@@ -116,11 +116,12 @@ RSpec.describe Spree::Api::V3::Admin::StoreController, type: :controller do
       end
     end
 
-    it 'includes computed default_currency, default_locale and supported lists' do
+    it 'includes computed default_currency, default_locale, default_country_code and supported lists' do
       subject
       expect(json_response).to include(
         'default_currency' => store.default_currency,
-        'default_locale' => store.default_locale
+        'default_locale' => store.default_locale,
+        'default_country_code' => store.default_country_code
       )
       expect(json_response['supported_currencies']).to be_an(Array)
       expect(json_response['supported_locales']).to be_an(Array)

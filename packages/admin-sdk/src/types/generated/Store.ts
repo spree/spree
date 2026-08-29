@@ -11,6 +11,7 @@ interface Store {
   preferred_storefront_url: string | null;
   default_currency: string;
   default_locale: string;
+  default_country_code: string | null;
   mail_from_address: string | null;
   customer_support_email: string | null;
   new_order_notifications_email: string | null;
