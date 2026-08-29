@@ -792,7 +792,7 @@ function QuickDateFilter({
       </PopoverTrigger>
       <PopoverContent align="start" className="w-[min(320px,calc(100vw-1rem))] p-1">
         {custom ? (
-          <div className="flex flex-col gap-2 p-2">
+          <div data-slot="filter-panel-controls" className="flex flex-col gap-2 p-2">
             <div className="flex flex-col gap-1">
               <span className="text-xs text-muted-foreground">
                 {t('admin.components.table_toolbar.date_range_start')}
@@ -837,6 +837,7 @@ function QuickDateFilter({
               <button
                 key={preset}
                 type="button"
+                data-slot="filter-panel-item"
                 className="flex w-full items-center justify-between gap-2 rounded-lg px-2 py-1.5 text-left text-sm transition-colors hover:bg-accent focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/50"
                 onClick={() => {
                   apply(preset)
@@ -854,6 +855,7 @@ function QuickDateFilter({
                 selected nor removable. */}
             <button
               type="button"
+              data-slot="filter-panel-item"
               className="flex w-full items-center justify-between gap-2 rounded-lg px-2 py-1.5 text-left text-sm transition-colors hover:bg-accent focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/50"
               onClick={() => setCustom({ from: from?.value ?? '', to: to?.value ?? '' })}
             >
@@ -1298,6 +1300,7 @@ function FilterPanel({
             <button
               key={col.key}
               type="button"
+              data-slot="filter-panel-item"
               className="flex w-full items-center justify-between gap-2 rounded-md px-2 py-1.5 text-left text-sm transition-colors hover:bg-accent focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/50"
               onClick={() => chooseField(col.key)}
             >
@@ -1317,6 +1320,7 @@ function FilterPanel({
             <button
               key={option.value}
               type="button"
+              data-slot="filter-panel-item"
               className="flex w-full items-center gap-2 rounded-lg px-2 py-1.5 text-left text-sm transition-colors hover:bg-accent focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/50"
               onClick={() => commit(option.value, 'eq')}
             >
@@ -1351,6 +1355,7 @@ function FilterPanel({
               <button
                 key={preset}
                 type="button"
+                data-slot="filter-panel-item"
                 className="flex w-full items-center rounded-lg px-2 py-1.5 text-left text-sm transition-colors hover:bg-accent focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/50"
                 onClick={() => commitDatePreset(preset)}
               >
@@ -1359,6 +1364,7 @@ function FilterPanel({
             ))}
             <button
               type="button"
+              data-slot="filter-panel-item"
               className="flex w-full items-center justify-between gap-2 rounded-md px-2 py-1.5 text-left text-sm transition-colors hover:bg-accent focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/50"
               onClick={() => setCustomRange({ from: '', to: '' })}
             >
@@ -1369,7 +1375,7 @@ function FilterPanel({
         )}
 
         {field && dated && customRange && (
-          <div className="flex flex-col gap-2 p-2">
+          <div data-slot="filter-panel-controls" className="flex flex-col gap-2 p-2">
             <div className="flex flex-col gap-1">
               <span className="text-xs text-muted-foreground">
                 {t('admin.components.table_toolbar.date_range_start')}
@@ -1435,7 +1441,7 @@ function FilterPanel({
             these types — a text column's "contains" versus "starts with" is a
             real choice, where a status has nothing to choose. */}
         {field && !listed && !dated && (
-          <div className="flex flex-col gap-2 p-2">
+          <div data-slot="filter-panel-controls" className="flex flex-col gap-2 p-2">
             <Select items={operators} value={operator} onValueChange={setOperator}>
               <SelectTrigger size="sm">
                 <SelectValue />

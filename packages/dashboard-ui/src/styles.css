@@ -494,7 +494,8 @@
     [data-slot='sidebar-menu-sub-button'],
     [data-slot='dropdown-menu-item'],
     [data-slot='select-item'],
-    [data-slot='command-item'] {
+    [data-slot='command-item'],
+    [data-slot='filter-panel-item'] {
       font-size: 1rem !important;
     }
   }
@@ -511,7 +512,21 @@
     [data-slot='dropdown-menu-sub-trigger'],
     [data-slot='select-item'],
     [data-slot='command-item'],
-    [data-slot='combobox-item'] {
+    [data-slot='combobox-item'],
+    /* The filter panel's own rows: fields, values and date presets. They are
+       hand-rolled buttons rather than menu items, so they carry this slot
+       deliberately to opt into the same touch sizing. */
+    [data-slot='filter-panel-item'] {
+      min-height: 2.75rem !important;
+    }
+
+    /* The controls inside the filter panel's value step — the operator select,
+       its input and the buttons under them. They are sized for a pointer
+       (`size="sm"`, roughly 30px), which is below the touch minimum on the one
+       surface where a merchant is most likely to be on a phone. */
+    [data-slot='filter-panel-controls'] [data-slot='select-trigger'],
+    [data-slot='filter-panel-controls'] [data-slot='input'],
+    [data-slot='filter-panel-controls'] button {
       min-height: 2.75rem !important;
     }
   }
