@@ -94,6 +94,16 @@ module Spree
           many :customer_groups,
                resource: proc { Spree.api.admin_customer_group_serializer },
                if: proc { expand?('customer_groups') }
+
+          # Store-scoped on purpose: customers are global while companies belong
+          # to one store, so rendering the plain association would show this
+          # merchant the businesses the person belongs to at another tenant.
+          # Membership rows only — standing over a parent is a question for the
+          # standing filter, not a claim of membership.
+          many :current_store_companies,
+               key: :companies,
+               resource: proc { Spree.api.admin_company_serializer },
+               if: proc { expand?('companies') }
         end
       end
     end

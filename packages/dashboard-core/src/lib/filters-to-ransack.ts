@@ -35,7 +35,11 @@ export function filtersToRansack(
     // ransack alias here when one isn't explicitly set.
     const fallback = col?.filterType === 'tags' ? 'tags_name' : filter.field
     const ransackKey = col?.ransackAttribute ?? fallback
-    const key = `${ransackKey}_${filter.operator}`
+    // A Ransack *scope* is invoked by its bare name — it takes the value as
+    // its argument rather than comparing a column, so appending an operator
+    // suffix would name a predicate that does not exist and silently filter
+    // nothing. The scope itself decides how to read the value.
+    const key = col?.ransackScope ? ransackKey : `${ransackKey}_${filter.operator}`
     if (ARRAY_OPERATORS.has(filter.operator)) {
       const ids = parseFilterIds(filter.value)
       if (ids.length > 0) out[key] = ids

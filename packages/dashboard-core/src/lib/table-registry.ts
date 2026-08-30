@@ -14,6 +14,14 @@ interface ColumnDefBase<T = any> {
   default?: boolean
   /** Ransack attribute name if different from key (e.g., 'master_sku' for 'sku') */
   ransackAttribute?: string
+  /**
+   * Treat `ransackAttribute` as a whitelisted Ransack *scope* rather than an
+   * attribute: the key is sent bare, without an operator suffix, and the
+   * scope receives the filter value as its argument. For rules a column
+   * comparison cannot express — e.g. company standing, which spans a node
+   * and its ancestors.
+   */
+  ransackScope?: boolean
   /** Custom cell renderer. If omitted, renders `row[key]` as text. */
   render?: (row: T) => ReactNode
   /**

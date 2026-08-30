@@ -25,4 +25,36 @@ RSpec.describe Spree::Api::V3::Admin::CustomerSerializer do
       expect(subject['customer_group_ids']).to contain_exactly(group.prefixed_id)
     end
   end
+
+  describe 'companies' do
+    let!(:company) { create(:company, store: store, name: 'Acme Corp') }
+
+    before { create(:company_membership, company: company, customer: customer) }
+
+    # Behind an expand rather than always on: the company payload counts each
+    # node's children and members, which a customers list that is not showing
+    # them should not pay for.
+    it 'is omitted unless expanded' do
+      expect(subject).not_to have_key('companies')
+    end
+
+    it 'embeds the memberships when expanded' do
+      result = described_class.new(customer, params: base_params.merge(expand: ['companies'])).to_h
+
+      expect(result['companies'].map { |c| c['id'] }).to contain_exactly(company.prefixed_id)
+      expect(result['companies'].first['name']).to eq('Acme Corp')
+    end
+
+    # Customers are global while companies belong to one store, so the plain
+    # association would show this merchant a business the person belongs to at
+    # another tenant.
+    it "omits companies belonging to another store" do
+      foreign = create(:company, store: create(:store), name: 'Other Tenant')
+      create(:company_membership, company: foreign, customer: customer)
+
+      result = described_class.new(customer.reload, params: base_params.merge(expand: ['companies'])).to_h
+
+      expect(result['companies'].map { |c| c['name'] }).to contain_exactly('Acme Corp')
+    end
+  end
 end

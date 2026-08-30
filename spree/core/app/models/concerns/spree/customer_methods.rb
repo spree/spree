@@ -78,6 +78,13 @@ module Spree
       has_many :company_memberships, class_name: 'Spree::CompanyMembership', foreign_key: :customer_id,
                                      dependent: :destroy, inverse_of: :customer
       has_many :companies, through: :company_memberships, class_name: 'Spree::Company'
+      # The subset belonging to the store being served. Customers are global
+      # while companies are store-scoped, so anything RENDERING a customer's
+      # memberships must read this rather than +companies+ — the unscoped
+      # association would show one merchant the businesses this person belongs
+      # to at another. Scoped in SQL so it preloads like any other association.
+      has_many :current_store_companies, -> { where(store_id: Spree::Current.store&.id) },
+               through: :company_memberships, source: :company, class_name: 'Spree::Company'
       belongs_to :ship_address, class_name: 'Spree::Address', optional: true
       belongs_to :bill_address, class_name: 'Spree::Address', optional: true
 
@@ -159,15 +166,41 @@ module Spree
       # Backward compatibility alias — remove in Spree 6.0
       def self.multi_search(query) = search(query)
 
-      self.whitelisted_ransackable_associations = %w[bill_address ship_address addresses tags spree_roles orders customer_groups]
+      self.whitelisted_ransackable_associations = %w[bill_address ship_address addresses tags spree_roles orders customer_groups companies]
       self.whitelisted_ransackable_attributes = %w[id email first_name last_name phone accepts_email_marketing
                                                     created_at updated_at last_sign_in_at]
-      self.whitelisted_ransackable_scopes = %w[search multi_search with_min_total_spent]
+      self.whitelisted_ransackable_scopes = %w[search multi_search with_min_total_spent with_standing_for_company]
 
       scope :with_min_total_spent, ->(amount) {
         joins(:orders).where.not(spree_orders: { completed_at: nil }).
           group("#{table_name}.id").
           having('SUM(spree_orders.total) >= ?', amount.to_d)
+      }
+
+      # Customers who may act for a company node: members of the node itself
+      # OR of any ancestor, because standing covers a node and everything
+      # below it (see {#standing_for?}). Filtering on the membership row alone
+      # would hide the group-level buyer who legitimately purchases for a
+      # subsidiary — and would offer a narrower set than the cart's own
+      # standing validation accepts, so a picker built on it could hide valid
+      # pairs.
+      #
+      # Accepts a record, an id (prefixed or raw), or an array of either — the
+      # dashboard's resource filter is multi-select and sends a list, and
+      # several nodes read naturally as "anyone who may buy for any of these".
+      # Ids resolve through the current store's companies: the value arrives
+      # straight off a query string, and reading it through the global
+      # constant would let one tenant filter by another's node.
+      scope :with_standing_for_company, ->(companies) {
+        scoped = Spree::Current.store&.companies || Spree::Company.none
+        nodes = Array.wrap(companies).filter_map do |company|
+          company.is_a?(Spree::Company) ? company : scoped.find_by_param(company)
+        end
+        next none if nodes.empty?
+
+        joins(:company_memberships).
+          where(Spree::CompanyMembership.table_name => { company_id: nodes.flat_map { |node| node.self_and_ancestors.map(&:id) }.uniq }).
+          distinct
       }
 
       # Precomputes orders_count, total_spent, and last_order_completed_at via a

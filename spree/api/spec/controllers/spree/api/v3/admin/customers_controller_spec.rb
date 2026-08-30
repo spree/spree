@@ -35,6 +35,38 @@ RSpec.describe Spree::Api::V3::Admin::CustomersController, type: :controller do
         expect(json_response['data'].map { |c| c['id'] }).to contain_exactly(matching.prefixed_id)
       end
     end
+
+    context 'filtering by company standing' do
+      let!(:parent) { create(:company, store: store, name: 'Acme Corp') }
+      let!(:division) { create(:company, store: store, name: 'EMEA', parent: parent, kind: 'division') }
+      let!(:group_buyer) { create(:user) }
+      let!(:division_buyer) { create(:user) }
+
+      before do
+        create(:company_membership, company: parent, customer: group_buyer)
+        create(:company_membership, company: division, customer: division_buyer)
+      end
+
+      # Standing covers a node and its subtree, so the group-level buyer is a
+      # legitimate purchaser for the division and must not be filtered out.
+      it 'returns members of the node and of its ancestors' do
+        get :index, params: { q: { with_standing_for_company: division.prefixed_id } }, as: :json
+
+        expect(response).to have_http_status(:ok)
+        expect(json_response['data'].map { |c| c['id'] }).
+          to contain_exactly(group_buyer.prefixed_id, division_buyer.prefixed_id)
+      end
+
+      it 'returns nothing for a company belonging to another store' do
+        other = create(:company, store: create(:store), name: 'Other Tenant')
+        create(:company_membership, company: other, customer: create(:user))
+
+        get :index, params: { q: { with_standing_for_company: other.prefixed_id } }, as: :json
+
+        expect(response).to have_http_status(:ok)
+        expect(json_response['data']).to be_empty
+      end
+    end
   end
 
   describe 'GET #show' do

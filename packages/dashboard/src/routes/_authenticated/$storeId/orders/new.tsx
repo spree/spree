@@ -1,5 +1,5 @@
 import { zodResolver } from '@hookform/resolvers/zod'
-import type { Customer, Variant } from '@spree/admin-sdk'
+import type { Company, Customer, Variant } from '@spree/admin-sdk'
 import {
   adminClient,
   formatPrice,
@@ -14,6 +14,7 @@ import {
   CardHeader,
   CardTitle,
   Field,
+  FieldDescription,
   FieldError,
   FieldGroup,
   FieldLabel,
@@ -36,6 +37,7 @@ import { useForm } from 'react-hook-form'
 import { useTranslation } from 'react-i18next'
 import { ChannelSelect } from '../../../../components/spree/channel-select'
 import { useChannels } from '../../../../hooks/use-channels'
+import { companyAutocompleteProps } from '../../../../hooks/use-companies'
 import { customerAutocompleteProps } from '../../../../hooks/use-customers'
 import {
   NEW_ORDER_DEFAULTS,
@@ -61,6 +63,7 @@ function NewOrderPage() {
   // (Customer record, picked Variants) and bespoke widgets (ResourceCombobox,
   // typeahead button list, items table), not standard form fields.
   const [customer, setCustomer] = useState<Customer | null>(null)
+  const [company, setCompany] = useState<Company | null>(null)
   const [items, setItems] = useState<PendingItem[]>([])
   const [useDefaultAddress, setUseDefaultAddress] = useState(true)
   // `onChange` hands back only the option id, so keep the records the search
@@ -88,6 +91,7 @@ function NewOrderPage() {
       } else if (values.email) {
         payload.email = values.email
       }
+      if (company) payload.company_id = company.id
       if (values.internal_note) payload.internal_note = values.internal_note
       if (values.customer_note) payload.customer_note = values.customer_note
       if (values.coupon_code) payload.coupon_code = values.coupon_code
@@ -149,10 +153,36 @@ function NewOrderPage() {
               </CardHeader>
               <CardContent>
                 <FieldGroup>
+                  {/* Above the customer, because it narrows that list. Optional:
+                      most orders are retail and leave it empty. */}
+                  <Field>
+                    <FieldLabel>{t('admin.pages.orders.new.select_company')}</FieldLabel>
+                    <ResourceCombobox<Company>
+                      {...companyAutocompleteProps('order-company-picker')}
+                      value={company?.id}
+                      onChange={(_id, record) => {
+                        setCompany(record)
+                        // A customer already chosen may have no standing for the
+                        // new company, and silently sending that pair would
+                        // attach the order to a business this person cannot buy
+                        // for. Clearing is the honest reset.
+                        if (record?.id !== company?.id) setCustomer(null)
+                      }}
+                      renderOption={(c) => (
+                        <div>
+                          <div className="font-medium">{c.name}</div>
+                          <div className="text-xs text-muted-foreground">
+                            {t(`admin.companies.kind.${c.kind}`)}
+                          </div>
+                        </div>
+                      )}
+                    />
+                    <FieldDescription>{t('admin.pages.orders.new.company_help')}</FieldDescription>
+                  </Field>
                   <Field>
                     <FieldLabel>{t('admin.pages.orders.new.select_customer')}</FieldLabel>
                     <ResourceCombobox<Customer>
-                      {...customerAutocompleteProps('customer-picker')}
+                      {...customerAutocompleteProps('customer-picker', company?.id)}
                       value={customer?.id}
                       onChange={(_id, record) => setCustomer(record)}
                       renderOption={(c) => (

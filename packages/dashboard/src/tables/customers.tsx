@@ -3,6 +3,7 @@ import { ActiveBadge, Badge, RelativeTime, TagList } from '@spree/dashboard-ui'
 import { Link } from '@tanstack/react-router'
 import i18n from 'i18next'
 import { UsersIcon } from 'lucide-react'
+import { companyAutocompleteProps } from '../hooks/use-companies'
 import { customerGroupAutocompleteProps } from '../hooks/use-customer-groups'
 
 defineTable('customers', {
@@ -85,6 +86,37 @@ defineTable('customers', {
             {groups.map((g: { id: string; name: string }) => (
               <Badge key={g.id} variant="secondary">
                 {g.name}
+              </Badge>
+            ))}
+          </div>
+        )
+      },
+    },
+    {
+      key: 'companies',
+      label: i18n.t('admin.customers.columns.companies'),
+      default: false,
+      sortable: false,
+      filterable: true,
+      filterType: 'resource',
+      // Fetched only while the column is visible — the company payload counts
+      // each node's children and members, so it is not worth paying for on a
+      // list that isn't showing it.
+      expand: 'companies',
+      // A Ransack scope, not an association predicate: standing covers a node
+      // AND its ancestors, so `companies_id_in` would hide the group-level
+      // buyer who legitimately purchases for a subsidiary.
+      ransackAttribute: 'with_standing_for_company',
+      ransackScope: true,
+      filterResource: companyAutocompleteProps('companies-filter-picker'),
+      render: (c) => {
+        const companies = c.companies ?? []
+        if (companies.length === 0) return '—'
+        return (
+          <div className="flex flex-wrap gap-1">
+            {companies.map((company: { id: string; name: string }) => (
+              <Badge key={company.id} variant="secondary">
+                {company.name}
               </Badge>
             ))}
           </div>
