@@ -268,6 +268,9 @@ module Spree
         # what is installed (see docs/plans/6.0-third-party-pricing-inventory.md).
         Rails.application.config.spree.pricing_providers.concat [Spree::PricingProvider::Internal]
         Rails.application.config.spree.inventory_providers.concat [Spree::InventoryProvider::Internal]
+        # 'manual' is the negotiated-price marker on line items, so no pricing
+        # engine may answer under it — fail the boot rather than the checkout.
+        Spree::PricingProvider.verify_registry!
 
         # Password policy for the default auth models. Swap for corporate rules,
         # breach-list lookups or entropy scoring.

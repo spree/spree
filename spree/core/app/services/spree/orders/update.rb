@@ -67,12 +67,29 @@ module Spree
 
       def process_items(items)
         result = Spree::Orders::UpsertItems.call(order: @order, items: items)
-        raise ActiveRecord::RecordInvalid, @order if result.failure?
+        propagate_step_failure!(result, fallback: 'Failed to update items on order') if result.failure?
       end
 
       def build_fulfillments
         result = Spree::Orders::BuildFulfillments.call(order: @order)
-        raise ActiveRecord::RecordInvalid, @order if result.failure?
+        propagate_step_failure!(result, fallback: 'Failed to build shipments') if result.failure?
+      end
+
+      # Surface why the step failed on the order, the way Orders::Create does.
+      # Raising RecordInvalid with the order's own untouched errors renders a
+      # 422 with an empty message, because a rejected batch carries its reason
+      # on the Result rather than on the order.
+      def propagate_step_failure!(result, fallback:)
+        record = result.value
+        if record.respond_to?(:errors) && record.errors.any? && record != @order
+          record.errors.full_messages.each { |message| @order.errors.add(:base, message) }
+        elsif result.error.to_s.present?
+          @order.errors.add(:base, result.error.to_s)
+        elsif @order.errors.empty?
+          @order.errors.add(:base, fallback)
+        end
+
+        raise ActiveRecord::RecordInvalid, @order
       end
     end
   end

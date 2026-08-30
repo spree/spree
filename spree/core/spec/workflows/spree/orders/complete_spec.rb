@@ -18,6 +18,19 @@ module Spree
       expect(draft.reload.status).to eq('placed')
     end
 
+    it 'places a draft with a negotiated line at the negotiated price' do
+      draft = create(:order_ready_to_ship, store: store, line_items_count: 1)
+      draft.update_columns(status: 'draft', completed_at: nil)
+      line_item = draft.line_items.first
+      line_item.update_columns(price: 7.2, price_source: Spree::LineItem::MANUAL_PRICE_SOURCE)
+
+      result = described_class.call(order: draft, payment_pending: true)
+
+      expect(result).to be_success
+      expect(line_item.reload.price).to eq(7.2)
+      expect(line_item.price_source).to eq('manual')
+    end
+
     describe 'stock' do
       let(:draft) { create(:order_ready_to_ship, store: store, line_items_count: 1) }
       let(:fulfillment) { draft.fulfillments.first }

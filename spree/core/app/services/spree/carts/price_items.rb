@@ -26,6 +26,9 @@ module Spree
         # fact. A line being added to it now still needs a price, or an admin
         # amendment bills list price to a contract customer.
         items = items.reject(&:persisted?) if money_frozen?(cart)
+        # A negotiated price is not a question either: only the explicit
+        # revert clears the manual marker, and it does so before asking.
+        items = items.reject(&:manual_price?)
         return success([]) if items.empty?
 
         resolutions = items.filter_map do |line_item|
@@ -75,6 +78,11 @@ module Spree
         vat_inputs = { address: owner&.tax_address, country: owner&.tax_country, market: owner&.market }
 
         resolutions.each do |line_item, price|
+          # Probe-based flows (AddItem, UpsertItems) resolve against stand-ins
+          # and transfer the answer here, so the row-level manual guard has to
+          # hold at the write too, not only at resolution.
+          next if line_item.manual_price?
+
           amount = price.price_including_vat_for(**vat_inputs)
           # Marked before the blank guard: the provider has already answered,
           # so a restatement that comes back blank must still not send the

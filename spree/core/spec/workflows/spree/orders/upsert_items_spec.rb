@@ -284,6 +284,86 @@ module Spree
           expect(unrelated_line_item.reload.quantity).to eq(3)
         end
       end
+
+      context 'with negotiated (manual) prices' do
+        context 'creating a line at a negotiated price' do
+          let(:items) { [{ variant_id: variant.prefixed_id, quantity: 10, price: '7.20' }] }
+
+          it 'stamps the line manual at the given price' do
+            expect(subject).to be_success
+            line_item = order.line_items.sole
+            expect(line_item.price).to eq(7.2)
+            expect(line_item.price_source).to eq('manual')
+            expect(line_item.price_list_id).to be_nil
+          end
+        end
+
+        context 'editing quantity on a negotiated line without a price key' do
+          let!(:line_item) do
+            create(:line_item, order: order, variant: variant, quantity: 2,
+                               price: 7.2, price_source: Spree::LineItem::MANUAL_PRICE_SOURCE)
+          end
+          let(:items) { [{ variant_id: variant.prefixed_id, quantity: 5 }] }
+
+          it 'keeps the negotiated price' do
+            expect(subject).to be_success
+            expect(line_item.reload.quantity).to eq(5)
+            expect(line_item.price).to eq(7.2)
+            expect(line_item.price_source).to eq('manual')
+          end
+        end
+
+        context 'reverting with an explicit nil price' do
+          let!(:line_item) do
+            create(:line_item, order: order, variant: variant, quantity: 2,
+                               price: 7.2, price_source: Spree::LineItem::MANUAL_PRICE_SOURCE)
+          end
+          let(:items) { [{ variant_id: variant.prefixed_id, quantity: 2, price: nil }] }
+
+          it 'clears the marker and re-prices through the resolver' do
+            catalog_price = variant.price_in(order.currency).amount
+
+            expect(subject).to be_success
+            expect(line_item.reload.price).to eq(catalog_price)
+            expect(line_item.price_source).to be_nil
+          end
+        end
+
+        context 'with a non-numeric price' do
+          let(:items) { [{ variant_id: variant.prefixed_id, quantity: 1, price: '12,50' }] }
+
+          it 'refuses the batch rather than coercing, and says why' do
+            expect(subject).to be_failure
+            expect(subject.error.to_s).to include('non-negative number')
+            expect(order.reload.line_items).to be_empty
+          end
+        end
+
+        # BigDecimal parses both, and neither is negative — without a finite?
+        # check they reach the insert and fail as a 500 rather than a 422.
+        ['NaN', 'Infinity', '-Infinity', '-1'].each do |bad_price|
+          context "with a price of #{bad_price}" do
+            let(:items) { [{ variant_id: variant.prefixed_id, quantity: 1, price: bad_price }] }
+
+            it 'refuses the batch' do
+              expect(subject).to be_failure
+              expect(order.reload.line_items).to be_empty
+            end
+          end
+        end
+
+        context 'on a placed order' do
+          let!(:line_item) { create(:line_item, order: order, variant: variant, quantity: 2) }
+          let(:items) { [{ variant_id: variant.prefixed_id, quantity: 2, price: '7.20' }] }
+
+          before { order.update_columns(status: 'placed', completed_at: Time.current) }
+
+          it 'refuses the price override — placed-order money edits are fees and discounts' do
+            expect(subject).to be_failure
+            expect(line_item.reload.price_source).to be_nil
+          end
+        end
+      end
     end
   end
 end
