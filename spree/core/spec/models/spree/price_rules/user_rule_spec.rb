@@ -6,6 +6,19 @@ describe Spree::PriceRules::UserRule, type: :model do
   let(:user) { create(:user) }
   let(:variant) { create(:variant) }
 
+  # Grandfathered: hidden from the picker, but it keeps working for the
+  # stores already using it — no warning, no removal date.
+  describe 'supersession' do
+    it 'is flagged superseded yet still matches its buyer' do
+      expect(described_class.superseded?).to be true
+
+      created = create(:user_price_rule, price_list: price_list, user_ids: [user.id])
+
+      context = Spree::Pricing::Context.new(variant: variant, currency: 'USD', user: user)
+      expect(created.applicable?(context)).to be true
+    end
+  end
+
   describe '#applicable?' do
     context 'when user_ids preference is empty' do
       before { rule.preferred_user_ids = [] }

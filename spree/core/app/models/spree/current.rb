@@ -4,7 +4,7 @@ module Spree
   # All attributes are automatically reset between requests by Rails.
   # Fallback chains ensure sensible defaults when attributes are not explicitly set.
   class Current < ::ActiveSupport::CurrentAttributes
-    attribute :store, :channel, :market, :currency, :locale, :content_locale, :tax_country, :price_lists, :applicable_catalogs, :catalog_bound_price_list_ids, :global_pricing_context, :provider_cache, :integrations
+    attribute :store, :channel, :market, :currency, :locale, :content_locale, :tax_country, :price_lists, :applicable_catalogs, :global_pricing_context, :provider_cache, :integrations
 
     # Scratch space for provider strategies to memoize a call across the
     # request — part of the delivery rate provider contract (nothing in core
@@ -81,7 +81,9 @@ module Spree
       super || (self.integrations = store ? store.integrations.active.to_a : [])
     end
 
-    # Returns the current price lists for the global pricing context.
+    # Returns the standalone (rule-matched) price lists in effect for the
+    # global pricing context. Catalog-owned lists are excluded — pricing
+    # reaches them through {#catalogs_for}.
     # @return [ActiveRecord::Relation<Spree::PriceList>]
     def price_lists
       super || begin
@@ -106,13 +108,6 @@ module Spree
       applicable_catalogs[key] ||= Spree::Catalog.for_context(
         store: store, company: company, user: user, channel: channel
       )
-    end
-
-    # Price-list ids claimed by any active catalog in the current store.
-    # One pluck per request — the listing path asked this for every variant.
-    # @return [Set<Integer>]
-    def catalog_bound_price_list_ids
-      super || (self.catalog_bound_price_list_ids = Spree::Catalog.bound_price_list_ids(store))
     end
 
     # @return [Hash]

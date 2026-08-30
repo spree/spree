@@ -1,5 +1,10 @@
 module Spree
   module PriceRules
+    # Superseded by catalog assignment, and grandfathered: existing rules
+    # keep matching indefinitely, but new setups target an audience by
+    # assigning it a catalog that owns the price list
+    # (docs/plans/6.0-catalog-agreement-rework.md). Hidden from the rule
+    # picker; nothing new builds on it.
     class CustomerGroupRule < Spree::PriceRule
       # Stored as raw IDs. Accepts prefixed IDs (`cg_…`) from API
       # callers and decodes them on write so eligibility checks compare
@@ -29,6 +34,10 @@ module Spree
 
       def self.description
         Spree.t('price_rules.customer_group_rule.description')
+      end
+
+      def self.superseded?
+        true
       end
     end
   end

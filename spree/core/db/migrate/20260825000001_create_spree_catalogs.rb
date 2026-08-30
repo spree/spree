@@ -2,7 +2,6 @@ class CreateSpreeCatalogs < ActiveRecord::Migration[8.1]
   def change
     create_table :spree_catalogs do |t|
       t.references :store, null: false
-      t.references :price_list             # nil = assortment-only, base prices
       t.string :name, null: false
       t.boolean :active, null: false, default: true
       t.integer :position

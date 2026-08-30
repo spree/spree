@@ -1,5 +1,8 @@
 module Spree
   module PriceRules
+    # Grandfathered (2026-08-30, one-question-per-entity doctrine): kept
+    # working, but nothing new builds on it — the forward path for channel
+    # pricing is the channel's default catalog owning a price list.
     class ChannelRule < Spree::PriceRule
       # Stored as raw IDs. Accepts prefixed IDs (`ch_…`) from API
       # callers and decodes them on write so eligibility checks compare

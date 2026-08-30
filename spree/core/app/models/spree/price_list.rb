@@ -10,18 +10,26 @@ module Spree
     MATCH_POLICIES = %w[all any].freeze
 
     belongs_to :store, class_name: 'Spree::Store'
+    # The owning agreement, or nil for a standalone list. An owned list is
+    # reached only through its catalog — generic rule matching skips it in
+    # SQL (see .for_context) — so a deactivated catalog's list goes dormant
+    # instead of leaking back into store-wide matching. `touch` keeps the
+    # catalog's cache key honest when its pricing changes.
+    belongs_to :catalog, class_name: 'Spree::Catalog', optional: true, inverse_of: :price_list, touch: true
 
     has_many :price_rules, class_name: 'Spree::PriceRule', autosave: true, dependent: :destroy
     alias rules price_rules
     has_many :prices, class_name: 'Spree::Price', dependent: :destroy_async
-    # Catalogs that price through this list. Nullify: deleting the list turns
-    # them back into assortment-only catalogs.
-    has_many :catalogs, class_name: 'Spree::Catalog', dependent: :nullify
     has_many :variants, -> { distinct }, through: :prices, source: :variant
     has_many :products, -> { distinct }, through: :variants, source: :product
     alias price_list_products products
 
     after_save :apply_pending_rules
+
+    # Request-scoped memoization of the generic matching set must not keep a
+    # set that a write in the same request has already superseded — a status
+    # flip or a catalog attach/detach changes which lists match generically.
+    after_commit -> { Spree::Current.price_lists = nil }
 
     # Flat-payload writer for `rules`. See
     # {Spree::TypedAssociations#assign_typed_association}.
@@ -31,12 +39,20 @@ module Spree
 
     validates :name, presence: true
     validates :match_policy, presence: true, inclusion: { in: MATCH_POLICIES }
+    # One live list per catalog; soft-deleted lists release the slot. The
+    # partial unique index enforces the same on PostgreSQL and SQLite —
+    # MySQL ignores the +where:+ clause, so there this validation stands
+    # alone and two concurrent attaches can race.
+    validates :catalog_id, uniqueness: { scope: spree_base_uniqueness_scope,
+                                         conditions: -> { where(deleted_at: nil) } }, allow_nil: true
     validate :starts_at_before_ends_at
+    validate :catalog_in_same_store
 
     self.whitelisted_ransackable_attributes = %w[status match_policy starts_at ends_at]
 
     scope :by_position, -> { order(position: :asc) }
     scope :for_store, ->(store) { where(store: store) }
+    scope :standalone, -> { where(catalog_id: nil) }
     scope :current, lambda { |timezone = nil|
       timezone ||= Rails.application.config.time_zone
       # Round to beginning of minute to enable Rails query caching
@@ -72,12 +88,18 @@ module Spree
       update(status: 'scheduled')
     end
 
-    # Returns price lists applicable for a given pricing context
+    # Returns price lists eligible for generic rule matching in a pricing
+    # context:
     # - active: always applies (within date range)
     # - scheduled: applies only within starts_at/ends_at date range
+    # - standalone only: a catalog-owned list is reached exclusively through
+    #   its catalog, so it is excluded here in SQL — which is what keeps a
+    #   deactivated catalog's (typically rule-less) list dormant instead of
+    #   pricing the whole store.
     def self.for_context(context)
       timezone = context.store&.preferred_timezone || 'UTC'
       for_store(context.store)
+        .standalone
         .with_status(:active, :scheduled)
         .current(timezone)
         .by_position
@@ -257,6 +279,13 @@ module Spree
       return if variant_ids.blank?
 
       Spree::Variants::TouchJob.perform_later(variant_ids)
+    end
+
+    def catalog_in_same_store
+      return if catalog.nil? || store_id.nil?
+      return if catalog.store_id == store_id
+
+      errors.add(:catalog, :invalid)
     end
 
     def starts_at_before_ends_at

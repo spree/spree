@@ -211,4 +211,89 @@ describe Spree::Catalog, type: :model do
 
     expect(catalog.reload.price_list_id).to be_nil
   end
+
+  # The FK lives on the list: a list is standalone or owned by exactly one
+  # catalog (docs/plans/6.0-catalog-agreement-rework.md).
+  describe 'price list ownership' do
+    let(:price_list) { create(:price_list, :active, store: store) }
+
+    it 'claims the list through its foreign key' do
+      catalog = create(:catalog, store: store, price_list: price_list)
+
+      expect(price_list.reload.catalog).to eq(catalog)
+      expect(catalog.price_list_id).to eq(price_list.id)
+    end
+
+    it 'attaches and detaches through the price_list_id writer' do
+      catalog = create(:catalog, store: store)
+
+      catalog.update!(price_list_id: price_list.id)
+      expect(price_list.reload.catalog).to eq(catalog)
+
+      catalog.update!(price_list_id: nil)
+      expect(price_list.reload.catalog).to be_nil
+    end
+
+    it 're-homes a list already owned by another catalog' do
+      create(:catalog, store: store, price_list: price_list)
+      other = create(:catalog, store: store)
+
+      other.update!(price_list: price_list)
+
+      expect(price_list.reload.catalog).to eq(other)
+    end
+
+    it 'releases the list back to standalone when the catalog is destroyed' do
+      catalog = create(:catalog, store: store, price_list: price_list)
+
+      catalog.destroy!
+
+      expect(price_list.reload.catalog_id).to be_nil
+    end
+
+    # The binding is a write on the LIST, so assigning it on a persisted
+    # catalog would hit the database before validation. A rejected save that
+    # had already detached would release a rule-less list to the whole store
+    # — the leak this design closes, arriving through the failure path.
+    describe 'a rejected save' do
+      it 'attaches nothing' do
+        catalog = create(:catalog, store: store)
+
+        catalog.assign_attributes(price_list_id: price_list.id, name: '')
+
+        expect(catalog.save).to be false
+        expect(price_list.reload.catalog_id).to be_nil
+      end
+
+      it 'detaches nothing' do
+        catalog = create(:catalog, store: store, price_list: price_list)
+
+        catalog.assign_attributes(price_list_id: nil, name: '')
+
+        expect(catalog.save).to be false
+        expect(price_list.reload.catalog_id).to eq(catalog.id)
+      end
+
+      it 'reads back the binding the caller asked for, so a form round-trips' do
+        catalog = create(:catalog, store: store)
+
+        catalog.assign_attributes(price_list_id: price_list.id, name: '')
+        catalog.save
+
+        expect(catalog.price_list_id).to eq(price_list.id)
+      end
+    end
+
+    # Rejecting through the catalog's own validation rather than raising
+    # RecordNotSaved out of the child's same-store check.
+    it 'refuses a foreign-store list as a validation error' do
+      catalog = create(:catalog, store: store)
+      foreign = create(:price_list, store: create(:store))
+
+      catalog.price_list = foreign
+
+      expect(catalog).not_to be_valid
+      expect(catalog.errors[:price_list]).to be_present
+    end
+  end
 end

@@ -64,27 +64,15 @@ module Spree
           @catalog_price_lists ||= catalogs_for_context.filter_map(&:price_list).uniq.select(&:currently_active?)
         end
 
-        # Returns the price lists that are applicable to the context.
-        # Catalog-attached lists are excluded here: they are audience-scoped
-        # by their catalog, and a rule-less list would otherwise apply to
-        # everyone.
+        # Returns the price lists that are applicable to the context by their
+        # own rules. Catalog-owned lists never appear here — the FK filter in
+        # {Spree::PriceList.for_context} keeps them out in SQL, since an
+        # owned list is audience-scoped by its catalog and a rule-less one
+        # would otherwise apply to everyone.
         # @return [Array<Spree::PriceList>]
         def applicable_price_lists
           @applicable_price_lists ||= price_lists_for_context.
-                                      reject { |list| catalog_bound_price_list_ids.include?(list.id) }.
                                       select { |list| list.applicable?(context) }
-        end
-
-        # Only ACTIVE catalogs claim their list: an inactive catalog is off,
-        # and blacklisting its list would silently kill a rule-based list
-        # that was working before the catalog draft existed.
-        def catalog_bound_price_list_ids
-          @catalog_bound_price_list_ids ||=
-            if context.store == Spree::Current.store
-              Spree::Current.catalog_bound_price_list_ids
-            else
-              Spree::Catalog.bound_price_list_ids(context.store)
-            end
         end
 
         # Catalogs that apply to this buyer. Reused from {Spree::Current}

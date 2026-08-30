@@ -21,8 +21,12 @@ module Spree
     attribute :active, :boolean, default: true
 
     belongs_to :store, class_name: 'Spree::Store', inverse_of: :catalogs
-    # nil = assortment-only; base prices apply.
-    belongs_to :price_list, class_name: 'Spree::PriceList', optional: true
+    # The owned list, or nil for an assortment-only catalog priced at base.
+    # The FK lives on the list (a list is standalone or owned by exactly one
+    # catalog); detaching or destroying the catalog releases the list back to
+    # standalone — an explicit act, since a rule-less standalone list starts
+    # matching by its own (absent) rules.
+    has_one :price_list, class_name: 'Spree::PriceList', inverse_of: :catalog, dependent: :nullify
 
     has_many :catalog_products, class_name: 'Spree::CatalogProduct', dependent: :destroy,
                                 inverse_of: :catalog
@@ -33,12 +37,18 @@ module Spree
     validates :name, presence: true
     validate :price_list_in_same_store
 
+    # The binding is applied inside the save, never on assignment: writing a
+    # has_one on a persisted record updates the child immediately, so a
+    # rejected save would already have re-homed the list — or, detaching,
+    # released it to store-wide rule matching, which is the leak this design
+    # exists to close. After rather than before, so a newly created catalog
+    # has an id for the child to point at; still inside the save transaction,
+    # so a later failure takes the binding down with it.
+    after_save :apply_pending_price_list
+
     # Request-scoped catalog memoization must not keep a set that a write
     # in the same request has already superseded.
-    after_commit -> {
-      Spree::Current.applicable_catalogs = nil
-      Spree::Current.catalog_bound_price_list_ids = nil
-    }
+    after_commit -> { Spree::Current.applicable_catalogs = nil }
 
     scope :active, -> { where(active: true) }
     scope :by_position, -> { order(position: :asc) }
@@ -119,18 +129,44 @@ module Spree
       catalogs
     end
 
-    # Price-list ids claimed by an active catalog of the store. Only ACTIVE
-    # catalogs claim their list: an inactive catalog is off, and blacklisting
-    # its list would silently kill a rule-based list that was working before
-    # the catalog draft existed.
+    # The owned list's id. Reads like the column the binding replaced, so
+    # serializers and write payloads keep their shape while the FK lives on
+    # the list side. An assigned-but-unsaved binding reads back as itself, so
+    # a rejected form round-trips what the merchant chose.
     #
-    # @param store [Spree::Store, nil]
-    # @return [Set<Integer>]
-    def self.bound_price_list_ids(store)
-      return Set.new if store.nil?
+    # @return [Integer, String, nil]
+    def price_list_id
+      return @pending_price_list&.id if defined?(@pending_price_list)
 
-      active.where(store_id: store.id).where.not(price_list_id: nil).
-        distinct.pluck(:price_list_id).to_set
+      price_list&.id
+    end
+
+    # Attaches the given list as this catalog's owned list (raw id), or
+    # detaches with nil — releasing the list back to standalone matching.
+    # A list already owned elsewhere is re-homed to this catalog.
+    #
+    # Records the intent only; {#apply_pending_price_list} performs the write
+    # inside the save, so a record that fails validation changes nothing.
+    #
+    # @param value [Integer, String, nil] raw price list PK
+    # @return [void]
+    def price_list_id=(value)
+      @pending_price_list = value.presence && Spree::PriceList.find(value)
+    end
+
+    # Assigning the association directly goes through the same deferral, so
+    # every write path — +price_list=+, +price_list_id=+, nested attributes —
+    # lands in the save rather than on assignment.
+    def price_list=(list)
+      @pending_price_list = list
+    end
+
+    # Reads back an assigned-but-unsaved binding, so callers see what they
+    # set rather than what is still on disk.
+    def price_list
+      return @pending_price_list if defined?(@pending_price_list)
+
+      super
     end
 
     # Adds products to the assortment, appending to the manual order and
@@ -189,11 +225,37 @@ module Spree
 
     private
 
+    # Runs before anything is written, so a foreign-store list is a validation
+    # error on the catalog rather than a RecordNotSaved raised out of the
+    # child's own same-store check.
     def price_list_in_same_store
       return if price_list.nil? || store_id.nil?
       return if price_list.store_id == store_id
 
       errors.add(:price_list, :invalid)
+    end
+
+    # Applies the deferred binding inside the save transaction: the newly
+    # claimed list points here, and a list this catalog is giving up is
+    # released. Written through the child, since the FK lives on the list.
+    def apply_pending_price_list
+      return unless defined?(@pending_price_list)
+
+      association(:price_list).reset
+      previous = association(:price_list).load_target
+      pending = @pending_price_list
+      remove_instance_variable(:@pending_price_list)
+
+      return if previous&.id == pending&.id
+
+      previous&.update_column(:catalog_id, nil)
+      pending&.update_column(:catalog_id, id) if pending
+
+      association(:price_list).reset
+      # update_column skips PriceList's own after_commit, so the request's
+      # memoized generic-matching set is cleared here instead — a detach must
+      # be visible to the rest of this request, not the next one.
+      Spree::Current.price_lists = nil
     end
   end
 end

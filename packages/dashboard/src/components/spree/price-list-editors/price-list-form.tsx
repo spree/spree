@@ -526,7 +526,9 @@ function RulesCard({
   const [pickerOpen, setPickerOpen] = useState(false)
   const [editingIndex, setEditingIndex] = useState<number | null>(null)
 
-  const types = typesData?.data ?? []
+  // Superseded kinds (audience rules, replaced by catalog assignment) stay
+  // renderable for existing rows but are never offered for new ones.
+  const types = (typesData?.data ?? []).filter((tt) => !tt.superseded)
   const watchedRules = (form.watch('rules') ?? []) as PriceRuleFormDraft[]
 
   return (
