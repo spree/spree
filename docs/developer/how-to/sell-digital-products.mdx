@@ -3,18 +3,83 @@ title: Sell Digital Products
 description: Digital goods in Spree — a digital delivery profile, instant fulfillment without a shipping address, and delivering files or entitlements after payment.
 ---
 
-Digital products skip the warehouse: no stock to reserve, no address to collect, no carrier to call. In Spree 6 that behavior comes from the product's delivery profile — assign a digital profile and checkout, fulfillment and the customer experience adapt.
+Digital products skip the warehouse: no stock to reserve, no address to collect, no carrier to call. In Spree 6 that behavior comes from the product's delivery profile — assign a digital profile and checkout, fulfillment and the customer experience adapt. This guide walks through selling an uploaded file end to end.
+
+For the concepts behind each piece — assets, links, allowances, providers — see [Products → Digital products](/developer/core-concepts/products#digital-products). This page is the practical walkthrough.
 
 ## What you will build
 
-- **Digital delivery profile** — products that require no shipping address and complete checkout without a delivery step.
-- **Instant fulfillment** — the digital fulfillment provider fulfills on payment rather than on dispatch.
-- **Delivery of the goods** — attaching files or granting entitlements, and notifying the customer.
-- **Mixed carts** — physical and digital items in one order, split into separate fulfillments automatically.
+- **A digital variant** — one whose delivery profile requires no shipping address, so a fully digital cart completes checkout without a delivery step.
+- **A downloadable file on it** — uploaded to private storage and attached as a digital asset.
+- **Automatic delivery** — a download link granted on order placement, and an email that sends it.
+- **Mixed carts** — physical and digital items in one order, handled without extra work.
 
-## Outline
+## 1. Make the product digital
 
-1. Create a digital delivery profile and assign products
-2. Configure the digital fulfillment provider
-3. Deliver files or entitlements on fulfillment
-4. Handle mixed physical and digital orders
+A variant is digital when its [delivery profile](/developer/core-concepts/fulfillments) is a digital one. A store ships with a built-in **Digital** delivery profile; assign it to the product and the product's variants stop asking for a shipping address.
+
+<CodeGroup>
+
+```typescript Admin SDK
+// Assign the store's digital delivery profile to the product.
+const { data: profiles } = await adminClient.deliveryProfiles.list()
+const digital = profiles.find((p) => p.kind === 'digital')
+
+await adminClient.products.update('prod_86Rf07xd4z', {
+  delivery_profile_id: digital.id,
+})
+```
+
+```bash cURL
+curl -X PATCH 'https://api.mystore.com/api/v3/admin/products/prod_86Rf07xd4z' \
+  -H 'X-Spree-API-Key: sk_xxx' \
+  -H 'Content-Type: application/json' \
+  -d '{ "delivery_profile_id": "dp_digital" }'
+```
+
+</CodeGroup>
+
+<Note>
+A product's delivery profile is auto-assigned when it is created — from its product type's template, or the store default. You only set it explicitly to change it. Selling from the dashboard, this is the **Shipping profile** field on the product page.
+</Note>
+
+## 2. Attach the file
+
+Upload the file to **private storage** and attach it to the variant as a digital asset. Private storage matters: a digital file is only ever served through a short-lived signed link, so the Admin API refuses a blob that landed on the public bucket.
+
+```typescript Admin SDK
+// Request a private upload slot, PUT the file, then attach the blob.
+const { direct_upload, signed_id } = await adminClient.directUploads.create({
+  private: true,
+  blob: { filename: 'guide.pdf', byte_size: file.size, checksum, content_type: 'application/pdf' },
+})
+await fetch(direct_upload.url, { method: 'PUT', headers: direct_upload.headers, body: file })
+
+await adminClient.products.digitalAssets.create('prod_86Rf07xd4z', { signed_id })
+```
+
+Leave `authorized_clicks` and `authorized_days` off to inherit the store's download limits, or set them per file to mix evergreen downloads with time-limited ones. See [the allowance](/developer/core-concepts/products#downloading-and-the-allowance) for how the limits resolve.
+
+<Tip>
+You can attach a file to a **physical** variant too — a manual or warranty PDF that ships alongside the goods. Carrying files and being digital are independent: the physical variant still needs an address, and it also grants a download link.
+</Tip>
+
+## 3. Let the order deliver itself
+
+There is no step three to configure. When the order is placed, the digital fulfillment provider runs automatically — it needs no address and no manual dispatch — and grants the buyer one download link per file, per purchased unit. `Spree::DigitalAssetMailer` then emails the links as a message of its own, so it survives a replaced order-confirmation template and can be re-sent from the order page.
+
+The customer downloads by following the link's token; each download is counted against the allowance and publishes a `digital_link.downloaded` event. If they exhaust their downloads or you replace the file mid-sale, an admin restores access by resetting the link from the order page.
+
+<Note>
+To deliver something other than an uploaded file — a license key minted on demand, an entitlement from your own system — the delivery step is pluggable. See [Build a Custom Digital Asset Provider](/developer/how-to/custom-digital-asset-provider).
+</Note>
+
+## 4. Mixed carts work on their own
+
+A cart with both physical and digital items needs nothing special. Spree splits the order into separate fulfillments per delivery profile, so the physical items collect an address and ship while the digital items skip straight to granting links. The delivery step only appears when at least one item actually needs shipping; an all-digital cart never sees it.
+
+## Related documentation
+
+- [Products → Digital products](/developer/core-concepts/products#digital-products) — the concepts: assets, links, allowances, providers
+- [Build a Custom Digital Asset Provider](/developer/how-to/custom-digital-asset-provider) — deliver a key or external file instead of an upload
+- [Fulfillments](/developer/core-concepts/fulfillments) — delivery profiles, providers, and how orders are fulfilled

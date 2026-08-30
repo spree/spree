@@ -78,7 +78,7 @@ setting :region, :select, in: %w[us eu], default: 'us'
 setting :auto_revoke, :boolean, default: false
 ```
 
-Field types are `:string`, `:number`, `:boolean`, and `:select` (pass `in:` for the choices). The merchant's answers are stored on the asset and read back through `digital_asset.provider_settings`, a plain hash keyed by the setting name:
+Field types are `:string`, `:number`, `:boolean`, and `:select` (pass `in:` for the choices). Your declarations become the provider's `settings_schema`, which the admin `providers` endpoint exposes so the dashboard can render the form. The merchant's answers are stored on the asset — under one key, `metadata['provider']`, so they never collide with other developer metadata — and read back through `digital_asset.provider_settings`, a plain hash keyed by the setting name:
 
 ```ruby
 digital_asset.provider_settings['pool_name'] # => "winter-sale"
@@ -95,6 +95,10 @@ end
 ```
 
 Once registered, the provider appears as a source on the product's **Digital files** card: the **Add** button becomes a menu offering **Upload a file** alongside each registered provider. Picking your provider creates an asset with its `provider_type` set and no file attached.
+
+<Note>
+Registration is what makes a `provider_type` valid. An asset validates that its `provider_type` names a registered provider, so an unregistered or misspelled class name is rejected with a 422 rather than failing at download time. A blank `provider_type` is always the built-in `File` provider.
+</Note>
 
 ## The download contract
 
@@ -132,4 +136,5 @@ Spree::DigitalDelivery.new(inline_value: 'ABCD-1234-EFGH', content_type: 'text/p
 ## Related documentation
 
 - [Digital products](/use-case/digital-products/capabilities) — what the feature does for merchants
-- [Build a Custom Delivery Rate Provider](/v6/developer/how-to/custom-delivery-rate-provider) — a provider strategy that *does* use an integration, for contrast
+- [Products](/developer/core-concepts/products#digital-products) — how digital assets, links, and downloads fit together
+- [Build a Custom Delivery Rate Provider](/developer/how-to/custom-delivery-rate-provider) — a provider strategy that *does* use an integration, for contrast
