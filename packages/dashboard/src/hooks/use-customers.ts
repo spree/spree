@@ -17,19 +17,18 @@ import { useQuery } from '@tanstack/react-query'
  * `Customer.search` is a Ransack alias the admin controller resolves into
  * `email_cont OR first_name_cont OR last_name_cont` — so a single query
  * narrows by either the email or the name.
- */
-/**
- * Customer picker wiring. Pass `companyId` to narrow the list to people who
- * may buy for that company — members of the node itself or of any ancestor,
- * since standing covers a node and everything below it. The query key carries
- * the company so switching it refetches rather than serving the previous
- * company's people from cache.
+ *
+ * Pass `companyId` to narrow the list to people who may buy for that company —
+ * members of the node itself or of any ancestor, since standing covers a node
+ * and everything below it. The query key carries the company so switching it
+ * refetches rather than serving the previous company's people from cache.
  */
 export function customerAutocompleteProps(queryKey: string, companyId?: string | null) {
   const scope = companyId ? { with_standing_for_company: companyId } : {}
   return {
     queryKey: companyId ? `${queryKey}:${companyId}` : queryKey,
-    search: (q: string) => adminClient.customers.list({ search: q, limit: 10, ...scope }),
+    search: (q: string) =>
+      adminClient.customers.list({ search: q, limit: 100, fields: ['email'], ...scope }),
     hydrate: (ids: string[]) => adminClient.customers.list({ id_in: ids, limit: ids.length }),
     getOptionLabel: (c: Customer) => c.email ?? c.id,
     placeholder: i18n.t('admin.customers.autocomplete.placeholder'),

@@ -35,7 +35,7 @@ import {
   ListFilter,
   XIcon,
 } from 'lucide-react'
-import { useCallback, useMemo, useState } from 'react'
+import { useCallback, useDeferredValue, useMemo, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { getApiClient } from '../api-client'
 import { useAuth } from '../hooks/use-auth'
@@ -271,123 +271,128 @@ export function TableToolbar({
         search ||
         (!hideSort && sortableColumns.length > 0) ||
         columns.some((c) => c.default !== undefined)) && (
-        <div className="flex flex-wrap items-center gap-2 border-b border-border-subtle px-3 py-2">
-          {/* Search leads: it is the widest net, and the filters beside it
+        <div className="flex items-start gap-2 border-b border-border-subtle px-3 py-2">
+          {/* Only the filters wrap. They grow with what the operator has set,
+              where sort and columns are a fixed pair — letting the whole row
+              wrap dropped those two onto a line of their own the moment the
+              filters filled the width. */}
+          <div className="flex min-w-0 flex-1 flex-wrap items-center gap-2">
+            {/* Search leads: it is the widest net, and the filters beside it
               narrow what it finds. Hidden on a phone, where the TopBar already
               carries a search field — two search boxes stacked in one column is
               the more confusing cost. A term set on desktop still shows as a
               chip there, so it never filters a list invisibly. */}
-          <SearchInput
-            value={search}
-            onValueChange={onSearchChange}
-            placeholder={
-              searchPlaceholder ?? t('admin.components.table_toolbar.search_placeholder')
-            }
-            clearLabel={t('admin.common.clear')}
-            className="hidden h-[2.125rem] w-[240px] bg-card text-sm lg:flex"
-          />
+            <SearchInput
+              value={search}
+              onValueChange={onSearchChange}
+              placeholder={
+                searchPlaceholder ?? t('admin.components.table_toolbar.search_placeholder')
+              }
+              clearLabel={t('admin.common.clear')}
+              className="hidden h-[2.125rem] w-[240px] bg-card text-sm lg:flex"
+            />
 
-          {/* Reads as a verb rather than an icon: it is the way *in* to
+            {/* Reads as a verb rather than an icon: it is the way *in* to
               everything the quick controls beside it don't cover, so it has to
               look like an action and not a toggle. */}
-          {/* Hidden when every filterable field already has a quick control:
+            {/* Hidden when every filterable field already has a quick control:
               the button would open onto an empty list. */}
-          {panelColumns.length > 0 && (
-            <Popover open={filterOpen} onOpenChange={setFilterOpen}>
-              <PopoverTrigger asChild>
-                <Button variant="outline" size="sm" className="h-11 gap-1.5 lg:h-[2.125rem]">
-                  <ListFilter className="size-3.5" />
-                  {t('admin.components.table_toolbar.add_filter')}
-                </Button>
-              </PopoverTrigger>
-              {/* `min(480px, …)` rather than a flat 480px: the panel is wider
+            {panelColumns.length > 0 && (
+              <Popover open={filterOpen} onOpenChange={setFilterOpen}>
+                <PopoverTrigger asChild>
+                  <Button variant="outline" size="sm" className="h-11 gap-1.5 lg:h-[2.125rem]">
+                    <ListFilter className="size-3.5" />
+                    {t('admin.components.table_toolbar.add_filter')}
+                  </Button>
+                </PopoverTrigger>
+                {/* `min(480px, …)` rather than a flat 480px: the panel is wider
                   than a phone, so a fixed width runs its right edge and the
                   Apply button off the screen. */}
-              <PopoverContent align="start" className="w-[min(480px,calc(100vw-1rem))] p-0">
-                <FilterPanel
-                  columns={panelColumns}
-                  allColumns={filterableColumns}
+                <PopoverContent align="start" className="w-[min(480px,calc(100vw-1rem))] p-0">
+                  <FilterPanel
+                    columns={panelColumns}
+                    allColumns={filterableColumns}
+                    filters={filters}
+                    onApply={(f) => {
+                      onFiltersChange(f)
+                      setFilterOpen(false)
+                    }}
+                    onChange={onFiltersChange}
+                    onClose={() => setFilterOpen(false)}
+                  />
+                </PopoverContent>
+              </Popover>
+            )}
+
+            {quickFilterColumns.map((col) =>
+              col.filterType === 'date' ? (
+                <QuickDateFilter
+                  key={col.key}
+                  column={col}
                   filters={filters}
-                  onApply={(f) => {
-                    onFiltersChange(f)
-                    setFilterOpen(false)
-                  }}
-                  onChange={onFiltersChange}
-                  onClose={() => setFilterOpen(false)}
+                  onFiltersChange={onFiltersChange}
                 />
-              </PopoverContent>
-            </Popover>
-          )}
+              ) : (
+                <QuickEnumFilter
+                  key={col.key}
+                  column={col}
+                  filters={filters}
+                  onFiltersChange={onFiltersChange}
+                />
+              ),
+            )}
 
-          {quickFilterColumns.map((col) =>
-            col.filterType === 'date' ? (
-              <QuickDateFilter
-                key={col.key}
-                column={col}
-                filters={filters}
-                onFiltersChange={onFiltersChange}
-              />
-            ) : (
-              <QuickEnumFilter
-                key={col.key}
-                column={col}
-                filters={filters}
-                onFiltersChange={onFiltersChange}
-              />
-            ),
-          )}
-
-          {/* The search term as a chip, mobile only — the field it came from is
+            {/* The search term as a chip, mobile only — the field it came from is
               hidden there, so this is the only way to see or clear it. */}
-          {search && (
-            <span className="inline-flex h-11 shrink-0 items-center gap-1.5 rounded-lg border border-border bg-muted py-1 pr-1 pl-2.5 text-sm lg:hidden">
-              <span className="text-muted-foreground">
-                {t('admin.components.table_toolbar.search_placeholder')}
+            {search && (
+              <span className="inline-flex h-11 shrink-0 items-center gap-1.5 rounded-lg border border-border bg-muted py-1 pr-1 pl-2.5 text-sm lg:hidden">
+                <span className="text-muted-foreground">
+                  {t('admin.components.table_toolbar.search_placeholder')}
+                </span>
+                <span className="truncate">{search}</span>
+                <Button
+                  type="button"
+                  variant="ghost"
+                  size="icon-sm"
+                  aria-label={t('admin.common.clear')}
+                  onClick={() => onSearchChange('')}
+                >
+                  <XIcon className="size-3.5" />
+                </Button>
               </span>
-              <span className="truncate">{search}</span>
+            )}
+            {chipFilters.map((entry) => (
+              <FilterChip
+                key={entry.key}
+                rules={entry.rules}
+                col={allCols.find((c) => c.key === entry.rules[0].field)}
+                onRemove={() => {
+                  const removing = new Set(entry.rules.map((r) => r.id))
+                  onFiltersChange(filters.filter((f) => !removing.has(f.id)))
+                }}
+              />
+            ))}
+            {filters.length > 0 && (
+              // Stays borderless while everything beside it is outlined: the
+              // rest of the row sets constraints, this one undoes them, and
+              // giving it the same weight would make "clear" look like a fifth
+              // filter. It matches on height so the row still sits on one line.
               <Button
                 type="button"
                 variant="ghost"
-                size="icon-sm"
-                aria-label={t('admin.common.clear')}
-                onClick={() => onSearchChange('')}
+                size="sm"
+                className="h-11 text-muted-foreground hover:text-foreground lg:h-[2.125rem]"
+                onClick={() => onFiltersChange([])}
               >
-                <XIcon className="size-3.5" />
+                {t('admin.components.table_toolbar.clear_all')}
               </Button>
-            </span>
-          )}
-          {chipFilters.map((entry) => (
-            <FilterChip
-              key={entry.key}
-              rules={entry.rules}
-              col={allCols.find((c) => c.key === entry.rules[0].field)}
-              onRemove={() => {
-                const removing = new Set(entry.rules.map((r) => r.id))
-                onFiltersChange(filters.filter((f) => !removing.has(f.id)))
-              }}
-            />
-          ))}
-          {filters.length > 0 && (
-            // Stays borderless while everything beside it is outlined: the
-            // rest of the row sets constraints, this one undoes them, and
-            // giving it the same weight would make "clear" look like a fifth
-            // filter. It matches on height so the row still sits on one line.
-            <Button
-              type="button"
-              variant="ghost"
-              size="sm"
-              className="h-11 text-muted-foreground hover:text-foreground lg:h-[2.125rem]"
-              onClick={() => onFiltersChange([])}
-            >
-              {t('admin.components.table_toolbar.clear_all')}
-            </Button>
-          )}
+            )}
+          </div>
 
           {/* Sort and columns close the row from the right. They shape the
               view rather than narrowing it, so they sit apart from the filters
-              — but on the same line, since both are things you reach for while
-              reading a list rather than while naming one. */}
-          <div className="ml-auto flex shrink-0 items-center gap-2">
+              — and stay on the first line however many filters are set. */}
+          <div className="flex shrink-0 items-center gap-2">
             {/* Hidden when the table is drag-reorderable, since free sorting
                 would defeat the drag. */}
             {!hideSort && sortableColumns.length > 0 && (
@@ -981,16 +986,32 @@ function InlineValueList({
     queryKey: ['panel-tags', tenantId, column.taggableType],
     queryFn: () => tagsClient?.list({ taggable_type: column.taggableType as TaggableType }),
     enabled: isTags && isAuthenticated && Boolean(tagsClient),
-    staleTime: 60_000,
+    // One list, filtered client-side, and it rarely changes — worth holding
+    // for the session so reopening the panel never refetches.
+    staleTime: 5 * 60_000,
+    gcTime: 30 * 60_000,
   })
+
+  // Deferred so a fast typist fires one request for what they finished typing
+  // rather than one per keystroke — the query string is part of the cache key,
+  // so every intermediate value would otherwise be its own round trip.
+  const deferredQuery = useDeferredValue(query)
 
   const resources = useQuery({
     // Tenant-scoped so a store or seller switch cannot reuse the previous
     // tenant's results.
-    queryKey: ['panel-resource-filter', column.filterResource?.queryKey, tenantId, query],
-    queryFn: () => column.filterResource?.search(query),
+    queryKey: ['panel-resource-filter', column.filterResource?.queryKey, tenantId, deferredQuery],
+    queryFn: () => column.filterResource?.search(deferredQuery),
     enabled: !isTags && !isCurrency && Boolean(column.filterResource),
-    staleTime: 30_000,
+    // These lists are reference data an operator reopens repeatedly while
+    // narrowing one list, and the result is small now that only the displayed
+    // fields are requested. Holding it for the session keeps reopening the
+    // panel instant; `gcTime` outlives the unmount between opens.
+    staleTime: 5 * 60_000,
+    gcTime: 30 * 60_000,
+    // Keeps the previous matches on screen while the next query resolves,
+    // rather than blanking the list on every keystroke.
+    placeholderData: (previous) => previous,
   })
 
   const options = useMemo(() => {

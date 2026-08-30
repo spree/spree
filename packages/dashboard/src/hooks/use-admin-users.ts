@@ -10,7 +10,8 @@ import { adminClient, i18n } from '@spree/dashboard-core'
 export function adminUserAutocompleteProps(queryKey: string) {
   return {
     queryKey,
-    search: (q: string) => adminClient.adminUsers.list({ email_cont: q, limit: 10 }),
+    search: (q: string) =>
+      adminClient.adminUsers.list({ email_cont: q, limit: 100, fields: ['email'] }),
     hydrate: (ids: string[]) => adminClient.adminUsers.list({ id_in: ids, limit: ids.length }),
     getOptionLabel: (a: AdminUser) => a.email ?? a.id,
     placeholder: i18n.t('admin.staff.autocomplete.placeholder'),

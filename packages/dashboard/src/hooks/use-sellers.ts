@@ -34,7 +34,8 @@ export function useSellers(params?: ListParams & Record<string, unknown>) {
 export function sellerAutocompleteProps(queryKey: string) {
   return {
     queryKey,
-    search: (q: string) => adminClient.sellers.list({ name_cont: q, limit: 20, sort: 'name' }),
+    search: (q: string) =>
+      adminClient.sellers.list({ name_cont: q, limit: 100, sort: 'name', fields: ['name'] }),
     hydrate: (ids: string[]) => adminClient.sellers.list({ id_in: ids, limit: ids.length }),
     getOptionLabel: (seller: Seller) => seller.name ?? seller.id,
     placeholder: i18n.t('admin.sellers.autocomplete.placeholder'),

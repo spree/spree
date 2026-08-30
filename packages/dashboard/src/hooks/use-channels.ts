@@ -66,7 +66,13 @@ export function useDeleteChannel() {
 export function channelAutocompleteProps(queryKey: string) {
   return {
     queryKey,
-    search: (q: string) => adminClient.channels.list({ name_cont: q, limit: 20, sort: 'name' }),
+    search: (q: string) =>
+      adminClient.channels.list({
+        name_cont: q,
+        limit: 100,
+        sort: 'name',
+        fields: ['name', 'code'],
+      }),
     hydrate: (ids: string[]) => adminClient.channels.list({ id_in: ids, limit: ids.length }),
     getOptionLabel: (c: Channel) => c.name ?? c.code ?? c.id,
     placeholder: i18n.t('admin.pages.channels.search_placeholder'),

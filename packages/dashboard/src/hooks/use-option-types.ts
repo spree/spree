@@ -21,7 +21,13 @@ interface UseOptionTypesParams {
 export function optionTypeAutocompleteProps(queryKey: string) {
   return {
     queryKey,
-    search: (q: string) => adminClient.optionTypes.list({ name_cont: q, limit: 20, sort: 'name' }),
+    search: (q: string) =>
+      adminClient.optionTypes.list({
+        name_cont: q,
+        limit: 100,
+        sort: 'name',
+        fields: ['name', 'presentation'],
+      }),
     hydrate: (ids: string[]) => adminClient.optionTypes.list({ id_in: ids, limit: ids.length }),
     getOptionLabel: (optionType: OptionType) =>
       optionType.label ?? optionType.name ?? optionType.id,
