@@ -223,16 +223,20 @@ module SpreeStripe
     private
 
     def handle_authorize_or_purchase(amount_in_cents, _payment_source, gateway_options)
-      # payment_id is the payment's own number, which already names its order
-      # (`R1001-P1`). Looked up through the store's payments so a number from
-      # another tenant cannot resolve.
-      payment_number = gateway_options[:payment_id].presence || gateway_options[:order_id]
-      return failure('Payment number is invalid') if payment_number.blank?
-
       # Scoped through this gateway's own payments — a cart-owned payment
       # (checkout is still in flight) has no order to join through, and the
-      # payment method already belongs to exactly one store.
-      payment = payments.find_by(number: payment_number)
+      # payment method already belongs to exactly one store. Found by the
+      # prefixed id: the derived `R1001-P1` number cannot be queried (its
+      # column is NULL on 6.0 rows). The stored-number lookup remains only
+      # for legacy rows and callers still passing pre-6.0 options.
+      payment = payments.find_by_prefix_id(gateway_options[:payment_prefixed_id]) if gateway_options[:payment_prefixed_id].present?
+
+      if payment.blank?
+        payment_number = gateway_options[:payment_id].presence || gateway_options[:order_id]
+        return failure('Payment number is invalid') if payment_number.blank?
+
+        payment = payments.find_by(number: payment_number)
+      end
       return failure('Payment not found') if payment.blank?
       return failure('Payment is missing a payment intent') if payment.response_code.blank?
 

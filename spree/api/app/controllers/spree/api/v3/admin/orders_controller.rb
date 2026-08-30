@@ -17,6 +17,7 @@ module Spree
             result = Spree.order_create_service.call(
               store: current_store,
               customer: resolve_user,
+              created_by: try_spree_current_user,
               params: order_create_params
             )
 
@@ -116,9 +117,13 @@ module Spree
             Spree.api.admin_order_serializer
           end
 
-          # Override scope — Order uses SingleStoreResource (for_store)
+          # Override scope — Order uses SingleStoreResource (for_store).
+          # Variant prices are eager-loaded because the admin line-item
+          # serializer reads the base catalog price for every row; this
+          # override bypasses scope_includes, so the preload has to live here.
           def scope
-            base = current_store.orders.accessible_by(current_ability, :show).preload_associations_lazily
+            base = current_store.orders.accessible_by(current_ability, :show).
+                   includes(line_items: { variant: :prices }).preload_associations_lazily
 
             # Transient completion drafts (status draft + cart_id set) belong
             # to in-flight checkouts, never to the admin. Admin drafts are the
@@ -150,8 +155,11 @@ module Spree
           # seller is preloaded because its id is read on every row and an
           # expanded list renders the whole profile; order_group is not, since
           # only its id is reported and that comes off the order's own column.
+          # Variant prices ride along because the admin line-item serializer
+          # reads the base catalog price for every row (the negotiated-price
+          # comparison); without it each line costs its own price query.
           def collection_includes
-            [:line_items, :customer, :channel, :seller, :external_references]
+            [:customer, :channel, :seller, :external_references, { line_items: { variant: :prices } }]
           end
 
           private
@@ -175,13 +183,13 @@ module Spree
           end
 
           def order_create_params
-            normalize_params(
+            permitted = normalize_params(
               params.permit(
                 :email, :customer_id, :user_id, :use_customer_default_address,
                 :currency, :market_id, :channel_id, :locale,
                 :customer_note, :internal_note,
                 :shipping_address_id, :billing_address_id,
-                :preferred_stock_location_id,
+                :preferred_stock_location_id, :company_id,
                 :coupon_code,
                 metadata: {},
                 tags: [],
@@ -190,6 +198,7 @@ module Spree
                 items: item_permitted_keys
               )
             )
+            resolve_company_param(permitted)
           end
 
           def order_update_params
@@ -236,7 +245,7 @@ module Spree
           end
 
           def item_permitted_keys
-            [:variant_id, :quantity, { metadata: {} }]
+            [:variant_id, :quantity, :price, { metadata: {} }]
           end
         end
       end

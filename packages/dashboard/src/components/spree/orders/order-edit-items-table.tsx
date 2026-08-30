@@ -11,15 +11,25 @@ import {
   TableRow,
   Thumbnail,
 } from '@spree/dashboard-ui'
-import { PackageIcon, RotateCcwIcon, XIcon } from 'lucide-react'
+import { PackageIcon, RotateCcwIcon, Undo2Icon, XIcon } from 'lucide-react'
 import { Controller, type FieldArrayWithId, type UseFormReturn } from 'react-hook-form'
 import { useTranslation } from 'react-i18next'
-import type { OrderEditFormValues } from '../../../schemas/order'
+import {
+  formatAmount,
+  type OrderEditFormValues,
+  projectedLineTotal,
+  projectedPrice,
+} from '../../../schemas/order'
 
 /**
  * The staged items table. Every control writes to form state only — quantities,
- * removals and picker additions all wait for the page's Save. A removed row
- * stays on screen struck through so the merchant can put it back before saving.
+ * prices, removals and picker additions all wait for the page's Save. A removed
+ * row stays on screen struck through so the merchant can put it back before
+ * saving.
+ *
+ * `pricesEditable` is on for draft orders only: a negotiated unit price is a
+ * pre-placement gesture, so placed orders keep the read-only price column and
+ * their money edits stay fees and discounts.
  *
  * The field array lives on the page rather than here because the catalog picker
  * appends to it too, and two `useFieldArray` calls on one name keep separate
@@ -28,9 +38,14 @@ import type { OrderEditFormValues } from '../../../schemas/order'
 export function OrderEditItemsTable({
   form,
   fields,
+  pricesEditable = false,
+  currency,
 }: {
   form: UseFormReturn<OrderEditFormValues>
   fields: FieldArrayWithId<OrderEditFormValues, 'items', 'id'>[]
+  pricesEditable?: boolean
+  /** Order currency, for formatting the projected line totals. */
+  currency: string
 }) {
   const { t } = useTranslation()
 
@@ -51,7 +66,13 @@ export function OrderEditItemsTable({
       </TableHeader>
       <TableBody>
         {fields.map((field, index) => (
-          <OrderEditItemRow key={field.id} form={form} index={index} />
+          <OrderEditItemRow
+            key={field.id}
+            form={form}
+            index={index}
+            pricesEditable={pricesEditable}
+            currency={currency}
+          />
         ))}
       </TableBody>
     </Table>
@@ -61,19 +82,46 @@ export function OrderEditItemsTable({
 function OrderEditItemRow({
   form,
   index,
+  pricesEditable,
+  currency,
 }: {
   form: UseFormReturn<OrderEditFormValues>
   index: number
+  pricesEditable: boolean
+  currency: string
 }) {
   const { t } = useTranslation()
   const row = form.watch(`items.${index}`)
   const quantityError = form.formState.errors.items?.[index]?.quantity?.message
+  const priceError = form.formState.errors.items?.[index]?.price?.message
+  const negotiated = row.price_source === 'manual'
+
+  // The projection is only shown when it actually differs from what the server
+  // holds — an untouched row should read exactly as it did before editing.
+  const projectedTotal = projectedLineTotal(row)
+  const savedTotal = Number(row.saved_price) * row.saved_quantity
+  const totalChanged =
+    !row.added && projectedTotal !== null && Math.abs(projectedTotal - savedTotal) > 0.004
+  const revertPreview = row.revert_price ? projectedPrice(row) : null
 
   function toggleRemoved() {
     form.setValue(`items.${index}.removed`, !row.removed, {
       shouldDirty: true,
       shouldValidate: true,
     })
+  }
+
+  function toggleRevertPrice() {
+    const reverting = !row.revert_price
+    form.setValue(`items.${index}.revert_price`, reverting, {
+      shouldDirty: true,
+      shouldValidate: true,
+    })
+    // A staged revert drops any price typed in the same session — the two
+    // gestures contradict each other.
+    if (reverting) {
+      form.setValue(`items.${index}.price`, row.saved_price, { shouldValidate: true })
+    }
   }
 
   return (
@@ -107,7 +155,77 @@ function OrderEditItemRow({
         </div>
       </TableCell>
 
-      <TableCell className="text-right whitespace-nowrap">{row.display_price}</TableCell>
+      <TableCell className="text-right">
+        {pricesEditable ? (
+          <div className="flex flex-col items-end gap-1">
+            <div className="flex items-center justify-end gap-1.5">
+              {negotiated && !row.revert_price && (
+                <Badge variant="secondary">{t('admin.orders.edit.badges.negotiated')}</Badge>
+              )}
+              {row.revert_price && (
+                <Badge variant="outline">{t('admin.orders.edit.badges.price_reverting')}</Badge>
+              )}
+              {negotiated && (
+                <Button
+                  type="button"
+                  variant="ghost"
+                  size="icon"
+                  onClick={toggleRevertPrice}
+                  aria-label={
+                    row.revert_price
+                      ? t('admin.orders.edit.actions.keep_negotiated_price', { name: row.name })
+                      : t('admin.orders.edit.actions.reset_price', { name: row.name })
+                  }
+                >
+                  {row.revert_price ? (
+                    <Undo2Icon className="size-4" />
+                  ) : (
+                    <RotateCcwIcon className="size-4" />
+                  )}
+                </Button>
+              )}
+              {/* A staged revert shows what the catalog restores rather than
+                  the negotiated price being abandoned. The input keeps the old
+                  value struck through beside it so the change is legible. */}
+              {row.revert_price ? (
+                <span className="flex items-center gap-2 text-sm whitespace-nowrap">
+                  <span className="text-muted-foreground line-through">{row.saved_price}</span>
+                  <span className="font-medium">
+                    {revertPreview === null
+                      ? t('admin.orders.edit.catalog_price_unknown')
+                      : revertPreview}
+                  </span>
+                </span>
+              ) : (
+                <Controller
+                  control={form.control}
+                  name={`items.${index}.price`}
+                  render={({ field }) => (
+                    <Input
+                      type="text"
+                      inputMode="decimal"
+                      className="w-24 text-right"
+                      disabled={row.removed}
+                      aria-invalid={!!priceError}
+                      aria-label={t('admin.orders.edit.actions.price_for', { name: row.name })}
+                      value={field.value}
+                      onChange={field.onChange}
+                      onBlur={field.onBlur}
+                    />
+                  )}
+                />
+              )}
+            </div>
+            {priceError && (
+              <p className="text-xs text-destructive" role="alert">
+                {priceError}
+              </p>
+            )}
+          </div>
+        ) : (
+          <span className="whitespace-nowrap">{row.display_price}</span>
+        )}
+      </TableCell>
 
       <TableCell className="text-right">
         <Controller
@@ -135,8 +253,25 @@ function OrderEditItemRow({
         )}
       </TableCell>
 
+      {/* Staged edits are previewed here — a quantity or price change shows
+          the saved total struck through beside what it becomes. A row whose
+          price cannot be projected keeps the server's figure rather than
+          guessing. */}
       <TableCell className="text-right whitespace-nowrap">
-        {row.added ? '—' : row.display_total}
+        {row.added ? (
+          projectedTotal === null ? (
+            '—'
+          ) : (
+            formatAmount(projectedTotal, currency)
+          )
+        ) : totalChanged ? (
+          <span className="flex items-center justify-end gap-2">
+            <span className="text-muted-foreground line-through">{row.display_total}</span>
+            <span className="font-medium">{formatAmount(projectedTotal as number, currency)}</span>
+          </span>
+        ) : (
+          row.display_total
+        )}
       </TableCell>
 
       <TableCell className="text-right">

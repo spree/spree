@@ -28,10 +28,13 @@ import { useOrder, useOrderMutation } from '../../../../../hooks/use-order'
 import { GONE_STATUSES } from '../../../../../lib/fulfillment-items'
 import {
   buildOrderItemsPayload,
+  formatAmount,
   type OrderEditFormValues,
+  type OrderEditItemValues,
   type OrderItemsPayload,
   orderEditFormSchema,
   orderToEditForm,
+  projectedSubtotal,
 } from '../../../../../schemas/order'
 
 export const Route = createFileRoute('/_authenticated/$storeId/orders/$orderId/edit')({
@@ -48,12 +51,29 @@ function TotalRow({ label, value, bold }: { label: string; value: ReactNode; bol
 }
 
 /**
- * The order's totals as the server currently has them. Deliberately not a
- * projection: 6.0 cannot compute what an edit would cost without writing the
- * rows, so this only ever reflects writes that already landed.
+ * The order's totals, previewing staged edits against what the server holds.
+ *
+ * The subtotal is always projectable (price × quantity). The grand total is
+ * only projectable when every other line is zero: shipping, tax, discounts and
+ * fees are recomputed server-side from rules the browser cannot evaluate — a
+ * quantity change can cross a shipping band or a promotion threshold — so a
+ * naive "subtotal delta added to the old total" would state a number that is
+ * quietly wrong. With no such charges the total IS the subtotal, which is the
+ * common case for a fresh draft, and freezing it there would be the more
+ * confusing lie.
  */
-function OrderTotalsCard({ order }: { order: Order }) {
+function OrderTotalsCard({ order, items }: { order: Order; items: OrderEditItemValues[] }) {
   const { t } = useTranslation()
+
+  const projected = projectedSubtotal(items)
+  const savedSubtotal = Number(order.item_total)
+  const subtotalChanged = projected !== null && Math.abs(projected - savedSubtotal) > 0.004
+
+  // Everything the server adds on top of the items. Derived from the order's
+  // own figures rather than summed from the parts, so anything not itemised in
+  // this card still counts.
+  const serverAddedCharges = Number(order.total) - savedSubtotal
+  const totalProjectable = subtotalChanged && Math.abs(serverAddedCharges) <= 0.004
 
   return (
     <Card className="gap-0 py-0">
@@ -62,7 +82,23 @@ function OrderTotalsCard({ order }: { order: Order }) {
       </CardHeader>
 
       <div className="py-2">
-        <TotalRow label={t('admin.fields.subtotal.label')} value={order.display_item_total} />
+        <TotalRow
+          label={t('admin.fields.subtotal.label')}
+          value={
+            subtotalChanged ? (
+              <span className="flex items-center justify-end gap-2">
+                <span className="text-muted-foreground line-through">
+                  {order.display_item_total}
+                </span>
+                <span className="font-medium">
+                  {formatAmount(projected as number, order.currency)}
+                </span>
+              </span>
+            ) : (
+              order.display_item_total
+            )
+          }
+        />
 
         {Number.parseFloat(order.delivery_total) > 0 && (
           <TotalRow label={t('admin.fields.shipping.label')} value={order.display_delivery_total} />
@@ -91,13 +127,34 @@ function OrderTotalsCard({ order }: { order: Order }) {
 
         <Separator />
 
-        <TotalRow label={t('admin.fields.total.label')} value={order.display_total} bold />
+        <TotalRow
+          label={t('admin.fields.total.label')}
+          value={
+            totalProjectable ? (
+              <span className="flex items-center justify-end gap-2">
+                <span className="font-normal text-muted-foreground line-through">
+                  {order.display_total}
+                </span>
+                <span>{formatAmount(projected as number, order.currency)}</span>
+              </span>
+            ) : (
+              order.display_total
+            )
+          }
+          bold
+        />
       </div>
 
       <Separator />
 
       <CardContent className="px-5 py-4">
-        <p className="text-xs text-muted-foreground">{t('admin.orders.edit.totals_hint')}</p>
+        <p className="text-xs text-muted-foreground">
+          {!subtotalChanged
+            ? t('admin.orders.edit.totals_hint')
+            : totalProjectable
+              ? t('admin.orders.edit.totals_preview_confirm_hint')
+              : t('admin.orders.edit.totals_preview_hint')}
+        </p>
       </CardContent>
     </Card>
   )
@@ -121,6 +178,9 @@ function OrderEditPage() {
   })
 
   const { fields, append } = useFieldArray({ control: form.control, name: 'items' })
+  // Watched, not read once: the totals card previews staged edits, so it has
+  // to re-render on every keystroke in the items table.
+  const watchedItems = form.watch('items')
 
   // Hydrate (and re-baseline after save) from the server rows, unless the
   // merchant has staged edits in flight.
@@ -146,7 +206,27 @@ function OrderEditPage() {
       form.reset({
         items: values.items
           .filter((item) => !item.removed)
-          .map((item) => ({ ...item, added: false, saved_quantity: item.quantity })),
+          .map((item) => {
+            // A revert hands pricing back to the resolver, so the browser
+            // cannot know the landing price — carry the catalog estimate and
+            // let the refetch correct it.
+            const reverted = item.revert_price
+            const price = reverted ? (item.catalog_price ?? item.price) : item.price
+
+            return {
+              ...item,
+              added: false,
+              saved_quantity: item.quantity,
+              price,
+              saved_price: price,
+              price_source: reverted
+                ? null
+                : item.price !== item.saved_price
+                  ? 'manual'
+                  : item.price_source,
+              revert_price: false,
+            }
+          }),
       })
       // Editing is a detour from the order, not a place to stay: hand the
       // merchant back the view that shows what the edit did.
@@ -191,6 +271,13 @@ function OrderEditPage() {
       added: true,
       saved_quantity: 0,
       fulfilled_quantity: 0,
+      // Seeded as both current and saved value, so an untouched price is
+      // omitted from the payload and the server prices the line itself.
+      price: variant.price?.amount ?? '0',
+      saved_price: variant.price?.amount ?? '0',
+      price_source: null,
+      catalog_price: variant.price?.amount ?? null,
+      revert_price: false,
       name: variant.product_name,
       options_text: variant.options_text ?? '',
       thumbnail_url: variant.thumbnail_url,
@@ -221,7 +308,7 @@ function OrderEditPage() {
           <PageHeader
             title={t('admin.orders.edit.title')}
             subtitle={t('admin.orders.edit.subtitle', { number: order.number })}
-            backTo={`${storeId}/orders/${orderId}`}
+            backTo={`orders/${orderId}`}
           />
         }
         main={
@@ -247,7 +334,7 @@ function OrderEditPage() {
             <PageHeader
               title={t('admin.orders.edit.title')}
               subtitle={t('admin.orders.edit.subtitle', { number: order.number })}
-              backTo={`${storeId}/orders/${orderId}`}
+              backTo={`orders/${orderId}`}
               actions={
                 <>
                   <Button type="button" variant="outline" onClick={() => setAddingItem(true)}>
@@ -270,11 +357,18 @@ function OrderEditPage() {
                 <CardTitle>{t('admin.orders.edit.items_title')}</CardTitle>
               </CardHeader>
               <CardContent className="p-0">
-                <OrderEditItemsTable form={form} fields={fields} />
+                {/* Unit prices are negotiable pre-placement only: a placed
+                    order's money edits stay fees and discounts. */}
+                <OrderEditItemsTable
+                  form={form}
+                  fields={fields}
+                  pricesEditable={order.status === 'draft'}
+                  currency={order.currency}
+                />
               </CardContent>
             </Card>
           }
-          sidebar={<OrderTotalsCard order={order} />}
+          sidebar={<OrderTotalsCard order={order} items={watchedItems} />}
         />
       </form>
 

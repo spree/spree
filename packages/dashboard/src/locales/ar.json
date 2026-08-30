@@ -374,6 +374,10 @@
     "companies": {
       "add_cta": "إضافة شركة",
       "add_sheet_title": "شركة جديدة",
+      "autocomplete": {
+        "empty": "لا توجد شركات مطابقة",
+        "placeholder": "البحث عن الشركات…"
+      },
       "create_description": "الشركة هي جذر شجرة المؤسسة. يمكنك إضافة الوحدات الفرعية والأعضاء والعناوين والتسجيلات الضريبية وشهادات الإعفاء بعد إنشائها.",
       "create_label": "إنشاء شركة",
       "delete_confirm": {
@@ -529,9 +533,11 @@
     "customers": {
       "autocomplete": {
         "empty": "لا يوجد عملاء مطابقون",
+        "empty_for_company": "لا يوجد عملاء يمكنهم الشراء لهذه الشركة",
         "placeholder": "البحث عن العملاء…"
       },
       "columns": {
+        "companies": "الشركات",
         "groups": "المجموعات",
         "last_order": "الطلب الأخير",
         "newsletter": "النشرة الإخبارية",
@@ -2559,16 +2565,22 @@
         "action_label": "تعديل الطلب",
         "actions": {
           "add_product": "إضافة منتج",
+          "keep_negotiated_price": "الاحتفاظ بالسعر المتفاوض عليه لـ {{name}}",
+          "price_for": "سعر الوحدة لـ {{name}}",
           "quantity_for": "كمية {{name}}",
           "remove_item": "إزالة {{name}}",
+          "reset_price": "إعادة {{name}} إلى سعر الكتالوج",
           "restore_item": "الإبقاء على {{name}}"
         },
         "badges": {
           "fulfilled_count_one": "تم الوفاء بـ {{count}}",
           "fulfilled_count_other": "تم الوفاء بـ {{count}}",
+          "negotiated": "سعر متفاوض عليه",
           "pending": "غير محفوظ",
+          "price_reverting": "سيعود إلى سعر الكتالوج",
           "removed": "قيد الإزالة"
         },
+        "catalog_price_unknown": "سعر الكتالوج",
         "columns": {
           "line_total": "إجمالي السطر",
           "product": "المنتج",
@@ -2580,10 +2592,13 @@
         "subtitle": "الطلب {{number}}",
         "title": "تعديل الطلب",
         "totals_hint": "يُعيد الخادم احتساب الإجماليات بعد الحفظ.",
+        "totals_preview_confirm_hint": "يؤكده الخادم عند الحفظ.",
+        "totals_preview_hint": "يُعيد الخادم حساب الشحن والضرائب والعروض بعد الحفظ.",
         "totals_title": "الإجماليات",
         "validation": {
           "below_fulfilled_one": "لا يمكن النزول تحت {{count}} وحدة تم الوفاء بها",
-          "below_fulfilled_other": "لا يمكن النزول تحت {{count}} وحدات تم الوفاء بها"
+          "below_fulfilled_other": "لا يمكن النزول تحت {{count}} وحدات تم الوفاء بها",
+          "invalid_price": "يجب أن يكون السعر رقمًا غير سالب"
         }
       },
       "errors": {
@@ -2886,12 +2901,14 @@
         "drafts_title": "Draft Orders",
         "new": {
           "add_line_item": "إضافة بند",
+          "company_help": "اربط هذا الطلب بشركة. ستعرض قائمة العملاء عندئذ الأشخاص المخوّلين بالشراء لها فقط.",
           "search_variant": "متغير البحث…",
           "section_billing": "الفواتير",
           "section_customer": "العميل",
           "section_items": "أغراض",
           "section_notes": "ملحوظات",
           "section_summary": "ملخص",
+          "select_company": "الشركة (اختياري)",
           "select_customer": "اختر عميلًا",
           "title": "طلب جديد"
         }

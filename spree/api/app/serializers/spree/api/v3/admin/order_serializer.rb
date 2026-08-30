@@ -144,16 +144,21 @@ module Spree
               resource: proc { Spree.api.admin_customer_serializer },
               if: proc { expand?('customer') }
 
+          # Staff actors, not customers: these three associations point at
+          # Spree.admin_user_class, and pushing them through the customer
+          # serializer 500s on the first customer-only attribute (phone) the
+          # moment the association is populated — which created_by now always
+          # is on staff-created drafts.
           one :approver,
-              resource: proc { Spree.api.admin_customer_serializer },
+              resource: proc { Spree.api.admin_admin_user_serializer },
               if: proc { expand?('approver') }
 
           one :canceler,
-              resource: proc { Spree.api.admin_customer_serializer },
+              resource: proc { Spree.api.admin_admin_user_serializer },
               if: proc { expand?('canceler') }
 
           one :created_by,
-              resource: proc { Spree.api.admin_customer_serializer },
+              resource: proc { Spree.api.admin_admin_user_serializer },
               if: proc { expand?('created_by') }
 
 

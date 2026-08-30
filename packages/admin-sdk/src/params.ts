@@ -138,10 +138,23 @@ export interface OptionTypeUpdateParams {
 export interface LineItemCreateParams {
   variant_id: string
   quantity?: number
+  /**
+   * Negotiated unit price (decimal string). Stamps the line
+   * `price_source: 'manual'` so quantity changes and recalculation never
+   * re-price it. Draft (incomplete) orders only.
+   */
+  price?: string
 }
 
 export interface LineItemUpdateParams {
   quantity?: number
+  /**
+   * Negotiated unit price (decimal string). Stamps the line
+   * `price_source: 'manual'`; an explicit `null` reverts the line to
+   * catalog pricing. Omit to leave pricing alone. Draft (incomplete)
+   * orders only.
+   */
+  price?: string | null
 }
 
 export interface PaymentCreateParams {
@@ -425,6 +438,8 @@ export interface OrderCreateParams {
     variant_id: string
     quantity: number
     metadata?: Record<string, unknown>
+    /** Negotiated unit price (decimal string); stamps `price_source: 'manual'`. */
+    price?: string
   }>
   /** Optional. Applied non-fatally; invalid codes do not block creation. */
   coupon_code?: string
@@ -455,6 +470,12 @@ export interface OrderUpdateParams {
     variant_id: string
     quantity: number
     metadata?: Record<string, unknown>
+    /**
+     * Negotiated unit price (decimal string); stamps
+     * `price_source: 'manual'`. An explicit `null` reverts the line to
+     * catalog pricing; omit to leave pricing alone. Draft orders only.
+     */
+    price?: string | null
   }>
 }
 

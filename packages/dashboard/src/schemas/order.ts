@@ -71,6 +71,25 @@ export const orderEditItemSchema = z
     saved_quantity: z.number().int(),
     /** Units already shipped in fulfilled fulfillments; 0 for staged additions. */
     fulfilled_quantity: z.number().int(),
+    /**
+     * Editable unit price (decimal string) — only rendered as an input on
+     * draft orders. A change stamps the line `price_source: 'manual'` on save.
+     */
+    price: z.string().regex(/^\d+(\.\d+)?$/, {
+      error: () => i18n.t('admin.orders.edit.validation.invalid_price'),
+    }),
+    /** Price the server currently holds; the initial catalog price for staged additions. */
+    saved_price: z.string(),
+    /** Provenance from the server; 'manual' marks a negotiated line. */
+    price_source: z.string().nullable(),
+    /**
+     * The variant's base catalog price, for previewing what a revert restores.
+     * Indicative only — the revert re-prices through the resolver, which may
+     * land on a price-list or contract amount instead.
+     */
+    catalog_price: z.string().nullable(),
+    /** Staged "reset to catalog price" — sends `price: null` on save. */
+    revert_price: z.boolean(),
     name: z.string(),
     options_text: z.string(),
     thumbnail_url: z.string().nullable(),
@@ -111,6 +130,11 @@ export function lineItemToEditRow(item: LineItem, fulfilledQuantity = 0): OrderE
     added: false,
     saved_quantity: item.quantity,
     fulfilled_quantity: fulfilledQuantity,
+    price: item.price,
+    saved_price: item.price,
+    price_source: item.price_source ?? null,
+    catalog_price: item.catalog_price ?? null,
+    revert_price: false,
     name: item.name,
     options_text: item.options_text ?? '',
     thumbnail_url: item.thumbnail_url,
@@ -138,6 +162,56 @@ export function orderToEditForm(
  * nothing, which is why an addition whose `removed` flag is set drops out
  * entirely rather than sending a pointless `0`.
  */
+/**
+ * Formats a projected amount in the order's currency. Only for previews the
+ * client computes — server-sent money always arrives pre-formatted as
+ * `display_*`, and rendering that through here would risk disagreeing with it.
+ */
+export function formatAmount(amount: number, currency: string): string {
+  return new Intl.NumberFormat(i18n.language, { style: 'currency', currency }).format(amount)
+}
+
+/**
+ * The unit price a row will end up at once saved, or null when it cannot be
+ * known client-side — a staged revert on a line whose catalog price the server
+ * did not send. Callers render the saved price unchanged in that case rather
+ * than inventing a number.
+ */
+export function projectedPrice(item: OrderEditItemValues): number | null {
+  const source = item.revert_price ? item.catalog_price : item.price
+  if (source == null || source === '') return null
+
+  const parsed = Number(source)
+  return Number.isFinite(parsed) ? parsed : null
+}
+
+/**
+ * What the line will cost after saving. Removed rows contribute nothing.
+ * Null propagates from {@link projectedPrice} so an unknowable line leaves the
+ * whole projection unknowable rather than silently under-counting the order.
+ */
+export function projectedLineTotal(item: OrderEditItemValues): number | null {
+  if (item.removed) return 0
+
+  const price = projectedPrice(item)
+  return price === null ? null : price * item.quantity
+}
+
+/**
+ * The order's projected item subtotal. Null when any row's price cannot be
+ * projected — a partial sum shown as a total would be a wrong number stated
+ * confidently, which is worse than showing the server's last known figure.
+ */
+export function projectedSubtotal(items: OrderEditItemValues[]): number | null {
+  let sum = 0
+  for (const item of items) {
+    const total = projectedLineTotal(item)
+    if (total === null) return null
+    sum += total
+  }
+  return sum
+}
+
 export type OrderItemsPayload = NonNullable<OrderUpdateParams['items']>
 
 export function buildOrderItemsPayload(items: OrderEditItemValues[]): OrderItemsPayload {
@@ -149,8 +223,17 @@ export function buildOrderItemsPayload(items: OrderEditItemValues[]): OrderItems
       continue
     }
 
-    if (item.added || item.quantity !== item.saved_quantity) {
-      payload.push({ variant_id: item.variant_id, quantity: item.quantity })
+    // A staged revert sends the explicit `price: null` gesture; an edited
+    // price rides along stamped manual. An untouched price is omitted so the
+    // server never mistakes "unchanged" for "negotiated at this amount".
+    const priceChange = item.revert_price
+      ? { price: null }
+      : item.price !== item.saved_price
+        ? { price: item.price }
+        : undefined
+
+    if (item.added || item.quantity !== item.saved_quantity || priceChange) {
+      payload.push({ variant_id: item.variant_id, quantity: item.quantity, ...priceChange })
     }
   }
 
