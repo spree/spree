@@ -2571,7 +2571,28 @@ export interface CatalogParams {
    * importProducts) to make it restrictive.
    */
   price_list_id?: string | null
+  /**
+   * The price list this catalog prices through, written inline: an object
+   * creates the owned list or updates the one already there, and an explicit
+   * `null` detaches it. Detaching is deliberate — a released list starts
+   * matching by its own rules again, and a rule-less list applies to every
+   * shopper. Omit the key to leave the list alone.
+   */
+  price_list?: CatalogPriceListParams | null
   metadata?: Record<string, unknown>
+}
+
+/** The owned list's attributes, as accepted on catalog create and update. */
+export interface CatalogPriceListParams {
+  name?: string
+  description?: string | null
+  status?: string
+  match_policy?: string
+  starts_at?: string | null
+  ends_at?: string | null
+  /** Signed: negative discounts off base prices, positive marks up. */
+  price_adjustment_percentage?: string | null
+  adjust_compare_at?: boolean
 }
 
 export interface CatalogAssignParams {
