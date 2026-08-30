@@ -1,3 +1,4 @@
+import type { PriceList } from '@spree/admin-sdk'
 import {
   Button,
   Field,
@@ -12,10 +13,17 @@ import {
   SelectValue,
   Switch,
 } from '@spree/dashboard-ui'
+import { TableIcon } from 'lucide-react'
+import { useState } from 'react'
 import { Controller, type UseFormReturn } from 'react-hook-form'
 import { useTranslation } from 'react-i18next'
-import { CATALOG_PRICING_MODES, type CatalogFormValues } from '../../schemas/catalog'
+import {
+  CATALOG_PRICING_MODES,
+  type CatalogFormValues,
+  type CatalogPricingMode,
+} from '../../schemas/catalog'
 import { ADJUSTMENT_DIRECTIONS } from '../../schemas/price-list'
+import { BulkPriceEditorDialog } from './bulk-price-editor/bulk-price-editor-dialog'
 
 /**
  * How the agreement prices, edited on the catalog itself: the catalog and the
@@ -29,20 +37,28 @@ import { ADJUSTMENT_DIRECTIONS } from '../../schemas/price-list'
 export function CatalogPricingFields({
   form,
   canEdit,
-  hasOwnedList = false,
-  onImport,
-  importing = false,
+  priceList,
+  savedMode,
 }: {
   form: UseFormReturn<CatalogFormValues>
   canEdit: boolean
-  /** Drives the detach warning and the import shortcut, both edit-only. */
-  hasOwnedList?: boolean
-  onImport?: () => void
-  importing?: boolean
+  /**
+   * The list this catalog owns, when it has one. Drives the detach warning
+   * and the price spreadsheet; absent on the create sheet, where the list
+   * does not exist until Save.
+   */
+  priceList?: PriceList | null
+  /** The mode as last saved, so a switch can be warned about before Save. */
+  savedMode?: CatalogPricingMode
 }) {
   const { t } = useTranslation()
   const { errors } = form.formState
   const mode = form.watch('pricing_mode')
+  const [priceEditorOpen, setPriceEditorOpen] = useState(false)
+  const hasOwnedList = !!priceList
+  // Hand-entered amounts beat the adjustment, so switching to a percentage
+  // clears them — said before Save, since the rows are not recoverable.
+  const willDiscardPrices = savedMode === 'fixed' && mode === 'automatic'
 
   const modeItems = CATALOG_PRICING_MODES.map((value) => ({
     value,
@@ -166,14 +182,39 @@ export function CatalogPricingFields({
         </p>
       )}
 
-      {canEdit && hasOwnedList && mode === 'fixed' && onImport && (
-        <div>
-          <Button type="button" size="sm" variant="outline" disabled={importing} onClick={onImport}>
-            {importing ? t('admin.actions.saving') : t('admin.catalogs.import_from_price_list')}
-          </Button>
-          <FieldDescription>{t('admin.catalogs.import_from_price_list_help')}</FieldDescription>
-        </div>
+      {willDiscardPrices && (
+        <p className="rounded-md bg-destructive/10 px-3 py-2 text-sm text-destructive" role="alert">
+          {t('admin.catalogs.discard_prices_warning')}
+        </p>
       )}
+
+      {/* Fixed pricing is only half-configured until amounts exist, so the
+          spreadsheet is offered right here rather than on a page the
+          merchant has no reason to know about. Unsaved first: the list is
+          created by Save, and there is nothing to price until it is. */}
+      {mode === 'fixed' &&
+        (priceList ? (
+          <div>
+            <Button
+              type="button"
+              size="sm"
+              variant="outline"
+              disabled={!canEdit}
+              onClick={() => setPriceEditorOpen(true)}
+            >
+              <TableIcon className="size-4" />
+              {t('admin.catalogs.edit_prices_cta')}
+            </Button>
+            <FieldDescription>{t('admin.catalogs.edit_prices_help')}</FieldDescription>
+            <BulkPriceEditorDialog
+              open={priceEditorOpen}
+              onOpenChange={setPriceEditorOpen}
+              priceList={priceList}
+            />
+          </div>
+        ) : (
+          <FieldDescription>{t('admin.catalogs.edit_prices_after_save')}</FieldDescription>
+        ))}
     </>
   )
 }

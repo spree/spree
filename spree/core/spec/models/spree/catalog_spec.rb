@@ -286,18 +286,19 @@ describe Spree::Catalog, type: :model do
       expect(price_list.reload.catalog_id).not_to eq(other.id)
     end
 
-    it 'releases the list back to standalone when the catalog is destroyed' do
+    # Releasing the list would let it match by its own rules, and an owned
+    # list has none — so it would price every shopper. It goes with the
+    # catalog instead, soft-deleted so it stays recoverable.
+    it 'takes the list with it when the catalog is destroyed' do
       catalog = create(:catalog, store: store, price_list: price_list)
 
       catalog.destroy!
 
-      expect(price_list.reload.catalog_id).to be_nil
+      expect(Spree::PriceList.where(id: price_list.id)).to be_empty
+      expect(Spree::PriceList.with_deleted.find(price_list.id)).to be_present
     end
 
-    # `dependent: :nullify` releases the list with an update_all, which never
-    # runs PriceList's own callback — so without the catalog clearing it, the
-    # released list stays missing from this request's matching set.
-    it 'makes a list released by destroy visible to the rest of the request' do
+    it 'does not leave the destroyed catalog list pricing the store' do
       price_list.update!(status: 'active')
       catalog = create(:catalog, store: store, price_list: price_list)
       Spree::Current.store = store
@@ -305,7 +306,7 @@ describe Spree::Catalog, type: :model do
 
       catalog.destroy!
 
-      expect(Spree::Current.price_lists.map(&:id)).to include(price_list.id)
+      expect(Spree::Current.price_lists.map(&:id)).not_to include(price_list.id)
     end
 
     # The binding is written with update_all, which never touches the

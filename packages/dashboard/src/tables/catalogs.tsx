@@ -18,7 +18,12 @@ defineTable<Catalog>('catalogs', {
       sortable: true,
       default: true,
       render: (catalog) => (
-        <ResourceNameCell id={catalog.id} dataAttr="data-catalog-id" name={catalog.name} />
+        <ResourceNameCell
+          id={catalog.id}
+          dataAttr="data-catalog-id"
+          name={catalog.name}
+          secondary={catalog.description ?? undefined}
+        />
       ),
     },
     {

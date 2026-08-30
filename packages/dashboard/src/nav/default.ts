@@ -96,18 +96,20 @@ nav.add({
   subject: Subject.Product,
   position: 300,
   children: [
-    {
-      key: 'products.price-lists',
-      labelKey: 'admin.nav.price_lists',
-      path: '/products/price-lists',
-      subject: Subject.PriceList,
-      position: 100,
-    },
+    // Catalogs first: the catalog is the agreement a merchant sets up, and
+    // a price list is one thing a catalog can own.
     {
       key: 'products.catalogs',
       labelKey: 'admin.nav.catalogs',
       path: '/products/catalogs',
       subject: Subject.Catalog,
+      position: 100,
+    },
+    {
+      key: 'products.price-lists',
+      labelKey: 'admin.nav.price_lists',
+      path: '/products/price-lists',
+      subject: Subject.PriceList,
       position: 200,
     },
     {

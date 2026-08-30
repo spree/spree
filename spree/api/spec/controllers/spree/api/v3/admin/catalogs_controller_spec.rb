@@ -11,6 +11,14 @@ RSpec.describe Spree::Api::V3::Admin::CatalogsController, type: :controller do
 
   # Standing up an agreement is one request — the catalog and the list it
   # prices through (docs/plans/6.0-catalog-agreement-rework.md).
+  it 'writes and returns the description' do
+    patch :update, params: { id: catalog.prefixed_id, description: 'Negotiated 2026 terms' }, as: :json
+
+    expect(response).to have_http_status(:ok)
+    expect(json_response['description']).to eq('Negotiated 2026 terms')
+    expect(catalog.reload.description).to eq('Negotiated 2026 terms')
+  end
+
   describe 'the inline price_list payload' do
     it 'creates the catalog and its owned list together' do
       post :create,
@@ -46,7 +54,9 @@ RSpec.describe Spree::Api::V3::Admin::CatalogsController, type: :controller do
       expect(created.price_list.price_adjustment_percentage).to eq(-20)
     end
 
-    it 'detaches on an explicit null, keeping the list itself' do
+    # A released list would price every shopper, since an owned list carries
+    # no rules — so removal takes the list with it.
+    it 'removes the owned list on an explicit null' do
       post :create, params: { name: 'Tier', price_list: { price_adjustment_percentage: '-10' } }, as: :json
       created = store.catalogs.find_by(name: 'Tier')
       list_id = created.price_list.id
@@ -55,7 +65,7 @@ RSpec.describe Spree::Api::V3::Admin::CatalogsController, type: :controller do
 
       expect(response).to have_http_status(:ok)
       expect(created.reload.price_list).to be_nil
-      expect(Spree::PriceList.find(list_id).catalog_id).to be_nil
+      expect(Spree::PriceList.where(id: list_id)).to be_empty
     end
 
     it 'leaves the list alone when the key is omitted' do
@@ -76,6 +86,21 @@ RSpec.describe Spree::Api::V3::Admin::CatalogsController, type: :controller do
       }.not_to change { store.catalogs.count }
 
       expect(response).to have_http_status(:unprocessable_content)
+    end
+
+    it 'clears hand-entered amounts when the payload says to' do
+      post :create, params: { name: 'Tier', price_list: { name: 'Fixed' } }, as: :json
+      created = store.catalogs.find_by(name: 'Tier')
+      variant = create(:variant)
+      create(:price, variant: variant, currency: 'EUR', amount: 5, price_list: created.price_list)
+
+      patch :update,
+            params: { id: created.prefixed_id,
+                      price_list: { price_adjustment_percentage: '-15', prices: [] } },
+            as: :json
+
+      expect(response).to have_http_status(:ok)
+      expect(created.reload.price_list.prices.first.amount).to be_nil
     end
 
     it 'expands the owned list on read' do

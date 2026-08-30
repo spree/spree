@@ -5,12 +5,13 @@ module Spree
         # Admin-only: catalogs are merchandising configuration with no
         # storefront surface — buyers see their effects, never the record.
         class CatalogSerializer < V3::BaseSerializer
-          typelize name: :string, active: :boolean, position: [:number, nullable: true],
+          typelize name: :string, description: 'string | null',
+                   active: :boolean, position: [:number, nullable: true],
                    price_list_id: [:string, nullable: true],
                    products_count: :number,
                    metadata: 'Record<string, unknown> | null'
 
-          attributes :name, :active, :position, :metadata,
+          attributes :name, :description, :active, :position, :metadata,
                      created_at: :iso8601, updated_at: :iso8601
 
           attribute :price_list_id do |catalog|

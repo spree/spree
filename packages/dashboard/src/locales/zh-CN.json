@@ -116,15 +116,18 @@
         "message": "这将删除 {{name}} 及其分配。产品和价格表不受影响。",
         "title": "删除目录？"
       },
-      "detach_warning": "保存后将释放此目录的价目表。它将重新按自身规则匹配，而没有规则的价目表会对所有顾客生效。",
+      "detach_warning": "保存后将删除此目录的价目表及其中的价格。此受众将支付正常价格。",
       "detail": {
         "delete_label": "删除目录",
         "load_error": "无法加载该目录",
+        "pricing": "定价",
         "settings": "目录"
       },
+      "discard_prices_warning": "切换为百分比将丢弃为此目录输入的价格，且无法恢复。",
+      "edit_prices_after_save": "保存目录后，再为此受众输入价格。",
+      "edit_prices_cta": "输入价格",
+      "edit_prices_help": "设置每件商品对此受众的价格。",
       "empty": "暂无目录",
-      "import_from_price_list": "从价格表导入产品",
-      "import_from_price_list_help": "将此目录定价的商品复制到其商品组合中。",
       "messages": {
         "assigned": "目录已分配",
         "created": "目录已创建",
@@ -901,6 +904,11 @@
         }
       },
       "catalog": {
+        "description": {
+          "help": "内部备注 — 顾客永远不会看到。",
+          "label": "描述",
+          "placeholder": "此协议的用途"
+        },
         "name": {
           "placeholder": "批发"
         },

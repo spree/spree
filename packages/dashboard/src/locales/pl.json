@@ -118,15 +118,18 @@
         "message": "To usunie {{name}} wraz z przypisaniami. Produkty i cenniki pozostaną nietknięte.",
         "title": "Usunąć katalog?"
       },
-      "detach_warning": "Zapis zwolni cennik tego katalogu. Zacznie on ponownie działać według własnych reguł, a cennik bez reguł obejmuje wszystkich klientów.",
+      "detach_warning": "Zapis usunie cennik tego katalogu wraz z zawartymi w nim cenami. Ta grupa odbiorców będzie płacić zwykłe ceny.",
       "detail": {
         "delete_label": "Usuń katalog",
         "load_error": "Nie udało się wczytać tego katalogu",
+        "pricing": "Ceny",
         "settings": "Katalog"
       },
+      "discard_prices_warning": "Przejście na wartość procentową usunie ceny wpisane dla tego katalogu. Nie będzie można ich odzyskać.",
+      "edit_prices_after_save": "Zapisz katalog, a następnie wprowadź ceny dla tej grupy odbiorców.",
+      "edit_prices_cta": "Wprowadź ceny",
+      "edit_prices_help": "Ustal, ile każdy produkt kosztuje tę grupę odbiorców.",
       "empty": "Brak katalogów",
-      "import_from_price_list": "Importuj produkty z cennika",
-      "import_from_price_list_help": "Kopiuje do asortymentu produkty, które ten katalog wycenia.",
       "messages": {
         "assigned": "Katalog przypisany",
         "created": "Katalog utworzony",
@@ -917,6 +920,11 @@
         }
       },
       "catalog": {
+        "description": {
+          "help": "Notatka wewnętrzna — nigdy nie widoczna dla klientów.",
+          "label": "Opis",
+          "placeholder": "Czemu służy ta umowa"
+        },
         "name": {
           "placeholder": "Hurt"
         },

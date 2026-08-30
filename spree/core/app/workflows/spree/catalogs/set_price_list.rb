@@ -1,13 +1,11 @@
 module Spree
   module Catalogs
     # Writes the price list a catalog prices through, from an inline payload:
-    # creates the owned list, updates the one already owned, or detaches with
-    # nil (docs/plans/6.0-catalog-agreement-rework.md).
+    # creates the owned list, updates the one already owned, or removes it
+    # with nil (docs/plans/6.0-catalog-agreement-rework.md).
     #
-    # Detaching is an explicit act with a consequence — a released list starts
-    # matching by its own rules again, and a rule-less one matches everyone —
-    # so it happens only when the caller sends `price_list: null`, never as a
-    # side effect of omitting the key.
+    # Removal happens only on an explicit `price_list: null`, never as a side
+    # effect of omitting the key.
     class SetPriceList < Spree::Workflow
       attr_reader :catalog
 
@@ -33,13 +31,14 @@ module Spree
         create_owned
       end
 
-      # Releases the list back to standalone matching. The list itself is
-      # kept: it holds prices someone entered, and deleting it because an
-      # agreement moved on would lose them.
+      # Removes the list the catalog owns, rather than releasing it to
+      # standalone matching: an owned list carries no rules, so released it
+      # would price every shopper in the store. Soft-deleted, since the model
+      # is paranoid.
       def detach
         return if catalog.price_list.nil?
 
-        failure(catalog) unless catalog.update(price_list: nil)
+        failure(catalog) unless catalog.price_list.destroy
       end
 
       def update_existing(price_list)

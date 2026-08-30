@@ -22,11 +22,13 @@ module Spree
 
     belongs_to :store, class_name: 'Spree::Store', inverse_of: :catalogs
     # The owned list, or nil for an assortment-only catalog priced at base.
-    # The FK lives on the list (a list is standalone or owned by exactly one
-    # catalog); detaching or destroying the catalog releases the list back to
-    # standalone — an explicit act, since a rule-less standalone list starts
-    # matching by its own (absent) rules.
-    has_one :price_list, class_name: 'Spree::PriceList', inverse_of: :catalog, dependent: :nullify
+    # The FK lives on the list: a list is standalone or owned by exactly one
+    # catalog.
+    #
+    # Destroyed with the catalog rather than released, because an owned list
+    # carries no rules of its own — released, it would match every shopper in
+    # the store. The list is paranoid, so this is a soft delete.
+    has_one :price_list, class_name: 'Spree::PriceList', inverse_of: :catalog, dependent: :destroy
 
     has_many :catalog_products, class_name: 'Spree::CatalogProduct', dependent: :destroy,
                                 inverse_of: :catalog

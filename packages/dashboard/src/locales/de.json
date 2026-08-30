@@ -116,15 +116,18 @@
         "message": "Dies löscht {{name}} und seine Zuweisungen. Produkte und Preislisten bleiben unberührt.",
         "title": "Katalog löschen?"
       },
-      "detach_warning": "Beim Speichern wird die Preisliste dieses Katalogs freigegeben. Sie greift dann wieder nach ihren eigenen Regeln, und eine Liste ohne Regeln gilt für alle Kundinnen und Kunden.",
+      "detach_warning": "Beim Speichern werden die Preisliste dieses Katalogs und die darin enthaltenen Preise entfernt. Diese Zielgruppe zahlt dann normale Preise.",
       "detail": {
         "delete_label": "Katalog löschen",
         "load_error": "Katalog konnte nicht geladen werden",
+        "pricing": "Preisgestaltung",
         "settings": "Katalog"
       },
+      "discard_prices_warning": "Der Wechsel zu einem Prozentsatz verwirft die für diesen Katalog eingegebenen Preise. Sie lassen sich nicht wiederherstellen.",
+      "edit_prices_after_save": "Katalog speichern, dann die Preise für diese Zielgruppe eingeben.",
+      "edit_prices_cta": "Preise eingeben",
+      "edit_prices_help": "Legen Sie fest, was jedes Produkt diese Zielgruppe kostet.",
       "empty": "Noch keine Kataloge",
-      "import_from_price_list": "Produkte aus Preisliste importieren",
-      "import_from_price_list_help": "Kopiert die Produkte, die dieser Katalog bepreist, in sein Sortiment.",
       "messages": {
         "assigned": "Katalog zugewiesen",
         "created": "Katalog erstellt",
@@ -905,6 +908,11 @@
         }
       },
       "catalog": {
+        "description": {
+          "help": "Interne Notiz — für Kundinnen und Kunden nie sichtbar.",
+          "label": "Beschreibung",
+          "placeholder": "Wozu diese Vereinbarung dient"
+        },
         "name": {
           "placeholder": "Großhandel"
         },

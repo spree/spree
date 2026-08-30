@@ -37,6 +37,7 @@ import {
   SelectItem,
   SelectTrigger,
   SelectValue,
+  Textarea,
   useConfirm,
 } from '@spree/dashboard-ui'
 import { createFileRoute, useNavigate } from '@tanstack/react-router'
@@ -53,7 +54,6 @@ import {
   useCatalog,
   useCatalogProducts,
   useDeleteCatalog,
-  useImportCatalogPriceListProducts,
   useSaveCatalog,
   useUnassignCatalog,
 } from '../../../../../hooks/use-catalogs'
@@ -106,6 +106,11 @@ function CatalogBody({ catalog }: { catalog: Catalog }) {
 
   const canEdit = permissions.can('update', Subject.Catalog)
 
+  // The mode as last saved, not as currently selected: switching away from
+  // hand-entered prices has to clear them, and the warning has to know a
+  // switch is what is about to happen.
+  const savedPricingMode = catalogPricingValues(catalog.price_list).pricing_mode
+
   const form = useForm<CatalogFormValues>({
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     resolver: zodResolver(catalogFormSchema) as any,
@@ -113,13 +118,14 @@ function CatalogBody({ catalog }: { catalog: Catalog }) {
   })
 
   // Hydrate (and re-baseline after save) from the source row, unless the
-  // merchant has unsaved edits in flight: importing from the price list
-  // refetches the catalog mid-edit, and an unguarded reset would drop both
-  // the settings being typed and any staged product changes.
+  // merchant has unsaved edits in flight: entering prices refetches the
+  // catalog mid-edit, and an unguarded reset would drop both the settings
+  // being typed and any staged product changes.
   useEffect(() => {
     if (form.formState.isDirty) return
     form.reset({
       name: catalog.name,
+      description: catalog.description ?? '',
       active: catalog.active,
       ...catalogPricingValues(catalog.price_list),
       staged_products: { adds: [], removes: [] },
@@ -134,7 +140,7 @@ function CatalogBody({ catalog }: { catalog: Catalog }) {
   async function handleSave(values: CatalogFormValues) {
     try {
       await saveMutation.mutateAsync({
-        attributes: catalogValuesToParams(values),
+        attributes: catalogValuesToParams(values, savedPricingMode),
         addProductIds: values.staged_products.adds.map((product) => product.id),
         removeProductIds: values.staged_products.removes,
       })
@@ -202,7 +208,8 @@ function CatalogBody({ catalog }: { catalog: Catalog }) {
           }
           sidebar={
             <>
-              <CatalogSettingsCard catalog={catalog} form={form} canEdit={canEdit} />
+              <CatalogSettingsCard form={form} canEdit={canEdit} />
+              <CatalogPricingCard catalog={catalog} form={form} canEdit={canEdit} />
               <CatalogAssignmentsCard catalog={catalog} canEdit={canEdit} />
             </>
           }
@@ -212,7 +219,12 @@ function CatalogBody({ catalog }: { catalog: Catalog }) {
   )
 }
 
-function CatalogSettingsCard({
+/**
+ * What the agreement pays. Its own card rather than a field on the settings
+ * card: pricing is the consequential half of a catalog, and burying it under
+ * the name reads as an afterthought.
+ */
+function CatalogPricingCard({
   catalog,
   form,
   canEdit,
@@ -222,7 +234,34 @@ function CatalogSettingsCard({
   canEdit: boolean
 }) {
   const { t } = useTranslation()
-  const importMutation = useImportCatalogPriceListProducts(catalog.id)
+
+  return (
+    <Card>
+      <CardHeader>
+        <CardTitle>{t('admin.catalogs.detail.pricing')}</CardTitle>
+      </CardHeader>
+      <CardContent>
+        <FieldGroup>
+          <CatalogPricingFields
+            form={form}
+            canEdit={canEdit}
+            priceList={catalog.price_list}
+            savedMode={catalogPricingValues(catalog.price_list).pricing_mode}
+          />
+        </FieldGroup>
+      </CardContent>
+    </Card>
+  )
+}
+
+function CatalogSettingsCard({
+  form,
+  canEdit,
+}: {
+  form: UseFormReturn<CatalogFormValues>
+  canEdit: boolean
+}) {
+  const { t } = useTranslation()
 
   const { errors } = form.formState
 
@@ -244,13 +283,19 @@ function CatalogSettingsCard({
             <FieldError errors={[errors.name]} />
           </Field>
 
-          <CatalogPricingFields
-            form={form}
-            canEdit={canEdit}
-            hasOwnedList={!!catalog.price_list_id}
-            onImport={() => importMutation.mutate()}
-            importing={importMutation.isPending}
-          />
+          <Field>
+            <FieldLabel htmlFor="catalog-description">
+              {t('admin.fields.catalog.description.label')}
+            </FieldLabel>
+            <Textarea
+              id="catalog-description"
+              rows={3}
+              disabled={!canEdit}
+              placeholder={t('admin.fields.catalog.description.placeholder')}
+              {...form.register('description')}
+            />
+            <FieldDescription>{t('admin.fields.catalog.description.help')}</FieldDescription>
+          </Field>
 
           <Controller
             control={form.control}

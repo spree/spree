@@ -3,6 +3,9 @@ class CreateSpreeCatalogs < ActiveRecord::Migration[8.1]
     create_table :spree_catalogs do |t|
       t.references :store, null: false
       t.string :name, null: false
+      # What the agreement is, in the operator's own words — never shown to
+      # a shopper, like a price list's.
+      t.text :description
       t.boolean :active, null: false, default: true
       t.integer :position
       if t.respond_to?(:jsonb)

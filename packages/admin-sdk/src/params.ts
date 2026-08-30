@@ -2562,6 +2562,8 @@ export interface CompanyMembershipCreateParams {
 
 export interface CatalogParams {
   name?: string
+  /** Internal note on what the agreement is — never shown to shoppers. */
+  description?: string | null
   active?: boolean
   position?: number
   /**

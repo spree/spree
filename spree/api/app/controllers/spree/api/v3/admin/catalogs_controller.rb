@@ -76,12 +76,17 @@ module Spree
           # leaves it alone.
           def permitted_params
             permitted = params.permit(*model_additional_permitted_attributes,
-                                      :name, :active, :position, :price_list_id,
+                                      :name, :description, :active, :position, :price_list_id,
                                       metadata: {},
                                       price_list: [
                                         :name, :description, :status, :match_policy,
                                         :starts_at, :ends_at,
-                                        :price_adjustment_percentage, :adjust_compare_at
+                                        :price_adjustment_percentage, :adjust_compare_at,
+                                        # An empty array clears the hand-entered
+                                        # amounts — what switching to a
+                                        # percentage sends.
+                                        { prices: [:id, :variant_id, :currency, :amount,
+                                                   :compare_at_amount] }
                                       ])
             if permitted.key?(:price_list_id)
               permitted[:price_list_id] =

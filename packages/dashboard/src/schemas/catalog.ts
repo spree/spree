@@ -1,4 +1,5 @@
 import type { CatalogParams } from '@spree/admin-sdk'
+import { blankToNull } from '@spree/dashboard-core'
 import { requiredMessage } from '@spree/dashboard-ui'
 import i18n from 'i18next'
 import { z } from 'zod/v4'
@@ -24,6 +25,7 @@ export type CatalogPricingMode = (typeof CATALOG_PRICING_MODES)[number]
 export const catalogFormSchema = z
   .object({
     name: z.string().min(1, { error: requiredMessage('name') }),
+    description: z.string().trim().optional(),
     /**
      * Staged product membership, applied on Save through the nested products
      * endpoints. Opaque by design — it holds SDK `Product` records so a staged
@@ -67,6 +69,7 @@ export type CatalogFormValues = z.infer<typeof catalogFormSchema>
 /** A new catalog: named on create, active, priced by base prices. */
 export const CATALOG_DEFAULTS: CatalogFormValues = {
   name: '',
+  description: '',
   active: true,
   pricing_mode: 'base',
   adjustment_direction: 'decrease',
@@ -82,15 +85,20 @@ export const CATALOG_DEFAULTS: CatalogFormValues = {
  * — which is a deliberate act, since a released list starts matching by its
  * own rules again.
  */
-export function catalogValuesToParams(values: CatalogFormValues): CatalogParams {
+export function catalogValuesToParams(
+  values: CatalogFormValues,
+  /** The mode the catalog was saved in, so a switch can be told from a plain save. */
+  previousMode?: CatalogPricingMode,
+): CatalogParams {
   return {
     name: values.name,
+    description: blankToNull(values.description),
     active: values.active,
-    price_list: priceListPayload(values),
+    price_list: priceListPayload(values, previousMode),
   }
 }
 
-function priceListPayload(values: CatalogFormValues) {
+function priceListPayload(values: CatalogFormValues, previousMode?: CatalogPricingMode) {
   if (values.pricing_mode === 'base') return null
 
   if (values.pricing_mode === 'fixed') {
@@ -100,13 +108,20 @@ function priceListPayload(values: CatalogFormValues) {
   }
 
   const magnitude = parsePercentage(values.adjustment_magnitude)
-  if (magnitude === null) return { adjust_compare_at: values.adjust_compare_at }
+  const base =
+    magnitude === null
+      ? { adjust_compare_at: values.adjust_compare_at }
+      : {
+          price_adjustment_percentage: String(
+            values.adjustment_direction === 'decrease' ? -magnitude : magnitude,
+          ),
+          adjust_compare_at: values.adjust_compare_at,
+        }
 
-  const signed = values.adjustment_direction === 'decrease' ? -magnitude : magnitude
-  return {
-    price_adjustment_percentage: String(signed),
-    adjust_compare_at: values.adjust_compare_at,
-  }
+  // Switching away from hand-entered prices clears them. An explicit amount
+  // beats the adjustment by design, so leaving the old rows behind would
+  // keep charging them while the card claims a percentage is in effect.
+  return previousMode === 'fixed' ? { ...base, prices: [] } : base
 }
 
 /**

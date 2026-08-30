@@ -116,15 +116,18 @@
         "message": "Cela supprime {{name}} et ses affectations. Les produits et listes de prix ne sont pas affectés.",
         "title": "Supprimer le catalogue ?"
       },
-      "detach_warning": "L’enregistrement libérera la liste de prix de ce catalogue. Elle s’appliquera de nouveau selon ses propres règles, et une liste sans règle vaut pour tous les clients.",
+      "detach_warning": "L’enregistrement supprimera la liste de prix de ce catalogue et les prix qu’elle contient. Cette audience paiera les prix normaux.",
       "detail": {
         "delete_label": "Supprimer le catalogue",
         "load_error": "Impossible de charger ce catalogue",
+        "pricing": "Tarification",
         "settings": "Catalogue"
       },
+      "discard_prices_warning": "Passer à un pourcentage supprimera les prix saisis pour ce catalogue. Ils ne pourront pas être récupérés.",
+      "edit_prices_after_save": "Enregistrez le catalogue, puis saisissez les prix de cette audience.",
+      "edit_prices_cta": "Saisir les prix",
+      "edit_prices_help": "Définissez le prix de chaque produit pour cette audience.",
       "empty": "Aucun catalogue pour le moment",
-      "import_from_price_list": "Importer les produits de la liste de prix",
-      "import_from_price_list_help": "Copie dans l’assortiment les produits que ce catalogue tarifie.",
       "messages": {
         "assigned": "Catalogue affecté",
         "created": "Catalogue créé",
@@ -905,6 +908,11 @@
         }
       },
       "catalog": {
+        "description": {
+          "help": "Note interne — jamais montrée aux clients.",
+          "label": "Description",
+          "placeholder": "À quoi sert cet accord"
+        },
         "name": {
           "placeholder": "Grossiste"
         },
