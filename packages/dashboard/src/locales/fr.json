@@ -116,6 +116,7 @@
         "message": "Cela supprime {{name}} et ses affectations. Les produits et listes de prix ne sont pas affectés.",
         "title": "Supprimer le catalogue ?"
       },
+      "detach_warning": "L’enregistrement libérera la liste de prix de ce catalogue. Elle s’appliquera de nouveau selon ses propres règles, et une liste sans règle vaut pour tous les clients.",
       "detail": {
         "delete_label": "Supprimer le catalogue",
         "load_error": "Impossible de charger ce catalogue",
@@ -123,6 +124,7 @@
       },
       "empty": "Aucun catalogue pour le moment",
       "import_from_price_list": "Importer les produits de la liste de prix",
+      "import_from_price_list_help": "Copie dans l’assortiment les produits que ce catalogue tarifie.",
       "messages": {
         "assigned": "Catalogue affecté",
         "created": "Catalogue créé",
@@ -911,6 +913,13 @@
           "help": "Optionnel. Sans liste, le catalogue ne restreint que l’assortiment et les prix de base s’appliquent. Avec un assortiment vide, le catalogue ne fait que tarifer — rien n’est masqué ; importez ou ajoutez des produits pour restreindre ce que voit cette audience.",
           "label": "Liste de prix",
           "placeholder": "Prix de base"
+        },
+        "pricing_mode": {
+          "automatic": "Un pourcentage sur les prix de base",
+          "base": "Prix normaux",
+          "fixed": "Les prix que je saisis pour ce catalogue",
+          "help": "Ce que paie cette audience. La modification met à jour le catalogue et ses prix ensemble.",
+          "label": "Tarification"
         }
       },
       "certificate_document": {

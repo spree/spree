@@ -116,6 +116,7 @@
         "message": "这将删除 {{name}} 及其分配。产品和价格表不受影响。",
         "title": "删除目录？"
       },
+      "detach_warning": "保存后将释放此目录的价目表。它将重新按自身规则匹配，而没有规则的价目表会对所有顾客生效。",
       "detail": {
         "delete_label": "删除目录",
         "load_error": "无法加载该目录",
@@ -123,6 +124,7 @@
       },
       "empty": "暂无目录",
       "import_from_price_list": "从价格表导入产品",
+      "import_from_price_list_help": "将此目录定价的商品复制到其商品组合中。",
       "messages": {
         "assigned": "目录已分配",
         "created": "目录已创建",
@@ -907,6 +909,13 @@
           "help": "可选。不设置价格表时，目录仅限定商品范围，按基础价格计价。商品范围为空时，目录只定价——不隐藏任何商品；导入或添加产品可限制该受众所见范围。",
           "label": "价格表",
           "placeholder": "基础价格"
+        },
+        "pricing_mode": {
+          "automatic": "在基准价格上按百分比调整",
+          "base": "正常价格",
+          "fixed": "我为此目录输入的价格",
+          "help": "此受众支付的价格。在此修改会同时更新目录及其价格。",
+          "label": "定价"
         }
       },
       "certificate_document": {

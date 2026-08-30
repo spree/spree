@@ -21,6 +21,13 @@ module Spree
             catalog.catalog_products.size
           end
 
+          # The owned list rides along so the agreement editor can render its
+          # pricing without a second request — the catalog page is where an
+          # owned list is edited (docs/plans/6.0-catalog-agreement-rework.md).
+          one :price_list,
+              resource: proc { Spree.api.admin_price_list_serializer },
+              if: proc { expand?('price_list') }
+
           many :catalog_assignments, key: :assignments,
                resource: proc { Spree.api.admin_catalog_assignment_serializer },
                if: proc { expand?('assignments') }

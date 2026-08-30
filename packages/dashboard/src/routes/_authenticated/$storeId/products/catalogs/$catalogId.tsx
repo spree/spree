@@ -1,5 +1,5 @@
 import { zodResolver } from '@hookform/resolvers/zod'
-import type { Catalog, CatalogAssignment, PriceList } from '@spree/admin-sdk'
+import type { Catalog, CatalogAssignment } from '@spree/admin-sdk'
 import {
   adminClient,
   mapSpreeErrorsToForm,
@@ -44,6 +44,7 @@ import { PlusIcon, TrashIcon } from 'lucide-react'
 import { useEffect, useState } from 'react'
 import { Controller, type UseFormReturn, useForm } from 'react-hook-form'
 import { useTranslation } from 'react-i18next'
+import { CatalogPricingFields } from '../../../../../components/spree/catalog-pricing-fields'
 import { DeferredProductMembershipCard } from '../../../../../components/spree/deferred-product-membership-card'
 import { ProductMembershipStagingProvider } from '../../../../../components/spree/product-membership-staging'
 import { ResourceDetailSkeleton } from '../../../../../components/spree/route-pending'
@@ -61,6 +62,7 @@ import {
   CATALOG_DEFAULTS,
   type CatalogFormValues,
   catalogFormSchema,
+  catalogPricingValues,
   catalogValuesToParams,
 } from '../../../../../schemas/catalog'
 
@@ -119,7 +121,7 @@ function CatalogBody({ catalog }: { catalog: Catalog }) {
     form.reset({
       name: catalog.name,
       active: catalog.active,
-      price_list_id: catalog.price_list_id ?? '',
+      ...catalogPricingValues(catalog.price_list),
       staged_products: { adds: [], removes: [] },
     })
   }, [catalog, form])
@@ -158,7 +160,8 @@ function CatalogBody({ catalog }: { catalog: Catalog }) {
               resource={{ id: catalog.id }}
               jsonPreview={{
                 title: `Catalog ${catalog.name}`,
-                fetch: () => adminClient.catalogs.get(catalog.id, { expand: ['assignments'] }),
+                fetch: () =>
+                  adminClient.catalogs.get(catalog.id, { expand: ['assignments', 'price_list'] }),
                 endpoint: `/api/v3/admin/catalogs/${catalog.id}`,
                 resolveLink: spreeJsonLinkResolver(storeId),
               }}
@@ -241,52 +244,13 @@ function CatalogSettingsCard({
             <FieldError errors={[errors.name]} />
           </Field>
 
-          <Field>
-            <FieldLabel>{t('admin.fields.catalog.price_list.label')}</FieldLabel>
-            <Controller
-              control={form.control}
-              name="price_list_id"
-              render={({ field }) => (
-                <ResourceCombobox<PriceList>
-                  queryKey="catalog-price-lists"
-                  // Only lists that are actually available: unowned ones,
-                  // plus the one this catalog already holds. A list another
-                  // catalog owns is refused server-side, so offering it
-                  // would only produce a confusing error.
-                  search={(q) =>
-                    adminClient.priceLists.list({
-                      name_cont: q,
-                      catalog_id_null: true,
-                      limit: 10,
-                    })
-                  }
-                  hydrate={(ids) => adminClient.priceLists.list({ id_in: ids, limit: ids.length })}
-                  getOptionLabel={(list) => list.name}
-                  placeholder={t('admin.fields.catalog.price_list.placeholder')}
-                  emptyText={t('admin.fields.catalog.price_list.empty')}
-                  disabled={!canEdit}
-                  value={field.value || undefined}
-                  onChange={(id) => field.onChange(id ?? '')}
-                />
-              )}
-            />
-            <FieldDescription>{t('admin.fields.catalog.price_list.help')}</FieldDescription>
-            {canEdit && catalog.price_list_id && (
-              <div>
-                <Button
-                  type="button"
-                  size="sm"
-                  variant="outline"
-                  disabled={importMutation.isPending}
-                  onClick={() => importMutation.mutate()}
-                >
-                  {importMutation.isPending
-                    ? t('admin.actions.saving')
-                    : t('admin.catalogs.import_from_price_list')}
-                </Button>
-              </div>
-            )}
-          </Field>
+          <CatalogPricingFields
+            form={form}
+            canEdit={canEdit}
+            hasOwnedList={!!catalog.price_list_id}
+            onImport={() => importMutation.mutate()}
+            importing={importMutation.isPending}
+          />
 
           <Controller
             control={form.control}

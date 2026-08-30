@@ -116,6 +116,7 @@
         "message": "Dies löscht {{name}} und seine Zuweisungen. Produkte und Preislisten bleiben unberührt.",
         "title": "Katalog löschen?"
       },
+      "detach_warning": "Beim Speichern wird die Preisliste dieses Katalogs freigegeben. Sie greift dann wieder nach ihren eigenen Regeln, und eine Liste ohne Regeln gilt für alle Kundinnen und Kunden.",
       "detail": {
         "delete_label": "Katalog löschen",
         "load_error": "Katalog konnte nicht geladen werden",
@@ -123,6 +124,7 @@
       },
       "empty": "Noch keine Kataloge",
       "import_from_price_list": "Produkte aus Preisliste importieren",
+      "import_from_price_list_help": "Kopiert die Produkte, die dieser Katalog bepreist, in sein Sortiment.",
       "messages": {
         "assigned": "Katalog zugewiesen",
         "created": "Katalog erstellt",
@@ -911,6 +913,13 @@
           "help": "Optional. Ohne Preisliste schränkt der Katalog nur das Sortiment ein; es gelten die Basispreise. Bei leerem Sortiment bepreist der Katalog nur — nichts wird ausgeblendet; importieren oder fügen Sie Produkte hinzu, um die Sichtbarkeit einzuschränken.",
           "label": "Preisliste",
           "placeholder": "Basispreise"
+        },
+        "pricing_mode": {
+          "automatic": "Ein Prozentsatz auf die Grundpreise",
+          "base": "Normale Preise",
+          "fixed": "Preise, die ich für diesen Katalog eingebe",
+          "help": "Was diese Zielgruppe zahlt. Änderungen hier aktualisieren den Katalog und seine Preise gemeinsam.",
+          "label": "Preisgestaltung"
         }
       },
       "certificate_document": {

@@ -116,6 +116,7 @@
         "message": "This deletes {{name}} and its assignments. Products and price lists are not affected.",
         "title": "Delete catalog?"
       },
+      "detach_warning": "Saving will release this catalog’s price list. It will start matching by its own rules again, and a list with no rules applies to every shopper.",
       "detail": {
         "delete_label": "Delete catalog",
         "load_error": "Could not load this catalog",
@@ -123,6 +124,7 @@
       },
       "empty": "No catalogs yet",
       "import_from_price_list": "Import products from price list",
+      "import_from_price_list_help": "Copies the products this catalog prices into its assortment.",
       "messages": {
         "assigned": "Catalog assigned",
         "created": "Catalog created",
@@ -911,6 +913,13 @@
           "help": "Optional. Without one, the catalog only narrows the assortment and base prices apply. With an empty assortment, the catalog only prices — nothing is hidden; import or add products to restrict what this audience sees.",
           "label": "Price list",
           "placeholder": "Base prices"
+        },
+        "pricing_mode": {
+          "automatic": "A percentage off base prices",
+          "base": "Normal prices",
+          "fixed": "Prices I enter for this catalog",
+          "help": "What this audience pays. Changing it here updates the catalog and its prices together.",
+          "label": "Pricing"
         }
       },
       "certificate_document": {

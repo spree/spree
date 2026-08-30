@@ -153,6 +153,12 @@ module Spree
         product_approve_workflow: 'Spree::Products::Approve',
         product_reject_workflow: 'Spree::Products::Reject',
 
+        # catalogs — the agreement, written together with the price list it
+        # prices through (docs/plans/6.0-catalog-agreement-rework.md)
+        catalog_create_workflow: 'Spree::Catalogs::Create',
+        catalog_update_workflow: 'Spree::Catalogs::Update',
+        catalog_price_list_workflow: 'Spree::Catalogs::SetPriceList',
+
         # price lists
         price_list_create_workflow: 'Spree::PriceLists::Create',
         price_list_update_workflow: 'Spree::PriceLists::Update',

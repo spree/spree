@@ -151,7 +151,7 @@ export const priceListFormSchema = z
   )
 
 /** A positive percentage, or null when absent or unparseable. */
-function parsePercentage(value: string | undefined): number | null {
+export function parsePercentage(value: string | undefined): number | null {
   if (!value?.trim()) return null
   const parsed = Number(value)
   return Number.isFinite(parsed) && parsed > 0 ? parsed : null

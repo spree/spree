@@ -9,6 +9,85 @@ RSpec.describe Spree::Api::V3::Admin::CatalogsController, type: :controller do
 
   before { request.headers.merge!(headers) }
 
+  # Standing up an agreement is one request — the catalog and the list it
+  # prices through (docs/plans/6.0-catalog-agreement-rework.md).
+  describe 'the inline price_list payload' do
+    it 'creates the catalog and its owned list together' do
+      post :create,
+           params: {
+             name: 'Wholesale tier',
+             price_list: { price_adjustment_percentage: '-15.0' }
+           },
+           as: :json
+
+      expect(response).to have_http_status(:created)
+
+      created = store.catalogs.find_by(name: 'Wholesale tier')
+      list = created.price_list
+      expect(list).to be_present
+      expect(list.price_adjustment_percentage).to eq(-15)
+      # Named after the catalog, since a merchant never sees it separately.
+      expect(list.name).to eq('Wholesale tier')
+      # Born active: the catalog's own flag already gates the agreement.
+      expect(list).to be_active
+    end
+
+    it 'updates the owned list in place' do
+      post :create, params: { name: 'Tier', price_list: { price_adjustment_percentage: '-10' } }, as: :json
+      created = store.catalogs.find_by(name: 'Tier')
+      list_id = created.price_list.id
+
+      patch :update,
+            params: { id: created.prefixed_id, price_list: { price_adjustment_percentage: '-20' } },
+            as: :json
+
+      expect(response).to have_http_status(:ok)
+      expect(created.reload.price_list.id).to eq(list_id)
+      expect(created.price_list.price_adjustment_percentage).to eq(-20)
+    end
+
+    it 'detaches on an explicit null, keeping the list itself' do
+      post :create, params: { name: 'Tier', price_list: { price_adjustment_percentage: '-10' } }, as: :json
+      created = store.catalogs.find_by(name: 'Tier')
+      list_id = created.price_list.id
+
+      patch :update, params: { id: created.prefixed_id, price_list: nil }, as: :json
+
+      expect(response).to have_http_status(:ok)
+      expect(created.reload.price_list).to be_nil
+      expect(Spree::PriceList.find(list_id).catalog_id).to be_nil
+    end
+
+    it 'leaves the list alone when the key is omitted' do
+      post :create, params: { name: 'Tier', price_list: { price_adjustment_percentage: '-10' } }, as: :json
+      created = store.catalogs.find_by(name: 'Tier')
+
+      patch :update, params: { id: created.prefixed_id, name: 'Renamed' }, as: :json
+
+      expect(created.reload.name).to eq('Renamed')
+      expect(created.price_list).to be_present
+    end
+
+    it 'refuses an invalid adjustment without creating the catalog' do
+      expect {
+        post :create,
+             params: { name: 'Bad tier', price_list: { price_adjustment_percentage: '-100' } },
+             as: :json
+      }.not_to change { store.catalogs.count }
+
+      expect(response).to have_http_status(:unprocessable_content)
+    end
+
+    it 'expands the owned list on read' do
+      post :create, params: { name: 'Tier', price_list: { price_adjustment_percentage: '-10' } }, as: :json
+      created = store.catalogs.find_by(name: 'Tier')
+
+      get :show, params: { id: created.prefixed_id, expand: 'price_list' }, as: :json
+
+      expect(json_response['price_list']['price_adjustment_percentage']).to eq('-10.0')
+    end
+  end
+
   describe 'GET #index' do
     it 'lists the store catalogs with product counts' do
       create(:catalog_product, catalog: catalog)
