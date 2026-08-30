@@ -284,6 +284,43 @@ describe Spree::Catalog, type: :model do
       end
     end
 
+    # An unsaved list has no id to bind, so it is saved through its own
+    # lifecycle rather than silently dropped.
+    describe 'an unsaved price list' do
+      it 'is persisted and bound when the catalog is new' do
+        catalog = build(:catalog, store: store)
+        catalog.price_list = build(:price_list, store: store, name: 'Fresh')
+
+        catalog.save!
+
+        expect(catalog.price_list.reload).to be_persisted
+        expect(catalog.price_list.catalog_id).to eq(catalog.id)
+      end
+
+      it 'is persisted and bound on a catalog that already exists' do
+        catalog = create(:catalog, store: store)
+        catalog.price_list = build(:price_list, store: store, name: 'Fresh')
+
+        expect { catalog.save! }.to change { store.price_lists.count }.by(1)
+        expect(catalog.price_list.reload.catalog_id).to eq(catalog.id)
+      end
+    end
+
+    # Releasing is a compare-and-swap: a list another request already re-homed
+    # must not be sent back to standalone matching, where a rule-less list
+    # prices the whole store.
+    it 'does not release a list that another catalog has already claimed' do
+      catalog = create(:catalog, store: store, price_list: price_list)
+      other = create(:catalog, store: store)
+      other.update!(price_list: price_list)
+
+      # `catalog` still believes it owns the list; detaching must be a no-op.
+      catalog.association(:price_list).reset
+      catalog.update!(price_list: nil)
+
+      expect(price_list.reload.catalog_id).to eq(other.id)
+    end
+
     # Rejecting through the catalog's own validation rather than raising
     # RecordNotSaved out of the child's same-store check.
     it 'refuses a foreign-store list as a validation error' do

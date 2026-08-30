@@ -527,8 +527,11 @@ function RulesCard({
   const [editingIndex, setEditingIndex] = useState<number | null>(null)
 
   // Superseded kinds (audience rules, replaced by catalog assignment) stay
-  // renderable for existing rows but are never offered for new ones.
-  const types = (typesData?.data ?? []).filter((tt) => !tt.superseded)
+  // renderable for existing rows but are never offered for new ones. The
+  // picker's empty state reads the unfiltered count, so a registry holding
+  // only superseded kinds says "all used" rather than "none registered".
+  const registeredTypes = typesData?.data ?? []
+  const types = registeredTypes.filter((tt) => !tt.superseded)
   const watchedRules = (form.watch('rules') ?? []) as PriceRuleFormDraft[]
 
   return (
@@ -595,7 +598,7 @@ function RulesCard({
           <RulePickerSheet
             // One rule type per list (backend uniqueness on `type`).
             types={types.filter((tt) => !watchedRules.some((r) => r.type === tt.type))}
-            registeredCount={types.length}
+            registeredCount={registeredTypes.length}
             open
             onOpenChange={(o) => !o && setPickerOpen(false)}
             onPicked={(type) => {

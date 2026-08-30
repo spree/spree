@@ -131,7 +131,7 @@ class CreateSpreeCommissionRates < ActiveRecord::Migration[8.1]
   # MySQL-only too. This expression is the one both accept.
   # One amount per currency per rate, among live rows.
   def add_rate_value_uniqueness_index
-    if mysql?
+    if Spree.mysql?
       reversible do |dir|
         dir.up do
           execute <<~SQL.squish
@@ -155,7 +155,7 @@ class CreateSpreeCommissionRates < ActiveRecord::Migration[8.1]
   end
 
   def add_rule_product_uniqueness_index
-    if mysql?
+    if Spree.mysql?
       reversible do |dir|
         dir.up do
           execute <<~SQL.squish
@@ -181,7 +181,7 @@ class CreateSpreeCommissionRates < ActiveRecord::Migration[8.1]
   # Same per-adapter split as the rate's code index below, and for the same
   # reason: only PostgreSQL and SQLite have partial indexes.
   def add_rule_uniqueness_index
-    if mysql?
+    if Spree.mysql?
       reversible do |dir|
         dir.up do
           execute <<~SQL.squish
@@ -205,7 +205,7 @@ class CreateSpreeCommissionRates < ActiveRecord::Migration[8.1]
   end
 
   def add_code_uniqueness_index
-    if mysql?
+    if Spree.mysql?
       reversible do |dir|
         dir.up do
           execute <<~SQL.squish
@@ -225,9 +225,5 @@ class CreateSpreeCommissionRates < ActiveRecord::Migration[8.1]
       add_index :spree_commission_rates, [:store_id, :code],
                 unique: true, where: 'deleted_at IS NULL', name: INDEX_NAME
     end
-  end
-
-  def mysql?
-    ActiveRecord::Base.connection.adapter_name.match?(/mysql|trilogy/i)
   end
 end

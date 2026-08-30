@@ -39,10 +39,9 @@ module Spree
 
     validates :name, presence: true
     validates :match_policy, presence: true, inclusion: { in: MATCH_POLICIES }
-    # One live list per catalog; soft-deleted lists release the slot. The
-    # partial unique index enforces the same on PostgreSQL and SQLite —
-    # MySQL ignores the +where:+ clause, so there this validation stands
-    # alone and two concurrent attaches can race.
+    # One live list per catalog; soft-deleted lists release the slot. Backed
+    # by a unique index on every adapter — partial on PostgreSQL and SQLite,
+    # over a stored generated column on MySQL/MariaDB.
     validates :catalog_id, uniqueness: { scope: spree_base_uniqueness_scope,
                                          conditions: -> { where(deleted_at: nil) } }, allow_nil: true
     validate :starts_at_before_ends_at

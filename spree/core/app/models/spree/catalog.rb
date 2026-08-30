@@ -241,18 +241,41 @@ module Spree
     def apply_pending_price_list
       return unless defined?(@pending_price_list)
 
-      association(:price_list).reset
-      previous = association(:price_list).load_target
       pending = @pending_price_list
       remove_instance_variable(:@pending_price_list)
 
-      return if previous&.id == pending&.id
+      # An unsaved list is persisted through its own lifecycle — it has no id
+      # to bind yet, and skipping that would silently drop it.
+      if pending && !pending.persisted?
+        pending.catalog_id = id
+        pending.save!
+        finish_price_list_binding
+        return
+      end
 
-      previous&.update_column(:catalog_id, nil)
-      pending&.update_column(:catalog_id, id) if pending
+      # Ownership moves under a row lock, so two concurrent saves cannot
+      # interleave the read of the current binding with the writes. Locking in
+      # id order avoids deadlock, and the binding is re-read once held.
+      association(:price_list).reset
+      lock_ids = [association(:price_list).load_target&.id, pending&.id].compact.uniq.sort
+      Spree::PriceList.where(id: lock_ids).order(:id).lock.load if lock_ids.any?
 
       association(:price_list).reset
-      # update_column skips PriceList's own after_commit, so the request's
+      previous = association(:price_list).load_target
+      return if previous&.id == pending&.id
+
+      # Compare-and-swap on the release: a list another request has already
+      # re-homed must not be sent back to standalone matching, where a
+      # rule-less list prices the whole store.
+      Spree::PriceList.where(id: previous.id, catalog_id: id).update_all(catalog_id: nil) if previous
+      pending&.update_column(:catalog_id, id)
+
+      finish_price_list_binding
+    end
+
+    def finish_price_list_binding
+      association(:price_list).reset
+      # The writes above skip PriceList's own after_commit, so the request's
       # memoized generic-matching set is cleared here instead — a detach must
       # be visible to the rest of this request, not the next one.
       Spree::Current.price_lists = nil
