@@ -304,6 +304,19 @@ describe Spree::Catalog, type: :model do
         expect { catalog.save! }.to change { store.price_lists.count }.by(1)
         expect(catalog.price_list.reload.catalog_id).to eq(catalog.id)
       end
+
+      # The outgoing list has to be released first, or one-live-list-per-
+      # catalog rejects the replacement before it can take over.
+      it 'replaces a list the catalog already owns, releasing the old one' do
+        catalog = create(:catalog, store: store, price_list: price_list)
+
+        catalog.price_list = build(:price_list, store: store, name: 'Replacement')
+        catalog.save!
+
+        expect(price_list.reload.catalog_id).to be_nil
+        expect(catalog.price_list.reload.name).to eq('Replacement')
+        expect(store.price_lists.where(catalog_id: catalog.id).count).to eq(1)
+      end
     end
 
     # Releasing is a compare-and-swap: a list another request already re-homed

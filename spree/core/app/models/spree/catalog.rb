@@ -245,8 +245,11 @@ module Spree
       remove_instance_variable(:@pending_price_list)
 
       # An unsaved list is persisted through its own lifecycle — it has no id
-      # to bind yet, and skipping that would silently drop it.
+      # to bind yet, and skipping that would silently drop it. Any list this
+      # catalog already owns is released first, or the one-live-list-per-
+      # catalog rule rejects the replacement before it can take over.
       if pending && !pending.persisted?
+        release_owned_price_list
         pending.catalog_id = id
         pending.save!
         finish_price_list_binding
@@ -264,13 +267,23 @@ module Spree
       previous = association(:price_list).load_target
       return if previous&.id == pending&.id
 
-      # Compare-and-swap on the release: a list another request has already
-      # re-homed must not be sent back to standalone matching, where a
-      # rule-less list prices the whole store.
-      Spree::PriceList.where(id: previous.id, catalog_id: id).update_all(catalog_id: nil) if previous
+      release_owned_price_list(previous)
       pending&.update_column(:catalog_id, id)
 
       finish_price_list_binding
+    end
+
+    # Compare-and-swap on the release: a list another request has already
+    # re-homed must not be sent back to standalone matching, where a
+    # rule-less list prices the whole store.
+    def release_owned_price_list(previous = nil)
+      previous ||= begin
+        association(:price_list).reset
+        association(:price_list).load_target
+      end
+      return if previous.nil?
+
+      Spree::PriceList.where(id: previous.id, catalog_id: id).update_all(catalog_id: nil)
     end
 
     def finish_price_list_binding
