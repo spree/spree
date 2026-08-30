@@ -1,14 +1,5 @@
 import { expect, type Page, test } from '@playwright/test'
-import {
-  FIXTURE_PROMO_CUSTOMER_EMAIL,
-  FIXTURE_PROMO_CUSTOMER_FIRST_NAME,
-  FIXTURE_PROMO_CUSTOMER_GROUP,
-  FIXTURE_PROMO_PRODUCT,
-  gotoIndex,
-  login,
-  openRowMenu,
-  rowButton,
-} from './helpers'
+import { FIXTURE_PROMO_PRODUCT, gotoIndex, login, openRowMenu, rowButton } from './helpers'
 
 const PRICE_LISTS_PATH = (storeId: string) => `/${storeId}/products/price-lists`
 const PRODUCTS_PATH = (storeId: string) => `/${storeId}/products`
@@ -168,69 +159,27 @@ test.describe('price lists', () => {
     await expect(page.getByText(/volume rule/i).first()).toBeVisible({ timeout: 15_000 })
   })
 
-  test('adds a Customer Group Rule with the seeded group', async ({ page }) => {
+  // The audience rules (customer group / customer) are superseded by catalog
+  // assignment (docs/plans/6.0-catalog-agreement-rework.md). Existing rules
+  // keep working and rendering; the picker stops offering them.
+  test('does not offer the superseded audience rules in the picker', async ({ page }) => {
     const creds = await login(page)
     await gotoIndex(page, PRICE_LISTS_PATH(creds.store_id), CTA)
 
-    const name = `E2E PL CG Rule ${Date.now()}`
+    const name = `E2E PL No Audience Rules ${Date.now()}`
     await startNewPriceList(page, creds.store_id, name)
     await submitCreate(page, name)
 
-    await pickRule(page, /^customer group rule\b/i)
-    await expect(page.getByRole('heading', { name: /^customer group rule$/i })).toBeVisible({
-      timeout: 5_000,
-    })
+    await page.getByRole('button', { name: /^add rule$/i }).click()
+    await expect(page.getByRole('heading', { name: /^add rule$/i })).toBeVisible()
 
-    await pickAutocompleteOption(page, /search customer groups/i, FIXTURE_PROMO_CUSTOMER_GROUP)
-    await saveEditor(page)
-
-    // Row summary renders the group name (proves the API embed shipped the
-    // resolved `customer_groups` array, which the SPA echoes on the draft).
-    await expect(page.getByText(FIXTURE_PROMO_CUSTOMER_GROUP).first()).toBeVisible({
-      timeout: 5_000,
-    })
-
-    await saveForm(page)
-
-    // Reload and verify the chip + preview survive (proves the serializer
-    // embed round-trips on reload, not just during the in-progress edit).
-    await page.reload()
-    await expect(page.getByText(FIXTURE_PROMO_CUSTOMER_GROUP).first()).toBeVisible({
-      timeout: 15_000,
-    })
-  })
-
-  test('adds a Customer Rule with the seeded customer', async ({ page }) => {
-    const creds = await login(page)
-    await gotoIndex(page, PRICE_LISTS_PATH(creds.store_id), CTA)
-
-    const name = `E2E PL Customer Rule ${Date.now()}`
-    await startNewPriceList(page, creds.store_id, name)
-    await submitCreate(page, name)
-
-    // Wire shorthand is `user_rule`; the SPA labels it "Customer rule"
-    // (see `Spree::PriceRules::UserRule.human_name`).
-    await pickRule(page, /^customer rule\b/i)
-    await expect(page.getByRole('heading', { name: /^customer rule$/i })).toBeVisible({
-      timeout: 5_000,
-    })
-
-    // `Spree.user_class.search` matches first_name (LIKE) and email (exact);
-    // we type the first name to drive the search, then assert on the email
-    // string the price-list `RuleSummary` renders.
-    await pickAutocompleteOption(page, /search customers/i, FIXTURE_PROMO_CUSTOMER_FIRST_NAME)
-    await saveEditor(page)
-
-    await expect(page.getByText(FIXTURE_PROMO_CUSTOMER_EMAIL).first()).toBeVisible({
-      timeout: 5_000,
-    })
-
-    await saveForm(page)
-
-    await page.reload()
-    await expect(page.getByText(FIXTURE_PROMO_CUSTOMER_EMAIL).first()).toBeVisible({
-      timeout: 15_000,
-    })
+    const picker = page.getByRole('dialog')
+    // The context rules stay first-class…
+    await expect(picker.getByRole('button', { name: /^volume rule\b/i })).toBeVisible()
+    await expect(picker.getByRole('button', { name: /^market rule\b/i })).toBeVisible()
+    // …the audience rules are gone.
+    await expect(picker.getByRole('button', { name: /^customer group rule\b/i })).toHaveCount(0)
+    await expect(picker.getByRole('button', { name: /^customer rule\b/i })).toHaveCount(0)
   })
 
   test('adds a Market Rule with the seeded default market', async ({ page }) => {

@@ -232,6 +232,12 @@ RSpec.describe Spree::Current do
       expect(described_class.price_lists).not_to include(inactive_price_list)
     end
 
+    it 'excludes catalog-owned price lists — pricing reaches them through the catalog walk' do
+      owned = create(:price_list, :active, store: store, catalog: create(:catalog, store: store))
+
+      expect(described_class.price_lists).not_to include(owned)
+    end
+
     it 'returns price lists ordered by position' do
       expect(described_class.price_lists.to_a).to eq([active_price_list, scheduled_price_list])
     end
@@ -284,25 +290,6 @@ RSpec.describe Spree::Current do
     end
   end
 
-  describe '#catalog_bound_price_list_ids' do
-    let(:store) { @default_store }
-    let!(:price_list) { create(:price_list, :active, store: store) }
-
-    before { described_class.store = store }
-
-    it 'includes price lists claimed by an active catalog' do
-      create(:catalog, store: store, price_list: price_list)
-
-      expect(described_class.catalog_bound_price_list_ids).to include(price_list.id)
-    end
-
-    it 'memoizes the id set' do
-      first = described_class.catalog_bound_price_list_ids
-      second = described_class.catalog_bound_price_list_ids
-      expect(first).to be(second)
-    end
-  end
-
   describe '.reset' do
     let(:store) { create(:store) }
     let(:country) { create(:country) }
@@ -343,14 +330,6 @@ RSpec.describe Spree::Current do
       described_class.reset
 
       expect(described_class.instance_variable_get(:@applicable_catalogs)).to be_nil
-    end
-
-    it 'clears memoized catalog_bound_price_list_ids' do
-      described_class.catalog_bound_price_list_ids
-
-      described_class.reset
-
-      expect(described_class.instance_variable_get(:@catalog_bound_price_list_ids)).to be_nil
     end
 
     it 'clears memoized global_pricing_context' do

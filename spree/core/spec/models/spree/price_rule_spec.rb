@@ -24,4 +24,19 @@ describe Spree::PriceRule, type: :model do
       expect(other).to be_valid
     end
   end
+
+  # Catalog assignment supersedes the audience rules, so pickers stop
+  # offering them — but they are grandfathered, not removed. The context
+  # rules stay unmarked.
+  describe '.subclasses_with_preference_schema' do
+    it 'flags only the superseded audience kinds' do
+      entries = described_class.subclasses_with_preference_schema.index_by { |entry| entry[:type] }
+
+      expect(entries['customer_group_rule'][:superseded]).to be true
+      expect(entries['user_rule'][:superseded]).to be true
+      expect(entries['channel_rule']).not_to have_key(:superseded)
+      expect(entries['market_rule']).not_to have_key(:superseded)
+      expect(entries['volume_rule']).not_to have_key(:superseded)
+    end
+  end
 end

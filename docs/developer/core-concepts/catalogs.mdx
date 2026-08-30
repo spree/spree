@@ -20,10 +20,8 @@ flowchart LR
 erDiagram
     Catalog ||--o{ CatalogProduct : "assortment"
     Catalog ||--o{ CatalogAssignment : "audiences"
-    Catalog }o--o| PriceList : "optional pricing"
-    CatalogAssignment }o--|| Channel : "one of"
+    Catalog ||--o| PriceList : "owns (optional)"
     CatalogAssignment }o--|| CustomerGroup : "one of"
-    CatalogAssignment }o--|| Market : "one of"
     CatalogAssignment }o--|| Company : "one of"
 
     Catalog {
@@ -64,6 +62,8 @@ const catalog = await adminClient.catalogs.create({
 
 The price list is optional. A catalog with an assortment and no price list restricts the range at normal prices; a catalog with a price list and no assortment adjusts prices without hiding anything.
 
+A price list is either **standalone** (matched by its own rules) or **owned by exactly one catalog** — attaching a list a catalog already claims moves it. Detaching (`price_list_id: null`) is an explicit act with a real consequence: a released list starts matching by its own rules again, and a rule-less one matches everyone.
+
 ### Filling the assortment
 
 ```typescript Admin SDK
@@ -75,7 +75,7 @@ const { data: products } = await adminClient.catalogs.products.list(catalog.id)
 await adminClient.catalogs.products.delete(catalog.id, 'prod_xxx')
 ```
 
-Products are positioned, so a catalog also controls the order they're presented in.
+Membership is all a catalog holds — it decides *what* a buyer sees, never the order they see it in. Presentation order stays with categories and collections.
 
 When a catalog should restrict to exactly what its price list covers, there's a shortcut that copies those products in rather than making someone add them by hand:
 
@@ -85,14 +85,14 @@ const { added_count } = await adminClient.catalogs.importProducts(catalog.id)
 
 ## Choosing the audience
 
-A catalog is assigned to one of four things:
+A catalog is assigned to a buyer audience:
 
 | Assign to | Meaning |
 |---|---|
-| **[Channel](/developer/core-concepts/channels)** | Everyone buying through this channel — an app, a retail till |
 | **[Customer group](/developer/core-concepts/customers)** | A segment — wholesale accounts, staff, a loyalty tier |
-| **[Market](/developer/core-concepts/markets)** | Everyone in a region |
 | **[Company](/developer/core-concepts/companies)** | One B2B organization |
+
+A [Channel](/developer/core-concepts/channels) is not assigned — it names its catalog directly via `default_catalog_id`, which applies to everyone buying through it when nothing narrower does.
 
 ```typescript Admin SDK
 await adminClient.catalogs.assign(catalog.id, {
@@ -134,9 +134,9 @@ Prices are checked in order, and the first match wins:
 Nearest-first is what lets a subsidiary hold a better-negotiated rate than the group's, without disturbing anyone else.
 
 <Warning>
-A price list attached to a catalog applies **because the catalog applies** — its own rules are not consulted, and it's excluded from ordinary rule matching.
+A price list owned by a catalog applies **because the catalog applies** — its own rules are not consulted, and it's excluded from ordinary rule matching.
 
-That exclusion is load-bearing: a price list with no rules would otherwise match everyone, and one company's negotiated pricing would leak to the entire storefront.
+That exclusion is load-bearing: a price list with no rules would otherwise match everyone, and one company's negotiated pricing would leak to the entire storefront. It also means a deactivated catalog's list goes **dormant** — turning the catalog off never releases its pricing to the whole store. Only explicitly detaching the list puts it back into rule matching.
 </Warning>
 
 ## Related

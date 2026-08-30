@@ -28,6 +28,16 @@ module Spree
       false
     end
 
+    # Whether a better mechanism has replaced this rule kind. Superseded
+    # kinds are grandfathered — existing rules keep matching indefinitely —
+    # but they are flagged in types discovery so pickers stop offering them
+    # to new setups (docs/plans/6.0-catalog-agreement-rework.md).
+    #
+    # @return [Boolean]
+    def self.superseded?
+      false
+    end
+
     # Returns the human name of the price rule
     # @return [String]
     def self.human_name

@@ -1895,6 +1895,12 @@ export interface ResourceTypeDefinition {
   label: string
   description: string | null
   preference_schema: PreferenceField[]
+  /**
+   * Present (true) only on kinds a better mechanism has replaced: existing
+   * records keep working and rendering, but pickers must stop offering the
+   * kind to new setups.
+   */
+  superseded?: boolean
 }
 
 // ---------------------------------------------------------------------------

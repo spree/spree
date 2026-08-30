@@ -71,8 +71,10 @@ class Spree::Base < ApplicationRecord
     true
   end
 
+  # @see Spree.mysql? — the single definition; this reads it so a model can
+  #   branch without reaching for the connection itself.
   def mysql_adapter?
-    ActiveRecord::Base.connection.adapter_name.downcase.include?('mysql')
+    Spree.mysql?
   end
 
   def self.json_api_columns

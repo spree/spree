@@ -162,7 +162,7 @@ module Spree
       end
 
       def mysql?
-        ActiveRecord::Base.connection.adapter_name == 'Mysql2'
+        Spree.mysql?
       end
 
       # MySQL-only path: NULLs are distinct in unique indexes, so

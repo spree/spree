@@ -149,7 +149,7 @@ const priceList = await client.priceLists.create({
   name: 'EU wholesale',
   match_policy: 'all',
   rules: [
-    { type: 'customer_group_rule', preferences: { customer_group_ids: ['cg_xxx'] } },
+    { type: 'market_rule', preferences: { market_ids: ['mkt_xxx'] } },
   ],
   prices: [
     { variant_id: 'variant_xxx', currency: 'EUR', amount: '19.99' },
@@ -173,15 +173,19 @@ spree api patch /price_lists/pl_xxx/activate
 
 ## Price Rules
 
-Price Rules define conditions that must be met for a Price List to apply. Spree includes five built-in rule types:
+Price Rules define conditions that must be met for a Price List to apply. Rules describe the *context* of a purchase — where, through what, how much:
 
 | Rule | Description | Use Case |
 |------|-------------|----------|
 | **Market Rule** | Matches based on the current [Market](/developer/core-concepts/markets) | Regional pricing across markets |
 | **Channel Rule** | Matches based on the [Channel](/developer/core-concepts/channels) the customer is buying through | App-only or in-store pricing |
-| **User Rule** | Matches specific customer accounts | VIP customers, wholesale accounts |
-| **Customer Group Rule** | Matches members of customer groups | Loyalty tiers, membership pricing |
 | **Volume Rule** | Matches based on quantity purchased | Bulk discounts, tiered pricing |
+
+*Who* gets a price list is not a rule — it's a [Catalog](/developer/core-concepts/catalogs): attach the list to a catalog assigned to the customer groups or companies it's for.
+
+<Note>
+The **User Rule** and **Customer Group Rule** kinds still work and are not going away, but they're no longer offered when adding a rule — targeting an audience through a catalog is the one way to do it now. Nothing needs migrating; rules you already have keep matching exactly as before.
+</Note>
 
 ### Market Rule
 
@@ -191,15 +195,7 @@ Regional pricing. Applies the Price List when the customer is in one of the spec
 
 ### Channel Rule
 
-Applies when the customer is buying through a particular sales channel — a discount that exists only in the mobile app, or a price that only applies at a retail till.
-
-### User Rule
-
-Limits the Price List to specific customer accounts. Useful for VIP customers, employee pricing, or wholesale accounts.
-
-### Customer Group Rule
-
-Applies to members of specific customer groups. Useful for wholesale tiers, loyalty programs, or membership-based pricing.
+Applies when the customer is buying through a particular sales channel — a discount that exists only in the mobile app, or a price that only applies at a retail till. For new setups, prefer giving the channel a default [Catalog](/developer/core-concepts/catalogs) that owns the price list — that is where channel-wide commercial terms live going forward.
 
 ### Volume Rule
 
@@ -224,7 +220,7 @@ When resolving prices, Spree considers the full context of the request:
 | Currency | Market or request header | The currency to price in |
 | Market | Customer's country | The [Market](/developer/core-concepts/markets) for market-based rules |
 | Channel | The API credential in use | The [Channel](/developer/core-concepts/channels) for channel-based rules |
-| Customer | Authentication | The signed-in customer for user-based rules |
+| Customer | Authentication | The signed-in customer, for resolving their [Catalogs](/developer/core-concepts/catalogs) |
 | Quantity | Cart line item | The quantity for volume-based rules |
 | Date | Current time | For time-based Price List scheduling |
 

@@ -40,6 +40,19 @@ module Spree
                  :cdn_host, :root_domain, :events_adapter_class, :queues,
                  :google_places_api_key
 
+  # Whether the connected database is MySQL or a MySQL-compatible server.
+  # The single definition every adapter branch reads — models, services and
+  # migrations alike — so a new adapter name is added in one place.
+  #
+  # Matches Trilogy and MariaDB as well as Mysql2: they share the behaviors
+  # Spree branches on (no partial indexes, `upsert_all` inferring its own
+  # conflict target, NULLs distinct in unique indexes).
+  #
+  # @return [Boolean]
+  def self.mysql?
+    ActiveRecord::Base.connection.adapter_name.match?(/mysql|trilogy/i)
+  end
+
   def self.base_class(constantize: true)
     @@base_class ||= 'Spree::Base'
     if @@base_class.is_a?(Class)

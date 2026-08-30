@@ -12,6 +12,47 @@ describe Spree::PriceList, type: :model do
     end
   end
 
+  # The catalog binding: nil = standalone (rule-matched), set = owned by
+  # exactly one catalog and reached only through it
+  # (docs/plans/6.0-catalog-agreement-rework.md).
+  describe 'catalog ownership' do
+    let(:store) { @default_store }
+    let(:catalog) { create(:catalog, store: store) }
+
+    it 'allows one live list per catalog, releasing the slot on soft delete' do
+      owned = create(:price_list, store: store, catalog: catalog)
+
+      expect(build(:price_list, store: store, catalog: catalog)).not_to be_valid
+
+      owned.destroy
+      expect(build(:price_list, store: store, catalog: catalog)).to be_valid
+    end
+
+    it 'refuses a catalog from another store' do
+      foreign_catalog = create(:catalog, store: create(:store))
+
+      expect(build(:price_list, store: store, catalog: foreign_catalog)).not_to be_valid
+    end
+
+    it 'scopes standalone lists to the ones without an owner' do
+      standalone = create(:price_list, store: store)
+      owned = create(:price_list, store: store, catalog: catalog)
+
+      expect(described_class.standalone).to include(standalone)
+      expect(described_class.standalone).not_to include(owned)
+    end
+
+    it 'keeps an owned list out of .for_context whatever the owning catalog status' do
+      owned = create(:price_list, :active, store: store, catalog: catalog)
+      context = Spree::Pricing::Context.new(store: store, currency: 'USD')
+
+      expect(described_class.for_context(context)).not_to include(owned)
+
+      catalog.update!(active: false)
+      expect(described_class.for_context(context)).not_to include(owned)
+    end
+  end
+
   describe 'status' do
     let(:price_list) { create(:price_list) }
 

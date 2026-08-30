@@ -1,5 +1,10 @@
 module Spree
   module PriceRules
+    # Superseded by catalog assignment, and grandfathered: existing rules
+    # keep matching indefinitely, but new setups target a buyer by assigning
+    # them a catalog that owns the price list
+    # (docs/plans/6.0-catalog-agreement-rework.md). Hidden from the rule
+    # picker; nothing new builds on it.
     class UserRule < Spree::PriceRule
       # Stored as raw IDs. Accepts prefixed IDs (the user class's prefix,
       # e.g. `usr_…`) from API callers and decodes them on write. Resolves
@@ -32,6 +37,10 @@ module Spree
       # but every UI surface reads "Customer rule".
       def self.human_name
         'Customer rule'
+      end
+
+      def self.superseded?
+        true
       end
     end
   end

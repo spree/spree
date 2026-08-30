@@ -4411,3 +4411,42 @@ standard deprecation bridges; decided when inventory-operations is groomed.
 Further optional trims, in order, if 6.0 needs more relief: the one-go
 catalog wizard polish, the wholesale storefront surfaces, automatic pricing
 (last resort — the catalog wizard's ±% option wants it).
+
+## 2026-08-30 — Audience price rules are grandfathered, not deprecated: no bridge, no data task
+
+Revises, later the same day, the retirement clause of the
+one-question-per-entity entry above. That entry deprecated
+`PriceRules::CustomerGroupRule` and `PriceRules::UserRule` in 6.0 with a
+one-release bridge and a data task
+(`spree:upgrade:migrate_audience_price_rules_to_catalogs`) converting each
+audience-targeted list into an assortment-less catalog assigned to that
+audience. Both were built, then removed on review.
+
+**Decision:** the two audience rules are **grandfathered on exactly the terms
+`PriceRules::ChannelRule` already had** — they keep matching indefinitely,
+carry no removal date and no creation warning, and there is no upgrade step.
+The only change that ships is a discovery-level flag: `superseded?` on the
+rule class surfaces as `superseded: true` in
+`subclasses_with_preference_schema` (present only when true, so rule families
+without the concept keep their wire shape byte-identical), and the dashboard
+rule picker filters those kinds out. Existing rules render, edit and match
+unchanged.
+
+The reasoning is that the data task only ever existed to service the removal.
+Once the classes simply keep working, converting is churn a merchant gains
+nothing from — and an automatic remap of *who gets which price* is exactly the
+class of change that is expensive to get wrong and invisible when it is. The
+doctrine goal was never to delete rows; it was to stop offering two mechanisms
+for one question, which hiding the kinds achieves on its own. It also removes
+the awkward middle state where a store that upgraded but never ran the task was
+one release away from silently losing its audience pricing.
+
+Accepted trade-off: two mechanisms for audience targeting remain in the
+codebase permanently, with the precedence the resolver already defines
+(catalog-owned lists first, then rule-matched lists). New work builds only on
+catalog assignment.
+
+Nothing else in the one-question-per-entity entry changes: the binding
+inversion, the leak fix, and the catalog-first dashboard direction all stand.
+Plans amended: `6.0-catalog-agreement-rework.md` (Key Decisions + phase 3),
+`6.0-b2b-companies-and-catalogs.md` (amendment block).
