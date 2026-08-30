@@ -323,6 +323,26 @@ describe Spree::Catalog, type: :model do
       expect(Spree::PriceList.where(id: price_list.id).pick(:catalog_id)).to be_nil
     end
 
+    # The list is saved inside the catalog's own save, so its problems have
+    # to surface as catalog errors — a bare `false` tells the merchant
+    # nothing about what went wrong.
+    it 'reports why an invalid new list was rejected' do
+      catalog = create(:catalog, store: store)
+      catalog.price_list = Spree::PriceList.new(store: store) # no name
+
+      expect(catalog.save).to be false
+      expect(catalog.errors[:price_list]).to be_present
+    end
+
+    # The binding is written straight to the row, which skips the `touch`
+    # on the child's belongs_to — so the largest change to a catalog's
+    # pricing would otherwise leave its cache key untouched.
+    it 'bumps the catalog timestamp when its pricing changes' do
+      catalog = create(:catalog, store: store)
+
+      expect { catalog.update!(price_list: price_list) }.to change { catalog.reload.updated_at }
+    end
+
     describe 'the price_list_id writer' do
       it 'records an unknown id as invalid rather than raising' do
         catalog = create(:catalog, store: store)

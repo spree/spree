@@ -40,6 +40,7 @@ module Spree
     validate :price_list_in_same_store
     validate :price_list_must_be_resolvable
     validate :price_list_not_owned_elsewhere
+    validate :pending_price_list_is_valid
 
     # The binding is applied inside the save, never on assignment: writing a
     # has_one on a persisted record updates the child immediately, so a
@@ -258,6 +259,17 @@ module Spree
       errors.add(:price_list, :invalid)
     end
 
+    # An unsaved list is saved inside this record's own save, so its problems
+    # have to surface here — otherwise the save just returns false with no
+    # message and the merchant is told nothing.
+    def pending_price_list_is_valid
+      return if price_list.nil? || price_list.persisted? || price_list.valid?
+
+      price_list.errors.each do |error|
+        errors.add(:price_list, error.message)
+      end
+    end
+
     # An id that resolved to nothing in this store is an error, not a silent
     # detach — otherwise a typo reads as "remove the pricing".
     def price_list_must_be_resolvable
@@ -295,10 +307,20 @@ module Spree
       # to bind yet, and skipping that would silently drop it. Any list this
       # catalog already owns is released first, or the one-live-list-per-
       # catalog rule rejects the replacement before it can take over.
+      #
+      # `save` rather than `save!`: two concurrent creates both see no owner
+      # and both insert, and the unique index rejects the loser. That is a
+      # lost race, not a server error, so it fails the save with a message
+      # the same way a visible conflict does.
       if pending && !pending.persisted?
         release_owned_price_list
         pending.catalog_id = id
-        pending.save!
+
+        unless save_pending_list(pending)
+          raise ActiveRecord::RecordNotUnique,
+                "catalog #{id} was given a price list by another request"
+        end
+
         finish_price_list_binding
         return
       end
@@ -332,6 +354,15 @@ module Spree
       finish_price_list_binding
     end
 
+    # Saves the new list, treating a lost race for this catalog's single
+    # live-list slot as a failure rather than an exception: the DB unique
+    # index is what decides, since two concurrent creates each see no owner.
+    def save_pending_list(price_list)
+      price_list.save
+    rescue ActiveRecord::RecordNotUnique
+      false
+    end
+
     # Compare-and-swap on the release: a list another request has already
     # re-homed must not be sent back to standalone matching, where a
     # rule-less list prices the whole store.
@@ -357,9 +388,13 @@ module Spree
 
     def finish_price_list_binding
       association(:price_list).reset
-      # The writes above skip PriceList's own after_commit, so the request's
-      # memoized generic-matching set is cleared here instead — a detach must
-      # be visible to the rest of this request, not the next one.
+      # The writes above skip PriceList's own callbacks, so the two things
+      # they would have done happen here instead: the `touch: true` on the
+      # child's belongs_to, without which the largest possible change to a
+      # catalog's pricing leaves its cache key untouched…
+      touch if persisted?
+      # …and clearing the request's memoized generic-matching set, so a
+      # removal is visible to the rest of this request, not the next one.
       Spree::Current.price_lists = nil
     end
   end
