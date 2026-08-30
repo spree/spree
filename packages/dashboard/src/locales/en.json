@@ -1417,6 +1417,18 @@
         "label": "Postal code"
       },
       "price_list": {
+        "adjust_compare_at": {
+          "help": "Derive the compare-at price from the base compare-at by the same percentage.",
+          "label": "Also adjust compare-at prices"
+        },
+        "adjustment_direction": {
+          "decrease": "decrease",
+          "increase": "increase",
+          "label": "Direction"
+        },
+        "adjustment_magnitude": {
+          "label": "Percentage"
+        },
         "description": {
           "label": "Description",
           "placeholder": "Optional internal description"
@@ -1435,6 +1447,11 @@
           "help": "Internal label — never shown to customers.",
           "label": "Name",
           "placeholder": "e.g. EU wholesale"
+        },
+        "pricing_mode": {
+          "automatic": "A percentage off base prices",
+          "fixed": "Only the prices I enter",
+          "label": "Pricing"
         },
         "starts_at": {
           "help": "When this list becomes active. Leave blank to start immediately on activation.",
@@ -3048,6 +3065,8 @@
           },
           "edit_prices_cta": "Edit prices",
           "no_changes": "No changes to save.",
+          "pricing_help": "How this list produces prices. Prices you enter yourself always win.",
+          "pricing_section": "Pricing",
           "products": {
             "add_cta": "Add products",
             "column_product": "Product",
@@ -3747,6 +3766,8 @@
           "updated": "Price list updated"
         },
         "validation": {
+          "adjustment_required": "Enter a percentage.",
+          "adjustment_too_deep": "Must be less than 100%.",
           "ends_after_starts": "Must be after start date."
         }
       },

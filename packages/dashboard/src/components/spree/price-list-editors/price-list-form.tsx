@@ -64,6 +64,7 @@ import {
   SheetDescription,
   SheetHeader,
   SheetTitle,
+  Switch,
   Textarea,
 } from '@spree/dashboard-ui'
 import {
@@ -75,8 +76,11 @@ import {
   useRemovePriceListProducts,
 } from '../../../hooks/use-price-lists'
 import {
+  ADJUSTMENT_DIRECTIONS,
+  adjustmentFormValues,
   MATCH_POLICIES,
   PRICE_LIST_DEFAULTS,
+  PRICING_MODES,
   type PriceListFormValues,
   type PriceRuleFormDraft,
   priceListFormSchema,
@@ -153,6 +157,8 @@ export function PriceListForm({
       starts_at: priceList.starts_at,
       ends_at: priceList.ends_at,
       match_policy: (priceList.match_policy as 'all' | 'any') ?? 'all',
+      ...adjustmentFormValues(priceList.price_adjustment_percentage),
+      adjust_compare_at: priceList.adjust_compare_at ?? false,
       rules: initialRules.map(ruleDraftFromRule),
       staged_products: { adds: [], removes: [] },
     })
@@ -259,6 +265,7 @@ export function PriceListForm({
                   {form.formState.errors.root.message}
                 </p>
               )}
+              <PricingCard form={form} />
               <RulesCard form={form} rulesArray={rulesArray} />
               {mode === 'edit' && priceList && (
                 <DeferredProductMembershipCard
@@ -287,6 +294,141 @@ export function PriceListForm({
         />
       </form>
     </ProductMembershipStagingProvider>
+  )
+}
+
+// =============================================================================
+// Main column — Pricing
+// =============================================================================
+
+/**
+ * How the list produces prices: only what it holds rows for, or derived from
+ * base prices by a percentage. The percentage is stored signed, but edited
+ * as magnitude + direction because that is how a merchant states it.
+ */
+function PricingCard({ form }: { form: UseFormReturn<PriceListFormValues> }) {
+  const { t } = useTranslation()
+  const { errors } = form.formState
+  const mode = form.watch('pricing_mode')
+
+  const modeItems = PRICING_MODES.map((value) => ({
+    value,
+    label: t(`admin.fields.price_list.pricing_mode.${value}`),
+  }))
+  const directionItems = ADJUSTMENT_DIRECTIONS.map((value) => ({
+    value,
+    label: t(`admin.fields.price_list.adjustment_direction.${value}`),
+  }))
+
+  return (
+    <Card>
+      <CardHeader>
+        <CardTitle>{t('admin.pages.products.price_lists.pricing_section')}</CardTitle>
+        <p className="text-sm text-muted-foreground">
+          {t('admin.pages.products.price_lists.pricing_help')}
+        </p>
+      </CardHeader>
+      <CardContent>
+        <FieldGroup>
+          <Field>
+            <FieldLabel htmlFor="pricing_mode">
+              {t('admin.fields.price_list.pricing_mode.label')}
+            </FieldLabel>
+            <Controller
+              name="pricing_mode"
+              control={form.control}
+              render={({ field }) => (
+                <Select
+                  items={modeItems as never}
+                  value={field.value}
+                  onValueChange={field.onChange}
+                >
+                  <SelectTrigger id="pricing_mode">
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {modeItems.map((option) => (
+                      <SelectItem key={option.value} value={option.value}>
+                        {option.label}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              )}
+            />
+          </Field>
+
+          {mode === 'automatic' && (
+            <>
+              <div className="flex items-end gap-2">
+                <Field className="w-32">
+                  <FieldLabel htmlFor="adjustment_magnitude">
+                    {t('admin.fields.price_list.adjustment_magnitude.label')}
+                  </FieldLabel>
+                  <Input
+                    id="adjustment_magnitude"
+                    inputMode="decimal"
+                    placeholder="15"
+                    aria-invalid={!!errors.adjustment_magnitude || undefined}
+                    {...form.register('adjustment_magnitude')}
+                  />
+                </Field>
+                <Field className="flex-1">
+                  <FieldLabel htmlFor="adjustment_direction" className="sr-only">
+                    {t('admin.fields.price_list.adjustment_direction.label')}
+                  </FieldLabel>
+                  <Controller
+                    name="adjustment_direction"
+                    control={form.control}
+                    render={({ field }) => (
+                      <Select
+                        items={directionItems as never}
+                        value={field.value}
+                        onValueChange={field.onChange}
+                      >
+                        <SelectTrigger id="adjustment_direction">
+                          <SelectValue />
+                        </SelectTrigger>
+                        <SelectContent>
+                          {directionItems.map((option) => (
+                            <SelectItem key={option.value} value={option.value}>
+                              {option.label}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                    )}
+                  />
+                </Field>
+              </div>
+              <FieldError errors={[errors.adjustment_magnitude]} />
+
+              <Field orientation="horizontal">
+                <Controller
+                  name="adjust_compare_at"
+                  control={form.control}
+                  render={({ field }) => (
+                    <Switch
+                      id="adjust_compare_at"
+                      checked={field.value}
+                      onCheckedChange={field.onChange}
+                    />
+                  )}
+                />
+                <div>
+                  <FieldLabel htmlFor="adjust_compare_at">
+                    {t('admin.fields.price_list.adjust_compare_at.label')}
+                  </FieldLabel>
+                  <p className="text-xs text-muted-foreground">
+                    {t('admin.fields.price_list.adjust_compare_at.help')}
+                  </p>
+                </div>
+              </Field>
+            </>
+          )}
+        </FieldGroup>
+      </CardContent>
+    </Card>
   )
 }
 

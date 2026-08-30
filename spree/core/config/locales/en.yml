@@ -255,6 +255,10 @@ en:
               values_should_be_percent: Tier values should all be percentages between 0% and 100%
             preferred_tiers:
               should_be_hash: should be a hash
+        spree/catalog:
+          attributes:
+            price_list:
+              owned_by_another_catalog: is already used by another catalog. Detach it there first.
         spree/category:
           attributes:
             parent:

@@ -36,6 +36,8 @@ module Spree
 
     validates :name, presence: true
     validate :price_list_in_same_store
+    validate :price_list_must_be_resolvable
+    validate :price_list_not_owned_elsewhere
 
     # The binding is applied inside the save, never on assignment: writing a
     # has_one on a persisted record updates the child immediately, so a
@@ -47,8 +49,15 @@ module Spree
     after_save :apply_pending_price_list
 
     # Request-scoped catalog memoization must not keep a set that a write
-    # in the same request has already superseded.
-    after_commit -> { Spree::Current.applicable_catalogs = nil }
+    # in the same request has already superseded. Destroying a catalog also
+    # releases its list through `dependent: :nullify`, which is an
+    # `update_all` and so never runs PriceList's own callback — without this
+    # the released list stays missing from the request's matching set, and
+    # anything priced later in that request misses it.
+    after_commit -> {
+      Spree::Current.applicable_catalogs = nil
+      Spree::Current.price_lists = nil
+    }
 
     scope :active, -> { where(active: true) }
     scope :by_position, -> { order(position: :asc) }
@@ -143,15 +152,27 @@ module Spree
 
     # Attaches the given list as this catalog's owned list (raw id), or
     # detaches with nil — releasing the list back to standalone matching.
-    # A list already owned elsewhere is re-homed to this catalog.
     #
     # Records the intent only; {#apply_pending_price_list} performs the write
-    # inside the save, so a record that fails validation changes nothing.
+    # inside the save, so a record that fails validation changes nothing. An
+    # unknown id is recorded as invalid rather than raised, so a bad payload
+    # becomes a validation error rather than an exception out of
+    # +assign_attributes+.
     #
     # @param value [Integer, String, nil] raw price list PK
     # @return [void]
     def price_list_id=(value)
-      @pending_price_list = value.presence && Spree::PriceList.find(value)
+      if value.blank?
+        @pending_price_list = nil
+        remove_instance_variable(:@pending_price_list_id) if defined?(@pending_price_list_id)
+        return
+      end
+
+      # Scoped to this store's lists: an id from another tenant must not be
+      # reachable here, whatever the caller. Missing resolves to nil and is
+      # rejected by #price_list_must_be_resolvable.
+      @pending_price_list_id = value
+      @pending_price_list = (store || Spree::Current.store)&.price_lists&.find_by(id: value)
     end
 
     # Assigning the association directly goes through the same deferral, so
@@ -235,6 +256,30 @@ module Spree
       errors.add(:price_list, :invalid)
     end
 
+    # An id that resolved to nothing in this store is an error, not a silent
+    # detach — otherwise a typo reads as "remove the pricing".
+    def price_list_must_be_resolvable
+      return unless defined?(@pending_price_list_id)
+      return if @pending_price_list_id.blank? || @pending_price_list.present?
+
+      errors.add(:price_list, :invalid)
+    end
+
+    # A list belongs to exactly one catalog, so claiming one another catalog
+    # already owns would silently un-price that catalog. Moving a list is a
+    # detach on the current owner followed by an attach here — two deliberate
+    # acts, not a side effect of picking a familiar name.
+    def price_list_not_owned_elsewhere
+      return if price_list.nil? || !price_list.persisted?
+
+      # Read the stored owner rather than the in-memory one: the caller may
+      # hold a copy loaded before another catalog claimed it.
+      owner_id = Spree::PriceList.where(id: price_list.id).pick(:catalog_id)
+      return if owner_id.nil? || owner_id == id
+
+      errors.add(:price_list, :owned_by_another_catalog)
+    end
+
     # Applies the deferred binding inside the save transaction: the newly
     # claimed list points here, and a list this catalog is giving up is
     # released. Written through the child, since the FK lives on the list.
@@ -245,32 +290,67 @@ module Spree
       remove_instance_variable(:@pending_price_list)
 
       # An unsaved list is persisted through its own lifecycle — it has no id
-      # to bind yet, and skipping that would silently drop it.
+      # to bind yet, and skipping that would silently drop it. Any list this
+      # catalog already owns is released first, or the one-live-list-per-
+      # catalog rule rejects the replacement before it can take over.
       if pending && !pending.persisted?
+        release_owned_price_list
         pending.catalog_id = id
         pending.save!
         finish_price_list_binding
         return
       end
 
-      # Ownership moves under a row lock, so two concurrent saves cannot
-      # interleave the read of the current binding with the writes. Locking in
-      # id order avoids deadlock, and the binding is re-read once held.
-      association(:price_list).reset
-      lock_ids = [association(:price_list).load_target&.id, pending&.id].compact.uniq.sort
-      Spree::PriceList.where(id: lock_ids).order(:id).lock.load if lock_ids.any?
-
       association(:price_list).reset
       previous = association(:price_list).load_target
       return if previous&.id == pending&.id
 
-      # Compare-and-swap on the release: a list another request has already
-      # re-homed must not be sent back to standalone matching, where a
-      # rule-less list prices the whole store.
-      Spree::PriceList.where(id: previous.id, catalog_id: id).update_all(catalog_id: nil) if previous
-      pending&.update_column(:catalog_id, id)
+      release_owned_price_list(previous)
+
+      if pending
+        # Compare-and-swap on the claim: only an unowned list is taken. The
+        # validation already refuses a list whose owner is visible, so this
+        # only fires when a concurrent request claimed it in between — the
+        # write raises and rolls the transaction back rather than silently
+        # un-pricing the catalog that won.
+        claimed = Spree::PriceList.where(id: pending.id, catalog_id: nil).update_all(catalog_id: id)
+
+        if claimed.zero?
+          raise ActiveRecord::RecordNotUnique,
+                "price list #{pending.id} was claimed by another catalog"
+        end
+
+        # The conditional UPDATE bypasses the instance, so tell the caller's
+        # copy what was written — otherwise it still reads catalog_id as nil
+        # and a later `price_list.catalog = nil` looks like a no-op and
+        # silently fails to detach.
+        sync_written_catalog_id(pending, id)
+      end
 
       finish_price_list_binding
+    end
+
+    # Compare-and-swap on the release: a list another request has already
+    # re-homed must not be sent back to standalone matching, where a
+    # rule-less list prices the whole store.
+    def release_owned_price_list(previous = nil)
+      previous ||= begin
+        association(:price_list).reset
+        association(:price_list).load_target
+      end
+      return if previous.nil?
+
+      released = Spree::PriceList.where(id: previous.id, catalog_id: id).update_all(catalog_id: nil)
+      sync_written_catalog_id(previous, nil) if released.positive?
+    end
+
+    # Reflects an `update_all` back onto the in-memory record, so the copy a
+    # caller holds agrees with the row and stays clean rather than dirty.
+    def sync_written_catalog_id(price_list, catalog_id)
+      return if price_list.catalog_id == catalog_id
+
+      price_list.catalog_id = catalog_id
+      price_list.send(:clear_attribute_changes, [:catalog_id])
     end
 
     def finish_price_list_binding

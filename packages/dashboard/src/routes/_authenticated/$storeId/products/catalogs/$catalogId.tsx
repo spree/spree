@@ -249,7 +249,17 @@ function CatalogSettingsCard({
               render={({ field }) => (
                 <ResourceCombobox<PriceList>
                   queryKey="catalog-price-lists"
-                  search={(q) => adminClient.priceLists.list({ name_cont: q, limit: 10 })}
+                  // Only lists that are actually available: unowned ones,
+                  // plus the one this catalog already holds. A list another
+                  // catalog owns is refused server-side, so offering it
+                  // would only produce a confusing error.
+                  search={(q) =>
+                    adminClient.priceLists.list({
+                      name_cont: q,
+                      catalog_id_null: true,
+                      limit: 10,
+                    })
+                  }
                   hydrate={(ids) => adminClient.priceLists.list({ id_in: ids, limit: ids.length })}
                   getOptionLabel={(list) => list.name}
                   placeholder={t('admin.fields.catalog.price_list.placeholder')}

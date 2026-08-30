@@ -14,6 +14,22 @@ export const MATCH_POLICIES = ['all', 'any'] as const
 export type MatchPolicy = (typeof MATCH_POLICIES)[number]
 
 /**
+ * How a list produces prices. `fixed` prices only what it holds explicit
+ * rows for — every list that existed before automatic pricing. `automatic`
+ * derives from base prices by a percentage, with explicit rows still
+ * winning per variant.
+ */
+export const PRICING_MODES = ['fixed', 'automatic'] as const
+export type PricingMode = (typeof PRICING_MODES)[number]
+
+/**
+ * Stored signed (negative = discount), but edited as magnitude + direction:
+ * a merchant thinks "15% off", not "-15".
+ */
+export const ADJUSTMENT_DIRECTIONS = ['decrease', 'increase'] as const
+export type AdjustmentDirection = (typeof ADJUSTMENT_DIRECTIONS)[number]
+
+/**
  * Form-state row for a price rule. Carries the editor's display fields
  * (`label`, `description`, `preference_schema`) alongside the payload
  * fields the API consumes (`type`, `preferences`, optional `id`). Closely
@@ -85,6 +101,14 @@ export const priceListFormSchema = z
     starts_at: z.string().optional().nullable(),
     ends_at: z.string().optional().nullable(),
     match_policy: z.enum(MATCH_POLICIES).default('all'),
+    /**
+     * Split across three fields for editing, recombined into the single
+     * signed `price_adjustment_percentage` by `priceListValuesToParams`.
+     */
+    pricing_mode: z.enum(PRICING_MODES).default('fixed'),
+    adjustment_direction: z.enum(ADJUSTMENT_DIRECTIONS).default('decrease'),
+    adjustment_magnitude: z.string().trim().optional(),
+    adjust_compare_at: z.boolean().default(false),
     rules: z.array(priceRuleDraftSchema).default([]),
     /**
      * Staged product membership, applied on Save through the nested products
@@ -105,6 +129,33 @@ export const priceListFormSchema = z
       error: () => i18n.t('admin.products.price_lists.validation.ends_after_starts'),
     },
   )
+  .refine(
+    (v) => v.pricing_mode !== 'automatic' || parsePercentage(v.adjustment_magnitude) !== null,
+    {
+      path: ['adjustment_magnitude'],
+      error: () => i18n.t('admin.products.price_lists.validation.adjustment_required'),
+    },
+  )
+  .refine(
+    (v) => {
+      if (v.pricing_mode !== 'automatic' || v.adjustment_direction !== 'decrease') return true
+      const magnitude = parsePercentage(v.adjustment_magnitude)
+      // A 100% discount is free, and deeper is negative money. The server
+      // enforces the same bound on the signed value.
+      return magnitude === null || magnitude < 100
+    },
+    {
+      path: ['adjustment_magnitude'],
+      error: () => i18n.t('admin.products.price_lists.validation.adjustment_too_deep'),
+    },
+  )
+
+/** A positive percentage, or null when absent or unparseable. */
+function parsePercentage(value: string | undefined): number | null {
+  if (!value?.trim()) return null
+  const parsed = Number(value)
+  return Number.isFinite(parsed) && parsed > 0 ? parsed : null
+}
 
 export type PriceListFormValues = z.infer<typeof priceListFormSchema>
 
@@ -114,6 +165,10 @@ export const PRICE_LIST_DEFAULTS: PriceListFormValues = {
   starts_at: null,
   ends_at: null,
   match_policy: 'all',
+  pricing_mode: 'fixed',
+  adjustment_direction: 'decrease',
+  adjustment_magnitude: '',
+  adjust_compare_at: false,
   rules: [],
   staged_products: { adds: [], removes: [] },
 }
@@ -127,7 +182,46 @@ export function priceListValuesToParams(
     starts_at: v.starts_at || null,
     ends_at: v.ends_at || null,
     match_policy: v.match_policy,
+    ...adjustmentParams(v),
     rules: v.rules.map(ruleDraftToPayload),
+  }
+}
+
+/**
+ * Recombines the edited magnitude and direction into the signed percentage
+ * the API stores. A fixed list sends an explicit null, which is what clears
+ * an adjustment a list previously carried.
+ */
+function adjustmentParams(v: PriceListFormValues) {
+  if (v.pricing_mode !== 'automatic') {
+    return { price_adjustment_percentage: null, adjust_compare_at: false }
+  }
+
+  const magnitude = parsePercentage(v.adjustment_magnitude)
+  if (magnitude === null) return { adjust_compare_at: v.adjust_compare_at }
+
+  const signed = v.adjustment_direction === 'decrease' ? -magnitude : magnitude
+  return {
+    price_adjustment_percentage: String(signed),
+    adjust_compare_at: v.adjust_compare_at,
+  }
+}
+
+/** Splits the stored signed percentage back into the edited pair. */
+export function adjustmentFormValues(percentage: string | null | undefined): {
+  pricing_mode: PricingMode
+  adjustment_direction: AdjustmentDirection
+  adjustment_magnitude: string
+} {
+  const parsed = percentage == null || percentage === '' ? null : Number(percentage)
+  if (parsed === null || !Number.isFinite(parsed)) {
+    return { pricing_mode: 'fixed', adjustment_direction: 'decrease', adjustment_magnitude: '' }
+  }
+
+  return {
+    pricing_mode: 'automatic',
+    adjustment_direction: parsed < 0 ? 'decrease' : 'increase',
+    adjustment_magnitude: String(Math.abs(parsed)),
   }
 }
 

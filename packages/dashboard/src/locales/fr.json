@@ -1417,6 +1417,18 @@
         "label": "Code postal"
       },
       "price_list": {
+        "adjust_compare_at": {
+          "help": "Déduire le prix barré du prix barré de base avec le même pourcentage.",
+          "label": "Ajuster aussi les prix barrés"
+        },
+        "adjustment_direction": {
+          "decrease": "diminution",
+          "increase": "augmentation",
+          "label": "Sens"
+        },
+        "adjustment_magnitude": {
+          "label": "Pourcentage"
+        },
         "description": {
           "label": "Description",
           "placeholder": "Description interne facultative"
@@ -1435,6 +1447,11 @@
           "help": "Libellé interne — jamais affiché aux clients.",
           "label": "Nom",
           "placeholder": "ex. Vente en gros UE"
+        },
+        "pricing_mode": {
+          "automatic": "Un pourcentage sur les prix de base",
+          "fixed": "Uniquement les prix que je saisis",
+          "label": "Tarification"
         },
         "starts_at": {
           "help": "Moment où cette liste devient active. Laissez vide pour démarrer immédiatement à l'activation.",
@@ -3048,6 +3065,8 @@
           },
           "edit_prices_cta": "Modifier les prix",
           "no_changes": "Aucune modification à enregistrer.",
+          "pricing_help": "Comment cette liste produit ses prix. Les prix que vous saisissez priment toujours.",
+          "pricing_section": "Tarification",
           "products": {
             "add_cta": "Ajouter des produits",
             "column_product": "Produit",
@@ -3747,6 +3766,8 @@
           "updated": "Liste de prix mise à jour"
         },
         "validation": {
+          "adjustment_required": "Saisissez un pourcentage.",
+          "adjustment_too_deep": "Doit être inférieur à 100 %.",
           "ends_after_starts": "Doit être postérieur à la date de début."
         }
       },

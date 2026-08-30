@@ -1431,6 +1431,18 @@
         "label": "الرمز البريدي"
       },
       "price_list": {
+        "adjust_compare_at": {
+          "help": "اشتقاق سعر المقارنة من سعر المقارنة الأساسي بالنسبة نفسها.",
+          "label": "اضبط أسعار المقارنة أيضًا"
+        },
+        "adjustment_direction": {
+          "decrease": "خفض",
+          "increase": "زيادة",
+          "label": "الاتجاه"
+        },
+        "adjustment_magnitude": {
+          "label": "النسبة المئوية"
+        },
         "description": {
           "label": "الوصف",
           "placeholder": "وصف داخلي اختياري"
@@ -1449,6 +1461,11 @@
           "help": "تسمية داخلية — لا تُعرض للعملاء أبدًا.",
           "label": "الاسم",
           "placeholder": "مثلًا EU wholesale"
+        },
+        "pricing_mode": {
+          "automatic": "نسبة مئوية من الأسعار الأساسية",
+          "fixed": "الأسعار التي أُدخلها فقط",
+          "label": "التسعير"
         },
         "starts_at": {
           "help": "متى تصبح هذه القائمة نشطة. اتركه فارغًا للبدء فور التفعيل.",
@@ -3061,6 +3078,8 @@
           },
           "edit_prices_cta": "تحرير الأسعار",
           "no_changes": "لا توجد تغييرات للحفظ.",
+          "pricing_help": "كيف تُنتج هذه القائمة الأسعار. الأسعار التي تُدخلها بنفسك لها الأولوية دائمًا.",
+          "pricing_section": "التسعير",
           "products": {
             "add_cta": "إضافة منتجات",
             "column_product": "المنتج",
@@ -3765,6 +3784,8 @@
           "updated": "تم تحديث قائمة الأسعار"
         },
         "validation": {
+          "adjustment_required": "أدخل نسبة مئوية.",
+          "adjustment_too_deep": "يجب أن تكون أقل من 100%.",
           "ends_after_starts": "يجب أن يكون بعد تاريخ البدء."
         }
       },

@@ -12,6 +12,30 @@ describe Spree::PriceList, type: :model do
     end
   end
 
+  # A percentage adjustment makes the list derive prices from base prices
+  # (docs/plans/6.0-price-list-automatic-pricing.md).
+  describe 'automatic pricing' do
+    it 'is off unless a percentage is set' do
+      expect(build(:price_list)).not_to be_automatic_pricing
+      expect(build(:price_list, price_adjustment_percentage: -15)).to be_automatic_pricing
+    end
+
+    it 'turns the percentage into the factor a base price is multiplied by' do
+      expect(build(:price_list, price_adjustment_percentage: -15).adjustment_factor).to eq(0.85)
+      expect(build(:price_list, price_adjustment_percentage: 10).adjustment_factor).to eq(1.1)
+      expect(build(:price_list).adjustment_factor).to be_nil
+    end
+
+    # At -100 every derived price is zero; below it the arithmetic goes
+    # negative. A markup has no ceiling.
+    it 'refuses a discount of 100% or deeper' do
+      expect(build(:price_list, price_adjustment_percentage: -100)).not_to be_valid
+      expect(build(:price_list, price_adjustment_percentage: -100.001)).not_to be_valid
+      expect(build(:price_list, price_adjustment_percentage: -99.999)).to be_valid
+      expect(build(:price_list, price_adjustment_percentage: 500)).to be_valid
+    end
+  end
+
   # The catalog binding: nil = standalone (rule-matched), set = owned by
   # exactly one catalog and reached only through it
   # (docs/plans/6.0-catalog-agreement-rework.md).

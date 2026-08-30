@@ -1429,6 +1429,18 @@
         "label": "Kod pocztowy"
       },
       "price_list": {
+        "adjust_compare_at": {
+          "help": "Wylicz cenę porównawczą z bazowej ceny porównawczej tym samym procentem.",
+          "label": "Dostosuj też ceny porównawcze"
+        },
+        "adjustment_direction": {
+          "decrease": "obniżka",
+          "increase": "podwyżka",
+          "label": "Kierunek"
+        },
+        "adjustment_magnitude": {
+          "label": "Procent"
+        },
         "description": {
           "label": "Opis",
           "placeholder": "Opcjonalny opis wewnętrzny"
@@ -1447,6 +1459,11 @@
           "help": "Etykieta wewnętrzna — nigdy nie pokazywana klientom.",
           "label": "Nazwa",
           "placeholder": "np. Hurt UE"
+        },
+        "pricing_mode": {
+          "automatic": "Procent od cen bazowych",
+          "fixed": "Tylko ceny, które wpiszę",
+          "label": "Ceny"
         },
         "starts_at": {
           "help": "Kiedy ta lista staje się aktywna. Pozostaw puste, aby rozpocząć natychmiast po aktywacji.",
@@ -3082,6 +3099,8 @@
           },
           "edit_prices_cta": "Edytuj ceny",
           "no_changes": "Brak zmian do zapisania.",
+          "pricing_help": "Jak ta lista tworzy ceny. Ceny wpisane ręcznie zawsze mają pierwszeństwo.",
+          "pricing_section": "Ceny",
           "products": {
             "add_cta": "Dodaj produkty",
             "column_product": "Produkt",
@@ -3795,6 +3814,8 @@
           "updated": "Zaktualizowano cennik"
         },
         "validation": {
+          "adjustment_required": "Podaj wartość procentową.",
+          "adjustment_too_deep": "Musi być mniejsza niż 100%.",
           "ends_after_starts": "Musi być po dacie rozpoczęcia."
         }
       },

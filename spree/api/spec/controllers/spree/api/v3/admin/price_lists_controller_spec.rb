@@ -9,6 +9,40 @@ RSpec.describe Spree::Api::V3::Admin::PriceListsController, type: :controller do
 
   before { request.headers.merge!(headers) }
 
+  # A percentage adjustment is how a list prices without holding rows
+  # (docs/plans/6.0-price-list-automatic-pricing.md).
+  describe 'automatic pricing attributes' do
+    it 'creates a list with a percentage adjustment' do
+      post :create, params: { name: 'Wholesale minus 15', price_adjustment_percentage: '-15.0' }, as: :json
+
+      expect(response).to have_http_status(:created)
+      expect(json_response['price_adjustment_percentage']).to eq('-15.0')
+      expect(json_response['automatic_pricing']).to be true
+      expect(json_response['adjust_compare_at']).to be false
+    end
+
+    it 'sets and clears the adjustment on an existing list' do
+      patch :update, params: { id: price_list.prefixed_id, price_adjustment_percentage: '10.5',
+                               adjust_compare_at: true }, as: :json
+
+      expect(response).to have_http_status(:ok)
+      expect(price_list.reload.price_adjustment_percentage).to eq(10.5)
+      expect(price_list.adjust_compare_at).to be true
+
+      patch :update, params: { id: price_list.prefixed_id, price_adjustment_percentage: nil }, as: :json
+
+      expect(price_list.reload.price_adjustment_percentage).to be_nil
+      expect(json_response['automatic_pricing']).to be false
+    end
+
+    it 'refuses a discount of 100% or deeper' do
+      patch :update, params: { id: price_list.prefixed_id, price_adjustment_percentage: '-100' }, as: :json
+
+      expect(response).to have_http_status(:unprocessable_content)
+      expect(price_list.reload.price_adjustment_percentage).to be_nil
+    end
+  end
+
   describe 'POST #create — one-shot creation' do
     let(:customer_group) { create(:customer_group, store: store) }
 

@@ -44,10 +44,17 @@ module Spree
     # over a stored generated column on MySQL/MariaDB.
     validates :catalog_id, uniqueness: { scope: spree_base_uniqueness_scope,
                                          conditions: -> { where(deleted_at: nil) } }, allow_nil: true
+    # Greater than -100: at exactly -100 every derived price is zero, and
+    # below it the arithmetic goes negative. The upper end is deliberately
+    # open — a markup has no natural ceiling.
+    validates :price_adjustment_percentage,
+              numericality: { greater_than: -100 }, allow_nil: true
     validate :starts_at_before_ends_at
     validate :catalog_in_same_store
 
-    self.whitelisted_ransackable_attributes = %w[status match_policy starts_at ends_at]
+    # `catalog_id` is queryable so a picker can offer the lists that are
+    # actually available — unowned, plus the one the catalog already holds.
+    self.whitelisted_ransackable_attributes = %w[status match_policy starts_at ends_at catalog_id]
 
     scope :by_position, -> { order(position: :asc) }
     scope :for_store, ->(store) { where(store: store) }
@@ -132,6 +139,22 @@ module Spree
       else
         false
       end
+    end
+
+    # Whether this list derives prices from base prices rather than pricing
+    # only what it holds explicit rows for.
+    # @return [Boolean]
+    def automatic_pricing?
+      price_adjustment_percentage.present?
+    end
+
+    # What a base price is multiplied by to derive this list's price:
+    # -15% gives 0.85, +10% gives 1.1.
+    # @return [BigDecimal, nil]
+    def adjustment_factor
+      return if price_adjustment_percentage.nil?
+
+      1 + (price_adjustment_percentage / 100)
     end
 
     # Returns true if the price list is active or scheduled

@@ -175,6 +175,130 @@ describe Spree::PricingProvider::Internal::Resolution do
       end
     end
 
+    # A list carrying a percentage derives a price from the base price for
+    # every variant it holds no explicit amount for
+    # (docs/plans/6.0-price-list-automatic-pricing.md).
+    context 'with an automatic (percentage adjustment) price list' do
+      let!(:price_list) do
+        create(:price_list, :active, store: store, price_adjustment_percentage: -15)
+      end
+
+      before { variant.prices.base_prices.with_currency(currency).update_all(amount: 20.00) }
+
+      it 'derives the price from the base price' do
+        price = resolver.resolve
+
+        expect(price.amount).to eq(17.00)
+        expect(price.price_list_id).to eq(price_list.id)
+        expect(price).not_to be_persisted
+      end
+
+      it 'applies a markup for a positive percentage' do
+        price_list.update!(price_adjustment_percentage: 10)
+
+        expect(resolver.resolve.amount).to eq(22.00)
+      end
+
+      it 'tracks the base price rather than freezing a copy of it' do
+        variant.prices.base_prices.with_currency(currency).update_all(amount: 40.00)
+
+        expect(resolver.resolve.amount).to eq(34.00)
+      end
+
+      it 'rounds to the currency minor unit' do
+        variant.prices.base_prices.with_currency(currency).update_all(amount: 9.99)
+
+        # 9.99 × 0.85 = 8.4915
+        expect(resolver.resolve.amount).to eq(8.49)
+      end
+
+      it 'lets an explicit row override the adjustment' do
+        create(:price, variant: variant, currency: currency, amount: 12.34, price_list: price_list)
+
+        expect(resolver.resolve.amount).to eq(12.34)
+      end
+
+      # `add_products` materializes nil-amount rows; those mean "in the list,
+      # not priced", so they must not block the derived amount.
+      it 'derives through a nil-amount placeholder row' do
+        create(:price, variant: variant, currency: currency, amount: nil, price_list: price_list)
+
+        expect(resolver.resolve.amount).to eq(17.00)
+      end
+
+      it 'yields nothing when the variant has no base price in this currency' do
+        variant.prices.delete_all
+
+        price = resolver.resolve
+        expect(price.amount).to be_nil
+        expect(price).not_to be_persisted
+      end
+
+      # A fresh resolver per assertion, because one instance memoizes the
+      # base price it read — which is the point of the object, and what a
+      # request-scoped resolution relies on.
+      it 'leaves the compare-at alone by default' do
+        variant.prices.base_prices.with_currency(currency).update_all(compare_at_amount: 30.00)
+
+        expect(described_class.new(context).resolve.compare_at_amount).to be_nil
+      end
+
+      it 'derives the compare-at when the list says to' do
+        variant.prices.base_prices.with_currency(currency).update_all(compare_at_amount: 30.00)
+        price_list.update!(adjust_compare_at: true)
+
+        expect(described_class.new(context).resolve.compare_at_amount).to eq(25.50)
+      end
+
+      it 'works the same when the variant prices are already loaded' do
+        variant.prices.load
+
+        expect(resolver.resolve.amount).to eq(17.00)
+      end
+
+      # The adjustment is a property of the list, not of a currency: it
+      # applies to whatever base price the buyer's currency has.
+      it 'applies to every currency the variant is priced in' do
+        create(:price, variant: variant, currency: 'EUR', amount: 50.00)
+        eur_context = Spree::Pricing::Context.new(variant: variant, currency: 'EUR', store: store)
+
+        expect(described_class.new(eur_context).resolve.amount).to eq(42.50)
+      end
+
+      # An adjustment list is an ordinary list otherwise — status, dates and
+      # rules gate it exactly as before.
+      it 'does not apply when the list is not in effect' do
+        price_list.update!(status: 'inactive')
+
+        expect(resolver.resolve.amount).to eq(20.00)
+      end
+
+      it 'obeys its own rules' do
+        create(:volume_price_rule, price_list: price_list, min_quantity: 10)
+
+        expect(resolver.resolve.amount).to eq(20.00)
+
+        bulk_context = Spree::Pricing::Context.new(
+          variant: variant, currency: currency, store: store, quantity: 10
+        )
+        expect(described_class.new(bulk_context).resolve.amount).to eq(17.00)
+      end
+
+      it 'is reached through a catalog when the list is catalog-owned' do
+        company = create(:company, store: store)
+        catalog = create(:catalog, store: store)
+        create(:catalog_assignment, catalog: catalog, assignable: company)
+        price_list.update!(catalog: catalog)
+
+        member_context = Spree::Pricing::Context.new(
+          variant: variant, currency: currency, store: store, company: company
+        )
+        expect(described_class.new(member_context).resolve.amount).to eq(17.00)
+        # …and not by anyone outside its audience.
+        expect(resolver.resolve.amount).to eq(20.00)
+      end
+    end
+
     context 'with price list from different store' do
       let(:other_store) { create(:store) }
       let!(:other_store_list) { create(:price_list, :active, store: other_store) }
