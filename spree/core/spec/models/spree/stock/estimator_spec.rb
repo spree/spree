@@ -427,15 +427,15 @@ module Spree
           expect(rate.metadata['quote_id']).to eq('rate_123')
         end
 
-        describe 'unpriced rates' do
-          let(:unpriced_provider_class) do
-            Class.new(Spree::DeliveryRateProvider::Base) do
-              def estimate(_package)
-                Spree::DeliveryRateProvider::Estimate.new(cost: 0, unpriced: true, name: 'Freight')
-              end
+        let(:unpriced_provider_class) do
+          Class.new(Spree::DeliveryRateProvider::Base) do
+            def estimate(_package)
+              Spree::DeliveryRateProvider::Estimate.new(cost: 0, unpriced: true, name: 'Freight')
             end
           end
+        end
 
+        describe 'unpriced rates' do
           before do
             stub_const('UnpricedRateProvider', unpriced_provider_class)
             allow(delivery_method).to receive(:rate_provider_instance).
@@ -475,14 +475,9 @@ module Spree
           before do
             allow(priced_method.calculator).to receive(:compute).and_return(BigDecimal('25'))
 
-            unpriced_provider = Class.new(Spree::DeliveryRateProvider::Base) do
-              def estimate(_package)
-                Spree::DeliveryRateProvider::Estimate.new(cost: 0, unpriced: true, name: 'Freight')
-              end
-            end
-            stub_const('MixedFreightProvider', unpriced_provider)
+            stub_const('MixedFreightProvider', unpriced_provider_class)
             allow(delivery_method).to receive(:rate_provider_instance).
-              and_return(unpriced_provider.new(delivery_method))
+              and_return(unpriced_provider_class.new(delivery_method))
             allow(package).to receive_messages(eligible_delivery_methods: [delivery_method, priced_method])
           end
 

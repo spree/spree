@@ -119,13 +119,12 @@ module Spree
     # storefront that renders the total rather than the cost would otherwise
     # put "$0.00" — free freight — in front of a buyer whose shipment has not
     # been quoted yet.
-    alias money_final_price display_final_price
-
+    #
     # @return [String, Spree::Money]
     def display_final_price
       return quoted_after_review if unpriced?
 
-      money_final_price
+      Spree::Money.new(final_price, currency: currency)
     end
     alias display_total display_final_price
 

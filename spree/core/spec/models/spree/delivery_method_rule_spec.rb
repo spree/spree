@@ -116,6 +116,9 @@ describe Spree::DeliveryMethodRule, type: :model do
       Spree::Stock::Coordinator.new(order.reload).packages.first
     end
 
+    # The tiers a merchant configures are ranges over this one number, so the
+    # comparison has to be converted volume, never the raw dimension columns:
+    # two one-meter cartons are 2 CBM, not 2,000,000.
     it 'bounds by the packed volume in cubic meters' do
       rule = described_class.new(delivery_method: delivery_method)
       expect(rule.eligible?(freight_package)).to be(true)
@@ -129,14 +132,6 @@ describe Spree::DeliveryMethodRule, type: :model do
       rule.preferred_minimum_volume = nil
       rule.preferred_maximum_volume = 1
       expect(rule.eligible?(freight_package)).to be(false)
-    end
-
-    # The tiers a merchant configures are ranges over this one number, so it
-    # has to be the converted volume rather than the raw dimension columns.
-    it 'compares cubic meters, not the product of dimension columns' do
-      rule = described_class.new(delivery_method: delivery_method, preferred_maximum_volume: 5)
-
-      expect(rule.eligible?(freight_package)).to be(true)
     end
   end
 

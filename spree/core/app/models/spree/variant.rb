@@ -920,8 +920,14 @@ module Spree
       product&.store
     end
 
+    # The cubic meters one unit of this variant occupies. Multiplying the
+    # raw dimension columns would answer in whatever unit the merchant typed,
+    # which is a sixteenfold error between inches and centimeters — so the
+    # name means CBM everywhere it appears (Variant, ContentItem, Package).
+    #
+    # @return [BigDecimal]
     def volume
-      (width || 0) * (height || 0) * (depth || 0)
+      Spree::Measurement.cubic_meters(width, height, depth, unit: dimensions_unit) || 0
     end
 
     def dimension

@@ -234,13 +234,12 @@ module Spree
     has_many :stock_locations, class_name: 'Spree::StockLocation', dependent: :nullify
 
     # The store's packaging vocabulary. The default row is the box it usually
-    # ships in — the tare and dimensions every parcel quote is built on.
+    # ships in — the tare and dimensions every parcel quote is built on, read
+    # through an association so it is loaded once per store rather than once
+    # per package quoted.
     has_many :package_types, class_name: 'Spree::PackageType', dependent: :destroy, inverse_of: :store
-
-    # @return [Spree::PackageType, nil]
-    def default_package_type
-      package_types.default.first
-    end
+    has_one :default_package_type, -> { where(default: true) }, class_name: 'Spree::PackageType',
+            inverse_of: :store
     has_many :promotions, class_name: 'Spree::Promotion', dependent: :nullify
 
     has_many :tax_categories, class_name: 'Spree::TaxCategory', dependent: :destroy, inverse_of: :store
