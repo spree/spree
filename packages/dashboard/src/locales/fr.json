@@ -1435,7 +1435,7 @@
       },
       "price_list": {
         "adjust_compare_at": {
-          "help": "Déduire le prix barré du prix barré de base avec le même pourcentage.",
+          "help": "Calculer le prix barré à partir du prix barré de base en appliquant le même pourcentage.",
           "label": "Ajuster aussi les prix barrés"
         },
         "adjustment_direction": {

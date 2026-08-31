@@ -352,6 +352,20 @@ describe Spree::Catalog, type: :model do
         expect(catalog.errors[:price_list]).to be_present
       end
 
+      # The association writer states the whole selection, so an id recorded
+      # by an earlier `price_list_id=` is spent — otherwise it rejects the
+      # detach as an unresolvable id.
+      it 'lets a later detach override an id assigned first' do
+        catalog = create(:catalog, store: store)
+
+        catalog.price_list_id = price_list.id
+        catalog.price_list = nil
+
+        expect(catalog).to be_valid
+        expect(catalog.save).to be true
+        expect(catalog.reload.price_list).to be_nil
+      end
+
       it 'does not reach another store list' do
         catalog = create(:catalog, store: store)
         foreign = create(:price_list, store: create(:store))

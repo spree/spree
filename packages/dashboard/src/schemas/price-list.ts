@@ -166,7 +166,10 @@ export function adjustmentFormValues(percentage: string | null | undefined): {
   adjustment_magnitude: string
 } {
   const parsed = percentage == null || percentage === '' ? null : Number(percentage)
-  if (parsed === null || !Number.isFinite(parsed)) {
+  // Zero is no adjustment, and the form's own rules require a magnitude
+  // above zero for automatic mode — loading it as automatic would leave the
+  // page unsaveable until the user noticed the error.
+  if (parsed === null || !Number.isFinite(parsed) || parsed === 0) {
     return { pricing_mode: 'fixed', adjustment_direction: 'decrease', adjustment_magnitude: '' }
   }
 

@@ -22,8 +22,12 @@ module Spree
 
       private
 
+      # Only an explicit nil removes the list. `{}` is a caller saying
+      # "change nothing about the pricing", and destroying a list over that
+      # would make an empty payload the most destructive one.
       def write_price_list
-        return detach if attributes.blank?
+        return detach if attributes.nil?
+        return if attributes.empty?
 
         existing = catalog.price_list
         return update_existing(existing) if existing

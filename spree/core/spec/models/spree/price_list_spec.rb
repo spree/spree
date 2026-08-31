@@ -20,6 +20,22 @@ describe Spree::PriceList, type: :model do
       expect(build(:price_list, price_adjustment_percentage: -15)).to be_automatic_pricing
     end
 
+    # Zero would derive base × 1.0 — every price stamped with this list's id
+    # and not one of them changed.
+    it 'treats a zero percentage as no adjustment at all' do
+      expect(build(:price_list, price_adjustment_percentage: 0)).not_to be_automatic_pricing
+    end
+
+    # The column is decimal(6,3); anything larger would be accepted here and
+    # fail on the way to the database.
+    it 'refuses a markup the column cannot hold' do
+      catalog = create(:catalog, store: @default_store)
+      owned = ->(pct) { build(:price_list, store: @default_store, catalog: catalog, price_adjustment_percentage: pct) }
+
+      expect(owned.call(1000)).not_to be_valid
+      expect(owned.call(999.999)).to be_valid
+    end
+
     it 'turns the percentage into the factor a base price is multiplied by' do
       expect(build(:price_list, price_adjustment_percentage: -15).adjustment_factor).to eq(0.85)
       expect(build(:price_list, price_adjustment_percentage: 10).adjustment_factor).to eq(1.1)

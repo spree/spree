@@ -45,10 +45,11 @@ module Spree
     validates :catalog_id, uniqueness: { scope: spree_base_uniqueness_scope,
                                          conditions: -> { where(deleted_at: nil) } }, allow_nil: true
     # Greater than -100: at exactly -100 every derived price is zero, and
-    # below it the arithmetic goes negative. The upper end is deliberately
-    # open — a markup has no natural ceiling.
+    # below it the arithmetic goes negative. Capped at what the
+    # `decimal(6,3)` column can hold, so an accepted value cannot fail on the
+    # way to the database.
     validates :price_adjustment_percentage,
-              numericality: { greater_than: -100 }, allow_nil: true
+              numericality: { greater_than: -100, less_than: 1000 }, allow_nil: true
     validate :starts_at_before_ends_at
     validate :catalog_in_same_store
     validate :percentage_requires_catalog
@@ -146,7 +147,10 @@ module Spree
     # only what it holds explicit rows for.
     # @return [Boolean]
     def automatic_pricing?
-      price_adjustment_percentage.present?
+      # Zero is no adjustment at all: deriving base × 1.0 would stamp every
+      # price with this list's id while changing nothing, and the dashboard
+      # has no "0%" to show. It reads as a fixed list.
+      price_adjustment_percentage.present? && !price_adjustment_percentage.zero?
     end
 
     # What a base price is multiplied by to derive this list's price:

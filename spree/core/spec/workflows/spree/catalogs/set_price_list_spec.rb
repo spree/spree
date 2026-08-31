@@ -69,6 +69,19 @@ describe Spree::Catalogs::SetPriceList do
     expect(Spree::PricingProvider::Internal::Resolution.new(context).resolve.amount).to eq(20)
   end
 
+  # Only an explicit nil removes the list. An empty payload says "change
+  # nothing", and destroying over that would make the emptiest request the
+  # most destructive one.
+  it 'leaves the list alone on an empty payload' do
+    call(price_adjustment_percentage: '-15')
+    list = catalog.reload.price_list
+
+    expect(described_class.call(catalog: catalog, attributes: {})).to be_success
+
+    expect(catalog.reload.price_list).to eq(list)
+    expect(Spree::PriceList.where(id: list.id)).to be_present
+  end
+
   it 'is a no-op when detaching a catalog that owns nothing' do
     expect(described_class.call(catalog: catalog, attributes: nil)).to be_success
     expect(catalog.reload.price_list).to be_nil

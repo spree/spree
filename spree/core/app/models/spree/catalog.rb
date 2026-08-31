@@ -183,6 +183,10 @@ module Spree
     # lands in the save rather than on assignment.
     def price_list=(list)
       @pending_price_list = list
+      # This writer states the whole selection, so an id an earlier
+      # `price_list_id=` recorded is spent — left behind, it would reject a
+      # detach as an unresolvable id.
+      remove_instance_variable(:@pending_price_list_id) if defined?(@pending_price_list_id)
     end
 
     # Reads back an assigned-but-unsaved binding, so callers see what they
