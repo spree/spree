@@ -1471,7 +1471,7 @@
           "label": "Match policy"
         },
         "minimum_quantity": {
-          "help": "Apply this pricing only from this quantity per item. Leave blank to price every quantity.",
+          "help": "Only discount a line once it reaches this many units. Leave blank to price every quantity.",
           "label": "Minimum quantity",
           "placeholder": "10"
         },

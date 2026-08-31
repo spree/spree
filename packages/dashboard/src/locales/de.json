@@ -1471,7 +1471,7 @@
           "label": "Übereinstimmungsregel"
         },
         "minimum_quantity": {
-          "help": "Diese Preisgestaltung erst ab dieser Menge je Artikel anwenden. Leer lassen, um jede Menge zu bepreisen.",
+          "help": "Rabatt erst ab dieser Stückzahl je Position. Leer lassen, um jede Menge zu bepreisen.",
           "label": "Mindestmenge",
           "placeholder": "10"
         },

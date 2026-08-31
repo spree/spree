@@ -1471,7 +1471,7 @@
           "label": "Règle de correspondance"
         },
         "minimum_quantity": {
-          "help": "N'appliquer cette tarification qu'à partir de cette quantité par article. Laissez vide pour tarifer toutes les quantités.",
+          "help": "N'appliquer la remise qu'à partir de ce nombre d'unités par ligne. Laissez vide pour tarifer toutes les quantités.",
           "label": "Quantité minimale",
           "placeholder": "10"
         },

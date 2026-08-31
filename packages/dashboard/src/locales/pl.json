@@ -1483,7 +1483,7 @@
           "label": "Reguła dopasowania"
         },
         "minimum_quantity": {
-          "help": "Zastosuj tę wycenę dopiero od tej ilości na pozycję. Pozostaw puste, aby wyceniać każdą ilość.",
+          "help": "Rabat dopiero od tej liczby sztuk w pozycji. Pozostaw puste, aby wyceniać każdą ilość.",
           "label": "Minimalna ilość",
           "placeholder": "10"
         },

@@ -6,6 +6,10 @@ import {
   FieldError,
   FieldLabel,
   Input,
+  InputGroup,
+  InputGroupAddon,
+  InputGroupInput,
+  InputGroupText,
   Select,
   SelectContent,
   SelectItem,
@@ -118,18 +122,23 @@ export function CatalogPricingFields({
       {mode === 'automatic' && (
         <>
           <div className="flex items-end gap-2">
-            <Field className="w-32">
+            <Field className="w-36">
               <FieldLabel htmlFor="catalog-adjustment-magnitude">
                 {t('admin.fields.price_list.adjustment_magnitude.label')}
               </FieldLabel>
-              <Input
-                id="catalog-adjustment-magnitude"
-                inputMode="decimal"
-                placeholder="15"
-                disabled={!canEdit}
-                aria-invalid={!!errors.adjustment_magnitude || undefined}
-                {...form.register('adjustment_magnitude')}
-              />
+              <InputGroup>
+                <InputGroupInput
+                  id="catalog-adjustment-magnitude"
+                  inputMode="decimal"
+                  placeholder="15"
+                  disabled={!canEdit}
+                  aria-invalid={!!errors.adjustment_magnitude || undefined}
+                  {...form.register('adjustment_magnitude')}
+                />
+                <InputGroupAddon align="inline-end">
+                  <InputGroupText>%</InputGroupText>
+                </InputGroupAddon>
+              </InputGroup>
             </Field>
             <Field className="flex-1">
               <FieldLabel htmlFor="catalog-adjustment-direction" className="sr-only">
@@ -189,23 +198,28 @@ export function CatalogPricingFields({
               agreement prices every quantity; filled in, it is an automatic
               volume discount with no rows to maintain
               (docs/plans/6.0-price-list-automatic-pricing.md). */}
-          <Field className="w-40">
-            <FieldLabel htmlFor="catalog-minimum-quantity">
-              {t('admin.fields.price_list.minimum_quantity.label')}
-            </FieldLabel>
-            <Input
-              id="catalog-minimum-quantity"
-              inputMode="numeric"
-              placeholder={t('admin.fields.price_list.minimum_quantity.placeholder')}
-              disabled={!canEdit}
-              aria-invalid={!!errors.minimum_quantity || undefined}
-              {...form.register('minimum_quantity')}
-            />
+          {/* A quantity needs a few characters, so the field is narrow — but
+              `Field` stretches its children, so the help text has to sit
+              outside it or it wraps inside that narrow column. */}
+          <div className="flex flex-col gap-2">
+            <Field className="w-36">
+              <FieldLabel htmlFor="catalog-minimum-quantity">
+                {t('admin.fields.price_list.minimum_quantity.label')}
+              </FieldLabel>
+              <Input
+                id="catalog-minimum-quantity"
+                inputMode="numeric"
+                placeholder={t('admin.fields.price_list.minimum_quantity.placeholder')}
+                disabled={!canEdit}
+                aria-invalid={!!errors.minimum_quantity || undefined}
+                {...form.register('minimum_quantity')}
+              />
+            </Field>
             <FieldDescription>
               {t('admin.fields.price_list.minimum_quantity.help')}
             </FieldDescription>
             <FieldError errors={[errors.minimum_quantity]} />
-          </Field>
+          </div>
         </>
       )}
 
