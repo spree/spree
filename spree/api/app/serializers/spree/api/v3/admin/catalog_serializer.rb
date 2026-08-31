@@ -7,7 +7,6 @@ module Spree
         class CatalogSerializer < V3::BaseSerializer
           typelize name: :string, description: 'string | null',
                    active: :boolean, position: [:number, nullable: true],
-                   price_list_id: [:string, nullable: true],
                    products_count: :number,
                    minimum_order_quantity: ['number | null'], order_multiple: ['number | null'],
                    metadata: 'Record<string, unknown> | null'
@@ -15,10 +14,6 @@ module Spree
           attributes :name, :description, :active, :position, :metadata,
                      :minimum_order_quantity, :order_multiple,
                      created_at: :iso8601, updated_at: :iso8601
-
-          attribute :price_list_id do |catalog|
-            catalog.price_list&.prefixed_id
-          end
 
           attribute :products_count do |catalog|
             catalog.catalog_products.size

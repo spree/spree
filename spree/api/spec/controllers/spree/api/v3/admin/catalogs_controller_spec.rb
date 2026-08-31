@@ -183,21 +183,21 @@ RSpec.describe Spree::Api::V3::Admin::CatalogsController, type: :controller do
   end
 
   describe 'POST #create' do
-    it 'creates a catalog with a price list' do
-      price_list = create(:price_list, store: store)
-
-      post :create, params: { name: 'VIP', price_list_id: price_list.prefixed_id }, as: :json
+    # The list a catalog prices through is stood up inline, in the same
+    # request (docs/plans/6.0-catalog-agreement-rework.md).
+    it 'creates a catalog with the price list it owns' do
+      post :create, params: { name: 'VIP', price_list: { price_adjustment_percentage: '-15' } },
+                    as: :json
 
       expect(response).to have_http_status(:created)
-      expect(json_response['price_list_id']).to eq(price_list.prefixed_id)
+      expect(Spree::Catalog.find_by(name: 'VIP').price_list.price_adjustment_percentage).to eq(-15)
     end
 
-    it '404s a price list from another store' do
-      foreign = create(:price_list, store: create(:store))
+    it 'creates a catalog that prices at base' do
+      post :create, params: { name: 'VIP' }, as: :json
 
-      post :create, params: { name: 'VIP', price_list_id: foreign.prefixed_id }, as: :json
-
-      expect(response).to have_http_status(:not_found)
+      expect(response).to have_http_status(:created)
+      expect(Spree::Catalog.find_by(name: 'VIP').price_list).to be_nil
     end
   end
 

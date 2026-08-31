@@ -78,7 +78,7 @@ module Spree
           # leaves it alone.
           def permitted_params
             permitted = params.permit(*model_additional_permitted_attributes,
-                                      :name, :description, :active, :position, :price_list_id,
+                                      :name, :description, :active, :position,
                                       :minimum_order_quantity, :order_multiple,
                                       metadata: {},
                                       # Small bounded sets, saved with the
@@ -105,14 +105,6 @@ module Spree
                                         { prices: [:id, :variant_id, :currency, :amount,
                                                    :compare_at_amount] }
                                       ])
-            if permitted.key?(:price_list_id)
-              permitted[:price_list_id] =
-                if permitted[:price_list_id].present?
-                  current_store.price_lists.find_by_prefix_id!(permitted[:price_list_id]).id
-                else
-                  nil
-                end
-            end
             # `permit` drops an explicit null, but detaching has to be
             # distinguishable from saying nothing.
             permitted[:price_list] = nil if params.key?(:price_list) && params[:price_list].nil?

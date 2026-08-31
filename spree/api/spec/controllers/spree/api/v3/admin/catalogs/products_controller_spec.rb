@@ -35,5 +35,40 @@ RSpec.describe Spree::Api::V3::Admin::Catalogs::ProductsController, type: :contr
       expect(json_response['data'].map { |row| row['id'] }).
         to eq([first.product.prefixed_id, last.product.prefixed_id])
     end
+
+    it 'leaves the resolved price out unless it is asked for' do
+      create(:catalog_product, catalog: catalog, product: create(:product, store: store, price: 100))
+
+      get :index, params: { catalog_id: catalog.prefixed_id }, as: :json
+
+      expect(json_response['data'].first).not_to have_key('catalog_price')
+    end
+
+    # What the products-with-prices view reads: the amount a buyer on this
+    # agreement pays, and where it came from
+    # (docs/plans/6.0-catalog-agreement-rework.md).
+    it 'reports an amount derived from the catalog percentage' do
+      product = create(:product, store: store, price: 100)
+      create(:catalog_product, catalog: catalog, product: product)
+      create(:price_list, :active, store: store, catalog: catalog, price_adjustment_percentage: -15)
+
+      get :index, params: { catalog_id: catalog.prefixed_id, expand: 'catalog_price' }, as: :json
+
+      price = json_response['data'].first['catalog_price']
+      expect(price['amount']).to eq('85.0')
+      expect(price['source']).to eq('automatic')
+    end
+
+    # The divergence the view exists to expose: in the assortment, priced by
+    # nothing the agreement says.
+    it 'reports a product the agreement does not price as base' do
+      product = create(:product, store: store, price: 100)
+      create(:catalog_product, catalog: catalog, product: product)
+      create(:price_list, :active, store: store, catalog: catalog)
+
+      get :index, params: { catalog_id: catalog.prefixed_id, expand: 'catalog_price' }, as: :json
+
+      expect(json_response['data'].first['catalog_price']['source']).to eq('base')
+    end
   end
 end

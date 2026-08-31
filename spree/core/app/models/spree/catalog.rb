@@ -48,7 +48,6 @@ module Spree
     validates :minimum_order_quantity, numericality: { only_integer: true, greater_than: 0, allow_nil: true }
     validates :order_multiple, numericality: { only_integer: true, greater_than: 0, allow_nil: true }
     validate :price_list_in_same_store
-    validate :price_list_must_be_resolvable
     validate :price_list_not_owned_elsewhere
     validate :pending_price_list_is_valid
 
@@ -181,52 +180,10 @@ module Spree
       end
     end
 
-    # The owned list's id. Reads like the column the binding replaced, so
-    # serializers and write payloads keep their shape while the FK lives on
-    # the list side. An assigned-but-unsaved binding reads back as itself, so
-    # a rejected form round-trips what the merchant chose.
-    #
-    # @return [Integer, String, nil]
-    def price_list_id
-      return @pending_price_list&.id if defined?(@pending_price_list)
-
-      price_list&.id
-    end
-
-    # Attaches the given list as this catalog's owned list (raw id), or
-    # detaches with nil — releasing the list back to standalone matching.
-    #
-    # Records the intent only; {#apply_pending_price_list} performs the write
-    # inside the save, so a record that fails validation changes nothing. An
-    # unknown id is recorded as invalid rather than raised, so a bad payload
-    # becomes a validation error rather than an exception out of
-    # +assign_attributes+.
-    #
-    # @param value [Integer, String, nil] raw price list PK
-    # @return [void]
-    def price_list_id=(value)
-      if value.blank?
-        @pending_price_list = nil
-        remove_instance_variable(:@pending_price_list_id) if defined?(@pending_price_list_id)
-        return
-      end
-
-      # Scoped to this store's lists: an id from another tenant must not be
-      # reachable here, whatever the caller. Missing resolves to nil and is
-      # rejected by #price_list_must_be_resolvable.
-      @pending_price_list_id = value
-      @pending_price_list = (store || Spree::Current.store)&.price_lists&.find_by(id: value)
-    end
-
-    # Assigning the association directly goes through the same deferral, so
-    # every write path — +price_list=+, +price_list_id=+, nested attributes —
-    # lands in the save rather than on assignment.
+    # Assigning the association goes through a deferral, so the binding lands
+    # in the save rather than on assignment.
     def price_list=(list)
       @pending_price_list = list
-      # This writer states the whole selection, so an id an earlier
-      # `price_list_id=` recorded is spent — left behind, it would reject a
-      # detach as an unresolvable id.
-      remove_instance_variable(:@pending_price_list_id) if defined?(@pending_price_list_id)
     end
 
     # Reads back an assigned-but-unsaved binding, so callers see what they
@@ -346,15 +303,6 @@ module Spree
       price_list.errors.each do |error|
         errors.add(:price_list, error.message)
       end
-    end
-
-    # An id that resolved to nothing in this store is an error, not a silent
-    # detach — otherwise a typo reads as "remove the pricing".
-    def price_list_must_be_resolvable
-      return unless defined?(@pending_price_list_id)
-      return if @pending_price_list_id.blank? || @pending_price_list.present?
-
-      errors.add(:price_list, :invalid)
     end
 
     # A list belongs to exactly one catalog, so claiming one another catalog
