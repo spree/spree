@@ -91,7 +91,7 @@ module Spree
           if channel.storefront_prices_hidden?
             'login_required' if try_spree_current_user.blank?
           elsif channel.storefront_approval_required? && !renders_receipts?
-            Spree.company_activation_policy_class.new.pricing_access_code(
+            Spree.company_activation_policy.pricing_access_code(
               user: try_spree_current_user, store: current_store
             )
           end

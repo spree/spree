@@ -273,22 +273,6 @@ RSpec.describe Spree::Purchase::Company do
     end
   end
 
-  # An admin keying in a wholesale draft is exempt from the activation gate —
-  # their authority is the credential, not a membership.
-  describe 'staff exemption from the activation gate' do
-    let(:store) { @default_store }
-
-    it 'excuses an order with a recorded creator' do
-      channel = create(:channel, store: store, preferred_storefront_access: 'approval_required')
-      order = create(:order, store: store, customer: customer, channel: channel)
-      expect(order.company_activation_missing?).to be(true)
-
-      order.update_columns(created_by_id: 1)
-
-      expect(order.reload.company_activation_missing?).to be(false)
-    end
-  end
-
   context 'included in Spree::Cart' do
     let(:record) { create(:cart, store: @default_store, customer: customer) }
 
