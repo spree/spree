@@ -27,6 +27,24 @@ module SpreeStripe
     # go round the same flow again.
     PENDING_REASONS = %w[under_review requirements.pending_verification platform_paused].freeze
 
+    # Failures that leave the answer with Stripe rather than in the response,
+    # so core must not assume the money stayed put.
+    #
+    # A dropped connection or a timeout may have arrived all the same. An
+    # `APIError` is Stripe's own 5xx, which says nothing about whether the
+    # request was processed before it broke. An `IdempotencyError` means the
+    # key is already held against different parameters, so *something* was
+    # recorded under it.
+    #
+    # `Stripe::APIError` is spelled with a capitalised initialism; there is no
+    # `Stripe::ApiError`, and naming one in a rescue raises NameError at the
+    # moment the rescue is needed.
+    AMBIGUOUS_ERRORS = [
+      Stripe::APIConnectionError,
+      Stripe::APIError,
+      Stripe::IdempotencyError
+    ].freeze
+
     def self.display_name
       'Stripe Connect'
     end
@@ -162,6 +180,12 @@ module SpreeStripe
 
       seller_transfer.update!(status: 'completed', reference: transfer.id)
       seller_transfer
+    rescue *AMBIGUOUS_ERRORS => e
+      # As with a settlement: the transfer may have been made before the answer
+      # was lost, so core parks the earning rather than offering it to the
+      # retry job, which would send the same money again once Stripe has
+      # forgotten the key.
+      raise Spree::Core::AmbiguousGatewayError, e.message
     end
 
     # Sends a settlement from the seller's connected account to their bank.
@@ -195,7 +219,7 @@ module SpreeStripe
       # matches on Stripe's own id instead of guessing by amount.
       seller_payout.update!(reference: payout.id)
       seller_payout
-    rescue Stripe::APIConnectionError, Stripe::IdempotencyError => e
+    rescue *AMBIGUOUS_ERRORS => e
       # Nobody knows whether the money moved. The request may have reached
       # Stripe and created the payout before the answer was lost, so core must
       # not put these earnings back on the pile — the idempotency key stops a

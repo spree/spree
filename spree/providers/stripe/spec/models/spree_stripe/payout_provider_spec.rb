@@ -61,6 +61,31 @@ RSpec.describe SpreeStripe::PayoutProvider do
       expect { described_class.new.transfer!(seller_transfer) }.to raise_error(Spree::Core::GatewayError)
     end
 
+    # Core parks an earning it cannot account for so nothing retries it, but
+    # it can only do that if the provider says which kind of failure this was.
+    context 'when the answer is lost on the way back' do
+      [
+        [Stripe::APIConnectionError, 'timed out'],
+        [Stripe::APIError, 'internal error'],
+        [Stripe::IdempotencyError, 'key reused']
+      ].each do |error_class, message|
+        it "reports #{error_class} as an outcome nobody knows" do
+          allow(Stripe::Transfer).to receive(:create).and_raise(error_class, message)
+
+          expect { described_class.new.transfer!(seller_transfer) }.
+            to raise_error(Spree::Core::AmbiguousGatewayError)
+        end
+      end
+    end
+
+    # A refusal is definite: the money did not move, and the earning is owed.
+    it 'lets an outright refusal through as itself' do
+      allow(Stripe::Transfer).to receive(:create).
+        and_raise(Stripe::InvalidRequestError.new('no such destination', 'destination'))
+
+      expect { described_class.new.transfer!(seller_transfer) }.to raise_error(Stripe::InvalidRequestError)
+    end
+
     context 'when the customer paid by card' do
       # Funds the transfer from that charge, so it settles with the charge
       # rather than out of the marketplace's own balance.
@@ -185,6 +210,15 @@ RSpec.describe SpreeStripe::PayoutProvider do
       # payout under it — so something moved, whatever this call thought.
       it 'says the same when Stripe rejects a reused key' do
         allow(Stripe::Payout).to receive(:create).and_raise(Stripe::IdempotencyError, 'key reused')
+
+        expect { described_class.new.pay!(payout) }.
+          to raise_error(Spree::Core::AmbiguousGatewayError)
+      end
+
+      # Stripe's own 5xx says nothing about whether it processed the request
+      # before it broke.
+      it 'says the same when Stripe itself errors' do
+        allow(Stripe::Payout).to receive(:create).and_raise(Stripe::APIError, 'internal error')
 
         expect { described_class.new.pay!(payout) }.
           to raise_error(Spree::Core::AmbiguousGatewayError)
