@@ -97,6 +97,43 @@ RSpec.describe Spree::Catalogs::ResolvePrices do
     end
   end
 
+  # The reading a merchant is shown has to be the amount a buyer on the
+  # agreement is actually charged — otherwise the view is confidently wrong.
+  describe 'agreement with the pricing resolver' do
+    let(:company) { create(:company, store: store) }
+
+    before { create(:catalog_assignment, catalog: catalog, assignable: company) }
+
+    def charged_to_buyer
+      context = Spree::Pricing::Context.new(
+        variant: variant, currency: 'USD', store: store, company: company
+      )
+      Spree::PricingProvider::Internal.new.price_for(context).amount
+    end
+
+    it 'matches an explicit amount' do
+      list = create(:price_list, :active, store: store, catalog: catalog)
+      create(:price, variant: variant, price_list: list, amount: 60, currency: 'USD')
+
+      expect(resolve(catalog.reload).amount).to eq(charged_to_buyer)
+    end
+
+    # A percentage list derives from base prices for every variant, whether or
+    # not the list holds a row for it — so the reading follows suit.
+    it 'matches a derived amount for a variant the list holds no row for' do
+      create(:price_list, :active, store: store, catalog: catalog,
+                                   price_adjustment_percentage: -15)
+
+      expect(resolve(catalog.reload).amount).to eq(charged_to_buyer)
+    end
+
+    it 'matches the base price a fixed list leaves alone' do
+      create(:price_list, :active, store: store, catalog: catalog)
+
+      expect(resolve(catalog.reload).amount).to eq(charged_to_buyer)
+    end
+  end
+
   describe '#preload' do
     it 'answers the same amounts from preloaded rows' do
       list = create(:price_list, :active, store: store, catalog: catalog)
