@@ -46,17 +46,12 @@ module Spree
         # resolving again — otherwise adding a buyer to a company months later
         # would reach back and exempt an order that legitimately charged tax.
         return company if is_a?(Spree::Order) && completed?
-        if company_id.present?
-          # A dangling id keeps today's behavior; the association answers nil.
-          return company if company.nil?
-
-          # An in-flight sale re-asks the policy: a company deactivated after
-          # being named must not keep exempting the sale through its
-          # certificates. Deliberately nil rather than the sole-standing
-          # fallback — the buyer named a node, and resolving a different one
-          # would invoice one business for another's purchase.
-          return Spree.company_activation_policy.active?(company) ? company : nil
-        end
+        # An explicitly named node stands even if the activation policy later
+        # deactivates it: attribution, the shared address book and buyer
+        # process (the PO requirement) are not commercial privileges. What an
+        # inactive company loses is its agreements and its exemptions —
+        # gated where catalogs resolve and where certificates are read.
+        return company if company_id.present?
 
         sole_standing_company
       end
@@ -71,18 +66,18 @@ module Spree
         resolved_company&.legal_entity
       end
 
-      # Whether an +approval_required+ channel must refuse completion.
-      # {#resolved_company} is the policy-filtered answer — an inactive
-      # sole standing or named node already resolves to nothing — so the
-      # question reduces to the posture plus an empty resolution. The
-      # staff exemption lives with the checkout requirement that consumes
-      # this (docs/plans/6.0-b2b-company-self-registration.md).
+      # Whether an +approval_required+ channel must refuse completion: the
+      # sale resolves to no company, or to a named node the policy has not
+      # activated (an inactive sole standing already resolves to nothing).
+      # The staff exemption lives with the checkout requirement that
+      # consumes this (docs/plans/6.0-b2b-company-self-registration.md).
       #
       # @return [Boolean]
       def company_activation_missing?
         return false if channel.blank? || !channel.storefront_approval_required?
 
-        resolved_company.nil?
+        node = resolved_company
+        node.nil? || !Spree.company_activation_policy.active?(node)
       end
 
       private

@@ -208,6 +208,16 @@ RSpec.describe Spree::Checkout::Requirements do
         not_to include(a_hash_including(code: 'company_activation_required'))
     end
 
+    # A guest's actionable gate is authentication, not company registration.
+    it 'sends a guest to the sign-in gate, not the register-a-business one' do
+      guest_cart = create(:cart, store: store, customer: nil, channel: channel)
+
+      codes = described_class.new(guest_cart).call(completion: true).map { |requirement| requirement[:code] }
+
+      expect(codes).to include('guest_checkout_not_allowed')
+      expect(codes).not_to include('company_activation_required')
+    end
+
     # An admin keying an order in is exempt — their authority is the
     # credential, not a membership.
     it 'does not gate an order keyed in by staff' do
