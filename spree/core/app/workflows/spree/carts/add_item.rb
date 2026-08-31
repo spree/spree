@@ -51,15 +51,9 @@ module Spree
 
       private
 
-      # Validates and converts the caller's negotiated price. Strict parse —
-      # a non-numeric value is refused, never coerced to zero — and overrides
-      # are pre-placement only: a placed order's money edits stay fees and
-      # discounts. finite? is not redundant with negative?: BigDecimal parses
-      # "NaN" and "Infinity", and neither is negative, so both would reach the
-      # insert and fail as a 500 rather than a validation message.
-      # reject!, not failure(cart, message): a failure whose value responds to
-      # +errors+ has its message replaced by that (empty) collection, so the
-      # merchant would get a 422 with nothing in it.
+      # finite? is not redundant: BigDecimal parses "NaN" and "Infinity" and
+      # neither is negative. reject! rather than failure(cart, message), which
+      # would drop the message.
       def parse_manual_price
         reject!(Spree.t('cart_line_item.price_override_not_allowed'), cart) if cart.completed?
 

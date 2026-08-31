@@ -159,11 +159,6 @@ module Spree
       # Backward compatibility alias — remove in Spree 6.0
       def self.multi_search(query) = search(query)
 
-      # `companies` is deliberately absent: a raw association predicate would
-      # match only members of the node itself, hiding the group-level buyer
-      # who may purchase for a subsidiary. Filtering by company goes through
-      # the with_standing_for_company scope, which covers a node's whole
-      # subtree the way every other standing check does.
       self.whitelisted_ransackable_associations = %w[bill_address ship_address addresses tags spree_roles orders customer_groups]
       self.whitelisted_ransackable_attributes = %w[id email first_name last_name phone accepts_email_marketing
                                                     created_at updated_at last_sign_in_at]
@@ -175,20 +170,8 @@ module Spree
           having('SUM(spree_orders.total) >= ?', amount.to_d)
       }
 
-      # Customers who may act for a company node: members of the node itself
-      # OR of any ancestor, because standing covers a node and everything
-      # below it (see {#standing_for?}). Filtering on the membership row alone
-      # would hide the group-level buyer who legitimately purchases for a
-      # subsidiary — and would offer a narrower set than the cart's own
-      # standing validation accepts, so a picker built on it could hide valid
-      # pairs.
-      #
-      # Accepts a record, an id (prefixed or raw), or an array of either — the
-      # dashboard's resource filter is multi-select and sends a list, and
-      # several nodes read naturally as "anyone who may buy for any of these".
-      # Ids resolve through the store's own companies, the way every other
-      # request-supplied id is looked up: an unknown id then matches nothing
-      # instead of reaching a node this store does not own.
+      # Customers with standing for a company: members of the node or of any
+      # ancestor (see #standing_for?). Accepts a record, an id, or an array.
       scope :with_standing_for_company, ->(companies) {
         scoped = Spree::Current.store&.companies || Spree::Company.none
         nodes = Array.wrap(companies).filter_map do |company|

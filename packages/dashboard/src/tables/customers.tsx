@@ -99,13 +99,8 @@ defineTable('customers', {
       sortable: false,
       filterable: true,
       filterType: 'resource',
-      // Fetched only while the column is visible — the company payload counts
-      // each node's children and members, so it is not worth paying for on a
-      // list that isn't showing it.
       expand: 'companies',
-      // A Ransack scope, not an association predicate: standing covers a node
-      // AND its ancestors, so `companies_id_in` would hide the group-level
-      // buyer who legitimately purchases for a subsidiary.
+      // Scope, not `companies_id_in`: standing covers a node AND its ancestors.
       ransackAttribute: 'with_standing_for_company',
       ransackScope: true,
       filterResource: companyAutocompleteProps('companies-filter-picker'),

@@ -22,18 +22,12 @@ import {
 } from '../../../schemas/order'
 
 /**
- * The staged items table. Every control writes to form state only — quantities,
- * prices, removals and picker additions all wait for the page's Save. A removed
- * row stays on screen struck through so the merchant can put it back before
- * saving.
+ * The staged items table. Every control writes to form state only; nothing is
+ * sent until the page's Save. `pricesEditable` is on for drafts only — a
+ * negotiated price is a pre-placement gesture.
  *
- * `pricesEditable` is on for draft orders only: a negotiated unit price is a
- * pre-placement gesture, so placed orders keep the read-only price column and
- * their money edits stay fees and discounts.
- *
- * The field array lives on the page rather than here because the catalog picker
- * appends to it too, and two `useFieldArray` calls on one name keep separate
- * row lists.
+ * The field array lives on the page because the catalog picker appends to it
+ * too, and two `useFieldArray` calls on one name keep separate row lists.
  */
 export function OrderEditItemsTable({
   form,
@@ -96,8 +90,6 @@ function OrderEditItemRow({
   const priceError = form.formState.errors.items?.[index]?.price?.message
   const negotiated = row.price_source === 'manual'
 
-  // The projection is only shown when it actually differs from what the server
-  // holds — an untouched row should read exactly as it did before editing.
   const projectedTotal = projectedLineTotal(row)
   const savedTotal = Number(row.saved_price) * row.saved_quantity
   const totalChanged =
@@ -184,9 +176,6 @@ function OrderEditItemRow({
                   )}
                 </Button>
               )}
-              {/* A staged revert shows what the catalog restores rather than
-                  the negotiated price being abandoned. The input keeps the old
-                  value struck through beside it so the change is legible. */}
               {row.revert_price ? (
                 <span className="flex items-center gap-2 text-sm whitespace-nowrap">
                   <span className="text-muted-foreground line-through">{row.saved_price}</span>
@@ -253,10 +242,6 @@ function OrderEditItemRow({
         )}
       </TableCell>
 
-      {/* Staged edits are previewed here — a quantity or price change shows
-          the saved total struck through beside what it becomes. A row whose
-          price cannot be projected keeps the server's figure rather than
-          guessing. */}
       <TableCell className="text-right whitespace-nowrap">
         {row.added ? (
           projectedTotal === null ? (

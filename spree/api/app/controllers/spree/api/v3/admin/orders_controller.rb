@@ -118,9 +118,8 @@ module Spree
           end
 
           # Override scope — Order uses SingleStoreResource (for_store).
-          # Variant prices are eager-loaded because the admin line-item
-          # serializer reads the base catalog price for every row; this
-          # override bypasses scope_includes, so the preload has to live here.
+          # Variant prices are preloaded here rather than via scope_includes,
+          # which this override bypasses; the serializer reads them per row.
           def scope
             base = current_store.orders.accessible_by(current_ability, :show).
                    includes(line_items: { variant: :prices }).preload_associations_lazily

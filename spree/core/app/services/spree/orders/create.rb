@@ -79,10 +79,6 @@ module Spree
         @store.channels.find_by_param!(@params[:channel_id])
       end
 
-      # Through the store's own companies, so a node belonging to another
-      # tenant is a 404 rather than a validation error that confirms the id
-      # exists. Accepts an already-resolved raw id (the admin controller
-      # decodes prefixed ids before calling) as well as a prefixed one.
       def resolve_company
         @store.companies.find_by_param!(@params[:company_id])
       end

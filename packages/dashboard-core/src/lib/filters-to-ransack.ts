@@ -22,9 +22,6 @@ import { type ColumnDef, type FilterRule, parseFilterIds } from './table-registr
 // FilterRule[]) stays simple.
 const ARRAY_OPERATORS = new Set(['in', 'not_in'])
 
-// Operators that mean "exclude these". A Ransack scope takes its value as an
-// argument and cannot express negation, so these are dropped for scope columns
-// rather than emitted as their own inverse.
 const NEGATING_OPERATORS = new Set(['not_in', 'not_eq'])
 
 export function filtersToRansack(
@@ -40,15 +37,9 @@ export function filtersToRansack(
     // ransack alias here when one isn't explicitly set.
     const fallback = col?.filterType === 'tags' ? 'tags_name' : filter.field
     const ransackKey = col?.ransackAttribute ?? fallback
-    // A Ransack *scope* is invoked by its bare name — it takes the value as
-    // its argument rather than comparing a column, so appending an operator
-    // suffix would name a predicate that does not exist and silently filter
-    // nothing. The scope itself decides how to read the value.
-    //
-    // That leaves no way to express negation: emitting the same bare key for
-    // `not_in` would run the scope as an inclusion and show the merchant the
-    // exact opposite of what they asked for. Skip it instead, so the rule
-    // visibly does nothing rather than quietly inverting.
+    // A scope is invoked by its bare name and takes the value as an argument,
+    // so it cannot express negation — emitting the same key for `not_in` would
+    // run it as an inclusion.
     if (col?.ransackScope && NEGATING_OPERATORS.has(filter.operator)) continue
 
     const key = col?.ransackScope ? ransackKey : `${ransackKey}_${filter.operator}`

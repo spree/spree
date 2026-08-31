@@ -55,22 +55,16 @@ module Spree
 
       private
 
-      # Puts the reason on the record before failing. +failure(record, message)+
-      # would drop it: the base helper replaces the message with the record's
-      # own (empty) errors whenever it responds to +errors+, leaving the API
-      # to render a 422 with nothing in it.
-      # Added to :base rather than :price so the full message reads as written
-      # — Rails prefixes the humanized attribute onto a field error, which
-      # would render "Price Price must be a non-negative number".
+      # failure(record, message) drops the message when the record responds to
+      # +errors+; :base rather than :price so Rails does not prefix the
+      # attribute name onto it.
       def reject_price(line_item, message)
         line_item.errors.add(:base, message)
         failure(line_item)
       end
 
-      # Strict parse — a non-numeric value is refused, never coerced to zero.
-      # finite? is not redundant with negative?: BigDecimal parses "NaN" and
-      # "Infinity", and neither is negative, so both would reach the insert
-      # and fail as a 500 rather than a validation message.
+      # finite? is not redundant: BigDecimal parses "NaN" and "Infinity" and
+      # neither is negative.
       # @return [BigDecimal, nil]
       def parse_manual_price(value)
         parsed = BigDecimal(value.to_s)

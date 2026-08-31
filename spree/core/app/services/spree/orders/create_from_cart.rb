@@ -1,20 +1,12 @@
 module Spree
   module Orders
-    # Copies a customer's cart into a fresh draft order, leaving the cart
-    # untouched — a buyer who requests a quote keeps shopping. Line items come
-    # over with their prices and +price_source+ as they stand, along with
-    # addresses, customer/company, notes and metadata. No money records and no
-    # fulfillment copies: fulfillments are rebuilt here and everything else by
-    # the draft's own lifecycle.
-    #
-    # Deliberately not the completion copier ({Spree::Carts::Complete}): that
-    # copy re-points money records and claims the cart's one-shot +cart_id+
-    # slot. This order is an independent duplicate — its +cart_id+ stays nil.
+    # Copies a cart into a fresh draft order, leaving the cart untouched.
+    # Not the completion copier: no money records are re-pointed and the
+    # one-shot +cart_id+ slot stays free.
     class CreateFromCart
       prepend Spree::ServiceModule::Base
 
-      # Money and tax columns stay behind: the draft's own recalculation
-      # rebuilds typed rows, so copied adjustment totals would be stale lies.
+      # Money/tax columns stay behind — the draft recalculates its own.
       LINE_ITEM_COPIED_ATTRIBUTES = %w[
         variant_id quantity price currency cost_price
         price_list_id price_source tax_category_id metadata

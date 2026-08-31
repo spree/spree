@@ -71,22 +71,15 @@ export const orderEditItemSchema = z
     saved_quantity: z.number().int(),
     /** Units already shipped in fulfilled fulfillments; 0 for staged additions. */
     fulfilled_quantity: z.number().int(),
-    /**
-     * Editable unit price (decimal string) — only rendered as an input on
-     * draft orders. A change stamps the line `price_source: 'manual'` on save.
-     * Its format is checked in the refinement below rather than here, so a
-     * row being removed is not held up by a price that will never be sent.
-     */
+    /** Editable on drafts; a change stamps `price_source: 'manual'`. Format
+     * checked in the refinement below, so a removed row is not held up. */
     price: z.string(),
     /** Price the server currently holds; the initial catalog price for staged additions. */
     saved_price: z.string(),
     /** Provenance from the server; 'manual' marks a negotiated line. */
     price_source: z.string().nullable(),
-    /**
-     * The variant's base catalog price, for previewing what a revert restores.
-     * Indicative only — the revert re-prices through the resolver, which may
-     * land on a price-list or contract amount instead.
-     */
+    /** Base catalog price, for previewing a revert. Indicative: the revert
+     * re-prices through the resolver. */
     catalog_price: z.string().nullable(),
     /** Staged "reset to catalog price" — sends `price: null` on save. */
     revert_price: z.boolean(),
@@ -97,10 +90,8 @@ export const orderEditItemSchema = z
     display_total: z.string(),
   })
   .superRefine((item, ctx) => {
-    // A removed row's price is never sent (the payload carries quantity 0),
-    // so refusing the form over it would block a legitimate removal — the
-    // obvious way out of having typed a bad price in the first place.
-    // A staged revert is exempt too: it sends `price: null`.
+    // Neither case sends a price, so refusing the form over one would block a
+    // legitimate removal.
     if (!item.removed && !item.revert_price && !/^\d+(\.\d+)?$/.test(item.price)) {
       ctx.addIssue({
         code: 'custom',
@@ -164,31 +155,12 @@ export function orderToEditForm(
   return { items: items.map((item) => lineItemToEditRow(item, fulfilled.get(item.id) ?? 0)) }
 }
 
-/**
- * Reduces staged rows to the `items` upsert the Admin API expects. The endpoint
- * is keyed by variant and touches only what it is sent, so untouched rows are
- * omitted, staged removals become `quantity: 0`, and additions carry their
- * quantity like any other change.
- *
- * A row that was staged and then unstaged in the same session contributes
- * nothing, which is why an addition whose `removed` flag is set drops out
- * entirely rather than sending a pointless `0`.
- */
-/**
- * Formats a projected amount in the order's currency. Only for previews the
- * client computes — server-sent money always arrives pre-formatted as
- * `display_*`, and rendering that through here would risk disagreeing with it.
- */
+/** Formats a client-computed preview amount; server money arrives as `display_*`. */
 export function formatAmount(amount: number, currency: string): string {
   return new Intl.NumberFormat(i18n.language, { style: 'currency', currency }).format(amount)
 }
 
-/**
- * The unit price a row will end up at once saved, or null when it cannot be
- * known client-side — a staged revert on a line whose catalog price the server
- * did not send. Callers render the saved price unchanged in that case rather
- * than inventing a number.
- */
+/** The price a row lands on once saved, or null when it cannot be known. */
 export function projectedPrice(item: OrderEditItemValues): number | null {
   const source = item.revert_price ? item.catalog_price : item.price
   if (source == null || source === '') return null
@@ -197,11 +169,7 @@ export function projectedPrice(item: OrderEditItemValues): number | null {
   return Number.isFinite(parsed) ? parsed : null
 }
 
-/**
- * What the line will cost after saving. Removed rows contribute nothing.
- * Null propagates from {@link projectedPrice} so an unknowable line leaves the
- * whole projection unknowable rather than silently under-counting the order.
- */
+/** What the line costs after saving; null propagates so a total is never partial. */
 export function projectedLineTotal(item: OrderEditItemValues): number | null {
   if (item.removed) return 0
 
@@ -209,11 +177,7 @@ export function projectedLineTotal(item: OrderEditItemValues): number | null {
   return price === null ? null : price * item.quantity
 }
 
-/**
- * The order's projected item subtotal. Null when any row's price cannot be
- * projected — a partial sum shown as a total would be a wrong number stated
- * confidently, which is worse than showing the server's last known figure.
- */
+/** Projected item subtotal; null if any row is unprojectable. */
 export function projectedSubtotal(items: OrderEditItemValues[]): number | null {
   let sum = 0
   for (const item of items) {
@@ -226,6 +190,11 @@ export function projectedSubtotal(items: OrderEditItemValues[]): number | null {
 
 export type OrderItemsPayload = NonNullable<OrderUpdateParams['items']>
 
+/**
+ * Reduces staged rows to the `items` upsert the Admin API expects: untouched
+ * rows are omitted, removals become `quantity: 0`, and a row staged then
+ * unstaged contributes nothing.
+ */
 export function buildOrderItemsPayload(items: OrderEditItemValues[]): OrderItemsPayload {
   const payload: OrderItemsPayload = []
 
@@ -235,9 +204,8 @@ export function buildOrderItemsPayload(items: OrderEditItemValues[]): OrderItems
       continue
     }
 
-    // A staged revert sends the explicit `price: null` gesture; an edited
-    // price rides along stamped manual. An untouched price is omitted so the
-    // server never mistakes "unchanged" for "negotiated at this amount".
+    // An untouched price is omitted so the server does not read "unchanged"
+    // as "negotiated at this amount".
     const priceChange = item.revert_price
       ? { price: null }
       : item.price !== item.saved_price

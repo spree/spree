@@ -51,16 +51,9 @@ function TotalRow({ label, value, bold }: { label: string; value: ReactNode; bol
 }
 
 /**
- * The order's totals, previewing staged edits against what the server holds.
- *
- * The subtotal is always projectable (price × quantity). The grand total is
- * only projectable when every other line is zero: shipping, tax, discounts and
- * fees are recomputed server-side from rules the browser cannot evaluate — a
- * quantity change can cross a shipping band or a promotion threshold — so a
- * naive "subtotal delta added to the old total" would state a number that is
- * quietly wrong. With no such charges the total IS the subtotal, which is the
- * common case for a fresh draft, and freezing it there would be the more
- * confusing lie.
+ * The order's totals, previewing staged edits. The subtotal is exact
+ * (price × quantity); the grand total is only projected when every other line
+ * is zero, since shipping, tax and promotions are recomputed server-side.
  */
 function OrderTotalsCard({ order, items }: { order: Order; items: OrderEditItemValues[] }) {
   const { t } = useTranslation()
@@ -69,9 +62,7 @@ function OrderTotalsCard({ order, items }: { order: Order; items: OrderEditItemV
   const savedSubtotal = Number(order.item_total)
   const subtotalChanged = projected !== null && Math.abs(projected - savedSubtotal) > 0.004
 
-  // Everything the server adds on top of the items. Derived from the order's
-  // own figures rather than summed from the parts, so anything not itemised in
-  // this card still counts.
+  // Derived from the order's own totals, so charges not itemised here count.
   const serverAddedCharges = Number(order.total) - savedSubtotal
   const totalProjectable = subtotalChanged && Math.abs(serverAddedCharges) <= 0.004
 
@@ -207,9 +198,8 @@ function OrderEditPage() {
         items: values.items
           .filter((item) => !item.removed)
           .map((item) => {
-            // A revert hands pricing back to the resolver, so the browser
-            // cannot know the landing price — carry the catalog estimate and
-            // let the refetch correct it.
+            // A revert re-prices server-side; carry the catalog estimate until
+            // the refetch corrects it.
             const reverted = item.revert_price
             const price = reverted ? (item.catalog_price ?? item.price) : item.price
 

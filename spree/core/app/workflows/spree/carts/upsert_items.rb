@@ -104,22 +104,15 @@ module Spree
           )
         end
 
-        # Price overrides are pre-placement only: a placed order's money
-        # edits stay fees and discounts. Batch-level on both sides — a
-        # directive that cannot apply is a caller bug, not a skippable line.
-        # reject!, not failure(cart, message): a failure whose value responds
-        # to +errors+ has its message replaced by that (empty) collection, so
-        # the merchant would get a 422 with nothing in it.
+        # Price overrides are pre-placement only. reject! rather than
+        # failure(cart, message), which would drop the message.
         if cart.completed? && @resolved_items.any?(&:price_provided)
           reject!(Spree.t('cart_line_item.price_override_not_allowed'), cart)
         end
       end
 
-      # Strict parse: a non-numeric or negative price is refused, never
-      # coerced — "12,50".to_d silently becoming 12 is a mispriced order.
-      # finite? is not redundant with negative?: BigDecimal happily parses
-      # "NaN" and "Infinity", and neither is negative, so both would reach
-      # the insert and fail as a 500 rather than a validation message.
+      # Never coerced — "12,50".to_d is 12, a mispriced order. finite? is not
+      # redundant: BigDecimal parses "NaN"/"Infinity" and neither is negative.
       def parse_manual_price(value)
         return nil if value.nil?
 
