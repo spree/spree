@@ -1096,6 +1096,7 @@
           "inherit": "Hériter de la boutique",
           "label": "Accès à la vitrine",
           "options": {
+            "approval_required": "Approbation requise — prix et paiement réservés aux membres d'une entreprise active",
             "login_required": "Connexion requise — les visiteurs doivent se connecter pour parcourir",
             "prices_hidden": "Prix masqués — les visiteurs doivent se connecter pour voir les prix",
             "public": "Public — tout le monde peut parcourir et voir les prix"
@@ -2062,6 +2063,7 @@
           "help": "Valeur par défaut à l'échelle de la boutique pour ce que les visiteurs anonymes peuvent voir. Les canaux peuvent la remplacer. Lorsque les prix sont masqués, les invités doivent se connecter pour passer à la caisse.",
           "label": "Accès à la vitrine",
           "options": {
+            "approval_required": "Approbation requise — prix et paiement réservés aux membres d'une entreprise active",
             "login_required": "Connexion requise — les visiteurs doivent se connecter pour parcourir",
             "prices_hidden": "Prix masqués — les visiteurs doivent se connecter pour voir les prix",
             "public": "Public — tout le monde peut parcourir et voir les prix"
