@@ -26,11 +26,18 @@ module Spree
     # we're not freezing this on purpose so developers can extend and manage
     # those attributes depending of the logic of their applications
     ADDRESS_FIELDS = %w(firstname lastname company address1 address2 city state zipcode country phone)
-    # Latitude and longitude are derived from the address rather than part of
-    # it, so they can never tell two otherwise-equal addresses apart — and an
-    # entry whose geocoding has already run would otherwise never match the
-    # same address freshly typed in.
-    EXCLUDED_KEYS_FOR_COMPARISON = %w(id updated_at created_at deleted_at label owner_type owner_id metadata latitude longitude)
+    # Beyond identity and ownership, three groups are excluded because they
+    # cannot tell two addresses apart. Latitude and longitude are derived from
+    # the address, so an entry whose geocoding has already run would otherwise
+    # never match the same address freshly typed in. country_id and state_id
+    # are the pre-6.0 foreign keys, which the upgrade task copies into codes
+    # and leaves populated: comparing them makes every migrated row differ
+    # from every new one. Both are handled the same way by .find_duplicate,
+    # which drops the legacy keys through .resolve_geo_params.
+    EXCLUDED_KEYS_FOR_COMPARISON = %w(
+      id updated_at created_at deleted_at label owner_type owner_id metadata
+      latitude longitude country_id state_id
+    )
     if defined?(Spree::Security::Addresses)
       include Spree::Security::Addresses
     end
@@ -320,11 +327,15 @@ module Spree
       end
     end
 
-    # The entry the owner's book already holds for this same place, if there is
-    # one. Sameness is by value: what {#value_attributes} leaves out tells two
-    # rows apart, it does not make them two different places — so someone
-    # re-entering an address they already saved gets the entry they have back
-    # instead of a near-copy filed beside it.
+    # The entry the owner's book already holds for this, if there is one, so
+    # someone re-entering an address they already saved gets the entry they
+    # have back instead of a near-copy filed beside it.
+    #
+    # An entry is more than a place. Two rows match only when they mean the
+    # same place ({#==}) *and* agree on the things the owner attached to the
+    # entry itself — its label and its metadata. A company filing "Dock A" and
+    # "Dock B" at one site keeps two entries, and neither request silently
+    # loses the name it was filed under.
     #
     # Owners that keep no book, including no owner at all, have nothing to
     # match against.
@@ -333,7 +344,12 @@ module Spree
     def duplicate_in_address_book
       return nil unless owner.respond_to?(:addresses)
 
-      owner.addresses.not_deleted.detect { |existing| existing.id != id && existing == self }
+      owner.addresses.not_deleted.detect do |existing|
+        existing.id != id &&
+          existing == self &&
+          existing.label == label &&
+          existing.metadata.to_h == metadata.to_h
+      end
     end
 
     def ==(other)

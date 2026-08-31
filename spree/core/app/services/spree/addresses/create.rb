@@ -19,12 +19,18 @@ module Spree
         address.owner = owner if owner.present?
 
         ApplicationRecord.transaction do
-          # Asked before saving, and of a validated record so the codes have
-          # been resolved: a book that already holds this address gets the
-          # entry it has back rather than a second copy of it. The default
-          # flags still apply — re-adding an address is a fair way to ask for
-          # it to be defaulted.
-          existing = address.valid? ? address.duplicate_in_address_book : nil
+          # A book that already holds this entry gets the entry it has back
+          # rather than a second copy of it. The default flags still apply —
+          # re-adding an address is a fair way to ask for it to be defaulted.
+          #
+          # Validation runs first only to resolve the country and state codes,
+          # and its verdict is deliberately ignored: a resubmission carrying
+          # the label it was filed under is invalid precisely because that
+          # entry already exists, and answering it with "name has already been
+          # taken" instead of the entry itself would be absurd. A genuinely
+          # invalid address matches nothing and fails on the save below.
+          address.validate
+          existing = address.duplicate_in_address_book
 
           if existing.present?
             assign_owner_default(

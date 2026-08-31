@@ -147,7 +147,7 @@ module Spree
       #
       # @param attributes [Hash, ActionController::Parameters]
       def bill_address_attributes=(attributes)
-        self.bill_address = update_or_create_address(attributes)
+        self.bill_address = update_or_create_address(attributes, guest_row: guest_editable_address(bill_address, ship_address_id))
         customer.bill_address = bill_address if should_assign_user_default_address?(bill_address)
       end
 
@@ -167,7 +167,7 @@ module Spree
       #
       # @param attributes [Hash, ActionController::Parameters]
       def ship_address_attributes=(attributes)
-        self.ship_address = update_or_create_address(attributes)
+        self.ship_address = update_or_create_address(attributes, guest_row: guest_editable_address(ship_address, bill_address_id))
         customer.ship_address = ship_address if should_assign_user_default_address?(ship_address)
         self.ship_address = nil if quick_checkout_address?(attributes[:quick_checkout]) && !ship_address.persisted?
       end
@@ -201,31 +201,49 @@ module Spree
         company.self_and_ancestors.any? { |node| node.id == address.owner_id } ? address : nil
       end
 
-      # Reuse is confined to the buyer's own address book, so a submission can
-      # only ever land on a row the buyer already owns. A guest keeps no book
-      # and so always writes a fresh row: the ownerless rows are other people's
-      # cart addresses and the snapshots placed orders keep, and reaching into
-      # those would let one checkout read or rewrite another's address.
-      def update_or_create_address(attributes = {})
+      # Reuse never reaches past what the buyer already owns: a signed-in buyer
+      # may name any entry of their own address book, and a guest — who keeps
+      # no book — may only edit the row already in the slot being written.
+      # Every other ownerless row is someone else's cart address or the
+      # snapshot a placed order keeps, and reaching into those would let one
+      # checkout read or rewrite another's address.
+      def update_or_create_address(attributes = {}, guest_row: nil)
         return if attributes.blank?
 
         attributes.transform_values!(&:presence)
         attributes = attributes.to_h.symbolize_keys
 
-        return ::Spree::Address.create(attributes.except(:id, :updated_at, :created_at)) if customer.nil?
+        reusable_address = customer ? customer.addresses.find_by(id: attributes[:id]) : guest_row
 
-        saved_address = customer.addresses.find_by(id: attributes[:id])
+        if reusable_address&.editable?
+          reusable_address.update(attributes)
 
-        if saved_address&.editable?
-          saved_address.update(attributes)
-
-          return saved_address
+          return reusable_address
         end
 
         attributes = attributes.except(:id, :updated_at, :created_at)
+        return ::Spree::Address.create(attributes) if customer.nil?
+
         attributes[:owner] = customer
 
         ::Spree::Address.find_duplicate(attributes) || ::Spree::Address.create(attributes)
+      end
+
+      # The row a guest write may edit in place rather than replace: the one
+      # already in this slot, which is the only address a guest owns. Editing
+      # it keeps a correction from leaving the row it corrected behind as an
+      # orphan carrying someone's name and street.
+      #
+      # It is left alone while the other slot points at the same row — checkout
+      # shares one row between the two whenever shipping is copied onto billing,
+      # and editing it there would move the parcel as well as the invoice.
+      #
+      # @return [Spree::Address, nil]
+      def guest_editable_address(address, other_slot_address_id)
+        return nil if customer.present? || address.nil? || !address.persisted?
+        return nil if address.owner_id.present? || address.id == other_slot_address_id
+
+        address
       end
 
       def quick_checkout_address?(quick_checkout_param)

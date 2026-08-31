@@ -64,6 +64,28 @@ RSpec.describe Spree::Addresses::Create do
         expect(customer.reload.bill_address_id).to eq(existing.id)
       end
 
+      # The entry keeps the name it was filed under. Returning the existing,
+      # differently named entry would drop the label and make a second one
+      # impossible.
+      it 'files a second entry when the request names it differently' do
+        first = subject.call(address_params: address_params.merge(label: 'Dock A'), owner: customer)
+        second = subject.call(address_params: address_params.merge(label: 'Dock B'), owner: customer)
+
+        expect(second).to be_success
+        expect(second.value.id).not_to eq(first.value.id)
+        expect(second.value.label).to eq('Dock B')
+      end
+
+      # The label is taken precisely because the entry is already there, so the
+      # answer is that entry — never "name has already been taken".
+      it 'returns the existing entry when the request repeats its label' do
+        first = subject.call(address_params: address_params.merge(label: 'Dock A'), owner: customer)
+        repeat = subject.call(address_params: address_params.merge(label: 'Dock A'), owner: customer)
+
+        expect(repeat).to be_success
+        expect(repeat.value.id).to eq(first.value.id)
+      end
+
       it 'creates a new address when a field differs' do
         expect {
           subject.call(address_params: address_params.merge(address1: '2 Main Street'), owner: customer)

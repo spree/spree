@@ -1028,10 +1028,6 @@ describe Spree::Address, type: :model do
       expect(build_for(customer).duplicate_in_address_book).to eq(saved)
     end
 
-    it 'ignores the label, which does not make it a different place' do
-      expect(build_for(customer, label: 'Office').duplicate_in_address_book).to eq(saved)
-    end
-
     it 'ignores geocoding, which is derived from the address' do
       saved.update_columns(latitude: 40.7, longitude: -74.0)
 
@@ -1058,6 +1054,36 @@ describe Spree::Address, type: :model do
 
     it 'does not match the address against itself' do
       expect(saved.duplicate_in_address_book).to be_nil
+    end
+
+    # The upgrade task copies the pre-6.0 foreign keys into codes and leaves
+    # them populated, so comparing them would make every migrated entry differ
+    # from every newly typed one and silently disable deduplication.
+    it 'matches an entry still carrying the pre-6.0 country and state ids' do
+      saved.update_columns(country_id: 42, state_id: 7)
+
+      expect(build_for(customer).duplicate_in_address_book).to eq(saved)
+    end
+
+    # A label names the entry, not the place: "Dock A" and "Dock B" at one site
+    # are two entries a company is entitled to keep.
+    it 'does not match an entry filed under a different label' do
+      saved.update!(label: 'Dock A')
+
+      expect(build_for(customer, label: 'Dock B').duplicate_in_address_book).to be_nil
+    end
+
+    it 'matches an entry filed under the same label' do
+      saved.update!(label: 'Dock A')
+
+      expect(build_for(customer, label: 'Dock A').duplicate_in_address_book).to eq(saved)
+    end
+
+    it 'does not match when the request carries metadata the entry lacks' do
+      built = build_for(customer)
+      built.metadata = { 'gate_code' => '1234' }
+
+      expect(built.duplicate_in_address_book).to be_nil
     end
   end
 end
