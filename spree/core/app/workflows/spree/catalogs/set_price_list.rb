@@ -102,15 +102,28 @@ module Spree
           next unless klass&.contextual?
 
           # A rule is unique per kind on a list, and this payload names kinds
-          # rather than rows, so an id the caller did not send is filled in
-          # from the row already holding that kind. Without it every save
-          # would try to create a second rule of the same type and be
-          # refused by the uniqueness validation.
-          attrs[:id] ||= existing.find { |rule| rule.class == klass }&.id
+          # rather than rows, so the row already holding that kind is the one
+          # meant — whatever id the caller sent, or none at all. Taking the
+          # caller's id at face value would build a second rule of the same
+          # type (an id from another list finds nothing here) and be refused
+          # by the uniqueness validation, turning an ordinary save into a
+          # 500.
+          attrs[:id] = existing.find { |rule| rule.class == klass }&.id
           attrs
         end
 
-        contextual + untouched.map { |rule| { id: rule.id, type: rule.class.api_type, preferences: rule.preferences } }
+        # The payload names kinds, so two rows of one kind are one intent
+        # stated twice; the last wins. Left as-is they would both resolve to
+        # the same row and the second would be refused as a duplicate type.
+        contextual = contextual.reverse.uniq { |attrs| attrs[:type] }.reverse
+
+        # Named by id and type only, deliberately without their preferences:
+        # reconciliation runs a row's preference setters, and those re-check
+        # every record an audience rule points at. Re-sending the stored
+        # values would re-validate data this payload never spoke about, so a
+        # customer group deleted long after the rule was written would turn
+        # an ordinary catalog save into a 404.
+        contextual + untouched.map { |rule| { id: rule.id, type: rule.class.api_type } }
       end
     end
   end

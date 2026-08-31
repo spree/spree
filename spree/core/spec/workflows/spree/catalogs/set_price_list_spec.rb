@@ -174,6 +174,66 @@ describe Spree::Catalogs::SetPriceList do
       expect(rules.first.preferred_min_quantity).to eq(25)
     end
 
+    # The payload names kinds, so the row holding that kind is the one meant.
+    # Taking a caller's id at face value would try to build a second rule of
+    # the same type and turn an ordinary save into a 500.
+    it 'ignores a rule id belonging to another catalog' do
+      other = create(:catalog, store: store)
+      other_list = create(:price_list, :active, store: store, catalog: other)
+      stranger = create(:volume_price_rule, price_list: other_list, min_quantity: 4)
+      mine = create(:volume_price_rule, price_list: price_list, min_quantity: 10)
+
+      result = described_class.call(
+        catalog: catalog,
+        attributes: { rules: [{ 'id' => stranger.id, 'type' => 'volume_rule',
+                                'preferences' => { 'min_quantity' => 99 } }] }
+      )
+
+      expect(result).to be_success
+      expect(mine.reload.preferred_min_quantity).to eq(99)
+      # The other catalog's rule is untouched, and still its own.
+      expect(stranger.reload.preferred_min_quantity).to eq(4)
+      expect(stranger.price_list_id).to eq(other_list.id)
+    end
+
+    # Merging a rule back in must not re-run its setters: those re-check
+    # every record the rule points at, so a group deleted long after the rule
+    # was written would fail a save that never mentioned it.
+    it 'survives an audience rule whose referenced record is gone' do
+      group = create(:customer_group, store: store)
+      create(:customer_group_price_rule, price_list: price_list, customer_group_ids: [group.id])
+      # Really gone, not soft-deleted: a paranoid destroy still resolves, so
+      # it would not exercise the validator at all.
+      group.really_destroy!
+
+      # The pricing card sends `rules` on every save, so an edit that only
+      # changes the percentage still carries the audience rule through here.
+      result = described_class.call(
+        catalog: catalog,
+        attributes: { price_adjustment_percentage: '-20',
+                      rules: [{ 'type' => 'volume_rule', 'preferences' => { 'min_quantity' => 10 } }] }
+      )
+
+      expect(result).to be_success
+      expect(price_list.reload.price_adjustment_percentage).to eq(-20)
+      expect(price_list.price_rules.map { |rule| rule.class.api_type }).to include('customer_group_rule')
+    end
+
+    # The payload names kinds, so one kind stated twice is one intent.
+    it 'takes the last of two rows naming the same kind' do
+      result = described_class.call(
+        catalog: catalog,
+        attributes: { rules: [
+          { 'type' => 'volume_rule', 'preferences' => { 'min_quantity' => 5 } },
+          { 'type' => 'volume_rule', 'preferences' => { 'min_quantity' => 20 } }
+        ] }
+      )
+
+      expect(result).to be_success
+      volume = price_list.reload.price_rules.select { |rule| rule.is_a?(Spree::PriceRules::VolumeRule) }
+      expect(volume.map(&:preferred_min_quantity)).to eq([20])
+    end
+
     it 'clears the contextual rules on an empty array without touching the rest' do
       create(:volume_price_rule, price_list: price_list, min_quantity: 10)
 
