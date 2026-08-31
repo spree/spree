@@ -102,19 +102,27 @@ function NewCatalogPage() {
     }
   }
 
+  // Stepping back and clearing a field can make Create fail validation on a
+  // step that is no longer on screen. Without this the button would do nothing
+  // at all, with the reason two steps away.
+  function reportInvalid() {
+    form.setError('root', { message: t('admin.catalogs.wizard.review.fix_earlier_steps') })
+  }
+
   return (
     // Enter is swallowed until the last step. A form whose only blocking
     // control is one text input submits on Enter, which from step one would
     // create the catalog without the merchant ever seeing Audience, Pricing
     // or Review — the opposite of the contract this flow makes.
     <form
-      onSubmit={form.handleSubmit(handleCreate)}
+      onSubmit={form.handleSubmit(handleCreate, reportInvalid)}
       onKeyDown={(event) => {
-        if (
-          event.key === 'Enter' &&
-          !isLastStep &&
-          !(event.target instanceof HTMLTextAreaElement)
-        ) {
+        // Only a single-line text field. Enter on a button is how a keyboard
+        // user presses it — including inside the audience dialog this form
+        // encloses — and a textarea needs it for a new line.
+        const onTextInput =
+          event.target instanceof HTMLInputElement && event.target.type !== 'checkbox'
+        if (event.key === 'Enter' && !isLastStep && onTextInput) {
           event.preventDefault()
         }
       }}

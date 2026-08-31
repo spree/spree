@@ -43,10 +43,14 @@ module Spree
 
       # The price this agreement gives for a variant.
       #
-      # @param variant [Spree::Variant]
+      # @param variant [Spree::Variant, nil]
       # @return [Spree::CatalogPrice, nil] nil when nothing prices the variant
-      #   in this currency at all
+      #   in this currency at all, or when there is no variant to price — a
+      #   product whose only variant was soft-deleted still has to render as a
+      #   row rather than taking the whole listing down with it
       def call(variant)
+        return if variant.nil?
+
         rows = rows_for(variant)
         base = rows.detect { |row| row.price_list_id.nil? }
 

@@ -85,6 +85,12 @@ RSpec.describe Spree::Catalogs::ResolvePrices do
       expect(price.source).to eq('base')
     end
 
+    # A product whose only variant was soft-deleted still has to render as a
+    # row; taking the whole listing down over it would be the worse failure.
+    it 'answers nothing for a product with no variant to price' do
+      expect(described_class.new(catalog: catalog, currency: 'USD').call(nil)).to be_nil
+    end
+
     it 'answers nothing when no price exists in the currency' do
       expect(resolve(catalog, currency: 'JPY')).to be_nil
     end

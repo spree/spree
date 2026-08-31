@@ -217,7 +217,8 @@
           "review": "Nic nie zostanie utworzone, dopóki nie zakończysz."
         },
         "review": {
-          "everyone": "Wszyscy"
+          "everyone": "Wszyscy",
+          "fix_earlier_steps": "Coś we wcześniejszym kroku wymaga poprawy, zanim ten katalog zostanie utworzony."
         }
       }
     },

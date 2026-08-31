@@ -215,7 +215,8 @@
           "review": "Es wird nichts erstellt, bevor Sie abschließen."
         },
         "review": {
-          "everyone": "Alle"
+          "everyone": "Alle",
+          "fix_earlier_steps": "Auf einem früheren Schritt muss etwas korrigiert werden, bevor dieser Katalog erstellt werden kann."
         }
       }
     },

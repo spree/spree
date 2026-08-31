@@ -215,7 +215,8 @@
           "review": "完成前不会创建任何内容。"
         },
         "review": {
-          "everyone": "所有人"
+          "everyone": "所有人",
+          "fix_earlier_steps": "需要先修正前面步骤中的内容，才能创建此目录。"
         }
       }
     },

@@ -215,7 +215,8 @@
           "review": "Rien n’est créé tant que vous n’avez pas terminé."
         },
         "review": {
-          "everyone": "Tout le monde"
+          "everyone": "Tout le monde",
+          "fix_earlier_steps": "Un élément d’une étape précédente doit être corrigé avant de créer ce catalogue."
         }
       }
     },

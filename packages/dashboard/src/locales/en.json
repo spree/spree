@@ -215,7 +215,8 @@
           "review": "Nothing is created until you finish."
         },
         "review": {
-          "everyone": "Everyone"
+          "everyone": "Everyone",
+          "fix_earlier_steps": "Something on an earlier step needs fixing before this catalog can be created."
         }
       }
     },
