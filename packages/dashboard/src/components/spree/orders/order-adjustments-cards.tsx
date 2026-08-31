@@ -46,6 +46,11 @@ import {
   useOrderFees,
   useOrderTaxLines,
 } from '../../../hooks/use-order'
+import {
+  groupTaxLines,
+  showsTaxabilityReason,
+  type TaxLineGroup,
+} from '../../../lib/tax-line-groups'
 import { FEE_KINDS } from '../../../schemas/order'
 
 /** The API accepts any kind string, so unknown values fall back to the raw value. */
@@ -89,21 +94,33 @@ function AdjustmentDeleteCell({
   )
 }
 
+/** The certificate line under an exempt tax row, or nothing. */
+function taxExemptionDetail(group: TaxLineGroup): string | null {
+  const number = group.exemption?.certificate_number
+  if (group.taxabilityReason !== 'customer_exempt' || !number) return null
+
+  const reasonCode = group.exemption?.reason_code
+  const reason = reasonCode
+    ? i18n.t(`admin.tax_exemption_certificates.reason_codes.${reasonCode}`, {
+        defaultValue: reasonCode,
+      })
+    : null
+
+  return reason
+    ? i18n.t('admin.orders.detail.adjustment_lines.tax_exempt_certificate', {
+        reason,
+        number,
+      })
+    : i18n.t('admin.orders.detail.adjustment_lines.tax_exempt_certificate_number', {
+        number,
+      })
+}
+
 export function TaxLinesCard({ order }: { order: Order }) {
   const { t } = useTranslation()
   const orderId = order.id
   const { data: taxLines } = useOrderTaxLines(orderId)
-
-  // Tax rows grouped by label so a rate charged on many lines reads as one row.
-  const taxGroups = new Map<string, { label: string; amount: number }>()
-  for (const row of taxLines?.data ?? []) {
-    const existing = taxGroups.get(row.label)
-    if (existing) {
-      existing.amount += Number.parseFloat(row.amount)
-    } else {
-      taxGroups.set(row.label, { label: row.label, amount: Number.parseFloat(row.amount) })
-    }
-  }
+  const taxGroups = groupTaxLines(taxLines?.data ?? [])
 
   return (
     <Card>
@@ -111,10 +128,12 @@ export function TaxLinesCard({ order }: { order: Order }) {
         <CardTitle>{t('admin.orders.detail.adjustment_lines.taxes')}</CardTitle>
       </CardHeader>
 
-      {taxGroups.size === 0 ? (
+      {taxGroups.length === 0 ? (
         <CardContent>
           <p className="text-sm text-muted-foreground">
-            {t('admin.orders.detail.adjustment_lines.taxes_empty')}
+            {order.completed_at
+              ? t('admin.orders.detail.adjustment_lines.taxes_unmatched')
+              : t('admin.orders.detail.adjustment_lines.taxes_empty')}
           </p>
         </CardContent>
       ) : (
@@ -128,18 +147,36 @@ export function TaxLinesCard({ order }: { order: Order }) {
             </TableRow>
           </TableHeader>
           <TableBody>
-            {[...taxGroups.values()].map((group) => (
-              <TableRow key={group.label}>
-                <TableCell>{group.label}</TableCell>
-                <TableCell className="text-right tabular-nums">
-                  {formatPrice({
-                    amount: group.amount.toFixed(2),
-                    currency: order.currency,
-                    display_amount: null,
-                  })}
-                </TableCell>
-              </TableRow>
-            ))}
+            {taxGroups.map((group) => {
+              const detail = taxExemptionDetail(group)
+              return (
+                <TableRow key={group.key}>
+                  <TableCell>
+                    <div className="flex flex-col gap-0.5">
+                      <div className="flex flex-wrap items-center gap-2">
+                        <span>{group.label}</span>
+                        {showsTaxabilityReason(group) && (
+                          <Badge variant="secondary">
+                            {t(
+                              `admin.orders.detail.adjustment_lines.taxability_reason.${group.taxabilityReason}`,
+                              { defaultValue: group.taxabilityReason ?? undefined },
+                            )}
+                          </Badge>
+                        )}
+                      </div>
+                      {detail && <span className="text-xs text-muted-foreground">{detail}</span>}
+                    </div>
+                  </TableCell>
+                  <TableCell className="text-right tabular-nums">
+                    {formatPrice({
+                      amount: group.amount.toFixed(2),
+                      currency: order.currency,
+                      display_amount: null,
+                    })}
+                  </TableCell>
+                </TableRow>
+              )
+            })}
           </TableBody>
         </Table>
       )}
