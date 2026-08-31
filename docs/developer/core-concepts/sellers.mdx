@@ -87,7 +87,7 @@ Requirements come in three flavours, which is what lets one mechanism cover very
 | **Attested** | The seller confirms something — accepting terms |
 | **Verified** | The seller submits something and the marketplace rules on it — a document, an operator review |
 
-A document requirement accepts a PDF, an image, or a Word file. The server confirms the type from the file's bytes, so the host needs the Unix `file` command — see [Docker](/developer/deployment/docker).
+A document requirement accepts a PDF, an image, or a Word file. The server confirms the type from the file's own bytes.
 
 Shipped out of the box: accepting terms, completing the profile, a billing address, a returns address, and a minimum number of products. Also available are generic document upload, attestation, operator review, and required custom fields.
 

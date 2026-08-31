@@ -266,7 +266,7 @@ module Spree
       end
     end
 
-    describe 'a purchase order document when the file command is missing' do
+    describe 'a purchase order document attached without the Unix file command' do
       let(:blob) do
         ActiveStorage::Blob.create_and_upload!(
           io: StringIO.new('%PDF-1.4 purchase order'),
@@ -276,16 +276,15 @@ module Spree
         )
       end
 
-      it 'fails with a message staff can act on rather than the library install text' do
-        allow(Open3).to receive(:capture2).with('file', any_args).and_raise(Errno::ENOENT)
+      it 'attaches the file' do
+        expect(Open3).not_to receive(:capture2)
 
         result = described_class.call(
           store: store, params: { email: 'buyer@example.com', po_document: blob.signed_id }
         )
 
-        expect(result).to be_failure
-        expect(result.error.to_s).to include(Spree.t(:attachment_could_not_be_verified))
-        expect(result.error.to_s).not_to include('file command-line tool')
+        expect(result).to be_success
+        expect(result.value.po_document).to be_attached
       end
     end
   end

@@ -135,11 +135,9 @@ RSpec.describe 'seller requirement submission workflows' do
       end
     end
 
-    # Same missing-tool path as the purchase-order document: the library
-    # raises install text, and a seller must not see it.
-    it 'does not leak a missing file-command error to the seller' do
+    it 'accepts a document without the Unix file command' do
       requirement = create(:document_requirement, store: store)
-      allow(Open3).to receive(:capture2).with('file', any_args).and_raise(Errno::ENOENT)
+      expect(Open3).not_to receive(:capture2)
 
       result = described_class.call(
         seller: seller,
@@ -151,9 +149,7 @@ RSpec.describe 'seller requirement submission workflows' do
         }
       )
 
-      expect(result).to be_failure
-      expect(result.error.value.full_messages.join).to include(Spree.t(:attachment_could_not_be_verified))
-      expect(result.error.value.full_messages.join).not_to include('file command-line tool')
+      expect(result).to be_success
     end
 
     it 'accepts a real PDF' do

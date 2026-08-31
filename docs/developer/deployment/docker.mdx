@@ -28,18 +28,6 @@ docker build . -f backend/Dockerfile -t my-store
 
 Both produce the same image — and it's exactly what Render and Railway build from your repository. Migrations run automatically on boot.
 
-<Warning>
-Purchase-order documents and seller onboarding documents are accepted only as a PDF, an image, or a Word file. The server confirms that from the file's own bytes, which needs the Unix `file` command.
-
-The starter image must install the `file` package in its **runtime** stage — the same stage that already installs `curl`, `libjemalloc2` and `libvips`:
-
-```dockerfile
-apt-get install --no-install-recommends -y curl libjemalloc2 libvips file
-```
-
-If you build your own image or run without Docker, install that package on the host. Without it every attach is refused.
-</Warning>
-
 ## Running the Image
 
 One app container plus Postgres is a complete deployment:
