@@ -143,6 +143,31 @@ module Spree
       end
     end
 
+    # Whether an owned list still applies once its catalog has selected it.
+    #
+    # Only the contextual rules are asked. An owned list is reached through
+    # its catalog, which already answered the audience question — re-asking a
+    # customer-group or channel rule here would let a stale audience rule
+    # switch off a price the agreement grants. Quantity is the case a catalog
+    # cannot express, and it is what makes automatic volume pricing work
+    # (docs/plans/6.0-price-list-automatic-pricing.md).
+    #
+    # An owned list with no contextual rules applies, which is every list
+    # merchants have set up so far.
+    #
+    # @param context [Spree::Pricing::Context]
+    # @return [Boolean]
+    def contextual_rules_applicable?(context)
+      contextual = price_rules.select { |rule| rule.class.contextual? }
+      return true if contextual.none?
+
+      case match_policy
+      when 'all' then contextual.all? { |rule| rule.applicable?(context) }
+      when 'any' then contextual.any? { |rule| rule.applicable?(context) }
+      else false
+      end
+    end
+
     # Whether this list derives prices from base prices rather than pricing
     # only what it holds explicit rows for.
     # @return [Boolean]

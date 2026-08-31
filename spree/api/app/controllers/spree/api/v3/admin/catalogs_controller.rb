@@ -82,6 +82,13 @@ module Spree
                                         :name, :description, :status, :match_policy,
                                         :starts_at, :ends_at,
                                         :price_adjustment_percentage, :adjust_compare_at,
+                                        # Contextual rules only in practice — a
+                                        # VolumeRule is what turns a percentage
+                                        # into automatic volume pricing. Audience
+                                        # rules on an owned list are inert, since
+                                        # the catalog assignment already decided
+                                        # the audience.
+                                        { rules: [:id, :type, { preferences: {} }] },
                                         # An empty array clears the hand-entered
                                         # amounts — what switching to a
                                         # percentage sends.

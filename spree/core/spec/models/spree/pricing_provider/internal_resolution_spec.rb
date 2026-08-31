@@ -293,6 +293,74 @@ describe Spree::PricingProvider::Internal::Resolution do
       end
     end
 
+    # The headline case: a percentage plus a VolumeRule is an automatic
+    # volume discount, with no rows to maintain
+    # (docs/plans/6.0-price-list-automatic-pricing.md).
+    context 'with an automatic price list carrying a contextual rule' do
+      let(:company) { create(:company, store: store) }
+      let(:catalog) do
+        create(:catalog, store: store).tap do |owner|
+          create(:catalog_assignment, catalog: owner, assignable: company)
+        end
+      end
+      let!(:price_list) do
+        create(:price_list, :active, store: store, catalog: catalog, price_adjustment_percentage: -10)
+      end
+
+      before do
+        variant.prices.base_prices.with_currency(currency).update_all(amount: 20.00)
+        create(:volume_price_rule, price_list: price_list, min_quantity: 10)
+      end
+
+      def price_at(quantity)
+        described_class.new(
+          Spree::Pricing::Context.new(
+            variant: variant, currency: currency, store: store,
+            company: company, quantity: quantity
+          )
+        ).resolve
+      end
+
+      it 'derives the adjusted price once the quantity threshold is met' do
+        price = price_at(10)
+
+        expect(price.amount).to eq(18.00)
+        expect(price.price_list_id).to eq(price_list.id)
+      end
+
+      it 'leaves the base price alone below the threshold' do
+        price = price_at(5)
+
+        expect(price.amount).to eq(20.00)
+        expect(price.price_list_id).to be_nil
+      end
+
+      # Rules need a quantity to judge; a catalogue listing has none, and
+      # must not be priced as though it were a bulk order.
+      it 'leaves the base price alone when the context carries no quantity' do
+        expect(price_at(nil).amount).to eq(20.00)
+      end
+
+      # An audience rule on an owned list is inert: the catalog assignment
+      # already answered that question, and re-asking it here would let a
+      # stale rule switch off a price the agreement grants.
+      it 'ignores an audience rule the buyer does not satisfy' do
+        create(:customer_group_price_rule, price_list: price_list,
+                                          customer_group_ids: [create(:customer_group, store: store).id])
+
+        expect(price_at(10).amount).to eq(18.00)
+      end
+
+      # An explicit row is a deliberate override and beats the derived
+      # amount, but only once the rule lets the list apply at all.
+      it 'still prefers an explicit row over the derived amount' do
+        create(:price, variant: variant, currency: currency, amount: 15.00, price_list: price_list)
+
+        expect(price_at(10).amount).to eq(15.00)
+        expect(price_at(5).amount).to eq(20.00)
+      end
+    end
+
     context 'with price list from different store' do
       let(:other_store) { create(:store) }
       let!(:other_store_list) { create(:price_list, :active, store: other_store) }

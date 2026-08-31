@@ -4538,3 +4538,50 @@ sale — as a default rather than an accident.
 Plans amended: `6.0-price-list-automatic-pricing.md` (Key Decisions, API +
 dashboard), `6.0-catalog-agreement-rework.md` (unchanged in substance — the
 catalog page was always the card's home).
+
+## 2026-08-31 — An owned price list honours its contextual rules, and only those
+
+Settles the open consequence recorded in the catalog-owned-only decision
+earlier today, which left automatic volume pricing — the automatic-pricing
+plan's headline case — with no working home.
+
+**The finding.** The resolver reaches a catalog-owned list through the
+catalog and selects it on status and dates alone; `applicable?` is never
+called, so an owned list's rules are inert. Meanwhile a percentage may only
+live on an owned list. The two halves of "a `VolumeRule` at `min_quantity:
+10` plus −5%" were therefore in different rooms: the resolver specs prove
+it, testing volume pricing only on standalone lists with hand-entered rows
+and percentages only on rule-less owned lists.
+
+**Decision.** Owned lists consult their **contextual** rules and ignore
+their **audience** rules. The split is a class-level predicate on the rule,
+`PriceRule.contextual?`, beside the existing `geographic?` and
+`superseded?` — not a constant listing type names, since extensions
+register rule kinds of their own and a frozen list would silently exclude
+them. `VolumeRule` is contextual; every other core kind is not.
+
+The reasoning is that an owned list has already been matched on audience by
+the time the resolver holds it — the catalog assignment is what selected it,
+nearest node first. Re-asking a `CustomerGroupRule` there could only narrow
+an audience the agreement already decided, which is the second answer to a
+question the doctrine says one entity owns. Quantity is different in kind:
+no catalog assignment can express "when they buy ten", because it is a
+property of the purchase and not of the buyer. Dates and status already
+gate owned lists and are unchanged.
+
+**Consequences.** `Catalogs::SetPriceList` accepts `rules` on the inline
+payload, and the catalog editor offers the contextual kinds only — the
+picker filters on `contextual?` for an owned list exactly as it filters on
+`superseded?` elsewhere. An owned list carrying no rules behaves exactly as
+before, so nothing merchants have already set up moves.
+
+Rejected: consulting every rule on an owned list. That re-litigates the
+audience inside the agreement and would let a stale `CustomerGroupRule`
+silently switch a negotiated price off. Also rejected: a separate
+quantity-tier table on the list — price rules already express the
+predicate, and a second vocabulary for the same question is what the
+one-question-per-entity doctrine exists to prevent.
+
+Plans amended: `6.0-price-list-automatic-pricing.md` (Key Decisions,
+Resolution), `6.0-catalog-agreement-rework.md` (Constraints — owned lists
+are no longer rule-free).
