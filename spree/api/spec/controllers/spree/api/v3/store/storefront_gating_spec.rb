@@ -199,6 +199,23 @@ RSpec.describe Spree::Api::V3::Store::OrdersController, type: :controller do
     request.headers['X-Spree-Channel'] = channel.code
   end
 
+  describe 'approval_required and receipts' do
+    before { channel.update!(preferred_storefront_access: 'approval_required') }
+
+    # Money already taken is the buyer's record of purchase — the posture
+    # protects catalog prices, never a receipt.
+    it 'still shows a gated customer the totals of their own completed order' do
+      order = create(:completed_order_with_totals, store: store, channel: channel, customer: user)
+      request.headers['Authorization'] = "Bearer #{jwt_token}"
+
+      get :show, params: { id: order.prefixed_id }, as: :json
+
+      expect(response).to have_http_status(:ok)
+      expect(json_response['total']).to be_present
+      expect(json_response['pricing_access']).to be_nil
+    end
+  end
+
   describe 'login_required gate' do
     before { channel.update!(preferred_storefront_access: 'login_required') }
 

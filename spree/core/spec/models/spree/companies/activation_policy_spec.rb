@@ -45,5 +45,20 @@ RSpec.describe Spree::Companies::ActivationPolicy, type: :model do
         expect(code).to eq('company_required')
       end
     end
+
+    # A conforming policy suspends whole subtrees, so a member's standing
+    # over a division must not slip past a suspended root.
+    it 'stays gated when only the root of the tree is suspended' do
+      root = create(:company, store: store)
+      create(:company, store: store, kind: 'division', parent: root)
+      create(:company_membership, company: root, customer: customer)
+
+      with_company_activation_policy(inactive: [root]) do
+        code = Spree.company_activation_policy_class.new.
+               pricing_access_code(user: customer, store: store)
+
+        expect(code).to eq('company_required')
+      end
+    end
   end
 end

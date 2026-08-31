@@ -8,6 +8,11 @@ module Spree
 
             protected
 
+            # The customer's own balances are a receipt surface — see StorefrontGating#renders_receipts?.
+            def renders_receipts?
+              true
+            end
+
             def set_parent
               @parent = current_user
             end

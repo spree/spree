@@ -56,6 +56,27 @@ RSpec.shared_examples 'a company host' do
     end
   end
 
+  describe 'an explicitly named company the policy deactivates' do
+    before do
+      create(:company_membership, company: company, customer: record.customer)
+      record.update!(company: company)
+    end
+
+    # The buyer named a node; a deactivated node must not keep exempting the
+    # sale, and resolving a different node would invoice another business.
+    it 'resolves to nothing while inactive' do
+      with_company_activation_policy(inactive: [company]) do
+        expect(record.resolved_company).to be_nil
+        expect(record.company_legal_entity).to be_nil
+        expect(record.b2b?).to be(false)
+      end
+    end
+
+    it 'resolves again once reactivated' do
+      expect(record.resolved_company).to eq(company)
+    end
+  end
+
   describe '#company_activation_missing?' do
     let(:approval_channel) { create(:channel, store: store, preferred_storefront_access: 'approval_required') }
 
@@ -157,6 +178,17 @@ RSpec.describe Spree::Purchase::Company do
       create(:company_membership, company: create(:company, store: store), customer: customer)
 
       expect(Spree::Order.find(order.id).resolved_company).to eq(company)
+    end
+
+    # A placed order is history: deactivating the company later must not
+    # rewrite which business the sale was for.
+    it 'keeps the stamped node even when the policy deactivates it' do
+      company = create(:company, store: store)
+      order.update_columns(company_id: company.id)
+
+      with_company_activation_policy(inactive: [company]) do
+        expect(Spree::Order.find(order.id).resolved_company).to eq(company)
+      end
     end
   end
 
