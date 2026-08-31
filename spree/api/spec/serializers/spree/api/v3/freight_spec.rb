@@ -43,6 +43,19 @@ RSpec.describe 'freight serialization' do
       expect(summary['complete']).to be(true)
     end
 
+    # The totals are logistics, but a SKU is the catalog identity a
+    # prices-hidden storefront exists to withhold.
+    it 'withholds the per-line SKU where prices are hidden' do
+      create(:line_item, cart: cart, order: nil, variant: variant, quantity: 24)
+
+      summary = described_class.new(cart.reload, params: { store: store, hide_prices: true }).
+                to_h['freight_summary']
+
+      expect(summary['total_cartons']).to eq(2)
+      expect(summary['lines'].first).not_to have_key('sku')
+      expect(summary['lines'].first['units']).to eq(24)
+    end
+
     it 'reports nothing for an empty cart' do
       json = described_class.new(cart, params: { store: store }).to_h
 

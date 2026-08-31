@@ -1008,6 +1008,7 @@ en:
         already_a_member: already exists
         cannot_delete_channel_with_active_api_keys: Channel cannot be deleted while active API keys are bound to it. Revoke those keys first.
         cannot_delete_default_channel: Default channel cannot be deleted. Promote another channel to default first.
+        cannot_delete_default_package_type: Default package cannot be deleted. Make another package the default first.
         cart_currency_mismatch: carts in different currencies cannot be merged
         channel_store_mismatch: must belong to the same store
         commission_rate_needs_an_amount: needs a flat fee amount in at least one currency

@@ -10,14 +10,33 @@ RSpec.describe Spree::Purchase::Freight do
 
     it 'computes the rollup live, because the buyer is still changing it' do
       create(:line_item, cart: cart, order: nil, variant: variant, quantity: 12)
-      expect(Spree::Cart.find(cart.id).freight_summary.total_cartons).to eq(1)
+      expect(cart.reload.freight_summary.total_cartons).to eq(1)
 
       create(:line_item, cart: cart, order: nil, variant: variant, quantity: 12)
-      expect(Spree::Cart.find(cart.id).freight_summary.total_cartons).to eq(2)
+      expect(cart.reload.freight_summary.total_cartons).to eq(2)
     end
 
     it 'has none when nothing is in it' do
       expect(cart.freight_summary).to be_nil
+    end
+
+    # Answering "nothing" is the common case — every retail cart — so it has
+    # to be remembered too, or each serializer call walks the catalog again.
+    it 'remembers that it has none rather than re-deriving it' do
+      cart.freight_summary
+
+      expect(cart).not_to receive(:build_freight_summary)
+      expect(cart.freight_summary).to be_nil
+    end
+
+    # Remembering must not outlive the cart's contents: an item added after
+    # the first read has to show up.
+    it 'forgets what it remembered when the cart is reloaded' do
+      expect(cart.freight_summary).to be_nil
+
+      create(:line_item, cart: cart, order: nil, variant: variant, quantity: 12)
+
+      expect(cart.reload.freight_summary.total_cartons).to eq(1)
     end
   end
 
@@ -56,6 +75,27 @@ RSpec.describe Spree::Purchase::Freight do
 
       expect(summary.total_cartons).to eq(2)
       expect(summary.total_volume).to eq(BigDecimal('0.06'))
+    end
+
+    # One variant split across two consignments is still one variant: each
+    # part rounded its cartons up, so adding them would invent a pallet.
+    it 're-rounds a variant split across consignments rather than adding' do
+      [3, 9].each do |units|
+        fulfillment = create(:shipment, order: order)
+        snapshot = Spree::FreightSummary.new(
+          lines: [Spree::FreightSummary::Line.new(variant_id: 'variant_abc', units: units,
+                                                  units_per_carton: 12, cartons_per_pallet: 40,
+                                                  cartons: 1, pallets: 1, complete: true)]
+        ).as_json
+        create(:delivery_rate, fulfillment: fulfillment, selected: true, unpriced: true,
+                               metadata: { 'freight_summary' => snapshot })
+      end
+
+      summary = order.reload.freight_summary
+
+      expect(summary.total_units).to eq(12)
+      expect(summary.total_cartons).to eq(1)
+      expect(summary.total_pallets).to eq(1)
     end
 
     # The sale already happened. Re-deriving it would mean a carton size

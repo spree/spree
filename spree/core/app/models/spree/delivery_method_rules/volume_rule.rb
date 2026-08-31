@@ -14,7 +14,16 @@ module Spree
       preference :maximum_volume, :decimal, default: nil, nullable: true
 
       def eligible?(package)
-        volume = package.freight_summary.total_volume
+        summary = package.freight_summary
+        volume = summary.total_volume
+
+        # An unmeasured catalog rolls up to zero cubic meters, which is not
+        # the same as a small shipment. Failing a minimum on it would hide
+        # the method from checkout with nothing for the merchant to see,
+        # which is the opposite of how the other rules treat a gap in their
+        # own configuration.
+        return true if volume.zero? && !summary.complete?
+
         return false if preferred_minimum_volume.present? && volume < preferred_minimum_volume
         return false if preferred_maximum_volume.present? && volume > preferred_maximum_volume
 

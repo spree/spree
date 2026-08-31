@@ -21,7 +21,19 @@ module Spree
         return @freight_summary if defined?(@freight_summary)
 
         summary = build_freight_summary
-        @freight_summary = summary unless summary.nil? || summary.empty?
+        # Assigned on every path, including the empty one: a retail cart is
+        # where this is asked most and answered "nothing", and a conditional
+        # assignment would leave that case unmemoized — walking every line
+        # item's variant again on each call, which is the opposite of what
+        # memoizing is for.
+        @freight_summary = (summary unless summary.nil? || summary.empty?)
+      end
+
+      # Dropped on reload, so a cart whose items changed in the same request
+      # rolls up again rather than answering from the load it had before.
+      def reload(*)
+        remove_instance_variable(:@freight_summary) if defined?(@freight_summary)
+        super
       end
 
       private

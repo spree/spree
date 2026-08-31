@@ -119,6 +119,20 @@ describe Spree::DeliveryMethodRule, type: :model do
     # The tiers a merchant configures are ranges over this one number, so the
     # comparison has to be converted volume, never the raw dimension columns:
     # two one-meter cartons are 2 CBM, not 2,000,000.
+    # A catalog nobody measured rolls up to zero cubic meters, which is not
+    # the same as a small shipment — failing a minimum on it would hide the
+    # method with nothing for the merchant to diagnose.
+    it 'offers the method when the goods were never measured' do
+      unmeasured = create(:variant, width: nil, height: nil, depth: nil, weight: 0)
+      order = create(:order, store: store)
+      create(:line_item, order: order, variant: unmeasured, quantity: 1)
+      package = Spree::Stock::Coordinator.new(order.reload).packages.first
+
+      rule = described_class.new(delivery_method: delivery_method, preferred_minimum_volume: 1)
+
+      expect(rule.eligible?(package)).to be(true)
+    end
+
     it 'bounds by the packed volume in cubic meters' do
       rule = described_class.new(delivery_method: delivery_method)
       expect(rule.eligible?(freight_package)).to be(true)

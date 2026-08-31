@@ -24043,8 +24043,6 @@ paths:
                   cost_price: '17.0'
                   cost_currency: USD
                   barcode:
-                  weight_unit: lb
-                  dimensions_unit: in
                   backorder_limit:
                   hs_code:
                   country_of_origin:
@@ -24056,6 +24054,8 @@ paths:
                   updated_at: '2026-01-15T12:00:00.000Z'
                   preorderable: false
                   tax_category_id: taxcat_UkLWZg9DAJ
+                  weight_unit:
+                  dimensions_unit:
                   carton_package_type_id:
                   units_per_pallet:
                   available_stock: 0
@@ -24114,8 +24114,6 @@ paths:
                   cost_price: '17.0'
                   cost_currency: USD
                   barcode:
-                  weight_unit: lb
-                  dimensions_unit: in
                   backorder_limit:
                   hs_code:
                   country_of_origin:
@@ -24127,6 +24125,8 @@ paths:
                   updated_at: '2026-01-15T12:00:00.000Z'
                   preorderable: false
                   tax_category_id: taxcat_UkLWZg9DAJ
+                  weight_unit:
+                  dimensions_unit:
                   carton_package_type_id:
                   units_per_pallet:
                   available_stock: 0
@@ -24260,8 +24260,6 @@ paths:
                 cost_price:
                 cost_currency: USD
                 barcode:
-                weight_unit: lb
-                dimensions_unit: in
                 backorder_limit:
                 hs_code:
                 country_of_origin:
@@ -24273,6 +24271,8 @@ paths:
                 updated_at: '2026-01-15T12:00:00.000Z'
                 preorderable: false
                 tax_category_id: taxcat_UkLWZg9DAJ
+                weight_unit:
+                dimensions_unit:
                 carton_package_type_id:
                 units_per_pallet:
                 available_stock: 0
@@ -24506,8 +24506,6 @@ paths:
                 cost_price: '17.0'
                 cost_currency: USD
                 barcode:
-                weight_unit: lb
-                dimensions_unit: in
                 backorder_limit:
                 hs_code:
                 country_of_origin:
@@ -24519,6 +24517,8 @@ paths:
                 updated_at: '2026-01-15T12:00:00.000Z'
                 preorderable: false
                 tax_category_id: taxcat_UkLWZg9DAJ
+                weight_unit:
+                dimensions_unit:
                 carton_package_type_id:
                 units_per_pallet:
                 available_stock: 0
@@ -24646,8 +24646,6 @@ paths:
                 cost_price: '17.0'
                 cost_currency: USD
                 barcode:
-                weight_unit: lb
-                dimensions_unit: in
                 backorder_limit:
                 hs_code:
                 country_of_origin:
@@ -24659,6 +24657,8 @@ paths:
                 updated_at: '2026-01-15T12:00:00.000Z'
                 preorderable: false
                 tax_category_id: taxcat_UkLWZg9DAJ
+                weight_unit:
+                dimensions_unit:
                 carton_package_type_id:
                 units_per_pallet:
                 available_stock: 0
@@ -41097,12 +41097,6 @@ components:
         barcode:
           type: string
           nullable: true
-        weight_unit:
-          type: string
-          nullable: true
-        dimensions_unit:
-          type: string
-          nullable: true
         backorder_limit:
           type: number
           nullable: true
@@ -41131,6 +41125,12 @@ components:
         preorderable:
           type: boolean
         tax_category_id:
+          type: string
+          nullable: true
+        weight_unit:
+          type: string
+          nullable: true
+        dimensions_unit:
           type: string
           nullable: true
         carton_package_type_id:
@@ -41191,8 +41191,6 @@ components:
       - cost_price
       - cost_currency
       - barcode
-      - weight_unit
-      - dimensions_unit
       - backorder_limit
       - hs_code
       - country_of_origin
@@ -41204,6 +41202,8 @@ components:
       - updated_at
       - preorderable
       - tax_category_id
+      - weight_unit
+      - dimensions_unit
       - carton_package_type_id
       - units_per_pallet
       - available_stock
