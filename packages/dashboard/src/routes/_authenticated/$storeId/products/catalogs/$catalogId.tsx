@@ -47,7 +47,10 @@ import { Controller, type UseFormReturn, useForm } from 'react-hook-form'
 import { useTranslation } from 'react-i18next'
 import { CatalogPricingFields } from '../../../../../components/spree/catalog-pricing-fields'
 import { DeferredProductMembershipCard } from '../../../../../components/spree/deferred-product-membership-card'
-import { ProductMembershipStagingProvider } from '../../../../../components/spree/product-membership-staging'
+import {
+  ProductMembershipStagingProvider,
+  useProductMembershipStaging,
+} from '../../../../../components/spree/product-membership-staging'
 import { ResourceDetailSkeleton } from '../../../../../components/spree/route-pending'
 import {
   useAssignCatalog,
@@ -234,6 +237,9 @@ function CatalogPricingCard({
   canEdit: boolean
 }) {
   const { t } = useTranslation()
+  // A product staged for removal still has its prices on the list until
+  // Save, so the spreadsheet would invite pricing something on its way out.
+  const { removes, dirty: stagedProducts } = useProductMembershipStaging()
 
   return (
     <Card>
@@ -247,6 +253,8 @@ function CatalogPricingCard({
             canEdit={canEdit}
             priceList={catalog.price_list}
             savedMode={catalogPricingValues(catalog.price_list).pricing_mode}
+            excludeProductIds={removes}
+            hasStagedProducts={stagedProducts}
           />
         </FieldGroup>
       </CardContent>

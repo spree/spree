@@ -127,6 +127,7 @@
       "edit_prices_after_save": "Save the catalog, then enter the prices for this audience.",
       "edit_prices_cta": "Enter prices",
       "edit_prices_help": "Set the price each product costs this audience.",
+      "edit_prices_pending_save": "Set the price each product costs this audience. Save first to price the products you just changed.",
       "empty": "No catalogs yet",
       "messages": {
         "assigned": "Catalog assigned",

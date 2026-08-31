@@ -127,6 +127,7 @@
       "edit_prices_after_save": "Enregistrez le catalogue, puis saisissez les prix de cette audience.",
       "edit_prices_cta": "Saisir les prix",
       "edit_prices_help": "Définissez le prix de chaque produit pour cette audience.",
+      "edit_prices_pending_save": "Définissez le prix de chaque produit pour cette audience. Enregistrez d'abord pour fixer le prix des produits que vous venez de modifier.",
       "empty": "Aucun catalogue pour le moment",
       "messages": {
         "assigned": "Catalogue affecté",

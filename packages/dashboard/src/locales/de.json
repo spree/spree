@@ -127,6 +127,7 @@
       "edit_prices_after_save": "Katalog speichern, dann die Preise für diese Zielgruppe eingeben.",
       "edit_prices_cta": "Preise eingeben",
       "edit_prices_help": "Legen Sie fest, was jedes Produkt diese Zielgruppe kostet.",
+      "edit_prices_pending_save": "Legen Sie fest, was jedes Produkt diese Zielgruppe kostet. Speichern Sie zuerst, um die soeben geänderten Produkte zu bepreisen.",
       "empty": "Noch keine Kataloge",
       "messages": {
         "assigned": "Katalog zugewiesen",

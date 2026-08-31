@@ -44,7 +44,7 @@ interface BaselineRow extends BulkPriceRow {
   variantId?: string
 }
 
-type FilterShape = Record<string, string | number | boolean | null | undefined>
+type FilterShape = Record<string, string | number | boolean | string[] | null | undefined>
 
 // Strip predicates the editor owns + drop empty values, then serialize
 // in a key-sorted form so reference churn from the parent doesn't
@@ -55,6 +55,9 @@ function sanitizeFilter(filter: FilterShape | undefined): FilterShape {
   for (const [k, v] of Object.entries(filter)) {
     if (k.startsWith('price_list_id')) continue
     if (v === undefined || v === null || v === '') continue
+    // An empty list is not a filter — Ransack reads `field_in: []` as
+    // "match nothing" and would blank the grid.
+    if (Array.isArray(v) && v.length === 0) continue
     out[k] = v
   }
   return out
@@ -74,7 +77,7 @@ export interface BulkPriceEditorProps {
    *  Keys starting with `price_list_id` are stripped (the editor owns
    *  that predicate via `priceListId`). Memoize in the parent to avoid
    *  refetch + edits-reset churn on every render. */
-  filter?: Record<string, string | number | boolean | null | undefined>
+  filter?: FilterShape
   /** Notifies the parent of dirty count + save handle so the route can
    *  render a sticky footer bar and a router-leave guard. */
   onStateChange?: (state: BulkPriceEditorState) => void

@@ -129,6 +129,7 @@
       "edit_prices_after_save": "Zapisz katalog, a następnie wprowadź ceny dla tej grupy odbiorców.",
       "edit_prices_cta": "Wprowadź ceny",
       "edit_prices_help": "Ustal, ile każdy produkt kosztuje tę grupę odbiorców.",
+      "edit_prices_pending_save": "Ustal, ile każdy produkt kosztuje tę grupę odbiorców. Zapisz najpierw, aby wycenić dopiero co zmienione produkty.",
       "empty": "Brak katalogów",
       "messages": {
         "assigned": "Katalog przypisany",

@@ -39,6 +39,8 @@ export function CatalogPricingFields({
   canEdit,
   priceList,
   savedMode,
+  excludeProductIds,
+  hasStagedProducts,
 }: {
   form: UseFormReturn<CatalogFormValues>
   canEdit: boolean
@@ -50,6 +52,18 @@ export function CatalogPricingFields({
   priceList?: PriceList | null
   /** The mode as last saved, so a switch can be warned about before Save. */
   savedMode?: CatalogPricingMode
+  /**
+   * Products staged for removal from the assortment. Their prices survive
+   * until Save, but they are on their way out, so the spreadsheet leaves
+   * them out rather than inviting work that Save discards.
+   */
+  excludeProductIds?: string[]
+  /**
+   * True while any membership edit is staged. A staged addition has no
+   * price rows until Save, so the grid cannot show it yet — the help text
+   * says so rather than leaving the merchant hunting for it.
+   */
+  hasStagedProducts?: boolean
 }) {
   const { t } = useTranslation()
   const { errors } = form.formState
@@ -205,11 +219,18 @@ export function CatalogPricingFields({
               <TableIcon className="size-4" />
               {t('admin.catalogs.edit_prices_cta')}
             </Button>
-            <FieldDescription>{t('admin.catalogs.edit_prices_help')}</FieldDescription>
+            <FieldDescription>
+              {t(
+                hasStagedProducts
+                  ? 'admin.catalogs.edit_prices_pending_save'
+                  : 'admin.catalogs.edit_prices_help',
+              )}
+            </FieldDescription>
             <BulkPriceEditorDialog
               open={priceEditorOpen}
               onOpenChange={setPriceEditorOpen}
               priceList={priceList}
+              excludeProductIds={excludeProductIds}
             />
           </div>
         ) : (

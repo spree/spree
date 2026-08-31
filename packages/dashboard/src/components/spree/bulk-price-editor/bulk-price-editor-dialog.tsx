@@ -15,7 +15,7 @@ import {
   useConfirm,
 } from '@spree/dashboard-ui'
 import { XIcon } from 'lucide-react'
-import { useCallback, useEffect, useState } from 'react'
+import { useCallback, useEffect, useMemo, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { BulkPriceEditor, type BulkPriceEditorState } from './bulk-price-editor'
 
@@ -23,6 +23,12 @@ interface BulkPriceEditorDialogProps {
   open: boolean
   onOpenChange: (open: boolean) => void
   priceList: PriceList
+  /**
+   * Products staged for removal on the surrounding page. Their prices are
+   * still on the list until Save, but pricing something on its way out is
+   * wasted work, so they are left out of the grid.
+   */
+  excludeProductIds?: string[]
 }
 
 /**
@@ -42,6 +48,7 @@ export function BulkPriceEditorDialog({
   open,
   onOpenChange,
   priceList,
+  excludeProductIds,
 }: BulkPriceEditorDialogProps) {
   const { t } = useTranslation()
   const { currencies, defaultCurrency } = useStore()
@@ -57,6 +64,17 @@ export function BulkPriceEditorDialog({
   const onStateChange = useCallback((next: BulkPriceEditorState) => {
     setEditorState(next)
   }, [])
+
+  // Keyed on contents rather than array identity: callers derive this from
+  // form state and hand over a fresh array on every render, which as a raw
+  // dependency would refetch the grid and drop in-progress edits.
+  const excludeKey = (excludeProductIds ?? []).join(',')
+  const filter = useMemo(
+    () => (excludeKey ? { variant_product_id_not_in: excludeKey.split(',') } : undefined),
+    // Depends on the joined key, not the array: callers derive this from form
+    // state and hand over a fresh array on every render.
+    [excludeKey],
+  )
 
   // Reset currency to the store default whenever the dialog reopens. Stale
   // currency state from a prior open would otherwise survive the
@@ -185,6 +203,7 @@ export function BulkPriceEditorDialog({
           <BulkPriceEditor
             priceListId={priceList.id}
             currency={currency}
+            filter={filter}
             onStateChange={onStateChange}
           />
         </DialogBody>

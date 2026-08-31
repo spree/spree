@@ -29,6 +29,7 @@ import { DeferredProductMembershipCard } from '../deferred-product-membership-ca
 import {
   flushProductMembership,
   ProductMembershipStagingProvider,
+  useProductMembershipStaging,
 } from '../product-membership-staging'
 import { PriceListStatusBadge } from './status-badge'
 // Side-effect import — registers per-rule editors (customer, customer
@@ -915,6 +916,9 @@ function DefaultRuleEditor({ draft, onSave, onClose }: PriceRuleEditorContext) {
 function EditPricesButton({ priceList }: { priceList: PriceList }) {
   const { t } = useTranslation()
   const [editorOpen, setEditorOpen] = useState(false)
+  // Products staged for removal keep their prices until Save, so leave them
+  // out of the grid rather than inviting edits that Save discards.
+  const { removes } = useProductMembershipStaging()
 
   return (
     <>
@@ -922,7 +926,12 @@ function EditPricesButton({ priceList }: { priceList: PriceList }) {
         <TableIcon className="size-4" />
         {t('admin.pages.products.price_lists.edit_prices_cta')}
       </Button>
-      <BulkPriceEditorDialog open={editorOpen} onOpenChange={setEditorOpen} priceList={priceList} />
+      <BulkPriceEditorDialog
+        open={editorOpen}
+        onOpenChange={setEditorOpen}
+        priceList={priceList}
+        excludeProductIds={removes}
+      />
     </>
   )
 }

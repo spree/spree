@@ -127,6 +127,7 @@
       "edit_prices_after_save": "保存目录后，再为此受众输入价格。",
       "edit_prices_cta": "输入价格",
       "edit_prices_help": "设置每件商品对此受众的价格。",
+      "edit_prices_pending_save": "设置每件商品对此受众的价格。请先保存，才能为刚刚更改的商品定价。",
       "empty": "暂无目录",
       "messages": {
         "assigned": "目录已分配",
