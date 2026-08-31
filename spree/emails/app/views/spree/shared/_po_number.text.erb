@@ -1,0 +1,6 @@
+<%# The buyer's own purchase-order reference, when they gave one. Rendered by
+    every order-facing document so their accounting can reconcile against it.
+    Locals: order. %>
+<% if order.po_number.present? %>
+<%= Spree.t('order_mailer.po_number', number: order.po_number) %>
+<% end %>

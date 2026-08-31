@@ -16,6 +16,7 @@ describe Spree::Order, type: :model do
   before { allow(Spree.customer_class).to receive_messages(current: build(:user)) }
 
   it_behaves_like 'metadata'
+  it_behaves_like 'a purchase carrying a PO reference', factory: :order
 
   describe 'Validations' do
     describe '#email' do
@@ -104,6 +105,16 @@ describe Spree::Order, type: :model do
         # comparison fails intermittently on the same records transposed.
         expect(described_class.search('jane moe')).to match_array([order_2, order_3])
         expect(described_class.search('greg smith')).to eq([])
+      end
+
+      # An accountant holds our number or their own purchase order, and either
+      # has to find the same transaction.
+      it 'returns orders based on the buyer purchase order number' do
+        order_1.update!(po_number: 'PO-4471')
+
+        expect(described_class.search('PO-4471')).to eq([order_1])
+        expect(described_class.search('4471')).to eq([order_1])
+        expect(described_class.search('PO-9999')).to eq([])
       end
     end
   end

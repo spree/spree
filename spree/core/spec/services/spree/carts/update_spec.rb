@@ -887,5 +887,24 @@ module Spree
         expect(cart.reload.shipping_address).to be_nil
       end
     end
+
+    # An abandoned direct upload leaves the blob row behind without its bytes,
+    # and the buyer's client may still send back the signed id it was handed.
+    describe 'a purchase order document whose upload never completed' do
+      let(:orphan_blob) do
+        ActiveStorage::Blob.create_before_direct_upload!(
+          filename: 'po.pdf', byte_size: 12, checksum: 'x' * 22,
+          content_type: 'application/pdf', service_name: Spree.private_storage_service_name
+        )
+      end
+
+      it 'reports a readable message instead of an exception class name' do
+        result = described_class.call(cart: cart, params: { po_document: orphan_blob.signed_id })
+
+        expect(result).to be_failure
+        expect(result.error.to_s).to include(Spree.t(:po_document_upload_incomplete))
+        expect(result.error.to_s).not_to include('ActiveStorage')
+      end
+    end
   end
 end

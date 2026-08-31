@@ -20,6 +20,9 @@ export const newOrderFormSchema = z.object({
     .or(z.literal('')),
   customer_note: z.string(),
   internal_note: z.string(),
+  // The buyer's own purchase-order reference — a PO arriving by email and
+  // keyed in is this form plus this field.
+  po_number: z.string(),
   coupon_code: z.string(),
   // Empty string = "use store default" (resolved server-side via
   // Order#ensure_channel_presence).
@@ -32,6 +35,7 @@ export const NEW_ORDER_DEFAULTS: NewOrderFormValues = {
   email: '',
   customer_note: '',
   internal_note: '',
+  po_number: '',
   coupon_code: '',
   channel_id: '',
 }

@@ -1047,6 +1047,10 @@
         "label": "Company",
         "name": {
           "placeholder": "Acme Industries"
+        },
+        "po_number_required": {
+          "help": "Buyers from this company must supply their purchase order number before checking out.",
+          "label": "Require a PO number"
         }
       },
       "company_location": {
@@ -1369,6 +1373,11 @@
         "order_group": {
           "label": "Purchase",
           "view": "View purchase"
+        },
+        "po_number": {
+          "help": "The buyer's own reference for this order.",
+          "label": "PO number",
+          "placeholder": "PO-4471"
         },
         "seller": {
           "first_party": "Sold by you",
@@ -2352,6 +2361,7 @@
         "items": "Items",
         "number": "Number",
         "payment": "Payment",
+        "po_number": "PO number",
         "sku": "SKU",
         "tags": "Tags"
       },
@@ -2522,6 +2532,10 @@
           "number": "Number",
           "state": "State"
         },
+        "purchase_order": {
+          "document": "Purchase order document",
+          "title": "Purchase order"
+        },
         "section_customer_note": "Special Instructions",
         "section_internal_note": "Internal Note",
         "section_seller": "Seller",
@@ -2643,7 +2657,7 @@
       },
       "table": {
         "empty": "No orders found",
-        "search_placeholder": "Search orders…"
+        "search_placeholder": "Search by number, PO, customer…"
       }
     },
     "pages": {

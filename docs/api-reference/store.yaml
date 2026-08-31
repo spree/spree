@@ -1501,10 +1501,14 @@ paths:
                   preferred_stock_location_id:
                   company_id:
                   company_name:
+                  po_number_required: false
+                  po_document_filename:
+                  po_document_byte_size:
                   number: cart_UkLWZg9DAJ
                   token: ckMf2iQ6r5adLceTPfKVH9BP
                   email:
                   customer_note:
+                  po_number:
                   currency: USD
                   locale: en
                   total_quantity: 1
@@ -1612,10 +1616,14 @@ paths:
                   preferred_stock_location_id:
                   company_id:
                   company_name:
+                  po_number_required: false
+                  po_document_filename:
+                  po_document_byte_size:
                   number: cart_gbHJdmfrXB
                   token: pvLw1ZWLLQNxh1uvSPUCdSmt
                   email:
                   customer_note:
+                  po_number:
                   currency: USD
                   locale: en
                   total_quantity: 1
@@ -1794,10 +1802,14 @@ paths:
                 preferred_stock_location_id:
                 company_id:
                 company_name:
+                po_number_required: false
+                po_document_filename:
+                po_document_byte_size:
                 number: cart_UkLWZg9DAJ
                 token: jBrNbC8FSNyavqebdqu7e3uL
                 email:
                 customer_note:
+                po_number:
                 currency: USD
                 locale: en
                 total_quantity: 0
@@ -1964,10 +1976,14 @@ paths:
                 preferred_stock_location_id:
                 company_id:
                 company_name:
+                po_number_required: false
+                po_document_filename:
+                po_document_byte_size:
                 number: cart_UkLWZg9DAJ
                 token: HnnryvFFwjfx9P6ykByF4Gg2
                 email:
                 customer_note:
+                po_number:
                 currency: USD
                 locale: en
                 total_quantity: 0
@@ -2123,10 +2139,14 @@ paths:
                 preferred_stock_location_id:
                 company_id:
                 company_name:
+                po_number_required: false
+                po_document_filename:
+                po_document_byte_size:
                 number: cart_UkLWZg9DAJ
                 token: PMVmxRAiLqMivU5QgJqfpQMD
                 email:
                 customer_note: Leave at door
+                po_number:
                 currency: USD
                 locale: en
                 total_quantity: 1
@@ -2404,10 +2424,14 @@ paths:
                 preferred_stock_location_id:
                 company_id:
                 company_name:
+                po_number_required: false
+                po_document_filename:
+                po_document_byte_size:
                 number: cart_UkLWZg9DAJ
                 token: rrGvkDXx3KcQVwLVk8XiVCVk
                 email: tarah@tromp.com
                 customer_note:
+                po_number:
                 currency: USD
                 locale: en
                 total_quantity: 1
@@ -2624,9 +2648,12 @@ paths:
                 channel_id: ch_UkLWZg9DAJ
                 company_id:
                 company_name:
+                po_document_filename:
+                po_document_byte_size:
                 number: R1001
                 email: marvel@bruen.com
                 customer_note:
+                po_number:
                 currency: USD
                 locale: en
                 total_quantity: 1
@@ -2939,10 +2966,14 @@ paths:
                 preferred_stock_location_id:
                 company_id:
                 company_name:
+                po_number_required: false
+                po_document_filename:
+                po_document_byte_size:
                 number: cart_UkLWZg9DAJ
                 token: 4ryA4ms4Nim9TfxNW4fZi3au
                 email:
                 customer_note:
+                po_number:
                 currency: USD
                 locale: en
                 total_quantity: 1
@@ -3133,10 +3164,14 @@ paths:
                 preferred_stock_location_id:
                 company_id:
                 company_name:
+                po_number_required: false
+                po_document_filename:
+                po_document_byte_size:
                 number: cart_UkLWZg9DAJ
                 token: gvr8TwNVJpxWf27uUHDj5Lj4
                 email:
                 customer_note:
+                po_number:
                 currency: USD
                 locale: en
                 total_quantity: 1
@@ -3318,10 +3353,14 @@ paths:
                 preferred_stock_location_id:
                 company_id:
                 company_name:
+                po_number_required: false
+                po_document_filename:
+                po_document_byte_size:
                 number: cart_UkLWZg9DAJ
                 token: KLLfFWg9T6dGonBb65hHjaZr
                 email: donya@jacobsonkunze.biz
                 customer_note:
+                po_number:
                 currency: USD
                 locale: en
                 total_quantity: 1
@@ -3605,10 +3644,14 @@ paths:
                 preferred_stock_location_id:
                 company_id:
                 company_name:
+                po_number_required: false
+                po_document_filename:
+                po_document_byte_size:
                 number: cart_UkLWZg9DAJ
                 token: nZjAPYSKrNaHf2ZVT6eZfNJV
                 email:
                 customer_note:
+                po_number:
                 currency: USD
                 locale: en
                 total_quantity: 1
@@ -3847,10 +3890,14 @@ paths:
                 preferred_stock_location_id:
                 company_id:
                 company_name:
+                po_number_required: false
+                po_document_filename:
+                po_document_byte_size:
                 number: cart_UkLWZg9DAJ
                 token: Wgq8NrLX3TUQLroJRYWFdQd5
                 email:
                 customer_note:
+                po_number:
                 currency: USD
                 locale: en
                 total_quantity: 1
@@ -4048,10 +4095,14 @@ paths:
                 preferred_stock_location_id:
                 company_id:
                 company_name:
+                po_number_required: false
+                po_document_filename:
+                po_document_byte_size:
                 number: cart_UkLWZg9DAJ
                 token: d12LXVnL3KtzGjXePqRawnPc
                 email:
                 customer_note:
+                po_number:
                 currency: USD
                 locale: en
                 total_quantity: 2
@@ -4303,10 +4354,14 @@ paths:
                 preferred_stock_location_id:
                 company_id:
                 company_name:
+                po_number_required: false
+                po_document_filename:
+                po_document_byte_size:
                 number: cart_UkLWZg9DAJ
                 token: Yq5XuZqq7KS7y7n2dMsChnZM
                 email:
                 customer_note:
+                po_number:
                 currency: USD
                 locale: en
                 total_quantity: 1
@@ -4487,10 +4542,14 @@ paths:
                 preferred_stock_location_id:
                 company_id:
                 company_name:
+                po_number_required: false
+                po_document_filename:
+                po_document_byte_size:
                 number: cart_UkLWZg9DAJ
                 token: arTvbVzmU1krWKLbRnWDZ3cL
                 email:
                 customer_note:
+                po_number:
                 currency: USD
                 locale: en
                 total_quantity: 0
@@ -5125,10 +5184,14 @@ paths:
                 preferred_stock_location_id:
                 company_id:
                 company_name:
+                po_number_required: false
+                po_document_filename:
+                po_document_byte_size:
                 number: cart_UkLWZg9DAJ
                 token: acfBZtWemHae74Y3g18LQg1f
                 email:
                 customer_note:
+                po_number:
                 currency: USD
                 locale: en
                 total_quantity: 1
@@ -5331,10 +5394,14 @@ paths:
                 preferred_stock_location_id:
                 company_id:
                 company_name:
+                po_number_required: false
+                po_document_filename:
+                po_document_byte_size:
                 number: cart_UkLWZg9DAJ
                 token: BHWevnp2PQxC1jSWU3ZFLejT
                 email:
                 customer_note:
+                po_number:
                 currency: USD
                 locale: en
                 total_quantity: 1
@@ -5513,9 +5580,12 @@ paths:
                 channel_id: ch_UkLWZg9DAJ
                 company_id:
                 company_name:
+                po_document_filename:
+                po_document_byte_size:
                 number: R1001
                 email: guest@example.com
                 customer_note:
+                po_number:
                 currency: USD
                 locale: en
                 total_quantity: 1
@@ -6623,9 +6693,12 @@ paths:
                   channel_id: ch_UkLWZg9DAJ
                   company_id:
                   company_name:
+                  po_document_filename:
+                  po_document_byte_size:
                   number: R1001
                   email: idella.ratke@runolfsdottir.us
                   customer_note:
+                  po_number:
                   currency: USD
                   locale: en
                   total_quantity: 1
@@ -6931,9 +7004,12 @@ paths:
                 channel_id: ch_UkLWZg9DAJ
                 company_id:
                 company_name:
+                po_document_filename:
+                po_document_byte_size:
                 number: R1001
                 email: whitney_homenick@leschwhite.co.uk
                 customer_note:
+                po_number:
                 currency: USD
                 locale: en
                 total_quantity: 1
@@ -10005,6 +10081,7 @@ paths:
                     id: comp_UkLWZg9DAJ
                     name: Acme Industrial
                     kind: company
+                    po_number_required: false
                     parent_id:
                     ancestors: []
         '401':
@@ -10066,6 +10143,7 @@ paths:
                 id: comp_UkLWZg9DAJ
                 name: Acme Industrial
                 kind: company
+                po_number_required: false
                 parent_id:
                 ancestors: []
         '404':
@@ -10105,6 +10183,7 @@ paths:
                 id: comp_UkLWZg9DAJ
                 name: Acme Industrial Group
                 kind: company
+                po_number_required: false
                 parent_id:
                 ancestors: []
       requestBody:
@@ -10466,9 +10545,12 @@ paths:
                   channel_id: ch_UkLWZg9DAJ
                   company_id: comp_UkLWZg9DAJ
                   company_name: Acme Industrial
+                  po_document_filename:
+                  po_document_byte_size:
                   number: R1001
                   email: chanell_langosh@schamberger.info
                   customer_note:
+                  po_number:
                   currency: USD
                   locale: en
                   total_quantity: 1
@@ -11606,6 +11688,14 @@ components:
         company_name:
           type: string
           nullable: true
+        po_number_required:
+          type: boolean
+        po_document_filename:
+          type: string
+          nullable: true
+        po_document_byte_size:
+          type: number
+          nullable: true
         number:
           type: string
         token:
@@ -11614,6 +11704,9 @@ components:
           type: string
           nullable: true
         customer_note:
+          type: string
+          nullable: true
+        po_number:
           type: string
           nullable: true
         currency:
@@ -11763,10 +11856,14 @@ components:
       - preferred_stock_location_id
       - company_id
       - company_name
+      - po_number_required
+      - po_document_filename
+      - po_document_byte_size
       - number
       - token
       - email
       - customer_note
+      - po_number
       - currency
       - locale
       - total_quantity
@@ -12124,6 +12221,8 @@ components:
           type: string
         kind:
           type: string
+        po_number_required:
+          type: boolean
         parent_id:
           type: string
           nullable: true
@@ -12133,6 +12232,7 @@ components:
       - id
       - name
       - kind
+      - po_number_required
       - parent_id
       - ancestors
       x-typelizer: true
@@ -13329,11 +13429,20 @@ components:
         company_name:
           type: string
           nullable: true
+        po_document_filename:
+          type: string
+          nullable: true
+        po_document_byte_size:
+          type: number
+          nullable: true
         number:
           type: string
         email:
           type: string
         customer_note:
+          type: string
+          nullable: true
+        po_number:
           type: string
           nullable: true
         currency:
@@ -13472,9 +13581,12 @@ components:
       - channel_id
       - company_id
       - company_name
+      - po_document_filename
+      - po_document_byte_size
       - number
       - email
       - customer_note
+      - po_number
       - currency
       - locale
       - total_quantity

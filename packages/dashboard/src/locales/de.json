@@ -1047,6 +1047,10 @@
         "label": "Unternehmen",
         "name": {
           "placeholder": "Acme Industries"
+        },
+        "po_number_required": {
+          "help": "Käufer dieses Unternehmens müssen vor dem Bezahlvorgang ihre Bestellnummer angeben.",
+          "label": "Bestellnummer verlangen"
         }
       },
       "company_location": {
@@ -1369,6 +1373,11 @@
         "order_group": {
           "label": "Einkauf",
           "view": "Einkauf anzeigen"
+        },
+        "po_number": {
+          "help": "Die eigene Referenz des Käufers für diese Bestellung.",
+          "label": "Bestellnummer des Kunden",
+          "placeholder": "PO-4471"
         },
         "seller": {
           "first_party": "Eigener Verkauf",
@@ -2352,6 +2361,7 @@
         "items": "Artikel",
         "number": "Nummer",
         "payment": "Zahlung",
+        "po_number": "Bestellnummer",
         "sku": "SKU",
         "tags": "Tags"
       },
@@ -2522,6 +2532,10 @@
           "number": "Nummer",
           "state": "Status"
         },
+        "purchase_order": {
+          "document": "Bestelldokument",
+          "title": "Bestellung des Kunden"
+        },
         "section_customer_note": "Besondere Anweisungen",
         "section_internal_note": "Interne Notiz",
         "section_seller": "Verkäufer",
@@ -2643,7 +2657,7 @@
       },
       "table": {
         "empty": "Keine Bestellungen gefunden",
-        "search_placeholder": "Bestellungen suchen…"
+        "search_placeholder": "Nach Nummer, Bestellnummer oder Kunde suchen…"
       }
     },
     "pages": {

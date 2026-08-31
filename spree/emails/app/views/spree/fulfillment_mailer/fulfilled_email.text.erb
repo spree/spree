@@ -5,6 +5,7 @@
 ============================================================
 <%= Spree.t('fulfillment_mailer.fulfilled_email.fulfillment_summary') %>
 ============================================================
+<%= render 'spree/shared/po_number', order: @fulfillment.order %>
 <% @fulfillment.manifest.each do |item| %>
   <%= item.variant.sku %> <%= item.variant.product.name %> <%= item.variant.options_text %>
 <% end %>

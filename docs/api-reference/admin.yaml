@@ -12971,9 +12971,12 @@ paths:
                 channel_id: ch_UkLWZg9DAJ
                 company_id:
                 company_name:
+                po_document_filename:
+                po_document_byte_size:
                 number: R1001
                 email: ghislaine_labadie@carroll.info
                 customer_note:
+                po_number:
                 currency: USD
                 locale: en
                 total_quantity: 1
@@ -13035,6 +13038,7 @@ paths:
                 created_at: '2026-01-15T12:00:00.000Z'
                 updated_at: '2026-01-15T12:00:00.000Z'
                 preferred_stock_location_id:
+                po_document_url:
                 seller_id:
                 order_group_id:
                 tags: []
@@ -13216,9 +13220,12 @@ paths:
                   channel_id: ch_UkLWZg9DAJ
                   company_id:
                   company_name:
+                  po_document_filename:
+                  po_document_byte_size:
                   number: R1001
                   email: viki_reichel@moorecummerata.us
                   customer_note:
+                  po_number:
                   currency: USD
                   locale: en
                   total_quantity: 0
@@ -13280,6 +13287,7 @@ paths:
                   created_at: '2026-01-15T12:00:00.000Z'
                   updated_at: '2026-01-15T12:00:00.000Z'
                   preferred_stock_location_id:
+                  po_document_url:
                   seller_id:
                   order_group_id:
                   tags: []
@@ -13438,9 +13446,12 @@ paths:
                 channel_id: ch_UkLWZg9DAJ
                 company_id:
                 company_name:
+                po_document_filename:
+                po_document_byte_size:
                 number: R1002
                 email: pinned@example.com
                 customer_note:
+                po_number:
                 currency: USD
                 locale: en
                 total_quantity: 0
@@ -13502,6 +13513,7 @@ paths:
                 created_at: '2026-01-15T12:00:00.000Z'
                 updated_at: '2026-01-15T12:00:00.000Z'
                 preferred_stock_location_id: sloc_UkLWZg9DAJ
+                po_document_url:
                 seller_id:
                 order_group_id:
                 tags: []
@@ -13693,9 +13705,12 @@ paths:
                 channel_id: ch_UkLWZg9DAJ
                 company_id:
                 company_name:
+                po_document_filename:
+                po_document_byte_size:
                 number: R1001
                 email: angelic@ogaromaguera.co.uk
                 customer_note:
+                po_number:
                 currency: USD
                 locale: en
                 total_quantity: 0
@@ -13757,6 +13772,7 @@ paths:
                 created_at: '2026-01-15T12:00:00.000Z'
                 updated_at: '2026-01-15T12:00:00.000Z'
                 preferred_stock_location_id:
+                po_document_url:
                 seller_id:
                 order_group_id:
                 tags: []
@@ -13836,9 +13852,12 @@ paths:
                 channel_id: ch_UkLWZg9DAJ
                 company_id:
                 company_name:
+                po_document_filename:
+                po_document_byte_size:
                 number: R1001
                 email: updated@example.com
                 customer_note:
+                po_number:
                 currency: USD
                 locale: en
                 total_quantity: 0
@@ -13900,6 +13919,7 @@ paths:
                 created_at: '2026-01-15T12:00:00.000Z'
                 updated_at: '2026-01-15T12:00:00.000Z'
                 preferred_stock_location_id:
+                po_document_url:
                 seller_id:
                 order_group_id:
                 tags: []
@@ -14091,9 +14111,12 @@ paths:
                 channel_id: ch_UkLWZg9DAJ
                 company_id:
                 company_name:
+                po_document_filename:
+                po_document_byte_size:
                 number: R1001
                 email: lisandra.blanda@grahamryan.biz
                 customer_note:
+                po_number:
                 currency: USD
                 locale: en
                 total_quantity: 1
@@ -14155,6 +14178,7 @@ paths:
                 created_at: '2026-01-15T12:00:00.000Z'
                 updated_at: '2026-01-15T12:00:00.000Z'
                 preferred_stock_location_id:
+                po_document_url:
                 seller_id:
                 order_group_id:
                 tags: []
@@ -14246,9 +14270,12 @@ paths:
                 channel_id: ch_UkLWZg9DAJ
                 company_id:
                 company_name:
+                po_document_filename:
+                po_document_byte_size:
                 number: R1001
                 email: eleanor@zulaufdavis.com
                 customer_note:
+                po_number:
                 currency: USD
                 locale: en
                 total_quantity: 1
@@ -14310,6 +14337,7 @@ paths:
                 created_at: '2026-01-15T12:00:00.000Z'
                 updated_at: '2026-01-15T12:00:00.000Z'
                 preferred_stock_location_id:
+                po_document_url:
                 seller_id:
                 order_group_id:
                 tags: []
@@ -14385,9 +14413,12 @@ paths:
                 channel_id: ch_UkLWZg9DAJ
                 company_id:
                 company_name:
+                po_document_filename:
+                po_document_byte_size:
                 number: R1001
                 email: del@bashirian.us
                 customer_note:
+                po_number:
                 currency: USD
                 locale: en
                 total_quantity: 1
@@ -14449,6 +14480,7 @@ paths:
                 created_at: '2026-01-15T12:00:00.000Z'
                 updated_at: '2026-01-15T12:00:00.000Z'
                 preferred_stock_location_id:
+                po_document_url:
                 seller_id:
                 order_group_id:
                 tags: []
@@ -14515,9 +14547,12 @@ paths:
                 channel_id: ch_UkLWZg9DAJ
                 company_id:
                 company_name:
+                po_document_filename:
+                po_document_byte_size:
                 number: R1001
                 email: maire@prosaccodeckow.co.uk
                 customer_note:
+                po_number:
                 currency: USD
                 locale: en
                 total_quantity: 1
@@ -14579,6 +14614,7 @@ paths:
                 created_at: '2026-01-15T12:00:00.000Z'
                 updated_at: '2026-01-15T12:00:00.000Z'
                 preferred_stock_location_id:
+                po_document_url:
                 seller_id:
                 order_group_id:
                 tags: []
@@ -14645,9 +14681,12 @@ paths:
                 channel_id: ch_UkLWZg9DAJ
                 company_id:
                 company_name:
+                po_document_filename:
+                po_document_byte_size:
                 number: R1001
                 email: michal.cartwright@hintzdeckow.info
                 customer_note:
+                po_number:
                 currency: USD
                 locale: en
                 total_quantity: 1
@@ -14709,6 +14748,7 @@ paths:
                 created_at: '2026-01-15T12:00:00.000Z'
                 updated_at: '2026-01-15T12:00:00.000Z'
                 preferred_stock_location_id:
+                po_document_url:
                 seller_id:
                 order_group_id:
                 tags: []
@@ -28498,6 +28538,7 @@ paths:
                 - id: comp_UkLWZg9DAJ
                   name: Acme Industrial
                   kind: company
+                  po_number_required: false
                   parent_id:
                   ancestors: []
                   external_references:
@@ -28566,6 +28607,7 @@ paths:
                 id: comp_gbHJdmfrXB
                 name: Globex Corporation
                 kind: company
+                po_number_required: false
                 parent_id:
                 ancestors: []
                 external_references:
@@ -33492,6 +33534,14 @@ components:
         company_name:
           type: string
           nullable: true
+        po_number_required:
+          type: boolean
+        po_document_filename:
+          type: string
+          nullable: true
+        po_document_byte_size:
+          type: number
+          nullable: true
         number:
           type: string
         token:
@@ -33500,6 +33550,9 @@ components:
           type: string
           nullable: true
         customer_note:
+          type: string
+          nullable: true
+        po_number:
           type: string
           nullable: true
         currency:
@@ -33636,10 +33689,14 @@ components:
       - preferred_stock_location_id
       - company_id
       - company_name
+      - po_number_required
+      - po_document_filename
+      - po_document_byte_size
       - number
       - token
       - email
       - customer_note
+      - po_number
       - currency
       - locale
       - total_quantity
@@ -34390,6 +34447,8 @@ components:
           type: string
         kind:
           type: string
+        po_number_required:
+          type: boolean
         parent_id:
           type: string
           nullable: true
@@ -34424,6 +34483,7 @@ components:
       - id
       - name
       - kind
+      - po_number_required
       - parent_id
       - ancestors
       - external_references
@@ -36658,11 +36718,20 @@ components:
         company_name:
           type: string
           nullable: true
+        po_document_filename:
+          type: string
+          nullable: true
+        po_document_byte_size:
+          type: number
+          nullable: true
         number:
           type: string
         email:
           type: string
         customer_note:
+          type: string
+          nullable: true
+        po_number:
           type: string
           nullable: true
         currency:
@@ -36794,6 +36863,9 @@ components:
         preferred_stock_location_id:
           type: string
           nullable: true
+        po_document_url:
+          type: string
+          nullable: true
         seller_id:
           type: string
           nullable: true
@@ -36865,9 +36937,12 @@ components:
       - channel_id
       - company_id
       - company_name
+      - po_document_filename
+      - po_document_byte_size
       - number
       - email
       - customer_note
+      - po_number
       - currency
       - locale
       - total_quantity
@@ -36916,6 +36991,7 @@ components:
       - created_at
       - updated_at
       - preferred_stock_location_id
+      - po_document_url
       - seller_id
       - order_group_id
       - tags

@@ -1061,6 +1061,10 @@
         "label": "الشركة",
         "name": {
           "placeholder": "Acme Industries"
+        },
+        "po_number_required": {
+          "help": "يجب على المشترين من هذه الشركة تقديم رقم أمر الشراء قبل إتمام الطلب.",
+          "label": "اشتراط رقم أمر الشراء"
         }
       },
       "company_location": {
@@ -1383,6 +1387,11 @@
         "order_group": {
           "label": "عملية الشراء",
           "view": "عرض عملية الشراء"
+        },
+        "po_number": {
+          "help": "المرجع الخاص بالمشتري لهذا الطلب.",
+          "label": "رقم أمر الشراء",
+          "placeholder": "PO-4471"
         },
         "seller": {
           "first_party": "تبيعه بنفسك",
@@ -2366,6 +2375,7 @@
         "items": "أغراض",
         "number": "رقم",
         "payment": "قسط",
+        "po_number": "رقم أمر الشراء",
         "sku": "SKU",
         "tags": "Tags"
       },
@@ -2535,6 +2545,10 @@
           "number": "رقم",
           "state": "ولاية"
         },
+        "purchase_order": {
+          "document": "مستند أمر الشراء",
+          "title": "أمر الشراء"
+        },
         "section_customer_note": "Special Instructions",
         "section_internal_note": "Internal Note",
         "section_seller": "البائع",
@@ -2656,7 +2670,7 @@
       },
       "table": {
         "empty": "لم يتم العثور على أي أوامر",
-        "search_placeholder": "أوامر البحث…"
+        "search_placeholder": "البحث بالرقم أو أمر الشراء أو العميل…"
       }
     },
     "pages": {

@@ -1043,6 +1043,10 @@
         "label": "公司",
         "name": {
           "placeholder": "Acme Industries"
+        },
+        "po_number_required": {
+          "help": "该公司的买家必须在结账前提供采购订单号。",
+          "label": "要求填写采购订单号"
         }
       },
       "company_location": {
@@ -1365,6 +1369,11 @@
         "order_group": {
           "label": "本次购买",
           "view": "查看本次购买"
+        },
+        "po_number": {
+          "help": "买家为此订单使用的自有参考编号。",
+          "label": "采购订单号",
+          "placeholder": "PO-4471"
         },
         "seller": {
           "first_party": "自营",
@@ -2346,6 +2355,7 @@
         "items": "商品",
         "number": "编号",
         "payment": "付款",
+        "po_number": "采购订单号",
         "sku": "SKU",
         "tags": "标签"
       },
@@ -2515,6 +2525,10 @@
           "number": "编号",
           "state": "州/省"
         },
+        "purchase_order": {
+          "document": "采购订单文件",
+          "title": "采购订单"
+        },
         "section_customer_note": "特别说明",
         "section_internal_note": "内部备注",
         "section_seller": "卖家",
@@ -2636,7 +2650,7 @@
       },
       "table": {
         "empty": "未找到订单",
-        "search_placeholder": "搜索订单…"
+        "search_placeholder": "按订单号、采购订单号或客户搜索…"
       }
     },
     "pages": {

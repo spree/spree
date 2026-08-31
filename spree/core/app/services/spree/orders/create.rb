@@ -44,6 +44,13 @@ module Spree
         success(order.reload)
       rescue ActiveRecord::RecordInvalid => e
         failure(e.record, e.record.errors.full_messages.to_sentence)
+      rescue ActiveStorage::FileNotFoundError
+        # An abandoned direct upload leaves the blob row without its bytes.
+        # ActiveStorage raises a message-less error for that, which would
+        # otherwise be an unhandled 500 on the Admin API.
+        order ||= @store.orders.new
+        order.errors.add(:po_document, Spree.t(:po_document_upload_incomplete))
+        failure(order, order.errors.full_messages.to_sentence)
       end
 
       private
@@ -56,11 +63,16 @@ module Spree
           currency: @params[:currency].presence&.upcase || @store.default_currency,
           locale: @params[:locale] || Spree::Current.locale,
           customer_note: @params[:customer_note],
+          po_number: @params[:po_number],
           internal_note: @params[:internal_note],
           metadata: @params[:metadata].to_h,
           token: Spree::GenerateToken.new.call(Spree::Order),
           status: 'draft'
         }
+
+        # The buyer's purchase order, when it arrived with the paperwork. A
+        # signed blob id, so it assigns like any other attribute.
+        attrs[:po_document] = @params[:po_document] if @params[:po_document].present?
 
         attrs[:market] = resolve_market if @params[:market_id].present?
         attrs[:channel] = resolve_channel if @params[:channel_id].present?

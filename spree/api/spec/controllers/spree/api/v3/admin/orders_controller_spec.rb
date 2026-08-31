@@ -551,6 +551,59 @@ RSpec.describe Spree::Api::V3::Admin::OrdersController, type: :controller do
     end
   end
 
+  describe 'the buyer purchase order' do
+    before { request.headers.merge!(headers) }
+
+    it 'is set when staff key an order in' do
+      post :create, params: { email: 'buyer@example.com', po_number: 'PO-4471' }, as: :json
+
+      expect(response).to have_http_status(:created)
+      expect(json_response['po_number']).to eq('PO-4471')
+    end
+
+    # A plain attribute write: the buyer forgot, and staff correct it. It is
+    # not money, so it never routes through the order-change substrate.
+    it 'is correctable after placement' do
+      placed = create(:completed_order_with_totals, store: store)
+
+      patch :update, params: { id: placed.prefixed_id, po_number: 'PO-9001' }, as: :json
+
+      expect(response).to have_http_status(:ok)
+      expect(placed.reload.po_number).to eq('PO-9001')
+    end
+
+    describe 'GET #po_document' do
+      let(:order) { create(:order, store: store) }
+
+      before do
+        order.po_document.attach(
+          io: StringIO.new('%PDF-1.4 purchase order'),
+          filename: 'po.pdf',
+          content_type: 'application/pdf'
+        )
+      end
+
+      # Streamed through the API, never a storage redirect, so admin auth runs
+      # on every download. Exercised with a JWT alone — a full-scope secret key
+      # in the shared headers would hide a missing ability mapping.
+      it 'streams the document to an authorized admin' do
+        get :po_document, params: { id: order.prefixed_id }
+
+        expect(response).to have_http_status(:ok)
+        expect(response.headers['Content-Disposition']).to include('po.pdf')
+        expect(response.body).to include('purchase order')
+      end
+
+      it 'reports a validation error when the order has no document' do
+        bare = create(:order, store: store)
+
+        get :po_document, params: { id: bare.prefixed_id }
+
+        expect(response).to have_http_status(:unprocessable_content)
+      end
+    end
+  end
+
   describe 'PATCH #update' do
     subject { patch :update, params: { id: order.prefixed_id, email: 'updated@example.com' }, as: :json }
 

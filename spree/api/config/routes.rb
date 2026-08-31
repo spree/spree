@@ -56,6 +56,7 @@ Spree::Core::Engine.add_routes do
           end
           resource :store_credits, only: [:create, :destroy], controller: 'carts/store_credits'
           resource :tax_identifier, only: [:show, :update, :destroy], controller: 'carts/tax_identifiers'
+          resource :po_document, only: [:show, :create, :destroy], controller: 'carts/po_documents'
         end
 
         # Delivery methods (pickup discovery)
@@ -670,6 +671,9 @@ Spree::Core::Engine.add_routes do
             patch :resume
             post :resend_confirmation
             post :resend_digital_links
+            # The buyer's purchase order, streamed through the API so it is
+            # never reachable without admin credentials.
+            get :po_document
           end
 
           resources :items, only: [:index, :show, :create, :update, :destroy], controller: 'orders/items'

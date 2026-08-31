@@ -283,6 +283,59 @@ module Spree
       end
     end
 
+    describe 'the buyer purchase order' do
+      it 'carries the reference onto the order' do
+        ready_cart.update!(po_number: 'PO-4471')
+
+        order = described_class.call(cart: ready_cart).value
+
+        expect(order.po_number).to eq('PO-4471')
+      end
+
+      it 'leaves the reference empty when the buyer gave none' do
+        order = described_class.call(cart: ready_cart).value
+
+        expect(order.po_number).to be_nil
+      end
+
+      # The same blob, not a second upload — and the cart keeps its own copy so
+      # a rolled-back completion leaves the buyer's file where they left it.
+      it 'attaches the same document to the order' do
+        ready_cart.po_document.attach(
+          io: StringIO.new('%PDF-1.4 purchase order'),
+          filename: 'po.pdf',
+          content_type: 'application/pdf'
+        )
+
+        order = described_class.call(cart: ready_cart).value
+
+        expect(order.po_document).to be_attached
+        expect(order.po_document.blob_id).to eq(ready_cart.reload.po_document.blob_id)
+        expect(order.po_document.filename.to_s).to eq('po.pdf')
+      end
+
+      it 'attaches nothing when the buyer uploaded nothing' do
+        order = described_class.call(cart: ready_cart).value
+
+        expect(order.po_document).not_to be_attached
+      end
+
+      # The order is persisted and unchanged by the time the copy runs, so
+      # `attach` saves immediately and answers nil rather than raising when the
+      # save is refused. Unchecked, the buyer's paperwork would vanish at
+      # placement with nothing reported.
+      it 'fails the completion rather than silently placing the order without the document' do
+        ready_cart.po_document.attach(
+          io: StringIO.new('%PDF-1.4 purchase order'),
+          filename: 'po.pdf',
+          content_type: 'application/pdf'
+        )
+        allow_any_instance_of(ActiveStorage::Attached::One).to receive(:attach).and_return(nil)
+
+        expect { described_class.call(cart: ready_cart) }.to raise_error(ActiveRecord::RecordInvalid)
+      end
+    end
+
     describe 'guest checkout policy' do
       it 'fails when the channel forbids guest checkout and the cart has no customer' do
         allow_any_instance_of(Spree::Cart).to receive(:guest_checkout_disallowed?).and_return(true)

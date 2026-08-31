@@ -54,6 +54,33 @@ describe Spree::OrderMailer, type: :mailer do
     expect(confirmation_email.body).not_to include('&quot;')
   end
 
+  # Cheap differentiation: the reference the buyer's accounting reconciles
+  # against, on the document they actually keep.
+  context 'when the buyer supplied a purchase order number' do
+    before { order.update!(po_number: 'PO-4471') }
+
+    it 'renders it in both parts of the confirmation' do
+      message = described_class.confirm_email(order)
+
+      expect(message.html_part.body.to_s).to include('PO-4471')
+      expect(message.text_part.body.to_s).to include('PO-4471')
+    end
+
+    it 'renders it on the cancellation too' do
+      message = described_class.cancel_email(order)
+
+      expect(message.html_part.body.to_s).to include('PO-4471')
+      expect(message.text_part.body.to_s).to include('PO-4471')
+    end
+  end
+
+  it 'says nothing about a purchase order when the buyer gave none' do
+    message = described_class.confirm_email(order)
+
+    expect(message.html_part.body.to_s).not_to include('PO Number')
+    expect(message.text_part.body.to_s).not_to include('PO Number')
+  end
+
   it 'confirm_email accepts an order id as an alternative to an Order object' do
     expect(Spree::Order).to receive(:find).with(order.id).and_return(order)
     expect do

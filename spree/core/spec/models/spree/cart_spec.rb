@@ -1,6 +1,8 @@
 require 'spec_helper'
 
 describe Spree::Cart, type: :model do
+  it_behaves_like 'a purchase carrying a PO reference', factory: :cart
+
   let(:store) { @default_store }
   let(:customer) { create(:user) }
 

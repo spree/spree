@@ -237,6 +237,16 @@ export interface UpdateCartParams {
    * and with it the company's catalog, pricing and tax anchoring.
    */
   company_id?: string | null
+  /**
+   * The buyer's own purchase-order reference. Their accounting reconciles the
+   * order, the invoice and the payment against it. Blank clears it.
+   */
+  po_number?: string | null
+  /**
+   * ActiveStorage signed blob id of the buyer's purchase order, from
+   * `POST /store/carts/:id/po_document`. Blank detaches the document.
+   */
+  po_document?: string | null
 }
 
 // Payments

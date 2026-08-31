@@ -242,5 +242,28 @@ module Spree
         end
       end
     end
+
+    # Same signed-id state as the storefront's, one step further along: without
+    # handling this it is an unhandled 500 on the Admin API.
+    describe 'a purchase order document whose upload never completed' do
+      let(:orphan_blob) do
+        ActiveStorage::Blob.create_before_direct_upload!(
+          filename: 'po.pdf', byte_size: 12, checksum: 'x' * 22,
+          content_type: 'application/pdf', service_name: Spree.private_storage_service_name
+        )
+      end
+
+      it 'fails with a readable message rather than raising' do
+        result = nil
+        expect {
+          result = described_class.call(
+            store: store, params: { email: 'buyer@example.com', po_document: orphan_blob.signed_id }
+          )
+        }.not_to raise_error
+
+        expect(result).to be_failure
+        expect(result.error.to_s).to include(Spree.t(:po_document_upload_incomplete))
+      end
+    end
   end
 end

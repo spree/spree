@@ -34,6 +34,7 @@ module Spree
           r << req('address', 'ship_address', Spree.t('checkout_requirements.ship_address_required')) if @cart.shipping_address_required? && @cart.ship_address.blank?
           r << req('delivery', 'delivery_method', Spree.t('checkout_requirements.delivery_method_required')) if delivery_step_required? && !delivery_method_selected?
           r << req('payment', 'payment', Spree.t('checkout_requirements.payment_required')) if payment_required? && !payment_satisfied?
+          r << req('payment', 'po_number', Spree.t('checkout_requirements.po_number_required')) if po_number_missing?
         end
       end
 
@@ -70,6 +71,18 @@ module Spree
 
       def payment_satisfied?
         @cart.payments.valid.any?
+      end
+
+      # Advisory rather than completion-only: the buyer has to be told the
+      # reference is needed while they can still type it, not refused at the
+      # end of checkout. Staff keying an order in are exempt — the buyer's PO
+      # commonly arrives with the paperwork rather than at the till.
+      def po_number_missing?
+        @cart.po_number.blank? && @cart.po_number_required? && !staff_initiated?
+      end
+
+      def staff_initiated?
+        @cart.respond_to?(:created_by_id) && @cart.created_by_id.present?
       end
 
       def req(step, field, message, code: nil)

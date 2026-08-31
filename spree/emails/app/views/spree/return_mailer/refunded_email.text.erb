@@ -5,6 +5,7 @@
 ============================================================
 <%= Spree.t('return_mailer.refunded_email.refund_summary') %>
 ============================================================
+<%= render 'spree/shared/po_number', order: @order %>
 <%= Spree.t('return_mailer.refunded_email.total_refunded', total: @return.display_refunded_total) %>
 
 ============================================================

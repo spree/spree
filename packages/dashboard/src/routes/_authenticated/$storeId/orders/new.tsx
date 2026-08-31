@@ -94,6 +94,7 @@ function NewOrderPage() {
       if (company) payload.company_id = company.id
       if (values.internal_note) payload.internal_note = values.internal_note
       if (values.customer_note) payload.customer_note = values.customer_note
+      if (values.po_number) payload.po_number = values.po_number
       if (values.coupon_code) payload.coupon_code = values.coupon_code
       if (values.channel_id) payload.channel_id = values.channel_id
       return adminClient.orders.create(payload)
@@ -330,6 +331,19 @@ function NewOrderPage() {
                       {...form.register('customer_note')}
                     />
                     <FieldError errors={[errors.customer_note]} />
+                  </Field>
+                  <Field>
+                    <FieldLabel htmlFor="po-number">
+                      {t('admin.fields.order.po_number.label')}
+                    </FieldLabel>
+                    <Input
+                      id="po-number"
+                      placeholder={t('admin.fields.order.po_number.placeholder')}
+                      aria-invalid={!!errors.po_number || undefined}
+                      {...form.register('po_number')}
+                    />
+                    <FieldDescription>{t('admin.fields.order.po_number.help')}</FieldDescription>
+                    <FieldError errors={[errors.po_number]} />
                   </Field>
                   <Field>
                     <FieldLabel htmlFor="internal-note">
