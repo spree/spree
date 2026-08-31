@@ -246,10 +246,10 @@ export function PromotionForm({
             // Delete lives in the more-actions menu, not beside Save: a
             // destructive action next to the primary one is easy to hit by
             // mistake, and the menu is where every other record page puts it.
-            // `dropdownItems` rather than `onDelete`: the caller already runs
+            // `destructiveItems` rather than `onDelete`: the caller already runs
             // its own confirm, naming the promotion being deleted, and
             // `onDelete` would stack the header's generic prompt in front of it.
-            dropdownItems={
+            destructiveItems={
               mode === 'edit' && onDelete && canDelete ? (
                 <DropdownMenuItem variant="destructive" disabled={deletePending} onClick={onDelete}>
                   {t('admin.actions.delete')}
@@ -786,13 +786,7 @@ function RuleRow({
       </button>
       <Can I="destroy" a={Subject.PromotionRule}>
         <div className="flex items-center pr-1.5">
-          <Button
-            type="button"
-            size="icon-xs"
-            variant="ghost"
-            onClick={handleRemove}
-            className="text-destructive hover:bg-destructive/10 hover:text-destructive"
-          >
+          <Button type="button" size="icon-xs" variant="destructive-ghost" onClick={handleRemove}>
             <TrashIcon className="size-4" />
             {/* "Remove rule", not "Remove": the confirm dialog this opens has
                 its own Remove button, and two identical names in one view is
@@ -1165,13 +1159,7 @@ function ActionRow({
       </button>
       <Can I="destroy" a={Subject.PromotionAction}>
         <div className="flex items-center pr-1.5">
-          <Button
-            type="button"
-            size="icon-xs"
-            variant="ghost"
-            onClick={handleRemove}
-            className="text-destructive hover:bg-destructive/10 hover:text-destructive"
-          >
+          <Button type="button" size="icon-xs" variant="destructive-ghost" onClick={handleRemove}>
             <TrashIcon className="size-4" />
             {/* "Remove rule", not "Remove": the confirm dialog this opens has
                 its own Remove button, and two identical names in one view is

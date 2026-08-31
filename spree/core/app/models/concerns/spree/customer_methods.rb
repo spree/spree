@@ -162,12 +162,26 @@ module Spree
       self.whitelisted_ransackable_associations = %w[bill_address ship_address addresses tags spree_roles orders customer_groups]
       self.whitelisted_ransackable_attributes = %w[id email first_name last_name phone accepts_email_marketing
                                                     created_at updated_at last_sign_in_at]
-      self.whitelisted_ransackable_scopes = %w[search multi_search with_min_total_spent]
+      self.whitelisted_ransackable_scopes = %w[search multi_search with_min_total_spent with_standing_for_company]
 
       scope :with_min_total_spent, ->(amount) {
         joins(:orders).where.not(spree_orders: { completed_at: nil }).
           group("#{table_name}.id").
           having('SUM(spree_orders.total) >= ?', amount.to_d)
+      }
+
+      # Customers with standing for a company: members of the node or of any
+      # ancestor (see #standing_for?). Accepts a record, an id, or an array.
+      scope :with_standing_for_company, ->(companies) {
+        scoped = Spree::Current.store&.companies || Spree::Company.none
+        nodes = Array.wrap(companies).filter_map do |company|
+          company.is_a?(Spree::Company) ? company : scoped.find_by_param(company)
+        end
+        next none if nodes.empty?
+
+        joins(:company_memberships).
+          where(Spree::CompanyMembership.table_name => { company_id: nodes.flat_map { |node| node.self_and_ancestors.map(&:id) }.uniq }).
+          distinct
       }
 
       # Precomputes orders_count, total_spent, and last_order_completed_at via a

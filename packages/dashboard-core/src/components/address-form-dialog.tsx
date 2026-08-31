@@ -21,6 +21,7 @@ import { Controller, useForm } from 'react-hook-form'
 import { useTranslation } from 'react-i18next'
 import { z } from 'zod/v4'
 import { mapSpreeErrorsToForm } from '../lib/form-errors'
+import { useOptionalStore } from '../providers/store-provider'
 import { CountryCombobox } from './country-combobox'
 import { StateCombobox, useCountryStates } from './country-state-fields'
 
@@ -125,7 +126,22 @@ export interface EditableAddress {
   is_default_shipping?: boolean | null
 }
 
-function buildDefaults(address: EditableAddress | null | undefined): AddressFormValues {
+/**
+ * Country a new address starts with. An existing record keeps whatever it
+ * stored; a new one takes the store's default so the merchant is not asked
+ * to pick the same country every time.
+ */
+export function resolveAddressCountryCode(
+  address: EditableAddress | null | undefined,
+  storeDefaultCountryCode?: string | null,
+): string {
+  return address?.country_code || storeDefaultCountryCode || ''
+}
+
+function buildDefaults(
+  address: EditableAddress | null | undefined,
+  storeDefaultCountryCode?: string | null,
+): AddressFormValues {
   return {
     first_name: address?.first_name ?? '',
     last_name: address?.last_name ?? '',
@@ -134,7 +150,7 @@ function buildDefaults(address: EditableAddress | null | undefined): AddressForm
     address2: address?.address2 ?? '',
     city: address?.city ?? '',
     postal_code: address?.postal_code ?? '',
-    country_code: address?.country_code ?? '',
+    country_code: resolveAddressCountryCode(address, storeDefaultCountryCode),
     state_code: address?.state_code ?? '',
     phone: address?.phone ?? '',
     label: address?.label ?? '',
@@ -177,8 +193,11 @@ export function AddressFormDialog({
 }) {
   const { t } = useTranslation()
   const resolvedTitle = title ?? t('admin.components.address_form_dialog.edit_title')
+  // Optional: the seller panel has no store context, so a new address there
+  // stays country-empty rather than refusing to render.
+  const storeDefaultCountryCode = useOptionalStore()?.defaultCountry
   const form = useForm<AddressFormValues>({
-    defaultValues: buildDefaults(address),
+    defaultValues: buildDefaults(address, storeDefaultCountryCode),
     resolver: zodResolver(business ? businessSchema : personalSchema),
   })
   const { errors } = form.formState
@@ -192,9 +211,19 @@ export function AddressFormDialog({
   useEffect(() => {
     if (address?.id !== prevAddressIdRef.current) {
       prevAddressIdRef.current = address?.id
-      form.reset(buildDefaults(address))
+      form.reset(buildDefaults(address, storeDefaultCountryCode))
     }
-  }, [address, form])
+  }, [address, form, storeDefaultCountryCode])
+
+  // The store payload can arrive after the sheet mounts. Fill country on a
+  // new record only while the field is still empty so a merchant who already
+  // picked a different country is not overwritten.
+  useEffect(() => {
+    if (address?.country_code) return
+    if (!storeDefaultCountryCode) return
+    if (form.getValues('country_code')) return
+    form.setValue('country_code', storeDefaultCountryCode)
+  }, [address?.country_code, storeDefaultCountryCode, form])
 
   const countryCode = form.watch('country_code')
   const { states, statesRequired } = useCountryStates(countryCode)

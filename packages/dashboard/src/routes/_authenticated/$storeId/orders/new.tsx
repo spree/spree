@@ -1,7 +1,10 @@
 import { zodResolver } from '@hookform/resolvers/zod'
-import type { Customer, Variant } from '@spree/admin-sdk'
+import type { Company, Customer, Variant } from '@spree/admin-sdk'
 import {
   adminClient,
+  EMPTY_FILE_UPLOAD_VALUE,
+  FileUploadField,
+  type FileUploadValue,
   formatPrice,
   mapSpreeErrorsToForm,
   PageHeader,
@@ -14,6 +17,7 @@ import {
   CardHeader,
   CardTitle,
   Field,
+  FieldDescription,
   FieldError,
   FieldGroup,
   FieldLabel,
@@ -30,18 +34,23 @@ import {
 } from '@spree/dashboard-ui'
 import { useMutation } from '@tanstack/react-query'
 import { createFileRoute, useNavigate } from '@tanstack/react-router'
-import { TrashIcon } from 'lucide-react'
+import { FileTextIcon, TrashIcon } from 'lucide-react'
 import { useRef, useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { useTranslation } from 'react-i18next'
 import { ChannelSelect } from '../../../../components/spree/channel-select'
 import { useChannels } from '../../../../hooks/use-channels'
+import { companyAutocompleteProps } from '../../../../hooks/use-companies'
 import { customerAutocompleteProps } from '../../../../hooks/use-customers'
 import {
   NEW_ORDER_DEFAULTS,
   type NewOrderFormValues,
   newOrderFormSchema,
 } from '../../../../schemas/order'
+
+/** What a purchase order plausibly arrives as — mirrors the server allowlist. */
+const PO_DOCUMENT_ACCEPT =
+  'application/pdf,image/jpeg,image/png,image/heic,image/webp,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document'
 
 export const Route = createFileRoute('/_authenticated/$storeId/orders/new')({
   component: NewOrderPage,
@@ -61,8 +70,13 @@ function NewOrderPage() {
   // (Customer record, picked Variants) and bespoke widgets (ResourceCombobox,
   // typeahead button list, items table), not standard form fields.
   const [customer, setCustomer] = useState<Customer | null>(null)
+  const [company, setCompany] = useState<Company | null>(null)
   const [items, setItems] = useState<PendingItem[]>([])
   const [useDefaultAddress, setUseDefaultAddress] = useState(true)
+  const [poDocument, setPoDocument] = useState<FileUploadValue>(EMPTY_FILE_UPLOAD_VALUE)
+  // The signed id does not exist until the upload resolves, so submitting
+  // during one would create the order without the document.
+  const [poUploading, setPoUploading] = useState(false)
   // `onChange` hands back only the option id, so keep the records the search
   // returned to resolve it. A ref, not state: it's a lookup table, and writing
   // it must not re-render the form mid-search.
@@ -88,8 +102,13 @@ function NewOrderPage() {
       } else if (values.email) {
         payload.email = values.email
       }
+      if (company) payload.company_id = company.id
       if (values.internal_note) payload.internal_note = values.internal_note
       if (values.customer_note) payload.customer_note = values.customer_note
+      if (values.po_number) payload.po_number = values.po_number
+      // The bytes are already in private storage by now; the create carries
+      // only the signed id the upload handed back.
+      if (poDocument.signedId) payload.po_document = poDocument.signedId
       if (values.coupon_code) payload.coupon_code = values.coupon_code
       if (values.channel_id) payload.channel_id = values.channel_id
       return adminClient.orders.create(payload)
@@ -101,7 +120,10 @@ function NewOrderPage() {
 
   const email = form.watch('email')
   const canSubmit =
-    (Boolean(customer) || email.length > 0) && items.length > 0 && !createMutation.isPending
+    (Boolean(customer) || email.length > 0) &&
+    items.length > 0 &&
+    !createMutation.isPending &&
+    !poUploading
 
   async function onSubmit(values: NewOrderFormValues) {
     if (!canSubmit) return
@@ -135,12 +157,30 @@ function NewOrderPage() {
   return (
     <form onSubmit={form.handleSubmit(onSubmit)}>
       <ResourceLayout
-        header={<PageHeader title={t('admin.pages.orders.new.title')} backTo="orders/drafts" />}
+        header={
+          <PageHeader
+            title={t('admin.pages.orders.new.title')}
+            subtitle={t('admin.orders.new.creates_draft_note')}
+            backTo="orders/drafts"
+            actions={
+              <Button type="submit" disabled={!canSubmit}>
+                {createMutation.isPending
+                  ? t('admin.actions.creating')
+                  : t('admin.pages.orders.new.title')}
+              </Button>
+            }
+          />
+        }
         main={
           <>
             {errors.root?.message && (
               <p className="text-sm text-destructive" role="alert">
                 {errors.root.message}
+              </p>
+            )}
+            {createMutation.error && !errors.root && (
+              <p className="text-sm text-destructive" role="alert">
+                {(createMutation.error as Error).message}
               </p>
             )}
             <Card>
@@ -149,10 +189,36 @@ function NewOrderPage() {
               </CardHeader>
               <CardContent>
                 <FieldGroup>
+                  {/* Above the customer, because it narrows that list. Optional:
+                      most orders are retail and leave it empty. */}
+                  <Field>
+                    <FieldLabel>{t('admin.pages.orders.new.select_company')}</FieldLabel>
+                    <ResourceCombobox<Company>
+                      {...companyAutocompleteProps('order-company-picker')}
+                      value={company?.id}
+                      onChange={(_id, record) => {
+                        setCompany(record)
+                        // A customer already chosen may have no standing for the
+                        // new company, and silently sending that pair would
+                        // attach the order to a business this person cannot buy
+                        // for. Clearing is the honest reset.
+                        if (record?.id !== company?.id) setCustomer(null)
+                      }}
+                      renderOption={(c) => (
+                        <div>
+                          <div className="font-medium">{c.name}</div>
+                          <div className="text-xs text-muted-foreground">
+                            {t(`admin.companies.kind.${c.kind}`)}
+                          </div>
+                        </div>
+                      )}
+                    />
+                    <FieldDescription>{t('admin.pages.orders.new.company_help')}</FieldDescription>
+                  </Field>
                   <Field>
                     <FieldLabel>{t('admin.pages.orders.new.select_customer')}</FieldLabel>
                     <ResourceCombobox<Customer>
-                      {...customerAutocompleteProps('customer-picker')}
+                      {...customerAutocompleteProps('customer-picker', company?.id)}
                       value={customer?.id}
                       onChange={(_id, record) => setCustomer(record)}
                       renderOption={(c) => (
@@ -283,6 +349,44 @@ function NewOrderPage() {
         }
         sidebar={
           <>
+            {/* The buyer's own reference and the paperwork behind it — their
+                document, not the merchant's notes about the order. */}
+            <Card>
+              <CardHeader>
+                <CardTitle>{t('admin.orders.detail.purchase_order.title')}</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <FieldGroup>
+                  <Field>
+                    <FieldLabel htmlFor="po-number">
+                      {t('admin.fields.order.po_number.label')}
+                    </FieldLabel>
+                    <Input
+                      id="po-number"
+                      placeholder={t('admin.fields.order.po_number.placeholder')}
+                      aria-invalid={!!errors.po_number || undefined}
+                      {...form.register('po_number')}
+                    />
+                    <FieldDescription>{t('admin.fields.order.po_number.help')}</FieldDescription>
+                    <FieldError errors={[errors.po_number]} />
+                  </Field>
+                  {/* Private storage — attaching a signed id never moves a
+                      blob between services. */}
+                  <FileUploadField
+                    private
+                    value={poDocument}
+                    onChange={setPoDocument}
+                    accept={PO_DOCUMENT_ACCEPT}
+                    variant="file"
+                    icon={<FileTextIcon className="size-4" />}
+                    label={t('admin.orders.detail.purchase_order.document')}
+                    help={t('admin.orders.detail.purchase_order.document_help')}
+                    onUploadingChange={setPoUploading}
+                  />
+                </FieldGroup>
+              </CardContent>
+            </Card>
+
             <Card>
               <CardHeader>
                 <CardTitle>{t('admin.pages.orders.new.section_notes')}</CardTitle>
@@ -358,24 +462,6 @@ function NewOrderPage() {
                     <FieldError errors={[errors.coupon_code]} />
                   </Field>
                 </FieldGroup>
-              </CardContent>
-            </Card>
-
-            <Card>
-              <CardContent className="flex flex-col gap-3 pt-6">
-                <Button type="submit" disabled={!canSubmit}>
-                  {createMutation.isPending
-                    ? t('admin.actions.creating')
-                    : t('admin.pages.orders.new.title')}
-                </Button>
-                {createMutation.error && !errors.root && (
-                  <p className="text-sm text-destructive">
-                    {(createMutation.error as Error).message}
-                  </p>
-                )}
-                <p className="text-xs text-muted-foreground">
-                  {t('admin.orders.new.creates_draft_note')}
-                </p>
               </CardContent>
             </Card>
           </>

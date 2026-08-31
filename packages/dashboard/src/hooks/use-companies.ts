@@ -28,6 +28,22 @@ export function useCompany(id: string | undefined) {
   })
 }
 
+/**
+ * Company picker wiring for a resource filter or combobox. Searches the whole
+ * tree rather than one level: a merchant filtering by "Berlin Office" should
+ * find it without walking down from its parent.
+ */
+export function companyAutocompleteProps(queryKey: string) {
+  return {
+    queryKey,
+    search: (q: string) => adminClient.companies.list({ name_cont: q, limit: 20, sort: 'name' }),
+    hydrate: (ids: string[]) => adminClient.companies.list({ id_in: ids, limit: ids.length }),
+    getOptionLabel: (company: Company) => company.name ?? company.id,
+    placeholder: i18n.t('admin.companies.autocomplete.placeholder'),
+    emptyText: i18n.t('admin.companies.autocomplete.empty'),
+  }
+}
+
 /** One level of the tree: roots when `parentId` is undefined, else children. */
 export function useCompanyChildren(parentId: string | undefined, page = 1, limit = 25) {
   return useQuery({

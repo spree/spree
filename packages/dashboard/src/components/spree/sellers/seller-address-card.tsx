@@ -10,6 +10,7 @@ import {
   CardContent,
   CardHeader,
   CardTitle,
+  StatusBadge,
 } from '@spree/dashboard-ui'
 import { PencilIcon } from 'lucide-react'
 import { useState } from 'react'
@@ -54,7 +55,7 @@ export function SellerAddressCard({
           <CardTitle>
             {title}
             {address ? (
-              <Badge variant="success">{t('admin.sellers.address.filled')}</Badge>
+              <StatusBadge status="complete" label={t('admin.sellers.address.filled')} />
             ) : (
               <Badge variant="outline">{t('admin.sellers.address.not_filled')}</Badge>
             )}

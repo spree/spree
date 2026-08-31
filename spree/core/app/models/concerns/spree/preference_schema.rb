@@ -166,12 +166,17 @@ module Spree
       # discovery surface and must never leak gateway-shipped defaults.
       def subclasses_with_preference_schema
         registered_subclasses.map do |klass|
-          {
+          entry = {
             type: klass.api_type,
             label: subclass_label(klass),
             description: klass.respond_to?(:description) ? klass.description : nil,
             preference_schema: klass.respond_to?(:serialized_preference_schema) ? klass.serialized_preference_schema : []
           }
+          # Only present when true, so families without the concept keep
+          # their wire shape byte-identical. Pickers stop offering a
+          # superseded kind; existing rows still render and match.
+          entry[:superseded] = true if klass.respond_to?(:superseded?) && klass.superseded?
+          entry
         end.sort_by { |entry| entry[:label] }
       end
 

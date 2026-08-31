@@ -6,7 +6,8 @@ RSpec.describe Spree::Api::V3::Admin::Customers::TaxIdentifiersController, type:
   include_context 'API v3 Admin authenticated'
 
   let!(:customer) { create(:user) }
-  let!(:tax_identifier) { create(:tax_identifier, :verified, owner: customer, kind: 'eu_vat', value: 'DE123456789') }
+  let(:vat_number) { eu_vat_number(0) }
+  let!(:tax_identifier) { create(:tax_identifier, :verified, owner: customer, kind: 'eu_vat', value: vat_number) }
 
   before { request.headers.merge!(headers) }
 
@@ -17,7 +18,7 @@ RSpec.describe Spree::Api::V3::Admin::Customers::TaxIdentifiersController, type:
       expect(response).to have_http_status(:ok)
       row = json_response['data'].first
       expect(row['kind']).to eq('eu_vat')
-      expect(row['value']).to eq('DE123456789')
+      expect(row['value']).to eq(vat_number)
       expect(row['validation_status']).to eq('verified')
       expect(row['validation_evidence']['registry']).to eq('vies')
       expect(row['customer_id']).to eq(customer.prefixed_id)
@@ -49,12 +50,15 @@ RSpec.describe Spree::Api::V3::Admin::Customers::TaxIdentifiersController, type:
   end
 
   describe 'PATCH #update' do
+    let(:corrected_vat_number) { eu_vat_number(1) }
+
     it 'updates the number' do
-      patch :update, params: { customer_id: customer.prefixed_id, id: tax_identifier.prefixed_id, value: 'DE987654321' },
+      patch :update, params: { customer_id: customer.prefixed_id, id: tax_identifier.prefixed_id,
+                               value: corrected_vat_number },
                      as: :json
 
       expect(response).to have_http_status(:ok)
-      expect(tax_identifier.reload.value).to eq('DE987654321')
+      expect(tax_identifier.reload.value).to eq(corrected_vat_number)
     end
   end
 
@@ -70,10 +74,7 @@ RSpec.describe Spree::Api::V3::Admin::Customers::TaxIdentifiersController, type:
   describe 'POST #validate' do
     context 'when a validator is registered for the kind' do
       around do |example|
-        Spree.tax_identifier_validators['eu_vat'] = 'Spree::TaxIdentifiers::Validator::Base'
-        example.run
-      ensure
-        Spree.tax_identifier_validators.delete('eu_vat')
+        with_tax_identifier_validator('eu_vat', 'Spree::TaxIdentifiers::Validator::Base') { example.run }
       end
 
       it 'queues a fresh registry check' do

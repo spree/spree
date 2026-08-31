@@ -3,7 +3,6 @@ import { adminClient, PageHeader, useResourceMutation, useStore } from '@spree/d
 import {
   Button,
   DropdownMenuItem,
-  DropdownMenuSeparator,
   RelativeTime,
   StatusBadge,
   useConfirm,
@@ -124,9 +123,13 @@ export function OrderHeader({ order }: { order: Order }) {
             <MailIcon className="size-4" />
             {t('admin.orders.detail.dropdown.resend_confirmation')}
           </DropdownMenuItem>
-          <DropdownMenuSeparator />
         </>
       )}
+    </>
+  )
+
+  const destructiveItems = (
+    <>
       {order.status !== 'canceled' && (
         <DropdownMenuItem
           variant="destructive"
@@ -191,6 +194,7 @@ export function OrderHeader({ order }: { order: Order }) {
         </>
       }
       dropdownItems={dropdownItems}
+      destructiveItems={destructiveItems}
       resource={{ id: order.id, number: order.number }}
       jsonPreview={{
         title: `Order ${order.number}`,

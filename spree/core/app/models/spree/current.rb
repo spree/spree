@@ -4,7 +4,7 @@ module Spree
   # All attributes are automatically reset between requests by Rails.
   # Fallback chains ensure sensible defaults when attributes are not explicitly set.
   class Current < ::ActiveSupport::CurrentAttributes
-    attribute :store, :channel, :market, :currency, :locale, :content_locale, :tax_country, :price_lists, :global_pricing_context, :provider_cache, :integrations
+    attribute :store, :channel, :market, :currency, :locale, :content_locale, :tax_country, :price_lists, :applicable_catalogs, :global_pricing_context, :provider_cache, :integrations
 
     # Scratch space for provider strategies to memoize a call across the
     # request — part of the delivery rate provider contract (nothing in core
@@ -81,13 +81,38 @@ module Spree
       super || (self.integrations = store ? store.integrations.active.to_a : [])
     end
 
-    # Returns the current price lists for the global pricing context.
+    # Returns the standalone (rule-matched) price lists in effect for the
+    # global pricing context. Catalog-owned lists are excluded — pricing
+    # reaches them through {#catalogs_for}.
     # @return [ActiveRecord::Relation<Spree::PriceList>]
     def price_lists
       super || begin
         context = global_pricing_context
         self.price_lists = Spree::PriceList.for_context(context)
       end
+    end
+
+    # Catalogs that apply to a buyer in this request, keyed by that buyer.
+    # A store can have many catalogs; only the company / customer-group /
+    # channel-default set is kept. Product listings price every variant
+    # through a new resolver, so the first call loads the set and the rest
+    # reuse it.
+    #
+    # @param company [Spree::Company, nil]
+    # @param user [Object, nil]
+    # @param channel [Spree::Channel, nil]
+    # @return [Array<Spree::Catalog>]
+    def catalogs_for(company: nil, user: nil, channel: nil)
+      channel ||= self.channel
+      key = [store&.id, company&.id, user&.id, channel&.id]
+      applicable_catalogs[key] ||= Spree::Catalog.for_context(
+        store: store, company: company, user: user, channel: channel
+      )
+    end
+
+    # @return [Hash]
+    def applicable_catalogs
+      super || (self.applicable_catalogs = {})
     end
 
     # Returns the current global pricing context, built from store, currency, country, and market.

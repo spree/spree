@@ -1,27 +1,20 @@
 import { useParams } from '@tanstack/react-router'
 import { useTranslation } from 'react-i18next'
 import {
-  useAddCollectionProducts,
   useCollectionProducts,
-  useRemoveCollectionProduct,
-  useRemoveCollectionProducts,
   useRepositionCollectionProduct,
 } from '../../../hooks/use-collections'
-import { ProductMembershipCard } from '../product-membership-card'
-
-const hooks = {
-  useProducts: useCollectionProducts,
-  useAdd: useAddCollectionProducts,
-  useRemoveOne: useRemoveCollectionProduct,
-  useRemoveMany: useRemoveCollectionProducts,
-  useReposition: useRepositionCollectionProduct,
-}
+import { DeferredProductMembershipCard } from '../deferred-product-membership-card'
 
 /**
- * Product membership for a collection. A manual collection is curated here; an
- * automatic one materializes its members from its rules, so the list renders
- * read-only — the API rejects curation there, and anything added by hand would
- * be dropped on the next regeneration.
+ * Product membership for a collection. A manual collection is curated here —
+ * adds and removes stage into the collection form and persist on its Save,
+ * while reordering writes through on drop, since a collection's position
+ * drives storefront display order.
+ *
+ * An automatic collection materializes its members from its rules, so the list
+ * renders read-only: the API rejects curation there, and anything added by
+ * hand would be dropped on the next regeneration.
  */
 export function CollectionProductsCard({
   collectionId,
@@ -34,14 +27,16 @@ export function CollectionProductsCard({
   const { storeId } = useParams({
     from: '/_authenticated/$storeId/products/collections/$collectionId',
   })
+  const reposition = useRepositionCollectionProduct(collectionId)
 
   return (
-    <ProductMembershipCard
+    <DeferredProductMembershipCard
       parentId={collectionId}
       storeId={storeId}
-      hooks={hooks}
-      translationNamespace="admin.collections"
       readOnly={automatic}
+      useProducts={useCollectionProducts}
+      onReorder={(productId, new_position) => reposition.mutateAsync({ productId, new_position })}
+      translationNamespace="admin.collections"
       description={automatic ? t('admin.collections.products.automatic_hint') : undefined}
     />
   )

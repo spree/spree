@@ -760,6 +760,123 @@ The API automatically returns the correct price based on the current currency an
 
 See the [Pricing](/developer/core-concepts/pricing) guide for details on Price Lists, Price Rules, and market-specific pricing.
 
+## Digital products
+
+**A digital product is an ordinary product whose variant delivers without shipping — its [delivery profile](/developer/core-concepts/fulfillments) is a digital one, so buying it grants the customer a download instead of dispatching a parcel.** Nothing about the catalog model changes — you still have a product, its variants, and its prices. What that variant hands over is usually a **digital asset** it carries (an e‑book, a design file) or a value a provider mints on demand (a license key) — but the file is the optional deliverable, not what makes the product digital.
+
+Two ideas are worth separating up front, because they are independent:
+
+- **Being digital** is a delivery decision. A variant is digital when its [delivery profile](/developer/core-concepts/fulfillments) is a digital one — that variant needs no shipping address, and a cart made up entirely of digital variants skips the delivery step at checkout.
+- **Carrying downloadable files** is a catalog decision. Any variant can own digital assets — including a physical one, so a boxed product can ship a warranty PDF or a setup guide alongside the goods.
+
+Most digital products are both: a digital variant that carries the files it delivers. But the two are decoupled on purpose, so "ships nothing" and "hands over a file" can be mixed as a merchant needs.
+
+```mermaid
+erDiagram
+    Product ||--|{ Variant : "has"
+    Variant ||--o{ DigitalAsset : "carries"
+    DigitalAsset ||--o{ DigitalLink : "granted as"
+    LineItem ||--o{ DigitalLink : "purchased in"
+    DigitalAsset {
+        string provider_type "blank = uploaded file"
+        int authorized_clicks "nullable, falls back to store"
+        int authorized_days "nullable, falls back to store"
+    }
+    DigitalLink {
+        string token "the download credential"
+        int access_counter "downloads spent"
+    }
+```
+
+### Assets live on the variant
+
+A digital asset (`Spree::DigitalAsset`) belongs to a variant and holds either an uploaded file or a reference to a provider that produces the deliverable on demand (see [Where the file comes from](#where-the-file-comes-from) below). Uploaded files go to **private storage** — they are only ever served through a short‑lived, signed link, never a public URL.
+
+You attach assets to a variant from the product's **Digital files** card in the dashboard, or through the Admin API nested under the product:
+
+<CodeGroup>
+
+```typescript Admin SDK
+// 1. Ask for a private-storage upload slot, then PUT the file to the returned URL.
+const { direct_upload, signed_id } = await adminClient.directUploads.create({
+  private: true, // digital files are only ever served through a signed link
+  blob: { filename: 'guide.pdf', byte_size: file.size, checksum, content_type: 'application/pdf' },
+})
+await fetch(direct_upload.url, { method: 'PUT', headers: direct_upload.headers, body: file })
+
+// 2. Attach the uploaded blob to the product's default variant.
+await adminClient.products.digitalAssets.create('prod_86Rf07xd4z', {
+  signed_id,
+  authorized_clicks: 5, // optional — omit to inherit the store default
+  authorized_days: 30,
+})
+```
+
+```bash cURL
+curl -X POST 'https://api.mystore.com/api/v3/admin/products/prod_86Rf07xd4z/digital_assets' \
+  -H 'X-Spree-API-Key: sk_xxx' \
+  -H 'Content-Type: application/json' \
+  -d '{ "signed_id": "eyJfcmFpbHMi...", "authorized_clicks": 5, "authorized_days": 30 }'
+```
+
+</CodeGroup>
+
+<Warning>
+Digital files must be uploaded to **private storage**. The Admin API refuses a blob that landed on the public service — attaching never moves a file between services, so a public upload would stay publicly readable while looking attached. Request the direct upload with `private: true`.
+</Warning>
+
+Replacing an asset's file keeps every download link that was already issued working: links resolve through the asset, not the underlying blob, so a merchant can swap a corrected file mid‑sale without breaking anyone's access.
+
+### A purchase grants download links
+
+When an order is placed, digital assets fulfill themselves. The digital fulfillment provider runs automatically (it needs no address and no manual action) and, for each purchased unit, creates one **download link** (`Spree::DigitalLink`) per asset on the variant. Buy three copies of a two‑file bundle and the buyer gets six links. Re‑running fulfillment is idempotent — it never duplicates links.
+
+A download link is the customer's **grant**: a globally unique token, a counter of downloads spent, and its own copy of the allowance. The token *is* the credential — it identifies the store on its own, which is why an emailed link works without any API key.
+
+Customers reach their files two ways:
+
+- **By email.** On order placement, `Spree::DigitalAssetMailer` sends a "your files are ready" message with the links — a message of its own, separate from the order confirmation, so it can be re‑sent from the order page later.
+- **From their account.** A signed‑in customer sees every link they have ever been granted, across all their orders, through the customer downloads endpoint.
+
+<Note>
+The files-ready email is only sent when the order actually has digital links and the store has consumer transactional emails enabled. A store that delivers files through its own storefront or webhooks can leave it off.
+</Note>
+
+### Downloading, and the allowance
+
+A download is a `GET` against the link's token. Every download runs the same guarded sequence, and the customer's allowance is only spent once a deliverable is actually in hand:
+
+1. **The grant must be live** — attempts remaining, and not past its expiry.
+2. **The signed‑URL window must be open** — clamped to whatever is shorter, the store's link lifetime or the link's own remaining days.
+3. **The deliverable is produced** — see providers below. This step is allowed to fail.
+4. **The download is charged** — the counter is incremented under a lock.
+5. **The file is handed over** — a redirect to a signed URL, or an inline body.
+
+The ordering is deliberate: producing the deliverable comes *before* charging the click, so a provider outage or a missing file returns an honest error and **costs the customer nothing**. Two allowances govern access, both falling back to store settings when the asset leaves them blank:
+
+| Field | Meaning | Store default |
+| --- | --- | :---: |
+| `authorized_clicks` | How many times the file may be downloaded | `5` |
+| `authorized_days` | How long after purchase the link stays valid | `7` |
+
+Store‑wide defaults and their on/off switches live at **Settings → Store**; the separate `digital_asset_link_expire_time` preference caps how long a single signed URL lives (default 5 minutes, never more than an hour) because that URL is a bearer credential. When a customer runs out of downloads or a file was replaced mid‑flight, an admin can restore access by resetting the link from the order page, which zeroes the counter and restarts the clock.
+
+Each successful download publishes an event you can subscribe to:
+
+| Event | Published when |
+| --- | --- |
+| `digital_link.downloaded` | A customer successfully downloads a file (after the click is charged) |
+
+### Where the file comes from
+
+By default a digital asset delivers its uploaded file. But the last step — "hand something over" — is pluggable through a **digital asset provider**, so the deliverable can instead be minted on demand: a license key from your billing system, an entitlement from internal software, or a signed link to a file on your own host. The purchase, the grant, the allowance, and the email are identical either way; only the production of the deliverable changes.
+
+A blank `provider_type` on an asset means the built‑in file provider — the uploaded‑file behavior described above. Registering your own provider adds it as a source on the Digital files card, so a merchant can pick it when adding an asset.
+
+<Tip>
+To build one, see the [Build a Custom Digital Asset Provider](/developer/how-to/custom-digital-asset-provider) how‑to. It covers the `#deliver` contract, per‑asset settings, and registration.
+</Tip>
+
 ## Categories
 
 There are two ways to group products, and they answer different questions.
@@ -986,6 +1103,7 @@ See [Sales Channels](/developer/core-concepts/channels) for the full channel lif
 - [Pricing](/developer/core-concepts/pricing) — Price Lists, Price Rules, and market-specific pricing
 - [Inventory](/developer/core-concepts/inventory) — Stock management and backorders
 - [Media](/developer/core-concepts/media) — Image management
+- [Build a Custom Digital Asset Provider](/developer/how-to/custom-digital-asset-provider) — Deliver a license key or external file instead of an uploaded one
 - [Translations](/developer/core-concepts/translations) — Translating product content
 - [Search & Filtering](/developer/core-concepts/search-filtering) — Full-text search and Ransack filtering
 - [Store SDK Products](/developer/sdk/store/products) — Listing, fetching, filtering, and categories via `client.products`

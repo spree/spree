@@ -248,6 +248,35 @@ RSpec.describe Spree::Api::V3::Admin::OrdersController, type: :controller do
       expect(json_response['email']).to eq('test@example.com')
     end
 
+    it 'stamps created_by from the authenticated admin' do
+      subject
+
+      created_order = Spree::Order.find_by_prefix_id(json_response['id'])
+      expect(created_order.created_by).to eq(admin_user)
+    end
+
+    # update permitted company_id from the start; create did not, so a draft
+    # could not be opened for a business in one call.
+    context 'with a company' do
+      let(:company) { create(:company, store: store) }
+      let(:create_params) { { email: 'test@example.com', company_id: company.prefixed_id } }
+
+      it 'attaches the company to the draft' do
+        subject
+
+        expect(response).to have_http_status(:created)
+        expect(Spree::Order.find_by_prefix_id(json_response['id']).company).to eq(company)
+      end
+
+      it "404s on another store's company rather than confirming the id exists" do
+        foreign = create(:company, store: create(:store))
+
+        post :create, params: { email: 'test@example.com', company_id: foreign.prefixed_id }, as: :json
+
+        expect(response).to have_http_status(:not_found)
+      end
+    end
+
     context 'with user assignment via user_id' do
       let(:customer) { create(:user) }
       let(:create_params) { { user_id: customer.prefixed_id } }
@@ -300,6 +329,42 @@ RSpec.describe Spree::Api::V3::Admin::OrdersController, type: :controller do
         expect(created.line_items.count).to eq(1)
         expect(created.line_items.first.variant).to eq(variant)
         expect(created.line_items.first.quantity).to eq(3)
+      end
+
+      context 'carrying a negotiated price' do
+        let(:create_params) do
+          {
+            email: 'test@example.com',
+            items: [{ variant_id: variant.prefixed_id, quantity: 10, price: '7.20' }]
+          }
+        end
+
+        it 'creates the line at the negotiated price, stamped manual' do
+          subject
+
+          expect(response).to have_http_status(:created)
+          created = Spree::Order.find_by_prefix_id(json_response['id'])
+          line_item = created.line_items.sole
+          expect(line_item.price).to eq(7.2)
+          expect(line_item.price_source).to eq('manual')
+        end
+      end
+
+      # A 422 whose message is blank leaves the dashboard with nothing to show.
+      context 'carrying an unusable price' do
+        let(:create_params) do
+          {
+            email: 'test@example.com',
+            items: [{ variant_id: variant.prefixed_id, quantity: 1, price: '12,50' }]
+          }
+        end
+
+        it 'refuses with an actionable message' do
+          expect { subject }.not_to change(Spree::Order, :count)
+
+          expect(response).to have_http_status(:unprocessable_entity)
+          expect(response.body).to include('non-negative number')
+        end
       end
     end
 
@@ -486,6 +551,59 @@ RSpec.describe Spree::Api::V3::Admin::OrdersController, type: :controller do
     end
   end
 
+  describe 'the buyer purchase order' do
+    before { request.headers.merge!(headers) }
+
+    it 'is set when staff key an order in' do
+      post :create, params: { email: 'buyer@example.com', po_number: 'PO-4471' }, as: :json
+
+      expect(response).to have_http_status(:created)
+      expect(json_response['po_number']).to eq('PO-4471')
+    end
+
+    # A plain attribute write: the buyer forgot, and staff correct it. It is
+    # not money, so it never routes through the order-change substrate.
+    it 'is correctable after placement' do
+      placed = create(:completed_order_with_totals, store: store)
+
+      patch :update, params: { id: placed.prefixed_id, po_number: 'PO-9001' }, as: :json
+
+      expect(response).to have_http_status(:ok)
+      expect(placed.reload.po_number).to eq('PO-9001')
+    end
+
+    describe 'GET #po_document' do
+      let(:order) { create(:order, store: store) }
+
+      before do
+        order.po_document.attach(
+          io: StringIO.new('%PDF-1.4 purchase order'),
+          filename: 'po.pdf',
+          content_type: 'application/pdf'
+        )
+      end
+
+      # Streamed through the API, never a storage redirect, so admin auth runs
+      # on every download. Exercised with a JWT alone — a full-scope secret key
+      # in the shared headers would hide a missing ability mapping.
+      it 'streams the document to an authorized admin' do
+        get :po_document, params: { id: order.prefixed_id }
+
+        expect(response).to have_http_status(:ok)
+        expect(response.headers['Content-Disposition']).to include('po.pdf')
+        expect(response.body).to include('purchase order')
+      end
+
+      it 'reports a validation error when the order has no document' do
+        bare = create(:order, store: store)
+
+        get :po_document, params: { id: bare.prefixed_id }
+
+        expect(response).to have_http_status(:unprocessable_content)
+      end
+    end
+  end
+
   describe 'PATCH #update' do
     subject { patch :update, params: { id: order.prefixed_id, email: 'updated@example.com' }, as: :json }
 
@@ -612,6 +730,25 @@ RSpec.describe Spree::Api::V3::Admin::OrdersController, type: :controller do
 
         expect(response).to have_http_status(:ok)
         expect(order.reload.tag_list).to contain_exactly('VIP')
+      end
+    end
+
+    # The path the dashboard's order-edit Save actually takes. A rejected batch
+    # carries its reason on the Result, so without propagation this rendered a
+    # 422 with an empty message and the form had nothing to display.
+    context 'with an unusable price in the items batch' do
+      let(:variant) { create(:variant, product: create(:product)) }
+      let!(:order) { create(:order, store: store, state: 'cart') }
+
+      it 'refuses with an actionable message' do
+        patch :update, params: {
+          id: order.prefixed_id,
+          items: [{ variant_id: variant.prefixed_id, quantity: 1, price: '12,50' }]
+        }, as: :json
+
+        expect(response).to have_http_status(:unprocessable_entity)
+        expect(response.body).to include('non-negative number')
+        expect(order.reload.line_items).to be_empty
       end
     end
 

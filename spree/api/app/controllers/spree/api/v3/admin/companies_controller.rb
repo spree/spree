@@ -32,7 +32,7 @@ module Spree
 
           def permitted_params
             permitted = params.permit(*model_additional_permitted_attributes,
-                                      :name, :kind, :parent_id, metadata: {})
+                                      :name, :kind, :parent_id, :po_number_required, metadata: {})
             resolve_parent_param(permitted)
           end
 

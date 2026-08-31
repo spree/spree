@@ -22,6 +22,8 @@ import { type ColumnDef, type FilterRule, parseFilterIds } from './table-registr
 // FilterRule[]) stays simple.
 const ARRAY_OPERATORS = new Set(['in', 'not_in'])
 
+const NEGATING_OPERATORS = new Set(['not_in', 'not_eq'])
+
 export function filtersToRansack(
   filters: FilterRule[],
   columns: ColumnDef[],
@@ -35,10 +37,29 @@ export function filtersToRansack(
     // ransack alias here when one isn't explicitly set.
     const fallback = col?.filterType === 'tags' ? 'tags_name' : filter.field
     const ransackKey = col?.ransackAttribute ?? fallback
-    const key = `${ransackKey}_${filter.operator}`
+    // A scope is invoked by its bare name and takes the value as an argument,
+    // so it cannot express negation — emitting the same key for `not_in` would
+    // run it as an inclusion.
+    if (col?.ransackScope && NEGATING_OPERATORS.has(filter.operator)) continue
+
+    const key = col?.ransackScope ? ransackKey : `${ransackKey}_${filter.operator}`
     if (ARRAY_OPERATORS.has(filter.operator)) {
       const ids = parseFilterIds(filter.value)
       if (ids.length > 0) out[key] = ids
+    } else if (col?.filterType === 'date' && filter.operator === 'lteq') {
+      // A date filter's upper bound is a whole day, but the columns it targets
+      // are datetimes: Ransack casts `2026-08-29` to midnight, so "up to the
+      // 29th" would drop everything that happened during the 29th. Carry the
+      // day's last instant instead — to the microsecond, since Rails defaults
+      // datetime columns to that precision and a bound of `23:59:59` would
+      // drop the final second of the day. The lower bound needs no such
+      // treatment: midnight is already the start of its day.
+      //
+      // Both ends are read in the server's zone, so a store trading far from
+      // it sees the same edge-of-day skew its other date filters already have.
+      // Fixing that means sending zoned bounds, which is a change to the
+      // filter wire format rather than to this conversion.
+      out[key] = `${filter.value} 23:59:59.999999`
     } else {
       out[key] = filter.value
     }

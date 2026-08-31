@@ -94,6 +94,12 @@ module Spree
           many :customer_groups,
                resource: proc { Spree.api.admin_customer_group_serializer },
                if: proc { expand?('customer_groups') }
+
+          # Membership rows only — standing over a parent is a question for the
+          # standing filter, not a claim of membership.
+          many :companies,
+               resource: proc { Spree.api.admin_company_serializer },
+               if: proc { expand?('companies') }
         end
       end
     end

@@ -1,3 +1,4 @@
+import { PageHeader } from '@spree/dashboard-core'
 import {
   AddressBlock,
   Button,
@@ -6,6 +7,7 @@ import {
   CardContent,
   CardHeader,
   CardTitle,
+  DropdownMenuItem,
   Field,
   FieldLabel,
   Input,
@@ -73,22 +75,35 @@ export function OrderPage() {
 
   return (
     <div className="flex flex-col gap-4">
-      <div className="flex items-start justify-between gap-4">
-        <div>
-          <h1 className="font-medium text-2xl">{order.number}</h1>
-          <p className="text-muted-foreground text-sm">
-            {order.completed_at ? new Date(order.completed_at).toLocaleString() : null}
-          </p>
-        </div>
-        <div className="flex items-center gap-2">
-          {order.fulfillment_status && <StatusBadge status={order.fulfillment_status} />}
-          {cancelable && (
-            <Button variant="outline" disabled={cancel.isPending} onClick={handleCancel}>
+      {/* Cancel goes in the menu's destructive group rather than beside the
+          title: a destructive action sitting next to the page's own heading is
+          easy to hit by mistake, and this is where the operator dashboard puts
+          the same action. */}
+      <PageHeader
+        title={order.number}
+        backTo="orders"
+        subtitle={order.completed_at ? new Date(order.completed_at).toLocaleString() : undefined}
+        badges={
+          order.fulfillment_status && (
+            <StatusBadge
+              status={order.fulfillment_status}
+              label={t(`orders.fulfillment_statuses.${order.fulfillment_status}`)}
+            />
+          )
+        }
+        resource={{ id: order.id, number: order.number }}
+        destructiveItems={
+          cancelable ? (
+            <DropdownMenuItem
+              variant="destructive"
+              disabled={cancel.isPending}
+              onClick={handleCancel}
+            >
               {t('orders.cancel')}
-            </Button>
-          )}
-        </div>
-      </div>
+            </DropdownMenuItem>
+          ) : undefined
+        }
+      />
 
       <Card>
         <CardHeader>
@@ -169,7 +184,10 @@ function FulfillmentCard({ orderId, fulfillment }: { orderId: string; fulfillmen
       <CardHeader>
         <CardTitle>{fulfillment.number}</CardTitle>
         <CardAction>
-          <StatusBadge status={fulfillment.status} />
+          <StatusBadge
+            status={fulfillment.status}
+            label={t(`orders.fulfillment_statuses.${fulfillment.status}`)}
+          />
         </CardAction>
       </CardHeader>
       <CardContent className="flex flex-col gap-3">

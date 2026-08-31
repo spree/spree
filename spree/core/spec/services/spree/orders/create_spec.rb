@@ -40,6 +40,18 @@ module Spree
         end
       end
 
+      context 'with a creating staff member' do
+        let(:admin) { create(:admin_user) }
+        let(:params) { { email: 'new@example.com' } }
+
+        it 'stamps created_by' do
+          result = described_class.call(store: store, customer: user, created_by: admin, params: params)
+
+          expect(result).to be_success
+          expect(result.value.created_by).to eq(admin)
+        end
+      end
+
       context 'with minimal params (no items, no address)' do
         let(:params) { { email: 'new@example.com' } }
 
@@ -228,6 +240,29 @@ module Spree
         it 'rolls back the order so no draft is persisted on failure' do
           expect { subject }.not_to change(Spree::Order, :count)
         end
+      end
+    end
+
+    # Same signed-id state as the storefront's, one step further along: without
+    # handling this it is an unhandled 500 on the Admin API.
+    describe 'a purchase order document whose upload never completed' do
+      let(:orphan_blob) do
+        ActiveStorage::Blob.create_before_direct_upload!(
+          filename: 'po.pdf', byte_size: 12, checksum: 'x' * 22,
+          content_type: 'application/pdf', service_name: Spree.private_storage_service_name
+        )
+      end
+
+      it 'fails with a readable message rather than raising' do
+        result = nil
+        expect {
+          result = described_class.call(
+            store: store, params: { email: 'buyer@example.com', po_document: orphan_blob.signed_id }
+          )
+        }.not_to raise_error
+
+        expect(result).to be_failure
+        expect(result.error.to_s).to include(Spree.t(:po_document_upload_incomplete))
       end
     end
   end

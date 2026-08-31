@@ -11,6 +11,7 @@ module Spree
           typelize company_id: [:string, nullable: true],
                    company_name: [:string, nullable: true],
                    seller_id: [:string, nullable: true],
+                   po_document_url: [:string, nullable: true],
                    order_group_id: [:string, nullable: true]
 
           # The Admin API has no guest gating — money fields inherited from the
@@ -51,6 +52,15 @@ module Spree
 
           attribute :preferred_stock_location_id do |order|
             order.preferred_stock_location&.prefixed_id
+          end
+
+          # Our own endpoint rather than a pre-signed storage URL: the
+          # controller streams the bytes, so admin auth runs on every download
+          # of the buyer's purchase order.
+          attribute :po_document_url do |order|
+            next nil unless order.po_document.attached?
+
+            Spree::Core::Engine.routes.url_helpers.po_document_api_v3_admin_order_path(id: order.prefixed_id)
           end
 
           # Which company node the order is for, so the dashboard can show and
@@ -144,16 +154,17 @@ module Spree
               resource: proc { Spree.api.admin_customer_serializer },
               if: proc { expand?('customer') }
 
+          # Staff actors, not customers — these point at Spree.admin_user_class.
           one :approver,
-              resource: proc { Spree.api.admin_customer_serializer },
+              resource: proc { Spree.api.admin_admin_user_serializer },
               if: proc { expand?('approver') }
 
           one :canceler,
-              resource: proc { Spree.api.admin_customer_serializer },
+              resource: proc { Spree.api.admin_admin_user_serializer },
               if: proc { expand?('canceler') }
 
           one :created_by,
-              resource: proc { Spree.api.admin_customer_serializer },
+              resource: proc { Spree.api.admin_admin_user_serializer },
               if: proc { expand?('created_by') }
 
 

@@ -53,7 +53,12 @@ export function useCreateCategory() {
 export function useUpdateCategory(id: string) {
   return useResourceMutation<Category, Error, CategoryUpdateParams>({
     mutationFn: (params) => adminClient.categories.update(id, params),
+    // The nested products list is held back: it prefix-matches
+    // `['categories', id]`, and this update runs before the membership flush
+    // inside the page's Save — refreshing it there paints the pre-save rows
+    // for a frame. The flush refreshes it once, at the end.
     invalidate: [['categories'], ['categories', id]],
+    doNotInvalidate: ['products'],
     successMessage: i18n.t('admin.categories.messages.updated'),
     errorMessage: i18n.t('admin.errors.failed_to_update'),
   })
@@ -109,34 +114,31 @@ export function useCategoryProducts(categoryId: string | undefined, page = 1, li
 /** Add one or many products to a category in a single request. */
 export function useAddCategoryProducts(categoryId: string) {
   return useResourceMutation<unknown, Error, string[]>({
-    mutationFn: (productIds) =>
-      adminClient.products.bulkAddToCategories({ ids: productIds, category_ids: [categoryId] }),
-    invalidate: [categoryProductsKey(categoryId), ['categories']],
+    mutationFn: (productIds) => adminClient.categories.products.create(categoryId, productIds),
+    // No invalidate: this runs inside the page's Save, and the parent's own
+    // update mutation already invalidates `['categories']`, which prefix-matches
+    // the products list. Invalidating here too refetches mid-flush — once
+    // before the membership is written — which renders the pre-save list for a
+    // frame before the final state lands.
+    // Silent: this runs inside the page's Save, whose own mutation reports
+    // the outcome — a second toast per flush would stack on it.
+    successMessage: false,
     errorMessage: i18n.t('admin.errors.failed_to_update'),
   })
 }
 
-export function useRemoveCategoryProduct(categoryId: string) {
-  return useResourceMutation<void, Error, string>({
-    mutationFn: (productId) => adminClient.categories.products.remove(categoryId, productId),
-    invalidate: [categoryProductsKey(categoryId), ['categories']],
-    errorMessage: i18n.t('admin.errors.failed_to_update'),
-  })
-}
-
-/**
- * Remove many products from a category in one request. Reuses the existing
- * products bulk endpoint (the same one the product-list bulk actions use) —
- * no category-specific bulk route needed.
- */
+/** Remove many products from a category in one request. */
 export function useRemoveCategoryProducts(categoryId: string) {
   return useResourceMutation<unknown, Error, string[]>({
-    mutationFn: (productIds) =>
-      adminClient.products.bulkRemoveFromCategories({
-        ids: productIds,
-        category_ids: [categoryId],
-      }),
-    invalidate: [categoryProductsKey(categoryId), ['categories']],
+    mutationFn: (productIds) => adminClient.categories.products.delete(categoryId, productIds),
+    // No invalidate: this runs inside the page's Save, and the parent's own
+    // update mutation already invalidates `['categories']`, which prefix-matches
+    // the products list. Invalidating here too refetches mid-flush — once
+    // before the membership is written — which renders the pre-save list for a
+    // frame before the final state lands.
+    // Silent: this runs inside the page's Save, whose own mutation reports
+    // the outcome — a second toast per flush would stack on it.
+    successMessage: false,
     errorMessage: i18n.t('admin.errors.failed_to_update'),
   })
 }

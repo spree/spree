@@ -27,9 +27,15 @@ module Spree
         base ||= store.products.for_channel(channel)
         company ||= sole_standing_company(store, customer)
 
-        catalogs = store.catalogs.for_company(company)
-        catalogs = customer_group_catalogs(store, customer) if catalogs.empty?
-        catalogs = [channel&.default_catalog].compact.select(&:active?) if catalogs.empty?
+        # Reuses the request-scoped set when resolving for the current store,
+        # so a listing that prices its variants right after does not resolve
+        # the same buyer's catalogs twice in one request.
+        catalogs =
+          if store == Spree::Current.store
+            Spree::Current.catalogs_for(company: company, user: customer, channel: channel)
+          else
+            Spree::Catalog.for_context(store: store, company: company, user: customer, channel: channel)
+          end
 
         return success(base) if catalogs.empty?
 
@@ -68,13 +74,6 @@ module Spree
                     map(&:company).uniq
 
         companies.one? ? companies.first : nil
-      end
-
-      def customer_group_catalogs(store, customer)
-        return [] if customer.nil?
-
-        groups = customer.customer_groups.where(store_id: store.id)
-        store.catalogs.for_customer_groups(groups)
       end
     end
   end

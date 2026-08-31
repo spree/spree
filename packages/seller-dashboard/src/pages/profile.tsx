@@ -1,3 +1,4 @@
+import { PageHeader } from '@spree/dashboard-core'
 import {
   Button,
   Card,
@@ -34,6 +35,7 @@ import { CenteredMessage } from '../components/centered-message'
 import { SellerAddressCard } from '../components/seller-address-card'
 import { SellerBusinessCard } from '../components/seller-business-card'
 import { SellerReturnsLocationCard } from '../components/seller-returns-location-card'
+import { SellerTaxIdentifiersCard } from '../components/seller-tax-identifiers-card'
 
 interface ProfileValues {
   name: string
@@ -81,12 +83,7 @@ export function ProfilePage() {
   return (
     <>
       <ResourceLayout
-        header={
-          <div>
-            <h1 className="font-medium text-2xl">{profile.name}</h1>
-            <p className="text-muted-foreground text-sm">{t('profile.subtitle')}</p>
-          </div>
-        }
+        header={<PageHeader title={profile.name} subtitle={t('profile.subtitle')} />}
         main={<BrandCard profile={profile} onEdit={() => setEditing(true)} />}
         sidebar={
           <>
@@ -94,6 +91,7 @@ export function ProfilePage() {
             <AtAGlanceCard profile={profile} teamCount={team?.data?.length} />
             <ContactCard profile={profile} onEdit={() => setEditing(true)} />
             <SellerBusinessCard profile={profile} />
+            <SellerTaxIdentifiersCard />
             <SellerAddressCard profile={profile} />
             <SellerReturnsLocationCard />
             <SettlementCard profile={profile} />

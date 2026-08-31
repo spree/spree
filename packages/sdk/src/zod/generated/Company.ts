@@ -5,6 +5,7 @@ export const CompanySchema = z.object({
   id: z.string(),
   name: z.string(),
   kind: z.string(),
+  po_number_required: z.boolean(),
   parent_id: z.string().nullable(),
   ancestors: z.array(z.object({ id: z.string(), name: z.string(), kind: z.string() })),
 });

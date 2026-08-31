@@ -36,14 +36,11 @@ module Spree
                 requested_custom_fields(attributes.delete(:custom_fields_attributes))
             end
 
-            tax_identifier = attributes.delete(:tax_identifier)
+            current_seller.update!(attributes)
 
-            if current_seller.update(attributes)
-              upsert_tax_identifier(tax_identifier) if tax_identifier.present?
-              render json: serialize_seller
-            else
-              render_validation_error(current_seller.errors)
-            end
+            render json: serialize_seller
+          rescue ActiveRecord::RecordInvalid => error
+            render_validation_error(error.record.errors)
           end
 
           protected
@@ -83,16 +80,6 @@ module Spree
           # A changed number drops its verdict — the validator's answer was
           # about the old one, and carrying it over would show a number as
           # verified that nobody has checked.
-          def upsert_tax_identifier(attributes)
-            kind = attributes[:kind].presence
-            return if kind.blank?
-
-            value = attributes[:value]
-            return current_seller.tax_identifiers.find_by(kind: kind)&.destroy if value.blank?
-
-            current_seller.tax_identifiers.find_or_initialize_by(kind: kind).update(value: value)
-          end
-
           # Narrowed to the definitions this marketplace's onboarding actually
           # asks this seller for.
           #
@@ -121,7 +108,6 @@ module Spree
               params.permit(:name, :contact_email, :billing_email, :about,
                             :legal_name, :registration_number,
                             :logo, :square_logo, :cover_photo,
-                            tax_identifier: [:kind, :value],
                             billing_address: Spree::Api::V3::AddressParams::ADDRESS_KEYS,
                             custom_fields: [:id, :custom_field_definition_id, :value,
                                             { value: [] }, { value: {} }])

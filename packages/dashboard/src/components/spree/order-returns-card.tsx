@@ -148,7 +148,7 @@ export function OrderReturnsCard({ order }: { order: Order }) {
                         <>
                           <DropdownMenuSeparator />
                           <DropdownMenuItem
-                            className="text-destructive focus:text-destructive"
+                            variant="destructive"
                             onClick={async () => {
                               if (
                                 await confirm({

@@ -6,7 +6,7 @@ module Spree
           class TaxIdentifiersController < BaseController
             scoped_resource :customers
 
-            include Spree::Api::V3::Admin::Concerns::TaxIdentifierValidation
+            include Spree::Api::V3::TaxIdentifierValidation
 
             # Re-declaring the filter replaces the inherited options, so the
             # standard actions have to be listed alongside the custom one.

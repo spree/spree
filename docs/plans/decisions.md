@@ -4064,3 +4064,437 @@ does this context pay*. No cleanup migration: any pre-release rows of the
 dropped kinds were always inert (the inclusion validation runs on the
 assignment row, which nothing re-saves), so they are left to lie. Plan
 amended: `6.0-b2b-companies-and-catalogs.md`.
+
+## 2026-08-30 — Wholesale shipping ships in 6.0: PackageType, unpriced rates, collected deposits; lot-level inventory joins inventory-operations
+
+Merchant feedback (wholesale carton/pallet/container shipping) turned into
+two new plans plus an inventory-operations extension. The decisions other
+plans need to know about:
+
+**`Spree::PackageType` is the packaging vocabulary and replaces the four
+`default_package_*` store preferences.** Store-scoped rows (`box | envelope
+| carton | pallet | container`, one default per store, Channel-style
+demotion); the default row is what `Stock::Package#weight`/`#dimensions`
+and the EasyPost parcel path read, with the preferences kept as deprecated
+one-release bridges. The name is deliberately not `Spree::Package` —
+`Spree::Stock::Package` is the in-memory packing unit and a persisted
+sibling with that name would be permanently confusing. Variant carton data
+is a **reference to a carton-kind row** (`carton_package_type_id`) plus
+per-variant packing facts (`units_per_carton`, `carton_weight`,
+`cartons_per_pallet`) — geometry is shared, packing facts are not.
+
+**Unpriced delivery rates are first-class.** `Estimate` and
+`spree_delivery_rates` gain `unpriced`; the estimator skips markup and
+serializers/UIs render "quoted after review". A zero-cost rate displaying
+as "Free" was rejected as the mechanism. Volume math behind the CBM tier
+rules is **unit-aware from day one** (a new conversion helper) — the
+raw-number shortcut recorded for `WeightRule` (2026-07-29) explicitly does
+not extend to volume, where cm-vs-in is a 16× error.
+
+**Deposits are collected, not just displayed** — the ambitious option,
+chosen deliberately in review. A freight method's `deposit_percentage`
+changes what `Carts::Complete` requires payments to cover
+(`Cart#amount_due_at_checkout`; base = the order total at placement);
+orders complete `partially_paid` against the existing
+`outstanding_balance`. Consequence for all order code: **completed no
+longer implies paid in full**. The later freight quote is a
+`Fee(kind: 'freight')` through the existing admin fees endpoint, never a
+delivery-rate edit. *[Amended same day — the method-level deposit became a
+default source feeding the order's `payment_terms` snapshot; see the
+payment-terms entry below.]*
+
+**Quantity rules (MOQ / order multiple / purchase unit) are a purchasing
+layer, never inventory.** Stock stays in units everywhere; enforcement
+lives in the item workflows and completion, the server refuses invalid
+quantities rather than rounding. Contextual tiers (the same SKU at retail
+1/1 and wholesale 48/24) were committed with the owner entity initially
+unresolved. *[Resolved same day — the tiers live on the Catalog; see the
+one-question-per-entity entry below.]*
+
+**`Spree::ChannelRule` is the home for channel-scoped gates.**
+*[Superseded same day — see the one-question-per-entity entry below: the
+family is dropped; terms went to the Catalog and gating stayed as Channel
+preferences.]*
+
+**Lot-level inventory (full tracking, not provenance-only) joins
+`6.0-inventory-operations.md`.** `Spree::StockLot` decomposes a
+lot-tracked variant's `count_on_hand` per location, kept in sync
+transactionally with typed movements (`stock_lot_id` on movements);
+receives assign lots, dispatch picks FEFO, allocation stays lot-agnostic.
+Lot numbers live only on `StockLot` rows.
+
+Plans: `6.0-b2b-wholesale-shipping.md`, `6.0-b2b-quantity-rules.md`,
+`6.0-inventory-operations.md`.
+
+## 2026-08-30 — One question per entity: Channel is the surface, Catalog is the agreement, PriceList is the numbers
+
+A stop-and-analyze pass over Channel (live), PriceList (live), and Catalog
+(unreleased) — triggered by the question of whether channel purchase rules
+duplicate catalog terms (they do) — settled the doctrine each of the three
+entities lives by. Each answers exactly one question with exactly one
+targeting mechanism:
+
+**Channel answers "where is the buyer shopping."** Publications, publishable-
+key binding, order routing, the stock-location allowlist, and access gating.
+Gating (`storefront_access`, `guest_checkout`) **stays as Channel
+preferences and never moves to catalogs**: it must bind before the buyer has
+an identity, and catalogs resolve *from* identity — a catalog cannot gate
+the door to the thing that determines the catalog. The `ChannelRule` STI
+family proposed earlier the same day is dropped; nothing purchase-shaped
+remains for it.
+
+**Catalog answers "what is this buyer's agreement."** Assortment (optional),
+its price list (optional), and — new — commercial terms: catalog-level
+`minimum_order_quantity`/`order_multiple` columns with per-variant override
+rows, and per-currency order minimums, resolved **per-field,
+nearest-agreement-wins** through the existing `Catalog.for_context` chain
+(nearest company node → customer groups → the channel's default catalog).
+All-or-nothing resolution was rejected — an agreement silent on a field
+passes it through rather than waiving it. The channel-level minimum falls
+out for free: it is the terms on the channel's *default catalog*, so no
+second mechanism exists. A terms-only catalog (empty assortment, no list)
+is legitimate. Terms are typed tables/columns per grain — never one
+generic `catalog_rules` table or an STI rule family (rules are matching
+predicates; terms are values on the hot path needing indexed lookups and
+DB uniqueness — the typed-adjustments doctrine).
+
+**PriceList answers "what are the numbers."** Price rows, dates, status,
+and *context* rules only. The audience-shaped rules duplicated catalog
+assignment with different precedence and are removed from the vocabulary:
+`PriceRules::CustomerGroupRule` and `PriceRules::UserRule` are **deprecated
+in 6.0** (one-release bridge + a data task converting each such list into
+an assortment-less catalog assigned to the audience and owning the list).
+`PriceRules::ChannelRule` is **grandfathered** — kept working, nothing new
+builds on it, the forward path being the channel's default catalog.
+`MarketRule` (carries VAT restatement) and `VolumeRule` are context-shaped
+and stay first-class. Price lists also gain **automatic pricing**
+(`6.0-price-list-automatic-pricing.md`): a signed percentage adjustment off
+base prices, computed on read (never materialized), currency-rounded,
+currency-agnostic, with explicit rows as per-variant overrides.
+
+**The list binding inverts: `spree_price_lists.catalog_id` replaces
+`spree_catalogs.price_list_id`.** A list is standalone (rule-matched) or
+owned by exactly one catalog, and generic matching skips owned lists by
+FK. This closes a live leak in the unreleased derived-set design:
+`Catalog.bound_price_list_ids` excluded only lists bound to **active**
+catalogs, so deactivating a catalog dropped its typically rule-less list
+into generic matching — pricing the entire store. Detaching a list is now
+an explicit act (dashboard warns that the list will start matching by its
+rules). Sharing one list across catalogs is lost; one catalog serving many
+audiences through assignments is the replacement.
+
+**Setup is catalog-first and one go.** The catalog page is the agreement
+editor (audiences, assortment, inline pricing card for the owned list,
+terms, and a products-with-prices view exposing assortment↔pricing
+divergence); the create flow takes the pricing choice (base / ±% / fixed)
+and the admin catalog endpoints accept an inline `price_list` payload, so
+standing up an agreement never requires visiting the price-lists page.
+
+Rejected alternatives, for the record: merging Catalog and PriceList (forces
+assignment-targeting and rule-matching into one entity — the ambiguity the
+2026-08-28 narrowing removed — and rewrites a released surface); killing
+Catalog (renames the merge); audience price rules kept alongside catalog
+assignment (two mechanisms, silent precedence). Supersedes the `ChannelRule`
+paragraph and resolves the "tier owner unresolved" clause of the earlier
+2026-08-30 entry. Plans amended: `6.0-b2b-companies-and-catalogs.md`
+(amendment block), `6.0-b2b-quantity-rules.md` (design finalized),
+`6.0-price-list-automatic-pricing.md` (new).
+
+## 2026-08-30 — Company registration is OSS 6.1 mechanisms; the approval flow is Enterprise onboarding
+
+The B2B front door splits along the recorded boundary. **OSS 6.1**
+(`6.0-b2b-company-self-registration.md`) ships the mechanisms: storefront
+company self-registration (`POST /store/companies` — an authenticated
+customer, including an existing retail customer, founds a root company +
+their membership in one call; companies are **born active**), a fourth
+storefront access posture **`approval_required`** (prices + checkout
+require a standing over an active company; shipped `prices_hidden`
+semantics untouched), a machine-readable **`pricing_access`** code beside
+every nulled price (no more bare nulls a client must interpret), and a
+dependency-registered **`Companies::ActivationPolicy`** consulted by every
+company-resolving call site (catalog resolution, both
+`sole_standing_company`s, cart company writes, the posture) — OSS default:
+every company is active, so the posture reads "company members only".
+Deliberately 6.1: every piece is additive, nothing needs the 6.0 breaking
+window, and 6.0 work must not build interim approval primitives in the
+meantime.
+
+**Enterprise** (`spree-enterprise-v2/docs/plans/b2b-company-onboarding.md`)
+registers the policy and owns the flow: an application record (FK → the
+OSS company; `spree_companies` stays status-free — this supersedes the
+same-day draft that put five statuses on Company), the seller-onboarding
+shape reused deliberately — requirements + submissions + evaluated-on-read
+statuses + exactly two enforcement points, reopen-with-note as the
+request-more-information move — plus the review queue, mails, and
+`approval_pending` pricing codes. Rationale: no modern platform ships
+registration approval in open source and everyone who has it charges for
+it, while the OSS side keeps a real free feature (instant self-registration
+— open-starter parity) and the funnel shape holds: registration works free,
+verification is the upgrade trigger. Two approval concepts stay distinct
+forever: account verification (merchant ↔ company, this split) vs order
+approvals/spend limits (company-internal governance, the existing
+Enterprise plan).
+
+**Constraints now (OSS):** any new code resolving a company for
+visibility, pricing, or checkout consults the activation policy (and the
+two `sole_standing_company` implementations stay mirrored); self-service
+standing is never approval-gated; new prices-hidden surfaces carry the
+`pricing_access` code; no status/approval columns on `spree_companies`;
+customer-group membership is never an activation mechanism.
+
+## 2026-08-30 — Quotes: OSS ships the negotiation mechanics, Enterprise the quote product; the OrderChange substrate is strictly post-placement
+
+Merchant feedback proposed building B2B quotations by extending draft
+orders, and the code audit confirmed the instinct: a 6.0 draft order
+(`Spree::Order`, `status: 'draft'`, `cart_id: nil`) already carries the
+editing engine — items, addresses, manual fees/discounts that survive
+recalculation and freeze at placement, notes, invoice-later conversion via
+`payment_pending`. Four things were missing: a customer-facing surface,
+negotiated unit prices, a lifecycle, and a cart-copy service. The tier
+split mirrors company registration:
+
+**OSS (`6.0-draft-order-negotiation-mechanics.md`)** ships the
+mechanics that are features in their own right. In 6.0: **manual line-item
+pricing** — admin item endpoints accept `price`, stamping
+`price_source: 'manual'`, and the provenance column gains its first
+readers as guards (`Carts::PriceItems` skips manual rows;
+`LineItem#should_update_price?` answers false for them) so a quantity edit
+no longer silently re-prices a negotiated line; `'manual'` is a reserved
+key no pricing provider may register; `price: null` is the explicit
+revert; overrides are pre-placement only and `price_source` stays off
+store serializers. Plus two fixes: `Orders::Create` stamps `created_by`
+(never written despite the column), and the `payment_pending` docstring
+lied — completion yields `payment_status: 'none'`, not `'balance_due'`
+(whether unpaid-placed deserves a distinct value belongs to the
+wholesale-deposit rollup work, decided once). In 6.1:
+`Orders::CreateFromCart` — copy a customer's cart into a fresh draft order
+leaving the cart untouched (deliberately not the completion copier, which
+re-points money records and is one-shot).
+
+**Enterprise (`spree-enterprise-v2/docs/plans/b2b-quotes.md`)** owns the
+quote product: a thin `Quote` row over the draft order (own model → clean
+`Q` numbers from the per-resource sequence; one quote per draft), statuses
+`draft → sent → accepted → converted` (+ `changes_requested`, `expired`
+evaluated on read against `valid_until`, `canceled`), buyer PO
+reference via the order's fields, `/store/quotes` view + accept (runs
+`payment_pending` completion; placement freezing is the price lock) +
+request-changes, mails. The quote never duplicates order data.
+
+**The OrderChange substrate narrows (Phase 5 superseded).** The 6.1 plan
+had draft-order amendments becoming OrderChanges "so draft-order editing
+and placed-order editing share one implementation" — wrong in the split
+world: a draft is directly mutable with no payments and no balance to
+settle, so preview-then-apply is ceremony there, and pre-acceptance quote
+negotiation needs no change-set (unlike the competitor whose draft is
+placed-like). The substrate is strictly post-placement; edit screens may
+share components, but only placed orders create OrderChange rows. Two
+applier rulings recorded with it: **appliers never derive unit prices** (a
+manual price comes through an amendment untouched), and a post-placement
+price change is its own future action kind (`update_item_price`), never a
+discount abused as one.
+
+## 2026-08-30 — Buyer PO numbers: a plain order reference, required per company, never a payment method
+
+Merchant feedback asked for the customer's purchase-order number as a
+permanent order reference, and the platform research settled the shape.
+The market: the largest platform's `poNumber` is a first-class, always-on,
+optional field at B2B checkout with no configuration surface at all (staff
+can edit it post-placement; their own emails cannot even render it); the
+two platforms that control PO behavior at all hang it **per company**; two
+platforms tie the number to an offline "Purchase Order" payment method —
+an anti-pattern we explicitly reject (a reconciliation reference must not
+depend on tender choice); nobody ships PO **document upload** on orders
+(native attachments exist only on quotes).
+
+Spree 6.0 ships (`6.0-b2b-customer-po-numbers.md`): `po_number` on cart +
+order (copied at completion, staff-correctable after placement as a plain
+write), optional `po_document` private-storage attachment (an order-native
+first), and `po_number_required` on `Spree::Company` — per-company per the
+market and the merchant ask, deliberately NOT a catalog term (a PO
+requirement is the buyer's procurement process, not the commercial
+agreement, and no platform models it on the assortment/pricing side) —
+enforced in `Carts::Complete` for customer checkouts. `po_number` is
+ransackable and the dashboard order search matches order number OR PO
+number. The Enterprise quote plan drops its own `customer_reference` +
+attachment in favor of the order's fields. Naming guard: `po_number` (the
+buyer's reference) and `Spree::PurchaseOrder` (the merchant's procurement
+document, `6.0-inventory-operations.md`) are opposite directions and never
+share endpoints, serializers, or vocabulary. "Only an authorised buyer may
+submit the company's PO" is Enterprise governance (company-role
+capability), untouched here.
+
+## 2026-08-30 — Payment terms split on the risk line; stages are data, statuses stay code; documents without invoices
+
+The deposits/terms/documents feedback plus the maintainer's status-composer
+question resolved into three plans and one doctrine ruling.
+
+**Payment terms split where the risk flips** (`6.0-6.1-b2b-payment-terms.md`):
+collect-first terms (prepaid, N% deposit + a balance-due *label* — the
+merchant's own "configurable label rather than automating every workflow")
+are OSS; ship-first terms (Net N, due dates, credit, invoicing, dunning)
+stay Enterprise roadmap item #1. The order carries **one frozen
+`payment_terms` snapshot** resolved from layered sources — quote/order
+override → company's `PaymentTerm` preset → the freight method's deposit
+preferences (demoted same-day from anchor to default source; wholesale plan
+amended) → none. The derived payment **schedule** (due-now, deposit state,
+balance + label) is computed on read; `Orders::UpdateStatuses` is untouched
+— `partially_paid` is the ledger truth, the schedule is the commercial
+truth. `PaymentMethod::BankTransfer` joins core with public-preference
+account details, and every payment gains a stored, generated, ransackable
+**`reference`** (structured, RF-style) — deliberately never the derived
+`R1001-P1` number, whose NULL column had silently broken ransack search and
+the Stripe `find_by(number:)` lookup (6.0 fixes recorded). Storefront
+pay-balance lands 6.1 and resolves the wholesale plan's open question 1.
+
+**Stages are data; statuses stay code** (`6.1-order-stages.md`): merchants
+compose a per-store, ordered, customer-visibility-flagged stage axis in the
+dashboard (`Spree::OrderStage` + nullable `order_stage_id` +
+`expected_ready_on` on orders; `Orders::SetStage` publishing
+`order.stage_changed`; optional auto-enter event bindings from the
+`Spree.order_stage_events` registry — event-driven labeling, never
+gating), while semantic statuses remain code-defined and workflow-written.
+**No transition graph, no commerce semantics on stages, ever** — nothing
+in checkout/payments/stock may branch on a stage; a needed gate is a code
+status/workflow validation; per-store status vocabularies on `has_status`
+models are forbidden (statuses are process-global code; per-store process
+expression is this axis). `Order` is deliberately not migrated to
+`has_status`. Landscape: no platform offers composed stages
+(label-on-fixed-state and code-config-machine are the closest), so this is
+an OSS first with a proven app-economy demand.
+
+**Documents without invoices** (`6.1-b2b-order-documents.md`):
+`Spree::OrderDocument` = uploaded files on orders (private storage,
+per-document customer visibility, buyer uploads allowed), and two
+client-side prints extending the shipped packing-slip pattern — a
+carton/pallet/CBM packing list off the frozen freight summary and a
+payment-instructions sheet off the terms schedule + bank reference. **No
+invoice vocabulary in OSS** — no model, number, or document called an
+invoice, no PDF stack in core; numbered proforma/commercial documents are
+the Enterprise invoicing product. `expected_ready_on` is an order-level
+merchant promise, deliberately distinct from the variant's
+`preorder_ships_at` (supply fact) and the fulfillment's
+`estimated_delivery_at` (carrier truth).
+
+## 2026-08-30 — Enterprise B2B ships on 6.0 GA: registration mechanisms and the cart→draft copy pulled forward
+
+Sequencing the whole plan set exposed a commercial inversion: both designed
+Enterprise B2B products (company onboarding, quotes) depended on OSS pieces
+scheduled for 6.1 — deferred there purely on the additive test, not
+necessity — leaving Enterprise revenue features gated behind a release that
+does not exist yet. Retargeted the same day:
+`6.0-b2b-company-self-registration.md` (renamed from 6.1 — the activation
+policy, `approval_required` posture, `pricing_access` codes and the
+registration endpoint are small, additive, and exist *for* Enterprise to
+build on) and the `Orders::CreateFromCart` phase of
+`6.0-draft-order-negotiation-mechanics.md` (renamed from 6.0-6.1) both land
+late in 6.0. This supersedes the "deliberately 6.1" clauses in the two
+earlier entries above. Consequence: **onboarding starts after the 6.0
+front-door wave, quotes after 6.0 wave 1 — every designed Enterprise B2B
+product needs nothing beyond 6.0 GA.** Track C (credit terms/invoicing)
+deliberately stays behind OSS 6.1 wave 6: it is roadmap-stage, and it can
+begin earlier on the 6.0 `payment_terms` snapshot if needed (the `kind`
+vocabulary is extensible and Enterprise may assign terms from its own
+tables), adopting the OSS `PaymentTerm` presets, bank-transfer method and
+payment references when they land.
+
+## 2026-08-30 — Scope trim: lot tracking defers to 6.1
+
+The counterpart of the same day's pull-forwards: limiting 6.0 scope. Lot
+tracking is the biggest additive chunk in the new set (new table, FEFO
+picking, receive/pick integration, admin surfaces), opt-in per variant, and
+nothing in 6.0 or the Enterprise GA products depends on it — so it moves to
+6.1 within `6.0-inventory-operations.md` (the plan keeps both halves:
+transfers/POs 6.0, lots 6.1). Flagged alongside: the transfer lifecycle's
+removal of the one-shot `StockTransfer.transfer` API is that plan's one
+breaking piece — it either uses the 6.0 window or ships in 6.1 behind the
+standard deprecation bridges; decided when inventory-operations is groomed.
+Further optional trims, in order, if 6.0 needs more relief: the one-go
+catalog wizard polish, the wholesale storefront surfaces, automatic pricing
+(last resort — the catalog wizard's ±% option wants it).
+
+## 2026-08-30 — Audience price rules are grandfathered, not deprecated: no bridge, no data task
+
+Revises, later the same day, the retirement clause of the
+one-question-per-entity entry above. That entry deprecated
+`PriceRules::CustomerGroupRule` and `PriceRules::UserRule` in 6.0 with a
+one-release bridge and a data task
+(`spree:upgrade:migrate_audience_price_rules_to_catalogs`) converting each
+audience-targeted list into an assortment-less catalog assigned to that
+audience. Both were built, then removed on review.
+
+**Decision:** the two audience rules are **grandfathered on exactly the terms
+`PriceRules::ChannelRule` already had** — they keep matching indefinitely,
+carry no removal date and no creation warning, and there is no upgrade step.
+The only change that ships is a discovery-level flag: `superseded?` on the
+rule class surfaces as `superseded: true` in
+`subclasses_with_preference_schema` (present only when true, so rule families
+without the concept keep their wire shape byte-identical), and the dashboard
+rule picker filters those kinds out. Existing rules render, edit and match
+unchanged.
+
+The reasoning is that the data task only ever existed to service the removal.
+Once the classes simply keep working, converting is churn a merchant gains
+nothing from — and an automatic remap of *who gets which price* is exactly the
+class of change that is expensive to get wrong and invisible when it is. The
+doctrine goal was never to delete rows; it was to stop offering two mechanisms
+for one question, which hiding the kinds achieves on its own. It also removes
+the awkward middle state where a store that upgraded but never ran the task was
+one release away from silently losing its audience pricing.
+
+Accepted trade-off: two mechanisms for audience targeting remain in the
+codebase permanently, with the precedence the resolver already defines
+(catalog-owned lists first, then rule-matched lists). New work builds only on
+catalog assignment.
+
+Nothing else in the one-question-per-entity entry changes: the binding
+inversion, the leak fix, and the catalog-first dashboard direction all stand.
+Plans amended: `6.0-catalog-agreement-rework.md` (Key Decisions + phase 3),
+`6.0-b2b-companies-and-catalogs.md` (amendment block).
+## 2026-08-30 — Draft-order negotiation mechanics implemented; payment lookup keys on the prefixed id
+
+The full `6.0-draft-order-negotiation-mechanics.md` scope shipped in one
+pass, including the "6.0, late" `Orders::CreateFromCart` (small and
+independent — no reason to hold it) and, per the Wave 1 roadmap bundling,
+the payment-number search fixes owned by `6.0-6.1-b2b-payment-terms.md`.
+Two mechanism choices worth recording. The reserved-key check and the
+`'manual'` constant live on the lightweight `Spree::PricingProvider`
+module (LineItem aliases it), because the boot-time
+`verify_registry!` call must not constant-load the model graph early —
+doing so reorders `Preferable#defined_preferences`, which reads Ruby's
+`methods` order, and churns the generated OpenAPI preference schemas. And
+the Stripe gateway's broken `find_by(number:)` resolves through a new
+`payment_prefixed_id` entry in `GatewayOptions#to_hash` — the plan said
+"corrected" without naming the mechanism; the prefixed id is the same
+stable handle the idempotency key was already built on, and "nothing
+durable keys on derived payment numbers" ruled out anything parsed from
+the number itself. The stored-number lookup stays as the legacy-row
+fallback.
+
+## 2026-08-30 — Order editor previews staged edits; the client-projection ban narrowed to exactness
+
+Making the draft-order unit price editable turned the edit screen's
+"totals are server truth" stance into a misleading one: staging a revert
+redisplayed the very price being abandoned, struck through, while every
+total sat frozen. Reported from live UI review, not caught by any spec —
+each number was individually correct and collectively wrong.
+
+The screen now previews staged edits as a before/after diff on the unit
+price, line total, subtotal and grand total. This narrows, but does not
+delete, the `6.1-order-change-substrate.md` constraint against computing
+projected totals client-side. **The line is exactness, not arithmetic.**
+Price × quantity is exact, so the subtotal projects. The grand total
+projects ONLY when shipping, tax, discounts and fees are all zero — where
+the total simply is the subtotal — and falls back to the server's figure
+the moment any of them is non-zero, because a quantity change can cross a
+shipping band or a promotion threshold and no client arithmetic can know
+it. A row that cannot be projected (a revert with no catalog price) nulls
+the entire projection rather than contributing a partial sum: a total
+stated confidently and wrongly is worse than a stale one.
+
+Supporting change: the admin line-item serializer gained `catalog_price`
+(the variant BASE price, not a resolved one — resolving would call the
+pricing provider once per row on a read path the third-party-pricing plan
+keeps provider-free). It is a comparison figure, not a promise: the revert
+re-prices through the resolver and may land elsewhere. It required
+eager-loading variant prices in the orders controller's own `scope`, which
+bypasses `scope_includes` — 15 price queries per order page became 1.

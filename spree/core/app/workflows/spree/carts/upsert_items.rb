@@ -28,7 +28,11 @@ module Spree
 
       # @param cart [Spree::Cart, Spree::Order]
       # @param items [Array<Hash>] :variant_id (prefixed or raw), :quantity,
-      #   :metadata. Quantity defaults to 1; zero or less removes.
+      #   :metadata, :price. Quantity defaults to 1; zero or less removes.
+      #   :price is tri-state — absent leaves pricing to the resolver, an
+      #   amount negotiates the line (+price_source: 'manual'+), an explicit
+      #   nil reverts a negotiated line to catalog pricing. Admin surface
+      #   only (draft orders); refused once the order is placed.
       # @return [Spree::ServiceModule::Result] value is the cart
       def perform(cart:, items:)
         super
@@ -94,9 +98,29 @@ module Spree
           Spree::Carts::ResolvedItem.new(
             variant: variant,
             quantity: quantity,
-            metadata: item_params[:metadata].to_h
+            metadata: item_params[:metadata].to_h,
+            price_provided: item_params.key?(:price),
+            price: parse_manual_price(item_params[:price])
           )
         end
+
+        # Price overrides are pre-placement only. reject! rather than
+        # failure(cart, message), which would drop the message.
+        if cart.completed? && @resolved_items.any?(&:price_provided)
+          reject!(Spree.t('cart_line_item.price_override_not_allowed'), cart)
+        end
+      end
+
+      # Never coerced — "12,50".to_d is 12, a mispriced order. finite? is not
+      # redundant: BigDecimal parses "NaN"/"Infinity" and neither is negative.
+      def parse_manual_price(value)
+        return nil if value.nil?
+
+        parsed = BigDecimal(value.to_s)
+        reject!(Spree.t('cart_line_item.invalid_price'), cart) if parsed.negative? || !parsed.finite?
+        parsed
+      rescue ArgumentError
+        reject!(Spree.t('cart_line_item.invalid_price'), cart)
       end
 
       # Only external inventory is asked here: Spree's own records are already
@@ -117,11 +141,14 @@ module Spree
       end
 
       # One provider round per batch rather than one per line: a fifty-line
-      # cart restore must not become fifty calls to an ERP.
+      # cart restore must not become fifty calls to an ERP. Lines arriving
+      # with a negotiated price are not asked about — the caller already
+      # answered; reverts still are, they need the catalog answer back.
       def resolve_prices
-        return if additions.empty?
+        priceable = additions.reject(&:manual_price?)
+        return if priceable.empty?
 
-        probes = additions.map do |item|
+        probes = priceable.map do |item|
           Spree::Carts::PriceItems.probe(cart: cart, variant: item.variant, quantity: item.quantity)
         end
 
@@ -147,6 +174,28 @@ module Spree
         @resolved_prices ||= {}
       end
 
+      # Applies the entry's price directive on top of whatever the resolver
+      # answered: an amount stamps the line manual (and detaches it from any
+      # matched price list), an explicit nil clears the marker and hands the
+      # line back to the resolution already fetched for this batch.
+      def apply_price_directive(item, line_item)
+        return unless item.price_provided
+
+        if item.manual_price?
+          line_item.assign_attributes(
+            price: item.price,
+            price_source: Spree::LineItem::MANUAL_PRICE_SOURCE,
+            price_list_id: nil
+          )
+          # The quantity-change callback must not re-ask the provider for a
+          # price this save already carries.
+          line_item.price_resolved = true
+        else
+          line_item.assign_attributes(price_source: nil, price_list_id: nil)
+          apply_resolved_price(line_item)
+        end
+      end
+
       def unsupplyable?(item)
         @unsupplyable_variant_ids.include?(item.variant.id)
       end
@@ -164,8 +213,9 @@ module Spree
 
           # A provider that already quoted this line is proof the currency is
           # sellable, even when the local catalog holds no price for it — an
-          # external system can be the only source for a currency.
-          if resolved_prices[item.variant.id]&.at(1)&.amount.nil? && item.variant.amount_in(cart.currency).nil?
+          # external system can be the only source for a currency. A
+          # negotiated price is a quote too, made by the merchant.
+          if !item.manual_price? && resolved_prices[item.variant.id]&.at(1)&.amount.nil? && item.variant.amount_in(cart.currency).nil?
             message = Spree.t('cart_line_item.currency_unavailable', li_name: item.variant.name, currency: cart.currency)
             failure(item.variant, message) unless partial_success?
 
@@ -232,6 +282,7 @@ module Spree
         # Before the save, so the resolved price rides the same write and the
         # quantity-change callback sees the line as already priced.
         apply_resolved_price(line_item)
+        apply_price_directive(item, line_item)
 
         # A line that won't save — most often the stock availability
         # validator — is this item's problem, not the batch's. Failing here

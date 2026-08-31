@@ -139,4 +139,61 @@ RSpec.describe Spree::Carts::PriceItems do
       expect(line_item).to be_new_record
     end
   end
+
+  describe 'negotiated (manual) prices' do
+    let(:manual_line_item) do
+      create(:line_item, order: cart, variant: variant, quantity: 1,
+                         price: 7.2, price_source: Spree::LineItem::MANUAL_PRICE_SOURCE)
+    end
+
+    it 'never resolves a manual row — the provider is not even asked' do
+      stub_const('SpreeTest::ContractProvider', external_provider_class)
+      external_provider_class.fail_with = nil
+      external_provider_class.calls = 0
+      Spree.pricing_providers << external_provider_class
+      stub_store_preferences(store, pricing_provider: 'contract')
+
+      result = described_class.new.call(cart: cart, line_items: [manual_line_item])
+
+      expect(result).to be_success
+      expect(result.value).to be_empty
+      expect(external_provider_class.calls).to eq(0)
+    ensure
+      Spree.pricing_providers.delete(external_provider_class)
+    end
+
+    # The same whole-cart call Carts::Complete's confirm_prices makes: the
+    # provider's fresher answer lands on every line except the negotiated one.
+    it 'survives a whole-cart confirmation pass under an external provider' do
+      stub_const('SpreeTest::ContractProvider', external_provider_class)
+      external_provider_class.fail_with = nil
+      external_provider_class.calls = 0
+      Spree.pricing_providers << external_provider_class
+      stub_store_preferences(store, pricing_provider: 'contract')
+      manual_line_item
+      plain_line_item = create(:line_item, order: cart, variant: create(:variant), quantity: 1)
+
+      result = described_class.new.call(cart: cart)
+      described_class.apply(result.value)
+
+      expect(manual_line_item.reload.price).to eq(7.2)
+      expect(manual_line_item.price_source).to eq('manual')
+      expect(plain_line_item.reload.price).to eq(5)
+      expect(plain_line_item.price_source).to eq('contract')
+    ensure
+      Spree.pricing_providers.delete(external_provider_class)
+    end
+
+    it 'refuses to write a resolution onto a manual row' do
+      plain_line_item = create(:line_item, order: cart, variant: variant, quantity: 1)
+      result = described_class.new.call(cart: cart, line_items: [plain_line_item])
+      resolution = result.value.first
+      # A probe-based flow resolves against a stand-in and applies onto the
+      # real row — that write must respect the marker too.
+      described_class.apply([[manual_line_item, resolution.last]])
+
+      expect(manual_line_item.reload.price).to eq(7.2)
+      expect(manual_line_item.price_source).to eq('manual')
+    end
+  end
 end

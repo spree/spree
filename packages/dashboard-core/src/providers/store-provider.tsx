@@ -28,6 +28,8 @@ interface StoreContextValue {
   availableLocales: string[]
   defaultCurrency: string
   defaultLocale: string
+  /** ISO country the store sells from — used to pre-fill new address forms. */
+  defaultCountry: string
   /** IANA timezone for the store (e.g. `Europe/Berlin`). Falls back to the
    *  browser's resolved timezone when the store hasn't loaded yet. */
   timezone: string
@@ -79,6 +81,7 @@ export function StoreProvider({ storeId, children }: { storeId: string; children
   const availableLocales = store?.available_locales ?? []
   const defaultCurrency = store?.default_currency ?? 'USD'
   const defaultLocale = store?.default_locale ?? 'en'
+  const defaultCountry = store?.default_country_code ?? ''
   const timezone =
     store?.preferred_timezone ?? Intl.DateTimeFormat().resolvedOptions().timeZone ?? 'UTC'
 
@@ -93,6 +96,7 @@ export function StoreProvider({ storeId, children }: { storeId: string; children
         availableLocales,
         defaultCurrency,
         defaultLocale,
+        defaultCountry,
         timezone,
         refetch: query.refetch,
       }}

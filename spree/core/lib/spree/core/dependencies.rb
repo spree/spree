@@ -70,6 +70,7 @@ module Spree
         order_fee_update_service: 'Spree::Orders::Fees::Update',
         order_fee_destroy_service: 'Spree::Orders::Fees::Destroy',
         order_create_service: 'Spree::Orders::Create',
+        order_create_from_cart_service: 'Spree::Orders::CreateFromCart',
         order_update_service: 'Spree::Orders::Update',
         order_update_statuses_service: 'Spree::Orders::UpdateStatuses',
         order_updater: 'Spree::OrderUpdater',

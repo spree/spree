@@ -13,11 +13,75 @@
     "title": "Join the team"
   },
   "admin": {
+    "actions": {
+      "actions_menu": "Actions",
+      "cancel": "Cancel",
+      "delete": "Delete",
+      "edit": "Edit",
+      "save": "Save",
+      "saving": "Saving…"
+    },
+    "common": {
+      "loading": "Loading…",
+      "no_results": "No results"
+    },
     "components": {
       "export_button": {
         "all": {
           "description": "Ignore filters and export all of your records."
         }
+      }
+    },
+    "fields": {
+      "tax_identifier": {
+        "kind": {
+          "help": "Which registration this is. It has to match the validator registered for it, so spelling matters.",
+          "label": "Kind",
+          "required": "Choose or type a registration type"
+        },
+        "value": {
+          "label": "Number",
+          "placeholder": "DE123456789",
+          "required": "Enter the registration number"
+        }
+      }
+    },
+    "tax_identifiers": {
+      "add_cta": "Add registration",
+      "add_title": "Add tax registration",
+      "checked_prefix": "Checked",
+      "delete_confirm": {
+        "message": "{{value}} will be removed. Orders already placed keep the number they were invoiced with.",
+        "title": "Delete this registration?"
+      },
+      "dialog_description": "The VAT or business number that appears on invoices. It is what makes EU B2B reverse charge possible.",
+      "edit_title": "Edit tax registration",
+      "empty": "No tax registration on file",
+      "kinds": {
+        "au_abn": "Australian Business Number",
+        "ch_vat": "Swiss VAT",
+        "eu_vat": "EU VAT",
+        "gb_vat": "UK VAT",
+        "us_ein": "US EIN"
+      },
+      "messages": {
+        "created": "Registration added",
+        "deleted": "Registration deleted",
+        "updated": "Registration updated",
+        "validation_failed": "Could not check the number",
+        "validation_requested": "Checking the number with the registry"
+      },
+      "not_validatable": "No registry to check this kind against, so the number is recorded as entered.",
+      "select_kind": "Select a kind",
+      "title": "Tax registration",
+      "validate_action": "Check with registry",
+      "validation_status": {
+        "not_checked": "Not checked",
+        "pending": "Checking",
+        "unavailable": "Registry unavailable",
+        "unsupported": "Cannot be checked",
+        "unverified": "Not valid",
+        "verified": "Verified"
       }
     }
   },
@@ -30,6 +94,7 @@
     "delete": "Delete",
     "error": "Something went wrong.",
     "loading": "Loading…",
+    "no_results": "No results",
     "remove": "Remove",
     "retry": "Try again",
     "save": "Save",
@@ -91,6 +156,7 @@
     "confirm": "Confirm",
     "document_help": "PDF or an image of the document.",
     "document_label": "Document",
+    "done": "This one is done.",
     "go": "Go there",
     "note_placeholder": "Anything the marketplace should know (optional)",
     "optional": "Optional",
@@ -133,8 +199,23 @@
     "fulfill": "Mark as shipped",
     "fulfilled": "Marked as shipped",
     "fulfilling": "Marking…",
+    "fulfillment_statuses": {
+      "backorder": "Backorder",
+      "canceled": "Canceled",
+      "delivered": "Delivered",
+      "fulfilled": "Fulfilled",
+      "partial": "Partial",
+      "unfulfilled": "Unfulfilled"
+    },
     "items": "Items",
     "not_found": "That order could not be found.",
+    "payment_statuses": {
+      "balance_due": "Balance due",
+      "credit_owed": "Credit owed",
+      "failed": "Failed",
+      "paid": "Paid",
+      "void": "Void"
+    },
     "search_placeholder": "Search by order number…",
     "shipping_address": "Ships to",
     "ships_from": "Ships from {{name}}",
@@ -213,33 +294,33 @@
     "details": "Details",
     "empty": "No products yet. Add one to start selling.",
     "fields": {
-      "description": "Description",
-      "name": "Name",
-      "price": "Price",
-      "price_placeholder": "Leave blank to keep the current price",
-      "status": "Status",
-      "slug": "URL handle",
-      "meta_title": "Page title",
-      "meta_description": "Meta description",
-      "meta_keywords": "Meta keywords",
-      "product_type": "Product type",
-      "product_type_placeholder": "Choose a type",
       "alt": "Alt text",
-      "sku": "SKU",
-      "stock": "Stock",
-      "option": "Option",
-      "option_name": "Option",
-      "option_value": "Value",
-      "price_in": "Price ({{currency}})",
-      "weight": "Weight",
-      "hs_code": "HS code",
-      "hs_code_placeholder": "e.g. 9405.20",
-      "country_of_origin": "Country of origin",
-      "country_of_origin_placeholder": "e.g. PL",
       "categories": "Categories",
       "categories_placeholder": "Search categories…",
       "collections": "Collections",
-      "collections_placeholder": "Search collections…"
+      "collections_placeholder": "Search collections…",
+      "country_of_origin": "Country of origin",
+      "country_of_origin_placeholder": "e.g. PL",
+      "description": "Description",
+      "hs_code": "HS code",
+      "hs_code_placeholder": "e.g. 9405.20",
+      "meta_description": "Meta description",
+      "meta_keywords": "Meta keywords",
+      "meta_title": "Page title",
+      "name": "Name",
+      "option": "Option",
+      "option_name": "Option",
+      "option_value": "Value",
+      "price": "Price",
+      "price_in": "Price ({{currency}})",
+      "price_placeholder": "Leave blank to keep the current price",
+      "product_type": "Product type",
+      "product_type_placeholder": "Choose a type",
+      "sku": "SKU",
+      "slug": "URL handle",
+      "status": "Status",
+      "stock": "Stock",
+      "weight": "Weight"
     },
     "media": "Media",
     "media_remove_confirm_description": "It comes off the product when you save.",
@@ -253,11 +334,11 @@
     "seo": "Search engine listing",
     "shipping": "Shipping and customs",
     "status_help": {
+      "active": "On sale and visible to shoppers.",
+      "archived": "Off sale and out of your active listings.",
       "draft": "Only you can see this. Submit it when you are ready for the marketplace to review it.",
       "proposed": "Waiting for the marketplace to review it. You can still make changes.",
-      "active": "On sale and visible to shoppers.",
-      "rejected": "The marketplace asked for changes. Edit it, then submit it again.",
-      "archived": "Off sale and out of your active listings."
+      "rejected": "The marketplace asked for changes. Edit it, then submit it again."
     },
     "status_updated": "Status updated",
     "statuses": {
@@ -310,6 +391,7 @@
     "section_contact": "Contact",
     "section_settlement": "Payouts and tax",
     "section_standing": "Standing",
+    "select_tax_identifier_kind": "Select or type a registration type",
     "status_help": {
       "approved": "You are approved and can sell on this marketplace.",
       "canceled": "This seller account is closed.",
@@ -321,6 +403,14 @@
       "suspended": "Selling is paused. Contact the marketplace to find out more."
     },
     "subtitle": "How your storefront presents you, and how the marketplace reaches you.",
+    "tax_identifier_kind": "Registration type",
+    "tax_identifier_kinds": {
+      "au_abn": "Australian Business Number",
+      "ch_vat": "Swiss VAT",
+      "eu_vat": "EU VAT",
+      "gb_vat": "UK VAT",
+      "us_ein": "US EIN"
+    },
     "tax_remittance": "Tax remitted by",
     "team_count": "Team members",
     "vat_number": "VAT number",

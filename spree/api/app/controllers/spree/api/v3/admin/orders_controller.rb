@@ -7,8 +7,14 @@ module Spree
 
           scoped_resource :orders
 
+          # The order accepts a `po_document` signed blob id and streams it back.
+          include ActiveStorage::SetCurrent
+
+          # A tampered signed id would otherwise surface as a 500.
+          rescue_from ActiveSupport::MessageVerifier::InvalidSignature, with: :render_invalid_po_document
+
           skip_before_action :set_resource, only: [:index, :create]
-          before_action :set_resource, only: [:show, :update, :destroy, :complete, :cancel, :approve, :resume, :resend_confirmation, :resend_digital_links]
+          before_action :set_resource, only: [:show, :update, :destroy, :complete, :cancel, :approve, :resume, :resend_confirmation, :resend_digital_links, :po_document]
 
           # POST /api/v3/admin/orders
           def create
@@ -17,6 +23,7 @@ module Spree
             result = Spree.order_create_service.call(
               store: current_store,
               customer: resolve_user,
+              created_by: try_spree_current_user,
               params: order_create_params
             )
 
@@ -106,7 +113,37 @@ module Spree
             render json: serialize_resource(@resource)
           end
 
+          # GET /api/v3/admin/orders/:id/po_document
+          #
+          # The buyer's purchase order, streamed rather than redirected so the
+          # document is never reachable without admin credentials.
+          def po_document
+            unless @resource.po_document.attached?
+              return render_error(
+                code: ERROR_CODES[:validation_error],
+                message: Spree.t(:po_document_missing),
+                status: :unprocessable_content
+              )
+            end
+
+            send_data(
+              @resource.po_document.download,
+              filename: @resource.po_document.filename.to_s,
+              type: @resource.po_document.content_type || 'application/octet-stream',
+              disposition: 'attachment'
+            )
+          end
+
           protected
+
+          # Fetching the document is a read of the order, so it takes the read
+          # scope rather than being classed as a write for not being index or
+          # show.
+          READ_ACTIONS = %w[index show po_document].freeze
+
+          def read_actions
+            READ_ACTIONS
+          end
 
           def model_class
             Spree::Order
@@ -116,9 +153,12 @@ module Spree
             Spree.api.admin_order_serializer
           end
 
-          # Override scope — Order uses SingleStoreResource (for_store)
+          # Override scope — Order uses SingleStoreResource (for_store).
+          # Variant prices are preloaded here rather than via scope_includes,
+          # which this override bypasses; the serializer reads them per row.
           def scope
-            base = current_store.orders.accessible_by(current_ability, :show).preload_associations_lazily
+            base = current_store.orders.accessible_by(current_ability, :show).
+                   includes(line_items: { variant: :prices }).preload_associations_lazily
 
             # Transient completion drafts (status draft + cart_id set) belong
             # to in-flight checkouts, never to the admin. Admin drafts are the
@@ -141,6 +181,8 @@ module Spree
             mapped_action = case action
                             when :complete, :cancel, :approve, :resume, :resend_confirmation, :resend_digital_links
                               :update
+                            when :po_document
+                              :show
                             else
                               action
                             end
@@ -150,11 +192,23 @@ module Spree
           # seller is preloaded because its id is read on every row and an
           # expanded list renders the whole profile; order_group is not, since
           # only its id is reported and that comes off the order's own column.
+          # Variant prices ride along because the admin line-item serializer
+          # reads the base catalog price for every row (the negotiated-price
+          # comparison); without it each line costs its own price query.
           def collection_includes
-            [:line_items, :customer, :channel, :seller, :external_references]
+            [:customer, :channel, :seller, :external_references,
+             { line_items: { variant: :prices } }, { po_document_attachment: :blob }]
           end
 
           private
+
+          def render_invalid_po_document
+            render_error(
+              code: ERROR_CODES[:validation_error],
+              message: Spree.t(:po_document_invalid_signed_id),
+              status: :unprocessable_content
+            )
+          end
 
           def resolve_user
             customer_param = params[:customer_id].presence || params[:user_id].presence
@@ -175,13 +229,17 @@ module Spree
           end
 
           def order_create_params
-            normalize_params(
+            permitted = normalize_params(
               params.permit(
                 :email, :customer_id, :user_id, :use_customer_default_address,
                 :currency, :market_id, :channel_id, :locale,
                 :customer_note, :internal_note,
+                # The buyer's own purchase-order reference, and the signed blob
+                # id of the document behind it — a PO arriving by email and
+                # keyed in is the draft-order flow plus these two fields.
+                :po_number, :po_document,
                 :shipping_address_id, :billing_address_id,
-                :preferred_stock_location_id,
+                :preferred_stock_location_id, :company_id,
                 :coupon_code,
                 metadata: {},
                 tags: [],
@@ -190,6 +248,7 @@ module Spree
                 items: item_permitted_keys
               )
             )
+            resolve_company_param(permitted)
           end
 
           def order_update_params
@@ -197,6 +256,7 @@ module Spree
               params.permit(
                 :email, :customer_id, :user_id,
                 :customer_note, :internal_note,
+                :po_number, :po_document,
                 :currency, :locale, :market_id, :channel_id,
                 :preferred_stock_location_id, :company_id,
                 metadata: {},
@@ -236,7 +296,7 @@ module Spree
           end
 
           def item_permitted_keys
-            [:variant_id, :quantity, { metadata: {} }]
+            [:variant_id, :quantity, :price, { metadata: {} }]
           end
         end
       end

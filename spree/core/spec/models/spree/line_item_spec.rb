@@ -744,6 +744,16 @@ describe Spree::LineItem, type: :model do
         expect(line_item.send(:should_update_price?)).to be false
       end
     end
+
+    context 'when the line carries a negotiated (manual) price' do
+      before do
+        line_item.update_columns(price: 7.2, price_source: Spree::LineItem::MANUAL_PRICE_SOURCE)
+      end
+
+      it 'returns false' do
+        expect(line_item.send(:should_update_price?)).to be false
+      end
+    end
   end
 
   describe '#recalculate_price' do
@@ -790,6 +800,19 @@ describe Spree::LineItem, type: :model do
 
           expect(line_item.reload.price).to eq(original_price)
           expect(line_item.price_list_id).to eq(original_price_list_id)
+        end
+      end
+
+      context 'when the line carries a negotiated (manual) price' do
+        before do
+          line_item.update_columns(price: 8.5, price_source: Spree::LineItem::MANUAL_PRICE_SOURCE)
+        end
+
+        it 'survives a quantity change that would otherwise hit a volume break' do
+          line_item.update!(quantity: 120)
+
+          expect(line_item.reload.price).to eq(8.5)
+          expect(line_item.price_source).to eq('manual')
         end
       end
     end

@@ -63,6 +63,14 @@ RSpec.describe Spree::Payment::GatewayOptions, type: :model do
     it { is_expected.to eq 'P1566' }
   end
 
+  describe '#payment_prefixed_id' do
+    subject { options.payment_prefixed_id }
+
+    # The stable lookup handle: the derived number cannot be queried (NULL
+    # column on 6.0 rows) and shifts when a sibling is destroyed.
+    it { is_expected.to eq 'py_k5nR8xLq' }
+  end
+
   describe '#email' do
     subject { options.email }
 
@@ -157,6 +165,7 @@ RSpec.describe Spree::Payment::GatewayOptions, type: :model do
         ip: '0.0.0.0',
         order_id: 'P1566',
         payment_id: 'P1566',
+        payment_prefixed_id: 'py_k5nR8xLq',
         idempotency_key: 'spree-py_k5nR8xLq',
         shipping: '1244'.to_d,
         tax: '153'.to_d,

@@ -244,12 +244,13 @@ RSpec.describe 'Admin Collections API', type: :request, swagger_doc: 'api-refere
       end
     end
 
-    post 'Add a product to a collection' do
+    post 'Add products to a collection' do
       tags 'Collections'
       consumes 'application/json'
       produces 'application/json'
       security [api_key: [], bearer_auth: []]
-      description 'Curates a product into the collection (appended to the end).'
+      description 'Curates products into the collection in bulk (appended to the end). ' \
+                  'Already-curated products are skipped; the count reports what was added.'
       admin_scope :write, :collections
 
       parameter name: 'x-spree-api-key', in: :header, type: :string, required: true
@@ -258,46 +259,52 @@ RSpec.describe 'Admin Collections API', type: :request, swagger_doc: 'api-refere
       parameter name: :collection_id, in: :path, type: :string, required: true, description: 'Collection ID'
       parameter name: :body, in: :body, schema: {
         type: :object,
-        properties: { product_id: { type: :string, example: 'prod_abc123' } },
-        required: %w[product_id]
+        properties: { product_ids: { type: :array, items: { type: :string }, example: ['prod_abc123'] } },
+        required: %w[product_ids]
       }
 
-      response '201', 'product added' do
+      response '201', 'products added' do
         let!(:product) { create(:product, store: store) }
         let(:'x-spree-api-key') { secret_api_key.plaintext_token }
         let(:collection_id) { collection.prefixed_id }
-        let(:body) { { product_id: product.prefixed_id } }
+        let(:body) { { product_ids: [product.prefixed_id] } }
 
-        schema '$ref' => '#/components/schemas/Product'
-
-        run_test!
+        run_test! do |response|
+          expect(JSON.parse(response.body)['added_count']).to eq(1)
+        end
       end
     end
-  end
 
-  path '/api/v3/admin/collections/{collection_id}/products/{id}' do
-    delete 'Remove a product from a collection' do
+    delete 'Remove products from a collection' do
       tags 'Collections'
+      consumes 'application/json'
       produces 'application/json'
       security [api_key: [], bearer_auth: []]
-      description 'Removes a product from the collection\'s manual curation.'
+      description 'Removes products from the collection\'s manual curation in bulk. ' \
+                  'Ids that are not curated are ignored; the count reports what was removed.'
       admin_scope :write, :collections
 
       parameter name: 'x-spree-api-key', in: :header, type: :string, required: true
       parameter name: :Authorization, in: :header, type: :string, required: true,
                 description: 'Bearer token for admin authentication'
       parameter name: :collection_id, in: :path, type: :string, required: true, description: 'Collection ID'
-      parameter name: :id, in: :path, type: :string, required: true, description: 'Product ID'
+      parameter name: :body, in: :body, schema: {
+        type: :object,
+        properties: { product_ids: { type: :array, items: { type: :string }, example: ['prod_abc123'] } },
+        required: %w[product_ids]
+      }
 
-      response '204', 'product removed' do
+      response '200', 'products removed' do
         let!(:product) { create(:product, store: store) }
         let(:'x-spree-api-key') { secret_api_key.plaintext_token }
         let(:collection_id) { collection.prefixed_id }
-        let(:id) { product.prefixed_id }
+        let(:body) { { product_ids: [product.prefixed_id] } }
 
         before { Spree::ProductCollection.create!(collection: collection, product: product, position: 1) }
 
-        run_test!
+        run_test! do |response|
+          expect(JSON.parse(response.body)['removed_count']).to eq(1)
+        end
       end
     end
   end

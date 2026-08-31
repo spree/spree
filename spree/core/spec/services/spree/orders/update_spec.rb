@@ -262,6 +262,21 @@ module Spree
           end
         end
 
+        # A rejected batch carries its reason on the Result, not on the order,
+        # so raising RecordInvalid on the untouched order used to render a 422
+        # with an empty message — the dashboard had nothing to display.
+        context 'when the items batch is rejected' do
+          let(:params) do
+            { items: [{ variant_id: variant.prefixed_id, quantity: 1, price: '12,50' }] }
+          end
+
+          it 'fails with the reason on the order' do
+            expect(subject).to be_failure
+            expect(order.errors.full_messages.join).to include('non-negative number')
+            expect(subject.error.to_s).to include('non-negative number')
+          end
+        end
+
         context 'when neither items nor shipping address change' do
           let(:params) { { customer_note: 'whatever' } }
 

@@ -91,7 +91,7 @@ function GettingStartedPage() {
           return (
             <Card key={task.name} className="overflow-hidden py-0">
               <Collapsible defaultOpen={task.name === firstPending}>
-                <CollapsibleTrigger className="group flex w-full cursor-pointer items-center gap-3 p-4 text-left hover:bg-muted/50">
+                <CollapsibleTrigger className="group flex w-full cursor-pointer items-center gap-3 p-4 text-left hover:bg-accent">
                   {task.done ? (
                     <CheckCircle2Icon className="size-5 shrink-0 text-green-600" />
                   ) : (

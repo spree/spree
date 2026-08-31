@@ -18,6 +18,7 @@ module Spree
     include Spree::SingleStoreResource
     include Spree::Purchase::Channel
     include Spree::Purchase::Company
+    include Spree::Purchase::PurchaseOrder
     include Spree::Purchase::Market
     include Spree::Purchase::Currency
     include Spree::Purchase::Locale

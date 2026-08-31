@@ -23,6 +23,18 @@ interface UseResourceMutationOptions<TData, TError, TVariables>
    * Started checklist and the nav progress badge stay live.
    */
   invalidate?: QueryKey[]
+  /**
+   * Key segments that must NOT be refreshed, even when `invalidate` matches
+   * them by prefix. `invalidate: [['categories', id]]` also sweeps nested
+   * lists like `['categories', id, 'products']`; passing `['products']` here
+   * holds those back.
+   *
+   * Use it where a parent's own save runs alongside writes to one of its
+   * nested collections: refreshing the collection from the parent's mutation
+   * lands mid-save, painting the pre-save rows for a frame before the real
+   * state arrives.
+   */
+  doNotInvalidate?: string[]
   /** Toast on success. Pass `false` to disable. Default `'Saved'`. */
   successMessage?: string | false
   /**
@@ -62,6 +74,7 @@ export function useResourceMutation<TData = unknown, TError = Error, TVariables 
   const tenantId = useTenantId()
   const {
     invalidate,
+    doNotInvalidate,
     successMessage = i18n.t('admin.messages.saved'),
     errorMessage = i18n.t('admin.errors.generic'),
     onSuccess,
@@ -74,7 +87,13 @@ export function useResourceMutation<TData = unknown, TError = Error, TVariables 
     onSuccess: (data, variables, onMutateResult, ctx) => {
       if (invalidate) {
         for (const key of invalidate) {
-          queryClient.invalidateQueries({ queryKey: withStoreScope(key, tenantId) })
+          const scoped = withStoreScope(key, tenantId)
+          queryClient.invalidateQueries({
+            queryKey: scoped,
+            predicate: doNotInvalidate?.length
+              ? (query) => !query.queryKey.some((part) => doNotInvalidate.includes(part as string))
+              : undefined,
+          })
         }
       }
       if (successMessage !== false) {

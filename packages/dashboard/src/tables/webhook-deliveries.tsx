@@ -1,6 +1,6 @@
 import type { WebhookDelivery } from '@spree/admin-sdk'
 import { defineTable } from '@spree/dashboard-core'
-import { Badge, RelativeTime } from '@spree/dashboard-ui'
+import { Badge, RelativeTime, StatusBadge } from '@spree/dashboard-ui'
 import i18n from 'i18next'
 import { ListIcon } from 'lucide-react'
 
@@ -29,7 +29,6 @@ defineTable<WebhookDelivery>('webhook-deliveries', {
       key: 'event_name',
       label: i18n.t('admin.pages.settings.webhooks.deliveries.table.event'),
       sortable: true,
-      filterable: true,
       default: true,
       render: (delivery) => (
         <button
@@ -60,19 +59,26 @@ defineTable<WebhookDelivery>('webhook-deliveries', {
           )
         }
         if (delivery.success === true) {
-          return <Badge>{i18n.t('admin.pages.settings.webhooks.deliveries.status.success')}</Badge>
+          return (
+            <StatusBadge
+              status="complete"
+              label={i18n.t('admin.pages.settings.webhooks.deliveries.status.success')}
+            />
+          )
         }
         if (delivery.error_type) {
           return (
-            <Badge variant="destructive">
-              {i18n.t('admin.pages.settings.webhooks.deliveries.status.error')}
-            </Badge>
+            <StatusBadge
+              status="error"
+              label={i18n.t('admin.pages.settings.webhooks.deliveries.status.error')}
+            />
           )
         }
         return (
-          <Badge variant="destructive">
-            {i18n.t('admin.pages.settings.webhooks.deliveries.status.failure')}
-          </Badge>
+          <StatusBadge
+            status="failed"
+            label={i18n.t('admin.pages.settings.webhooks.deliveries.status.failure')}
+          />
         )
       },
     },

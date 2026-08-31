@@ -16,7 +16,6 @@ defineTable<Policy>('seller-policies', {
       key: 'name',
       label: i18n.t('policies.columns.name'),
       sortable: true,
-      filterable: true,
       default: true,
       render: (policy) => (
         <ResourceNameCell

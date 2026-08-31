@@ -277,6 +277,9 @@ module Spree
         # what is installed (see docs/plans/6.0-third-party-pricing-inventory.md).
         Rails.application.config.spree.pricing_providers.concat [Spree::PricingProvider::Internal]
         Rails.application.config.spree.inventory_providers.concat [Spree::InventoryProvider::Internal]
+        # 'manual' is the negotiated-price marker on line items, so no pricing
+        # engine may answer under it — fail the boot rather than the checkout.
+        Spree::PricingProvider.verify_registry!
 
         # How sellers are paid when a store names nothing: the books are kept
         # and the operator settles offline. Assigned only if an initializer has

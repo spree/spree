@@ -2,6 +2,7 @@ import {
   EMPTY_FILE_UPLOAD_VALUE,
   FileUploadField,
   type FileUploadValue,
+  PageHeader,
   progressPercentage,
 } from '@spree/dashboard-core'
 import {
@@ -15,6 +16,7 @@ import {
   FieldLabel,
   Input,
   Progress,
+  StatusBadge as SharedStatusBadge,
   Textarea,
   toastManager,
 } from '@spree/dashboard-ui'
@@ -82,10 +84,7 @@ export function OnboardingPage() {
 
   return (
     <div className="flex flex-col gap-6">
-      <div>
-        <h1 className="font-medium text-2xl">{t('onboarding.title')}</h1>
-        <p className="text-muted-foreground text-sm">{t('onboarding.subtitle')}</p>
-      </div>
+      <PageHeader title={t('onboarding.title')} subtitle={t('onboarding.subtitle')} />
 
       <Card>
         <CardHeader className="flex-row items-center justify-between gap-4">
@@ -525,10 +524,12 @@ function StatusIcon({ status }: { status: string }) {
 function StatusBadge({ status }: { status: string }) {
   const { t } = useTranslation()
 
+  // Only the wording is local — the colour comes from the shared status map.
   if (status === 'complete')
-    return <Badge variant="success">{t('onboarding.status.complete')}</Badge>
-  if (status === 'pending') return <Badge variant="warning">{t('onboarding.status.pending')}</Badge>
+    return <SharedStatusBadge status="complete" label={t('onboarding.status.complete')} />
+  if (status === 'pending')
+    return <SharedStatusBadge status="pending" label={t('onboarding.status.pending')} />
   if (status === 'rejected')
-    return <Badge variant="destructive">{t('onboarding.status.rejected')}</Badge>
+    return <SharedStatusBadge status="rejected" label={t('onboarding.status.rejected')} />
   return null
 }

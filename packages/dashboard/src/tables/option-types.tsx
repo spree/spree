@@ -22,7 +22,6 @@ defineTable<OptionType>('option-types', {
       key: 'name',
       label: i18n.t('admin.fields.name.label'),
       sortable: true,
-      filterable: true,
       default: true,
       render: (ot) => (
         <ResourceNameCell
@@ -40,6 +39,7 @@ defineTable<OptionType>('option-types', {
       filterable: true,
       filterType: 'enum',
       filterOptions: Object.entries(KIND_LABELS).map(([value, label]) => ({ value, label })),
+      quickFilter: true,
       default: true,
       render: (ot) => <Badge variant="secondary">{KIND_LABELS[ot.kind] ?? ot.kind}</Badge>,
     },

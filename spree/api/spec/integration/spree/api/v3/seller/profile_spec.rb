@@ -60,10 +60,6 @@ RSpec.describe 'Seller Profile API', type: :request, swagger_doc: 'api-reference
         `slug`, since a seller renaming their own storefront address would break
         every link pointing at it.
 
-        `tax_identifier` holds one registration per kind: re-sending a kind
-        corrects the number, and an empty value removes it. A changed number
-        drops its validation verdict, because that answer was about the old one.
-
         `accept_terms: true` stamps the moment the seller accepted the
         marketplace's terms, which is what the matching onboarding requirement
         reads. One-way — sending `false` does not unmake the stamp.
@@ -87,13 +83,6 @@ RSpec.describe 'Seller Profile API', type: :request, swagger_doc: 'api-reference
           square_logo: { type: :string, nullable: true },
           cover_photo: { type: :string, nullable: true },
           accept_terms: { type: :boolean, description: 'Stamps acceptance of the marketplace terms' },
-          tax_identifier: {
-            type: :object,
-            properties: {
-              kind: { type: :string, example: 'eu_vat' },
-              value: { type: :string, example: 'PL1234567890' }
-            }
-          },
           billing_address: { type: :object, additionalProperties: true },
           custom_fields: {
             type: :array,

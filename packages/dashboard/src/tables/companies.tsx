@@ -17,7 +17,6 @@ defineTable<Company>('companies', {
       key: 'name',
       label: i18n.t('admin.fields.name.label'),
       sortable: true,
-      filterable: true,
       default: true,
       render: (company) => (
         <ResourceNameCell
@@ -44,6 +43,7 @@ defineTable<Company>('companies', {
         { value: 'company', label: i18n.t('admin.companies.kind.company') },
         { value: 'division', label: i18n.t('admin.companies.kind.division') },
       ],
+      quickFilter: true,
       default: true,
       render: (company) => <CompanyKindBadge kind={company.kind} />,
     },

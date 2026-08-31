@@ -5,7 +5,6 @@ import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
-  DropdownMenuSeparator,
   DropdownMenuTrigger,
   useConfirm,
   useCopyToClipboard,
@@ -57,11 +56,20 @@ interface PageHeaderProps {
   /** Primary action buttons (rightmost, before the dropdown). Most pages use this for "Save". */
   actions?: ReactNode
   /**
-   * Domain-specific items to render at the top of the more-actions dropdown
-   * (e.g., Complete/Approve/Cancel on orders). Rendered above the
-   * `page.actions_dropdown` slot and the auto-wired Copy ID / Delete items.
+   * Domain-specific items for the top group of the more-actions dropdown
+   * (e.g. Preview, Resend, Approve on orders). Rendered above the
+   * `page.actions_dropdown` slot and the standard Copy ID / JSON items.
+   *
+   * Destructive entries belong in `destructiveItems`, not here — the dropdown
+   * orders its three groups itself so every page reads the same way.
    */
   dropdownItems?: ReactNode
+  /**
+   * Destructive domain actions (Cancel order, a delete with its own confirm).
+   * Always rendered last, in the same group as the auto-wired Delete, so a
+   * page can never put a red item above the standard actions.
+   */
+  destructiveItems?: ReactNode
   /**
    * The resource being edited. When supplied, PageHeader renders the legacy
    * "more actions" dropdown (Copy ID, Copy number, Delete). When omitted, the
@@ -102,6 +110,7 @@ export function PageHeader({
   badges,
   actions,
   dropdownItems,
+  destructiveItems,
   resource,
   slotContext,
   onDelete,
@@ -110,7 +119,9 @@ export function PageHeader({
 }: PageHeaderProps) {
   const { t } = useTranslation()
   const slotCtx = { ...slotContext, resource }
-  const showDropdown = Boolean(resource || onDelete || dropdownItems || jsonPreview)
+  const showDropdown = Boolean(
+    resource || onDelete || dropdownItems || destructiveItems || jsonPreview,
+  )
   const [jsonOpen, setJsonOpen] = useState(false)
   // Latches true on first open so the drawer (and its lazy JsonView chunk)
   // doesn't mount until the user actually invokes it, but stays mounted
@@ -208,6 +219,7 @@ export function PageHeader({
             resource={resource}
             slotContext={slotCtx}
             dropdownItems={dropdownItems}
+            destructiveItems={destructiveItems}
             onDelete={onDelete}
             deleteLabel={deleteLabel ?? t('admin.actions.delete')}
             onOpenJson={jsonPreview ? openJson : undefined}
@@ -232,6 +244,7 @@ interface PageActionsDropdownProps {
   resource?: PageHeaderResource
   slotContext: Record<string, unknown>
   dropdownItems?: ReactNode
+  destructiveItems?: ReactNode
   onDelete?: () => void | Promise<void>
   deleteLabel: string
   onOpenJson?: () => void
@@ -241,6 +254,7 @@ function PageActionsDropdown({
   resource,
   slotContext,
   dropdownItems,
+  destructiveItems,
   onDelete,
   deleteLabel,
   onOpenJson,
@@ -255,32 +269,49 @@ function PageActionsDropdown({
           <EllipsisVerticalIcon className="size-4" />
         </Button>
       </DropdownMenuTrigger>
-      <DropdownMenuContent align="end">
-        {dropdownItems}
-        <Slot name="page.actions_dropdown" context={slotContext} />
+      {/* Three fixed groups, in this order: domain actions, standard actions,
+          destructive actions. The order lives here rather than in each caller
+          so every record page's menu reads the same way.
 
-        {onOpenJson && (
-          <DropdownMenuItem onClick={onOpenJson}>
-            <BracesIcon className="size-4" />
-            {t('admin.components.page_header.view_as_json')}
-          </DropdownMenuItem>
-        )}
-        {resource?.number && (
-          <CopyToClipboardItem
-            label={t('admin.components.page_header.copy_number')}
-            value={resource.number}
-          />
-        )}
-        {resource && (
-          <CopyToClipboardItem
-            label={t('admin.components.page_header.copy_id')}
-            value={resource.id}
-          />
-        )}
+          Dividers are drawn by CSS (`:not(:empty) ~ :not(:empty)`) rather than
+          by rendering a <DropdownMenuSeparator> between groups. A group's
+          content can be present as a value but render nothing — an all-false
+          fragment, or a plugin slot with no registrations — which a JS check
+          reads as "has content" and would leave a divider floating against the
+          menu's edge. `:empty` asks the DOM what actually rendered. */}
+      <DropdownMenuContent
+        align="end"
+        className="[&>[data-menu-group]:not(:empty)~[data-menu-group]:not(:empty)]:mt-1 [&>[data-menu-group]:not(:empty)~[data-menu-group]:not(:empty)]:border-t [&>[data-menu-group]:not(:empty)~[data-menu-group]:not(:empty)]:border-border-subtle [&>[data-menu-group]:not(:empty)~[data-menu-group]:not(:empty)]:pt-1"
+      >
+        <div data-menu-group>
+          {dropdownItems}
+          <Slot name="page.actions_dropdown" context={slotContext} />
+        </div>
 
-        {onDelete && (
-          <>
-            <DropdownMenuSeparator />
+        <div data-menu-group>
+          {onOpenJson && (
+            <DropdownMenuItem onClick={onOpenJson}>
+              <BracesIcon className="size-4" />
+              {t('admin.components.page_header.view_as_json')}
+            </DropdownMenuItem>
+          )}
+          {resource?.number && (
+            <CopyToClipboardItem
+              label={t('admin.components.page_header.copy_number')}
+              value={resource.number}
+            />
+          )}
+          {resource && (
+            <CopyToClipboardItem
+              label={t('admin.components.page_header.copy_id')}
+              value={resource.id}
+            />
+          )}
+        </div>
+
+        <div data-menu-group>
+          {destructiveItems}
+          {onDelete && (
             <DropdownMenuItem
               variant="destructive"
               onClick={async () => {
@@ -298,8 +329,8 @@ function PageActionsDropdown({
               <TrashIcon className="size-4" />
               {deleteLabel}
             </DropdownMenuItem>
-          </>
-        )}
+          )}
+        </div>
       </DropdownMenuContent>
     </DropdownMenu>
   )

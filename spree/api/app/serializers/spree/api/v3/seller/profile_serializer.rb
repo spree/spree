@@ -61,9 +61,6 @@ module Spree
             seller.products.count
           end
 
-          many :tax_identifiers,
-               resource: proc { Spree.api.seller_tax_identifier_serializer }
-
           one :billing_address,
               resource: proc { Spree.api.address_serializer },
               if: proc { |seller| seller.billing_address.present? }

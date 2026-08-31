@@ -97,18 +97,43 @@ test.describe('categories management', () => {
     await expect(confirm).toBeEnabled({ timeout: 15_000 })
     await confirm.click()
 
-    // The product row now renders in the products table.
+    // The product row renders immediately, staged — the badge marks it as
+    // not yet persisted, and the page's Save is what writes it.
     const productRow = page.getByRole('row', { name: new RegExp(FIXTURE_PROMO_PRODUCT, 'i') })
     await expect(productRow).toBeVisible({ timeout: 15_000 })
+    await expect(productRow.getByText(/^new$/i)).toBeVisible()
 
-    // Remove it via the per-row remove button.
+    await page.getByRole('button', { name: /^save$/i }).click()
+
+    // One Save, one toast — the membership flush rides inside the category
+    // update and must not announce itself separately. Asserted before the
+    // staged badge clears, because toasts auto-dismiss after a few seconds.
+    // `[data-type]` is the toast root; dnd-kit also renders an empty
+    // `role="status"` region, so counting that role would overcount.
+    // Exactly one toast for the whole Save: the membership flush rides inside
+    // the category update and must not announce itself separately.
+    // `toHaveText` on the collection asserts the full stack in one shot, so a
+    // second toast fails the array comparison rather than slipping past a
+    // count that was momentarily 1.
+    const toasts = page.locator('[role="status"][data-type]')
+    await expect(toasts).toHaveText([/category updated/i])
+
+    await expect(productRow.getByText(/^new$/i)).toHaveCount(0, { timeout: 15_000 })
+
+    // Reload and prove the membership actually persisted.
+    await page.reload()
+    await expect(productRow).toBeVisible({ timeout: 15_000 })
+
+    // Removing stages too — no confirm, because Save is the confirmation.
     await productRow.getByRole('button', { name: /remove from category/i }).click()
-    // Removing writes through immediately, so it confirms first. Scope to the
-    // dialog — the row button matches /remove/ too.
-    await page
-      .getByRole('dialog')
-      .getByRole('button', { name: /^remove$/i })
-      .click()
+    await expect(productRow.getByRole('button', { name: /restore/i })).toBeVisible()
+
+    await page.getByRole('button', { name: /^save$/i }).click()
+    await expect(page.getByText(/no products in this category yet/i)).toBeVisible({
+      timeout: 15_000,
+    })
+
+    await page.reload()
     await expect(page.getByText(/no products in this category yet/i)).toBeVisible({
       timeout: 15_000,
     })

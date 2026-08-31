@@ -11,15 +11,19 @@ export const COMPANY_KINDS = ['company', 'division'] as const
 
 export const companyFormSchema = z.object({
   name: z.string().min(1, { error: requiredMessage('name') }),
+  // Whether this buyer's own procurement process demands a PO reference on
+  // every order they place.
+  po_number_required: z.boolean(),
 })
 
 export type CompanyFormValues = z.infer<typeof companyFormSchema>
 
-export const COMPANY_DEFAULTS: CompanyFormValues = { name: '' }
+export const COMPANY_DEFAULTS: CompanyFormValues = { name: '', po_number_required: false }
 
 export function companyValuesToParams(values: CompanyFormValues): CompanyParams {
   return {
     name: values.name,
+    po_number_required: values.po_number_required,
   }
 }
 

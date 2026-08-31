@@ -127,10 +127,7 @@
         "assigned": "Catalog assigned",
         "created": "Catalog created",
         "deleted": "Catalog deleted",
-        "product_removed": "Product removed",
-        "products_added": "Products added",
         "products_imported": "Products imported",
-        "products_removed": "Products removed",
         "unassigned": "Assignment removed",
         "updated": "Catalog updated"
       },
@@ -140,16 +137,13 @@
         "empty": "No products in this catalog yet.",
         "filter_placeholder": "Filter products…",
         "no_matches": "No products match your filter.",
+        "pending_added_badge": "New",
+        "pending_changes_hint": "Changes to the product list apply when you save.",
         "picker_description": "Search and select products to add to this catalog.",
         "picker_title": "Add products to catalog",
         "remove": "Remove from catalog",
-        "remove_confirm": {
-          "message_named": "Remove \"{{name}}\" from this catalog? This takes effect immediately. The product stays in your store.",
-          "message_one": "Remove {{count}} product from this catalog? This takes effect immediately. The products stay in your store.",
-          "message_other": "Remove {{count}} products from this catalog? This takes effect immediately. The products stay in your store.",
-          "title": "Remove from catalog"
-        },
         "remove_selected": "Remove",
+        "restore": "Restore",
         "search_placeholder": "Search products…",
         "select_all": "Select all",
         "select_row": "Select product",
@@ -200,16 +194,13 @@
         "empty": "No products in this category yet.",
         "filter_placeholder": "Filter products…",
         "no_matches": "No products match your filter.",
+        "pending_added_badge": "New",
+        "pending_changes_hint": "Changes to the product list apply when you save.",
         "picker_description": "Search and select products to add to this category.",
         "picker_title": "Add products to category",
         "remove": "Remove from category",
-        "remove_confirm": {
-          "message_named": "Remove \"{{name}}\" from this category? This takes effect immediately. The product stays in your catalog.",
-          "message_one": "Remove {{count}} product from this category? This takes effect immediately. The products stay in your catalog.",
-          "message_other": "Remove {{count}} products from this category? This takes effect immediately. The products stay in your catalog.",
-          "title": "Remove from category"
-        },
         "remove_selected": "Remove",
+        "restore": "Restore",
         "search_placeholder": "Search products…",
         "select_all": "Select all",
         "select_row": "Select product",
@@ -294,16 +285,13 @@
         "empty_automatic": "No products match the rules yet.",
         "filter_placeholder": "Filter products…",
         "no_matches": "No products match your filter.",
+        "pending_added_badge": "New",
+        "pending_changes_hint": "Changes to the product list apply when you save.",
         "picker_description": "Search and select products to add to this collection.",
         "picker_title": "Add products to collection",
         "remove": "Remove from collection",
-        "remove_confirm": {
-          "message_named": "Remove \"{{name}}\" from this collection? This takes effect immediately. The product stays in your catalog.",
-          "message_one": "Remove {{count}} product from this collection? This takes effect immediately. The products stay in your catalog.",
-          "message_other": "Remove {{count}} products from this collection? This takes effect immediately. The products stay in your catalog.",
-          "title": "Remove from collection"
-        },
         "remove_selected": "Remove",
+        "restore": "Restore",
         "search_placeholder": "Search products…",
         "select_all": "Select all",
         "select_row": "Select product",
@@ -386,6 +374,10 @@
     "companies": {
       "add_cta": "Add company",
       "add_sheet_title": "New company",
+      "autocomplete": {
+        "empty": "No companies match",
+        "placeholder": "Search companies…"
+      },
       "create_description": "A company is the root of an organization tree. Add sub-units, members, addresses, tax registration and exemption certificates once it exists.",
       "create_label": "Create company",
       "delete_confirm": {
@@ -538,9 +530,11 @@
     "customers": {
       "autocomplete": {
         "empty": "No customers match",
+        "empty_for_company": "No customers can buy for this company",
         "placeholder": "Search customers…"
       },
       "columns": {
+        "companies": "Companies",
         "groups": "Groups",
         "last_order": "Last order",
         "newsletter": "Newsletter",
@@ -1053,6 +1047,10 @@
         "label": "Company",
         "name": {
           "placeholder": "Acme Industries"
+        },
+        "po_number_required": {
+          "help": "Buyers from this company must supply their purchase order number before checking out.",
+          "label": "Require a PO number"
         }
       },
       "company_location": {
@@ -1375,6 +1373,11 @@
         "order_group": {
           "label": "Purchase",
           "view": "View purchase"
+        },
+        "po_number": {
+          "help": "The buyer's own reference for this order.",
+          "label": "PO number",
+          "placeholder": "PO-4471"
         },
         "seller": {
           "first_party": "Sold by you",
@@ -2014,11 +2017,13 @@
       "tax_identifier": {
         "kind": {
           "help": "Which registration this is. It has to match the validator registered for it, so spelling matters.",
-          "label": "Kind"
+          "label": "Kind",
+          "required": "Choose or type a registration type"
         },
         "value": {
           "label": "Number",
-          "placeholder": "DE123456789"
+          "placeholder": "DE123456789",
+          "required": "Enter the registration number"
         }
       },
       "tax_rate": {
@@ -2382,6 +2387,7 @@
         "items": "Items",
         "number": "Number",
         "payment": "Payment",
+        "po_number": "PO number",
         "sku": "SKU",
         "tags": "Tags"
       },
@@ -2552,6 +2558,13 @@
           "number": "Number",
           "state": "State"
         },
+        "purchase_order": {
+          "document": "Purchase order document",
+          "document_help": "PDF, image or Word file, up to 10 MB.",
+          "download_failed": "Could not download the purchase order",
+          "save_failed": "Could not save the purchase order",
+          "title": "Purchase order"
+        },
         "section_customer_note": "Special Instructions",
         "section_internal_note": "Internal Note",
         "section_seller": "Seller",
@@ -2582,16 +2595,22 @@
         "action_label": "Edit order",
         "actions": {
           "add_product": "Add product",
+          "keep_negotiated_price": "Keep negotiated price for {{name}}",
+          "price_for": "Unit price for {{name}}",
           "quantity_for": "Quantity of {{name}}",
           "remove_item": "Remove {{name}}",
+          "reset_price": "Reset {{name}} to catalog price",
           "restore_item": "Keep {{name}}"
         },
         "badges": {
           "fulfilled_count_one": "{{count}} fulfilled",
           "fulfilled_count_other": "{{count}} fulfilled",
+          "negotiated": "Negotiated",
           "pending": "Not saved",
+          "price_reverting": "Reverting to catalog price",
           "removed": "Removing"
         },
+        "catalog_price_unknown": "catalog price",
         "columns": {
           "line_total": "Line total",
           "product": "Product",
@@ -2603,10 +2622,13 @@
         "subtitle": "Order {{number}}",
         "title": "Edit order",
         "totals_hint": "Totals are recalculated by the server after you save.",
+        "totals_preview_confirm_hint": "Confirmed by the server when you save.",
+        "totals_preview_hint": "Shipping, tax and promotions are recalculated by the server after you save.",
         "totals_title": "Totals",
         "validation": {
           "below_fulfilled_one": "Can't go below {{count}} fulfilled unit",
-          "below_fulfilled_other": "Can't go below {{count}} fulfilled units"
+          "below_fulfilled_other": "Can't go below {{count}} fulfilled units",
+          "invalid_price": "Price must be a non-negative number"
         }
       },
       "errors": {
@@ -2664,7 +2686,7 @@
       },
       "table": {
         "empty": "No orders found",
-        "search_placeholder": "Search orders…"
+        "search_placeholder": "Search by number, PO, customer…"
       }
     },
     "pages": {
@@ -2823,6 +2845,9 @@
               "resolve_refund": "Resolve with refund",
               "resolve_replacement": "Resolve with replacement"
             },
+            "confirm": {
+              "deny": "Deny this claim? The customer will not receive a refund or replacement."
+            },
             "create_title": "New claim",
             "empty": "No claims for this order.",
             "refund_amount": "Refund amount",
@@ -2906,12 +2931,14 @@
         "drafts_title": "Draft Orders",
         "new": {
           "add_line_item": "Add line item",
+          "company_help": "Attach this order to a business. The customer list then shows only people who can buy for it.",
           "search_variant": "Search variant…",
           "section_billing": "Billing",
           "section_customer": "Customer",
           "section_items": "Items",
           "section_notes": "Notes",
           "section_summary": "Summary",
+          "select_company": "Company (optional)",
           "select_customer": "Select customer",
           "title": "New Order"
         }
@@ -3014,7 +3041,6 @@
             "title": "Activate price list?"
           },
           "add_cta": "New price list",
-          "add_products_cta": "Add products",
           "add_rule": "Add rule",
           "add_rule_help": "Pick a rule type to configure.",
           "basics_section": "Basics",
@@ -3065,16 +3091,27 @@
           },
           "edit_prices_cta": "Edit prices",
           "no_changes": "No changes to save.",
-          "prices_help_one": "{{count}} price configured. Open the bulk editor to update it.",
-          "prices_help_other": "{{count}} prices configured. Open the bulk editor to update them.",
-          "prices_help_zero": "Pick products above to seed placeholder prices, then open the bulk editor.",
-          "products_empty": "No products yet — add one to start editing prices.",
-          "products_empty_search": "No products match",
-          "products_help": "Pick the products this list applies to. Placeholder prices are created on save — fill them in below.",
-          "products_search_placeholder": "Search products by name…",
-          "products_section": "Products",
-          "products_selected_one": "{{count}} product selected.",
-          "products_selected_other": "{{count}} products selected.",
+          "products": {
+            "add_cta": "Add products",
+            "column_product": "Product",
+            "empty": "No products yet — add one to start editing prices.",
+            "filter_placeholder": "Filter products…",
+            "no_matches": "No products match your filter.",
+            "pending_added_badge": "New",
+            "pending_changes_hint": "Changes to the product list apply when you save.",
+            "picker_description": "Search and select products to add to this price list.",
+            "picker_title": "Add products to price list",
+            "remove": "Remove from price list",
+            "remove_selected": "Remove",
+            "restore": "Restore",
+            "search_placeholder": "Search products…",
+            "select_all": "Select all",
+            "select_row": "Select product",
+            "title": "Products"
+          },
+          "products_help": "Pick the products this list applies to. Placeholder prices are created on save — fill them in with Edit prices.",
+          "products_help_with_prices_one": "Pick the products this list applies to. {{count}} price is configured — use Edit prices to update it.",
+          "products_help_with_prices_other": "Pick the products this list applies to. {{count}} prices are configured — use Edit prices to update them.",
           "remove_rule_confirm": {
             "message": "The rule is removed when you save the price list.",
             "title": "Remove rule?"
@@ -4739,7 +4776,7 @@
         "validation_failed": "Could not check the number",
         "validation_requested": "Checking the number with the registry"
       },
-      "not_validatable": "No validator is set up for this kind, so the number is used as entered.",
+      "not_validatable": "No registry to check this kind against, so the number is recorded as entered.",
       "select_kind": "Select a kind",
       "title": "Tax registration",
       "validate_action": "Check with registry",

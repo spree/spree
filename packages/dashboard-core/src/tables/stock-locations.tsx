@@ -16,7 +16,6 @@ defineTable<PanelStockLocation>('stock-locations', {
       key: 'name',
       label: i18n.t('admin.fields.name.label'),
       sortable: true,
-      filterable: true,
       default: true,
       render: (sl) => (
         <ResourceNameCell
@@ -42,6 +41,7 @@ defineTable<PanelStockLocation>('stock-locations', {
           label: i18n.t('admin.stock_locations.kinds.fulfillment_center'),
         },
       ],
+      quickFilter: true,
       render: (sl) => {
         const key = `admin.stock_locations.kinds.${sl.kind}`
         const label = i18n.exists(key) ? i18n.t(key) : sl.kind.replace('_', ' ')

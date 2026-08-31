@@ -78,10 +78,7 @@ function AdjustmentDeleteCell({
             </Button>
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end">
-            <DropdownMenuItem
-              className="text-destructive focus:text-destructive"
-              onClick={onDelete}
-            >
+            <DropdownMenuItem variant="destructive" onClick={onDelete}>
               <TrashIcon className="size-4" />
               {i18n.t('admin.actions.delete')}
             </DropdownMenuItem>
@@ -130,7 +127,7 @@ export function TaxLinesCard({ order }: { order: Order }) {
               </TableHead>
             </TableRow>
           </TableHeader>
-          <TableBody className="border-t border-border">
+          <TableBody>
             {[...taxGroups.values()].map((group) => (
               <TableRow key={group.label}>
                 <TableCell>{group.label}</TableCell>
@@ -207,7 +204,7 @@ export function OrderDiscountsCard({ order }: { order: Order }) {
               <TableHead className="w-10" />
             </TableRow>
           </TableHeader>
-          <TableBody className="border-t border-border">
+          <TableBody>
             {discountRows.map((row) => (
               <TableRow key={row.id}>
                 <TableCell>{row.label}</TableCell>
@@ -290,7 +287,7 @@ export function FeesCard({ order }: { order: Order }) {
               <TableHead className="w-10" />
             </TableRow>
           </TableHeader>
-          <TableBody className="border-t border-border">
+          <TableBody>
             {feeRows.map((row) => (
               <TableRow key={row.id}>
                 <TableCell>{row.label}</TableCell>

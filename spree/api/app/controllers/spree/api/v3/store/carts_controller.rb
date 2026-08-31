@@ -5,6 +5,11 @@ module Spree
         class CartsController < Store::ResourceController
           include Spree::Api::V3::CartResolvable
           include Spree::Api::V3::OrderLock
+          # The cart accepts a `po_document` signed blob id.
+          include ActiveStorage::SetCurrent
+
+          # A tampered signed id would otherwise surface as a 500.
+          rescue_from ActiveSupport::MessageVerifier::InvalidSignature, with: :render_invalid_po_document
 
           skip_before_action :set_resource
           prepend_before_action :require_authentication!, only: [:index, :associate]
@@ -176,6 +181,14 @@ module Spree
 
           private
 
+          def render_invalid_po_document
+            render_error(
+              code: ERROR_CODES[:validation_error],
+              message: Spree.t(:po_document_invalid_signed_id),
+              status: :unprocessable_content
+            )
+          end
+
           def permitted_params
             params.permit(
               *model_additional_permitted_attributes,
@@ -188,6 +201,10 @@ module Spree
               :billing_address_id,
               :preferred_stock_location_id,
               :company_id,
+              # The buyer's own purchase-order reference, and the signed blob id
+              # of the document behind it (from POST .../carts/:id/po_document).
+              :po_number,
+              :po_document,
               :use_shipping,
               shipping_address: address_params,
               billing_address: address_params,

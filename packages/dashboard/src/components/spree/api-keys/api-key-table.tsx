@@ -18,6 +18,7 @@ import {
   RelativeTime,
   RowActions,
   Skeleton,
+  StatusBadge,
   Table,
   TableBody,
   TableCell,
@@ -236,7 +237,7 @@ function ApiKeyRow({
       <TableCell>
         <div className="flex items-center gap-2">
           <span className="font-medium">{apiKey.name}</span>
-          {isRevoked && <Badge variant="destructive">{t('admin.api_keys.badge.revoked')}</Badge>}
+          {isRevoked && <StatusBadge status="revoked" label={t('admin.api_keys.badge.revoked')} />}
         </div>
       </TableCell>
       <TableCell>
@@ -291,6 +292,10 @@ function ApiKeyRow({
               icon: <BanIcon className="size-4" />,
               visible: !isRevoked,
               disabled: revokeMutation.isPending,
+              // Revoking kills a live credential, and its confirm is already
+              // destructive — the row should say so before the click, not only
+              // in the dialog after it.
+              destructive: true,
               onSelect: handleRevoke,
             },
             {

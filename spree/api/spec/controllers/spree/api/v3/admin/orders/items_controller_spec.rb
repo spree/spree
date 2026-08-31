@@ -81,6 +81,24 @@ RSpec.describe Spree::Api::V3::Admin::Orders::ItemsController, type: :controller
     end
   end
 
+  describe 'POST #create with a negotiated price' do
+    subject do
+      post :create, params: { order_id: order.prefixed_id, variant_id: variant.prefixed_id, quantity: 10, price: '7.20' }, as: :json
+    end
+
+    before { request.headers.merge!(headers) }
+
+    it 'adds the line at the negotiated price, stamped manual' do
+      subject
+
+      expect(response).to have_http_status(:created)
+      line_item = order.line_items.sole
+      expect(line_item.price).to eq(7.2)
+      expect(line_item.price_source).to eq('manual')
+      expect(json_response['price_source']).to eq('manual')
+    end
+  end
+
   describe 'PATCH #update' do
     let!(:line_item) { create(:line_item, order: order, variant: variant, quantity: 1) }
 
@@ -93,6 +111,70 @@ RSpec.describe Spree::Api::V3::Admin::Orders::ItemsController, type: :controller
 
       expect(response).to have_http_status(:ok)
       expect(line_item.reload.quantity).to eq(5)
+    end
+
+    context 'with a negotiated price' do
+      subject { patch :update, params: { order_id: order.prefixed_id, id: line_item.prefixed_id, price: '7.20' }, as: :json }
+
+      it 'stamps the line manual at the given price' do
+        subject
+
+        expect(response).to have_http_status(:ok)
+        expect(line_item.reload.price).to eq(7.2)
+        expect(line_item.price_source).to eq('manual')
+        expect(json_response['price_source']).to eq('manual')
+      end
+
+      it 'leaves pricing alone when the request carries no price key' do
+        patch :update, params: { order_id: order.prefixed_id, id: line_item.prefixed_id, quantity: 2 }, as: :json
+
+        expect(line_item.reload.price_source).to be_nil
+      end
+    end
+
+    context 'reverting a negotiated price with an explicit null' do
+      before do
+        line_item.update_columns(price: 7.2, price_source: Spree::LineItem::MANUAL_PRICE_SOURCE)
+      end
+
+      subject { patch :update, params: { order_id: order.prefixed_id, id: line_item.prefixed_id, price: nil }, as: :json }
+
+      it 'clears the marker and re-prices from the catalog' do
+        catalog_price = variant.price_in(order.currency).amount
+
+        subject
+
+        expect(response).to have_http_status(:ok)
+        expect(line_item.reload.price).to eq(catalog_price)
+        expect(line_item.price_source).to be_nil
+      end
+    end
+
+    context 'with a price on a placed order' do
+      before { order.update_columns(status: 'placed', completed_at: Time.current) }
+
+      subject { patch :update, params: { order_id: order.prefixed_id, id: line_item.prefixed_id, price: '7.20' }, as: :json }
+
+      it 'refuses with 422 and an actionable message' do
+        subject
+
+        expect(response).to have_http_status(:unprocessable_entity)
+        expect(response.body).to include('placed order')
+        expect(line_item.reload.price_source).to be_nil
+      end
+    end
+
+    # A 422 whose message is blank leaves the dashboard with nothing to show.
+    context 'with an unusable price' do
+      subject { patch :update, params: { order_id: order.prefixed_id, id: line_item.prefixed_id, price: 'NaN' }, as: :json }
+
+      it 'refuses with 422 and an actionable message' do
+        subject
+
+        expect(response).to have_http_status(:unprocessable_entity)
+        expect(response.body).to include('non-negative number')
+        expect(line_item.reload.price_source).to be_nil
+      end
     end
   end
 

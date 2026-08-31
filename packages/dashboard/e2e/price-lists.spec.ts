@@ -1,14 +1,5 @@
 import { expect, type Page, test } from '@playwright/test'
-import {
-  FIXTURE_PROMO_CUSTOMER_EMAIL,
-  FIXTURE_PROMO_CUSTOMER_FIRST_NAME,
-  FIXTURE_PROMO_CUSTOMER_GROUP,
-  FIXTURE_PROMO_PRODUCT,
-  gotoIndex,
-  login,
-  openRowMenu,
-  rowButton,
-} from './helpers'
+import { FIXTURE_PROMO_PRODUCT, gotoIndex, login, openRowMenu, rowButton } from './helpers'
 
 const PRICE_LISTS_PATH = (storeId: string) => `/${storeId}/products/price-lists`
 const PRODUCTS_PATH = (storeId: string) => `/${storeId}/products`
@@ -71,23 +62,38 @@ async function saveForm(page: Page) {
     .click()
 }
 
-// Pick a product from the Products card's `<ResourceMultiAutocomplete>`.
-// Unlike the promotions spec's helper, the picker lives on the page (not
-// inside a dialog), so we scope to `main` to skip any open Sheet/Dialog.
+// Add a product through the Products card's picker sheet (the same shared
+// membership panel categories/collections/catalogs use). Membership lives in
+// form state, so the row appears immediately but persists only on Save.
 async function pickProductOnPage(page: Page, optionLabel: string) {
-  const input = page.locator('main').getByPlaceholder(/search products by name/i)
-  await input.fill(optionLabel)
   await page
-    .getByRole('option', { name: new RegExp(optionLabel, 'i') })
-    .first()
+    .locator('main')
+    .getByRole('button', { name: /^add products$/i })
     .click()
-  // Close the listbox so the next focus (the bulk-prices button) lands cleanly.
-  await input.press('Escape')
+  const picker = page.getByRole('dialog')
+  await expect(picker.getByRole('heading', { name: /add products to price list/i })).toBeVisible()
+
+  // Search is debounced + async; wait for the matching option to render
+  // before selecting it.
+  await picker.getByRole('searchbox').fill(optionLabel)
+  const option = picker.getByRole('button', { name: new RegExp(optionLabel, 'i') }).first()
+  await expect(option).toBeVisible({ timeout: 15_000 })
+  await option.click()
+
+  const confirm = picker.getByRole('button', { name: /^add 1$/i })
+  await expect(confirm).toBeEnabled({ timeout: 15_000 })
+  await confirm.click()
+  await expect(picker).toBeHidden({ timeout: 15_000 })
+
+  // The staged product renders as a row in the membership table.
+  await expect(page.getByRole('row', { name: new RegExp(optionLabel, 'i') }).first()).toBeVisible({
+    timeout: 15_000,
+  })
 }
 
 async function openBulkPriceEditor(page: Page) {
-  // Single "Edit prices" button on both surfaces (price-list PricesCard
-  // and product PageHeader).
+  // Single "Edit prices" button on both surfaces — the price list's page
+  // header and the product PageHeader.
   await page.getByRole('button', { name: /^edit prices$/i }).click()
   await expect(page.getByRole('dialog')).toBeVisible({ timeout: 15_000 })
   await expect(page.getByRole('heading', { name: /^edit prices —/i })).toBeVisible()
@@ -153,69 +159,27 @@ test.describe('price lists', () => {
     await expect(page.getByText(/volume rule/i).first()).toBeVisible({ timeout: 15_000 })
   })
 
-  test('adds a Customer Group Rule with the seeded group', async ({ page }) => {
+  // The audience rules (customer group / customer) are superseded by catalog
+  // assignment (docs/plans/6.0-catalog-agreement-rework.md). Existing rules
+  // keep working and rendering; the picker stops offering them.
+  test('does not offer the superseded audience rules in the picker', async ({ page }) => {
     const creds = await login(page)
     await gotoIndex(page, PRICE_LISTS_PATH(creds.store_id), CTA)
 
-    const name = `E2E PL CG Rule ${Date.now()}`
+    const name = `E2E PL No Audience Rules ${Date.now()}`
     await startNewPriceList(page, creds.store_id, name)
     await submitCreate(page, name)
 
-    await pickRule(page, /^customer group rule\b/i)
-    await expect(page.getByRole('heading', { name: /^customer group rule$/i })).toBeVisible({
-      timeout: 5_000,
-    })
+    await page.getByRole('button', { name: /^add rule$/i }).click()
+    await expect(page.getByRole('heading', { name: /^add rule$/i })).toBeVisible()
 
-    await pickAutocompleteOption(page, /search customer groups/i, FIXTURE_PROMO_CUSTOMER_GROUP)
-    await saveEditor(page)
-
-    // Row summary renders the group name (proves the API embed shipped the
-    // resolved `customer_groups` array, which the SPA echoes on the draft).
-    await expect(page.getByText(FIXTURE_PROMO_CUSTOMER_GROUP).first()).toBeVisible({
-      timeout: 5_000,
-    })
-
-    await saveForm(page)
-
-    // Reload and verify the chip + preview survive (proves the serializer
-    // embed round-trips on reload, not just during the in-progress edit).
-    await page.reload()
-    await expect(page.getByText(FIXTURE_PROMO_CUSTOMER_GROUP).first()).toBeVisible({
-      timeout: 15_000,
-    })
-  })
-
-  test('adds a Customer Rule with the seeded customer', async ({ page }) => {
-    const creds = await login(page)
-    await gotoIndex(page, PRICE_LISTS_PATH(creds.store_id), CTA)
-
-    const name = `E2E PL Customer Rule ${Date.now()}`
-    await startNewPriceList(page, creds.store_id, name)
-    await submitCreate(page, name)
-
-    // Wire shorthand is `user_rule`; the SPA labels it "Customer rule"
-    // (see `Spree::PriceRules::UserRule.human_name`).
-    await pickRule(page, /^customer rule\b/i)
-    await expect(page.getByRole('heading', { name: /^customer rule$/i })).toBeVisible({
-      timeout: 5_000,
-    })
-
-    // `Spree.user_class.search` matches first_name (LIKE) and email (exact);
-    // we type the first name to drive the search, then assert on the email
-    // string the price-list `RuleSummary` renders.
-    await pickAutocompleteOption(page, /search customers/i, FIXTURE_PROMO_CUSTOMER_FIRST_NAME)
-    await saveEditor(page)
-
-    await expect(page.getByText(FIXTURE_PROMO_CUSTOMER_EMAIL).first()).toBeVisible({
-      timeout: 5_000,
-    })
-
-    await saveForm(page)
-
-    await page.reload()
-    await expect(page.getByText(FIXTURE_PROMO_CUSTOMER_EMAIL).first()).toBeVisible({
-      timeout: 15_000,
-    })
+    const picker = page.getByRole('dialog')
+    // The context rules stay first-class…
+    await expect(picker.getByRole('button', { name: /^volume rule\b/i })).toBeVisible()
+    await expect(picker.getByRole('button', { name: /^market rule\b/i })).toBeVisible()
+    // …the audience rules are gone.
+    await expect(picker.getByRole('button', { name: /^customer group rule\b/i })).toHaveCount(0)
+    await expect(picker.getByRole('button', { name: /^customer rule\b/i })).toHaveCount(0)
   })
 
   test('adds a Market Rule with the seeded default market', async ({ page }) => {
@@ -299,13 +263,14 @@ test.describe('price lists', () => {
     // Attach a seeded product so the bulk editor has a row to edit.
     // Saving creates a placeholder price the editor can fill in.
     await pickProductOnPage(page, FIXTURE_PROMO_PRODUCT)
-    await expect(page.getByText(/1 product selected/i)).toBeVisible({ timeout: 5_000 })
     await saveForm(page)
-    // Card-counter help text updates once placeholder prices exist. A
-    // multi-currency store creates one placeholder per currency, so the
-    // count is "N prices configured" (singular when the store has one
-    // currency) — match either form.
-    await expect(page.getByText(/\d+ price(s)? configured/i)).toBeVisible({ timeout: 15_000 })
+    // The Products card's description picks up the price count once
+    // placeholder prices exist. A multi-currency store creates one
+    // placeholder per currency, so the copy is singular or plural depending
+    // on the store — match either form.
+    await expect(page.getByText(/\d+ price(s)? (is|are) configured/i)).toBeVisible({
+      timeout: 15_000,
+    })
 
     await openBulkPriceEditor(page)
 
@@ -358,9 +323,10 @@ test.describe('price lists', () => {
     await submitCreate(page, name)
 
     await pickProductOnPage(page, FIXTURE_PROMO_PRODUCT)
-    await expect(page.getByText(/1 product selected/i)).toBeVisible({ timeout: 5_000 })
     await saveForm(page)
-    await expect(page.getByText(/\d+ price(s)? configured/i)).toBeVisible({ timeout: 15_000 })
+    await expect(page.getByText(/\d+ price(s)? (is|are) configured/i)).toBeVisible({
+      timeout: 15_000,
+    })
 
     await openBulkPriceEditor(page)
     const dialog = page.getByRole('dialog')

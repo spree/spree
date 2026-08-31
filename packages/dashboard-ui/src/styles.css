@@ -43,7 +43,7 @@
   --brand-blue: oklch(0.5967 0.2212 258); /* #0077ff — site accent */
   --brand-blue-strong: oklch(0.5106 0.1868 257.7); /* #0060ce — site link hover */
 
-  --background: oklch(98.5% 0 none); /* neutral-100 */
+  --background: oklch(98.5% 0 none); /* neutral-50 */
   --foreground: oklch(0.145 0 0); /* neutral-950 */
   --card: oklch(1 0 0); /* white cards, one step above the page */
   --card-foreground: oklch(0.145 0 0);
@@ -63,10 +63,9 @@
   --muted-foreground: oklch(0.535 0 0);
   /* Hover/highlight for menu items and table rows. A lighter step than
      neutral-200: these sit on white surfaces, where that value reads as a
-     pressed state rather than a hover. The sidebar keeps the stronger tone
-     via --sidebar-accent, since it sits on the grey sidebar rather than on
-     white. */
-  --accent: oklch(0.955 0 0);
+     pressed state rather than a hover. The sidebar shares this value via
+     --sidebar-accent so a highlighted row looks the same wherever it is. */
+  --accent: oklch(0.95 0 0);
   --accent-foreground: oklch(0.145 0 0);
   --destructive: oklch(0.58 0.22 27); /* red-600 */
   --destructive-foreground: oklch(1 0 0); /* #ffffff */
@@ -89,8 +88,8 @@
   --radius: 0.75rem;
 
   /* Sidebar — one step off the page, so it reads as its own surface. */
-  --sidebar: oklch(98.5% 0 none); /* neutral-100 */
-  --sidebar-foreground: oklch(0.145 0 0);
+  --sidebar: oklch(97% 0 none); /* neutral-100 */
+  --sidebar-foreground: oklch(37.1% 0 none);
   --sidebar-primary: oklch(0.145 0 0);
   --sidebar-primary-foreground: oklch(1 0 0);
   --sidebar-accent: oklch(0.922 0 0); /* neutral-200 */
@@ -117,8 +116,8 @@
    * needs, so green's fill drops one step to clear it. The difference is
    * invisible beside the other three but keeps the whole set measurably legible
    * rather than passing only by eye. */
-  --status-green-bg: var(--color-green-50);
-  --status-green-border: var(--color-green-100);
+  --status-green-bg: var(--color-green-100);
+  --status-green-border: var(--color-green-200);
   --status-green-fg: var(--color-green-700);
 
   --status-amber-bg: var(--color-amber-100);
@@ -221,10 +220,36 @@
   --text-3xl: 1.75rem;
   --text-4xl: 2rem;
 
-  /* Shadows — subtle like Rails admin */
-  --shadow-xs: rgba(43, 34, 51, 0.05) 0px 1px 1px;
-  --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
-  --shadow-nav: rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0.04) 0px 0px 0px 1px, rgba(0, 0, 0, 0.04) 0px 1px 2px -1px, rgba(0, 0, 0, 0.02) 0px 2px 4px 0px;
+  /* Shadows are retired rather than removed. A card already carries its own
+     border, so the extra 1px of depth under it added no information — it just
+     softened an edge the border was drawing cleanly. The tokens stay defined,
+     at effectively nothing, so the components still carrying `shadow-xs`
+     flatten with the rest instead of each needing to be found and edited.
+     Floating surfaces are the exception and set their own shadow: a menu or
+     dialog genuinely is above the page, and that is the one place depth is
+     telling the truth. */
+  --shadow-xs: 0 0 0 0 transparent;
+  --shadow-sm: 0 0 0 0 transparent;
+  --shadow-nav: 0 0 0 1px var(--border);
+
+  /* Floating surfaces — menus, popovers, dialogs, sheets. Wide and faint
+     rather than tight and dark: the job is to say "this is above the page",
+     which a large soft spread does without drawing an edge of its own. A
+     hairline ring carries the actual boundary. */
+  --shadow-md: 0 4px 16px -4px rgb(0 0 0 / 0.08), 0 1px 4px -2px rgb(0 0 0 / 0.05);
+  --shadow-lg: 0 8px 32px -8px rgb(0 0 0 / 0.10), 0 2px 8px -4px rgb(0 0 0 / 0.06);
+
+  /* Radius scale, remapped one step rounder than Tailwind's defaults.
+     Corner radius is most of what reads as "soft", and remapping the scale
+     reaches every `rounded-lg`/`rounded-xl` already written in the components
+     — including the `calc(var(--radius-2xl) - 1px)` a card header derives its
+     own corner from, which would drift out of alignment if the components
+     were each edited by hand instead. */
+  --radius-sm: 0.4rem;
+  --radius-md: 0.5rem;
+  --radius-lg: 0.625rem;
+  --radius-xl: 0.875rem;
+  --radius-2xl: 1.125rem;
 
   /* Sidebar + header tokens */
   --spacing-sidebar-width: 220px;
@@ -469,7 +494,8 @@
     [data-slot='sidebar-menu-sub-button'],
     [data-slot='dropdown-menu-item'],
     [data-slot='select-item'],
-    [data-slot='command-item'] {
+    [data-slot='command-item'],
+    [data-slot='filter-panel-item'] {
       font-size: 1rem !important;
     }
   }
@@ -486,7 +512,21 @@
     [data-slot='dropdown-menu-sub-trigger'],
     [data-slot='select-item'],
     [data-slot='command-item'],
-    [data-slot='combobox-item'] {
+    [data-slot='combobox-item'],
+    /* The filter panel's own rows: fields, values and date presets. They are
+       hand-rolled buttons rather than menu items, so they carry this slot
+       deliberately to opt into the same touch sizing. */
+    [data-slot='filter-panel-item'] {
+      min-height: 2.75rem !important;
+    }
+
+    /* The controls inside the filter panel's value step — the operator select,
+       its input and the buttons under them. They are sized for a pointer
+       (`size="sm"`, roughly 30px), which is below the touch minimum on the one
+       surface where a merchant is most likely to be on a phone. */
+    [data-slot='filter-panel-controls'] [data-slot='select-trigger'],
+    [data-slot='filter-panel-controls'] [data-slot='input'],
+    [data-slot='filter-panel-controls'] button {
       min-height: 2.75rem !important;
     }
   }

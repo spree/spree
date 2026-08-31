@@ -14,6 +14,8 @@ interface ColumnDefBase<T = any> {
   default?: boolean
   /** Ransack attribute name if different from key (e.g., 'master_sku' for 'sku') */
   ransackAttribute?: string
+  /** Send `ransackAttribute` as a Ransack scope: bare key, no operator suffix. */
+  ransackScope?: boolean
   /** Custom cell renderer. If omitted, renders `row[key]` as text. */
   render?: (row: T) => ReactNode
   /**
@@ -26,6 +28,20 @@ interface ColumnDefBase<T = any> {
   className?: string
   /** Whether this column is displayable in the table. Set to false for filter-only columns. */
   displayable?: boolean
+  /**
+   * Surface this column as a always-visible control in the toolbar, beside the
+   * search field, instead of only inside the filter popover.
+   *
+   * For the handful of filters an operator reaches for constantly — a status,
+   * a date range — the popover costs an open, an "Add filter", a field pick, a
+   * value pick and an Apply. A quick filter is the same `FilterRule` reached in
+   * one click, so it shares the URL state, the chips and the export with
+   * everything set the long way.
+   *
+   * Only `enum`/`boolean` (multi-select) and `date` (relative presets) render
+   * one; the flag is ignored on other filter types.
+   */
+  quickFilter?: boolean
 }
 
 /**

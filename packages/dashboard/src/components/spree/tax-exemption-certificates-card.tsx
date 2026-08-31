@@ -194,9 +194,10 @@ export function TaxExemptionCertificatesCard({
                     })}
                   />
                   {certificate.lapsed && certificate.status !== 'expired' && (
-                    <Badge variant="destructive">
-                      {t('admin.tax_exemption_certificates.lapsed')}
-                    </Badge>
+                    <StatusBadge
+                      status="expired"
+                      label={t('admin.tax_exemption_certificates.lapsed')}
+                    />
                   )}
                 </div>
                 <span className="text-muted-foreground text-xs">
@@ -297,7 +298,7 @@ export function TaxExemptionCertificatesCard({
                   )}
                   {canEdit && certificate.status !== 'revoked' && (
                     <DropdownMenuItem
-                      className="text-destructive focus:text-destructive"
+                      variant="destructive"
                       disabled={revokeMutation.isPending}
                       onClick={() => handleRevoke(certificate)}
                     >
@@ -307,7 +308,7 @@ export function TaxExemptionCertificatesCard({
                   )}
                   {canEdit && certificate.can_be_deleted && (
                     <DropdownMenuItem
-                      className="text-destructive focus:text-destructive"
+                      variant="destructive"
                       onClick={() => handleDelete(certificate)}
                     >
                       <TrashIcon className="size-4" />

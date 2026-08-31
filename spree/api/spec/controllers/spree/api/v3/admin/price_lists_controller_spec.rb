@@ -12,17 +12,13 @@ RSpec.describe Spree::Api::V3::Admin::PriceListsController, type: :controller do
   describe 'POST #create — one-shot creation' do
     let(:customer_group) { create(:customer_group, store: store) }
 
-    context 'admin UI shape (product_ids + rules)' do
-      let(:product1) { create(:product) }
-      let(:product2) { create(:product) }
-
-      it 'persists metadata, products, and rules in one request' do
+    context 'admin UI shape (rules)' do
+      it 'persists metadata and rules in one request' do
         post :create,
              params: {
                name: 'EU wholesale',
                description: 'B2B verified customers',
                match_policy: 'all',
-               product_ids: [product1.prefixed_id, product2.prefixed_id],
                rules: [
                  {
                    type: 'customer_group_rule',
@@ -36,7 +32,6 @@ RSpec.describe Spree::Api::V3::Admin::PriceListsController, type: :controller do
         expect(response).to have_http_status(:created)
         list = Spree::PriceList.for_store(store).find_by!(name: 'EU wholesale')
         expect(list.match_policy).to eq('all')
-        expect(list.products).to contain_exactly(product1, product2)
         expect(list.price_rules.length).to eq(2)
         cg_rule = list.price_rules.find { |r| r.is_a?(Spree::PriceRules::CustomerGroupRule) }
         volume_rule = list.price_rules.find { |r| r.is_a?(Spree::PriceRules::VolumeRule) }
@@ -48,10 +43,10 @@ RSpec.describe Spree::Api::V3::Admin::PriceListsController, type: :controller do
       end
     end
 
-    context 'server-to-server shape (rules + prices, no product_ids)' do
+    context 'server-to-server shape (rules + prices)' do
       # The natural API shape when the caller already knows per-variant
       # prices. Variants in `prices` implicitly become part of the list
-      # via the unique-key upsert — no separate `product_ids` round trip.
+      # via the unique-key upsert — no separate membership round trip.
       let(:product) { create(:product) }
       let(:variant_a) { product.default_variant }
       let(:variant_b) { create(:variant, product: product) }
@@ -97,16 +92,6 @@ RSpec.describe Spree::Api::V3::Admin::PriceListsController, type: :controller do
       let(:other_store) { create(:store) }
       let(:foreign_product) { create(:product, store: other_store) }
       let(:foreign_variant) { foreign_product.default_variant }
-
-      it 'ignores another store\'s product in product_ids' do
-        post :create,
-             params: { name: 'Sneaky list', match_policy: 'all', product_ids: [foreign_product.prefixed_id] },
-             as: :json
-
-        expect(response).to have_http_status(:created)
-        list = Spree::PriceList.for_store(store).find_by!(name: 'Sneaky list')
-        expect(list.products).to be_empty
-      end
 
       it 'ignores another store\'s variant in nested prices' do
         post :create,

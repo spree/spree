@@ -38,6 +38,13 @@ module Spree
         payment.number
       end
 
+      # Stable handle for a gateway to find its own payment back. The derived
+      # number cannot be queried (its column is NULL on 6.0 rows) and shifts
+      # if an earlier sibling is destroyed — nothing durable may key on it.
+      def payment_prefixed_id
+        payment.prefixed_id
+      end
+
       # Built on the prefixed ID, not the number: a derived number shifts if
       # an earlier sibling payment is destroyed, and a shifted idempotency
       # key could collide with one already used at the gateway.
@@ -77,6 +84,7 @@ module Spree
           :ip,
           :order_id,
           :payment_id,
+          :payment_prefixed_id,
           :idempotency_key,
           :shipping,
           :tax,

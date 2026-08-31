@@ -8,9 +8,12 @@ module Spree
       class CompanySerializer < BaseSerializer
         typelize name: :string,
                  kind: :string, parent_id: [:string, nullable: true],
+                 po_number_required: :boolean,
                  ancestors: 'Array<{id: string, name: string, kind: string}>'
 
-        attributes :name, :kind
+        # `po_number_required` is buyer-facing by design: the checkout marks
+        # the PO field required from it.
+        attributes :name, :kind, :po_number_required
 
         attribute :parent_id do |company|
           company.parent&.prefixed_id

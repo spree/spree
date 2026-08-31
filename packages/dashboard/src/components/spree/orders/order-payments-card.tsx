@@ -139,7 +139,7 @@ export function PaymentsCard({ order }: { order: Order }) {
                           payment.status === 'pending' ||
                           payment.status === 'completed') && (
                           <DropdownMenuItem
-                            className="text-destructive focus:text-destructive"
+                            variant="destructive"
                             onClick={async () => {
                               if (
                                 await confirm({

@@ -15,12 +15,22 @@ module Spree
         # written over the new one — see #persist.
         @checked = tax_identifier.slice(:kind, :value)
 
-        validator = Spree.tax_identifier_validators[tax_identifier.kind]
+        # Absent, or named by an entry that no longer loads — a gem dropped
+        # while a check was already queued. Both mean the same thing here as a
+        # deregistration does, and neither is a registry that failed to answer,
+        # so they must not be recorded as an outage.
+        validator_class = Spree.tax_identifier_validators[tax_identifier.kind].presence&.to_s&.safe_constantize
+        return persist(tax_identifier, unsupported_result) if validator_class.nil?
 
-        # Narrow race: the validator was deregistered between enqueue and run.
-        return persist(tax_identifier, unsupported_result) if validator.blank?
+        # Nothing should enqueue a check for a format-only validator, since
+        # TaxIdentifier#validatable? reports false for one. Belt and braces all
+        # the same: it must not surface as a job that crashes. A validator
+        # predating the predicate is assumed to ask, as it always did.
+        if validator_class.respond_to?(:checks_registry?) && !validator_class.checks_registry?
+          return persist(tax_identifier, unsupported_result)
+        end
 
-        result = validator.to_s.constantize.new.call(tax_identifier: tax_identifier)
+        result = validator_class.new.call(tax_identifier: tax_identifier)
         persist(tax_identifier, result)
       rescue StandardError => error
         # A number nobody could check is not a number known to be wrong, so it

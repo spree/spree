@@ -127,10 +127,7 @@
         "assigned": "تم تعيين الكتالوج",
         "created": "تم إنشاء الكتالوج",
         "deleted": "تم حذف الكتالوج",
-        "product_removed": "تمت إزالة المنتج",
-        "products_added": "تمت إضافة المنتجات",
         "products_imported": "تم استيراد المنتجات",
-        "products_removed": "تمت إزالة المنتجات",
         "unassigned": "تمت إزالة التعيين",
         "updated": "تم تحديث الكتالوج"
       },
@@ -140,19 +137,13 @@
         "empty": "لا توجد منتجات في هذا الكتالوج بعد.",
         "filter_placeholder": "تصفية المنتجات…",
         "no_matches": "لا توجد منتجات مطابقة للتصفية.",
+        "pending_added_badge": "جديد",
+        "pending_changes_hint": "تُطبَّق تغييرات قائمة المنتجات عند الحفظ.",
         "picker_description": "ابحث واختر منتجات لإضافتها إلى هذا الكتالوج.",
         "picker_title": "إضافة منتجات إلى الكتالوج",
         "remove": "إزالة من الكتالوج",
-        "remove_confirm": {
-          "message_few": "إزالة {{count}} منتجات من هذا الكتالوج؟ يسري ذلك فورًا. تبقى المنتجات في متجرك.",
-          "message_many": "إزالة {{count}} منتجًا من هذا الكتالوج؟ يسري ذلك فورًا. تبقى المنتجات في متجرك.",
-          "message_named": "إزالة \"{{name}}\" من هذا الكتالوج؟ يسري ذلك فورًا. يبقى المنتج في متجرك.",
-          "message_one": "إزالة منتج واحد من هذا الكتالوج؟ يسري ذلك فورًا. تبقى المنتجات في متجرك.",
-          "message_other": "إزالة {{count}} منتج من هذا الكتالوج؟ يسري ذلك فورًا. تبقى المنتجات في متجرك.",
-          "message_two": "إزالة منتجين من هذا الكتالوج؟ يسري ذلك فورًا. تبقى المنتجات في متجرك.",
-          "title": "إزالة من الكتالوج"
-        },
         "remove_selected": "إزالة",
+        "restore": "استعادة",
         "search_placeholder": "البحث في المنتجات…",
         "select_all": "تحديد الكل",
         "select_row": "تحديد المنتج",
@@ -203,16 +194,13 @@
         "empty": "لا توجد منتجات في هذه الفئة بعد.",
         "filter_placeholder": "تصفية المنتجات…",
         "no_matches": "لا توجد منتجات تطابق عامل التصفية.",
+        "pending_added_badge": "جديد",
+        "pending_changes_hint": "تُطبَّق تغييرات قائمة المنتجات عند الحفظ.",
         "picker_description": "ابحث وحدد المنتجات لإضافتها إلى هذه الفئة.",
         "picker_title": "إضافة منتجات إلى الفئة",
         "remove": "إزالة من الفئة",
-        "remove_confirm": {
-          "message_named": "إزالة «{{name}}» من هذه الفئة؟ يسري التغيير فورًا. سيبقى المنتج في الكتالوج.",
-          "message_one": "إزالة {{count}} منتج من هذه الفئة؟ يسري التغيير فورًا. ستبقى المنتجات في الكتالوج.",
-          "message_other": "إزالة {{count}} منتجات من هذه الفئة؟ يسري التغيير فورًا. ستبقى المنتجات في الكتالوج.",
-          "title": "إزالة من الفئة"
-        },
         "remove_selected": "إزالة",
+        "restore": "استعادة",
         "search_placeholder": "البحث عن المنتجات…",
         "select_all": "تحديد الكل",
         "select_row": "تحديد المنتج",
@@ -297,16 +285,13 @@
         "empty_automatic": "لا توجد منتجات مطابقة للقواعد بعد.",
         "filter_placeholder": "تصفية المنتجات…",
         "no_matches": "لا توجد منتجات مطابقة للتصفية.",
+        "pending_added_badge": "جديد",
+        "pending_changes_hint": "تُطبَّق تغييرات قائمة المنتجات عند الحفظ.",
         "picker_description": "ابحث واختر منتجات لإضافتها إلى هذه المجموعة.",
         "picker_title": "إضافة منتجات إلى المجموعة",
         "remove": "إزالة من المجموعة",
-        "remove_confirm": {
-          "message_named": "إزالة «{{name}}» من هذه المجموعة؟ يسري التغيير فورًا. سيبقى المنتج في الكتالوج.",
-          "message_one": "إزالة {{count}} منتج من هذه المجموعة؟ يسري التغيير فورًا. ستبقى المنتجات في الكتالوج.",
-          "message_other": "إزالة {{count}} منتجات من هذه المجموعة؟ يسري التغيير فورًا. ستبقى المنتجات في الكتالوج.",
-          "title": "إزالة من المجموعة"
-        },
         "remove_selected": "إزالة",
+        "restore": "استعادة",
         "search_placeholder": "ابحث عن منتجات…",
         "select_all": "تحديد الكل",
         "select_row": "تحديد المنتج",
@@ -389,6 +374,10 @@
     "companies": {
       "add_cta": "إضافة شركة",
       "add_sheet_title": "شركة جديدة",
+      "autocomplete": {
+        "empty": "لا توجد شركات مطابقة",
+        "placeholder": "البحث عن الشركات…"
+      },
       "create_description": "الشركة هي جذر شجرة المؤسسة. يمكنك إضافة الوحدات الفرعية والأعضاء والعناوين والتسجيلات الضريبية وشهادات الإعفاء بعد إنشائها.",
       "create_label": "إنشاء شركة",
       "delete_confirm": {
@@ -544,9 +533,11 @@
     "customers": {
       "autocomplete": {
         "empty": "لا يوجد عملاء مطابقون",
+        "empty_for_company": "لا يوجد عملاء يمكنهم الشراء لهذه الشركة",
         "placeholder": "البحث عن العملاء…"
       },
       "columns": {
+        "companies": "الشركات",
         "groups": "المجموعات",
         "last_order": "الطلب الأخير",
         "newsletter": "النشرة الإخبارية",
@@ -1070,6 +1061,10 @@
         "label": "الشركة",
         "name": {
           "placeholder": "Acme Industries"
+        },
+        "po_number_required": {
+          "help": "يجب على المشترين من هذه الشركة تقديم رقم أمر الشراء قبل إتمام الطلب.",
+          "label": "اشتراط رقم أمر الشراء"
         }
       },
       "company_location": {
@@ -1392,6 +1387,11 @@
         "order_group": {
           "label": "عملية الشراء",
           "view": "عرض عملية الشراء"
+        },
+        "po_number": {
+          "help": "المرجع الخاص بالمشتري لهذا الطلب.",
+          "label": "رقم أمر الشراء",
+          "placeholder": "PO-4471"
         },
         "seller": {
           "first_party": "تبيعه بنفسك",
@@ -2031,11 +2031,13 @@
       "tax_identifier": {
         "kind": {
           "help": "نوع هذا الرقم. يجب أن يطابق التحقق المُعد له، لذا فالكتابة الصحيحة مهمة.",
-          "label": "النوع"
+          "label": "النوع",
+          "required": "اختر نوع التسجيل أو اكتبه"
         },
         "value": {
           "label": "الرقم",
-          "placeholder": "DE123456789"
+          "placeholder": "DE123456789",
+          "required": "أدخل رقم التسجيل"
         }
       },
       "tax_rate": {
@@ -2399,6 +2401,7 @@
         "items": "أغراض",
         "number": "رقم",
         "payment": "قسط",
+        "po_number": "رقم أمر الشراء",
         "sku": "SKU",
         "tags": "Tags"
       },
@@ -2568,6 +2571,13 @@
           "number": "رقم",
           "state": "ولاية"
         },
+        "purchase_order": {
+          "document": "مستند أمر الشراء",
+          "document_help": "ملف PDF أو صورة أو Word، بحد أقصى 10 ميغابايت.",
+          "download_failed": "تعذر تنزيل أمر الشراء",
+          "save_failed": "تعذر حفظ أمر الشراء",
+          "title": "أمر الشراء"
+        },
         "section_customer_note": "Special Instructions",
         "section_internal_note": "Internal Note",
         "section_seller": "البائع",
@@ -2598,16 +2608,22 @@
         "action_label": "تعديل الطلب",
         "actions": {
           "add_product": "إضافة منتج",
+          "keep_negotiated_price": "الاحتفاظ بالسعر المتفاوض عليه لـ {{name}}",
+          "price_for": "سعر الوحدة لـ {{name}}",
           "quantity_for": "كمية {{name}}",
           "remove_item": "إزالة {{name}}",
+          "reset_price": "إعادة {{name}} إلى سعر الكتالوج",
           "restore_item": "الإبقاء على {{name}}"
         },
         "badges": {
           "fulfilled_count_one": "تم الوفاء بـ {{count}}",
           "fulfilled_count_other": "تم الوفاء بـ {{count}}",
+          "negotiated": "سعر متفاوض عليه",
           "pending": "غير محفوظ",
+          "price_reverting": "سيعود إلى سعر الكتالوج",
           "removed": "قيد الإزالة"
         },
+        "catalog_price_unknown": "سعر الكتالوج",
         "columns": {
           "line_total": "إجمالي السطر",
           "product": "المنتج",
@@ -2619,10 +2635,13 @@
         "subtitle": "الطلب {{number}}",
         "title": "تعديل الطلب",
         "totals_hint": "يُعيد الخادم احتساب الإجماليات بعد الحفظ.",
+        "totals_preview_confirm_hint": "يؤكده الخادم عند الحفظ.",
+        "totals_preview_hint": "يُعيد الخادم حساب الشحن والضرائب والعروض بعد الحفظ.",
         "totals_title": "الإجماليات",
         "validation": {
           "below_fulfilled_one": "لا يمكن النزول تحت {{count}} وحدة تم الوفاء بها",
-          "below_fulfilled_other": "لا يمكن النزول تحت {{count}} وحدات تم الوفاء بها"
+          "below_fulfilled_other": "لا يمكن النزول تحت {{count}} وحدات تم الوفاء بها",
+          "invalid_price": "يجب أن يكون السعر رقمًا غير سالب"
         }
       },
       "errors": {
@@ -2680,7 +2699,7 @@
       },
       "table": {
         "empty": "لم يتم العثور على أي أوامر",
-        "search_placeholder": "أوامر البحث…"
+        "search_placeholder": "البحث بالرقم أو أمر الشراء أو العميل…"
       }
     },
     "pages": {
@@ -2839,6 +2858,9 @@
               "resolve_refund": "الحل بالاسترداد",
               "resolve_replacement": "الحل بالاستبدال"
             },
+            "confirm": {
+              "deny": "هل تريد رفض هذه المطالبة؟ لن يحصل العميل على استرداد أو استبدال."
+            },
             "create_title": "مطالبة جديدة",
             "empty": "لا توجد مطالبات لهذا الطلب.",
             "refund_amount": "مبلغ الاسترداد",
@@ -2922,12 +2944,14 @@
         "drafts_title": "Draft Orders",
         "new": {
           "add_line_item": "إضافة بند",
+          "company_help": "اربط هذا الطلب بشركة. ستعرض قائمة العملاء عندئذ الأشخاص المخوّلين بالشراء لها فقط.",
           "search_variant": "متغير البحث…",
           "section_billing": "الفواتير",
           "section_customer": "العميل",
           "section_items": "أغراض",
           "section_notes": "ملحوظات",
           "section_summary": "ملخص",
+          "select_company": "الشركة (اختياري)",
           "select_customer": "اختر عميلًا",
           "title": "طلب جديد"
         }
@@ -3030,7 +3054,6 @@
             "title": "تفعيل قائمة الأسعار؟"
           },
           "add_cta": "قائمة الأسعار الجديدة",
-          "add_products_cta": "أضف المنتجات",
           "add_rule": "أضف القاعدة",
           "add_rule_help": "اختر نوع القاعدة لتكوينه.",
           "basics_section": "الأساسيات",
@@ -3081,16 +3104,27 @@
           },
           "edit_prices_cta": "تحرير الأسعار",
           "no_changes": "لا توجد تغييرات للحفظ.",
-          "prices_help_one": "{{count}} تم تكوين السعر. افتح المحرر المجمع لتحديثه.",
-          "prices_help_other": "{{count}} الأسعار مضبوطة. افتح المحرر المجمع لتحديثها.",
-          "prices_help_zero": "اختر المنتجات أعلاه لتحديد أسعار العناصر النائبة، ثم افتح المحرر المجمع.",
-          "products_empty": "لا توجد منتجات حتى الآن — أضف منتجًا لبدء تعديل الأسعار.",
-          "products_empty_search": "لا توجد منتجات متطابقة",
-          "products_help": "اختر المنتجات التي تنطبق عليها هذه القائمة. يتم إنشاء أسعار العناصر النائبة عند الحفظ - املأها أدناه.",
-          "products_search_placeholder": "البحث عن المنتجات بالاسم…",
-          "products_section": "منتجات",
-          "products_selected_one": "{{count}} المنتج المحدد.",
-          "products_selected_other": "{{count}} منتجات المختارة.",
+          "products": {
+            "add_cta": "إضافة منتجات",
+            "column_product": "المنتج",
+            "empty": "لا توجد منتجات بعد — أضف منتجًا لبدء تعديل الأسعار.",
+            "filter_placeholder": "تصفية المنتجات…",
+            "no_matches": "لا توجد منتجات مطابقة لعامل التصفية.",
+            "pending_added_badge": "جديد",
+            "pending_changes_hint": "تُطبَّق تغييرات قائمة المنتجات عند الحفظ.",
+            "picker_description": "ابحث واختر المنتجات لإضافتها إلى قائمة الأسعار هذه.",
+            "picker_title": "إضافة منتجات إلى قائمة الأسعار",
+            "remove": "إزالة من قائمة الأسعار",
+            "remove_selected": "إزالة",
+            "restore": "استعادة",
+            "search_placeholder": "البحث عن منتجات…",
+            "select_all": "تحديد الكل",
+            "select_row": "تحديد المنتج",
+            "title": "المنتجات"
+          },
+          "products_help": "اختر المنتجات التي تنطبق عليها هذه القائمة. تُنشأ أسعار مؤقتة عند الحفظ — املأها عبر «تعديل الأسعار».",
+          "products_help_with_prices_one": "اختر المنتجات التي تنطبق عليها هذه القائمة. تم ضبط سعر واحد ({{count}}) — استخدم «تعديل الأسعار» لتحديثه.",
+          "products_help_with_prices_other": "اختر المنتجات التي تنطبق عليها هذه القائمة. تم ضبط {{count}} سعر — استخدم «تعديل الأسعار» لتحديثها.",
           "remove_rule_confirm": {
             "message": "تتم إزالة القاعدة عند حفظ قائمة الأسعار.",
             "title": "هل تريد إزالة القاعدة؟"
@@ -4760,7 +4794,7 @@
         "validation_failed": "تعذر التحقق من الرقم",
         "validation_requested": "جارٍ التحقق من الرقم لدى السجل"
       },
-      "not_validatable": "لا يوجد تحقق مُعد لهذا النوع، لذا يُستخدم الرقم كما أُدخل.",
+      "not_validatable": "لا يوجد سجل للتحقق من هذا النوع، لذا يُسجَّل الرقم كما أُدخل.",
       "select_kind": "اختر النوع",
       "title": "الرقم الضريبي",
       "validate_action": "التحقق لدى السجل",

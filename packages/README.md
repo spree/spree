@@ -7,7 +7,7 @@ For monorepo-wide conventions (type generation pipeline, code style, testing) se
 ## Status legend
 
 | Badge | Meaning |
-|---|---|
+| --- | --- |
 | **Stable** | Published to npm, follows semver, safe for production. |
 | **Developer Preview** | Published to npm but API may change between minor versions. Pin exact versions. |
 | **In Development** | Active work for an upcoming Spree release. Not yet published or only published behind a `next` dist-tag. |
@@ -16,7 +16,7 @@ For monorepo-wide conventions (type generation pipeline, code style, testing) se
 ## Packages
 
 | Package | npm | Status | Description |
-|---|---|---|---|
+| --- | --- | --- | --- |
 | [`sdk`](./sdk) | [`@spree/sdk`](https://www.npmjs.com/package/@spree/sdk) | **Stable** (1.x) | TypeScript client for the customer-facing **Store API v3**. |
 | [`admin-sdk`](./admin-sdk) | [`@spree/admin-sdk`](https://www.npmjs.com/package/@spree/admin-sdk) | **Developer Preview** (0.x) | TypeScript client for the **Admin API v3** (Spree 5.5+). Published under the `next` dist-tag. |
 | [`dashboard`](./dashboard) | `@spree/dashboard` (not yet published) | **In Development** | React SPA admin dashboard for Spree 6.0. Will replace the legacy Rails `spree/admin` engine. Currently private in the workspace; will be published as `@spree/dashboard` once ready. |

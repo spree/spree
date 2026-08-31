@@ -80,15 +80,77 @@ describe 'catalog-aware pricing' do
     expect(Spree::Pricing::Resolver.new(context).resolve.amount).to eq(95)
   end
 
-  # An inactive catalog is off: it must neither price its audience nor keep
-  # claiming its list away from the generic rule matcher — a rule-less list
-  # that worked before the catalog draft existed has to keep working.
-  it 'releases a price list back to rule matching while its catalog is inactive' do
+  # An inactive catalog is off, and its owned list goes dormant WITH it: the
+  # old derived exclusion set read active catalogs only, so deactivating a
+  # catalog dropped its typically rule-less list into generic matching and
+  # priced the whole store (docs/plans/6.0-catalog-agreement-rework.md).
+  # Releasing the list is an explicit detach, never a side effect.
+  it 'keeps an inactive catalog price list dormant until explicitly detached' do
     price_list = price_list_with_price(80)
     catalog = create(:catalog, store: store, price_list: price_list, active: false)
     create(:catalog_assignment, catalog: catalog, assignable: company)
 
-    expect(resolve(company: company).amount).to eq(80)
+    expect(resolve(company: company).amount).to eq(100)
+    expect(resolve.amount).to eq(100)
+
+    price_list.update!(catalog: nil)
+
     expect(resolve.amount).to eq(80)
+  end
+
+  # Detaching through the catalog writes the list's FK directly, skipping
+  # PriceList's own callbacks — the request-scoped matching set has to be
+  # cleared anyway, or the released list stays invisible until the next
+  # request.
+  it 'sees a detach made through the catalog within the same request' do
+    price_list = price_list_with_price(80)
+    catalog = create(:catalog, store: store, price_list: price_list)
+
+    Spree::Current.store = store
+    expect(resolve.amount).to eq(100)
+
+    catalog.update!(price_list: nil)
+
+    expect(resolve.amount).to eq(80)
+  end
+
+  # Product listings build one Pricing::Context per variant. The catalogs
+  # that apply to this buyer are request scoped, so later rows must not
+  # query catalogs again.
+  it 'loads applicable catalogs once across many variant resolutions' do
+    catalog = create(:catalog, store: store, price_list: price_list_with_price(80))
+    create(:catalog_assignment, catalog: catalog, assignable: company)
+    variants = create_list(:variant, 3)
+
+    catalog_query_count = lambda do |&block|
+      queries = 0
+      counter = lambda do |*, payload|
+        next if payload[:name].to_s.match?(/SCHEMA|TRANSACTION/)
+
+        queries += 1 if payload[:sql].include?('spree_catalogs')
+      end
+      ActiveSupport::Notifications.subscribed(counter, 'sql.active_record', &block)
+      queries
+    end
+
+    price_variants = lambda do |records|
+      records.each do |priced_variant|
+        Spree::Pricing::PriceResolution.call(
+          Spree::Pricing::Context.new(
+            variant: priced_variant, currency: 'USD', store: store, company: company
+          )
+        )
+      end
+    end
+
+    Spree::Current.store = store
+    single = catalog_query_count.call { price_variants.call(variants.take(1)) }
+
+    Spree::Current.reset
+    Spree::Current.store = store
+    batched = catalog_query_count.call { price_variants.call(variants) }
+
+    expect(batched).to eq(single)
+    expect(single).to be > 0
   end
 end

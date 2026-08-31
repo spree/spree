@@ -35,4 +35,15 @@ describe Spree::ReturnMailer, type: :mailer do
   it 'accepts an id as well as a record' do
     expect(described_class.refunded_email(return_record.id).to).to eq([order.email])
   end
+
+  # Every order-facing document renders the buyer's reference when present —
+  # and both parts of it, not just the HTML one.
+  context 'when the order carries a purchase order number' do
+    before { order.update!(po_number: 'PO-4471') }
+
+    it 'renders it in both parts' do
+      expect(message.html_part.body.to_s).to include('PO-4471')
+      expect(message.text_part.body.to_s).to include('PO-4471')
+    end
+  end
 end

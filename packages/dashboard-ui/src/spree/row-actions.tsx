@@ -73,7 +73,7 @@ export function RowActions({ actions }: RowActionsProps) {
             key={action.key}
             onClick={action.onSelect}
             disabled={action.disabled}
-            className={action.destructive ? 'text-destructive focus:text-destructive' : undefined}
+            variant={action.destructive ? 'destructive' : undefined}
           >
             {action.icon ?? BUILTIN_ICONS[action.key]}
             {action.label ?? t(`admin.row_actions.${action.key}`)}

@@ -1,4 +1,4 @@
-import { progressPercentage } from '@spree/dashboard-core'
+import { PageHeader, progressPercentage } from '@spree/dashboard-core'
 import {
   Button,
   Card,
@@ -54,10 +54,7 @@ export function HomePage() {
 
   return (
     <div className="flex flex-col gap-6">
-      <div>
-        <h1 className="font-medium text-2xl">{t('home.title', { name: profile.name })}</h1>
-        <p className="text-muted-foreground text-sm">{t('home.subtitle')}</p>
-      </div>
+      <PageHeader title={t('home.title', { name: profile.name })} subtitle={t('home.subtitle')} />
 
       {/* Setup leads while it is unfinished — until a seller is approved it is
           the only thing on this page that matters. It drops away once done

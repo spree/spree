@@ -2,6 +2,7 @@ import type { Category } from '@spree/admin-sdk'
 import { customFieldFormSchema } from '@spree/dashboard-core'
 import { requiredMessage } from '@spree/dashboard-ui'
 import { z } from 'zod/v4'
+import type { ProductMembershipStagingValue } from '../components/spree/product-membership-staging'
 
 // Each image field is a small state machine: untouched (omit on save),
 // uploaded (send signed_id), or cleared (send null to purge). `*_signed_id`
@@ -18,6 +19,15 @@ const imageFields = {
 }
 
 export const categoryFormSchema = z.object({
+  /**
+   * Staged product membership, applied on Save through the nested products
+   * endpoints. Deliberately opaque: it holds SDK `Product` records so a
+   * staged addition can render before it exists server-side, and RHF's
+   * `Path<T>` must not walk that object graph (see the note on
+   * `RuleEmbedRecord` in schemas/price-list.ts). Never sent to the API —
+   * `categoryToParams` drops it.
+   */
+  staged_products: z.custom<ProductMembershipStagingValue>(() => true),
   name: z.string().min(1, { error: requiredMessage('name') }),
   /** Prefixed parent category id; null = top-level category. */
   parent_id: z.string().nullable(),
@@ -44,6 +54,7 @@ const IMAGE_DEFAULTS = {
 } satisfies Partial<CategoryFormValues>
 
 export const CATEGORY_DEFAULTS: CategoryFormValues = {
+  staged_products: { adds: [], removes: [] },
   name: '',
   parent_id: null,
   description: '',
@@ -69,6 +80,9 @@ export function categoryToForm(category: Category): CategoryFormValues {
         custom_field_definition_id: cf.custom_field_definition_id,
         value: cf.value,
       })) ?? [],
+    // Membership starts unstaged on every hydrate — a reset re-baselines the
+    // form, and anything staged has either been flushed or discarded.
+    staged_products: { adds: [], removes: [] },
     ...IMAGE_DEFAULTS,
   }
 }

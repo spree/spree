@@ -62,12 +62,6 @@ RSpec.describe 'Admin Price Lists API', type: :request, swagger_doc: 'api-refere
           ends_at: { type: :string, nullable: true, example: '2026-09-01T00:00:00Z' },
           match_policy: { type: :string, enum: %w[all any], example: 'all' },
           position: { type: :integer, example: 1 },
-          product_ids: {
-            type: :array,
-            items: { type: :string },
-            description: 'Prefixed product ids to seed the list with.',
-            example: ['prod_aBc123']
-          },
           rules: {
             type: :array,
             description: 'STI-typed price rules to attach on create. Existing rules ' \
@@ -83,12 +77,12 @@ RSpec.describe 'Admin Price Lists API', type: :request, swagger_doc: 'api-refere
           },
           prices: {
             type: :array,
-            description: 'Server-to-server alternative to `product_ids`: ship the ' \
-                         'exact per-variant prices the list should contain. Each row ' \
-                         'upserts on the unique key `(variant_id, currency, price_list_id)`. ' \
-                         'Mix-and-match with `product_ids` is supported but typically ' \
-                         'unnecessary — `prices` alone tells the server which variants ' \
-                         'belong to the list and what the override amount is.',
+            description: 'Server-to-server shape: ship the exact per-variant prices ' \
+                         'the list should contain. Each row upserts on the unique key ' \
+                         '`(variant_id, currency, price_list_id)` — `prices` alone tells ' \
+                         'the server which variants belong to the list and what the ' \
+                         'override amount is. Curating whole products goes through the ' \
+                         'nested `/price_lists/{id}/products` surface instead.',
             items: {
               type: :object,
               required: %w[variant_id currency],
@@ -103,10 +97,8 @@ RSpec.describe 'Admin Price Lists API', type: :request, swagger_doc: 'api-refere
         }
       }
 
-      response '201', 'price list created (one-shot — metadata, schedule, products, rules)' do
+      response '201', 'price list created (one-shot — metadata, schedule, rules)' do
         let(:'x-spree-api-key') { secret_api_key.plaintext_token }
-        let(:product1) { create(:product) }
-        let(:product2) { create(:product) }
         let(:customer_group) { create(:customer_group, store: store) }
         let(:body) do
           {
@@ -115,7 +107,6 @@ RSpec.describe 'Admin Price Lists API', type: :request, swagger_doc: 'api-refere
             match_policy: 'all',
             starts_at: '2026-06-01T00:00:00Z',
             ends_at: '2026-09-01T00:00:00Z',
-            product_ids: [product1.prefixed_id, product2.prefixed_id],
             rules: [
               {
                 type: 'customer_group_rule',
@@ -137,7 +128,6 @@ RSpec.describe 'Admin Price Lists API', type: :request, swagger_doc: 'api-refere
           expect(list.name).to eq('EU wholesale')
           expect(list.match_policy).to eq('all')
           expect(list.status).to eq('draft')
-          expect(list.products).to contain_exactly(product1, product2)
           expect(list.price_rules.length).to eq(2)
           cg_rule = list.price_rules.find { |r| r.is_a?(Spree::PriceRules::CustomerGroupRule) }
           volume_rule = list.price_rules.find { |r| r.is_a?(Spree::PriceRules::VolumeRule) }
@@ -149,10 +139,10 @@ RSpec.describe 'Admin Price Lists API', type: :request, swagger_doc: 'api-refere
         end
       end
 
-      response '201', 'price list created (server-to-server — rules + prices, no product_ids)' do
+      response '201', 'price list created (server-to-server — rules + prices)' do
         # The natural API shape when you already know the exact per-variant
-        # prices: skip `product_ids` and ship `prices` directly. Variants
-        # referenced in `prices` implicitly become part of the list.
+        # prices: ship `prices` directly. Variants referenced in `prices`
+        # implicitly become part of the list.
         let(:'x-spree-api-key') { secret_api_key.plaintext_token }
         let(:product) { create(:product) }
         let(:variant_a) { product.default_variant }
@@ -272,12 +262,6 @@ RSpec.describe 'Admin Price Lists API', type: :request, swagger_doc: 'api-refere
           ends_at: { type: :string, nullable: true },
           match_policy: { type: :string, enum: %w[all any] },
           position: { type: :integer },
-          product_ids: {
-            type: :array,
-            items: { type: :string },
-            description: 'Prefixed product ids — reconciles list membership (adds + removes).',
-            example: ['prod_aBc123']
-          },
           rules: {
             type: :array,
             items: {
@@ -323,29 +307,6 @@ RSpec.describe 'Admin Price Lists API', type: :request, swagger_doc: 'api-refere
         run_test! do |response|
           data = JSON.parse(response.body)
           expect(data['name']).to eq('Wholesale (Q3)')
-        end
-      end
-
-      response '200', 'price list membership reconciles via product_ids' do
-        let(:'x-spree-api-key') { secret_api_key.plaintext_token }
-        let(:id) { price_list.prefixed_id }
-        let(:kept_product) { create(:product) }
-        let(:removed_product) { create(:product) }
-        let(:added_product) { create(:product) }
-        let(:body) { { product_ids: [kept_product.prefixed_id, added_product.prefixed_id] } }
-
-        before do
-          # Seed the list with kept + removed; PATCH should drop `removed`
-          # and pick up `added` in a single round-trip.
-          price_list.add_products([kept_product.id, removed_product.id])
-        end
-
-        schema '$ref' => '#/components/schemas/PriceList'
-
-        run_test! do
-          products = price_list.reload.products
-          expect(products).to include(kept_product, added_product)
-          expect(products).not_to include(removed_product)
         end
       end
 
@@ -479,6 +440,89 @@ RSpec.describe 'Admin Price Lists API', type: :request, swagger_doc: 'api-refere
         run_test! do |response|
           data = JSON.parse(response.body)
           expect(data['status']).to eq('inactive')
+        end
+      end
+    end
+  end
+
+  path '/api/v3/admin/price_lists/{price_list_id}/products' do
+    get 'List price list products' do
+      tags 'Price Lists'
+      produces 'application/json'
+      security [api_key: [], bearer_auth: []]
+      description 'The products the list prices, listed by name — membership is derived from the price rows.'
+      admin_scope :read, :products
+
+      parameter name: 'x-spree-api-key', in: :header, type: :string, required: true
+      parameter name: :Authorization, in: :header, type: :string, required: true
+      parameter name: :price_list_id, in: :path, type: :string, required: true
+
+      response '200', 'products found' do
+        let(:'x-spree-api-key') { secret_api_key.plaintext_token }
+        let(:price_list_id) { price_list.prefixed_id }
+
+        schema SwaggerSchemaHelpers.paginated('Product')
+
+        run_test!
+      end
+    end
+
+    post 'Add products to a price list' do
+      tags 'Price Lists'
+      consumes 'application/json'
+      produces 'application/json'
+      security [api_key: [], bearer_auth: []]
+      description 'Adds products to the list in bulk, materializing a placeholder price per variant and store currency. Already-present products are skipped.'
+      admin_scope :write, :products
+
+      parameter name: 'x-spree-api-key', in: :header, type: :string, required: true
+      parameter name: :Authorization, in: :header, type: :string, required: true
+      parameter name: :price_list_id, in: :path, type: :string, required: true
+      parameter name: :body, in: :body, schema: {
+        type: :object,
+        properties: { product_ids: { type: :array, items: { type: :string }, example: ['prod_abc123'] } },
+        required: %w[product_ids]
+      }
+
+      response '201', 'products added' do
+        let!(:product) { create(:product, store: store) }
+        let(:'x-spree-api-key') { secret_api_key.plaintext_token }
+        let(:price_list_id) { price_list.prefixed_id }
+        let(:body) { { product_ids: [product.prefixed_id] } }
+
+        run_test! do |response|
+          expect(JSON.parse(response.body)['added_count']).to eq(1)
+        end
+      end
+    end
+
+    delete 'Remove products from a price list' do
+      tags 'Price Lists'
+      consumes 'application/json'
+      produces 'application/json'
+      security [api_key: [], bearer_auth: []]
+      description 'Removes products from the list in bulk, hard-deleting their price rows. Ids that are not members are ignored.'
+      admin_scope :write, :products
+
+      parameter name: 'x-spree-api-key', in: :header, type: :string, required: true
+      parameter name: :Authorization, in: :header, type: :string, required: true
+      parameter name: :price_list_id, in: :path, type: :string, required: true
+      parameter name: :body, in: :body, schema: {
+        type: :object,
+        properties: { product_ids: { type: :array, items: { type: :string }, example: ['prod_abc123'] } },
+        required: %w[product_ids]
+      }
+
+      response '200', 'products removed' do
+        let!(:product) { create(:product, store: store) }
+        let(:'x-spree-api-key') { secret_api_key.plaintext_token }
+        let(:price_list_id) { price_list.prefixed_id }
+        let(:body) { { product_ids: [product.prefixed_id] } }
+
+        before { price_list.add_products([product.id]) }
+
+        run_test! do |response|
+          expect(JSON.parse(response.body)['removed_count']).to eq(1)
         end
       end
     end

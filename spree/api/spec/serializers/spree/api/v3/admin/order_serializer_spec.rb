@@ -46,4 +46,22 @@ RSpec.describe Spree::Api::V3::Admin::OrderSerializer do
       expect(subject['customer']['email']).to eq('buyer@example.com')
     end
   end
+
+  # Regression: these three point at staff, and rendering them through the
+  # customer serializer raised on the first customer-only attribute (phone)
+  # as soon as the association was populated — which created_by now always is
+  # on staff-created drafts.
+  describe 'staff actors' do
+    let(:admin) { create(:admin_user, email: 'staff@example.com') }
+    let(:order) { create(:order, store: store, created_by: admin, approver: admin, canceler: admin) }
+    let(:base_params) { { store: store, currency: store.default_currency, expand: %w[created_by approver canceler] } }
+
+    it 'embeds them through the admin user serializer' do
+      %w[created_by approver canceler].each do |actor|
+        expect(subject[actor]['id']).to eq(admin.prefixed_id)
+        expect(subject[actor]['email']).to eq('staff@example.com')
+        expect(subject[actor]).not_to have_key('phone')
+      end
+    end
+  end
 end

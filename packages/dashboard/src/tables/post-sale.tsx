@@ -1,28 +1,9 @@
 import type { Claim, Exchange, Return } from '@spree/admin-sdk'
 import { defineTable } from '@spree/dashboard-core'
-import { Badge, RelativeTime } from '@spree/dashboard-ui'
+import { RelativeTime, StatusBadge } from '@spree/dashboard-ui'
 import { Link } from '@tanstack/react-router'
 import i18n from 'i18next'
 import { RepeatIcon, RotateCcwIcon, ShieldAlertIcon } from 'lucide-react'
-
-/**
- * Status colours read the same way across all three: amber while the merchant
- * still owes an action, green once settled, muted when it went nowhere.
- */
-const STATUS_VARIANT: Record<
-  string,
-  'success' | 'destructive' | 'secondary' | 'default' | 'outline'
-> = {
-  requested: 'default',
-  open: 'default',
-  approved: 'default',
-  received: 'default',
-  refunded: 'success',
-  fulfilled: 'success',
-  resolved: 'success',
-  denied: 'destructive',
-  canceled: 'secondary',
-}
 
 /**
  * The record's own number, linking to the order it belongs to — that page is
@@ -57,11 +38,10 @@ function statusColumn(values: string[]) {
     filterable: true,
     filterType: 'enum' as const,
     filterOptions: values.map((value) => ({ value, label: statusLabel(value) })),
+    quickFilter: true,
     default: true,
     render: (record: { status: string }) => (
-      <Badge variant={STATUS_VARIANT[record.status] ?? 'secondary'}>
-        {statusLabel(record.status)}
-      </Badge>
+      <StatusBadge status={record.status} label={statusLabel(record.status)} />
     ),
   }
 }

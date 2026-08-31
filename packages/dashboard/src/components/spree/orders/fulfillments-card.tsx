@@ -491,7 +491,7 @@ function FulfillmentRow({ order, fulfillment }: { order: Order; fulfillment: Ful
               <>
                 <DropdownMenuSeparator />
                 <DropdownMenuItem
-                  className="text-destructive focus:text-destructive"
+                  variant="destructive"
                   onClick={async () => {
                     if (
                       await confirm({

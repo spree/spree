@@ -127,10 +127,7 @@
         "assigned": "Katalog zugewiesen",
         "created": "Katalog erstellt",
         "deleted": "Katalog gelöscht",
-        "product_removed": "Produkt entfernt",
-        "products_added": "Produkte hinzugefügt",
         "products_imported": "Produkte importiert",
-        "products_removed": "Produkte entfernt",
         "unassigned": "Zuweisung entfernt",
         "updated": "Katalog aktualisiert"
       },
@@ -140,16 +137,13 @@
         "empty": "Noch keine Produkte in diesem Katalog.",
         "filter_placeholder": "Produkte filtern…",
         "no_matches": "Keine Produkte entsprechen Ihrem Filter.",
+        "pending_added_badge": "Neu",
+        "pending_changes_hint": "Änderungen an der Produktliste werden beim Speichern übernommen.",
         "picker_description": "Produkte suchen und auswählen, um sie diesem Katalog hinzuzufügen.",
         "picker_title": "Produkte zum Katalog hinzufügen",
         "remove": "Aus Katalog entfernen",
-        "remove_confirm": {
-          "message_named": "\"{{name}}\" aus diesem Katalog entfernen? Dies gilt sofort. Das Produkt bleibt in Ihrem Shop.",
-          "message_one": "{{count}} Produkt aus diesem Katalog entfernen? Dies gilt sofort. Die Produkte bleiben in Ihrem Shop.",
-          "message_other": "{{count}} Produkte aus diesem Katalog entfernen? Dies gilt sofort. Die Produkte bleiben in Ihrem Shop.",
-          "title": "Aus Katalog entfernen"
-        },
         "remove_selected": "Entfernen",
+        "restore": "Wiederherstellen",
         "search_placeholder": "Produkte suchen…",
         "select_all": "Alle auswählen",
         "select_row": "Produkt auswählen",
@@ -200,16 +194,13 @@
         "empty": "Noch keine Produkte in dieser Kategorie.",
         "filter_placeholder": "Produkte filtern…",
         "no_matches": "Keine Produkte entsprechen dem Filter.",
+        "pending_added_badge": "Neu",
+        "pending_changes_hint": "Änderungen an der Produktliste werden beim Speichern übernommen.",
         "picker_description": "Suchen und wählen Sie Produkte für diese Kategorie aus.",
         "picker_title": "Produkte zur Kategorie hinzufügen",
         "remove": "Aus Kategorie entfernen",
-        "remove_confirm": {
-          "message_named": "„{{name}}“ aus dieser Kategorie entfernen? Die Änderung wird sofort wirksam. Das Produkt bleibt im Katalog.",
-          "message_one": "{{count}} Produkt aus dieser Kategorie entfernen? Die Änderung wird sofort wirksam. Die Produkte bleiben im Katalog.",
-          "message_other": "{{count}} Produkte aus dieser Kategorie entfernen? Die Änderung wird sofort wirksam. Die Produkte bleiben im Katalog.",
-          "title": "Aus Kategorie entfernen"
-        },
         "remove_selected": "Entfernen",
+        "restore": "Wiederherstellen",
         "search_placeholder": "Produkte suchen…",
         "select_all": "Alle auswählen",
         "select_row": "Produkt auswählen",
@@ -294,16 +285,13 @@
         "empty_automatic": "Noch keine Produkte erfüllen die Regeln.",
         "filter_placeholder": "Produkte filtern…",
         "no_matches": "Keine Produkte entsprechen dem Filter.",
+        "pending_added_badge": "Neu",
+        "pending_changes_hint": "Änderungen an der Produktliste werden beim Speichern übernommen.",
         "picker_description": "Produkte suchen und zu dieser Kollektion hinzufügen.",
         "picker_title": "Produkte zur Kollektion hinzufügen",
         "remove": "Aus Kollektion entfernen",
-        "remove_confirm": {
-          "message_named": "„{{name}}“ aus dieser Kollektion entfernen? Die Änderung wird sofort wirksam. Das Produkt bleibt im Katalog.",
-          "message_one": "{{count}} Produkt aus dieser Kollektion entfernen? Die Änderung wird sofort wirksam. Die Produkte bleiben im Katalog.",
-          "message_other": "{{count}} Produkte aus dieser Kollektion entfernen? Die Änderung wird sofort wirksam. Die Produkte bleiben im Katalog.",
-          "title": "Aus Kollektion entfernen"
-        },
         "remove_selected": "Entfernen",
+        "restore": "Wiederherstellen",
         "search_placeholder": "Produkte suchen…",
         "select_all": "Alle auswählen",
         "select_row": "Produkt auswählen",
@@ -386,6 +374,10 @@
     "companies": {
       "add_cta": "Unternehmen hinzufügen",
       "add_sheet_title": "Neues Unternehmen",
+      "autocomplete": {
+        "empty": "Keine passenden Firmen",
+        "placeholder": "Firmen suchen…"
+      },
       "create_description": "Ein Unternehmen ist die Wurzel eines Organisationsbaums. Untereinheiten, Mitglieder, Adressen, Steuerregistrierung und Befreiungsnachweise fügen Sie danach hinzu.",
       "create_label": "Unternehmen erstellen",
       "delete_confirm": {
@@ -538,9 +530,11 @@
     "customers": {
       "autocomplete": {
         "empty": "Keine passenden Kunden",
+        "empty_for_company": "Keine Kunden können für diese Firma einkaufen",
         "placeholder": "Kunden suchen…"
       },
       "columns": {
+        "companies": "Firmen",
         "groups": "Gruppen",
         "last_order": "Letzte Bestellung",
         "newsletter": "Newsletter",
@@ -1053,6 +1047,10 @@
         "label": "Unternehmen",
         "name": {
           "placeholder": "Acme Industries"
+        },
+        "po_number_required": {
+          "help": "Käufer dieses Unternehmens müssen vor dem Bezahlvorgang ihre Bestellnummer angeben.",
+          "label": "Bestellnummer verlangen"
         }
       },
       "company_location": {
@@ -1375,6 +1373,11 @@
         "order_group": {
           "label": "Einkauf",
           "view": "Einkauf anzeigen"
+        },
+        "po_number": {
+          "help": "Die eigene Referenz des Käufers für diese Bestellung.",
+          "label": "Bestellnummer des Kunden",
+          "placeholder": "PO-4471"
         },
         "seller": {
           "first_party": "Eigener Verkauf",
@@ -2014,11 +2017,13 @@
       "tax_identifier": {
         "kind": {
           "help": "Um welche Nummer es sich handelt. Sie muss zur eingerichteten Prüfung passen, die Schreibweise ist also wichtig.",
-          "label": "Art"
+          "label": "Art",
+          "required": "Registrierungsart wählen oder eingeben"
         },
         "value": {
           "label": "Nummer",
-          "placeholder": "DE123456789"
+          "placeholder": "DE123456789",
+          "required": "Registrierungsnummer eingeben"
         }
       },
       "tax_rate": {
@@ -2382,6 +2387,7 @@
         "items": "Artikel",
         "number": "Nummer",
         "payment": "Zahlung",
+        "po_number": "Bestellnummer",
         "sku": "SKU",
         "tags": "Tags"
       },
@@ -2552,6 +2558,13 @@
           "number": "Nummer",
           "state": "Status"
         },
+        "purchase_order": {
+          "document": "Bestelldokument",
+          "document_help": "PDF-, Bild- oder Word-Datei, bis zu 10 MB.",
+          "download_failed": "Die Bestellung konnte nicht heruntergeladen werden",
+          "save_failed": "Die Bestellung konnte nicht gespeichert werden",
+          "title": "Bestellung des Kunden"
+        },
         "section_customer_note": "Besondere Anweisungen",
         "section_internal_note": "Interne Notiz",
         "section_seller": "Verkäufer",
@@ -2582,16 +2595,22 @@
         "action_label": "Bestellung bearbeiten",
         "actions": {
           "add_product": "Produkt hinzufügen",
+          "keep_negotiated_price": "Verhandelten Preis für {{name}} behalten",
+          "price_for": "Stückpreis für {{name}}",
           "quantity_for": "Menge von {{name}}",
           "remove_item": "{{name}} entfernen",
+          "reset_price": "{{name}} auf Katalogpreis zurücksetzen",
           "restore_item": "{{name}} behalten"
         },
         "badges": {
           "fulfilled_count_one": "{{count}} abgewickelt",
           "fulfilled_count_other": "{{count}} abgewickelt",
+          "negotiated": "Verhandelt",
           "pending": "Nicht gespeichert",
+          "price_reverting": "Wird auf Katalogpreis zurückgesetzt",
           "removed": "Wird entfernt"
         },
+        "catalog_price_unknown": "Katalogpreis",
         "columns": {
           "line_total": "Positionssumme",
           "product": "Produkt",
@@ -2603,10 +2622,13 @@
         "subtitle": "Bestellung {{number}}",
         "title": "Bestellung bearbeiten",
         "totals_hint": "Die Summen werden nach dem Speichern vom Server neu berechnet.",
+        "totals_preview_confirm_hint": "Wird beim Speichern vom Server bestätigt.",
+        "totals_preview_hint": "Versand, Steuern und Aktionen werden nach dem Speichern vom Server neu berechnet.",
         "totals_title": "Summen",
         "validation": {
           "below_fulfilled_one": "Darf {{count}} abgewickelte Einheit nicht unterschreiten",
-          "below_fulfilled_other": "Darf {{count}} abgewickelte Einheiten nicht unterschreiten"
+          "below_fulfilled_other": "Darf {{count}} abgewickelte Einheiten nicht unterschreiten",
+          "invalid_price": "Der Preis muss eine nicht negative Zahl sein"
         }
       },
       "errors": {
@@ -2664,7 +2686,7 @@
       },
       "table": {
         "empty": "Keine Bestellungen gefunden",
-        "search_placeholder": "Bestellungen suchen…"
+        "search_placeholder": "Nach Nummer, Bestellnummer oder Kunde suchen…"
       }
     },
     "pages": {
@@ -2823,6 +2845,9 @@
               "resolve_refund": "Mit Erstattung lösen",
               "resolve_replacement": "Mit Ersatz lösen"
             },
+            "confirm": {
+              "deny": "Diese Reklamation ablehnen? Die Kundin oder der Kunde erhält weder eine Rückerstattung noch Ersatz."
+            },
             "create_title": "Neue Reklamation",
             "empty": "Keine Reklamationen für diese Bestellung.",
             "refund_amount": "Erstattungsbetrag",
@@ -2906,12 +2931,14 @@
         "drafts_title": "Bestellentwürfe",
         "new": {
           "add_line_item": "Position hinzufügen",
+          "company_help": "Diese Bestellung einem Unternehmen zuordnen. Die Kundenliste zeigt dann nur Personen, die dafür einkaufen dürfen.",
           "search_variant": "Variante suchen…",
           "section_billing": "Rechnung",
           "section_customer": "Kunde",
           "section_items": "Artikel",
           "section_notes": "Notizen",
           "section_summary": "Zusammenfassung",
+          "select_company": "Firma (optional)",
           "select_customer": "Kunde auswählen",
           "title": "Neue Bestellung"
         }
@@ -3014,7 +3041,6 @@
             "title": "Preisliste aktivieren?"
           },
           "add_cta": "Neue Preisliste",
-          "add_products_cta": "Produkte hinzufügen",
           "add_rule": "Regel hinzufügen",
           "add_rule_help": "Wählen Sie einen Regeltyp zum Konfigurieren.",
           "basics_section": "Grunddaten",
@@ -3065,16 +3091,27 @@
           },
           "edit_prices_cta": "Preise bearbeiten",
           "no_changes": "Keine Änderungen zum Speichern.",
-          "prices_help_one": "{{count}} Preis konfiguriert. Öffnen Sie den Mehrfacheditor, um ihn zu aktualisieren.",
-          "prices_help_other": "{{count}} Preise konfiguriert. Öffnen Sie den Mehrfacheditor, um sie zu aktualisieren.",
-          "prices_help_zero": "Wählen Sie oben Produkte aus, um Platzhalterpreise anzulegen, und öffnen Sie dann den Mehrfacheditor.",
-          "products_empty": "Noch keine Produkte — fügen Sie eins hinzu, um die Preisbearbeitung zu starten.",
-          "products_empty_search": "Keine passenden Produkte",
-          "products_help": "Wählen Sie die Produkte, für die diese Liste gilt. Platzhalterpreise werden beim Speichern erstellt — füllen Sie sie unten aus.",
-          "products_search_placeholder": "Produkte nach Namen suchen…",
-          "products_section": "Produkte",
-          "products_selected_one": "{{count}} Produkt ausgewählt.",
-          "products_selected_other": "{{count}} Produkte ausgewählt.",
+          "products": {
+            "add_cta": "Produkte hinzufügen",
+            "column_product": "Produkt",
+            "empty": "Noch keine Produkte – fügen Sie eines hinzu, um Preise zu bearbeiten.",
+            "filter_placeholder": "Produkte filtern…",
+            "no_matches": "Keine Produkte entsprechen Ihrem Filter.",
+            "pending_added_badge": "Neu",
+            "pending_changes_hint": "Änderungen an der Produktliste werden beim Speichern übernommen.",
+            "picker_description": "Suchen und wählen Sie Produkte für diese Preisliste aus.",
+            "picker_title": "Produkte zur Preisliste hinzufügen",
+            "remove": "Aus der Preisliste entfernen",
+            "remove_selected": "Entfernen",
+            "restore": "Wiederherstellen",
+            "search_placeholder": "Produkte suchen…",
+            "select_all": "Alle auswählen",
+            "select_row": "Produkt auswählen",
+            "title": "Produkte"
+          },
+          "products_help": "Wählen Sie die Produkte, für die diese Liste gilt. Platzhalterpreise werden beim Speichern angelegt — über „Preise bearbeiten\" ausfüllen.",
+          "products_help_with_prices_one": "Wählen Sie die Produkte, für die diese Liste gilt. {{count}} Preis ist hinterlegt — über „Preise bearbeiten\" anpassen.",
+          "products_help_with_prices_other": "Wählen Sie die Produkte, für die diese Liste gilt. {{count}} Preise sind hinterlegt — über „Preise bearbeiten\" anpassen.",
           "remove_rule_confirm": {
             "message": "Die Regel wird entfernt, wenn Sie die Preisliste speichern.",
             "title": "Regel entfernen?"
@@ -4739,7 +4776,7 @@
         "validation_failed": "Die Nummer konnte nicht geprüft werden",
         "validation_requested": "Die Nummer wird beim Register geprüft"
       },
-      "not_validatable": "Für diese Art ist keine Prüfung eingerichtet, die Nummer wird wie eingegeben verwendet.",
+      "not_validatable": "Für diese Art gibt es kein Register zum Abgleich, die Nummer wird wie eingegeben erfasst.",
       "select_kind": "Art wählen",
       "title": "Steuernummer",
       "validate_action": "Beim Register prüfen",

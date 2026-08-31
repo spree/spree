@@ -58,7 +58,7 @@ module Spree
       private
 
       def mysql_adapter?
-        ActiveRecord::Base.connection.adapter_name.downcase.include?('mysql')
+        Spree.mysql?
       end
     end
   end

@@ -23,17 +23,19 @@ import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { sellerClient } from '../api-client'
 
-/** The registration kind this panel collects. */
-const VAT_KIND = 'eu_vat'
+function errorMessage(error: unknown, fallback: string) {
+  return error instanceof Error && error.message ? error.message : fallback
+}
 
 /**
- * The business behind the seller, as the marketplace's commission invoice
- * must address it: legal name, registration number, and the VAT number that
- * decides whether that invoice carries VAT or is reverse-charged.
+ * The business behind the seller, as the marketplace's commission invoice must
+ * address it: the legal name and registration number.
  *
- * Separate from the billing address, which is only where post goes. Most of
- * what an invoice needs is not an address, and putting a VAT number in an
- * address form is what makes it get lost.
+ * The tax registrations sit in their own card beside this one, on the same
+ * panel a company's are managed from — a business trading in several regimes
+ * holds a registration in each, so they are a collection rather than a field.
+ *
+ * Separate from the billing address, which is only where post goes.
  */
 export function SellerBusinessCard({ profile }: { profile: Profile }) {
   const { t } = useTranslation()
@@ -41,19 +43,33 @@ export function SellerBusinessCard({ profile }: { profile: Profile }) {
   const queryClient = useQueryClient()
   const [editing, setEditing] = useState(false)
 
-  const vat = profile.tax_identifiers?.find((identifier) => identifier.kind === VAT_KIND)
-
   const [legalName, setLegalName] = useState(profile.legal_name ?? '')
   const [registrationNumber, setRegistrationNumber] = useState(profile.registration_number ?? '')
-  const [vatNumber, setVatNumber] = useState(vat?.value ?? '')
+  // Shown in the sheet rather than as a toast: the toast stack deliberately
+  // sits below the sheet overlay, so a rejection raised here would be hidden
+  // behind the very form that caused it.
+  const [formError, setFormError] = useState<string | null>(null)
+
+  // Opening the sheet is the seller starting over, so it shows what is on file
+  // rather than whatever they last typed — the card never remounts, so an
+  // abandoned edit would otherwise outlive the sheet that made it.
+  function setSheetOpen(open: boolean) {
+    if (open) {
+      setLegalName(profile.legal_name ?? '')
+      setRegistrationNumber(profile.registration_number ?? '')
+      setFormError(null)
+    }
+    setEditing(open)
+  }
 
   const save = useMutation({
-    mutationFn: () =>
-      sellerClient().profile.update({
+    mutationFn: () => {
+      setFormError(null)
+      return sellerClient().profile.update({
         legal_name: legalName || null,
         registration_number: registrationNumber || null,
-        tax_identifier: { kind: VAT_KIND, value: vatNumber },
-      }),
+      })
+    },
     onSuccess: (updated) => {
       queryClient.setQueryData(['seller', sellerId, 'profile'], updated)
       // A checklist kind may read these, so it has to re-evaluate.
@@ -61,17 +77,12 @@ export function SellerBusinessCard({ profile }: { profile: Profile }) {
       setEditing(false)
       toastManager.add({ type: 'success', title: t('profile.saved') })
     },
-    onError: (err) =>
-      toastManager.add({
-        type: 'error',
-        title: err instanceof Error ? err.message : t('common.error'),
-      }),
+    onError: (err) => setFormError(errorMessage(err, t('common.error'))),
   })
 
   const rows = [
     { label: t('profile.legal_name'), value: profile.legal_name },
     { label: t('profile.registration_number'), value: profile.registration_number },
-    { label: t('profile.vat_number'), value: vat?.value },
   ]
 
   return (
@@ -80,7 +91,7 @@ export function SellerBusinessCard({ profile }: { profile: Profile }) {
         <CardHeader>
           <CardTitle>{t('profile.business_details')}</CardTitle>
           <CardAction>
-            <Button variant="outline" size="sm" onClick={() => setEditing(true)}>
+            <Button variant="outline" size="sm" onClick={() => setSheetOpen(true)}>
               <PencilIcon className="size-4" />
               {t('profile.edit')}
             </Button>
@@ -93,24 +104,20 @@ export function SellerBusinessCard({ profile }: { profile: Profile }) {
               <span className="text-right">{row.value || '—'}</span>
             </div>
           ))}
-          {/* A number the seller believes is on file but which came back
-              unverified is worth them knowing about. */}
-          {vat?.validation_status && vat.validation_status !== 'verified' && (
-            <p className="text-muted-foreground text-xs">
-              {t(`profile.vat_status.${vat.validation_status}`, {
-                defaultValue: vat.validation_status,
-              })}
-            </p>
-          )}
         </CardContent>
       </Card>
 
-      <Sheet open={editing} onOpenChange={setEditing}>
+      <Sheet open={editing} onOpenChange={setSheetOpen}>
         <SheetContent>
           <SheetHeader>
             <SheetTitle>{t('profile.business_details')}</SheetTitle>
           </SheetHeader>
           <div className="flex flex-1 flex-col gap-4 overflow-y-auto p-4">
+            {formError && (
+              <p role="alert" className="text-destructive text-sm">
+                {formError}
+              </p>
+            )}
             <Field>
               <FieldLabel htmlFor="legal-name">{t('profile.legal_name')}</FieldLabel>
               <Input
@@ -129,17 +136,9 @@ export function SellerBusinessCard({ profile }: { profile: Profile }) {
                 onChange={(event) => setRegistrationNumber(event.target.value)}
               />
             </Field>
-            <Field>
-              <FieldLabel htmlFor="vat-number">{t('profile.vat_number')}</FieldLabel>
-              <Input
-                id="vat-number"
-                value={vatNumber}
-                onChange={(event) => setVatNumber(event.target.value)}
-              />
-            </Field>
           </div>
           <SheetFooter>
-            <Button variant="outline" size="sm" onClick={() => setEditing(false)}>
+            <Button variant="outline" size="sm" onClick={() => setSheetOpen(false)}>
               {t('common.cancel')}
             </Button>
             <Button size="sm" disabled={save.isPending} onClick={() => save.mutate()}>

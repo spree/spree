@@ -12,6 +12,47 @@ describe Spree::PriceList, type: :model do
     end
   end
 
+  # The catalog binding: nil = standalone (rule-matched), set = owned by
+  # exactly one catalog and reached only through it
+  # (docs/plans/6.0-catalog-agreement-rework.md).
+  describe 'catalog ownership' do
+    let(:store) { @default_store }
+    let(:catalog) { create(:catalog, store: store) }
+
+    it 'allows one live list per catalog, releasing the slot on soft delete' do
+      owned = create(:price_list, store: store, catalog: catalog)
+
+      expect(build(:price_list, store: store, catalog: catalog)).not_to be_valid
+
+      owned.destroy
+      expect(build(:price_list, store: store, catalog: catalog)).to be_valid
+    end
+
+    it 'refuses a catalog from another store' do
+      foreign_catalog = create(:catalog, store: create(:store))
+
+      expect(build(:price_list, store: store, catalog: foreign_catalog)).not_to be_valid
+    end
+
+    it 'scopes standalone lists to the ones without an owner' do
+      standalone = create(:price_list, store: store)
+      owned = create(:price_list, store: store, catalog: catalog)
+
+      expect(described_class.standalone).to include(standalone)
+      expect(described_class.standalone).not_to include(owned)
+    end
+
+    it 'keeps an owned list out of .for_context whatever the owning catalog status' do
+      owned = create(:price_list, :active, store: store, catalog: catalog)
+      context = Spree::Pricing::Context.new(store: store, currency: 'USD')
+
+      expect(described_class.for_context(context)).not_to include(owned)
+
+      catalog.update!(active: false)
+      expect(described_class.for_context(context)).not_to include(owned)
+    end
+  end
+
   describe 'status' do
     let(:price_list) { create(:price_list) }
 
@@ -157,41 +198,6 @@ describe Spree::PriceList, type: :model do
     it 'returns false when status is not active' do
       price_list = create(:price_list, :inactive)
       expect(price_list.active?).to be false
-    end
-  end
-
-  describe 'product membership' do
-    let(:store) { create(:store, supported_currencies: 'USD,EUR,GBP') }
-    let(:price_list) { create(:price_list, store: store) }
-    # Same store as the list: membership resolves through the store's own
-    # products, so a product from another store is not a member to be had.
-    let(:product1) { create(:product, store: store) }
-    let(:product2) { create(:product, store: store) }
-
-    # Guards the POST/PATCH /price_lists response: membership is reconciled
-    # through raw upsert_all/delete_all, which bypasses the products
-    # association cache, so `product_ids` / `product_prefixed_ids` — which the
-    # serializer renders — must reflect the change WITHOUT a reload.
-    it 'reflects assigned products in product_ids without reload' do
-      Spree.price_list_update_workflow.call(
-        price_list: price_list, attributes: { product_ids: [product1.id, product2.id] }
-      )
-
-      expect(price_list.product_ids).to match_array([product1.id, product2.id])
-      expect(price_list.product_prefixed_ids).to match_array(
-        [product1.prefixed_id, product2.prefixed_id]
-      )
-    end
-
-    it 'reflects a partial removal in product_ids without reload' do
-      Spree.price_list_update_workflow.call(
-        price_list: price_list, attributes: { product_ids: [product1.id, product2.id] }
-      )
-      Spree.price_list_update_workflow.call(
-        price_list: price_list, attributes: { product_ids: [product1.id] }
-      )
-
-      expect(price_list.product_ids).to eq([product1.id])
     end
   end
 

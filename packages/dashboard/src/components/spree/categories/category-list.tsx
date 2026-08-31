@@ -47,7 +47,7 @@ export function CategoryList({
           <TableHead className="w-12" />
         </TableRow>
       </TableHeader>
-      <TableBody className="border-t border-border">
+      <TableBody>
         {categories.length === 0 ? (
           <TableEmpty colSpan={3}>{t('admin.categories.no_results')}</TableEmpty>
         ) : (

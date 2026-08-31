@@ -99,6 +99,33 @@ module Spree
         expect(moved.uniq.size).to eq(moved.size)
       end
 
+      # The buyer's reference and the paperwork behind it have to travel
+      # together: the reference on every order with the document on only one
+      # is the reconciliation problem the field exists to solve.
+      context 'when the buyer supplied a purchase order' do
+        before do
+          cart.update!(po_number: 'PO-4471')
+          cart.po_document.attach(
+            io: StringIO.new('%PDF-1.4 purchase order'),
+            filename: 'po.pdf',
+            content_type: 'application/pdf'
+          )
+        end
+
+        it 'carries the reference and the document onto every child order' do
+          group.orders.each do |order|
+            expect(order.po_number).to eq('PO-4471')
+            expect(order.po_document).to be_attached
+          end
+        end
+
+        it 'shares one blob rather than duplicating the upload' do
+          blob_ids = group.orders.map { |order| order.po_document.blob_id }
+
+          expect(blob_ids.uniq.size).to eq(1)
+        end
+      end
+
       it 'computes each child’s totals from its own rows' do
         group.orders.each do |order|
           expect(order.total).to be > 0

@@ -18,7 +18,6 @@ defineTable<Seller>('sellers', {
       key: 'name',
       label: i18n.t('admin.fields.name.label'),
       sortable: true,
-      filterable: true,
       default: true,
       render: (seller) => (
         <Link
@@ -40,6 +39,7 @@ defineTable<Seller>('sellers', {
         value: status,
         label: i18n.t(`admin.sellers.status.${status}`),
       })),
+      quickFilter: true,
       default: true,
       render: (seller) => (
         <StatusBadge

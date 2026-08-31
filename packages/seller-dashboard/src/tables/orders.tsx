@@ -4,6 +4,17 @@ import type { Order } from '@spree/seller-sdk'
 import i18n from 'i18next'
 import { PackageIcon } from 'lucide-react'
 
+/** Mirrors the operator dashboard's order status vocabularies. */
+const FULFILLMENT_STATUSES = [
+  'unfulfilled',
+  'backorder',
+  'partial',
+  'fulfilled',
+  'delivered',
+  'canceled',
+] as const
+const PAYMENT_STATUSES = ['balance_due', 'paid', 'credit_owed', 'failed', 'void'] as const
+
 defineTable<Order>('seller-orders', {
   title: i18n.t('orders.title'),
   searchParam: 'number_cont',
@@ -25,6 +36,9 @@ defineTable<Order>('seller-orders', {
       key: 'completed_at',
       label: i18n.t('orders.columns.placed'),
       sortable: true,
+      filterable: true,
+      filterType: 'date',
+      quickFilter: true,
       default: true,
       render: (order) =>
         order.completed_at ? new Date(order.completed_at).toLocaleDateString() : '—',
@@ -32,16 +46,44 @@ defineTable<Order>('seller-orders', {
     {
       key: 'fulfillment_status',
       label: i18n.t('orders.columns.fulfillment'),
+      filterable: true,
+      filterType: 'enum',
+      filterOptions: FULFILLMENT_STATUSES.map((status) => ({
+        value: status,
+        label: i18n.t(`orders.fulfillment_statuses.${status}`),
+      })),
+      quickFilter: true,
       default: true,
       render: (order) =>
-        order.fulfillment_status ? <StatusBadge status={order.fulfillment_status} /> : '—',
+        order.fulfillment_status ? (
+          <StatusBadge
+            status={order.fulfillment_status}
+            label={i18n.t(`orders.fulfillment_statuses.${order.fulfillment_status}`)}
+          />
+        ) : (
+          '—'
+        ),
     },
     {
       key: 'payment_status',
       label: i18n.t('orders.columns.payment'),
+      filterable: true,
+      filterType: 'enum',
+      filterOptions: PAYMENT_STATUSES.map((status) => ({
+        value: status,
+        label: i18n.t(`orders.payment_statuses.${status}`),
+      })),
+      quickFilter: true,
       default: true,
       render: (order) =>
-        order.payment_status ? <StatusBadge status={order.payment_status} /> : '—',
+        order.payment_status ? (
+          <StatusBadge
+            status={order.payment_status}
+            label={i18n.t(`orders.payment_statuses.${order.payment_status}`)}
+          />
+        ) : (
+          '—'
+        ),
     },
     {
       key: 'total',

@@ -18,10 +18,20 @@ module Spree
 
           typelize metadata: 'Record<string, unknown>',
                    cost_price: [:string, nullable: true],
-                   tax_category_id: [:string, nullable: true]
+                   tax_category_id: [:string, nullable: true],
+                   price_source: [:string, nullable: true],
+                   catalog_price: [:string, nullable: true]
 
-          attributes :metadata,
+          # price_source is operational provenance — admin-only, never on the
+          # store serializer.
+          attributes :metadata, :price_source,
                      created_at: :iso8601, updated_at: :iso8601
+
+          # Base price, not resolved: resolving would call the pricing provider
+          # once per line on a read path that must stay provider-free.
+          attribute :catalog_price do |line_item|
+            line_item.variant&.amount_in(line_item.currency)&.to_s
+          end
 
           attribute :cost_price do |line_item|
             line_item.cost_price&.to_s

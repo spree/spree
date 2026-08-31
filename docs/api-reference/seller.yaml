@@ -82,9 +82,9 @@ paths:
           content:
             application/json:
               example:
-                token: eyJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjo0MjQsInVzZXJfdHlwZSI6ImFkbWluIiwianRpIjoiMTk1Zjg5MTYtYjc0ZC00ODYxLWExNDctMmYwOGIzOGIxYjM1IiwiaXNzIjoic3ByZWUiLCJhdWQiOiJzZWxsZXJfYXBpIiwiZXhwIjoxNzY4NDc4NzAwfQ.oYONGPT1sUFdsYiUmKLYSIKqHiGcChdMwoqfJgmEmm0
+                token: eyJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoxLCJ1c2VyX3R5cGUiOiJhZG1pbiIsImp0aSI6IjE5NWY4OTE2LWI3NGQtNDg2MS1hMTQ3LTJmMDhiMzhiMWIzNSIsImlzcyI6InNwcmVlIiwiYXVkIjoic2VsbGVyX2FwaSIsImV4cCI6MTc2ODQ3ODcwMH0.e2XwsDONtD0x4j9jfjnHhDhAJpzhXBQ2LuIjWS1kY1k
                 user:
-                  id: adm_IPCvBlcSU2
+                  id: adm_UkLWZg9DAJ
                   email: seller@example.com
                   first_name: Jan
                   last_name: Cummerata
@@ -92,7 +92,7 @@ paths:
                   created_at: '2026-01-15T12:00:00.000Z'
                   avatar_url:
                 sellers:
-                - id: sel_C9SrJgpzQ4
+                - id: sel_UkLWZg9DAJ
                   name: Seller 1
                   status: approved
               schema:
@@ -148,9 +148,9 @@ paths:
           content:
             application/json:
               example:
-                token: eyJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjo0MjYsInVzZXJfdHlwZSI6ImFkbWluIiwianRpIjoiN2M4MTM2N2MtMGVhYS00ZTM4LWE2ZGMtMmMxNjM5MjFjZDUyIiwiaXNzIjoic3ByZWUiLCJhdWQiOiJzZWxsZXJfYXBpIiwiZXhwIjoxNzY4NDc4NzAwfQ.tcfJy4_v2iCtEnsBv47jQB6acAoppq3TqglVe-Go6n0
+                token: eyJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoxLCJ1c2VyX3R5cGUiOiJhZG1pbiIsImp0aSI6IjdjODEzNjdjLTBlYWEtNGUzOC1hNmRjLTJjMTYzOTIxY2Q1MiIsImlzcyI6InNwcmVlIiwiYXVkIjoic2VsbGVyX2FwaSIsImV4cCI6MTc2ODQ3ODcwMH0.N2ttey6pvsPoOdx0F9pdUNbdT1j25ejAzpghXTbB8zo
                 user:
-                  id: adm_iYiDfaj7G4
+                  id: adm_UkLWZg9DAJ
                   email: seller@example.com
                   first_name: Magdalen
                   last_name: Hayes
@@ -158,7 +158,7 @@ paths:
                   created_at: '2026-01-15T12:00:00.000Z'
                   avatar_url:
                 sellers:
-                - id: sel_5OQZnCRf8J
+                - id: sel_UkLWZg9DAJ
                   name: Seller 3
                   status: approved
               schema:
@@ -238,13 +238,13 @@ paths:
           content:
             application/json:
               example:
-                id: inv_AXs1igzRC6
+                id: inv_UkLWZg9DAJ
                 email: newcomer@acme.test
                 created_at: '2026-01-15T12:00:00.000Z'
                 expires_at: '2026-01-29T12:00:00.000Z'
                 accepted_at:
                 status: pending
-                acceptance_url: "/accept-invitation/inv_AXs1igzRC6?token=RgGhNP1euUCS75Nc3V1Y7YQF"
+                acceptance_url: "/accept-invitation/inv_UkLWZg9DAJ?token=RgGhNP1euUCS75Nc3V1Y7YQF"
               schema:
                 "$ref": "#/components/schemas/Invitation"
         '404':
@@ -293,9 +293,9 @@ paths:
           content:
             application/json:
               example:
-                token: eyJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjo0NDUsInVzZXJfdHlwZSI6ImFkbWluIiwianRpIjoiNGZjNWU3MGYtZTU4MC00MTE2LWE5ZTktMGM0OWIwYTFiMzE0IiwiaXNzIjoic3ByZWUiLCJhdWQiOiJzZWxsZXJfYXBpIiwiZXhwIjoxNzY4NDc4NzAwfQ.-OAiAhSSoUTkmNywNYyeMj6HXvVQ0hKUtjMxzuerLMQ
+                token: eyJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoyLCJ1c2VyX3R5cGUiOiJhZG1pbiIsImp0aSI6IjRmYzVlNzBmLWU1ODAtNDExNi1hOWU5LTBjNDliMGExYjMxNCIsImlzcyI6InNwcmVlIiwiYXVkIjoic2VsbGVyX2FwaSIsImV4cCI6MTc2ODQ3ODcwMH0.H0mJ1zDqTi6mNs_BZBRTJ77OMsWAqeUXvQM09YPLefs
                 user:
-                  id: adm_xuGoCpeNMW
+                  id: adm_gbHJdmfrXB
                   email: newcomer@acme.test
                   first_name: Robin
                   last_name: Ellis
@@ -303,7 +303,7 @@ paths:
                   created_at: '2026-01-15T12:00:00.000Z'
                   avatar_url:
                 sellers:
-                - id: sel_qp31JYFduR
+                - id: sel_UkLWZg9DAJ
                   name: Seller 21
                   status: approved
               schema:
@@ -409,9 +409,9 @@ paths:
           content:
             application/json:
               example:
-                token: eyJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjo0NjIsInVzZXJfdHlwZSI6ImFkbWluIiwianRpIjoiYmMwMzc1M2EtMTM3Yy00YzVmLWEzMzYtZTMyMGVlM2IyNDljIiwiaXNzIjoic3ByZWUiLCJhdWQiOiJzZWxsZXJfYXBpIiwiZXhwIjoxNzY4NDc4NzAwfQ.JWWIjLLW6Rh4VEHaNy9RnmcxltYCOrYHsGbNAK1bgVY
+                token: eyJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoxLCJ1c2VyX3R5cGUiOiJhZG1pbiIsImp0aSI6ImJjMDM3NTNhLTEzN2MtNGM1Zi1hMzM2LWUzMjBlZTNiMjQ5YyIsImlzcyI6InNwcmVlIiwiYXVkIjoic2VsbGVyX2FwaSIsImV4cCI6MTc2ODQ3ODcwMH0.EASrzbGpJVyAl10SJyzs8na68Wmvedkm7G66wTBq_0k
                 user:
-                  id: adm_mcVx3nOJap
+                  id: adm_UkLWZg9DAJ
                   email: lon@veum.us
                   first_name: Ariana
                   last_name: Wiza
@@ -419,7 +419,7 @@ paths:
                   created_at: '2026-01-15T12:00:00.000Z'
                   avatar_url:
                 sellers:
-                - id: sel_bnnZn4Y5Fq
+                - id: sel_UkLWZg9DAJ
                   name: Seller 42
                   status: approved
               schema:
@@ -480,7 +480,7 @@ paths:
             application/json:
               example:
                 user:
-                  id: adm_RMSeNhrwyV
+                  id: adm_UkLWZg9DAJ
                   email: johnny_feest@hodkiewicz.ca
                   first_name: Nadia
                   last_name: Effertz
@@ -488,7 +488,7 @@ paths:
                   created_at: '2026-01-15T12:00:00.000Z'
                   avatar_url:
                 sellers:
-                - id: sel_Kj5Q8YFGzd
+                - id: sel_UkLWZg9DAJ
                   name: Seller 30
                   slug: seller-30
                   status: approved
@@ -12543,7 +12543,7 @@ paths:
             application/json:
               example:
                 data:
-                - id: pol_ROeNhrwyV9
+                - id: pol_uw2YK1rnl0
                   name: Returns Policy
                   slug: returns-policy
                   body: Send anything back within 30 days.
@@ -12596,7 +12596,7 @@ paths:
           content:
             application/json:
               example:
-                id: pol_PQNMcnNFWw
+                id: pol_OIJLhNcSbf
                 name: Shipping Policy
                 slug: shipping-policy
                 body: Orders leave the workshop within two working days.
@@ -12649,7 +12649,7 @@ paths:
           content:
             application/json:
               example:
-                id: pol_C9SrJgpzQ4
+                id: pol_uw2YK1rnl0
                 name: Returns Policy
                 slug: returns-policy
                 body: Send anything back within 30 days.
@@ -12687,7 +12687,7 @@ paths:
           content:
             application/json:
               example:
-                id: pol_5OQZnCRf8J
+                id: pol_uw2YK1rnl0
                 name: Returns Policy
                 slug: returns-policy
                 body: Send anything back within 60 days.
@@ -12768,7 +12768,7 @@ paths:
             application/json:
               example:
                 data:
-                - id: prod_HZaVtlDrOm
+                - id: prod_UkLWZg9DAJ
                   name: Product 1363250
                   slug: product-1363250
                   meta_title:
@@ -12799,12 +12799,12 @@ paths:
                     Distinctio perferendis quasi nisi exercitationem veritatis minima esse. In velit at corporis nobis. Voluptate mollitia nam pariatur enim. Recusandae necessitatibus earum deserunt sapiente eveniet quidem unde.
                     Consectetur ab perspiciatis veniam dolor tempora. Omnis odit autem quae repellat. Delectus corrupti ea nisi reiciendis atque iure a molestias.
                     Repellendus laboriosam sint molestias debitis in. Minima omnis accusantium modi accusamus doloribus fugit. Accusamus autem sequi perferendis saepe quos perspiciatis.
-                  default_variant_id: variant_kAEKT9MVfb
-                  buy_box_variant_id: variant_kAEKT9MVfb
+                  default_variant_id: variant_UkLWZg9DAJ
+                  buy_box_variant_id: variant_UkLWZg9DAJ
                   thumbnail_url:
                   tags: []
                   price:
-                    id: price_HMtVtlDrOm
+                    id: price_UkLWZg9DAJ
                     amount: '19.99'
                     amount_in_cents: 1999
                     compare_at_amount:
@@ -12814,7 +12814,7 @@ paths:
                     display_compare_at_amount:
                     price_list_id:
                   original_price:
-                  seller_id: sel_ARbs1igzRC
+                  seller_id: sel_UkLWZg9DAJ
                   status: active
                   metadata: {}
                   created_at: '2026-01-15T12:00:00.000Z'
@@ -12868,7 +12868,7 @@ paths:
           content:
             application/json:
               example:
-                id: prod_s6d8jaGony
+                id: prod_gbHJdmfrXB
                 name: Hand-thrown mug
                 slug: hand-thrown-mug
                 meta_title:
@@ -12884,12 +12884,12 @@ paths:
                 available: false
                 description:
                 description_html:
-                default_variant_id: variant_Sx7IszOMIv
-                buy_box_variant_id: variant_Sx7IszOMIv
+                default_variant_id: variant_gbHJdmfrXB
+                buy_box_variant_id: variant_gbHJdmfrXB
                 thumbnail_url:
                 tags: []
                 price:
-                  id: price_sg48jaGony
+                  id: price_gbHJdmfrXB
                   amount: '24.0'
                   amount_in_cents: 2400
                   compare_at_amount:
@@ -12899,7 +12899,7 @@ paths:
                   display_compare_at_amount:
                   price_list_id:
                 original_price:
-                seller_id: sel_p5gklVeMgb
+                seller_id: sel_UkLWZg9DAJ
                 status: draft
                 metadata: {}
                 created_at: '2026-01-15T12:00:00.000Z'
@@ -13008,7 +13008,7 @@ paths:
           content:
             application/json:
               example:
-                id: prod_RHaeNhrwyV
+                id: prod_UkLWZg9DAJ
                 name: Product 1396710
                 slug: product-1396710
                 meta_title:
@@ -13034,12 +13034,12 @@ paths:
                 description_html: |-
                   Aliquid voluptate laudantium necessitatibus quidem eaque. Sapiente at autem eveniet exercitationem odio in dolores. Laborum accusantium nulla autem tempora qui inventore assumenda molestiae. Quisquam voluptas delectus ipsum totam ab incidunt. Sunt excepturi eius provident unde neque in.
                   Earum pariatur enim odit delectus accusamus recusandae. Dolorem eligendi debitis iste voluptate laboriosam ab. Ab aut suscipit illo occaecati. Dolores libero cupiditate provident at itaque temporibus. Adipisci iste beatae quibusdam perferendis ea blanditiis saepe facilis.
-                default_variant_id: variant_Ksf5Q8YFGz
-                buy_box_variant_id: variant_Ksf5Q8YFGz
+                default_variant_id: variant_UkLWZg9DAJ
+                buy_box_variant_id: variant_UkLWZg9DAJ
                 thumbnail_url:
                 tags: []
                 price:
-                  id: price_RVteNhrwyV
+                  id: price_UkLWZg9DAJ
                   amount: '19.99'
                   amount_in_cents: 1999
                   compare_at_amount:
@@ -13049,7 +13049,7 @@ paths:
                   display_compare_at_amount:
                   price_list_id:
                 original_price:
-                seller_id: sel_9URFqgRua4
+                seller_id: sel_UkLWZg9DAJ
                 status: active
                 metadata: {}
                 created_at: '2026-01-15T12:00:00.000Z'
@@ -13085,7 +13085,7 @@ paths:
           content:
             application/json:
               example:
-                id: prod_CmGSrJgpzQ
+                id: prod_UkLWZg9DAJ
                 name: Hand-thrown mug, large
                 slug: product-1428212
                 meta_title:
@@ -13107,12 +13107,12 @@ paths:
                 description_html: |-
                   Vel minima recusandae iure deserunt non. Corrupti soluta pariatur recusandae saepe eveniet. Sequi deserunt fugiat architecto animi.
                   Eum facilis veniam a consequatur minus. Dolor iure facilis repellendus tenetur. Nobis harum perferendis ab maiores labore eius eum quo.
-                default_variant_id: variant_KsG5Q8YFGz
-                buy_box_variant_id: variant_KsG5Q8YFGz
+                default_variant_id: variant_UkLWZg9DAJ
+                buy_box_variant_id: variant_UkLWZg9DAJ
                 thumbnail_url:
                 tags: []
                 price:
-                  id: price_CxUSrJgpzQ
+                  id: price_UkLWZg9DAJ
                   amount: '19.99'
                   amount_in_cents: 1999
                   compare_at_amount:
@@ -13122,7 +13122,7 @@ paths:
                   display_compare_at_amount:
                   price_list_id:
                 original_price:
-                seller_id: sel_2h5Y5XM6fr
+                seller_id: sel_UkLWZg9DAJ
                 status: active
                 metadata: {}
                 created_at: '2026-01-15T12:00:00.000Z'
@@ -13197,7 +13197,7 @@ paths:
           content:
             application/json:
               example:
-                id: sel_eH46l8wVqS
+                id: sel_UkLWZg9DAJ
                 name: Seller 57
                 slug: seller-57
                 about: ''
@@ -13224,7 +13224,6 @@ paths:
                 - EUR
                 - GBP
                 products_count: 0
-                tax_identifiers: []
               schema:
                 "$ref": "#/components/schemas/Profile"
         '403':
@@ -13251,10 +13250,6 @@ paths:
         `slug`, since a seller renaming their own storefront address would break
         every link pointing at it.
 
-        `tax_identifier` holds one registration per kind: re-sending a kind
-        corrects the number, and an empty value removes it. A changed number
-        drops its validation verdict, because that answer was about the old one.
-
         `accept_terms: true` stamps the moment the seller accepted the
         marketplace's terms, which is what the matching onboarding requirement
         reads. One-way — sending `false` does not unmake the stamp.
@@ -13274,7 +13269,7 @@ paths:
           content:
             application/json:
               example:
-                id: sel_GpMUcnUYI5
+                id: sel_UkLWZg9DAJ
                 name: Acme Supplies
                 slug: seller-59
                 about: ''
@@ -13301,7 +13296,6 @@ paths:
                 - EUR
                 - GBP
                 products_count: 0
-                tax_identifiers: []
               schema:
                 "$ref": "#/components/schemas/Profile"
         '422':
@@ -13360,15 +13354,6 @@ paths:
                 accept_terms:
                   type: boolean
                   description: Stamps acceptance of the marketplace terms
-                tax_identifier:
-                  type: object
-                  properties:
-                    kind:
-                      type: string
-                      example: eu_vat
-                    value:
-                      type: string
-                      example: PL1234567890
                 billing_address:
                   type: object
                   additionalProperties: true
@@ -13425,7 +13410,7 @@ paths:
             application/json:
               example:
                 data:
-                - id: sloc_miRx3nOJap
+                - id: sloc_UkLWZg9DAJ
                   name: Lesha Stroman
                   address1: 1600 Pennsylvania Ave NW
                   city: Washington
@@ -13490,7 +13475,7 @@ paths:
           content:
             application/json:
               example:
-                id: sloc_MWEnyloHRU
+                id: sloc_gbHJdmfrXB
                 name: Main warehouse
                 address1:
                 city: Portland
@@ -13605,7 +13590,7 @@ paths:
           content:
             application/json:
               example:
-                id: sloc_s6i8jaGony
+                id: sloc_UkLWZg9DAJ
                 name: Marsha Turner
                 address1: 1600 Pennsylvania Ave NW
                 city: Washington
@@ -13661,7 +13646,7 @@ paths:
           content:
             application/json:
               example:
-                id: sloc_aC8tNvLSUA
+                id: sloc_UkLWZg9DAJ
                 name: Kiln Lane warehouse
                 address1: 1600 Pennsylvania Ave NW
                 city: Washington
@@ -13742,13 +13727,13 @@ paths:
             application/json:
               example:
                 data:
-                - id: inv_xhoCpeNMWu
+                - id: inv_UkLWZg9DAJ
                   email: colleague@acme.test
                   created_at: '2026-01-15T12:00:00.000Z'
                   expires_at: '2026-01-29T12:00:00.000Z'
                   accepted_at:
                   status: pending
-                  acceptance_url: "/accept-invitation/inv_xhoCpeNMWu?token=gybGAXxVP79yKWNTZLAC94ui"
+                  acceptance_url: "/accept-invitation/inv_UkLWZg9DAJ?token=gybGAXxVP79yKWNTZLAC94ui"
               schema:
                 type: object
                 properties:
@@ -13788,13 +13773,13 @@ paths:
           content:
             application/json:
               example:
-                id: inv_vEmzDoNU0H
+                id: inv_UkLWZg9DAJ
                 email: colleague@acme.test
                 created_at: '2026-01-15T12:00:00.000Z'
                 expires_at: '2026-01-29T12:00:00.000Z'
                 accepted_at:
                 status: pending
-                acceptance_url: "/accept-invitation/inv_vEmzDoNU0H?token=3uJFfKUSiHtnc9TGAXMJUXsB"
+                acceptance_url: "/accept-invitation/inv_UkLWZg9DAJ?token=3uJFfKUSiHtnc9TGAXMJUXsB"
               schema:
                 "$ref": "#/components/schemas/Invitation"
         '404':
@@ -13866,7 +13851,7 @@ paths:
             application/json:
               example:
                 data:
-                - id: adm_63VgxZbenF
+                - id: adm_UkLWZg9DAJ
                   email: twyla_haley@nikolaus.ca
                   first_name: Bill
                   last_name: Towne
@@ -13910,13 +13895,13 @@ paths:
           content:
             application/json:
               example:
-                id: inv_s18jaGonyx
+                id: inv_UkLWZg9DAJ
                 email: colleague@acme.test
                 created_at: '2026-01-15T12:00:00.000Z'
                 expires_at: '2026-01-29T12:00:00.000Z'
                 accepted_at:
                 status: pending
-                acceptance_url: "/accept-invitation/inv_s18jaGonyx?token=3K6BfBtHGFeQgToPE45qUDWE"
+                acceptance_url: "/accept-invitation/inv_UkLWZg9DAJ?token=3K6BfBtHGFeQgToPE45qUDWE"
               schema:
                 "$ref": "#/components/schemas/Invitation"
         '422':
@@ -14029,10 +14014,10 @@ paths:
             application/json:
               example:
                 direct_upload:
-                  url: http://www.example.com/rails/active_storage/disk/eyJfcmFpbHMiOnsiZGF0YSI6eyJrZXkiOiJuem5oOGdra3VxendvbDc1ODBxNHNwZmpmMjVxIiwiY29udGVudF90eXBlIjoiYXBwbGljYXRpb24vcGRmIiwiY29udGVudF9sZW5ndGgiOjUxMjM0LCJjaGVja3N1bSI6IlZqaHowNGxRdUVHdXY0bkR2aHNhTlE9PSIsInNlcnZpY2VfbmFtZSI6InRlc3QifSwiZXhwIjoiMjAyNi0wMS0xNVQxMjowNTowMC4wMDBaIiwicHVyIjoiYmxvYl90b2tlbiJ9fQ==--cac28840dcb0580253f9f4bba0e94154789f8bf0
+                  url: http://www.example.com/rails/active_storage/disk/eyJfcmFpbHMiOnsiZGF0YSI6eyJrZXkiOiJuem5oOGdra3VxendvbDc1ODBxNHNwZmpmMjVxIiwiY29udGVudF90eXBlIjoiYXBwbGljYXRpb24vcGRmIiwiY29udGVudF9sZW5ndGgiOjUxMjM0LCJjaGVja3N1bSI6IlZqaHowNGxRdUVHdXY0bkR2aHNhTlE9PSIsInNlcnZpY2VfbmFtZSI6InRlc3QifSwiZXhwIjoiMjAyNi0wMS0xNVQxMjowNTowMC4wMDBaIiwicHVyIjoiYmxvYl90b2tlbiJ9fQ==--ec01546e3fc6ebad1b6d0564981d279619e5b061
                   headers:
                     Content-Type: application/pdf
-                signed_id: eyJfcmFpbHMiOnsiZGF0YSI6MjQsInB1ciI6ImJsb2JfaWQifX0=--442d70f8804d2dcdb5fa8ac6ae00a4c757c3a083
+                signed_id: eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--389837f16b7b8cde04c6aea7d0e8d4bc3ac5e2e7
               schema:
                 "$ref": "#/components/schemas/DirectUploadResponse"
       requestBody:
@@ -14093,13 +14078,13 @@ paths:
           content:
             application/json:
               example:
-                id: exp_AXs1igzRC6
+                id: exp_UkLWZg9DAJ
                 number: EF1001
                 format: csv
                 created_at: '2026-01-15T12:00:00.000Z'
                 updated_at: '2026-01-15T12:00:00.000Z'
                 type: orders
-                user_id: adm_cfjuasQi8r
+                user_id: adm_UkLWZg9DAJ
                 done: false
                 filename:
                 byte_size:
@@ -14175,13 +14160,13 @@ paths:
           content:
             application/json:
               example:
-                id: exp_p6klVeMgbn
+                id: exp_UkLWZg9DAJ
                 number: EF1001
                 format: csv
                 created_at: '2026-01-15T12:00:00.000Z'
                 updated_at: '2026-01-15T12:00:00.000Z'
                 type: orders
-                user_id: adm_b11Zn4Y5Fq
+                user_id: adm_UkLWZg9DAJ
                 done: false
                 filename:
                 byte_size:
@@ -14279,7 +14264,7 @@ paths:
             application/json:
               example:
                 data:
-                - id: ful_STIszOMIvc
+                - id: ful_UkLWZg9DAJ
                   number: R1001-F1
                   status: unfulfilled
                   tracking: U10000
@@ -14293,9 +14278,9 @@ paths:
                   delivery_method_name: UPS Ground
                   stock_location_name: Vernie Lehner
                   fulfillment_items:
-                  - id: fi_STIszOMIvc
+                  - id: fi_UkLWZg9DAJ
                     quantity: 1
-                    line_item_id: li_Aks1igzRC6
+                    line_item_id: li_UkLWZg9DAJ
                     name: Product 1299315
                     sku: SKU-161
                     options_text: ''
@@ -14349,7 +14334,7 @@ paths:
           content:
             application/json:
               example:
-                id: ful_LYpHOn63Vw
+                id: ful_UkLWZg9DAJ
                 number: R1001-F1
                 status: fulfilled
                 tracking: TRACK-1
@@ -14363,9 +14348,9 @@ paths:
                 delivery_method_name: UPS Ground
                 stock_location_name: Mirta Herman
                 fulfillment_items:
-                - id: fi_LYpHOn63Vw
+                - id: fi_UkLWZg9DAJ
                   quantity: 1
-                  line_item_id: li_lmiGAYKIUz
+                  line_item_id: li_UkLWZg9DAJ
                   name: Product 130961
                   sku: SKU-162
                   options_text: ''
@@ -14448,7 +14433,7 @@ paths:
             application/json:
               example:
                 data:
-                - id: or_uEf2YK1rnl
+                - id: or_UkLWZg9DAJ
                   number: R1001
                   customer_note:
                   currency: USD
@@ -14466,7 +14451,7 @@ paths:
                   total: '110.0'
                   display_total: "$110.00"
                   items:
-                  - id: li_yar3EWPH85
+                  - id: li_UkLWZg9DAJ
                     name: Product 13195
                     options_text: ''
                     quantity: 1
@@ -14475,11 +14460,11 @@ paths:
                     display_price: "$10.00"
                     total: '10.0'
                     display_total: "$10.00"
-                    variant_id: variant_qTK31JYFdu
+                    variant_id: variant_UkLWZg9DAJ
                     sku: SKU-163
                     thumbnail_url:
                   fulfillments:
-                  - id: ful_Kj5Q8YFGzd
+                  - id: ful_UkLWZg9DAJ
                     number: R1001-F1
                     status: unfulfilled
                     tracking: U10000
@@ -14493,14 +14478,14 @@ paths:
                     delivery_method_name: UPS Ground
                     stock_location_name: Roseline Roberts
                     fulfillment_items:
-                    - id: fi_Kj5Q8YFGzd
+                    - id: fi_UkLWZg9DAJ
                       quantity: 1
-                      line_item_id: li_yar3EWPH85
+                      line_item_id: li_UkLWZg9DAJ
                       name: Product 13195
                       sku: SKU-163
                       options_text: ''
                   shipping_address:
-                    id: addr_lPxiGAYKIU
+                    id: addr_gbHJdmfrXB
                     label:
                     first_name: John
                     last_name: Doe
@@ -14522,7 +14507,7 @@ paths:
                     country_iso: US
                     state_name: New York
                   billing_address:
-                    id: addr_ARKs1igzRC
+                    id: addr_UkLWZg9DAJ
                     label:
                     first_name: John
                     last_name: Doe
@@ -14597,7 +14582,7 @@ paths:
           content:
             application/json:
               example:
-                id: or_OtvJLhNcSb
+                id: or_UkLWZg9DAJ
                 number: R1001
                 customer_note:
                 currency: USD
@@ -14615,7 +14600,7 @@ paths:
                 total: '110.0'
                 display_total: "$110.00"
                 items:
-                - id: li_zNcwP3ZbDr
+                - id: li_UkLWZg9DAJ
                   name: Product 1329755
                   options_text: ''
                   quantity: 1
@@ -14624,11 +14609,11 @@ paths:
                   display_price: "$10.00"
                   total: '10.0'
                   display_total: "$10.00"
-                  variant_id: variant_JrVaEBgznC
+                  variant_id: variant_UkLWZg9DAJ
                   sku: SKU-164
                   thumbnail_url:
                 fulfillments:
-                - id: ful_hDBvQ85Ws9
+                - id: ful_UkLWZg9DAJ
                   number: R1001-F1
                   status: unfulfilled
                   tracking: U10000
@@ -14642,14 +14627,14 @@ paths:
                   delivery_method_name: UPS Ground
                   stock_location_name: Woodrow Hand
                   fulfillment_items:
-                  - id: fi_hDBvQ85Ws9
+                  - id: fi_UkLWZg9DAJ
                     quantity: 1
-                    line_item_id: li_zNcwP3ZbDr
+                    line_item_id: li_UkLWZg9DAJ
                     name: Product 1329755
                     sku: SKU-164
                     options_text: ''
                 shipping_address:
-                  id: addr_z2zcwP3ZbD
+                  id: addr_gbHJdmfrXB
                   label:
                   first_name: John
                   last_name: Doe
@@ -14671,7 +14656,7 @@ paths:
                   country_iso: US
                   state_name: New York
                 billing_address:
-                  id: addr_yStr3EWPH8
+                  id: addr_UkLWZg9DAJ
                   label:
                   first_name: John
                   last_name: Doe
@@ -14735,7 +14720,7 @@ paths:
           content:
             application/json:
               example:
-                id: or_nWaqfPa3Cp
+                id: or_UkLWZg9DAJ
                 number: R1001
                 customer_note:
                 currency: USD
@@ -14753,7 +14738,7 @@ paths:
                 total: '110.0'
                 display_total: "$110.00"
                 items:
-                - id: li_bnnZn4Y5Fq
+                - id: li_UkLWZg9DAJ
                   name: Product 1356554
                   options_text: ''
                   quantity: 1
@@ -14762,11 +14747,11 @@ paths:
                   display_price: "$10.00"
                   total: '10.0'
                   display_total: "$10.00"
-                  variant_id: variant_Xnkbb5HTmV
+                  variant_id: variant_UkLWZg9DAJ
                   sku: SKU-167
                   thumbnail_url:
                 fulfillments:
-                - id: ful_iIDfaj7G4u
+                - id: ful_UkLWZg9DAJ
                   number: R1001-F1
                   status: canceled
                   tracking: U10000
@@ -14780,14 +14765,14 @@ paths:
                   delivery_method_name: UPS Ground
                   stock_location_name: Ricky Kutch
                   fulfillment_items:
-                  - id: fi_iIDfaj7G4u
+                  - id: fi_UkLWZg9DAJ
                     quantity: 1
-                    line_item_id: li_bnnZn4Y5Fq
+                    line_item_id: li_UkLWZg9DAJ
                     name: Product 1356554
                     sku: SKU-167
                     options_text: ''
                 shipping_address:
-                  id: addr_EwFhxLZ9ck
+                  id: addr_gbHJdmfrXB
                   label:
                   first_name: John
                   last_name: Doe
@@ -14809,7 +14794,7 @@ paths:
                   country_iso: US
                   state_name: New York
                 billing_address:
-                  id: addr_gbMHJdmfrX
+                  id: addr_UkLWZg9DAJ
                   label:
                   first_name: John
                   last_name: Doe
@@ -14841,6 +14826,201 @@ paths:
                 notify_customer:
                   type: boolean
                   description: Email the customer about the cancellation
+  "/api/v3/seller/tax_identifiers":
+    get:
+      summary: List tax registrations
+      tags:
+      - Tax Identifiers
+      security:
+      - bearer_auth: []
+      description: |
+        The seller's own registrations — the numbers the marketplace's
+        commission invoice is made out to, and what makes EU reverse charge on
+        that fee possible.
+
+        A collection rather than a single field: a business trading in more
+        than one regime holds a registration in each, and they are not
+        alternatives. One per kind.
+      parameters:
+      - name: X-Spree-Seller-Id
+        in: header
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: registrations returned
+          content:
+            application/json:
+              example:
+                data:
+                - id: txi_UkLWZg9DAJ
+                  kind: eu_vat
+                  value: DE100000008
+                  validation_status:
+                  validated_at:
+                meta:
+                  page: 1
+                  limit: 25
+                  count: 1
+                  pages: 1
+                  from: 1
+                  to: 1
+                  in: 1
+                  previous:
+                  next:
+    post:
+      summary: Add a tax registration
+      tags:
+      - Tax Identifiers
+      security:
+      - bearer_auth: []
+      description: |
+        `kind` names the regime — `eu_vat`, `gb_vat`, and whatever else a
+        validator is registered for. Any string is accepted; what a kind means
+        is decided by its validator, and a kind nothing is registered for is
+        stored and used as entered.
+
+        A number a registered validator refuses is rejected outright rather
+        than stored, so a typo cannot reach an invoice.
+      parameters:
+      - name: X-Spree-Seller-Id
+        in: header
+        required: true
+        schema:
+          type: string
+      responses:
+        '201':
+          description: registration recorded
+          content:
+            application/json:
+              example:
+                id: txi_UkLWZg9DAJ
+                kind: eu_vat
+                value: DE100000008
+                validation_status:
+                validated_at:
+        '422':
+          description: the number is not valid for its regime
+          content:
+            application/json:
+              example:
+                error:
+                  code: validation_error
+                  message: Number does not look like a valid EU VAT registration
+                  details:
+                    value:
+                    - does not look like a valid EU VAT registration
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                kind:
+                  type: string
+                  example: eu_vat
+                value:
+                  type: string
+                  example: DE100000008
+              required:
+              - kind
+              - value
+  "/api/v3/seller/tax_identifiers/{id}":
+    parameters:
+    - name: id
+      in: path
+      required: true
+      schema:
+        type: string
+    patch:
+      summary: Correct a tax registration
+      tags:
+      - Tax Identifiers
+      security:
+      - bearer_auth: []
+      description: |
+        A changed number drops its validation verdict, because that answer was
+        about the old one.
+      parameters:
+      - name: X-Spree-Seller-Id
+        in: header
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: registration corrected
+          content:
+            application/json:
+              example:
+                id: txi_UkLWZg9DAJ
+                kind: eu_vat
+                value: DE100000016
+                validation_status:
+                validated_at:
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                kind:
+                  type: string
+                  example: eu_vat
+                value:
+                  type: string
+                  example: DE100000016
+    delete:
+      summary: Remove a tax registration
+      tags:
+      - Tax Identifiers
+      security:
+      - bearer_auth: []
+      parameters:
+      - name: X-Spree-Seller-Id
+        in: header
+        required: true
+        schema:
+          type: string
+      responses:
+        '204':
+          description: registration removed
+  "/api/v3/seller/tax_identifiers/{id}/validate":
+    parameters:
+    - name: id
+      in: path
+      required: true
+      schema:
+        type: string
+    post:
+      summary: Re-check a registration against its registry
+      tags:
+      - Tax Identifiers
+      security:
+      - bearer_auth: []
+      description: |
+        A registry answers "valid now", so a number verified last year may have
+        been deregistered since. Refused when no registry validator is
+        installed for the kind — core format-checks EU VAT numbers but asks no
+        registry, so a stock install answers 422 here rather than queueing a
+        check nobody can answer.
+      parameters:
+      - name: X-Spree-Seller-Id
+        in: header
+        required: true
+        schema:
+          type: string
+      responses:
+        '422':
+          description: no registry validator is installed for this kind
+          content:
+            application/json:
+              example:
+                error:
+                  code: tax_id_not_validatable
+                  message: No registry validator is installed for tax identifier kind
+                    'eu_vat'
 servers:
 - url: http://{defaultHost}
   variables:
@@ -16459,10 +16639,6 @@ components:
             type: string
         products_count:
           type: number
-        tax_identifiers:
-          type: array
-          items:
-            "$ref": "#/components/schemas/TaxIdentifier"
         billing_address:
           "$ref": "#/components/schemas/Address"
         returns_address:
@@ -16492,7 +16668,6 @@ components:
       - default_currency
       - supported_currencies
       - products_count
-      - tax_identifiers
       x-typelizer: true
     RequirementCustomField:
       type: object

@@ -127,10 +127,7 @@
         "assigned": "目录已分配",
         "created": "目录已创建",
         "deleted": "目录已删除",
-        "product_removed": "产品已移除",
-        "products_added": "产品已添加",
         "products_imported": "产品已导入",
-        "products_removed": "产品已移除",
         "unassigned": "分配已移除",
         "updated": "目录已更新"
       },
@@ -140,15 +137,13 @@
         "empty": "该目录中暂无产品。",
         "filter_placeholder": "筛选产品…",
         "no_matches": "没有匹配筛选条件的产品。",
+        "pending_added_badge": "新增",
+        "pending_changes_hint": "产品列表的更改将在保存时生效。",
         "picker_description": "搜索并选择要添加到该目录的产品。",
         "picker_title": "向目录添加产品",
         "remove": "从目录中移除",
-        "remove_confirm": {
-          "message_named": "将“{{name}}”从该目录中移除？立即生效。产品仍保留在您的商店中。",
-          "message_other": "将 {{count}} 个产品从该目录中移除？立即生效。产品仍保留在您的商店中。",
-          "title": "从目录中移除"
-        },
         "remove_selected": "移除",
+        "restore": "恢复",
         "search_placeholder": "搜索产品…",
         "select_all": "全选",
         "select_row": "选择产品",
@@ -199,16 +194,13 @@
         "empty": "此分类中暂无商品。",
         "filter_placeholder": "筛选商品…",
         "no_matches": "没有商品匹配筛选条件。",
+        "pending_added_badge": "新增",
+        "pending_changes_hint": "产品列表的更改将在保存时生效。",
         "picker_description": "搜索并选择要添加到此分类的商品。",
         "picker_title": "向分类添加商品",
         "remove": "从分类中移除",
-        "remove_confirm": {
-          "message_named": "从该分类中移除“{{name}}”吗？将立即生效。商品仍保留在目录中。",
-          "message_one": "从该分类中移除 {{count}} 件商品吗？将立即生效。商品仍保留在目录中。",
-          "message_other": "从该分类中移除 {{count}} 件商品吗？将立即生效。商品仍保留在目录中。",
-          "title": "从分类中移除"
-        },
         "remove_selected": "移除",
+        "restore": "恢复",
         "search_placeholder": "搜索商品…",
         "select_all": "全选",
         "select_row": "选择商品",
@@ -293,16 +285,13 @@
         "empty_automatic": "暂无商品符合规则。",
         "filter_placeholder": "筛选商品…",
         "no_matches": "没有符合筛选条件的商品。",
+        "pending_added_badge": "新增",
+        "pending_changes_hint": "产品列表的更改将在保存时生效。",
         "picker_description": "搜索并选择要添加到该系列的商品。",
         "picker_title": "向系列添加商品",
         "remove": "从系列中移除",
-        "remove_confirm": {
-          "message_named": "从该系列中移除“{{name}}”吗？将立即生效。商品仍保留在目录中。",
-          "message_one": "从该系列中移除 {{count}} 件商品吗？将立即生效。商品仍保留在目录中。",
-          "message_other": "从该系列中移除 {{count}} 件商品吗？将立即生效。商品仍保留在目录中。",
-          "title": "从系列中移除"
-        },
         "remove_selected": "移除",
+        "restore": "恢复",
         "search_placeholder": "搜索商品…",
         "select_all": "全选",
         "select_row": "选择商品",
@@ -385,6 +374,10 @@
     "companies": {
       "add_cta": "添加公司",
       "add_sheet_title": "新建公司",
+      "autocomplete": {
+        "empty": "没有匹配的公司",
+        "placeholder": "搜索公司…"
+      },
       "create_description": "公司是组织树的根节点。创建后可以添加子单位、成员、地址、税务登记和免税证书。",
       "create_label": "创建公司",
       "delete_confirm": {
@@ -536,9 +529,11 @@
     "customers": {
       "autocomplete": {
         "empty": "没有匹配的客户",
+        "empty_for_company": "没有客户可为此公司采购",
         "placeholder": "搜索客户…"
       },
       "columns": {
+        "companies": "公司",
         "groups": "分组",
         "last_order": "最近订单",
         "newsletter": "订阅资讯",
@@ -1048,6 +1043,10 @@
         "label": "公司",
         "name": {
           "placeholder": "Acme Industries"
+        },
+        "po_number_required": {
+          "help": "该公司的买家必须在结账前提供采购订单号。",
+          "label": "要求填写采购订单号"
         }
       },
       "company_location": {
@@ -1370,6 +1369,11 @@
         "order_group": {
           "label": "本次购买",
           "view": "查看本次购买"
+        },
+        "po_number": {
+          "help": "买家为此订单使用的自有参考编号。",
+          "label": "采购订单号",
+          "placeholder": "PO-4471"
         },
         "seller": {
           "first_party": "自营",
@@ -2009,11 +2013,13 @@
       "tax_identifier": {
         "kind": {
           "help": "该号码的类型。必须与配置的校验方式一致，因此拼写很重要。",
-          "label": "类型"
+          "label": "类型",
+          "required": "请选择或输入登记类型"
         },
         "value": {
           "label": "号码",
-          "placeholder": "DE123456789"
+          "placeholder": "DE123456789",
+          "required": "请输入登记号码"
         }
       },
       "tax_rate": {
@@ -2375,6 +2381,7 @@
         "items": "商品",
         "number": "编号",
         "payment": "付款",
+        "po_number": "采购订单号",
         "sku": "SKU",
         "tags": "标签"
       },
@@ -2544,6 +2551,13 @@
           "number": "编号",
           "state": "州/省"
         },
+        "purchase_order": {
+          "document": "采购订单文件",
+          "document_help": "PDF、图片或 Word 文件，最大 10 MB。",
+          "download_failed": "无法下载采购订单",
+          "save_failed": "无法保存采购订单",
+          "title": "采购订单"
+        },
         "section_customer_note": "特别说明",
         "section_internal_note": "内部备注",
         "section_seller": "卖家",
@@ -2574,16 +2588,22 @@
         "action_label": "编辑订单",
         "actions": {
           "add_product": "添加商品",
+          "keep_negotiated_price": "保留 {{name}} 的议价",
+          "price_for": "{{name}} 的单价",
           "quantity_for": "{{name}} 的数量",
           "remove_item": "移除 {{name}}",
+          "reset_price": "将 {{name}} 恢复为目录价格",
           "restore_item": "保留 {{name}}"
         },
         "badges": {
           "fulfilled_count_one": "已履行 {{count}} 件",
           "fulfilled_count_other": "已履行 {{count}} 件",
+          "negotiated": "议价",
           "pending": "未保存",
+          "price_reverting": "将恢复为目录价格",
           "removed": "待移除"
         },
+        "catalog_price_unknown": "目录价格",
         "columns": {
           "line_total": "小计",
           "product": "商品",
@@ -2595,10 +2615,13 @@
         "subtitle": "订单 {{number}}",
         "title": "编辑订单",
         "totals_hint": "保存后，服务器会重新计算金额。",
+        "totals_preview_confirm_hint": "保存时由服务器确认。",
+        "totals_preview_hint": "运费、税费和促销将在保存后由服务器重新计算。",
         "totals_title": "金额",
         "validation": {
           "below_fulfilled_one": "不能低于已履行的 {{count}} 件",
-          "below_fulfilled_other": "不能低于已履行的 {{count}} 件"
+          "below_fulfilled_other": "不能低于已履行的 {{count}} 件",
+          "invalid_price": "价格必须是非负数"
         }
       },
       "errors": {
@@ -2656,7 +2679,7 @@
       },
       "table": {
         "empty": "未找到订单",
-        "search_placeholder": "搜索订单…"
+        "search_placeholder": "按订单号、采购订单号或客户搜索…"
       }
     },
     "pages": {
@@ -2815,6 +2838,9 @@
               "resolve_refund": "以退款解决",
               "resolve_replacement": "以换货解决"
             },
+            "confirm": {
+              "deny": "拒绝此索赔？客户将不会收到退款或补发商品。"
+            },
             "create_title": "新建索赔",
             "empty": "此订单暂无索赔。",
             "refund_amount": "退款金额",
@@ -2898,12 +2924,14 @@
         "drafts_title": "草稿订单",
         "new": {
           "add_line_item": "添加订单项",
+          "company_help": "将此订单关联到某个公司。客户列表随后只显示可为其采购的人员。",
           "search_variant": "搜索变体…",
           "section_billing": "账单",
           "section_customer": "客户",
           "section_items": "商品",
           "section_notes": "备注",
           "section_summary": "概览",
+          "select_company": "公司（可选）",
           "select_customer": "选择客户",
           "title": "新建订单"
         }
@@ -3006,7 +3034,6 @@
             "title": "激活价格列表？"
           },
           "add_cta": "新建价格表",
-          "add_products_cta": "添加商品",
           "add_rule": "添加规则",
           "add_rule_help": "选择要配置的规则类型。",
           "basics_section": "基本信息",
@@ -3057,16 +3084,27 @@
           },
           "edit_prices_cta": "编辑价格",
           "no_changes": "没有需要保存的更改。",
-          "prices_help_one": "已配置 {{count}} 个价格。打开批量编辑器进行更新。",
-          "prices_help_other": "已配置 {{count}} 个价格。打开批量编辑器进行更新。",
-          "prices_help_zero": "在上方选择商品以生成占位价格，然后打开批量编辑器。",
-          "products_empty": "暂无商品——添加一个以开始编辑价格。",
-          "products_empty_search": "没有匹配的商品",
-          "products_help": "选择此价格表适用的商品。保存时会创建占位价格——请在下方填写。",
-          "products_search_placeholder": "按名称搜索商品…",
-          "products_section": "商品",
-          "products_selected_one": "已选择 {{count}} 个商品。",
-          "products_selected_other": "已选择 {{count}} 个商品。",
+          "products": {
+            "add_cta": "添加产品",
+            "column_product": "产品",
+            "empty": "还没有产品——添加一个以开始编辑价格。",
+            "filter_placeholder": "筛选产品…",
+            "no_matches": "没有符合筛选条件的产品。",
+            "pending_added_badge": "新增",
+            "pending_changes_hint": "产品列表的更改将在保存时生效。",
+            "picker_description": "搜索并选择要添加到此价格表的产品。",
+            "picker_title": "向价格表添加产品",
+            "remove": "从价格表中移除",
+            "remove_selected": "移除",
+            "restore": "恢复",
+            "search_placeholder": "搜索产品…",
+            "select_all": "全选",
+            "select_row": "选择产品",
+            "title": "产品"
+          },
+          "products_help": "选择此价格表适用的产品。保存时会创建占位价格 — 使用“编辑价格”填写。",
+          "products_help_with_prices_one": "选择此价格表适用的产品。已配置 {{count}} 个价格 — 使用“编辑价格”进行更新。",
+          "products_help_with_prices_other": "选择此价格表适用的产品。已配置 {{count}} 个价格 — 使用“编辑价格”进行更新。",
           "remove_rule_confirm": {
             "message": "保存价格列表时将移除该规则。",
             "title": "移除规则？"
@@ -4730,7 +4768,7 @@
         "validation_failed": "无法核验该号码",
         "validation_requested": "正在向登记机构核验该号码"
       },
-      "not_validatable": "该类型未配置校验方式，将按填写的内容直接使用。",
+      "not_validatable": "该类型没有可核对的登记机构，号码将按填写的内容记录。",
       "select_kind": "选择类型",
       "title": "税务登记号",
       "validate_action": "向登记机构核验",

@@ -126,5 +126,18 @@ describe Spree::FulfillmentMailer, type: :mailer do
     specify "shows order's user name in email body" do
       expect(fulfilled_email).to have_body_text("Dear #{order.name}")
     end
+
+    # Every order-facing document renders the buyer's reference when present —
+    # and both parts of it, not just the HTML one.
+    context 'when the order carries a purchase order number' do
+      before { order.update!(po_number: 'PO-4471') }
+
+      it 'renders it in both parts' do
+        message = described_class.fulfilled_email(fulfillment)
+
+        expect(message.html_part.body.to_s).to include('PO-4471')
+        expect(message.text_part.body.to_s).to include('PO-4471')
+      end
+    end
   end
 end

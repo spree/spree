@@ -19,7 +19,6 @@ defineTable<CommissionRate>('commission-rates', {
       key: 'name',
       label: i18n.t('admin.fields.name.label'),
       sortable: true,
-      filterable: true,
       default: true,
       render: (rate) => (
         <ResourceNameCell

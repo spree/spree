@@ -56,6 +56,7 @@ Spree::Core::Engine.add_routes do
           end
           resource :store_credits, only: [:create, :destroy], controller: 'carts/store_credits'
           resource :tax_identifier, only: [:show, :update, :destroy], controller: 'carts/tax_identifiers'
+          resource :po_document, only: [:show, :create, :destroy], controller: 'carts/po_documents'
         end
 
         # Delivery methods (pickup discovery)
@@ -170,6 +171,19 @@ Spree::Core::Engine.add_routes do
         # every translatable model. See docs/plans/5.5-6.0-resource-translations-api.md.
         concern :translatable do
           resources :translations, only: [:index], controller: 'translations'
+        end
+
+        # Mounts the uniform nested products surface on parents that curate
+        # products (categories, collections, catalogs, price lists). Bulk by
+        # design: POST adds and DELETE removes any number of products in one
+        # request. `positioned: true` adds per-member reposition where the
+        # membership carries a manual order. See
+        # Spree::Api::V3::Admin::ProductMembership.
+        concern :product_membership do |options|
+          resources :products, controller: options.fetch(:controller), only: [:index, :create] do
+            patch :reposition, on: :member if options[:positioned]
+          end
+          delete 'products', to: "#{options.fetch(:controller)}#destroy"
         end
 
         # Definitions are per resource type, not per instance.
@@ -349,12 +363,7 @@ Spree::Core::Engine.add_routes do
           end
 
           # Manual product membership + ordering within the category.
-          # (Bulk add/remove reuse POST /products/bulk_{add,remove}_*_categories.)
-          resources :products, controller: 'categories/products', only: [:index, :create, :destroy] do
-            member do
-              patch :reposition
-            end
-          end
+          concerns :product_membership, controller: 'categories/products', positioned: true
         end
 
         # Collections (flat, merchandising). Reordering the collection itself is a
@@ -362,11 +371,7 @@ Spree::Core::Engine.add_routes do
         # top-level reposition action — only the nested membership has one.
         resources :collections, concerns: [:custom_fieldable, :translatable] do
           # Manual product membership + ordering within the collection.
-          resources :products, controller: 'collections/products', only: [:index, :create, :destroy] do
-            member do
-              patch :reposition
-            end
-          end
+          concerns :product_membership, controller: 'collections/products', positioned: true
         end
 
         # Subclass discovery for the collection rules editor, mirroring
@@ -613,12 +618,9 @@ Spree::Core::Engine.add_routes do
             post :assign
             post :import_products
           end
-          # Manual assortment membership + ordering within the catalog.
-          resources :products, controller: 'catalogs/products', only: [:index, :create, :destroy] do
-            member do
-              patch :reposition
-            end
-          end
+          # Assortment membership. Unordered: a catalog decides what a buyer
+          # sees, never the order they see it in.
+          concerns :product_membership, controller: 'catalogs/products'
         end
         resources :catalog_assignments, only: [:show, :destroy]
 
@@ -631,6 +633,9 @@ Spree::Core::Engine.add_routes do
             patch :activate
             patch :deactivate
           end
+          # Which products the list prices. Adding materializes placeholder
+          # prices per variant x currency; removing hard-deletes the rows.
+          concerns :product_membership, controller: 'price_lists/products'
         end
 
         # Prices (generic — covers base prices AND price-list overrides).
@@ -681,6 +686,9 @@ Spree::Core::Engine.add_routes do
             patch :resume
             post :resend_confirmation
             post :resend_digital_links
+            # The buyer's purchase order, streamed through the API so it is
+            # never reachable without admin credentials.
+            get :po_document
           end
 
           resources :items, only: [:index, :show, :create, :update, :destroy], controller: 'orders/items'
@@ -763,6 +771,15 @@ Spree::Core::Engine.add_routes do
 
         # Singular: the seller in play is always `current_seller`.
         resource :profile, only: [:show, :update], controller: 'profile'
+
+        # The seller's own registrations — a collection, like a company's: a
+        # business trading in several regimes holds one in each.
+        resources :tax_identifiers, only: [:index, :create, :update, :destroy],
+                                    controller: 'tax_identifiers' do
+          member do
+            post :validate
+          end
+        end
 
         resources :team, only: [:index, :create, :destroy], controller: 'team'
 

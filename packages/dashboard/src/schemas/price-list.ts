@@ -8,6 +8,7 @@ import { blankToNull, defaultPreferences } from '@spree/dashboard-core'
 import { requiredMessage } from '@spree/dashboard-ui'
 import i18n from 'i18next'
 import { z } from 'zod/v4'
+import type { ProductMembershipStagingValue } from '../components/spree/product-membership-staging'
 
 export const MATCH_POLICIES = ['all', 'any'] as const
 export type MatchPolicy = (typeof MATCH_POLICIES)[number]
@@ -86,11 +87,13 @@ export const priceListFormSchema = z
     match_policy: z.enum(MATCH_POLICIES).default('all'),
     rules: z.array(priceRuleDraftSchema).default([]),
     /**
-     * Prefixed product ids in the list. The server reconciles this set
-     * on every PATCH — adds placeholder prices for new ids, drops prices
-     * for removed ones — so the form ships the full desired set.
+     * Staged product membership, applied on Save through the nested products
+     * endpoints. Opaque by design — it holds SDK `Product` records so a staged
+     * addition can render before it exists server-side, and RHF's `Path<T>`
+     * must not walk that object graph (same reason as `RuleEmbedRecord`).
+     * Never sent to the API; `priceListValuesToParams` drops it.
      */
-    product_ids: z.array(z.string()).default([]),
+    staged_products: z.custom<ProductMembershipStagingValue>(() => true),
   })
   .refine(
     (v) => {
@@ -112,7 +115,7 @@ export const PRICE_LIST_DEFAULTS: PriceListFormValues = {
   ends_at: null,
   match_policy: 'all',
   rules: [],
-  product_ids: [],
+  staged_products: { adds: [], removes: [] },
 }
 
 export function priceListValuesToParams(
@@ -125,7 +128,6 @@ export function priceListValuesToParams(
     ends_at: v.ends_at || null,
     match_policy: v.match_policy,
     rules: v.rules.map(ruleDraftToPayload),
-    product_ids: v.product_ids,
   }
 }
 

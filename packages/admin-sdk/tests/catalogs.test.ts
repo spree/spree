@@ -33,35 +33,27 @@ describe('catalogs', () => {
 
   it('manages the assortment through the nested products resource', async () => {
     let added: Record<string, unknown> | null = null
-    let repositioned: Record<string, unknown> | null = null
-    let removed = false
+    let removed: Record<string, unknown> | null = null
     server.use(
       http.post(`${API_PREFIX}/catalogs/cat_abc123/products`, async ({ request }) => {
         added = (await request.json()) as Record<string, unknown>
         return HttpResponse.json({ added_count: 2 }, { status: 201 })
       }),
-      http.delete(`${API_PREFIX}/catalogs/cat_abc123/products/prod_1`, () => {
-        removed = true
-        return new HttpResponse(null, { status: 204 })
+      // Removal is bulk too — one DELETE carries every id in the body.
+      http.delete(`${API_PREFIX}/catalogs/cat_abc123/products`, async ({ request }) => {
+        removed = (await request.json()) as Record<string, unknown>
+        return HttpResponse.json({ removed_count: 2 })
       }),
-      http.patch(
-        `${API_PREFIX}/catalogs/cat_abc123/products/prod_1/reposition`,
-        async ({ request }) => {
-          repositioned = (await request.json()) as Record<string, unknown>
-          return new HttpResponse(null, { status: 204 })
-        },
-      ),
     )
 
     const client = createTestClient()
     const result = await client.catalogs.products.create('cat_abc123', ['prod_1', 'prod_2'])
-    await client.catalogs.products.delete('cat_abc123', 'prod_1')
-    await client.catalogs.products.reposition('cat_abc123', 'prod_1', 0)
+    const removal = await client.catalogs.products.delete('cat_abc123', ['prod_1', 'prod_2'])
 
     expect(result.added_count).toBe(2)
     expect(added).toEqual({ product_ids: ['prod_1', 'prod_2'] })
-    expect(removed).toBe(true)
-    expect(repositioned).toEqual({ new_position: 0 })
+    expect(removal.removed_count).toBe(2)
+    expect(removed).toEqual({ product_ids: ['prod_1', 'prod_2'] })
   })
 
   it('imports the price list products into the assortment', async () => {

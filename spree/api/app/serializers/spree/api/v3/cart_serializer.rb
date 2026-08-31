@@ -10,6 +10,9 @@ module Spree
                  coupon_code: [:string, nullable: true],
                  preferred_stock_location_id: [:string, nullable: true],
                  company_id: [:string, nullable: true], company_name: [:string, nullable: true],
+                 po_number: [:string, nullable: true], po_number_required: :boolean,
+                 po_document_filename: [:string, nullable: true],
+                 po_document_byte_size: ['number | null'],
                  requirements: 'Array<{step: string, field: string, code: string, message: string}>',
                  item_total: [:string, nullable: true], display_item_total: [:string, nullable: true],
                  delivery_total: [:string, nullable: true], display_delivery_total: [:string, nullable: true],
@@ -55,9 +58,24 @@ module Spree
           cart.company&.name
         end
 
+        # The buyer's own purchase-order reference, and whether their company
+        # demands one — the storefront marks the field required from this
+        # rather than fetching the company to ask.
+        attribute :po_number_required do |cart|
+          cart.po_number_required?
+        end
+
+        attribute :po_document_filename do |cart|
+          cart.po_document.blob&.filename&.to_s if cart.po_document.attached?
+        end
+
+        attribute :po_document_byte_size do |cart|
+          cart.po_document.blob&.byte_size if cart.po_document.attached?
+        end
+
         # @deprecated `number` mirrors `id` (carts have no order-style
         #   number) — kept one release for 5.x clients; removed in 6.1.
-        attributes :number, :token, :email, :customer_note,
+        attributes :number, :token, :email, :customer_note, :po_number,
                    :currency, :locale, :total_quantity, :warnings, :coupon_code
 
         # Nulled for gated (prices_hidden) guests so the cart can't leak the

@@ -15,11 +15,14 @@ module Spree
 
       # @param store [Spree::Store]
       # @param customer [Object, nil] resolved customer (Spree.customer_class instance)
+      # @param created_by [Object, nil] the staff member creating the draft
+      #   (Spree.admin_user_class instance); nil for machine callers (secret keys)
       # @param params [Hash] order params (see admin API docs)
       # @return [Spree::ServiceModule::Result]
-      def call(store:, customer: nil, params: {})
+      def call(store:, customer: nil, created_by: nil, params: {})
         @store = store
         @customer = customer
+        @created_by = created_by
         @params = params.to_h.deep_symbolize_keys
         @discount_application_errors = []
 
@@ -41,6 +44,13 @@ module Spree
         success(order.reload)
       rescue ActiveRecord::RecordInvalid => e
         failure(e.record, e.record.errors.full_messages.to_sentence)
+      rescue ActiveStorage::FileNotFoundError
+        # An abandoned direct upload leaves the blob row without its bytes.
+        # ActiveStorage raises a message-less error for that, which would
+        # otherwise be an unhandled 500 on the Admin API.
+        order ||= @store.orders.new
+        order.errors.add(:po_document, Spree.t(:po_document_upload_incomplete))
+        failure(order, order.errors.full_messages.to_sentence)
       end
 
       private
@@ -48,18 +58,25 @@ module Spree
       def build_order
         attrs = {
           customer: @customer,
+          created_by: @created_by,
           email: @params[:email] || @customer&.email,
           currency: @params[:currency].presence&.upcase || @store.default_currency,
           locale: @params[:locale] || Spree::Current.locale,
           customer_note: @params[:customer_note],
+          po_number: @params[:po_number],
           internal_note: @params[:internal_note],
           metadata: @params[:metadata].to_h,
           token: Spree::GenerateToken.new.call(Spree::Order),
           status: 'draft'
         }
 
+        # The buyer's purchase order, when it arrived with the paperwork. A
+        # signed blob id, so it assigns like any other attribute.
+        attrs[:po_document] = @params[:po_document] if @params[:po_document].present?
+
         attrs[:market] = resolve_market if @params[:market_id].present?
         attrs[:channel] = resolve_channel if @params[:channel_id].present?
+        attrs[:company] = resolve_company if @params[:company_id].present?
         attrs[:preferred_stock_location] = resolve_preferred_stock_location if @params[:preferred_stock_location_id].present?
         attrs.compact_blank!
 
@@ -72,6 +89,10 @@ module Spree
 
       def resolve_channel
         @store.channels.find_by_param!(@params[:channel_id])
+      end
+
+      def resolve_company
+        @store.companies.find_by_param!(@params[:company_id])
       end
 
       def resolve_preferred_stock_location

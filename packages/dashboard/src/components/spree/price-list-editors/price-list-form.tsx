@@ -6,10 +6,11 @@ import {
   formatStoreDateTime,
   PageHeader,
   PreferencesForm,
-  ResourceMultiAutocomplete,
+  useResourceKey,
   useStore,
 } from '@spree/dashboard-core'
 import { DropdownMenuItem, useConfirm } from '@spree/dashboard-ui'
+import { useQueryClient } from '@tanstack/react-query'
 import {
   CalendarOffIcon,
   PauseIcon,
@@ -24,6 +25,11 @@ import { Controller, type UseFormReturn, useFieldArray, useForm } from 'react-ho
 import { useTranslation } from 'react-i18next'
 import { spreeJsonLinkResolver } from '../../../lib/json-link-resolver'
 import { BulkPriceEditorDialog } from '../bulk-price-editor/bulk-price-editor-dialog'
+import { DeferredProductMembershipCard } from '../deferred-product-membership-card'
+import {
+  flushProductMembership,
+  ProductMembershipStagingProvider,
+} from '../product-membership-staging'
 import { PriceListStatusBadge } from './status-badge'
 // Side-effect import — registers per-rule editors (customer, customer
 // group, …) into the slot registry. Must run before any RuleEditSheet
@@ -62,8 +68,11 @@ import {
 } from '@spree/dashboard-ui'
 import {
   useActivatePriceList,
+  useAddPriceListProducts,
   useDeactivatePriceList,
+  usePriceListProducts,
   usePriceRuleTypes,
+  useRemovePriceListProducts,
 } from '../../../hooks/use-price-lists'
 import {
   MATCH_POLICIES,
@@ -112,6 +121,7 @@ export function PriceListForm({
   const { storeId } = useStore()
   const { permissions } = usePermissions()
   const canDelete = permissions.can('destroy', Subject.PriceList)
+  const canEdit = permissions.can('update', Subject.PriceList)
 
   const form = useForm<PriceListFormValues>({
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -125,6 +135,14 @@ export function PriceListForm({
     keyName: '_key',
   })
 
+  // Membership stages into the form and flushes through the nested products
+  // endpoints on Save. Create mode has no products card — the list has to
+  // exist before it can price anything.
+  const queryClient = useQueryClient()
+  const productsKey = useResourceKey('price-lists', priceList?.id ?? 'noop', 'products')
+  const addProducts = useAddPriceListProducts(priceList?.id ?? '')
+  const removeProducts = useRemovePriceListProducts(priceList?.id ?? '')
+
   // biome-ignore lint/correctness/useExhaustiveDependencies: form is stable
   useEffect(() => {
     if (mode !== 'edit') return
@@ -136,13 +154,25 @@ export function PriceListForm({
       ends_at: priceList.ends_at,
       match_policy: (priceList.match_policy as 'all' | 'any') ?? 'all',
       rules: initialRules.map(ruleDraftFromRule),
-      product_ids: priceList.product_ids ?? [],
+      staged_products: { adds: [], removes: [] },
     })
   }, [mode, priceList, initialRules])
 
   async function handleSubmit(values: PriceListFormValues) {
     try {
       await onSubmit(priceListValuesToParams(values))
+      // Membership flushes after the list itself saves, so a validation
+      // failure aborts before any membership write.
+      if (priceList) {
+        await flushProductMembership({
+          staging: values.staged_products,
+          add: (ids) => addProducts.mutateAsync(ids),
+          remove: (ids) => removeProducts.mutateAsync(ids),
+          queryClient,
+          productsKey,
+        })
+        form.reset({ ...values, staged_products: { adds: [], removes: [] } })
+      }
     } catch (err) {
       if (!mapSpreeErrorsToForm(err, form.setError)) throw err
     }
@@ -159,81 +189,104 @@ export function PriceListForm({
   }
 
   return (
-    <form onSubmit={form.handleSubmit(handleSubmit)}>
-      <ResourceLayout
-        header={
-          <PageHeader
-            title={
-              mode === 'create'
-                ? t('admin.pages.products.price_lists.sheet_title_create')
-                : (priceList?.name ?? '')
-            }
-            backTo="products/price-lists"
-            badges={priceList && <PriceListStatusBadge priceList={priceList} />}
-            // `dropdownItems` rather than `onDelete`: the caller already runs
-            // its own confirm, naming the price list being deleted, and
-            // `onDelete` would stack the header's generic prompt in front of it.
-            dropdownItems={
-              mode === 'edit' && onDelete && canDelete ? (
-                <DropdownMenuItem variant="destructive" disabled={deletePending} onClick={onDelete}>
-                  {t('admin.actions.delete')}
-                </DropdownMenuItem>
-              ) : undefined
-            }
-            jsonPreview={
-              mode === 'edit' && priceList
-                ? {
-                    title: `Price list ${priceList.name}`,
-                    fetch: () => adminClient.priceLists.get(priceList.id),
-                    endpoint: `/api/v3/admin/price_lists/${priceList.id}`,
-                    resolveLink: spreeJsonLinkResolver(storeId),
-                  }
-                : undefined
-            }
-            actions={
-              <div className="flex gap-2">
-                {mode === 'edit' && priceList && <ActivationButtons priceList={priceList} />}
-                <Button
-                  type="submit"
-                  disabled={
-                    form.formState.isSubmitting || (mode === 'edit' && !form.formState.isDirty)
-                  }
+    <ProductMembershipStagingProvider form={form} name="staged_products">
+      <form onSubmit={form.handleSubmit(handleSubmit)}>
+        <ResourceLayout
+          header={
+            <PageHeader
+              title={
+                mode === 'create'
+                  ? t('admin.pages.products.price_lists.sheet_title_create')
+                  : (priceList?.name ?? '')
+              }
+              backTo="products/price-lists"
+              badges={priceList && <PriceListStatusBadge priceList={priceList} />}
+              // `destructiveItems` rather than `onDelete`: the caller already runs
+              // its own confirm, naming the price list being deleted, and
+              // `onDelete` would stack the header's generic prompt in front of it.
+              destructiveItems={
+                mode === 'edit' && onDelete && canDelete ? (
+                  <DropdownMenuItem
+                    variant="destructive"
+                    disabled={deletePending}
+                    onClick={onDelete}
+                  >
+                    {t('admin.actions.delete')}
+                  </DropdownMenuItem>
+                ) : undefined
+              }
+              jsonPreview={
+                mode === 'edit' && priceList
+                  ? {
+                      title: `Price list ${priceList.name}`,
+                      fetch: () => adminClient.priceLists.get(priceList.id),
+                      endpoint: `/api/v3/admin/price_lists/${priceList.id}`,
+                      resolveLink: spreeJsonLinkResolver(storeId),
+                    }
+                  : undefined
+              }
+              actions={
+                <div className="flex gap-2">
+                  {mode === 'edit' && priceList && canEdit && (
+                    <EditPricesButton priceList={priceList} />
+                  )}
+                  {mode === 'edit' && priceList && <ActivationButtons priceList={priceList} />}
+                  <Button
+                    type="submit"
+                    disabled={
+                      form.formState.isSubmitting || (mode === 'edit' && !form.formState.isDirty)
+                    }
+                  >
+                    {form.formState.isSubmitting
+                      ? mode === 'create'
+                        ? t('admin.actions.creating')
+                        : t('admin.actions.saving')
+                      : mode === 'create'
+                        ? t('admin.actions.create')
+                        : t('admin.actions.save')}
+                  </Button>
+                </div>
+              }
+            />
+          }
+          main={
+            <>
+              {form.formState.errors.root?.message && (
+                <p
+                  className="rounded-md bg-destructive/10 px-3 py-2 text-sm text-destructive"
+                  role="alert"
                 >
-                  {form.formState.isSubmitting
-                    ? mode === 'create'
-                      ? t('admin.actions.creating')
-                      : t('admin.actions.saving')
-                    : mode === 'create'
-                      ? t('admin.actions.create')
-                      : t('admin.actions.save')}
-                </Button>
-              </div>
-            }
-          />
-        }
-        main={
-          <>
-            {form.formState.errors.root?.message && (
-              <p
-                className="rounded-md bg-destructive/10 px-3 py-2 text-sm text-destructive"
-                role="alert"
-              >
-                {form.formState.errors.root.message}
-              </p>
-            )}
-            <RulesCard form={form} rulesArray={rulesArray} />
-            <ProductsCard form={form} />
-            {mode === 'edit' && priceList && <PricesCard priceList={priceList} />}
-          </>
-        }
-        sidebar={
-          <>
-            <BasicsCard form={form} />
-            <ScheduleCard form={form} />
-          </>
-        }
-      />
-    </form>
+                  {form.formState.errors.root.message}
+                </p>
+              )}
+              <RulesCard form={form} rulesArray={rulesArray} />
+              {mode === 'edit' && priceList && (
+                <DeferredProductMembershipCard
+                  parentId={priceList.id}
+                  storeId={storeId}
+                  canEdit={canEdit}
+                  useProducts={usePriceListProducts}
+                  translationNamespace="admin.pages.products.price_lists"
+                  description={
+                    (priceList.prices_count ?? 0) > 0
+                      ? t('admin.pages.products.price_lists.products_help_with_prices', {
+                          count: priceList.prices_count ?? 0,
+                        })
+                      : t('admin.pages.products.price_lists.products_help')
+                  }
+                />
+              )}
+            </>
+          }
+          sidebar={
+            <>
+              <BasicsCard form={form} />
+              <ScheduleCard form={form} />
+            </>
+          }
+        />
+      </form>
+    </ProductMembershipStagingProvider>
   )
 }
 
@@ -473,7 +526,12 @@ function RulesCard({
   const [pickerOpen, setPickerOpen] = useState(false)
   const [editingIndex, setEditingIndex] = useState<number | null>(null)
 
-  const types = typesData?.data ?? []
+  // Superseded kinds (audience rules, replaced by catalog assignment) stay
+  // renderable for existing rows but are never offered for new ones. The
+  // picker's empty state reads the unfiltered count, so a registry holding
+  // only superseded kinds says "all used" rather than "none registered".
+  const registeredTypes = typesData?.data ?? []
+  const types = registeredTypes.filter((tt) => !tt.superseded)
   const watchedRules = (form.watch('rules') ?? []) as PriceRuleFormDraft[]
 
   return (
@@ -540,7 +598,7 @@ function RulesCard({
           <RulePickerSheet
             // One rule type per list (backend uniqueness on `type`).
             types={types.filter((tt) => !watchedRules.some((r) => r.type === tt.type))}
-            registeredCount={types.length}
+            registeredCount={registeredTypes.length}
             open
             onOpenChange={(o) => !o && setPickerOpen(false)}
             onPicked={(type) => {
@@ -610,13 +668,7 @@ function RuleRow({
       </button>
       <Can I="destroy" a={Subject.PriceRule}>
         <div className="flex items-center pr-1.5">
-          <Button
-            type="button"
-            size="icon-xs"
-            variant="ghost"
-            onClick={handleRemove}
-            className="text-destructive hover:bg-destructive/10 hover:text-destructive"
-          >
+          <Button type="button" size="icon-xs" variant="destructive-ghost" onClick={handleRemove}>
             <TrashIcon className="size-4" />
             {/* "Remove rule", not "Remove": the confirm dialog this opens has
                 its own Remove button, and two identical names in one view is
@@ -855,82 +907,21 @@ function DefaultRuleEditor({ draft, onSave, onClose }: PriceRuleEditorContext) {
   )
 }
 
-// =============================================================================
-// Products card — inline multi-autocomplete + link to spreadsheet
-// =============================================================================
-
 /**
- * Products that belong to the price list. The picker writes directly to
- * the form's `product_ids` field — on Save the whole list ships in the
- * same PATCH that handles name, schedule, and rules. No separate
- * add/remove endpoints, no sheet.
- *
- * The spreadsheet for filling in the actual amounts is rendered as a
- * sibling card below, so adding a product here causes its variant rows
- * to appear (after Save) in the Prices card without any navigation.
+ * Opens the bulk price spreadsheet from the page header. It used to be a card
+ * below the products table, where a long assortment pushed it off-screen — it
+ * holds no content of its own, only this action.
  */
-function ProductsCard({ form }: { form: UseFormReturn<PriceListFormValues> }) {
-  const { t } = useTranslation()
-  const productIds = form.watch('product_ids')
-
-  return (
-    <Card>
-      <CardHeader>
-        <CardTitle>{t('admin.pages.products.price_lists.products_section')}</CardTitle>
-        <p className="mt-1 text-xs text-muted-foreground">
-          {t('admin.pages.products.price_lists.products_help')}
-        </p>
-      </CardHeader>
-      <CardContent>
-        <Controller
-          name="product_ids"
-          control={form.control}
-          render={({ field }) => (
-            <ResourceMultiAutocomplete
-              queryKey="price-list-products"
-              value={field.value}
-              onChange={field.onChange}
-              search={(q) => adminClient.products.list({ name_cont: q, limit: 10, sort: 'name' })}
-              hydrate={(ids) => adminClient.products.list({ id_in: ids, limit: ids.length })}
-              getOptionLabel={(p) => p.name ?? p.id}
-              placeholder={t('admin.pages.products.price_lists.products_search_placeholder')}
-              emptyText={t('admin.pages.products.price_lists.products_empty_search')}
-            />
-          )}
-        />
-        {productIds.length > 0 && (
-          <p className="mt-2 text-xs text-muted-foreground">
-            {t('admin.pages.products.price_lists.products_selected', {
-              count: productIds.length,
-            })}
-          </p>
-        )}
-      </CardContent>
-    </Card>
-  )
-}
-
-function PricesCard({ priceList }: { priceList: PriceList }) {
+function EditPricesButton({ priceList }: { priceList: PriceList }) {
   const { t } = useTranslation()
   const [editorOpen, setEditorOpen] = useState(false)
-  const count = priceList.prices_count ?? 0
 
   return (
     <>
-      <Card>
-        <CardHeader className="flex flex-row items-center justify-between gap-3 space-y-0">
-          <div>
-            <CardTitle>{t('admin.common.prices')}</CardTitle>
-            <p className="mt-1 text-xs text-muted-foreground">
-              {t('admin.pages.products.price_lists.prices_help', { count })}
-            </p>
-          </div>
-          <Button type="button" size="sm" variant="outline" onClick={() => setEditorOpen(true)}>
-            <TableIcon className="mr-1 size-4" />
-            {t('admin.pages.products.price_lists.edit_prices_cta')}
-          </Button>
-        </CardHeader>
-      </Card>
+      <Button type="button" variant="outline" onClick={() => setEditorOpen(true)}>
+        <TableIcon className="size-4" />
+        {t('admin.pages.products.price_lists.edit_prices_cta')}
+      </Button>
       <BulkPriceEditorDialog open={editorOpen} onOpenChange={setEditorOpen} priceList={priceList} />
     </>
   )
