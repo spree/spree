@@ -56,6 +56,37 @@ RSpec.shared_examples 'a company host' do
     end
   end
 
+  describe '#company_activation_missing?' do
+    let(:approval_channel) { create(:channel, store: store, preferred_storefront_access: 'approval_required') }
+
+    it 'is false away from the approval posture' do
+      expect(record.company_activation_missing?).to be(false)
+    end
+
+    context 'on an approval_required channel' do
+      before { record.update!(channel: approval_channel) }
+
+      it 'is true when the sale resolves to no company' do
+        expect(record.company_activation_missing?).to be(true)
+      end
+
+      it 'is false once the buyer resolves to an active company' do
+        create(:company_membership, company: company, customer: record.customer)
+
+        expect(record.reload.company_activation_missing?).to be(false)
+      end
+
+      it 'is true when the resolved company is not policy-active' do
+        create(:company_membership, company: company, customer: record.customer)
+        record.update!(company: company)
+
+        with_company_activation_policy(inactive: [company]) do
+          expect(record.company_activation_missing?).to be(true)
+        end
+      end
+    end
+  end
+
   describe '#company_legal_entity' do
     it 'reads through the resolved node to its legal entity' do
       division = create(:company, store: store, kind: 'division', parent: company)
@@ -193,6 +224,36 @@ RSpec.describe Spree::Purchase::Company do
       order.company = company
 
       expect(order).to be_valid
+    end
+
+    # Distinct from :invalid so a storefront can tell "not yours" from "not
+    # yet activated" — the awaiting-approval state the registration flow
+    # renders.
+    it 'refuses an inactive company with a distinct error' do
+      create(:company_membership, company: company, customer: customer)
+
+      with_company_activation_policy(inactive: [company]) do
+        cart.company = company
+
+        expect(cart).not_to be_valid
+        expect(cart.errors.details[:company]).to include(error: :not_active)
+      end
+    end
+  end
+
+  # An admin keying in a wholesale draft is exempt from the activation gate —
+  # their authority is the credential, not a membership.
+  describe 'staff exemption from the activation gate' do
+    let(:store) { @default_store }
+
+    it 'excuses an order with a recorded creator' do
+      channel = create(:channel, store: store, preferred_storefront_access: 'approval_required')
+      order = create(:order, store: store, customer: customer, channel: channel)
+      expect(order.company_activation_missing?).to be(true)
+
+      order.update_columns(created_by_id: 1)
+
+      expect(order.reload.company_activation_missing?).to be(false)
     end
   end
 
