@@ -36,7 +36,17 @@ module Spree
     has_many :catalog_assignments, class_name: 'Spree::CatalogAssignment', dependent: :destroy,
                                    inverse_of: :catalog
 
+    # Commercial terms — typed per grain rather than one rules table, because
+    # quantity rules are read on the add-to-cart path and want an indexed
+    # lookup, while minimums want DB-enforced per-currency uniqueness.
+    has_many :quantity_rules, class_name: 'Spree::CatalogQuantityRule', dependent: :destroy,
+                              inverse_of: :catalog
+    has_many :order_minimums, class_name: 'Spree::CatalogOrderMinimum', dependent: :destroy,
+                              inverse_of: :catalog
+
     validates :name, presence: true
+    validates :minimum_order_quantity, numericality: { only_integer: true, greater_than: 0, allow_nil: true }
+    validates :order_multiple, numericality: { only_integer: true, greater_than: 0, allow_nil: true }
     validate :price_list_in_same_store
     validate :price_list_must_be_resolvable
     validate :price_list_not_owned_elsewhere
@@ -284,6 +294,29 @@ module Spree
       return 0 if price_list.nil?
 
       add_products(price_list.product_ids)
+    end
+
+    # This catalog's own quantity terms, before any per-variant override —
+    # the middle of the three resolution levels. Fields this catalog is
+    # silent on stay nil so the level below still answers them.
+    #
+    # @return [Spree::QuantityRule]
+    def default_quantity_rule
+      Spree::QuantityRule.new(
+        minimum_order_quantity: minimum_order_quantity,
+        order_multiple: order_multiple
+      )
+    end
+
+    # True when this catalog states any commercial term at all. A catalog can
+    # legitimately carry terms and nothing else — that is how a channel's
+    # default catalog sets a store-wide minimum without narrowing what anyone
+    # sees or pays.
+    #
+    # @return [Boolean]
+    def commercial_terms?
+      minimum_order_quantity.present? || order_multiple.present? ||
+        quantity_rules.any? || order_minimums.any?
     end
 
     private

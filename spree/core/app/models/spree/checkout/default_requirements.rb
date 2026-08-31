@@ -35,13 +35,48 @@ module Spree
           r << req('delivery', 'delivery_method', Spree.t('checkout_requirements.delivery_method_required')) if delivery_step_required? && !delivery_method_selected?
           r << req('payment', 'payment', Spree.t('checkout_requirements.payment_required')) if payment_required? && !payment_satisfied?
           r << req('address', 'po_number', Spree.t('checkout_requirements.po_number_required')) if po_number_missing?
+          r << order_minimum_requirement if below_order_minimum?
         end
       end
 
       def completion_requirements
-        errors = stock_errors
+        errors = stock_errors + quantity_rule_errors
         errors << req('address', 'email', Spree.t(:guest_checkout_not_allowed), code: 'guest_checkout_not_allowed') if @cart.guest_checkout_disallowed?
         errors
+      end
+
+      # Re-checked at completion because an agreement can change between the
+      # add and the checkout — a company moved to a different tier, a term
+      # edited. Naming the nearest valid quantities rather than rounding: a
+      # silent adjustment on a wholesale order is a five-figure surprise.
+      def quantity_rule_errors
+        return [] if staff_initiated?
+
+        @cart.line_items_violating_quantity_rules.map do |line_item, rule|
+          req('cart', 'line_items',
+              Spree.t('cart_line_item.quantity_rule_violated',
+                      li_name: line_item.name,
+                      quantities: rule.nearest_valid(line_item.quantity).to_sentence),
+              code: 'quantity_rule_violated')
+        end
+      end
+
+      # Advisory rather than completion-only: a buyer has to be able to build
+      # the order below the threshold and read how far off they are while
+      # they can still add to it. Completion refuses it because the advisory
+      # feed is included there too.
+      def below_order_minimum?
+        !staff_initiated? && @cart.below_order_minimum?
+      end
+
+      def order_minimum_requirement
+        minimum = @cart.order_minimum
+        shortfall = Spree::Money.new(@cart.order_minimum_shortfall, currency: minimum.currency)
+
+        req('cart', 'order_minimum',
+            Spree.t('checkout_requirements.order_minimum_not_met',
+                    minimum: minimum.display_amount.to_s, shortfall: shortfall.to_s),
+            code: 'order_minimum_not_met')
       end
 
       # Discontinuation is checked at both levels: a product can stay active

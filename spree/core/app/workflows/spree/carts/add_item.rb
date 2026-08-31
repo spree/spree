@@ -26,6 +26,12 @@ module Spree
 
         step :parse_manual_price unless price.nil?
 
+        # Core behaviour rather than a hook: an agreement's quantity terms are
+        # part of what the merchant sold, not an extension's opinion. Before
+        # the hook so a host app's own rules see a quantity that already
+        # passed the commercial ones.
+        step :validate_quantity_rules
+
         # Veto point — purchase limits, B2B eligibility, per-group rules.
         # Outside the transaction: nothing has been written yet, so a
         # rejection costs no rollback.
@@ -61,6 +67,38 @@ module Spree
         reject!(Spree.t('cart_line_item.invalid_price'), cart) if @manual_price.negative? || !@manual_price.finite?
       rescue ArgumentError
         reject!(Spree.t('cart_line_item.invalid_price'), cart)
+      end
+
+      # Checked against the quantity the line will END UP at, not the
+      # increment: adding 24 to an existing 24 is an order of 48, which a
+      # 48/24 rule allows even though neither 24 does on its own.
+      #
+      # Staff keying an order in are unrestricted — an admin is entering what
+      # the buyer actually negotiated, and refusing it would make the
+      # exception impossible to record.
+      def validate_quantity_rules
+        return if staff_initiated?
+
+        rule = cart.quantity_rules_for(variant)
+        return if rule.satisfied_by?(resulting_quantity)
+
+        # A symbolic type rather than a bare string, so callers reading
+        # `details` get `quantity_rule_violated` rather than the sentence.
+        errors.add(
+          :base, :quantity_rule_violated,
+          message: Spree.t('cart_line_item.quantity_rule_violated',
+                           li_name: variant.name,
+                           quantities: rule.nearest_valid(resulting_quantity).to_sentence)
+        )
+        failure(cart, errors)
+      end
+
+      # Draft orders are the admin surface — a cart is always the buyer's own,
+      # and only an Order carries a creator. Staff key in what the buyer
+      # actually negotiated, so refusing them would make an agreed exception
+      # impossible to record.
+      def staff_initiated?
+        cart.is_a?(Spree::Order)
       end
 
       def add_to_line_item

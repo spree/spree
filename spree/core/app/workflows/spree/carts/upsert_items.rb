@@ -241,6 +241,10 @@ module Spree
       # deliberate difference between this workflow and every other one.
       def validated?(item, index)
         bind_current_item(item)
+        # Core behaviour rather than a hook: an agreement's quantity terms are
+        # what the merchant sold. Removals are exempt — a buyer must always be
+        # able to empty a line, whatever the rules now say about holding it.
+        check_quantity_rules(item) unless item.remove?
         run_hooks :validate
         true
       rescue Spree::Workflow::FailureSignal
@@ -257,6 +261,31 @@ module Spree
         false
       ensure
         bind_current_item(nil)
+      end
+
+      # This workflow SETS the quantity, so the submitted number is already
+      # the resulting one — no increment to add on.
+      def check_quantity_rules(item)
+        return if staff_initiated?
+
+        rule = cart.quantity_rules_for(item.variant)
+        return if rule.satisfied_by?(item.quantity)
+
+        # A symbolic type rather than a bare string, so the warning this
+        # becomes carries `quantity_rule_violated` as its code — a client
+        # switching on the code must not be handed the sentence.
+        errors.add(
+          :base, :quantity_rule_violated,
+          message: Spree.t('cart_line_item.quantity_rule_violated',
+                           li_name: item.variant.name,
+                           quantities: rule.nearest_valid(item.quantity).to_sentence)
+        )
+        failure(cart, errors)
+      end
+
+      # Draft orders are the admin surface — a cart is always the buyer's own.
+      def staff_initiated?
+        cart.is_a?(Spree::Order)
       end
 
       def bind_current_item(item)

@@ -19,6 +19,10 @@ module Spree
     DIMENSION_UNITS = %w[mm cm in ft]
     WEIGHT_UNITS = %w[g kg lb oz]
 
+    # What a buyer is quoted in. Stored quantities are units at every level;
+    # this only changes the vocabulary a storefront presents.
+    PURCHASE_UNITS = %w[unit carton]
+
     belongs_to :product, -> { with_deleted }, touch: true, class_name: 'Spree::Product', inverse_of: :variants
     belongs_to :tax_category, class_name: 'Spree::TaxCategory', optional: true
     # Which seller sells this variant. Nil is the operator's own listing, and
@@ -112,6 +116,21 @@ module Spree
     validates :weight_unit, inclusion: { in: WEIGHT_UNITS }, allow_blank: true
 
     validates :backorder_limit, numericality: { only_integer: true, greater_than_or_equal_to: 0, allow_nil: true }
+
+    # Base purchasing rules. Blank means unrestricted, so the columns start
+    # empty and every existing variant keeps buying one at a time.
+    validates :minimum_order_quantity, numericality: { only_integer: true, greater_than: 0, allow_nil: true }
+    validates :order_multiple, numericality: { only_integer: true, greater_than: 0, allow_nil: true }
+    validates :units_per_carton, numericality: { only_integer: true, greater_than: 0, allow_nil: true }
+    validates :purchase_unit, inclusion: { in: PURCHASE_UNITS }, allow_blank: true
+
+    # Both are data errors the merchant should hear about while editing, not
+    # discover through a customer complaint: an order multiple that straddles
+    # carton boundaries can never be shipped whole, and quoting cartons
+    # without saying how many units one holds leaves the storefront no way to
+    # render the offer.
+    validate :order_multiple_fits_cartons
+    validate :carton_purchase_unit_has_divisor
 
     # Customs classification. Optional everywhere — only an international
     # shipment or a duties provider needs it, and each raises its own error
@@ -244,7 +263,8 @@ module Spree
     # applies it, not an allowlist entry that quietly answers a different
     # question.
     self.whitelisted_ransackable_attributes = %w[weight depth width height sku discontinue_on cost_price cost_currency track_inventory
-                                                 deleted_at product_id hs_code country_of_origin]
+                                                 deleted_at product_id hs_code country_of_origin
+                                                 minimum_order_quantity order_multiple purchase_unit units_per_carton]
     self.whitelisted_ransackable_scopes = %i(product_name_or_sku_cont search_by_product_name_or_sku search)
 
     def self.product_name_or_sku_cont(query)
@@ -920,7 +940,53 @@ module Spree
       digital_assets.any?
     end
 
+    # The variant's own purchasing rules — the base every cart obeys, and the
+    # floor a buyer falls back to when their catalogs state nothing. A buyer's
+    # effective rules resolve through {Spree::Catalogs::ResolveQuantityRules};
+    # nothing below the cart layer reads either.
+    #
+    # @return [Spree::QuantityRule]
+    def quantity_rule
+      Spree::QuantityRule.new(
+        minimum_order_quantity: minimum_order_quantity,
+        order_multiple: order_multiple
+      )
+    end
+
+    # True when this variant is quoted in cartons rather than units. Requires
+    # +units_per_carton+, which the validation above guarantees.
+    #
+    # @return [Boolean]
+    def sold_by_carton?
+      purchase_unit == 'carton' && units_per_carton.to_i.positive?
+    end
+
+    # How many cartons a unit quantity fills, rounded up — a part carton still
+    # ships as a carton. Nil when the variant declares no carton size.
+    #
+    # @param quantity [Integer]
+    # @return [Integer, nil]
+    def cartons_for(quantity)
+      return nil unless units_per_carton.to_i.positive?
+
+      (quantity.to_i / units_per_carton.to_f).ceil
+    end
+
     private
+
+    def order_multiple_fits_cartons
+      return if order_multiple.to_i.zero? || units_per_carton.to_i.zero?
+      return if (order_multiple % units_per_carton).zero? || (units_per_carton % order_multiple).zero?
+
+      errors.add(:order_multiple, :incompatible_with_carton, units_per_carton: units_per_carton)
+    end
+
+    def carton_purchase_unit_has_divisor
+      return unless purchase_unit == 'carton'
+      return if units_per_carton.to_i.positive?
+
+      errors.add(:units_per_carton, :required_for_carton_purchase_unit)
+    end
 
     # Resolved through the product's own store, because
     # +Spree::StockLocation.find_by_param+ is global: an id belonging to another

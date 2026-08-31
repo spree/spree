@@ -214,13 +214,24 @@ en:
         email: Email
         password: Password
         password_confirmation: Password Confirmation
+      spree/catalog_order_minimum:
+        amount: Amount
+        currency: Currency
+      spree/catalog_quantity_rule:
+        minimum_order_quantity: Minimum order quantity
+        order_multiple: Order multiple
+        variant: Variant
       spree/variant:
         cost_currency: Cost Currency
         cost_price: Cost Price
         depth: Depth
         height: Height
+        minimum_order_quantity: Minimum order quantity
+        order_multiple: Order multiple
         price: Price
+        purchase_unit: Purchase unit
         sku: SKU
+        units_per_carton: Units per carton
         weight: Weight
         width: Width
       spree/wished_item:
@@ -404,10 +415,18 @@ en:
             ship_address_id:
               belongs_to_other_user: belongs to other user
               deprecated_in_completed_order: deprecated in completed order
+        spree/catalog_quantity_rule:
+          attributes:
+            base:
+              quantity_rule_states_nothing: Set a minimum order quantity, an order multiple, or both
         spree/variant:
           attributes:
             base:
               cannot_destroy_if_attached_to_line_items: Cannot delete Variants that are added to placed Orders. In such cases, please discontinue them.
+            order_multiple:
+              incompatible_with_carton: must divide into or be a multiple of %{units_per_carton} units per carton
+            units_per_carton:
+              required_for_carton_purchase_unit: is required when the purchase unit is cartons
         spree/webhook_endpoint:
           attributes:
             url:
@@ -720,6 +739,7 @@ en:
       price_override_not_allowed: Prices cannot be changed on a placed order — use fees or discounts instead
       pricing_unavailable: Prices could not be confirmed. Please try again.
       quantity_must_be_positive: Quantity must be at least 1. Use DELETE to remove the item.
+      quantity_rule_violated: "%{li_name} cannot be ordered in that quantity. Try %{quantities}."
     catalogs:
       no_price_list_to_import: This catalog has no price list to import products from.
     categories: Categories
@@ -735,6 +755,7 @@ en:
       email_required: Email address is required
       line_items_required: Add at least one item to your cart
       payment_required: Add a payment method
+      order_minimum_not_met: "Orders must come to at least %{minimum}. Add %{shortfall} more to check out."
       po_number_required: A purchase order number is required for this account
       ship_address_required: Shipping address is required
     choose_currency: Choose Currency
