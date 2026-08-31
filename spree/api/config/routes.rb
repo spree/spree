@@ -609,8 +609,17 @@ Spree::Core::Engine.add_routes do
 
           # Commercial terms. Typed per grain rather than one rules endpoint:
           # quantity rules are per variant, minimums are per currency.
+          #
+          # Both also answer as a whole set, because the agreement editor
+          # stages every term behind the catalog's Save: a half-applied
+          # agreement is not a state to leave a merchant in.
           resources :quantity_rules, controller: 'catalogs/quantity_rules'
-          resources :order_minimums, controller: 'catalogs/order_minimums'
+          resources :product_terms, controller: 'catalogs/product_terms', only: [:index] do
+            collection { put :upsert, path: '' }
+          end
+          resources :order_minimums, controller: 'catalogs/order_minimums' do
+            collection { put :replace, path: '' }
+          end
         end
         resources :catalog_assignments, only: [:show, :destroy]
 

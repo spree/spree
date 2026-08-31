@@ -102,7 +102,9 @@ import type {
   ApiKeyUpdateParams,
   CatalogAssignParams,
   CatalogOrderMinimumParams,
+  CatalogOrderMinimumsParams,
   CatalogParams,
+  CatalogProductTermsParams,
   CatalogQuantityRuleParams,
   CategoryCreateParams,
   CategoryRepositionParams,
@@ -260,6 +262,7 @@ import type {
   Catalog,
   CatalogAssignment,
   CatalogOrderMinimum,
+  CatalogProductTerm,
   CatalogQuantityRule,
   Category,
   Channel,
@@ -3460,6 +3463,39 @@ export class AdminClient {
         this.request<void>('DELETE', `/catalogs/${catalogId}/quantity_rules/${id}`, options),
     },
 
+    /**
+     * Per-product quantity terms — the grain the agreement editor states
+     * them at, over rows the database keeps per variant.
+     */
+    productTerms: {
+      list: (
+        catalogId: string,
+        options?: RequestOptions,
+      ): Promise<{ data: CatalogProductTerm[] }> =>
+        this.request<{ data: CatalogProductTerm[] }>(
+          'GET',
+          `/catalogs/${catalogId}/product_terms`,
+          options,
+        ),
+
+      /**
+       * Writes the whole set in one request. A product whose pair is both
+       * null has its terms cleared; a product not yet in the assortment is
+       * added, since a term with nothing to apply to is not a reachable
+       * state.
+       */
+      upsert: (
+        catalogId: string,
+        params: CatalogProductTermsParams,
+        options?: RequestOptions,
+      ): Promise<{ data: CatalogProductTerm[] }> =>
+        this.request<{ data: CatalogProductTerm[] }>(
+          'PUT',
+          `/catalogs/${catalogId}/product_terms`,
+          { ...options, body: params },
+        ),
+    },
+
     /** The order minimum in each currency this agreement states one for. */
     orderMinimums: {
       list: (
@@ -3496,6 +3532,22 @@ export class AdminClient {
 
       delete: (catalogId: string, id: string, options?: RequestOptions): Promise<void> =>
         this.request<void>('DELETE', `/catalogs/${catalogId}/order_minimums/${id}`, options),
+
+      /**
+       * Replaces the whole set. A currency absent from the payload has its
+       * minimum lifted — the agreement editor stages every term behind the
+       * catalog's Save, so they apply together or not at all.
+       */
+      replace: (
+        catalogId: string,
+        params: CatalogOrderMinimumsParams,
+        options?: RequestOptions,
+      ): Promise<{ data: CatalogOrderMinimum[] }> =>
+        this.request<{ data: CatalogOrderMinimum[] }>(
+          'PUT',
+          `/catalogs/${catalogId}/order_minimums`,
+          { ...options, body: params },
+        ),
     },
   }
 

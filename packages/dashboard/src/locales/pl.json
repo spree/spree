@@ -166,32 +166,15 @@
         "minimums_title": "Minimalne wartości zamówienia",
         "minimums_description": "Najniższa wartość całego zamówienia, dla każdej waluty.",
         "minimums_empty": "Brak minimalnej wartości zamówienia. Kupujący mogą złożyć zamówienie na dowolną kwotę.",
-        "overrides_title": "Reguły dla produktów",
-        "overrides_description": "Reguły ilości dla wybranych produktów, nadpisujące wartość domyślną powyżej.",
-        "overrides_empty": "Brak reguł dla produktów. Wszystkie produkty używają wartości domyślnej powyżej.",
-        "product_column": "Produkt",
-        "add_minimum_title": "Dodaj minimalną wartość zamówienia",
         "minimum_amount_label": "Kwota minimalna",
-        "add_rule_title": "Dodaj regułę produktu",
-        "variant_placeholder": "Szukaj produktów",
-        "variant_empty": "Nie znaleziono produktów",
-        "override_help": "Pozostaw pole puste, aby użyć wartości domyślnej powyżej.",
-        "remove_minimum_title": "Usunąć minimalną wartość zamówienia?",
-        "remove_minimum_description": "Zamówienia w {{currency}} nie będą już musiały osiągać minimum. Zmiana działa natychmiast.",
-        "remove_rule_title": "Usunąć regułę produktu?",
-        "remove_rule_description": "{{name}} wróci do wartości domyślnej katalogu. Zmiana działa natychmiast.",
         "validation": {
           "positive_integer": "Podaj liczbę całkowitą większą od zera lub pozostaw pole puste.",
           "currency_taken": "Ta waluta ma już ustawione minimum.",
           "positive_amount": "Podaj kwotę większą od zera."
         },
-        "messages": {
-          "rule_created": "Dodano regułę produktu",
-          "rule_updated": "Zaktualizowano regułę produktu",
-          "rule_deleted": "Usunięto regułę produktu",
-          "minimum_created": "Dodano minimalną wartość zamówienia",
-          "minimum_deleted": "Usunięto minimalną wartość zamówienia"
-        }
+        "mixed": "Różne",
+        "inherits": "Domyślne",
+        "default_help": "Dotyczy każdego produktu w tym katalogu, chyba że produkt na liście określi własne wartości."
       }
     },
     "categories": {

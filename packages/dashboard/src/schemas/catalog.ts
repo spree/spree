@@ -61,6 +61,22 @@ export const catalogFormSchema = z
      */
     minimum_order_quantity: z.string().trim().optional(),
     order_multiple: z.string().trim().optional(),
+    /**
+     * Per-product terms as edited on the assortment rows, keyed by product
+     * id. Blank cells mean "uses the catalog default", so an entry whose
+     * pair is empty is a deletion rather than an absence.
+     *
+     * Opaque to Zod for the same reason `staged_products` is: it is form
+     * bookkeeping the submit handler consumes, never part of the parsed
+     * payload.
+     */
+    staged_terms: z.custom<StagedProductTerms>(() => true),
+    /**
+     * The order minimums as edited, one row per currency. Staged like
+     * everything else on the page: writing them on click inside a
+     * dirty-tracked form meant Discard did not undo them.
+     */
+    order_minimums: z.custom<OrderMinimumEntry[]>(() => true),
   })
   // Blank is a valid answer — it means the agreement states nothing — so the
   // shared normalizer's null stands for both "unset" and "unusable", and only
@@ -109,6 +125,32 @@ export const catalogFormSchema = z
     },
   )
 
+/**
+ * A product's quantity terms as typed. Both fields are strings so an
+ * unusable entry can be reported rather than silently coerced, and `mixed`
+ * marks a product whose variants currently disagree — typing over it sets
+ * them all.
+ */
+export interface ProductTermEntry {
+  minimum_order_quantity: string
+  order_multiple: string
+  mixed?: boolean
+}
+
+/** Per-product terms staged on the assortment rows, keyed by product id. */
+export type StagedProductTerms = Record<string, ProductTermEntry>
+
+/**
+ * One currency's order minimum as edited. `id` is present for a row that
+ * exists server-side, absent for one the merchant just added — which is how
+ * the save tells a create from an update.
+ */
+export interface OrderMinimumEntry {
+  id?: string
+  currency: string
+  amount: string
+}
+
 /** Values the catalog form holds. */
 export type CatalogFormValues = z.infer<typeof catalogFormSchema>
 
@@ -125,6 +167,8 @@ export const CATALOG_DEFAULTS: CatalogFormValues = {
   minimum_order_quantity: '',
   order_multiple: '',
   staged_products: { adds: [], removes: [] },
+  staged_terms: {},
+  order_minimums: [],
 }
 
 /**

@@ -164,32 +164,15 @@
         "minimums_title": "Mindestbestellwerte",
         "minimums_description": "Der Mindestwert einer gesamten Bestellung, je Währung.",
         "minimums_empty": "Kein Mindestbestellwert. Käufer können mit jeder Summe bestellen.",
-        "overrides_title": "Produktbezogene Regeln",
-        "overrides_description": "Mengenregeln für einzelne Produkte, die den Standard oben überschreiben.",
-        "overrides_empty": "Keine produktbezogenen Regeln. Alle Produkte nutzen den Standard oben.",
-        "product_column": "Produkt",
-        "add_minimum_title": "Mindestbestellwert hinzufügen",
         "minimum_amount_label": "Mindestbetrag",
-        "add_rule_title": "Produktregel hinzufügen",
-        "variant_placeholder": "Produkte suchen",
-        "variant_empty": "Keine Produkte gefunden",
-        "override_help": "Feld leer lassen, um auf den Standard oben zurückzufallen.",
-        "remove_minimum_title": "Mindestbestellwert entfernen?",
-        "remove_minimum_description": "Bestellungen in {{currency}} benötigen keinen Mindestwert mehr. Dies wirkt sofort.",
-        "remove_rule_title": "Produktregel entfernen?",
-        "remove_rule_description": "{{name}} nutzt wieder den Katalogstandard. Dies wirkt sofort.",
         "validation": {
           "positive_integer": "Geben Sie eine ganze Zahl größer als null ein oder lassen Sie das Feld leer.",
           "currency_taken": "Für diese Währung gibt es bereits einen Mindestwert.",
           "positive_amount": "Geben Sie einen Betrag größer als null ein."
         },
-        "messages": {
-          "rule_created": "Produktregel hinzugefügt",
-          "rule_updated": "Produktregel aktualisiert",
-          "rule_deleted": "Produktregel entfernt",
-          "minimum_created": "Mindestbestellwert hinzugefügt",
-          "minimum_deleted": "Mindestbestellwert entfernt"
-        }
+        "mixed": "Gemischt",
+        "inherits": "Standard",
+        "default_help": "Gilt für jedes Produkt in diesem Katalog, sofern ein Produkt in der Liste nichts Eigenes angibt."
       }
     },
     "categories": {

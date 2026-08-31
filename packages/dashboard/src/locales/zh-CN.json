@@ -164,32 +164,15 @@
         "minimums_title": "订单最低金额",
         "minimums_description": "整笔订单必须达到的最低金额，按币种设置。",
         "minimums_empty": "没有订单最低金额。买家可以任意金额结账。",
-        "overrides_title": "单品规则",
-        "overrides_description": "针对特定商品的数量规则，覆盖上面的默认值。",
-        "overrides_empty": "没有单品规则。所有商品都使用上面的默认值。",
-        "product_column": "商品",
-        "add_minimum_title": "添加订单最低金额",
         "minimum_amount_label": "最低金额",
-        "add_rule_title": "添加商品规则",
-        "variant_placeholder": "搜索商品",
-        "variant_empty": "未找到商品",
-        "override_help": "留空该字段将回退到上面的默认值。",
-        "remove_minimum_title": "移除订单最低金额？",
-        "remove_minimum_description": "{{currency}} 订单将不再需要达到最低金额。此更改立即生效。",
-        "remove_rule_title": "移除商品规则？",
-        "remove_rule_description": "{{name}} 将回退到目录默认值。此更改立即生效。",
         "validation": {
           "positive_integer": "请输入大于零的整数，或留空。",
           "currency_taken": "该币种已设置最低金额。",
           "positive_amount": "请输入大于零的金额。"
         },
-        "messages": {
-          "rule_created": "已添加商品规则",
-          "rule_updated": "已更新商品规则",
-          "rule_deleted": "已移除商品规则",
-          "minimum_created": "已添加订单最低金额",
-          "minimum_deleted": "已移除订单最低金额"
-        }
+        "mixed": "不一致",
+        "inherits": "默认",
+        "default_help": "适用于本目录中的每个商品，除非某个商品在列表中另行设置。"
       }
     },
     "categories": {

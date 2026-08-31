@@ -164,32 +164,15 @@
         "minimums_title": "Minimums de commande",
         "minimums_description": "Le montant minimal d'une commande entière, par devise.",
         "minimums_empty": "Aucun minimum de commande. Les acheteurs peuvent commander tout montant.",
-        "overrides_title": "Règles par produit",
-        "overrides_description": "Règles de quantité pour des produits précis, qui remplacent la valeur par défaut ci-dessus.",
-        "overrides_empty": "Aucune règle par produit. Tous les produits utilisent la valeur par défaut ci-dessus.",
-        "product_column": "Produit",
-        "add_minimum_title": "Ajouter un minimum de commande",
         "minimum_amount_label": "Montant minimal",
-        "add_rule_title": "Ajouter une règle produit",
-        "variant_placeholder": "Rechercher des produits",
-        "variant_empty": "Aucun produit trouvé",
-        "override_help": "Laisser un champ vide pour revenir à la valeur par défaut ci-dessus.",
-        "remove_minimum_title": "Supprimer le minimum de commande ?",
-        "remove_minimum_description": "Les commandes en {{currency}} n'auront plus de minimum. Effet immédiat.",
-        "remove_rule_title": "Supprimer la règle produit ?",
-        "remove_rule_description": "{{name}} reviendra à la valeur par défaut du catalogue. Effet immédiat.",
         "validation": {
           "positive_integer": "Saisissez un nombre entier supérieur à zéro, ou laissez vide.",
           "currency_taken": "Cette devise a déjà un minimum.",
           "positive_amount": "Saisissez un montant supérieur à zéro."
         },
-        "messages": {
-          "rule_created": "Règle produit ajoutée",
-          "rule_updated": "Règle produit mise à jour",
-          "rule_deleted": "Règle produit supprimée",
-          "minimum_created": "Minimum de commande ajouté",
-          "minimum_deleted": "Minimum de commande supprimé"
-        }
+        "mixed": "Variable",
+        "inherits": "Par défaut",
+        "default_help": "S'applique à chaque produit de ce catalogue, sauf si un produit indique le sien dans la liste."
       }
     },
     "categories": {

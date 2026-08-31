@@ -42,11 +42,16 @@ import {
 } from '@spree/dashboard-ui'
 import { createFileRoute, useNavigate } from '@tanstack/react-router'
 import { PlusIcon, TrashIcon } from 'lucide-react'
-import { useEffect, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { Controller, type UseFormReturn, useForm } from 'react-hook-form'
 import { useTranslation } from 'react-i18next'
 import { CatalogPricingFields } from '../../../../../components/spree/catalog-pricing-fields'
-import { CatalogTermsCard } from '../../../../../components/spree/catalog-terms-card'
+import {
+  CatalogTermsCard,
+  catalogTermColumns,
+  stagedTermsToParams,
+  termsToFormValues,
+} from '../../../../../components/spree/catalog-terms-card'
 import { DeferredProductMembershipCard } from '../../../../../components/spree/deferred-product-membership-card'
 import {
   ProductMembershipStagingProvider,
@@ -57,6 +62,7 @@ import {
   useAssignCatalog,
   useCatalog,
   useCatalogProducts,
+  useCatalogProductTerms,
   useDeleteCatalog,
   useSaveCatalog,
   useUnassignCatalog,
@@ -107,6 +113,8 @@ function CatalogBody({ catalog }: { catalog: Catalog }) {
   const { permissions } = usePermissions()
   const deleteMutation = useDeleteCatalog()
   const saveMutation = useSaveCatalog(catalog.id)
+  const { data: productTermsData } = useCatalogProductTerms(catalog.id)
+  const productTerms = useMemo(() => productTermsData?.data ?? [], [productTermsData])
 
   const canEdit = permissions.can('update', Subject.Catalog)
 
@@ -133,10 +141,16 @@ function CatalogBody({ catalog }: { catalog: Catalog }) {
       active: catalog.active,
       minimum_order_quantity: catalog.minimum_order_quantity?.toString() ?? '',
       order_multiple: catalog.order_multiple?.toString() ?? '',
+      order_minimums: (catalog.order_minimums ?? []).map((minimum) => ({
+        id: minimum.id,
+        currency: minimum.currency,
+        amount: minimum.amount,
+      })),
       ...catalogPricingValues(catalog.price_list),
       staged_products: { adds: [], removes: [] },
+      staged_terms: termsToFormValues(productTerms),
     })
-  }, [catalog, form])
+  }, [catalog, productTerms, form])
 
   async function handleDelete() {
     await deleteMutation.mutateAsync(catalog.id)
@@ -145,10 +159,20 @@ function CatalogBody({ catalog }: { catalog: Catalog }) {
 
   async function handleSave(values: CatalogFormValues) {
     try {
+      // A product on its way out takes its terms with it, so its cells are
+      // dropped rather than sent — the save would otherwise re-create rows
+      // the removal just cleared.
+      const removed = new Set(values.staged_products.removes)
+      const terms = Object.fromEntries(
+        Object.entries(values.staged_terms ?? {}).filter(([productId]) => !removed.has(productId)),
+      )
+
       await saveMutation.mutateAsync({
         attributes: catalogValuesToParams(values, savedPricingMode),
         addProductIds: values.staged_products.adds.map((product) => product.id),
         removeProductIds: values.staged_products.removes,
+        productTerms: stagedTermsToParams(terms),
+        orderMinimums: values.order_minimums,
       })
       form.reset({ ...values, staged_products: { adds: [], removes: [] } })
     } catch (err) {
@@ -211,6 +235,19 @@ function CatalogBody({ catalog }: { catalog: Catalog }) {
                 canEdit={canEdit}
                 useProducts={useCatalogProducts}
                 translationNamespace="admin.catalogs"
+                // Quantity terms are stated per product, so they belong on
+                // the rows the products are already on rather than in a
+                // second list beside this one.
+                extraColumns={catalogTermColumns({
+                  form,
+                  canEdit,
+                  headers: {
+                    minimum: t('admin.fields.minimum_order_quantity.label'),
+                    multiple: t('admin.fields.order_multiple.label'),
+                    mixed: t('admin.catalogs.terms.mixed'),
+                    defaultHint: t('admin.catalogs.terms.inherits'),
+                  },
+                })}
               />
             </>
           }
@@ -218,12 +255,7 @@ function CatalogBody({ catalog }: { catalog: Catalog }) {
             <>
               <CatalogSettingsCard form={form} canEdit={canEdit} />
               <CatalogPricingCard catalog={catalog} form={form} canEdit={canEdit} />
-              <CatalogTermsCard
-                catalogId={catalog.id}
-                form={form}
-                orderMinimums={catalog.order_minimums ?? []}
-                canEdit={canEdit}
-              />
+              <CatalogTermsCard form={form} canEdit={canEdit} />
               <CatalogAssignmentsCard catalog={catalog} canEdit={canEdit} />
             </>
           }

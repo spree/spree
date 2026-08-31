@@ -2,11 +2,7 @@ import type {
   Catalog,
   CatalogAssignment,
   CatalogAssignParams,
-  CatalogOrderMinimum,
-  CatalogOrderMinimumParams,
   CatalogParams,
-  CatalogQuantityRule,
-  CatalogQuantityRuleParams,
 } from '@spree/admin-sdk'
 import {
   adminClient,
@@ -81,6 +77,18 @@ export interface CatalogSavePayload {
   addProductIds?: string[]
   /** Staged assortment removals, flushed on Save. */
   removeProductIds?: string[]
+  /**
+   * Per-product quantity terms as edited, keyed by product id. A pair of
+   * blanks clears that product's terms. Products named here that are not in
+   * the assortment are added by the save — a term with nothing to apply to
+   * is not a state worth being able to reach.
+   */
+  productTerms?: Record<
+    string,
+    { minimum_order_quantity: number | null; order_multiple: number | null }
+  >
+  /** The order minimums as edited; rows the merchant deleted are absent. */
+  orderMinimums?: Array<{ currency: string; amount: string }>
 }
 
 /**
@@ -90,16 +98,40 @@ export interface CatalogSavePayload {
  */
 export function useSaveCatalog(catalogId: string) {
   return useResourceMutation<void, Error, CatalogSavePayload>({
-    mutationFn: async ({ attributes, addProductIds = [], removeProductIds = [] }) => {
+    mutationFn: async ({
+      attributes,
+      addProductIds = [],
+      removeProductIds = [],
+      productTerms = {},
+      orderMinimums,
+    }) => {
       if (attributes) await adminClient.catalogs.update(catalogId, attributes)
+
+      // Removals first: a product on its way out takes its terms with it, so
+      // sending them afterwards would re-create rows the delete just cleared.
       if (removeProductIds.length > 0) {
         await adminClient.catalogs.products.delete(catalogId, removeProductIds)
       }
       if (addProductIds.length > 0) {
         await adminClient.catalogs.products.create(catalogId, addProductIds)
       }
+
+      const termProductIds = Object.keys(productTerms)
+      if (termProductIds.length > 0) {
+        await adminClient.catalogs.productTerms.upsert(catalogId, { terms: productTerms })
+      }
+      if (orderMinimums) {
+        await adminClient.catalogs.orderMinimums.replace(catalogId, {
+          order_minimums: orderMinimums,
+        })
+      }
     },
-    invalidate: [['catalogs'], ['catalogs', catalogId], ['catalogs', catalogId, 'products']],
+    invalidate: [
+      ['catalogs'],
+      ['catalogs', catalogId],
+      ['catalogs', catalogId, 'products'],
+      ['catalogs', catalogId, 'product_terms'],
+    ],
     successMessage: i18n.t('admin.catalogs.messages.updated'),
     errorMessage: i18n.t('admin.errors.failed_to_update'),
   })
@@ -147,59 +179,11 @@ export function useUnassignCatalog(catalogId: string) {
 // Commercial terms — what the buyer may order, and what the order must reach
 // ---------------------------------------------------------------------------
 
-/**
- * The per-variant quantity overrides. Paginated rather than capped: an
- * agreement can name terms for thousands of SKUs, and a silent limit would
- * hide the rest while still calling itself the list.
- */
-export function useCatalogQuantityRules(catalogId: string | undefined, page = 1) {
+/** A catalog's per-product quantity terms, at the grain the editor states them. */
+export function useCatalogProductTerms(catalogId: string | undefined) {
   return useQuery({
-    queryKey: useResourceKey('catalogs', catalogId ?? 'noop', 'quantity_rules', `${page}`),
-    queryFn: () =>
-      adminClient.catalogs.quantityRules.list(catalogId as string, { page, limit: 25 }),
+    queryKey: useResourceKey('catalogs', catalogId ?? 'noop', 'product_terms'),
+    queryFn: () => adminClient.catalogs.productTerms.list(catalogId as string),
     enabled: !!catalogId,
-    placeholderData: (previous) => previous,
-  })
-}
-
-export function useCreateCatalogQuantityRule(catalogId: string) {
-  return useResourceMutation<CatalogQuantityRule, Error, CatalogQuantityRuleParams>({
-    mutationFn: (params) => adminClient.catalogs.quantityRules.create(catalogId, params),
-    invalidate: [
-      ['catalogs', catalogId],
-      ['catalogs', catalogId, 'quantity_rules'],
-    ],
-    successMessage: i18n.t('admin.catalogs.terms.messages.rule_created'),
-    errorMessage: i18n.t('admin.errors.failed_to_create'),
-  })
-}
-
-export function useDeleteCatalogQuantityRule(catalogId: string) {
-  return useResourceMutation<void, Error, string>({
-    mutationFn: (id) => adminClient.catalogs.quantityRules.delete(catalogId, id),
-    invalidate: [
-      ['catalogs', catalogId],
-      ['catalogs', catalogId, 'quantity_rules'],
-    ],
-    successMessage: i18n.t('admin.catalogs.terms.messages.rule_deleted'),
-    errorMessage: i18n.t('admin.errors.failed_to_delete'),
-  })
-}
-
-export function useCreateCatalogOrderMinimum(catalogId: string) {
-  return useResourceMutation<CatalogOrderMinimum, Error, CatalogOrderMinimumParams>({
-    mutationFn: (params) => adminClient.catalogs.orderMinimums.create(catalogId, params),
-    invalidate: [['catalogs'], ['catalogs', catalogId]],
-    successMessage: i18n.t('admin.catalogs.terms.messages.minimum_created'),
-    errorMessage: i18n.t('admin.errors.failed_to_create'),
-  })
-}
-
-export function useDeleteCatalogOrderMinimum(catalogId: string) {
-  return useResourceMutation<void, Error, string>({
-    mutationFn: (id) => adminClient.catalogs.orderMinimums.delete(catalogId, id),
-    invalidate: [['catalogs'], ['catalogs', catalogId]],
-    successMessage: i18n.t('admin.catalogs.terms.messages.minimum_deleted'),
-    errorMessage: i18n.t('admin.errors.failed_to_delete'),
   })
 }

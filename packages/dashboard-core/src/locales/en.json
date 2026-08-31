@@ -1555,32 +1555,15 @@
         "minimums_title": "Order minimums",
         "minimums_description": "The least a whole order must come to, per currency.",
         "minimums_empty": "No order minimum. Buyers may check out with any total.",
-        "overrides_title": "Per-product rules",
-        "overrides_description": "Quantity rules for specific products, overriding the default above.",
-        "overrides_empty": "No per-product rules. Every product uses the default above.",
-        "product_column": "Product",
-        "add_minimum_title": "Add order minimum",
         "minimum_amount_label": "Minimum amount",
-        "add_rule_title": "Add product rule",
-        "variant_placeholder": "Search products",
-        "variant_empty": "No products found",
-        "override_help": "Leave a field blank to fall back to the default above.",
-        "remove_minimum_title": "Remove order minimum?",
-        "remove_minimum_description": "Orders in {{currency}} will no longer need to reach a minimum. This takes effect immediately.",
-        "remove_rule_title": "Remove product rule?",
-        "remove_rule_description": "{{name}} will fall back to the catalog default. This takes effect immediately.",
         "validation": {
           "positive_integer": "Enter a whole number greater than zero, or leave blank.",
           "currency_taken": "This currency already has a minimum.",
           "positive_amount": "Enter an amount greater than zero."
         },
-        "messages": {
-          "rule_created": "Product rule added",
-          "rule_updated": "Product rule updated",
-          "rule_deleted": "Product rule removed",
-          "minimum_created": "Order minimum added",
-          "minimum_deleted": "Order minimum removed"
-        }
+        "mixed": "Mixed",
+        "inherits": "Default",
+        "default_help": "Applies to every product in this catalog, unless a product states its own on the list."
       }
     }
   }

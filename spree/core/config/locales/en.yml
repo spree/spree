@@ -742,6 +742,7 @@ en:
       quantity_rule_violated: "%{li_name} cannot be ordered in that quantity. Try %{quantities}."
     catalogs:
       no_price_list_to_import: This catalog has no price list to import products from.
+      product_not_in_store: One of those products belongs to another store.
     categories: Categories
     category: Category
     change: Change

@@ -2673,6 +2673,19 @@ export interface CatalogOrderMinimumParams {
   amount?: string | number
 }
 
+/**
+ * Per-product quantity terms, keyed by prefixed product id. Both fields null
+ * clears that product's terms; a product not in the assortment is added.
+ */
+export interface CatalogProductTermsParams {
+  terms: Record<string, { minimum_order_quantity?: number | null; order_multiple?: number | null }>
+}
+
+/** The whole order-minimum set. A currency left out has its minimum lifted. */
+export interface CatalogOrderMinimumsParams {
+  order_minimums: Array<{ currency: string; amount: string | number }>
+}
+
 export interface CatalogAssignParams {
   /**
    * Who sees the catalog — buyer audiences only. A company assignment covers
