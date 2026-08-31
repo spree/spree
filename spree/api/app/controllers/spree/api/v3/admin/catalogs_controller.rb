@@ -58,7 +58,7 @@ module Spree
           end
 
           def collection_includes
-            [:catalog_products, :price_list]
+            [:catalog_products, :price_list, :order_minimums]
           end
 
           def create_workflow
@@ -77,6 +77,7 @@ module Spree
           def permitted_params
             permitted = params.permit(*model_additional_permitted_attributes,
                                       :name, :description, :active, :position, :price_list_id,
+                                      :minimum_order_quantity, :order_multiple,
                                       metadata: {},
                                       price_list: [
                                         :name, :description, :status, :match_policy,

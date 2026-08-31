@@ -22,6 +22,8 @@ module Spree
                    customs_description: [:string, nullable: true],
                    deleted_at: [:string, nullable: true],
                    delivery_profile_id: [:string, nullable: true],
+                   minimum_order_quantity: ['number | null'], order_multiple: ['number | null'],
+                   purchase_unit: [:string, nullable: true],
                    metadata: 'Record<string, unknown>'
 
           attributes :metadata, :position, :cost_price, :cost_currency,
@@ -29,6 +31,21 @@ module Spree
                      :hs_code, :country_of_origin, :customs_description,
                      preorder_ships_at: :iso8601, deleted_at: :iso8601,
                      created_at: :iso8601, updated_at: :iso8601
+
+          # The variant's OWN rules, overriding the store serializer's
+          # buyer-resolved ones: a merchant edits what is stored on the row,
+          # not what some catalog resolves to for a buyer they are not.
+          attribute :minimum_order_quantity do |variant|
+            variant.minimum_order_quantity
+          end
+
+          attribute :order_multiple do |variant|
+            variant.order_multiple
+          end
+
+          attribute :purchase_unit do |variant|
+            variant.purchase_unit
+          end
 
           attribute :preorderable do |variant|
             variant.preorderable?

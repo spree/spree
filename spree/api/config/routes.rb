@@ -606,6 +606,11 @@ Spree::Core::Engine.add_routes do
           # Assortment membership. Unordered: a catalog decides what a buyer
           # sees, never the order they see it in.
           concerns :product_membership, controller: 'catalogs/products'
+
+          # Commercial terms. Typed per grain rather than one rules endpoint:
+          # quantity rules are per variant, minimums are per currency.
+          resources :quantity_rules, controller: 'catalogs/quantity_rules'
+          resources :order_minimums, controller: 'catalogs/order_minimums'
         end
         resources :catalog_assignments, only: [:show, :destroy]
 

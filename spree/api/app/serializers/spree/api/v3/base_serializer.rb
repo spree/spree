@@ -109,6 +109,24 @@ module Spree
           )
         end
 
+        # The buyer's effective purchasing rules for a variant — their
+        # catalogs' commercial terms resolved over the variant's own base
+        # rules. Read from the request context the same way price_for does,
+        # so a storefront gets the stepper matching the price it is quoted.
+        #
+        # One resolver per render rather than one per variant: a listing page
+        # asks about every row against the same few catalogs.
+        def quantity_rule_for(variant)
+          @quantity_rule_cache ||= {}
+          @quantity_rule_cache[variant.id] ||= quantity_rules_resolver.call(variant)
+        end
+
+        def quantity_rules_resolver
+          @quantity_rules_resolver ||= Spree::Catalogs::ResolveQuantityRules.new(
+            Spree::Current.catalogs_for(user: current_user)
+          )
+        end
+
         # Returns the base price for a variant without Price List resolution
         # This is the "original" price before any price list discounts
         # Memoized per variant to avoid duplicate queries

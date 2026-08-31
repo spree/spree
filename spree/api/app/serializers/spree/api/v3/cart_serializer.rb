@@ -13,6 +13,8 @@ module Spree
                  po_number: [:string, nullable: true], po_number_required: :boolean,
                  po_document_filename: [:string, nullable: true],
                  po_document_byte_size: ['number | null'],
+                 order_minimum: ['number | null'], order_minimum_shortfall: ['number | null'],
+                 below_order_minimum: :boolean,
                  requirements: 'Array<{step: string, field: string, code: string, message: string}>',
                  item_total: [:string, nullable: true], display_item_total: [:string, nullable: true],
                  delivery_total: [:string, nullable: true], display_delivery_total: [:string, nullable: true],
@@ -112,6 +114,22 @@ module Spree
 
         attribute :requirements do |order|
           Spree::Checkout::Requirements.new(order).call
+        end
+
+        # The order minimum in force for this buyer, or nil when their
+        # agreements state none. Exposed alongside the shortfall so a
+        # storefront can render "$180 to reach the $500 minimum" without
+        # doing the arithmetic or knowing where the number came from.
+        attribute :order_minimum do |order|
+          order.order_minimum_amount&.to_f
+        end
+
+        attribute :order_minimum_shortfall do |order|
+          order.order_minimum_shortfall&.to_f
+        end
+
+        attribute :below_order_minimum do |order|
+          order.below_order_minimum?
         end
 
         attribute :shipping_eq_billing_address do |order|

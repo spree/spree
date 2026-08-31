@@ -24,6 +24,8 @@ module Spree
                    hs_code: [:string, nullable: true],
                    country_of_origin: [:string, nullable: true],
                    customs_description: [:string, nullable: true],
+                   minimum_order_quantity: ['number | null'], order_multiple: ['number | null'],
+                   purchase_unit: [:string, nullable: true],
                    metadata: 'Record<string, unknown>'
 
           attributes :metadata, :position, :cost_price, :cost_currency,
@@ -31,6 +33,12 @@ module Spree
                      :hs_code, :country_of_origin, :customs_description,
                      preorder_ships_at: :iso8601,
                      created_at: :iso8601, updated_at: :iso8601
+
+          # The variant's own stored rules, not a buyer's resolved ones — a
+          # seller edits the row.
+          attribute :minimum_order_quantity, &:minimum_order_quantity
+          attribute :order_multiple, &:order_multiple
+          attribute :purchase_unit, &:purchase_unit
 
           attribute :preorderable, &:preorderable?
 

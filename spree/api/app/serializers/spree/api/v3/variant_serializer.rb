@@ -12,6 +12,8 @@ module Spree
                  weight: [:number, nullable: true], height: [:number, nullable: true], width: [:number, nullable: true], depth: [:number, nullable: true],
                  price: 'Price',
                  original_price: ['Price', nullable: true],
+                 minimum_order_quantity: :number, order_multiple: :number,
+                 purchase_unit: :string, units_per_carton: ['number | null'],
                  seller_id: [:string, nullable: true]
 
         attribute :product_id do |variant|
@@ -61,6 +63,28 @@ module Spree
 
         attribute :depth do |variant|
           variant.depth&.to_f
+        end
+
+        # The buyer's RESOLVED rules — their catalog terms over the variant's
+        # base — so a storefront draws the right stepper without knowing
+        # which of the two answered. Always present: an unrestricted variant
+        # reads 1 and 1, which is a valid stepper rather than a special case.
+        attribute :minimum_order_quantity do |variant|
+          quantity_rule_for(variant).minimum
+        end
+
+        attribute :order_multiple do |variant|
+          quantity_rule_for(variant).multiple
+        end
+
+        # What the buyer is quoted in. Stored quantities stay units at every
+        # level; this only says how to present them.
+        attribute :purchase_unit do |variant|
+          variant.purchase_unit.presence || 'unit'
+        end
+
+        attribute :units_per_carton do |variant|
+          variant.units_per_carton
         end
 
         # Price object - calculated price with price list resolution
