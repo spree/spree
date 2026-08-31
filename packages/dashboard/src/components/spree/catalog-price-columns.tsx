@@ -9,7 +9,6 @@ import {
   TooltipTrigger,
 } from '@spree/dashboard-ui'
 import i18n from 'i18next'
-import { Fragment, type ReactNode } from 'react'
 
 /** The three answers the API gives for where a resolved amount came from. */
 const AGREEMENT_SOURCES = ['explicit', 'automatic'] as const
@@ -94,34 +93,4 @@ function PriceSourceBadge({ source }: { source: string }) {
       <TooltipContent className="max-w-xs">{help}</TooltipContent>
     </Tooltip>
   )
-}
-
-/**
- * Renders several column sets side by side. Both halves must agree on how
- * many cells they emit, so they are composed here rather than at each call
- * site guessing at the other's width.
- */
-export function mergeColumns(
-  ...sets: { headers: ReactNode; renderCells: (row: ProductMembershipRow) => ReactNode }[]
-) {
-  return {
-    headers: (
-      <>
-        {sets.map((set, index) => (
-          // Column sets are fixed for the life of the table — there is no
-          // identity to key on beyond their order.
-          // biome-ignore lint/suspicious/noArrayIndexKey: positional by nature
-          <Fragment key={index}>{set.headers}</Fragment>
-        ))}
-      </>
-    ),
-    renderCells: (row: ProductMembershipRow) => (
-      <>
-        {sets.map((set, index) => (
-          // biome-ignore lint/suspicious/noArrayIndexKey: positional by nature
-          <Fragment key={index}>{set.renderCells(row)}</Fragment>
-        ))}
-      </>
-    ),
-  }
 }

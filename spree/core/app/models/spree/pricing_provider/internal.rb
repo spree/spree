@@ -155,29 +155,7 @@ module Spree
         # @param price_list [Spree::PriceList]
         # @return [Spree::Price, nil]
         def derived_price_for_list(price_list)
-          base = base_price
-          return if base.nil? || base.amount.nil?
-
-          factor = price_list.adjustment_factor
-          compare_at =
-            if price_list.adjust_compare_at && base.compare_at_amount.present?
-              round_for_currency(base.compare_at_amount * factor, base.currency)
-            end
-
-          Spree::Price.new(
-            variant_id: context.variant.id,
-            currency: base.currency,
-            amount: round_for_currency(base.amount * factor, base.currency),
-            compare_at_amount: compare_at,
-            price_list_id: price_list.id
-          )
-        end
-
-        # Rounds to the currency's own minor unit — two places for USD, none
-        # for JPY — rather than assuming cents.
-        # @return [BigDecimal]
-        def round_for_currency(amount, currency)
-          amount.round(::Money::Currency.find(currency)&.exponent || 2)
+          price_list.derived_price_from(base_price)
         end
 
         # Returns the base price for the variant in the current currency

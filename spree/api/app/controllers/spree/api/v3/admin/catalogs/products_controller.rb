@@ -23,19 +23,13 @@ module Spree
             # with this page's variants: resolving row by row would be a query
             # per product, and the answer is the same for every row on the
             # page.
-            # Matched the way the serializer matches it, dot notation included:
-            # a stricter gate here would leave the attribute rendering with no
-            # resolver behind it, and every row would read as unpriced.
+            # `expanded_keys` is the same dot-notation matching the serializer's
+            # own `expand?` does, so the attribute never renders without the
+            # resolver that fills it.
             def serializer_params
-              return super unless expanded_catalog_price?
+              return super unless expanded_keys.include?('catalog_price')
 
               super.merge(catalog_price_resolver: catalog_price_resolver)
-            end
-
-            def expanded_catalog_price?
-              expand_list.any? do |name|
-                name == 'catalog_price' || name.start_with?('catalog_price.')
-              end
             end
 
             # Preloaded off the same variant the serializer prices — the buy-box
@@ -48,9 +42,7 @@ module Spree
             end
 
             def priced_variants
-              Array(@collection).filter_map do |product|
-                product.buy_box_variant(currency: current_currency) || product.default_variant
-              end
+              Array(@collection).filter_map { |product| product.featured_variant(currency: current_currency) }
             end
 
             def scope

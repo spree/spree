@@ -53,7 +53,10 @@ module Spree
         if price_list
           explicit = rows.detect { |row| row.price_list_id == price_list.id }
           return build(explicit, 'explicit') if explicit
-          return build(derive(base), 'automatic') if price_list.automatic_pricing? && base
+          # Derived by the list itself, so the amount a merchant reads here is
+          # the one the pricing resolver charges — one formula, not two.
+          derived = price_list.automatic_pricing? ? price_list.derived_price_from(base) : nil
+          return build(derived, 'automatic') if derived
         end
 
         base && build(base, 'base')
@@ -93,21 +96,6 @@ module Spree
           where(price_list_id: list_ids).
           where.not(amount: nil).
           group_by(&:variant_id)
-      end
-
-      # Base × the list's factor, rounded to the currency's own minor unit —
-      # the same arithmetic the pricing resolver does on read, and for the
-      # same reason it is not stored.
-      def derive(base)
-        factor = price_list.adjustment_factor
-        exponent = ::Money::Currency.find(base.currency)&.exponent || 2
-
-        Spree::Price.new(
-          variant_id: base.variant_id,
-          currency: base.currency,
-          amount: (base.amount * factor).round(exponent),
-          price_list_id: price_list.id
-        )
       end
 
       def build(price, source)

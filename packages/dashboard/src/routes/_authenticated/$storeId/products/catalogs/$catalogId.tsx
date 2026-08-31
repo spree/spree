@@ -22,6 +22,7 @@ import {
   FieldGroup,
   FieldLabel,
   Input,
+  mergeExtraColumns,
   ResourceLayout,
   Textarea,
 } from '@spree/dashboard-ui'
@@ -31,10 +32,7 @@ import { useEffect, useMemo } from 'react'
 import { Controller, type UseFormReturn, useForm } from 'react-hook-form'
 import { useTranslation } from 'react-i18next'
 import { CatalogAudienceCard } from '../../../../../components/spree/catalog-audience-fields'
-import {
-  catalogPriceColumns,
-  mergeColumns,
-} from '../../../../../components/spree/catalog-price-columns'
+import { catalogPriceColumns } from '../../../../../components/spree/catalog-price-columns'
 import { CatalogPricingFields } from '../../../../../components/spree/catalog-pricing-fields'
 import {
   CatalogTermsCard,
@@ -243,7 +241,7 @@ function CatalogBody({ catalog }: { catalog: Catalog }) {
                 // but does not price is only visible if the two sit together
                 // (docs/plans/6.0-catalog-agreement-rework.md).
                 extraColumns={(products) =>
-                  mergeColumns(
+                  mergeExtraColumns(
                     catalogPriceColumns({
                       products,
                       headers: {
