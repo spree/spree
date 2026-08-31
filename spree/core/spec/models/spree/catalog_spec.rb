@@ -28,6 +28,30 @@ describe Spree::Catalog, type: :model do
       expect(catalog.products.reload).to contain_exactly(product)
     end
 
+    # An owned list prices the assortment and nothing else, so it follows it
+    # — those placeholder rows are what the price spreadsheet edits.
+    it 'gives an owned price list rows for the products it adds' do
+      list = create(:price_list, store: store)
+      catalog.update!(price_list: list)
+      product = create(:product, store: store, price: 100)
+
+      expect { catalog.add_products([product.id]) }.to change { list.prices.reload.count }.from(0)
+      expect(list.variants).to include(product.default_variant)
+    end
+
+    it 'drops those rows again when the product leaves the assortment' do
+      list = create(:price_list, store: store)
+      catalog.update!(price_list: list)
+      kept = create(:product, store: store, price: 100)
+      dropped = create(:product, store: store, price: 50)
+      catalog.add_products([kept.id, dropped.id])
+
+      expect { catalog.remove_products([dropped.id]) }.to change { list.prices.reload.count }
+
+      expect(list.variants.reload).to include(kept.default_variant)
+      expect(list.variants).not_to include(dropped.default_variant)
+    end
+
     it 'appends to the existing assortment in one statement' do
       first = create(:product, store: store)
       catalog.add_products([first.id])

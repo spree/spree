@@ -233,10 +233,40 @@ module Spree
       # and rejects an explicit +unique_by+; PostgreSQL/SQLite require it.
       opts[:unique_by] = %i[catalog_id product_id] unless mysql_adapter?
 
-      Spree::CatalogProduct.upsert_all(rows, **opts)
-      touch
+      # Both memberships move together: a half-applied add is the drift this
+      # sync exists to prevent, leaving the spreadsheet without rows for
+      # products the assortment already lists.
+      transaction do
+        Spree::CatalogProduct.upsert_all(rows, **opts)
+        # An owned list prices this assortment and nothing else, so it
+        # follows it: those placeholder rows are what the spreadsheet edits.
+        price_list&.add_products(new_ids)
+        touch
+      end
 
       new_ids.size
+    end
+
+    # Drops products from the assortment, and the rows an owned list carried
+    # for them — a price for something this audience can no longer see is
+    # dead weight, and would reappear if the product were added back.
+    #
+    # @param product_ids [Array<Integer>] raw product PKs
+    # @return [Integer] how many were removed
+    def remove_products(product_ids)
+      return 0 if product_ids.blank?
+
+      removed = 0
+
+      transaction do
+        removed = catalog_products.where(product_id: product_ids).delete_all
+        next if removed.zero?
+
+        price_list&.remove_products(product_ids)
+        touch
+      end
+
+      removed
     end
 
     # Copies the price list's products into the assortment — the explicit

@@ -82,6 +82,19 @@ describe Spree::Catalogs::SetPriceList do
     expect(Spree::PriceList.where(id: list.id)).to be_present
   end
 
+  # The assortment usually exists before the pricing does: a merchant picks
+  # products, then decides what they cost. Without this the price
+  # spreadsheet opens empty on a catalog that plainly has products.
+  it 'starts a new list from the assortment the catalog already holds' do
+    product = create(:product, store: store, price: 100)
+    catalog.add_products([product.id])
+
+    call(name: 'Fixed')
+
+    expect(catalog.reload.price_list.prices).to be_present
+    expect(catalog.price_list.variants).to include(product.default_variant)
+  end
+
   it 'is a no-op when detaching a catalog that owns nothing' do
     expect(described_class.call(catalog: catalog, attributes: nil)).to be_success
     expect(catalog.reload.price_list).to be_nil

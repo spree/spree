@@ -60,8 +60,13 @@ module Spree
           attributes: list_attributes(for_create: true).merge(catalog_id: catalog.id)
         )
         return failure(catalog, result.error.value) unless result.success?
+        return failure(catalog) unless catalog.update(price_list: result.value)
 
-        failure(catalog) unless catalog.update(price_list: result.value)
+        # The assortment usually exists before the pricing does — a merchant
+        # picks products, then decides what they cost. The new list starts
+        # from what the catalog already holds, so the spreadsheet has rows
+        # to edit rather than opening empty.
+        result.value.add_products(catalog.catalog_products.pluck(:product_id))
       end
 
       # A list a catalog owns is reached only through that catalog, so it

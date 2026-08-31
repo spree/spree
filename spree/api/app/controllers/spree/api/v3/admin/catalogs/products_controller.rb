@@ -33,10 +33,10 @@ module Spree
               @parent_catalog.add_products(products.map(&:id))
             end
 
-            # One statement — the join rows carry no callbacks worth firing.
+            # Through the model, so an owned price list drops the rows it
+            # held for these products along with them.
             def remove_member_products(products)
-              @parent_catalog.catalog_products.where(product_id: products.map(&:id)).delete_all
-              @parent_catalog.touch
+              @parent_catalog.remove_products(products.map(&:id))
             end
 
             def set_parent
