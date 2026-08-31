@@ -8,7 +8,8 @@ module Spree
         class CatalogsController < ResourceController
           scoped_resource :products
 
-          before_action :set_resource, only: [:show, :update, :destroy, :assign, :import_products]
+          before_action :set_resource,
+                        only: [:show, :update, :destroy, :assign, :set_assignments, :import_products]
 
           # POST /api/v3/admin/catalogs/:id/import_products — copies the
           # attached price list's products into the assortment. Explicit by
@@ -40,6 +41,34 @@ module Spree
               ).to_h, status: :created
             else
               render_validation_error(assignment.errors)
+            end
+          end
+
+          # PUT /api/v3/admin/catalogs/:id/assignments
+          #
+          # { assignments: [{ assignable_type: 'company', assignable_id: 'comp_x' }] }
+          #
+          # Replaces the whole audience: an entry absent from the payload is
+          # withdrawn. One request per save, because the agreement editor
+          # stages every change behind the catalog's Save and showing an
+          # agreement to half the intended audience is not a state to leave.
+          def set_assignments
+            authorize! :update, @resource
+
+            result = Spree::Catalogs::SetAssignments.call(
+              catalog: @resource, assignables: requested_assignables
+            )
+
+            if result.success?
+              render json: {
+                data: @resource.catalog_assignments.reload.map do |assignment|
+                  Spree.api.admin_catalog_assignment_serializer.new(
+                    assignment, params: serializer_params
+                  ).to_h
+                end
+              }
+            else
+              render_service_error(result)
             end
           end
 
@@ -124,12 +153,26 @@ module Spree
           # to one it cannot read, and an unreadable record is not-found
           # rather than refused so its existence does not leak.
           def find_assignable
-            scope_builder = ASSIGNABLE_SCOPES[params.require(:assignable_type).to_s]
+            resolve_assignable(params.require(:assignable_type), params.require(:assignable_id))
+          end
+
+          # Each entry resolves the same way a single assign does — through
+          # the store AND through what this caller may see — so a set write
+          # cannot reach an audience the one-at-a-time path could not.
+          def requested_assignables
+            Array(params[:assignments]).map do |entry|
+              permitted = entry.permit(:assignable_type, :assignable_id)
+              resolve_assignable(permitted.require(:assignable_type), permitted.require(:assignable_id))
+            end
+          end
+
+          def resolve_assignable(type, id)
+            scope_builder = ASSIGNABLE_SCOPES[type.to_s]
             raise ActiveRecord::RecordNotFound if scope_builder.nil?
 
             scope_builder.call(current_store).
               accessible_by(current_ability, :show).
-              find_by_prefix_id!(params.require(:assignable_id))
+              find_by_prefix_id!(id)
           end
         end
       end

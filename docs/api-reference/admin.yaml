@@ -26225,6 +26225,71 @@ paths:
                   - prod_abc123
               required:
               - product_ids
+  "/api/v3/admin/catalogs/{id}/assignments":
+    put:
+      summary: Replace a catalog audience
+      tags:
+      - Catalogs
+      security:
+      - api_key: []
+        bearer_auth: []
+      description: |-
+        Replaces the whole audience in one request. An entry absent from the payload is withdrawn — the agreement editor stages every change behind its Save, so they apply together or not at all. A company assignment covers the node and its whole subtree.
+
+        **Required scope:** `write_products` (for API-key authentication).
+      parameters:
+      - name: x-spree-api-key
+        in: header
+        required: true
+        schema:
+          type: string
+      - name: Authorization
+        in: header
+        required: true
+        schema:
+          type: string
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: audience replaced
+          content:
+            application/json:
+              example:
+                data:
+                - id: cata_UkLWZg9DAJ
+                  created_at: '2026-01-15T12:00:00.000Z'
+                  catalog_id: cat_UkLWZg9DAJ
+                  assignable_type: company
+                  assignable_id: comp_UkLWZg9DAJ
+                  assignable_name: Acme Corp 2
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                assignments:
+                  type: array
+                  items:
+                    type: object
+                    properties:
+                      assignable_type:
+                        type: string
+                        enum:
+                        - customer_group
+                        - company
+                      assignable_id:
+                        type: string
+                        example: comp_86Rf07xd4z
+                    required:
+                    - assignable_type
+                    - assignable_id
+              required:
+              - assignments
   "/api/v3/admin/catalogs/{catalog_id}/quantity_rules":
     get:
       summary: List catalog quantity rules
@@ -29990,14 +30055,14 @@ paths:
                   type: carrier
                   group: shipping
                   preferences:
-                    api_key: "•••••cret"
                     account_number: '42'
+                    api_key: "•••••cret"
                   preference_schema:
-                  - key: api_key
-                    type: password
-                    default:
                   - key: account_number
                     type: string
+                    default:
+                  - key: api_key
+                    type: password
                     default:
                 meta:
                   page: 1
@@ -30063,14 +30128,14 @@ paths:
                 type: carrier
                 group: shipping
                 preferences:
-                  api_key: "•••••cret"
                   account_number:
+                  api_key: "•••••cret"
                 preference_schema:
-                - key: api_key
-                  type: password
-                  default:
                 - key: account_number
                   type: string
+                  default:
+                - key: api_key
+                  type: password
                   default:
       requestBody:
         content:
@@ -30143,11 +30208,11 @@ paths:
                   description:
                   logo_url:
                   preference_schema:
-                  - key: api_key
-                    type: password
-                    default:
                   - key: account_number
                     type: string
+                    default:
+                  - key: api_key
+                    type: password
                     default:
   "/api/v3/admin/integrations/{id}/test":
     post:

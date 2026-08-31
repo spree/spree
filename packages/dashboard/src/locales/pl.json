@@ -110,7 +110,8 @@
           "title": "Usunąć to przypisanie?"
         },
         "title": "Odbiorcy",
-        "type_label": "Typ odbiorcy"
+        "type_label": "Typ odbiorcy",
+        "already_assigned": "Ta grupa odbiorców jest już przypisana do tego katalogu."
       },
       "create_description": "Katalog zawęża, co widzi dana grupa odbiorców, a poprzez cennik — ile płaci. Produkty i odbiorców dodasz później.",
       "create_label": "Utwórz katalog",

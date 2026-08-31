@@ -100,6 +100,7 @@ import type {
   AllowedOriginUpdateParams,
   ApiKeyCreateParams,
   ApiKeyUpdateParams,
+  CatalogAssignmentsParams,
   CatalogAssignParams,
   CatalogOrderMinimumParams,
   CatalogOrderMinimumsParams,
@@ -3462,6 +3463,21 @@ export class AdminClient {
       delete: (catalogId: string, id: string, options?: RequestOptions): Promise<void> =>
         this.request<void>('DELETE', `/catalogs/${catalogId}/quantity_rules/${id}`, options),
     },
+
+    /**
+     * Replaces the whole audience. An entry absent from the payload is
+     * withdrawn — the agreement editor stages every change behind the
+     * catalog's Save, so they apply together or not at all.
+     */
+    setAssignments: (
+      id: string,
+      params: CatalogAssignmentsParams,
+      options?: RequestOptions,
+    ): Promise<{ data: CatalogAssignment[] }> =>
+      this.request<{ data: CatalogAssignment[] }>('PUT', `/catalogs/${id}/assignments`, {
+        ...options,
+        body: params,
+      }),
 
     /**
      * Per-product quantity terms — the grain the agreement editor states

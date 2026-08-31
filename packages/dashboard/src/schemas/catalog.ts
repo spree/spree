@@ -77,6 +77,11 @@ export const catalogFormSchema = z
      * dirty-tracked form meant Discard did not undo them.
      */
     order_minimums: z.custom<OrderMinimumEntry[]>(() => true),
+    /**
+     * Who this agreement is shown to, as edited. Staged like the rest of the
+     * page so Save applies it and Discard rolls it back.
+     */
+    assignments: z.custom<AssignmentEntry[]>(() => true),
   })
   // Blank is a valid answer — it means the agreement states nothing — so the
   // shared normalizer's null stands for both "unset" and "unusable", and only
@@ -151,6 +156,19 @@ export interface OrderMinimumEntry {
   amount: string
 }
 
+/**
+ * One audience this catalog is shown to. `id` is present for an assignment
+ * that exists server-side and absent for one just added; the type and id of
+ * the audience are what identify it, since a company and a customer group
+ * can share an id.
+ */
+export interface AssignmentEntry {
+  id?: string
+  assignable_type: 'company' | 'customer_group'
+  assignable_id: string
+  assignable_name?: string | null
+}
+
 /** Values the catalog form holds. */
 export type CatalogFormValues = z.infer<typeof catalogFormSchema>
 
@@ -169,6 +187,7 @@ export const CATALOG_DEFAULTS: CatalogFormValues = {
   staged_products: { adds: [], removes: [] },
   staged_terms: {},
   order_minimums: [],
+  assignments: [],
 }
 
 /**

@@ -601,6 +601,9 @@ Spree::Core::Engine.add_routes do
         resources :catalogs do
           member do
             post :assign
+            # The whole audience in one request, for the agreement editor,
+            # which stages every change behind its Save.
+            put :assignments, action: :set_assignments
             post :import_products
           end
           # Assortment membership. Unordered: a catalog decides what a buyer

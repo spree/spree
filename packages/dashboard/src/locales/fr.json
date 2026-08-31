@@ -108,7 +108,8 @@
           "title": "Retirer cette affectation ?"
         },
         "title": "Audiences",
-        "type_label": "Type d’audience"
+        "type_label": "Type d’audience",
+        "already_assigned": "Ce public est déjà associé à ce catalogue."
       },
       "create_description": "Un catalogue restreint ce qu’une audience voit et, via une liste de prix, ce qu’elle paie. Ajoutez ensuite produits et audiences.",
       "create_label": "Créer le catalogue",

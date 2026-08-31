@@ -221,6 +221,59 @@ RSpec.describe Spree::Api::V3::Admin::CatalogsController, type: :controller do
     end
   end
 
+  describe 'PUT #set_assignments' do
+    let!(:company) { create(:company, store: store) }
+    let!(:group) { create(:customer_group, store: store) }
+
+    it 'writes the whole audience in one request' do
+      put :set_assignments, params: {
+        id: catalog.prefixed_id,
+        assignments: [
+          { assignable_type: 'company', assignable_id: company.prefixed_id },
+          { assignable_type: 'customer_group', assignable_id: group.prefixed_id }
+        ]
+      }, as: :json
+
+      expect(response).to have_http_status(:ok)
+      expect(catalog.catalog_assignments.reload.map(&:assignable)).to match_array([company, group])
+    end
+
+    # The set arrives whole, so an audience left out is one the merchant
+    # removed on a page that stages every change behind its Save.
+    it 'withdraws an audience the payload leaves out' do
+      catalog.catalog_assignments.create!(assignable: company)
+      catalog.catalog_assignments.create!(assignable: group)
+
+      put :set_assignments, params: {
+        id: catalog.prefixed_id,
+        assignments: [{ assignable_type: 'company', assignable_id: company.prefixed_id }]
+      }, as: :json
+
+      expect(catalog.catalog_assignments.reload.map(&:assignable)).to eq([company])
+    end
+
+    it 'clears the audience for an empty payload' do
+      catalog.catalog_assignments.create!(assignable: company)
+
+      put :set_assignments, params: { id: catalog.prefixed_id, assignments: [] }, as: :json
+
+      expect(catalog.catalog_assignments.reload).to be_empty
+    end
+
+    # A set write must not reach an audience the one-at-a-time path could not.
+    it 'is not found for an audience in another store' do
+      foreign = create(:company, store: create(:store))
+
+      put :set_assignments, params: {
+        id: catalog.prefixed_id,
+        assignments: [{ assignable_type: 'company', assignable_id: foreign.prefixed_id }]
+      }, as: :json
+
+      expect(response).to have_http_status(:not_found)
+      expect(catalog.catalog_assignments.reload).to be_empty
+    end
+  end
+
   describe 'POST #assign' do
     it 'assigns the catalog to a company node' do
       company = create(:company, store: store)

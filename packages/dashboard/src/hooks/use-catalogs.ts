@@ -89,6 +89,8 @@ export interface CatalogSavePayload {
   >
   /** The order minimums as edited; rows the merchant deleted are absent. */
   orderMinimums?: Array<{ currency: string; amount: string }>
+  /** The audience as edited; entries the merchant removed are absent. */
+  assignments?: Array<{ assignable_type: 'company' | 'customer_group'; assignable_id: string }>
 }
 
 /**
@@ -104,6 +106,7 @@ export function useSaveCatalog(catalogId: string) {
       removeProductIds = [],
       productTerms = {},
       orderMinimums,
+      assignments,
     }) => {
       if (attributes) await adminClient.catalogs.update(catalogId, attributes)
 
@@ -123,6 +126,14 @@ export function useSaveCatalog(catalogId: string) {
       if (orderMinimums) {
         await adminClient.catalogs.orderMinimums.replace(catalogId, {
           order_minimums: orderMinimums,
+        })
+      }
+      if (assignments) {
+        await adminClient.catalogs.setAssignments(catalogId, {
+          assignments: assignments.map((entry) => ({
+            assignable_type: entry.assignable_type,
+            assignable_id: entry.assignable_id,
+          })),
         })
       }
     },

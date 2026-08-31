@@ -108,7 +108,8 @@
           "title": "Diese Zuweisung entfernen?"
         },
         "title": "Zielgruppen",
-        "type_label": "Zielgruppen-Typ"
+        "type_label": "Zielgruppen-Typ",
+        "already_assigned": "Diese Zielgruppe ist diesem Katalog bereits zugeordnet."
       },
       "create_description": "Ein Katalog bestimmt, was eine Zielgruppe sieht und — über eine Preisliste — was sie zahlt. Produkte und Zielgruppen fügen Sie danach hinzu.",
       "create_label": "Katalog erstellen",

@@ -108,7 +108,8 @@
           "title": "Remove this assignment?"
         },
         "title": "Audiences",
-        "type_label": "Audience type"
+        "type_label": "Audience type",
+        "already_assigned": "That audience is already on this catalog."
       },
       "create_description": "A catalog narrows what an audience sees and, through a price list, what they pay. Add products and assign audiences once it exists.",
       "create_label": "Create catalog",

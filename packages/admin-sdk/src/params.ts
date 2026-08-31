@@ -2686,6 +2686,11 @@ export interface CatalogOrderMinimumsParams {
   order_minimums: Array<{ currency: string; amount: string | number }>
 }
 
+/** The whole audience. An entry left out is withdrawn. */
+export interface CatalogAssignmentsParams {
+  assignments: Array<{ assignable_type: 'company' | 'customer_group'; assignable_id: string }>
+}
+
 export interface CatalogAssignParams {
   /**
    * Who sees the catalog — buyer audiences only. A company assignment covers

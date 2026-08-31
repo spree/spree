@@ -108,7 +108,8 @@
           "title": "移除该分配？"
         },
         "title": "受众",
-        "type_label": "受众类型"
+        "type_label": "受众类型",
+        "already_assigned": "该受众已添加到此目录。"
       },
       "create_description": "目录限定某类受众能看到什么，并通过价格表决定其价格。创建后可添加产品和受众。",
       "create_label": "创建目录",

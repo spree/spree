@@ -1,5 +1,5 @@
 import { zodResolver } from '@hookform/resolvers/zod'
-import type { Catalog, CatalogAssignment } from '@spree/admin-sdk'
+import type { Catalog } from '@spree/admin-sdk'
 import {
   adminClient,
   mapSpreeErrorsToForm,
@@ -38,7 +38,6 @@ import {
   SelectTrigger,
   SelectValue,
   Textarea,
-  useConfirm,
 } from '@spree/dashboard-ui'
 import { createFileRoute, useNavigate } from '@tanstack/react-router'
 import { PlusIcon, TrashIcon } from 'lucide-react'
@@ -60,15 +59,14 @@ import {
 } from '../../../../../components/spree/product-membership-staging'
 import { ResourceDetailSkeleton } from '../../../../../components/spree/route-pending'
 import {
-  useAssignCatalog,
   useCatalog,
   useCatalogProducts,
   useCatalogProductTerms,
   useDeleteCatalog,
   useSaveCatalog,
-  useUnassignCatalog,
 } from '../../../../../hooks/use-catalogs'
 import { spreeJsonLinkResolver } from '../../../../../lib/json-link-resolver'
+import type { AssignmentEntry } from '../../../../../schemas/catalog'
 import {
   CATALOG_DEFAULTS,
   type CatalogFormValues,
@@ -142,6 +140,12 @@ function CatalogBody({ catalog }: { catalog: Catalog }) {
       active: catalog.active,
       minimum_order_quantity: catalog.minimum_order_quantity?.toString() ?? '',
       order_multiple: catalog.order_multiple?.toString() ?? '',
+      assignments: (catalog.assignments ?? []).map((assignment) => ({
+        id: assignment.id,
+        assignable_type: assignment.assignable_type as AssignmentEntry['assignable_type'],
+        assignable_id: assignment.assignable_id,
+        assignable_name: assignment.assignable_name,
+      })),
       order_minimums: (catalog.order_minimums ?? []).map((minimum) => ({
         id: minimum.id,
         currency: minimum.currency,
@@ -182,6 +186,7 @@ function CatalogBody({ catalog }: { catalog: Catalog }) {
         removeProductIds: values.staged_products.removes,
         productTerms: stagedTermsToParams(terms),
         orderMinimums: values.order_minimums,
+        assignments: values.assignments,
       })
       form.reset({ ...values, staged_products: { adds: [], removes: [] } })
     } catch (err) {
@@ -273,7 +278,7 @@ function CatalogBody({ catalog }: { catalog: Catalog }) {
               <CatalogSettingsCard form={form} canEdit={canEdit} />
               <CatalogPricingCard catalog={catalog} form={form} canEdit={canEdit} />
               <CatalogTermsCard form={form} canEdit={canEdit} />
-              <CatalogAssignmentsCard catalog={catalog} canEdit={canEdit} />
+              <CatalogAssignmentsCard form={form} canEdit={canEdit} />
             </>
           }
         />
@@ -389,25 +394,25 @@ function CatalogSettingsCard({
 const ASSIGNABLE_TYPES = ['company', 'customer_group'] as const
 type AssignableType = (typeof ASSIGNABLE_TYPES)[number]
 
-function CatalogAssignmentsCard({ catalog, canEdit }: { catalog: Catalog; canEdit: boolean }) {
+function CatalogAssignmentsCard({
+  form,
+  canEdit,
+}: {
+  form: UseFormReturn<CatalogFormValues>
+  canEdit: boolean
+}) {
   const { t } = useTranslation()
-  const confirm = useConfirm()
-  const unassignMutation = useUnassignCatalog(catalog.id)
   const [addOpen, setAddOpen] = useState(false)
+  const assignments: AssignmentEntry[] = form.watch('assignments') ?? []
 
-  const assignments = catalog.assignments ?? []
+  function update(next: AssignmentEntry[]) {
+    form.setValue('assignments', next, { shouldDirty: true })
+  }
 
-  async function handleUnassign(assignment: CatalogAssignment) {
-    const ok = await confirm({
-      title: t('admin.catalogs.assignments.remove_confirm.title'),
-      message: t('admin.catalogs.assignments.remove_confirm.message', {
-        name: assignment.assignable_name ?? assignment.assignable_id,
-      }),
-      variant: 'destructive',
-      confirmLabel: t('admin.actions.delete'),
-    })
-    if (!ok) return
-    await unassignMutation.mutateAsync(assignment.id).catch(() => undefined)
+  // Removal needs no confirm: nothing is written until Save, and Discard
+  // puts it back — the same reason the assortment rows drop theirs.
+  function remove(index: number) {
+    update(assignments.filter((_, i) => i !== index))
   }
 
   return (
@@ -428,8 +433,11 @@ function CatalogAssignmentsCard({ catalog, canEdit }: { catalog: Catalog; canEdi
           <p className="text-muted-foreground text-sm">{t('admin.catalogs.assignments.empty')}</p>
         ) : (
           <div className="flex flex-col gap-2">
-            {assignments.map((assignment) => (
-              <div key={assignment.id} className="flex items-center justify-between gap-2">
+            {assignments.map((assignment, index) => (
+              <div
+                key={`${assignment.assignable_type}-${assignment.assignable_id}`}
+                className="flex items-center justify-between gap-2"
+              >
                 <span className="flex min-w-0 items-center gap-2">
                   <Badge variant="outline">
                     {t(`admin.catalogs.assignable_types.${assignment.assignable_type}`)}
@@ -443,8 +451,8 @@ function CatalogAssignmentsCard({ catalog, canEdit }: { catalog: Catalog; canEdi
                     variant="ghost"
                     size="icon-xs"
                     type="button"
-                    onClick={() => handleUnassign(assignment)}
-                    aria-label={t('admin.actions.delete')}
+                    onClick={() => remove(index)}
+                    aria-label={t('admin.actions.remove')}
                   >
                     <TrashIcon className="size-4" />
                   </Button>
@@ -455,7 +463,14 @@ function CatalogAssignmentsCard({ catalog, canEdit }: { catalog: Catalog; canEdi
         )}
       </CardContent>
 
-      {addOpen && <AssignCatalogDialog catalogId={catalog.id} open onOpenChange={setAddOpen} />}
+      {addOpen && (
+        <AssignCatalogDialog
+          open
+          onOpenChange={setAddOpen}
+          assigned={assignments}
+          onAdd={(entry) => update([...assignments, entry])}
+        />
+      )}
     </Card>
   )
 }
@@ -483,18 +498,21 @@ function assignableSearch(type: AssignableType) {
 }
 
 function AssignCatalogDialog({
-  catalogId,
   open,
   onOpenChange,
+  assigned,
+  onAdd,
 }: {
-  catalogId: string
   open: boolean
   onOpenChange: (open: boolean) => void
+  /** Already staged, so the same audience cannot be added twice. */
+  assigned: AssignmentEntry[]
+  onAdd: (entry: AssignmentEntry) => void
 }) {
   const { t } = useTranslation()
-  const assignMutation = useAssignCatalog(catalogId)
   const [assignableType, setAssignableType] = useState<AssignableType>('company')
   const [assignableId, setAssignableId] = useState('')
+  const [assignableName, setAssignableName] = useState<string | null>(null)
 
   const typeOptions = ASSIGNABLE_TYPES.map((type) => ({
     value: type,
@@ -503,12 +521,19 @@ function AssignCatalogDialog({
 
   const { search, hydrate } = assignableSearch(assignableType)
 
-  async function handleSubmit() {
-    if (!assignableId) return
-    await assignMutation
-      .mutateAsync({ assignable_type: assignableType, assignable_id: assignableId })
-      .then(() => onOpenChange(false))
-      .catch(() => undefined)
+  const duplicate = assigned.some(
+    (entry) => entry.assignable_type === assignableType && entry.assignable_id === assignableId,
+  )
+
+  function handleSubmit() {
+    if (!assignableId || duplicate) return
+
+    onAdd({
+      assignable_type: assignableType,
+      assignable_id: assignableId,
+      assignable_name: assignableName,
+    })
+    onOpenChange(false)
   }
 
   return (
@@ -556,8 +581,16 @@ function AssignCatalogDialog({
                 placeholder={t('admin.catalogs.assignments.audience_placeholder')}
                 emptyText={t('admin.catalogs.assignments.audience_empty')}
                 value={assignableId || undefined}
-                onChange={(id) => setAssignableId(id ?? '')}
+                // The record, not just the id: a staged row has to render a
+                // name before the assignment exists server-side.
+                onChange={(id, record) => {
+                  setAssignableId(id ?? '')
+                  setAssignableName(record ? (record.name ?? record.email ?? null) : null)
+                }}
               />
+              {duplicate && (
+                <FieldError>{t('admin.catalogs.assignments.already_assigned')}</FieldError>
+              )}
               {assignableType === 'company' && (
                 <FieldDescription>
                   {t('admin.catalogs.assignments.company_subtree_help')}
@@ -567,20 +600,11 @@ function AssignCatalogDialog({
           </FieldGroup>
         </DialogBody>
         <DialogFooter>
-          <Button
-            type="button"
-            variant="outline"
-            onClick={() => onOpenChange(false)}
-            disabled={assignMutation.isPending}
-          >
+          <Button type="button" variant="outline" onClick={() => onOpenChange(false)}>
             {t('admin.actions.cancel')}
           </Button>
-          <Button
-            type="button"
-            disabled={assignMutation.isPending || !assignableId}
-            onClick={handleSubmit}
-          >
-            {assignMutation.isPending ? t('admin.actions.saving') : t('admin.actions.add')}
+          <Button type="button" disabled={!assignableId || duplicate} onClick={handleSubmit}>
+            {t('admin.actions.add')}
           </Button>
         </DialogFooter>
       </DialogContent>
