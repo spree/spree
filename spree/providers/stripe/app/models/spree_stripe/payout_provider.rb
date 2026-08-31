@@ -188,7 +188,7 @@ module SpreeStripe
           currency: seller_payout.currency.downcase,
           metadata: { spree_seller_payout_id: seller_payout.id }
         },
-        gateway.api_options.merge(stripe_account: account_id, idempotency_key: payout_idempotency_key(seller_payout))
+        gateway.api_options.merge(stripe_account: account_id, idempotency_key: idempotency_key(seller_payout))
       )
 
       # Stored now rather than waiting for the webhook, so the confirmation
@@ -220,27 +220,6 @@ module SpreeStripe
     def complete_without_sending(seller_transfer)
       seller_transfer.update!(status: 'completed')
       seller_transfer
-    end
-
-    # Keyed to the earnings being settled, not to the settlement row.
-    #
-    # A refused payout releases its earnings, so the next sweep assembles a
-    # *new* row for the same money — and a key derived from that row would be
-    # a new key, which is Stripe's cue to send the money a second time. The
-    # transfers are what the two attempts have in common, so they are what
-    # identifies the operation.
-    #
-    # This protects a retry only while Stripe keeps the record, which is a
-    # day. It is why a payout whose outcome was never established is held
-    # rather than retried at all: past that window the key is no defence, so
-    # core keeps those earnings claimed instead of relying on one.
-    def payout_idempotency_key(seller_payout)
-      transfer_ids = seller_payout.transfers.order(:id).pluck(:id)
-      digest = Digest::SHA256.hexdigest(
-        "#{seller_payout.seller_id}-#{seller_payout.currency}-#{transfer_ids.join(',')}"
-      )
-
-      "spree-payout-#{digest[0, 32]}"
     end
 
     # Nil rather than raising: a checklist row asking why it is incomplete

@@ -51,6 +51,11 @@ module Spree
       # serializers don't allocate `pref.to_s` per request.
       def preference_schema
         @preference_schema ||= compute_preference_schema
+
+        # An empty list to callers either way; only the memo tells the two
+        # apart, so a schema that could not be computed is retried rather than
+        # settled on.
+        @preference_schema || []
       end
 
       # Wire-safe variant of `preference_schema` with `:password`
@@ -63,7 +68,12 @@ module Spree
       # `Masking.serialize` to avoid `to_s` allocations per request, not
       # part of the documented `{ key, type, default }` wire shape.
       def serialized_preference_schema
-        @serialized_preference_schema ||= preference_schema.map do |field|
+        fields = preference_schema
+        # Nothing to memoize yet: the schema could not be computed, and
+        # settling on its empty stand-in would outlive the reason for it.
+        return fields if @preference_schema.nil?
+
+        @serialized_preference_schema ||= fields.map do |field|
           wire = { key: field[:key], type: field[:type], default: field[:default] }
           wire[:default] = nil if field[:type] == :password
           wire.freeze
@@ -74,7 +84,10 @@ module Spree
       # so write-side guards (e.g. the masked-round-trip check) don't
       # walk the schema or fall back to a `rescue NoMethodError`.
       def password_preference_keys
-        @password_preference_keys ||= preference_schema
+        fields = preference_schema
+        return Set.new.freeze if @preference_schema.nil?
+
+        @password_preference_keys ||= fields
                                       .each_with_object(Set.new) { |field, set| set << field[:key] if field[:type] == :password }
                                       .freeze
       end
@@ -86,10 +99,14 @@ module Spree
         # database. Describing the preferences themselves is pure Ruby, so an
         # error there is a real bug: left inside the rescue it would return an
         # empty schema and quietly strip every field from the admin form.
+        # Nil rather than an empty list, so `preference_schema`'s `||=` asks
+        # again next time. Memoizing the failure would leave a class describing
+        # no preferences for the life of the process because it was first asked
+        # before the database was up.
         instance = begin
           new
         rescue StandardError
-          return []
+          return nil
         end
 
         instance.defined_preferences.filter_map do |pref|

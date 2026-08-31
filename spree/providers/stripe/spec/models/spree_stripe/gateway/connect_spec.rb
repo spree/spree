@@ -242,6 +242,41 @@ RSpec.describe SpreeStripe::Gateway::Connect do
 
       gateway.create_connect_account_link(seller: seller, refresh_url: 'https://s/r', return_url: 'https://s/d')
     end
+
+    # Stripe caches a refusal against the key for a day. A key that does not
+    # move with what is being sent would replay yesterday's failure at a
+    # seller who has since corrected the thing that caused it.
+    describe 'the idempotency key' do
+      let(:new_seller) { create(:seller, :approved, store: store, contact_email: 'first@sparks.example') }
+
+      def keys_from_two_attempts
+        keys = []
+        allow(Stripe::Account).to receive(:create) do |_params, options|
+          keys << options[:idempotency_key]
+          raise Stripe::InvalidRequestError.new('bad email', 'email')
+        end
+
+        2.times do
+          gateway.create_connect_account_link(seller: new_seller, refresh_url: 'https://s/r',
+                                              return_url: 'https://s/d')
+        rescue Stripe::StripeError, Spree::Core::GatewayError
+          next
+        end
+
+        keys
+      end
+
+      it 'repeats for an identical request, so two clicks open one account' do
+        expect(keys_from_two_attempts.uniq.size).to eq(1)
+      end
+
+      it 'moves once the seller corrects what the request carried' do
+        first = keys_from_two_attempts.first
+        new_seller.update!(contact_email: 'corrected@sparks.example')
+
+        expect(keys_from_two_attempts.first).not_to eq(first)
+      end
+    end
   end
 
   describe 'the account a seller is onboarded to' do

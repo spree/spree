@@ -383,4 +383,40 @@ describe Spree::PaymentMethod, type: :model do
       expect(keys).to include(:api_key, :issued_secret)
     end
   end
+
+  # Describing a class needs a connection, so the schema can be asked for
+  # before there is one — at boot, or in a rake task on an empty database.
+  # Settling on the empty answer would leave that class describing no
+  # preferences for the life of the process.
+  describe 'a schema asked for before the database was up' do
+    let(:gateway_class) do
+      Class.new(Spree::Gateway) do
+        def self.name = 'RetryableSchemaGateway'
+
+        preference :api_key, :password
+      end
+    end
+
+    it 'is retried rather than settled on' do
+      allow(gateway_class).to receive(:new).and_raise(ActiveRecord::ConnectionNotEstablished)
+      expect(gateway_class.preference_schema).to be_empty
+
+      allow(gateway_class).to receive(:new).and_call_original
+
+      expect(gateway_class.preference_schema.map { |field| field[:key] }).to eq([:api_key])
+    end
+
+    # These memoize off the schema, so caching what they derived from its
+    # empty stand-in would outlive the reason for it.
+    it 'does not leave the derived lists empty either' do
+      allow(gateway_class).to receive(:new).and_raise(ActiveRecord::ConnectionNotEstablished)
+      gateway_class.password_preference_keys
+      gateway_class.serialized_preference_schema
+
+      allow(gateway_class).to receive(:new).and_call_original
+
+      expect(gateway_class.password_preference_keys).to contain_exactly(:api_key)
+      expect(gateway_class.serialized_preference_schema.map { |field| field[:key] }).to eq([:api_key])
+    end
+  end
 end

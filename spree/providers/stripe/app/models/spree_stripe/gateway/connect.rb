@@ -103,9 +103,11 @@ module SpreeStripe
       private
 
       def create_connect_account(seller)
+        params = connect_account_params(seller)
+
         Stripe::Account.create(
-          connect_account_params(seller),
-          api_options.merge(idempotency_key: account_idempotency_key(seller))
+          params,
+          api_options.merge(idempotency_key: account_idempotency_key(seller, params))
         ).id
       end
 
@@ -148,7 +150,7 @@ module SpreeStripe
         params
       end
 
-      # Identifies one attempt at creating this seller's account, not the seller.
+      # Identifies one request, not the seller.
       #
       # Two clicks a second apart must not open two Connect accounts, which is
       # what an idempotency key is for. But Stripe caches a failed response
@@ -157,13 +159,14 @@ module SpreeStripe
       # request stays broken until tomorrow, and sees a confusing complaint
       # about mismatched parameters rather than the real problem.
       #
-      # Rolling on the day keeps double-submit protection where it matters
-      # while letting a fix take effect. `updated_at` moves whenever the
-      # seller record is touched, which a failed attempt does.
-      def account_idempotency_key(seller)
-        stamp = seller.updated_at.to_i
+      # Keying on the parameters themselves gets both: the identical request
+      # is deduplicated, while a corrected one — a fixed country, an email the
+      # seller has since filled in — is a different request and gets a fresh
+      # attempt rather than yesterday's cached failure.
+      def account_idempotency_key(seller, params)
+        digest = Digest::SHA256.hexdigest(params.to_json)
 
-        "spree-seller-#{seller.prefixed_id}-#{stamp}"
+        "spree-seller-#{seller.prefixed_id}-#{digest[0, 32]}"
       end
 
       # Where the seller trades, which decides what currency and bank details

@@ -59,6 +59,14 @@ module Spree
             render_service_error(e.message)
           end
 
+          protected
+
+          def read_actions
+            %w[show]
+          end
+
+          private
+
           # Where a provider may send the seller back to.
           #
           # Checked against the panel's own origin rather than echoed: a seller
@@ -78,14 +86,6 @@ module Spree
           rescue URI::InvalidURIError
             panel
           end
-
-          protected
-
-          def read_actions
-            %w[show]
-          end
-
-          private
 
           def requirements
             @requirements ||= Spree::Sellers::Requirements.new(current_seller.reload)

@@ -139,6 +139,31 @@ RSpec.describe SpreeStripe::PayoutProvider do
       described_class.new.pay!(payout)
     end
 
+    # Keyed to the settlement being attempted, not to the money in it. Stripe
+    # caches a refusal against a key for a day, so a key shared with the
+    # settlement that was already refused would replay that refusal instead of
+    # genuinely trying again — and a refusal releases its earnings precisely so
+    # the next sweep can retry them.
+    it 'gives a fresh settlement of the same earnings its own key' do
+      keys = []
+      allow(Stripe::Payout).to receive(:create) do |_attributes, options|
+        keys << options[:idempotency_key]
+        Stripe::StripeObject.construct_from(id: "po_#{keys.size}")
+      end
+      transfer = create(:seller_transfer, :completed, seller: seller, payout: payout, amount: 40,
+                                                      order: create(:order, store: store, seller: seller))
+      described_class.new.pay!(payout)
+
+      # What a refusal leaves behind: the earnings released, then swept into a
+      # settlement of their own.
+      payout.fail!
+      retried = create(:seller_payout, seller: seller, amount: 40, currency: 'USD')
+      transfer.update!(payout: retried)
+      described_class.new.pay!(retried)
+
+      expect(keys.uniq.size).to eq(2)
+    end
+
     it 'refuses a seller who holds no Stripe account' do
       other = create(:seller_payout, seller: create(:seller, :approved, store: store))
 
