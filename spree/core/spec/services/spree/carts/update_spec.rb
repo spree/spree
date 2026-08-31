@@ -926,5 +926,25 @@ module Spree
         expect(cart.reload.po_document).to be_attached
       end
     end
+
+    describe 'a purchase order document whose bytes do not match the declared type' do
+      let(:blob) do
+        ActiveStorage::Blob.create_and_upload!(
+          io: StringIO.new("#!/bin/sh\nrm -rf /\n"),
+          filename: 'po.pdf',
+          content_type: 'application/pdf',
+          identify: false,
+          service_name: Spree.private_storage_service_name
+        )
+      end
+
+      it 'refuses the attach' do
+        result = described_class.call(cart: cart, params: { po_document: blob.signed_id })
+
+        expect(result).to be_failure
+        expect(result.error.to_s).to include(Spree.t(:attachment_content_type_mismatch))
+        expect(cart.reload.po_document).not_to be_attached
+      end
+    end
   end
 end
