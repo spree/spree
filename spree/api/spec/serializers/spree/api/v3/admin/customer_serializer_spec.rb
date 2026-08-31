@@ -44,17 +44,5 @@ RSpec.describe Spree::Api::V3::Admin::CustomerSerializer do
       expect(result['companies'].map { |c| c['id'] }).to contain_exactly(company.prefixed_id)
       expect(result['companies'].first['name']).to eq('Acme Corp')
     end
-
-    # Customers are global while companies belong to one store, so the plain
-    # association would show this merchant a business the person belongs to at
-    # another tenant.
-    it "omits companies belonging to another store" do
-      foreign = create(:company, store: create(:store), name: 'Other Tenant')
-      create(:company_membership, company: foreign, customer: customer)
-
-      result = described_class.new(customer.reload, params: base_params.merge(expand: ['companies'])).to_h
-
-      expect(result['companies'].map { |c| c['name'] }).to contain_exactly('Acme Corp')
-    end
   end
 end

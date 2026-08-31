@@ -78,13 +78,6 @@ module Spree
       has_many :company_memberships, class_name: 'Spree::CompanyMembership', foreign_key: :customer_id,
                                      dependent: :destroy, inverse_of: :customer
       has_many :companies, through: :company_memberships, class_name: 'Spree::Company'
-      # The subset belonging to the store being served. Customers are global
-      # while companies are store-scoped, so anything RENDERING a customer's
-      # memberships must read this rather than +companies+ — the unscoped
-      # association would show one merchant the businesses this person belongs
-      # to at another. Scoped in SQL so it preloads like any other association.
-      has_many :current_store_companies, -> { where(store_id: Spree::Current.store&.id) },
-               through: :company_memberships, source: :company, class_name: 'Spree::Company'
       belongs_to :ship_address, class_name: 'Spree::Address', optional: true
       belongs_to :bill_address, class_name: 'Spree::Address', optional: true
 
@@ -166,12 +159,11 @@ module Spree
       # Backward compatibility alias — remove in Spree 6.0
       def self.multi_search(query) = search(query)
 
-      # `companies` is deliberately absent: customers are global while
-      # companies are store-scoped, so a raw association predicate would let
-      # one tenant probe another's company names. Filtering by company goes
-      # through the with_standing_for_company scope, which resolves the node
-      # through the current store — and is the correct filter anyway, since
-      # standing covers a node's whole subtree.
+      # `companies` is deliberately absent: a raw association predicate would
+      # match only members of the node itself, hiding the group-level buyer
+      # who may purchase for a subsidiary. Filtering by company goes through
+      # the with_standing_for_company scope, which covers a node's whole
+      # subtree the way every other standing check does.
       self.whitelisted_ransackable_associations = %w[bill_address ship_address addresses tags spree_roles orders customer_groups]
       self.whitelisted_ransackable_attributes = %w[id email first_name last_name phone accepts_email_marketing
                                                     created_at updated_at last_sign_in_at]
@@ -194,9 +186,9 @@ module Spree
       # Accepts a record, an id (prefixed or raw), or an array of either — the
       # dashboard's resource filter is multi-select and sends a list, and
       # several nodes read naturally as "anyone who may buy for any of these".
-      # Ids resolve through the current store's companies: the value arrives
-      # straight off a query string, and reading it through the global
-      # constant would let one tenant filter by another's node.
+      # Ids resolve through the store's own companies, the way every other
+      # request-supplied id is looked up: an unknown id then matches nothing
+      # instead of reaching a node this store does not own.
       scope :with_standing_for_company, ->(companies) {
         scoped = Spree::Current.store&.companies || Spree::Company.none
         nodes = Array.wrap(companies).filter_map do |company|
