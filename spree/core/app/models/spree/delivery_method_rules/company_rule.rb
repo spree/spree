@@ -21,9 +21,9 @@ module Spree
         # convention the other rules follow for half-filled rows.
         return true if preferred_company_presence.blank?
 
-        buying_for_a_company = package.owner&.b2b? || false
+        buying_for_a_company = package.owner&.b2b?
 
-        preferred_company_presence == REQUIRED ? buying_for_a_company : !buying_for_a_company
+        preferred_company_presence == REQUIRED ? !!buying_for_a_company : !buying_for_a_company
       end
     end
   end

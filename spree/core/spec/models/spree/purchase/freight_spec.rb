@@ -10,10 +10,10 @@ RSpec.describe Spree::Purchase::Freight do
 
     it 'computes the rollup live, because the buyer is still changing it' do
       create(:line_item, cart: cart, order: nil, variant: variant, quantity: 12)
-      expect(cart.reload.freight_summary.total_cartons).to eq(1)
+      expect(Spree::Cart.find(cart.id).freight_summary.total_cartons).to eq(1)
 
       create(:line_item, cart: cart, order: nil, variant: variant, quantity: 12)
-      expect(cart.reload.freight_summary.total_cartons).to eq(2)
+      expect(Spree::Cart.find(cart.id).freight_summary.total_cartons).to eq(2)
     end
 
     it 'has none when nothing is in it' do
@@ -58,10 +58,12 @@ RSpec.describe Spree::Purchase::Freight do
       expect(summary.total_volume).to eq(BigDecimal('0.06'))
     end
 
-    it 'falls back to computing when the order shipped by parcel' do
+    # The sale already happened. Re-deriving it would mean a carton size
+    # corrected next month silently rewrites what shipped last month.
+    it 'reports nothing rather than re-deriving when no rate froze a summary' do
       create(:shipment, order: order)
 
-      expect(order.reload.freight_summary.total_cartons).to eq(2)
+      expect(order.reload.freight_summary).to be_nil
     end
   end
 end

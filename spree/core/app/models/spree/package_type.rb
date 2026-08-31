@@ -37,10 +37,14 @@ module Spree
 
     scope :default, -> { where(default: true) }
 
-    KINDS.each do |package_kind|
-      scope package_kind.pluralize.to_sym, -> { where(kind: package_kind) }
+    scope :cartons, -> { where(kind: 'carton') }
 
-      define_method(:"#{package_kind}?") { kind == package_kind }
+    # The one kind anything branches on: a variant may only be packed into a
+    # carton. The rest of the vocabulary is the merchant's to name and read.
+    #
+    # @return [Boolean]
+    def carton?
+      kind == 'carton'
     end
 
     self.whitelisted_ransackable_attributes = %w[name kind default]

@@ -89,15 +89,6 @@ module Spree
         default_package_type&.dimensions_in(store_dimensions_unit)
       end
 
-      # The store's default box.
-      #
-      # @return [Spree::PackageType, nil]
-      def default_package_type
-        return @default_package_type if defined?(@default_package_type)
-
-        @default_package_type = owner&.store&.default_package_type
-      end
-
       # How this package's contents roll up into freight logistics — cartons,
       # pallets, cubic meters, gross weight. Computed live; an order's summary
       # comes from the frozen copy on its selected delivery rate instead.
@@ -204,6 +195,15 @@ module Spree
       end
 
       private
+
+      # The store's default box.
+      #
+      # @return [Spree::PackageType, nil]
+      def default_package_type
+        return @default_package_type if defined?(@default_package_type)
+
+        @default_package_type = owner&.store&.default_package_type
+      end
 
       # The box's own weight, converted into the unit the contents are
       # measured in. A merchant may record a carton in kilograms while the

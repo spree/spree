@@ -216,8 +216,6 @@ function StoreSettingsForm({ store }: { store: Store }) {
     numberFormat === 'random' ? '482910375' : (numberStart ?? 1001)
   }${numberSuffix ?? ''}`
 
-  // Live unit suffixes for the default-package inputs.
-
   // When unit_system flips, reset weight_unit to the first valid option for
   // that system so the form never holds an inconsistent pair.
   const unitSystem = form.watch('preferred_unit_system')

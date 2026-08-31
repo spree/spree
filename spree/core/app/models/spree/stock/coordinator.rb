@@ -27,18 +27,13 @@ module Spree
         packages = estimate_packages(packages)
       end
 
-      # Every package carries the cart or order it is being quoted for.
-      # Without it, anything reading the buyer through the package — the
-      # store's packaging tare, the channel and company eligibility rules —
-      # sees nothing during checkout: a proposed package's inventory units
-      # belong to no order yet, so the fallback that walks to one answers nil.
       def build_packages(packages = [])
         stock_locations_with_requested_variants.each do |stock_location|
           units = allocatable_units_for(stock_location)
           next if units.empty?
 
           packer = build_packer(stock_location, units)
-          packages += packer.packages.each { |package| package.owner = order }
+          packages += packer.packages
         end
 
         # A proposal's packages belong to the cart or order being allocated.
@@ -125,7 +120,7 @@ module Spree
       end
 
       def build_packer(stock_location, inventory_units)
-        Packer.new(stock_location, inventory_units, splitters(stock_location))
+        Packer.new(stock_location, inventory_units, splitters(stock_location), owner: order)
       end
 
       def splitters(_stock_location)

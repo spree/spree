@@ -68,12 +68,12 @@ module Spree
 
     # @return [Integer]
     def total_units
-      sum_of(:units).to_i
+      @total_units ||= sum_of(:units).to_i
     end
 
     # @return [Integer]
     def total_cartons
-      sum_of(:cartons).to_i
+      @total_cartons ||= sum_of(:cartons).to_i
     end
 
     # Pallets are only meaningful when every carton-bearing line says how it
@@ -81,20 +81,23 @@ module Spree
     #
     # @return [Integer, nil]
     def total_pallets
-      carton_lines = lines.select(&:cartons?)
-      return if carton_lines.empty? || carton_lines.any? { |line| line.pallets.nil? }
+      return @total_pallets if defined?(@total_pallets)
 
-      carton_lines.sum(&:pallets)
+      carton_lines = lines.select(&:cartons?)
+      @total_pallets =
+        unless carton_lines.empty? || carton_lines.any? { |line| line.pallets.nil? }
+          carton_lines.sum(&:pallets)
+        end
     end
 
     # @return [BigDecimal] cubic meters
     def total_volume
-      sum_of(:volume)
+      @total_volume ||= sum_of(:volume)
     end
 
     # @return [BigDecimal] kilograms
     def total_weight
-      sum_of(:weight)
+      @total_weight ||= sum_of(:weight)
     end
 
     # True when every line was measured from its carton. False means some of

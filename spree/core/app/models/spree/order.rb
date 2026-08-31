@@ -1094,6 +1094,20 @@ module Spree
 
     private
 
+    # What the freight rates carried when they were quoted, across every
+    # fulfillment this order ships in — two freight consignments are still one
+    # load to the forwarder. Never derived from the live catalog: the sale has
+    # already happened, and repacking a product afterwards must not change
+    # what this order shipped as.
+    #
+    # @return [Spree::FreightSummary, nil]
+    def build_freight_summary
+      summaries = fulfillments.filter_map { |fulfillment| fulfillment.selected_delivery_rate&.freight_summary }
+      return if summaries.empty?
+
+      Spree::FreightSummary.new(lines: summaries.flat_map(&:lines))
+    end
+
     def ensure_can_be_deleted
       return true if can_be_deleted?
 
