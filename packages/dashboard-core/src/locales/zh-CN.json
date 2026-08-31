@@ -805,7 +805,36 @@
         },
         "width": {
           "label": "宽度"
-        }
+        },
+        "minimum_order_quantity": {
+          "label": "最小起订量",
+          "placeholder": "无最小值",
+          "help": "买家可以订购的最小数量。留空表示没有最小值。"
+        },
+        "order_multiple": {
+          "label": "订购倍数",
+          "placeholder": "无倍数",
+          "help": "在最小起订量之上的每一档增量。留空表示不限数量。"
+        },
+        "purchase_unit": {
+          "label": "销售单位",
+          "options": {
+            "unit": "件",
+            "carton": "箱"
+          }
+        },
+        "units_per_carton": {
+          "label": "每箱件数"
+        },
+        "quantity_rule_invalid": "请输入大于零的整数，或留空。"
+      },
+      "minimum_order_quantity": {
+        "label": "最小起订量",
+        "help": "买家可以订购的最小数量。留空表示没有最小值。"
+      },
+      "order_multiple": {
+        "label": "订购倍数",
+        "help": "在最小起订量之上的每一档增量。留空表示不限数量。"
       }
     },
     "image_upload": {
@@ -1427,7 +1456,9 @@
           "customs": "海关",
           "customs_help": "当该商品跨境运输时用于海关申报单。",
           "identity": "标识",
-          "tax_category_placeholder": "继承自商品"
+          "tax_category_placeholder": "继承自商品",
+          "ordering": "B2B 订购",
+          "ordering_help": "买家必须订购的数量。库存仍以件计算。"
         },
         "title": "变体",
         "variant_label": "变体"
@@ -1512,6 +1543,33 @@
     },
     "media_library": {
       "download": "下载"
+    },
+    "catalogs": {
+      "terms": {
+        "title": "商务条款",
+        "description": "适用本协议的买家必须订购的数量。",
+        "no_rule_placeholder": "无规则",
+        "minimums_title": "订单最低金额",
+        "minimums_description": "整笔订单必须达到的最低金额，按币种设置。",
+        "minimums_empty": "没有订单最低金额。买家可以任意金额结账。",
+        "minimum_amount_label": "最低金额",
+        "validation": {
+          "positive_integer": "请输入大于零的整数，或留空。",
+          "currency_taken": "该币种已设置最低金额。",
+          "positive_amount": "请输入大于零的金额。",
+          "fix_terms": "保存前请修正标记的数量规则。"
+        },
+        "mixed": "不一致",
+        "inherits": "默认",
+        "default_help": "适用于本目录中的每个商品，除非某个商品在列表中另行设置。",
+        "column_minimum": "最小起订量",
+        "column_multiple": "订购倍数",
+        "help": {
+          "minimum": "买家单个商品可订购的最小数量。低于该数量的订单会被拒绝，并提示最接近的有效数量——系统绝不会自动向上取整。",
+          "multiple": "递增步长。倍数为 24 时，买家可订购 24、48 或 72——但不能是 30。步长从最小起订量开始计算：最小 50、步长 24 时，允许 50、74 和 98。",
+          "order_minimum": "整笔订单必须达到的最低金额，仅计算商品——运费和税费不计入。买家在选购时即可看到还差多少，未达到前无法结账。"
+        }
+      }
     }
   }
 }

@@ -805,7 +805,36 @@
         },
         "width": {
           "label": "Breite"
-        }
+        },
+        "minimum_order_quantity": {
+          "label": "Mindestbestellmenge",
+          "placeholder": "Kein Minimum",
+          "help": "Die geringste Menge, die ein Käufer bestellen darf. Leer lassen für kein Minimum."
+        },
+        "order_multiple": {
+          "label": "Bestellvielfaches",
+          "placeholder": "Kein Vielfaches",
+          "help": "Jeder Schritt über der Mindestmenge. Leer lassen für beliebige Mengen."
+        },
+        "purchase_unit": {
+          "label": "Verkaufseinheit",
+          "options": {
+            "unit": "Stück",
+            "carton": "Kartons"
+          }
+        },
+        "units_per_carton": {
+          "label": "Stück pro Karton"
+        },
+        "quantity_rule_invalid": "Geben Sie eine ganze Zahl größer als null ein oder lassen Sie das Feld leer."
+      },
+      "minimum_order_quantity": {
+        "label": "Mindestbestellmenge",
+        "help": "Die geringste Menge, die ein Käufer bestellen darf. Leer lassen für kein Minimum."
+      },
+      "order_multiple": {
+        "label": "Bestellvielfaches",
+        "help": "Jeder Schritt über der Mindestmenge. Leer lassen für beliebige Mengen."
       }
     },
     "image_upload": {
@@ -1428,7 +1457,9 @@
           "customs": "Zoll",
           "customs_help": "Wird auf Zollformularen verwendet, wenn dieser Artikel eine Grenze überquert.",
           "identity": "Identität",
-          "tax_category_placeholder": "Vom Produkt übernehmen"
+          "tax_category_placeholder": "Vom Produkt übernehmen",
+          "ordering": "B2B-Bestellung",
+          "ordering_help": "Wie viel ein Käufer abnehmen muss. Der Bestand wird weiterhin in Stück gezählt."
         },
         "title": "Varianten",
         "variant_label": "Variante"
@@ -1513,6 +1544,33 @@
     },
     "media_library": {
       "download": "Herunterladen"
+    },
+    "catalogs": {
+      "terms": {
+        "title": "Handelsbedingungen",
+        "description": "Welche Menge Käufer im Rahmen dieser Vereinbarung bestellen müssen.",
+        "no_rule_placeholder": "Keine Regel",
+        "minimums_title": "Mindestbestellwerte",
+        "minimums_description": "Der Mindestwert einer gesamten Bestellung, je Währung.",
+        "minimums_empty": "Kein Mindestbestellwert. Käufer können mit jeder Summe bestellen.",
+        "minimum_amount_label": "Mindestbetrag",
+        "validation": {
+          "positive_integer": "Geben Sie eine ganze Zahl größer als null ein oder lassen Sie das Feld leer.",
+          "currency_taken": "Für diese Währung gibt es bereits einen Mindestwert.",
+          "positive_amount": "Geben Sie einen Betrag größer als null ein.",
+          "fix_terms": "Korrigieren Sie die markierten Mengenregeln, bevor Sie speichern."
+        },
+        "mixed": "Gemischt",
+        "inherits": "Standard",
+        "default_help": "Gilt für jedes Produkt in diesem Katalog, sofern ein Produkt in der Liste nichts Eigenes angibt.",
+        "column_minimum": "Minimum",
+        "column_multiple": "Vielfaches",
+        "help": {
+          "minimum": "Die geringste Menge, die ein Käufer von einem Produkt bestellen darf. Eine kleinere Bestellung wird abgelehnt und nennt die nächstgelegenen gültigen Mengen — es wird nie aufgerundet.",
+          "multiple": "Die Schrittweite. Bei einem Vielfachen von 24 bestellt ein Käufer 24, 48 oder 72 — nie 30. Die Schritte zählen ab der Mindestmenge: bei Minimum 50 und Schritten von 24 sind 50, 74 und 98 erlaubt.",
+          "order_minimum": "Der Mindestwert einer gesamten Bestellung, nur Artikel — Versand und Steuern zählen nicht mit. Käufer sehen beim Einkaufen, wie viel noch fehlt, und der Checkout wird bis dahin abgelehnt."
+        }
+      }
     }
   }
 }

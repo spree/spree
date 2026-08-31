@@ -35,13 +35,42 @@ module Spree
           r << req('delivery', 'delivery_method', Spree.t('checkout_requirements.delivery_method_required')) if delivery_step_required? && !delivery_method_selected?
           r << req('payment', 'payment', Spree.t('checkout_requirements.payment_required')) if payment_required? && !payment_satisfied?
           r << req('address', 'po_number', Spree.t('checkout_requirements.po_number_required')) if po_number_missing?
+          r << order_minimum_requirement if below_order_minimum?
         end
       end
 
       def completion_requirements
-        errors = stock_errors
+        errors = stock_errors + quantity_rule_errors
         errors << req('address', 'email', Spree.t(:guest_checkout_not_allowed), code: 'guest_checkout_not_allowed') if @cart.guest_checkout_disallowed?
         errors
+      end
+
+      # Re-checked at completion because an agreement can change between the
+      # add and the checkout — a company moved to a different tier, a term
+      # edited. Naming the nearest valid quantities rather than rounding: a
+      # silent adjustment on a wholesale order is a five-figure surprise.
+      def quantity_rule_errors
+        @cart.quantity_rule_violations.map do |_line_item, message|
+          req('cart', 'line_items', message, code: 'quantity_rule_violated')
+        end
+      end
+
+      # Advisory rather than completion-only: a buyer has to be able to build
+      # the order below the threshold and read how far off they are while
+      # they can still add to it. Completion refuses it because the advisory
+      # feed is included there too.
+      def below_order_minimum?
+        !@cart.staff_initiated? && @cart.below_order_minimum?
+      end
+
+      def order_minimum_requirement
+        minimum = @cart.order_minimum
+        shortfall = Spree::Money.new(@cart.order_minimum_shortfall, currency: minimum.currency)
+
+        req('cart', 'order_minimum',
+            Spree.t('checkout_requirements.order_minimum_not_met',
+                    minimum: minimum.display_amount.to_s, shortfall: shortfall.to_s),
+            code: 'order_minimum_not_met')
       end
 
       # Discontinuation is checked at both levels: a product can stay active
@@ -82,10 +111,16 @@ module Spree
       # from the steps of a cart that owes nothing, and a requirement naming a
       # step the buyer never visits is one they cannot clear.
       def po_number_missing?
-        @cart.po_number.blank? && @cart.po_number_required? && !staff_initiated?
+        @cart.po_number.blank? && @cart.po_number_required? && !keyed_in_by_staff?
       end
 
-      def staff_initiated?
+      # Narrower than {Spree::Purchase::QuantityRules#staff_initiated?} on
+      # purpose. A buyer's PO reference commonly arrives with the paperwork,
+      # so only an order someone actually keyed in is excused — a draft with
+      # no recorded creator still has to ask for it. Quantity terms take the
+      # wider exemption: any draft order is the admin surface, and refusing
+      # staff there would make an agreed exception impossible to record.
+      def keyed_in_by_staff?
         @cart.respond_to?(:created_by_id) && @cart.created_by_id.present?
       end
 

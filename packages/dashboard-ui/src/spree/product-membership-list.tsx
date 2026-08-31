@@ -79,6 +79,17 @@ export interface ProductMembershipListProps {
   onReorder?: (id: string, position: number) => Promise<unknown> | undefined
   /** Row title cell — pass a link to the product page; defaults to plain text. */
   renderTitle?: (row: ProductMembershipRow) => ReactNode
+  /**
+   * Extra columns between the product name and the remove button, for a
+   * parent whose membership carries data of its own — a catalog's quantity
+   * terms, say. Headers and cells are passed separately so the host stays in
+   * charge of what a row means to it; both must return the same number of
+   * cells or the table misaligns.
+   */
+  extraColumns?: {
+    headers: ReactNode
+    renderCells: (row: ProductMembershipRow) => ReactNode
+  }
 }
 
 /**
@@ -104,6 +115,7 @@ export function ProductMembershipList({
   reorderable = false,
   onReorder,
   renderTitle,
+  extraColumns,
 }: ProductMembershipListProps) {
   const [query, setQuery] = useState('')
 
@@ -214,6 +226,7 @@ export function ProductMembershipList({
                 )}
                 {reorderable && <TableHead className="w-8" />}
                 <TableHead>{labels.columnProduct}</TableHead>
+                {extraColumns?.headers}
                 <TableHead className="w-10" />
               </TableRow>
             </TableHeader>
@@ -236,6 +249,7 @@ export function ProductMembershipList({
                     onRestore={onRestore ? () => onRestore(row.id) : undefined}
                     labels={labels}
                     renderTitle={renderTitle}
+                    extraCells={extraColumns?.renderCells(row)}
                   />
                 ))}
               </TableBody>
@@ -260,6 +274,7 @@ function MembershipRow({
   onRestore,
   labels,
   renderTitle,
+  extraCells,
 }: {
   row: ProductMembershipRow
   curatable: boolean
@@ -271,6 +286,7 @@ function MembershipRow({
   onRestore?: () => void
   labels: ProductMembershipListLabels
   renderTitle?: (row: ProductMembershipRow) => ReactNode
+  extraCells?: ReactNode
 }) {
   const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({
     id: row.id,
@@ -318,6 +334,7 @@ function MembershipRow({
           )}
         </span>
       </TableCell>
+      {extraCells}
       <TableCell className="text-right">
         {curatable &&
           (removed

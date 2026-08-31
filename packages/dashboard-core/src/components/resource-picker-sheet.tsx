@@ -172,7 +172,7 @@ export function ResourcePickerSheet<T extends PickerOption>({
                       type="button"
                       disabled={inList}
                       onClick={() => toggle(option)}
-                      className="flex w-full items-center gap-3 px-4 py-2.5 text-left hover:bg-muted/50 disabled:cursor-not-allowed disabled:opacity-60"
+                      className="flex w-full items-center gap-3 px-4 py-2.5 text-left hover:bg-accent/50 disabled:cursor-not-allowed disabled:opacity-60"
                     >
                       <Checkbox
                         checked={checked}

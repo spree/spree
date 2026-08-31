@@ -392,7 +392,7 @@ function SubUnitsCard({ company, canEdit }: { company: Company; canEdit: boolean
                 key={child.id}
                 to={'/$storeId/companies/$companyId' as string}
                 params={{ storeId, companyId: child.id }}
-                className="flex items-center justify-between gap-3 border-b px-6 py-3 no-underline last:border-b-0 hover:bg-muted/50"
+                className="flex items-center justify-between gap-3 border-b px-6 py-3 no-underline last:border-b-0 hover:bg-accent/50"
               >
                 <span className="flex min-w-0 items-center gap-2">
                   <span className="truncate font-medium text-foreground text-sm">{child.name}</span>

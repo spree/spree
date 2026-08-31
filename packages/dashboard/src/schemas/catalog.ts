@@ -1,5 +1,5 @@
 import type { CatalogParams, PriceList } from '@spree/admin-sdk'
-import { blankToNull } from '@spree/dashboard-core'
+import { blankToNull, normalizeQuantityRule } from '@spree/dashboard-core'
 import { requiredMessage } from '@spree/dashboard-ui'
 import i18n from 'i18next'
 import { z } from 'zod/v4'
@@ -51,6 +51,52 @@ export const catalogFormSchema = z
      * (docs/plans/6.0-price-list-automatic-pricing.md).
      */
     minimum_quantity: z.string().trim().optional(),
+    /**
+     * The catalog-wide quantity terms — the middle of the three levels a
+     * buyer's rules resolve through. Blank means this agreement is silent,
+     * which passes the question down rather than answering it.
+     *
+     * Distinct from `minimum_quantity` above: that one decides when a
+     * discount starts, these decide what a buyer may order at all.
+     */
+    minimum_order_quantity: z.string().trim().optional(),
+    order_multiple: z.string().trim().optional(),
+    /**
+     * Per-product terms as edited on the assortment rows, keyed by product
+     * id. Blank cells mean "uses the catalog default", so an entry whose
+     * pair is empty is a deletion rather than an absence.
+     *
+     * Opaque to Zod for the same reason `staged_products` is: it is form
+     * bookkeeping the submit handler consumes, never part of the parsed
+     * payload.
+     */
+    staged_terms: z.custom<StagedProductTerms>(() => true),
+    /**
+     * The order minimums as edited, one row per currency. Staged like
+     * everything else on the page: writing them on click inside a
+     * dirty-tracked form meant Discard did not undo them.
+     */
+    order_minimums: z.custom<OrderMinimumEntry[]>(() => true),
+    /**
+     * Who this agreement is shown to, as edited. Staged like the rest of the
+     * page so Save applies it and Discard rolls it back.
+     */
+    assignments: z.custom<AssignmentEntry[]>(() => true),
+  })
+  // Blank is a valid answer — it means the agreement states nothing — so the
+  // shared normalizer's null stands for both "unset" and "unusable", and only
+  // a non-blank field that normalizes away is an error.
+  .refine(
+    (v) =>
+      !v.minimum_order_quantity?.trim() || normalizeQuantityRule(v.minimum_order_quantity) !== null,
+    {
+      path: ['minimum_order_quantity'],
+      error: () => i18n.t('admin.catalogs.terms.validation.positive_integer'),
+    },
+  )
+  .refine((v) => !v.order_multiple?.trim() || normalizeQuantityRule(v.order_multiple) !== null, {
+    path: ['order_multiple'],
+    error: () => i18n.t('admin.catalogs.terms.validation.positive_integer'),
   })
   // Only while the field is on screen. The value survives a switch away from
   // automatic pricing, and judging it then would block Save over a field the
@@ -84,6 +130,51 @@ export const catalogFormSchema = z
     },
   )
 
+/**
+ * A product's quantity terms as typed. Both fields are strings so an
+ * unusable entry can be reported rather than silently coerced, and `mixed`
+ * marks a product whose variants currently disagree — typing over it sets
+ * them all.
+ */
+export interface ProductTermEntry {
+  minimum_order_quantity: string
+  order_multiple: string
+  mixed?: boolean
+}
+
+/** Per-product terms staged on the assortment rows, keyed by product id. */
+export type StagedProductTerms = Record<string, ProductTermEntry>
+
+/**
+ * One currency's order minimum as edited. `id` is present for a row that
+ * exists server-side, absent for one the merchant just added — which is how
+ * the save tells a create from an update.
+ */
+export interface OrderMinimumEntry {
+  id?: string
+  currency: string
+  amount: string
+}
+
+/**
+ * One audience this catalog is shown to. `id` is present for an assignment
+ * that exists server-side and absent for one just added; the type and id of
+ * the audience are what identify it, since a company and a customer group
+ * can share an id.
+ */
+export interface AssignmentEntry {
+  id?: string
+  assignable_type: 'company' | 'customer_group'
+  assignable_id: string
+  assignable_name?: string | null
+  /**
+   * Staged for withdrawal. The row stays on screen struck through with an
+   * undo, the way a product staged for removal does — Save is what actually
+   * withdraws it, so it is dropped from the payload rather than the list.
+   */
+  removed?: boolean
+}
+
 /** Values the catalog form holds. */
 export type CatalogFormValues = z.infer<typeof catalogFormSchema>
 
@@ -97,7 +188,12 @@ export const CATALOG_DEFAULTS: CatalogFormValues = {
   adjustment_magnitude: '',
   adjust_compare_at: false,
   minimum_quantity: '',
+  minimum_order_quantity: '',
+  order_multiple: '',
   staged_products: { adds: [], removes: [] },
+  staged_terms: {},
+  order_minimums: [],
+  assignments: [],
 }
 
 /**
@@ -116,6 +212,24 @@ export function catalogValuesToParams(
     name: values.name,
     description: blankToNull(values.description),
     active: values.active,
+    minimum_order_quantity: normalizeQuantityRule(values.minimum_order_quantity),
+    order_multiple: normalizeQuantityRule(values.order_multiple),
+    // Whole-set writes riding the catalog's own save, so the agreement lands
+    // in one transaction rather than a sequence a failure can leave half
+    // applied. Per-product terms stay their own request — an agreement may
+    // name thousands of them.
+    // Rows staged for withdrawal are simply absent: the endpoint replaces
+    // the whole audience, so leaving one out is what removes it.
+    assignments: values.assignments
+      .filter((entry) => !entry.removed)
+      .map((entry) => ({
+        assignable_type: entry.assignable_type,
+        assignable_id: entry.assignable_id,
+      })),
+    order_minimums: values.order_minimums.map((row) => ({
+      currency: row.currency,
+      amount: row.amount,
+    })),
     price_list: priceListPayload(values, previousMode),
   }
 }

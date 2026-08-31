@@ -22,11 +22,17 @@ module Spree
                    customs_description: [:string, nullable: true],
                    deleted_at: [:string, nullable: true],
                    delivery_profile_id: [:string, nullable: true],
+                   minimum_order_quantity: ['number | null'], order_multiple: ['number | null'],
+                   purchase_unit: [:string, nullable: true],
                    metadata: 'Record<string, unknown>'
 
+          # The last three override the store serializer's buyer-resolved
+          # values with the variant's OWN: a merchant edits what is stored on
+          # the row, not what some catalog resolves to for a buyer they are not.
           attributes :metadata, :position, :cost_price, :cost_currency,
                      :barcode, :weight_unit, :dimensions_unit, :backorder_limit,
                      :hs_code, :country_of_origin, :customs_description,
+                     :minimum_order_quantity, :order_multiple, :purchase_unit,
                      preorder_ships_at: :iso8601, deleted_at: :iso8601,
                      created_at: :iso8601, updated_at: :iso8601
 

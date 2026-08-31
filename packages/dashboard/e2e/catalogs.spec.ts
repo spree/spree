@@ -223,6 +223,30 @@ test.describe('catalogs', () => {
     })
   })
 
+  // The order minimums stage like everything else on the page: nothing is
+  // written until Save, and Discard is the undo.
+  test('stages an order minimum and persists it on Save', async ({ page }) => {
+    const creds = await login(page)
+    await gotoIndex(page, CATALOGS_PATH(creds.store_id), CTA)
+
+    const name = `E2E Catalog Minimum ${Date.now()}`
+    await createCatalog(page, name)
+
+    await page.getByRole('button', { name: /^add$/i }).first().click()
+    await page.getByLabel(/minimum amount/i).fill('500')
+
+    // Still unsaved: a reload before Save must lose it.
+    await page.reload()
+    await expect(page.getByLabel(/minimum amount/i)).toHaveCount(0, { timeout: 15_000 })
+
+    await page.getByRole('button', { name: /^add$/i }).first().click()
+    await page.getByLabel(/minimum amount/i).fill('500')
+    await saveCatalog(page)
+
+    await page.reload()
+    await expect(page.getByLabel(/minimum amount/i)).toHaveValue('500.0', { timeout: 15_000 })
+  })
+
   test('renames a catalog from the header Save', async ({ page }) => {
     const creds = await login(page)
     await gotoIndex(page, CATALOGS_PATH(creds.store_id), CTA)

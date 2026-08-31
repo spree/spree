@@ -9,9 +9,11 @@ module Spree
                    active: :boolean, position: [:number, nullable: true],
                    price_list_id: [:string, nullable: true],
                    products_count: :number,
+                   minimum_order_quantity: ['number | null'], order_multiple: ['number | null'],
                    metadata: 'Record<string, unknown> | null'
 
           attributes :name, :description, :active, :position, :metadata,
+                     :minimum_order_quantity, :order_multiple,
                      created_at: :iso8601, updated_at: :iso8601
 
           attribute :price_list_id do |catalog|
@@ -21,6 +23,12 @@ module Spree
           attribute :products_count do |catalog|
             catalog.catalog_products.size
           end
+
+          # Minimums are few (one per currency) and the card renders them
+          # inline, so they ride along rather than costing a second request.
+          many :order_minimums,
+               resource: proc { Spree.api.admin_catalog_order_minimum_serializer },
+               if: proc { expand?('order_minimums') }
 
           # The owned list rides along so the agreement editor can render its
           # pricing without a second request — the catalog page is where an

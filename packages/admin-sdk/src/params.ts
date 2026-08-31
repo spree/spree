@@ -2587,6 +2587,24 @@ export interface CompanyMembershipCreateParams {
 
 export interface CatalogParams {
   name?: string
+  /**
+   * The catalog-wide quantity terms — the middle of the three levels a
+   * buyer's rules resolve through (variant base -> this -> a per-variant
+   * override). Null on either leaves that field to the variant's own rule.
+   */
+  minimum_order_quantity?: number | null
+  order_multiple?: number | null
+  /**
+   * The whole audience, saved with the catalog. An entry absent from the
+   * array is withdrawn; omitting the key leaves the audience alone.
+   */
+  assignments?: Array<{ assignable_type: 'company' | 'customer_group'; assignable_id: string }>
+  /**
+   * The whole order-minimum set, saved with the catalog. A currency absent
+   * from the array has its minimum lifted; omitting the key leaves them
+   * alone.
+   */
+  order_minimums?: Array<{ currency: string; amount: string | number }>
   /** Internal note on what the agreement is — never shown to shoppers. */
   description?: string | null
   active?: boolean
@@ -2641,6 +2659,47 @@ export interface CatalogPriceListParams {
    * switching from hand-entered prices to a percentage sends.
    */
   prices?: Array<PriceListPriceOverrideParams>
+}
+
+/**
+ * A catalog's quantity terms for ONE variant — the narrowest of the three
+ * levels. Both fields are independently optional, but a row must state at
+ * least one: an override that overrides nothing is a half-filled form.
+ */
+export interface CatalogQuantityRuleParams {
+  /** Prefixed variant id (variant_...). Required on create. */
+  variant_id?: string
+  minimum_order_quantity?: number | null
+  order_multiple?: number | null
+}
+
+/**
+ * The least a whole order must come to under this agreement, in ONE
+ * currency. One row per currency — Spree holds no exchange rates, so a
+ * threshold is never stated once and converted.
+ */
+export interface CatalogOrderMinimumParams {
+  /** ISO 4217 code. Required on create; unique per catalog. */
+  currency?: string
+  amount?: string | number
+}
+
+/**
+ * Per-product quantity terms, keyed by prefixed product id. Both fields null
+ * clears that product's terms; a product not in the assortment is added.
+ */
+export interface CatalogProductTermsParams {
+  terms: Record<string, { minimum_order_quantity?: number | null; order_multiple?: number | null }>
+}
+
+/** The whole order-minimum set. A currency left out has its minimum lifted. */
+export interface CatalogOrderMinimumsParams {
+  order_minimums: Array<{ currency: string; amount: string | number }>
+}
+
+/** The whole audience. An entry left out is withdrawn. */
+export interface CatalogAssignmentsParams {
+  assignments: Array<{ assignable_type: 'company' | 'customer_group'; assignable_id: string }>
 }
 
 export interface CatalogAssignParams {

@@ -36,7 +36,17 @@ module Spree
     has_many :catalog_assignments, class_name: 'Spree::CatalogAssignment', dependent: :destroy,
                                    inverse_of: :catalog
 
+    # Commercial terms — typed per grain rather than one rules table, because
+    # quantity rules are read on the add-to-cart path and want an indexed
+    # lookup, while minimums want DB-enforced per-currency uniqueness.
+    has_many :quantity_rules, class_name: 'Spree::CatalogQuantityRule', dependent: :destroy,
+                              inverse_of: :catalog
+    has_many :order_minimums, class_name: 'Spree::CatalogOrderMinimum', dependent: :destroy,
+                              inverse_of: :catalog
+
     validates :name, presence: true
+    validates :minimum_order_quantity, numericality: { only_integer: true, greater_than: 0, allow_nil: true }
+    validates :order_multiple, numericality: { only_integer: true, greater_than: 0, allow_nil: true }
     validate :price_list_in_same_store
     validate :price_list_must_be_resolvable
     validate :price_list_not_owned_elsewhere
@@ -57,10 +67,7 @@ module Spree
     # `update_all` and so never runs PriceList's own callback — without this
     # the released list stays missing from the request's matching set, and
     # anything priced later in that request misses it.
-    after_commit -> {
-      Spree::Current.applicable_catalogs = nil
-      Spree::Current.price_lists = nil
-    }
+    after_commit -> { Spree::Current.reset_catalog_memos }
 
     scope :active, -> { where(active: true) }
     scope :by_position, -> { order(position: :asc) }
@@ -144,6 +151,34 @@ module Spree
         ).call
       end
       catalogs
+    end
+
+    # The catalogs applying to a buyer, resolving the company for them when
+    # the caller does not already know it, and reusing the request's memoized
+    # set where the store being asked about is the one being served.
+    #
+    # The single entry point for "what are this buyer's catalogs": visibility,
+    # pricing and quantity terms must answer from the same set, and a caller
+    # that resolved the company differently — or not at all — would show a
+    # storefront one agreement's prices under another's rules.
+    #
+    # @param store [Spree::Store, nil]
+    # @param customer [Object, nil]
+    # @param company [Spree::Company, nil] the purchase node; defaults to the
+    #   customer's sole standing within the store
+    # @param channel [Spree::Channel, nil]
+    # @return [Array<Spree::Catalog>]
+    def self.for_buyer(store:, customer: nil, company: nil, channel: nil)
+      return [] if store.nil?
+
+      if store == Spree::Current.store
+        company ||= Spree::Current.standing_company_for(customer)
+        channel ||= Spree::Current.channel
+        Spree::Current.catalogs_for(company: company, user: customer, channel: channel)
+      else
+        company ||= Spree::Company.sole_standing_for(store: store, customer: customer)
+        for_context(store: store, company: company, user: customer, channel: channel)
+      end
     end
 
     # The owned list's id. Reads like the column the binding replaced, so
@@ -268,6 +303,10 @@ module Spree
         next if removed.zero?
 
         price_list&.remove_products(product_ids)
+        # Terms go with the products they were stated for. Left behind, a
+        # merchant who removes a SKU and later re-adds it gets the old
+        # minimum back — terms they believe they deleted.
+        quantity_rules.where(variant_id: Spree::Variant.where(product_id: product_ids).select(:id)).delete_all
         touch
       end
 

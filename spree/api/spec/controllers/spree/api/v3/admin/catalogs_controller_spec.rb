@@ -221,6 +221,94 @@ RSpec.describe Spree::Api::V3::Admin::CatalogsController, type: :controller do
     end
   end
 
+  describe 'POST #create with nested sets' do
+    let!(:company) { create(:company, store: store) }
+
+    # The dashboard's create sheet shares the detail page's form, so it sends
+    # both keys on every create — empty when the merchant filled neither.
+    it 'accepts the sets as empty arrays' do
+      post :create, params: { name: 'Fresh', assignments: [], order_minimums: [] }, as: :json
+
+      expect(response).to have_http_status(:created)
+    end
+
+    it 'stands a catalog up with its audience and minimums in one request' do
+      post :create, params: {
+        name: 'Fresh',
+        assignments: [{ assignable_type: 'company', assignable_id: company.prefixed_id }],
+        order_minimums: [{ currency: 'USD', amount: '500' }]
+      }, as: :json
+
+      expect(response).to have_http_status(:created)
+      catalog = store.catalogs.find_by(name: 'Fresh')
+      expect(catalog.catalog_assignments.map(&:assignable)).to eq([company])
+      expect(catalog.order_minimums.pluck(:currency)).to eq(['USD'])
+    end
+  end
+
+  describe 'PATCH #update with nested sets' do
+    let!(:company) { create(:company, store: store) }
+    let!(:group) { create(:customer_group, store: store) }
+
+    it 'saves the audience and the minimums with the catalog' do
+      patch :update, params: {
+        id: catalog.prefixed_id,
+        name: 'Renamed',
+        assignments: [{ assignable_type: 'company', assignable_id: company.prefixed_id }],
+        order_minimums: [{ currency: 'USD', amount: '500' }]
+      }, as: :json
+
+      expect(response).to have_http_status(:ok)
+      expect(catalog.reload.name).to eq('Renamed')
+      expect(catalog.catalog_assignments.reload.map(&:assignable)).to eq([company])
+      expect(catalog.order_minimums.reload.pluck(:currency)).to eq(['USD'])
+    end
+
+    # Omitting a key says nothing; sending an empty array clears the set.
+    it 'leaves both sets alone when their keys are absent' do
+      catalog.catalog_assignments.create!(assignable: company)
+      create(:catalog_order_minimum, catalog: catalog, currency: 'USD')
+
+      patch :update, params: { id: catalog.prefixed_id, name: 'Renamed' }, as: :json
+
+      expect(catalog.catalog_assignments.reload.count).to eq(1)
+      expect(catalog.order_minimums.reload.count).to eq(1)
+    end
+
+    it 'clears a set sent as an empty array' do
+      catalog.catalog_assignments.create!(assignable: company)
+
+      patch :update, params: { id: catalog.prefixed_id, assignments: [] }, as: :json
+
+      expect(catalog.catalog_assignments.reload).to be_empty
+    end
+
+    # The whole agreement lands together or not at all.
+    it 'rolls the catalog back when a nested set is invalid' do
+      patch :update, params: {
+        id: catalog.prefixed_id,
+        name: 'Renamed',
+        order_minimums: [{ currency: 'USD', amount: '0' }]
+      }, as: :json
+
+      expect(response).to have_http_status(:unprocessable_content)
+      expect(catalog.reload.name).not_to eq('Renamed')
+      expect(catalog.order_minimums.reload).to be_empty
+    end
+
+    it 'is not found for an audience in another store' do
+      foreign = create(:company, store: create(:store))
+
+      patch :update, params: {
+        id: catalog.prefixed_id,
+        assignments: [{ assignable_type: 'company', assignable_id: foreign.prefixed_id }]
+      }, as: :json
+
+      expect(response).to have_http_status(:not_found)
+    end
+  end
+
+
   describe 'POST #assign' do
     it 'assigns the catalog to a company node' do
       company = create(:company, store: store)

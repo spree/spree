@@ -241,6 +241,10 @@ module Spree
       # deliberate difference between this workflow and every other one.
       def validated?(item, index)
         bind_current_item(item)
+        # Core behaviour rather than a hook: an agreement's quantity terms are
+        # what the merchant sold. Removals are exempt — a buyer must always be
+        # able to empty a line, whatever the rules now say about holding it.
+        check_quantity_rules(item) unless item.remove?
         run_hooks :validate
         true
       rescue Spree::Workflow::FailureSignal
@@ -257,6 +261,19 @@ module Spree
         false
       ensure
         bind_current_item(nil)
+      end
+
+      # This workflow SETS the quantity, so the submitted number is already
+      # the resulting one — no increment to add on.
+      def check_quantity_rules(item)
+        message = cart.quantity_rule_violation(item.variant, item.quantity)
+        return if message.nil?
+
+        # A symbolic type rather than a bare string, so the warning this
+        # becomes carries `quantity_rule_violated` as its code — a client
+        # switching on the code must not be handed the sentence.
+        errors.add(:base, :quantity_rule_violated, message: message)
+        failure(cart, errors)
       end
 
       def bind_current_item(item)

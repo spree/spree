@@ -21,6 +21,8 @@ module Spree
         ApplicationRecord.transaction do
           step :save_catalog
           step :apply_price_list
+          step :apply_assignments
+          step :apply_order_minimums
           run_hooks :after_create
         end
 
@@ -31,11 +33,35 @@ module Spree
 
       # The list payload is held back rather than assigned: the catalog needs
       # an id before a list can point at it.
+      # The nested sets are held back rather than assigned: they are applied
+      # inside the save's transaction, once the catalog has an id to point at.
       def build_catalog
         attrs = attributes.to_h.with_indifferent_access
 
         @price_list_attributes = attrs.key?(:price_list) ? attrs[:price_list] : nil
-        @catalog = store.catalogs.new(attrs.except(:price_list))
+        @assignables = attrs[:assignables]
+        @order_minimums = attrs[:order_minimums]
+
+        @catalog = store.catalogs.new(attrs.except(:price_list, :assignables, :order_minimums))
+      end
+
+      # A catalog can be created with its audience and minimums already
+      # stated, so standing one up is a single request the way the price list
+      # already is.
+      def apply_assignments
+        return if @assignables.blank?
+
+        result = Spree::Catalogs::SetAssignments.call(catalog: catalog, assignables: @assignables)
+        failure(catalog, result.error) unless result.success?
+      end
+
+      def apply_order_minimums
+        return if @order_minimums.blank?
+
+        result = Spree::Catalogs::SetOrderMinimums.call(
+          catalog: catalog, order_minimums: @order_minimums
+        )
+        failure(catalog, result.error) unless result.success?
       end
 
       def save_catalog

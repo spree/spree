@@ -101,7 +101,10 @@ import type {
   ApiKeyCreateParams,
   ApiKeyUpdateParams,
   CatalogAssignParams,
+  CatalogOrderMinimumParams,
   CatalogParams,
+  CatalogProductTermsParams,
+  CatalogQuantityRuleParams,
   CategoryCreateParams,
   CategoryRepositionParams,
   CategoryUpdateParams,
@@ -257,6 +260,9 @@ import type {
   ApiKey,
   Catalog,
   CatalogAssignment,
+  CatalogOrderMinimum,
+  CatalogProductTerm,
+  CatalogQuantityRule,
   Category,
   Channel,
   Claim,
@@ -3414,6 +3420,118 @@ export class AdminClient {
         ...options,
         body: params,
       }),
+
+    /**
+     * Per-variant quantity terms. The catalog-wide default is a pair of
+     * fields on the catalog itself, so this is strictly the overrides.
+     */
+    quantityRules: {
+      list: (
+        catalogId: string,
+        params?: ListParams & Record<string, unknown>,
+        options?: RequestOptions,
+      ): Promise<PaginatedResponse<CatalogQuantityRule>> =>
+        this.request<PaginatedResponse<CatalogQuantityRule>>(
+          'GET',
+          `/catalogs/${catalogId}/quantity_rules`,
+          { ...options, params: params ? transformListParams(params) : undefined },
+        ),
+
+      create: (
+        catalogId: string,
+        params: CatalogQuantityRuleParams,
+        options?: RequestOptions,
+      ): Promise<CatalogQuantityRule> =>
+        this.request<CatalogQuantityRule>('POST', `/catalogs/${catalogId}/quantity_rules`, {
+          ...options,
+          body: params,
+        }),
+
+      update: (
+        catalogId: string,
+        id: string,
+        params: CatalogQuantityRuleParams,
+        options?: RequestOptions,
+      ): Promise<CatalogQuantityRule> =>
+        this.request<CatalogQuantityRule>('PATCH', `/catalogs/${catalogId}/quantity_rules/${id}`, {
+          ...options,
+          body: params,
+        }),
+
+      delete: (catalogId: string, id: string, options?: RequestOptions): Promise<void> =>
+        this.request<void>('DELETE', `/catalogs/${catalogId}/quantity_rules/${id}`, options),
+    },
+
+    /**
+     * Per-product quantity terms — the grain the agreement editor states
+     * them at, over rows the database keeps per variant.
+     */
+    productTerms: {
+      list: (
+        catalogId: string,
+        options?: RequestOptions,
+      ): Promise<{ data: CatalogProductTerm[] }> =>
+        this.request<{ data: CatalogProductTerm[] }>(
+          'GET',
+          `/catalogs/${catalogId}/product_terms`,
+          options,
+        ),
+
+      /**
+       * Writes the whole set in one request. A product whose pair is both
+       * null has its terms cleared; a product not yet in the assortment is
+       * added, since a term with nothing to apply to is not a reachable
+       * state.
+       */
+      upsert: (
+        catalogId: string,
+        params: CatalogProductTermsParams,
+        options?: RequestOptions,
+      ): Promise<{ data: CatalogProductTerm[] }> =>
+        this.request<{ data: CatalogProductTerm[] }>(
+          'PUT',
+          `/catalogs/${catalogId}/product_terms`,
+          { ...options, body: params },
+        ),
+    },
+
+    /** The order minimum in each currency this agreement states one for. */
+    orderMinimums: {
+      list: (
+        catalogId: string,
+        params?: ListParams & Record<string, unknown>,
+        options?: RequestOptions,
+      ): Promise<PaginatedResponse<CatalogOrderMinimum>> =>
+        this.request<PaginatedResponse<CatalogOrderMinimum>>(
+          'GET',
+          `/catalogs/${catalogId}/order_minimums`,
+          { ...options, params: params ? transformListParams(params) : undefined },
+        ),
+
+      create: (
+        catalogId: string,
+        params: CatalogOrderMinimumParams,
+        options?: RequestOptions,
+      ): Promise<CatalogOrderMinimum> =>
+        this.request<CatalogOrderMinimum>('POST', `/catalogs/${catalogId}/order_minimums`, {
+          ...options,
+          body: params,
+        }),
+
+      update: (
+        catalogId: string,
+        id: string,
+        params: CatalogOrderMinimumParams,
+        options?: RequestOptions,
+      ): Promise<CatalogOrderMinimum> =>
+        this.request<CatalogOrderMinimum>('PATCH', `/catalogs/${catalogId}/order_minimums/${id}`, {
+          ...options,
+          body: params,
+        }),
+
+      delete: (catalogId: string, id: string, options?: RequestOptions): Promise<void> =>
+        this.request<void>('DELETE', `/catalogs/${catalogId}/order_minimums/${id}`, options),
+    },
   }
 
   readonly catalogAssignments = {

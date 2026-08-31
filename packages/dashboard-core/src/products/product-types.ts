@@ -56,6 +56,10 @@ export interface PanelVariant {
   hs_code?: string | null
   country_of_origin?: string | null
   customs_description?: string | null
+  minimum_order_quantity?: number | null
+  order_multiple?: number | null
+  purchase_unit?: string | null
+  units_per_carton?: number | null
   track_inventory?: boolean
   preorderable?: boolean
   preorder_ships_at?: string | null

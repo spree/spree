@@ -8,6 +8,7 @@ import {
   CardHeader,
   CardTitle,
   ProductMembershipList,
+  type ProductMembershipListProps,
   type ProductMembershipRow,
 } from '@spree/dashboard-ui'
 import { Link } from '@tanstack/react-router'
@@ -56,6 +57,7 @@ export function DeferredProductMembershipCard({
   onReorder,
   translationNamespace,
   description,
+  extraColumns,
 }: {
   parentId: string
   storeId: string
@@ -69,6 +71,11 @@ export function DeferredProductMembershipCard({
   translationNamespace: string
   /** Rendered under the title while nothing is staged. */
   description?: string
+  /**
+   * Extra per-row columns, for a parent whose membership carries data of its
+   * own — a catalog's quantity terms. Passed straight to the list.
+   */
+  extraColumns?: ProductMembershipListProps['extraColumns']
 }) {
   const { t } = useTranslation()
   const tr = (key: string, options?: Record<string, unknown>) =>
@@ -193,6 +200,7 @@ export function DeferredProductMembershipCard({
           // change. Disabled until the staged changes are saved.
           reorderable={Boolean(onReorder) && curatable && !staging.dirty}
           onReorder={onReorder}
+          extraColumns={extraColumns}
           renderTitle={(row) => (
             <Link
               to="/$storeId/products/$productId"

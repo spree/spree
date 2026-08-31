@@ -26,6 +26,12 @@ module Spree
 
         step :parse_manual_price unless price.nil?
 
+        # Core behaviour rather than a hook: an agreement's quantity terms are
+        # part of what the merchant sold, not an extension's opinion. Before
+        # the hook so a host app's own rules see a quantity that already
+        # passed the commercial ones.
+        step :validate_quantity_rules
+
         # Veto point — purchase limits, B2B eligibility, per-group rules.
         # Outside the transaction: nothing has been written yet, so a
         # rejection costs no rollback.
@@ -61,6 +67,19 @@ module Spree
         reject!(Spree.t('cart_line_item.invalid_price'), cart) if @manual_price.negative? || !@manual_price.finite?
       rescue ArgumentError
         reject!(Spree.t('cart_line_item.invalid_price'), cart)
+      end
+
+      # Checked against the quantity the line will END UP at, not the
+      # increment: adding 24 to an existing 24 is an order of 48, which a
+      # 48/24 rule allows even though neither 24 does on its own.
+      def validate_quantity_rules
+        message = cart.quantity_rule_violation(variant, resulting_quantity)
+        return if message.nil?
+
+        # A symbolic type rather than a bare string, so callers reading
+        # `details` get `quantity_rule_violated` rather than the sentence.
+        errors.add(:base, :quantity_rule_violated, message: message)
+        failure(cart, errors)
       end
 
       def add_to_line_item
