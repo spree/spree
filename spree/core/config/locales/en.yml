@@ -33,6 +33,13 @@ en:
       spree/calculator/tiered_percent:
         preferred_base_percent: Base Percent
         preferred_tiers: Tiers
+      spree/catalog_order_minimum:
+        amount: Amount
+        currency: Currency
+      spree/catalog_quantity_rule:
+        minimum_order_quantity: Minimum order quantity
+        order_multiple: Order multiple
+        variant: Variant
       spree/country:
         iso: ISO
         iso3: ISO3
@@ -214,13 +221,6 @@ en:
         email: Email
         password: Password
         password_confirmation: Password Confirmation
-      spree/catalog_order_minimum:
-        amount: Amount
-        currency: Currency
-      spree/catalog_quantity_rule:
-        minimum_order_quantity: Minimum order quantity
-        order_multiple: Order multiple
-        variant: Variant
       spree/variant:
         cost_currency: Cost Currency
         cost_price: Cost Price
@@ -270,6 +270,10 @@ en:
           attributes:
             price_list:
               owned_by_another_catalog: is already used by another catalog. Detach it there first.
+        spree/catalog_quantity_rule:
+          attributes:
+            base:
+              quantity_rule_states_nothing: Set a minimum order quantity, an order multiple, or both
         spree/category:
           attributes:
             parent:
@@ -415,10 +419,6 @@ en:
             ship_address_id:
               belongs_to_other_user: belongs to other user
               deprecated_in_completed_order: deprecated in completed order
-        spree/catalog_quantity_rule:
-          attributes:
-            base:
-              quantity_rule_states_nothing: Set a minimum order quantity, an order multiple, or both
         spree/variant:
           attributes:
             base:
@@ -754,8 +754,8 @@ en:
       delivery_method_required: Select a delivery method for all fulfillments
       email_required: Email address is required
       line_items_required: Add at least one item to your cart
+      order_minimum_not_met: Orders must come to at least %{minimum}. Add %{shortfall} more to check out.
       payment_required: Add a payment method
-      order_minimum_not_met: "Orders must come to at least %{minimum}. Add %{shortfall} more to check out."
       po_number_required: A purchase order number is required for this account
       ship_address_required: Shipping address is required
     choose_currency: Choose Currency
