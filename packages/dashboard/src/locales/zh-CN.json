@@ -1466,6 +1466,11 @@
           "any": "满足任一规则即可",
           "label": "匹配策略"
         },
+        "minimum_quantity": {
+          "help": "仅在每项商品达到此数量时应用此定价。留空则对所有数量定价。",
+          "label": "最低数量",
+          "placeholder": "10"
+        },
         "name": {
           "help": "内部标签 — 不会向客户展示。",
           "label": "名称",
@@ -3803,7 +3808,8 @@
         "validation": {
           "adjustment_required": "请输入百分比。",
           "adjustment_too_deep": "必须小于 100%。",
-          "ends_after_starts": "必须晚于开始日期。"
+          "ends_after_starts": "必须晚于开始日期。",
+          "minimum_quantity_invalid": "请输入大于 1 的整数。"
         }
       },
       "product_type_adds_options_one": "此类型会为新商品添加{{options}}。",

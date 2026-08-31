@@ -184,6 +184,28 @@ export function CatalogPricingFields({
               </p>
             </div>
           </Field>
+
+          {/* The threshold rides as the list's volume rule. Left blank the
+              agreement prices every quantity; filled in, it is an automatic
+              volume discount with no rows to maintain
+              (docs/plans/6.0-price-list-automatic-pricing.md). */}
+          <Field className="w-40">
+            <FieldLabel htmlFor="catalog-minimum-quantity">
+              {t('admin.fields.price_list.minimum_quantity.label')}
+            </FieldLabel>
+            <Input
+              id="catalog-minimum-quantity"
+              inputMode="numeric"
+              placeholder={t('admin.fields.price_list.minimum_quantity.placeholder')}
+              disabled={!canEdit}
+              aria-invalid={!!errors.minimum_quantity || undefined}
+              {...form.register('minimum_quantity')}
+            />
+            <FieldDescription>
+              {t('admin.fields.price_list.minimum_quantity.help')}
+            </FieldDescription>
+            <FieldError errors={[errors.minimum_quantity]} />
+          </Field>
         </>
       )}
 

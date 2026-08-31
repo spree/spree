@@ -43,7 +43,26 @@ export const catalogFormSchema = z
     adjustment_direction: z.enum(ADJUSTMENT_DIRECTIONS).default('decrease'),
     adjustment_magnitude: z.string().trim().optional(),
     adjust_compare_at: z.boolean().default(false),
+    /**
+     * The quantity an order line must reach before the adjustment applies,
+     * carried as the owned list's volume rule. Blank means the agreement
+     * prices every quantity — which is what most agreements do
+     * (docs/plans/6.0-price-list-automatic-pricing.md).
+     */
+    minimum_quantity: z.string().trim().optional(),
   })
+  .refine(
+    (v) => {
+      const raw = v.minimum_quantity?.trim()
+      if (!raw) return true
+      const parsed = Number(raw)
+      return Number.isInteger(parsed) && parsed > 1
+    },
+    {
+      path: ['minimum_quantity'],
+      error: () => i18n.t('admin.products.price_lists.validation.minimum_quantity_invalid'),
+    },
+  )
   .refine(
     (v) => v.pricing_mode !== 'automatic' || parsePercentage(v.adjustment_magnitude) !== null,
     {
@@ -75,6 +94,7 @@ export const CATALOG_DEFAULTS: CatalogFormValues = {
   adjustment_direction: 'decrease',
   adjustment_magnitude: '',
   adjust_compare_at: false,
+  minimum_quantity: '',
   staged_products: { adds: [], removes: [] },
 }
 
@@ -118,10 +138,22 @@ function priceListPayload(values: CatalogFormValues, previousMode?: CatalogPrici
           adjust_compare_at: values.adjust_compare_at,
         }
 
+  // A minimum quantity rides as the list's volume rule; an empty array
+  // clears it, so removing the threshold is a real edit rather than a
+  // silent no-op.
+  const withRule = { ...base, rules: volumeRulePayload(values.minimum_quantity) }
+
   // Switching away from hand-entered prices clears them. An explicit amount
   // beats the adjustment by design, so leaving the old rows behind would
   // keep charging them while the card claims a percentage is in effect.
-  return previousMode === 'fixed' ? { ...base, prices: [] } : base
+  return previousMode === 'fixed' ? { ...withRule, prices: [] } : withRule
+}
+
+function volumeRulePayload(minimumQuantity: string | undefined) {
+  const parsed = Number(minimumQuantity?.trim())
+  if (!minimumQuantity?.trim() || !Number.isInteger(parsed) || parsed <= 1) return []
+
+  return [{ type: 'volume_rule', preferences: { min_quantity: parsed } }]
 }
 
 /**
@@ -133,6 +165,10 @@ export function catalogPricingValues(
     | {
         price_adjustment_percentage?: string | null
         adjust_compare_at?: boolean
+        price_rules?: Array<{
+          type?: string | null
+          preferences?: Record<string, unknown> | null
+        }> | null
       }
     | null
     | undefined,
@@ -141,6 +177,7 @@ export function catalogPricingValues(
   adjustment_direction: CatalogFormValues['adjustment_direction']
   adjustment_magnitude: string
   adjust_compare_at: boolean
+  minimum_quantity: string
 } {
   if (!priceList) {
     return {
@@ -148,6 +185,7 @@ export function catalogPricingValues(
       adjustment_direction: 'decrease',
       adjustment_magnitude: '',
       adjust_compare_at: false,
+      minimum_quantity: '',
     }
   }
 
@@ -160,5 +198,21 @@ export function catalogPricingValues(
     adjustment_direction,
     adjustment_magnitude,
     adjust_compare_at: priceList.adjust_compare_at ?? false,
+    minimum_quantity: minimumQuantityOf(priceList.price_rules),
   }
+}
+
+/** The volume rule's threshold, as the string the input edits. */
+function minimumQuantityOf(
+  rules:
+    | Array<{ type?: string | null; preferences?: Record<string, unknown> | null }>
+    | null
+    | undefined,
+): string {
+  const rule = rules?.find((entry) => entry.type === 'volume_rule')
+  const minimum = rule?.preferences?.min_quantity
+  if (minimum === null || minimum === undefined || minimum === '') return ''
+
+  const parsed = Number(minimum)
+  return Number.isInteger(parsed) && parsed > 1 ? String(parsed) : ''
 }

@@ -170,7 +170,9 @@ function CatalogBody({ catalog }: { catalog: Catalog }) {
               jsonPreview={{
                 title: `Catalog ${catalog.name}`,
                 fetch: () =>
-                  adminClient.catalogs.get(catalog.id, { expand: ['assignments', 'price_list'] }),
+                  adminClient.catalogs.get(catalog.id, {
+                    expand: ['assignments', 'price_list', 'price_list.price_rules'],
+                  }),
                 endpoint: `/api/v3/admin/catalogs/${catalog.id}`,
                 resolveLink: spreeJsonLinkResolver(storeId),
               }}

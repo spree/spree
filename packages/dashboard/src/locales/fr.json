@@ -1470,6 +1470,11 @@
           "any": "N'importe quelle règle peut correspondre",
           "label": "Règle de correspondance"
         },
+        "minimum_quantity": {
+          "help": "N'appliquer cette tarification qu'à partir de cette quantité par article. Laissez vide pour tarifer toutes les quantités.",
+          "label": "Quantité minimale",
+          "placeholder": "10"
+        },
         "name": {
           "help": "Libellé interne — jamais affiché aux clients.",
           "label": "Nom",
@@ -3811,7 +3816,8 @@
         "validation": {
           "adjustment_required": "Saisissez un pourcentage.",
           "adjustment_too_deep": "Doit être inférieur à 100 %.",
-          "ends_after_starts": "Doit être postérieur à la date de début."
+          "ends_after_starts": "Doit être postérieur à la date de début.",
+          "minimum_quantity_invalid": "Saisissez un nombre entier supérieur à 1."
         }
       },
       "product_type_adds_options_one": "Ce type ajoute {{options}} aux nouveaux produits.",
