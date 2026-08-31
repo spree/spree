@@ -68,6 +68,7 @@ module Spree
       def assign_cart_attributes
         cart.email = params[:email] if params[:email].present?
         cart.customer_note = params[:customer_note] if params.key?(:customer_note)
+        cart.po_number = params[:po_number] if params.key?(:po_number)
 
         assign_market if params[:market_id].present?
         cart.currency = params[:currency].upcase if params[:currency].present?
@@ -76,6 +77,29 @@ module Spree
         cart.use_shipping = params[:use_shipping] if params.key?(:use_shipping)
         assign_preferred_stock_location if params.key?(:preferred_stock_location_id)
         assign_company if params.key?(:company_id)
+        assign_po_document if params.key?(:po_document)
+      end
+
+      # The buyer's purchase order as an ActiveStorage signed blob id — the
+      # bytes are normally already in storage by the time this runs. A blank
+      # value detaches, so a buyer can withdraw a document they attached in
+      # error.
+      #
+      # An abandoned direct upload leaves the blob row behind without its
+      # bytes, and the buyer's client may still send back the signed id it was
+      # handed. ActiveStorage raises a message-less FileNotFoundError for that,
+      # which would otherwise reach the storefront as a bare class name.
+      def assign_po_document
+        value = params[:po_document]
+
+        if value.blank?
+          cart.po_document.detach
+        else
+          cart.po_document.attach(value)
+        end
+      rescue ActiveStorage::FileNotFoundError
+        cart.errors.add(:po_document, Spree.t(:po_document_upload_incomplete))
+        raise ActiveRecord::RecordInvalid, cart
       end
 
       # Which company node the purchase is for. Resolved through the cart's

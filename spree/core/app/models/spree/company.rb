@@ -100,7 +100,7 @@ module Spree
       where("#{table_name}.id IN (#{subtree_sql})")
     }
 
-    self.whitelisted_ransackable_attributes = %w[name kind parent_id]
+    self.whitelisted_ransackable_attributes = %w[name kind parent_id po_number_required]
     self.whitelisted_ransackable_associations = %w[parent children memberships external_references]
 
     # @return [Array<Spree::Company>] parent chain, nearest first (leaf → root)

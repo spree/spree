@@ -222,6 +222,7 @@ module Spree
             coupon_code: cart.read_attribute(:coupon_code),
             preferred_stock_location_id: cart.preferred_stock_location_id,
             customer_note: cart.customer_note,
+            po_number: cart.po_number,
             last_ip_address: cart.last_ip_address,
             ship_address: cart.ship_address&.dup,
             bill_address: cart.bill_address&.dup
@@ -233,6 +234,7 @@ module Spree
           copy_typed_lines!(cart, order, line_item_map, fulfillment_map)
           copy_promotions!(cart, order)
           copy_tax_identifier!(cart, order)
+          copy_po_document!(cart, order)
           repoint_money_records!(cart, order)
 
           order.update_columns(
@@ -264,6 +266,24 @@ module Spree
         attributes = resolved.attributes.except('id', 'owner_type', 'owner_id',
                                                 'created_at', 'updated_at')
         order.create_tax_identifier!(attributes.merge('source' => source_of(resolved)))
+      end
+
+      # The buyer's purchase order follows the number onto the order. The same
+      # blob is attached to both records rather than uploaded twice — the cart
+      # keeps its copy so a completion that rolls back leaves the buyer's
+      # upload where they left it.
+      #
+      # The order is persisted and unchanged here, so `attach` saves
+      # immediately and answers nil instead of raising when the save is
+      # refused. Left unchecked the placed order would simply have no
+      # paperwork, silently — so the failure is raised into the completion
+      # transaction rather than dropped.
+      def copy_po_document!(cart, order)
+        return unless cart.po_document.attached?
+
+        return if order.po_document.attach(cart.po_document.blob)
+
+        raise ActiveRecord::RecordInvalid, order
       end
 
       # Which link of the chain produced the snapshot, so a placed order's tax

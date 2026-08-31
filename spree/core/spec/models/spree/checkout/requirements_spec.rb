@@ -112,6 +112,57 @@ RSpec.describe Spree::Checkout::Requirements do
     end
   end
 
+  describe 'po_number requirement' do
+    let(:customer) { create(:user) }
+    let(:company) { create(:company, store: store, po_number_required: true) }
+
+    before do
+      create(:company_membership, company: company, customer: customer)
+      order.update_columns(customer_id: customer.id, company_id: company.id)
+      order.reload
+    end
+
+    it 'asks for the reference when the buyer\'s company demands one' do
+      expect(subject).to include(
+        a_hash_including(step: 'address', field: 'po_number', code: 'po_number_required')
+      )
+    end
+
+    it 'stops asking once the buyer supplies it' do
+      order.update!(po_number: 'PO-4471')
+
+      expect(subject).not_to include(a_hash_including(field: 'po_number'))
+    end
+
+    it 'does not ask when the company does not demand one' do
+      company.update!(po_number_required: false)
+      order.reload
+
+      expect(subject).not_to include(a_hash_including(field: 'po_number'))
+    end
+
+    # Payment is dropped from the steps of a cart that owes nothing, so a
+    # requirement naming that step would be one the buyer can never reach.
+    it 'reports against a step that survives on a cart owing nothing' do
+      cart = create(:cart, store: store, customer: customer)
+      cart.update_column(:company_id, company.id)
+      allow(cart).to receive(:payment_required?).and_return(false)
+
+      requirements = described_class.new(cart).call
+      po_requirement = requirements.find { |requirement| requirement[:field] == 'po_number' }
+
+      expect(po_requirement).to be_present
+      expect(cart.checkout_steps).to include(po_requirement[:step])
+    end
+
+    it 'does not ask of staff keying the order in' do
+      order.update_columns(created_by_id: create(:admin_user).id)
+      order.reload
+
+      expect(subject).not_to include(a_hash_including(field: 'po_number'))
+    end
+  end
+
   describe 'fully ready order' do
     let(:order) { create(:order_with_line_items, store: store, state: 'payment') }
 

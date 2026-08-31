@@ -614,6 +614,57 @@ RSpec.describe Spree::Api::V3::Store::CartsController, type: :controller do
       expect(order.reload.ship_address_id).to eq(existing_address.id)
     end
 
+    context 'the buyer purchase order' do
+      it 'persists the reference and reports it back' do
+        patch :update, params: { id: order.prefixed_id, po_number: 'PO-4471' }
+
+        expect(response).to have_http_status(:ok)
+        expect(order.reload.po_number).to eq('PO-4471')
+        expect(json_response['po_number']).to eq('PO-4471')
+      end
+
+      it 'clears the reference when the buyer blanks it' do
+        order.update!(po_number: 'PO-4471')
+
+        patch :update, params: { id: order.prefixed_id, po_number: '' }
+
+        expect(response).to have_http_status(:ok)
+        expect(order.reload.po_number).to be_nil
+      end
+
+      it 'reports whether the company demands one' do
+        company = create(:company, store: store, po_number_required: true)
+        create(:company_membership, company: company, customer: user)
+
+        patch :update, params: { id: order.prefixed_id, company_id: company.prefixed_id }
+
+        expect(json_response['po_number_required']).to be(true)
+      end
+
+      it 'attaches a document from a signed blob id' do
+        blob = ActiveStorage::Blob.create_and_upload!(
+          io: StringIO.new('%PDF-1.4 purchase order'),
+          filename: 'po.pdf',
+          content_type: 'application/pdf',
+          service_name: Spree.private_storage_service_name
+        )
+
+        patch :update, params: { id: order.prefixed_id, po_document: blob.signed_id }
+
+        expect(response).to have_http_status(:ok)
+        expect(order.reload.po_document).to be_attached
+        expect(json_response['po_document_filename']).to eq('po.pdf')
+      end
+
+      # A tampered id must not surface as a 500.
+      it 'refuses a tampered signed id' do
+        patch :update, params: { id: order.prefixed_id, po_document: 'not-a-signed-id' }
+
+        expect(response).to have_http_status(:unprocessable_content)
+        expect(order.reload.po_document).not_to be_attached
+      end
+    end
+
     context 'naming the company the purchase is for' do
       let(:company) { create(:company, store: store) }
 

@@ -427,6 +427,16 @@ export interface OrderCreateParams {
   preferred_stock_location_id?: string
   locale?: string
   customer_note?: string
+  /**
+   * The buyer's own purchase-order reference. Searchable alongside the order
+   * number, and rendered on every order-facing document.
+   */
+  po_number?: string
+  /**
+   * ActiveStorage signed blob id of the buyer's purchase order, from
+   * `POST /api/v3/admin/direct_uploads` with `private: true`.
+   */
+  po_document?: string
   /** Rich text HTML. Reads come back as this plus `internal_note_html`. */
   internal_note?: string
   metadata?: Record<string, unknown>
@@ -450,6 +460,16 @@ export interface OrderUpdateParams {
   email?: string
   customer_id?: string
   customer_note?: string
+  /**
+   * The buyer's own purchase-order reference. Correctable after placement —
+   * a plain attribute write, never an order change.
+   */
+  po_number?: string
+  /**
+   * See {@link OrderCreateParams.po_document}. Null removes the document the
+   * order currently carries.
+   */
+  po_document?: string | null
   /** Rich text HTML. Reads come back as this plus `internal_note_html`. */
   internal_note?: string
   /**
@@ -2518,6 +2538,11 @@ export interface CompanyParams {
   kind?: 'company' | 'division'
   /** The parent node (comp_...). Omit or null for a root. */
   parent_id?: string | null
+  /**
+   * Whether this buyer's own procurement process demands a PO reference on
+   * every order — checkout asks for one and refuses to complete without it.
+   */
+  po_number_required?: boolean
   external_references?: ExternalReferencesParams
   metadata?: Record<string, unknown>
 }

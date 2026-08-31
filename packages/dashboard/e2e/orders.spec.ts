@@ -1,5 +1,14 @@
+import * as path from 'node:path'
+import { fileURLToPath } from 'node:url'
 import { expect, type Page, test } from '@playwright/test'
 import { FIXTURE_PROMO_PRODUCT, fillAddressForm, login } from './helpers'
+
+// A PNG is in the PO document allowlist, so the shared fixture works and no
+// new binary ships with the suite.
+const FIXTURE_PO_DOCUMENT = path.join(
+  path.dirname(fileURLToPath(import.meta.url)),
+  'fixtures/test-image.png',
+)
 
 const ORDERS_PATH = (storeId: string) => `/${storeId}/orders`
 const DRAFTS_PATH = (storeId: string) => `/${storeId}/orders/drafts`
@@ -81,6 +90,41 @@ test.describe('new order', () => {
     await expect(page).toHaveURL(new RegExp(`/${creds.store_id}/orders/or_[^/]+$`), {
       timeout: 15_000,
     })
+  })
+
+  // The motivating case for this form: a purchase order arrives by email and
+  // the merchant keys the order in, reference and paperwork together.
+  test('carries a PO number and its document onto the created order', async ({ page }) => {
+    const creds = await login(page)
+    await page.goto(NEW_ORDER_PATH(creds.store_id))
+    await expect(page.getByRole('heading', { name: CTA })).toBeVisible({ timeout: 15_000 })
+
+    const email = `e2e-po-${Date.now()}@example.com`
+    const poNumber = `PO-${Date.now()}`
+    await fillNewOrderForm(page, email)
+
+    await page.locator('#po-number').fill(poNumber)
+    await page.locator('input[type="file"]').setInputFiles(FIXTURE_PO_DOCUMENT)
+
+    // Wait for the upload itself, not for the filename — the field shows the
+    // name the moment the file is picked, while the signed id it saves does
+    // not exist until the upload resolves. Submit is disabled meanwhile, so
+    // the button coming back is the real signal.
+    const submit = page.locator('button[type="submit"]')
+    await expect(page.getByText(/uploading/i)).toBeHidden({ timeout: 30_000 })
+    await expect(submit).toBeEnabled({ timeout: 30_000 })
+
+    await submit.click()
+
+    await expect(page).toHaveURL(new RegExp(`/${creds.store_id}/orders/or_[^/]+$`), {
+      timeout: 15_000,
+    })
+
+    const poCard = page
+      .locator('[data-slot="card"]')
+      .filter({ has: page.locator('[data-slot="card-title"]', { hasText: /^Purchase order$/ }) })
+    await expect(poCard.getByText(poNumber)).toBeVisible({ timeout: 15_000 })
+    await expect(poCard.getByRole('button', { name: /test-image\.png/i })).toBeVisible()
   })
 
   test('newly-created draft shows up in the drafts list', async ({ page }) => {

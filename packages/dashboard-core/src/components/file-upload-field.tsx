@@ -74,6 +74,18 @@ export interface FileUploadFieldProps {
   disabled?: boolean
   /** Re-wrap the picked file before upload (e.g. force a content type). */
   transformFile?: (file: File) => File
+  /**
+   * Upload to private storage rather than the public bucket. Required for
+   * anything served through an authorized endpoint — attaching a signed id
+   * never moves a blob between services, so this has to be right up front.
+   */
+  private?: boolean
+  /**
+   * Called with true while a picked file is uploading. A consumer whose save
+   * sends `signedId` must disable it meanwhile — the id does not exist until
+   * the upload resolves, so an early submit silently drops the file.
+   */
+  onUploadingChange?: (uploading: boolean) => void
 }
 
 /**
@@ -99,9 +111,11 @@ export function FileUploadField({
   mediaClassName,
   disabled = false,
   transformFile,
+  private: privateStorage = false,
+  onUploadingChange,
 }: FileUploadFieldProps) {
   const { t } = useTranslation()
-  const directUpload = useDirectUpload()
+  const directUpload = useDirectUpload({ private: privateStorage })
   const [pending, setPending] = useState<File | null>(null)
 
   const isImage = variant === 'image'
@@ -137,6 +151,7 @@ export function FileUploadField({
 
     const file = transformFile ? transformFile(picked) : picked
     setPending(file)
+    onUploadingChange?.(true)
     try {
       const result = await directUpload.mutateAsync(file)
       // Revoke a preview we're replacing in-place; the object URL otherwise
@@ -159,6 +174,7 @@ export function FileUploadField({
       })
     } finally {
       setPending(null)
+      onUploadingChange?.(false)
     }
   }
 

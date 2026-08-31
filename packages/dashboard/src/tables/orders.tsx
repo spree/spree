@@ -144,6 +144,17 @@ defineTable('orders', {
       className: 'text-right tabular-nums whitespace-nowrap font-medium',
       render: (order) => order.display_total ?? '—',
     },
+    // Off by default — most stores never see one — but a B2B merchant turns it
+    // on and reconciles against the buyer's own reference.
+    {
+      key: 'po_number',
+      label: i18n.t('admin.orders.columns.po_number'),
+      sortable: true,
+      filterable: true,
+      default: false,
+      className: 'text-sm text-muted-foreground',
+      render: (order) => order.po_number ?? '—',
+    },
     {
       key: 'currency',
       label: i18n.t('admin.fields.currency.label'),

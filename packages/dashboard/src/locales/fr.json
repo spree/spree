@@ -1047,6 +1047,10 @@
         "label": "Entreprise",
         "name": {
           "placeholder": "Acme Industries"
+        },
+        "po_number_required": {
+          "help": "Les acheteurs de cette entreprise doivent indiquer leur numéro de bon de commande avant de valider.",
+          "label": "Exiger un numéro de bon de commande"
         }
       },
       "company_location": {
@@ -1369,6 +1373,11 @@
         "order_group": {
           "label": "Achat",
           "view": "Voir l'achat"
+        },
+        "po_number": {
+          "help": "La référence propre de l'acheteur pour cette commande.",
+          "label": "Numéro de bon de commande",
+          "placeholder": "PO-4471"
         },
         "seller": {
           "first_party": "Vendu par vous",
@@ -2352,6 +2361,7 @@
         "items": "Articles",
         "number": "Numéro",
         "payment": "Paiement",
+        "po_number": "N° de bon de commande",
         "sku": "SKU",
         "tags": "Étiquettes"
       },
@@ -2522,6 +2532,13 @@
           "number": "Numéro",
           "state": "État"
         },
+        "purchase_order": {
+          "document": "Document de bon de commande",
+          "document_help": "Fichier PDF, image ou Word, jusqu’à 10 Mo.",
+          "download_failed": "Impossible de télécharger le bon de commande",
+          "save_failed": "Impossible d’enregistrer le bon de commande",
+          "title": "Bon de commande"
+        },
         "section_customer_note": "Instructions spéciales",
         "section_internal_note": "Note interne",
         "section_seller": "Vendeur",
@@ -2643,7 +2660,7 @@
       },
       "table": {
         "empty": "Aucune commande trouvée",
-        "search_placeholder": "Rechercher des commandes…"
+        "search_placeholder": "Rechercher par numéro, bon de commande ou client…"
       }
     },
     "pages": {

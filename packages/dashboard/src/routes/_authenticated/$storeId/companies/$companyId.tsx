@@ -30,6 +30,7 @@ import {
   DropdownMenuTrigger,
   ErrorState,
   Field,
+  FieldContent,
   FieldDescription,
   FieldError,
   FieldGroup,
@@ -42,6 +43,7 @@ import {
   SelectItem,
   SelectTrigger,
   SelectValue,
+  Switch,
   useConfirm,
 } from '@spree/dashboard-ui'
 import { createFileRoute, Link, useNavigate } from '@tanstack/react-router'
@@ -210,7 +212,7 @@ function CompanyProfileCard({ company, canEdit }: { company: Company; canEdit: b
   })
 
   useEffect(() => {
-    form.reset({ name: company.name })
+    form.reset({ name: company.name, po_number_required: company.po_number_required ?? false })
   }, [company, form])
 
   async function onSubmit(values: CompanyFormValues) {
@@ -245,6 +247,30 @@ function CompanyProfileCard({ company, canEdit }: { company: Company; canEdit: b
               {...form.register('name')}
             />
             <FieldError errors={[errors.name]} />
+          </Field>
+          {/* Hung on the company because it describes this buyer's own
+              procurement process, not the merchant's agreement with them. */}
+          <Field orientation="horizontal">
+            <Controller
+              control={form.control}
+              name="po_number_required"
+              render={({ field }) => (
+                <Switch
+                  id="company-po-number-required"
+                  disabled={!canEdit}
+                  checked={field.value}
+                  onCheckedChange={field.onChange}
+                />
+              )}
+            />
+            <FieldContent>
+              <FieldLabel htmlFor="company-po-number-required">
+                {t('admin.fields.company.po_number_required.label')}
+              </FieldLabel>
+              <FieldDescription>
+                {t('admin.fields.company.po_number_required.help')}
+              </FieldDescription>
+            </FieldContent>
           </Field>
           {canEdit && (
             <div className="flex justify-end">

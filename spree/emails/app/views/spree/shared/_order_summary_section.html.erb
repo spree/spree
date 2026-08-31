@@ -6,6 +6,11 @@
   <tr>
     <td>
       <h3 class="f-fallback"><%= heading %></h3>
+      <%# The buyer's own purchase-order reference, when they gave one — it is
+          how their accounting reconciles this order. %>
+      <% if order.po_number.present? %>
+        <p class="f-fallback"><%= Spree.t('order_mailer.po_number', number: order.po_number) %></p>
+      <% end %>
       <%= render 'spree/shared/purchased_items_table',
                  line_items: line_items,
                  order: order,

@@ -28,6 +28,7 @@ import {
   TagsCard,
 } from '../../../../../components/spree/orders/order-notes-cards'
 import { PaymentsCard } from '../../../../../components/spree/orders/order-payments-card'
+import { OrderPurchaseOrderCard } from '../../../../../components/spree/orders/order-purchase-order-card'
 import { OrderSkeleton } from '../../../../../components/spree/orders/order-skeleton'
 import { OrderSummaryCard } from '../../../../../components/spree/orders/order-summary-card'
 import { useOrder } from '../../../../../hooks/use-order'
@@ -90,6 +91,7 @@ function OrderDetailPage() {
           <MarketplaceCard order={order} />
           <TagsCard order={order} />
           <DiscountsCard order={order} />
+          <OrderPurchaseOrderCard order={order} />
           <SpecialInstructionsCard order={order} />
           <InternalNoteCard order={order} />
           <Slot name="order.form_sidebar" context={{ order }} />

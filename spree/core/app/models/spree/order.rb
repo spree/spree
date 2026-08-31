@@ -26,6 +26,7 @@ module Spree
     include Spree::SanitizableRichText
     include Spree::Purchase::Channel
     include Spree::Purchase::Company
+    include Spree::Purchase::PurchaseOrder
     include Spree::Purchase::Market
     include Spree::Purchase::Currency
     include Spree::Purchase::Locale
@@ -111,7 +112,7 @@ module Spree
     self.whitelisted_ransackable_associations = %w[fulfillments shipments customer created_by approver canceler promotions bill_address ship_address line_items store channel tags seller order_group]
     self.whitelisted_ransackable_attributes = %w[
       completed_at email number status payment_status payment_state fulfillment_status shipment_state delivery_total
-      total item_total total_quantity considered_risky channel_id currency coupon_code seller_id order_group_id
+      total item_total total_quantity considered_risky channel_id currency coupon_code seller_id order_group_id po_number
     ]
     self.whitelisted_ransackable_scopes = %w[complete incomplete refunded partially_refunded search multi_search]
 
@@ -293,6 +294,9 @@ module Spree
 
       conditions = []
       conditions << arel_table[:number].lower.matches(query_pattern)
+      # An accountant holds one reference or the other — ours or their own
+      # purchase order — and both have to find the same transaction.
+      conditions << arel_table[:po_number].lower.matches(query_pattern)
 
       conditions << search_condition(Spree::Address, :firstname, sanitized_query)
       conditions << search_condition(Spree::Address, :lastname, sanitized_query)

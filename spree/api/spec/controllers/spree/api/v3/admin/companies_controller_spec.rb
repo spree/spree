@@ -138,6 +138,22 @@ RSpec.describe Spree::Api::V3::Admin::CompaniesController, type: :controller do
     end
   end
 
+  describe 'the PO requirement flag' do
+    it 'defaults to off' do
+      get :show, params: { id: company.prefixed_id }
+
+      expect(json_response['po_number_required']).to be(false)
+    end
+
+    it 'is switched on through the company form' do
+      patch :update, params: { id: company.prefixed_id, po_number_required: true }, as: :json
+
+      expect(response).to have_http_status(:ok)
+      expect(json_response['po_number_required']).to be(true)
+      expect(company.reload.po_number_required).to be(true)
+    end
+  end
+
   describe 'PATCH #update' do
     it 'renames a company' do
       patch :update, params: { id: company.prefixed_id, name: 'Acme Global' }, as: :json

@@ -727,6 +727,7 @@ en:
       email_required: Email address is required
       line_items_required: Add at least one item to your cart
       payment_required: Add a payment method
+      po_number_required: A purchase order number is required for this account
       ship_address_required: Shipping address is required
     choose_currency: Choose Currency
     city: City
@@ -1266,6 +1267,7 @@ en:
         message_copy_link: 'If the button doesn''t work please copy and paste the following link to your browser:'
         pay_for_order: Pay for order
         subject: 'Payment link for order #%{number}'
+      po_number: 'PO Number: %{number}'
       store_owner_notification_email:
         heading: New Order Received
         instructions: You have received a new order.
@@ -1386,6 +1388,11 @@ en:
     phone: Phone
     pickup:
       store_pickup: Store Pickup
+    po_document_invalid: A purchase order document must be a PDF, image or Word file of %{size} or less.
+    po_document_invalid_signed_id: The purchase order document reference is not valid.
+    po_document_missing: This order has no attached purchase order document.
+    po_document_too_large: is larger than %{size}.
+    po_document_upload_incomplete: The purchase order document was not uploaded completely. Please try attaching it again.
     policies: Policies
     powered_by: Powered by
     pre_tax_amount: Pre-Tax Amount

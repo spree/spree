@@ -5,6 +5,7 @@
 ============================================================
 <%= Spree.t('order_mailer.cancel_email.order_summary_canceled', number: @order.number) %>
 ============================================================
+<%= render 'spree/shared/po_number', order: @order %>
 <%= render 'spree/shared/purchased_items_table', line_items: @order.line_items, order: @order %>
 ============================================================
 <%= Spree.t('order_mailer.total') %> <%= @order.display_total %>

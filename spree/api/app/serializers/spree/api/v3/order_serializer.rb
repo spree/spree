@@ -9,6 +9,9 @@ module Spree
                  customer_note: [:string, nullable: true],
                  market_id: [:string, nullable: true], channel_id: [:string, nullable: true],
                  company_id: [:string, nullable: true], company_name: [:string, nullable: true],
+                 po_number: [:string, nullable: true],
+                 po_document_filename: [:string, nullable: true],
+                 po_document_byte_size: ['number | null'],
                  currency: :string, locale: [:string, nullable: true], total_quantity: :number,
                  coupon_code: [:string, nullable: true],
                  fulfillment_status: [:string, nullable: true], payment_status: [:string, nullable: true],
@@ -54,7 +57,17 @@ module Spree
           order.company&.name
         end
 
-        attributes :number, :email, :customer_note,
+        # The buyer's own purchase-order reference, carried from the cart. Their
+        # accounting reconciles against it, so it stays on the order forever.
+        attribute :po_document_filename do |order|
+          order.po_document.blob&.filename&.to_s if order.po_document.attached?
+        end
+
+        attribute :po_document_byte_size do |order|
+          order.po_document.blob&.byte_size if order.po_document.attached?
+        end
+
+        attributes :number, :email, :customer_note, :po_number,
                    :currency, :locale, :total_quantity, :coupon_code,
                    :fulfillment_status, :payment_status,
                    completed_at: :iso8601
