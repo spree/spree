@@ -1,19 +1,75 @@
 import type { DeliveryMethodRule } from '@spree/admin-sdk'
 import type { TFunction } from 'i18next'
 
-/**
- * The flat amount a calculator-priced method charges, or null when it is
- * priced some other way (per item, tiered, per carrier quote) and has no
- * single number to show.
- */
-export function flatAmount(preferences: Record<string, unknown> | null | undefined): number | null {
-  const amount = preferences?.amount
-  if (amount === null || amount === undefined || amount === '') return null
-  const parsed = Number(amount)
+function toNumber(value: unknown): number | null {
+  if (value === null || value === undefined || value === '') return null
+  const parsed = Number(value)
   return Number.isNaN(parsed) ? null : parsed
 }
 
-/** Formats an amount in the store's currency, falling back to a bare number. */
+export type ListedAmount = {
+  amount: number
+  currency: string
+}
+
+/**
+ * Every amount a calculator-priced method quotes, each with the currency it
+ * belongs to. The per-currency `amounts` hash is the source of truth; the
+ * legacy single `amount` fills in for its own currency (the `currency`
+ * preference, or the store default) when the hash has no entry there.
+ *
+ * A method priced only in a non-default currency therefore returns that
+ * currency's row, not a number that the caller would stamp with the store
+ * default's symbol.
+ */
+export function listedAmounts(
+  preferences: Record<string, unknown> | null | undefined,
+  defaultCurrency: string,
+): ListedAmount[] {
+  const listed: ListedAmount[] = []
+  const seen = new Set<string>()
+  const defaultCode = defaultCurrency.toUpperCase()
+
+  const amounts = preferences?.amounts
+  if (amounts && typeof amounts === 'object' && !Array.isArray(amounts)) {
+    for (const [code, value] of Object.entries(amounts as Record<string, unknown>)) {
+      const parsed = toNumber(value)
+      if (parsed === null) continue
+      const currency = code.toUpperCase()
+      listed.push({ amount: parsed, currency })
+      seen.add(currency)
+    }
+  }
+
+  const legacyAmount = toNumber(preferences?.amount)
+  if (legacyAmount !== null) {
+    const rawCurrency =
+      typeof preferences?.currency === 'string' && preferences.currency.trim() !== ''
+        ? preferences.currency
+        : defaultCurrency
+    const legacyCurrency = rawCurrency.toUpperCase()
+    if (!seen.has(legacyCurrency)) {
+      listed.push({ amount: legacyAmount, currency: legacyCurrency })
+    }
+  }
+
+  return listed.sort((left, right) => {
+    if (left.currency === defaultCode) return -1
+    if (right.currency === defaultCode) return 1
+    return left.currency.localeCompare(right.currency)
+  })
+}
+
+/**
+ * The flat amount a calculator-priced method charges, or null when it is
+ * priced some other way (per item, tiered, per carrier quote) and has no
+ * single number to show. Prefer `listedAmounts` when the currency matters.
+ */
+export function flatAmount(preferences: Record<string, unknown> | null | undefined): number | null {
+  return toNumber(preferences?.amount)
+}
+
+/** Formats an amount in the given currency, falling back to a bare number. */
 export function formatAmount(amount: number, currency: string, locale?: string): string {
   try {
     return new Intl.NumberFormat(locale, { style: 'currency', currency }).format(amount)
@@ -22,10 +78,21 @@ export function formatAmount(amount: number, currency: string, locale?: string):
   }
 }
 
-function toNumber(value: unknown): number | null {
-  if (value === null || value === undefined || value === '') return null
-  const parsed = Number(value)
-  return Number.isNaN(parsed) ? null : parsed
+/**
+ * The glance price for a calculator-priced method on the delivery profile
+ * list. Each stored amount is formatted in its own currency; zero-only or
+ * empty preferences read as free.
+ */
+export function formatListedPrice(
+  preferences: Record<string, unknown> | null | undefined,
+  defaultCurrency: string,
+  locale: string | undefined,
+  freeLabel: string,
+  separator: string,
+): string {
+  const priced = listedAmounts(preferences, defaultCurrency).filter((row) => row.amount !== 0)
+  if (priced.length === 0) return freeLabel
+  return priced.map((row) => formatAmount(row.amount, row.currency, locale)).join(separator)
 }
 
 interface RuleSummaryContext {
