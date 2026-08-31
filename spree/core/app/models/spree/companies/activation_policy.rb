@@ -37,8 +37,12 @@ module Spree
       def pricing_access_code(user:, store:)
         return 'login_required' if user.blank?
 
-        standing = store && user.try(:company_standing, store: store)
-        return nil if standing&.any? { |company| active?(company) }
+        # The membership nodes are enough: a conforming policy suspending a
+        # parent answers inactive for everything below it, so expanding to
+        # the standing subtree could not change the answer — it would only
+        # load it.
+        memberships = store && user.try(:companies)&.where(store_id: store.id)
+        return nil if memberships&.any? { |company| active?(company) }
 
         'company_required'
       end

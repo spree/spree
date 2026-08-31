@@ -208,6 +208,17 @@ RSpec.describe Spree::Checkout::Requirements do
         not_to include(a_hash_including(code: 'company_activation_required'))
     end
 
+    # An admin keying an order in is exempt — their authority is the
+    # credential, not a membership.
+    it 'does not gate an order keyed in by staff' do
+      staff_order = create(:order, store: store, customer: customer, channel: channel)
+      staff_order.update_columns(created_by_id: create(:admin_user).id)
+      staff_order.reload
+
+      expect(described_class.new(staff_order).call(completion: true)).
+        not_to include(a_hash_including(code: 'company_activation_required'))
+    end
+
     # Two distinct remediations: a buyer whose standing already covers an
     # active company just has to pick which node the order is for — sending
     # them to a "register your business" page would be wrong.
