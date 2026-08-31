@@ -21,35 +21,31 @@ test.describe('product edit', () => {
 
     const description = page.locator('#product-description')
     await typeDescription(page, 'Formatted line')
-    await page.keyboard.press('ControlOrMeta+A')
 
-    await page.getByRole('button', { name: /^bullet list$/i }).click()
+    const bulletBtn = page.getByRole('button', { name: /^bullet list$/i })
+    await bulletBtn.click()
     const bulletList = description.locator('ul')
     await expect(bulletList).toBeVisible()
     await expect(bulletList).toHaveCSS('list-style-type', 'disc')
-    await expect(page.getByRole('button', { name: /^bullet list$/i })).toHaveAttribute(
-      'aria-pressed',
-      'true',
-    )
+    await expect(bulletBtn).toHaveAttribute('aria-pressed', 'true')
+    await bulletBtn.click()
 
-    await page.getByRole('button', { name: /^ordered list$/i }).click()
+    const orderedBtn = page.getByRole('button', { name: /^ordered list$/i })
+    await orderedBtn.click()
     const orderedList = description.locator('ol')
     await expect(orderedList).toBeVisible()
     await expect(orderedList).toHaveCSS('list-style-type', 'decimal')
-    await expect(page.getByRole('button', { name: /^ordered list$/i })).toHaveAttribute(
-      'aria-pressed',
-      'true',
-    )
+    await expect(orderedBtn).toHaveAttribute('aria-pressed', 'true')
+    await orderedBtn.click()
 
-    await page.getByRole('button', { name: /^blockquote$/i }).click()
+    const quoteBtn = page.getByRole('button', { name: /^blockquote$/i })
+    await quoteBtn.click()
     const quote = description.locator('blockquote')
     await expect(quote).toBeVisible()
     await expect(quote).toHaveCSS('border-inline-start-width', '3px')
-    await expect(page.getByRole('button', { name: /^blockquote$/i })).toHaveAttribute(
-      'aria-pressed',
-      'true',
-    )
+    await expect(quoteBtn).toHaveAttribute('aria-pressed', 'true')
 
+    await quote.click({ clickCount: 3 })
     page.once('dialog', (dialog) => dialog.accept('https://example.com'))
     await page.getByRole('button', { name: /^link$/i }).click()
     const link = description.locator('a[href="https://example.com"]')
@@ -74,7 +70,9 @@ test.describe('product edit', () => {
     await page.keyboard.press('ControlOrMeta+A')
     await page.keyboard.press('ControlOrMeta+B')
 
-    await expect(page.locator('#product-description strong')).toHaveText('Bold this')
+    const boldText = page.locator('#product-description strong')
+    await expect(boldText).toHaveText('Bold this')
+    await boldText.click()
     await expect(page.getByRole('button', { name: /^bold$/i })).toHaveAttribute(
       'aria-pressed',
       'true',

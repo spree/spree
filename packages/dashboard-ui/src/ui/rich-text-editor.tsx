@@ -219,6 +219,18 @@ function EditorToolbar({
     }),
   })
 
+  const runToolbarCommand = (command: () => void) => {
+    command()
+    // Ctrl/Cmd+A in Tiptap is an AllSelection that also covers the trailing
+    // empty paragraph the editor always keeps. Block formats then wrap the
+    // written text but `isActive` stays false because the selection still
+    // spans mixed nodes — collapse so the button the merchant just used
+    // lights up against the formatted text.
+    if (editor.state.selection.toJSON().type === 'all') {
+      editor.commands.setTextSelection(1)
+    }
+  }
+
   return (
     <div
       data-slot="rich-text-editor-toolbar"
@@ -226,21 +238,21 @@ function EditorToolbar({
     >
       <ToolbarButton
         active={toolbar.isBold}
-        onClick={() => editor.chain().focus().toggleBold().run()}
+        onClick={() => runToolbarCommand(() => editor.chain().focus().toggleBold().run())}
         title={t('admin.components.rich_text_editor.bold')}
       >
         <BoldIcon className="size-4" />
       </ToolbarButton>
       <ToolbarButton
         active={toolbar.isItalic}
-        onClick={() => editor.chain().focus().toggleItalic().run()}
+        onClick={() => runToolbarCommand(() => editor.chain().focus().toggleItalic().run())}
         title={t('admin.components.rich_text_editor.italic')}
       >
         <ItalicIcon className="size-4" />
       </ToolbarButton>
       <ToolbarButton
         active={toolbar.isStrike}
-        onClick={() => editor.chain().focus().toggleStrike().run()}
+        onClick={() => runToolbarCommand(() => editor.chain().focus().toggleStrike().run())}
         title={t('admin.components.rich_text_editor.strikethrough')}
       >
         <StrikethroughIcon className="size-4" />
@@ -250,21 +262,21 @@ function EditorToolbar({
 
       <ToolbarButton
         active={toolbar.isBulletList}
-        onClick={() => editor.chain().focus().toggleBulletList().run()}
+        onClick={() => runToolbarCommand(() => editor.chain().focus().toggleBulletList().run())}
         title={t('admin.components.rich_text_editor.bullet_list')}
       >
         <ListIcon className="size-4" />
       </ToolbarButton>
       <ToolbarButton
         active={toolbar.isOrderedList}
-        onClick={() => editor.chain().focus().toggleOrderedList().run()}
+        onClick={() => runToolbarCommand(() => editor.chain().focus().toggleOrderedList().run())}
         title={t('admin.components.rich_text_editor.ordered_list')}
       >
         <ListOrderedIcon className="size-4" />
       </ToolbarButton>
       <ToolbarButton
         active={toolbar.isBlockquote}
-        onClick={() => editor.chain().focus().toggleBlockquote().run()}
+        onClick={() => runToolbarCommand(() => editor.chain().focus().toggleBlockquote().run())}
         title={t('admin.components.rich_text_editor.blockquote')}
       >
         <QuoteIcon className="size-4" />
@@ -274,7 +286,7 @@ function EditorToolbar({
 
       <ToolbarButton
         active={toolbar.isLink}
-        onClick={onSetLink}
+        onClick={() => runToolbarCommand(onSetLink)}
         title={t('admin.components.rich_text_editor.link')}
       >
         <LinkIcon className="size-4" />
