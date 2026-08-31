@@ -25895,8 +25895,6 @@ paths:
                   updated_at: '2026-01-15T12:00:00.000Z'
                   price_list_id:
                   products_count: 0
-                  quantity_rules_count: 0
-                  order_minimums_count: 0
                 meta:
                   page: 1
                   limit: 25
@@ -25965,8 +25963,6 @@ paths:
                 updated_at: '2026-01-15T12:00:00.000Z'
                 price_list_id:
                 products_count: 0
-                quantity_rules_count: 0
-                order_minimums_count: 0
         '422':
           description: invalid request
           content:
@@ -34164,10 +34160,6 @@ components:
           nullable: true
         products_count:
           type: number
-        quantity_rules_count:
-          type: number
-        order_minimums_count:
-          type: number
         order_minimums:
           type: array
           items:
@@ -34191,8 +34183,6 @@ components:
       - updated_at
       - price_list_id
       - products_count
-      - quantity_rules_count
-      - order_minimums_count
       x-typelizer: true
     Category:
       type: object
