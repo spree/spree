@@ -22,7 +22,11 @@ describe('normalizeQuantityRule', () => {
     expect(normalizeQuantityRule('abc')).toBeNull()
   })
 
-  it('truncates a fractional entry to whole units', () => {
-    expect(normalizeQuantityRule('48.9')).toBe(48)
+  // Truncating would be the same silent adjustment the whole feature exists
+  // to prevent, one level up.
+  it('refuses a fraction rather than truncating it', () => {
+    expect(normalizeQuantityRule('48.9')).toBeNull()
+    expect(normalizeQuantityRule('2.5')).toBeNull()
+    expect(normalizeQuantityRule(1.5)).toBeNull()
   })
 })

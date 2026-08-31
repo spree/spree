@@ -159,7 +159,7 @@
       "search_placeholder": "搜索目录",
       "terms": {
         "title": "商务条款",
-        "description": "适用本协议的买家必须订购多少。",
+        "description": "适用本协议的买家必须订购的数量。",
         "no_rule_placeholder": "无规则",
         "minimums_title": "订单最低金额",
         "minimums_description": "整笔订单必须达到的最低金额，按币种设置。",
@@ -2155,7 +2155,7 @@
         "order_multiple": {
           "label": "订购倍数",
           "placeholder": "无倍数",
-          "help": "订单数量必须是该数值的倍数。留空表示不限数量。"
+          "help": "在最小起订量之上的每一档增量。留空表示不限数量。"
         },
         "purchase_unit": {
           "label": "销售单位",
@@ -2194,7 +2194,7 @@
       },
       "order_multiple": {
         "label": "订购倍数",
-        "help": "订单数量必须是该数值的倍数。留空表示不限数量。"
+        "help": "在最小起订量之上的每一档增量。留空表示不限数量。"
       }
     },
     "gift_cards": {

@@ -426,11 +426,16 @@ function AddQuantityRuleDialog({
   const [multiple, setMultiple] = useState('')
 
   // A row must state at least one field: an override that overrides nothing
-  // is a half-filled form, and the server refuses it anyway.
+  // is a half-filled form, and the server refuses it anyway. Each stated
+  // field must also be usable — without checking here the request goes,
+  // fails validation, and the dialog just sits there saying nothing.
+  const minimumValid = !minimum.trim() || normalizeQuantityRule(minimum) !== null
+  const multipleValid = !multiple.trim() || normalizeQuantityRule(multiple) !== null
   const statesSomething = !!minimum.trim() || !!multiple.trim()
+  const canSubmit = statesSomething && minimumValid && multipleValid
 
   async function handleSubmit() {
-    if (!variantId || !statesSomething) return
+    if (!variantId || !canSubmit) return
 
     await createMutation
       .mutateAsync({
@@ -483,9 +488,13 @@ function AddQuantityRuleDialog({
                 type="number"
                 min={1}
                 step={1}
+                aria-invalid={!minimumValid}
                 value={minimum}
                 onChange={(event) => setMinimum(event.target.value)}
               />
+              {!minimumValid && (
+                <FieldError>{t('admin.catalogs.terms.validation.positive_integer')}</FieldError>
+              )}
             </Field>
             <Field>
               <FieldLabel htmlFor="rule-multiple">
@@ -496,9 +505,13 @@ function AddQuantityRuleDialog({
                 type="number"
                 min={1}
                 step={1}
+                aria-invalid={!multipleValid}
                 value={multiple}
                 onChange={(event) => setMultiple(event.target.value)}
               />
+              {!multipleValid && (
+                <FieldError>{t('admin.catalogs.terms.validation.positive_integer')}</FieldError>
+              )}
               <FieldDescription>{t('admin.catalogs.terms.override_help')}</FieldDescription>
             </Field>
           </FieldGroup>
@@ -509,7 +522,7 @@ function AddQuantityRuleDialog({
           </Button>
           <Button
             type="button"
-            disabled={createMutation.isPending || !variantId || !statesSomething}
+            disabled={createMutation.isPending || !variantId || !canSubmit}
             onClick={handleSubmit}
           >
             {t('admin.actions.add')}

@@ -159,7 +159,7 @@
       "search_placeholder": "Rechercher des catalogues",
       "terms": {
         "title": "Conditions commerciales",
-        "description": "Combien les acheteurs de cet accord doivent commander.",
+        "description": "Les quantités que les acheteurs de cet accord doivent commander.",
         "no_rule_placeholder": "Aucune règle",
         "minimums_title": "Minimums de commande",
         "minimums_description": "Le montant minimal d'une commande entière, par devise.",
@@ -2159,7 +2159,7 @@
         "order_multiple": {
           "label": "Multiple de commande",
           "placeholder": "Aucun multiple",
-          "help": "Les commandes doivent être un multiple de cette valeur. Laisser vide pour toute quantité."
+          "help": "Chaque palier au-dessus du minimum. Laisser vide pour toute quantité."
         },
         "purchase_unit": {
           "label": "Unité de vente",
@@ -2198,7 +2198,7 @@
       },
       "order_multiple": {
         "label": "Multiple de commande",
-        "help": "Les commandes doivent être un multiple de cette valeur. Laisser vide pour toute quantité."
+        "help": "Chaque palier au-dessus du minimum. Laisser vide pour toute quantité."
       }
     },
     "gift_cards": {

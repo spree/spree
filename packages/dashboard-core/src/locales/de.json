@@ -814,7 +814,7 @@
         "order_multiple": {
           "label": "Bestellvielfaches",
           "placeholder": "Kein Vielfaches",
-          "help": "Bestellungen müssen ein Vielfaches davon sein. Leer lassen für beliebige Mengen."
+          "help": "Jeder Schritt über der Mindestmenge. Leer lassen für beliebige Mengen."
         },
         "purchase_unit": {
           "label": "Verkaufseinheit",
@@ -834,7 +834,7 @@
       },
       "order_multiple": {
         "label": "Bestellvielfaches",
-        "help": "Bestellungen müssen ein Vielfaches davon sein. Leer lassen für beliebige Mengen."
+        "help": "Jeder Schritt über der Mindestmenge. Leer lassen für beliebige Mengen."
       }
     },
     "image_upload": {
@@ -1548,7 +1548,7 @@
     "catalogs": {
       "terms": {
         "title": "Handelsbedingungen",
-        "description": "Wie viel Käufer dieser Vereinbarung bestellen müssen.",
+        "description": "Welche Menge Käufer im Rahmen dieser Vereinbarung bestellen müssen.",
         "no_rule_placeholder": "Keine Regel",
         "minimums_title": "Mindestbestellwerte",
         "minimums_description": "Der Mindestwert einer gesamten Bestellung, je Währung.",

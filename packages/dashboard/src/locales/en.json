@@ -2159,7 +2159,7 @@
         "order_multiple": {
           "label": "Order multiple",
           "placeholder": "No multiple",
-          "help": "Orders must be a multiple of this. Leave blank for any quantity."
+          "help": "Each step up from the minimum. Leave blank for any quantity."
         },
         "purchase_unit": {
           "label": "Purchase unit",
@@ -2198,7 +2198,7 @@
       },
       "order_multiple": {
         "label": "Order multiple",
-        "help": "Orders must be a multiple of this. Leave blank for any quantity."
+        "help": "Each step up from the minimum. Leave blank for any quantity."
       }
     },
     "gift_cards": {

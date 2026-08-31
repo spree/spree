@@ -161,7 +161,7 @@
       "search_placeholder": "Szukaj katalogów",
       "terms": {
         "title": "Warunki handlowe",
-        "description": "Ile muszą zamawiać kupujący objęci tą umową.",
+        "description": "Jakie ilości muszą zamawiać kupujący objęci tą umową.",
         "no_rule_placeholder": "Brak reguły",
         "minimums_title": "Minimalne wartości zamówienia",
         "minimums_description": "Najniższa wartość całego zamówienia, dla każdej waluty.",
@@ -2171,7 +2171,7 @@
         "order_multiple": {
           "label": "Wielokrotność zamówienia",
           "placeholder": "Brak wielokrotności",
-          "help": "Zamówienia muszą być wielokrotnością tej liczby. Pozostaw puste, aby dopuścić dowolną ilość."
+          "help": "Każdy kolejny krok powyżej minimum. Pozostaw puste, aby dopuścić dowolną ilość."
         },
         "purchase_unit": {
           "label": "Jednostka sprzedaży",
@@ -2210,7 +2210,7 @@
       },
       "order_multiple": {
         "label": "Wielokrotność zamówienia",
-        "help": "Zamówienia muszą być wielokrotnością tej liczby. Pozostaw puste, aby dopuścić dowolną ilość."
+        "help": "Każdy kolejny krok powyżej minimum. Pozostaw puste, aby dopuścić dowolną ilość."
       }
     },
     "gift_cards": {
