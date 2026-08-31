@@ -61,17 +61,11 @@ module Spree
       # business here (recorded decision, 2026-08-31); only division-level
       # memberships leave registration open.
       def ensure_no_existing_root
-        return unless holds_root_membership?
-
-        errors.add(:base, :already_registered, message: Spree.t('company_registration.already_registered'))
-        reject!
+        refuse_second_founding! if holds_root_membership?
       end
 
       def holds_root_membership?
-        store.companies.roots.
-          joins(:memberships).
-          where(Spree::CompanyMembership.table_name => { customer_id: customer.id }).
-          exists?
+        customer.companies.roots.where(store_id: store.id).exists?
       end
 
       # Serializes concurrent registrations by the same customer: the second
@@ -82,10 +76,11 @@ module Spree
       end
 
       def confirm_sole_founding
-        return unless holds_root_membership?
+        refuse_second_founding! if holds_root_membership?
+      end
 
-        errors.add(:base, :already_registered, message: Spree.t('company_registration.already_registered'))
-        reject!
+      def refuse_second_founding!
+        reject!(Spree.t('company_registration.already_registered'))
       end
 
       def build_company

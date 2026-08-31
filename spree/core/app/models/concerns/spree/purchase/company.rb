@@ -47,14 +47,15 @@ module Spree
         # would reach back and exempt an order that legitimately charged tax.
         return company if is_a?(Spree::Order) && completed?
         if company_id.present?
+          # A dangling id keeps today's behavior; the association answers nil.
+          return company if company.nil?
+
           # An in-flight sale re-asks the policy: a company deactivated after
           # being named must not keep exempting the sale through its
           # certificates. Deliberately nil rather than the sole-standing
           # fallback — the buyer named a node, and resolving a different one
           # would invoice one business for another's purchase.
-          return company if company.nil? || Spree.company_activation_policy_class.new.active?(company)
-
-          return nil
+          return Spree.company_activation_policy.active?(company) ? company : nil
         end
 
         sole_standing_company
@@ -70,22 +71,18 @@ module Spree
         resolved_company&.legal_entity
       end
 
-      # Whether an +approval_required+ channel must refuse completion: the
-      # sale resolves to no company, or to one the activation policy has not
-      # activated. A record with a creator is exempt — a keyed-in order's
-      # authority is the admin credential, not a membership. Carts carry no
-      # creator column, so on the cart-side completion requirement the
-      # exemption never fires; it is here for the order twin, whose
-      # completion path may adopt the requirement later
-      # (docs/plans/6.0-b2b-company-self-registration.md).
+      # Whether an +approval_required+ channel must refuse completion.
+      # {#resolved_company} is the policy-filtered answer — an inactive
+      # sole standing or named node already resolves to nothing — so the
+      # question reduces to the posture plus an empty resolution. The
+      # staff exemption lives with the checkout requirement that consumes
+      # this (docs/plans/6.0-b2b-company-self-registration.md).
       #
       # @return [Boolean]
       def company_activation_missing?
         return false if channel.blank? || !channel.storefront_approval_required?
-        return false if respond_to?(:created_by_id) && created_by_id.present?
 
-        node = resolved_company
-        node.nil? || !Spree.company_activation_policy_class.new.active?(node)
+        resolved_company.nil?
       end
 
       private
@@ -107,7 +104,7 @@ module Spree
         # Distinct from :invalid so a storefront can tell "not yours" from
         # "not yet activated" — the latter is the awaiting-approval state the
         # registration flow renders (docs/plans/6.0-b2b-company-self-registration.md).
-        return if Spree.company_activation_policy_class.new.active?(company)
+        return if Spree.company_activation_policy.active?(company)
 
         errors.add(:company, :not_active)
       end

@@ -142,7 +142,7 @@ module Spree
       # is on a not-yet-approved business is still unambiguous, and an
       # inactive company must not price or exempt a sale
       # (docs/plans/6.0-b2b-company-self-registration.md).
-      policy = Spree.company_activation_policy_class.new
+      policy = Spree.company_activation_policy
       active_companies = companies.select { |company| policy.active?(company) }
 
       active_companies.one? ? active_companies.first : nil
