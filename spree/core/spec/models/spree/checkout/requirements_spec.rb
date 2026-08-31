@@ -163,6 +163,52 @@ RSpec.describe Spree::Checkout::Requirements do
     end
   end
 
+  describe 'company activation requirement' do
+    let(:customer) { create(:user) }
+    let(:channel) { create(:channel, store: store, preferred_storefront_access: 'approval_required') }
+    let(:cart) { create(:cart, store: store, customer: customer, channel: channel) }
+
+    subject { described_class.new(cart).call(completion: true) }
+
+    it 'refuses completion without a company on an approval_required channel' do
+      expect(subject).to include(
+        a_hash_including(step: 'address', field: 'company', code: 'company_activation_required')
+      )
+    end
+
+    it 'passes with standing over an active company' do
+      company = create(:company, store: store)
+      create(:company_membership, company: company, customer: customer)
+      cart.reload
+
+      expect(subject).not_to include(a_hash_including(code: 'company_activation_required'))
+    end
+
+    it 'refuses when the resolved company is not policy-active' do
+      company = create(:company, store: store)
+      create(:company_membership, company: company, customer: customer)
+      cart.reload
+
+      with_company_activation_policy(inactive: [company]) do
+        expect(subject).to include(a_hash_including(code: 'company_activation_required'))
+      end
+    end
+
+    # Completion-only: the buyer browses and builds the basket freely — the
+    # storefront reads the pricing_access code to explain the state.
+    it 'stays out of the advisory cart-phase feed' do
+      expect(described_class.new(cart).call).
+        not_to include(a_hash_including(code: 'company_activation_required'))
+    end
+
+    it 'does not gate other postures' do
+      ordinary_cart = create(:cart, store: store, customer: customer)
+
+      expect(described_class.new(ordinary_cart).call(completion: true)).
+        not_to include(a_hash_including(code: 'company_activation_required'))
+    end
+  end
+
   describe 'fully ready order' do
     let(:order) { create(:order_with_line_items, store: store, state: 'payment') }
 

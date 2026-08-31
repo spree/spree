@@ -11,6 +11,10 @@ module Spree
         # see Spree::Storefront::AccessPolicy
         storefront_access_policy_class: 'Spree::Storefront::AccessPolicy',
 
+        # company commercial standing (catalogs, pricing, checkout); the OSS
+        # default activates every company — see Spree::Companies::ActivationPolicy
+        company_activation_policy_class: 'Spree::Companies::ActivationPolicy',
+
         # cart — the legacy Spree::Cart::* namespace is gone (Spree::Cart is the
         # cart model since 6.0); surviving services live under Spree::Carts::.
         # cart_create/update/estimate_shipping_rates/change_currency service
@@ -187,6 +191,7 @@ module Spree
         # converge on these
         company_add_member_service: 'Spree::Companies::AddMember',
         company_invitation_accept_service: 'Spree::CompanyInvitations::Accept',
+        company_register_workflow: 'Spree::Companies::Register',
 
         # catalog-aware product visibility for a buyer
         products_for_context_service: 'Spree::Products::ForContext',
