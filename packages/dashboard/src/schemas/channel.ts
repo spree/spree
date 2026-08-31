@@ -15,6 +15,8 @@ export const ORDER_ROUTING_STRATEGY_VALUES = [
 export type OrderRoutingStrategyValue = (typeof ORDER_ROUTING_STRATEGY_VALUES)[number]
 
 // Empty string clears the channel-level override → falls back to store.
+// `approval_required`: anyone browses, but prices come back null and
+// checkout is refused unless the customer belongs to an active company.
 export const STOREFRONT_ACCESS_VALUES = [
   '',
   'public',
