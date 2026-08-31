@@ -14,7 +14,9 @@ const ALL_WEIGHT_UNITS = [...WEIGHT_UNITS.metric, ...WEIGHT_UNITS.imperial] as c
 // Store-wide storefront posture. Unlike the channel field there is no blank
 // "inherit" option — the store is the terminal fallback in the resolution
 // chain, so it always holds a concrete value. Labels live in `en.json` under
-// `admin.fields.store.storefront_access.options.*`.
+// `admin.fields.store.storefront_access.options.*`. `approval_required`:
+// anyone browses, but prices come back null and checkout is refused unless
+// the customer belongs to an active company.
 export const STOREFRONT_ACCESS_LEVELS = [
   'public',
   'prices_hidden',
