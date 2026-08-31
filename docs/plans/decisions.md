@@ -4857,7 +4857,8 @@ goes in `dashboard-core` locales, never in `packages/seller-dashboard`.
 ## 2026-08-31 — Company self-registration implementation choices: hard one-root guard, pricing_access on priced payloads
 
 Implementation of `6.0-b2b-company-self-registration.md` settled its
-remaining calls. The one-self-registered-root guard refuses any second
+remaining calls (target: Spree 6.0, per the 2026-08-30 retarget entry
+that supersedes the "deliberately 6.1" wording above). The one-self-registered-root guard refuses any second
 founding (`already_registered`) for a customer already holding a
 membership on a root company in the store — duplicate-with-a-typo is
 exactly the duplicate-application problem the guard exists for, and a
