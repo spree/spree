@@ -1,4 +1,4 @@
-import type { Order } from '@spree/admin-sdk'
+import type { Order, OrderUpdateParams } from '@spree/admin-sdk'
 import {
   adminClient,
   downloadFromApi,
@@ -27,10 +27,8 @@ import { useOrderMutation } from '../../../hooks/use-order'
 const PO_DOCUMENT_ACCEPT =
   'application/pdf,image/jpeg,image/png,image/heic,image/webp,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document'
 
-interface UpdateParams {
-  po_number: string
-  po_document?: string | null
-}
+/** Narrowed from the SDK's own contract so the payload cannot drift from it. */
+type UpdateParams = Pick<OrderUpdateParams, 'po_number' | 'po_document'>
 
 /**
  * The buyer's own purchase-order reference and the document behind it.
@@ -55,7 +53,13 @@ export function OrderPurchaseOrderCard({ order }: { order: Order }) {
     adminClient.orders.update(orderId, params),
   )
 
+  // Refused while an upload is in flight: clearing the state here would not
+  // stop it, and its onChange would land afterwards and restore the signed id
+  // the merchant just discarded — attaching, on the next save, a document
+  // they had cancelled.
   function stopEditing() {
+    if (uploading) return
+
     setEditing(false)
     setDocument(EMPTY_FILE_UPLOAD_VALUE)
   }
@@ -71,7 +75,15 @@ export function OrderPurchaseOrderCard({ order }: { order: Order }) {
     if (document.signedId) params.po_document = document.signedId
     else if (document.cleared) params.po_document = null
 
-    mutation.mutate(params, { onSuccess: stopEditing })
+    mutation.mutate(params, {
+      onSuccess: stopEditing,
+      onError: (error) =>
+        toastManager.add({
+          type: 'error',
+          title: t('admin.orders.detail.purchase_order.save_failed'),
+          description: error instanceof Error ? error.message : String(error),
+        }),
+    })
   }
 
   // Streamed through the admin endpoint rather than a public blob URL, so the
@@ -108,6 +120,7 @@ export function OrderPurchaseOrderCard({ order }: { order: Order }) {
           <Button
             variant="ghost"
             size="icon-sm"
+            disabled={uploading}
             onClick={() => (editing ? stopEditing() : setEditing(true))}
             aria-label={t('admin.actions.edit')}
           >
@@ -141,7 +154,13 @@ export function OrderPurchaseOrderCard({ order }: { order: Order }) {
               onUploadingChange={setUploading}
             />
             <div className="flex justify-end gap-2">
-              <Button type="button" variant="outline" size="sm" onClick={stopEditing}>
+              <Button
+                type="button"
+                variant="outline"
+                size="sm"
+                disabled={uploading}
+                onClick={stopEditing}
+              >
                 {t('admin.actions.cancel')}
               </Button>
               <Button type="submit" size="sm" disabled={mutation.isPending || uploading}>

@@ -2536,6 +2536,7 @@
           "document": "Document de bon de commande",
           "document_help": "Fichier PDF, image ou Word, jusqu’à 10 Mo.",
           "download_failed": "Impossible de télécharger le bon de commande",
+          "save_failed": "Impossible d’enregistrer le bon de commande",
           "title": "Bon de commande"
         },
         "section_customer_note": "Instructions spéciales",

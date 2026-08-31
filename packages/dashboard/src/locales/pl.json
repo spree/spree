@@ -2556,6 +2556,7 @@
           "document": "Dokument zamówienia zakupu",
           "document_help": "Plik PDF, obraz lub dokument Word, do 10 MB.",
           "download_failed": "Nie udało się pobrać zamówienia zakupu",
+          "save_failed": "Nie udało się zapisać zamówienia zakupu",
           "title": "Zamówienie zakupu"
         },
         "section_customer_note": "Specjalne instrukcje",
