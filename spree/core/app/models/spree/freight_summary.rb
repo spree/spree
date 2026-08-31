@@ -125,14 +125,20 @@ module Spree
         'total_units' => total_units,
         'total_cartons' => total_cartons,
         'total_pallets' => total_pallets,
-        'total_volume' => total_volume.to_s,
-        'total_weight' => total_weight.to_s,
+        'total_volume' => decimal_string(total_volume),
+        'total_weight' => decimal_string(total_weight),
         'complete' => complete?,
         'lines' => lines.map(&:as_json)
       }
     end
 
     private
+
+    # Plain decimal notation. BigDecimal's default renders 0.06 as "0.6e-1",
+    # which is what a client would print beside "CBM".
+    def decimal_string(value)
+      BigDecimal(value.to_s).to_s('F')
+    end
 
     def sum_of(attribute)
       lines.sum { |line| line.public_send(attribute) || 0 }

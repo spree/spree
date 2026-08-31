@@ -14903,12 +14903,12 @@ paths:
                   label: Bogus
                   description:
                   preference_schema:
-                  - key: dummy_secret_key
-                    type: password
-                    default:
                   - key: dummy_key
                     type: string
                     default: PUBLICKEY123
+                  - key: dummy_secret_key
+                    type: password
+                    default:
                 - type: custom_payment_source_method
                   label: Custom Payment Source Method
                   description:
@@ -20518,6 +20518,9 @@ paths:
                   label: Item total
                   description:
                   preference_schema:
+                  - key: operator_min
+                    type: string
+                    default: ">"
                   - key: amount_max
                     type: decimal
                     default:
@@ -20527,9 +20530,6 @@ paths:
                   - key: amount_min
                     type: decimal
                     default: 100.0
-                  - key: operator_min
-                    type: string
-                    default: ">"
                 - type: market
                   label: Market(s)
                   description:
@@ -30088,9 +30088,9 @@ paths:
                   stock_location_ids: []
                   calculator_type: Spree::Calculator::Shipping::FlatRate
                   calculator_preferences:
+                    amount: '10.0'
                     currency: USD
                     amounts: {}
-                    amount: '10.0'
                 meta:
                   page: 1
                   limit: 25
@@ -30177,9 +30177,9 @@ paths:
                 stock_location_ids: []
                 calculator_type: Spree::Calculator::Shipping::FlatRate
                 calculator_preferences:
+                  amount: '12.5'
                   currency: USD
                   amounts: {}
-                  amount: '12.5'
       requestBody:
         content:
           application/json:
@@ -30284,15 +30284,15 @@ paths:
                 - type: Spree::Calculator::Shipping::FlatRate
                   name: Flat rate
                   preference_schema:
+                  - key: amount
+                    type: decimal
+                    default: 0
                   - key: currency
                     type: string
                     default: USD
                   - key: amounts
                     type: hash
                     default: {}
-                  - key: amount
-                    type: decimal
-                    default: 0
                 - type: Spree::Calculator::Shipping::FlexiRate
                   name: Flexible Rate per package item
                   preference_schema:
@@ -30311,18 +30311,21 @@ paths:
                 - type: Spree::Calculator::Shipping::PerItem
                   name: Flat rate per package item
                   preference_schema:
+                  - key: amount
+                    type: decimal
+                    default: 0
                   - key: currency
                     type: string
                     default: USD
                   - key: amounts
                     type: hash
                     default: {}
-                  - key: amount
-                    type: decimal
-                    default: 0
                 - type: Spree::Calculator::Shipping::PriceSack
                   name: Price sack
                   preference_schema:
+                  - key: normal_amount
+                    type: decimal
+                    default: 0
                   - key: discount_amount
                     type: decimal
                     default: 0
@@ -30332,21 +30335,18 @@ paths:
                   - key: minimal_amount
                     type: decimal
                     default: 0
-                  - key: normal_amount
-                    type: decimal
-                    default: 0
                 - type: Spree::Calculator::Shipping::DigitalDelivery
                   name: Digital Delivery
                   preference_schema:
+                  - key: amount
+                    type: decimal
+                    default: 0
                   - key: currency
                     type: string
                     default: USD
                   - key: amounts
                     type: hash
                     default: {}
-                  - key: amount
-                    type: decimal
-                    default: 0
   "/api/v3/admin/delivery_zones":
     post:
       summary: Create delivery zone
@@ -32199,8 +32199,8 @@ paths:
                   name: Accept terms
                   description: Read and accept the marketplace terms
                   preferences:
-                    terms_url:
                     terms_effective_from:
+                    terms_url:
                   custom_field_definition_ids: []
                   allow_multiple: false
                   accepts_submissions: false
@@ -32422,10 +32422,10 @@ paths:
                   accepted_content_types: []
                   association_fields: []
                   preference_schema:
-                  - key: terms_url
+                  - key: terms_effective_from
                     type: string
                     default:
-                  - key: terms_effective_from
+                  - key: terms_url
                     type: string
                     default:
                 - type: complete_profile

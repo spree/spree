@@ -495,6 +495,18 @@ module Spree
           it 'sorts the unpriced rate last' do
             expect(subject.delivery_rates(package).last.unpriced).to be(true)
           end
+
+          # The Estimator's in-memory order is thrown away the moment the
+          # rates are persisted and read back through the association, which
+          # is what the storefront actually receives.
+          it 'keeps the unpriced rate last when the rates are read back' do
+            fulfillment = create(:shipment)
+            subject.delivery_rates(package).each do |rate|
+              rate.update!(fulfillment: fulfillment)
+            end
+
+            expect(fulfillment.reload.delivery_rates.last.unpriced).to be(true)
+          end
         end
 
         # One carrier method now yields one rate per service (decisions.md

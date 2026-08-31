@@ -90,6 +90,31 @@ RSpec.describe Spree::FreightSummary do
     end
   end
 
+  # A client prints these strings beside "CBM" and "kg". BigDecimal's
+  # default renders 0.06 as "0.6e-1".
+  describe 'the serialized numbers' do
+    it 'writes plain decimals, never engineering notation' do
+      json = summary_for([[packed_variant, 24]]).as_json
+
+      expect(json['total_volume']).to eq('0.06')
+      expect(json['lines'].first['volume']).to eq('0.06')
+    end
+  end
+
+  # The merchant recorded what a packed carton weighs. That is a better
+  # answer than the loose goods' weight even when nobody measured the
+  # carton's sides.
+  it 'uses a declared carton weight even when the carton is unmeasured' do
+    unmeasured_carton = create(:package_type, store: store, kind: 'carton', length: nil, width: nil, height: nil)
+    variant = create(:variant, units_per_carton: 12, carton_weight: 10, weight_unit: 'kg',
+                               weight: 0.2, carton_package_type: unmeasured_carton)
+
+    summary = summary_for([[variant, 24]])
+
+    expect(summary.total_weight).to eq(BigDecimal('20'))
+    expect(summary).not_to be_complete
+  end
+
   describe 'freezing and rebuilding' do
     it 'round-trips through its serialized form' do
       original = summary_for([[packed_variant, 24]])

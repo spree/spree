@@ -37,6 +37,33 @@ RSpec.describe Spree::Measurement do
     end
   end
 
+  describe '.convert_length' do
+    it 'converts between any two supported units' do
+      expect(described_class.convert_length(2.54, from: 'cm', to: 'in')).to eq(BigDecimal('1'))
+      expect(described_class.convert_length(1, from: 'ft', to: 'in')).to eq(BigDecimal('12'))
+      expect(described_class.convert_length(1, from: 'cm', to: 'mm')).to eq(BigDecimal('10'))
+    end
+
+    it 'is the identity when the units match' do
+      expect(described_class.convert_length(7, from: 'in', to: 'in')).to eq(BigDecimal('7'))
+    end
+
+    it 'answers nil for a missing value' do
+      expect(described_class.convert_length(nil, from: 'cm', to: 'in')).to be_nil
+    end
+  end
+
+  describe '.convert_weight' do
+    it 'converts between any two supported units' do
+      expect(described_class.convert_weight(1, from: 'kg', to: 'g')).to eq(BigDecimal('1000'))
+      expect(described_class.convert_weight(1, from: 'lb', to: 'oz')).to eq(BigDecimal('16'))
+    end
+
+    it 'is the identity when the units match' do
+      expect(described_class.convert_weight(3, from: 'lb', to: 'lb')).to eq(BigDecimal('3'))
+    end
+  end
+
   describe '.cubic_meters' do
     it 'converts a metric box' do
       expect(described_class.cubic_meters(100, 100, 100, unit: 'cm')).to eq(BigDecimal('1'))

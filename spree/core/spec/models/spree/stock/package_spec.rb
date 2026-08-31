@@ -41,7 +41,7 @@ module Spree
         # currency read the owner's store, and a cart-owned package must not
         # lose them just because no order exists yet.
         it 'applies the store tare to a cart-owned package' do
-          create(:package_type, store: @default_store, default: true, weight: 2.5)
+          create(:package_type, store: @default_store, default: true, weight: 2.5, weight_unit: 'lb')
           cart = create(:cart, store: @default_store)
           create(:line_item, cart: cart, order: nil, variant: variant)
           fulfillment = create(:shipment, cart: cart, order: nil, stock_location: create(:stock_location))
@@ -66,7 +66,7 @@ module Spree
       # calculators, rate providers, weight rules, the weight splitter —
       # inherits it without knowing the preference exists.
       it 'adds the default package type weight on top of the contents' do
-        create(:package_type, store: order.store, default: true, weight: 2.5)
+        create(:package_type, store: order.store, default: true, weight: 2.5, weight_unit: 'lb')
 
         4.times { subject.add build_inventory_unit }
 
@@ -74,11 +74,36 @@ module Spree
       end
 
       it 'applies the tare once per package, not per item' do
-        create(:package_type, store: order.store, default: true, weight: 2.5)
+        create(:package_type, store: order.store, default: true, weight: 2.5, weight_unit: 'lb')
 
         subject.add build_inventory_unit
 
         expect(subject.weight).to eq(27.5)
+      end
+
+      # A merchant may record a carton in centimetres while the store quotes
+      # in pounds and inches. Handing the raw numbers to a carrier reads
+      # centimetres as inches — a 2.54x overstatement on every axis.
+      describe 'packages measured in another unit than the store uses' do
+        it 'converts the tare into the store weight unit' do
+          stub_store_preferences(order.store, weight_unit: 'lb')
+          create(:package_type, store: order.store, default: true, weight: 1, weight_unit: 'kg')
+
+          subject.add build_inventory_unit
+
+          # 1 kg is about 2.2 lb, not 1.
+          expect(subject.weight - 25).to be_within(0.01).of(2.2046)
+        end
+
+        it 'converts the box dimensions into the store dimension unit' do
+          stub_store_preferences(order.store, unit_system: 'imperial')
+          create(:package_type, store: order.store, default: true,
+                                length: 25.4, width: 50.8, height: 76.2, dimensions_unit: 'cm')
+
+          subject.add build_inventory_unit
+
+          expect(subject.dimensions).to eq(length: 10.0, width: 20.0, height: 30.0)
+        end
       end
 
       describe '#dimensions' do
@@ -86,12 +111,12 @@ module Spree
           subject.add build_inventory_unit
           expect(subject.dimensions).to be_nil
 
-          create(:package_type, store: order.store, default: true, length: 12, width: 9, height: nil)
+          create(:package_type, store: order.store, default: true, length: 12, width: 9, height: nil, dimensions_unit: 'in')
           expect(subject.dimensions).to be_nil
         end
 
         it 'returns the configured box verbatim, never derived from items' do
-          create(:package_type, store: order.store, default: true, length: 12, width: 9, height: 4)
+          create(:package_type, store: order.store, default: true, length: 12, width: 9, height: 4, dimensions_unit: 'in')
 
           subject.add build_inventory_unit
 
