@@ -357,8 +357,24 @@ module Spree
     # @return [Array<Spree::SellerRequirementStatus>]
     def onboarding_requirements
       @onboarding_requirements ||= Spree::Sellers::Requirements.new(
-        self, preloaded: store&.association(:seller_requirements)&.loaded? || false
+        self,
+        preloaded: store&.association(:seller_requirements)&.loaded? || false,
+        cached: onboarding_requirements_cached
       ).statuses
+    end
+
+    # Whether this seller's checklist may answer from what Spree already knows
+    # rather than asking a payment provider. Set by a caller rendering many
+    # sellers at once, where one network call per row is the difference
+    # between a list that loads and one that does not.
+    #
+    # Deliberately not inferred from the checklist being eager-loaded: a
+    # single-seller read shares that preload, and there the operator is
+    # looking at exactly this seller and wants the current answer.
+    attr_writer :onboarding_requirements_cached
+
+    def onboarding_requirements_cached
+      @onboarding_requirements_cached || false
     end
 
     # @return [Hash{Symbol => Integer}] done and total over the whole

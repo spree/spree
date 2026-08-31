@@ -168,6 +168,17 @@ module Spree
     # never see that. Not overridable for exactly that reason; kinds
     # override {#met_by_seller?} instead.
     #
+    # Whether this evaluation may answer from what Spree already knows rather
+    # than asking the outside world. Set by `Spree::Sellers::Requirements` for
+    # a listing, where one network call per row is the difference between a
+    # page that loads and one that does not. A kind that never leaves the
+    # database can ignore it; one that calls a provider should read the value
+    # it last recorded instead.
+    #
+    # False everywhere it matters — the two approval gates and a seller's own
+    # page ask for the current answer.
+    attr_accessor :prefer_cached
+
     # @param seller [Spree::Seller]
     # @return [Boolean]
     def satisfied?(seller)

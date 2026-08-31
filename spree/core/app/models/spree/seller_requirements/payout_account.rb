@@ -21,13 +21,23 @@ module Spree
     # may be dead before the seller clicks it — the panel asks for a fresh one
     # at the moment of clicking, through the seller API.
     class PayoutAccount < Spree::SellerRequirement
+      # Asked of the provider, since only it knows for certain — except on a
+      # listing, which reads the stamp a webhook last wrote. Otherwise a page
+      # of sellers makes one call to the payment provider per row, and the
+      # operator's list is as slow as their network.
       def met_by_seller?(seller)
+        return seller.payouts_enabled? if prefer_cached
+
         provider_for(seller).onboarded?(seller)
       end
 
-      # Asked of the provider, since only it knows — and its three answers
-      # want different words: go and finish, wait, or you have been refused.
+      # Which of the three is true: go and finish, wait, or you have been
+      # refused. Each wants different words, and only the provider knows — so
+      # a listing, which is not asking, says nothing rather than guessing from
+      # the stamp.
       def blocker(seller)
+        return nil if prefer_cached
+
         provider = provider_for(seller)
         state = provider.onboarding_state(seller)
         return nil if state.nil?

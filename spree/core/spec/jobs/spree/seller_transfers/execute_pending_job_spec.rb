@@ -74,4 +74,39 @@ RSpec.describe Spree::SellerTransfers::ExecutePendingJob do
 
     expect(transfer.reload).to be_pending
   end
+
+  # This job is the retry, so leaving an earning it could not account for in a
+  # retryable state means the next run sends the same money again.
+  context 'when the provider cannot say whether the money moved' do
+    before do
+      allow_any_instance_of(Spree::PayoutProvider::System).to receive(:transfer!).
+        and_raise(Spree::Core::AmbiguousGatewayError, 'connection timed out')
+    end
+
+    it 'parks the earning where no later run will send it' do
+      transfer = pending_earning
+
+      described_class.perform_now(seller.id)
+
+      expect(transfer.reload).to be_unresolved
+    end
+
+    it 'does not offer it again on the next run' do
+      pending_earning
+      described_class.perform_now(seller.id)
+
+      expect(seller.seller_transfers.earnings.retryable).to be_empty
+    end
+  end
+
+  # A refusal means the money did not move, so the earning is still owed.
+  it 'leaves a refused earning for the next run' do
+    allow_any_instance_of(Spree::PayoutProvider::System).to receive(:transfer!).
+      and_raise(StandardError, 'gateway down')
+    transfer = pending_earning
+
+    described_class.perform_now(seller.id)
+
+    expect(transfer.reload).to be_pending
+  end
 end

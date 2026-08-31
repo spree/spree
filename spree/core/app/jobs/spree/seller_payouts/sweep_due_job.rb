@@ -1,78 +1,33 @@
 module Spree
   module SellerPayouts
-    # Settles every seller whose schedule has come round.
+    # Hands every approved seller to a job of their own.
     #
-    # Scheduled by the host app — daily is right, since the job itself decides
-    # who is actually due. A scheduler cannot express "weekly, but per seller,
-    # from whenever that seller was last paid", so the interval logic lives
-    # here rather than in a cron expression.
+    # Scheduled by the host app — daily is right, since {SweepSellerJob}
+    # decides who is actually due. A scheduler cannot express "weekly, but per
+    # seller, from whenever that seller was last paid", so the interval logic
+    # lives there rather than in a cron expression.
     #
-    # Deliberately no retry beyond the base job's infrastructure errors: a
-    # sweep that half-ran has already claimed its transfers, and re-running is
-    # safe only because of that claim, not because the work is repeatable.
+    # This job only fans out. Settling talks to a payment provider, so doing it
+    # inline would hold one worker for the whole marketplace and let a single
+    # slow provider call delay every seller behind it. Enqueued in batches with
+    # plain `ActiveJob.perform_all_later`, which every queue adapter supports —
+    # core must not require a particular one.
     class SweepDueJob < ::Spree::BaseJob
       queue_as Spree.queues.payouts
 
+      # How many jobs are handed to the adapter at a time. Enough to make the
+      # round trip worth it, small enough that a marketplace with a hundred
+      # thousand sellers never builds one enormous array.
+      BATCH_SIZE = 1_000
+
       def perform
         # Store by store, so each seller is reached through the store that owns
-        # them — which is what makes the (store, status) index usable, and what
-        # the schedule falls back to anyway.
+        # them — which is what makes the (store, status) index usable.
         Spree::Store.find_each do |store|
-          store.sellers.approved.find_each { |seller| sweep_seller(seller) }
+          store.sellers.approved.in_batches(of: BATCH_SIZE) do |sellers|
+            ActiveJob.perform_all_later(sellers.ids.map { |id| SweepSellerJob.new(id) })
+          end
         end
-      end
-
-      private
-
-      # One seller's failure must not end the run for everyone behind them.
-      def sweep_seller(seller)
-        return if seller.resolved_payouts_schedule_interval == 'manual'
-
-        currencies_owed(seller).each do |currency|
-          next unless due?(seller, currency)
-
-          Spree.seller_payout_sweep_workflow.call(seller: seller, currency: currency)
-        end
-      rescue StandardError => e
-        Rails.error.report(e, handled: true, context: { seller_id: seller.id }, source: 'spree.core')
-      end
-
-      # Whether enough time has passed since this seller was last settled in
-      # this currency. A seller who has never been paid is due as soon as they
-      # have earned anything — their first settlement should not wait a whole
-      # period.
-      #
-      # Asked per currency, because settlements are made per currency. Reading
-      # the seller's most recent payout across all of them would let an
-      # out-of-band settlement in one currency reset the clock for every other
-      # — a monthly seller paid early in dollars would have their euro balance
-      # skipped for another month.
-      def due?(seller, currency)
-        # Failed payouts are excluded: one releases its earnings back to the
-        # next sweep, so counting it as a settlement would block the very
-        # retry it exists to allow — for a whole interval, with the money
-        # sitting owed and unsent.
-        settled_at = seller.seller_payouts.where(currency: currency).
-                     where.not(status: 'failed').maximum(:created_at)
-        return true if settled_at.nil?
-
-        settled_at <= interval_ago(seller.resolved_payouts_schedule_interval)
-      end
-
-      def interval_ago(interval)
-        case interval
-        when 'daily' then 1.day.ago
-        when 'weekly' then 1.week.ago
-        when 'biweekly' then 2.weeks.ago
-        else 1.month.ago
-        end
-      end
-
-      # Only the currencies this seller actually has earnings waiting in — a
-      # marketplace trading in three currencies should not run three sweeps for
-      # a seller who sold in one.
-      def currencies_owed(seller)
-        seller.seller_transfers.unsettled.distinct.pluck(:currency)
       end
     end
   end

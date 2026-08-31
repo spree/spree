@@ -21,9 +21,15 @@ module Spree
       #   should say so — a page of sellers shares one store, so its rows load
       #   once for all of them — because trusting whatever happens to be
       #   cached would let a gate measure against a stale checklist.
-      def initialize(seller, preloaded: false)
+      # @param cached [Boolean] let a requirement answer from what Spree
+      #   already knows instead of asking the outside world. A listing says so:
+      #   a kind that checks a payment provider would otherwise make one
+      #   network call per row. Never for a gate or a single seller's own
+      #   page, where the answer has to be current.
+      def initialize(seller, preloaded: false, cached: false)
         @seller = seller
         @preloaded = preloaded
+        @cached = cached
       end
 
       # The checklist, in the operator's order. Requirements a kind says do
@@ -101,6 +107,8 @@ module Spree
       end
 
       def build_status(requirement)
+        requirement.prefer_cached = @cached
+
         Spree::SellerRequirementStatus.new(
           id: requirement.prefixed_id,
           kind: requirement.class.api_type,

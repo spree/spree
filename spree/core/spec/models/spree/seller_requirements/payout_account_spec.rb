@@ -85,6 +85,44 @@ RSpec.describe Spree::SellerRequirements::PayoutAccount do
     end
   end
 
+  # A page of sellers would otherwise make one call to the payment provider
+  # per row, which is the difference between a list that loads and one that
+  # does not.
+  describe 'on a listing' do
+    before { requirement.prefer_cached = true }
+
+    it 'answers from the stamp rather than asking the provider' do
+      expect_any_instance_of(Spree::PayoutProvider::System).not_to receive(:onboarded?)
+      seller.update!(payouts_enabled_at: Time.current)
+
+      expect(requirement).to be_met_by_seller(seller)
+    end
+
+    it 'reads a seller with no stamp as unmet' do
+      # Only a provider that actually moves money can refuse a seller; the
+      # record-only one counts everybody payable.
+      allow(Spree::PayoutProvider::System).to receive(:requires_payout_account?).and_return(true)
+      seller.update!(payouts_enabled_at: nil)
+
+      expect(requirement).not_to be_met_by_seller(seller)
+    end
+
+    # Which of the three states applies is the provider's to say, and a
+    # listing is not asking — so it says nothing rather than guessing.
+    it 'offers no explanation it would have to invent' do
+      expect_any_instance_of(Spree::PayoutProvider::System).not_to receive(:onboarding_state)
+
+      expect(requirement.blocker(seller)).to be_nil
+    end
+  end
+
+  # The gates and a seller's own page ask the provider, whatever a list does.
+  it 'asks the provider when nobody said a cached answer would do' do
+    expect_any_instance_of(Spree::PayoutProvider::System).to receive(:onboarded?).and_return(true)
+
+    expect(requirement).to be_met_by_seller(seller)
+  end
+
   # A marketplace settling by hand should not have this forced on it.
   it 'is registered as a kind an operator may add' do
     expect(Spree.seller_requirements).to include(described_class)

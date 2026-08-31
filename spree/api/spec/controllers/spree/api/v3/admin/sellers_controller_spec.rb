@@ -61,6 +61,35 @@ RSpec.describe Spree::Api::V3::Admin::SellersController, type: :controller do
     end
   end
 
+  # A requirement kind may ask a payment provider whether a seller can be
+  # paid. One call is fine for one seller; a page of them would make the list
+  # as slow as the operator's connection.
+  describe 'asking the payout provider' do
+    before do
+      Spree::SellerRequirements::PayoutAccount.create!(store: store, name: 'Payout account', required: true)
+    end
+
+    it 'is not done per row on the list' do
+      create(:seller, store: store)
+      expect_any_instance_of(Spree::PayoutProvider::System).not_to receive(:onboarded?)
+
+      get :index, as: :json
+
+      expect(response).to have_http_status(:ok)
+    end
+
+    # Here the operator is looking at exactly this seller, so the answer has
+    # to be the current one — the checklist is eager-loaded either way, which
+    # is why that cannot be the signal.
+    it 'is done for the seller being looked at' do
+      expect_any_instance_of(Spree::PayoutProvider::System).to receive(:onboarded?).at_least(:once).and_return(true)
+
+      get :show, params: { id: seller.prefixed_id }, as: :json
+
+      expect(response).to have_http_status(:ok)
+    end
+  end
+
   describe 'GET #show' do
     it 'returns the seller profile' do
       get :show, params: { id: seller.prefixed_id }, as: :json

@@ -4,98 +4,47 @@ RSpec.describe Spree::SellerPayouts::SweepDueJob do
   let(:store) { @default_store }
   let(:seller) { create(:seller, :approved, store: store) }
 
-  def earn(amount, seller: nil, currency: 'USD')
-    owner = seller || self.seller
-    create(:seller_transfer, :completed, seller: owner, currency: currency, amount: amount,
-                                         order: create(:order, store: owner.store, seller: owner, currency: currency))
+  def enqueued_seller_ids
+    enqueued_jobs.
+      select { |job| job[:job] == Spree::SellerPayouts::SweepSellerJob }.
+      map { |job| job[:args].first }
   end
 
-  it 'settles a seller who is owed money' do
-    earn(40)
-
-    expect { described_class.perform_now }.to change { Spree::SellerPayout.count }.by(1)
-  end
-
-  it 'leaves a seller who has earned nothing' do
+  it 'hands an approved seller to a job of their own' do
     seller
-
-    expect { described_class.perform_now }.not_to change { Spree::SellerPayout.count }
-  end
-
-  # The operator settles these by hand, so nothing schedules them.
-  it 'never settles a seller on a manual schedule' do
-    seller.update!(payouts_schedule_interval: 'manual')
-    earn(40)
-
-    expect { described_class.perform_now }.not_to change { Spree::SellerPayout.count }
-  end
-
-  it 'ignores a seller who is not approved' do
-    pending_seller = create(:seller, store: store, status: 'pending')
-    earn(40, seller: pending_seller)
-
-    expect { described_class.perform_now }.not_to change { Spree::SellerPayout.count }
-  end
-
-  it 'settles each currency a seller is owed in separately' do
-    earn(40)
-    earn(30, currency: 'EUR')
 
     described_class.perform_now
 
-    expect(seller.seller_payouts.pluck(:currency, :amount)).to contain_exactly(['USD', 40], ['EUR', 30])
+    expect(enqueued_seller_ids).to contain_exactly(seller.id)
+  end
+
+  it 'ignores a seller who is not approved' do
+    create(:seller, store: store, status: 'pending')
+
+    described_class.perform_now
+
+    expect(enqueued_seller_ids).to be_empty
   end
 
   # Every marketplace on the installation is swept, each seller reached
   # through the store that owns them.
-  it 'settles sellers across every store' do
-    other_store = create(:store)
-    other_seller = create(:seller, :approved, store: other_store)
-    earn(40)
-    earn(30, seller: other_seller)
+  it 'reaches sellers across every store' do
+    seller
+    other_seller = create(:seller, :approved, store: create(:store))
 
     described_class.perform_now
 
-    expect(seller.seller_payouts.count).to eq(1)
-    expect(other_seller.seller_payouts.count).to eq(1)
+    expect(enqueued_seller_ids).to contain_exactly(seller.id, other_seller.id)
   end
 
-  # A failed payout released its earnings back to the next sweep, so counting
-  # it as a settlement would block the retry it exists to allow.
-  it 'retries a seller whose last settlement failed' do
-    earn(40)
-    create(:seller_payout, seller: seller, currency: 'USD', status: 'failed', amount: 0)
-
-    expect { described_class.perform_now }.to change { Spree::SellerPayout.where(status: 'pending').count }.by(1)
-  end
-
-  it 'still waits when the last settlement went out' do
-    earn(40)
+  # Whether a seller is actually due is the per-seller job's question — this
+  # one only fans out, so a settled seller still gets a job that decides to do
+  # nothing. Asking here would mean running the interval logic twice.
+  it 'leaves the due date to the job it enqueues' do
     create(:seller_payout, seller: seller, currency: 'USD', status: 'completed', amount: 40)
 
-    expect { described_class.perform_now }.not_to change { Spree::SellerPayout.count }
-  end
-
-  # One stuck seller must not end the run for everyone behind them.
-  it 'carries on past a seller whose settlement fails' do
-    other_seller = create(:seller, :approved, store: store)
-    earn(40)
-    earn(30, seller: other_seller)
-    allow(Spree).to receive(:seller_payout_sweep_workflow).and_wrap_original do |original|
-      workflow = original.call
-      failing = seller
-      Class.new do
-        define_singleton_method(:call) do |seller:, currency:|
-          raise StandardError, 'provider down' if seller.id == failing.id
-
-          workflow.call(seller: seller, currency: currency)
-        end
-      end
-    end
-
     described_class.perform_now
 
-    expect(seller.seller_payouts.count).to eq(0)
-    expect(other_seller.seller_payouts.count).to eq(1)
+    expect(enqueued_seller_ids).to contain_exactly(seller.id)
   end
 end

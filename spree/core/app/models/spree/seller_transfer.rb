@@ -69,6 +69,10 @@ module Spree
     #
     scope :earnings, -> { where(kind: 'earning') }
     scope :reversals_only, -> { where(kind: 'refund_reversal') }
+    # Safe to ask the provider about again: never sent, or refused outright.
+    # Deliberately excludes `unresolved`, where the provider could not say
+    # whether the money moved — asking again is how it moves twice.
+    scope :retryable, -> { with_status('pending', 'processing') }
     # Earned and confirmed, but not yet swept into a settlement — what the next
     # payout will pick up.
     scope :unsettled, -> { completed.where(payout_id: nil) }
