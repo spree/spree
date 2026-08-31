@@ -112,6 +112,13 @@ module Spree
 
       def execute_reversal
         provider.reverse!(reversal)
+      rescue Spree::Core::AmbiguousGatewayError => e
+        # Whether the clawback happened is the provider's to say. Recorded as
+        # such rather than as a refusal, so an operator reconciling knows which
+        # rows are questions and which are simply owed.
+        reversal.update!(status: 'unresolved')
+        Rails.error.report(e, handled: true, context: { seller_transfer_id: reversal.id }, source: 'spree.core')
+        failure(reversal, e.message)
       rescue StandardError => e
         reversal.update!(status: 'processing')
         Rails.error.report(e, handled: true, context: { seller_transfer_id: reversal.id }, source: 'spree.core')

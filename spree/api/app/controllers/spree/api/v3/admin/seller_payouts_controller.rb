@@ -61,7 +61,15 @@ module Spree
           # each row for its own would be a query per settlement, and a
           # counter column cannot work here because the sweep claims transfers
           # with `update_all`, which no callback sees.
+          #
+          # Only for the listing. Every action shares this method, and building
+          # the count needs `collection` — so a member action would run a whole
+          # paginated index query to serialize its one record, then read that
+          # record's count out of a page it may not even be on. The serializer
+          # asks a single payout for its own count, which is one query.
           def serializer_params
+            return super unless action_name == 'index'
+
             super.merge(transfer_counts: transfer_counts)
           end
 

@@ -77,9 +77,19 @@ module Spree
         return unless order.seller.payouts_enabled?
 
         provider.transfer!(seller_transfer)
+      rescue Spree::Core::AmbiguousGatewayError => e
+        # Nobody knows whether the money moved, so nothing may send it again:
+        # the retry job takes `pending` and `processing` rows, and an
+        # idempotency key only covers a retry while the provider keeps its
+        # record. Parked where no automatic attempt reaches it, for an
+        # operator to resolve against the provider's own books.
+        seller_transfer.update!(status: 'unresolved')
+        Rails.error.report(e, handled: true, context: { seller_transfer_id: seller_transfer.id },
+                              source: 'spree.core')
+        failure(seller_transfer, e.message)
       rescue StandardError => e
-        # The money may or may not have moved — that is precisely what an
-        # operator has to resolve, so the row parks rather than pretending.
+        # A definite refusal — the money did not move, so the earning is still
+        # owed and the retry job picks it up.
         seller_transfer.update!(status: 'processing')
         Rails.error.report(e, handled: true, context: { seller_transfer_id: seller_transfer.id },
                               source: 'spree.core')

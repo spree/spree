@@ -57,6 +57,26 @@ RSpec.describe Spree::Api::V3::Admin::SellerPayoutsController, type: :controller
 
       expect(response).to have_http_status(:not_found)
     end
+
+    it 'still reports how many earnings the settlement covers' do
+      create(:seller_transfer, :completed, seller: seller, payout: payout)
+      create(:seller_transfer, :completed, seller: seller, payout: payout)
+
+      patch :complete, params: { id: payout.prefixed_id }, as: :json
+
+      expect(json_response['transfers_count']).to eq(2)
+    end
+
+    # The page-wide count belongs to the listing, and building it runs the
+    # whole paginated index query. Doing that to serialize one record is waste
+    # on every call, and answers from a page this settlement need not be on.
+    it 'does not run the listing query to serialize one settlement' do
+      expect(controller).not_to receive(:collection)
+
+      patch :complete, params: { id: payout.prefixed_id }, as: :json
+
+      expect(response).to have_http_status(:ok)
+    end
   end
 
   describe 'writes' do

@@ -59,7 +59,10 @@ module Spree
     # graph (docs/plans/6.0-service-workflows.md).
     #
     include Spree::HasStatus
-    has_status :pending, :processing, :completed, :failed, default: :pending
+    # `processing` is an attempt that failed and will be tried again;
+    # `unresolved` is one whose outcome the provider could not report, which
+    # nothing may retry until a person establishes what happened.
+    has_status :pending, :processing, :completed, :failed, :unresolved, default: :pending
 
     #
     # Scopes

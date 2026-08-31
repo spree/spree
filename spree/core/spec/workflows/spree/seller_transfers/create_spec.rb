@@ -140,4 +140,53 @@ RSpec.describe Spree::SellerTransfers::Create do
       expect(seller.balance('USD')).to eq(88)
     end
   end
+
+  # The two ways a provider call can go wrong want opposite reactions, so they
+  # must not share a status: one is owed and should be tried again, the other
+  # may already have been sent and must not be.
+  describe 'when the provider call goes wrong' do
+    before { seller.update!(payouts_enabled_at: Time.current) }
+
+    context 'and the provider refused outright' do
+      before do
+        allow_any_instance_of(Spree::PayoutProvider::System).to receive(:transfer!).
+          and_raise(StandardError, 'gateway down')
+      end
+
+      it 'leaves the earning for the retry job to send' do
+        result = described_class.call(order: shipped_order)
+
+        expect(result.value.reload).to be_processing
+      end
+    end
+
+    context 'and nobody knows whether the money moved' do
+      before do
+        allow_any_instance_of(Spree::PayoutProvider::System).to receive(:transfer!).
+          and_raise(Spree::Core::AmbiguousGatewayError, 'connection timed out')
+      end
+
+      it 'parks it where no automatic attempt will send it again' do
+        result = described_class.call(order: shipped_order)
+
+        expect(result.value.reload).to be_unresolved
+      end
+
+      # The retry job takes pending and processing rows, and an idempotency
+      # key stops a duplicate only while the provider still holds the record.
+      it 'is not picked up by the job that retries earnings' do
+        described_class.call(order: shipped_order)
+
+        retryable = seller.seller_transfers.earnings.where(status: %w[pending processing], payout_id: nil)
+
+        expect(retryable).to be_empty
+      end
+
+      it 'stays out of the balance until somebody establishes what happened' do
+        described_class.call(order: shipped_order)
+
+        expect(seller.balance('USD')).to eq(0)
+      end
+    end
+  end
 end
