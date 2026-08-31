@@ -79,6 +79,17 @@ RSpec.describe Spree::Catalogs::ResolveQuantityRules do
         expect(rule.multiple).to eq(6)
       end
 
+      it "mixes an override field with the same catalog's default for the other" do
+        catalog = create(:catalog, store: store, minimum_order_quantity: 48, order_multiple: 24)
+        create(:catalog_quantity_rule, catalog: catalog, variant: variant,
+                                       minimum_order_quantity: 100, order_multiple: nil)
+
+        rule = described_class.new([catalog]).call(variant)
+
+        expect(rule.minimum).to eq(100)
+        expect(rule.multiple).to eq(24)
+      end
+
       it 'mixes an override field with a further catalog for the other field' do
         nearest = create(:catalog, store: store)
         create(:catalog_quantity_rule, catalog: nearest, variant: variant,
