@@ -19,10 +19,6 @@ interface Store {
   preferred_admin_locale: string | null;
   preferred_timezone: string;
   preferred_weight_unit: string;
-  preferred_default_package_weight: number;
-  preferred_default_package_length: number;
-  preferred_default_package_width: number;
-  preferred_default_package_height: number;
   preferred_unit_system: string;
   preferred_storefront_access: string;
   preferred_guest_checkout: boolean;

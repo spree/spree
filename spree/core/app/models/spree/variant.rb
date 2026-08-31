@@ -114,6 +114,7 @@ module Spree
     # configuration from another store must never be reachable by id.
     validate :seller_must_belong_to_store, if: -> { will_save_change_to_seller_id? }
     validate :delivery_profile_must_belong_to_store, if: -> { will_save_change_to_delivery_profile_id? }
+    validate :carton_package_type_must_belong_to_store, if: -> { will_save_change_to_carton_package_type_id? }
 
     # On an owned product the variant's own seller and profile columns carry
     # no meaning — every variant is the product's seller's and ships as the
@@ -1178,6 +1179,18 @@ module Spree
       return if association(:delivery_profile).reader&.store_id == store.id
 
       errors.add(:delivery_profile, :invalid)
+    end
+
+    # Same guard as the delivery profile above: a carton belonging to another
+    # store must never be reachable by id.
+    def carton_package_type_must_belong_to_store
+      return if self[:carton_package_type_id].nil?
+
+      store = product&.store
+      return if store.nil?
+      return if association(:carton_package_type).reader&.store_id == store.id
+
+      errors.add(:carton_package_type, :invalid)
     end
 
     def validate_sku_uniqueness

@@ -12,6 +12,7 @@ module Spree
                  po_number: [:string, nullable: true],
                  po_document_filename: [:string, nullable: true],
                  po_document_byte_size: ['number | null'],
+                 freight_summary: ['Record<string, unknown>', nullable: true],
                  currency: :string, locale: [:string, nullable: true], total_quantity: :number,
                  coupon_code: [:string, nullable: true],
                  fulfillment_status: [:string, nullable: true], payment_status: [:string, nullable: true],
@@ -78,6 +79,13 @@ module Spree
 
         attribute :po_document_byte_size do |order|
           order.po_document.blob&.byte_size if order.po_document.attached?
+        end
+
+        # The shipment as the freight forwarder read it, frozen onto the rate
+        # this order shipped under. Never re-derived, so repacking a product
+        # cannot rewrite what an order that already left the warehouse held.
+        attribute :freight_summary do |order|
+          order.freight_summary&.as_json
         end
 
         attributes :number, :email, :customer_note, :po_number,

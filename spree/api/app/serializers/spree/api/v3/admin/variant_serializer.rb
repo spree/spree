@@ -24,6 +24,10 @@ module Spree
                    delivery_profile_id: [:string, nullable: true],
                    minimum_order_quantity: ['number | null'], order_multiple: ['number | null'],
                    purchase_unit: [:string, nullable: true],
+                   carton_package_type_id: [:string, nullable: true],
+                   carton_weight: [:string, nullable: true],
+                   cartons_per_pallet: ['number | null'],
+                   units_per_pallet: ['number | null'],
                    metadata: 'Record<string, unknown>'
 
           # The last three override the store serializer's buyer-resolved
@@ -33,6 +37,7 @@ module Spree
                      :barcode, :weight_unit, :dimensions_unit, :backorder_limit,
                      :hs_code, :country_of_origin, :customs_description,
                      :minimum_order_quantity, :order_multiple, :purchase_unit,
+                     :carton_weight, :cartons_per_pallet,
                      preorder_ships_at: :iso8601, deleted_at: :iso8601,
                      created_at: :iso8601, updated_at: :iso8601
 
@@ -43,6 +48,14 @@ module Spree
           attribute :tax_category_id do |variant|
             variant.tax_category&.prefixed_id
           end
+
+          attribute :carton_package_type_id do |variant|
+            variant.carton_package_type&.prefixed_id
+          end
+
+          # How many units a full pallet holds — the far end of the packing
+          # chain, derived so a merchant sees it without doing the arithmetic.
+          attribute :units_per_pallet, &:units_per_pallet
 
           # Physical pool minus already-allocated units. In 5.5 allocated_count
           # is always 0, so this equals SUM(stock_levels.count_on_hand).

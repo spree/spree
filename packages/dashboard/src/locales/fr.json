@@ -2025,17 +2025,6 @@
           "label": "Langue de l'administration",
           "placeholder": "Utiliser la langue par défaut"
         },
-        "preferred_default_package_dimensions": {
-          "height": "Hauteur",
-          "help": "Le carton habituel d'expédition, utilisé par les transporteurs pour le poids volumétrique — pouces en impérial, centimètres en métrique. Les trois valeurs sont requises.",
-          "label": "Dimensions de colis par défaut",
-          "length": "Longueur",
-          "width": "Largeur"
-        },
-        "preferred_default_package_weight": {
-          "help": "Poids d'emballage (carton et calage) ajouté au contenu de chaque colis lors du calcul des tarifs de livraison. 0 pour désactiver.",
-          "label": "Poids de colis par défaut"
-        },
         "preferred_send_consumer_transactional_emails": {
           "help": "Si désactivé, aucun e-mail de confirmation de commande, d'expédition ou de remboursement n'est envoyé.",
           "label": "Envoyer les e-mails transactionnels aux clients"
@@ -3599,11 +3588,9 @@
           "search_placeholder": "Rechercher des emplacements de stock…"
         },
         "store": {
-          "default_package_description": "Le carton habituel d'expédition. Les transporteurs ajoutent son poids à chaque colis et utilisent ses dimensions pour le poids volumétrique.",
           "subtitle": "Configuration générale et valeurs par défaut à l'échelle de la boutique.",
           "tab_addresses": "Adresses",
           "tab_catalog": "Catalogue",
-          "tab_default_package": "Colis par défaut",
           "tab_general": "Général",
           "tab_inventory": "Stock",
           "tab_order_numbers": "Numéros de commande",

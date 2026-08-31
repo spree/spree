@@ -152,6 +152,7 @@ module Spree
         admin_exchange_line_item_serializer: 'Spree::Api::V3::Admin::ExchangeLineItemSerializer',
         admin_claim_serializer: 'Spree::Api::V3::Admin::ClaimSerializer',
         admin_claim_line_item_serializer: 'Spree::Api::V3::Admin::ClaimLineItemSerializer',
+        admin_package_type_serializer: 'Spree::Api::V3::Admin::PackageTypeSerializer',
         admin_policy_serializer: 'Spree::Api::V3::Admin::PolicySerializer',
         admin_tax_category_serializer: 'Spree::Api::V3::Admin::TaxCategorySerializer',
         admin_tax_rate_serializer: 'Spree::Api::V3::Admin::TaxRateSerializer',
