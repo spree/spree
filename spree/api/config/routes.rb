@@ -613,11 +613,13 @@ Spree::Core::Engine.add_routes do
           # Both also answer as a whole set, because the agreement editor
           # stages every term behind the catalog's Save: a half-applied
           # agreement is not a state to leave a merchant in.
-          resources :quantity_rules, controller: 'catalogs/quantity_rules'
+          resources :quantity_rules, controller: 'catalogs/quantity_rules',
+                                     only: [:index, :show, :create, :update, :destroy]
           resources :product_terms, controller: 'catalogs/product_terms', only: [:index] do
             collection { put :upsert, path: '' }
           end
-          resources :order_minimums, controller: 'catalogs/order_minimums'
+          resources :order_minimums, controller: 'catalogs/order_minimums',
+                                     only: [:index, :show, :create, :update, :destroy]
         end
         resources :catalog_assignments, only: [:show, :destroy]
 

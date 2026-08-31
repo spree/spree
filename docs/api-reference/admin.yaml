@@ -11477,7 +11477,7 @@ paths:
               example:
                 data:
                 - id: opt_UkLWZg9DAJ
-                  name: foo-size-4
+                  name: foo-size-7
                   label: Size
                   position: 1
                   kind: dropdown
@@ -11697,7 +11697,7 @@ paths:
             application/json:
               example:
                 id: opt_UkLWZg9DAJ
-                name: foo-size-8
+                name: foo-size-11
                 label: Size
                 position: 1
                 kind: dropdown
@@ -11771,7 +11771,7 @@ paths:
             application/json:
               example:
                 id: opt_UkLWZg9DAJ
-                name: foo-size-10
+                name: foo-size-13
                 label: Updated Label
                 position: 1
                 kind: dropdown
@@ -12452,8 +12452,8 @@ paths:
                   preorder_ships_at:
                   quantity: 2
                   currency: USD
-                  name: Product 459180
-                  slug: product-459180
+                  name: Product 499180
+                  slug: product-499180
                   options_text: 'Size: S'
                   price: '10.0'
                   display_price: "$10.00"
@@ -12477,11 +12477,11 @@ paths:
                   option_values:
                   - id: optval_UkLWZg9DAJ
                     option_type_id: opt_UkLWZg9DAJ
-                    name: size-4
+                    name: size-7
                     label: S
                     position: 1
                     color_code:
-                    option_type_name: foo-size-13
+                    option_type_name: foo-size-16
                     option_type_label: Size
                     image_url:
                     metadata: {}
@@ -12565,8 +12565,8 @@ paths:
                 preorder_ships_at:
                 quantity: 3
                 currency: USD
-                name: Product 4799
-                slug: product-4799
+                name: Product 5199
+                slug: product-5199
                 options_text: 'Size: S'
                 price: '19.99'
                 display_price: "$19.99"
@@ -12590,11 +12590,11 @@ paths:
                 option_values:
                 - id: optval_gbHJdmfrXB
                   option_type_id: opt_gbHJdmfrXB
-                  name: size-6
+                  name: size-9
                   label: S
                   position: 1
                   color_code:
-                  option_type_name: foo-size-15
+                  option_type_name: foo-size-18
                   option_type_label: Size
                   image_url:
                   metadata: {}
@@ -12700,8 +12700,8 @@ paths:
                 preorder_ships_at:
                 quantity: 2
                 currency: USD
-                name: Product 482714
-                slug: product-482714
+                name: Product 522714
+                slug: product-522714
                 options_text: 'Size: S'
                 price: '10.0'
                 display_price: "$10.00"
@@ -12725,11 +12725,11 @@ paths:
                 option_values:
                 - id: optval_UkLWZg9DAJ
                   option_type_id: opt_UkLWZg9DAJ
-                  name: size-7
+                  name: size-10
                   label: S
                   position: 1
                   color_code:
-                  option_type_name: foo-size-16
+                  option_type_name: foo-size-19
                   option_type_label: Size
                   image_url:
                   metadata: {}
@@ -12808,8 +12808,8 @@ paths:
                 preorder_ships_at:
                 quantity: 5
                 currency: USD
-                name: Product 499758
-                slug: product-499758
+                name: Product 539758
+                slug: product-539758
                 options_text: 'Size: S'
                 price: '19.99'
                 display_price: "$19.99"
@@ -12833,11 +12833,11 @@ paths:
                 option_values:
                 - id: optval_UkLWZg9DAJ
                   option_type_id: opt_UkLWZg9DAJ
-                  name: size-8
+                  name: size-11
                   label: S
                   position: 1
                   color_code:
-                  option_type_name: foo-size-17
+                  option_type_name: foo-size-20
                   option_type_label: Size
                   image_url:
                   metadata: {}
@@ -17333,8 +17333,8 @@ paths:
               example:
                 data:
                 - id: prod_UkLWZg9DAJ
-                  name: Product 876550
-                  slug: product-876550
+                  name: Product 916550
+                  slug: product-916550
                   meta_title:
                   meta_description:
                   meta_keywords:
@@ -17727,8 +17727,8 @@ paths:
             application/json:
               example:
                 id: prod_UkLWZg9DAJ
-                name: Product 912061
-                slug: product-912061
+                name: Product 952061
+                slug: product-952061
                 meta_title:
                 meta_description:
                 meta_keywords:
@@ -17841,7 +17841,7 @@ paths:
               example:
                 id: prod_UkLWZg9DAJ
                 name: Updated Name
-                slug: product-935339
+                slug: product-975339
                 meta_title:
                 meta_description:
                 meta_keywords:
@@ -24004,7 +24004,7 @@ paths:
                 data:
                 - id: variant_UkLWZg9DAJ
                   product_id: prod_UkLWZg9DAJ
-                  sku: SKU-146
+                  sku: SKU-153
                   options_text: ''
                   track_inventory: true
                   media_count: 0
@@ -24055,11 +24055,11 @@ paths:
                   available_stock: 0
                   reserved_quantity: 0
                   total_on_hand: 0
-                  product_name: Product 1186804
+                  product_name: Product 1226804
                   delivery_profile_id: fp_UkLWZg9DAJ
                 - id: variant_gbHJdmfrXB
                   product_id: prod_UkLWZg9DAJ
-                  sku: SKU-147
+                  sku: SKU-154
                   options_text: 'Size: S'
                   track_inventory: true
                   media_count: 0
@@ -24092,11 +24092,11 @@ paths:
                   option_values:
                   - id: optval_UkLWZg9DAJ
                     option_type_id: opt_UkLWZg9DAJ
-                    name: size-28
+                    name: size-31
                     label: S
                     position: 1
                     color_code:
-                    option_type_name: foo-size-37
+                    option_type_name: foo-size-40
                     option_type_label: Size
                     image_url:
                     metadata: {}
@@ -24122,7 +24122,7 @@ paths:
                   available_stock: 0
                   reserved_quantity: 0
                   total_on_hand: 0
-                  product_name: Product 1186804
+                  product_name: Product 1226804
                   delivery_profile_id: fp_UkLWZg9DAJ
                 meta:
                   page: 1
@@ -24264,7 +24264,7 @@ paths:
                 available_stock: 0
                 reserved_quantity: 0
                 total_on_hand: 0
-                product_name: Product 1191771
+                product_name: Product 1231771
                 delivery_profile_id: fp_UkLWZg9DAJ
         '422':
           description: validation error
@@ -24443,7 +24443,7 @@ paths:
               example:
                 id: variant_gbHJdmfrXB
                 product_id: prod_UkLWZg9DAJ
-                sku: SKU-153
+                sku: SKU-160
                 options_text: 'Size: S'
                 track_inventory: true
                 media_count: 0
@@ -24476,11 +24476,11 @@ paths:
                 option_values:
                 - id: optval_UkLWZg9DAJ
                   option_type_id: opt_UkLWZg9DAJ
-                  name: size-31
+                  name: size-34
                   label: S
                   position: 1
                   color_code:
-                  option_type_name: foo-size-40
+                  option_type_name: foo-size-43
                   option_type_label: Size
                   image_url:
                   metadata: {}
@@ -24506,7 +24506,7 @@ paths:
                 available_stock: 0
                 reserved_quantity: 0
                 total_on_hand: 0
-                product_name: Product 1214025
+                product_name: Product 1254025
                 delivery_profile_id: fp_UkLWZg9DAJ
         '404':
           description: variant not found
@@ -24612,11 +24612,11 @@ paths:
                 option_values:
                 - id: optval_UkLWZg9DAJ
                   option_type_id: opt_UkLWZg9DAJ
-                  name: size-33
+                  name: size-36
                   label: S
                   position: 1
                   color_code:
-                  option_type_name: foo-size-42
+                  option_type_name: foo-size-45
                   option_type_label: Size
                   image_url:
                   metadata: {}
@@ -24642,7 +24642,7 @@ paths:
                 available_stock: 0
                 reserved_quantity: 0
                 total_on_hand: 0
-                product_name: Product 1235672
+                product_name: Product 1275672
                 delivery_profile_id: fp_UkLWZg9DAJ
       requestBody:
         content:
@@ -26470,6 +26470,294 @@ paths:
               required:
               - currency
               - amount
+  "/api/v3/admin/catalogs/{catalog_id}/quantity_rules/{id}":
+    patch:
+      summary: Update a catalog quantity rule
+      tags:
+      - Catalogs
+      security:
+      - api_key: []
+        bearer_auth: []
+      description: |-
+        Restates one variant term. A field sent as null hands that field back to the catalog default; a rule must still state at least one of the two.
+
+        **Required scope:** `write_products` (for API-key authentication).
+      parameters:
+      - name: x-spree-api-key
+        in: header
+        required: true
+        schema:
+          type: string
+      - name: Authorization
+        in: header
+        required: true
+        schema:
+          type: string
+      - name: catalog_id
+        in: path
+        required: true
+        schema:
+          type: string
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: quantity rule updated
+          content:
+            application/json:
+              example:
+                id: cqr_UkLWZg9DAJ
+                minimum_order_quantity: 96
+                order_multiple: 24
+                created_at: '2026-01-15T12:00:00.000Z'
+                updated_at: '2026-01-15T12:00:00.000Z'
+                variant_id: variant_gbHJdmfrXB
+                variant_sku: SKU-10
+                product_name: Product 61912
+                options_text: 'Size: S'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                minimum_order_quantity:
+                  type: integer
+                  nullable: true
+                  example: 96
+                order_multiple:
+                  type: integer
+                  nullable: true
+                  example: 48
+    delete:
+      summary: Delete a catalog quantity rule
+      tags:
+      - Catalogs
+      security:
+      - api_key: []
+        bearer_auth: []
+      description: |-
+        Drops one variant's exception, so it falls back to the catalog's own default.
+
+        **Required scope:** `write_products` (for API-key authentication).
+      parameters:
+      - name: x-spree-api-key
+        in: header
+        required: true
+        schema:
+          type: string
+      - name: Authorization
+        in: header
+        required: true
+        schema:
+          type: string
+      - name: catalog_id
+        in: path
+        required: true
+        schema:
+          type: string
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        '204':
+          description: quantity rule deleted
+  "/api/v3/admin/catalogs/{catalog_id}/order_minimums/{id}":
+    patch:
+      summary: Update a catalog order minimum
+      tags:
+      - Catalogs
+      security:
+      - api_key: []
+        bearer_auth: []
+      description: |-
+        Restates one currency's threshold.
+
+        **Required scope:** `write_products` (for API-key authentication).
+      parameters:
+      - name: x-spree-api-key
+        in: header
+        required: true
+        schema:
+          type: string
+      - name: Authorization
+        in: header
+        required: true
+        schema:
+          type: string
+      - name: catalog_id
+        in: path
+        required: true
+        schema:
+          type: string
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: order minimum updated
+          content:
+            application/json:
+              example:
+                id: com_UkLWZg9DAJ
+                currency: USD
+                created_at: '2026-01-15T12:00:00.000Z'
+                updated_at: '2026-01-15T12:00:00.000Z'
+                amount: '750.0'
+                display_amount: "$750.00"
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                amount:
+                  type: string
+                  example: '750.00'
+    delete:
+      summary: Delete a catalog order minimum
+      tags:
+      - Catalogs
+      security:
+      - api_key: []
+        bearer_auth: []
+      description: |-
+        Lifts the threshold for one currency, so orders in it may come to any total.
+
+        **Required scope:** `write_products` (for API-key authentication).
+      parameters:
+      - name: x-spree-api-key
+        in: header
+        required: true
+        schema:
+          type: string
+      - name: Authorization
+        in: header
+        required: true
+        schema:
+          type: string
+      - name: catalog_id
+        in: path
+        required: true
+        schema:
+          type: string
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        '204':
+          description: order minimum deleted
+  "/api/v3/admin/catalogs/{catalog_id}/product_terms":
+    get:
+      summary: List catalog terms by product
+      tags:
+      - Catalogs
+      security:
+      - api_key: []
+        bearer_auth: []
+      description: |-
+        The catalog's quantity terms at the grain a merchant states them: one entry per product, over rows the database keeps per variant. `mixed` marks a product whose variants carry different terms.
+
+        **Required scope:** `read_products` (for API-key authentication).
+      parameters:
+      - name: x-spree-api-key
+        in: header
+        required: true
+        schema:
+          type: string
+      - name: Authorization
+        in: header
+        required: true
+        schema:
+          type: string
+      - name: catalog_id
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: product terms found
+          content:
+            application/json:
+              example:
+                data:
+                - id: prod_UkLWZg9DAJ
+                  product_id: prod_UkLWZg9DAJ
+                  product_name: Product 83986
+                  minimum_order_quantity: 48
+                  order_multiple: 24
+                  mixed: true
+    put:
+      summary: Set catalog terms by product
+      tags:
+      - Catalogs
+      security:
+      - api_key: []
+        bearer_auth: []
+      description: |-
+        Writes the given products' terms in one request, keyed by prefixed product id. Both fields null clears that product's terms; a product not yet in the assortment is added, since a term with nothing to apply to is not a reachable state. Products absent from the payload are left alone — this is the one catalog-term surface that is not a whole-set replacement, because an agreement may name terms for thousands of SKUs.
+
+        **Required scope:** `write_products` (for API-key authentication).
+      parameters:
+      - name: x-spree-api-key
+        in: header
+        required: true
+        schema:
+          type: string
+      - name: Authorization
+        in: header
+        required: true
+        schema:
+          type: string
+      - name: catalog_id
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: product terms set
+          content:
+            application/json:
+              example:
+                data:
+                - id: prod_UkLWZg9DAJ
+                  product_id: prod_UkLWZg9DAJ
+                  product_name: Product 97053
+                  minimum_order_quantity: 48
+                  order_multiple: 24
+                  mixed: false
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                terms:
+                  type: object
+                  additionalProperties:
+                    type: object
+                    properties:
+                      minimum_order_quantity:
+                        type: integer
+                        nullable: true
+                        example: 48
+                      order_multiple:
+                        type: integer
+                        nullable: true
+                        example: 24
+              required:
+              - terms
   "/api/v3/admin/collections":
     get:
       summary: List collections
@@ -30439,7 +30727,7 @@ paths:
               example:
                 data:
                 - kind: media
-                  name: Product 203397
+                  name: Product 243397
                   owner_type: Spree::Product
                   owner_id: prod_UkLWZg9DAJ
                   field: attachment
