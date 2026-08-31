@@ -304,7 +304,7 @@ paths:
                   avatar_url:
                 sellers:
                 - id: sel_UkLWZg9DAJ
-                  name: Seller 43
+                  name: Seller 21
                   status: approved
               schema:
                 "$ref": "#/components/schemas/AuthResponse"
@@ -420,7 +420,7 @@ paths:
                   avatar_url:
                 sellers:
                 - id: sel_UkLWZg9DAJ
-                  name: Seller 70
+                  name: Seller 42
                   status: approved
               schema:
                 "$ref": "#/components/schemas/AuthResponse"
@@ -489,8 +489,8 @@ paths:
                   avatar_url:
                 sellers:
                 - id: sel_UkLWZg9DAJ
-                  name: Seller 52
-                  slug: seller-52
+                  name: Seller 30
+                  slug: seller-30
                   status: approved
                 permissions:
                 - allow: true
@@ -12293,683 +12293,6 @@ paths:
                 required:
                 - data
                 - meta
-  "/api/v3/seller/delivery_methods":
-    get:
-      summary: List delivery methods
-      tags:
-      - Delivery Methods
-      security:
-      - bearer_auth: []
-      description: |
-        How this seller's goods can ship: the methods they created themselves,
-        plus any the marketplace shares with its sellers.
-
-        A shared marketplace method comes back with `editable: false` — it is
-        listed so the seller can see what already ships their goods, and every
-        write against it is a 404.
-      parameters:
-      - name: X-Spree-Seller-Id
-        in: header
-        required: true
-        schema:
-          type: string
-      - name: page
-        in: query
-        required: false
-        description: Page number
-        schema:
-          type: integer
-      - name: limit
-        in: query
-        required: false
-        description: Records per page (max 100)
-        schema:
-          type: integer
-      responses:
-        '200':
-          description: delivery methods listed
-          content:
-            application/json:
-              example:
-                data:
-                - id: dm_UkLWZg9DAJ
-                  name: My courier
-                  code: UPS_GROUND
-                  estimated_transit_business_days_min:
-                  estimated_transit_business_days_max:
-                  digital: false
-                  pickup: false
-                  pickup_point: false
-                  admin_name:
-                  storefront_visible: true
-                  tracking_url:
-                  created_at: '2026-01-15T12:00:00.000Z'
-                  updated_at: '2026-01-15T12:00:00.000Z'
-                  rules: []
-                  editable: true
-                  delivery_profile_id: fp_UkLWZg9DAJ
-                  delivery_zone_id:
-                  calculator_type: Spree::Calculator::Shipping::FlatRate
-                  calculator_preferences:
-                    amounts: {}
-                    amount: '10.0'
-                    currency: USD
-                - id: dm_gbHJdmfrXB
-                  name: Marketplace post
-                  code: UPS_GROUND
-                  estimated_transit_business_days_min:
-                  estimated_transit_business_days_max:
-                  digital: false
-                  pickup: false
-                  pickup_point: false
-                  admin_name:
-                  storefront_visible: true
-                  tracking_url:
-                  created_at: '2026-01-15T12:00:00.000Z'
-                  updated_at: '2026-01-15T12:00:00.000Z'
-                  rules: []
-                  editable: false
-                  delivery_profile_id: fp_UkLWZg9DAJ
-                  delivery_zone_id:
-                  calculator_type: Spree::Calculator::Shipping::FlatRate
-                  calculator_preferences:
-                    amounts: {}
-                    amount: '10.0'
-                    currency: USD
-                meta:
-                  page: 1
-                  limit: 25
-                  count: 2
-                  pages: 1
-                  from: 1
-                  to: 2
-                  in: 2
-                  previous:
-                  next:
-              schema:
-                type: object
-                properties:
-                  data:
-                    type: array
-                    items:
-                      "$ref": "#/components/schemas/DeliveryMethod"
-                  meta:
-                    "$ref": "#/components/schemas/PaginationMeta"
-                required:
-                - data
-                - meta
-    post:
-      summary: Create a delivery method
-      tags:
-      - Delivery Methods
-      security:
-      - bearer_auth: []
-      description: |
-        Adds a way for this seller to ship. The method is always the seller's
-        own, whatever the payload says.
-
-        Neither the rate provider nor the fulfillment provider is settable: a
-        seller prices their own rates and enters tracking numbers by hand,
-        because carrier accounts belong to the marketplace.
-      parameters:
-      - name: X-Spree-Seller-Id
-        in: header
-        required: true
-        schema:
-          type: string
-      responses:
-        '201':
-          description: delivery method created
-          content:
-            application/json:
-              example:
-                id: dm_EfhxLZ9ck8
-                name: Next day
-                code:
-                estimated_transit_business_days_min:
-                estimated_transit_business_days_max:
-                digital: false
-                pickup: false
-                pickup_point: false
-                admin_name:
-                storefront_visible: true
-                tracking_url:
-                created_at: '2026-01-15T12:00:00.000Z'
-                updated_at: '2026-01-15T12:00:00.000Z'
-                rules: []
-                editable: true
-                delivery_profile_id: fp_gbHJdmfrXB
-                delivery_zone_id:
-                calculator_type: Spree::Calculator::Shipping::FlatRate
-                calculator_preferences:
-                  amounts: {}
-                  amount: '9.99'
-                  currency: USD
-              schema:
-                "$ref": "#/components/schemas/DeliveryMethod"
-        '422':
-          description: invalid request
-          content:
-            application/json:
-              example:
-                error:
-                  code: validation_error
-                  message: Name can't be blank
-                  details:
-                    name:
-                    - can't be blank
-              schema:
-                "$ref": "#/components/schemas/ErrorResponse"
-      requestBody:
-        content:
-          application/json:
-            schema:
-              type: object
-              properties:
-                name:
-                  type: string
-                admin_name:
-                  type: string
-                  nullable: true
-                code:
-                  type: string
-                  nullable: true
-                delivery_profile_id:
-                  type: string
-                  description: One of the marketplace's delivery profiles
-                delivery_zone_id:
-                  type: string
-                  nullable: true
-                  description: Narrows where the method ships
-                storefront_visible:
-                  type: boolean
-                tracking_url:
-                  type: string
-                  nullable: true
-                estimated_transit_business_days_min:
-                  type: integer
-                  nullable: true
-                estimated_transit_business_days_max:
-                  type: integer
-                  nullable: true
-                calculator_type:
-                  type: string
-                calculator_preferences:
-                  type: object
-                rules:
-                  type: array
-                  description: Conditions on the method, from `/delivery_methods/rule_types`
-                  items:
-                    type: object
-                    properties:
-                      type:
-                        type: string
-                      preferences:
-                        type: object
-              required:
-              - name
-  "/api/v3/seller/delivery_methods/{id}":
-    parameters:
-    - name: id
-      in: path
-      description: Delivery method ID
-      required: true
-      schema:
-        type: string
-    - name: X-Spree-Seller-Id
-      in: header
-      required: true
-      schema:
-        type: string
-    get:
-      summary: Retrieve a delivery method
-      tags:
-      - Delivery Methods
-      security:
-      - bearer_auth: []
-      responses:
-        '200':
-          description: delivery method found
-          content:
-            application/json:
-              example:
-                id: dm_UkLWZg9DAJ
-                name: My courier
-                code: UPS_GROUND
-                estimated_transit_business_days_min:
-                estimated_transit_business_days_max:
-                digital: false
-                pickup: false
-                pickup_point: false
-                admin_name:
-                storefront_visible: true
-                tracking_url:
-                created_at: '2026-01-15T12:00:00.000Z'
-                updated_at: '2026-01-15T12:00:00.000Z'
-                rules: []
-                editable: true
-                delivery_profile_id: fp_UkLWZg9DAJ
-                delivery_zone_id:
-                calculator_type: Spree::Calculator::Shipping::FlatRate
-                calculator_preferences:
-                  amounts: {}
-                  amount: '10.0'
-                  currency: USD
-              schema:
-                "$ref": "#/components/schemas/DeliveryMethod"
-    patch:
-      summary: Update a delivery method
-      tags:
-      - Delivery Methods
-      security:
-      - bearer_auth: []
-      description: Only the seller's own methods can be changed — a marketplace method
-        shared with sellers is read-only.
-      parameters: []
-      responses:
-        '200':
-          description: delivery method updated
-          content:
-            application/json:
-              example:
-                id: dm_UkLWZg9DAJ
-                name: My express courier
-                code: UPS_GROUND
-                estimated_transit_business_days_min:
-                estimated_transit_business_days_max:
-                digital: false
-                pickup: false
-                pickup_point: false
-                admin_name:
-                storefront_visible: true
-                tracking_url:
-                created_at: '2026-01-15T12:00:00.000Z'
-                updated_at: '2026-01-15T12:00:00.000Z'
-                rules: []
-                editable: true
-                delivery_profile_id: fp_UkLWZg9DAJ
-                delivery_zone_id:
-                calculator_type: Spree::Calculator::Shipping::FlatRate
-                calculator_preferences:
-                  amounts: {}
-                  amount: '10.0'
-                  currency: USD
-              schema:
-                "$ref": "#/components/schemas/DeliveryMethod"
-      requestBody:
-        content:
-          application/json:
-            schema:
-              type: object
-              properties:
-                name:
-                  type: string
-                admin_name:
-                  type: string
-                  nullable: true
-                code:
-                  type: string
-                  nullable: true
-                delivery_profile_id:
-                  type: string
-                  description: One of the marketplace's delivery profiles
-                delivery_zone_id:
-                  type: string
-                  nullable: true
-                  description: Narrows where the method ships
-                storefront_visible:
-                  type: boolean
-                tracking_url:
-                  type: string
-                  nullable: true
-                estimated_transit_business_days_min:
-                  type: integer
-                  nullable: true
-                estimated_transit_business_days_max:
-                  type: integer
-                  nullable: true
-                calculator_type:
-                  type: string
-                calculator_preferences:
-                  type: object
-                rules:
-                  type: array
-                  description: Replaces the whole set — a rule dropped here is deleted,
-                    so re-send surviving rules with their `id`.
-                  items:
-                    type: object
-                    properties:
-                      id:
-                        type: string
-                      type:
-                        type: string
-                      preferences:
-                        type: object
-    delete:
-      summary: Retire a delivery method
-      tags:
-      - Delivery Methods
-      security:
-      - bearer_auth: []
-      responses:
-        '204':
-          description: delivery method retired
-  "/api/v3/seller/delivery_methods/rule_types":
-    get:
-      summary: List the conditions a method can carry
-      tags:
-      - Delivery Methods
-      security:
-      - bearer_auth: []
-      description: The eligibility rules a seller may put on their own method, with
-        the preference schema each form is rendered from.
-      parameters:
-      - name: X-Spree-Seller-Id
-        in: header
-        required: true
-        schema:
-          type: string
-      responses:
-        '200':
-          description: rule types listed
-          content:
-            application/json:
-              example:
-                data:
-                - type: item_total_rule
-                  name: Item total
-                  description: Limits the delivery method to carts within an item
-                    total range
-                  preference_schema:
-                  - key: minimum_amount
-                    type: decimal
-                    default:
-                  - key: maximum_amount
-                    type: decimal
-                    default:
-                - type: weight_rule
-                  name: Weight
-                  description: Limits the delivery method to packages within a weight
-                    range
-                  preference_schema:
-                  - key: minimum_weight
-                    type: decimal
-                    default:
-                  - key: maximum_weight
-                    type: decimal
-                    default:
-              schema:
-                type: object
-                properties:
-                  data:
-                    type: array
-                    items:
-                      type: object
-                      properties:
-                        type:
-                          type: string
-                        name:
-                          type: string
-                        description:
-                          type: string
-                        preference_schema:
-                          type: array
-                          items:
-                            type: object
-                required:
-                - data
-  "/api/v3/seller/delivery_methods/calculators":
-    get:
-      summary: List the ways a method can be priced
-      tags:
-      - Delivery Methods
-      security:
-      - bearer_auth: []
-      parameters:
-      - name: X-Spree-Seller-Id
-        in: header
-        required: true
-        schema:
-          type: string
-      responses:
-        '200':
-          description: calculators listed
-          content:
-            application/json:
-              example:
-                data:
-                - type: Spree::Calculator::Shipping::FlatPercentItemTotal
-                  name: Flat Percent
-                  preference_schema:
-                  - key: flat_percent
-                    type: decimal
-                    default: 0
-                - type: Spree::Calculator::Shipping::FlatRate
-                  name: Flat rate
-                  preference_schema:
-                  - key: amounts
-                    type: hash
-                    default: {}
-                  - key: amount
-                    type: decimal
-                    default: 0
-                  - key: currency
-                    type: string
-                    default: USD
-                - type: Spree::Calculator::Shipping::FlexiRate
-                  name: Flexible Rate per package item
-                  preference_schema:
-                  - key: first_item
-                    type: decimal
-                    default: 0.0
-                  - key: additional_item
-                    type: decimal
-                    default: 0.0
-                  - key: max_items
-                    type: integer
-                    default: 0
-                  - key: currency
-                    type: string
-                    default: USD
-                - type: Spree::Calculator::Shipping::PerItem
-                  name: Flat rate per package item
-                  preference_schema:
-                  - key: amounts
-                    type: hash
-                    default: {}
-                  - key: amount
-                    type: decimal
-                    default: 0
-                  - key: currency
-                    type: string
-                    default: USD
-                - type: Spree::Calculator::Shipping::PriceSack
-                  name: Price sack
-                  preference_schema:
-                  - key: minimal_amount
-                    type: decimal
-                    default: 0
-                  - key: normal_amount
-                    type: decimal
-                    default: 0
-                  - key: discount_amount
-                    type: decimal
-                    default: 0
-                  - key: currency
-                    type: string
-                    default: USD
-                - type: Spree::Calculator::Shipping::DigitalDelivery
-                  name: Digital Delivery
-                  preference_schema:
-                  - key: amounts
-                    type: hash
-                    default: {}
-                  - key: amount
-                    type: decimal
-                    default: 0
-                  - key: currency
-                    type: string
-                    default: USD
-              schema:
-                type: object
-                properties:
-                  data:
-                    type: array
-                    items:
-                      type: object
-                      properties:
-                        type:
-                          type: string
-                        name:
-                          type: string
-                        preference_schema:
-                          type: array
-                          items:
-                            type: object
-                required:
-                - data
-  "/api/v3/seller/delivery_profiles":
-    get:
-      summary: List delivery profiles
-      tags:
-      - Delivery Profiles
-      security:
-      - bearer_auth: []
-      description: |
-        The marketplace's delivery profiles — what kind of goods a product is
-        (parcel, digital, pallet), which decides how it can be shipped.
-
-        Read only. A seller assigns one to a product as `delivery_profile_id`;
-        the profiles themselves, and the zones and methods behind them, are the
-        marketplace's. A product created without one lands on the profile
-        marked `default`.
-      parameters:
-      - name: X-Spree-Seller-Id
-        in: header
-        required: true
-        schema:
-          type: string
-      - name: page
-        in: query
-        required: false
-        description: Page number
-        schema:
-          type: integer
-      - name: limit
-        in: query
-        required: false
-        description: Records per page (max 100)
-        schema:
-          type: integer
-      responses:
-        '200':
-          description: delivery profiles listed
-          content:
-            application/json:
-              example:
-                data:
-                - id: fp_UkLWZg9DAJ
-                  name: General
-                  default: true
-                  digital: false
-                - id: fp_gbHJdmfrXB
-                  name: Oversized
-                  default: false
-                  digital: false
-                meta:
-                  page: 1
-                  limit: 25
-                  count: 2
-                  pages: 1
-                  from: 1
-                  to: 2
-                  in: 2
-                  previous:
-                  next:
-              schema:
-                type: object
-                properties:
-                  data:
-                    type: array
-                    items:
-                      "$ref": "#/components/schemas/DeliveryProfile"
-                  meta:
-                    "$ref": "#/components/schemas/PaginationMeta"
-                required:
-                - data
-                - meta
-  "/api/v3/seller/delivery_zones":
-    get:
-      summary: List delivery zones
-      tags:
-      - Delivery Zones
-      security:
-      - bearer_auth: []
-      description: |
-        The marketplace's delivery zones — where its methods may ship to.
-
-        Read only: a seller narrows their own method to one of these and never
-        draws one. Pass `delivery_profile_id` to list only the zones under the
-        profile a method belongs to, which is what the method form's picker
-        asks for.
-      parameters:
-      - name: X-Spree-Seller-Id
-        in: header
-        required: true
-        schema:
-          type: string
-      - name: delivery_profile_id
-        in: query
-        required: false
-        description: Only zones under this delivery profile
-        schema:
-          type: string
-      - name: page
-        in: query
-        required: false
-        description: Page number
-        schema:
-          type: integer
-      - name: limit
-        in: query
-        required: false
-        description: Records per page (max 100)
-        schema:
-          type: integer
-      responses:
-        '200':
-          description: delivery zones listed
-          content:
-            application/json:
-              example:
-                data:
-                - id: dz_UkLWZg9DAJ
-                  name: Domestic
-                  description: Maxime illum debitis veritatis porro accusantium laudantium
-                    omnis.
-                  delivery_profile_id: fp_gbHJdmfrXB
-                meta:
-                  page: 1
-                  limit: 25
-                  count: 1
-                  pages: 1
-                  from: 1
-                  to: 1
-                  in: 1
-                  previous:
-                  next:
-              schema:
-                type: object
-                properties:
-                  data:
-                    type: array
-                    items:
-                      "$ref": "#/components/schemas/DeliveryZone"
-                  meta:
-                    "$ref": "#/components/schemas/PaginationMeta"
-                required:
-                - data
-                - meta
   "/api/v3/seller/onboarding":
     get:
       summary: Get onboarding checklist
@@ -13401,100 +12724,6 @@ paths:
       responses:
         '204':
           description: policy deleted
-  "/api/v3/seller/product_types":
-    get:
-      summary: List product types
-      tags:
-      - Product Types
-      security:
-      - bearer_auth: []
-      description: |
-        The product types a seller may list a product against.
-
-        Read only. A type is the template that hands a product its option types
-        and its delivery profile, so a seller picks one when listing; defining
-        types is the marketplace's. Send the chosen `id` as `product_type_id`
-        on the product.
-      parameters:
-      - name: X-Spree-Seller-Id
-        in: header
-        required: true
-        schema:
-          type: string
-      - name: page
-        in: query
-        required: false
-        description: Page number
-        schema:
-          type: integer
-      - name: limit
-        in: query
-        required: false
-        description: Records per page (max 100)
-        schema:
-          type: integer
-      responses:
-        '200':
-          description: product types listed
-          content:
-            application/json:
-              example:
-                data:
-                - id: pt_UkLWZg9DAJ
-                  name: Apparel
-                  option_type_labels: []
-                meta:
-                  page: 1
-                  limit: 25
-                  count: 1
-                  pages: 1
-                  from: 1
-                  to: 1
-                  in: 1
-                  previous:
-                  next:
-              schema:
-                type: object
-                properties:
-                  data:
-                    type: array
-                    items:
-                      "$ref": "#/components/schemas/ProductType"
-                  meta:
-                    "$ref": "#/components/schemas/PaginationMeta"
-                required:
-                - data
-                - meta
-  "/api/v3/seller/product_types/{id}":
-    get:
-      summary: Get a product type
-      tags:
-      - Product Types
-      security:
-      - bearer_auth: []
-      parameters:
-      - name: X-Spree-Seller-Id
-        in: header
-        required: true
-        schema:
-          type: string
-      - name: id
-        in: path
-        required: true
-        description: Product type ID
-        schema:
-          type: string
-      responses:
-        '200':
-          description: product type found
-          content:
-            application/json:
-              example:
-                id: pt_UkLWZg9DAJ
-                name: Apparel
-                option_type_labels: []
-              schema:
-                "$ref": "#/components/schemas/ProductType"
   "/api/v3/seller/products":
     get:
       summary: List products
@@ -13540,8 +12769,8 @@ paths:
               example:
                 data:
                 - id: prod_UkLWZg9DAJ
-                  name: Product 1733250
-                  slug: product-1733250
+                  name: Product 1423250
+                  slug: product-1423250
                   meta_title:
                   meta_description:
                   meta_keywords:
@@ -13590,8 +12819,6 @@ paths:
                   metadata: {}
                   created_at: '2026-01-15T12:00:00.000Z'
                   updated_at: '2026-01-15T12:00:00.000Z'
-                  product_type_id:
-                  delivery_profile_id: fp_UkLWZg9DAJ
                 meta:
                   page: 1
                   limit: 25
@@ -13677,8 +12904,6 @@ paths:
                 metadata: {}
                 created_at: '2026-01-15T12:00:00.000Z'
                 updated_at: '2026-01-15T12:00:00.000Z'
-                product_type_id:
-                delivery_profile_id: fp_UkLWZg9DAJ
               schema:
                 "$ref": "#/components/schemas/Product"
         '422':
@@ -13784,8 +13009,8 @@ paths:
             application/json:
               example:
                 id: prod_UkLWZg9DAJ
-                name: Product 1766710
-                slug: product-1766710
+                name: Product 1456710
+                slug: product-1456710
                 meta_title:
                 meta_description:
                 meta_keywords:
@@ -13829,8 +13054,6 @@ paths:
                 metadata: {}
                 created_at: '2026-01-15T12:00:00.000Z'
                 updated_at: '2026-01-15T12:00:00.000Z'
-                product_type_id:
-                delivery_profile_id: fp_UkLWZg9DAJ
               schema:
                 "$ref": "#/components/schemas/Product"
         '404':
@@ -13864,7 +13087,7 @@ paths:
               example:
                 id: prod_UkLWZg9DAJ
                 name: Hand-thrown mug, large
-                slug: product-1798212
+                slug: product-1488212
                 meta_title:
                 meta_description:
                 meta_keywords:
@@ -13904,8 +13127,6 @@ paths:
                 metadata: {}
                 created_at: '2026-01-15T12:00:00.000Z'
                 updated_at: '2026-01-15T12:00:00.000Z'
-                product_type_id:
-                delivery_profile_id: fp_UkLWZg9DAJ
               schema:
                 "$ref": "#/components/schemas/Product"
       requestBody:
@@ -13977,8 +13198,8 @@ paths:
             application/json:
               example:
                 id: sel_UkLWZg9DAJ
-                name: Seller 87
-                slug: seller-87
+                name: Seller 57
+                slug: seller-57
                 about: ''
                 about_html: ''
                 logo_url:
@@ -14050,7 +13271,7 @@ paths:
               example:
                 id: sel_UkLWZg9DAJ
                 name: Acme Supplies
-                slug: seller-89
+                slug: seller-59
                 about: ''
                 about_html: ''
                 logo_url:
@@ -14207,7 +13428,6 @@ paths:
                   active: true
                   default: false
                   kind: warehouse
-                  returns_enabled: true
                   created_at: '2026-01-15T12:00:00.000Z'
                   updated_at: '2026-01-15T12:00:00.000Z'
                 meta:
@@ -14273,7 +13493,6 @@ paths:
                 active: true
                 default: false
                 kind: warehouse
-                returns_enabled: true
                 created_at: '2026-01-15T12:00:00.000Z'
                 updated_at: '2026-01-15T12:00:00.000Z'
               schema:
@@ -14389,7 +13608,6 @@ paths:
                 active: true
                 default: false
                 kind: warehouse
-                returns_enabled: true
                 created_at: '2026-01-15T12:00:00.000Z'
                 updated_at: '2026-01-15T12:00:00.000Z'
               schema:
@@ -14446,7 +13664,6 @@ paths:
                 active: true
                 default: false
                 kind: warehouse
-                returns_enabled: true
                 created_at: '2026-01-15T12:00:00.000Z'
                 updated_at: '2026-01-15T12:00:00.000Z'
               schema:
@@ -14797,10 +14014,10 @@ paths:
             application/json:
               example:
                 direct_upload:
-                  url: http://www.example.com/rails/active_storage/disk/eyJfcmFpbHMiOnsiZGF0YSI6eyJrZXkiOiJuem5oOGdra3VxendvbDc1ODBxNHNwZmpmMjVxIiwiY29udGVudF90eXBlIjoiYXBwbGljYXRpb24vcGRmIiwiY29udGVudF9sZW5ndGgiOjUxMjM0LCJjaGVja3N1bSI6IlZqaHowNGxRdUVHdXY0bkR2aHNhTlE9PSIsInNlcnZpY2VfbmFtZSI6InRlc3QifSwiZXhwIjoiMjAyNi0wMS0xNVQxMjowNTowMC4wMDBaIiwicHVyIjoiYmxvYl90b2tlbiJ9fQ==--c3d1b432a81cee52587d4fb8fc024ac71d58e690
+                  url: http://www.example.com/rails/active_storage/disk/eyJfcmFpbHMiOnsiZGF0YSI6eyJrZXkiOiJuem5oOGdra3VxendvbDc1ODBxNHNwZmpmMjVxIiwiY29udGVudF90eXBlIjoiYXBwbGljYXRpb24vcGRmIiwiY29udGVudF9sZW5ndGgiOjUxMjM0LCJjaGVja3N1bSI6IlZqaHowNGxRdUVHdXY0bkR2aHNhTlE9PSIsInNlcnZpY2VfbmFtZSI6InRlc3QifSwiZXhwIjoiMjAyNi0wMS0xNVQxMjowNTowMC4wMDBaIiwicHVyIjoiYmxvYl90b2tlbiJ9fQ==--c0e3b25f985a821df6c39644de94ceea72ad357d
                   headers:
                     Content-Type: application/pdf
-                signed_id: eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--0566183e020a36008b9fa853684c959de4430ca1
+                signed_id: eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--bc30a562c4f9c38fad1949c9c3be2188baad829f
               schema:
                 "$ref": "#/components/schemas/DirectUploadResponse"
       requestBody:
@@ -14832,546 +14049,6 @@ paths:
                   - content_type
               required:
               - blob
-  "/api/v3/seller/orders/{order_id}/claims":
-    parameters:
-    - name: order_id
-      in: path
-      description: Prefixed order ID
-      required: true
-      schema:
-        type: string
-    get:
-      summary: List claims
-      tags:
-      - Claims
-      security:
-      - bearer_auth: []
-      description: Problems reported on one of this seller's orders.
-      parameters:
-      - name: X-Spree-Seller-Id
-        in: header
-        required: true
-        schema:
-          type: string
-      responses:
-        '200':
-          description: claims listed
-          content:
-            application/json:
-              example:
-                data:
-                - id: claim_UkLWZg9DAJ
-                  number: CLM1001
-                  status: open
-                  resolution:
-                  order_id: or_UkLWZg9DAJ
-                  reason_id:
-                  refund_total: '0.0'
-                  display_refund_total: "$0.00"
-                  approved_at:
-                  resolved_at:
-                  denied_at:
-                  canceled_at:
-                  memo:
-                meta:
-                  page: 1
-                  limit: 25
-                  count: 1
-                  pages: 1
-                  from: 1
-                  to: 1
-                  in: 1
-                  previous:
-                  next:
-              schema:
-                type: object
-                properties:
-                  data:
-                    type: array
-                    items:
-                      "$ref": "#/components/schemas/Claim"
-                required:
-                - data
-    post:
-      summary: Open a claim
-      tags:
-      - Claims
-      security:
-      - bearer_auth: []
-      description: |
-        Reports that something went wrong with a delivery, to be put right
-        without necessarily asking for the goods back.
-
-        A replacement variant, if one is offered, comes from this seller's own
-        catalogue — a rival's is not theirs to promise.
-      parameters:
-      - name: X-Spree-Seller-Id
-        in: header
-        required: true
-        schema:
-          type: string
-      responses:
-        '201':
-          description: claim opened
-          content:
-            application/json:
-              example:
-                id: claim_UkLWZg9DAJ
-                number: CLM1001
-                status: open
-                resolution:
-                order_id: or_UkLWZg9DAJ
-                reason_id:
-                refund_total: '0.0'
-                display_refund_total: "$0.00"
-                approved_at:
-                resolved_at:
-                denied_at:
-                canceled_at:
-                memo:
-              schema:
-                "$ref": "#/components/schemas/Claim"
-      requestBody:
-        content:
-          application/json:
-            schema:
-              type: object
-              properties:
-                items:
-                  type: array
-                  items:
-                    type: object
-                    properties:
-                      line_item_id:
-                        type: string
-                      quantity:
-                        type: integer
-                      description:
-                        type: string
-                        nullable: true
-                      send_replacement:
-                        type: boolean
-                      replacement_variant_id:
-                        type: string
-                        nullable: true
-                      refund_amount:
-                        type: string
-                        nullable: true
-                    required:
-                    - line_item_id
-                    - quantity
-                reason_id:
-                  type: string
-                  nullable: true
-                memo:
-                  type: string
-                  nullable: true
-              required:
-              - items
-  "/api/v3/seller/orders/{order_id}/claims/{id}/approve":
-    parameters:
-    - name: order_id
-      in: path
-      required: true
-      schema:
-        type: string
-    - name: id
-      in: path
-      required: true
-      schema:
-        type: string
-    patch:
-      summary: Approve a claim
-      tags:
-      - Claims
-      security:
-      - bearer_auth: []
-      description: Accepts that the claim is good.
-      parameters:
-      - name: X-Spree-Seller-Id
-        in: header
-        required: true
-        schema:
-          type: string
-      responses:
-        '200':
-          description: claim approved
-          content:
-            application/json:
-              example:
-                id: claim_UkLWZg9DAJ
-                number: CLM1001
-                status: approved
-                resolution:
-                order_id: or_UkLWZg9DAJ
-                reason_id:
-                refund_total: '0.0'
-                display_refund_total: "$0.00"
-                approved_at: '2026-01-15T12:00:00Z'
-                resolved_at:
-                denied_at:
-                canceled_at:
-                memo:
-              schema:
-                "$ref": "#/components/schemas/Claim"
-  "/api/v3/seller/orders/{order_id}/claims/{id}/resolve":
-    parameters:
-    - name: order_id
-      in: path
-      required: true
-      schema:
-        type: string
-    - name: id
-      in: path
-      required: true
-      schema:
-        type: string
-    patch:
-      summary: Resolve a claim
-      tags:
-      - Claims
-      security:
-      - bearer_auth: []
-      description: |
-        Puts the claim right: money back, a replacement shipment, or both.
-
-        A refund is bounded by this order's share of the payment, so one
-        seller can never settle out of a sibling's money.
-      parameters:
-      - name: X-Spree-Seller-Id
-        in: header
-        required: true
-        schema:
-          type: string
-      responses:
-        '200':
-          description: claim resolved
-          content:
-            application/json:
-              example:
-                id: claim_UkLWZg9DAJ
-                number: CLM1001
-                status: resolved
-                resolution: refund
-                order_id: or_UkLWZg9DAJ
-                reason_id:
-                refund_total: '0.0'
-                display_refund_total: "$0.00"
-                approved_at: '2026-01-15T12:00:00Z'
-                resolved_at: '2026-01-15T12:00:00Z'
-                denied_at:
-                canceled_at:
-                memo:
-              schema:
-                "$ref": "#/components/schemas/Claim"
-      requestBody:
-        content:
-          application/json:
-            schema:
-              type: object
-              properties:
-                resolution:
-                  type: string
-                  enum:
-                  - refund
-                  - replacement
-                  - refund_and_replacement
-                refund_method:
-                  type: string
-                  enum:
-                  - original_payment
-                  - store_credit
-                amount:
-                  type: string
-                  nullable: true
-                replacement_line_item_ids:
-                  type: array
-                  items:
-                    type: string
-              required:
-              - resolution
-  "/api/v3/seller/orders/{order_id}/claims/{id}/deny":
-    parameters:
-    - name: order_id
-      in: path
-      required: true
-      schema:
-        type: string
-    - name: id
-      in: path
-      required: true
-      schema:
-        type: string
-    patch:
-      summary: Deny a claim
-      tags:
-      - Claims
-      security:
-      - bearer_auth: []
-      description: Turns the claim down.
-      parameters:
-      - name: X-Spree-Seller-Id
-        in: header
-        required: true
-        schema:
-          type: string
-      responses:
-        '200':
-          description: claim denied
-          content:
-            application/json:
-              example:
-                id: claim_UkLWZg9DAJ
-                number: CLM1001
-                status: denied
-                resolution:
-                order_id: or_UkLWZg9DAJ
-                reason_id:
-                refund_total: '0.0'
-                display_refund_total: "$0.00"
-                approved_at:
-                resolved_at:
-                denied_at: '2026-01-15T12:00:00Z'
-                canceled_at:
-                memo:
-              schema:
-                "$ref": "#/components/schemas/Claim"
-  "/api/v3/seller/claim_reasons":
-    get:
-      summary: List claim reasons
-      tags:
-      - Claims
-      security:
-      - bearer_auth: []
-      description: |
-        What can go wrong with a delivery, as the marketplace defines it.
-
-        Read-only: a seller picks from the operator's vocabulary.
-      parameters:
-      - name: X-Spree-Seller-Id
-        in: header
-        required: true
-        schema:
-          type: string
-      responses:
-        '200':
-          description: reasons listed
-          content:
-            application/json:
-              example:
-                data:
-                - id: clr_UkLWZg9DAJ
-                  name: Arrived damaged
-                  active: true
-                meta:
-                  page: 1
-                  limit: 25
-                  count: 1
-                  pages: 1
-                  from: 1
-                  to: 1
-                  in: 1
-                  previous:
-                  next:
-              schema:
-                type: object
-                properties:
-                  data:
-                    type: array
-                    items:
-                      "$ref": "#/components/schemas/Reason"
-                required:
-                - data
-  "/api/v3/seller/orders/{order_id}/exchanges":
-    parameters:
-    - name: order_id
-      in: path
-      description: Prefixed order ID
-      required: true
-      schema:
-        type: string
-    get:
-      summary: List exchanges
-      tags:
-      - Exchanges
-      security:
-      - bearer_auth: []
-      description: Goods swapped for different ones on one of this seller's orders.
-      parameters:
-      - name: X-Spree-Seller-Id
-        in: header
-        required: true
-        schema:
-          type: string
-      responses:
-        '200':
-          description: exchanges listed
-          content:
-            application/json:
-              example:
-                data:
-                - id: exch_UkLWZg9DAJ
-                  number: EX1001
-                  status: requested
-                  order_id: or_UkLWZg9DAJ
-                  reason_id:
-                  price_difference: '9.99'
-                  display_price_difference: "$9.99"
-                  approved_at:
-                  received_at:
-                  fulfilled_at:
-                  canceled_at:
-                  memo:
-                  stock_location_id: sloc_UkLWZg9DAJ
-                meta:
-                  page: 1
-                  limit: 25
-                  count: 1
-                  pages: 1
-                  from: 1
-                  to: 1
-                  in: 1
-                  previous:
-                  next:
-              schema:
-                type: object
-                properties:
-                  data:
-                    type: array
-                    items:
-                      "$ref": "#/components/schemas/Exchange"
-                required:
-                - data
-    post:
-      summary: Open an exchange
-      tags:
-      - Exchanges
-      security:
-      - bearer_auth: []
-      description: |
-        Swaps goods for different ones.
-
-        The replacement comes from this seller's own catalogue: it is stock
-        they will send, so a variant belonging to another seller is not theirs
-        to promise and reads as missing.
-      parameters:
-      - name: X-Spree-Seller-Id
-        in: header
-        required: true
-        schema:
-          type: string
-      responses:
-        '201':
-          description: exchange opened
-          content:
-            application/json:
-              example:
-                id: exch_UkLWZg9DAJ
-                number: EX1001
-                status: requested
-                order_id: or_UkLWZg9DAJ
-                reason_id:
-                price_difference: '9.99'
-                display_price_difference: "$9.99"
-                approved_at:
-                received_at:
-                fulfilled_at:
-                canceled_at:
-                memo:
-                stock_location_id: sloc_UkLWZg9DAJ
-              schema:
-                "$ref": "#/components/schemas/Exchange"
-      requestBody:
-        content:
-          application/json:
-            schema:
-              type: object
-              properties:
-                items:
-                  type: array
-                  items:
-                    type: object
-                    properties:
-                      fulfillment_item_id:
-                        type: string
-                      new_variant_id:
-                        type: string
-                      quantity:
-                        type: integer
-                    required:
-                    - fulfillment_item_id
-                    - new_variant_id
-                    - quantity
-                reason_id:
-                  type: string
-                  nullable: true
-                stock_location_id:
-                  type: string
-                  nullable: true
-                memo:
-                  type: string
-                  nullable: true
-              required:
-              - items
-  "/api/v3/seller/orders/{order_id}/exchanges/{id}/fulfill":
-    parameters:
-    - name: order_id
-      in: path
-      required: true
-      schema:
-        type: string
-    - name: id
-      in: path
-      required: true
-      schema:
-        type: string
-    patch:
-      summary: Send the replacement
-      tags:
-      - Exchanges
-      security:
-      - bearer_auth: []
-      description: |
-        Sends the replacement goods, settling any price difference at the same
-        time — which is why it takes a refund method.
-      parameters:
-      - name: X-Spree-Seller-Id
-        in: header
-        required: true
-        schema:
-          type: string
-      responses:
-        '200':
-          description: replacement sent
-          content:
-            application/json:
-              example:
-                id: exch_UkLWZg9DAJ
-                number: EX1001
-                status: fulfilled
-                order_id: or_UkLWZg9DAJ
-                reason_id:
-                price_difference: '9.99'
-                display_price_difference: "$9.99"
-                approved_at: '2026-01-15T12:00:00Z'
-                received_at: '2026-01-15T12:00:00Z'
-                fulfilled_at: '2026-01-15T12:00:00Z'
-                canceled_at:
-                memo:
-                stock_location_id: sloc_UkLWZg9DAJ
-              schema:
-                "$ref": "#/components/schemas/Exchange"
-      requestBody:
-        content:
-          application/json:
-            schema:
-              type: object
-              properties:
-                refund_method:
-                  type: string
-                  enum:
-                  - original_payment
-                  - store_credit
   "/api/v3/seller/exports":
     post:
       summary: Create an export
@@ -15592,58 +14269,21 @@ paths:
                   status: unfulfilled
                   tracking: U10000
                   tracking_url:
+                  tracking_carrier:
+                  tracking_status:
                   fulfilled_at:
-                  delivered_at:
                   created_at: '2026-01-15T12:00:00.000Z'
                   updated_at: '2026-01-15T12:00:00.000Z'
                   fulfillment_type: shipping
                   delivery_method_name: UPS Ground
                   stock_location_name: Vernie Lehner
-                  stock_location_id: sloc_UkLWZg9DAJ
                   fulfillment_items:
                   - id: fi_UkLWZg9DAJ
                     quantity: 1
                     line_item_id: li_UkLWZg9DAJ
-                    variant_id: variant_UkLWZg9DAJ
-                    name: Product 1579315
-                    sku: SKU-199
+                    name: Product 1359315
+                    sku: SKU-173
                     options_text: ''
-                  selected_delivery_rate_id: dr_gbHJdmfrXB
-                  delivery_rates:
-                  - id: dr_gbHJdmfrXB
-                    name: UPS Ground
-                    selected: true
-                    cost: '10.0'
-                    total: '10.0'
-                    carrier:
-                    service_level:
-                    estimated_delivery_date:
-                    display_cost: "$10.00"
-                    display_total: "$10.00"
-                  deliveries:
-                  - id: dlv_UkLWZg9DAJ
-                    tracking_number: U10000
-                    carrier:
-                    carrier_name:
-                    service:
-                    status: pending
-                    tracking_url:
-                    estimated_delivery_at:
-                    delivered_at:
-                    created_at: '2026-01-15T12:00:00.000Z'
-                    updated_at: '2026-01-15T12:00:00.000Z'
-                    shipping_label_id:
-                  labels: []
-                meta:
-                  page: 1
-                  limit: 25
-                  count: 1
-                  pages: 1
-                  from: 1
-                  to: 1
-                  in: 1
-                  previous:
-                  next:
               schema:
                 type: object
                 properties:
@@ -15699,48 +14339,21 @@ paths:
                 status: fulfilled
                 tracking: TRACK-1
                 tracking_url:
+                tracking_carrier:
+                tracking_status:
                 fulfilled_at: '2026-01-15T12:00:00.000Z'
-                delivered_at:
                 created_at: '2026-01-15T12:00:00.000Z'
                 updated_at: '2026-01-15T12:00:00.000Z'
                 fulfillment_type: shipping
                 delivery_method_name: UPS Ground
                 stock_location_name: Mirta Herman
-                stock_location_id: sloc_UkLWZg9DAJ
                 fulfillment_items:
                 - id: fi_UkLWZg9DAJ
                   quantity: 1
                   line_item_id: li_UkLWZg9DAJ
-                  variant_id: variant_UkLWZg9DAJ
-                  name: Product 158961
-                  sku: SKU-200
+                  name: Product 136961
+                  sku: SKU-174
                   options_text: ''
-                selected_delivery_rate_id: dr_gbHJdmfrXB
-                delivery_rates:
-                - id: dr_gbHJdmfrXB
-                  name: UPS Ground
-                  selected: true
-                  cost: '10.0'
-                  total: '10.0'
-                  carrier:
-                  service_level:
-                  estimated_delivery_date:
-                  display_cost: "$10.00"
-                  display_total: "$10.00"
-                deliveries:
-                - id: dlv_UkLWZg9DAJ
-                  tracking_number: TRACK-1
-                  carrier:
-                  carrier_name:
-                  service:
-                  status: pending
-                  tracking_url:
-                  estimated_delivery_at:
-                  delivered_at:
-                  created_at: '2026-01-15T12:00:00.000Z'
-                  updated_at: '2026-01-15T12:00:00.000Z'
-                  shipping_label_id:
-                labels: []
               schema:
                 "$ref": "#/components/schemas/Fulfillment"
       requestBody:
@@ -15772,257 +14385,6 @@ paths:
                     required:
                     - item_id
                     - quantity
-  "/api/v3/seller/orders/{order_id}/fulfillments/{id}":
-    parameters:
-    - name: order_id
-      in: path
-      required: true
-      schema:
-        type: string
-    - name: id
-      in: path
-      required: true
-      schema:
-        type: string
-    patch:
-      summary: Update tracking
-      tags:
-      - Fulfillments
-      security:
-      - bearer_auth: []
-      description: |
-        Adds or corrects the tracking number and its carrier.
-
-        Deliberately narrow: where a parcel ships from and which service
-        carries it are the marketplace's arrangements, so they are not
-        editable here.
-      parameters:
-      - name: X-Spree-Seller-Id
-        in: header
-        required: true
-        schema:
-          type: string
-      responses:
-        '200':
-          description: tracking recorded
-          content:
-            application/json:
-              example:
-                id: ful_UkLWZg9DAJ
-                number: R1001-F1
-                status: unfulfilled
-                tracking: TRACK-2
-                tracking_url: https://www.ups.com/track?tracknum=TRACK-2
-                fulfilled_at:
-                delivered_at:
-                created_at: '2026-01-15T12:00:00.000Z'
-                updated_at: '2026-01-15T12:00:00.000Z'
-                fulfillment_type: shipping
-                delivery_method_name: UPS Ground
-                stock_location_name: Eugena Schultz
-                stock_location_id: sloc_UkLWZg9DAJ
-                fulfillment_items:
-                - id: fi_UkLWZg9DAJ
-                  quantity: 1
-                  line_item_id: li_UkLWZg9DAJ
-                  variant_id: variant_UkLWZg9DAJ
-                  name: Product 1593170
-                  sku: SKU-201
-                  options_text: ''
-                selected_delivery_rate_id: dr_gbHJdmfrXB
-                delivery_rates:
-                - id: dr_gbHJdmfrXB
-                  name: UPS Ground
-                  selected: true
-                  cost: '10.0'
-                  total: '10.0'
-                  carrier:
-                  service_level:
-                  estimated_delivery_date:
-                  display_cost: "$10.00"
-                  display_total: "$10.00"
-                deliveries:
-                - id: dlv_UkLWZg9DAJ
-                  tracking_number: TRACK-2
-                  carrier: ups
-                  carrier_name: UPS
-                  service:
-                  status: pending
-                  tracking_url: https://www.ups.com/track?tracknum=TRACK-2
-                  estimated_delivery_at:
-                  delivered_at:
-                  created_at: '2026-01-15T12:00:00.000Z'
-                  updated_at: '2026-01-15T12:00:00.000Z'
-                  shipping_label_id:
-                labels: []
-              schema:
-                "$ref": "#/components/schemas/Fulfillment"
-      requestBody:
-        content:
-          application/json:
-            schema:
-              type: object
-              properties:
-                tracking:
-                  type: string
-                  nullable: true
-                tracking_carrier:
-                  type: string
-                  nullable: true
-  "/api/v3/seller/orders/{order_id}/fulfillments/{id}/cancel":
-    parameters:
-    - name: order_id
-      in: path
-      required: true
-      schema:
-        type: string
-    - name: id
-      in: path
-      required: true
-      schema:
-        type: string
-    patch:
-      summary: Cancel a parcel
-      tags:
-      - Fulfillments
-      security:
-      - bearer_auth: []
-      description: |
-        A parcel this seller is not going to send after all. The goods go back
-        on the shelf and the carrier is stood down.
-      parameters:
-      - name: X-Spree-Seller-Id
-        in: header
-        required: true
-        schema:
-          type: string
-      responses:
-        '200':
-          description: parcel canceled
-          content:
-            application/json:
-              example:
-                id: ful_UkLWZg9DAJ
-                number: R1001-F1
-                status: canceled
-                tracking: U10000
-                tracking_url:
-                fulfilled_at:
-                delivered_at:
-                created_at: '2026-01-15T12:00:00.000Z'
-                updated_at: '2026-01-15T12:00:00.000Z'
-                fulfillment_type: shipping
-                delivery_method_name: UPS Ground
-                stock_location_name: Karyn Moore
-                stock_location_id: sloc_UkLWZg9DAJ
-                fulfillment_items:
-                - id: fi_UkLWZg9DAJ
-                  quantity: 1
-                  line_item_id: li_UkLWZg9DAJ
-                  variant_id: variant_UkLWZg9DAJ
-                  name: Product 1607276
-                  sku: SKU-202
-                  options_text: ''
-                selected_delivery_rate_id: dr_gbHJdmfrXB
-                delivery_rates:
-                - id: dr_gbHJdmfrXB
-                  name: UPS Ground
-                  selected: true
-                  cost: '10.0'
-                  total: '10.0'
-                  carrier:
-                  service_level:
-                  estimated_delivery_date:
-                  display_cost: "$10.00"
-                  display_total: "$10.00"
-                deliveries:
-                - id: dlv_UkLWZg9DAJ
-                  tracking_number: U10000
-                  carrier:
-                  carrier_name:
-                  service:
-                  status: pending
-                  tracking_url:
-                  estimated_delivery_at:
-                  delivered_at:
-                  created_at: '2026-01-15T12:00:00.000Z'
-                  updated_at: '2026-01-15T12:00:00.000Z'
-                  shipping_label_id:
-                labels: []
-              schema:
-                "$ref": "#/components/schemas/Fulfillment"
-  "/api/v3/seller/tracking_carriers":
-    get:
-      summary: List tracking carriers
-      tags:
-      - Fulfillments
-      security:
-      - bearer_auth: []
-      description: |
-        The carriers a tracking number can be pinned to, from the registry —
-        so a carrier an extension adds appears without a client change.
-      parameters:
-      - name: X-Spree-Seller-Id
-        in: header
-        required: true
-        schema:
-          type: string
-      responses:
-        '200':
-          description: carriers listed
-          content:
-            application/json:
-              example:
-                data:
-                - id: australia_post
-                  name: Australia Post
-                - id: canada_post
-                  name: Canada Post
-                - id: chronopost
-                  name: Chronopost
-                - id: colissimo
-                  name: Colissimo
-                - id: dhl
-                  name: DHL Express
-                - id: dpd
-                  name: DPD
-                - id: deutsche_post
-                  name: Deutsche Post DHL
-                - id: evri
-                  name: Evri
-                - id: fedex
-                  name: FedEx
-                - id: gls
-                  name: GLS
-                - id: inpost
-                  name: InPost
-                - id: poczta_polska
-                  name: Poczta Polska
-                - id: postnl
-                  name: PostNL
-                - id: royal_mail
-                  name: Royal Mail
-                - id: ups
-                  name: UPS
-                - id: usps
-                  name: USPS
-              schema:
-                type: object
-                properties:
-                  data:
-                    type: array
-                    items:
-                      type: object
-                      properties:
-                        id:
-                          type: string
-                        name:
-                          type: string
-                      required:
-                      - id
-                      - name
-                required:
-                - data
   "/api/v3/seller/orders":
     get:
       summary: List orders
@@ -16082,34 +14444,15 @@ paths:
                   completed_at: '2026-01-15T12:00:00.000Z'
                   created_at: '2026-01-15T12:00:00.000Z'
                   updated_at: '2026-01-15T12:00:00.000Z'
-                  internal_note:
-                  internal_note_html:
                   item_total: '10.0'
                   display_item_total: "$10.00"
-                  delivery_total: '100.0'
-                  display_delivery_total: "$100.00"
-                  discount_total: '0.0'
-                  display_discount_total: "$0.00"
-                  adjustment_total: '0.0'
-                  display_adjustment_total: "$0.00"
-                  included_tax_total: '0.0'
-                  display_included_tax_total: "$0.00"
-                  additional_tax_total: '0.0'
-                  display_additional_tax_total: "$0.00"
                   tax_total: '0.0'
                   display_tax_total: "$0.00"
                   total: '110.0'
                   display_total: "$110.00"
-                  payment_total: '0.0'
-                  display_payment_total: "$0.00"
-                  amount_due: '110.0'
-                  display_amount_due: "$110.00"
-                  canceled_at:
-                  cancel_reason_name:
-                  cancel_note:
                   items:
                   - id: li_UkLWZg9DAJ
-                    name: Product 16295
+                    name: Product 13795
                     options_text: ''
                     quantity: 1
                     currency: USD
@@ -16118,7 +14461,7 @@ paths:
                     total: '10.0'
                     display_total: "$10.00"
                     variant_id: variant_UkLWZg9DAJ
-                    sku: SKU-204
+                    sku: SKU-175
                     thumbnail_url:
                   fulfillments:
                   - id: ful_UkLWZg9DAJ
@@ -16126,55 +14469,28 @@ paths:
                     status: unfulfilled
                     tracking: U10000
                     tracking_url:
+                    tracking_carrier:
+                    tracking_status:
                     fulfilled_at:
-                    delivered_at:
                     created_at: '2026-01-15T12:00:00.000Z'
                     updated_at: '2026-01-15T12:00:00.000Z'
                     fulfillment_type: shipping
                     delivery_method_name: UPS Ground
                     stock_location_name: Roseline Roberts
-                    stock_location_id: sloc_UkLWZg9DAJ
                     fulfillment_items:
                     - id: fi_UkLWZg9DAJ
                       quantity: 1
                       line_item_id: li_UkLWZg9DAJ
-                      variant_id: variant_UkLWZg9DAJ
-                      name: Product 16295
-                      sku: SKU-204
+                      name: Product 13795
+                      sku: SKU-175
                       options_text: ''
-                    selected_delivery_rate_id: dr_gbHJdmfrXB
-                    delivery_rates:
-                    - id: dr_gbHJdmfrXB
-                      name: UPS Ground
-                      selected: true
-                      cost: '10.0'
-                      total: '10.0'
-                      carrier:
-                      service_level:
-                      estimated_delivery_date:
-                      display_cost: "$10.00"
-                      display_total: "$10.00"
-                    deliveries:
-                    - id: dlv_UkLWZg9DAJ
-                      tracking_number: U10000
-                      carrier:
-                      carrier_name:
-                      service:
-                      status: pending
-                      tracking_url:
-                      estimated_delivery_at:
-                      delivered_at:
-                      created_at: '2026-01-15T12:00:00.000Z'
-                      updated_at: '2026-01-15T12:00:00.000Z'
-                      shipping_label_id:
-                    labels: []
                   shipping_address:
                     id: addr_gbHJdmfrXB
                     label:
                     first_name: John
                     last_name: Doe
                     full_name: John Doe
-                    address1: 159 Lovely Street
+                    address1: 117 Lovely Street
                     address2: Northwest
                     postal_code: '10118'
                     city: New York
@@ -16196,7 +14512,7 @@ paths:
                     first_name: John
                     last_name: Doe
                     full_name: John Doe
-                    address1: 158 Lovely Street
+                    address1: 116 Lovely Street
                     address2: Northwest
                     postal_code: '10118'
                     city: New York
@@ -16277,34 +14593,15 @@ paths:
                 completed_at: '2026-01-15T12:00:00.000Z'
                 created_at: '2026-01-15T12:00:00.000Z'
                 updated_at: '2026-01-15T12:00:00.000Z'
-                internal_note:
-                internal_note_html:
                 item_total: '10.0'
                 display_item_total: "$10.00"
-                delivery_total: '100.0'
-                display_delivery_total: "$100.00"
-                discount_total: '0.0'
-                display_discount_total: "$0.00"
-                adjustment_total: '0.0'
-                display_adjustment_total: "$0.00"
-                included_tax_total: '0.0'
-                display_included_tax_total: "$0.00"
-                additional_tax_total: '0.0'
-                display_additional_tax_total: "$0.00"
                 tax_total: '0.0'
                 display_tax_total: "$0.00"
                 total: '110.0'
                 display_total: "$110.00"
-                payment_total: '0.0'
-                display_payment_total: "$0.00"
-                amount_due: '110.0'
-                display_amount_due: "$110.00"
-                canceled_at:
-                cancel_reason_name:
-                cancel_note:
                 items:
                 - id: li_UkLWZg9DAJ
-                  name: Product 1639755
+                  name: Product 1389755
                   options_text: ''
                   quantity: 1
                   currency: USD
@@ -16313,7 +14610,7 @@ paths:
                   total: '10.0'
                   display_total: "$10.00"
                   variant_id: variant_UkLWZg9DAJ
-                  sku: SKU-205
+                  sku: SKU-176
                   thumbnail_url:
                 fulfillments:
                 - id: ful_UkLWZg9DAJ
@@ -16321,55 +14618,28 @@ paths:
                   status: unfulfilled
                   tracking: U10000
                   tracking_url:
+                  tracking_carrier:
+                  tracking_status:
                   fulfilled_at:
-                  delivered_at:
                   created_at: '2026-01-15T12:00:00.000Z'
                   updated_at: '2026-01-15T12:00:00.000Z'
                   fulfillment_type: shipping
                   delivery_method_name: UPS Ground
                   stock_location_name: Woodrow Hand
-                  stock_location_id: sloc_UkLWZg9DAJ
                   fulfillment_items:
                   - id: fi_UkLWZg9DAJ
                     quantity: 1
                     line_item_id: li_UkLWZg9DAJ
-                    variant_id: variant_UkLWZg9DAJ
-                    name: Product 1639755
-                    sku: SKU-205
+                    name: Product 1389755
+                    sku: SKU-176
                     options_text: ''
-                  selected_delivery_rate_id: dr_gbHJdmfrXB
-                  delivery_rates:
-                  - id: dr_gbHJdmfrXB
-                    name: UPS Ground
-                    selected: true
-                    cost: '10.0'
-                    total: '10.0'
-                    carrier:
-                    service_level:
-                    estimated_delivery_date:
-                    display_cost: "$10.00"
-                    display_total: "$10.00"
-                  deliveries:
-                  - id: dlv_UkLWZg9DAJ
-                    tracking_number: U10000
-                    carrier:
-                    carrier_name:
-                    service:
-                    status: pending
-                    tracking_url:
-                    estimated_delivery_at:
-                    delivered_at:
-                    created_at: '2026-01-15T12:00:00.000Z'
-                    updated_at: '2026-01-15T12:00:00.000Z'
-                    shipping_label_id:
-                  labels: []
                 shipping_address:
                   id: addr_gbHJdmfrXB
                   label:
                   first_name: John
                   last_name: Doe
                   full_name: John Doe
-                  address1: 161 Lovely Street
+                  address1: 119 Lovely Street
                   address2: Northwest
                   postal_code: '10118'
                   city: New York
@@ -16391,7 +14661,7 @@ paths:
                   first_name: John
                   last_name: Doe
                   full_name: John Doe
-                  address1: 160 Lovely Street
+                  address1: 118 Lovely Street
                   address2: Northwest
                   postal_code: '10118'
                   city: New York
@@ -16434,17 +14704,10 @@ paths:
       security:
       - bearer_auth: []
       description: |
-        Withdraws from an order this seller cannot fulfil, naming a reason from
-        the marketplace's own list.
+        Withdraws from an order this seller cannot fulfil.
 
-        The goods go back on the shelf and the payment authorization is
-        released either way. `refund_payments` also hands back what the buyer
-        paid for these goods — a seller is merchant of record for their own
-        child order, and on a split checkout only that order's share of the
-        group's payment is settled.
-
-        There is no `refund_amount`: withdrawing from the whole order returns
-        what that order was paid, and a partial figure is a return.
+        Restocking and any refund are the cancellation's own concern, so a
+        seller cannot cancel without the money and the stock following.
       parameters:
       - name: X-Spree-Seller-Id
         in: header
@@ -16468,34 +14731,15 @@ paths:
                 completed_at: '2026-01-15T12:00:00.000Z'
                 created_at: '2026-01-15T12:00:00.000Z'
                 updated_at: '2026-01-15T12:00:00.000Z'
-                internal_note:
-                internal_note_html:
                 item_total: '10.0'
                 display_item_total: "$10.00"
-                delivery_total: '100.0'
-                display_delivery_total: "$100.00"
-                discount_total: '0.0'
-                display_discount_total: "$0.00"
-                adjustment_total: '0.0'
-                display_adjustment_total: "$0.00"
-                included_tax_total: '0.0'
-                display_included_tax_total: "$0.00"
-                additional_tax_total: '0.0'
-                display_additional_tax_total: "$0.00"
                 tax_total: '0.0'
                 display_tax_total: "$0.00"
                 total: '110.0'
                 display_total: "$110.00"
-                payment_total: '0.0'
-                display_payment_total: "$0.00"
-                amount_due: "-0.0"
-                display_amount_due: "$0.00"
-                canceled_at: '2026-01-15T12:00:00Z'
-                cancel_reason_name:
-                cancel_note:
                 items:
                 - id: li_UkLWZg9DAJ
-                  name: Product 1666554
+                  name: Product 1416554
                   options_text: ''
                   quantity: 1
                   currency: USD
@@ -16504,7 +14748,7 @@ paths:
                   total: '10.0'
                   display_total: "$10.00"
                   variant_id: variant_UkLWZg9DAJ
-                  sku: SKU-208
+                  sku: SKU-179
                   thumbnail_url:
                 fulfillments:
                 - id: ful_UkLWZg9DAJ
@@ -16512,55 +14756,28 @@ paths:
                   status: canceled
                   tracking: U10000
                   tracking_url:
+                  tracking_carrier:
+                  tracking_status:
                   fulfilled_at:
-                  delivered_at:
                   created_at: '2026-01-15T12:00:00.000Z'
                   updated_at: '2026-01-15T12:00:00.000Z'
                   fulfillment_type: shipping
                   delivery_method_name: UPS Ground
                   stock_location_name: Ricky Kutch
-                  stock_location_id: sloc_UkLWZg9DAJ
                   fulfillment_items:
                   - id: fi_UkLWZg9DAJ
                     quantity: 1
                     line_item_id: li_UkLWZg9DAJ
-                    variant_id: variant_UkLWZg9DAJ
-                    name: Product 1666554
-                    sku: SKU-208
+                    name: Product 1416554
+                    sku: SKU-179
                     options_text: ''
-                  selected_delivery_rate_id: dr_gbHJdmfrXB
-                  delivery_rates:
-                  - id: dr_gbHJdmfrXB
-                    name: UPS Ground
-                    selected: true
-                    cost: '10.0'
-                    total: '10.0'
-                    carrier:
-                    service_level:
-                    estimated_delivery_date:
-                    display_cost: "$10.00"
-                    display_total: "$10.00"
-                  deliveries:
-                  - id: dlv_UkLWZg9DAJ
-                    tracking_number: U10000
-                    carrier:
-                    carrier_name:
-                    service:
-                    status: pending
-                    tracking_url:
-                    estimated_delivery_at:
-                    delivered_at:
-                    created_at: '2026-01-15T12:00:00.000Z'
-                    updated_at: '2026-01-15T12:00:00.000Z'
-                    shipping_label_id:
-                  labels: []
                 shipping_address:
                   id: addr_gbHJdmfrXB
                   label:
                   first_name: John
                   last_name: Doe
                   full_name: John Doe
-                  address1: 167 Lovely Street
+                  address1: 125 Lovely Street
                   address2: Northwest
                   postal_code: '10118'
                   city: New York
@@ -16582,7 +14799,7 @@ paths:
                   first_name: John
                   last_name: Doe
                   full_name: John Doe
-                  address1: 166 Lovely Street
+                  address1: 124 Lovely Street
                   address2: Northwest
                   postal_code: '10118'
                   city: New York
@@ -16606,1141 +14823,9 @@ paths:
             schema:
               type: object
               properties:
-                cancel_reason_id:
-                  type: string
-                  nullable: true
-                  description: A reason from GET /order_cancellation_reasons
-                cancel_note:
-                  type: string
-                  nullable: true
-                  description: Free text beside the reason
-                refund_payments:
-                  type: boolean
-                  description: Hand back what the buyer paid for this order's goods
                 notify_customer:
                   type: boolean
                   description: Email the customer about the cancellation
-  "/api/v3/seller/orders/{id}/address":
-    parameters:
-    - name: id
-      in: path
-      description: Prefixed order ID
-      required: true
-      schema:
-        type: string
-    patch:
-      summary: Correct an order address
-      tags:
-      - Orders
-      security:
-      - bearer_auth: []
-      description: |
-        Corrects where the goods go or who the invoice names.
-
-        The seller is merchant of record for their own child order, so a
-        delivery address the buyer got wrong is theirs to fix. Send only the
-        lines that change — the rest of the address is carried over.
-
-        This is the only write against the order itself besides cancelling:
-        nothing else about it, its totals included, is the seller's to change.
-      parameters:
-      - name: X-Spree-Seller-Id
-        in: header
-        required: true
-        schema:
-          type: string
-      responses:
-        '200':
-          description: address corrected
-          content:
-            application/json:
-              example:
-                id: or_UkLWZg9DAJ
-                number: R1001
-                customer_note:
-                currency: USD
-                total_quantity: 1
-                status: placed
-                fulfillment_status:
-                payment_status:
-                completed_at: '2026-01-15T12:00:00.000Z'
-                created_at: '2026-01-15T12:00:00.000Z'
-                updated_at: '2026-01-15T12:00:00.000Z'
-                internal_note:
-                internal_note_html:
-                item_total: '10.0'
-                display_item_total: "$10.00"
-                delivery_total: '100.0'
-                display_delivery_total: "$100.00"
-                discount_total: '0.0'
-                display_discount_total: "$0.00"
-                adjustment_total: '0.0'
-                display_adjustment_total: "$0.00"
-                included_tax_total: '0.0'
-                display_included_tax_total: "$0.00"
-                additional_tax_total: '0.0'
-                display_additional_tax_total: "$0.00"
-                tax_total: '0.0'
-                display_tax_total: "$0.00"
-                total: '110.0'
-                display_total: "$110.00"
-                payment_total: '0.0'
-                display_payment_total: "$0.00"
-                amount_due: '110.0'
-                display_amount_due: "$110.00"
-                canceled_at:
-                cancel_reason_name:
-                cancel_note:
-                items:
-                - id: li_UkLWZg9DAJ
-                  name: Product 1675038
-                  options_text: ''
-                  quantity: 1
-                  currency: USD
-                  price: '10.0'
-                  display_price: "$10.00"
-                  total: '10.0'
-                  display_total: "$10.00"
-                  variant_id: variant_UkLWZg9DAJ
-                  sku: SKU-209
-                  thumbnail_url:
-                fulfillments:
-                - id: ful_UkLWZg9DAJ
-                  number: R1001-F1
-                  status: unfulfilled
-                  tracking: U10000
-                  tracking_url:
-                  fulfilled_at:
-                  delivered_at:
-                  created_at: '2026-01-15T12:00:00.000Z'
-                  updated_at: '2026-01-15T12:00:00.000Z'
-                  fulfillment_type: shipping
-                  delivery_method_name: UPS Ground
-                  stock_location_name: Rudy Mosciski
-                  stock_location_id: sloc_UkLWZg9DAJ
-                  fulfillment_items:
-                  - id: fi_UkLWZg9DAJ
-                    quantity: 1
-                    line_item_id: li_UkLWZg9DAJ
-                    variant_id: variant_UkLWZg9DAJ
-                    name: Product 1675038
-                    sku: SKU-209
-                    options_text: ''
-                  selected_delivery_rate_id: dr_gbHJdmfrXB
-                  delivery_rates:
-                  - id: dr_gbHJdmfrXB
-                    name: UPS Ground
-                    selected: true
-                    cost: '10.0'
-                    total: '10.0'
-                    carrier:
-                    service_level:
-                    estimated_delivery_date:
-                    display_cost: "$10.00"
-                    display_total: "$10.00"
-                  deliveries:
-                  - id: dlv_UkLWZg9DAJ
-                    tracking_number: U10000
-                    carrier:
-                    carrier_name:
-                    service:
-                    status: pending
-                    tracking_url:
-                    estimated_delivery_at:
-                    delivered_at:
-                    created_at: '2026-01-15T12:00:00.000Z'
-                    updated_at: '2026-01-15T12:00:00.000Z'
-                    shipping_label_id:
-                  labels: []
-                shipping_address:
-                  id: addr_EfhxLZ9ck8
-                  label:
-                  first_name: John
-                  last_name: Doe
-                  full_name: John Doe
-                  address1: 9 Corrected Way
-                  address2: Northwest
-                  postal_code: '10118'
-                  city: Fixedton
-                  phone: 555-555-0199
-                  company: Company
-                  country_name: United States
-                  country_code: US
-                  state_text: NY
-                  state_code: NY
-                  quick_checkout: false
-                  is_default_billing: false
-                  is_default_shipping: true
-                  state_abbr: NY
-                  country_iso: US
-                  state_name: New York
-                billing_address:
-                  id: addr_UkLWZg9DAJ
-                  label:
-                  first_name: John
-                  last_name: Doe
-                  full_name: John Doe
-                  address1: 168 Lovely Street
-                  address2: Northwest
-                  postal_code: '10118'
-                  city: New York
-                  phone: 555-555-0199
-                  company: Company
-                  country_name: United States
-                  country_code: US
-                  state_text: NY
-                  state_code: NY
-                  quick_checkout: false
-                  is_default_billing: false
-                  is_default_shipping: false
-                  state_abbr: NY
-                  country_iso: US
-                  state_name: New York
-              schema:
-                "$ref": "#/components/schemas/Order"
-        '422':
-          description: neither address named
-          content:
-            application/json:
-              example:
-                error:
-                  code: validation_error
-                  message: shipping_address or billing_address is required
-                  details:
-                    base:
-                    - shipping_address or billing_address is required
-      requestBody:
-        content:
-          application/json:
-            schema:
-              type: object
-              properties:
-                shipping_address:
-                  type: object
-                  description: Only the lines that change; the rest is carried over
-                  properties:
-                    first_name:
-                      type: string
-                    last_name:
-                      type: string
-                    company:
-                      type: string
-                      nullable: true
-                    address1:
-                      type: string
-                    address2:
-                      type: string
-                      nullable: true
-                    city:
-                      type: string
-                    postal_code:
-                      type: string
-                    country_code:
-                      type: string
-                    state_code:
-                      type: string
-                      nullable: true
-                    state_name:
-                      type: string
-                      nullable: true
-                    phone:
-                      type: string
-                      nullable: true
-                    label:
-                      type: string
-                      nullable: true
-                billing_address:
-                  type: object
-                  description: Only the lines that change; the rest is carried over
-                  properties:
-                    first_name:
-                      type: string
-                    last_name:
-                      type: string
-                    company:
-                      type: string
-                      nullable: true
-                    address1:
-                      type: string
-                    address2:
-                      type: string
-                      nullable: true
-                    city:
-                      type: string
-                    postal_code:
-                      type: string
-                    country_code:
-                      type: string
-                    state_code:
-                      type: string
-                      nullable: true
-                    state_name:
-                      type: string
-                      nullable: true
-                    phone:
-                      type: string
-                      nullable: true
-                    label:
-                      type: string
-                      nullable: true
-        required: true
-  "/api/v3/seller/orders/{order_id}/notes":
-    parameters:
-    - name: order_id
-      in: path
-      description: Prefixed order ID
-      required: true
-      schema:
-        type: string
-    get:
-      summary: Get order notes
-      tags:
-      - Orders
-      security:
-      - bearer_auth: []
-      description: |
-        The instructions the buyer left, and the seller's own working note.
-
-        A marketplace basket splits into one order per seller, so the internal
-        note here is this seller's alone rather than the operator's note about
-        the whole sale.
-      parameters:
-      - name: X-Spree-Seller-Id
-        in: header
-        required: true
-        schema:
-          type: string
-      responses:
-        '200':
-          description: notes
-          content:
-            application/json:
-              example:
-                id: or_UkLWZg9DAJ
-                number: R1001
-                customer_note:
-                currency: USD
-                total_quantity: 1
-                status: placed
-                fulfillment_status:
-                payment_status:
-                completed_at: '2026-01-15T12:00:00.000Z'
-                created_at: '2026-01-15T12:00:00.000Z'
-                updated_at: '2026-01-15T12:00:00.000Z'
-                internal_note:
-                internal_note_html:
-                item_total: '10.0'
-                display_item_total: "$10.00"
-                delivery_total: '100.0'
-                display_delivery_total: "$100.00"
-                discount_total: '0.0'
-                display_discount_total: "$0.00"
-                adjustment_total: '0.0'
-                display_adjustment_total: "$0.00"
-                included_tax_total: '0.0'
-                display_included_tax_total: "$0.00"
-                additional_tax_total: '0.0'
-                display_additional_tax_total: "$0.00"
-                tax_total: '0.0'
-                display_tax_total: "$0.00"
-                total: '110.0'
-                display_total: "$110.00"
-                payment_total: '0.0'
-                display_payment_total: "$0.00"
-                amount_due: '110.0'
-                display_amount_due: "$110.00"
-                canceled_at:
-                cancel_reason_name:
-                cancel_note:
-                items:
-                - id: li_UkLWZg9DAJ
-                  name: Product 1693962
-                  options_text: ''
-                  quantity: 1
-                  currency: USD
-                  price: '10.0'
-                  display_price: "$10.00"
-                  total: '10.0'
-                  display_total: "$10.00"
-                  variant_id: variant_UkLWZg9DAJ
-                  sku: SKU-211
-                  thumbnail_url:
-                fulfillments:
-                - id: ful_UkLWZg9DAJ
-                  number: R1001-F1
-                  status: unfulfilled
-                  tracking: U10000
-                  tracking_url:
-                  fulfilled_at:
-                  delivered_at:
-                  created_at: '2026-01-15T12:00:00.000Z'
-                  updated_at: '2026-01-15T12:00:00.000Z'
-                  fulfillment_type: shipping
-                  delivery_method_name: UPS Ground
-                  stock_location_name: Kecia Pollich
-                  stock_location_id: sloc_UkLWZg9DAJ
-                  fulfillment_items:
-                  - id: fi_UkLWZg9DAJ
-                    quantity: 1
-                    line_item_id: li_UkLWZg9DAJ
-                    variant_id: variant_UkLWZg9DAJ
-                    name: Product 1693962
-                    sku: SKU-211
-                    options_text: ''
-                  selected_delivery_rate_id: dr_gbHJdmfrXB
-                  delivery_rates:
-                  - id: dr_gbHJdmfrXB
-                    name: UPS Ground
-                    selected: true
-                    cost: '10.0'
-                    total: '10.0'
-                    carrier:
-                    service_level:
-                    estimated_delivery_date:
-                    display_cost: "$10.00"
-                    display_total: "$10.00"
-                  deliveries:
-                  - id: dlv_UkLWZg9DAJ
-                    tracking_number: U10000
-                    carrier:
-                    carrier_name:
-                    service:
-                    status: pending
-                    tracking_url:
-                    estimated_delivery_at:
-                    delivered_at:
-                    created_at: '2026-01-15T12:00:00.000Z'
-                    updated_at: '2026-01-15T12:00:00.000Z'
-                    shipping_label_id:
-                  labels: []
-                shipping_address:
-                  id: addr_gbHJdmfrXB
-                  label:
-                  first_name: John
-                  last_name: Doe
-                  full_name: John Doe
-                  address1: 173 Lovely Street
-                  address2: Northwest
-                  postal_code: '10118'
-                  city: New York
-                  phone: 555-555-0199
-                  company: Company
-                  country_name: United States
-                  country_code: US
-                  state_text: NY
-                  state_code: NY
-                  quick_checkout: false
-                  is_default_billing: false
-                  is_default_shipping: false
-                  state_abbr: NY
-                  country_iso: US
-                  state_name: New York
-                billing_address:
-                  id: addr_UkLWZg9DAJ
-                  label:
-                  first_name: John
-                  last_name: Doe
-                  full_name: John Doe
-                  address1: 172 Lovely Street
-                  address2: Northwest
-                  postal_code: '10118'
-                  city: New York
-                  phone: 555-555-0199
-                  company: Company
-                  country_name: United States
-                  country_code: US
-                  state_text: NY
-                  state_code: NY
-                  quick_checkout: false
-                  is_default_billing: false
-                  is_default_shipping: false
-                  state_abbr: NY
-                  country_iso: US
-                  state_name: New York
-              schema:
-                "$ref": "#/components/schemas/Order"
-    patch:
-      summary: Update order notes
-      tags:
-      - Orders
-      security:
-      - bearer_auth: []
-      description: |
-        Send only the note that changes: an absent key leaves the other alone,
-        while an empty string clears it.
-
-        `internal_note` accepts HTML and is sanitized on save;
-        `internal_note_html` reads it back.
-      parameters:
-      - name: X-Spree-Seller-Id
-        in: header
-        required: true
-        schema:
-          type: string
-      responses:
-        '200':
-          description: notes updated
-          content:
-            application/json:
-              example:
-                id: or_UkLWZg9DAJ
-                number: R1001
-                customer_note:
-                currency: USD
-                total_quantity: 1
-                status: placed
-                fulfillment_status:
-                payment_status:
-                completed_at: '2026-01-15T12:00:00.000Z'
-                created_at: '2026-01-15T12:00:00.000Z'
-                updated_at: '2026-01-15T12:00:00.000Z'
-                internal_note: Packed with the fragile insert.
-                internal_note_html: "<p>Packed with the fragile insert.</p>"
-                item_total: '10.0'
-                display_item_total: "$10.00"
-                delivery_total: '100.0'
-                display_delivery_total: "$100.00"
-                discount_total: '0.0'
-                display_discount_total: "$0.00"
-                adjustment_total: '0.0'
-                display_adjustment_total: "$0.00"
-                included_tax_total: '0.0'
-                display_included_tax_total: "$0.00"
-                additional_tax_total: '0.0'
-                display_additional_tax_total: "$0.00"
-                tax_total: '0.0'
-                display_tax_total: "$0.00"
-                total: '110.0'
-                display_total: "$110.00"
-                payment_total: '0.0'
-                display_payment_total: "$0.00"
-                amount_due: '110.0'
-                display_amount_due: "$110.00"
-                canceled_at:
-                cancel_reason_name:
-                cancel_note:
-                items:
-                - id: li_UkLWZg9DAJ
-                  name: Product 1705749
-                  options_text: ''
-                  quantity: 1
-                  currency: USD
-                  price: '10.0'
-                  display_price: "$10.00"
-                  total: '10.0'
-                  display_total: "$10.00"
-                  variant_id: variant_UkLWZg9DAJ
-                  sku: SKU-212
-                  thumbnail_url:
-                fulfillments:
-                - id: ful_UkLWZg9DAJ
-                  number: R1001-F1
-                  status: unfulfilled
-                  tracking: U10000
-                  tracking_url:
-                  fulfilled_at:
-                  delivered_at:
-                  created_at: '2026-01-15T12:00:00.000Z'
-                  updated_at: '2026-01-15T12:00:00.000Z'
-                  fulfillment_type: shipping
-                  delivery_method_name: UPS Ground
-                  stock_location_name: Ophelia Hartmann
-                  stock_location_id: sloc_UkLWZg9DAJ
-                  fulfillment_items:
-                  - id: fi_UkLWZg9DAJ
-                    quantity: 1
-                    line_item_id: li_UkLWZg9DAJ
-                    variant_id: variant_UkLWZg9DAJ
-                    name: Product 1705749
-                    sku: SKU-212
-                    options_text: ''
-                  selected_delivery_rate_id: dr_gbHJdmfrXB
-                  delivery_rates:
-                  - id: dr_gbHJdmfrXB
-                    name: UPS Ground
-                    selected: true
-                    cost: '10.0'
-                    total: '10.0'
-                    carrier:
-                    service_level:
-                    estimated_delivery_date:
-                    display_cost: "$10.00"
-                    display_total: "$10.00"
-                  deliveries:
-                  - id: dlv_UkLWZg9DAJ
-                    tracking_number: U10000
-                    carrier:
-                    carrier_name:
-                    service:
-                    status: pending
-                    tracking_url:
-                    estimated_delivery_at:
-                    delivered_at:
-                    created_at: '2026-01-15T12:00:00.000Z'
-                    updated_at: '2026-01-15T12:00:00.000Z'
-                    shipping_label_id:
-                  labels: []
-                shipping_address:
-                  id: addr_gbHJdmfrXB
-                  label:
-                  first_name: John
-                  last_name: Doe
-                  full_name: John Doe
-                  address1: 175 Lovely Street
-                  address2: Northwest
-                  postal_code: '10118'
-                  city: New York
-                  phone: 555-555-0199
-                  company: Company
-                  country_name: United States
-                  country_code: US
-                  state_text: NY
-                  state_code: NY
-                  quick_checkout: false
-                  is_default_billing: false
-                  is_default_shipping: false
-                  state_abbr: NY
-                  country_iso: US
-                  state_name: New York
-                billing_address:
-                  id: addr_UkLWZg9DAJ
-                  label:
-                  first_name: John
-                  last_name: Doe
-                  full_name: John Doe
-                  address1: 174 Lovely Street
-                  address2: Northwest
-                  postal_code: '10118'
-                  city: New York
-                  phone: 555-555-0199
-                  company: Company
-                  country_name: United States
-                  country_code: US
-                  state_text: NY
-                  state_code: NY
-                  quick_checkout: false
-                  is_default_billing: false
-                  is_default_shipping: false
-                  state_abbr: NY
-                  country_iso: US
-                  state_name: New York
-              schema:
-                "$ref": "#/components/schemas/Order"
-        '422':
-          description: neither note named
-          content:
-            application/json:
-              example:
-                error:
-                  code: validation_error
-                  message: customer_note or internal_note is required
-                  details:
-                    base:
-                    - customer_note or internal_note is required
-      requestBody:
-        content:
-          application/json:
-            schema:
-              type: object
-              properties:
-                customer_note:
-                  type: string
-                  nullable: true
-                  description: What the buyer asked for
-                internal_note:
-                  type: string
-                  nullable: true
-                  description: The seller's own working note, as HTML
-        required: true
-  "/api/v3/seller/order_cancellation_reasons":
-    get:
-      summary: List order cancellation reasons
-      tags:
-      - Orders
-      security:
-      - bearer_auth: []
-      description: |
-        Why an order was called off, as the marketplace defines it.
-
-        Read-only: a seller picks one when cancelling, and the operator decides
-        what the list holds. Retired reasons are left out.
-      parameters:
-      - name: X-Spree-Seller-Id
-        in: header
-        required: true
-        schema:
-          type: string
-      responses:
-        '200':
-          description: reasons listed
-          content:
-            application/json:
-              example:
-                data:
-                - id: ocr_UkLWZg9DAJ
-                  name: Out of stock
-                  active: true
-                meta:
-                  page: 1
-                  limit: 25
-                  count: 1
-                  pages: 1
-                  from: 1
-                  to: 1
-                  in: 1
-                  previous:
-                  next:
-              schema:
-                type: object
-                properties:
-                  data:
-                    type: array
-                    items:
-                      "$ref": "#/components/schemas/Reason"
-                required:
-                - data
-  "/api/v3/seller/orders/{order_id}/returns":
-    parameters:
-    - name: order_id
-      in: path
-      description: Prefixed order ID
-      required: true
-      schema:
-        type: string
-    get:
-      summary: List returns
-      tags:
-      - Returns
-      security:
-      - bearer_auth: []
-      description: |
-        Goods coming back on one of this seller's orders.
-
-        Reached through the order, which is itself fetched through the acting
-        seller — so a return on somebody else's order is unreachable whatever
-        ids are sent.
-      parameters:
-      - name: X-Spree-Seller-Id
-        in: header
-        required: true
-        schema:
-          type: string
-      responses:
-        '200':
-          description: returns listed
-          content:
-            application/json:
-              example:
-                data:
-                - id: ret_UkLWZg9DAJ
-                  number: RET1001
-                  status: requested
-                  order_id: or_UkLWZg9DAJ
-                  reason_id:
-                  refund_total: '10.0'
-                  display_refund_total: "$10.00"
-                  approved_at:
-                  received_at:
-                  refunded_at:
-                  canceled_at:
-                  memo:
-                  stock_location_id: sloc_UkLWZg9DAJ
-                  refunded_total: '0.0'
-                  refundable_total: '10.0'
-                  display_refunded_total: "$0.00"
-                meta:
-                  page: 1
-                  limit: 25
-                  count: 1
-                  pages: 1
-                  from: 1
-                  to: 1
-                  in: 1
-                  previous:
-                  next:
-              schema:
-                type: object
-                properties:
-                  data:
-                    type: array
-                    items:
-                      "$ref": "#/components/schemas/Return"
-                required:
-                - data
-    post:
-      summary: Open a return
-      tags:
-      - Returns
-      security:
-      - bearer_auth: []
-      description: |
-        Takes goods back on one of this seller's orders.
-
-        The units are addressed by fulfillment item and resolved through the
-        order, so only what this seller actually shipped can come back. An
-        optional stock location says which of the seller's own shelves it
-        returns to.
-      parameters:
-      - name: X-Spree-Seller-Id
-        in: header
-        required: true
-        schema:
-          type: string
-      responses:
-        '201':
-          description: return opened
-          content:
-            application/json:
-              example:
-                id: ret_UkLWZg9DAJ
-                number: RET1001
-                status: requested
-                order_id: or_UkLWZg9DAJ
-                reason_id:
-                refund_total: '10.0'
-                display_refund_total: "$10.00"
-                approved_at:
-                received_at:
-                refunded_at:
-                canceled_at:
-                memo:
-                stock_location_id: sloc_UkLWZg9DAJ
-                refunded_total: '0.0'
-                refundable_total: '10.0'
-                display_refunded_total: "$0.00"
-              schema:
-                "$ref": "#/components/schemas/Return"
-        '422':
-          description: more than was shipped
-          content:
-            application/json:
-              example:
-                error:
-                  code: processing_error
-                  message: Only 1 of Product 1837120 can be returned
-      requestBody:
-        content:
-          application/json:
-            schema:
-              type: object
-              properties:
-                items:
-                  type: array
-                  items:
-                    type: object
-                    properties:
-                      fulfillment_item_id:
-                        type: string
-                      quantity:
-                        type: integer
-                    required:
-                    - fulfillment_item_id
-                    - quantity
-                reason_id:
-                  type: string
-                  nullable: true
-                stock_location_id:
-                  type: string
-                  nullable: true
-                memo:
-                  type: string
-                  nullable: true
-              required:
-              - items
-  "/api/v3/seller/orders/{order_id}/returns/{id}/approve":
-    parameters:
-    - name: order_id
-      in: path
-      required: true
-      schema:
-        type: string
-    - name: id
-      in: path
-      required: true
-      schema:
-        type: string
-    patch:
-      summary: Approve a return
-      tags:
-      - Returns
-      security:
-      - bearer_auth: []
-      description: Agrees the goods may come back.
-      parameters:
-      - name: X-Spree-Seller-Id
-        in: header
-        required: true
-        schema:
-          type: string
-      responses:
-        '200':
-          description: return approved
-          content:
-            application/json:
-              example:
-                id: ret_UkLWZg9DAJ
-                number: RET1001
-                status: approved
-                order_id: or_UkLWZg9DAJ
-                reason_id:
-                refund_total: '10.0'
-                display_refund_total: "$10.00"
-                approved_at: '2026-01-15T12:00:00Z'
-                received_at:
-                refunded_at:
-                canceled_at:
-                memo:
-                stock_location_id: sloc_UkLWZg9DAJ
-                refunded_total: '0.0'
-                refundable_total: '10.0'
-                display_refunded_total: "$0.00"
-              schema:
-                "$ref": "#/components/schemas/Return"
-  "/api/v3/seller/orders/{order_id}/returns/{id}/receive":
-    parameters:
-    - name: order_id
-      in: path
-      required: true
-      schema:
-        type: string
-    - name: id
-      in: path
-      required: true
-      schema:
-        type: string
-    patch:
-      summary: Receive a return
-      tags:
-      - Returns
-      security:
-      - bearer_auth: []
-      description: |
-        Records what actually arrived, and whether it can be sold again.
-
-        Omitting `items` receives everything as requested and resellable.
-      parameters:
-      - name: X-Spree-Seller-Id
-        in: header
-        required: true
-        schema:
-          type: string
-      responses:
-        '200':
-          description: return received
-          content:
-            application/json:
-              example:
-                id: ret_UkLWZg9DAJ
-                number: RET1001
-                status: received
-                order_id: or_UkLWZg9DAJ
-                reason_id:
-                refund_total: '10.0'
-                display_refund_total: "$10.00"
-                approved_at: '2026-01-15T12:00:00Z'
-                received_at: '2026-01-15T12:00:00Z'
-                refunded_at:
-                canceled_at:
-                memo:
-                stock_location_id: sloc_UkLWZg9DAJ
-                refunded_total: '0.0'
-                refundable_total: '10.0'
-                display_refunded_total: "$0.00"
-              schema:
-                "$ref": "#/components/schemas/Return"
-      requestBody:
-        content:
-          application/json:
-            schema:
-              type: object
-              properties:
-                items:
-                  type: array
-                  items:
-                    type: object
-                    properties:
-                      return_line_item_id:
-                        type: string
-                      quantity:
-                        type: integer
-                      resellable:
-                        type: boolean
-                    required:
-                    - return_line_item_id
-                    - quantity
-  "/api/v3/seller/orders/{order_id}/returns/{id}/refund":
-    parameters:
-    - name: order_id
-      in: path
-      required: true
-      schema:
-        type: string
-    - name: id
-      in: path
-      required: true
-      schema:
-        type: string
-    patch:
-      summary: Refund a return
-      tags:
-      - Returns
-      security:
-      - bearer_auth: []
-      description: |
-        Gives the customer their money back.
-
-        The seller is merchant of record for their own child order, so this is
-        theirs to do. The amount is bounded by what the return is owed and, on
-        a basket split between sellers, by this order's share of the payment —
-        never a sibling's.
-      parameters:
-      - name: X-Spree-Seller-Id
-        in: header
-        required: true
-        schema:
-          type: string
-      responses:
-        '200':
-          description: return refunded
-          content:
-            application/json:
-              example:
-                id: ret_UkLWZg9DAJ
-                number: RET1001
-                status: refunded
-                order_id: or_UkLWZg9DAJ
-                reason_id:
-                refund_total: '10.0'
-                display_refund_total: "$10.00"
-                approved_at: '2026-01-15T12:00:00Z'
-                received_at: '2026-01-15T12:00:00Z'
-                refunded_at: '2026-01-15T12:00:00Z'
-                canceled_at:
-                memo:
-                stock_location_id: sloc_UkLWZg9DAJ
-                refunded_total: '10.0'
-                refundable_total: '0.0'
-                display_refunded_total: "$10.00"
-              schema:
-                "$ref": "#/components/schemas/Return"
-        '422':
-          description: more than the return is owed
-          content:
-            application/json:
-              example:
-                error:
-                  code: processing_error
-                  message: refund_exceeds_balance
-      requestBody:
-        content:
-          application/json:
-            schema:
-              type: object
-              properties:
-                amount:
-                  type: string
-                  nullable: true
-                refund_method:
-                  type: string
-                  enum:
-                  - original_payment
-                  - store_credit
-  "/api/v3/seller/orders/{order_id}/returns/{id}/cancel":
-    parameters:
-    - name: order_id
-      in: path
-      required: true
-      schema:
-        type: string
-    - name: id
-      in: path
-      required: true
-      schema:
-        type: string
-    patch:
-      summary: Cancel a return
-      tags:
-      - Returns
-      security:
-      - bearer_auth: []
-      description: Calls the return off.
-      parameters:
-      - name: X-Spree-Seller-Id
-        in: header
-        required: true
-        schema:
-          type: string
-      responses:
-        '200':
-          description: return canceled
-          content:
-            application/json:
-              example:
-                id: ret_UkLWZg9DAJ
-                number: RET1001
-                status: canceled
-                order_id: or_UkLWZg9DAJ
-                reason_id:
-                refund_total: '10.0'
-                display_refund_total: "$10.00"
-                approved_at:
-                received_at:
-                refunded_at:
-                canceled_at: '2026-01-15T12:00:00Z'
-                memo:
-                stock_location_id: sloc_UkLWZg9DAJ
-                refunded_total: '0.0'
-                refundable_total: '10.0'
-                display_refunded_total: "$0.00"
-              schema:
-                "$ref": "#/components/schemas/Return"
-  "/api/v3/seller/return_reasons":
-    get:
-      summary: List return reasons
-      tags:
-      - Returns
-      security:
-      - bearer_auth: []
-      description: |
-        Why goods come back, as the marketplace defines it.
-
-        Read-only: the vocabulary is the operator's, and a seller picks from
-        it. Retired reasons are left out.
-      parameters:
-      - name: X-Spree-Seller-Id
-        in: header
-        required: true
-        schema:
-          type: string
-      responses:
-        '200':
-          description: reasons listed
-          content:
-            application/json:
-              example:
-                data:
-                - id: rar_UkLWZg9DAJ
-                  name: Damaged in transit
-                  active: true
-                meta:
-                  page: 1
-                  limit: 25
-                  count: 1
-                  pages: 1
-                  from: 1
-                  to: 1
-                  in: 1
-                  previous:
-                  next:
-              schema:
-                type: object
-                properties:
-                  data:
-                    type: array
-                    items:
-                      "$ref": "#/components/schemas/Reason"
-                required:
-                - data
   "/api/v3/seller/tax_identifiers":
     get:
       summary: List tax registrations
@@ -17949,22 +15034,11 @@ tags:
     do
 - name: Countries
   description: Country and state reference data for the panel's address forms
-- name: Delivery Methods
-  description: The seller's own ways to ship, and the marketplace methods shared with
-    them
-- name: Delivery Profiles
-  description: The marketplace's delivery vocabulary — what kind of goods a product
-    is, which decides how it ships
-- name: Delivery Zones
-  description: The marketplace's destinations, for narrowing where a seller's own
-    method ships
 - name: Onboarding
   description: The marketplace checklist a seller completes before admission, and
     what they submit against it
 - name: Policies
   description: The seller's own legal documents, as the marketplace asks them to publish
-- name: Product Types
-  description: The types a seller may list a product against, and what each adds
 - name: Products
   description: The seller's own catalog
 - name: Profile
@@ -18784,435 +15858,6 @@ components:
       - display_compare_at_amount
       - price_list_id
       x-typelizer: true
-    ClaimLineItem:
-      type: object
-      properties:
-        id:
-          type: string
-        quantity:
-          type: number
-        send_replacement:
-          type: boolean
-        description:
-          type: string
-          nullable: true
-        refund_amount:
-          type: string
-        paid_amount:
-          type: string
-        display_refund_amount:
-          type: string
-        variant_id:
-          type: string
-          nullable: true
-        replacement_variant_id:
-          type: string
-          nullable: true
-        line_item_id:
-          type: string
-          nullable: true
-        variant:
-          "$ref": "#/components/schemas/Variant"
-        name:
-          type: string
-          nullable: true
-      required:
-      - id
-      - quantity
-      - send_replacement
-      - description
-      - refund_amount
-      - paid_amount
-      - display_refund_amount
-      - variant_id
-      - replacement_variant_id
-      - line_item_id
-      - name
-      x-typelizer: true
-    Claim:
-      type: object
-      properties:
-        id:
-          type: string
-        number:
-          type: string
-        status:
-          type: string
-        resolution:
-          type: string
-          nullable: true
-        order_id:
-          type: string
-          nullable: true
-        reason_id:
-          type: string
-          nullable: true
-        refund_total:
-          type: string
-        display_refund_total:
-          type: string
-        approved_at:
-          type: string
-          nullable: true
-        resolved_at:
-          type: string
-          nullable: true
-        denied_at:
-          type: string
-          nullable: true
-        canceled_at:
-          type: string
-          nullable: true
-        reason:
-          "$ref": "#/components/schemas/Reason"
-        claim_line_items:
-          type: array
-          items:
-            "$ref": "#/components/schemas/ClaimLineItem"
-        memo:
-          type: string
-          nullable: true
-      required:
-      - id
-      - number
-      - status
-      - resolution
-      - order_id
-      - reason_id
-      - refund_total
-      - display_refund_total
-      - approved_at
-      - resolved_at
-      - denied_at
-      - canceled_at
-      - memo
-      x-typelizer: true
-    DeliveryMethodRule:
-      type: object
-      properties:
-        id:
-          type: string
-        active:
-          type: boolean
-        type:
-          type: string
-        preferences:
-          type: object
-        preference_schema:
-          type: object
-      required:
-      - id
-      - active
-      - type
-      - preferences
-      - preference_schema
-      x-typelizer: true
-    DeliveryMethod:
-      type: object
-      properties:
-        id:
-          type: string
-        name:
-          type: string
-        code:
-          type: string
-          nullable: true
-        estimated_transit_business_days_min:
-          type: number
-          nullable: true
-        estimated_transit_business_days_max:
-          type: number
-          nullable: true
-        digital:
-          type: boolean
-        pickup:
-          type: boolean
-        pickup_point:
-          type: boolean
-        admin_name:
-          type: string
-          nullable: true
-        storefront_visible:
-          type: boolean
-        tracking_url:
-          type: string
-          nullable: true
-        created_at:
-          type: string
-        updated_at:
-          type: string
-        rules:
-          type: array
-          items:
-            "$ref": "#/components/schemas/DeliveryMethodRule"
-        editable:
-          type: boolean
-        delivery_profile_id:
-          type: string
-          nullable: true
-        delivery_zone_id:
-          type: string
-          nullable: true
-        calculator_type:
-          type: string
-          nullable: true
-        calculator_preferences:
-          type: object
-          nullable: true
-      required:
-      - id
-      - name
-      - code
-      - estimated_transit_business_days_min
-      - estimated_transit_business_days_max
-      - digital
-      - pickup
-      - pickup_point
-      - admin_name
-      - storefront_visible
-      - tracking_url
-      - created_at
-      - updated_at
-      - rules
-      - editable
-      - delivery_profile_id
-      - delivery_zone_id
-      - calculator_type
-      - calculator_preferences
-      x-typelizer: true
-    DeliveryProfile:
-      type: object
-      properties:
-        id:
-          type: string
-        name:
-          type: string
-        default:
-          type: boolean
-        digital:
-          type: boolean
-      required:
-      - id
-      - name
-      - default
-      - digital
-      x-typelizer: true
-    DeliveryRate:
-      type: object
-      properties:
-        id:
-          type: string
-        name:
-          type: string
-        selected:
-          type: boolean
-        cost:
-          type: string
-        total:
-          type: string
-        carrier:
-          type: string
-          nullable: true
-        service_level:
-          type: string
-          nullable: true
-        estimated_delivery_date:
-          type: string
-          nullable: true
-        display_cost:
-          type: string
-        display_total:
-          type: string
-      required:
-      - id
-      - name
-      - selected
-      - cost
-      - total
-      - carrier
-      - service_level
-      - estimated_delivery_date
-      - display_cost
-      - display_total
-      x-typelizer: true
-    Delivery:
-      type: object
-      properties:
-        id:
-          type: string
-        tracking_number:
-          type: string
-        carrier:
-          type: string
-          nullable: true
-        carrier_name:
-          type: string
-          nullable: true
-        service:
-          type: string
-          nullable: true
-        status:
-          type: string
-        tracking_url:
-          type: string
-          nullable: true
-        estimated_delivery_at:
-          type: string
-          nullable: true
-        delivered_at:
-          type: string
-          nullable: true
-        created_at:
-          type: string
-        updated_at:
-          type: string
-        shipping_label_id:
-          type: string
-          nullable: true
-      required:
-      - id
-      - tracking_number
-      - carrier
-      - carrier_name
-      - service
-      - status
-      - tracking_url
-      - estimated_delivery_at
-      - delivered_at
-      - created_at
-      - updated_at
-      - shipping_label_id
-      x-typelizer: true
-    DeliveryZone:
-      type: object
-      properties:
-        id:
-          type: string
-        name:
-          type: string
-        description:
-          type: string
-          nullable: true
-        delivery_profile_id:
-          type: string
-      required:
-      - id
-      - name
-      - description
-      - delivery_profile_id
-      x-typelizer: true
-    ExchangeLineItem:
-      type: object
-      properties:
-        id:
-          type: string
-        quantity:
-          type: number
-        received_quantity:
-          type: number
-        resellable:
-          type: boolean
-        original_price:
-          type: string
-        new_variant_price:
-          type: string
-        price_difference:
-          type: string
-        original_variant_id:
-          type: string
-          nullable: true
-        new_variant_id:
-          type: string
-          nullable: true
-        line_item_id:
-          type: string
-          nullable: true
-        fulfillment_item_id:
-          type: string
-          nullable: true
-        original_variant:
-          "$ref": "#/components/schemas/Variant"
-        new_variant:
-          "$ref": "#/components/schemas/Variant"
-        name:
-          type: string
-          nullable: true
-        new_variant_name:
-          type: string
-          nullable: true
-      required:
-      - id
-      - quantity
-      - received_quantity
-      - resellable
-      - original_price
-      - new_variant_price
-      - price_difference
-      - original_variant_id
-      - new_variant_id
-      - line_item_id
-      - fulfillment_item_id
-      - name
-      - new_variant_name
-      x-typelizer: true
-    Exchange:
-      type: object
-      properties:
-        id:
-          type: string
-        number:
-          type: string
-        status:
-          type: string
-        order_id:
-          type: string
-          nullable: true
-        reason_id:
-          type: string
-          nullable: true
-        price_difference:
-          type: string
-        display_price_difference:
-          type: string
-        approved_at:
-          type: string
-          nullable: true
-        received_at:
-          type: string
-          nullable: true
-        fulfilled_at:
-          type: string
-          nullable: true
-        canceled_at:
-          type: string
-          nullable: true
-        reason:
-          "$ref": "#/components/schemas/Reason"
-        exchange_line_items:
-          type: array
-          items:
-            "$ref": "#/components/schemas/ExchangeLineItem"
-        memo:
-          type: string
-          nullable: true
-        stock_location_id:
-          type: string
-          nullable: true
-      required:
-      - id
-      - number
-      - status
-      - order_id
-      - reason_id
-      - price_difference
-      - display_price_difference
-      - approved_at
-      - received_at
-      - fulfilled_at
-      - canceled_at
-      - memo
-      - stock_location_id
-      x-typelizer: true
     Export:
       type: object
       properties:
@@ -19267,9 +15912,6 @@ components:
         line_item_id:
           type: string
           nullable: true
-        variant_id:
-          type: string
-          nullable: true
         name:
           type: string
           nullable: true
@@ -19283,7 +15925,6 @@ components:
       - id
       - quantity
       - line_item_id
-      - variant_id
       - name
       - sku
       - options_text
@@ -19303,10 +15944,13 @@ components:
         tracking_url:
           type: string
           nullable: true
-        fulfilled_at:
+        tracking_carrier:
           type: string
           nullable: true
-        delivered_at:
+        tracking_status:
+          type: string
+          nullable: true
+        fulfilled_at:
           type: string
           nullable: true
         created_at:
@@ -19322,47 +15966,25 @@ components:
         stock_location_name:
           type: string
           nullable: true
-        stock_location_id:
-          type: string
-          nullable: true
         fulfillment_items:
           type: array
           items:
             "$ref": "#/components/schemas/FulfillmentItem"
-        selected_delivery_rate_id:
-          type: string
-          nullable: true
-        delivery_rates:
-          type: array
-          items:
-            "$ref": "#/components/schemas/DeliveryRate"
-        deliveries:
-          type: array
-          items:
-            "$ref": "#/components/schemas/Delivery"
-        labels:
-          type: array
-          items:
-            "$ref": "#/components/schemas/ShippingLabel"
       required:
       - id
       - number
       - status
       - tracking
       - tracking_url
+      - tracking_carrier
+      - tracking_status
       - fulfilled_at
-      - delivered_at
       - created_at
       - updated_at
       - fulfillment_type
       - delivery_method_name
       - stock_location_name
-      - stock_location_id
       - fulfillment_items
-      - selected_delivery_rate_id
-      - delivery_rates
-      - deliveries
-      - labels
       x-typelizer: true
     ImportMapping:
       type: object
@@ -19705,46 +16327,10 @@ components:
           type: string
         updated_at:
           type: string
-        internal_note:
-          type: string
-          nullable: true
-        internal_note_html:
-          type: string
-          nullable: true
         item_total:
           type: string
           nullable: true
         display_item_total:
-          type: string
-          nullable: true
-        delivery_total:
-          type: string
-          nullable: true
-        display_delivery_total:
-          type: string
-          nullable: true
-        discount_total:
-          type: string
-          nullable: true
-        display_discount_total:
-          type: string
-          nullable: true
-        adjustment_total:
-          type: string
-          nullable: true
-        display_adjustment_total:
-          type: string
-          nullable: true
-        included_tax_total:
-          type: string
-          nullable: true
-        display_included_tax_total:
-          type: string
-          nullable: true
-        additional_tax_total:
-          type: string
-          nullable: true
-        display_additional_tax_total:
           type: string
           nullable: true
         tax_total:
@@ -19757,27 +16343,6 @@ components:
           type: string
           nullable: true
         display_total:
-          type: string
-          nullable: true
-        payment_total:
-          type: string
-          nullable: true
-        display_payment_total:
-          type: string
-          nullable: true
-        amount_due:
-          type: string
-          nullable: true
-        display_amount_due:
-          type: string
-          nullable: true
-        canceled_at:
-          type: string
-          nullable: true
-        cancel_reason_name:
-          type: string
-          nullable: true
-        cancel_note:
           type: string
           nullable: true
         items:
@@ -19804,31 +16369,12 @@ components:
       - completed_at
       - created_at
       - updated_at
-      - internal_note
-      - internal_note_html
       - item_total
       - display_item_total
-      - delivery_total
-      - display_delivery_total
-      - discount_total
-      - display_discount_total
-      - adjustment_total
-      - display_adjustment_total
-      - included_tax_total
-      - display_included_tax_total
-      - additional_tax_total
-      - display_additional_tax_total
       - tax_total
       - display_tax_total
       - total
       - display_total
-      - payment_total
-      - display_payment_total
-      - amount_due
-      - display_amount_due
-      - canceled_at
-      - cancel_reason_name
-      - cancel_note
       - items
       - fulfillments
       - shipping_address
@@ -19967,12 +16513,6 @@ components:
           type: string
         updated_at:
           type: string
-        product_type_id:
-          type: string
-          nullable: true
-        delivery_profile_id:
-          type: string
-          nullable: true
         submission:
           allOf:
           - "$ref": "#/components/schemas/ProductSubmission"
@@ -20005,8 +16545,6 @@ components:
       - metadata
       - created_at
       - updated_at
-      - product_type_id
-      - delivery_profile_id
       x-typelizer: true
     ProductSubmission:
       type: object
@@ -20032,22 +16570,6 @@ components:
       - reviewed_at
       - created_at
       - product_id
-      x-typelizer: true
-    ProductType:
-      type: object
-      properties:
-        id:
-          type: string
-        name:
-          type: string
-        option_type_labels:
-          type: array
-          items:
-            type: string
-      required:
-      - id
-      - name
-      - option_type_labels
       x-typelizer: true
     Profile:
       type: object
@@ -20147,20 +16669,6 @@ components:
       - supported_currencies
       - products_count
       x-typelizer: true
-    Reason:
-      type: object
-      properties:
-        id:
-          type: string
-        name:
-          type: string
-        active:
-          type: boolean
-      required:
-      - id
-      - name
-      - active
-      x-typelizer: true
     RequirementCustomField:
       type: object
       properties:
@@ -20209,9 +16717,6 @@ components:
         action_url:
           type: string
           nullable: true
-        blocker:
-          type: object
-          nullable: true
         blocking:
           type: boolean
         accepts_submissions:
@@ -20240,7 +16745,6 @@ components:
       - position
       - status
       - action_url
-      - blocker
       - blocking
       - accepts_submissions
       - requires_file
@@ -20287,192 +16791,6 @@ components:
       - updated_at
       - file_url
       - file_name
-      x-typelizer: true
-    ReturnLineItem:
-      type: object
-      properties:
-        id:
-          type: string
-        quantity:
-          type: number
-        received_quantity:
-          type: number
-        resellable:
-          type: boolean
-        pre_tax_amount:
-          type: string
-        display_pre_tax_amount:
-          type: string
-        variant_id:
-          type: string
-          nullable: true
-        line_item_id:
-          type: string
-          nullable: true
-        fulfillment_item_id:
-          type: string
-          nullable: true
-        variant:
-          "$ref": "#/components/schemas/Variant"
-        name:
-          type: string
-          nullable: true
-      required:
-      - id
-      - quantity
-      - received_quantity
-      - resellable
-      - pre_tax_amount
-      - display_pre_tax_amount
-      - variant_id
-      - line_item_id
-      - fulfillment_item_id
-      - name
-      x-typelizer: true
-    Return:
-      type: object
-      properties:
-        id:
-          type: string
-        number:
-          type: string
-        status:
-          type: string
-        order_id:
-          type: string
-          nullable: true
-        reason_id:
-          type: string
-          nullable: true
-        refund_total:
-          type: string
-        display_refund_total:
-          type: string
-        approved_at:
-          type: string
-          nullable: true
-        received_at:
-          type: string
-          nullable: true
-        refunded_at:
-          type: string
-          nullable: true
-        canceled_at:
-          type: string
-          nullable: true
-        reason:
-          "$ref": "#/components/schemas/Reason"
-        return_line_items:
-          type: array
-          items:
-            "$ref": "#/components/schemas/ReturnLineItem"
-        memo:
-          type: string
-          nullable: true
-        stock_location_id:
-          type: string
-          nullable: true
-        refunded_total:
-          type: string
-        refundable_total:
-          type: string
-        display_refunded_total:
-          type: string
-      required:
-      - id
-      - number
-      - status
-      - order_id
-      - reason_id
-      - refund_total
-      - display_refund_total
-      - approved_at
-      - received_at
-      - refunded_at
-      - canceled_at
-      - memo
-      - stock_location_id
-      - refunded_total
-      - refundable_total
-      - display_refunded_total
-      x-typelizer: true
-    ShippingLabel:
-      type: object
-      properties:
-        id:
-          type: string
-        source:
-          type: string
-        status:
-          type: string
-        carrier:
-          type: string
-          nullable: true
-        carrier_name:
-          type: string
-          nullable: true
-        service:
-          type: string
-          nullable: true
-        tracking_number:
-          type: string
-          nullable: true
-        currency:
-          type: string
-          nullable: true
-        format:
-          type: string
-          nullable: true
-        external_id:
-          type: string
-          nullable: true
-        metadata:
-          type: object
-        refunded_at:
-          type: string
-          nullable: true
-        created_at:
-          type: string
-        updated_at:
-          type: string
-        owner_id:
-          type: string
-        owner_type:
-          type: string
-        cost:
-          type: string
-        display_cost:
-          type: string
-        integration_id:
-          type: string
-          nullable: true
-        file_pending:
-          type: boolean
-        download_url:
-          type: string
-          nullable: true
-      required:
-      - id
-      - source
-      - status
-      - carrier
-      - carrier_name
-      - service
-      - tracking_number
-      - currency
-      - format
-      - external_id
-      - metadata
-      - refunded_at
-      - created_at
-      - updated_at
-      - owner_id
-      - owner_type
-      - cost
-      - display_cost
-      - integration_id
-      - file_pending
-      - download_url
       x-typelizer: true
     StockLevel:
       type: object
@@ -20562,8 +16880,6 @@ components:
           type: boolean
         kind:
           type: string
-        returns_enabled:
-          type: boolean
         created_at:
           type: string
         updated_at:
@@ -20587,7 +16903,6 @@ components:
       - active
       - default
       - kind
-      - returns_enabled
       - created_at
       - updated_at
       x-typelizer: true

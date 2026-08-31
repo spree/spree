@@ -191,11 +191,7 @@ RSpec.describe SpreeEasyPost::DeliveryRateProvider do
 
     describe 'parcel dimensions' do
       before do
-        store.update!(
-          preferred_default_package_length: 12,
-          preferred_default_package_width: 9,
-          preferred_default_package_height: 4
-        )
+        create(:package_type, store: store, default: true, length: 12, width: 9, height: 4)
       end
 
       it 'sends the default package dimensions with the quote' do
