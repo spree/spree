@@ -4853,3 +4853,23 @@ keys in every dashboard locale, not a `Spree.t` label; new validation errors in
 core use a symbol and parameters, never a preformatted string; nothing in the
 dashboard prints an API `label`/`name`/`description` directly; shared admin copy
 goes in `dashboard-core` locales, never in `packages/seller-dashboard`.
+
+## 2026-08-31 — Company self-registration implementation choices: hard one-root guard, pricing_access on priced payloads
+
+Implementation of `6.0-b2b-company-self-registration.md` settled its
+remaining calls. The one-self-registered-root guard refuses any second
+founding (`already_registered`) for a customer already holding a
+membership on a root company in the store — duplicate-with-a-typo is
+exactly the duplicate-application problem the guard exists for, and a
+legitimate second business is a staff-created one. The `pricing_access`
+reason code is injected through `serializer_params` and rendered on every
+payload that nulls a price (product, variant, cart, order, line item),
+null when prices are visible — never a channel-only attribute clients
+would have to correlate. Guests on `approval_required` channels browse
+price-less (`login_required` code) rather than being rejected; the
+posture's point is a visible front door. The dependency key keeps the
+`_class` suffix (`company_activation_policy_class`), matching
+`storefront_access_policy_class`. The storefront reference page ships
+separately in the storefront repository.
+
+Plans amended: `6.0-b2b-company-self-registration.md` (In development).
