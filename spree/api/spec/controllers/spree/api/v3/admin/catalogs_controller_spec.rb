@@ -221,6 +221,31 @@ RSpec.describe Spree::Api::V3::Admin::CatalogsController, type: :controller do
     end
   end
 
+  describe 'POST #create with nested sets' do
+    let!(:company) { create(:company, store: store) }
+
+    # The dashboard's create sheet shares the detail page's form, so it sends
+    # both keys on every create — empty when the merchant filled neither.
+    it 'accepts the sets as empty arrays' do
+      post :create, params: { name: 'Fresh', assignments: [], order_minimums: [] }, as: :json
+
+      expect(response).to have_http_status(:created)
+    end
+
+    it 'stands a catalog up with its audience and minimums in one request' do
+      post :create, params: {
+        name: 'Fresh',
+        assignments: [{ assignable_type: 'company', assignable_id: company.prefixed_id }],
+        order_minimums: [{ currency: 'USD', amount: '500' }]
+      }, as: :json
+
+      expect(response).to have_http_status(:created)
+      catalog = store.catalogs.find_by(name: 'Fresh')
+      expect(catalog.catalog_assignments.map(&:assignable)).to eq([company])
+      expect(catalog.order_minimums.pluck(:currency)).to eq(['USD'])
+    end
+  end
+
   describe 'PATCH #update with nested sets' do
     let!(:company) { create(:company, store: store) }
     let!(:group) { create(:customer_group, store: store) }
