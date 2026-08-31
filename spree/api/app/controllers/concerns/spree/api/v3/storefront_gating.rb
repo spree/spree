@@ -5,11 +5,18 @@ module Spree
       # The posture is resolved from the request's channel
       # (+Spree::Channel#resolved_storefront_access+, with store fallback):
       #
-      # - +login_required+ → 401 on every gated read for unauthenticated requests
-      # - +prices_hidden+  → price fields serialized as +null+ for guests
+      # - +login_required+    → 401 on every gated read for unauthenticated requests
+      # - +prices_hidden+     → price fields serialized as +null+ for guests
+      # - +approval_required+ → price fields serialized as +null+ unless the
+      #   customer has standing over a policy-active company
+      #   (docs/plans/6.0-b2b-company-self-registration.md)
       #
       # "Guest" means no authenticated customer (publishable key or guest cart
-      # token without a customer JWT). Logged-in customers are never gated.
+      # token without a customer JWT). Every nulled price travels with a
+      # machine-readable +pricing_access+ reason code — +login_required+,
+      # +company_required+, or a code the registered activation policy
+      # supplies — so storefronts render "sign in" / "register your business"
+      # from the code, never by interpreting bare nulls.
       module StorefrontGating
         extend ActiveSupport::Concern
 
@@ -31,13 +38,25 @@ module Spree
 
         # @return [Boolean] whether prices must be hidden from this request.
         def hide_prices?
-          try_spree_current_user.blank? && !!current_channel&.storefront_prices_hidden?
+          pricing_access.present?
+        end
+
+        # Why prices are withheld from this request — nil when they are
+        # visible. Computed once per request; rendered by the serializers
+        # beside every nulled price.
+        #
+        # @return [String, nil]
+        def pricing_access
+          return @pricing_access if defined?(@pricing_access)
+
+          @pricing_access = compute_pricing_access
         end
 
         # Injects the price-hiding flag so the shared +price_for+/+price_in+
-        # serializer helpers null prices for gated guests.
+        # serializer helpers null prices for gated requests, and the reason
+        # code the priced payloads render beside the nulls.
         def serializer_params
-          super.merge(hide_prices: hide_prices?)
+          super.merge(hide_prices: hide_prices?, pricing_access: pricing_access)
         end
 
         # Renders a 401 with the shared +authentication_required+ error code.
@@ -52,6 +71,20 @@ module Spree
         end
 
         private
+
+        def compute_pricing_access
+          channel = current_channel
+          return nil if channel.nil?
+
+          case channel.resolved_storefront_access
+          when 'prices_hidden'
+            'login_required' if try_spree_current_user.blank?
+          when 'approval_required'
+            Spree.company_activation_policy_class.new.pricing_access_code(
+              user: try_spree_current_user, store: current_store
+            )
+          end
+        end
 
         def enforce_storefront_login_required!
           return if try_spree_current_user.present?

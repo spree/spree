@@ -42,6 +42,69 @@ RSpec.describe Spree::Api::V3::Store::ProductsController, type: :controller do
     end
   end
 
+  describe 'approval_required storefront access' do
+    before { channel.update!(preferred_storefront_access: 'approval_required') }
+
+    it 'lets a guest browse with prices null and a login_required reason' do
+      get :index
+
+      expect(response).to have_http_status(:ok)
+      expect(json_response['data'].first['price']).to be_nil
+      expect(json_response['data'].first['pricing_access']).to eq('login_required')
+    end
+
+    it 'nulls prices for a customer without a company, naming company_required' do
+      request.headers['Authorization'] = "Bearer #{jwt_token}"
+
+      get :index
+
+      expect(response).to have_http_status(:ok)
+      expect(json_response['data'].first['price']).to be_nil
+      expect(json_response['data'].first['pricing_access']).to eq('company_required')
+    end
+
+    it 'shows prices to a member of an active company' do
+      create(:company_membership, company: create(:company, store: store), customer: user)
+      request.headers['Authorization'] = "Bearer #{jwt_token}"
+
+      get :index
+
+      expect(response).to have_http_status(:ok)
+      expect(json_response['data'].first['price']).to be_present
+      expect(json_response['data'].first['pricing_access']).to be_nil
+    end
+
+    it 'keeps prices null while the company is not policy-active' do
+      company = create(:company, store: store)
+      create(:company_membership, company: company, customer: user)
+      request.headers['Authorization'] = "Bearer #{jwt_token}"
+
+      with_company_activation_policy(inactive: [company]) do
+        get :index
+      end
+
+      expect(response).to have_http_status(:ok)
+      expect(json_response['data'].first['price']).to be_nil
+      expect(json_response['data'].first['pricing_access']).to eq('company_required')
+    end
+  end
+
+  describe 'pricing_access on the other postures' do
+    it 'is null when prices are visible' do
+      get :index
+
+      expect(json_response['data'].first['pricing_access']).to be_nil
+    end
+
+    it 'is login_required for a prices_hidden guest' do
+      channel.update!(preferred_storefront_access: 'prices_hidden')
+
+      get :index
+
+      expect(json_response['data'].first['pricing_access']).to eq('login_required')
+    end
+  end
+
   describe 'login_required storefront access' do
     before { channel.update!(preferred_storefront_access: 'login_required') }
 

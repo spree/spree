@@ -65,4 +65,51 @@ RSpec.describe Spree::Api::V3::Store::CompaniesController, type: :controller do
       expect(division.kind).to eq('division')
     end
   end
+
+  describe 'POST #create' do
+    it 'founds a root company with the caller as its first member' do
+      post :create, params: { name: 'Nowak Tools' }, as: :json
+
+      expect(response).to have_http_status(:created)
+      expect(json_response['name']).to eq('Nowak Tools')
+
+      founded = store.companies.find_by(name: 'Nowak Tools')
+      expect(founded.kind).to eq('company')
+      expect(founded.parent_id).to be_nil
+      expect(founded.memberships.map(&:customer)).to eq([user])
+    end
+
+    it 'stores the free-form registration answers under metadata' do
+      post :create, params: { name: 'Nowak Tools', registration: { vat_number: 'PL123', employees: '50' } }, as: :json
+
+      expect(response).to have_http_status(:created)
+      expect(store.companies.last.metadata['registration']).to eq(
+        'vat_number' => 'PL123', 'employees' => '50'
+      )
+    end
+
+    it 'refuses a second founding by the same customer' do
+      create(:company_membership, company: company, customer: user)
+
+      post :create, params: { name: 'Second Business' }, as: :json
+
+      expect(response).to have_http_status(:unprocessable_content)
+      expect(response.body).to include('already registered')
+      expect(store.companies.where(name: 'Second Business')).to be_empty
+    end
+
+    it 'refuses an invalid registration' do
+      post :create, params: { name: '' }, as: :json
+
+      expect(response).to have_http_status(:unprocessable_content)
+    end
+
+    it '401s a guest' do
+      request.headers['Authorization'] = nil
+
+      post :create, params: { name: 'Nowak Tools' }, as: :json
+
+      expect(response).to have_http_status(:unauthorized)
+    end
+  end
 end
