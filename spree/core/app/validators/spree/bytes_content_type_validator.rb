@@ -3,12 +3,13 @@
 module Spree
   # Confirms an attachment is the type it claims to be, from the bytes.
   #
-  # {ActiveStorageValidations}' +spoofing_protection+ option does the same
-  # job by shelling out to the Unix +file+ command, which is not in the
-  # starter image and is not a Ruby dependency. Rails already ships Marcel,
-  # which reads the same magic numbers in process. This validator uses that
-  # so a stock install can accept a purchase-order or seller document
-  # without an extra system package.
+  # The validation gem's +spoofing_protection+ option shells out to the
+  # Unix +file+ command for this. The gem's own maintainers describe that
+  # as a short magic sniff, close to what Marcel already does inside
+  # Active Storage (igorkasyanchuk/active_storage_validations#404). We
+  # use Marcel in process so a stock install does not need an extra
+  # system package — and so we do not pick up +file+'s false negatives
+  # (a PDF with a leading space is one they documented).
   #
   # @example
   #   validates :po_document, 'spree/bytes_content_type': { in: %w[application/pdf] }
