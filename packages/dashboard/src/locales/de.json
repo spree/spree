@@ -200,14 +200,8 @@
         }
       },
       "wizard": {
-        "title": "Neuer Katalog",
         "description": "Eine Vereinbarung einrichten: was sie ist, für wen sie gilt und was sie kostet.",
-        "steps": {
-          "details": "Details",
-          "audience": "Zielgruppe",
-          "pricing": "Preise",
-          "review": "Überprüfen"
-        },
+        "fix_this_step": "Korrigieren Sie das markierte Feld, bevor Sie fortfahren.",
         "help": {
           "details": "Benennen Sie diese Vereinbarung, damit Sie sie später wiedererkennen.",
           "audience": "Wer diesen Katalog sieht. Leer lassen, damit er für alle gilt.",
@@ -217,7 +211,14 @@
         "review": {
           "everyone": "Alle",
           "fix_earlier_steps": "Auf einem früheren Schritt muss etwas korrigiert werden, bevor dieser Katalog erstellt werden kann."
-        }
+        },
+        "steps": {
+          "details": "Details",
+          "audience": "Zielgruppe",
+          "pricing": "Preise",
+          "review": "Überprüfen"
+        },
+        "title": "Neuer Katalog"
       }
     },
     "categories": {

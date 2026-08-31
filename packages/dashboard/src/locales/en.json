@@ -200,14 +200,8 @@
         }
       },
       "wizard": {
-        "title": "New catalog",
         "description": "Set up an agreement: what it is, who it is for, and what it charges.",
-        "steps": {
-          "details": "Details",
-          "audience": "Audience",
-          "pricing": "Pricing",
-          "review": "Review"
-        },
+        "fix_this_step": "Fix the highlighted field before continuing.",
         "help": {
           "details": "Name this agreement so you recognise it later.",
           "audience": "Who sees this catalog. Leave it empty and it applies to everyone.",
@@ -217,7 +211,14 @@
         "review": {
           "everyone": "Everyone",
           "fix_earlier_steps": "Something on an earlier step needs fixing before this catalog can be created."
-        }
+        },
+        "steps": {
+          "details": "Details",
+          "audience": "Audience",
+          "pricing": "Pricing",
+          "review": "Review"
+        },
+        "title": "New catalog"
       }
     },
     "categories": {

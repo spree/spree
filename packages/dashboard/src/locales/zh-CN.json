@@ -200,14 +200,8 @@
         }
       },
       "wizard": {
-        "title": "新建目录",
         "description": "设置一份协议：它是什么、面向谁、收费多少。",
-        "steps": {
-          "details": "详情",
-          "audience": "受众",
-          "pricing": "定价",
-          "review": "确认"
-        },
+        "fix_this_step": "请先修正标记的字段，然后继续。",
         "help": {
           "details": "为该协议命名，以便日后识别。",
           "audience": "谁能看到本目录。留空则对所有人生效。",
@@ -217,7 +211,14 @@
         "review": {
           "everyone": "所有人",
           "fix_earlier_steps": "需要先修正前面步骤中的内容，才能创建此目录。"
-        }
+        },
+        "steps": {
+          "details": "详情",
+          "audience": "受众",
+          "pricing": "定价",
+          "review": "确认"
+        },
+        "title": "新建目录"
       }
     },
     "categories": {

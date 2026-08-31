@@ -202,14 +202,8 @@
         }
       },
       "wizard": {
-        "title": "Nowy katalog",
         "description": "Skonfiguruj umowę: czym jest, dla kogo i ile kosztuje.",
-        "steps": {
-          "details": "Szczegóły",
-          "audience": "Odbiorcy",
-          "pricing": "Ceny",
-          "review": "Podsumowanie"
-        },
+        "fix_this_step": "Popraw zaznaczone pole, aby przejść dalej.",
         "help": {
           "details": "Nazwij tę umowę, aby później ją rozpoznać.",
           "audience": "Kto widzi ten katalog. Pozostaw puste, aby dotyczył wszystkich.",
@@ -219,7 +213,14 @@
         "review": {
           "everyone": "Wszyscy",
           "fix_earlier_steps": "Coś we wcześniejszym kroku wymaga poprawy, zanim ten katalog zostanie utworzony."
-        }
+        },
+        "steps": {
+          "details": "Szczegóły",
+          "audience": "Odbiorcy",
+          "pricing": "Ceny",
+          "review": "Podsumowanie"
+        },
+        "title": "Nowy katalog"
       }
     },
     "categories": {

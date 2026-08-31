@@ -83,10 +83,18 @@ function NewCatalogPage() {
 
   // Only this step's fields: judging a later step's would block Next over a
   // question the merchant has not been asked yet.
+  //
+  // A refusal is stated at the top of the step as well as on the field. Next
+  // going quiet is the one outcome a merchant cannot act on, and the field's
+  // own message can be below the fold on a long step.
   async function goNext() {
     const fields = STEP_FIELDS[step]
-    if (fields.length > 0 && !(await form.trigger(fields))) return
+    if (fields.length > 0 && !(await form.trigger(fields))) {
+      form.setError('root', { message: t('admin.catalogs.wizard.fix_this_step') })
+      return
+    }
 
+    form.clearErrors('root')
     setStep(STEP_KEYS[stepIndex + 1])
   }
 

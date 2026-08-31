@@ -200,14 +200,8 @@
         }
       },
       "wizard": {
-        "title": "Nouveau catalogue",
         "description": "Créer un accord : ce qu’il est, à qui il s’adresse et ce qu’il facture.",
-        "steps": {
-          "details": "Détails",
-          "audience": "Audience",
-          "pricing": "Tarification",
-          "review": "Vérification"
-        },
+        "fix_this_step": "Corrigez le champ signalé avant de continuer.",
         "help": {
           "details": "Nommez cet accord pour le reconnaître plus tard.",
           "audience": "Qui voit ce catalogue. Laissez vide pour qu’il s’applique à tous.",
@@ -217,7 +211,14 @@
         "review": {
           "everyone": "Tout le monde",
           "fix_earlier_steps": "Un élément d’une étape précédente doit être corrigé avant de créer ce catalogue."
-        }
+        },
+        "steps": {
+          "details": "Détails",
+          "audience": "Audience",
+          "pricing": "Tarification",
+          "review": "Vérification"
+        },
+        "title": "Nouveau catalogue"
       }
     },
     "categories": {
