@@ -111,6 +111,14 @@ describe Spree::Catalog, type: :model do
 
       expect(store.catalogs.for_company(division)).to eq([first, second])
     end
+
+    it 'resolves nothing for a node the activation policy answers inactive for' do
+      create(:catalog_assignment, catalog: create(:catalog, store: store), assignable: root)
+
+      with_company_activation_policy(inactive: [root]) do
+        expect(store.catalogs.for_company(root)).to eq([])
+      end
+    end
   end
 
   describe '.for_context' do

@@ -1,0 +1,45 @@
+module Spree
+  module Companies
+    # Whether a company may act commercially — see catalogs, be priced by
+    # its agreements, be bought for. The single answer every company-resolving
+    # read consults: catalog resolution, sole-standing resolution, cart
+    # +company_id+ writes and the +approval_required+ storefront posture
+    # (docs/plans/6.0-b2b-company-self-registration.md).
+    #
+    # The OSS default activates every company, so self-registration is
+    # instant and the +approval_required+ posture reads "company members
+    # only". An approval flow replaces this class via
+    # `Spree::Dependencies.company_activation_policy_class`; subtree
+    # semantics (a suspended parent covering its divisions) are the
+    # replacement's job, which is why {#active?} takes the node.
+    #
+    # Self-service standing (company pages, members, invitations, the
+    # address book) never consults this policy — members of an inactive
+    # company keep their workspace while they wait.
+    class ActivationPolicy
+      # Whether the company may act commercially.
+      #
+      # @param _company [Spree::Company]
+      # @return [Boolean]
+      def active?(_company)
+        true
+      end
+
+      # The +pricing_access+ reason code for a viewer an +approval_required+
+      # channel withholds prices from, or nil when prices are visible.
+      #
+      # @param user [Object, nil] the authenticated customer, nil for guests
+      # @param store [Spree::Store, nil]
+      # @return [String, nil] +login_required+ | +company_required+ | a
+      #   policy-supplied code | nil
+      def pricing_access_code(user:, store:)
+        return 'login_required' if user.blank?
+
+        standing = store && user.try(:company_standing, store: store)
+        return nil if standing&.any? { |company| active?(company) }
+
+        'company_required'
+      end
+    end
+  end
+end

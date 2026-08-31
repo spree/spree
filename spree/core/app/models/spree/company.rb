@@ -130,17 +130,22 @@ module Spree
       # customer's fact about a business, and nothing else has it.
       return nil unless customer.is_a?(Spree.customer_class)
 
-      # Two rows at most: the question is only "exactly one, or not". Joined
-      # rather than read off each membership, because `joins` does not
+      # Joined rather than read off each membership, because `joins` does not
       # populate the association and a product listing takes this path.
       companies = where(store_id: store.id).
                   joins(:memberships).
                   where(Spree::CompanyMembership.table_name => { customer_id: customer.id }).
                   distinct.
-                  limit(2).
                   to_a
 
-      companies.one? ? companies.first : nil
+      # Only policy-active companies count: a buyer whose second membership
+      # is on a not-yet-approved business is still unambiguous, and an
+      # inactive company must not price or exempt a sale
+      # (docs/plans/6.0-b2b-company-self-registration.md).
+      policy = Spree.company_activation_policy_class.new
+      active_companies = companies.select { |company| policy.active?(company) }
+
+      active_companies.one? ? active_companies.first : nil
     end
 
     # @return [Array<Spree::Company>] parent chain, nearest first (leaf → root)

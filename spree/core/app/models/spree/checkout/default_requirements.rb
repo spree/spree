@@ -42,6 +42,7 @@ module Spree
       def completion_requirements
         errors = stock_errors + quantity_rule_errors
         errors << req('address', 'email', Spree.t(:guest_checkout_not_allowed), code: 'guest_checkout_not_allowed') if @cart.guest_checkout_disallowed?
+        errors << req('address', 'company', Spree.t('checkout_requirements.company_activation_required'), code: 'company_activation_required') if @cart.company_activation_missing?
         errors
       end
 

@@ -1,8 +1,9 @@
 module Spree
   module Seeds
-    # The Wholesale group is the B2B approval primitive until 6.1 Company
-    # accounts land: membership marks an approved wholesale buyer and is what
-    # wholesale price lists key off.
+    # The Wholesale group is a pricing audience: catalog assignments and
+    # price lists key off membership. It never activates anyone — whether a
+    # company may buy is the activation policy's answer
+    # (docs/plans/6.0-b2b-company-self-registration.md).
     class CustomerGroups
       prepend Spree::ServiceModule::Base
 

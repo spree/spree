@@ -61,6 +61,21 @@ module Spree
         resolved_company&.legal_entity
       end
 
+      # Whether an +approval_required+ channel must refuse completion: the
+      # sale resolves to no company, or to one the activation policy has not
+      # activated. Staff-keyed orders are exempt — their authority is the
+      # admin credential, not a membership
+      # (docs/plans/6.0-b2b-company-self-registration.md).
+      #
+      # @return [Boolean]
+      def company_activation_missing?
+        return false if channel.blank? || !channel.storefront_approval_required?
+        return false if respond_to?(:created_by_id) && created_by_id.present?
+
+        node = resolved_company
+        node.nil? || !Spree.company_activation_policy_class.new.active?(node)
+      end
+
       private
 
       def company_id_changing?
@@ -76,9 +91,13 @@ module Spree
 
       def customer_has_standing_over_company
         return if company.nil?
-        return if customer&.standing_for?(company)
+        return errors.add(:company, :invalid) unless customer&.standing_for?(company)
+        # Distinct from :invalid so a storefront can tell "not yours" from
+        # "not yet activated" — the latter is the awaiting-approval state the
+        # registration flow renders (docs/plans/6.0-b2b-company-self-registration.md).
+        return if Spree.company_activation_policy_class.new.active?(company)
 
-        errors.add(:company, :invalid)
+        errors.add(:company, :not_active)
       end
 
       # Deliberately not memoized. An instance variable survives #reload, so a

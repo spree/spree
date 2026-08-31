@@ -8,10 +8,13 @@ module Spree
       extend ActiveSupport::Concern
 
       # Posture controlling catalog/price visibility for anonymous visitors:
-      # - +public+         products + prices visible to anyone
-      # - +prices_hidden+  products browsable, prices null for guests
-      # - +login_required+ catalog reads rejected for guests
-      STOREFRONT_ACCESS = %w[public prices_hidden login_required].freeze
+      # - +public+            products + prices visible to anyone
+      # - +prices_hidden+     products browsable, prices null for guests
+      # - +login_required+    catalog reads rejected for guests
+      # - +approval_required+ products browsable by anyone, prices and
+      #   checkout only for buyers with standing over a policy-active company
+      #   (docs/plans/6.0-b2b-company-self-registration.md)
+      STOREFRONT_ACCESS = %w[public prices_hidden login_required approval_required].freeze
 
       included do
         # Empty -> falls back to the Store-level preference. Both are `nullable`
@@ -48,6 +51,12 @@ module Spree
       # @return [Boolean] true when guests must authenticate before browsing.
       def storefront_login_required?
         resolved_storefront_access == 'login_required'
+      end
+
+      # @return [Boolean] true when prices and checkout require standing over
+      #   a policy-active company on this channel.
+      def storefront_approval_required?
+        resolved_storefront_access == 'approval_required'
       end
 
       private
