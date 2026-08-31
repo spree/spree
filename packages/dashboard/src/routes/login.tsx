@@ -157,24 +157,38 @@ function PasswordLoginForm() {
           />
           {errors.email && <p className="text-sm text-destructive">{errors.email.message}</p>}
         </div>
-        <div className="grid gap-2">
-          <div className="flex items-center justify-between">
-            <Label htmlFor="password">{t('admin.fields.password.label')}</Label>
-            <Link to="/forgot-password" className="text-sm underline-offset-4 hover:underline">
-              {t('admin.auth.forgot_password.link')}
-            </Link>
-          </div>
+        {/* Password, submit and the recovery link share one grid so the link can
+            sit on the label's row visually while coming last in source order.
+            That makes tabbing run email → password → Sign in — the path someone
+            signing in actually takes — and only then offer the way out to
+            recovery. Ordering it visually rather than dropping it from the tab
+            sequence keeps it reachable by keyboard. */}
+        <div className="grid grid-cols-2 gap-x-2 gap-y-2">
+          <Label htmlFor="password" className="col-start-1 row-start-1 self-center">
+            {t('admin.fields.password.label')}
+          </Label>
           <Input
             id="password"
             type="password"
+            className="col-span-2 row-start-2"
             aria-invalid={!!errors.password || undefined}
             {...form.register('password')}
           />
-          {errors.password && <p className="text-sm text-destructive">{errors.password.message}</p>}
+          {errors.password && (
+            <p className="col-span-2 row-start-3 text-sm text-destructive">
+              {errors.password.message}
+            </p>
+          )}
+          <Button type="submit" className="col-span-2 row-start-4 mt-2 w-full" disabled={isLoading}>
+            {isLoading ? t('admin.actions.signing_in') : t('admin.actions.sign_in')}
+          </Button>
+          <Link
+            to="/forgot-password"
+            className="col-start-2 row-start-1 justify-self-end self-center text-sm underline-offset-4 hover:underline"
+          >
+            {t('admin.auth.forgot_password.link')}
+          </Link>
         </div>
-        <Button type="submit" className="w-full" disabled={isLoading}>
-          {isLoading ? t('admin.actions.signing_in') : t('admin.actions.sign_in')}
-        </Button>
       </div>
     </form>
   )
