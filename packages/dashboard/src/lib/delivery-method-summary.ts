@@ -7,6 +7,7 @@ function toNumber(value: unknown): number | null {
   return Number.isNaN(parsed) ? null : parsed
 }
 
+/** One stored delivery amount and the ISO currency it was entered in. */
 export type ListedAmount = {
   amount: number
   currency: string
