@@ -75,6 +75,8 @@ module Spree
           cart.po_document.blob&.byte_size if cart.po_document.attached?
         end
 
+        pricing_access_attribute
+
         # @deprecated `number` mirrors `id` (carts have no order-style
         #   number) — kept one release for 5.x clients; removed in 6.1.
         attributes :number, :token, :email, :customer_note, :po_number,
