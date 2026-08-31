@@ -626,7 +626,7 @@
     min-height: 8rem;
     outline: none;
 
-    &.is-editor-empty:first-child::before {
+    & p.is-editor-empty:first-child::before {
       color: var(--muted-foreground);
       content: attr(data-placeholder);
       float: left;
