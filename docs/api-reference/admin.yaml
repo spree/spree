@@ -25893,7 +25893,6 @@ paths:
                   order_multiple:
                   created_at: '2026-01-15T12:00:00.000Z'
                   updated_at: '2026-01-15T12:00:00.000Z'
-                  price_list_id:
                   products_count: 0
                 meta:
                   page: 1
@@ -25961,7 +25960,6 @@ paths:
                 order_multiple:
                 created_at: '2026-01-15T12:00:00.000Z'
                 updated_at: '2026-01-15T12:00:00.000Z'
-                price_list_id:
                 products_count: 0
         '422':
           description: invalid request
@@ -25986,13 +25984,22 @@ paths:
                 active:
                   type: boolean
                   example: true
-                price_list_id:
-                  type: string
+                price_list:
+                  type: object
                   nullable: true
-                  description: Price list pricing this catalog; omit for assortment-only
-                    (base prices). A catalog with an empty assortment prices without
-                    restricting visibility; import or curate products to make it restrictive.
-                  example: pl_86Rf07xd4z
+                  description: The price list this catalog owns, written inline. Omit
+                    for assortment-only (base prices); send null to remove the pricing,
+                    which deletes the list. A catalog with an empty assortment prices
+                    without restricting visibility; import or curate products to make
+                    it restrictive.
+                  properties:
+                    price_adjustment_percentage:
+                      type: string
+                      nullable: true
+                      example: "-15.0"
+                    adjust_compare_at:
+                      type: boolean
+                      example: false
               required:
               - name
   "/api/v3/admin/catalogs/{id}/assign":
@@ -34379,6 +34386,210 @@ components:
       - amount
       - display_amount
       x-typelizer: true
+    CatalogPrice:
+      type: object
+      properties:
+        currency:
+          type: string
+        source:
+          type: string
+        amount:
+          type: string
+        display_amount:
+          type: string
+      required:
+      - currency
+      - source
+      - amount
+      - display_amount
+      x-typelizer: true
+    CatalogProduct:
+      type: object
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+        slug:
+          type: string
+        meta_title:
+          type: string
+          nullable: true
+        meta_description:
+          type: string
+          nullable: true
+        meta_keywords:
+          type: string
+          nullable: true
+        variant_count:
+          type: number
+        available_on:
+          type: string
+          nullable: true
+        preorder_ships_at:
+          type: string
+          nullable: true
+        purchasable:
+          type: boolean
+        preorder:
+          type: boolean
+        in_stock:
+          type: boolean
+        backorderable:
+          type: boolean
+        available:
+          type: boolean
+        description:
+          type: string
+          nullable: true
+        description_html:
+          type: string
+          nullable: true
+        default_variant_id:
+          type: string
+        buy_box_variant_id:
+          type: string
+          nullable: true
+        thumbnail_url:
+          type: string
+          nullable: true
+        tags:
+          type: array
+          items:
+            type: string
+        price:
+          allOf:
+          - "$ref": "#/components/schemas/Price"
+          nullable: true
+        original_price:
+          allOf:
+          - "$ref": "#/components/schemas/Price"
+          nullable: true
+        seller_id:
+          type: string
+          nullable: true
+        seller:
+          "$ref": "#/components/schemas/Seller"
+        primary_media:
+          "$ref": "#/components/schemas/Media"
+        media:
+          type: array
+          items:
+            "$ref": "#/components/schemas/Media"
+        variants:
+          type: array
+          items:
+            "$ref": "#/components/schemas/Variant"
+        default_variant:
+          "$ref": "#/components/schemas/Variant"
+        option_types:
+          type: array
+          items:
+            "$ref": "#/components/schemas/OptionType"
+        option_values:
+          type: array
+          items:
+            "$ref": "#/components/schemas/OptionValue"
+        categories:
+          type: array
+          items:
+            "$ref": "#/components/schemas/Category"
+        custom_fields:
+          type: array
+          items:
+            "$ref": "#/components/schemas/CustomField"
+        prior_price:
+          allOf:
+          - "$ref": "#/components/schemas/PriceHistory"
+          nullable: true
+        external_references:
+          type: object
+        translations:
+          type: object
+        status:
+          type: string
+        metadata:
+          type: object
+        deleted_at:
+          type: string
+          nullable: true
+        created_at:
+          type: string
+        updated_at:
+          type: string
+        delivery_profile_id:
+          type: string
+          nullable: true
+        submission:
+          allOf:
+          - "$ref": "#/components/schemas/ProductSubmission"
+          nullable: true
+        seller_name:
+          type: string
+          nullable: true
+        product_type_id:
+          type: string
+          nullable: true
+        tax_category_id:
+          type: string
+          nullable: true
+        digital_assets:
+          type: array
+          items:
+            "$ref": "#/components/schemas/DigitalAsset"
+        collections:
+          type: array
+          items:
+            "$ref": "#/components/schemas/Collection"
+        product_publications:
+          type: array
+          items:
+            "$ref": "#/components/schemas/ProductPublication"
+        channels:
+          type: array
+          items:
+            "$ref": "#/components/schemas/Channel"
+        product_type:
+          "$ref": "#/components/schemas/ProductType"
+        catalog_price:
+          allOf:
+          - "$ref": "#/components/schemas/CatalogPrice"
+          nullable: true
+      required:
+      - id
+      - name
+      - slug
+      - meta_title
+      - meta_description
+      - meta_keywords
+      - variant_count
+      - available_on
+      - preorder_ships_at
+      - purchasable
+      - preorder
+      - in_stock
+      - backorderable
+      - available
+      - description
+      - description_html
+      - default_variant_id
+      - buy_box_variant_id
+      - thumbnail_url
+      - tags
+      - price
+      - original_price
+      - seller_id
+      - external_references
+      - status
+      - metadata
+      - deleted_at
+      - created_at
+      - updated_at
+      - delivery_profile_id
+      - seller_name
+      - product_type_id
+      - tax_category_id
+      x-typelizer: true
     CatalogProductTerm:
       type: object
       properties:
@@ -34471,9 +34682,6 @@ components:
           type: string
         updated_at:
           type: string
-        price_list_id:
-          type: string
-          nullable: true
         products_count:
           type: number
         order_minimums:
@@ -34497,7 +34705,6 @@ components:
       - order_multiple
       - created_at
       - updated_at
-      - price_list_id
       - products_count
       x-typelizer: true
     Category:
