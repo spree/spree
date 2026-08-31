@@ -158,7 +158,40 @@
         "title": "Produkty"
       },
       "products_column": "Produkty",
-      "search_placeholder": "Szukaj katalogów"
+      "search_placeholder": "Szukaj katalogów",
+      "terms": {
+        "title": "Warunki handlowe",
+        "description": "Ile muszą zamawiać kupujący objęci tą umową.",
+        "no_rule_placeholder": "Brak reguły",
+        "minimums_title": "Minimalne wartości zamówienia",
+        "minimums_description": "Najniższa wartość całego zamówienia, dla każdej waluty.",
+        "minimums_empty": "Brak minimalnej wartości zamówienia. Kupujący mogą złożyć zamówienie na dowolną kwotę.",
+        "overrides_title": "Reguły dla produktów",
+        "overrides_description": "Reguły ilości dla wybranych produktów, nadpisujące wartość domyślną powyżej.",
+        "overrides_empty": "Brak reguł dla produktów. Wszystkie produkty używają wartości domyślnej powyżej.",
+        "product_column": "Produkt",
+        "add_minimum_title": "Dodaj minimalną wartość zamówienia",
+        "minimum_amount_label": "Kwota minimalna",
+        "add_rule_title": "Dodaj regułę produktu",
+        "variant_placeholder": "Szukaj produktów",
+        "variant_empty": "Nie znaleziono produktów",
+        "override_help": "Pozostaw pole puste, aby użyć wartości domyślnej powyżej.",
+        "remove_minimum_title": "Usunąć minimalną wartość zamówienia?",
+        "remove_minimum_description": "Zamówienia w {{currency}} nie będą już musiały osiągać minimum. Zmiana działa natychmiast.",
+        "remove_rule_title": "Usunąć regułę produktu?",
+        "remove_rule_description": "{{name}} wróci do wartości domyślnej katalogu. Zmiana działa natychmiast.",
+        "validation": {
+          "positive_integer": "Podaj liczbę całkowitą większą od zera lub pozostaw pole puste.",
+          "currency_taken": "Ta waluta ma już ustawione minimum."
+        },
+        "messages": {
+          "rule_created": "Dodano regułę produktu",
+          "rule_updated": "Zaktualizowano regułę produktu",
+          "rule_deleted": "Usunięto regułę produktu",
+          "minimum_created": "Dodano minimalną wartość zamówienia",
+          "minimum_deleted": "Usunięto minimalną wartość zamówienia"
+        }
+      }
     },
     "categories": {
       "add_cta": "Nowa kategoria",
@@ -2128,6 +2161,26 @@
         },
         "width": {
           "label": "Szerokość"
+        },
+        "minimum_order_quantity": {
+          "label": "Minimalna wielkość zamówienia",
+          "placeholder": "Brak minimum",
+          "help": "Najmniejsza ilość, jaką kupujący może zamówić. Pozostaw puste, aby nie było minimum."
+        },
+        "order_multiple": {
+          "label": "Wielokrotność zamówienia",
+          "placeholder": "Brak wielokrotności",
+          "help": "Zamówienia muszą być wielokrotnością tej liczby. Pozostaw puste, aby dopuścić dowolną ilość."
+        },
+        "purchase_unit": {
+          "label": "Jednostka sprzedaży",
+          "options": {
+            "unit": "Sztuki",
+            "carton": "Kartony"
+          }
+        },
+        "units_per_carton": {
+          "label": "Sztuk w kartonie"
         }
       },
       "webhook_endpoint": {
@@ -2148,6 +2201,14 @@
           "label": "Docelowy adres URL",
           "placeholder": "https://example.com/webhooks"
         }
+      },
+      "minimum_order_quantity": {
+        "label": "Minimalna wielkość zamówienia",
+        "help": "Najmniejsza ilość, jaką kupujący może zamówić. Pozostaw puste, aby nie było minimum."
+      },
+      "order_multiple": {
+        "label": "Wielokrotność zamówienia",
+        "help": "Zamówienia muszą być wielokrotnością tej liczby. Pozostaw puste, aby dopuścić dowolną ilość."
       }
     },
     "gift_cards": {
@@ -3957,7 +4018,9 @@
           "customs": "Cło",
           "customs_help": "Używane na formularzach celnych, gdy ten produkt przekracza granicę.",
           "identity": "Tożsamość",
-          "tax_category_placeholder": "Dziedzicz z produktu"
+          "tax_category_placeholder": "Dziedzicz z produktu",
+          "ordering": "Zamówienia B2B",
+          "ordering_help": "Ile kupujący musi wziąć. Stan magazynowy nadal liczony jest w sztukach."
         },
         "title": "Warianty",
         "variant_label": "Wariant"

@@ -2587,6 +2587,13 @@ export interface CompanyMembershipCreateParams {
 
 export interface CatalogParams {
   name?: string
+  /**
+   * The catalog-wide quantity terms — the middle of the three levels a
+   * buyer's rules resolve through (variant base -> this -> a per-variant
+   * override). Null on either leaves that field to the variant's own rule.
+   */
+  minimum_order_quantity?: number | null
+  order_multiple?: number | null
   /** Internal note on what the agreement is — never shown to shoppers. */
   description?: string | null
   active?: boolean
@@ -2641,6 +2648,29 @@ export interface CatalogPriceListParams {
    * switching from hand-entered prices to a percentage sends.
    */
   prices?: Array<PriceListPriceOverrideParams>
+}
+
+/**
+ * A catalog's quantity terms for ONE variant — the narrowest of the three
+ * levels. Both fields are independently optional, but a row must state at
+ * least one: an override that overrides nothing is a half-filled form.
+ */
+export interface CatalogQuantityRuleParams {
+  /** Prefixed variant id (variant_...). Required on create. */
+  variant_id?: string
+  minimum_order_quantity?: number | null
+  order_multiple?: number | null
+}
+
+/**
+ * The least a whole order must come to under this agreement, in ONE
+ * currency. One row per currency — Spree holds no exchange rates, so a
+ * threshold is never stated once and converted.
+ */
+export interface CatalogOrderMinimumParams {
+  /** ISO 4217 code. Required on create; unique per catalog. */
+  currency?: string
+  amount?: string | number
 }
 
 export interface CatalogAssignParams {

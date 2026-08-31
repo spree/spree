@@ -226,6 +226,16 @@ export function VariantsSection({ form, seedFromType = false }: Props) {
         dimensions_unit: carry?.dimensions_unit ?? null,
         track_inventory: carry?.track_inventory ?? true,
         tax_category_id: carry?.tax_category_id ?? null,
+        // Carried like the rest: removing the last option type must not
+        // silently wipe the customs classification or the purchasing rules a
+        // merchant entered on the row this collapses into.
+        hs_code: carry?.hs_code ?? null,
+        country_of_origin: carry?.country_of_origin ?? null,
+        customs_description: carry?.customs_description ?? null,
+        minimum_order_quantity: carry?.minimum_order_quantity ?? null,
+        order_multiple: carry?.order_multiple ?? null,
+        purchase_unit: carry?.purchase_unit ?? null,
+        units_per_carton: carry?.units_per_carton ?? null,
         prices: carry?.prices ?? [],
         stock_levels: carry?.stock_levels ?? [],
       }

@@ -49,6 +49,10 @@ export const variantFormSchema = z.object({
   hs_code: z.string().nullable().optional(),
   country_of_origin: z.string().nullable().optional(),
   customs_description: z.string().nullable().optional(),
+  minimum_order_quantity: z.number().int().positive().nullable().optional(),
+  order_multiple: z.number().int().positive().nullable().optional(),
+  purchase_unit: z.string().nullable().optional(),
+  units_per_carton: z.number().int().positive().nullable().optional(),
   track_inventory: z.boolean().optional(),
   preorderable: z.boolean().optional(),
   preorder_ships_at: z.string().nullable().optional(),
@@ -271,6 +275,10 @@ export function isPlaceholderDefaultVariant(v: VariantFormValues): boolean {
     !v.hs_code &&
     !v.country_of_origin &&
     !v.customs_description &&
+    v.minimum_order_quantity == null &&
+    v.order_multiple == null &&
+    v.purchase_unit == null &&
+    v.units_per_carton == null &&
     v.preorderable !== true &&
     v.preorder_ships_at == null &&
     v.backorder_limit == null &&

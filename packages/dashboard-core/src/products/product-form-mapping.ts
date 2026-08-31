@@ -31,6 +31,10 @@ export function variantToFormValues(variant: PanelVariant, position: number): Va
     hs_code: variant.hs_code ?? null,
     country_of_origin: variant.country_of_origin ?? null,
     customs_description: variant.customs_description ?? null,
+    minimum_order_quantity: variant.minimum_order_quantity ?? null,
+    order_multiple: variant.order_multiple ?? null,
+    purchase_unit: variant.purchase_unit ?? null,
+    units_per_carton: variant.units_per_carton ?? null,
     track_inventory: variant.track_inventory,
     preorderable: variant.preorderable ?? false,
     preorder_ships_at: variant.preorder_ships_at ?? null,
@@ -173,6 +177,10 @@ export function variantToWirePayload(v: VariantFormValues, index: number) {
     hs_code: v.hs_code ?? null,
     country_of_origin: v.country_of_origin ?? null,
     customs_description: v.customs_description ?? null,
+    minimum_order_quantity: v.minimum_order_quantity ?? null,
+    order_multiple: v.order_multiple ?? null,
+    purchase_unit: v.purchase_unit ?? null,
+    units_per_carton: v.units_per_carton ?? null,
   }
   if (v.id) payload.id = v.id
   if (v.track_inventory != null) payload.track_inventory = v.track_inventory

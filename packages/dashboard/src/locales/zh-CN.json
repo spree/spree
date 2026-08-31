@@ -156,7 +156,40 @@
         "title": "产品"
       },
       "products_column": "产品",
-      "search_placeholder": "搜索目录"
+      "search_placeholder": "搜索目录",
+      "terms": {
+        "title": "商务条款",
+        "description": "适用本协议的买家必须订购多少。",
+        "no_rule_placeholder": "无规则",
+        "minimums_title": "订单最低金额",
+        "minimums_description": "整笔订单必须达到的最低金额，按币种设置。",
+        "minimums_empty": "没有订单最低金额。买家可以任意金额结账。",
+        "overrides_title": "单品规则",
+        "overrides_description": "针对特定商品的数量规则，覆盖上面的默认值。",
+        "overrides_empty": "没有单品规则。所有商品都使用上面的默认值。",
+        "product_column": "商品",
+        "add_minimum_title": "添加订单最低金额",
+        "minimum_amount_label": "最低金额",
+        "add_rule_title": "添加商品规则",
+        "variant_placeholder": "搜索商品",
+        "variant_empty": "未找到商品",
+        "override_help": "留空该字段将回退到上面的默认值。",
+        "remove_minimum_title": "移除订单最低金额？",
+        "remove_minimum_description": "{{currency}} 订单将不再需要达到最低金额。此更改立即生效。",
+        "remove_rule_title": "移除商品规则？",
+        "remove_rule_description": "{{name}} 将回退到目录默认值。此更改立即生效。",
+        "validation": {
+          "positive_integer": "请输入大于零的整数，或留空。",
+          "currency_taken": "该币种已设置最低金额。"
+        },
+        "messages": {
+          "rule_created": "已添加商品规则",
+          "rule_updated": "已更新商品规则",
+          "rule_deleted": "已移除商品规则",
+          "minimum_created": "已添加订单最低金额",
+          "minimum_deleted": "已移除订单最低金额"
+        }
+      }
     },
     "categories": {
       "add_cta": "新建分类",
@@ -2112,6 +2145,26 @@
         },
         "width": {
           "label": "宽度"
+        },
+        "minimum_order_quantity": {
+          "label": "最小起订量",
+          "placeholder": "无最小值",
+          "help": "买家可以订购的最小数量。留空表示没有最小值。"
+        },
+        "order_multiple": {
+          "label": "订购倍数",
+          "placeholder": "无倍数",
+          "help": "订单数量必须是该数值的倍数。留空表示不限数量。"
+        },
+        "purchase_unit": {
+          "label": "销售单位",
+          "options": {
+            "unit": "件",
+            "carton": "箱"
+          }
+        },
+        "units_per_carton": {
+          "label": "每箱件数"
         }
       },
       "webhook_endpoint": {
@@ -2132,6 +2185,14 @@
           "label": "目标 URL",
           "placeholder": "https://example.com/webhooks"
         }
+      },
+      "minimum_order_quantity": {
+        "label": "最小起订量",
+        "help": "买家可以订购的最小数量。留空表示没有最小值。"
+      },
+      "order_multiple": {
+        "label": "订购倍数",
+        "help": "订单数量必须是该数值的倍数。留空表示不限数量。"
       }
     },
     "gift_cards": {
@@ -3897,7 +3958,9 @@
           "customs": "海关",
           "customs_help": "当该商品跨境运输时用于海关申报单。",
           "identity": "标识",
-          "tax_category_placeholder": "继承自商品"
+          "tax_category_placeholder": "继承自商品",
+          "ordering": "B2B 订购",
+          "ordering_help": "买家必须订购的数量。库存仍以件计算。"
         },
         "title": "变体",
         "variant_label": "变体"

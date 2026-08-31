@@ -2,7 +2,11 @@ import type {
   Catalog,
   CatalogAssignment,
   CatalogAssignParams,
+  CatalogOrderMinimum,
+  CatalogOrderMinimumParams,
   CatalogParams,
+  CatalogQuantityRule,
+  CatalogQuantityRuleParams,
 } from '@spree/admin-sdk'
 import {
   adminClient,
@@ -18,7 +22,7 @@ export function useCatalog(id: string | undefined) {
     queryKey: useResourceKey('catalogs', id ?? 'noop'),
     queryFn: () =>
       adminClient.catalogs.get(id as string, {
-        expand: ['assignments', 'price_list', 'price_list.price_rules'],
+        expand: ['assignments', 'price_list', 'price_list.price_rules', 'order_minimums'],
       }),
     enabled: !!id,
   })
@@ -136,5 +140,83 @@ export function useUnassignCatalog(catalogId: string) {
     invalidate: [['catalogs', catalogId]],
     successMessage: i18n.t('admin.catalogs.messages.unassigned'),
     errorMessage: i18n.t('admin.errors.failed_to_update'),
+  })
+}
+
+// ---------------------------------------------------------------------------
+// Commercial terms — what the buyer may order, and what the order must reach
+// ---------------------------------------------------------------------------
+
+/**
+ * The per-variant quantity overrides. Paginated rather than capped: an
+ * agreement can name terms for thousands of SKUs, and a silent limit would
+ * hide the rest while still calling itself the list.
+ */
+export function useCatalogQuantityRules(catalogId: string | undefined, page = 1) {
+  return useQuery({
+    queryKey: useResourceKey('catalogs', catalogId ?? 'noop', 'quantity_rules', `${page}`),
+    queryFn: () =>
+      adminClient.catalogs.quantityRules.list(catalogId as string, { page, limit: 25 }),
+    enabled: !!catalogId,
+    placeholderData: (previous) => previous,
+  })
+}
+
+export function useCreateCatalogQuantityRule(catalogId: string) {
+  return useResourceMutation<CatalogQuantityRule, Error, CatalogQuantityRuleParams>({
+    mutationFn: (params) => adminClient.catalogs.quantityRules.create(catalogId, params),
+    invalidate: [
+      ['catalogs', catalogId],
+      ['catalogs', catalogId, 'quantity_rules'],
+    ],
+    successMessage: i18n.t('admin.catalogs.terms.messages.rule_created'),
+    errorMessage: i18n.t('admin.errors.failed_to_create'),
+  })
+}
+
+export function useUpdateCatalogQuantityRule(catalogId: string) {
+  return useResourceMutation<
+    CatalogQuantityRule,
+    Error,
+    { id: string; params: CatalogQuantityRuleParams }
+  >({
+    mutationFn: ({ id, params }) =>
+      adminClient.catalogs.quantityRules.update(catalogId, id, params),
+    invalidate: [
+      ['catalogs', catalogId],
+      ['catalogs', catalogId, 'quantity_rules'],
+    ],
+    successMessage: i18n.t('admin.catalogs.terms.messages.rule_updated'),
+    errorMessage: i18n.t('admin.errors.failed_to_update'),
+  })
+}
+
+export function useDeleteCatalogQuantityRule(catalogId: string) {
+  return useResourceMutation<void, Error, string>({
+    mutationFn: (id) => adminClient.catalogs.quantityRules.delete(catalogId, id),
+    invalidate: [
+      ['catalogs', catalogId],
+      ['catalogs', catalogId, 'quantity_rules'],
+    ],
+    successMessage: i18n.t('admin.catalogs.terms.messages.rule_deleted'),
+    errorMessage: i18n.t('admin.errors.failed_to_delete'),
+  })
+}
+
+export function useCreateCatalogOrderMinimum(catalogId: string) {
+  return useResourceMutation<CatalogOrderMinimum, Error, CatalogOrderMinimumParams>({
+    mutationFn: (params) => adminClient.catalogs.orderMinimums.create(catalogId, params),
+    invalidate: [['catalogs'], ['catalogs', catalogId]],
+    successMessage: i18n.t('admin.catalogs.terms.messages.minimum_created'),
+    errorMessage: i18n.t('admin.errors.failed_to_create'),
+  })
+}
+
+export function useDeleteCatalogOrderMinimum(catalogId: string) {
+  return useResourceMutation<void, Error, string>({
+    mutationFn: (id) => adminClient.catalogs.orderMinimums.delete(catalogId, id),
+    invalidate: [['catalogs'], ['catalogs', catalogId]],
+    successMessage: i18n.t('admin.catalogs.terms.messages.minimum_deleted'),
+    errorMessage: i18n.t('admin.errors.failed_to_delete'),
   })
 }

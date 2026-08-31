@@ -22,6 +22,7 @@ import { useEffect, useRef } from 'react'
 import { Controller, type UseFormReturn } from 'react-hook-form'
 import { useTranslation } from 'react-i18next'
 import { normalizeCustomsDescription, normalizeHsCode } from './normalize-customs'
+import { normalizeQuantityRule, PURCHASE_UNITS } from './normalize-quantity'
 import {
   useFormOptionTypes as useOptionTypes,
   useFormTaxCategories as useTaxCategories,
@@ -325,6 +326,102 @@ export function VariantEditSheet({ form, variantIndex, open, onOpenChange }: Pro
                 errors={[form.formState.errors.variants?.[variantIndex]?.customs_description]}
               />
             </Field>
+          </Section>
+
+          <Section title={t('admin.products.variants.sheet.ordering')}>
+            <p className="text-sm text-muted-foreground">
+              {t('admin.products.variants.sheet.ordering_help')}
+            </p>
+            <div className="grid grid-cols-2 gap-3">
+              <Field>
+                <FieldLabel htmlFor={`variant-${variantIndex}-moq`}>
+                  {t('admin.fields.variant.minimum_order_quantity.label')}
+                </FieldLabel>
+                <Input
+                  id={`variant-${variantIndex}-moq`}
+                  type="number"
+                  min="1"
+                  step="1"
+                  placeholder={t('admin.fields.variant.minimum_order_quantity.placeholder')}
+                  {...form.register(`variants.${variantIndex}.minimum_order_quantity`, {
+                    setValueAs: normalizeQuantityRule,
+                  })}
+                />
+                <FieldError
+                  errors={[form.formState.errors.variants?.[variantIndex]?.minimum_order_quantity]}
+                />
+              </Field>
+              <Field>
+                <FieldLabel htmlFor={`variant-${variantIndex}-order-multiple`}>
+                  {t('admin.fields.variant.order_multiple.label')}
+                </FieldLabel>
+                <Input
+                  id={`variant-${variantIndex}-order-multiple`}
+                  type="number"
+                  min="1"
+                  step="1"
+                  placeholder={t('admin.fields.variant.order_multiple.placeholder')}
+                  {...form.register(`variants.${variantIndex}.order_multiple`, {
+                    setValueAs: normalizeQuantityRule,
+                  })}
+                />
+                <FieldError
+                  errors={[form.formState.errors.variants?.[variantIndex]?.order_multiple]}
+                />
+              </Field>
+              <Field>
+                <FieldLabel htmlFor={`variant-${variantIndex}-purchase-unit`}>
+                  {t('admin.fields.variant.purchase_unit.label')}
+                </FieldLabel>
+                <Controller
+                  name={`variants.${variantIndex}.purchase_unit`}
+                  control={form.control}
+                  render={({ field }) => (
+                    <Select
+                      value={field.value ?? ''}
+                      onValueChange={(v) => field.onChange(v || null)}
+                    >
+                      <SelectTrigger
+                        id={`variant-${variantIndex}-purchase-unit`}
+                        className="w-full"
+                      >
+                        <SelectValue>
+                          {(v) =>
+                            v
+                              ? t(`admin.fields.variant.purchase_unit.options.${v as string}`)
+                              : t('admin.fields.variant.purchase_unit.options.unit')
+                          }
+                        </SelectValue>
+                      </SelectTrigger>
+                      <SelectContent>
+                        {PURCHASE_UNITS.map((unit) => (
+                          <SelectItem key={unit} value={unit}>
+                            {t(`admin.fields.variant.purchase_unit.options.${unit}`)}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  )}
+                />
+              </Field>
+              <Field>
+                <FieldLabel htmlFor={`variant-${variantIndex}-units-per-carton`}>
+                  {t('admin.fields.variant.units_per_carton.label')}
+                </FieldLabel>
+                <Input
+                  id={`variant-${variantIndex}-units-per-carton`}
+                  type="number"
+                  min="1"
+                  step="1"
+                  {...form.register(`variants.${variantIndex}.units_per_carton`, {
+                    setValueAs: normalizeQuantityRule,
+                  })}
+                />
+                <FieldError
+                  errors={[form.formState.errors.variants?.[variantIndex]?.units_per_carton]}
+                />
+              </Field>
+            </div>
           </Section>
 
           <Section title={t('admin.products.variants.sheet.availability')}>

@@ -51,6 +51,24 @@ export const catalogFormSchema = z
      * (docs/plans/6.0-price-list-automatic-pricing.md).
      */
     minimum_quantity: z.string().trim().optional(),
+    /**
+     * The catalog-wide quantity terms — the middle of the three levels a
+     * buyer's rules resolve through. Blank means this agreement is silent,
+     * which passes the question down rather than answering it.
+     *
+     * Distinct from `minimum_quantity` above: that one decides when a
+     * discount starts, these decide what a buyer may order at all.
+     */
+    minimum_order_quantity: z.string().trim().optional(),
+    order_multiple: z.string().trim().optional(),
+  })
+  .refine((v) => isBlankOrPositiveInteger(v.minimum_order_quantity), {
+    path: ['minimum_order_quantity'],
+    error: () => i18n.t('admin.catalogs.terms.validation.positive_integer'),
+  })
+  .refine((v) => isBlankOrPositiveInteger(v.order_multiple), {
+    path: ['order_multiple'],
+    error: () => i18n.t('admin.catalogs.terms.validation.positive_integer'),
   })
   // Only while the field is on screen. The value survives a switch away from
   // automatic pricing, and judging it then would block Save over a field the
@@ -97,7 +115,21 @@ export const CATALOG_DEFAULTS: CatalogFormValues = {
   adjustment_magnitude: '',
   adjust_compare_at: false,
   minimum_quantity: '',
+  minimum_order_quantity: '',
+  order_multiple: '',
   staged_products: { adds: [], removes: [] },
+}
+
+/** Blank is a valid answer — it means the agreement states nothing. */
+function isBlankOrPositiveInteger(value: string | undefined): boolean {
+  if (!value?.trim()) return true
+  return /^\d+$/.test(value.trim()) && Number(value) > 0
+}
+
+/** Parses a terms field, where blank means "say nothing" rather than zero. */
+export function parseTermQuantity(value: string | undefined): number | null {
+  const trimmed = value?.trim()
+  return trimmed ? Number(trimmed) : null
 }
 
 /**
@@ -116,6 +148,8 @@ export function catalogValuesToParams(
     name: values.name,
     description: blankToNull(values.description),
     active: values.active,
+    minimum_order_quantity: parseTermQuantity(values.minimum_order_quantity),
+    order_multiple: parseTermQuantity(values.order_multiple),
     price_list: priceListPayload(values, previousMode),
   }
 }

@@ -46,6 +46,7 @@ import { useEffect, useState } from 'react'
 import { Controller, type UseFormReturn, useForm } from 'react-hook-form'
 import { useTranslation } from 'react-i18next'
 import { CatalogPricingFields } from '../../../../../components/spree/catalog-pricing-fields'
+import { CatalogTermsCard } from '../../../../../components/spree/catalog-terms-card'
 import { DeferredProductMembershipCard } from '../../../../../components/spree/deferred-product-membership-card'
 import {
   ProductMembershipStagingProvider,
@@ -130,6 +131,8 @@ function CatalogBody({ catalog }: { catalog: Catalog }) {
       name: catalog.name,
       description: catalog.description ?? '',
       active: catalog.active,
+      minimum_order_quantity: catalog.minimum_order_quantity?.toString() ?? '',
+      order_multiple: catalog.order_multiple?.toString() ?? '',
       ...catalogPricingValues(catalog.price_list),
       staged_products: { adds: [], removes: [] },
     })
@@ -215,6 +218,12 @@ function CatalogBody({ catalog }: { catalog: Catalog }) {
             <>
               <CatalogSettingsCard form={form} canEdit={canEdit} />
               <CatalogPricingCard catalog={catalog} form={form} canEdit={canEdit} />
+              <CatalogTermsCard
+                catalogId={catalog.id}
+                form={form}
+                orderMinimums={catalog.order_minimums ?? []}
+                canEdit={canEdit}
+              />
               <CatalogAssignmentsCard catalog={catalog} canEdit={canEdit} />
             </>
           }

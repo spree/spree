@@ -128,6 +128,10 @@ function NewProductPage() {
         v.hs_code != null ||
         v.country_of_origin != null ||
         v.customs_description != null ||
+        v.minimum_order_quantity != null ||
+        v.order_multiple != null ||
+        v.purchase_unit != null ||
+        v.units_per_carton != null ||
         v.track_inventory === false ||
         v.preorderable === true ||
         v.preorder_ships_at != null ||
