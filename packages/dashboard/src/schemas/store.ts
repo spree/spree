@@ -15,7 +15,12 @@ const ALL_WEIGHT_UNITS = [...WEIGHT_UNITS.metric, ...WEIGHT_UNITS.imperial] as c
 // "inherit" option — the store is the terminal fallback in the resolution
 // chain, so it always holds a concrete value. Labels live in `en.json` under
 // `admin.fields.store.storefront_access.options.*`.
-export const STOREFRONT_ACCESS_LEVELS = ['public', 'prices_hidden', 'login_required'] as const
+export const STOREFRONT_ACCESS_LEVELS = [
+  'public',
+  'prices_hidden',
+  'login_required',
+  'approval_required',
+] as const
 
 /**
  * How document numbers are produced. `sequential` counts up from a starting
