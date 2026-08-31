@@ -14,7 +14,7 @@ import {
   useDeleteDeliveryMethod,
   useDeliveryRateProviders,
 } from '../../../hooks/use-delivery-methods'
-import { flatAmount, formatAmount, summarizeRules } from '../../../lib/delivery-method-summary'
+import { formatListedPrice, summarizeRules } from '../../../lib/delivery-method-summary'
 import { useMethodSheetNavigation } from './use-method-sheet-navigation'
 
 export function DeliveryMethodList({
@@ -69,12 +69,15 @@ export function DeliveryMethodList({
         const carrierPriced = rateProvider
           ? rateProvider.uses_calculator === false
           : !!method.rate_provider && method.rate_provider !== defaultRateProvider
-        const amount = flatAmount(method.calculator_preferences)
         const price = carrierPriced
           ? t('admin.delivery_methods.carrier_rates')
-          : amount === null || amount === 0
-            ? t('admin.delivery_methods.free')
-            : formatAmount(amount, defaultCurrency, i18n.language)
+          : formatListedPrice(
+              method.calculator_preferences,
+              defaultCurrency,
+              i18n.language,
+              t('admin.delivery_methods.free'),
+              t('admin.delivery_methods.rule_summary.separator'),
+            )
 
         const ruleSummary = summarizeRules(method.rules, {
           t,
