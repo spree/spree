@@ -14,12 +14,17 @@ module Spree
       # @param variant [Spree::Variant]
       # @param quantity [Integer, nil] defaults to 1
       # @param metadata [Hash] schemaless developer metadata stored on the line item
-      def perform(variant:, cart: nil, order: nil, quantity: nil, metadata: {}, options: {})
+      # @param price [BigDecimal, String, nil] negotiated unit price — stamps the
+      #   line +price_source: 'manual'+ so repricing leaves it alone. Admin
+      #   surface only (draft orders); refused once the order is placed.
+      def perform(variant:, cart: nil, order: nil, quantity: nil, metadata: {}, options: {}, price: nil)
         if order
           Spree::Deprecation.warn('Calling Spree::Carts::AddItem with order: is deprecated and will be removed in Spree 6.1. Pass cart: instead.')
           cart ||= order
         end
-        super(cart: cart, variant: variant, quantity: quantity, metadata: metadata, options: options)
+        super(cart: cart, variant: variant, quantity: quantity, metadata: metadata, options: options, price: price)
+
+        step :parse_manual_price unless price.nil?
 
         # Veto point — purchase limits, B2B eligibility, per-group rules.
         # Outside the transaction: nothing has been written yet, so a
@@ -29,8 +34,10 @@ module Spree
         # Both providers are consulted before the transaction opens: they may
         # be external systems, and a database transaction held open across a
         # network call is how a slow warehouse becomes a table of stuck locks.
+        # A negotiated price skips the pricing round: the caller has already
+        # answered the question the provider would be asked.
         external_step :check_availability
-        external_step :resolve_price
+        external_step :resolve_price if price.nil?
 
         ApplicationRecord.transaction do
           step :add_to_line_item
@@ -44,6 +51,18 @@ module Spree
 
       private
 
+      # finite? is not redundant: BigDecimal parses "NaN" and "Infinity" and
+      # neither is negative. reject! rather than failure(cart, message), which
+      # would drop the message.
+      def parse_manual_price
+        reject!(Spree.t('cart_line_item.price_override_not_allowed'), cart) if cart.completed?
+
+        @manual_price = BigDecimal(price.to_s)
+        reject!(Spree.t('cart_line_item.invalid_price'), cart) if @manual_price.negative? || !@manual_price.finite?
+      rescue ArgumentError
+        reject!(Spree.t('cart_line_item.invalid_price'), cart)
+      end
+
       def add_to_line_item
         item_options = options || {}
         requested_quantity = quantity || 1
@@ -52,8 +71,9 @@ module Spree
         # sellable, even when the local catalog holds no price for it — an
         # external system can be the only source for a currency. The internal
         # resolver returns a placeholder with a nil amount when it has none,
-        # which is not a quote.
-        if resolved_amount.nil? && variant.amount_in(cart.currency).nil?
+        # which is not a quote. A negotiated price is a quote too — the
+        # merchant just made it themselves.
+        if @manual_price.nil? && resolved_amount.nil? && variant.amount_in(cart.currency).nil?
           failure(variant, "#{variant.name} is not available in #{cart.currency}")
         end
 
@@ -88,6 +108,7 @@ module Spree
         # Before the save, so the resolved price rides the same write and the
         # quantity-change callback sees the line as already priced.
         apply_resolved_price
+        apply_manual_price
         failure(@line_item) unless @line_item.save
 
         @line_item.reload
@@ -142,6 +163,22 @@ module Spree
 
         _probe, price = @resolved_price
         Spree::Carts::PriceItems.apply([[@line_item, price]], persist: false)
+      end
+
+      # Stamps the negotiated price after any resolved one, so it wins the
+      # write, marks the line manual, and detaches it from whatever price list
+      # the resolver may have matched.
+      def apply_manual_price
+        return if @manual_price.nil?
+
+        @line_item.assign_attributes(
+          price: @manual_price,
+          price_source: Spree::LineItem::MANUAL_PRICE_SOURCE,
+          price_list_id: nil
+        )
+        # The quantity-change callback must not re-ask the provider for a
+        # price this save already carries.
+        @line_item.price_resolved = true
       end
 
       # What the line will hold once this add is applied. Volume pricing and

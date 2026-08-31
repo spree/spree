@@ -49,6 +49,11 @@ module Spree
 
     DB_INTEGER_MAX = (2**31) - 1
 
+    # The +price_source+ value marking a negotiated (admin-set) unit price.
+    # Reserved: no pricing provider may register it as its key — see
+    # Spree::PricingProvider.verify_registry!.
+    MANUAL_PRICE_SOURCE = Spree::PricingProvider::MANUAL_PRICE_SOURCE
+
     # numericality: :less_than_or_equal_to validation is due to the restriction at the database level
     #   https://github.com/spree/spree/issues/2695#issuecomment-143314161
     validates :quantity, numericality: {
@@ -369,6 +374,15 @@ module Spree
       variant.with_digital_assets?
     end
 
+    # Whether this line carries a negotiated price set by staff. A manual
+    # price is never overwritten by repricing — only the explicit revert
+    # (+price: nil+ through the admin item update) clears it.
+    #
+    # @return [Boolean]
+    def manual_price?
+      price_source == MANUAL_PRICE_SOURCE
+    end
+
     # Recalculates and persists the price based on the current quantity and
     # pricing context — volume breaks, price list rules, contract pricing.
     #
@@ -447,10 +461,11 @@ module Spree
 
     # Returns true if the price should be updated when quantity changes
     # Override this method to customize when prices should be recalculated
-    # By default, prices are not updated after an order is completed
+    # By default, prices are not updated after an order is completed, and a
+    # negotiated (manual) price is never re-derived by a quantity change.
     # @return [Boolean]
     def should_update_price?
-      !owner.completed?
+      !owner.completed? && !manual_price?
     end
 
     def update_tax_charge

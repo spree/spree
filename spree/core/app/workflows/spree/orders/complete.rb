@@ -9,8 +9,10 @@ module Spree
     class Complete < Spree::Workflow
       # @param order [Spree::Order]
       # @param payment_pending [Boolean] when true the order places without
-      #   processing payments (B2B / invoice-later) — payment_status stays
-      #   'balance_due'
+      #   processing payments (B2B / invoice-later). With no payment rows the
+      #   status rollup yields payment_status: 'none' — whether an unpaid
+      #   placed order deserves a distinct value is the wholesale-deposit
+      #   rollup work's call (docs/plans/6.0-b2b-wholesale-shipping.md phase 7)
       # @param notify_customer [Boolean, nil] admin drafts pass false to
       #   complete silently; nil (checkout) leaves customer notification on
       def perform(order:, payment_pending: false, notify_customer: nil)

@@ -40,6 +40,18 @@ module Spree
         end
       end
 
+      context 'with a creating staff member' do
+        let(:admin) { create(:admin_user) }
+        let(:params) { { email: 'new@example.com' } }
+
+        it 'stamps created_by' do
+          result = described_class.call(store: store, customer: user, created_by: admin, params: params)
+
+          expect(result).to be_success
+          expect(result.value.created_by).to eq(admin)
+        end
+      end
+
       context 'with minimal params (no items, no address)' do
         let(:params) { { email: 'new@example.com' } }
 

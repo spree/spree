@@ -248,6 +248,35 @@ RSpec.describe Spree::Api::V3::Admin::OrdersController, type: :controller do
       expect(json_response['email']).to eq('test@example.com')
     end
 
+    it 'stamps created_by from the authenticated admin' do
+      subject
+
+      created_order = Spree::Order.find_by_prefix_id(json_response['id'])
+      expect(created_order.created_by).to eq(admin_user)
+    end
+
+    # update permitted company_id from the start; create did not, so a draft
+    # could not be opened for a business in one call.
+    context 'with a company' do
+      let(:company) { create(:company, store: store) }
+      let(:create_params) { { email: 'test@example.com', company_id: company.prefixed_id } }
+
+      it 'attaches the company to the draft' do
+        subject
+
+        expect(response).to have_http_status(:created)
+        expect(Spree::Order.find_by_prefix_id(json_response['id']).company).to eq(company)
+      end
+
+      it "404s on another store's company rather than confirming the id exists" do
+        foreign = create(:company, store: create(:store))
+
+        post :create, params: { email: 'test@example.com', company_id: foreign.prefixed_id }, as: :json
+
+        expect(response).to have_http_status(:not_found)
+      end
+    end
+
     context 'with user assignment via user_id' do
       let(:customer) { create(:user) }
       let(:create_params) { { user_id: customer.prefixed_id } }
@@ -300,6 +329,42 @@ RSpec.describe Spree::Api::V3::Admin::OrdersController, type: :controller do
         expect(created.line_items.count).to eq(1)
         expect(created.line_items.first.variant).to eq(variant)
         expect(created.line_items.first.quantity).to eq(3)
+      end
+
+      context 'carrying a negotiated price' do
+        let(:create_params) do
+          {
+            email: 'test@example.com',
+            items: [{ variant_id: variant.prefixed_id, quantity: 10, price: '7.20' }]
+          }
+        end
+
+        it 'creates the line at the negotiated price, stamped manual' do
+          subject
+
+          expect(response).to have_http_status(:created)
+          created = Spree::Order.find_by_prefix_id(json_response['id'])
+          line_item = created.line_items.sole
+          expect(line_item.price).to eq(7.2)
+          expect(line_item.price_source).to eq('manual')
+        end
+      end
+
+      # A 422 whose message is blank leaves the dashboard with nothing to show.
+      context 'carrying an unusable price' do
+        let(:create_params) do
+          {
+            email: 'test@example.com',
+            items: [{ variant_id: variant.prefixed_id, quantity: 1, price: '12,50' }]
+          }
+        end
+
+        it 'refuses with an actionable message' do
+          expect { subject }.not_to change(Spree::Order, :count)
+
+          expect(response).to have_http_status(:unprocessable_entity)
+          expect(response.body).to include('non-negative number')
+        end
       end
     end
 
@@ -612,6 +677,25 @@ RSpec.describe Spree::Api::V3::Admin::OrdersController, type: :controller do
 
         expect(response).to have_http_status(:ok)
         expect(order.reload.tag_list).to contain_exactly('VIP')
+      end
+    end
+
+    # The path the dashboard's order-edit Save actually takes. A rejected batch
+    # carries its reason on the Result, so without propagation this rendered a
+    # 422 with an empty message and the form had nothing to display.
+    context 'with an unusable price in the items batch' do
+      let(:variant) { create(:variant, product: create(:product)) }
+      let!(:order) { create(:order, store: store, state: 'cart') }
+
+      it 'refuses with an actionable message' do
+        patch :update, params: {
+          id: order.prefixed_id,
+          items: [{ variant_id: variant.prefixed_id, quantity: 1, price: '12,50' }]
+        }, as: :json
+
+        expect(response).to have_http_status(:unprocessable_entity)
+        expect(response.body).to include('non-negative number')
+        expect(order.reload.line_items).to be_empty
       end
     end
 

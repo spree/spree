@@ -14,6 +14,8 @@ interface ColumnDefBase<T = any> {
   default?: boolean
   /** Ransack attribute name if different from key (e.g., 'master_sku' for 'sku') */
   ransackAttribute?: string
+  /** Send `ransackAttribute` as a Ransack scope: bare key, no operator suffix. */
+  ransackScope?: boolean
   /** Custom cell renderer. If omitted, renders `row[key]` as text. */
   render?: (row: T) => ReactNode
   /**

@@ -12489,8 +12489,10 @@ paths:
                     updated_at: '2026-01-15T12:00:00.000Z'
                   digital_links: []
                   metadata: {}
+                  price_source:
                   created_at: '2026-01-15T12:00:00.000Z'
                   updated_at: '2026-01-15T12:00:00.000Z'
+                  catalog_price: '19.99'
                   cost_price: '17.0'
                   tax_category_id: taxcat_UkLWZg9DAJ
                 meta:
@@ -12600,8 +12602,10 @@ paths:
                   updated_at: '2026-01-15T12:00:00.000Z'
                 digital_links: []
                 metadata: {}
+                price_source:
                 created_at: '2026-01-15T12:00:00.000Z'
                 updated_at: '2026-01-15T12:00:00.000Z'
+                catalog_price: '19.99'
                 cost_price: '17.0'
                 tax_category_id: taxcat_UkLWZg9DAJ
       requestBody:
@@ -12733,8 +12737,10 @@ paths:
                   updated_at: '2026-01-15T12:00:00.000Z'
                 digital_links: []
                 metadata: {}
+                price_source:
                 created_at: '2026-01-15T12:00:00.000Z'
                 updated_at: '2026-01-15T12:00:00.000Z'
+                catalog_price: '19.99'
                 cost_price: '17.0'
                 tax_category_id: taxcat_UkLWZg9DAJ
     patch:
@@ -12839,8 +12845,10 @@ paths:
                   updated_at: '2026-01-15T12:00:00.000Z'
                 digital_links: []
                 metadata: {}
+                price_source:
                 created_at: '2026-01-15T12:00:00.000Z'
                 updated_at: '2026-01-15T12:00:00.000Z'
+                catalog_price: '19.99'
                 cost_price: '17.0'
                 tax_category_id: taxcat_UkLWZg9DAJ
       requestBody:
@@ -13501,7 +13509,7 @@ paths:
                 internal_note_html:
                 approver_id:
                 canceler_id:
-                created_by_id:
+                created_by_id: adm_UkLWZg9DAJ
                 customer_id:
       requestBody:
         content:
@@ -34737,6 +34745,10 @@ components:
           type: array
           items:
             type: string
+        companies:
+          type: array
+          items:
+            "$ref": "#/components/schemas/Company"
       required:
       - id
       - email
@@ -36154,10 +36166,16 @@ components:
             "$ref": "#/components/schemas/TaxLine"
         metadata:
           type: object
+        price_source:
+          type: string
+          nullable: true
         created_at:
           type: string
         updated_at:
           type: string
+        catalog_price:
+          type: string
+          nullable: true
         cost_price:
           type: string
           nullable: true
@@ -36201,8 +36219,10 @@ components:
       - option_values
       - digital_links
       - metadata
+      - price_source
       - created_at
       - updated_at
+      - catalog_price
       - cost_price
       - tax_category_id
       x-typelizer: true
@@ -36821,11 +36841,11 @@ components:
         customer:
           "$ref": "#/components/schemas/Customer"
         approver:
-          "$ref": "#/components/schemas/Customer"
+          "$ref": "#/components/schemas/AdminUser"
         canceler:
-          "$ref": "#/components/schemas/Customer"
+          "$ref": "#/components/schemas/AdminUser"
         created_by:
-          "$ref": "#/components/schemas/Customer"
+          "$ref": "#/components/schemas/AdminUser"
         returns:
           type: array
           items:

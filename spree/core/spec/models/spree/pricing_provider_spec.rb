@@ -178,6 +178,21 @@ RSpec.describe 'Pricing providers' do
     end
   end
 
+  describe 'reserved keys' do
+    it 'accepts the shipped registry' do
+      expect { Spree::PricingProvider.verify_registry! }.not_to raise_error
+    end
+
+    # 'manual' marks a negotiated line price, so a provider answering under it
+    # would make negotiated rows indistinguishable from its own.
+    it 'refuses a provider registering the manual key' do
+      external_provider_class.key_name = 'manual'
+
+      expect { Spree::PricingProvider.verify_registry!([external_provider_class]) }.
+        to raise_error(ArgumentError, /manual.*reserved/m)
+    end
+  end
+
   def with_memory_cache
     original = Rails.cache
     Rails.cache = ActiveSupport::Cache::MemoryStore.new

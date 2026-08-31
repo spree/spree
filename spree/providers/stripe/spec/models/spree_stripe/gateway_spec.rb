@@ -617,6 +617,41 @@ RSpec.describe SpreeStripe::Gateway do
       end
     end
 
+    # A 6.0 payment stores no number at all — the column is NULL and the
+    # number is derived — so the lookup has to resolve through the prefixed
+    # id the gateway options now carry.
+    context 'when the payment has no stored number (6.0 row)' do
+      let(:gateway_options) do
+        { order_id: payment.number, payment_id: payment.number, payment_prefixed_id: payment.prefixed_id }
+      end
+
+      before { payment.update_columns(number: nil) }
+
+      it 'resolves the payment by its prefixed id' do
+        VCR.use_cassette('create_payment_intent_with_payment_method') do
+          expect(subject.success?).to be(true)
+        end
+      end
+    end
+
+    context "when the prefixed id names another gateway's payment" do
+      let(:other_gateway) { create(:stripe_gateway, store: store) }
+      let!(:other_payment) do
+        create(:payment, amount: order.total, payment_method: other_gateway,
+                         order: order, source: credit_card, response_code: payment_intent_id)
+      end
+      let(:gateway_options) do
+        { order_id: nil, payment_id: nil, payment_prefixed_id: other_payment.prefixed_id }
+      end
+
+      before { other_payment.update_columns(number: nil) }
+
+      it 'does not resolve it' do
+        expect(subject.success?).to be(false)
+        expect(subject.message).to eq('Payment number is invalid')
+      end
+    end
+
     # Derived numbers contain the order number and a hyphen (`R1001-P1`), so a
     # gateway that splits on the hyphen looks up the wrong record entirely.
     context 'when the payment carries a derived, hyphenated number' do

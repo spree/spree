@@ -15,11 +15,14 @@ module Spree
 
       # @param store [Spree::Store]
       # @param customer [Object, nil] resolved customer (Spree.customer_class instance)
+      # @param created_by [Object, nil] the staff member creating the draft
+      #   (Spree.admin_user_class instance); nil for machine callers (secret keys)
       # @param params [Hash] order params (see admin API docs)
       # @return [Spree::ServiceModule::Result]
-      def call(store:, customer: nil, params: {})
+      def call(store:, customer: nil, created_by: nil, params: {})
         @store = store
         @customer = customer
+        @created_by = created_by
         @params = params.to_h.deep_symbolize_keys
         @discount_application_errors = []
 
@@ -48,6 +51,7 @@ module Spree
       def build_order
         attrs = {
           customer: @customer,
+          created_by: @created_by,
           email: @params[:email] || @customer&.email,
           currency: @params[:currency].presence&.upcase || @store.default_currency,
           locale: @params[:locale] || Spree::Current.locale,
@@ -60,6 +64,7 @@ module Spree
 
         attrs[:market] = resolve_market if @params[:market_id].present?
         attrs[:channel] = resolve_channel if @params[:channel_id].present?
+        attrs[:company] = resolve_company if @params[:company_id].present?
         attrs[:preferred_stock_location] = resolve_preferred_stock_location if @params[:preferred_stock_location_id].present?
         attrs.compact_blank!
 
@@ -72,6 +77,10 @@ module Spree
 
       def resolve_channel
         @store.channels.find_by_param!(@params[:channel_id])
+      end
+
+      def resolve_company
+        @store.companies.find_by_param!(@params[:company_id])
       end
 
       def resolve_preferred_stock_location

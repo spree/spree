@@ -11,7 +11,8 @@ module Spree
                   order: @parent,
                   variant: variant,
                   quantity: permitted_params[:quantity] || 1,
-                  options: permitted_params[:options] || {}
+                  options: permitted_params[:options] || {},
+                  **manual_price_arguments
                 )
 
                 if result.success?
@@ -29,7 +30,8 @@ module Spree
                   order: @parent,
                   line_item: @resource,
                   quantity: permitted_params[:quantity],
-                  metadata: permitted_params[:metadata]&.to_h
+                  metadata: permitted_params[:metadata]&.to_h,
+                  **manual_price_arguments
                 )
 
                 if result.success?
@@ -67,10 +69,21 @@ module Spree
             end
 
             def permitted_params
-              params.permit(:variant_id, :quantity, metadata: {}, options: {})
+              params.permit(:variant_id, :quantity, :price, metadata: {}, options: {})
             end
 
             private
+
+            # price is tri-state — absent leaves pricing alone, an amount
+            # negotiates the line, an explicit null reverts to catalog
+            # pricing — so it is forwarded only when the request carried the
+            # key, which also keeps custom services without the keyword
+            # working for every other request.
+            def manual_price_arguments
+              return {} unless params.key?(:price)
+
+              { price: permitted_params[:price] }
+            end
 
             def variant
               @variant ||= current_store.variants.find_by_prefix_id!(permitted_params[:variant_id])

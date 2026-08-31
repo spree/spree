@@ -22,6 +22,8 @@ import { type ColumnDef, type FilterRule, parseFilterIds } from './table-registr
 // FilterRule[]) stays simple.
 const ARRAY_OPERATORS = new Set(['in', 'not_in'])
 
+const NEGATING_OPERATORS = new Set(['not_in', 'not_eq'])
+
 export function filtersToRansack(
   filters: FilterRule[],
   columns: ColumnDef[],
@@ -35,7 +37,12 @@ export function filtersToRansack(
     // ransack alias here when one isn't explicitly set.
     const fallback = col?.filterType === 'tags' ? 'tags_name' : filter.field
     const ransackKey = col?.ransackAttribute ?? fallback
-    const key = `${ransackKey}_${filter.operator}`
+    // A scope is invoked by its bare name and takes the value as an argument,
+    // so it cannot express negation — emitting the same key for `not_in` would
+    // run it as an inclusion.
+    if (col?.ransackScope && NEGATING_OPERATORS.has(filter.operator)) continue
+
+    const key = col?.ransackScope ? ransackKey : `${ransackKey}_${filter.operator}`
     if (ARRAY_OPERATORS.has(filter.operator)) {
       const ids = parseFilterIds(filter.value)
       if (ids.length > 0) out[key] = ids

@@ -374,6 +374,10 @@
     "companies": {
       "add_cta": "Unternehmen hinzufügen",
       "add_sheet_title": "Neues Unternehmen",
+      "autocomplete": {
+        "empty": "Keine passenden Firmen",
+        "placeholder": "Firmen suchen…"
+      },
       "create_description": "Ein Unternehmen ist die Wurzel eines Organisationsbaums. Untereinheiten, Mitglieder, Adressen, Steuerregistrierung und Befreiungsnachweise fügen Sie danach hinzu.",
       "create_label": "Unternehmen erstellen",
       "delete_confirm": {
@@ -526,9 +530,11 @@
     "customers": {
       "autocomplete": {
         "empty": "Keine passenden Kunden",
+        "empty_for_company": "Keine Kunden können für diese Firma einkaufen",
         "placeholder": "Kunden suchen…"
       },
       "columns": {
+        "companies": "Firmen",
         "groups": "Gruppen",
         "last_order": "Letzte Bestellung",
         "newsletter": "Newsletter",
@@ -2546,16 +2552,22 @@
         "action_label": "Bestellung bearbeiten",
         "actions": {
           "add_product": "Produkt hinzufügen",
+          "keep_negotiated_price": "Verhandelten Preis für {{name}} behalten",
+          "price_for": "Stückpreis für {{name}}",
           "quantity_for": "Menge von {{name}}",
           "remove_item": "{{name}} entfernen",
+          "reset_price": "{{name}} auf Katalogpreis zurücksetzen",
           "restore_item": "{{name}} behalten"
         },
         "badges": {
           "fulfilled_count_one": "{{count}} abgewickelt",
           "fulfilled_count_other": "{{count}} abgewickelt",
+          "negotiated": "Verhandelt",
           "pending": "Nicht gespeichert",
+          "price_reverting": "Wird auf Katalogpreis zurückgesetzt",
           "removed": "Wird entfernt"
         },
+        "catalog_price_unknown": "Katalogpreis",
         "columns": {
           "line_total": "Positionssumme",
           "product": "Produkt",
@@ -2567,10 +2579,13 @@
         "subtitle": "Bestellung {{number}}",
         "title": "Bestellung bearbeiten",
         "totals_hint": "Die Summen werden nach dem Speichern vom Server neu berechnet.",
+        "totals_preview_confirm_hint": "Wird beim Speichern vom Server bestätigt.",
+        "totals_preview_hint": "Versand, Steuern und Aktionen werden nach dem Speichern vom Server neu berechnet.",
         "totals_title": "Summen",
         "validation": {
           "below_fulfilled_one": "Darf {{count}} abgewickelte Einheit nicht unterschreiten",
-          "below_fulfilled_other": "Darf {{count}} abgewickelte Einheiten nicht unterschreiten"
+          "below_fulfilled_other": "Darf {{count}} abgewickelte Einheiten nicht unterschreiten",
+          "invalid_price": "Der Preis muss eine nicht negative Zahl sein"
         }
       },
       "errors": {
@@ -2873,12 +2888,14 @@
         "drafts_title": "Bestellentwürfe",
         "new": {
           "add_line_item": "Position hinzufügen",
+          "company_help": "Diese Bestellung einem Unternehmen zuordnen. Die Kundenliste zeigt dann nur Personen, die dafür einkaufen dürfen.",
           "search_variant": "Variante suchen…",
           "section_billing": "Rechnung",
           "section_customer": "Kunde",
           "section_items": "Artikel",
           "section_notes": "Notizen",
           "section_summary": "Zusammenfassung",
+          "select_company": "Firma (optional)",
           "select_customer": "Kunde auswählen",
           "title": "Neue Bestellung"
         }

@@ -376,6 +376,10 @@
     "companies": {
       "add_cta": "Dodaj firmę",
       "add_sheet_title": "Nowa firma",
+      "autocomplete": {
+        "empty": "Brak pasujących firm",
+        "placeholder": "Szukaj firm…"
+      },
       "create_description": "Firma jest korzeniem drzewa organizacji. Jednostki podrzędne, członków, adresy, rejestracje podatkowe i certyfikaty zwolnień dodasz później.",
       "create_label": "Utwórz firmę",
       "delete_confirm": {
@@ -530,9 +534,11 @@
     "customers": {
       "autocomplete": {
         "empty": "Brak pasujących klientów",
+        "empty_for_company": "Żaden klient nie może kupować dla tej firmy",
         "placeholder": "Szukaj klientów…"
       },
       "columns": {
+        "companies": "Firmy",
         "groups": "Grupy",
         "last_order": "Ostatnie zamówienie",
         "newsletter": "Newsletter",
@@ -2566,8 +2572,11 @@
         "action_label": "Edytuj zamówienie",
         "actions": {
           "add_product": "Dodaj produkt",
+          "keep_negotiated_price": "Zachowaj wynegocjowaną cenę dla {{name}}",
+          "price_for": "Cena jednostkowa {{name}}",
           "quantity_for": "Ilość dla {{name}}",
           "remove_item": "Usuń {{name}}",
+          "reset_price": "Przywróć cenę katalogową dla {{name}}",
           "restore_item": "Zachowaj {{name}}"
         },
         "badges": {
@@ -2575,9 +2584,12 @@
           "fulfilled_count_many": "{{count}} zrealizowanych",
           "fulfilled_count_one": "{{count}} zrealizowana",
           "fulfilled_count_other": "{{count}} zrealizowanych",
+          "negotiated": "Wynegocjowana",
           "pending": "Niezapisane",
+          "price_reverting": "Powrót do ceny katalogowej",
           "removed": "Do usunięcia"
         },
+        "catalog_price_unknown": "cena katalogowa",
         "columns": {
           "line_total": "Wartość pozycji",
           "product": "Produkt",
@@ -2589,12 +2601,15 @@
         "subtitle": "Zamówienie {{number}}",
         "title": "Edytuj zamówienie",
         "totals_hint": "Sumy są przeliczane przez serwer po zapisaniu zmian.",
+        "totals_preview_confirm_hint": "Potwierdzane przez serwer po zapisaniu.",
+        "totals_preview_hint": "Wysyłka, podatki i promocje zostaną przeliczone przez serwer po zapisaniu.",
         "totals_title": "Sumy",
         "validation": {
           "below_fulfilled_few": "Nie można zejść poniżej {{count}} zrealizowanych sztuk",
           "below_fulfilled_many": "Nie można zejść poniżej {{count}} zrealizowanych sztuk",
           "below_fulfilled_one": "Nie można zejść poniżej {{count}} zrealizowanej sztuki",
-          "below_fulfilled_other": "Nie można zejść poniżej {{count}} zrealizowanych sztuk"
+          "below_fulfilled_other": "Nie można zejść poniżej {{count}} zrealizowanych sztuk",
+          "invalid_price": "Cena musi być liczbą nieujemną"
         }
       },
       "errors": {
@@ -2899,12 +2914,14 @@
         "drafts_title": "Wersje robocze zamówień",
         "new": {
           "add_line_item": "Dodaj pozycję",
+          "company_help": "Przypisz to zamówienie do firmy. Lista klientów pokaże wtedy tylko osoby, które mogą dla niej kupować.",
           "search_variant": "Szukaj wariantu…",
           "section_billing": "Rozliczenie",
           "section_customer": "Klient",
           "section_items": "Pozycje",
           "section_notes": "Notatki",
           "section_summary": "Podsumowanie",
+          "select_company": "Firma (opcjonalnie)",
           "select_customer": "Wybierz klienta",
           "title": "Nowe zamówienie"
         }

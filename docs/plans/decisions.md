@@ -4450,3 +4450,51 @@ Nothing else in the one-question-per-entity entry changes: the binding
 inversion, the leak fix, and the catalog-first dashboard direction all stand.
 Plans amended: `6.0-catalog-agreement-rework.md` (Key Decisions + phase 3),
 `6.0-b2b-companies-and-catalogs.md` (amendment block).
+## 2026-08-30 — Draft-order negotiation mechanics implemented; payment lookup keys on the prefixed id
+
+The full `6.0-draft-order-negotiation-mechanics.md` scope shipped in one
+pass, including the "6.0, late" `Orders::CreateFromCart` (small and
+independent — no reason to hold it) and, per the Wave 1 roadmap bundling,
+the payment-number search fixes owned by `6.0-6.1-b2b-payment-terms.md`.
+Two mechanism choices worth recording. The reserved-key check and the
+`'manual'` constant live on the lightweight `Spree::PricingProvider`
+module (LineItem aliases it), because the boot-time
+`verify_registry!` call must not constant-load the model graph early —
+doing so reorders `Preferable#defined_preferences`, which reads Ruby's
+`methods` order, and churns the generated OpenAPI preference schemas. And
+the Stripe gateway's broken `find_by(number:)` resolves through a new
+`payment_prefixed_id` entry in `GatewayOptions#to_hash` — the plan said
+"corrected" without naming the mechanism; the prefixed id is the same
+stable handle the idempotency key was already built on, and "nothing
+durable keys on derived payment numbers" ruled out anything parsed from
+the number itself. The stored-number lookup stays as the legacy-row
+fallback.
+
+## 2026-08-30 — Order editor previews staged edits; the client-projection ban narrowed to exactness
+
+Making the draft-order unit price editable turned the edit screen's
+"totals are server truth" stance into a misleading one: staging a revert
+redisplayed the very price being abandoned, struck through, while every
+total sat frozen. Reported from live UI review, not caught by any spec —
+each number was individually correct and collectively wrong.
+
+The screen now previews staged edits as a before/after diff on the unit
+price, line total, subtotal and grand total. This narrows, but does not
+delete, the `6.1-order-change-substrate.md` constraint against computing
+projected totals client-side. **The line is exactness, not arithmetic.**
+Price × quantity is exact, so the subtotal projects. The grand total
+projects ONLY when shipping, tax, discounts and fees are all zero — where
+the total simply is the subtotal — and falls back to the server's figure
+the moment any of them is non-zero, because a quantity change can cross a
+shipping band or a promotion threshold and no client arithmetic can know
+it. A row that cannot be projected (a revert with no catalog price) nulls
+the entire projection rather than contributing a partial sum: a total
+stated confidently and wrongly is worse than a stale one.
+
+Supporting change: the admin line-item serializer gained `catalog_price`
+(the variant BASE price, not a resolved one — resolving would call the
+pricing provider once per row on a read path the third-party-pricing plan
+keeps provider-free). It is a comparison figure, not a promise: the revert
+re-prices through the resolver and may land elsewhere. It required
+eager-loading variant prices in the orders controller's own `scope`, which
+bypasses `scope_includes` — 15 price queries per order page became 1.

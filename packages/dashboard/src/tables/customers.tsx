@@ -3,6 +3,7 @@ import { ActiveBadge, Badge, RelativeTime, TagList } from '@spree/dashboard-ui'
 import { Link } from '@tanstack/react-router'
 import i18n from 'i18next'
 import { UsersIcon } from 'lucide-react'
+import { companyAutocompleteProps } from '../hooks/use-companies'
 import { customerGroupAutocompleteProps } from '../hooks/use-customer-groups'
 
 defineTable('customers', {
@@ -85,6 +86,32 @@ defineTable('customers', {
             {groups.map((g: { id: string; name: string }) => (
               <Badge key={g.id} variant="secondary">
                 {g.name}
+              </Badge>
+            ))}
+          </div>
+        )
+      },
+    },
+    {
+      key: 'companies',
+      label: i18n.t('admin.customers.columns.companies'),
+      default: false,
+      sortable: false,
+      filterable: true,
+      filterType: 'resource',
+      expand: 'companies',
+      // Scope, not `companies_id_in`: standing covers a node AND its ancestors.
+      ransackAttribute: 'with_standing_for_company',
+      ransackScope: true,
+      filterResource: companyAutocompleteProps('companies-filter-picker'),
+      render: (c) => {
+        const companies = c.companies ?? []
+        if (companies.length === 0) return '—'
+        return (
+          <div className="flex flex-wrap gap-1">
+            {companies.map((company: { id: string; name: string }) => (
+              <Badge key={company.id} variant="secondary">
+                {company.name}
               </Badge>
             ))}
           </div>

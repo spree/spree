@@ -136,6 +136,41 @@ test.describe('order editing', () => {
 
     await expect(page).toHaveURL(orderUrl, { timeout: 15_000 })
   })
+
+  // Draft orders take a negotiated unit price: editing it stamps the line
+  // manual server-side, and coming back to the form shows the marker with
+  // the reset-to-catalog action beside it.
+  test('sets a negotiated unit price on a draft order line', async ({ page }) => {
+    const creds = await login(page)
+    await page.goto(NEW_ORDER_PATH(creds.store_id))
+    await expect(page.getByRole('heading', { name: CTA })).toBeVisible({ timeout: 15_000 })
+
+    await fillNewOrderForm(page, `e2e-order-price-${Date.now()}@example.com`)
+    await page.locator('button[type="submit"]').click()
+    await expect(page).toHaveURL(new RegExp(`/${creds.store_id}/orders/or_[^/]+$`), {
+      timeout: 15_000,
+    })
+
+    const orderUrl = page.url()
+    await page.goto(`${orderUrl}/edit`)
+    await expect(page.getByRole('heading', { name: /edit order/i })).toBeVisible({
+      timeout: 15_000,
+    })
+
+    const price = page.getByLabel(/unit price for/i).first()
+    await expect(price).toBeVisible({ timeout: 15_000 })
+    await price.fill('7.20')
+
+    await page.getByRole('button', { name: /^save$/i }).click()
+    await expect(page).toHaveURL(orderUrl, { timeout: 15_000 })
+
+    await page.goto(`${orderUrl}/edit`)
+    await expect(page.getByLabel(/unit price for/i).first()).toHaveValue(/^7\.20?$/, {
+      timeout: 15_000,
+    })
+    await expect(page.getByText(/^negotiated$/i)).toBeVisible()
+    await expect(page.getByRole('button', { name: /reset .* to catalog price/i })).toBeVisible()
+  })
 })
 
 test.describe('order addresses', () => {

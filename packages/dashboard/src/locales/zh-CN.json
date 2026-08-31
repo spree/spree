@@ -374,6 +374,10 @@
     "companies": {
       "add_cta": "添加公司",
       "add_sheet_title": "新建公司",
+      "autocomplete": {
+        "empty": "没有匹配的公司",
+        "placeholder": "搜索公司…"
+      },
       "create_description": "公司是组织树的根节点。创建后可以添加子单位、成员、地址、税务登记和免税证书。",
       "create_label": "创建公司",
       "delete_confirm": {
@@ -525,9 +529,11 @@
     "customers": {
       "autocomplete": {
         "empty": "没有匹配的客户",
+        "empty_for_company": "没有客户可为此公司采购",
         "placeholder": "搜索客户…"
       },
       "columns": {
+        "companies": "公司",
         "groups": "分组",
         "last_order": "最近订单",
         "newsletter": "订阅资讯",
@@ -2539,16 +2545,22 @@
         "action_label": "编辑订单",
         "actions": {
           "add_product": "添加商品",
+          "keep_negotiated_price": "保留 {{name}} 的议价",
+          "price_for": "{{name}} 的单价",
           "quantity_for": "{{name}} 的数量",
           "remove_item": "移除 {{name}}",
+          "reset_price": "将 {{name}} 恢复为目录价格",
           "restore_item": "保留 {{name}}"
         },
         "badges": {
           "fulfilled_count_one": "已履行 {{count}} 件",
           "fulfilled_count_other": "已履行 {{count}} 件",
+          "negotiated": "议价",
           "pending": "未保存",
+          "price_reverting": "将恢复为目录价格",
           "removed": "待移除"
         },
+        "catalog_price_unknown": "目录价格",
         "columns": {
           "line_total": "小计",
           "product": "商品",
@@ -2560,10 +2572,13 @@
         "subtitle": "订单 {{number}}",
         "title": "编辑订单",
         "totals_hint": "保存后，服务器会重新计算金额。",
+        "totals_preview_confirm_hint": "保存时由服务器确认。",
+        "totals_preview_hint": "运费、税费和促销将在保存后由服务器重新计算。",
         "totals_title": "金额",
         "validation": {
           "below_fulfilled_one": "不能低于已履行的 {{count}} 件",
-          "below_fulfilled_other": "不能低于已履行的 {{count}} 件"
+          "below_fulfilled_other": "不能低于已履行的 {{count}} 件",
+          "invalid_price": "价格必须是非负数"
         }
       },
       "errors": {
@@ -2866,12 +2881,14 @@
         "drafts_title": "草稿订单",
         "new": {
           "add_line_item": "添加订单项",
+          "company_help": "将此订单关联到某个公司。客户列表随后只显示可为其采购的人员。",
           "search_variant": "搜索变体…",
           "section_billing": "账单",
           "section_customer": "客户",
           "section_items": "商品",
           "section_notes": "备注",
           "section_summary": "概览",
+          "select_company": "公司（可选）",
           "select_customer": "选择客户",
           "title": "新建订单"
         }

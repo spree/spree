@@ -99,7 +99,11 @@ module Spree
 
     self.whitelisted_ransackable_associations = %w[payment_method order source]
     ransack_alias :state, :status # @deprecated filter alias — removed in 6.1
-    self.whitelisted_ransackable_attributes = %w[number amount status state response_code avs_response cvv_response_code cvv_response_message]
+    # `number` is deliberately absent: it is derived (its column is NULL on
+    # 6.0 rows), so a filter on it silently matches nothing. The 6.1 payment
+    # `reference` becomes the searchable identifier
+    # (docs/plans/6.0-6.1-b2b-payment-terms.md).
+    self.whitelisted_ransackable_attributes = %w[amount status state response_code avs_response cvv_response_code cvv_response_message]
 
     # transaction_id is much easier to understand
     alias_attribute :transaction_id, :response_code

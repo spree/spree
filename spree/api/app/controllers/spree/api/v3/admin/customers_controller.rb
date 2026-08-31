@@ -71,7 +71,9 @@ module Spree
           end
 
           # `customer_groups` is preloaded because the serializer's always-on
-          # `customer_group_ids` attribute reads it for every row.
+          # `customer_group_ids` attribute reads it for every row. `companies`
+          # is not: it only renders behind `?expand=companies`, where
+          # ar_lazy_preload already batches it into one query for the page.
           def collection_includes
             [:customer_groups, taggings: :tag]
           end
