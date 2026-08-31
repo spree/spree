@@ -194,6 +194,33 @@ test.describe('catalogs', () => {
     await expect(page.locator('#catalog-minimum-quantity')).toHaveValue('10')
   })
 
+  // The threshold survives a switch away from automatic pricing, where its
+  // field is no longer rendered. Judging it then would block Save over
+  // something the merchant cannot see or correct.
+  test('does not judge the quantity once the agreement prices by hand', async ({ page }) => {
+    const creds = await login(page)
+    await gotoIndex(page, CATALOGS_PATH(creds.store_id), CTA)
+
+    const name = `E2E Catalog Switch ${Date.now()}`
+    await createCatalog(page, name)
+
+    await page.locator('#catalog-pricing-mode').click()
+    await page.getByRole('option', { name: /percentage off/i }).click()
+    await page.locator('#catalog-adjustment-magnitude').fill('10')
+    await page.locator('#catalog-minimum-quantity').fill('abc')
+
+    await page.locator('#catalog-pricing-mode').click()
+    await page.getByRole('option', { name: /prices i enter for this catalog/i }).click()
+    await expect(page.locator('#catalog-minimum-quantity')).toHaveCount(0)
+
+    await saveCatalog(page)
+
+    // Saved: the list exists, so the price spreadsheet is reachable.
+    await expect(page.getByRole('button', { name: /^enter prices$/i })).toBeVisible({
+      timeout: 15_000,
+    })
+  })
+
   test('renames a catalog from the header Save', async ({ page }) => {
     const creds = await login(page)
     await gotoIndex(page, CATALOGS_PATH(creds.store_id), CTA)

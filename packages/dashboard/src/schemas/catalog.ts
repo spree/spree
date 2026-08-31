@@ -52,10 +52,19 @@ export const catalogFormSchema = z
      */
     minimum_quantity: z.string().trim().optional(),
   })
-  .refine((v) => !v.minimum_quantity?.trim() || parseMinimumQuantity(v.minimum_quantity) !== null, {
-    path: ['minimum_quantity'],
-    error: () => i18n.t('admin.products.price_lists.validation.minimum_quantity_invalid'),
-  })
+  // Only while the field is on screen. The value survives a switch away from
+  // automatic pricing, and judging it then would block Save over a field the
+  // merchant can no longer see or correct.
+  .refine(
+    (v) =>
+      v.pricing_mode !== 'automatic' ||
+      !v.minimum_quantity?.trim() ||
+      parseMinimumQuantity(v.minimum_quantity) !== null,
+    {
+      path: ['minimum_quantity'],
+      error: () => i18n.t('admin.products.price_lists.validation.minimum_quantity_invalid'),
+    },
+  )
   .refine(
     (v) => v.pricing_mode !== 'automatic' || parsePercentage(v.adjustment_magnitude) !== null,
     {
