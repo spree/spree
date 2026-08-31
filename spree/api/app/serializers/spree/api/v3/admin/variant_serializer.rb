@@ -26,26 +26,15 @@ module Spree
                    purchase_unit: [:string, nullable: true],
                    metadata: 'Record<string, unknown>'
 
+          # The last three override the store serializer's buyer-resolved
+          # values with the variant's OWN: a merchant edits what is stored on
+          # the row, not what some catalog resolves to for a buyer they are not.
           attributes :metadata, :position, :cost_price, :cost_currency,
                      :barcode, :weight_unit, :dimensions_unit, :backorder_limit,
                      :hs_code, :country_of_origin, :customs_description,
+                     :minimum_order_quantity, :order_multiple, :purchase_unit,
                      preorder_ships_at: :iso8601, deleted_at: :iso8601,
                      created_at: :iso8601, updated_at: :iso8601
-
-          # The variant's OWN rules, overriding the store serializer's
-          # buyer-resolved ones: a merchant edits what is stored on the row,
-          # not what some catalog resolves to for a buyer they are not.
-          attribute :minimum_order_quantity do |variant|
-            variant.minimum_order_quantity
-          end
-
-          attribute :order_multiple do |variant|
-            variant.order_multiple
-          end
-
-          attribute :purchase_unit do |variant|
-            variant.purchase_unit
-          end
 
           attribute :preorderable do |variant|
             variant.preorderable?

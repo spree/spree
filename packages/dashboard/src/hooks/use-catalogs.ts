@@ -174,23 +174,6 @@ export function useCreateCatalogQuantityRule(catalogId: string) {
   })
 }
 
-export function useUpdateCatalogQuantityRule(catalogId: string) {
-  return useResourceMutation<
-    CatalogQuantityRule,
-    Error,
-    { id: string; params: CatalogQuantityRuleParams }
-  >({
-    mutationFn: ({ id, params }) =>
-      adminClient.catalogs.quantityRules.update(catalogId, id, params),
-    invalidate: [
-      ['catalogs', catalogId],
-      ['catalogs', catalogId, 'quantity_rules'],
-    ],
-    successMessage: i18n.t('admin.catalogs.terms.messages.rule_updated'),
-    errorMessage: i18n.t('admin.errors.failed_to_update'),
-  })
-}
-
 export function useDeleteCatalogQuantityRule(catalogId: string) {
   return useResourceMutation<void, Error, string>({
     mutationFn: (id) => adminClient.catalogs.quantityRules.delete(catalogId, id),

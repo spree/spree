@@ -4,7 +4,7 @@ module Spree
   # All attributes are automatically reset between requests by Rails.
   # Fallback chains ensure sensible defaults when attributes are not explicitly set.
   class Current < ::ActiveSupport::CurrentAttributes
-    attribute :store, :channel, :market, :currency, :locale, :content_locale, :tax_country, :price_lists, :applicable_catalogs, :global_pricing_context, :provider_cache, :integrations
+    attribute :store, :channel, :market, :currency, :locale, :content_locale, :tax_country, :price_lists, :applicable_catalogs, :quantity_rules_resolvers, :global_pricing_context, :provider_cache, :integrations
 
     # Scratch space for provider strategies to memoize a call across the
     # request — part of the delivery rate provider contract (nothing in core
@@ -113,6 +113,40 @@ module Spree
     # @return [Hash]
     def applicable_catalogs
       super || (self.applicable_catalogs = {})
+    end
+
+    # The quantity-rule resolver for a buyer in this request, keyed the same
+    # way their catalogs are.
+    #
+    # Request-scoped rather than per-caller because a serializer is built
+    # fresh for every variant on a listing: a per-instance memo would reload
+    # and re-hash each catalog's override rows once per row on the page.
+    #
+    # @param company [Spree::Company, nil]
+    # @param user [Object, nil]
+    # @param channel [Spree::Channel, nil]
+    # @return [Spree::Catalogs::ResolveQuantityRules]
+    def quantity_rules_resolver_for(company: nil, user: nil, channel: nil)
+      channel ||= self.channel
+      key = [store&.id, company&.id, user&.id, channel&.id]
+      quantity_rules_resolvers[key] ||= Spree::Catalogs::ResolveQuantityRules.new(
+        catalogs_for(company: company, user: user, channel: channel)
+      )
+    end
+
+    # @return [Hash]
+    def quantity_rules_resolvers
+      super || (self.quantity_rules_resolvers = {})
+    end
+
+    # Drops everything derived from the catalog set, so a write in this
+    # request is not read back through a memo it has already superseded.
+    # One call rather than a list every caller has to keep in step.
+    # @return [void]
+    def reset_catalog_memos
+      self.applicable_catalogs = nil
+      self.quantity_rules_resolvers = nil
+      self.price_lists = nil
     end
 
     # Returns the current global pricing context, built from store, currency, country, and market.

@@ -50,14 +50,8 @@ module Spree
       # edited. Naming the nearest valid quantities rather than rounding: a
       # silent adjustment on a wholesale order is a five-figure surprise.
       def quantity_rule_errors
-        return [] if staff_initiated?
-
-        @cart.line_items_violating_quantity_rules.map do |line_item, rule|
-          req('cart', 'line_items',
-              Spree.t('cart_line_item.quantity_rule_violated',
-                      li_name: line_item.name,
-                      quantities: rule.nearest_valid(line_item.quantity).to_sentence),
-              code: 'quantity_rule_violated')
+        @cart.quantity_rule_violations.map do |_line_item, message|
+          req('cart', 'line_items', message, code: 'quantity_rule_violated')
         end
       end
 
@@ -66,7 +60,7 @@ module Spree
       # they can still add to it. Completion refuses it because the advisory
       # feed is included there too.
       def below_order_minimum?
-        !staff_initiated? && @cart.below_order_minimum?
+        !@cart.staff_initiated? && @cart.below_order_minimum?
       end
 
       def order_minimum_requirement
@@ -117,18 +111,17 @@ module Spree
       # from the steps of a cart that owes nothing, and a requirement naming a
       # step the buyer never visits is one they cannot clear.
       def po_number_missing?
-        @cart.po_number.blank? && @cart.po_number_required? && !staff_initiated?
+        @cart.po_number.blank? && @cart.po_number_required? && !keyed_in_by_staff?
       end
 
-      # Two signals, because either alone leaves a gap: a draft order is the
-      # admin surface whether or not a creator was recorded (the draft
-      # workflows take `created_by` optionally), and a cart cannot carry one
-      # at all. The item workflows exempt staff on the same terms, so an
-      # order that passed the add is never refused at completion for the
-      # quantities staff deliberately keyed in.
-      def staff_initiated?
-        @cart.is_a?(Spree::Order) ||
-          (@cart.respond_to?(:created_by_id) && @cart.created_by_id.present?)
+      # Narrower than {Spree::Purchase::QuantityRules#staff_initiated?} on
+      # purpose. A buyer's PO reference commonly arrives with the paperwork,
+      # so only an order someone actually keyed in is excused — a draft with
+      # no recorded creator still has to ask for it. Quantity terms take the
+      # wider exemption: any draft order is the admin surface, and refusing
+      # staff there would make an agreed exception impossible to record.
+      def keyed_in_by_staff?
+        @cart.respond_to?(:created_by_id) && @cart.created_by_id.present?
       end
 
       def req(step, field, message, code: nil)

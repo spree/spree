@@ -10,7 +10,6 @@ module Spree
                    price_list_id: [:string, nullable: true],
                    products_count: :number,
                    minimum_order_quantity: ['number | null'], order_multiple: ['number | null'],
-                   quantity_rules_count: :number, order_minimums_count: :number,
                    metadata: 'Record<string, unknown> | null'
 
           attributes :name, :description, :active, :position, :metadata,
@@ -23,16 +22,6 @@ module Spree
 
           attribute :products_count do |catalog|
             catalog.catalog_products.size
-          end
-
-          # Counts rather than the rows themselves: a catalog can carry
-          # thousands of overrides, and the terms card pages through them.
-          attribute :quantity_rules_count do |catalog|
-            catalog.quantity_rules.size
-          end
-
-          attribute :order_minimums_count do |catalog|
-            catalog.order_minimums.size
           end
 
           # Minimums are few (one per currency) and the card renders them

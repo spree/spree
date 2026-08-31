@@ -16,7 +16,7 @@ module Spree
 
     delegate :store, :store_id, to: :catalog
 
-    after_commit -> { Spree::Current.applicable_catalogs = nil }
+    after_commit -> { Spree::Current.reset_catalog_memos }
 
     # @return [Spree::Money]
     def display_amount

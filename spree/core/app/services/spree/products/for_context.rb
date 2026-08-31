@@ -49,19 +49,6 @@ module Spree
         ))
       end
 
-      private
-
-      # The node a buyer browses as when they name none: the single node they
-      # hold a membership on.
-      #
-      # Deliberately the membership node rather than
-      # +Customer#company_standing+, which expands to the whole subtree — a
-      # buyer with one membership over a parent with three divisions has
-      # standing for four nodes but is still unambiguous, and counting the
-      # expansion would refuse to resolve. Where standing covers several
-      # nodes the buyer picks one on the cart, and catalogs follow that
-      # choice; matches +Purchase::Company#resolved_company+ exactly, so
-      # what they browse and what they are charged agree.
     end
   end
 end

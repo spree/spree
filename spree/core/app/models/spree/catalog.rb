@@ -67,10 +67,7 @@ module Spree
     # `update_all` and so never runs PriceList's own callback — without this
     # the released list stays missing from the request's matching set, and
     # anything priced later in that request misses it.
-    after_commit -> {
-      Spree::Current.applicable_catalogs = nil
-      Spree::Current.price_lists = nil
-    }
+    after_commit -> { Spree::Current.reset_catalog_memos }
 
     scope :active, -> { where(active: true) }
     scope :by_position, -> { order(position: :asc) }
@@ -174,7 +171,7 @@ module Spree
     def self.for_buyer(store:, customer: nil, company: nil, channel: nil)
       return [] if store.nil?
 
-      company ||= sole_standing_company(store, customer)
+      company ||= Spree::Company.sole_standing_for(store: store, customer: customer)
       channel ||= Spree::Current.channel if store == Spree::Current.store
 
       if store == Spree::Current.store
@@ -182,24 +179,6 @@ module Spree
       else
         for_context(store: store, company: company, user: customer, channel: channel)
       end
-    end
-
-    # The one company a customer unambiguously buys for in this store, or nil
-    # when they belong to none or to several — guessing would put one
-    # business's agreement on another's purchase.
-    #
-    # @param store [Spree::Store]
-    # @param customer [Object, nil]
-    # @return [Spree::Company, nil]
-    def self.sole_standing_company(store, customer)
-      return nil if customer.nil?
-
-      companies = customer.company_memberships.
-                  joins(:company).
-                  merge(Spree::Company.where(store_id: store.id)).
-                  map(&:company).uniq
-
-      companies.one? ? companies.first : nil
     end
 
     # The owned list's id. Reads like the column the binding replaced, so
@@ -340,18 +319,6 @@ module Spree
       return 0 if price_list.nil?
 
       add_products(price_list.product_ids)
-    end
-
-    # This catalog's own quantity terms, before any per-variant override —
-    # the middle of the three resolution levels. Fields this catalog is
-    # silent on stay nil so the level below still answers them.
-    #
-    # @return [Spree::QuantityRule]
-    def default_quantity_rule
-      Spree::QuantityRule.new(
-        minimum_order_quantity: minimum_order_quantity,
-        order_multiple: order_multiple
-      )
     end
 
     private

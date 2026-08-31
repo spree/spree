@@ -1,5 +1,5 @@
 import type { CatalogParams, PriceList } from '@spree/admin-sdk'
-import { blankToNull } from '@spree/dashboard-core'
+import { blankToNull, normalizeQuantityRule } from '@spree/dashboard-core'
 import { requiredMessage } from '@spree/dashboard-ui'
 import i18n from 'i18next'
 import { z } from 'zod/v4'
@@ -62,11 +62,18 @@ export const catalogFormSchema = z
     minimum_order_quantity: z.string().trim().optional(),
     order_multiple: z.string().trim().optional(),
   })
-  .refine((v) => isBlankOrPositiveInteger(v.minimum_order_quantity), {
-    path: ['minimum_order_quantity'],
-    error: () => i18n.t('admin.catalogs.terms.validation.positive_integer'),
-  })
-  .refine((v) => isBlankOrPositiveInteger(v.order_multiple), {
+  // Blank is a valid answer — it means the agreement states nothing — so the
+  // shared normalizer's null stands for both "unset" and "unusable", and only
+  // a non-blank field that normalizes away is an error.
+  .refine(
+    (v) =>
+      !v.minimum_order_quantity?.trim() || normalizeQuantityRule(v.minimum_order_quantity) !== null,
+    {
+      path: ['minimum_order_quantity'],
+      error: () => i18n.t('admin.catalogs.terms.validation.positive_integer'),
+    },
+  )
+  .refine((v) => !v.order_multiple?.trim() || normalizeQuantityRule(v.order_multiple) !== null, {
     path: ['order_multiple'],
     error: () => i18n.t('admin.catalogs.terms.validation.positive_integer'),
   })
@@ -120,18 +127,6 @@ export const CATALOG_DEFAULTS: CatalogFormValues = {
   staged_products: { adds: [], removes: [] },
 }
 
-/** Blank is a valid answer — it means the agreement states nothing. */
-function isBlankOrPositiveInteger(value: string | undefined): boolean {
-  if (!value?.trim()) return true
-  return /^\d+$/.test(value.trim()) && Number(value) > 0
-}
-
-/** Parses a terms field, where blank means "say nothing" rather than zero. */
-export function parseTermQuantity(value: string | undefined): number | null {
-  const trimmed = value?.trim()
-  return trimmed ? Number(trimmed) : null
-}
-
 /**
  * Maps form values to the Admin API payload. The catalog and the list it
  * prices through are written in one request, so `price_list` rides inline:
@@ -148,8 +143,8 @@ export function catalogValuesToParams(
     name: values.name,
     description: blankToNull(values.description),
     active: values.active,
-    minimum_order_quantity: parseTermQuantity(values.minimum_order_quantity),
-    order_multiple: parseTermQuantity(values.order_multiple),
+    minimum_order_quantity: normalizeQuantityRule(values.minimum_order_quantity),
+    order_multiple: normalizeQuantityRule(values.order_multiple),
     price_list: priceListPayload(values, previousMode),
   }
 }

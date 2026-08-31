@@ -14,11 +14,6 @@ module Spree
     attribute :minimum_order_quantity, :integer
     attribute :order_multiple, :integer
 
-    # The rule every buyer gets when nothing declares one: buy one at a time.
-    def self.default
-      new
-    end
-
     # @return [Integer] the least quantity that may be ordered
     def minimum
       value = minimum_order_quantity.to_i
@@ -31,7 +26,8 @@ module Spree
       value.positive? ? value : 1
     end
 
-    # True when neither rule narrows anything — the shape a retail buyer sees.
+    # True when neither rule narrows anything — the shape a retail buyer sees,
+    # and what a variant with empty columns resolves to.
     # @return [Boolean]
     def unrestricted?
       minimum == 1 && multiple == 1
@@ -74,6 +70,21 @@ module Spree
     # @return [Array<Integer>] one or two ascending quantities
     def nearest_valid(quantity)
       [previous_valid(quantity), next_valid(quantity)].compact.uniq
+    end
+
+    # Why a quantity was refused, naming what may be ordered instead — nil
+    # when the quantity is fine. Lives here beside the arithmetic so the two
+    # cart workflows and the completion check all refuse in the same words;
+    # the server never rounds, so the neighbours are the whole answer.
+    #
+    # @param name [String] what the buyer called for
+    # @param quantity [Integer]
+    # @return [String, nil]
+    def violation_message(name, quantity)
+      return nil if satisfied_by?(quantity)
+
+      Spree.t('cart_line_item.quantity_rule_violated',
+              li_name: name, quantities: nearest_valid(quantity).to_sentence)
     end
 
     # Steps are counted from a DECLARED minimum rather than from zero, so a

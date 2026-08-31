@@ -129,6 +129,22 @@ RSpec.describe 'cart quantity rule enforcement' do
       expect(violation[:message]).to include('100')
     end
 
+    # The two exemptions are deliberately different widths: quantity terms
+    # excuse any draft order, a buyer's PO reference only one someone
+    # actually keyed in. Widening one must not quietly widen the other.
+    it 'still asks a draft order with no recorded creator for its PO number' do
+      customer = create(:user)
+      buyer_company = create(:company, store: store, po_number_required: true)
+      create(:company_membership, company: buyer_company, customer: customer)
+      draft = create(:order, store: store)
+      draft.update_columns(customer_id: customer.id, company_id: buyer_company.id)
+
+      codes = described_class.new(draft.reload).call(completion: true).map { |r| r[:code] }
+
+      expect(codes).to include('po_number_required')
+      expect(codes).not_to include('quantity_rule_violated')
+    end
+
     it 'exempts a staff-keyed purchase' do
       allow(cart).to receive(:created_by_id).and_return(1)
       variant.update!(minimum_order_quantity: 100, order_multiple: 100)

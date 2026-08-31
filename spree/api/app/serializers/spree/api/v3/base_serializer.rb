@@ -114,21 +114,18 @@ module Spree
         # rules. Read from the request context the same way price_for does,
         # so a storefront gets the stepper matching the price it is quoted.
         #
-        # One resolver per render rather than one per variant: a listing page
-        # asks about every row against the same few catalogs.
+        # The resolver is request-scoped, not instance-scoped: Alba builds a
+        # fresh serializer for every element of a collection, so a memo held
+        # here would reload each catalog's override rows once per row on the
+        # page. Resolving without the buyer's company would also answer from
+        # a different agreement than the one pricing the same page.
         def quantity_rule_for(variant)
-          @quantity_rule_cache ||= {}
-          @quantity_rule_cache[variant.id] ||= quantity_rules_resolver.call(variant)
-        end
+          return Spree::QuantityRule.new if current_store.nil?
 
-        # Through the same entry point visibility and pricing use, so the
-        # stepper a storefront draws matches the price beside it and the
-        # quantity the cart will actually accept. Resolving without the
-        # buyer's company would answer from a different agreement.
-        def quantity_rules_resolver
-          @quantity_rules_resolver ||= Spree::Catalogs::ResolveQuantityRules.new(
-            Spree::Catalog.for_buyer(store: current_store, customer: current_user)
-          )
+          Spree::Current.quantity_rules_resolver_for(
+            company: Spree::Company.sole_standing_for(store: current_store, customer: current_user),
+            user: current_user
+          ).call(variant)
         end
 
         # Returns the base price for a variant without Price List resolution

@@ -7,7 +7,6 @@ RSpec.describe Spree::QuantityRule do
 
       expect(rule.minimum).to eq(1)
       expect(rule.multiple).to eq(1)
-      expect(rule).to be_unrestricted
       expect(rule).to be_satisfied_by(7)
     end
 

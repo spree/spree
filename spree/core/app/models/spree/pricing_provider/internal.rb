@@ -84,18 +84,17 @@ module Spree
                                       select { |list| list.applicable?(context) }
         end
 
-        # Catalogs that apply to this buyer. Reused from {Spree::Current}
-        # when the context is the current store, so a product listing does
-        # not re-resolve the same company / group / channel set per variant.
+        # Catalogs that apply to this buyer, through the one entry point
+        # visibility and quantity terms also use — what a buyer is shown, what
+        # they pay and how much they must take have to come from the same
+        # agreement. Reuses the request-scoped set for the current store, so a
+        # listing does not re-resolve the same buyer per variant.
         # @return [Array<Spree::Catalog>]
         def catalogs_for_context
-          if context.store == Spree::Current.store
-            Spree::Current.catalogs_for(company: context.company, user: context.user, channel: context.channel)
-          else
-            Spree::Catalog.for_context(
-              store: context.store, company: context.company, user: context.user, channel: context.channel
-            )
-          end
+          Spree::Catalog.for_buyer(
+            store: context.store, customer: context.user,
+            company: context.company, channel: context.channel
+          )
         end
 
         # Returns the price lists for the context's store

@@ -9,7 +9,7 @@ RSpec.describe Spree::Catalog, '.for_buyer' do
   before do
     create(:company_membership, company: company, customer: customer)
     create(:catalog_assignment, catalog: catalog, assignable: company)
-    Spree::Current.applicable_catalogs = nil
+    Spree::Current.reset_catalog_memos
   end
 
   # Every catalog-reading surface has to answer from the same set. A caller

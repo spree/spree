@@ -24,15 +24,7 @@ module Spree
     # A catalog's terms are invalidated the moment they change: the resolved
     # set is memoized per request, and a rule edited in the same request must
     # not be read back stale.
-    after_commit -> { Spree::Current.applicable_catalogs = nil }
-
-    # @return [Spree::QuantityRule] this row's contribution, unresolved
-    def to_quantity_rule
-      Spree::QuantityRule.new(
-        minimum_order_quantity: minimum_order_quantity,
-        order_multiple: order_multiple
-      )
-    end
+    after_commit -> { Spree::Current.reset_catalog_memos }
 
     private
 

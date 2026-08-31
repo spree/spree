@@ -59,7 +59,6 @@ module Spree
           order_multiple: multiple || variant.order_multiple
         )
       end
-      alias for_variant call
 
       # The order minimum in effect for a currency: the first catalog with a
       # row for it. Catalogs saying nothing about this currency pass through,
@@ -69,7 +68,7 @@ module Spree
       # @param currency [String]
       # @return [Spree::CatalogOrderMinimum, nil]
       def order_minimum(currency)
-        return nil if currency.blank?
+        return nil if currency.blank? || catalogs.empty?
 
         code = currency.to_s.upcase
         catalogs.each do |catalog|

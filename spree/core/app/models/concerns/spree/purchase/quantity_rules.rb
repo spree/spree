@@ -11,6 +11,36 @@ module Spree
     module QuantityRules
       extend ActiveSupport::Concern
 
+      # True when staff keyed this purchase in rather than a buyer building it.
+      # Two signals, because either alone leaves a gap: a draft order is the
+      # admin surface whether or not a creator was recorded (both draft
+      # workflows take `created_by` optionally), and a cart cannot carry one
+      # at all.
+      #
+      # Staff are unrestricted by the quantity terms — an admin is entering
+      # what the buyer actually negotiated, and refusing it would make an
+      # agreed exception impossible to record.
+      #
+      # @return [Boolean]
+      def staff_initiated?
+        is_a?(Spree::Order) || (respond_to?(:created_by_id) && created_by_id.present?)
+      end
+
+      # Why this buyer may not order that many of a variant, naming what they
+      # may order instead — nil when the quantity is fine, and nil for staff,
+      # who are unrestricted. The one place the three enforcement points get
+      # their answer, so they all refuse in the same words.
+      #
+      # @param variant [Spree::Variant]
+      # @param quantity [Integer]
+      # @param name [String, nil] what to call the item; defaults to the variant
+      # @return [String, nil]
+      def quantity_rule_violation(variant, quantity, name: nil)
+        return nil if staff_initiated?
+
+        quantity_rules_for(variant).violation_message(name || variant.name, quantity)
+      end
+
       # The buyer's effective rules for one variant: their catalogs' terms
       # resolved per field over the variant's own base rules.
       #
@@ -57,22 +87,22 @@ module Spree
         shortfall.present? && shortfall.positive?
       end
 
-      # Every line whose quantity no longer satisfies the buyer's rules,
-      # paired with the rule it breaks. Empty for a retail buyer, and empty
-      # for anyone who has not had their terms changed under them.
+      # Why each line may no longer be ordered as it stands, in the same words
+      # add-to-cart used. Empty for a retail buyer, and empty for anyone whose
+      # terms have not changed under them since they built the cart.
       #
-      # @return [Array<Array(Spree::LineItem, Spree::QuantityRule)>]
-      def line_items_violating_quantity_rules
-        resolver = quantity_rules_resolver
+      # @return [Array<Array(Spree::LineItem, String)>]
+      def quantity_rule_violations
+        return [] if staff_initiated?
 
         line_items.filter_map do |line_item|
           variant = line_item.variant
           next if variant.nil?
 
-          rule = resolver.call(variant)
-          next if rule.satisfied_by?(line_item.quantity)
+          message = quantity_rules_for(variant).violation_message(line_item.name, line_item.quantity)
+          next if message.nil?
 
-          [line_item, rule]
+          [line_item, message]
         end
       end
 

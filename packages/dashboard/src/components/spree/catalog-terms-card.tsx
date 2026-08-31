@@ -1,5 +1,11 @@
 import type { CatalogOrderMinimum, CatalogQuantityRule, Variant } from '@spree/admin-sdk'
-import { adminClient, CurrencySelect, ResourceCombobox, useStore } from '@spree/dashboard-core'
+import {
+  adminClient,
+  CurrencySelect,
+  normalizeQuantityRule,
+  ResourceCombobox,
+  useStore,
+} from '@spree/dashboard-core'
 import {
   Button,
   Card,
@@ -422,8 +428,8 @@ function AddQuantityRuleDialog({
     await createMutation
       .mutateAsync({
         variant_id: variantId,
-        minimum_order_quantity: minimum.trim() ? Number(minimum) : null,
-        order_multiple: multiple.trim() ? Number(multiple) : null,
+        minimum_order_quantity: normalizeQuantityRule(minimum),
+        order_multiple: normalizeQuantityRule(multiple),
       })
       .then(() => {
         setVariantId('')

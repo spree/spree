@@ -10,7 +10,7 @@ RSpec.describe Spree::Purchase::QuantityRules do
   before do
     create(:company_membership, company: company, customer: customer)
     create(:catalog_assignment, catalog: catalog, assignable: company)
-    Spree::Current.applicable_catalogs = nil
+    Spree::Current.reset_catalog_memos
   end
 
   describe 'the order minimum' do
@@ -59,7 +59,7 @@ RSpec.describe Spree::Purchase::QuantityRules do
     end
   end
 
-  describe '#line_items_violating_quantity_rules' do
+  describe '#quantity_rule_violations' do
     let(:product) { create(:product, store: store, price: 10) }
     let(:variant) { product.default_variant }
 
@@ -68,18 +68,29 @@ RSpec.describe Spree::Purchase::QuantityRules do
     end
 
     it 'is empty while every line still fits' do
-      expect(cart.reload.line_items_violating_quantity_rules).to be_empty
+      expect(cart.reload.quantity_rule_violations).to be_empty
     end
 
-    it 'names a line the terms no longer admit, with the rule it breaks' do
+    it 'names a line the terms no longer admit, in the words add-to-cart used' do
       create(:catalog_quantity_rule, catalog: catalog, variant: variant,
                                      minimum_order_quantity: 48, order_multiple: 24)
-      Spree::Current.applicable_catalogs = nil
+      Spree::Current.reset_catalog_memos
 
-      line_item, rule = cart.reload.line_items_violating_quantity_rules.first
+      line_item, message = cart.reload.quantity_rule_violations.first
 
       expect(line_item.variant).to eq(variant)
-      expect(rule.minimum).to eq(48)
+      expect(message).to include('48')
+    end
+
+    # Staff key in what the buyer negotiated, so a draft order is never
+    # refused at completion for a quantity they deliberately entered.
+    it 'is empty for a staff-keyed purchase' do
+      create(:catalog_quantity_rule, catalog: catalog, variant: variant,
+                                     minimum_order_quantity: 48, order_multiple: 24)
+      Spree::Current.reset_catalog_memos
+      allow(cart).to receive(:staff_initiated?).and_return(true)
+
+      expect(cart.quantity_rule_violations).to be_empty
     end
   end
 end

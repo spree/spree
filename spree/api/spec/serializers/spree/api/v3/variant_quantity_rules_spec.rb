@@ -13,7 +13,7 @@ RSpec.describe Spree::Api::V3::VariantSerializer, 'quantity rules' do
 
   before do
     Spree::Current.store = store
-    Spree::Current.applicable_catalogs = nil
+    Spree::Current.reset_catalog_memos
   end
 
   it 'reads 1 and 1 when nothing declares a rule' do
@@ -42,7 +42,7 @@ RSpec.describe Spree::Api::V3::VariantSerializer, 'quantity rules' do
     catalog = create(:catalog, store: store, minimum_order_quantity: 48, order_multiple: 24)
     create(:company_membership, company: company, customer: customer)
     create(:catalog_assignment, catalog: catalog, assignable: company)
-    Spree::Current.applicable_catalogs = nil
+    Spree::Current.reset_catalog_memos
 
     json = render(user: customer)
 
