@@ -31,18 +31,22 @@ import type {
  * rules are easy to confuse with one another (an order multiple is a step
  * size, not a divisor of the total) and a merchant setting one needs the
  * distinction where they are reading, not in a paragraph below.
+ *
+ * The icon takes a tab stop deliberately. Skipping it would leave the
+ * explanation reachable by pointer only, which is the audience least likely
+ * to need it read aloud.
  */
 function TermHelp({ text }: { text: string }) {
   return (
     <Tooltip>
       <TooltipTrigger asChild>
+        {/* Focusable and named: the tooltip opens on focus as well as hover,
+            so keyboard and screen-reader users reach the explanation the
+            same way everyone else does. */}
         <button
           type="button"
-          // A cursor-help affordance, not an action: it opens nothing and
-          // must not take a tab stop away from the field it describes.
-          tabIndex={-1}
-          className="cursor-help text-muted-foreground"
-          aria-hidden="true"
+          className="cursor-help rounded-sm text-muted-foreground focus-visible:outline-2 focus-visible:outline-ring focus-visible:outline-offset-2"
+          aria-label={text}
         >
           <InfoIcon className="size-3.5" />
         </button>
