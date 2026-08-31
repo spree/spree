@@ -262,6 +262,8 @@ export function catalogTermColumns({
     /** What the term means, shown from the column heading. */
     minimumHelp: string
     multipleHelp: string
+    /** Shown under a cell holding something that cannot be a rule. */
+    invalid: string
     mixed: string
     defaultHint: string
   }
@@ -310,6 +312,11 @@ export function catalogTermColumns({
       // A row on its way out takes its terms with it, so editing them is
       // meaningless — and the struck-through row already says so.
       const disabled = !canEdit || row.pending === 'removed'
+      // An unusable entry is flagged where it was typed. Without this it
+      // normalizes to null on submit, which the API reads as "clear this
+      // override" — the merchant's rule would vanish with no error anywhere.
+      const minimumInvalid = isUnusable(entry?.minimum_order_quantity)
+      const multipleInvalid = isUnusable(entry?.order_multiple)
 
       return (
         <>
@@ -319,12 +326,14 @@ export function catalogTermColumns({
               min={1}
               step={1}
               disabled={disabled}
+              aria-invalid={minimumInvalid}
               aria-label={headers.minimumLabel}
               placeholder={entry?.mixed ? headers.mixed : catalogMinimum || headers.defaultHint}
               value={entry?.minimum_order_quantity ?? ''}
               onChange={(event) => set(row.id, 'minimum_order_quantity', event.target.value)}
               className="h-8"
             />
+            {minimumInvalid && <p className="mt-1 text-destructive text-xs">{headers.invalid}</p>}
           </TableCell>
           <TableCell>
             <Input
@@ -332,12 +341,14 @@ export function catalogTermColumns({
               min={1}
               step={1}
               disabled={disabled}
+              aria-invalid={multipleInvalid}
               aria-label={headers.multipleLabel}
               placeholder={entry?.mixed ? headers.mixed : catalogMultiple || headers.defaultHint}
               value={entry?.order_multiple ?? ''}
               onChange={(event) => set(row.id, 'order_multiple', event.target.value)}
               className="h-8"
             />
+            {multipleInvalid && <p className="mt-1 text-destructive text-xs">{headers.invalid}</p>}
           </TableCell>
         </>
       )
@@ -363,6 +374,24 @@ export function termsToFormValues(
         mixed: term.mixed,
       },
     ]),
+  )
+}
+
+/**
+ * True when a cell holds something that is neither blank nor a usable rule.
+ * Blank is a valid answer — it means the product uses the catalog default.
+ */
+function isUnusable(value: string | undefined): boolean {
+  return !!value?.trim() && normalizeQuantityRule(value) === null
+}
+
+/**
+ * True when any staged cell holds an unusable entry, so the page refuses to
+ * save rather than send a value the API would read as "clear this rule".
+ */
+export function stagedTermsHaveErrors(terms: StagedProductTerms): boolean {
+  return Object.values(terms).some(
+    (entry) => isUnusable(entry.minimum_order_quantity) || isUnusable(entry.order_multiple),
   )
 }
 

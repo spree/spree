@@ -83,6 +83,26 @@ RSpec.describe Spree::Catalog, '.for_buyer' do
     expect(Spree::Current.standing_company_for(customer)).to eq(company)
   end
 
+  # The same collision one level up: the catalog memo is keyed on an id too,
+  # so a non-customer must not reach it in either order.
+  it 'keeps a non-customer out of the catalog memo in either order' do
+    group = create(:customer_group, store: store)
+    grouped = create(:user)
+    grouped.customer_groups << group
+    group_catalog = create(:catalog, store: store)
+    create(:catalog_assignment, catalog: group_catalog, assignable: group)
+    Spree::Current.store = store
+    impostor = Struct.new(:id).new(grouped.id)
+
+    Spree::Current.reset_catalog_memos
+    expect(Spree::Current.catalogs_for(user: grouped)).to eq([group_catalog])
+    expect(Spree::Current.catalogs_for(user: impostor)).to be_empty
+
+    Spree::Current.reset_catalog_memos
+    expect(Spree::Current.catalogs_for(user: impostor)).to be_empty
+    expect(Spree::Current.catalogs_for(user: grouped)).to eq([group_catalog])
+  end
+
   it 'is empty without a store' do
     expect(described_class.for_buyer(store: nil, customer: customer)).to eq([])
   end

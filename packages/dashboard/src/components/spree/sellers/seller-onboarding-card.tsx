@@ -63,7 +63,7 @@ export function SellerOnboardingCard({ seller, canEdit }: { seller: Seller; canE
       {/* Open while there is something left to do; a finished checklist
           folds away so the page leads with what still needs the operator. */}
       <Collapsible defaultOpen={!seller.onboarding_complete}>
-        <CollapsibleTrigger className="group flex w-full cursor-pointer items-center gap-3 p-4 text-left hover:bg-muted/50 border-border-subtle">
+        <CollapsibleTrigger className="group flex w-full cursor-pointer items-center gap-3 p-4 text-left hover:bg-accent/50 border-border-subtle">
           <CardTitle>{t('admin.sellers.onboarding.title')}</CardTitle>
           {seller.onboarding_complete ? (
             <SharedStatusBadge status="complete" label={t('admin.sellers.onboarding.all_done')} />

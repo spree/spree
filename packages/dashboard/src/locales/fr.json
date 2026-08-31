@@ -168,7 +168,8 @@
         "validation": {
           "positive_integer": "Saisissez un nombre entier supérieur à zéro, ou laissez vide.",
           "currency_taken": "Cette devise a déjà un minimum.",
-          "positive_amount": "Saisissez un montant supérieur à zéro."
+          "positive_amount": "Saisissez un montant supérieur à zéro.",
+          "fix_terms": "Corrigez les règles de quantité signalées avant d’enregistrer."
         },
         "mixed": "Variable",
         "inherits": "Par défaut",

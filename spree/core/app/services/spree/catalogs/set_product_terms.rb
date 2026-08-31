@@ -23,17 +23,30 @@ module Spree
         foreign = terms.keys.reject { |product| product.store_id == catalog.store_id }
         return failure(catalog, Spree.t('catalogs.product_not_in_store')) if foreign.any?
 
+        invalid = nil
+
         ApplicationRecord.transaction do
           catalog.add_products(terms.keys.reject { |product| catalog.product_ids.include?(product.id) }.map(&:id))
 
-          terms.each { |product, values| apply(catalog, product, values) }
+          terms.each do |product, values|
+            invalid = apply(catalog, product, values)
+            # A plain service's `failure` returns rather than raising, so one
+            # bad row has to take the transaction down itself — otherwise the
+            # rest of the set commits, the products are added, and the caller
+            # is told the whole thing worked.
+            raise ActiveRecord::Rollback if invalid
+          end
         end
+
+        return failure(invalid) if invalid
 
         success(catalog.reload)
       end
 
       private
 
+      # @return [Spree::CatalogQuantityRule, nil] the first row that would not
+      #   save, so the caller can roll the whole set back
       def apply(catalog, product, values)
         minimum = normalize(values[:minimum_order_quantity])
         multiple = normalize(values[:order_multiple])
@@ -43,22 +56,27 @@ module Spree
         # own default, which is what an empty pair means on the row.
         if minimum.nil? && multiple.nil?
           catalog.quantity_rules.where(variant_id: variant_ids).destroy_all
-          return
+          return nil
         end
 
         variant_ids.each do |variant_id|
           rule = catalog.quantity_rules.find_or_initialize_by(variant_id: variant_id)
           rule.assign_attributes(minimum_order_quantity: minimum, order_multiple: multiple)
-          failure(rule) unless rule.save
+          return rule unless rule.save
         end
+
+        nil
       end
 
       # A blank arrives as nil or an empty string depending on the client;
-      # both mean "say nothing", which is not the same as zero.
+      # both mean "say nothing", which is not the same as zero. Anything else
+      # is passed through as given — a negative or fractional entry has to
+      # reach the model's validation and be refused, not be coerced into a
+      # different rule than the merchant typed.
       def normalize(value)
         return nil if value.nil? || value.to_s.strip.empty?
 
-        value.to_i
+        value
       end
     end
   end

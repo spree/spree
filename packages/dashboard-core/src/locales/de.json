@@ -1557,7 +1557,8 @@
         "validation": {
           "positive_integer": "Geben Sie eine ganze Zahl größer als null ein oder lassen Sie das Feld leer.",
           "currency_taken": "Für diese Währung gibt es bereits einen Mindestwert.",
-          "positive_amount": "Geben Sie einen Betrag größer als null ein."
+          "positive_amount": "Geben Sie einen Betrag größer als null ein.",
+          "fix_terms": "Korrigieren Sie die markierten Mengenregeln, bevor Sie speichern."
         },
         "mixed": "Gemischt",
         "inherits": "Standard",

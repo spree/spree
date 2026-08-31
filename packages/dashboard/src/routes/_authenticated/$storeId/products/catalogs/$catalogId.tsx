@@ -49,6 +49,7 @@ import { CatalogPricingFields } from '../../../../../components/spree/catalog-pr
 import {
   CatalogTermsCard,
   catalogTermColumns,
+  stagedTermsHaveErrors,
   stagedTermsToParams,
   termsToFormValues,
 } from '../../../../../components/spree/catalog-terms-card'
@@ -158,6 +159,14 @@ function CatalogBody({ catalog }: { catalog: Catalog }) {
   }
 
   async function handleSave(values: CatalogFormValues) {
+    // Refused here rather than normalized away: an unusable cell would be
+    // sent as null, which the API reads as "clear this override", so the
+    // merchant's rule would disappear instead of being corrected.
+    if (stagedTermsHaveErrors(values.staged_terms ?? {})) {
+      form.setError('root', { message: t('admin.catalogs.terms.validation.fix_terms') })
+      return
+    }
+
     try {
       // A product on its way out takes its terms with it, so its cells are
       // dropped rather than sent — the save would otherwise re-create rows
@@ -251,6 +260,7 @@ function CatalogBody({ catalog }: { catalog: Catalog }) {
                     multipleLabel: t('admin.fields.order_multiple.label'),
                     minimumHelp: t('admin.catalogs.terms.help.minimum'),
                     multipleHelp: t('admin.catalogs.terms.help.multiple'),
+                    invalid: t('admin.catalogs.terms.validation.positive_integer'),
                     mixed: t('admin.catalogs.terms.mixed'),
                     defaultHint: t('admin.catalogs.terms.inherits'),
                   },

@@ -15,7 +15,7 @@ RSpec.describe Spree::Catalogs::SetProductTerms do
     apply(product => { minimum_order_quantity: 48, order_multiple: 24 })
 
     rules = catalog.quantity_rules.reload
-    expect(rules.count).to eq(product.variants_including_master.count)
+    expect(rules.count).to eq(product.variants.count)
     expect(rules.map(&:minimum_order_quantity).uniq).to eq([48])
   end
 
@@ -62,6 +62,31 @@ RSpec.describe Spree::Catalogs::SetProductTerms do
     foreign = create(:product, store: create(:store))
 
     result = apply(foreign => { minimum_order_quantity: 48 })
+
+    expect(result).to be_failure
+    expect(catalog.quantity_rules.reload).to be_empty
+  end
+
+  # The set applies whole or not at all: a partial write would leave the
+  # agreement in a state the merchant never asked for, and the products would
+  # have been added on the way.
+  it 'rolls the whole set back when one product\'s terms are unusable' do
+    other = create(:product, store: store)
+
+    result = apply(
+      product => { minimum_order_quantity: 48 },
+      other => { minimum_order_quantity: -5 }
+    )
+
+    expect(result).to be_failure
+    expect(catalog.quantity_rules.reload).to be_empty
+    expect(catalog.products.reload).to be_empty
+  end
+
+  # Coercing would save a different rule than the one typed — the same silent
+  # adjustment the whole feature exists to prevent.
+  it 'refuses a fractional quantity rather than truncating it' do
+    result = apply(product => { minimum_order_quantity: '2.5' })
 
     expect(result).to be_failure
     expect(catalog.quantity_rules.reload).to be_empty

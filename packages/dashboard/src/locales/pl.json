@@ -170,7 +170,8 @@
         "validation": {
           "positive_integer": "Podaj liczbę całkowitą większą od zera lub pozostaw pole puste.",
           "currency_taken": "Ta waluta ma już ustawione minimum.",
-          "positive_amount": "Podaj kwotę większą od zera."
+          "positive_amount": "Podaj kwotę większą od zera.",
+          "fix_terms": "Popraw zaznaczone reguły ilości przed zapisaniem."
         },
         "mixed": "Różne",
         "inherits": "Domyślne",

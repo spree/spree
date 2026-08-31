@@ -168,7 +168,8 @@
         "validation": {
           "positive_integer": "请输入大于零的整数，或留空。",
           "currency_taken": "该币种已设置最低金额。",
-          "positive_amount": "请输入大于零的金额。"
+          "positive_amount": "请输入大于零的金额。",
+          "fix_terms": "保存前请修正标记的数量规则。"
         },
         "mixed": "不一致",
         "inherits": "默认",

@@ -104,6 +104,12 @@ module Spree
     # @return [Array<Spree::Catalog>]
     def catalogs_for(company: nil, user: nil, channel: nil)
       channel ||= self.channel
+      # Normalized before the key is built, not just before the query: the
+      # key is an id, so an admin and a customer sharing one would otherwise
+      # share an entry and whichever resolved first would decide for both.
+      # Only a customer has customer-group catalogs to resolve.
+      user = nil unless user.is_a?(Spree.customer_class)
+
       key = [store&.id, company&.id, user&.id, channel&.id]
       applicable_catalogs[key] ||= Spree::Catalog.for_context(
         store: store, company: company, user: user, channel: channel

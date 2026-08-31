@@ -168,7 +168,8 @@
         "validation": {
           "positive_integer": "Enter a whole number greater than zero, or leave blank.",
           "currency_taken": "This currency already has a minimum.",
-          "positive_amount": "Enter an amount greater than zero."
+          "positive_amount": "Enter an amount greater than zero.",
+          "fix_terms": "Fix the highlighted quantity rules before saving."
         },
         "mixed": "Mixed",
         "inherits": "Default",
