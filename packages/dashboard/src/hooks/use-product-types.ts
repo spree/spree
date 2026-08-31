@@ -32,7 +32,8 @@ export function useProductTypes({ page = 1, limit = 100 }: UseProductTypesParams
 export function productTypeAutocompleteProps(queryKey: string) {
   return {
     queryKey,
-    search: (q: string) => adminClient.productTypes.list({ name_cont: q, limit: 20, sort: 'name' }),
+    search: (q: string) =>
+      adminClient.productTypes.list({ name_cont: q, limit: 100, sort: 'name', fields: ['name'] }),
     hydrate: (ids: string[]) => adminClient.productTypes.list({ id_in: ids, limit: ids.length }),
     getOptionLabel: (productType: ProductType) => productType.name ?? productType.id,
     placeholder: i18n.t('admin.product_types.search_placeholder'),

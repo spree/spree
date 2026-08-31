@@ -29,7 +29,7 @@ export function customerGroupAutocompleteProps(queryKey: string) {
   return {
     queryKey,
     search: (q: string) =>
-      adminClient.customerGroups.list({ name_cont: q, limit: 20, sort: 'name' }),
+      adminClient.customerGroups.list({ name_cont: q, limit: 100, sort: 'name', fields: ['name'] }),
     hydrate: (ids: string[]) => adminClient.customerGroups.list({ id_in: ids, limit: ids.length }),
     getOptionLabel: (g: CustomerGroup) => g.name ?? g.id,
     placeholder: i18n.t('admin.customer_groups.autocomplete.placeholder'),

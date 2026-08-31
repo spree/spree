@@ -1,18 +1,18 @@
 import type { SetupTask } from '@spree/admin-sdk'
 import { PageHeader, Slot, useStore } from '@spree/dashboard-core'
 import {
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
   Button,
   Card,
-  CardTitle,
-  Collapsible,
-  CollapsibleContent,
-  CollapsibleTrigger,
   Progress,
   ProgressValue,
   Skeleton,
 } from '@spree/dashboard-ui'
 import { createFileRoute, Link } from '@tanstack/react-router'
-import { CheckCircle2Icon, ChevronDownIcon, CircleIcon } from 'lucide-react'
+import { CheckCircle2Icon, CircleIcon } from 'lucide-react'
 import { useTranslation } from 'react-i18next'
 import '../../../components/spree/setup-tasks/register'
 import { setupTaskSlot } from '../../../components/spree/setup-tasks/types'
@@ -82,54 +82,58 @@ function GettingStartedPage() {
         </ProgressValue>
       </Progress>
 
-      <div className="flex flex-col gap-4">
-        {tasks.map((task) => {
-          const link = TASK_LINKS[task.name]
-          const description = taskCopy(task, 'description')
-          const cta = taskCopy(task, 'cta')
+      {/* One card holding every step, rather than a card each: this is a single
+          checklist read top to bottom, and five separate frames made it read as
+          five unrelated things. Opens on the first unfinished step. */}
+      <Card className="overflow-hidden py-0">
+        <Accordion defaultValue={firstPending ? [firstPending] : []}>
+          {tasks.map((task) => {
+            const link = TASK_LINKS[task.name]
+            const description = taskCopy(task, 'description')
+            const cta = taskCopy(task, 'cta')
 
-          return (
-            <Card key={task.name} className="overflow-hidden py-0">
-              <Collapsible defaultOpen={task.name === firstPending}>
-                <CollapsibleTrigger className="group flex w-full cursor-pointer items-center gap-3 p-4 text-left hover:bg-accent">
+            return (
+              <AccordionItem key={task.name} value={task.name}>
+                <AccordionTrigger>
                   {task.done ? (
-                    <CheckCircle2Icon className="size-5 shrink-0 text-green-600" />
+                    <CheckCircle2Icon className="size-5 shrink-0 text-success" />
                   ) : (
                     <CircleIcon className="size-5 shrink-0 text-muted-foreground" />
                   )}
-                  <CardTitle className="grow">{taskCopy(task, 'title')}</CardTitle>
-                  <ChevronDownIcon className="size-4 shrink-0 text-muted-foreground transition-transform group-data-[panel-open]:rotate-180" />
-                </CollapsibleTrigger>
-                {/* keepMounted so slot components mount even while their card is
+                  {/* Muted once done, so a glance down the list separates what
+                      is left from what is finished without reading the icons. */}
+                  <span className={task.done ? 'text-muted-foreground' : undefined}>
+                    {taskCopy(task, 'title')}
+                  </span>
+                </AccordionTrigger>
+                {/* keepMounted so slot components mount even while their step is
                     collapsed — the storefront task auto-opens its sheet from the
                     Vercel callback param, which requires being mounted. */}
-                <CollapsibleContent keepMounted>
-                  <div className="flex flex-col items-start gap-3 border-t px-4 py-4 pl-12">
-                    <Slot
-                      name={setupTaskSlot(task.name)}
-                      context={{ task, store, storeId }}
-                      fallback={
-                        <>
-                          {description && (
-                            <p className="text-muted-foreground text-sm">{description}</p>
-                          )}
-                          {link && cta && (
-                            <Button asChild variant={task.done ? 'outline' : 'default'}>
-                              <Link to={link} params={{ storeId }}>
-                                {cta}
-                              </Link>
-                            </Button>
-                          )}
-                        </>
-                      }
-                    />
-                  </div>
-                </CollapsibleContent>
-              </Collapsible>
-            </Card>
-          )
-        })}
-      </div>
+                <AccordionContent keepMounted className="flex flex-col items-start gap-3 ps-12">
+                  <Slot
+                    name={setupTaskSlot(task.name)}
+                    context={{ task, store, storeId }}
+                    fallback={
+                      <>
+                        {description && (
+                          <p className="text-muted-foreground text-sm">{description}</p>
+                        )}
+                        {link && cta && (
+                          <Button asChild variant={task.done ? 'outline' : 'default'}>
+                            <Link to={link} params={{ storeId }}>
+                              {cta}
+                            </Link>
+                          </Button>
+                        )}
+                      </>
+                    }
+                  />
+                </AccordionContent>
+              </AccordionItem>
+            )
+          })}
+        </Accordion>
+      </Card>
     </div>
   )
 }

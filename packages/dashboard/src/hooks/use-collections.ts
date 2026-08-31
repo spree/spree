@@ -169,8 +169,9 @@ export function collectionAutocompleteProps(queryKey: string) {
       adminClient.collections.list({
         name_cont: q,
         automatic_eq: false,
-        limit: 20,
+        limit: 100,
         sort: 'name',
+        fields: ['name'],
       }),
     hydrate: (ids: string[]) => adminClient.collections.list({ id_in: ids, limit: ids.length }),
     getOptionLabel: (c: Collection) => c.name ?? c.id,

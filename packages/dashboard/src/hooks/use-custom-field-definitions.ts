@@ -28,8 +28,9 @@ export function customFieldDefinitionAutocompleteProps(resourceType: string) {
       adminClient.customFieldDefinitions.list({
         resource_type_eq: resourceType,
         label_or_key_cont: q,
-        limit: 20,
+        limit: 100,
         sort: 'key',
+        fields: ['label', 'key', 'namespace'],
       }),
     hydrate: (ids: string[]) =>
       adminClient.customFieldDefinitions.list({ id_in: ids, limit: ids.length }),
