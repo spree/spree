@@ -21,6 +21,23 @@ RSpec.describe Spree::Api::V3::Seller::OnboardingController, type: :controller d
     request.headers['X-Spree-Seller-Id'] = seller.prefixed_id
   end
 
+  # The seller is looking at their own checklist to find out what is left to
+  # do, so a cached answer is the wrong one here: someone who has just
+  # finished with the provider must not be told they have not.
+  describe 'the payout account requirement' do
+    before do
+      Spree::SellerRequirements::PayoutAccount.create!(store: store, name: 'Payout account', required: true)
+    end
+
+    it 'asks the provider rather than reading the stamp' do
+      expect_any_instance_of(Spree::PayoutProvider::System).to receive(:onboarded?).at_least(:once).and_return(true)
+
+      get :show, as: :json
+
+      expect(response).to have_http_status(:ok)
+    end
+  end
+
   describe 'GET #show' do
     it 'reads as finished when the marketplace asks for nothing' do
       get :show, as: :json

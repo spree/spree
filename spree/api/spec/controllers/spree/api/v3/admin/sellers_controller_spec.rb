@@ -88,6 +88,17 @@ RSpec.describe Spree::Api::V3::Admin::SellersController, type: :controller do
 
       expect(response).to have_http_status(:ok)
     end
+
+    # The checklist is where staff decide whether to admit a seller, so a
+    # stale answer here is the one that costs something — a seller who has
+    # finished with Stripe left looking unfinished, or the reverse.
+    it 'is done for the checklist staff read' do
+      expect_any_instance_of(Spree::PayoutProvider::System).to receive(:onboarded?).at_least(:once).and_return(true)
+
+      get :onboarding, params: { id: seller.prefixed_id }, as: :json
+
+      expect(response).to have_http_status(:ok)
+    end
   end
 
   describe 'GET #show' do

@@ -161,19 +161,31 @@ RSpec.describe Spree::Api::V3::Admin::PaymentMethodsController, type: :controlle
       # gave back. They are absent from the schema so no form offers them,
       # and ignored here so a client cannot write one anyway and break the
       # signature check that depends on it.
+      # A gateway of its own, declaring a real internal preference. Stubbing
+      # `preference_internal` on the shared Bogus class would be read by the
+      # class-level schema memo as well, caching a schema without its password
+      # key for every later example in the process.
       it 'ignores a preference the system owns' do
-        allow_any_instance_of(Spree::Gateway::Bogus).to receive(:preference_internal).
-          and_wrap_original { |original, name| name == :dummy_secret_key || original.call(name) }
+        gateway_class = Class.new(Spree::Gateway) do
+          def self.name = 'InternalPreferenceGateway'
+
+          preference :issued_secret, :password, internal: true
+        end
+        stub_const('InternalPreferenceGateway', gateway_class)
+        allow(Spree::PaymentMethod).to receive(:providers).and_return(
+          Spree::PaymentMethod.providers + [gateway_class]
+        )
+        gateway = gateway_class.create!(store: store, name: 'Issued', preferred_issued_secret: 'whsec_real')
 
         patch :update,
               params: {
-                id: payment_method.prefixed_id,
-                preferences: { dummy_secret_key: 'sk_live_written_by_a_client' }
+                id: gateway.prefixed_id,
+                preferences: { issued_secret: 'whsec_written_by_a_client' }
               },
               as: :json
 
         expect(response).to have_http_status(:ok)
-        expect(payment_method.reload.preferred_dummy_secret_key).to eq('sk_live_existing_secret')
+        expect(gateway.reload.preferred_issued_secret).to eq('whsec_real')
       end
 
       it 'replaces the secret when the submitted value is a new plaintext' do
