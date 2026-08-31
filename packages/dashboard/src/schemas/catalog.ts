@@ -208,6 +208,18 @@ export function catalogValuesToParams(
     active: values.active,
     minimum_order_quantity: normalizeQuantityRule(values.minimum_order_quantity),
     order_multiple: normalizeQuantityRule(values.order_multiple),
+    // Whole-set writes riding the catalog's own save, so the agreement lands
+    // in one transaction rather than a sequence a failure can leave half
+    // applied. Per-product terms stay their own request — an agreement may
+    // name thousands of them.
+    assignments: values.assignments.map((entry) => ({
+      assignable_type: entry.assignable_type,
+      assignable_id: entry.assignable_id,
+    })),
+    order_minimums: values.order_minimums.map((row) => ({
+      currency: row.currency,
+      amount: row.amount,
+    })),
     price_list: priceListPayload(values, previousMode),
   }
 }

@@ -185,8 +185,6 @@ function CatalogBody({ catalog }: { catalog: Catalog }) {
         addProductIds: values.staged_products.adds.map((product) => product.id),
         removeProductIds: values.staged_products.removes,
         productTerms: stagedTermsToParams(terms),
-        orderMinimums: values.order_minimums,
-        assignments: values.assignments,
       })
       form.reset({ ...values, staged_products: { adds: [], removes: [] } })
     } catch (err) {

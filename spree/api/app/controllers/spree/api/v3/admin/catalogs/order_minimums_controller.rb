@@ -9,27 +9,6 @@ module Spree
           class OrderMinimumsController < BaseController
             before_action :authorize_parent_access!
 
-            # PUT /api/v3/admin/catalogs/:catalog_id/order_minimums
-            #
-            # { order_minimums: [{ currency: 'USD', amount: '500.00' }] }
-            #
-            # Replaces the whole set: a currency absent from the payload has
-            # its minimum lifted. One request per save, because the agreement
-            # editor stages every term behind the catalog's Save and a
-            # half-applied set is not a state to leave a merchant in.
-            def replace
-              authorize! :update, @catalog
-
-              result = Spree::Catalogs::SetOrderMinimums.call(
-                catalog: @catalog, order_minimums: minimum_params
-              )
-
-              if result.success?
-                render json: { data: serialize_collection(@catalog.order_minimums.reload) }
-              else
-                render_service_error(result)
-              end
-            end
 
             protected
 
@@ -53,13 +32,6 @@ module Spree
               params.permit(:currency, :amount)
             end
 
-            private
-
-            def minimum_params
-              Array(params[:order_minimums]).map do |row|
-                row.permit(:currency, :amount).to_h.symbolize_keys
-              end
-            end
           end
         end
       end

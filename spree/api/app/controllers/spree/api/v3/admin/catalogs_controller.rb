@@ -9,7 +9,7 @@ module Spree
           scoped_resource :products
 
           before_action :set_resource,
-                        only: [:show, :update, :destroy, :assign, :set_assignments, :import_products]
+                        only: [:show, :update, :destroy, :assign, :import_products]
 
           # POST /api/v3/admin/catalogs/:id/import_products — copies the
           # attached price list's products into the assortment. Explicit by
@@ -44,33 +44,6 @@ module Spree
             end
           end
 
-          # PUT /api/v3/admin/catalogs/:id/assignments
-          #
-          # { assignments: [{ assignable_type: 'company', assignable_id: 'comp_x' }] }
-          #
-          # Replaces the whole audience: an entry absent from the payload is
-          # withdrawn. One request per save, because the agreement editor
-          # stages every change behind the catalog's Save and showing an
-          # agreement to half the intended audience is not a state to leave.
-          def set_assignments
-            authorize! :update, @resource
-
-            result = Spree::Catalogs::SetAssignments.call(
-              catalog: @resource, assignables: requested_assignables
-            )
-
-            if result.success?
-              render json: {
-                data: @resource.catalog_assignments.reload.map do |assignment|
-                  Spree.api.admin_catalog_assignment_serializer.new(
-                    assignment, params: serializer_params
-                  ).to_h
-                end
-              }
-            else
-              render_service_error(result)
-            end
-          end
 
           protected
 
@@ -108,6 +81,13 @@ module Spree
                                       :name, :description, :active, :position, :price_list_id,
                                       :minimum_order_quantity, :order_multiple,
                                       metadata: {},
+                                      # Small bounded sets, saved with the
+                                      # catalog so the whole agreement lands
+                                      # in one transaction. Per-product terms
+                                      # stay their own endpoint — an
+                                      # agreement may name thousands of them.
+                                      assignments: [:assignable_type, :assignable_id],
+                                      order_minimums: [:currency, :amount],
                                       price_list: [
                                         :name, :description, :status, :match_policy,
                                         :starts_at, :ends_at,
@@ -136,6 +116,15 @@ module Spree
             # `permit` drops an explicit null, but detaching has to be
             # distinguishable from saying nothing.
             permitted[:price_list] = nil if params.key?(:price_list) && params[:price_list].nil?
+
+            # Resolved here rather than in the workflow: each audience goes
+            # through the store AND through what this caller may see, so a
+            # nested write cannot reach one the dedicated endpoint could not.
+            if permitted.key?(:assignments)
+              permitted[:assignables] = requested_assignables
+              permitted.delete(:assignments)
+            end
+
             permitted
           end
 

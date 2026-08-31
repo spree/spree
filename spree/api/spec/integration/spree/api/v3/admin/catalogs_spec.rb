@@ -194,53 +194,6 @@ RSpec.describe 'Admin Catalogs API', type: :request, swagger_doc: 'api-reference
     end
   end
 
-  path '/api/v3/admin/catalogs/{id}/assignments' do
-    put 'Replace a catalog audience' do
-      tags 'Catalogs'
-      consumes 'application/json'
-      produces 'application/json'
-      security [api_key: [], bearer_auth: []]
-      description 'Replaces the whole audience in one request. An entry absent from the payload is withdrawn — the agreement editor stages every change behind its Save, so they apply together or not at all. A company assignment covers the node and its whole subtree.'
-      admin_scope :write, :products
-
-      parameter name: 'x-spree-api-key', in: :header, type: :string, required: true
-      parameter name: :Authorization, in: :header, type: :string, required: true
-      parameter name: :id, in: :path, type: :string, required: true
-      parameter name: :body, in: :body, schema: {
-        type: :object,
-        properties: {
-          assignments: {
-            type: :array,
-            items: {
-              type: :object,
-              properties: {
-                assignable_type: { type: :string, enum: %w[customer_group company] },
-                assignable_id: { type: :string, example: 'comp_86Rf07xd4z' }
-              },
-              required: %w[assignable_type assignable_id]
-            }
-          }
-        },
-        required: ['assignments']
-      }
-
-      let(:'x-spree-api-key') { secret_api_key.plaintext_token }
-      let(:id) { catalog.prefixed_id }
-
-      response '200', 'audience replaced' do
-        let!(:company) { create(:company, store: store) }
-        let(:body) do
-          { assignments: [{ assignable_type: 'company', assignable_id: company.prefixed_id }] }
-        end
-
-        run_test! do |response|
-          data = JSON.parse(response.body)['data']
-          expect(data.pluck('assignable_type')).to eq(['company'])
-        end
-      end
-    end
-  end
-
   path '/api/v3/admin/catalogs/{catalog_id}/quantity_rules' do
     get 'List catalog quantity rules' do
       tags 'Catalogs'

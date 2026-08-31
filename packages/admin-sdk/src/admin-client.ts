@@ -100,10 +100,8 @@ import type {
   AllowedOriginUpdateParams,
   ApiKeyCreateParams,
   ApiKeyUpdateParams,
-  CatalogAssignmentsParams,
   CatalogAssignParams,
   CatalogOrderMinimumParams,
-  CatalogOrderMinimumsParams,
   CatalogParams,
   CatalogProductTermsParams,
   CatalogQuantityRuleParams,
@@ -3465,21 +3463,6 @@ export class AdminClient {
     },
 
     /**
-     * Replaces the whole audience. An entry absent from the payload is
-     * withdrawn — the agreement editor stages every change behind the
-     * catalog's Save, so they apply together or not at all.
-     */
-    setAssignments: (
-      id: string,
-      params: CatalogAssignmentsParams,
-      options?: RequestOptions,
-    ): Promise<{ data: CatalogAssignment[] }> =>
-      this.request<{ data: CatalogAssignment[] }>('PUT', `/catalogs/${id}/assignments`, {
-        ...options,
-        body: params,
-      }),
-
-    /**
      * Per-product quantity terms — the grain the agreement editor states
      * them at, over rows the database keeps per variant.
      */
@@ -3548,22 +3531,6 @@ export class AdminClient {
 
       delete: (catalogId: string, id: string, options?: RequestOptions): Promise<void> =>
         this.request<void>('DELETE', `/catalogs/${catalogId}/order_minimums/${id}`, options),
-
-      /**
-       * Replaces the whole set. A currency absent from the payload has its
-       * minimum lifted — the agreement editor stages every term behind the
-       * catalog's Save, so they apply together or not at all.
-       */
-      replace: (
-        catalogId: string,
-        params: CatalogOrderMinimumsParams,
-        options?: RequestOptions,
-      ): Promise<{ data: CatalogOrderMinimum[] }> =>
-        this.request<{ data: CatalogOrderMinimum[] }>(
-          'PUT',
-          `/catalogs/${catalogId}/order_minimums`,
-          { ...options, body: params },
-        ),
     },
   }
 

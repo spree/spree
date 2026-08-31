@@ -2594,6 +2594,17 @@ export interface CatalogParams {
    */
   minimum_order_quantity?: number | null
   order_multiple?: number | null
+  /**
+   * The whole audience, saved with the catalog. An entry absent from the
+   * array is withdrawn; omitting the key leaves the audience alone.
+   */
+  assignments?: Array<{ assignable_type: 'company' | 'customer_group'; assignable_id: string }>
+  /**
+   * The whole order-minimum set, saved with the catalog. A currency absent
+   * from the array has its minimum lifted; omitting the key leaves them
+   * alone.
+   */
+  order_minimums?: Array<{ currency: string; amount: string | number }>
   /** Internal note on what the agreement is — never shown to shoppers. */
   description?: string | null
   active?: boolean
