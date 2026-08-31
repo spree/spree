@@ -25,11 +25,14 @@ module Spree
 
       private
 
+      # Subtree membership is asked per call, not snapshotted at swap time,
+      # so a node created inside the block under an inactive parent answers
+      # inactive too.
       def deactivating_policy_class(inactive_companies)
-        inactive_ids = Spree::Company.subtree_of(inactive_companies).pluck(:id)
-
         Class.new(Spree::Companies::ActivationPolicy) do
-          define_method(:active?) { |company| !inactive_ids.include?(company.id) }
+          define_method(:active?) do |company|
+            !Spree::Company.subtree_of(inactive_companies).where(id: company.id).exists?
+          end
         end
       end
     end

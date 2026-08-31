@@ -767,7 +767,10 @@ module Spree
   # The registered company activation policy, ready to ask. The contract is
   # an argless constructor (the policy is a stateless per-call strategy), so
   # this is the one construction point every consumer shares — a replacement
-  # needing per-request state overrides the class, not the call sites.
+  # needing per-request state overrides the class, not the call sites. A
+  # policy that reads persisted approval state should cache per request
+  # itself (e.g. through Spree::Current or a request store) — instances are
+  # constructed per consult, several times in one completion.
   #
   # @return [Object] an instance of Spree.company_activation_policy_class
   def self.company_activation_policy

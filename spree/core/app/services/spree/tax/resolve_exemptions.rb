@@ -27,6 +27,11 @@ module Spree
         company = order.company_legal_entity
         address = order.tax_address
         return success([]) if company.nil? || address.nil?
+        # An inactive company must not exempt a sale: the certificates stay
+        # on file, they just stop applying while the activation policy says
+        # the business may not act commercially
+        # (docs/plans/6.0-b2b-company-self-registration.md).
+        return success([]) unless Spree.company_activation_policy.active?(order.resolved_company)
 
         success(
           company.tax_exemption_certificates.active.for_address(address).map do |certificate|
