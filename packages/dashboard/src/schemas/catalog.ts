@@ -1,4 +1,4 @@
-import type { CatalogParams } from '@spree/admin-sdk'
+import type { CatalogParams, PriceList } from '@spree/admin-sdk'
 import { blankToNull } from '@spree/dashboard-core'
 import { requiredMessage } from '@spree/dashboard-ui'
 import i18n from 'i18next'
@@ -8,6 +8,7 @@ import {
   ADJUSTMENT_DIRECTIONS,
   adjustmentFormValues,
   PRICING_MODES,
+  parseMinimumQuantity,
   parsePercentage,
 } from './price-list'
 
@@ -51,18 +52,10 @@ export const catalogFormSchema = z
      */
     minimum_quantity: z.string().trim().optional(),
   })
-  .refine(
-    (v) => {
-      const raw = v.minimum_quantity?.trim()
-      if (!raw) return true
-      const parsed = Number(raw)
-      return Number.isInteger(parsed) && parsed >= 1
-    },
-    {
-      path: ['minimum_quantity'],
-      error: () => i18n.t('admin.products.price_lists.validation.minimum_quantity_invalid'),
-    },
-  )
+  .refine((v) => !v.minimum_quantity?.trim() || parseMinimumQuantity(v.minimum_quantity) !== null, {
+    path: ['minimum_quantity'],
+    error: () => i18n.t('admin.products.price_lists.validation.minimum_quantity_invalid'),
+  })
   .refine(
     (v) => v.pricing_mode !== 'automatic' || parsePercentage(v.adjustment_magnitude) !== null,
     {
@@ -109,49 +102,25 @@ export function catalogValuesToParams(
   values: CatalogFormValues,
   /** The mode the catalog was saved in, so a switch can be told from a plain save. */
   previousMode?: CatalogPricingMode,
-  /**
-   * The rules the owned list already carries. The API reconciles `rules`
-   * by replacement, so anything this page omits is destroyed — and this
-   * page only edits the volume rule. Passing the rest through keeps an
-   * unrelated edit from dropping, say, a market rule, which decides
-   * whether the list's prices are restated for the buyer's VAT.
-   */
-  existingRules?: PriceListRuleShape[],
 ): CatalogParams {
   return {
     name: values.name,
     description: blankToNull(values.description),
     active: values.active,
-    price_list: priceListPayload(values, previousMode, existingRules),
+    price_list: priceListPayload(values, previousMode),
   }
 }
 
-/** A rule row as the API renders and accepts it. */
-type PriceListRuleShape = {
-  type?: string | null
-  preferences?: Record<string, unknown> | null
-}
-
-function priceListPayload(
-  values: CatalogFormValues,
-  previousMode?: CatalogPricingMode,
-  existingRules?: PriceListRuleShape[],
-) {
+function priceListPayload(values: CatalogFormValues, previousMode?: CatalogPricingMode) {
   if (values.pricing_mode === 'base') return null
-
-  // Everything the list carries except the volume rule, which this card owns
-  // and rewrites below. Sent on every branch, because omitting a rule is how
-  // the API is told to destroy it.
-  const preserved = (existingRules ?? [])
-    .filter((rule) => rule.type && rule.type !== 'volume_rule')
-    .map((rule) => ({ type: rule.type as string, preferences: rule.preferences ?? {} }))
 
   if (values.pricing_mode === 'fixed') {
     // A fixed list holds explicit rows; clearing any adjustment is what
     // makes it fixed. The quantity threshold goes with the percentage — left
     // behind it would gate the hand-entered prices, and the card stops
-    // showing it, so nothing would explain the gap.
-    return { price_adjustment_percentage: null, adjust_compare_at: false, rules: preserved }
+    // showing it, so nothing would explain the gap. `rules: []` clears only
+    // the contextual ones; the server keeps the rest.
+    return { price_adjustment_percentage: null, adjust_compare_at: false, rules: [] }
   }
 
   const magnitude = parsePercentage(values.adjustment_magnitude)
@@ -168,7 +137,7 @@ function priceListPayload(
   // A minimum quantity rides as the list's volume rule; dropping it from the
   // list of rules is what clears it, so removing the threshold is a real
   // edit rather than a silent no-op.
-  const withRule = { ...base, rules: [...preserved, ...volumeRulePayload(values.minimum_quantity)] }
+  const withRule = { ...base, rules: volumeRulePayload(values.minimum_quantity) }
 
   // Switching away from hand-entered prices clears them. An explicit amount
   // beats the adjustment by design, so leaving the old rows behind would
@@ -177,12 +146,12 @@ function priceListPayload(
 }
 
 function volumeRulePayload(minimumQuantity: string | undefined) {
-  const parsed = Number(minimumQuantity?.trim())
+  const quantity = parseMinimumQuantity(minimumQuantity)
   // A threshold of 1 gates nothing, which is exactly what blank means, so
   // both send no rule at all rather than one that always matches.
-  if (!minimumQuantity?.trim() || !Number.isInteger(parsed) || parsed <= 1) return []
+  if (quantity === null || quantity === 1) return []
 
-  return [{ type: 'volume_rule', preferences: { min_quantity: parsed } }]
+  return [{ type: 'volume_rule', preferences: { min_quantity: quantity } }]
 }
 
 /**
@@ -191,14 +160,7 @@ function volumeRulePayload(minimumQuantity: string | undefined) {
  */
 export function catalogPricingValues(
   priceList:
-    | {
-        price_adjustment_percentage?: string | null
-        adjust_compare_at?: boolean
-        price_rules?: Array<{
-          type?: string | null
-          preferences?: Record<string, unknown> | null
-        }> | null
-      }
+    | Pick<PriceList, 'price_adjustment_percentage' | 'adjust_compare_at' | 'price_rules'>
     | null
     | undefined,
 ): {
@@ -237,16 +199,11 @@ export function catalogPricingValues(
  * editor — because a value the field hides is a value the next Save destroys
  * without the merchant ever seeing it.
  */
-function minimumQuantityOf(
-  rules:
-    | Array<{ type?: string | null; preferences?: Record<string, unknown> | null }>
-    | null
-    | undefined,
-): string {
+function minimumQuantityOf(rules: PriceList['price_rules']): string {
   const rule = rules?.find((entry) => entry.type === 'volume_rule')
-  const minimum = rule?.preferences?.min_quantity
-  if (minimum === null || minimum === undefined || minimum === '') return ''
+  const quantity = parseMinimumQuantity(
+    rule?.preferences?.min_quantity as string | number | undefined,
+  )
 
-  const parsed = Number(minimum)
-  return Number.isInteger(parsed) && parsed >= 1 ? String(parsed) : ''
+  return quantity === null ? '' : String(quantity)
 }

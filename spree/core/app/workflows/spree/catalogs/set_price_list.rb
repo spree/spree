@@ -81,7 +81,36 @@ module Spree
         attrs = attributes.to_h.with_indifferent_access
         attrs[:name] = catalog.name if attrs[:name].blank?
         attrs[:status] = 'active' if for_create && attrs[:status].blank?
+        attrs[:rules] = merged_rules(attrs[:rules]) if attrs.key?(:rules)
         attrs
+      end
+
+      # This payload speaks only for the list's contextual rules — a catalog
+      # states the terms of the purchase, while who the agreement is for is
+      # settled by its assignments. Rules are reconciled by replacement, so
+      # the audience rules the caller never mentioned are merged back in;
+      # without this, editing a catalog's name through the inline payload
+      # would destroy a market rule and silently change how its prices are
+      # restated for VAT.
+      def merged_rules(rows)
+        existing = catalog.price_list&.price_rules&.to_a || []
+        untouched = existing.reject(&:contextual?)
+
+        contextual = Array(rows).filter_map do |row|
+          attrs = row.to_h.with_indifferent_access
+          klass = Spree::PriceRule.find_by_api_type(attrs[:type])
+          next unless klass&.contextual?
+
+          # A rule is unique per kind on a list, and this payload names kinds
+          # rather than rows, so an id the caller did not send is filled in
+          # from the row already holding that kind. Without it every save
+          # would try to create a second rule of the same type and be
+          # refused by the uniqueness validation.
+          attrs[:id] ||= existing.find { |rule| rule.class == klass }&.id
+          attrs
+        end
+
+        contextual + untouched.map { |rule| { id: rule.id, type: rule.class.api_type, preferences: rule.preferences } }
       end
     end
   end

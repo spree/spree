@@ -129,17 +129,17 @@ module Spree
 
     # Returns true if the price list rules are applicable to the context
     # @param context [Spree::Pricing::Context]
+    # @param rules [Enumerable<Spree::PriceRule>] the rules to judge; the
+    #   list's own by default, a subset when only some of them still have a
+    #   question to answer (see #contextual_rules_applicable?)
     # @return [Boolean]
-    def rules_applicable?(context)
-      return true if price_rules.none?
+    def rules_applicable?(context, rules = price_rules)
+      return true if rules.none?
 
       case match_policy
-      when 'all'
-        price_rules.all? { |rule| rule.applicable?(context) }
-      when 'any'
-        price_rules.any? { |rule| rule.applicable?(context) }
-      else
-        false
+      when 'all' then rules.all? { |rule| rule.applicable?(context) }
+      when 'any' then rules.any? { |rule| rule.applicable?(context) }
+      else false
       end
     end
 
@@ -158,14 +158,7 @@ module Spree
     # @param context [Spree::Pricing::Context]
     # @return [Boolean]
     def contextual_rules_applicable?(context)
-      contextual = price_rules.select { |rule| rule.class.contextual? }
-      return true if contextual.none?
-
-      case match_policy
-      when 'all' then contextual.all? { |rule| rule.applicable?(context) }
-      when 'any' then contextual.any? { |rule| rule.applicable?(context) }
-      else false
-      end
+      rules_applicable?(context, price_rules.select(&:contextual?))
     end
 
     # Whether this list derives prices from base prices rather than pricing

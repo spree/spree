@@ -133,4 +133,54 @@ describe Spree::Catalogs::SetPriceList do
     expect(result).not_to be_success
     expect(catalog.reload.price_list).to be_nil
   end
+  # The inline payload is the catalog's voice, and a catalog states the terms
+  # of the purchase, not who it is for. So it speaks only for the contextual
+  # rules; the audience rules on the list belong to the standalone editor and
+  # must survive an edit made here.
+  describe 'rule reconciliation' do
+    let(:catalog) { create(:catalog, store: store) }
+    let!(:price_list) { create(:price_list, :active, store: store, catalog: catalog) }
+    let!(:market_rule) { create(:market_price_rule, price_list: price_list) }
+
+    it 'keeps the audience rules the payload never mentions' do
+      described_class.call(
+        catalog: catalog,
+        attributes: { rules: [{ 'type' => 'volume_rule', 'preferences' => { 'min_quantity' => 10 } }] }
+      )
+
+      types = price_list.reload.price_rules.map { |rule| rule.class.api_type }
+      expect(types).to contain_exactly('volume_rule', 'market_rule')
+      # Kept, not replaced: reconciliation matches on id, so the row survives.
+      expect(price_list.price_rules.find_by(type: market_rule.type).id).to eq(market_rule.id)
+    end
+
+    # The payload names kinds, not rows. A second save that repeats the kind
+    # has to update the row it already has — building another would be
+    # refused, and the merchant would see a 500 on an ordinary Save.
+    it 'updates the rule in place when the same kind is sent again' do
+      volume_payload = ->(quantity) do
+        { rules: [{ 'type' => 'volume_rule', 'preferences' => { 'min_quantity' => quantity } }] }
+      end
+
+      described_class.call(catalog: catalog, attributes: volume_payload.call(10))
+      original = price_list.reload.price_rules.find_by(type: 'Spree::PriceRules::VolumeRule')
+
+      result = described_class.call(catalog: catalog, attributes: volume_payload.call(25))
+
+      expect(result).to be_success
+      rules = price_list.reload.price_rules.select { |rule| rule.is_a?(Spree::PriceRules::VolumeRule) }
+      expect(rules.size).to eq(1)
+      expect(rules.first.id).to eq(original.id)
+      expect(rules.first.preferred_min_quantity).to eq(25)
+    end
+
+    it 'clears the contextual rules on an empty array without touching the rest' do
+      create(:volume_price_rule, price_list: price_list, min_quantity: 10)
+
+      described_class.call(catalog: catalog, attributes: { rules: [] })
+
+      expect(price_list.reload.price_rules.map { |rule| rule.class.api_type }).to eq(['market_rule'])
+    end
+  end
+
 end

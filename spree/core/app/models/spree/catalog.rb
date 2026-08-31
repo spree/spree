@@ -135,9 +135,14 @@ module Spree
         catalogs = store.catalogs.for_customer_groups(groups)
       end
       catalogs = [channel&.default_catalog].compact.select(&:active?) if catalogs.empty?
-      # Pricing reads each catalog's price list; without this the walk is one
-      # query per catalog again.
-      ActiveRecord::Associations::Preloader.new(records: catalogs, associations: :price_list).call if catalogs.any?
+      # Pricing reads each catalog's price list, and the list's contextual
+      # rules decide whether it applies to the quantity being bought; without
+      # this the walk is one query per catalog again, plus one per list.
+      if catalogs.any?
+        ActiveRecord::Associations::Preloader.new(
+          records: catalogs, associations: { price_list: :price_rules }
+        ).call
+      end
       catalogs
     end
 

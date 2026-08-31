@@ -2628,30 +2628,19 @@ export interface CatalogPriceListParams {
   adjust_compare_at?: boolean
   /**
    * Contextual rules for the owned list — in practice a `volume_rule`, which
-   * is what turns a percentage into an automatic volume discount. Audience
-   * rules are inert here: the catalog's assignments already decide who the
-   * agreement is for. An empty array clears the rules.
+   * is what turns a percentage into an automatic volume discount.
+   *
+   * This payload speaks only for those: the catalog's assignments already
+   * decide who the agreement is for, so audience rules on the list are left
+   * exactly as they are, and an empty array clears the contextual rules
+   * without touching them.
    */
-  rules?: Array<CatalogPriceListRuleParams>
+  rules?: Array<PriceListRuleDraft>
   /**
    * Explicit per-variant amounts. An empty array clears them, which is what
    * switching from hand-entered prices to a percentage sends.
    */
-  prices?: Array<{
-    id?: string
-    variant_id?: string
-    currency?: string
-    amount?: string | null
-    compare_at_amount?: string | null
-  }>
-}
-
-/** A rule row on the catalog's owned price list. */
-export interface CatalogPriceListRuleParams {
-  /** The rule kind, e.g. `volume_rule`. */
-  type: string
-  id?: string
-  preferences?: Record<string, unknown>
+  prices?: Array<PriceListPriceOverrideParams>
 }
 
 export interface CatalogAssignParams {

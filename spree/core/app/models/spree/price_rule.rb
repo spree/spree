@@ -45,6 +45,16 @@ module Spree
       false
     end
 
+    # Instance-side reader, so rules are classified the same way
+    # `geographic?` classifies them (`rules.any?(&:geographic?)`). A kind
+    # whose answer depends on how it is configured overrides this, exactly
+    # as MarketRule does for `geographic?`.
+    #
+    # @return [Boolean]
+    def contextual?
+      self.class.contextual?
+    end
+
     # Whether a better mechanism has replaced this rule kind. Superseded
     # kinds are grandfathered — existing rules keep matching indefinitely —
     # but they are flagged in types discovery so pickers stop offering them
