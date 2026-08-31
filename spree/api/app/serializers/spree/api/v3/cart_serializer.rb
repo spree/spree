@@ -14,7 +14,7 @@ module Spree
                  po_document_filename: [:string, nullable: true],
                  po_document_byte_size: ['number | null'],
                  order_minimum: ['number | null'], order_minimum_shortfall: ['number | null'],
-                 below_order_minimum: :boolean,
+                 below_order_minimum: ['boolean | null'],
                  requirements: 'Array<{step: string, field: string, code: string, message: string}>',
                  item_total: [:string, nullable: true], display_item_total: [:string, nullable: true],
                  delivery_total: [:string, nullable: true], display_delivery_total: [:string, nullable: true],
@@ -112,24 +112,34 @@ module Spree
           order.completed_checkout_steps
         end
 
+        # The order-minimum requirement names both amounts in its message, so
+        # it is dropped rather than redacted for a gated guest: a requirement
+        # with its numbers stripped tells them nothing they can act on.
         attribute :requirements do |order|
-          Spree::Checkout::Requirements.new(order).call
+          requirements = Spree::Checkout::Requirements.new(order).call
+          next requirements unless params[:hide_prices]
+
+          requirements.reject { |requirement| requirement[:code] == 'order_minimum_not_met' }
         end
 
         # The order minimum in force for this buyer, or nil when their
         # agreements state none. Exposed alongside the shortfall so a
         # storefront can render "$180 to reach the $500 minimum" without
         # doing the arithmetic or knowing where the number came from.
+        #
+        # Gated with the rest of the price surface: a threshold and a
+        # shortfall are amounts, and a storefront that hides prices from
+        # guests must not hand them "$180 short of $500" instead.
         attribute :order_minimum do |order|
-          order.order_minimum_amount&.to_f
+          order.order_minimum_amount&.to_f unless params[:hide_prices]
         end
 
         attribute :order_minimum_shortfall do |order|
-          order.order_minimum_shortfall&.to_f
+          order.order_minimum_shortfall&.to_f unless params[:hide_prices]
         end
 
         attribute :below_order_minimum do |order|
-          order.below_order_minimum?
+          order.below_order_minimum? unless params[:hide_prices]
         end
 
         attribute :shipping_eq_billing_address do |order|

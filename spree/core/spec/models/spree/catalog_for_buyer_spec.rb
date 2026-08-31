@@ -68,6 +68,21 @@ RSpec.describe Spree::Catalog, '.for_buyer' do
     expect(queries).to eq(1)
   end
 
+  # The request memo keys on an id, so an admin and a customer sharing one
+  # would share an entry — whichever resolved first deciding for both.
+  it 'keeps a non-customer out of the request memo in either order' do
+    Spree::Current.store = store
+    impostor = Struct.new(:id).new(customer.id)
+
+    Spree::Current.reset_catalog_memos
+    expect(Spree::Current.standing_company_for(customer)).to eq(company)
+    expect(Spree::Current.standing_company_for(impostor)).to be_nil
+
+    Spree::Current.reset_catalog_memos
+    expect(Spree::Current.standing_company_for(impostor)).to be_nil
+    expect(Spree::Current.standing_company_for(customer)).to eq(company)
+  end
+
   it 'is empty without a store' do
     expect(described_class.for_buyer(store: nil, customer: customer)).to eq([])
   end

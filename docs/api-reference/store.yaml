@@ -11867,6 +11867,7 @@ components:
           nullable: true
         below_order_minimum:
           type: boolean
+          nullable: true
         shipping_eq_billing_address:
           type: boolean
         discounts:

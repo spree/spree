@@ -34,6 +34,42 @@ RSpec.describe 'v3 Store serializer price gating' do
       end
     end
 
+    # A threshold and a shortfall are amounts. A storefront hiding prices from
+    # guests must not hand them "$180 short of $500" instead.
+    context 'with an order minimum in force' do
+      let(:customer) { create(:user) }
+      let(:company) { create(:company, store: store) }
+      let(:catalog) { create(:catalog, store: store) }
+
+      before do
+        create(:company_membership, company: company, customer: customer)
+        create(:catalog_assignment, catalog: catalog, assignable: company)
+        create(:catalog_order_minimum, catalog: catalog, currency: cart.currency, amount: 500)
+        cart.update!(user: customer, company: company)
+        Spree::Current.store = store
+        Spree::Current.reset_catalog_memos
+      end
+
+      it 'nulls the threshold and shortfall for gated guests' do
+        hash = serialize(described_class, cart.reload, hide: true)
+
+        expect(hash['order_minimum']).to be_nil
+        expect(hash['order_minimum_shortfall']).to be_nil
+        expect(hash['below_order_minimum']).to be_nil
+        expect(hash['requirements'].map { |r| r['code'] }).not_to include('order_minimum_not_met')
+      end
+
+      it 'states the threshold and shortfall when not gated' do
+        hash = serialize(described_class, cart.reload, hide: false)
+
+        expect(hash['order_minimum']).to eq(500.0)
+        # What is left to add, so the cart's own items count against it.
+        expect(hash['order_minimum_shortfall']).to eq(500.0 - cart.item_total.to_f)
+        expect(hash['below_order_minimum']).to be(true)
+        expect(hash['requirements'].map { |r| r['code'] }).to include('order_minimum_not_met')
+      end
+    end
+
     it 'serializes money fields normally when not gated' do
       hash = serialize(described_class, cart, hide: false)
 

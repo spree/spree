@@ -147,7 +147,11 @@ module Spree
     # @param customer [Object, nil]
     # @return [Spree::Company, nil]
     def standing_company_for(customer)
-      return nil if store.nil? || customer.nil?
+      return nil if store.nil?
+      # Checked before the cache, not only inside the lookup: the key is an
+      # id, so an admin and a customer sharing one would otherwise share an
+      # entry — whichever resolved first deciding for both.
+      return nil unless customer.is_a?(Spree.customer_class)
 
       key = [store.id, customer.id]
       return standing_companies[key] if standing_companies.key?(key)

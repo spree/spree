@@ -6,7 +6,7 @@ module Spree
         # variant to render the row without a second request — a merchant
         # reading a terms table needs to know which SKU each line is about.
         class CatalogQuantityRuleSerializer < V3::BaseSerializer
-          typelize variant_id: :string, variant_sku: 'string | null',
+          typelize variant_id: 'string | null', variant_sku: 'string | null',
                    product_name: 'string | null',
                    options_text: 'string | null',
                    minimum_order_quantity: ['number | null'],
