@@ -1568,7 +1568,8 @@
         "remove_rule_description": "{{name}} nutzt wieder den Katalogstandard. Dies wirkt sofort.",
         "validation": {
           "positive_integer": "Geben Sie eine ganze Zahl größer als null ein oder lassen Sie das Feld leer.",
-          "currency_taken": "Für diese Währung gibt es bereits einen Mindestwert."
+          "currency_taken": "Für diese Währung gibt es bereits einen Mindestwert.",
+          "positive_amount": "Geben Sie einen Betrag größer als null ein."
         },
         "messages": {
           "rule_created": "Produktregel hinzugefügt",

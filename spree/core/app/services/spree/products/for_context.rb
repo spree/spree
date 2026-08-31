@@ -25,17 +25,14 @@ module Spree
       # @return [Spree::ServiceModule::Result] value is a Product relation
       def call(store:, channel:, customer: nil, company: nil, base: nil)
         base ||= store.products.for_channel(channel)
-        company ||= sole_standing_company(store, customer)
 
-        # Reuses the request-scoped set when resolving for the current store,
-        # so a listing that prices its variants right after does not resolve
-        # the same buyer's catalogs twice in one request.
-        catalogs =
-          if store == Spree::Current.store
-            Spree::Current.catalogs_for(company: company, user: customer, channel: channel)
-          else
-            Spree::Catalog.for_context(store: store, company: company, user: customer, channel: channel)
-          end
+        # One resolution for every surface: visibility, pricing and quantity
+        # terms have to answer from the same catalogs, and it reuses the
+        # request-scoped set so a listing that prices its variants right after
+        # does not resolve the same buyer twice.
+        catalogs = Spree::Catalog.for_buyer(
+          store: store, customer: customer, company: company, channel: channel
+        )
 
         return success(base) if catalogs.empty?
 
@@ -65,16 +62,6 @@ module Spree
       # nodes the buyer picks one on the cart, and catalogs follow that
       # choice; matches +Purchase::Company#resolved_company+ exactly, so
       # what they browse and what they are charged agree.
-      def sole_standing_company(store, customer)
-        return nil if customer.nil?
-
-        companies = customer.company_memberships.
-                    joins(:company).
-                    merge(Spree::Company.where(store_id: store.id)).
-                    map(&:company).uniq
-
-        companies.one? ? companies.first : nil
-      end
     end
   end
 end

@@ -235,9 +235,14 @@ function AddOrderMinimumDialog({
   const [amount, setAmount] = useState('')
 
   const duplicate = usedCurrencies.includes(currency)
+  // Never coerced: "12,50" parses as 12 in JavaScript too, and a minimum an
+  // order can trivially clear is worse than one the merchant has to retype.
+  const parsedAmount = /^\d+(\.\d{1,2})?$/.test(amount.trim()) ? Number(amount.trim()) : null
+  const amountValid = parsedAmount !== null && parsedAmount > 0
+  const showAmountError = amount.trim() !== '' && !amountValid
 
   async function handleSubmit() {
-    if (!amount.trim() || duplicate) return
+    if (!amountValid || duplicate) return
 
     await createMutation
       .mutateAsync({ currency, amount })
@@ -270,9 +275,13 @@ function AddOrderMinimumDialog({
               <Input
                 id="minimum-amount"
                 inputMode="decimal"
+                aria-invalid={showAmountError}
                 value={amount}
                 onChange={(event) => setAmount(event.target.value)}
               />
+              {showAmountError && (
+                <FieldError>{t('admin.catalogs.terms.validation.positive_amount')}</FieldError>
+              )}
             </Field>
           </FieldGroup>
         </DialogBody>
@@ -282,7 +291,7 @@ function AddOrderMinimumDialog({
           </Button>
           <Button
             type="button"
-            disabled={createMutation.isPending || !amount.trim() || duplicate}
+            disabled={createMutation.isPending || !amountValid || duplicate}
             onClick={handleSubmit}
           >
             {t('admin.actions.add')}

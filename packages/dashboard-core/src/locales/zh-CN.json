@@ -1567,7 +1567,8 @@
         "remove_rule_description": "{{name}} 将回退到目录默认值。此更改立即生效。",
         "validation": {
           "positive_integer": "请输入大于零的整数，或留空。",
-          "currency_taken": "该币种已设置最低金额。"
+          "currency_taken": "该币种已设置最低金额。",
+          "positive_amount": "请输入大于零的金额。"
         },
         "messages": {
           "rule_created": "已添加商品规则",

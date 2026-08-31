@@ -156,6 +156,52 @@ module Spree
       catalogs
     end
 
+    # The catalogs applying to a buyer, resolving the company for them when
+    # the caller does not already know it, and reusing the request's memoized
+    # set where the store being asked about is the one being served.
+    #
+    # The single entry point for "what are this buyer's catalogs": visibility,
+    # pricing and quantity terms must answer from the same set, and a caller
+    # that resolved the company differently — or not at all — would show a
+    # storefront one agreement's prices under another's rules.
+    #
+    # @param store [Spree::Store, nil]
+    # @param customer [Object, nil]
+    # @param company [Spree::Company, nil] the purchase node; defaults to the
+    #   customer's sole standing within the store
+    # @param channel [Spree::Channel, nil]
+    # @return [Array<Spree::Catalog>]
+    def self.for_buyer(store:, customer: nil, company: nil, channel: nil)
+      return [] if store.nil?
+
+      company ||= sole_standing_company(store, customer)
+      channel ||= Spree::Current.channel if store == Spree::Current.store
+
+      if store == Spree::Current.store
+        Spree::Current.catalogs_for(company: company, user: customer, channel: channel)
+      else
+        for_context(store: store, company: company, user: customer, channel: channel)
+      end
+    end
+
+    # The one company a customer unambiguously buys for in this store, or nil
+    # when they belong to none or to several — guessing would put one
+    # business's agreement on another's purchase.
+    #
+    # @param store [Spree::Store]
+    # @param customer [Object, nil]
+    # @return [Spree::Company, nil]
+    def self.sole_standing_company(store, customer)
+      return nil if customer.nil?
+
+      companies = customer.company_memberships.
+                  joins(:company).
+                  merge(Spree::Company.where(store_id: store.id)).
+                  map(&:company).uniq
+
+      companies.one? ? companies.first : nil
+    end
+
     # The owned list's id. Reads like the column the binding replaced, so
     # serializers and write payloads keep their shape while the FK lives on
     # the list side. An assigned-but-unsaved binding reads back as itself, so
@@ -306,17 +352,6 @@ module Spree
         minimum_order_quantity: minimum_order_quantity,
         order_multiple: order_multiple
       )
-    end
-
-    # True when this catalog states any commercial term at all. A catalog can
-    # legitimately carry terms and nothing else — that is how a channel's
-    # default catalog sets a store-wide minimum without narrowing what anyone
-    # sees or pays.
-    #
-    # @return [Boolean]
-    def commercial_terms?
-      minimum_order_quantity.present? || order_multiple.present? ||
-        quantity_rules.any? || order_minimums.any?
     end
 
     private

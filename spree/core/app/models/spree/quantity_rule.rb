@@ -76,11 +76,18 @@ module Spree
       [previous_valid(quantity), next_valid(quantity)].compact.uniq
     end
 
-    # Steps are counted from the minimum rather than from zero, so a rule of
-    # "at least 50, in 24s" offers 50 / 74 / 98 instead of refusing its own
-    # minimum. A minimum that already sits on the multiple leaves this at 0
-    # and the arithmetic is the plain modulo it looks like.
+    # Steps are counted from a DECLARED minimum rather than from zero, so a
+    # rule of "at least 50, in 24s" offers 50 / 74 / 98 instead of refusing
+    # its own minimum.
+    #
+    # Only a declared one: the implicit minimum of 1 is the absence of a rule,
+    # and letting it set the offset would turn "sold in packs of 5" into
+    # 1 / 6 / 11, refusing a buyer who orders exactly one pack. A minimum that
+    # already sits on the multiple leaves this at 0 either way, and the
+    # arithmetic is the plain modulo it looks like.
     def offset
+      return 0 unless minimum_order_quantity.to_i.positive?
+
       minimum % multiple
     end
 

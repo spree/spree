@@ -1570,7 +1570,8 @@
         "remove_rule_description": "{{name}} will fall back to the catalog default. This takes effect immediately.",
         "validation": {
           "positive_integer": "Enter a whole number greater than zero, or leave blank.",
-          "currency_taken": "This currency already has a minimum."
+          "currency_taken": "This currency already has a minimum.",
+          "positive_amount": "Enter an amount greater than zero."
         },
         "messages": {
           "rule_created": "Product rule added",

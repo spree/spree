@@ -121,9 +121,13 @@ module Spree
           @quantity_rule_cache[variant.id] ||= quantity_rules_resolver.call(variant)
         end
 
+        # Through the same entry point visibility and pricing use, so the
+        # stepper a storefront draws matches the price beside it and the
+        # quantity the cart will actually accept. Resolving without the
+        # buyer's company would answer from a different agreement.
         def quantity_rules_resolver
           @quantity_rules_resolver ||= Spree::Catalogs::ResolveQuantityRules.new(
-            Spree::Current.catalogs_for(user: current_user)
+            Spree::Catalog.for_buyer(store: current_store, customer: current_user)
           )
         end
 

@@ -58,7 +58,7 @@ module Spree
           end
 
           def collection_includes
-            [:catalog_products, :price_list, :order_minimums]
+            [:catalog_products, :price_list, :order_minimums, :quantity_rules]
           end
 
           def create_workflow

@@ -180,7 +180,8 @@
         "remove_rule_description": "{{name}} reviendra à la valeur par défaut du catalogue. Effet immédiat.",
         "validation": {
           "positive_integer": "Saisissez un nombre entier supérieur à zéro, ou laissez vide.",
-          "currency_taken": "Cette devise a déjà un minimum."
+          "currency_taken": "Cette devise a déjà un minimum.",
+          "positive_amount": "Saisissez un montant supérieur à zéro."
         },
         "messages": {
           "rule_created": "Règle produit ajoutée",

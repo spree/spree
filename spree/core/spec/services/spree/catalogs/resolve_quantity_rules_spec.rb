@@ -141,16 +141,4 @@ RSpec.describe Spree::Catalogs::ResolveQuantityRules do
       expect(described_class.new([nearest, fallback]).order_minimum('USD').amount).to eq(250)
     end
   end
-
-  describe '#blank?' do
-    it 'is true when no catalog states any term' do
-      expect(described_class.new([create(:catalog, store: store)])).to be_blank
-    end
-
-    it 'is false once a catalog carries terms' do
-      catalog = create(:catalog, store: store, minimum_order_quantity: 48)
-
-      expect(described_class.new([catalog])).not_to be_blank
-    end
-  end
 end

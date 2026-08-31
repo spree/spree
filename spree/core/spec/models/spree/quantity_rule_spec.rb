@@ -34,6 +34,23 @@ RSpec.describe Spree::QuantityRule do
       expect(rule).not_to be_satisfied_by(100)
     end
 
+    # "Sold in packs of 5, no minimum" must accept one pack. Steps count from
+    # a DECLARED minimum only — the implicit 1 is the absence of a rule, and
+    # letting it set the offset would offer 1 / 6 / 11 and refuse 5.
+    context 'when only a multiple is declared' do
+      subject(:rule) { described_class.new(order_multiple: 5) }
+
+      it 'accepts whole packs from the first one' do
+        expect(rule).to be_satisfied_by(5)
+        expect(rule).to be_satisfied_by(10)
+        expect(rule).not_to be_satisfied_by(7)
+      end
+
+      it 'offers whole packs as the neighbours' do
+        expect(rule.nearest_valid(7)).to eq([5, 10])
+      end
+    end
+
     # A minimum that does not sit on the multiple still has to be orderable,
     # so steps are counted from the minimum rather than from zero.
     context 'when the minimum is not itself a multiple' do

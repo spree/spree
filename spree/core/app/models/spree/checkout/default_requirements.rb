@@ -120,8 +120,15 @@ module Spree
         @cart.po_number.blank? && @cart.po_number_required? && !staff_initiated?
       end
 
+      # Two signals, because either alone leaves a gap: a draft order is the
+      # admin surface whether or not a creator was recorded (the draft
+      # workflows take `created_by` optionally), and a cart cannot carry one
+      # at all. The item workflows exempt staff on the same terms, so an
+      # order that passed the add is never refused at completion for the
+      # quantities staff deliberately keyed in.
       def staff_initiated?
-        @cart.respond_to?(:created_by_id) && @cart.created_by_id.present?
+        @cart.is_a?(Spree::Order) ||
+          (@cart.respond_to?(:created_by_id) && @cart.created_by_id.present?)
       end
 
       def req(step, field, message, code: nil)

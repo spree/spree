@@ -6,10 +6,18 @@ module Spree
     # Resolution is **per field**, not all-or-nothing: the first catalog that
     # states a minimum wins the minimum, the first that states a multiple wins
     # the multiple, and an agreement silent on a field passes it through to
-    # the next one rather than waiving it — a distributor catalog with no
-    # stated minimum must not silently drop the channel default's. Within one
-    # catalog the variant override row beats the catalog's own default
+    # the next rather than waiving it — a nearer catalog with no stated
+    # minimum must not silently drop the one behind it. Within a single
+    # catalog the variant override row beats that catalog's own default
     # columns. Nothing anywhere leaves the variant's own base rules.
+    #
+    # The catalogs walked are whatever {Spree::Catalog.for_buyer} resolved,
+    # and that chain is exclusive by tier: a buyer with company catalogs never
+    # also carries their customer group's or the channel's default. So a
+    # channel-wide term is the floor for buyers who resolve NO company or
+    # group catalog, not a fallback beneath one — a company agreement that
+    # states nothing about a field lands on the variant's base rule, not on
+    # the channel default.
     #
     # Built once per cart or request and reused: resolving a fifty-line cart
     # must not be fifty passes over the same catalogs.
@@ -55,8 +63,8 @@ module Spree
 
       # The order minimum in effect for a currency: the first catalog with a
       # row for it. Catalogs saying nothing about this currency pass through,
-      # so a distributor agreement priced only in EUR does not waive the
-      # channel default's USD threshold.
+      # so an agreement priced only in EUR does not waive a USD threshold set
+      # by another catalog in the same tier.
       #
       # @param currency [String]
       # @return [Spree::CatalogOrderMinimum, nil]
@@ -71,26 +79,15 @@ module Spree
         nil
       end
 
-      # True when no catalog states any quantity term, so every variant
-      # resolves to its own base rules. Lets callers skip the walk entirely.
-      # @return [Boolean]
-      def blank?
-        catalogs.none? { |catalog| catalog.commercial_terms? }
-      end
-
+      # Through the one entry point every catalog-reading surface uses, so a
+      # cart's terms come from the same agreement its prices did.
       def self.catalogs_for(purchase)
-        store = purchase.store
-        return [] if store.nil?
-
-        company = purchase.try(:resolved_company)
-        user = purchase.try(:user)
-        channel = purchase.try(:channel)
-
-        if store == Spree::Current.store
-          Spree::Current.catalogs_for(company: company, user: user, channel: channel)
-        else
-          Spree::Catalog.for_context(store: store, company: company, user: user, channel: channel)
-        end
+        Spree::Catalog.for_buyer(
+          store: purchase.store,
+          customer: purchase.try(:user),
+          company: purchase.try(:resolved_company),
+          channel: purchase.try(:channel)
+        )
       end
       private_class_method :catalogs_for
 
