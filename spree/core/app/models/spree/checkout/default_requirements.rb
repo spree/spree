@@ -42,8 +42,24 @@ module Spree
       def completion_requirements
         errors = stock_errors + quantity_rule_errors
         errors << req('address', 'email', Spree.t(:guest_checkout_not_allowed), code: 'guest_checkout_not_allowed') if @cart.guest_checkout_disallowed?
-        errors << req('address', 'company', Spree.t('checkout_requirements.company_activation_required'), code: 'company_activation_required') if @cart.company_activation_missing?
-        errors
+        errors << company_requirement if @cart.company_activation_missing?
+        errors.compact
+      end
+
+      # Two distinct remediations behind one gate: a buyer whose standing
+      # covers an active company merely has to say which node the order is
+      # for (the same test that shows them prices), while everyone else has
+      # to register or await activation. One code for both would send the
+      # multi-company buyer to a "register your business" page.
+      def company_requirement
+        code = Spree.company_activation_policy_class.new.
+               pricing_access_code(user: @cart.customer, store: @cart.store)
+
+        if code.nil?
+          req('address', 'company', Spree.t('checkout_requirements.company_selection_required'), code: 'company_selection_required')
+        else
+          req('address', 'company', Spree.t('checkout_requirements.company_activation_required'), code: 'company_activation_required')
+        end
       end
 
       # Re-checked at completion because an agreement can change between the

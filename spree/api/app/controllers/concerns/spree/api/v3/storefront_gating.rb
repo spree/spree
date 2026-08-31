@@ -70,16 +70,27 @@ module Spree
           )
         end
 
+        # Whether this controller serves receipts — completed purchases and
+        # the customer's own stored value, money already taken. The
+        # +approval_required+ posture protects catalog prices, never a
+        # buyer's record of what they were charged, so receipt surfaces opt
+        # out of its per-customer gating. The shipped +prices_hidden+
+        # guest semantics stay untouched. Override to return true.
+        #
+        # @return [Boolean]
+        def renders_receipts?
+          false
+        end
+
         private
 
         def compute_pricing_access
           channel = current_channel
           return nil if channel.nil?
 
-          case channel.resolved_storefront_access
-          when 'prices_hidden'
+          if channel.storefront_prices_hidden?
             'login_required' if try_spree_current_user.blank?
-          when 'approval_required'
+          elsif channel.storefront_approval_required? && !renders_receipts?
             Spree.company_activation_policy_class.new.pricing_access_code(
               user: try_spree_current_user, store: current_store
             )

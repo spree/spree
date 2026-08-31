@@ -38,6 +38,11 @@ module Spree
         run_hooks :validate
 
         ApplicationRecord.transaction do
+          # The early guard is check-then-insert; serializing concurrent
+          # registrations on the founder's row and re-checking under the lock
+          # keeps a double-clicked form from founding two businesses.
+          step :lock_founder
+          step :confirm_sole_founding
           step :create_company
           step :create_membership
         end
@@ -49,17 +54,35 @@ module Spree
 
       private
 
-      # At most one self-registered root per customer per store: a duplicate
+      # At most one root company per customer per store: a duplicate
       # submission must not found a second business, and a buyer who really
-      # operates two asks staff. Memberships on divisions or sub-units do not
-      # count — being invited into someone's company is not having founded
-      # one.
+      # operates two asks staff. Any root membership counts — founded or
+      # joined at the top of someone's tree, the customer already has a
+      # business here (recorded decision, 2026-08-31); only division-level
+      # memberships leave registration open.
       def ensure_no_existing_root
-        already_registered = store.companies.roots.
-                             joins(:memberships).
-                             where(Spree::CompanyMembership.table_name => { customer_id: customer.id }).
-                             exists?
-        return unless already_registered
+        return unless holds_root_membership?
+
+        errors.add(:base, :already_registered, message: Spree.t('company_registration.already_registered'))
+        reject!
+      end
+
+      def holds_root_membership?
+        store.companies.roots.
+          joins(:memberships).
+          where(Spree::CompanyMembership.table_name => { customer_id: customer.id }).
+          exists?
+      end
+
+      # Serializes concurrent registrations by the same customer: the second
+      # request blocks here until the first commits, and the re-check then
+      # sees its root.
+      def lock_founder
+        customer.lock!
+      end
+
+      def confirm_sole_founding
+        return unless holds_root_membership?
 
         errors.add(:base, :already_registered, message: Spree.t('company_registration.already_registered'))
         reject!

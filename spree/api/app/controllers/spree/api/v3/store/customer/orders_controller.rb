@@ -8,6 +8,11 @@ module Spree
 
             protected
 
+            # Order history is a receipt surface — see StorefrontGating#renders_receipts?.
+            def renders_receipts?
+              true
+            end
+
             def model_class
               Spree::Order
             end

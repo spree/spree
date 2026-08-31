@@ -46,7 +46,16 @@ module Spree
         # resolving again — otherwise adding a buyer to a company months later
         # would reach back and exempt an order that legitimately charged tax.
         return company if is_a?(Spree::Order) && completed?
-        return company if company_id.present?
+        if company_id.present?
+          # An in-flight sale re-asks the policy: a company deactivated after
+          # being named must not keep exempting the sale through its
+          # certificates. Deliberately nil rather than the sole-standing
+          # fallback — the buyer named a node, and resolving a different one
+          # would invoice one business for another's purchase.
+          return company if company.nil? || Spree.company_activation_policy_class.new.active?(company)
+
+          return nil
+        end
 
         sole_standing_company
       end
@@ -63,8 +72,11 @@ module Spree
 
       # Whether an +approval_required+ channel must refuse completion: the
       # sale resolves to no company, or to one the activation policy has not
-      # activated. Staff-keyed orders are exempt — their authority is the
-      # admin credential, not a membership
+      # activated. A record with a creator is exempt — a keyed-in order's
+      # authority is the admin credential, not a membership. Carts carry no
+      # creator column, so on the cart-side completion requirement the
+      # exemption never fires; it is here for the order twin, whose
+      # completion path may adopt the requirement later
       # (docs/plans/6.0-b2b-company-self-registration.md).
       #
       # @return [Boolean]

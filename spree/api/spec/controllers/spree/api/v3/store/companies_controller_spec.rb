@@ -83,7 +83,7 @@ RSpec.describe Spree::Api::V3::Store::CompaniesController, type: :controller do
       post :create, params: { name: 'Nowak Tools', registration: { vat_number: 'PL123', employees: '50' } }, as: :json
 
       expect(response).to have_http_status(:created)
-      expect(store.companies.last.metadata['registration']).to eq(
+      expect(store.companies.find_by(name: 'Nowak Tools').metadata['registration']).to eq(
         'vat_number' => 'PL123', 'employees' => '50'
       )
     end

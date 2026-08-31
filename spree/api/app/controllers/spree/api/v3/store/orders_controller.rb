@@ -13,6 +13,11 @@ module Spree
 
           private
 
+          # Completed orders are receipts — see StorefrontGating#renders_receipts?.
+          def renders_receipts?
+            true
+          end
+
           # The cart's prefixed id stays the client's stable checkout handle:
           # after completion it resolves here to the order created from that
           # cart (Order#cart_id is unique; the order copies the cart token).
