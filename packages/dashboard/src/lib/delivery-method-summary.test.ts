@@ -107,6 +107,16 @@ describe('amountForCurrency', () => {
     expect(amountForCurrency({ amount: 5 }, 'USD', 'USD')).toBe(5)
     expect(amountForCurrency({ amount: 5 }, 'EUR', 'USD')).toBeNull()
   })
+
+  it('trims surrounding space on the legacy currency preference', () => {
+    const preferences = { amount: 7, currency: ' EUR ' }
+    expect(amountForCurrency(preferences, 'EUR', 'USD')).toBe(7)
+    expect(amountForCurrency(preferences, 'USD', 'USD')).toBeNull()
+  })
+
+  it('reads a lowercase amounts-hash key as that currency', () => {
+    expect(amountForCurrency({ amounts: { eur: 7 } }, 'EUR', 'USD')).toBe(7)
+  })
 })
 
 describe('applyCurrencyAmount', () => {
@@ -131,6 +141,15 @@ describe('applyCurrencyAmount', () => {
       amount: 5,
       currency: 'USD',
       amounts: { EUR: 11 },
+    })
+  })
+
+  it('updates and clears a lowercase stored hash key without leaving a stale entry', () => {
+    expect(applyCurrencyAmount({ amounts: { eur: 7 } }, 'EUR', '11', 'USD')).toEqual({
+      amounts: { EUR: 11 },
+    })
+    expect(applyCurrencyAmount({ amounts: { eur: 7 } }, 'EUR', '', 'USD')).toEqual({
+      amounts: {},
     })
   })
 })

@@ -21,10 +21,24 @@ function amountsHash(
   return amounts as Record<string, unknown>
 }
 
-function hashEntry(amounts: Record<string, unknown>, currency: string): unknown {
+function hashKey(amounts: Record<string, unknown>, currency: string): string | undefined {
   const code = currency.toUpperCase()
-  const match = Object.entries(amounts).find(([key]) => key.toUpperCase() === code)
-  return match ? match[1] : undefined
+  return Object.keys(amounts).find((key) => key.toUpperCase() === code)
+}
+
+function hashEntry(amounts: Record<string, unknown>, currency: string): unknown {
+  const key = hashKey(amounts, currency)
+  return key === undefined ? undefined : amounts[key]
+}
+
+function writeHashAmount(
+  amounts: Record<string, unknown>,
+  currency: string,
+  value: number | null,
+): void {
+  const existing = hashKey(amounts, currency)
+  if (existing !== undefined) delete amounts[existing]
+  if (value !== null) amounts[currency.toUpperCase()] = value
 }
 
 /** The currency the pre-6.0 single `amount` belongs to. */
@@ -33,7 +47,7 @@ function legacyCurrency(
   defaultCurrency: string,
 ): string {
   if (typeof preferences?.currency === 'string' && preferences.currency.trim() !== '') {
-    return preferences.currency.toUpperCase()
+    return preferences.currency.trim().toUpperCase()
   }
   return defaultCurrency.toUpperCase()
 }
@@ -92,12 +106,8 @@ export function applyCurrencyAmount(
   }
 
   if (code === defaultCode) {
-    if (hashEntry(nextAmounts, code) !== undefined) {
-      if (parsed === null) {
-        delete nextAmounts[code]
-      } else {
-        nextAmounts[code] = parsed
-      }
+    if (hashKey(nextAmounts, code) !== undefined) {
+      writeHashAmount(nextAmounts, code, parsed)
     }
     return {
       ...preferences,
@@ -107,11 +117,7 @@ export function applyCurrencyAmount(
     }
   }
 
-  if (parsed === null) {
-    delete nextAmounts[code]
-  } else {
-    nextAmounts[code] = parsed
-  }
+  writeHashAmount(nextAmounts, code, parsed)
 
   if (namedCurrency === code) {
     return { ...preferences, amount: parsed, amounts: nextAmounts }
