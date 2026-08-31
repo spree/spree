@@ -160,6 +160,69 @@ test.describe('catalogs', () => {
     await expect(emptyGrid.getByLabel(/^price for/i)).toHaveCount(0, { timeout: 15_000 })
   })
 
+  // An automatic agreement is a percentage plus the quantity it starts at.
+  // Both have to survive a reload, and a second Save must not fail on the
+  // rule the first one wrote
+  // (docs/plans/6.0-price-list-automatic-pricing.md).
+  test('keeps the percentage and its quantity threshold across saves', async ({ page }) => {
+    const creds = await login(page)
+    await gotoIndex(page, CATALOGS_PATH(creds.store_id), CTA)
+
+    const name = `E2E Catalog Volume ${Date.now()}`
+    await createCatalog(page, name)
+
+    await page.locator('#catalog-pricing-mode').click()
+    await page.getByRole('option', { name: /percentage off/i }).click()
+    await page.locator('#catalog-adjustment-magnitude').fill('10')
+    await page.locator('#catalog-minimum-quantity').fill('10')
+    await saveCatalog(page)
+
+    await page.reload()
+    await expect(page.locator('#catalog-adjustment-magnitude')).toHaveValue('10', {
+      timeout: 15_000,
+    })
+    await expect(page.locator('#catalog-minimum-quantity')).toHaveValue('10')
+
+    // Saving again re-sends the same rule; it must update the row rather
+    // than try to add a second of its kind.
+    await page.locator('#catalog-adjustment-magnitude').fill('20')
+    await saveCatalog(page)
+    await page.reload()
+    await expect(page.locator('#catalog-adjustment-magnitude')).toHaveValue('20', {
+      timeout: 15_000,
+    })
+    await expect(page.locator('#catalog-minimum-quantity')).toHaveValue('10')
+  })
+
+  // The threshold survives a switch away from automatic pricing, where its
+  // field is no longer rendered. Judging it then would block Save over
+  // something the merchant cannot see or correct. The input refuses letters
+  // on its own, so the value that gets here is a number the rule still
+  // rejects — zero gates nothing.
+  test('does not judge the quantity once the agreement prices by hand', async ({ page }) => {
+    const creds = await login(page)
+    await gotoIndex(page, CATALOGS_PATH(creds.store_id), CTA)
+
+    const name = `E2E Catalog Switch ${Date.now()}`
+    await createCatalog(page, name)
+
+    await page.locator('#catalog-pricing-mode').click()
+    await page.getByRole('option', { name: /percentage off/i }).click()
+    await page.locator('#catalog-adjustment-magnitude').fill('10')
+    await page.locator('#catalog-minimum-quantity').fill('0')
+
+    await page.locator('#catalog-pricing-mode').click()
+    await page.getByRole('option', { name: /prices i enter for this catalog/i }).click()
+    await expect(page.locator('#catalog-minimum-quantity')).toHaveCount(0)
+
+    await saveCatalog(page)
+
+    // Saved: the list exists, so the price spreadsheet is reachable.
+    await expect(page.getByRole('button', { name: /^enter prices$/i })).toBeVisible({
+      timeout: 15_000,
+    })
+  })
+
   test('renames a catalog from the header Save', async ({ page }) => {
     const creds = await login(page)
     await gotoIndex(page, CATALOGS_PATH(creds.store_id), CTA)

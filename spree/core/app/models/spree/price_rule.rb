@@ -28,6 +28,33 @@ module Spree
       false
     end
 
+    # Whether this rule narrows by something about the purchase rather than
+    # about the buyer. A catalog-owned price list has already been matched on
+    # audience by the time the resolver holds it — the catalog assignment is
+    # what selected it — so only contextual rules still have a question left
+    # to answer there. Quantity is the case that matters: no assignment can
+    # express "when they buy ten", because that is a property of the order
+    # line and not of the customer.
+    #
+    # A predicate rather than a list of type names, so a rule kind an
+    # extension registers can declare itself contextual too
+    # (docs/plans/6.0-price-list-automatic-pricing.md).
+    #
+    # @return [Boolean]
+    def self.contextual?
+      false
+    end
+
+    # Instance-side reader, so rules are classified the same way
+    # `geographic?` classifies them (`rules.any?(&:geographic?)`). A kind
+    # whose answer depends on how it is configured overrides this, exactly
+    # as MarketRule does for `geographic?`.
+    #
+    # @return [Boolean]
+    def contextual?
+      self.class.contextual?
+    end
+
     # Whether a better mechanism has replaced this rule kind. Superseded
     # kinds are grandfathered — existing rules keep matching indefinitely —
     # but they are flagged in types discovery so pickers stop offering them

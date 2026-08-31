@@ -134,6 +134,19 @@ export function parsePercentage(value: string | undefined): number | null {
   return Number.isFinite(parsed) && parsed > 0 ? parsed : null
 }
 
+/**
+ * A whole-number quantity threshold, or null when absent or unusable. One
+ * parse for the validation, the write and the read, so the field cannot
+ * accept a value it then silently discards.
+ */
+export function parseMinimumQuantity(value: string | number | undefined | null): number | null {
+  const text = typeof value === 'string' ? value.trim() : value
+  if (text === '' || text === null || text === undefined) return null
+
+  const parsed = Number(text)
+  return Number.isInteger(parsed) && parsed >= 1 ? parsed : null
+}
+
 export type PriceListFormValues = z.infer<typeof priceListFormSchema>
 
 export const PRICE_LIST_DEFAULTS: PriceListFormValues = {

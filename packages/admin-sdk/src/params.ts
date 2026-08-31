@@ -2601,10 +2601,11 @@ export interface CatalogParams {
   /**
    * The price list this catalog prices through, written inline: an object
    * creates the owned list or updates the one already there. An explicit
-   * `null` **deletes** that list — a list a catalog owns carries no rules of
-   * its own, so releasing it into general matching would price every
-   * shopper; it is a soft delete, so the prices stay recoverable. Omit the
-   * key, or send `{}`, to leave the pricing alone.
+   * `null` **deletes** that list — an owned list is matched by its catalog
+   * rather than by an audience of its own, so releasing it into general
+   * matching would price every shopper; it is a soft delete, so the prices
+   * stay recoverable. Omit the key, or send `{}`, to leave the pricing
+   * alone.
    *
    * Do not send this together with `price_list_id`: a catalog may only own
    * its own list, and the pair is refused rather than letting one catalog
@@ -2625,6 +2626,21 @@ export interface CatalogPriceListParams {
   /** Signed: negative discounts off base prices, positive marks up. */
   price_adjustment_percentage?: string | null
   adjust_compare_at?: boolean
+  /**
+   * Contextual rules for the owned list — in practice a `volume_rule`, which
+   * is what turns a percentage into an automatic volume discount.
+   *
+   * This payload speaks only for those: the catalog's assignments already
+   * decide who the agreement is for, so audience rules on the list are left
+   * exactly as they are, and an empty array clears the contextual rules
+   * without touching them.
+   */
+  rules?: Array<PriceListRuleDraft>
+  /**
+   * Explicit per-variant amounts. An empty array clears them, which is what
+   * switching from hand-entered prices to a percentage sends.
+   */
+  prices?: Array<PriceListPriceOverrideParams>
 }
 
 export interface CatalogAssignParams {

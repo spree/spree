@@ -1,4 +1,4 @@
-import type { CatalogParams } from '@spree/admin-sdk'
+import type { CatalogParams, PriceList } from '@spree/admin-sdk'
 import { blankToNull } from '@spree/dashboard-core'
 import { requiredMessage } from '@spree/dashboard-ui'
 import i18n from 'i18next'
@@ -8,6 +8,7 @@ import {
   ADJUSTMENT_DIRECTIONS,
   adjustmentFormValues,
   PRICING_MODES,
+  parseMinimumQuantity,
   parsePercentage,
 } from './price-list'
 
@@ -43,7 +44,27 @@ export const catalogFormSchema = z
     adjustment_direction: z.enum(ADJUSTMENT_DIRECTIONS).default('decrease'),
     adjustment_magnitude: z.string().trim().optional(),
     adjust_compare_at: z.boolean().default(false),
+    /**
+     * The quantity an order line must reach before the adjustment applies,
+     * carried as the owned list's volume rule. Blank means the agreement
+     * prices every quantity — which is what most agreements do
+     * (docs/plans/6.0-price-list-automatic-pricing.md).
+     */
+    minimum_quantity: z.string().trim().optional(),
   })
+  // Only while the field is on screen. The value survives a switch away from
+  // automatic pricing, and judging it then would block Save over a field the
+  // merchant can no longer see or correct.
+  .refine(
+    (v) =>
+      v.pricing_mode !== 'automatic' ||
+      !v.minimum_quantity?.trim() ||
+      parseMinimumQuantity(v.minimum_quantity) !== null,
+    {
+      path: ['minimum_quantity'],
+      error: () => i18n.t('admin.products.price_lists.validation.minimum_quantity_invalid'),
+    },
+  )
   .refine(
     (v) => v.pricing_mode !== 'automatic' || parsePercentage(v.adjustment_magnitude) !== null,
     {
@@ -75,6 +96,7 @@ export const CATALOG_DEFAULTS: CatalogFormValues = {
   adjustment_direction: 'decrease',
   adjustment_magnitude: '',
   adjust_compare_at: false,
+  minimum_quantity: '',
   staged_products: { adds: [], removes: [] },
 }
 
@@ -103,8 +125,11 @@ function priceListPayload(values: CatalogFormValues, previousMode?: CatalogPrici
 
   if (values.pricing_mode === 'fixed') {
     // A fixed list holds explicit rows; clearing any adjustment is what
-    // makes it fixed.
-    return { price_adjustment_percentage: null, adjust_compare_at: false }
+    // makes it fixed. The quantity threshold goes with the percentage — left
+    // behind it would gate the hand-entered prices, and the card stops
+    // showing it, so nothing would explain the gap. `rules: []` clears only
+    // the contextual ones; the server keeps the rest.
+    return { price_adjustment_percentage: null, adjust_compare_at: false, rules: [] }
   }
 
   const magnitude = parsePercentage(values.adjustment_magnitude)
@@ -118,10 +143,24 @@ function priceListPayload(values: CatalogFormValues, previousMode?: CatalogPrici
           adjust_compare_at: values.adjust_compare_at,
         }
 
+  // A minimum quantity rides as the list's volume rule; dropping it from the
+  // list of rules is what clears it, so removing the threshold is a real
+  // edit rather than a silent no-op.
+  const withRule = { ...base, rules: volumeRulePayload(values.minimum_quantity) }
+
   // Switching away from hand-entered prices clears them. An explicit amount
   // beats the adjustment by design, so leaving the old rows behind would
   // keep charging them while the card claims a percentage is in effect.
-  return previousMode === 'fixed' ? { ...base, prices: [] } : base
+  return previousMode === 'fixed' ? { ...withRule, prices: [] } : withRule
+}
+
+function volumeRulePayload(minimumQuantity: string | undefined) {
+  const quantity = parseMinimumQuantity(minimumQuantity)
+  // A threshold of 1 gates nothing, which is exactly what blank means, so
+  // both send no rule at all rather than one that always matches.
+  if (quantity === null || quantity === 1) return []
+
+  return [{ type: 'volume_rule', preferences: { min_quantity: quantity } }]
 }
 
 /**
@@ -130,10 +169,7 @@ function priceListPayload(values: CatalogFormValues, previousMode?: CatalogPrici
  */
 export function catalogPricingValues(
   priceList:
-    | {
-        price_adjustment_percentage?: string | null
-        adjust_compare_at?: boolean
-      }
+    | Pick<PriceList, 'price_adjustment_percentage' | 'adjust_compare_at' | 'price_rules'>
     | null
     | undefined,
 ): {
@@ -141,6 +177,7 @@ export function catalogPricingValues(
   adjustment_direction: CatalogFormValues['adjustment_direction']
   adjustment_magnitude: string
   adjust_compare_at: boolean
+  minimum_quantity: string
 } {
   if (!priceList) {
     return {
@@ -148,6 +185,7 @@ export function catalogPricingValues(
       adjustment_direction: 'decrease',
       adjustment_magnitude: '',
       adjust_compare_at: false,
+      minimum_quantity: '',
     }
   }
 
@@ -160,5 +198,21 @@ export function catalogPricingValues(
     adjustment_direction,
     adjustment_magnitude,
     adjust_compare_at: priceList.adjust_compare_at ?? false,
+    minimum_quantity: minimumQuantityOf(priceList.price_rules),
   }
+}
+
+/**
+ * The volume rule's threshold, as the string the input edits. Shows whatever
+ * the rule holds — including a 1 set through the API or the standalone rules
+ * editor — because a value the field hides is a value the next Save destroys
+ * without the merchant ever seeing it.
+ */
+function minimumQuantityOf(rules: PriceList['price_rules']): string {
+  const rule = rules?.find((entry) => entry.type === 'volume_rule')
+  const quantity = parseMinimumQuantity(
+    rule?.preferences?.min_quantity as string | number | undefined,
+  )
+
+  return quantity === null ? '' : String(quantity)
 }

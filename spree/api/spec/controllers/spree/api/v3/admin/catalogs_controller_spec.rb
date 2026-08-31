@@ -40,6 +40,53 @@ RSpec.describe Spree::Api::V3::Admin::CatalogsController, type: :controller do
       expect(list).to be_active
     end
 
+    # A percentage plus a volume rule is an automatic volume discount, and
+    # both halves have to be settable in the one request that stands the
+    # agreement up (docs/plans/6.0-price-list-automatic-pricing.md).
+    it 'accepts the contextual rules that make automatic volume pricing work' do
+      post :create,
+           params: {
+             name: 'Bulk tier',
+             price_list: {
+               price_adjustment_percentage: '-10',
+               rules: [{ type: 'volume_rule', preferences: { min_quantity: 10 } }]
+             }
+           },
+           as: :json
+
+      expect(response).to have_http_status(:created)
+
+      list = store.catalogs.find_by(name: 'Bulk tier').price_list
+      rule = list.price_rules.sole
+      expect(rule).to be_a(Spree::PriceRules::VolumeRule)
+      expect(rule.preferred_min_quantity).to eq(10)
+    end
+
+    # Switching to hand-entered prices has to take the threshold with it.
+    # A rule left behind would gate the merchant's own amounts, and the card
+    # stops showing the field, so nothing would explain the missing discount.
+    it 'clears the volume rule when the agreement moves to fixed prices' do
+      post :create,
+           params: {
+             name: 'Switcher',
+             price_list: {
+               price_adjustment_percentage: '-10',
+               rules: [{ type: 'volume_rule', preferences: { min_quantity: 10 } }]
+             }
+           },
+           as: :json
+      created = store.catalogs.find_by(name: 'Switcher')
+      expect(created.price_list.price_rules.count).to eq(1)
+
+      patch :update,
+            params: { id: created.prefixed_id,
+                      price_list: { price_adjustment_percentage: nil, rules: [] } },
+            as: :json
+
+      expect(response).to have_http_status(:ok)
+      expect(created.price_list.reload.price_rules).to be_empty
+    end
+
     it 'updates the owned list in place' do
       post :create, params: { name: 'Tier', price_list: { price_adjustment_percentage: '-10' } }, as: :json
       created = store.catalogs.find_by(name: 'Tier')

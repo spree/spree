@@ -1470,6 +1470,11 @@
           "any": "Eine beliebige Regel darf zutreffen",
           "label": "Übereinstimmungsregel"
         },
+        "minimum_quantity": {
+          "help": "Rabatt erst ab dieser Stückzahl je Position. Leer lassen, um jede Menge zu bepreisen.",
+          "label": "Mindestmenge",
+          "placeholder": "10"
+        },
         "name": {
           "help": "Interne Bezeichnung — wird Kunden nie angezeigt.",
           "label": "Name",
@@ -3811,7 +3816,8 @@
         "validation": {
           "adjustment_required": "Bitte einen Prozentsatz eingeben.",
           "adjustment_too_deep": "Muss kleiner als 100 % sein.",
-          "ends_after_starts": "Muss nach dem Startdatum liegen."
+          "ends_after_starts": "Muss nach dem Startdatum liegen.",
+          "minimum_quantity_invalid": "Geben Sie eine ganze Zahl ein."
         }
       },
       "product_type_adds_options_one": "Dieser Typ fügt neuen Produkten {{options}} hinzu.",

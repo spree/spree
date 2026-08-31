@@ -81,7 +81,49 @@ module Spree
         attrs = attributes.to_h.with_indifferent_access
         attrs[:name] = catalog.name if attrs[:name].blank?
         attrs[:status] = 'active' if for_create && attrs[:status].blank?
+        attrs[:rules] = merged_rules(attrs[:rules]) if attrs.key?(:rules)
         attrs
+      end
+
+      # This payload speaks only for the list's contextual rules — a catalog
+      # states the terms of the purchase, while who the agreement is for is
+      # settled by its assignments. Rules are reconciled by replacement, so
+      # the audience rules the caller never mentioned are merged back in;
+      # without this, editing a catalog's name through the inline payload
+      # would destroy a market rule and silently change how its prices are
+      # restated for VAT.
+      def merged_rules(rows)
+        existing = catalog.price_list&.price_rules&.to_a || []
+        untouched = existing.reject(&:contextual?)
+
+        contextual = Array(rows).filter_map do |row|
+          attrs = row.to_h.with_indifferent_access
+          klass = Spree::PriceRule.find_by_api_type(attrs[:type])
+          next unless klass&.contextual?
+
+          # A rule is unique per kind on a list, and this payload names kinds
+          # rather than rows, so the row already holding that kind is the one
+          # meant — whatever id the caller sent, or none at all. Taking the
+          # caller's id at face value would build a second rule of the same
+          # type (an id from another list finds nothing here) and be refused
+          # by the uniqueness validation, turning an ordinary save into a
+          # 500.
+          attrs[:id] = existing.find { |rule| rule.class == klass }&.id
+          attrs
+        end
+
+        # The payload names kinds, so two rows of one kind are one intent
+        # stated twice; the last wins. Left as-is they would both resolve to
+        # the same row and the second would be refused as a duplicate type.
+        contextual = contextual.reverse.uniq { |attrs| attrs[:type] }.reverse
+
+        # Named by id and type only, deliberately without their preferences:
+        # reconciliation runs a row's preference setters, and those re-check
+        # every record an audience rule points at. Re-sending the stored
+        # values would re-validate data this payload never spoke about, so a
+        # customer group deleted long after the rule was written would turn
+        # an ordinary catalog save into a 404.
+        contextual + untouched.map { |rule| { id: rule.id, type: rule.class.api_type } }
       end
     end
   end

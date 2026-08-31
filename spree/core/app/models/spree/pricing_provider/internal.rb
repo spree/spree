@@ -56,12 +56,21 @@ module Spree
         # Price lists reached through the buyer's effective catalogs, in
         # catalog resolution order — company subtree first, then customer
         # groups, then the channel's default catalog (the same fallback
-        # chain visibility uses). A catalog-attached list applies because
-        # the catalog applies — its own rules are not consulted, only its
-        # status and dates.
+        # chain visibility uses).
+        #
+        # A catalog-attached list applies because the catalog applies: its
+        # audience rules are not consulted, since the assignment already
+        # answered that question. Its *contextual* rules still are — a
+        # VolumeRule asks about the quantity being bought, which no catalog
+        # assignment can express, and that combination is what automatic
+        # volume pricing is (docs/plans/6.0-price-list-automatic-pricing.md).
+        # Status and dates gate the list as before.
+        #
         # @return [Array<Spree::PriceList>]
         def catalog_price_lists
-          @catalog_price_lists ||= catalogs_for_context.filter_map(&:price_list).uniq.select(&:currently_active?)
+          @catalog_price_lists ||= catalogs_for_context.filter_map(&:price_list).uniq.select do |price_list|
+            price_list.currently_active? && price_list.contextual_rules_applicable?(context)
+          end
         end
 
         # Returns the price lists that are applicable to the context by their

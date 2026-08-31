@@ -1470,6 +1470,11 @@
           "any": "Any rule may match",
           "label": "Match policy"
         },
+        "minimum_quantity": {
+          "help": "Only discount a line once it reaches this many units. Leave blank to price every quantity.",
+          "label": "Minimum quantity",
+          "placeholder": "10"
+        },
         "name": {
           "help": "Internal label — never shown to customers.",
           "label": "Name",
@@ -3811,7 +3816,8 @@
         "validation": {
           "adjustment_required": "Enter a percentage.",
           "adjustment_too_deep": "Must be less than 100%.",
-          "ends_after_starts": "Must be after start date."
+          "ends_after_starts": "Must be after start date.",
+          "minimum_quantity_invalid": "Enter a whole number."
         }
       },
       "product_type_adds_options_one": "This type adds {{options}} to new products.",

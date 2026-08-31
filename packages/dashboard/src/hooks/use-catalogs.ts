@@ -17,7 +17,9 @@ export function useCatalog(id: string | undefined) {
   return useQuery({
     queryKey: useResourceKey('catalogs', id ?? 'noop'),
     queryFn: () =>
-      adminClient.catalogs.get(id as string, { expand: ['assignments', 'price_list'] }),
+      adminClient.catalogs.get(id as string, {
+        expand: ['assignments', 'price_list', 'price_list.price_rules'],
+      }),
     enabled: !!id,
   })
 }
