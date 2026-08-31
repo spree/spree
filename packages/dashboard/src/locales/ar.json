@@ -2547,6 +2547,7 @@
         },
         "purchase_order": {
           "document": "مستند أمر الشراء",
+          "download_failed": "تعذر تنزيل أمر الشراء",
           "title": "أمر الشراء"
         },
         "section_customer_note": "Special Instructions",

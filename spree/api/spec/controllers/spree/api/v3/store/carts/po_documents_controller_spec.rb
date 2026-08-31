@@ -34,6 +34,35 @@ RSpec.describe Spree::Api::V3::Store::Carts::PoDocumentsController, type: :contr
       expect(json_response['direct_upload']['url']).to be_present
     end
 
+    # A guest cart is self-service, so this endpoint is reachable anonymously.
+    # Without a gate here an attacker could mint uploads for arbitrarily large
+    # files and fill the merchant's bucket — the attachment's own validation
+    # only runs once the bytes are already stored.
+    it 'refuses to presign an upload larger than the cap' do
+      post :create, params: {
+        cart_id: order.prefixed_id,
+        blob: blob_params.merge(byte_size: Spree::Purchase::PurchaseOrder::MAX_PO_DOCUMENT_SIZE + 1)
+      }
+
+      expect(response).to have_http_status(:unprocessable_content)
+      expect { ActiveStorage::Blob.find_signed!(json_response['signed_id']) }.to raise_error(StandardError)
+    end
+
+    it 'refuses to presign a file type a purchase order never arrives as' do
+      post :create, params: {
+        cart_id: order.prefixed_id,
+        blob: blob_params.merge(content_type: 'application/x-sh')
+      }
+
+      expect(response).to have_http_status(:unprocessable_content)
+    end
+
+    it 'refuses a byte_size that is not a positive number' do
+      post :create, params: { cart_id: order.prefixed_id, blob: blob_params.merge(byte_size: 0) }
+
+      expect(response).to have_http_status(:unprocessable_content)
+    end
+
     # A purchase order carries the buyer's prices and terms, and attaching a
     # signed id never moves a blob between services.
     it 'mints the blob on private storage' do

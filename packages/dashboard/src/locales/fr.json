@@ -2534,6 +2534,7 @@
         },
         "purchase_order": {
           "document": "Document de bon de commande",
+          "download_failed": "Impossible de télécharger le bon de commande",
           "title": "Bon de commande"
         },
         "section_customer_note": "Instructions spéciales",

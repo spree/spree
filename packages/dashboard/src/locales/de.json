@@ -2534,6 +2534,7 @@
         },
         "purchase_order": {
           "document": "Bestelldokument",
+          "download_failed": "Die Bestellung konnte nicht heruntergeladen werden",
           "title": "Bestellung des Kunden"
         },
         "section_customer_note": "Besondere Anweisungen",

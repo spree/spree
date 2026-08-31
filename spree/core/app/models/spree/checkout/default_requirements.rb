@@ -34,7 +34,7 @@ module Spree
           r << req('address', 'ship_address', Spree.t('checkout_requirements.ship_address_required')) if @cart.shipping_address_required? && @cart.ship_address.blank?
           r << req('delivery', 'delivery_method', Spree.t('checkout_requirements.delivery_method_required')) if delivery_step_required? && !delivery_method_selected?
           r << req('payment', 'payment', Spree.t('checkout_requirements.payment_required')) if payment_required? && !payment_satisfied?
-          r << req('payment', 'po_number', Spree.t('checkout_requirements.po_number_required')) if po_number_missing?
+          r << req('address', 'po_number', Spree.t('checkout_requirements.po_number_required')) if po_number_missing?
         end
       end
 
@@ -77,6 +77,10 @@ module Spree
       # reference is needed while they can still type it, not refused at the
       # end of checkout. Staff keying an order in are exempt — the buyer's PO
       # commonly arrives with the paperwork rather than at the till.
+      #
+      # Reported against `address` rather than `payment`: payment is dropped
+      # from the steps of a cart that owes nothing, and a requirement naming a
+      # step the buyer never visits is one they cannot clear.
       def po_number_missing?
         @cart.po_number.blank? && @cart.po_number_required? && !staff_initiated?
       end

@@ -2554,6 +2554,7 @@
         },
         "purchase_order": {
           "document": "Dokument zamówienia zakupu",
+          "download_failed": "Nie udało się pobrać zamówienia zakupu",
           "title": "Zamówienie zakupu"
         },
         "section_customer_note": "Specjalne instrukcje",

@@ -2527,6 +2527,7 @@
         },
         "purchase_order": {
           "document": "采购订单文件",
+          "download_failed": "无法下载采购订单",
           "title": "采购订单"
         },
         "section_customer_note": "特别说明",

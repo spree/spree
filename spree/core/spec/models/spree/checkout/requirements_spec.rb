@@ -124,7 +124,7 @@ RSpec.describe Spree::Checkout::Requirements do
 
     it 'asks for the reference when the buyer\'s company demands one' do
       expect(subject).to include(
-        a_hash_including(step: 'payment', field: 'po_number', code: 'po_number_required')
+        a_hash_including(step: 'address', field: 'po_number', code: 'po_number_required')
       )
     end
 
@@ -139,6 +139,20 @@ RSpec.describe Spree::Checkout::Requirements do
       order.reload
 
       expect(subject).not_to include(a_hash_including(field: 'po_number'))
+    end
+
+    # Payment is dropped from the steps of a cart that owes nothing, so a
+    # requirement naming that step would be one the buyer can never reach.
+    it 'reports against a step that survives on a cart owing nothing' do
+      cart = create(:cart, store: store, customer: customer)
+      cart.update_column(:company_id, company.id)
+      allow(cart).to receive(:payment_required?).and_return(false)
+
+      requirements = described_class.new(cart).call
+      po_requirement = requirements.find { |requirement| requirement[:field] == 'po_number' }
+
+      expect(po_requirement).to be_present
+      expect(cart.checkout_steps).to include(po_requirement[:step])
     end
 
     it 'does not ask of staff keying the order in' do

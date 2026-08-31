@@ -83,6 +83,23 @@ shared_examples_for 'a purchase carrying a PO reference' do |factory:|
       expect(purchase.errors[:po_document]).to be_present
     end
 
+    # A direct upload declares its size before sending any bytes, so the
+    # recorded byte_size is the uploader's claim, not a measurement. Trusting
+    # it would let an under-declared file past every size check.
+    it 'refuses a file whose stored bytes exceed the cap despite a small declared size' do
+      oversized = 'a' * (Spree::Purchase::PurchaseOrder::MAX_PO_DOCUMENT_SIZE + 1024)
+      blob = ActiveStorage::Blob.create_and_upload!(
+        io: StringIO.new(oversized), filename: 'po.pdf', content_type: 'application/pdf',
+        service_name: Spree.private_storage_service_name
+      )
+      blob.update_column(:byte_size, 5)
+
+      purchase.po_document.attach(blob)
+
+      expect(purchase).not_to be_valid
+      expect(purchase.errors[:po_document].join).to include('larger than')
+    end
+
     it 'is stored privately' do
       purchase.po_document.attach(
         io: StringIO.new('%PDF-1.4'), filename: 'po.pdf', content_type: 'application/pdf'

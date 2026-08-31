@@ -26,7 +26,17 @@ module Spree
             # Exchanges blob metadata for an upload URL. The returned signed id
             # is then sent back as `po_document` on a cart update, which is what
             # actually attaches it.
+            #
+            # The declared size and type are checked here, before any URL is
+            # minted. A guest cart is self-service, so without this an
+            # anonymous caller could mint uploads for arbitrarily large files
+            # and fill the merchant's bucket — the attachment's own validation
+            # only runs once the bytes are already stored. It is a gate on the
+            # cheap lie, not a substitute: the attach-time check still reads
+            # the stored object, which is what catches an under-declared size.
             def create
+              return render_po_document_invalid unless acceptable_upload?
+
               blob = ActiveStorage::Blob.create_before_direct_upload!(
                 service_name: Spree.private_storage_service_name, **blob_params
               )
@@ -71,6 +81,27 @@ module Spree
 
             def blob_params
               params.require(:blob).permit(:filename, :byte_size, :checksum, :content_type).to_h.symbolize_keys
+            end
+
+            def acceptable_upload?
+              declared_size = Integer(blob_params[:byte_size].to_s, exception: false)
+
+              declared_size&.positive? &&
+                declared_size <= Spree::Purchase::PurchaseOrder::MAX_PO_DOCUMENT_SIZE &&
+                Spree::Purchase::PurchaseOrder::PO_DOCUMENT_CONTENT_TYPES.include?(blob_params[:content_type])
+            end
+
+            def render_po_document_invalid
+              render_error(
+                code: ERROR_CODES[:parameter_invalid],
+                message: Spree.t(
+                  :po_document_invalid,
+                  size: ActiveSupport::NumberHelper.number_to_human_size(
+                    Spree::Purchase::PurchaseOrder::MAX_PO_DOCUMENT_SIZE
+                  )
+                ),
+                status: :unprocessable_content
+              )
             end
           end
         end

@@ -2534,6 +2534,7 @@
         },
         "purchase_order": {
           "document": "Purchase order document",
+          "download_failed": "Could not download the purchase order",
           "title": "Purchase order"
         },
         "section_customer_note": "Special Instructions",

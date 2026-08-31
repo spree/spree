@@ -8,6 +8,7 @@ import {
   CardHeader,
   CardTitle,
   Input,
+  toastManager,
 } from '@spree/dashboard-ui'
 import { DownloadIcon, PencilIcon } from 'lucide-react'
 import { type FormEvent, useState } from 'react'
@@ -47,12 +48,23 @@ export function OrderPurchaseOrderCard({ order }: { order: Order }) {
   async function handleDownload() {
     if (!order.po_document_url) return
 
-    await downloadFromApi(
-      token,
-      order.po_document_url,
-      order.po_document_filename ?? 'purchase-order',
-      getApiClient().downloadHeaders?.() ?? {},
-    )
+    try {
+      await downloadFromApi(
+        token,
+        order.po_document_url,
+        order.po_document_filename ?? 'purchase-order',
+        getApiClient().downloadHeaders?.() ?? {},
+      )
+    } catch (error) {
+      // The fetch rejects on any non-success response, and a click handler
+      // that swallows it leaves the merchant staring at a button that did
+      // nothing.
+      toastManager.add({
+        type: 'error',
+        title: t('admin.orders.detail.purchase_order.download_failed'),
+        description: error instanceof Error ? error.message : String(error),
+      })
+    }
   }
 
   return (

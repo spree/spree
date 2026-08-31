@@ -1388,8 +1388,10 @@ en:
     phone: Phone
     pickup:
       store_pickup: Store Pickup
+    po_document_invalid: A purchase order document must be a PDF, image or Word file of %{size} or less.
     po_document_invalid_signed_id: The purchase order document reference is not valid.
     po_document_missing: This order has no attached purchase order document.
+    po_document_too_large: is larger than %{size}.
     po_document_upload_incomplete: The purchase order document was not uploaded completely. Please try attaching it again.
     policies: Policies
     powered_by: Powered by
