@@ -56,7 +56,7 @@ module Spree
               content_type: {
                 in: ->(record) { record.requirement&.accepted_content_types || [] }
               },
-              'spree/bytes_content_type': {
+              'spree/attachment_content_type': {
                 in: ->(record) { record.requirement&.accepted_content_types || [] }
               },
               size: { less_than_or_equal_to: ->(_record) { Spree::Config.max_seller_document_upload_size } },

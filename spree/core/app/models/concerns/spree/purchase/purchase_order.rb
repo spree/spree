@@ -44,7 +44,7 @@ module Spree
         # command the gem's spoofing_protection option shells out to.
         validates :po_document,
                   content_type: { in: PO_DOCUMENT_CONTENT_TYPES },
-                  'spree/bytes_content_type': { in: PO_DOCUMENT_CONTENT_TYPES },
+                  'spree/attachment_content_type': { in: PO_DOCUMENT_CONTENT_TYPES },
                   size: { less_than_or_equal_to: MAX_PO_DOCUMENT_SIZE },
                   if: -> { po_document.attached? }
 

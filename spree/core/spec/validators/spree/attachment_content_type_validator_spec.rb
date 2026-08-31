@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe Spree::BytesContentTypeValidator do
+describe Spree::AttachmentContentTypeValidator do
   subject(:validator) do
     described_class.new(attributes: [:po_document], in: %w[application/pdf image/jpeg])
   end

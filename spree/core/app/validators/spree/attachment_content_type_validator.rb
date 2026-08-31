@@ -12,8 +12,8 @@ module Spree
   # (a PDF with a leading space is one they documented).
   #
   # @example
-  #   validates :po_document, 'spree/bytes_content_type': { in: %w[application/pdf] }
-  class BytesContentTypeValidator < ActiveModel::EachValidator
+  #   validates :po_document, 'spree/attachment_content_type': { in: %w[application/pdf] }
+  class AttachmentContentTypeValidator < ActiveModel::EachValidator
     # Marcel's Office Open XML signatures look past the zip header (up to
     # 64 KiB) for +[Content_Types].xml+ / +word/+. Images and PDFs need
     # only the first few bytes.
