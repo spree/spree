@@ -4,13 +4,32 @@ import { FIXTURE_PROMO_PRODUCT, gotoIndex, login } from './helpers'
 const CATALOGS_PATH = (storeId: string) => `/${storeId}/products/catalogs`
 const CTA = /add catalog/i
 
+// New catalog is a four-step wizard — Details, Audience, Pricing, Review —
+// that writes nothing until Create on the last step.
 async function createCatalog(page: Page, name: string) {
   await page.getByRole('button', { name: CTA }).click()
-  const sheet = page.getByRole('dialog')
-  await expect(sheet.getByRole('heading', { name: /new catalog/i })).toBeVisible()
-  await sheet.locator('#catalog-name').fill(name)
-  await sheet.getByRole('button', { name: /create catalog/i }).click()
-  // On success the sheet navigates to the new catalog's detail page.
+  await expect(page.getByRole('heading', { name: /new catalog/i })).toBeVisible()
+
+  await page.locator('#catalog-name').fill(name)
+
+  // Audience and Pricing are answered by their defaults: no audience means
+  // everyone, and base prices mean the catalog decides visibility only.
+  //
+  // Each step is confirmed by the rail's own current marker before the next
+  // click. Next and Create are different buttons in the same place, so
+  // clicking without checking where the wizard actually is lands on whichever
+  // one the last render left there.
+  const onStep = (label: RegExp) =>
+    expect(page.locator('[aria-current="step"]').getByText(label)).toBeVisible()
+
+  await onStep(/^details$/i)
+  for (const step of [/^audience$/i, /^pricing$/i, /^review$/i]) {
+    await page.getByRole('button', { name: /^next$/i }).click()
+    await onStep(step)
+  }
+
+  await page.getByRole('button', { name: /create catalog/i }).click()
+  // On success the wizard lands on the new catalog's detail page.
   await expect(page.getByRole('heading', { name })).toBeVisible({ timeout: 15_000 })
 }
 
