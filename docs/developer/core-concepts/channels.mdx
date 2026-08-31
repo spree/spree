@@ -92,18 +92,22 @@ This attribution drives reporting (best-selling by channel, revenue per channel)
 
 ### Storefront Access Gating
 
-A channel's `storefront_access` decides what an **anonymous** visitor — a request with no authenticated customer — may see. Logged-in customers are never gated. The posture is one of three values:
+A channel's `storefront_access` decides what a visitor may see. The first three postures gate only **anonymous** visitors — a request with no authenticated customer; the fourth also gates signed-in customers until they belong to a company:
 
 | Mode | Guest sees catalog | Guest sees prices | Use case |
 |---|---|---|---|
 | `public` | Yes | Yes | The default. An open storefront — anyone can browse; guests can also check out when `guest_checkout` is enabled. |
 | `prices_hidden` | Yes | No — prices come back `null` | A catalog you want discoverable, with pricing revealed only after sign-in (e.g. a trade catalog for lead generation). |
 | `login_required` | No — reads rejected with `401` | No | A fully gated surface — a guest can't read the catalog at all (e.g. a members-only or B2B wholesale portal). |
+| `approval_required` | Yes | No — for guests **and** customers without an active [company](/developer/core-concepts/companies) | A trade store with a visible range: anyone browses, but prices and checkout need a company account. |
 
 The gate is enforced by the **Store API**, not the storefront, so a storefront app can't loosen it:
 
 - **`login_required`** — every gated read returns `401` for an unauthenticated request. Endpoints that must stay reachable before sign-in (authentication, password reset, reference data like countries and currencies) are exempt.
 - **`prices_hidden`** — reads succeed, but every money field is serialized as `null` for a guest. The storefront renders these as a sign-in prompt rather than a price.
+- **`approval_required`** — reads succeed for everyone, but money fields are `null` unless the customer has standing over an active company, and completing checkout is refused (requirement code `company_activation_required`) until the cart resolves to one. See [company self-registration](/developer/core-concepts/companies#self-registration-and-activation) for the registration flow and what "active" means.
+
+Whenever prices are withheld, every payload that nulls them also carries a **`pricing_access`** reason code — `login_required` (sign in to see prices) or `company_required` (register or join a company) — so a storefront renders the right prompt from the code instead of guessing at bare nulls. The field is `null` when prices are visible.
 
 A companion control, **`guest_checkout`**, decides whether an order can be placed without an account on the channel. It's independent of `storefront_access` — a `public` channel can still require accounts, and the two are resolved separately.
 
