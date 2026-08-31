@@ -14,6 +14,22 @@ export const MATCH_POLICIES = ['all', 'any'] as const
 export type MatchPolicy = (typeof MATCH_POLICIES)[number]
 
 /**
+ * How a list produces prices. `fixed` prices only what it holds explicit
+ * rows for — every list that existed before automatic pricing. `automatic`
+ * derives from base prices by a percentage, with explicit rows still
+ * winning per variant.
+ */
+export const PRICING_MODES = ['fixed', 'automatic'] as const
+export type PricingMode = (typeof PRICING_MODES)[number]
+
+/**
+ * Stored signed (negative = discount), but edited as magnitude + direction:
+ * a merchant thinks "15% off", not "-15".
+ */
+export const ADJUSTMENT_DIRECTIONS = ['decrease', 'increase'] as const
+export type AdjustmentDirection = (typeof ADJUSTMENT_DIRECTIONS)[number]
+
+/**
  * Form-state row for a price rule. Carries the editor's display fields
  * (`label`, `description`, `preference_schema`) alongside the payload
  * fields the API consumes (`type`, `preferences`, optional `id`). Closely
@@ -106,6 +122,18 @@ export const priceListFormSchema = z
     },
   )
 
+/**
+ * A positive percentage, or null when absent or unparseable. Lives here
+ * with the other percentage helpers, though only the catalog form uses them
+ * now: a percentage adjustment is valid only on a list a catalog owns, so
+ * the standalone editor no longer offers it.
+ */
+export function parsePercentage(value: string | undefined): number | null {
+  if (!value?.trim()) return null
+  const parsed = Number(value)
+  return Number.isFinite(parsed) && parsed > 0 ? parsed : null
+}
+
 export type PriceListFormValues = z.infer<typeof priceListFormSchema>
 
 export const PRICE_LIST_DEFAULTS: PriceListFormValues = {
@@ -128,6 +156,27 @@ export function priceListValuesToParams(
     ends_at: v.ends_at || null,
     match_policy: v.match_policy,
     rules: v.rules.map(ruleDraftToPayload),
+  }
+}
+
+/** Splits the stored signed percentage back into the edited pair. */
+export function adjustmentFormValues(percentage: string | null | undefined): {
+  pricing_mode: PricingMode
+  adjustment_direction: AdjustmentDirection
+  adjustment_magnitude: string
+} {
+  const parsed = percentage == null || percentage === '' ? null : Number(percentage)
+  // Zero is no adjustment, and the form's own rules require a magnitude
+  // above zero for automatic mode — loading it as automatic would leave the
+  // page unsaveable until the user noticed the error.
+  if (parsed === null || !Number.isFinite(parsed) || parsed === 0) {
+    return { pricing_mode: 'fixed', adjustment_direction: 'decrease', adjustment_magnitude: '' }
+  }
+
+  return {
+    pricing_mode: 'automatic',
+    adjustment_direction: parsed < 0 ? 'decrease' : 'increase',
+    adjustment_magnitude: String(Math.abs(parsed)),
   }
 }
 

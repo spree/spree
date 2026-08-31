@@ -118,13 +118,19 @@
         "message": "To usunie {{name}} wraz z przypisaniami. Produkty i cenniki pozostaną nietknięte.",
         "title": "Usunąć katalog?"
       },
+      "detach_warning": "Zapis usunie cennik tego katalogu wraz z zawartymi w nim cenami. Ta grupa odbiorców będzie płacić zwykłe ceny.",
       "detail": {
         "delete_label": "Usuń katalog",
         "load_error": "Nie udało się wczytać tego katalogu",
+        "pricing": "Ceny",
         "settings": "Katalog"
       },
+      "discard_prices_warning": "Przejście na wartość procentową usunie ceny wpisane dla tego katalogu. Nie będzie można ich odzyskać.",
+      "edit_prices_after_save": "Zapisz katalog, a następnie wprowadź ceny dla tej grupy odbiorców.",
+      "edit_prices_cta": "Wprowadź ceny",
+      "edit_prices_help": "Ustal, ile każdy produkt kosztuje tę grupę odbiorców.",
+      "edit_prices_pending_save": "Ustal, ile każdy produkt kosztuje tę grupę odbiorców. Zapisz najpierw, aby wycenić dopiero co zmienione produkty.",
       "empty": "Brak katalogów",
-      "import_from_price_list": "Importuj produkty z cennika",
       "messages": {
         "assigned": "Katalog przypisany",
         "created": "Katalog utworzony",
@@ -915,6 +921,11 @@
         }
       },
       "catalog": {
+        "description": {
+          "help": "Notatka wewnętrzna — nigdy nie widoczna dla klientów.",
+          "label": "Opis",
+          "placeholder": "Czemu służy ta umowa"
+        },
         "name": {
           "placeholder": "Hurt"
         },
@@ -923,6 +934,13 @@
           "help": "Opcjonalny. Bez cennika katalog zawęża tylko asortyment i obowiązują ceny podstawowe. Przy pustym asortymencie katalog tylko wycenia — nic nie jest ukrywane; zaimportuj lub dodaj produkty, aby ograniczyć widoczność dla tego odbiorcy.",
           "label": "Cennik",
           "placeholder": "Ceny podstawowe"
+        },
+        "pricing_mode": {
+          "automatic": "Procent od cen bazowych",
+          "base": "Zwykłe ceny",
+          "fixed": "Ceny, które wpiszę dla tego katalogu",
+          "help": "Ile płaci ta grupa odbiorców. Zmiana aktualizuje katalog i jego ceny jednocześnie.",
+          "label": "Ceny"
         }
       },
       "certificate_document": {
@@ -1438,6 +1456,18 @@
         "label": "Kod pocztowy"
       },
       "price_list": {
+        "adjust_compare_at": {
+          "help": "Wylicz cenę porównawczą z bazowej ceny porównawczej tym samym procentem.",
+          "label": "Dostosuj też ceny porównawcze"
+        },
+        "adjustment_direction": {
+          "decrease": "obniżka",
+          "increase": "podwyżka",
+          "label": "Kierunek"
+        },
+        "adjustment_magnitude": {
+          "label": "Procent"
+        },
         "description": {
           "label": "Opis",
           "placeholder": "Opcjonalny opis wewnętrzny"
@@ -3827,6 +3857,8 @@
           "updated": "Zaktualizowano cennik"
         },
         "validation": {
+          "adjustment_required": "Podaj wartość procentową.",
+          "adjustment_too_deep": "Musi być mniejsza niż 100%.",
           "ends_after_starts": "Musi być po dacie rozpoczęcia."
         }
       },

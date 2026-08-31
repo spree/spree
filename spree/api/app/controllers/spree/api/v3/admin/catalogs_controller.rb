@@ -61,9 +61,33 @@ module Spree
             [:catalog_products, :price_list]
           end
 
+          def create_workflow
+            Spree.catalog_create_workflow
+          end
+
+          def update_workflow
+            Spree.catalog_update_workflow
+          end
+
+          # `price_list` is an inline payload rather than a reference: a
+          # catalog and the list it prices through are stood up in one
+          # request (docs/plans/6.0-catalog-agreement-rework.md). Sending it
+          # as `null` detaches the list the catalog owns; omitting the key
+          # leaves it alone.
           def permitted_params
             permitted = params.permit(*model_additional_permitted_attributes,
-                                      :name, :active, :position, :price_list_id, metadata: {})
+                                      :name, :description, :active, :position, :price_list_id,
+                                      metadata: {},
+                                      price_list: [
+                                        :name, :description, :status, :match_policy,
+                                        :starts_at, :ends_at,
+                                        :price_adjustment_percentage, :adjust_compare_at,
+                                        # An empty array clears the hand-entered
+                                        # amounts — what switching to a
+                                        # percentage sends.
+                                        { prices: [:id, :variant_id, :currency, :amount,
+                                                   :compare_at_amount] }
+                                      ])
             if permitted.key?(:price_list_id)
               permitted[:price_list_id] =
                 if permitted[:price_list_id].present?
@@ -72,6 +96,9 @@ module Spree
                   nil
                 end
             end
+            # `permit` drops an explicit null, but detaching has to be
+            # distinguishable from saying nothing.
+            permitted[:price_list] = nil if params.key?(:price_list) && params[:price_list].nil?
             permitted
           end
 

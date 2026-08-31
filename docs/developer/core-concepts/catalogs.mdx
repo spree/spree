@@ -62,7 +62,9 @@ const catalog = await adminClient.catalogs.create({
 
 The price list is optional. A catalog with an assortment and no price list restricts the range at normal prices; a catalog with a price list and no assortment adjusts prices without hiding anything.
 
-A price list is either **standalone** (matched by its own rules) or **owned by exactly one catalog** — attaching a list a catalog already claims moves it. Detaching (`price_list_id: null`) is an explicit act with a real consequence: a released list starts matching by its own rules again, and a rule-less one matches everyone.
+A price list is either **standalone** (matched by its own rules) or **owned by exactly one catalog**. A catalog creates the list it prices through, so the two are configured together on the catalog page — an owned list never appears in the price-lists index, since it has no rules or audience of its own.
+
+Removing a catalog's pricing (`price_list: null`), or deleting the catalog itself, **deletes the owned list** rather than releasing it. A released list would match by its own rules, and an owned list has none — so it would begin pricing every shopper in the store. It is a soft delete, so the prices stay recoverable.
 
 ### Filling the assortment
 
@@ -136,7 +138,7 @@ Nearest-first is what lets a subsidiary hold a better-negotiated rate than the g
 <Warning>
 A price list owned by a catalog applies **because the catalog applies** — its own rules are not consulted, and it's excluded from ordinary rule matching.
 
-That exclusion is load-bearing: a price list with no rules would otherwise match everyone, and one company's negotiated pricing would leak to the entire storefront. It also means a deactivated catalog's list goes **dormant** — turning the catalog off never releases its pricing to the whole store. Only explicitly detaching the list puts it back into rule matching.
+That exclusion is load-bearing: a price list with no rules would otherwise match everyone, and one company's negotiated pricing would leak to the entire storefront. It also means a deactivated catalog's list goes **dormant** — turning the catalog off never releases its pricing to the whole store. Nothing puts an owned list back into rule matching: removing the pricing deletes the list instead, for the same reason.
 </Warning>
 
 ## Related

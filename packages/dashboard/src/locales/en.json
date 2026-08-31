@@ -116,13 +116,19 @@
         "message": "This deletes {{name}} and its assignments. Products and price lists are not affected.",
         "title": "Delete catalog?"
       },
+      "detach_warning": "Saving will remove this catalog’s price list and the prices in it. This audience will pay normal prices.",
       "detail": {
         "delete_label": "Delete catalog",
         "load_error": "Could not load this catalog",
+        "pricing": "Pricing",
         "settings": "Catalog"
       },
+      "discard_prices_warning": "Switching to a percentage will discard the prices entered for this catalog. They cannot be recovered.",
+      "edit_prices_after_save": "Save the catalog, then enter the prices for this audience.",
+      "edit_prices_cta": "Enter prices",
+      "edit_prices_help": "Set the price each product costs this audience.",
+      "edit_prices_pending_save": "Set the price each product costs this audience. Save first to price the products you just changed.",
       "empty": "No catalogs yet",
-      "import_from_price_list": "Import products from price list",
       "messages": {
         "assigned": "Catalog assigned",
         "created": "Catalog created",
@@ -903,6 +909,11 @@
         }
       },
       "catalog": {
+        "description": {
+          "help": "Internal note — never shown to shoppers.",
+          "label": "Description",
+          "placeholder": "What this agreement is for"
+        },
         "name": {
           "placeholder": "Wholesale"
         },
@@ -911,6 +922,13 @@
           "help": "Optional. Without one, the catalog only narrows the assortment and base prices apply. With an empty assortment, the catalog only prices — nothing is hidden; import or add products to restrict what this audience sees.",
           "label": "Price list",
           "placeholder": "Base prices"
+        },
+        "pricing_mode": {
+          "automatic": "A percentage off base prices",
+          "base": "Normal prices",
+          "fixed": "Prices I enter for this catalog",
+          "help": "What this audience pays. Changing it here updates the catalog and its prices together.",
+          "label": "Pricing"
         }
       },
       "certificate_document": {
@@ -1426,6 +1444,18 @@
         "label": "Postal code"
       },
       "price_list": {
+        "adjust_compare_at": {
+          "help": "Derive the compare-at price from the base compare-at by the same percentage.",
+          "label": "Also adjust compare-at prices"
+        },
+        "adjustment_direction": {
+          "decrease": "decrease",
+          "increase": "increase",
+          "label": "Direction"
+        },
+        "adjustment_magnitude": {
+          "label": "Percentage"
+        },
         "description": {
           "label": "Description",
           "placeholder": "Optional internal description"
@@ -3779,6 +3809,8 @@
           "updated": "Price list updated"
         },
         "validation": {
+          "adjustment_required": "Enter a percentage.",
+          "adjustment_too_deep": "Must be less than 100%.",
           "ends_after_starts": "Must be after start date."
         }
       },

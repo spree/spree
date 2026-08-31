@@ -28,6 +28,30 @@ describe Spree::Catalog, type: :model do
       expect(catalog.products.reload).to contain_exactly(product)
     end
 
+    # An owned list prices the assortment and nothing else, so it follows it
+    # — those placeholder rows are what the price spreadsheet edits.
+    it 'gives an owned price list rows for the products it adds' do
+      list = create(:price_list, store: store)
+      catalog.update!(price_list: list)
+      product = create(:product, store: store, price: 100)
+
+      expect { catalog.add_products([product.id]) }.to change { list.prices.reload.count }.from(0)
+      expect(list.variants).to include(product.default_variant)
+    end
+
+    it 'drops those rows again when the product leaves the assortment' do
+      list = create(:price_list, store: store)
+      catalog.update!(price_list: list)
+      kept = create(:product, store: store, price: 100)
+      dropped = create(:product, store: store, price: 50)
+      catalog.add_products([kept.id, dropped.id])
+
+      expect { catalog.remove_products([dropped.id]) }.to change { list.prices.reload.count }
+
+      expect(list.variants.reload).to include(kept.default_variant)
+      expect(list.variants).not_to include(dropped.default_variant)
+    end
+
     it 'appends to the existing assortment in one statement' do
       first = create(:product, store: store)
       catalog.add_products([first.id])
@@ -234,21 +258,147 @@ describe Spree::Catalog, type: :model do
       expect(price_list.reload.catalog).to be_nil
     end
 
-    it 're-homes a list already owned by another catalog' do
-      create(:catalog, store: store, price_list: price_list)
+    # Taking a list another catalog owns would silently un-price that
+    # catalog, so moving one is detach-then-attach: two deliberate acts.
+    it 'refuses a list another catalog already owns' do
+      owner = create(:catalog, store: store, price_list: price_list)
       other = create(:catalog, store: store)
 
-      other.update!(price_list: price_list)
+      expect(other.update(price_list: price_list)).to be false
+      expect(other.errors[:price_list]).to be_present
+      expect(price_list.reload.catalog).to eq(owner)
+    end
 
+    it 'accepts the list once its previous owner lets go' do
+      owner = create(:catalog, store: store, price_list: price_list)
+      other = create(:catalog, store: store)
+
+      owner.update!(price_list: nil)
+
+      expect(other.update(price_list: price_list)).to be true
       expect(price_list.reload.catalog).to eq(other)
     end
 
-    it 'releases the list back to standalone when the catalog is destroyed' do
+    # Validation re-reads the stored owner, so a list taken between the
+    # caller loading it and saving is refused rather than stolen.
+    it 'refuses a list claimed concurrently before this save ran' do
+      other = create(:catalog, store: store)
+      rival = create(:catalog, store: store)
+
+      other.price_list = price_list
+      Spree::PriceList.where(id: price_list.id).update_all(catalog_id: rival.id)
+
+      expect(other.save).to be false
+      expect(other.errors[:price_list]).to be_present
+      expect(price_list.reload.catalog_id).to eq(rival.id)
+    end
+
+    # The claim itself is a conditional UPDATE, so even a list taken after
+    # validation passed is never stolen — it raises instead.
+    it 'raises rather than stealing a list claimed between validation and write' do
+      other = create(:catalog, store: store)
+      rival = create(:catalog, store: store)
+      other.price_list = price_list
+
+      allow(other).to receive(:price_list_not_owned_elsewhere) do
+        Spree::PriceList.where(id: price_list.id).update_all(catalog_id: rival.id)
+      end
+
+      # The write rolls back with the transaction, so what matters is that
+      # this catalog never ends up owning the list.
+      expect { other.save }.to raise_error(ActiveRecord::RecordNotUnique)
+      expect(price_list.reload.catalog_id).not_to eq(other.id)
+    end
+
+    # Releasing the list would let it match by its own rules, and an owned
+    # list has none — so it would price every shopper. It goes with the
+    # catalog instead, soft-deleted so it stays recoverable.
+    it 'takes the list with it when the catalog is destroyed' do
       catalog = create(:catalog, store: store, price_list: price_list)
 
       catalog.destroy!
 
-      expect(price_list.reload.catalog_id).to be_nil
+      expect(Spree::PriceList.where(id: price_list.id)).to be_empty
+      expect(Spree::PriceList.with_deleted.find(price_list.id)).to be_present
+    end
+
+    it 'does not leave the destroyed catalog list pricing the store' do
+      price_list.update!(status: 'active')
+      catalog = create(:catalog, store: store, price_list: price_list)
+      Spree::Current.store = store
+      expect(Spree::Current.price_lists.map(&:id)).not_to include(price_list.id)
+
+      catalog.destroy!
+
+      expect(Spree::Current.price_lists.map(&:id)).not_to include(price_list.id)
+    end
+
+    # The binding is written with update_all, which never touches the
+    # instance the caller holds. Left unsynced, that copy still reads
+    # catalog_id as nil and detaching from the list side looks like a no-op.
+    it 'leaves the attached list agreeing with its row' do
+      catalog = create(:catalog, store: store, price_list: price_list)
+
+      expect(price_list.catalog_id).to eq(catalog.id)
+      expect(price_list.changed).to be_empty
+
+      price_list.update!(catalog: nil)
+
+      expect(Spree::PriceList.where(id: price_list.id).pick(:catalog_id)).to be_nil
+    end
+
+    # The list is saved inside the catalog's own save, so its problems have
+    # to surface as catalog errors — a bare `false` tells the merchant
+    # nothing about what went wrong.
+    it 'reports why an invalid new list was rejected' do
+      catalog = create(:catalog, store: store)
+      catalog.price_list = Spree::PriceList.new(store: store) # no name
+
+      expect(catalog.save).to be false
+      expect(catalog.errors[:price_list]).to be_present
+    end
+
+    # The binding is written straight to the row, which skips the `touch`
+    # on the child's belongs_to — so the largest change to a catalog's
+    # pricing would otherwise leave its cache key untouched.
+    it 'bumps the catalog timestamp when its pricing changes' do
+      catalog = create(:catalog, store: store)
+
+      expect { catalog.update!(price_list: price_list) }.to change { catalog.reload.updated_at }
+    end
+
+    describe 'the price_list_id writer' do
+      it 'records an unknown id as invalid rather than raising' do
+        catalog = create(:catalog, store: store)
+
+        expect { catalog.price_list_id = 999_999 }.not_to raise_error
+        expect(catalog).not_to be_valid
+        expect(catalog.errors[:price_list]).to be_present
+      end
+
+      # The association writer states the whole selection, so an id recorded
+      # by an earlier `price_list_id=` is spent — otherwise it rejects the
+      # detach as an unresolvable id.
+      it 'lets a later detach override an id assigned first' do
+        catalog = create(:catalog, store: store)
+
+        catalog.price_list_id = price_list.id
+        catalog.price_list = nil
+
+        expect(catalog).to be_valid
+        expect(catalog.save).to be true
+        expect(catalog.reload.price_list).to be_nil
+      end
+
+      it 'does not reach another store list' do
+        catalog = create(:catalog, store: store)
+        foreign = create(:price_list, store: create(:store))
+
+        catalog.price_list_id = foreign.id
+
+        expect(catalog).not_to be_valid
+        expect(catalog.price_list).to be_nil
+      end
     end
 
     # The binding is a write on the LIST, so assigning it on a persisted
@@ -312,7 +462,10 @@ describe Spree::Catalog, type: :model do
     it 'does not release a list that another catalog has already claimed' do
       catalog = create(:catalog, store: store, price_list: price_list)
       other = create(:catalog, store: store)
-      other.update!(price_list: price_list)
+
+      # Stand in for a concurrent request that legitimately took the list
+      # over after this record loaded it.
+      Spree::PriceList.where(id: price_list.id).update_all(catalog_id: other.id)
 
       # `catalog` still believes it owns the list; detaching must be a no-op.
       catalog.association(:price_list).reset

@@ -116,13 +116,19 @@
         "message": "这将删除 {{name}} 及其分配。产品和价格表不受影响。",
         "title": "删除目录？"
       },
+      "detach_warning": "保存后将删除此目录的价目表及其中的价格。此受众将支付正常价格。",
       "detail": {
         "delete_label": "删除目录",
         "load_error": "无法加载该目录",
+        "pricing": "定价",
         "settings": "目录"
       },
+      "discard_prices_warning": "切换为百分比将丢弃为此目录输入的价格，且无法恢复。",
+      "edit_prices_after_save": "保存目录后，再为此受众输入价格。",
+      "edit_prices_cta": "输入价格",
+      "edit_prices_help": "设置每件商品对此受众的价格。",
+      "edit_prices_pending_save": "设置每件商品对此受众的价格。请先保存，才能为刚刚更改的商品定价。",
       "empty": "暂无目录",
-      "import_from_price_list": "从价格表导入产品",
       "messages": {
         "assigned": "目录已分配",
         "created": "目录已创建",
@@ -899,6 +905,11 @@
         }
       },
       "catalog": {
+        "description": {
+          "help": "内部备注 — 顾客永远不会看到。",
+          "label": "描述",
+          "placeholder": "此协议的用途"
+        },
         "name": {
           "placeholder": "批发"
         },
@@ -907,6 +918,13 @@
           "help": "可选。不设置价格表时，目录仅限定商品范围，按基础价格计价。商品范围为空时，目录只定价——不隐藏任何商品；导入或添加产品可限制该受众所见范围。",
           "label": "价格表",
           "placeholder": "基础价格"
+        },
+        "pricing_mode": {
+          "automatic": "在基准价格上按百分比调整",
+          "base": "正常价格",
+          "fixed": "我为此目录输入的价格",
+          "help": "此受众支付的价格。在此修改会同时更新目录及其价格。",
+          "label": "定价"
         }
       },
       "certificate_document": {
@@ -1422,6 +1440,18 @@
         "label": "邮政编码"
       },
       "price_list": {
+        "adjust_compare_at": {
+          "help": "按相同百分比从基准对比价格推算对比价格。",
+          "label": "同时调整对比价格"
+        },
+        "adjustment_direction": {
+          "decrease": "下调",
+          "increase": "上调",
+          "label": "方向"
+        },
+        "adjustment_magnitude": {
+          "label": "百分比"
+        },
         "description": {
           "label": "描述",
           "placeholder": "可选的内部描述"
@@ -3771,6 +3801,8 @@
           "updated": "价目表已更新"
         },
         "validation": {
+          "adjustment_required": "请输入百分比。",
+          "adjustment_too_deep": "必须小于 100%。",
           "ends_after_starts": "必须晚于开始日期。"
         }
       },

@@ -2587,6 +2587,8 @@ export interface CompanyMembershipCreateParams {
 
 export interface CatalogParams {
   name?: string
+  /** Internal note on what the agreement is — never shown to shoppers. */
+  description?: string | null
   active?: boolean
   position?: number
   /**
@@ -2596,7 +2598,33 @@ export interface CatalogParams {
    * importProducts) to make it restrictive.
    */
   price_list_id?: string | null
+  /**
+   * The price list this catalog prices through, written inline: an object
+   * creates the owned list or updates the one already there. An explicit
+   * `null` **deletes** that list — a list a catalog owns carries no rules of
+   * its own, so releasing it into general matching would price every
+   * shopper; it is a soft delete, so the prices stay recoverable. Omit the
+   * key, or send `{}`, to leave the pricing alone.
+   *
+   * Do not send this together with `price_list_id`: a catalog may only own
+   * its own list, and the pair is refused rather than letting one catalog
+   * edit another's pricing.
+   */
+  price_list?: CatalogPriceListParams | null
   metadata?: Record<string, unknown>
+}
+
+/** The owned list's attributes, as accepted on catalog create and update. */
+export interface CatalogPriceListParams {
+  name?: string
+  description?: string | null
+  status?: string
+  match_policy?: string
+  starts_at?: string | null
+  ends_at?: string | null
+  /** Signed: negative discounts off base prices, positive marks up. */
+  price_adjustment_percentage?: string | null
+  adjust_compare_at?: boolean
 }
 
 export interface CatalogAssignParams {

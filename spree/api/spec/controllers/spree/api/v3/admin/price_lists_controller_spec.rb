@@ -9,6 +9,33 @@ RSpec.describe Spree::Api::V3::Admin::PriceListsController, type: :controller do
 
   before { request.headers.merge!(headers) }
 
+  # A percentage adjustment lives only on a list a catalog owns — the
+  # assortment is what scopes it to products. Standalone, it would put the
+  # whole store on sale (docs/plans/6.0-price-list-automatic-pricing.md).
+  describe 'automatic pricing attributes' do
+    it 'refuses a percentage on a standalone list' do
+      post :create, params: { name: 'Wholesale minus 15', price_adjustment_percentage: '-15.0' }, as: :json
+
+      expect(response).to have_http_status(:unprocessable_content)
+      expect(store.price_lists.find_by(name: 'Wholesale minus 15')).to be_nil
+
+      patch :update, params: { id: price_list.prefixed_id, price_adjustment_percentage: '10.5' }, as: :json
+
+      expect(response).to have_http_status(:unprocessable_content)
+      expect(price_list.reload.price_adjustment_percentage).to be_nil
+    end
+
+    it 'still exposes the fields, read-only in effect, on an owned list' do
+      catalog = create(:catalog, store: store)
+      owned = create(:price_list, store: store, catalog: catalog, price_adjustment_percentage: -15)
+
+      get :show, params: { id: owned.prefixed_id }, as: :json
+
+      expect(json_response['price_adjustment_percentage']).to eq('-15.0')
+      expect(json_response['automatic_pricing']).to be true
+    end
+  end
+
   describe 'POST #create — one-shot creation' do
     let(:customer_group) { create(:customer_group, store: store) }
 

@@ -100,14 +100,26 @@ module Spree
           end
         end
 
-        # Returns the price for a given price list
+        # Returns the price for a given price list. An explicit row wins; a
+        # list carrying a percentage adjustment otherwise derives one from the
+        # base price.
         # @param price_list [Spree::PriceList]
-        # @return [Spree::Price]
+        # @return [Spree::Price, nil]
         def find_price_for_list(price_list)
+          explicit_price_for_list(price_list) ||
+            (price_list.automatic_pricing? ? derived_price_for_list(price_list) : nil)
+        end
+
+        # An amount someone typed for this variant on this list.
+        # @param price_list [Spree::PriceList]
+        # @return [Spree::Price, nil]
+        def explicit_price_for_list(price_list)
           currency = context.currency&.upcase
 
           # Zero is a valid override (free for this list); only nil placeholder
-          # rows (materialized by PriceList#add_products) are skipped.
+          # rows (materialized by PriceList#add_products) are skipped, so a
+          # placeholder on an adjustment list falls through to the derived
+          # amount rather than blocking it.
           if prices.loaded?
             prices.detect do |p|
               p.currency == currency &&
@@ -123,26 +135,71 @@ module Spree
           end
         end
 
+        # The base price times the list's factor, rounded to the currency's
+        # minor unit. Built unsaved and never written: deriving on read is
+        # what keeps an adjustment list from drifting when base prices move
+        # (docs/plans/6.0-price-list-automatic-pricing.md).
+        #
+        # A variant with no base price in this currency yields nothing, so the
+        # walk moves on to the next list exactly as it would for a list
+        # holding no row.
+        #
+        # @param price_list [Spree::PriceList]
+        # @return [Spree::Price, nil]
+        def derived_price_for_list(price_list)
+          base = base_price
+          return if base.nil? || base.amount.nil?
+
+          factor = price_list.adjustment_factor
+          compare_at =
+            if price_list.adjust_compare_at && base.compare_at_amount.present?
+              round_for_currency(base.compare_at_amount * factor, base.currency)
+            end
+
+          Spree::Price.new(
+            variant_id: context.variant.id,
+            currency: base.currency,
+            amount: round_for_currency(base.amount * factor, base.currency),
+            compare_at_amount: compare_at,
+            price_list_id: price_list.id
+          )
+        end
+
+        # Rounds to the currency's own minor unit — two places for USD, none
+        # for JPY — rather than assuming cents.
+        # @return [BigDecimal]
+        def round_for_currency(amount, currency)
+          amount.round(::Money::Currency.find(currency)&.exponent || 2)
+        end
+
         # Returns the base price for the variant in the current currency
         # @return [Spree::Price]
         def find_base_price
+          base_price || build_empty_price
+        end
+
+        # The variant's own price in this currency, or nil when it has none.
+        # Memoized: an adjustment list asks for it, and the base fallback may
+        # ask again for the same context.
+        # @return [Spree::Price, nil]
+        def base_price
+          return @base_price if defined?(@base_price)
+
           currency = context.currency&.upcase
 
-          price = if prices.loaded?
-                    prices.detect do |p|
-                      p.currency == currency &&
-                        p.price_list_id.nil? &&
-                        p.amount.present?
-                    end
-                  else
-                    context.variant.prices
-                           .with_currency(currency)
-                           .where(price_list_id: nil)
-                           .where.not(amount: nil)
-                           .first
-                  end
-
-          price || build_empty_price
+          @base_price = if prices.loaded?
+                          prices.detect do |p|
+                            p.currency == currency &&
+                              p.price_list_id.nil? &&
+                              p.amount.present?
+                          end
+                        else
+                          context.variant.prices
+                                 .with_currency(currency)
+                                 .where(price_list_id: nil)
+                                 .where.not(amount: nil)
+                                 .first
+                        end
         end
 
         # Returns the prices for the variant

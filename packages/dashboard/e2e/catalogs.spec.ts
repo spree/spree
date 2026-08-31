@@ -112,6 +112,54 @@ test.describe('catalogs', () => {
     })
   })
 
+  // An owned price list prices the catalog's assortment and nothing else, so
+  // the spreadsheet has to open on the products the catalog actually holds —
+  // and drop the ones on their way out.
+  test('prices the assortment, and omits a product staged for removal', async ({ page }) => {
+    const creds = await login(page)
+    await gotoIndex(page, CATALOGS_PATH(creds.store_id), CTA)
+
+    const name = `E2E Catalog Prices ${Date.now()}`
+    await createCatalog(page, name)
+
+    // Products first, then pricing — the order a merchant works in.
+    await page.getByRole('button', { name: /add products/i }).click()
+    const picker = page.getByRole('dialog')
+    await expect(picker.getByRole('heading', { name: /add products to catalog/i })).toBeVisible()
+    await picker.getByRole('searchbox').fill(FIXTURE_PROMO_PRODUCT)
+    const option = picker
+      .getByRole('button', { name: new RegExp(FIXTURE_PROMO_PRODUCT, 'i') })
+      .first()
+    await expect(option).toBeVisible({ timeout: 15_000 })
+    await option.click()
+    await picker.getByRole('button', { name: /^add 1$/i }).click()
+    await expect(picker).toBeHidden({ timeout: 15_000 })
+
+    await page.locator('#catalog-pricing-mode').click()
+    await page.getByRole('option', { name: /prices i enter for this catalog/i }).click()
+    await saveCatalog(page)
+
+    // The list is created by Save and seeded from the assortment, so the
+    // spreadsheet opens on a priceable row rather than empty.
+    const openPrices = page.getByRole('button', { name: /^enter prices$/i })
+    await expect(openPrices).toBeVisible({ timeout: 15_000 })
+    await openPrices.click()
+    const grid = page.getByRole('dialog')
+    await expect(grid.getByLabel(/^price for/i).first()).toBeVisible({ timeout: 15_000 })
+    await grid.getByRole('button', { name: /^close$/i }).click()
+    await expect(grid).toBeHidden({ timeout: 15_000 })
+
+    // Staging the product for removal takes it out of the grid: its prices
+    // survive until Save, but pricing something on its way out is wasted work.
+    const productRow = page.getByRole('row', { name: new RegExp(FIXTURE_PROMO_PRODUCT, 'i') })
+    await productRow.getByRole('button', { name: /remove from catalog/i }).click()
+    await expect(productRow.getByRole('button', { name: /restore/i })).toBeVisible()
+
+    await openPrices.click()
+    const emptyGrid = page.getByRole('dialog')
+    await expect(emptyGrid.getByLabel(/^price for/i)).toHaveCount(0, { timeout: 15_000 })
+  })
+
   test('renames a catalog from the header Save', async ({ page }) => {
     const creds = await login(page)
     await gotoIndex(page, CATALOGS_PATH(creds.store_id), CTA)

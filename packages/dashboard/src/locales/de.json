@@ -116,13 +116,19 @@
         "message": "Dies löscht {{name}} und seine Zuweisungen. Produkte und Preislisten bleiben unberührt.",
         "title": "Katalog löschen?"
       },
+      "detach_warning": "Beim Speichern werden die Preisliste dieses Katalogs und die darin enthaltenen Preise entfernt. Diese Zielgruppe zahlt dann normale Preise.",
       "detail": {
         "delete_label": "Katalog löschen",
         "load_error": "Katalog konnte nicht geladen werden",
+        "pricing": "Preisgestaltung",
         "settings": "Katalog"
       },
+      "discard_prices_warning": "Der Wechsel zu einem Prozentsatz verwirft die für diesen Katalog eingegebenen Preise. Sie lassen sich nicht wiederherstellen.",
+      "edit_prices_after_save": "Katalog speichern, dann die Preise für diese Zielgruppe eingeben.",
+      "edit_prices_cta": "Preise eingeben",
+      "edit_prices_help": "Legen Sie fest, was jedes Produkt diese Zielgruppe kostet.",
+      "edit_prices_pending_save": "Legen Sie fest, was jedes Produkt diese Zielgruppe kostet. Speichern Sie zuerst, um die soeben geänderten Produkte zu bepreisen.",
       "empty": "Noch keine Kataloge",
-      "import_from_price_list": "Produkte aus Preisliste importieren",
       "messages": {
         "assigned": "Katalog zugewiesen",
         "created": "Katalog erstellt",
@@ -903,6 +909,11 @@
         }
       },
       "catalog": {
+        "description": {
+          "help": "Interne Notiz — für Kundinnen und Kunden nie sichtbar.",
+          "label": "Beschreibung",
+          "placeholder": "Wozu diese Vereinbarung dient"
+        },
         "name": {
           "placeholder": "Großhandel"
         },
@@ -911,6 +922,13 @@
           "help": "Optional. Ohne Preisliste schränkt der Katalog nur das Sortiment ein; es gelten die Basispreise. Bei leerem Sortiment bepreist der Katalog nur — nichts wird ausgeblendet; importieren oder fügen Sie Produkte hinzu, um die Sichtbarkeit einzuschränken.",
           "label": "Preisliste",
           "placeholder": "Basispreise"
+        },
+        "pricing_mode": {
+          "automatic": "Ein Prozentsatz auf die Grundpreise",
+          "base": "Normale Preise",
+          "fixed": "Preise, die ich für diesen Katalog eingebe",
+          "help": "Was diese Zielgruppe zahlt. Änderungen hier aktualisieren den Katalog und seine Preise gemeinsam.",
+          "label": "Preisgestaltung"
         }
       },
       "certificate_document": {
@@ -1426,6 +1444,18 @@
         "label": "Postleitzahl"
       },
       "price_list": {
+        "adjust_compare_at": {
+          "help": "Den Vergleichspreis mit demselben Prozentsatz aus dem Grund-Vergleichspreis ableiten.",
+          "label": "Auch Vergleichspreise anpassen"
+        },
+        "adjustment_direction": {
+          "decrease": "Verringerung",
+          "increase": "Erhöhung",
+          "label": "Richtung"
+        },
+        "adjustment_magnitude": {
+          "label": "Prozentsatz"
+        },
         "description": {
           "label": "Beschreibung",
           "placeholder": "Optionale interne Beschreibung"
@@ -3779,6 +3809,8 @@
           "updated": "Preisliste aktualisiert"
         },
         "validation": {
+          "adjustment_required": "Bitte einen Prozentsatz eingeben.",
+          "adjustment_too_deep": "Muss kleiner als 100 % sein.",
           "ends_after_starts": "Muss nach dem Startdatum liegen."
         }
       },

@@ -255,6 +255,10 @@ en:
               values_should_be_percent: Tier values should all be percentages between 0% and 100%
             preferred_tiers:
               should_be_hash: should be a hash
+        spree/catalog:
+          attributes:
+            price_list:
+              owned_by_another_catalog: is already used by another catalog. Detach it there first.
         spree/category:
           attributes:
             parent:
@@ -340,8 +344,12 @@ en:
               greater_than_max_amount: is greater than the allowed maximum amount of %{max_amount}
         spree/price_list:
           attributes:
+            base:
+              nothing_to_apply_to: has no rules, no catalog and no products, so it would apply to nothing. Add one before activating.
             ends_at:
               must_be_after_starts_at: must be after starts at
+            price_adjustment_percentage:
+              requires_catalog: can only be set on a price list a catalog owns
         spree/product:
           attributes:
             base:

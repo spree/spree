@@ -1,5 +1,5 @@
 import { zodResolver } from '@hookform/resolvers/zod'
-import type { Catalog, CatalogAssignment, PriceList } from '@spree/admin-sdk'
+import type { Catalog, CatalogAssignment } from '@spree/admin-sdk'
 import {
   adminClient,
   mapSpreeErrorsToForm,
@@ -37,6 +37,7 @@ import {
   SelectItem,
   SelectTrigger,
   SelectValue,
+  Textarea,
   useConfirm,
 } from '@spree/dashboard-ui'
 import { createFileRoute, useNavigate } from '@tanstack/react-router'
@@ -44,15 +45,18 @@ import { PlusIcon, TrashIcon } from 'lucide-react'
 import { useEffect, useState } from 'react'
 import { Controller, type UseFormReturn, useForm } from 'react-hook-form'
 import { useTranslation } from 'react-i18next'
+import { CatalogPricingFields } from '../../../../../components/spree/catalog-pricing-fields'
 import { DeferredProductMembershipCard } from '../../../../../components/spree/deferred-product-membership-card'
-import { ProductMembershipStagingProvider } from '../../../../../components/spree/product-membership-staging'
+import {
+  ProductMembershipStagingProvider,
+  useProductMembershipStaging,
+} from '../../../../../components/spree/product-membership-staging'
 import { ResourceDetailSkeleton } from '../../../../../components/spree/route-pending'
 import {
   useAssignCatalog,
   useCatalog,
   useCatalogProducts,
   useDeleteCatalog,
-  useImportCatalogPriceListProducts,
   useSaveCatalog,
   useUnassignCatalog,
 } from '../../../../../hooks/use-catalogs'
@@ -61,6 +65,7 @@ import {
   CATALOG_DEFAULTS,
   type CatalogFormValues,
   catalogFormSchema,
+  catalogPricingValues,
   catalogValuesToParams,
 } from '../../../../../schemas/catalog'
 
@@ -104,6 +109,11 @@ function CatalogBody({ catalog }: { catalog: Catalog }) {
 
   const canEdit = permissions.can('update', Subject.Catalog)
 
+  // The mode as last saved, not as currently selected: switching away from
+  // hand-entered prices has to clear them, and the warning has to know a
+  // switch is what is about to happen.
+  const savedPricingMode = catalogPricingValues(catalog.price_list).pricing_mode
+
   const form = useForm<CatalogFormValues>({
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     resolver: zodResolver(catalogFormSchema) as any,
@@ -111,15 +121,16 @@ function CatalogBody({ catalog }: { catalog: Catalog }) {
   })
 
   // Hydrate (and re-baseline after save) from the source row, unless the
-  // merchant has unsaved edits in flight: importing from the price list
-  // refetches the catalog mid-edit, and an unguarded reset would drop both
-  // the settings being typed and any staged product changes.
+  // merchant has unsaved edits in flight: entering prices refetches the
+  // catalog mid-edit, and an unguarded reset would drop both the settings
+  // being typed and any staged product changes.
   useEffect(() => {
     if (form.formState.isDirty) return
     form.reset({
       name: catalog.name,
+      description: catalog.description ?? '',
       active: catalog.active,
-      price_list_id: catalog.price_list_id ?? '',
+      ...catalogPricingValues(catalog.price_list),
       staged_products: { adds: [], removes: [] },
     })
   }, [catalog, form])
@@ -132,7 +143,7 @@ function CatalogBody({ catalog }: { catalog: Catalog }) {
   async function handleSave(values: CatalogFormValues) {
     try {
       await saveMutation.mutateAsync({
-        attributes: catalogValuesToParams(values),
+        attributes: catalogValuesToParams(values, savedPricingMode),
         addProductIds: values.staged_products.adds.map((product) => product.id),
         removeProductIds: values.staged_products.removes,
       })
@@ -158,7 +169,8 @@ function CatalogBody({ catalog }: { catalog: Catalog }) {
               resource={{ id: catalog.id }}
               jsonPreview={{
                 title: `Catalog ${catalog.name}`,
-                fetch: () => adminClient.catalogs.get(catalog.id, { expand: ['assignments'] }),
+                fetch: () =>
+                  adminClient.catalogs.get(catalog.id, { expand: ['assignments', 'price_list'] }),
                 endpoint: `/api/v3/admin/catalogs/${catalog.id}`,
                 resolveLink: spreeJsonLinkResolver(storeId),
               }}
@@ -199,7 +211,8 @@ function CatalogBody({ catalog }: { catalog: Catalog }) {
           }
           sidebar={
             <>
-              <CatalogSettingsCard catalog={catalog} form={form} canEdit={canEdit} />
+              <CatalogSettingsCard form={form} canEdit={canEdit} />
+              <CatalogPricingCard catalog={catalog} form={form} canEdit={canEdit} />
               <CatalogAssignmentsCard catalog={catalog} canEdit={canEdit} />
             </>
           }
@@ -209,7 +222,12 @@ function CatalogBody({ catalog }: { catalog: Catalog }) {
   )
 }
 
-function CatalogSettingsCard({
+/**
+ * What the agreement pays. Its own card rather than a field on the settings
+ * card: pricing is the consequential half of a catalog, and burying it under
+ * the name reads as an afterthought.
+ */
+function CatalogPricingCard({
   catalog,
   form,
   canEdit,
@@ -219,7 +237,39 @@ function CatalogSettingsCard({
   canEdit: boolean
 }) {
   const { t } = useTranslation()
-  const importMutation = useImportCatalogPriceListProducts(catalog.id)
+  // A product staged for removal still has its prices on the list until
+  // Save, so the spreadsheet would invite pricing something on its way out.
+  const { removes, dirty: stagedProducts } = useProductMembershipStaging()
+
+  return (
+    <Card>
+      <CardHeader>
+        <CardTitle>{t('admin.catalogs.detail.pricing')}</CardTitle>
+      </CardHeader>
+      <CardContent>
+        <FieldGroup>
+          <CatalogPricingFields
+            form={form}
+            canEdit={canEdit}
+            priceList={catalog.price_list}
+            savedMode={catalogPricingValues(catalog.price_list).pricing_mode}
+            excludeProductIds={removes}
+            hasStagedProducts={stagedProducts}
+          />
+        </FieldGroup>
+      </CardContent>
+    </Card>
+  )
+}
+
+function CatalogSettingsCard({
+  form,
+  canEdit,
+}: {
+  form: UseFormReturn<CatalogFormValues>
+  canEdit: boolean
+}) {
+  const { t } = useTranslation()
 
   const { errors } = form.formState
 
@@ -242,40 +292,17 @@ function CatalogSettingsCard({
           </Field>
 
           <Field>
-            <FieldLabel>{t('admin.fields.catalog.price_list.label')}</FieldLabel>
-            <Controller
-              control={form.control}
-              name="price_list_id"
-              render={({ field }) => (
-                <ResourceCombobox<PriceList>
-                  queryKey="catalog-price-lists"
-                  search={(q) => adminClient.priceLists.list({ name_cont: q, limit: 10 })}
-                  hydrate={(ids) => adminClient.priceLists.list({ id_in: ids, limit: ids.length })}
-                  getOptionLabel={(list) => list.name}
-                  placeholder={t('admin.fields.catalog.price_list.placeholder')}
-                  emptyText={t('admin.fields.catalog.price_list.empty')}
-                  disabled={!canEdit}
-                  value={field.value || undefined}
-                  onChange={(id) => field.onChange(id ?? '')}
-                />
-              )}
+            <FieldLabel htmlFor="catalog-description">
+              {t('admin.fields.catalog.description.label')}
+            </FieldLabel>
+            <Textarea
+              id="catalog-description"
+              rows={3}
+              disabled={!canEdit}
+              placeholder={t('admin.fields.catalog.description.placeholder')}
+              {...form.register('description')}
             />
-            <FieldDescription>{t('admin.fields.catalog.price_list.help')}</FieldDescription>
-            {canEdit && catalog.price_list_id && (
-              <div>
-                <Button
-                  type="button"
-                  size="sm"
-                  variant="outline"
-                  disabled={importMutation.isPending}
-                  onClick={() => importMutation.mutate()}
-                >
-                  {importMutation.isPending
-                    ? t('admin.actions.saving')
-                    : t('admin.catalogs.import_from_price_list')}
-                </Button>
-              </div>
-            )}
+            <FieldDescription>{t('admin.fields.catalog.description.help')}</FieldDescription>
           </Field>
 
           <Controller

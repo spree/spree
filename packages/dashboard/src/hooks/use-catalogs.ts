@@ -16,7 +16,8 @@ import i18n from 'i18next'
 export function useCatalog(id: string | undefined) {
   return useQuery({
     queryKey: useResourceKey('catalogs', id ?? 'noop'),
-    queryFn: () => adminClient.catalogs.get(id as string, { expand: ['assignments'] }),
+    queryFn: () =>
+      adminClient.catalogs.get(id as string, { expand: ['assignments', 'price_list'] }),
     enabled: !!id,
   })
 }

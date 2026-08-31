@@ -44,10 +44,19 @@ module Spree
     # over a stored generated column on MySQL/MariaDB.
     validates :catalog_id, uniqueness: { scope: spree_base_uniqueness_scope,
                                          conditions: -> { where(deleted_at: nil) } }, allow_nil: true
+    # Greater than -100: at exactly -100 every derived price is zero, and
+    # below it the arithmetic goes negative. Capped at what the
+    # `decimal(6,3)` column can hold, so an accepted value cannot fail on the
+    # way to the database.
+    validates :price_adjustment_percentage,
+              numericality: { greater_than: -100, less_than: 1000 }, allow_nil: true
     validate :starts_at_before_ends_at
     validate :catalog_in_same_store
+    validate :percentage_requires_catalog
 
-    self.whitelisted_ransackable_attributes = %w[status match_policy starts_at ends_at]
+    # `catalog_id` is queryable so a picker can offer the lists that are
+    # actually available — unowned, plus the one the catalog already holds.
+    self.whitelisted_ransackable_attributes = %w[status match_policy starts_at ends_at catalog_id]
 
     scope :by_position, -> { order(position: :asc) }
     scope :for_store, ->(store) { where(store: store) }
@@ -132,6 +141,25 @@ module Spree
       else
         false
       end
+    end
+
+    # Whether this list derives prices from base prices rather than pricing
+    # only what it holds explicit rows for.
+    # @return [Boolean]
+    def automatic_pricing?
+      # Zero is no adjustment at all: deriving base × 1.0 would stamp every
+      # price with this list's id while changing nothing, and the dashboard
+      # has no "0%" to show. It reads as a fixed list.
+      price_adjustment_percentage.present? && !price_adjustment_percentage.zero?
+    end
+
+    # What a base price is multiplied by to derive this list's price:
+    # -15% gives 0.85, +10% gives 1.1.
+    # @return [BigDecimal, nil]
+    def adjustment_factor
+      return if price_adjustment_percentage.nil?
+
+      1 + (price_adjustment_percentage / 100)
     end
 
     # Returns true if the price list is active or scheduled
@@ -285,6 +313,17 @@ module Spree
       return if catalog.store_id == store_id
 
       errors.add(:catalog, :invalid)
+    end
+
+    # A percentage has no product scope of its own — it adjusts every variant
+    # the list is asked about. Owned by a catalog, the assortment draws that
+    # line; standalone, nothing does, and a rule-less list would put the
+    # whole store on sale while its product list changed nothing. So the
+    # feature exists only inside an agreement.
+    def percentage_requires_catalog
+      return if price_adjustment_percentage.nil? || catalog_id.present?
+
+      errors.add(:price_adjustment_percentage, :requires_catalog)
     end
 
     def starts_at_before_ends_at

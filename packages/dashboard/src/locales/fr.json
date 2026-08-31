@@ -116,13 +116,19 @@
         "message": "Cela supprime {{name}} et ses affectations. Les produits et listes de prix ne sont pas affectés.",
         "title": "Supprimer le catalogue ?"
       },
+      "detach_warning": "L’enregistrement supprimera la liste de prix de ce catalogue et les prix qu’elle contient. Cette audience paiera les prix normaux.",
       "detail": {
         "delete_label": "Supprimer le catalogue",
         "load_error": "Impossible de charger ce catalogue",
+        "pricing": "Tarification",
         "settings": "Catalogue"
       },
+      "discard_prices_warning": "Passer à un pourcentage supprimera les prix saisis pour ce catalogue. Ils ne pourront pas être récupérés.",
+      "edit_prices_after_save": "Enregistrez le catalogue, puis saisissez les prix de cette audience.",
+      "edit_prices_cta": "Saisir les prix",
+      "edit_prices_help": "Définissez le prix de chaque produit pour cette audience.",
+      "edit_prices_pending_save": "Définissez le prix de chaque produit pour cette audience. Enregistrez d'abord pour fixer le prix des produits que vous venez de modifier.",
       "empty": "Aucun catalogue pour le moment",
-      "import_from_price_list": "Importer les produits de la liste de prix",
       "messages": {
         "assigned": "Catalogue affecté",
         "created": "Catalogue créé",
@@ -903,6 +909,11 @@
         }
       },
       "catalog": {
+        "description": {
+          "help": "Note interne — jamais montrée aux clients.",
+          "label": "Description",
+          "placeholder": "À quoi sert cet accord"
+        },
         "name": {
           "placeholder": "Grossiste"
         },
@@ -911,6 +922,13 @@
           "help": "Optionnel. Sans liste, le catalogue ne restreint que l’assortiment et les prix de base s’appliquent. Avec un assortiment vide, le catalogue ne fait que tarifer — rien n’est masqué ; importez ou ajoutez des produits pour restreindre ce que voit cette audience.",
           "label": "Liste de prix",
           "placeholder": "Prix de base"
+        },
+        "pricing_mode": {
+          "automatic": "Un pourcentage sur les prix de base",
+          "base": "Prix normaux",
+          "fixed": "Les prix que je saisis pour ce catalogue",
+          "help": "Ce que paie cette audience. La modification met à jour le catalogue et ses prix ensemble.",
+          "label": "Tarification"
         }
       },
       "certificate_document": {
@@ -1426,6 +1444,18 @@
         "label": "Code postal"
       },
       "price_list": {
+        "adjust_compare_at": {
+          "help": "Calculer le prix barré à partir du prix barré de base en appliquant le même pourcentage.",
+          "label": "Ajuster aussi les prix barrés"
+        },
+        "adjustment_direction": {
+          "decrease": "diminution",
+          "increase": "augmentation",
+          "label": "Sens"
+        },
+        "adjustment_magnitude": {
+          "label": "Pourcentage"
+        },
         "description": {
           "label": "Description",
           "placeholder": "Description interne facultative"
@@ -3779,6 +3809,8 @@
           "updated": "Liste de prix mise à jour"
         },
         "validation": {
+          "adjustment_required": "Saisissez un pourcentage.",
+          "adjustment_too_deep": "Doit être inférieur à 100 %.",
           "ends_after_starts": "Doit être postérieur à la date de début."
         }
       },
