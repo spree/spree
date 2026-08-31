@@ -3817,7 +3817,7 @@
           "adjustment_required": "Bitte einen Prozentsatz eingeben.",
           "adjustment_too_deep": "Muss kleiner als 100 % sein.",
           "ends_after_starts": "Muss nach dem Startdatum liegen.",
-          "minimum_quantity_invalid": "Geben Sie eine ganze Zahl größer als 1 ein."
+          "minimum_quantity_invalid": "Geben Sie eine ganze Zahl ein."
         }
       },
       "product_type_adds_options_one": "Dieser Typ fügt neuen Produkten {{options}} hinzu.",

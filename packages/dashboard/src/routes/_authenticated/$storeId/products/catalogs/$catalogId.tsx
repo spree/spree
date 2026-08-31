@@ -143,7 +143,11 @@ function CatalogBody({ catalog }: { catalog: Catalog }) {
   async function handleSave(values: CatalogFormValues) {
     try {
       await saveMutation.mutateAsync({
-        attributes: catalogValuesToParams(values, savedPricingMode),
+        attributes: catalogValuesToParams(
+          values,
+          savedPricingMode,
+          catalog.price_list?.price_rules,
+        ),
         addProductIds: values.staged_products.adds.map((product) => product.id),
         removeProductIds: values.staged_products.removes,
       })

@@ -3835,7 +3835,7 @@
           "adjustment_required": "أدخل نسبة مئوية.",
           "adjustment_too_deep": "يجب أن تكون أقل من 100%.",
           "ends_after_starts": "يجب أن يكون بعد تاريخ البدء.",
-          "minimum_quantity_invalid": "أدخل عددًا صحيحًا أكبر من 1."
+          "minimum_quantity_invalid": "أدخل عددًا صحيحًا."
         }
       },
       "product_type_adds_options_one": "يضيف هذا النوع {{options}} إلى المنتجات الجديدة.",

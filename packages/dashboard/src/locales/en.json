@@ -3817,7 +3817,7 @@
           "adjustment_required": "Enter a percentage.",
           "adjustment_too_deep": "Must be less than 100%.",
           "ends_after_starts": "Must be after start date.",
-          "minimum_quantity_invalid": "Enter a whole number above 1."
+          "minimum_quantity_invalid": "Enter a whole number."
         }
       },
       "product_type_adds_options_one": "This type adds {{options}} to new products.",

@@ -3865,7 +3865,7 @@
           "adjustment_required": "Podaj wartość procentową.",
           "adjustment_too_deep": "Musi być mniejsza niż 100%.",
           "ends_after_starts": "Musi być po dacie rozpoczęcia.",
-          "minimum_quantity_invalid": "Podaj liczbę całkowitą większą niż 1."
+          "minimum_quantity_invalid": "Podaj liczbę całkowitą."
         }
       },
       "product_type_adds_options_few": "Ten typ dodaje {{options}} do nowych produktów.",

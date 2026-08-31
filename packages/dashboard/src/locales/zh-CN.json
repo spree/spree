@@ -3809,7 +3809,7 @@
           "adjustment_required": "请输入百分比。",
           "adjustment_too_deep": "必须小于 100%。",
           "ends_after_starts": "必须晚于开始日期。",
-          "minimum_quantity_invalid": "请输入大于 1 的整数。"
+          "minimum_quantity_invalid": "请输入整数。"
         }
       },
       "product_type_adds_options_one": "此类型会为新商品添加{{options}}。",

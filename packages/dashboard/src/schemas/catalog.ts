@@ -56,7 +56,7 @@ export const catalogFormSchema = z
       const raw = v.minimum_quantity?.trim()
       if (!raw) return true
       const parsed = Number(raw)
-      return Number.isInteger(parsed) && parsed > 1
+      return Number.isInteger(parsed) && parsed >= 1
     },
     {
       path: ['minimum_quantity'],
@@ -109,22 +109,49 @@ export function catalogValuesToParams(
   values: CatalogFormValues,
   /** The mode the catalog was saved in, so a switch can be told from a plain save. */
   previousMode?: CatalogPricingMode,
+  /**
+   * The rules the owned list already carries. The API reconciles `rules`
+   * by replacement, so anything this page omits is destroyed — and this
+   * page only edits the volume rule. Passing the rest through keeps an
+   * unrelated edit from dropping, say, a market rule, which decides
+   * whether the list's prices are restated for the buyer's VAT.
+   */
+  existingRules?: PriceListRuleShape[],
 ): CatalogParams {
   return {
     name: values.name,
     description: blankToNull(values.description),
     active: values.active,
-    price_list: priceListPayload(values, previousMode),
+    price_list: priceListPayload(values, previousMode, existingRules),
   }
 }
 
-function priceListPayload(values: CatalogFormValues, previousMode?: CatalogPricingMode) {
+/** A rule row as the API renders and accepts it. */
+type PriceListRuleShape = {
+  type?: string | null
+  preferences?: Record<string, unknown> | null
+}
+
+function priceListPayload(
+  values: CatalogFormValues,
+  previousMode?: CatalogPricingMode,
+  existingRules?: PriceListRuleShape[],
+) {
   if (values.pricing_mode === 'base') return null
+
+  // Everything the list carries except the volume rule, which this card owns
+  // and rewrites below. Sent on every branch, because omitting a rule is how
+  // the API is told to destroy it.
+  const preserved = (existingRules ?? [])
+    .filter((rule) => rule.type && rule.type !== 'volume_rule')
+    .map((rule) => ({ type: rule.type as string, preferences: rule.preferences ?? {} }))
 
   if (values.pricing_mode === 'fixed') {
     // A fixed list holds explicit rows; clearing any adjustment is what
-    // makes it fixed.
-    return { price_adjustment_percentage: null, adjust_compare_at: false }
+    // makes it fixed. The quantity threshold goes with the percentage — left
+    // behind it would gate the hand-entered prices, and the card stops
+    // showing it, so nothing would explain the gap.
+    return { price_adjustment_percentage: null, adjust_compare_at: false, rules: preserved }
   }
 
   const magnitude = parsePercentage(values.adjustment_magnitude)
@@ -138,10 +165,10 @@ function priceListPayload(values: CatalogFormValues, previousMode?: CatalogPrici
           adjust_compare_at: values.adjust_compare_at,
         }
 
-  // A minimum quantity rides as the list's volume rule; an empty array
-  // clears it, so removing the threshold is a real edit rather than a
-  // silent no-op.
-  const withRule = { ...base, rules: volumeRulePayload(values.minimum_quantity) }
+  // A minimum quantity rides as the list's volume rule; dropping it from the
+  // list of rules is what clears it, so removing the threshold is a real
+  // edit rather than a silent no-op.
+  const withRule = { ...base, rules: [...preserved, ...volumeRulePayload(values.minimum_quantity)] }
 
   // Switching away from hand-entered prices clears them. An explicit amount
   // beats the adjustment by design, so leaving the old rows behind would
@@ -151,6 +178,8 @@ function priceListPayload(values: CatalogFormValues, previousMode?: CatalogPrici
 
 function volumeRulePayload(minimumQuantity: string | undefined) {
   const parsed = Number(minimumQuantity?.trim())
+  // A threshold of 1 gates nothing, which is exactly what blank means, so
+  // both send no rule at all rather than one that always matches.
   if (!minimumQuantity?.trim() || !Number.isInteger(parsed) || parsed <= 1) return []
 
   return [{ type: 'volume_rule', preferences: { min_quantity: parsed } }]
@@ -202,7 +231,12 @@ export function catalogPricingValues(
   }
 }
 
-/** The volume rule's threshold, as the string the input edits. */
+/**
+ * The volume rule's threshold, as the string the input edits. Shows whatever
+ * the rule holds — including a 1 set through the API or the standalone rules
+ * editor — because a value the field hides is a value the next Save destroys
+ * without the merchant ever seeing it.
+ */
 function minimumQuantityOf(
   rules:
     | Array<{ type?: string | null; preferences?: Record<string, unknown> | null }>
@@ -214,5 +248,5 @@ function minimumQuantityOf(
   if (minimum === null || minimum === undefined || minimum === '') return ''
 
   const parsed = Number(minimum)
-  return Number.isInteger(parsed) && parsed > 1 ? String(parsed) : ''
+  return Number.isInteger(parsed) && parsed >= 1 ? String(parsed) : ''
 }

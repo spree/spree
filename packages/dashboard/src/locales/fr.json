@@ -3817,7 +3817,7 @@
           "adjustment_required": "Saisissez un pourcentage.",
           "adjustment_too_deep": "Doit être inférieur à 100 %.",
           "ends_after_starts": "Doit être postérieur à la date de début.",
-          "minimum_quantity_invalid": "Saisissez un nombre entier supérieur à 1."
+          "minimum_quantity_invalid": "Saisissez un nombre entier."
         }
       },
       "product_type_adds_options_one": "Ce type ajoute {{options}} aux nouveaux produits.",
