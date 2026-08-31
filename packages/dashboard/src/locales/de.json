@@ -2417,7 +2417,7 @@
             "reduced_rated": "Ermäßigter Satz",
             "reverse_charge": "Reverse Charge",
             "standard_rated": "Regelsatz",
-            "zero_rated": "Steuerfrei (0 %)"
+            "zero_rated": "Nullsteuersatz (0 %)"
           },
           "taxes": "Steuern",
           "taxes_empty": "Noch keine Steuern für diese Bestellung.",

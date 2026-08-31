@@ -2419,8 +2419,8 @@
           "percent_preview": "الخصم المقدر: {{amount}}",
           "target_field": "ينطبق على",
           "target_order": "الطلب بأكمله",
-          "tax_exempt_certificate": "شهادة {{reason}} {{number}}",
-          "tax_exempt_certificate_number": "الشهادة {{number}}",
+          "tax_exempt_certificate": "شهادة الإعفاء الضريبي: {{reason}} (رقم {{number}})",
+          "tax_exempt_certificate_number": "رقم شهادة الإعفاء الضريبي: {{number}}",
           "taxability_reason": {
             "customer_exempt": "المشتري معفى",
             "export": "تصدير",
@@ -2429,7 +2429,7 @@
             "not_subject_to_tax": "غير خاضع للضريبة",
             "product_exempt": "المنتج معفى",
             "reduced_rated": "نسبة مخفضة",
-            "reverse_charge": "التحصيل العكسي",
+            "reverse_charge": "الاحتساب العكسي",
             "standard_rated": "النسبة القياسية",
             "zero_rated": "نسبة صفرية"
           },

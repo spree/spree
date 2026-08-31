@@ -2405,8 +2405,8 @@
           "percent_preview": "Remise estimée : {{amount}}",
           "target_field": "S'applique à",
           "target_order": "Commande entière",
-          "tax_exempt_certificate": "Certificat {{reason}} {{number}}",
-          "tax_exempt_certificate_number": "Certificat {{number}}",
+          "tax_exempt_certificate": "Attestation d'exonération — {{reason}} — {{number}}",
+          "tax_exempt_certificate_number": "Attestation d'exonération — {{number}}",
           "taxability_reason": {
             "customer_exempt": "Acheteur exonéré",
             "export": "Exportation",

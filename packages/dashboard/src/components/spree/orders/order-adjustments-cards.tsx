@@ -119,8 +119,15 @@ function taxExemptionDetail(group: TaxLineGroup): string | null {
 export function TaxLinesCard({ order }: { order: Order }) {
   const { t } = useTranslation()
   const orderId = order.id
-  const { data: taxLines } = useOrderTaxLines(orderId)
+  const { data: taxLines, isPending, isError, isSuccess } = useOrderTaxLines(orderId)
   const taxGroups = groupTaxLines(taxLines?.data ?? [])
+  const emptyMessage = isPending
+    ? t('admin.common.loading')
+    : isError
+      ? t('admin.errors.failed_to_load')
+      : isSuccess && order.completed_at
+        ? t('admin.orders.detail.adjustment_lines.taxes_unmatched')
+        : t('admin.orders.detail.adjustment_lines.taxes_empty')
 
   return (
     <Card>
@@ -130,11 +137,7 @@ export function TaxLinesCard({ order }: { order: Order }) {
 
       {taxGroups.length === 0 ? (
         <CardContent>
-          <p className="text-sm text-muted-foreground">
-            {order.completed_at
-              ? t('admin.orders.detail.adjustment_lines.taxes_unmatched')
-              : t('admin.orders.detail.adjustment_lines.taxes_empty')}
-          </p>
+          <p className="text-sm text-muted-foreground">{emptyMessage}</p>
         </CardContent>
       ) : (
         <Table>
