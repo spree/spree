@@ -1116,6 +1116,7 @@
           "inherit": "Dziedzicz ze sklepu",
           "label": "Dostęp do sklepu",
           "options": {
+            "approval_required": "Wymagana aktywacja — ceny i zamówienia tylko dla członków aktywnej firmy",
             "login_required": "Wymagane logowanie — odwiedzający muszą się zalogować, aby przeglądać",
             "prices_hidden": "Ceny ukryte — odwiedzający muszą się zalogować, aby zobaczyć ceny",
             "public": "Publiczny — każdy może przeglądać i widzieć ceny"
@@ -2082,6 +2083,7 @@
           "help": "Domyślne ustawienie dla całego sklepu określające, co widzą anonimowi odwiedzający. Kanały mogą je nadpisać. Gdy ceny są ukryte, goście muszą się zalogować, aby sfinalizować zakup.",
           "label": "Dostęp do sklepu",
           "options": {
+            "approval_required": "Wymagana aktywacja — ceny i zamówienia tylko dla członków aktywnej firmy",
             "login_required": "Wymagane logowanie — odwiedzający muszą się zalogować, aby przeglądać",
             "prices_hidden": "Ceny ukryte — odwiedzający muszą się zalogować, aby zobaczyć ceny",
             "public": "Publiczny — każdy może przeglądać i widzieć ceny"

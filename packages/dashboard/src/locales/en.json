@@ -1102,6 +1102,7 @@
           "inherit": "Inherit from store",
           "label": "Storefront access",
           "options": {
+            "approval_required": "Approval required — prices and checkout only for members of an active company",
             "login_required": "Login required — visitors must sign in to browse",
             "prices_hidden": "Prices hidden — visitors must sign in to see prices",
             "public": "Public — anyone can browse and see prices"
@@ -2068,6 +2069,7 @@
           "help": "Store-wide default for what anonymous visitors can see. Channels can override this. When prices are hidden, guests must sign in to check out.",
           "label": "Storefront access",
           "options": {
+            "approval_required": "Approval required — prices and checkout only for members of an active company",
             "login_required": "Login required — visitors must sign in to browse",
             "prices_hidden": "Prices hidden — visitors must sign in to see prices",
             "public": "Public — anyone can browse and see prices"

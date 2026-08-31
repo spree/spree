@@ -1102,6 +1102,7 @@
           "inherit": "Vom Store übernehmen",
           "label": "Storefront-Zugriff",
           "options": {
+            "approval_required": "Freigabe erforderlich — Preise und Checkout nur für Mitglieder eines aktiven Unternehmens",
             "login_required": "Anmeldung erforderlich – Besucher müssen sich anmelden, um zu stöbern",
             "prices_hidden": "Preise verborgen – Besucher müssen sich anmelden, um Preise zu sehen",
             "public": "Öffentlich – alle können stöbern und Preise sehen"
@@ -2068,6 +2069,7 @@
           "help": "Store-weite Vorgabe dafür, was anonyme Besucher sehen. Vertriebskanäle können dies überschreiben. Wenn Preise verborgen sind, müssen Gäste sich zum Bezahlen anmelden.",
           "label": "Storefront-Zugriff",
           "options": {
+            "approval_required": "Freigabe erforderlich — Preise und Checkout nur für Mitglieder eines aktiven Unternehmens",
             "login_required": "Anmeldung erforderlich – Besucher müssen sich anmelden, um zu stöbern",
             "prices_hidden": "Preise verborgen – Besucher müssen sich anmelden, um Preise zu sehen",
             "public": "Öffentlich – alle können stöbern und Preise sehen"
