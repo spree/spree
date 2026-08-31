@@ -1,7 +1,8 @@
 import Image from '@tiptap/extension-image'
 import Link from '@tiptap/extension-link'
 import Placeholder from '@tiptap/extension-placeholder'
-import { EditorContent, useEditor } from '@tiptap/react'
+import type { Editor } from '@tiptap/react'
+import { EditorContent, useEditor, useEditorState } from '@tiptap/react'
 import StarterKit from '@tiptap/starter-kit'
 import {
   BoldIcon,
@@ -167,99 +168,152 @@ export function RichTextEditor({
   return (
     <div
       ref={wrapperRef}
+      data-slot="rich-text-editor"
       className={cn(
         'rounded-lg border border-border bg-card text-foreground shadow-xs transition-[color,background-color,border-color,box-shadow] duration-100 ease-out focus-within:border-blue-500 focus-within:shadow-[0_0_0_3px_color-mix(in_srgb,var(--ring)_15%,transparent)]',
         disabled && 'pointer-events-none bg-muted border-border',
         className,
       )}
     >
-      {/* Toolbar */}
-      <div className="flex items-center gap-0.5 border-b border-border px-2 py-1.5">
-        <ToolbarButton
-          active={editor.isActive('bold')}
-          onClick={() => editor.chain().focus().toggleBold().run()}
-          title={t('admin.components.rich_text_editor.bold')}
-        >
-          <BoldIcon className="size-4" />
-        </ToolbarButton>
-        <ToolbarButton
-          active={editor.isActive('italic')}
-          onClick={() => editor.chain().focus().toggleItalic().run()}
-          title={t('admin.components.rich_text_editor.italic')}
-        >
-          <ItalicIcon className="size-4" />
-        </ToolbarButton>
-        <ToolbarButton
-          active={editor.isActive('strike')}
-          onClick={() => editor.chain().focus().toggleStrike().run()}
-          title={t('admin.components.rich_text_editor.strikethrough')}
-        >
-          <StrikethroughIcon className="size-4" />
-        </ToolbarButton>
-
-        <ToolbarSeparator />
-
-        <ToolbarButton
-          active={editor.isActive('bulletList')}
-          onClick={() => editor.chain().focus().toggleBulletList().run()}
-          title={t('admin.components.rich_text_editor.bullet_list')}
-        >
-          <ListIcon className="size-4" />
-        </ToolbarButton>
-        <ToolbarButton
-          active={editor.isActive('orderedList')}
-          onClick={() => editor.chain().focus().toggleOrderedList().run()}
-          title={t('admin.components.rich_text_editor.ordered_list')}
-        >
-          <ListOrderedIcon className="size-4" />
-        </ToolbarButton>
-        <ToolbarButton
-          active={editor.isActive('blockquote')}
-          onClick={() => editor.chain().focus().toggleBlockquote().run()}
-          title={t('admin.components.rich_text_editor.blockquote')}
-        >
-          <QuoteIcon className="size-4" />
-        </ToolbarButton>
-
-        <ToolbarSeparator />
-
-        <ToolbarButton
-          active={editor.isActive('link')}
-          onClick={setLink}
-          title={t('admin.components.rich_text_editor.link')}
-        >
-          <LinkIcon className="size-4" />
-        </ToolbarButton>
-
-        {onRequestImage && (
-          <ToolbarButton onClick={insertImage} title={t('admin.components.rich_text_editor.image')}>
-            <ImageIcon className="size-4" />
-          </ToolbarButton>
-        )}
-
-        <div className="ml-auto flex items-center gap-0.5">
-          <ToolbarButton
-            onClick={() => editor.chain().focus().undo().run()}
-            disabled={!editor.can().undo()}
-            title={t('admin.components.rich_text_editor.undo')}
-          >
-            <UndoIcon className="size-4" />
-          </ToolbarButton>
-          <ToolbarButton
-            onClick={() => editor.chain().focus().redo().run()}
-            disabled={!editor.can().redo()}
-            title={t('admin.components.rich_text_editor.redo')}
-          >
-            <RedoIcon className="size-4" />
-          </ToolbarButton>
-        </div>
-      </div>
-
-      {/* Editor */}
-      <EditorContent
+      <EditorToolbar
         editor={editor}
-        className="prose prose-sm max-w-none px-3 py-2 dark:prose-invert [&_.tiptap]:min-h-32 [&_.tiptap]:outline-none [&_.tiptap.is-editor-empty:first-child::before]:text-muted-foreground [&_.tiptap.is-editor-empty:first-child::before]:content-[attr(data-placeholder)] [&_.tiptap.is-editor-empty:first-child::before]:float-left [&_.tiptap.is-editor-empty:first-child::before]:h-0 [&_.tiptap.is-editor-empty:first-child::before]:pointer-events-none [&_.tiptap_img]:max-w-full [&_.tiptap_img]:rounded-md [&_.tiptap_img.ProseMirror-selectednode]:outline-2 [&_.tiptap_img.ProseMirror-selectednode]:outline-blue-500"
+        onRequestImage={onRequestImage}
+        onSetLink={setLink}
+        onInsertImage={insertImage}
       />
+
+      <EditorContent editor={editor} className="px-3 py-2" />
+    </div>
+  )
+}
+
+/**
+ * Isolated so `useEditorState` can re-render the buttons when the selection
+ * moves. Tiptap v3 no longer re-renders `useEditor` on every transaction, so
+ * reading `editor.isActive(...)` in the parent would stay stale.
+ */
+function EditorToolbar({
+  editor,
+  onRequestImage,
+  onSetLink,
+  onInsertImage,
+}: {
+  editor: Editor
+  onRequestImage?: RichTextEditorProps['onRequestImage']
+  onSetLink: () => void
+  onInsertImage: () => Promise<void>
+}) {
+  const { t } = useTranslation()
+  const toolbar = useEditorState({
+    editor,
+    selector: ({ editor: current }) => ({
+      isBold: current.isActive('bold'),
+      isItalic: current.isActive('italic'),
+      isStrike: current.isActive('strike'),
+      isBulletList: current.isActive('bulletList'),
+      isOrderedList: current.isActive('orderedList'),
+      isBlockquote: current.isActive('blockquote'),
+      isLink: current.isActive('link'),
+      canUndo: current.can().undo(),
+      canRedo: current.can().redo(),
+    }),
+  })
+
+  const runToolbarCommand = (command: () => void) => {
+    command()
+    // Ctrl/Cmd+A in Tiptap is an AllSelection that also covers the trailing
+    // empty paragraph the editor always keeps. Block formats then wrap the
+    // written text but `isActive` stays false because the selection still
+    // spans mixed nodes — collapse so the button the merchant just used
+    // lights up against the formatted text.
+    if (editor.state.selection.toJSON().type === 'all') {
+      editor.commands.setTextSelection(1)
+    }
+  }
+
+  return (
+    <div
+      data-slot="rich-text-editor-toolbar"
+      className="flex items-center gap-0.5 border-b border-border px-2 py-1.5"
+    >
+      <ToolbarButton
+        active={toolbar.isBold}
+        onClick={() => runToolbarCommand(() => editor.chain().focus().toggleBold().run())}
+        title={t('admin.components.rich_text_editor.bold')}
+      >
+        <BoldIcon className="size-4" />
+      </ToolbarButton>
+      <ToolbarButton
+        active={toolbar.isItalic}
+        onClick={() => runToolbarCommand(() => editor.chain().focus().toggleItalic().run())}
+        title={t('admin.components.rich_text_editor.italic')}
+      >
+        <ItalicIcon className="size-4" />
+      </ToolbarButton>
+      <ToolbarButton
+        active={toolbar.isStrike}
+        onClick={() => runToolbarCommand(() => editor.chain().focus().toggleStrike().run())}
+        title={t('admin.components.rich_text_editor.strikethrough')}
+      >
+        <StrikethroughIcon className="size-4" />
+      </ToolbarButton>
+
+      <ToolbarSeparator />
+
+      <ToolbarButton
+        active={toolbar.isBulletList}
+        onClick={() => runToolbarCommand(() => editor.chain().focus().toggleBulletList().run())}
+        title={t('admin.components.rich_text_editor.bullet_list')}
+      >
+        <ListIcon className="size-4" />
+      </ToolbarButton>
+      <ToolbarButton
+        active={toolbar.isOrderedList}
+        onClick={() => runToolbarCommand(() => editor.chain().focus().toggleOrderedList().run())}
+        title={t('admin.components.rich_text_editor.ordered_list')}
+      >
+        <ListOrderedIcon className="size-4" />
+      </ToolbarButton>
+      <ToolbarButton
+        active={toolbar.isBlockquote}
+        onClick={() => runToolbarCommand(() => editor.chain().focus().toggleBlockquote().run())}
+        title={t('admin.components.rich_text_editor.blockquote')}
+      >
+        <QuoteIcon className="size-4" />
+      </ToolbarButton>
+
+      <ToolbarSeparator />
+
+      <ToolbarButton
+        active={toolbar.isLink}
+        onClick={() => runToolbarCommand(onSetLink)}
+        title={t('admin.components.rich_text_editor.link')}
+      >
+        <LinkIcon className="size-4" />
+      </ToolbarButton>
+
+      {onRequestImage && (
+        <ToolbarButton onClick={onInsertImage} title={t('admin.components.rich_text_editor.image')}>
+          <ImageIcon className="size-4" />
+        </ToolbarButton>
+      )}
+
+      <div className="ml-auto flex items-center gap-0.5">
+        <ToolbarButton
+          onClick={() => editor.chain().focus().undo().run()}
+          disabled={!toolbar.canUndo}
+          title={t('admin.components.rich_text_editor.undo')}
+        >
+          <UndoIcon className="size-4" />
+        </ToolbarButton>
+        <ToolbarButton
+          onClick={() => editor.chain().focus().redo().run()}
+          disabled={!toolbar.canRedo}
+          title={t('admin.components.rich_text_editor.redo')}
+        >
+          <RedoIcon className="size-4" />
+        </ToolbarButton>
+      </div>
     </div>
   )
 }
@@ -283,6 +337,8 @@ function ToolbarButton({
       onClick={onClick}
       disabled={disabled}
       title={title}
+      aria-label={title}
+      aria-pressed={active}
       className={cn(
         'inline-flex items-center justify-center rounded-md p-1.5 text-muted-foreground hover:bg-accent hover:text-foreground transition-colors disabled:opacity-40 disabled:pointer-events-none',
         active && 'bg-accent text-foreground',
