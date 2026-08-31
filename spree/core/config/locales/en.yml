@@ -925,7 +925,7 @@ en:
         description: Offers the delivery method only on the selected channels
         name: Channel
       company_rule:
-        description: Limits the delivery method to orders placed for a company, or to orders that are not
+        description: Offers the delivery method only to orders placed for a company, or only to orders that are not
         name: Company
       excluded_products_rule:
         description: Blocks the delivery method for packages containing the selected products

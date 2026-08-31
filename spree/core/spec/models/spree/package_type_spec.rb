@@ -71,6 +71,31 @@ RSpec.describe Spree::PackageType, type: :model do
     end
   end
 
+  describe 'reading geometry in another unit' do
+    subject(:package_type) do
+      build(:package_type, length: 30.48, width: 22.86, height: 10.16,
+                           dimensions_unit: 'cm', weight: 1, weight_unit: 'kg')
+    end
+
+    it 'converts the sides' do
+      expect(package_type.dimensions_in('in')).to eq(length: 12.0, width: 9.0, height: 4.0)
+    end
+
+    it 'converts the tare' do
+      expect(package_type.weight_in('lb')).to be_within(0.001).of(2.2046)
+    end
+
+    it 'has no dimensions until every side is recorded' do
+      package_type.height = nil
+
+      expect(package_type.dimensions_in('cm')).to be_nil
+    end
+
+    it 'reads an unrecorded tare as nothing rather than nil' do
+      expect(build(:package_type, weight: nil).weight_in('kg')).to eq(0)
+    end
+  end
+
   describe 'deletion' do
     it 'refuses while a variant is packed into it' do
       carton = create(:carton_package_type, store: store)

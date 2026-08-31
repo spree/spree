@@ -57,13 +57,17 @@ module Spree
         unit_volume = Spree::Measurement.cubic_meters(
           variant.width, variant.height, variant.depth, unit: variant.dimensions_unit
         )
+        cartons = variant.cartons_for(quantity)
 
         new(
           **identity(variant),
           units: quantity,
-          cartons: variant.cartons_for(quantity),
+          cartons: cartons,
           volume: (unit_volume || 0) * quantity,
-          weight: unit_weight(variant) * quantity,
+          # A merchant who recorded what a packed carton weighs knows more
+          # than the loose goods do, even when the carton itself is
+          # unmeasured — using the goods' weight there understates the load.
+          weight: cartons ? carton_weight_for(variant, cartons, quantity) : unit_weight(variant) * quantity,
           complete: false
         )
       end
@@ -117,8 +121,8 @@ module Spree
           'units' => units,
           'cartons' => cartons,
           'pallets' => pallets,
-          'volume' => volume.to_s,
-          'weight' => weight.to_s,
+          'volume' => BigDecimal(volume.to_s).to_s('F'),
+          'weight' => BigDecimal(weight.to_s).to_s('F'),
           'complete' => complete
         }
       end

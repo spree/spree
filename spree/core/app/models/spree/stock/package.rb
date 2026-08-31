@@ -76,7 +76,7 @@ module Spree
       # splitter — so the tare applies everywhere without any of them knowing
       # about it.
       def weight
-        contents.sum(&:weight) + default_package_type&.weight.to_f
+        contents.sum(&:weight) + tare
       end
 
       # The store's default package dimensions (the box this package ships
@@ -86,7 +86,7 @@ module Spree
       #
       # @return [Hash{Symbol => Float}, nil]
       def dimensions
-        default_package_type&.dimensions
+        default_package_type&.dimensions_in(store_dimensions_unit)
       end
 
       # The store's default box.
@@ -204,6 +204,27 @@ module Spree
       end
 
       private
+
+      # The box's own weight, converted into the unit the contents are
+      # measured in. A merchant may record a carton in kilograms while the
+      # store quotes in pounds, and adding those numbers together would
+      # understate the tare by more than half.
+      #
+      # @return [BigDecimal]
+      def tare
+        package_type = default_package_type
+        return 0 if package_type.nil?
+
+        package_type.weight_in(owner&.store&.preferred_weight_unit || Spree::Measurement::DEFAULT_WEIGHT_UNIT)
+      end
+
+      # What a dimension means to this store, matching the fallback a
+      # variant's own dimensions take.
+      #
+      # @return [String]
+      def store_dimensions_unit
+        Spree::Variant.store_dimensions_unit(owner&.store)
+      end
 
       def variant_ids
         contents.map { |item| item.inventory_unit.variant_id }.compact.uniq

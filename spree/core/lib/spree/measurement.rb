@@ -55,6 +55,26 @@ module Spree
         convert(value, WEIGHT_IN_KILOGRAMS, unit, DEFAULT_WEIGHT_UNIT)
       end
 
+      # Converts a length between any two supported units.
+      #
+      # @param value [Numeric, String, nil]
+      # @param from [String, nil]
+      # @param to [String, nil]
+      # @return [BigDecimal, nil] nil when the value is missing
+      def convert_length(value, from:, to:)
+        rescale(to_centimeters(value, unit: from), LENGTH_IN_CENTIMETERS, to, DEFAULT_LENGTH_UNIT)
+      end
+
+      # Converts a weight between any two supported units.
+      #
+      # @param value [Numeric, String, nil]
+      # @param from [String, nil]
+      # @param to [String, nil]
+      # @return [BigDecimal, nil] nil when the value is missing
+      def convert_weight(value, from:, to:)
+        rescale(to_kilograms(value, unit: from), WEIGHT_IN_KILOGRAMS, to, DEFAULT_WEIGHT_UNIT)
+      end
+
       # The cubic meters a box of these dimensions occupies — the CBM figure
       # freight is quoted and tiered on.
       #
@@ -73,6 +93,14 @@ module Spree
       end
 
       private
+
+      # Turns a normalized figure (centimeters, kilograms) back into the
+      # target unit.
+      def rescale(normalized, table, unit, default_unit)
+        return if normalized.nil?
+
+        normalized / (table[unit.to_s.downcase.presence || default_unit] || table[default_unit])
+      end
 
       def convert(value, table, unit, default_unit)
         return if value.nil? || (value.is_a?(String) && value.blank?)

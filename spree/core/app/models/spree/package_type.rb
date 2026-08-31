@@ -66,15 +66,26 @@ module Spree
       Spree::Measurement.cubic_meters(length, width, height, unit: dimensions_unit)
     end
 
-    # Geometry as the carrier rate providers want it, in the recorded unit.
-    # Nil unless all three sides are present and positive.
+    # Geometry expressed in the unit the given store works in, so a carton
+    # a merchant measured in centimetres is still usable by a store that
+    # quotes in inches. Nil unless all three sides are recorded.
     #
+    # @param unit [String] one of {Spree::Variant::DIMENSION_UNITS}
     # @return [Hash{Symbol => Float}, nil]
-    def dimensions
-      sides = { length: length.to_f, width: width.to_f, height: height.to_f }
-      return if sides.values.any?(&:zero?)
+    def dimensions_in(unit)
+      sides = { length: length, width: width, height: height }
+      return if sides.values.any? { |side| side.to_f.zero? }
 
-      sides
+      sides.transform_values { |side| Spree::Measurement.convert_length(side, from: dimensions_unit, to: unit).to_f }
+    end
+
+    # The empty package's own weight in the given unit — the tare added to
+    # every quote.
+    #
+    # @param unit [String] one of {Spree::Variant::WEIGHT_UNITS}
+    # @return [BigDecimal]
+    def weight_in(unit)
+      Spree::Measurement.convert_weight(weight, from: weight_unit, to: unit) || 0
     end
 
     private

@@ -25,7 +25,12 @@ module Spree
 
     with_options dependent: :delete_all do
       has_many :fulfillment_items, class_name: 'Spree::FulfillmentItem', inverse_of: :fulfillment
-      has_many :delivery_rates, -> { order(:cost) }, class_name: 'Spree::DeliveryRate'
+      # Cheapest first, with unpriced rates after every priced one — a rate
+      # quoted after review costs zero only because nobody has priced it, so
+      # ordering on cost alone would list freight above real quotes. Matches
+      # the order the Estimator hands back, so a rate read from the database
+      # sorts the same way as one just computed.
+      has_many :delivery_rates, -> { order(:unpriced, :cost) }, class_name: 'Spree::DeliveryRate'
     end
     has_many :tax_lines, class_name: 'Spree::TaxLine', dependent: :destroy, inverse_of: :fulfillment
     has_many :discounts, class_name: 'Spree::Discount', dependent: :destroy, inverse_of: :fulfillment

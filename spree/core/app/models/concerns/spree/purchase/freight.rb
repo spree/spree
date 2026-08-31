@@ -23,14 +23,20 @@ module Spree
 
       private
 
-      # The summary a freight rate carried when it was quoted. Nil on carts
-      # and on orders that shipped by parcel.
+      # The summary the freight rates carried when they were quoted, across
+      # every fulfillment this order ships in. An order split into two
+      # freight shipments is still one load to the forwarder, so reading only
+      # the first package would leave the rest of the cartons out of the
+      # number the merchant is quoted and billed on.
       #
       # @return [Spree::FreightSummary, nil]
       def frozen_freight_summary
         return unless is_a?(Spree::Order)
 
-        fulfillments.filter_map { |fulfillment| fulfillment.selected_delivery_rate&.freight_summary }.first
+        summaries = fulfillments.filter_map { |fulfillment| fulfillment.selected_delivery_rate&.freight_summary }
+        return if summaries.empty?
+
+        Spree::FreightSummary.new(lines: summaries.flat_map(&:lines))
       end
     end
   end

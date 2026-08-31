@@ -40,6 +40,24 @@ RSpec.describe Spree::Purchase::Freight do
       expect(order.reload.freight_summary.total_cartons).to eq(2)
     end
 
+    # Two freight shipments are still one load to the forwarder.
+    it 'sums the frozen summaries across every fulfillment' do
+      2.times do
+        fulfillment = create(:shipment, order: order)
+        snapshot = Spree::FreightSummary.new(
+          lines: [Spree::FreightSummary::Line.new(units: 12, cartons: 1, pallets: 1,
+                                                  volume: BigDecimal('0.03'), complete: true)]
+        ).as_json
+        create(:delivery_rate, fulfillment: fulfillment, selected: true, unpriced: true,
+                               metadata: { 'freight_summary' => snapshot })
+      end
+
+      summary = order.reload.freight_summary
+
+      expect(summary.total_cartons).to eq(2)
+      expect(summary.total_volume).to eq(BigDecimal('0.06'))
+    end
+
     it 'falls back to computing when the order shipped by parcel' do
       create(:shipment, order: order)
 

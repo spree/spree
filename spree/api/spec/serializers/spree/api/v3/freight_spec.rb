@@ -62,6 +62,16 @@ RSpec.describe 'freight serialization' do
       expect(json['display_cost']).to eq(Spree.t('delivery_rates.quoted_after_review'))
     end
 
+    # A storefront rendering the total rather than the cost would otherwise
+    # show "$0.00" over a container of goods nobody has quoted yet.
+    it 'says the same on every money display, not just the cost' do
+      rate = create(:delivery_rate, fulfillment: fulfillment, cost: 0, unpriced: true)
+
+      json = described_class.new(rate, params: { store: store }).to_h
+
+      expect(json['display_total']).to eq(Spree.t('delivery_rates.quoted_after_review'))
+    end
+
     it 'carries the frozen summary the provider quoted against' do
       snapshot = Spree::FreightSummary.new(
         lines: [Spree::FreightSummary::Line.new(units: 48, cartons: 4, pallets: 1,
