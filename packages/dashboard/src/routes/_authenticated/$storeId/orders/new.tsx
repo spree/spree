@@ -157,12 +157,30 @@ function NewOrderPage() {
   return (
     <form onSubmit={form.handleSubmit(onSubmit)}>
       <ResourceLayout
-        header={<PageHeader title={t('admin.pages.orders.new.title')} backTo="orders/drafts" />}
+        header={
+          <PageHeader
+            title={t('admin.pages.orders.new.title')}
+            subtitle={t('admin.orders.new.creates_draft_note')}
+            backTo="orders/drafts"
+            actions={
+              <Button type="submit" disabled={!canSubmit}>
+                {createMutation.isPending
+                  ? t('admin.actions.creating')
+                  : t('admin.pages.orders.new.title')}
+              </Button>
+            }
+          />
+        }
         main={
           <>
             {errors.root?.message && (
               <p className="text-sm text-destructive" role="alert">
                 {errors.root.message}
+              </p>
+            )}
+            {createMutation.error && !errors.root && (
+              <p className="text-sm text-destructive" role="alert">
+                {(createMutation.error as Error).message}
               </p>
             )}
             <Card>
@@ -331,6 +349,44 @@ function NewOrderPage() {
         }
         sidebar={
           <>
+            {/* The buyer's own reference and the paperwork behind it — their
+                document, not the merchant's notes about the order. */}
+            <Card>
+              <CardHeader>
+                <CardTitle>{t('admin.orders.detail.purchase_order.title')}</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <FieldGroup>
+                  <Field>
+                    <FieldLabel htmlFor="po-number">
+                      {t('admin.fields.order.po_number.label')}
+                    </FieldLabel>
+                    <Input
+                      id="po-number"
+                      placeholder={t('admin.fields.order.po_number.placeholder')}
+                      aria-invalid={!!errors.po_number || undefined}
+                      {...form.register('po_number')}
+                    />
+                    <FieldDescription>{t('admin.fields.order.po_number.help')}</FieldDescription>
+                    <FieldError errors={[errors.po_number]} />
+                  </Field>
+                  {/* Private storage — attaching a signed id never moves a
+                      blob between services. */}
+                  <FileUploadField
+                    private
+                    value={poDocument}
+                    onChange={setPoDocument}
+                    accept={PO_DOCUMENT_ACCEPT}
+                    variant="file"
+                    icon={<FileTextIcon className="size-4" />}
+                    label={t('admin.orders.detail.purchase_order.document')}
+                    help={t('admin.orders.detail.purchase_order.document_help')}
+                    onUploadingChange={setPoUploading}
+                  />
+                </FieldGroup>
+              </CardContent>
+            </Card>
+
             <Card>
               <CardHeader>
                 <CardTitle>{t('admin.pages.orders.new.section_notes')}</CardTitle>
@@ -349,34 +405,6 @@ function NewOrderPage() {
                     />
                     <FieldError errors={[errors.customer_note]} />
                   </Field>
-                  <Field>
-                    <FieldLabel htmlFor="po-number">
-                      {t('admin.fields.order.po_number.label')}
-                    </FieldLabel>
-                    <Input
-                      id="po-number"
-                      placeholder={t('admin.fields.order.po_number.placeholder')}
-                      aria-invalid={!!errors.po_number || undefined}
-                      {...form.register('po_number')}
-                    />
-                    <FieldDescription>{t('admin.fields.order.po_number.help')}</FieldDescription>
-                    <FieldError errors={[errors.po_number]} />
-                  </Field>
-                  {/* A PO arriving by email is the motivating case for this
-                      form, so the paperwork can come with the number. Private
-                      storage — attaching a signed id never moves a blob
-                      between services. */}
-                  <FileUploadField
-                    private
-                    value={poDocument}
-                    onChange={setPoDocument}
-                    accept={PO_DOCUMENT_ACCEPT}
-                    variant="file"
-                    icon={<FileTextIcon className="size-4" />}
-                    label={t('admin.orders.detail.purchase_order.document')}
-                    help={t('admin.orders.detail.purchase_order.document_help')}
-                    onUploadingChange={setPoUploading}
-                  />
                   <Field>
                     <FieldLabel htmlFor="internal-note">
                       {t('admin.fields.order.internal_note.label')}
@@ -434,24 +462,6 @@ function NewOrderPage() {
                     <FieldError errors={[errors.coupon_code]} />
                   </Field>
                 </FieldGroup>
-              </CardContent>
-            </Card>
-
-            <Card>
-              <CardContent className="flex flex-col gap-3 pt-6">
-                <Button type="submit" disabled={!canSubmit}>
-                  {createMutation.isPending
-                    ? t('admin.actions.creating')
-                    : t('admin.pages.orders.new.title')}
-                </Button>
-                {createMutation.error && !errors.root && (
-                  <p className="text-sm text-destructive">
-                    {(createMutation.error as Error).message}
-                  </p>
-                )}
-                <p className="text-xs text-muted-foreground">
-                  {t('admin.orders.new.creates_draft_note')}
-                </p>
               </CardContent>
             </Card>
           </>
