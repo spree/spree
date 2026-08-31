@@ -229,7 +229,8 @@ module SpreeStripe
       # prefixed id: the derived `R1001-P1` number cannot be queried (its
       # column is NULL on 6.0 rows). The stored-number lookup remains only
       # for legacy rows and callers still passing pre-6.0 options.
-      payment = payments.find_by_prefix_id(gateway_options[:payment_prefixed_id]) if gateway_options[:payment_prefixed_id].present?
+      prefixed_id = gateway_options[:payment_prefixed_id]
+      payment = prefixed_id.present? ? payments.find_by_prefix_id(prefixed_id) : nil
 
       if payment.blank?
         payment_number = gateway_options[:payment_id].presence || gateway_options[:order_id]

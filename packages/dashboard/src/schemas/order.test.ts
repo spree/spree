@@ -107,6 +107,20 @@ describe('orderEditItemSchema price format', () => {
   it('rejects a negative price', () => {
     expect(orderEditItemSchema.safeParse(row({ price: '-3' })).success).toBe(false)
   })
+
+  // Refusing the form over a price that is never sent would block the obvious
+  // way out of having typed it: deleting the row.
+  it('ignores an invalid price on a row being removed', () => {
+    expect(orderEditItemSchema.safeParse(row({ price: '12,50', removed: true })).success).toBe(true)
+  })
+
+  it('ignores an invalid price on a row being reverted to catalog price', () => {
+    const result = orderEditItemSchema.safeParse(
+      row({ price: '12,50', revert_price: true, catalog_price: '25.0' }),
+    )
+
+    expect(result.success).toBe(true)
+  })
 })
 
 // Shipped units are physical fact — the schema refuses edits that pretend

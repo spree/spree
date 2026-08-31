@@ -74,10 +74,10 @@ export const orderEditItemSchema = z
     /**
      * Editable unit price (decimal string) — only rendered as an input on
      * draft orders. A change stamps the line `price_source: 'manual'` on save.
+     * Its format is checked in the refinement below rather than here, so a
+     * row being removed is not held up by a price that will never be sent.
      */
-    price: z.string().regex(/^\d+(\.\d+)?$/, {
-      error: () => i18n.t('admin.orders.edit.validation.invalid_price'),
-    }),
+    price: z.string(),
     /** Price the server currently holds; the initial catalog price for staged additions. */
     saved_price: z.string(),
     /** Provenance from the server; 'manual' marks a negotiated line. */
@@ -97,6 +97,18 @@ export const orderEditItemSchema = z
     display_total: z.string(),
   })
   .superRefine((item, ctx) => {
+    // A removed row's price is never sent (the payload carries quantity 0),
+    // so refusing the form over it would block a legitimate removal — the
+    // obvious way out of having typed a bad price in the first place.
+    // A staged revert is exempt too: it sends `price: null`.
+    if (!item.removed && !item.revert_price && !/^\d+(\.\d+)?$/.test(item.price)) {
+      ctx.addIssue({
+        code: 'custom',
+        path: ['price'],
+        message: i18n.t('admin.orders.edit.validation.invalid_price'),
+      })
+    }
+
     // Shipped units are physical fact: a row can neither be struck out nor
     // set below what already left the warehouse. Removal counts as zero, so
     // one rule covers both edits.

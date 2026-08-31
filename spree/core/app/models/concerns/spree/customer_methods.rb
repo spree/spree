@@ -166,7 +166,13 @@ module Spree
       # Backward compatibility alias — remove in Spree 6.0
       def self.multi_search(query) = search(query)
 
-      self.whitelisted_ransackable_associations = %w[bill_address ship_address addresses tags spree_roles orders customer_groups companies]
+      # `companies` is deliberately absent: customers are global while
+      # companies are store-scoped, so a raw association predicate would let
+      # one tenant probe another's company names. Filtering by company goes
+      # through the with_standing_for_company scope, which resolves the node
+      # through the current store — and is the correct filter anyway, since
+      # standing covers a node's whole subtree.
+      self.whitelisted_ransackable_associations = %w[bill_address ship_address addresses tags spree_roles orders customer_groups]
       self.whitelisted_ransackable_attributes = %w[id email first_name last_name phone accepts_email_marketing
                                                     created_at updated_at last_sign_in_at]
       self.whitelisted_ransackable_scopes = %w[search multi_search with_min_total_spent with_standing_for_company]
