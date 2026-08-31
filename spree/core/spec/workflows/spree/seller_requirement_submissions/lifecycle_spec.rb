@@ -135,6 +135,27 @@ RSpec.describe 'seller requirement submission workflows' do
       end
     end
 
+    # Same missing-tool path as the purchase-order document: the library
+    # raises install text, and a seller must not see it.
+    it 'does not leak a missing file-command error to the seller' do
+      requirement = create(:document_requirement, store: store)
+      allow(Open3).to receive(:capture2).with('file', any_args).and_raise(Errno::ENOENT)
+
+      result = described_class.call(
+        seller: seller,
+        requirement: requirement,
+        file: {
+          io: StringIO.new("%PDF-1.4\ntrailer<</Root 1 0 R>>"),
+          filename: 'certificate.pdf',
+          content_type: 'application/pdf'
+        }
+      )
+
+      expect(result).to be_failure
+      expect(result.error.value.full_messages.join).to include(Spree.t(:attachment_could_not_be_verified))
+      expect(result.error.value.full_messages.join).not_to include('file command-line tool')
+    end
+
     it 'accepts a real PDF' do
       requirement = create(:document_requirement, store: store)
 

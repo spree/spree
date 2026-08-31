@@ -12,6 +12,7 @@ module Spree
   class SellerRequirementSubmission < Spree.base_class
     include Spree::HasStatus
     include Spree::Metadata
+    include Spree::TranslatesMissingFileCommand
 
     has_prefix_id :selsub
 
@@ -46,7 +47,10 @@ module Spree
     # Sellers are the marketplace's lower-trust writers and an operator opens
     # these files on their own machine, so the bytes decide what a file is,
     # not the header the uploader sent. `spoofing_protection` is what makes
-    # that true: without it a script named `certificate.pdf` passes.
+    # that true: without it a script named `certificate.pdf` passes. That
+    # check needs the Unix `file` command on the host (the starter image
+    # installs it). A missing command is translated rather than shown to the
+    # seller.
     #
     # The accepted list comes from the requirement's own kind, the same value
     # the seller API serializes so the panel's picker can hint it.

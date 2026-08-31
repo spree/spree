@@ -906,5 +906,30 @@ module Spree
         expect(result.error.to_s).not_to include('ActiveStorage')
       end
     end
+
+    # The storefront attach path is the one that showed the library's
+    # install text as a 422. Lock the translated message here, not only
+    # on the model, so a service-level rescue cannot start leaking it again.
+    describe 'a purchase order document when the file command is missing' do
+      let(:blob) do
+        ActiveStorage::Blob.create_and_upload!(
+          io: StringIO.new('%PDF-1.4 purchase order'),
+          filename: 'po.pdf',
+          content_type: 'application/pdf',
+          service_name: Spree.private_storage_service_name
+        )
+      end
+
+      it 'reports a message the buyer can act on' do
+        allow(Open3).to receive(:capture2).with('file', any_args).and_raise(Errno::ENOENT)
+
+        result = described_class.call(cart: cart, params: { po_document: blob.signed_id })
+
+        expect(result).to be_failure
+        expect(result.error.to_s).to include(Spree.t(:attachment_could_not_be_verified))
+        expect(result.error.to_s).not_to include('file command-line tool')
+        expect(cart.reload.po_document).not_to be_attached
+      end
+    end
   end
 end

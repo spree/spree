@@ -671,6 +671,7 @@ en:
     approver: Approver
     assets: Media
     at_symbol: "@"
+    attachment_could_not_be_verified: This document could not be verified. Please try a PDF, image or Word file.
     attachments: Attachments
     author: Author
     authorized: Authorized

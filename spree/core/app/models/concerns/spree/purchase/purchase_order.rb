@@ -19,6 +19,7 @@ module Spree
       # What a purchase order plausibly arrives as: an export from the buyer's
       # procurement system, a scan, or a photo of one. Matches the list the
       # seller document requirement accepts — the same kinds of paperwork.
+      # Confirming the type from the bytes needs the Unix `file` command.
       PO_DOCUMENT_CONTENT_TYPES = %w[
         application/pdf
         image/jpeg
@@ -30,6 +31,8 @@ module Spree
       ].freeze
 
       included do
+        include Spree::TranslatesMissingFileCommand
+
         normalizes :po_number, with: ->(value) { value.strip.presence }
 
         # Private storage: a purchase order carries a buyer's prices, terms and
@@ -40,6 +43,9 @@ module Spree
         # Buyers are the lower-trust writers here — the storefront uploads this
         # — so the bytes decide what the file is, not the header the uploader
         # sent. Without spoofing_protection a script named `po.pdf` passes.
+        # That check needs the Unix `file` command on the host (the starter
+        # image installs it). A missing command is translated rather than
+        # shown to the buyer.
         validates :po_document,
                   content_type: { in: PO_DOCUMENT_CONTENT_TYPES, spoofing_protection: true },
                   size: { less_than_or_equal_to: MAX_PO_DOCUMENT_SIZE },

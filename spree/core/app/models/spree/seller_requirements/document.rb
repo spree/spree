@@ -14,7 +14,8 @@ module Spree
       # document actually arrives as: a PDF, a photo or scan of one, or an
       # office file. Fixed rather than configurable — the answer is the same
       # for every marketplace, and asking an operator to type MIME types is a
-      # way to get `image/jpg` typed and nothing accepted.
+      # way to get `image/jpg` typed and nothing accepted. Confirming the
+      # type from the bytes needs the Unix `file` command on the host.
       #
       # Reopen this constant to take something else.
       ACCEPTED_CONTENT_TYPES = %w[

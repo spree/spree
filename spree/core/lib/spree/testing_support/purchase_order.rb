@@ -60,6 +60,23 @@ shared_examples_for 'a purchase carrying a PO reference' do |factory:|
       expect(purchase.po_document).to be_attached
     end
 
+    # The validation library raises its own install text when `file` is
+    # missing. That text must never become the API message — a buyer cannot
+    # install a system package.
+    it 'does not leak a missing file-command error to the buyer' do
+      allow(Open3).to receive(:capture2).with('file', any_args).and_raise(Errno::ENOENT)
+
+      purchase.po_document.attach(
+        io: StringIO.new('%PDF-1.4 purchase order'),
+        filename: 'po.pdf',
+        content_type: 'application/pdf'
+      )
+
+      expect(purchase).not_to be_valid
+      expect(purchase.errors.full_messages.join).to include(Spree.t(:attachment_could_not_be_verified))
+      expect(purchase.errors.full_messages.join).not_to include('file command-line tool')
+    end
+
     # Spoofing protection is the point: the bytes decide, not the header the
     # uploader sent.
     it 'refuses an executable dressed up as a PDF' do
