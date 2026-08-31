@@ -61,6 +61,7 @@ export const CartSchema = z.object({
   order_minimum: z.number().nullable(),
   order_minimum_shortfall: z.number().nullable(),
   below_order_minimum: z.boolean().nullable(),
+  freight_summary: z.record(z.string(), z.unknown()).nullable(),
   shipping_eq_billing_address: z.boolean(),
   discounts: z.array(AppliedPromotionSchema),
   fees: z.array(FeeSchema),

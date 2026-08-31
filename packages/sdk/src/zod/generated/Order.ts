@@ -18,6 +18,7 @@ export const OrderSchema = z.object({
   company_name: z.string().nullable(),
   po_document_filename: z.string().nullable(),
   po_document_byte_size: z.number().nullable(),
+  freight_summary: z.record(z.string(), z.unknown()).nullable(),
   number: z.string(),
   email: z.string(),
   customer_note: z.string().nullable(),

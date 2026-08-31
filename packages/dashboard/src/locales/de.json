@@ -2031,17 +2031,6 @@
           "label": "Admin-Sprache",
           "placeholder": "Standardsprache verwenden"
         },
-        "preferred_default_package_dimensions": {
-          "height": "Höhe",
-          "help": "Der übliche Versandkarton, von Carrier-Tarifanbietern für Volumengewicht-Preise genutzt — Zoll bei imperial, Zentimeter bei metrisch. Wirksam nur mit allen drei Werten.",
-          "label": "Standard-Paketabmessungen",
-          "length": "Länge",
-          "width": "Breite"
-        },
-        "preferred_default_package_weight": {
-          "help": "Verpackungsgewicht (Karton und Füllmaterial), das bei der Berechnung von Versandtarifen zum Inhalt jedes Pakets addiert wird. 0 deaktiviert es.",
-          "label": "Standard-Paketgewicht"
-        },
         "preferred_send_consumer_transactional_emails": {
           "help": "Wenn deaktiviert, werden keine Bestellbestätigungen, Versand- oder Erstattungs-E-Mails gesendet.",
           "label": "Transaktionale E-Mails an Kunden senden"
@@ -3612,11 +3601,9 @@
           "search_placeholder": "Lagerstandorte suchen…"
         },
         "store": {
-          "default_package_description": "Der Karton, in dem Sie üblicherweise versenden. Carrier-Tarifanbieter addieren sein Gewicht zu jedem Paket und nutzen seine Abmessungen für Volumengewicht-Preise.",
           "subtitle": "Allgemeine Konfiguration und shopweite Standardwerte.",
           "tab_addresses": "Adressen",
           "tab_catalog": "Katalog",
-          "tab_default_package": "Standardpaket",
           "tab_general": "Allgemein",
           "tab_inventory": "Lagerbestand",
           "tab_order_numbers": "Bestellnummern",

@@ -2031,17 +2031,6 @@
           "label": "Admin language",
           "placeholder": "Use the default language"
         },
-        "preferred_default_package_dimensions": {
-          "height": "Height",
-          "help": "The box you usually ship in, used by carrier rate providers for dimensional-weight pricing — inches for imperial, centimeters for metric. All three are needed to take effect.",
-          "label": "Default package dimensions",
-          "length": "Length",
-          "width": "Width"
-        },
-        "preferred_default_package_weight": {
-          "help": "Packaging weight (box and filler) added to every package's contents when calculating delivery rates. Set to 0 to disable.",
-          "label": "Default package weight"
-        },
         "preferred_send_consumer_transactional_emails": {
           "help": "When off, no order confirmation, shipping, or refund emails are sent.",
           "label": "Send transactional emails to customers"
@@ -3612,11 +3601,9 @@
           "search_placeholder": "Search stock locations…"
         },
         "store": {
-          "default_package_description": "The box you usually ship in. Carrier rate providers add its weight to every package and use its dimensions for dimensional-weight pricing.",
           "subtitle": "General configuration and store-wide defaults.",
           "tab_addresses": "Addresses",
           "tab_catalog": "Catalog",
-          "tab_default_package": "Default package",
           "tab_general": "General",
           "tab_inventory": "Inventory",
           "tab_order_numbers": "Order numbers",

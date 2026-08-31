@@ -115,10 +115,6 @@ function storeToFormValues(store: Store): StoreSettingsFormValues {
     preferred_timezone: store.preferred_timezone,
     preferred_unit_system: (store.preferred_unit_system as 'metric' | 'imperial') ?? 'metric',
     preferred_weight_unit: store.preferred_weight_unit,
-    preferred_default_package_weight: Number(store.preferred_default_package_weight ?? 0),
-    preferred_default_package_length: Number(store.preferred_default_package_length ?? 0),
-    preferred_default_package_width: Number(store.preferred_default_package_width ?? 0),
-    preferred_default_package_height: Number(store.preferred_default_package_height ?? 0),
     preferred_storefront_access:
       (store.preferred_storefront_access as (typeof STOREFRONT_ACCESS_LEVELS)[number]) ?? 'public',
     preferred_guest_checkout: store.preferred_guest_checkout ?? true,
@@ -221,8 +217,6 @@ function StoreSettingsForm({ store }: { store: Store }) {
   }${numberSuffix ?? ''}`
 
   // Live unit suffixes for the default-package inputs.
-  const weightUnit = form.watch('preferred_weight_unit')
-  const dimensionUnit = form.watch('preferred_unit_system') === 'metric' ? 'cm' : 'in'
 
   // When unit_system flips, reset weight_unit to the first valid option for
   // that system so the form never holds an inconsistent pair.
@@ -252,10 +246,6 @@ function StoreSettingsForm({ store }: { store: Store }) {
         preferred_timezone: values.preferred_timezone,
         preferred_unit_system: values.preferred_unit_system,
         preferred_weight_unit: values.preferred_weight_unit,
-        preferred_default_package_weight: values.preferred_default_package_weight,
-        preferred_default_package_length: values.preferred_default_package_length,
-        preferred_default_package_width: values.preferred_default_package_width,
-        preferred_default_package_height: values.preferred_default_package_height,
         preferred_storefront_access: values.preferred_storefront_access,
         preferred_guest_checkout: values.preferred_guest_checkout,
         preferred_company_field_enabled: values.preferred_company_field_enabled,
@@ -473,73 +463,6 @@ function StoreSettingsForm({ store }: { store: Store }) {
                       control={form.control}
                       options={weightOptions}
                     />
-                  </FieldGroup>
-                </CardContent>
-              </Card>
-
-              <Card>
-                <CardHeader>
-                  <CardTitle>{t('admin.pages.settings.store.tab_default_package')}</CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <FieldGroup>
-                    <FieldDescription>
-                      {t('admin.pages.settings.store.default_package_description')}
-                    </FieldDescription>
-                    <div className="grid grid-cols-[1fr_120px] gap-3">
-                      <Field>
-                        <FieldLabel htmlFor="store-default-package-weight">
-                          {t('admin.fields.store.preferred_default_package_weight.label')}
-                        </FieldLabel>
-                        <Input
-                          id="store-default-package-weight"
-                          type="number"
-                          min="0"
-                          step="0.01"
-                          {...form.register('preferred_default_package_weight')}
-                        />
-                        <FieldError
-                          errors={[form.formState.errors.preferred_default_package_weight]}
-                        />
-                      </Field>
-                      <Field>
-                        <FieldLabel htmlFor="store-default-package-weight-unit">
-                          {t('admin.fields.variant.weight_unit.label')}
-                        </FieldLabel>
-                        <Input id="store-default-package-weight-unit" value={weightUnit} disabled />
-                      </Field>
-                    </div>
-                    <div className="grid grid-cols-[1fr_1fr_1fr_120px] gap-3">
-                      {(
-                        [
-                          ['length', 'store-default-package-length'],
-                          ['width', 'store-default-package-width'],
-                          ['height', 'store-default-package-height'],
-                        ] as const
-                      ).map(([side, id]) => (
-                        <Field key={side}>
-                          <FieldLabel htmlFor={id}>
-                            {t(`admin.fields.store.preferred_default_package_dimensions.${side}`)}
-                          </FieldLabel>
-                          <Input
-                            id={id}
-                            type="number"
-                            min="0"
-                            step="0.01"
-                            {...form.register(`preferred_default_package_${side}`)}
-                          />
-                        </Field>
-                      ))}
-                      <Field>
-                        <FieldLabel htmlFor="store-default-package-dim-unit">
-                          {t('admin.fields.variant.dimensions_unit.label')}
-                        </FieldLabel>
-                        <Input id="store-default-package-dim-unit" value={dimensionUnit} disabled />
-                      </Field>
-                    </div>
-                    <FieldDescription>
-                      {t('admin.fields.store.preferred_default_package_dimensions.help')}
-                    </FieldDescription>
                   </FieldGroup>
                 </CardContent>
               </Card>

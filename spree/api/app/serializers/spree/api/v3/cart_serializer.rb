@@ -15,6 +15,7 @@ module Spree
                  po_document_byte_size: ['number | null'],
                  order_minimum: ['number | null'], order_minimum_shortfall: ['number | null'],
                  below_order_minimum: ['boolean | null'],
+                 freight_summary: ['Record<string, unknown>', nullable: true],
                  requirements: 'Array<{step: string, field: string, code: string, message: string}>',
                  item_total: [:string, nullable: true], display_item_total: [:string, nullable: true],
                  delivery_total: [:string, nullable: true], display_delivery_total: [:string, nullable: true],
@@ -140,6 +141,14 @@ module Spree
 
         attribute :below_order_minimum do |order|
           order.below_order_minimum? unless params[:hide_prices]
+        end
+
+        # The shipment as a freight forwarder reads it: cartons, pallets,
+        # cubic meters, gross weight. Null for anything the store never
+        # measured that way, which is every retail cart. Not price-gated —
+        # these are logistics, not amounts.
+        attribute :freight_summary do |purchase|
+          purchase.freight_summary&.as_json
         end
 
         attribute :shipping_eq_billing_address do |order|
