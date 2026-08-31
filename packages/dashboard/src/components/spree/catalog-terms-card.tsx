@@ -11,8 +11,13 @@ import {
   FieldError,
   FieldLabel,
   Input,
+  TableCell,
+  TableHead,
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
 } from '@spree/dashboard-ui'
-import { PlusIcon, XIcon } from 'lucide-react'
+import { InfoIcon, PlusIcon, XIcon } from 'lucide-react'
 import type { UseFormReturn } from 'react-hook-form'
 import { useTranslation } from 'react-i18next'
 import type {
@@ -20,6 +25,32 @@ import type {
   OrderMinimumEntry,
   StagedProductTerms,
 } from '../../schemas/catalog'
+
+/**
+ * A term's explanation, on the label rather than under the field: these
+ * rules are easy to confuse with one another (an order multiple is a step
+ * size, not a divisor of the total) and a merchant setting one needs the
+ * distinction where they are reading, not in a paragraph below.
+ */
+function TermHelp({ text }: { text: string }) {
+  return (
+    <Tooltip>
+      <TooltipTrigger asChild>
+        <button
+          type="button"
+          // A cursor-help affordance, not an action: it opens nothing and
+          // must not take a tab stop away from the field it describes.
+          tabIndex={-1}
+          className="cursor-help text-muted-foreground"
+          aria-hidden="true"
+        >
+          <InfoIcon className="size-3.5" />
+        </button>
+      </TooltipTrigger>
+      <TooltipContent className="max-w-xs">{text}</TooltipContent>
+    </Tooltip>
+  )
+}
 
 /**
  * How much buyers on this agreement must order: the catalog-wide default,
@@ -52,8 +83,9 @@ export function CatalogTermsCard({
       <CardContent className="flex flex-col gap-6">
         <div className="grid grid-cols-2 gap-3">
           <Field>
-            <FieldLabel htmlFor="catalog-moq">
+            <FieldLabel htmlFor="catalog-moq" className="flex items-center gap-1.5">
               {t('admin.fields.minimum_order_quantity.label')}
+              <TermHelp text={t('admin.catalogs.terms.help.minimum')} />
             </FieldLabel>
             <Input
               id="catalog-moq"
@@ -71,8 +103,9 @@ export function CatalogTermsCard({
           </Field>
 
           <Field>
-            <FieldLabel htmlFor="catalog-multiple">
+            <FieldLabel htmlFor="catalog-multiple" className="flex items-center gap-1.5">
               {t('admin.fields.order_multiple.label')}
+              <TermHelp text={t('admin.catalogs.terms.help.multiple')} />
             </FieldLabel>
             <Input
               id="catalog-multiple"
@@ -121,7 +154,10 @@ function OrderMinimums({
     <section className="flex flex-col gap-3">
       <div className="flex items-center justify-between">
         <div>
-          <h3 className="font-medium text-sm">{t('admin.catalogs.terms.minimums_title')}</h3>
+          <h3 className="flex items-center gap-1.5 font-medium text-sm">
+            {t('admin.catalogs.terms.minimums_title')}
+            <TermHelp text={t('admin.catalogs.terms.help.order_minimum')} />
+          </h3>
           <p className="text-muted-foreground text-sm">
             {t('admin.catalogs.terms.minimums_description')}
           </p>
@@ -216,7 +252,19 @@ export function catalogTermColumns({
 }: {
   form: UseFormReturn<CatalogFormValues>
   canEdit: boolean
-  headers: { minimum: string; multiple: string; mixed: string; defaultHint: string }
+  headers: {
+    /** Short column heading. */
+    minimum: string
+    multiple: string
+    /** The full field name, kept as the input's accessible label. */
+    minimumLabel: string
+    multipleLabel: string
+    /** What the term means, shown from the column heading. */
+    minimumHelp: string
+    multipleHelp: string
+    mixed: string
+    defaultHint: string
+  }
 }) {
   const terms = form.watch('staged_terms') ?? {}
   const catalogMinimum = form.watch('minimum_order_quantity')?.trim()
@@ -238,14 +286,23 @@ export function catalogTermColumns({
   }
 
   return {
+    // The shared table's own cells rather than hand-rolled ones: TableHead
+    // carries the header's rule and background, TableCell the row border, so
+    // raw elements read as a separate block that ignores the row hover.
     headers: (
       <>
-        <th className="h-10 w-28 px-2 text-left align-middle font-medium text-muted-foreground text-xs">
-          {headers.minimum}
-        </th>
-        <th className="h-10 w-28 px-2 text-left align-middle font-medium text-muted-foreground text-xs">
-          {headers.multiple}
-        </th>
+        <TableHead className="w-32">
+          <span className="flex items-center gap-1.5">
+            {headers.minimum}
+            <TermHelp text={headers.minimumHelp} />
+          </span>
+        </TableHead>
+        <TableHead className="w-32">
+          <span className="flex items-center gap-1.5">
+            {headers.multiple}
+            <TermHelp text={headers.multipleHelp} />
+          </span>
+        </TableHead>
       </>
     ),
     renderCells: (row: { id: string; pending?: 'added' | 'removed' }) => {
@@ -256,32 +313,32 @@ export function catalogTermColumns({
 
       return (
         <>
-          <td className="px-2 py-1">
+          <TableCell>
             <Input
               type="number"
               min={1}
               step={1}
               disabled={disabled}
-              aria-label={headers.minimum}
+              aria-label={headers.minimumLabel}
               placeholder={entry?.mixed ? headers.mixed : catalogMinimum || headers.defaultHint}
               value={entry?.minimum_order_quantity ?? ''}
               onChange={(event) => set(row.id, 'minimum_order_quantity', event.target.value)}
               className="h-8"
             />
-          </td>
-          <td className="px-2 py-1">
+          </TableCell>
+          <TableCell>
             <Input
               type="number"
               min={1}
               step={1}
               disabled={disabled}
-              aria-label={headers.multiple}
+              aria-label={headers.multipleLabel}
               placeholder={entry?.mixed ? headers.mixed : catalogMultiple || headers.defaultHint}
               value={entry?.order_multiple ?? ''}
               onChange={(event) => set(row.id, 'order_multiple', event.target.value)}
               className="h-8"
             />
-          </td>
+          </TableCell>
         </>
       )
     },

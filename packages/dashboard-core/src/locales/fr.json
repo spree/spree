@@ -1561,7 +1561,14 @@
         },
         "mixed": "Variable",
         "inherits": "Par défaut",
-        "default_help": "S'applique à chaque produit de ce catalogue, sauf si un produit indique le sien dans la liste."
+        "default_help": "S'applique à chaque produit de ce catalogue, sauf si un produit indique le sien dans la liste.",
+        "column_minimum": "Minimum",
+        "column_multiple": "Multiple",
+        "help": {
+          "minimum": "La plus petite quantité qu'un acheteur peut commander d'un produit. Une commande inférieure est refusée en indiquant les quantités valables les plus proches — rien n'est jamais arrondi.",
+          "multiple": "Le pas. Avec un multiple de 24, un acheteur commande 24, 48 ou 72 — jamais 30. Les paliers partent du minimum : un minimum de 50 par pas de 24 autorise 50, 74 et 98.",
+          "order_minimum": "Le montant minimal d'une commande entière, articles seuls — la livraison et la taxe n'y contribuent pas. Les acheteurs voient ce qu'il leur manque et la commande est refusée en dessous."
+        }
       }
     }
   }

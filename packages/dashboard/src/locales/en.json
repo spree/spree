@@ -172,7 +172,14 @@
         },
         "mixed": "Mixed",
         "inherits": "Default",
-        "default_help": "Applies to every product in this catalog, unless a product states its own on the list."
+        "default_help": "Applies to every product in this catalog, unless a product states its own on the list.",
+        "column_minimum": "Minimum",
+        "column_multiple": "Multiple",
+        "help": {
+          "minimum": "The least a buyer may order of one product. An order below it is refused with the nearest valid quantities named — nothing is ever rounded up for them.",
+          "multiple": "The step size. With a multiple of 24 a buyer orders 24, 48 or 72 — never 30. Steps count up from the minimum, so a minimum of 50 in steps of 24 allows 50, 74 and 98.",
+          "order_minimum": "The least a whole order must come to, counting items only — delivery and tax do not help reach it. Buyers see how far short they are while they shop, and checkout is refused until they reach it."
+        }
       }
     },
     "categories": {

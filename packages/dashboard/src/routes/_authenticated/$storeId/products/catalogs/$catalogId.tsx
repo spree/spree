@@ -242,8 +242,15 @@ function CatalogBody({ catalog }: { catalog: Catalog }) {
                   form,
                   canEdit,
                   headers: {
-                    minimum: t('admin.fields.minimum_order_quantity.label'),
-                    multiple: t('admin.fields.order_multiple.label'),
+                    // Short column headers — the card's own title already
+                    // says these are quantity terms. The full names stay as
+                    // the inputs' accessible labels.
+                    minimum: t('admin.catalogs.terms.column_minimum'),
+                    multiple: t('admin.catalogs.terms.column_multiple'),
+                    minimumLabel: t('admin.fields.minimum_order_quantity.label'),
+                    multipleLabel: t('admin.fields.order_multiple.label'),
+                    minimumHelp: t('admin.catalogs.terms.help.minimum'),
+                    multipleHelp: t('admin.catalogs.terms.help.multiple'),
                     mixed: t('admin.catalogs.terms.mixed'),
                     defaultHint: t('admin.catalogs.terms.inherits'),
                   },

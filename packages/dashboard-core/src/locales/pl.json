@@ -1587,7 +1587,14 @@
         },
         "mixed": "Różne",
         "inherits": "Domyślne",
-        "default_help": "Dotyczy każdego produktu w tym katalogu, chyba że produkt na liście określi własne wartości."
+        "default_help": "Dotyczy każdego produktu w tym katalogu, chyba że produkt na liście określi własne wartości.",
+        "column_minimum": "Minimum",
+        "column_multiple": "Wielokrotność",
+        "help": {
+          "minimum": "Najmniejsza ilość jednego produktu, jaką kupujący może zamówić. Mniejsze zamówienie jest odrzucane ze wskazaniem najbliższych prawidłowych ilości — nic nie jest zaokrąglane.",
+          "multiple": "Wielkość kroku. Przy wielokrotności 24 kupujący zamawia 24, 48 lub 72 — nigdy 30. Kroki liczone są od minimum: przy minimum 50 i kroku 24 dozwolone są 50, 74 i 98.",
+          "order_minimum": "Najniższa wartość całego zamówienia, liczone tylko produkty — dostawa i podatek się nie liczą. Kupujący widzą, ile brakuje, a złożenie zamówienia jest blokowane do osiągnięcia progu."
+        }
       }
     }
   }

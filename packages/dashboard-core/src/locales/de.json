@@ -1561,7 +1561,14 @@
         },
         "mixed": "Gemischt",
         "inherits": "Standard",
-        "default_help": "Gilt für jedes Produkt in diesem Katalog, sofern ein Produkt in der Liste nichts Eigenes angibt."
+        "default_help": "Gilt für jedes Produkt in diesem Katalog, sofern ein Produkt in der Liste nichts Eigenes angibt.",
+        "column_minimum": "Minimum",
+        "column_multiple": "Vielfaches",
+        "help": {
+          "minimum": "Die geringste Menge, die ein Käufer von einem Produkt bestellen darf. Eine kleinere Bestellung wird abgelehnt und nennt die nächstgelegenen gültigen Mengen — es wird nie aufgerundet.",
+          "multiple": "Die Schrittweite. Bei einem Vielfachen von 24 bestellt ein Käufer 24, 48 oder 72 — nie 30. Die Schritte zählen ab der Mindestmenge: bei Minimum 50 und Schritten von 24 sind 50, 74 und 98 erlaubt.",
+          "order_minimum": "Der Mindestwert einer gesamten Bestellung, nur Artikel — Versand und Steuern zählen nicht mit. Käufer sehen beim Einkaufen, wie viel noch fehlt, und der Checkout wird bis dahin abgelehnt."
+        }
       }
     }
   }
