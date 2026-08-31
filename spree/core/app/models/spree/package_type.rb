@@ -34,7 +34,10 @@ module Spree
     # index ("one default per store") never sees two TRUE rows, and MySQL —
     # which cannot enforce that index — arrives at the same place.
     before_save :demote_other_defaults, if: -> { default? && will_save_change_to_default? }
-    before_destroy :ensure_not_default
+    validate :default_cannot_be_given_up, on: :update
+    # prepend so this runs before the association callbacks Rails registers,
+    # and is skipped when the store itself is going away.
+    before_destroy :ensure_not_default, prepend: true
 
     scope :default, -> { where(default: true) }
 
@@ -97,12 +100,24 @@ module Spree
 
     # Deleting the store's box would leave every quote with no tare and no
     # dimensions, which under-prices bulky shipments silently. Name another
-    # default first.
+    # default first — unless the store itself is being destroyed, where
+    # refusing would abort that too and strand the row.
     def ensure_not_default
       return unless default?
+      return if destroyed_by_association.present?
 
       errors.add(:base, Spree.t('errors.messages.cannot_delete_default_package_type'))
       throw(:abort)
+    end
+
+    # Clearing the flag on the only default leaves the store with no box at
+    # all, which is the same silent loss as deleting it. Promote another row
+    # instead; that demotes this one in the same save.
+    def default_cannot_be_given_up
+      return unless default_changed? && default_was && !default?
+      return if self.class.where(store_id: store_id, default: true).where.not(id: id).exists?
+
+      errors.add(:default, :cannot_be_given_up)
     end
 
     def demote_other_defaults

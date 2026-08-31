@@ -34,7 +34,7 @@ module Spree
         # yet, and stays readable on the placed order because the provider
         # froze it here when it quoted.
         attribute :freight_summary do |delivery_rate|
-          delivery_rate.freight_summary&.as_json
+          delivery_rate.freight_summary&.as_json(identify_lines: !params[:hide_prices])
         end
 
         attribute :display_cost do |deliver_rate|

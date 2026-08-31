@@ -97,7 +97,8 @@ module Spree
       def self.combine(parts)
         first = parts.first
         units = parts.sum(&:units)
-        cartons = divide(units, first.units_per_carton) || parts.filter_map(&:cartons).sum.presence
+        recombined = divide(units, first.units_per_carton)
+        cartons = recombined || parts.filter_map(&:cartons).sum.presence
         pallets = cartons && divide(cartons, first.cartons_per_pallet)
 
         new(
@@ -109,11 +110,28 @@ module Spree
           cartons_per_pallet: first.cartons_per_pallet,
           cartons: cartons,
           pallets: pallets,
-          volume: parts.sum(&:volume),
+          # Volume follows the recombined carton count for the same reason
+          # the count itself does: adding two part-full cartons' volumes
+          # reports space the combined shipment does not take.
+          volume: combined_volume(parts, recombined),
           weight: parts.sum(&:weight),
           complete: parts.all?(&:complete?)
         )
       end
+
+      # Per-carton volume from whichever part recorded one, scaled to the
+      # combined count. Falls back to the plain sum for lines measured loose,
+      # where volume is per unit and adding is right.
+      def self.combined_volume(parts, cartons)
+        summed = parts.sum(&:volume)
+        return summed if cartons.nil?
+
+        measured = parts.detect { |part| part.complete? && part.cartons.to_i.positive? && part.volume.to_d.positive? }
+        return summed if measured.nil?
+
+        (measured.volume.to_d / measured.cartons) * cartons
+      end
+      private_class_method :combined_volume
 
       # A part of anything still ships as a whole one.
       def self.divide(quantity, divisor)
@@ -142,15 +160,24 @@ module Spree
       private_class_method :pallets_for
 
       # A packed carton's declared gross weight where the merchant recorded
-      # one; otherwise the goods' own weight, which at least counts the
-      # contents.
+      # one — that figure already includes the box. Otherwise the goods plus
+      # the empty carton's own weight, so the packaging is not simply lost
+      # from a shipment the summary calls fully measured.
       def self.carton_weight_for(variant, cartons, quantity)
         declared = Spree::Measurement.to_kilograms(variant.carton_weight, unit: variant.weight_unit)
         return declared * cartons if declared&.positive?
 
-        unit_weight(variant) * quantity
+        (unit_weight(variant) * quantity) + (carton_tare(variant) * cartons)
       end
       private_class_method :carton_weight_for
+
+      # The empty carton's own weight, in the kilograms the summary reports.
+      def self.carton_tare(variant)
+        Spree::Measurement.to_kilograms(
+          variant.carton_package_type&.weight, unit: variant.carton_package_type&.weight_unit
+        ) || 0
+      end
+      private_class_method :carton_tare
 
       def self.unit_weight(variant)
         Spree::Measurement.to_kilograms(variant.weight, unit: variant.weight_unit) || 0

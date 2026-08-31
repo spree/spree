@@ -100,6 +100,21 @@ RSpec.describe 'freight serialization' do
       expect(summary['total_volume'].to_d).to eq(BigDecimal('0.12'))
     end
 
+    it 'withholds the per-line SKU where prices are hidden' do
+      snapshot = Spree::FreightSummary.new(
+        lines: [Spree::FreightSummary::Line.new(variant_id: 'variant_abc', sku: 'SECRET-SKU',
+                                                units: 48, cartons: 4, complete: true)]
+      ).as_json
+      rate = create(:delivery_rate, fulfillment: fulfillment, cost: 0, unpriced: true,
+                                    metadata: { 'freight_summary' => snapshot })
+
+      summary = described_class.new(rate, params: { store: store, hide_prices: true }).
+                to_h['freight_summary']
+
+      expect(summary['total_cartons']).to eq(4)
+      expect(summary['lines'].first).not_to have_key('sku')
+    end
+
     it 'leaves an ordinary parcel rate priced and unsummarized' do
       rate = create(:delivery_rate, fulfillment: fulfillment, cost: 12)
 
