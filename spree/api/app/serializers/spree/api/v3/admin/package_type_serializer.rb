@@ -8,14 +8,14 @@ module Spree
         class PackageTypeSerializer < V3::BaseSerializer
           typelize name: :string,
                    kind: :string,
-                   length: [:number, nullable: true],
-                   width: [:number, nullable: true],
-                   height: [:number, nullable: true],
+                   length: [:string, nullable: true],
+                   width: [:string, nullable: true],
+                   height: [:string, nullable: true],
                    dimensions_unit: :string,
-                   weight: [:number, nullable: true],
-                   max_weight: [:number, nullable: true],
+                   weight: [:string, nullable: true],
+                   max_weight: [:string, nullable: true],
                    weight_unit: :string,
-                   volume: [:number, nullable: true],
+                   volume: [:string, nullable: true],
                    default: :boolean,
                    metadata: ['Record<string, unknown> | null']
 

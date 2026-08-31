@@ -1561,6 +1561,7 @@ paths:
                   order_minimum:
                   order_minimum_shortfall:
                   below_order_minimum: false
+                  freight_summary:
                   shipping_eq_billing_address: true
                   discounts: []
                   fees: []
@@ -1679,6 +1680,7 @@ paths:
                   order_minimum:
                   order_minimum_shortfall:
                   below_order_minimum: false
+                  freight_summary:
                   shipping_eq_billing_address: true
                   discounts: []
                   fees: []
@@ -1860,6 +1862,7 @@ paths:
                 order_minimum:
                 order_minimum_shortfall:
                 below_order_minimum: false
+                freight_summary:
                 shipping_eq_billing_address: true
                 discounts: []
                 fees: []
@@ -2041,6 +2044,7 @@ paths:
                 order_minimum:
                 order_minimum_shortfall:
                 below_order_minimum: false
+                freight_summary:
                 shipping_eq_billing_address: true
                 discounts: []
                 fees: []
@@ -2207,6 +2211,7 @@ paths:
                 order_minimum:
                 order_minimum_shortfall:
                 below_order_minimum: false
+                freight_summary:
                 shipping_eq_billing_address: true
                 discounts: []
                 fees: []
@@ -2492,6 +2497,7 @@ paths:
                 order_minimum:
                 order_minimum_shortfall:
                 below_order_minimum: false
+                freight_summary:
                 shipping_eq_billing_address: false
                 discounts: []
                 fees: []
@@ -2668,6 +2674,7 @@ paths:
                 company_name:
                 po_document_filename:
                 po_document_byte_size:
+                freight_summary:
                 number: R1001
                 email: marvel@bruen.com
                 customer_note:
@@ -2800,6 +2807,8 @@ paths:
                     carrier:
                     service_level:
                     estimated_delivery_date:
+                    unpriced: false
+                    freight_summary:
                     display_cost: "$10.00"
                     display_total: "$10.00"
                     display_additional_tax_total: "$0.00"
@@ -3039,6 +3048,7 @@ paths:
                 order_minimum:
                 order_minimum_shortfall:
                 below_order_minimum: false
+                freight_summary:
                 shipping_eq_billing_address: true
                 discounts: []
                 fees: []
@@ -3237,6 +3247,7 @@ paths:
                 order_minimum:
                 order_minimum_shortfall:
                 below_order_minimum: false
+                freight_summary:
                 shipping_eq_billing_address: true
                 discounts: []
                 fees: []
@@ -3423,6 +3434,7 @@ paths:
                 order_minimum:
                 order_minimum_shortfall:
                 below_order_minimum: false
+                freight_summary:
                 shipping_eq_billing_address: false
                 discounts: []
                 fees: []
@@ -3520,6 +3532,8 @@ paths:
                     carrier:
                     service_level:
                     estimated_delivery_date:
+                    unpriced: false
+                    freight_summary:
                     display_cost: "$10.00"
                     display_total: "$10.00"
                     display_additional_tax_total: "$0.00"
@@ -3716,6 +3730,7 @@ paths:
                 order_minimum:
                 order_minimum_shortfall:
                 below_order_minimum: false
+                freight_summary:
                 shipping_eq_billing_address: true
                 discounts: []
                 fees: []
@@ -3969,6 +3984,7 @@ paths:
                 order_minimum:
                 order_minimum_shortfall:
                 below_order_minimum: false
+                freight_summary:
                 shipping_eq_billing_address: true
                 discounts: []
                 fees: []
@@ -4183,6 +4199,7 @@ paths:
                 order_minimum:
                 order_minimum_shortfall:
                 below_order_minimum: false
+                freight_summary:
                 shipping_eq_billing_address: true
                 discounts: []
                 fees: []
@@ -4443,6 +4460,7 @@ paths:
                 order_minimum:
                 order_minimum_shortfall:
                 below_order_minimum: false
+                freight_summary:
                 shipping_eq_billing_address: true
                 discounts: []
                 fees: []
@@ -4626,6 +4644,7 @@ paths:
                 order_minimum:
                 order_minimum_shortfall:
                 below_order_minimum: false
+                freight_summary:
                 shipping_eq_billing_address: true
                 discounts: []
                 fees: []
@@ -5271,6 +5290,7 @@ paths:
                 order_minimum:
                 order_minimum_shortfall:
                 below_order_minimum: false
+                freight_summary:
                 shipping_eq_billing_address: true
                 discounts: []
                 fees: []
@@ -5488,6 +5508,7 @@ paths:
                 order_minimum:
                 order_minimum_shortfall:
                 below_order_minimum: false
+                freight_summary:
                 shipping_eq_billing_address: true
                 discounts: []
                 fees: []
@@ -5623,6 +5644,7 @@ paths:
                 company_name:
                 po_document_filename:
                 po_document_byte_size:
+                freight_summary:
                 number: R1001
                 email: guest@example.com
                 customer_note:
@@ -5764,6 +5786,8 @@ paths:
                     carrier:
                     service_level:
                     estimated_delivery_date:
+                    unpriced: false
+                    freight_summary:
                     display_cost: "$10.00"
                     display_total: "$10.00"
                     display_additional_tax_total: "$0.00"
@@ -6742,6 +6766,7 @@ paths:
                   company_name:
                   po_document_filename:
                   po_document_byte_size:
+                  freight_summary:
                   number: R1001
                   email: idella.ratke@runolfsdottir.us
                   customer_note:
@@ -6883,6 +6908,8 @@ paths:
                       carrier:
                       service_level:
                       estimated_delivery_date:
+                      unpriced: false
+                      freight_summary:
                       display_cost: "$10.00"
                       display_total: "$10.00"
                       display_additional_tax_total: "$0.00"
@@ -7059,6 +7086,7 @@ paths:
                 company_name:
                 po_document_filename:
                 po_document_byte_size:
+                freight_summary:
                 number: R1001
                 email: whitney_homenick@leschwhite.co.uk
                 customer_note:
@@ -7200,6 +7228,8 @@ paths:
                     carrier:
                     service_level:
                     estimated_delivery_date:
+                    unpriced: false
+                    freight_summary:
                     display_cost: "$10.00"
                     display_total: "$10.00"
                     display_additional_tax_total: "$0.00"
@@ -10610,6 +10640,7 @@ paths:
                   company_name: Acme Industrial
                   po_document_filename:
                   po_document_byte_size:
+                  freight_summary:
                   number: R1001
                   email: chanell_langosh@schamberger.info
                   customer_note:
@@ -10751,6 +10782,8 @@ paths:
                       carrier:
                       service_level:
                       estimated_delivery_date:
+                      unpriced: false
+                      freight_summary:
                       display_cost: "$10.00"
                       display_total: "$10.00"
                       display_additional_tax_total: "$0.00"
@@ -11885,6 +11918,9 @@ components:
         below_order_minimum:
           type: boolean
           nullable: true
+        freight_summary:
+          type: object
+          nullable: true
         shipping_eq_billing_address:
           type: boolean
         discounts:
@@ -11978,6 +12014,7 @@ components:
       - order_minimum
       - order_minimum_shortfall
       - below_order_minimum
+      - freight_summary
       - shipping_eq_billing_address
       - discounts
       - fees
@@ -12554,6 +12591,11 @@ components:
         estimated_delivery_date:
           type: string
           nullable: true
+        unpriced:
+          type: boolean
+        freight_summary:
+          type: object
+          nullable: true
         display_cost:
           type: string
         display_total:
@@ -12579,6 +12621,8 @@ components:
       - carrier
       - service_level
       - estimated_delivery_date
+      - unpriced
+      - freight_summary
       - display_cost
       - display_total
       - display_additional_tax_total
@@ -13543,6 +13587,9 @@ components:
         po_document_byte_size:
           type: number
           nullable: true
+        freight_summary:
+          type: object
+          nullable: true
         number:
           type: string
         email:
@@ -13691,6 +13738,7 @@ components:
       - company_name
       - po_document_filename
       - po_document_byte_size
+      - freight_summary
       - number
       - email
       - customer_note

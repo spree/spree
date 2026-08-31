@@ -108,7 +108,24 @@ RSpec.describe Spree::FreightSummary do
     end
   end
 
-  it 'is empty for a cart with nothing in it' do
-    expect(summary_for([])).to be_empty
+  describe 'having nothing to report' do
+    it 'is empty for a cart with nothing in it' do
+      expect(summary_for([])).to be_empty
+    end
+
+    # A retail catalog nobody measured would otherwise report a shipment of
+    # zero cartons taking up no space, which reads as a measured empty load
+    # rather than an unmeasured one.
+    it 'is empty when the goods carry no measurements at all' do
+      unmeasured = create(:variant, width: nil, height: nil, depth: nil, weight: 0)
+
+      expect(summary_for([[unmeasured, 3]])).to be_empty
+    end
+
+    it 'is not empty once anything is measured' do
+      measured = create(:variant, width: 10, height: 10, depth: 10, dimensions_unit: 'cm')
+
+      expect(summary_for([[measured, 1]])).not_to be_empty
+    end
   end
 end

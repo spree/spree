@@ -106,9 +106,15 @@ module Spree
       lines.any? && lines.all?(&:complete?)
     end
 
+    # True when there is nothing here worth reporting as freight — no lines,
+    # or lines that measured to nothing because the catalog records no
+    # dimensions. A retail cart of unmeasured goods has no freight summary
+    # rather than one full of zeros, which would read as a shipment that
+    # takes up no space.
+    #
     # @return [Boolean]
     def empty?
-      lines.empty?
+      lines.empty? || (total_volume.zero? && total_weight.zero? && total_cartons.zero?)
     end
 
     # The serialized form frozen onto a delivery rate at completion.
