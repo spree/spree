@@ -992,9 +992,12 @@ function InlineValueList({
     gcTime: 30 * 60_000,
   })
 
-  // Deferred so a fast typist fires one request for what they finished typing
-  // rather than one per keystroke — the query string is part of the cache key,
-  // so every intermediate value would otherwise be its own round trip.
+  // Deferred so typing stays responsive: the input updates immediately while
+  // the list re-renders at React's convenience, matching the resource picker
+  // sheet. It lowers request volume under load rather than guaranteeing it —
+  // React may still let every keystroke through on a fast machine. What keeps
+  // that cheap is the cache: repeated prefixes are served from it, and only a
+  // genuinely new query reaches the network.
   const deferredQuery = useDeferredValue(query)
 
   const resources = useQuery({
@@ -1009,9 +1012,19 @@ function InlineValueList({
     // panel instant; `gcTime` outlives the unmount between opens.
     staleTime: 5 * 60_000,
     gcTime: 30 * 60_000,
-    // Keeps the previous matches on screen while the next query resolves,
-    // rather than blanking the list on every keystroke.
-    placeholderData: (previous) => previous,
+    // Keeps the previous matches on screen while the next query resolves, so
+    // the list does not blank on every keystroke.
+    //
+    // Only within one field of one tenant: the second argument is the query
+    // those results came from, so a change of store, seller or filter column
+    // drops them instead of briefly offering another tenant's records as
+    // though they were this one's.
+    placeholderData: (previous, previousQuery) => {
+      const [, previousResource, previousTenant] = (previousQuery?.queryKey ?? []) as unknown[]
+      const sameScope =
+        previousResource === column.filterResource?.queryKey && previousTenant === tenantId
+      return sameScope ? previous : undefined
+    },
   })
 
   const options = useMemo(() => {

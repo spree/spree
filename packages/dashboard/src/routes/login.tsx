@@ -175,11 +175,11 @@ function PasswordLoginForm() {
             {...form.register('password')}
           />
           {errors.password && (
-            <p className="col-span-2 row-start-3 text-sm text-destructive">
-              {errors.password.message}
-            </p>
+            <p className="col-span-2 text-sm text-destructive">{errors.password.message}</p>
           )}
-          <Button type="submit" className="col-span-2 row-start-4 mt-2 w-full" disabled={isLoading}>
+          {/* Auto-placed rather than pinned to a row: naming a row would reserve
+              it even when no error renders, leaving a gap above the button. */}
+          <Button type="submit" className="col-span-2 mt-2 w-full" disabled={isLoading}>
             {isLoading ? t('admin.actions.signing_in') : t('admin.actions.sign_in')}
           </Button>
           <Link

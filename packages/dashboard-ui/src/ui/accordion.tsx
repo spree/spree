@@ -8,13 +8,14 @@ import { cn } from '../lib/utils'
  *
  * One item is open at a time by default: a list of steps is read in order, and
  * letting several stand open turns it back into the wall of text the collapse
- * exists to avoid. Pass `openMultiple` where the sections are independent
- * rather than sequential.
+ * exists to avoid. Pass `multiple` where the sections are independent rather
+ * than sequential.
  */
 function Accordion({ ...props }: React.ComponentProps<typeof AccordionPrimitive.Root>) {
   return <AccordionPrimitive.Root data-slot="accordion" {...props} />
 }
 
+/** One section. `value` identifies it for `defaultValue` and controlled use. */
 function AccordionItem({
   className,
   ...props
@@ -30,6 +31,10 @@ function AccordionItem({
   )
 }
 
+/**
+ * The always-visible row that opens its section. Renders a chevron after the
+ * children, so callers pass only the label's own content.
+ */
 function AccordionTrigger({
   className,
   children,
@@ -52,6 +57,10 @@ function AccordionTrigger({
   )
 }
 
+/**
+ * The revealed panel. Carries the section's padding, so `className` styles the
+ * content rather than the animated box around it.
+ */
 function AccordionContent({
   className,
   children,

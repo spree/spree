@@ -26,7 +26,7 @@ export function optionTypeAutocompleteProps(queryKey: string) {
         name_cont: q,
         limit: 100,
         sort: 'name',
-        fields: ['name', 'presentation'],
+        fields: ['name', 'label'],
       }),
     hydrate: (ids: string[]) => adminClient.optionTypes.list({ id_in: ids, limit: ids.length }),
     getOptionLabel: (optionType: OptionType) =>
