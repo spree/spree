@@ -38,27 +38,35 @@ RSpec.describe Spree::Api::V3::Store::Carts::PoDocumentsController, type: :contr
     # Without a gate here an attacker could mint uploads for arbitrarily large
     # files and fill the merchant's bucket — the attachment's own validation
     # only runs once the bytes are already stored.
+    # The point of the gate is that no row is written and no URL is handed
+    # out, so the assertion is on the blob count — an error response alone
+    # would still pass if a regression created the blob before rendering it.
     it 'refuses to presign an upload larger than the cap' do
-      post :create, params: {
-        cart_id: order.prefixed_id,
-        blob: blob_params.merge(byte_size: Spree::Purchase::PurchaseOrder::MAX_PO_DOCUMENT_SIZE + 1)
-      }
+      expect {
+        post :create, params: {
+          cart_id: order.prefixed_id,
+          blob: blob_params.merge(byte_size: Spree::Purchase::PurchaseOrder::MAX_PO_DOCUMENT_SIZE + 1)
+        }
+      }.not_to change(ActiveStorage::Blob, :count)
 
       expect(response).to have_http_status(:unprocessable_content)
-      expect { ActiveStorage::Blob.find_signed!(json_response['signed_id']) }.to raise_error(StandardError)
     end
 
     it 'refuses to presign a file type a purchase order never arrives as' do
-      post :create, params: {
-        cart_id: order.prefixed_id,
-        blob: blob_params.merge(content_type: 'application/x-sh')
-      }
+      expect {
+        post :create, params: {
+          cart_id: order.prefixed_id,
+          blob: blob_params.merge(content_type: 'application/x-sh')
+        }
+      }.not_to change(ActiveStorage::Blob, :count)
 
       expect(response).to have_http_status(:unprocessable_content)
     end
 
     it 'refuses a byte_size that is not a positive number' do
-      post :create, params: { cart_id: order.prefixed_id, blob: blob_params.merge(byte_size: 0) }
+      expect {
+        post :create, params: { cart_id: order.prefixed_id, blob: blob_params.merge(byte_size: 0) }
+      }.not_to change(ActiveStorage::Blob, :count)
 
       expect(response).to have_http_status(:unprocessable_content)
     end
