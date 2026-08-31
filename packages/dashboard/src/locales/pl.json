@@ -1477,11 +1477,6 @@
           "label": "Nazwa",
           "placeholder": "np. Hurt UE"
         },
-        "pricing_mode": {
-          "automatic": "Procent od cen bazowych",
-          "fixed": "Tylko ceny, które wpiszę",
-          "label": "Ceny"
-        },
         "starts_at": {
           "help": "Kiedy ta lista staje się aktywna. Pozostaw puste, aby rozpocząć natychmiast po aktywacji.",
           "label": "Rozpoczyna się",
@@ -3116,8 +3111,6 @@
           },
           "edit_prices_cta": "Edytuj ceny",
           "no_changes": "Brak zmian do zapisania.",
-          "pricing_help": "Jak ta lista tworzy ceny. Ceny wpisane ręcznie zawsze mają pierwszeństwo.",
-          "pricing_section": "Ceny",
           "products": {
             "add_cta": "Dodaj produkty",
             "column_product": "Produkt",

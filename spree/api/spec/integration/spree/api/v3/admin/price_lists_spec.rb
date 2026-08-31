@@ -406,6 +406,9 @@ RSpec.describe 'Admin Price Lists API', type: :request, swagger_doc: 'api-refere
       response '200', 'price list activated' do
         let(:'x-spree-api-key') { secret_api_key.plaintext_token }
         let(:id) { price_list.prefixed_id }
+        # Activation refuses a list with nothing to apply to; a rule is the
+        # cheapest way to give the shared fixture something.
+        before { create(:volume_price_rule, price_list: price_list, min_quantity: 2) }
 
         schema '$ref' => '#/components/schemas/PriceList'
 

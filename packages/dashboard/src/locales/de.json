@@ -1465,11 +1465,6 @@
           "label": "Name",
           "placeholder": "z. B. EU-Großhandel"
         },
-        "pricing_mode": {
-          "automatic": "Ein Prozentsatz auf die Grundpreise",
-          "fixed": "Nur die Preise, die ich eingebe",
-          "label": "Preisgestaltung"
-        },
         "starts_at": {
           "help": "Wann diese Liste aktiv wird. Leer lassen, um bei Aktivierung sofort zu starten.",
           "label": "Beginnt",
@@ -3082,8 +3077,6 @@
           },
           "edit_prices_cta": "Preise bearbeiten",
           "no_changes": "Keine Änderungen zum Speichern.",
-          "pricing_help": "Wie diese Liste Preise erzeugt. Selbst eingegebene Preise haben immer Vorrang.",
-          "pricing_section": "Preisgestaltung",
           "products": {
             "add_cta": "Produkte hinzufügen",
             "column_product": "Produkt",

@@ -48,9 +48,12 @@ module Spree
         failure(catalog, result.error.value) unless result.success?
       end
 
+      # Born owned: the catalog id goes in with the create, since a percentage
+      # is only valid on a list that has a catalog to scope it.
       def create_owned
         result = Spree.price_list_create_workflow.call(
-          store: catalog.store, attributes: list_attributes(for_create: true)
+          store: catalog.store,
+          attributes: list_attributes(for_create: true).merge(catalog_id: catalog.id)
         )
         return failure(catalog, result.error.value) unless result.success?
 

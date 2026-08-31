@@ -51,6 +51,7 @@ module Spree
               numericality: { greater_than: -100 }, allow_nil: true
     validate :starts_at_before_ends_at
     validate :catalog_in_same_store
+    validate :percentage_requires_catalog
 
     # `catalog_id` is queryable so a picker can offer the lists that are
     # actually available — unowned, plus the one the catalog already holds.
@@ -308,6 +309,17 @@ module Spree
       return if catalog.store_id == store_id
 
       errors.add(:catalog, :invalid)
+    end
+
+    # A percentage has no product scope of its own — it adjusts every variant
+    # the list is asked about. Owned by a catalog, the assortment draws that
+    # line; standalone, nothing does, and a rule-less list would put the
+    # whole store on sale while its product list changed nothing. So the
+    # feature exists only inside an agreement.
+    def percentage_requires_catalog
+      return if price_adjustment_percentage.nil? || catalog_id.present?
+
+      errors.add(:price_adjustment_percentage, :requires_catalog)
     end
 
     def starts_at_before_ends_at

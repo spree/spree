@@ -176,11 +176,22 @@ describe Spree::PricingProvider::Internal::Resolution do
     end
 
     # A list carrying a percentage derives a price from the base price for
-    # every variant it holds no explicit amount for
+    # every variant it holds no explicit amount for. Such a list is always
+    # catalog-owned — the assortment is what scopes the percentage to
+    # products — so the buyer here is a member of the catalog's audience
     # (docs/plans/6.0-price-list-automatic-pricing.md).
     context 'with an automatic (percentage adjustment) price list' do
+      let(:company) { create(:company, store: store) }
+      let(:catalog) do
+        create(:catalog, store: store).tap do |owner|
+          create(:catalog_assignment, catalog: owner, assignable: company)
+        end
+      end
       let!(:price_list) do
-        create(:price_list, :active, store: store, price_adjustment_percentage: -15)
+        create(:price_list, :active, store: store, catalog: catalog, price_adjustment_percentage: -15)
+      end
+      let(:context) do
+        Spree::Pricing::Context.new(variant: variant, currency: currency, store: store, company: company)
       end
 
       before { variant.prices.base_prices.with_currency(currency).update_all(amount: 20.00) }
@@ -260,42 +271,25 @@ describe Spree::PricingProvider::Internal::Resolution do
       # applies to whatever base price the buyer's currency has.
       it 'applies to every currency the variant is priced in' do
         create(:price, variant: variant, currency: 'EUR', amount: 50.00)
-        eur_context = Spree::Pricing::Context.new(variant: variant, currency: 'EUR', store: store)
+        eur_context = Spree::Pricing::Context.new(
+          variant: variant, currency: 'EUR', store: store, company: company
+        )
 
         expect(described_class.new(eur_context).resolve.amount).to eq(42.50)
       end
 
-      # An adjustment list is an ordinary list otherwise — status, dates and
-      # rules gate it exactly as before.
+      # An adjustment list is an ordinary owned list otherwise — its status
+      # and dates gate it exactly as before.
       it 'does not apply when the list is not in effect' do
         price_list.update!(status: 'inactive')
 
         expect(resolver.resolve.amount).to eq(20.00)
       end
 
-      it 'obeys its own rules' do
-        create(:volume_price_rule, price_list: price_list, min_quantity: 10)
+      it 'is not reached by a buyer outside the catalog audience' do
+        outsider = Spree::Pricing::Context.new(variant: variant, currency: currency, store: store)
 
-        expect(resolver.resolve.amount).to eq(20.00)
-
-        bulk_context = Spree::Pricing::Context.new(
-          variant: variant, currency: currency, store: store, quantity: 10
-        )
-        expect(described_class.new(bulk_context).resolve.amount).to eq(17.00)
-      end
-
-      it 'is reached through a catalog when the list is catalog-owned' do
-        company = create(:company, store: store)
-        catalog = create(:catalog, store: store)
-        create(:catalog_assignment, catalog: catalog, assignable: company)
-        price_list.update!(catalog: catalog)
-
-        member_context = Spree::Pricing::Context.new(
-          variant: variant, currency: currency, store: store, company: company
-        )
-        expect(described_class.new(member_context).resolve.amount).to eq(17.00)
-        # …and not by anyone outside its audience.
-        expect(resolver.resolve.amount).to eq(20.00)
+        expect(described_class.new(outsider).resolve.amount).to eq(20.00)
       end
     end
 

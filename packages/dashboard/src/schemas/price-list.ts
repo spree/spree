@@ -101,14 +101,6 @@ export const priceListFormSchema = z
     starts_at: z.string().optional().nullable(),
     ends_at: z.string().optional().nullable(),
     match_policy: z.enum(MATCH_POLICIES).default('all'),
-    /**
-     * Split across three fields for editing, recombined into the single
-     * signed `price_adjustment_percentage` by `priceListValuesToParams`.
-     */
-    pricing_mode: z.enum(PRICING_MODES).default('fixed'),
-    adjustment_direction: z.enum(ADJUSTMENT_DIRECTIONS).default('decrease'),
-    adjustment_magnitude: z.string().trim().optional(),
-    adjust_compare_at: z.boolean().default(false),
     rules: z.array(priceRuleDraftSchema).default([]),
     /**
      * Staged product membership, applied on Save through the nested products
@@ -129,28 +121,13 @@ export const priceListFormSchema = z
       error: () => i18n.t('admin.products.price_lists.validation.ends_after_starts'),
     },
   )
-  .refine(
-    (v) => v.pricing_mode !== 'automatic' || parsePercentage(v.adjustment_magnitude) !== null,
-    {
-      path: ['adjustment_magnitude'],
-      error: () => i18n.t('admin.products.price_lists.validation.adjustment_required'),
-    },
-  )
-  .refine(
-    (v) => {
-      if (v.pricing_mode !== 'automatic' || v.adjustment_direction !== 'decrease') return true
-      const magnitude = parsePercentage(v.adjustment_magnitude)
-      // A 100% discount is free, and deeper is negative money. The server
-      // enforces the same bound on the signed value.
-      return magnitude === null || magnitude < 100
-    },
-    {
-      path: ['adjustment_magnitude'],
-      error: () => i18n.t('admin.products.price_lists.validation.adjustment_too_deep'),
-    },
-  )
 
-/** A positive percentage, or null when absent or unparseable. */
+/**
+ * A positive percentage, or null when absent or unparseable. Lives here
+ * with the other percentage helpers, though only the catalog form uses them
+ * now: a percentage adjustment is valid only on a list a catalog owns, so
+ * the standalone editor no longer offers it.
+ */
 export function parsePercentage(value: string | undefined): number | null {
   if (!value?.trim()) return null
   const parsed = Number(value)
@@ -165,10 +142,6 @@ export const PRICE_LIST_DEFAULTS: PriceListFormValues = {
   starts_at: null,
   ends_at: null,
   match_policy: 'all',
-  pricing_mode: 'fixed',
-  adjustment_direction: 'decrease',
-  adjustment_magnitude: '',
-  adjust_compare_at: false,
   rules: [],
   staged_products: { adds: [], removes: [] },
 }
@@ -182,28 +155,7 @@ export function priceListValuesToParams(
     starts_at: v.starts_at || null,
     ends_at: v.ends_at || null,
     match_policy: v.match_policy,
-    ...adjustmentParams(v),
     rules: v.rules.map(ruleDraftToPayload),
-  }
-}
-
-/**
- * Recombines the edited magnitude and direction into the signed percentage
- * the API stores. A fixed list sends an explicit null, which is what clears
- * an adjustment a list previously carried.
- */
-function adjustmentParams(v: PriceListFormValues) {
-  if (v.pricing_mode !== 'automatic') {
-    return { price_adjustment_percentage: null, adjust_compare_at: false }
-  }
-
-  const magnitude = parsePercentage(v.adjustment_magnitude)
-  if (magnitude === null) return { adjust_compare_at: v.adjust_compare_at }
-
-  const signed = v.adjustment_direction === 'decrease' ? -magnitude : magnitude
-  return {
-    price_adjustment_percentage: String(signed),
-    adjust_compare_at: v.adjust_compare_at,
   }
 }
 

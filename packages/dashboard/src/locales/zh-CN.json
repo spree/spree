@@ -1461,11 +1461,6 @@
           "label": "名称",
           "placeholder": "例如：欧盟批发"
         },
-        "pricing_mode": {
-          "automatic": "在基准价格上按百分比调整",
-          "fixed": "仅使用我输入的价格",
-          "label": "定价"
-        },
         "starts_at": {
           "help": "此列表何时生效。留空则在激活时立即开始。",
           "label": "开始时间",
@@ -3075,8 +3070,6 @@
           },
           "edit_prices_cta": "编辑价格",
           "no_changes": "没有需要保存的更改。",
-          "pricing_help": "此价目表如何生成价格。您手动输入的价格始终优先。",
-          "pricing_section": "定价",
           "products": {
             "add_cta": "添加产品",
             "column_product": "产品",

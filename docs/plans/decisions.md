@@ -4498,3 +4498,43 @@ keeps provider-free). It is a comparison figure, not a promise: the revert
 re-prices through the resolver and may land elsewhere. It required
 eager-loading variant prices in the orders controller's own `scope`, which
 bypasses `scope_includes` — 15 price queries per order page became 1.
+
+## 2026-08-31 — Percentage adjustment is a catalog-owned feature; a standalone list must have something to apply to
+
+Revises the same-day automatic-pricing decision, which put the ±% Pricing
+card on the standalone price-list page as well as the catalog page.
+
+**The finding.** A percentage list has no product scope of its own: it
+adjusts every variant it is asked about. On a catalog-owned list the
+catalog's assortment draws that line, because the audience only ever sees
+(and so is only ever priced on) what the assortment allows. On a standalone
+list nothing draws it. A rule-less standalone −15% list put the entire store
+on sale for every shopper — and adding products to that list, which the UI
+offered and counted, changed nothing at all. A control that looks like it
+scopes and does not is worse than a missing one.
+
+**Decision.** `price_adjustment_percentage` may only be set on a list a
+catalog owns (a `PriceList` validation; `Catalogs::SetPriceList` creates
+owned lists with their `catalog_id` already set). The standalone price-list
+editor no longer offers the percentage at all. **Open consequence for the plan's headline case** — automatic volume
+pricing, a `VolumeRule` plus a percentage: an owned list's own rules are not
+consulted by the resolver (`catalog_price_lists` selects on status and dates
+only, per the catalogs doc), so that combination has no working home until
+owned lists honour their *context* rules. Deciding that is the next call;
+recorded here rather than silently changing resolver semantics. A product-scoped store-wide percentage discount ("−15% on these 40
+SKUs for everyone") is a Promotion's job: promotions already have product
+rules and a percent action, and it is a campaign, not an agreement.
+
+**Also.** A standalone list with no rules, no catalog and no products is
+refused activation (`PriceLists::Activate`). Such a list applies to
+everyone and prices nothing; a draft may sit that way while it is built,
+but making it live is refused so that emptiness reads as the mistake it is.
+
+Rejected: letting the list's own products scope an automatic list, with
+"no products" meaning "everything". That reintroduces the exact leak the
+catalog rework closed — remove the last product and the whole store goes on
+sale — as a default rather than an accident.
+
+Plans amended: `6.0-price-list-automatic-pricing.md` (Key Decisions, API +
+dashboard), `6.0-catalog-agreement-rework.md` (unchanged in substance — the
+catalog page was always the card's home).

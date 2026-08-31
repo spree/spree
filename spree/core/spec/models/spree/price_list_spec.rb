@@ -29,10 +29,23 @@ describe Spree::PriceList, type: :model do
     # At -100 every derived price is zero; below it the arithmetic goes
     # negative. A markup has no ceiling.
     it 'refuses a discount of 100% or deeper' do
-      expect(build(:price_list, price_adjustment_percentage: -100)).not_to be_valid
-      expect(build(:price_list, price_adjustment_percentage: -100.001)).not_to be_valid
-      expect(build(:price_list, price_adjustment_percentage: -99.999)).to be_valid
-      expect(build(:price_list, price_adjustment_percentage: 500)).to be_valid
+      catalog = create(:catalog, store: @default_store)
+      owned = ->(pct) { build(:price_list, store: @default_store, catalog: catalog, price_adjustment_percentage: pct) }
+
+      expect(owned.call(-100)).not_to be_valid
+      expect(owned.call(-100.001)).not_to be_valid
+      expect(owned.call(-99.999)).to be_valid
+      expect(owned.call(500)).to be_valid
+    end
+
+    # A percentage has no product scope of its own; the owning catalog's
+    # assortment is what gives it one. Standalone, it would put the whole
+    # store on sale while the list's own products changed nothing.
+    it 'is only valid on a list a catalog owns' do
+      expect(build(:price_list, price_adjustment_percentage: -15)).not_to be_valid
+
+      catalog = create(:catalog, store: @default_store)
+      expect(build(:price_list, store: @default_store, catalog: catalog, price_adjustment_percentage: -15)).to be_valid
     end
   end
 

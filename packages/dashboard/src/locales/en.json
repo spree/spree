@@ -1465,11 +1465,6 @@
           "label": "Name",
           "placeholder": "e.g. EU wholesale"
         },
-        "pricing_mode": {
-          "automatic": "A percentage off base prices",
-          "fixed": "Only the prices I enter",
-          "label": "Pricing"
-        },
         "starts_at": {
           "help": "When this list becomes active. Leave blank to start immediately on activation.",
           "label": "Starts",
@@ -3082,8 +3077,6 @@
           },
           "edit_prices_cta": "Edit prices",
           "no_changes": "No changes to save.",
-          "pricing_help": "How this list produces prices. Prices you enter yourself always win.",
-          "pricing_section": "Pricing",
           "products": {
             "add_cta": "Add products",
             "column_product": "Product",

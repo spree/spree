@@ -1465,11 +1465,6 @@
           "label": "Nom",
           "placeholder": "ex. Vente en gros UE"
         },
-        "pricing_mode": {
-          "automatic": "Un pourcentage sur les prix de base",
-          "fixed": "Uniquement les prix que je saisis",
-          "label": "Tarification"
-        },
         "starts_at": {
           "help": "Moment où cette liste devient active. Laissez vide pour démarrer immédiatement à l'activation.",
           "label": "Début",
@@ -3082,8 +3077,6 @@
           },
           "edit_prices_cta": "Modifier les prix",
           "no_changes": "Aucune modification à enregistrer.",
-          "pricing_help": "Comment cette liste produit ses prix. Les prix que vous saisissez priment toujours.",
-          "pricing_section": "Tarification",
           "products": {
             "add_cta": "Ajouter des produits",
             "column_product": "Produit",
