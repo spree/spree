@@ -43,6 +43,8 @@ module Spree
       # and the completion event — public API a subscriber may act on — would
       # fire twice for one settlement.
       def mark_completed
+        halt!(seller_payout) if reference_taken_by_another_settlement?
+
         attributes = { status: 'completed', updated_at: Time.current }
         attributes[:reference] = reference if reference.present?
 
@@ -54,17 +56,24 @@ module Spree
         halt!(seller_payout.reload) if claimed.zero?
 
         seller_payout.reload
-      rescue ActiveRecord::RecordNotUnique
-        # The reference is already on another settlement, so this movement is
-        # recorded and completing this row would record it twice. Reachable
-        # through a settlement whose outcome was never established: it holds no
-        # reference of its own, so it is matched by the id we sent rather than
-        # the provider's, and a redelivered event can name one already filed.
-        #
-        # The row is left where it is for a person to reconcile — marking it
-        # completed without the reference would claim a movement that belongs
-        # to a different settlement.
-        halt!(seller_payout.reload)
+      end
+
+      # Whether this reference already names a different settlement, in which
+      # case that movement is recorded and completing this row would record it
+      # twice. Reachable through a settlement whose outcome was never
+      # established: it holds no reference of its own, so it is matched by the
+      # id we sent rather than the provider's, and a redelivered event can name
+      # one already filed.
+      #
+      # Asked before the write rather than rescuing the unique index, because
+      # on PostgreSQL a violated constraint poisons the surrounding
+      # transaction — every later statement fails, including the reload the
+      # rescue would want.
+      def reference_taken_by_another_settlement?
+        return false if reference.blank?
+
+        Spree::SellerPayout.where(provider: seller_payout.provider, reference: reference).
+          where.not(id: seller_payout.id).exists?
       end
     end
   end
