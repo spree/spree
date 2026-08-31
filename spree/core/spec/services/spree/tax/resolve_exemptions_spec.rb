@@ -25,6 +25,18 @@ describe Spree::Tax::ResolveExemptions do
                     bill_address: create(:address, country: germany, state: berlin))
     end
 
+    # Certificates stay on file but stop applying while the policy says the
+    # business may not act commercially.
+    it 'resolves nothing while the company is not policy-active' do
+      create(:tax_exemption_certificate, :verified, company: company,
+                                                    reason_code: 'resale', certificate_number: 'DE-RESALE-9',
+                                                    country_code: germany&.iso, state_code: berlin&.abbr)
+
+      with_company_activation_policy(inactive: [company]) do
+        expect(described_class.call(order: order.reload).value).to eq([])
+      end
+    end
+
     it 'turns an active certificate into a claim' do
       create(:tax_exemption_certificate, :verified, company: company,
                                                     reason_code: 'resale', certificate_number: 'DE-RESALE-1',

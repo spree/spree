@@ -72,15 +72,7 @@ module Spree
           end
 
           def serializer_params
-            {
-              store: current_store,
-              locale: current_locale,
-              currency: current_currency,
-              user: current_user,
-              includes: [],
-              hide_prices: hide_prices?,
-              pricing_access: pricing_access
-            }
+            super.merge(includes: [])
           end
 
           def permitted_params

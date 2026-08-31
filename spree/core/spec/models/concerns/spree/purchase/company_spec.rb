@@ -62,18 +62,16 @@ RSpec.shared_examples 'a company host' do
       record.update!(company: company)
     end
 
-    # The buyer named a node; a deactivated node must not keep exempting the
-    # sale, and resolving a different node would invoice another business.
-    it 'resolves to nothing while inactive' do
+    # Attribution, the address book and buyer process are not commercial
+    # privileges: the named node stands. What an inactive company loses is
+    # its agreements (Catalog.for_company) and its exemptions
+    # (Tax::ResolveExemptions), gated where those are read.
+    it 'keeps the named node while inactive' do
       with_company_activation_policy(inactive: [company]) do
-        expect(record.resolved_company).to be_nil
-        expect(record.company_legal_entity).to be_nil
-        expect(record.b2b?).to be(false)
+        expect(record.resolved_company).to eq(company)
+        expect(record.company_legal_entity).to eq(company)
+        expect(record.b2b?).to be(true)
       end
-    end
-
-    it 'resolves again once reactivated' do
-      expect(record.resolved_company).to eq(company)
     end
   end
 

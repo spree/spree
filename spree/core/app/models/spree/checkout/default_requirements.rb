@@ -42,7 +42,9 @@ module Spree
       def completion_requirements
         errors = stock_errors + quantity_rule_errors
         errors << req('address', 'email', Spree.t(:guest_checkout_not_allowed), code: 'guest_checkout_not_allowed') if @cart.guest_checkout_disallowed?
-        errors << company_requirement if @cart.company_activation_missing? && !keyed_in_by_staff?
+        # Signed-in buyers only: a guest's actionable gate is authentication
+        # (guest_checkout_disallowed? above), not company registration.
+        errors << company_requirement if @cart.customer && @cart.company_activation_missing? && !keyed_in_by_staff?
         errors
       end
 
