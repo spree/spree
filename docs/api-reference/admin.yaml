@@ -11477,7 +11477,7 @@ paths:
               example:
                 data:
                 - id: opt_UkLWZg9DAJ
-                  name: foo-size-1
+                  name: foo-size-4
                   label: Size
                   position: 1
                   kind: dropdown
@@ -11697,7 +11697,7 @@ paths:
             application/json:
               example:
                 id: opt_UkLWZg9DAJ
-                name: foo-size-5
+                name: foo-size-8
                 label: Size
                 position: 1
                 kind: dropdown
@@ -11771,7 +11771,7 @@ paths:
             application/json:
               example:
                 id: opt_UkLWZg9DAJ
-                name: foo-size-7
+                name: foo-size-10
                 label: Updated Label
                 position: 1
                 kind: dropdown
@@ -12452,8 +12452,8 @@ paths:
                   preorder_ships_at:
                   quantity: 2
                   currency: USD
-                  name: Product 429180
-                  slug: product-429180
+                  name: Product 459180
+                  slug: product-459180
                   options_text: 'Size: S'
                   price: '10.0'
                   display_price: "$10.00"
@@ -12477,11 +12477,11 @@ paths:
                   option_values:
                   - id: optval_UkLWZg9DAJ
                     option_type_id: opt_UkLWZg9DAJ
-                    name: size-1
+                    name: size-4
                     label: S
                     position: 1
                     color_code:
-                    option_type_name: foo-size-10
+                    option_type_name: foo-size-13
                     option_type_label: Size
                     image_url:
                     metadata: {}
@@ -12565,8 +12565,8 @@ paths:
                 preorder_ships_at:
                 quantity: 3
                 currency: USD
-                name: Product 4499
-                slug: product-4499
+                name: Product 4799
+                slug: product-4799
                 options_text: 'Size: S'
                 price: '19.99'
                 display_price: "$19.99"
@@ -12590,11 +12590,11 @@ paths:
                 option_values:
                 - id: optval_gbHJdmfrXB
                   option_type_id: opt_gbHJdmfrXB
-                  name: size-3
+                  name: size-6
                   label: S
                   position: 1
                   color_code:
-                  option_type_name: foo-size-12
+                  option_type_name: foo-size-15
                   option_type_label: Size
                   image_url:
                   metadata: {}
@@ -12700,8 +12700,8 @@ paths:
                 preorder_ships_at:
                 quantity: 2
                 currency: USD
-                name: Product 452714
-                slug: product-452714
+                name: Product 482714
+                slug: product-482714
                 options_text: 'Size: S'
                 price: '10.0'
                 display_price: "$10.00"
@@ -12725,11 +12725,11 @@ paths:
                 option_values:
                 - id: optval_UkLWZg9DAJ
                   option_type_id: opt_UkLWZg9DAJ
-                  name: size-4
+                  name: size-7
                   label: S
                   position: 1
                   color_code:
-                  option_type_name: foo-size-13
+                  option_type_name: foo-size-16
                   option_type_label: Size
                   image_url:
                   metadata: {}
@@ -12808,8 +12808,8 @@ paths:
                 preorder_ships_at:
                 quantity: 5
                 currency: USD
-                name: Product 469758
-                slug: product-469758
+                name: Product 499758
+                slug: product-499758
                 options_text: 'Size: S'
                 price: '19.99'
                 display_price: "$19.99"
@@ -12833,11 +12833,11 @@ paths:
                 option_values:
                 - id: optval_UkLWZg9DAJ
                   option_type_id: opt_UkLWZg9DAJ
-                  name: size-5
+                  name: size-8
                   label: S
                   position: 1
                   color_code:
-                  option_type_name: foo-size-14
+                  option_type_name: foo-size-17
                   option_type_label: Size
                   image_url:
                   metadata: {}
@@ -15550,11 +15550,14 @@ paths:
                   status: draft
                   position: 1
                   match_policy: all
+                  adjust_compare_at: false
                   starts_at:
                   ends_at:
                   deleted_at:
                   created_at: '2026-01-15T12:00:00.000Z'
                   updated_at: '2026-01-15T12:00:00.000Z'
+                  price_adjustment_percentage:
+                  automatic_pricing: false
                   currently_active: false
                   products_count: 0
                   prices_count: 0
@@ -15564,11 +15567,14 @@ paths:
                   status: draft
                   position: 2
                   match_policy: all
+                  adjust_compare_at: false
                   starts_at:
                   ends_at:
                   deleted_at:
                   created_at: '2026-01-15T12:00:00.000Z'
                   updated_at: '2026-01-15T12:00:00.000Z'
+                  price_adjustment_percentage:
+                  automatic_pricing: false
                   currently_active: false
                   products_count: 0
                   prices_count: 0
@@ -15678,11 +15684,14 @@ paths:
                 status: draft
                 position: 3
                 match_policy: all
+                adjust_compare_at: false
                 starts_at:
                 ends_at:
                 deleted_at:
                 created_at: '2026-01-15T12:00:00.000Z'
                 updated_at: '2026-01-15T12:00:00.000Z'
+                price_adjustment_percentage:
+                automatic_pricing: false
                 currently_active: false
                 products_count: 1
                 prices_count: 2
@@ -15833,11 +15842,14 @@ paths:
                 status: draft
                 position: 1
                 match_policy: all
+                adjust_compare_at: false
                 starts_at:
                 ends_at:
                 deleted_at:
                 created_at: '2026-01-15T12:00:00.000Z'
                 updated_at: '2026-01-15T12:00:00.000Z'
+                price_adjustment_percentage:
+                automatic_pricing: false
                 currently_active: false
                 products_count: 0
                 prices_count: 0
@@ -15908,11 +15920,14 @@ paths:
                 status: draft
                 position: 1
                 match_policy: all
+                adjust_compare_at: false
                 starts_at:
                 ends_at:
                 deleted_at:
                 created_at: '2026-01-15T12:00:00.000Z'
                 updated_at: '2026-01-15T12:00:00.000Z'
+                price_adjustment_percentage:
+                automatic_pricing: false
                 currently_active: false
                 products_count: 0
                 prices_count: 0
@@ -16088,11 +16103,14 @@ paths:
                 status: active
                 position: 1
                 match_policy: all
+                adjust_compare_at: false
                 starts_at:
                 ends_at:
                 deleted_at:
                 created_at: '2026-01-15T12:00:00.000Z'
                 updated_at: '2026-01-15T12:00:00.000Z'
+                price_adjustment_percentage:
+                automatic_pricing: false
                 currently_active: true
                 products_count: 0
                 prices_count: 0
@@ -16151,11 +16169,14 @@ paths:
                 status: inactive
                 position: 1
                 match_policy: all
+                adjust_compare_at: false
                 starts_at:
                 ends_at:
                 deleted_at:
                 created_at: '2026-01-15T12:00:00.000Z'
                 updated_at: '2026-01-15T12:00:00.000Z'
+                price_adjustment_percentage:
+                automatic_pricing: false
                 currently_active: false
                 products_count: 0
                 prices_count: 0
@@ -17312,8 +17333,8 @@ paths:
               example:
                 data:
                 - id: prod_UkLWZg9DAJ
-                  name: Product 846550
-                  slug: product-846550
+                  name: Product 876550
+                  slug: product-876550
                   meta_title:
                   meta_description:
                   meta_keywords:
@@ -17706,8 +17727,8 @@ paths:
             application/json:
               example:
                 id: prod_UkLWZg9DAJ
-                name: Product 882061
-                slug: product-882061
+                name: Product 912061
+                slug: product-912061
                 meta_title:
                 meta_description:
                 meta_keywords:
@@ -17820,7 +17841,7 @@ paths:
               example:
                 id: prod_UkLWZg9DAJ
                 name: Updated Name
-                slug: product-905339
+                slug: product-935339
                 meta_title:
                 meta_description:
                 meta_keywords:
@@ -20487,18 +20508,18 @@ paths:
                   label: Item total
                   description:
                   preference_schema:
-                  - key: amount_max
-                    type: decimal
-                    default:
-                  - key: operator_max
-                    type: string
-                    default: "<"
                   - key: amount_min
                     type: decimal
                     default: 100.0
                   - key: operator_min
                     type: string
                     default: ">"
+                  - key: amount_max
+                    type: decimal
+                    default:
+                  - key: operator_max
+                    type: string
+                    default: "<"
                 - type: market
                   label: Market(s)
                   description:
@@ -23983,7 +24004,7 @@ paths:
                 data:
                 - id: variant_UkLWZg9DAJ
                   product_id: prod_UkLWZg9DAJ
-                  sku: SKU-140
+                  sku: SKU-146
                   options_text: ''
                   track_inventory: true
                   media_count: 0
@@ -23997,6 +24018,10 @@ paths:
                   height:
                   width:
                   depth:
+                  minimum_order_quantity:
+                  order_multiple:
+                  purchase_unit:
+                  units_per_carton:
                   price:
                     id: price_UkLWZg9DAJ
                     amount: '19.99'
@@ -24030,11 +24055,11 @@ paths:
                   available_stock: 0
                   reserved_quantity: 0
                   total_on_hand: 0
-                  product_name: Product 1156804
+                  product_name: Product 1186804
                   delivery_profile_id: fp_UkLWZg9DAJ
                 - id: variant_gbHJdmfrXB
                   product_id: prod_UkLWZg9DAJ
-                  sku: SKU-141
+                  sku: SKU-147
                   options_text: 'Size: S'
                   track_inventory: true
                   media_count: 0
@@ -24048,6 +24073,10 @@ paths:
                   height: 97.29
                   width: 126.5
                   depth: 56.58
+                  minimum_order_quantity:
+                  order_multiple:
+                  purchase_unit:
+                  units_per_carton:
                   price:
                     id: price_gbHJdmfrXB
                     amount: '19.99'
@@ -24063,11 +24092,11 @@ paths:
                   option_values:
                   - id: optval_UkLWZg9DAJ
                     option_type_id: opt_UkLWZg9DAJ
-                    name: size-25
+                    name: size-28
                     label: S
                     position: 1
                     color_code:
-                    option_type_name: foo-size-34
+                    option_type_name: foo-size-37
                     option_type_label: Size
                     image_url:
                     metadata: {}
@@ -24093,7 +24122,7 @@ paths:
                   available_stock: 0
                   reserved_quantity: 0
                   total_on_hand: 0
-                  product_name: Product 1156804
+                  product_name: Product 1186804
                   delivery_profile_id: fp_UkLWZg9DAJ
                 meta:
                   page: 1
@@ -24186,6 +24215,10 @@ paths:
                 height:
                 width:
                 depth:
+                minimum_order_quantity:
+                order_multiple:
+                purchase_unit:
+                units_per_carton:
                 price:
                   id: price_EfhxLZ9ck8
                   amount: '24.99'
@@ -24231,7 +24264,7 @@ paths:
                 available_stock: 0
                 reserved_quantity: 0
                 total_on_hand: 0
-                product_name: Product 1161771
+                product_name: Product 1191771
                 delivery_profile_id: fp_UkLWZg9DAJ
         '422':
           description: validation error
@@ -24410,7 +24443,7 @@ paths:
               example:
                 id: variant_gbHJdmfrXB
                 product_id: prod_UkLWZg9DAJ
-                sku: SKU-147
+                sku: SKU-153
                 options_text: 'Size: S'
                 track_inventory: true
                 media_count: 0
@@ -24424,6 +24457,10 @@ paths:
                 height: 158.93
                 width: 166.27
                 depth: 20.71
+                minimum_order_quantity:
+                order_multiple:
+                purchase_unit:
+                units_per_carton:
                 price:
                   id: price_gbHJdmfrXB
                   amount: '19.99'
@@ -24439,11 +24476,11 @@ paths:
                 option_values:
                 - id: optval_UkLWZg9DAJ
                   option_type_id: opt_UkLWZg9DAJ
-                  name: size-28
+                  name: size-31
                   label: S
                   position: 1
                   color_code:
-                  option_type_name: foo-size-37
+                  option_type_name: foo-size-40
                   option_type_label: Size
                   image_url:
                   metadata: {}
@@ -24469,7 +24506,7 @@ paths:
                 available_stock: 0
                 reserved_quantity: 0
                 total_on_hand: 0
-                product_name: Product 1184025
+                product_name: Product 1214025
                 delivery_profile_id: fp_UkLWZg9DAJ
         '404':
           description: variant not found
@@ -24556,6 +24593,10 @@ paths:
                 height: 120.69
                 width: 57.61
                 depth: 3.72
+                minimum_order_quantity:
+                order_multiple:
+                purchase_unit:
+                units_per_carton:
                 price:
                   id: price_gbHJdmfrXB
                   amount: '19.99'
@@ -24571,11 +24612,11 @@ paths:
                 option_values:
                 - id: optval_UkLWZg9DAJ
                   option_type_id: opt_UkLWZg9DAJ
-                  name: size-30
+                  name: size-33
                   label: S
                   position: 1
                   color_code:
-                  option_type_name: foo-size-39
+                  option_type_name: foo-size-42
                   option_type_label: Size
                   image_url:
                   metadata: {}
@@ -24601,7 +24642,7 @@ paths:
                 available_stock: 0
                 reserved_quantity: 0
                 total_on_hand: 0
-                product_name: Product 1205672
+                product_name: Product 1235672
                 delivery_profile_id: fp_UkLWZg9DAJ
       requestBody:
         content:
@@ -25844,13 +25885,18 @@ paths:
                 data:
                 - id: cat_UkLWZg9DAJ
                   name: Wholesale
+                  description:
                   active: true
                   position: 1
                   metadata: {}
+                  minimum_order_quantity:
+                  order_multiple:
                   created_at: '2026-01-15T12:00:00.000Z'
                   updated_at: '2026-01-15T12:00:00.000Z'
                   price_list_id:
                   products_count: 0
+                  quantity_rules_count: 0
+                  order_minimums_count: 0
                 meta:
                   page: 1
                   limit: 25
@@ -25909,13 +25955,18 @@ paths:
               example:
                 id: cat_gbHJdmfrXB
                 name: VIP Assortment
+                description:
                 active: true
                 position: 2
                 metadata: {}
+                minimum_order_quantity:
+                order_multiple:
                 created_at: '2026-01-15T12:00:00.000Z'
                 updated_at: '2026-01-15T12:00:00.000Z'
                 price_list_id:
                 products_count: 0
+                quantity_rules_count: 0
+                order_minimums_count: 0
         '422':
           description: invalid request
           content:
@@ -26178,6 +26229,251 @@ paths:
                   - prod_abc123
               required:
               - product_ids
+  "/api/v3/admin/catalogs/{catalog_id}/quantity_rules":
+    get:
+      summary: List catalog quantity rules
+      tags:
+      - Catalogs
+      security:
+      - api_key: []
+        bearer_auth: []
+      description: |-
+        The catalog's per-variant quantity terms. The catalog-wide default is a pair of fields on the catalog itself, so these are strictly the overrides.
+
+        **Required scope:** `read_products` (for API-key authentication).
+      parameters:
+      - name: x-spree-api-key
+        in: header
+        required: true
+        schema:
+          type: string
+      - name: Authorization
+        in: header
+        required: true
+        schema:
+          type: string
+      - name: catalog_id
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: quantity rules found
+          content:
+            application/json:
+              example:
+                data:
+                - id: cqr_UkLWZg9DAJ
+                  minimum_order_quantity: 48
+                  order_multiple: 24
+                  created_at: '2026-01-15T12:00:00.000Z'
+                  updated_at: '2026-01-15T12:00:00.000Z'
+                  variant_id: variant_gbHJdmfrXB
+                  variant_sku: SKU-4
+                  product_name: Product 35457
+                  options_text: 'Size: S'
+                meta:
+                  page: 1
+                  limit: 25
+                  count: 1
+                  pages: 1
+                  from: 1
+                  to: 1
+                  in: 1
+                  previous:
+                  next:
+    post:
+      summary: Create a catalog quantity rule
+      tags:
+      - Catalogs
+      security:
+      - api_key: []
+        bearer_auth: []
+      description: |-
+        States how much of one variant a buyer on this agreement must order. Both fields are optional individually, but a rule must state at least one — a field left out falls through to the catalog default, and then to the variant.
+
+        **Required scope:** `write_products` (for API-key authentication).
+      parameters:
+      - name: x-spree-api-key
+        in: header
+        required: true
+        schema:
+          type: string
+      - name: Authorization
+        in: header
+        required: true
+        schema:
+          type: string
+      - name: catalog_id
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        '201':
+          description: quantity rule created
+          content:
+            application/json:
+              example:
+                id: cqr_UkLWZg9DAJ
+                minimum_order_quantity: 48
+                order_multiple: 24
+                created_at: '2026-01-15T12:00:00.000Z'
+                updated_at: '2026-01-15T12:00:00.000Z'
+                variant_id: variant_gbHJdmfrXB
+                variant_sku: SKU-6
+                product_name: Product 41599
+                options_text: 'Size: S'
+        '422':
+          description: invalid request
+          content:
+            application/json:
+              example:
+                error:
+                  code: validation_error
+                  message: Set a minimum order quantity, an order multiple, or both
+                  details:
+                    base:
+                    - Set a minimum order quantity, an order multiple, or both
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                variant_id:
+                  type: string
+                  example: variant_86Rf07xd4z
+                minimum_order_quantity:
+                  type: integer
+                  nullable: true
+                  example: 48
+                  description: The least a buyer may order.
+                order_multiple:
+                  type: integer
+                  nullable: true
+                  example: 24
+                  description: Orders must land on a multiple of this, counted from
+                    the minimum.
+              required:
+              - variant_id
+  "/api/v3/admin/catalogs/{catalog_id}/order_minimums":
+    get:
+      summary: List catalog order minimums
+      tags:
+      - Catalogs
+      security:
+      - api_key: []
+        bearer_auth: []
+      description: |-
+        The least a whole order must come to under this agreement. One row per currency — Spree holds no exchange rates, so a threshold is never stated once and converted.
+
+        **Required scope:** `read_products` (for API-key authentication).
+      parameters:
+      - name: x-spree-api-key
+        in: header
+        required: true
+        schema:
+          type: string
+      - name: Authorization
+        in: header
+        required: true
+        schema:
+          type: string
+      - name: catalog_id
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: order minimums found
+          content:
+            application/json:
+              example:
+                data:
+                - id: com_UkLWZg9DAJ
+                  currency: USD
+                  created_at: '2026-01-15T12:00:00.000Z'
+                  updated_at: '2026-01-15T12:00:00.000Z'
+                  amount: '500.0'
+                  display_amount: "$500.00"
+                meta:
+                  page: 1
+                  limit: 25
+                  count: 1
+                  pages: 1
+                  from: 1
+                  to: 1
+                  in: 1
+                  previous:
+                  next:
+    post:
+      summary: Create a catalog order minimum
+      tags:
+      - Catalogs
+      security:
+      - api_key: []
+        bearer_auth: []
+      description: |-
+        Requires orders in one currency to reach an amount. The buyer sees the shortfall on the cart while they can still act on it; completion is refused below it.
+
+        **Required scope:** `write_products` (for API-key authentication).
+      parameters:
+      - name: x-spree-api-key
+        in: header
+        required: true
+        schema:
+          type: string
+      - name: Authorization
+        in: header
+        required: true
+        schema:
+          type: string
+      - name: catalog_id
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        '201':
+          description: order minimum created
+          content:
+            application/json:
+              example:
+                id: com_UkLWZg9DAJ
+                currency: USD
+                created_at: '2026-01-15T12:00:00.000Z'
+                updated_at: '2026-01-15T12:00:00.000Z'
+                amount: '500.0'
+                display_amount: "$500.00"
+        '422':
+          description: invalid request
+          content:
+            application/json:
+              example:
+                error:
+                  code: validation_error
+                  message: Amount must be greater than 0
+                  details:
+                    amount:
+                    - must be greater than 0
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                currency:
+                  type: string
+                  example: USD
+                amount:
+                  type: string
+                  example: '500.00'
+              required:
+              - currency
+              - amount
   "/api/v3/admin/collections":
     get:
       summary: List collections
@@ -28371,11 +28667,11 @@ paths:
           // A business registration outranks the buyer's own when the sale is for that business.
           const registration = await client.companies.taxIdentifiers.create('comp_UkLWZg9DAJ', {
             kind: 'eu_vat',
-            value: 'DE100000008',
+            value: 'DE123456789',
           })
       - lang: bash
         label: Spree CLI
-        source: spree api post /companies/{company_id}/tax_identifiers -d '{"kind":"eu_vat","value":"DE100000008"}'
+        source: spree api post /companies/{company_id}/tax_identifiers -d '{"kind":"eu_vat","value":"DE123456789"}'
       parameters: []
       responses:
         '201':
@@ -29479,15 +29775,15 @@ paths:
                 - type: Spree::Calculator::Shipping::PerItem
                   name: Flat rate per package item
                   preference_schema:
-                  - key: currency
-                    type: string
-                    default: USD
                   - key: amounts
                     type: hash
                     default: {}
                   - key: amount
                     type: decimal
                     default: 0
+                  - key: currency
+                    type: string
+                    default: USD
                 - type: Spree::Calculator::Shipping::PriceSack
                   name: Price sack
                   preference_schema:
@@ -29506,15 +29802,15 @@ paths:
                 - type: Spree::Calculator::Shipping::DigitalDelivery
                   name: Digital Delivery
                   preference_schema:
-                  - key: currency
-                    type: string
-                    default: USD
                   - key: amounts
                     type: hash
                     default: {}
                   - key: amount
                     type: decimal
                     default: 0
+                  - key: currency
+                    type: string
+                    default: USD
   "/api/v3/admin/delivery_zones":
     post:
       summary: Create delivery zone
@@ -29968,13 +30264,13 @@ paths:
                   video_embed_url:
                   video_url:
                   poster_url:
-                  original_url: http://localhost:3000/rails/active_storage/blobs/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--f728cc8f2cc6dc935156331dc163f31d2e271174/thinking-cat.jpg
-                  mini_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--f728cc8f2cc6dc935156331dc163f31d2e271174/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOlsxMjgsMTI4XSwic2F2ZXIiOnsic3RyaXAiOnRydWUsInF1YWxpdHkiOjc1LCJsb3NzbGVzcyI6ZmFsc2UsImFscGhhX3EiOjg1LCJyZWR1Y3Rpb25fZWZmb3J0Ijo2LCJzbWFydF9zdWJzYW1wbGUiOnRydWV9fSwicHVyIjoidmFyaWF0aW9uIn19--babf6d500aaca35a65a8fec003ef3c01809baa0c/thinking-cat.jpg
-                  small_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--f728cc8f2cc6dc935156331dc163f31d2e271174/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOlsyNTYsMjU2XSwic2F2ZXIiOnsic3RyaXAiOnRydWUsInF1YWxpdHkiOjc1LCJsb3NzbGVzcyI6ZmFsc2UsImFscGhhX3EiOjg1LCJyZWR1Y3Rpb25fZWZmb3J0Ijo2LCJzbWFydF9zdWJzYW1wbGUiOnRydWV9fSwicHVyIjoidmFyaWF0aW9uIn19--b77ecd0fc713785bdf67008c26822f4cc6a0d4f6/thinking-cat.jpg
-                  medium_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--f728cc8f2cc6dc935156331dc163f31d2e271174/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOls0MDAsNDAwXSwic2F2ZXIiOnsic3RyaXAiOnRydWUsInF1YWxpdHkiOjc1LCJsb3NzbGVzcyI6ZmFsc2UsImFscGhhX3EiOjg1LCJyZWR1Y3Rpb25fZWZmb3J0Ijo2LCJzbWFydF9zdWJzYW1wbGUiOnRydWV9fSwicHVyIjoidmFyaWF0aW9uIn19--76866a5912e575bef633b388a58010da81243ce5/thinking-cat.jpg
-                  large_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--f728cc8f2cc6dc935156331dc163f31d2e271174/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOls3MjAsNzIwXSwic2F2ZXIiOnsic3RyaXAiOnRydWUsInF1YWxpdHkiOjc1LCJsb3NzbGVzcyI6ZmFsc2UsImFscGhhX3EiOjg1LCJyZWR1Y3Rpb25fZWZmb3J0Ijo2LCJzbWFydF9zdWJzYW1wbGUiOnRydWV9fSwicHVyIjoidmFyaWF0aW9uIn19--3c65a0bc45934d992a45bd51bd6e871c1525a1a3/thinking-cat.jpg
-                  xlarge_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--f728cc8f2cc6dc935156331dc163f31d2e271174/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOlsyMDAwLDIwMDBdLCJzYXZlciI6eyJzdHJpcCI6dHJ1ZSwicXVhbGl0eSI6NzUsImxvc3NsZXNzIjpmYWxzZSwiYWxwaGFfcSI6ODUsInJlZHVjdGlvbl9lZmZvcnQiOjYsInNtYXJ0X3N1YnNhbXBsZSI6dHJ1ZX19LCJwdXIiOiJ2YXJpYXRpb24ifX0=--ae5752fe9360a435f2f4eeacf090b4fd8a51d13d/thinking-cat.jpg
-                  og_image_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--f728cc8f2cc6dc935156331dc163f31d2e271174/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOlsxMjAwLDYzMF0sInNhdmVyIjp7InN0cmlwIjp0cnVlLCJxdWFsaXR5Ijo3NSwibG9zc2xlc3MiOmZhbHNlLCJhbHBoYV9xIjo4NSwicmVkdWN0aW9uX2VmZm9ydCI6Niwic21hcnRfc3Vic2FtcGxlIjp0cnVlfX0sInB1ciI6InZhcmlhdGlvbiJ9fQ==--29ef070f5138a5a0fbe8f6d0ceb110d7b29de07a/thinking-cat.jpg
+                  original_url: http://localhost:3000/rails/active_storage/blobs/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--a33ca860a375672868d319422e8798668ebddc16/thinking-cat.jpg
+                  mini_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--a33ca860a375672868d319422e8798668ebddc16/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOlsxMjgsMTI4XSwic2F2ZXIiOnsic3RyaXAiOnRydWUsInF1YWxpdHkiOjc1LCJsb3NzbGVzcyI6ZmFsc2UsImFscGhhX3EiOjg1LCJyZWR1Y3Rpb25fZWZmb3J0Ijo2LCJzbWFydF9zdWJzYW1wbGUiOnRydWV9fSwicHVyIjoidmFyaWF0aW9uIn19--4d229913dbf70b659c8f32b72f49ce477d43ffd5/thinking-cat.jpg
+                  small_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--a33ca860a375672868d319422e8798668ebddc16/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOlsyNTYsMjU2XSwic2F2ZXIiOnsic3RyaXAiOnRydWUsInF1YWxpdHkiOjc1LCJsb3NzbGVzcyI6ZmFsc2UsImFscGhhX3EiOjg1LCJyZWR1Y3Rpb25fZWZmb3J0Ijo2LCJzbWFydF9zdWJzYW1wbGUiOnRydWV9fSwicHVyIjoidmFyaWF0aW9uIn19--6e46aac461572409721f6e9c862a405ff2007b23/thinking-cat.jpg
+                  medium_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--a33ca860a375672868d319422e8798668ebddc16/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOls0MDAsNDAwXSwic2F2ZXIiOnsic3RyaXAiOnRydWUsInF1YWxpdHkiOjc1LCJsb3NzbGVzcyI6ZmFsc2UsImFscGhhX3EiOjg1LCJyZWR1Y3Rpb25fZWZmb3J0Ijo2LCJzbWFydF9zdWJzYW1wbGUiOnRydWV9fSwicHVyIjoidmFyaWF0aW9uIn19--b941529250487fb6ef983987b3b5f3bc35997ea0/thinking-cat.jpg
+                  large_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--a33ca860a375672868d319422e8798668ebddc16/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOls3MjAsNzIwXSwic2F2ZXIiOnsic3RyaXAiOnRydWUsInF1YWxpdHkiOjc1LCJsb3NzbGVzcyI6ZmFsc2UsImFscGhhX3EiOjg1LCJyZWR1Y3Rpb25fZWZmb3J0Ijo2LCJzbWFydF9zdWJzYW1wbGUiOnRydWV9fSwicHVyIjoidmFyaWF0aW9uIn19--4677f0820d2d58fce038be00dd3c9c34fb524863/thinking-cat.jpg
+                  xlarge_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--a33ca860a375672868d319422e8798668ebddc16/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOlsyMDAwLDIwMDBdLCJzYXZlciI6eyJzdHJpcCI6dHJ1ZSwicXVhbGl0eSI6NzUsImxvc3NsZXNzIjpmYWxzZSwiYWxwaGFfcSI6ODUsInJlZHVjdGlvbl9lZmZvcnQiOjYsInNtYXJ0X3N1YnNhbXBsZSI6dHJ1ZX19LCJwdXIiOiJ2YXJpYXRpb24ifX0=--66d4771ebbc71feb52b43bd1f272961f61129f28/thinking-cat.jpg
+                  og_image_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--a33ca860a375672868d319422e8798668ebddc16/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOlsxMjAwLDYzMF0sInNhdmVyIjp7InN0cmlwIjp0cnVlLCJxdWFsaXR5Ijo3NSwibG9zc2xlc3MiOmZhbHNlLCJhbHBoYV9xIjo4NSwicmVkdWN0aW9uX2VmZm9ydCI6Niwic21hcnRfc3Vic2FtcGxlIjp0cnVlfX0sInB1ciI6InZhcmlhdGlvbiJ9fQ==--a5ae5c1e2ca63edc680a895b67fef58825be0354/thinking-cat.jpg
                   external_references: {}
                   created_at: '2026-01-15T12:00:00.000Z'
                   updated_at: '2026-01-15T12:00:00.000Z'
@@ -29982,10 +30278,10 @@ paths:
                   filename: thinking-cat.jpg
                   content_type: image/jpeg
                   byte_size: 18090
-                  embed_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--f728cc8f2cc6dc935156331dc163f31d2e271174/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2xpbWl0IjpbMTIwMCwxMjAwXSwic2F2ZXIiOnsic3RyaXAiOnRydWUsInF1YWxpdHkiOjc1LCJsb3NzbGVzcyI6ZmFsc2UsImFscGhhX3EiOjg1LCJyZWR1Y3Rpb25fZWZmb3J0Ijo2LCJzbWFydF9zdWJzYW1wbGUiOnRydWV9fSwicHVyIjoidmFyaWF0aW9uIn19--7f00ee5789e0eaf9bcfb0a15a6527c0770241e18/thinking-cat.jpg
-                  signed_id: eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--f728cc8f2cc6dc935156331dc163f31d2e271174
+                  embed_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--a33ca860a375672868d319422e8798668ebddc16/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2xpbWl0IjpbMTIwMCwxMjAwXSwic2F2ZXIiOnsic3RyaXAiOnRydWUsInF1YWxpdHkiOjc1LCJsb3NzbGVzcyI6ZmFsc2UsImFscGhhX3EiOjg1LCJyZWR1Y3Rpb25fZWZmb3J0Ijo2LCJzbWFydF9zdWJzYW1wbGUiOnRydWV9fSwicHVyIjoidmFyaWF0aW9uIn19--c2cbb88512e90a64f9cb0e72e3fc82dd3ca70057/thinking-cat.jpg
+                  signed_id: eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--a33ca860a375672868d319422e8798668ebddc16
                   viewable_id: prod_UkLWZg9DAJ
-                  download_url: http://localhost:3000/rails/active_storage/blobs/redirect/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--f728cc8f2cc6dc935156331dc163f31d2e271174/thinking-cat.jpg?disposition=attachment
+                  download_url: http://localhost:3000/rails/active_storage/blobs/redirect/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--a33ca860a375672868d319422e8798668ebddc16/thinking-cat.jpg?disposition=attachment
                   metadata: {}
                   viewable_type: product
                 meta:
@@ -30056,13 +30352,13 @@ paths:
                 video_embed_url:
                 video_url:
                 poster_url:
-                original_url: http://localhost:3000/rails/active_storage/blobs/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MiwicHVyIjoiYmxvYl9pZCJ9fQ==--5f7aaa13caf8a354e70fd24c8e37feebf15a56db/library-upload.jpg
-                mini_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MiwicHVyIjoiYmxvYl9pZCJ9fQ==--5f7aaa13caf8a354e70fd24c8e37feebf15a56db/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOlsxMjgsMTI4XSwic2F2ZXIiOnsic3RyaXAiOnRydWUsInF1YWxpdHkiOjc1LCJsb3NzbGVzcyI6ZmFsc2UsImFscGhhX3EiOjg1LCJyZWR1Y3Rpb25fZWZmb3J0Ijo2LCJzbWFydF9zdWJzYW1wbGUiOnRydWV9fSwicHVyIjoidmFyaWF0aW9uIn19--babf6d500aaca35a65a8fec003ef3c01809baa0c/library-upload.jpg
-                small_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MiwicHVyIjoiYmxvYl9pZCJ9fQ==--5f7aaa13caf8a354e70fd24c8e37feebf15a56db/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOlsyNTYsMjU2XSwic2F2ZXIiOnsic3RyaXAiOnRydWUsInF1YWxpdHkiOjc1LCJsb3NzbGVzcyI6ZmFsc2UsImFscGhhX3EiOjg1LCJyZWR1Y3Rpb25fZWZmb3J0Ijo2LCJzbWFydF9zdWJzYW1wbGUiOnRydWV9fSwicHVyIjoidmFyaWF0aW9uIn19--b77ecd0fc713785bdf67008c26822f4cc6a0d4f6/library-upload.jpg
-                medium_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MiwicHVyIjoiYmxvYl9pZCJ9fQ==--5f7aaa13caf8a354e70fd24c8e37feebf15a56db/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOls0MDAsNDAwXSwic2F2ZXIiOnsic3RyaXAiOnRydWUsInF1YWxpdHkiOjc1LCJsb3NzbGVzcyI6ZmFsc2UsImFscGhhX3EiOjg1LCJyZWR1Y3Rpb25fZWZmb3J0Ijo2LCJzbWFydF9zdWJzYW1wbGUiOnRydWV9fSwicHVyIjoidmFyaWF0aW9uIn19--76866a5912e575bef633b388a58010da81243ce5/library-upload.jpg
-                large_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MiwicHVyIjoiYmxvYl9pZCJ9fQ==--5f7aaa13caf8a354e70fd24c8e37feebf15a56db/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOls3MjAsNzIwXSwic2F2ZXIiOnsic3RyaXAiOnRydWUsInF1YWxpdHkiOjc1LCJsb3NzbGVzcyI6ZmFsc2UsImFscGhhX3EiOjg1LCJyZWR1Y3Rpb25fZWZmb3J0Ijo2LCJzbWFydF9zdWJzYW1wbGUiOnRydWV9fSwicHVyIjoidmFyaWF0aW9uIn19--3c65a0bc45934d992a45bd51bd6e871c1525a1a3/library-upload.jpg
-                xlarge_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MiwicHVyIjoiYmxvYl9pZCJ9fQ==--5f7aaa13caf8a354e70fd24c8e37feebf15a56db/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOlsyMDAwLDIwMDBdLCJzYXZlciI6eyJzdHJpcCI6dHJ1ZSwicXVhbGl0eSI6NzUsImxvc3NsZXNzIjpmYWxzZSwiYWxwaGFfcSI6ODUsInJlZHVjdGlvbl9lZmZvcnQiOjYsInNtYXJ0X3N1YnNhbXBsZSI6dHJ1ZX19LCJwdXIiOiJ2YXJpYXRpb24ifX0=--ae5752fe9360a435f2f4eeacf090b4fd8a51d13d/library-upload.jpg
-                og_image_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MiwicHVyIjoiYmxvYl9pZCJ9fQ==--5f7aaa13caf8a354e70fd24c8e37feebf15a56db/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOlsxMjAwLDYzMF0sInNhdmVyIjp7InN0cmlwIjp0cnVlLCJxdWFsaXR5Ijo3NSwibG9zc2xlc3MiOmZhbHNlLCJhbHBoYV9xIjo4NSwicmVkdWN0aW9uX2VmZm9ydCI6Niwic21hcnRfc3Vic2FtcGxlIjp0cnVlfX0sInB1ciI6InZhcmlhdGlvbiJ9fQ==--29ef070f5138a5a0fbe8f6d0ceb110d7b29de07a/library-upload.jpg
+                original_url: http://localhost:3000/rails/active_storage/blobs/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MiwicHVyIjoiYmxvYl9pZCJ9fQ==--0ac330d77f819d24aa1efda21bdeddd812ce34ce/library-upload.jpg
+                mini_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MiwicHVyIjoiYmxvYl9pZCJ9fQ==--0ac330d77f819d24aa1efda21bdeddd812ce34ce/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOlsxMjgsMTI4XSwic2F2ZXIiOnsic3RyaXAiOnRydWUsInF1YWxpdHkiOjc1LCJsb3NzbGVzcyI6ZmFsc2UsImFscGhhX3EiOjg1LCJyZWR1Y3Rpb25fZWZmb3J0Ijo2LCJzbWFydF9zdWJzYW1wbGUiOnRydWV9fSwicHVyIjoidmFyaWF0aW9uIn19--4d229913dbf70b659c8f32b72f49ce477d43ffd5/library-upload.jpg
+                small_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MiwicHVyIjoiYmxvYl9pZCJ9fQ==--0ac330d77f819d24aa1efda21bdeddd812ce34ce/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOlsyNTYsMjU2XSwic2F2ZXIiOnsic3RyaXAiOnRydWUsInF1YWxpdHkiOjc1LCJsb3NzbGVzcyI6ZmFsc2UsImFscGhhX3EiOjg1LCJyZWR1Y3Rpb25fZWZmb3J0Ijo2LCJzbWFydF9zdWJzYW1wbGUiOnRydWV9fSwicHVyIjoidmFyaWF0aW9uIn19--6e46aac461572409721f6e9c862a405ff2007b23/library-upload.jpg
+                medium_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MiwicHVyIjoiYmxvYl9pZCJ9fQ==--0ac330d77f819d24aa1efda21bdeddd812ce34ce/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOls0MDAsNDAwXSwic2F2ZXIiOnsic3RyaXAiOnRydWUsInF1YWxpdHkiOjc1LCJsb3NzbGVzcyI6ZmFsc2UsImFscGhhX3EiOjg1LCJyZWR1Y3Rpb25fZWZmb3J0Ijo2LCJzbWFydF9zdWJzYW1wbGUiOnRydWV9fSwicHVyIjoidmFyaWF0aW9uIn19--b941529250487fb6ef983987b3b5f3bc35997ea0/library-upload.jpg
+                large_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MiwicHVyIjoiYmxvYl9pZCJ9fQ==--0ac330d77f819d24aa1efda21bdeddd812ce34ce/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOls3MjAsNzIwXSwic2F2ZXIiOnsic3RyaXAiOnRydWUsInF1YWxpdHkiOjc1LCJsb3NzbGVzcyI6ZmFsc2UsImFscGhhX3EiOjg1LCJyZWR1Y3Rpb25fZWZmb3J0Ijo2LCJzbWFydF9zdWJzYW1wbGUiOnRydWV9fSwicHVyIjoidmFyaWF0aW9uIn19--4677f0820d2d58fce038be00dd3c9c34fb524863/library-upload.jpg
+                xlarge_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MiwicHVyIjoiYmxvYl9pZCJ9fQ==--0ac330d77f819d24aa1efda21bdeddd812ce34ce/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOlsyMDAwLDIwMDBdLCJzYXZlciI6eyJzdHJpcCI6dHJ1ZSwicXVhbGl0eSI6NzUsImxvc3NsZXNzIjpmYWxzZSwiYWxwaGFfcSI6ODUsInJlZHVjdGlvbl9lZmZvcnQiOjYsInNtYXJ0X3N1YnNhbXBsZSI6dHJ1ZX19LCJwdXIiOiJ2YXJpYXRpb24ifX0=--66d4771ebbc71feb52b43bd1f272961f61129f28/library-upload.jpg
+                og_image_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MiwicHVyIjoiYmxvYl9pZCJ9fQ==--0ac330d77f819d24aa1efda21bdeddd812ce34ce/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOlsxMjAwLDYzMF0sInNhdmVyIjp7InN0cmlwIjp0cnVlLCJxdWFsaXR5Ijo3NSwibG9zc2xlc3MiOmZhbHNlLCJhbHBoYV9xIjo4NSwicmVkdWN0aW9uX2VmZm9ydCI6Niwic21hcnRfc3Vic2FtcGxlIjp0cnVlfX0sInB1ciI6InZhcmlhdGlvbiJ9fQ==--a5ae5c1e2ca63edc680a895b67fef58825be0354/library-upload.jpg
                 external_references: {}
                 created_at: '2026-01-15T12:00:00.000Z'
                 updated_at: '2026-01-15T12:00:00.000Z'
@@ -30070,10 +30366,10 @@ paths:
                 filename: library-upload.jpg
                 content_type: image/jpeg
                 byte_size: 18090
-                embed_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MiwicHVyIjoiYmxvYl9pZCJ9fQ==--5f7aaa13caf8a354e70fd24c8e37feebf15a56db/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2xpbWl0IjpbMTIwMCwxMjAwXSwic2F2ZXIiOnsic3RyaXAiOnRydWUsInF1YWxpdHkiOjc1LCJsb3NzbGVzcyI6ZmFsc2UsImFscGhhX3EiOjg1LCJyZWR1Y3Rpb25fZWZmb3J0Ijo2LCJzbWFydF9zdWJzYW1wbGUiOnRydWV9fSwicHVyIjoidmFyaWF0aW9uIn19--7f00ee5789e0eaf9bcfb0a15a6527c0770241e18/library-upload.jpg
-                signed_id: eyJfcmFpbHMiOnsiZGF0YSI6MiwicHVyIjoiYmxvYl9pZCJ9fQ==--5f7aaa13caf8a354e70fd24c8e37feebf15a56db
+                embed_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MiwicHVyIjoiYmxvYl9pZCJ9fQ==--0ac330d77f819d24aa1efda21bdeddd812ce34ce/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2xpbWl0IjpbMTIwMCwxMjAwXSwic2F2ZXIiOnsic3RyaXAiOnRydWUsInF1YWxpdHkiOjc1LCJsb3NzbGVzcyI6ZmFsc2UsImFscGhhX3EiOjg1LCJyZWR1Y3Rpb25fZWZmb3J0Ijo2LCJzbWFydF9zdWJzYW1wbGUiOnRydWV9fSwicHVyIjoidmFyaWF0aW9uIn19--c2cbb88512e90a64f9cb0e72e3fc82dd3ca70057/library-upload.jpg
+                signed_id: eyJfcmFpbHMiOnsiZGF0YSI6MiwicHVyIjoiYmxvYl9pZCJ9fQ==--0ac330d77f819d24aa1efda21bdeddd812ce34ce
                 viewable_id:
-                download_url: http://localhost:3000/rails/active_storage/blobs/redirect/eyJfcmFpbHMiOnsiZGF0YSI6MiwicHVyIjoiYmxvYl9pZCJ9fQ==--5f7aaa13caf8a354e70fd24c8e37feebf15a56db/library-upload.jpg?disposition=attachment
+                download_url: http://localhost:3000/rails/active_storage/blobs/redirect/eyJfcmFpbHMiOnsiZGF0YSI6MiwicHVyIjoiYmxvYl9pZCJ9fQ==--0ac330d77f819d24aa1efda21bdeddd812ce34ce/library-upload.jpg?disposition=attachment
                 metadata: {}
                 viewable_type:
               schema:
@@ -30147,7 +30443,7 @@ paths:
               example:
                 data:
                 - kind: media
-                  name: Product 173397
+                  name: Product 203397
                   owner_type: Spree::Product
                   owner_id: prod_UkLWZg9DAJ
                   field: attachment
@@ -30230,13 +30526,13 @@ paths:
                 video_embed_url:
                 video_url:
                 poster_url:
-                original_url: http://localhost:3000/rails/active_storage/blobs/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--f728cc8f2cc6dc935156331dc163f31d2e271174/thinking-cat.jpg
-                mini_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--f728cc8f2cc6dc935156331dc163f31d2e271174/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOlsxMjgsMTI4XSwic2F2ZXIiOnsic3RyaXAiOnRydWUsInF1YWxpdHkiOjc1LCJsb3NzbGVzcyI6ZmFsc2UsImFscGhhX3EiOjg1LCJyZWR1Y3Rpb25fZWZmb3J0Ijo2LCJzbWFydF9zdWJzYW1wbGUiOnRydWV9fSwicHVyIjoidmFyaWF0aW9uIn19--babf6d500aaca35a65a8fec003ef3c01809baa0c/thinking-cat.jpg
-                small_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--f728cc8f2cc6dc935156331dc163f31d2e271174/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOlsyNTYsMjU2XSwic2F2ZXIiOnsic3RyaXAiOnRydWUsInF1YWxpdHkiOjc1LCJsb3NzbGVzcyI6ZmFsc2UsImFscGhhX3EiOjg1LCJyZWR1Y3Rpb25fZWZmb3J0Ijo2LCJzbWFydF9zdWJzYW1wbGUiOnRydWV9fSwicHVyIjoidmFyaWF0aW9uIn19--b77ecd0fc713785bdf67008c26822f4cc6a0d4f6/thinking-cat.jpg
-                medium_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--f728cc8f2cc6dc935156331dc163f31d2e271174/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOls0MDAsNDAwXSwic2F2ZXIiOnsic3RyaXAiOnRydWUsInF1YWxpdHkiOjc1LCJsb3NzbGVzcyI6ZmFsc2UsImFscGhhX3EiOjg1LCJyZWR1Y3Rpb25fZWZmb3J0Ijo2LCJzbWFydF9zdWJzYW1wbGUiOnRydWV9fSwicHVyIjoidmFyaWF0aW9uIn19--76866a5912e575bef633b388a58010da81243ce5/thinking-cat.jpg
-                large_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--f728cc8f2cc6dc935156331dc163f31d2e271174/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOls3MjAsNzIwXSwic2F2ZXIiOnsic3RyaXAiOnRydWUsInF1YWxpdHkiOjc1LCJsb3NzbGVzcyI6ZmFsc2UsImFscGhhX3EiOjg1LCJyZWR1Y3Rpb25fZWZmb3J0Ijo2LCJzbWFydF9zdWJzYW1wbGUiOnRydWV9fSwicHVyIjoidmFyaWF0aW9uIn19--3c65a0bc45934d992a45bd51bd6e871c1525a1a3/thinking-cat.jpg
-                xlarge_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--f728cc8f2cc6dc935156331dc163f31d2e271174/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOlsyMDAwLDIwMDBdLCJzYXZlciI6eyJzdHJpcCI6dHJ1ZSwicXVhbGl0eSI6NzUsImxvc3NsZXNzIjpmYWxzZSwiYWxwaGFfcSI6ODUsInJlZHVjdGlvbl9lZmZvcnQiOjYsInNtYXJ0X3N1YnNhbXBsZSI6dHJ1ZX19LCJwdXIiOiJ2YXJpYXRpb24ifX0=--ae5752fe9360a435f2f4eeacf090b4fd8a51d13d/thinking-cat.jpg
-                og_image_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--f728cc8f2cc6dc935156331dc163f31d2e271174/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOlsxMjAwLDYzMF0sInNhdmVyIjp7InN0cmlwIjp0cnVlLCJxdWFsaXR5Ijo3NSwibG9zc2xlc3MiOmZhbHNlLCJhbHBoYV9xIjo4NSwicmVkdWN0aW9uX2VmZm9ydCI6Niwic21hcnRfc3Vic2FtcGxlIjp0cnVlfX0sInB1ciI6InZhcmlhdGlvbiJ9fQ==--29ef070f5138a5a0fbe8f6d0ceb110d7b29de07a/thinking-cat.jpg
+                original_url: http://localhost:3000/rails/active_storage/blobs/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--a33ca860a375672868d319422e8798668ebddc16/thinking-cat.jpg
+                mini_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--a33ca860a375672868d319422e8798668ebddc16/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOlsxMjgsMTI4XSwic2F2ZXIiOnsic3RyaXAiOnRydWUsInF1YWxpdHkiOjc1LCJsb3NzbGVzcyI6ZmFsc2UsImFscGhhX3EiOjg1LCJyZWR1Y3Rpb25fZWZmb3J0Ijo2LCJzbWFydF9zdWJzYW1wbGUiOnRydWV9fSwicHVyIjoidmFyaWF0aW9uIn19--4d229913dbf70b659c8f32b72f49ce477d43ffd5/thinking-cat.jpg
+                small_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--a33ca860a375672868d319422e8798668ebddc16/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOlsyNTYsMjU2XSwic2F2ZXIiOnsic3RyaXAiOnRydWUsInF1YWxpdHkiOjc1LCJsb3NzbGVzcyI6ZmFsc2UsImFscGhhX3EiOjg1LCJyZWR1Y3Rpb25fZWZmb3J0Ijo2LCJzbWFydF9zdWJzYW1wbGUiOnRydWV9fSwicHVyIjoidmFyaWF0aW9uIn19--6e46aac461572409721f6e9c862a405ff2007b23/thinking-cat.jpg
+                medium_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--a33ca860a375672868d319422e8798668ebddc16/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOls0MDAsNDAwXSwic2F2ZXIiOnsic3RyaXAiOnRydWUsInF1YWxpdHkiOjc1LCJsb3NzbGVzcyI6ZmFsc2UsImFscGhhX3EiOjg1LCJyZWR1Y3Rpb25fZWZmb3J0Ijo2LCJzbWFydF9zdWJzYW1wbGUiOnRydWV9fSwicHVyIjoidmFyaWF0aW9uIn19--b941529250487fb6ef983987b3b5f3bc35997ea0/thinking-cat.jpg
+                large_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--a33ca860a375672868d319422e8798668ebddc16/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOls3MjAsNzIwXSwic2F2ZXIiOnsic3RyaXAiOnRydWUsInF1YWxpdHkiOjc1LCJsb3NzbGVzcyI6ZmFsc2UsImFscGhhX3EiOjg1LCJyZWR1Y3Rpb25fZWZmb3J0Ijo2LCJzbWFydF9zdWJzYW1wbGUiOnRydWV9fSwicHVyIjoidmFyaWF0aW9uIn19--4677f0820d2d58fce038be00dd3c9c34fb524863/thinking-cat.jpg
+                xlarge_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--a33ca860a375672868d319422e8798668ebddc16/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOlsyMDAwLDIwMDBdLCJzYXZlciI6eyJzdHJpcCI6dHJ1ZSwicXVhbGl0eSI6NzUsImxvc3NsZXNzIjpmYWxzZSwiYWxwaGFfcSI6ODUsInJlZHVjdGlvbl9lZmZvcnQiOjYsInNtYXJ0X3N1YnNhbXBsZSI6dHJ1ZX19LCJwdXIiOiJ2YXJpYXRpb24ifX0=--66d4771ebbc71feb52b43bd1f272961f61129f28/thinking-cat.jpg
+                og_image_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--a33ca860a375672868d319422e8798668ebddc16/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOlsxMjAwLDYzMF0sInNhdmVyIjp7InN0cmlwIjp0cnVlLCJxdWFsaXR5Ijo3NSwibG9zc2xlc3MiOmZhbHNlLCJhbHBoYV9xIjo4NSwicmVkdWN0aW9uX2VmZm9ydCI6Niwic21hcnRfc3Vic2FtcGxlIjp0cnVlfX0sInB1ciI6InZhcmlhdGlvbiJ9fQ==--a5ae5c1e2ca63edc680a895b67fef58825be0354/thinking-cat.jpg
                 external_references: {}
                 created_at: '2026-01-15T12:00:00.000Z'
                 updated_at: '2026-01-15T12:00:00.000Z'
@@ -30244,10 +30540,10 @@ paths:
                 filename: thinking-cat.jpg
                 content_type: image/jpeg
                 byte_size: 18090
-                embed_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--f728cc8f2cc6dc935156331dc163f31d2e271174/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2xpbWl0IjpbMTIwMCwxMjAwXSwic2F2ZXIiOnsic3RyaXAiOnRydWUsInF1YWxpdHkiOjc1LCJsb3NzbGVzcyI6ZmFsc2UsImFscGhhX3EiOjg1LCJyZWR1Y3Rpb25fZWZmb3J0Ijo2LCJzbWFydF9zdWJzYW1wbGUiOnRydWV9fSwicHVyIjoidmFyaWF0aW9uIn19--7f00ee5789e0eaf9bcfb0a15a6527c0770241e18/thinking-cat.jpg
-                signed_id: eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--f728cc8f2cc6dc935156331dc163f31d2e271174
+                embed_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--a33ca860a375672868d319422e8798668ebddc16/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2xpbWl0IjpbMTIwMCwxMjAwXSwic2F2ZXIiOnsic3RyaXAiOnRydWUsInF1YWxpdHkiOjc1LCJsb3NzbGVzcyI6ZmFsc2UsImFscGhhX3EiOjg1LCJyZWR1Y3Rpb25fZWZmb3J0Ijo2LCJzbWFydF9zdWJzYW1wbGUiOnRydWV9fSwicHVyIjoidmFyaWF0aW9uIn19--c2cbb88512e90a64f9cb0e72e3fc82dd3ca70057/thinking-cat.jpg
+                signed_id: eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--a33ca860a375672868d319422e8798668ebddc16
                 viewable_id: prod_gbHJdmfrXB
-                download_url: http://localhost:3000/rails/active_storage/blobs/redirect/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--f728cc8f2cc6dc935156331dc163f31d2e271174/thinking-cat.jpg?disposition=attachment
+                download_url: http://localhost:3000/rails/active_storage/blobs/redirect/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--a33ca860a375672868d319422e8798668ebddc16/thinking-cat.jpg?disposition=attachment
                 metadata: {}
                 viewable_type: product
               schema:
@@ -33653,6 +33949,14 @@ components:
           type: array
           items:
             "$ref": "#/components/schemas/CheckoutRequirement"
+        order_minimum:
+          type: number
+          nullable: true
+        order_minimum_shortfall:
+          type: number
+          nullable: true
+        below_order_minimum:
+          type: boolean
         shipping_eq_billing_address:
           type: boolean
         items:
@@ -33730,6 +34034,9 @@ components:
       - current_step
       - completed_steps
       - requirements
+      - order_minimum
+      - order_minimum_shortfall
+      - below_order_minimum
       - shipping_eq_billing_address
       - items
       - billing_address
@@ -33764,6 +34071,66 @@ components:
       - assignable_id
       - assignable_name
       x-typelizer: true
+    CatalogOrderMinimum:
+      type: object
+      properties:
+        id:
+          type: string
+        currency:
+          type: string
+        created_at:
+          type: string
+        updated_at:
+          type: string
+        amount:
+          type: string
+        display_amount:
+          type: string
+      required:
+      - id
+      - currency
+      - created_at
+      - updated_at
+      - amount
+      - display_amount
+      x-typelizer: true
+    CatalogQuantityRule:
+      type: object
+      properties:
+        id:
+          type: string
+        minimum_order_quantity:
+          type: number
+          nullable: true
+        order_multiple:
+          type: number
+          nullable: true
+        created_at:
+          type: string
+        updated_at:
+          type: string
+        variant_id:
+          type: string
+        variant_sku:
+          type: string
+          nullable: true
+        product_name:
+          type: string
+          nullable: true
+        options_text:
+          type: string
+          nullable: true
+      required:
+      - id
+      - minimum_order_quantity
+      - order_multiple
+      - created_at
+      - updated_at
+      - variant_id
+      - variant_sku
+      - product_name
+      - options_text
+      x-typelizer: true
     Catalog:
       type: object
       properties:
@@ -33771,6 +34138,9 @@ components:
           type: string
         name:
           type: string
+        description:
+          type: string
+          nullable: true
         active:
           type: boolean
         position:
@@ -33778,6 +34148,12 @@ components:
           nullable: true
         metadata:
           type: object
+          nullable: true
+        minimum_order_quantity:
+          type: number
+          nullable: true
+        order_multiple:
+          type: number
           nullable: true
         created_at:
           type: string
@@ -33788,6 +34164,16 @@ components:
           nullable: true
         products_count:
           type: number
+        quantity_rules_count:
+          type: number
+        order_minimums_count:
+          type: number
+        order_minimums:
+          type: array
+          items:
+            "$ref": "#/components/schemas/CatalogOrderMinimum"
+        price_list:
+          "$ref": "#/components/schemas/PriceList"
         assignments:
           type: array
           items:
@@ -33795,13 +34181,18 @@ components:
       required:
       - id
       - name
+      - description
       - active
       - position
       - metadata
+      - minimum_order_quantity
+      - order_multiple
       - created_at
       - updated_at
       - price_list_id
       - products_count
+      - quantity_rules_count
+      - order_minimums_count
       x-typelizer: true
     Category:
       type: object
@@ -37278,6 +37669,8 @@ components:
           type: number
         match_policy:
           type: string
+        adjust_compare_at:
+          type: boolean
         starts_at:
           type: string
           nullable: true
@@ -37291,6 +37684,11 @@ components:
           type: string
         updated_at:
           type: string
+        price_adjustment_percentage:
+          type: string
+          nullable: true
+        automatic_pricing:
+          type: boolean
         currently_active:
           type: boolean
         products_count:
@@ -37308,11 +37706,14 @@ components:
       - status
       - position
       - match_policy
+      - adjust_compare_at
       - starts_at
       - ends_at
       - deleted_at
       - created_at
       - updated_at
+      - price_adjustment_percentage
+      - automatic_pricing
       - currently_active
       - products_count
       - prices_count
@@ -39345,6 +39746,18 @@ components:
         depth:
           type: number
           nullable: true
+        minimum_order_quantity:
+          type: number
+          nullable: true
+        order_multiple:
+          type: number
+          nullable: true
+        purchase_unit:
+          type: string
+          nullable: true
+        units_per_carton:
+          type: number
+          nullable: true
         price:
           "$ref": "#/components/schemas/Price"
         original_price:
@@ -39457,6 +39870,10 @@ components:
       - height
       - width
       - depth
+      - minimum_order_quantity
+      - order_multiple
+      - purchase_unit
+      - units_per_carton
       - price
       - original_price
       - seller_id

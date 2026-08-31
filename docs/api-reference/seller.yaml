@@ -12769,8 +12769,8 @@ paths:
               example:
                 data:
                 - id: prod_UkLWZg9DAJ
-                  name: Product 1363250
-                  slug: product-1363250
+                  name: Product 1383250
+                  slug: product-1383250
                   meta_title:
                   meta_description:
                   meta_keywords:
@@ -13009,8 +13009,8 @@ paths:
             application/json:
               example:
                 id: prod_UkLWZg9DAJ
-                name: Product 1396710
-                slug: product-1396710
+                name: Product 1416710
+                slug: product-1416710
                 meta_title:
                 meta_description:
                 meta_keywords:
@@ -13087,7 +13087,7 @@ paths:
               example:
                 id: prod_UkLWZg9DAJ
                 name: Hand-thrown mug, large
-                slug: product-1428212
+                slug: product-1448212
                 meta_title:
                 meta_description:
                 meta_keywords:
@@ -14014,10 +14014,10 @@ paths:
             application/json:
               example:
                 direct_upload:
-                  url: http://www.example.com/rails/active_storage/disk/eyJfcmFpbHMiOnsiZGF0YSI6eyJrZXkiOiJuem5oOGdra3VxendvbDc1ODBxNHNwZmpmMjVxIiwiY29udGVudF90eXBlIjoiYXBwbGljYXRpb24vcGRmIiwiY29udGVudF9sZW5ndGgiOjUxMjM0LCJjaGVja3N1bSI6IlZqaHowNGxRdUVHdXY0bkR2aHNhTlE9PSIsInNlcnZpY2VfbmFtZSI6InRlc3QifSwiZXhwIjoiMjAyNi0wMS0xNVQxMjowNTowMC4wMDBaIiwicHVyIjoiYmxvYl90b2tlbiJ9fQ==--ec01546e3fc6ebad1b6d0564981d279619e5b061
+                  url: http://www.example.com/rails/active_storage/disk/eyJfcmFpbHMiOnsiZGF0YSI6eyJrZXkiOiJuem5oOGdra3VxendvbDc1ODBxNHNwZmpmMjVxIiwiY29udGVudF90eXBlIjoiYXBwbGljYXRpb24vcGRmIiwiY29udGVudF9sZW5ndGgiOjUxMjM0LCJjaGVja3N1bSI6IlZqaHowNGxRdUVHdXY0bkR2aHNhTlE9PSIsInNlcnZpY2VfbmFtZSI6InRlc3QifSwiZXhwIjoiMjAyNi0wMS0xNVQxMjowNTowMC4wMDBaIiwicHVyIjoiYmxvYl90b2tlbiJ9fQ==--b4d7dd06f8103d13b67bd6304050525bb98f33cf
                   headers:
                     Content-Type: application/pdf
-                signed_id: eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--389837f16b7b8cde04c6aea7d0e8d4bc3ac5e2e7
+                signed_id: eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--a33ca860a375672868d319422e8798668ebddc16
               schema:
                 "$ref": "#/components/schemas/DirectUploadResponse"
       requestBody:
@@ -14281,8 +14281,8 @@ paths:
                   - id: fi_UkLWZg9DAJ
                     quantity: 1
                     line_item_id: li_UkLWZg9DAJ
-                    name: Product 1299315
-                    sku: SKU-161
+                    name: Product 1319315
+                    sku: SKU-166
                     options_text: ''
               schema:
                 type: object
@@ -14351,8 +14351,8 @@ paths:
                 - id: fi_UkLWZg9DAJ
                   quantity: 1
                   line_item_id: li_UkLWZg9DAJ
-                  name: Product 130961
-                  sku: SKU-162
+                  name: Product 132961
+                  sku: SKU-167
                   options_text: ''
               schema:
                 "$ref": "#/components/schemas/Fulfillment"
@@ -14452,7 +14452,7 @@ paths:
                   display_total: "$110.00"
                   items:
                   - id: li_UkLWZg9DAJ
-                    name: Product 13195
+                    name: Product 13395
                     options_text: ''
                     quantity: 1
                     currency: USD
@@ -14461,7 +14461,7 @@ paths:
                     total: '10.0'
                     display_total: "$10.00"
                     variant_id: variant_UkLWZg9DAJ
-                    sku: SKU-163
+                    sku: SKU-168
                     thumbnail_url:
                   fulfillments:
                   - id: ful_UkLWZg9DAJ
@@ -14481,8 +14481,8 @@ paths:
                     - id: fi_UkLWZg9DAJ
                       quantity: 1
                       line_item_id: li_UkLWZg9DAJ
-                      name: Product 13195
-                      sku: SKU-163
+                      name: Product 13395
+                      sku: SKU-168
                       options_text: ''
                   shipping_address:
                     id: addr_gbHJdmfrXB
@@ -14601,7 +14601,7 @@ paths:
                 display_total: "$110.00"
                 items:
                 - id: li_UkLWZg9DAJ
-                  name: Product 1329755
+                  name: Product 1349755
                   options_text: ''
                   quantity: 1
                   currency: USD
@@ -14610,7 +14610,7 @@ paths:
                   total: '10.0'
                   display_total: "$10.00"
                   variant_id: variant_UkLWZg9DAJ
-                  sku: SKU-164
+                  sku: SKU-169
                   thumbnail_url:
                 fulfillments:
                 - id: ful_UkLWZg9DAJ
@@ -14630,8 +14630,8 @@ paths:
                   - id: fi_UkLWZg9DAJ
                     quantity: 1
                     line_item_id: li_UkLWZg9DAJ
-                    name: Product 1329755
-                    sku: SKU-164
+                    name: Product 1349755
+                    sku: SKU-169
                     options_text: ''
                 shipping_address:
                   id: addr_gbHJdmfrXB
@@ -14739,7 +14739,7 @@ paths:
                 display_total: "$110.00"
                 items:
                 - id: li_UkLWZg9DAJ
-                  name: Product 1356554
+                  name: Product 1376554
                   options_text: ''
                   quantity: 1
                   currency: USD
@@ -14748,7 +14748,7 @@ paths:
                   total: '10.0'
                   display_total: "$10.00"
                   variant_id: variant_UkLWZg9DAJ
-                  sku: SKU-167
+                  sku: SKU-172
                   thumbnail_url:
                 fulfillments:
                 - id: ful_UkLWZg9DAJ
@@ -14768,8 +14768,8 @@ paths:
                   - id: fi_UkLWZg9DAJ
                     quantity: 1
                     line_item_id: li_UkLWZg9DAJ
-                    name: Product 1356554
-                    sku: SKU-167
+                    name: Product 1376554
+                    sku: SKU-172
                     options_text: ''
                 shipping_address:
                   id: addr_gbHJdmfrXB
@@ -17000,6 +17000,18 @@ components:
         depth:
           type: number
           nullable: true
+        minimum_order_quantity:
+          type: number
+          nullable: true
+        order_multiple:
+          type: number
+          nullable: true
+        purchase_unit:
+          type: string
+          nullable: true
+        units_per_carton:
+          type: number
+          nullable: true
         price:
           "$ref": "#/components/schemas/Price"
         original_price:
@@ -17097,6 +17109,10 @@ components:
       - height
       - width
       - depth
+      - minimum_order_quantity
+      - order_multiple
+      - purchase_unit
+      - units_per_carton
       - price
       - original_price
       - seller_id
