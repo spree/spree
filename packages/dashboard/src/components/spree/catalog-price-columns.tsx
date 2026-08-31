@@ -23,9 +23,10 @@ const AGREEMENT_SOURCES = ['explicit', 'automatic'] as const
  * divergence — in the assortment, priced by nothing the agreement says
  * (docs/plans/6.0-catalog-agreement-rework.md).
  *
- * Staged rows have no resolved price: an addition does not exist server-side
- * yet, and a removal is on its way out. Both read as blank rather than
- * borrowing another row's number.
+ * A staged addition has no resolved price yet — it does not exist server-side
+ * until Save — so it says so rather than borrowing another row's number. A
+ * staged removal keeps showing its price: it is still on the list until Save,
+ * and the struck-through row already says it is leaving.
  */
 export function catalogPriceColumns({
   products,

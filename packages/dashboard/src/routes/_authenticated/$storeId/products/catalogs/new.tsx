@@ -103,7 +103,22 @@ function NewCatalogPage() {
   }
 
   return (
-    <form onSubmit={form.handleSubmit(handleCreate)}>
+    // Enter is swallowed until the last step. A form whose only blocking
+    // control is one text input submits on Enter, which from step one would
+    // create the catalog without the merchant ever seeing Audience, Pricing
+    // or Review — the opposite of the contract this flow makes.
+    <form
+      onSubmit={form.handleSubmit(handleCreate)}
+      onKeyDown={(event) => {
+        if (
+          event.key === 'Enter' &&
+          !isLastStep &&
+          !(event.target instanceof HTMLTextAreaElement)
+        ) {
+          event.preventDefault()
+        }
+      }}
+    >
       <ResourceLayout
         header={<PageHeader title={t('admin.catalogs.wizard.title')} backTo="products/catalogs" />}
         main={

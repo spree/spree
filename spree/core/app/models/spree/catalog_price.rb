@@ -14,9 +14,15 @@ module Spree
     include ActiveModel::Model
     include ActiveModel::Attributes
 
+    # Where a resolved amount came from. A closed set: the reading is only
+    # useful if every amount can say which of the three it is.
+    SOURCES = %w[explicit automatic base].freeze
+
     attribute :amount, :decimal
     attribute :currency, :string
     attribute :source, :string
+
+    validates :source, inclusion: { in: SOURCES }
 
     # True when the catalog's own pricing decided this amount, rather than the
     # shop price showing through.

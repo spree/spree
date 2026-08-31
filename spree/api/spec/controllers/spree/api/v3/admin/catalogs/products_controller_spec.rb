@@ -59,6 +59,20 @@ RSpec.describe Spree::Api::V3::Admin::Catalogs::ProductsController, type: :contr
       expect(price['source']).to eq('automatic')
     end
 
+    # The serializer matches dot notation, so the controller has to as well —
+    # a stricter gate renders the attribute with no resolver behind it, and
+    # every row reads as unpriced.
+    it 'still resolves when the expand carries a nested path' do
+      product = create(:product, store: store, price: 100)
+      create(:catalog_product, catalog: catalog, product: product)
+      create(:price_list, :active, store: store, catalog: catalog, price_adjustment_percentage: -15)
+
+      get :index, params: { catalog_id: catalog.prefixed_id, expand: 'catalog_price.anything' },
+                  as: :json
+
+      expect(json_response['data'].first['catalog_price']).to be_present
+    end
+
     # The divergence the view exists to expose: in the assortment, priced by
     # nothing the agreement says.
     it 'reports a product the agreement does not price as base' do

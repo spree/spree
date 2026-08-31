@@ -20,9 +20,6 @@ module Spree
     # Built once per page of products and reused, so a fifty-row listing is
     # two queries rather than a hundred.
     class ResolvePrices
-      # Where a resolved amount came from.
-      SOURCES = %w[explicit automatic base].freeze
-
       # @param catalog [Spree::Catalog]
       # @param currency [String] the currency to read prices in
       def initialize(catalog:, currency:)

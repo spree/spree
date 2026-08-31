@@ -2610,13 +2610,6 @@ export interface CatalogParams {
   active?: boolean
   position?: number
   /**
-   * Price list (pl_...) pricing this catalog; null = assortment-only, base
-   * prices. A catalog with an EMPTY assortment is a pricing-only overlay —
-   * its list applies and nothing is hidden; curate products (or call
-   * importProducts) to make it restrictive.
-   */
-  price_list_id?: string | null
-  /**
    * The price list this catalog prices through, written inline: an object
    * creates the owned list or updates the one already there. An explicit
    * `null` **deletes** that list — an owned list is matched by its catalog
@@ -2625,9 +2618,9 @@ export interface CatalogParams {
    * stay recoverable. Omit the key, or send `{}`, to leave the pricing
    * alone.
    *
-   * Do not send this together with `price_list_id`: a catalog may only own
-   * its own list, and the pair is refused rather than letting one catalog
-   * edit another's pricing.
+   * A catalog with an EMPTY assortment is a pricing-only overlay — its list
+   * applies and nothing is hidden; curate products (or call importProducts)
+   * to make it restrictive.
    */
   price_list?: CatalogPriceListParams | null
   metadata?: Record<string, unknown>
