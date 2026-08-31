@@ -66,6 +66,7 @@ export * from './spree/tag-list'
 export * from './spree/tax-identifiers-card'
 export * from './spree/theme-provider'
 export * from './spree/theme-toggle'
+export * from './spree/wizard-steps'
 // ---------------------------------------------------------------------------
 // UI primitives (shadcn) — see ./ui/*
 // ---------------------------------------------------------------------------

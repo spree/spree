@@ -138,6 +138,22 @@
         "unassigned": "Assignment removed",
         "updated": "Catalog updated"
       },
+      "prices": {
+        "column_price": "Price",
+        "column_source": "From",
+        "unpriced": "No price",
+        "after_save": "After save",
+        "source": {
+          "explicit": "Entered",
+          "automatic": "Adjusted",
+          "base": "Shop price"
+        },
+        "source_help": {
+          "explicit": "An amount entered on this catalog’s own price list.",
+          "automatic": "The shop price with this catalog’s percentage applied.",
+          "base": "The normal shop price — this catalog does not price this product."
+        }
+      },
       "products": {
         "add_cta": "Add products",
         "column_product": "Product",
@@ -181,6 +197,25 @@
           "minimum": "The least a buyer may order of one product. An order below it is refused with the nearest valid quantities named — nothing is ever rounded up for them.",
           "multiple": "The step size. With a multiple of 24 a buyer orders 24, 48 or 72 — never 30. Steps count up from the minimum, so a minimum of 50 in steps of 24 allows 50, 74 and 98.",
           "order_minimum": "The least a whole order must come to, counting items only — delivery and tax do not help reach it. Buyers see how far short they are while they shop, and checkout is refused until they reach it."
+        }
+      },
+      "wizard": {
+        "title": "New catalog",
+        "description": "Set up an agreement: what it is, who it is for, and what it charges.",
+        "steps": {
+          "details": "Details",
+          "audience": "Audience",
+          "pricing": "Pricing",
+          "review": "Review"
+        },
+        "help": {
+          "details": "Name this agreement so you recognise it later.",
+          "audience": "Who sees this catalog. Leave it empty and it applies to everyone.",
+          "pricing": "What buyers on this agreement pay.",
+          "review": "Nothing is created until you finish."
+        },
+        "review": {
+          "everyone": "Everyone"
         }
       }
     },

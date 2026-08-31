@@ -138,6 +138,22 @@
         "unassigned": "Zuweisung entfernt",
         "updated": "Katalog aktualisiert"
       },
+      "prices": {
+        "column_price": "Preis",
+        "column_source": "Von",
+        "unpriced": "Kein Preis",
+        "after_save": "Nach dem Speichern",
+        "source": {
+          "explicit": "Eingegeben",
+          "automatic": "Angepasst",
+          "base": "Ladenpreis"
+        },
+        "source_help": {
+          "explicit": "Ein Betrag, der in der eigenen Preisliste dieses Katalogs eingegeben wurde.",
+          "automatic": "Der Ladenpreis mit dem Prozentsatz dieses Katalogs.",
+          "base": "Der normale Ladenpreis — dieser Katalog setzt für dieses Produkt keinen Preis."
+        }
+      },
       "products": {
         "add_cta": "Produkte hinzufügen",
         "column_product": "Produkt",
@@ -181,6 +197,25 @@
           "minimum": "Die geringste Menge, die ein Käufer von einem Produkt bestellen darf. Eine kleinere Bestellung wird abgelehnt und nennt die nächstgelegenen gültigen Mengen — es wird nie aufgerundet.",
           "multiple": "Die Schrittweite. Bei einem Vielfachen von 24 bestellt ein Käufer 24, 48 oder 72 — nie 30. Die Schritte zählen ab der Mindestmenge: bei Minimum 50 und Schritten von 24 sind 50, 74 und 98 erlaubt.",
           "order_minimum": "Der Mindestwert einer gesamten Bestellung, nur Artikel — Versand und Steuern zählen nicht mit. Käufer sehen beim Einkaufen, wie viel noch fehlt, und der Checkout wird bis dahin abgelehnt."
+        }
+      },
+      "wizard": {
+        "title": "Neuer Katalog",
+        "description": "Eine Vereinbarung einrichten: was sie ist, für wen sie gilt und was sie kostet.",
+        "steps": {
+          "details": "Details",
+          "audience": "Zielgruppe",
+          "pricing": "Preise",
+          "review": "Überprüfen"
+        },
+        "help": {
+          "details": "Benennen Sie diese Vereinbarung, damit Sie sie später wiedererkennen.",
+          "audience": "Wer diesen Katalog sieht. Leer lassen, damit er für alle gilt.",
+          "pricing": "Was Käufer mit dieser Vereinbarung zahlen.",
+          "review": "Es wird nichts erstellt, bevor Sie abschließen."
+        },
+        "review": {
+          "everyone": "Alle"
         }
       }
     },

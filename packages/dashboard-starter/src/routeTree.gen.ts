@@ -80,6 +80,7 @@ import { Route as ProductsCollectionsNewRouteImport } from './../../dashboard/sr
 import { Route as ProductsCollectionsCollectionIdRouteImport } from './../../dashboard/src/routes/_authenticated/$storeId/products/collections/$collectionId'
 import { Route as ProductsCategoriesNewRouteImport } from './../../dashboard/src/routes/_authenticated/$storeId/products/categories/new'
 import { Route as ProductsCategoriesCategoryIdRouteImport } from './../../dashboard/src/routes/_authenticated/$storeId/products/categories/$categoryId'
+import { Route as ProductsCatalogsNewRouteImport } from './../../dashboard/src/routes/_authenticated/$storeId/products/catalogs/new'
 import { Route as ProductsCatalogsCatalogIdRouteImport } from './../../dashboard/src/routes/_authenticated/$storeId/products/catalogs/$catalogId'
 import { Route as OrdersOrderIdEditRouteImport } from './../../dashboard/src/routes/_authenticated/$storeId/orders/$orderId/edit'
 import { Route as SettingsDeliveryProfilesProfileIdIndexRouteImport } from './../../dashboard/src/routes/_authenticated/$storeId/settings/delivery-profiles/$profileId/index'
@@ -449,6 +450,11 @@ const ProductsCategoriesCategoryIdRoute =
     path: '/products/categories/$categoryId',
     getParentRoute: () => authenticatedStoreIdRoute,
   } as any)
+const ProductsCatalogsNewRoute = ProductsCatalogsNewRouteImport.update({
+  id: '/products/catalogs/new',
+  path: '/products/catalogs/new',
+  getParentRoute: () => authenticatedStoreIdRoute,
+} as any)
 const ProductsCatalogsCatalogIdRoute =
   ProductsCatalogsCatalogIdRouteImport.update({
     id: '/products/catalogs/$catalogId',
@@ -544,6 +550,7 @@ export interface FileRoutesByFullPath {
   '/$storeId/settings/': typeof SettingsIndexRoute
   '/$storeId/orders/$orderId/edit': typeof OrdersOrderIdEditRoute
   '/$storeId/products/catalogs/$catalogId': typeof ProductsCatalogsCatalogIdRoute
+  '/$storeId/products/catalogs/new': typeof ProductsCatalogsNewRoute
   '/$storeId/products/categories/$categoryId': typeof ProductsCategoriesCategoryIdRoute
   '/$storeId/products/categories/new': typeof ProductsCategoriesNewRoute
   '/$storeId/products/collections/$collectionId': typeof ProductsCollectionsCollectionIdRoute
@@ -620,6 +627,7 @@ export interface FileRoutesByTo {
   '/$storeId/settings': typeof SettingsIndexRoute
   '/$storeId/orders/$orderId/edit': typeof OrdersOrderIdEditRoute
   '/$storeId/products/catalogs/$catalogId': typeof ProductsCatalogsCatalogIdRoute
+  '/$storeId/products/catalogs/new': typeof ProductsCatalogsNewRoute
   '/$storeId/products/categories/$categoryId': typeof ProductsCategoriesCategoryIdRoute
   '/$storeId/products/categories/new': typeof ProductsCategoriesNewRoute
   '/$storeId/products/collections/$collectionId': typeof ProductsCollectionsCollectionIdRoute
@@ -700,6 +708,7 @@ export interface FileRoutesById {
   '/_authenticated/$storeId/settings/': typeof SettingsIndexRoute
   '/_authenticated/$storeId/orders/$orderId/edit': typeof OrdersOrderIdEditRoute
   '/_authenticated/$storeId/products/catalogs/$catalogId': typeof ProductsCatalogsCatalogIdRoute
+  '/_authenticated/$storeId/products/catalogs/new': typeof ProductsCatalogsNewRoute
   '/_authenticated/$storeId/products/categories/$categoryId': typeof ProductsCategoriesCategoryIdRoute
   '/_authenticated/$storeId/products/categories/new': typeof ProductsCategoriesNewRoute
   '/_authenticated/$storeId/products/collections/$collectionId': typeof ProductsCollectionsCollectionIdRoute
@@ -780,6 +789,7 @@ export interface FileRouteTypes {
     | '/$storeId/settings/'
     | '/$storeId/orders/$orderId/edit'
     | '/$storeId/products/catalogs/$catalogId'
+    | '/$storeId/products/catalogs/new'
     | '/$storeId/products/categories/$categoryId'
     | '/$storeId/products/categories/new'
     | '/$storeId/products/collections/$collectionId'
@@ -856,6 +866,7 @@ export interface FileRouteTypes {
     | '/$storeId/settings'
     | '/$storeId/orders/$orderId/edit'
     | '/$storeId/products/catalogs/$catalogId'
+    | '/$storeId/products/catalogs/new'
     | '/$storeId/products/categories/$categoryId'
     | '/$storeId/products/categories/new'
     | '/$storeId/products/collections/$collectionId'
@@ -935,6 +946,7 @@ export interface FileRouteTypes {
     | '/_authenticated/$storeId/settings/'
     | '/_authenticated/$storeId/orders/$orderId/edit'
     | '/_authenticated/$storeId/products/catalogs/$catalogId'
+    | '/_authenticated/$storeId/products/catalogs/new'
     | '/_authenticated/$storeId/products/categories/$categoryId'
     | '/_authenticated/$storeId/products/categories/new'
     | '/_authenticated/$storeId/products/collections/$collectionId'
@@ -1463,6 +1475,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ProductsCategoriesCategoryIdRouteImport
       parentRoute: typeof authenticatedStoreIdRoute
     }
+    '/_authenticated/$storeId/products/catalogs/new': {
+      id: '/_authenticated/$storeId/products/catalogs/new'
+      path: '/products/catalogs/new'
+      fullPath: '/$storeId/products/catalogs/new'
+      preLoaderRoute: typeof ProductsCatalogsNewRouteImport
+      parentRoute: typeof authenticatedStoreIdRoute
+    }
     '/_authenticated/$storeId/products/catalogs/$catalogId': {
       id: '/_authenticated/$storeId/products/catalogs/$catalogId'
       path: '/products/catalogs/$catalogId'
@@ -1608,6 +1627,7 @@ interface authenticatedStoreIdRouteChildren {
   SellersIndexRoute: typeof SellersIndexRoute
   OrdersOrderIdEditRoute: typeof OrdersOrderIdEditRoute
   ProductsCatalogsCatalogIdRoute: typeof ProductsCatalogsCatalogIdRoute
+  ProductsCatalogsNewRoute: typeof ProductsCatalogsNewRoute
   ProductsCategoriesCategoryIdRoute: typeof ProductsCategoriesCategoryIdRoute
   ProductsCategoriesNewRoute: typeof ProductsCategoriesNewRoute
   ProductsCollectionsCollectionIdRoute: typeof ProductsCollectionsCollectionIdRoute
@@ -1653,6 +1673,7 @@ const authenticatedStoreIdRouteChildren: authenticatedStoreIdRouteChildren = {
   SellersIndexRoute: SellersIndexRoute,
   OrdersOrderIdEditRoute: OrdersOrderIdEditRoute,
   ProductsCatalogsCatalogIdRoute: ProductsCatalogsCatalogIdRoute,
+  ProductsCatalogsNewRoute: ProductsCatalogsNewRoute,
   ProductsCategoriesCategoryIdRoute: ProductsCategoriesCategoryIdRoute,
   ProductsCategoriesNewRoute: ProductsCategoriesNewRoute,
   ProductsCollectionsCollectionIdRoute: ProductsCollectionsCollectionIdRoute,

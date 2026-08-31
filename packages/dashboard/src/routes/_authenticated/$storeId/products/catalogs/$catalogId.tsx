@@ -4,7 +4,6 @@ import {
   adminClient,
   mapSpreeErrorsToForm,
   PageHeader,
-  ResourceCombobox,
   Subject,
   usePermissions,
 } from '@spree/dashboard-core'
@@ -12,19 +11,10 @@ import {
   Badge,
   Button,
   Card,
-  CardAction,
   CardContent,
   CardHeader,
   CardTitle,
   Checkbox,
-  cn,
-  Dialog,
-  DialogBody,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
   ErrorState,
   Field,
   FieldDescription,
@@ -33,18 +23,18 @@ import {
   FieldLabel,
   Input,
   ResourceLayout,
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
   Textarea,
 } from '@spree/dashboard-ui'
 import { PlusIcon, TrashIcon, Undo2Icon } from '@spree/dashboard-ui/icons'
 import { createFileRoute, useNavigate } from '@tanstack/react-router'
-import { useEffect, useMemo, useState } from 'react'
+import { useEffect, useMemo } from 'react'
 import { Controller, type UseFormReturn, useForm } from 'react-hook-form'
 import { useTranslation } from 'react-i18next'
+import { CatalogAudienceCard } from '../../../../../components/spree/catalog-audience-fields'
+import {
+  catalogPriceColumns,
+  mergeColumns,
+} from '../../../../../components/spree/catalog-price-columns'
 import { CatalogPricingFields } from '../../../../../components/spree/catalog-pricing-fields'
 import {
   CatalogTermsCard,
@@ -248,27 +238,39 @@ function CatalogBody({ catalog }: { catalog: Catalog }) {
                 canEdit={canEdit}
                 useProducts={useCatalogProducts}
                 translationNamespace="admin.catalogs"
-                // Quantity terms are stated per product, so they belong on
-                // the rows the products are already on rather than in a
-                // second list beside this one.
-                extraColumns={catalogTermColumns({
-                  form,
-                  canEdit,
-                  headers: {
-                    // Short column headers — the card's own title already
-                    // says these are quantity terms. The full names stay as
-                    // the inputs' accessible labels.
-                    minimum: t('admin.catalogs.terms.column_minimum'),
-                    multiple: t('admin.catalogs.terms.column_multiple'),
-                    minimumLabel: t('admin.fields.minimum_order_quantity.label'),
-                    multipleLabel: t('admin.fields.order_multiple.label'),
-                    minimumHelp: t('admin.catalogs.terms.help.minimum'),
-                    multipleHelp: t('admin.catalogs.terms.help.multiple'),
-                    invalid: t('admin.catalogs.terms.validation.positive_integer'),
-                    mixed: t('admin.catalogs.terms.mixed'),
-                    defaultHint: t('admin.catalogs.terms.inherits'),
-                  },
-                })}
+                // What the agreement charges and what it demands, on the rows
+                // the merchant already curates. A product this catalog lists
+                // but does not price is only visible if the two sit together
+                // (docs/plans/6.0-catalog-agreement-rework.md).
+                extraColumns={(products) =>
+                  mergeColumns(
+                    catalogPriceColumns({
+                      products,
+                      headers: {
+                        price: t('admin.catalogs.prices.column_price'),
+                        source: t('admin.catalogs.prices.column_source'),
+                      },
+                    }),
+                    catalogTermColumns({
+                      form,
+                      canEdit,
+                      headers: {
+                        // Short column headers — the card's own title already
+                        // says these are quantity terms. The full names stay as
+                        // the inputs' accessible labels.
+                        minimum: t('admin.catalogs.terms.column_minimum'),
+                        multiple: t('admin.catalogs.terms.column_multiple'),
+                        minimumLabel: t('admin.fields.minimum_order_quantity.label'),
+                        multipleLabel: t('admin.fields.order_multiple.label'),
+                        minimumHelp: t('admin.catalogs.terms.help.minimum'),
+                        multipleHelp: t('admin.catalogs.terms.help.multiple'),
+                        invalid: t('admin.catalogs.terms.validation.positive_integer'),
+                        mixed: t('admin.catalogs.terms.mixed'),
+                        defaultHint: t('admin.catalogs.terms.inherits'),
+                      },
+                    }),
+                  )
+                }
               />
             </>
           }
@@ -277,7 +279,7 @@ function CatalogBody({ catalog }: { catalog: Catalog }) {
               <CatalogSettingsCard form={form} canEdit={canEdit} />
               <CatalogPricingCard catalog={catalog} form={form} canEdit={canEdit} />
               <CatalogTermsCard form={form} canEdit={canEdit} />
-              <CatalogAssignmentsCard form={form} canEdit={canEdit} />
+              <CatalogAudienceCard form={form} canEdit={canEdit} />
             </>
           }
         />
@@ -387,280 +389,5 @@ function CatalogSettingsCard({
         </FieldGroup>
       </CardContent>
     </Card>
-  )
-}
-
-const ASSIGNABLE_TYPES = ['company', 'customer_group'] as const
-type AssignableType = (typeof ASSIGNABLE_TYPES)[number]
-
-function CatalogAssignmentsCard({
-  form,
-  canEdit,
-}: {
-  form: UseFormReturn<CatalogFormValues>
-  canEdit: boolean
-}) {
-  const { t } = useTranslation()
-  const [addOpen, setAddOpen] = useState(false)
-  const assignments: AssignmentEntry[] = form.watch('assignments') ?? []
-
-  function update(next: AssignmentEntry[]) {
-    form.setValue('assignments', next, { shouldDirty: true })
-  }
-
-  // Removal needs no confirm: nothing is written until Save, and Discard
-  // puts it back — the same reason the assortment rows drop theirs.
-  //
-  // A row that exists server-side is marked rather than dropped, so it stays
-  // visible struck through with an undo, like a product staged for removal.
-  // One the merchant only just added has nothing to undo back to, so it goes.
-  function remove(index: number) {
-    const entry = assignments[index]
-    if (!entry.id) {
-      update(assignments.filter((_, i) => i !== index))
-      return
-    }
-
-    update(assignments.map((row, i) => (i === index ? { ...row, removed: true } : row)))
-  }
-
-  function restore(index: number) {
-    update(assignments.map((row, i) => (i === index ? { ...row, removed: false } : row)))
-  }
-
-  return (
-    <Card>
-      <CardHeader>
-        <CardTitle>{t('admin.catalogs.assignments.title')}</CardTitle>
-        {canEdit && (
-          <CardAction>
-            <Button size="sm" variant="outline" type="button" onClick={() => setAddOpen(true)}>
-              <PlusIcon className="size-4" />
-              {t('admin.catalogs.assignments.add_cta')}
-            </Button>
-          </CardAction>
-        )}
-      </CardHeader>
-      <CardContent>
-        {assignments.length === 0 ? (
-          <p className="text-muted-foreground text-sm">{t('admin.catalogs.assignments.empty')}</p>
-        ) : (
-          <div className="flex flex-col gap-2">
-            {assignments.map((assignment, index) => (
-              <div
-                key={`${assignment.assignable_type}-${assignment.assignable_id}`}
-                className={cn(
-                  'flex items-center justify-between gap-2',
-                  assignment.removed && 'opacity-60',
-                )}
-              >
-                <span
-                  className={cn(
-                    'flex min-w-0 items-center gap-2',
-                    assignment.removed && 'line-through',
-                  )}
-                >
-                  <Badge variant="outline">
-                    {t(`admin.catalogs.assignable_types.${assignment.assignable_type}`)}
-                  </Badge>
-                  <span className="truncate text-foreground text-sm">
-                    {assignment.assignable_name ?? assignment.assignable_id}
-                  </span>
-                </span>
-                {canEdit &&
-                  (assignment.removed ? (
-                    <Button
-                      variant="ghost"
-                      size="icon-xs"
-                      type="button"
-                      onClick={() => restore(index)}
-                      aria-label={t('admin.actions.restore')}
-                    >
-                      <Undo2Icon className="size-4" />
-                    </Button>
-                  ) : (
-                    <Button
-                      variant="ghost"
-                      size="icon-xs"
-                      type="button"
-                      onClick={() => remove(index)}
-                      aria-label={t('admin.actions.remove')}
-                    >
-                      <TrashIcon className="size-4" />
-                    </Button>
-                  ))}
-              </div>
-            ))}
-          </div>
-        )}
-      </CardContent>
-
-      {addOpen && (
-        <AssignCatalogDialog
-          open
-          onOpenChange={setAddOpen}
-          assigned={assignments}
-          onAdd={(entry) => {
-            // Re-picking an audience staged for withdrawal restores it: it
-            // is still assigned server-side, so adding a second row would
-            // render it twice and then re-create what the save just left in
-            // place.
-            const staged = assignments.findIndex(
-              (row) =>
-                row.assignable_type === entry.assignable_type &&
-                row.assignable_id === entry.assignable_id,
-            )
-            if (staged >= 0) {
-              restore(staged)
-              return
-            }
-
-            update([...assignments, entry])
-          }}
-        />
-      )}
-    </Card>
-  )
-}
-
-interface AssignableOption {
-  id: string
-  name?: string | null
-  email?: string | null
-}
-
-function assignableSearch(type: AssignableType) {
-  switch (type) {
-    case 'company':
-      return {
-        search: (q: string) => adminClient.companies.list({ name_cont: q, limit: 10 }),
-        hydrate: (ids: string[]) => adminClient.companies.list({ id_in: ids, limit: ids.length }),
-      }
-    case 'customer_group':
-      return {
-        search: (q: string) => adminClient.customerGroups.list({ name_cont: q, limit: 10 }),
-        hydrate: (ids: string[]) =>
-          adminClient.customerGroups.list({ id_in: ids, limit: ids.length }),
-      }
-  }
-}
-
-function AssignCatalogDialog({
-  open,
-  onOpenChange,
-  assigned,
-  onAdd,
-}: {
-  open: boolean
-  onOpenChange: (open: boolean) => void
-  /** Already staged, so the same audience cannot be added twice. */
-  assigned: AssignmentEntry[]
-  onAdd: (entry: AssignmentEntry) => void
-}) {
-  const { t } = useTranslation()
-  const [assignableType, setAssignableType] = useState<AssignableType>('company')
-  const [assignableId, setAssignableId] = useState('')
-  const [assignableName, setAssignableName] = useState<string | null>(null)
-
-  const typeOptions = ASSIGNABLE_TYPES.map((type) => ({
-    value: type,
-    label: t(`admin.catalogs.assignable_types.${type}`),
-  }))
-
-  const { search, hydrate } = assignableSearch(assignableType)
-
-  // A row staged for withdrawal is not a duplicate — picking it again is how
-  // the merchant takes the removal back.
-  const duplicate = assigned.some(
-    (entry) =>
-      !entry.removed &&
-      entry.assignable_type === assignableType &&
-      entry.assignable_id === assignableId,
-  )
-
-  function handleSubmit() {
-    if (!assignableId || duplicate) return
-
-    onAdd({
-      assignable_type: assignableType,
-      assignable_id: assignableId,
-      assignable_name: assignableName,
-    })
-    onOpenChange(false)
-  }
-
-  return (
-    <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent>
-        <DialogHeader>
-          <DialogTitle>{t('admin.catalogs.assignments.add_title')}</DialogTitle>
-          <DialogDescription>
-            {t('admin.catalogs.assignments.dialog_description')}
-          </DialogDescription>
-        </DialogHeader>
-        <DialogBody>
-          <FieldGroup>
-            <Field>
-              <FieldLabel>{t('admin.catalogs.assignments.type_label')}</FieldLabel>
-              <Select
-                items={typeOptions}
-                value={assignableType}
-                onValueChange={(value) => {
-                  setAssignableType(value as AssignableType)
-                  setAssignableId('')
-                }}
-              >
-                <SelectTrigger>
-                  <SelectValue />
-                </SelectTrigger>
-                <SelectContent>
-                  {typeOptions.map((option) => (
-                    <SelectItem key={option.value} value={option.value}>
-                      {option.label}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </Field>
-
-            <Field>
-              <FieldLabel>{t('admin.catalogs.assignments.audience_label')}</FieldLabel>
-              <ResourceCombobox<AssignableOption>
-                key={assignableType}
-                queryKey={`catalog-assignables-${assignableType}`}
-                search={search}
-                hydrate={hydrate}
-                getOptionLabel={(option) => option.name ?? option.email ?? option.id}
-                placeholder={t('admin.catalogs.assignments.audience_placeholder')}
-                emptyText={t('admin.catalogs.assignments.audience_empty')}
-                value={assignableId || undefined}
-                // The record, not just the id: a staged row has to render a
-                // name before the assignment exists server-side.
-                onChange={(id, record) => {
-                  setAssignableId(id ?? '')
-                  setAssignableName(record ? (record.name ?? record.email ?? null) : null)
-                }}
-              />
-              {duplicate && (
-                <FieldError>{t('admin.catalogs.assignments.already_assigned')}</FieldError>
-              )}
-              {assignableType === 'company' && (
-                <FieldDescription>
-                  {t('admin.catalogs.assignments.company_subtree_help')}
-                </FieldDescription>
-              )}
-            </Field>
-          </FieldGroup>
-        </DialogBody>
-        <DialogFooter>
-          <Button type="button" variant="outline" onClick={() => onOpenChange(false)}>
-            {t('admin.actions.cancel')}
-          </Button>
-          <Button type="button" disabled={!assignableId || duplicate} onClick={handleSubmit}>
-            {t('admin.actions.add')}
-          </Button>
-        </DialogFooter>
-      </DialogContent>
-    </Dialog>
   )
 }

@@ -73,9 +73,16 @@ export function DeferredProductMembershipCard({
   description?: string
   /**
    * Extra per-row columns, for a parent whose membership carries data of its
-   * own — a catalog's quantity terms. Passed straight to the list.
+   * own — a catalog's quantity terms, or what its agreement charges.
+   *
+   * A function receives the server rows this page loaded, for a column whose
+   * value the listing itself carries rather than the form: the card owns that
+   * query, so lifting it out only to read a column back would mean fetching
+   * the same page twice.
    */
-  extraColumns?: ProductMembershipListProps['extraColumns']
+  extraColumns?:
+    | ProductMembershipListProps['extraColumns']
+    | ((products: Product[]) => ProductMembershipListProps['extraColumns'])
 }) {
   const { t } = useTranslation()
   const tr = (key: string, options?: Record<string, unknown>) =>
@@ -200,7 +207,9 @@ export function DeferredProductMembershipCard({
           // change. Disabled until the staged changes are saved.
           reorderable={Boolean(onReorder) && curatable && !staging.dirty}
           onReorder={onReorder}
-          extraColumns={extraColumns}
+          extraColumns={
+            typeof extraColumns === 'function' ? extraColumns(serverProducts) : extraColumns
+          }
           renderTitle={(row) => (
             <Link
               to="/$storeId/products/$productId"

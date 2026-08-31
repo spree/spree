@@ -261,6 +261,7 @@ import type {
   Catalog,
   CatalogAssignment,
   CatalogOrderMinimum,
+  CatalogProduct,
   CatalogProductTerm,
   CatalogQuantityRule,
   Category,
@@ -473,14 +474,19 @@ export class AdminClient {
    * (already-present ids don't fail an add, non-members don't fail a
    * remove).
    */
-  private productMembership(basePath: string) {
+  private productMembership<Row = Product>(basePath: string) {
     return {
+      /**
+       * A parent whose listing says more about a member than the plain
+       * product does — a catalog reports what its agreement charges — types
+       * `Row` accordingly.
+       */
       list: (
         parentId: string,
         params?: ListParams & Record<string, unknown>,
         options?: RequestOptions,
-      ): Promise<PaginatedResponse<Product>> =>
-        this.request<PaginatedResponse<Product>>('GET', `${basePath}/${parentId}/products`, {
+      ): Promise<PaginatedResponse<Row>> =>
+        this.request<PaginatedResponse<Row>>('GET', `${basePath}/${parentId}/products`, {
           ...options,
           params: params ? transformListParams(params) : undefined,
         }),
@@ -3399,8 +3405,12 @@ export class AdminClient {
     delete: (id: string, options?: RequestOptions): Promise<void> =>
       this.request<void>('DELETE', `/catalogs/${id}`, options),
 
-    /** The catalog's assortment, in the merchant's manual order. */
-    products: this.productMembership('/catalogs'),
+    /**
+     * The catalog's assortment. Rows carry `catalog_price` when asked for
+     * with `expand: ['catalog_price']` — what a buyer on this agreement pays
+     * and where the amount comes from.
+     */
+    products: this.productMembership<CatalogProduct>('/catalogs'),
 
     /**
      * Copies the attached price list's products into the assortment.
