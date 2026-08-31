@@ -93,6 +93,22 @@ RSpec.describe Spree::Addresses::Create do
       end
     end
 
+    # Finding no entry and then filing one is a read the write depends on, and
+    # no unique index stands behind it.
+    it 'serializes writes to one book so simultaneous requests cannot each file an entry' do
+      expect(customer).to receive(:with_lock).once.and_call_original
+
+      expect(subject.call(address_params: address_params.dup, owner: customer)).to be_success
+    end
+
+    it 'writes an ownerless address without a book to serialize on' do
+      result = subject.call(address_params: address_params.dup)
+
+      expect(result).to be_success
+      expect(result.value).to be_persisted
+      expect(result.value.owner).to be_nil
+    end
+
     context 'when another customer has the same address' do
       let(:other_customer) { create(:customer) }
 

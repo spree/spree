@@ -19,54 +19,70 @@ module Spree
         address.owner = owner if owner.present?
 
         ApplicationRecord.transaction do
-          # A book that already holds this entry gets the entry it has back
-          # rather than a second copy of it. The default flags still apply —
-          # re-adding an address is a fair way to ask for it to be defaulted.
-          #
-          # Validation runs first only to resolve the country and state codes,
-          # and its verdict is deliberately ignored: a resubmission carrying
-          # the label it was filed under is invalid precisely because that
-          # entry already exists, and answering it with "name has already been
-          # taken" instead of the entry itself would be absurd. A genuinely
-          # invalid address matches nothing and fails on the save below.
-          address.validate
-          existing = address.duplicate_in_address_book
+          arguments = { order: order, default_billing: default_billing, default_shipping: default_shipping }
+          next write(address, **arguments) if owner.nil?
 
-          if existing.present?
-            assign_owner_default(
-              owner: owner,
-              address_id: existing.id,
-              default_billing: default_billing,
-              default_shipping: default_shipping
-            )
-
-            assign_to_order(order: order, address_id: existing.id) if order.present?
-            success(existing)
-          elsif address.save
-            if owner.present?
-              # The first address a book gets is its default of both kinds —
-              # there is nothing for it to displace.
-              if owner.addresses.pluck(:id) == [address.id]
-                assign_owner_default(owner: owner, address_id: address.id)
-              else
-                assign_owner_default(
-                  owner: owner,
-                  address_id: address.id,
-                  default_billing: default_billing,
-                  default_shipping: default_shipping
-                )
-              end
-            end
-
-            assign_to_order(order: order, address_id: address.id) if order.present?
-            success(address)
-          else
-            failure(address)
-          end
+          # One writer per book at a time. Looking for an entry and then filing
+          # one when there is none is a read the write depends on, and no
+          # unique index stands behind it, so two requests arriving together
+          # would each find nothing and file an entry each — the very duplicate
+          # the lookup exists to prevent.
+          owner.with_lock { write(address, **arguments) }
         end
       end
 
       private
+
+      def write(address, order:, default_billing:, default_shipping:)
+        owner = address.owner
+        existing = existing_entry(address)
+
+        if existing.present?
+          assign_owner_default(
+            owner: owner,
+            address_id: existing.id,
+            default_billing: default_billing,
+            default_shipping: default_shipping
+          )
+
+          assign_to_order(order: order, address_id: existing.id) if order.present?
+          success(existing)
+        elsif address.save
+          if owner.present?
+            # The first address a book gets is its default of both kinds —
+            # there is nothing for it to displace.
+            if owner.addresses.pluck(:id) == [address.id]
+              assign_owner_default(owner: owner, address_id: address.id)
+            else
+              assign_owner_default(
+                owner: owner,
+                address_id: address.id,
+                default_billing: default_billing,
+                default_shipping: default_shipping
+              )
+            end
+          end
+
+          assign_to_order(order: order, address_id: address.id) if order.present?
+          success(address)
+        else
+          failure(address)
+        end
+      end
+
+      # The entry the book already holds for this, so a book that has it gets
+      # that entry back rather than a second copy of it.
+      #
+      # Validation runs first only to resolve the country and state codes, and
+      # its verdict is deliberately ignored: a resubmission carrying the label
+      # it was filed under is invalid precisely because that entry already
+      # exists, and answering it with "name has already been taken" instead of
+      # the entry itself would be absurd. A genuinely invalid address matches
+      # nothing and fails on the save that follows.
+      def existing_entry(address)
+        address.validate
+        address.duplicate_in_address_book
+      end
 
       def assign_to_order(order:, address_id:)
         order.update(ship_address_id: address_id)
