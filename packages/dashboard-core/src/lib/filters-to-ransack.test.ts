@@ -97,6 +97,15 @@ describe('filtersToRansack', () => {
     })
   })
 
+  // A scope takes its value as an argument and cannot express negation, so
+  // emitting the same bare key would run it as an inclusion — the exact
+  // opposite of what the merchant picked.
+  it('drops a negating operator on a scope column rather than inverting it', () => {
+    const filters = [rule({ field: 'companies', operator: 'not_in', value: 'comp_1' })]
+
+    expect(filtersToRansack(filters, columns)).toEqual({})
+  })
+
   it('still drops an empty scope filter', () => {
     const filters = [rule({ field: 'companies', operator: 'in', value: '' })]
     expect(filtersToRansack(filters, columns)).toEqual({})

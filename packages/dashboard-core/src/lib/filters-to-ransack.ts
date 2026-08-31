@@ -22,6 +22,11 @@ import { type ColumnDef, type FilterRule, parseFilterIds } from './table-registr
 // FilterRule[]) stays simple.
 const ARRAY_OPERATORS = new Set(['in', 'not_in'])
 
+// Operators that mean "exclude these". A Ransack scope takes its value as an
+// argument and cannot express negation, so these are dropped for scope columns
+// rather than emitted as their own inverse.
+const NEGATING_OPERATORS = new Set(['not_in', 'not_eq'])
+
 export function filtersToRansack(
   filters: FilterRule[],
   columns: ColumnDef[],
@@ -39,6 +44,13 @@ export function filtersToRansack(
     // its argument rather than comparing a column, so appending an operator
     // suffix would name a predicate that does not exist and silently filter
     // nothing. The scope itself decides how to read the value.
+    //
+    // That leaves no way to express negation: emitting the same bare key for
+    // `not_in` would run the scope as an inclusion and show the merchant the
+    // exact opposite of what they asked for. Skip it instead, so the rule
+    // visibly does nothing rather than quietly inverting.
+    if (col?.ransackScope && NEGATING_OPERATORS.has(filter.operator)) continue
+
     const key = col?.ransackScope ? ransackKey : `${ransackKey}_${filter.operator}`
     if (ARRAY_OPERATORS.has(filter.operator)) {
       const ids = parseFilterIds(filter.value)
