@@ -129,7 +129,9 @@ export function CatalogPricingFields({
               <InputGroup>
                 <InputGroupInput
                   id="catalog-adjustment-magnitude"
-                  inputMode="decimal"
+                  type="number"
+                  step="0.001"
+                  min="0"
                   placeholder="15"
                   disabled={!canEdit}
                   aria-invalid={!!errors.adjustment_magnitude || undefined}
@@ -208,7 +210,9 @@ export function CatalogPricingFields({
               </FieldLabel>
               <Input
                 id="catalog-minimum-quantity"
-                inputMode="numeric"
+                type="number"
+                step="1"
+                min="1"
                 placeholder={t('admin.fields.price_list.minimum_quantity.placeholder')}
                 disabled={!canEdit}
                 aria-invalid={!!errors.minimum_quantity || undefined}

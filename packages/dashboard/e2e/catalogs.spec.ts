@@ -196,7 +196,9 @@ test.describe('catalogs', () => {
 
   // The threshold survives a switch away from automatic pricing, where its
   // field is no longer rendered. Judging it then would block Save over
-  // something the merchant cannot see or correct.
+  // something the merchant cannot see or correct. The input refuses letters
+  // on its own, so the value that gets here is a number the rule still
+  // rejects — zero gates nothing.
   test('does not judge the quantity once the agreement prices by hand', async ({ page }) => {
     const creds = await login(page)
     await gotoIndex(page, CATALOGS_PATH(creds.store_id), CTA)
@@ -207,7 +209,7 @@ test.describe('catalogs', () => {
     await page.locator('#catalog-pricing-mode').click()
     await page.getByRole('option', { name: /percentage off/i }).click()
     await page.locator('#catalog-adjustment-magnitude').fill('10')
-    await page.locator('#catalog-minimum-quantity').fill('abc')
+    await page.locator('#catalog-minimum-quantity').fill('0')
 
     await page.locator('#catalog-pricing-mode').click()
     await page.getByRole('option', { name: /prices i enter for this catalog/i }).click()
