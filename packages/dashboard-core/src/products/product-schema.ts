@@ -1,6 +1,20 @@
 import { requiredMessage } from '@spree/dashboard-ui'
+import i18n from 'i18next'
 import { z } from 'zod/v4'
+import { normalizeQuantityRule } from './normalize-quantity'
 import { isSupportedVideoUrl } from './video-url'
+
+/**
+ * A purchasing rule as typed. Blank means the rule is unset — a valid
+ * answer — so only a non-blank entry that normalizes away is an error.
+ */
+const quantityRuleField = z
+  .string()
+  .nullable()
+  .optional()
+  .refine((value) => !value?.trim() || normalizeQuantityRule(value) !== null, {
+    error: () => i18n.t('admin.fields.variant.quantity_rule_invalid'),
+  })
 
 export const stockLevelFormSchema = z.object({
   id: z.string().optional(),
@@ -49,10 +63,13 @@ export const variantFormSchema = z.object({
   hs_code: z.string().nullable().optional(),
   country_of_origin: z.string().nullable().optional(),
   customs_description: z.string().nullable().optional(),
-  minimum_order_quantity: z.number().int().positive().nullable().optional(),
-  order_multiple: z.number().int().positive().nullable().optional(),
+  // Held as strings so an unusable entry can be reported rather than
+  // silently coerced away: normalizing `0` straight to null would clear the
+  // rule while the merchant believes they set one.
+  minimum_order_quantity: quantityRuleField,
+  order_multiple: quantityRuleField,
   purchase_unit: z.string().nullable().optional(),
-  units_per_carton: z.number().int().positive().nullable().optional(),
+  units_per_carton: quantityRuleField,
   track_inventory: z.boolean().optional(),
   preorderable: z.boolean().optional(),
   preorder_ships_at: z.string().nullable().optional(),
@@ -275,10 +292,10 @@ export function isPlaceholderDefaultVariant(v: VariantFormValues): boolean {
     !v.hs_code &&
     !v.country_of_origin &&
     !v.customs_description &&
-    v.minimum_order_quantity == null &&
-    v.order_multiple == null &&
+    !v.minimum_order_quantity &&
+    !v.order_multiple &&
     v.purchase_unit == null &&
-    v.units_per_carton == null &&
+    !v.units_per_carton &&
     v.preorderable !== true &&
     v.preorder_ships_at == null &&
     v.backorder_limit == null &&

@@ -825,7 +825,8 @@
         },
         "units_per_carton": {
           "label": "每箱件数"
-        }
+        },
+        "quantity_rule_invalid": "请输入大于零的整数，或留空。"
       },
       "minimum_order_quantity": {
         "label": "最小起订量",

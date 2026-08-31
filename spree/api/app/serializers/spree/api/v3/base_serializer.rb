@@ -123,7 +123,7 @@ module Spree
           return Spree::QuantityRule.new if current_store.nil?
 
           Spree::Current.quantity_rules_resolver_for(
-            company: Spree::Company.sole_standing_for(store: current_store, customer: current_user),
+            company: Spree::Current.standing_company_for(current_user),
             user: current_user
           ).call(variant)
         end

@@ -2170,7 +2170,8 @@
         },
         "units_per_carton": {
           "label": "Stück pro Karton"
-        }
+        },
+        "quantity_rule_invalid": "Geben Sie eine ganze Zahl größer als null ein oder lassen Sie das Feld leer."
       },
       "webhook_endpoint": {
         "active": {

@@ -2182,7 +2182,8 @@
         },
         "units_per_carton": {
           "label": "Sztuk w kartonie"
-        }
+        },
+        "quantity_rule_invalid": "Podaj liczbę całkowitą większą od zera lub pozostaw pole puste."
       },
       "webhook_endpoint": {
         "active": {

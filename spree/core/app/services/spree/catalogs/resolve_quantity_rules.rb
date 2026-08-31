@@ -83,7 +83,7 @@ module Spree
       def self.catalogs_for(purchase)
         Spree::Catalog.for_buyer(
           store: purchase.store,
-          customer: purchase.try(:user),
+          customer: purchase.try(:customer),
           company: purchase.try(:resolved_company),
           channel: purchase.try(:channel)
         )
@@ -94,13 +94,16 @@ module Spree
 
       attr_reader :catalogs
 
-      # Loaded per catalog on first touch and kept: a cart asks about many
-      # variants against the same few catalogs, and one query each beats one
-      # query per line.
+      # One indexed row read per (catalog, variant), memoized: an agreement
+      # may state terms for thousands of SKUs, so loading the whole table to
+      # answer about one variant would put that on the add-to-cart path. The
+      # composite unique index makes the keyed read cheap.
       def override_for(catalog, variant)
         @overrides ||= {}
-        @overrides[catalog.id] ||= catalog.quantity_rules.index_by(&:variant_id)
-        @overrides[catalog.id][variant.id]
+        key = [catalog.id, variant.id]
+        return @overrides[key] if @overrides.key?(key)
+
+        @overrides[key] = catalog.quantity_rules.find_by(variant_id: variant.id)
       end
 
       def minimums_for(catalog)

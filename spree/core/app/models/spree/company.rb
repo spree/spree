@@ -123,11 +123,16 @@ module Spree
     # @param customer [Object, nil]
     # @return [Spree::Company, nil]
     def self.sole_standing_for(store:, customer:)
-      return nil if customer.nil? || store.nil?
+      return nil if store.nil?
+      # Matching a bare id would resolve a company for anything answering
+      # #id — an admin user sharing an id with a customer, a value object off
+      # a request — so the type is checked rather than assumed. Standing is a
+      # customer's fact about a business, and nothing else has it.
+      return nil unless customer.is_a?(Spree.customer_class)
 
-      # Two rather than one-per-membership: `joins` does not populate the
-      # association, so reading `.company` off each row would be an N+1 on a
-      # path a product listing takes for every request.
+      # Two rows at most: the question is only "exactly one, or not". Joined
+      # rather than read off each membership, because `joins` does not
+      # populate the association and a product listing takes this path.
       companies = where(store_id: store.id).
                   joins(:memberships).
                   where(Spree::CompanyMembership.table_name => { customer_id: customer.id }).

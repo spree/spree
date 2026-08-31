@@ -4,7 +4,7 @@ module Spree
   # All attributes are automatically reset between requests by Rails.
   # Fallback chains ensure sensible defaults when attributes are not explicitly set.
   class Current < ::ActiveSupport::CurrentAttributes
-    attribute :store, :channel, :market, :currency, :locale, :content_locale, :tax_country, :price_lists, :applicable_catalogs, :quantity_rules_resolvers, :global_pricing_context, :provider_cache, :integrations
+    attribute :store, :channel, :market, :currency, :locale, :content_locale, :tax_country, :price_lists, :applicable_catalogs, :quantity_rules_resolvers, :standing_companies, :global_pricing_context, :provider_cache, :integrations
 
     # Scratch space for provider strategies to memoize a call across the
     # request — part of the delivery rate provider contract (nothing in core
@@ -139,6 +139,27 @@ module Spree
       super || (self.quantity_rules_resolvers = {})
     end
 
+    # The company a customer unambiguously buys for in this request. Resolved
+    # once: catalog resolution asks for it on every entry, and a product
+    # listing prices every variant through that path — unmemoized it was two
+    # queries per row.
+    #
+    # @param customer [Object, nil]
+    # @return [Spree::Company, nil]
+    def standing_company_for(customer)
+      return nil if store.nil? || customer.nil?
+
+      key = [store.id, customer.id]
+      return standing_companies[key] if standing_companies.key?(key)
+
+      standing_companies[key] = Spree::Company.sole_standing_for(store: store, customer: customer)
+    end
+
+    # @return [Hash]
+    def standing_companies
+      super || (self.standing_companies = {})
+    end
+
     # Drops everything derived from the catalog set, so a write in this
     # request is not read back through a memo it has already superseded.
     # One call rather than a list every caller has to keep in step.
@@ -146,6 +167,7 @@ module Spree
     def reset_catalog_memos
       self.applicable_catalogs = nil
       self.quantity_rules_resolvers = nil
+      self.standing_companies = nil
       self.price_lists = nil
     end
 

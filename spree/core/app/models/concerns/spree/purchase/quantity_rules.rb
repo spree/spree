@@ -11,19 +11,25 @@ module Spree
     module QuantityRules
       extend ActiveSupport::Concern
 
-      # True when staff keyed this purchase in rather than a buyer building it.
-      # Two signals, because either alone leaves a gap: a draft order is the
-      # admin surface whether or not a creator was recorded (both draft
-      # workflows take `created_by` optionally), and a cart cannot carry one
-      # at all.
+      # True when this purchase is staff's to key in rather than a buyer's to
+      # build. Two signals, because either alone leaves a gap: an incomplete
+      # order is the admin draft surface whether or not a creator was
+      # recorded (both draft workflows take `created_by` optionally), and a
+      # cart cannot carry one at all.
       #
       # Staff are unrestricted by the quantity terms — an admin is entering
       # what the buyer actually negotiated, and refusing it would make an
       # agreed exception impossible to record.
       #
+      # A placed order is nobody's draft, so it is excluded: post-placement
+      # item changes go through the admin surface with a creator, and the
+      # exemption should come from that rather than from the sale having
+      # already happened.
+      #
       # @return [Boolean]
       def staff_initiated?
-        is_a?(Spree::Order) || (respond_to?(:created_by_id) && created_by_id.present?)
+        (is_a?(Spree::Order) && !completed?) ||
+          (respond_to?(:created_by_id) && created_by_id.present?)
       end
 
       # Why this buyer may not order that many of a variant, naming what they
@@ -93,7 +99,10 @@ module Spree
       #
       # @return [Array<Array(Spree::LineItem, String)>]
       def quantity_rule_violations
-        return [] if staff_initiated?
+        # A placed order is history: its terms were checked when it was
+        # placed, and re-reporting them against today's agreement would
+        # accuse a completed sale of breaking a rule written after it.
+        return [] if staff_initiated? || (is_a?(Spree::Order) && completed?)
 
         line_items.filter_map do |line_item|
           variant = line_item.variant

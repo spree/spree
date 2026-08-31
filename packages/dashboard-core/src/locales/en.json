@@ -827,7 +827,8 @@
         },
         "units_per_carton": {
           "label": "Units per carton"
-        }
+        },
+        "quantity_rule_invalid": "Enter a whole number greater than zero, or leave blank."
       },
       "minimum_order_quantity": {
         "label": "Minimum order quantity",

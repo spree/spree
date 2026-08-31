@@ -44,6 +44,25 @@ RSpec.describe Spree::CatalogQuantityRule do
     }.to raise_error(ActiveRecord::RecordNotUnique)
   end
 
+  # Terms go with the products they were stated for: left behind, a merchant
+  # who removes a SKU and later re-adds it gets the old minimum back.
+  it 'is removed when its product leaves the assortment' do
+    catalog.add_products([variant.product_id])
+    create(:catalog_quantity_rule, catalog: catalog, variant: variant)
+
+    catalog.remove_products([variant.product_id])
+
+    expect(catalog.quantity_rules.reload).to be_empty
+  end
+
+  it 'is removed with the variant it names' do
+    create(:catalog_quantity_rule, catalog: catalog, variant: variant)
+
+    variant.destroy
+
+    expect(catalog.quantity_rules.reload).to be_empty
+  end
+
   it 'refuses a zero or negative quantity' do
     expect(build(:catalog_quantity_rule, catalog: catalog, variant: variant, minimum_order_quantity: 0)).not_to be_valid
     expect(build(:catalog_quantity_rule, catalog: catalog, variant: variant, order_multiple: -2)).not_to be_valid

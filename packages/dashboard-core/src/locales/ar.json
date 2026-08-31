@@ -825,7 +825,8 @@
         },
         "units_per_carton": {
           "label": "الوحدات في الكرتونة"
-        }
+        },
+        "quantity_rule_invalid": "أدخل عددًا صحيحًا أكبر من صفر، أو اترك الحقل فارغًا."
       },
       "minimum_order_quantity": {
         "label": "الحد الأدنى لكمية الطلب",

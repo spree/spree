@@ -46,6 +46,12 @@ module Spree
     before_destroy :ensure_not_in_complete_orders
     after_destroy :remove_line_items_from_incomplete_orders
 
+    # Terms stated for this variant go with it. Nothing below the cart layer
+    # reads them, but a row pointing at a destroyed variant would resolve for
+    # nobody and count against the agreement's overrides forever.
+    has_many :catalog_quantity_rules, class_name: 'Spree::CatalogQuantityRule',
+                                      dependent: :destroy, inverse_of: :variant
+
     with_options inverse_of: :variant do
       has_many :fulfillment_items, class_name: 'Spree::FulfillmentItem'
       has_many :line_items

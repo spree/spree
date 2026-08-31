@@ -43,6 +43,31 @@ RSpec.describe Spree::Catalog, '.for_buyer' do
     expect(described_class.for_buyer(store: store, customer: other_customer)).to be_empty
   end
 
+  # A bare id match would resolve a company for anything answering #id — an
+  # admin user sharing an id with a customer, a value object off a request.
+  it 'resolves nothing for a non-customer that merely answers to an id' do
+    impostor = Struct.new(:id).new(customer.id)
+
+    expect(described_class.for_buyer(store: store, customer: impostor)).to be_empty
+    expect(Spree::Company.sole_standing_for(store: store, customer: impostor)).to be_nil
+  end
+
+  # Catalog resolution asks for the company on every entry, and a listing
+  # prices every variant through that path.
+  it 'resolves the buyer only once per request' do
+    Spree::Current.store = store
+    Spree::Current.reset_catalog_memos
+    queries = 0
+    subscriber = ActiveSupport::Notifications.subscribe('sql.active_record') do |*, payload|
+      queries += 1 if payload[:sql].to_s.include?('spree_companies')
+    end
+
+    5.times { described_class.for_buyer(store: store, customer: customer) }
+    ActiveSupport::Notifications.unsubscribe(subscriber)
+
+    expect(queries).to eq(1)
+  end
+
   it 'is empty without a store' do
     expect(described_class.for_buyer(store: nil, customer: customer)).to eq([])
   end

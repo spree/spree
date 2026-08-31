@@ -2184,7 +2184,8 @@
         },
         "units_per_carton": {
           "label": "الوحدات في الكرتونة"
-        }
+        },
+        "quantity_rule_invalid": "أدخل عددًا صحيحًا أكبر من صفر، أو اترك الحقل فارغًا."
       },
       "webhook_endpoint": {
         "active": {

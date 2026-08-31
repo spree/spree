@@ -2170,7 +2170,8 @@
         },
         "units_per_carton": {
           "label": "Units per carton"
-        }
+        },
+        "quantity_rule_invalid": "Enter a whole number greater than zero, or leave blank."
       },
       "webhook_endpoint": {
         "active": {

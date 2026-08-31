@@ -22,7 +22,7 @@ import { useEffect, useRef } from 'react'
 import { Controller, type UseFormReturn } from 'react-hook-form'
 import { useTranslation } from 'react-i18next'
 import { normalizeCustomsDescription, normalizeHsCode } from './normalize-customs'
-import { normalizeQuantityRule, PURCHASE_UNITS } from './normalize-quantity'
+import { PURCHASE_UNITS } from './normalize-quantity'
 import {
   useFormOptionTypes as useOptionTypes,
   useFormTaxCategories as useTaxCategories,
@@ -343,9 +343,7 @@ export function VariantEditSheet({ form, variantIndex, open, onOpenChange }: Pro
                   min="1"
                   step="1"
                   placeholder={t('admin.fields.variant.minimum_order_quantity.placeholder')}
-                  {...form.register(`variants.${variantIndex}.minimum_order_quantity`, {
-                    setValueAs: normalizeQuantityRule,
-                  })}
+                  {...form.register(`variants.${variantIndex}.minimum_order_quantity`)}
                 />
                 <FieldError
                   errors={[form.formState.errors.variants?.[variantIndex]?.minimum_order_quantity]}
@@ -361,9 +359,7 @@ export function VariantEditSheet({ form, variantIndex, open, onOpenChange }: Pro
                   min="1"
                   step="1"
                   placeholder={t('admin.fields.variant.order_multiple.placeholder')}
-                  {...form.register(`variants.${variantIndex}.order_multiple`, {
-                    setValueAs: normalizeQuantityRule,
-                  })}
+                  {...form.register(`variants.${variantIndex}.order_multiple`)}
                 />
                 <FieldError
                   errors={[form.formState.errors.variants?.[variantIndex]?.order_multiple]}
@@ -413,9 +409,7 @@ export function VariantEditSheet({ form, variantIndex, open, onOpenChange }: Pro
                   type="number"
                   min="1"
                   step="1"
-                  {...form.register(`variants.${variantIndex}.units_per_carton`, {
-                    setValueAs: normalizeQuantityRule,
-                  })}
+                  {...form.register(`variants.${variantIndex}.units_per_carton`)}
                 />
                 <FieldError
                   errors={[form.formState.errors.variants?.[variantIndex]?.units_per_carton]}

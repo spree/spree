@@ -171,12 +171,12 @@ module Spree
     def self.for_buyer(store:, customer: nil, company: nil, channel: nil)
       return [] if store.nil?
 
-      company ||= Spree::Company.sole_standing_for(store: store, customer: customer)
-      channel ||= Spree::Current.channel if store == Spree::Current.store
-
       if store == Spree::Current.store
+        company ||= Spree::Current.standing_company_for(customer)
+        channel ||= Spree::Current.channel
         Spree::Current.catalogs_for(company: company, user: customer, channel: channel)
       else
+        company ||= Spree::Company.sole_standing_for(store: store, customer: customer)
         for_context(store: store, company: company, user: customer, channel: channel)
       end
     end
@@ -303,6 +303,10 @@ module Spree
         next if removed.zero?
 
         price_list&.remove_products(product_ids)
+        # Terms go with the products they were stated for. Left behind, a
+        # merchant who removes a SKU and later re-adds it gets the old
+        # minimum back — terms they believe they deleted.
+        quantity_rules.where(variant_id: Spree::Variant.where(product_id: product_ids).select(:id)).delete_all
         touch
       end
 

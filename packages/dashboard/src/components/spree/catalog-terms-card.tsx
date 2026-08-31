@@ -35,7 +35,7 @@ import {
   useConfirm,
 } from '@spree/dashboard-ui'
 import { PlusIcon, XIcon } from 'lucide-react'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import type { UseFormReturn } from 'react-hook-form'
 import { useTranslation } from 'react-i18next'
 import {
@@ -318,6 +318,13 @@ function QuantityRulesSection({ catalogId, canEdit }: { catalogId: string; canEd
   const deleteMutation = useDeleteCatalogQuantityRule(catalogId)
 
   const rules = data?.data ?? []
+  const lastPage = data?.meta?.pages ?? 1
+
+  // Deleting the last row on the last page would otherwise strand the
+  // merchant on an empty page while earlier ones still have rows.
+  useEffect(() => {
+    if (page > lastPage) setPage(lastPage)
+  }, [page, lastPage])
 
   async function handleDelete(rule: CatalogQuantityRule) {
     const confirmed = await confirm({

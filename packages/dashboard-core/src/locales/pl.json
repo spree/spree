@@ -825,7 +825,8 @@
         },
         "units_per_carton": {
           "label": "Sztuk w kartonie"
-        }
+        },
+        "quantity_rule_invalid": "Podaj liczbę całkowitą większą od zera lub pozostaw pole puste."
       },
       "minimum_order_quantity": {
         "label": "Minimalna wielkość zamówienia",
