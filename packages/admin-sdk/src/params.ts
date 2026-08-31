@@ -465,8 +465,11 @@ export interface OrderUpdateParams {
    * a plain attribute write, never an order change.
    */
   po_number?: string
-  /** See {@link OrderCreateParams.po_document}. */
-  po_document?: string
+  /**
+   * See {@link OrderCreateParams.po_document}. Null removes the document the
+   * order currently carries.
+   */
+  po_document?: string | null
   /** Rich text HTML. Reads come back as this plus `internal_note_html`. */
   internal_note?: string
   /**

@@ -2547,6 +2547,7 @@
         },
         "purchase_order": {
           "document": "مستند أمر الشراء",
+          "document_help": "ملف PDF أو صورة أو Word، بحد أقصى 10 ميغابايت.",
           "download_failed": "تعذر تنزيل أمر الشراء",
           "title": "أمر الشراء"
         },

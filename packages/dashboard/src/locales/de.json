@@ -2534,6 +2534,7 @@
         },
         "purchase_order": {
           "document": "Bestelldokument",
+          "document_help": "PDF-, Bild- oder Word-Datei, bis zu 10 MB.",
           "download_failed": "Die Bestellung konnte nicht heruntergeladen werden",
           "title": "Bestellung des Kunden"
         },

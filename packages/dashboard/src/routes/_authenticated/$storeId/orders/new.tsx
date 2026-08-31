@@ -2,6 +2,9 @@ import { zodResolver } from '@hookform/resolvers/zod'
 import type { Company, Customer, Variant } from '@spree/admin-sdk'
 import {
   adminClient,
+  EMPTY_FILE_UPLOAD_VALUE,
+  FileUploadField,
+  type FileUploadValue,
   formatPrice,
   mapSpreeErrorsToForm,
   PageHeader,
@@ -31,7 +34,7 @@ import {
 } from '@spree/dashboard-ui'
 import { useMutation } from '@tanstack/react-query'
 import { createFileRoute, useNavigate } from '@tanstack/react-router'
-import { TrashIcon } from 'lucide-react'
+import { FileTextIcon, TrashIcon } from 'lucide-react'
 import { useRef, useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { useTranslation } from 'react-i18next'
@@ -44,6 +47,10 @@ import {
   type NewOrderFormValues,
   newOrderFormSchema,
 } from '../../../../schemas/order'
+
+/** What a purchase order plausibly arrives as — mirrors the server allowlist. */
+const PO_DOCUMENT_ACCEPT =
+  'application/pdf,image/jpeg,image/png,image/heic,image/webp,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document'
 
 export const Route = createFileRoute('/_authenticated/$storeId/orders/new')({
   component: NewOrderPage,
@@ -66,6 +73,10 @@ function NewOrderPage() {
   const [company, setCompany] = useState<Company | null>(null)
   const [items, setItems] = useState<PendingItem[]>([])
   const [useDefaultAddress, setUseDefaultAddress] = useState(true)
+  const [poDocument, setPoDocument] = useState<FileUploadValue>(EMPTY_FILE_UPLOAD_VALUE)
+  // The signed id does not exist until the upload resolves, so submitting
+  // during one would create the order without the document.
+  const [poUploading, setPoUploading] = useState(false)
   // `onChange` hands back only the option id, so keep the records the search
   // returned to resolve it. A ref, not state: it's a lookup table, and writing
   // it must not re-render the form mid-search.
@@ -95,6 +106,9 @@ function NewOrderPage() {
       if (values.internal_note) payload.internal_note = values.internal_note
       if (values.customer_note) payload.customer_note = values.customer_note
       if (values.po_number) payload.po_number = values.po_number
+      // The bytes are already in private storage by now; the create carries
+      // only the signed id the upload handed back.
+      if (poDocument.signedId) payload.po_document = poDocument.signedId
       if (values.coupon_code) payload.coupon_code = values.coupon_code
       if (values.channel_id) payload.channel_id = values.channel_id
       return adminClient.orders.create(payload)
@@ -106,7 +120,10 @@ function NewOrderPage() {
 
   const email = form.watch('email')
   const canSubmit =
-    (Boolean(customer) || email.length > 0) && items.length > 0 && !createMutation.isPending
+    (Boolean(customer) || email.length > 0) &&
+    items.length > 0 &&
+    !createMutation.isPending &&
+    !poUploading
 
   async function onSubmit(values: NewOrderFormValues) {
     if (!canSubmit) return
@@ -345,6 +362,21 @@ function NewOrderPage() {
                     <FieldDescription>{t('admin.fields.order.po_number.help')}</FieldDescription>
                     <FieldError errors={[errors.po_number]} />
                   </Field>
+                  {/* A PO arriving by email is the motivating case for this
+                      form, so the paperwork can come with the number. Private
+                      storage — attaching a signed id never moves a blob
+                      between services. */}
+                  <FileUploadField
+                    private
+                    value={poDocument}
+                    onChange={setPoDocument}
+                    accept={PO_DOCUMENT_ACCEPT}
+                    variant="file"
+                    icon={<FileTextIcon className="size-4" />}
+                    label={t('admin.orders.detail.purchase_order.document')}
+                    help={t('admin.orders.detail.purchase_order.document_help')}
+                    onUploadingChange={setPoUploading}
+                  />
                   <Field>
                     <FieldLabel htmlFor="internal-note">
                       {t('admin.fields.order.internal_note.label')}
