@@ -10,8 +10,10 @@ module Spree
     # instant and the +approval_required+ posture reads "company members
     # only". An approval flow replaces this class via
     # `Spree::Dependencies.company_activation_policy_class`; subtree
-    # semantics (a suspended parent covering its divisions) are the
-    # replacement's job, which is why {#active?} takes the node.
+    # semantics are the replacement's job, which is why {#active?} takes the
+    # node — and a policy suspending a parent MUST answer inactive for every
+    # node below it too, or a member's standing over a still-"active"
+    # division keeps showing prices the suspended tree may not see.
     #
     # Self-service standing (company pages, members, invitations, the
     # address book) never consults this policy — members of an inactive

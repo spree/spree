@@ -207,6 +207,20 @@ RSpec.describe Spree::Checkout::Requirements do
       expect(described_class.new(ordinary_cart).call(completion: true)).
         not_to include(a_hash_including(code: 'company_activation_required'))
     end
+
+    # Two distinct remediations: a buyer whose standing already covers an
+    # active company just has to pick which node the order is for — sending
+    # them to a "register your business" page would be wrong.
+    it 'asks a multi-company buyer to choose, not to register' do
+      create(:company_membership, company: create(:company, store: store), customer: customer)
+      create(:company_membership, company: create(:company, store: store), customer: customer)
+      cart.reload
+
+      codes = subject.map { |requirement| requirement[:code] }
+
+      expect(codes).to include('company_selection_required')
+      expect(codes).not_to include('company_activation_required')
+    end
   end
 
   describe 'fully ready order' do

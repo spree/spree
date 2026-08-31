@@ -764,6 +764,7 @@ en:
     checkout: Checkout
     checkout_requirements:
       company_activation_required: An active company account is required to place orders on this store
+      company_selection_required: Choose which company this order is for
       delivery_method_required: Select a delivery method for all fulfillments
       email_required: Email address is required
       line_items_required: Add at least one item to your cart
