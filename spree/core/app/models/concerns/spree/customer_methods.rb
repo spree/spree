@@ -326,12 +326,12 @@ module Spree
       raise Spree::Core::DestroyWithOrdersError if !spree_admin? && orders.complete.present?
     end
 
+    # One entry, both slots — which is what "ship to my billing address" means
+    # in an address book. Copying instead produced either an ownerless row the
+    # customer's own book could not see, or a second entry carrying the first
+    # one's label, which the per-book label index refuses.
     def clone_billing_address
-      if bill_address && ship_address.nil?
-        self.ship_address = bill_address.clone
-      else
-        ship_address.attributes = bill_address.attributes.except('id', 'updated_at', 'created_at')
-      end
+      self.ship_address = bill_address if bill_address
       true
     end
 

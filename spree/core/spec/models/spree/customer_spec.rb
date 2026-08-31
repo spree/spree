@@ -51,6 +51,33 @@ describe Spree::Customer, type: :model do
     let(:lockable) { customer }
   end
 
+  describe 'use_billing' do
+    let(:customer) { create(:customer) }
+    let(:address) { create(:address, owner: customer) }
+
+    # One entry serving both slots. The old copy left the customer's default
+    # shipping address as a row their own address book could not see.
+    it 'points the shipping slot at the billing entry' do
+      customer.bill_address = address
+      customer.use_billing = true
+      customer.save!
+
+      expect(customer.reload.ship_address_id).to eq(address.id)
+      expect(customer.addresses.map(&:id)).to eq([address.id])
+    end
+
+    # Overwriting the existing shipping entry in place copied the billing
+    # entry's label onto it, and two entries in one book cannot share a label.
+    it 'replaces an existing shipping address rather than overwriting it' do
+      labelled = create(:address, owner: customer, label: 'Home')
+      customer.update!(bill_address: labelled, ship_address: create(:address, owner: customer, label: 'Office'))
+      customer.use_billing = true
+
+      expect(customer.save).to be(true)
+      expect(customer.reload.ship_address_id).to eq(labelled.id)
+    end
+  end
+
   describe 'prefixed id' do
     it 'uses the cust_ prefix' do
       expect(customer.prefixed_id).to start_with('cust_')

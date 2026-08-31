@@ -39,7 +39,15 @@ describe Spree::Address, type: :model do
     end
   end
 
-  describe 'clone' do
+  describe 'clone (deprecated, becomes the standard Ruby clone in 6.1)' do
+    before { allow(Spree::Deprecation).to receive(:warn) }
+
+    it 'warns and points at #snapshot' do
+      create(:address).clone
+
+      expect(Spree::Deprecation).to have_received(:warn).with(/#snapshot/)
+    end
+
     it 'creates a copy of the address with the exception of the id, label, owner, updated_at and created_at attributes' do
       state = create(:state)
       original = create(:address,
@@ -526,7 +534,7 @@ describe Spree::Address, type: :model do
 
   context '#==' do
     let(:address) { create(:address) }
-    let(:address2) { address.clone }
+    let(:address2) { address.snapshot }
 
     context 'same addresses' do
       it { expect(address == address2).to eq(true) }

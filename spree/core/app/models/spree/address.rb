@@ -291,7 +291,16 @@ module Spree
       ].reject(&:blank?).map { |attribute| ERB::Util.html_escape(attribute) }.join('<br/>')
     end
 
+    # @deprecated Overriding Ruby's +Object#clone+ was a mistake: this returns
+    #   a value copy with the owner, label and metadata stripped, which is not
+    #   what +clone+ means anywhere else in Ruby. The override is removed in
+    #   Spree 6.1 and +clone+ becomes the standard shallow copy. Use
+    #   {#snapshot} for the ownerless copy a purchase keeps.
     def clone
+      Spree::Deprecation.warn(
+        'Spree::Address#clone is deprecated. From Spree 6.1 it behaves as the standard Ruby Object#clone — a shallow copy keeping the owner and every other attribute. Use #snapshot for the ownerless copy a purchase keeps.'
+      )
+
       self.class.new(value_attributes)
     end
 

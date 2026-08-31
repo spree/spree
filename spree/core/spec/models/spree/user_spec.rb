@@ -59,7 +59,15 @@ describe Spree.customer_class, type: :model do # rubocop:disable RSpec/MultipleD
       end
     end
 
-    context 'persists order address' do
+    context 'persists order address (deprecated, removed in 6.1)' do
+      before { allow(Spree::Deprecation).to receive(:warn) }
+
+      it 'warns that nothing needs to call it' do
+        user.persist_order_address(order)
+
+        expect(Spree::Deprecation).to have_received(:warn).with(/persist_order_address is deprecated/)
+      end
+
       it 'copies over order addresses' do
         expect do
           user.persist_order_address(order)
