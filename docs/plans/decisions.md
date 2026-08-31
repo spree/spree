@@ -4585,3 +4585,41 @@ one-question-per-entity doctrine exists to prevent.
 Plans amended: `6.0-price-list-automatic-pricing.md` (Key Decisions,
 Resolution), `6.0-catalog-agreement-rework.md` (Constraints — owned lists
 are no longer rule-free).
+
+## 2026-08-31 — Quantity rules: the divisor ships early, completion refuses, the storefront follows
+
+Implementation of `6.0-b2b-quantity-rules.md` settled four questions the
+design left to the build.
+
+**`units_per_carton` moves to the quantity plan.** The carton purchase unit
+is a display vocabulary that needs a divisor, and the wholesale-shipping
+plan that owns the packing chain is design only. Rather than ship a flag
+that does nothing, the single column lands with the feature that first uses
+it; wholesale shipping still owns `carton_package_type_id`,
+`carton_weight` and `cartons_per_pallet` and must not re-declare it. The
+alternative — waiting — would have meant either no carton vocabulary in 6.0
+or pulling an unbuilt plan forward wholesale.
+
+**Completion refuses an out-of-rule line rather than warning.** Rules can
+change between add-to-cart and checkout (a company reassigned to a different
+tier, a catalog term edited), so every line is re-checked at completion
+through `Checkout::Requirements` with `completion: true` — the same place
+out-of-stock and discontinued lines are already refused — with the message
+naming the nearest valid quantities. Letting a below-MOQ wholesale order
+through is the five-figure surprise the feature exists to prevent.
+
+**The order minimum is advisory before completion and blocking at it.** The
+shortfall rides the requirements feed as an advisory requirement so the
+buyer reads "$180 to reach the $500 minimum" while they can still act, and
+becomes refusal only when completion is attempted. Staff-initiated carts
+(`created_by_id` present) skip both the line re-check and the minimum —
+the same exemption `po_number_required` takes, for the same reason: staff
+key in what the buyer actually negotiated.
+
+**The storefront ships separately.** The Next.js selector, carton display
+and shortfall banner land on `spree/storefront` afterwards. The Store API
+exposes the buyer's *resolved* rules on the variant and the minimum plus
+shortfall on the cart, so neither side blocks the other.
+
+Plans amended: `6.0-b2b-quantity-rules.md` (implementation started),
+`6.0-b2b-wholesale-shipping.md` (`units_per_carton` no longer its column).
