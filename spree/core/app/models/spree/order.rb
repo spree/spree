@@ -1105,7 +1105,7 @@ module Spree
       summaries = fulfillments.filter_map { |fulfillment| fulfillment.selected_delivery_rate&.freight_summary }
       return if summaries.empty?
 
-      Spree::FreightSummary.new(lines: summaries.flat_map(&:lines))
+      Spree::FreightSummary.merge(summaries)
     end
 
     def ensure_can_be_deleted

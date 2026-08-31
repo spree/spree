@@ -29,7 +29,10 @@ namespace :spree do
 
         # Read the raw preferences hash: the four keys no longer have
         # declarations on Spree::Store, so there are no readers to call.
-        preferences = store.preferences || {}
+        # Indifferent access because how the YAML column keyed them depends on
+        # what wrote it, and a symbol-only read would silently answer zero and
+        # discard a merchant's configured box.
+        preferences = (store.preferences || {}).with_indifferent_access
         weight, length, width, height = %i[
           default_package_weight default_package_length default_package_width default_package_height
         ].map { |key| preferences[key].to_f }

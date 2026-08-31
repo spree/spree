@@ -34,7 +34,7 @@ module Spree
           # values with the variant's OWN: a merchant edits what is stored on
           # the row, not what some catalog resolves to for a buyer they are not.
           attributes :metadata, :position, :cost_price, :cost_currency,
-                     :barcode, :weight_unit, :dimensions_unit, :backorder_limit,
+                     :barcode, :backorder_limit,
                      :hs_code, :country_of_origin, :customs_description,
                      :minimum_order_quantity, :order_multiple, :purchase_unit,
                      :carton_weight, :cartons_per_pallet,
@@ -47,6 +47,17 @@ module Spree
 
           attribute :tax_category_id do |variant|
             variant.tax_category&.prefixed_id
+          end
+
+          # The stored columns, so an editor shows a blank where the merchant
+          # left one and saving does not write this store's units onto the
+          # row. Both readers resolve a fallback for display elsewhere.
+          attribute :weight_unit do |variant|
+            variant[:weight_unit]
+          end
+
+          attribute :dimensions_unit do |variant|
+            variant[:dimensions_unit]
           end
 
           attribute :carton_package_type_id do |variant|

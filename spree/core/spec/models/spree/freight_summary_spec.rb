@@ -131,6 +131,46 @@ RSpec.describe Spree::FreightSummary do
     it 'answers nil for an absent snapshot' do
       expect(described_class.from_metadata(nil)).to be_nil
     end
+
+    # A snapshot outlives the code that wrote it by design, so a key this
+    # version no longer knows must read as absent rather than raise on every
+    # historical order the moment it is serialized.
+    it 'ignores keys it no longer declares' do
+      json = summary_for([[packed_variant, 12]]).as_json
+      json['lines'].first['retired_field'] = 'whatever'
+
+      expect { described_class.from_metadata(json) }.not_to raise_error
+    end
+  end
+
+  describe '.merge' do
+    # Each part rounded its own carton count up, so adding them reports a
+    # part-empty carton twice and can invent a whole pallet.
+    it 're-derives the counts from the combined units rather than adding them' do
+      split = [summary_for([[packed_variant, 3]]), summary_for([[packed_variant, 9]])]
+
+      merged = described_class.merge(split)
+
+      expect(merged.total_units).to eq(12)
+      expect(merged.total_cartons).to eq(1)
+      expect(merged.total_pallets).to eq(1)
+    end
+
+    it 'keeps distinct variants as separate lines' do
+      other = create(:variant, units_per_carton: 6, carton_package_type: carton)
+      merged = described_class.merge([summary_for([[packed_variant, 12]]), summary_for([[other, 6]])])
+
+      expect(merged.lines.length).to eq(2)
+      expect(merged.total_cartons).to eq(2)
+    end
+
+    it 'is incomplete when any part was' do
+      loose = create(:variant, width: 10, height: 10, depth: 10, dimensions_unit: 'cm')
+
+      merged = described_class.merge([summary_for([[packed_variant, 12]]), summary_for([[loose, 1]])])
+
+      expect(merged).not_to be_complete
+    end
   end
 
   describe 'having nothing to report' do

@@ -68,11 +68,12 @@ module Spree
           order.po_document.blob&.byte_size if order.po_document.attached?
         end
 
-        # The shipment as the freight forwarder read it, frozen onto the rate
+        # The shipment as the freight forwarder read it, frozen onto the rates
         # this order shipped under. Never re-derived, so repacking a product
         # cannot rewrite what an order that already left the warehouse held.
+        # Per-line identity is withheld where prices are, as on the cart.
         attribute :freight_summary do |order|
-          order.freight_summary&.as_json
+          order.freight_summary&.as_json(identify_lines: !params[:hide_prices])
         end
 
         attributes :number, :email, :customer_note, :po_number,

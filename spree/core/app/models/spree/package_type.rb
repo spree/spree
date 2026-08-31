@@ -34,6 +34,7 @@ module Spree
     # index ("one default per store") never sees two TRUE rows, and MySQL —
     # which cannot enforce that index — arrives at the same place.
     before_save :demote_other_defaults, if: -> { default? && will_save_change_to_default? }
+    before_destroy :ensure_not_default
 
     scope :default, -> { where(default: true) }
 
@@ -93,6 +94,16 @@ module Spree
     end
 
     private
+
+    # Deleting the store's box would leave every quote with no tare and no
+    # dimensions, which under-prices bulky shipments silently. Name another
+    # default first.
+    def ensure_not_default
+      return unless default?
+
+      errors.add(:base, Spree.t('errors.messages.cannot_delete_default_package_type'))
+      throw(:abort)
+    end
 
     def demote_other_defaults
       self.class.where(store_id: store_id, default: true).where.not(id: id).update_all(default: false)

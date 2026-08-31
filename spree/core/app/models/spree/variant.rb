@@ -944,7 +944,11 @@ module Spree
     # to what the store's unit system implies, which is what every other
     # dimension in the store already means — there is no separate store
     # preference for it, so a second settable value cannot contradict the
-    # first.
+    # first. Mirrors {#weight_unit}, which has always resolved this way.
+    #
+    # Surfaces that show or export what the merchant actually stored — the CSV
+    # export, so a round-trip does not stamp one store's unit onto every
+    # variant — read the raw column instead.
     #
     # @return [String] one of {DIMENSION_UNITS}
     def dimensions_unit

@@ -42,6 +42,24 @@ module Spree
         from_pairs(purchase.line_items.map { |line_item| [line_item.variant, line_item.quantity] })
       end
 
+      # Combines the summaries several fulfillments froze into the one load
+      # the forwarder sees.
+      #
+      # Lines for the same variant are added together rather than listed
+      # twice, because carton and pallet counts were each rounded up when the
+      # line was built: three cartons in one consignment and three in another
+      # is six cartons on one pallet, not two pallets.
+      #
+      # @param summaries [Array<Spree::FreightSummary>]
+      # @return [Spree::FreightSummary]
+      def merge(summaries)
+        lines = Array(summaries).flat_map(&:lines).
+                group_by(&:variant_id).
+                map { |_variant_id, grouped| grouped.length == 1 ? grouped.first : Line.combine(grouped) }
+
+        new(lines: lines)
+      end
+
       # Rebuilds a summary from its serialized form — the frozen copy carried
       # in a delivery rate's metadata.
       #
@@ -51,7 +69,15 @@ module Spree
         return if payload.blank?
 
         payload = payload.with_indifferent_access
-        lines = Array(payload[:lines]).map { |line| Spree::FreightSummary::Line.new(line.symbolize_keys) }
+        # Only keys this version of Line declares. A frozen snapshot outlives
+        # the code that wrote it by design, so an attribute renamed or dropped
+        # later must read as absent rather than raise on every historical
+        # order the moment it is serialized.
+        known = Spree::FreightSummary::Line.attribute_names.map(&:to_sym)
+        lines = Array(payload[:lines]).map do |line|
+          Spree::FreightSummary::Line.new(line.symbolize_keys.slice(*known))
+        end
+
         new(lines: lines)
       end
 
@@ -122,8 +148,11 @@ module Spree
 
     # The serialized form frozen onto a delivery rate at completion.
     #
+    # @param identify_lines [Boolean] whether each line names the variant it
+    #   came from. False on a storefront that withholds commercial detail —
+    #   the totals are logistics and stay, but a SKU is catalog identity.
     # @return [Hash]
-    def as_json(*)
+    def as_json(identify_lines: true)
       {
         'total_units' => total_units,
         'total_cartons' => total_cartons,
@@ -131,7 +160,7 @@ module Spree
         'total_volume' => decimal_string(total_volume),
         'total_weight' => decimal_string(total_weight),
         'complete' => complete?,
-        'lines' => lines.map(&:as_json)
+        'lines' => lines.map { |line| line.as_json(identify_lines: identify_lines) }
       }
     end
 

@@ -97,6 +97,16 @@ RSpec.describe Spree::PackageType, type: :model do
   end
 
   describe 'deletion' do
+    # Deleting it would leave every quote with no tare and no dimensions,
+    # which under-prices bulky shipments with nothing to notice.
+    it 'refuses the store default' do
+      package_type = create(:package_type, store: store, default: true)
+
+      expect(package_type.destroy).to be_falsey
+      expect(package_type.errors[:base]).to be_present
+      expect(store.reload.default_package_type).to eq(package_type)
+    end
+
     it 'refuses while a variant is packed into it' do
       carton = create(:carton_package_type, store: store)
       create(:variant, carton_package_type: carton)

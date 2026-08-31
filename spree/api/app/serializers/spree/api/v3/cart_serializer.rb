@@ -145,10 +145,14 @@ module Spree
 
         # The shipment as a freight forwarder reads it: cartons, pallets,
         # cubic meters, gross weight. Null for anything the store never
-        # measured that way, which is every retail cart. Not price-gated —
-        # these are logistics, not amounts.
+        # measured that way, which is every retail cart.
+        #
+        # The totals are logistics rather than amounts, so they survive a
+        # storefront that hides prices; the per-line SKU and product name do
+        # not, being the catalog identity such a storefront exists to
+        # withhold.
         attribute :freight_summary do |purchase|
-          purchase.freight_summary&.as_json
+          purchase.freight_summary&.as_json(identify_lines: !params[:hide_prices])
         end
 
         attribute :shipping_eq_billing_address do |order|

@@ -120,11 +120,15 @@ module Spree
     # put "$0.00" — free freight — in front of a buyer whose shipment has not
     # been quoted yet.
     #
+    # Keeps the generated method's shape: the same keyword options, and a
+    # Spree::Money on every priced path, so callers doing money arithmetic on
+    # the total are unaffected.
+    #
     # @return [String, Spree::Money]
-    def display_final_price
+    def display_final_price(**options)
       return quoted_after_review if unpriced?
 
-      Spree::Money.new(final_price, currency: currency)
+      Spree::Money.new(final_price, { currency: currency }.merge(options))
     end
     alias display_total display_final_price
 
