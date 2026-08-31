@@ -13,6 +13,113 @@ export type ListedAmount = {
   currency: string
 }
 
+function amountsHash(
+  preferences: Record<string, unknown> | null | undefined,
+): Record<string, unknown> {
+  const amounts = preferences?.amounts
+  if (!amounts || typeof amounts !== 'object' || Array.isArray(amounts)) return {}
+  return amounts as Record<string, unknown>
+}
+
+function hashEntry(amounts: Record<string, unknown>, currency: string): unknown {
+  const code = currency.toUpperCase()
+  const match = Object.entries(amounts).find(([key]) => key.toUpperCase() === code)
+  return match ? match[1] : undefined
+}
+
+/** The currency the pre-6.0 single `amount` belongs to. */
+function legacyCurrency(
+  preferences: Record<string, unknown> | null | undefined,
+  defaultCurrency: string,
+): string {
+  if (typeof preferences?.currency === 'string' && preferences.currency.trim() !== '') {
+    return preferences.currency.toUpperCase()
+  }
+  return defaultCurrency.toUpperCase()
+}
+
+/**
+ * The amount a calculator-priced method quotes for one currency — the same
+ * order the calculator uses. The per-currency `amounts` hash wins; the
+ * legacy single `amount` fills in only for its own currency (the `currency`
+ * preference, or the store default when that preference is blank).
+ *
+ * A pre-6.0 method that names EUR therefore returns 7 for EUR and nothing
+ * for USD. Reading the single amount as the store default is how a euro
+ * figure appeared in the dollar row of the editor.
+ */
+export function amountForCurrency(
+  preferences: Record<string, unknown> | null | undefined,
+  currency: string,
+  defaultCurrency: string,
+): number | null {
+  const code = currency.toUpperCase()
+  const fromHash = hashEntry(amountsHash(preferences), code)
+  if (fromHash !== undefined && fromHash !== null && fromHash !== '') {
+    return toNumber(fromHash)
+  }
+
+  if (legacyCurrency(preferences, defaultCurrency) !== code) return null
+  return toNumber(preferences?.amount)
+}
+
+/**
+ * Writes one currency's amount the way the delivery-method editor does,
+ * without moving a price that belongs to another currency.
+ *
+ * The default-currency row owns the legacy `amount` + `currency` pair. When
+ * that pair still names a different currency (a pre-6.0 EUR price), the
+ * existing figure is copied into the `amounts` hash first so typing in the
+ * dollar row cannot overwrite the euro price.
+ */
+export function applyCurrencyAmount(
+  preferences: Record<string, unknown>,
+  currency: string,
+  raw: string,
+  defaultCurrency: string,
+): Record<string, unknown> {
+  const code = currency.toUpperCase()
+  const defaultCode = defaultCurrency.toUpperCase()
+  const parsed = raw === '' ? null : toNumber(raw)
+  const nextAmounts = { ...amountsHash(preferences) }
+  const namedCurrency = legacyCurrency(preferences, defaultCurrency)
+
+  if (namedCurrency !== code && namedCurrency !== defaultCode) {
+    const existing = amountForCurrency(preferences, namedCurrency, defaultCurrency)
+    if (existing !== null && hashEntry(nextAmounts, namedCurrency) === undefined) {
+      nextAmounts[namedCurrency] = existing
+    }
+  }
+
+  if (code === defaultCode) {
+    if (hashEntry(nextAmounts, code) !== undefined) {
+      if (parsed === null) {
+        delete nextAmounts[code]
+      } else {
+        nextAmounts[code] = parsed
+      }
+    }
+    return {
+      ...preferences,
+      amount: parsed,
+      currency: defaultCurrency,
+      amounts: nextAmounts,
+    }
+  }
+
+  if (parsed === null) {
+    delete nextAmounts[code]
+  } else {
+    nextAmounts[code] = parsed
+  }
+
+  if (namedCurrency === code) {
+    return { ...preferences, amount: parsed, amounts: nextAmounts }
+  }
+
+  return { ...preferences, amounts: nextAmounts }
+}
+
 /**
  * Every amount a calculator-priced method quotes, each with the currency it
  * belongs to. The per-currency `amounts` hash is the source of truth; the
@@ -31,26 +138,19 @@ export function listedAmounts(
   const seen = new Set<string>()
   const defaultCode = defaultCurrency.toUpperCase()
 
-  const amounts = preferences?.amounts
-  if (amounts && typeof amounts === 'object' && !Array.isArray(amounts)) {
-    for (const [code, value] of Object.entries(amounts as Record<string, unknown>)) {
-      const parsed = toNumber(value)
-      if (parsed === null) continue
-      const currency = code.toUpperCase()
-      listed.push({ amount: parsed, currency })
-      seen.add(currency)
-    }
+  for (const [code, value] of Object.entries(amountsHash(preferences))) {
+    const parsed = toNumber(value)
+    if (parsed === null) continue
+    const currency = code.toUpperCase()
+    listed.push({ amount: parsed, currency })
+    seen.add(currency)
   }
 
   const legacyAmount = toNumber(preferences?.amount)
   if (legacyAmount !== null) {
-    const rawCurrency =
-      typeof preferences?.currency === 'string' && preferences.currency.trim() !== ''
-        ? preferences.currency
-        : defaultCurrency
-    const legacyCurrency = rawCurrency.toUpperCase()
-    if (!seen.has(legacyCurrency)) {
-      listed.push({ amount: legacyAmount, currency: legacyCurrency })
+    const named = legacyCurrency(preferences, defaultCurrency)
+    if (!seen.has(named)) {
+      listed.push({ amount: legacyAmount, currency: named })
     }
   }
 

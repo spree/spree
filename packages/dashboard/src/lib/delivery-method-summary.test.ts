@@ -1,5 +1,10 @@
 import { describe, expect, it } from 'vitest'
-import { formatListedPrice, listedAmounts } from './delivery-method-summary'
+import {
+  amountForCurrency,
+  applyCurrencyAmount,
+  formatListedPrice,
+  listedAmounts,
+} from './delivery-method-summary'
 
 describe('listedAmounts', () => {
   it('reads the legacy single amount as the store default currency', () => {
@@ -14,6 +19,13 @@ describe('listedAmounts', () => {
 
   it('reads a non-default currency from the amounts hash when the default is empty', () => {
     expect(listedAmounts({ amounts: { EUR: 7 } }, 'USD')).toEqual([{ amount: 7, currency: 'EUR' }])
+  })
+
+  it('reads the editor-written hash even when the single amount is zero', () => {
+    expect(listedAmounts({ amount: 0, amounts: { EUR: 11 } }, 'USD')).toEqual([
+      { amount: 0, currency: 'USD' },
+      { amount: 11, currency: 'EUR' },
+    ])
   })
 
   it('keeps each hash amount against the currency it was entered in', () => {
@@ -69,5 +81,56 @@ describe('formatListedPrice', () => {
     expect(formatListedPrice({}, 'USD', 'en', 'Free', separator)).toBe('Free')
     expect(formatListedPrice({ amount: 0 }, 'USD', 'en', 'Free', separator)).toBe('Free')
     expect(formatListedPrice({ amounts: { EUR: 0 } }, 'USD', 'en', 'Free', separator)).toBe('Free')
+  })
+
+  it('does not read a zero single amount as free when the hash has a real price', () => {
+    expect(
+      formatListedPrice({ amount: 0, amounts: { EUR: 11 } }, 'USD', 'en', 'Free', separator),
+    ).toBe('€11.00')
+  })
+})
+
+describe('amountForCurrency', () => {
+  it('puts a pre-6.0 euro amount in the euro row, not the store default', () => {
+    const preferences = { amount: 7, currency: 'EUR' }
+    expect(amountForCurrency(preferences, 'EUR', 'USD')).toBe(7)
+    expect(amountForCurrency(preferences, 'USD', 'USD')).toBeNull()
+  })
+
+  it('reads an editor-written euro price from the amounts hash', () => {
+    const preferences = { amount: 0, amounts: { EUR: 11 } }
+    expect(amountForCurrency(preferences, 'EUR', 'USD')).toBe(11)
+    expect(amountForCurrency(preferences, 'USD', 'USD')).toBe(0)
+  })
+
+  it('treats a blank currency preference as the store default', () => {
+    expect(amountForCurrency({ amount: 5 }, 'USD', 'USD')).toBe(5)
+    expect(amountForCurrency({ amount: 5 }, 'EUR', 'USD')).toBeNull()
+  })
+})
+
+describe('applyCurrencyAmount', () => {
+  it('keeps a pre-6.0 euro price when the dollar row is edited', () => {
+    expect(applyCurrencyAmount({ amount: 7, currency: 'EUR' }, 'USD', '10', 'USD')).toEqual({
+      amount: 10,
+      currency: 'USD',
+      amounts: { EUR: 7 },
+    })
+  })
+
+  it('updates the named currency in place on a pre-6.0 method', () => {
+    expect(applyCurrencyAmount({ amount: 7, currency: 'EUR' }, 'EUR', '11', 'USD')).toEqual({
+      amount: 11,
+      currency: 'EUR',
+      amounts: { EUR: 11 },
+    })
+  })
+
+  it('writes a non-default currency into the amounts hash', () => {
+    expect(applyCurrencyAmount({ amount: 5, currency: 'USD' }, 'EUR', '11', 'USD')).toEqual({
+      amount: 5,
+      currency: 'USD',
+      amounts: { EUR: 11 },
+    })
   })
 })

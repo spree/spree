@@ -58,6 +58,7 @@ import {
 import { useIntegrations, useIntegrationTypes } from '../../../hooks/use-integrations'
 import { productAutocompleteProps } from '../../../hooks/use-products'
 import { useTaxCategories } from '../../../hooks/use-tax-categories'
+import { amountForCurrency, applyCurrencyAmount } from '../../../lib/delivery-method-summary'
 import type { DeliveryMethodFormValues } from '../../../schemas/delivery-method'
 import { ConfigureIntegrationSheet } from '../integrations/configure-integration-sheet'
 import { StockLocationScopeField } from './stock-location-scope-field'
@@ -76,8 +77,8 @@ const AMOUNT_BASED_CALCULATORS = [
 
 /**
  * Preference keys the per-currency editor owns on those calculators. `amount`
- * and `currency` are the pre-6.0 single-currency pair, kept authoritative for
- * the store's default currency so an upgraded store quotes unchanged.
+ * and `currency` are the pre-6.0 single-currency pair: they belong to the
+ * currency the method names, not automatically to the store default.
  */
 const CURRENCY_AMOUNT_KEYS = ['amount', 'currency', 'amounts']
 
@@ -901,10 +902,10 @@ function ServiceOverridesSheet({
 
 /**
  * The amount an amount-based calculator charges, one input per currency the
- * store sells in. The default currency writes the legacy single `amount`
- * preference, so an upgraded store keeps quoting from the value it already
- * had; every other currency lives in the `amounts` hash. A currency left
- * blank has no amount, and the method is simply not offered to those carts.
+ * store sells in. Each row shows the amount for that currency — the
+ * per-currency `amounts` hash, or the pre-6.0 single `amount` when its
+ * `currency` preference names this row. A currency left blank has no
+ * amount, and the method is simply not offered to those carts.
  *
  * A single-currency store sees one plain amount field, exactly as before.
  */
@@ -932,24 +933,12 @@ function CurrencyAmountsField({
   const multiCurrency = codes.length > 1
 
   function amountFor(code: string): string {
-    const raw = code === defaultCurrency ? values.amount : amounts[code]
-    return raw === null || raw === undefined ? '' : String(raw)
+    const raw = amountForCurrency(values, code, defaultCurrency)
+    return raw === null ? '' : String(raw)
   }
 
   function setAmount(code: string, raw: string) {
-    if (code === defaultCurrency) {
-      onChange({ ...values, amount: raw === '' ? null : Number(raw) })
-      return
-    }
-    const nextAmounts = { ...amounts }
-    // An empty input is the absence of an amount, not a zero — a zero would
-    // offer the method free of charge in that currency.
-    if (raw === '') {
-      delete nextAmounts[code]
-    } else {
-      nextAmounts[code] = Number(raw)
-    }
-    onChange({ ...values, amounts: nextAmounts })
+    onChange(applyCurrencyAmount(values, code, raw, defaultCurrency))
   }
 
   return (
