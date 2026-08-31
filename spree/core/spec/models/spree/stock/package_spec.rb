@@ -41,14 +41,12 @@ module Spree
         # currency read the owner's store, and a cart-owned package must not
         # lose them just because no order exists yet.
         it 'applies the store tare to a cart-owned package' do
-          @default_store.update!(preferred_default_package_weight: 2.5)
+          create(:package_type, store: @default_store, default: true, weight: 2.5)
           cart = create(:cart, store: @default_store)
-          line_item = create(:line_item, cart: cart, order: nil, variant: variant)
+          create(:line_item, cart: cart, order: nil, variant: variant)
           fulfillment = create(:shipment, cart: cart, order: nil, stock_location: create(:stock_location))
 
           expect(fulfillment.to_package.weight).to eq(27.5)
-        ensure
-          @default_store.update!(preferred_default_package_weight: 0)
         end
 
         it 'falls back to the units for a package with no fulfillment' do
@@ -67,8 +65,8 @@ module Spree
       # The tare applies at this single seam so every weight consumer —
       # calculators, rate providers, weight rules, the weight splitter —
       # inherits it without knowing the preference exists.
-      it 'adds the store default package weight on top of the contents' do
-        order.store.update!(preferred_default_package_weight: 2.5)
+      it 'adds the default package type weight on top of the contents' do
+        create(:package_type, store: order.store, default: true, weight: 2.5)
 
         4.times { subject.add build_inventory_unit }
 
@@ -76,7 +74,7 @@ module Spree
       end
 
       it 'applies the tare once per package, not per item' do
-        order.store.update!(preferred_default_package_weight: 2.5)
+        create(:package_type, store: order.store, default: true, weight: 2.5)
 
         subject.add build_inventory_unit
 
@@ -84,20 +82,16 @@ module Spree
       end
 
       describe '#dimensions' do
-        it 'is nil until the store configures a full default package' do
+        it 'is nil until the store has a fully measured default package' do
           subject.add build_inventory_unit
           expect(subject.dimensions).to be_nil
 
-          order.store.update!(preferred_default_package_length: 12, preferred_default_package_width: 9)
+          create(:package_type, store: order.store, default: true, length: 12, width: 9, height: nil)
           expect(subject.dimensions).to be_nil
         end
 
         it 'returns the configured box verbatim, never derived from items' do
-          order.store.update!(
-            preferred_default_package_length: 12,
-            preferred_default_package_width: 9,
-            preferred_default_package_height: 4
-          )
+          create(:package_type, store: order.store, default: true, length: 12, width: 9, height: 4)
 
           subject.add build_inventory_unit
 
@@ -248,13 +242,25 @@ module Spree
       end
 
       context '#volume' do
-        it 'calculates the sum of the volume of all the items' do
-          contents = [ContentItem.new(build(:inventory_unit, variant: build(:variant))),
-                      ContentItem.new(build(:inventory_unit, variant: build(:variant))),
-                      ContentItem.new(build(:inventory_unit, variant: build(:variant))),
-                      ContentItem.new(build(:inventory_unit, variant: build(:variant)))]
+        # Cubic meters, not the product of raw dimension columns: the same
+        # numbers read as inches rather than centimeters are a sixteenfold
+        # error, which is why freight math never multiplies columns directly.
+        it 'reports the packed volume in cubic meters' do
+          variant = build(:variant, width: 10, height: 20, depth: 30, dimensions_unit: 'cm')
+          contents = [ContentItem.new(build(:inventory_unit, variant: variant, quantity: 2))]
           package = Package.new(stock_location, contents)
-          expect(package.volume).to eq contents.sum(&:volume)
+
+          expect(package.volume).to eq(BigDecimal('0.012'))
+        end
+
+        it 'reads the same box in inches as a larger volume' do
+          metric = build(:variant, width: 10, height: 20, depth: 30, dimensions_unit: 'cm')
+          imperial = build(:variant, width: 10, height: 20, depth: 30, dimensions_unit: 'in')
+
+          metric_package = Package.new(stock_location, [ContentItem.new(build(:inventory_unit, variant: metric))])
+          imperial_package = Package.new(stock_location, [ContentItem.new(build(:inventory_unit, variant: imperial))])
+
+          expect(imperial_package.volume).to be > metric_package.volume
         end
       end
 

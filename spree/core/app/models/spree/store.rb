@@ -44,16 +44,6 @@ module Spree
     preference :admin_locale, :string
     preference :timezone, :string, default: Time.zone.name
     preference :weight_unit, :string, default: 'lb'
-    # Default package (Shopify-style): the box a store usually ships in.
-    # Weight is the packaging tare (box + filler) added to every package's
-    # content weight for rate calculation, in the store's weight unit; the
-    # dimensions are the box itself, used verbatim by carrier rate providers
-    # for dimensional-weight pricing — inches when the unit system is
-    # imperial, centimeters when metric. Zeros keep historical behavior.
-    preference :default_package_weight, :decimal, default: 0
-    preference :default_package_length, :decimal, default: 0
-    preference :default_package_width, :decimal, default: 0
-    preference :default_package_height, :decimal, default: 0
     preference :unit_system, :string, default: 'imperial'
     # email preferences
     preference :send_consumer_transactional_emails, :boolean, default: true
@@ -238,6 +228,15 @@ module Spree
       Spree::DeliveryProfile.default_for(self)
     end
     has_many :stock_locations, class_name: 'Spree::StockLocation', dependent: :nullify
+
+    # The store's packaging vocabulary. The default row is the box it usually
+    # ships in — the tare and dimensions every parcel quote is built on.
+    has_many :package_types, class_name: 'Spree::PackageType', dependent: :destroy, inverse_of: :store
+
+    # @return [Spree::PackageType, nil]
+    def default_package_type
+      package_types.default.first
+    end
     has_many :promotions, class_name: 'Spree::Promotion', dependent: :nullify
 
     has_many :tax_categories, class_name: 'Spree::TaxCategory', dependent: :destroy, inverse_of: :store

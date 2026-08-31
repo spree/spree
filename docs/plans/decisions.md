@@ -4749,6 +4749,49 @@ agreement to understand every part of it at once); skippable steps (a
 "create now" escape hatch competing with Next on every step).
 
 Plans amended: `6.0-catalog-agreement-rework.md` (phase 4 completed).
+## 2026-08-31 — Wholesale shipping backend: the store's box becomes a row with no bridge, and unpriced rates carry the logistics instead of a price
+
+Phases 1–6 of `6.0-b2b-wholesale-shipping.md` — everything below the
+dashboard and the storefront. Three rulings other plans need.
+
+**The four `default_package_*` store preferences are deleted outright, with
+no deprecation bridge.** A recorded exception to the always-bridge
+convention, and the reasoning is narrow enough to be worth stating so it is
+not read as a precedent: those preferences were added inside this same
+unreleased 6.0 cycle, so no released version exposes them and there is no
+caller to keep working. A bridge writing through to the new default
+`PackageType` row would have left two spellings of the store's shipping box
+coexisting for a release, each able to disagree with the other in the
+dashboard, in exchange for compatibility nobody can be relying on. The
+upgrade task (`spree:package_types:backfill`) creates each store's default
+row from the preference values, which is what makes the removal safe. The
+convention still holds for anything that shipped: bridge it.
+
+**An unset variant `dimensions_unit` follows the store's `unit_system`** —
+imperial reads as inches, metric as centimeters — rather than gaining a
+`default_dimensions_unit` store preference to mirror `weight_unit`'s
+fallback. The store already answers "what do dimensions mean here" through
+`unit_system`, which is what the box preferences and the EasyPost provider
+have always read; a second settable value could contradict it, and the
+merchant would have no way to tell which one a number obeyed.
+
+**An unpriced rate is a rate with no price, not a rate priced at zero.**
+`Spree::DeliveryRateProvider::Estimate` and `spree_delivery_rates` carry an
+`unpriced` boolean; the estimator skips markup and tax gross-up for those
+rows, and `DeliveryRate#free?` answers false for them so nothing renders
+"Free" over a shipment whose cost is genuinely unknown. This is the
+mechanism the plan's constraint points at — a zero-cost priced rate is the
+workaround it exists to prevent. `Spree::FreightSummary` (units, cartons,
+pallets, CBM, gross weight, `complete?`) rides in the estimate's metadata
+and is frozen onto the selected rate at completion, never re-derived from
+the live catalog afterwards.
+
+Everything money-shaped stays for phase 7: deposits, the completion
+payment-sufficiency change and the partial-payment order surfaces are not in
+this cut. **Constraint unchanged and now load-bearing:** nothing may assume
+a completed order is paid in full once phase 7 lands.
+
+Plan: `6.0-b2b-wholesale-shipping.md` (phases 1–6 implemented).
 
 ## 2026-09-02 — Order cancellation and approval history tables are dropped; the reason lives on the order
 

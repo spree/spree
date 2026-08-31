@@ -429,6 +429,8 @@ en:
           attributes:
             base:
               cannot_destroy_if_attached_to_line_items: Cannot delete Variants that are added to placed Orders. In such cases, please discontinue them.
+            carton_package_type:
+              must_be_a_carton: must be a package type of kind carton
             order_multiple:
               incompatible_with_carton: must divide into or be a multiple of %{units_per_carton} units per carton
             units_per_carton:
@@ -908,15 +910,23 @@ en:
       channel_rule:
         description: Offers the delivery method only on the selected channels
         name: Channel
+      company_rule:
+        description: Limits the delivery method to orders placed for a company, or to orders that are not
+        name: Company
       excluded_products_rule:
         description: Blocks the delivery method for packages containing the selected products
         name: Excluded products
       item_total_rule:
         description: Limits the delivery method to carts within an item total range
         name: Item total
+      volume_rule:
+        description: Limits the delivery method to shipments within a volume range, in cubic meters
+        name: Volume
       weight_rule:
         description: Limits the delivery method to packages within a weight range
         name: Weight
+    delivery_rates:
+      quoted_after_review: Quoted after review
     depth: Depth
     description: Description
     destination: Destination
@@ -1348,6 +1358,8 @@ en:
     other: Other
     out_of_stock: Out of Stock
     outstanding_balance: Outstanding Balance
+    package_types:
+      default_name: Shipping box
     page: Page
     pages: Pages
     password: Password

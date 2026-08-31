@@ -51,11 +51,18 @@ module Spree
         return if delivery_rates.empty?
 
         shipped = delivery_rates.select { |rate| rate.delivery_method&.requires_address? }
-        (shipped.presence || delivery_rates).min_by(&:cost).selected = true
+        candidates = shipped.presence || delivery_rates
+        # An unpriced rate costs zero, so preselecting on price alone would
+        # hand every mixed offering to freight. Prefer something actually
+        # priced; fall back to freight when that is all there is.
+        priced = candidates.reject(&:unpriced?)
+        (priced.presence || candidates).min_by(&:cost).selected = true
       end
 
+      # Cheapest first, with unpriced rates after the priced ones — their zero
+      # cost is an absence of information, not a bargain.
       def sort_delivery_rates(delivery_rates)
-        delivery_rates.sort_by!(&:cost)
+        delivery_rates.sort_by! { |rate| [rate.unpriced? ? 1 : 0, rate.cost] }
       end
 
       # Quoting runs through the method's rate provider — Internal prices
@@ -78,11 +85,11 @@ module Spree
             end
 
             service_row = delivery_method.service_for(estimate)
-            cost = apply_markup(estimate.cost, delivery_method, service_row, provider)
 
             delivery_method.delivery_rates.new(
-              cost: gross_amount(cost, taxation_options_for(delivery_method)),
-              tax_rate: first_tax_rate_for(delivery_method.tax_category),
+              cost: rate_cost(estimate, delivery_method, service_row, provider),
+              tax_rate: (first_tax_rate_for(delivery_method.tax_category) unless estimate.unpriced),
+              unpriced: estimate.unpriced,
               name: rate_name(estimate, service_row),
               carrier: estimate.carrier,
               service_level: estimate.service_level,
@@ -93,6 +100,17 @@ module Spree
             )
           end
         end
+      end
+
+      # An unpriced quote has no amount to mark up or tax — a percentage of an
+      # unknown price is still unknown, and rounding zero through the VAT
+      # gross-up would only invent a number. Its cost stays zero and every
+      # display surface reads +unpriced+ instead.
+      def rate_cost(estimate, delivery_method, service_row, provider)
+        return 0 if estimate.unpriced
+
+        cost = apply_markup(estimate.cost, delivery_method, service_row, provider)
+        gross_amount(cost, taxation_options_for(delivery_method))
       end
 
       # Handling fee on top of provider quotes: the service row's values when

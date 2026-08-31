@@ -427,6 +427,76 @@ module Spree
           expect(rate.metadata['quote_id']).to eq('rate_123')
         end
 
+        describe 'unpriced rates' do
+          let(:unpriced_provider_class) do
+            Class.new(Spree::DeliveryRateProvider::Base) do
+              def estimate(_package)
+                Spree::DeliveryRateProvider::Estimate.new(cost: 0, unpriced: true, name: 'Freight')
+              end
+            end
+          end
+
+          before do
+            stub_const('UnpricedRateProvider', unpriced_provider_class)
+            allow(delivery_method).to receive(:rate_provider_instance).
+              and_return(unpriced_provider_class.new(delivery_method))
+          end
+
+          it 'marks the rate unpriced rather than pricing it at nothing' do
+            rate = subject.delivery_rates(package).first
+
+            expect(rate.unpriced).to be(true)
+            expect(rate).not_to be_free
+          end
+
+          # A percentage of an unknown price is still unknown, so the handling
+          # markup a merchant set for real carrier quotes must not apply.
+          it 'skips the method markup' do
+            delivery_method.update!(markup_percent: 50, markup_flat: 10)
+
+            expect(subject.delivery_rates(package).first.cost).to be_zero
+          end
+
+          it 'resolves no tax rate against an amount nobody has quoted' do
+            expect(subject.delivery_rates(package).first.tax_rate).to be_nil
+          end
+
+          it 'says the price is coming rather than showing an amount' do
+            expect(subject.delivery_rates(package).first.display_price).
+              to eq(Spree.t('delivery_rates.quoted_after_review'))
+          end
+        end
+
+        # A zero cost would otherwise sort first and be preselected, handing
+        # every mixed offering to freight.
+        describe 'unpriced rates beside priced ones' do
+          let(:priced_method) { create(:delivery_method) }
+
+          before do
+            allow(priced_method.calculator).to receive(:compute).and_return(BigDecimal('25'))
+
+            unpriced_provider = Class.new(Spree::DeliveryRateProvider::Base) do
+              def estimate(_package)
+                Spree::DeliveryRateProvider::Estimate.new(cost: 0, unpriced: true, name: 'Freight')
+              end
+            end
+            stub_const('MixedFreightProvider', unpriced_provider)
+            allow(delivery_method).to receive(:rate_provider_instance).
+              and_return(unpriced_provider.new(delivery_method))
+            allow(package).to receive_messages(eligible_delivery_methods: [delivery_method, priced_method])
+          end
+
+          it 'preselects the priced rate' do
+            selected = subject.delivery_rates(package).detect(&:selected)
+
+            expect(selected.delivery_method).to eq(priced_method)
+          end
+
+          it 'sorts the unpriced rate last' do
+            expect(subject.delivery_rates(package).last.unpriced).to be(true)
+          end
+        end
+
         # One carrier method now yields one rate per service (decisions.md
         # 2026-08-09) — the provider returns several estimates and the
         # estimator fans them out, names them, and applies merchant controls.

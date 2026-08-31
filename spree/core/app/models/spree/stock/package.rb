@@ -70,34 +70,41 @@ module Spree
         contents.sum(&:amount)
       end
 
-      # Content weight plus the store's default package weight (packaging
-      # tare). This is the single seam every weight consumer reads —
-      # calculators, rate providers, weight rules and the weight splitter —
-      # so the tare applies everywhere without any of them knowing about it.
+      # Content weight plus the tare of the store's default package (the box
+      # itself, plus filler). This is the single point every weight consumer
+      # reads — calculators, rate providers, weight rules and the weight
+      # splitter — so the tare applies everywhere without any of them knowing
+      # about it.
       def weight
-        contents_weight = contents.sum(&:weight)
-        tare = owner&.store&.preferred_default_package_weight.to_f
-
-        contents_weight + tare
+        contents.sum(&:weight) + default_package_type&.weight.to_f
       end
 
       # The store's default package dimensions (the box this package ships
       # in), used verbatim by carrier rate providers for dimensional-weight
       # pricing. Item dimensions are deliberately not summed — items don't
-      # stack into a box shape. Nil until the store configures all three,
-      # in the unit implied by the store's unit system (in/cm).
+      # stack into a box shape. Nil until the store records all three.
       #
       # @return [Hash{Symbol => Float}, nil]
       def dimensions
-        store = owner&.store
-        return if store.nil?
+        default_package_type&.dimensions
+      end
 
-        length = store.preferred_default_package_length.to_f
-        width = store.preferred_default_package_width.to_f
-        height = store.preferred_default_package_height.to_f
-        return if [length, width, height].any?(&:zero?)
+      # The store's default box.
+      #
+      # @return [Spree::PackageType, nil]
+      def default_package_type
+        return @default_package_type if defined?(@default_package_type)
 
-        { length: length, width: width, height: height }
+        @default_package_type = owner&.store&.default_package_type
+      end
+
+      # How this package's contents roll up into freight logistics — cartons,
+      # pallets, cubic meters, gross weight. Computed live; an order's summary
+      # comes from the frozen copy on its selected delivery rate instead.
+      #
+      # @return [Spree::FreightSummary]
+      def freight_summary
+        @freight_summary ||= Spree::FreightSummary.build(contents)
       end
 
       def on_hand
@@ -183,8 +190,13 @@ module Spree
         to_fulfillment
       end
 
+      # Cubic meters of packed goods — carton volume where the contents
+      # declare cartons, unit volume otherwise. Cartons stack, so unlike
+      # +dimensions+ this genuinely sums.
+      #
+      # @return [BigDecimal]
       def volume
-        contents.sum(&:volume)
+        freight_summary.total_volume
       end
 
       def dimension

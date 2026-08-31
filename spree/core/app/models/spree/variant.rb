@@ -25,6 +25,10 @@ module Spree
 
     belongs_to :product, -> { with_deleted }, touch: true, class_name: 'Spree::Product', inverse_of: :variants
     belongs_to :tax_category, class_name: 'Spree::TaxCategory', optional: true
+    # The carton this variant is packed into. Geometry lives on the shared
+    # row; how many units fit and what a packed carton weighs stay here.
+    belongs_to :carton_package_type, class_name: 'Spree::PackageType', optional: true,
+               inverse_of: :variants
     # Which seller sells this variant. Nil is the operator's own listing, and
     # on a product whose seller owns every variant the product answers instead
     # — see #resolved_seller_id. Several sellers on one product is the whole point: two
@@ -129,6 +133,9 @@ module Spree
     validates :minimum_order_quantity, numericality: { only_integer: true, greater_than: 0, allow_nil: true }
     validates :order_multiple, numericality: { only_integer: true, greater_than: 0, allow_nil: true }
     validates :units_per_carton, numericality: { only_integer: true, greater_than: 0, allow_nil: true }
+    validates :cartons_per_pallet, numericality: { only_integer: true, greater_than: 0, allow_nil: true }
+    validates :carton_weight, numericality: { greater_than: 0, allow_nil: true }
+    validate :carton_package_type_is_a_carton
     validates :purchase_unit, inclusion: { in: PURCHASE_UNITS }, allow_blank: true
 
     # Both are data errors the merchant should hear about while editing, not
@@ -271,7 +278,8 @@ module Spree
     # question.
     self.whitelisted_ransackable_attributes = %w[weight depth width height sku discontinue_on cost_price cost_currency track_inventory
                                                  deleted_at product_id hs_code country_of_origin
-                                                 minimum_order_quantity order_multiple purchase_unit units_per_carton]
+                                                 minimum_order_quantity order_multiple purchase_unit units_per_carton
+                                                 carton_package_type_id carton_weight cartons_per_pallet]
     self.whitelisted_ransackable_scopes = %i(product_name_or_sku_cont search_by_product_name_or_sku search)
 
     def self.product_name_or_sku_cont(query)
@@ -925,6 +933,24 @@ module Spree
       attributes['weight_unit'] || Spree::Store.default.preferred_weight_unit
     end
 
+    # The unit this variant's width/height/depth are expressed in. Falls back
+    # to what the store's unit system implies, which is what every other
+    # dimension in the store already means — there is no separate store
+    # preference for it, so a second settable value cannot contradict the
+    # first.
+    #
+    # @return [String] one of {DIMENSION_UNITS}
+    def dimensions_unit
+      attributes['dimensions_unit'].presence || self.class.store_dimensions_unit(preference_store)
+    end
+
+    # @param store [Spree::Store, nil]
+    # @return [String]
+    def self.store_dimensions_unit(store)
+      store ||= Spree::Store.default
+      store&.metric_unit_system? ? 'cm' : 'in'
+    end
+
     def discontinue!
       update_attribute(:discontinue_on, Time.current)
     end
@@ -984,6 +1010,25 @@ module Spree
       (quantity.to_i / units_per_carton.to_f).ceil
     end
 
+    # The cubic meters one packed carton of this variant occupies. Geometry
+    # comes from the shared carton row, so correcting a carton size fixes
+    # every product packed in it.
+    #
+    # @return [BigDecimal, nil]
+    def carton_volume
+      carton_package_type&.volume
+    end
+
+    # How many units a full pallet of this variant holds. Nil unless both
+    # halves of the chain are recorded.
+    #
+    # @return [Integer, nil]
+    def units_per_pallet
+      return if units_per_carton.to_i.zero? || cartons_per_pallet.to_i.zero?
+
+      units_per_carton * cartons_per_pallet
+    end
+
     private
 
     def order_multiple_fits_cartons
@@ -991,6 +1036,14 @@ module Spree
       return if (order_multiple % units_per_carton).zero? || (units_per_carton % order_multiple).zero?
 
       errors.add(:order_multiple, :incompatible_with_carton, units_per_carton: units_per_carton)
+    end
+
+    # A pallet or a shipping box is not what a product is packed into; only
+    # a carton row can stand in this slot.
+    def carton_package_type_is_a_carton
+      return if carton_package_type.blank? || carton_package_type.carton?
+
+      errors.add(:carton_package_type, :must_be_a_carton)
     end
 
     def carton_purchase_unit_has_divisor
