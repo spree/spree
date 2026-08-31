@@ -26,7 +26,11 @@ module Spree
     # we're not freezing this on purpose so developers can extend and manage
     # those attributes depending of the logic of their applications
     ADDRESS_FIELDS = %w(firstname lastname company address1 address2 city state zipcode country phone)
-    EXCLUDED_KEYS_FOR_COMPARISON = %w(id updated_at created_at deleted_at label owner_type owner_id metadata)
+    # Latitude and longitude are derived from the address rather than part of
+    # it, so they can never tell two otherwise-equal addresses apart — and an
+    # entry whose geocoding has already run would otherwise never match the
+    # same address freshly typed in.
+    EXCLUDED_KEYS_FOR_COMPARISON = %w(id updated_at created_at deleted_at label owner_type owner_id metadata latitude longitude)
     if defined?(Spree::Security::Addresses)
       include Spree::Security::Addresses
     end
@@ -289,6 +293,38 @@ module Spree
 
     def clone
       self.class.new(value_attributes)
+    end
+
+    # A copy of this address for a purchase to keep. An order's address records
+    # where the parcel actually went, so it belongs to the order and not to
+    # anyone's address book — a copy that kept the owner would file a second
+    # entry in the buyer's book on every order they place. Having no owner it
+    # carries no label either: a label is unique within one book, so every
+    # ownerless snapshot would compete for the same one.
+    #
+    # @return [Spree::Address]
+    def snapshot
+      dup.tap do |copy|
+        copy.owner = nil
+        copy.label = nil
+        copy.deleted_at = nil
+      end
+    end
+
+    # The entry the owner's book already holds for this same place, if there is
+    # one. Sameness is by value: what {#value_attributes} leaves out tells two
+    # rows apart, it does not make them two different places — so someone
+    # re-entering an address they already saved gets the entry they have back
+    # instead of a near-copy filed beside it.
+    #
+    # Owners that keep no book, including no owner at all, have nothing to
+    # match against.
+    #
+    # @return [Spree::Address, nil]
+    def duplicate_in_address_book
+      return nil unless owner.respond_to?(:addresses)
+
+      owner.addresses.not_deleted.detect { |existing| existing.id != id && existing == self }
     end
 
     def ==(other)

@@ -972,4 +972,84 @@ describe Spree::Address, type: :model do
       expect(described_class.find_duplicate(address1: 'nowhere at all')).to be_nil
     end
   end
+
+  describe '#snapshot' do
+    let(:customer) { create(:customer) }
+    let(:address) { create(:address, owner: customer, label: 'Home') }
+
+    subject(:snapshot) { address.snapshot }
+
+    it 'copies the address without an owner, so it stays out of the book it came from' do
+      expect(snapshot.owner).to be_nil
+      expect(snapshot.address1).to eq(address.address1)
+      expect(snapshot.city).to eq(address.city)
+      expect(snapshot.zipcode).to eq(address.zipcode)
+    end
+
+    it 'drops the label, which belongs to the entry in the book' do
+      expect(snapshot.label).to be_nil
+    end
+
+    it 'is a new record' do
+      expect(snapshot).to be_new_record
+    end
+
+    it 'lets two snapshots of the same labelled address be saved side by side' do
+      expect(address.snapshot.save).to be(true)
+      expect(address.snapshot.save).to be(true)
+    end
+  end
+
+  describe '#duplicate_in_address_book' do
+    let(:customer) { create(:customer) }
+    let(:attributes) do
+      { firstname: 'John', lastname: 'Doe', company: 'Company', address1: '1 Main St',
+        address2: 'Northwest', city: 'New York', zipcode: '10001', state_code: 'NY',
+        country_code: 'US', phone: '555-1212', alternative_phone: '555-1213' }
+    end
+    let!(:saved) { create(:address, attributes.merge(owner: customer)) }
+
+    def build_for(owner, overrides = {})
+      described_class.new(attributes.merge(overrides)).tap do |address|
+        address.owner = owner
+        address.valid?
+      end
+    end
+
+    it 'finds the entry the book already holds' do
+      expect(build_for(customer).duplicate_in_address_book).to eq(saved)
+    end
+
+    it 'ignores the label, which does not make it a different place' do
+      expect(build_for(customer, label: 'Office').duplicate_in_address_book).to eq(saved)
+    end
+
+    it 'ignores geocoding, which is derived from the address' do
+      saved.update_columns(latitude: 40.7, longitude: -74.0)
+
+      expect(build_for(customer).duplicate_in_address_book).to eq(saved)
+    end
+
+    it 'returns nil when the address differs' do
+      expect(build_for(customer, address1: '2 Main St').duplicate_in_address_book).to be_nil
+    end
+
+    it 'returns nil for a deleted entry' do
+      saved.update_column(:deleted_at, Time.current)
+
+      expect(build_for(customer).duplicate_in_address_book).to be_nil
+    end
+
+    it 'never reaches into another owner\'s book' do
+      expect(build_for(create(:customer)).duplicate_in_address_book).to be_nil
+    end
+
+    it 'returns nil without an owner' do
+      expect(build_for(nil).duplicate_in_address_book).to be_nil
+    end
+
+    it 'does not match the address against itself' do
+      expect(saved.duplicate_in_address_book).to be_nil
+    end
+  end
 end

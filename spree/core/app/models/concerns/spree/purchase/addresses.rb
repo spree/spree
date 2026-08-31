@@ -201,19 +201,25 @@ module Spree
         company.self_and_ancestors.any? { |node| node.id == address.owner_id } ? address : nil
       end
 
+      # Reuse is confined to the buyer's own address book, so a submission can
+      # only ever land on a row the buyer already owns. A guest keeps no book
+      # and so always writes a fresh row: the ownerless rows are other people's
+      # cart addresses and the snapshots placed orders keep, and reaching into
+      # those would let one checkout read or rewrite another's address.
       def update_or_create_address(attributes = {})
         return if attributes.blank?
 
         attributes.transform_values!(&:presence)
         attributes = attributes.to_h.symbolize_keys
 
-        default_address_scope = customer ? customer.addresses : ::Spree::Address.where(owner_id: nil)
-        default_address = default_address_scope.find_by(id: attributes[:id])
+        return ::Spree::Address.create(attributes.except(:id, :updated_at, :created_at)) if customer.nil?
 
-        if default_address&.editable?
-          default_address.update(attributes)
+        saved_address = customer.addresses.find_by(id: attributes[:id])
 
-          return default_address
+        if saved_address&.editable?
+          saved_address.update(attributes)
+
+          return saved_address
         end
 
         attributes = attributes.except(:id, :updated_at, :created_at)

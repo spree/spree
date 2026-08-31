@@ -19,7 +19,24 @@ module Spree
         address.owner = owner if owner.present?
 
         ApplicationRecord.transaction do
-          if address.save
+          # Asked before saving, and of a validated record so the codes have
+          # been resolved: a book that already holds this address gets the
+          # entry it has back rather than a second copy of it. The default
+          # flags still apply — re-adding an address is a fair way to ask for
+          # it to be defaulted.
+          existing = address.valid? ? address.duplicate_in_address_book : nil
+
+          if existing.present?
+            assign_owner_default(
+              owner: owner,
+              address_id: existing.id,
+              default_billing: default_billing,
+              default_shipping: default_shipping
+            )
+
+            assign_to_order(order: order, address_id: existing.id) if order.present?
+            success(existing)
+          elsif address.save
             if owner.present?
               # The first address a book gets is its default of both kinds —
               # there is nothing for it to displace.

@@ -50,6 +50,29 @@ RSpec.shared_examples 'an addresses host' do
 
       expect(user.ship_address).to be_nil
     end
+
+    # Reuse means "an address this buyer already owns". A guest owns none, so
+    # the ownerless rows around them — other guests' cart addresses, and the
+    # snapshots placed orders keep — must stay out of reach.
+    context 'on a guest record' do
+      it 'writes its own row rather than reusing an ownerless one' do
+        ownerless = Spree::Address.create!(address_attributes)
+
+        guest_record.ship_address_attributes = address_attributes
+
+        expect(guest_record.ship_address).to be_persisted
+        expect(guest_record.ship_address.id).not_to eq(ownerless.id)
+      end
+
+      it 'ignores an id naming an ownerless address instead of rewriting it' do
+        ownerless = Spree::Address.create!(address_attributes)
+
+        guest_record.ship_address_attributes = { id: ownerless.id, first_name: 'Renamed' }
+
+        expect(guest_record.ship_address.id).not_to eq(ownerless.id)
+        expect(ownerless.reload.first_name).not_to eq('Renamed')
+      end
+    end
   end
 
   describe '#bill_address_attributes=' do

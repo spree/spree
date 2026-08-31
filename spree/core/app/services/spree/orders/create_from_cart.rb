@@ -55,8 +55,8 @@ module Spree
           metadata: cart.metadata.to_h,
           preferred_stock_location_id: cart.preferred_stock_location_id,
           token: Spree::GenerateToken.new.call(Spree::Order),
-          ship_address: cart.ship_address&.dup,
-          bill_address: cart.bill_address&.dup
+          ship_address: cart.ship_address&.snapshot,
+          bill_address: cart.bill_address&.snapshot
         )
       end
 
