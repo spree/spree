@@ -359,6 +359,10 @@ en:
               not_allowed_content_type: has not allowed content type
             external_video_url:
               unsupported_video_provider: must be a YouTube or Vimeo link
+        spree/package_type:
+          attributes:
+            default:
+              cannot_be_given_up: cannot be turned off on the only default package — make another one the default instead
         spree/payment:
           attributes:
             amount:

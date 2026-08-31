@@ -70,6 +70,28 @@ RSpec.describe Spree::FreightSummary do
     end
   end
 
+  # The merchant recorded the carton's own weight; leaving it out of a
+  # summary that calls itself complete loses the packaging from the load.
+  it 'counts the empty carton weight when no gross weight is declared' do
+    tared_carton = create(:carton_package_type, store: store, length: 40, width: 30, height: 25,
+                                                weight: 0.4, weight_unit: 'kg')
+    variant = create(:variant, units_per_carton: 12, carton_package_type: tared_carton,
+                               carton_weight: nil, weight: 1, weight_unit: 'kg')
+
+    summary = summary_for([[variant, 12]])
+
+    expect(summary.total_weight).to eq(BigDecimal('12.4'))
+  end
+
+  it 'trusts a declared gross weight, which already includes the box' do
+    tared_carton = create(:carton_package_type, store: store, length: 40, width: 30, height: 25,
+                                                weight: 0.4, weight_unit: 'kg')
+    variant = create(:variant, units_per_carton: 12, carton_package_type: tared_carton,
+                               carton_weight: 10, weight: 1, weight_unit: 'kg')
+
+    expect(summary_for([[variant, 12]]).total_weight).to eq(BigDecimal('10'))
+  end
+
   it 'is incomplete when any single line is unmeasured' do
     loose = create(:variant, width: 10, height: 10, depth: 10, dimensions_unit: 'cm')
 
@@ -154,6 +176,17 @@ RSpec.describe Spree::FreightSummary do
       expect(merged.total_units).to eq(12)
       expect(merged.total_cartons).to eq(1)
       expect(merged.total_pallets).to eq(1)
+    end
+
+    # Adding two part-full cartons' volumes reports space the combined
+    # shipment does not take, which would misprice a volume tier.
+    it 're-derives volume from the recombined carton count' do
+      split = [summary_for([[packed_variant, 3]]), summary_for([[packed_variant, 9]])]
+
+      merged = described_class.merge(split)
+
+      expect(merged.total_cartons).to eq(1)
+      expect(merged.total_volume).to eq(BigDecimal('0.03'))
     end
 
     it 'keeps distinct variants as separate lines' do

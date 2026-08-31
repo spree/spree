@@ -96,6 +96,25 @@ RSpec.describe Spree::PackageType, type: :model do
     end
   end
 
+  describe 'giving up the default' do
+    # Clearing the flag leaves the store with no box at all, which is the
+    # same silent loss as deleting it.
+    it 'refuses to turn the flag off on the only default' do
+      package_type = create(:package_type, store: store, default: true)
+
+      expect(package_type.update(default: false)).to be(false)
+      expect(package_type.errors[:default]).to be_present
+      expect(store.reload.default_package_type).to eq(package_type)
+    end
+
+    it 'allows it once another row holds the flag' do
+      first = create(:package_type, store: store, default: true)
+      create(:package_type, store: store, default: true)
+
+      expect(first.reload).not_to be_default
+    end
+  end
+
   describe 'deletion' do
     # Deleting it would leave every quote with no tare and no dimensions,
     # which under-prices bulky shipments with nothing to notice.
@@ -105,6 +124,15 @@ RSpec.describe Spree::PackageType, type: :model do
       expect(package_type.destroy).to be_falsey
       expect(package_type.errors[:base]).to be_present
       expect(store.reload.default_package_type).to eq(package_type)
+    end
+
+    # Refusing here would abort the store's own destroy and strand the row.
+    it 'goes with the store it belongs to' do
+      other_store = create(:store)
+      package_type = create(:package_type, store: other_store, default: true)
+
+      expect { other_store.destroy }.not_to raise_error
+      expect(Spree::PackageType.where(id: package_type.id)).not_to exist
     end
 
     it 'refuses while a variant is packed into it' do
