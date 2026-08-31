@@ -29,6 +29,12 @@ export function customerAutocompleteProps(queryKey: string, companyId?: string |
     queryKey: companyId ? `${queryKey}:${companyId}` : queryKey,
     search: (q: string) =>
       adminClient.customers.list({ search: q, limit: 100, fields: ['email'], ...scope }),
+    // Deliberately unscoped, where `search` is not: this resolves ids the form
+    // already holds into labels, and offers nothing selectable. Narrowing it to
+    // the company would make a selection taken before the company changed
+    // resolve to nothing and render as a raw id, trading a correct label for no
+    // gain — the scope that matters is on `search`, which decides what can be
+    // picked.
     hydrate: (ids: string[]) => adminClient.customers.list({ id_in: ids, limit: ids.length }),
     getOptionLabel: (c: Customer) => c.email ?? c.id,
     placeholder: i18n.t('admin.customers.autocomplete.placeholder'),
