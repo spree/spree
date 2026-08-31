@@ -106,6 +106,81 @@ describe Spree::DeliveryMethodRule, type: :model do
     end
   end
 
+  describe Spree::DeliveryMethodRules::VolumeRule do
+    let(:carton) { create(:carton_package_type, store: store, length: 100, width: 100, height: 100) }
+    # Two cartons at one cubic meter each.
+    let(:freight_package) do
+      variant = create(:variant, units_per_carton: 6, carton_package_type: carton)
+      order = create(:order, store: store)
+      create(:line_item, order: order, variant: variant, quantity: 12)
+      Spree::Stock::Coordinator.new(order.reload).packages.first
+    end
+
+    it 'bounds by the packed volume in cubic meters' do
+      rule = described_class.new(delivery_method: delivery_method)
+      expect(rule.eligible?(freight_package)).to be(true)
+
+      rule.preferred_minimum_volume = 2
+      expect(rule.eligible?(freight_package)).to be(true)
+
+      rule.preferred_minimum_volume = 3
+      expect(rule.eligible?(freight_package)).to be(false)
+
+      rule.preferred_minimum_volume = nil
+      rule.preferred_maximum_volume = 1
+      expect(rule.eligible?(freight_package)).to be(false)
+    end
+
+    # The tiers a merchant configures are ranges over this one number, so it
+    # has to be the converted volume rather than the raw dimension columns.
+    it 'compares cubic meters, not the product of dimension columns' do
+      rule = described_class.new(delivery_method: delivery_method, preferred_maximum_volume: 5)
+
+      expect(rule.eligible?(freight_package)).to be(true)
+    end
+  end
+
+  describe Spree::DeliveryMethodRules::CompanyRule do
+    let(:customer) { create(:user) }
+    let(:company) { create(:company, store: store) }
+
+    let(:company_package) do
+      create(:company_membership, company: company, customer: customer)
+      cart = create(:cart, store: store, user: customer, company: company)
+      create(:line_item, cart: cart, order: nil)
+      fulfillment = create(:shipment, cart: cart, order: nil, stock_location: create(:stock_location))
+      fulfillment.to_package
+    end
+
+    it 'restricts nothing while unconfigured' do
+      rule = described_class.new(delivery_method: delivery_method)
+
+      expect(rule.eligible?(company_package)).to be(true)
+      expect(rule.eligible?(package)).to be(true)
+    end
+
+    it 'hides a freight method from a retail cart when a company is required' do
+      rule = described_class.new(delivery_method: delivery_method, preferred_company_presence: 'required')
+
+      expect(rule.eligible?(company_package)).to be(true)
+      expect(rule.eligible?(package)).to be(false)
+    end
+
+    it 'hides a parcel method from a company cart when a company must be absent' do
+      rule = described_class.new(delivery_method: delivery_method, preferred_company_presence: 'absent')
+
+      expect(rule.eligible?(company_package)).to be(false)
+      expect(rule.eligible?(package)).to be(true)
+    end
+
+    it 'refuses a presence value outside the two it knows' do
+      rule = described_class.new(delivery_method: delivery_method, preferred_company_presence: 'maybe')
+
+      expect(rule).not_to be_valid
+      expect(rule.errors[:preferred_company_presence]).to be_present
+    end
+  end
+
   describe Spree::DeliveryMethodRules::ExcludedProductsRule do
     it 'blocks packages containing an excluded product and fails open without products' do
       rule = described_class.create!(delivery_method: delivery_method)

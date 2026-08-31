@@ -19,22 +19,32 @@ end
 
 # A realistic shipping box (imperial units — the demo store is US): its weight
 # rides on every parcel and its dimensions feed dimensional-weight pricing,
-# without which carrier quotes under-price bulky-but-light items. Applied only
-# when nothing is configured, so a half-filled box is never completed with
-# values the merchant did not choose.
-package_preferences = %i[
-  preferred_default_package_weight
-  preferred_default_package_length
-  preferred_default_package_width
-  preferred_default_package_height
-]
+# without which carrier quotes under-price bulky-but-light items. Created only
+# when the store has no default box, so a merchant's own is never replaced.
+if store.default_package_type.nil?
+  store.package_types.create!(
+    name: 'Standard box',
+    kind: 'box',
+    default: true,
+    weight: 0.5,
+    length: 12,
+    width: 9,
+    height: 4,
+    dimensions_unit: 'in',
+    weight_unit: 'lb'
+  )
+end
 
-if package_preferences.all? { |preference| store.public_send(preference).to_f.zero? }
-  store.preferred_default_package_weight = 0.5
-  store.preferred_default_package_length = 12
-  store.preferred_default_package_width = 9
-  store.preferred_default_package_height = 4
-  store.save!
+# Wholesale packaging: the carton products are packed into, and the pallet
+# those cartons stack onto. A merchant configuring freight starts from rows
+# like these.
+[
+  { name: 'Master carton', kind: 'carton', length: 40, width: 30, height: 25, weight: 0.4, max_weight: 20 },
+  { name: 'Euro pallet', kind: 'pallet', length: 120, width: 80, height: 15, weight: 25, max_weight: 1_500 }
+].each do |attributes|
+  store.package_types.where(name: attributes[:name]).first_or_create! do |package_type|
+    package_type.assign_attributes(attributes.merge(dimensions_unit: 'cm', weight_unit: 'kg'))
+  end
 end
 
 domestic = store.delivery_zones.find_by(name: 'Domestic')

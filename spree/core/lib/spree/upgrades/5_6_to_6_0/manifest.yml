@@ -616,3 +616,21 @@ steps:
       filter_key another row in the same store already owns — only one of them
       can be addressed as a sort or filter param. Rename one and re-run.
       Idempotent.
+
+  - id: package_types
+    name: "Turn the store's default package into a package type row"
+    task: "spree:upgrade:package_types"
+    notes: |
+      The box a store ships parcels in used to be four loose preferences on
+      the store. It is now a row in the store's packaging vocabulary, beside
+      the cartons, pallets and containers a wholesale order leaves on, so the
+      same geometry can be named, reused, and referenced by the products
+      packed into it.
+
+      Until this runs, quotes for stores that had configured a box lose their
+      packaging tare and dimensions — carrier rates then under-price bulky
+      light items, which is what the dimensions were there to prevent. Stores
+      still on the seeded zeros are unaffected either way.
+
+      Idempotent — a store that already has a default package type is left
+      alone, so a box edited since the upgrade is never overwritten.

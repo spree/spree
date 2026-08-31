@@ -34,6 +34,8 @@ module Spree
     end
 
     def display_price
+      return Spree.t('delivery_rates.quoted_after_review') if unpriced?
+
       price = display_base_price.to_s
 
       return price if tax_rate.nil? || tax_amount.zero? || !tax_rate.show_rate_in_label
@@ -49,11 +51,25 @@ module Spree
     alias display_cost display_price
     alias_attribute :base_price, :cost
 
-    # Returns true if the shipping rate is free
+    # Returns true if the shipping rate is free.
+    #
+    # An unpriced rate is never free — its cost is zero because nobody has
+    # quoted it yet, and saying "free shipping" over a container of goods
+    # would be a promise the merchant cannot keep.
     #
     # @return [Boolean]
     def free?
-      final_price.zero?
+      !unpriced? && final_price.zero?
+    end
+
+    # The logistics the freight provider computed when it quoted this rate —
+    # cartons, pallets, cubic meters, gross weight. Frozen at estimate time
+    # and never re-derived, so an order keeps reporting what it actually
+    # shipped as.
+    #
+    # @return [Spree::FreightSummary, nil]
+    def freight_summary
+      @freight_summary ||= Spree::FreightSummary.from_metadata(metadata&.dig('freight_summary'))
     end
 
     # Returns the tax amount for the shipping rate, computed directly from

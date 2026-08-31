@@ -328,7 +328,8 @@ module Spree
         # Quoting strategies selectable on a delivery method. Internal prices
         # through the method's calculator; carrier gems append theirs.
         Rails.application.config.spree.delivery_rate_providers.concat [
-          Spree::DeliveryRateProvider::Internal
+          Spree::DeliveryRateProvider::Internal,
+          Spree::DeliveryRateProvider::Freight
         ]
 
         # Digital asset sources. Core ships the uploaded-file default; host
@@ -390,7 +391,9 @@ module Spree
           Spree::DeliveryMethodRules::ItemTotalRule,
           Spree::DeliveryMethodRules::WeightRule,
           Spree::DeliveryMethodRules::ExcludedProductsRule,
-          Spree::DeliveryMethodRules::ChannelRule
+          Spree::DeliveryMethodRules::ChannelRule,
+          Spree::DeliveryMethodRules::VolumeRule,
+          Spree::DeliveryMethodRules::CompanyRule
         ]
 
         Rails.application.config.spree.calculators.promotion_actions_create_adjustments = [
