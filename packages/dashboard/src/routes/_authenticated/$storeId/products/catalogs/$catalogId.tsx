@@ -17,6 +17,7 @@ import {
   CardHeader,
   CardTitle,
   Checkbox,
+  cn,
   Dialog,
   DialogBody,
   DialogContent,
@@ -40,7 +41,7 @@ import {
   Textarea,
 } from '@spree/dashboard-ui'
 import { createFileRoute, useNavigate } from '@tanstack/react-router'
-import { PlusIcon, TrashIcon } from 'lucide-react'
+import { PlusIcon, TrashIcon, Undo2Icon } from 'lucide-react'
 import { useEffect, useMemo, useState } from 'react'
 import { Controller, type UseFormReturn, useForm } from 'react-hook-form'
 import { useTranslation } from 'react-i18next'
@@ -409,8 +410,22 @@ function CatalogAssignmentsCard({
 
   // Removal needs no confirm: nothing is written until Save, and Discard
   // puts it back — the same reason the assortment rows drop theirs.
+  //
+  // A row that exists server-side is marked rather than dropped, so it stays
+  // visible struck through with an undo, like a product staged for removal.
+  // One the merchant only just added has nothing to undo back to, so it goes.
   function remove(index: number) {
-    update(assignments.filter((_, i) => i !== index))
+    const entry = assignments[index]
+    if (!entry.id) {
+      update(assignments.filter((_, i) => i !== index))
+      return
+    }
+
+    update(assignments.map((row, i) => (i === index ? { ...row, removed: true } : row)))
+  }
+
+  function restore(index: number) {
+    update(assignments.map((row, i) => (i === index ? { ...row, removed: false } : row)))
   }
 
   return (
@@ -434,9 +449,17 @@ function CatalogAssignmentsCard({
             {assignments.map((assignment, index) => (
               <div
                 key={`${assignment.assignable_type}-${assignment.assignable_id}`}
-                className="flex items-center justify-between gap-2"
+                className={cn(
+                  'flex items-center justify-between gap-2',
+                  assignment.removed && 'opacity-60',
+                )}
               >
-                <span className="flex min-w-0 items-center gap-2">
+                <span
+                  className={cn(
+                    'flex min-w-0 items-center gap-2',
+                    assignment.removed && 'line-through',
+                  )}
+                >
                   <Badge variant="outline">
                     {t(`admin.catalogs.assignable_types.${assignment.assignable_type}`)}
                   </Badge>
@@ -444,17 +467,28 @@ function CatalogAssignmentsCard({
                     {assignment.assignable_name ?? assignment.assignable_id}
                   </span>
                 </span>
-                {canEdit && (
-                  <Button
-                    variant="ghost"
-                    size="icon-xs"
-                    type="button"
-                    onClick={() => remove(index)}
-                    aria-label={t('admin.actions.remove')}
-                  >
-                    <TrashIcon className="size-4" />
-                  </Button>
-                )}
+                {canEdit &&
+                  (assignment.removed ? (
+                    <Button
+                      variant="ghost"
+                      size="icon-xs"
+                      type="button"
+                      onClick={() => restore(index)}
+                      aria-label={t('admin.actions.restore')}
+                    >
+                      <Undo2Icon className="size-4" />
+                    </Button>
+                  ) : (
+                    <Button
+                      variant="ghost"
+                      size="icon-xs"
+                      type="button"
+                      onClick={() => remove(index)}
+                      aria-label={t('admin.actions.remove')}
+                    >
+                      <TrashIcon className="size-4" />
+                    </Button>
+                  ))}
               </div>
             ))}
           </div>
@@ -466,7 +500,23 @@ function CatalogAssignmentsCard({
           open
           onOpenChange={setAddOpen}
           assigned={assignments}
-          onAdd={(entry) => update([...assignments, entry])}
+          onAdd={(entry) => {
+            // Re-picking an audience staged for withdrawal restores it: it
+            // is still assigned server-side, so adding a second row would
+            // render it twice and then re-create what the save just left in
+            // place.
+            const staged = assignments.findIndex(
+              (row) =>
+                row.assignable_type === entry.assignable_type &&
+                row.assignable_id === entry.assignable_id,
+            )
+            if (staged >= 0) {
+              restore(staged)
+              return
+            }
+
+            update([...assignments, entry])
+          }}
         />
       )}
     </Card>
@@ -519,8 +569,13 @@ function AssignCatalogDialog({
 
   const { search, hydrate } = assignableSearch(assignableType)
 
+  // A row staged for withdrawal is not a duplicate — picking it again is how
+  // the merchant takes the removal back.
   const duplicate = assigned.some(
-    (entry) => entry.assignable_type === assignableType && entry.assignable_id === assignableId,
+    (entry) =>
+      !entry.removed &&
+      entry.assignable_type === assignableType &&
+      entry.assignable_id === assignableId,
   )
 
   function handleSubmit() {

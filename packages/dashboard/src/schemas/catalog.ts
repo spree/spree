@@ -167,6 +167,12 @@ export interface AssignmentEntry {
   assignable_type: 'company' | 'customer_group'
   assignable_id: string
   assignable_name?: string | null
+  /**
+   * Staged for withdrawal. The row stays on screen struck through with an
+   * undo, the way a product staged for removal does — Save is what actually
+   * withdraws it, so it is dropped from the payload rather than the list.
+   */
+  removed?: boolean
 }
 
 /** Values the catalog form holds. */
@@ -212,10 +218,14 @@ export function catalogValuesToParams(
     // in one transaction rather than a sequence a failure can leave half
     // applied. Per-product terms stay their own request — an agreement may
     // name thousands of them.
-    assignments: values.assignments.map((entry) => ({
-      assignable_type: entry.assignable_type,
-      assignable_id: entry.assignable_id,
-    })),
+    // Rows staged for withdrawal are simply absent: the endpoint replaces
+    // the whole audience, so leaving one out is what removes it.
+    assignments: values.assignments
+      .filter((entry) => !entry.removed)
+      .map((entry) => ({
+        assignable_type: entry.assignable_type,
+        assignable_id: entry.assignable_id,
+      })),
     order_minimums: values.order_minimums.map((row) => ({
       currency: row.currency,
       amount: row.amount,

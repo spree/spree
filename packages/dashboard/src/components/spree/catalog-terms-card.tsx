@@ -156,8 +156,11 @@ function OrderMinimums({
 
   return (
     <section className="flex flex-col gap-3">
-      <div className="flex items-center justify-between">
-        <div>
+      {/* The description wraps within its own column rather than running
+          under the button: `min-w-0` lets the text block shrink, and the
+          button refuses to. */}
+      <div className="flex items-start justify-between gap-3">
+        <div className="min-w-0">
           <h3 className="flex items-center gap-1.5 font-medium text-sm">
             {t('admin.catalogs.terms.minimums_title')}
             <TermHelp text={t('admin.catalogs.terms.help.order_minimum')} />
@@ -171,6 +174,7 @@ function OrderMinimums({
             type="button"
             variant="outline"
             size="sm"
+            className="shrink-0"
             disabled={!nextCurrency}
             onClick={() => update([...rows, { currency: nextCurrency, amount: '' }])}
           >
