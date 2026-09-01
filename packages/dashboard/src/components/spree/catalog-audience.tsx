@@ -3,6 +3,7 @@ import {
   Badge,
   Button,
   Card,
+  CardAction,
   CardContent,
   CardHeader,
   CardTitle,
@@ -38,37 +39,24 @@ import type { AssignmentEntry, CatalogFormValues } from '../../schemas/catalog'
 const ASSIGNABLE_TYPES = ['company', 'customer_group'] as const
 type AssignableType = (typeof ASSIGNABLE_TYPES)[number]
 
-export function CatalogAudienceFields({
-  form,
-  canEdit,
-  showAddButton = true,
-  inlineAssign = false,
-}: {
-  form: UseFormReturn<CatalogFormValues>
-  canEdit: boolean
-  /**
-   * False where the host already offers Assign in its own header — the card
-   * on the agreement editor does. The empty state keeps its button either
-   * way: with no rows there is nothing for a header button to sit above.
-   */
-  showAddButton?: boolean
-  /**
-   * Render the assign form in the flow instead of a dialog. The wizard's
-   * Audience step is a page of its own, and a dialog inside a dialog is a
-   * stack with nothing to gain from it.
-   */
-  inlineAssign?: boolean
-}) {
-  const { t } = useTranslation()
-  const [addOpen, setAddOpen] = useState(false)
+/**
+ * The staged audience and the three things a surface does to it. Shared so
+ * the wizard step and the editor card agree on what assigning means, while
+ * each arranges it the way its own space wants.
+ */
+function useCatalogAudience(form: UseFormReturn<CatalogFormValues>) {
   const assignments: AssignmentEntry[] = form.watch('assignments') ?? []
 
   function update(next: AssignmentEntry[]) {
     form.setValue('assignments', next, { shouldDirty: true })
   }
 
-  // Removal needs no confirm: nothing is written until Save, and Discard
-  // puts it back — the same reason the assortment rows drop theirs.
+  function restore(index: number) {
+    update(assignments.map((row, i) => (i === index ? { ...row, removed: false } : row)))
+  }
+
+  // Removal needs no confirm: nothing is written until Save, and Discard puts
+  // it back — the same reason the assortment rows drop theirs.
   //
   // A row that exists server-side is marked rather than dropped, so it stays
   // visible struck through with an undo, like a product staged for removal.
@@ -86,7 +74,7 @@ export function CatalogAudienceFields({
   // Re-picking an audience staged for withdrawal restores it: it is still
   // assigned server-side, so a second row would render it twice and then
   // re-create what the save just left in place.
-  function addAssignment(entry: AssignmentEntry) {
+  function add(entry: AssignmentEntry) {
     const staged = assignments.findIndex(
       (row) =>
         row.assignable_type === entry.assignable_type && row.assignable_id === entry.assignable_id,
@@ -99,123 +87,146 @@ export function CatalogAudienceFields({
     update([...assignments, entry])
   }
 
-  function restore(index: number) {
-    update(assignments.map((row, i) => (i === index ? { ...row, removed: false } : row)))
-  }
+  return { assignments, add, remove, restore }
+}
+
+/** The assigned rows. Layout above it differs by surface; a row does not. */
+function AudienceList({
+  assignments,
+  canEdit,
+  onRemove,
+  onRestore,
+}: {
+  assignments: AssignmentEntry[]
+  canEdit: boolean
+  onRemove: (index: number) => void
+  onRestore: (index: number) => void
+}) {
+  const { t } = useTranslation()
 
   return (
-    <>
-      {/* Nothing assigned reads as a state to act on rather than a sentence
-          under a button in the corner: the one thing to do is offered in the
-          middle of the space it will fill. */}
-      {assignments.length === 0 ? (
-        <Empty className="border">
-          <EmptyHeader>
-            <EmptyMedia variant="icon">
-              <UsersIcon />
-            </EmptyMedia>
-            <EmptyTitle>{t('admin.catalogs.assignments.empty')}</EmptyTitle>
-            <EmptyDescription>{t('admin.catalogs.assignments.empty_description')}</EmptyDescription>
-          </EmptyHeader>
-          {canEdit && (
-            <Button size="sm" variant="outline" type="button" onClick={() => setAddOpen(true)}>
-              <PlusIcon className="size-4" />
-              {t('admin.catalogs.assignments.add_cta')}
-            </Button>
+    <div className="flex flex-col gap-2">
+      {assignments.map((assignment, index) => (
+        <div
+          key={`${assignment.assignable_type}-${assignment.assignable_id}`}
+          className={cn(
+            'flex items-center justify-between gap-2',
+            assignment.removed && 'opacity-60',
           )}
-        </Empty>
-      ) : (
-        <div className="flex flex-col gap-3">
-          {canEdit && showAddButton && (
-            <div className="flex justify-end">
-              <Button size="sm" variant="outline" type="button" onClick={() => setAddOpen(true)}>
-                <PlusIcon className="size-4" />
-                {t('admin.catalogs.assignments.add_cta')}
-              </Button>
-            </div>
-          )}
-          <div className="flex flex-col gap-2">
-            {assignments.map((assignment, index) => (
-              <div
-                key={`${assignment.assignable_type}-${assignment.assignable_id}`}
-                className={cn(
-                  'flex items-center justify-between gap-2',
-                  assignment.removed && 'opacity-60',
-                )}
+        >
+          <span
+            className={cn('flex min-w-0 items-center gap-2', assignment.removed && 'line-through')}
+          >
+            <Badge variant="outline">
+              {t(`admin.catalogs.assignable_types.${assignment.assignable_type}`)}
+            </Badge>
+            <span className="truncate text-foreground text-sm">
+              {assignment.assignable_name ?? assignment.assignable_id}
+            </span>
+          </span>
+          {canEdit &&
+            (assignment.removed ? (
+              <Button
+                variant="ghost"
+                size="icon-xs"
+                type="button"
+                onClick={() => onRestore(index)}
+                aria-label={t('admin.actions.restore')}
               >
-                <span
-                  className={cn(
-                    'flex min-w-0 items-center gap-2',
-                    assignment.removed && 'line-through',
-                  )}
-                >
-                  <Badge variant="outline">
-                    {t(`admin.catalogs.assignable_types.${assignment.assignable_type}`)}
-                  </Badge>
-                  <span className="truncate text-foreground text-sm">
-                    {assignment.assignable_name ?? assignment.assignable_id}
-                  </span>
-                </span>
-                {canEdit &&
-                  (assignment.removed ? (
-                    <Button
-                      variant="ghost"
-                      size="icon-xs"
-                      type="button"
-                      onClick={() => restore(index)}
-                      aria-label={t('admin.actions.restore')}
-                    >
-                      <Undo2Icon className="size-4" />
-                    </Button>
-                  ) : (
-                    <Button
-                      variant="ghost"
-                      size="icon-xs"
-                      type="button"
-                      onClick={() => remove(index)}
-                      aria-label={t('admin.actions.remove')}
-                    >
-                      <TrashIcon className="size-4" />
-                    </Button>
-                  ))}
-              </div>
+                <Undo2Icon className="size-4" />
+              </Button>
+            ) : (
+              <Button
+                variant="ghost"
+                size="icon-xs"
+                type="button"
+                onClick={() => onRemove(index)}
+                aria-label={t('admin.actions.remove')}
+              >
+                <TrashIcon className="size-4" />
+              </Button>
             ))}
-          </div>
         </div>
-      )}
+      ))}
+    </div>
+  )
+}
 
-      {addOpen &&
-        (inlineAssign ? (
-          <div className="flex flex-col gap-4 rounded-md border p-4">
-            <div>
-              <h3 className="font-medium text-sm">{t('admin.catalogs.assignments.add_title')}</h3>
-              <p className="text-muted-foreground text-sm">
-                {t('admin.catalogs.assignments.dialog_description')}
-              </p>
-            </div>
-            <AssignCatalogForm
-              assigned={assignments}
-              onCancel={() => setAddOpen(false)}
-              onAdd={addAssignment}
-            />
-          </div>
-        ) : (
-          <AssignCatalogDialog
-            open
-            onOpenChange={setAddOpen}
-            assigned={assignments}
-            onAdd={addAssignment}
-          />
-        ))}
-    </>
+/** Nothing assigned yet, with the one thing to do offered in the middle. */
+function AudienceEmpty({ canEdit, onAssign }: { canEdit: boolean; onAssign: () => void }) {
+  const { t } = useTranslation()
+
+  return (
+    <Empty className="border">
+      <EmptyHeader>
+        <EmptyMedia variant="icon">
+          <UsersIcon />
+        </EmptyMedia>
+        <EmptyTitle>{t('admin.catalogs.assignments.empty')}</EmptyTitle>
+        <EmptyDescription>{t('admin.catalogs.assignments.empty_description')}</EmptyDescription>
+      </EmptyHeader>
+      {canEdit && (
+        <Button size="sm" variant="outline" type="button" onClick={onAssign}>
+          <PlusIcon className="size-4" />
+          {t('admin.catalogs.assignments.add_cta')}
+        </Button>
+      )}
+    </Empty>
   )
 }
 
 /**
- * The audience as a card, for the agreement editor's sidebar. The wizard
- * renders the same fields inside its own step card, so the two surfaces
- * cannot drift — there is one place a catalog's audience is edited
- * (docs/plans/6.0-catalog-agreement-rework.md).
+ * The audience on the wizard's step, which is a page of its own: the assign
+ * form opens inline below the list, because a dialog on top of the wizard's
+ * dialog is a stack with nothing to gain from it.
+ */
+export function CatalogAudienceStep({ form }: { form: UseFormReturn<CatalogFormValues> }) {
+  const { t } = useTranslation()
+  const [assigning, setAssigning] = useState(false)
+  const { assignments, add, remove, restore } = useCatalogAudience(form)
+
+  return (
+    <div className="flex flex-col gap-3">
+      {assignments.length === 0 ? (
+        <AudienceEmpty canEdit onAssign={() => setAssigning(true)} />
+      ) : (
+        <>
+          <div className="flex justify-end">
+            <Button size="sm" variant="outline" type="button" onClick={() => setAssigning(true)}>
+              <PlusIcon className="size-4" />
+              {t('admin.catalogs.assignments.add_cta')}
+            </Button>
+          </div>
+          <AudienceList assignments={assignments} canEdit onRemove={remove} onRestore={restore} />
+        </>
+      )}
+
+      {assigning && (
+        <div className="flex flex-col gap-4 rounded-md border p-4">
+          <div>
+            <h3 className="font-medium text-sm">{t('admin.catalogs.assignments.add_title')}</h3>
+            <p className="text-muted-foreground text-sm">
+              {t('admin.catalogs.assignments.dialog_description')}
+            </p>
+          </div>
+          <AssignCatalogForm
+            assigned={assignments}
+            onCancel={() => setAssigning(false)}
+            onAdd={(entry) => {
+              add(entry)
+              setAssigning(false)
+            }}
+          />
+        </div>
+      )}
+    </div>
+  )
+}
+
+/**
+ * The audience on the agreement editor, as a card in the sidebar: Assign sits
+ * in the card header where every other card here puts its one action, and the
+ * form opens in a dialog, since the sidebar has no room to grow one inline.
  */
 export function CatalogAudienceCard({
   form,
@@ -225,15 +236,40 @@ export function CatalogAudienceCard({
   canEdit: boolean
 }) {
   const { t } = useTranslation()
+  const [assigning, setAssigning] = useState(false)
+  const { assignments, add, remove, restore } = useCatalogAudience(form)
 
   return (
     <Card>
       <CardHeader>
         <CardTitle>{t('admin.catalogs.assignments.title')}</CardTitle>
+        {/* Only once there are rows: with none, the empty state below offers
+            the same action in the middle of the space it will fill. */}
+        {canEdit && assignments.length > 0 && (
+          <CardAction>
+            <Button size="sm" variant="outline" type="button" onClick={() => setAssigning(true)}>
+              <PlusIcon className="size-4" />
+              {t('admin.catalogs.assignments.add_cta')}
+            </Button>
+          </CardAction>
+        )}
       </CardHeader>
-      <CardContent className="flex flex-col gap-3">
-        <CatalogAudienceFields form={form} canEdit={canEdit} />
+      <CardContent>
+        {assignments.length === 0 ? (
+          <AudienceEmpty canEdit={canEdit} onAssign={() => setAssigning(true)} />
+        ) : (
+          <AudienceList
+            assignments={assignments}
+            canEdit={canEdit}
+            onRemove={remove}
+            onRestore={restore}
+          />
+        )}
       </CardContent>
+
+      {assigning && (
+        <AssignCatalogDialog open onOpenChange={setAssigning} assigned={assignments} onAdd={add} />
+      )}
     </Card>
   )
 }

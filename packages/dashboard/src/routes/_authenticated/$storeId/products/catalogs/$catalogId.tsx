@@ -31,7 +31,7 @@ import { createFileRoute, useNavigate } from '@tanstack/react-router'
 import { useEffect, useMemo, useState } from 'react'
 import { type UseFormReturn, useForm } from 'react-hook-form'
 import { useTranslation } from 'react-i18next'
-import { CatalogAudienceCard } from '../../../../../components/spree/catalog-audience-fields'
+import { CatalogAudienceCard } from '../../../../../components/spree/catalog-audience'
 import { catalogPriceColumns } from '../../../../../components/spree/catalog-price-columns'
 import { CatalogPricingFields } from '../../../../../components/spree/catalog-pricing-fields'
 import {

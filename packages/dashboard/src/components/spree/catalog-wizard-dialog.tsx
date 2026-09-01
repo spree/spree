@@ -36,7 +36,7 @@ import {
   catalogFormSchema,
   catalogValuesToParams,
 } from '../../schemas/catalog'
-import { CatalogAudienceFields } from './catalog-audience-fields'
+import { CatalogAudienceStep } from './catalog-audience'
 import { CatalogPricingFields } from './catalog-pricing-fields'
 
 const STEP_KEYS = ['details', 'audience', 'products', 'pricing', 'review'] as const
@@ -216,7 +216,7 @@ function CatalogWizard({
       {step === 'details' && <DetailsStep form={form} />}
       {step === 'audience' && (
         <>
-          <CatalogAudienceFields form={form} canEdit inlineAssign />
+          <CatalogAudienceStep form={form} />
           {/* Both empty states are legitimate — a catalog with no audience and
               one with no assortment each mean something specific — so neither
               blocks. What they mean is said here rather than discovered
