@@ -484,9 +484,10 @@ function DeliveryMethodSheet({
                         value={field.value}
                         onValueChange={(next) => {
                           field.onChange(next)
-                          const schema =
+                          const schema = renderableSchema(
                             calculators?.data.find((calculator) => calculator.type === next)
-                              ?.preference_schema ?? []
+                              ?.preference_schema,
+                          )
                           form.setValue('calculator_preferences', defaultPreferences(schema))
                         }}
                       >

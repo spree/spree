@@ -69,9 +69,13 @@ RSpec.describe 'Seller Delivery Methods API', type: :request, swagger_doc: 'api-
         properties: {
           name: { type: :string },
           admin_name: { type: :string, nullable: true },
+          code: { type: :string, nullable: true },
           delivery_profile_id: { type: :string, description: "One of the marketplace's delivery profiles" },
           delivery_zone_id: { type: :string, nullable: true, description: 'Narrows where the method ships' },
           storefront_visible: { type: :boolean },
+          tracking_url: { type: :string, nullable: true },
+          estimated_transit_business_days_min: { type: :integer, nullable: true },
+          estimated_transit_business_days_max: { type: :integer, nullable: true },
           calculator_type: { type: :string },
           calculator_preferences: { type: :object },
           rules: {
@@ -151,10 +155,28 @@ RSpec.describe 'Seller Delivery Methods API', type: :request, swagger_doc: 'api-
         type: :object,
         properties: {
           name: { type: :string },
+          admin_name: { type: :string, nullable: true },
+          code: { type: :string, nullable: true },
+          delivery_profile_id: { type: :string, description: "One of the marketplace's delivery profiles" },
+          delivery_zone_id: { type: :string, nullable: true, description: 'Narrows where the method ships' },
           storefront_visible: { type: :boolean },
-          delivery_zone_id: { type: :string, nullable: true },
+          tracking_url: { type: :string, nullable: true },
+          estimated_transit_business_days_min: { type: :integer, nullable: true },
+          estimated_transit_business_days_max: { type: :integer, nullable: true },
           calculator_type: { type: :string },
-          calculator_preferences: { type: :object }
+          calculator_preferences: { type: :object },
+          rules: {
+            type: :array,
+            description: 'Replaces the whole set — a rule dropped here is deleted, so re-send surviving rules with their `id`.',
+            items: {
+              type: :object,
+              properties: {
+                id: { type: :string },
+                type: { type: :string },
+                preferences: { type: :object }
+              }
+            }
+          }
         }
       }
 
