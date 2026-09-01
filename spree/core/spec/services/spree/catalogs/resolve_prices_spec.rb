@@ -91,6 +91,19 @@ RSpec.describe Spree::Catalogs::ResolvePrices do
       expect(described_class.new(catalog: catalog, currency: 'USD').call(nil)).to be_nil
     end
 
+    # The reading is what the agreement will charge, not what anyone is paying
+    # today: a catalog is born inactive and priced before it goes live, so a
+    # draft has to show its own prices rather than the shop's.
+    it 'reports the agreement price while the catalog is still a draft' do
+      draft = create(:catalog, :inactive, store: store)
+      create(:price_list, :active, store: store, catalog: draft, price_adjustment_percentage: -20)
+
+      price = described_class.new(catalog: draft.reload, currency: 'USD').call(variant)
+
+      expect(price.amount).to eq(80)
+      expect(price.source).to eq('automatic')
+    end
+
     it 'answers nothing when no price exists in the currency' do
       expect(resolve(catalog, currency: 'JPY')).to be_nil
     end

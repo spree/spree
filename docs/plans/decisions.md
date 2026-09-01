@@ -4632,7 +4632,7 @@ products-with-prices view and a create flow worth the name.
 
 **The resolved price and its source ride the catalog's own products
 endpoint, behind `expand`.** A catalog's nested membership listing answers
-`?expand=resolved_price` with the amount a buyer on this agreement pays and
+`?expand=catalog_price` with the amount a buyer on this agreement pays and
 where that amount came from: an explicit row on the owned list, the list's
 ±% adjustment, or the variant's base price. Resolution stays server-side —
 an adjusted price is derived on read and never stored, so a dashboard

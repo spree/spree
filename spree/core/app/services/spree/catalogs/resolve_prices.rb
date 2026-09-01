@@ -17,6 +17,15 @@ module Spree
     # the list (a volume threshold) are deliberately not consulted — they ask
     # about the purchase, which a merchant reading an agreement is not making.
     #
+    # Nor is the catalog's own `active` flag. This answers "what will this
+    # agreement charge", not "what is anyone paying right now": a catalog is
+    # born inactive and is priced before it goes live, so reporting base
+    # prices while it is a draft would show every row undiscounted beside a
+    # pricing card promising a percentage — exactly when checking the
+    # agreement matters most. What an active catalog charges a real buyer is
+    # `PricingProvider::Internal`'s question, and its specs pin the two
+    # together.
+    #
     # Built once per page of products and reused, so a fifty-row listing is
     # two queries rather than a hundred.
     class ResolvePrices

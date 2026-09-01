@@ -520,7 +520,7 @@ RSpec.describe 'Admin Catalogs API', type: :request, swagger_doc: 'api-reference
     parameter name: :id, in: :path, type: :string, required: true
 
     patch 'Activate a catalog' do
-      tags 'Products'
+      tags 'Catalogs'
       produces 'application/json'
       security [api_key: [], bearer_auth: []]
       description <<~DESC
@@ -558,7 +558,7 @@ RSpec.describe 'Admin Catalogs API', type: :request, swagger_doc: 'api-reference
     parameter name: :id, in: :path, type: :string, required: true
 
     patch 'Deactivate a catalog' do
-      tags 'Products'
+      tags 'Catalogs'
       produces 'application/json'
       security [api_key: [], bearer_auth: []]
       description <<~DESC

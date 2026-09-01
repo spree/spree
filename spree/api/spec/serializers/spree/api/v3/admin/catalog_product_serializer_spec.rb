@@ -18,6 +18,9 @@ RSpec.describe Spree::Api::V3::Admin::CatalogProductSerializer do
                 catalog_price_resolver: resolver }
     ).to_h
 
-    expect(hash[:catalog_price]).to be_nil
+    # Present and null, not absent: the expansion was asked for, so a client
+    # reading the key must find it answered rather than missing.
+    expect(hash).to have_key('catalog_price')
+    expect(hash['catalog_price']).to be_nil
   end
 end
