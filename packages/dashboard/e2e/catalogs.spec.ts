@@ -172,9 +172,22 @@ test.describe('catalogs', () => {
     await expect(openPrices).toBeVisible({ timeout: 15_000 })
     await openPrices.click()
     const grid = page.getByRole('dialog')
-    await expect(grid.getByLabel(/^price for/i).first()).toBeVisible({ timeout: 15_000 })
+    const cell = grid.getByLabel(/^price for/i).first()
+    await expect(cell).toBeVisible({ timeout: 15_000 })
+
+    // Entering a price has to reach the assortment rows behind the grid: they
+    // carry what the agreement charges, so closing onto the old amount is the
+    // merchant being shown a price that is no longer true.
+    // The grid is a spreadsheet: a cell is read-only until it is opened for
+    // editing, which is a double click, exactly as a merchant does it.
+    await cell.dblclick()
+    await cell.fill('12.34')
+    await cell.press('Enter')
+    await grid.getByRole('button', { name: /^save prices$/i }).click()
     await grid.getByRole('button', { name: /^close$/i }).click()
     await expect(grid).toBeHidden({ timeout: 15_000 })
+
+    await expect(page.getByText('$12.34')).toBeVisible({ timeout: 15_000 })
 
     // Staging the product for removal takes it out of the grid: its prices
     // survive until Save, but pricing something on its way out is wasted work.
