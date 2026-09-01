@@ -69,13 +69,7 @@ module SpreeAvalara
     # item is reached through its fulfillments; anything without one falls back
     # to the owner's first, so a fee is taxed from the same origin as the goods.
     def ship_from
-      location = case item
-                 when Spree::Fulfillment then item.stock_location
-                 when Spree::LineItem then item.fulfillments.first&.stock_location
-                 end
-      location ||= owner.fulfillments.first&.stock_location
-
-      AddressPresenter.new(location).call
+      AddressPresenter.new(SpreeAvalara.origin_location(owner, item: item)).call
     end
   end
 end

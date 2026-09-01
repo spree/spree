@@ -59,8 +59,13 @@ RSpec.describe SpreeAvalara::TransactionPresenter do
       expect(present[:addresses][:shipTo]).to include(city: 'Seattle', region: 'WA', postalCode: '98109')
     end
 
-    it 'omits an origin the sale has no fulfillment for' do
-      expect(present[:addresses]).not_to have_key(:shipFrom)
+    # Avalara refuses a document with no origin, and a cart has no fulfillment
+    # until delivery is proposed — so the store's own location stands in.
+    it 'ships from the store default location before any fulfillment exists' do
+      create(:stock_location, store: @default_store, default: true, country_code: 'US', state_code: 'CA')
+
+      expect(cart.fulfillments).to be_empty
+      expect(present[:addresses][:shipFrom]).to include(country: 'US', region: 'CA')
     end
   end
 

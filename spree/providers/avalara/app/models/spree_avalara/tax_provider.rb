@@ -100,7 +100,7 @@ module SpreeAvalara
       {
         identifier_sent: tax_identifier&.value.present?,
         exemption_sent: exemptions.present?,
-        ship_from_country: owner.fulfillments.first&.stock_location&.country_code,
+        ship_from_country: SpreeAvalara.origin_location(owner)&.country_code,
         ship_to_country: owner.tax_address&.country_code
       }
     end

@@ -76,10 +76,7 @@ module SpreeAvalara
     end
 
     def ship_from_id(item)
-      case item
-      when Spree::Fulfillment then item.stock_location_id
-      when Spree::LineItem then item.fulfillments.first&.stock_location_id
-      end
+      SpreeAvalara.origin_location(owner, item: item)&.id
     end
   end
 end

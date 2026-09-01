@@ -79,4 +79,27 @@ module SpreeAvalara
 
     (market || owner.market)&.tax_inclusive || false
   end
+
+  # Where a sale ships from, which decides the origin jurisdiction. Avalara
+  # refuses a document with no origin at all, and a cart has no fulfillment
+  # until delivery is proposed — every recalculation before that would fail — so
+  # the store's own default location stands in until one exists.
+  #
+  # Deliberately read-only: Store#default_stock_location creates a location when
+  # the store has none, and pricing tax must not write inventory records.
+  #
+  # @param owner [Spree::Cart, Spree::Order]
+  # @param item [Spree::LineItem, Spree::Fulfillment, Spree::Fee, nil]
+  # @return [Spree::StockLocation, nil]
+  def self.origin_location(owner, item: nil)
+    from_item = case item
+                when Spree::Fulfillment then item.stock_location
+                when Spree::LineItem then item.fulfillments.first&.stock_location
+                end
+    return from_item if from_item
+
+    locations = owner.store&.stock_locations&.first_party
+
+    owner.fulfillments.first&.stock_location || locations&.find_by(default: true) || locations&.first
+  end
 end

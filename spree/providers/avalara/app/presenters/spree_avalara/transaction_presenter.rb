@@ -64,7 +64,7 @@ module SpreeAvalara
 
     def addresses
       {
-        shipFrom: AddressPresenter.new(owner.fulfillments.first&.stock_location).call,
+        shipFrom: AddressPresenter.new(SpreeAvalara.origin_location(owner)).call,
         shipTo: AddressPresenter.new(owner.tax_address).call
       }.compact
     end
