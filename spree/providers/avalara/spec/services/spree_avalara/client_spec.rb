@@ -138,4 +138,33 @@ RSpec.describe SpreeAvalara::Client do
         with(body: { code: 'DocVoided' }.to_json)
     end
   end
+
+  # Which refusals mean "the ledger already says what you wanted it to say".
+  # The exact codes are confirmed when the cassettes are recorded.
+  describe 'idempotency predicates' do
+    def error(code)
+      SpreeAvalara::RequestError.new('refused', status: 400, details: { 'code' => code })
+    end
+
+    it 'recognises an already-filed document' do
+      expect(client.duplicate_document_error?(error('DocumentAlreadyExists'))).to be(true)
+      expect(client.duplicate_document_error?(error('EntityNotFoundError'))).to be(false)
+    end
+
+    it 'recognises a document that cannot be voided again' do
+      expect(client.already_voided_error?(error('DocumentNotVoidable'))).to be(true)
+      expect(client.already_voided_error?(error('DocumentAlreadyVoided'))).to be(true)
+      # Never filed is as good as voided for the caller.
+      expect(client.already_voided_error?(error('EntityNotFoundError'))).to be(true)
+      expect(client.already_voided_error?(error('AuthenticationIncomplete'))).to be(false)
+    end
+
+    # A transport failure carries no details at all.
+    it 'claims nothing about a failure Avalara never explained' do
+      transport = SpreeAvalara::RequestError.new('connection refused', status: nil)
+
+      expect(client.duplicate_document_error?(transport)).to be(false)
+      expect(client.already_voided_error?(transport)).to be(false)
+    end
+  end
 end

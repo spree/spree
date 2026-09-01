@@ -100,14 +100,19 @@ module Spree
         pre_tax_item_amount + fulfillments.sum(:pre_tax_amount)
       end
 
-      private
-
       # The resolver is swappable, so what it returns is host code. An entry
       # whose per-line overrides cannot name their line is not a narrower claim
       # but a wider one — the provider would read it as the whole order being
       # exempt — so it is dropped rather than trusted. Charging tax is the safe
       # direction: under-exempting surfaces as a customer query, over-exempting
       # is tax the merchant owes and never collected.
+      #
+      # Public because a provider filing the sale needs the same evidence core
+      # hands it as an +estimate+ argument: an external engine commits its
+      # document after placement, and resolving again there could file an
+      # exemption the estimate never applied.
+      #
+      # @return [Array]
       def usable_exemptions
         resolved = Array(Spree.tax_resolve_exemptions_service.new.call(order: self).value)
 
@@ -126,6 +131,8 @@ module Spree
           false
         end
       end
+
+      private
 
       # Read through the legal entity, never the node — a division holds no
       # registrations of its own.

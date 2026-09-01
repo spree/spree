@@ -21,11 +21,21 @@ RSpec.describe SpreeAvalara::TaxProvider do
     }
   end
 
+  # The idempotency predicates are real logic, so the double delegates to a real
+  # client rather than asserting a canned answer.
+  let(:predicates) do
+    SpreeAvalara::Client.new(account_number: 'a', license_key: 'b',
+                             endpoint: SpreeAvalara::Integration::SANDBOX_ENDPOINT)
+  end
+
   before do
     Rails.cache.clear
     allow(SpreeAvalara::Integration).to receive(:active_for!).with(@default_store).and_return(integration)
+    allow(SpreeAvalara::Integration).to receive(:active_for).with(@default_store).and_return(integration)
     allow(integration).to receive(:client).and_return(client)
     allow(client).to receive(:create_transaction).and_return(response)
+    allow(client).to receive(:duplicate_document_error?) { |error| predicates.duplicate_document_error?(error) }
+    allow(client).to receive(:already_voided_error?) { |error| predicates.already_voided_error?(error) }
   end
 
   it 'registers itself as a selectable engine named after the service' do
@@ -147,5 +157,125 @@ RSpec.describe SpreeAvalara::TaxProvider do
 
       expect { provider.estimate(cart) }.to raise_error(SpreeAvalara::Error, /never sent/)
     end
+  end
+
+  describe '#commit' do
+    let(:order) { create(:order, store: @default_store, completed_at: Time.current, ship_address: address, bill_address: address) }
+    let!(:order_line) { create(:line_item, order: order, cart: nil, price: 100) }
+
+    before { allow(client).to receive(:create_or_adjust_transaction).and_return('id' => 987_654) }
+
+    it 'files the sale and keeps the document id on the order' do
+      provider.commit(order)
+
+      expect(client).to have_received(:create_or_adjust_transaction) do |args|
+        model = args[:createTransactionModel]
+        expect(model[:type]).to eq('SalesInvoice')
+        expect(model[:code]).to eq(order.number)
+      end
+      expect(order.reload.metadata['avalara_transaction_id']).to eq('987654')
+    end
+
+    # Completion is replayable, so filing the same code twice is the success it
+    # describes rather than an error to surface.
+    it 'treats an already-filed document as success' do
+      provider.commit(order)
+      allow(client).to receive(:create_or_adjust_transaction).
+        and_raise(SpreeAvalara::RequestError.new('Document already exists.', status: 400,
+                                                 details: { 'code' => 'DocumentAlreadyExists' }))
+
+      expect { provider.commit(order) }.not_to raise_error
+      expect(order.reload.metadata['avalara_transaction_id']).to eq('987654')
+    end
+
+    it 'raises on any other refusal' do
+      allow(client).to receive(:create_or_adjust_transaction).
+        and_raise(SpreeAvalara::RequestError.new('Company not found.', status: 400,
+                                                 details: { 'code' => 'EntityNotFoundError' }))
+
+      expect { provider.commit(order) }.to raise_error(SpreeAvalara::RequestError)
+    end
+  end
+
+  describe '#void' do
+    let(:order) { create(:order, store: @default_store, completed_at: Time.current) }
+
+    before { allow(client).to receive(:void_transaction).and_return('status' => 'Cancelled') }
+
+    it 'reverses the document by its order number' do
+      provider.void(order)
+
+      expect(client).to have_received(:void_transaction).with(order.number)
+    end
+
+    # Nothing was filed through an integration that is not connected.
+    it 'has nothing to reverse without a connected integration' do
+      allow(SpreeAvalara::Integration).to receive(:active_for).with(@default_store).and_return(nil)
+
+      expect { provider.void(order) }.not_to raise_error
+      expect(client).not_to have_received(:void_transaction)
+    end
+
+    it 'treats an already-voided document as success' do
+      allow(client).to receive(:void_transaction).
+        and_raise(SpreeAvalara::RequestError.new('Not voidable.', status: 400,
+                                                 details: { 'code' => 'DocumentNotVoidable' }))
+
+      expect { provider.void(order) }.not_to raise_error
+    end
+
+    # Cancelling an order must not depend on a tax service being reachable.
+    it 'does not fail closed the way estimate does' do
+      allow(client).to receive(:void_transaction).
+        and_raise(SpreeAvalara::RequestError.new('Document not found.', status: 404,
+                                                 details: { 'code' => 'EntityNotFoundError' }))
+
+      expect { provider.void(order) }.not_to raise_error
+    end
+  end
+
+  describe '#refund' do
+    let(:order) { create(:order, store: @default_store, completed_at: Time.current, ship_address: address, bill_address: address) }
+    let(:refunded_line) { create(:line_item, order: order, cart: nil, price: 100, quantity: 4) }
+    let(:return_items) do
+      [instance_double(Spree::ReturnLineItem, line_item: refunded_line, received_quantity: 2,
+                                              return: instance_double(Spree::Return, number: 'RET1'))]
+    end
+
+    before do
+      refunded_line.update_column(:pre_tax_amount, 400)
+      allow(client).to receive(:create_transaction).and_return('id' => 5)
+    end
+
+    it 'credits the returned lines against the filed document' do
+      provider.refund(order, return_items)
+
+      expect(client).to have_received(:create_transaction) do |model|
+        expect(model[:type]).to eq('ReturnInvoice')
+        expect(model[:code]).to eq("#{order.number}-RET1")
+        expect(model[:lines].sole[:amount]).to eq(-200)
+      end
+    end
+
+    it 'files nothing when no units came back' do
+      empty = [instance_double(Spree::ReturnLineItem, line_item: refunded_line, received_quantity: 0,
+                                                      return: instance_double(Spree::Return, number: 'RET1'))]
+
+      provider.refund(order, empty)
+
+      expect(client).not_to have_received(:create_transaction)
+    end
+
+    it 'treats a replayed credit as success' do
+      allow(client).to receive(:create_transaction).
+        and_raise(SpreeAvalara::RequestError.new('Document already exists.', status: 400,
+                                                 details: { 'code' => 'DocumentAlreadyExists' }))
+
+      expect { provider.refund(order, return_items) }.not_to raise_error
+    end
+  end
+
+  it 'has no opinion on the tax of a service the platform supplies' do
+    expect(provider.service_tax_rate(address: address, store: @default_store)).to be_nil
   end
 end

@@ -65,7 +65,35 @@ module SpreeAvalara
       request { avatax_client.resolve_address(params) }
     end
 
+    # Whether a refusal means the document is already filed. Commit is
+    # replayable — a crash between the order commit and the cart stamp leaves
+    # completion to re-run — so filing the same code twice has to count as
+    # success rather than raise.
+    #
+    # @param error [SpreeAvalara::RequestError]
+    # @return [Boolean]
+    def duplicate_document_error?(error)
+      # verify against cassette (Phase 7)
+      error_code(error).in?(%w[DocumentAlreadyExists DuplicateDocumentException])
+    end
+
+    # Whether a refusal means there is nothing left to void: already voided, or
+    # never filed at all. Both leave the ledger where the caller wanted it.
+    #
+    # @param error [SpreeAvalara::RequestError]
+    # @return [Boolean]
+    def already_voided_error?(error)
+      # verify against cassette (Phase 7)
+      error_code(error).in?(%w[DocumentNotVoidable DocumentAlreadyVoided EntityNotFoundError])
+    end
+
     private
+
+    def error_code(error)
+      details = error.try(:details)
+
+      details.is_a?(Hash) ? details['code'].to_s : ''
+    end
 
     # Every option the SDK reads is passed explicitly: its initializer merges the
     # process-wide `AvaTax.options` underneath, so an unset option silently

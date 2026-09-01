@@ -44,7 +44,85 @@ module SpreeAvalara
       end
     end
 
+    # Files the sale with Avalara once it is placed.
+    #
+    # Idempotent, because completion is replayable: a crash between the order
+    # commit and the cart stamp leaves Carts::Complete to re-run its finalize
+    # phase. create_or_adjust_transaction keyed on the order number adjusts the
+    # document rather than filing a second one, and a duplicate refusal counts
+    # as the success it describes.
+    #
+    # @param order [Spree::Order]
+    # @return [void]
+    def commit(order)
+      integration = Integration.active_for!(order.store)
+
+      body = integration.client.create_or_adjust_transaction(
+        createTransactionModel: TransactionPresenter.new(
+          owner: order, integration: integration, items: order.taxable_items,
+          type: 'SalesInvoice', code: order.number,
+          commit: integration.preferred_commit_transaction_enabled,
+          tax_date: order.completed_at,
+          # The order's frozen snapshot, not a fresh resolution: what was
+          # filed has to match what was charged.
+          tax_identifier: order.resolved_tax_identifier,
+          exemptions: order.usable_exemptions
+        ).call
+      )
+
+      stamp_document_id(order, body['id'])
+    rescue SpreeAvalara::RequestError => error
+      raise unless integration.client.duplicate_document_error?(error)
+    end
+
+    # Reverses the filed document when the order is cancelled.
+    #
+    # @param order [Spree::Order]
+    # @return [void]
+    def void(order)
+      integration = Integration.active_for(order.store)
+      # Nothing was ever filed through an integration that is not connected, so
+      # there is nothing to reverse. Unlike estimate, this does not fail closed:
+      # refusing to cancel an order because a tax service is unreachable helps
+      # nobody.
+      return if integration.nil?
+
+      integration.client.void_transaction(order.number)
+    rescue SpreeAvalara::RequestError => error
+      raise unless integration.client.already_voided_error?(error)
+    end
+
+    # Credits the returned lines against the filed document.
+    #
+    # @param order [Spree::Order]
+    # @param return_items [Array<Spree::ReturnLineItem>]
+    # @param amount [BigDecimal, nil] the refund issued; nil = the lines' worth
+    # @param tax_date [Time, nil] the original supply date
+    # @return [void]
+    def refund(order, return_items, amount: nil, tax_date: nil)
+      integration = Integration.active_for!(order.store)
+      presenter = RefundPresenter.new(
+        order: order, integration: integration, return_items: return_items,
+        amount: amount, tax_date: tax_date
+      )
+      return if presenter.nothing_to_credit?
+
+      integration.client.create_transaction(presenter.call)
+    rescue SpreeAvalara::RequestError => error
+      raise unless integration.client.duplicate_document_error?(error)
+    end
+
     private
+
+    # Informational: void and refund key on the document code, which is the
+    # order number. update_column because completion may replay and there is
+    # nothing here to validate.
+    def stamp_document_id(order, document_id)
+      return if document_id.blank?
+
+      order.metadata = (order.metadata || {}).merge('avalara_transaction_id' => document_id.to_s)
+      order.update_column(:metadata, order.metadata)
+    end
 
     # Provider-scoped: another engine's rows on the same owner — the import VAT
     # a landed-cost provider writes against a duty — are not ours to delete.
