@@ -56,7 +56,7 @@ RSpec.describe 'seller requirement submission workflows' do
       )
 
       expect(result).to be_failure
-      expect(result.error.value.full_messages.join).to match(/invalid content type/i)
+      expect(result.error.value.full_messages.join).to match(/not a file type we accept/i)
     end
 
     # The header is the uploader's word for what a file is. A seller is the
@@ -76,7 +76,7 @@ RSpec.describe 'seller requirement submission workflows' do
       )
 
       expect(result).to be_failure
-      expect(result.error.value.full_messages.join).to match(/content type/i)
+      expect(result.error.value.full_messages.join).to match(/not a file type we accept/i)
     end
 
     it 'refuses a document larger than the configured limit' do

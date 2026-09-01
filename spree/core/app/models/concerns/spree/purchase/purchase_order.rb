@@ -37,13 +37,17 @@ module Spree
         # download action.
         has_one_attached :po_document, service: Spree.private_storage_service_name
 
-        # Buyers are the lower-trust writers here — the storefront uploads this
-        # — so the bytes decide what the file is, not the header the uploader
-        # sent. Without spoofing_protection a script named `po.pdf` passes.
         validates :po_document,
-                  content_type: { in: PO_DOCUMENT_CONTENT_TYPES, spoofing_protection: true },
                   size: { less_than_or_equal_to: MAX_PO_DOCUMENT_SIZE },
                   if: -> { po_document.attached? }
+
+        # Buyers are the lower-trust writers here — the storefront uploads this
+        # — so the bytes decide what the file is, not the header the uploader
+        # sent. Without that check a script named `po.pdf` passes.
+        validates_with Spree::AttachmentContentTypeValidator,
+                       attributes: [:po_document],
+                       in: PO_DOCUMENT_CONTENT_TYPES,
+                       if: -> { po_document.attached? }
 
         validate :po_document_within_size_on_disk, if: -> { po_document.attached? }
       end

@@ -248,6 +248,7 @@ en:
         blank: can't be blank
         must_apply_to_products: must be a custom field definition for products
         not_registered: is not a registered provider
+        spree_content_type_not_allowed: is not a file type we accept
       models:
         spree/allowed_origin:
           attributes:
