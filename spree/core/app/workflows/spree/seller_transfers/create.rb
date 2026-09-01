@@ -73,7 +73,8 @@ module Spree
         # A seller the provider cannot pay yet keeps the earning as a pending
         # row. Verification can take days, and an account can lose the
         # capability again — either way the money is owed, and
-        # `SellerTransfers::ExecutePendingJob` sends it once they are payable.
+        # `SellerTransfers::ExecutePendingJob` sends it once they are payable,
+        # or on its next scheduled run if that moment went unseen.
         return unless order.seller.payouts_enabled?
 
         provider.transfer!(seller_transfer)

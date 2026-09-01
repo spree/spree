@@ -73,6 +73,11 @@ module Spree
     # Deliberately excludes `unresolved`, where the provider could not say
     # whether the money moved — asking again is how it moves twice.
     scope :retryable, -> { with_status('pending', 'processing') }
+    # Earnings still owing the provider a call.
+    # Reversals are excluded for the same reason the job excludes them: their
+    # amount is negative, and sending one as a transfer pays the seller the
+    # money it exists to take back.
+    scope :awaiting_provider, -> { earnings.retryable.where(payout_id: nil) }
     # Earned and confirmed, but not yet swept into a settlement — what the next
     # payout will pick up.
     scope :unsettled, -> { completed.where(payout_id: nil) }

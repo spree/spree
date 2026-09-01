@@ -4,12 +4,15 @@ module Spree
     #
     # A seller who ships while their payout account is still being verified has
     # earned all the same, so the ledger records the row and leaves it pending.
-    # What clears it is this job, run when the seller becomes payable — the
-    # event that changed, rather than the next scheduled settlement.
+    # So does a seller whose provider simply refused the call. Either way the
+    # money is owed, and no settlement will find it: a sweep collects confirmed
+    # earnings, and these are not confirmed.
     #
-    # That distinction matters: a sweep would never reach these rows, because
-    # it looks for confirmed earnings and a seller whose only rows are pending
-    # has none, so nothing would prompt it in the one case this exists for.
+    # Two callers, for the two ways a row gets here. A seller becoming payable
+    # runs it at once, because that is the moment the answer changed. Everyone
+    # else is reached by {ExecutePendingDueJob} on a schedule — without it, a
+    # seller who was payable all along would never see a refused earning tried
+    # again, since nothing about them ever changes to prompt it.
     #
     # It takes the retryable rows — never sent, or refused outright. A transfer
     # whose outcome the provider could not report is left alone: asking again
@@ -25,11 +28,11 @@ module Spree
 
         provider = seller.store.payout_provider_instance
 
-        # Earnings only. A reversal is retryable the same way when its own
-        # provider call is refused, but sending one through `transfer!` would
-        # pay the seller the amount it exists to take back — the row is
-        # negative and the amount sent is its absolute value.
-        seller.seller_transfers.earnings.retryable.where(payout_id: nil).find_each do |transfer|
+        # Earnings only — see the scope. A reversal is retryable the same way
+        # when its own provider call is refused, but sending one through
+        # `transfer!` would pay the seller the amount it exists to take back:
+        # the row is negative and the amount sent is its absolute value.
+        seller.seller_transfers.awaiting_provider.find_each do |transfer|
           provider.transfer!(transfer)
         rescue Spree::Core::AmbiguousGatewayError => e
           # The money may already have moved, so this row must not be offered

@@ -58,4 +58,14 @@ RSpec.describe Spree::SellerPayouts::SweepSellerJob do
   it 'does nothing for a seller that has gone' do
     expect { described_class.perform_now(-1) }.not_to raise_error
   end
+
+  # Confirming an earning is the transfer level's business, on its own
+  # schedule — see Spree::SellerTransfers::ExecutePendingDueJob.
+  it 'leaves an unconfirmed earning to the job that owns it' do
+    create(:seller_transfer, seller: seller, amount: 40, status: 'processing',
+                             order: create(:order, store: store, seller: seller))
+
+    expect { described_class.perform_now(seller.id) }.
+      not_to have_enqueued_job(Spree::SellerTransfers::ExecutePendingJob)
+  end
 end
