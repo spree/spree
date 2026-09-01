@@ -183,7 +183,15 @@ test.describe('catalogs', () => {
     await cell.dblclick()
     await cell.fill('12.34')
     await cell.press('Enter')
-    await grid.getByRole('button', { name: /^save prices$/i }).click()
+
+    // Save is disabled until the grid registers the edit, and it disables
+    // again once the write lands — which is also what tells us the close
+    // below will not be caught by the unsaved-changes guard.
+    const savePrices = grid.getByRole('button', { name: /^save prices$/i })
+    await expect(savePrices).toBeEnabled({ timeout: 15_000 })
+    await savePrices.click()
+    await expect(savePrices).toBeDisabled({ timeout: 15_000 })
+
     await grid.getByRole('button', { name: /^close$/i }).click()
     await expect(grid).toBeHidden({ timeout: 15_000 })
 

@@ -641,16 +641,17 @@ function QuickEnumFilter({
 }) {
   const { t } = useTranslation()
   // A boolean column carries no `filterOptions` — its two values are fixed, so
-  // the control supplies them rather than every such column restating them.
+  // the control supplies them. `booleanLabels` names them where the domain has
+  // better words than Yes and No.
   const options = useMemo(
     () =>
       column.filterType === 'boolean'
         ? [
-            { value: 'true', label: t('admin.common.yes') },
-            { value: 'false', label: t('admin.common.no') },
+            { value: 'true', label: column.booleanLabels?.true ?? t('admin.common.yes') },
+            { value: 'false', label: column.booleanLabels?.false ?? t('admin.common.no') },
           ]
         : (column.filterOptions ?? []),
-    [column.filterType, column.filterOptions, t],
+    [column.filterType, column.filterOptions, column.booleanLabels, t],
   )
   const existing = filters.find((f) => f.field === column.key && f.operator === 'in')
 
@@ -1182,14 +1183,14 @@ function FilterPanel({
     const options =
       type === 'boolean'
         ? [
-            { value: 'true', label: t('admin.common.yes') },
-            { value: 'false', label: t('admin.common.no') },
+            { value: 'true', label: column?.booleanLabels?.true ?? t('admin.common.yes') },
+            { value: 'false', label: column?.booleanLabels?.false ?? t('admin.common.no') },
           ]
         : (column?.filterOptions ?? [])
     if (!query.trim()) return options
     const needle = query.trim().toLowerCase()
     return options.filter((o) => o.label.toLowerCase().includes(needle))
-  }, [type, column?.filterOptions, query, t])
+  }, [type, column?.filterOptions, column?.booleanLabels, query, t])
 
   const visibleFields = useMemo(() => {
     if (!query.trim()) return columns

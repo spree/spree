@@ -24,10 +24,11 @@ import {
   mergeExtraColumns,
   ResourceLayout,
   Textarea,
+  useConfirm,
 } from '@spree/dashboard-ui'
 import { PlusIcon, TrashIcon, Undo2Icon } from '@spree/dashboard-ui/icons'
 import { createFileRoute, useNavigate } from '@tanstack/react-router'
-import { TableIcon } from 'lucide-react'
+import { PauseIcon, PlayIcon, TableIcon } from 'lucide-react'
 import { useEffect, useMemo, useState } from 'react'
 import { type UseFormReturn, useForm } from 'react-hook-form'
 import { useTranslation } from 'react-i18next'
@@ -117,6 +118,7 @@ function CatalogBody({ catalog }: { catalog: Catalog }) {
   const [priceEditorOpen, setPriceEditorOpen] = useState(false)
   const activate = useActivateCatalog(catalog.id)
   const deactivate = useDeactivateCatalog(catalog.id)
+  const confirm = useConfirm()
 
   const form = useForm<CatalogFormValues>({
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -153,6 +155,31 @@ function CatalogBody({ catalog }: { catalog: Catalog }) {
       staged_terms: termsToFormValues(productTerms),
     })
   }, [catalog, productTerms, form])
+
+  // Both directions confirm: activating starts showing an audience prices they
+  // were not seeing, and deactivating takes them away. Whole keys rather than
+  // a built template — a literal spanning a union of prefixes exhausts the
+  // checker's relation cache against i18next's key union.
+  async function handleActivation() {
+    const ok = catalog.active
+      ? await confirm({
+          title: t('admin.catalogs.deactivate_confirm.title'),
+          message: t('admin.catalogs.deactivate_confirm.message', { name: catalog.name }),
+          confirmLabel: t('admin.catalogs.actions.deactivate'),
+        })
+      : await confirm({
+          title: t('admin.catalogs.activate_confirm.title'),
+          message: t('admin.catalogs.activate_confirm.message', { name: catalog.name }),
+          confirmLabel: t('admin.catalogs.actions.activate'),
+        })
+    if (!ok) return
+
+    if (catalog.active) {
+      deactivate.mutate()
+    } else {
+      activate.mutate()
+    }
+  }
 
   async function handleDelete() {
     await deleteMutation.mutateAsync(catalog.id)
@@ -235,8 +262,13 @@ function CatalogBody({ catalog }: { catalog: Catalog }) {
                       type="button"
                       variant="outline"
                       disabled={activate.isPending || deactivate.isPending}
-                      onClick={() => (catalog.active ? deactivate.mutate() : activate.mutate())}
+                      onClick={handleActivation}
                     >
+                      {catalog.active ? (
+                        <PauseIcon className="size-4" />
+                      ) : (
+                        <PlayIcon className="size-4" />
+                      )}
                       {catalog.active
                         ? t('admin.catalogs.actions.deactivate')
                         : t('admin.catalogs.actions.activate')}

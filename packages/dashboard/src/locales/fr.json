@@ -92,6 +92,10 @@
         "activate": "Activer",
         "deactivate": "Désactiver"
       },
+      "activate_confirm": {
+        "title": "Activer ce catalogue ?",
+        "message": "{{name}} entre en vigueur : son audience verra son assortiment et bénéficiera de ses prix."
+      },
       "add_cta": "Ajouter un catalogue",
       "add_sheet_title": "Nouveau catalogue",
       "assignable_types": {
@@ -118,6 +122,10 @@
       },
       "create_description": "Un catalogue restreint ce qu’une audience voit et, via une liste de prix, ce qu’elle paie. Ajoutez ensuite produits et audiences.",
       "create_label": "Créer le catalogue",
+      "deactivate_confirm": {
+        "title": "Désactiver ce catalogue ?",
+        "message": "{{name}} cesse de s’appliquer. Son audience revient aux prix boutique et tout le contenu du catalogue est conservé."
+      },
       "delete_confirm": {
         "message": "Cela supprime {{name}} et ses affectations. Les produits et listes de prix ne sont pas affectés.",
         "title": "Supprimer le catalogue ?"

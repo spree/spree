@@ -31,6 +31,12 @@ defineTable<Catalog>('catalogs', {
       label: i18n.t('admin.fields.status.label'),
       filterable: true,
       filterType: 'boolean',
+      // The filter says what the rows say. Left to the generic Yes/No, a
+      // Status control would answer a question the column never asked.
+      booleanLabels: {
+        true: i18n.t('admin.common.active'),
+        false: i18n.t('admin.common.inactive'),
+      },
       // Surfaced beside the search the way a price list's status is: which
       // agreements are live is the first thing asked of this list. A catalog
       // is only ever active or not — it has no dates, so nothing to schedule.

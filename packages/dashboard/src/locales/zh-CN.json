@@ -92,6 +92,10 @@
         "activate": "启用",
         "deactivate": "停用"
       },
+      "activate_confirm": {
+        "title": "启用此目录？",
+        "message": "{{name}} 将开始生效：其受众将看到其商品并享受其价格。"
+      },
       "add_cta": "添加目录",
       "add_sheet_title": "新建目录",
       "assignable_types": {
@@ -118,6 +122,10 @@
       },
       "create_description": "目录限定某类受众能看到什么，并通过价格表决定其价格。创建后可添加产品和受众。",
       "create_label": "创建目录",
+      "deactivate_confirm": {
+        "title": "停用此目录？",
+        "message": "{{name}} 将停止生效。其受众将回到店铺价格，目录中的所有内容都会保留。"
+      },
       "delete_confirm": {
         "message": "这将删除 {{name}} 及其分配。产品和价格表不受影响。",
         "title": "删除目录？"

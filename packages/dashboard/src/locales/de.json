@@ -92,6 +92,10 @@
         "activate": "Aktivieren",
         "deactivate": "Deaktivieren"
       },
+      "activate_confirm": {
+        "title": "Diesen Katalog aktivieren?",
+        "message": "{{name}} beginnt zu gelten: Die Zielgruppe sieht das Sortiment und erhält die Preise."
+      },
       "add_cta": "Katalog hinzufügen",
       "add_sheet_title": "Neuer Katalog",
       "assignable_types": {
@@ -118,6 +122,10 @@
       },
       "create_description": "Ein Katalog bestimmt, was eine Zielgruppe sieht und — über eine Preisliste — was sie zahlt. Produkte und Zielgruppen fügen Sie danach hinzu.",
       "create_label": "Katalog erstellen",
+      "deactivate_confirm": {
+        "title": "Diesen Katalog deaktivieren?",
+        "message": "{{name}} gilt nicht mehr. Die Zielgruppe zahlt wieder die Ladenpreise; alle Inhalte des Katalogs bleiben erhalten."
+      },
       "delete_confirm": {
         "message": "Dies löscht {{name}} und seine Zuweisungen. Produkte und Preislisten bleiben unberührt.",
         "title": "Katalog löschen?"

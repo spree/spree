@@ -92,6 +92,10 @@
         "activate": "Activate",
         "deactivate": "Deactivate"
       },
+      "activate_confirm": {
+        "title": "Activate this catalog?",
+        "message": "{{name}} starts applying: its audience will see its assortment and get its prices."
+      },
       "add_cta": "Add catalog",
       "add_sheet_title": "New catalog",
       "assignable_types": {
@@ -118,6 +122,10 @@
       },
       "create_description": "A catalog narrows what an audience sees and, through a price list, what they pay. Add products and assign audiences once it exists.",
       "create_label": "Create catalog",
+      "deactivate_confirm": {
+        "title": "Deactivate this catalog?",
+        "message": "{{name}} stops applying. Its audience goes back to the shop prices, and everything the catalog holds is kept."
+      },
       "delete_confirm": {
         "message": "This deletes {{name}} and its assignments. Products and price lists are not affected.",
         "title": "Delete catalog?"
