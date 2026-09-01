@@ -108,7 +108,8 @@
           "title": "Diese Zuweisung entfernen?"
         },
         "title": "Zielgruppen",
-        "type_label": "Zielgruppen-Typ"
+        "type_label": "Zielgruppen-Typ",
+        "already_assigned": "Diese Zielgruppe ist diesem Katalog bereits zugeordnet."
       },
       "create_description": "Ein Katalog bestimmt, was eine Zielgruppe sieht und — über eine Preisliste — was sie zahlt. Produkte und Zielgruppen fügen Sie danach hinzu.",
       "create_label": "Katalog erstellen",
@@ -116,13 +117,19 @@
         "message": "Dies löscht {{name}} und seine Zuweisungen. Produkte und Preislisten bleiben unberührt.",
         "title": "Katalog löschen?"
       },
+      "detach_warning": "Beim Speichern werden die Preisliste dieses Katalogs und die darin enthaltenen Preise entfernt. Diese Zielgruppe zahlt dann normale Preise.",
       "detail": {
         "delete_label": "Katalog löschen",
         "load_error": "Katalog konnte nicht geladen werden",
+        "pricing": "Preisgestaltung",
         "settings": "Katalog"
       },
+      "discard_prices_warning": "Der Wechsel zu einem Prozentsatz verwirft die für diesen Katalog eingegebenen Preise. Sie lassen sich nicht wiederherstellen.",
+      "edit_prices_after_save": "Katalog speichern, dann die Preise für diese Zielgruppe eingeben.",
+      "edit_prices_cta": "Preise eingeben",
+      "edit_prices_help": "Legen Sie fest, was jedes Produkt diese Zielgruppe kostet.",
+      "edit_prices_pending_save": "Legen Sie fest, was jedes Produkt diese Zielgruppe kostet. Speichern Sie zuerst, um die soeben geänderten Produkte zu bepreisen.",
       "empty": "Noch keine Kataloge",
-      "import_from_price_list": "Produkte aus Preisliste importieren",
       "messages": {
         "assigned": "Katalog zugewiesen",
         "created": "Katalog erstellt",
@@ -150,7 +157,32 @@
         "title": "Produkte"
       },
       "products_column": "Produkte",
-      "search_placeholder": "Kataloge suchen"
+      "search_placeholder": "Kataloge suchen",
+      "terms": {
+        "title": "Handelsbedingungen",
+        "description": "Welche Menge Käufer im Rahmen dieser Vereinbarung bestellen müssen.",
+        "no_rule_placeholder": "Keine Regel",
+        "minimums_title": "Mindestbestellwerte",
+        "minimums_description": "Der Mindestwert einer gesamten Bestellung, je Währung.",
+        "minimums_empty": "Kein Mindestbestellwert. Käufer können mit jeder Summe bestellen.",
+        "minimum_amount_label": "Mindestbetrag",
+        "validation": {
+          "positive_integer": "Geben Sie eine ganze Zahl größer als null ein oder lassen Sie das Feld leer.",
+          "currency_taken": "Für diese Währung gibt es bereits einen Mindestwert.",
+          "positive_amount": "Geben Sie einen Betrag größer als null ein.",
+          "fix_terms": "Korrigieren Sie die markierten Mengenregeln, bevor Sie speichern."
+        },
+        "mixed": "Gemischt",
+        "inherits": "Standard",
+        "default_help": "Gilt für jedes Produkt in diesem Katalog, sofern ein Produkt in der Liste nichts Eigenes angibt.",
+        "column_minimum": "Minimum",
+        "column_multiple": "Vielfaches",
+        "help": {
+          "minimum": "Die geringste Menge, die ein Käufer von einem Produkt bestellen darf. Eine kleinere Bestellung wird abgelehnt und nennt die nächstgelegenen gültigen Mengen — es wird nie aufgerundet.",
+          "multiple": "Die Schrittweite. Bei einem Vielfachen von 24 bestellt ein Käufer 24, 48 oder 72 — nie 30. Die Schritte zählen ab der Mindestmenge: bei Minimum 50 und Schritten von 24 sind 50, 74 und 98 erlaubt.",
+          "order_minimum": "Der Mindestwert einer gesamten Bestellung, nur Artikel — Versand und Steuern zählen nicht mit. Käufer sehen beim Einkaufen, wie viel noch fehlt, und der Checkout wird bis dahin abgelehnt."
+        }
+      }
     },
     "categories": {
       "add_cta": "Neue Kategorie",
@@ -903,6 +935,11 @@
         }
       },
       "catalog": {
+        "description": {
+          "help": "Interne Notiz — für Kundinnen und Kunden nie sichtbar.",
+          "label": "Beschreibung",
+          "placeholder": "Wozu diese Vereinbarung dient"
+        },
         "name": {
           "placeholder": "Großhandel"
         },
@@ -911,6 +948,13 @@
           "help": "Optional. Ohne Preisliste schränkt der Katalog nur das Sortiment ein; es gelten die Basispreise. Bei leerem Sortiment bepreist der Katalog nur — nichts wird ausgeblendet; importieren oder fügen Sie Produkte hinzu, um die Sichtbarkeit einzuschränken.",
           "label": "Preisliste",
           "placeholder": "Basispreise"
+        },
+        "pricing_mode": {
+          "automatic": "Ein Prozentsatz auf die Grundpreise",
+          "base": "Normale Preise",
+          "fixed": "Preise, die ich für diesen Katalog eingebe",
+          "help": "Was diese Zielgruppe zahlt. Änderungen hier aktualisieren den Katalog und seine Preise gemeinsam.",
+          "label": "Preisgestaltung"
         }
       },
       "certificate_document": {
@@ -1426,6 +1470,18 @@
         "label": "Postleitzahl"
       },
       "price_list": {
+        "adjust_compare_at": {
+          "help": "Den Vergleichspreis mit demselben Prozentsatz aus dem Grund-Vergleichspreis ableiten.",
+          "label": "Auch Vergleichspreise anpassen"
+        },
+        "adjustment_direction": {
+          "decrease": "Verringerung",
+          "increase": "Erhöhung",
+          "label": "Richtung"
+        },
+        "adjustment_magnitude": {
+          "label": "Prozentsatz"
+        },
         "description": {
           "label": "Beschreibung",
           "placeholder": "Optionale interne Beschreibung"
@@ -1439,6 +1495,11 @@
           "all": "Alle Regeln müssen zutreffen",
           "any": "Eine beliebige Regel darf zutreffen",
           "label": "Übereinstimmungsregel"
+        },
+        "minimum_quantity": {
+          "help": "Rabatt erst ab dieser Stückzahl je Position. Leer lassen, um jede Menge zu bepreisen.",
+          "label": "Mindestmenge",
+          "placeholder": "10"
         },
         "name": {
           "help": "Interne Bezeichnung — wird Kunden nie angezeigt.",
@@ -2107,7 +2168,28 @@
         },
         "width": {
           "label": "Breite"
-        }
+        },
+        "minimum_order_quantity": {
+          "label": "Mindestbestellmenge",
+          "placeholder": "Kein Minimum",
+          "help": "Die geringste Menge, die ein Käufer bestellen darf. Leer lassen für kein Minimum."
+        },
+        "order_multiple": {
+          "label": "Bestellvielfaches",
+          "placeholder": "Kein Vielfaches",
+          "help": "Jeder Schritt über der Mindestmenge. Leer lassen für beliebige Mengen."
+        },
+        "purchase_unit": {
+          "label": "Verkaufseinheit",
+          "options": {
+            "unit": "Stück",
+            "carton": "Kartons"
+          }
+        },
+        "units_per_carton": {
+          "label": "Stück pro Karton"
+        },
+        "quantity_rule_invalid": "Geben Sie eine ganze Zahl größer als null ein oder lassen Sie das Feld leer."
       },
       "webhook_endpoint": {
         "active": {
@@ -2127,6 +2209,14 @@
           "label": "Ziel-URL",
           "placeholder": "https://example.com/webhooks"
         }
+      },
+      "minimum_order_quantity": {
+        "label": "Mindestbestellmenge",
+        "help": "Die geringste Menge, die ein Käufer bestellen darf. Leer lassen für kein Minimum."
+      },
+      "order_multiple": {
+        "label": "Bestellvielfaches",
+        "help": "Jeder Schritt über der Mindestmenge. Leer lassen für beliebige Mengen."
       }
     },
     "gift_cards": {
@@ -2431,8 +2521,23 @@
           "percent_preview": "Voraussichtlicher Rabatt: {{amount}}",
           "target_field": "Gilt für",
           "target_order": "Gesamte Bestellung",
+          "tax_exempt_certificate": "{{reason}}-Bescheinigung {{number}}",
+          "tax_exempt_certificate_number": "Bescheinigung {{number}}",
+          "taxability_reason": {
+            "customer_exempt": "Käufer befreit",
+            "export": "Ausfuhr",
+            "intra_community_supply": "Innergemeinschaftliche Lieferung",
+            "not_collecting": "Keine Erhebung",
+            "not_subject_to_tax": "Nicht steuerbar",
+            "product_exempt": "Produkt befreit",
+            "reduced_rated": "Ermäßigter Satz",
+            "reverse_charge": "Reverse Charge",
+            "standard_rated": "Regelsatz",
+            "zero_rated": "Nullsteuersatz (0 %)"
+          },
           "taxes": "Steuern",
           "taxes_empty": "Noch keine Steuern für diese Bestellung.",
+          "taxes_unmatched": "Für diese Adresse gilt kein Steuersatz.",
           "value_field": "Wert",
           "value_type_field": "Typ",
           "value_type_flat": "Betrag",
@@ -3794,7 +3899,10 @@
           "updated": "Preisliste aktualisiert"
         },
         "validation": {
-          "ends_after_starts": "Muss nach dem Startdatum liegen."
+          "adjustment_required": "Bitte einen Prozentsatz eingeben.",
+          "adjustment_too_deep": "Muss kleiner als 100 % sein.",
+          "ends_after_starts": "Muss nach dem Startdatum liegen.",
+          "minimum_quantity_invalid": "Geben Sie eine ganze Zahl ein."
         }
       },
       "product_type_adds_options_one": "Dieser Typ fügt neuen Produkten {{options}} hinzu.",
@@ -3882,7 +3990,9 @@
           "customs": "Zoll",
           "customs_help": "Wird auf Zollformularen verwendet, wenn dieser Artikel eine Grenze überquert.",
           "identity": "Identität",
-          "tax_category_placeholder": "Vom Produkt übernehmen"
+          "tax_category_placeholder": "Vom Produkt übernehmen",
+          "ordering": "B2B-Bestellung",
+          "ordering_help": "Wie viel ein Käufer abnehmen muss. Der Bestand wird weiterhin in Stück gezählt."
         },
         "title": "Varianten",
         "variant_label": "Variante"

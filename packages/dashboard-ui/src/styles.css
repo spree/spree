@@ -31,9 +31,16 @@
 
 /* Brand palette.
  *
- * Surfaces, borders and text are Tailwind's `neutral` ramp — true greyscale,
- * zero chroma — so the single blue accent is the only colour in the palette
- * and reads unmistakably as interaction.
+ * Surfaces, borders and text are Tailwind's `stone` ramp — the same lightness
+ * ladder as `neutral`, carrying a trace of warm chroma (0.001–0.013) rather
+ * than none. Far too little to read as a colour: it stops large white and grey
+ * areas looking blue-cold, and leaves the blue accent still the only thing in
+ * the palette that reads as interaction.
+ *
+ * Values are stone's chroma and hue interpolated onto the lightnesses this
+ * palette already chose, rather than snapped to the nearest ramp step: the
+ * lightness decisions below are load-bearing for contrast, and none of them
+ * move.
  *
  * Primary CTAs stay near-black rather than adopting the site's blue button:
  * in a dense admin UI the blue has to stay meaningful as a selection and
@@ -43,42 +50,42 @@
   --brand-blue: oklch(0.5967 0.2212 258); /* #0077ff — site accent */
   --brand-blue-strong: oklch(0.5106 0.1868 257.7); /* #0060ce — site link hover */
 
-  --background: oklch(98.5% 0 none); /* neutral-50 */
-  --foreground: oklch(0.145 0 0); /* neutral-950 */
+  --background: oklch(98.5% 0.001 106.423); /* stone-50 */
+  --foreground: oklch(0.145 0.0039 49.25); /* stone-950 */
   --card: oklch(1 0 0); /* white cards, one step above the page */
-  --card-foreground: oklch(0.145 0 0);
+  --card-foreground: oklch(0.145 0.0039 49.25);
   --popover: oklch(1 0 0);
-  --popover-foreground: oklch(0.145 0 0);
-  --primary: oklch(0.145 0 0); /* neutral-950 — near-black primary CTAs */
+  --popover-foreground: oklch(0.145 0.0039 49.25);
+  --primary: oklch(0.145 0.0039 49.25); /* stone-950 — near-black primary CTAs */
   --primary-foreground: oklch(1 0 0);
   /* Filled surfaces (table headers, badges, secondary buttons) read as a
      whisper against the white card rather than a distinct band. */
-  --secondary: oklch(0.97 0 0); /* neutral-100 */
-  --secondary-foreground: oklch(0.145 0 0);
-  --muted: oklch(0.985 0 0); /* neutral-50 */
-  /* Between neutral-500 and -600. Clears 4.5:1 against every surface this text
+  --secondary: oklch(0.97 0.001 106.424); /* stone-100 */
+  --secondary-foreground: oklch(0.145 0.0039 49.25);
+  --muted: oklch(0.985 0.001 106.423); /* stone-50 */
+  /* Between stone-500 and -600. Clears 4.5:1 against every surface this text
      actually lands on — including --accent, the darkest of them — where the
-     neutral-500 step measured 4.15:1. Dark mode keeps its own value: it already
+     stone-500 step measured 4.15:1. Dark mode keeps its own value: it already
      passes on all four grounds. */
-  --muted-foreground: oklch(0.535 0 0);
+  --muted-foreground: oklch(0.535 0.0127 58.071);
   /* Hover/highlight for menu items and table rows. A lighter step than
-     neutral-200: these sit on white surfaces, where that value reads as a
+     stone-200: these sit on white surfaces, where that value reads as a
      pressed state rather than a hover. The sidebar shares this value via
      --sidebar-accent so a highlighted row looks the same wherever it is. */
-  --accent: oklch(0.95 0 0);
-  --accent-foreground: oklch(0.145 0 0);
+  --accent: oklch(0.95 0.0019 106.424);
+  --accent-foreground: oklch(0.145 0.0039 49.25);
   --destructive: oklch(0.58 0.22 27); /* red-600 */
   --destructive-foreground: oklch(1 0 0); /* #ffffff */
-  /* neutral-200 — rules stay legible but recede, so a dense table reads as
+  /* stone-200 — rules stay legible but recede, so a dense table reads as
      rows of content rather than a grid. */
-  --border: oklch(0.922 0 0);
+  --border: oklch(0.922 0.003 48.717);
   /* Half-strength rule for dividers *inside* a container — card header/footer
      splits, dialog and sheet separators, table chrome. Distinct from --border,
      which draws a container's own edge. Resolved to a real colour rather than
      an opacity utility so it also works inside arbitrary values such as the
      sticky table header's inset shadow, where `/50` has no effect. */
   --border-subtle: color-mix(in srgb, var(--border) 50%, transparent);
-  --input: oklch(0.922 0 0);
+  --input: oklch(0.922 0.003 48.717);
   --ring: var(--brand-blue);
   --chart-1: oklch(0.7663 0.1067 254.4);
   --chart-2: oklch(0.5967 0.2212 258); /* brand blue */
@@ -88,13 +95,13 @@
   --radius: 0.75rem;
 
   /* Sidebar — one step off the page, so it reads as its own surface. */
-  --sidebar: oklch(97% 0 none); /* neutral-100 */
-  --sidebar-foreground: oklch(37.1% 0 none);
-  --sidebar-primary: oklch(0.145 0 0);
+  --sidebar: oklch(97% 0.001 106.424); /* stone-100 */
+  --sidebar-foreground: oklch(37.1% 0.0099 67.558);
+  --sidebar-primary: oklch(0.145 0.0039 49.25);
   --sidebar-primary-foreground: oklch(1 0 0);
-  --sidebar-accent: oklch(0.922 0 0); /* neutral-200 */
-  --sidebar-accent-foreground: oklch(0.145 0 0);
-  --sidebar-border: oklch(0.9 0 0);
+  --sidebar-accent: oklch(0.922 0.003 48.717); /* stone-200 */
+  --sidebar-accent-foreground: oklch(0.145 0.0039 49.25);
+  --sidebar-border: oklch(0.9 0.0039 48.717);
   --sidebar-ring: var(--brand-blue);
 
   /* Status ramps, following Vercel's Geist colour system.
@@ -139,26 +146,26 @@
 .dark {
   /* Vercel-style "true black" base, with surfaces stepping up in lightness. */
   --background: oklch(0 0 0); /* #000000 */
-  --foreground: oklch(0.95 0 0); /* #ededed */
-  --card: oklch(0.145 0 0); /* #0a0a0a — surface */
-  --card-foreground: oklch(0.95 0 0);
-  --popover: oklch(0.145 0 0);
-  --popover-foreground: oklch(0.95 0 0);
+  --foreground: oklch(0.95 0.0019 106.424); /* stone-100-ish */
+  --card: oklch(0.145 0.0039 49.25); /* stone-950 — surface */
+  --card-foreground: oklch(0.95 0.0019 106.424);
+  --popover: oklch(0.145 0.0039 49.25);
+  --popover-foreground: oklch(0.95 0.0019 106.424);
   /* Mirrors the light theme's primary: there a navy fill carries white text,
      so here the two swap rather than the button taking on its own colour. */
-  --primary: oklch(0.95 0 0);
-  --primary-foreground: oklch(0.145 0 0); /* neutral-950 — light theme's primary */
+  --primary: oklch(0.95 0.0019 106.424);
+  --primary-foreground: oklch(0.145 0.0039 49.25); /* stone-950 — light theme's primary */
   /* Above --card, but only just. These fill elements that sit *on* a card
      (combobox chips, badges, secondary buttons, table header rows), so a value
      at or under the card's lightness erases them — while too big a step reads
      as a bright band across a full-width table header. Dark mode raises where
      light mode lowers, since a surface reads as raised by getting lighter. */
-  --secondary: oklch(0.225 0 0);
-  --secondary-foreground: oklch(0.95 0 0);
-  --muted: oklch(0.185 0 0);
-  --muted-foreground: oklch(0.62 0 0); /* #888 */
-  --accent: oklch(0.225 0 0); /* hover surface, a step above --muted */
-  --accent-foreground: oklch(0.95 0 0);
+  --secondary: oklch(0.225 0.0062 56.043);
+  --secondary-foreground: oklch(0.95 0.0019 106.424);
+  --muted: oklch(0.185 0.0051 56.043);
+  --muted-foreground: oklch(0.62 0.0117 58.071); /* stone-500-ish */
+  --accent: oklch(0.225 0.0062 56.043); /* hover surface, a step above --muted */
+  --accent-foreground: oklch(0.95 0.0019 106.424);
   --destructive: oklch(0.704 0.191 22.216);
   --border: oklch(1 0 0 / 12%);
   --border-subtle: color-mix(in srgb, var(--border) 50%, transparent);
@@ -169,14 +176,14 @@
   --chart-3: oklch(0.546 0.245 262.881);
   --chart-4: oklch(0.488 0.243 264.376);
   --chart-5: oklch(0.424 0.199 265.638);
-  --sidebar: oklch(0.145 0 0); /* #0a0a0a — slightly elevated from background */
-  --sidebar-foreground: oklch(0.95 0 0);
-  --sidebar-primary: oklch(0.95 0 0);
-  --sidebar-primary-foreground: oklch(0.145 0 0);
-  --sidebar-accent: oklch(0.27 0 0);
-  --sidebar-accent-foreground: oklch(0.95 0 0);
+  --sidebar: oklch(0.145 0.0039 49.25); /* stone-950 — slightly elevated from background */
+  --sidebar-foreground: oklch(0.95 0.0019 106.424);
+  --sidebar-primary: oklch(0.95 0.0019 106.424);
+  --sidebar-primary-foreground: oklch(0.145 0.0039 49.25);
+  --sidebar-accent: oklch(0.27 0.0071 34.298);
+  --sidebar-accent-foreground: oklch(0.95 0.0019 106.424);
   --sidebar-border: oklch(1 0 0 / 10%);
-  --sidebar-ring: oklch(0.708 0 0);
+  --sidebar-ring: oklch(0.708 0.01 56.259);
 
   /* Geist's dark ramps are not the light ones dimmed — the fill becomes a deep
      shade of the hue and the text becomes brighter than its light-mode
@@ -420,12 +427,12 @@
 
 @layer base {
   :root {
-    --scrollbar-thumb: oklch(0.78 0 0); /* neutral-300-ish */
-    --scrollbar-thumb-hover: oklch(0.62 0 0);
+    --scrollbar-thumb: oklch(0.78 0.0078 56.259); /* stone-300-ish */
+    --scrollbar-thumb-hover: oklch(0.62 0.0117 58.071);
   }
   .dark {
-    --scrollbar-thumb: oklch(0.35 0 0); /* zinc-700-ish */
-    --scrollbar-thumb-hover: oklch(0.45 0 0);
+    --scrollbar-thumb: oklch(0.35 0.0093 67.558); /* stone-700-ish */
+    --scrollbar-thumb-hover: oklch(0.45 0.0111 73.639);
   }
 
   /* Themed scrollbar inside floating surfaces only — page scrollbar stays
@@ -609,6 +616,96 @@
       0 5px,
       5px -5px,
       -5px 0;
+  }
+
+  /* Tiptap editor surface. Tailwind preflight strips list markers, link
+     underlines and block margins, so lists, quotes and links would save
+     correctly but look like plain paragraphs until the storefront rendered
+     them. These rules restore that chrome only inside the editor. */
+  .tiptap {
+    min-height: 8rem;
+    outline: none;
+
+    & p.is-editor-empty:first-child::before {
+      color: var(--muted-foreground);
+      content: attr(data-placeholder);
+      float: left;
+      height: 0;
+      pointer-events: none;
+    }
+
+    & p {
+      margin-block: 0.5em;
+    }
+
+    & p:first-child {
+      margin-block-start: 0;
+    }
+
+    & p:last-child {
+      margin-block-end: 0;
+    }
+
+    & ul {
+      list-style-type: disc;
+      margin-block: 0.5em;
+      padding-inline-start: 1.5em;
+    }
+
+    & ol {
+      list-style-type: decimal;
+      margin-block: 0.5em;
+      padding-inline-start: 1.5em;
+    }
+
+    & ul ul,
+    & ol ul {
+      list-style-type: circle;
+      margin-block: 0.15em;
+    }
+
+    & ul ul ul,
+    & ol ul ul,
+    & ol ol ul,
+    & ul ol ul {
+      list-style-type: square;
+    }
+
+    & ol ol,
+    & ul ol {
+      list-style-type: lower-alpha;
+      margin-block: 0.15em;
+    }
+
+    & li {
+      margin-block: 0.15em;
+    }
+
+    & li > p {
+      margin-block: 0;
+    }
+
+    & blockquote {
+      border-inline-start: 3px solid var(--border);
+      color: var(--muted-foreground);
+      margin-block: 0.75em;
+      padding-inline-start: 1em;
+    }
+
+    & a {
+      color: var(--brand-blue);
+      text-decoration: underline;
+      text-underline-offset: 2px;
+    }
+
+    & img {
+      max-width: 100%;
+      border-radius: var(--radius-md);
+    }
+
+    & img.ProseMirror-selectednode {
+      outline: 2px solid var(--brand-blue);
+    }
   }
 }
 

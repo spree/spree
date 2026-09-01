@@ -87,18 +87,9 @@ module Spree
       # this safely needs the reset-on-reload machinery; the repeated query is
       # the cheaper problem.
       def sole_standing_company
-        return nil if customer.nil? || store_id.nil?
+        return nil if store_id.nil?
 
-        # Scoped to this sale's store. Customers are global, so without this a
-        # buyer who is a member at a company in another store would resolve to
-        # that business here — and its registration and exemption certificates
-        # would then decide this sale's tax.
-        memberships = customer.company_memberships.
-                      joins(:company).
-                      merge(Spree::Company.where(store_id: store_id)).
-                      to_a.uniq
-
-        memberships.one? ? memberships.first.company : nil
+        Spree::Company.sole_standing_for(store: store, customer: customer)
       end
     end
   end

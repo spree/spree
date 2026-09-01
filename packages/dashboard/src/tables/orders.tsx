@@ -4,6 +4,7 @@ import { Link } from '@tanstack/react-router'
 import i18n from 'i18next'
 import { ShoppingCartIcon } from 'lucide-react'
 import { channelAutocompleteProps } from '../hooks/use-channels'
+import { customerAutocompleteProps } from '../hooks/use-customers'
 import { sellerAutocompleteProps } from '../hooks/use-sellers'
 import { orderGroupSearch } from '../lib/order-group-search'
 
@@ -56,6 +57,14 @@ defineTable('orders', {
       label: i18n.t('admin.orders.columns.customer'),
       sortable: true,
       filterable: true,
+      // Picked from a list rather than typed: an operator looking for one
+      // customer's orders knows who they mean, not how their address is
+      // spelled. Filters through the `customer` association's id — `email` is
+      // what the column *shows*, but matching it as free text would also miss
+      // a guest order placed under a second address.
+      filterType: 'resource',
+      filterResource: customerAutocompleteProps('orders-table-customer-filter'),
+      ransackAttribute: 'customer_id',
       default: true,
       className: 'text-sm',
       render: (order) => order.email ?? '—',

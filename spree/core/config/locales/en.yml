@@ -33,6 +33,13 @@ en:
       spree/calculator/tiered_percent:
         preferred_base_percent: Base Percent
         preferred_tiers: Tiers
+      spree/catalog_order_minimum:
+        amount: Amount
+        currency: Currency
+      spree/catalog_quantity_rule:
+        minimum_order_quantity: Minimum order quantity
+        order_multiple: Order multiple
+        variant: Variant
       spree/country:
         iso: ISO
         iso3: ISO3
@@ -219,8 +226,12 @@ en:
         cost_price: Cost Price
         depth: Depth
         height: Height
+        minimum_order_quantity: Minimum order quantity
+        order_multiple: Order multiple
         price: Price
+        purchase_unit: Purchase unit
         sku: SKU
+        units_per_carton: Units per carton
         weight: Weight
         width: Width
       spree/wished_item:
@@ -255,6 +266,14 @@ en:
               values_should_be_percent: Tier values should all be percentages between 0% and 100%
             preferred_tiers:
               should_be_hash: should be a hash
+        spree/catalog:
+          attributes:
+            price_list:
+              owned_by_another_catalog: is already used by another catalog. Detach it there first.
+        spree/catalog_quantity_rule:
+          attributes:
+            base:
+              quantity_rule_states_nothing: Set a minimum order quantity, an order multiple, or both
         spree/category:
           attributes:
             parent:
@@ -340,8 +359,12 @@ en:
               greater_than_max_amount: is greater than the allowed maximum amount of %{max_amount}
         spree/price_list:
           attributes:
+            base:
+              nothing_to_apply_to: has no rules, no catalog and no products, so it would apply to nothing. Add one before activating.
             ends_at:
               must_be_after_starts_at: must be after starts at
+            price_adjustment_percentage:
+              requires_catalog: can only be set on a price list a catalog owns
         spree/product:
           attributes:
             base:
@@ -400,6 +423,10 @@ en:
           attributes:
             base:
               cannot_destroy_if_attached_to_line_items: Cannot delete Variants that are added to placed Orders. In such cases, please discontinue them.
+            order_multiple:
+              incompatible_with_carton: must divide into or be a multiple of %{units_per_carton} units per carton
+            units_per_carton:
+              required_for_carton_purchase_unit: is required when the purchase unit is cartons
         spree/webhook_endpoint:
           attributes:
             url:
@@ -712,8 +739,10 @@ en:
       price_override_not_allowed: Prices cannot be changed on a placed order — use fees or discounts instead
       pricing_unavailable: Prices could not be confirmed. Please try again.
       quantity_must_be_positive: Quantity must be at least 1. Use DELETE to remove the item.
+      quantity_rule_violated: "%{li_name} cannot be ordered in that quantity. Try %{quantities}."
     catalogs:
       no_price_list_to_import: This catalog has no price list to import products from.
+      product_not_in_store: One of those products belongs to another store.
     categories: Categories
     category: Category
     change: Change
@@ -726,6 +755,7 @@ en:
       delivery_method_required: Select a delivery method for all fulfillments
       email_required: Email address is required
       line_items_required: Add at least one item to your cart
+      order_minimum_not_met: Orders must come to at least %{minimum}. Add %{shortfall} more to check out.
       payment_required: Add a payment method
       po_number_required: A purchase order number is required for this account
       ship_address_required: Shipping address is required

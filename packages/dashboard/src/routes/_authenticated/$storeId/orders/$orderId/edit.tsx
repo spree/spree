@@ -109,7 +109,8 @@ function OrderTotalsCard({ order, items }: { order: Order; items: OrderEditItemV
           />
         )}
 
-        {Number.parseFloat(order.additional_tax_total) > 0 && (
+        {(Number.parseFloat(order.additional_tax_total) > 0 ||
+          (Boolean(order.completed_at) && Number.parseFloat(order.included_tax_total) === 0)) && (
           <TotalRow
             label={t('admin.orders.detail.summary.tax_additional')}
             value={order.display_additional_tax_total}

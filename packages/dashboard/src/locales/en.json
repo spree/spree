@@ -108,7 +108,8 @@
           "title": "Remove this assignment?"
         },
         "title": "Audiences",
-        "type_label": "Audience type"
+        "type_label": "Audience type",
+        "already_assigned": "That audience is already on this catalog."
       },
       "create_description": "A catalog narrows what an audience sees and, through a price list, what they pay. Add products and assign audiences once it exists.",
       "create_label": "Create catalog",
@@ -116,13 +117,19 @@
         "message": "This deletes {{name}} and its assignments. Products and price lists are not affected.",
         "title": "Delete catalog?"
       },
+      "detach_warning": "Saving will remove this catalog’s price list and the prices in it. This audience will pay normal prices.",
       "detail": {
         "delete_label": "Delete catalog",
         "load_error": "Could not load this catalog",
+        "pricing": "Pricing",
         "settings": "Catalog"
       },
+      "discard_prices_warning": "Switching to a percentage will discard the prices entered for this catalog. They cannot be recovered.",
+      "edit_prices_after_save": "Save the catalog, then enter the prices for this audience.",
+      "edit_prices_cta": "Enter prices",
+      "edit_prices_help": "Set the price each product costs this audience.",
+      "edit_prices_pending_save": "Set the price each product costs this audience. Save first to price the products you just changed.",
       "empty": "No catalogs yet",
-      "import_from_price_list": "Import products from price list",
       "messages": {
         "assigned": "Catalog assigned",
         "created": "Catalog created",
@@ -150,7 +157,32 @@
         "title": "Products"
       },
       "products_column": "Products",
-      "search_placeholder": "Search catalogs"
+      "search_placeholder": "Search catalogs",
+      "terms": {
+        "title": "Commercial terms",
+        "description": "How much buyers on this agreement must order.",
+        "no_rule_placeholder": "No rule",
+        "minimums_title": "Order minimums",
+        "minimums_description": "The least a whole order must come to, per currency.",
+        "minimums_empty": "No order minimum. Buyers may check out with any total.",
+        "minimum_amount_label": "Minimum amount",
+        "validation": {
+          "positive_integer": "Enter a whole number greater than zero, or leave blank.",
+          "currency_taken": "This currency already has a minimum.",
+          "positive_amount": "Enter an amount greater than zero.",
+          "fix_terms": "Fix the highlighted quantity rules before saving."
+        },
+        "mixed": "Mixed",
+        "inherits": "Default",
+        "default_help": "Applies to every product in this catalog, unless a product states its own on the list.",
+        "column_minimum": "Minimum",
+        "column_multiple": "Multiple",
+        "help": {
+          "minimum": "The least a buyer may order of one product. An order below it is refused with the nearest valid quantities named — nothing is ever rounded up for them.",
+          "multiple": "The step size. With a multiple of 24 a buyer orders 24, 48 or 72 — never 30. Steps count up from the minimum, so a minimum of 50 in steps of 24 allows 50, 74 and 98.",
+          "order_minimum": "The least a whole order must come to, counting items only — delivery and tax do not help reach it. Buyers see how far short they are while they shop, and checkout is refused until they reach it."
+        }
+      }
     },
     "categories": {
       "add_cta": "New category",
@@ -903,6 +935,11 @@
         }
       },
       "catalog": {
+        "description": {
+          "help": "Internal note — never shown to shoppers.",
+          "label": "Description",
+          "placeholder": "What this agreement is for"
+        },
         "name": {
           "placeholder": "Wholesale"
         },
@@ -911,6 +948,13 @@
           "help": "Optional. Without one, the catalog only narrows the assortment and base prices apply. With an empty assortment, the catalog only prices — nothing is hidden; import or add products to restrict what this audience sees.",
           "label": "Price list",
           "placeholder": "Base prices"
+        },
+        "pricing_mode": {
+          "automatic": "A percentage off base prices",
+          "base": "Normal prices",
+          "fixed": "Prices I enter for this catalog",
+          "help": "What this audience pays. Changing it here updates the catalog and its prices together.",
+          "label": "Pricing"
         }
       },
       "certificate_document": {
@@ -1426,6 +1470,18 @@
         "label": "Postal code"
       },
       "price_list": {
+        "adjust_compare_at": {
+          "help": "Derive the compare-at price from the base compare-at by the same percentage.",
+          "label": "Also adjust compare-at prices"
+        },
+        "adjustment_direction": {
+          "decrease": "decrease",
+          "increase": "increase",
+          "label": "Direction"
+        },
+        "adjustment_magnitude": {
+          "label": "Percentage"
+        },
         "description": {
           "label": "Description",
           "placeholder": "Optional internal description"
@@ -1439,6 +1495,11 @@
           "all": "All rules must match",
           "any": "Any rule may match",
           "label": "Match policy"
+        },
+        "minimum_quantity": {
+          "help": "Only discount a line once it reaches this many units. Leave blank to price every quantity.",
+          "label": "Minimum quantity",
+          "placeholder": "10"
         },
         "name": {
           "help": "Internal label — never shown to customers.",
@@ -2107,7 +2168,28 @@
         },
         "width": {
           "label": "Width"
-        }
+        },
+        "minimum_order_quantity": {
+          "label": "Minimum order quantity",
+          "placeholder": "No minimum",
+          "help": "The least a buyer may order. Leave blank for no minimum."
+        },
+        "order_multiple": {
+          "label": "Order multiple",
+          "placeholder": "No multiple",
+          "help": "Each step up from the minimum. Leave blank for any quantity."
+        },
+        "purchase_unit": {
+          "label": "Purchase unit",
+          "options": {
+            "unit": "Units",
+            "carton": "Cartons"
+          }
+        },
+        "units_per_carton": {
+          "label": "Units per carton"
+        },
+        "quantity_rule_invalid": "Enter a whole number greater than zero, or leave blank."
       },
       "webhook_endpoint": {
         "active": {
@@ -2127,6 +2209,14 @@
           "label": "Destination URL",
           "placeholder": "https://example.com/webhooks"
         }
+      },
+      "minimum_order_quantity": {
+        "label": "Minimum order quantity",
+        "help": "The least a buyer may order. Leave blank for no minimum."
+      },
+      "order_multiple": {
+        "label": "Order multiple",
+        "help": "Each step up from the minimum. Leave blank for any quantity."
       }
     },
     "gift_cards": {
@@ -2431,8 +2521,23 @@
           "percent_preview": "Estimated discount: {{amount}}",
           "target_field": "Applies to",
           "target_order": "Whole order",
+          "tax_exempt_certificate": "{{reason}} certificate {{number}}",
+          "tax_exempt_certificate_number": "Certificate {{number}}",
+          "taxability_reason": {
+            "customer_exempt": "Buyer exempt",
+            "export": "Export",
+            "intra_community_supply": "Intra-community supply",
+            "not_collecting": "Not collecting",
+            "not_subject_to_tax": "Not subject to tax",
+            "product_exempt": "Product exempt",
+            "reduced_rated": "Reduced rate",
+            "reverse_charge": "Reverse charge",
+            "standard_rated": "Standard rate",
+            "zero_rated": "Zero-rated"
+          },
           "taxes": "Taxes",
           "taxes_empty": "No taxes on this order yet.",
+          "taxes_unmatched": "No tax rate matched this address.",
           "value_field": "Value",
           "value_type_field": "Type",
           "value_type_flat": "Amount",
@@ -3794,7 +3899,10 @@
           "updated": "Price list updated"
         },
         "validation": {
-          "ends_after_starts": "Must be after start date."
+          "adjustment_required": "Enter a percentage.",
+          "adjustment_too_deep": "Must be less than 100%.",
+          "ends_after_starts": "Must be after start date.",
+          "minimum_quantity_invalid": "Enter a whole number."
         }
       },
       "product_type_adds_options_one": "This type adds {{options}} to new products.",
@@ -3882,7 +3990,9 @@
           "customs": "Customs",
           "customs_help": "Used on customs forms when this item ships across a border.",
           "identity": "Identity",
-          "tax_category_placeholder": "Inherit from product"
+          "tax_category_placeholder": "Inherit from product",
+          "ordering": "B2B ordering",
+          "ordering_help": "How much a buyer must take. Stock is still counted in units."
         },
         "title": "Variants",
         "variant_label": "Variant"

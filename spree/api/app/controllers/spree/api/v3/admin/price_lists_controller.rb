@@ -118,6 +118,7 @@ module Spree
               params.permit(
                 :name, :description, :position,
                 :starts_at, :ends_at, :match_policy,
+                :price_adjustment_percentage, :adjust_compare_at,
                 rules: [:id, :type, { preferences: {} }],
                 prices: [:id, :variant_id, :currency, :amount, :compare_at_amount]
               )

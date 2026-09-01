@@ -22,7 +22,7 @@ module Spree
     validates :catalog_id, uniqueness: { scope: [:assignable_type, :assignable_id, *spree_base_uniqueness_scope] }
     validate :assignable_in_same_store
 
-    after_commit -> { Spree::Current.applicable_catalogs = nil }
+    after_commit -> { Spree::Current.reset_catalog_memos }
 
     delegate :store, :store_id, to: :catalog
 

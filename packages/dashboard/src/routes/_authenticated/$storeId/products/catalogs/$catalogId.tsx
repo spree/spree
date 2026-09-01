@@ -1,5 +1,5 @@
 import { zodResolver } from '@hookform/resolvers/zod'
-import type { Catalog, CatalogAssignment, PriceList } from '@spree/admin-sdk'
+import type { Catalog } from '@spree/admin-sdk'
 import {
   adminClient,
   mapSpreeErrorsToForm,
@@ -17,6 +17,7 @@ import {
   CardHeader,
   CardTitle,
   Checkbox,
+  cn,
   Dialog,
   DialogBody,
   DialogContent,
@@ -37,30 +38,41 @@ import {
   SelectItem,
   SelectTrigger,
   SelectValue,
-  useConfirm,
+  Textarea,
 } from '@spree/dashboard-ui'
 import { createFileRoute, useNavigate } from '@tanstack/react-router'
-import { PlusIcon, TrashIcon } from 'lucide-react'
-import { useEffect, useState } from 'react'
+import { PlusIcon, TrashIcon, Undo2Icon } from 'lucide-react'
+import { useEffect, useMemo, useState } from 'react'
 import { Controller, type UseFormReturn, useForm } from 'react-hook-form'
 import { useTranslation } from 'react-i18next'
+import { CatalogPricingFields } from '../../../../../components/spree/catalog-pricing-fields'
+import {
+  CatalogTermsCard,
+  catalogTermColumns,
+  stagedTermsHaveErrors,
+  stagedTermsToParams,
+  termsToFormValues,
+} from '../../../../../components/spree/catalog-terms-card'
 import { DeferredProductMembershipCard } from '../../../../../components/spree/deferred-product-membership-card'
-import { ProductMembershipStagingProvider } from '../../../../../components/spree/product-membership-staging'
+import {
+  ProductMembershipStagingProvider,
+  useProductMembershipStaging,
+} from '../../../../../components/spree/product-membership-staging'
 import { ResourceDetailSkeleton } from '../../../../../components/spree/route-pending'
 import {
-  useAssignCatalog,
   useCatalog,
   useCatalogProducts,
+  useCatalogProductTerms,
   useDeleteCatalog,
-  useImportCatalogPriceListProducts,
   useSaveCatalog,
-  useUnassignCatalog,
 } from '../../../../../hooks/use-catalogs'
 import { spreeJsonLinkResolver } from '../../../../../lib/json-link-resolver'
+import type { AssignmentEntry } from '../../../../../schemas/catalog'
 import {
   CATALOG_DEFAULTS,
   type CatalogFormValues,
   catalogFormSchema,
+  catalogPricingValues,
   catalogValuesToParams,
 } from '../../../../../schemas/catalog'
 
@@ -101,8 +113,15 @@ function CatalogBody({ catalog }: { catalog: Catalog }) {
   const { permissions } = usePermissions()
   const deleteMutation = useDeleteCatalog()
   const saveMutation = useSaveCatalog(catalog.id)
+  const { data: productTermsData } = useCatalogProductTerms(catalog.id)
+  const productTerms = useMemo(() => productTermsData?.data ?? [], [productTermsData])
 
   const canEdit = permissions.can('update', Subject.Catalog)
+
+  // The mode as last saved, not as currently selected: switching away from
+  // hand-entered prices has to clear them, and the warning has to know a
+  // switch is what is about to happen.
+  const savedPricingMode = catalogPricingValues(catalog.price_list).pricing_mode
 
   const form = useForm<CatalogFormValues>({
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -111,18 +130,33 @@ function CatalogBody({ catalog }: { catalog: Catalog }) {
   })
 
   // Hydrate (and re-baseline after save) from the source row, unless the
-  // merchant has unsaved edits in flight: importing from the price list
-  // refetches the catalog mid-edit, and an unguarded reset would drop both
-  // the settings being typed and any staged product changes.
+  // merchant has unsaved edits in flight: entering prices refetches the
+  // catalog mid-edit, and an unguarded reset would drop both the settings
+  // being typed and any staged product changes.
   useEffect(() => {
     if (form.formState.isDirty) return
     form.reset({
       name: catalog.name,
+      description: catalog.description ?? '',
       active: catalog.active,
-      price_list_id: catalog.price_list_id ?? '',
+      minimum_order_quantity: catalog.minimum_order_quantity?.toString() ?? '',
+      order_multiple: catalog.order_multiple?.toString() ?? '',
+      assignments: (catalog.assignments ?? []).map((assignment) => ({
+        id: assignment.id,
+        assignable_type: assignment.assignable_type as AssignmentEntry['assignable_type'],
+        assignable_id: assignment.assignable_id,
+        assignable_name: assignment.assignable_name,
+      })),
+      order_minimums: (catalog.order_minimums ?? []).map((minimum) => ({
+        id: minimum.id,
+        currency: minimum.currency,
+        amount: minimum.amount,
+      })),
+      ...catalogPricingValues(catalog.price_list),
       staged_products: { adds: [], removes: [] },
+      staged_terms: termsToFormValues(productTerms),
     })
-  }, [catalog, form])
+  }, [catalog, productTerms, form])
 
   async function handleDelete() {
     await deleteMutation.mutateAsync(catalog.id)
@@ -130,11 +164,28 @@ function CatalogBody({ catalog }: { catalog: Catalog }) {
   }
 
   async function handleSave(values: CatalogFormValues) {
+    // Refused here rather than normalized away: an unusable cell would be
+    // sent as null, which the API reads as "clear this override", so the
+    // merchant's rule would disappear instead of being corrected.
+    if (stagedTermsHaveErrors(values.staged_terms ?? {})) {
+      form.setError('root', { message: t('admin.catalogs.terms.validation.fix_terms') })
+      return
+    }
+
     try {
+      // A product on its way out takes its terms with it, so its cells are
+      // dropped rather than sent — the save would otherwise re-create rows
+      // the removal just cleared.
+      const removed = new Set(values.staged_products.removes)
+      const terms = Object.fromEntries(
+        Object.entries(values.staged_terms ?? {}).filter(([productId]) => !removed.has(productId)),
+      )
+
       await saveMutation.mutateAsync({
-        attributes: catalogValuesToParams(values),
+        attributes: catalogValuesToParams(values, savedPricingMode),
         addProductIds: values.staged_products.adds.map((product) => product.id),
         removeProductIds: values.staged_products.removes,
+        productTerms: stagedTermsToParams(terms),
       })
       form.reset({ ...values, staged_products: { adds: [], removes: [] } })
     } catch (err) {
@@ -158,7 +209,10 @@ function CatalogBody({ catalog }: { catalog: Catalog }) {
               resource={{ id: catalog.id }}
               jsonPreview={{
                 title: `Catalog ${catalog.name}`,
-                fetch: () => adminClient.catalogs.get(catalog.id, { expand: ['assignments'] }),
+                fetch: () =>
+                  adminClient.catalogs.get(catalog.id, {
+                    expand: ['assignments', 'price_list', 'price_list.price_rules'],
+                  }),
                 endpoint: `/api/v3/admin/catalogs/${catalog.id}`,
                 resolveLink: spreeJsonLinkResolver(storeId),
               }}
@@ -194,13 +248,36 @@ function CatalogBody({ catalog }: { catalog: Catalog }) {
                 canEdit={canEdit}
                 useProducts={useCatalogProducts}
                 translationNamespace="admin.catalogs"
+                // Quantity terms are stated per product, so they belong on
+                // the rows the products are already on rather than in a
+                // second list beside this one.
+                extraColumns={catalogTermColumns({
+                  form,
+                  canEdit,
+                  headers: {
+                    // Short column headers — the card's own title already
+                    // says these are quantity terms. The full names stay as
+                    // the inputs' accessible labels.
+                    minimum: t('admin.catalogs.terms.column_minimum'),
+                    multiple: t('admin.catalogs.terms.column_multiple'),
+                    minimumLabel: t('admin.fields.minimum_order_quantity.label'),
+                    multipleLabel: t('admin.fields.order_multiple.label'),
+                    minimumHelp: t('admin.catalogs.terms.help.minimum'),
+                    multipleHelp: t('admin.catalogs.terms.help.multiple'),
+                    invalid: t('admin.catalogs.terms.validation.positive_integer'),
+                    mixed: t('admin.catalogs.terms.mixed'),
+                    defaultHint: t('admin.catalogs.terms.inherits'),
+                  },
+                })}
               />
             </>
           }
           sidebar={
             <>
-              <CatalogSettingsCard catalog={catalog} form={form} canEdit={canEdit} />
-              <CatalogAssignmentsCard catalog={catalog} canEdit={canEdit} />
+              <CatalogSettingsCard form={form} canEdit={canEdit} />
+              <CatalogPricingCard catalog={catalog} form={form} canEdit={canEdit} />
+              <CatalogTermsCard form={form} canEdit={canEdit} />
+              <CatalogAssignmentsCard form={form} canEdit={canEdit} />
             </>
           }
         />
@@ -209,7 +286,12 @@ function CatalogBody({ catalog }: { catalog: Catalog }) {
   )
 }
 
-function CatalogSettingsCard({
+/**
+ * What the agreement pays. Its own card rather than a field on the settings
+ * card: pricing is the consequential half of a catalog, and burying it under
+ * the name reads as an afterthought.
+ */
+function CatalogPricingCard({
   catalog,
   form,
   canEdit,
@@ -219,7 +301,39 @@ function CatalogSettingsCard({
   canEdit: boolean
 }) {
   const { t } = useTranslation()
-  const importMutation = useImportCatalogPriceListProducts(catalog.id)
+  // A product staged for removal still has its prices on the list until
+  // Save, so the spreadsheet would invite pricing something on its way out.
+  const { removes, dirty: stagedProducts } = useProductMembershipStaging()
+
+  return (
+    <Card>
+      <CardHeader>
+        <CardTitle>{t('admin.catalogs.detail.pricing')}</CardTitle>
+      </CardHeader>
+      <CardContent>
+        <FieldGroup>
+          <CatalogPricingFields
+            form={form}
+            canEdit={canEdit}
+            priceList={catalog.price_list}
+            savedMode={catalogPricingValues(catalog.price_list).pricing_mode}
+            excludeProductIds={removes}
+            hasStagedProducts={stagedProducts}
+          />
+        </FieldGroup>
+      </CardContent>
+    </Card>
+  )
+}
+
+function CatalogSettingsCard({
+  form,
+  canEdit,
+}: {
+  form: UseFormReturn<CatalogFormValues>
+  canEdit: boolean
+}) {
+  const { t } = useTranslation()
 
   const { errors } = form.formState
 
@@ -242,40 +356,17 @@ function CatalogSettingsCard({
           </Field>
 
           <Field>
-            <FieldLabel>{t('admin.fields.catalog.price_list.label')}</FieldLabel>
-            <Controller
-              control={form.control}
-              name="price_list_id"
-              render={({ field }) => (
-                <ResourceCombobox<PriceList>
-                  queryKey="catalog-price-lists"
-                  search={(q) => adminClient.priceLists.list({ name_cont: q, limit: 10 })}
-                  hydrate={(ids) => adminClient.priceLists.list({ id_in: ids, limit: ids.length })}
-                  getOptionLabel={(list) => list.name}
-                  placeholder={t('admin.fields.catalog.price_list.placeholder')}
-                  emptyText={t('admin.fields.catalog.price_list.empty')}
-                  disabled={!canEdit}
-                  value={field.value || undefined}
-                  onChange={(id) => field.onChange(id ?? '')}
-                />
-              )}
+            <FieldLabel htmlFor="catalog-description">
+              {t('admin.fields.catalog.description.label')}
+            </FieldLabel>
+            <Textarea
+              id="catalog-description"
+              rows={3}
+              disabled={!canEdit}
+              placeholder={t('admin.fields.catalog.description.placeholder')}
+              {...form.register('description')}
             />
-            <FieldDescription>{t('admin.fields.catalog.price_list.help')}</FieldDescription>
-            {canEdit && catalog.price_list_id && (
-              <div>
-                <Button
-                  type="button"
-                  size="sm"
-                  variant="outline"
-                  disabled={importMutation.isPending}
-                  onClick={() => importMutation.mutate()}
-                >
-                  {importMutation.isPending
-                    ? t('admin.actions.saving')
-                    : t('admin.catalogs.import_from_price_list')}
-                </Button>
-              </div>
-            )}
+            <FieldDescription>{t('admin.fields.catalog.description.help')}</FieldDescription>
           </Field>
 
           <Controller
@@ -302,25 +393,39 @@ function CatalogSettingsCard({
 const ASSIGNABLE_TYPES = ['company', 'customer_group'] as const
 type AssignableType = (typeof ASSIGNABLE_TYPES)[number]
 
-function CatalogAssignmentsCard({ catalog, canEdit }: { catalog: Catalog; canEdit: boolean }) {
+function CatalogAssignmentsCard({
+  form,
+  canEdit,
+}: {
+  form: UseFormReturn<CatalogFormValues>
+  canEdit: boolean
+}) {
   const { t } = useTranslation()
-  const confirm = useConfirm()
-  const unassignMutation = useUnassignCatalog(catalog.id)
   const [addOpen, setAddOpen] = useState(false)
+  const assignments: AssignmentEntry[] = form.watch('assignments') ?? []
 
-  const assignments = catalog.assignments ?? []
+  function update(next: AssignmentEntry[]) {
+    form.setValue('assignments', next, { shouldDirty: true })
+  }
 
-  async function handleUnassign(assignment: CatalogAssignment) {
-    const ok = await confirm({
-      title: t('admin.catalogs.assignments.remove_confirm.title'),
-      message: t('admin.catalogs.assignments.remove_confirm.message', {
-        name: assignment.assignable_name ?? assignment.assignable_id,
-      }),
-      variant: 'destructive',
-      confirmLabel: t('admin.actions.delete'),
-    })
-    if (!ok) return
-    await unassignMutation.mutateAsync(assignment.id).catch(() => undefined)
+  // Removal needs no confirm: nothing is written until Save, and Discard
+  // puts it back — the same reason the assortment rows drop theirs.
+  //
+  // A row that exists server-side is marked rather than dropped, so it stays
+  // visible struck through with an undo, like a product staged for removal.
+  // One the merchant only just added has nothing to undo back to, so it goes.
+  function remove(index: number) {
+    const entry = assignments[index]
+    if (!entry.id) {
+      update(assignments.filter((_, i) => i !== index))
+      return
+    }
+
+    update(assignments.map((row, i) => (i === index ? { ...row, removed: true } : row)))
+  }
+
+  function restore(index: number) {
+    update(assignments.map((row, i) => (i === index ? { ...row, removed: false } : row)))
   }
 
   return (
@@ -341,9 +446,20 @@ function CatalogAssignmentsCard({ catalog, canEdit }: { catalog: Catalog; canEdi
           <p className="text-muted-foreground text-sm">{t('admin.catalogs.assignments.empty')}</p>
         ) : (
           <div className="flex flex-col gap-2">
-            {assignments.map((assignment) => (
-              <div key={assignment.id} className="flex items-center justify-between gap-2">
-                <span className="flex min-w-0 items-center gap-2">
+            {assignments.map((assignment, index) => (
+              <div
+                key={`${assignment.assignable_type}-${assignment.assignable_id}`}
+                className={cn(
+                  'flex items-center justify-between gap-2',
+                  assignment.removed && 'opacity-60',
+                )}
+              >
+                <span
+                  className={cn(
+                    'flex min-w-0 items-center gap-2',
+                    assignment.removed && 'line-through',
+                  )}
+                >
                   <Badge variant="outline">
                     {t(`admin.catalogs.assignable_types.${assignment.assignable_type}`)}
                   </Badge>
@@ -351,24 +467,58 @@ function CatalogAssignmentsCard({ catalog, canEdit }: { catalog: Catalog; canEdi
                     {assignment.assignable_name ?? assignment.assignable_id}
                   </span>
                 </span>
-                {canEdit && (
-                  <Button
-                    variant="ghost"
-                    size="icon-xs"
-                    type="button"
-                    onClick={() => handleUnassign(assignment)}
-                    aria-label={t('admin.actions.delete')}
-                  >
-                    <TrashIcon className="size-4" />
-                  </Button>
-                )}
+                {canEdit &&
+                  (assignment.removed ? (
+                    <Button
+                      variant="ghost"
+                      size="icon-xs"
+                      type="button"
+                      onClick={() => restore(index)}
+                      aria-label={t('admin.actions.restore')}
+                    >
+                      <Undo2Icon className="size-4" />
+                    </Button>
+                  ) : (
+                    <Button
+                      variant="ghost"
+                      size="icon-xs"
+                      type="button"
+                      onClick={() => remove(index)}
+                      aria-label={t('admin.actions.remove')}
+                    >
+                      <TrashIcon className="size-4" />
+                    </Button>
+                  ))}
               </div>
             ))}
           </div>
         )}
       </CardContent>
 
-      {addOpen && <AssignCatalogDialog catalogId={catalog.id} open onOpenChange={setAddOpen} />}
+      {addOpen && (
+        <AssignCatalogDialog
+          open
+          onOpenChange={setAddOpen}
+          assigned={assignments}
+          onAdd={(entry) => {
+            // Re-picking an audience staged for withdrawal restores it: it
+            // is still assigned server-side, so adding a second row would
+            // render it twice and then re-create what the save just left in
+            // place.
+            const staged = assignments.findIndex(
+              (row) =>
+                row.assignable_type === entry.assignable_type &&
+                row.assignable_id === entry.assignable_id,
+            )
+            if (staged >= 0) {
+              restore(staged)
+              return
+            }
+
+            update([...assignments, entry])
+          }}
+        />
+      )}
     </Card>
   )
 }
@@ -396,18 +546,21 @@ function assignableSearch(type: AssignableType) {
 }
 
 function AssignCatalogDialog({
-  catalogId,
   open,
   onOpenChange,
+  assigned,
+  onAdd,
 }: {
-  catalogId: string
   open: boolean
   onOpenChange: (open: boolean) => void
+  /** Already staged, so the same audience cannot be added twice. */
+  assigned: AssignmentEntry[]
+  onAdd: (entry: AssignmentEntry) => void
 }) {
   const { t } = useTranslation()
-  const assignMutation = useAssignCatalog(catalogId)
   const [assignableType, setAssignableType] = useState<AssignableType>('company')
   const [assignableId, setAssignableId] = useState('')
+  const [assignableName, setAssignableName] = useState<string | null>(null)
 
   const typeOptions = ASSIGNABLE_TYPES.map((type) => ({
     value: type,
@@ -416,12 +569,24 @@ function AssignCatalogDialog({
 
   const { search, hydrate } = assignableSearch(assignableType)
 
-  async function handleSubmit() {
-    if (!assignableId) return
-    await assignMutation
-      .mutateAsync({ assignable_type: assignableType, assignable_id: assignableId })
-      .then(() => onOpenChange(false))
-      .catch(() => undefined)
+  // A row staged for withdrawal is not a duplicate — picking it again is how
+  // the merchant takes the removal back.
+  const duplicate = assigned.some(
+    (entry) =>
+      !entry.removed &&
+      entry.assignable_type === assignableType &&
+      entry.assignable_id === assignableId,
+  )
+
+  function handleSubmit() {
+    if (!assignableId || duplicate) return
+
+    onAdd({
+      assignable_type: assignableType,
+      assignable_id: assignableId,
+      assignable_name: assignableName,
+    })
+    onOpenChange(false)
   }
 
   return (
@@ -469,8 +634,16 @@ function AssignCatalogDialog({
                 placeholder={t('admin.catalogs.assignments.audience_placeholder')}
                 emptyText={t('admin.catalogs.assignments.audience_empty')}
                 value={assignableId || undefined}
-                onChange={(id) => setAssignableId(id ?? '')}
+                // The record, not just the id: a staged row has to render a
+                // name before the assignment exists server-side.
+                onChange={(id, record) => {
+                  setAssignableId(id ?? '')
+                  setAssignableName(record ? (record.name ?? record.email ?? null) : null)
+                }}
               />
+              {duplicate && (
+                <FieldError>{t('admin.catalogs.assignments.already_assigned')}</FieldError>
+              )}
               {assignableType === 'company' && (
                 <FieldDescription>
                   {t('admin.catalogs.assignments.company_subtree_help')}
@@ -480,20 +653,11 @@ function AssignCatalogDialog({
           </FieldGroup>
         </DialogBody>
         <DialogFooter>
-          <Button
-            type="button"
-            variant="outline"
-            onClick={() => onOpenChange(false)}
-            disabled={assignMutation.isPending}
-          >
+          <Button type="button" variant="outline" onClick={() => onOpenChange(false)}>
             {t('admin.actions.cancel')}
           </Button>
-          <Button
-            type="button"
-            disabled={assignMutation.isPending || !assignableId}
-            onClick={handleSubmit}
-          >
-            {assignMutation.isPending ? t('admin.actions.saving') : t('admin.actions.add')}
+          <Button type="button" disabled={!assignableId || duplicate} onClick={handleSubmit}>
+            {t('admin.actions.add')}
           </Button>
         </DialogFooter>
       </DialogContent>

@@ -9,6 +9,157 @@ RSpec.describe Spree::Api::V3::Admin::CatalogsController, type: :controller do
 
   before { request.headers.merge!(headers) }
 
+  # Standing up an agreement is one request — the catalog and the list it
+  # prices through (docs/plans/6.0-catalog-agreement-rework.md).
+  it 'writes and returns the description' do
+    patch :update, params: { id: catalog.prefixed_id, description: 'Negotiated 2026 terms' }, as: :json
+
+    expect(response).to have_http_status(:ok)
+    expect(json_response['description']).to eq('Negotiated 2026 terms')
+    expect(catalog.reload.description).to eq('Negotiated 2026 terms')
+  end
+
+  describe 'the inline price_list payload' do
+    it 'creates the catalog and its owned list together' do
+      post :create,
+           params: {
+             name: 'Wholesale tier',
+             price_list: { price_adjustment_percentage: '-15.0' }
+           },
+           as: :json
+
+      expect(response).to have_http_status(:created)
+
+      created = store.catalogs.find_by(name: 'Wholesale tier')
+      list = created.price_list
+      expect(list).to be_present
+      expect(list.price_adjustment_percentage).to eq(-15)
+      # Named after the catalog, since a merchant never sees it separately.
+      expect(list.name).to eq('Wholesale tier')
+      # Born active: the catalog's own flag already gates the agreement.
+      expect(list).to be_active
+    end
+
+    # A percentage plus a volume rule is an automatic volume discount, and
+    # both halves have to be settable in the one request that stands the
+    # agreement up (docs/plans/6.0-price-list-automatic-pricing.md).
+    it 'accepts the contextual rules that make automatic volume pricing work' do
+      post :create,
+           params: {
+             name: 'Bulk tier',
+             price_list: {
+               price_adjustment_percentage: '-10',
+               rules: [{ type: 'volume_rule', preferences: { min_quantity: 10 } }]
+             }
+           },
+           as: :json
+
+      expect(response).to have_http_status(:created)
+
+      list = store.catalogs.find_by(name: 'Bulk tier').price_list
+      rule = list.price_rules.sole
+      expect(rule).to be_a(Spree::PriceRules::VolumeRule)
+      expect(rule.preferred_min_quantity).to eq(10)
+    end
+
+    # Switching to hand-entered prices has to take the threshold with it.
+    # A rule left behind would gate the merchant's own amounts, and the card
+    # stops showing the field, so nothing would explain the missing discount.
+    it 'clears the volume rule when the agreement moves to fixed prices' do
+      post :create,
+           params: {
+             name: 'Switcher',
+             price_list: {
+               price_adjustment_percentage: '-10',
+               rules: [{ type: 'volume_rule', preferences: { min_quantity: 10 } }]
+             }
+           },
+           as: :json
+      created = store.catalogs.find_by(name: 'Switcher')
+      expect(created.price_list.price_rules.count).to eq(1)
+
+      patch :update,
+            params: { id: created.prefixed_id,
+                      price_list: { price_adjustment_percentage: nil, rules: [] } },
+            as: :json
+
+      expect(response).to have_http_status(:ok)
+      expect(created.price_list.reload.price_rules).to be_empty
+    end
+
+    it 'updates the owned list in place' do
+      post :create, params: { name: 'Tier', price_list: { price_adjustment_percentage: '-10' } }, as: :json
+      created = store.catalogs.find_by(name: 'Tier')
+      list_id = created.price_list.id
+
+      patch :update,
+            params: { id: created.prefixed_id, price_list: { price_adjustment_percentage: '-20' } },
+            as: :json
+
+      expect(response).to have_http_status(:ok)
+      expect(created.reload.price_list.id).to eq(list_id)
+      expect(created.price_list.price_adjustment_percentage).to eq(-20)
+    end
+
+    # A released list would price every shopper, since an owned list carries
+    # no rules — so removal takes the list with it.
+    it 'removes the owned list on an explicit null' do
+      post :create, params: { name: 'Tier', price_list: { price_adjustment_percentage: '-10' } }, as: :json
+      created = store.catalogs.find_by(name: 'Tier')
+      list_id = created.price_list.id
+
+      patch :update, params: { id: created.prefixed_id, price_list: nil }, as: :json
+
+      expect(response).to have_http_status(:ok)
+      expect(created.reload.price_list).to be_nil
+      expect(Spree::PriceList.where(id: list_id)).to be_empty
+    end
+
+    it 'leaves the list alone when the key is omitted' do
+      post :create, params: { name: 'Tier', price_list: { price_adjustment_percentage: '-10' } }, as: :json
+      created = store.catalogs.find_by(name: 'Tier')
+
+      patch :update, params: { id: created.prefixed_id, name: 'Renamed' }, as: :json
+
+      expect(created.reload.name).to eq('Renamed')
+      expect(created.price_list).to be_present
+    end
+
+    it 'refuses an invalid adjustment without creating the catalog' do
+      expect {
+        post :create,
+             params: { name: 'Bad tier', price_list: { price_adjustment_percentage: '-100' } },
+             as: :json
+      }.not_to change { store.catalogs.count }
+
+      expect(response).to have_http_status(:unprocessable_content)
+    end
+
+    it 'clears hand-entered amounts when the payload says to' do
+      post :create, params: { name: 'Tier', price_list: { name: 'Fixed' } }, as: :json
+      created = store.catalogs.find_by(name: 'Tier')
+      variant = create(:variant)
+      create(:price, variant: variant, currency: 'EUR', amount: 5, price_list: created.price_list)
+
+      patch :update,
+            params: { id: created.prefixed_id,
+                      price_list: { price_adjustment_percentage: '-15', prices: [] } },
+            as: :json
+
+      expect(response).to have_http_status(:ok)
+      expect(created.reload.price_list.prices.first.amount).to be_nil
+    end
+
+    it 'expands the owned list on read' do
+      post :create, params: { name: 'Tier', price_list: { price_adjustment_percentage: '-10' } }, as: :json
+      created = store.catalogs.find_by(name: 'Tier')
+
+      get :show, params: { id: created.prefixed_id, expand: 'price_list' }, as: :json
+
+      expect(json_response['price_list']['price_adjustment_percentage']).to eq('-10.0')
+    end
+  end
+
   describe 'GET #index' do
     it 'lists the store catalogs with product counts' do
       create(:catalog_product, catalog: catalog)
@@ -69,6 +220,94 @@ RSpec.describe Spree::Api::V3::Admin::CatalogsController, type: :controller do
       expect(response).to have_http_status(:unprocessable_content)
     end
   end
+
+  describe 'POST #create with nested sets' do
+    let!(:company) { create(:company, store: store) }
+
+    # The dashboard's create sheet shares the detail page's form, so it sends
+    # both keys on every create — empty when the merchant filled neither.
+    it 'accepts the sets as empty arrays' do
+      post :create, params: { name: 'Fresh', assignments: [], order_minimums: [] }, as: :json
+
+      expect(response).to have_http_status(:created)
+    end
+
+    it 'stands a catalog up with its audience and minimums in one request' do
+      post :create, params: {
+        name: 'Fresh',
+        assignments: [{ assignable_type: 'company', assignable_id: company.prefixed_id }],
+        order_minimums: [{ currency: 'USD', amount: '500' }]
+      }, as: :json
+
+      expect(response).to have_http_status(:created)
+      catalog = store.catalogs.find_by(name: 'Fresh')
+      expect(catalog.catalog_assignments.map(&:assignable)).to eq([company])
+      expect(catalog.order_minimums.pluck(:currency)).to eq(['USD'])
+    end
+  end
+
+  describe 'PATCH #update with nested sets' do
+    let!(:company) { create(:company, store: store) }
+    let!(:group) { create(:customer_group, store: store) }
+
+    it 'saves the audience and the minimums with the catalog' do
+      patch :update, params: {
+        id: catalog.prefixed_id,
+        name: 'Renamed',
+        assignments: [{ assignable_type: 'company', assignable_id: company.prefixed_id }],
+        order_minimums: [{ currency: 'USD', amount: '500' }]
+      }, as: :json
+
+      expect(response).to have_http_status(:ok)
+      expect(catalog.reload.name).to eq('Renamed')
+      expect(catalog.catalog_assignments.reload.map(&:assignable)).to eq([company])
+      expect(catalog.order_minimums.reload.pluck(:currency)).to eq(['USD'])
+    end
+
+    # Omitting a key says nothing; sending an empty array clears the set.
+    it 'leaves both sets alone when their keys are absent' do
+      catalog.catalog_assignments.create!(assignable: company)
+      create(:catalog_order_minimum, catalog: catalog, currency: 'USD')
+
+      patch :update, params: { id: catalog.prefixed_id, name: 'Renamed' }, as: :json
+
+      expect(catalog.catalog_assignments.reload.count).to eq(1)
+      expect(catalog.order_minimums.reload.count).to eq(1)
+    end
+
+    it 'clears a set sent as an empty array' do
+      catalog.catalog_assignments.create!(assignable: company)
+
+      patch :update, params: { id: catalog.prefixed_id, assignments: [] }, as: :json
+
+      expect(catalog.catalog_assignments.reload).to be_empty
+    end
+
+    # The whole agreement lands together or not at all.
+    it 'rolls the catalog back when a nested set is invalid' do
+      patch :update, params: {
+        id: catalog.prefixed_id,
+        name: 'Renamed',
+        order_minimums: [{ currency: 'USD', amount: '0' }]
+      }, as: :json
+
+      expect(response).to have_http_status(:unprocessable_content)
+      expect(catalog.reload.name).not_to eq('Renamed')
+      expect(catalog.order_minimums.reload).to be_empty
+    end
+
+    it 'is not found for an audience in another store' do
+      foreign = create(:company, store: create(:store))
+
+      patch :update, params: {
+        id: catalog.prefixed_id,
+        assignments: [{ assignable_type: 'company', assignable_id: foreign.prefixed_id }]
+      }, as: :json
+
+      expect(response).to have_http_status(:not_found)
+    end
+  end
+
 
   describe 'POST #assign' do
     it 'assigns the catalog to a company node' do

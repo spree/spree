@@ -108,7 +108,8 @@
           "title": "Retirer cette affectation ?"
         },
         "title": "Audiences",
-        "type_label": "Type d’audience"
+        "type_label": "Type d’audience",
+        "already_assigned": "Ce public est déjà associé à ce catalogue."
       },
       "create_description": "Un catalogue restreint ce qu’une audience voit et, via une liste de prix, ce qu’elle paie. Ajoutez ensuite produits et audiences.",
       "create_label": "Créer le catalogue",
@@ -116,13 +117,19 @@
         "message": "Cela supprime {{name}} et ses affectations. Les produits et listes de prix ne sont pas affectés.",
         "title": "Supprimer le catalogue ?"
       },
+      "detach_warning": "L’enregistrement supprimera la liste de prix de ce catalogue et les prix qu’elle contient. Cette audience paiera les prix normaux.",
       "detail": {
         "delete_label": "Supprimer le catalogue",
         "load_error": "Impossible de charger ce catalogue",
+        "pricing": "Tarification",
         "settings": "Catalogue"
       },
+      "discard_prices_warning": "Passer à un pourcentage supprimera les prix saisis pour ce catalogue. Ils ne pourront pas être récupérés.",
+      "edit_prices_after_save": "Enregistrez le catalogue, puis saisissez les prix de cette audience.",
+      "edit_prices_cta": "Saisir les prix",
+      "edit_prices_help": "Définissez le prix de chaque produit pour cette audience.",
+      "edit_prices_pending_save": "Définissez le prix de chaque produit pour cette audience. Enregistrez d'abord pour fixer le prix des produits que vous venez de modifier.",
       "empty": "Aucun catalogue pour le moment",
-      "import_from_price_list": "Importer les produits de la liste de prix",
       "messages": {
         "assigned": "Catalogue affecté",
         "created": "Catalogue créé",
@@ -150,7 +157,32 @@
         "title": "Produits"
       },
       "products_column": "Produits",
-      "search_placeholder": "Rechercher des catalogues"
+      "search_placeholder": "Rechercher des catalogues",
+      "terms": {
+        "title": "Conditions commerciales",
+        "description": "Les quantités que les acheteurs de cet accord doivent commander.",
+        "no_rule_placeholder": "Aucune règle",
+        "minimums_title": "Minimums de commande",
+        "minimums_description": "Le montant minimal d'une commande entière, par devise.",
+        "minimums_empty": "Aucun minimum de commande. Les acheteurs peuvent commander tout montant.",
+        "minimum_amount_label": "Montant minimal",
+        "validation": {
+          "positive_integer": "Saisissez un nombre entier supérieur à zéro, ou laissez vide.",
+          "currency_taken": "Cette devise a déjà un minimum.",
+          "positive_amount": "Saisissez un montant supérieur à zéro.",
+          "fix_terms": "Corrigez les règles de quantité signalées avant d’enregistrer."
+        },
+        "mixed": "Variable",
+        "inherits": "Par défaut",
+        "default_help": "S'applique à chaque produit de ce catalogue, sauf si un produit indique le sien dans la liste.",
+        "column_minimum": "Minimum",
+        "column_multiple": "Multiple",
+        "help": {
+          "minimum": "La plus petite quantité qu'un acheteur peut commander d'un produit. Une commande inférieure est refusée en indiquant les quantités valables les plus proches — rien n'est jamais arrondi.",
+          "multiple": "Le pas. Avec un multiple de 24, un acheteur commande 24, 48 ou 72 — jamais 30. Les paliers partent du minimum : un minimum de 50 par pas de 24 autorise 50, 74 et 98.",
+          "order_minimum": "Le montant minimal d'une commande entière, articles seuls — la livraison et la taxe n'y contribuent pas. Les acheteurs voient ce qu'il leur manque et la commande est refusée en dessous."
+        }
+      }
     },
     "categories": {
       "add_cta": "Nouvelle catégorie",
@@ -903,6 +935,11 @@
         }
       },
       "catalog": {
+        "description": {
+          "help": "Note interne — jamais montrée aux clients.",
+          "label": "Description",
+          "placeholder": "À quoi sert cet accord"
+        },
         "name": {
           "placeholder": "Grossiste"
         },
@@ -911,6 +948,13 @@
           "help": "Optionnel. Sans liste, le catalogue ne restreint que l’assortiment et les prix de base s’appliquent. Avec un assortiment vide, le catalogue ne fait que tarifer — rien n’est masqué ; importez ou ajoutez des produits pour restreindre ce que voit cette audience.",
           "label": "Liste de prix",
           "placeholder": "Prix de base"
+        },
+        "pricing_mode": {
+          "automatic": "Un pourcentage sur les prix de base",
+          "base": "Prix normaux",
+          "fixed": "Les prix que je saisis pour ce catalogue",
+          "help": "Ce que paie cette audience. La modification met à jour le catalogue et ses prix ensemble.",
+          "label": "Tarification"
         }
       },
       "certificate_document": {
@@ -1426,6 +1470,18 @@
         "label": "Code postal"
       },
       "price_list": {
+        "adjust_compare_at": {
+          "help": "Calculer le prix barré à partir du prix barré de base en appliquant le même pourcentage.",
+          "label": "Ajuster aussi les prix barrés"
+        },
+        "adjustment_direction": {
+          "decrease": "diminution",
+          "increase": "augmentation",
+          "label": "Sens"
+        },
+        "adjustment_magnitude": {
+          "label": "Pourcentage"
+        },
         "description": {
           "label": "Description",
           "placeholder": "Description interne facultative"
@@ -1439,6 +1495,11 @@
           "all": "Toutes les règles doivent correspondre",
           "any": "N'importe quelle règle peut correspondre",
           "label": "Règle de correspondance"
+        },
+        "minimum_quantity": {
+          "help": "N'appliquer la remise qu'à partir de ce nombre d'unités par ligne. Laissez vide pour tarifer toutes les quantités.",
+          "label": "Quantité minimale",
+          "placeholder": "10"
         },
         "name": {
           "help": "Libellé interne — jamais affiché aux clients.",
@@ -2107,7 +2168,28 @@
         },
         "width": {
           "label": "Largeur"
-        }
+        },
+        "minimum_order_quantity": {
+          "label": "Quantité minimale de commande",
+          "placeholder": "Aucun minimum",
+          "help": "La plus petite quantité qu'un acheteur peut commander. Laisser vide pour aucun minimum."
+        },
+        "order_multiple": {
+          "label": "Multiple de commande",
+          "placeholder": "Aucun multiple",
+          "help": "Chaque palier au-dessus du minimum. Laisser vide pour toute quantité."
+        },
+        "purchase_unit": {
+          "label": "Unité de vente",
+          "options": {
+            "unit": "Unités",
+            "carton": "Cartons"
+          }
+        },
+        "units_per_carton": {
+          "label": "Unités par carton"
+        },
+        "quantity_rule_invalid": "Saisissez un nombre entier supérieur à zéro, ou laissez vide."
       },
       "webhook_endpoint": {
         "active": {
@@ -2127,6 +2209,14 @@
           "label": "URL de destination",
           "placeholder": "https://example.com/webhooks"
         }
+      },
+      "minimum_order_quantity": {
+        "label": "Quantité minimale de commande",
+        "help": "La plus petite quantité qu'un acheteur peut commander. Laisser vide pour aucun minimum."
+      },
+      "order_multiple": {
+        "label": "Multiple de commande",
+        "help": "Chaque palier au-dessus du minimum. Laisser vide pour toute quantité."
       }
     },
     "gift_cards": {
@@ -2431,8 +2521,23 @@
           "percent_preview": "Remise estimée : {{amount}}",
           "target_field": "S'applique à",
           "target_order": "Commande entière",
+          "tax_exempt_certificate": "Attestation d'exonération — {{reason}} — {{number}}",
+          "tax_exempt_certificate_number": "Attestation d'exonération — {{number}}",
+          "taxability_reason": {
+            "customer_exempt": "Acheteur exonéré",
+            "export": "Exportation",
+            "intra_community_supply": "Livraison intra-communautaire",
+            "not_collecting": "Non collectée",
+            "not_subject_to_tax": "Hors champ",
+            "product_exempt": "Produit exonéré",
+            "reduced_rated": "Taux réduit",
+            "reverse_charge": "Autoliquidation",
+            "standard_rated": "Taux normal",
+            "zero_rated": "Taux zéro"
+          },
           "taxes": "Taxes",
           "taxes_empty": "Aucune taxe sur cette commande pour le moment.",
+          "taxes_unmatched": "Aucun taux de taxe ne correspond à cette adresse.",
           "value_field": "Valeur",
           "value_type_field": "Type",
           "value_type_flat": "Montant",
@@ -3794,7 +3899,10 @@
           "updated": "Liste de prix mise à jour"
         },
         "validation": {
-          "ends_after_starts": "Doit être postérieur à la date de début."
+          "adjustment_required": "Saisissez un pourcentage.",
+          "adjustment_too_deep": "Doit être inférieur à 100 %.",
+          "ends_after_starts": "Doit être postérieur à la date de début.",
+          "minimum_quantity_invalid": "Saisissez un nombre entier."
         }
       },
       "product_type_adds_options_one": "Ce type ajoute {{options}} aux nouveaux produits.",
@@ -3882,7 +3990,9 @@
           "customs": "Douane",
           "customs_help": "Utilisé sur les formulaires douaniers lorsque cet article franchit une frontière.",
           "identity": "Identité",
-          "tax_category_placeholder": "Hériter du produit"
+          "tax_category_placeholder": "Hériter du produit",
+          "ordering": "Commande B2B",
+          "ordering_help": "Combien un acheteur doit prendre. Le stock reste compté en unités."
         },
         "title": "Variantes",
         "variant_label": "Variante"

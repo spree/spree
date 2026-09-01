@@ -1,4 +1,5 @@
 import { i18n } from '../lib/i18n'
+import { normalizeQuantityRule } from './normalize-quantity'
 import type { MediaType, ProductFormValues, VariantFormValues } from './product-schema'
 import type { PanelMedia, PanelProduct, PanelVariant } from './product-types'
 
@@ -31,6 +32,10 @@ export function variantToFormValues(variant: PanelVariant, position: number): Va
     hs_code: variant.hs_code ?? null,
     country_of_origin: variant.country_of_origin ?? null,
     customs_description: variant.customs_description ?? null,
+    minimum_order_quantity: variant.minimum_order_quantity?.toString() ?? null,
+    order_multiple: variant.order_multiple?.toString() ?? null,
+    purchase_unit: variant.purchase_unit ?? null,
+    units_per_carton: variant.units_per_carton?.toString() ?? null,
     track_inventory: variant.track_inventory,
     preorderable: variant.preorderable ?? false,
     preorder_ships_at: variant.preorder_ships_at ?? null,
@@ -173,6 +178,10 @@ export function variantToWirePayload(v: VariantFormValues, index: number) {
     hs_code: v.hs_code ?? null,
     country_of_origin: v.country_of_origin ?? null,
     customs_description: v.customs_description ?? null,
+    minimum_order_quantity: normalizeQuantityRule(v.minimum_order_quantity),
+    order_multiple: normalizeQuantityRule(v.order_multiple),
+    purchase_unit: v.purchase_unit ?? null,
+    units_per_carton: normalizeQuantityRule(v.units_per_carton),
   }
   if (v.id) payload.id = v.id
   if (v.track_inventory != null) payload.track_inventory = v.track_inventory

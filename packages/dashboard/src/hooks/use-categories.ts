@@ -161,7 +161,12 @@ export function categoryAutocompleteProps(queryKey: string) {
   return {
     queryKey,
     search: (q: string) =>
-      adminClient.categories.list({ pretty_name_cont: q, limit: 20, sort: 'pretty_name' }),
+      adminClient.categories.list({
+        pretty_name_cont: q,
+        limit: 100,
+        sort: 'pretty_name',
+        fields: ['pretty_name', 'name'],
+      }),
     hydrate: (ids: string[]) => adminClient.categories.list({ id_in: ids, limit: ids.length }),
     getOptionLabel: (c: Category) => c.pretty_name ?? c.name ?? c.id,
     placeholder: i18n.t('admin.products.category_search_placeholder'),

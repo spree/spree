@@ -5,12 +5,15 @@ module Spree
         # Admin-only: catalogs are merchandising configuration with no
         # storefront surface — buyers see their effects, never the record.
         class CatalogSerializer < V3::BaseSerializer
-          typelize name: :string, active: :boolean, position: [:number, nullable: true],
+          typelize name: :string, description: 'string | null',
+                   active: :boolean, position: [:number, nullable: true],
                    price_list_id: [:string, nullable: true],
                    products_count: :number,
+                   minimum_order_quantity: ['number | null'], order_multiple: ['number | null'],
                    metadata: 'Record<string, unknown> | null'
 
-          attributes :name, :active, :position, :metadata,
+          attributes :name, :description, :active, :position, :metadata,
+                     :minimum_order_quantity, :order_multiple,
                      created_at: :iso8601, updated_at: :iso8601
 
           attribute :price_list_id do |catalog|
@@ -20,6 +23,19 @@ module Spree
           attribute :products_count do |catalog|
             catalog.catalog_products.size
           end
+
+          # Minimums are few (one per currency) and the card renders them
+          # inline, so they ride along rather than costing a second request.
+          many :order_minimums,
+               resource: proc { Spree.api.admin_catalog_order_minimum_serializer },
+               if: proc { expand?('order_minimums') }
+
+          # The owned list rides along so the agreement editor can render its
+          # pricing without a second request — the catalog page is where an
+          # owned list is edited (docs/plans/6.0-catalog-agreement-rework.md).
+          one :price_list,
+              resource: proc { Spree.api.admin_price_list_serializer },
+              if: proc { expand?('price_list') }
 
           many :catalog_assignments, key: :assignments,
                resource: proc { Spree.api.admin_catalog_assignment_serializer },

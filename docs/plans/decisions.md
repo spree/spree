@@ -4498,3 +4498,128 @@ keeps provider-free). It is a comparison figure, not a promise: the revert
 re-prices through the resolver and may land elsewhere. It required
 eager-loading variant prices in the orders controller's own `scope`, which
 bypasses `scope_includes` — 15 price queries per order page became 1.
+
+## 2026-08-31 — Percentage adjustment is a catalog-owned feature; a standalone list must have something to apply to
+
+Revises the same-day automatic-pricing decision, which put the ±% Pricing
+card on the standalone price-list page as well as the catalog page.
+
+**The finding.** A percentage list has no product scope of its own: it
+adjusts every variant it is asked about. On a catalog-owned list the
+catalog's assortment draws that line, because the audience only ever sees
+(and so is only ever priced on) what the assortment allows. On a standalone
+list nothing draws it. A rule-less standalone −15% list put the entire store
+on sale for every shopper — and adding products to that list, which the UI
+offered and counted, changed nothing at all. A control that looks like it
+scopes and does not is worse than a missing one.
+
+**Decision.** `price_adjustment_percentage` may only be set on a list a
+catalog owns (a `PriceList` validation; `Catalogs::SetPriceList` creates
+owned lists with their `catalog_id` already set). The standalone price-list
+editor no longer offers the percentage at all. **Open consequence for the plan's headline case** — automatic volume
+pricing, a `VolumeRule` plus a percentage: an owned list's own rules are not
+consulted by the resolver (`catalog_price_lists` selects on status and dates
+only, per the catalogs doc), so that combination has no working home until
+owned lists honour their *context* rules. Deciding that is the next call;
+recorded here rather than silently changing resolver semantics. A product-scoped store-wide percentage discount ("−15% on these 40
+SKUs for everyone") is a Promotion's job: promotions already have product
+rules and a percent action, and it is a campaign, not an agreement.
+
+**Also.** A standalone list with no rules, no catalog and no products is
+refused activation (`PriceLists::Activate`). Such a list applies to
+everyone and prices nothing; a draft may sit that way while it is built,
+but making it live is refused so that emptiness reads as the mistake it is.
+
+Rejected: letting the list's own products scope an automatic list, with
+"no products" meaning "everything". That reintroduces the exact leak the
+catalog rework closed — remove the last product and the whole store goes on
+sale — as a default rather than an accident.
+
+Plans amended: `6.0-price-list-automatic-pricing.md` (Key Decisions, API +
+dashboard), `6.0-catalog-agreement-rework.md` (unchanged in substance — the
+catalog page was always the card's home).
+
+## 2026-08-31 — An owned price list honours its contextual rules, and only those
+
+Settles the open consequence recorded in the catalog-owned-only decision
+earlier today, which left automatic volume pricing — the automatic-pricing
+plan's headline case — with no working home.
+
+**The finding.** The resolver reaches a catalog-owned list through the
+catalog and selects it on status and dates alone; `applicable?` is never
+called, so an owned list's rules are inert. Meanwhile a percentage may only
+live on an owned list. The two halves of "a `VolumeRule` at `min_quantity:
+10` plus −5%" were therefore in different rooms: the resolver specs prove
+it, testing volume pricing only on standalone lists with hand-entered rows
+and percentages only on rule-less owned lists.
+
+**Decision.** Owned lists consult their **contextual** rules and ignore
+their **audience** rules. The split is a class-level predicate on the rule,
+`PriceRule.contextual?`, beside the existing `geographic?` and
+`superseded?` — not a constant listing type names, since extensions
+register rule kinds of their own and a frozen list would silently exclude
+them. `VolumeRule` is contextual; every other core kind is not.
+
+The reasoning is that an owned list has already been matched on audience by
+the time the resolver holds it — the catalog assignment is what selected it,
+nearest node first. Re-asking a `CustomerGroupRule` there could only narrow
+an audience the agreement already decided, which is the second answer to a
+question the doctrine says one entity owns. Quantity is different in kind:
+no catalog assignment can express "when they buy ten", because it is a
+property of the purchase and not of the buyer. Dates and status already
+gate owned lists and are unchanged.
+
+**Consequences.** `Catalogs::SetPriceList` accepts `rules` on the inline
+payload, and the catalog editor offers the contextual kinds only — the
+picker filters on `contextual?` for an owned list exactly as it filters on
+`superseded?` elsewhere. An owned list carrying no rules behaves exactly as
+before, so nothing merchants have already set up moves.
+
+Rejected: consulting every rule on an owned list. That re-litigates the
+audience inside the agreement and would let a stale `CustomerGroupRule`
+silently switch a negotiated price off. Also rejected: a separate
+quantity-tier table on the list — price rules already express the
+predicate, and a second vocabulary for the same question is what the
+one-question-per-entity doctrine exists to prevent.
+
+Plans amended: `6.0-price-list-automatic-pricing.md` (Key Decisions,
+Resolution), `6.0-catalog-agreement-rework.md` (Constraints — owned lists
+are no longer rule-free).
+
+## 2026-08-31 — Quantity rules: the divisor ships early, completion refuses, the storefront follows
+
+Implementation of `6.0-b2b-quantity-rules.md` settled four questions the
+design left to the build.
+
+**`units_per_carton` moves to the quantity plan.** The carton purchase unit
+is a display vocabulary that needs a divisor, and the wholesale-shipping
+plan that owns the packing chain is design only. Rather than ship a flag
+that does nothing, the single column lands with the feature that first uses
+it; wholesale shipping still owns `carton_package_type_id`,
+`carton_weight` and `cartons_per_pallet` and must not re-declare it. The
+alternative — waiting — would have meant either no carton vocabulary in 6.0
+or pulling an unbuilt plan forward wholesale.
+
+**Completion refuses an out-of-rule line rather than warning.** Rules can
+change between add-to-cart and checkout (a company reassigned to a different
+tier, a catalog term edited), so every line is re-checked at completion
+through `Checkout::Requirements` with `completion: true` — the same place
+out-of-stock and discontinued lines are already refused — with the message
+naming the nearest valid quantities. Letting a below-MOQ wholesale order
+through is the five-figure surprise the feature exists to prevent.
+
+**The order minimum is advisory before completion and blocking at it.** The
+shortfall rides the requirements feed as an advisory requirement so the
+buyer reads "$180 to reach the $500 minimum" while they can still act, and
+becomes refusal only when completion is attempted. Staff-initiated carts
+(`created_by_id` present) skip both the line re-check and the minimum —
+the same exemption `po_number_required` takes, for the same reason: staff
+key in what the buyer actually negotiated.
+
+**The storefront ships separately.** The Next.js selector, carton display
+and shortfall banner land on `spree/storefront` afterwards. The Store API
+exposes the buyer's *resolved* rules on the variant and the minimum plus
+shortfall on the cart, so neither side blocks the other.
+
+Plans amended: `6.0-b2b-quantity-rules.md` (implementation started),
+`6.0-b2b-wholesale-shipping.md` (`units_per_carton` no longer its column).

@@ -108,7 +108,8 @@
           "title": "移除该分配？"
         },
         "title": "受众",
-        "type_label": "受众类型"
+        "type_label": "受众类型",
+        "already_assigned": "该受众已添加到此目录。"
       },
       "create_description": "目录限定某类受众能看到什么，并通过价格表决定其价格。创建后可添加产品和受众。",
       "create_label": "创建目录",
@@ -116,13 +117,19 @@
         "message": "这将删除 {{name}} 及其分配。产品和价格表不受影响。",
         "title": "删除目录？"
       },
+      "detach_warning": "保存后将删除此目录的价目表及其中的价格。此受众将支付正常价格。",
       "detail": {
         "delete_label": "删除目录",
         "load_error": "无法加载该目录",
+        "pricing": "定价",
         "settings": "目录"
       },
+      "discard_prices_warning": "切换为百分比将丢弃为此目录输入的价格，且无法恢复。",
+      "edit_prices_after_save": "保存目录后，再为此受众输入价格。",
+      "edit_prices_cta": "输入价格",
+      "edit_prices_help": "设置每件商品对此受众的价格。",
+      "edit_prices_pending_save": "设置每件商品对此受众的价格。请先保存，才能为刚刚更改的商品定价。",
       "empty": "暂无目录",
-      "import_from_price_list": "从价格表导入产品",
       "messages": {
         "assigned": "目录已分配",
         "created": "目录已创建",
@@ -150,7 +157,32 @@
         "title": "产品"
       },
       "products_column": "产品",
-      "search_placeholder": "搜索目录"
+      "search_placeholder": "搜索目录",
+      "terms": {
+        "title": "商务条款",
+        "description": "适用本协议的买家必须订购的数量。",
+        "no_rule_placeholder": "无规则",
+        "minimums_title": "订单最低金额",
+        "minimums_description": "整笔订单必须达到的最低金额，按币种设置。",
+        "minimums_empty": "没有订单最低金额。买家可以任意金额结账。",
+        "minimum_amount_label": "最低金额",
+        "validation": {
+          "positive_integer": "请输入大于零的整数，或留空。",
+          "currency_taken": "该币种已设置最低金额。",
+          "positive_amount": "请输入大于零的金额。",
+          "fix_terms": "保存前请修正标记的数量规则。"
+        },
+        "mixed": "不一致",
+        "inherits": "默认",
+        "default_help": "适用于本目录中的每个商品，除非某个商品在列表中另行设置。",
+        "column_minimum": "最小起订量",
+        "column_multiple": "订购倍数",
+        "help": {
+          "minimum": "买家单个商品可订购的最小数量。低于该数量的订单会被拒绝，并提示最接近的有效数量——系统绝不会自动向上取整。",
+          "multiple": "递增步长。倍数为 24 时，买家可订购 24、48 或 72——但不能是 30。步长从最小起订量开始计算：最小 50、步长 24 时，允许 50、74 和 98。",
+          "order_minimum": "整笔订单必须达到的最低金额，仅计算商品——运费和税费不计入。买家在选购时即可看到还差多少，未达到前无法结账。"
+        }
+      }
     },
     "categories": {
       "add_cta": "新建分类",
@@ -899,6 +931,11 @@
         }
       },
       "catalog": {
+        "description": {
+          "help": "内部备注 — 顾客永远不会看到。",
+          "label": "描述",
+          "placeholder": "此协议的用途"
+        },
         "name": {
           "placeholder": "批发"
         },
@@ -907,6 +944,13 @@
           "help": "可选。不设置价格表时，目录仅限定商品范围，按基础价格计价。商品范围为空时，目录只定价——不隐藏任何商品；导入或添加产品可限制该受众所见范围。",
           "label": "价格表",
           "placeholder": "基础价格"
+        },
+        "pricing_mode": {
+          "automatic": "在基准价格上按百分比调整",
+          "base": "正常价格",
+          "fixed": "我为此目录输入的价格",
+          "help": "此受众支付的价格。在此修改会同时更新目录及其价格。",
+          "label": "定价"
         }
       },
       "certificate_document": {
@@ -1422,6 +1466,18 @@
         "label": "邮政编码"
       },
       "price_list": {
+        "adjust_compare_at": {
+          "help": "按相同百分比从基准对比价格推算对比价格。",
+          "label": "同时调整对比价格"
+        },
+        "adjustment_direction": {
+          "decrease": "下调",
+          "increase": "上调",
+          "label": "方向"
+        },
+        "adjustment_magnitude": {
+          "label": "百分比"
+        },
         "description": {
           "label": "描述",
           "placeholder": "可选的内部描述"
@@ -1435,6 +1491,11 @@
           "all": "必须满足所有规则",
           "any": "满足任一规则即可",
           "label": "匹配策略"
+        },
+        "minimum_quantity": {
+          "help": "订单行达到此数量后才享受折扣。留空则对所有数量定价。",
+          "label": "最低数量",
+          "placeholder": "10"
         },
         "name": {
           "help": "内部标签 — 不会向客户展示。",
@@ -2103,7 +2164,28 @@
         },
         "width": {
           "label": "宽度"
-        }
+        },
+        "minimum_order_quantity": {
+          "label": "最小起订量",
+          "placeholder": "无最小值",
+          "help": "买家可以订购的最小数量。留空表示没有最小值。"
+        },
+        "order_multiple": {
+          "label": "订购倍数",
+          "placeholder": "无倍数",
+          "help": "在最小起订量之上的每一档增量。留空表示不限数量。"
+        },
+        "purchase_unit": {
+          "label": "销售单位",
+          "options": {
+            "unit": "件",
+            "carton": "箱"
+          }
+        },
+        "units_per_carton": {
+          "label": "每箱件数"
+        },
+        "quantity_rule_invalid": "请输入大于零的整数，或留空。"
       },
       "webhook_endpoint": {
         "active": {
@@ -2123,6 +2205,14 @@
           "label": "目标 URL",
           "placeholder": "https://example.com/webhooks"
         }
+      },
+      "minimum_order_quantity": {
+        "label": "最小起订量",
+        "help": "买家可以订购的最小数量。留空表示没有最小值。"
+      },
+      "order_multiple": {
+        "label": "订购倍数",
+        "help": "在最小起订量之上的每一档增量。留空表示不限数量。"
       }
     },
     "gift_cards": {
@@ -2425,8 +2515,23 @@
           "percent_preview": "预计折扣：{{amount}}",
           "target_field": "适用于",
           "target_order": "整个订单",
+          "tax_exempt_certificate": "{{reason}} 证明 {{number}}",
+          "tax_exempt_certificate_number": "证明 {{number}}",
+          "taxability_reason": {
+            "customer_exempt": "买方免税",
+            "export": "出口",
+            "intra_community_supply": "共同体内供应",
+            "not_collecting": "不征收",
+            "not_subject_to_tax": "不在征税范围",
+            "product_exempt": "产品免税",
+            "reduced_rated": "优惠税率",
+            "reverse_charge": "反向征收",
+            "standard_rated": "标准税率",
+            "zero_rated": "零税率"
+          },
           "taxes": "税费",
           "taxes_empty": "该订单暂无税费。",
+          "taxes_unmatched": "没有税率匹配该地址。",
           "value_field": "数值",
           "value_type_field": "类型",
           "value_type_flat": "金额",
@@ -3786,7 +3891,10 @@
           "updated": "价目表已更新"
         },
         "validation": {
-          "ends_after_starts": "必须晚于开始日期。"
+          "adjustment_required": "请输入百分比。",
+          "adjustment_too_deep": "必须小于 100%。",
+          "ends_after_starts": "必须晚于开始日期。",
+          "minimum_quantity_invalid": "请输入整数。"
         }
       },
       "product_type_adds_options_one": "此类型会为新商品添加{{options}}。",
@@ -3874,7 +3982,9 @@
           "customs": "海关",
           "customs_help": "当该商品跨境运输时用于海关申报单。",
           "identity": "标识",
-          "tax_category_placeholder": "继承自商品"
+          "tax_category_placeholder": "继承自商品",
+          "ordering": "B2B 订购",
+          "ordering_help": "买家必须订购的数量。库存仍以件计算。"
         },
         "title": "变体",
         "variant_label": "变体"

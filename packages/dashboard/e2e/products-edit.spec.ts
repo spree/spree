@@ -13,6 +13,73 @@ test.describe('product edit', () => {
     await expect(page.getByLabel(/^name$/i)).toHaveValue(name)
   })
 
+  test('reflects list, quote and link formatting in the description editor', async ({ page }) => {
+    const creds = await login(page)
+    const name = `E2E Product Editor Styles ${Date.now()}`
+
+    await createProduct(page, creds.store_id, name)
+
+    const description = page.locator('#product-description')
+    await typeDescription(page, 'Formatted line')
+
+    const bulletBtn = page.getByRole('button', { name: /^bullet list$/i })
+    await bulletBtn.click()
+    const bulletList = description.locator('ul')
+    await expect(bulletList).toBeVisible()
+    await expect(bulletList).toHaveCSS('list-style-type', 'disc')
+    await expect(bulletBtn).toHaveAttribute('aria-pressed', 'true')
+    await bulletBtn.click()
+
+    const orderedBtn = page.getByRole('button', { name: /^ordered list$/i })
+    await orderedBtn.click()
+    const orderedList = description.locator('ol')
+    await expect(orderedList).toBeVisible()
+    await expect(orderedList).toHaveCSS('list-style-type', 'decimal')
+    await expect(orderedBtn).toHaveAttribute('aria-pressed', 'true')
+    await orderedBtn.click()
+
+    const quoteBtn = page.getByRole('button', { name: /^blockquote$/i })
+    await quoteBtn.click()
+    const quote = description.locator('blockquote')
+    await expect(quote).toBeVisible()
+    await expect(quote).toHaveCSS('border-inline-start-width', '3px')
+    await expect(quoteBtn).toHaveAttribute('aria-pressed', 'true')
+
+    await quote.click({ clickCount: 3 })
+    page.once('dialog', (dialog) => dialog.accept('https://example.com'))
+    await page.getByRole('button', { name: /^link$/i }).click()
+    const link = description.locator('a[href="https://example.com"]')
+    await expect(link).toBeVisible()
+    await expect(link).toHaveCSS('text-decoration-line', 'underline')
+    await expect(page.getByRole('button', { name: /^link$/i })).toHaveAttribute(
+      'aria-pressed',
+      'true',
+    )
+  })
+
+  test('cmd+b bolds description text without collapsing the sidebar', async ({ page }) => {
+    const creds = await login(page)
+    const name = `E2E Product Editor Bold ${Date.now()}`
+
+    await createProduct(page, creds.store_id, name)
+
+    const sidebar = page.locator('[data-slot="sidebar"][data-state]').first()
+    await expect(sidebar).toHaveAttribute('data-state', 'expanded')
+
+    await typeDescription(page, 'Bold this')
+    await page.keyboard.press('ControlOrMeta+A')
+    await page.keyboard.press('ControlOrMeta+B')
+
+    const boldText = page.locator('#product-description strong')
+    await expect(boldText).toHaveText('Bold this')
+    await boldText.click()
+    await expect(page.getByRole('button', { name: /^bold$/i })).toHaveAttribute(
+      'aria-pressed',
+      'true',
+    )
+    await expect(sidebar).toHaveAttribute('data-state', 'expanded')
+  })
+
   test('preserves multi-paragraph description formatting across reload', async ({ page }) => {
     const creds = await login(page)
     const name = `E2E Product Rich Text ${Date.now()}`

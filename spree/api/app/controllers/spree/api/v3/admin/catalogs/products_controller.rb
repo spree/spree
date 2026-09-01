@@ -8,17 +8,17 @@ module Spree
           # Spree::Api::V3::Admin::ProductMembership). A catalog decides what
           # a buyer sees, never the order they see it in, so membership
           # carries no position and listing is ordered by name.
-          class ProductsController < ResourceController
+          class ProductsController < BaseController
             include Spree::Api::V3::Admin::ProductMembership
 
-            scoped_resource :products
+            before_action :authorize_parent_access!
 
             protected
 
             def scope
               product_scope.
                 joins(:catalog_products).
-                where(Spree::CatalogProduct.table_name => { catalog_id: @parent_catalog.id }).
+                where(Spree::CatalogProduct.table_name => { catalog_id: @catalog.id }).
                 order(:name)
             end
 
@@ -30,20 +30,13 @@ module Spree
             end
 
             def add_member_products(products)
-              @parent_catalog.add_products(products.map(&:id))
+              @catalog.add_products(products.map(&:id))
             end
 
-            # One statement — the join rows carry no callbacks worth firing.
+            # Through the model, so an owned price list drops the rows it
+            # held for these products along with them.
             def remove_member_products(products)
-              @parent_catalog.catalog_products.where(product_id: products.map(&:id)).delete_all
-              @parent_catalog.touch
-            end
-
-            def set_parent
-              @parent_catalog = current_store.catalogs.
-                                accessible_by(current_ability, parent_ability_action).
-                                find_by_prefix_id!(params[:catalog_id])
-              authorize_parent!(@parent_catalog)
+              @catalog.remove_products(products.map(&:id))
             end
           end
         end

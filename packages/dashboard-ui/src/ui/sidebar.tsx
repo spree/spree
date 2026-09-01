@@ -32,6 +32,12 @@ export const mobileDrawerClassName =
 const SIDEBAR_WIDTH_ICON = '59px'
 const SIDEBAR_KEYBOARD_SHORTCUT = 'b'
 
+function isEditableKeyboardTarget(target: EventTarget | null): boolean {
+  if (!(target instanceof HTMLElement)) return false
+  if (target.isContentEditable) return true
+  return Boolean(target.closest('input, textarea, select'))
+}
+
 type SidebarContextProps = {
   state: 'expanded' | 'collapsed'
   open: boolean
@@ -120,13 +126,17 @@ function SidebarProvider({
     return isMobile ? setOpenMobile((open) => !open) : setOpen((open) => !open)
   }, [isMobile, setOpen, setOpenMobile])
 
-  // Adds a keyboard shortcut to toggle the sidebar.
+  // Cmd/Ctrl+B is also "bold" in every text field. Skip the shortcut when
+  // the merchant is typing so it cannot collapse the nav out from under
+  // a rich-text editor (or steal the keystroke from an input).
   React.useEffect(() => {
     const handleKeyDown = (event: KeyboardEvent) => {
-      if (event.key === SIDEBAR_KEYBOARD_SHORTCUT && (event.metaKey || event.ctrlKey)) {
-        event.preventDefault()
-        toggleSidebar()
-      }
+      if (event.key !== SIDEBAR_KEYBOARD_SHORTCUT || !(event.metaKey || event.ctrlKey)) return
+      if (event.defaultPrevented) return
+      if (isEditableKeyboardTarget(event.target)) return
+
+      event.preventDefault()
+      toggleSidebar()
     }
 
     window.addEventListener('keydown', handleKeyDown)

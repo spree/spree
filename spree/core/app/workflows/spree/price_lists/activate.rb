@@ -11,6 +11,7 @@ module Spree
       def perform(price_list:)
         super
 
+        step :require_something_to_apply_to
         run_hooks :validate
 
         ApplicationRecord.transaction do
@@ -22,6 +23,19 @@ module Spree
       end
 
       private
+
+      # A list with no rules, no catalog and no products applies to everyone
+      # and prices nothing. A draft may sit in that state while it is built;
+      # making it live is refused so that emptiness reads as the mistake it
+      # is rather than silently going nowhere.
+      def require_something_to_apply_to
+        return if price_list.catalog_id.present?
+        return if price_list.price_rules.any?
+        return if price_list.prices.exists?
+
+        price_list.errors.add(:base, :nothing_to_apply_to)
+        failure(price_list)
+      end
 
       def scheduled?
         price_list.starts_at.present? && price_list.starts_at.future?

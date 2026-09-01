@@ -16,6 +16,12 @@ module Spree
       def self.description
         'Apply pricing based on quantity purchased'
       end
+
+      # Quantity is a fact about the purchase, not the buyer, so this rule
+      # still narrows a list its catalog has already matched on audience.
+      def self.contextual?
+        true
+      end
     end
   end
 end

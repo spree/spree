@@ -8,7 +8,8 @@ module Spree
         class CatalogsController < ResourceController
           scoped_resource :products
 
-          before_action :set_resource, only: [:show, :update, :destroy, :assign, :import_products]
+          before_action :set_resource,
+                        only: [:show, :update, :destroy, :assign, :import_products]
 
           # POST /api/v3/admin/catalogs/:id/import_products — copies the
           # attached price list's products into the assortment. Explicit by
@@ -43,6 +44,7 @@ module Spree
             end
           end
 
+
           protected
 
           def model_class
@@ -58,12 +60,51 @@ module Spree
           end
 
           def collection_includes
-            [:catalog_products, :price_list]
+            [:catalog_products, :price_list, :order_minimums]
           end
 
+          def create_workflow
+            Spree.catalog_create_workflow
+          end
+
+          def update_workflow
+            Spree.catalog_update_workflow
+          end
+
+          # `price_list` is an inline payload rather than a reference: a
+          # catalog and the list it prices through are stood up in one
+          # request (docs/plans/6.0-catalog-agreement-rework.md). Sending it
+          # as `null` detaches the list the catalog owns; omitting the key
+          # leaves it alone.
           def permitted_params
             permitted = params.permit(*model_additional_permitted_attributes,
-                                      :name, :active, :position, :price_list_id, metadata: {})
+                                      :name, :description, :active, :position, :price_list_id,
+                                      :minimum_order_quantity, :order_multiple,
+                                      metadata: {},
+                                      # Small bounded sets, saved with the
+                                      # catalog so the whole agreement lands
+                                      # in one transaction. Per-product terms
+                                      # stay their own endpoint — an
+                                      # agreement may name thousands of them.
+                                      assignments: [:assignable_type, :assignable_id],
+                                      order_minimums: [:currency, :amount],
+                                      price_list: [
+                                        :name, :description, :status, :match_policy,
+                                        :starts_at, :ends_at,
+                                        :price_adjustment_percentage, :adjust_compare_at,
+                                        # Contextual rules only in practice — a
+                                        # VolumeRule is what turns a percentage
+                                        # into automatic volume pricing. Audience
+                                        # rules on an owned list are inert, since
+                                        # the catalog assignment already decided
+                                        # the audience.
+                                        { rules: [:id, :type, { preferences: {} }] },
+                                        # An empty array clears the hand-entered
+                                        # amounts — what switching to a
+                                        # percentage sends.
+                                        { prices: [:id, :variant_id, :currency, :amount,
+                                                   :compare_at_amount] }
+                                      ])
             if permitted.key?(:price_list_id)
               permitted[:price_list_id] =
                 if permitted[:price_list_id].present?
@@ -72,6 +113,18 @@ module Spree
                   nil
                 end
             end
+            # `permit` drops an explicit null, but detaching has to be
+            # distinguishable from saying nothing.
+            permitted[:price_list] = nil if params.key?(:price_list) && params[:price_list].nil?
+
+            # Resolved here rather than in the workflow: each audience goes
+            # through the store AND through what this caller may see, so a
+            # nested write cannot reach one the dedicated endpoint could not.
+            if permitted.key?(:assignments)
+              permitted[:assignables] = requested_assignables
+              permitted.delete(:assignments)
+            end
+
             permitted
           end
 
@@ -89,12 +142,26 @@ module Spree
           # to one it cannot read, and an unreadable record is not-found
           # rather than refused so its existence does not leak.
           def find_assignable
-            scope_builder = ASSIGNABLE_SCOPES[params.require(:assignable_type).to_s]
+            resolve_assignable(params.require(:assignable_type), params.require(:assignable_id))
+          end
+
+          # Each entry resolves the same way a single assign does — through
+          # the store AND through what this caller may see — so a set write
+          # cannot reach an audience the one-at-a-time path could not.
+          def requested_assignables
+            Array(params[:assignments]).map do |entry|
+              permitted = entry.permit(:assignable_type, :assignable_id)
+              resolve_assignable(permitted.require(:assignable_type), permitted.require(:assignable_id))
+            end
+          end
+
+          def resolve_assignable(type, id)
+            scope_builder = ASSIGNABLE_SCOPES[type.to_s]
             raise ActiveRecord::RecordNotFound if scope_builder.nil?
 
             scope_builder.call(current_store).
               accessible_by(current_ability, :show).
-              find_by_prefix_id!(params.require(:assignable_id))
+              find_by_prefix_id!(id)
           end
         end
       end

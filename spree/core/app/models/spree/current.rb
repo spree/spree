@@ -4,7 +4,7 @@ module Spree
   # All attributes are automatically reset between requests by Rails.
   # Fallback chains ensure sensible defaults when attributes are not explicitly set.
   class Current < ::ActiveSupport::CurrentAttributes
-    attribute :store, :channel, :market, :currency, :locale, :content_locale, :tax_country, :price_lists, :applicable_catalogs, :global_pricing_context, :provider_cache, :integrations
+    attribute :store, :channel, :market, :currency, :locale, :content_locale, :tax_country, :price_lists, :applicable_catalogs, :quantity_rules_resolvers, :standing_companies, :global_pricing_context, :provider_cache, :integrations
 
     # Scratch space for provider strategies to memoize a call across the
     # request — part of the delivery rate provider contract (nothing in core
@@ -104,6 +104,12 @@ module Spree
     # @return [Array<Spree::Catalog>]
     def catalogs_for(company: nil, user: nil, channel: nil)
       channel ||= self.channel
+      # Normalized before the key is built, not just before the query: the
+      # key is an id, so an admin and a customer sharing one would otherwise
+      # share an entry and whichever resolved first would decide for both.
+      # Only a customer has customer-group catalogs to resolve.
+      user = nil unless user.is_a?(Spree.customer_class)
+
       key = [store&.id, company&.id, user&.id, channel&.id]
       applicable_catalogs[key] ||= Spree::Catalog.for_context(
         store: store, company: company, user: user, channel: channel
@@ -113,6 +119,66 @@ module Spree
     # @return [Hash]
     def applicable_catalogs
       super || (self.applicable_catalogs = {})
+    end
+
+    # The quantity-rule resolver for a buyer in this request, keyed the same
+    # way their catalogs are.
+    #
+    # Request-scoped rather than per-caller because a serializer is built
+    # fresh for every variant on a listing: a per-instance memo would reload
+    # and re-hash each catalog's override rows once per row on the page.
+    #
+    # @param company [Spree::Company, nil]
+    # @param user [Object, nil]
+    # @param channel [Spree::Channel, nil]
+    # @return [Spree::Catalogs::ResolveQuantityRules]
+    def quantity_rules_resolver_for(company: nil, user: nil, channel: nil)
+      channel ||= self.channel
+      key = [store&.id, company&.id, user&.id, channel&.id]
+      quantity_rules_resolvers[key] ||= Spree::Catalogs::ResolveQuantityRules.new(
+        catalogs_for(company: company, user: user, channel: channel)
+      )
+    end
+
+    # @return [Hash]
+    def quantity_rules_resolvers
+      super || (self.quantity_rules_resolvers = {})
+    end
+
+    # The company a customer unambiguously buys for in this request. Resolved
+    # once: catalog resolution asks for it on every entry, and a product
+    # listing prices every variant through that path — unmemoized it was two
+    # queries per row.
+    #
+    # @param customer [Object, nil]
+    # @return [Spree::Company, nil]
+    def standing_company_for(customer)
+      return nil if store.nil?
+      # Checked before the cache, not only inside the lookup: the key is an
+      # id, so an admin and a customer sharing one would otherwise share an
+      # entry — whichever resolved first deciding for both.
+      return nil unless customer.is_a?(Spree.customer_class)
+
+      key = [store.id, customer.id]
+      return standing_companies[key] if standing_companies.key?(key)
+
+      standing_companies[key] = Spree::Company.sole_standing_for(store: store, customer: customer)
+    end
+
+    # @return [Hash]
+    def standing_companies
+      super || (self.standing_companies = {})
+    end
+
+    # Drops everything derived from the catalog set, so a write in this
+    # request is not read back through a memo it has already superseded.
+    # One call rather than a list every caller has to keep in step.
+    # @return [void]
+    def reset_catalog_memos
+      self.applicable_catalogs = nil
+      self.quantity_rules_resolvers = nil
+      self.standing_companies = nil
+      self.price_lists = nil
     end
 
     # Returns the current global pricing context, built from store, currency, country, and market.

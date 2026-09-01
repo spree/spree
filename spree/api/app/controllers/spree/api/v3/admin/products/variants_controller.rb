@@ -52,6 +52,7 @@ module Spree
                 :cost_price, :cost_currency,
                 :weight, :height, :width, :depth, :weight_unit, :dimensions_unit,
                 :hs_code, :country_of_origin, :customs_description,
+                :minimum_order_quantity, :order_multiple, :purchase_unit, :units_per_carton,
                 :seller_id, :delivery_profile_id,
                 :track_inventory, :preorderable, :preorder_ships_at, :backorder_limit, :tax_category_id, :position,
                 options: [:name, :value],

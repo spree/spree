@@ -12,6 +12,113 @@ describe Spree::PriceList, type: :model do
     end
   end
 
+  # A percentage adjustment makes the list derive prices from base prices
+  # (docs/plans/6.0-price-list-automatic-pricing.md).
+  describe 'automatic pricing' do
+    it 'is off unless a percentage is set' do
+      expect(build(:price_list)).not_to be_automatic_pricing
+      expect(build(:price_list, price_adjustment_percentage: -15)).to be_automatic_pricing
+    end
+
+    # Zero would derive base × 1.0 — every price stamped with this list's id
+    # and not one of them changed.
+    it 'treats a zero percentage as no adjustment at all' do
+      expect(build(:price_list, price_adjustment_percentage: 0)).not_to be_automatic_pricing
+    end
+
+    # The column is decimal(6,3); anything larger would be accepted here and
+    # fail on the way to the database.
+    it 'refuses a markup the column cannot hold' do
+      catalog = create(:catalog, store: @default_store)
+      owned = ->(pct) { build(:price_list, store: @default_store, catalog: catalog, price_adjustment_percentage: pct) }
+
+      expect(owned.call(1000)).not_to be_valid
+      expect(owned.call(999.999)).to be_valid
+    end
+
+    it 'turns the percentage into the factor a base price is multiplied by' do
+      expect(build(:price_list, price_adjustment_percentage: -15).adjustment_factor).to eq(0.85)
+      expect(build(:price_list, price_adjustment_percentage: 10).adjustment_factor).to eq(1.1)
+      expect(build(:price_list).adjustment_factor).to be_nil
+    end
+
+    # At -100 every derived price is zero; below it the arithmetic goes
+    # negative. A markup has no ceiling.
+    it 'refuses a discount of 100% or deeper' do
+      catalog = create(:catalog, store: @default_store)
+      owned = ->(pct) { build(:price_list, store: @default_store, catalog: catalog, price_adjustment_percentage: pct) }
+
+      expect(owned.call(-100)).not_to be_valid
+      expect(owned.call(-100.001)).not_to be_valid
+      expect(owned.call(-99.999)).to be_valid
+      expect(owned.call(500)).to be_valid
+    end
+
+    # A percentage has no product scope of its own; the owning catalog's
+    # assortment is what gives it one. Standalone, it would put the whole
+    # store on sale while the list's own products changed nothing.
+    it 'is only valid on a list a catalog owns' do
+      expect(build(:price_list, price_adjustment_percentage: -15)).not_to be_valid
+
+      catalog = create(:catalog, store: @default_store)
+      expect(build(:price_list, store: @default_store, catalog: catalog, price_adjustment_percentage: -15)).to be_valid
+    end
+  end
+
+  # An owned list is selected by its catalog, which already answered the
+  # audience question — so only rules about the purchase itself still have
+  # anything to say (docs/plans/6.0-price-list-automatic-pricing.md).
+  describe '#contextual_rules_applicable?' do
+    let(:catalog) { create(:catalog, store: @default_store) }
+    let(:price_list) { create(:price_list, :active, store: @default_store, catalog: catalog) }
+
+    def context_with(quantity:)
+      Spree::Pricing::Context.new(currency: 'USD', store: @default_store, quantity: quantity)
+    end
+
+    it 'applies when the list carries no rules at all' do
+      expect(price_list.contextual_rules_applicable?(context_with(quantity: 1))).to be true
+    end
+
+    it 'asks a volume rule about the quantity being bought' do
+      create(:volume_price_rule, price_list: price_list, min_quantity: 10)
+      price_list.reload
+
+      expect(price_list.contextual_rules_applicable?(context_with(quantity: 10))).to be true
+      expect(price_list.contextual_rules_applicable?(context_with(quantity: 9))).to be false
+    end
+
+    # Re-asking the audience inside the agreement would let a stale rule
+    # switch off a price the catalog assignment already granted.
+    it 'ignores audience rules entirely' do
+      create(:customer_group_price_rule, price_list: price_list,
+                                         customer_group_ids: [create(:customer_group, store: @default_store).id])
+      price_list.reload
+
+      expect(price_list.contextual_rules_applicable?(context_with(quantity: 1))).to be true
+    end
+
+    it 'honours the match policy across contextual rules only' do
+      create(:volume_price_rule, price_list: price_list, min_quantity: 10)
+      create(:customer_group_price_rule, price_list: price_list,
+                                         customer_group_ids: [create(:customer_group, store: @default_store).id])
+      price_list.update!(match_policy: 'all')
+      price_list.reload
+
+      # The unsatisfied audience rule does not drag the 'all' policy down.
+      expect(price_list.contextual_rules_applicable?(context_with(quantity: 10))).to be true
+    end
+  end
+
+  describe '.contextual?' do
+    it 'is true for the volume rule and false for the audience kinds' do
+      expect(Spree::PriceRules::VolumeRule).to be_contextual
+      expect(Spree::PriceRules::CustomerGroupRule).not_to be_contextual
+      expect(Spree::PriceRules::ChannelRule).not_to be_contextual
+      expect(Spree::PriceRules::MarketRule).not_to be_contextual
+    end
+  end
+
   # The catalog binding: nil = standalone (rule-matched), set = owned by
   # exactly one catalog and reached only through it
   # (docs/plans/6.0-catalog-agreement-rework.md).

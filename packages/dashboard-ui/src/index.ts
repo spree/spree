@@ -69,6 +69,7 @@ export * from './spree/theme-toggle'
 // ---------------------------------------------------------------------------
 // UI primitives (shadcn) — see ./ui/*
 // ---------------------------------------------------------------------------
+export * from './ui/accordion'
 export * from './ui/alert'
 export * from './ui/attachment'
 export * from './ui/avatar'

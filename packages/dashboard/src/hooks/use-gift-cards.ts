@@ -86,7 +86,12 @@ export function giftCardBatchAutocompleteProps(queryKey: string) {
   return {
     queryKey,
     search: (q: string) =>
-      adminClient.giftCardBatches.list({ prefix_cont: q, limit: 20, sort: '-created_at' }),
+      adminClient.giftCardBatches.list({
+        prefix_cont: q,
+        limit: 100,
+        sort: '-created_at',
+        fields: ['prefix'],
+      }),
     hydrate: (ids: string[]) => adminClient.giftCardBatches.list({ id_in: ids, limit: ids.length }),
     getOptionLabel: (b: GiftCardBatch) => b.prefix ?? b.id,
     placeholder: i18n.t('admin.gift_cards.batch_autocomplete.placeholder'),

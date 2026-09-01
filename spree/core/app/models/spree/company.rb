@@ -103,6 +103,46 @@ module Spree
     self.whitelisted_ransackable_attributes = %w[name kind parent_id po_number_required]
     self.whitelisted_ransackable_associations = %w[parent children memberships external_references]
 
+    # The node a buyer browses and buys as when they name none: the single
+    # node they hold a membership on. Nil when they hold none, or several —
+    # guessing would invoice one business for another's purchase.
+    #
+    # Deliberately the membership node rather than +Customer#company_standing+,
+    # which expands to the whole subtree: a buyer with one membership over a
+    # parent with three divisions has standing for four nodes but is still
+    # unambiguous, and counting the expansion would refuse to resolve. Where
+    # standing covers several nodes the buyer picks one on the cart, and
+    # catalogs follow that choice — so what they browse, what they are charged
+    # and how much they must take all agree.
+    #
+    # Scoped to the store: customers are global, so without it a buyer who is
+    # a member at a company in another store would resolve to that business
+    # here, and its agreement would decide this sale.
+    #
+    # @param store [Spree::Store, nil]
+    # @param customer [Object, nil]
+    # @return [Spree::Company, nil]
+    def self.sole_standing_for(store:, customer:)
+      return nil if store.nil?
+      # Matching a bare id would resolve a company for anything answering
+      # #id — an admin user sharing an id with a customer, a value object off
+      # a request — so the type is checked rather than assumed. Standing is a
+      # customer's fact about a business, and nothing else has it.
+      return nil unless customer.is_a?(Spree.customer_class)
+
+      # Two rows at most: the question is only "exactly one, or not". Joined
+      # rather than read off each membership, because `joins` does not
+      # populate the association and a product listing takes this path.
+      companies = where(store_id: store.id).
+                  joins(:memberships).
+                  where(Spree::CompanyMembership.table_name => { customer_id: customer.id }).
+                  distinct.
+                  limit(2).
+                  to_a
+
+      companies.one? ? companies.first : nil
+    end
+
     # @return [Array<Spree::Company>] parent chain, nearest first (leaf → root)
     def ancestors
       chain = []
