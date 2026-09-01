@@ -31,22 +31,25 @@ RSpec.describe SpreeAvalara::ItemPresenter do
       expect(present(line_item)[:taxIncluded]).to be(false)
     end
 
-    it 'sends the item tax category code when the merchant classified it' do
+    # Classification lives on the variant; the line copies it on every save.
+    it 'sends the item tax category code when the merchant classified the product' do
       category = create(:tax_category, store: @default_store, tax_code: 'PC040100')
-      line_item.update!(tax_category: category)
+      line_item.variant.update!(tax_category: category)
+      line_item.save!
 
-      expect(present(line_item)[:taxCode]).to eq('PC040100')
+      expect(present(line_item.reload)[:taxCode]).to eq('PC040100')
     end
 
     it "falls back to the store default category's code" do
       create(:tax_category, store: @default_store, tax_code: 'PC030000', is_default: true)
-      line_item.update!(tax_category: nil)
 
       expect(present(line_item)[:taxCode]).to eq('PC030000')
     end
 
-    it 'falls back to generic tangible goods when nothing is classified' do
-      line_item.update!(tax_category: nil)
+    # A category with no Avalara code classifies nothing as far as AvaTax is
+    # concerned, which is the common case for a store that never set one.
+    it 'falls back to generic tangible goods when no category carries a code' do
+      expect(line_item.tax_category&.tax_code).to be_blank
 
       expect(present(line_item)[:taxCode]).to eq(described_class::DEFAULT_TAX_CODE)
     end

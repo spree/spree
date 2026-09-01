@@ -12,6 +12,7 @@ module SpreeAvalara
     # to happen in a later one — engine callbacks run in load order.
     config.after_initialize do
       Spree.integrations << 'SpreeAvalara::Integration' unless Spree.integrations.include?('SpreeAvalara::Integration')
+      Spree.tax_providers << SpreeAvalara::TaxProvider unless Spree.tax_providers.include?(SpreeAvalara::TaxProvider)
     end
   end
 end
