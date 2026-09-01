@@ -1,4 +1,3 @@
-import { CheckIcon, XIcon } from 'lucide-react'
 import type { ReactNode } from 'react'
 import { useTranslation } from 'react-i18next'
 import { cn } from '../lib/utils'
@@ -11,6 +10,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from '../ui/dialog'
+import { CheckIcon, XIcon } from './icons'
 
 /** One step in a wizard: what it is called, and how far in it sits. */
 export interface WizardStep {
@@ -166,7 +166,7 @@ export function Wizard({
         </DialogHeader>
 
         <form onSubmit={onSubmit} onKeyDown={onKeyDown} className="flex min-h-0 flex-1 flex-col">
-          <div className="border-b px-6 py-4">
+          <div className="border-b border-border-subtle px-6 py-4">
             <WizardProgress steps={steps} current={current} onStepSelect={onStepSelect} />
           </div>
 

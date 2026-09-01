@@ -29,7 +29,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@spree/dashboard-ui'
-import { PlusIcon, TrashIcon, Undo2Icon, UsersIcon } from 'lucide-react'
+import { PlusIcon, TrashIcon, Undo2Icon, UsersIcon } from '@spree/dashboard-ui/icons'
 import { useState } from 'react'
 import type { UseFormReturn } from 'react-hook-form'
 import { useTranslation } from 'react-i18next'

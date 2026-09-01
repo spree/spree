@@ -26,9 +26,8 @@ import {
   Textarea,
   useConfirm,
 } from '@spree/dashboard-ui'
-import { PlusIcon, TrashIcon, Undo2Icon } from '@spree/dashboard-ui/icons'
+import { PauseIcon, PlayIcon, TableIcon } from '@spree/dashboard-ui/icons'
 import { createFileRoute, useNavigate } from '@tanstack/react-router'
-import { PauseIcon, PlayIcon, TableIcon } from 'lucide-react'
 import { useEffect, useMemo, useState } from 'react'
 import { type UseFormReturn, useForm } from 'react-hook-form'
 import { useTranslation } from 'react-i18next'

@@ -24,7 +24,7 @@ import {
   toastManager,
   Wizard,
 } from '@spree/dashboard-ui'
-import { CheckIcon, InfoIcon, PackageIcon, PlusIcon, XIcon } from 'lucide-react'
+import { CheckIcon, InfoIcon, PackageIcon, PlusIcon, XIcon } from '@spree/dashboard-ui/icons'
 import { useDeferredValue, useEffect, useMemo, useState } from 'react'
 import { type UseFormReturn, useForm } from 'react-hook-form'
 import { useTranslation } from 'react-i18next'
