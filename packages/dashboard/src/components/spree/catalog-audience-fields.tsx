@@ -194,7 +194,6 @@ export function CatalogAudienceFields({
               </p>
             </div>
             <AssignCatalogForm
-              inline
               assigned={assignments}
               onCancel={() => setAddOpen(false)}
               onAdd={addAssignment}
@@ -271,13 +270,11 @@ function AssignCatalogForm({
   assigned,
   onAdd,
   onCancel,
-  inline,
 }: {
   /** Already staged, so the same audience cannot be added twice. */
   assigned: AssignmentEntry[]
   onAdd: (entry: AssignmentEntry) => void
   onCancel: () => void
-  inline?: boolean
 }) {
   const { t } = useTranslation()
   const [assignableType, setAssignableType] = useState<AssignableType>('company')
@@ -308,14 +305,10 @@ function AssignCatalogForm({
       assignable_id: assignableId,
       assignable_name: assignableName,
     })
-    // Inline the form stays open for a second pick, so it is reset rather
-    // than dismissed; in a dialog the close is the reset.
-    if (inline) {
-      setAssignableId('')
-      setAssignableName(null)
-    } else {
-      onCancel()
-    }
+    // Closed either way: the row that appears in the list above is the
+    // confirmation, and a form still sitting open under it reads as though
+    // the add had not taken.
+    onCancel()
   }
 
   return (

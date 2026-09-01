@@ -90,6 +90,10 @@
       "tiered_percent": "Procent progowy"
     },
     "catalogs": {
+      "actions": {
+        "activate": "Aktywuj",
+        "deactivate": "Dezaktywuj"
+      },
       "add_cta": "Dodaj katalog",
       "add_sheet_title": "Nowy katalog",
       "assignable_types": {
@@ -133,9 +137,15 @@
       "edit_prices_help": "Ustal, ile każdy produkt kosztuje tę grupę odbiorców.",
       "edit_prices_pending_save": "Ustal, ile każdy produkt kosztuje tę grupę odbiorców. Zapisz najpierw, aby wycenić dopiero co zmienione produkty.",
       "empty": "Brak katalogów",
+      "errors": {
+        "failed_to_activate": "Nie udało się aktywować katalogu",
+        "failed_to_deactivate": "Nie udało się dezaktywować katalogu"
+      },
       "messages": {
+        "activated": "Katalog aktywowany",
         "assigned": "Katalog przypisany",
         "created": "Katalog utworzony",
+        "deactivated": "Katalog dezaktywowany",
         "deleted": "Katalog usunięty",
         "products_imported": "Produkty zaimportowane",
         "unassigned": "Przypisanie usunięte",
@@ -214,16 +224,19 @@
           "review": "Nic nie zostanie utworzone, dopóki nie zakończysz."
         },
         "products": {
+          "count_few": "{{count}} produkty",
+          "count_many": "{{count}} produktów",
+          "count_one": "{{count}} produkt",
+          "count_other": "{{count}} produktu",
           "empty": "Brak produktów",
-          "empty_description": "Wybierz, czego dotyczy ta umowa. Pozostaw puste, aby ustalać ceny bez ograniczania widoczności.",
-          "count": "{{count}} produkt",
-          "count_plural": "{{count}} produktów"
+          "empty_description": "Wybierz, czego dotyczy ta umowa. Pozostaw puste, aby ustalać ceny bez ograniczania widoczności."
         },
         "products_failed": "Katalog został utworzony, ale nie udało się dodać produktów. Dodaj je na stronie katalogu.",
         "products_none_warning": "Brak produktów. Pusty katalog ustala ceny, niczego nie ukrywając — kupujący nadal widzą cały sklep.",
         "review": {
           "everyone": "Wszyscy",
-          "everything": "Cały sklep"
+          "everything": "Cały sklep",
+          "inactive": "Katalog zostanie utworzony jako nieaktywny. Aktywuj go na jego stronie, gdy umowa będzie gotowa."
         },
         "steps": {
           "details": "Szczegóły",

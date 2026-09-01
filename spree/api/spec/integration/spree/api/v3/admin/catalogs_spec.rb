@@ -516,4 +516,73 @@ RSpec.describe 'Admin Catalogs API', type: :request, swagger_doc: 'api-reference
     end
   end
 
+  path '/api/v3/admin/catalogs/{id}/activate' do
+    parameter name: :id, in: :path, type: :string, required: true
+
+    patch 'Activate a catalog' do
+      tags 'Products'
+      produces 'application/json'
+      security [api_key: [], bearer_auth: []]
+      description <<~DESC
+        Puts the agreement into effect: its audience starts seeing its
+        assortment and paying its prices. Refused for a catalog nobody is
+        assigned to, since activating it would reach no buyer — a channel's
+        default catalog is reached through the channel instead, so it needs
+        no assignment.
+      DESC
+      admin_scope :write, :products
+      admin_sdk_example 'catalogs/activate'
+
+      parameter name: 'x-spree-api-key', in: :header, type: :string, required: true
+      parameter name: :Authorization, in: :header, type: :string, required: true
+
+      response '200', 'catalog activated' do
+        let(:'x-spree-api-key') { secret_api_key.plaintext_token }
+        let(:id) { catalog.prefixed_id }
+        # Activation refuses an agreement nobody is assigned to; an audience
+        # is what gives the shared fixture someone to apply to.
+        before do
+          create(:catalog_assignment, catalog: catalog, assignable: create(:company, store: store))
+        end
+
+        schema '$ref' => '#/components/schemas/Catalog'
+
+        run_test! do |response|
+          expect(JSON.parse(response.body)['active']).to be(true)
+        end
+      end
+    end
+  end
+
+  path '/api/v3/admin/catalogs/{id}/deactivate' do
+    parameter name: :id, in: :path, type: :string, required: true
+
+    patch 'Deactivate a catalog' do
+      tags 'Products'
+      produces 'application/json'
+      security [api_key: [], bearer_auth: []]
+      description <<~DESC
+        Takes the agreement out of effect. Everything it holds — assignments,
+        commercial terms, its price list — survives, so activating again
+        resumes exactly what was there.
+      DESC
+      admin_scope :write, :products
+      admin_sdk_example 'catalogs/deactivate'
+
+      parameter name: 'x-spree-api-key', in: :header, type: :string, required: true
+      parameter name: :Authorization, in: :header, type: :string, required: true
+
+      response '200', 'catalog deactivated' do
+        let(:'x-spree-api-key') { secret_api_key.plaintext_token }
+        let(:id) { catalog.prefixed_id }
+
+        schema '$ref' => '#/components/schemas/Catalog'
+
+        run_test! do |response|
+          expect(JSON.parse(response.body)['active']).to be(false)
+        end
+      end
+    end
+  end
+
 end

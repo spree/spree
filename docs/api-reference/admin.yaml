@@ -16793,6 +16793,143 @@ paths:
                   type: array
                   items:
                     type: string
+  "/api/v3/admin/catalogs/{id}/activate":
+    parameters:
+    - name: id
+      in: path
+      required: true
+      schema:
+        type: string
+    patch:
+      summary: Activate a catalog
+      tags:
+      - Products
+      security:
+      - api_key: []
+        bearer_auth: []
+      description: |-
+        Puts the agreement into effect: its audience starts seeing its
+        assortment and paying its prices. Refused for a catalog nobody is
+        assigned to, since activating it would reach no buyer — a channel's
+        default catalog is reached through the channel instead, so it needs
+        no assignment.
+
+
+        **Required scope:** `write_products` (for API-key authentication).
+      x-codeSamples:
+      - lang: javascript
+        label: Spree Admin SDK
+        source: |-
+          import { createAdminClient } from '@spree/admin-sdk'
+
+          const client = createAdminClient({
+            baseUrl: 'https://your-store.com',
+            secretKey: 'sk_xxx',
+          })
+
+          // Puts the agreement into effect. Refused for a catalog nobody is assigned
+          // to, which would reach no buyer.
+          const catalog = await client.catalogs.activate('cat_xxx')
+      - lang: bash
+        label: Spree CLI
+        source: spree api patch /catalogs/{id}/activate -d '{ ... }'
+      parameters:
+      - name: x-spree-api-key
+        in: header
+        required: true
+        schema:
+          type: string
+      - name: Authorization
+        in: header
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: catalog activated
+          content:
+            application/json:
+              example:
+                id: cat_UkLWZg9DAJ
+                name: Wholesale
+                description:
+                active: true
+                position: 1
+                metadata: {}
+                minimum_order_quantity:
+                order_multiple:
+                created_at: '2026-01-15T12:00:00.000Z'
+                updated_at: '2026-01-15T12:00:00.000Z'
+                products_count: 0
+              schema:
+                "$ref": "#/components/schemas/Catalog"
+  "/api/v3/admin/catalogs/{id}/deactivate":
+    parameters:
+    - name: id
+      in: path
+      required: true
+      schema:
+        type: string
+    patch:
+      summary: Deactivate a catalog
+      tags:
+      - Products
+      security:
+      - api_key: []
+        bearer_auth: []
+      description: |-
+        Takes the agreement out of effect. Everything it holds — assignments,
+        commercial terms, its price list — survives, so activating again
+        resumes exactly what was there.
+
+
+        **Required scope:** `write_products` (for API-key authentication).
+      x-codeSamples:
+      - lang: javascript
+        label: Spree Admin SDK
+        source: |-
+          import { createAdminClient } from '@spree/admin-sdk'
+
+          const client = createAdminClient({
+            baseUrl: 'https://your-store.com',
+            secretKey: 'sk_xxx',
+          })
+
+          // Takes it out of effect; its assignments, terms and prices survive.
+          const catalog = await client.catalogs.deactivate('cat_xxx')
+      - lang: bash
+        label: Spree CLI
+        source: spree api patch /catalogs/{id}/deactivate -d '{ ... }'
+      parameters:
+      - name: x-spree-api-key
+        in: header
+        required: true
+        schema:
+          type: string
+      - name: Authorization
+        in: header
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: catalog deactivated
+          content:
+            application/json:
+              example:
+                id: cat_UkLWZg9DAJ
+                name: Wholesale
+                description:
+                active: false
+                position: 1
+                metadata: {}
+                minimum_order_quantity:
+                order_multiple:
+                created_at: '2026-01-15T12:00:00.000Z'
+                updated_at: '2026-01-15T12:00:00.000Z'
+                products_count: 0
+              schema:
+                "$ref": "#/components/schemas/Catalog"
   "/api/v3/admin/products/{product_id}/custom_fields":
     get:
       summary: List product custom fields

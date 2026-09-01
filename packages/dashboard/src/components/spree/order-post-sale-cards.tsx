@@ -285,25 +285,23 @@ export function OrderClaimsCard({ order }: { order: Order }) {
                         </DropdownMenuItem>
                       )}
                       {['open', 'approved'].includes(claim.status) && (
-                        <>
-                          <DropdownMenuItem
-                            variant="destructive"
-                            onClick={async () => {
-                              if (
-                                await confirm({
-                                  message: t('admin.pages.orders.detail.returns.confirm.cancel'),
-                                  variant: 'destructive',
-                                  confirmLabel: t('admin.actions.cancel'),
-                                })
-                              ) {
-                                cancel.mutate({ claimId: claim.id })
-                              }
-                            }}
-                          >
-                            <XCircleIcon className="size-4" />
-                            {t('admin.actions.cancel')}
-                          </DropdownMenuItem>
-                        </>
+                        <DropdownMenuItem
+                          variant="destructive"
+                          onClick={async () => {
+                            if (
+                              await confirm({
+                                message: t('admin.pages.orders.detail.returns.confirm.cancel'),
+                                variant: 'destructive',
+                                confirmLabel: t('admin.actions.cancel'),
+                              })
+                            ) {
+                              cancel.mutate({ claimId: claim.id })
+                            }
+                          }}
+                        >
+                          <XCircleIcon className="size-4" />
+                          {t('admin.actions.cancel')}
+                        </DropdownMenuItem>
                       )}
                     </DropdownMenuContent>
                   </DropdownMenu>

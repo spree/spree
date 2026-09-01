@@ -57,6 +57,30 @@ export function useDeleteCatalog() {
   })
 }
 
+/**
+ * Going live is its own act rather than a field on the form: what has to
+ * happen alongside — sweeping cached catalog sets, telling the companies it
+ * covers — hangs off the workflow behind these
+ * (docs/plans/6.0-catalog-agreement-rework.md).
+ */
+export function useActivateCatalog(id: string) {
+  return useResourceMutation<Catalog, Error, void>({
+    mutationFn: () => adminClient.catalogs.activate(id),
+    invalidate: [['catalogs'], ['catalogs', id]],
+    successMessage: i18n.t('admin.catalogs.messages.activated'),
+    errorMessage: i18n.t('admin.catalogs.errors.failed_to_activate'),
+  })
+}
+
+export function useDeactivateCatalog(id: string) {
+  return useResourceMutation<Catalog, Error, void>({
+    mutationFn: () => adminClient.catalogs.deactivate(id),
+    invalidate: [['catalogs'], ['catalogs', id]],
+    successMessage: i18n.t('admin.catalogs.messages.deactivated'),
+    errorMessage: i18n.t('admin.catalogs.errors.failed_to_deactivate'),
+  })
+}
+
 // ---------------------------------------------------------------------------
 // Assortment
 // ---------------------------------------------------------------------------

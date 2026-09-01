@@ -2,9 +2,10 @@ import { zodResolver } from '@hookform/resolvers/zod'
 import type { Product } from '@spree/admin-sdk'
 import { adminClient, mapSpreeErrorsToForm, ResourcePickerSheet } from '@spree/dashboard-core'
 import {
+  Alert,
+  AlertDescription,
   Badge,
   Button,
-  Checkbox,
   Dialog,
   DialogBody,
   DialogContent,
@@ -27,9 +28,9 @@ import {
   toastManager,
   WizardSteps,
 } from '@spree/dashboard-ui'
-import { PackageIcon, PlusIcon, XIcon } from 'lucide-react'
+import { InfoIcon, PackageIcon, PlusIcon, XIcon } from 'lucide-react'
 import { useState } from 'react'
-import { Controller, type UseFormReturn, useForm } from 'react-hook-form'
+import { type UseFormReturn, useForm } from 'react-hook-form'
 import { useTranslation } from 'react-i18next'
 import { useCreateCatalog } from '../../hooks/use-catalogs'
 import {
@@ -247,7 +248,17 @@ function CatalogWizard({
               <CatalogPricingFields form={form} canEdit />
             </FieldGroup>
           )}
-          {step === 'review' && <ReviewStep form={form} products={products} />}
+          {step === 'review' && (
+            <>
+              <ReviewStep form={form} products={products} />
+              {/* Creating and going live are separate acts, so the merchant is
+                  told which one Create performs. */}
+              <Alert variant="info">
+                <InfoIcon />
+                <AlertDescription>{t('admin.catalogs.wizard.review.inactive')}</AlertDescription>
+              </Alert>
+            </>
+          )}
         </div>
       </DialogBody>
 
@@ -317,17 +328,6 @@ function DetailsStep({ form }: { form: UseFormReturn<CatalogFormValues> }) {
         />
         <FieldDescription>{t('admin.fields.catalog.description.help')}</FieldDescription>
       </Field>
-
-      <Controller
-        control={form.control}
-        name="active"
-        render={({ field }) => (
-          <label htmlFor="catalog-active" className="flex items-center gap-2 text-sm">
-            <Checkbox id="catalog-active" checked={field.value} onCheckedChange={field.onChange} />
-            {t('admin.fields.active.label')}
-          </label>
-        )}
-      />
     </FieldGroup>
   )
 }
@@ -480,9 +480,6 @@ function ReviewStep({
 
       <dt className="text-muted-foreground">{t('admin.catalogs.detail.pricing')}</dt>
       <dd>{t(`admin.fields.catalog.pricing_mode.${values.pricing_mode}`)}</dd>
-
-      <dt className="text-muted-foreground">{t('admin.fields.active.label')}</dt>
-      <dd>{values.active ? t('admin.common.yes') : t('admin.common.no')}</dd>
     </dl>
   )
 }

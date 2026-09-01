@@ -35,7 +35,6 @@ export const catalogFormSchema = z
      * `catalogValuesToParams` drops it.
      */
     staged_products: z.custom<ProductMembershipStagingValue>(() => true),
-    active: z.boolean(),
     /**
      * Split for editing, recombined into the inline `price_list` payload by
      * `catalogValuesToParams`.
@@ -178,11 +177,14 @@ export interface AssignmentEntry {
 /** Values the catalog form holds. */
 export type CatalogFormValues = z.infer<typeof catalogFormSchema>
 
-/** A new catalog: named on create, active, priced by base prices. */
+/**
+ * A new catalog: named on create and priced by base prices. Whether it
+ * applies is not a field here at all — going live is its own act, through
+ * Catalogs::Activate (docs/plans/6.0-catalog-agreement-rework.md).
+ */
 export const CATALOG_DEFAULTS: CatalogFormValues = {
   name: '',
   description: '',
-  active: true,
   pricing_mode: 'base',
   adjustment_direction: 'decrease',
   adjustment_magnitude: '',
@@ -211,7 +213,9 @@ export function catalogValuesToParams(
   return {
     name: values.name,
     description: blankToNull(values.description),
-    active: values.active,
+    // `active` is deliberately absent: going live is its own act through the
+    // activate endpoint, so a plain Save never changes whether an agreement
+    // applies (docs/plans/6.0-catalog-agreement-rework.md).
     minimum_order_quantity: normalizeQuantityRule(values.minimum_order_quantity),
     order_multiple: normalizeQuantityRule(values.order_multiple),
     // Whole-set writes riding the catalog's own save, so the agreement lands

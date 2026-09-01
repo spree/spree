@@ -18,7 +18,10 @@ module Spree
 
     acts_as_list scope: :store_id
 
-    attribute :active, :boolean, default: true
+    # Born inactive: an agreement goes live through Catalogs::Activate, which
+    # is where the checks and the notifications hang — the same shape a price
+    # list uses (docs/plans/6.0-catalog-agreement-rework.md).
+    attribute :active, :boolean, default: false
 
     belongs_to :store, class_name: 'Spree::Store', inverse_of: :catalogs
     # The owned list, or nil for an assortment-only catalog priced at base.

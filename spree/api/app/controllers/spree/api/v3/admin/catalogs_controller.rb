@@ -9,7 +9,8 @@ module Spree
           scoped_resource :products
 
           before_action :set_resource,
-                        only: [:show, :update, :destroy, :assign, :import_products]
+                        only: [:show, :update, :destroy, :assign, :import_products,
+                               :activate, :deactivate]
 
           # POST /api/v3/admin/catalogs/:id/import_products — copies the
           # attached price list's products into the assortment. Explicit by
@@ -44,6 +45,15 @@ module Spree
             end
           end
 
+          # PATCH /api/v3/admin/catalogs/:id/activate
+          def activate
+            run_status_workflow(Spree.catalog_activate_workflow)
+          end
+
+          # PATCH /api/v3/admin/catalogs/:id/deactivate
+          def deactivate
+            run_status_workflow(Spree.catalog_deactivate_workflow)
+          end
 
           protected
 
@@ -69,6 +79,18 @@ module Spree
 
           def update_workflow
             Spree.catalog_update_workflow
+          end
+
+          def run_status_workflow(workflow)
+            authorize! :update, @resource
+
+            result = workflow.call(catalog: @resource)
+
+            if result.success?
+              render json: serialize_resource(@resource.reload)
+            else
+              render_service_error(result.error)
+            end
           end
 
           # `price_list` is an inline payload rather than a reference: a

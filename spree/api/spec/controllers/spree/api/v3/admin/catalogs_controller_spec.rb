@@ -377,4 +377,44 @@ RSpec.describe Spree::Api::V3::Admin::CatalogsController, type: :controller do
       expect(Spree::CatalogAssignment.count).to eq(0)
     end
   end
+  describe 'PATCH #activate' do
+    it 'puts an assigned catalog into effect' do
+      catalog = create(:catalog, :inactive, store: store)
+      create(:catalog_assignment, catalog: catalog, assignable: create(:company, store: store))
+
+      patch :activate, params: { id: catalog.prefixed_id }, as: :json
+
+      expect(response).to have_http_status(:ok)
+      expect(catalog.reload).to be_active
+    end
+
+    # Activating a catalog nobody is assigned to would reach no buyer.
+    it 'refuses a catalog with no audience' do
+      catalog = create(:catalog, :inactive, store: store)
+
+      patch :activate, params: { id: catalog.prefixed_id }, as: :json
+
+      expect(response).to have_http_status(:unprocessable_content)
+      expect(catalog.reload).not_to be_active
+    end
+
+    it '404s a catalog from another store' do
+      foreign = create(:catalog, store: create(:store))
+
+      patch :activate, params: { id: foreign.prefixed_id }, as: :json
+
+      expect(response).to have_http_status(:not_found)
+    end
+  end
+
+  describe 'PATCH #deactivate' do
+    it 'takes the catalog out of effect' do
+      catalog = create(:catalog, store: store)
+
+      patch :deactivate, params: { id: catalog.prefixed_id }, as: :json
+
+      expect(response).to have_http_status(:ok)
+      expect(catalog.reload).not_to be_active
+    end
+  end
 end

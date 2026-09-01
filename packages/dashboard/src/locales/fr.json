@@ -88,6 +88,10 @@
       "tiered_percent": "Pourcentage par paliers"
     },
     "catalogs": {
+      "actions": {
+        "activate": "Activer",
+        "deactivate": "Désactiver"
+      },
       "add_cta": "Ajouter un catalogue",
       "add_sheet_title": "Nouveau catalogue",
       "assignable_types": {
@@ -131,9 +135,15 @@
       "edit_prices_help": "Définissez le prix de chaque produit pour cette audience.",
       "edit_prices_pending_save": "Définissez le prix de chaque produit pour cette audience. Enregistrez d'abord pour fixer le prix des produits que vous venez de modifier.",
       "empty": "Aucun catalogue pour le moment",
+      "errors": {
+        "failed_to_activate": "Impossible d’activer le catalogue",
+        "failed_to_deactivate": "Impossible de désactiver le catalogue"
+      },
       "messages": {
+        "activated": "Catalogue activé",
         "assigned": "Catalogue affecté",
         "created": "Catalogue créé",
+        "deactivated": "Catalogue désactivé",
         "deleted": "Catalogue supprimé",
         "products_imported": "Produits importés",
         "unassigned": "Affectation retirée",
@@ -212,16 +222,17 @@
           "review": "Rien n’est créé tant que vous n’avez pas terminé."
         },
         "products": {
+          "count_one": "{{count}} produit",
+          "count_other": "{{count}} produits",
           "empty": "Aucun produit",
-          "empty_description": "Choisissez ce que couvre cet accord. Laissez vide pour fixer des prix sans restreindre la visibilité.",
-          "count": "{{count}} produit",
-          "count_plural": "{{count}} produits"
+          "empty_description": "Choisissez ce que couvre cet accord. Laissez vide pour fixer des prix sans restreindre la visibilité."
         },
         "products_failed": "Le catalogue a été créé, mais ses produits n’ont pas pu être ajoutés. Ajoutez-les depuis la page du catalogue.",
         "products_none_warning": "Aucun produit pour l’instant. Un catalogue vide fixe des prix sans rien masquer — tous les acheteurs voient encore toute la boutique.",
         "review": {
           "everyone": "Tout le monde",
-          "everything": "Toute la boutique"
+          "everything": "Toute la boutique",
+          "inactive": "Le catalogue est créé inactif. Activez-le depuis sa page lorsque l’accord est prêt."
         },
         "steps": {
           "details": "Détails",

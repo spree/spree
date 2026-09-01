@@ -1,6 +1,6 @@
 import type { Catalog } from '@spree/admin-sdk'
 import { defineTable } from '@spree/dashboard-core'
-import { Badge, RelativeTime, ResourceNameCell } from '@spree/dashboard-ui'
+import { ActiveBadge, RelativeTime, ResourceNameCell } from '@spree/dashboard-ui'
 import { BookOpenIcon } from '@spree/dashboard-ui/icons'
 import i18n from 'i18next'
 
@@ -28,14 +28,15 @@ defineTable<Catalog>('catalogs', {
     },
     {
       key: 'active',
-      label: i18n.t('admin.fields.active.label'),
+      label: i18n.t('admin.fields.status.label'),
+      filterable: true,
+      filterType: 'boolean',
+      // Surfaced beside the search the way a price list's status is: which
+      // agreements are live is the first thing asked of this list. A catalog
+      // is only ever active or not — it has no dates, so nothing to schedule.
+      quickFilter: true,
       default: true,
-      render: (catalog) =>
-        catalog.active ? (
-          <Badge variant="outline">{i18n.t('admin.common.active')}</Badge>
-        ) : (
-          <Badge variant="secondary">{i18n.t('admin.common.inactive')}</Badge>
-        ),
+      render: (catalog) => <ActiveBadge active={catalog.active} />,
     },
     {
       key: 'products_count',

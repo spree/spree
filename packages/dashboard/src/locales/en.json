@@ -88,6 +88,10 @@
       "tiered_percent": "Tiered Percent"
     },
     "catalogs": {
+      "actions": {
+        "activate": "Activate",
+        "deactivate": "Deactivate"
+      },
       "add_cta": "Add catalog",
       "add_sheet_title": "New catalog",
       "assignable_types": {
@@ -131,9 +135,15 @@
       "edit_prices_help": "Set the price each product costs this audience.",
       "edit_prices_pending_save": "Set the price each product costs this audience. Save first to price the products you just changed.",
       "empty": "No catalogs yet",
+      "errors": {
+        "failed_to_activate": "Could not activate the catalog",
+        "failed_to_deactivate": "Could not deactivate the catalog"
+      },
       "messages": {
+        "activated": "Catalog activated",
         "assigned": "Catalog assigned",
         "created": "Catalog created",
+        "deactivated": "Catalog deactivated",
         "deleted": "Catalog deleted",
         "products_imported": "Products imported",
         "unassigned": "Assignment removed",
@@ -212,16 +222,17 @@
           "review": "Nothing is created until you finish."
         },
         "products": {
+          "count_one": "{{count}} product",
+          "count_other": "{{count}} products",
           "empty": "No products yet",
-          "empty_description": "Pick what this agreement covers. Leave it empty to price without restricting what buyers see.",
-          "count": "{{count}} product",
-          "count_plural": "{{count}} products"
+          "empty_description": "Pick what this agreement covers. Leave it empty to price without restricting what buyers see."
         },
         "products_failed": "The catalog was created, but its products could not be added. Add them from the catalog page.",
         "products_none_warning": "No products yet. An empty catalog prices without hiding anything — every shopper still sees the whole shop.",
         "review": {
           "everyone": "Everyone",
-          "everything": "Everything in the shop"
+          "everything": "Everything in the shop",
+          "inactive": "The catalog is created inactive. Activate it from its page when the agreement is ready."
         },
         "steps": {
           "details": "Details",

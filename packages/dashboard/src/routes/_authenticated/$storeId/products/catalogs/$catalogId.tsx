@@ -14,7 +14,6 @@ import {
   CardContent,
   CardHeader,
   CardTitle,
-  Checkbox,
   ErrorState,
   Field,
   FieldDescription,
@@ -30,7 +29,7 @@ import { PlusIcon, TrashIcon, Undo2Icon } from '@spree/dashboard-ui/icons'
 import { createFileRoute, useNavigate } from '@tanstack/react-router'
 import { TableIcon } from 'lucide-react'
 import { useEffect, useMemo, useState } from 'react'
-import { Controller, type UseFormReturn, useForm } from 'react-hook-form'
+import { type UseFormReturn, useForm } from 'react-hook-form'
 import { useTranslation } from 'react-i18next'
 import { CatalogAudienceCard } from '../../../../../components/spree/catalog-audience-fields'
 import { catalogPriceColumns } from '../../../../../components/spree/catalog-price-columns'
@@ -49,9 +48,11 @@ import {
 } from '../../../../../components/spree/product-membership-staging'
 import { ResourceDetailSkeleton } from '../../../../../components/spree/route-pending'
 import {
+  useActivateCatalog,
   useCatalog,
   useCatalogProducts,
   useCatalogProductTerms,
+  useDeactivateCatalog,
   useDeleteCatalog,
   useSaveCatalog,
 } from '../../../../../hooks/use-catalogs'
@@ -114,6 +115,8 @@ function CatalogBody({ catalog }: { catalog: Catalog }) {
   // Owned here so the pricing card and the assortment rows open the same
   // spreadsheet — pricing an assortment is an action on those rows too.
   const [priceEditorOpen, setPriceEditorOpen] = useState(false)
+  const activate = useActivateCatalog(catalog.id)
+  const deactivate = useDeactivateCatalog(catalog.id)
 
   const form = useForm<CatalogFormValues>({
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -132,7 +135,6 @@ function CatalogBody({ catalog }: { catalog: Catalog }) {
     form.reset({
       name: catalog.name,
       description: catalog.description ?? '',
-      active: catalog.active,
       minimum_order_quantity: catalog.minimum_order_quantity?.toString() ?? '',
       order_multiple: catalog.order_multiple?.toString() ?? '',
       assignments: (catalog.assignments ?? []).map((assignment) => ({
@@ -214,14 +216,40 @@ function CatalogBody({ catalog }: { catalog: Catalog }) {
               deleteLabel={t('admin.catalogs.detail.delete_label')}
               actions={
                 canEdit ? (
-                  <Button
-                    type="submit"
-                    disabled={form.formState.isSubmitting || !form.formState.isDirty}
-                  >
-                    {form.formState.isSubmitting
-                      ? t('admin.actions.saving')
-                      : t('admin.actions.save')}
-                  </Button>
+                  <>
+                    {/* Pricing and going live sit beside Save rather than in
+                        the form: they are acts on the catalog, not fields of
+                        it, so neither waits for a Save and neither is undone
+                        by a Discard. */}
+                    {catalog.price_list && pricingMode === 'fixed' && (
+                      <Button
+                        type="button"
+                        variant="outline"
+                        onClick={() => setPriceEditorOpen(true)}
+                      >
+                        <TableIcon className="size-4" />
+                        {t('admin.catalogs.edit_prices_cta')}
+                      </Button>
+                    )}
+                    <Button
+                      type="button"
+                      variant="outline"
+                      disabled={activate.isPending || deactivate.isPending}
+                      onClick={() => (catalog.active ? deactivate.mutate() : activate.mutate())}
+                    >
+                      {catalog.active
+                        ? t('admin.catalogs.actions.deactivate')
+                        : t('admin.catalogs.actions.activate')}
+                    </Button>
+                    <Button
+                      type="submit"
+                      disabled={form.formState.isSubmitting || !form.formState.isDirty}
+                    >
+                      {form.formState.isSubmitting
+                        ? t('admin.actions.saving')
+                        : t('admin.actions.save')}
+                    </Button>
+                  </>
                 ) : undefined
               }
             />
@@ -401,22 +429,6 @@ function CatalogSettingsCard({
             />
             <FieldDescription>{t('admin.fields.catalog.description.help')}</FieldDescription>
           </Field>
-
-          <Controller
-            control={form.control}
-            name="active"
-            render={({ field }) => (
-              <label htmlFor="catalog-active" className="flex items-center gap-2 text-sm">
-                <Checkbox
-                  id="catalog-active"
-                  checked={field.value}
-                  onCheckedChange={field.onChange}
-                  disabled={!canEdit}
-                />
-                {t('admin.fields.active.label')}
-              </label>
-            )}
-          />
         </FieldGroup>
       </CardContent>
     </Card>

@@ -3,7 +3,7 @@ class CreateSpreeCatalogs < ActiveRecord::Migration[8.1]
     create_table :spree_catalogs do |t|
       t.references :store, null: false
       t.string :name, null: false
-      t.boolean :active, null: false, default: true
+      t.boolean :active, null: false, default: false
       t.integer :position
       if t.respond_to?(:jsonb)
         t.jsonb :metadata

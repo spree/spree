@@ -88,6 +88,10 @@
       "tiered_percent": "阶梯百分比"
     },
     "catalogs": {
+      "actions": {
+        "activate": "启用",
+        "deactivate": "停用"
+      },
       "add_cta": "添加目录",
       "add_sheet_title": "新建目录",
       "assignable_types": {
@@ -131,9 +135,15 @@
       "edit_prices_help": "设置每件商品对此受众的价格。",
       "edit_prices_pending_save": "设置每件商品对此受众的价格。请先保存，才能为刚刚更改的商品定价。",
       "empty": "暂无目录",
+      "errors": {
+        "failed_to_activate": "无法启用该目录",
+        "failed_to_deactivate": "无法停用该目录"
+      },
       "messages": {
+        "activated": "目录已启用",
         "assigned": "目录已分配",
         "created": "目录已创建",
+        "deactivated": "目录已停用",
         "deleted": "目录已删除",
         "products_imported": "产品已导入",
         "unassigned": "分配已移除",
@@ -212,16 +222,16 @@
           "review": "完成前不会创建任何内容。"
         },
         "products": {
+          "count_other": "{{count}} 件商品",
           "empty": "尚无商品",
-          "empty_description": "选择本协议涵盖的商品。留空则只定价，不限制买家可见范围。",
-          "count": "{{count}} 件商品",
-          "count_plural": "{{count}} 件商品"
+          "empty_description": "选择本协议涵盖的商品。留空则只定价，不限制买家可见范围。"
         },
         "products_failed": "目录已创建，但未能添加其商品。请在目录页面添加。",
         "products_none_warning": "尚未添加商品。空目录只定价、不隐藏任何内容 — 买家仍能看到整个商店。",
         "review": {
           "everyone": "所有人",
-          "everything": "整个商店"
+          "everything": "整个商店",
+          "inactive": "目录创建后为停用状态。协议准备好后，请在其页面启用。"
         },
         "steps": {
           "details": "详情",

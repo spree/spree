@@ -3413,6 +3413,18 @@ export class AdminClient {
     products: this.productMembership<CatalogProduct>('/catalogs'),
 
     /**
+     * Puts the agreement into effect: its audience starts seeing its
+     * assortment and paying its prices. Refused for a catalog nobody is
+     * assigned to, which would reach no buyer.
+     */
+    activate: (id: string, options?: RequestOptions): Promise<Catalog> =>
+      this.request<Catalog>('PATCH', `/catalogs/${id}/activate`, options),
+
+    /** Takes it out of effect; everything it holds survives untouched. */
+    deactivate: (id: string, options?: RequestOptions): Promise<Catalog> =>
+      this.request<Catalog>('PATCH', `/catalogs/${id}/deactivate`, options),
+
+    /**
      * Copies the attached price list's products into the assortment.
      * Explicit by design — an empty assortment is a pricing-only overlay
      * (nothing hidden), so making a catalog restrictive is deliberate.

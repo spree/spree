@@ -88,6 +88,10 @@
       "tiered_percent": "Gestaffelter Prozentsatz"
     },
     "catalogs": {
+      "actions": {
+        "activate": "Aktivieren",
+        "deactivate": "Deaktivieren"
+      },
       "add_cta": "Katalog hinzufügen",
       "add_sheet_title": "Neuer Katalog",
       "assignable_types": {
@@ -131,9 +135,15 @@
       "edit_prices_help": "Legen Sie fest, was jedes Produkt diese Zielgruppe kostet.",
       "edit_prices_pending_save": "Legen Sie fest, was jedes Produkt diese Zielgruppe kostet. Speichern Sie zuerst, um die soeben geänderten Produkte zu bepreisen.",
       "empty": "Noch keine Kataloge",
+      "errors": {
+        "failed_to_activate": "Katalog konnte nicht aktiviert werden",
+        "failed_to_deactivate": "Katalog konnte nicht deaktiviert werden"
+      },
       "messages": {
+        "activated": "Katalog aktiviert",
         "assigned": "Katalog zugewiesen",
         "created": "Katalog erstellt",
+        "deactivated": "Katalog deaktiviert",
         "deleted": "Katalog gelöscht",
         "products_imported": "Produkte importiert",
         "unassigned": "Zuweisung entfernt",
@@ -212,16 +222,17 @@
           "review": "Es wird nichts erstellt, bevor Sie abschließen."
         },
         "products": {
+          "count_one": "{{count}} Produkt",
+          "count_other": "{{count}} Produkte",
           "empty": "Noch keine Produkte",
-          "empty_description": "Wählen Sie, was diese Vereinbarung umfasst. Leer lassen, um Preise zu setzen, ohne die Sichtbarkeit einzuschränken.",
-          "count": "{{count}} Produkt",
-          "count_plural": "{{count}} Produkte"
+          "empty_description": "Wählen Sie, was diese Vereinbarung umfasst. Leer lassen, um Preise zu setzen, ohne die Sichtbarkeit einzuschränken."
         },
         "products_failed": "Der Katalog wurde erstellt, aber seine Produkte konnten nicht hinzugefügt werden. Fügen Sie sie auf der Katalogseite hinzu.",
         "products_none_warning": "Noch keine Produkte. Ein leerer Katalog setzt Preise, ohne etwas zu verbergen — alle Käufer sehen weiterhin das gesamte Sortiment.",
         "review": {
           "everyone": "Alle",
-          "everything": "Das gesamte Sortiment"
+          "everything": "Das gesamte Sortiment",
+          "inactive": "Der Katalog wird inaktiv erstellt. Aktivieren Sie ihn auf seiner Seite, sobald die Vereinbarung bereit ist."
         },
         "steps": {
           "details": "Details",

@@ -300,60 +300,58 @@ function GeneralCard({ form }: { form: UseFormReturn<DeliveryMethodFormValues> }
 
   return (
     <FormSection>
-      <>
-        {errors.root?.message && (
-          <p className="text-sm text-destructive" role="alert">
-            {errors.root.message}
-          </p>
-        )}
-        <Field>
-          <FieldLabel htmlFor="name">{t('admin.fields.name.label')}</FieldLabel>
-          <Input
-            id="name"
-            autoFocus
-            aria-invalid={!!errors.name || undefined}
-            {...form.register('name')}
-          />
-          <FieldError errors={[errors.name]} />
-        </Field>
+      {errors.root?.message && (
+        <p className="text-sm text-destructive" role="alert">
+          {errors.root.message}
+        </p>
+      )}
+      <Field>
+        <FieldLabel htmlFor="name">{t('admin.fields.name.label')}</FieldLabel>
+        <Input
+          id="name"
+          autoFocus
+          aria-invalid={!!errors.name || undefined}
+          {...form.register('name')}
+        />
+        <FieldError errors={[errors.name]} />
+      </Field>
 
-        <div className="grid grid-cols-2 gap-3">
-          <Field>
-            <FieldLabel htmlFor="admin_name">
-              {t('admin.fields.delivery_method.admin_name.label')}
+      <div className="grid grid-cols-2 gap-3">
+        <Field>
+          <FieldLabel htmlFor="admin_name">
+            {t('admin.fields.delivery_method.admin_name.label')}
+          </FieldLabel>
+          <Input id="admin_name" {...form.register('admin_name')} />
+        </Field>
+        <Field>
+          <FieldLabel htmlFor="code">{t('admin.fields.delivery_method.code.label')}</FieldLabel>
+          <Input id="code" {...form.register('code')} />
+        </Field>
+      </div>
+
+      <Field>
+        <div className="flex items-start justify-between gap-4">
+          <div className="flex flex-col">
+            <FieldLabel htmlFor="storefront_visible" className="cursor-pointer">
+              {t('admin.fields.storefront_visible.label')}
             </FieldLabel>
-            <Input id="admin_name" {...form.register('admin_name')} />
-          </Field>
-          <Field>
-            <FieldLabel htmlFor="code">{t('admin.fields.delivery_method.code.label')}</FieldLabel>
-            <Input id="code" {...form.register('code')} />
-          </Field>
-        </div>
-
-        <Field>
-          <div className="flex items-start justify-between gap-4">
-            <div className="flex flex-col">
-              <FieldLabel htmlFor="storefront_visible" className="cursor-pointer">
-                {t('admin.fields.storefront_visible.label')}
-              </FieldLabel>
-              <span className="text-xs text-muted-foreground">
-                {t('admin.fields.delivery_method.storefront_visible.help')}
-              </span>
-            </div>
-            <Controller
-              name="storefront_visible"
-              control={form.control}
-              render={({ field }) => (
-                <Switch
-                  id="storefront_visible"
-                  checked={!!field.value}
-                  onCheckedChange={field.onChange}
-                />
-              )}
-            />
+            <span className="text-xs text-muted-foreground">
+              {t('admin.fields.delivery_method.storefront_visible.help')}
+            </span>
           </div>
-        </Field>
-      </>
+          <Controller
+            name="storefront_visible"
+            control={form.control}
+            render={({ field }) => (
+              <Switch
+                id="storefront_visible"
+                checked={!!field.value}
+                onCheckedChange={field.onChange}
+              />
+            )}
+          />
+        </div>
+      </Field>
     </FormSection>
   )
 }
