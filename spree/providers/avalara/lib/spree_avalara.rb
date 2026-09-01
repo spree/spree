@@ -55,4 +55,28 @@ module SpreeAvalara
   def self.read_timeout
     Float(ENV.fetch('SPREE_AVALARA_READ_TIMEOUT', DEFAULT_READ_TIMEOUT))
   end
+
+  # Whether prices for this sale include tax, resolved through the market that
+  # covers the tax destination rather than read off the cart's own market.
+  #
+  # The two diverge for mundane reasons: a currency switch re-resolves the
+  # market without consulting the address, a bill-address tax destination is
+  # never checked against markets at all, and a request omitting the country
+  # hint lands on the default market. Reading the browsing market naively is the
+  # 5.x bug that spree_avatax_official#198 fixed; this restates that fix.
+  #
+  # Overridable on purpose — a host with its own notion of where a sale is
+  # taxed replaces this one method.
+  #
+  # @param owner [Spree::Cart, Spree::Order]
+  # @return [Boolean]
+  def self.tax_inclusive?(owner)
+    country = owner.tax_address&.country_code
+    return owner.market&.tax_inclusive || false if country.blank?
+
+    market = owner.market if owner.market&.country_codes&.include?(country)
+    market ||= owner.store&.markets&.detect { |candidate| candidate.country_codes.include?(country) }
+
+    (market || owner.market)&.tax_inclusive || false
+  end
 end
