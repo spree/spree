@@ -40,6 +40,9 @@ export const deliveryMethodFormSchema = z.object({
   // Empty string means the built-in Internal provider (calculator-priced).
   rate_provider: z.string(),
   storefront_visible: z.boolean(),
+  // Marketplace only: whether a seller's packages may be quoted by this
+  // method (docs/plans/6.0-multi-vendor-marketplace.md, Decision 13).
+  available_to_sellers: z.boolean(),
   tracking_url: z.string().optional(),
   estimated_transit_business_days_min: z.string().optional(),
   estimated_transit_business_days_max: z.string().optional(),
@@ -65,6 +68,7 @@ export const DELIVERY_METHOD_DEFAULTS: DeliveryMethodFormValues = {
   fulfillment_provider: 'Spree::FulfillmentProvider::Manual',
   rate_provider: '',
   storefront_visible: true,
+  available_to_sellers: false,
   tracking_url: '',
   estimated_transit_business_days_min: '',
   estimated_transit_business_days_max: '',
@@ -87,6 +91,7 @@ export function deliveryMethodValuesToParams(values: DeliveryMethodFormValues) {
     fulfillment_provider: values.fulfillment_provider,
     rate_provider: values.rate_provider || null,
     storefront_visible: values.storefront_visible,
+    available_to_sellers: values.available_to_sellers,
     tracking_url: values.tracking_url || null,
     estimated_transit_business_days_min: values.estimated_transit_business_days_min
       ? Number(values.estimated_transit_business_days_min)

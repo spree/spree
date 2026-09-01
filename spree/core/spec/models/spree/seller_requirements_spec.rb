@@ -198,6 +198,38 @@ RSpec.describe 'seller requirement kinds', type: :model do
     end
   end
 
+  describe Spree::SellerRequirements::DeliveryMethod do
+    let(:requirement) { create(:delivery_method_requirement, store: store) }
+
+    it 'is unmet while nothing can ship the seller’s goods' do
+      expect(requirement.satisfied?(seller)).to be false
+    end
+
+    it 'is met by a method the seller made themselves' do
+      create(:delivery_method, store: store, seller: seller)
+
+      expect(requirement.satisfied?(seller.reload)).to be true
+    end
+
+    it 'is met by a marketplace method the operator shares with sellers' do
+      create(:delivery_method, store: store, available_to_sellers: true)
+
+      expect(requirement.satisfied?(seller.reload)).to be true
+    end
+
+    it 'is not met by a marketplace method the operator keeps to themselves' do
+      create(:delivery_method, store: store)
+
+      expect(requirement.satisfied?(seller.reload)).to be false
+    end
+
+    it 'is not met by a method a customer never sees' do
+      create(:delivery_method, store: store, seller: seller, storefront_visible: false)
+
+      expect(requirement.satisfied?(seller.reload)).to be false
+    end
+  end
+
   describe Spree::SellerRequirements::RequiredCustomFields do
     let(:requirement) { create(:required_custom_fields_requirement, store: store) }
 

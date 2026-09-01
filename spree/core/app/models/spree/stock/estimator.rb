@@ -147,16 +147,33 @@ module Spree
         # Storeless orders exist only in specs; real orders always carry one.
         methods = methods.merge(order.store.delivery_methods) if order.store
 
+        # On a marketplace, a package's seller is its stock location's, and it
+        # is quoted by that seller's own methods plus whatever the operator
+        # shares. This is the one place that decision is made
+        # (docs/plans/6.0-multi-vendor-marketplace.md, Decision 13).
+        package_seller_id = package.stock_location&.seller_id
+
         methods.select do |delivery_method|
           calculator = delivery_method.calculator
 
-          delivery_method.available_to?(audience) &&
+          offered_to_seller?(delivery_method, package_seller_id) &&
+            delivery_method.available_to?(audience) &&
             delivery_method.include?(order.ship_address) &&
             delivery_method.serves_location?(package.stock_location) &&
             delivery_method.eligible_for_package?(package) &&
             calculator.available?(package) &&
             calculator.supports_currency?(currency)
         end
+      end
+
+      # A seller's package is quoted by that seller's own methods plus the
+      # marketplace ones the operator shares; a first-party package sees the
+      # marketplace's methods only.
+      def offered_to_seller?(delivery_method, package_seller_id)
+        return delivery_method.seller_id.nil? if package_seller_id.nil?
+        return true if delivery_method.seller_id == package_seller_id
+
+        delivery_method.seller_id.nil? && delivery_method.available_to_sellers?
       end
 
       # True when a subclass or decorator redefined the legacy seam, so its

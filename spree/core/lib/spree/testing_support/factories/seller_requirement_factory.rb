@@ -25,6 +25,10 @@ FactoryBot.define do
       type { 'Spree::SellerRequirements::MinimumProducts' }
     end
 
+    factory :delivery_method_requirement, class: Spree::SellerRequirements::DeliveryMethod do
+      type { 'Spree::SellerRequirements::DeliveryMethod' }
+    end
+
     factory :required_custom_fields_requirement, class: Spree::SellerRequirements::RequiredCustomFields do
       type { 'Spree::SellerRequirements::RequiredCustomFields' }
     end

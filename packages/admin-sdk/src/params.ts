@@ -2490,6 +2490,12 @@ export interface DeliveryMethodParams {
    */
   rate_provider?: string | null
   storefront_visible?: boolean
+  /**
+   * Marketplace only: whether a seller's packages may be quoted by this
+   * method. Off by default — sharing shipping is a decision, not a starting
+   * point — and refused on a method that belongs to a seller.
+   */
+  available_to_sellers?: boolean
   tracking_url?: string | null
   estimated_transit_business_days_min?: number | null
   estimated_transit_business_days_max?: number | null

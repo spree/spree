@@ -801,7 +801,8 @@
         "weight_between": "{{min}}–{{max}} {{unit}}",
         "weight_max": "Unter {{max}} {{unit}}",
         "weight_min": "Ab {{min}} {{unit}}"
-      }
+      },
+      "shared_with_sellers_badge": "Für Verkäufer freigegeben"
     },
     "delivery_origin_groups": {
       "delete_confirm": {
@@ -1270,6 +1271,10 @@
       "delivery_method": {
         "admin_name": {
           "label": "Interner Name"
+        },
+        "available_to_sellers": {
+          "help": "Erlaubt den Versand von Verkäuferbestellungen mit dieser Methode. Deaktiviert lassen, wenn jeder Verkäufer seinen Versand selbst organisiert.",
+          "label": "Für Verkäufer verfügbar"
         },
         "calculator": {
           "label": "Tarifrechner"

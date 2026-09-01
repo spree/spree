@@ -401,4 +401,81 @@ describe Spree::DeliveryMethod, type: :model do
       expect(delivery_method.available_pickup_locations).to contain_exactly(own_location)
     end
   end
+
+  describe 'seller ownership' do
+    let(:seller) { create(:seller, store: @default_store) }
+
+    it 'belongs to the marketplace when no seller is named' do
+      expect(create(:delivery_method, store: @default_store)).not_to be_seller_owned
+    end
+
+    it "refuses a seller from another store" do
+      other_seller = create(:seller, store: create(:store))
+      delivery_method = build(:delivery_method, store: @default_store, seller: other_seller)
+
+      expect(delivery_method).not_to be_valid
+      expect(delivery_method.errors[:seller]).to be_present
+    end
+
+    it 'refuses a carrier rate provider on a seller’s method' do
+      carrier_provider = Class.new(Spree::DeliveryRateProvider::Base) do
+        def self.provider_name = 'Carrier'
+      end
+      stub_const('SellerCarrierRateProvider', carrier_provider)
+      Spree.delivery_rate_providers << carrier_provider
+
+      delivery_method = build(:delivery_method, store: @default_store, seller: seller,
+                                                rate_provider: 'SellerCarrierRateProvider')
+
+      expect(delivery_method).not_to be_valid
+      expect(delivery_method.errors[:rate_provider]).to be_present
+    ensure
+      Spree.delivery_rate_providers.delete(carrier_provider)
+    end
+
+    it 'refuses a fulfillment provider other than manual on a seller’s method' do
+      delivery_method = build(:delivery_method, store: @default_store, seller: seller,
+                                                fulfillment_provider: 'Spree::FulfillmentProvider::Digital')
+
+      expect(delivery_method).not_to be_valid
+      expect(delivery_method.errors[:fulfillment_provider]).to be_present
+    end
+
+    it 'refuses to share a seller’s own method with the rest of the marketplace' do
+      delivery_method = build(:delivery_method, store: @default_store, seller: seller, available_to_sellers: true)
+
+      expect(delivery_method).not_to be_valid
+      expect(delivery_method.errors[:available_to_sellers]).to be_present
+    end
+
+    # A nil seller_id IS the marketplace's own method, so releasing a departed
+    # seller's rows would hand the operator their pricing and start quoting it
+    # on first-party packages.
+    it "keeps a departed seller's methods pointed at them" do
+      delivery_method = create(:delivery_method, store: @default_store, seller: seller)
+
+      seller.destroy
+
+      expect(delivery_method.reload.seller_id).to eq(seller.id)
+    end
+
+    describe '.available_to_seller' do
+      let!(:marketplace_method) { create(:delivery_method, store: @default_store) }
+      let!(:shared_method) { create(:delivery_method, store: @default_store, available_to_sellers: true) }
+      let!(:own_method) { create(:delivery_method, store: @default_store, seller: seller) }
+      let!(:other_sellers_method) { create(:delivery_method, store: @default_store, seller: create(:seller, store: @default_store)) }
+
+      it "offers a seller their own methods and whatever the operator shares" do
+        expect(described_class.available_to_seller(seller)).to contain_exactly(own_method, shared_method)
+      end
+
+      it 'offers a first-party package the marketplace methods only' do
+        expect(described_class.available_to_seller(nil)).to contain_exactly(marketplace_method, shared_method)
+      end
+
+      it "never offers one seller another seller's method" do
+        expect(described_class.available_to_seller(seller)).not_to include(other_sellers_method)
+      end
+    end
+  end
 end

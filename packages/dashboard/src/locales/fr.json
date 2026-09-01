@@ -801,7 +801,8 @@
         "weight_between": "{{min}}–{{max}} {{unit}}",
         "weight_max": "Moins de {{max}} {{unit}}",
         "weight_min": "À partir de {{min}} {{unit}}"
-      }
+      },
+      "shared_with_sellers_badge": "Partagée avec les vendeurs"
     },
     "delivery_origin_groups": {
       "delete_confirm": {
@@ -1270,6 +1271,10 @@
       "delivery_method": {
         "admin_name": {
           "label": "Nom interne"
+        },
+        "available_to_sellers": {
+          "help": "Permet d'expédier les commandes des vendeurs avec cette méthode. Laissez désactivé si chaque vendeur organise sa propre expédition.",
+          "label": "Disponible pour les vendeurs"
         },
         "calculator": {
           "label": "Calculateur de tarif"

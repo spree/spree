@@ -801,7 +801,8 @@
         "weight_between": "{{min}}–{{max}}{{unit}}",
         "weight_max": "Under {{max}}{{unit}}",
         "weight_min": "{{min}}{{unit}} and up"
-      }
+      },
+      "shared_with_sellers_badge": "Shared with sellers"
     },
     "delivery_origin_groups": {
       "delete_confirm": {
@@ -1270,6 +1271,10 @@
       "delivery_method": {
         "admin_name": {
           "label": "Internal name"
+        },
+        "available_to_sellers": {
+          "help": "Lets sellers' orders be shipped with this method. Leave off if each seller arranges their own shipping.",
+          "label": "Available to sellers"
         },
         "calculator": {
           "label": "Rate calculator"

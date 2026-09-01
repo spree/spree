@@ -3,7 +3,7 @@ module Spree
     module V3
       module Admin
         class DeliveryMethodsController < ResourceController
-          scoped_resource :settings
+          scoped_resource :delivery_methods
 
           # GET /api/v3/admin/delivery_methods/calculators
           # Registered delivery calculator classes with their preference
@@ -129,6 +129,7 @@ module Spree
               *model_additional_permitted_attributes,
               :name, :admin_name, :code, :fulfillment_provider,
               :pickup_point_provider, :rate_provider, :storefront_visible, :tracking_url,
+              :available_to_sellers,
               :estimated_transit_business_days_min, :estimated_transit_business_days_max,
               :tax_category_id, :calculator_type, :markup_flat, :markup_percent,
               :delivery_profile_id, :delivery_origin_group_id, :delivery_zone_id,
@@ -152,7 +153,7 @@ module Spree
           end
 
           def collection_includes
-            [:calculator, :tax_category, :delivery_zone, :delivery_profile, :delivery_method_rules]
+            [:calculator, :tax_category, :delivery_zone, :delivery_profile, :delivery_method_rules, :seller]
           end
 
           private

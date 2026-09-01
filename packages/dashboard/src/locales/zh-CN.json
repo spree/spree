@@ -799,7 +799,8 @@
         "weight_between": "{{min}}–{{max}} {{unit}}",
         "weight_max": "低于 {{max}} {{unit}}",
         "weight_min": "{{min}} {{unit}} 及以上"
-      }
+      },
+      "shared_with_sellers_badge": "已共享给卖家"
     },
     "delivery_origin_groups": {
       "delete_confirm": {
@@ -1265,6 +1266,10 @@
       "delivery_method": {
         "admin_name": {
           "label": "内部名称"
+        },
+        "available_to_sellers": {
+          "help": "允许卖家的订单使用此配送方式。如果每位卖家自行安排配送，请保持关闭。",
+          "label": "卖家可用"
         },
         "calculator": {
           "label": "运费计算器"

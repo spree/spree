@@ -375,6 +375,7 @@ module Spree
           Spree::SellerRequirements::CompleteProfile,
           Spree::SellerRequirements::BillingAddress,
           Spree::SellerRequirements::ReturnsAddress,
+          Spree::SellerRequirements::DeliveryMethod,
           Spree::SellerRequirements::MinimumProducts,
           Spree::SellerRequirements::PayoutAccount,
           Spree::SellerRequirements::RequiredCustomFields,

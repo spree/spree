@@ -24,7 +24,7 @@ RSpec.describe Spree::Api::V3::Seller::DeliveryProfilesController, type: :contro
 
       expect(response).to have_http_status(:ok)
       expect(json_response['data'].pluck('name')).to include('Oversized')
-      expect(json_response['data'].first.keys).to contain_exactly('id', 'name', 'default')
+      expect(json_response['data'].first.keys).to contain_exactly('id', 'name', 'default', 'digital')
     end
 
     it "leaves out another store's profiles" do
@@ -44,6 +44,21 @@ RSpec.describe Spree::Api::V3::Seller::DeliveryProfilesController, type: :contro
         get :index, as: :json
 
         expect(response).to have_http_status(:forbidden)
+      end
+    end
+
+    # It backs the delivery-method form's picker too, so a member granted only
+    # that key must reach it — otherwise they load the page and find an empty
+    # "kind of goods" list with no way to create a method.
+    context 'with delivery methods but not products' do
+      let(:seller_role) do
+        create(:role, name: 'Seller', resource: seller, permissions: %w[read_delivery_methods])
+      end
+
+      it 'is allowed' do
+        get :index, as: :json
+
+        expect(response).to have_http_status(:ok)
       end
     end
   end

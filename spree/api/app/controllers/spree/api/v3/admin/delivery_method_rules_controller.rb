@@ -3,7 +3,7 @@ module Spree
     module V3
       module Admin
         class DeliveryMethodRulesController < ResourceController
-          scoped_resource :settings
+          scoped_resource :delivery_methods
 
           # GET /api/v3/admin/delivery_method_rules/types
           # Registered rule kinds with preference schemas for admin pickers.

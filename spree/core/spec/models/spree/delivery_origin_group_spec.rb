@@ -72,4 +72,35 @@ describe Spree::DeliveryOriginGroup, type: :model do
       expect(group.can_be_deleted?).to be true
     end
   end
+  describe '#covers_location?' do
+    let(:group) { create(:delivery_origin_group, delivery_profile: profile, name: 'EU') }
+
+    it 'covers every location when the operator narrowed nothing' do
+      expect(group.covers_location?(create(:stock_location, store: store))).to be true
+    end
+
+    context 'when the operator narrowed the group to particular warehouses' do
+      let(:named_location) { create(:stock_location, store: store) }
+
+      before { group.stock_locations << named_location }
+
+      it 'covers the warehouse it names' do
+        expect(group.covers_location?(named_location)).to be true
+      end
+
+      it 'leaves out a warehouse it does not name' do
+        expect(group.covers_location?(create(:stock_location, store: store))).to be false
+      end
+
+      # The member list narrows the marketplace's own warehouses and says
+      # nothing about where a seller keeps stock — reading it as a store-wide
+      # allowlist would make every seller's inventory unallocatable
+      # (docs/plans/6.0-multi-vendor-marketplace.md, Decision 13).
+      it "still covers a seller's own warehouse" do
+        seller_location = create(:stock_location, store: store, seller: create(:seller, store: store))
+
+        expect(group.covers_location?(seller_location)).to be true
+      end
+    end
+  end
 end

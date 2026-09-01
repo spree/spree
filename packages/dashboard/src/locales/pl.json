@@ -809,7 +809,8 @@
         "weight_between": "{{min}}–{{max}} {{unit}}",
         "weight_max": "Poniżej {{max}} {{unit}}",
         "weight_min": "Od {{min}} {{unit}}"
-      }
+      },
+      "shared_with_sellers_badge": "Udostępniona sprzedawcom"
     },
     "delivery_origin_groups": {
       "delete_confirm": {
@@ -1284,6 +1285,10 @@
       "delivery_method": {
         "admin_name": {
           "label": "Nazwa wewnętrzna"
+        },
+        "available_to_sellers": {
+          "help": "Pozwala wysyłać zamówienia sprzedawców tą metodą. Zostaw wyłączone, jeśli każdy sprzedawca organizuje wysyłkę samodzielnie.",
+          "label": "Dostępna dla sprzedawców"
         },
         "calculator": {
           "label": "Kalkulator stawek"

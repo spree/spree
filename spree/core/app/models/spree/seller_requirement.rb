@@ -51,7 +51,7 @@ module Spree
 
     # The kinds a marketplace starts with, in the order a seller meets them:
     # agree to the terms, say who you are, tell us where to invoice and where
-    # returns go, then list something.
+    # returns go, have a way to ship, then list something.
     #
     # Only the kinds that ask a question core already knows how to answer.
     # The generic ones (an attestation, a document, a manual check) are absent
@@ -62,6 +62,7 @@ module Spree
       Spree::SellerRequirements::CompleteProfile
       Spree::SellerRequirements::BillingAddress
       Spree::SellerRequirements::ReturnsAddress
+      Spree::SellerRequirements::DeliveryMethod
       Spree::SellerRequirements::MinimumProducts
     ].freeze
 

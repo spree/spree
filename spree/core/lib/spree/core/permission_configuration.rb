@@ -379,12 +379,23 @@ module Spree
       })
 
       register_resource(:settings, group: :settings, subjects: -> {
-        [Spree::Store, Spree::PaymentMethod, Spree::Gateway, Spree::DeliveryMethod,
-         Spree::DeliveryMethodRule, Spree::DeliveryZone, Spree::DeliveryZoneMember,
+        [Spree::Store, Spree::PaymentMethod, Spree::Gateway,
+         Spree::DeliveryZone, Spree::DeliveryZoneMember,
          Spree::StockLocation, Spree::DeliveryProfile,
          Spree::Market, Spree::TaxCategory, Spree::TaxRate, Spree::AllowedOrigin,
          Spree::RefundReason, Spree::ReturnReason, Spree::ClaimReason, Spree::Channel,
          Spree::OrderRoutingRule, Spree::CustomFieldDefinition, Spree::Policy]
+      })
+      # How goods actually get shipped and what that costs. Its own resource
+      # rather than part of `settings` because on a marketplace a seller owns
+      # their own methods, and `settings` is never seller-grantable — the rest
+      # of what it covers is store-wide administration
+      # (docs/plans/6.0-multi-vendor-marketplace.md, Decision 13).
+      #
+      # The profiles and zones these methods hang off stay in `settings`: the
+      # marketplace defines that vocabulary and a seller only reads it.
+      register_resource(:delivery_methods, group: :settings, audiences: %i[seller], subjects: -> {
+        [Spree::DeliveryMethod, Spree::DeliveryMethodRule, Spree::DeliveryMethodService]
       })
       register_resource(:webhooks, group: :settings, subjects: -> {
         [Spree::WebhookEndpoint, Spree::WebhookDelivery]

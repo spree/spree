@@ -101,6 +101,15 @@ export function DeliveryMethodList({
                 )}
               </span>
             </button>
+            {/* On a marketplace this one list holds the operator's methods and
+                every seller's, so a row that is not the operator's says whose
+                it is (docs/plans/6.0-multi-vendor-marketplace.md, Decision 13). */}
+            {method.seller_name && <Badge variant="outline">{method.seller_name}</Badge>}
+            {method.available_to_sellers && (
+              <Badge variant="secondary">
+                {t('admin.delivery_methods.shared_with_sellers_badge')}
+              </Badge>
+            )}
             {!method.storefront_visible && (
               <Badge variant="outline">{t('admin.delivery_profiles.detail.hidden_badge')}</Badge>
             )}

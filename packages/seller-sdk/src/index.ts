@@ -8,6 +8,12 @@ export type { Client, Client as SellerApiClient, SellerClientConfig } from './cl
 export { createSellerClient } from './client'
 export type {
   BulkProductResult,
+  DeliveryCalculatorType,
+  DeliveryMethodParams,
+  DeliveryMethodRuleParams,
+  DeliveryMethodRuleType,
+  DeliveryPreferenceField,
+  DeliveryZoneListParams,
   MeResponse,
   OnboardingResponse,
   PermissionRule,
