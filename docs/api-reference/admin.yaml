@@ -26092,7 +26092,15 @@ paths:
       - api_key: []
         bearer_auth: []
       description: |-
-        The catalog's curated assortment, listed by product name — membership carries no order.
+        The catalog's curated assortment, listed by product name — membership
+        carries no order.
+
+        `expand=catalog_price` adds what a buyer on this agreement pays for
+        each row and where the amount comes from: `explicit` (an amount
+        entered on the catalog's own price list), `automatic` (that list's
+        percentage applied to the shop price) or `base` (the shop price
+        itself — this agreement does not price the product).
+
 
         **Required scope:** `read_products` (for API-key authentication).
       parameters:
@@ -26111,21 +26119,93 @@ paths:
         required: true
         schema:
           type: string
+      - name: expand
+        in: query
+        required: false
+        description: Comma-separated. `catalog_price` adds the resolved price to every
+          row.
+        example: catalog_price
+        schema:
+          type: string
       responses:
         '200':
-          description: products found
+          description: products found, with what the agreement charges
           content:
             application/json:
               example:
-                data: []
+                data:
+                - id: prod_UkLWZg9DAJ
+                  name: Product 12159
+                  slug: product-12159
+                  meta_title:
+                  meta_description:
+                  meta_keywords:
+                  variant_count: 1
+                  available_on:
+                  preorder_ships_at:
+                  purchasable: true
+                  preorder: false
+                  in_stock: false
+                  backorderable: true
+                  available: true
+                  description: Veritatis quos vel inventore enim quod. Accusamus ipsum
+                    itaque debitis magnam nisi deserunt error. Ad aperiam tempora
+                    totam veniam adipisci nihil deleniti. Corporis expedita soluta
+                    sunt harum reiciendis. Animi alias sed odio modi expedita corrupti
+                    facere. Inventore quos corrupti dolor vitae. Dolorem amet unde
+                    blanditiis iste adipisci quo fuga. Autem corporis accusamus ullam
+                    repellendus architecto aliquid ipsum reprehenderit. Magni aliquid
+                    id asperiores consectetur sunt numquam. Praesentium animi corrupti
+                    tenetur recusandae sunt magnam aliquid. Expedita cumque qui sint
+                    amet. Voluptatum architecto tempora nulla repudiandae adipisci.
+                    Est quos quis minus quia at.
+                  description_html: |-
+                    Veritatis quos vel inventore enim quod. Accusamus ipsum itaque debitis magnam nisi deserunt error. Ad aperiam tempora totam veniam adipisci nihil deleniti.
+                    Corporis expedita soluta sunt harum reiciendis. Animi alias sed odio modi expedita corrupti facere. Inventore quos corrupti dolor vitae. Dolorem amet unde blanditiis iste adipisci quo fuga.
+                    Autem corporis accusamus ullam repellendus architecto aliquid ipsum reprehenderit. Magni aliquid id asperiores consectetur sunt numquam. Praesentium animi corrupti tenetur recusandae sunt magnam aliquid.
+                    Expedita cumque qui sint amet. Voluptatum architecto tempora nulla repudiandae adipisci. Est quos quis minus quia at.
+                  default_variant_id: variant_UkLWZg9DAJ
+                  buy_box_variant_id: variant_UkLWZg9DAJ
+                  thumbnail_url:
+                  tags: []
+                  price:
+                    id: price_UkLWZg9DAJ
+                    amount: '100.0'
+                    amount_in_cents: 10000
+                    compare_at_amount:
+                    compare_at_amount_in_cents:
+                    currency: USD
+                    display_amount: "$100.00"
+                    display_compare_at_amount:
+                    price_list_id:
+                    variant_id: variant_UkLWZg9DAJ
+                    created_at: '2026-01-15T12:00:00.000Z'
+                    updated_at: '2026-01-15T12:00:00.000Z'
+                  original_price:
+                  seller_id:
+                  external_references: {}
+                  status: active
+                  metadata: {}
+                  deleted_at:
+                  created_at: '2026-01-15T12:00:00.000Z'
+                  updated_at: '2026-01-15T12:00:00.000Z'
+                  delivery_profile_id: fp_UkLWZg9DAJ
+                  seller_name:
+                  product_type_id:
+                  tax_category_id: taxcat_UkLWZg9DAJ
+                  catalog_price:
+                    currency: USD
+                    source: automatic
+                    amount: '80.0'
+                    display_amount: "$80.00"
                 meta:
                   page: 1
                   limit: 25
-                  count: 0
+                  count: 1
                   pages: 1
-                  from: 0
-                  to: 0
-                  in: 0
+                  from: 1
+                  to: 1
+                  in: 1
                   previous:
                   next:
               schema:
@@ -26134,7 +26214,7 @@ paths:
                   data:
                     type: array
                     items:
-                      "$ref": "#/components/schemas/Product"
+                      "$ref": "#/components/schemas/CatalogProduct"
                   meta:
                     "$ref": "#/components/schemas/PaginationMeta"
                 required:

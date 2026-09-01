@@ -119,20 +119,54 @@ RSpec.describe 'Admin Catalogs API', type: :request, swagger_doc: 'api-reference
       tags 'Catalogs'
       produces 'application/json'
       security [api_key: [], bearer_auth: []]
-      description "The catalog's curated assortment, listed by product name — membership carries no order."
+      description <<~DESC
+        The catalog's curated assortment, listed by product name — membership
+        carries no order.
+
+        `expand=catalog_price` adds what a buyer on this agreement pays for
+        each row and where the amount comes from: `explicit` (an amount
+        entered on the catalog's own price list), `automatic` (that list's
+        percentage applied to the shop price) or `base` (the shop price
+        itself — this agreement does not price the product).
+      DESC
       admin_scope :read, :products
 
       parameter name: 'x-spree-api-key', in: :header, type: :string, required: true
       parameter name: :Authorization, in: :header, type: :string, required: true
       parameter name: :catalog_id, in: :path, type: :string, required: true
+      parameter name: :expand, in: :query, type: :string, required: false,
+                description: 'Comma-separated. `catalog_price` adds the resolved price to every row.',
+                example: 'catalog_price'
 
       response '200', 'products found' do
         let(:'x-spree-api-key') { secret_api_key.plaintext_token }
         let(:catalog_id) { catalog.prefixed_id }
+        let(:expand) { nil }
 
-        schema SwaggerSchemaHelpers.paginated('Product')
+        schema SwaggerSchemaHelpers.paginated('CatalogProduct')
 
         run_test!
+      end
+
+      response '200', 'products found, with what the agreement charges' do
+        let(:'x-spree-api-key') { secret_api_key.plaintext_token }
+        let(:catalog_id) { catalog.prefixed_id }
+        let(:expand) { 'catalog_price' }
+        let(:product) { create(:product, store: store, price: 100) }
+
+        before do
+          catalog.add_products([product.id])
+          create(:price_list, :active, store: store, catalog: catalog,
+                                       price_adjustment_percentage: -20)
+        end
+
+        schema SwaggerSchemaHelpers.paginated('CatalogProduct')
+
+        run_test! do |response|
+          price = JSON.parse(response.body)['data'].first['catalog_price']
+          expect(price['source']).to eq('automatic')
+          expect(price['amount']).to eq('80.0')
+        end
       end
     end
 
