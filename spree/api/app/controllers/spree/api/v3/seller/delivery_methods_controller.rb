@@ -211,16 +211,19 @@ module Spree
             preferences = permitted_params[:calculator_preferences]
 
             if calculator_type.present? && delivery_method.calculator&.type != calculator_type
-              unless Spree::DeliveryMethod.calculators.any? { |klass| klass.to_s == calculator_type }
+              registered = Spree::DeliveryMethod.calculators.find { |klass| klass.to_s == calculator_type }
+              unless registered
                 delivery_method.errors.add(:calculator_type, :invalid)
                 return
               end
 
-              # Constantized from the checked name rather than instantiating
-              # the registry's own object: in development the registry holds a
-              # class from an earlier reload, and assigning an instance of it
-              # fails the association's type check.
-              delivery_method.calculator = calculator_type.constantize.new
+              # Resolved from the registry entry's OWN name, never the
+              # request's: nothing user-supplied reaches `constantize`. Going
+              # back through the name rather than instantiating `registered`
+              # directly is what survives a reload — in development the
+              # registry holds a class from an earlier one, and an instance of
+              # it fails the association's type check.
+              delivery_method.calculator = registered.to_s.constantize.new
             end
 
             return if preferences.blank? || delivery_method.calculator.nil?
