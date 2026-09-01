@@ -1,9 +1,9 @@
 import type { Seller } from '@spree/admin-sdk'
 import { defineTable, progressPercentage } from '@spree/dashboard-core'
 import { Progress, RelativeTime, StatusBadge } from '@spree/dashboard-ui'
+import { StoreIcon } from '@spree/dashboard-ui/icons'
 import { Link } from '@tanstack/react-router'
 import i18n from 'i18next'
-import { StoreIcon } from 'lucide-react'
 import { SELLER_STATUSES } from '../schemas/seller'
 
 defineTable<Seller>('sellers', {

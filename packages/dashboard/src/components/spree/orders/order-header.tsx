@@ -7,7 +7,6 @@ import {
   StatusBadge,
   useConfirm,
 } from '@spree/dashboard-ui'
-import { Link } from '@tanstack/react-router'
 import {
   CheckCircleIcon,
   ExternalLinkIcon,
@@ -16,7 +15,8 @@ import {
   RotateCcwIcon,
   ShieldCheckIcon,
   XCircleIcon,
-} from 'lucide-react'
+} from '@spree/dashboard-ui/icons'
+import { Link } from '@tanstack/react-router'
 import { useTranslation } from 'react-i18next'
 import { orderQueryKey } from '../../../hooks/use-order'
 import { GONE_STATUSES } from '../../../lib/fulfillment-items'

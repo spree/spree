@@ -157,6 +157,8 @@ module Spree
         admin_company_membership_serializer: 'Spree::Api::V3::Admin::CompanyMembershipSerializer',
         admin_company_invitation_serializer: 'Spree::Api::V3::Admin::CompanyInvitationSerializer',
         admin_catalog_serializer: 'Spree::Api::V3::Admin::CatalogSerializer',
+        admin_catalog_price_serializer: 'Spree::Api::V3::Admin::CatalogPriceSerializer',
+        admin_catalog_product_serializer: 'Spree::Api::V3::Admin::CatalogProductSerializer',
         admin_catalog_assignment_serializer: 'Spree::Api::V3::Admin::CatalogAssignmentSerializer',
         admin_catalog_quantity_rule_serializer: 'Spree::Api::V3::Admin::CatalogQuantityRuleSerializer',
         admin_catalog_product_term_serializer: 'Spree::Api::V3::Admin::CatalogProductTermSerializer',

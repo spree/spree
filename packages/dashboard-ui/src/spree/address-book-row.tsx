@@ -1,4 +1,3 @@
-import { EllipsisVerticalIcon, PencilIcon, TrashIcon } from 'lucide-react'
 import { useTranslation } from 'react-i18next'
 import { Badge } from '../ui/badge'
 import { Button } from '../ui/button'
@@ -9,6 +8,7 @@ import {
   DropdownMenuTrigger,
 } from '../ui/dropdown-menu'
 import { AddressBlock, type AddressBlockValue } from './address-block'
+import { EllipsisVerticalIcon, PencilIcon, TrashIcon } from './icons'
 
 /** What every address book row needs, whoever owns the book. */
 export interface AddressBookEntry extends AddressBlockValue {

@@ -6,7 +6,7 @@ import {
   SettingsIcon,
   StoreIcon,
   TagIcon,
-} from 'lucide-react'
+} from '@spree/dashboard-ui/icons'
 import { OnboardingNavBadge } from '../components/onboarding-nav-badge'
 
 // The panel's built-in sidebar. Registered into the same registry a plugin

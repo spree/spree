@@ -1,6 +1,6 @@
 import { type ResourceSearch, ResourceTable } from '@spree/dashboard-core'
 import { Button } from '@spree/dashboard-ui'
-import { PlusIcon } from 'lucide-react'
+import { PlusIcon } from '@spree/dashboard-ui/icons'
 import { useTranslation } from 'react-i18next'
 import { type BrandsListParams, brandsClient } from '../client'
 import type { Brand } from '../types'

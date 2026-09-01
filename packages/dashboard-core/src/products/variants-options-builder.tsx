@@ -11,7 +11,7 @@ import {
   SelectValue,
   toastManager,
 } from '@spree/dashboard-ui'
-import { CheckIcon, PencilIcon, PlusIcon, XIcon } from 'lucide-react'
+import { CheckIcon, PencilIcon, PlusIcon, XIcon } from '@spree/dashboard-ui/icons'
 import { useMemo, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { getApiClient, type PanelOptionType as OptionType } from '../api-client'

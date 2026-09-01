@@ -1,4 +1,3 @@
-import { AlertTriangleIcon, RotateCcwIcon } from 'lucide-react'
 import { Component, type ReactNode } from 'react'
 import { useTranslation } from 'react-i18next'
 import { Button } from '../ui/button'
@@ -10,6 +9,7 @@ import {
   EmptyMedia,
   EmptyTitle,
 } from '../ui/empty'
+import { AlertTriangleIcon, RotateCcwIcon } from './icons'
 
 interface ErrorStateProps {
   /** Headline. Defaults to "Something went wrong". */

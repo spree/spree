@@ -1,8 +1,8 @@
 import type { Import } from '@spree/admin-sdk'
 import { defineTable } from '@spree/dashboard-core'
 import { RelativeTime, ResourceNameCell, StatusBadge } from '@spree/dashboard-ui'
+import { UploadIcon } from '@spree/dashboard-ui/icons'
 import i18n from 'i18next'
-import { UploadIcon } from 'lucide-react'
 import { importTypeLabel } from '../lib/import-types'
 
 defineTable<Import>('imports', {

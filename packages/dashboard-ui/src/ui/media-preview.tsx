@@ -1,7 +1,7 @@
-import { FilmIcon, ImagePlusIcon } from 'lucide-react'
 import type * as React from 'react'
 import { useTranslation } from 'react-i18next'
 import { cn } from '../lib/utils'
+import { FilmIcon, ImagePlusIcon } from '../spree/icons'
 
 export interface MediaPreviewProps {
   mediaType?: 'image' | 'video' | 'external_video' | string

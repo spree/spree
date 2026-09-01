@@ -12,7 +12,7 @@ import {
   FieldLabel,
   toastManager,
 } from '@spree/dashboard-ui'
-import { FileIcon, UploadCloudIcon, XIcon } from 'lucide-react'
+import { FileIcon, UploadCloudIcon, XIcon } from '@spree/dashboard-ui/icons'
 import { type ReactNode, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useDirectUpload } from '../hooks/use-direct-upload'
@@ -213,7 +213,7 @@ export function FileUploadField({
             Enter/Space; the label paints a focus ring via has-[:focus-visible]. */}
         <label
           className={cn(
-            'flex cursor-pointer flex-col items-center justify-center gap-2 rounded-md border border-border border-dashed bg-muted/40 px-4 py-8 text-center transition-colors hover:bg-muted',
+            'flex cursor-pointer flex-col items-center justify-center gap-2 rounded-md border border-border border-dashed bg-muted/40 px-4 py-8 text-center transition-colors hover:bg-accent/50',
             'has-[:focus-visible]:border-ring has-[:focus-visible]:ring-[3px] has-[:focus-visible]:ring-ring/50',
             (disabled || !!pending) && 'pointer-events-none opacity-60',
           )}
@@ -228,7 +228,7 @@ export function FileUploadField({
           <span className="text-muted-foreground text-sm">
             {dropLabel ?? t('admin.components.file_upload.drop_label')}
           </span>
-          <span className="mt-1 inline-flex h-8 items-center rounded-md border border-border bg-background px-3 font-medium text-sm shadow-xs">
+          <span className="mt-1 inline-flex h-8 items-center rounded-md border border-border bg-background px-3 font-medium text-sm hover:bg-accent">
             {browseLabel ?? t('admin.components.file_upload.browse')}
           </span>
           <input

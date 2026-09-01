@@ -35,7 +35,7 @@ import {
   DownloadIcon,
   RotateCcwIcon,
   XIcon,
-} from 'lucide-react'
+} from '@spree/dashboard-ui/icons'
 import { useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import type { PanelImport, PanelImportRow } from '../api-client'

@@ -12,7 +12,7 @@ import {
   PlugIcon,
   RadioTowerIcon,
   ReceiptTextIcon,
-  RotateCcwIcon,
+  ReturnRequestIcon,
   ScrollTextIcon,
   ShapesIcon,
   ShieldCheckIcon,
@@ -20,10 +20,10 @@ import {
   TagIcon,
   TruckIcon,
   UploadIcon,
-  UsersRoundIcon,
+  UsersIcon,
   WarehouseIcon,
   WebhookIcon,
-} from 'lucide-react'
+} from '@spree/dashboard-ui/icons'
 
 // Built-in entries use `labelKey` so labels re-render on language change —
 // see settings-sidebar.tsx for resolution. Plugins can still pass `label`
@@ -230,7 +230,7 @@ settingsNav.add({
   descriptionKey: 'admin.settings_nav.descriptions.reasons',
   keywords: ['returns', 'refunds', 'claims', 'rma', 'reason'],
   path: '/reasons',
-  icon: RotateCcwIcon,
+  icon: ReturnRequestIcon,
   group: 'shipping',
   position: 400,
   subject: Subject.ReturnReason,
@@ -280,7 +280,7 @@ settingsNav.add({
   descriptionKey: 'admin.settings_nav.descriptions.staff',
   keywords: ['users', 'team', 'invite', 'admins'],
   path: '/staff',
-  icon: UsersRoundIcon,
+  icon: UsersIcon,
   group: 'team',
   position: 100,
   subject: Subject.AdminUser,

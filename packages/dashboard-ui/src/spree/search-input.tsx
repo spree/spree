@@ -1,8 +1,8 @@
-import { SearchIcon, XIcon } from 'lucide-react'
 import type * as React from 'react'
 import { useRef } from 'react'
 import { cn } from '../lib/utils'
 import { InputGroup, InputGroupAddon, InputGroupButton, InputGroupInput } from '../ui/input-group'
+import { SearchIcon, XIcon } from './icons'
 
 /**
  * Search box with a leading magnifier and our own clear button.

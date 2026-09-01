@@ -9,7 +9,8 @@ module Spree
           scoped_resource :products
 
           before_action :set_resource,
-                        only: [:show, :update, :destroy, :assign, :import_products]
+                        only: [:show, :update, :destroy, :assign, :import_products,
+                               :activate, :deactivate]
 
           # POST /api/v3/admin/catalogs/:id/import_products — copies the
           # attached price list's products into the assortment. Explicit by
@@ -44,6 +45,15 @@ module Spree
             end
           end
 
+          # PATCH /api/v3/admin/catalogs/:id/activate
+          def activate
+            run_status_workflow(Spree.catalog_activate_workflow)
+          end
+
+          # PATCH /api/v3/admin/catalogs/:id/deactivate
+          def deactivate
+            run_status_workflow(Spree.catalog_deactivate_workflow)
+          end
 
           protected
 
@@ -71,6 +81,18 @@ module Spree
             Spree.catalog_update_workflow
           end
 
+          def run_status_workflow(workflow)
+            authorize! :update, @resource
+
+            result = workflow.call(catalog: @resource)
+
+            if result.success?
+              render json: serialize_resource(@resource.reload)
+            else
+              render_service_error(result.error)
+            end
+          end
+
           # `price_list` is an inline payload rather than a reference: a
           # catalog and the list it prices through are stood up in one
           # request (docs/plans/6.0-catalog-agreement-rework.md). Sending it
@@ -78,7 +100,7 @@ module Spree
           # leaves it alone.
           def permitted_params
             permitted = params.permit(*model_additional_permitted_attributes,
-                                      :name, :description, :active, :position, :price_list_id,
+                                      :name, :description, :active, :position,
                                       :minimum_order_quantity, :order_multiple,
                                       metadata: {},
                                       # Small bounded sets, saved with the
@@ -105,14 +127,6 @@ module Spree
                                         { prices: [:id, :variant_id, :currency, :amount,
                                                    :compare_at_amount] }
                                       ])
-            if permitted.key?(:price_list_id)
-              permitted[:price_list_id] =
-                if permitted[:price_list_id].present?
-                  current_store.price_lists.find_by_prefix_id!(permitted[:price_list_id]).id
-                else
-                  nil
-                end
-            end
             # `permit` drops an explicit null, but detaching has to be
             # distinguishable from saying nothing.
             permitted[:price_list] = nil if params.key?(:price_list) && params[:price_list].nil?

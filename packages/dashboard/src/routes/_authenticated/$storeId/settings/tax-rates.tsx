@@ -20,6 +20,10 @@ import {
   FieldGroup,
   FieldLabel,
   Input,
+  InputGroup,
+  InputGroupAddon,
+  InputGroupInput,
+  InputGroupText,
   RowActions,
   Select,
   SelectContent,
@@ -36,8 +40,8 @@ import {
   useConfirm,
   useRowClickBridge,
 } from '@spree/dashboard-ui'
+import { PlusIcon } from '@spree/dashboard-ui/icons'
 import { createFileRoute, useNavigate } from '@tanstack/react-router'
-import { PlusIcon } from 'lucide-react'
 import { useEffect } from 'react'
 import { Controller, type UseFormReturn, useForm } from 'react-hook-form'
 import { useTranslation } from 'react-i18next'
@@ -318,16 +322,21 @@ function TaxRateFormFields({ form }: { form: UseFormReturn<TaxRateFormValues> })
         <FieldLabel htmlFor="amount_percentage">
           {t('admin.fields.tax_rate.amount.label')}
         </FieldLabel>
-        <Input
-          id="amount_percentage"
-          type="number"
-          step="0.01"
-          min="0"
-          max="100"
-          inputMode="decimal"
-          aria-invalid={!!errors.amount_percentage || undefined}
-          {...form.register('amount_percentage')}
-        />
+        <InputGroup>
+          <InputGroupInput
+            id="amount_percentage"
+            type="number"
+            step="0.01"
+            min="0"
+            max="100"
+            inputMode="decimal"
+            aria-invalid={!!errors.amount_percentage || undefined}
+            {...form.register('amount_percentage')}
+          />
+          <InputGroupAddon align="inline-end">
+            <InputGroupText>%</InputGroupText>
+          </InputGroupAddon>
+        </InputGroup>
         <FieldDescription>{t('admin.fields.tax_rate.amount.help')}</FieldDescription>
         <FieldError errors={[errors.amount_percentage]} />
       </Field>

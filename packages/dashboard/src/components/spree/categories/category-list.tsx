@@ -10,7 +10,7 @@ import {
   TableHeader,
   TableRow,
 } from '@spree/dashboard-ui'
-import { TagIcon } from 'lucide-react'
+import { TagIcon } from '@spree/dashboard-ui/icons'
 import { useTranslation } from 'react-i18next'
 
 interface CategoryListProps {

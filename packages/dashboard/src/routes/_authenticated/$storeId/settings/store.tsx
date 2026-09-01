@@ -36,8 +36,8 @@ import {
   toastManager,
   useFormSubmitShortcut,
 } from '@spree/dashboard-ui'
+import { ExternalLinkIcon } from '@spree/dashboard-ui/icons'
 import { createFileRoute } from '@tanstack/react-router'
-import { ExternalLinkIcon } from 'lucide-react'
 import { type ReactNode, useCallback, useEffect, useMemo } from 'react'
 import {
   type Control,

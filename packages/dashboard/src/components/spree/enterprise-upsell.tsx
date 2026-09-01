@@ -1,5 +1,5 @@
 import { Alert, AlertDescription, AlertTitle } from '@spree/dashboard-ui'
-import { ExternalLinkIcon, SparklesIcon } from 'lucide-react'
+import { ExternalLinkIcon, SparklesIcon } from '@spree/dashboard-ui/icons'
 import { useTranslation } from 'react-i18next'
 
 export const SPREE_ENTERPRISE_URL = 'https://spreecommerce.org/enterprise/'

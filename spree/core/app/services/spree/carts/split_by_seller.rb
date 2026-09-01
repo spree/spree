@@ -84,8 +84,8 @@ module Spree
           currency: cart.currency,
           email: cart.email,
           token: cart.token,
-          ship_address: cart.ship_address&.dup,
-          bill_address: cart.bill_address&.dup
+          ship_address: cart.ship_address&.snapshot,
+          bill_address: cart.bill_address&.snapshot
         )
         group
       end
@@ -114,8 +114,8 @@ module Spree
             'status' => 'draft',
             # Copies, not the same rows: each order has to be able to have its
             # address corrected without moving a sibling's parcel.
-            'ship_address' => source_order.ship_address&.dup,
-            'bill_address' => source_order.bill_address&.dup
+            'ship_address' => source_order.ship_address&.snapshot,
+            'bill_address' => source_order.bill_address&.snapshot
           )
         )
 

@@ -4,6 +4,9 @@ import Placeholder from '@tiptap/extension-placeholder'
 import type { Editor } from '@tiptap/react'
 import { EditorContent, useEditor, useEditorState } from '@tiptap/react'
 import StarterKit from '@tiptap/starter-kit'
+import { useCallback, useEffect, useRef } from 'react'
+import { useTranslation } from 'react-i18next'
+import { cn } from '../lib/utils'
 import {
   BoldIcon,
   ImageIcon,
@@ -15,10 +18,7 @@ import {
   RedoIcon,
   StrikethroughIcon,
   UndoIcon,
-} from 'lucide-react'
-import { useCallback, useEffect, useRef } from 'react'
-import { useTranslation } from 'react-i18next'
-import { cn } from '../lib/utils'
+} from '../spree/icons'
 
 export interface RichTextEditorProps {
   value?: string
@@ -170,7 +170,7 @@ export function RichTextEditor({
       ref={wrapperRef}
       data-slot="rich-text-editor"
       className={cn(
-        'rounded-lg border border-border bg-card text-foreground shadow-xs transition-[color,background-color,border-color,box-shadow] duration-100 ease-out focus-within:border-blue-500 focus-within:shadow-[0_0_0_3px_color-mix(in_srgb,var(--ring)_15%,transparent)]',
+        'rounded-lg border border-border bg-card text-foreground transition-[color,background-color,border-color,box-shadow] duration-100 ease-out focus-within:border-blue-500 focus-within:shadow-[0_0_0_3px_color-mix(in_srgb,var(--ring)_15%,transparent)]',
         disabled && 'pointer-events-none bg-muted border-border',
         className,
       )}

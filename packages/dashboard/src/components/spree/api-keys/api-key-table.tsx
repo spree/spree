@@ -29,7 +29,7 @@ import {
   useConfirm,
   useCopyToClipboard,
 } from '@spree/dashboard-ui'
-import { BanIcon, CheckIcon, CopyIcon, KeyRoundIcon, PencilIcon } from 'lucide-react'
+import { BanIcon, CheckIcon, CopyIcon, KeyRoundIcon, PencilIcon } from '@spree/dashboard-ui/icons'
 import type { ReactNode } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useDeleteApiKey, useRevokeApiKey } from '../../../hooks/use-api-keys'

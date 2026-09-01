@@ -20,9 +20,6 @@ import {
   Textarea,
   toastManager,
 } from '@spree/dashboard-ui'
-import type { RequirementStatus } from '@spree/seller-sdk'
-import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
-import { Link, useParams } from '@tanstack/react-router'
 import {
   CheckCircle2Icon,
   ChevronRightIcon,
@@ -30,7 +27,10 @@ import {
   ClockIcon,
   ExternalLinkIcon,
   XCircleIcon,
-} from 'lucide-react'
+} from '@spree/dashboard-ui/icons'
+import type { RequirementStatus } from '@spree/seller-sdk'
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
+import { Link, useParams } from '@tanstack/react-router'
 import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { sellerClient } from '../api-client'

@@ -13,8 +13,8 @@ import {
   SheetHeader,
   SheetTitle,
 } from '@spree/dashboard-ui'
+import { CheckIcon } from '@spree/dashboard-ui/icons'
 import i18n from 'i18next'
-import { CheckIcon } from 'lucide-react'
 import { useCallback, useEffect, useRef } from 'react'
 import type { UseFormReturn } from 'react-hook-form'
 import type { PanelVariant as Variant } from './product-types'

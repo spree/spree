@@ -1,8 +1,8 @@
 import type { Promotion } from '@spree/admin-sdk'
 import { defineTable } from '@spree/dashboard-core'
 import { Badge, RelativeTime, ResourceNameCell } from '@spree/dashboard-ui'
+import { TagIcon } from '@spree/dashboard-ui/icons'
 import i18n from 'i18next'
-import { TagIcon } from 'lucide-react'
 
 defineTable<Promotion>('promotions', {
   title: i18n.t('admin.nav.promotions'),

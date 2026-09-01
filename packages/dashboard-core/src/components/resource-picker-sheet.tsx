@@ -10,8 +10,8 @@ import {
   SheetTitle,
   Thumbnail,
 } from '@spree/dashboard-ui'
+import { Loader2Icon } from '@spree/dashboard-ui/icons'
 import { useQuery } from '@tanstack/react-query'
-import { Loader2Icon } from 'lucide-react'
 import { useDeferredValue, useMemo, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 

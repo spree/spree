@@ -47,9 +47,9 @@ import {
   useConfirm,
   useRowClickBridge,
 } from '@spree/dashboard-ui'
+import { PlusIcon, Trash2Icon } from '@spree/dashboard-ui/icons'
 import { useQueryClient } from '@tanstack/react-query'
 import { createFileRoute, useNavigate } from '@tanstack/react-router'
-import { PlusIcon, Trash2Icon } from 'lucide-react'
 import { useEffect } from 'react'
 import { Controller, type UseFormReturn, useFieldArray, useForm } from 'react-hook-form'
 import { useTranslation } from 'react-i18next'
@@ -423,14 +423,19 @@ function CommissionRateFormFields({ form }: { form: UseFormReturn<CommissionRate
         <FieldLabel htmlFor="commission_tax_rate">
           {t('admin.fields.commission_rate.commission_tax_rate.label')}
         </FieldLabel>
-        <Input
-          id="commission_tax_rate"
-          type="number"
-          step="0.01"
-          min="0"
-          placeholder={t('admin.fields.commission_rate.commission_tax_rate.placeholder')}
-          {...form.register('commission_tax_rate')}
-        />
+        <InputGroup>
+          <InputGroupInput
+            id="commission_tax_rate"
+            type="number"
+            step="0.01"
+            min="0"
+            placeholder={t('admin.fields.commission_rate.commission_tax_rate.placeholder')}
+            {...form.register('commission_tax_rate')}
+          />
+          <InputGroupAddon align="inline-end">
+            <InputGroupText>%</InputGroupText>
+          </InputGroupAddon>
+        </InputGroup>
         <span className="text-xs text-muted-foreground">
           {t('admin.fields.commission_rate.commission_tax_rate.help')}
         </span>

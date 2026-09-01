@@ -233,7 +233,7 @@ describe Spree::Catalog, type: :model do
 
     price_list.destroy
 
-    expect(catalog.reload.price_list_id).to be_nil
+    expect(catalog.reload.price_list).to be_nil
   end
 
   # The FK lives on the list: a list is standalone or owned by exactly one
@@ -245,16 +245,16 @@ describe Spree::Catalog, type: :model do
       catalog = create(:catalog, store: store, price_list: price_list)
 
       expect(price_list.reload.catalog).to eq(catalog)
-      expect(catalog.price_list_id).to eq(price_list.id)
+      expect(catalog.price_list).to eq(price_list)
     end
 
-    it 'attaches and detaches through the price_list_id writer' do
+    it 'attaches and detaches through the association writer' do
       catalog = create(:catalog, store: store)
 
-      catalog.update!(price_list_id: price_list.id)
+      catalog.update!(price_list: price_list)
       expect(price_list.reload.catalog).to eq(catalog)
 
-      catalog.update!(price_list_id: nil)
+      catalog.update!(price_list: nil)
       expect(price_list.reload.catalog).to be_nil
     end
 
@@ -367,38 +367,14 @@ describe Spree::Catalog, type: :model do
       expect { catalog.update!(price_list: price_list) }.to change { catalog.reload.updated_at }
     end
 
-    describe 'the price_list_id writer' do
-      it 'records an unknown id as invalid rather than raising' do
-        catalog = create(:catalog, store: store)
+    it 'refuses a list belonging to another store' do
+      catalog = create(:catalog, store: store)
+      foreign = create(:price_list, store: create(:store))
 
-        expect { catalog.price_list_id = 999_999 }.not_to raise_error
-        expect(catalog).not_to be_valid
-        expect(catalog.errors[:price_list]).to be_present
-      end
+      catalog.price_list = foreign
 
-      # The association writer states the whole selection, so an id recorded
-      # by an earlier `price_list_id=` is spent — otherwise it rejects the
-      # detach as an unresolvable id.
-      it 'lets a later detach override an id assigned first' do
-        catalog = create(:catalog, store: store)
-
-        catalog.price_list_id = price_list.id
-        catalog.price_list = nil
-
-        expect(catalog).to be_valid
-        expect(catalog.save).to be true
-        expect(catalog.reload.price_list).to be_nil
-      end
-
-      it 'does not reach another store list' do
-        catalog = create(:catalog, store: store)
-        foreign = create(:price_list, store: create(:store))
-
-        catalog.price_list_id = foreign.id
-
-        expect(catalog).not_to be_valid
-        expect(catalog.price_list).to be_nil
-      end
+      expect(catalog).not_to be_valid
+      expect(catalog.errors[:price_list]).to be_present
     end
 
     # The binding is a write on the LIST, so assigning it on a persisted
@@ -409,7 +385,7 @@ describe Spree::Catalog, type: :model do
       it 'attaches nothing' do
         catalog = create(:catalog, store: store)
 
-        catalog.assign_attributes(price_list_id: price_list.id, name: '')
+        catalog.assign_attributes(price_list: price_list, name: '')
 
         expect(catalog.save).to be false
         expect(price_list.reload.catalog_id).to be_nil
@@ -418,7 +394,7 @@ describe Spree::Catalog, type: :model do
       it 'detaches nothing' do
         catalog = create(:catalog, store: store, price_list: price_list)
 
-        catalog.assign_attributes(price_list_id: nil, name: '')
+        catalog.assign_attributes(price_list: nil, name: '')
 
         expect(catalog.save).to be false
         expect(price_list.reload.catalog_id).to eq(catalog.id)
@@ -427,10 +403,10 @@ describe Spree::Catalog, type: :model do
       it 'reads back the binding the caller asked for, so a form round-trips' do
         catalog = create(:catalog, store: store)
 
-        catalog.assign_attributes(price_list_id: price_list.id, name: '')
+        catalog.assign_attributes(price_list: price_list, name: '')
         catalog.save
 
-        expect(catalog.price_list_id).to eq(price_list.id)
+        expect(catalog.price_list).to eq(price_list)
       end
     end
 
@@ -484,6 +460,26 @@ describe Spree::Catalog, type: :model do
 
       expect(catalog).not_to be_valid
       expect(catalog.errors[:price_list]).to be_present
+    end
+  end
+  describe '#pricing_strategy' do
+    let(:catalog) { create(:catalog, store: store) }
+
+    it 'reads base when the catalog owns no list' do
+      expect(catalog.pricing_strategy).to eq('base')
+    end
+
+    it 'reads automatic for a percentage list' do
+      create(:price_list, :active, store: store, catalog: catalog,
+                                   price_adjustment_percentage: -15)
+
+      expect(catalog.reload.pricing_strategy).to eq('automatic')
+    end
+
+    it 'reads fixed for a list holding entered amounts' do
+      create(:price_list, :active, store: store, catalog: catalog)
+
+      expect(catalog.reload.pricing_strategy).to eq('fixed')
     end
   end
 end

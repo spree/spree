@@ -4,13 +4,36 @@ import { FIXTURE_PROMO_PRODUCT, gotoIndex, login } from './helpers'
 const CATALOGS_PATH = (storeId: string) => `/${storeId}/products/catalogs`
 const CTA = /add catalog/i
 
+// New catalog is a full-window wizard dialog — Details, Audience, Products,
+// Pricing, Review — that writes nothing until Create on the last step.
 async function createCatalog(page: Page, name: string) {
   await page.getByRole('button', { name: CTA }).click()
-  const sheet = page.getByRole('dialog')
-  await expect(sheet.getByRole('heading', { name: /new catalog/i })).toBeVisible()
-  await sheet.locator('#catalog-name').fill(name)
-  await sheet.getByRole('button', { name: /create catalog/i }).click()
-  // On success the sheet navigates to the new catalog's detail page.
+
+  const wizard = page.getByRole('dialog')
+  await expect(wizard.getByRole('heading', { name: /new catalog/i })).toBeVisible()
+  await wizard.locator('#catalog-name').fill(name)
+
+  // Audience, Products and Pricing are all answered by their defaults: no
+  // audience, no assortment and base prices are each a legitimate agreement.
+  //
+  // Each step is confirmed from the rail before the next click: Next and
+  // Create occupy the same slot in the footer, so clicking without knowing
+  // where the wizard is submits the form a step early.
+  const onStep = (label: RegExp) =>
+    expect(wizard.getByRole('button', { name: label })).toHaveAttribute('aria-current', 'step')
+
+  await onStep(/^details$/i)
+  for (const step of [/^audience$/i, /^products$/i, /^pricing$/i, /^review$/i]) {
+    await wizard.getByRole('button', { name: /^next$/i }).click()
+    await onStep(step)
+  }
+
+  // `noWaitAfter`: Create closes the dialog and navigates, and a click that
+  // waits for its own element to settle races that teardown. The outcome is
+  // what matters, and the next assertion is the one that proves it.
+  await wizard.getByRole('button', { name: /create catalog/i }).click({ noWaitAfter: true })
+
+  // On success the dialog closes onto the new catalog's detail page.
   await expect(page.getByRole('heading', { name })).toBeVisible({ timeout: 15_000 })
 }
 
@@ -141,13 +164,38 @@ test.describe('catalogs', () => {
 
     // The list is created by Save and seeded from the assortment, so the
     // spreadsheet opens on a priceable row rather than empty.
-    const openPrices = page.getByRole('button', { name: /^enter prices$/i })
+    //
+    // `.first()`: the button sits on the pricing card and on the products
+    // card — pricing the rows being priced belongs there too — and both open
+    // this one grid.
+    const openPrices = page.getByRole('button', { name: /^enter prices$/i }).first()
     await expect(openPrices).toBeVisible({ timeout: 15_000 })
     await openPrices.click()
     const grid = page.getByRole('dialog')
-    await expect(grid.getByLabel(/^price for/i).first()).toBeVisible({ timeout: 15_000 })
+    const cell = grid.getByLabel(/^price for/i).first()
+    await expect(cell).toBeVisible({ timeout: 15_000 })
+
+    // Entering a price has to reach the assortment rows behind the grid: they
+    // carry what the agreement charges, so closing onto the old amount is the
+    // merchant being shown a price that is no longer true.
+    // The grid is a spreadsheet: a cell is read-only until it is opened for
+    // editing, which is a double click, exactly as a merchant does it.
+    await cell.dblclick()
+    await cell.fill('12.34')
+    await cell.press('Enter')
+
+    // Save is disabled until the grid registers the edit, and it disables
+    // again once the write lands — which is also what tells us the close
+    // below will not be caught by the unsaved-changes guard.
+    const savePrices = grid.getByRole('button', { name: /^save prices$/i })
+    await expect(savePrices).toBeEnabled({ timeout: 15_000 })
+    await savePrices.click()
+    await expect(savePrices).toBeDisabled({ timeout: 15_000 })
+
     await grid.getByRole('button', { name: /^close$/i }).click()
     await expect(grid).toBeHidden({ timeout: 15_000 })
+
+    await expect(page.getByText('$12.34')).toBeVisible({ timeout: 15_000 })
 
     // Staging the product for removal takes it out of the grid: its prices
     // survive until Save, but pricing something on its way out is wasted work.
@@ -217,8 +265,9 @@ test.describe('catalogs', () => {
 
     await saveCatalog(page)
 
-    // Saved: the list exists, so the price spreadsheet is reachable.
-    await expect(page.getByRole('button', { name: /^enter prices$/i })).toBeVisible({
+    // Saved: the list exists, so the price spreadsheet is reachable — from the
+    // pricing card and from the assortment rows alike.
+    await expect(page.getByRole('button', { name: /^enter prices$/i }).first()).toBeVisible({
       timeout: 15_000,
     })
   })

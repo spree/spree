@@ -9,8 +9,8 @@ import {
   InputGroupAddon,
   InputGroupInput,
 } from '@spree/dashboard-ui'
+import { PlusIcon, SearchIcon } from '@spree/dashboard-ui/icons'
 import { createFileRoute, useNavigate } from '@tanstack/react-router'
-import { PlusIcon, SearchIcon } from 'lucide-react'
 import { useDeferredValue, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { CategoryList } from '../../../../../components/spree/categories/category-list'

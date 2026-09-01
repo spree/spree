@@ -12,7 +12,7 @@ import {
   Skeleton,
   toastManager,
 } from '@spree/dashboard-ui'
-import { ExternalLinkIcon, EyeIcon, EyeOffIcon } from 'lucide-react'
+import { ExternalLinkIcon, EyeIcon, EyeOffIcon } from '@spree/dashboard-ui/icons'
 import { type ReactNode, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useStorefrontPublishableKey } from '../../hooks/use-api-keys'

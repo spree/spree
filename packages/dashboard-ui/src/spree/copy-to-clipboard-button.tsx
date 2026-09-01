@@ -1,8 +1,8 @@
-import { CheckIcon, CopyIcon } from 'lucide-react'
 import type { ComponentProps, ReactNode } from 'react'
 import { useCopyToClipboard } from '../hooks/use-copy-to-clipboard'
 import { cn } from '../lib/utils'
 import { Button } from '../ui/button'
+import { CheckIcon, CopyIcon } from './icons'
 
 type ButtonProps = ComponentProps<typeof Button>
 

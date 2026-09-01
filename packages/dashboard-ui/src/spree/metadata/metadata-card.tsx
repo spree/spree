@@ -1,7 +1,7 @@
-import { BracesIcon } from 'lucide-react'
 import { Fragment } from 'react'
 import { Card, CardContent, CardHeader, CardTitle } from '../../ui/card'
 import { Empty, EmptyDescription, EmptyHeader, EmptyMedia, EmptyTitle } from '../../ui/empty'
+import { BracesIcon } from '../icons'
 
 interface MetadataCardProps {
   /**

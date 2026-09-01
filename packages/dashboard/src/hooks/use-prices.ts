@@ -8,6 +8,10 @@ import { adminClient, useResourceMutation } from '@spree/dashboard-core'
  * refetch automatically. Toasts and form-error mapping live in the caller
  * so the spreadsheet can render its own dirty-state UI on failure.
  *
+ * `catalogs` goes with it: a catalog's assortment rows carry the price its
+ * agreement charges, so writing prices leaves that listing stale — the grid
+ * closes onto rows still showing what the products used to cost.
+ *
  * Amounts arrive already normalized to canonical `"1234.56"` form — the editor
  * converts the merchant's localized input client-side (see
  * docs/plans/5.5-client-side-money-normalization.md), so no request locale.
@@ -15,7 +19,7 @@ import { adminClient, useResourceMutation } from '@spree/dashboard-core'
 export function useBulkUpsertPrices() {
   return useResourceMutation<{ price_count: number }, Error, { prices: PriceBulkUpsertRow[] }>({
     mutationFn: (params) => adminClient.prices.bulkUpsert(params),
-    invalidate: [['prices']],
+    invalidate: [['prices'], ['catalogs']],
     successMessage: false,
     errorMessage: false,
   })

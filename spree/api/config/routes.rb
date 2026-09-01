@@ -617,6 +617,11 @@ Spree::Core::Engine.add_routes do
           member do
             post :assign
             post :import_products
+            # Going live is its own act, not a column write: an agreement is
+            # checked before it starts reaching buyers, and what has to happen
+            # alongside hangs off the workflow's hooks.
+            patch :activate
+            patch :deactivate
           end
           # Assortment membership. Unordered: a catalog decides what a buyer
           # sees, never the order they see it in.

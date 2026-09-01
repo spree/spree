@@ -11,7 +11,7 @@ import {
   RichTextEditor,
   Textarea,
 } from '@spree/dashboard-ui'
-import { PencilIcon } from 'lucide-react'
+import { PencilIcon } from '@spree/dashboard-ui/icons'
 import { type FormEvent, useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useOrderMutation } from '../../../hooks/use-order'

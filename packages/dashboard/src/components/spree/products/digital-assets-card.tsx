@@ -24,7 +24,13 @@ import {
   toastManager,
   useConfirm,
 } from '@spree/dashboard-ui'
-import { ChevronDownIcon, DownloadIcon, FileIcon, PlusIcon, UploadIcon } from 'lucide-react'
+import {
+  ChevronDownIcon,
+  DownloadIcon,
+  FileIcon,
+  PlusIcon,
+  UploadIcon,
+} from '@spree/dashboard-ui/icons'
 import { useRef, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import {

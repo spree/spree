@@ -1,9 +1,9 @@
 import { cva, type VariantProps } from 'class-variance-authority'
 import i18n from 'i18next'
-import { PanelLeftIcon } from 'lucide-react'
 import * as React from 'react'
 import { useIsMobile } from '../hooks/use-mobile'
 import { cn } from '../lib/utils'
+import { PanelLeftIcon } from '../spree/icons'
 import { Button } from './button'
 import { Input } from './input'
 import { Separator } from './separator'
@@ -281,7 +281,7 @@ function Sidebar({
         <div
           data-sidebar="sidebar"
           data-slot="sidebar-inner"
-          className="flex size-full flex-col bg-sidebar border-e group-data-[variant=floating]:rounded-lg group-data-[variant=floating]:shadow-sm group-data-[variant=floating]:ring-1 group-data-[variant=floating]:ring-sidebar-border"
+          className="flex size-full flex-col bg-sidebar border-e border-sidebar-border group-data-[variant=floating]:rounded-lg group-data-[variant=floating]:shadow-sm group-data-[variant=floating]:ring-1 group-data-[variant=floating]:ring-sidebar-border"
         >
           {children}
         </div>

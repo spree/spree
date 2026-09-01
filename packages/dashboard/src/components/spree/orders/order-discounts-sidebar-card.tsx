@@ -21,8 +21,8 @@ import {
   Separator,
   useConfirm,
 } from '@spree/dashboard-ui'
+import { PlusIcon } from '@spree/dashboard-ui/icons'
 import { useQuery } from '@tanstack/react-query'
-import { PlusIcon } from 'lucide-react'
 import { type FormEvent, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useOrderMutation } from '../../../hooks/use-order'

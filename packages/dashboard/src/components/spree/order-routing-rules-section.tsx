@@ -24,8 +24,8 @@ import {
   useResourceKeyBuilder,
 } from '@spree/dashboard-core'
 import { Button, DragHandle, Switch, useConfirm } from '@spree/dashboard-ui'
+import { PlusIcon, SlidersHorizontalIcon, Trash2Icon } from '@spree/dashboard-ui/icons'
 import { useQueryClient } from '@tanstack/react-query'
-import { PlusIcon, SlidersHorizontalIcon, Trash2Icon } from 'lucide-react'
 import { type CSSProperties, useMemo, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import {

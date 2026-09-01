@@ -1,5 +1,5 @@
 import { i18n, settingsNav } from '@spree/dashboard-core'
-import { ScrollTextIcon, UsersRoundIcon, WarehouseIcon } from 'lucide-react'
+import { ScrollTextIcon, UsersRoundIcon, WarehouseIcon } from '@spree/dashboard-ui/icons'
 
 // The panel's settings rail, registered into the same registry the operator's
 // dashboard writes to — so a marketplace adds, removes or reorders entries

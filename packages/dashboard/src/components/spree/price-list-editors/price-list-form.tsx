@@ -10,7 +10,6 @@ import {
   useStore,
 } from '@spree/dashboard-core'
 import { DropdownMenuItem, useConfirm } from '@spree/dashboard-ui'
-import { useQueryClient } from '@tanstack/react-query'
 import {
   CalendarOffIcon,
   PauseIcon,
@@ -19,7 +18,8 @@ import {
   PlusIcon,
   TableIcon,
   TrashIcon,
-} from 'lucide-react'
+} from '@spree/dashboard-ui/icons'
+import { useQueryClient } from '@tanstack/react-query'
 import { useEffect, useState } from 'react'
 import { Controller, type UseFormReturn, useFieldArray, useForm } from 'react-hook-form'
 import { useTranslation } from 'react-i18next'

@@ -158,6 +158,8 @@ module Spree
         catalog_create_workflow: 'Spree::Catalogs::Create',
         catalog_update_workflow: 'Spree::Catalogs::Update',
         catalog_price_list_workflow: 'Spree::Catalogs::SetPriceList',
+        catalog_activate_workflow: 'Spree::Catalogs::Activate',
+        catalog_deactivate_workflow: 'Spree::Catalogs::Deactivate',
 
         # price lists
         price_list_create_workflow: 'Spree::PriceLists::Create',

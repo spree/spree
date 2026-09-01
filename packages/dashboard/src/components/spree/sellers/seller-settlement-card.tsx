@@ -8,7 +8,7 @@ import {
   CardTitle,
   RelativeTime,
 } from '@spree/dashboard-ui'
-import { PencilIcon } from 'lucide-react'
+import { PencilIcon } from '@spree/dashboard-ui/icons'
 import { useTranslation } from 'react-i18next'
 import { ReadRow } from './seller-read-row'
 

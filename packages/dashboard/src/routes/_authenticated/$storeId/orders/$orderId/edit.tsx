@@ -17,8 +17,8 @@ import {
   toastManager,
   useFormSubmitShortcut,
 } from '@spree/dashboard-ui'
+import { InfoIcon, PlusIcon } from '@spree/dashboard-ui/icons'
 import { createFileRoute, useNavigate } from '@tanstack/react-router'
-import { InfoIcon, PlusIcon } from 'lucide-react'
 import { type ReactNode, useEffect, useState } from 'react'
 import { useFieldArray, useForm } from 'react-hook-form'
 import { useTranslation } from 'react-i18next'

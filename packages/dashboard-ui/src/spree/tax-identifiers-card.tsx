@@ -1,4 +1,3 @@
-import { BadgeCheckIcon, EllipsisVerticalIcon, PencilIcon, PlusIcon, TrashIcon } from 'lucide-react'
 import { useEffect, useState } from 'react'
 import { Controller, type UseFormSetError, useForm } from 'react-hook-form'
 import { useTranslation } from 'react-i18next'
@@ -36,6 +35,7 @@ import {
   StatusBadge,
   useConfirm,
 } from '../index'
+import { BadgeCheckIcon, EllipsisVerticalIcon, PencilIcon, PlusIcon, TrashIcon } from './icons'
 
 /** One selectable registration kind. */
 interface KindOption {

@@ -11,8 +11,8 @@ import {
   ProgressValue,
   Skeleton,
 } from '@spree/dashboard-ui'
+import { CheckCircle2Icon, CircleIcon } from '@spree/dashboard-ui/icons'
 import { createFileRoute, Link } from '@tanstack/react-router'
-import { CheckCircle2Icon, CircleIcon } from 'lucide-react'
 import { useTranslation } from 'react-i18next'
 import '../../../components/spree/setup-tasks/register'
 import { setupTaskSlot } from '../../../components/spree/setup-tasks/types'

@@ -37,9 +37,6 @@ import {
   useConfirm,
   useCopyToClipboard,
 } from '@spree/dashboard-ui'
-import type { Invitation, TeamMember } from '@spree/seller-sdk'
-import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
-import { useParams } from '@tanstack/react-router'
 import {
   ClockIcon,
   LinkIcon,
@@ -49,7 +46,10 @@ import {
   UserMinusIcon,
   UsersRoundIcon,
   XIcon,
-} from 'lucide-react'
+} from '@spree/dashboard-ui/icons'
+import type { Invitation, TeamMember } from '@spree/seller-sdk'
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
+import { useParams } from '@tanstack/react-router'
 import { useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { useTranslation } from 'react-i18next'

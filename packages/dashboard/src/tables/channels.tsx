@@ -1,8 +1,8 @@
 import type { Channel } from '@spree/admin-sdk'
 import { defineTable } from '@spree/dashboard-core'
 import { ActiveBadge, ResourceNameCell } from '@spree/dashboard-ui'
+import { RadioTowerIcon } from '@spree/dashboard-ui/icons'
 import i18n from 'i18next'
-import { RadioTowerIcon } from 'lucide-react'
 
 defineTable<Channel>('channels', {
   title: i18n.t('admin.pages.channels.title'),
