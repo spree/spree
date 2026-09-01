@@ -1,0 +1,88 @@
+---
+http_interactions:
+- request:
+    method: post
+    uri: https://sandbox-rest.avatax.com/api/v2/transactions/create
+    body:
+      encoding: UTF-8
+      string: '{"type":"ReturnInvoice","companyCode":"AVALARA_COMPANY","code":"R1001-RET1","commit":true,"date":"2026-09-01","currencyCode":"USD","customerCode":"cust_UkLWZg9DAJ","addresses":{"shipFrom":{"line1":"2000
+        Main Street","city":"Irvine","region":"CA","country":"US","postalCode":"92614"},"shipTo":{"line1":"6
+        Lovely Street","line2":"Northwest","city":"New York","region":"NY","country":"US","postalCode":"10001"}},"taxOverride":{"type":"TaxDate","reason":"Refund","taxDate":"2026-09-01"},"lines":[{"number":"li_UkLWZg9DAJ","quantity":1,"amount":"-100.0","taxIncluded":false,"discounted":false,"discount":0,"taxCode":"P0000000","addresses":{"shipFrom":{"line1":"2000
+        Main Street","city":"Irvine","region":"CA","country":"US","postalCode":"92614"},"shipTo":{"line1":"6
+        Lovely Street","line2":"Northwest","city":"New York","region":"NY","country":"US","postalCode":"10001"}}}]}'
+    headers:
+      Accept:
+      - application/json; charset=utf-8
+      User-Agent:
+      - AvaTax Ruby Gem 26.7.3
+      X-Avalara-Client:
+      - a0o0b000005HsXPAA0;Spree by AVALARA_COMPANY;RubySdk;26.7.3;
+      Content-Type:
+      - application/json
+      Authorization:
+      - "<AVATAX_AUTHORIZATION>"
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+  response:
+    status:
+      code: 400
+      message: Bad Request
+    headers:
+      Date:
+      - Tue, 01 Sep 2026 16:41:26 GMT
+      Content-Type:
+      - application/json; charset=utf-8
+      Transfer-Encoding:
+      - chunked
+      Connection:
+      - keep-alive
+      Cache-Control:
+      - private, no-cache, no-store
+      Vary:
+      - Accept-Encoding
+      Strict-Transport-Security:
+      - max-age=31536000; includeSubDomains
+      X-Content-Type-Options:
+      - nosniff
+      X-Frame-Options:
+      - sameorigin
+      X-Xss-Protection:
+      - 1; mode=block
+      Referrer-Policy:
+      - same-origin
+      X-Permitted-Cross-Domain-Policies:
+      - none
+      X-Correlation-Id:
+      - 4c50e7ea-4bb6-480f-9b93-59c027a8a7c7
+      X-Avalara-Uid:
+      - 4c50e7ea-4bb6-480f-9b93-59c027a8a7c7
+      X-Avalara-Gateway-Pod:
+      - avagateway-6766775548-jb9p2
+      Serverduration:
+      - '00:00:00.0067199'
+      Api-Supported-Versions:
+      - '2.0'
+      X-Envoy-Upstream-Service-Time:
+      - '7'
+      Content-Security-Policy:
+      - frame-ancestors 'self';
+      X-Download-Options:
+      - noopen
+      X-Dns-Prefetch-Control:
+      - 'off'
+      Permissions-Policy:
+      - camera 'none';microphone 'none';geolocation 'none';encrypted-media 'none';payment
+        'none';speaker 'none';usb 'none';
+      X-Cip-Engine:
+      - containers
+      X-Cip-Site:
+      - gcp_us-west3
+      X-Cip-Environment:
+      - sbx
+    body:
+      encoding: UTF-8
+      string: '{"error":{"code":"GetTaxError","message":"DocStatus is invalid for
+        this operation.","target":"Unknown","details":[{"code":"GetTaxError","number":300,"message":"DocStatus
+        is invalid for this operation.","description":"Expected Saved|Posted","faultCode":"GetTaxError","faultSubCode":"DocStatusError","helpLink":"https://developer.avalara.com/avatax/errors/GetTaxError","refersTo":"DocStatus","severity":"Error"}]}}'
+  recorded_at: Tue, 01 Sep 2026 16:41:26 GMT
+recorded_with: VCR 6.4.0

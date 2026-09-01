@@ -101,8 +101,16 @@ module SpreeAvalara
       details.first&.dig('country').presence || context[:ship_to_country]
     end
 
+    # Only a region that genuinely is a subdivision of the country. For a tax
+    # levied at country level Avalara repeats the country in `region` — a German
+    # sale comes back `country: "DE", region: "DE"` — which core's geography
+    # validation rejects, and the whole estimate would fail with it. Resolving
+    # through core's own ISO data both filters and canonicalises.
     def state_code
-      details.first&.dig('region').presence
+      region = details.first&.dig('region').presence
+      return if region.nil? || country_code.blank?
+
+      Spree::IsoData.subdivision_code(country_code, region)
     end
 
     # The treatment, folded from Avalara's own reason fields. First match wins,

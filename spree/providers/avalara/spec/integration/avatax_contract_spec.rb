@@ -8,12 +8,12 @@ require 'spec_helper'
 #
 # Recording: see the README. Never hand-author a cassette.
 RSpec.describe 'AvaTax API contract', :vcr do
-  let(:integration) do
-    create(:avalara_integration, :active, store: @default_store,
-                                          preferred_account_number: ENV.fetch('AVATAX_ACCOUNT_NUMBER', 'recorded'),
-                                          preferred_license_key: ENV.fetch('AVATAX_LICENSE_KEY', 'recorded'),
-                                          preferred_company_code: ENV.fetch('AVATAX_COMPANY_CODE', 'recorded'))
+  let(:credentials) do
+    { preferred_account_number: ENV.fetch('AVATAX_ACCOUNT_NUMBER', 'recorded'),
+      preferred_license_key: ENV.fetch('AVATAX_LICENSE_KEY', 'recorded'),
+      preferred_company_code: ENV.fetch('AVATAX_COMPANY_CODE', 'AVALARA_COMPANY') }
   end
+  let(:integration) { create(:avalara_integration, :active, store: @default_store, **credentials) }
   let(:provider) { SpreeAvalara::TaxProvider.new }
 
   def us_cart(state: 'WA', zipcode: '98109', city: 'Seattle')
@@ -26,12 +26,17 @@ RSpec.describe 'AvaTax API contract', :vcr do
   end
 
   describe 'ping' do
+    # Deliberately without the :active trait, which answers can_connect? with a
+    # stub — this example is about the real call.
     it 'reports an authenticated account', vcr: { cassette_name: 'ping/authenticated' } do
-      expect(integration.can_connect?).to be(true)
+      connected = build(:avalara_integration, store: @default_store, **credentials)
+
+      expect(connected.can_connect?).to be(true)
     end
 
     it 'reports a rejected key', vcr: { cassette_name: 'ping/unauthorized' } do
-      rejected = build(:avalara_integration, store: @default_store, preferred_license_key: 'invalid')
+      rejected = build(:avalara_integration, store: @default_store, **credentials,
+                                             preferred_license_key: 'deliberately-wrong')
 
       expect(rejected.can_connect?).to be(false)
       expect(rejected.connection_error_message).to be_present
@@ -76,7 +81,10 @@ RSpec.describe 'AvaTax API contract', :vcr do
       expect(rows.map(&:taxability_reason)).not_to include('customer_exempt')
     end
 
-    # Seller's use tax is collected tax, however Avalara spells the type.
+    # Seller's use tax is collected tax, however Avalara spells the type. Not
+    # recorded: the sandbox company holds no remote-seller registration, so no
+    # destination returns collected use tax. Recording needs an account that has
+    # one — until then the predicate rests on the reasoning in the design doc.
     it 'calls collected use tax standard_rated',
        vcr: { cassette_name: 'estimate/registered_remote_seller' } do
       cart = us_cart(state: 'AL', zipcode: '35203', city: 'Birmingham')
@@ -88,6 +96,9 @@ RSpec.describe 'AvaTax API contract', :vcr do
       expect(rows.map(&:taxability_reason)).to all(eq('standard_rated'))
     end
 
+    # The sandbox company has no EU VAT registration, so the recorded response
+    # carries a 0% rate. What this pins is that the inclusive flag round-trips
+    # onto the row — not the VAT arithmetic, which needs a registered account.
     it 'marks rows included when the destination market prices gross',
        vcr: { cassette_name: 'estimate/eu_tax_inclusive' } do
       market = create(:market, store: @default_store, tax_inclusive: true)
@@ -104,9 +115,22 @@ RSpec.describe 'AvaTax API contract', :vcr do
   end
 
   describe 'the document lifecycle' do
-    let(:order) { create(:order, store: @default_store, completed_at: Time.current) }
+    let(:destination) { create(:address, city: 'New York', state_code: 'NY', country_code: 'US', zipcode: '10001') }
+    let(:order) do
+      create(:order, store: @default_store, completed_at: Time.current,
+                     ship_address: destination, bill_address: destination)
+    end
+    let!(:sold) { create(:line_item, order: order, cart: nil, price: 100) }
 
-    before { allow(SpreeAvalara::Integration).to receive(:active_for!).and_return(integration) }
+    before do
+      allow(SpreeAvalara::Integration).to receive(:active_for!).and_return(integration)
+      allow(SpreeAvalara::Integration).to receive(:active_for).and_return(integration)
+      create(:stock_location, store: @default_store, default: true, country_code: 'US',
+                              state_code: 'CA', city: 'Irvine', zipcode: '92614', address1: '2000 Main Street')
+      # The void URL carries the document code, and VCR matches on the URI, so a
+      # generated order number would never replay.
+      order.update_column(:number, 'R-AVALARA-LIFECYCLE')
+    end
 
     it 'files the sale', vcr: { cassette_name: 'commit/sales_invoice' } do
       provider.commit(order)
@@ -122,20 +146,25 @@ RSpec.describe 'AvaTax API contract', :vcr do
     end
 
     it 'voids the document', vcr: { cassette_name: 'void/cancelled' } do
-      allow(SpreeAvalara::Integration).to receive(:active_for).and_return(integration)
+      provider.commit(order)
 
       expect { provider.void(order) }.not_to raise_error
     end
 
     it 'accepts voiding a document already voided', vcr: { cassette_name: 'void/already_voided' } do
-      allow(SpreeAvalara::Integration).to receive(:active_for).and_return(integration)
+      provider.commit(order)
+      provider.void(order)
 
       expect { provider.void(order) }.not_to raise_error
     end
   end
 
   describe 'refund' do
-    let(:order) { create(:order, store: @default_store, completed_at: Time.current) }
+    let(:destination) { create(:address, city: 'New York', state_code: 'NY', country_code: 'US', zipcode: '10001') }
+    let(:order) do
+      create(:order, store: @default_store, completed_at: Time.current,
+                     ship_address: destination, bill_address: destination)
+    end
     let(:line_item) { create(:line_item, order: order, cart: nil, price: 100, quantity: 2) }
     let(:return_items) do
       [instance_double(Spree::ReturnLineItem, line_item: line_item, received_quantity: 1,
@@ -144,6 +173,8 @@ RSpec.describe 'AvaTax API contract', :vcr do
 
     before do
       allow(SpreeAvalara::Integration).to receive(:active_for!).and_return(integration)
+      create(:stock_location, store: @default_store, default: true, country_code: 'US',
+                              state_code: 'CA', city: 'Irvine', zipcode: '92614', address1: '2000 Main Street')
       line_item.update_column(:pre_tax_amount, 200)
     end
 

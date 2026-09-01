@@ -1,0 +1,92 @@
+---
+http_interactions:
+- request:
+    method: post
+    uri: https://sandbox-rest.avatax.com/api/v2/transactions/create
+    body:
+      encoding: UTF-8
+      string: '{"type":"SalesOrder","companyCode":"AVALARA_COMPANY","date":"2026-09-01","commit":false,"currencyCode":"USD","customerCode":"cart_UkLWZg9DAJ","addresses":{"shipFrom":{"line1":"1600
+        Pennsylvania Ave NW","city":"Washington","region":"AL","country":"US","postalCode":"20500"},"shipTo":{"line1":"2
+        Lovely Street","line2":"Northwest","city":"Berlin","country":"DE","postalCode":"10115"}},"lines":[{"number":"li_UkLWZg9DAJ","quantity":1,"amount":"100.0","taxIncluded":true,"discounted":false,"discount":0,"taxCode":"P0000000","addresses":{"shipFrom":{"line1":"1600
+        Pennsylvania Ave NW","city":"Washington","region":"AL","country":"US","postalCode":"20500"},"shipTo":{"line1":"2
+        Lovely Street","line2":"Northwest","city":"Berlin","country":"DE","postalCode":"10115"}}}]}'
+    headers:
+      Accept:
+      - application/json; charset=utf-8
+      User-Agent:
+      - AvaTax Ruby Gem 26.7.3
+      X-Avalara-Client:
+      - a0o0b000005HsXPAA0;Spree by AVALARA_COMPANY;RubySdk;26.7.3;
+      Content-Type:
+      - application/json
+      Authorization:
+      - "<AVATAX_AUTHORIZATION>"
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+  response:
+    status:
+      code: 201
+      message: Created
+    headers:
+      Date:
+      - Tue, 01 Sep 2026 16:41:23 GMT
+      Content-Type:
+      - application/json; charset=utf-8
+      Transfer-Encoding:
+      - chunked
+      Connection:
+      - keep-alive
+      Cache-Control:
+      - private, no-cache, no-store
+      Location:
+      - "/api/v2/companies/848106/transactions/0"
+      Vary:
+      - Accept-Encoding
+      Strict-Transport-Security:
+      - max-age=31536000; includeSubDomains
+      X-Content-Type-Options:
+      - nosniff
+      X-Frame-Options:
+      - sameorigin
+      X-Xss-Protection:
+      - 1; mode=block
+      Referrer-Policy:
+      - same-origin
+      X-Permitted-Cross-Domain-Policies:
+      - none
+      X-Correlation-Id:
+      - 68c500f6-f55f-4795-b3d6-ac2d31498497
+      X-Avalara-Uid:
+      - 68c500f6-f55f-4795-b3d6-ac2d31498497
+      X-Avalara-Gateway-Pod:
+      - avagateway-6766775548-jb9p2
+      Serverduration:
+      - '00:00:00.0020188'
+      Api-Supported-Versions:
+      - '2.0'
+      X-Envoy-Upstream-Service-Time:
+      - '3'
+      Content-Security-Policy:
+      - frame-ancestors 'self';
+      X-Download-Options:
+      - noopen
+      X-Dns-Prefetch-Control:
+      - 'off'
+      Permissions-Policy:
+      - camera 'none';microphone 'none';geolocation 'none';encrypted-media 'none';payment
+        'none';speaker 'none';usb 'none';
+      X-Cip-Engine:
+      - containers
+      X-Cip-Site:
+      - gcp_us-west3
+      X-Cip-Environment:
+      - sbx
+    body:
+      encoding: UTF-8
+      string: '{"id":0,"code":"c9ffcabe-381c-4966-83a0-29397ad7f177","companyId":848106,"date":"2026-09-01","paymentDate":"2026-09-01","status":"Temporary","type":"SalesOrder","batchCode":"","currencyCode":"USD","exchangeRateCurrencyCode":"USD","customerUsageType":"","entityUseCode":"","customerVendorCode":"cart_UkLWZg9DAJ","customerCode":"cart_UkLWZg9DAJ","exemptNo":"","reconciled":false,"locationCode":"","reportingLocationCode":"","purchaseOrderNo":"","referenceCode":"","salespersonCode":"","totalAmount":100.0,"totalExempt":100.0,"totalDiscount":0.0,"totalTax":0.0,"totalTaxable":0.0,"totalTaxCalculated":0.0,"adjustmentReason":"NotAdjusted","locked":false,"version":1,"originAddressId":2,"destinationAddressId":1,"exchangeRateEffectiveDate":"2026-09-01","exchangeRate":1.0,"modifiedDate":"2026-09-01T16:41:23.5490927Z","modifiedUserId":429316,"taxDate":"2026-09-01","lines":[{"id":0,"transactionId":0,"lineNumber":"li_UkLWZg9DAJ","customerUsageType":"","entityUseCode":"","destinationAddressId":1,"originAddressId":2,"discountAmount":0.0,"exemptAmount":100.0,"exemptCertId":0,"exemptNo":"","isItemTaxable":false,"itemCode":"","lineAmount":100.0,"quantity":1.0,"ref1":"","ref2":"","reportingDate":"2026-09-01","revAccount":"","sourcing":"Destination","tax":0.0,"taxableAmount":0.0,"taxCalculated":0.0,"taxCode":"P0000000","taxCodeId":8087,"taxDate":"2026-09-01","taxIncluded":true,"details":[{"id":0,"transactionLineId":0,"transactionId":0,"country":"DE","region":"DE","stateFIPS":"DE","exemptAmount":0.0,"jurisCode":"DE","jurisName":"GERMANY","jurisdictionId":200079,"stateAssignedNo":"","jurisType":"CNT","jurisdictionType":"Country","nonTaxableAmount":100.0,"rate":0.0,"sourcing":"Destination","tax":0.0,"taxableAmount":0.0,"taxType":"Output","taxSubTypeId":"O","taxTypeGroupId":"InputAndOutput","taxName":"DE
+        VAT","taxAuthorityTypeId":45,"taxCalculated":0.0,"rateType":"Zero","rateTypeCode":"Z","taxableUnits":0.0,"nonTaxableUnits":100.0,"exemptUnits":0.0,"unitOfBasis":"PerCurrencyUnit","isNonPassThru":false,"isFee":false,"reportingTaxableUnits":0.0,"reportingNonTaxableUnits":100.0,"reportingExemptUnits":0.0,"reportingTax":0.0,"reportingTaxCalculated":0.0,"liabilityType":"Seller","chargedTo":"Buyer","vatCode":"DE_S_-_000_C"}],"nonPassthroughDetails":[],"lineLocationTypes":[{"documentLineLocationTypeId":0,"documentLineId":0,"documentAddressId":2,"locationTypeCode":"ShipFrom"},{"documentLineLocationTypeId":0,"documentLineId":0,"documentAddressId":1,"locationTypeCode":"ShipTo"}],"hsCode":"","costInsuranceFreight":0.0,"vatCode":"DES-000C","vatNumberTypeId":0}],"addresses":[{"id":1,"transactionId":0,"boundaryLevel":"Zip5","line1":"2
+        Lovely Street","line2":"Northwest","line3":"","city":"Berlin","region":"","postalCode":"10115","country":"DE","taxRegionId":205079,"taxRegionIdAv":0,"latitude":"","longitude":""},{"id":2,"transactionId":0,"boundaryLevel":"Zip9","line1":"1600
+        Pennsylvania Ave Nw","line2":"","line3":"","city":"Washington","region":"DC","postalCode":"20500-0005","country":"US","taxRegionId":949,"taxRegionIdAv":0,"latitude":"38.897199","longitude":"-77.036548"}],"locationTypes":[{"documentLocationTypeId":0,"documentId":0,"documentAddressId":2,"locationTypeCode":"ShipFrom"},{"documentLocationTypeId":0,"documentId":0,"documentAddressId":1,"locationTypeCode":"ShipTo"}],"summary":[{"country":"DE","region":"DE","jurisType":"Country","jurisCode":"DE","jurisName":"GERMANY","taxAuthorityType":45,"stateAssignedNo":"","taxType":"Output","taxSubType":"O","taxName":"DE
+        VAT","rateType":"Zero","taxable":0.0,"rate":0.0,"tax":0.0,"taxCalculated":0.0,"nonTaxable":100.0,"exemption":0.0}]}'
+  recorded_at: Tue, 01 Sep 2026 16:41:23 GMT
+recorded_with: VCR 6.4.0

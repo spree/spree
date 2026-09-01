@@ -73,8 +73,15 @@ module SpreeAvalara
     # @param error [SpreeAvalara::RequestError]
     # @return [Boolean]
     def duplicate_document_error?(error)
-      # verify against cassette (Phase 7)
-      error_code(error).in?(%w[DocumentAlreadyExists DuplicateDocumentException])
+      # The two names remain unconfirmed — no recording has produced them.
+      return true if error_code(error).in?(%w[DocumentAlreadyExists DuplicateDocumentException])
+
+      # What a replay actually answers, observed against the sandbox on
+      # 2026-09-01: a committed document with this code cannot be recreated or
+      # adjusted, so AvaTax refuses with GetTaxError / DocStatusError
+      # ("Expected Saved|Posted") rather than naming a duplicate. The document
+      # is filed, which is the state the caller wanted.
+      fault_sub_codes(error).include?('DocStatusError')
     end
 
     # Whether a refusal means there is nothing left to void: already voided, or
@@ -83,8 +90,12 @@ module SpreeAvalara
     # @param error [SpreeAvalara::RequestError]
     # @return [Boolean]
     def already_voided_error?(error)
-      # verify against cassette (Phase 7)
-      error_code(error).in?(%w[DocumentNotVoidable DocumentAlreadyVoided EntityNotFoundError])
+      # TransactionAlreadyCancelled is what AvaTax actually answers, confirmed
+      # against a recorded cassette: "The transaction ... is already in a
+      # 'Cancelled' status. There is nothing to be done." EntityNotFoundError
+      # covers a document that was never filed, which leaves the ledger where
+      # the caller wanted it just the same.
+      error_code(error).in?(%w[TransactionAlreadyCancelled EntityNotFoundError])
     end
 
     private
@@ -93,6 +104,13 @@ module SpreeAvalara
       details = error.try(:details)
 
       details.is_a?(Hash) ? details['code'].to_s : ''
+    end
+
+    def fault_sub_codes(error)
+      details = error.try(:details)
+      return [] unless details.is_a?(Hash)
+
+      Array(details['details']).filter_map { |entry| entry['faultSubCode'] if entry.is_a?(Hash) }
     end
 
     # Every option the SDK reads is passed explicitly: its initializer merges the

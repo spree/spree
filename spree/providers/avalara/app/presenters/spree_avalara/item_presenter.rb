@@ -34,7 +34,7 @@ module SpreeAvalara
       }
 
       payload[:taxCode] = tax_code if tax_code.present?
-      payload[:addresses] = { shipFrom: ship_from } if ship_from.present?
+      payload[:addresses] = line_addresses if line_addresses
       payload.merge!(exemption_payload)
       payload
     end
@@ -93,11 +93,23 @@ module SpreeAvalara
       Spree::TaxCategory.default(owner.store)&.tax_code
     end
 
-    # Where this line ships from, which decides the origin jurisdiction. A line
-    # item is reached through its fulfillments; anything without one falls back
-    # to the owner's first, so a fee is taxed from the same origin as the goods.
-    def ship_from
-      AddressPresenter.new(SpreeAvalara.origin_location(owner, item: item)).call
+    # Both ends of the supply, or neither.
+    #
+    # A line-level block naming only a shipFrom makes AvaTax source the line
+    # *to* that origin: a California warehouse shipping to Montana came back
+    # taxed at 7.25% California sales tax instead of Montana's nothing, so every
+    # customer was charged the warehouse's state rather than their own. Verified
+    # against the sandbox — shipFrom alone re-sources, shipFrom with shipTo does
+    # not.
+    #
+    # The origin is per line, because an order can ship from several warehouses;
+    # the destination is the owner's, and identical on every line.
+    def line_addresses
+      origin = AddressPresenter.new(SpreeAvalara.origin_location(owner, item: item)).call
+      destination = AddressPresenter.new(owner.tax_address).call
+      return if origin.blank? || destination.blank?
+
+      { shipFrom: origin, shipTo: destination }
     end
   end
 end

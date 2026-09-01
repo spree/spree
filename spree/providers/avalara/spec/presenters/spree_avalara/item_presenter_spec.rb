@@ -1,7 +1,8 @@
 require 'spec_helper'
 
 RSpec.describe SpreeAvalara::ItemPresenter do
-  let(:cart) { create(:cart, store: @default_store) }
+  let(:address) { create(:address, city: 'Absarokee', state_code: 'MT', country_code: 'US', zipcode: '59001') }
+  let(:cart) { create(:cart, store: @default_store, ship_address: address, bill_address: address) }
   let(:line_item) { create(:line_item, cart: cart, order: nil, price: 25, quantity: 2) }
 
   def present(item, tax_included: false)
@@ -68,6 +69,16 @@ RSpec.describe SpreeAvalara::ItemPresenter do
       expect(present(fulfillment)[:addresses][:shipFrom]).to include(
         country: fulfillment.stock_location.country_code
       )
+    end
+
+    # A line block naming only an origin makes AvaTax source the line to that
+    # origin — a California warehouse shipping to Montana was taxed at
+    # California's rate instead of Montana's nothing. Both ends, or neither.
+    it 'names the destination alongside the origin' do
+      addresses = present(fulfillment)[:addresses]
+
+      expect(addresses[:shipTo]).to include(region: cart.tax_address.state_code)
+      expect(addresses.keys).to contain_exactly(:shipFrom, :shipTo)
     end
   end
 

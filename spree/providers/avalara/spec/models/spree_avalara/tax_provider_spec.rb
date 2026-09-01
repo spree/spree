@@ -236,8 +236,8 @@ RSpec.describe SpreeAvalara::TaxProvider do
 
     it 'treats an already-voided document as success' do
       allow(client).to receive(:void_transaction).
-        and_raise(SpreeAvalara::RequestError.new('Not voidable.', status: 400,
-                                                 details: { 'code' => 'DocumentNotVoidable' }))
+        and_raise(SpreeAvalara::RequestError.new('The transaction has already been cancelled.', status: 400,
+                                                 details: { 'code' => 'TransactionAlreadyCancelled' }))
 
       expect { provider.void(order) }.not_to raise_error
     end

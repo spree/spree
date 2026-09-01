@@ -151,12 +151,23 @@ RSpec.describe SpreeAvalara::Client do
       expect(client.duplicate_document_error?(error('EntityNotFoundError'))).to be(false)
     end
 
-    it 'recognises a document that cannot be voided again' do
-      expect(client.already_voided_error?(error('DocumentNotVoidable'))).to be(true)
-      expect(client.already_voided_error?(error('DocumentAlreadyVoided'))).to be(true)
+    # The code AvaTax actually returns, taken from a recorded cassette.
+    it 'recognises a transaction that is already cancelled' do
+      expect(client.already_voided_error?(error('TransactionAlreadyCancelled'))).to be(true)
       # Never filed is as good as voided for the caller.
       expect(client.already_voided_error?(error('EntityNotFoundError'))).to be(true)
       expect(client.already_voided_error?(error('AuthenticationIncomplete'))).to be(false)
+    end
+
+    # A committed document cannot be recreated, and AvaTax says so through a
+    # DocStatus fault rather than by naming a duplicate.
+    it 'recognises a committed document as already filed' do
+      refusal = SpreeAvalara::RequestError.new(
+        'DocStatus is invalid for this operation.', status: 400,
+        details: { 'code' => 'GetTaxError', 'details' => [{ 'faultSubCode' => 'DocStatusError' }] }
+      )
+
+      expect(client.duplicate_document_error?(refusal)).to be(true)
     end
 
     # A transport failure carries no details at all.
