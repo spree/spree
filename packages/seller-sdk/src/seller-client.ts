@@ -2,6 +2,7 @@ import type { ListParams, PaginatedResponse, RequestFn, RequestOptions } from '@
 import { transformListParams } from '@spree/sdk-core'
 import type {
   AuthTokens,
+  DeliveryProfile,
   Export,
   Fulfillment,
   Import,
@@ -10,6 +11,7 @@ import type {
   Order,
   Policy,
   Product,
+  ProductType,
   Profile,
   RequirementStatus,
   RequirementSubmission,
@@ -452,6 +454,41 @@ export class SellerClient {
   }
 
   /**
+   * The types a seller may list a product against. Read only — defining a
+   * type is the operator's. A seller picks one because it is the template
+   * that hands their product its option types and delivery profile.
+   */
+  readonly productTypes = {
+    list: (
+      params?: ListParams & Record<string, unknown>,
+      options?: RequestOptions,
+    ): Promise<PaginatedResponse<ProductType>> =>
+      this.request<PaginatedResponse<ProductType>>('GET', '/product_types', {
+        ...options,
+        params: params ? transformListParams(params) : undefined,
+      }),
+
+    get: (id: string, options?: RequestOptions): Promise<ProductType> =>
+      this.request<ProductType>('GET', `/product_types/${id}`, options),
+  }
+
+  /**
+   * The marketplace's delivery profiles — what kind of goods a product is
+   * (parcel, digital, pallet). Read only: a seller assigns one to their
+   * product and never defines one.
+   */
+  readonly deliveryProfiles = {
+    list: (
+      params?: ListParams & Record<string, unknown>,
+      options?: RequestOptions,
+    ): Promise<PaginatedResponse<DeliveryProfile>> =>
+      this.request<PaginatedResponse<DeliveryProfile>>('GET', '/delivery_profiles', {
+        ...options,
+        params: params ? transformListParams(params) : undefined,
+      }),
+  }
+
+  /**
    * Where this seller keeps stock, and so where their returns are sent.
    *
    * No delete: a location holds stock levels and is named on historical
@@ -749,6 +786,18 @@ export interface ProductParams {
   meta_description?: string
   meta_keywords?: string
   metadata?: Record<string, unknown>
+  /**
+   * The marketplace's type this product is listed against, from
+   * `productTypes.list()`. `null` detaches it. Saving with a type seeds its
+   * option types onto the product.
+   */
+  product_type_id?: string | null
+  /**
+   * Which of the marketplace's delivery profiles the product ships under,
+   * from `deliveryProfiles.list()`. A new product sent without one lands on
+   * the profile marked `default`.
+   */
+  delivery_profile_id?: string
   /**
    * The gallery, as a whole. A file absent from the list is removed, so send
    * every image the product should end up with. `signed_id` attaches a fresh

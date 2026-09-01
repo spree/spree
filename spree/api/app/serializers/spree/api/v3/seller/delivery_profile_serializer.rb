@@ -1,0 +1,19 @@
+module Spree
+  module Api
+    module V3
+      module Seller
+        # A delivery profile as a seller picks it: a name, and whether it is
+        # the one a product lands on when they pick none.
+        #
+        # Declared rather than subclassed from the admin serializer, like every
+        # serializer on this branch: which warehouses and methods sit behind a
+        # profile is the marketplace's configuration, not a seller's to read.
+        class DeliveryProfileSerializer < BaseSerializer
+          typelize name: :string, default: :boolean
+
+          attributes :name, :default
+        end
+      end
+    end
+  end
+end

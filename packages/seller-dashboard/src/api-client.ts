@@ -116,10 +116,16 @@ export function createSellerApiClient({
       create: (params) => sellerClient().stockLocations.create(params),
       update: (id, params) => sellerClient().stockLocations.update(id, params),
     },
-    // No catalog reference data is registered: how a product is filed — its
-    // type, categories, collections and tags — is the marketplace's own
-    // merchandising, so the shared form's Categorization card has nothing to
-    // read and hides (docs/plans/6.0-seller-product-submission.md).
+    // The marketplace's vocabulary the product form picks from: types and
+    // delivery profiles only. Categories, collections and tags are filing,
+    // which is the operator's at review, so they are not registered and the
+    // shared Categorization card offers just these two
+    // (docs/plans/6.0-multi-vendor-marketplace.md, Decision 13).
+    productTypes: {
+      list: (params) => sellerClient().productTypes.list(params),
+      get: (id) => sellerClient().productTypes.get(id),
+    },
+    deliveryProfiles: { list: (params) => sellerClient().deliveryProfiles.list(params) },
   })
 
   return client

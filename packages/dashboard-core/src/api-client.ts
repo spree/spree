@@ -137,8 +137,13 @@ export interface PanelApiClient {
     get(id: string): Promise<PanelProductType>
   }
   /**
-   * Marketplace configuration a seller does not write, so a seller's client
-   * registers neither and the cards that read them hide.
+   * Tax category is marketplace configuration a seller does not write, so
+   * their client registers none and the card that reads it hides.
+   *
+   * Delivery profiles are different: the marketplace defines them, but a
+   * seller assigns one to their own product — it decides how their goods can
+   * be shipped at all — so both panels register this one
+   * (docs/plans/6.0-multi-vendor-marketplace.md, Decision 13).
    */
   taxCategories?: {
     list(params?: Record<string, unknown>): Promise<{ data: PanelNamedRecord[] }>
@@ -405,6 +410,13 @@ export interface PanelProductType {
   id: string
   name: string
   option_type_ids?: string[]
+  /**
+   * The option types picking this type will add, already named. A panel that
+   * manages no option-type vocabulary (a seller's) cannot resolve
+   * `option_type_ids` against a list it never loads, so its API sends the
+   * labels instead and the form reads whichever it was given.
+   */
+  option_type_labels?: string[]
   category_ids?: string[]
   custom_field_definitions?: unknown[]
 }
