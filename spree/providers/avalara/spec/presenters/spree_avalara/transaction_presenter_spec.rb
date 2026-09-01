@@ -88,4 +88,48 @@ RSpec.describe SpreeAvalara::TransactionPresenter do
 
     expect(present[:lines].map { |line| line[:taxIncluded] }).to eq([true])
   end
+
+  describe 'exemption placement' do
+    def exemption(**attributes)
+      Spree::TaxExemption.new(**{ reason_code: 'RESALE', certificate_number: 'C-100' }.merge(attributes))
+    end
+
+    # One claim over the whole destination is an order-wide exemption, and saying
+    # so once reads more clearly in the filing than repeating it per line.
+    it 'goes on the document when one claim covers the whole order' do
+      payload = present(exemptions: [exemption])
+
+      expect(payload[:entityUseCode]).to eq('G')
+      expect(payload[:exemptionNo]).to eq('C-100')
+      expect(payload[:lines].sole).not_to have_key(:entityUseCode)
+    end
+
+    it 'goes per line when the claim carves lines out' do
+      override = instance_double('override', item_id: line_item.prefixed_id, exempt?: true, reason_code: 'FEDERAL_GOV')
+      payload = present(exemptions: [exemption(item_overrides: [override])])
+
+      expect(payload).not_to have_key(:entityUseCode)
+      expect(payload[:lines].sole).to include(entityUseCode: 'A', exemptionCode: 'C-100')
+    end
+
+    it 'goes per line when more than one certificate applies' do
+      payload = present(exemptions: [exemption, exemption(reason_code: 'CHARITABLE', certificate_number: 'C-200')])
+
+      expect(payload).not_to have_key(:entityUseCode)
+      expect(payload[:lines].sole[:entityUseCode]).to eq('G')
+    end
+
+    # A certificate valid in one state does not claim the next.
+    it 'ignores a claim scoped to another jurisdiction' do
+      payload = present(exemptions: [exemption(country_code: 'US', state_code: 'CA')])
+
+      expect(payload).not_to have_key(:entityUseCode)
+      expect(payload[:lines].sole).not_to have_key(:entityUseCode)
+    end
+
+    it 'claims nothing when the sale has no exemption' do
+      expect(present).not_to have_key(:entityUseCode)
+      expect(present[:lines].sole).not_to have_key(:entityUseCode)
+    end
+  end
 end

@@ -10,10 +10,13 @@ module SpreeAvalara
     # @param item [Spree::LineItem, Spree::Fulfillment, Spree::Fee]
     # @param owner [Spree::Cart, Spree::Order]
     # @param tax_included [Boolean] resolved through the tax destination
-    def initialize(item:, owner:, tax_included:)
+    # @param exemptions [Array<Spree::TaxExemption>] entries to place on this
+    #   line; empty when the claim was placed on the document instead
+    def initialize(item:, owner:, tax_included:, exemptions: [])
       @item = item
       @owner = owner
       @tax_included = tax_included
+      @exemptions = exemptions
     end
 
     # @return [Hash]
@@ -32,12 +35,37 @@ module SpreeAvalara
 
       payload[:taxCode] = tax_code if tax_code.present?
       payload[:addresses] = { shipFrom: ship_from } if ship_from.present?
+      payload.merge!(exemption_payload)
       payload
     end
 
     private
 
-    attr_reader :item, :owner, :tax_included
+    attr_reader :item, :owner, :tax_included, :exemptions
+
+    # The first entry claiming both this line and the jurisdiction being taxed.
+    # Multiple certificates mean multiple entries, and one claim is enough —
+    # the same rule Internal applies.
+    def exemption_payload
+      entry = exemptions.find do |exemption|
+        exemption.covers_item?(item) &&
+          exemption.covers_jurisdiction?(destination_country, destination_state)
+      end
+      return {} if entry.nil?
+
+      code = EntityUseCodes.for(entry.reason_code_for(item))
+      payload = code ? { entityUseCode: code } : {}
+      payload[:exemptionCode] = entry.certificate_number if entry.certificate_number.present?
+      payload
+    end
+
+    def destination_country
+      owner.tax_address&.country_code
+    end
+
+    def destination_state
+      owner.tax_address&.state_code
+    end
 
     def quantity
       item.respond_to?(:quantity) ? item.quantity : 1

@@ -94,6 +94,16 @@ RSpec.describe SpreeAvalara::TransactionLine do
         to raise_error(SpreeAvalara::Error, /not taxable/)
     end
 
+    # Avalara only ever sees OTHER/CUSTOM for a reason it does not define, so the
+    # reason the merchant recorded has to survive on the row.
+    it 'keeps the exemption reasons that were sent' do
+      line = build_line({}, { exemption_reasons: ['SOMETHING_LOCAL'] })
+
+      attributes = line.to_tax_line_attributes(item: item, owner: cart)
+
+      expect(attributes[:data]['avalara']['sent_exemption_reasons']).to eq(['SOMETHING_LOCAL'])
+    end
+
     it 'names every jurisdiction that taxed the line' do
       payload = { 'details' => [detail, detail('taxName' => 'LA COUNTY TAX', 'rate' => 0.01)] }
 

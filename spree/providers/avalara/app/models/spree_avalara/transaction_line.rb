@@ -244,7 +244,11 @@ module SpreeAvalara
         'entityUseCode' => payload['entityUseCode'],
         'isItemTaxable' => payload['isItemTaxable'],
         'taxCode' => payload['taxCode'],
-        'vatCode' => payload['vatCode']
+        'vatCode' => payload['vatCode'],
+        # An exemption reason core does not share with Avalara is sent as
+        # OTHER/CUSTOM, so the reason the merchant actually recorded is kept here
+        # rather than lost to the translation.
+        'sent_exemption_reasons' => context[:exemption_reasons].presence
       }.compact
     end
   end

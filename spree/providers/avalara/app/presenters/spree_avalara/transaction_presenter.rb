@@ -40,7 +40,30 @@ module SpreeAvalara
 
       payload[:code] = code if code.present?
       payload[:businessIdentificationNo] = tax_identifier.value if tax_identifier&.value.present?
+
+      if (entry = document_exemption)
+        code = EntityUseCodes.for(entry.reason_code)
+        payload[:entityUseCode] = code if code
+        payload[:exemptionNo] = entry.certificate_number if entry.certificate_number.present?
+      end
+
       payload
+    end
+
+    # A single claim covering the whole destination with no per-line carve-outs
+    # is an order-wide exemption, and saying so once is clearer to Avalara — and
+    # to whoever reads the filing — than repeating it on every line. Anything
+    # narrower is placed per line instead.
+    #
+    # @return [Spree::TaxExemption, nil]
+    def document_exemption
+      return if exemptions.size != 1
+
+      entry = exemptions.first
+      return if entry.item_overrides.present?
+      return unless entry.covers_jurisdiction?(destination_country, destination_state)
+
+      entry
     end
 
     private
@@ -71,10 +94,21 @@ module SpreeAvalara
 
     def lines
       tax_included = SpreeAvalara.tax_inclusive?(owner)
+      # Placed once on the document, or line by line — never both.
+      line_exemptions = document_exemption ? [] : exemptions
 
       items.map do |item|
-        ItemPresenter.new(item: item, owner: owner, tax_included: tax_included).call
+        ItemPresenter.new(item: item, owner: owner, tax_included: tax_included,
+                          exemptions: line_exemptions).call
       end
+    end
+
+    def destination_country
+      owner.tax_address&.country_code
+    end
+
+    def destination_state
+      owner.tax_address&.state_code
     end
   end
 end

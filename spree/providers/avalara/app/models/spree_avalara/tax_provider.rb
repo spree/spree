@@ -178,6 +178,7 @@ module SpreeAvalara
       {
         identifier_sent: tax_identifier&.value.present?,
         exemption_sent: exemptions.present?,
+        exemption_reasons: Array(exemptions).map(&:reason_code).compact,
         ship_from_country: SpreeAvalara.origin_location(owner)&.country_code,
         ship_to_country: owner.tax_address&.country_code
       }
