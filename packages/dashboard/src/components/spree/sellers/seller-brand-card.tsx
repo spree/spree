@@ -1,6 +1,6 @@
 import type { Seller } from '@spree/admin-sdk'
 import { Button, Card, CardContent } from '@spree/dashboard-ui'
-import { PencilIcon, StoreIcon } from 'lucide-react'
+import { PencilIcon, StoreIcon } from '@spree/dashboard-ui/icons'
 import { useTranslation } from 'react-i18next'
 
 /** Cover photo, logo and the seller's own description — the storefront face. */

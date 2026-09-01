@@ -14,7 +14,7 @@ import {
   TicketPercentIcon,
   UserIcon,
   UsersRoundIcon,
-} from 'lucide-react'
+} from '@spree/dashboard-ui/icons'
 
 // Each entry teaches the command palette that one resource can be created, so
 // "add product" or "new customer" jumps straight to the right page. Destinations

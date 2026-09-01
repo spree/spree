@@ -1,7 +1,7 @@
 import { adminClient, ResourceTable, resourceSearchSchema } from '@spree/dashboard-core'
 import { Button } from '@spree/dashboard-ui'
+import { PlusIcon } from '@spree/dashboard-ui/icons'
 import { createFileRoute, Link } from '@tanstack/react-router'
-import { PlusIcon } from 'lucide-react'
 import { useTranslation } from 'react-i18next'
 import '../../../../tables/orders'
 

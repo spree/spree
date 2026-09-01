@@ -53,8 +53,6 @@ import {
   useConfirm,
   useCopyToClipboard,
 } from '@spree/dashboard-ui'
-import { createFileRoute, Link } from '@tanstack/react-router'
-import i18n from 'i18next'
 import {
   BanIcon,
   ClockIcon,
@@ -63,7 +61,9 @@ import {
   PlusIcon,
   UserMinusIcon,
   UsersRoundIcon,
-} from 'lucide-react'
+} from '@spree/dashboard-ui/icons'
+import { createFileRoute, Link } from '@tanstack/react-router'
+import i18n from 'i18next'
 import { useState } from 'react'
 import { Controller, useForm } from 'react-hook-form'
 import { useTranslation } from 'react-i18next'

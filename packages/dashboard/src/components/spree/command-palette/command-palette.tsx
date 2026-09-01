@@ -28,8 +28,9 @@ import {
   DialogHeader,
   DialogTitle,
 } from '@spree/dashboard-ui'
+import { LogOutIcon, PackageIcon, PlusIcon, SettingsIcon } from '@spree/dashboard-ui/icons'
 import { useNavigate, useParams } from '@tanstack/react-router'
-import { LogOutIcon, type LucideIcon, PackageIcon, PlusIcon, SettingsIcon } from 'lucide-react'
+import type { LucideIcon } from 'lucide-react'
 import { type ReactNode, useMemo, useState } from 'react'
 
 export function CommandPalette() {

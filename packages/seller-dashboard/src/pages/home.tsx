@@ -9,9 +9,9 @@ import {
   Progress,
   StatusBadge,
 } from '@spree/dashboard-ui'
+import { ChevronRightIcon, PackageIcon, UsersIcon } from '@spree/dashboard-ui/icons'
 import { useQuery } from '@tanstack/react-query'
 import { Link, useParams } from '@tanstack/react-router'
-import { ChevronRightIcon, PackageIcon, UsersIcon } from 'lucide-react'
 import type { ReactNode } from 'react'
 import { useTranslation } from 'react-i18next'
 import { sellerClient } from '../api-client'

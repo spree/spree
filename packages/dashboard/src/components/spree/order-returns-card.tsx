@@ -1,4 +1,5 @@
 import type { Order, Return, ReturnLineItem } from '@spree/admin-sdk'
+import { currencyParts, useStore } from '@spree/dashboard-core'
 import {
   Badge,
   Button,
@@ -21,6 +22,10 @@ import {
   Field,
   FieldLabel,
   Input,
+  InputGroup,
+  InputGroupAddon,
+  InputGroupInput,
+  InputGroupText,
   Select,
   SelectContent,
   SelectItem,
@@ -38,7 +43,8 @@ import {
   PlusIcon,
   RotateCcwIcon,
   XCircleIcon,
-} from 'lucide-react'
+} from '@spree/dashboard-ui/icons'
+import i18n from 'i18next'
 import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useOrderReturns, useReturnActions } from '../../hooks/use-returns'
@@ -363,6 +369,8 @@ function RefundDialog({
     'original_payment',
   )
   const [amount, setAmount] = useState(returnRecord.refundable_total)
+  const { defaultCurrency } = useStore()
+  const { symbol: currencySymbol } = currencyParts(defaultCurrency, i18n.language)
 
   const methodOptions = [
     {
@@ -386,11 +394,19 @@ function RefundDialog({
             <FieldLabel htmlFor="refund-amount">
               {t('admin.pages.orders.detail.returns.refund_amount')}
             </FieldLabel>
-            <Input
-              id="refund-amount"
-              value={amount}
-              onChange={(event) => setAmount(event.target.value)}
-            />
+            <InputGroup>
+              <InputGroupAddon>
+                <InputGroupText>{currencySymbol}</InputGroupText>
+              </InputGroupAddon>
+              <InputGroupInput
+                id="refund-amount"
+                type="number"
+                step="0.01"
+                min="0"
+                value={amount}
+                onChange={(event) => setAmount(event.target.value)}
+              />
+            </InputGroup>
           </Field>
           <Field>
             <FieldLabel htmlFor="refund-method">

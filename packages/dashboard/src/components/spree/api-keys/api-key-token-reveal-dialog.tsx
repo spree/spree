@@ -10,7 +10,7 @@ import {
   DialogTitle,
   useCopyToClipboard,
 } from '@spree/dashboard-ui'
-import { AlertTriangleIcon, CheckIcon, CopyIcon } from 'lucide-react'
+import { AlertTriangleIcon, CheckIcon, CopyIcon } from '@spree/dashboard-ui/icons'
 import { useTranslation } from 'react-i18next'
 
 /** One-shot reveal of a freshly created secret token. */

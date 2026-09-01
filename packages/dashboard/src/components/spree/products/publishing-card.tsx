@@ -18,8 +18,8 @@ import {
   SheetTitle,
   Skeleton,
 } from '@spree/dashboard-ui'
+import { PencilIcon, SettingsIcon } from '@spree/dashboard-ui/icons'
 import { parseISO } from 'date-fns'
-import { PencilIcon, SettingsIcon } from 'lucide-react'
 import { useEffect, useMemo, useRef, useState } from 'react'
 import { Controller, type UseFormReturn, useFieldArray } from 'react-hook-form'
 import { useTranslation } from 'react-i18next'

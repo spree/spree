@@ -64,8 +64,6 @@ import {
   useConfirm,
   useRowClickBridge,
 } from '@spree/dashboard-ui'
-import { useQueryClient } from '@tanstack/react-query'
-import { createFileRoute, useNavigate } from '@tanstack/react-router'
 import {
   ImageIcon,
   LanguagesIcon,
@@ -73,7 +71,9 @@ import {
   Trash2Icon,
   UploadCloudIcon,
   XIcon,
-} from 'lucide-react'
+} from '@spree/dashboard-ui/icons'
+import { useQueryClient } from '@tanstack/react-query'
+import { createFileRoute, useNavigate } from '@tanstack/react-router'
 import { type CSSProperties, useEffect, useId, useRef, useState } from 'react'
 import {
   type Control,

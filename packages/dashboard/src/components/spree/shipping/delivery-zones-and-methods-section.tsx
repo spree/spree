@@ -1,7 +1,7 @@
 import type { DeliveryMethod, DeliveryProfile, DeliveryZone } from '@spree/admin-sdk'
 import { Can, Subject } from '@spree/dashboard-core'
 import { Button } from '@spree/dashboard-ui'
-import { PlusIcon, SplitIcon } from 'lucide-react'
+import { PlusIcon, SplitIcon } from '@spree/dashboard-ui/icons'
 import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useAllDeliveryMethods } from '../../../hooks/use-delivery-methods'

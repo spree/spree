@@ -1,6 +1,6 @@
-import { MonitorIcon, MoonStarIcon, SunIcon } from 'lucide-react'
 import { useTranslation } from 'react-i18next'
 import { cn } from '../lib/utils'
+import { MonitorIcon, MoonStarIcon, SunIcon } from './icons'
 import { useTheme } from './theme-provider'
 
 const OPTIONS = [

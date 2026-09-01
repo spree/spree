@@ -9,7 +9,7 @@ import {
   Switch,
   Textarea,
 } from '@spree/dashboard-ui'
-import { PlusIcon, TrashIcon } from 'lucide-react'
+import { PlusIcon, TrashIcon } from '@spree/dashboard-ui/icons'
 import { useId, useMemo, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { CurrencySelect } from './currency-select'

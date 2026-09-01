@@ -1,8 +1,8 @@
 import type { Catalog } from '@spree/admin-sdk'
 import { defineTable } from '@spree/dashboard-core'
 import { Badge, RelativeTime, ResourceNameCell } from '@spree/dashboard-ui'
+import { BookOpenIcon } from '@spree/dashboard-ui/icons'
 import i18n from 'i18next'
-import { BookOpenIcon } from 'lucide-react'
 
 defineTable<Catalog>('catalogs', {
   title: i18n.t('admin.nav.catalogs'),

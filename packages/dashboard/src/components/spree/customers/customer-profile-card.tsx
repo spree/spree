@@ -22,7 +22,7 @@ import {
   SheetHeader,
   SheetTitle,
 } from '@spree/dashboard-ui'
-import { MailIcon, PencilIcon, PhoneIcon, StarIcon } from 'lucide-react'
+import { MailIcon, PencilIcon, PhoneIcon, StarIcon } from '@spree/dashboard-ui/icons'
 import { useState } from 'react'
 import { Controller, useForm } from 'react-hook-form'
 import { useTranslation } from 'react-i18next'

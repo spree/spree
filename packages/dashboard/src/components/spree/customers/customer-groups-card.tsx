@@ -17,7 +17,7 @@ import {
   SheetHeader,
   SheetTitle,
 } from '@spree/dashboard-ui'
-import { PencilIcon, UsersIcon } from 'lucide-react'
+import { PencilIcon, UsersIcon } from '@spree/dashboard-ui/icons'
 import { useEffect, useMemo, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import {

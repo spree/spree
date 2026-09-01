@@ -9,8 +9,8 @@ import {
   StatusBadge,
   useConfirm,
 } from '@spree/dashboard-ui'
+import { BanIcon, MailIcon, PauseIcon, UndoIcon } from '@spree/dashboard-ui/icons'
 import { createFileRoute, useNavigate } from '@tanstack/react-router'
-import { BanIcon, MailIcon, PauseIcon, UndoIcon } from 'lucide-react'
 import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { ResourceDetailSkeleton } from '../../../../components/spree/route-pending'

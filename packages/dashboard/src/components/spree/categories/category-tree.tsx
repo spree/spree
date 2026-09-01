@@ -27,7 +27,7 @@ import {
   TableHeader,
   TableRow,
 } from '@spree/dashboard-ui'
-import { ChevronDownIcon, ChevronRightIcon, LanguagesIcon } from 'lucide-react'
+import { ChevronDownIcon, ChevronRightIcon, LanguagesIcon } from '@spree/dashboard-ui/icons'
 import { useMemo, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import {

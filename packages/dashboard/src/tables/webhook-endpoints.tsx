@@ -8,8 +8,8 @@ import {
   ResourceNameCell,
   StatusBadge,
 } from '@spree/dashboard-ui'
+import { WebhookIcon } from '@spree/dashboard-ui/icons'
 import i18n from 'i18next'
-import { WebhookIcon } from 'lucide-react'
 import { webhookEndpointHealth, webhookHealthBadgeVariant } from '../lib/webhook-health'
 
 defineTable<WebhookEndpoint>('webhook-endpoints', {

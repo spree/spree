@@ -1,5 +1,5 @@
 import type { Order } from '@spree/admin-sdk'
-import { adminClient } from '@spree/dashboard-core'
+import { adminClient, currencyParts } from '@spree/dashboard-core'
 import {
   Badge,
   Button,
@@ -22,7 +22,10 @@ import {
   Field,
   FieldGroup,
   FieldLabel,
-  Input,
+  InputGroup,
+  InputGroupAddon,
+  InputGroupInput,
+  InputGroupText,
   Select,
   SelectContent,
   SelectItem,
@@ -38,8 +41,14 @@ import {
   TableRow,
   useConfirm,
 } from '@spree/dashboard-ui'
+import {
+  CreditCardIcon,
+  EllipsisVerticalIcon,
+  PlusIcon,
+  XCircleIcon,
+} from '@spree/dashboard-ui/icons'
 import { useQuery } from '@tanstack/react-query'
-import { CreditCardIcon, EllipsisVerticalIcon, PlusIcon, XCircleIcon } from 'lucide-react'
+import i18n from 'i18next'
 import { type FormEvent, useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useOrderMutation } from '../../../hooks/use-order'
@@ -186,6 +195,7 @@ function AddPaymentDialog({
   const [sourceId, setSourceId] = useState<string>('')
   const [amount, setAmount] = useState<string>(order.amount_due ?? '')
   const [capture, setCapture] = useState(false)
+  const { symbol: currencySymbol } = currencyParts(order.currency, i18n.language)
 
   // Re-seed amount from outstanding balance whenever the dialog opens.
   useEffect(() => {
@@ -338,14 +348,19 @@ function AddPaymentDialog({
 
               <Field>
                 <FieldLabel htmlFor="pay-amount">{t('admin.fields.amount.label')}</FieldLabel>
-                <Input
-                  id="pay-amount"
-                  type="number"
-                  step="0.01"
-                  placeholder={order.amount_due ?? '0.00'}
-                  value={amount}
-                  onChange={(e) => setAmount(e.target.value)}
-                />
+                <InputGroup>
+                  <InputGroupAddon>
+                    <InputGroupText>{currencySymbol}</InputGroupText>
+                  </InputGroupAddon>
+                  <InputGroupInput
+                    id="pay-amount"
+                    type="number"
+                    step="0.01"
+                    placeholder={order.amount_due ?? '0.00'}
+                    value={amount}
+                    onChange={(e) => setAmount(e.target.value)}
+                  />
+                </InputGroup>
                 <p className="text-xs text-muted-foreground mt-1">
                   {t('admin.orders.detail.payment_form.amount_help')}
                 </p>

@@ -16,7 +16,7 @@ import {
   toastManager,
   useConfirm,
 } from '@spree/dashboard-ui'
-import { FileIcon, Loader2Icon, UploadIcon, XIcon } from 'lucide-react'
+import { FileIcon, Loader2Icon, UploadIcon, XIcon } from '@spree/dashboard-ui/icons'
 import { useCallback, useRef, useState } from 'react'
 import type { UseFormReturn } from 'react-hook-form'
 import { useTranslation } from 'react-i18next'

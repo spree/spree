@@ -1,8 +1,8 @@
 import { defineTable } from '@spree/dashboard-core'
 import { ResourceNameCell, StatusBadge, Thumbnail } from '@spree/dashboard-ui'
+import { PackageIcon } from '@spree/dashboard-ui/icons'
 import type { Product } from '@spree/seller-sdk'
 import i18n from 'i18next'
-import { PackageIcon } from 'lucide-react'
 
 /** Mirrors the operator dashboard's product statuses. */
 const PRODUCT_STATUSES = ['active', 'draft', 'proposed', 'rejected', 'archived'] as const

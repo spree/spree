@@ -24,6 +24,7 @@
   "types": "./src/index.ts",
   "exports": {
     ".": "./src/index.ts",
+    "./icons": "./src/spree/icons.ts",
     "./styles.css": "./src/styles.css",
     "./ui/*": "./src/ui/*.tsx",
     "./spree/*": "./src/spree/*.tsx",

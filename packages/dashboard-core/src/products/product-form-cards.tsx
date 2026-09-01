@@ -59,7 +59,7 @@ import {
   PencilIcon,
   PlayIcon,
   TrashIcon,
-} from 'lucide-react'
+} from '@spree/dashboard-ui/icons'
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { type Control, Controller, type UseFormReturn, useWatch } from 'react-hook-form'
 import { useTranslation } from 'react-i18next'

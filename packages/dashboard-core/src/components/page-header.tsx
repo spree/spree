@@ -10,8 +10,14 @@ import {
   useCopyToClipboard,
   useScrolled,
 } from '@spree/dashboard-ui'
+import {
+  BracesIcon,
+  CheckIcon,
+  CopyIcon,
+  EllipsisVerticalIcon,
+  TrashIcon,
+} from '@spree/dashboard-ui/icons'
 import type { JsonPreviewDrawerProps } from '@spree/dashboard-ui/spree/json-preview-drawer'
-import { BracesIcon, CheckIcon, CopyIcon, EllipsisVerticalIcon, TrashIcon } from 'lucide-react'
 import { lazy, type ReactNode, Suspense, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useRegisterPageHeader } from '../providers/sticky-header-provider'

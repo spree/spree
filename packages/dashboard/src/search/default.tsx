@@ -20,7 +20,7 @@ import {
   TicketPercentIcon,
   UserIcon,
   UsersRoundIcon,
-} from 'lucide-react'
+} from '@spree/dashboard-ui/icons'
 import { useTranslation } from 'react-i18next'
 
 // Each entry teaches the command palette how to search one resource: how to

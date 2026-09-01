@@ -29,8 +29,15 @@ import {
   useCopyToClipboard,
   useRowClickBridge,
 } from '@spree/dashboard-ui'
+import {
+  AlertTriangleIcon,
+  BanIcon,
+  CheckIcon,
+  CopyIcon,
+  PlayIcon,
+  PlusIcon,
+} from '@spree/dashboard-ui/icons'
 import { createFileRoute, useNavigate } from '@tanstack/react-router'
-import { AlertTriangleIcon, BanIcon, CheckIcon, CopyIcon, PlayIcon, PlusIcon } from 'lucide-react'
 import { useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { useTranslation } from 'react-i18next'

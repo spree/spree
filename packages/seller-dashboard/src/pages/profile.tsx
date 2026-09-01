@@ -22,10 +22,10 @@ import {
   Textarea,
   toastManager,
 } from '@spree/dashboard-ui'
+import { PackageIcon, PencilIcon, StoreIcon, UsersIcon } from '@spree/dashboard-ui/icons'
 import type { Profile } from '@spree/seller-sdk'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { useParams } from '@tanstack/react-router'
-import { PackageIcon, PencilIcon, StoreIcon, UsersIcon } from 'lucide-react'
 import type { ReactNode } from 'react'
 import { useEffect, useState } from 'react'
 import { useForm } from 'react-hook-form'

@@ -2,6 +2,8 @@
 
 import { Toast as ToastPrimitive } from '@base-ui/react/toast'
 import i18n from 'i18next'
+import type * as React from 'react'
+import { cn } from '../lib/utils'
 import {
   CircleCheckIcon,
   InfoIcon,
@@ -9,9 +11,7 @@ import {
   OctagonXIcon,
   TriangleAlertIcon,
   XIcon,
-} from 'lucide-react'
-import type * as React from 'react'
-import { cn } from '../lib/utils'
+} from '../spree/icons'
 
 /**
  * App-wide toast manager. Created outside React so a toast can be raised from

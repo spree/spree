@@ -17,7 +17,7 @@ import {
   SelectValue,
   Thumbnail,
 } from '@spree/dashboard-ui'
-import { PackageIcon, TriangleAlertIcon } from 'lucide-react'
+import { PackageIcon, TriangleAlertIcon } from '@spree/dashboard-ui/icons'
 import { useEffect, useRef } from 'react'
 import { Controller, type UseFormReturn, useForm } from 'react-hook-form'
 import { useTranslation } from 'react-i18next'

@@ -1,8 +1,8 @@
 import type { CustomerGroup } from '@spree/admin-sdk'
 import { defineTable } from '@spree/dashboard-core'
 import { ResourceNameCell } from '@spree/dashboard-ui'
+import { UsersRoundIcon } from '@spree/dashboard-ui/icons'
 import i18n from 'i18next'
-import { UsersRoundIcon } from 'lucide-react'
 
 defineTable<CustomerGroup>('customer-groups', {
   title: i18n.t('admin.customers.groups.table.title'),

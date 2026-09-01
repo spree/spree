@@ -11,6 +11,7 @@ import type {
 import {
   type adminClient,
   Can,
+  currencyParts,
   PreferencesForm,
   ResourceMultiAutocomplete,
   Subject,
@@ -29,6 +30,10 @@ import {
   FieldError,
   FieldLabel,
   Input,
+  InputGroup,
+  InputGroupAddon,
+  InputGroupInput,
+  InputGroupText,
   RadioGroup,
   RadioGroupItem,
   Select,
@@ -43,8 +48,9 @@ import {
   SheetTitle,
   Switch,
 } from '@spree/dashboard-ui'
+import { PencilIcon, PlusIcon, Trash2Icon } from '@spree/dashboard-ui/icons'
 import { useQueryClient } from '@tanstack/react-query'
-import { PencilIcon, PlusIcon, Trash2Icon } from 'lucide-react'
+import i18n from 'i18next'
 import { useEffect, useMemo, useState } from 'react'
 import { Controller, type UseFormReturn, useFieldArray } from 'react-hook-form'
 import { useTranslation } from 'react-i18next'
@@ -838,6 +844,8 @@ function ServiceOverridesSheet({
   onClose: () => void
 }) {
   const { t } = useTranslation()
+  const { defaultCurrency } = useStore()
+  const { symbol: currencySymbol } = currencyParts(defaultCurrency, i18n.language)
 
   return (
     <Sheet open onOpenChange={(open) => !open && onClose()}>
@@ -862,27 +870,37 @@ function ServiceOverridesSheet({
             <FieldLabel htmlFor={`service-markup-flat-${index}`}>
               {t('admin.fields.delivery_method.markup_flat.label')}
             </FieldLabel>
-            <Input
-              id={`service-markup-flat-${index}`}
-              type="number"
-              step="0.01"
-              min="0"
-              placeholder="0"
-              {...form.register(`services.${index}.markup_flat`)}
-            />
+            <InputGroup>
+              <InputGroupAddon>
+                <InputGroupText>{currencySymbol}</InputGroupText>
+              </InputGroupAddon>
+              <InputGroupInput
+                id={`service-markup-flat-${index}`}
+                type="number"
+                step="0.01"
+                min="0"
+                placeholder="0"
+                {...form.register(`services.${index}.markup_flat`)}
+              />
+            </InputGroup>
           </Field>
           <Field>
             <FieldLabel htmlFor={`service-markup-percent-${index}`}>
               {t('admin.fields.delivery_method.markup_percent.label')}
             </FieldLabel>
-            <Input
-              id={`service-markup-percent-${index}`}
-              type="number"
-              step="0.01"
-              min="0"
-              placeholder="0"
-              {...form.register(`services.${index}.markup_percent`)}
-            />
+            <InputGroup>
+              <InputGroupInput
+                id={`service-markup-percent-${index}`}
+                type="number"
+                step="0.01"
+                min="0"
+                placeholder="0"
+                {...form.register(`services.${index}.markup_percent`)}
+              />
+              <InputGroupAddon align="inline-end">
+                <InputGroupText>%</InputGroupText>
+              </InputGroupAddon>
+            </InputGroup>
           </Field>
         </div>
         <SheetFooter>
@@ -948,8 +966,11 @@ function CurrencyAmountsField({
       </FieldLabel>
       <div className="flex flex-col gap-2">
         {codes.map((code) => (
-          <div key={code} className="flex items-center gap-2">
-            <Input
+          <InputGroup key={code}>
+            <InputGroupAddon>
+              <InputGroupText>{currencyParts(code, i18n.language).symbol}</InputGroupText>
+            </InputGroupAddon>
+            <InputGroupInput
               id={`calculator-amount-${code}`}
               type="number"
               step="any"
@@ -960,8 +981,10 @@ function CurrencyAmountsField({
               value={amountFor(code)}
               onChange={(event) => setAmount(code, event.target.value)}
             />
-            <span className="w-12 shrink-0 text-muted-foreground text-xs">{code}</span>
-          </div>
+            <InputGroupAddon align="inline-end">
+              <InputGroupText>{code}</InputGroupText>
+            </InputGroupAddon>
+          </InputGroup>
         ))}
       </div>
       {multiCurrency && (
@@ -975,6 +998,8 @@ function CurrencyAmountsField({
 
 function PricingCard({ form }: { form: UseFormReturn<DeliveryMethodFormValues> }) {
   const { t } = useTranslation()
+  const { defaultCurrency } = useStore()
+  const { symbol: currencySymbol } = currencyParts(defaultCurrency, i18n.language)
   const { data: calculators } = useDeliveryCalculators()
   const { data: taxCategories } = useTaxCategories()
   const selectedRateProvider = useSelectedRateProvider(form)
@@ -1063,27 +1088,37 @@ function PricingCard({ form }: { form: UseFormReturn<DeliveryMethodFormValues> }
               <FieldLabel htmlFor="markup_percent">
                 {t('admin.fields.delivery_method.markup_percent.label')}
               </FieldLabel>
-              <Input
-                id="markup_percent"
-                type="number"
-                step="0.01"
-                min="0"
-                placeholder="0"
-                {...form.register('markup_percent')}
-              />
+              <InputGroup>
+                <InputGroupInput
+                  id="markup_percent"
+                  type="number"
+                  step="0.01"
+                  min="0"
+                  placeholder="0"
+                  {...form.register('markup_percent')}
+                />
+                <InputGroupAddon align="inline-end">
+                  <InputGroupText>%</InputGroupText>
+                </InputGroupAddon>
+              </InputGroup>
             </Field>
             <Field>
               <FieldLabel htmlFor="markup_flat">
                 {t('admin.fields.delivery_method.markup_flat.label')}
               </FieldLabel>
-              <Input
-                id="markup_flat"
-                type="number"
-                step="0.01"
-                min="0"
-                placeholder="0"
-                {...form.register('markup_flat')}
-              />
+              <InputGroup>
+                <InputGroupAddon>
+                  <InputGroupText>{currencySymbol}</InputGroupText>
+                </InputGroupAddon>
+                <InputGroupInput
+                  id="markup_flat"
+                  type="number"
+                  step="0.01"
+                  min="0"
+                  placeholder="0"
+                  {...form.register('markup_flat')}
+                />
+              </InputGroup>
             </Field>
           </div>
           <span className="text-xs text-muted-foreground">

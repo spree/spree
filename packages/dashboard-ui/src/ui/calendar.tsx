@@ -1,8 +1,8 @@
-import { ChevronLeftIcon, ChevronRightIcon } from 'lucide-react'
 import type * as React from 'react'
 import { DayPicker } from 'react-day-picker'
 import { activeDateLocale } from '../lib/date-locale'
 import { cn } from '../lib/utils'
+import { ChevronLeftIcon, ChevronRightIcon } from '../spree/icons'
 
 function Calendar({
   className,

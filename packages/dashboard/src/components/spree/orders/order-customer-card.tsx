@@ -21,7 +21,7 @@ import {
   DropdownMenuTrigger,
   toastManager,
 } from '@spree/dashboard-ui'
-import { EllipsisVerticalIcon, PencilIcon } from 'lucide-react'
+import { EllipsisVerticalIcon, PencilIcon } from '@spree/dashboard-ui/icons'
 import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useOrderMutation } from '../../../hooks/use-order'

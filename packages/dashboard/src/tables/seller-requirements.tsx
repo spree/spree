@@ -1,8 +1,8 @@
 import type { SellerRequirement } from '@spree/admin-sdk'
 import { defineTable } from '@spree/dashboard-core'
 import { ActiveBadge, Badge, ResourceNameCell } from '@spree/dashboard-ui'
+import { ClipboardCheckIcon } from '@spree/dashboard-ui/icons'
 import i18n from 'i18next'
-import { ClipboardCheckIcon } from 'lucide-react'
 
 defineTable<SellerRequirement>('seller-requirements', {
   title: i18n.t('admin.seller_requirements.title'),

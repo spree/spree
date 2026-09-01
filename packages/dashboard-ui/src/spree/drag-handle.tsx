@@ -1,8 +1,8 @@
 import type { DraggableAttributes, DraggableSyntheticListeners } from '@dnd-kit/core'
-import { GripVerticalIcon } from 'lucide-react'
 import type { ComponentProps } from 'react'
 import { useTranslation } from 'react-i18next'
 import { cn } from '../lib/utils'
+import { GripVerticalIcon } from './icons'
 
 interface DragHandleProps extends Omit<ComponentProps<'button'>, 'type'> {
   /** `attributes` from `useSortable` / `useDraggable`. */

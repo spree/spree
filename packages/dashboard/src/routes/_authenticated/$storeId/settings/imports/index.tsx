@@ -6,8 +6,8 @@ import {
   useDownloadImportOriginal,
 } from '@spree/dashboard-core'
 import { RowActions, useConfirm, useRowClickBridge } from '@spree/dashboard-ui'
+import { DownloadIcon } from '@spree/dashboard-ui/icons'
 import { createFileRoute, useNavigate } from '@tanstack/react-router'
-import { DownloadIcon } from 'lucide-react'
 import { useTranslation } from 'react-i18next'
 import { z } from 'zod/v4'
 import { ImportWizardDialog } from '../../../../../components/spree/imports/import-wizard-dialog'

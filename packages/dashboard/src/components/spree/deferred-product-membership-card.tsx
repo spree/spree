@@ -11,8 +11,8 @@ import {
   type ProductMembershipListProps,
   type ProductMembershipRow,
 } from '@spree/dashboard-ui'
+import { PlusIcon, Trash2Icon } from '@spree/dashboard-ui/icons'
 import { Link } from '@tanstack/react-router'
-import { PlusIcon, Trash2Icon } from 'lucide-react'
 import { useEffect, useMemo, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useProductMembershipStaging } from './product-membership-staging'

@@ -1,7 +1,7 @@
 import type { DeliveryMethod } from '@spree/admin-sdk'
 import { Can, Subject, useStockLocations, useUpdateStockLocationById } from '@spree/dashboard-core'
 import { Button, Card, CardContent, CardHeader, CardTitle, Checkbox } from '@spree/dashboard-ui'
-import { PlusIcon, StoreIcon } from 'lucide-react'
+import { PlusIcon, StoreIcon } from '@spree/dashboard-ui/icons'
 import { useTranslation } from 'react-i18next'
 import { DeliveryMethodList } from './delivery-method-list'
 import { useMethodSheetNavigation } from './use-method-sheet-navigation'

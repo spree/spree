@@ -1,6 +1,6 @@
 import { useParams, useRouter } from '@tanstack/react-router'
-import { ArrowLeftIcon } from 'lucide-react'
 import { useTranslation } from 'react-i18next'
+import { ArrowLeftIcon } from './icons'
 
 interface BackButtonProps {
   /**

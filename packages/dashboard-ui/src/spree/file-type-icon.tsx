@@ -1,3 +1,4 @@
+import type { ComponentType } from 'react'
 import {
   FileArchiveIcon,
   FileAudioIcon,
@@ -7,8 +8,7 @@ import {
   FileSpreadsheetIcon,
   FileTextIcon,
   FileVideoIcon,
-} from 'lucide-react'
-import type { ComponentType } from 'react'
+} from './icons'
 
 type IconComponent = ComponentType<{ className?: string }>
 

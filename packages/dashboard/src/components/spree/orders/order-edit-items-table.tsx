@@ -11,7 +11,7 @@ import {
   TableRow,
   Thumbnail,
 } from '@spree/dashboard-ui'
-import { PackageIcon, RotateCcwIcon, Undo2Icon, XIcon } from 'lucide-react'
+import { PackageIcon, RotateCcwIcon, Undo2Icon, XIcon } from '@spree/dashboard-ui/icons'
 import { Controller, type FieldArrayWithId, type UseFormReturn } from 'react-hook-form'
 import { useTranslation } from 'react-i18next'
 import {

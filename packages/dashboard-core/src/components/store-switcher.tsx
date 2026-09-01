@@ -11,8 +11,8 @@ import {
   Skeleton,
   useSidebar,
 } from '@spree/dashboard-ui'
+import { CheckIcon, ChevronsUpDownIcon } from '@spree/dashboard-ui/icons'
 import { Link } from '@tanstack/react-router'
-import { CheckIcon, ChevronsUpDownIcon } from 'lucide-react'
 import { useTranslation } from 'react-i18next'
 import { useAuth } from '../hooks/use-auth'
 import { useStore } from '../providers/store-provider'

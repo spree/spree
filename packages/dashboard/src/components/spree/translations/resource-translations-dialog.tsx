@@ -25,7 +25,7 @@ import {
   toastManager,
   useConfirm,
 } from '@spree/dashboard-ui'
-import { XIcon } from 'lucide-react'
+import { XIcon } from '@spree/dashboard-ui/icons'
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import {
