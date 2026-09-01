@@ -6,13 +6,6 @@ import {
   AlertDescription,
   Badge,
   Button,
-  cn,
-  Dialog,
-  DialogBody,
-  DialogContent,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
   Empty,
   EmptyDescription,
   EmptyHeader,
@@ -29,7 +22,7 @@ import {
   Textarea,
   Thumbnail,
   toastManager,
-  WizardSteps,
+  Wizard,
 } from '@spree/dashboard-ui'
 import { CheckIcon, InfoIcon, PackageIcon, PlusIcon, XIcon } from 'lucide-react'
 import { useDeferredValue, useEffect, useMemo, useState } from 'react'
@@ -79,39 +72,17 @@ export function CatalogWizardDialog({
   /** Where to go once the catalog exists — its agreement editor. */
   onCreated: (catalogId: string) => void
 }) {
-  const { t } = useTranslation()
-
-  return (
-    <Dialog open={open} onOpenChange={onOpenChange} modal>
-      <DialogContent
-        // Edge-to-edge minus a gutter, like the import wizard and the bulk
-        // price editor — every inset/translate/max is overridden.
-        className="!inset-3 !w-auto !max-w-none !translate-x-0 !translate-y-0 flex flex-col p-0"
-        style={{ maxHeight: 'none' }}
-        showCloseButton={false}
-      >
-        <DialogHeader className="flex flex-row items-center justify-between gap-3 space-y-0 border-b p-3">
-          <DialogTitle>{t('admin.catalogs.wizard.title')}</DialogTitle>
-          <Button
-            type="button"
-            size="icon-sm"
-            variant="ghost"
-            onClick={() => onOpenChange(false)}
-            aria-label={t('admin.actions.close')}
-          >
-            <XIcon />
-          </Button>
-        </DialogHeader>
-        {open && <CatalogWizard onOpenChange={onOpenChange} onCreated={onCreated} />}
-      </DialogContent>
-    </Dialog>
-  )
+  // Remounted per opening, so an abandoned draft is not still sitting there
+  // the next time the wizard opens.
+  return open ? <CatalogWizard open onOpenChange={onOpenChange} onCreated={onCreated} /> : null
 }
 
 function CatalogWizard({
+  open,
   onOpenChange,
   onCreated,
 }: {
+  open: boolean
   onOpenChange: (open: boolean) => void
   onCreated: (catalogId: string) => void
 }) {
@@ -183,7 +154,13 @@ function CatalogWizard({
   }
 
   return (
-    <form
+    <Wizard
+      open={open}
+      onOpenChange={onOpenChange}
+      title={t('admin.catalogs.wizard.title')}
+      steps={steps}
+      current={step}
+      onStepSelect={(key: string) => setStep(key as StepKey)}
       onSubmit={form.handleSubmit(handleCreate, () =>
         form.setError('root', { message: t('admin.catalogs.wizard.fix_this_step') }),
       )}
@@ -194,91 +171,10 @@ function CatalogWizard({
           event.target instanceof HTMLInputElement && event.target.type !== 'checkbox'
         if (event.key === 'Enter' && !isLastStep && onTextInput) event.preventDefault()
       }}
-      className="flex min-h-0 flex-1 flex-col"
-    >
-      <div className="border-b border-border-subtle px-6 py-4">
-        <WizardSteps
-          steps={steps}
-          current={step}
-          onStepSelect={(key: string) => setStep(key as StepKey)}
-        />
-      </div>
-
-      <DialogBody className="flex-1 overflow-y-auto p-6">
-        {/* The Products step is two columns and wants the room; the others
-            are a form, which reads badly stretched across a wide window. */}
-        <div
-          className={cn(
-            'mx-auto flex w-full flex-col gap-6',
-            step === 'products' ? 'max-w-5xl' : 'max-w-2xl',
-          )}
-        >
-          <div>
-            <h2 className="font-medium text-lg">{t(`admin.catalogs.wizard.steps.${step}`)}</h2>
-            <p className="text-muted-foreground text-sm">
-              {t(`admin.catalogs.wizard.help.${step}`)}
-            </p>
-          </div>
-
-          {form.formState.errors.root?.message && (
-            <p
-              className="rounded-md bg-destructive/10 px-3 py-2 text-sm text-destructive"
-              role="alert"
-            >
-              {form.formState.errors.root.message}
-            </p>
-          )}
-
-          {step === 'details' && <DetailsStep form={form} />}
-          {step === 'audience' && (
-            <>
-              <CatalogAudienceFields form={form} canEdit inlineAssign />
-              {/* Both empty states are legitimate — a catalog with no audience
-                  and one with no assortment each mean something specific — so
-                  neither blocks. What they mean is said here rather than
-                  discovered later. */}
-              {audienceCount === 0 && (
-                <p className="rounded-md bg-muted px-3 py-2 text-muted-foreground text-sm">
-                  {t('admin.catalogs.wizard.audience_none_warning')}
-                </p>
-              )}
-            </>
-          )}
-          {step === 'products' && (
-            <>
-              <ProductsStep products={products} onChange={setProducts} />
-              {products.length === 0 && (
-                <p className="rounded-md bg-muted px-3 py-2 text-muted-foreground text-sm">
-                  {t('admin.catalogs.wizard.products_none_warning')}
-                </p>
-              )}
-            </>
-          )}
-          {step === 'pricing' && (
-            <FieldGroup>
-              <CatalogPricingFields form={form} canEdit />
-            </FieldGroup>
-          )}
-          {step === 'review' && (
-            <>
-              <ReviewStep form={form} products={products} />
-              {/* Creating and going live are separate acts, so the merchant is
-                  told which one Create performs. */}
-              <Alert variant="info">
-                <InfoIcon />
-                <AlertDescription>{t('admin.catalogs.wizard.review.inactive')}</AlertDescription>
-              </Alert>
-            </>
-          )}
-        </div>
-      </DialogBody>
-
-      {/* Back sits opposite the forward action rather than beside it, so the
-          footer's default end-justification is overridden — everything else
-          about it (border, ground, padding) is the shared one. It stays a row
-          at every width too: stacked, "Back" would sit above "Next", which
-          reads as the order to press them in. */}
-      <DialogFooter className="flex-row justify-between sm:justify-between">
+      // The Products step is two columns and wants the room; the others are a
+      // form, which reads badly stretched across a wide window.
+      contentClassName={step === 'products' ? 'max-w-5xl' : 'max-w-2xl'}
+      back={
         <Button
           type="button"
           variant="outline"
@@ -287,13 +183,13 @@ function CatalogWizard({
         >
           {t('admin.actions.back')}
         </Button>
-
-        {/* Keyed apart so React swaps the element instead of mutating one in
-            place: reusing the node means the click that lands on Next
-            resolves against a button that has just become the submit, and the
-            catalog is created a step early without the merchant pressing
-            Create. */}
-        {isLastStep ? (
+      }
+      forward={
+        // Keyed apart so React swaps the element instead of mutating one in
+        // place: reusing the node means the click that lands on Next resolves
+        // against a button that has just become the submit, and the catalog is
+        // created a step early without the merchant pressing Create.
+        isLastStep ? (
           <Button key="create" type="submit" disabled={form.formState.isSubmitting}>
             {form.formState.isSubmitting
               ? t('admin.actions.creating')
@@ -303,9 +199,62 @@ function CatalogWizard({
           <Button key="next" type="button" onClick={goNext}>
             {t('admin.common.next')}
           </Button>
-        )}
-      </DialogFooter>
-    </form>
+        )
+      }
+    >
+      <div>
+        <h2 className="font-medium text-lg">{t(`admin.catalogs.wizard.steps.${step}`)}</h2>
+        <p className="text-muted-foreground text-sm">{t(`admin.catalogs.wizard.help.${step}`)}</p>
+      </div>
+
+      {form.formState.errors.root?.message && (
+        <p className="rounded-md bg-destructive/10 px-3 py-2 text-sm text-destructive" role="alert">
+          {form.formState.errors.root.message}
+        </p>
+      )}
+
+      {step === 'details' && <DetailsStep form={form} />}
+      {step === 'audience' && (
+        <>
+          <CatalogAudienceFields form={form} canEdit inlineAssign />
+          {/* Both empty states are legitimate — a catalog with no audience and
+              one with no assortment each mean something specific — so neither
+              blocks. What they mean is said here rather than discovered
+              later. */}
+          {audienceCount === 0 && (
+            <p className="rounded-md bg-muted px-3 py-2 text-muted-foreground text-sm">
+              {t('admin.catalogs.wizard.audience_none_warning')}
+            </p>
+          )}
+        </>
+      )}
+      {step === 'products' && (
+        <>
+          <ProductsStep products={products} onChange={setProducts} />
+          {products.length === 0 && (
+            <p className="rounded-md bg-muted px-3 py-2 text-muted-foreground text-sm">
+              {t('admin.catalogs.wizard.products_none_warning')}
+            </p>
+          )}
+        </>
+      )}
+      {step === 'pricing' && (
+        <FieldGroup>
+          <CatalogPricingFields form={form} canEdit />
+        </FieldGroup>
+      )}
+      {step === 'review' && (
+        <>
+          <ReviewStep form={form} products={products} />
+          {/* Creating and going live are separate acts, so the merchant is
+              told which one Create performs. */}
+          <Alert variant="info">
+            <InfoIcon />
+            <AlertDescription>{t('admin.catalogs.wizard.review.inactive')}</AlertDescription>
+          </Alert>
+        </>
+      )}
+    </Wizard>
   )
 }
 
