@@ -218,6 +218,25 @@ export class SellerClient {
      */
     submitForReview: (options?: RequestOptions): Promise<OnboardingResponse> =>
       this.request<OnboardingResponse>('POST', '/onboarding/submit_for_review', options),
+
+    /**
+     * A fresh link to wherever the marketplace's payout provider collects
+     * what it needs before it will pay this seller.
+     *
+     * Asked for at the moment the seller acts, never rendered with the
+     * checklist: these links are short-lived and single-use, so one made
+     * while drawing a page is often dead before it is clicked. Answers
+     * `{ url: null }` when the provider hosts no onboarding — a marketplace
+     * paying by hand collects those details itself.
+     */
+    payoutAccount: (
+      data: { refresh_url: string; return_url: string },
+      options?: RequestOptions,
+    ): Promise<PayoutAccountLink> =>
+      this.request<PayoutAccountLink>('POST', '/onboarding/payout_account', {
+        ...options,
+        body: data,
+      }),
   }
 
   /**
@@ -682,6 +701,12 @@ export interface SellerCountry {
   states_required?: boolean
   zipcode_required?: boolean
   states?: Array<{ abbr: string; name: string }>
+}
+
+/** Where to send a seller to set up how they get paid. */
+export interface PayoutAccountLink {
+  /** Null when the provider hosts no onboarding of its own. */
+  url: string | null
 }
 
 /** What `/seller/onboarding` answers. */

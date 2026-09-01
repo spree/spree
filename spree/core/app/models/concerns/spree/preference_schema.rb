@@ -42,7 +42,8 @@ module Spree
 
     class_methods do
       # Returns `[{ key:, type:, default: }]` for every preference declared
-      # on this class (and its ancestors). Skips deprecated preferences.
+      # on this class (and its ancestors). Skips deprecated and internal
+      # preferences.
       #
       # Memoized at class load — the schema is derived from the static
       # `preference :name, :type` declarations, so it can never change at
@@ -50,6 +51,11 @@ module Spree
       # serializers don't allocate `pref.to_s` per request.
       def preference_schema
         @preference_schema ||= compute_preference_schema
+
+        # An empty list to callers either way; only the memo tells the two
+        # apart, so a schema that could not be computed is retried rather than
+        # settled on.
+        @preference_schema || []
       end
 
       # Wire-safe variant of `preference_schema` with `:password`
@@ -62,7 +68,12 @@ module Spree
       # `Masking.serialize` to avoid `to_s` allocations per request, not
       # part of the documented `{ key, type, default }` wire shape.
       def serialized_preference_schema
-        @serialized_preference_schema ||= preference_schema.map do |field|
+        fields = preference_schema
+        # Nothing to memoize yet: the schema could not be computed, and
+        # settling on its empty stand-in would outlive the reason for it.
+        return fields if @preference_schema.nil?
+
+        @serialized_preference_schema ||= fields.map do |field|
           wire = { key: field[:key], type: field[:type], default: field[:default] }
           wire[:default] = nil if field[:type] == :password
           wire.freeze
@@ -73,15 +84,38 @@ module Spree
       # so write-side guards (e.g. the masked-round-trip check) don't
       # walk the schema or fall back to a `rescue NoMethodError`.
       def password_preference_keys
-        @password_preference_keys ||= preference_schema
+        fields = preference_schema
+        return Set.new.freeze if @preference_schema.nil?
+
+        @password_preference_keys ||= fields
                                       .each_with_object(Set.new) { |field, set| set << field[:key] if field[:type] == :password }
                                       .freeze
       end
 
       def compute_preference_schema
-        instance = new
+        # Only instantiation is guarded. `new` touches the database to read
+        # the column list, so it fails whenever the schema is asked for before
+        # a connection exists — at boot, or in a rake task on an empty
+        # database. Describing the preferences themselves is pure Ruby, so an
+        # error there is a real bug: left inside the rescue it would return an
+        # empty schema and quietly strip every field from the admin form.
+        # Nil rather than an empty list, so `preference_schema`'s `||=` asks
+        # again next time. Memoizing the failure would leave a class describing
+        # no preferences for the life of the process because it was first asked
+        # before the database was up.
+        instance = begin
+          new
+        rescue StandardError
+          return nil
+        end
+
         instance.defined_preferences.filter_map do |pref|
           next if instance.preference_deprecated(pref)
+          # Written by Spree, not supplied by the operator — a value a
+          # provider hands back after we register something with it. Offering
+          # it as a field invites somebody to type over a secret that
+          # signature verification depends on.
+          next if instance.preference_internal(pref)
 
           {
             key: pref,
@@ -90,8 +124,6 @@ module Spree
             default: safe_preference_default(instance, pref)
           }.freeze
         end
-      rescue StandardError
-        []
       end
 
       # Builds a `parse_on_set:` lambda for `preference :foo_ids, :array`

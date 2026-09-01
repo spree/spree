@@ -240,6 +240,7 @@ import type {
   StockTransferCreateParams,
   StoreCreditApplyParams,
   StoreDataSources,
+  StorePayoutProvider,
   StoreUpdateParams,
   TaxCategoryCreateParams,
   TaxCategoryUpdateParams,
@@ -327,9 +328,11 @@ import type {
   ReturnReason,
   Role,
   Seller,
+  SellerPayout,
   SellerRequirement,
   SellerRequirementSubmission,
   SellerTeamMember,
+  SellerTransfer,
   StockLevel,
   StockLocation,
   StockMovement,
@@ -2885,6 +2888,73 @@ export class AdminClient {
   }
 
   // ============================================
+  // Seller fund ledger
+  // ============================================
+
+  /**
+   * Read-only view of `Spree::SellerTransfer` — what one order earned one
+   * seller, credited when the goods went out. There is no write path: a
+   * refund writes a reversal, which is another row rather than an edit.
+   */
+  readonly sellerTransfers = {
+    list: (
+      params?: ListParams & Record<string, unknown>,
+      options?: RequestOptions,
+    ): Promise<PaginatedResponse<SellerTransfer>> =>
+      this.request<PaginatedResponse<SellerTransfer>>('GET', '/seller_transfers', {
+        ...options,
+        params: params ? transformListParams(params) : undefined,
+      }),
+
+    get: (
+      id: string,
+      params?: { expand?: string[] },
+      options?: RequestOptions,
+    ): Promise<SellerTransfer> =>
+      this.request<SellerTransfer>('GET', `/seller_transfers/${id}`, {
+        ...options,
+        params: getParams(params),
+      }),
+  }
+
+  /**
+   * `Spree::SellerPayout` — one settlement to one seller. Created by the
+   * sweep on that seller's own schedule rather than by a caller, so there is
+   * no create or update. `complete` is what the built-in provider waits for:
+   * the operator saying the bank transfer went out.
+   */
+  readonly sellerPayouts = {
+    list: (
+      params?: ListParams & Record<string, unknown>,
+      options?: RequestOptions,
+    ): Promise<PaginatedResponse<SellerPayout>> =>
+      this.request<PaginatedResponse<SellerPayout>>('GET', '/seller_payouts', {
+        ...options,
+        params: params ? transformListParams(params) : undefined,
+      }),
+
+    get: (
+      id: string,
+      params?: { expand?: string[] },
+      options?: RequestOptions,
+    ): Promise<SellerPayout> =>
+      this.request<SellerPayout>('GET', `/seller_payouts/${id}`, {
+        ...options,
+        params: getParams(params),
+      }),
+
+    complete: (
+      id: string,
+      data?: { reference?: string },
+      options?: RequestOptions,
+    ): Promise<SellerPayout> =>
+      this.request<SellerPayout>('PATCH', `/seller_payouts/${id}/complete`, {
+        ...options,
+        body: data,
+      }),
+  }
+
+  // ============================================
   // Gift cards (admin-issued)
   // ============================================
 
@@ -3057,6 +3127,19 @@ export class AdminClient {
   readonly taxProviders = {
     list: (options?: RequestOptions): Promise<PaginatedResponse<Record<string, unknown>>> =>
       this.request<PaginatedResponse<Record<string, unknown>>>('GET', '/tax_providers', options),
+  }
+
+  /**
+   * How this installation can pay its sellers. Discovery only — which one a
+   * store uses is a store preference, so there is nothing here to create.
+   *
+   * Each says whether it is usable by this store today, and whether it needs
+   * sellers to hold an account with it: choosing one changes what the
+   * marketplace has to ask of its sellers before it can pay them.
+   */
+  readonly payoutProviders = {
+    list: (options?: RequestOptions): Promise<PaginatedResponse<StorePayoutProvider>> =>
+      this.request<PaginatedResponse<StorePayoutProvider>>('GET', '/payout_providers', options),
   }
 
   // ============================================

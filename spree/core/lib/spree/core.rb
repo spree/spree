@@ -136,7 +136,8 @@ module Spree
       api_keys: :default,
       search: :default,
       stock_reservations: :default,
-      tax_identifiers: :default
+      tax_identifiers: :default,
+      payouts: :default
     ).tap do |queues|
       # @deprecated The taxons queue was renamed to categories in 6.0; removed in 6.1.
       queues.define_singleton_method(:taxons) do
@@ -394,6 +395,30 @@ module Spree
 
   def self.inventory_providers=(value)
     Rails.application.config.spree.inventory_providers = value
+  end
+
+  # How sellers get paid. Core ships {Spree::PayoutProvider::System}, which
+  # keeps the books and leaves the operator to settle; a provider gem appends
+  # one that moves the money itself.
+  #
+  # @return [Array<Class>]
+  def self.payout_providers
+    Rails.application.config.spree.payout_providers
+  end
+
+  def self.payout_providers=(value)
+    Rails.application.config.spree.payout_providers = value
+  end
+
+  # The provider a store pays through when it has named none.
+  #
+  # @return [Class]
+  def self.default_payout_provider
+    Rails.application.config.spree.default_payout_provider
+  end
+
+  def self.default_payout_provider=(value)
+    Rails.application.config.spree.default_payout_provider = value
   end
 
   # Validator enforcing the password policy on the default auth models
@@ -791,6 +816,14 @@ module Spree
 
   module Core
     class GatewayError < RuntimeError; end
+
+    # The call may or may not have taken effect — a timeout, a dropped
+    # connection, anything that leaves the answer at the provider rather than
+    # in the response. Distinct from its parent because the safe reaction is
+    # the opposite one: a definite failure can be retried, while an unknown
+    # outcome must not be, since retrying is how the same money moves twice.
+    class AmbiguousGatewayError < GatewayError; end
+
     class DestroyWithOrdersError < StandardError; end
   end
 end

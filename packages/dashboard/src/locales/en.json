@@ -2064,6 +2064,32 @@
           "help": "Keep past prices so the storefront can show the lowest price of the last 30 days, as EU rules require.",
           "label": "Record price history"
         },
+        "payouts": {
+          "title": "Seller payouts",
+          "description": "How this marketplace pays the sellers who trade on it.",
+          "provider": {
+            "label": "Paid through",
+            "help": "Who moves the money. Keeping your own books means you send the transfers yourself and mark each one paid.",
+            "requires_account": "Sellers must set up an account with this provider before it will pay them."
+          },
+          "provider_none": "Your own books",
+          "provider_unavailable": "Connect this provider before you can pay through it",
+          "schedule": {
+            "label": "Settle sellers",
+            "help": "How often earnings are batched into a payment. A seller can carry their own schedule instead."
+          },
+          "schedule_intervals": {
+            "daily": "Daily",
+            "weekly": "Weekly",
+            "biweekly": "Every two weeks",
+            "monthly": "Monthly",
+            "manual": "Only when you say so"
+          },
+          "minimum": {
+            "label": "Minimum payout",
+            "help": "Below this, a seller’s balance carries to the next period rather than being sent. Zero pays whatever is owed."
+          }
+        },
         "limit_digital_download_count": {
           "help": "Off means buyers can download as often as they like.",
           "label": "Limit number of downloads"
@@ -3641,6 +3667,10 @@
             "url": "URL"
           },
           "title": "Webhooks"
+        },
+        "payouts": {
+          "title": "Payouts",
+          "subtitle": "How and when this marketplace pays its sellers."
         }
       },
       "staff": {
@@ -4656,17 +4686,18 @@
         "store": "Store name, timezone, units and regional defaults",
         "tax_categories": "Tax classes assigned to products",
         "tax_rates": "Rates applied per market and region",
-        "webhooks": "Endpoints notified when events happen"
+        "webhooks": "Endpoints notified when events happen",
+        "payouts": "Who pays your sellers, how often, and the minimum worth sending"
       },
       "groups": {
         "audit": "Audit",
         "developer": "Developer",
         "payments": "Payments & taxes",
-        "post_sale": "Returns & sellers",
         "selling": "Selling",
         "shipping": "Shipping & delivery",
         "store": "Store",
-        "team": "Users & permissions"
+        "team": "Users & permissions",
+        "marketplace": "Marketplace"
       },
       "items": {
         "allowed_origins": "Allowed origins",
@@ -4691,7 +4722,8 @@
         "store": "Store",
         "tax_categories": "Tax categories",
         "tax_rates": "Tax rates",
-        "webhooks": "Webhooks"
+        "webhooks": "Webhooks",
+        "payouts": "Payouts"
       }
     },
     "setup": {

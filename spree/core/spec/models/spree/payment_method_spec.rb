@@ -337,4 +337,86 @@ describe Spree::PaymentMethod, type: :model do
       ActiveSupport::Notifications.unsubscribe(subscription)
     end
   end
+  # A preference the system writes rather than the operator supplies — a
+  # secret a provider issues, an id it gives back.
+  describe 'internal preferences' do
+    let(:gateway_class) do
+      Class.new(Spree::Gateway) do
+        def self.name = 'TestInternalGateway'
+
+        preference :api_key, :password
+        preference :issued_secret, :password, internal: true
+      end
+    end
+
+    it 'keeps them out of the schema, so no form offers them' do
+      keys = gateway_class.serialized_preference_schema.map { |field| field[:key] }
+
+      expect(keys).to include(:api_key)
+      expect(keys).not_to include(:issued_secret)
+    end
+
+    it 'still stores and reads one, since the system depends on the value' do
+      gateway = gateway_class.new
+      gateway.preferred_issued_secret = 'whsec_abc'
+
+      expect(gateway.preferred_issued_secret).to eq('whsec_abc')
+    end
+
+    it 'reports which preferences are internal' do
+      gateway = gateway_class.new
+
+      expect(gateway.preference_internal(:issued_secret)).to be(true)
+      expect(gateway.preference_internal(:api_key)).to be_nil
+    end
+
+    # A gateway loaded from a build that predates this option has no such
+    # reader. Schema computation rescues everything into an empty list, so
+    # without a guard one old declaration would strip every field from the
+    # class — including the password ones the admin form relies on.
+    it 'still describes a class whose declarations predate the option' do
+      gateway_class.send(:undef_method, :preferred_issued_secret_internal)
+      gateway_class.instance_variable_set(:@preference_schema, nil)
+
+      keys = gateway_class.preference_schema.map { |field| field[:key] }
+
+      expect(keys).to include(:api_key, :issued_secret)
+    end
+  end
+
+  # Describing a class needs a connection, so the schema can be asked for
+  # before there is one — at boot, or in a rake task on an empty database.
+  # Settling on the empty answer would leave that class describing no
+  # preferences for the life of the process.
+  describe 'a schema asked for before the database was up' do
+    let(:gateway_class) do
+      Class.new(Spree::Gateway) do
+        def self.name = 'RetryableSchemaGateway'
+
+        preference :api_key, :password
+      end
+    end
+
+    it 'is retried rather than settled on' do
+      allow(gateway_class).to receive(:new).and_raise(ActiveRecord::ConnectionNotEstablished)
+      expect(gateway_class.preference_schema).to be_empty
+
+      allow(gateway_class).to receive(:new).and_call_original
+
+      expect(gateway_class.preference_schema.map { |field| field[:key] }).to eq([:api_key])
+    end
+
+    # These memoize off the schema, so caching what they derived from its
+    # empty stand-in would outlive the reason for it.
+    it 'does not leave the derived lists empty either' do
+      allow(gateway_class).to receive(:new).and_raise(ActiveRecord::ConnectionNotEstablished)
+      gateway_class.password_preference_keys
+      gateway_class.serialized_preference_schema
+
+      allow(gateway_class).to receive(:new).and_call_original
+
+      expect(gateway_class.password_preference_keys).to contain_exactly(:api_key)
+      expect(gateway_class.serialized_preference_schema.map { |field| field[:key] }).to eq([:api_key])
+    end
+  end
 end

@@ -41,6 +41,7 @@ import { Route as SettingsRolesRouteImport } from './routes/_authenticated/$stor
 import { Route as SettingsReasonsRouteImport } from './routes/_authenticated/$storeId/settings/reasons'
 import { Route as SettingsProductTypesRouteImport } from './routes/_authenticated/$storeId/settings/product-types'
 import { Route as SettingsPoliciesRouteImport } from './routes/_authenticated/$storeId/settings/policies'
+import { Route as SettingsPayoutsRouteImport } from './routes/_authenticated/$storeId/settings/payouts'
 import { Route as SettingsPaymentMethodsRouteImport } from './routes/_authenticated/$storeId/settings/payment-methods'
 import { Route as SettingsMarketsRouteImport } from './routes/_authenticated/$storeId/settings/markets'
 import { Route as SettingsIntegrationsRouteImport } from './routes/_authenticated/$storeId/settings/integrations'
@@ -244,6 +245,11 @@ const SettingsProductTypesRoute = SettingsProductTypesRouteImport.update({
 const SettingsPoliciesRoute = SettingsPoliciesRouteImport.update({
   id: '/policies',
   path: '/policies',
+  getParentRoute: () => SettingsRoute,
+} as any)
+const SettingsPayoutsRoute = SettingsPayoutsRouteImport.update({
+  id: '/payouts',
+  path: '/payouts',
   getParentRoute: () => SettingsRoute,
 } as any)
 const SettingsPaymentMethodsRoute = SettingsPaymentMethodsRouteImport.update({
@@ -511,6 +517,7 @@ export interface FileRoutesByFullPath {
   '/$storeId/settings/integrations': typeof SettingsIntegrationsRoute
   '/$storeId/settings/markets': typeof SettingsMarketsRoute
   '/$storeId/settings/payment-methods': typeof SettingsPaymentMethodsRoute
+  '/$storeId/settings/payouts': typeof SettingsPayoutsRoute
   '/$storeId/settings/policies': typeof SettingsPoliciesRoute
   '/$storeId/settings/product-types': typeof SettingsProductTypesRoute
   '/$storeId/settings/reasons': typeof SettingsReasonsRoute
@@ -585,6 +592,7 @@ export interface FileRoutesByTo {
   '/$storeId/settings/integrations': typeof SettingsIntegrationsRoute
   '/$storeId/settings/markets': typeof SettingsMarketsRoute
   '/$storeId/settings/payment-methods': typeof SettingsPaymentMethodsRoute
+  '/$storeId/settings/payouts': typeof SettingsPayoutsRoute
   '/$storeId/settings/policies': typeof SettingsPoliciesRoute
   '/$storeId/settings/product-types': typeof SettingsProductTypesRoute
   '/$storeId/settings/reasons': typeof SettingsReasonsRoute
@@ -663,6 +671,7 @@ export interface FileRoutesById {
   '/_authenticated/$storeId/settings/integrations': typeof SettingsIntegrationsRoute
   '/_authenticated/$storeId/settings/markets': typeof SettingsMarketsRoute
   '/_authenticated/$storeId/settings/payment-methods': typeof SettingsPaymentMethodsRoute
+  '/_authenticated/$storeId/settings/payouts': typeof SettingsPayoutsRoute
   '/_authenticated/$storeId/settings/policies': typeof SettingsPoliciesRoute
   '/_authenticated/$storeId/settings/product-types': typeof SettingsProductTypesRoute
   '/_authenticated/$storeId/settings/reasons': typeof SettingsReasonsRoute
@@ -741,6 +750,7 @@ export interface FileRouteTypes {
     | '/$storeId/settings/integrations'
     | '/$storeId/settings/markets'
     | '/$storeId/settings/payment-methods'
+    | '/$storeId/settings/payouts'
     | '/$storeId/settings/policies'
     | '/$storeId/settings/product-types'
     | '/$storeId/settings/reasons'
@@ -815,6 +825,7 @@ export interface FileRouteTypes {
     | '/$storeId/settings/integrations'
     | '/$storeId/settings/markets'
     | '/$storeId/settings/payment-methods'
+    | '/$storeId/settings/payouts'
     | '/$storeId/settings/policies'
     | '/$storeId/settings/product-types'
     | '/$storeId/settings/reasons'
@@ -892,6 +903,7 @@ export interface FileRouteTypes {
     | '/_authenticated/$storeId/settings/integrations'
     | '/_authenticated/$storeId/settings/markets'
     | '/_authenticated/$storeId/settings/payment-methods'
+    | '/_authenticated/$storeId/settings/payouts'
     | '/_authenticated/$storeId/settings/policies'
     | '/_authenticated/$storeId/settings/product-types'
     | '/_authenticated/$storeId/settings/reasons'
@@ -1164,6 +1176,13 @@ declare module '@tanstack/react-router' {
       path: '/policies'
       fullPath: '/$storeId/settings/policies'
       preLoaderRoute: typeof SettingsPoliciesRouteImport
+      parentRoute: typeof SettingsRoute
+    }
+    '/_authenticated/$storeId/settings/payouts': {
+      id: '/_authenticated/$storeId/settings/payouts'
+      path: '/payouts'
+      fullPath: '/$storeId/settings/payouts'
+      preLoaderRoute: typeof SettingsPayoutsRouteImport
       parentRoute: typeof SettingsRoute
     }
     '/_authenticated/$storeId/settings/payment-methods': {
@@ -1480,6 +1499,7 @@ interface SettingsRouteChildren {
   SettingsIntegrationsRoute: typeof SettingsIntegrationsRoute
   SettingsMarketsRoute: typeof SettingsMarketsRoute
   SettingsPaymentMethodsRoute: typeof SettingsPaymentMethodsRoute
+  SettingsPayoutsRoute: typeof SettingsPayoutsRoute
   SettingsPoliciesRoute: typeof SettingsPoliciesRoute
   SettingsProductTypesRoute: typeof SettingsProductTypesRoute
   SettingsReasonsRoute: typeof SettingsReasonsRoute
@@ -1510,6 +1530,7 @@ const SettingsRouteChildren: SettingsRouteChildren = {
   SettingsIntegrationsRoute: SettingsIntegrationsRoute,
   SettingsMarketsRoute: SettingsMarketsRoute,
   SettingsPaymentMethodsRoute: SettingsPaymentMethodsRoute,
+  SettingsPayoutsRoute: SettingsPayoutsRoute,
   SettingsPoliciesRoute: SettingsPoliciesRoute,
   SettingsProductTypesRoute: SettingsProductTypesRoute,
   SettingsReasonsRoute: SettingsReasonsRoute,

@@ -2,10 +2,11 @@ module Spree::Preferences
   module PreferableClassMethods
     def preference(name, type, *args)
       options = args.extract_options!
-      options.assert_valid_keys(:default, :deprecated, :nullable, :parse_on_set)
+      options.assert_valid_keys(:default, :deprecated, :internal, :nullable, :parse_on_set)
       default = options[:default]
       default = -> { options[:default] } unless default.is_a?(Proc)
       deprecated = options[:deprecated]
+      internal = options[:internal]
       nullable = options[:nullable]
       parse_on_set = options[:parse_on_set]
 
@@ -47,6 +48,13 @@ module Spree::Preferences
 
       define_method preference_deprecated_getter_method(name) do
         deprecated
+      end
+
+      # Whether this preference is the system's to write rather than the
+      # operator's to supply — a value a provider hands back to us, not one
+      # anybody could know in advance.
+      define_method preference_internal_getter_method(name) do
+        internal
       end
 
       define_method prefers_query_method(name) do
@@ -96,6 +104,10 @@ module Spree::Preferences
 
     def preference_deprecated_getter_method(name)
       "preferred_#{name}_deprecated".to_sym
+    end
+
+    def preference_internal_getter_method(name)
+      "preferred_#{name}_internal".to_sym
     end
 
     def preference_type_getter_method(name)

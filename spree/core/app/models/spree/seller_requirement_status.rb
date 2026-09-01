@@ -30,6 +30,18 @@ module Spree
     attribute :status, :string
     attribute :action_url, :string
 
+    # Why this line is stuck, when the reason lives somewhere the seller
+    # cannot see — a payout provider still checking their identity, say.
+    #
+    # `state` is one of `action` (they must do something), `pending` (the
+    # provider is looking, and nobody can hurry it) or `rejected`. `message`
+    # is the provider's own sentence when it wrote one: best-effort and
+    # unlocalized, so it is shown as detail beside translated copy rather
+    # than in place of it.
+    #
+    # @return [Hash, nil]
+    attr_accessor :blocker
+
     # The submission behind the status, when there is one.
     # @return [Spree::SellerRequirementSubmission, nil]
     attr_accessor :submission

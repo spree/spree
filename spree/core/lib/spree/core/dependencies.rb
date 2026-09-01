@@ -206,6 +206,10 @@ module Spree
         payment_capture_workflow: 'Spree::Payments::Capture',
         payment_void_workflow: 'Spree::Payments::Void',
         refund_create_workflow: 'Spree::Refunds::Create',
+        seller_transfer_create_workflow: 'Spree::SellerTransfers::Create',
+        seller_transfer_reverse_workflow: 'Spree::SellerTransfers::Reverse',
+        seller_payout_sweep_workflow: 'Spree::SellerPayouts::Sweep',
+        seller_payout_complete_workflow: 'Spree::SellerPayouts::Complete',
         payments_handle_webhook_workflow: 'Spree::Payments::HandleWebhook',
         payment_session_complete_workflow: 'Spree::PaymentSessions::Complete',
 

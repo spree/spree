@@ -28,8 +28,12 @@ module SpreeStripe
       }.freeze
 
       included do
-        preference :webhook_signing_secret, :password
-        preference :webhook_endpoint_id, :string
+        # Both written by CreateGatewayWebhooks once Stripe has registered the
+        # endpoint — Stripe issues the secret and only reveals it at creation.
+        # An operator has nothing to type here, and a value typed over one
+        # would break the signature check it exists to satisfy.
+        preference :webhook_signing_secret, :password, internal: true
+        preference :webhook_endpoint_id, :string, internal: true
 
         after_commit :create_webhook_endpoint_async, on: %i[create update]
       end
@@ -96,7 +100,7 @@ module SpreeStripe
       def create_webhook_endpoint_async
         return if preferred_webhook_signing_secret.present?
 
-        SpreeStripe::CreateWebhookEndpointJob.perform_later(id)
+        SpreeStripe::CreateWebhookEndpointJob.perform_later(id, connect: false)
       end
     end
   end

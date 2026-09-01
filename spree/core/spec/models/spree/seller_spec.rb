@@ -360,4 +360,122 @@ describe Spree::Seller do
       expect(ability).not_to be_can(:manage, seller)
     end
   end
+
+  describe '#balance' do
+    let(:store) { @default_store }
+    let(:seller) { create(:seller, :approved, store: store) }
+
+    def earn(amount, currency: 'USD', status: 'completed')
+      create(:seller_transfer, seller: seller, currency: currency, amount: amount, status: status,
+                               order: create(:order, store: store, seller: seller, currency: currency))
+    end
+
+    it 'is what has been earned less what has been settled' do
+      earn(40)
+      earn(30)
+      create(:seller_payout, :completed, seller: seller, amount: 50)
+
+      expect(seller.balance('USD')).to eq(20)
+    end
+
+    it 'counts only confirmed earnings' do
+      earn(40)
+      earn(25, status: 'pending')
+
+      expect(seller.balance('USD')).to eq(40)
+    end
+
+    # Nothing is ever converted, so a seller trading in two currencies accrues
+    # two balances and is settled in each.
+    it 'keeps each currency separate' do
+      earn(40)
+      earn(30, currency: 'EUR')
+
+      expect(seller.balance('USD')).to eq(40)
+      expect(seller.balance('EUR')).to eq(30)
+    end
+
+    it 'is nothing for a seller who has earned nothing' do
+      expect(seller.balance('USD')).to eq(0)
+    end
+  end
+
+  describe 'settlement configuration' do
+    let(:store) { @default_store }
+    let(:seller) { create(:seller, :approved, store: store) }
+
+    it 'falls back to the store’s schedule and threshold' do
+      expect(seller.resolved_payouts_schedule_interval).to eq('monthly')
+      expect(seller.resolved_minimum_payout_amount).to eq(0)
+    end
+
+    it 'prefers its own once it deviates' do
+      seller.update!(payouts_schedule_interval: 'weekly', minimum_payout_amount: 25)
+
+      expect(seller.resolved_payouts_schedule_interval).to eq('weekly')
+      expect(seller.resolved_minimum_payout_amount).to eq(25)
+    end
+  end
+  # The seller's identity in the system that pays them — recorded where every
+  # other external identity is, rather than in a column of its own.
+  describe 'the payout account' do
+    let(:seller) { create(:seller, :approved, store: @default_store) }
+
+    # A stand-in for a provider gem, which names itself when it files the
+    # account it minted.
+    let(:provider) do
+      Class.new(Spree::PayoutProvider::Base) do
+        def self.reference_system = 'acme_pay'
+      end
+    end
+
+    it 'is filed under the provider that issued it' do
+      seller.set_payout_account_reference(provider, 'acct_123')
+
+      reference = seller.external_references.reload.first
+      expect(reference.system).to eq('acme_pay')
+      expect(reference.external_id).to eq('acct_123')
+    end
+
+    it 'reads back what was written' do
+      seller.set_payout_account_reference(provider, 'acct_123')
+
+      expect(seller.reload.payout_account_reference(provider)).to eq('acct_123')
+    end
+
+    it 'is nil for a seller who holds no account' do
+      expect(seller.payout_account_reference(provider)).to be_nil
+    end
+
+    it 'forgets the account when blanked' do
+      seller.set_payout_account_reference(provider, 'acct_123')
+      seller.set_payout_account_reference(provider, nil)
+
+      expect(seller.reload.payout_account_reference(provider)).to be_nil
+    end
+
+    # The whole point of keying by provider: a marketplace that changes
+    # provider keeps the old account rather than reading it as the new one.
+    it 'keeps one provider’s account out of another’s' do
+      other_provider = Class.new(Spree::PayoutProvider::Base) do
+        def self.reference_system = 'other_pay'
+      end
+      seller.set_payout_account_reference(provider, 'acct_123')
+
+      expect(seller.reload.payout_account_reference(other_provider)).to be_nil
+    end
+
+    # What a provider webhook does: it knows the account, not the seller.
+    it 'finds the seller an account belongs to' do
+      seller.set_payout_account_reference(provider, 'acct_123')
+
+      expect(Spree::Seller.with_payout_account(@default_store, provider, 'acct_123')).to contain_exactly(seller)
+    end
+
+    it 'does not find a seller in another marketplace' do
+      seller.set_payout_account_reference(provider, 'acct_123')
+
+      expect(Spree::Seller.with_payout_account(create(:store), provider, 'acct_123')).to be_empty
+    end
+  end
 end

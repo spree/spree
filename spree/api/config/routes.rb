@@ -393,6 +393,9 @@ Spree::Core::Engine.add_routes do
 
         # Selectable tax engines and their declared limits (discovery only)
         resources :tax_providers, only: [:index]
+        # How sellers get paid. Discovery only — the choice itself is a store
+        # preference, so there is nothing here to create.
+        resources :payout_providers, only: [:index]
 
         # Return / claim / refund reasons (dropdowns + settings management)
         resources :return_reasons
@@ -555,6 +558,18 @@ Spree::Core::Engine.add_routes do
           end
         end
         resources :commission_lines, only: [:index, :show]
+
+        # The fund ledger — what sellers earned, and what has been sent them.
+        # Both are written by fulfilment and by the sweep rather than by a
+        # caller, so both are read-only. The one thing an operator does is say
+        # a settlement landed, which the built-in provider depends on: it
+        # records what to send and waits to be told it went.
+        resources :seller_transfers, only: [:index, :show]
+        resources :seller_payouts, only: [:index, :show] do
+          member do
+            patch :complete
+          end
+        end
 
         # What one checkout produced when it reached several sellers. Read-only:
         # everything an operator acts on lives on the orders inside it.
@@ -870,6 +885,10 @@ Spree::Core::Engine.add_routes do
         # Singular: the checklist is always `current_seller`'s.
         resource :onboarding, only: [:show], controller: 'onboarding' do
           post :submit_for_review
+          # A fresh link to the payout provider's own onboarding. A POST
+          # because asking for one creates the account at the provider if the
+          # seller has none.
+          post :payout_account
         end
 
         resources :requirements, only: [] do
@@ -886,6 +905,13 @@ Spree::Core::Engine.add_routes do
       namespace :webhooks do
         post 'payments/:payment_method_id', to: 'payments#create', as: :payment_webhook
         post 'fulfillments/:integration_id', to: 'fulfillments#create', as: :fulfillment_webhook
+        # Marketplace events about sellers rather than about a payment —
+        # whether a seller may be paid, and whether a payout reached their
+        # bank. A separate endpoint because providers scope these separately:
+        # events originating in a seller's own account arrive on a different
+        # subscription, with a different signing secret, than the
+        # marketplace's own payment events.
+        post 'payouts/:payment_method_id', to: 'payouts#create', as: :payout_webhook
       end
     end
   end

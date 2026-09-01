@@ -33,6 +33,32 @@ module Spree
             render json: onboarding_payload
           end
 
+          # POST /api/v3/seller/onboarding/payout_account
+          #
+          # A fresh link to wherever the provider collects what it needs before
+          # it will pay this seller. Minted per request rather than rendered
+          # with the checklist, because these links are short-lived and
+          # single-use — one made while drawing a page is often dead by the
+          # time the seller clicks it.
+          #
+          # The panel says where to come back to. Core does not know the
+          # panel's routes, and a marketplace may host it anywhere.
+          def payout_account
+            provider = current_store.payout_provider_instance
+            url = provider.onboarding_url(
+              current_seller,
+              refresh_url: panel_url(params.require(:refresh_url)),
+              return_url: panel_url(params.require(:return_url))
+            )
+
+            # A null link rather than an empty response: the panel has to tell
+            # "this provider hosts nothing" from "the request failed", and a
+            # 204 makes the client infer that from an absence.
+            render json: { url: url.presence }
+          rescue Spree::Core::GatewayError => e
+            render_service_error(e.message)
+          end
+
           protected
 
           def read_actions
@@ -40,6 +66,26 @@ module Spree
           end
 
           private
+
+          # Where a provider may send the seller back to.
+          #
+          # Checked against the panel's own origin rather than echoed: a seller
+          # could otherwise name any address and turn the marketplace's genuine
+          # provider flow into a redirect to a page of their choosing, which is
+          # a convincing place to ask somebody for credentials. Anything else
+          # falls back to the panel's own root.
+          def panel_url(candidate)
+            panel = Spree::Sellers::PanelUrl.call(store: current_store)
+            return panel if candidate.blank?
+
+            uri = URI.parse(candidate.to_s)
+            allowed = URI.parse(panel)
+
+            same_origin = uri.scheme == allowed.scheme && uri.host == allowed.host && uri.port == allowed.port
+            same_origin ? candidate.to_s : panel
+          rescue URI::InvalidURIError
+            panel
+          end
 
           def requirements
             @requirements ||= Spree::Sellers::Requirements.new(current_seller.reload)

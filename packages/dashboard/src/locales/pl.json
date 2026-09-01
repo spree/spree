@@ -2078,6 +2078,32 @@
           "help": "Przechowuj poprzednie ceny, aby sklep mógł pokazać najniższą cenę z ostatnich 30 dni, zgodnie z przepisami UE.",
           "label": "Zapisuj historię cen"
         },
+        "payouts": {
+          "title": "Wypłaty dla sprzedawców",
+          "description": "Jak ten marketplace płaci sprzedawcom, którzy na nim handlują.",
+          "provider": {
+            "label": "Wypłacane przez",
+            "help": "Kto przenosi pieniądze. Przy własnej księgowości sam wykonujesz przelewy i oznaczasz każdy jako zapłacony.",
+            "requires_account": "Sprzedawcy muszą założyć konto u tego dostawcy, zanim otrzymają wypłatę."
+          },
+          "provider_none": "Własna księgowość",
+          "provider_unavailable": "Połącz tego dostawcę, zanim będziesz mógł przez niego płacić",
+          "schedule": {
+            "label": "Rozliczaj sprzedawców",
+            "help": "Jak często zarobki są łączone w jedną wypłatę. Sprzedawca może mieć własny harmonogram."
+          },
+          "schedule_intervals": {
+            "daily": "Codziennie",
+            "weekly": "Co tydzień",
+            "biweekly": "Co dwa tygodnie",
+            "monthly": "Co miesiąc",
+            "manual": "Tylko na Twoje polecenie"
+          },
+          "minimum": {
+            "label": "Minimalna wypłata",
+            "help": "Poniżej tej kwoty saldo przechodzi na następny okres zamiast zostać wypłacone. Zero wypłaca każdą należność."
+          }
+        },
         "limit_digital_download_count": {
           "help": "Wyłączone oznacza, że kupujący mogą pobierać dowolną liczbę razy.",
           "label": "Ogranicz liczbę pobrań"
@@ -3685,6 +3711,10 @@
             "url": "URL"
           },
           "title": "Webhooki"
+        },
+        "payouts": {
+          "title": "Wypłaty",
+          "subtitle": "Jak i kiedy ten marketplace płaci swoim sprzedawcom."
         }
       },
       "staff": {
@@ -4710,17 +4740,18 @@
         "store": "Nazwa sklepu, strefa czasowa, jednostki i ustawienia regionalne",
         "tax_categories": "Klasy podatkowe przypisane do produktów",
         "tax_rates": "Stawki stosowane według rynku i regionu",
-        "webhooks": "Adresy powiadamiane o zdarzeniach"
+        "webhooks": "Adresy powiadamiane o zdarzeniach",
+        "payouts": "Kto płaci Twoim sprzedawcom, jak często i od jakiej kwoty"
       },
       "groups": {
         "audit": "Audyt",
         "developer": "Deweloper",
         "payments": "Płatności i podatki",
-        "post_sale": "Zwroty i sprzedawcy",
         "selling": "Sprzedaż",
         "shipping": "Wysyłka i dostawa",
         "store": "Sklep",
-        "team": "Użytkownicy i uprawnienia"
+        "team": "Użytkownicy i uprawnienia",
+        "marketplace": "Marketplace"
       },
       "items": {
         "allowed_origins": "Dozwolone źródła",
@@ -4745,7 +4776,8 @@
         "store": "Sklep",
         "tax_categories": "Kategorie podatkowe",
         "tax_rates": "Stawki podatku",
-        "webhooks": "Webhooki"
+        "webhooks": "Webhooki",
+        "payouts": "Wypłaty"
       }
     },
     "setup": {

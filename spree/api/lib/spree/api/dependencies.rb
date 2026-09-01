@@ -197,6 +197,8 @@ module Spree
         admin_commission_rate_serializer: 'Spree::Api::V3::Admin::CommissionRateSerializer',
         admin_commission_rule_serializer: 'Spree::Api::V3::Admin::CommissionRuleSerializer',
         admin_commission_line_serializer: 'Spree::Api::V3::Admin::CommissionLineSerializer',
+        admin_seller_transfer_serializer: 'Spree::Api::V3::Admin::SellerTransferSerializer',
+        admin_seller_payout_serializer: 'Spree::Api::V3::Admin::SellerPayoutSerializer',
         admin_address_serializer: 'Spree::Api::V3::Admin::AddressSerializer',
         admin_channel_serializer: 'Spree::Api::V3::Admin::ChannelSerializer',
         admin_order_routing_rule_serializer: 'Spree::Api::V3::Admin::OrderRoutingRuleSerializer',
