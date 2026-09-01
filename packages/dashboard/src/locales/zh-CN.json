@@ -97,19 +97,20 @@
       "assignments": {
         "add_cta": "分配",
         "add_title": "分配该目录",
+        "already_assigned": "该受众已添加到此目录。",
         "audience_empty": "未找到结果",
         "audience_label": "受众",
         "audience_placeholder": "搜索…",
         "company_subtree_help": "分配给公司将覆盖其整个子树。",
         "dialog_description": "谁能看到该目录。分配给公司将覆盖该节点及其下所有单位。",
         "empty": "尚未分配给任何受众——没有人能看到该目录。",
+        "empty_description": "指定公司或客户组，以决定本目录面向谁。",
         "remove_confirm": {
           "message": "{{name}} 将不再看到该目录。",
           "title": "移除该分配？"
         },
         "title": "受众",
-        "type_label": "受众类型",
-        "already_assigned": "该受众已添加到此目录。"
+        "type_label": "受众类型"
       },
       "create_description": "目录限定某类受众能看到什么，并通过价格表决定其价格。创建后可添加产品和受众。",
       "create_label": "创建目录",
@@ -200,21 +201,32 @@
         }
       },
       "wizard": {
+        "audience_none_warning": "尚未设置受众，因此无人能看到本目录。可以现在或稍后指定。",
         "description": "设置一份协议：它是什么、面向谁、收费多少。",
         "fix_this_step": "请先修正标记的字段，然后继续。",
         "help": {
           "details": "为该协议命名，以便日后识别。",
-          "audience": "谁能看到本目录。留空则对所有人生效。",
+          "audience": "谁能看到本目录并享受其价格。",
+          "products": "本协议涵盖的范围。",
           "pricing": "适用本协议的买家支付的金额。",
           "review": "完成前不会创建任何内容。"
         },
+        "products": {
+          "empty": "尚无商品",
+          "empty_description": "选择本协议涵盖的商品。留空则只定价，不限制买家可见范围。",
+          "count": "{{count}} 件商品",
+          "count_plural": "{{count}} 件商品"
+        },
+        "products_failed": "目录已创建，但未能添加其商品。请在目录页面添加。",
+        "products_none_warning": "尚未添加商品。空目录只定价、不隐藏任何内容 — 买家仍能看到整个商店。",
         "review": {
           "everyone": "所有人",
-          "fix_earlier_steps": "需要先修正前面步骤中的内容，才能创建此目录。"
+          "everything": "整个商店"
         },
         "steps": {
           "details": "详情",
           "audience": "受众",
+          "products": "商品",
           "pricing": "定价",
           "review": "确认"
         },

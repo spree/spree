@@ -13,7 +13,7 @@ import {
 } from '@spree/dashboard-ui'
 import { PlusIcon, Trash2Icon } from '@spree/dashboard-ui/icons'
 import { Link } from '@tanstack/react-router'
-import { useEffect, useMemo, useState } from 'react'
+import { type ReactNode, useEffect, useMemo, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useProductMembershipStaging } from './product-membership-staging'
 
@@ -58,6 +58,7 @@ export function DeferredProductMembershipCard({
   translationNamespace,
   description,
   extraColumns,
+  headerActions,
 }: {
   parentId: string
   storeId: string
@@ -83,6 +84,13 @@ export function DeferredProductMembershipCard({
   extraColumns?:
     | ProductMembershipListProps['extraColumns']
     | ((products: Product[]) => ProductMembershipListProps['extraColumns'])
+  /**
+   * Extra controls beside Add products, for an action that belongs on these
+   * rows rather than in a card of its own — pricing a catalog's assortment.
+   * Hidden while a selection is active, since the header is then the bulk
+   * remove.
+   */
+  headerActions?: ReactNode
 }) {
   const { t } = useTranslation()
   const tr = (key: string, options?: Record<string, unknown>) =>
@@ -185,10 +193,13 @@ export function DeferredProductMembershipCard({
               {tr('remove_selected', { count: selected.length })}
             </Button>
           ) : (
-            <Button type="button" variant="outline" size="sm" onClick={() => setPickerOpen(true)}>
-              <PlusIcon className="size-4" />
-              {tr('add_cta')}
-            </Button>
+            <div className="flex items-center gap-2">
+              {headerActions}
+              <Button type="button" variant="outline" size="sm" onClick={() => setPickerOpen(true)}>
+                <PlusIcon className="size-4" />
+                {tr('add_cta')}
+              </Button>
+            </div>
           ))}
       </CardHeader>
       <CardContent className="p-0">

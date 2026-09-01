@@ -99,19 +99,20 @@
       "assignments": {
         "add_cta": "Przypisz",
         "add_title": "Przypisz ten katalog",
+        "already_assigned": "Ta grupa odbiorców jest już przypisana do tego katalogu.",
         "audience_empty": "Nic nie znaleziono",
         "audience_label": "Odbiorca",
         "audience_placeholder": "Szukaj…",
         "company_subtree_help": "Przypisanie do firmy obejmuje całe jej poddrzewo.",
         "dialog_description": "Kto widzi ten katalog. Przypisanie do firmy obejmuje węzeł i wszystko poniżej.",
         "empty": "Nie przypisano do żadnego odbiorcy — nikt nie widzi tego katalogu.",
+        "empty_description": "Przypisz firmę lub grupę klientów, aby określić, dla kogo jest ten katalog.",
         "remove_confirm": {
           "message": "{{name}} przestanie widzieć ten katalog.",
           "title": "Usunąć to przypisanie?"
         },
         "title": "Odbiorcy",
-        "type_label": "Typ odbiorcy",
-        "already_assigned": "Ta grupa odbiorców jest już przypisana do tego katalogu."
+        "type_label": "Typ odbiorcy"
       },
       "create_description": "Katalog zawęża, co widzi dana grupa odbiorców, a poprzez cennik — ile płaci. Produkty i odbiorców dodasz później.",
       "create_label": "Utwórz katalog",
@@ -202,21 +203,32 @@
         }
       },
       "wizard": {
+        "audience_none_warning": "Brak odbiorców, więc nikt nie widzi tego katalogu. Możesz przypisać ich teraz lub później.",
         "description": "Skonfiguruj umowę: czym jest, dla kogo i ile kosztuje.",
         "fix_this_step": "Popraw zaznaczone pole, aby przejść dalej.",
         "help": {
           "details": "Nazwij tę umowę, aby później ją rozpoznać.",
-          "audience": "Kto widzi ten katalog. Pozostaw puste, aby dotyczył wszystkich.",
+          "audience": "Kto widzi ten katalog i otrzymuje jego ceny.",
+          "products": "Czego dotyczy ta umowa.",
           "pricing": "Ile płacą kupujący objęci tą umową.",
           "review": "Nic nie zostanie utworzone, dopóki nie zakończysz."
         },
+        "products": {
+          "empty": "Brak produktów",
+          "empty_description": "Wybierz, czego dotyczy ta umowa. Pozostaw puste, aby ustalać ceny bez ograniczania widoczności.",
+          "count": "{{count}} produkt",
+          "count_plural": "{{count}} produktów"
+        },
+        "products_failed": "Katalog został utworzony, ale nie udało się dodać produktów. Dodaj je na stronie katalogu.",
+        "products_none_warning": "Brak produktów. Pusty katalog ustala ceny, niczego nie ukrywając — kupujący nadal widzą cały sklep.",
         "review": {
           "everyone": "Wszyscy",
-          "fix_earlier_steps": "Coś we wcześniejszym kroku wymaga poprawy, zanim ten katalog zostanie utworzony."
+          "everything": "Cały sklep"
         },
         "steps": {
           "details": "Szczegóły",
           "audience": "Odbiorcy",
+          "products": "Produkty",
           "pricing": "Ceny",
           "review": "Podsumowanie"
         },

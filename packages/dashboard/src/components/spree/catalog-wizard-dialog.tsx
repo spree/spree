@@ -1,0 +1,488 @@
+import { zodResolver } from '@hookform/resolvers/zod'
+import type { Product } from '@spree/admin-sdk'
+import { adminClient, mapSpreeErrorsToForm, ResourcePickerSheet } from '@spree/dashboard-core'
+import {
+  Badge,
+  Button,
+  Checkbox,
+  Dialog,
+  DialogBody,
+  DialogContent,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  Empty,
+  EmptyDescription,
+  EmptyHeader,
+  EmptyMedia,
+  EmptyTitle,
+  Field,
+  FieldDescription,
+  FieldError,
+  FieldGroup,
+  FieldLabel,
+  Input,
+  Textarea,
+  Thumbnail,
+  toastManager,
+  WizardSteps,
+} from '@spree/dashboard-ui'
+import { PackageIcon, PlusIcon, XIcon } from 'lucide-react'
+import { useState } from 'react'
+import { Controller, type UseFormReturn, useForm } from 'react-hook-form'
+import { useTranslation } from 'react-i18next'
+import { useCreateCatalog } from '../../hooks/use-catalogs'
+import {
+  CATALOG_DEFAULTS,
+  type CatalogFormValues,
+  catalogFormSchema,
+  catalogValuesToParams,
+} from '../../schemas/catalog'
+import { CatalogAudienceFields } from './catalog-audience-fields'
+import { CatalogPricingFields } from './catalog-pricing-fields'
+
+const STEP_KEYS = ['details', 'audience', 'products', 'pricing', 'review'] as const
+type StepKey = (typeof STEP_KEYS)[number]
+
+/** The fields each step owns, so Next judges only what it asked for. */
+const STEP_FIELDS: Partial<Record<StepKey, (keyof CatalogFormValues)[]>> = {
+  details: ['name', 'description'],
+  pricing: ['adjustment_magnitude', 'minimum_quantity'],
+}
+
+/**
+ * Standing up a whole agreement in one pass: what it is, who it is for, what
+ * it sells, what that costs, then a look at the lot before it exists
+ * (docs/plans/6.0-catalog-agreement-rework.md).
+ *
+ * A full-window dialog rather than a route, matching the import wizard: this
+ * is going deeper into the catalogs page, not leaving it, so the list behind
+ * keeps its state and closing puts the merchant back where they were.
+ *
+ * Nothing is written until Create. The assortment is staged here and attached
+ * immediately after the catalog exists — product membership needs a saved
+ * parent, which is a fact about the write, not a reason to ask for the
+ * products on a different screen.
+ */
+export function CatalogWizardDialog({
+  open,
+  onOpenChange,
+  onCreated,
+}: {
+  open: boolean
+  onOpenChange: (open: boolean) => void
+  /** Where to go once the catalog exists — its agreement editor. */
+  onCreated: (catalogId: string) => void
+}) {
+  const { t } = useTranslation()
+
+  return (
+    <Dialog open={open} onOpenChange={onOpenChange} modal>
+      <DialogContent
+        // Edge-to-edge minus a gutter, like the import wizard and the bulk
+        // price editor — every inset/translate/max is overridden.
+        className="!inset-3 !w-auto !max-w-none !translate-x-0 !translate-y-0 flex flex-col p-0"
+        style={{ maxHeight: 'none' }}
+        showCloseButton={false}
+      >
+        <DialogHeader className="flex flex-row items-center justify-between gap-3 space-y-0 border-b p-3">
+          <DialogTitle>{t('admin.catalogs.wizard.title')}</DialogTitle>
+          <Button
+            type="button"
+            size="icon-sm"
+            variant="ghost"
+            onClick={() => onOpenChange(false)}
+            aria-label={t('admin.actions.close')}
+          >
+            <XIcon />
+          </Button>
+        </DialogHeader>
+        {open && <CatalogWizard onOpenChange={onOpenChange} onCreated={onCreated} />}
+      </DialogContent>
+    </Dialog>
+  )
+}
+
+function CatalogWizard({
+  onOpenChange,
+  onCreated,
+}: {
+  onOpenChange: (open: boolean) => void
+  onCreated: (catalogId: string) => void
+}) {
+  const { t } = useTranslation()
+  const createMutation = useCreateCatalog()
+  const [step, setStep] = useState<StepKey>('details')
+  const [products, setProducts] = useState<Product[]>([])
+
+  const form = useForm<CatalogFormValues>({
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    resolver: zodResolver(catalogFormSchema) as any,
+    defaultValues: CATALOG_DEFAULTS,
+  })
+
+  const stepIndex = STEP_KEYS.indexOf(step)
+  const isLastStep = stepIndex === STEP_KEYS.length - 1
+  const audienceCount = (form.watch('assignments') ?? []).filter((entry) => !entry.removed).length
+
+  const steps = STEP_KEYS.map((key) => ({
+    key,
+    label: t(`admin.catalogs.wizard.steps.${key}`),
+  }))
+
+  // Only this step's own fields. A refusal is stated at the top as well as on
+  // the field: Next going quiet is the one outcome a merchant cannot act on.
+  async function goNext() {
+    const fields = STEP_FIELDS[step]
+    if (fields && !(await form.trigger(fields))) {
+      form.setError('root', { message: t('admin.catalogs.wizard.fix_this_step') })
+      return
+    }
+
+    form.clearErrors('root')
+    setStep(STEP_KEYS[stepIndex + 1])
+  }
+
+  async function handleCreate(values: CatalogFormValues) {
+    // The only way to create is pressing Create on the last step. Anything
+    // else reaching submit — a stray Enter, a button the DOM reused across
+    // the Next/Create swap — is refused rather than quietly making a catalog
+    // the merchant has not finished describing.
+    if (!isLastStep) return
+
+    try {
+      const catalog = await createMutation.mutateAsync(catalogValuesToParams(values))
+
+      // The catalog exists from here on, so a failure to attach products is
+      // reported rather than rolled back — the merchant lands on the page
+      // where they can add them, instead of losing the agreement too.
+      if (products.length > 0) {
+        try {
+          await adminClient.catalogs.products.create(
+            catalog.id,
+            products.map((product) => product.id),
+          )
+        } catch {
+          toastManager.add({
+            type: 'error',
+            title: t('admin.catalogs.wizard.products_failed'),
+          })
+        }
+      }
+
+      onOpenChange(false)
+      onCreated(catalog.id)
+    } catch (err) {
+      if (!mapSpreeErrorsToForm(err, form.setError)) throw err
+    }
+  }
+
+  return (
+    <form
+      onSubmit={form.handleSubmit(handleCreate, () =>
+        form.setError('root', { message: t('admin.catalogs.wizard.fix_this_step') }),
+      )}
+      onKeyDown={(event) => {
+        // Only a single-line text field. Enter on a button is how a keyboard
+        // user presses it, and a textarea needs it for a new line.
+        const onTextInput =
+          event.target instanceof HTMLInputElement && event.target.type !== 'checkbox'
+        if (event.key === 'Enter' && !isLastStep && onTextInput) event.preventDefault()
+      }}
+      className="flex min-h-0 flex-1 flex-col"
+    >
+      <div className="border-b border-border-subtle px-6 py-4">
+        <WizardSteps
+          steps={steps}
+          current={step}
+          onStepSelect={(key: string) => setStep(key as StepKey)}
+        />
+      </div>
+
+      <DialogBody className="flex-1 overflow-y-auto p-6">
+        <div className="mx-auto flex w-full max-w-2xl flex-col gap-6">
+          <div>
+            <h2 className="font-medium text-lg">{t(`admin.catalogs.wizard.steps.${step}`)}</h2>
+            <p className="text-muted-foreground text-sm">
+              {t(`admin.catalogs.wizard.help.${step}`)}
+            </p>
+          </div>
+
+          {form.formState.errors.root?.message && (
+            <p
+              className="rounded-md bg-destructive/10 px-3 py-2 text-sm text-destructive"
+              role="alert"
+            >
+              {form.formState.errors.root.message}
+            </p>
+          )}
+
+          {step === 'details' && <DetailsStep form={form} />}
+          {step === 'audience' && (
+            <>
+              <CatalogAudienceFields form={form} canEdit inlineAssign />
+              {/* Both empty states are legitimate — a catalog with no audience
+                  and one with no assortment each mean something specific — so
+                  neither blocks. What they mean is said here rather than
+                  discovered later. */}
+              {audienceCount === 0 && (
+                <p className="rounded-md bg-muted px-3 py-2 text-muted-foreground text-sm">
+                  {t('admin.catalogs.wizard.audience_none_warning')}
+                </p>
+              )}
+            </>
+          )}
+          {step === 'products' && (
+            <>
+              <ProductsStep products={products} onChange={setProducts} />
+              {products.length === 0 && (
+                <p className="rounded-md bg-muted px-3 py-2 text-muted-foreground text-sm">
+                  {t('admin.catalogs.wizard.products_none_warning')}
+                </p>
+              )}
+            </>
+          )}
+          {step === 'pricing' && (
+            <FieldGroup>
+              <CatalogPricingFields form={form} canEdit />
+            </FieldGroup>
+          )}
+          {step === 'review' && <ReviewStep form={form} products={products} />}
+        </div>
+      </DialogBody>
+
+      {/* Back sits opposite the forward action rather than beside it, so the
+          footer's default end-justification is overridden — everything else
+          about it (border, ground, padding) is the shared one. It stays a row
+          at every width too: stacked, "Back" would sit above "Next", which
+          reads as the order to press them in. */}
+      <DialogFooter className="flex-row justify-between sm:justify-between">
+        <Button
+          type="button"
+          variant="outline"
+          disabled={stepIndex === 0}
+          onClick={() => setStep(STEP_KEYS[stepIndex - 1])}
+        >
+          {t('admin.actions.back')}
+        </Button>
+
+        {/* Keyed apart so React swaps the element instead of mutating one in
+            place: reusing the node means the click that lands on Next
+            resolves against a button that has just become the submit, and the
+            catalog is created a step early without the merchant pressing
+            Create. */}
+        {isLastStep ? (
+          <Button key="create" type="submit" disabled={form.formState.isSubmitting}>
+            {form.formState.isSubmitting
+              ? t('admin.actions.creating')
+              : t('admin.catalogs.create_label')}
+          </Button>
+        ) : (
+          <Button key="next" type="button" onClick={goNext}>
+            {t('admin.common.next')}
+          </Button>
+        )}
+      </DialogFooter>
+    </form>
+  )
+}
+
+function DetailsStep({ form }: { form: UseFormReturn<CatalogFormValues> }) {
+  const { t } = useTranslation()
+  const { errors } = form.formState
+
+  return (
+    <FieldGroup>
+      <Field>
+        <FieldLabel htmlFor="catalog-name">{t('admin.fields.name.label')}</FieldLabel>
+        <Input
+          id="catalog-name"
+          autoFocus
+          placeholder={t('admin.fields.catalog.name.placeholder')}
+          aria-invalid={!!errors.name || undefined}
+          {...form.register('name')}
+        />
+        <FieldError errors={[errors.name]} />
+      </Field>
+
+      <Field>
+        <FieldLabel htmlFor="catalog-description">
+          {t('admin.fields.catalog.description.label')}
+        </FieldLabel>
+        <Textarea
+          id="catalog-description"
+          rows={3}
+          placeholder={t('admin.fields.catalog.description.placeholder')}
+          {...form.register('description')}
+        />
+        <FieldDescription>{t('admin.fields.catalog.description.help')}</FieldDescription>
+      </Field>
+
+      <Controller
+        control={form.control}
+        name="active"
+        render={({ field }) => (
+          <label htmlFor="catalog-active" className="flex items-center gap-2 text-sm">
+            <Checkbox id="catalog-active" checked={field.value} onCheckedChange={field.onChange} />
+            {t('admin.fields.active.label')}
+          </label>
+        )}
+      />
+    </FieldGroup>
+  )
+}
+
+/**
+ * The assortment, staged. An empty catalog is legitimate — it prices without
+ * restricting what anyone sees — so this step never blocks; it says what
+ * leaving it empty means instead.
+ */
+function ProductsStep({
+  products,
+  onChange,
+}: {
+  products: Product[]
+  onChange: (products: Product[]) => void
+}) {
+  const { t } = useTranslation()
+  const [pickerOpen, setPickerOpen] = useState(false)
+
+  return (
+    <div className="flex flex-col gap-3">
+      {products.length === 0 ? (
+        <Empty className="border">
+          <EmptyHeader>
+            <EmptyMedia variant="icon">
+              <PackageIcon />
+            </EmptyMedia>
+            <EmptyTitle>{t('admin.catalogs.wizard.products.empty')}</EmptyTitle>
+            <EmptyDescription>
+              {t('admin.catalogs.wizard.products.empty_description')}
+            </EmptyDescription>
+          </EmptyHeader>
+          <Button size="sm" variant="outline" type="button" onClick={() => setPickerOpen(true)}>
+            <PlusIcon className="size-4" />
+            {t('admin.catalogs.products.add_cta')}
+          </Button>
+        </Empty>
+      ) : (
+        <>
+          <div className="flex items-center justify-between">
+            <span className="text-muted-foreground text-sm">
+              {t('admin.catalogs.wizard.products.count', { count: products.length })}
+            </span>
+            <Button size="sm" variant="outline" type="button" onClick={() => setPickerOpen(true)}>
+              <PlusIcon className="size-4" />
+              {t('admin.catalogs.products.add_cta')}
+            </Button>
+          </div>
+          <div className="flex flex-col divide-y rounded-md border">
+            {products.map((product) => (
+              <div key={product.id} className="flex items-center gap-3 p-2">
+                <Thumbnail
+                  src={product.thumbnail_url}
+                  alt={product.name ?? ''}
+                  className="size-8"
+                />
+                <span className="min-w-0 flex-1 truncate text-sm">{product.name}</span>
+                <Button
+                  variant="ghost"
+                  size="icon-xs"
+                  type="button"
+                  onClick={() => onChange(products.filter((row) => row.id !== product.id))}
+                  aria-label={t('admin.actions.remove')}
+                >
+                  <XIcon className="size-4" />
+                </Button>
+              </div>
+            ))}
+          </div>
+        </>
+      )}
+
+      {pickerOpen && (
+        <ResourcePickerSheet<Product>
+          open
+          onOpenChange={setPickerOpen}
+          queryKey="catalog-wizard-products-picker"
+          selectedIds={products.map((product) => product.id)}
+          onConfirm={(_, records) => {
+            const known = new Set(products.map((product) => product.id))
+            onChange([...products, ...records.filter((record) => !known.has(record.id))])
+          }}
+          search={(q) => adminClient.products.list({ name_cont: q, limit: 25, sort: 'name' })}
+          getOptionLabel={(product) => product.name ?? product.id}
+          getOptionImageUrl={(product) => product.thumbnail_url}
+          getOptionSubtitle={(product) => product.slug ?? null}
+          title={t('admin.catalogs.products.picker_title')}
+          description={t('admin.catalogs.products.picker_description')}
+          searchPlaceholder={t('admin.catalogs.products.search_placeholder')}
+        />
+      )}
+    </div>
+  )
+}
+
+/**
+ * The whole agreement before it exists. Read-only: a correction goes back to
+ * the step that owns it, so each answer has one home.
+ */
+function ReviewStep({
+  form,
+  products,
+}: {
+  form: UseFormReturn<CatalogFormValues>
+  products: Product[]
+}) {
+  const { t } = useTranslation()
+  const values = form.watch()
+  const audiences = values.assignments.filter((entry) => !entry.removed)
+
+  return (
+    <dl className="grid grid-cols-[10rem_1fr] gap-y-3 text-sm">
+      <dt className="text-muted-foreground">{t('admin.fields.name.label')}</dt>
+      <dd>{values.name}</dd>
+
+      {values.description?.trim() && (
+        <>
+          <dt className="text-muted-foreground">{t('admin.fields.catalog.description.label')}</dt>
+          <dd className="whitespace-pre-wrap">{values.description}</dd>
+        </>
+      )}
+
+      <dt className="text-muted-foreground">{t('admin.catalogs.assignments.title')}</dt>
+      <dd>
+        {audiences.length === 0 ? (
+          <span className="text-muted-foreground">
+            {t('admin.catalogs.wizard.review.everyone')}
+          </span>
+        ) : (
+          <span className="flex flex-wrap gap-1">
+            {audiences.map((entry) => (
+              <Badge key={`${entry.assignable_type}-${entry.assignable_id}`} variant="outline">
+                {entry.assignable_name ?? entry.assignable_id}
+              </Badge>
+            ))}
+          </span>
+        )}
+      </dd>
+
+      <dt className="text-muted-foreground">{t('admin.catalogs.products.title')}</dt>
+      <dd>
+        {products.length === 0 ? (
+          <span className="text-muted-foreground">
+            {t('admin.catalogs.wizard.review.everything')}
+          </span>
+        ) : (
+          t('admin.catalogs.wizard.products.count', { count: products.length })
+        )}
+      </dd>
+
+      <dt className="text-muted-foreground">{t('admin.catalogs.detail.pricing')}</dt>
+      <dd>{t(`admin.fields.catalog.pricing_mode.${values.pricing_mode}`)}</dd>
+
+      <dt className="text-muted-foreground">{t('admin.fields.active.label')}</dt>
+      <dd>{values.active ? t('admin.common.yes') : t('admin.common.no')}</dd>
+    </dl>
+  )
+}

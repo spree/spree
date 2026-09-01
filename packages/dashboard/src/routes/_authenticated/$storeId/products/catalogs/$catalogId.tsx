@@ -28,7 +28,8 @@ import {
 } from '@spree/dashboard-ui'
 import { PlusIcon, TrashIcon, Undo2Icon } from '@spree/dashboard-ui/icons'
 import { createFileRoute, useNavigate } from '@tanstack/react-router'
-import { useEffect, useMemo } from 'react'
+import { TableIcon } from 'lucide-react'
+import { useEffect, useMemo, useState } from 'react'
 import { Controller, type UseFormReturn, useForm } from 'react-hook-form'
 import { useTranslation } from 'react-i18next'
 import { CatalogAudienceCard } from '../../../../../components/spree/catalog-audience-fields'
@@ -110,12 +111,17 @@ function CatalogBody({ catalog }: { catalog: Catalog }) {
   // hand-entered prices has to clear them, and the warning has to know a
   // switch is what is about to happen.
   const savedPricingMode = catalogPricingValues(catalog.price_list).pricing_mode
+  // Owned here so the pricing card and the assortment rows open the same
+  // spreadsheet — pricing an assortment is an action on those rows too.
+  const [priceEditorOpen, setPriceEditorOpen] = useState(false)
 
   const form = useForm<CatalogFormValues>({
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     resolver: zodResolver(catalogFormSchema) as any,
     defaultValues: CATALOG_DEFAULTS,
   })
+
+  const pricingMode = form.watch('pricing_mode')
 
   // Hydrate (and re-baseline after save) from the source row, unless the
   // merchant has unsaved edits in flight: entering prices refetches the
@@ -240,6 +246,21 @@ function CatalogBody({ catalog }: { catalog: Catalog }) {
                 // the merchant already curates. A product this catalog lists
                 // but does not price is only visible if the two sit together
                 // (docs/plans/6.0-catalog-agreement-rework.md).
+                // Pricing belongs on the rows being priced, not only in the
+                // card that names the mode.
+                headerActions={
+                  canEdit && catalog.price_list && pricingMode === 'fixed' ? (
+                    <Button
+                      type="button"
+                      size="sm"
+                      variant="outline"
+                      onClick={() => setPriceEditorOpen(true)}
+                    >
+                      <TableIcon className="size-4" />
+                      {t('admin.catalogs.edit_prices_cta')}
+                    </Button>
+                  ) : undefined
+                }
                 extraColumns={(products) =>
                   mergeExtraColumns(
                     catalogPriceColumns({
@@ -275,7 +296,13 @@ function CatalogBody({ catalog }: { catalog: Catalog }) {
           sidebar={
             <>
               <CatalogSettingsCard form={form} canEdit={canEdit} />
-              <CatalogPricingCard catalog={catalog} form={form} canEdit={canEdit} />
+              <CatalogPricingCard
+                catalog={catalog}
+                form={form}
+                canEdit={canEdit}
+                priceEditorOpen={priceEditorOpen}
+                onPriceEditorOpenChange={setPriceEditorOpen}
+              />
               <CatalogTermsCard form={form} canEdit={canEdit} />
               <CatalogAudienceCard form={form} canEdit={canEdit} />
             </>
@@ -295,10 +322,14 @@ function CatalogPricingCard({
   catalog,
   form,
   canEdit,
+  priceEditorOpen,
+  onPriceEditorOpenChange,
 }: {
   catalog: Catalog
   form: UseFormReturn<CatalogFormValues>
   canEdit: boolean
+  priceEditorOpen: boolean
+  onPriceEditorOpenChange: (open: boolean) => void
 }) {
   const { t } = useTranslation()
   // A product staged for removal still has its prices on the list until
@@ -319,6 +350,8 @@ function CatalogPricingCard({
             savedMode={catalogPricingValues(catalog.price_list).pricing_mode}
             excludeProductIds={removes}
             hasStagedProducts={stagedProducts}
+            priceEditorOpen={priceEditorOpen}
+            onPriceEditorOpenChange={onPriceEditorOpenChange}
           />
         </FieldGroup>
       </CardContent>

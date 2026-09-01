@@ -97,19 +97,20 @@
       "assignments": {
         "add_cta": "Zuweisen",
         "add_title": "Diesen Katalog zuweisen",
+        "already_assigned": "Diese Zielgruppe ist diesem Katalog bereits zugeordnet.",
         "audience_empty": "Nichts gefunden",
         "audience_label": "Zielgruppe",
         "audience_placeholder": "Suchen…",
         "company_subtree_help": "Die Zuweisung an ein Unternehmen gilt für dessen gesamten Teilbaum.",
         "dialog_description": "Wer diesen Katalog sieht. Eine Unternehmens-Zuweisung gilt für den Knoten und alles darunter.",
         "empty": "Noch keiner Zielgruppe zugewiesen — niemand sieht diesen Katalog.",
+        "empty_description": "Weisen Sie ein Unternehmen oder eine Kundengruppe zu, um festzulegen, für wen dieser Katalog gilt.",
         "remove_confirm": {
           "message": "{{name}} sieht diesen Katalog dann nicht mehr.",
           "title": "Diese Zuweisung entfernen?"
         },
         "title": "Zielgruppen",
-        "type_label": "Zielgruppen-Typ",
-        "already_assigned": "Diese Zielgruppe ist diesem Katalog bereits zugeordnet."
+        "type_label": "Zielgruppen-Typ"
       },
       "create_description": "Ein Katalog bestimmt, was eine Zielgruppe sieht und — über eine Preisliste — was sie zahlt. Produkte und Zielgruppen fügen Sie danach hinzu.",
       "create_label": "Katalog erstellen",
@@ -200,21 +201,32 @@
         }
       },
       "wizard": {
+        "audience_none_warning": "Noch keine Zielgruppe, daher sieht niemand diesen Katalog. Sie können jetzt oder später eine zuweisen.",
         "description": "Eine Vereinbarung einrichten: was sie ist, für wen sie gilt und was sie kostet.",
         "fix_this_step": "Korrigieren Sie das markierte Feld, bevor Sie fortfahren.",
         "help": {
           "details": "Benennen Sie diese Vereinbarung, damit Sie sie später wiedererkennen.",
-          "audience": "Wer diesen Katalog sieht. Leer lassen, damit er für alle gilt.",
+          "audience": "Wer diesen Katalog sieht und seine Preise erhält.",
+          "products": "Was diese Vereinbarung umfasst.",
           "pricing": "Was Käufer mit dieser Vereinbarung zahlen.",
           "review": "Es wird nichts erstellt, bevor Sie abschließen."
         },
+        "products": {
+          "empty": "Noch keine Produkte",
+          "empty_description": "Wählen Sie, was diese Vereinbarung umfasst. Leer lassen, um Preise zu setzen, ohne die Sichtbarkeit einzuschränken.",
+          "count": "{{count}} Produkt",
+          "count_plural": "{{count}} Produkte"
+        },
+        "products_failed": "Der Katalog wurde erstellt, aber seine Produkte konnten nicht hinzugefügt werden. Fügen Sie sie auf der Katalogseite hinzu.",
+        "products_none_warning": "Noch keine Produkte. Ein leerer Katalog setzt Preise, ohne etwas zu verbergen — alle Käufer sehen weiterhin das gesamte Sortiment.",
         "review": {
           "everyone": "Alle",
-          "fix_earlier_steps": "Auf einem früheren Schritt muss etwas korrigiert werden, bevor dieser Katalog erstellt werden kann."
+          "everything": "Das gesamte Sortiment"
         },
         "steps": {
           "details": "Details",
           "audience": "Zielgruppe",
+          "products": "Produkte",
           "pricing": "Preise",
           "review": "Überprüfen"
         },

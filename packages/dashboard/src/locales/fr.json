@@ -97,19 +97,20 @@
       "assignments": {
         "add_cta": "Affecter",
         "add_title": "Affecter ce catalogue",
+        "already_assigned": "Ce public est déjà associé à ce catalogue.",
         "audience_empty": "Rien trouvé",
         "audience_label": "Audience",
         "audience_placeholder": "Rechercher…",
         "company_subtree_help": "L’affectation à une entreprise couvre tout son sous-arbre.",
         "dialog_description": "Qui voit ce catalogue. Une affectation à une entreprise couvre le nœud et tout ce qui se trouve en dessous.",
         "empty": "Affecté à aucune audience — personne ne voit ce catalogue.",
+        "empty_description": "Assignez une entreprise ou un groupe de clients pour définir à qui s’adresse ce catalogue.",
         "remove_confirm": {
           "message": "{{name}} ne verra plus ce catalogue.",
           "title": "Retirer cette affectation ?"
         },
         "title": "Audiences",
-        "type_label": "Type d’audience",
-        "already_assigned": "Ce public est déjà associé à ce catalogue."
+        "type_label": "Type d’audience"
       },
       "create_description": "Un catalogue restreint ce qu’une audience voit et, via une liste de prix, ce qu’elle paie. Ajoutez ensuite produits et audiences.",
       "create_label": "Créer le catalogue",
@@ -200,21 +201,32 @@
         }
       },
       "wizard": {
+        "audience_none_warning": "Aucune audience pour l’instant, donc personne ne voit ce catalogue. Vous pouvez en assigner une maintenant ou plus tard.",
         "description": "Créer un accord : ce qu’il est, à qui il s’adresse et ce qu’il facture.",
         "fix_this_step": "Corrigez le champ signalé avant de continuer.",
         "help": {
           "details": "Nommez cet accord pour le reconnaître plus tard.",
-          "audience": "Qui voit ce catalogue. Laissez vide pour qu’il s’applique à tous.",
+          "audience": "Qui voit ce catalogue et bénéficie de ses prix.",
+          "products": "Ce que couvre cet accord.",
           "pricing": "Ce que paient les acheteurs de cet accord.",
           "review": "Rien n’est créé tant que vous n’avez pas terminé."
         },
+        "products": {
+          "empty": "Aucun produit",
+          "empty_description": "Choisissez ce que couvre cet accord. Laissez vide pour fixer des prix sans restreindre la visibilité.",
+          "count": "{{count}} produit",
+          "count_plural": "{{count}} produits"
+        },
+        "products_failed": "Le catalogue a été créé, mais ses produits n’ont pas pu être ajoutés. Ajoutez-les depuis la page du catalogue.",
+        "products_none_warning": "Aucun produit pour l’instant. Un catalogue vide fixe des prix sans rien masquer — tous les acheteurs voient encore toute la boutique.",
         "review": {
           "everyone": "Tout le monde",
-          "fix_earlier_steps": "Un élément d’une étape précédente doit être corrigé avant de créer ce catalogue."
+          "everything": "Toute la boutique"
         },
         "steps": {
           "details": "Détails",
           "audience": "Audience",
+          "products": "Produits",
           "pricing": "Tarification",
           "review": "Vérification"
         },

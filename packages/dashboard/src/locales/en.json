@@ -97,19 +97,20 @@
       "assignments": {
         "add_cta": "Assign",
         "add_title": "Assign this catalog",
+        "already_assigned": "That audience is already on this catalog.",
         "audience_empty": "Nothing found",
         "audience_label": "Audience",
         "audience_placeholder": "Search…",
         "company_subtree_help": "Assigning to a company covers its whole subtree.",
         "dialog_description": "Who sees this catalog. A company assignment covers the node and everything below it.",
         "empty": "Not assigned to any audience yet — nobody sees this catalog.",
+        "empty_description": "Assign a company or customer group to decide who this catalog is for.",
         "remove_confirm": {
           "message": "{{name}} will stop seeing this catalog.",
           "title": "Remove this assignment?"
         },
         "title": "Audiences",
-        "type_label": "Audience type",
-        "already_assigned": "That audience is already on this catalog."
+        "type_label": "Audience type"
       },
       "create_description": "A catalog narrows what an audience sees and, through a price list, what they pay. Add products and assign audiences once it exists.",
       "create_label": "Create catalog",
@@ -200,21 +201,32 @@
         }
       },
       "wizard": {
+        "audience_none_warning": "No audience yet, so nobody sees this catalog. You can assign one now or later.",
         "description": "Set up an agreement: what it is, who it is for, and what it charges.",
         "fix_this_step": "Fix the highlighted field before continuing.",
         "help": {
           "details": "Name this agreement so you recognise it later.",
-          "audience": "Who sees this catalog. Leave it empty and it applies to everyone.",
+          "audience": "Who sees this catalog and gets its prices.",
+          "products": "What this agreement covers.",
           "pricing": "What buyers on this agreement pay.",
           "review": "Nothing is created until you finish."
         },
+        "products": {
+          "empty": "No products yet",
+          "empty_description": "Pick what this agreement covers. Leave it empty to price without restricting what buyers see.",
+          "count": "{{count}} product",
+          "count_plural": "{{count}} products"
+        },
+        "products_failed": "The catalog was created, but its products could not be added. Add them from the catalog page.",
+        "products_none_warning": "No products yet. An empty catalog prices without hiding anything — every shopper still sees the whole shop.",
         "review": {
           "everyone": "Everyone",
-          "fix_earlier_steps": "Something on an earlier step needs fixing before this catalog can be created."
+          "everything": "Everything in the shop"
         },
         "steps": {
           "details": "Details",
           "audience": "Audience",
+          "products": "Products",
           "pricing": "Pricing",
           "review": "Review"
         },

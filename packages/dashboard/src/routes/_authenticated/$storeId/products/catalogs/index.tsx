@@ -10,7 +10,9 @@ import {
 import { Button, RowActions, useConfirm, useRowClickBridge } from '@spree/dashboard-ui'
 import { PlusIcon } from '@spree/dashboard-ui/icons'
 import { createFileRoute, useNavigate } from '@tanstack/react-router'
+import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
+import { CatalogWizardDialog } from '../../../../../components/spree/catalog-wizard-dialog'
 import { useDeleteCatalog } from '../../../../../hooks/use-catalogs'
 import '../../../../../tables/catalogs'
 
@@ -28,6 +30,7 @@ function CatalogsPage() {
   const confirm = useConfirm()
   const deleteMutation = useDeleteCatalog()
   const { permissions } = usePermissions()
+  const [wizardOpen, setWizardOpen] = useState(false)
 
   function openEdit(id: string) {
     navigate({
@@ -50,49 +53,49 @@ function CatalogsPage() {
   }
 
   return (
-    <ResourceTable<Catalog>
-      tableKey="catalogs"
-      queryKey="catalogs"
-      queryFn={(params) => adminClient.catalogs.list(params)}
-      searchParams={search}
-      rowActions={(catalog) => (
-        <RowActions
-          actions={[
-            { key: 'edit', onSelect: () => openEdit(catalog.id) },
-            {
-              key: 'delete',
-              destructive: true,
-              visible: permissions.can('destroy', Subject.Catalog),
-              disabled: deleteMutation.isPending,
-              onSelect: () => handleDelete(catalog),
-            },
-          ]}
-        />
-      )}
-      actions={
-        <Can I="create" a={Subject.Catalog}>
-          <Button
-            size="sm"
-            className="h-[2.125rem]"
-            onClick={() => navigate({ to: '/$storeId/products/catalogs/new', params: { storeId } })}
-          >
-            <PlusIcon className="size-4" />
-            {t('admin.catalogs.add_cta')}
-          </Button>
-        </Can>
-      }
-      // Dragging fires an update request, so offer it only to callers who
-      // may actually update — otherwise the row moves and springs back on
-      // the 403.
-      reorder={
-        permissions.can('update', Subject.Catalog)
-          ? {
-              onReorder: async (id, position) => {
-                await adminClient.catalogs.update(id, { position })
+    <>
+      <ResourceTable<Catalog>
+        tableKey="catalogs"
+        queryKey="catalogs"
+        queryFn={(params) => adminClient.catalogs.list(params)}
+        searchParams={search}
+        rowActions={(catalog) => (
+          <RowActions
+            actions={[
+              { key: 'edit', onSelect: () => openEdit(catalog.id) },
+              {
+                key: 'delete',
+                destructive: true,
+                visible: permissions.can('destroy', Subject.Catalog),
+                disabled: deleteMutation.isPending,
+                onSelect: () => handleDelete(catalog),
               },
-            }
-          : undefined
-      }
-    />
+            ]}
+          />
+        )}
+        actions={
+          <Can I="create" a={Subject.Catalog}>
+            <Button size="sm" className="h-[2.125rem]" onClick={() => setWizardOpen(true)}>
+              <PlusIcon className="size-4" />
+              {t('admin.catalogs.add_cta')}
+            </Button>
+          </Can>
+        }
+        // Dragging fires an update request, so offer it only to callers who
+        // may actually update — otherwise the row moves and springs back on
+        // the 403.
+        reorder={
+          permissions.can('update', Subject.Catalog)
+            ? {
+                onReorder: async (id, position) => {
+                  await adminClient.catalogs.update(id, { position })
+                },
+              }
+            : undefined
+        }
+      />
+
+      <CatalogWizardDialog open={wizardOpen} onOpenChange={setWizardOpen} onCreated={openEdit} />
+    </>
   )
 }
