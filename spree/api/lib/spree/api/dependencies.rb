@@ -172,6 +172,8 @@ module Spree
         seller_team_member_serializer: 'Spree::Api::V3::Seller::TeamMemberSerializer',
         seller_invitation_serializer: 'Spree::Api::V3::Seller::InvitationSerializer',
         seller_product_serializer: 'Spree::Api::V3::Seller::ProductSerializer',
+        seller_product_type_serializer: 'Spree::Api::V3::Seller::ProductTypeSerializer',
+        seller_delivery_profile_serializer: 'Spree::Api::V3::Seller::DeliveryProfileSerializer',
         seller_variant_serializer: 'Spree::Api::V3::Seller::VariantSerializer',
         seller_media_serializer: 'Spree::Api::V3::Seller::MediaSerializer',
         seller_stock_level_serializer: 'Spree::Api::V3::Seller::StockLevelSerializer',

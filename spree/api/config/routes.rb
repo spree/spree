@@ -873,6 +873,15 @@ Spree::Core::Engine.add_routes do
           resources :rows, only: [:index], controller: 'import_rows'
         end
 
+        # The types a seller may list against. Read only — defining a type is
+        # the operator's (docs/plans/6.0-seller-product-submission.md).
+        resources :product_types, only: [:index, :show]
+
+        # The marketplace's delivery vocabulary, for the product form's picker.
+        # Read only: a seller assigns a profile, never creates one
+        # (docs/plans/6.0-multi-vendor-marketplace.md, Decision 13).
+        resources :delivery_profiles, only: [:index]
+
         # No destroy: a location holds stock levels and is named on historical
         # fulfillments, so a seller retires one by deactivating it.
         resources :stock_locations, only: [:index, :show, :create, :update]

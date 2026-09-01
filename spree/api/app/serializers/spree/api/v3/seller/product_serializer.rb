@@ -7,14 +7,26 @@ module Spree
         # Read and write have to name the same fields: the panel loads a
         # product into a form and sends it back, so anything the controller
         # accepts but this withholds would be blanked on save. The reverse
-        # matters too — how a product is filed (type, categories, collections,
-        # tags) is the marketplace's own merchandising, so it is neither
-        # written nor read here.
+        # matters too — how a product is filed (categories, collections, tags)
+        # is the marketplace's own merchandising, so it is neither written nor
+        # read here. The type and the delivery profile are: a seller picks
+        # both from the marketplace's list
+        # (docs/plans/6.0-multi-vendor-marketplace.md, Decision 13).
         class ProductSerializer < V3::ProductSerializer
           typelize status: :string, metadata: 'Record<string, unknown>',
+                   product_type_id: [:string, nullable: true],
+                   delivery_profile_id: [:string, nullable: true],
                    submission: ['ProductSubmission', nullable: true]
 
           attributes :status, :metadata, created_at: :iso8601, updated_at: :iso8601
+
+          attribute :product_type_id do |product|
+            product.product_type&.prefixed_id
+          end
+
+          attribute :delivery_profile_id do |product|
+            product.delivery_profile&.prefixed_id
+          end
 
           many :variants,
                resource: proc { Spree.api.seller_variant_serializer },

@@ -304,7 +304,7 @@ paths:
                   avatar_url:
                 sellers:
                 - id: sel_UkLWZg9DAJ
-                  name: Seller 21
+                  name: Seller 22
                   status: approved
               schema:
                 "$ref": "#/components/schemas/AuthResponse"
@@ -420,7 +420,7 @@ paths:
                   avatar_url:
                 sellers:
                 - id: sel_UkLWZg9DAJ
-                  name: Seller 42
+                  name: Seller 43
                   status: approved
               schema:
                 "$ref": "#/components/schemas/AuthResponse"
@@ -489,8 +489,8 @@ paths:
                   avatar_url:
                 sellers:
                 - id: sel_UkLWZg9DAJ
-                  name: Seller 30
-                  slug: seller-30
+                  name: Seller 31
+                  slug: seller-31
                   status: approved
                 permissions:
                 - allow: true
@@ -12293,6 +12293,74 @@ paths:
                 required:
                 - data
                 - meta
+  "/api/v3/seller/delivery_profiles":
+    get:
+      summary: List delivery profiles
+      tags:
+      - Delivery Profiles
+      security:
+      - bearer_auth: []
+      description: |
+        The marketplace's delivery profiles — what kind of goods a product is
+        (parcel, digital, pallet), which decides how it can be shipped.
+
+        Read only. A seller assigns one to a product as `delivery_profile_id`;
+        the profiles themselves, and the zones and methods behind them, are the
+        marketplace's. A product created without one lands on the profile
+        marked `default`.
+      parameters:
+      - name: X-Spree-Seller-Id
+        in: header
+        required: true
+        schema:
+          type: string
+      - name: page
+        in: query
+        required: false
+        description: Page number
+        schema:
+          type: integer
+      - name: limit
+        in: query
+        required: false
+        description: Records per page (max 100)
+        schema:
+          type: integer
+      responses:
+        '200':
+          description: delivery profiles listed
+          content:
+            application/json:
+              example:
+                data:
+                - id: fp_UkLWZg9DAJ
+                  name: General
+                  default: true
+                - id: fp_gbHJdmfrXB
+                  name: Oversized
+                  default: false
+                meta:
+                  page: 1
+                  limit: 25
+                  count: 2
+                  pages: 1
+                  from: 1
+                  to: 2
+                  in: 2
+                  previous:
+                  next:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      "$ref": "#/components/schemas/DeliveryProfile"
+                  meta:
+                    "$ref": "#/components/schemas/PaginationMeta"
+                required:
+                - data
+                - meta
   "/api/v3/seller/onboarding":
     get:
       summary: Get onboarding checklist
@@ -12724,6 +12792,100 @@ paths:
       responses:
         '204':
           description: policy deleted
+  "/api/v3/seller/product_types":
+    get:
+      summary: List product types
+      tags:
+      - Product Types
+      security:
+      - bearer_auth: []
+      description: |
+        The product types a seller may list a product against.
+
+        Read only. A type is the template that hands a product its option types
+        and its delivery profile, so a seller picks one when listing; defining
+        types is the marketplace's. Send the chosen `id` as `product_type_id`
+        on the product.
+      parameters:
+      - name: X-Spree-Seller-Id
+        in: header
+        required: true
+        schema:
+          type: string
+      - name: page
+        in: query
+        required: false
+        description: Page number
+        schema:
+          type: integer
+      - name: limit
+        in: query
+        required: false
+        description: Records per page (max 100)
+        schema:
+          type: integer
+      responses:
+        '200':
+          description: product types listed
+          content:
+            application/json:
+              example:
+                data:
+                - id: pt_UkLWZg9DAJ
+                  name: Apparel
+                  option_type_labels: []
+                meta:
+                  page: 1
+                  limit: 25
+                  count: 1
+                  pages: 1
+                  from: 1
+                  to: 1
+                  in: 1
+                  previous:
+                  next:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      "$ref": "#/components/schemas/ProductType"
+                  meta:
+                    "$ref": "#/components/schemas/PaginationMeta"
+                required:
+                - data
+                - meta
+  "/api/v3/seller/product_types/{id}":
+    get:
+      summary: Get a product type
+      tags:
+      - Product Types
+      security:
+      - bearer_auth: []
+      parameters:
+      - name: X-Spree-Seller-Id
+        in: header
+        required: true
+        schema:
+          type: string
+      - name: id
+        in: path
+        required: true
+        description: Product type ID
+        schema:
+          type: string
+      responses:
+        '200':
+          description: product type found
+          content:
+            application/json:
+              example:
+                id: pt_UkLWZg9DAJ
+                name: Apparel
+                option_type_labels: []
+              schema:
+                "$ref": "#/components/schemas/ProductType"
   "/api/v3/seller/products":
     get:
       summary: List products
@@ -12769,8 +12931,8 @@ paths:
               example:
                 data:
                 - id: prod_UkLWZg9DAJ
-                  name: Product 1423250
-                  slug: product-1423250
+                  name: Product 1433250
+                  slug: product-1433250
                   meta_title:
                   meta_description:
                   meta_keywords:
@@ -12819,6 +12981,8 @@ paths:
                   metadata: {}
                   created_at: '2026-01-15T12:00:00.000Z'
                   updated_at: '2026-01-15T12:00:00.000Z'
+                  product_type_id:
+                  delivery_profile_id: fp_UkLWZg9DAJ
                 meta:
                   page: 1
                   limit: 25
@@ -12904,6 +13068,8 @@ paths:
                 metadata: {}
                 created_at: '2026-01-15T12:00:00.000Z'
                 updated_at: '2026-01-15T12:00:00.000Z'
+                product_type_id:
+                delivery_profile_id: fp_UkLWZg9DAJ
               schema:
                 "$ref": "#/components/schemas/Product"
         '422':
@@ -13009,8 +13175,8 @@ paths:
             application/json:
               example:
                 id: prod_UkLWZg9DAJ
-                name: Product 1456710
-                slug: product-1456710
+                name: Product 1466710
+                slug: product-1466710
                 meta_title:
                 meta_description:
                 meta_keywords:
@@ -13054,6 +13220,8 @@ paths:
                 metadata: {}
                 created_at: '2026-01-15T12:00:00.000Z'
                 updated_at: '2026-01-15T12:00:00.000Z'
+                product_type_id:
+                delivery_profile_id: fp_UkLWZg9DAJ
               schema:
                 "$ref": "#/components/schemas/Product"
         '404':
@@ -13087,7 +13255,7 @@ paths:
               example:
                 id: prod_UkLWZg9DAJ
                 name: Hand-thrown mug, large
-                slug: product-1488212
+                slug: product-1498212
                 meta_title:
                 meta_description:
                 meta_keywords:
@@ -13127,6 +13295,8 @@ paths:
                 metadata: {}
                 created_at: '2026-01-15T12:00:00.000Z'
                 updated_at: '2026-01-15T12:00:00.000Z'
+                product_type_id:
+                delivery_profile_id: fp_UkLWZg9DAJ
               schema:
                 "$ref": "#/components/schemas/Product"
       requestBody:
@@ -13198,8 +13368,8 @@ paths:
             application/json:
               example:
                 id: sel_UkLWZg9DAJ
-                name: Seller 57
-                slug: seller-57
+                name: Seller 60
+                slug: seller-60
                 about: ''
                 about_html: ''
                 logo_url:
@@ -13271,7 +13441,7 @@ paths:
               example:
                 id: sel_UkLWZg9DAJ
                 name: Acme Supplies
-                slug: seller-59
+                slug: seller-62
                 about: ''
                 about_html: ''
                 logo_url:
@@ -14014,10 +14184,10 @@ paths:
             application/json:
               example:
                 direct_upload:
-                  url: http://www.example.com/rails/active_storage/disk/eyJfcmFpbHMiOnsiZGF0YSI6eyJrZXkiOiJuem5oOGdra3VxendvbDc1ODBxNHNwZmpmMjVxIiwiY29udGVudF90eXBlIjoiYXBwbGljYXRpb24vcGRmIiwiY29udGVudF9sZW5ndGgiOjUxMjM0LCJjaGVja3N1bSI6IlZqaHowNGxRdUVHdXY0bkR2aHNhTlE9PSIsInNlcnZpY2VfbmFtZSI6InRlc3QifSwiZXhwIjoiMjAyNi0wMS0xNVQxMjowNTowMC4wMDBaIiwicHVyIjoiYmxvYl90b2tlbiJ9fQ==--58a641a639a7fc8dd127772326a8ed6da4fbcf25
+                  url: http://www.example.com/rails/active_storage/disk/eyJfcmFpbHMiOnsiZGF0YSI6eyJrZXkiOiJuem5oOGdra3VxendvbDc1ODBxNHNwZmpmMjVxIiwiY29udGVudF90eXBlIjoiYXBwbGljYXRpb24vcGRmIiwiY29udGVudF9sZW5ndGgiOjUxMjM0LCJjaGVja3N1bSI6IlZqaHowNGxRdUVHdXY0bkR2aHNhTlE9PSIsInNlcnZpY2VfbmFtZSI6InRlc3QifSwiZXhwIjoiMjAyNi0wMS0xNVQxMjowNTowMC4wMDBaIiwicHVyIjoiYmxvYl90b2tlbiJ9fQ==--64df88e13fbbd7bb2787ec2a2d7871d2f8473840
                   headers:
                     Content-Type: application/pdf
-                signed_id: eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--8daa562c0917e5095f42256aae1474497fe1b382
+                signed_id: eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--444fd0fa6ae1549b84a2ef7c39e5f2fd9f672093
               schema:
                 "$ref": "#/components/schemas/DirectUploadResponse"
       requestBody:
@@ -14281,8 +14451,8 @@ paths:
                   - id: fi_UkLWZg9DAJ
                     quantity: 1
                     line_item_id: li_UkLWZg9DAJ
-                    name: Product 1359315
-                    sku: SKU-173
+                    name: Product 1369315
+                    sku: SKU-174
                     options_text: ''
               schema:
                 type: object
@@ -14351,8 +14521,8 @@ paths:
                 - id: fi_UkLWZg9DAJ
                   quantity: 1
                   line_item_id: li_UkLWZg9DAJ
-                  name: Product 136961
-                  sku: SKU-174
+                  name: Product 137961
+                  sku: SKU-175
                   options_text: ''
               schema:
                 "$ref": "#/components/schemas/Fulfillment"
@@ -14452,7 +14622,7 @@ paths:
                   display_total: "$110.00"
                   items:
                   - id: li_UkLWZg9DAJ
-                    name: Product 13795
+                    name: Product 13895
                     options_text: ''
                     quantity: 1
                     currency: USD
@@ -14461,7 +14631,7 @@ paths:
                     total: '10.0'
                     display_total: "$10.00"
                     variant_id: variant_UkLWZg9DAJ
-                    sku: SKU-175
+                    sku: SKU-176
                     thumbnail_url:
                   fulfillments:
                   - id: ful_UkLWZg9DAJ
@@ -14481,8 +14651,8 @@ paths:
                     - id: fi_UkLWZg9DAJ
                       quantity: 1
                       line_item_id: li_UkLWZg9DAJ
-                      name: Product 13795
-                      sku: SKU-175
+                      name: Product 13895
+                      sku: SKU-176
                       options_text: ''
                   shipping_address:
                     id: addr_gbHJdmfrXB
@@ -14601,7 +14771,7 @@ paths:
                 display_total: "$110.00"
                 items:
                 - id: li_UkLWZg9DAJ
-                  name: Product 1389755
+                  name: Product 1399755
                   options_text: ''
                   quantity: 1
                   currency: USD
@@ -14610,7 +14780,7 @@ paths:
                   total: '10.0'
                   display_total: "$10.00"
                   variant_id: variant_UkLWZg9DAJ
-                  sku: SKU-176
+                  sku: SKU-177
                   thumbnail_url:
                 fulfillments:
                 - id: ful_UkLWZg9DAJ
@@ -14630,8 +14800,8 @@ paths:
                   - id: fi_UkLWZg9DAJ
                     quantity: 1
                     line_item_id: li_UkLWZg9DAJ
-                    name: Product 1389755
-                    sku: SKU-176
+                    name: Product 1399755
+                    sku: SKU-177
                     options_text: ''
                 shipping_address:
                   id: addr_gbHJdmfrXB
@@ -14739,7 +14909,7 @@ paths:
                 display_total: "$110.00"
                 items:
                 - id: li_UkLWZg9DAJ
-                  name: Product 1416554
+                  name: Product 1426554
                   options_text: ''
                   quantity: 1
                   currency: USD
@@ -14748,7 +14918,7 @@ paths:
                   total: '10.0'
                   display_total: "$10.00"
                   variant_id: variant_UkLWZg9DAJ
-                  sku: SKU-179
+                  sku: SKU-180
                   thumbnail_url:
                 fulfillments:
                 - id: ful_UkLWZg9DAJ
@@ -14768,8 +14938,8 @@ paths:
                   - id: fi_UkLWZg9DAJ
                     quantity: 1
                     line_item_id: li_UkLWZg9DAJ
-                    name: Product 1416554
-                    sku: SKU-179
+                    name: Product 1426554
+                    sku: SKU-180
                     options_text: ''
                 shipping_address:
                   id: addr_gbHJdmfrXB
@@ -15034,11 +15204,16 @@ tags:
     do
 - name: Countries
   description: Country and state reference data for the panel's address forms
+- name: Delivery Profiles
+  description: The marketplace's delivery vocabulary — what kind of goods a product
+    is, which decides how it ships
 - name: Onboarding
   description: The marketplace checklist a seller completes before admission, and
     what they submit against it
 - name: Policies
   description: The seller's own legal documents, as the marketplace asks them to publish
+- name: Product Types
+  description: The types a seller may list a product against, and what each adds
 - name: Products
   description: The seller's own catalog
 - name: Profile
@@ -15858,6 +16033,20 @@ components:
       - display_compare_at_amount
       - price_list_id
       x-typelizer: true
+    DeliveryProfile:
+      type: object
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+        default:
+          type: boolean
+      required:
+      - id
+      - name
+      - default
+      x-typelizer: true
     Export:
       type: object
       properties:
@@ -16513,6 +16702,12 @@ components:
           type: string
         updated_at:
           type: string
+        product_type_id:
+          type: string
+          nullable: true
+        delivery_profile_id:
+          type: string
+          nullable: true
         submission:
           allOf:
           - "$ref": "#/components/schemas/ProductSubmission"
@@ -16545,6 +16740,8 @@ components:
       - metadata
       - created_at
       - updated_at
+      - product_type_id
+      - delivery_profile_id
       x-typelizer: true
     ProductSubmission:
       type: object
@@ -16570,6 +16767,22 @@ components:
       - reviewed_at
       - created_at
       - product_id
+      x-typelizer: true
+    ProductType:
+      type: object
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+        option_type_labels:
+          type: array
+          items:
+            type: string
+      required:
+      - id
+      - name
+      - option_type_labels
       x-typelizer: true
     Profile:
       type: object
@@ -16717,6 +16930,9 @@ components:
         action_url:
           type: string
           nullable: true
+        blocker:
+          type: object
+          nullable: true
         blocking:
           type: boolean
         accepts_submissions:
@@ -16745,6 +16961,7 @@ components:
       - position
       - status
       - action_url
+      - blocker
       - blocking
       - accepts_submissions
       - requires_file
