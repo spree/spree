@@ -448,6 +448,17 @@ module Spree
       ).value
     end
 
+    # The variant this product leads with in a currency: the buy-box winner,
+    # else the default. One definition, because a caller that prices a page and
+    # a caller that preloads for it must land on the same variant — otherwise
+    # the preload misses and every row falls back to a query of its own.
+    #
+    # @param currency [String, nil]
+    # @return [Spree::Variant, nil]
+    def featured_variant(currency: nil)
+      buy_box_variant(currency: currency) || default_variant
+    end
+
     # Availability asks whether *anyone who is selling today* has this on the
     # shelf. It deliberately does not ask the buy box: the winner is picked
     # by price in one currency, and stock is a fact about the shelf, not about

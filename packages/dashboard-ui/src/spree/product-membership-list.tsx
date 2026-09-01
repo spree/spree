@@ -15,7 +15,7 @@ import {
   verticalListSortingStrategy,
 } from '@dnd-kit/sortable'
 import { CSS } from '@dnd-kit/utilities'
-import { type ReactNode, useEffect, useMemo, useState } from 'react'
+import { Fragment, type ReactNode, useEffect, useMemo, useState } from 'react'
 import { cn } from '../lib/utils'
 import { Badge } from '../ui/badge'
 import { Button } from '../ui/button'
@@ -363,4 +363,38 @@ function MembershipRow({
       </TableCell>
     </tr>
   )
+}
+
+/**
+ * Renders several `extraColumns` sets side by side, for a parent whose rows
+ * carry more than one kind of data — a catalog states both what it charges for
+ * a product and what quantities it may be ordered in.
+ *
+ * Composed here rather than at each call site because the contract being kept
+ * is this file's: every set must emit the same number of header cells as body
+ * cells, or the table misaligns.
+ */
+export function mergeExtraColumns(
+  ...sets: NonNullable<ProductMembershipListProps['extraColumns']>[]
+): NonNullable<ProductMembershipListProps['extraColumns']> {
+  return {
+    headers: (
+      <>
+        {sets.map((set, index) => (
+          // Column sets are positional and fixed for the life of the table —
+          // there is no identity to key on but their order.
+          // biome-ignore lint/suspicious/noArrayIndexKey: positional by nature
+          <Fragment key={index}>{set.headers}</Fragment>
+        ))}
+      </>
+    ),
+    renderCells: (row: ProductMembershipRow) => (
+      <>
+        {sets.map((set, index) => (
+          // biome-ignore lint/suspicious/noArrayIndexKey: positional by nature
+          <Fragment key={index}>{set.renderCells(row)}</Fragment>
+        ))}
+      </>
+    ),
+  }
 }

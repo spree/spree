@@ -48,9 +48,12 @@ RSpec.describe 'Admin Catalogs API', type: :request, swagger_doc: 'api-reference
         properties: {
           name: { type: :string, example: 'VIP Assortment' },
           active: { type: :boolean, example: true },
-          price_list_id: { type: :string, nullable: true,
-                           description: 'Price list pricing this catalog; omit for assortment-only (base prices). A catalog with an empty assortment prices without restricting visibility; import or curate products to make it restrictive.',
-                           example: 'pl_86Rf07xd4z' }
+          price_list: { type: :object, nullable: true,
+                        description: 'The price list this catalog owns, written inline. Omit for assortment-only (base prices); send null to remove the pricing, which deletes the list. A catalog with an empty assortment prices without restricting visibility; import or curate products to make it restrictive.',
+                        properties: {
+                          price_adjustment_percentage: { type: :string, nullable: true, example: '-15.0' },
+                          adjust_compare_at: { type: :boolean, example: false }
+                        } }
         },
         required: ['name']
       }
@@ -116,20 +119,54 @@ RSpec.describe 'Admin Catalogs API', type: :request, swagger_doc: 'api-reference
       tags 'Catalogs'
       produces 'application/json'
       security [api_key: [], bearer_auth: []]
-      description "The catalog's curated assortment, listed by product name — membership carries no order."
+      description <<~DESC
+        The catalog's curated assortment, listed by product name — membership
+        carries no order.
+
+        `expand=catalog_price` adds what a buyer on this agreement pays for
+        each row and where the amount comes from: `explicit` (an amount
+        entered on the catalog's own price list), `automatic` (that list's
+        percentage applied to the shop price) or `base` (the shop price
+        itself — this agreement does not price the product).
+      DESC
       admin_scope :read, :products
 
       parameter name: 'x-spree-api-key', in: :header, type: :string, required: true
       parameter name: :Authorization, in: :header, type: :string, required: true
       parameter name: :catalog_id, in: :path, type: :string, required: true
+      parameter name: :expand, in: :query, type: :string, required: false,
+                description: 'Comma-separated. `catalog_price` adds the resolved price to every row.',
+                example: 'catalog_price'
 
       response '200', 'products found' do
         let(:'x-spree-api-key') { secret_api_key.plaintext_token }
         let(:catalog_id) { catalog.prefixed_id }
+        let(:expand) { nil }
 
-        schema SwaggerSchemaHelpers.paginated('Product')
+        schema SwaggerSchemaHelpers.paginated('CatalogProduct')
 
         run_test!
+      end
+
+      response '200', 'products found, with what the agreement charges' do
+        let(:'x-spree-api-key') { secret_api_key.plaintext_token }
+        let(:catalog_id) { catalog.prefixed_id }
+        let(:expand) { 'catalog_price' }
+        let(:product) { create(:product, store: store, price: 100) }
+
+        before do
+          catalog.add_products([product.id])
+          create(:price_list, :active, store: store, catalog: catalog,
+                                       price_adjustment_percentage: -20)
+        end
+
+        schema SwaggerSchemaHelpers.paginated('CatalogProduct')
+
+        run_test! do |response|
+          price = JSON.parse(response.body)['data'].first['catalog_price']
+          expect(price['source']).to eq('automatic')
+          expect(price['amount']).to eq('80.0')
+        end
       end
     end
 
@@ -508,6 +545,75 @@ RSpec.describe 'Admin Catalogs API', type: :request, swagger_doc: 'api-reference
 
         run_test! do |response|
           expect(JSON.parse(response.body)['data'].first['minimum_order_quantity']).to eq(48)
+        end
+      end
+    end
+  end
+
+  path '/api/v3/admin/catalogs/{id}/activate' do
+    parameter name: :id, in: :path, type: :string, required: true
+
+    patch 'Activate a catalog' do
+      tags 'Catalogs'
+      produces 'application/json'
+      security [api_key: [], bearer_auth: []]
+      description <<~DESC
+        Puts the agreement into effect: its audience starts seeing its
+        assortment and paying its prices. Refused for a catalog nobody is
+        assigned to, since activating it would reach no buyer — a channel's
+        default catalog is reached through the channel instead, so it needs
+        no assignment.
+      DESC
+      admin_scope :write, :products
+      admin_sdk_example 'catalogs/activate'
+
+      parameter name: 'x-spree-api-key', in: :header, type: :string, required: true
+      parameter name: :Authorization, in: :header, type: :string, required: true
+
+      response '200', 'catalog activated' do
+        let(:'x-spree-api-key') { secret_api_key.plaintext_token }
+        let(:id) { catalog.prefixed_id }
+        # Activation refuses an agreement nobody is assigned to; an audience
+        # is what gives the shared fixture someone to apply to.
+        before do
+          create(:catalog_assignment, catalog: catalog, assignable: create(:company, store: store))
+        end
+
+        schema '$ref' => '#/components/schemas/Catalog'
+
+        run_test! do |response|
+          expect(JSON.parse(response.body)['active']).to be(true)
+        end
+      end
+    end
+  end
+
+  path '/api/v3/admin/catalogs/{id}/deactivate' do
+    parameter name: :id, in: :path, type: :string, required: true
+
+    patch 'Deactivate a catalog' do
+      tags 'Catalogs'
+      produces 'application/json'
+      security [api_key: [], bearer_auth: []]
+      description <<~DESC
+        Takes the agreement out of effect. Everything it holds — assignments,
+        commercial terms, its price list — survives, so activating again
+        resumes exactly what was there.
+      DESC
+      admin_scope :write, :products
+      admin_sdk_example 'catalogs/deactivate'
+
+      parameter name: 'x-spree-api-key', in: :header, type: :string, required: true
+      parameter name: :Authorization, in: :header, type: :string, required: true
+
+      response '200', 'catalog deactivated' do
+        let(:'x-spree-api-key') { secret_api_key.plaintext_token }
+        let(:id) { catalog.prefixed_id }
+
+        schema '$ref' => '#/components/schemas/Catalog'
+
+        run_test! do |response|
+          expect(JSON.parse(response.body)['active']).to be(false)
         end
       end
     end

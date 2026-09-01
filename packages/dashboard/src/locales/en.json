@@ -88,6 +88,14 @@
       "tiered_percent": "Tiered Percent"
     },
     "catalogs": {
+      "actions": {
+        "activate": "Activate",
+        "deactivate": "Deactivate"
+      },
+      "activate_confirm": {
+        "title": "Activate this catalog?",
+        "message": "{{name}} starts applying: its audience will see its assortment and get its prices."
+      },
       "add_cta": "Add catalog",
       "add_sheet_title": "New catalog",
       "assignable_types": {
@@ -97,22 +105,27 @@
       "assignments": {
         "add_cta": "Assign",
         "add_title": "Assign this catalog",
+        "already_assigned": "That audience is already on this catalog.",
         "audience_empty": "Nothing found",
         "audience_label": "Audience",
         "audience_placeholder": "Search…",
         "company_subtree_help": "Assigning to a company covers its whole subtree.",
         "dialog_description": "Who sees this catalog. A company assignment covers the node and everything below it.",
         "empty": "Not assigned to any audience yet — nobody sees this catalog.",
+        "empty_description": "Assign a company or customer group to decide who this catalog is for.",
         "remove_confirm": {
           "message": "{{name}} will stop seeing this catalog.",
           "title": "Remove this assignment?"
         },
         "title": "Audiences",
-        "type_label": "Audience type",
-        "already_assigned": "That audience is already on this catalog."
+        "type_label": "Audience type"
       },
       "create_description": "A catalog narrows what an audience sees and, through a price list, what they pay. Add products and assign audiences once it exists.",
       "create_label": "Create catalog",
+      "deactivate_confirm": {
+        "title": "Deactivate this catalog?",
+        "message": "{{name}} stops applying. Its audience goes back to the shop prices, and everything the catalog holds is kept."
+      },
       "delete_confirm": {
         "message": "This deletes {{name}} and its assignments. Products and price lists are not affected.",
         "title": "Delete catalog?"
@@ -130,13 +143,35 @@
       "edit_prices_help": "Set the price each product costs this audience.",
       "edit_prices_pending_save": "Set the price each product costs this audience. Save first to price the products you just changed.",
       "empty": "No catalogs yet",
+      "errors": {
+        "failed_to_activate": "Could not activate the catalog",
+        "failed_to_deactivate": "Could not deactivate the catalog"
+      },
       "messages": {
+        "activated": "Catalog activated",
         "assigned": "Catalog assigned",
         "created": "Catalog created",
+        "deactivated": "Catalog deactivated",
         "deleted": "Catalog deleted",
         "products_imported": "Products imported",
         "unassigned": "Assignment removed",
         "updated": "Catalog updated"
+      },
+      "prices": {
+        "column_price": "Price",
+        "column_source": "From",
+        "unpriced": "No price",
+        "after_save": "After save",
+        "source": {
+          "explicit": "Entered",
+          "automatic": "Adjusted",
+          "base": "Shop price"
+        },
+        "source_help": {
+          "explicit": "An amount entered on this catalog’s own price list.",
+          "automatic": "The shop price with this catalog’s percentage applied.",
+          "base": "The normal shop price — this catalog does not price this product."
+        }
       },
       "products": {
         "add_cta": "Add products",
@@ -182,6 +217,43 @@
           "multiple": "The step size. With a multiple of 24 a buyer orders 24, 48 or 72 — never 30. Steps count up from the minimum, so a minimum of 50 in steps of 24 allows 50, 74 and 98.",
           "order_minimum": "The least a whole order must come to, counting items only — delivery and tax do not help reach it. Buyers see how far short they are while they shop, and checkout is refused until they reach it."
         }
+      },
+      "wizard": {
+        "audience_none_warning": "No audience yet, so nobody sees this catalog. You can assign one now or later.",
+        "description": "Set up an agreement: what it is, who it is for, and what it charges.",
+        "fix_this_step": "Fix the highlighted field before continuing.",
+        "help": {
+          "details": "Name this agreement so you recognise it later.",
+          "audience": "Who sees this catalog and gets its prices.",
+          "products": "What this agreement covers.",
+          "pricing": "What buyers on this agreement pay.",
+          "review": "Nothing is created until you finish."
+        },
+        "products": {
+          "add": "Add {{name}}",
+          "all_title": "All products",
+          "chosen_title": "This catalog",
+          "count_one": "{{count}} product",
+          "count_other": "{{count}} products",
+          "empty": "No products yet",
+          "empty_description": "Pick what this agreement covers. Leave it empty to price without restricting what buyers see.",
+          "remove": "Remove {{name}}"
+        },
+        "products_failed": "The catalog was created, but its products could not be added. Add them from the catalog page.",
+        "products_none_warning": "No products yet. An empty catalog prices without hiding anything — every shopper still sees the whole shop.",
+        "review": {
+          "everyone": "Everyone",
+          "everything": "Everything in the shop",
+          "inactive": "The catalog is created inactive. Activate it from its page when the agreement is ready."
+        },
+        "steps": {
+          "details": "Details",
+          "audience": "Audience",
+          "products": "Products",
+          "pricing": "Pricing",
+          "review": "Review"
+        },
+        "title": "New catalog"
       }
     },
     "categories": {

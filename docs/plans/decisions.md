@@ -4623,3 +4623,49 @@ shortfall on the cart, so neither side blocks the other.
 
 Plans amended: `6.0-b2b-quantity-rules.md` (implementation started),
 `6.0-b2b-wholesale-shipping.md` (`units_per_carton` no longer its column).
+
+## 2026-08-31 — Catalog phase 4: the agreement's prices are shown where it is curated, and a new one is built in steps
+
+Settling the last of the catalog agreement rework
+(`6.0-catalog-agreement-rework.md`), whose remaining work was the
+products-with-prices view and a create flow worth the name.
+
+**The resolved price and its source ride the catalog's own products
+endpoint, behind `expand`.** A catalog's nested membership listing answers
+`?expand=catalog_price` with the amount a buyer on this agreement pays and
+where that amount came from: an explicit row on the owned list, the list's
+±% adjustment, or the variant's base price. Resolution stays server-side —
+an adjusted price is derived on read and never stored, so a dashboard
+inferring the source from the price rows would be re-implementing the
+resolver against a shape it cannot observe, and would be wrong the moment
+base prices move. `expand` rather than a bespoke query flag, because every
+other optional payload on this API is asked for that way.
+
+**Those prices are columns on the assortment card, not a second surface.**
+Assortment↔pricing divergence — a product in the agreement that the
+agreement does not actually price — is what the view exists to expose, so
+it belongs on the rows the merchant already curates. A parallel prices
+card, or a tab beside the assortment, both turn the divergence into
+something to go looking for, which is the state before this work.
+
+**The transitional `price_list_id` accessors on `Spree::Catalog` are
+removed.** They kept the admin API's pre-inversion write shape working
+until phase 4 reshaped the payload; the inline `price_list` object has
+done that, so the accessors, the pending-assignment machinery behind them
+and the serializer attribute all go. Catalogs are unreleased, so no bridge
+is owed — the same reasoning that let the migration be rewritten in place.
+
+**New catalog becomes a linear four-step wizard: Details → Audience →
+Pricing → Review.** Back and Next only, with one create request on Finish
+carrying the whole agreement. Nothing is written until then, so abandoning
+midway leaves nothing behind — the staged-until-Save model the agreement
+editor already uses, and the reason a create-then-configure wizard was
+rejected. The assortment is deliberately not a step: product membership
+stages against a saved parent through the nested endpoints, and a first
+catalog is more usefully curated on the agreement editor the wizard lands
+on. Rejected alternatives: one sectioned create page (consistent with
+other create screens, but it asks a merchant standing up their first
+agreement to understand every part of it at once); skippable steps (a
+"create now" escape hatch competing with Next on every step).
+
+Plans amended: `6.0-catalog-agreement-rework.md` (phase 4 completed).

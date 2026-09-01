@@ -57,14 +57,50 @@ export function useDeleteCatalog() {
   })
 }
 
+/**
+ * Going live is its own act rather than a field on the form: what has to
+ * happen alongside — sweeping cached catalog sets, telling the companies it
+ * covers — hangs off the workflow behind these
+ * (docs/plans/6.0-catalog-agreement-rework.md).
+ */
+export function useActivateCatalog(id: string) {
+  return useResourceMutation<Catalog, Error, void>({
+    mutationFn: () => adminClient.catalogs.activate(id),
+    invalidate: [['catalogs'], ['catalogs', id]],
+    successMessage: i18n.t('admin.catalogs.messages.activated'),
+    errorMessage: i18n.t('admin.catalogs.errors.failed_to_activate'),
+  })
+}
+
+export function useDeactivateCatalog(id: string) {
+  return useResourceMutation<Catalog, Error, void>({
+    mutationFn: () => adminClient.catalogs.deactivate(id),
+    invalidate: [['catalogs'], ['catalogs', id]],
+    successMessage: i18n.t('admin.catalogs.messages.deactivated'),
+    errorMessage: i18n.t('admin.catalogs.errors.failed_to_deactivate'),
+  })
+}
+
 // ---------------------------------------------------------------------------
 // Assortment
 // ---------------------------------------------------------------------------
 
+/**
+ * The catalog's assortment, each row carrying what the agreement charges for
+ * it. The price is asked for here rather than in a second request because it
+ * is read on the same rows: a product the agreement does not price has to be
+ * visible beside the ones it does
+ * (docs/plans/6.0-catalog-agreement-rework.md).
+ */
 export function useCatalogProducts(catalogId: string | undefined, page = 1) {
   return useQuery({
     queryKey: useResourceKey('catalogs', catalogId ?? 'noop', 'products', `${page}`),
-    queryFn: () => adminClient.catalogs.products.list(catalogId as string, { page, limit: 25 }),
+    queryFn: () =>
+      adminClient.catalogs.products.list(catalogId as string, {
+        page,
+        limit: 25,
+        expand: ['catalog_price'],
+      }),
     enabled: !!catalogId,
     placeholderData: (previous) => previous,
   })

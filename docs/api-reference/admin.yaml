@@ -25893,8 +25893,8 @@ paths:
                   order_multiple:
                   created_at: '2026-01-15T12:00:00.000Z'
                   updated_at: '2026-01-15T12:00:00.000Z'
-                  price_list_id:
                   products_count: 0
+                  pricing_strategy: base
                 meta:
                   page: 1
                   limit: 25
@@ -25927,13 +25927,15 @@ paths:
             secretKey: 'sk_xxx',
           })
 
+          // The catalog and the price list it charges through are written together, so
+          // standing up an agreement never means visiting the price-lists page.
           const catalog = await client.catalogs.create({
             name: 'VIP Assortment',
-            price_list_id: 'pl_86Rf07xd4z',
+            price_list: { price_adjustment_percentage: '-15.0' },
           })
       - lang: bash
         label: Spree CLI
-        source: spree api post /catalogs -d '{"name":"VIP Assortment","price_list_id":"pl_86Rf07xd4z"}'
+        source: spree api post /catalogs -d '{"name":"VIP Assortment","price_list":{"price_adjustment_percentage":"-15.0"}}'
       parameters:
       - name: x-spree-api-key
         in: header
@@ -25961,8 +25963,8 @@ paths:
                 order_multiple:
                 created_at: '2026-01-15T12:00:00.000Z'
                 updated_at: '2026-01-15T12:00:00.000Z'
-                price_list_id:
                 products_count: 0
+                pricing_strategy: base
         '422':
           description: invalid request
           content:
@@ -25986,13 +25988,22 @@ paths:
                 active:
                   type: boolean
                   example: true
-                price_list_id:
-                  type: string
+                price_list:
+                  type: object
                   nullable: true
-                  description: Price list pricing this catalog; omit for assortment-only
-                    (base prices). A catalog with an empty assortment prices without
-                    restricting visibility; import or curate products to make it restrictive.
-                  example: pl_86Rf07xd4z
+                  description: The price list this catalog owns, written inline. Omit
+                    for assortment-only (base prices); send null to remove the pricing,
+                    which deletes the list. A catalog with an empty assortment prices
+                    without restricting visibility; import or curate products to make
+                    it restrictive.
+                  properties:
+                    price_adjustment_percentage:
+                      type: string
+                      nullable: true
+                      example: "-15.0"
+                    adjust_compare_at:
+                      type: boolean
+                      example: false
               required:
               - name
   "/api/v3/admin/catalogs/{id}/assign":
@@ -26081,7 +26092,15 @@ paths:
       - api_key: []
         bearer_auth: []
       description: |-
-        The catalog's curated assortment, listed by product name — membership carries no order.
+        The catalog's curated assortment, listed by product name — membership
+        carries no order.
+
+        `expand=catalog_price` adds what a buyer on this agreement pays for
+        each row and where the amount comes from: `explicit` (an amount
+        entered on the catalog's own price list), `automatic` (that list's
+        percentage applied to the shop price) or `base` (the shop price
+        itself — this agreement does not price the product).
+
 
         **Required scope:** `read_products` (for API-key authentication).
       parameters:
@@ -26100,21 +26119,93 @@ paths:
         required: true
         schema:
           type: string
+      - name: expand
+        in: query
+        required: false
+        description: Comma-separated. `catalog_price` adds the resolved price to every
+          row.
+        example: catalog_price
+        schema:
+          type: string
       responses:
         '200':
-          description: products found
+          description: products found, with what the agreement charges
           content:
             application/json:
               example:
-                data: []
+                data:
+                - id: prod_UkLWZg9DAJ
+                  name: Product 12159
+                  slug: product-12159
+                  meta_title:
+                  meta_description:
+                  meta_keywords:
+                  variant_count: 1
+                  available_on:
+                  preorder_ships_at:
+                  purchasable: true
+                  preorder: false
+                  in_stock: false
+                  backorderable: true
+                  available: true
+                  description: Veritatis quos vel inventore enim quod. Accusamus ipsum
+                    itaque debitis magnam nisi deserunt error. Ad aperiam tempora
+                    totam veniam adipisci nihil deleniti. Corporis expedita soluta
+                    sunt harum reiciendis. Animi alias sed odio modi expedita corrupti
+                    facere. Inventore quos corrupti dolor vitae. Dolorem amet unde
+                    blanditiis iste adipisci quo fuga. Autem corporis accusamus ullam
+                    repellendus architecto aliquid ipsum reprehenderit. Magni aliquid
+                    id asperiores consectetur sunt numquam. Praesentium animi corrupti
+                    tenetur recusandae sunt magnam aliquid. Expedita cumque qui sint
+                    amet. Voluptatum architecto tempora nulla repudiandae adipisci.
+                    Est quos quis minus quia at.
+                  description_html: |-
+                    Veritatis quos vel inventore enim quod. Accusamus ipsum itaque debitis magnam nisi deserunt error. Ad aperiam tempora totam veniam adipisci nihil deleniti.
+                    Corporis expedita soluta sunt harum reiciendis. Animi alias sed odio modi expedita corrupti facere. Inventore quos corrupti dolor vitae. Dolorem amet unde blanditiis iste adipisci quo fuga.
+                    Autem corporis accusamus ullam repellendus architecto aliquid ipsum reprehenderit. Magni aliquid id asperiores consectetur sunt numquam. Praesentium animi corrupti tenetur recusandae sunt magnam aliquid.
+                    Expedita cumque qui sint amet. Voluptatum architecto tempora nulla repudiandae adipisci. Est quos quis minus quia at.
+                  default_variant_id: variant_UkLWZg9DAJ
+                  buy_box_variant_id: variant_UkLWZg9DAJ
+                  thumbnail_url:
+                  tags: []
+                  price:
+                    id: price_UkLWZg9DAJ
+                    amount: '100.0'
+                    amount_in_cents: 10000
+                    compare_at_amount:
+                    compare_at_amount_in_cents:
+                    currency: USD
+                    display_amount: "$100.00"
+                    display_compare_at_amount:
+                    price_list_id:
+                    variant_id: variant_UkLWZg9DAJ
+                    created_at: '2026-01-15T12:00:00.000Z'
+                    updated_at: '2026-01-15T12:00:00.000Z'
+                  original_price:
+                  seller_id:
+                  external_references: {}
+                  status: active
+                  metadata: {}
+                  deleted_at:
+                  created_at: '2026-01-15T12:00:00.000Z'
+                  updated_at: '2026-01-15T12:00:00.000Z'
+                  delivery_profile_id: fp_UkLWZg9DAJ
+                  seller_name:
+                  product_type_id:
+                  tax_category_id: taxcat_UkLWZg9DAJ
+                  catalog_price:
+                    currency: USD
+                    source: automatic
+                    amount: '80.0'
+                    display_amount: "$80.00"
                 meta:
                   page: 1
                   limit: 25
-                  count: 0
+                  count: 1
                   pages: 1
-                  from: 0
-                  to: 0
-                  in: 0
+                  from: 1
+                  to: 1
+                  in: 1
                   previous:
                   next:
               schema:
@@ -26123,7 +26214,7 @@ paths:
                   data:
                     type: array
                     items:
-                      "$ref": "#/components/schemas/Product"
+                      "$ref": "#/components/schemas/CatalogProduct"
                   meta:
                     "$ref": "#/components/schemas/PaginationMeta"
                 required:
@@ -26758,6 +26849,145 @@ paths:
                         example: 24
               required:
               - terms
+  "/api/v3/admin/catalogs/{id}/activate":
+    parameters:
+    - name: id
+      in: path
+      required: true
+      schema:
+        type: string
+    patch:
+      summary: Activate a catalog
+      tags:
+      - Catalogs
+      security:
+      - api_key: []
+        bearer_auth: []
+      description: |-
+        Puts the agreement into effect: its audience starts seeing its
+        assortment and paying its prices. Refused for a catalog nobody is
+        assigned to, since activating it would reach no buyer — a channel's
+        default catalog is reached through the channel instead, so it needs
+        no assignment.
+
+
+        **Required scope:** `write_products` (for API-key authentication).
+      x-codeSamples:
+      - lang: javascript
+        label: Spree Admin SDK
+        source: |-
+          import { createAdminClient } from '@spree/admin-sdk'
+
+          const client = createAdminClient({
+            baseUrl: 'https://your-store.com',
+            secretKey: 'sk_xxx',
+          })
+
+          // Puts the agreement into effect. Refused for a catalog nobody is assigned
+          // to, which would reach no buyer.
+          const catalog = await client.catalogs.activate('cat_xxx')
+      - lang: bash
+        label: Spree CLI
+        source: spree api patch /catalogs/{id}/activate -d '{ ... }'
+      parameters:
+      - name: x-spree-api-key
+        in: header
+        required: true
+        schema:
+          type: string
+      - name: Authorization
+        in: header
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: catalog activated
+          content:
+            application/json:
+              example:
+                id: cat_UkLWZg9DAJ
+                name: Wholesale
+                description:
+                active: true
+                position: 1
+                metadata: {}
+                minimum_order_quantity:
+                order_multiple:
+                created_at: '2026-01-15T12:00:00.000Z'
+                updated_at: '2026-01-15T12:00:00.000Z'
+                products_count: 0
+                pricing_strategy: base
+              schema:
+                "$ref": "#/components/schemas/Catalog"
+  "/api/v3/admin/catalogs/{id}/deactivate":
+    parameters:
+    - name: id
+      in: path
+      required: true
+      schema:
+        type: string
+    patch:
+      summary: Deactivate a catalog
+      tags:
+      - Catalogs
+      security:
+      - api_key: []
+        bearer_auth: []
+      description: |-
+        Takes the agreement out of effect. Everything it holds — assignments,
+        commercial terms, its price list — survives, so activating again
+        resumes exactly what was there.
+
+
+        **Required scope:** `write_products` (for API-key authentication).
+      x-codeSamples:
+      - lang: javascript
+        label: Spree Admin SDK
+        source: |-
+          import { createAdminClient } from '@spree/admin-sdk'
+
+          const client = createAdminClient({
+            baseUrl: 'https://your-store.com',
+            secretKey: 'sk_xxx',
+          })
+
+          // Takes it out of effect; its assignments, terms and prices survive.
+          const catalog = await client.catalogs.deactivate('cat_xxx')
+      - lang: bash
+        label: Spree CLI
+        source: spree api patch /catalogs/{id}/deactivate -d '{ ... }'
+      parameters:
+      - name: x-spree-api-key
+        in: header
+        required: true
+        schema:
+          type: string
+      - name: Authorization
+        in: header
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: catalog deactivated
+          content:
+            application/json:
+              example:
+                id: cat_UkLWZg9DAJ
+                name: Wholesale
+                description:
+                active: false
+                position: 1
+                metadata: {}
+                minimum_order_quantity:
+                order_multiple:
+                created_at: '2026-01-15T12:00:00.000Z'
+                updated_at: '2026-01-15T12:00:00.000Z'
+                products_count: 0
+                pricing_strategy: base
+              schema:
+                "$ref": "#/components/schemas/Catalog"
   "/api/v3/admin/collections":
     get:
       summary: List collections
@@ -34379,6 +34609,210 @@ components:
       - amount
       - display_amount
       x-typelizer: true
+    CatalogPrice:
+      type: object
+      properties:
+        currency:
+          type: string
+        source:
+          type: string
+        amount:
+          type: string
+        display_amount:
+          type: string
+      required:
+      - currency
+      - source
+      - amount
+      - display_amount
+      x-typelizer: true
+    CatalogProduct:
+      type: object
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+        slug:
+          type: string
+        meta_title:
+          type: string
+          nullable: true
+        meta_description:
+          type: string
+          nullable: true
+        meta_keywords:
+          type: string
+          nullable: true
+        variant_count:
+          type: number
+        available_on:
+          type: string
+          nullable: true
+        preorder_ships_at:
+          type: string
+          nullable: true
+        purchasable:
+          type: boolean
+        preorder:
+          type: boolean
+        in_stock:
+          type: boolean
+        backorderable:
+          type: boolean
+        available:
+          type: boolean
+        description:
+          type: string
+          nullable: true
+        description_html:
+          type: string
+          nullable: true
+        default_variant_id:
+          type: string
+        buy_box_variant_id:
+          type: string
+          nullable: true
+        thumbnail_url:
+          type: string
+          nullable: true
+        tags:
+          type: array
+          items:
+            type: string
+        price:
+          allOf:
+          - "$ref": "#/components/schemas/Price"
+          nullable: true
+        original_price:
+          allOf:
+          - "$ref": "#/components/schemas/Price"
+          nullable: true
+        seller_id:
+          type: string
+          nullable: true
+        seller:
+          "$ref": "#/components/schemas/Seller"
+        primary_media:
+          "$ref": "#/components/schemas/Media"
+        media:
+          type: array
+          items:
+            "$ref": "#/components/schemas/Media"
+        variants:
+          type: array
+          items:
+            "$ref": "#/components/schemas/Variant"
+        default_variant:
+          "$ref": "#/components/schemas/Variant"
+        option_types:
+          type: array
+          items:
+            "$ref": "#/components/schemas/OptionType"
+        option_values:
+          type: array
+          items:
+            "$ref": "#/components/schemas/OptionValue"
+        categories:
+          type: array
+          items:
+            "$ref": "#/components/schemas/Category"
+        custom_fields:
+          type: array
+          items:
+            "$ref": "#/components/schemas/CustomField"
+        prior_price:
+          allOf:
+          - "$ref": "#/components/schemas/PriceHistory"
+          nullable: true
+        external_references:
+          type: object
+        translations:
+          type: object
+        status:
+          type: string
+        metadata:
+          type: object
+        deleted_at:
+          type: string
+          nullable: true
+        created_at:
+          type: string
+        updated_at:
+          type: string
+        delivery_profile_id:
+          type: string
+          nullable: true
+        submission:
+          allOf:
+          - "$ref": "#/components/schemas/ProductSubmission"
+          nullable: true
+        seller_name:
+          type: string
+          nullable: true
+        product_type_id:
+          type: string
+          nullable: true
+        tax_category_id:
+          type: string
+          nullable: true
+        digital_assets:
+          type: array
+          items:
+            "$ref": "#/components/schemas/DigitalAsset"
+        collections:
+          type: array
+          items:
+            "$ref": "#/components/schemas/Collection"
+        product_publications:
+          type: array
+          items:
+            "$ref": "#/components/schemas/ProductPublication"
+        channels:
+          type: array
+          items:
+            "$ref": "#/components/schemas/Channel"
+        product_type:
+          "$ref": "#/components/schemas/ProductType"
+        catalog_price:
+          allOf:
+          - "$ref": "#/components/schemas/CatalogPrice"
+          nullable: true
+      required:
+      - id
+      - name
+      - slug
+      - meta_title
+      - meta_description
+      - meta_keywords
+      - variant_count
+      - available_on
+      - preorder_ships_at
+      - purchasable
+      - preorder
+      - in_stock
+      - backorderable
+      - available
+      - description
+      - description_html
+      - default_variant_id
+      - buy_box_variant_id
+      - thumbnail_url
+      - tags
+      - price
+      - original_price
+      - seller_id
+      - external_references
+      - status
+      - metadata
+      - deleted_at
+      - created_at
+      - updated_at
+      - delivery_profile_id
+      - seller_name
+      - product_type_id
+      - tax_category_id
+      x-typelizer: true
     CatalogProductTerm:
       type: object
       properties:
@@ -34471,11 +34905,10 @@ components:
           type: string
         updated_at:
           type: string
-        price_list_id:
-          type: string
-          nullable: true
         products_count:
           type: number
+        pricing_strategy:
+          type: string
         order_minimums:
           type: array
           items:
@@ -34497,8 +34930,8 @@ components:
       - order_multiple
       - created_at
       - updated_at
-      - price_list_id
       - products_count
+      - pricing_strategy
       x-typelizer: true
     Category:
       type: object

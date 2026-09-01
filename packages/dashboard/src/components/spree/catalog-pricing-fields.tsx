@@ -1,5 +1,7 @@
 import type { PriceList } from '@spree/admin-sdk'
 import {
+  Alert,
+  AlertDescription,
   Button,
   Field,
   FieldDescription,
@@ -17,7 +19,7 @@ import {
   SelectValue,
   Switch,
 } from '@spree/dashboard-ui'
-import { TableIcon } from '@spree/dashboard-ui/icons'
+import { InfoIcon, TableIcon } from '@spree/dashboard-ui/icons'
 import { useState } from 'react'
 import { Controller, type UseFormReturn } from 'react-hook-form'
 import { useTranslation } from 'react-i18next'
@@ -45,6 +47,8 @@ export function CatalogPricingFields({
   savedMode,
   excludeProductIds,
   hasStagedProducts,
+  priceEditorOpen: controlledOpen,
+  onPriceEditorOpenChange,
 }: {
   form: UseFormReturn<CatalogFormValues>
   canEdit: boolean
@@ -63,6 +67,13 @@ export function CatalogPricingFields({
    */
   excludeProductIds?: string[]
   /**
+   * Controlled price-editor state. The catalog page owns it so the products
+   * card can open the same spreadsheet — pricing an assortment is an action
+   * on those rows, not only on the pricing card.
+   */
+  priceEditorOpen?: boolean
+  onPriceEditorOpenChange?: (open: boolean) => void
+  /**
    * True while any membership edit is staged. A staged addition has no
    * price rows until Save, so the grid cannot show it yet — the help text
    * says so rather than leaving the merchant hunting for it.
@@ -72,7 +83,9 @@ export function CatalogPricingFields({
   const { t } = useTranslation()
   const { errors } = form.formState
   const mode = form.watch('pricing_mode')
-  const [priceEditorOpen, setPriceEditorOpen] = useState(false)
+  const [uncontrolledOpen, setUncontrolledOpen] = useState(false)
+  const priceEditorOpen = controlledOpen ?? uncontrolledOpen
+  const setPriceEditorOpen = onPriceEditorOpenChange ?? setUncontrolledOpen
   const hasOwnedList = !!priceList
   // Hand-entered amounts beat the adjustment, so switching to a percentage
   // clears them — said before Save, since the rows are not recoverable.
@@ -252,14 +265,13 @@ export function CatalogPricingFields({
             <Button
               type="button"
               size="sm"
-              variant="outline"
               disabled={!canEdit}
               onClick={() => setPriceEditorOpen(true)}
             >
               <TableIcon className="size-4" />
               {t('admin.catalogs.edit_prices_cta')}
             </Button>
-            <FieldDescription>
+            <FieldDescription className="mt-4">
               {t(
                 hasStagedProducts
                   ? 'admin.catalogs.edit_prices_pending_save'
@@ -274,7 +286,13 @@ export function CatalogPricingFields({
             />
           </div>
         ) : (
-          <FieldDescription>{t('admin.catalogs.edit_prices_after_save')}</FieldDescription>
+          // An alert rather than helper text: fixed pricing is only half
+          // configured until amounts exist, and what happens next is the one
+          // thing the merchant has to notice here.
+          <Alert variant="info">
+            <InfoIcon />
+            <AlertDescription>{t('admin.catalogs.edit_prices_after_save')}</AlertDescription>
+          </Alert>
         ))}
     </>
   )

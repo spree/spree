@@ -12,6 +12,13 @@ interface ColumnDefBase<T = any> {
   sortable?: boolean
   filterable?: boolean
   default?: boolean
+  /**
+   * What a `boolean` column's two states are called, where the domain has
+   * better words than Yes and No — "Active" and "Inactive" on a catalog. The
+   * filter control then says what the rows say, instead of asking a question
+   * the column never posed. Ignored by every other filter type.
+   */
+  booleanLabels?: { true: string; false: string }
   /** Ransack attribute name if different from key (e.g., 'master_sku' for 'sku') */
   ransackAttribute?: string
   /** Send `ransackAttribute` as a Ransack scope: bare key, no operator suffix. */

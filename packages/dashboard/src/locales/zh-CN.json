@@ -88,6 +88,14 @@
       "tiered_percent": "阶梯百分比"
     },
     "catalogs": {
+      "actions": {
+        "activate": "启用",
+        "deactivate": "停用"
+      },
+      "activate_confirm": {
+        "title": "启用此目录？",
+        "message": "{{name}} 将开始生效：其受众将看到其商品并享受其价格。"
+      },
       "add_cta": "添加目录",
       "add_sheet_title": "新建目录",
       "assignable_types": {
@@ -97,22 +105,27 @@
       "assignments": {
         "add_cta": "分配",
         "add_title": "分配该目录",
+        "already_assigned": "该受众已添加到此目录。",
         "audience_empty": "未找到结果",
         "audience_label": "受众",
         "audience_placeholder": "搜索…",
         "company_subtree_help": "分配给公司将覆盖其整个子树。",
         "dialog_description": "谁能看到该目录。分配给公司将覆盖该节点及其下所有单位。",
         "empty": "尚未分配给任何受众——没有人能看到该目录。",
+        "empty_description": "指定公司或客户组，以决定本目录面向谁。",
         "remove_confirm": {
           "message": "{{name}} 将不再看到该目录。",
           "title": "移除该分配？"
         },
         "title": "受众",
-        "type_label": "受众类型",
-        "already_assigned": "该受众已添加到此目录。"
+        "type_label": "受众类型"
       },
       "create_description": "目录限定某类受众能看到什么，并通过价格表决定其价格。创建后可添加产品和受众。",
       "create_label": "创建目录",
+      "deactivate_confirm": {
+        "title": "停用此目录？",
+        "message": "{{name}} 将停止生效。其受众将回到店铺价格，目录中的所有内容都会保留。"
+      },
       "delete_confirm": {
         "message": "这将删除 {{name}} 及其分配。产品和价格表不受影响。",
         "title": "删除目录？"
@@ -130,13 +143,35 @@
       "edit_prices_help": "设置每件商品对此受众的价格。",
       "edit_prices_pending_save": "设置每件商品对此受众的价格。请先保存，才能为刚刚更改的商品定价。",
       "empty": "暂无目录",
+      "errors": {
+        "failed_to_activate": "无法启用该目录",
+        "failed_to_deactivate": "无法停用该目录"
+      },
       "messages": {
+        "activated": "目录已启用",
         "assigned": "目录已分配",
         "created": "目录已创建",
+        "deactivated": "目录已停用",
         "deleted": "目录已删除",
         "products_imported": "产品已导入",
         "unassigned": "分配已移除",
         "updated": "目录已更新"
+      },
+      "prices": {
+        "column_price": "价格",
+        "column_source": "来源",
+        "unpriced": "无价格",
+        "after_save": "保存后",
+        "source": {
+          "explicit": "已录入",
+          "automatic": "已调整",
+          "base": "店铺价"
+        },
+        "source_help": {
+          "explicit": "在本目录自有价格表中录入的金额。",
+          "automatic": "店铺价应用本目录百分比后的结果。",
+          "base": "普通店铺价 — 本目录未为该商品定价。"
+        }
       },
       "products": {
         "add_cta": "添加产品",
@@ -182,6 +217,42 @@
           "multiple": "递增步长。倍数为 24 时，买家可订购 24、48 或 72——但不能是 30。步长从最小起订量开始计算：最小 50、步长 24 时，允许 50、74 和 98。",
           "order_minimum": "整笔订单必须达到的最低金额，仅计算商品——运费和税费不计入。买家在选购时即可看到还差多少，未达到前无法结账。"
         }
+      },
+      "wizard": {
+        "audience_none_warning": "尚未设置受众，因此无人能看到本目录。可以现在或稍后指定。",
+        "description": "设置一份协议：它是什么、面向谁、收费多少。",
+        "fix_this_step": "请先修正标记的字段，然后继续。",
+        "help": {
+          "details": "为该协议命名，以便日后识别。",
+          "audience": "谁能看到本目录并享受其价格。",
+          "products": "本协议涵盖的范围。",
+          "pricing": "适用本协议的买家支付的金额。",
+          "review": "完成前不会创建任何内容。"
+        },
+        "products": {
+          "add": "添加 {{name}}",
+          "all_title": "全部商品",
+          "chosen_title": "本目录",
+          "count_other": "{{count}} 件商品",
+          "empty": "尚无商品",
+          "empty_description": "选择本协议涵盖的商品。留空则只定价，不限制买家可见范围。",
+          "remove": "移除 {{name}}"
+        },
+        "products_failed": "目录已创建，但未能添加其商品。请在目录页面添加。",
+        "products_none_warning": "尚未添加商品。空目录只定价、不隐藏任何内容 — 买家仍能看到整个商店。",
+        "review": {
+          "everyone": "所有人",
+          "everything": "整个商店",
+          "inactive": "目录创建后为停用状态。协议准备好后，请在其页面启用。"
+        },
+        "steps": {
+          "details": "详情",
+          "audience": "受众",
+          "products": "商品",
+          "pricing": "定价",
+          "review": "确认"
+        },
+        "title": "新建目录"
       }
     },
     "categories": {
