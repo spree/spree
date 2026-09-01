@@ -39,7 +39,15 @@ describe Spree::Address, type: :model do
     end
   end
 
-  describe 'clone' do
+  describe 'clone (deprecated, becomes the standard Ruby clone in 6.1)' do
+    before { allow(Spree::Deprecation).to receive(:warn) }
+
+    it 'warns and points at #snapshot' do
+      create(:address).clone
+
+      expect(Spree::Deprecation).to have_received(:warn).with(/#snapshot/)
+    end
+
     it 'creates a copy of the address with the exception of the id, label, owner, updated_at and created_at attributes' do
       state = create(:state)
       original = create(:address,
@@ -526,7 +534,7 @@ describe Spree::Address, type: :model do
 
   context '#==' do
     let(:address) { create(:address) }
-    let(:address2) { address.clone }
+    let(:address2) { address.snapshot }
 
     context 'same addresses' do
       it { expect(address == address2).to eq(true) }
@@ -970,6 +978,112 @@ describe Spree::Address, type: :model do
 
     it 'returns nil when nothing matches' do
       expect(described_class.find_duplicate(address1: 'nowhere at all')).to be_nil
+    end
+  end
+
+  describe '#snapshot' do
+    let(:customer) { create(:customer) }
+    let(:address) { create(:address, owner: customer, label: 'Home') }
+
+    subject(:snapshot) { address.snapshot }
+
+    it 'copies the address without an owner, so it stays out of the book it came from' do
+      expect(snapshot.owner).to be_nil
+      expect(snapshot.address1).to eq(address.address1)
+      expect(snapshot.city).to eq(address.city)
+      expect(snapshot.zipcode).to eq(address.zipcode)
+    end
+
+    it 'drops the label, which belongs to the entry in the book' do
+      expect(snapshot.label).to be_nil
+    end
+
+    it 'is a new record' do
+      expect(snapshot).to be_new_record
+    end
+
+    it 'lets two snapshots of the same labelled address be saved side by side' do
+      expect(address.snapshot.save).to be(true)
+      expect(address.snapshot.save).to be(true)
+    end
+  end
+
+  describe '#duplicate_in_address_book' do
+    let(:customer) { create(:customer) }
+    let(:attributes) do
+      { firstname: 'John', lastname: 'Doe', company: 'Company', address1: '1 Main St',
+        address2: 'Northwest', city: 'New York', zipcode: '10001', state_code: 'NY',
+        country_code: 'US', phone: '555-1212', alternative_phone: '555-1213' }
+    end
+    let!(:saved) { create(:address, attributes.merge(owner: customer)) }
+
+    def build_for(owner, overrides = {})
+      described_class.new(attributes.merge(overrides)).tap do |address|
+        address.owner = owner
+        address.valid?
+      end
+    end
+
+    it 'finds the entry the book already holds' do
+      expect(build_for(customer).duplicate_in_address_book).to eq(saved)
+    end
+
+    it 'ignores geocoding, which is derived from the address' do
+      saved.update_columns(latitude: 40.7, longitude: -74.0)
+
+      expect(build_for(customer).duplicate_in_address_book).to eq(saved)
+    end
+
+    it 'returns nil when the address differs' do
+      expect(build_for(customer, address1: '2 Main St').duplicate_in_address_book).to be_nil
+    end
+
+    it 'returns nil for a deleted entry' do
+      saved.update_column(:deleted_at, Time.current)
+
+      expect(build_for(customer).duplicate_in_address_book).to be_nil
+    end
+
+    it 'never reaches into another owner\'s book' do
+      expect(build_for(create(:customer)).duplicate_in_address_book).to be_nil
+    end
+
+    it 'returns nil without an owner' do
+      expect(build_for(nil).duplicate_in_address_book).to be_nil
+    end
+
+    it 'does not match the address against itself' do
+      expect(saved.duplicate_in_address_book).to be_nil
+    end
+
+    # The upgrade task copies the pre-6.0 foreign keys into codes and leaves
+    # them populated, so comparing them would make every migrated entry differ
+    # from every newly typed one and silently disable deduplication.
+    it 'matches an entry still carrying the pre-6.0 country and state ids' do
+      saved.update_columns(country_id: 42, state_id: 7)
+
+      expect(build_for(customer).duplicate_in_address_book).to eq(saved)
+    end
+
+    # A label names the entry, not the place: "Dock A" and "Dock B" at one site
+    # are two entries a company is entitled to keep.
+    it 'does not match an entry filed under a different label' do
+      saved.update!(label: 'Dock A')
+
+      expect(build_for(customer, label: 'Dock B').duplicate_in_address_book).to be_nil
+    end
+
+    it 'matches an entry filed under the same label' do
+      saved.update!(label: 'Dock A')
+
+      expect(build_for(customer, label: 'Dock A').duplicate_in_address_book).to eq(saved)
+    end
+
+    it 'does not match when the request carries metadata the entry lacks' do
+      built = build_for(customer)
+      built.metadata = { 'gate_code' => '1234' }
+
+      expect(built.duplicate_in_address_book).to be_nil
     end
   end
 end

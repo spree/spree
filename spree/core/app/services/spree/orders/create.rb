@@ -103,8 +103,8 @@ module Spree
         if @params[:use_customer_default_address] && @customer
           @customer.association(:bill_address).load_target
           @customer.association(:ship_address).load_target
-          order.bill_address = @customer.bill_address&.dup
-          order.ship_address = @customer.ship_address&.dup
+          order.bill_address = @customer.bill_address&.snapshot
+          order.ship_address = @customer.ship_address&.snapshot
         end
 
         assign_address(order, :ship_address, @params[:shipping_address_id], @params[:shipping_address])

@@ -26,7 +26,18 @@ module Spree
     # we're not freezing this on purpose so developers can extend and manage
     # those attributes depending of the logic of their applications
     ADDRESS_FIELDS = %w(firstname lastname company address1 address2 city state zipcode country phone)
-    EXCLUDED_KEYS_FOR_COMPARISON = %w(id updated_at created_at deleted_at label owner_type owner_id metadata)
+    # Beyond identity and ownership, three groups are excluded because they
+    # cannot tell two addresses apart. Latitude and longitude are derived from
+    # the address, so an entry whose geocoding has already run would otherwise
+    # never match the same address freshly typed in. country_id and state_id
+    # are the pre-6.0 foreign keys, which the upgrade task copies into codes
+    # and leaves populated: comparing them makes every migrated row differ
+    # from every new one. Both are handled the same way by .find_duplicate,
+    # which drops the legacy keys through .resolve_geo_params.
+    EXCLUDED_KEYS_FOR_COMPARISON = %w(
+      id updated_at created_at deleted_at label owner_type owner_id metadata
+      latitude longitude country_id state_id
+    )
     if defined?(Spree::Security::Addresses)
       include Spree::Security::Addresses
     end
@@ -287,8 +298,58 @@ module Spree
       ].reject(&:blank?).map { |attribute| ERB::Util.html_escape(attribute) }.join('<br/>')
     end
 
+    # @deprecated Overriding Ruby's +Object#clone+ was a mistake: this returns
+    #   a value copy with the owner, label and metadata stripped, which is not
+    #   what +clone+ means anywhere else in Ruby. The override is removed in
+    #   Spree 6.1 and +clone+ becomes the standard shallow copy. Use
+    #   {#snapshot} for the ownerless copy a purchase keeps.
     def clone
+      Spree::Deprecation.warn(
+        'Spree::Address#clone is deprecated. From Spree 6.1 it behaves as the standard Ruby Object#clone — a shallow copy keeping the owner and every other attribute. Use #snapshot for the ownerless copy a purchase keeps.'
+      )
+
       self.class.new(value_attributes)
+    end
+
+    # A copy of this address for a purchase to keep. An order's address records
+    # where the parcel actually went, so it belongs to the order and not to
+    # anyone's address book — a copy that kept the owner would file a second
+    # entry in the buyer's book on every order they place. Having no owner it
+    # carries no label either: a label is unique within one book, so every
+    # ownerless snapshot would compete for the same one.
+    #
+    # @return [Spree::Address]
+    def snapshot
+      dup.tap do |copy|
+        copy.owner = nil
+        copy.label = nil
+        copy.deleted_at = nil
+      end
+    end
+
+    # The entry the owner's book already holds for this, if there is one, so
+    # someone re-entering an address they already saved gets the entry they
+    # have back instead of a near-copy filed beside it.
+    #
+    # An entry is more than a place. Two rows match only when they mean the
+    # same place ({#==}) *and* agree on the things the owner attached to the
+    # entry itself — its label and its metadata. A company filing "Dock A" and
+    # "Dock B" at one site keeps two entries, and neither request silently
+    # loses the name it was filed under.
+    #
+    # Owners that keep no book, including no owner at all, have nothing to
+    # match against.
+    #
+    # @return [Spree::Address, nil]
+    def duplicate_in_address_book
+      return nil unless owner.respond_to?(:addresses)
+
+      owner.addresses.not_deleted.detect do |existing|
+        existing.id != id &&
+          existing == self &&
+          existing.label == label &&
+          existing.metadata.to_h == metadata.to_h
+      end
     end
 
     def ==(other)
