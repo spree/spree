@@ -230,10 +230,14 @@
           "review": "Es wird nichts erstellt, bevor Sie abschließen."
         },
         "products": {
+          "add": "{{name}} hinzufügen",
+          "all_title": "Alle Produkte",
+          "chosen_title": "Dieser Katalog",
           "count_one": "{{count}} Produkt",
           "count_other": "{{count}} Produkte",
           "empty": "Noch keine Produkte",
-          "empty_description": "Wählen Sie, was diese Vereinbarung umfasst. Leer lassen, um Preise zu setzen, ohne die Sichtbarkeit einzuschränken."
+          "empty_description": "Wählen Sie, was diese Vereinbarung umfasst. Leer lassen, um Preise zu setzen, ohne die Sichtbarkeit einzuschränken.",
+          "remove": "{{name}} entfernen"
         },
         "products_failed": "Der Katalog wurde erstellt, aber seine Produkte konnten nicht hinzugefügt werden. Fügen Sie sie auf der Katalogseite hinzu.",
         "products_none_warning": "Noch keine Produkte. Ein leerer Katalog setzt Preise, ohne etwas zu verbergen — alle Käufer sehen weiterhin das gesamte Sortiment.",

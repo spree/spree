@@ -230,10 +230,14 @@
           "review": "Nothing is created until you finish."
         },
         "products": {
+          "add": "Add {{name}}",
+          "all_title": "All products",
+          "chosen_title": "This catalog",
           "count_one": "{{count}} product",
           "count_other": "{{count}} products",
           "empty": "No products yet",
-          "empty_description": "Pick what this agreement covers. Leave it empty to price without restricting what buyers see."
+          "empty_description": "Pick what this agreement covers. Leave it empty to price without restricting what buyers see.",
+          "remove": "Remove {{name}}"
         },
         "products_failed": "The catalog was created, but its products could not be added. Add them from the catalog page.",
         "products_none_warning": "No products yet. An empty catalog prices without hiding anything — every shopper still sees the whole shop.",

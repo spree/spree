@@ -230,9 +230,13 @@
           "review": "完成前不会创建任何内容。"
         },
         "products": {
+          "add": "添加 {{name}}",
+          "all_title": "全部商品",
+          "chosen_title": "本目录",
           "count_other": "{{count}} 件商品",
           "empty": "尚无商品",
-          "empty_description": "选择本协议涵盖的商品。留空则只定价，不限制买家可见范围。"
+          "empty_description": "选择本协议涵盖的商品。留空则只定价，不限制买家可见范围。",
+          "remove": "移除 {{name}}"
         },
         "products_failed": "目录已创建，但未能添加其商品。请在目录页面添加。",
         "products_none_warning": "尚未添加商品。空目录只定价、不隐藏任何内容 — 买家仍能看到整个商店。",

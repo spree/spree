@@ -230,10 +230,14 @@
           "review": "Rien n’est créé tant que vous n’avez pas terminé."
         },
         "products": {
+          "add": "Ajouter {{name}}",
+          "all_title": "Tous les produits",
+          "chosen_title": "Ce catalogue",
           "count_one": "{{count}} produit",
           "count_other": "{{count}} produits",
           "empty": "Aucun produit",
-          "empty_description": "Choisissez ce que couvre cet accord. Laissez vide pour fixer des prix sans restreindre la visibilité."
+          "empty_description": "Choisissez ce que couvre cet accord. Laissez vide pour fixer des prix sans restreindre la visibilité.",
+          "remove": "Retirer {{name}}"
         },
         "products_failed": "Le catalogue a été créé, mais ses produits n’ont pas pu être ajoutés. Ajoutez-les depuis la page du catalogue.",
         "products_none_warning": "Aucun produit pour l’instant. Un catalogue vide fixe des prix sans rien masquer — tous les acheteurs voient encore toute la boutique.",

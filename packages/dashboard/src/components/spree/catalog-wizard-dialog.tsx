@@ -1,11 +1,12 @@
 import { zodResolver } from '@hookform/resolvers/zod'
 import type { Product } from '@spree/admin-sdk'
-import { adminClient, mapSpreeErrorsToForm, ResourcePickerSheet } from '@spree/dashboard-core'
+import { adminClient, mapSpreeErrorsToForm } from '@spree/dashboard-core'
 import {
   Alert,
   AlertDescription,
   Badge,
   Button,
+  cn,
   Dialog,
   DialogBody,
   DialogContent,
@@ -23,16 +24,19 @@ import {
   FieldGroup,
   FieldLabel,
   Input,
+  Pagination,
+  SearchInput,
   Textarea,
   Thumbnail,
   toastManager,
   WizardSteps,
 } from '@spree/dashboard-ui'
-import { InfoIcon, PackageIcon, PlusIcon, XIcon } from 'lucide-react'
-import { useState } from 'react'
+import { CheckIcon, InfoIcon, PackageIcon, PlusIcon, XIcon } from 'lucide-react'
+import { useDeferredValue, useEffect, useMemo, useState } from 'react'
 import { type UseFormReturn, useForm } from 'react-hook-form'
 import { useTranslation } from 'react-i18next'
 import { useCreateCatalog } from '../../hooks/use-catalogs'
+import { useProducts } from '../../hooks/use-products'
 import {
   CATALOG_DEFAULTS,
   type CatalogFormValues,
@@ -201,7 +205,14 @@ function CatalogWizard({
       </div>
 
       <DialogBody className="flex-1 overflow-y-auto p-6">
-        <div className="mx-auto flex w-full max-w-2xl flex-col gap-6">
+        {/* The Products step is two columns and wants the room; the others
+            are a form, which reads badly stretched across a wide window. */}
+        <div
+          className={cn(
+            'mx-auto flex w-full flex-col gap-6',
+            step === 'products' ? 'max-w-5xl' : 'max-w-2xl',
+          )}
+        >
           <div>
             <h2 className="font-medium text-lg">{t(`admin.catalogs.wizard.steps.${step}`)}</h2>
             <p className="text-muted-foreground text-sm">
@@ -333,9 +344,13 @@ function DetailsStep({ form }: { form: UseFormReturn<CatalogFormValues> }) {
 }
 
 /**
- * The assortment, staged. An empty catalog is legitimate — it prices without
- * restricting what anyone sees — so this step never blocks; it says what
- * leaving it empty means instead.
+ * The assortment, staged, as two columns: what the agreement covers on the
+ * left, everything else on the right. Built in place rather than behind a
+ * picker sheet — this step exists to assemble a list, and a sheet sliding
+ * over the wizard covers the very list being assembled.
+ *
+ * An empty catalog is legitimate — it prices without restricting what anyone
+ * sees — so this step never blocks; it says what leaving it empty means.
  */
 function ProductsStep({
   products,
@@ -345,38 +360,41 @@ function ProductsStep({
   onChange: (products: Product[]) => void
 }) {
   const { t } = useTranslation()
-  const [pickerOpen, setPickerOpen] = useState(false)
+  const [search, setSearch] = useState('')
+  const [page, setPage] = useState(1)
+  const deferredSearch = useDeferredValue(search)
+
+  const { data, isLoading } = useProducts({ page, limit: 10, search: deferredSearch, sort: 'name' })
+  const chosen = useMemo(() => new Set(products.map((product) => product.id)), [products])
+
+  // Typing filters a list whose page numbers no longer mean anything.
+  // biome-ignore lint/correctness/useExhaustiveDependencies: resetting the page is the point
+  useEffect(() => {
+    setPage(1)
+  }, [deferredSearch])
 
   return (
-    <div className="flex flex-col gap-3">
-      {products.length === 0 ? (
-        <Empty className="border">
-          <EmptyHeader>
-            <EmptyMedia variant="icon">
-              <PackageIcon />
-            </EmptyMedia>
-            <EmptyTitle>{t('admin.catalogs.wizard.products.empty')}</EmptyTitle>
-            <EmptyDescription>
-              {t('admin.catalogs.wizard.products.empty_description')}
-            </EmptyDescription>
-          </EmptyHeader>
-          <Button size="sm" variant="outline" type="button" onClick={() => setPickerOpen(true)}>
-            <PlusIcon className="size-4" />
-            {t('admin.catalogs.products.add_cta')}
-          </Button>
-        </Empty>
-      ) : (
-        <>
-          <div className="flex items-center justify-between">
-            <span className="text-muted-foreground text-sm">
-              {t('admin.catalogs.wizard.products.count', { count: products.length })}
-            </span>
-            <Button size="sm" variant="outline" type="button" onClick={() => setPickerOpen(true)}>
-              <PlusIcon className="size-4" />
-              {t('admin.catalogs.products.add_cta')}
-            </Button>
-          </div>
-          <div className="flex flex-col divide-y rounded-md border">
+    <div className="grid grid-cols-1 gap-4 lg:grid-cols-2">
+      <section className="flex min-w-0 flex-col gap-2">
+        <h3 className="font-medium text-sm">
+          {t('admin.catalogs.wizard.products.chosen_title')}
+          <span className="ml-2 font-normal text-muted-foreground">{products.length}</span>
+        </h3>
+
+        {products.length === 0 ? (
+          <Empty className="min-h-64 border">
+            <EmptyHeader>
+              <EmptyMedia variant="icon">
+                <PackageIcon />
+              </EmptyMedia>
+              <EmptyTitle>{t('admin.catalogs.wizard.products.empty')}</EmptyTitle>
+              <EmptyDescription>
+                {t('admin.catalogs.wizard.products.empty_description')}
+              </EmptyDescription>
+            </EmptyHeader>
+          </Empty>
+        ) : (
+          <div className="flex max-h-96 flex-col divide-y overflow-y-auto rounded-md border">
             {products.map((product) => (
               <div key={product.id} className="flex items-center gap-3 p-2">
                 <Thumbnail
@@ -390,43 +408,71 @@ function ProductsStep({
                   size="icon-xs"
                   type="button"
                   onClick={() => onChange(products.filter((row) => row.id !== product.id))}
-                  aria-label={t('admin.actions.remove')}
+                  aria-label={t('admin.catalogs.wizard.products.remove', { name: product.name })}
                 >
                   <XIcon className="size-4" />
                 </Button>
               </div>
             ))}
           </div>
-        </>
-      )}
+        )}
+      </section>
 
-      {pickerOpen && (
-        <ResourcePickerSheet<Product>
-          open
-          onOpenChange={setPickerOpen}
-          queryKey="catalog-wizard-products-picker"
-          selectedIds={products.map((product) => product.id)}
-          onConfirm={(_, records) => {
-            const known = new Set(products.map((product) => product.id))
-            onChange([...products, ...records.filter((record) => !known.has(record.id))])
-          }}
-          search={(q) => adminClient.products.list({ name_cont: q, limit: 25, sort: 'name' })}
-          getOptionLabel={(product) => product.name ?? product.id}
-          getOptionImageUrl={(product) => product.thumbnail_url}
-          getOptionSubtitle={(product) => product.slug ?? null}
-          title={t('admin.catalogs.products.picker_title')}
-          description={t('admin.catalogs.products.picker_description')}
-          searchPlaceholder={t('admin.catalogs.products.search_placeholder')}
+      <section className="flex min-w-0 flex-col gap-2">
+        <h3 className="font-medium text-sm">{t('admin.catalogs.wizard.products.all_title')}</h3>
+
+        <SearchInput
+          value={search}
+          onValueChange={setSearch}
+          placeholder={t('admin.catalogs.products.search_placeholder')}
         />
-      )}
+
+        <div className="flex max-h-96 flex-col divide-y overflow-y-auto rounded-md border">
+          {isLoading && (
+            <p className="p-4 text-center text-muted-foreground text-sm">
+              {t('admin.common.loading')}
+            </p>
+          )}
+          {!isLoading && (data?.data.length ?? 0) === 0 && (
+            <p className="p-4 text-center text-muted-foreground text-sm">
+              {t('admin.common.no_results')}
+            </p>
+          )}
+          {data?.data.map((product) => {
+            const added = chosen.has(product.id)
+
+            return (
+              <div key={product.id} className="flex items-center gap-3 p-2">
+                <Thumbnail
+                  src={product.thumbnail_url}
+                  alt={product.name ?? ''}
+                  className="size-8"
+                />
+                <span className="min-w-0 flex-1 truncate text-sm">{product.name}</span>
+                {/* An added row stays visible and disabled rather than
+                    disappearing: a list that reshuffles as you click it is
+                    hard to work down. */}
+                <Button
+                  variant="ghost"
+                  size="icon-xs"
+                  type="button"
+                  disabled={added}
+                  onClick={() => onChange([...products, product])}
+                  aria-label={t('admin.catalogs.wizard.products.add', { name: product.name })}
+                >
+                  {added ? <CheckIcon className="size-4" /> : <PlusIcon className="size-4" />}
+                </Button>
+              </div>
+            )
+          })}
+        </div>
+
+        {data?.meta && <Pagination meta={data.meta} onPageChange={setPage} />}
+      </section>
     </div>
   )
 }
 
-/**
- * The whole agreement before it exists. Read-only: a correction goes back to
- * the step that owns it, so each answer has one home.
- */
 function ReviewStep({
   form,
   products,
