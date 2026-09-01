@@ -23,9 +23,9 @@ module SpreeAvalara
         end
       end
 
-      # Why an address was not accepted. `transport?` separates "Avalara says
-      # this address is wrong" from "Avalara could not be reached", which the
-      # two callers treat very differently.
+      # Why an address was not accepted. `transport?` separates "Avalara judged
+      # this address" from "no judgement was obtained", which the two callers
+      # treat very differently.
       class Failure
         include ActiveModel::Model
         include ActiveModel::Attributes
@@ -57,9 +57,13 @@ module SpreeAvalara
 
         Result.new(body: body)
       rescue SpreeAvalara::RequestError => error
-        # No status means nothing answered, which is Avalara being unreachable
-        # rather than a judgement about the address.
-        Result.new(error: Failure.new(messages: [error.message], transport: error.status.nil?))
+        # Every raised failure is a missing judgement, not a bad address. A
+        # refusal Avalara actually made about the address arrives as `messages`
+        # in a successful response; a raise means the service was unreachable,
+        # degraded (5xx), or the credentials were rotated (401) — none of which
+        # says anything about where the customer lives, and all of which would
+        # otherwise block every checkout until somebody noticed.
+        Result.new(error: Failure.new(messages: [error.message], transport: true))
       end
 
       private

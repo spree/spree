@@ -77,6 +77,22 @@ RSpec.describe SpreeAvalara::TaxProvider do
   end
 
   it 'records what the line is worth before tax' do
+    # Start from a wrong value, so the example fails if nothing writes it.
+    line_item.update_column(:pre_tax_amount, 0)
+
+    provider.estimate(cart)
+
+    expect(line_item.reload.pre_tax_amount).to eq(line_item.taxable_basis)
+  end
+
+  # Internal restores the full basis when no rate matches; sweeping has to do the
+  # same, or an inclusive market keeps reporting a net figure for an item that is
+  # no longer taxed at all.
+  it 'restores the pre-tax amount when it sweeps and has nothing to say' do
+    provider.estimate(cart)
+    line_item.update_column(:pre_tax_amount, 1)
+    cart.update!(ship_address: nil, bill_address: nil)
+
     provider.estimate(cart)
 
     expect(line_item.reload.pre_tax_amount).to eq(line_item.taxable_basis)
@@ -178,14 +194,16 @@ RSpec.describe SpreeAvalara::TaxProvider do
 
     # Completion is replayable, so filing the same code twice is the success it
     # describes rather than an error to surface.
+    # A replay cannot learn the document id — the refusal carries none — so what
+    # matters is that it does not raise and does not invent one. Void and refund
+    # key on the order number, not this value.
     it 'treats an already-filed document as success' do
-      provider.commit(order)
       allow(client).to receive(:create_or_adjust_transaction).
         and_raise(SpreeAvalara::RequestError.new('Document already exists.', status: 400,
                                                  details: { 'code' => 'DocumentAlreadyExists' }))
 
       expect { provider.commit(order) }.not_to raise_error
-      expect(order.reload.metadata['avalara_transaction_id']).to eq('987654')
+      expect(order.reload.metadata['avalara_transaction_id']).to be_nil
     end
 
     it 'raises on any other refusal' do

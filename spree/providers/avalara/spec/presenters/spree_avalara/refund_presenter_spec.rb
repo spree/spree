@@ -44,6 +44,34 @@ RSpec.describe SpreeAvalara::RefundPresenter do
     expect(present.call[:taxOverride]).to eq(type: 'TaxDate', reason: 'Refund', taxDate: '2026-05-01')
   end
 
+  # The credit has to be classified the way the sale was, or Avalara re-prices it
+  # as generic goods for a non-exempt buyer.
+  describe 'mirroring the sale' do
+    it 'carries the tax code the line was sold under' do
+      category = create(:tax_category, store: @default_store, tax_code: 'PC040100')
+      line_item.variant.update!(tax_category: category)
+      line_item.save!
+
+      expect(present.call[:lines].sole[:taxCode]).to eq('PC040100')
+    end
+
+    it 'carries the exemption the sale was filed with' do
+      exemption = Spree::TaxExemption.new(reason_code: 'RESALE', certificate_number: 'C-100')
+
+      line = present(exemptions: [exemption]).call[:lines].sole
+
+      expect(line[:entityUseCode]).to eq('G')
+      expect(line[:exemptionCode]).to eq('C-100')
+    end
+
+    # The amount comes from pre_tax_amount, so it is net. Flagging it inclusive
+    # would have Avalara back tax out of a figure that never contained any,
+    # crediting roughly 1/(1+rate) of the VAT actually charged.
+    it 'states the credit as net of tax' do
+      expect(present.call[:lines].sole[:taxIncluded]).to be(false)
+    end
+  end
+
   describe 'when the refund is short of the returned lines' do
     # An admin keeping a restocking fee refunded less than came back, and no more
     # tax may be credited than the refund actually carried.

@@ -32,8 +32,13 @@ module SpreeAvalara
 
       # No items or nowhere to ship means Avalara has nothing to price. That is
       # an absence of opinion rather than a failure, so the stale rows go and
-      # nothing replaces them.
-      return sweep!(owner) if taxable.empty? || owner.tax_address.nil?
+      # nothing replaces them — and each item is worth its whole basis again,
+      # which is what Internal does when no rate matches.
+      if taxable.empty? || owner.tax_address.nil?
+        sweep!(owner)
+        taxable.each { |item| reset_pre_tax_amount(item) }
+        return
+      end
 
       body = fetch(owner, taxable, integration, tax_date, tax_identifier, exemptions)
       lines = TransactionLine.from_response(body, context: response_context(owner, tax_identifier, exemptions))
@@ -103,7 +108,7 @@ module SpreeAvalara
       integration = Integration.active_for!(order.store)
       presenter = RefundPresenter.new(
         order: order, integration: integration, return_items: return_items,
-        amount: amount, tax_date: tax_date
+        amount: amount, tax_date: tax_date, exemptions: order.usable_exemptions
       )
       return if presenter.nothing_to_credit?
 
@@ -159,13 +164,23 @@ module SpreeAvalara
       taxable.each { |item| store_pre_tax_amount(item, lines) }
     end
 
+    def reset_pre_tax_amount(item)
+      return unless item.respond_to?(:pre_tax_amount)
+
+      item.update_column(:pre_tax_amount, basis_for(item))
+    end
+
+    def basis_for(item)
+      item.respond_to?(:taxable_basis) ? item.taxable_basis : item.amount
+    end
+
     # Mirrors Internal#store_pre_tax_amount: what the item is worth before tax,
     # which the refund path reads back. Only included-in-price tax comes out of
     # the basis; additional tax sits on top of it.
     def store_pre_tax_amount(item, lines)
       return unless item.respond_to?(:pre_tax_amount)
 
-      basis = item.respond_to?(:taxable_basis) ? item.taxable_basis : item.amount
+      basis = basis_for(item)
       line = lines.find { |candidate| candidate.line_number.to_s == item.prefixed_id.to_s }
       basis -= line.amount if line&.included?
 
@@ -177,7 +192,6 @@ module SpreeAvalara
     def response_context(owner, tax_identifier, exemptions)
       {
         identifier_sent: tax_identifier&.value.present?,
-        exemption_sent: exemptions.present?,
         exemption_reasons: Array(exemptions).map(&:reason_code).compact,
         ship_from_country: SpreeAvalara.origin_location(owner)&.country_code,
         ship_to_country: owner.tax_address&.country_code

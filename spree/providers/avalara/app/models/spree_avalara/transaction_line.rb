@@ -140,14 +140,18 @@ module SpreeAvalara
       payload['exemptAmount'].to_d
     end
 
-    # A certificate has to exist for the row to claim one: either we sent a code,
-    # or Avalara applied one from its own store. `exemptAmount` alone says
-    # nothing — a sale into a state with no nexus reports the whole line exempt.
+    # A certificate has to exist for *this line* to claim one. `exemptAmount`
+    # alone says nothing — a sale into a state with no nexus reports the whole
+    # line exempt — and neither does an order-wide "we sent something", because
+    # a claim may cover some lines and not others.
+    #
+    # Avalara echoes back the code it applied, so the line is its own evidence.
+    # Where it echoes nothing the row falls through to a zero-tax reason, which
+    # under-claims rather than naming a certificate that does not exist.
     def customer_exempt?
       return false unless exempt_amount.positive?
 
-      context[:exemption_sent] == true ||
-        payload['exemptCertId'].to_i.positive? ||
+      payload['exemptCertId'].to_i.positive? ||
         payload['exemptNo'].to_s.present? ||
         payload['entityUseCode'].to_s.present?
     end
@@ -159,8 +163,17 @@ module SpreeAvalara
       zero_vat? && context[:identifier_sent] == true && goods?(item) && cross_border?
     end
 
+    # A cross-border supply to a registered buyer that is not goods: the service
+    # case the EU reverse-charges. Deliberately narrow rather than "whatever
+    # intra-community supply did not claim" — a domestic zero-rated sale (books,
+    # food) to a customer who happens to hold a registration is zero_rated, and
+    # calling it reverse charge files it under the wrong e-invoice category.
+    #
+    # Domestic reverse charge (construction and the like) is indistinguishable
+    # from zero-rating in the payload, so it reads zero_rated until a cassette
+    # shows a marker that separates them.
     def reverse_charge?(item)
-      zero_vat? && context[:identifier_sent] == true && !(goods?(item) && cross_border?)
+      zero_vat? && context[:identifier_sent] == true && cross_border? && !goods?(item)
     end
 
     def zero_vat?

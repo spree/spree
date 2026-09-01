@@ -11,12 +11,15 @@ module SpreeAvalara
     # @param amount [BigDecimal, nil] what the customer was actually refunded;
     #   nil means the returned lines' full worth
     # @param tax_date [Time, nil] the original supply date
-    def initialize(order:, integration:, return_items:, amount: nil, tax_date: nil)
+    # @param exemptions [Array<Spree::TaxExemption>] the same evidence the sale
+    #   was filed with, so the credit is classified the way the sale was
+    def initialize(order:, integration:, return_items:, amount: nil, tax_date: nil, exemptions: [])
       @order = order
       @integration = integration
       @return_items = Array(return_items)
       @amount = amount
       @tax_date = tax_date
+      @exemptions = exemptions
     end
 
     # What the returned lines are worth before tax. Nothing to credit means
@@ -70,22 +73,31 @@ module SpreeAvalara
 
     private
 
-    attr_reader :order, :integration, :return_items, :amount, :tax_date
+    attr_reader :order, :integration, :return_items, :amount, :tax_date, :exemptions
 
+    # Each credit line is the sale's line rebuilt — same tax code, same origin,
+    # same exemption — with the returned quantity at a negative amount. A credit
+    # that drops the classification is re-priced by Avalara as generic goods for
+    # a non-exempt buyer, which reclaims tax that was never collected.
     def lines
       return_items.filter_map do |item|
         credited = (credited_basis(item) * scale).round(2)
         next if credited <= 0
 
-        {
-          number: item.line_item.prefixed_id,
+        as_sold(item.line_item).merge(
           quantity: item.received_quantity,
           amount: -credited,
-          taxIncluded: SpreeAvalara.tax_inclusive?(order),
-          discounted: false,
-          discount: 0
-        }
+          # The amount is net by construction — it comes from pre_tax_amount —
+          # so Avalara must add tax to it rather than back tax out of it. Saying
+          # otherwise credits roughly 1/(1+rate) of the VAT on an inclusive
+          # market and leaves the rest permanently over-declared.
+          taxIncluded: false
+        )
       end
+    end
+
+    def as_sold(line_item)
+      ItemPresenter.new(item: line_item, owner: order, tax_included: false, exemptions: exemptions).call
     end
 
     # Per unit rather than per line: a partial return credits what came back.

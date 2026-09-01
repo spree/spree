@@ -130,8 +130,21 @@ RSpec.describe SpreeAvalara::TransactionLine do
     context 'customer exemptions' do
       let(:exempt) { { 'exemptAmount' => 100.0, 'taxCalculated' => 0.0 } }
 
-      it 'claims one when we sent a code' do
-        expect(reason(exempt, { exemption_sent: true })).to eq('customer_exempt')
+      # Avalara echoes back the code it applied, so the line carries its own
+      # evidence.
+      it 'claims one when Avalara echoes the code that was sent' do
+        expect(reason(exempt.merge('entityUseCode' => 'G'))).to eq('customer_exempt')
+      end
+
+      # A claim can cover some lines and not others, so an order-wide "something
+      # was sent" is not evidence about this line.
+      it 'does not claim one because another line was exempt' do
+        no_nexus = exempt.merge(
+          'details' => [detail('taxType' => 'Use', 'rate' => 0.0, 'taxCalculated' => 0.0,
+                               'nonTaxableAmount' => 100.0)]
+        )
+
+        expect(reason(no_nexus, { exemption_sent: true })).to eq('not_collecting')
       end
 
       it 'claims one when Avalara applied its own certificate' do
@@ -227,10 +240,22 @@ RSpec.describe SpreeAvalara::TransactionLine do
         expect(reason(zero_vat, context)).to eq('intra_community_supply')
       end
 
-      it 'is reverse_charge for a domestic supply to a registered buyer' do
+      # A cross-border supply that is not goods: the service case the EU
+      # reverse-charges.
+      it 'is reverse_charge for a cross-border service to a registered buyer' do
+        context = { identifier_sent: true, ship_from_country: 'DE', ship_to_country: 'FR' }
+        fee = build_stubbed(:fee)
+
+        expect(build_line(zero_vat, context).taxability_reason(fee)).to eq('reverse_charge')
+      end
+
+      # Books and food are zero-rated everywhere they are sold, and a buyer who
+      # happens to hold a registration does not turn that into reverse charge —
+      # they are different e-invoice categories.
+      it 'leaves a domestic zero-rated sale alone' do
         context = { identifier_sent: true, ship_from_country: 'DE', ship_to_country: 'DE' }
 
-        expect(reason(zero_vat, context)).to eq('reverse_charge')
+        expect(reason(zero_vat, context)).to eq('zero_rated')
       end
 
       it 'is neither without a buyer registration' do

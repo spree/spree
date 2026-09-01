@@ -60,20 +60,26 @@ RSpec.describe SpreeAvalara::Address::Validate do
     expect(result.error).to be_transport
   end
 
-  it 'treats a refusal Avalara answered as a judgement about the address' do
-    allow(client).to receive(:resolve_address).
-      and_raise(SpreeAvalara::RequestError.new('Bad request.', status: 400))
+  # A degraded service or a rotated licence key says nothing about where the
+  # customer lives, so neither may refuse a checkout. Only what Avalara reports
+  # in `messages` is a judgement about the address.
+  it 'treats any raised failure as a missing judgement, not a bad address' do
+    [500, 401, 400].each do |status|
+      allow(client).to receive(:resolve_address).
+        and_raise(SpreeAvalara::RequestError.new('refused', status: status))
 
-    expect(service.call(address: address, store: @default_store).error).not_to be_transport
+      expect(service.call(address: address, store: @default_store).error).to be_transport
+    end
   end
 
   # Avalara validates US and Canadian addresses only, so there is no opinion to
   # be had about anywhere else.
   it 'has no opinion outside the countries Avalara covers' do
+    allow(client).to receive(:resolve_address).and_return({})
     german = build(:address, country_code: 'DE')
 
     expect(service.call(address: german, store: @default_store)).to be_success
-    expect(client).not_to have_received(:resolve_address) if client.respond_to?(:resolve_address)
+    expect(client).not_to have_received(:resolve_address)
   end
 
   it 'has no opinion without an address' do
