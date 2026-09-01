@@ -1,8 +1,8 @@
 import type { TaxRate } from '@spree/admin-sdk'
 import { defineTable } from '@spree/dashboard-core'
 import { ActiveBadge, ResourceNameCell } from '@spree/dashboard-ui'
+import { ReceiptTextIcon } from '@spree/dashboard-ui/icons'
 import i18n from 'i18next'
-import { ReceiptTextIcon } from 'lucide-react'
 import { JurisdictionLabel } from '../components/spree/jurisdiction-label'
 import { TaxCategoryLabel } from '../components/spree/tax-category-label'
 

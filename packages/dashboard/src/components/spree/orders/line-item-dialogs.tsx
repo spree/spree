@@ -13,8 +13,8 @@ import {
   SheetHeader,
   SheetTitle,
 } from '@spree/dashboard-ui'
+import { XCircleIcon } from '@spree/dashboard-ui/icons'
 import { useQuery } from '@tanstack/react-query'
-import { XCircleIcon } from 'lucide-react'
 import { type FormEvent, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 

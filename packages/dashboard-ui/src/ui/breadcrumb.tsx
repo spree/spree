@@ -1,7 +1,7 @@
 import i18n from 'i18next'
-import { ChevronRightIcon, MoreHorizontalIcon } from 'lucide-react'
 import type * as React from 'react'
 import { cn } from '../lib/utils'
+import { ChevronRightIcon, MoreHorizontalIcon } from '../spree/icons'
 import { Slot } from './slot'
 
 function Breadcrumb({ className, ...props }: React.ComponentProps<'nav'>) {

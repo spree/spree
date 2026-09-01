@@ -14,8 +14,8 @@ import {
   EmptyMedia,
   EmptyTitle,
 } from '@spree/dashboard-ui'
+import { PlugIcon } from '@spree/dashboard-ui/icons'
 import { createFileRoute, useNavigate } from '@tanstack/react-router'
-import { PlugIcon } from 'lucide-react'
 import { useMemo } from 'react'
 import { useTranslation } from 'react-i18next'
 import { z } from 'zod/v4'

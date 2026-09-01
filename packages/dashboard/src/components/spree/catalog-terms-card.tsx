@@ -17,7 +17,7 @@ import {
   TooltipContent,
   TooltipTrigger,
 } from '@spree/dashboard-ui'
-import { InfoIcon, PlusIcon, XIcon } from 'lucide-react'
+import { InfoIcon, PlusIcon, XIcon } from '@spree/dashboard-ui/icons'
 import type { UseFormReturn } from 'react-hook-form'
 import { useTranslation } from 'react-i18next'
 import type {

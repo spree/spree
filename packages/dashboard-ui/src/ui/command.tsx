@@ -1,5 +1,7 @@
 import { Command as CommandPrimitive } from 'cmdk'
 import i18n from 'i18next'
+import * as React from 'react'
+import { cn } from '../lib/utils'
 import {
   CheckIcon,
   CornerDownLeftIcon,
@@ -7,9 +9,7 @@ import {
   MoveDownIcon,
   MoveUpIcon,
   SearchIcon,
-} from 'lucide-react'
-import * as React from 'react'
-import { cn } from '../lib/utils'
+} from '../spree/icons'
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from './dialog'
 
 function Command({ className, ...props }: React.ComponentProps<typeof CommandPrimitive>) {

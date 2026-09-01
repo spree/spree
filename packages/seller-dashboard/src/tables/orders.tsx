@@ -1,8 +1,8 @@
 import { defineTable } from '@spree/dashboard-core'
 import { ResourceNameCell, StatusBadge } from '@spree/dashboard-ui'
+import { PackageIcon } from '@spree/dashboard-ui/icons'
 import type { Order } from '@spree/seller-sdk'
 import i18n from 'i18next'
-import { PackageIcon } from 'lucide-react'
 
 /** Mirrors the operator dashboard's order status vocabularies. */
 const FULFILLMENT_STATUSES = [

@@ -25,7 +25,6 @@ import {
   TooltipContent,
   TooltipTrigger,
 } from '@spree/dashboard-ui'
-import { useQuery } from '@tanstack/react-query'
 import {
   ArrowUpDownIcon,
   CheckIcon,
@@ -34,7 +33,8 @@ import {
   Columns3Icon,
   ListFilter,
   XIcon,
-} from 'lucide-react'
+} from '@spree/dashboard-ui/icons'
+import { useQuery } from '@tanstack/react-query'
 import { useCallback, useDeferredValue, useMemo, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { getApiClient } from '../api-client'

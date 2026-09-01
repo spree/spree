@@ -18,7 +18,7 @@ import {
   Input,
   toastManager,
 } from '@spree/dashboard-ui'
-import { DownloadIcon, FileTextIcon, PencilIcon } from 'lucide-react'
+import { DownloadIcon, FileTextIcon, PencilIcon } from '@spree/dashboard-ui/icons'
 import { type FormEvent, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useOrderMutation } from '../../../hooks/use-order'

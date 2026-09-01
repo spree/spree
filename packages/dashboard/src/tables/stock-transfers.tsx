@@ -1,8 +1,8 @@
 import type { StockTransfer } from '@spree/admin-sdk'
 import { defineTable } from '@spree/dashboard-core'
 import { Badge, RelativeTime, ResourceNameCell } from '@spree/dashboard-ui'
+import { ArrowLeftRightIcon } from '@spree/dashboard-ui/icons'
 import i18n from 'i18next'
-import { ArrowLeftRightIcon } from 'lucide-react'
 
 defineTable<StockTransfer>('stock-transfers', {
   title: i18n.t('admin.stock_transfers.title'),

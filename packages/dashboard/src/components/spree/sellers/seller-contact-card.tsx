@@ -1,6 +1,6 @@
 import type { Seller } from '@spree/admin-sdk'
 import { Button, Card, CardAction, CardContent, CardHeader, CardTitle } from '@spree/dashboard-ui'
-import { PencilIcon } from 'lucide-react'
+import { PencilIcon } from '@spree/dashboard-ui/icons'
 import { useTranslation } from 'react-i18next'
 import { ReadRow } from './seller-read-row'
 

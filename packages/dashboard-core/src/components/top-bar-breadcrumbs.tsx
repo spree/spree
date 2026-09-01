@@ -6,8 +6,8 @@ import {
   BreadcrumbPage,
   BreadcrumbSeparator,
 } from '@spree/dashboard-ui'
+import { MenuIcon } from '@spree/dashboard-ui/icons'
 import { Link, useParams, useRouterState } from '@tanstack/react-router'
-import { MenuIcon } from 'lucide-react'
 import { Fragment, type ReactNode, useMemo } from 'react'
 import { useTranslation } from 'react-i18next'
 import { isPathWithin, type NavEntry, resolveNavLabel, useNavEntries } from '../lib/nav-registry'

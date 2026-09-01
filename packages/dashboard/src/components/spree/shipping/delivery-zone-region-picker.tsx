@@ -10,8 +10,14 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@spree/dashboard-ui'
+import {
+  ChevronDownIcon,
+  ChevronRightIcon,
+  PlusIcon,
+  SearchIcon,
+  Trash2Icon,
+} from '@spree/dashboard-ui/icons'
 import { Link } from '@tanstack/react-router'
-import { ChevronDownIcon, ChevronRightIcon, PlusIcon, SearchIcon, Trash2Icon } from 'lucide-react'
 import { useMemo, useRef, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useCountryNames, useCountryStates, useMarketCountries } from '../../../hooks/use-geography'

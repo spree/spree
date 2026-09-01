@@ -14,8 +14,8 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
 } from '@spree/dashboard-ui'
+import { ArrowLeftIcon, PackageIcon } from '@spree/dashboard-ui/icons'
 import { Link, useParams, useRouterState } from '@tanstack/react-router'
-import { ArrowLeftIcon, PackageIcon } from 'lucide-react'
 import { useEffect, useMemo, useState, useSyncExternalStore } from 'react'
 import { useTranslation } from 'react-i18next'
 import { isPathWithin, resolveNavLabel } from '../lib/nav-registry'

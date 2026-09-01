@@ -40,8 +40,8 @@ import {
   TableRow,
   useConfirm,
 } from '@spree/dashboard-ui'
+import { PlusIcon, RotateCcwIcon, TriangleAlertIcon } from '@spree/dashboard-ui/icons'
 import { createFileRoute } from '@tanstack/react-router'
-import { PlusIcon, RotateCcwIcon, TriangleAlertIcon } from 'lucide-react'
 import { useState } from 'react'
 import { Controller, type UseFormReturn, useForm } from 'react-hook-form'
 import { useTranslation } from 'react-i18next'

@@ -8,8 +8,8 @@ import {
   usePermissions,
 } from '@spree/dashboard-core'
 import { Button, RowActions, useConfirm, useRowClickBridge } from '@spree/dashboard-ui'
+import { PlusIcon } from '@spree/dashboard-ui/icons'
 import { createFileRoute, useNavigate } from '@tanstack/react-router'
-import { PlusIcon } from 'lucide-react'
 import { useTranslation } from 'react-i18next'
 import { useDeletePriceList } from '../../../../../hooks/use-price-lists'
 import '../../../../../tables/price-lists'

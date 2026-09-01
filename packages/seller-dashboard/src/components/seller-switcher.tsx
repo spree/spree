@@ -11,9 +11,9 @@ import {
   Skeleton,
   useSidebar,
 } from '@spree/dashboard-ui'
+import { CheckIcon, ChevronsUpDownIcon } from '@spree/dashboard-ui/icons'
 import { useQuery } from '@tanstack/react-query'
 import { Link, useParams } from '@tanstack/react-router'
-import { CheckIcon, ChevronsUpDownIcon } from 'lucide-react'
 import { useTranslation } from 'react-i18next'
 import { sellerClient } from '../api-client'
 

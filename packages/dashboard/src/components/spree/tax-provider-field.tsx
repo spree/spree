@@ -11,7 +11,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@spree/dashboard-ui'
-import { TriangleAlertIcon } from 'lucide-react'
+import { TriangleAlertIcon } from '@spree/dashboard-ui/icons'
 import { Controller, type UseFormReturn } from 'react-hook-form'
 import { useTranslation } from 'react-i18next'
 import { useTaxProviders } from '../../hooks/use-tax-rates'

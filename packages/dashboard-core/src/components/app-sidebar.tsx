@@ -1,6 +1,6 @@
 import { Sidebar, SidebarContent, SidebarHeader } from '@spree/dashboard-ui'
+import { PackageIcon } from '@spree/dashboard-ui/icons'
 import { useParams } from '@tanstack/react-router'
-import { PackageIcon } from 'lucide-react'
 import type { ComponentProps, ReactNode } from 'react'
 import { useAuth } from '../hooks/use-auth'
 import { primarySidebarSide, useTranslation } from '../lib/i18n'

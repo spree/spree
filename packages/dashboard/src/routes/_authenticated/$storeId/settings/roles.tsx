@@ -21,8 +21,8 @@ import {
   toastManager,
   useConfirm,
 } from '@spree/dashboard-ui'
+import { CopyIcon, LockIcon, PlusIcon, ShieldIcon } from '@spree/dashboard-ui/icons'
 import { createFileRoute, useNavigate } from '@tanstack/react-router'
-import { CopyIcon, LockIcon, PlusIcon, ShieldIcon } from 'lucide-react'
 import { useTranslation } from 'react-i18next'
 import { z } from 'zod/v4'
 import { permissionKeyLabel } from '../../../../components/spree/permission-picker'

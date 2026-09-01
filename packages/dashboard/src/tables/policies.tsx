@@ -1,8 +1,8 @@
 import type { Policy } from '@spree/admin-sdk'
 import { defineTable } from '@spree/dashboard-core'
 import { RelativeTime, ResourceNameCell } from '@spree/dashboard-ui'
+import { ScrollTextIcon } from '@spree/dashboard-ui/icons'
 import i18n from 'i18next'
-import { ScrollTextIcon } from 'lucide-react'
 
 defineTable<Policy>('policies', {
   title: i18n.t('admin.settings_nav.items.policies'),

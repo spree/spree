@@ -1,8 +1,8 @@
 import type { WebhookDelivery } from '@spree/admin-sdk'
 import { defineTable } from '@spree/dashboard-core'
 import { Badge, RelativeTime, StatusBadge } from '@spree/dashboard-ui'
+import { ListIcon } from '@spree/dashboard-ui/icons'
 import i18n from 'i18next'
-import { ListIcon } from 'lucide-react'
 
 // `success` on a delivery is tri-state: `true` (HTTP 2xx received), `false`
 // (response/transport error), or `null` (queued, not yet attempted). The

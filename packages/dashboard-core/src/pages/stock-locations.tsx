@@ -23,8 +23,8 @@ import {
   useConfirm,
   useRowClickBridge,
 } from '@spree/dashboard-ui'
+import { PlusIcon } from '@spree/dashboard-ui/icons'
 import { useNavigate } from '@tanstack/react-router'
-import { PlusIcon } from 'lucide-react'
 import { type ComponentType, useEffect } from 'react'
 import { Controller, type UseFormReturn, useForm } from 'react-hook-form'
 import { useTranslation } from 'react-i18next'

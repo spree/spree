@@ -1,8 +1,8 @@
 import type { CommissionRate } from '@spree/admin-sdk'
 import { defineTable } from '@spree/dashboard-core'
 import { ActiveBadge, ResourceNameCell } from '@spree/dashboard-ui'
+import { HandCoinsIcon } from '@spree/dashboard-ui/icons'
 import i18n from 'i18next'
-import { HandCoinsIcon } from 'lucide-react'
 
 defineTable<CommissionRate>('commission-rates', {
   title: i18n.t('admin.settings_nav.items.commission_rates'),

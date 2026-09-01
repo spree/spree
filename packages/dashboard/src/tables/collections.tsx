@@ -1,8 +1,8 @@
 import type { Collection } from '@spree/admin-sdk'
 import { defineTable } from '@spree/dashboard-core'
 import { Badge, ResourceNameCell } from '@spree/dashboard-ui'
+import { LayersIcon } from '@spree/dashboard-ui/icons'
 import i18n from 'i18next'
-import { LayersIcon } from 'lucide-react'
 import { sortOrderLabelKey } from '../schemas/collection'
 
 defineTable<Collection>('collections', {

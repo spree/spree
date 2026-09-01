@@ -17,7 +17,7 @@ import {
   SelectValue,
   Switch,
 } from '@spree/dashboard-ui'
-import { TableIcon } from 'lucide-react'
+import { TableIcon } from '@spree/dashboard-ui/icons'
 import { useState } from 'react'
 import { Controller, type UseFormReturn } from 'react-hook-form'
 import { useTranslation } from 'react-i18next'

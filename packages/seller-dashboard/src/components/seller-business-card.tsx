@@ -15,10 +15,10 @@ import {
   SheetTitle,
   toastManager,
 } from '@spree/dashboard-ui'
+import { PencilIcon } from '@spree/dashboard-ui/icons'
 import type { Profile } from '@spree/seller-sdk'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { useParams } from '@tanstack/react-router'
-import { PencilIcon } from 'lucide-react'
 import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { sellerClient } from '../api-client'

@@ -1,7 +1,7 @@
 import type { DeliveryMethod } from '@spree/admin-sdk'
 import { Can, Subject } from '@spree/dashboard-core'
 import { Button, Card, CardContent, CardHeader, CardTitle } from '@spree/dashboard-ui'
-import { PlusIcon, ZapIcon } from 'lucide-react'
+import { PlusIcon, ZapIcon } from '@spree/dashboard-ui/icons'
 import { useTranslation } from 'react-i18next'
 import { DeliveryMethodList } from './delivery-method-list'
 import { useMethodSheetNavigation } from './use-method-sheet-navigation'

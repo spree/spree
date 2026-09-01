@@ -1,7 +1,7 @@
 import { Accordion as AccordionPrimitive } from '@base-ui/react/accordion'
-import { ChevronDownIcon } from 'lucide-react'
 import type * as React from 'react'
 import { cn } from '../lib/utils'
+import { ChevronDownIcon } from '../spree/icons'
 
 /**
  * Vertically stacked, expandable sections sharing one frame.

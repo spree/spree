@@ -31,7 +31,7 @@ import {
   TableHeader,
   TableRow,
 } from '@spree/dashboard-ui'
-import { PencilIcon, XIcon } from 'lucide-react'
+import { PencilIcon, XIcon } from '@spree/dashboard-ui/icons'
 import { type CSSProperties, useEffect, useMemo, useState } from 'react'
 import { type UseFormReturn, useFieldArray, useWatch } from 'react-hook-form'
 import { useTranslation } from 'react-i18next'

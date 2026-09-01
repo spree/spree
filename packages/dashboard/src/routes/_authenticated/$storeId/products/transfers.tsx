@@ -43,8 +43,8 @@ import {
   useConfirm,
   useRowClickBridge,
 } from '@spree/dashboard-ui'
+import { ArrowLeftRightIcon, EyeIcon, PlusIcon, TrashIcon } from '@spree/dashboard-ui/icons'
 import { createFileRoute, useNavigate } from '@tanstack/react-router'
-import { ArrowLeftRightIcon, EyeIcon, PlusIcon, TrashIcon } from 'lucide-react'
 import { useMemo, useRef, useState } from 'react'
 import { Trans, useTranslation } from 'react-i18next'
 import { z } from 'zod/v4'

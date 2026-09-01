@@ -47,7 +47,7 @@ import {
   TagIcon,
   TruckIcon,
   XCircleIcon,
-} from 'lucide-react'
+} from '@spree/dashboard-ui/icons'
 import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useFulfillmentActions } from '../../../hooks/use-fulfillments'

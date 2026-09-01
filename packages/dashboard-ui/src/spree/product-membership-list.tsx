@@ -15,7 +15,6 @@ import {
   verticalListSortingStrategy,
 } from '@dnd-kit/sortable'
 import { CSS } from '@dnd-kit/utilities'
-import { Undo2Icon, XIcon } from 'lucide-react'
 import { type ReactNode, useEffect, useMemo, useState } from 'react'
 import { cn } from '../lib/utils'
 import { Badge } from '../ui/badge'
@@ -25,6 +24,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '.
 import { Pagination, type PaginationMeta } from '../ui/pagination'
 import { Thumbnail } from '../ui/thumbnail'
 import { DragHandle } from './drag-handle'
+import { Undo2Icon, XIcon } from './icons'
 import { SearchInput } from './search-input'
 
 /** One product row in a membership list. */

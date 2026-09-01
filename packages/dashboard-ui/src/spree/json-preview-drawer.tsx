@@ -8,6 +8,9 @@ import {
   SheetTitle,
   useCopyToClipboard,
 } from '@spree/dashboard-ui'
+import type { ComponentProps } from 'react'
+import { useEffect, useMemo, useState } from 'react'
+import { useTranslation } from 'react-i18next'
 import {
   CheckIcon,
   ChevronDownIcon,
@@ -17,10 +20,7 @@ import {
   Loader2Icon,
   RotateCcwIcon,
   XIcon,
-} from 'lucide-react'
-import type { ComponentProps } from 'react'
-import { useEffect, useMemo, useState } from 'react'
-import { useTranslation } from 'react-i18next'
+} from './icons'
 import { type JsonValueLinkResolver, JsonValueView } from './json-value-view'
 
 // Re-export so existing imports of `JsonValueLinkResolver` from this module

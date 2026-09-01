@@ -15,7 +15,7 @@ import {
   SheetTitle,
   toastManager,
 } from '@spree/dashboard-ui'
-import { DownloadIcon, FileSpreadsheetIcon, UploadIcon } from 'lucide-react'
+import { DownloadIcon, FileSpreadsheetIcon, UploadIcon } from '@spree/dashboard-ui/icons'
 import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import type { PanelImport } from '../api-client'

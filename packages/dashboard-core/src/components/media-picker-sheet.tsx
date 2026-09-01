@@ -8,8 +8,8 @@ import {
   SheetHeader,
   SheetTitle,
 } from '@spree/dashboard-ui'
+import { CheckIcon, ImageIcon, Loader2Icon, PlayIcon, UploadIcon } from '@spree/dashboard-ui/icons'
 import { useQuery } from '@tanstack/react-query'
-import { CheckIcon, ImageIcon, Loader2Icon, PlayIcon, UploadIcon } from 'lucide-react'
 import { useDeferredValue, useRef, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useTenantId } from '../providers/tenant-provider'

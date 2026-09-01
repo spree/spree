@@ -8,7 +8,7 @@ import {
   TooltipTrigger,
   useConfirm,
 } from '@spree/dashboard-ui'
-import { TruckIcon } from 'lucide-react'
+import { TruckIcon } from '@spree/dashboard-ui/icons'
 import { useTranslation } from 'react-i18next'
 import {
   useDeleteDeliveryMethod,

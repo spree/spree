@@ -11,7 +11,7 @@ import {
   CardTitle,
   useConfirm,
 } from '@spree/dashboard-ui'
-import { PlusIcon } from 'lucide-react'
+import { PlusIcon } from '@spree/dashboard-ui/icons'
 import { useMemo, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import {

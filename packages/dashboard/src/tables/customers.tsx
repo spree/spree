@@ -1,8 +1,8 @@
 import { defineTable, Subject } from '@spree/dashboard-core'
 import { ActiveBadge, Badge, RelativeTime, TagList } from '@spree/dashboard-ui'
+import { UsersIcon } from '@spree/dashboard-ui/icons'
 import { Link } from '@tanstack/react-router'
 import i18n from 'i18next'
-import { UsersIcon } from 'lucide-react'
 import { companyAutocompleteProps } from '../hooks/use-companies'
 import { customerGroupAutocompleteProps } from '../hooks/use-customer-groups'
 
