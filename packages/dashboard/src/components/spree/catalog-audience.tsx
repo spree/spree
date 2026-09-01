@@ -180,25 +180,26 @@ function AudienceEmpty({ canEdit, onAssign }: { canEdit: boolean; onAssign: () =
  * form opens inline below the list, because a dialog on top of the wizard's
  * dialog is a stack with nothing to gain from it.
  */
-export function CatalogAudienceStep({ form }: { form: UseFormReturn<CatalogFormValues> }) {
+export function CatalogAudienceStep({
+  form,
+  assigning,
+  onAssigningChange,
+}: {
+  form: UseFormReturn<CatalogFormValues>
+  /** Owned by the wizard, whose heading row carries the Assign button. */
+  assigning: boolean
+  onAssigningChange: (assigning: boolean) => void
+}) {
   const { t } = useTranslation()
-  const [assigning, setAssigning] = useState(false)
   const { assignments, add, remove, restore } = useCatalogAudience(form)
+  const setAssigning = onAssigningChange
 
   return (
     <div className="flex flex-col gap-3">
       {assignments.length === 0 ? (
         <AudienceEmpty canEdit onAssign={() => setAssigning(true)} />
       ) : (
-        <>
-          <div className="flex justify-end">
-            <Button size="sm" variant="outline" type="button" onClick={() => setAssigning(true)}>
-              <PlusIcon className="size-4" />
-              {t('admin.catalogs.assignments.add_cta')}
-            </Button>
-          </div>
-          <AudienceList assignments={assignments} canEdit onRemove={remove} onRestore={restore} />
-        </>
+        <AudienceList assignments={assignments} canEdit onRemove={remove} onRestore={restore} />
       )}
 
       {assigning && (

@@ -90,6 +90,8 @@ function CatalogWizard({
   const createMutation = useCreateCatalog()
   const [step, setStep] = useState<StepKey>('details')
   const [products, setProducts] = useState<Product[]>([])
+  // Lifted so the step's Assign can sit on the heading row the wizard owns.
+  const [assigning, setAssigning] = useState(false)
 
   const form = useForm<CatalogFormValues>({
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -202,9 +204,19 @@ function CatalogWizard({
         )
       }
     >
-      <div>
-        <h2 className="font-medium text-lg">{t(`admin.catalogs.wizard.steps.${step}`)}</h2>
-        <p className="text-muted-foreground text-sm">{t(`admin.catalogs.wizard.help.${step}`)}</p>
+      {/* A step's own action belongs on its title row, not floating above
+          the content it acts on. */}
+      <div className="flex items-start justify-between gap-4">
+        <div>
+          <h2 className="font-medium text-lg">{t(`admin.catalogs.wizard.steps.${step}`)}</h2>
+          <p className="text-muted-foreground text-sm">{t(`admin.catalogs.wizard.help.${step}`)}</p>
+        </div>
+        {step === 'audience' && audienceCount > 0 && (
+          <Button size="sm" variant="outline" type="button" onClick={() => setAssigning(true)}>
+            <PlusIcon className="size-4" />
+            {t('admin.catalogs.assignments.add_cta')}
+          </Button>
+        )}
       </div>
 
       {form.formState.errors.root?.message && (
@@ -216,7 +228,7 @@ function CatalogWizard({
       {step === 'details' && <DetailsStep form={form} />}
       {step === 'audience' && (
         <>
-          <CatalogAudienceStep form={form} />
+          <CatalogAudienceStep form={form} assigning={assigning} onAssigningChange={setAssigning} />
           {/* Both empty states are legitimate — a catalog with no audience and
               one with no assortment each mean something specific — so neither
               blocks. What they mean is said here rather than discovered
