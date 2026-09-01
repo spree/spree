@@ -72,8 +72,6 @@ export function CatalogWizardDialog({
   /** Where to go once the catalog exists — its agreement editor. */
   onCreated: (catalogId: string) => void
 }) {
-  // Remounted per opening, so an abandoned draft is not still sitting there
-  // the next time the wizard opens.
   return open ? <CatalogWizard open onOpenChange={onOpenChange} onCreated={onCreated} /> : null
 }
 
@@ -90,7 +88,6 @@ function CatalogWizard({
   const createMutation = useCreateCatalog()
   const [step, setStep] = useState<StepKey>('details')
   const [products, setProducts] = useState<Product[]>([])
-  // Lifted so the step's Assign can sit on the heading row the wizard owns.
   const [assigning, setAssigning] = useState(false)
 
   const form = useForm<CatalogFormValues>({
@@ -204,8 +201,6 @@ function CatalogWizard({
         )
       }
     >
-      {/* A step's own action belongs on its title row, not floating above
-          the content it acts on. */}
       <div className="flex items-start justify-between gap-4">
         <div>
           <h2 className="font-medium text-lg">{t(`admin.catalogs.wizard.steps.${step}`)}</h2>
@@ -229,10 +224,6 @@ function CatalogWizard({
       {step === 'audience' && (
         <>
           <CatalogAudienceStep form={form} assigning={assigning} onAssigningChange={setAssigning} />
-          {/* Both empty states are legitimate — a catalog with no audience and
-              one with no assortment each mean something specific — so neither
-              blocks. What they mean is said here rather than discovered
-              later. */}
           {audienceCount === 0 && (
             <p className="rounded-md bg-muted px-3 py-2 text-muted-foreground text-sm">
               {t('admin.catalogs.wizard.audience_none_warning')}
@@ -258,8 +249,6 @@ function CatalogWizard({
       {step === 'review' && (
         <>
           <ReviewStep form={form} products={products} />
-          {/* Creating and going live are separate acts, so the merchant is
-              told which one Create performs. */}
           <Alert variant="info">
             <InfoIcon />
             <AlertDescription>{t('admin.catalogs.wizard.review.inactive')}</AlertDescription>

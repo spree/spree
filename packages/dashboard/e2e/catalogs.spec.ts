@@ -165,7 +165,7 @@ test.describe('catalogs', () => {
     // The list is created by Save and seeded from the assortment, so the
     // spreadsheet opens on a priceable row rather than empty.
     //
-    // `.first()`: the same button sits on the pricing card and on the products
+    // `.first()`: the button sits on the pricing card and on the products
     // card — pricing the rows being priced belongs there too — and both open
     // this one grid.
     const openPrices = page.getByRole('button', { name: /^enter prices$/i }).first()

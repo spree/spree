@@ -1,4 +1,4 @@
-import { adminClient, ResourceCombobox } from '@spree/dashboard-core'
+import { adminClient, ResourceCombobox, useStore } from '@spree/dashboard-core'
 import {
   Badge,
   Button,
@@ -31,6 +31,7 @@ import {
   SelectValue,
 } from '@spree/dashboard-ui'
 import { PlusIcon, TrashIcon, Undo2Icon, UsersIcon } from '@spree/dashboard-ui/icons'
+import { Link } from '@tanstack/react-router'
 import { useState } from 'react'
 import type { UseFormReturn } from 'react-hook-form'
 import { useTranslation } from 'react-i18next'
@@ -39,11 +40,7 @@ import type { AssignmentEntry, CatalogFormValues } from '../../schemas/catalog'
 const ASSIGNABLE_TYPES = ['company', 'customer_group'] as const
 type AssignableType = (typeof ASSIGNABLE_TYPES)[number]
 
-/**
- * The staged audience and the three things a surface does to it. Shared so
- * the wizard step and the editor card agree on what assigning means, while
- * each arranges it the way its own space wants.
- */
+/** Shared so the wizard step and the editor card agree on what assigning means. */
 function useCatalogAudience(form: UseFormReturn<CatalogFormValues>) {
   const assignments: AssignmentEntry[] = form.watch('assignments') ?? []
 
@@ -55,12 +52,9 @@ function useCatalogAudience(form: UseFormReturn<CatalogFormValues>) {
     update(assignments.map((row, i) => (i === index ? { ...row, removed: false } : row)))
   }
 
-  // Removal needs no confirm: nothing is written until Save, and Discard puts
-  // it back — the same reason the assortment rows drop theirs.
-  //
-  // A row that exists server-side is marked rather than dropped, so it stays
-  // visible struck through with an undo, like a product staged for removal.
-  // One the merchant only just added has nothing to undo back to, so it goes.
+  // A saved row is marked rather than dropped, so it stays visible with an
+  // undo; one just added has nothing to undo back to. No confirm either way —
+  // Save is what writes, Discard is the undo.
   function remove(index: number) {
     const entry = assignments[index]
     if (!entry.id) {
@@ -71,9 +65,8 @@ function useCatalogAudience(form: UseFormReturn<CatalogFormValues>) {
     update(assignments.map((row, i) => (i === index ? { ...row, removed: true } : row)))
   }
 
-  // Re-picking an audience staged for withdrawal restores it: it is still
-  // assigned server-side, so a second row would render it twice and then
-  // re-create what the save just left in place.
+  // Re-picking a withdrawn audience restores it: still assigned server-side,
+  // so a second row would render twice and re-create what Save left alone.
   function add(entry: AssignmentEntry) {
     const staged = assignments.findIndex(
       (row) =>
@@ -90,7 +83,6 @@ function useCatalogAudience(form: UseFormReturn<CatalogFormValues>) {
   return { assignments, add, remove, restore }
 }
 
-/** The assigned rows. Layout above it differs by surface; a row does not. */
 function AudienceList({
   assignments,
   canEdit,
@@ -103,6 +95,7 @@ function AudienceList({
   onRestore: (index: number) => void
 }) {
   const { t } = useTranslation()
+  const { storeId } = useStore()
 
   return (
     <div className="flex flex-col gap-2">
@@ -120,9 +113,21 @@ function AudienceList({
             <Badge variant="outline">
               {t(`admin.catalogs.assignable_types.${assignment.assignable_type}`)}
             </Badge>
-            <span className="truncate text-foreground text-sm">
-              {assignment.assignable_name ?? assignment.assignable_id}
-            </span>
+            {/* Only companies have a page to open; a customer group is
+                managed from a list, so its name stays plain text. */}
+            {assignment.assignable_type === 'company' && !assignment.removed ? (
+              <Link
+                to="/$storeId/companies/$companyId"
+                params={{ storeId, companyId: assignment.assignable_id }}
+                className="truncate text-sm hover:underline"
+              >
+                {assignment.assignable_name ?? assignment.assignable_id}
+              </Link>
+            ) : (
+              <span className="truncate text-foreground text-sm">
+                {assignment.assignable_name ?? assignment.assignable_id}
+              </span>
+            )}
           </span>
           {canEdit &&
             (assignment.removed ? (
@@ -152,7 +157,6 @@ function AudienceList({
   )
 }
 
-/** Nothing assigned yet, with the one thing to do offered in the middle. */
 function AudienceEmpty({ canEdit, onAssign }: { canEdit: boolean; onAssign: () => void }) {
   const { t } = useTranslation()
 
@@ -175,11 +179,7 @@ function AudienceEmpty({ canEdit, onAssign }: { canEdit: boolean; onAssign: () =
   )
 }
 
-/**
- * The audience on the wizard's step, which is a page of its own: the assign
- * form opens inline below the list, because a dialog on top of the wizard's
- * dialog is a stack with nothing to gain from it.
- */
+/** The wizard's step: a page of its own, so the assign form opens inline. */
 export function CatalogAudienceStep({
   form,
   assigning,
@@ -224,11 +224,7 @@ export function CatalogAudienceStep({
   )
 }
 
-/**
- * The audience on the agreement editor, as a card in the sidebar: Assign sits
- * in the card header where every other card here puts its one action, and the
- * form opens in a dialog, since the sidebar has no room to grow one inline.
- */
+/** The editor's sidebar card, which has no room to grow a form inline. */
 export function CatalogAudienceCard({
   form,
   canEdit,
@@ -244,8 +240,6 @@ export function CatalogAudienceCard({
     <Card>
       <CardHeader>
         <CardTitle>{t('admin.catalogs.assignments.title')}</CardTitle>
-        {/* Only once there are rows: with none, the empty state below offers
-            the same action in the middle of the space it will fill. */}
         {canEdit && assignments.length > 0 && (
           <CardAction>
             <Button size="sm" variant="outline" type="button" onClick={() => setAssigning(true)}>
@@ -297,12 +291,7 @@ function assignableSearch(type: AssignableType) {
   }
 }
 
-/**
- * Picking one audience. Rendered inline where there is room for it — the
- * wizard's Audience step is a whole empty page, and a dialog on top of a
- * dialog is a stack nobody asked for — and in a dialog on the agreement
- * editor, where it is one small action on an already busy page.
- */
+/** Picking one audience. Its host decides whether this sits inline or in a dialog. */
 function AssignCatalogForm({
   assigned,
   onAdd,

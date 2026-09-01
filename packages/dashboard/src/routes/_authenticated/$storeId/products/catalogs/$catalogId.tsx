@@ -243,20 +243,11 @@ function CatalogBody({ catalog }: { catalog: Catalog }) {
               actions={
                 canEdit ? (
                   <>
-                    {/* Pricing and going live sit beside Save rather than in
-                        the form: they are acts on the catalog, not fields of
-                        it, so neither waits for a Save and neither is undone
-                        by a Discard. */}
-                    {catalog.price_list && pricingMode === 'fixed' && (
-                      <Button
-                        type="button"
-                        variant="outline"
-                        onClick={() => setPriceEditorOpen(true)}
-                      >
-                        <TableIcon className="size-4" />
-                        {t('admin.catalogs.edit_prices_cta')}
-                      </Button>
-                    )}
+                    {/* Going live sits beside Save rather than in the form:
+                        it is an act on the catalog, not a field of it, so it
+                        neither waits for a Save nor is undone by a Discard.
+                        Pricing is offered on the assortment rows instead —
+                        that is where the products being priced are. */}
                     <Button
                       type="button"
                       variant="outline"

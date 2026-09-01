@@ -10,7 +10,6 @@ import {
 } from '@spree/dashboard-ui'
 import i18n from 'i18next'
 
-/** The three answers the API gives for where a resolved amount came from. */
 const AGREEMENT_SOURCES = ['explicit', 'automatic'] as const
 
 /**
