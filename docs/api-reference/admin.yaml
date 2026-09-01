@@ -16861,6 +16861,7 @@ paths:
                 created_at: '2026-01-15T12:00:00.000Z'
                 updated_at: '2026-01-15T12:00:00.000Z'
                 products_count: 0
+                pricing_strategy: base
               schema:
                 "$ref": "#/components/schemas/Catalog"
   "/api/v3/admin/catalogs/{id}/deactivate":
@@ -16928,6 +16929,7 @@ paths:
                 created_at: '2026-01-15T12:00:00.000Z'
                 updated_at: '2026-01-15T12:00:00.000Z'
                 products_count: 0
+                pricing_strategy: base
               schema:
                 "$ref": "#/components/schemas/Catalog"
   "/api/v3/admin/products/{product_id}/custom_fields":
@@ -26031,6 +26033,7 @@ paths:
                   created_at: '2026-01-15T12:00:00.000Z'
                   updated_at: '2026-01-15T12:00:00.000Z'
                   products_count: 0
+                  pricing_strategy: base
                 meta:
                   page: 1
                   limit: 25
@@ -26100,6 +26103,7 @@ paths:
                 created_at: '2026-01-15T12:00:00.000Z'
                 updated_at: '2026-01-15T12:00:00.000Z'
                 products_count: 0
+                pricing_strategy: base
         '422':
           description: invalid request
           content:
@@ -34823,6 +34827,8 @@ components:
           type: string
         products_count:
           type: number
+        pricing_strategy:
+          type: string
         order_minimums:
           type: array
           items:
@@ -34845,6 +34851,7 @@ components:
       - created_at
       - updated_at
       - products_count
+      - pricing_strategy
       x-typelizer: true
     Category:
       type: object

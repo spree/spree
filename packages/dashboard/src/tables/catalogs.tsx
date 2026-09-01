@@ -1,6 +1,6 @@
 import type { Catalog } from '@spree/admin-sdk'
 import { defineTable } from '@spree/dashboard-core'
-import { ActiveBadge, RelativeTime, ResourceNameCell } from '@spree/dashboard-ui'
+import { ActiveBadge, Badge, RelativeTime, ResourceNameCell } from '@spree/dashboard-ui'
 import { BookOpenIcon } from '@spree/dashboard-ui/icons'
 import i18n from 'i18next'
 
@@ -36,7 +36,30 @@ defineTable<Catalog>('catalogs', {
       // is only ever active or not — it has no dates, so nothing to schedule.
       quickFilter: true,
       default: true,
-      render: (catalog) => <ActiveBadge active={catalog.active} />,
+      // Named rather than left to the Yes/No default: the column asks whether
+      // the agreement applies, and "Active" is what that answer is called
+      // everywhere else it appears.
+      render: (catalog) => (
+        <ActiveBadge
+          active={catalog.active}
+          activeLabel={i18n.t('admin.common.active')}
+          inactiveLabel={i18n.t('admin.common.inactive')}
+        />
+      ),
+    },
+    {
+      key: 'pricing_strategy',
+      label: i18n.t('admin.fields.catalog.pricing_mode.label'),
+      default: true,
+      // What the agreement charges, in a word. `base` is the one worth
+      // reading differently: the catalog decides visibility and leaves the
+      // price alone, so it is not a pricing strategy so much as the absence
+      // of one.
+      render: (catalog) => (
+        <Badge variant={catalog.pricing_strategy === 'base' ? 'outline' : 'secondary'}>
+          {i18n.t(`admin.fields.catalog.pricing_mode.${catalog.pricing_strategy}`)}
+        </Badge>
+      ),
     },
     {
       key: 'products_count',

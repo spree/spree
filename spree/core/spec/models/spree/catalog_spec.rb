@@ -462,4 +462,24 @@ describe Spree::Catalog, type: :model do
       expect(catalog.errors[:price_list]).to be_present
     end
   end
+  describe '#pricing_strategy' do
+    let(:catalog) { create(:catalog, store: store) }
+
+    it 'reads base when the catalog owns no list' do
+      expect(catalog.pricing_strategy).to eq('base')
+    end
+
+    it 'reads automatic for a percentage list' do
+      create(:price_list, :active, store: store, catalog: catalog,
+                                   price_adjustment_percentage: -15)
+
+      expect(catalog.reload.pricing_strategy).to eq('automatic')
+    end
+
+    it 'reads fixed for a list holding entered amounts' do
+      create(:price_list, :active, store: store, catalog: catalog)
+
+      expect(catalog.reload.pricing_strategy).to eq('fixed')
+    end
+  end
 end

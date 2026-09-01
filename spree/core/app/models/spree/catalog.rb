@@ -183,6 +183,23 @@ module Spree
       end
     end
 
+    # How this agreement prices, as one word. The same three the dashboard
+    # offers when setting it up: `base` is no list at all — the buyer pays the
+    # shop price and the catalog only decides what they see — while
+    # `automatic` derives from base prices by a percentage and `fixed` holds
+    # amounts a merchant entered (docs/plans/6.0-catalog-agreement-rework.md).
+    #
+    # Read from the list rather than stored: it is the same question
+    # `automatic_pricing?` already answers, and a column would be a second
+    # copy to keep in step.
+    #
+    # @return [String] one of `base`, `automatic`, `fixed`
+    def pricing_strategy
+      return 'base' if price_list.nil?
+
+      price_list.automatic_pricing? ? 'automatic' : 'fixed'
+    end
+
     # Assigning the association goes through a deferral, so the binding lands
     # in the save rather than on assignment.
     def price_list=(list)

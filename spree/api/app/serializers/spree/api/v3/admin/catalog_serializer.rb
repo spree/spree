@@ -7,7 +7,7 @@ module Spree
         class CatalogSerializer < V3::BaseSerializer
           typelize name: :string, description: 'string | null',
                    active: :boolean, position: [:number, nullable: true],
-                   products_count: :number,
+                   products_count: :number, pricing_strategy: :string,
                    minimum_order_quantity: ['number | null'], order_multiple: ['number | null'],
                    metadata: 'Record<string, unknown> | null'
 
@@ -18,6 +18,10 @@ module Spree
           attribute :products_count do |catalog|
             catalog.catalog_products.size
           end
+
+          # One word for how the agreement prices, so a listing can show it
+          # without expanding a price list for every row.
+          attributes :pricing_strategy
 
           # Minimums are few (one per currency) and the card renders them
           # inline, so they ride along rather than costing a second request.
