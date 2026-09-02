@@ -82,6 +82,45 @@ RSpec.describe SpreeAvalara::RefundPresenter do
     end
   end
 
+  # Every unit of every line came back, so the whole pre-tax worth is credited.
+  it 'credits a full return in full' do
+    everything = [return_item(received: 4)]
+
+    presenter = present(return_items: everything)
+
+    expect(presenter.lines_worth).to eq(400)
+    expect(presenter.call[:lines].sole).to include(quantity: 4, amount: -400)
+  end
+
+  # Worth is summed across lines and the scale applies to each, so a fault that
+  # credited only the first line — or scaled each against its own worth — would
+  # never show up in a single-line example.
+  describe 'a return spanning several lines' do
+    let(:second_line) { create(:line_item, order: order, cart: nil, price: 50, quantity: 2) }
+    let(:both_lines) do
+      [return_item(received: 4),
+       instance_double(Spree::ReturnLineItem, line_item: second_line, received_quantity: 2,
+                                              return: instance_double(Spree::Return, number: 'RET1'))]
+    end
+
+    before { second_line.update_column(:pre_tax_amount, 100) }
+
+    it 'credits each line its own worth' do
+      presenter = present(return_items: both_lines)
+
+      expect(presenter.lines_worth).to eq(500)
+      expect(presenter.call[:lines].map { |line| line[:amount] }).to eq([-400, -100])
+    end
+
+    it 'spreads a short refund across every line rather than exhausting the first' do
+      presenter = present(return_items: both_lines, amount: 250)
+
+      expect(presenter.scale).to eq(0.5)
+      expect(presenter.call[:lines].map { |line| line[:amount] }).to eq([-200, -50])
+      expect(presenter.call[:lines].sum { |line| line[:amount] }).to eq(-250)
+    end
+  end
+
   describe 'when the refund is short of the returned lines' do
     # An admin keeping a restocking fee refunded less than came back, and no more
     # tax may be credited than the refund actually carried.
