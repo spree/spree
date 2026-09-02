@@ -231,9 +231,15 @@ function TranslationsPage() {
                 value={searchInput}
                 onValueChange={(value: string) => {
                   setSearchInput(value)
-                  // A narrowed list rarely has the page the merchant was on;
-                  // only touch the URL when there is one to leave.
-                  if (page !== 1) patchSearch({ page: 1 }, { replace: true })
+                  // The term itself stays local — writing it per keystroke
+                  // re-renders the route and unmounts this input. But a URL
+                  // arrived at with `?search=` seeded the box, and once the
+                  // merchant edits it that param is stale, so drop it. Page
+                  // goes back to one because a narrowed list rarely has the
+                  // page they were on.
+                  if (page !== 1 || search.search !== undefined) {
+                    patchSearch({ page: 1, search: undefined }, { replace: true })
+                  }
                 }}
                 placeholder={t('admin.common.search_placeholder')}
               />
