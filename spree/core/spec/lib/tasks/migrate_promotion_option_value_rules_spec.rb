@@ -59,8 +59,9 @@ describe 'spree:upgrade:migrate_promotion_option_value_rules' do
       preferences: rule.preferences.merge(eligible_values: [join_row.id.to_s])
     )
 
-    allow(Spree::OptionValue).to receive(:exists?).with(join_row.id.to_s).and_return(true)
     allow(Spree::OptionValue).to receive(:exists?).and_call_original
+    allow(Spree::OptionValue).to receive(:exists?).with(join_row.id.to_s).and_return(true)
+    allow(Spree::OptionValue).to receive(:exists?).with(join_row.id).and_return(true)
 
     expect { subject.invoke }.to raise_error(SystemExit)
     expect(rule.reload.preferred_eligible_values).to eq([join_row.id.to_s])
