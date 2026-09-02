@@ -67,6 +67,7 @@ module Spree
     validates :custom_field_definition_id, uniqueness: { scope: [:resource_type, :resource_id] }
     validate :type_must_match_custom_field_definition
     validate :resource_type_must_match_custom_field_definition
+    validate :custom_field_definition_must_belong_to_the_resource_store
 
     #
     # Scopes
@@ -140,6 +141,24 @@ module Spree
       return if definition_type.safe_constantize&.base_class&.name == resource_type
 
       errors.add(:resource_type, 'must match custom field definition')
+    end
+
+    # Definitions are store-owned, so a record may only carry its own store's.
+    # This is the last gate every write path passes through — `custom_fields=`
+    # resolves the definition through the store, but Rails' own
+    # `custom_fields_attributes=` assigns the id straight onto the row.
+    #
+    # A resource with no store of its own (a customer, an address — both
+    # global) is left alone: there is nothing to compare against, and the
+    # definition it was given was resolved within a store already.
+    def custom_field_definition_must_belong_to_the_resource_store
+      return if custom_field_definition.blank? || resource.blank?
+
+      resource_store_id = resource.try(:store_id) || resource.try(:order)&.store_id || resource.try(:product)&.store_id
+      return if resource_store_id.blank?
+      return if custom_field_definition.store_id == resource_store_id
+
+      errors.add(:custom_field_definition, :must_belong_to_same_store)
     end
   end
 end
