@@ -3,7 +3,12 @@ require 'spec_helper'
 # The migration derives filter_key for every pre-existing definition, and two
 # different namespace/key splits can flatten to one value. Nothing forbade that
 # before the migration, so an existing install can hold a pair the unique index
-# would reject — which is data no model can reach once the constraint is on.
+# would reject — data no model can reach once the constraint is on.
+#
+# The disambiguation is exercised through its own query-building rather than by
+# planting colliding rows: doing that needs the unique index dropped, which is
+# DDL, and MySQL commits implicitly on DDL — dropping the savepoint the example
+# runs inside.
 RSpec.describe 'AddStoreAndFilterKeyToCustomFieldDefinitions migration' do
   let(:migration) do
     require Spree::Core::Engine.root.join(
@@ -13,66 +18,59 @@ RSpec.describe 'AddStoreAndFilterKeyToCustomFieldDefinitions migration' do
   end
 
   let(:store) { Spree::Store.default }
-  let(:table) { Spree::CustomFieldDefinition.table_name }
 
-  def filter_keys_for(*definitions)
-    Spree::CustomFieldDefinition.where(id: definitions.map(&:id)).order(:id).pluck(:filter_key)
+  describe '#free_filter_key' do
+    it 'suffixes with _2 when nothing holds it' do
+      expect(migration.send(:free_filter_key, 'cf_a_b_c', store.id, 'Spree::Product')).to eq('cf_a_b_c_2')
+    end
+
+    # An install can legitimately hold the suffixed form as a definition of its
+    # own (namespace `a_b_c`, key `2`), and handing it out twice would fail the
+    # unique index halfway through the migration.
+    it 'skips a suffix another definition already owns' do
+      create(:custom_field_definition, store: store, resource_type: 'Spree::Product', namespace: 'a_b_c', key: '2')
+
+      expect(migration.send(:free_filter_key, 'cf_a_b_c', store.id, 'Spree::Product')).to eq('cf_a_b_c_3')
+    end
+
+    it 'ignores a row holding that key in another store' do
+      create(:custom_field_definition, store: create(:store), resource_type: 'Spree::Product',
+                                       namespace: 'a_b_c', key: '2')
+
+      expect(migration.send(:free_filter_key, 'cf_a_b_c', store.id, 'Spree::Product')).to eq('cf_a_b_c_2')
+    end
+
+    it 'ignores a row holding that key for another resource type' do
+      create(:custom_field_definition, store: store, resource_type: 'Spree::Order', namespace: 'a_b_c', key: '2')
+
+      expect(migration.send(:free_filter_key, 'cf_a_b_c', store.id, 'Spree::Product')).to eq('cf_a_b_c_2')
+    end
   end
 
-  describe 'colliding filter keys' do
-    # The colliding pair is unreachable once the index the migration adds is
-    # in place, so reproduce the pre-migration shape by taking it off.
-    around do |example|
-      connection = ActiveRecord::Base.connection
-      connection.remove_index table, name: 'index_custom_field_definitions_on_store_and_filter_key'
-
-      example.run
-    ensure
-      Spree::CustomFieldDefinition.delete_all
-      connection.add_index table, %i[store_id resource_type filter_key],
-                           unique: true, name: 'index_custom_field_definitions_on_store_and_filter_key'
-    end
-
-    it 'keeps the first and suffixes every later one' do
-      first = create(:custom_field_definition, resource_type: 'Spree::Product', namespace: 'a_b', key: 'c')
-      # The colliding row is unreachable through the model once the validation
-      # and index are on, so write it the way the migration finds it: a
-      # pre-existing row whose namespace/key split flattens to the same value.
-      second = create(:custom_field_definition, resource_type: 'Spree::Product', namespace: 'a', key: 'b')
-      ActiveRecord::Base.connection.update(
-        "UPDATE #{table} SET key = 'b_c', namespace = 'a', filter_key = 'cf_a_b_c' WHERE id = #{second.id}"
-      )
-
-      migration.send(:disambiguate_colliding_filter_keys)
-
-      expect(filter_keys_for(first, second)).to eq(%w[cf_a_b_c cf_a_b_c_2])
-    end
-
-    # An install can legitimately hold the suffixed form as a definition of
-    # its own, and handing it out twice would fail the unique index halfway
-    # through the migration.
-    it 'skips a suffix that is already taken' do
-      first = create(:custom_field_definition, resource_type: 'Spree::Product', namespace: 'a_b', key: 'c')
-      taken = create(:custom_field_definition, resource_type: 'Spree::Product', namespace: 'a_b_c', key: '2')
-      second = create(:custom_field_definition, resource_type: 'Spree::Product', namespace: 'a', key: 'b')
-      ActiveRecord::Base.connection.update(
-        "UPDATE #{table} SET key = 'b_c', namespace = 'a', filter_key = 'cf_a_b_c' WHERE id = #{second.id}"
-      )
-
-      migration.send(:disambiguate_colliding_filter_keys)
-
-      expect(filter_keys_for(first, taken, second)).to eq(%w[cf_a_b_c cf_a_b_c_2 cf_a_b_c_3])
-    end
-
-    it 'leaves the same value in another store alone' do
-      mine = create(:custom_field_definition, store: store, resource_type: 'Spree::Product',
-                                              namespace: 'custom', key: 'material')
-      theirs = create(:custom_field_definition, store: create(:store), resource_type: 'Spree::Product',
+  describe '#disambiguate_colliding_filter_keys' do
+    # Every row on a migrated schema already holds a unique filter_key, so the
+    # pass has nothing to rename and must leave them untouched.
+    it 'is a no-op when no two rows share a filter key' do
+      first = create(:custom_field_definition, store: store, resource_type: 'Spree::Product',
+                                               namespace: 'a_b', key: 'c')
+      second = create(:custom_field_definition, store: store, resource_type: 'Spree::Product',
                                                 namespace: 'custom', key: 'material')
 
       migration.send(:disambiguate_colliding_filter_keys)
 
-      expect(filter_keys_for(mine, theirs)).to eq(%w[cf_custom_material cf_custom_material])
+      expect(first.reload[:filter_key]).to eq('cf_a_b_c')
+      expect(second.reload[:filter_key]).to eq('cf_custom_material')
+    end
+  end
+
+  describe '#concat_filter_key' do
+    it 'builds the same value the model derives, quoting the reserved key column' do
+      sql = migration.send(:concat_filter_key)
+
+      expect(sql).to include('cf_')
+      expect(sql).to match(/namespace/).and match(/key/)
+      # `key` is reserved on MySQL, so both column names must arrive quoted.
+      expect(sql).not_to match(/[^"`\w]key[^"`\w]/)
     end
   end
 end
