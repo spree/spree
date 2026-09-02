@@ -444,30 +444,41 @@ module Spree
     # When the buyer's statutory right of withdrawal expires — the EU
     # cooling-off period (Consumer Rights Directive 2011/83/EU Art. 9).
     #
-    # Derived rather than stored. The clock starts when the buyer takes
-    # delivery, and a parcel delivered today would leave a value written at
-    # placement pointing at the wrong date; recomputing costs one comparison
-    # over fulfillments the order has usually already loaded.
+    # Derived rather than stored, because the clock starts when the buyer takes
+    # physical possession: a value written at placement would be wrong the
+    # moment a parcel arrived.
     #
-    # Falls back to completion while nothing has been delivered, which is the
-    # conservative reading: the period cannot have started earlier than the
-    # sale, so a deadline shown before dispatch never understates the right.
+    # Nil until the last live parcel is delivered. Counting from completion
+    # instead would expire the deadline before the statutory period had even
+    # begun — the buyer would be told their right had run out while they were
+    # still waiting for the goods. A right whose start has not happened yet has
+    # no end date to report.
     #
     # @return [ActiveSupport::TimeWithZone, nil] nil when the market grants no
-    #   withdrawal right, or the order is not yet complete
+    #   withdrawal right, the order is not complete, or delivery is outstanding
     def withdrawal_period_ends_at
       return nil unless completed?
 
       days = withdrawal_period_days
-      return nil if days.blank?
+      started_at = withdrawal_period_starts_at
+      return nil if days.blank? || started_at.nil?
 
-      (withdrawal_period_starts_at || completed_at) + days.days
+      started_at + days.days
     end
 
-    # @return [Boolean] whether the buyer may still withdraw
+    # Whether the buyer may still withdraw.
+    #
+    # True while delivery is outstanding: the right cannot have lapsed before
+    # it started, so an order still in transit is always within its period even
+    # though no deadline can be named yet.
+    #
+    # @return [Boolean]
     def within_withdrawal_period?
+      return false unless completed?
+      return false if withdrawal_period_days.blank?
+
       deadline = withdrawal_period_ends_at
-      deadline.present? && deadline.future?
+      deadline.nil? || deadline.future?
     end
 
     # The moment the cooling-off period starts: receipt of the goods. The

@@ -29,6 +29,7 @@ module Spree
           consent_records: consent_records,
           addresses: addresses,
           orders: orders,
+          carts: carts,
           payment_sources: payment_sources,
           store_credits: store_credits,
           gift_cards: gift_cards,
@@ -81,8 +82,13 @@ module Spree
 
       # The evidence trail behind the booleans above — when each agreement was
       # made, from where, and which document version was shown.
+      # Matched by email as well as by owner: guest checkout records consent
+      # against the ORDER, so a person who bought before registering has rows
+      # that are about them but which this account does not own.
       def consent_records
-        scope = Spree::ConsentRecord.where(owner_type: customer.class.base_class.to_s, owner_id: customer.id)
+        scope = Spree::ConsentRecord.
+                where(owner_type: customer.class.base_class.to_s, owner_id: customer.id).
+                or(Spree::ConsentRecord.where(email: customer.email))
         scope = scope.where(store_id: store.id) if store
 
         scope.recent_first.map do |record|
@@ -134,6 +140,23 @@ module Spree
         end
 
         exported
+      end
+
+      # Abandoned checkouts are retained data about this person, so an access
+      # request has to disclose them. Kept separate from orders: nothing was
+      # bought, and listing them together would misrepresent both.
+      def carts
+        Spree::Cart.where(customer_id: customer.id).includes(:line_items).map do |cart|
+          {
+            email: cart.email,
+            currency: cart.currency,
+            item_total: cart.item_total&.to_s,
+            created_at: cart.created_at&.iso8601,
+            line_items: cart.line_items.map do |line_item|
+              { name: line_item.name, sku: line_item.sku, quantity: line_item.quantity }
+            end
+          }
+        end
       end
 
       # Card numbers were never stored, so this is the metadata that was: the

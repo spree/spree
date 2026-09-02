@@ -8,8 +8,15 @@ RSpec.describe 'Spree::Order withdrawal period' do
   before { order.update_columns(market_id: market.id, completed_at: 10.days.ago) }
 
   describe 'before anything is delivered' do
-    it 'counts from completion, which cannot understate the right' do
-      expect(order.withdrawal_period_ends_at).to be_within(1.minute).of(order.completed_at + 14.days)
+    # The statutory clock starts on physical possession. Counting from
+    # completion would expire the deadline before the period had begun, telling
+    # a buyer their right had run out while they waited for the goods.
+    it 'reports no deadline yet' do
+      expect(order.withdrawal_period_ends_at).to be_nil
+    end
+
+    it 'still treats the buyer as within their rights' do
+      expect(order).to be_within_withdrawal_period
     end
   end
 
@@ -38,11 +45,11 @@ RSpec.describe 'Spree::Order withdrawal period' do
       create(:fulfillment, order: order)
       order.reload
 
-      # Falls back to completion rather than counting from the parcel that
-      # did arrive — otherwise the right could expire while the buyer is
-      # still waiting for the rest of their order.
+      # For goods delivered separately the period runs from the last one, so
+      # neither a start nor an end can be named while one is outstanding.
       expect(order.withdrawal_period_starts_at).to be_nil
-      expect(order.withdrawal_period_ends_at).to be_within(1.minute).of(order.completed_at + 14.days)
+      expect(order.withdrawal_period_ends_at).to be_nil
+      expect(order).to be_within_withdrawal_period
     end
 
     it 'waits for the final parcel' do

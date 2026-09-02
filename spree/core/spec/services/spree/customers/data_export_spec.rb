@@ -58,6 +58,28 @@ RSpec.describe Spree::Customers::DataExport do
     end
   end
 
+  describe 'abandoned checkouts' do
+    let!(:cart) { create(:cart, customer: customer, store: store) }
+
+    it 'discloses them, because they are retained data about this person' do
+      expect(payload[:carts].length).to eq(1)
+    end
+  end
+
+  describe 'consent given before the account existed' do
+    let!(:guest_consent) do
+      order = create(:completed_order_with_totals, store: store)
+      create(:consent_record, store: store, owner: order, email: 'buyer@example.com',
+                              purpose: Spree::ConsentRecord::EMAIL_MARKETING)
+    end
+
+    it 'includes rows the order owns but which are about this person' do
+      purposes = payload[:consent_records].map { |record| record[:purpose] }
+
+      expect(purposes).to include(Spree::ConsentRecord::EMAIL_MARKETING)
+    end
+  end
+
   it 'produces a payload that survives a JSON round trip' do
     expect { JSON.parse(JSON.generate(payload)) }.not_to raise_error
   end

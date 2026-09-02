@@ -26,6 +26,11 @@ module Spree
     # the buyer did.
     def record_marketing_consent(order)
       return unless order.accept_marketing?
+      # Each side effect here guards its own idempotency: the event can be
+      # replayed, and one tick of one box must stay one agreement.
+      return if Spree::ConsentRecord.exists?(
+        owner: order, purpose: Spree::ConsentRecord::EMAIL_MARKETING
+      )
 
       Spree::ConsentRecord.record!(
         store: order.store,

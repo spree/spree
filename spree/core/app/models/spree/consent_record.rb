@@ -77,18 +77,25 @@ module Spree
 
     # The document as it read at the moment of agreement.
     #
-    # Records the locale alongside the digest: policies are translated, so the
-    # same document hashes differently per language and a digest without its
-    # locale cannot establish which text the person was actually shown.
+    # Stores the body itself, not only a hash of it. A digest can show that a
+    # policy has since changed, but it cannot say what the person actually
+    # read — and reproducing the text they agreed to is the whole point of
+    # keeping the row. The digest rides along as a cheap equality check.
+    #
+    # The locale is recorded because policies are translated: the same document
+    # is different text in each language.
     #
     # @param policy [Spree::Policy]
     # @return [Hash]
     def self.document_snapshot(policy)
+      body = policy.body.to_s
+
       {
         'slug' => policy.slug,
         'name' => policy.name,
         'locale' => Spree::Current.locale || I18n.locale.to_s,
-        'digest' => Digest::SHA256.hexdigest(policy.body.to_s),
+        'body' => body,
+        'digest' => Digest::SHA256.hexdigest(body),
         'updated_at' => policy.updated_at&.iso8601
       }
     end

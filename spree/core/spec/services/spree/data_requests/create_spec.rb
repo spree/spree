@@ -57,6 +57,15 @@ RSpec.describe Spree::DataRequests::Create do
     end
   end
 
+  # Two requests racing both pass the in-flight check, so the loser has to be
+  # retired rather than queueing a second export of the same history.
+  it 'keeps only one request when two are opened concurrently' do
+    described_class.call(store: store, customer: customer, kind: Spree::DataRequest::ACCESS)
+    described_class.call(store: store, customer: customer, kind: Spree::DataRequest::ACCESS)
+
+    expect(Spree::DataRequest.where(customer_id: customer.id, kind: Spree::DataRequest::ACCESS).count).to eq(1)
+  end
+
   it 'treats access and erasure as different requests' do
     described_class.call(store: store, customer: customer, kind: Spree::DataRequest::ACCESS)
 

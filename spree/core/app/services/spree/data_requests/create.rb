@@ -39,6 +39,15 @@ module Spree
 
         return failure(data_request) unless data_request.save
 
+        # Two requests racing both pass the in-flight check above, so the loser
+        # is retired here rather than queueing a second export of the same
+        # person's history.
+        duplicate = in_flight_request(store: store, customer: customer, kind: kind)
+        if duplicate && duplicate.id != data_request.id
+          data_request.destroy
+          return success(duplicate)
+        end
+
         Spree::DataRequests::ProcessJob.perform_later(data_request.prefixed_id)
 
         success(data_request)

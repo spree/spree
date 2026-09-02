@@ -36,6 +36,19 @@ RSpec.describe Spree::ConsentRecord do
       expect(record.documents_list.first['name']).to eq('Terms of Service')
     end
 
+    it 'keeps the text the person actually read' do
+      expect(record.documents_list.first['body']).to include('Version one')
+    end
+
+    it 'still reproduces that text after the policy is edited' do
+      snapshot = record.documents_list.first['body']
+
+      policy.update!(body: '<p>Version two</p>')
+
+      expect(record.reload.documents_list.first['body']).to eq(snapshot)
+      expect(policy.reload.body).to include('Version two')
+    end
+
     it 'fingerprints the text so a later edit is detectable' do
       original_digest = record.documents_list.first['digest']
 

@@ -21,18 +21,18 @@ module Spree
             @order = cart_pk ? scope.find_by!(cart_id: cart_pk) : scope.find_by_prefix_id!(params[:id])
           end
 
+          # `market` and `fulfillments` are the withdrawal deadline's inputs and
+          # the serializer emits it on every response, so they are preloaded
+          # here rather than through `collection_includes` — this controller
+          # loads through `find_order!`, which never touches a collection.
           def scope
-            storefront_access_policy.scope(current_store.orders.complete, token: order_token)
+            storefront_access_policy.
+              scope(current_store.orders.complete, token: order_token).
+              includes(:market, :fulfillments)
           end
 
           def serializer_class
             Spree.api.order_serializer
-          end
-
-          # The withdrawal deadline reads both on every row, so without these
-          # a listing pays two queries per order for a field it always emits.
-          def collection_includes
-            super + [:market, :fulfillments]
           end
         end
       end

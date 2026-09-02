@@ -30,6 +30,10 @@ module Spree
               )
             end
 
+            # The response points at a person's whole personal-data export, so
+            # no shared cache or browser history should hold on to it.
+            response.headers['Cache-Control'] = 'no-store'
+
             redirect_to(
               data_request.export_file.url(
                 expires_in: 5.minutes,
