@@ -155,6 +155,7 @@
       "deleted": "已删除",
       "empty_value": "—",
       "inactive": "停用",
+      "learn_more": "了解更多",
       "loading": "加载中…",
       "next": "下一页",
       "no": "否",
@@ -894,6 +895,11 @@
         "mapping": "匹配中",
         "pending": "待处理",
         "processing": "处理中"
+      },
+      "step_descriptions": {
+        "complete": "导入已完成。请查看已创建和更新的内容。",
+        "map_fields": "将文件中的每一列与 Spree 中的字段对应。",
+        "process_rows": "正在导入您的数据行，这可能需要几分钟。"
       },
       "steps": {
         "complete": "完成",

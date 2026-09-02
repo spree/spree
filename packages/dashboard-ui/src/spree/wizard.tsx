@@ -49,13 +49,30 @@ export function WizardProgress({ steps, current, onStepSelect, className }: Wiza
   const currentIndex = steps.findIndex((step) => step.key === current)
 
   return (
-    <ol className={cn('flex items-center gap-2', className)}>
+    <ol className={cn('flex flex-col', className)}>
       {steps.map((step, index) => {
         const state = index < currentIndex ? 'done' : index === currentIndex ? 'current' : 'ahead'
         const navigable = state === 'done' && !!onStepSelect
+        const last = index === steps.length - 1
 
         return (
-          <li key={step.key} className="flex flex-1 items-center gap-2">
+          <li key={step.key} className="flex gap-3">
+            {/* Marker and connector share a column so the line always meets
+                the dots, whatever a label wraps to. */}
+            <div className="flex flex-col items-center">
+              <span
+                aria-hidden
+                className={cn(
+                  'flex size-4 shrink-0 items-center justify-center rounded-full border-2 transition-colors',
+                  state === 'done' && 'border-success bg-success text-white',
+                  state === 'current' && 'border-ring bg-background',
+                  state === 'ahead' && 'border-border bg-background',
+                )}
+              >
+                {state === 'done' ? <CheckIcon className="size-2.5" strokeWidth={3} /> : null}
+              </span>
+              {last ? null : <span aria-hidden className="w-px flex-auto bg-border" />}
+            </div>
             <button
               type="button"
               disabled={!navigable}
@@ -66,29 +83,14 @@ export function WizardProgress({ steps, current, onStepSelect, className }: Wiza
               tabIndex={navigable ? undefined : -1}
               aria-current={state === 'current' ? 'step' : undefined}
               className={cn(
-                'flex min-w-0 flex-1 items-center gap-2 rounded-md px-2 py-1.5 text-left text-sm',
-                navigable && 'cursor-pointer hover:bg-muted',
-                state === 'ahead' && 'text-muted-foreground',
+                'min-w-0 pb-7 text-left text-sm leading-none',
+                navigable && 'cursor-pointer hover:text-foreground',
+                state === 'current' ? 'font-medium text-foreground' : 'text-muted-foreground',
+                last && 'pb-0',
               )}
             >
-              <span
-                aria-hidden
-                className={cn(
-                  'flex size-6 shrink-0 items-center justify-center rounded-full border text-xs',
-                  state === 'current' && 'border-primary bg-primary text-primary-foreground',
-                  state === 'done' && 'border-primary text-primary',
-                  state === 'ahead' && 'border-border text-muted-foreground',
-                )}
-              >
-                {state === 'done' ? <CheckIcon className="size-3.5" /> : index + 1}
-              </span>
-              <span className={cn('truncate', state === 'current' && 'font-medium')}>
-                {step.label}
-              </span>
+              <span className="truncate">{step.label}</span>
             </button>
-            {index < steps.length - 1 && (
-              <span aria-hidden className="h-px flex-1 bg-border last:hidden" />
-            )}
           </li>
         )
       })}
@@ -115,6 +117,8 @@ export function Wizard({
   open,
   onOpenChange,
   title,
+  subtitle,
+  status,
   steps,
   current,
   onStepSelect,
@@ -128,6 +132,10 @@ export function Wizard({
   open: boolean
   onOpenChange: (open: boolean) => void
   title: string
+  /** Shown after the title behind a divider — what this run is about. */
+  subtitle?: ReactNode
+  /** Right-aligned ambient status, e.g. a save state or a badge. */
+  status?: ReactNode
   steps: WizardStep[]
   current: string
   onStepSelect?: (key: string) => void
@@ -152,27 +160,47 @@ export function Wizard({
         style={{ maxHeight: 'none' }}
         showCloseButton={false}
       >
-        <DialogHeader className="flex flex-row items-center justify-between gap-3 space-y-0 border-b p-3">
-          <DialogTitle>{title}</DialogTitle>
-          <Button
-            type="button"
-            size="icon-sm"
-            variant="ghost"
-            onClick={() => onOpenChange(false)}
-            aria-label={t('admin.actions.close')}
-          >
-            <XIcon />
-          </Button>
+        <DialogHeader className="h-14 shrink-0 flex-row items-center gap-3 space-y-0 border-b border-border-subtle bg-background px-4 py-0">
+          <div className="flex min-w-0 items-center gap-3">
+            <DialogTitle className="truncate text-base">{title}</DialogTitle>
+            {subtitle ? (
+              <>
+                <span aria-hidden className="h-4 w-px shrink-0 bg-border" />
+                <span className="truncate text-muted-foreground text-sm">{subtitle}</span>
+              </>
+            ) : null}
+          </div>
+          <div className="ms-auto flex shrink-0 items-center gap-3">
+            {status}
+            <Button
+              type="button"
+              size="icon-sm"
+              variant="ghost"
+              onClick={() => onOpenChange(false)}
+              aria-label={t('admin.actions.close')}
+            >
+              <XIcon />
+            </Button>
+          </div>
         </DialogHeader>
 
         <form onSubmit={onSubmit} onKeyDown={onKeyDown} className="flex min-h-0 flex-1 flex-col">
-          <div className="border-b border-border-subtle px-6 py-4">
-            <WizardProgress steps={steps} current={current} onStepSelect={onStepSelect} />
-          </div>
-
-          <DialogBody className="flex-1 overflow-y-auto p-6">
-            <div className={cn('mx-auto flex w-full flex-col gap-6', contentClassName)}>
-              {children}
+          {/* The body itself does not scroll: the rail stays put while the
+              step's own column scrolls, so a long form never carries the
+              progress list off-screen. */}
+          <DialogBody className="flex min-h-0 flex-1 gap-8 overflow-hidden p-0">
+            <WizardProgress
+              steps={steps}
+              current={current}
+              onStepSelect={onStepSelect}
+              className="hidden w-56 shrink-0 py-8 ps-8 md:flex"
+            />
+            <div className="min-w-0 flex-1 overflow-y-auto py-8 pe-8 ps-8 md:ps-0">
+              {/* No width cap here: `contentClassName` is what sets it, and a
+                  default with a breakpoint would outrank the caller's own. */}
+              <div className={cn('flex w-full min-w-0 flex-col gap-6', contentClassName)}>
+                {children}
+              </div>
             </div>
           </DialogBody>
 
@@ -180,7 +208,7 @@ export function Wizard({
               the footer's end-justification is overridden. It stays a row at
               every width too: stacked, Back would sit above Next and read as
               the order to press them in. */}
-          <DialogFooter className="flex-row justify-between sm:justify-between">
+          <DialogFooter className="h-16 shrink-0 flex-row items-center justify-between border-border-subtle bg-background px-4 py-0 sm:justify-between">
             {back}
             {forward}
           </DialogFooter>

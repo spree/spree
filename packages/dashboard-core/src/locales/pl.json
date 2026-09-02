@@ -155,6 +155,7 @@
       "deleted": "Usunięto",
       "empty_value": "—",
       "inactive": "Nieaktywny",
+      "learn_more": "Dowiedz się więcej",
       "loading": "Ładowanie…",
       "next": "Następna",
       "no": "Nie",
@@ -894,6 +895,11 @@
         "mapping": "Dopasowywanie",
         "pending": "Oczekujący",
         "processing": "Przetwarzanie"
+      },
+      "step_descriptions": {
+        "complete": "Import zakończony. Sprawdź, co zostało utworzone i zaktualizowane.",
+        "map_fields": "Dopasuj każdą kolumnę pliku do pola w Spree.",
+        "process_rows": "Importujemy Twoje wiersze. Może to potrwać kilka minut."
       },
       "steps": {
         "complete": "Gotowe",
