@@ -13,7 +13,7 @@ module SpreeAvalara
     config.after_initialize do
       Spree.integrations << 'SpreeAvalara::Integration' unless Spree.integrations.include?('SpreeAvalara::Integration')
       Spree.tax_providers << SpreeAvalara::TaxProvider unless Spree.tax_providers.include?(SpreeAvalara::TaxProvider)
-      Spree.hooks.register('carts.complete.validate', 'SpreeAvalara::CheckoutAddressValidation')
+      Spree.hooks.register('carts.complete.validate', 'SpreeAvalara::ValidateCheckoutAddress')
 
       # The exemption reasons AvaTax understands, offered to a merchant
       # recording a certificate. Merged rather than assigned, so another

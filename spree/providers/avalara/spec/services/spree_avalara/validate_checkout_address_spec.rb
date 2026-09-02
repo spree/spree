@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-RSpec.describe SpreeAvalara::CheckoutAddressValidation do
+RSpec.describe SpreeAvalara::ValidateCheckoutAddress do
   subject(:handler) { described_class.new }
 
   let!(:integration) do

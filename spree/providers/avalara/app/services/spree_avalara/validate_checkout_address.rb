@@ -6,7 +6,7 @@ module SpreeAvalara
   # the customer's address book, an admin editing a record — with no checkout
   # context, so a validation belonging to one sale would block a merchant from
   # saving a legitimate address.
-  class CheckoutAddressValidation
+  class ValidateCheckoutAddress
     # @param workflow [Spree::Carts::Complete]
     # @return [void]
     def call(workflow)
