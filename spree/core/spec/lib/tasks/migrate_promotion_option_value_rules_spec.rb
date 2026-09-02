@@ -13,7 +13,7 @@ describe 'spree:upgrade:migrate_promotion_option_value_rules' do
 
   it 'rewrites join-row ids to option value ids' do
     create_list(:option_value, 3)
-    option_value = create(:option_value, name: 'Medium', presentation: 'Medium')
+    option_value = create(:option_value, name: 'Medium', label: 'Medium')
     variant = create(:variant, option_values: [option_value])
     join_row = Spree::OptionValueVariant.find_by!(variant: variant, option_value: option_value)
 
@@ -50,7 +50,7 @@ describe 'spree:upgrade:migrate_promotion_option_value_rules' do
   end
 
   it 'aborts when an id matches both a join row and an option value' do
-    option_value = create(:option_value, name: 'Small', presentation: 'Small')
+    option_value = create(:option_value, name: 'Small', label: 'Small')
     variant = create(:variant, option_values: [option_value])
     join_row = Spree::OptionValueVariant.find_by!(variant: variant, option_value: option_value)
 
@@ -68,7 +68,7 @@ describe 'spree:upgrade:migrate_promotion_option_value_rules' do
   end
 
   it 'continues without aborting when SKIP_FAILED_ROWS is set' do
-    option_value = create(:option_value, name: 'Large', presentation: 'Large')
+    option_value = create(:option_value, name: 'Large', label: 'Large')
     variant = create(:variant, option_values: [option_value])
     join_row = Spree::OptionValueVariant.find_by!(variant: variant, option_value: option_value)
 

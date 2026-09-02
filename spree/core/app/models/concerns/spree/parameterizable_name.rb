@@ -3,12 +3,12 @@ module Spree
     extend ActiveSupport::Concern
 
     included do
-      normalizes :name, :presentation, with: ->(value) { value&.to_s&.squish&.presence }
+      normalizes :name, :label, with: ->(value) { value&.to_s&.squish&.presence }
 
       #
       # Callbacks
       #
-      before_validation :set_name_from_presentation, if: -> { name.blank? }
+      before_validation :set_name_from_label, if: -> { name.blank? }
       before_validation :normalize_name
 
       #
@@ -16,12 +16,12 @@ module Spree
       #
       scope :search_by_name, ->(query) do
         i18n do
-          name.matches("%#{query.downcase}%").or(presentation.matches("%#{query.downcase}%"))
+          name.matches("%#{query.downcase}%").or(label.matches("%#{query.downcase}%"))
         end
       end
 
-      def set_name_from_presentation
-        self.name = presentation
+      def set_name_from_label
+        self.name = label
       end
 
       def normalize_name

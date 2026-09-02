@@ -5,13 +5,13 @@ require 'spec_helper'
 # catalog; sharing one only makes the wrong answer more common.
 describe Spree::Product, '.with_option_value_ids', type: :model do
   let(:store) { @default_store }
-  let(:color) { create(:option_type, name: 'shirt-color', presentation: 'Color') }
-  let(:size) { create(:option_type, name: 'shirt-size', presentation: 'Size') }
+  let(:color) { create(:option_type, name: 'shirt-color', label: 'Color') }
+  let(:size) { create(:option_type, name: 'shirt-size', label: 'Size') }
 
-  let(:blue) { create(:option_value, option_type: color, name: 'blue', presentation: 'Blue') }
-  let(:red) { create(:option_value, option_type: color, name: 'red', presentation: 'Red') }
-  let(:small) { create(:option_value, option_type: size, name: 'small', presentation: 'S') }
-  let(:xl) { create(:option_value, option_type: size, name: 'xl', presentation: 'XL') }
+  let(:blue) { create(:option_value, option_type: color, name: 'blue', label: 'Blue') }
+  let(:red) { create(:option_value, option_type: color, name: 'red', label: 'Red') }
+  let(:small) { create(:option_value, option_type: size, name: 'small', label: 'S') }
+  let(:xl) { create(:option_value, option_type: size, name: 'xl', label: 'XL') }
 
   let(:product) { create(:product, store: store) }
 
@@ -47,9 +47,9 @@ describe Spree::Product, '.with_option_value_ids', type: :model do
   # case a pairwise encoding gets wrong, and the reason the search providers
   # have to answer this identically.
   context 'with three option types' do
-    let(:condition) { create(:option_type, name: 'shirt-condition', presentation: 'Condition') }
-    let(:used) { create(:option_value, option_type: condition, name: 'used', presentation: 'Used') }
-    let(:brand_new) { create(:option_value, option_type: condition, name: 'new', presentation: 'New') }
+    let(:condition) { create(:option_type, name: 'shirt-condition', label: 'Condition') }
+    let(:used) { create(:option_value, option_type: condition, name: 'used', label: 'Used') }
+    let(:brand_new) { create(:option_value, option_type: condition, name: 'new', label: 'New') }
 
     before do
       create(:variant, product: product, option_values: [blue, xl, used])

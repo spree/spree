@@ -68,11 +68,11 @@ describe Spree::Promotion::Rules::OptionValue do
       create(
         :option_value,
         name: 'Blue',
-        presentation: 'Blue',
+        label: 'Blue',
         option_type: create(
           :option_type,
           name: 'foo-colour',
-          presentation: 'Colour'
+          label: 'Colour'
         )
       )
     end

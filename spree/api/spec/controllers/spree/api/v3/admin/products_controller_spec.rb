@@ -462,7 +462,7 @@ RSpec.describe Spree::Api::V3::Admin::ProductsController, type: :controller do
         expect(small.width.to_f).to eq(30.0)
         expect(small.height.to_f).to eq(40.0)
         expect(small.depth.to_f).to eq(2.0)
-        expect(small.option_values.first.presentation).to eq('Small')
+        expect(small.option_values.first.label).to eq('Small')
         expect(small.option_values.first.option_type.name).to eq('size')
 
         # Multi-currency prices
@@ -916,7 +916,7 @@ RSpec.describe Spree::Api::V3::Admin::ProductsController, type: :controller do
         small = updated.variants.find_by(sku: 'UPD-SHIRT-S')
         expect(small).to be_present
         expect(small.weight.to_f).to eq(0.3)
-        expect(small.option_values.first.presentation).to eq('Small')
+        expect(small.option_values.first.label).to eq('Small')
 
         # Customs classification rides inline with the variant — this is the
         # path the dashboard's product Save uses, not the nested variants

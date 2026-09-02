@@ -8,8 +8,8 @@ RSpec.describe 'Products API', type: :request, swagger_doc: 'api-reference/store
   let(:category) { create(:category) }
   let(:child_category) { create(:category, parent: category, name: 'Shirts') }
 
-  let(:option_type) { create(:option_type, name: 'size', presentation: 'Size', filterable: true) }
-  let(:option_value_small) { create(:option_value, option_type: option_type, name: 'small', presentation: 'S') }
+  let(:option_type) { create(:option_type, name: 'size', label: 'Size', filterable: true) }
+  let(:option_value_small) { create(:option_value, option_type: option_type, name: 'small', label: 'S') }
 
   let!(:product) do
     create(:product, status: 'active', categories: [child_category],

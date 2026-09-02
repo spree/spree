@@ -78,9 +78,9 @@ describe Spree::Products::SelectBuyBox do
   end
 
   describe 'option combinations' do
-    let(:condition) { create(:option_type, name: 'condition', presentation: 'Condition') }
-    let(:used) { create(:option_value, option_type: condition, name: 'used', presentation: 'Used') }
-    let(:new_value) { create(:option_value, option_type: condition, name: 'new', presentation: 'New') }
+    let(:condition) { create(:option_type, name: 'condition', label: 'Condition') }
+    let(:used) { create(:option_value, option_type: condition, name: 'used', label: 'Used') }
+    let(:new_value) { create(:option_value, option_type: condition, name: 'new', label: 'New') }
 
     it 'gives each condition its own winner' do
       used_cheap = create(:variant, product: product, seller: seller, sku: 'U-1', price: 4, option_values: [used])

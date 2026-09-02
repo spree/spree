@@ -13,11 +13,9 @@ module Spree
       end
 
       # Maps a public API field name to the internal Mobility field, for models
-      # whose translatable column has a legacy name (e.g. OptionType exposes
-      # +label+ but stores +presentation+). The public name is what the API
-      # serializer and translation matrix use; the writer alias (+label=+)
-      # already routes to the internal field through Mobility. Override per
-      # model; default is identity.
+      # whose translatable column has a legacy name. The public name is what
+      # the API serializer and translation matrix use. Override per model;
+      # default is identity.
       #
       # @return [Hash{Symbol=>Symbol}] public_name => internal_field
       def translatable_field_aliases

@@ -20,7 +20,7 @@ RSpec.describe Spree::Addresses::Update do
           address1: FFaker::Address.street_address,
           city: FFaker::Address.city,
           phone: FFaker::PhoneNumber.phone_number,
-          zipcode: Spree::TestingSupport::CountryPool.postal_code_for(country.iso),
+          postal_code: Spree::TestingSupport::CountryPool.postal_code_for(country.iso),
           state_name: state.name,
           country_code: country.iso
         }
@@ -314,7 +314,7 @@ RSpec.describe Spree::Addresses::Update do
       let(:new_address_params) do
         {
           phone: '',
-          zipcode: ''
+          postal_code: ''
         }
       end
 
@@ -323,7 +323,7 @@ RSpec.describe Spree::Addresses::Update do
         expect(result).to be_failure
 
         messages = result.error.value.messages
-        expect(messages).to eq( zipcode: ["can't be blank"])
+        expect(messages).to eq( postal_code: ["can't be blank"])
       end
 
       context 'when the address is uneditable' do

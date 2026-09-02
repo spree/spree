@@ -29,7 +29,7 @@ RSpec.describe 'Spree::Variants write workflows' do
 
       variant = result.value
       expect(result).to be_success
-      expect(variant.option_values.map(&:presentation)).to include('Red')
+      expect(variant.option_values.map(&:label)).to include('Red')
       expect(variant.price_in('USD').amount).to eq(12)
       expect(variant.stock_levels.find_by(stock_location: stock_location).count_on_hand).to eq(7)
     end

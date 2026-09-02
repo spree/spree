@@ -95,7 +95,7 @@ module Spree
             Spree::OptionValue
               .where(option_type_id: type_ids)
               .order(:position)
-              .pluck(:id, :option_type_id, :name, :presentation, :position, :color_code)
+              .pluck(:id, :option_type_id, :name, :label, :position, :color_code)
           end
           return [] if ov_rows.empty?
 
@@ -145,15 +145,15 @@ module Spree
             .count("#{var_table}.product_id")
         end
 
-        # Load translated presentations for option values.
-        # Returns { option_value_id => translated_presentation } or empty hash when using the content locale.
+        # Load translated labels for option values.
+        # Returns { option_value_id => translated_label } or empty hash when using the content locale.
         def load_option_value_translations(ov_ids)
           locale = Spree::Current.locale || I18n.locale.to_s
           return {} if locale.to_s == Spree::Current.content_locale
 
           Spree::OptionValue::Translation
             .where(spree_option_value_id: ov_ids, locale: locale)
-            .pluck(:spree_option_value_id, :presentation)
+            .pluck(:spree_option_value_id, :label)
             .to_h
         end
 
@@ -165,12 +165,12 @@ module Spree
             rows = ov_rows_by_type[option_type.id]
             next if rows.blank?
 
-            # rows: [id, option_type_id, name, presentation, position, color_code]
-            options = rows.filter_map do |id, _, name, presentation, position, color_code|
+            # rows: [id, option_type_id, name, label, position, color_code]
+            options = rows.filter_map do |id, _, name, column_label, position, color_code|
               count = counts[id] || 0
               next if count.zero?
 
-              label = ov_translations[id] || presentation
+              label = ov_translations[id] || column_label
 
               {
                 id: encode_prefixed_id(:optval, id),

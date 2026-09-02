@@ -1,7 +1,7 @@
 FactoryBot.define do
   factory :option_value, class: Spree::OptionValue do
     sequence(:name) { |n| "Size-#{n}" }
-    presentation    { 'S' }
+    label    { 'S' }
     option_type
   end
 
@@ -12,22 +12,22 @@ FactoryBot.define do
 
   factory :option_type, class: Spree::OptionType do
     sequence(:name) { |n| "foo-size-#{n}" }
-    presentation    { 'Size' }
+    label    { 'Size' }
 
     trait :size do
       name { 'size' }
-      presentation { 'Size' }
+      label { 'Size' }
     end
 
     trait :color do
       name { 'color' }
-      presentation { 'Color' }
+      label { 'Color' }
       kind { 'color_swatch' }
     end
 
     trait :color_swatch do
       name { 'color' }
-      presentation { 'Color' }
+      label { 'Color' }
       kind { 'color_swatch' }
     end
 

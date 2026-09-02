@@ -111,15 +111,15 @@ RSpec.describe Spree::Api::V3::Admin::TranslationsCoverageController, type: :con
     end
 
     context 'with a model whose label is a different column than its name' do
-      # An option type displays `label` (stored as `presentation`) while `name`
+      # An option type displays `label` while `name`
       # holds a slug, so searching `name` would mean typing the visible label
       # finds nothing.
-      let!(:option_type) { create(:option_type, name: 'shirt-size', presentation: 'Shirt Size') }
+      let!(:option_type) { create(:option_type, name: 'shirt-size', label: 'Shirt Size') }
 
       it 'searches the column the grid displays' do
         get :index, params: { resource_type: 'option_type', search: 'Shirt Size' }, as: :json
 
-        expect(json_response['data']['search_field']).to eq('presentation_cont')
+        expect(json_response['data']['search_field']).to eq('label_cont')
         labels = json_response['data']['records'].map { |r| r['label'] }
         expect(labels).to include('Shirt Size')
       end
@@ -172,10 +172,10 @@ RSpec.describe Spree::Api::V3::Admin::TranslationsCoverageController, type: :con
     end
 
     context 'with another resource type' do
-      let!(:option_type) { create(:option_type, name: 'color', presentation: 'Color') }
+      let!(:option_type) { create(:option_type, name: 'color', label: 'Color') }
 
       it 'reports coverage using the public field name' do
-        Mobility.with_locale(:de) { option_type.update!(presentation: 'Farbe') }
+        Mobility.with_locale(:de) { option_type.update!(label: 'Farbe') }
 
         get :index, params: { resource_type: 'option_type' }, as: :json
 

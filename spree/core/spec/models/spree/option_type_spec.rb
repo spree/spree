@@ -20,39 +20,39 @@ describe Spree::OptionType, type: :model do
   end
 
   describe 'translations' do
-    let!(:option_type) { create(:option_type, name: 'size', presentation: 'Size') }
+    let!(:option_type) { create(:option_type, name: 'size', label: 'Size') }
 
     before do
       Mobility.with_locale(:pl) do
-        option_type.update!(presentation: 'Rozmiar')
+        option_type.update!(label: 'Rozmiar')
       end
     end
 
     let(:option_type_pl_translation) { option_type.translations.find_by(locale: 'pl') }
 
     it 'translates option type fields' do
-      expect(option_type.presentation).to eq('Size')
+      expect(option_type.label).to eq('Size')
 
       expect(option_type_pl_translation).to be_present
-      expect(option_type_pl_translation.presentation).to eq('Rozmiar')
+      expect(option_type_pl_translation.label).to eq('Rozmiar')
     end
 
-    describe '#label alias' do
-      it 'returns the translated presentation for the current locale' do
+    describe '#label' do
+      it 'returns the translated label for the current locale' do
         expect(option_type.label).to eq('Size')
       end
 
-      it 'returns the translated presentation for a different locale' do
+      it 'returns the translated label for a different locale' do
         Mobility.with_locale(:pl) do
           expect(option_type.label).to eq('Rozmiar')
         end
       end
 
-      it 'sets the translated presentation via label=' do
+      it 'sets the translated label' do
         Mobility.with_locale(:pl) do
           option_type.label = 'Nowy Rozmiar'
           option_type.save!
-          expect(option_type.presentation).to eq('Nowy Rozmiar')
+          expect(option_type.label).to eq('Nowy Rozmiar')
         end
       end
     end
@@ -67,25 +67,25 @@ describe Spree::OptionType, type: :model do
         I18n.locale = :en
       end
 
-      it 'creates option type with normalized presentation without NotNullViolation' do
+      it 'creates option type with normalized label without NotNullViolation' do
         I18n.locale = :en
-        option_type = create(:option_type, name: 'weight', presentation: '  Weight  ')
-        expect(option_type.presentation).to eq('Weight')
+        option_type = create(:option_type, name: 'weight', label: '  Weight  ')
+        expect(option_type.label).to eq('Weight')
         expect(option_type.persisted?).to be true
       end
 
-      it 'normalizes translated presentations across locales' do
+      it 'normalizes translated labels across locales' do
         I18n.locale = :en
-        option_type = create(:option_type, name: 'material', presentation: 'Material')
+        option_type = create(:option_type, name: 'material', label: 'Material')
 
         I18n.locale = :de
-        option_type.presentation = '  Material German  '
+        option_type.label = '  Material German  '
         option_type.save!
 
-        expect(option_type.presentation).to eq('Material German')
+        expect(option_type.label).to eq('Material German')
 
         I18n.locale = :en
-        expect(option_type.presentation).to eq('Material')
+        expect(option_type.label).to eq('Material')
       end
     end
   end
@@ -141,7 +141,7 @@ describe Spree::OptionType, type: :model do
     end
 
     it 'touches a product on update' do
-      expect { option_type.update!(presentation: 'New Presentation') }.to change { product.reload.updated_at }
+      expect { option_type.update!(label: 'New Label') }.to change { product.reload.updated_at }
     end
   end
 
@@ -159,7 +159,7 @@ describe Spree::OptionType, type: :model do
     context 'on a new option type' do
       it 'persists option values when the parent is saved' do
         option_type = build(:option_type)
-        option_type.option_values = [{ name: 'red', presentation: 'Red' }]
+        option_type.option_values = [{ name: 'red', label: 'Red' }]
 
         # Children mutate the in-memory association and ride the parent's
         # save via `autosave: true` — no DB hits until `save!`.
@@ -171,33 +171,33 @@ describe Spree::OptionType, type: :model do
 
     context 'on a persisted option type' do
       let!(:option_type) { create(:option_type) }
-      let!(:red) { create(:option_value, option_type: option_type, name: 'red', presentation: 'Red', position: 1) }
-      let!(:blue) { create(:option_value, option_type: option_type, name: 'blue', presentation: 'Blue', position: 2) }
+      let!(:red) { create(:option_value, option_type: option_type, name: 'red', label: 'Red', position: 1) }
+      let!(:blue) { create(:option_value, option_type: option_type, name: 'blue', label: 'Blue', position: 2) }
 
       it 'updates existing values matched by id on save' do
-        option_type.option_values = [{ id: red.prefixed_id, presentation: 'Bright Red' }]
+        option_type.option_values = [{ id: red.prefixed_id, label: 'Bright Red' }]
         option_type.save!
-        expect(red.reload.presentation).to eq('Bright Red')
+        expect(red.reload.label).to eq('Bright Red')
       end
 
       it 'renames a value when name is sent with its id (id-based matching)' do
-        option_type.option_values = [{ id: red.prefixed_id, name: 'crimson', presentation: 'Crimson' }]
+        option_type.option_values = [{ id: red.prefixed_id, name: 'crimson', label: 'Crimson' }]
         option_type.save!
         expect(red.reload.name).to eq('crimson')
       end
 
       it 'creates new values when id is absent' do
         option_type.option_values = [
-          { id: red.prefixed_id, name: 'red', presentation: 'Red' },
-          { id: blue.prefixed_id, name: 'blue', presentation: 'Blue' },
-          { name: 'green', presentation: 'Green' }
+          { id: red.prefixed_id, name: 'red', label: 'Red' },
+          { id: blue.prefixed_id, name: 'blue', label: 'Blue' },
+          { name: 'green', label: 'Green' }
         ]
         option_type.save!
         expect(option_type.reload.option_values.pluck(:name)).to match_array(%w[red blue green])
       end
 
       it 'destroys values not referenced in the payload' do
-        option_type.option_values = [{ id: red.prefixed_id, name: 'red', presentation: 'Red' }]
+        option_type.option_values = [{ id: red.prefixed_id, name: 'red', label: 'Red' }]
         option_type.save!
         expect(option_type.reload.option_values.pluck(:name)).to eq(['red'])
         expect { blue.reload }.to raise_error(ActiveRecord::RecordNotFound)
@@ -209,12 +209,12 @@ describe Spree::OptionType, type: :model do
       end
 
       it 'leaves values untouched when the writer is not called' do
-        option_type.update!(presentation: 'Updated')
+        option_type.update!(label: 'Updated')
         expect(option_type.reload.option_values.pluck(:name)).to match_array(%w[red blue])
       end
 
       it 'returns false from save and surfaces validation errors when option values are invalid' do
-        option_type.option_values = [{ name: '', presentation: '' }]
+        option_type.option_values = [{ name: '', label: '' }]
         expect(option_type.save).to be false
         # Rails autosave surfaces nested errors as `option_values.<attr>`.
         expect(option_type.errors.attribute_names.map(&:to_s)).to include('option_values.name')

@@ -214,7 +214,7 @@ module Spree
 
       conditions = [
         search_condition(self, :sku, query),
-        search_condition(Spree::OptionValue, :presentation, query),
+        search_condition(Spree::OptionValue, :label, query),
       ]
 
       if Spree.use_translations?
@@ -303,7 +303,7 @@ module Spree
                       joins(option_type: :product_option_types).
                       merge(product.product_option_types).
                       reorder('spree_product_option_types.position').
-                      pluck(:presentation).join('/')
+                      pluck(:label).join('/')
     end
 
     # Returns true if the variant is available.
@@ -413,10 +413,10 @@ module Spree
       @options_text ||= if option_values.loaded?
                           option_values.sort_by do |ov|
                             ov.option_type.position
-                          end.map { |ov| "#{ov.option_type.presentation}: #{ov.presentation}" }.to_sentence(words_connector: ', ', two_words_connector: ', ')
+                          end.map { |ov| "#{ov.option_type.label}: #{ov.label}" }.to_sentence(words_connector: ', ', two_words_connector: ', ')
                         else
                           option_values.includes(:option_type).joins(:option_type).order("#{Spree::OptionType.table_name}.position").map do |ov|
-                            "#{ov.option_type.presentation}: #{ov.presentation}"
+                            "#{ov.option_type.label}: #{ov.label}"
                           end.to_sentence(words_connector: ', ', two_words_connector: ', ')
                         end
     end
@@ -504,7 +504,7 @@ module Spree
       gallery_media.reject { |media| media.id == primary_media&.id }
     end
 
-    # Returns an array of hashes with the option type name, value and presentation
+    # Returns an array of hashes with the option type name, value and label
     # @return [Array<Hash>]
     def options
       @options ||= option_values.
@@ -515,7 +515,7 @@ module Spree
                      {
                        name: option_value.option_type.name,
                        value: option_value.name,
-                       presentation: option_value.presentation
+                       label: option_value.label
                      }
                    end
     end
@@ -543,7 +543,7 @@ module Spree
     # @return [void]
     def set_option_value(opt_name, opt_value, opt_type_position = nil)
       option_type = Spree::OptionType.where(name: opt_name.parameterize).first_or_initialize do |o|
-        o.name = o.presentation = opt_name
+        o.name = o.label = opt_name
         o.save!
       end
 
@@ -566,7 +566,7 @@ module Spree
       end
 
       option_value = option_type.option_values.where(name: opt_value.parameterize).first_or_initialize do |o|
-        o.name = o.presentation = opt_value
+        o.name = o.label = opt_value
         o.save!
       end
 
@@ -586,9 +586,9 @@ module Spree
     # @return [String] the presentation of the option value for the given option type
     def option_value(option_type)
       if option_type.is_a?(Spree::OptionType)
-        option_values.detect { |o| o.option_type_id == option_type.id }.try(:presentation)
+        option_values.detect { |o| o.option_type_id == option_type.id }.try(:label)
       else
-        find_option_value(option_type).try(:presentation)
+        find_option_value(option_type).try(:label)
       end
     end
 
