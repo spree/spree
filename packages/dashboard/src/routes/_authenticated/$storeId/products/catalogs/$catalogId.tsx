@@ -8,7 +8,7 @@ import {
   usePermissions,
 } from '@spree/dashboard-core'
 import {
-  Badge,
+  ActiveBadge,
   Button,
   Card,
   CardContent,
@@ -224,9 +224,11 @@ function CatalogBody({ catalog }: { catalog: Catalog }) {
             <PageHeader
               title={catalog.name}
               badges={
-                catalog.active ? undefined : (
-                  <Badge variant="secondary">{t('admin.common.inactive')}</Badge>
-                )
+                <ActiveBadge
+                  active={catalog.active}
+                  activeLabel={t('admin.common.active')}
+                  inactiveLabel={t('admin.common.inactive')}
+                />
               }
               backTo="products/catalogs"
               resource={{ id: catalog.id }}

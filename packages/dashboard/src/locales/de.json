@@ -3060,7 +3060,7 @@
             "create_title": "Neuer Umtausch",
             "empty": "Kein Umtausch für diese Bestellung.",
             "price_difference": "Preisdifferenz",
-            "replacement_variant": "Varianten-ID des Ersatzes"
+            "replacement_variant": "Ersatzvariante"
           },
           "no_delivery_method": "Keine Versandmethode ausgewählt.",
           "returns": {

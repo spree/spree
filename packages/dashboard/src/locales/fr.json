@@ -3060,7 +3060,7 @@
             "create_title": "Nouvel échange",
             "empty": "Aucun échange pour cette commande.",
             "price_difference": "Différence de prix",
-            "replacement_variant": "ID de la variante de remplacement"
+            "replacement_variant": "Variante de remplacement"
           },
           "no_delivery_method": "Aucune méthode de livraison sélectionnée.",
           "returns": {

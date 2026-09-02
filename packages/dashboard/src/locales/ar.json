@@ -3077,7 +3077,7 @@
             "create_title": "استبدال جديد",
             "empty": "لا توجد استبدالات لهذا الطلب.",
             "price_difference": "فرق السعر",
-            "replacement_variant": "معرّف النسخة البديلة"
+            "replacement_variant": "النسخة البديلة"
           },
           "no_delivery_method": "لم يتم اختيار طريقة توصيل.",
           "returns": {

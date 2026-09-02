@@ -3088,7 +3088,7 @@
             "create_title": "Nowa wymiana",
             "empty": "Brak wymian dla tego zamówienia.",
             "price_difference": "Różnica w cenie",
-            "replacement_variant": "ID wariantu zamiennego"
+            "replacement_variant": "Wariant zamienny"
           },
           "no_delivery_method": "Nie wybrano metody dostawy.",
           "returns": {
