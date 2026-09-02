@@ -21,6 +21,53 @@ module Spree
       specify { expect(subject.stock_levels).to eq([stock_level]) }
       specify { expect(subject.variant).to eq(stock_level.variant) }
 
+      # The quantifier answers from memory when the caller has already loaded
+      # the rows, and falls back to SQL when it has not. Listing endpoints
+      # preload precisely so they take the first path — without coverage, a
+      # dropped `includes` turns a page of variants back into a query per row
+      # with nothing failing.
+      describe 'preloaded associations' do
+        def count_queries
+          count = 0
+          subscription = ActiveSupport::Notifications.subscribe('sql.active_record') do |*, payload|
+            next if payload[:cached] || payload[:name].to_s.match?(/SCHEMA|TRANSACTION/)
+            # Only stock reads matter here: `should_track_inventory?` looks up
+            # the product and store, which no amount of stock preloading avoids.
+            next unless payload[:name].to_s.match?(/StockLevel|StockReservation/)
+
+            count += 1
+          end
+          yield
+          count
+        ensure
+          ActiveSupport::Notifications.unsubscribe(subscription)
+        end
+
+        let(:variant) { stock_level.variant }
+
+        it 'answers from the loaded rows without querying' do
+          preloaded = Spree::Variant.
+            where(id: variant.id).
+            includes(stock_levels: [:stock_location, :active_stock_reservations]).
+            first
+          quantifier = described_class.new(preloaded)
+
+          queries = count_queries do
+            quantifier.available_stock
+            quantifier.reserved_quantity
+          end
+
+          expect(queries).to eq(0)
+          expect(quantifier.available_stock).to eq(described_class.new(variant).available_stock)
+        end
+
+        it 'queries when the rows are not loaded' do
+          quantifier = described_class.new(Spree::Variant.find(variant.id))
+
+          expect(count_queries { quantifier.available_stock }).to be > 0
+        end
+      end
+
       context 'with a single stock location/item' do
         it 'total_on_hand should match stock_level' do
           expect(subject.total_on_hand).to eq(stock_level.count_on_hand)
