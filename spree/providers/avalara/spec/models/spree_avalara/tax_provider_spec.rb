@@ -133,19 +133,31 @@ RSpec.describe SpreeAvalara::TaxProvider do
   end
 
   describe 'having no opinion' do
-    it 'sweeps and returns when the sale has nowhere to ship' do
-      provider.estimate(cart)
+    # Asserting the absence of rows is not enough — that would also hold for an
+    # implementation that asked Avalara and threw the answer away. A cart with no
+    # address yet is most of a cart's life, and it must cost nothing.
+    it 'never asks Avalara about a sale with nowhere to ship' do
       cart.update!(ship_address: nil, bill_address: nil)
 
-      provider.estimate(cart)
+      provider.estimate(cart.reload)
 
+      expect(client).not_to have_received(:create_transaction)
       expect(cart.tax_lines.reload).to be_empty
     end
 
-    it 'sweeps and returns when there is nothing to tax' do
-      provider.estimate(cart)
+    it 'never asks Avalara when there is nothing to tax' do
       line_item.destroy!
 
+      provider.estimate(cart.reload)
+
+      expect(client).not_to have_received(:create_transaction)
+    end
+
+    it 'sweeps rows it wrote earlier once the address goes away' do
+      provider.estimate(cart)
+      expect(cart.tax_lines.reload).to be_present
+
+      cart.update!(ship_address: nil, bill_address: nil)
       provider.estimate(cart.reload)
 
       expect(cart.tax_lines.reload).to be_empty
