@@ -100,6 +100,10 @@ export function useTranslationCoverage(
     queryKey: useResourceKey('translations', 'coverage', resourceType, params),
     queryFn: () => adminClient.translations.coverage(resourceType, params),
     enabled: !!resourceType,
+    // Hold the previous result while a new term or page loads. Without it
+    // every keystroke is a fresh query key with no data, so the page swaps to
+    // its loading state and unmounts the search box the merchant is typing in.
+    placeholderData: (previous) => previous,
   })
 }
 

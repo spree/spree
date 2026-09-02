@@ -155,116 +155,122 @@ function TranslationsPage() {
           )}
         </div>
 
-        {isLoading || isError ? (
-          <Card>
-            <CardContent className="py-10">
-              {isError ? (
-                <p className="text-center text-muted-foreground text-sm">
-                  {t('admin.pages.translations.load_error')}
-                </p>
-              ) : (
+        {/* The cards and their headers stay mounted through every state, so
+            the search box the merchant is typing in is never unmounted — only
+            each card's content switches. */}
+        <Card>
+          <CardHeader>
+            <CardTitle>{t('admin.pages.translations.coverage')}</CardTitle>
+          </CardHeader>
+          <CardContent className="p-0">
+            {isError ? (
+              <p className="px-6 py-10 text-center text-muted-foreground text-sm">
+                {t('admin.pages.translations.load_error')}
+              </p>
+            ) : isLoading ? (
+              <div className="px-6 py-6">
+                <Skeleton className="h-28 w-full" />
+              </div>
+            ) : targetLocales.length === 0 ? (
+              <Empty className="py-10">
+                <EmptyTitle>{t('admin.pages.translations.no_locales_title')}</EmptyTitle>
+                <EmptyDescription>
+                  {t('admin.pages.translations.no_locales_description')}
+                </EmptyDescription>
+              </Empty>
+            ) : (
+              <Table>
+                <TableHeader>
+                  <TableRow>
+                    <TableHead>{t('admin.translations.locale')}</TableHead>
+                    <TableHead className="text-center">
+                      {t('admin.pages.translations.translated')}
+                    </TableHead>
+                    <TableHead className="text-center">
+                      {t('admin.pages.translations.total')}
+                    </TableHead>
+                    <TableHead className="w-2/5">
+                      {t('admin.pages.translations.progress')}
+                    </TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
+                  {(coverage?.coverage ?? []).map((row) => {
+                    const percentage = Math.round(row.coverage * 100)
+
+                    return (
+                      <TableRow key={row.locale}>
+                        <TableCell>
+                          <span className="font-medium">{localeName(row.locale)}</span>
+                          <span className="ml-2 text-muted-foreground">{row.locale}</span>
+                        </TableCell>
+                        <TableCell className="text-center tabular-nums">{row.translated}</TableCell>
+                        <TableCell className="text-center tabular-nums">{row.total}</TableCell>
+                        <TableCell>
+                          <div className="flex items-center gap-3">
+                            <Progress value={percentage} className="flex-1" />
+                            <span className="whitespace-nowrap text-muted-foreground text-sm tabular-nums">
+                              {percentage}%
+                            </span>
+                          </div>
+                        </TableCell>
+                      </TableRow>
+                    )
+                  })}
+                </TableBody>
+              </Table>
+            )}
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardHeader className="flex flex-row flex-wrap items-center justify-between gap-3 space-y-0">
+            <CardTitle>{t('admin.pages.translations.records')}</CardTitle>
+            <div className="flex items-center gap-2">
+              <SearchInput
+                value={searchInput}
+                onValueChange={(value: string) => {
+                  setSearchInput(value)
+                  // A narrowed list rarely has the page the merchant was on;
+                  // only touch the URL when there is one to leave.
+                  if (page !== 1) patchSearch({ page: 1 }, { replace: true })
+                }}
+                placeholder={t('admin.common.search_placeholder')}
+              />
+              <Select
+                items={resourceOptions}
+                value={resourceType}
+                onValueChange={(value: string) =>
+                  patchSearch({ resource: value, page: 1, edit: undefined })
+                }
+              >
+                {/* Sized to its content rather than a fixed width: a two-word
+                    label ("Option types") wraps in a narrow trigger and grows
+                    it taller than the search field beside it. */}
+                <SelectTrigger className="w-auto min-w-40 whitespace-nowrap">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  {resourceOptions.map((option) => (
+                    <SelectItem key={option.value} value={option.value}>
+                      {option.label}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+          </CardHeader>
+          <CardContent className="p-0">
+            {isError ? (
+              <p className="px-6 py-10 text-center text-muted-foreground text-sm">
+                {t('admin.pages.translations.load_error')}
+              </p>
+            ) : isLoading ? (
+              <div className="px-6 py-6">
                 <Skeleton className="h-40 w-full" />
-              )}
-            </CardContent>
-          </Card>
-        ) : targetLocales.length === 0 ? (
-          <Empty>
-            <EmptyTitle>{t('admin.pages.translations.no_locales_title')}</EmptyTitle>
-            <EmptyDescription>
-              {t('admin.pages.translations.no_locales_description')}
-            </EmptyDescription>
-          </Empty>
-        ) : (
-          <>
-            <Card>
-              <CardHeader>
-                <CardTitle>{t('admin.pages.translations.coverage')}</CardTitle>
-              </CardHeader>
-              <CardContent className="p-0">
-                <Table>
-                  <TableHeader>
-                    <TableRow>
-                      <TableHead>{t('admin.translations.locale')}</TableHead>
-                      <TableHead className="text-center">
-                        {t('admin.pages.translations.translated')}
-                      </TableHead>
-                      <TableHead className="text-center">
-                        {t('admin.pages.translations.total')}
-                      </TableHead>
-                      <TableHead className="w-2/5">
-                        {t('admin.pages.translations.progress')}
-                      </TableHead>
-                    </TableRow>
-                  </TableHeader>
-                  <TableBody>
-                    {(coverage?.coverage ?? []).map((row) => {
-                      const percentage = Math.round(row.coverage * 100)
-
-                      return (
-                        <TableRow key={row.locale}>
-                          <TableCell>
-                            <span className="font-medium">{localeName(row.locale)}</span>
-                            <span className="ml-2 text-muted-foreground">{row.locale}</span>
-                          </TableCell>
-                          <TableCell className="text-center tabular-nums">
-                            {row.translated}
-                          </TableCell>
-                          <TableCell className="text-center tabular-nums">{row.total}</TableCell>
-                          <TableCell>
-                            <div className="flex items-center gap-3">
-                              <Progress value={percentage} className="flex-1" />
-                              <span className="whitespace-nowrap text-muted-foreground text-sm tabular-nums">
-                                {percentage}%
-                              </span>
-                            </div>
-                          </TableCell>
-                        </TableRow>
-                      )
-                    })}
-                  </TableBody>
-                </Table>
-              </CardContent>
-            </Card>
-
-            <Card>
-              <CardHeader className="flex flex-row flex-wrap items-center justify-between gap-3 space-y-0">
-                <CardTitle>{t('admin.pages.translations.records')}</CardTitle>
-                <div className="flex items-center gap-2">
-                  <SearchInput
-                    value={searchInput}
-                    onValueChange={(value: string) => {
-                      setSearchInput(value)
-                      // A narrowed list rarely has the page the merchant was
-                      // on; only touch the URL when there is one to leave.
-                      if (page !== 1) patchSearch({ page: 1 }, { replace: true })
-                    }}
-                    placeholder={t('admin.common.search_placeholder')}
-                  />
-                  <Select
-                    items={resourceOptions}
-                    value={resourceType}
-                    onValueChange={(value: string) =>
-                      patchSearch({ resource: value, page: 1, edit: undefined })
-                    }
-                  >
-                    {/* Sized to its content rather than a fixed width: a
-                        two-word label ("Option types") wraps in a narrow
-                        trigger and grows it taller than the search field
-                        beside it. */}
-                    <SelectTrigger className="w-auto min-w-40 whitespace-nowrap">
-                      <SelectValue />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {resourceOptions.map((option) => (
-                        <SelectItem key={option.value} value={option.value}>
-                          {option.label}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                </div>
-              </CardHeader>
-              <CardContent className="p-0">
+              </div>
+            ) : (
+              <>
                 <Table>
                   <TableHeader>
                     <TableRow>
@@ -304,10 +310,10 @@ function TranslationsPage() {
                     onPageChange={(next: number) => patchSearch({ page: next })}
                   />
                 )}
-              </CardContent>
-            </Card>
-          </>
-        )}
+              </>
+            )}
+          </CardContent>
+        </Card>
       </div>
 
       {editId && (
