@@ -47,7 +47,9 @@ export function CustomerPrivacyCard({ customer }: { customer: Customer }) {
     try {
       await downloadFromApi(
         token,
-        `/customers/${customer.id}/export`,
+        // A full engine path: downloadFromApi resolves against the API
+        // origin, not the SDK's admin base.
+        `/api/v3/admin/customers/${customer.id}/export`,
         `customer-${customer.id}.json`,
         getApiClient().downloadHeaders?.() ?? {},
       )

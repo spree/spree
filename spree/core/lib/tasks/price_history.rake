@@ -53,6 +53,26 @@ namespace :spree do
         puts "Store #{store.name}: pruned #{deleted} price history records older than #{retention_days} days"
       end
 
+      # Rows whose variant or product was hard-deleted belong to no store's
+      # query and would otherwise outlive every retention window there is.
+      # Swept on the longest window in play, so no store loses evidence it is
+      # still required to be able to show.
+      longest = Spree::Store.all.filter_map { |store| store.preferred_price_history_retention_days }.max
+
+      if longest
+        owned = Spree::Variant.with_deleted.
+                joins(:product).merge(Spree::Product.with_deleted).
+                select(:id)
+
+        orphaned = Spree::PriceHistory.
+                   where.not(variant_id: owned).
+                   where(recorded_at: ...longest.days.ago).
+                   delete_all
+
+        total += orphaned
+        puts "Pruned #{orphaned} price history records with no surviving variant"
+      end
+
       puts "Pruned #{total} price history records"
     end
   end

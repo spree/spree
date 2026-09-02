@@ -19,6 +19,10 @@ module Spree
           def create
             result = Spree.customer_create_workflow.call(
               store: current_store,
+              # Records that the storefront's terms box was ticked. Read from
+              # params rather than permitted: it is evidence the workflow acts
+              # on, not an attribute of the customer row.
+              terms_of_service: params[:terms_of_service],
               **permitted_params.except(:current_password).to_h.symbolize_keys
             )
 
@@ -48,6 +52,7 @@ module Spree
             return render_current_password_invalid if sensitive_update? && !valid_current_password?
 
             update_params = permitted_params.except(:current_password)
+            current_user.consent_source = Spree::ConsentRecord::ACCOUNT
 
             if current_user.update(update_params)
               render json: serialize_resource(current_user)
@@ -75,9 +80,7 @@ module Spree
 
           def permitted_params
             params.permit(:email, :password, :password_confirmation, :first_name, :last_name,
-                          :accepts_email_marketing, :phone, :current_password,
-                          # Records that the storefront's terms box was ticked.
-                          :terms_of_service, metadata: {})
+                          :accepts_email_marketing, :phone, :current_password, metadata: {})
           end
 
           private

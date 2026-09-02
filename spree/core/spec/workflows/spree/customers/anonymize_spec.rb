@@ -135,6 +135,33 @@ RSpec.describe Spree::Customers::Anonymize do
     end
   end
 
+  describe 'saved cards' do
+    let!(:card) { create(:credit_card, customer: customer, name: 'Ada Lovelace') }
+
+    it 'erases the cardholder name' do
+      result
+
+      expect(card.reload.name).to eq('Redacted')
+    end
+
+    it 'keeps the card reachable, so a refund on a retained order still has its source' do
+      result
+
+      # Spree::Payment#source carries no with_deleted scope, so a soft-deleted
+      # card reads back as nil and breaks refunds on orders that were kept.
+      expect(card.reload.deleted_at).to be_nil
+      expect(Spree::CreditCard.find_by(id: card.id)).to be_present
+    end
+
+    it 'keeps the digits a refund is traced by' do
+      digits = card.last_digits
+
+      result
+
+      expect(card.reload.last_digits).to eq(digits)
+    end
+  end
+
   describe 'credentials and sessions' do
     let!(:refresh_token) do
       Spree::RefreshToken.create!(

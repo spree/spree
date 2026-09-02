@@ -55,6 +55,7 @@ module Spree
           step :anonymize_order_addresses
           step :anonymize_purchases
           step :anonymize_payment_sources
+          step :forget_gateway_profiles
           step :anonymize_identities
           step :anonymize_sessions
           step :anonymize_consent_records
@@ -164,15 +165,25 @@ module Spree
           update_all(email: customer.email, updated_at: Time.current)
       end
 
-      # Cards keep their last four digits and expiry — a refund to a card on a
-      # retained order has to be traceable — but lose the cardholder name, and
-      # the profiles at the gateway are released so the processor stops
-      # holding the person too.
+      # Cards keep their last four digits and expiry — a refund against a
+      # retained order has to be traceable — and lose the cardholder name.
+      #
+      # Deliberately NOT soft-deleted: `Spree::Payment#source` carries no
+      # `with_deleted` scope, so a deleted card reads back as nil and a refund
+      # or void on a past order would lose the source it needs. Erasing the
+      # name is what this step is for; hiding the row would break the ledger
+      # the rest of the flow is preserving.
       def anonymize_payment_sources
-        customer.credit_cards.update_all(
-          name: REDACTED_NAME, deleted_at: Time.current, updated_at: Time.current
-        )
+        customer.credit_cards.update_all(name: REDACTED_NAME, updated_at: Time.current)
+      end
 
+      # Drops the local mapping to the customer object the processor holds.
+      #
+      # This does not delete anything at the gateway — nothing here calls one,
+      # and a gateway call belongs outside the transaction. A merchant whose
+      # processor agreement requires deletion there does it through the
+      # `after_anonymize` hook, which runs with the erased customer in hand.
+      def forget_gateway_profiles
         customer.gateway_customers.destroy_all
       end
 
@@ -218,8 +229,13 @@ module Spree
       def record_consent_withdrawal
         return unless @accepted_marketing
 
+        consent_store = store || Spree::Current.store
+        # A console or rake caller may have no store in scope. The erasure is
+        # the obligation; the note about it is not worth failing one over.
+        return if consent_store.nil?
+
         Spree::ConsentRecord.record!(
-          store: store || Spree::Current.store,
+          store: consent_store,
           owner: customer,
           purpose: Spree::ConsentRecord::EMAIL_MARKETING,
           source: Spree::ConsentRecord::ANONYMIZATION,

@@ -17,6 +17,15 @@ module Spree
       #   subject asked for it themselves
       # @return [Spree::ServiceModule::Result]
       def call(store:, customer:, kind:, requested_by: nil)
+        # Nothing useful is left to answer with: an export would return the
+        # tombstone and email a link to an address that no longer receives,
+        # and a second erasure has nothing to erase.
+        if customer.anonymized?
+          data_request = Spree::DataRequest.new(customer: customer)
+          data_request.errors.add(:base, Spree.t('data_request_errors.already_anonymized'))
+          return failure(data_request)
+        end
+
         existing = in_flight_request(store: store, customer: customer, kind: kind)
         return success(existing) if existing
 

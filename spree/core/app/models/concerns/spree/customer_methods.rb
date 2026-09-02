@@ -345,7 +345,7 @@ module Spree
     def scramble_email_and_names
       Spree::Deprecation.warn('Spree::CustomerMethods#scramble_email_and_names is deprecated and will be removed in Spree 6.1. Use Spree::Customers::Anonymize instead.')
 
-      Spree.customer_anonymize_workflow.call(customer: self).success?
+      Spree.customer_anonymize_workflow.call(customer: self, store: Spree::Current.store).success?
     end
 
     # Whether this customer's personal data has been erased.

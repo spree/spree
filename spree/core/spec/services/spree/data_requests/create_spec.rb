@@ -45,6 +45,18 @@ RSpec.describe Spree::DataRequests::Create do
     end
   end
 
+  describe 'a customer whose data has already been erased' do
+    before { Spree::Customers::Anonymize.call(customer: customer, store: store) }
+
+    it 'refuses the request rather than exporting the tombstone' do
+      expect(result).to be_failure
+    end
+
+    it 'queues nothing' do
+      expect { result }.not_to have_enqueued_job(Spree::DataRequests::ProcessJob)
+    end
+  end
+
   it 'treats access and erasure as different requests' do
     described_class.call(store: store, customer: customer, kind: Spree::DataRequest::ACCESS)
 

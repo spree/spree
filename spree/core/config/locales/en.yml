@@ -894,6 +894,7 @@ en:
     cvv: CVV
     cvv_response: CVV Response
     data_request_errors:
+      already_anonymized: This customer's personal data has already been erased
       download_unavailable: This download link has expired or is no longer valid
       not_pending: This request has already been processed
     date: Date

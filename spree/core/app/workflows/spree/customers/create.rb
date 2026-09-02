@@ -124,6 +124,10 @@ module Spree
       end
 
       def create_customer
+        # Keeps the stamped column agreeing with the consent row written below
+        # — otherwise a registration records 'registration' in one place and
+        # 'account' in the other, for the same instant.
+        customer.consent_source = consent_source
         failure(customer) unless customer.save
       end
 
@@ -148,6 +152,10 @@ module Spree
           )
         end
 
+        # Checkout already recorded the marketing opt-in against the order
+        # before this workflow ran (OrderPlacedSubscriber), so writing one here
+        # too would make a single tick look like two separate agreements.
+        return if order
         return unless customer.accepts_email_marketing?
 
         Spree::ConsentRecord.record!(
