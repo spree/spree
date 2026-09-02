@@ -360,6 +360,10 @@ Two behavior notes for extension authors: `Spree::Metadata` no longer includes t
 
 **BREAKING — product CSV.** Custom-field columns are now prefixed `custom_field.` instead of `metafield.` (for example `custom_field.custom.material`). Exports emit the new prefix and imports only recognise the new prefix, so update any saved import templates and any integration that reads the export. A file still using the old prefix imports without its custom-field values rather than failing.
 
+**Definitions now belong to a store.** They used to be global, shared by every store in an installation. `db:migrate` assigns every existing definition to the default store and gives it a `filter_key` column (the `cf_…` identifier that used to be recomputed on every read). Read them through the store — `store.custom_field_definitions` — rather than the class; the admin endpoint is store-scoped, so a definition belonging to another store now returns 404 instead of being readable and editable.
+
+Single-store installations notice nothing. **A multi-store installation ends up with its whole schema on the default store**, and its other stores start empty: create the fields you want on each store, or run `bin/rake spree:upgrade:backfill_custom_field_definition_stores` first if the migration ran before any store existed. Existing values keep pointing at the definitions they always did, which is why the rows are not copied — copies would render blank anyway. Two definitions whose `namespace`/`key` pair flattens to one `cf_…` key (`("a_b", "c")` and `("a", "b_c")`) can no longer coexist in a store; the migration suffixes the later one and names it in its output so you can rename it.
+
 ### The Legacy order-routing strategy is gone
 
 `Spree::OrderRouting::Strategy::Legacy` — the pre-5.5 escape hatch that delegated straight to `Spree::Stock::Coordinator` and consulted no routing rules — is removed and no longer registered in `Spree.order_routing.strategies`.
