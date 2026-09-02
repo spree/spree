@@ -217,7 +217,16 @@ module Spree
               delivery_method.calculator = selected_calculator_class.new
             end
 
-            return if preferences.blank? || delivery_method.calculator.nil?
+            return if preferences.blank?
+
+            # A payload may carry preferences without naming a calculator —
+            # editing the amount on a method that already has one, or creating
+            # with the default. The model only builds the default calculator
+            # at validation, so without this the preferences land on nothing
+            # and the amount the merchant typed is silently replaced by a free
+            # rate.
+            delivery_method.ensure_calculator
+            return if delivery_method.calculator.nil?
 
             preferences.each do |key, value|
               next unless delivery_method.calculator.has_preference?(key)

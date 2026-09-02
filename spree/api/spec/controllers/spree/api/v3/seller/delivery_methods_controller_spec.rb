@@ -107,6 +107,16 @@ RSpec.describe Spree::Api::V3::Seller::DeliveryMethodsController, type: :control
         to eq(Spree::DeliveryMethod::DEFAULT_FULFILLMENT_PROVIDER)
     end
 
+    # The model only builds the default calculator at validation, so a payload
+    # carrying preferences without naming a calculator used to drop them and
+    # save a free rate over the amount the seller typed.
+    it 'keeps the amount when no calculator is named' do
+      post :create, params: valid_params.except(:calculator_type), as: :json
+
+      expect(response).to have_http_status(:created)
+      expect(Spree::DeliveryMethod.find_by(name: 'Next day').calculator.preferred_amount).to eq(9.99)
+    end
+
     it 'refuses a calculator this store does not offer' do
       post :create, params: valid_params.merge(calculator_type: 'NoSuchCalculator'), as: :json
 
