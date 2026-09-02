@@ -214,6 +214,7 @@ The full address surface is shared by Cart and Order through `Spree::Purchase::A
 - `ship_address_id=` / `bill_address_id=` are **ownership-guarded**: an address not owned by the record's customer resolves to `nil`.
 - A signed-in customer entering checkout gets blank address slots **auto-filled from their saved defaults**.
 - **`use_billing` is deprecated** (removed in 6.1): the shipping address is canonical — use `use_shipping` to copy ship → bill.
+- The `firstname`, `lastname` and `zipcode` **columns are renamed** to `first_name`, `last_name` and `postal_code`. The API has used the new names since 5.4, but two things carried the old ones and now change: **validation error keys** (a client sending `postal_code` used to get its error back under `zipcode`) and **Ransack filter keys** (`q[zipcode_cont]` becomes `q[postal_code_cont]`). The old method names still read for one release.
 
 ## Returns, exchanges and claims
 
@@ -560,6 +561,14 @@ Every rename keeps the legacy name working for one release with a deprecation wa
 | `Order#shipping_discount` | `#fulfillment_discount` |
 | `Order#special_instructions` | `#customer_note` (column renamed) |
 | `Order#promo_total`, `#item_count`, `#ship_total` | `#discount_total`, `#total_quantity`, `#delivery_total` (columns renamed) |
+| `LineItem#promo_total`, `Fulfillment#promo_total` | `#discount_total` (columns renamed) |
+| `Address#firstname`, `#lastname`, `#zipcode` | `#first_name`, `#last_name`, `#postal_code` (columns renamed) |
+| `Address.normalize_zipcode`, `#normalized_zipcode` | `.normalize_postal_code`, `#normalized_postal_code` |
+| `Order#bill_address_firstname`, `#bill_address_lastname` | `#bill_address_first_name`, `#bill_address_last_name` |
+| `OptionType#presentation`, `OptionValue#presentation` | `#label` (column renamed, translations included) |
+| `OptionValue#option_type_presentation` | `#option_type_label` |
+| `Spree::PresentationTranslatable` | `Spree::LabelTranslatable` |
+| `Spree::WishedItem`, `Wishlist#wished_items`, `#wished_items_count` | `Spree::WishlistItem`, `#wishlist_items`, `#wishlist_items_count` (table renamed, prefix `wi_` → `wli_`) |
 | `use_billing` / `clone_billing_address` | `use_shipping` (shipping address is canonical) |
 | `Fulfillment#ship`, `#ship!`, `#shipped?`, `#can_ship?`, `#shipping_method`, `#add_shipping_method` | `#fulfill`, `#fulfill!`, `#fulfilled?`, `#can_fulfill?`, `#delivery_method`, `#add_delivery_method` |
 | `LineItem#target_shipment` | `#target_fulfillment` |
