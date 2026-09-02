@@ -354,8 +354,8 @@ RSpec.describe SpreeMeilisearch::SearchProvider do
 
     context 'with option type facets' do
       let(:color_type) { create(:option_type, :color_swatch, filterable: true) }
-      let(:red_value) { create(:option_value, option_type: color_type, name: 'red', presentation: 'Red', color_code: '#FF0000') }
-      let(:blue_value) { create(:option_value, option_type: color_type, name: 'blue', presentation: 'Blue', color_code: '#0000FF') }
+      let(:red_value) { create(:option_value, option_type: color_type, name: 'red', label: 'Red', color_code: '#FF0000') }
+      let(:blue_value) { create(:option_value, option_type: color_type, name: 'blue', label: 'Blue', color_code: '#0000FF') }
 
       let(:ms_response) do
         {

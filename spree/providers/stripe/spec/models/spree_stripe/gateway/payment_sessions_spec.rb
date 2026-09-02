@@ -250,7 +250,7 @@ RSpec.describe SpreeStripe::Gateway::PaymentSessions do
             expect(order.bill_address.country.iso).to eq('US')
             expect(order.bill_address.address1).to eq('100 California Street')
             expect(order.bill_address.city).to eq('San Francisco')
-            expect(order.bill_address.zipcode).to eq('94111')
+            expect(order.bill_address.postal_code).to eq('94111')
             expect(order.bill_address.state).to eq(california)
             expect(order.bill_address).to be_quick_checkout
           end

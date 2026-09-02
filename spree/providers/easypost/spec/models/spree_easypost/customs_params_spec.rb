@@ -8,7 +8,7 @@ RSpec.describe 'SpreeEasyPost customs params' do
 
   let(:origin) { create(:stock_location, country: usa) }
   let(:domestic_destination) { create(:address, country: usa) }
-  let(:foreign_destination) { create(:address, country: canada, state: nil, state_name: 'Ontario', zipcode: 'K1A 0B1') }
+  let(:foreign_destination) { create(:address, country: canada, state: nil, state_name: 'Ontario', postal_code: 'K1A 0B1') }
 
   let(:order) { create(:order_with_line_items, store: store, line_items_count: 1) }
   let(:variant) { order.line_items.first.variant }
