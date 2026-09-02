@@ -14,23 +14,23 @@ us_iso = 'US'
 ny_abbr = 'NY'
 
 billing_address = Spree::Address.find_or_create_by!(
-  firstname: 'John',
-  lastname: 'Doe',
+  first_name: 'John',
+  last_name: 'Doe',
   address1: '7735 Old Georgetown Rd',
   city: 'Bethesda',
   state_abbr: ny_abbr,
-  zipcode: '20814',
+  postal_code: '20814',
   country_code: us_iso,
   phone: '555-0199'
 )
 
 shipping_address = Spree::Address.find_or_create_by!(
-  firstname: 'John',
-  lastname: 'Doe',
+  first_name: 'John',
+  last_name: 'Doe',
   address1: '1600 Pennsylvania Ave NW',
   city: 'Washington',
   state_abbr: ny_abbr,
-  zipcode: '20500',
+  postal_code: '20500',
   country_code: us_iso,
   phone: '555-0199'
 )

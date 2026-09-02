@@ -210,13 +210,13 @@ module Spree
 
       def self.with_address(query, address = :ship_address)
         left_outer_joins(address).
-          where("#{Spree::Address.table_name}.firstname like ?", "%#{query}%").
-          or(left_outer_joins(address).where("#{Spree::Address.table_name}.lastname like ?", "%#{query}%"))
+          where("#{Spree::Address.table_name}.first_name like ?", "%#{query}%").
+          or(left_outer_joins(address).where("#{Spree::Address.table_name}.last_name like ?", "%#{query}%"))
       end
 
       def self.with_email_or_address(email, address)
         left_outer_joins(:addresses).
-          where("#{Spree::Address.table_name}.firstname LIKE ? or #{Spree::Address.table_name}.lastname LIKE ? or #{table_name}.email LIKE ?",
+          where("#{Spree::Address.table_name}.first_name LIKE ? or #{Spree::Address.table_name}.last_name LIKE ? or #{table_name}.email LIKE ?",
                 "%#{address}%", "%#{address}%", "%#{email}%")
       end
 

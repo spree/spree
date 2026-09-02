@@ -14,8 +14,8 @@ FactoryBot.define do
   # A company node's address book entry: an ordinary address the node owns.
   factory :company_address, parent: :address do
     association :owner, factory: :company
-    firstname { nil }
-    lastname  { nil }
+    first_name { nil }
+    last_name  { nil }
     sequence(:label) { |n| "Site #{n}" }
   end
 

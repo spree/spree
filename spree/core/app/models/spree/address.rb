@@ -25,7 +25,7 @@ module Spree
 
     # we're not freezing this on purpose so developers can extend and manage
     # those attributes depending of the logic of their applications
-    ADDRESS_FIELDS = %w(firstname lastname company address1 address2 city state zipcode country phone)
+    ADDRESS_FIELDS = %w(first_name last_name company address1 address2 city state postal_code country phone)
     # Beyond identity and ownership, three groups are excluded because they
     # cannot tell two addresses apart. Latitude and longitude are derived from
     # the address, so an entry whose geocoding has already run would otherwise
@@ -89,10 +89,10 @@ module Spree
     after_commit :async_geocode
 
     with_options presence: true do
-      validates :firstname, :lastname, if: :require_name?
+      validates :first_name, :last_name, if: :require_name?
       validates :address1, if: :require_street?
       validates :city, :country
-      validates :zipcode, if: :require_zipcode?
+      validates :postal_code, if: :require_postal_code?
       validates :phone, if: :require_phone?
       validates :company, if: :require_company?
     end
@@ -114,21 +114,35 @@ module Spree
 
     delegate :name, :iso3, :iso_name, to: :country, prefix: true, allow_nil: true
 
-    alias_attribute :postal_code, :zipcode
-    alias_attribute :first_name, :firstname
-    alias_attribute :last_name, :lastname
+    # Standardized column names (renamed in 6.0); the legacy readers stay one
+    # release.
+    alias_attribute :zipcode, :postal_code
+    alias_attribute :firstname, :first_name
+    alias_attribute :lastname, :last_name
 
     # The single home for postal-code normalization (delivery-zone matching) —
-    # don't scatter zipcode munging elsewhere.
+    # don't scatter postal-code munging elsewhere.
     # @param value [String, nil]
     # @return [String] value with spaces/dashes stripped, upcased
-    def self.normalize_zipcode(value)
+    def self.normalize_postal_code(value)
       value.to_s.gsub(/[\s-]/, '').upcase
     end
 
-    # @return [String] this address's zipcode, normalized via {.normalize_zipcode}
+    # @deprecated Use {.normalize_postal_code}; removed in 6.1.
+    def self.normalize_zipcode(value)
+      Spree::Deprecation.warn('Spree::Address.normalize_zipcode is deprecated and will be removed in Spree 6.1. Use .normalize_postal_code instead.')
+      normalize_postal_code(value)
+    end
+
+    # @return [String] this address's postal code, normalized via {.normalize_postal_code}
+    def normalized_postal_code
+      self.class.normalize_postal_code(postal_code)
+    end
+
+    # @deprecated Use {#normalized_postal_code}; removed in 6.1.
     def normalized_zipcode
-      self.class.normalize_zipcode(zipcode)
+      Spree::Deprecation.warn('Spree::Address#normalized_zipcode is deprecated and will be removed in Spree 6.1. Use #normalized_postal_code instead.')
+      normalized_postal_code
     end
 
     # Normalizes a params hash for query builders like +find_or_create_by+,
@@ -272,7 +286,7 @@ module Spree
     # first_name / last_name aliases are defined via alias_attribute above
 
     def full_name
-      "#{firstname} #{lastname}".strip
+      "#{first_name} #{last_name}".strip
     end
 
     def state_text
@@ -293,7 +307,7 @@ module Spree
         company,
         address1,
         address2,
-        "#{city}, #{state_text} #{zipcode}",
+        "#{city}, #{state_text} #{postal_code}",
         country.to_s
       ].reject(&:blank?).map { |attribute| ERB::Util.html_escape(attribute) }.join('<br/>')
     end
@@ -376,7 +390,7 @@ module Spree
         address2: address2,
         city: city,
         state: state_text,
-        zip: zipcode,
+        zip: postal_code,
         country: country.try(:iso),
         phone: phone
       }
@@ -389,7 +403,7 @@ module Spree
       !quick_checkout && store_preference(:address_requires_phone, false)
     end
 
-    def require_zipcode?
+    def require_postal_code?
       !quick_checkout && (country ? country.zipcode_required? : true)
     end
 
@@ -470,8 +484,8 @@ module Spree
     end
 
     def set_default_values
-      self.firstname ||= customer_owner.first_name
-      self.lastname ||= customer_owner.last_name
+      self.first_name ||= customer_owner.first_name
+      self.last_name ||= customer_owner.last_name
       self.phone ||= customer_owner.phone
     end
 
@@ -538,8 +552,8 @@ module Spree
     def set_user_attributes
       customer = customer_owner
       if customer.name.blank?
-        customer.first_name = firstname
-        customer.last_name = lastname
+        customer.first_name = first_name
+        customer.last_name = last_name
       end
       customer.phone = customer.phone.presence || phone.presence
 
@@ -570,15 +584,15 @@ module Spree
     end
 
     def postal_code_validate
-      return if country.blank? || country_code.blank? || !require_zipcode? || zipcode.blank?
+      return if country.blank? || country_code.blank? || !require_postal_code? || postal_code.blank?
       return unless ::ValidatesZipcode::CldrRegexpCollection::ZIPCODES_REGEX.keys.include?(country_code.upcase.to_sym)
 
       formatted_zip = ::ValidatesZipcode::Formatter.new(
-        zipcode: zipcode.to_s.strip,
+        zipcode: postal_code.to_s.strip,
         country_alpha2: country_code.upcase
       ).format
 
-      errors.add(:zipcode, :invalid) unless ::ValidatesZipcode.valid?(formatted_zip, country_code.upcase)
+      errors.add(:postal_code, :invalid) unless ::ValidatesZipcode.valid?(formatted_zip, country_code.upcase)
     end
 
     def assign_new_default_address_to_user

@@ -19,7 +19,7 @@ module Spree
     has_iso_geography
 
     normalizes :postal_code_prefix, :postal_code_from, :postal_code_to,
-               with: ->(value) { Spree::Address.normalize_zipcode(value).presence }
+               with: ->(value) { Spree::Address.normalize_postal_code(value).presence }
 
     # Mapping a retired subdivision code to its successor needs both halves,
     # which normalizes can't see — it runs per attribute — so it stays a
@@ -41,7 +41,7 @@ module Spree
       case member_type
       when 'country' then same_country?(address)
       when 'state' then same_country?(address) && address.state_code.present? && address.state_code == state_code
-      when 'postal_code' then same_country?(address) && postal_match?(address.normalized_zipcode)
+      when 'postal_code' then same_country?(address) && postal_match?(address.normalized_postal_code)
       else false
       end
     end

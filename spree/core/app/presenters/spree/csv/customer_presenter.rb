@@ -44,7 +44,7 @@ module Spree
           customer.address&.state_code,
           customer.address&.country&.name,
           customer.address&.country&.iso,
-          customer.address&.zipcode,
+          customer.address&.postal_code,
           customer.phone,
           customer.amount_spent_in(Spree::Store.current.default_currency),
           customer.completed_orders.count,

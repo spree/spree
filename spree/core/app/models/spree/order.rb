@@ -261,7 +261,12 @@ module Spree
     #   {#recalculate_totals!}. Removed in 6.1.
     delegate :update_totals, :persist_totals, to: :updater
     delegate :merge!, to: :merger
-    delegate :firstname, :lastname, to: :bill_address, prefix: true, allow_nil: true
+    delegate :first_name, :last_name, to: :bill_address, prefix: true, allow_nil: true
+
+    # @deprecated The delegated names follow the renamed address columns since
+    #   6.0; removed in 6.1.
+    alias bill_address_firstname bill_address_first_name
+    alias bill_address_lastname bill_address_last_name
 
     class_attribute :update_hooks
     self.update_hooks = Set.new
@@ -300,14 +305,14 @@ module Spree
       # purchase order — and both have to find the same transaction.
       conditions << arel_table[:po_number].lower.matches(query_pattern)
 
-      conditions << search_condition(Spree::Address, :firstname, sanitized_query)
-      conditions << search_condition(Spree::Address, :lastname, sanitized_query)
+      conditions << search_condition(Spree::Address, :first_name, sanitized_query)
+      conditions << search_condition(Spree::Address, :last_name, sanitized_query)
 
       full_name = NameOfPerson::PersonName.full(sanitized_query)
 
       if full_name.first.present? && full_name.last.present?
-        conditions << search_condition(Spree::Address, :firstname, full_name.first)
-        conditions << search_condition(Spree::Address, :lastname, full_name.last)
+        conditions << search_condition(Spree::Address, :first_name, full_name.first)
+        conditions << search_condition(Spree::Address, :last_name, full_name.last)
       end
 
       left_joins(:bill_address).where(arel_table[:email].lower.eq(query.downcase)).or(where(conditions.reduce(:or)))
