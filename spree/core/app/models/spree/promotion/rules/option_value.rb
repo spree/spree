@@ -11,16 +11,22 @@ module Spree
         preference :eligible_values, :array, default: [],
                    parse_on_set: normalize_id_preference(klass: Spree::OptionValue)
 
+        # @param promotable [Object]
+        # @return [Boolean]
         def applicable?(promotable)
           promotable.is_a?(Spree::Order) || promotable.is_a?(Spree::Cart)
         end
 
+        # @return [ActiveRecord::Relation<Spree::OptionValue>]
         def option_values
           return Spree::OptionValue.none if preferred_eligible_values.blank?
 
           Spree::OptionValue.where(id: preferred_eligible_values)
         end
 
+        # @param promotable [Spree::Order, Spree::Cart]
+        # @param _options [Hash]
+        # @return [Boolean]
         def eligible?(promotable, _options = {})
           return false if eligible_option_value_ids.empty?
 
@@ -33,6 +39,8 @@ module Spree
           end
         end
 
+        # @param line_item [Spree::LineItem]
+        # @return [Boolean]
         def actionable?(line_item)
           return false if eligible_option_value_ids.empty?
 
