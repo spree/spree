@@ -141,6 +141,13 @@ nav.add({
       position: 450,
     },
     {
+      key: 'products.translations',
+      labelKey: 'admin.nav.translations',
+      path: '/products/translations',
+      subject: Subject.Product,
+      position: 475,
+    },
+    {
       key: 'products.transfers',
       labelKey: 'admin.nav.transfers',
       path: '/products/transfers',

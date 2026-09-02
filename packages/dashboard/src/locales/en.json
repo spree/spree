@@ -2504,7 +2504,8 @@
       "returns": "Returns",
       "sellers": "Sellers",
       "settings": "Settings",
-      "transfers": "Transfers"
+      "transfers": "Transfers",
+      "translations": "Translations"
     },
     "option_types": {
       "columns": {
@@ -3708,6 +3709,24 @@
           "roles": "Roles"
         },
         "title": "Staff"
+      },
+      "translations": {
+        "coverage": "Translation coverage",
+        "description": "See how much of your catalog is translated, and fill the gaps.",
+        "no_locales_description": "Add a locale to one of your markets to start translating.",
+        "no_locales_title": "No other locales yet",
+        "progress": "Progress",
+        "record": "Record",
+        "records": "Records",
+        "resource_types": {
+          "category": "Categories",
+          "collection": "Collections",
+          "option_type": "Option types",
+          "policy": "Policies",
+          "product": "Products"
+        },
+        "total": "Total",
+        "translated": "Translated"
       }
     },
     "payment_methods": {

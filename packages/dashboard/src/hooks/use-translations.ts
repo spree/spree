@@ -1,4 +1,9 @@
-import type { Locale, ResourceTranslations } from '@spree/admin-sdk'
+import type {
+  Locale,
+  ResourceTranslations,
+  TranslatableResource,
+  TranslationCoverage,
+} from '@spree/admin-sdk'
 import { adminClient, useResourceKey } from '@spree/dashboard-core'
 import { useQuery } from '@tanstack/react-query'
 
@@ -42,3 +47,32 @@ export function useResourceTranslations(
     enabled: !!resourceId,
   })
 }
+
+/**
+ * The translatable-resource registry: which resource types exist, what fields
+ * each has, and which have a dedicated read route. Drives the centralized
+ * page's tabs, so adding a translatable model needs no dashboard change.
+ */
+export function useTranslatableResources() {
+  return useQuery<TranslatableResource[]>({
+    queryKey: useResourceKey('translatable_resources'),
+    queryFn: () => adminClient.translatableResources.list(),
+  })
+}
+
+/**
+ * Translation coverage across a whole resource type — per-locale totals plus a
+ * page of records carrying how many fields each has translated.
+ */
+export function useTranslationCoverage(
+  resourceType: string,
+  params: { page?: number; limit?: number } & Record<string, unknown>,
+) {
+  return useQuery({
+    queryKey: useResourceKey('translations', 'coverage', resourceType, params),
+    queryFn: () => adminClient.translations.coverage(resourceType, params),
+    enabled: !!resourceType,
+  })
+}
+
+export type { TranslationCoverage }

@@ -2497,7 +2497,8 @@
       "returns": "退货",
       "sellers": "卖家",
       "settings": "设置",
-      "transfers": "调拨"
+      "transfers": "调拨",
+      "translations": "翻译"
     },
     "option_types": {
       "columns": {
@@ -3700,6 +3701,24 @@
           "roles": "角色"
         },
         "title": "员工"
+      },
+      "translations": {
+        "coverage": "翻译覆盖率",
+        "description": "查看目录的翻译进度，并补齐缺失的内容。",
+        "no_locales_description": "为某个市场添加语言即可开始翻译。",
+        "no_locales_title": "尚无其他语言",
+        "progress": "进度",
+        "record": "记录",
+        "records": "记录",
+        "resource_types": {
+          "category": "分类",
+          "collection": "系列",
+          "option_type": "选项类型",
+          "policy": "政策",
+          "product": "商品"
+        },
+        "total": "总计",
+        "translated": "已翻译"
       }
     },
     "payment_methods": {
