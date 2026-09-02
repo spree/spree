@@ -87,7 +87,8 @@ module Spree
              inverse_of: :variant,
              autosave: true
 
-    has_many :wished_items, dependent: :destroy
+    has_many :wishlist_items, class_name: 'Spree::WishlistItem', dependent: :destroy
+    has_many :wished_items, class_name: 'Spree::WishlistItem', inverse_of: :variant, deprecated: true
 
     has_many :digital_assets, class_name: 'Spree::DigitalAsset', dependent: :destroy
     has_many :digitals, class_name: 'Spree::DigitalAsset', deprecated: true

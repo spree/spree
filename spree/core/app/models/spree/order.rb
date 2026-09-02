@@ -379,7 +379,7 @@ module Spree
     # It's a sum of the item total and the promo total
     # @return [Float]
     def analytics_subtotal
-      (item_total + line_items.sum(:promo_total)).to_f
+      (item_total + line_items.sum(:discount_total)).to_f
     end
 
 

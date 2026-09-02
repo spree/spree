@@ -8,7 +8,7 @@ RSpec.describe Spree::Api::V3::Store::WishlistItemsController, type: :controller
   let(:wishlist) { create(:wishlist, customer: user, store: store) }
   let(:product) { create(:product) }
   let(:variant) { create(:variant, product: product) }
-  let!(:wished_item) { create(:wished_item, wishlist: wishlist, variant: variant) }
+  let!(:wishlist_item) { create(:wishlist_item, wishlist: wishlist, variant: variant) }
 
   before do
     request.headers['X-Spree-Api-Key'] = api_key.token
@@ -82,16 +82,16 @@ RSpec.describe Spree::Api::V3::Store::WishlistItemsController, type: :controller
   end
 
   describe 'PATCH #update' do
-    it 'updates wished item quantity' do
-      patch :update, params: { wishlist_id: wishlist.prefixed_id, id: wished_item.prefixed_id, quantity: 5 }
+    it 'updates wishlist item quantity' do
+      patch :update, params: { wishlist_id: wishlist.prefixed_id, id: wishlist_item.prefixed_id, quantity: 5 }
 
       expect(response).to have_http_status(:ok)
-      expect(wished_item.reload.quantity).to eq(5)
+      expect(wishlist_item.reload.quantity).to eq(5)
     end
 
     context 'validation errors' do
       it 'returns errors for invalid quantity' do
-        patch :update, params: { wishlist_id: wishlist.prefixed_id, id: wished_item.prefixed_id, quantity: 0 }
+        patch :update, params: { wishlist_id: wishlist.prefixed_id, id: wishlist_item.prefixed_id, quantity: 0 }
 
         expect(response).to have_http_status(:unprocessable_content)
         expect(json_response['error']['code']).to eq('validation_error')
@@ -111,7 +111,7 @@ RSpec.describe Spree::Api::V3::Store::WishlistItemsController, type: :controller
       it 'returns not found for item in other users wishlist' do
         other_user = create(:user)
         other_wishlist = create(:wishlist, customer: other_user, store: store)
-        other_item = create(:wished_item, wishlist: other_wishlist, variant: variant)
+        other_item = create(:wishlist_item, wishlist: other_wishlist, variant: variant)
 
         patch :update, params: { wishlist_id: other_wishlist.prefixed_id, id: other_item.prefixed_id, quantity: 5 }
 
@@ -124,7 +124,7 @@ RSpec.describe Spree::Api::V3::Store::WishlistItemsController, type: :controller
   describe 'DELETE #destroy' do
     it 'removes item from wishlist' do
       expect {
-        delete :destroy, params: { wishlist_id: wishlist.prefixed_id, id: wished_item.prefixed_id }
+        delete :destroy, params: { wishlist_id: wishlist.prefixed_id, id: wishlist_item.prefixed_id }
       }.to change(Spree::WishedItem, :count).by(-1)
 
       expect(response).to have_http_status(:no_content)
@@ -142,7 +142,7 @@ RSpec.describe Spree::Api::V3::Store::WishlistItemsController, type: :controller
       it 'returns not found for item in other users wishlist' do
         other_user = create(:user)
         other_wishlist = create(:wishlist, customer: other_user, store: store)
-        other_item = create(:wished_item, wishlist: other_wishlist, variant: variant)
+        other_item = create(:wishlist_item, wishlist: other_wishlist, variant: variant)
 
         delete :destroy, params: { wishlist_id: other_wishlist.prefixed_id, id: other_item.prefixed_id }
 

@@ -235,7 +235,7 @@ en:
         units_per_carton: Units per carton
         weight: Weight
         width: Width
-      spree/wished_item:
+      spree/wishlist_item:
         variant: ''
       spree/zone:
         description: Description
@@ -436,7 +436,7 @@ en:
           attributes:
             url:
               internal_address_not_allowed: must not point to an internal or private network address
-        spree/wished_item:
+        spree/wishlist_item:
           attributes:
             variant:
               taken: You already added this item to your wishlist

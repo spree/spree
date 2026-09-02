@@ -1080,8 +1080,8 @@ describe Spree::Order, type: :model do
 
     before do
       order.update_column(:item_total, 100)
-      order.line_items[0].update_column(:promo_total, 10)
-      order.line_items[1].update_column(:promo_total, 5)
+      order.line_items[0].update_column(:discount_total, 10)
+      order.line_items[1].update_column(:discount_total, 5)
     end
 
     it 'returns the subtotal used for analytics integrations' do
