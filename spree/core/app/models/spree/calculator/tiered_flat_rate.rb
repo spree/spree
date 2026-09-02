@@ -20,7 +20,8 @@ module Spree
     end
 
     def compute(object = nil)
-      return 0 unless object && preferred_currency.casecmp(object.currency.upcase).zero?
+      return 0 unless object&.currency.present?
+      return 0 unless preferred_currency.casecmp(object.currency.upcase).zero?
 
       base, amount = preferred_tiers.sort.reverse.detect { |b, _| object.amount >= b }
       amount || preferred_base_amount

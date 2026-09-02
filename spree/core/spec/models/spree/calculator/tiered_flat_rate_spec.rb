@@ -66,6 +66,14 @@ describe Spree::Calculator::TieredFlatRate, type: :model do
       it { is_expected.to eq 0 }
     end
 
+    context 'when object currency is nil' do
+      before do
+        allow(line_item).to receive_messages(amount: 150, currency: nil)
+      end
+
+      it { is_expected.to eq 0 }
+    end
+
     context 'when there is no object' do
       subject { calculator.compute }
 
