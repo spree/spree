@@ -52,7 +52,10 @@ RSpec.describe SpreeAvalara::ItemPresenter do
     it 'falls back to generic tangible goods when no category carries a code' do
       expect(line_item.tax_category&.tax_code).to be_blank
 
-      expect(present(line_item)[:taxCode]).to eq(described_class::DEFAULT_TAX_CODE)
+      # The literal, not the constant the presenter reads: comparing the code to
+      # itself passes whatever the value becomes, and this one is Avalara's —
+      # 'NT' would file every uncategorised line as non-taxable.
+      expect(present(line_item)[:taxCode]).to eq('P0000000')
     end
   end
 
@@ -62,7 +65,7 @@ RSpec.describe SpreeAvalara::ItemPresenter do
     # A fulfillment carries no tax category of its own; the delivery method it
     # was rated with does.
     it 'is taxed as freight when the delivery method names no category' do
-      expect(present(fulfillment)[:taxCode]).to eq(described_class::FREIGHT_TAX_CODE)
+      expect(present(fulfillment)[:taxCode]).to eq('FR')
     end
 
     it 'ships from its own stock location' do

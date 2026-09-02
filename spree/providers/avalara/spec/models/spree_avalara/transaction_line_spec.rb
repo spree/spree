@@ -147,6 +147,14 @@ RSpec.describe SpreeAvalara::TransactionLine do
         expect(reason(no_nexus, { exemption_sent: true })).to eq('not_collecting')
       end
 
+      # Sending a code is not the same as Avalara honouring it: with no
+      # certificate on file for the jurisdiction it taxes the line and can still
+      # echo the code back. Reading that as an exemption would tell the merchant
+      # tax was not collected on a line where it was.
+      it 'claims none when the code came back but the line was taxed anyway' do
+        expect(reason('entityUseCode' => 'G', 'exemptAmount' => 0.0)).to eq('standard_rated')
+      end
+
       it 'claims one when Avalara applied its own certificate' do
         expect(reason(exempt.merge('exemptCertId' => 4321))).to eq('customer_exempt')
         expect(reason(exempt.merge('exemptNo' => 'EX-1'))).to eq('customer_exempt')

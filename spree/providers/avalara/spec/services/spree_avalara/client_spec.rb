@@ -148,6 +148,9 @@ RSpec.describe SpreeAvalara::Client do
 
     it 'recognises an already-filed document' do
       expect(client.duplicate_document_error?(error('DocumentAlreadyExists'))).to be(true)
+      # Unverified — no recording has produced this name. Pinned so it is not
+      # dropped as dead weight; the recorded path is the DocStatusError below.
+      expect(client.duplicate_document_error?(error('DuplicateDocumentException'))).to be(true)
       expect(client.duplicate_document_error?(error('EntityNotFoundError'))).to be(false)
     end
 

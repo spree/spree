@@ -120,6 +120,21 @@ RSpec.describe SpreeAvalara::TaxProvider do
       expect(client).to have_received(:create_transaction).once
     end
 
+    # A quote goes stale: rates change, certificates lapse, and Avalara is the
+    # authority on both. The window exists to absorb the several calls one
+    # recalculation makes, not to answer tomorrow's checkout — so the duration
+    # is asserted, since nothing else here would notice it widening.
+    it 'holds a quote only for minutes' do
+      expect(SpreeAvalara::EstimateCacheKey::EXPIRES_IN).to be <= 15.minutes
+
+      provider.estimate(cart)
+      Timecop.travel(Time.current + SpreeAvalara::EstimateCacheKey::EXPIRES_IN + 1.minute) do
+        provider.estimate(cart)
+      end
+
+      expect(client).to have_received(:create_transaction).twice
+    end
+
     # An address change can flip inclusiveness as well as the rate, so it has to
     # bust the key rather than serve the previous calculation.
     it 'prices again when the tax address changes' do
