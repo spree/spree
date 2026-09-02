@@ -716,9 +716,6 @@ function FulfillmentPanel({
  * it does not have.
  */
 function UnfulfilledGroup({ rows }: { rows: FulfillmentItemRow[] }) {
-  const { t } = useTranslation()
-  const totalUnits = rows.reduce((sum, row) => sum + row.quantity, 0)
-
   return (
     <FulfillmentPanel status="unfulfilled">
       <CardContent className="px-0 py-3">
