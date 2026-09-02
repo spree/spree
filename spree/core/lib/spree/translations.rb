@@ -29,6 +29,70 @@ module Spree
       end
     end
 
+    # Per-locale coverage for a whole resource type: how many of each record's
+    # translatable fields are filled in, per locale, in ONE query per resource
+    # type rather than one per record (the legacy admin page's N+1).
+    #
+    # Counting every field rather than just the first is deliberate: a product
+    # whose name is translated but whose description is not is not "translated"
+    # (see the plan's Key Decision 15).
+    #
+    # @param records [ActiveRecord::Relation] the page of records to report on
+    # @param klass [Class] the translatable model
+    # @param locales [Array<String>] non-default locales to report
+    # @return [Hash{Integer=>Hash{String=>Integer}}] record id => locale => filled field count
+    def translated_counts(records, klass, locales)
+      return {} if locales.empty?
+
+      record_ids = records.map(&:id)
+      return {} if record_ids.empty?
+
+      columns = internal_field_columns(klass)
+      rows = translation_scope(klass).
+             where(foreign_key(klass) => record_ids, locale: locales).
+             pluck(foreign_key(klass), :locale, *columns)
+
+      rows.each_with_object({}) do |row, counts|
+        record_id, locale, *values = row
+        filled = values.count { |value| value.to_s.present? }
+        next if filled.zero?
+
+        (counts[record_id] ||= {})[locale.to_s] = filled
+      end
+    end
+
+    # Store-wide totals per locale: how many records have every translatable
+    # field filled in, out of how many records there are.
+    #
+    # @param scope [ActiveRecord::Relation] every record of this type in the store
+    # @param klass [Class]
+    # @param locales [Array<String>]
+    # @return [Array<Hash>] one entry per locale
+    def coverage_for(scope, klass, locales)
+      total = scope.count
+      field_count = klass.public_translatable_fields.size
+      counts = translated_counts(scope, klass, locales)
+
+      locales.map do |locale|
+        translated = counts.count { |_id, by_locale| by_locale[locale].to_i >= field_count }
+
+        {
+          'locale' => locale,
+          'translated' => translated,
+          'total' => total,
+          'coverage' => total.positive? ? (translated.to_f / total).round(4) : 0.0
+        }
+      end
+    end
+
+    # The number of translatable fields a record of this type has, so a client
+    # can render "2/5" without counting the field list itself.
+    #
+    # @return [Integer]
+    def field_count(klass)
+      klass.public_translatable_fields.size
+    end
+
     # @return [Array<Hash>] registry made public: [{ "resource_type" => "product", "fields" => [{key,type}] }]
     def registry
       Spree.translatable_resources.map do |klass|
@@ -109,5 +173,28 @@ module Spree
       (store.supported_locales_list - [store.default_locale]).sort
     end
     private_class_method :non_default_locales
+
+    # Translation-table columns for the model's translatable fields, mapped from
+    # the PUBLIC field names to the internal ones (OptionType exposes `label`,
+    # the column is `presentation`).
+    def internal_field_columns(klass)
+      aliases = klass.translatable_field_aliases
+      klass.public_translatable_fields.map { |field| (aliases[field] || field).to_s }
+    end
+    private_class_method :internal_field_columns
+
+    # Soft-deleted translation rows must not count as coverage; only some
+    # translation tables carry `deleted_at`.
+    def translation_scope(klass)
+      scope = klass::Translation.unscoped
+      scope = scope.where(deleted_at: nil) if klass::Translation.column_names.include?('deleted_at')
+      scope
+    end
+    private_class_method :translation_scope
+
+    def foreign_key(klass)
+      klass.reflect_on_association(:translations).foreign_key
+    end
+    private_class_method :foreign_key
   end
 end

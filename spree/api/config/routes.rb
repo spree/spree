@@ -203,6 +203,10 @@ Spree::Core::Engine.add_routes do
         # option values in one save). Flat list of independent registry writes.
         post 'translations/batch', to: 'translations/batches#create'
 
+        # Translation coverage across a whole resource type (?resource_type=),
+        # driving the centralized Translations page's grid.
+        get 'translations', to: 'translations_coverage#index'
+
         # Authentication
         post 'auth/login', to: 'auth#create'
         post 'auth/refresh', to: 'auth#refresh'

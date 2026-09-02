@@ -32,8 +32,14 @@ RSpec.describe Spree::Api::V3::Admin::TranslatableResourcesController, type: :co
       resources = json_response['data'].index_by { |r| r['resource_type'] }
       expect(resources['product']['readable']).to be(true)
       expect(resources['category']['readable']).to be(true)
+      # Derived from the mounted routes, so every resource carrying the
+      # :translatable concern is flagged — collections and policies included.
+      expect(resources['collection']['readable']).to be(true)
+      expect(resources['policy']['readable']).to be(true)
+      expect(resources['option_type']['readable']).to be(true)
       # Writable via batch + readable inline as children, but no standalone route.
       expect(resources['option_value']['readable']).to be(false)
+      expect(resources['store']['readable']).to be(false)
     end
   end
 end
