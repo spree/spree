@@ -11,13 +11,18 @@ require 'spec_helper'
 # Adding a column here without handling it is how a store silently becomes
 # non-compliant: nothing else in the suite would notice.
 RSpec.describe 'personal data coverage' do
-  # Column names that carry data identifying a person.
+  # Column names that carry data identifying a person. Deliberately wider than
+  # contact details: a street line, a postcode and a free-text note all point
+  # at a household, and a guard that only caught columns called "email" would
+  # pass a new table holding somebody's address.
   PII_COLUMN_PATTERNS = [
     /\Aemail\z/, /_email\z/,
     /\Aphone\z/, /_phone\z/,
     /\Afirst_?name\z/, /\Alast_?name\z/, /\Afull_name\z/,
     /\Aip_address\z/, /_ip_address\z/,
-    /\Auser_agent\z/
+    /\Auser_agent\z/,
+    /\Aaddress\d?\z/, /\Azipcode\z/, /\Apostal_code\z/,
+    /\Anote\z/, /_note\z/
   ].freeze
 
   # Tables whose personal data the anonymizer handles, each with why.
@@ -50,7 +55,8 @@ RSpec.describe 'personal data coverage' do
     'spree_order_cancellations' => 'cancellation notes, written by staff about an order',
     'spree_sellers' => 'marketplace seller contact details, not a shopper',
     'spree_stores' => 'the merchant\'s own support and notification addresses',
-    'spree_store_translations' => 'translated copies of the merchant\'s own addresses'
+    'spree_store_translations' => 'translated copies of the merchant\'s own addresses',
+    'spree_product_submissions' => 'an operator\'s note about a seller\'s product, not about a shopper'
   }.freeze
 
   it 'handles every table that stores personal data' do

@@ -725,17 +725,18 @@
       },
       "new_sheet_description": "在此创建的客户未设置密码。他们首次登录时将收到一个魔法链接。",
       "privacy": {
-        "title": "隐私与数据",
+        "already_anonymized": "个人数据已于 {{date}} 抹除",
+        "anonymize": "抹除个人数据",
+        "anonymize_confirm_message": "其姓名、邮箱、电话和地址将在所有位置被替换，并且该客户会被登出。订单和付款记录将保留，但不含个人信息。此操作无法撤销。",
+        "anonymize_confirm_title": "确定抹除该客户的个人数据吗？",
+        "consent_updated": "营销同意最近更新于 {{date}}",
         "description": "回应该客户的数据保护请求。",
         "export": "导出数据",
-        "anonymize": "抹除个人数据",
-        "anonymize_confirm_title": "确定抹除该客户的个人数据吗？",
-        "anonymize_confirm_message": "其姓名、邮箱、电话和地址将在所有位置被替换，并且该客户会被登出。订单和付款记录将保留，但不含个人信息。此操作无法撤销。",
-        "consent_updated": "营销同意最近更新于 {{date}}",
-        "already_anonymized": "个人数据已于 {{date}} 抹除",
+        "export_failed": "无法导出数据",
         "messages": {
           "anonymized": "个人数据已抹除"
-        }
+        },
+        "title": "隐私与数据"
       },
       "row_actions": {
         "delete_confirm": "删除 {{email}}？已有已完成订单的客户无法被移除。"

@@ -100,9 +100,14 @@ module Spree
         customer.addresses.map { |address| address_hash(address) }
       end
 
+      # Batched: a long-standing customer's whole order history, its line items
+      # and both address snapshots would otherwise be resident at once, beside
+      # the hash built from them and the JSON built from that.
       def orders
-        customer.orders.complete.includes(:line_items, :bill_address, :ship_address).map do |order|
-          {
+        exported = []
+
+        customer.orders.complete.includes(:line_items, :bill_address, :ship_address).find_each do |order|
+          exported << {
             number: order.number,
             email: order.email,
             currency: order.currency,
@@ -127,6 +132,8 @@ module Spree
             end
           }
         end
+
+        exported
       end
 
       # Card numbers were never stored, so this is the metadata that was: the
@@ -170,7 +177,9 @@ module Spree
       end
 
       def wishlists
-        customer.wishlists.includes(wished_items: :variant).map do |wishlist|
+        # Through to the product: a variant's name delegates to it, so
+        # stopping at the variant costs a query per distinct item.
+        customer.wishlists.includes(wished_items: { variant: :product }).map do |wishlist|
           {
             name: wishlist.name,
             is_private: wishlist.is_private,

@@ -28,6 +28,12 @@ module Spree
           def serializer_class
             Spree.api.order_serializer
           end
+
+          # The withdrawal deadline reads both on every row, so without these
+          # a listing pays two queries per order for a field it always emits.
+          def collection_includes
+            super + [:market, :fulfillments]
+          end
         end
       end
     end

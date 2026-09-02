@@ -26,7 +26,6 @@ module Spree
       # What replaces a name. Recognisable as a tombstone rather than looking
       # like a real person called Anonymized.
       REDACTED_NAME = 'Redacted'.freeze
-      REDACTED_VALUE = 'Redacted'.freeze
 
       # A reserved TLD (RFC 2606), so an anonymized address can never be
       # delivered to and can never collide with a real one.
@@ -60,11 +59,16 @@ module Spree
           step :anonymize_sessions
           step :anonymize_consent_records
           step :anonymize_data_requests
+          step :record_consent_withdrawal
           step :remove_newsletter_subscriptions
           step :stamp_anonymized
         end
 
-        customer.publish_event('customer.anonymized', store_id: store&.prefixed_id)
+        customer.publish_event(
+          'customer.anonymized',
+          store_id: store&.prefixed_id,
+          requested_by_id: requested_by&.prefixed_id
+        )
 
         run_hooks :after_anonymize
         success(customer.reload)
@@ -75,6 +79,7 @@ module Spree
       # Read before anything rewrites it — guest rows are found by address.
       def capture_original_email
         @original_email = customer.email
+        @accepted_marketing = customer.accepts_email_marketing?
       end
 
       def ensure_not_already_anonymized
@@ -94,7 +99,7 @@ module Spree
           phone: nil,
           accepts_email_marketing: false,
           email_marketing_consent_updated_at: Time.current,
-          email_marketing_consent_source: 'anonymization',
+          email_marketing_consent_source: Spree::ConsentRecord::ANONYMIZATION,
           selected_locale: nil,
           metadata: {},
           internal_note: nil,
@@ -164,9 +169,9 @@ module Spree
       # the profiles at the gateway are released so the processor stops
       # holding the person too.
       def anonymize_payment_sources
-        customer.credit_cards.find_each do |card|
-          card.update_columns(name: REDACTED_NAME, deleted_at: Time.current, updated_at: Time.current)
-        end
+        customer.credit_cards.update_all(
+          name: REDACTED_NAME, deleted_at: Time.current, updated_at: Time.current
+        )
 
         customer.gateway_customers.destroy_all
       end
@@ -191,7 +196,7 @@ module Spree
       def anonymize_consent_records
         Spree::ConsentRecord.
           where(owner_type: customer.class.base_class.to_s, owner_id: customer.id).
-          or(Spree::ConsentRecord.where(email: erased_emails)).
+          or(Spree::ConsentRecord.where(email: @original_email)).
           update_all(email: nil, ip_address: nil, user_agent: nil, updated_at: Time.current)
       end
 
@@ -207,10 +212,25 @@ module Spree
       # Matched by email as well as by customer: guest checkout subscribes with
       # `customer: nil`, so the person's address sits in a row that never
       # pointed at an account.
+      # Erasure withdraws marketing consent on the person's behalf. That is a
+      # consent decision like any other, so it is recorded as one rather than
+      # only flipping the column — the row is what the history is read from.
+      def record_consent_withdrawal
+        return unless @accepted_marketing
+
+        Spree::ConsentRecord.record!(
+          store: store || Spree::Current.store,
+          owner: customer,
+          purpose: Spree::ConsentRecord::EMAIL_MARKETING,
+          source: Spree::ConsentRecord::ANONYMIZATION,
+          accepted: false
+        )
+      end
+
       def remove_newsletter_subscriptions
         Spree::NewsletterSubscriber.
           where(customer_id: customer.id).
-          or(Spree::NewsletterSubscriber.where(email: erased_emails)).
+          or(Spree::NewsletterSubscriber.where(email: @original_email)).
           destroy_all
       end
 
@@ -224,7 +244,7 @@ module Spree
         attributes = {
           firstname: REDACTED_NAME,
           lastname: REDACTED_NAME,
-          address1: REDACTED_VALUE,
+          address1: REDACTED_NAME,
           address2: nil,
           phone: nil,
           alternative_phone: nil,
@@ -257,14 +277,7 @@ module Spree
         @anonymous_email ||= "anonymized-#{SecureRandom.uuid}@#{REDACTED_DOMAIN}"
       end
 
-      # The addresses this person was known by. Captured before the account is
-      # rewritten, because rows that never pointed at the account can only be
-      # found by the address they carry.
-      #
-      # @return [Array<String>]
-      def erased_emails
-        @erased_emails ||= [@original_email, customer.email].compact_blank.uniq
-      end
+
     end
   end
 end

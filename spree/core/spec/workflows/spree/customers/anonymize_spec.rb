@@ -216,6 +216,38 @@ RSpec.describe Spree::Customers::Anonymize do
     end
   end
 
+  describe 'the marketing consent it withdraws' do
+    before { customer.update!(accepts_email_marketing: true) }
+
+    it 'records the withdrawal as a consent event' do
+      result
+
+      withdrawal = Spree::ConsentRecord.where(owner: customer).
+                   for_purpose(Spree::ConsentRecord::EMAIL_MARKETING).recent_first.first
+
+      expect(withdrawal.accepted).to be(false)
+      expect(withdrawal.source).to eq(Spree::ConsentRecord::ANONYMIZATION)
+    end
+
+    it 'leaves no contact detail on the row it writes' do
+      result
+
+      withdrawal = Spree::ConsentRecord.where(owner: customer).
+                   for_purpose(Spree::ConsentRecord::EMAIL_MARKETING).recent_first.first
+
+      expect(withdrawal.email).to be_nil
+    end
+
+    it 'writes nothing when there was no consent to withdraw' do
+      customer.update!(accepts_email_marketing: false)
+
+      result
+
+      expect(Spree::ConsentRecord.where(owner: customer).
+             for_purpose(Spree::ConsentRecord::EMAIL_MARKETING)).to be_empty
+    end
+  end
+
   it 'announces the erasure' do
     expect(customer).to receive(:publish_event).with('customer.anonymized', hash_including(:store_id))
 

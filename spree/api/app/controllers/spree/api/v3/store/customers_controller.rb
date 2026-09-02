@@ -3,6 +3,8 @@ module Spree
     module V3
       module Store
         class CustomersController < Store::BaseController
+          include Spree::Api::V3::CurrentPasswordConfirmation
+
           allow_guest_storefront_access!
           rate_limit to: Spree::Api::Config[:rate_limit_register], within: Spree::Api::Config[:rate_limit_window].seconds, store: Rails.cache, only: :create, with: -> { render_rate_limited(limit: Spree::Api::Config[:rate_limit_register]) }
 
@@ -43,13 +45,7 @@ module Spree
 
           # PATCH /api/v3/store/customer
           def update
-            if sensitive_update? && !valid_current_password?
-              return render_error(
-                code: ErrorHandler::ERROR_CODES[:current_password_invalid],
-                message: Spree.t(:current_password_invalid, scope: :api),
-                status: :unprocessable_content
-              )
-            end
+            return render_current_password_invalid if sensitive_update? && !valid_current_password?
 
             update_params = permitted_params.except(:current_password)
 
@@ -89,18 +85,6 @@ module Spree
           def sensitive_update?
             (params[:email].present? && params[:email] != current_user.email) ||
               params[:password].present?
-          end
-
-          def valid_current_password?
-            return false if params[:current_password].blank?
-
-            if current_user.respond_to?(:valid_password?)
-              current_user.valid_password?(params[:current_password])
-            elsif current_user.respond_to?(:authenticate)
-              current_user.authenticate(params[:current_password]).present?
-            else
-              false
-            end
           end
 
           def user_serializer

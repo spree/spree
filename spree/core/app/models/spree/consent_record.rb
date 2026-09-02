@@ -19,10 +19,15 @@ module Spree
     TERMS_OF_SERVICE = 'terms_of_service'.freeze
     EMAIL_MARKETING = 'email_marketing'.freeze
 
-    # Where the gesture happened. `anonymization` is core's own: erasure
-    # withdraws marketing consent on the person's behalf, and that withdrawal
-    # is still a consent event worth recording honestly.
-    SOURCES = %w[checkout registration account admin import storefront anonymization].freeze
+    # Where the gesture happened.
+    CHECKOUT = 'checkout'.freeze
+    REGISTRATION = 'registration'.freeze
+    ACCOUNT = 'account'.freeze
+    # Core's own: erasure withdraws marketing consent on the person's behalf,
+    # and that withdrawal is a consent event like any other.
+    ANONYMIZATION = 'anonymization'.freeze
+
+    SOURCES = [CHECKOUT, REGISTRATION, ACCOUNT, ANONYMIZATION, 'admin', 'import', 'storefront'].freeze
 
     belongs_to :store, class_name: 'Spree::Store'
     belongs_to :owner, polymorphic: true

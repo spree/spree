@@ -11,17 +11,13 @@ module Spree
           # trigger it — the same bar the account already applies to changing
           # an email address.
           class DataRequestsController < ResourceController
+            include Spree::Api::V3::CurrentPasswordConfirmation
+
             prepend_before_action :require_authentication!
 
             # POST /api/v3/store/customers/me/data_requests
             def create
-              if erasure? && !valid_current_password?
-                return render_error(
-                  code: ErrorHandler::ERROR_CODES[:current_password_invalid],
-                  message: Spree.t(:current_password_invalid, scope: :api),
-                  status: :unprocessable_content
-                )
-              end
+              return render_current_password_invalid if erasure? && !valid_current_password?
 
               result = Spree::DataRequests::Create.call(
                 store: current_store,
@@ -63,17 +59,6 @@ module Spree
               params[:kind].to_s == Spree::DataRequest::ERASURE
             end
 
-            def valid_current_password?
-              return false if params[:current_password].blank?
-
-              if current_user.respond_to?(:valid_password?)
-                current_user.valid_password?(params[:current_password])
-              elsif current_user.respond_to?(:authenticate)
-                current_user.authenticate(params[:current_password]).present?
-              else
-                false
-              end
-            end
           end
         end
       end

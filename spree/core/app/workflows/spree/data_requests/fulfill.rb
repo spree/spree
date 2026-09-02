@@ -50,7 +50,7 @@ module Spree
       end
 
       def build_export
-        payload = Spree::Customers::DataExport.new(
+        payload = Spree.customer_data_export_service.new(
           customer: data_request.customer,
           store: data_request.store
         ).call

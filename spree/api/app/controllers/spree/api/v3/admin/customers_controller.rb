@@ -83,7 +83,7 @@ module Spree
           def export
             authorize_resource!(@resource)
 
-            render json: Spree::Customers::DataExport.new(
+            render json: Spree.customer_data_export_service.new(
               customer: @resource,
               store: current_store
             ).call

@@ -98,13 +98,6 @@ export function useAnonymizeCustomer(customerId: string) {
   })
 }
 
-export function useExportCustomerData(customerId: string) {
-  return useResourceMutation({
-    mutationFn: () => adminClient.customers.export(customerId),
-    successMessage: false,
-  })
-}
-
 // `params` is spread into the queryKey so callers passing a fresh `{}` each
 // render don't force a JSON-equality rehash on every paint.
 export function useCustomerOrders(customerId: string, params: { limit: number; status?: string }) {

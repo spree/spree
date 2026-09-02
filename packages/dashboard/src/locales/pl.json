@@ -735,17 +735,18 @@
       },
       "new_sheet_description": "Klienci utworzeni w tym miejscu nie mają ustawionego hasła. Przy pierwszym logowaniu otrzymają magiczny link.",
       "privacy": {
-        "title": "Prywatność i dane",
+        "already_anonymized": "Dane osobowe usunięto {{date}}",
+        "anonymize": "Usuń dane osobowe",
+        "anonymize_confirm_message": "Imię i nazwisko, adres e-mail, telefon oraz adresy zostaną wszędzie zastąpione, a klient zostanie wylogowany. Zamówienia i zapisy płatności pozostaną, bez danych osobowych. Tej operacji nie można cofnąć.",
+        "anonymize_confirm_title": "Usunąć dane osobowe tego klienta?",
+        "consent_updated": "Zgoda marketingowa ostatnio zmieniona {{date}}",
         "description": "Odpowiedz na wniosek tego klienta dotyczący ochrony danych.",
         "export": "Eksportuj dane",
-        "anonymize": "Usuń dane osobowe",
-        "anonymize_confirm_title": "Usunąć dane osobowe tego klienta?",
-        "anonymize_confirm_message": "Imię i nazwisko, adres e-mail, telefon oraz adresy zostaną wszędzie zastąpione, a klient zostanie wylogowany. Zamówienia i zapisy płatności pozostaną, bez danych osobowych. Tej operacji nie można cofnąć.",
-        "consent_updated": "Zgoda marketingowa ostatnio zmieniona {{date}}",
-        "already_anonymized": "Dane osobowe usunięto {{date}}",
+        "export_failed": "Nie udało się wyeksportować danych",
         "messages": {
           "anonymized": "Dane osobowe usunięte"
-        }
+        },
+        "title": "Prywatność i dane"
       },
       "row_actions": {
         "delete_confirm": "Usunąć {{email}}? Klientów ze zrealizowanymi zamówieniami nie można usunąć."

@@ -110,12 +110,13 @@ module Spree
       #
       attr_accessor :confirm_email, :terms_of_service
 
-      # Where a consent change came from, when the caller knows. Set alongside
-      # `accepts_email_marketing` and consumed by the stamping callback.
-      attr_writer :email_marketing_consent_source_context
+      # Where a consent change came from, set alongside
+      # `accepts_email_marketing` by whatever is making the change. A caller
+      # that says nothing is recorded as an account-level edit, which is what
+      # a plain profile update is.
+      attr_writer :consent_source
 
       scope :anonymized, -> { where.not(anonymized_at: nil) }
-      scope :not_anonymized, -> { where(anonymized_at: nil) }
 
       # The company nodes this customer may act for within a store — their
       # memberships on that store's trees, expanded by subtree. Customers are
@@ -374,7 +375,7 @@ module Spree
 
     def stamp_email_marketing_consent
       self.email_marketing_consent_updated_at = Time.current
-      self.email_marketing_consent_source = @email_marketing_consent_source_context.presence || 'account'
+      self.email_marketing_consent_source = @consent_source.presence || Spree::ConsentRecord::ACCOUNT
     end
 
     def sync_newsletter_subscription_with_marketing_consent

@@ -480,11 +480,11 @@ module Spree
     # @return [ActiveSupport::TimeWithZone, nil] nil until every parcel that is
     #   still live has been delivered
     def withdrawal_period_starts_at
-      live = fulfillments.reject(&:canceled?)
-      return nil if live.empty?
-      return nil unless live.all? { |fulfillment| fulfillment.delivered_at.present? }
+      delivered = fulfillments.reject(&:canceled?).map(&:delivered_at)
 
-      live.filter_map(&:delivered_at).max
+      return nil if delivered.empty? || delivered.any?(&:blank?)
+
+      delivered.max
     end
 
     # @return [Integer, nil] nil where no market says otherwise — a statutory

@@ -1,5 +1,11 @@
 import type { Customer } from '@spree/admin-sdk'
-import { formatStoreDateTime, useStore } from '@spree/dashboard-core'
+import {
+  downloadFromApi,
+  formatStoreDateTime,
+  getApiClient,
+  useAuth,
+  useStore,
+} from '@spree/dashboard-core'
 import {
   Button,
   Card,
@@ -7,11 +13,13 @@ import {
   CardDescription,
   CardHeader,
   CardTitle,
+  toastManager,
   useConfirm,
 } from '@spree/dashboard-ui'
 import { DownloadIcon, ShieldIcon } from '@spree/dashboard-ui/icons'
+import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
-import { useAnonymizeCustomer, useExportCustomerData } from '../../../hooks/use-customers'
+import { useAnonymizeCustomer } from '../../../hooks/use-customers'
 
 /**
  * The two GDPR actions a merchant needs when a subject request arrives by
@@ -24,26 +32,36 @@ import { useAnonymizeCustomer, useExportCustomerData } from '../../../hooks/use-
 export function CustomerPrivacyCard({ customer }: { customer: Customer }) {
   const { t } = useTranslation()
   const { timezone } = useStore()
+  const { token } = useAuth()
   const confirm = useConfirm()
   const anonymizeMutation = useAnonymizeCustomer(customer.id)
-  const exportMutation = useExportCustomerData(customer.id)
+  const [exporting, setExporting] = useState(false)
 
   const anonymized = Boolean(customer.anonymized_at)
 
+  // Streamed through the admin endpoint rather than fetched and re-serialized,
+  // so the file the merchant forwards is exactly what the server produced.
   async function handleExport() {
-    const payload = await exportMutation.mutateAsync()
+    setExporting(true)
 
-    // Handed to the merchant as a file because that is what they forward to
-    // the person who asked. Revoked immediately — the object URL holds the
-    // whole payload in memory.
-    const url = URL.createObjectURL(
-      new Blob([JSON.stringify(payload, null, 2)], { type: 'application/json' }),
-    )
-    const link = document.createElement('a')
-    link.href = url
-    link.download = `customer-${customer.id}.json`
-    link.click()
-    URL.revokeObjectURL(url)
+    try {
+      await downloadFromApi(
+        token,
+        `/customers/${customer.id}/export`,
+        `customer-${customer.id}.json`,
+        getApiClient().downloadHeaders?.() ?? {},
+      )
+    } catch (error) {
+      // A click handler that swallows the failure leaves the merchant staring
+      // at a button that did nothing.
+      toastManager.add({
+        type: 'error',
+        title: t('admin.customers.privacy.export_failed'),
+        description: error instanceof Error ? error.message : String(error),
+      })
+    } finally {
+      setExporting(false)
+    }
   }
 
   async function handleAnonymize() {
@@ -80,12 +98,7 @@ export function CustomerPrivacyCard({ customer }: { customer: Customer }) {
           </p>
         ) : (
           <div className="flex flex-wrap gap-2">
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={handleExport}
-              disabled={exportMutation.isPending}
-            >
+            <Button variant="outline" size="sm" onClick={handleExport} disabled={exporting}>
               <DownloadIcon className="size-4" />
               {t('admin.customers.privacy.export')}
             </Button>

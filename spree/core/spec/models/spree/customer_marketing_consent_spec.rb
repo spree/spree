@@ -29,10 +29,10 @@ RSpec.describe 'Spree::Customer marketing consent' do
   end
 
   it 'notes where the person agreed' do
-    customer.email_marketing_consent_source_context = 'checkout'
+    customer.consent_source = Spree::ConsentRecord::CHECKOUT
     customer.update!(accepts_email_marketing: true)
 
-    expect(customer.email_marketing_consent_source).to eq('checkout')
+    expect(customer.email_marketing_consent_source).to eq(Spree::ConsentRecord::CHECKOUT)
   end
 
   it 'defaults the source to the account page' do
