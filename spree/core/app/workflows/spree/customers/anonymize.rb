@@ -100,10 +100,16 @@ module Spree
 
       # The customer's own address book — soft-deleted as well as scrubbed,
       # since nothing needs to render it again.
+      #
+      # Reads the table rather than `customer.addresses`, which is scoped to
+      # `deleted_at: nil`: an address the person removed years ago is still
+      # their street address sitting in the database, and erasure has to reach
+      # it.
       def anonymize_address_book
-        customer.addresses.each do |address|
-          redact_address(address, deleted: true)
-        end
+        Spree::Address.where(owner_type: customer.class.base_class.to_s, owner_id: customer.id).
+          find_each do |address|
+            redact_address(address, deleted: true)
+          end
       end
 
       # Address snapshots on orders and carts. These are not the customer's

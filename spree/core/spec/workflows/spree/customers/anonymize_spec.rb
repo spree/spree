@@ -69,6 +69,17 @@ RSpec.describe Spree::Customers::Anonymize do
 
       expect(address.reload.deleted_at).to be_present
     end
+
+    it 'reaches an address the customer had already removed' do
+      old_address = create(:address, owner: customer, address1: '1 Old Street', firstname: 'Ada')
+      old_address.update_columns(deleted_at: 1.day.ago)
+
+      result
+      old_address.reload
+
+      expect(old_address.address1).to eq('Redacted')
+      expect(old_address.firstname).to eq('Redacted')
+    end
   end
 
   describe 'past orders' do
