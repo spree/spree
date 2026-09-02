@@ -26,9 +26,10 @@ export interface ResourceComboboxProps<T extends ComboboxOption>
    * Server-side search. Called as the user types (debounced via React's
    * `useDeferredValue`). Receives the trimmed query string — returning
    * `{ data: [] }` for empty queries is a fine default, as is showing
-   * "recent records".
+   * "recent records". When the response includes `meta.count`, rows beyond
+   * `data.length` trigger a footer hint so a capped list does not read complete.
    */
-  search: (query: string) => Promise<{ data: T[] }>
+  search: (query: string) => Promise<{ data: T[]; meta?: { count: number } }>
 
   /**
    * Hydrate the currently-selected ID into a record so the trigger can show
@@ -117,6 +118,11 @@ export function ResourceCombobox<T extends ComboboxOption>({
     return filterOption ? merged.filter(filterOption) : merged
   }, [searchData, hydratedData, filterOption])
 
+  const hiddenCount =
+    searchData?.meta && searchData.meta.count > items.length
+      ? searchData.meta.count - items.length
+      : 0
+
   return (
     <HeadlessResourceCombobox
       value={value}
@@ -127,6 +133,13 @@ export function ResourceCombobox<T extends ComboboxOption>({
       renderOption={renderOption}
       placeholder={placeholderLabel}
       emptyText={emptyLabel}
+      listFooter={
+        hiddenCount > 0 ? (
+          <p className="border-t border-border px-2.5 py-2 text-muted-foreground text-xs">
+            {t('admin.common.combobox_more_results', { count: hiddenCount })}
+          </p>
+        ) : undefined
+      }
       disabled={disabled}
       id={id}
     />

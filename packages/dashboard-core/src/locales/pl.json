@@ -159,6 +159,7 @@
       "next": "Następna",
       "no": "Nie",
       "no_results": "Brak wyników",
+      "combobox_more_results": "Nie pokazano {{count}} więcej. Wpisz, aby wyszukać.",
       "none": "Brak",
       "optional": "Opcjonalne",
       "or": "lub",

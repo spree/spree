@@ -159,6 +159,7 @@
       "next": "التالي",
       "no": "لا",
       "no_results": "لا توجد نتائج",
+      "combobox_more_results": "لم يُعرض {{count}} أخرى. اكتب للبحث.",
       "none": "لا شيء",
       "optional": "اختياري",
       "or": "أو",

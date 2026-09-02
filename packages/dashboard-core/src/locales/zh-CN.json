@@ -159,6 +159,7 @@
       "next": "下一页",
       "no": "否",
       "no_results": "无结果",
+      "combobox_more_results": "还有 {{count}} 个未显示。输入以搜索。",
       "none": "无",
       "optional": "可选",
       "or": "或",
