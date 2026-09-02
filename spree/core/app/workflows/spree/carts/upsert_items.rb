@@ -107,20 +107,34 @@ module Spree
         # Price overrides are pre-placement only. reject! rather than
         # failure(cart, message), which would drop the message.
         if cart.completed? && @resolved_items.any?(&:price_provided)
-          reject!(Spree.t('cart_line_item.price_override_not_allowed'), cart)
+          errors.add(:base, :price_override_not_allowed, message: Spree.t('cart_line_item.price_override_not_allowed'))
+          reject!(nil, cart)
         end
       end
 
       # Never coerced — "12,50".to_d is 12, a mispriced order. finite? is not
       # redundant: BigDecimal parses "NaN"/"Infinity" and neither is negative.
+      #
+      # @param value [Object] raw price from the request
+      # @return [BigDecimal, nil] parsed amount, or nil for an explicit revert
       def parse_manual_price(value)
         return nil if value.nil?
 
+        if cart.completed?
+          errors.add(:base, :price_override_not_allowed, message: Spree.t('cart_line_item.price_override_not_allowed'))
+          reject!(nil, cart)
+        end
+
         parsed = BigDecimal(value.to_s)
-        reject!(Spree.t('cart_line_item.invalid_price'), cart) if parsed.negative? || !parsed.finite?
+        if parsed.negative? || !parsed.finite?
+          errors.add(:base, :invalid_price, message: Spree.t('cart_line_item.invalid_price'))
+          reject!(nil, cart)
+        end
+
         parsed
       rescue ArgumentError
-        reject!(Spree.t('cart_line_item.invalid_price'), cart)
+        errors.add(:base, :invalid_price, message: Spree.t('cart_line_item.invalid_price'))
+        reject!(nil, cart)
       end
 
       # Only external inventory is asked here: Spree's own records are already

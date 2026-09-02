@@ -97,6 +97,47 @@ RSpec.describe Spree::Api::V3::Admin::Orders::ItemsController, type: :controller
       expect(line_item.price_source).to eq('manual')
       expect(json_response['price_source']).to eq('manual')
     end
+
+    context 'with an unusable price' do
+      subject do
+        post :create, params: { order_id: order.prefixed_id, variant_id: variant.prefixed_id, quantity: 1, price: 'NaN' }, as: :json
+      end
+
+      it 'refuses with the invalid_price code' do
+        subject
+
+        expect(response).to have_http_status(:unprocessable_entity)
+        expect(json_response['error']['code']).to eq('invalid_price')
+      end
+    end
+
+    context 'with a price on a placed order' do
+      before { order.update_columns(status: 'placed', completed_at: Time.current) }
+
+      subject do
+        post :create, params: { order_id: order.prefixed_id, variant_id: variant.prefixed_id, quantity: 1, price: '7.20' }, as: :json
+      end
+
+      it 'refuses with the price_override_not_allowed code' do
+        subject
+
+        expect(response).to have_http_status(:unprocessable_entity)
+        expect(json_response['error']['code']).to eq('price_override_not_allowed')
+      end
+
+      context 'with a non-numeric price' do
+        subject do
+          post :create, params: { order_id: order.prefixed_id, variant_id: variant.prefixed_id, quantity: 1, price: 'NaN' }, as: :json
+        end
+
+        it 'still refuses with price_override_not_allowed' do
+          subject
+
+          expect(response).to have_http_status(:unprocessable_entity)
+          expect(json_response['error']['code']).to eq('price_override_not_allowed')
+        end
+      end
+    end
   end
 
   describe 'PATCH #update' do
@@ -159,12 +200,23 @@ RSpec.describe Spree::Api::V3::Admin::Orders::ItemsController, type: :controller
         subject
 
         expect(response).to have_http_status(:unprocessable_entity)
+        expect(json_response['error']['code']).to eq('price_override_not_allowed')
         expect(response.body).to include('placed order')
         expect(line_item.reload.price_source).to be_nil
       end
+
+      context 'with a non-numeric price' do
+        subject { patch :update, params: { order_id: order.prefixed_id, id: line_item.prefixed_id, price: 'NaN' }, as: :json }
+
+        it 'still refuses with price_override_not_allowed' do
+          subject
+
+          expect(response).to have_http_status(:unprocessable_entity)
+          expect(json_response['error']['code']).to eq('price_override_not_allowed')
+        end
+      end
     end
 
-    # A 422 whose message is blank leaves the dashboard with nothing to show.
     context 'with an unusable price' do
       subject { patch :update, params: { order_id: order.prefixed_id, id: line_item.prefixed_id, price: 'NaN' }, as: :json }
 
@@ -172,8 +224,20 @@ RSpec.describe Spree::Api::V3::Admin::Orders::ItemsController, type: :controller
         subject
 
         expect(response).to have_http_status(:unprocessable_entity)
+        expect(json_response['error']['code']).to eq('invalid_price')
         expect(response.body).to include('non-negative number')
         expect(line_item.reload.price_source).to be_nil
+      end
+    end
+
+    context 'with a negative price' do
+      subject { patch :update, params: { order_id: order.prefixed_id, id: line_item.prefixed_id, price: '-1' }, as: :json }
+
+      it 'refuses with the invalid_price code' do
+        subject
+
+        expect(response).to have_http_status(:unprocessable_entity)
+        expect(json_response['error']['code']).to eq('invalid_price')
       end
     end
   end

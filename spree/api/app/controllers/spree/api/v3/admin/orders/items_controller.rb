@@ -18,7 +18,7 @@ module Spree
                 if result.success?
                   render json: serialize_resource(result.value), status: :created
                 else
-                  render_service_error(result.error, code: ERROR_CODES[:insufficient_stock])
+                  render_order_item_error(result, default_code: ERROR_CODES[:insufficient_stock])
                 end
               end
             end
@@ -37,7 +37,7 @@ module Spree
                 if result.success?
                   render json: serialize_resource(@resource.reload)
                 else
-                  render_service_error(result.error, code: ERROR_CODES[:invalid_quantity])
+                  render_order_item_error(result, default_code: ERROR_CODES[:invalid_quantity])
                 end
               end
             end
@@ -87,6 +87,18 @@ module Spree
 
             def variant
               @variant ||= current_store.variants.find_by_prefix_id!(permitted_params[:variant_id])
+            end
+
+            # Renders a failed add/update with a code inferred from symbolic errors.
+            #
+            # @param result [Spree::ServiceModule::Result] failed service outcome
+            # @param default_code [String] fallback when the error carries no symbol
+            def render_order_item_error(result, default_code:)
+              error = result.error
+              errors = error.respond_to?(:value) ? error.value : error
+              code = infer_line_item_error_code(errors, default: default_code)
+
+              render_service_error(error, code: code)
             end
           end
         end

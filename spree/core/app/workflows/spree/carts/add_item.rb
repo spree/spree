@@ -60,13 +60,22 @@ module Spree
       # finite? is not redundant: BigDecimal parses "NaN" and "Infinity" and
       # neither is negative. reject! rather than failure(cart, message), which
       # would drop the message.
+      #
+      # @return [Spree::ServiceModule::Result, nil] failure when the price is refused
       def parse_manual_price
-        reject!(Spree.t('cart_line_item.price_override_not_allowed'), cart) if cart.completed?
+        if cart.completed?
+          errors.add(:base, :price_override_not_allowed, message: Spree.t('cart_line_item.price_override_not_allowed'))
+          return failure(cart, errors)
+        end
 
         @manual_price = BigDecimal(price.to_s)
-        reject!(Spree.t('cart_line_item.invalid_price'), cart) if @manual_price.negative? || !@manual_price.finite?
+        if @manual_price.negative? || !@manual_price.finite?
+          errors.add(:base, :invalid_price, message: Spree.t('cart_line_item.invalid_price'))
+          return failure(cart, errors)
+        end
       rescue ArgumentError
-        reject!(Spree.t('cart_line_item.invalid_price'), cart)
+        errors.add(:base, :invalid_price, message: Spree.t('cart_line_item.invalid_price'))
+        failure(cart, errors)
       end
 
       # Checked against the quantity the line will END UP at, not the
