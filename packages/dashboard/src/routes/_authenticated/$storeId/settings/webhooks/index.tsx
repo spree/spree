@@ -217,6 +217,7 @@ function WebhooksPage() {
             navigate({
               to: '/$storeId/settings/webhooks/$webhookEndpointId',
               params: { storeId, webhookEndpointId: id },
+              replace: true,
             })
           }
         }}

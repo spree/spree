@@ -34,6 +34,24 @@ test.describe('sellers', () => {
     await gotoIndex(page, SELLERS_PATH(creds.store_id), CTA)
   })
 
+  test('back from a new seller lands on the list', async ({ page }) => {
+    const creds = await login(page)
+    await gotoIndex(page, SELLERS_PATH(creds.store_id), CTA)
+
+    const name = `E2E Back Seller ${Date.now()}`
+    await page.getByRole('button', { name: CTA }).click()
+    await page.locator('#name').fill(name)
+    await page.getByRole('button', { name: /create seller/i }).click()
+    await expect(page.getByRole('heading', { name })).toBeVisible({ timeout: 15_000 })
+
+    await page.getByRole('button', { name: /^back$/i }).click()
+    await expect(page).toHaveURL(new RegExp(`/${creds.store_id}/sellers(?:\\?|$)`), {
+      timeout: 15_000,
+    })
+    await expect(page.getByRole('heading', { name: /new seller/i })).toHaveCount(0)
+    await expect(rowLink(page, name)).toBeVisible({ timeout: 15_000 })
+  })
+
   // The page is a profile you read, not a form you land in.
   test('shows the profile without dropping into an edit form', async ({ page }) => {
     const creds = await login(page)

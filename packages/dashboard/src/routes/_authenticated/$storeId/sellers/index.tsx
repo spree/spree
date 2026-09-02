@@ -153,6 +153,7 @@ function CreateSellerSheet({
       navigate({
         to: '/$storeId/sellers/$sellerId',
         params: { storeId, sellerId: seller.id },
+        replace: true,
       })
     } catch (err) {
       if (!mapSpreeErrorsToForm(err, form.setError)) throw err

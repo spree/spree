@@ -16,9 +16,12 @@ function NewPriceListPage() {
       mode="create"
       onSubmit={async (payload) => {
         const list = await create.mutateAsync(payload)
+        // Replace history rather than pushing — otherwise the detail page's
+        // back button lands the merchant on the (now-stale) new form.
         navigate({
           to: '/$storeId/products/price-lists/$priceListId',
           params: { storeId, priceListId: list.id },
+          replace: true,
         })
       }}
     />

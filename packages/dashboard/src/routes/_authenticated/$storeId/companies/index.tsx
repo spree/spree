@@ -152,6 +152,7 @@ function CreateCompanySheet({
       navigate({
         to: '/$storeId/companies/$companyId',
         params: { storeId, companyId: company.id },
+        replace: true,
       })
     } catch (err) {
       if (!mapSpreeErrorsToForm(err, form.setError)) throw err
