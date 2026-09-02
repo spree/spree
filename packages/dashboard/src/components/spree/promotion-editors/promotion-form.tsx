@@ -61,6 +61,7 @@ import {
   TableRow,
   Textarea,
 } from '@spree/dashboard-ui'
+import { optionValueLabel } from '../../../hooks/use-option-types'
 import {
   usePromotionActionTypes,
   usePromotionCouponCodes,
@@ -809,6 +810,7 @@ function RuleSummary({ draft }: { draft: PromotionRuleFormDraft }) {
   const countries = nameList(draft.countries)
   const channels = nameList(draft.channels)
   const markets = nameList(draft.markets)
+  const optionValues = nameList(draft.option_values, optionValueLabel)
 
   if (products) parts.push(products)
   else if (draft.product_ids?.length)
@@ -832,6 +834,7 @@ function RuleSummary({ draft }: { draft: PromotionRuleFormDraft }) {
   if (countries) parts.push(countries)
   if (channels) parts.push(channels)
   if (markets) parts.push(markets)
+  if (optionValues) parts.push(optionValues)
 
   // Fallback for preference-only rules (Currency, ItemTotal, FirstOrder,
   // OneUsePerUser, UserLoggedIn, OptionValue, …) — these don't carry
@@ -853,6 +856,7 @@ const RULE_PREFS_SHOWN_ELSEWHERE = new Set([
   'country_code',
   'channel_ids', // surfaced via `channels` records
   'market_ids', // surfaced via `markets` records
+  'eligible_values', // surfaced via `option_values` records
 ])
 
 function formatPreferencesSummary(draft: PromotionRuleFormDraft): string | null {

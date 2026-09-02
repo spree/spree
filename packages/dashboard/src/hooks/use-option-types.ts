@@ -1,4 +1,9 @@
-import type { OptionType, OptionTypeCreateParams, OptionTypeUpdateParams } from '@spree/admin-sdk'
+import type {
+  OptionType,
+  OptionTypeCreateParams,
+  OptionTypeUpdateParams,
+  OptionValue,
+} from '@spree/admin-sdk'
 import {
   adminClient,
   useResourceKey,
@@ -7,6 +12,22 @@ import {
 } from '@spree/dashboard-core'
 import { useQuery, useQueryClient } from '@tanstack/react-query'
 import i18n from 'i18next'
+
+/** Human-readable label for an option value, including its option type. */
+export function optionValueLabel(optionValue: OptionValue): string {
+  const typeLabel = optionValue.option_type_label ?? optionValue.option_type_name
+  const valueLabel = optionValue.label ?? optionValue.name
+  return typeLabel ? `${typeLabel}: ${valueLabel}` : valueLabel
+}
+
+/** Client-side filter for option-value pickers backed by a preloaded catalog. */
+export function filterOptionValues(optionValues: OptionValue[], query: string): OptionValue[] {
+  const normalized = query.trim().toLowerCase()
+  if (!normalized) return optionValues
+  return optionValues.filter((optionValue) =>
+    optionValueLabel(optionValue).toLowerCase().includes(normalized),
+  )
+}
 
 interface UseOptionTypesParams {
   page?: number
