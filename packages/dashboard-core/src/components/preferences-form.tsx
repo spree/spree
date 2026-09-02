@@ -1,4 +1,4 @@
-import type { PreferenceField as PreferenceFieldDef } from '@spree/admin-sdk'
+import type { PreferenceField as PreferenceFieldDef, PreferenceOption } from '@spree/admin-sdk'
 import {
   Button,
   Field,
@@ -6,6 +6,11 @@ import {
   FieldLabel,
   Input,
   SecretInput,
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
   Switch,
   Textarea,
 } from '@spree/dashboard-ui'
@@ -130,6 +135,20 @@ export function PreferenceField({
     )
   }
 
+  // A preference whose declaring class named its values gets a picker rather
+  // than a text box.
+  if (field.options?.length && field.type !== 'password' && field.type !== 'boolean') {
+    return (
+      <OptionField
+        id={id}
+        label={displayLabel}
+        options={field.options}
+        value={typeof value === 'string' ? value : ''}
+        onChange={onChange}
+      />
+    )
+  }
+
   // `tiers` preference (Spree::Calculator::TieredPercent /
   // TieredFlatRate) — a Hash<threshold, value> that the default
   // hash-as-text input would render as `[object Object]`. Render a row
@@ -239,6 +258,49 @@ export function PreferenceField({
         </Field>
       )
   }
+}
+
+/**
+ * A select over the values a preference declares. A stored value that is not
+ * among them is offered as its own option rather than dropped — a row written
+ * before the list existed, or by an API client, must not be silently rewritten
+ * to the first choice the moment someone opens the form.
+ */
+function OptionField({
+  id,
+  label,
+  options,
+  value,
+  onChange,
+}: {
+  id: string
+  label: string
+  options: PreferenceOption[]
+  value: string
+  onChange: (value: unknown) => void
+}) {
+  const items =
+    value !== '' && !options.some((option) => option.value === value)
+      ? [...options, { value, label: value }]
+      : options
+
+  return (
+    <Field>
+      <FieldLabel htmlFor={id}>{label}</FieldLabel>
+      <Select items={items} value={value} onValueChange={(next) => onChange(next ?? '')}>
+        <SelectTrigger id={id}>
+          <SelectValue />
+        </SelectTrigger>
+        <SelectContent>
+          {items.map((item) => (
+            <SelectItem key={item.value} value={item.value}>
+              {item.label}
+            </SelectItem>
+          ))}
+        </SelectContent>
+      </Select>
+    </Field>
+  )
 }
 
 function humanizeKey(key: string): string {

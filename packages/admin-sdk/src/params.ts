@@ -1890,6 +1890,17 @@ export interface PreferenceField {
   key: string
   type: string
   default: unknown
+  /**
+   * The values this preference may hold, present only when the declaring
+   * class named them. A UI renders a picker rather than a text box.
+   */
+  options?: PreferenceOption[]
+}
+
+/** One selectable value for a preference, with the label a person reads. */
+export interface PreferenceOption {
+  value: string
+  label: string
 }
 
 /**

@@ -21,6 +21,17 @@ describe Spree::Preferences::Preferable, type: :model do
     class B < A
       preference :flavor, :string
     end
+
+    class C < A
+      # The wire shape lives in the schema concern, so the class that exercises
+      # options carries both halves.
+      include Spree::PreferenceSchema
+
+      preference :endpoint, :string, default: 'https://one.example',
+                                     options: { 'https://one.example' => 'One',
+                                                'https://two.example' => 'Two' }
+      preference :note, :string
+    end
   end
 
   before do
@@ -33,6 +44,31 @@ describe Spree::Preferences::Preferable, type: :model do
     #
     store = Spree::Preferences::Store.instance
     store.persistence = true
+  end
+
+  describe 'options' do
+    let(:record) { C.new }
+
+    it 'reports what a UI should offer, labelled' do
+      expect(record.preference_options(:endpoint)).to eq('https://one.example' => 'One',
+                                                          'https://two.example' => 'Two')
+      expect(record.preference_options(:color)).to be_nil
+    end
+
+    it 'reaches the schema as one shape whichever way it was declared' do
+      expect(C.serialized_preference_schema).to include(
+        hash_including(key: :endpoint,
+                       options: [{ value: 'https://one.example', label: 'One' },
+                                 { value: 'https://two.example', label: 'Two' }])
+      )
+    end
+
+    it 'leaves a preference that declared none without the key' do
+      field = C.serialized_preference_schema.find { |entry| entry[:key] == :note }
+
+      expect(field).to be_present
+      expect(field).not_to have_key(:options)
+    end
   end
 
   describe 'preference definitions' do

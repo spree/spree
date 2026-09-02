@@ -65,6 +65,15 @@ RSpec.describe SpreeAvalara::Integration do
     end
   end
 
+  # Avalara publishes these two and no others, under these names — the same
+  # choice the legacy extension offered, so nobody has to type a hostname.
+  it 'offers the two Avalara hosts by name' do
+    field = described_class.serialized_preference_schema.find { |entry| entry[:key] == :endpoint }
+
+    expect(field[:options]).to eq([{ value: described_class::SANDBOX_ENDPOINT, label: 'Sandbox' },
+                                   { value: described_class::PRODUCTION_ENDPOINT, label: 'Production' }])
+  end
+
   describe '#can_connect?' do
     let(:client) { instance_double(SpreeAvalara::Client) }
 

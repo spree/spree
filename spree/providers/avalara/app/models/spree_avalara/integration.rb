@@ -9,8 +9,13 @@ module SpreeAvalara
     preference :account_number, :string
     preference :license_key, :password
     # Sandbox by default: a merchant connecting for the first time should not be
-    # filing live documents before they have looked at one.
-    preference :endpoint, :string, default: SANDBOX_ENDPOINT
+    # filing live documents before they have looked at one. Avalara publishes
+    # these two hosts and no others, and the legacy extension offered the same
+    # pair under the same labels, so a merchant sees the choice they already
+    # know rather than a URL to type.
+    preference :endpoint, :string, default: SANDBOX_ENDPOINT,
+                                   options: { SANDBOX_ENDPOINT => 'Sandbox',
+                                              PRODUCTION_ENDPOINT => 'Production' }
     preference :company_code, :string
 
     preference :address_validation_enabled, :boolean, default: false

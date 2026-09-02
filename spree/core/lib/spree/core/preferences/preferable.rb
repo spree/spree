@@ -62,6 +62,17 @@ module Spree::Preferences::Preferable
     send self.class.preference_default_getter_method(name)
   end
 
+  # The values this preference may hold as declared, or nil. Read through
+  # {Spree::PreferenceSchema#preference_schema} for the normalized form an
+  # admin UI renders.
+  #
+  # @param name [Symbol]
+  # @return [Hash, Array, nil]
+  def preference_options(name)
+    has_preference! name
+    send(self.class.preference_options_getter_method(name))
+  end
+
   def preference_deprecated(name)
     has_preference! name
     send(self.class.preference_deprecated_getter_method(name))
