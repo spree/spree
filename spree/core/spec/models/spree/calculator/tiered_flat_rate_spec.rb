@@ -28,10 +28,12 @@ describe Spree::Calculator::TieredFlatRate, type: :model do
 
     before do
       calculator.preferred_base_amount = 10
+      calculator.preferred_currency = 'USD'
       calculator.preferred_tiers = {
         100 => 15,
         200 => 20
       }
+      allow(line_item).to receive_messages(currency: 'USD')
     end
 
     context 'when amount falls within the first tier' do
@@ -44,6 +46,30 @@ describe Spree::Calculator::TieredFlatRate, type: :model do
       before { allow(line_item).to receive_messages(amount: 150) }
 
       it { is_expected.to eq 15 }
+    end
+
+    context 'when currency does not match' do
+      before do
+        calculator.preferred_currency = 'GBP'
+        allow(line_item).to receive_messages(amount: 150)
+      end
+
+      it { is_expected.to eq 0 }
+    end
+
+    context 'when currency is blank' do
+      before do
+        calculator.preferred_currency = ''
+        allow(line_item).to receive_messages(amount: 150)
+      end
+
+      it { is_expected.to eq 0 }
+    end
+
+    context 'when there is no object' do
+      subject { calculator.compute }
+
+      it { is_expected.to eq 0 }
     end
   end
 end
