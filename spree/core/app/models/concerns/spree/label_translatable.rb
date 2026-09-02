@@ -17,6 +17,12 @@ module Spree
     end
 
     # @deprecated The column is +label+ since 6.0; removed in 6.1.
+    #
+    # Unlike the attribute aliases the other 6.0 renames use, this is a plain
+    # method — Mobility owns +label+, so it cannot be an alias_attribute. It
+    # therefore reads and writes only on an instance: +where(presentation:)+
+    # and +find_by(presentation:)+ name a column that no longer exists and
+    # raise. Query by +label+.
     def presentation(*args, **kwargs)
       Spree::Deprecation.warn("#{self.class.name}#presentation is deprecated and will be removed in Spree 6.1. Use #label instead.")
       label(*args, **kwargs)

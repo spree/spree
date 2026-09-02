@@ -565,8 +565,9 @@ Every rename keeps the legacy name working for one release with a deprecation wa
 | `Address#firstname`, `#lastname`, `#zipcode` | `#first_name`, `#last_name`, `#postal_code` (columns renamed) |
 | `Address.normalize_zipcode`, `#normalized_zipcode` | `.normalize_postal_code`, `#normalized_postal_code` |
 | `Order#bill_address_firstname`, `#bill_address_lastname` | `#bill_address_first_name`, `#bill_address_last_name` |
-| `OptionType#presentation`, `OptionValue#presentation` | `#label` (column renamed, translations included) |
+| `OptionType#presentation`, `OptionValue#presentation` | `#label` (column renamed, translations included). Reads and writes on an instance only — `where(presentation:)` and `find_by(presentation:)` raise, because Mobility owns `label` so the bridge cannot be an attribute alias. Query by `label`. |
 | `OptionValue#option_type_presentation` | `#option_type_label` |
+| `q[presentation_cont]` (option type / value filters) | `q[label_cont]` — the Ransack whitelist publishes the column, so the filter key moves with it |
 | `Spree::PresentationTranslatable` | `Spree::LabelTranslatable` |
 | `Spree::WishedItem`, `Wishlist#wished_items`, `#wished_items_count` | `Spree::WishlistItem`, `#wishlist_items`, `#wishlist_items_count` (table renamed, prefix `wi_` → `wli_`) |
 | `use_billing` / `clone_billing_address` | `use_shipping` (shipping address is canonical) |

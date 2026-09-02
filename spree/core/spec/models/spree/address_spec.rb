@@ -979,6 +979,16 @@ describe Spree::Address, type: :model do
     it 'returns nil when nothing matches' do
       expect(described_class.find_duplicate(address1: 'nowhere at all')).to be_nil
     end
+
+    # The renamed columns are still accepted under their pre-6.0 write names,
+    # and a query builder matches on the literal key rather than the alias.
+    it 'matches attributes given under the legacy write names' do
+      attributes = address.attributes.symbolize_keys.
+                   slice(:address1, :city, :country_code, :state_code).
+                   merge(firstname: address.first_name, lastname: address.last_name, zipcode: address.postal_code)
+
+      expect(described_class.find_duplicate(attributes)).to eq(address)
+    end
   end
 
   describe '#snapshot' do

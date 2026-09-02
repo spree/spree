@@ -26,6 +26,7 @@ module Spree
     # we're not freezing this on purpose so developers can extend and manage
     # those attributes depending of the logic of their applications
     ADDRESS_FIELDS = %w(first_name last_name company address1 address2 city state postal_code country phone)
+
     # Beyond identity and ownership, three groups are excluded because they
     # cannot tell two addresses apart. Latitude and longitude are derived from
     # the address, so an entry whose geocoding has already run would otherwise
@@ -162,7 +163,9 @@ module Spree
       params.delete(:state_id)
 
       # Legacy write names accepted until 6.1; the columns are country_code
-      # and state_code.
+      # and state_code. The renamed name and postal-code columns need no entry
+      # here — alias_attribute resolves those inside `where` too, while these
+      # two are not attribute aliases.
       params[:state_code] = params.delete(:state_abbr) if params.key?(:state_abbr)
       params[:country_code] = params.delete(:country_iso) if params.key?(:country_iso)
 
