@@ -78,3 +78,34 @@ export interface TranslatableResource {
    */
   readable: boolean
 }
+
+/** How much of one locale is translated across a whole resource type. */
+export interface TranslationCoverageRow {
+  locale: string
+  translated: number
+  total: number
+  /** Fraction between 0 and 1. */
+  coverage: number
+}
+
+/**
+ * One record in the coverage grid. `locales` maps each locale to how many of
+ * the record's translatable fields are filled in — compare against
+ * `field_count` to tell complete from partial.
+ */
+export interface TranslationCoverageRecord {
+  id: string
+  label: string | null
+  locales: Record<string, number>
+}
+
+/** Response of `GET /admin/translations?resource_type=…`. */
+export interface TranslationCoverage {
+  resource_type: string
+  default_locale: string
+  locales: string[]
+  /** How many translatable fields a record of this type has. */
+  field_count: number
+  coverage: TranslationCoverageRow[]
+  records: TranslationCoverageRecord[]
+}

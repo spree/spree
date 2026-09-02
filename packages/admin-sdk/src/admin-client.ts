@@ -3,6 +3,7 @@ import type {
   ListParams,
   LoginCredentials,
   PaginatedResponse,
+  PaginationMeta,
   ProviderLogin,
   RequestFn,
   RequestOptions,
@@ -346,6 +347,7 @@ import type {
   TaxRate,
   TranslatableResource,
   TranslationBatchEntry,
+  TranslationCoverage,
   Variant,
   WebhookDelivery,
   WebhookEndpoint,
@@ -810,6 +812,36 @@ export class AdminClient {
    * resource_type + resource_id; all succeed or none do.
    */
   readonly translations = {
+    /**
+     * Translation coverage across a whole resource type, for the centralized
+     * Translations page.
+     *
+     * `resource_type` is sent as a plain param rather than through
+     * `transformListParams`, which would wrap it into `q[resource_type]` and
+     * leave the server without the one param it requires.
+     */
+    coverage: (
+      resourceType: string,
+      params?: ListParams & Record<string, unknown>,
+      options?: RequestOptions,
+    ): Promise<{ data: TranslationCoverage; meta: PaginationMeta }> => {
+      const { page, limit, ...filters } = params ?? {}
+
+      return this.request<{ data: TranslationCoverage; meta: PaginationMeta }>(
+        'GET',
+        '/translations',
+        {
+          ...options,
+          params: {
+            resource_type: resourceType,
+            ...(page === undefined ? {} : { page: page as number }),
+            ...(limit === undefined ? {} : { limit: limit as number }),
+            ...transformListParams(filters),
+          },
+        },
+      )
+    },
+
     batch: (
       entries: TranslationBatchEntry[],
       options?: RequestOptions,
