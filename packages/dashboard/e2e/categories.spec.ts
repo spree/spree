@@ -24,9 +24,9 @@ async function createCategory(page: Page, name: string) {
   await expect(page.locator('#category-name')).toHaveValue(name, { timeout: 15_000 })
   await page.getByRole('button', { name: /^back$/i }).click()
   await expect(page).toHaveURL(/\/products\/categories(?:\?|$)/, { timeout: 15_000 })
-  await expect(page.getByRole('heading', { name: /^categories$/i })).toBeVisible({
-    timeout: 15_000,
-  })
+  // List page title is a CardTitle (not a heading role); the CTA proves we're on the tree.
+  await expect(page.getByRole('button', { name: CTA })).toBeVisible({ timeout: 15_000 })
+  await expect(page.getByRole('heading', { name: CTA })).toHaveCount(0)
   await expect(treeRow(page, name)).toBeVisible({ timeout: 15_000 })
 }
 
