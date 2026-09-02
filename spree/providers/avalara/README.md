@@ -37,6 +37,12 @@ shows Avalara's own message.
 destination, so a warehouse carrying only a country makes every estimate fail. Fill in street, city,
 region and postal code for the locations you ship from.
 
+**A market pointing at a disconnected integration computes no tax.** Deactivating the integration
+does not break your storefront — carts and checkout keep working, Avalara simply has no opinion, and
+the misconfiguration is reported to your error tracker. Watch for orders with no tax after a
+credential change. A *connected* Avalara that cannot be reached does fail closed, because that is
+the case where quietly charging nothing is a liability rather than a setting.
+
 ## Calculate through Avalara
 
 Tax engines are chosen per market: set a market's tax provider to **Avalara AvaTax** and every sale in
@@ -76,12 +82,6 @@ whichever answer individual exemptions get.
 **Orders filed by the legacy extension carry no Avalara document id.** The legacy table recorded the
 document *code*, which is the order number — and that is what voids and credits key on anyway, so
 nothing is lost.
-
-## Known limits in this version
-
-- **A market pointing at a disconnected integration raises.** Tax calculation fails closed on purpose:
-  quietly charging no tax is a liability you discover in a filing. Reconnect the integration, or point
-  the market elsewhere.
 
 ## Development
 

@@ -8,7 +8,7 @@ RSpec.describe SpreeAvalara::Address::Validate do
   let(:address) { build(:address, city: 'Seattle', state_code: 'WA', country_code: 'US', zipcode: '98109') }
 
   before do
-    allow(SpreeAvalara::Integration).to receive(:active_for!).with(@default_store).and_return(integration)
+    allow(SpreeAvalara::Integration).to receive(:active_for).with(@default_store).and_return(integration)
     allow(integration).to receive(:client).and_return(client)
   end
 
@@ -84,5 +84,12 @@ RSpec.describe SpreeAvalara::Address::Validate do
 
   it 'has no opinion without an address' do
     expect(service.call(address: nil, store: @default_store)).to be_success
+  end
+
+  # Advisory validation never blocks on configuration.
+  it 'has no opinion when nothing is connected' do
+    allow(SpreeAvalara::Integration).to receive(:active_for).with(@default_store).and_return(nil)
+
+    expect(service.call(address: address, store: @default_store)).to be_success
   end
 end

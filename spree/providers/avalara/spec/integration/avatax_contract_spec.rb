@@ -46,7 +46,7 @@ RSpec.describe 'AvaTax API contract', :vcr do
   describe 'estimate' do
     it 'prices a US sale line by line', vcr: { cassette_name: 'estimate/us_multi_line' } do
       cart = us_cart
-      allow(SpreeAvalara::Integration).to receive(:active_for!).and_return(integration)
+      allow(SpreeAvalara::Integration).to receive(:active_for).and_return(integration)
 
       provider.estimate(cart)
 
@@ -59,7 +59,7 @@ RSpec.describe 'AvaTax API contract', :vcr do
     it 'records a customer exemption Avalara applied',
        vcr: { cassette_name: 'estimate/exempt_entity_use_code' } do
       cart = us_cart
-      allow(SpreeAvalara::Integration).to receive(:active_for!).and_return(integration)
+      allow(SpreeAvalara::Integration).to receive(:active_for).and_return(integration)
       exemption = Spree::TaxExemption.new(reason_code: 'RESALE', certificate_number: 'C-100')
 
       provider.estimate(cart, exemptions: [exemption])
@@ -72,7 +72,7 @@ RSpec.describe 'AvaTax API contract', :vcr do
     it 'calls a destination with no nexus not_collecting',
        vcr: { cassette_name: 'estimate/no_nexus_destination' } do
       cart = us_cart(state: 'MT', zipcode: '59001', city: 'Absarokee')
-      allow(SpreeAvalara::Integration).to receive(:active_for!).and_return(integration)
+      allow(SpreeAvalara::Integration).to receive(:active_for).and_return(integration)
 
       provider.estimate(cart)
 
@@ -92,7 +92,7 @@ RSpec.describe 'AvaTax API contract', :vcr do
       address = create(:address, country_code: 'DE', state_code: nil, city: 'Berlin', zipcode: '10115')
       cart = create(:cart, store: @default_store, ship_address: address, bill_address: address, market: market)
       create(:line_item, cart: cart, order: nil, price: 100)
-      allow(SpreeAvalara::Integration).to receive(:active_for!).and_return(integration)
+      allow(SpreeAvalara::Integration).to receive(:active_for).and_return(integration)
 
       provider.estimate(cart.reload)
 
@@ -112,7 +112,6 @@ RSpec.describe 'AvaTax API contract', :vcr do
     let!(:sold) { create(:line_item, order: order, cart: nil, price: 100) }
 
     before do
-      allow(SpreeAvalara::Integration).to receive(:active_for!).and_return(integration)
       allow(SpreeAvalara::Integration).to receive(:active_for).and_return(integration)
       create(:stock_location, store: @default_store, default: true, country_code: 'US',
                               state_code: 'CA', city: 'Irvine', zipcode: '92614', address1: '2000 Main Street')
@@ -161,7 +160,7 @@ RSpec.describe 'AvaTax API contract', :vcr do
     end
 
     before do
-      allow(SpreeAvalara::Integration).to receive(:active_for!).and_return(integration)
+      allow(SpreeAvalara::Integration).to receive(:active_for).and_return(integration)
       create(:stock_location, store: @default_store, default: true, country_code: 'US',
                               state_code: 'CA', city: 'Irvine', zipcode: '92614', address1: '2000 Main Street')
       line_item.update_column(:pre_tax_amount, 200)
@@ -181,7 +180,7 @@ RSpec.describe 'AvaTax API contract', :vcr do
   describe 'address validation' do
     let(:service) { SpreeAvalara::Address::Validate.new }
 
-    before { allow(SpreeAvalara::Integration).to receive(:active_for!).and_return(integration) }
+    before { allow(SpreeAvalara::Integration).to receive(:active_for).and_return(integration) }
 
     it 'resolves a deliverable address', vcr: { cassette_name: 'address/resolved' } do
       address = build(:address, address1: '410 Terry Ave N', city: 'Seattle',

@@ -164,13 +164,53 @@ RSpec.describe SpreeAvalara::TaxProvider do
     end
   end
 
-  describe 'failing closed' do
-    it 'raises when the store has no connected integration' do
-      allow(SpreeAvalara::Integration).to receive(:active_for!).
-        with(@default_store).and_raise(SpreeAvalara::NotConfiguredError)
+  # An integration is an operational toggle — connected at one stage, switched
+  # off to rotate credentials, switched on again. None of that may decide whether
+  # a customer can shop, so a disconnected provider has no opinion.
+  describe 'when nothing is connected' do
+    before { allow(SpreeAvalara::Integration).to receive(:active_for).with(@default_store).and_return(nil) }
 
-      expect { provider.estimate(cart) }.to raise_error(SpreeAvalara::NotConfiguredError)
+    it 'lets an estimate through without asking Avalara' do
+      expect { provider.estimate(cart) }.not_to raise_error
+      expect(client).not_to have_received(:create_transaction)
+      expect(cart.tax_lines.reload).to be_empty
     end
+
+    it 'clears rows it wrote while it was connected' do
+      allow(SpreeAvalara::Integration).to receive(:active_for).with(@default_store).and_return(integration)
+      provider.estimate(cart)
+      expect(cart.tax_lines.reload).to be_present
+
+      allow(SpreeAvalara::Integration).to receive(:active_for).with(@default_store).and_return(nil)
+      provider.estimate(cart.reload)
+
+      expect(cart.tax_lines.reload).to be_empty
+      expect(line_item.reload.pre_tax_amount).to eq(line_item.taxable_basis)
+    end
+
+    # Refusing to complete an order the customer has already paid for is worse
+    # than a sale the merchant files by hand.
+    it 'lets an order be placed without filing it' do
+      order = create(:order, store: @default_store, completed_at: Time.current)
+
+      expect { provider.commit(order) }.not_to raise_error
+    end
+
+    it 'has nothing to credit' do
+      order = create(:order, store: @default_store, completed_at: Time.current)
+
+      expect { provider.refund(order, []) }.not_to raise_error
+    end
+
+    # No tax at all is visible; the reason for it is not, so it is reported.
+    it 'reports the misconfiguration where errors are collected' do
+      expect(Rails.error).to receive(:report).with(instance_of(SpreeAvalara::NotConfiguredError), any_args)
+
+      provider.estimate(cart)
+    end
+  end
+
+  describe 'failing closed on a service failure' do
 
     # Under-collecting silently is the failure mode this avoids.
     it 'raises rather than writing no rows when Avalara refuses' do

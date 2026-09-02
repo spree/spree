@@ -20,21 +20,27 @@ module SpreeAvalara
       'Avalara AvaTax'
     end
 
-    # Fails closed. A market naming this provider with no connected integration,
-    # or an Avalara that cannot be reached, raises rather than writing no rows:
-    # silently under-collecting is a liability the merchant discovers in a
-    # return, while a raise surfaces at checkout where it can be fixed.
+    # Fails closed on a service failure — an Avalara that refuses or cannot be
+    # reached raises, because silently under-collecting is a liability the
+    # merchant discovers in a filing.
+    #
+    # Being *disconnected* is different, and deliberately not a failure. An
+    # integration is an operational toggle: a merchant connects providers at
+    # different stages, deactivates one to change credentials, activates it
+    # again. None of that may decide whether a customer can add to their cart or
+    # place an order, so an unconnected provider simply has no opinion and writes
+    # no rows.
     #
     # @see Spree::TaxProvider::Base#estimate
     def estimate(owner, items = nil, tax_date: nil, tax_identifier: nil, exemptions: [], context: {})
-      integration = Integration.active_for!(owner.store)
+      integration = Integration.active_for(owner.store)
       taxable = owner.taxable_items
 
-      # No items or nowhere to ship means Avalara has nothing to price. That is
-      # an absence of opinion rather than a failure, so the stale rows go and
-      # nothing replaces them — and each item is worth its whole basis again,
-      # which is what Internal does when no rate matches.
-      if taxable.empty? || owner.tax_address.nil?
+      # Nothing to price: no items, nowhere to ship, or nothing connected to ask.
+      # The stale rows go and nothing replaces them — each item is worth its whole
+      # basis again, which is what Internal does when no rate matches.
+      if integration.nil? || taxable.empty? || owner.tax_address.nil?
+        report_disconnected(owner) if integration.nil?
         sweep!(owner)
         taxable.each { |item| reset_pre_tax_amount(item) }
         return
@@ -60,7 +66,11 @@ module SpreeAvalara
     # @param order [Spree::Order]
     # @return [void]
     def commit(order)
-      integration = Integration.active_for!(order.store)
+      integration = Integration.active_for(order.store)
+      # Nothing connected to file with. Reported rather than raised: refusing to
+      # complete an order the customer has already paid for is worse than a sale
+      # the merchant has to file by hand.
+      return report_disconnected(order) if integration.nil?
 
       body = integration.client.create_or_adjust_transaction(
         createTransactionModel: TransactionPresenter.new(
@@ -105,7 +115,11 @@ module SpreeAvalara
     # @param tax_date [Time, nil] the original supply date
     # @return [void]
     def refund(order, return_items, amount: nil, tax_date: nil)
-      integration = Integration.active_for!(order.store)
+      integration = Integration.active_for(order.store)
+      # Nothing was filed through an integration that is not connected, so there
+      # is nothing to credit — the same reasoning as void.
+      return report_disconnected(order) if integration.nil?
+
       presenter = RefundPresenter.new(
         order: order, integration: integration, return_items: return_items,
         amount: amount, tax_date: tax_date, exemptions: order.usable_exemptions
@@ -118,6 +132,22 @@ module SpreeAvalara
     end
 
     private
+
+    # A market calculating through Avalara with nothing connected produces no tax
+    # at all, which is visible in the storefront and the dashboard — but the
+    # reason is not, so it is reported where the host collects errors.
+    def report_disconnected(owner)
+      Rails.error.report(
+        SpreeAvalara::NotConfiguredError.new(
+          "Store #{owner.store_id.inspect} calculates tax through Avalara, but no integration is connected"
+        ),
+        handled: true,
+        context: { store_id: owner.store_id, owner: owner.class.name, owner_id: owner.id },
+        source: 'spree_avalara'
+      )
+
+      nil
+    end
 
     # Informational: void and refund key on the document code, which is the
     # order number. update_column because completion may replay and there is

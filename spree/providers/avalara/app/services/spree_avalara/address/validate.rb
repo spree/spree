@@ -49,7 +49,11 @@ module SpreeAvalara
       def call(address:, store:)
         return Result.new if address.nil? || !supported?(address)
 
-        integration = Integration.active_for!(store)
+        integration = Integration.active_for(store)
+        # Nothing connected to ask, so nothing to say about the address. Advisory
+        # validation never blocks on configuration.
+        return Result.new if integration.nil?
+
         body = integration.client.resolve_address(AddressPresenter.new(address).call)
         messages = error_messages(body)
 
