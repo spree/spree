@@ -62,7 +62,8 @@ test.describe('catalogs', () => {
   // A wizard holds several steps of work, so dismissing it is not the cheap
   // action it is for an ordinary dialog.
   test('confirms before Escape discards a part-filled wizard', async ({ page }) => {
-    await gotoIndex(page, CATALOGS_PATH)
+    const creds = await login(page)
+    await gotoIndex(page, CATALOGS_PATH(creds.store_id), CTA)
     await page.getByRole('button', { name: CTA }).click()
 
     await expect(page.getByRole('heading', { name: /new catalog/i })).toBeVisible()
@@ -88,7 +89,8 @@ test.describe('catalogs', () => {
 
   // Nothing typed, nothing to lose: the wizard should not nag on the way out.
   test('closes an untouched wizard without asking', async ({ page }) => {
-    await gotoIndex(page, CATALOGS_PATH)
+    const creds = await login(page)
+    await gotoIndex(page, CATALOGS_PATH(creds.store_id), CTA)
     await page.getByRole('button', { name: CTA }).click()
 
     await expect(page.getByRole('heading', { name: /new catalog/i })).toBeVisible()
