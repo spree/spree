@@ -46,8 +46,12 @@ RSpec.describe Spree::Api::V3::Admin::VariantsController, type: :controller do
 
           stock_and_price += 1
         end
-        get :index, as: :json
-        ActiveSupport::Notifications.unsubscribe(subscription)
+        begin
+          get :index, as: :json
+        ensure
+          # A leaked subscriber would keep counting into later examples.
+          ActiveSupport::Notifications.unsubscribe(subscription)
+        end
 
         expect(response).to have_http_status(:ok)
         rows << json_response['data'].size
