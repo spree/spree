@@ -67,7 +67,8 @@ test.describe('catalogs', () => {
     await page.getByRole('button', { name: CTA }).click()
 
     await expect(page.getByRole('heading', { name: /new catalog/i })).toBeVisible()
-    await page.locator('#catalog-name').fill(`Escape guard ${Date.now()}`)
+    const draftName = `Escape guard ${Date.now()}`
+    await page.locator('#catalog-name').fill(draftName)
 
     // Escape asks rather than closing, and keeping the draft leaves the work
     // exactly where it was.
@@ -78,6 +79,8 @@ test.describe('catalogs', () => {
     await expect(confirmDialog).toBeVisible()
     await confirmDialog.getByRole('button', { name: /keep editing/i }).click()
     await expect(page.getByRole('heading', { name: /new catalog/i })).toBeVisible()
+    // Keeping the draft has to keep the draft, not just the dialog.
+    await expect(page.locator('#catalog-name')).toHaveValue(draftName)
 
     // Discarding is still one Escape and one confirmation away.
     await page.keyboard.press('Escape')
