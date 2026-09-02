@@ -14,6 +14,8 @@
 
 module Spree
   class Product < Spree.base_class
+    include Spree::CSV::CustomFieldsHelper
+
     has_prefix_id :prod # Stripe: prod_
 
     acts_as_paranoid
@@ -803,13 +805,10 @@ module Spree
                            else
                              []
                            end
-      # Read through the store the export runs for, not the product's own: the
-      # header row comes from the same store, and a mismatch silently shifts
-      # every value column.
-      custom_fields_for_csv ||= store.custom_field_definitions.for_resource_type('Spree::Product').
-                                order(:namespace, :key).map do |definition|
-        custom_fields.find { |custom_field| custom_field.custom_field_definition_id == definition.id }&.csv_value
-      end
+      # Through the shared helper so the value row is built from exactly the
+      # definitions, in exactly the order, that Export#custom_fields_headers
+      # used for the header row — a mismatch shifts every value column.
+      custom_field_values = custom_fields_for_csv(self, store)
       categories_for_csv ||= categories.reorder(depth: :desc).first(3).pluck(:pretty_name)
       categories_for_csv.fill(nil, categories_for_csv.size...3)
 
@@ -821,7 +820,7 @@ module Spree
       # Primary rows in the store's default currency
       all_variants.each_with_index do |variant, index|
         csv_lines << Spree::CSV::ProductVariantPresenter.new(self, variant, index, properties_for_csv, categories_for_csv, store,
-                                                             custom_fields_for_csv).call
+                                                             custom_field_values).call
       end
 
       # Price-only rows for each additional currency
