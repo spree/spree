@@ -18,11 +18,12 @@ module Spree
         'Updated At'
       ].freeze
 
-      def initialize(gift_card)
+      def initialize(gift_card, store)
         @gift_card = gift_card
+        @store = store
       end
 
-      attr_accessor :gift_card
+      attr_accessor :gift_card, :store
 
       def call
         csv = [
@@ -40,7 +41,7 @@ module Spree
           gift_card.updated_at&.strftime('%Y-%m-%d %H:%M:%S')
         ]
 
-        csv += custom_fields_for_csv(gift_card)
+        csv += custom_fields_for_csv(gift_card, store)
 
         csv
       end

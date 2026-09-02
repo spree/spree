@@ -1,5 +1,6 @@
 FactoryBot.define do
   factory :custom_field_definition, aliases: [:metafield_definition], class: 'Spree::CustomFieldDefinition' do
+    store { Spree::Store.default || create(:store) }
     namespace { 'custom' }
     sequence(:key) { |n| "custom_field_#{n}" }
     label { 'Custom Field' }

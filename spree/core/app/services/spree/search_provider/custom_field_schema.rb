@@ -15,6 +15,15 @@ module Spree
       ORDERED_FILTER_PREDICATES = (TEXT_FILTER_PREDICATES | NUMBER_FILTER_PREDICATES).
                                   sort_by { |predicate| -predicate.length }.freeze
 
+      attr_reader :store
+
+      # @param store [Spree::Store] the store whose custom-field schema this
+      #   describes — definitions are store-owned, so two stores have their own
+      #   filter vocabularies.
+      def initialize(store)
+        @store = store
+      end
+
       # @return [Hash{String => Spree::CustomFieldDefinition}]
       def entries
         @entries ||= product_definitions.index_by(&:filter_key)
@@ -57,7 +66,7 @@ module Spree
       def sort_options
         @sort_options ||= entries.each_value.select(&:sortable?).flat_map do |definition|
           key = definition.filter_key
-          name = definition.name.presence || key
+          name = definition.label.presence || key
 
           [
             { id: key, label: sort_option_label(name, definition.field_type, :asc) },
@@ -126,7 +135,7 @@ module Spree
       private
 
       def product_definitions
-        scope = Spree::CustomFieldDefinition.for_resource_type('Spree::Product')
+        scope = store.custom_field_definitions.for_resource_type('Spree::Product')
         scope.where(searchable: true).or(scope.where(sortable: true))
       end
 

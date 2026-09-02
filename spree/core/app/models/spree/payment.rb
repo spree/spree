@@ -108,7 +108,7 @@ module Spree
     # transaction_id is much easier to understand
     alias_attribute :transaction_id, :response_code
 
-    delegate :currency, to: :owner
+    delegate :currency, :store, to: :owner
 
     money_methods :amount, :credit_allowed
     alias money display_amount # for compatibility with older versions of Spree

@@ -203,6 +203,14 @@ In the dashboard, fields with these flags become available in the product table'
 
 Most things you'd want to annotate: products, variants, orders, line items, customers, categories, payments, fulfillments, gift cards and store credits, among others.
 
+## Definitions belong to a store
+
+A definition is owned by the store it was created in. Each store keeps its own
+set, so two stores can both define `custom.material` without colliding, and
+neither can read or edit the other's. Everything that reads the schema — the
+dashboard, CSV exports and imports, and product sorting and filtering — reads
+the current store's definitions.
+
 ## Custom fields or metadata?
 
 Spree has two ways to store your own data, and they are not competing — they solve different problems.

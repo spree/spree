@@ -3,7 +3,9 @@
 require 'spec_helper'
 
 RSpec.describe Spree::SearchProvider::CustomFieldSchema do
-  subject(:schema) { described_class.new }
+  subject(:schema) { described_class.new(store) }
+
+  let(:store) { @default_store }
 
   describe 'accessors' do
     it 'exposes definitions by cf_* key' do

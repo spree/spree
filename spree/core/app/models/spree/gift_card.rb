@@ -168,8 +168,8 @@ module Spree
       run_gift_card_workflow(Spree.gift_card_cancel_workflow)
     end
 
-    def to_csv(_store = nil)
-      Spree::CSV::GiftCardPresenter.new(self).call
+    def to_csv(store = nil)
+      Spree::CSV::GiftCardPresenter.new(self, store || self.store).call
     end
 
     private

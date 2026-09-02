@@ -524,7 +524,9 @@ module Spree
     def custom_field_definitions_for_model
       return [] unless model_class.present?
 
-      Spree::CustomFieldDefinition.for_resource_type(model_class.name)
+      # `store` is assigned at before_validation, so the unsaved import the
+      # template CSV is built on has none yet.
+      (store || Spree::Current.store).custom_field_definitions.for_resource_type(model_class.name)
     end
   end
 end

@@ -28,7 +28,12 @@ module Spree
       def perform(viewable_id, viewable_type, external_url, external_id = nil, position = nil, link_variant_id = nil)
         viewable = viewable_type.safe_constantize.find(viewable_id)
 
-        Spree::Media.ensure_custom_field_definition_exists!(Spree::Media::EXTERNAL_URL_CUSTOM_FIELD_KEY)
+        # The viewable's own store, not the current one: a job runs outside a
+        # request, where `Spree::Current.store` answers with the default store
+        # and would file every store's external-url definition on that one.
+        Spree::Media.ensure_custom_field_definition_exists!(
+          Spree::Media::EXTERNAL_URL_CUSTOM_FIELD_KEY, store: store_for(viewable)
+        )
 
         external_url = external_url.strip
         references = external_references_from(external_id)
@@ -59,6 +64,14 @@ module Spree
       end
 
       private
+
+      # Mirrors how Spree::Media picks its own store: the viewable's, or its
+      # product's for a variant.
+      #
+      # @return [Spree::Store]
+      def store_for(viewable)
+        viewable.try(:store) || viewable.try(:product)&.store || Spree::Store.default
+      end
 
       def download_and_attach_image(external_url, image)
         max_size = Spree::Config.max_image_download_size

@@ -226,6 +226,15 @@ RSpec.describe 'seller requirement kinds', type: :model do
       expect(link.errors[:custom_field_definition].join).to match(/defined for sellers/i)
     end
 
+    it 'refuses a field owned by another store' do
+      foreign_field = create(:custom_field_definition, store: create(:store), resource_type: 'Spree::Seller')
+
+      link = requirement.seller_requirement_custom_fields.new(custom_field_definition: foreign_field)
+
+      expect(link).not_to be_valid
+      expect(link.errors[:custom_field_definition].join).to match(/same store/i)
+    end
+
     it 'forgets a field the operator deleted rather than asking for it forever' do
       definition = create(:custom_field_definition, resource_type: 'Spree::Seller')
       requirement.update!(custom_field_definitions: [definition])

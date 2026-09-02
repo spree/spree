@@ -15,7 +15,7 @@ module Spree
 
       # @return [CustomFieldSchema]
       def custom_field_schema
-        @custom_field_schema ||= CustomFieldSchema.new
+        @custom_field_schema ||= CustomFieldSchema.new(store)
       end
 
       # Deprecated 6.0 name, removed in 6.1.

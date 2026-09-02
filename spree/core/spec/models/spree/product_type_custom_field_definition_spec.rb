@@ -27,6 +27,14 @@ RSpec.describe Spree::ProductTypeCustomFieldDefinition, type: :model do
       expect(join).not_to be_valid
       expect(join.errors[:custom_field_definition]).to include('must be a custom field definition for products')
     end
+
+    it 'rejects a definition owned by another store' do
+      foreign = create(:custom_field_definition, store: create(:store))
+      join = build(:product_type_custom_field_definition, product_type: product_type, custom_field_definition: foreign)
+
+      expect(join).not_to be_valid
+      expect(join.errors[:custom_field_definition]).to include('must belong to the same store')
+    end
   end
 
   describe 'defaults' do

@@ -159,6 +159,46 @@ RSpec.describe Spree::HasCustomFields, type: :concern do
         product.set_custom_field(Object.new, 'x')
       }.to raise_error(ArgumentError, /Invalid definition_or_key/)
     end
+
+    # Definitions are store-owned, so a record must not end up carrying one
+    # from another store — whichever of the accepted shapes names it.
+    context 'with a definition owned by another store' do
+      let(:foreign) do
+        create(:custom_field_definition, store: create(:store), namespace: 'custom',
+                                         key: 'supplier', resource_type: 'Spree::Product')
+      end
+
+      it 'refuses the record itself' do
+        expect { product.set_custom_field(foreign, 'x') }.to raise_error(ArgumentError, /Unknown custom field definition/)
+      end
+
+      it 'refuses its prefixed id' do
+        expect { product.set_custom_field(foreign.prefixed_id, 'x') }.to raise_error(ArgumentError, /Unknown custom field definition/)
+      end
+
+      it 'refuses its raw id' do
+        expect { product.set_custom_field(foreign.id, 'x') }.to raise_error(ArgumentError, /Unknown custom field definition/)
+      end
+
+      it 'writes nothing' do
+        expect {
+          begin
+            product.set_custom_field(foreign, 'x')
+          rescue ArgumentError
+            nil
+          end
+        }.not_to change { Spree::CustomField.count }
+      end
+    end
+
+    it 'accepts a definition owned by the record\'s own store' do
+      definition = create(:custom_field_definition, store: product.store, namespace: 'custom',
+                                                    key: 'material', resource_type: 'Spree::Product')
+
+      product.set_custom_field(definition, 'wool')
+
+      expect(product.get_custom_field('custom.material').value).to eq('wool')
+    end
   end
 
   describe '#has_custom_field?' do

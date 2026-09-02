@@ -59,6 +59,17 @@ describe Spree::ProductType, type: :model do
       expect(product_type.errors[:custom_field_definitions]).to be_present
     end
 
+    # Definitions are store-owned, so another store's is unknown here rather
+    # than a join that fails silently on save.
+    it 'refuses a definition owned by another store' do
+      foreign = create(:custom_field_definition, store: create(:store), resource_type: 'Spree::Product')
+
+      product_type.update(custom_field_definitions: [{ id: foreign.prefixed_id, required: true }])
+
+      expect(product_type.reload.custom_field_definitions).to eq([existing])
+      expect(product_type.errors[:custom_field_definitions]).to be_present
+    end
+
     it 'keeps the existing joins when a definition is not for products' do
       order_definition = create(:custom_field_definition, :for_order)
 

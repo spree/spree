@@ -114,8 +114,15 @@ module Spree
     end
 
     def generate
-      send(:"generate_#{format}")
-      handle_attachment
+      # An export runs in a job, where nothing has named a store. Scopes that
+      # read the current one — the product search's custom-field arm, address
+      # validation — would otherwise answer for the default store rather than
+      # the one whose records are being exported.
+      Spree::Current.set(store: store) do
+        send(:"generate_#{format}")
+        handle_attachment
+      end
+
       send_export_done_email
     end
 
@@ -157,7 +164,8 @@ module Spree
     #
     # @return [Array<String>]
     def custom_fields_headers
-      @custom_fields_headers ||= Spree::CustomFieldDefinition.for_resource_type(model_class.to_s).order(:namespace, :key).map(&:csv_header_name)
+      @custom_fields_headers ||= store.custom_field_definitions.for_resource_type(model_class.to_s).
+                                 order(:namespace, :key).map(&:csv_header_name)
     end
 
     def build_csv_line(_record)
@@ -205,7 +213,9 @@ module Spree
       # `cf_*` custom-field predicates aren't Ransack attributes — resolve them
       # first so an export of a filtered list matches what the admin sees.
       filtered_scope, params = if scope.respond_to?(:with_custom_field_filters)
-                                scope.with_custom_field_filters(params)
+                                scope.with_custom_field_filters(
+                                  params, schema: Spree::SearchProvider::CustomFieldSchema.new(store)
+                                )
                               else
                                 [scope, params]
                               end

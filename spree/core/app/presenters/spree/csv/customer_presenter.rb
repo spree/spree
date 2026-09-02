@@ -23,11 +23,12 @@ module Spree
         'Tags'
       ].freeze
 
-      def initialize(customer)
+      def initialize(customer, store)
         @customer = customer
+        @store = store
       end
 
-      attr_accessor :customer
+      attr_accessor :customer, :store
 
       def call
         csv = [
@@ -50,7 +51,7 @@ module Spree
           customer.tag_list
         ]
 
-        csv += custom_fields_for_csv(customer)
+        csv += custom_fields_for_csv(customer, store)
 
         csv
       end

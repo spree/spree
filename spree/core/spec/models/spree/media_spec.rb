@@ -595,6 +595,18 @@ describe Spree::Media, type: :model do
         asset = create(:asset)
         expect(asset.external_url).to be_nil
       end
+
+      # store_id is filled in at before_validation, so a row still being built
+      # has none — and an imported image is given its URL before it is saved.
+      it 'files the definition on the viewable store while the row is unsaved' do
+        other_store = create(:store)
+        product = create(:product, store: other_store)
+        Spree::Current.store = nil
+
+        media = product.images.new(viewable: product)
+
+        expect(media.send(:custom_field_definition_store)).to eq(other_store)
+      end
     end
 
     describe '#external_url=' do

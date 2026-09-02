@@ -1,6 +1,7 @@
 
 module Spree
   class Order < Spree.base_class
+    include Spree::CSV::CustomFieldsHelper
     has_prefix_id :or  # Stripe: or_
 
     # Legacy free-text `channel` column was replaced by the `channel_id` FK
@@ -1074,15 +1075,17 @@ module Spree
     # @param omit_headers [Array<String>] columns to leave out, named by their
     #   header. A seller's export drops the buyer's email this way — see
     #   Spree::Exports::Orders.
-    def to_csv(_store = nil, omit_headers: [])
-      custom_fields_for_csv ||= Spree::CustomFieldDefinition.for_resource_type('Spree::Order').order(:namespace, :key).map do |mf_def|
-        custom_fields.find { |mf| mf.custom_field_definition_id == mf_def.id }&.csv_value
-      end
+    def to_csv(store = nil, omit_headers: [])
+      store ||= self.store
+      # Through the shared helper so the value row is built from exactly the
+      # definitions, in exactly the order, that Export#custom_fields_headers
+      # used for the header row — a mismatch shifts every value column.
+      custom_field_values = custom_fields_for_csv(self, store)
 
       csv_lines = []
       line_items.each_with_index do |line_item, index|
         csv_lines << Spree::CSV::OrderLineItemPresenter.new(
-          self, line_item, index, custom_fields_for_csv, omit_headers: omit_headers
+          self, line_item, index, custom_field_values, omit_headers: omit_headers
         ).call
       end
       csv_lines

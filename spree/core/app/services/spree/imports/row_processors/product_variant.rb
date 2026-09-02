@@ -363,7 +363,7 @@ module Spree
 
             # Find or initialize custom_field definition
             custom_field_definition = cached_lookup(:custom_field_definition, namespace, key, product.class.name) do
-              Spree::CustomFieldDefinition.find_by(
+              store.custom_field_definitions.find_by(
                 namespace: namespace,
                 key: key,
                 resource_type: product.class.name

@@ -24,14 +24,18 @@ RSpec.describe Spree::CustomFieldFilterable do
     product_3.set_custom_field(weight, '3.5')
   end
 
+  def schema
+    Spree::SearchProvider::CustomFieldSchema.new(store)
+  end
+
   def filter(filters)
-    scope, remaining = Spree::Product.with_custom_field_filters(filters)
+    scope, remaining = Spree::Product.with_custom_field_filters(filters, schema: schema)
     [scope.to_a, remaining]
   end
 
   describe '.with_custom_field_filters' do
     it 'returns the untouched scope and filters when no cf_* keys are present' do
-      scope, remaining = Spree::Product.with_custom_field_filters({'name_cont' => 'Blue'})
+      scope, remaining = Spree::Product.with_custom_field_filters({'name_cont' => 'Blue'}, schema: schema)
 
       expect(scope.to_a).to match_array([product_1, product_2, product_3])
       expect(remaining).to eq('name_cont' => 'Blue')
@@ -82,16 +86,17 @@ RSpec.describe Spree::CustomFieldFilterable do
     end
 
     it 'leaves keys whose predicate the field type does not support for Ransack' do
-      _, remaining = Spree::Product.with_custom_field_filters({'cf_custom_weight_cont' => 'abc'})
+      _, remaining = Spree::Product.with_custom_field_filters({'cf_custom_weight_cont' => 'abc'}, schema: schema)
 
       expect(remaining).to eq('cf_custom_weight_cont' => 'abc')
     end
 
     # The schema hits the DB, so a filter hash with no cf_* keys must not pay for it.
-    it 'does not build a schema when no cf_* key is present' do
-      expect(Spree::SearchProvider::CustomFieldSchema).not_to receive(:new)
+    it 'does not read the schema when no cf_* key is present' do
+      untouched = Spree::SearchProvider::CustomFieldSchema.new(store)
+      expect(untouched).not_to receive(:parse_filter)
 
-      Spree::Product.with_custom_field_filters({'name_cont' => 'Blue'})
+      Spree::Product.with_custom_field_filters({'name_cont' => 'Blue'}, schema: untouched)
     end
   end
 

@@ -56,8 +56,8 @@ module Spree
       verified_at.present?
     end
 
-    def to_csv(_store = nil)
-      Spree::CSV::NewsletterSubscriberPresenter.new(self).call
+    def to_csv(store = nil)
+      Spree::CSV::NewsletterSubscriberPresenter.new(self, store || self.store).call
     end
 
     def self.subscribe(email:, customer: nil, store: nil, redirect_url: nil)
