@@ -573,6 +573,12 @@
         "select_calculator": "Select a calculator",
         "settings_label": "Calculator settings"
       },
+      "create_line_items_action_editor": {
+        "description": "When the promotion qualifies, these items are added to the cart.",
+        "empty": "No variants yet. Search below to add one.",
+        "search_placeholder": "Search variants by name or SKU…",
+        "variant_label": "Add variant"
+      },
       "custom_fields": {
         "default_resource": "records",
         "empty_description": "Track structured details like material, fit, or care instructions.",

@@ -573,6 +573,12 @@
         "select_calculator": "Kalkulator auswählen",
         "settings_label": "Kalkulator-Einstellungen"
       },
+      "create_line_items_action_editor": {
+        "description": "Wenn die Promotion greift, werden diese Artikel dem Warenkorb hinzugefügt.",
+        "empty": "Noch keine Varianten. Suchen Sie unten, um eine hinzuzufügen.",
+        "search_placeholder": "Varianten nach Name oder SKU suchen…",
+        "variant_label": "Variante hinzufügen"
+      },
       "custom_fields": {
         "default_resource": "Datensätzen",
         "empty_description": "Erfassen Sie strukturierte Details wie Material, Passform oder Pflegehinweise.",

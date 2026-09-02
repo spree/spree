@@ -579,6 +579,12 @@
         "select_calculator": "Wybierz kalkulator",
         "settings_label": "Ustawienia kalkulatora"
       },
+      "create_line_items_action_editor": {
+        "description": "Gdy promocja kwalifikuje się, te pozycje są dodawane do koszyka.",
+        "empty": "Brak wariantów. Wyszukaj poniżej, aby dodać.",
+        "search_placeholder": "Szukaj wariantów po nazwie lub SKU…",
+        "variant_label": "Dodaj wariant"
+      },
       "custom_fields": {
         "default_resource": "rekordy",
         "empty_description": "Śledź ustrukturyzowane szczegóły, takie jak materiał, krój czy instrukcje pielęgnacji.",

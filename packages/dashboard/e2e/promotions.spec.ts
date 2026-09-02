@@ -332,6 +332,26 @@ test.describe('promotions', () => {
     await submitCreate(page, name)
   })
 
+  test('creates a promotion with a Create Line Items action', async ({ page }) => {
+    const creds = await login(page)
+    await gotoIndex(page, PROMOTIONS_PATH(creds.store_id), CTA)
+
+    const name = `E2E Line Items Promo ${Date.now()}`
+    await startNewPromotion(page, creds.store_id, name)
+
+    await pickAction(page, /^create line items$/i)
+    await expect(page.getByRole('heading', { name: /^create line items$/i })).toBeVisible({
+      timeout: 5_000,
+    })
+
+    await pickAutocompleteOption(page, /search variants by name or sku/i, FIXTURE_PROMO_PRODUCT)
+    await saveEditor(page)
+
+    await expect(page.getByText(/1 variants/i).first()).toBeVisible({ timeout: 5_000 })
+
+    await submitCreate(page, name)
+  })
+
   test('deletes a promotion', async ({ page }) => {
     const creds = await login(page)
     await gotoIndex(page, PROMOTIONS_PATH(creds.store_id), CTA)
