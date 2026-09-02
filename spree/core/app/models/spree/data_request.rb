@@ -59,6 +59,14 @@ module Spree
 
     before_validation :set_defaults, on: :create
 
+    # The event payload must never carry the download credential — see
+    # {Spree::Api::V3::DataRequestEventSerializer}.
+    #
+    # @return [Class, nil]
+    def event_serializer_class
+      'Spree::Api::V3::DataRequestEventSerializer'.safe_constantize
+    end
+
     # @return [Boolean] a request for a copy of the data (Art. 15)
     def access?
       kind == ACCESS

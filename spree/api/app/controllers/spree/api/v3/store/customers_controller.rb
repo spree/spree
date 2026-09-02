@@ -79,7 +79,9 @@ module Spree
 
           def permitted_params
             params.permit(:email, :password, :password_confirmation, :first_name, :last_name,
-                          :accepts_email_marketing, :phone, :current_password, metadata: {})
+                          :accepts_email_marketing, :phone, :current_password,
+                          # Records that the storefront's terms box was ticked.
+                          :terms_of_service, metadata: {})
           end
 
           private

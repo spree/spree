@@ -135,9 +135,6 @@ module Spree
     # asks a shop to be able to show; a longer window is a merchant's own
     # evidentiary choice.
     preference :price_history_retention_days, :integer, default: 30
-    # The cooling-off period is per market, but whether the storefront
-    # announces one at all is a store-wide decision.
-    preference :withdrawal_notice_enabled, :boolean, default: true
     # Address preferences
     preference :company_field_enabled, :boolean, default: false
     # Showing the company field and requiring it are separate decisions: a

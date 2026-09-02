@@ -19,14 +19,16 @@ module Spree
     TERMS_OF_SERVICE = 'terms_of_service'.freeze
     EMAIL_MARKETING = 'email_marketing'.freeze
 
-    # Where the gesture happened.
-    SOURCES = %w[checkout registration account admin import storefront].freeze
+    # Where the gesture happened. `anonymization` is core's own: erasure
+    # withdraws marketing consent on the person's behalf, and that withdrawal
+    # is still a consent event worth recording honestly.
+    SOURCES = %w[checkout registration account admin import storefront anonymization].freeze
 
     belongs_to :store, class_name: 'Spree::Store'
     belongs_to :owner, polymorphic: true
 
     validates :purpose, presence: true
-    validates :source, presence: true
+    validates :source, presence: true, inclusion: { in: SOURCES }
     validates :recorded_at, presence: true
 
     scope :for_purpose, ->(purpose) { where(purpose: purpose.to_s) }
@@ -68,12 +70,19 @@ module Spree
       )
     end
 
+    # The document as it read at the moment of agreement.
+    #
+    # Records the locale alongside the digest: policies are translated, so the
+    # same document hashes differently per language and a digest without its
+    # locale cannot establish which text the person was actually shown.
+    #
     # @param policy [Spree::Policy]
     # @return [Hash]
     def self.document_snapshot(policy)
       {
         'slug' => policy.slug,
         'name' => policy.name,
+        'locale' => Spree::Current.locale || I18n.locale.to_s,
         'digest' => Digest::SHA256.hexdigest(policy.body.to_s),
         'updated_at' => policy.updated_at&.iso8601
       }

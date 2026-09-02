@@ -35,7 +35,14 @@ namespace :spree do
         retention_days = store.preferred_price_history_retention_days
         next if retention_days.blank?
 
-        variant_ids = Spree::Variant.joins(:product).where(spree_products: { store_id: store.id }).select(:id)
+        # `with_deleted` on both: a soft-deleted variant or product still has
+        # price history, and a scope that skips it would match no store at all
+        # — leaving those rows to accumulate past the retention window the
+        # task exists to enforce.
+        variant_ids = Spree::Variant.with_deleted.
+                      joins(:product).merge(Spree::Product.with_deleted).
+                      where(spree_products: { store_id: store.id }).
+                      select(:id)
 
         deleted = Spree::PriceHistory.
                   where(variant_id: variant_ids).

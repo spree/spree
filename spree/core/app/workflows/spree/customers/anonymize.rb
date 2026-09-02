@@ -43,6 +43,7 @@ module Spree
       def perform(customer:, store: nil, requested_by: nil)
         super
 
+        step :capture_original_email
         step :ensure_not_already_anonymized
 
         # Veto point — a host app that must keep a customer identifiable for
@@ -70,6 +71,11 @@ module Spree
       end
 
       private
+
+      # Read before anything rewrites it — guest rows are found by address.
+      def capture_original_email
+        @original_email = customer.email
+      end
 
       def ensure_not_already_anonymized
         return if customer.anonymized_at.nil?
@@ -113,11 +119,16 @@ module Spree
       end
 
       # Address snapshots on orders and carts. These are not the customer's
-      # address book: they are what was on the order at the time, and the
+      # address book: they are what was on the purchase at the time, and the
       # order keeps them.
+      #
+      # Carts are their own table since the Cart/Order split, so an abandoned
+      # checkout holds its own copy of wherever the person was having it sent.
       def anonymize_order_addresses
-        address_ids = Spree::Order.where(customer_id: customer.id).
-                      pluck(:bill_address_id, :ship_address_id).flatten.compact.uniq
+        address_ids = [
+          Spree::Order.where(customer_id: customer.id).pluck(:bill_address_id, :ship_address_id),
+          Spree::Cart.where(customer_id: customer.id).pluck(:bill_address_id, :ship_address_id)
+        ].flatten.compact.uniq
         return if address_ids.empty?
 
         Spree::Address.where(id: address_ids).find_each do |address|
@@ -125,16 +136,24 @@ module Spree
         end
       end
 
-      # Orders and carts. The money stays; the person goes.
+      # Orders, carts and order groups. The money stays; the person goes.
+      #
+      # An abandoned cart is not a financial record and could simply be
+      # deleted, but scrubbing it keeps one rule for every purchase-shaped row
+      # and leaves nothing for a later feature to resurrect.
       def anonymize_purchases
-        Spree::Order.where(customer_id: customer.id).update_all(
+        scrubbed = {
           email: customer.email,
           customer_note: nil,
           last_ip_address: nil,
           metadata: {},
-          internal_note: nil,
           updated_at: Time.current
-        )
+        }
+
+        # Orders carry a staff-written note that carts have no column for, so
+        # each is scrubbed to the columns it actually has.
+        Spree::Order.where(customer_id: customer.id).update_all(scrubbed.merge(internal_note: nil))
+        Spree::Cart.where(customer_id: customer.id).update_all(scrubbed)
 
         Spree::OrderGroup.where(customer_id: customer.id).
           update_all(email: customer.email, updated_at: Time.current)
@@ -165,8 +184,14 @@ module Spree
       # The consent rows keep their purpose, source and timestamp — the proof
       # that consent was given survives the person — but lose the contact
       # details and device fingerprints attached to them.
+      #
+      # Matched by email as well as by owner: a guest checkout records consent
+      # against the ORDER, not the account, so a person who bought as a guest
+      # before registering has rows this customer does not own.
       def anonymize_consent_records
-        Spree::ConsentRecord.where(owner_type: customer.class.base_class.to_s, owner_id: customer.id).
+        Spree::ConsentRecord.
+          where(owner_type: customer.class.base_class.to_s, owner_id: customer.id).
+          or(Spree::ConsentRecord.where(email: erased_emails)).
           update_all(email: nil, ip_address: nil, user_agent: nil, updated_at: Time.current)
       end
 
@@ -179,8 +204,14 @@ module Spree
           update_all(email: customer.email, updated_at: Time.current)
       end
 
+      # Matched by email as well as by customer: guest checkout subscribes with
+      # `customer: nil`, so the person's address sits in a row that never
+      # pointed at an account.
       def remove_newsletter_subscriptions
-        Spree::NewsletterSubscriber.where(customer_id: customer.id).destroy_all
+        Spree::NewsletterSubscriber.
+          where(customer_id: customer.id).
+          or(Spree::NewsletterSubscriber.where(email: erased_emails)).
+          destroy_all
       end
 
       def stamp_anonymized
@@ -224,6 +255,15 @@ module Spree
 
       def anonymous_email
         @anonymous_email ||= "anonymized-#{SecureRandom.uuid}@#{REDACTED_DOMAIN}"
+      end
+
+      # The addresses this person was known by. Captured before the account is
+      # rewritten, because rows that never pointed at the account can only be
+      # found by the address they carry.
+      #
+      # @return [Array<String>]
+      def erased_emails
+        @erased_emails ||= [@original_email, customer.email].compact_blank.uniq
       end
     end
   end

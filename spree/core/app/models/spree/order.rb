@@ -470,19 +470,27 @@ module Spree
       deadline.present? && deadline.future?
     end
 
-    # The moment the cooling-off period starts: receipt of the goods. Uses the
-    # last delivery, since a split shipment leaves the buyer waiting on the
-    # final parcel before the whole order is theirs to assess.
+    # The moment the cooling-off period starts: receipt of the goods. The
+    # Consumer Rights Directive treats an order delivered in instalments as
+    # received when the LAST one arrives, so a partly-delivered order has not
+    # started its clock at all — reading the max over the delivered subset
+    # would start it at the first parcel and could expire the right while the
+    # buyer is still waiting for the rest.
     #
-    # @return [ActiveSupport::TimeWithZone, nil]
+    # @return [ActiveSupport::TimeWithZone, nil] nil until every parcel that is
+    #   still live has been delivered
     def withdrawal_period_starts_at
-      delivered = fulfillments.filter_map(&:delivered_at)
-      delivered.max
+      live = fulfillments.reject(&:canceled?)
+      return nil if live.empty?
+      return nil unless live.all? { |fulfillment| fulfillment.delivered_at.present? }
+
+      live.filter_map(&:delivered_at).max
     end
 
-    # @return [Integer, nil]
+    # @return [Integer, nil] nil where no market says otherwise — a statutory
+    #   notice is not something to assume on an order with no region attached
     def withdrawal_period_days
-      (market || Spree::Market.new).preferred_withdrawal_period_days
+      market&.preferred_withdrawal_period_days
     end
 
     # Indicates whether or not the user is allowed to proceed to checkout.

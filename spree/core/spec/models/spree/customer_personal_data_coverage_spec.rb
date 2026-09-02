@@ -32,7 +32,8 @@ RSpec.describe 'personal data coverage' do
     'spree_refresh_tokens' => 'anonymize_sessions',
     'spree_consent_records' => 'anonymize_consent_records',
     'spree_newsletter_subscribers' => 'remove_newsletter_subscriptions',
-    'spree_data_requests' => 'anonymize_data_requests — the record survives, the address on it does not'
+    'spree_data_requests' => 'anonymize_data_requests — the record survives, the address on it does not',
+    'spree_carts' => 'anonymize_purchases — carts are their own table since the Cart/Order split'
   }.freeze
 
   # Tables holding personal data that is deliberately NOT erased by a customer
@@ -44,7 +45,6 @@ RSpec.describe 'personal data coverage' do
     'spree_company_invitations' => 'B2B invitations, erased with the company rather than the buyer',
     'spree_stock_locations' => 'a warehouse contact number, not a customer',
     'spree_webhook_deliveries' => 'operational log with its own retention; payloads expire on their own schedule',
-    'spree_carts' => 'carts belong to spree_orders in the split; covered by anonymize_purchases',
     'spree_seller_requirement_submissions' => 'seller onboarding evidence, not customer data',
     'spree_order_approvals' => 'B2B approval notes, written by staff about an order',
     'spree_order_cancellations' => 'cancellation notes, written by staff about an order',

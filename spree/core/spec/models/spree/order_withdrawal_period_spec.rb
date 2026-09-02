@@ -32,6 +32,19 @@ RSpec.describe 'Spree::Order withdrawal period' do
   end
 
   describe 'with a split shipment' do
+    it 'has not started while one parcel is still in transit' do
+      first = order.fulfillments.first || create(:fulfillment, order: order)
+      first.update_columns(delivered_at: 9.days.ago, status: 'delivered')
+      create(:fulfillment, order: order)
+      order.reload
+
+      # Falls back to completion rather than counting from the parcel that
+      # did arrive — otherwise the right could expire while the buyer is
+      # still waiting for the rest of their order.
+      expect(order.withdrawal_period_starts_at).to be_nil
+      expect(order.withdrawal_period_ends_at).to be_within(1.minute).of(order.completed_at + 14.days)
+    end
+
     it 'waits for the final parcel' do
       first = order.fulfillments.first || create(:fulfillment, order: order)
       first.update_columns(delivered_at: 9.days.ago, status: 'delivered')

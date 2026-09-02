@@ -170,6 +170,52 @@ RSpec.describe Spree::Customers::Anonymize do
     end
   end
 
+  describe 'an abandoned cart' do
+    let!(:cart) do
+      create(:cart, customer: customer, store: store).tap do |record|
+        record.update_columns(email: 'buyer@example.com', last_ip_address: '203.0.113.4',
+                              customer_note: 'ring the bell')
+      end
+    end
+
+    it 'scrubs the personal data on it' do
+      result
+      cart.reload
+
+      expect(cart.email).to eq(customer.reload.email)
+      expect(cart.last_ip_address).to be_nil
+      expect(cart.customer_note).to be_nil
+    end
+  end
+
+  describe 'traces left by guest checkout' do
+    let!(:guest_subscriber) do
+      create(:newsletter_subscriber, store: store, email: 'buyer@example.com').tap do |record|
+        record.update_columns(customer_id: nil)
+      end
+    end
+
+    let!(:guest_consent) do
+      order = create(:completed_order_with_totals, store: store)
+      create(:consent_record, store: store, owner: order, email: 'buyer@example.com',
+                              ip_address: '203.0.113.4')
+    end
+
+    it 'removes a subscription made before the account existed' do
+      result
+
+      expect(Spree::NewsletterSubscriber.where(email: 'buyer@example.com')).to be_empty
+    end
+
+    it 'scrubs consent recorded against the order rather than the account' do
+      result
+      guest_consent.reload
+
+      expect(guest_consent.email).to be_nil
+      expect(guest_consent.ip_address).to be_nil
+    end
+  end
+
   it 'announces the erasure' do
     expect(customer).to receive(:publish_event).with('customer.anonymized', hash_including(:store_id))
 
