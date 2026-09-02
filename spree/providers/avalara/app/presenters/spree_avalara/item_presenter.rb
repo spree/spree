@@ -55,11 +55,18 @@ module SpreeAvalara
 
       code = EntityUseCodes.for(entry.reason_code_for(item))
       payload = code ? { entityUseCode: code } : {}
-      # `exemptionCode` on a line, `exemptionNo` on the document — genuinely
-      # different names for the same certificate number, verified against the
-      # sandbox: a line sent `exemptionNo` comes back with none recorded, and
-      # AvaTax ignores line keys it does not know without any error. A typo here
-      # would drop the certificate from the filing in silence.
+      # `exemptionCode` on a line, `exemptionNo` on the document. Strictly one
+      # each — all four combinations checked against the sandbox, and each name
+      # is ignored at the level it does not belong to:
+      #
+      #   document exemptionNo   -> certificate recorded
+      #   document exemptionCode -> ignored
+      #   line     exemptionCode -> certificate recorded
+      #   line     exemptionNo   -> ignored
+      #
+      # Ignored means silently: the sale is still exempt, because entityUseCode
+      # does that work on its own, so a wrong name here loses the certificate
+      # reference from the filing without anything failing.
       payload[:exemptionCode] = entry.certificate_number if entry.certificate_number.present?
       payload
     end

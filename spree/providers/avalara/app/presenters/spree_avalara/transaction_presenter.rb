@@ -41,6 +41,8 @@ module SpreeAvalara
       payload[:code] = code if code.present?
       payload[:businessIdentificationNo] = tax_identifier.value if tax_identifier&.value.present?
 
+      # `exemptionNo` here, `exemptionCode` on a line — see ItemPresenter for the
+      # matrix. Each name is ignored at the other level, silently.
       if (entry = document_exemption)
         code = EntityUseCodes.for(entry.reason_code)
         payload[:entityUseCode] = code if code
