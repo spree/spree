@@ -27,6 +27,9 @@ module Spree
     # Magic methods
     #
     self.whitelisted_ransackable_scopes = %w[search_by_name]
+    # `presentation` is what admin surfaces display (as `label`), so it has to
+    # be filterable — matching Spree::OptionValue, which already allows it.
+    self.whitelisted_ransackable_attributes = %w[presentation]
     acts_as_list
 
     #

@@ -20630,12 +20630,12 @@ paths:
                   label: Option Value(s)
                   description:
                   preference_schema:
-                  - key: match_policy
-                    type: string
-                    default: any
                   - key: eligible_values
                     type: array
                     default: []
+                  - key: match_policy
+                    type: string
+                    default: any
                 - type: product
                   label: Product(s)
                   description:
@@ -30621,14 +30621,14 @@ paths:
                   type: carrier
                   group: shipping
                   preferences:
-                    api_key: "•••••cret"
                     account_number: '42'
+                    api_key: "•••••cret"
                   preference_schema:
-                  - key: api_key
-                    type: password
-                    default:
                   - key: account_number
                     type: string
+                    default:
+                  - key: api_key
+                    type: password
                     default:
                 meta:
                   page: 1
@@ -30694,14 +30694,14 @@ paths:
                 type: carrier
                 group: shipping
                 preferences:
-                  api_key: "•••••cret"
                   account_number:
+                  api_key: "•••••cret"
                 preference_schema:
-                - key: api_key
-                  type: password
-                  default:
                 - key: account_number
                   type: string
+                  default:
+                - key: api_key
+                  type: password
                   default:
       requestBody:
         content:
@@ -30774,11 +30774,11 @@ paths:
                   description:
                   logo_url:
                   preference_schema:
-                  - key: api_key
-                    type: password
-                    default:
                   - key: account_number
                     type: string
+                    default:
+                  - key: api_key
+                    type: password
                     default:
   "/api/v3/admin/integrations/{id}/test":
     post:

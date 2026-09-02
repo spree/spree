@@ -14184,10 +14184,10 @@ paths:
             application/json:
               example:
                 direct_upload:
-                  url: http://www.example.com/rails/active_storage/disk/eyJfcmFpbHMiOnsiZGF0YSI6eyJrZXkiOiJuem5oOGdra3VxendvbDc1ODBxNHNwZmpmMjVxIiwiY29udGVudF90eXBlIjoiYXBwbGljYXRpb24vcGRmIiwiY29udGVudF9sZW5ndGgiOjUxMjM0LCJjaGVja3N1bSI6IlZqaHowNGxRdUVHdXY0bkR2aHNhTlE9PSIsInNlcnZpY2VfbmFtZSI6InRlc3QifSwiZXhwIjoiMjAyNi0wMS0xNVQxMjowNTowMC4wMDBaIiwicHVyIjoiYmxvYl90b2tlbiJ9fQ==--64df88e13fbbd7bb2787ec2a2d7871d2f8473840
+                  url: http://www.example.com/rails/active_storage/disk/eyJfcmFpbHMiOnsiZGF0YSI6eyJrZXkiOiJuem5oOGdra3VxendvbDc1ODBxNHNwZmpmMjVxIiwiY29udGVudF90eXBlIjoiYXBwbGljYXRpb24vcGRmIiwiY29udGVudF9sZW5ndGgiOjUxMjM0LCJjaGVja3N1bSI6IlZqaHowNGxRdUVHdXY0bkR2aHNhTlE9PSIsInNlcnZpY2VfbmFtZSI6InRlc3QifSwiZXhwIjoiMjAyNi0wMS0xNVQxMjowNTowMC4wMDBaIiwicHVyIjoiYmxvYl90b2tlbiJ9fQ==--405bb35b1c699d5e80bbbcfc04d02decaecec4ee
                   headers:
                     Content-Type: application/pdf
-                signed_id: eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--444fd0fa6ae1549b84a2ef7c39e5f2fd9f672093
+                signed_id: eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--9bc58549b63ad1356a2279c4324418829d950221
               schema:
                 "$ref": "#/components/schemas/DirectUploadResponse"
       requestBody:
@@ -14452,7 +14452,7 @@ paths:
                     quantity: 1
                     line_item_id: li_UkLWZg9DAJ
                     name: Product 1369315
-                    sku: SKU-174
+                    sku: SKU-175
                     options_text: ''
               schema:
                 type: object
@@ -14522,7 +14522,7 @@ paths:
                   quantity: 1
                   line_item_id: li_UkLWZg9DAJ
                   name: Product 137961
-                  sku: SKU-175
+                  sku: SKU-176
                   options_text: ''
               schema:
                 "$ref": "#/components/schemas/Fulfillment"
@@ -14631,7 +14631,7 @@ paths:
                     total: '10.0'
                     display_total: "$10.00"
                     variant_id: variant_UkLWZg9DAJ
-                    sku: SKU-176
+                    sku: SKU-177
                     thumbnail_url:
                   fulfillments:
                   - id: ful_UkLWZg9DAJ
@@ -14652,7 +14652,7 @@ paths:
                       quantity: 1
                       line_item_id: li_UkLWZg9DAJ
                       name: Product 13895
-                      sku: SKU-176
+                      sku: SKU-177
                       options_text: ''
                   shipping_address:
                     id: addr_gbHJdmfrXB
@@ -14780,7 +14780,7 @@ paths:
                   total: '10.0'
                   display_total: "$10.00"
                   variant_id: variant_UkLWZg9DAJ
-                  sku: SKU-177
+                  sku: SKU-178
                   thumbnail_url:
                 fulfillments:
                 - id: ful_UkLWZg9DAJ
@@ -14801,7 +14801,7 @@ paths:
                     quantity: 1
                     line_item_id: li_UkLWZg9DAJ
                     name: Product 1399755
-                    sku: SKU-177
+                    sku: SKU-178
                     options_text: ''
                 shipping_address:
                   id: addr_gbHJdmfrXB
@@ -14918,7 +14918,7 @@ paths:
                   total: '10.0'
                   display_total: "$10.00"
                   variant_id: variant_UkLWZg9DAJ
-                  sku: SKU-180
+                  sku: SKU-181
                   thumbnail_url:
                 fulfillments:
                 - id: ful_UkLWZg9DAJ
@@ -14939,7 +14939,7 @@ paths:
                     quantity: 1
                     line_item_id: li_UkLWZg9DAJ
                     name: Product 1426554
-                    sku: SKU-180
+                    sku: SKU-181
                     options_text: ''
                 shipping_address:
                   id: addr_gbHJdmfrXB

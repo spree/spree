@@ -12,7 +12,7 @@ module Spree
     # @return [Hash{String=>Hash}] locale => { field => value, "translated_field_count" => Integer }
     def matrix_for(record, locales: nil)
       fields = field_keys(record)
-      locales ||= non_default_locales(record.translatable_store)
+      locales ||= non_default_locales(record)
 
       locales.index_with do |locale|
         translated = field_values(record, locale, fields)
@@ -173,9 +173,19 @@ module Spree
     # The locales a store translates INTO — everything it supports except the
     # one its source content is written in.
     #
-    # @param store [Spree::Store]
+    # Accepts a translatable record as well as a store: this was private and
+    # record-taking before the coverage endpoint needed it, and a record still
+    # answers with its own store's locales.
+    #
+    # @param store_or_record [Spree::Store, #translatable_store]
     # @return [Array<String>] sorted locale codes
-    def non_default_locales(store)
+    def non_default_locales(store_or_record)
+      store =
+        if store_or_record.respond_to?(:supported_locales_list)
+          store_or_record
+        else
+          store_or_record.try(:translatable_store)
+        end
       return [] unless store
 
       (store.supported_locales_list - [store.default_locale]).sort

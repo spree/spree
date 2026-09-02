@@ -50,9 +50,12 @@ module Spree
 
           # Store-scoped by the model itself, then ability-filtered the way the
           # admin base class does so a host app's record-level rules still bind.
+          # Memoized: `index` reaches this for the paginated page and again for
+          # the store-wide totals, and rebuilding it re-runs the ability filter
+          # each time.
           def scope
-            model_class.translatable_scope(current_store).
-              accessible_by(current_ability, ability_action_for_request)
+            @scope ||= model_class.translatable_scope(current_store).
+                       accessible_by(current_ability, ability_action_for_request)
           end
 
           # Coverage itself reads the translation tables in one grouped query,
@@ -85,16 +88,34 @@ module Spree
           # silently returns the unfiltered list.
           #
           # @return [String, nil]
+          # The predicate the grid filters by. It has to match the column the
+          # grid DISPLAYS, which is the record's first public translatable
+          # field — for an option type that is `label`, stored as
+          # `presentation`, while `name` holds a slug. Searching `name` there
+          # means typing the visible label ("Shirt Size") returns nothing.
+          #
+          # Falls back to `name` when the displayed column is not ransackable,
+          # since Ransack's defaults always carry it.
+          #
+          # @return [String, nil]
           def search_field
             return @search_field if defined?(@search_field)
 
-            # `ransackable_attributes` is what Ransack actually consults — the
-            # `whitelisted_` half omits the defaults, which already carry
-            # `name`, so reading it would send collections to `permalink` and
-            # leave option types with no search at all.
             attributes = model_class.ransackable_attributes
-            field = %w[name presentation permalink slug].find { |candidate| attributes.include?(candidate) }
+            column = displayed_column
+            field = [column, 'name'].compact.find { |candidate| attributes.include?(candidate) }
             @search_field = field && "#{field}_cont"
+          end
+
+          # The internal column behind the record's displayed label, resolving
+          # any public-name alias (`label` -> `presentation`).
+          #
+          # @return [String, nil]
+          def displayed_column
+            public_field = model_class.public_translatable_fields.first
+            return if public_field.nil?
+
+            (model_class.translatable_field_aliases[public_field] || public_field).to_s
           end
 
           def translatable_locales

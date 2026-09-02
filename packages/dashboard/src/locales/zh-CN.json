@@ -3705,6 +3705,7 @@
       "translations": {
         "coverage": "翻译覆盖率",
         "description": "查看目录的翻译进度，并补齐缺失的内容。",
+        "load_error": "无法加载翻译覆盖率。",
         "no_locales_description": "为某个市场添加语言即可开始翻译。",
         "no_locales_title": "尚无其他语言",
         "progress": "进度",

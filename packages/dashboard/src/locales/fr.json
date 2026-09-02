@@ -3713,6 +3713,7 @@
       "translations": {
         "coverage": "Couverture des traductions",
         "description": "Voyez quelle part de votre catalogue est traduite et comblez les manques.",
+        "load_error": "Impossible de charger la couverture des traductions.",
         "no_locales_description": "Ajoutez une langue à l'un de vos marchés pour commencer à traduire.",
         "no_locales_title": "Pas encore d'autres langues",
         "progress": "Progression",

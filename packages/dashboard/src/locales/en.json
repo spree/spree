@@ -3713,6 +3713,7 @@
       "translations": {
         "coverage": "Translation coverage",
         "description": "See how much of your catalog is translated, and fill the gaps.",
+        "load_error": "Could not load translation coverage.",
         "no_locales_description": "Add a locale to one of your markets to start translating.",
         "no_locales_title": "No other locales yet",
         "progress": "Progress",

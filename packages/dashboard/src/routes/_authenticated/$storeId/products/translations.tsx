@@ -63,7 +63,10 @@ function TranslationsPage() {
   const navigate = useNavigate({ from: Route.fullPath })
   const search = Route.useSearch()
 
-  const { resource: resourceType, page } = search
+  const { page } = search
+  // The URL is user-supplied: an unknown or non-editable `?resource=` would
+  // otherwise reach the accessor map and throw inside the dialog's queryFn.
+  const resourceType = isTranslatableResourceType(search.resource) ? search.resource : 'product'
   // Defer the LOCAL value, the way ResourceTable does: deferring the URL
   // param cannot coalesce, because writing it is already an urgent update, so
   // every keystroke would issue its own request.
@@ -102,7 +105,7 @@ function TranslationsPage() {
     () => ({ page, ...(trimmedSearch ? { search: trimmedSearch } : {}) }),
     [page, trimmedSearch],
   )
-  const { data, isLoading } = useTranslationCoverage(resourceType, coverageParams)
+  const { data, isLoading, isError } = useTranslationCoverage(resourceType, coverageParams)
 
   const coverage = data?.data
   const targetLocales = coverage?.locales ?? []
@@ -152,7 +155,19 @@ function TranslationsPage() {
           )}
         </div>
 
-        {targetLocales.length === 0 ? (
+        {isLoading || isError ? (
+          <Card>
+            <CardContent className="py-10">
+              {isError ? (
+                <p className="text-center text-muted-foreground text-sm">
+                  {t('admin.pages.translations.load_error')}
+                </p>
+              ) : (
+                <Skeleton className="h-40 w-full" />
+              )}
+            </CardContent>
+          </Card>
+        ) : targetLocales.length === 0 ? (
           <Empty>
             <EmptyTitle>{t('admin.pages.translations.no_locales_title')}</EmptyTitle>
             <EmptyDescription>
@@ -231,7 +246,9 @@ function TranslationsPage() {
                   <Select
                     items={resourceOptions}
                     value={resourceType}
-                    onValueChange={(value: string) => patchSearch({ resource: value, page: 1 })}
+                    onValueChange={(value: string) =>
+                      patchSearch({ resource: value, page: 1, edit: undefined })
+                    }
                   >
                     <SelectTrigger className="w-48">
                       <SelectValue />

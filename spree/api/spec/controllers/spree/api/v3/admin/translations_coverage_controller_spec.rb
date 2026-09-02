@@ -110,6 +110,21 @@ RSpec.describe Spree::Api::V3::Admin::TranslationsCoverageController, type: :con
       expect(json_response['data']['search_field']).to eq('name_cont')
     end
 
+    context 'with a model whose label is a different column than its name' do
+      # An option type displays `label` (stored as `presentation`) while `name`
+      # holds a slug, so searching `name` would mean typing the visible label
+      # finds nothing.
+      let!(:option_type) { create(:option_type, name: 'shirt-size', presentation: 'Shirt Size') }
+
+      it 'searches the column the grid displays' do
+        get :index, params: { resource_type: 'option_type', search: 'Shirt Size' }, as: :json
+
+        expect(json_response['data']['search_field']).to eq('presentation_cont')
+        labels = json_response['data']['records'].map { |r| r['label'] }
+        expect(labels).to include('Shirt Size')
+      end
+    end
+
     context 'with a model whose whitelist omits name' do
       it 'still searches by name, which Ransack allows by default' do
         collection = create(:collection, store: store, name: 'Summer Sale')

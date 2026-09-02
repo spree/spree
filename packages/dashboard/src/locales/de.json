@@ -3713,6 +3713,7 @@
       "translations": {
         "coverage": "Übersetzungsabdeckung",
         "description": "Sehen Sie, wie viel Ihres Katalogs übersetzt ist, und schließen Sie die Lücken.",
+        "load_error": "Übersetzungsabdeckung konnte nicht geladen werden.",
         "no_locales_description": "Fügen Sie einem Ihrer Märkte eine Sprache hinzu, um mit dem Übersetzen zu beginnen.",
         "no_locales_title": "Noch keine weiteren Sprachen",
         "progress": "Fortschritt",
