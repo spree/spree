@@ -457,6 +457,11 @@ describe Spree::DeliveryMethod, type: :model do
       seller.destroy
 
       expect(delivery_method.reload.seller_id).to eq(seller.id)
+      # A seller is paranoid, so the association has to read through the soft
+      # delete — otherwise the row looks unowned, which is the marketplace's
+      # own method.
+      expect(delivery_method.seller).to eq(seller)
+      expect(delivery_method).to be_seller_owned
     end
 
     describe '.available_to_seller' do

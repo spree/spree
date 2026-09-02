@@ -57,7 +57,12 @@ module Spree
     # operator's own method — the only kind that existed before sellers, and
     # the only kind a first-party package is ever offered
     # (docs/plans/6.0-multi-vendor-marketplace.md, Decision 13).
-    belongs_to :seller, class_name: 'Spree::Seller', optional: true, inverse_of: :delivery_methods
+    # `with_deleted` because a seller is paranoid and this association
+    # deliberately survives one: the rows keep pointing at a departed seller
+    # rather than being released, so without it the operator's list would show
+    # a seller-owned method with no owner and read it as their own.
+    belongs_to :seller, -> { with_deleted }, class_name: 'Spree::Seller', optional: true,
+               inverse_of: :delivery_methods
 
     attribute :storefront_visible, :boolean, default: true
 

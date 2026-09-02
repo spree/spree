@@ -128,8 +128,21 @@ module Spree
               :calculator_type,
               :delivery_profile_id, :delivery_zone_id,
               calculator_preferences: {},
-              rules: [:id, :type, :active, { preferences: {} }]
+              rules: [:id, :type, :active, { preferences: {} }, *subclassed_rule_attributes]
             )
+          end
+
+          # Association-backed config a rule declares on its own class. Empty
+          # today — the one core rule that declares any is withheld from this
+          # branch — but a seller-eligible rule that grows some would
+          # otherwise have them dropped by `permit` without a word.
+          #
+          # Read from the seller's own rule set, not every registered kind, so
+          # a withheld rule's attributes never become permitted here.
+          def subclassed_rule_attributes
+            seller_rule_classes.flat_map do |klass|
+              klass.respond_to?(:additional_permitted_attributes) ? klass.additional_permitted_attributes : []
+            end.uniq
           end
 
           def collection_includes
