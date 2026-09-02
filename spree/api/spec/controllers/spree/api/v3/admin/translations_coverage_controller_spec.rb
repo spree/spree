@@ -148,6 +148,25 @@ RSpec.describe Spree::Api::V3::Admin::TranslationsCoverageController, type: :con
       end
     end
 
+    describe 'authorization' do
+      # Each type is read under the permission of what it belongs to, matching
+      # the per-resource translations endpoint: an option type's translations
+      # ride `products`, a policy's ride `settings`.
+      {
+        'product' => :products,
+        'category' => :categories,
+        'collection' => :collections,
+        'option_type' => :products,
+        'policy' => :settings
+      }.each do |resource_type, expected_scope|
+        it "reads #{resource_type} translations under #{expected_scope}" do
+          controller.params[:resource_type] = resource_type
+
+          expect(controller.send(:scoped_resource_name)).to eq(expected_scope)
+        end
+      end
+    end
+
     context 'with an unknown resource type' do
       it 'returns 404' do
         get :index, params: { resource_type: 'nonsense' }, as: :json
