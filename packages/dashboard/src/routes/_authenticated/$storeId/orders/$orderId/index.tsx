@@ -61,9 +61,16 @@ function OrderDetailPage() {
         <>
           <FulfillmentsCard order={order} />
           <OrderDigitalLinksCard order={order} />
-          <OrderReturnsCard order={order} />
-          <OrderExchangesCard order={order} />
-          <OrderClaimsCard order={order} />
+          {/* Nothing can come back from an order that has not been placed:
+              all three read fulfilled units, and a draft has none, so they
+              would only ever render an empty card with a disabled action. */}
+          {order.completed_at && (
+            <>
+              <OrderReturnsCard order={order} />
+              <OrderExchangesCard order={order} />
+              <OrderClaimsCard order={order} />
+            </>
+          )}
           <PaymentsCard order={order} />
           <TaxLinesCard order={order} />
           <OrderDiscountsCard order={order} />
