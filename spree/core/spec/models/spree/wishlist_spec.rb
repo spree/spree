@@ -140,4 +140,16 @@ describe Spree::Wishlist, type: :model do
       expect(wishlist.variant_ids).to eq [variant.id, variant_2.id]
     end
   end
+
+  describe '#wished_items_count' do
+    # The pre-6.0 name stays callable for one release.
+    it 'delegates to the renamed counter' do
+      wishlist = create(:wishlist)
+      create(:wishlist_item, wishlist: wishlist)
+      expect(Spree::Deprecation).to receive(:warn).with(/wished_items_count/)
+
+      expect(wishlist.wished_items_count).to eq(1)
+    end
+  end
+
 end

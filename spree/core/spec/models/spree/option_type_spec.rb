@@ -223,4 +223,25 @@ describe Spree::OptionType, type: :model do
       end
     end
   end
+
+  # The pre-6.0 name stays callable for one release. It is a plain method, not
+  # an alias_attribute — Mobility owns `label` — so it reads and writes on an
+  # instance only.
+  describe 'the deprecated presentation reader' do
+    let(:option_type) { create(:option_type, label: 'Size') }
+
+    it 'reads the label' do
+      expect(Spree::Deprecation).to receive(:warn).with(/presentation is deprecated/)
+
+      expect(option_type.presentation).to eq('Size')
+    end
+
+    it 'writes the label' do
+      expect(Spree::Deprecation).to receive(:warn).with(/presentation= is deprecated/)
+
+      option_type.presentation = 'Waist'
+      expect(option_type.label).to eq('Waist')
+    end
+  end
+
 end

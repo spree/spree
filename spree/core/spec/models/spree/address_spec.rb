@@ -942,6 +942,23 @@ describe Spree::Address, type: :model do
     end
   end
 
+  # The pre-6.0 names stay callable for one release. Nothing in core calls
+  # them, so without these they could break unnoticed.
+  describe 'deprecated postal-code helpers' do
+    it 'normalizes through the class-level shell' do
+      expect(Spree::Deprecation).to receive(:warn).with(/normalize_zipcode/)
+
+      expect(described_class.normalize_zipcode(' sw1a 1-aa ')).to eq('SW1A1AA')
+    end
+
+    it 'normalizes this address through the instance shell' do
+      address = build(:address, postal_code: ' sw1a 1-aa ')
+      expect(Spree::Deprecation).to receive(:warn).with(/normalized_zipcode/)
+
+      expect(address.normalized_zipcode).to eq('SW1A1AA')
+    end
+  end
+
   describe '#require_postal_code?' do
     # The pre-6.0 name stays overridable for one release: a decorator's
     # require_zipcode? sits ahead of Spree::Address in the ancestry, so it
