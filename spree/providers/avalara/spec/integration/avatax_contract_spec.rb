@@ -77,7 +77,8 @@ RSpec.describe 'AvaTax API contract', :vcr do
       cart = us_cart
       allow(SpreeAvalara::Integration).to receive(:active_for).and_return(integration)
       line = cart.line_items.first
-      override = instance_double('override', item_id: line.prefixed_id, exempt?: true, reason_code: 'RESALE')
+      override = Spree::TaxExemption::ItemOverride.new(item_id: line.prefixed_id, exempt: true,
+                                                       reason_code: 'RESALE')
       exemption = Spree::TaxExemption.new(reason_code: 'RESALE', certificate_number: 'C-100',
                                           item_overrides: [override])
 

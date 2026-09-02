@@ -3,6 +3,11 @@ module SpreeAvalara
   # vocabulary. Frozen here rather than seeded into a table: the list is
   # Avalara's, not the merchant's, and the legacy extension's editable table
   # only ever held these same seventeen rows.
+  #
+  # Two directions, because two callers need opposite things. The dashboard
+  # offers the merchant this list (code to label, registered in the engine) and
+  # sends back a code. A reason recorded some other way — a hand-written API
+  # call, an importer — may arrive as a name instead, and {.for} resolves it.
   module EntityUseCodes
     ALL = {
       'A' => 'FEDERAL GOV',
@@ -24,46 +29,26 @@ module SpreeAvalara
       'TAXABLE' => 'NON-EXEMPT TAXABLE CUSTOMER'
     }.freeze
 
-    # Whatever a merchant recorded on a certificate, said in Avalara's terms. A
-    # reason core knows nothing about is still a claim worth sending, so it goes
-    # as OTHER/CUSTOM rather than being dropped — the raw reason stays on the
-    # row for anyone reading the filing later.
+    # A reason Avalara cannot classify is still a claim worth sending, so it
+    # goes as OTHER/CUSTOM rather than being dropped — the raw reason stays on
+    # the row for anyone reading the filing later.
     FALLBACK_CODE = 'L'.freeze
 
-    # Names a merchant is likely to have typed, mapped onto the codes they mean.
-    # Derived from the code list itself, so a new code needs no second entry
-    # here, plus the aliases the underscore form does not cover.
-    REASON_CODE_MAP = ALL.each_with_object({}) { |(code, name), map| map[name] = code }.
-                      merge(
-                        'FEDERAL_GOV' => 'A',
-                        'STATE_GOV' => 'B',
-                        'TRIBAL_GOVERNMENT' => 'C',
-                        'FOREIGN_DIPLOMAT' => 'D',
-                        'CHARITABLE' => 'E',
-                        'CHARITABLE_ORG' => 'E',
-                        'EXEMPT_ORG' => 'E',
-                        'RELIGIOUS_ORG' => 'F',
-                        'RESALE' => 'G',
-                        'AGRICULTURE' => 'H',
-                        'INDUSTRIAL' => 'I',
-                        'MANUFACTURER' => 'I',
-                        'DIRECT_PAY' => 'J',
-                        'DIRECT_MAIL' => 'K',
-                        'EDUCATIONAL_ORG' => 'N',
-                        'COMMERCIAL_AQUACULTURE' => 'P',
-                        'COMMERCIAL_FISHERY' => 'Q',
-                        'NON_RESIDENT' => 'R'
-                      ).freeze
+    # Name to code, derived so a new code needs no second entry. Nothing is
+    # hand-aliased onto it: a name this does not hold is a name nobody can
+    # show Avalara meant, and guessing files the wrong exemption. Unknown
+    # reasons take the fallback, which files a claim Avalara will look at.
+    BY_NAME = ALL.each_with_object({}) { |(code, label), index| index[label] = code }.freeze
 
     # @param reason_code [String, nil] whatever the certificate recorded
     # @return [String, nil] an Avalara entity use code, nil when nothing was claimed
     def self.for(reason_code)
       return if reason_code.blank?
 
-      normalized = reason_code.to_s.strip.upcase
-      return normalized if ALL.key?(normalized)
+      value = normalize(reason_code)
+      return value if ALL.key?(value)
 
-      REASON_CODE_MAP[normalized] || REASON_CODE_MAP[normalized.tr(' ', '_')] || FALLBACK_CODE
+      BY_NAME[value] || FALLBACK_CODE
     end
 
     # Whether the code was understood, so a caller can keep the raw reason when
@@ -74,9 +59,16 @@ module SpreeAvalara
     def self.recognized?(reason_code)
       return false if reason_code.blank?
 
-      normalized = reason_code.to_s.strip.upcase
+      value = normalize(reason_code)
 
-      ALL.key?(normalized) || REASON_CODE_MAP.key?(normalized) || REASON_CODE_MAP.key?(normalized.tr(' ', '_'))
+      ALL.key?(value) || BY_NAME.key?(value)
     end
+
+    # One form for both indexes, so 'federal_gov', 'Federal Gov' and
+    # 'FEDERAL  GOV' are read as the same claim.
+    def self.normalize(value)
+      value.to_s.strip.upcase.tr('_', ' ').squeeze(' ')
+    end
+    private_class_method :normalize
   end
 end

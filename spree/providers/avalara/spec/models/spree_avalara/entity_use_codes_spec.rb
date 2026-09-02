@@ -27,6 +27,20 @@ RSpec.describe SpreeAvalara::EntityUseCodes do
       expect(described_class).not_to be_recognized('SOMETHING_LOCAL')
     end
 
+    it 'reads a name however it was punctuated' do
+      expect(described_class.for('  direct_pay ')).to eq('J')
+      expect(described_class.for('Direct  Mail')).to eq('K')
+    end
+
+    # Every alias this module used to carry was a guess about a string nobody
+    # has been able to store: the certificate model has never shipped, and the
+    # dashboard sends codes.
+    it 'files a name it cannot place as OTHER/CUSTOM rather than guessing' do
+      expect(described_class.for('manufacturing')).to eq('L')
+      expect(described_class.for('government')).to eq('L')
+      expect(described_class).not_to be_recognized('manufacturing')
+    end
+
     it 'claims nothing when no reason was recorded' do
       expect(described_class.for(nil)).to be_nil
       expect(described_class.for('')).to be_nil

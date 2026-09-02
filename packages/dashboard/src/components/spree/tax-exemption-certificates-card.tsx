@@ -59,7 +59,7 @@ import {
   PlusIcon,
   TrashIcon,
 } from 'lucide-react'
-import { useEffect, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { Controller, useForm } from 'react-hook-form'
 import { useTranslation } from 'react-i18next'
 import {
@@ -120,9 +120,29 @@ export function TaxExemptionCertificatesCard({
   const verifyMutation = useVerifyTaxExemptionCertificate(companyId)
   const revokeMutation = useRevokeTaxExemptionCertificate(companyId)
   const deleteMutation = useDeleteTaxExemptionCertificate(companyId)
+  const { data: reasonCodeGroups } = useTaxExemptionReasonCodes(companyId)
   const [addOpen, setAddOpen] = useState(false)
 
   const certificates = data?.data ?? []
+
+  // The same vocabulary the form offers, so a certificate reads back as the
+  // reason that was picked rather than as the code it stores.
+  const reasonLabels = useMemo(() => {
+    const labels = new Map<string, string>()
+    for (const group of reasonCodeGroups?.data ?? []) {
+      for (const code of group.reason_codes) labels.set(code.value, code.label)
+    }
+    return labels
+  }, [reasonCodeGroups])
+
+  // A row recorded before the vocabulary moved to the server holds one of the
+  // six values the dashboard used to offer, which are translated locally.
+  function reasonLabel(code: string) {
+    return (
+      reasonLabels.get(code) ??
+      t(`admin.tax_exemption_certificates.reason_codes.${code}`, { defaultValue: code })
+    )
+  }
 
   async function handleRevoke(certificate: TaxExemptionCertificate) {
     const ok = await confirm({
@@ -212,9 +232,7 @@ export function TaxExemptionCertificatesCard({
                   )}
                 </div>
                 <span className="text-muted-foreground text-xs">
-                  {t(`admin.tax_exemption_certificates.reason_codes.${certificate.reason_code}`, {
-                    defaultValue: certificate.reason_code,
-                  })}
+                  {reasonLabel(certificate.reason_code)}
                   {' · '}
                   <JurisdictionLabel
                     countryCode={certificate.country_code}

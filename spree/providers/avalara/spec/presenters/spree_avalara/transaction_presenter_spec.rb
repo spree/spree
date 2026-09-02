@@ -105,7 +105,8 @@ RSpec.describe SpreeAvalara::TransactionPresenter do
     end
 
     it 'goes per line when the claim carves lines out' do
-      override = instance_double('override', item_id: line_item.prefixed_id, exempt?: true, reason_code: 'FEDERAL_GOV')
+      override = Spree::TaxExemption::ItemOverride.new(item_id: line_item.prefixed_id, exempt: true,
+                                                       reason_code: 'FEDERAL_GOV')
       payload = present(exemptions: [exemption(item_overrides: [override])])
 
       expect(payload).not_to have_key(:entityUseCode)
