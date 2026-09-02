@@ -47,6 +47,8 @@ module Spree
           variant_not_found: 'variant_not_found',
           insufficient_stock: 'insufficient_stock',
           invalid_quantity: 'invalid_quantity',
+          invalid_price: 'invalid_price',
+          price_override_not_allowed: 'price_override_not_allowed',
 
           # Validation errors
           validation_error: 'validation_error',
@@ -125,6 +127,20 @@ module Spree
             status: :unprocessable_content,
             details: details
           )
+        end
+
+        # Maps symbolic line-item rejections onto the API error-code vocabulary.
+        # Callers pass a default for failures that carry no recognized symbol
+        # (stock, availability strings, and so on).
+        def infer_line_item_error_code(errors, default:)
+          return default unless errors.is_a?(ActiveModel::Errors)
+
+          base_symbols = (errors.details[:base] || []).pluck(:error)
+          return ERROR_CODES[:price_override_not_allowed] if base_symbols.include?(:price_override_not_allowed)
+          return ERROR_CODES[:invalid_price] if base_symbols.include?(:invalid_price)
+          return ERROR_CODES[:invalid_quantity] if base_symbols.include?(:quantity_rule_violated)
+
+          default
         end
 
         # Convenience method for service result errors
