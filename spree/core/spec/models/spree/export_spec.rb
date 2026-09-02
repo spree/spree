@@ -76,6 +76,43 @@ RSpec.describe Spree::Export, :job, type: :model do
         expect { export.generate }.to change(export.attachment, :attached?).from(false).to(true)
       end
     end
+
+    # Header and value rows are built in different objects, so they have to
+    # agree about whose custom-field schema they describe or every value
+    # column silently shifts.
+    describe 'custom field columns' do
+      let!(:mine) do
+        create(:custom_field_definition, store: store, resource_type: 'Spree::Product',
+                                         namespace: 'custom', key: 'material')
+      end
+      let!(:theirs) do
+        create(:custom_field_definition, store: create(:store), resource_type: 'Spree::Product',
+                                         namespace: 'custom', key: 'supplier')
+      end
+      let!(:product) { create(:product, store: store) }
+
+      def generated_rows
+        export.save!
+        export.generate
+        ::CSV.parse(export.attachment.download)
+      end
+
+      it 'names only the exporting store definitions in the header' do
+        headers, = generated_rows
+
+        expect(headers).to include('custom_field.custom.material')
+        expect(headers).not_to include('custom_field.custom.supplier')
+      end
+
+      it 'lines each value up under its own header' do
+        product.set_custom_field(mine, 'Wool-Blend')
+
+        headers, *rows = generated_rows
+        column = headers.index('custom_field.custom.material')
+
+        expect(rows.map { |values| values[column] }).to include('Wool-Blend')
+      end
+    end
   end
 
   describe '#scope' do

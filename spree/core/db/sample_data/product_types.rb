@@ -14,7 +14,7 @@ store = Spree::Store.default
 
 color_option_type = Spree::OptionType.find_by(name: 'color')
 
-definitions = Spree::CustomFieldDefinition.where(
+definitions = store.custom_field_definitions.where(
   namespace: 'custom',
   resource_type: 'Spree::Product'
 ).index_by(&:key)

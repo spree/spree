@@ -181,6 +181,52 @@ RSpec.describe Spree::Api::V3::Admin::CustomFieldDefinitionsController, type: :c
     end
   end
 
+  # Definitions are store-owned, so another store's schema is not readable,
+  # editable or deletable through this endpoint — a cross-store id is simply
+  # not found.
+  describe 'store isolation' do
+    let!(:other_store_definition) do
+      create(:custom_field_definition, store: create(:store), namespace: 'specs', key: 'supplier')
+    end
+
+    it 'omits another store\'s definitions from the listing' do
+      get :index, as: :json
+
+      keys = json_response['data'].map { |definition| definition['key'] }
+      expect(keys).to include('fabric')
+      expect(keys).not_to include('supplier')
+    end
+
+    it 'does not find another store\'s definition' do
+      get :show, params: { id: other_store_definition.prefixed_id }, as: :json
+
+      expect(response).to have_http_status(:not_found)
+    end
+
+    it 'refuses to update another store\'s definition' do
+      patch :update, params: { id: other_store_definition.prefixed_id, label: 'Taken' }, as: :json
+
+      expect(response).to have_http_status(:not_found)
+      expect(other_store_definition.reload.label).not_to eq('Taken')
+    end
+
+    it 'refuses to destroy another store\'s definition' do
+      delete :destroy, params: { id: other_store_definition.prefixed_id }, as: :json
+
+      expect(response).to have_http_status(:not_found)
+      expect(other_store_definition.reload).to be_present
+    end
+
+    it 'builds a created definition on the requesting store' do
+      post :create,
+           params: { namespace: 'specs', key: 'weave', field_type: 'short_text', resource_type: 'Spree::Product' },
+           as: :json
+
+      expect(response).to have_http_status(:created)
+      expect(store.custom_field_definitions.find_by(key: 'weave')).to be_present
+    end
+  end
+
   describe 'API key scope enforcement' do
     let(:api_key) { create(:api_key, :secret, store: store, scopes: [granted_scope]) }
     let(:api_key_headers) { { 'x-spree-api-key' => api_key.plaintext_token } }

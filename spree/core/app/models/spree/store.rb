@@ -203,6 +203,11 @@ module Spree
     # store's types out from under its products would contradict that guard.
     has_many :product_types, class_name: 'Spree::ProductType', dependent: :restrict_with_error
 
+    # The store's custom-field schema. Destroying a definition takes its values
+    # with it, which is a large fan-out on a busy store, so it runs in a job.
+    has_many :custom_field_definitions, class_name: 'Spree::CustomFieldDefinition',
+             inverse_of: :store, dependent: :destroy_async
+
     # @deprecated Use #categories; removed in 6.1.
     def taxons
       Spree::Deprecation.warn('Spree::Store#taxons is deprecated and will be removed in Spree 6.1. Use #categories instead.')

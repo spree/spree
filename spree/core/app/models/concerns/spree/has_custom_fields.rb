@@ -3,9 +3,17 @@ module Spree
     extend ActiveSupport::Concern
 
     module ClassMethods
-      def ensure_custom_field_definition_exists!(key_with_namespace)
+      # @param key_with_namespace [String] the dotted `"namespace.key"` form
+      # @param store [Spree::Store, nil] the store the definition belongs to;
+      #   defaults to the current request's store, since definitions are
+      #   store-owned and there is no global schema to fall back on.
+      def ensure_custom_field_definition_exists!(key_with_namespace, store: Spree::Current.store)
         namespace, key = extract_namespace_and_key(key_with_namespace)
-        Spree::CustomFieldDefinition.find_or_create_by!(namespace: namespace, key: key, resource_type: self.name)
+        raise ArgumentError, 'a store is required to create a custom field definition' if store.nil?
+
+        store.custom_field_definitions.find_or_create_by!(
+          namespace: namespace, key: key, resource_type: self.name
+        )
       end
 
       def extract_namespace_and_key(key_with_namespace)
@@ -15,9 +23,9 @@ module Spree
       end
 
       # Deprecated 6.0 names, removed in 6.1.
-      def ensure_metafield_definition_exists!(key_with_namespace)
+      def ensure_metafield_definition_exists!(key_with_namespace, store: Spree::Current.store)
         Spree::Deprecation.warn('ensure_metafield_definition_exists! is deprecated and will be removed in Spree 6.1. Use ensure_custom_field_definition_exists! instead.')
-        ensure_custom_field_definition_exists!(key_with_namespace)
+        ensure_custom_field_definition_exists!(key_with_namespace, store: store)
       end
 
       def with_metafield_key(key_with_namespace)
@@ -278,7 +286,7 @@ module Spree
         # auto-create the definition if missing.
         if value.include?('.')
           namespace, key = extract_namespace_and_key(value)
-          return Spree::CustomFieldDefinition.find_or_create_by!(
+          return custom_field_definition_store.custom_field_definitions.find_or_create_by!(
             namespace: namespace, key: key, resource_type: self.class.name
           ).id
         end
@@ -304,6 +312,19 @@ module Spree
         raise ArgumentError, "Invalid custom field definition reference: #{value.inspect}" unless /\A\d+\z/.match?(value)
 
         value
+      end
+
+      # The store whose custom-field schema this record's fields are defined
+      # in: its own if it has one, otherwise the current request's — a
+      # customer or address is global but its fields still belong to a store.
+      #
+      # @return [Spree::Store]
+      # @raise [ArgumentError] when neither is available.
+      def custom_field_definition_store
+        store = try(:store) || Spree::Current.store
+        raise ArgumentError, 'a store is required to resolve a custom field definition' if store.nil?
+
+        store
       end
     end
   end

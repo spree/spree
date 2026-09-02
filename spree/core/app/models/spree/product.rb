@@ -278,13 +278,16 @@ module Spree
 
       product_ids = Spree::Variant.search_by_product_name_or_sku(query).pluck(:product_id)
 
-      searchable_definitions = Spree::CustomFieldDefinition.
-                               for_resource_type('Spree::Product').
+      # Definitions are store-owned, so the searchable set is the current
+      # store's. Without one there is no schema to read and the scan is skipped
+      # rather than reading every store's.
+      searchable_definitions = Spree::Current.store&.custom_field_definitions&.
+                               for_resource_type('Spree::Product')&.
                                searchable
 
       # Only pay for the custom_field scan when some definition opts into search;
       # the leading-wildcard LIKE over spree_custom_fields can't use an index.
-      custom_field_ids = if searchable_definitions.exists?
+      custom_field_ids = if searchable_definitions&.exists?
                         joins(custom_fields: :custom_field_definition).
                           merge(searchable_definitions).
                           where(search_condition(Spree::CustomField, :value, query)).
@@ -799,8 +802,12 @@ module Spree
                            else
                              []
                            end
-      custom_fields_for_csv ||= Spree::CustomFieldDefinition.for_resource_type('Spree::Product').order(:namespace, :key).map do |mf_def|
-        custom_fields.find { |mf| mf.custom_field_definition_id == mf_def.id }&.csv_value
+      # Read through the store the export runs for, not the product's own: the
+      # header row comes from the same store, and a mismatch silently shifts
+      # every value column.
+      custom_fields_for_csv ||= store.custom_field_definitions.for_resource_type('Spree::Product').
+                                order(:namespace, :key).map do |definition|
+        custom_fields.find { |custom_field| custom_field.custom_field_definition_id == definition.id }&.csv_value
       end
       categories_for_csv ||= categories.reorder(depth: :desc).first(3).pluck(:pretty_name)
       categories_for_csv.fill(nil, categories_for_csv.size...3)

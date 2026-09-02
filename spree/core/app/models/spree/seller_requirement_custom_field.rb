@@ -11,6 +11,7 @@ module Spree
 
     validates :custom_field_definition_id, uniqueness: { scope: :seller_requirement_id }, allow_nil: true
     validate :definition_must_describe_a_seller
+    validate :definition_must_belong_to_the_same_store
 
     private
 
@@ -23,6 +24,15 @@ module Spree
       errors.add(:custom_field_definition, :invalid,
                  message: Spree.t('seller_requirements.custom_field_not_for_sellers',
                                   default: 'must be a custom field defined for sellers'))
+    end
+
+    # Both sides are store-owned, so a marketplace can only ask its sellers
+    # for fields it defined itself.
+    def definition_must_belong_to_the_same_store
+      return if custom_field_definition.nil? || seller_requirement.nil?
+      return if custom_field_definition.store_id == seller_requirement.store_id
+
+      errors.add(:custom_field_definition, :must_belong_to_same_store)
     end
   end
 end

@@ -74,8 +74,11 @@ module Spree
       rows = @pending_custom_field_definitions
       @pending_custom_field_definitions = nil
 
+      # Resolved through the type's own store: definitions are store-owned, so
+      # another store's id is unknown here rather than a join that fails
+      # silently on save.
       resolved = rows.map do |row|
-        [Spree::CustomFieldDefinition.find_by_prefix_id(row[:id]), row]
+        [store.custom_field_definitions.find_by_prefix_id(row[:id]), row]
       end
 
       # Validate the whole payload before touching anything. This runs inside

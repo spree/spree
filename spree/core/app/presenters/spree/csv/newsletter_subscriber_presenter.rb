@@ -13,11 +13,12 @@ module Spree
         'Updated At'
       ].freeze
 
-      def initialize(newsletter_subscriber)
+      def initialize(newsletter_subscriber, store)
         @newsletter_subscriber = newsletter_subscriber
+        @store = store
       end
 
-      attr_accessor :newsletter_subscriber
+      attr_accessor :newsletter_subscriber, :store
 
       def call
         csv = [
@@ -30,7 +31,7 @@ module Spree
           newsletter_subscriber.updated_at
         ]
 
-        csv += custom_fields_for_csv(newsletter_subscriber)
+        csv += custom_fields_for_csv(newsletter_subscriber, store)
 
         csv
       end

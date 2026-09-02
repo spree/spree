@@ -288,10 +288,13 @@ module Spree
     end
 
     # Returns the CSV row representation of the user
-    # @param [Spree::Store] store
     # @return [Array<String>]
-    def to_csv(_store = nil)
-      Spree::CSV::CustomerPresenter.new(self).call
+    # @param store [Spree::Store, nil] the store the export runs for — it
+    #   decides which custom-field definitions the value columns are built
+    #   from. Customers are global, so unlike a store-owned record there is
+    #   nothing to fall back to but the current request's store.
+    def to_csv(store = nil)
+      Spree::CSV::CustomerPresenter.new(self, store || Spree::Current.store).call
     end
 
     # Returns the full name of the user

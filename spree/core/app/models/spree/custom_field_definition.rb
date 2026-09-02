@@ -2,6 +2,7 @@ module Spree
   class CustomFieldDefinition < Spree.base_class
     has_prefix_id :cfdef
 
+    include Spree::SingleStoreResource
     include Spree::CustomFieldDefinition::SearchCapabilities
 
     #
@@ -14,7 +15,7 @@ module Spree
     #
     validates :namespace, :key, :label, :resource_type, presence: true
     validates :resource_type, presence: true, inclusion: { in: :valid_available_resources }
-    validates :key, uniqueness: { scope: spree_base_uniqueness_scope + [:resource_type, :namespace] }
+    validates :key, uniqueness: { scope: spree_base_uniqueness_scope + [:store_id, :resource_type, :namespace] }
     validate :field_type_input_must_be_recognized
     validate :field_type_must_be_available
 
@@ -42,6 +43,7 @@ module Spree
     normalizes :namespace, with: ->(value) { value.to_s.parameterize.underscore.strip }
     before_validation :set_default_type, if: -> { self[:field_type].blank? }, on: :create
     before_validation :set_label_from_key, if: -> { label.blank? }, on: :create
+    before_validation :set_filter_key
 
     #
     # Ransack
@@ -199,6 +201,13 @@ module Spree
 
     def set_label_from_key
       self.label ||= key.titleize
+    end
+
+    # Kept in step with namespace and key on every write, so renaming either
+    # moves the sort/filter identifier with it rather than leaving a stale one
+    # that no listing can address.
+    def set_filter_key
+      self.filter_key = computed_filter_key
     end
   end
 end

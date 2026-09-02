@@ -1074,9 +1074,13 @@ module Spree
     # @param omit_headers [Array<String>] columns to leave out, named by their
     #   header. A seller's export drops the buyer's email this way — see
     #   Spree::Exports::Orders.
-    def to_csv(_store = nil, omit_headers: [])
-      custom_fields_for_csv ||= Spree::CustomFieldDefinition.for_resource_type('Spree::Order').order(:namespace, :key).map do |mf_def|
-        custom_fields.find { |mf| mf.custom_field_definition_id == mf_def.id }&.csv_value
+    def to_csv(store = nil, omit_headers: [])
+      store ||= self.store
+      # The store the export runs for, so header and value columns are built
+      # from one custom-field schema and stay aligned.
+      custom_fields_for_csv = store.custom_field_definitions.for_resource_type('Spree::Order').
+                              order(:namespace, :key).map do |definition|
+        custom_fields.find { |custom_field| custom_field.custom_field_definition_id == definition.id }&.csv_value
       end
 
       csv_lines = []

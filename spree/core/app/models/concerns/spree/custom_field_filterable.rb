@@ -35,15 +35,16 @@ module Spree
       # "no filter" instead of a 500.
       #
       # @param filters [Hash]
-      # @param schema [Spree::SearchProvider::CustomFieldSchema, nil]
+      # @param schema [Spree::SearchProvider::CustomFieldSchema] the store's
+      #   custom-field vocabulary; definitions are store-owned, so filtering
+      #   without one would read another store's schema.
       # @return [Array(ActiveRecord::Relation, Hash)] scoped relation + remaining filters
-      def with_custom_field_filters(filters, schema: nil)
+      def with_custom_field_filters(filters, schema:)
         return [all, filters] if filters.blank?
         # Skip the schema's DB query entirely for the common case of a filter
         # hash with no custom-field predicates at all.
         return [all, filters] unless filters.any? { |key, _| key.to_s.start_with?('cf_') }
 
-        schema ||= Spree::SearchProvider::CustomFieldSchema.new
         scope = all
 
         remaining = filters.reject do |key, value|
