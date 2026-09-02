@@ -716,8 +716,20 @@ function FulfillmentPanel({
  * it does not have.
  */
 function UnfulfilledGroup({ rows }: { rows: FulfillmentItemRow[] }) {
+  const { t } = useTranslation()
+  const totalUnits = rows.reduce((sum, row) => sum + row.quantity, 0)
+
   return (
-    <FulfillmentPanel status="unfulfilled">
+    <FulfillmentPanel
+      status="unfulfilled"
+      // The badge names the state; the count says how much is in it, which a
+      // real fulfillment carries in its own rows instead.
+      meta={
+        <span className="text-muted-foreground text-xs">
+          {t('admin.orders.detail.fulfillments.unfulfilled', { count: totalUnits })}
+        </span>
+      }
+    >
       <CardContent className="px-0 py-3">
         <FulfillmentItemList rows={rows} />
       </CardContent>
