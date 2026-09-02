@@ -44,6 +44,26 @@ class AddStoreAndFilterKeyToCustomFieldDefinitions < ActiveRecord::Migration[8.1
   end
 
   def down
+    # Two stores may each hold `custom.material` once this migration has run —
+    # that is the point of it. The pre-migration index was global, so rolling
+    # back over such a pair has no correct answer: one of them would have to
+    # lose its key. Refuse before anything is dropped rather than fail halfway
+    # with the columns already gone.
+    duplicated = select_value(<<~SQL.squish).to_i
+      SELECT COUNT(*) FROM (
+        SELECT 1 FROM spree_custom_field_definitions
+        GROUP BY resource_type, namespace, #{quote_column_name(:key)}
+        HAVING COUNT(*) > 1
+      ) AS duplicated_keys
+    SQL
+
+    if duplicated.positive?
+      raise ActiveRecord::IrreversibleMigration,
+            "#{duplicated} custom field definition key(s) are held by more than one store. " \
+            'The pre-6.0 schema indexes them globally, so rolling back would have to discard one of each pair. ' \
+            'Remove the duplicates you do not want to keep, then roll back.'
+    end
+
     remove_index :spree_custom_field_definitions, name: 'index_custom_field_definitions_on_store_and_filter_key', if_exists: true
     remove_index :spree_custom_field_definitions, name: 'index_custom_field_definitions_on_store_and_key', if_exists: true
 

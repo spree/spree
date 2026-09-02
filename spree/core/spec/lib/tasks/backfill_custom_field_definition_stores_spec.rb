@@ -40,6 +40,28 @@ describe 'spree:upgrade:backfill_custom_field_definition_stores' do
     expect(theirs.reload.store).to eq(other_store)
   end
 
+  # The migration applies these itself and skips them only when it found rows
+  # it could not fill. Restoring them is what this task exists to do — without
+  # them the unique indexes constrain nothing, since SQL treats NULLs as
+  # distinct.
+  it 'reports the constraints it enforced' do
+    create(:custom_field_definition, store: store, namespace: 'custom', key: 'material')
+
+    # Already enforced by the migration, so the task finds nothing to do and
+    # says so by staying silent about them rather than re-applying.
+    expect { subject.invoke }.not_to output(/leaving it nullable/).to_stdout
+  end
+
+  it 'leaves the columns NOT NULL' do
+    subject.invoke
+
+    connection = ActiveRecord::Base.connection
+    nullable = connection.columns(Spree::CustomFieldDefinition.table_name).
+               select { |c| %w[store_id filter_key].include?(c.name) }.map(&:null)
+
+    expect(nullable).to all(be false)
+  end
+
   it 'refuses to run without a default store to assign' do
     allow(Spree::Store).to receive(:default).and_return(nil)
 

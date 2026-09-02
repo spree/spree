@@ -63,6 +63,31 @@ RSpec.describe 'AddStoreAndFilterKeyToCustomFieldDefinitions migration' do
     end
   end
 
+  # Two stores may each hold `custom.material` once this migration has run —
+  # that is the point of it. The pre-migration index was global, so rolling
+  # back over such a pair has no correct answer.
+  describe '#down' do
+    it 'refuses when two stores hold the same key' do
+      create(:custom_field_definition, store: store, resource_type: 'Spree::Product',
+                                       namespace: 'custom', key: 'material')
+      create(:custom_field_definition, store: create(:store), resource_type: 'Spree::Product',
+                                       namespace: 'custom', key: 'material')
+
+      expect { migration.down }.to raise_error(ActiveRecord::IrreversibleMigration, /more than one store/)
+    end
+
+    it 'leaves the columns in place when it refuses' do
+      create(:custom_field_definition, store: store, resource_type: 'Spree::Product',
+                                       namespace: 'custom', key: 'material')
+      create(:custom_field_definition, store: create(:store), resource_type: 'Spree::Product',
+                                       namespace: 'custom', key: 'material')
+
+      expect { migration.down }.to raise_error(ActiveRecord::IrreversibleMigration)
+
+      expect(Spree::CustomFieldDefinition.column_names).to include('store_id', 'filter_key')
+    end
+  end
+
   describe '#concat_filter_key' do
     it 'builds the same value the model derives, quoting the reserved key column' do
       sql = migration.send(:concat_filter_key)
