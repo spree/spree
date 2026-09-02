@@ -3060,7 +3060,7 @@
             "create_title": "New exchange",
             "empty": "No exchanges for this order.",
             "price_difference": "Price difference",
-            "replacement_variant": "Replacement variant ID"
+            "replacement_variant": "Replacement variant"
           },
           "no_delivery_method": "No delivery method selected.",
           "returns": {

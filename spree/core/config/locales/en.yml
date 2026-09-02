@@ -1259,6 +1259,7 @@ en:
     next: Next
     no_cc_type: N/A
     no_payment_found: No payment found
+    no_refundable_payments: There is no payment left on this order to refund.
     no_report_data: No report data
     none: None
     normal_amount: Normal Amount
@@ -1266,7 +1267,9 @@ en:
     not_available: N/A
     not_enough_stock: There is not enough inventory at the source location to complete this transfer.
     not_found: "%{resource} is not found"
+    not_received: This return cannot be refunded until its items are marked received.
     note: Note
+    nothing_to_refund: There is nothing left to refund on this return.
     number: Number
     ok: OK
     on_hand: On Hand
@@ -1533,6 +1536,7 @@ en:
     reference: Reference
     refund: Refund
     refund_amount: Refund Amount
+    refund_exceeds_balance: That is more than the amount still refundable.
     refunds: Refunds
     register: Register
     registration: Registration

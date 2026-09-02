@@ -39,9 +39,14 @@ export function ResourceDetailSkeleton({ sidebar = true }: { sidebar?: boolean }
       <span role="status" className="sr-only">
         {t('admin.common.loading')}
       </span>
-      <div className="flex flex-col gap-2">
+      {/* Mirrors PageHeader: the title on its own line, statuses and the
+          timestamp sharing the one below. */}
+      <div className="flex flex-col gap-1">
         <Skeleton className="h-8 w-64" />
-        <Skeleton className="h-4 w-40" />
+        <div className="flex items-center gap-3">
+          <Skeleton className="h-5 w-20 rounded-md" />
+          <Skeleton className="h-4 w-32" />
+        </div>
       </div>
       {sidebar ? (
         <div className="grid grid-cols-12 gap-6">

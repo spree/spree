@@ -5,6 +5,7 @@ import {
   Card,
   CardAction,
   CardContent,
+  CardFooter,
   CardHeader,
   CardTitle,
   DropdownMenu,
@@ -16,6 +17,7 @@ import {
   useConfirm,
 } from '@spree/dashboard-ui'
 import {
+  BanIcon,
   BanknoteIcon,
   CheckCircleIcon,
   EllipsisVerticalIcon,
@@ -89,72 +91,74 @@ export function OrderExchangesCard({ order }: { order: Order }) {
             </p>
           )}
           {exchanges.map((exchange: Exchange) => (
-            <div key={exchange.id} className="rounded-lg border p-4 flex flex-col gap-3">
-              <div className="flex items-center justify-between">
-                <div className="flex items-center gap-2">
+            <Card key={exchange.id} variant="nested">
+              <CardHeader>
+                <CardTitle className="text-sm font-medium">
                   <StatusBadge status={exchange.status} />
                   <span className="text-sm font-medium">{exchange.number}</span>
-                </div>
+                </CardTitle>
 
                 {EXCHANGE_ACTIONABLE.includes(exchange.status) && (
-                  <DropdownMenu>
-                    <DropdownMenuTrigger asChild>
-                      <Button variant="ghost" size="icon-xs">
-                        <EllipsisVerticalIcon className="size-4" />
-                        <span className="sr-only">{t('admin.actions.actions_menu')}</span>
-                      </Button>
-                    </DropdownMenuTrigger>
-                    <DropdownMenuContent align="end">
-                      {exchange.status === 'requested' && (
-                        <DropdownMenuItem onClick={() => approve.mutate(exchange.id)}>
-                          <CheckCircleIcon className="size-4" />
-                          {t('admin.pages.orders.detail.returns.actions.approve')}
-                        </DropdownMenuItem>
-                      )}
-                      {exchange.status === 'approved' && (
-                        <DropdownMenuItem
-                          onClick={() => receive.mutate({ exchangeId: exchange.id })}
-                        >
-                          <PackageCheckIcon className="size-4" />
-                          {t('admin.pages.orders.detail.returns.actions.receive')}
-                        </DropdownMenuItem>
-                      )}
-                      {exchange.status === 'received' && (
-                        <DropdownMenuItem
-                          onClick={() => fulfill.mutate({ exchangeId: exchange.id })}
-                        >
-                          <TruckIcon className="size-4" />
-                          {t('admin.pages.orders.detail.exchanges.actions.fulfill')}
-                        </DropdownMenuItem>
-                      )}
-                      {['requested', 'approved'].includes(exchange.status) && (
-                        <>
-                          <DropdownMenuSeparator />
-                          <DropdownMenuItem
-                            variant="destructive"
-                            onClick={async () => {
-                              if (
-                                await confirm({
-                                  message: t('admin.pages.orders.detail.returns.confirm.cancel'),
-                                  variant: 'destructive',
-                                  confirmLabel: t('admin.actions.cancel'),
-                                })
-                              ) {
-                                cancel.mutate({ exchangeId: exchange.id })
-                              }
-                            }}
-                          >
-                            <XCircleIcon className="size-4" />
-                            {t('admin.actions.cancel')}
+                  <CardAction>
+                    <DropdownMenu>
+                      <DropdownMenuTrigger asChild>
+                        <Button variant="ghost" size="icon-xs">
+                          <EllipsisVerticalIcon className="size-4" />
+                          <span className="sr-only">{t('admin.actions.actions_menu')}</span>
+                        </Button>
+                      </DropdownMenuTrigger>
+                      <DropdownMenuContent align="end">
+                        {exchange.status === 'requested' && (
+                          <DropdownMenuItem onClick={() => approve.mutate(exchange.id)}>
+                            <CheckCircleIcon className="size-4" />
+                            {t('admin.pages.orders.detail.returns.actions.approve')}
                           </DropdownMenuItem>
-                        </>
-                      )}
-                    </DropdownMenuContent>
-                  </DropdownMenu>
+                        )}
+                        {exchange.status === 'approved' && (
+                          <DropdownMenuItem
+                            onClick={() => receive.mutate({ exchangeId: exchange.id })}
+                          >
+                            <PackageCheckIcon className="size-4" />
+                            {t('admin.pages.orders.detail.returns.actions.receive')}
+                          </DropdownMenuItem>
+                        )}
+                        {exchange.status === 'received' && (
+                          <DropdownMenuItem
+                            onClick={() => fulfill.mutate({ exchangeId: exchange.id })}
+                          >
+                            <TruckIcon className="size-4" />
+                            {t('admin.pages.orders.detail.exchanges.actions.fulfill')}
+                          </DropdownMenuItem>
+                        )}
+                        {['requested', 'approved'].includes(exchange.status) && (
+                          <>
+                            <DropdownMenuSeparator />
+                            <DropdownMenuItem
+                              variant="destructive"
+                              onClick={async () => {
+                                if (
+                                  await confirm({
+                                    message: t('admin.pages.orders.detail.returns.confirm.cancel'),
+                                    variant: 'destructive',
+                                    confirmLabel: t('admin.actions.cancel'),
+                                  })
+                                ) {
+                                  cancel.mutate({ exchangeId: exchange.id })
+                                }
+                              }}
+                            >
+                              <XCircleIcon className="size-4" />
+                              {t('admin.actions.cancel')}
+                            </DropdownMenuItem>
+                          </>
+                        )}
+                      </DropdownMenuContent>
+                    </DropdownMenu>
+                  </CardAction>
                 )}
-              </div>
+              </CardHeader>
 
-              <div className="flex flex-col gap-1.5">
+              <CardContent className="flex flex-col gap-1.5">
                 {(exchange.exchange_line_items ?? []).map((line) => (
                   <div key={line.id} className="flex items-center justify-between text-sm">
                     <span className="truncate">
@@ -167,15 +171,15 @@ export function OrderExchangesCard({ order }: { order: Order }) {
                     <span className="text-muted-foreground">×{line.quantity}</span>
                   </div>
                 ))}
-              </div>
+              </CardContent>
 
-              <div className="flex items-center justify-between text-sm border-t pt-3">
+              <CardFooter className="justify-between text-sm">
                 <span className="text-muted-foreground">
                   {t('admin.pages.orders.detail.exchanges.price_difference')}
                 </span>
                 <span className="font-medium">{exchange.display_price_difference}</span>
-              </div>
-            </div>
+              </CardFooter>
+            </Card>
           ))}
         </CardContent>
       </Card>
@@ -236,79 +240,81 @@ export function OrderClaimsCard({ order }: { order: Order }) {
             </p>
           )}
           {claims.map((claim: Claim) => (
-            <div key={claim.id} className="rounded-lg border p-4 flex flex-col gap-3">
-              <div className="flex items-center justify-between">
-                <div className="flex items-center gap-2">
+            <Card key={claim.id} variant="nested">
+              <CardHeader>
+                <CardTitle className="text-sm font-medium">
                   <StatusBadge status={claim.status} />
                   <span className="text-sm font-medium">{claim.number}</span>
-                </div>
+                </CardTitle>
 
                 {CLAIM_ACTIONABLE.includes(claim.status) && (
-                  <DropdownMenu>
-                    <DropdownMenuTrigger asChild>
-                      <Button variant="ghost" size="icon-xs">
-                        <EllipsisVerticalIcon className="size-4" />
-                        <span className="sr-only">{t('admin.actions.actions_menu')}</span>
-                      </Button>
-                    </DropdownMenuTrigger>
-                    <DropdownMenuContent align="end">
-                      {claim.status === 'open' && (
-                        <DropdownMenuItem onClick={() => approve.mutate(claim.id)}>
-                          <CheckCircleIcon className="size-4" />
-                          {t('admin.pages.orders.detail.returns.actions.approve')}
-                        </DropdownMenuItem>
-                      )}
-                      {claim.status === 'approved' && (
-                        <DropdownMenuItem onClick={() => setResolving(claim)}>
-                          <BanknoteIcon className="size-4" />
-                          {t('admin.pages.orders.detail.claims.actions.resolve')}
-                        </DropdownMenuItem>
-                      )}
-                      {['open', 'approved'].includes(claim.status) && <DropdownMenuSeparator />}
-                      {claim.status === 'open' && (
-                        <DropdownMenuItem
-                          variant="destructive"
-                          onClick={async () => {
-                            if (
-                              await confirm({
-                                message: t('admin.pages.orders.detail.claims.confirm.deny'),
-                                variant: 'destructive',
-                                confirmLabel: t('admin.pages.orders.detail.claims.actions.deny'),
-                              })
-                            ) {
-                              deny.mutate({ claimId: claim.id })
-                            }
-                          }}
-                        >
-                          <XCircleIcon className="size-4" />
-                          {t('admin.pages.orders.detail.claims.actions.deny')}
-                        </DropdownMenuItem>
-                      )}
-                      {['open', 'approved'].includes(claim.status) && (
-                        <DropdownMenuItem
-                          variant="destructive"
-                          onClick={async () => {
-                            if (
-                              await confirm({
-                                message: t('admin.pages.orders.detail.returns.confirm.cancel'),
-                                variant: 'destructive',
-                                confirmLabel: t('admin.actions.cancel'),
-                              })
-                            ) {
-                              cancel.mutate({ claimId: claim.id })
-                            }
-                          }}
-                        >
-                          <XCircleIcon className="size-4" />
-                          {t('admin.actions.cancel')}
-                        </DropdownMenuItem>
-                      )}
-                    </DropdownMenuContent>
-                  </DropdownMenu>
+                  <CardAction>
+                    <DropdownMenu>
+                      <DropdownMenuTrigger asChild>
+                        <Button variant="ghost" size="icon-xs">
+                          <EllipsisVerticalIcon className="size-4" />
+                          <span className="sr-only">{t('admin.actions.actions_menu')}</span>
+                        </Button>
+                      </DropdownMenuTrigger>
+                      <DropdownMenuContent align="end">
+                        {claim.status === 'open' && (
+                          <DropdownMenuItem onClick={() => approve.mutate(claim.id)}>
+                            <CheckCircleIcon className="size-4" />
+                            {t('admin.pages.orders.detail.returns.actions.approve')}
+                          </DropdownMenuItem>
+                        )}
+                        {claim.status === 'approved' && (
+                          <DropdownMenuItem onClick={() => setResolving(claim)}>
+                            <BanknoteIcon className="size-4" />
+                            {t('admin.pages.orders.detail.claims.actions.resolve')}
+                          </DropdownMenuItem>
+                        )}
+                        {['open', 'approved'].includes(claim.status) && <DropdownMenuSeparator />}
+                        {claim.status === 'open' && (
+                          <DropdownMenuItem
+                            variant="destructive"
+                            onClick={async () => {
+                              if (
+                                await confirm({
+                                  message: t('admin.pages.orders.detail.claims.confirm.deny'),
+                                  variant: 'destructive',
+                                  confirmLabel: t('admin.pages.orders.detail.claims.actions.deny'),
+                                })
+                              ) {
+                                deny.mutate({ claimId: claim.id })
+                              }
+                            }}
+                          >
+                            <BanIcon className="size-4" />
+                            {t('admin.pages.orders.detail.claims.actions.deny')}
+                          </DropdownMenuItem>
+                        )}
+                        {['open', 'approved'].includes(claim.status) && (
+                          <DropdownMenuItem
+                            variant="destructive"
+                            onClick={async () => {
+                              if (
+                                await confirm({
+                                  message: t('admin.pages.orders.detail.returns.confirm.cancel'),
+                                  variant: 'destructive',
+                                  confirmLabel: t('admin.actions.cancel'),
+                                })
+                              ) {
+                                cancel.mutate({ claimId: claim.id })
+                              }
+                            }}
+                          >
+                            <XCircleIcon className="size-4" />
+                            {t('admin.actions.cancel')}
+                          </DropdownMenuItem>
+                        )}
+                      </DropdownMenuContent>
+                    </DropdownMenu>
+                  </CardAction>
                 )}
-              </div>
+              </CardHeader>
 
-              <div className="flex flex-col gap-1.5">
+              <CardContent className="flex flex-col gap-1.5">
                 {(claim.claim_line_items ?? []).map((line) => (
                   <div key={line.id} className="flex items-center justify-between text-sm">
                     <span className="truncate">
@@ -320,15 +326,15 @@ export function OrderClaimsCard({ order }: { order: Order }) {
                     <span className="text-muted-foreground">×{line.quantity}</span>
                   </div>
                 ))}
-              </div>
+              </CardContent>
 
-              <div className="flex items-center justify-between text-sm border-t pt-3">
+              <CardFooter className="justify-between text-sm">
                 <span className="text-muted-foreground">
                   {t('admin.pages.orders.detail.returns.refund_total')}
                 </span>
                 <span className="font-medium">{claim.display_refund_total}</span>
-              </div>
-            </div>
+              </CardFooter>
+            </Card>
           ))}
         </CardContent>
       </Card>

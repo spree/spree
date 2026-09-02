@@ -3052,7 +3052,7 @@
             "create_title": "新建换货",
             "empty": "此订单暂无换货。",
             "price_difference": "差价",
-            "replacement_variant": "替换变体 ID"
+            "replacement_variant": "替换变体"
           },
           "no_delivery_method": "未选择配送方式。",
           "returns": {
