@@ -275,6 +275,21 @@ steps:
       with one statement scoped to the rows still missing a code, so an
       interrupted run picks up where it stopped.
 
+  - id: migrate_promotion_option_value_rules
+    name: "Rewrite Option Value promotion rules to stable option value ids"
+    task: "spree:upgrade:migrate_promotion_option_value_rules"
+    notes: |
+      Spree 6.0 stores Option Value promotion rules against Spree::OptionValue
+      ids. Upgrades from 5.6 may still carry join-row ids from
+      spree_option_value_variants in the eligible_values preference — those
+      rows shift whenever variants are reconfigured, so a saved rule can start
+      matching different SKUs without warning.
+
+      Rewrites each rule's eligible_values array in place, mapping legacy
+      join-row ids to their option_value_id and leaving rows that already
+      name an option value untouched. Idempotent — re-running is a no-op once
+      every value resolves to an option value id.
+
   - id: migrate_adjustments_to_typed_rows
     name: "Convert adjustments to typed rows"
     task: "spree:migrate_adjustments_to_typed_rows"

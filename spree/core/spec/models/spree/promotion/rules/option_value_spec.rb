@@ -4,16 +4,17 @@ describe Spree::Promotion::Rules::OptionValue do
   let(:rule) { described_class.new }
 
   describe 'setting eligible values' do
-    let(:option_value_variant_ids) do
-      [
-        'abc-123',
-        'def-123, def-456,ghj-789 ,   '
-      ]
+    let(:option_value) { create(:option_value) }
+
+    it 'accepts prefixed option value ids' do
+      rule.preferred_eligible_values = [option_value.prefixed_id]
+      expect(rule.preferred_eligible_values).to eq([option_value.id.to_s])
     end
 
-    it 'parses ids' do
-      rule.preferred_eligible_values = option_value_variant_ids
-      expect(rule.preferred_eligible_values).to eq(['abc-123', 'def-123', 'def-456', 'ghj-789'])
+    it 'rejects unknown ids' do
+      expect {
+        rule.preferred_eligible_values = ['optval_missing']
+      }.to raise_error(ActiveRecord::RecordNotFound)
     end
   end
 
@@ -42,15 +43,17 @@ describe Spree::Promotion::Rules::OptionValue do
 
     context 'when there are any applicable line items' do
       before do
-        rule.preferred_eligible_values = [variant.option_value_variant_ids.first, 1233542]
+        rule.preferred_eligible_values = [variant.option_values.first.id]
       end
 
       it { is_expected.to be true }
     end
 
     context 'when there are no applicable line items' do
+      let(:other_option_value) { create(:option_value) }
+
       before do
-        rule.preferred_eligible_values = [123235234, 4531236]
+        rule.preferred_eligible_values = [other_option_value.id]
       end
 
       it { is_expected.to be false }
@@ -73,53 +76,32 @@ describe Spree::Promotion::Rules::OptionValue do
         )
       )
     end
-    let(:option_value_medium) do
-      create(
-        :option_value,
-        name: 'Medium',
-        presentation: 'M'
-      )
-    end
 
     before do
       line_item.variant.option_values << option_value_blue
-      rule.preferred_eligible_values = option_value_variant_ids
+      rule.preferred_eligible_values = eligible_option_value_ids
     end
 
-    context 'when the line item has the correct product' do
-      let(:product_id) { line_item.product.id }
+    context 'when the line item variant carries a matching option value' do
+      let(:eligible_option_value_ids) { [option_value_blue.id] }
 
-      context 'when all of the option values match' do
-        let(:option_value_variant_ids) do
-          [
-            line_item.variant.option_value_variants.reload.find_by(option_value: option_value_blue).id
-          ]
-        end
-
-        it { is_expected.to be true }
-      end
-
-      context 'when not all of the option values match' do
-        let(:option_value_variant_ids) do
-          [
-            line_item.variant.option_value_variants.reload.find_by(option_value: option_value_blue).id,
-            12356342
-          ]
-        end
-
-        it { is_expected.to be true }
-      end
+      it { is_expected.to be true }
     end
 
-    context "when the line item's product doesn't match" do
-      let(:option_value_variant_ids) do
-        [
-          12312423,
-          45823843
-        ]
-      end
+    context 'when the line item variant does not carry a matching option value' do
+      let(:eligible_option_value_ids) { [create(:option_value).id] }
 
       it { is_expected.to be false }
+    end
+  end
+
+  describe '#option_values' do
+    let(:option_value) { create(:option_value) }
+
+    before { rule.preferred_eligible_values = [option_value.id] }
+
+    it 'returns the configured option values' do
+      expect(rule.option_values).to contain_exactly(option_value)
     end
   end
 end
