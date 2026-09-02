@@ -36,7 +36,7 @@ import {
   RotateCcwIcon,
   XIcon,
 } from '@spree/dashboard-ui/icons'
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import type { PanelImport, PanelImportRow } from '../api-client'
 import {
@@ -110,9 +110,14 @@ function ImportWizard({
   const completeMapping = useCompleteMapping(importId)
   const [assignments, setAssignments] = useState<MappingAssignments>({})
 
-  // Seed once the import arrives, and re-seed if a different one is opened.
+  // Seeded once per import. The query is stale immediately, so a refetch on
+  // window focus hands back a new object; re-seeding on that would throw away
+  // a mapping the merchant is part-way through.
+  const seededFor = useRef<string | null>(null)
   useEffect(() => {
-    if (imp) setAssignments(initialAssignments(imp))
+    if (!imp || seededFor.current === imp.id) return
+    seededFor.current = imp.id
+    setAssignments(initialAssignments(imp))
   }, [imp])
 
   const isMapping = imp?.status === 'mapping'

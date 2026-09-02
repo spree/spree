@@ -178,7 +178,7 @@ One-time machine setup: Homebrew `postgresql@18` running on :5432 (with a `postg
 - DON'T comment code removal, just delete it
 - DON'T comment obvious and native to Rails framework methods, associations, validations
 - DON'T comment on shapes, serializers, types
-- Commit message body: max 3-4 sentances, DON'T include implementation detail, focus on the "what" and "why", not the "how"
+- Commit message body: max 3-4 sentences, DON'T include implementation detail, focus on the "what" and "why", not the "how"
 - If n-commits are needed for a single logical change, use `git commit --fixup` for the follow-ups and `git rebase -i --autosquash` to combine into a single commit before merging
 - Documentation also needs to follow the same principles — focus on the "what" and "why", not the "how". Don't include implementation details in docs. Docs should explain the feature, its purpose, and how to use it, but not how it's implemented internally.
 - NEVER commit anything to main branch, always use feature/fix/chore branches for development
