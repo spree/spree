@@ -6,12 +6,22 @@ describe 'spree:price_history:prune' do
 
   let(:task_name) { 'spree:price_history:prune' }
 
-  before(:all) do
-    Rake::Task.define_task(:environment)
-    load Spree::Core::Engine.root.join('lib', 'tasks', 'price_history.rake')
+  # Rake's registry is global and shared with every other task spec. Declaring
+  # the :environment prerequisite unconditionally CLEARS that registry, which
+  # silently un-defines tasks that sibling specs loaded at file scope — so
+  # declare it only when nothing already has, and re-load this task per example
+  # so it survives whatever else the run does.
+  # Guarded on both counts. Rake's registry is process-global: redefining a
+  # task APPENDS its action, so an unguarded load runs the body one more time
+  # per example, and `define_task(:environment)` unguarded would clear tasks
+  # that sibling specs loaded at file scope.
+  before do
+    unless Rake::Task.task_defined?(task_name)
+      load Spree::Core::Engine.root.join('lib', 'tasks', 'price_history.rake')
+    end
+    Rake::Task.define_task(:environment) unless Rake::Task.task_defined?(:environment)
+    subject.reenable
   end
-
-  before { subject.reenable }
 
   let(:store) { @default_store }
   let(:variant) { create(:variant) }
