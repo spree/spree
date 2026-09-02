@@ -82,11 +82,12 @@ en:
       spree/option_type:
         filterable: Filterable
         kind: Kind
+        label: Label
         name: Name
-        presentation: Presentation
       spree/option_value:
         color_code: Color Code
         image: Swatch Image
+        label: Label
       spree/order:
         checkout_complete: Checkout Complete
         completed_at: Completed At

@@ -942,6 +942,21 @@ describe Spree::Address, type: :model do
     end
   end
 
+  describe '#require_postal_code?' do
+    # The pre-6.0 name stays overridable for one release: a decorator's
+    # require_zipcode? sits ahead of Spree::Address in the ancestry, so it
+    # still decides. Otherwise the override would stop being called silently.
+    it 'honors a host app override of the pre-6.0 require_zipcode?' do
+      overridden = Class.new(Spree::Address) do
+        def require_zipcode?
+          false
+        end
+      end
+
+      expect(overridden.new.require_postal_code?).to be(false)
+    end
+  end
+
   describe '.find_duplicate' do
     let(:country) { create(:country, iso: 'US') }
     let(:state) { create(:state, country: country, abbr: 'NY', name: 'New York') }

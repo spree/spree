@@ -406,7 +406,17 @@ module Spree
       !quick_checkout && store_preference(:address_requires_phone, false)
     end
 
+    # A host app that overrode the pre-6.0 +require_zipcode?+ still decides:
+    # its override sits ahead of this class in the ancestry, so the shell below
+    # never runs and the answer comes from the decorator. Without the
+    # indirection that override would stop being called silently, and addresses
+    # that used to save would start failing validation with nothing in the log.
     def require_postal_code?
+      require_zipcode?
+    end
+
+    # @deprecated Override {#require_postal_code?}; removed in 6.1.
+    def require_zipcode?
       !quick_checkout && (country ? country.zipcode_required? : true)
     end
 
