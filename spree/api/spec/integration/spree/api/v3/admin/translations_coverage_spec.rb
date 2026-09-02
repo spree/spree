@@ -23,6 +23,9 @@ RSpec.describe 'Admin Translations Coverage API', type: :request, swagger_doc: '
                 description: 'A translatable resource type, e.g. `product`, `category`, `option_type`.'
       parameter name: :page, in: :query, type: :integer, required: false
       parameter name: :limit, in: :query, type: :integer, required: false
+      parameter name: :search, in: :query, type: :string, required: false,
+                description: 'Free-text term, applied through whichever predicate the resource type ' \
+                             'whitelists (reported back as `search_field`).'
 
       response '200', 'coverage found' do
         let(:'x-spree-api-key') { secret_api_key.plaintext_token }
@@ -39,6 +42,7 @@ RSpec.describe 'Admin Translations Coverage API', type: :request, swagger_doc: '
           expect(data['resource_type']).to eq('product')
           expect(data['locales']).to eq(['de'])
           expect(data['records'].first['locales']).to have_key('de')
+          expect(data['search_field']).to eq('name_cont')
         end
       end
 

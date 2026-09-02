@@ -76,13 +76,18 @@ function TranslationsPage() {
   // are the only ones worth listing here.
   const readable = (resources ?? []).filter((resource) => resource.readable)
 
+  // `search` rather than a predicate the client picks: the server knows which
+  // one this resource type whitelists (`name` is ransackable on products and
+  // categories but not on collections) and applies it, or ignores the term.
   const { data, isLoading } = useTranslationCoverage(resourceType, {
     page,
-    ...(deferredSearch.trim() ? { name_cont: deferredSearch.trim() } : {}),
+    ...(deferredSearch.trim() ? { search: deferredSearch.trim() } : {}),
   })
 
   const coverage = data?.data
   const targetLocales = coverage?.locales ?? []
+  // No whitelisted predicate means nothing to type into.
+  const searchable = !!coverage?.search_field
 
   const patchSearch = (patch: Record<string, unknown>) =>
     navigate({ search: (prev: Record<string, unknown>) => ({ ...prev, ...patch }) as never })
@@ -97,21 +102,28 @@ function TranslationsPage() {
             title={t('admin.translations.title')}
             description={t('admin.pages.translations.description')}
           />
-          <div className="flex items-center gap-2">
-            <ImportButton
-              type="product_translations"
-              subject={Subject.Product}
-              onCreated={(imp) => patchSearch({ import: imp.id })}
-            />
-            <ExportButton
-              type="product_translations"
-              filters={[]}
-              search=""
-              searchParam="name_cont"
-              columns={[]}
-              totalCount={coverage?.coverage[0]?.total ?? 0}
-            />
-          </div>
+          {/* CSV covers product translations only, so the buttons appear on
+              the products view rather than implying they would export
+              whichever resource type the grid happens to be showing. */}
+          {resourceType === 'product' && (
+            <div className="flex items-center gap-2">
+              <ImportButton
+                type="product_translations"
+                subject={Subject.Product}
+                onCreated={(imp) => patchSearch({ import: imp.id })}
+              />
+              {/* Exports what the grid is showing: the search box narrows the
+                  file the same way it narrows the rows. */}
+              <ExportButton
+                type="product_translations"
+                filters={[]}
+                search={deferredSearch}
+                searchParam="name_cont"
+                columns={[]}
+                totalCount={coverage?.coverage[0]?.total}
+              />
+            </div>
+          )}
         </div>
 
         {targetLocales.length === 0 ? (
@@ -179,14 +191,16 @@ function TranslationsPage() {
               <CardHeader className="flex flex-row flex-wrap items-center justify-between gap-3 space-y-0">
                 <CardTitle>{t('admin.pages.translations.records')}</CardTitle>
                 <div className="flex items-center gap-2">
-                  <SearchInput
-                    value={searchInput}
-                    onValueChange={(value: string) => {
-                      setSearchInput(value)
-                      patchSearch({ search: value || undefined, page: undefined })
-                    }}
-                    placeholder={t('admin.common.search')}
-                  />
+                  {searchable && (
+                    <SearchInput
+                      value={searchInput}
+                      onValueChange={(value: string) => {
+                        setSearchInput(value)
+                        patchSearch({ search: value || undefined, page: undefined })
+                      }}
+                      placeholder={t('admin.common.search')}
+                    />
+                  )}
                   <Select
                     items={readable.map((r) => ({
                       value: r.resource_type,

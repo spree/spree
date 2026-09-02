@@ -97,6 +97,30 @@ RSpec.describe Spree::Api::V3::Admin::TranslationsCoverageController, type: :con
       expect(labels).to eq(['Espresso Machine'])
     end
 
+    it 'applies a plain search term through the whitelisted predicate' do
+      get :index, params: { resource_type: 'product', search: 'Espresso' }, as: :json
+
+      labels = json_response['data']['records'].map { |r| r['label'] }
+      expect(labels).to eq(['Espresso Machine'])
+    end
+
+    it 'reports which predicate the grid can filter by' do
+      get :index, params: { resource_type: 'product' }, as: :json
+
+      expect(json_response['data']['search_field']).to eq('name_cont')
+    end
+
+    context 'with a model that does not whitelist name' do
+      it 'falls back to a predicate the model does whitelist' do
+        get :index, params: { resource_type: 'collection' }, as: :json
+
+        expect(response).to have_http_status(:ok)
+        # Collection whitelists permalink but not name, so the grid is told to
+        # search that instead of a predicate Ransack would reject.
+        expect(json_response['data']['search_field']).to eq('permalink_cont')
+      end
+    end
+
     context 'with another resource type' do
       let!(:option_type) { create(:option_type, name: 'color', presentation: 'Color') }
 

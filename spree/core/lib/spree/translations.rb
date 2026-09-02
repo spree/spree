@@ -70,11 +70,12 @@ module Spree
     # @return [Array<Hash>] one entry per locale
     def coverage_for(scope, klass, locales)
       total = scope.count
-      field_count = klass.public_translatable_fields.size
-      counts = translated_counts(scope, klass, locales)
+      return [] if locales.empty?
+
+      complete = complete_counts_by_locale(scope, klass, locales)
 
       locales.map do |locale|
-        translated = counts.count { |_id, by_locale| by_locale[locale].to_i >= field_count }
+        translated = complete[locale].to_i
 
         {
           'locale' => locale,
@@ -173,6 +174,33 @@ module Spree
       (store.supported_locales_list - [store.default_locale]).sort
     end
     private_class_method :non_default_locales
+
+    # How many records are fully translated, per locale, counted in the database
+    # rather than by loading every record's ids into Ruby — the store-wide
+    # totals span the whole catalog, not the page being displayed.
+    #
+    # @return [Hash{String=>Integer}] locale => number of fully translated records
+    def complete_counts_by_locale(scope, klass, locales)
+      columns = internal_field_columns(klass)
+      table = klass::Translation.arel_table
+
+      # A record counts for a locale only when every translatable column on its
+      # translation row is non-blank. Columns come from the model's own
+      # TRANSLATABLE_FIELDS, but they are quoted as identifiers regardless
+      # rather than interpolated raw.
+      all_present = columns.map { |column|
+        quoted = "#{table.name}.#{klass.connection.quote_column_name(column)}"
+        "#{quoted} IS NOT NULL AND #{quoted} != ''"
+      }.join(' AND ')
+
+      translation_scope(klass).
+        where(foreign_key(klass) => scope.select(:id), locale: locales).
+        where(all_present).
+        group(:locale).
+        count.
+        transform_keys(&:to_s)
+    end
+    private_class_method :complete_counts_by_locale
 
     # Translation-table columns for the model's translatable fields, mapped from
     # the PUBLIC field names to the internal ones (OptionType exposes `label`,

@@ -106,6 +106,12 @@ export interface TranslationCoverage {
   locales: string[]
   /** How many translatable fields a record of this type has. */
   field_count: number
+  /**
+   * Ransack predicate this grid can be filtered by (e.g. `name_cont`), or null
+   * when the model whitelists nothing searchable — `name` is ransackable on
+   * products and categories but not on collections.
+   */
+  search_field: string | null
   coverage: TranslationCoverageRow[]
   records: TranslationCoverageRecord[]
 }

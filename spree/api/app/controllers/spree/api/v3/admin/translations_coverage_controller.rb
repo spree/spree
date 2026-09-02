@@ -21,6 +21,7 @@ module Spree
                 'default_locale' => current_store.default_locale,
                 'locales' => locales,
                 'field_count' => Spree::Translations.field_count(model_class),
+                'search_field' => search_field,
                 'coverage' => Spree::Translations.coverage_for(scope, model_class, locales),
                 'records' => serialize_records(records, locales)
               },
@@ -61,7 +62,32 @@ module Spree
             []
           end
 
+          # The grid sends a plain `search` term and lets the server choose the
+          # predicate, since which one a model whitelists varies (`name` on
+          # products and categories, nothing usable on collections).
+          def ransack_params
+            term = params[:search].presence
+            field = search_field
+            return super unless term && field
+
+            super.to_h.merge(field => term)
+          end
+
           private
+
+          # The Ransack predicate the client may filter this grid by, or nil
+          # when the model whitelists nothing usable. Reported rather than
+          # assumed: `name` is ransackable on products and categories but not
+          # on collections, and a client guessing `name_cont` either errors or
+          # silently returns the unfiltered list.
+          #
+          # @return [String, nil]
+          def search_field
+            # A model that never declared a whitelist (option types) has none.
+            attributes = model_class.whitelisted_ransackable_attributes || []
+            field = %w[name presentation permalink slug].find { |candidate| attributes.include?(candidate) }
+            field && "#{field}_cont"
+          end
 
           def translatable_locales
             (current_store.supported_locales_list - [current_store.default_locale]).sort

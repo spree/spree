@@ -18826,6 +18826,13 @@ paths:
         required: false
         schema:
           type: integer
+      - name: search
+        in: query
+        required: false
+        description: Free-text term, applied through whichever predicate the resource
+          type whitelists (reported back as `search_field`).
+        schema:
+          type: string
       responses:
         '200':
           description: coverage found
@@ -18838,6 +18845,7 @@ paths:
                   locales:
                   - de
                   field_count: 5
+                  search_field: name_cont
                   coverage:
                   - locale: de
                     translated: 0
@@ -31808,8 +31816,8 @@ paths:
                   name: Accept terms
                   description: Read and accept the marketplace terms
                   preferences:
-                    terms_effective_from:
                     terms_url:
+                    terms_effective_from:
                   custom_field_definition_ids: []
                   allow_multiple: false
                   accepts_submissions: false
@@ -32031,10 +32039,10 @@ paths:
                   accepted_content_types: []
                   association_fields: []
                   preference_schema:
-                  - key: terms_effective_from
+                  - key: terms_url
                     type: string
                     default:
-                  - key: terms_url
+                  - key: terms_effective_from
                     type: string
                     default:
                 - type: complete_profile

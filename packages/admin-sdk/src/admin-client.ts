@@ -822,10 +822,13 @@ export class AdminClient {
      */
     coverage: (
       resourceType: string,
-      params?: ListParams & Record<string, unknown>,
+      params?: ListParams & { search?: string } & Record<string, unknown>,
       options?: RequestOptions,
     ): Promise<{ data: TranslationCoverage; meta: PaginationMeta }> => {
-      const { page, limit, ...filters } = params ?? {}
+      // `resource_type` and `search` are read as plain params by the server;
+      // routing them through `transformListParams` would wrap both into
+      // Ransack predicates (`q[resource_type]`) the controller never sees.
+      const { page, limit, search, ...filters } = params ?? {}
 
       return this.request<{ data: TranslationCoverage; meta: PaginationMeta }>(
         'GET',
@@ -836,6 +839,7 @@ export class AdminClient {
             resource_type: resourceType,
             ...(page === undefined ? {} : { page: page as number }),
             ...(limit === undefined ? {} : { limit: limit as number }),
+            ...(search === undefined ? {} : { search: search as string }),
             ...transformListParams(filters),
           },
         },
