@@ -255,7 +255,11 @@ function TranslationsPage() {
                       patchSearch({ resource: value, page: 1, edit: undefined })
                     }
                   >
-                    <SelectTrigger className="w-44">
+                    {/* Sized to its content rather than a fixed width: a
+                        two-word label ("Option types") wraps in a narrow
+                        trigger and grows it taller than the search field
+                        beside it. */}
+                    <SelectTrigger className="w-auto min-w-40 whitespace-nowrap">
                       <SelectValue />
                     </SelectTrigger>
                     <SelectContent>
