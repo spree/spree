@@ -61,11 +61,13 @@ function TranslationsPage() {
   const { t } = useTranslation()
   const navigate = useNavigate({ from: Route.fullPath })
   const search = Route.useSearch()
+  const localeName = useLocaleName()
 
   const { page } = search
   // The URL is user-supplied: an unknown or non-editable `?resource=` would
   // otherwise reach the accessor map and throw inside the dialog's queryFn.
   const resourceType = isTranslatableResourceType(search.resource) ? search.resource : 'product'
+
   // Defer the LOCAL value, the way ResourceTable does: deferring the URL
   // param cannot coalesce, because writing it is already an urgent update, so
   // every keystroke would issue its own request.
@@ -84,8 +86,8 @@ function TranslationsPage() {
   const { data: resources } = useTranslatableResources()
 
   // A type needs both a dedicated read route and an SDK accessor before the
-  // editor can open it — the registry reports the first, `isTranslatable`
-  // the second. Offering a type without an accessor would open a dialog that
+  // editor can open it — the registry reports the first, the type guard the
+  // second. Offering a type without an accessor would open a dialog that
   // throws when it tries to fetch.
   const resourceOptions = (resources ?? [])
     .filter((resource) => resource.readable && isTranslatableResourceType(resource.resource_type))
@@ -108,15 +110,7 @@ function TranslationsPage() {
 
   const coverage = data?.data
   const targetLocales = coverage?.locales ?? []
-  // Only open the editor for a record the current grid actually lists. A URL
-  // carrying an `edit` id from another resource type — a link shared after
-  // switching types, or a hand-edited address — would otherwise open a dialog
-  // that fetches an id its endpoint has never heard of.
-  const editId = coverage?.records.some((record) => record.id === search.edit)
-    ? search.edit
-    : undefined
-  // No whitelisted predicate means nothing to type into.
-  const searchable = !!coverage?.search_field
+  const fieldCount = coverage?.field_count ?? 0
 
   const patchSearch = (patch: Record<string, unknown>, options?: { replace?: boolean }) =>
     navigate({
@@ -124,7 +118,13 @@ function TranslationsPage() {
       replace: options?.replace,
     })
 
-  const localeName = useLocaleName()
+  // Only open the editor for a record the current grid actually lists. A URL
+  // carrying an `edit` id from another resource type — a link shared after
+  // switching types, or a hand-edited address — would otherwise open a dialog
+  // that fetches an id its endpoint has never heard of.
+  const editId = coverage?.records.some((record) => record.id === search.edit)
+    ? search.edit
+    : undefined
 
   return (
     <>
@@ -144,8 +144,6 @@ function TranslationsPage() {
                 subject={Subject.Product}
                 onCreated={(imp) => patchSearch({ import: imp.id })}
               />
-              {/* Exports what the grid is showing: the search box narrows the
-                  file the same way it narrows the rows. */}
               {/* `meta.count` follows the search, unlike the coverage totals,
                   which are deliberately store-wide — so the confirm dialog
                   reports the number of rows the file will actually contain. */}
@@ -153,7 +151,7 @@ function TranslationsPage() {
                 type="product_translations"
                 filters={[]}
                 search={deferredSearch}
-                searchParam={coverage?.search_field ?? 'name_cont'}
+                searchParam="name_cont"
                 columns={[]}
                 totalCount={data?.meta?.count}
               />
@@ -186,7 +184,7 @@ function TranslationsPage() {
               <CardHeader>
                 <CardTitle>{t('admin.pages.translations.coverage')}</CardTitle>
               </CardHeader>
-              <CardContent>
+              <CardContent className="p-0">
                 <Table>
                   <TableHeader>
                     <TableRow>
@@ -212,12 +210,14 @@ function TranslationsPage() {
                             <span className="font-medium">{localeName(row.locale)}</span>
                             <span className="ml-2 text-muted-foreground">{row.locale}</span>
                           </TableCell>
-                          <TableCell className="text-center">{row.translated}</TableCell>
-                          <TableCell className="text-center">{row.total}</TableCell>
+                          <TableCell className="text-center tabular-nums">
+                            {row.translated}
+                          </TableCell>
+                          <TableCell className="text-center tabular-nums">{row.total}</TableCell>
                           <TableCell>
                             <div className="flex items-center gap-3">
                               <Progress value={percentage} className="flex-1" />
-                              <span className="whitespace-nowrap text-muted-foreground text-sm">
+                              <span className="whitespace-nowrap text-muted-foreground text-sm tabular-nums">
                                 {percentage}%
                               </span>
                             </div>
@@ -234,21 +234,16 @@ function TranslationsPage() {
               <CardHeader className="flex flex-row flex-wrap items-center justify-between gap-3 space-y-0">
                 <CardTitle>{t('admin.pages.translations.records')}</CardTitle>
                 <div className="flex items-center gap-2">
-                  {searchable && (
-                    <SearchInput
-                      value={searchInput}
-                      onValueChange={(value: string) => {
-                        setSearchInput(value)
-                        // `replace` so a typed word leaves one history entry,
-                        // not one per keystroke.
-                        patchSearch(
-                          { search: value || undefined, page: undefined },
-                          { replace: true },
-                        )
-                      }}
-                      placeholder={t('admin.common.search_placeholder')}
-                    />
-                  )}
+                  <SearchInput
+                    value={searchInput}
+                    onValueChange={(value: string) => {
+                      setSearchInput(value)
+                      // `replace` so a typed word leaves one history entry,
+                      // not one per keystroke.
+                      patchSearch({ search: value || undefined, page: 1 }, { replace: true })
+                    }}
+                    placeholder={t('admin.common.search_placeholder')}
+                  />
                   <Select
                     items={resourceOptions}
                     value={resourceType}
@@ -256,7 +251,7 @@ function TranslationsPage() {
                       patchSearch({ resource: value, page: 1, edit: undefined })
                     }
                   >
-                    <SelectTrigger className="w-48">
+                    <SelectTrigger className="w-44">
                       <SelectValue />
                     </SelectTrigger>
                     <SelectContent>
@@ -269,49 +264,43 @@ function TranslationsPage() {
                   </Select>
                 </div>
               </CardHeader>
-              <CardContent>
-                {isLoading ? (
-                  <Skeleton className="h-48 w-full" />
-                ) : (
-                  <>
-                    <Table>
-                      <TableHeader>
-                        <TableRow>
-                          <TableHead>{t('admin.pages.translations.record')}</TableHead>
-                          {targetLocales.map((locale) => (
-                            <TableHead key={locale} className="text-center">
-                              {locale}
-                            </TableHead>
-                          ))}
-                        </TableRow>
-                      </TableHeader>
-                      <TableBody>
-                        {(coverage?.records ?? []).map((record) => (
-                          <TableRow
-                            key={record.id}
-                            className="cursor-pointer"
-                            onClick={() => patchSearch({ edit: record.id })}
-                          >
-                            <TableCell className="font-medium">{record.label}</TableCell>
-                            {targetLocales.map((locale) => (
-                              <TableCell key={locale} className="text-center">
-                                <CoverageCell
-                                  translated={record.locales[locale] ?? 0}
-                                  total={coverage?.field_count ?? 0}
-                                />
-                              </TableCell>
-                            ))}
-                          </TableRow>
+              <CardContent className="p-0">
+                <Table>
+                  <TableHeader>
+                    <TableRow>
+                      <TableHead>{t('admin.pages.translations.record')}</TableHead>
+                      {targetLocales.map((locale) => (
+                        <TableHead key={locale} className="text-center">
+                          {locale}
+                        </TableHead>
+                      ))}
+                    </TableRow>
+                  </TableHeader>
+                  <TableBody>
+                    {(coverage?.records ?? []).map((record) => (
+                      <TableRow
+                        key={record.id}
+                        className="cursor-pointer"
+                        onClick={() => patchSearch({ edit: record.id })}
+                      >
+                        <TableCell className="font-medium">{record.label}</TableCell>
+                        {targetLocales.map((locale) => (
+                          <TableCell key={locale} className="text-center">
+                            <CoverageCell
+                              translated={record.locales[locale] ?? 0}
+                              total={fieldCount}
+                            />
+                          </TableCell>
                         ))}
-                      </TableBody>
-                    </Table>
-                    {data?.meta && (
-                      <Pagination
-                        meta={data.meta}
-                        onPageChange={(next: number) => patchSearch({ page: next })}
-                      />
-                    )}
-                  </>
+                      </TableRow>
+                    ))}
+                  </TableBody>
+                </Table>
+                {data?.meta && (
+                  <Pagination
+                    meta={data.meta}
+                    onPageChange={(next: number) => patchSearch({ page: next })}
+                  />
                 )}
               </CardContent>
             </Card>
