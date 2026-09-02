@@ -52,14 +52,48 @@ describe 'spree:upgrade:backfill_custom_field_definition_stores' do
     expect { subject.invoke }.not_to output(/leaving it nullable/).to_stdout
   end
 
-  it 'leaves the columns NOT NULL' do
-    subject.invoke
-
+  # The branch that matters runs only on the schema the task exists to repair:
+  # columns the migration left nullable because it found rows it could not
+  # fill. Relaxing them here would be DDL, which MySQL commits implicitly and
+  # so drops the savepoint the example runs inside — so the schema is reported
+  # as nullable instead, and the constraint call is observed rather than
+  # applied.
+  #
+  # `filter_key` is checked and `store_id` is not: RSpec stubs one call at a
+  # time, and one column proves the branch runs.
+  it 'enforces a constraint the migration left off' do
     connection = ActiveRecord::Base.connection
-    nullable = connection.columns(Spree::CustomFieldDefinition.table_name).
-               select { |c| %w[store_id filter_key].include?(c.name) }.map(&:null)
+    nullable = connection.columns(Spree::CustomFieldDefinition.table_name).map do |column|
+      column.name == 'filter_key' ? column.dup.tap { |c| c.instance_variable_set(:@null, true) } : column
+    end
+    allow(connection).to receive(:columns).and_call_original
+    allow(connection).to receive(:columns).with(Spree::CustomFieldDefinition.table_name).and_return(nullable)
+    allow(connection).to receive(:change_column_null).and_return(true)
 
-    expect(nullable).to all(be false)
+    expect { subject.invoke }.to output(/Enforced NOT NULL on filter_key/).to_stdout
+
+    expect(connection).to have_received(:change_column_null).
+      with(Spree::CustomFieldDefinition.table_name, :filter_key, false)
+  end
+
+  it 'leaves a column alone while rows still cannot be filled' do
+    connection = ActiveRecord::Base.connection
+    nullable = connection.columns(Spree::CustomFieldDefinition.table_name).map do |column|
+      column.name == 'filter_key' ? column.dup.tap { |c| c.instance_variable_set(:@null, true) } : column
+    end
+    allow(connection).to receive(:columns).and_call_original
+    allow(connection).to receive(:columns).with(Spree::CustomFieldDefinition.table_name).and_return(nullable)
+    allow(connection).to receive(:change_column_null).and_return(true)
+    # The guard reads `exists?`; the backfill loop earlier in the task reads
+    # `find_each` off the same query, so the double answers both.
+    still_null = instance_double(ActiveRecord::Relation, exists?: true, find_each: nil)
+    allow(Spree::CustomFieldDefinition).to receive(:where).and_call_original
+    allow(Spree::CustomFieldDefinition).to receive(:where).with(filter_key: nil).and_return(still_null)
+
+    expect { subject.invoke }.to output(/filter_key is still NULL/).to_stdout
+
+    expect(connection).not_to have_received(:change_column_null).
+      with(anything, :filter_key, false)
   end
 
   it 'refuses to run without a default store to assign' do
