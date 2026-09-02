@@ -726,6 +726,19 @@
         "view_members": "View members"
       },
       "new_sheet_description": "Customers created here have no password set. They'll get a magic link the first time they sign in.",
+      "privacy": {
+        "title": "Privacy and data",
+        "description": "Answer a data protection request from this customer.",
+        "export": "Export data",
+        "anonymize": "Erase personal data",
+        "anonymize_confirm_title": "Erase this customer's personal data?",
+        "anonymize_confirm_message": "Their name, email, phone and addresses will be replaced everywhere, and they will be signed out. Orders and payment records are kept, with the personal details removed. This cannot be undone.",
+        "consent_updated": "Marketing consent last changed {{date}}",
+        "already_anonymized": "Personal data was erased {{date}}",
+        "messages": {
+          "anonymized": "Personal data erased"
+        }
+      },
       "row_actions": {
         "delete_confirm": "Delete {{email}}? Customers with completed orders cannot be removed."
       },

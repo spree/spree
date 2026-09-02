@@ -88,6 +88,23 @@ export function useDeleteCustomer(customerId: string) {
   })
 }
 
+// GDPR subject requests. Erasure is irreversible, so the caller is expected
+// to confirm before running the mutation.
+export function useAnonymizeCustomer(customerId: string) {
+  return useResourceMutation({
+    mutationFn: () => adminClient.customers.anonymize(customerId),
+    invalidate: [['customers'], ['customers', customerId]],
+    successMessage: i18n.t('admin.customers.privacy.messages.anonymized'),
+  })
+}
+
+export function useExportCustomerData(customerId: string) {
+  return useResourceMutation({
+    mutationFn: () => adminClient.customers.export(customerId),
+    successMessage: false,
+  })
+}
+
 // `params` is spread into the queryKey so callers passing a fresh `{}` each
 // render don't force a JSON-equality rehash on every paint.
 export function useCustomerOrders(customerId: string, params: { limit: number; status?: string }) {

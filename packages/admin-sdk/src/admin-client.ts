@@ -4058,6 +4058,20 @@ export class AdminClient {
       this.request<void>('DELETE', `/customers/${id}`, options),
 
     /**
+     * Everything the store holds about this customer, for answering a GDPR
+     * subject access request that arrived by email.
+     */
+    export: (id: string, options?: RequestOptions): Promise<Record<string, unknown>> =>
+      this.request<Record<string, unknown>>('GET', `/customers/${id}/export`, options),
+
+    /**
+     * Erases the customer's personal data, keeping the financial record.
+     * Irreversible.
+     */
+    anonymize: (id: string, options?: RequestOptions): Promise<Customer> =>
+      this.request<Customer>('POST', `/customers/${id}/anonymize`, options),
+
+    /**
      * Bulk-attach a set of customers to a set of groups. Both arrays carry
      * prefixed IDs; the server decodes them. Idempotent.
      */

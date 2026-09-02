@@ -13,6 +13,7 @@ import { CustomerInternalNoteCard } from '../../../../components/spree/customers
 import { CustomerLastOrderCard } from '../../../../components/spree/customers/customer-last-order-card'
 import { CustomerLifetimeStatsCard } from '../../../../components/spree/customers/customer-lifetime-stats-card'
 import { CustomerOrdersCard } from '../../../../components/spree/customers/customer-orders-card'
+import { CustomerPrivacyCard } from '../../../../components/spree/customers/customer-privacy-card'
 import { CustomerProfileCard } from '../../../../components/spree/customers/customer-profile-card'
 import { CustomerStoreCreditsCard } from '../../../../components/spree/customers/customer-store-credits-card'
 import { CustomerTaxIdentifiersCard } from '../../../../components/spree/customers/customer-tax-identifiers-card'
@@ -125,6 +126,7 @@ function CustomerBody({ customer }: { customer: Customer }) {
           <CustomerAddressesCard customer={customer} />
           <CustomerTaxIdentifiersCard customer={customer} />
           <CustomerInternalNoteCard customer={customer} />
+          <CustomerPrivacyCard customer={customer} />
           <Slot name="customer.form_sidebar" context={{ customer }} />
         </>
       }
