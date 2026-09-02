@@ -78,11 +78,33 @@ class AddStoreAndFilterKeyToCustomFieldDefinitions < ActiveRecord::Migration[8.1
         ORDER BY id ASC
       SQL
 
-      ids.drop(1).each_with_index do |id, index|
-        suffixed = quote("#{filter_key}_#{index + 2}")
-        execute("UPDATE spree_custom_field_definitions SET filter_key = #{suffixed} WHERE id = #{quote(id)}")
-        say "  filter_key collision on #{filter_key} — definition #{id} renamed to #{filter_key}_#{index + 2}", true
+      ids.drop(1).each do |id|
+        replacement = free_filter_key(filter_key, store_id, resource_type)
+        execute("UPDATE spree_custom_field_definitions SET filter_key = #{quote(replacement)} WHERE id = #{quote(id)}")
+        say "  filter_key collision on #{filter_key} — definition #{id} renamed to #{replacement}", true
       end
+    end
+  end
+
+  # The first +cf_..._2+, +_3+, ... not already taken in this store. An install
+  # can legitimately hold the suffixed form as a definition of its own
+  # (namespace +a_b_c+, key +2+), and handing it out twice would fail the
+  # unique index halfway through this migration.
+  def free_filter_key(filter_key, store_id, resource_type)
+    suffix = 2
+
+    loop do
+      candidate = "#{filter_key}_#{suffix}"
+      taken = select_value(<<~SQL.squish)
+        SELECT 1 FROM spree_custom_field_definitions
+        WHERE store_id #{store_id.nil? ? 'IS NULL' : "= #{store_id.to_i}"}
+          AND resource_type = #{quote(resource_type)}
+          AND filter_key = #{quote(candidate)}
+        LIMIT 1
+      SQL
+      return candidate if taken.nil?
+
+      suffix += 1
     end
   end
 

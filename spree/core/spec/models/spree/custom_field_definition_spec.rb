@@ -157,6 +157,17 @@ RSpec.describe Spree::CustomFieldDefinition, type: :model do
 
       expect(custom_field_definition.reload[:filter_key]).to eq('cf_specs_fabric')
     end
+
+    # The upgrade migration suffixes one of a colliding pair. Recomputing on an
+    # unrelated edit would undo that and leave the row permanently unsaveable.
+    it 'keeps a suffixed value when neither segment changes' do
+      custom_field_definition = create(:custom_field_definition, namespace: 'a', key: 'b_c')
+      described_class.where(id: custom_field_definition.id).update_all(filter_key: 'cf_a_b_c_2')
+
+      custom_field_definition.reload.update!(label: 'Renamed')
+
+      expect(custom_field_definition.reload[:filter_key]).to eq('cf_a_b_c_2')
+    end
   end
 
   describe 'store scoping' do

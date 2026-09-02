@@ -273,21 +273,22 @@ module Spree
                         where("#{Spree::Price.table_name}.compare_at_amount > #{Spree::Price.table_name}.amount")
                     }
 
-    scope :search, ->(query) {
+    # @param store [Spree::Store] whose custom-field definitions take part in
+    #   the search. Definitions are store-owned, so the caller says which store
+    #   is searching; `Spree::Current.store` is the request's answer and a
+    #   background caller (an export, say) passes its own.
+    scope :search, ->(query, store = Spree::Current.store) {
       next none if query.blank?
 
       product_ids = Spree::Variant.search_by_product_name_or_sku(query).pluck(:product_id)
 
-      # Definitions are store-owned, so the searchable set is the current
-      # store's. Without one there is no schema to read and the scan is skipped
-      # rather than reading every store's.
-      searchable_definitions = Spree::Current.store&.custom_field_definitions&.
-                               for_resource_type('Spree::Product')&.
+      searchable_definitions = store.custom_field_definitions.
+                               for_resource_type('Spree::Product').
                                searchable
 
       # Only pay for the custom_field scan when some definition opts into search;
       # the leading-wildcard LIKE over spree_custom_fields can't use an index.
-      custom_field_ids = if searchable_definitions&.exists?
+      custom_field_ids = if searchable_definitions.exists?
                         joins(custom_fields: :custom_field_definition).
                           merge(searchable_definitions).
                           where(search_condition(Spree::CustomField, :value, query)).

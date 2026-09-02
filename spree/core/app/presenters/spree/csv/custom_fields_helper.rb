@@ -7,6 +7,11 @@ module Spree
       # from the same store's definitions, so reading any other store's here
       # would shift every value column.
       def custom_field_definitions_for_csv(resource, store)
+        # No store means no schema to read, so the row carries the base columns
+        # only — matching what the header row does in the same situation,
+        # rather than raising on nil halfway through a file.
+        return Spree::CustomFieldDefinition.none if store.nil?
+
         store.custom_field_definitions.for_resource_type(resource.class.to_s).order(:namespace, :key)
       end
 

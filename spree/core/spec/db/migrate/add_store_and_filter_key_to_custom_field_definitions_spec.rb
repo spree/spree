@@ -48,6 +48,22 @@ RSpec.describe 'AddStoreAndFilterKeyToCustomFieldDefinitions migration' do
       expect(filter_keys_for(first, second)).to eq(%w[cf_a_b_c cf_a_b_c_2])
     end
 
+    # An install can legitimately hold the suffixed form as a definition of
+    # its own, and handing it out twice would fail the unique index halfway
+    # through the migration.
+    it 'skips a suffix that is already taken' do
+      first = create(:custom_field_definition, resource_type: 'Spree::Product', namespace: 'a_b', key: 'c')
+      taken = create(:custom_field_definition, resource_type: 'Spree::Product', namespace: 'a_b_c', key: '2')
+      second = create(:custom_field_definition, resource_type: 'Spree::Product', namespace: 'a', key: 'b')
+      ActiveRecord::Base.connection.update(
+        "UPDATE #{table} SET key = 'b_c', namespace = 'a', filter_key = 'cf_a_b_c' WHERE id = #{second.id}"
+      )
+
+      migration.send(:disambiguate_colliding_filter_keys)
+
+      expect(filter_keys_for(first, taken, second)).to eq(%w[cf_a_b_c cf_a_b_c_2 cf_a_b_c_3])
+    end
+
     it 'leaves the same value in another store alone' do
       mine = create(:custom_field_definition, store: store, resource_type: 'Spree::Product',
                                               namespace: 'custom', key: 'material')

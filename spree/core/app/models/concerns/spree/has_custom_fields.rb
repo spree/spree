@@ -260,16 +260,21 @@ module Spree
       # Resolve any of the supported reference shapes to a raw definition id.
       # See {#set_custom_field} for the accepted shapes.
       #
+      # Every shape is checked against this record's store: definitions are
+      # store-owned, so one store's record must not end up carrying another
+      # store's definition whichever way the caller names it.
+      #
       # @param definition_or_key [String, Integer, Spree::CustomFieldDefinition]
       # @return [Integer, String] the definition's primary key value (Integer
       #   for legacy integer-id setups, String for UUID setups).
-      # @raise [ArgumentError] for unknown / malformed input.
+      # @raise [ArgumentError] for unknown / malformed input, or a definition
+      #   belonging to another store.
       def resolve_custom_field_definition_id(definition_or_key)
         case definition_or_key
         when Spree::CustomFieldDefinition
-          definition_or_key.id
+          find_definition_id_in_store!(definition_or_key.id, definition_or_key.full_key)
         when Integer
-          definition_or_key
+          find_definition_id_in_store!(definition_or_key, definition_or_key)
         when String
           resolve_custom_field_definition_id_from_string(definition_or_key)
         else
@@ -293,35 +298,48 @@ module Spree
 
         # Prefixed id (`"cfdef_..."`/`"mfd_..."`). Use the canonical predicate
         # so single-segment names with underscores (e.g. `"product_specs"`)
-        # don't get mistaken for prefixed ids. We must verify the decoded id
-        # actually exists — Sqids will happily decode any all-lowercase
-        # alphanumeric string to a phantom integer; without the existence
-        # check `find_or_initialize_by(custom_field_definition_id: phantom_id)`
-        # would later raise a confusing "CustomField definition must exist"
-        # 422 instead of an "unknown id" 422.
+        # don't get mistaken for prefixed ids.
+        #
+        # Both id shapes are resolved through the store rather than the class.
+        # That is what stops one store's record carrying another store's
+        # definition, and it also covers the phantom-id case: Sqids will
+        # happily decode any all-lowercase alphanumeric string to an integer
+        # that matches no row, and without the existence check
+        # `find_or_initialize_by(custom_field_definition_id: phantom_id)` would
+        # later raise a confusing "CustomField definition must exist" 422
+        # instead of an "unknown id" one.
         if Spree::PrefixedId.prefixed_id?(value)
           decoded = Spree::CustomFieldDefinition.decode_prefixed_id(value)
-          existing = decoded && Spree::CustomFieldDefinition.find_by(id: decoded)
-          raise ArgumentError, "Unknown custom field definition id: #{value.inspect}" if existing.nil?
-
-          return existing.id
+          return find_definition_id_in_store!(decoded, value)
         end
 
-        # Bare numeric id ("42"). Reject anything else outright. Returned as
-        # the original string — casting would rewrite zero-padded ids.
+        # Bare numeric id ("42"). Reject anything else outright.
         raise ArgumentError, "Invalid custom field definition reference: #{value.inspect}" unless /\A\d+\z/.match?(value)
 
-        value
+        find_definition_id_in_store!(value, value)
+      end
+
+      # @param id [Integer, String, nil] the decoded primary key
+      # @param reference [String] what the caller passed, for the error message
+      # @return [Integer, String] the definition's own primary key value
+      # @raise [ArgumentError] when this store has no such definition.
+      def find_definition_id_in_store!(id, reference)
+        definition = id && custom_field_definition_store.custom_field_definitions.find_by(id: id)
+        raise ArgumentError, "Unknown custom field definition id: #{reference.inspect}" if definition.nil?
+
+        definition.id
       end
 
       # The store whose custom-field schema this record's fields are defined
-      # in: its own if it has one, otherwise the current request's — a
-      # customer or address is global but its fields still belong to a store.
+      # in: its own, or its owner's for a record nested under a purchase (a
+      # payment, a line item). Falls back to the current request's store for
+      # the genuinely global records — a customer, an address — whose fields
+      # still belong to a store.
       #
       # @return [Spree::Store]
-      # @raise [ArgumentError] when neither is available.
+      # @raise [ArgumentError] when none is available.
       def custom_field_definition_store
-        store = try(:store) || Spree::Current.store
+        store = try(:store) || try(:order)&.store || try(:product)&.store || Spree::Current.store
         raise ArgumentError, 'a store is required to resolve a custom field definition' if store.nil?
 
         store

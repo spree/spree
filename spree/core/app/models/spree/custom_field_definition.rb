@@ -203,10 +203,17 @@ module Spree
       self.label ||= key.titleize
     end
 
-    # Kept in step with namespace and key on every write, so renaming either
-    # moves the sort/filter identifier with it rather than leaving a stale one
-    # that no listing can address.
+    # Kept in step with namespace and key, so renaming either moves the
+    # sort/filter identifier with it rather than leaving a stale one that no
+    # listing can address.
+    #
+    # A stored value is left alone while both segments stay put. Two splits can
+    # flatten to one key, and the upgrade migration resolves such a pair by
+    # suffixing the later row; recomputing on an unrelated edit would undo that
+    # and leave the row permanently unsaveable.
     def set_filter_key
+      return if self[:filter_key].present? && !namespace_changed? && !key_changed?
+
       self.filter_key = computed_filter_key
     end
   end

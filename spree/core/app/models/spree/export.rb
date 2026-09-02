@@ -213,7 +213,22 @@ module Spree
                                 [scope, params]
                               end
 
-      filtered_scope.ransack(params).result
+      filtered_scope = apply_search_param(filtered_scope, params)
+
+      filtered_scope.ransack(params.except('search', :search)).result
+    end
+
+    # Runs a free-text `search` param against this export's own store. Left to
+    # Ransack it would reach the scope with one argument and search whichever
+    # store the current request happens to name, which for a background export
+    # is the default one.
+    #
+    # @return [ActiveRecord::Relation]
+    def apply_search_param(relation, params)
+      query = params['search'] || params[:search]
+      return relation if query.blank? || !relation.respond_to?(:search)
+
+      relation.search(query, store)
     end
 
     # Replace any prefixed IDs in `search_params` with their raw DB IDs so
