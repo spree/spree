@@ -6086,9 +6086,9 @@ paths:
                     can't be blank, City can't be blank, Country can't be blank, and
                     Zip Code can't be blank
                   details:
-                    firstname:
+                    first_name:
                     - can't be blank
-                    lastname:
+                    last_name:
                     - can't be blank
                     address1:
                     - can't be blank
@@ -6096,7 +6096,7 @@ paths:
                     - can't be blank
                     country:
                     - can't be blank
-                    zipcode:
+                    postal_code:
                     - can't be blank
               schema:
                 "$ref": "#/components/schemas/ErrorResponse"
@@ -9460,7 +9460,7 @@ paths:
           content:
             application/json:
               example:
-                id: wi_gbHJdmfrXB
+                id: wli_gbHJdmfrXB
                 variant_id: variant_gbHJdmfrXB
                 product_id: prod_gbHJdmfrXB
                 wishlist_id: wl_UkLWZg9DAJ
@@ -9568,7 +9568,7 @@ paths:
               example:
                 error:
                   code: record_not_found
-                  message: Wished item not found
+                  message: Wishlist item not found
   "/api/v3/store/newsletter_subscribers":
     post:
       summary: Subscribe to the newsletter
