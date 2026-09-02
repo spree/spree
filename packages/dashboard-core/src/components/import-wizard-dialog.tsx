@@ -3,13 +3,12 @@ import {
   Button,
   Card,
   CardContent,
-  CardFooter,
   CardHeader,
   CardTitle,
-  cn,
   Dialog,
   DialogBody,
   DialogContent,
+  DialogFooter,
   DialogHeader,
   DialogTitle,
   Progress,
@@ -26,6 +25,7 @@ import {
   TableHead,
   TableHeader,
   TableRow,
+  WizardProgress,
 } from '@spree/dashboard-ui'
 import {
   AlertTriangleIcon,
@@ -36,7 +36,7 @@ import {
   RotateCcwIcon,
   XIcon,
 } from '@spree/dashboard-ui/icons'
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import type { PanelImport, PanelImportRow } from '../api-client'
 import {
@@ -107,22 +107,57 @@ function ImportWizard({
   // from row totals (they look identical in the last poll tick of a first
   // pass that ends with failures).
   const [retryRequested, setRetryRequested] = useState(false)
+  const completeMapping = useCompleteMapping(importId)
+  const [assignments, setAssignments] = useState<MappingAssignments>({})
+
+  // Seeded once per import. The query is stale immediately, so a refetch on
+  // window focus hands back a new object; re-seeding on that would throw away
+  // a mapping the merchant is part-way through.
+  const seededFor = useRef<string | null>(null)
+  useEffect(() => {
+    if (!imp || seededFor.current === imp.id) return
+    seededFor.current = imp.id
+    setAssignments(initialAssignments(imp))
+  }, [imp])
+
+  const isMapping = imp?.status === 'mapping'
+  const isCompleted = imp?.status === 'completed'
+  const missingRequired = imp && isMapping ? missingRequiredFields(imp, assignments) : []
+  const retryMutation = useRetryFailedRows(importId)
+
+  function handleStartImport() {
+    if (!imp) return
+    completeMapping.mutate({
+      mappings: imp.schema_fields.map((field) => ({
+        schema_field: field.name,
+        file_column: assignments[field.name] ?? null,
+      })),
+    })
+  }
 
   const showFailedRows =
     !!imp && imp.failed_rows_count > 0 && (isImportActive(imp.status) || imp.status === 'completed')
 
   return (
     <>
-      <DialogHeader className="flex flex-row items-center justify-between gap-3 space-y-0 border-b p-3">
-        <div className="flex min-w-0 items-center gap-2">
-          <DialogTitle className="truncate">
-            {imp ? `${importTypeLabel(imp.type)} · ${imp.number}` : t('admin.imports.wizard_title')}
+      <DialogHeader className="h-14 shrink-0 flex-row items-center gap-3 space-y-0 border-b border-border-subtle bg-background px-4 py-0">
+        <div className="flex min-w-0 items-center gap-3">
+          <DialogTitle className="truncate text-base">
+            {t('admin.imports.wizard_title')}
           </DialogTitle>
+          {imp && (
+            <>
+              <span aria-hidden className="h-4 w-px shrink-0 bg-border" />
+              <span className="truncate text-muted-foreground text-sm">
+                {`${importTypeLabel(imp.type)} · ${imp.number}`}
+              </span>
+            </>
+          )}
+        </div>
+        <div className="ms-auto flex shrink-0 items-center gap-2">
           {imp && (
             <StatusBadge status={imp.status} label={t(`admin.imports.status.${imp.status}`)} />
           )}
-        </div>
-        <div className="flex items-center gap-1">
           {/* Keyed on the filename rather than the URL: a client that serves
               the file from its own endpoint may send no `original_file_url`
               (the download hook falls back to `imports().downloadUrl`), but an
@@ -152,8 +187,12 @@ function ImportWizard({
         </div>
       </DialogHeader>
 
-      <DialogBody className="min-h-0 flex-1 overflow-y-auto p-4">
-        <div className="mx-auto flex w-full flex-col gap-4">
+      {/* The body itself does not scroll: the rail stays put while the step's
+          own column scrolls, so a long mapping table never carries the
+          progress list off-screen. */}
+      <DialogBody className="flex min-h-0 flex-1 gap-8 overflow-hidden p-0">
+        <StepIndicator status={imp?.status ?? 'mapping'} />
+        <div className="flex min-w-0 flex-1 flex-col gap-4 overflow-y-auto py-8 pe-8 ps-8 md:ps-0">
           {isError ? (
             <div className="flex flex-col items-center gap-3 py-12 text-center">
               <AlertTriangleIcon className="size-8 text-destructive" />
@@ -169,26 +208,77 @@ function ImportWizard({
             </>
           ) : (
             <>
-              <StepIndicator status={imp.status} />
-
-              {imp.status === 'mapping' && <MappingStep imp={imp} />}
+              {imp.status === 'mapping' && (
+                <MappingStep
+                  imp={imp}
+                  assignments={assignments}
+                  setAssignments={setAssignments}
+                  error={completeMapping.error}
+                />
+              )}
               {isImportActive(imp.status) && (
                 <ProcessingCard imp={imp} retryPass={retryRequested} />
               )}
-              {imp.status === 'completed' && (
-                <ResultsCard
-                  imp={imp}
-                  onClose={onClose}
-                  onRetried={() => setRetryRequested(true)}
-                  onViewRecords={onViewRecords}
-                />
-              )}
+              {imp.status === 'completed' && <ResultsCard imp={imp} />}
               {imp.status === 'failed' && <FailedCard imp={imp} />}
               {showFailedRows && <FailedRowsCard imp={imp} />}
             </>
           )}
         </div>
       </DialogBody>
+
+      {/* Every step's action lives here rather than at the end of its card:
+          a long mapping table or failed-rows list would otherwise push the
+          button below the fold. */}
+      {(isMapping || isCompleted) && imp && (
+        <DialogFooter className="h-16 shrink-0 flex-row items-center justify-between border-border-subtle bg-background px-4 py-0 sm:justify-between">
+          <span className="text-muted-foreground text-sm">
+            {isMapping && missingRequired.length > 0
+              ? t('admin.imports.mapping.missing_required', {
+                  fields: missingRequired.map((f) => f.label).join(', '),
+                })
+              : null}
+          </span>
+
+          {isMapping ? (
+            <Button
+              onClick={handleStartImport}
+              disabled={missingRequired.length > 0 || completeMapping.isPending}
+            >
+              {completeMapping.isPending
+                ? t('admin.imports.mapping.starting')
+                : t('admin.imports.mapping.start')}
+            </Button>
+          ) : (
+            <div className="flex items-center gap-2">
+              {imp.failed_rows_count > 0 && (
+                <Button
+                  variant="outline"
+                  onClick={() =>
+                    retryMutation.mutate(undefined, { onSuccess: () => setRetryRequested(true) })
+                  }
+                  disabled={retryMutation.isPending}
+                >
+                  <RotateCcwIcon className="size-4" />
+                  {retryMutation.isPending
+                    ? t('admin.imports.results.retrying')
+                    : t('admin.imports.results.retry_failed', { failed: imp.failed_rows_count })}
+                </Button>
+              )}
+              {onViewRecords && (
+                <Button
+                  onClick={() => {
+                    onClose()
+                    onViewRecords(imp.type)
+                  }}
+                >
+                  {t('admin.imports.results.view_records', { type: importTypeLabel(imp.type) })}
+                </Button>
+              )}
+            </div>
+          )}
+        </DialogFooter>
+      )}
     </>
   )
 }
@@ -207,32 +297,11 @@ function StepIndicator({ status }: { status: string }) {
   const steps = ['map_fields', 'process_rows', 'complete'] as const
 
   return (
-    <ol className="flex items-center gap-2">
-      {steps.map((step, index) => (
-        <li key={step} className="flex items-center gap-2">
-          <span
-            className={cn(
-              'flex size-5 items-center justify-center rounded-full text-xs',
-              index <= activeIndex && 'bg-primary text-primary-foreground',
-              index > activeIndex && 'bg-muted text-muted-foreground',
-            )}
-          >
-            {index < activeIndex ? <CheckCircle2Icon className="size-3.5" /> : index + 1}
-          </span>
-          <span
-            className={cn(
-              'text-sm',
-              index === activeIndex ? 'font-medium' : 'text-muted-foreground',
-            )}
-          >
-            {t(`admin.imports.steps.${step}`)}
-          </span>
-          {index < steps.length - 1 && (
-            <ChevronRightIcon className="size-4 text-muted-foreground" />
-          )}
-        </li>
-      ))}
-    </ol>
+    <WizardProgress
+      className="hidden w-56 shrink-0 py-8 ps-8 md:flex"
+      current={steps[activeIndex]}
+      steps={steps.map((step) => ({ key: step, label: t(`admin.imports.steps.${step}`) }))}
+    />
   )
 }
 
@@ -240,23 +309,35 @@ function StepIndicator({ status }: { status: string }) {
 // Mapping step
 // ---------------------------------------------------------------------------
 
-function MappingStep({ imp }: { imp: PanelImport }) {
+/** Which schema field each CSV column feeds, keyed by field name. */
+export type MappingAssignments = Record<string, string | null>
+
+export function initialAssignments(imp: PanelImport): MappingAssignments {
+  return Object.fromEntries(imp.mappings.map((m) => [m.schema_field, m.file_column]))
+}
+
+export function missingRequiredFields(imp: PanelImport, assignments: MappingAssignments) {
+  return imp.schema_fields.filter((f) => f.required && !assignments[f.name])
+}
+
+/**
+ * The mapping table. Assignments live in the wizard rather than here, because
+ * the action that submits them sits in the wizard's footer — a long column
+ * list would otherwise bury the button below the fold.
+ */
+function MappingStep({
+  imp,
+  assignments,
+  setAssignments,
+  error,
+}: {
+  imp: PanelImport
+  assignments: MappingAssignments
+  setAssignments: React.Dispatch<React.SetStateAction<MappingAssignments>>
+  /** Failure from the footer's submit, rendered beside the fields it concerns. */
+  error?: Error | null
+}) {
   const { t } = useTranslation()
-  const completeMapping = useCompleteMapping(imp.id)
-  const [assignments, setAssignments] = useState<Record<string, string | null>>(() =>
-    Object.fromEntries(imp.mappings.map((m) => [m.schema_field, m.file_column])),
-  )
-
-  const missingRequired = imp.schema_fields.filter((f) => f.required && !assignments[f.name])
-
-  function handleStart() {
-    completeMapping.mutate({
-      mappings: imp.schema_fields.map((field) => ({
-        schema_field: field.name,
-        file_column: assignments[field.name] ?? null,
-      })),
-    })
-  }
 
   const headerOptions = (current: string | null) => [
     { value: NOT_MAPPED, label: t('admin.imports.mapping.not_mapped'), disabled: false },
@@ -340,36 +421,13 @@ function MappingStep({ imp }: { imp: PanelImport }) {
           </Table>
         </div>
 
-        {missingRequired.length > 0 && (
-          <p className="text-muted-foreground text-sm">
-            {t('admin.imports.mapping.missing_required', {
-              fields: missingRequired.map((f) => f.label).join(', '),
-            })}
-          </p>
-        )}
-
-        {completeMapping.isError && (
+        {error && (
           <div className="flex items-start gap-2 rounded-md border border-destructive/40 bg-destructive/10 p-3 text-destructive text-sm">
             <AlertTriangleIcon className="size-4 shrink-0" />
-            <span>
-              {completeMapping.error instanceof Error
-                ? completeMapping.error.message
-                : String(completeMapping.error)}
-            </span>
+            <span>{error.message}</span>
           </div>
         )}
       </CardContent>
-      <CardFooter className="flex justify-end">
-        <Button
-          onClick={handleStart}
-          disabled={missingRequired.length > 0 || completeMapping.isPending}
-          className="m-4"
-        >
-          {completeMapping.isPending
-            ? t('admin.imports.mapping.starting')
-            : t('admin.imports.mapping.start')}
-        </Button>
-      </CardFooter>
     </Card>
   )
 }
@@ -429,19 +487,8 @@ function ProcessingCard({ imp, retryPass }: { imp: PanelImport; retryPass: boole
 // Results / file-level failure
 // ---------------------------------------------------------------------------
 
-function ResultsCard({
-  imp,
-  onClose,
-  onRetried,
-  onViewRecords,
-}: {
-  imp: PanelImport
-  onClose: () => void
-  onRetried: () => void
-  onViewRecords?: (type: string | null) => void
-}) {
+function ResultsCard({ imp }: { imp: PanelImport }) {
   const { t } = useTranslation()
-  const retryMutation = useRetryFailedRows(imp.id)
 
   return (
     <Card>
@@ -454,30 +501,6 @@ function ResultsCard({
             failed: imp.failed_rows_count.toLocaleString(),
           })}
         </p>
-        <div className="mt-2 flex items-center gap-2">
-          {imp.failed_rows_count > 0 && (
-            <Button
-              variant="outline"
-              onClick={() => retryMutation.mutate(undefined, { onSuccess: onRetried })}
-              disabled={retryMutation.isPending}
-            >
-              <RotateCcwIcon className="size-4" />
-              {retryMutation.isPending
-                ? t('admin.imports.results.retrying')
-                : t('admin.imports.results.retry_failed', { failed: imp.failed_rows_count })}
-            </Button>
-          )}
-          {onViewRecords && (
-            <Button
-              onClick={() => {
-                onClose()
-                onViewRecords(imp.type)
-              }}
-            >
-              {t('admin.imports.results.view_records', { type: importTypeLabel(imp.type) })}
-            </Button>
-          )}
-        </div>
       </CardContent>
     </Card>
   )

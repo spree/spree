@@ -331,7 +331,7 @@
     "collections": {
       "add_cta": "Nouvelle collection",
       "columns": {
-        "membership": "Composition",
+        "kind": "Type",
         "products_count": "Produits",
         "sort_order": "Tri"
       },
@@ -4870,6 +4870,18 @@
         "lb": "Livre (lb)",
         "oz": "Once (oz)"
       }
+    },
+    "table_descriptions": {
+      "catalogs": "Ce qu’un groupe d’acheteurs voit et les prix qu’il paie.",
+      "categories": "L’arborescence de navigation par laquelle vos clients parcourent la boutique.",
+      "collections": "Des groupes de produits mis en avant ensemble, choisis à la main ou par règle.",
+      "companies": "Les acheteurs professionnels, leurs équipes et leurs conditions d’achat.",
+      "customer_groups": "Les groupes dans lesquels vous classez vos clients, pour les prix et les promotions.",
+      "delivery_profiles": "Les règles d’expédition d’un produit, appliquées produit par produit.",
+      "options": "Des choix comme la taille ou la couleur qui déclinent un produit en variantes.",
+      "price_lists": "Des prix alternatifs qui s’appliquent quand leurs règles correspondent.",
+      "product_types": "Des modèles qui donnent aux nouveaux produits leurs champs et leurs options.",
+      "stock_transfers": "Le stock qui circule entre vos entrepôts, et ce qui est arrivé."
     },
     "tax_categories": {
       "add_cta": "Ajouter une catégorie de taxe",

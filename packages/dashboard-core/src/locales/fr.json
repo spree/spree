@@ -155,6 +155,7 @@
       "deleted": "Supprimé",
       "empty_value": "—",
       "inactive": "Inactif",
+      "learn_more": "En savoir plus",
       "loading": "Chargement…",
       "next": "Suivant",
       "no": "Non",
@@ -894,6 +895,11 @@
         "mapping": "Association",
         "pending": "En attente",
         "processing": "En cours"
+      },
+      "step_descriptions": {
+        "complete": "Votre import est terminé. Vérifiez ce qui a été créé et mis à jour.",
+        "map_fields": "Associez chaque colonne de votre fichier à un champ dans Spree.",
+        "process_rows": "Vos lignes sont en cours d’import. Cela peut prendre quelques minutes."
       },
       "steps": {
         "complete": "Terminé",

@@ -155,6 +155,7 @@
       "deleted": "Deleted",
       "empty_value": "—",
       "inactive": "Inactive",
+      "learn_more": "Learn more",
       "loading": "Loading…",
       "next": "Next",
       "no": "No",
@@ -896,6 +897,11 @@
         "mapping": "Mapping",
         "pending": "Pending",
         "processing": "Processing"
+      },
+      "step_descriptions": {
+        "complete": "Your import has finished. Review what was created and updated.",
+        "map_fields": "Match each column in your file to a field in Spree.",
+        "process_rows": "We are importing your rows. This can take a few minutes."
       },
       "steps": {
         "complete": "Complete",

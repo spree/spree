@@ -6,6 +6,8 @@ import i18n from 'i18next'
 
 defineTable<Catalog>('catalogs', {
   title: i18n.t('admin.nav.catalogs'),
+  description: i18n.t('admin.table_descriptions.catalogs'),
+  docsPath: 'manage-products/catalogs',
   searchParam: 'name_cont',
   searchPlaceholder: i18n.t('admin.catalogs.search_placeholder'),
   defaultSort: { field: 'position', direction: 'asc' },

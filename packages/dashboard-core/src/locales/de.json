@@ -155,6 +155,7 @@
       "deleted": "Gelöscht",
       "empty_value": "—",
       "inactive": "Inaktiv",
+      "learn_more": "Mehr erfahren",
       "loading": "Wird geladen…",
       "next": "Weiter",
       "no": "Nein",
@@ -894,6 +895,11 @@
         "mapping": "Zuordnung",
         "pending": "Ausstehend",
         "processing": "In Bearbeitung"
+      },
+      "step_descriptions": {
+        "complete": "Der Import ist abgeschlossen. Prüfen Sie, was erstellt und aktualisiert wurde.",
+        "map_fields": "Ordnen Sie jede Spalte Ihrer Datei einem Feld in Spree zu.",
+        "process_rows": "Ihre Zeilen werden importiert. Das kann einige Minuten dauern."
       },
       "steps": {
         "complete": "Fertig",

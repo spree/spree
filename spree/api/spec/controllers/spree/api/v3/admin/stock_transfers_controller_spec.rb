@@ -26,6 +26,32 @@ RSpec.describe Spree::Api::V3::Admin::StockTransfersController, type: :controlle
       expect(response).to have_http_status(:ok)
       expect(json_response['data'].map { |t| t['id'] }).to include(transfer.prefixed_id)
     end
+
+    # The dashboard's search box sends this one predicate for both columns, so
+    # a whitelist that covers only `number` would silently return every row.
+    context 'searching by number or reference' do
+      let!(:referenced) do
+        Spree::StockTransfer.new(reference: 'PO-4471').tap do |t|
+          t.transfer(source_location, destination_location, variant => 1)
+        end
+      end
+
+      it 'matches on the reference' do
+        get :index, params: { q: { number_or_reference_cont: 'PO-4471' } }, as: :json
+
+        expect(response).to have_http_status(:ok)
+        ids = json_response['data'].map { |t| t['id'] }
+        expect(ids).to eq([referenced.prefixed_id])
+      end
+
+      it 'matches on the number' do
+        get :index, params: { q: { number_or_reference_cont: transfer.number } }, as: :json
+
+        expect(response).to have_http_status(:ok)
+        ids = json_response['data'].map { |t| t['id'] }
+        expect(ids).to eq([transfer.prefixed_id])
+      end
+    end
   end
 
   describe 'POST #create' do

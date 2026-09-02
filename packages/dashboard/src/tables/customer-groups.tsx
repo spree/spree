@@ -6,6 +6,8 @@ import i18n from 'i18next'
 
 defineTable<CustomerGroup>('customer-groups', {
   title: i18n.t('admin.customers.groups.table.title'),
+  description: i18n.t('admin.table_descriptions.customer_groups'),
+  docsPath: 'customers/customer-groups',
   searchParam: 'name_cont',
   searchPlaceholder: i18n.t('admin.customers.groups.table.search_placeholder'),
   defaultSort: { field: 'name', direction: 'asc' },

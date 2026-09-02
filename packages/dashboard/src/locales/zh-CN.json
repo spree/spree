@@ -330,7 +330,7 @@
     "collections": {
       "add_cta": "新建系列",
       "columns": {
-        "membership": "商品来源",
+        "kind": "类型",
         "products_count": "商品",
         "sort_order": "排序"
       },
@@ -4861,6 +4861,18 @@
         "lb": "磅 (lb)",
         "oz": "盎司 (oz)"
       }
+    },
+    "table_descriptions": {
+      "catalogs": "某一类买家能看到的商品，以及他们支付的价格。",
+      "categories": "顾客浏览店铺所依循的分类树。",
+      "collections": "一起陈列的商品组合，可手动挑选或按规则生成。",
+      "companies": "企业买家、他们的团队，以及采购条款。",
+      "customer_groups": "用于定价和促销的客户分组。",
+      "delivery_profiles": "按商品应用的配送规则。",
+      "options": "尺码、颜色等选项，用于生成商品的多个款式。",
+      "price_lists": "规则匹配时生效的备选价格。",
+      "product_types": "为新商品预设字段和选项的模板。",
+      "stock_transfers": "在各地点之间调拨的库存，以及已到货的部分。"
     },
     "tax_categories": {
       "add_cta": "添加税务类别",

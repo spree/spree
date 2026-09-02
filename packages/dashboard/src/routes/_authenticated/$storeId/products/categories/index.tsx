@@ -1,10 +1,9 @@
 import type { Category } from '@spree/admin-sdk'
-import { Can, Subject } from '@spree/dashboard-core'
+import { Can, SectionHeading, Subject } from '@spree/dashboard-core'
 import {
   Button,
   Card,
   CardContent,
-  CardTitle,
   InputGroup,
   InputGroupAddon,
   InputGroupInput,
@@ -73,8 +72,12 @@ function CategoriesPage() {
   return (
     <>
       <Card className="overflow-hidden rounded-xl">
-        <div className="flex flex-col items-start justify-between gap-2 border-b border-border-subtle p-3 lg:flex-row lg:items-center">
-          <CardTitle>{t('admin.categories.title')}</CardTitle>
+        <div className="flex flex-col items-start justify-between gap-2 border-b border-border-subtle p-3 lg:flex-row lg:items-start">
+          <SectionHeading
+            title={t('admin.categories.title')}
+            description={t('admin.table_descriptions.categories')}
+            docsPath="manage-products/product-taxonomies"
+          />
           <div className="flex items-center gap-2">
             <InputGroup className="lg:w-[300px]">
               <InputGroupAddon>

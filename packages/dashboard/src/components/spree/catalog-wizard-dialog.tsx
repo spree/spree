@@ -170,9 +170,9 @@ function CatalogWizard({
           event.target instanceof HTMLInputElement && event.target.type !== 'checkbox'
         if (event.key === 'Enter' && !isLastStep && onTextInput) event.preventDefault()
       }}
-      // The Products step is two columns and wants the room; the others are a
-      // form, which reads badly stretched across a wide window.
-      contentClassName={step === 'products' ? 'max-w-5xl' : 'max-w-2xl'}
+      // The Products step is a two-column picker and takes the whole window;
+      // the others are a form, which reads badly stretched across one.
+      contentClassName={step === 'products' ? undefined : 'max-w-2xl'}
       back={
         <Button
           type="button"
