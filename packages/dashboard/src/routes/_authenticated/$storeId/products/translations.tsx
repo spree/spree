@@ -39,7 +39,6 @@ import { ImportWizardDialog } from '../../../../components/spree/imports/import-
 import { ResourceTranslationsDialog } from '../../../../components/spree/translations/resource-translations-dialog'
 import {
   isTranslatableResourceType,
-  type TranslatableResourceType,
   useLocaleName,
   useTranslatableResources,
   useTranslationCoverage,
@@ -97,9 +96,9 @@ function TranslationsPage() {
       }),
     }))
 
-  // `search` rather than a predicate the client picks: the server knows which
-  // one this resource type whitelists (`name` is ransackable on products and
-  // categories but not on collections) and applies it, or ignores the term.
+  // A plain term rather than a predicate the client picks: which column to
+  // match varies by resource type (an option type is displayed by
+  // `presentation`, not `name`), and only the server knows which.
   const trimmedSearch = deferredSearch.trim()
   const coverageParams = useMemo(
     () => ({ page, ...(trimmedSearch ? { search: trimmedSearch } : {}) }),
@@ -109,6 +108,13 @@ function TranslationsPage() {
 
   const coverage = data?.data
   const targetLocales = coverage?.locales ?? []
+  // Only open the editor for a record the current grid actually lists. A URL
+  // carrying an `edit` id from another resource type — a link shared after
+  // switching types, or a hand-edited address — would otherwise open a dialog
+  // that fetches an id its endpoint has never heard of.
+  const editId = coverage?.records.some((record) => record.id === search.edit)
+    ? search.edit
+    : undefined
   // No whitelisted predicate means nothing to type into.
   const searchable = !!coverage?.search_field
 
@@ -313,14 +319,14 @@ function TranslationsPage() {
         )}
       </div>
 
-      {search.edit && (
+      {editId && (
         <ResourceTranslationsDialog
           open
           onOpenChange={(open) => {
             if (!open) patchSearch({ edit: undefined })
           }}
-          resourceType={resourceType as TranslatableResourceType}
-          resourceId={search.edit}
+          resourceType={resourceType}
+          resourceId={editId}
         />
       )}
 
