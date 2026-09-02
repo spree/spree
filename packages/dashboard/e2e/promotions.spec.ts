@@ -44,9 +44,10 @@ async function cancelEditor(page: Page) {
 }
 
 async function saveEditor(page: Page) {
+  // Zero-config rule/action editors label the confirm button "Add"; the rest use "Save".
   await page
     .getByRole('dialog')
-    .getByRole('button', { name: /^save$/i })
+    .getByRole('button', { name: /^(save|add)$/i })
     .click()
 }
 
@@ -83,17 +84,15 @@ test.describe('promotions', () => {
 
     await startNewPromotion(page, creds.store_id, name)
 
-    // No-preference rule + action: pick the type to append the draft, then
-    // cancel to close the editor (Save is disabled when there's nothing to
-    // configure).
+    // No-preference rule + action: confirm in the editor so the row is appended.
     await pickRule(page, /^first order$/i)
     await expect(page.getByRole('heading', { name: /^first order$/i })).toBeVisible({
       timeout: 5_000,
     })
-    await cancelEditor(page)
+    await saveEditor(page)
 
     await pickAction(page, /^free shipping$/i)
-    await cancelEditor(page)
+    await saveEditor(page)
 
     await submitCreate(page, name)
 
@@ -107,6 +106,25 @@ test.describe('promotions', () => {
     await expect(rowButton(page, name)).toBeVisible({ timeout: 15_000 })
   })
 
+  test('cancelling a rule or action editor does not add a row', async ({ page }) => {
+    const creds = await login(page)
+    await gotoIndex(page, PROMOTIONS_PATH(creds.store_id), CTA)
+
+    const name = `E2E Promo Cancel ${Date.now()}`
+    await startNewPromotion(page, creds.store_id, name)
+
+    await pickRule(page, /^first order$/i)
+    await expect(page.getByRole('heading', { name: /^first order$/i })).toBeVisible({
+      timeout: 5_000,
+    })
+    await cancelEditor(page)
+    await expect(page.getByText(/^first order$/i)).toHaveCount(0)
+
+    await pickAction(page, /^free shipping$/i)
+    await cancelEditor(page)
+    await expect(page.getByText(/^free shipping$/i)).toHaveCount(0)
+  })
+
   test('removes a rule and an action while editing', async ({ page }) => {
     const creds = await login(page)
     await gotoIndex(page, PROMOTIONS_PATH(creds.store_id), CTA)
@@ -116,10 +134,10 @@ test.describe('promotions', () => {
     await startNewPromotion(page, creds.store_id, name)
 
     await pickRule(page, /^first order$/i)
-    await cancelEditor(page)
+    await saveEditor(page)
 
     await pickAction(page, /^free shipping$/i)
-    await cancelEditor(page)
+    await saveEditor(page)
 
     await submitCreate(page, name)
 
