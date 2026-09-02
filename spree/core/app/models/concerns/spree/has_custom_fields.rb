@@ -337,15 +337,20 @@ module Spree
       end
 
       # The store whose custom-field schema this record's fields are defined
-      # in: its own, or its owner's for a record nested under a purchase (a
-      # payment, a line item). Falls back to the current request's store for
-      # the genuinely global records — a customer, an address — whose fields
-      # still belong to a store.
+      # in. A record that owns a store answers with it; one that reaches a
+      # store through its owner overrides this (see Spree::Payment,
+      # Spree::Variant); the genuinely global records — a customer, an
+      # address — fall through to the current request's store, since their
+      # fields still belong to one.
+      #
+      # Override rather than extending a chain here: which owner holds the
+      # store is the host's own fact, and a chain of `try`s silently answers
+      # for the wrong one when a host matches none of its steps.
       #
       # @return [Spree::Store]
       # @raise [ArgumentError] when none is available.
       def custom_field_definition_store
-        store = try(:store) || try(:order)&.store || try(:product)&.store || Spree::Current.store
+        store = try(:store) || Spree::Current.store
         raise ArgumentError, 'a store is required to resolve a custom field definition' if store.nil?
 
         store

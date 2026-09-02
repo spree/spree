@@ -154,7 +154,11 @@ module Spree
     def custom_field_definition_must_belong_to_the_resource_store
       return if custom_field_definition.blank? || resource.blank?
 
-      resource_store_id = resource.try(:store_id) || resource.try(:order)&.store_id || resource.try(:product)&.store_id
+      # Only a resource that genuinely belongs to a store is checked — its
+      # own, or its product's for a variant. A customer or an address is
+      # global: it can carry a field defined by any store it deals with, and
+      # there is no owning store to disagree with.
+      resource_store_id = resource.try(:store_id) || resource.try(:product)&.store_id
       return if resource_store_id.blank?
       return if custom_field_definition.store_id == resource_store_id
 

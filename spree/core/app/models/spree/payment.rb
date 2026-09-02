@@ -405,6 +405,13 @@ module Spree
       payment_method&.source_required?
     end
 
+    # A payment has no store of its own; it reaches one through the order it
+    # settles. Without this its gateway-error custom field would be filed
+    # against whichever store the request named — the default one in a job.
+    def custom_field_definition_store
+      order&.store || super
+    end
+
     def add_gateway_processing_error(error_message)
       if has_custom_field?('gateway.processing_errors')
         errors = JSON.parse(get_custom_field('gateway.processing_errors').value)

@@ -164,6 +164,15 @@ RSpec.describe Spree::CustomField, type: :model do
       expect(product).not_to be_valid
     end
 
+    it 'refuses a foreign definition on a variant, which belongs to its product store' do
+      variant = create(:variant, product: product)
+      foreign = create(:custom_field_definition, store: create(:store), resource_type: 'Spree::Variant', key: 'vk')
+      custom_field = build(:custom_field, resource: variant, custom_field_definition: foreign, value: 'x')
+
+      expect(custom_field).not_to be_valid
+      expect(custom_field.errors[:custom_field_definition]).to include('must belong to the same store')
+    end
+
     # A customer is global, so there is no store to compare against — and the
     # definition it was given was resolved within one already.
     it 'leaves a resource without a store of its own alone' do

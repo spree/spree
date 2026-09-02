@@ -264,6 +264,44 @@ RSpec.describe Spree::Export, :job, type: :model do
       end
     end
 
+    # An export runs in a job, so nothing has named a store. A scope that reads
+    # the current one has to see the store being exported, not the default.
+    context 'with a free-text search param' do
+      it 'exports a searched customer list' do
+        create(:user, email: 'findme@example.com')
+        customer_export = Spree::Exports::Customers.create!(
+          store: store, user: user, format: 'csv', search_params: { search: 'findme' }.to_json
+        )
+
+        expect { customer_export.generate }.to change(customer_export.attachment, :attached?).from(false).to(true)
+      end
+
+      it 'exports a searched product list' do
+        create(:product, name: 'Findable Widget')
+        product_export = Spree::Exports::Products.create!(
+          store: store, user: user, format: 'csv', search_params: { multi_search: 'Findable' }.to_json
+        )
+
+        expect { product_export.generate }.to change(product_export.attachment, :attached?).from(false).to(true)
+      end
+
+      it 'names the exporting store while it runs' do
+        other_store = create(:store)
+        Spree::Current.store = other_store
+        seen = nil
+        export.save!
+        allow(export).to receive(:csv_headers).and_wrap_original do |original|
+          seen = Spree::Current.store
+          original.call
+        end
+
+        export.generate
+
+        expect(seen).to eq(store)
+        expect(Spree::Current.store).to eq(other_store)
+      end
+    end
+
     # The dashboard builds export search_params from the same filter state as
     # the products table, so a `cf_*` filter has to survive the round-trip —
     # Ransack alone has no such attribute.

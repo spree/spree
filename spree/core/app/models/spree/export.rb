@@ -114,8 +114,15 @@ module Spree
     end
 
     def generate
-      send(:"generate_#{format}")
-      handle_attachment
+      # An export runs in a job, where nothing has named a store. Scopes that
+      # read the current one — the product search's custom-field arm, address
+      # validation — would otherwise answer for the default store rather than
+      # the one whose records are being exported.
+      Spree::Current.set(store: store) do
+        send(:"generate_#{format}")
+        handle_attachment
+      end
+
       send_export_done_email
     end
 
@@ -213,22 +220,7 @@ module Spree
                                 [scope, params]
                               end
 
-      filtered_scope = apply_search_param(filtered_scope, params)
-
-      filtered_scope.ransack(params.except('search', :search)).result
-    end
-
-    # Runs a free-text `search` param against this export's own store. Left to
-    # Ransack it would reach the scope with one argument and search whichever
-    # store the current request happens to name, which for a background export
-    # is the default one.
-    #
-    # @return [ActiveRecord::Relation]
-    def apply_search_param(relation, params)
-      query = params['search'] || params[:search]
-      return relation if query.blank? || !relation.respond_to?(:search)
-
-      relation.search(query, store)
+      filtered_scope.ransack(params).result
     end
 
     # Replace any prefixed IDs in `search_params` with their raw DB IDs so
