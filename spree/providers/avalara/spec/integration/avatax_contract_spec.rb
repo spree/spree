@@ -67,6 +67,27 @@ RSpec.describe 'AvaTax API contract', :vcr do
       expect(cart.tax_lines.reload.map(&:taxability_reason)).to include('customer_exempt')
     end
 
+    # The document-level example above cannot exercise the per-line keys, because
+    # one order-wide claim goes on the document by design. This one carves a line
+    # out so placement moves onto the line, and pins the certificate number
+    # coming back — AvaTax ignores line keys it does not recognise without
+    # complaining, so a wrong name here would silently drop the certificate.
+    it 'records a per-line exemption with its certificate number',
+       vcr: { cassette_name: 'estimate/exempt_per_line' } do
+      cart = us_cart
+      allow(SpreeAvalara::Integration).to receive(:active_for).and_return(integration)
+      line = cart.line_items.first
+      override = instance_double('override', item_id: line.prefixed_id, exempt?: true, reason_code: 'RESALE')
+      exemption = Spree::TaxExemption.new(reason_code: 'RESALE', certificate_number: 'C-100',
+                                          item_overrides: [override])
+
+      provider.estimate(cart, exemptions: [exemption])
+
+      row = cart.tax_lines.reload.find_by(line_item_id: line.id)
+      expect(row.taxability_reason).to eq('customer_exempt')
+      expect(row.data['avalara']['exemptNo']).to eq('C-100')
+    end
+
     # The commonest zero-tax case, and the one the reason table originally got
     # wrong: the whole line reads exempt with no certificate behind it.
     it 'calls a destination with no nexus not_collecting',

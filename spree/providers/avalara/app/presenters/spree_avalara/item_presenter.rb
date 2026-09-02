@@ -55,6 +55,11 @@ module SpreeAvalara
 
       code = EntityUseCodes.for(entry.reason_code_for(item))
       payload = code ? { entityUseCode: code } : {}
+      # `exemptionCode` on a line, `exemptionNo` on the document — genuinely
+      # different names for the same certificate number, verified against the
+      # sandbox: a line sent `exemptionNo` comes back with none recorded, and
+      # AvaTax ignores line keys it does not know without any error. A typo here
+      # would drop the certificate from the filing in silence.
       payload[:exemptionCode] = entry.certificate_number if entry.certificate_number.present?
       payload
     end
