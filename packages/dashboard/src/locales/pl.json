@@ -2522,7 +2522,8 @@
       "returns": "Zwroty",
       "sellers": "Sprzedawcy",
       "settings": "Ustawienia",
-      "transfers": "Transfery"
+      "transfers": "Transfery",
+      "translations": "Tłumaczenia"
     },
     "option_types": {
       "columns": {
@@ -3752,6 +3753,25 @@
           "roles": "Role"
         },
         "title": "Zespół"
+      },
+      "translations": {
+        "complete": "W pełni przetłumaczone",
+        "coverage": "Pokrycie tłumaczeń",
+        "description": "Zobacz, jaka część katalogu jest przetłumaczona, i uzupełnij braki.",
+        "load_error": "Nie udało się wczytać pokrycia tłumaczeń.",
+        "no_locales_description": "Dodaj język do jednego ze swoich rynków, aby rozpocząć tłumaczenie.",
+        "no_locales_title": "Brak innych języków",
+        "progress": "Postęp",
+        "record": "Rekord",
+        "records": "Rekordy",
+        "resource_types": {
+          "category": "Kategorie",
+          "collection": "Kolekcje",
+          "option_type": "Typy opcji",
+          "product": "Produkty"
+        },
+        "total": "Łącznie",
+        "translated": "Przetłumaczone"
       }
     },
     "payment_methods": {

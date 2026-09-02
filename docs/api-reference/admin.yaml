@@ -386,6 +386,8 @@ paths:
                 - write_sellers
                 - read_commissions
                 - write_commissions
+                - read_payouts
+                - write_payouts
                 - read_seller_profile
                 - write_seller_profile
                 - read_dashboard
@@ -515,6 +517,8 @@ paths:
                 - write_sellers
                 - read_commissions
                 - write_commissions
+                - read_payouts
+                - write_payouts
                 - read_seller_profile
                 - write_seller_profile
                 - read_dashboard
@@ -12452,8 +12456,8 @@ paths:
                   preorder_ships_at:
                   quantity: 2
                   currency: USD
-                  name: Product 499180
-                  slug: product-499180
+                  name: Product 509180
+                  slug: product-509180
                   options_text: 'Size: S'
                   price: '10.0'
                   display_price: "$10.00"
@@ -12565,8 +12569,8 @@ paths:
                 preorder_ships_at:
                 quantity: 3
                 currency: USD
-                name: Product 5199
-                slug: product-5199
+                name: Product 5299
+                slug: product-5299
                 options_text: 'Size: S'
                 price: '19.99'
                 display_price: "$19.99"
@@ -12700,8 +12704,8 @@ paths:
                 preorder_ships_at:
                 quantity: 2
                 currency: USD
-                name: Product 522714
-                slug: product-522714
+                name: Product 532714
+                slug: product-532714
                 options_text: 'Size: S'
                 price: '10.0'
                 display_price: "$10.00"
@@ -12808,8 +12812,8 @@ paths:
                 preorder_ships_at:
                 quantity: 5
                 currency: USD
-                name: Product 539758
-                slug: product-539758
+                name: Product 549758
+                slug: product-549758
                 options_text: 'Size: S'
                 price: '19.99'
                 display_price: "$19.99"
@@ -16164,7 +16168,7 @@ paths:
             application/json:
               example:
                 id: pl_UkLWZg9DAJ
-                name: Price List 1
+                name: Price List 2
                 description:
                 status: inactive
                 position: 1
@@ -17333,8 +17337,8 @@ paths:
               example:
                 data:
                 - id: prod_UkLWZg9DAJ
-                  name: Product 916550
-                  slug: product-916550
+                  name: Product 926550
+                  slug: product-926550
                   meta_title:
                   meta_description:
                   meta_keywords:
@@ -17727,8 +17731,8 @@ paths:
             application/json:
               example:
                 id: prod_UkLWZg9DAJ
-                name: Product 952061
-                slug: product-952061
+                name: Product 962061
+                slug: product-962061
                 meta_title:
                 meta_description:
                 meta_keywords:
@@ -17841,7 +17845,7 @@ paths:
               example:
                 id: prod_UkLWZg9DAJ
                 name: Updated Name
-                slug: product-975339
+                slug: product-985339
                 meta_title:
                 meta_description:
                 meta_keywords:
@@ -18783,6 +18787,93 @@ paths:
                   type: array
                   items:
                     type: string
+  "/api/v3/admin/translations":
+    get:
+      summary: Translation coverage for a resource type
+      tags:
+      - Products
+      security:
+      - api_key: []
+        bearer_auth: []
+      description: |-
+        Reports how much of each record is translated into each of the store's non-default locales, plus per-locale totals. A record counts as covered for a locale only when every one of its translatable fields is filled in.
+
+        **Required scope:** `read_products` (for API-key authentication).
+      parameters:
+      - name: x-spree-api-key
+        in: header
+        required: true
+        schema:
+          type: string
+      - name: Authorization
+        in: header
+        required: true
+        schema:
+          type: string
+      - name: resource_type
+        in: query
+        required: true
+        description: A translatable resource type, e.g. `product`, `category`, `option_type`.
+        schema:
+          type: string
+      - name: page
+        in: query
+        required: false
+        schema:
+          type: integer
+      - name: limit
+        in: query
+        required: false
+        schema:
+          type: integer
+      - name: search
+        in: query
+        required: false
+        description: Free-text term, applied through whichever predicate the resource
+          type whitelists (reported back as `search_field`).
+        schema:
+          type: string
+      responses:
+        '200':
+          description: coverage found
+          content:
+            application/json:
+              example:
+                data:
+                  resource_type: product
+                  default_locale: en
+                  locales:
+                  - de
+                  field_count: 5
+                  search_field: name_cont
+                  coverage:
+                  - locale: de
+                    translated: 0
+                    total: 1
+                    coverage: 0.0
+                  records:
+                  - id: prod_UkLWZg9DAJ
+                    label: Espresso Machine
+                    locales:
+                      de: 2
+                meta:
+                  page: 1
+                  limit: 25
+                  count: 1
+                  pages: 1
+                  from: 1
+                  to: 1
+                  in: 1
+                  previous:
+                  next:
+        '404':
+          description: resource type is not translatable
+          content:
+            application/json:
+              example:
+                error:
+                  code: record_not_found
+                  message: record not found
   "/api/v3/admin/policies":
     get:
       summary: List policies
@@ -20834,6 +20925,9 @@ paths:
                 preferred_inventory_provider: internal
                 preferred_pricing_provider_failure_policy: strict
                 preferred_inventory_provider_failure_policy: fallback
+                preferred_payout_provider:
+                preferred_default_payouts_schedule_interval: monthly
+                preferred_default_minimum_payout_amount: 0
                 preferred_document_number_format: sequential
                 preferred_order_number_prefix: R
                 preferred_order_number_suffix: ''
@@ -21160,6 +21254,9 @@ paths:
                 preferred_inventory_provider: internal
                 preferred_pricing_provider_failure_policy: strict
                 preferred_inventory_provider_failure_policy: fallback
+                preferred_payout_provider:
+                preferred_default_payouts_schedule_interval: monthly
+                preferred_default_minimum_payout_amount: 0
                 preferred_document_number_format: sequential
                 preferred_order_number_prefix: R
                 preferred_order_number_suffix: ''
@@ -21917,7 +22014,7 @@ paths:
                     type: html
                   - key: permalink
                     type: string
-                  readable: false
+                  readable: true
                 - resource_type: category
                   fields:
                   - key: name
@@ -21952,7 +22049,7 @@ paths:
                     type: string
                   - key: body
                     type: html
-                  readable: false
+                  readable: true
                 - resource_type: seller
                   fields:
                   - key: name
@@ -22923,6 +23020,20 @@ paths:
                   group_label: Access
                   label: Commissions
                   description: ''
+                - key: read_payouts
+                  resource: payouts
+                  kind: read
+                  group: access
+                  group_label: Access
+                  label: Payouts
+                  description: ''
+                - key: write_payouts
+                  resource: payouts
+                  kind: write
+                  group: access
+                  group_label: Access
+                  label: Payouts
+                  description: ''
                 - key: read_seller_profile
                   resource: seller_profile
                   kind: read
@@ -22945,7 +23056,7 @@ paths:
                   label: Analytics dashboard
                   description: Sales and performance analytics
                 meta:
-                  count: 47
+                  count: 49
   "/api/v3/admin/roles":
     get:
       summary: List roles
@@ -23041,6 +23152,8 @@ paths:
                   - write_sellers
                   - read_commissions
                   - write_commissions
+                  - read_payouts
+                  - write_payouts
                   - read_seller_profile
                   - write_seller_profile
                   - read_dashboard
@@ -24004,7 +24117,7 @@ paths:
                 data:
                 - id: variant_UkLWZg9DAJ
                   product_id: prod_UkLWZg9DAJ
-                  sku: SKU-153
+                  sku: SKU-155
                   options_text: ''
                   track_inventory: true
                   media_count: 0
@@ -24055,11 +24168,11 @@ paths:
                   available_stock: 0
                   reserved_quantity: 0
                   total_on_hand: 0
-                  product_name: Product 1226804
+                  product_name: Product 1236804
                   delivery_profile_id: fp_UkLWZg9DAJ
                 - id: variant_gbHJdmfrXB
                   product_id: prod_UkLWZg9DAJ
-                  sku: SKU-154
+                  sku: SKU-156
                   options_text: 'Size: S'
                   track_inventory: true
                   media_count: 0
@@ -24122,7 +24235,7 @@ paths:
                   available_stock: 0
                   reserved_quantity: 0
                   total_on_hand: 0
-                  product_name: Product 1226804
+                  product_name: Product 1236804
                   delivery_profile_id: fp_UkLWZg9DAJ
                 meta:
                   page: 1
@@ -24264,7 +24377,7 @@ paths:
                 available_stock: 0
                 reserved_quantity: 0
                 total_on_hand: 0
-                product_name: Product 1231771
+                product_name: Product 1241771
                 delivery_profile_id: fp_UkLWZg9DAJ
         '422':
           description: validation error
@@ -24443,7 +24556,7 @@ paths:
               example:
                 id: variant_gbHJdmfrXB
                 product_id: prod_UkLWZg9DAJ
-                sku: SKU-160
+                sku: SKU-162
                 options_text: 'Size: S'
                 track_inventory: true
                 media_count: 0
@@ -24506,7 +24619,7 @@ paths:
                 available_stock: 0
                 reserved_quantity: 0
                 total_on_hand: 0
-                product_name: Product 1254025
+                product_name: Product 1264025
                 delivery_profile_id: fp_UkLWZg9DAJ
         '404':
           description: variant not found
@@ -24642,7 +24755,7 @@ paths:
                 available_stock: 0
                 reserved_quantity: 0
                 total_on_hand: 0
-                product_name: Product 1275672
+                product_name: Product 1285672
                 delivery_profile_id: fp_UkLWZg9DAJ
       requestBody:
         content:
@@ -25956,7 +26069,7 @@ paths:
                 id: cat_gbHJdmfrXB
                 name: VIP Assortment
                 description:
-                active: true
+                active: false
                 position: 2
                 metadata: {}
                 minimum_order_quantity:
@@ -26357,8 +26470,8 @@ paths:
                   created_at: '2026-01-15T12:00:00.000Z'
                   updated_at: '2026-01-15T12:00:00.000Z'
                   variant_id: variant_gbHJdmfrXB
-                  variant_sku: SKU-4
-                  product_name: Product 35457
+                  variant_sku: SKU-5
+                  product_name: Product 45457
                   options_text: 'Size: S'
                 meta:
                   page: 1
@@ -26409,8 +26522,8 @@ paths:
                 created_at: '2026-01-15T12:00:00.000Z'
                 updated_at: '2026-01-15T12:00:00.000Z'
                 variant_id: variant_gbHJdmfrXB
-                variant_sku: SKU-6
-                product_name: Product 41599
+                variant_sku: SKU-7
+                product_name: Product 51599
                 options_text: 'Size: S'
         '422':
           description: invalid request
@@ -26606,8 +26719,8 @@ paths:
                 created_at: '2026-01-15T12:00:00.000Z'
                 updated_at: '2026-01-15T12:00:00.000Z'
                 variant_id: variant_gbHJdmfrXB
-                variant_sku: SKU-10
-                product_name: Product 61912
+                variant_sku: SKU-11
+                product_name: Product 71912
                 options_text: 'Size: S'
       requestBody:
         content:
@@ -26784,7 +26897,7 @@ paths:
                 data:
                 - id: prod_UkLWZg9DAJ
                   product_id: prod_UkLWZg9DAJ
-                  product_name: Product 83986
+                  product_name: Product 93986
                   minimum_order_quantity: 48
                   order_multiple: 24
                   mixed: true
@@ -26824,7 +26937,7 @@ paths:
                 data:
                 - id: prod_UkLWZg9DAJ
                   product_id: prod_UkLWZg9DAJ
-                  product_name: Product 97053
+                  product_name: Product 107053
                   minimum_order_quantity: 48
                   order_multiple: 24
                   mixed: false
@@ -28269,10 +28382,10 @@ paths:
                   name: Sale value
                   description: Charges this rate only on sales within a value range
                   preference_schema:
-                  - key: min_amount
+                  - key: max_amount
                     type: decimal
                     default:
-                  - key: max_amount
+                  - key: min_amount
                     type: decimal
                     default:
                   association_fields: []
@@ -30289,15 +30402,15 @@ paths:
                 - type: Spree::Calculator::Shipping::PerItem
                   name: Flat rate per package item
                   preference_schema:
+                  - key: currency
+                    type: string
+                    default: USD
                   - key: amounts
                     type: hash
                     default: {}
                   - key: amount
                     type: decimal
                     default: 0
-                  - key: currency
-                    type: string
-                    default: USD
                 - type: Spree::Calculator::Shipping::PriceSack
                   name: Price sack
                   preference_schema:
@@ -30307,24 +30420,24 @@ paths:
                   - key: normal_amount
                     type: decimal
                     default: 0
-                  - key: currency
-                    type: string
-                    default: USD
                   - key: discount_amount
                     type: decimal
                     default: 0
+                  - key: currency
+                    type: string
+                    default: USD
                 - type: Spree::Calculator::Shipping::DigitalDelivery
                   name: Digital Delivery
                   preference_schema:
+                  - key: currency
+                    type: string
+                    default: USD
                   - key: amounts
                     type: hash
                     default: {}
                   - key: amount
                     type: decimal
                     default: 0
-                  - key: currency
-                    type: string
-                    default: USD
   "/api/v3/admin/delivery_zones":
     post:
       summary: Create delivery zone
@@ -30778,13 +30891,13 @@ paths:
                   video_embed_url:
                   video_url:
                   poster_url:
-                  original_url: http://localhost:3000/rails/active_storage/blobs/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--8daa562c0917e5095f42256aae1474497fe1b382/thinking-cat.jpg
-                  mini_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--8daa562c0917e5095f42256aae1474497fe1b382/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOlsxMjgsMTI4XSwic2F2ZXIiOnsic3RyaXAiOnRydWUsInF1YWxpdHkiOjc1LCJsb3NzbGVzcyI6ZmFsc2UsImFscGhhX3EiOjg1LCJyZWR1Y3Rpb25fZWZmb3J0Ijo2LCJzbWFydF9zdWJzYW1wbGUiOnRydWV9fSwicHVyIjoidmFyaWF0aW9uIn19--4a37e0676a570d1ac8a2c4eb824f6a98a6eec3f2/thinking-cat.jpg
-                  small_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--8daa562c0917e5095f42256aae1474497fe1b382/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOlsyNTYsMjU2XSwic2F2ZXIiOnsic3RyaXAiOnRydWUsInF1YWxpdHkiOjc1LCJsb3NzbGVzcyI6ZmFsc2UsImFscGhhX3EiOjg1LCJyZWR1Y3Rpb25fZWZmb3J0Ijo2LCJzbWFydF9zdWJzYW1wbGUiOnRydWV9fSwicHVyIjoidmFyaWF0aW9uIn19--e172096a8b99002f90abf116b5142ecac7f6e287/thinking-cat.jpg
-                  medium_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--8daa562c0917e5095f42256aae1474497fe1b382/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOls0MDAsNDAwXSwic2F2ZXIiOnsic3RyaXAiOnRydWUsInF1YWxpdHkiOjc1LCJsb3NzbGVzcyI6ZmFsc2UsImFscGhhX3EiOjg1LCJyZWR1Y3Rpb25fZWZmb3J0Ijo2LCJzbWFydF9zdWJzYW1wbGUiOnRydWV9fSwicHVyIjoidmFyaWF0aW9uIn19--02e5187f95a3d4d057f02e78c2e485795b3dd83a/thinking-cat.jpg
-                  large_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--8daa562c0917e5095f42256aae1474497fe1b382/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOls3MjAsNzIwXSwic2F2ZXIiOnsic3RyaXAiOnRydWUsInF1YWxpdHkiOjc1LCJsb3NzbGVzcyI6ZmFsc2UsImFscGhhX3EiOjg1LCJyZWR1Y3Rpb25fZWZmb3J0Ijo2LCJzbWFydF9zdWJzYW1wbGUiOnRydWV9fSwicHVyIjoidmFyaWF0aW9uIn19--b748474318a6e7f24c8583018970b06f8e9e6f39/thinking-cat.jpg
-                  xlarge_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--8daa562c0917e5095f42256aae1474497fe1b382/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOlsyMDAwLDIwMDBdLCJzYXZlciI6eyJzdHJpcCI6dHJ1ZSwicXVhbGl0eSI6NzUsImxvc3NsZXNzIjpmYWxzZSwiYWxwaGFfcSI6ODUsInJlZHVjdGlvbl9lZmZvcnQiOjYsInNtYXJ0X3N1YnNhbXBsZSI6dHJ1ZX19LCJwdXIiOiJ2YXJpYXRpb24ifX0=--4edd5d882f2e8043693f8932d6291dfae16601f5/thinking-cat.jpg
-                  og_image_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--8daa562c0917e5095f42256aae1474497fe1b382/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOlsxMjAwLDYzMF0sInNhdmVyIjp7InN0cmlwIjp0cnVlLCJxdWFsaXR5Ijo3NSwibG9zc2xlc3MiOmZhbHNlLCJhbHBoYV9xIjo4NSwicmVkdWN0aW9uX2VmZm9ydCI6Niwic21hcnRfc3Vic2FtcGxlIjp0cnVlfX0sInB1ciI6InZhcmlhdGlvbiJ9fQ==--a36a55f2bb6ae83cca5b3aed691446af80062731/thinking-cat.jpg
+                  original_url: http://localhost:3000/rails/active_storage/blobs/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--9bc58549b63ad1356a2279c4324418829d950221/thinking-cat.jpg
+                  mini_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--9bc58549b63ad1356a2279c4324418829d950221/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOlsxMjgsMTI4XSwic2F2ZXIiOnsic3RyaXAiOnRydWUsInF1YWxpdHkiOjc1LCJsb3NzbGVzcyI6ZmFsc2UsImFscGhhX3EiOjg1LCJyZWR1Y3Rpb25fZWZmb3J0Ijo2LCJzbWFydF9zdWJzYW1wbGUiOnRydWV9fSwicHVyIjoidmFyaWF0aW9uIn19--39b4543c3c059b1e3b92918c201965eeaa29ee4c/thinking-cat.jpg
+                  small_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--9bc58549b63ad1356a2279c4324418829d950221/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOlsyNTYsMjU2XSwic2F2ZXIiOnsic3RyaXAiOnRydWUsInF1YWxpdHkiOjc1LCJsb3NzbGVzcyI6ZmFsc2UsImFscGhhX3EiOjg1LCJyZWR1Y3Rpb25fZWZmb3J0Ijo2LCJzbWFydF9zdWJzYW1wbGUiOnRydWV9fSwicHVyIjoidmFyaWF0aW9uIn19--9cb95228ac36c2833e30a06bbb4a99962119e46d/thinking-cat.jpg
+                  medium_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--9bc58549b63ad1356a2279c4324418829d950221/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOls0MDAsNDAwXSwic2F2ZXIiOnsic3RyaXAiOnRydWUsInF1YWxpdHkiOjc1LCJsb3NzbGVzcyI6ZmFsc2UsImFscGhhX3EiOjg1LCJyZWR1Y3Rpb25fZWZmb3J0Ijo2LCJzbWFydF9zdWJzYW1wbGUiOnRydWV9fSwicHVyIjoidmFyaWF0aW9uIn19--7ab6834f26aa4f1bc2156789499fdd2cc71b834e/thinking-cat.jpg
+                  large_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--9bc58549b63ad1356a2279c4324418829d950221/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOls3MjAsNzIwXSwic2F2ZXIiOnsic3RyaXAiOnRydWUsInF1YWxpdHkiOjc1LCJsb3NzbGVzcyI6ZmFsc2UsImFscGhhX3EiOjg1LCJyZWR1Y3Rpb25fZWZmb3J0Ijo2LCJzbWFydF9zdWJzYW1wbGUiOnRydWV9fSwicHVyIjoidmFyaWF0aW9uIn19--1d8b6e2d3133838c72fce943c8e993b414c712a5/thinking-cat.jpg
+                  xlarge_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--9bc58549b63ad1356a2279c4324418829d950221/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOlsyMDAwLDIwMDBdLCJzYXZlciI6eyJzdHJpcCI6dHJ1ZSwicXVhbGl0eSI6NzUsImxvc3NsZXNzIjpmYWxzZSwiYWxwaGFfcSI6ODUsInJlZHVjdGlvbl9lZmZvcnQiOjYsInNtYXJ0X3N1YnNhbXBsZSI6dHJ1ZX19LCJwdXIiOiJ2YXJpYXRpb24ifX0=--74108145c50932e76438531ad1d89b778141a5c8/thinking-cat.jpg
+                  og_image_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--9bc58549b63ad1356a2279c4324418829d950221/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOlsxMjAwLDYzMF0sInNhdmVyIjp7InN0cmlwIjp0cnVlLCJxdWFsaXR5Ijo3NSwibG9zc2xlc3MiOmZhbHNlLCJhbHBoYV9xIjo4NSwicmVkdWN0aW9uX2VmZm9ydCI6Niwic21hcnRfc3Vic2FtcGxlIjp0cnVlfX0sInB1ciI6InZhcmlhdGlvbiJ9fQ==--bdd783cb21f5d053e71cc0c2a59f9995b15404f8/thinking-cat.jpg
                   external_references: {}
                   created_at: '2026-01-15T12:00:00.000Z'
                   updated_at: '2026-01-15T12:00:00.000Z'
@@ -30792,10 +30905,10 @@ paths:
                   filename: thinking-cat.jpg
                   content_type: image/jpeg
                   byte_size: 18090
-                  embed_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--8daa562c0917e5095f42256aae1474497fe1b382/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2xpbWl0IjpbMTIwMCwxMjAwXSwic2F2ZXIiOnsic3RyaXAiOnRydWUsInF1YWxpdHkiOjc1LCJsb3NzbGVzcyI6ZmFsc2UsImFscGhhX3EiOjg1LCJyZWR1Y3Rpb25fZWZmb3J0Ijo2LCJzbWFydF9zdWJzYW1wbGUiOnRydWV9fSwicHVyIjoidmFyaWF0aW9uIn19--cf80063d385bdf82988701ad3560963ae02360f8/thinking-cat.jpg
-                  signed_id: eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--8daa562c0917e5095f42256aae1474497fe1b382
+                  embed_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--9bc58549b63ad1356a2279c4324418829d950221/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2xpbWl0IjpbMTIwMCwxMjAwXSwic2F2ZXIiOnsic3RyaXAiOnRydWUsInF1YWxpdHkiOjc1LCJsb3NzbGVzcyI6ZmFsc2UsImFscGhhX3EiOjg1LCJyZWR1Y3Rpb25fZWZmb3J0Ijo2LCJzbWFydF9zdWJzYW1wbGUiOnRydWV9fSwicHVyIjoidmFyaWF0aW9uIn19--f1bcdadd1e910f865de4d6f69e93c0481c2efb48/thinking-cat.jpg
+                  signed_id: eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--9bc58549b63ad1356a2279c4324418829d950221
                   viewable_id: prod_UkLWZg9DAJ
-                  download_url: http://localhost:3000/rails/active_storage/blobs/redirect/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--8daa562c0917e5095f42256aae1474497fe1b382/thinking-cat.jpg?disposition=attachment
+                  download_url: http://localhost:3000/rails/active_storage/blobs/redirect/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--9bc58549b63ad1356a2279c4324418829d950221/thinking-cat.jpg?disposition=attachment
                   metadata: {}
                   viewable_type: product
                 meta:
@@ -30866,13 +30979,13 @@ paths:
                 video_embed_url:
                 video_url:
                 poster_url:
-                original_url: http://localhost:3000/rails/active_storage/blobs/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MiwicHVyIjoiYmxvYl9pZCJ9fQ==--931f5ded53b765a563e1a71b11f31bb5f8944f3c/library-upload.jpg
-                mini_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MiwicHVyIjoiYmxvYl9pZCJ9fQ==--931f5ded53b765a563e1a71b11f31bb5f8944f3c/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOlsxMjgsMTI4XSwic2F2ZXIiOnsic3RyaXAiOnRydWUsInF1YWxpdHkiOjc1LCJsb3NzbGVzcyI6ZmFsc2UsImFscGhhX3EiOjg1LCJyZWR1Y3Rpb25fZWZmb3J0Ijo2LCJzbWFydF9zdWJzYW1wbGUiOnRydWV9fSwicHVyIjoidmFyaWF0aW9uIn19--4a37e0676a570d1ac8a2c4eb824f6a98a6eec3f2/library-upload.jpg
-                small_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MiwicHVyIjoiYmxvYl9pZCJ9fQ==--931f5ded53b765a563e1a71b11f31bb5f8944f3c/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOlsyNTYsMjU2XSwic2F2ZXIiOnsic3RyaXAiOnRydWUsInF1YWxpdHkiOjc1LCJsb3NzbGVzcyI6ZmFsc2UsImFscGhhX3EiOjg1LCJyZWR1Y3Rpb25fZWZmb3J0Ijo2LCJzbWFydF9zdWJzYW1wbGUiOnRydWV9fSwicHVyIjoidmFyaWF0aW9uIn19--e172096a8b99002f90abf116b5142ecac7f6e287/library-upload.jpg
-                medium_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MiwicHVyIjoiYmxvYl9pZCJ9fQ==--931f5ded53b765a563e1a71b11f31bb5f8944f3c/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOls0MDAsNDAwXSwic2F2ZXIiOnsic3RyaXAiOnRydWUsInF1YWxpdHkiOjc1LCJsb3NzbGVzcyI6ZmFsc2UsImFscGhhX3EiOjg1LCJyZWR1Y3Rpb25fZWZmb3J0Ijo2LCJzbWFydF9zdWJzYW1wbGUiOnRydWV9fSwicHVyIjoidmFyaWF0aW9uIn19--02e5187f95a3d4d057f02e78c2e485795b3dd83a/library-upload.jpg
-                large_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MiwicHVyIjoiYmxvYl9pZCJ9fQ==--931f5ded53b765a563e1a71b11f31bb5f8944f3c/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOls3MjAsNzIwXSwic2F2ZXIiOnsic3RyaXAiOnRydWUsInF1YWxpdHkiOjc1LCJsb3NzbGVzcyI6ZmFsc2UsImFscGhhX3EiOjg1LCJyZWR1Y3Rpb25fZWZmb3J0Ijo2LCJzbWFydF9zdWJzYW1wbGUiOnRydWV9fSwicHVyIjoidmFyaWF0aW9uIn19--b748474318a6e7f24c8583018970b06f8e9e6f39/library-upload.jpg
-                xlarge_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MiwicHVyIjoiYmxvYl9pZCJ9fQ==--931f5ded53b765a563e1a71b11f31bb5f8944f3c/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOlsyMDAwLDIwMDBdLCJzYXZlciI6eyJzdHJpcCI6dHJ1ZSwicXVhbGl0eSI6NzUsImxvc3NsZXNzIjpmYWxzZSwiYWxwaGFfcSI6ODUsInJlZHVjdGlvbl9lZmZvcnQiOjYsInNtYXJ0X3N1YnNhbXBsZSI6dHJ1ZX19LCJwdXIiOiJ2YXJpYXRpb24ifX0=--4edd5d882f2e8043693f8932d6291dfae16601f5/library-upload.jpg
-                og_image_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MiwicHVyIjoiYmxvYl9pZCJ9fQ==--931f5ded53b765a563e1a71b11f31bb5f8944f3c/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOlsxMjAwLDYzMF0sInNhdmVyIjp7InN0cmlwIjp0cnVlLCJxdWFsaXR5Ijo3NSwibG9zc2xlc3MiOmZhbHNlLCJhbHBoYV9xIjo4NSwicmVkdWN0aW9uX2VmZm9ydCI6Niwic21hcnRfc3Vic2FtcGxlIjp0cnVlfX0sInB1ciI6InZhcmlhdGlvbiJ9fQ==--a36a55f2bb6ae83cca5b3aed691446af80062731/library-upload.jpg
+                original_url: http://localhost:3000/rails/active_storage/blobs/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MiwicHVyIjoiYmxvYl9pZCJ9fQ==--9ccd6fd184d4ba9afdd7bf51b8e6471cebca911f/library-upload.jpg
+                mini_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MiwicHVyIjoiYmxvYl9pZCJ9fQ==--9ccd6fd184d4ba9afdd7bf51b8e6471cebca911f/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOlsxMjgsMTI4XSwic2F2ZXIiOnsic3RyaXAiOnRydWUsInF1YWxpdHkiOjc1LCJsb3NzbGVzcyI6ZmFsc2UsImFscGhhX3EiOjg1LCJyZWR1Y3Rpb25fZWZmb3J0Ijo2LCJzbWFydF9zdWJzYW1wbGUiOnRydWV9fSwicHVyIjoidmFyaWF0aW9uIn19--39b4543c3c059b1e3b92918c201965eeaa29ee4c/library-upload.jpg
+                small_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MiwicHVyIjoiYmxvYl9pZCJ9fQ==--9ccd6fd184d4ba9afdd7bf51b8e6471cebca911f/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOlsyNTYsMjU2XSwic2F2ZXIiOnsic3RyaXAiOnRydWUsInF1YWxpdHkiOjc1LCJsb3NzbGVzcyI6ZmFsc2UsImFscGhhX3EiOjg1LCJyZWR1Y3Rpb25fZWZmb3J0Ijo2LCJzbWFydF9zdWJzYW1wbGUiOnRydWV9fSwicHVyIjoidmFyaWF0aW9uIn19--9cb95228ac36c2833e30a06bbb4a99962119e46d/library-upload.jpg
+                medium_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MiwicHVyIjoiYmxvYl9pZCJ9fQ==--9ccd6fd184d4ba9afdd7bf51b8e6471cebca911f/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOls0MDAsNDAwXSwic2F2ZXIiOnsic3RyaXAiOnRydWUsInF1YWxpdHkiOjc1LCJsb3NzbGVzcyI6ZmFsc2UsImFscGhhX3EiOjg1LCJyZWR1Y3Rpb25fZWZmb3J0Ijo2LCJzbWFydF9zdWJzYW1wbGUiOnRydWV9fSwicHVyIjoidmFyaWF0aW9uIn19--7ab6834f26aa4f1bc2156789499fdd2cc71b834e/library-upload.jpg
+                large_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MiwicHVyIjoiYmxvYl9pZCJ9fQ==--9ccd6fd184d4ba9afdd7bf51b8e6471cebca911f/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOls3MjAsNzIwXSwic2F2ZXIiOnsic3RyaXAiOnRydWUsInF1YWxpdHkiOjc1LCJsb3NzbGVzcyI6ZmFsc2UsImFscGhhX3EiOjg1LCJyZWR1Y3Rpb25fZWZmb3J0Ijo2LCJzbWFydF9zdWJzYW1wbGUiOnRydWV9fSwicHVyIjoidmFyaWF0aW9uIn19--1d8b6e2d3133838c72fce943c8e993b414c712a5/library-upload.jpg
+                xlarge_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MiwicHVyIjoiYmxvYl9pZCJ9fQ==--9ccd6fd184d4ba9afdd7bf51b8e6471cebca911f/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOlsyMDAwLDIwMDBdLCJzYXZlciI6eyJzdHJpcCI6dHJ1ZSwicXVhbGl0eSI6NzUsImxvc3NsZXNzIjpmYWxzZSwiYWxwaGFfcSI6ODUsInJlZHVjdGlvbl9lZmZvcnQiOjYsInNtYXJ0X3N1YnNhbXBsZSI6dHJ1ZX19LCJwdXIiOiJ2YXJpYXRpb24ifX0=--74108145c50932e76438531ad1d89b778141a5c8/library-upload.jpg
+                og_image_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MiwicHVyIjoiYmxvYl9pZCJ9fQ==--9ccd6fd184d4ba9afdd7bf51b8e6471cebca911f/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOlsxMjAwLDYzMF0sInNhdmVyIjp7InN0cmlwIjp0cnVlLCJxdWFsaXR5Ijo3NSwibG9zc2xlc3MiOmZhbHNlLCJhbHBoYV9xIjo4NSwicmVkdWN0aW9uX2VmZm9ydCI6Niwic21hcnRfc3Vic2FtcGxlIjp0cnVlfX0sInB1ciI6InZhcmlhdGlvbiJ9fQ==--bdd783cb21f5d053e71cc0c2a59f9995b15404f8/library-upload.jpg
                 external_references: {}
                 created_at: '2026-01-15T12:00:00.000Z'
                 updated_at: '2026-01-15T12:00:00.000Z'
@@ -30880,10 +30993,10 @@ paths:
                 filename: library-upload.jpg
                 content_type: image/jpeg
                 byte_size: 18090
-                embed_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MiwicHVyIjoiYmxvYl9pZCJ9fQ==--931f5ded53b765a563e1a71b11f31bb5f8944f3c/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2xpbWl0IjpbMTIwMCwxMjAwXSwic2F2ZXIiOnsic3RyaXAiOnRydWUsInF1YWxpdHkiOjc1LCJsb3NzbGVzcyI6ZmFsc2UsImFscGhhX3EiOjg1LCJyZWR1Y3Rpb25fZWZmb3J0Ijo2LCJzbWFydF9zdWJzYW1wbGUiOnRydWV9fSwicHVyIjoidmFyaWF0aW9uIn19--cf80063d385bdf82988701ad3560963ae02360f8/library-upload.jpg
-                signed_id: eyJfcmFpbHMiOnsiZGF0YSI6MiwicHVyIjoiYmxvYl9pZCJ9fQ==--931f5ded53b765a563e1a71b11f31bb5f8944f3c
+                embed_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MiwicHVyIjoiYmxvYl9pZCJ9fQ==--9ccd6fd184d4ba9afdd7bf51b8e6471cebca911f/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2xpbWl0IjpbMTIwMCwxMjAwXSwic2F2ZXIiOnsic3RyaXAiOnRydWUsInF1YWxpdHkiOjc1LCJsb3NzbGVzcyI6ZmFsc2UsImFscGhhX3EiOjg1LCJyZWR1Y3Rpb25fZWZmb3J0Ijo2LCJzbWFydF9zdWJzYW1wbGUiOnRydWV9fSwicHVyIjoidmFyaWF0aW9uIn19--f1bcdadd1e910f865de4d6f69e93c0481c2efb48/library-upload.jpg
+                signed_id: eyJfcmFpbHMiOnsiZGF0YSI6MiwicHVyIjoiYmxvYl9pZCJ9fQ==--9ccd6fd184d4ba9afdd7bf51b8e6471cebca911f
                 viewable_id:
-                download_url: http://localhost:3000/rails/active_storage/blobs/redirect/eyJfcmFpbHMiOnsiZGF0YSI6MiwicHVyIjoiYmxvYl9pZCJ9fQ==--931f5ded53b765a563e1a71b11f31bb5f8944f3c/library-upload.jpg?disposition=attachment
+                download_url: http://localhost:3000/rails/active_storage/blobs/redirect/eyJfcmFpbHMiOnsiZGF0YSI6MiwicHVyIjoiYmxvYl9pZCJ9fQ==--9ccd6fd184d4ba9afdd7bf51b8e6471cebca911f/library-upload.jpg?disposition=attachment
                 metadata: {}
                 viewable_type:
               schema:
@@ -30957,7 +31070,7 @@ paths:
               example:
                 data:
                 - kind: media
-                  name: Product 243397
+                  name: Product 253397
                   owner_type: Spree::Product
                   owner_id: prod_UkLWZg9DAJ
                   field: attachment
@@ -31040,13 +31153,13 @@ paths:
                 video_embed_url:
                 video_url:
                 poster_url:
-                original_url: http://localhost:3000/rails/active_storage/blobs/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--8daa562c0917e5095f42256aae1474497fe1b382/thinking-cat.jpg
-                mini_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--8daa562c0917e5095f42256aae1474497fe1b382/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOlsxMjgsMTI4XSwic2F2ZXIiOnsic3RyaXAiOnRydWUsInF1YWxpdHkiOjc1LCJsb3NzbGVzcyI6ZmFsc2UsImFscGhhX3EiOjg1LCJyZWR1Y3Rpb25fZWZmb3J0Ijo2LCJzbWFydF9zdWJzYW1wbGUiOnRydWV9fSwicHVyIjoidmFyaWF0aW9uIn19--4a37e0676a570d1ac8a2c4eb824f6a98a6eec3f2/thinking-cat.jpg
-                small_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--8daa562c0917e5095f42256aae1474497fe1b382/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOlsyNTYsMjU2XSwic2F2ZXIiOnsic3RyaXAiOnRydWUsInF1YWxpdHkiOjc1LCJsb3NzbGVzcyI6ZmFsc2UsImFscGhhX3EiOjg1LCJyZWR1Y3Rpb25fZWZmb3J0Ijo2LCJzbWFydF9zdWJzYW1wbGUiOnRydWV9fSwicHVyIjoidmFyaWF0aW9uIn19--e172096a8b99002f90abf116b5142ecac7f6e287/thinking-cat.jpg
-                medium_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--8daa562c0917e5095f42256aae1474497fe1b382/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOls0MDAsNDAwXSwic2F2ZXIiOnsic3RyaXAiOnRydWUsInF1YWxpdHkiOjc1LCJsb3NzbGVzcyI6ZmFsc2UsImFscGhhX3EiOjg1LCJyZWR1Y3Rpb25fZWZmb3J0Ijo2LCJzbWFydF9zdWJzYW1wbGUiOnRydWV9fSwicHVyIjoidmFyaWF0aW9uIn19--02e5187f95a3d4d057f02e78c2e485795b3dd83a/thinking-cat.jpg
-                large_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--8daa562c0917e5095f42256aae1474497fe1b382/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOls3MjAsNzIwXSwic2F2ZXIiOnsic3RyaXAiOnRydWUsInF1YWxpdHkiOjc1LCJsb3NzbGVzcyI6ZmFsc2UsImFscGhhX3EiOjg1LCJyZWR1Y3Rpb25fZWZmb3J0Ijo2LCJzbWFydF9zdWJzYW1wbGUiOnRydWV9fSwicHVyIjoidmFyaWF0aW9uIn19--b748474318a6e7f24c8583018970b06f8e9e6f39/thinking-cat.jpg
-                xlarge_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--8daa562c0917e5095f42256aae1474497fe1b382/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOlsyMDAwLDIwMDBdLCJzYXZlciI6eyJzdHJpcCI6dHJ1ZSwicXVhbGl0eSI6NzUsImxvc3NsZXNzIjpmYWxzZSwiYWxwaGFfcSI6ODUsInJlZHVjdGlvbl9lZmZvcnQiOjYsInNtYXJ0X3N1YnNhbXBsZSI6dHJ1ZX19LCJwdXIiOiJ2YXJpYXRpb24ifX0=--4edd5d882f2e8043693f8932d6291dfae16601f5/thinking-cat.jpg
-                og_image_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--8daa562c0917e5095f42256aae1474497fe1b382/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOlsxMjAwLDYzMF0sInNhdmVyIjp7InN0cmlwIjp0cnVlLCJxdWFsaXR5Ijo3NSwibG9zc2xlc3MiOmZhbHNlLCJhbHBoYV9xIjo4NSwicmVkdWN0aW9uX2VmZm9ydCI6Niwic21hcnRfc3Vic2FtcGxlIjp0cnVlfX0sInB1ciI6InZhcmlhdGlvbiJ9fQ==--a36a55f2bb6ae83cca5b3aed691446af80062731/thinking-cat.jpg
+                original_url: http://localhost:3000/rails/active_storage/blobs/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--9bc58549b63ad1356a2279c4324418829d950221/thinking-cat.jpg
+                mini_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--9bc58549b63ad1356a2279c4324418829d950221/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOlsxMjgsMTI4XSwic2F2ZXIiOnsic3RyaXAiOnRydWUsInF1YWxpdHkiOjc1LCJsb3NzbGVzcyI6ZmFsc2UsImFscGhhX3EiOjg1LCJyZWR1Y3Rpb25fZWZmb3J0Ijo2LCJzbWFydF9zdWJzYW1wbGUiOnRydWV9fSwicHVyIjoidmFyaWF0aW9uIn19--39b4543c3c059b1e3b92918c201965eeaa29ee4c/thinking-cat.jpg
+                small_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--9bc58549b63ad1356a2279c4324418829d950221/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOlsyNTYsMjU2XSwic2F2ZXIiOnsic3RyaXAiOnRydWUsInF1YWxpdHkiOjc1LCJsb3NzbGVzcyI6ZmFsc2UsImFscGhhX3EiOjg1LCJyZWR1Y3Rpb25fZWZmb3J0Ijo2LCJzbWFydF9zdWJzYW1wbGUiOnRydWV9fSwicHVyIjoidmFyaWF0aW9uIn19--9cb95228ac36c2833e30a06bbb4a99962119e46d/thinking-cat.jpg
+                medium_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--9bc58549b63ad1356a2279c4324418829d950221/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOls0MDAsNDAwXSwic2F2ZXIiOnsic3RyaXAiOnRydWUsInF1YWxpdHkiOjc1LCJsb3NzbGVzcyI6ZmFsc2UsImFscGhhX3EiOjg1LCJyZWR1Y3Rpb25fZWZmb3J0Ijo2LCJzbWFydF9zdWJzYW1wbGUiOnRydWV9fSwicHVyIjoidmFyaWF0aW9uIn19--7ab6834f26aa4f1bc2156789499fdd2cc71b834e/thinking-cat.jpg
+                large_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--9bc58549b63ad1356a2279c4324418829d950221/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOls3MjAsNzIwXSwic2F2ZXIiOnsic3RyaXAiOnRydWUsInF1YWxpdHkiOjc1LCJsb3NzbGVzcyI6ZmFsc2UsImFscGhhX3EiOjg1LCJyZWR1Y3Rpb25fZWZmb3J0Ijo2LCJzbWFydF9zdWJzYW1wbGUiOnRydWV9fSwicHVyIjoidmFyaWF0aW9uIn19--1d8b6e2d3133838c72fce943c8e993b414c712a5/thinking-cat.jpg
+                xlarge_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--9bc58549b63ad1356a2279c4324418829d950221/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOlsyMDAwLDIwMDBdLCJzYXZlciI6eyJzdHJpcCI6dHJ1ZSwicXVhbGl0eSI6NzUsImxvc3NsZXNzIjpmYWxzZSwiYWxwaGFfcSI6ODUsInJlZHVjdGlvbl9lZmZvcnQiOjYsInNtYXJ0X3N1YnNhbXBsZSI6dHJ1ZX19LCJwdXIiOiJ2YXJpYXRpb24ifX0=--74108145c50932e76438531ad1d89b778141a5c8/thinking-cat.jpg
+                og_image_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--9bc58549b63ad1356a2279c4324418829d950221/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOlsxMjAwLDYzMF0sInNhdmVyIjp7InN0cmlwIjp0cnVlLCJxdWFsaXR5Ijo3NSwibG9zc2xlc3MiOmZhbHNlLCJhbHBoYV9xIjo4NSwicmVkdWN0aW9uX2VmZm9ydCI6Niwic21hcnRfc3Vic2FtcGxlIjp0cnVlfX0sInB1ciI6InZhcmlhdGlvbiJ9fQ==--bdd783cb21f5d053e71cc0c2a59f9995b15404f8/thinking-cat.jpg
                 external_references: {}
                 created_at: '2026-01-15T12:00:00.000Z'
                 updated_at: '2026-01-15T12:00:00.000Z'
@@ -31054,10 +31167,10 @@ paths:
                 filename: thinking-cat.jpg
                 content_type: image/jpeg
                 byte_size: 18090
-                embed_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--8daa562c0917e5095f42256aae1474497fe1b382/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2xpbWl0IjpbMTIwMCwxMjAwXSwic2F2ZXIiOnsic3RyaXAiOnRydWUsInF1YWxpdHkiOjc1LCJsb3NzbGVzcyI6ZmFsc2UsImFscGhhX3EiOjg1LCJyZWR1Y3Rpb25fZWZmb3J0Ijo2LCJzbWFydF9zdWJzYW1wbGUiOnRydWV9fSwicHVyIjoidmFyaWF0aW9uIn19--cf80063d385bdf82988701ad3560963ae02360f8/thinking-cat.jpg
-                signed_id: eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--8daa562c0917e5095f42256aae1474497fe1b382
+                embed_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--9bc58549b63ad1356a2279c4324418829d950221/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2xpbWl0IjpbMTIwMCwxMjAwXSwic2F2ZXIiOnsic3RyaXAiOnRydWUsInF1YWxpdHkiOjc1LCJsb3NzbGVzcyI6ZmFsc2UsImFscGhhX3EiOjg1LCJyZWR1Y3Rpb25fZWZmb3J0Ijo2LCJzbWFydF9zdWJzYW1wbGUiOnRydWV9fSwicHVyIjoidmFyaWF0aW9uIn19--f1bcdadd1e910f865de4d6f69e93c0481c2efb48/thinking-cat.jpg
+                signed_id: eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--9bc58549b63ad1356a2279c4324418829d950221
                 viewable_id: prod_gbHJdmfrXB
-                download_url: http://localhost:3000/rails/active_storage/blobs/redirect/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--8daa562c0917e5095f42256aae1474497fe1b382/thinking-cat.jpg?disposition=attachment
+                download_url: http://localhost:3000/rails/active_storage/blobs/redirect/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--9bc58549b63ad1356a2279c4324418829d950221/thinking-cat.jpg?disposition=attachment
                 metadata: {}
                 viewable_type: product
               schema:
@@ -31703,8 +31816,8 @@ paths:
                   name: Accept terms
                   description: Read and accept the marketplace terms
                   preferences:
-                    terms_effective_from:
                     terms_url:
+                    terms_effective_from:
                   custom_field_definition_ids: []
                   allow_multiple: false
                   accepts_submissions: false
@@ -31926,10 +32039,10 @@ paths:
                   accepted_content_types: []
                   association_fields: []
                   preference_schema:
-                  - key: terms_effective_from
+                  - key: terms_url
                     type: string
                     default:
-                  - key: terms_url
+                  - key: terms_effective_from
                     type: string
                     default:
                 - type: complete_profile
@@ -31991,6 +32104,17 @@ paths:
                   - key: minimum_count
                     type: integer
                     default: 1
+                - type: payout_account
+                  name: Payout Account
+                  description: ''
+                  allow_multiple: false
+                  accepts_submissions: false
+                  reviewed_by_operator: false
+                  configured: false
+                  addable: true
+                  accepted_content_types: []
+                  association_fields: []
+                  preference_schema: []
                 - type: required_custom_fields
                   name: Required custom fields
                   description: Fill in the details the marketplace asks for
@@ -39343,6 +39467,60 @@ components:
       - mutable
       - users_count
       x-typelizer: true
+    SellerPayout:
+      type: object
+      properties:
+        id:
+          type: string
+        status:
+          type: string
+        currency:
+          type: string
+        provider:
+          type: string
+        reference:
+          type: string
+          nullable: true
+        metadata:
+          type: object
+        period_start:
+          type: string
+          nullable: true
+        period_end:
+          type: string
+          nullable: true
+        created_at:
+          type: string
+        updated_at:
+          type: string
+        amount:
+          type: string
+        display_amount:
+          type: string
+        seller_id:
+          type: string
+        seller_name:
+          type: string
+          nullable: true
+        transfers_count:
+          type: number
+      required:
+      - id
+      - status
+      - currency
+      - provider
+      - reference
+      - metadata
+      - period_start
+      - period_end
+      - created_at
+      - updated_at
+      - amount
+      - display_amount
+      - seller_id
+      - seller_name
+      - transfers_count
+      x-typelizer: true
     SellerRequirement:
       type: object
       properties:
@@ -39418,6 +39596,9 @@ components:
         action_url:
           type: string
           nullable: true
+        blocker:
+          type: object
+          nullable: true
         blocking:
           type: boolean
         required_policy_name:
@@ -39436,6 +39617,7 @@ components:
       - position
       - status
       - action_url
+      - blocker
       - blocking
       - required_policy_name
       x-typelizer: true
@@ -39631,6 +39813,72 @@ components:
       - created_at
       - updated_at
       - avatar_url
+      x-typelizer: true
+    SellerTransfer:
+      type: object
+      properties:
+        id:
+          type: string
+        kind:
+          type: string
+        status:
+          type: string
+        currency:
+          type: string
+        provider:
+          type: string
+        reference:
+          type: string
+          nullable: true
+        metadata:
+          type: object
+        created_at:
+          type: string
+        updated_at:
+          type: string
+        amount:
+          type: string
+        display_amount:
+          type: string
+        seller_id:
+          type: string
+        order_id:
+          type: string
+          nullable: true
+        payout_id:
+          type: string
+          nullable: true
+        reversed_from_id:
+          type: string
+          nullable: true
+        refund_id:
+          type: string
+          nullable: true
+        seller_name:
+          type: string
+          nullable: true
+        order_number:
+          type: string
+          nullable: true
+      required:
+      - id
+      - kind
+      - status
+      - currency
+      - provider
+      - reference
+      - metadata
+      - created_at
+      - updated_at
+      - amount
+      - display_amount
+      - seller_id
+      - order_id
+      - payout_id
+      - reversed_from_id
+      - refund_id
+      - seller_name
+      - order_number
       x-typelizer: true
     SetupTask:
       type: object
@@ -40063,6 +40311,13 @@ components:
           type: string
         preferred_inventory_provider_failure_policy:
           type: string
+        preferred_payout_provider:
+          type: string
+          nullable: true
+        preferred_default_payouts_schedule_interval:
+          type: string
+        preferred_default_minimum_payout_amount:
+          type: number
         preferred_document_number_format:
           type: string
         preferred_order_number_prefix:
@@ -40149,6 +40404,9 @@ components:
       - preferred_inventory_provider
       - preferred_pricing_provider_failure_policy
       - preferred_inventory_provider_failure_policy
+      - preferred_payout_provider
+      - preferred_default_payouts_schedule_interval
+      - preferred_default_minimum_payout_amount
       - preferred_document_number_format
       - preferred_order_number_prefix
       - preferred_order_number_suffix

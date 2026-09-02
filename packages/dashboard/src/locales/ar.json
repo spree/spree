@@ -2522,7 +2522,8 @@
       "returns": "المرتجعات",
       "sellers": "البائعون",
       "settings": "الإعدادات",
-      "transfers": "التحويلات"
+      "transfers": "التحويلات",
+      "translations": "الترجمات"
     },
     "option_types": {
       "columns": {
@@ -3725,6 +3726,25 @@
           "roles": "الأدوار"
         },
         "title": "طاقم عمل"
+      },
+      "translations": {
+        "complete": "مُترجَم بالكامل",
+        "coverage": "تغطية الترجمة",
+        "description": "اطّلع على نسبة ما تُرجم من الكتالوج وأكمل ما ينقصه.",
+        "load_error": "تعذّر تحميل تغطية الترجمة.",
+        "no_locales_description": "أضف لغة إلى أحد أسواقك لبدء الترجمة.",
+        "no_locales_title": "لا توجد لغات أخرى بعد",
+        "progress": "التقدّم",
+        "record": "السجل",
+        "records": "السجلات",
+        "resource_types": {
+          "category": "الفئات",
+          "collection": "المجموعات",
+          "option_type": "أنواع الخيارات",
+          "product": "المنتجات"
+        },
+        "total": "الإجمالي",
+        "translated": "مُترجَم"
       }
     },
     "payment_methods": {

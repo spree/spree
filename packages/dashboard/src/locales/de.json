@@ -2504,7 +2504,8 @@
       "returns": "Retouren",
       "sellers": "Verkäufer",
       "settings": "Einstellungen",
-      "transfers": "Umlagerungen"
+      "transfers": "Umlagerungen",
+      "translations": "Übersetzungen"
     },
     "option_types": {
       "columns": {
@@ -3708,6 +3709,25 @@
           "roles": "Rollen"
         },
         "title": "Team"
+      },
+      "translations": {
+        "complete": "Vollständig übersetzt",
+        "coverage": "Übersetzungsabdeckung",
+        "description": "Sehen Sie, wie viel Ihres Katalogs übersetzt ist, und schließen Sie die Lücken.",
+        "load_error": "Übersetzungsabdeckung konnte nicht geladen werden.",
+        "no_locales_description": "Fügen Sie einem Ihrer Märkte eine Sprache hinzu, um mit dem Übersetzen zu beginnen.",
+        "no_locales_title": "Noch keine weiteren Sprachen",
+        "progress": "Fortschritt",
+        "record": "Datensatz",
+        "records": "Datensätze",
+        "resource_types": {
+          "category": "Kategorien",
+          "collection": "Kollektionen",
+          "option_type": "Optionstypen",
+          "product": "Produkte"
+        },
+        "total": "Gesamt",
+        "translated": "Übersetzt"
       }
     },
     "payment_methods": {

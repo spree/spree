@@ -133,5 +133,8 @@ export type {
   TranslatableFieldType,
   TranslatableResource,
   TranslationBatchEntry,
+  TranslationCoverage,
+  TranslationCoverageRecord,
+  TranslationCoverageRow,
   TranslationsUpsertParams,
 } from './translations'
