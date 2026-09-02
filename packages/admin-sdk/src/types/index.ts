@@ -13,6 +13,8 @@ export type {
   DeliveryRateProviderCatalogEntry,
   DeliveryRateProviderOption,
   FulfillmentProviderOption,
+  TaxExemptionReasonCode,
+  TaxExemptionReasonCodeGroup,
 } from './fulfillment-providers'
 // Admin-specific generated types
 export type { default as Address } from './generated/Address'

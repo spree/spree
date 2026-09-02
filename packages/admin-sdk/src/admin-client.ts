@@ -337,6 +337,7 @@ import type {
   StoreCredit,
   TaxCategory,
   TaxExemptionCertificate,
+  TaxExemptionReasonCodeGroup,
   TaxIdentifier,
   TaxLine,
   TaxRate,
@@ -3279,6 +3280,21 @@ export class AdminClient {
      * will not work.
      */
     taxExemptionCertificates: {
+      /**
+       * Exemption reasons a merchant may pick, grouped by the tax provider that
+       * understands them. `provider` is null for the neutral default list,
+       * which is what a store with no provider installed gets.
+       */
+      reasonCodes: (
+        companyId: string,
+        options?: RequestOptions,
+      ): Promise<{ data: TaxExemptionReasonCodeGroup[] }> =>
+        this.request<{ data: TaxExemptionReasonCodeGroup[] }>(
+          'GET',
+          `/companies/${companyId}/tax_exemption_certificates/reason_codes`,
+          options,
+        ),
+
       list: (
         companyId: string,
         params?: ListParams & Record<string, unknown>,

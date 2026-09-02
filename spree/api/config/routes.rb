@@ -587,6 +587,10 @@ Spree::Core::Engine.add_routes do
           # never mass assignment — and a verified certificate is revoked
           # rather than deleted.
           resources :tax_exemption_certificates, controller: 'companies/tax_exemption_certificates' do
+            collection do
+              get :reason_codes
+            end
+
             member do
               patch :verify
               patch :revoke

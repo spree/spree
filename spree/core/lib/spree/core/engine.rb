@@ -18,6 +18,7 @@ module Spree
                                :password_validator,
                                :fulfillment_providers,
                                :tracking_carriers,
+                               :tax_exemption_reason_codes,
                                :stock_splitters,
                                :commission_rules,
                                :delivery_method_rules,
@@ -282,6 +283,15 @@ module Spree
           Spree::FulfillmentProvider::Pickup,
           Spree::FulfillmentProvider::PickupPoint
         ]
+
+        # Why a buyer is exempt, offered to a merchant recording an exemption
+        # certificate. Deliberately empty: the vocabulary belongs to whichever
+        # tax engine has to understand it, so core ships none and a provider
+        # registers its own, keyed by the name a merchant sees:
+        #   Spree.tax_exemption_reason_codes['Avalara AvaTax'] = { 'G' => 'RESALE' }
+        # The admin API answers with a neutral default list while this is empty,
+        # so a store with no provider installed still has something to pick from.
+        Rails.application.config.spree.tax_exemption_reason_codes = {}
 
         # Carriers a merchant can pin a tracking number to, with the public
         # tracking page each one offers (`:tracking` is the placeholder).

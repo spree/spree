@@ -432,6 +432,17 @@ module Spree
     Rails.application.config.spree.tracking_carriers = value
   end
 
+  # Exemption reason vocabularies, grouped by the provider that understands
+  # them: { 'Avalara AvaTax' => { 'G' => 'RESALE' } }. Empty in core — see the
+  # engine's note.
+  def self.tax_exemption_reason_codes
+    Rails.application.config.spree.tax_exemption_reason_codes
+  end
+
+  def self.tax_exemption_reason_codes=(value)
+    Rails.application.config.spree.tax_exemption_reason_codes = value
+  end
+
 
   def self.stock_splitters
     Rails.application.config.spree.stock_splitters
