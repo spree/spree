@@ -59,41 +59,55 @@ describe 'spree:upgrade:backfill_custom_field_definition_stores' do
   # as nullable instead, and the constraint call is observed rather than
   # applied.
   #
-  # `filter_key` is checked and `store_id` is not: RSpec stubs one call at a
-  # time, and one column proves the branch runs.
-  it 'enforces a constraint the migration left off' do
+  # The task guards each column separately, so both are covered: a regression
+  # in either one's branch has to fail an example.
+  def report_nullable(*columns)
     connection = ActiveRecord::Base.connection
-    nullable = connection.columns(Spree::CustomFieldDefinition.table_name).map do |column|
-      column.name == 'filter_key' ? column.dup.tap { |c| c.instance_variable_set(:@null, true) } : column
+    relaxed = connection.columns(Spree::CustomFieldDefinition.table_name).map do |column|
+      next column unless columns.map(&:to_s).include?(column.name)
+
+      column.dup.tap { |c| c.instance_variable_set(:@null, true) }
     end
+
     allow(connection).to receive(:columns).and_call_original
-    allow(connection).to receive(:columns).with(Spree::CustomFieldDefinition.table_name).and_return(nullable)
+    allow(connection).to receive(:columns).with(Spree::CustomFieldDefinition.table_name).and_return(relaxed)
     allow(connection).to receive(:change_column_null).and_return(true)
-
-    expect { subject.invoke }.to output(/Enforced NOT NULL on filter_key/).to_stdout
-
-    expect(connection).to have_received(:change_column_null).
-      with(Spree::CustomFieldDefinition.table_name, :filter_key, false)
+    connection
   end
 
-  it 'leaves a column alone while rows still cannot be filled' do
-    connection = ActiveRecord::Base.connection
-    nullable = connection.columns(Spree::CustomFieldDefinition.table_name).map do |column|
-      column.name == 'filter_key' ? column.dup.tap { |c| c.instance_variable_set(:@null, true) } : column
+  %i[store_id filter_key].each do |column|
+    it "enforces #{column} when the migration left it off" do
+      connection = report_nullable(column)
+
+      expect { subject.invoke }.to output(/Enforced NOT NULL on #{column}/).to_stdout
+
+      expect(connection).to have_received(:change_column_null).
+        with(Spree::CustomFieldDefinition.table_name, column, false)
     end
-    allow(connection).to receive(:columns).and_call_original
-    allow(connection).to receive(:columns).with(Spree::CustomFieldDefinition.table_name).and_return(nullable)
-    allow(connection).to receive(:change_column_null).and_return(true)
-    # The guard reads `exists?`; the backfill loop earlier in the task reads
-    # `find_each` off the same query, so the double answers both.
-    still_null = instance_double(ActiveRecord::Relation, exists?: true, find_each: nil)
-    allow(Spree::CustomFieldDefinition).to receive(:where).and_call_original
-    allow(Spree::CustomFieldDefinition).to receive(:where).with(filter_key: nil).and_return(still_null)
 
-    expect { subject.invoke }.to output(/filter_key is still NULL/).to_stdout
+    it "leaves #{column} alone while rows still cannot be filled" do
+      connection = report_nullable(column)
+      # The guard reads `exists?`; the backfill loop earlier in the task reads
+      # `find_each` off the same query, so the double answers both.
+      unresolved = instance_double(ActiveRecord::Relation, exists?: true, find_each: nil, update_all: 0)
+      allow(Spree::CustomFieldDefinition).to receive(:where).and_call_original
+      allow(Spree::CustomFieldDefinition).to receive(:where).with(column => nil).and_return(unresolved)
 
-    expect(connection).not_to have_received(:change_column_null).
-      with(anything, :filter_key, false)
+      expect { subject.invoke }.to output(/#{column} is still NULL/).to_stdout
+
+      expect(connection).not_to have_received(:change_column_null).with(anything, column, false)
+    end
+  end
+
+  it 'enforces both columns when the migration left both off' do
+    connection = report_nullable(:store_id, :filter_key)
+
+    subject.invoke
+
+    expect(connection).to have_received(:change_column_null).
+      with(Spree::CustomFieldDefinition.table_name, :store_id, false)
+    expect(connection).to have_received(:change_column_null).
+      with(Spree::CustomFieldDefinition.table_name, :filter_key, false)
   end
 
   it 'refuses to run without a default store to assign' do
