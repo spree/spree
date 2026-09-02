@@ -61,8 +61,11 @@ function Table({
 
   // Applied on the table so it reaches the last row's edge cells without
   // every TableCell paying for the selector.
+  // `td:only-child` covers the empty and skeleton rows, whose single spanning
+  // cell is both first and last child — matching on those alone rounds one
+  // corner and leaves the other square against the card's curve.
   const roundedClasses = roundedBottom
-    ? '[&_tbody_tr:last-child_td:first-child]:rounded-bl-xl [&_tbody_tr:last-child_td:last-child]:rounded-br-xl'
+    ? '[&_tbody_tr:last-child_td:first-child]:rounded-bl-xl [&_tbody_tr:last-child_td:last-child]:rounded-br-xl [&_tbody_tr:last-child_td:only-child]:rounded-b-xl'
     : undefined
 
   const kids = Children.toArray(children)
