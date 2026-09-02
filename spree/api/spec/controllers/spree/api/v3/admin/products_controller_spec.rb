@@ -209,6 +209,17 @@ RSpec.describe Spree::Api::V3::Admin::ProductsController, type: :controller do
         ids = json_response['data'].map { |p| p['id'] }
         expect(ids).to eq([other_product.prefixed_id])
       end
+
+      it 'decodes prefixed IDs for q[id_not_in]' do
+        get :index,
+            params: { q: { id_not_in: [product.prefixed_id, third_product.prefixed_id] } },
+            as: :json
+
+        expect(response).to have_http_status(:ok)
+        ids = json_response['data'].map { |p| p['id'] }
+        expect(ids).not_to include(product.prefixed_id, third_product.prefixed_id)
+        expect(ids).to include(other_product.prefixed_id)
+      end
     end
 
     context 'with q[search] (full-text search)' do

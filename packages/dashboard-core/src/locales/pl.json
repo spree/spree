@@ -1223,7 +1223,12 @@
       "add_count_other": "Dodaj {{count}}",
       "already_added": "Dodano",
       "empty": "Nie znaleziono wyników.",
+      "load_more": "Załaduj więcej",
       "search_placeholder": "Szukaj…",
+      "select_all_matching_one": "Zaznacz wszystkie {{count}} dopasowanie",
+      "select_all_matching_other": "Zaznacz wszystkie {{count}} dopasowania",
+      "select_page_one": "Zaznacz {{count}} na tej stronie",
+      "select_page_other": "Zaznacz wszystkie {{count}} na tej stronie",
       "selected_count_one": "Wybrano {{count}}",
       "selected_count_other": "Wybrano {{count}}",
       "title": "Dodaj produkty"

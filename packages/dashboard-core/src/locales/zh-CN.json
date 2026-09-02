@@ -1209,7 +1209,12 @@
       "add_count_other": "添加 {{count}} 个",
       "already_added": "已添加",
       "empty": "未找到结果。",
+      "load_more": "加载更多",
       "search_placeholder": "搜索…",
+      "select_all_matching_one": "选择全部 {{count}} 个匹配项",
+      "select_all_matching_other": "选择全部 {{count}} 个匹配项",
+      "select_page_one": "选择本页 {{count}} 个",
+      "select_page_other": "选择本页全部 {{count}} 个",
       "selected_count_one": "已选择 {{count}} 个",
       "selected_count_other": "已选择 {{count}} 个",
       "title": "添加商品"

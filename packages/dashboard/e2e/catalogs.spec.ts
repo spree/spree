@@ -1,5 +1,10 @@
 import { expect, type Page, test } from '@playwright/test'
-import { FIXTURE_PROMO_PRODUCT, gotoIndex, login } from './helpers'
+import {
+  FIXTURE_CATALOG_PICKER_PRODUCT_PREFIX,
+  FIXTURE_PROMO_PRODUCT,
+  gotoIndex,
+  login,
+} from './helpers'
 
 const CATALOGS_PATH = (storeId: string) => `/${storeId}/products/catalogs`
 const CTA = /add catalog/i
@@ -310,5 +315,34 @@ test.describe('catalogs', () => {
 
     await page.reload()
     await expect(page.locator('#catalog-name')).toHaveValue(renamed, { timeout: 15_000 })
+  })
+
+  test('paginates the product picker and selects all matching search results', async ({ page }) => {
+    const creds = await login(page)
+    await gotoIndex(page, CATALOGS_PATH(creds.store_id), CTA)
+
+    const name = `E2E Catalog Picker ${Date.now()}`
+    await createCatalog(page, name)
+
+    await page.getByRole('button', { name: /add products/i }).click()
+    const picker = page.getByRole('dialog')
+    await expect(picker.getByRole('heading', { name: /add products to catalog/i })).toBeVisible()
+
+    await picker.getByRole('searchbox').fill(FIXTURE_CATALOG_PICKER_PRODUCT_PREFIX)
+
+    const productButtons = picker.getByRole('button', {
+      name: new RegExp(FIXTURE_CATALOG_PICKER_PRODUCT_PREFIX, 'i'),
+    })
+    await expect(productButtons.first()).toBeVisible({ timeout: 15_000 })
+    expect(await productButtons.count()).toBe(25)
+
+    await picker.getByRole('button', { name: /load more/i }).click()
+    await expect(productButtons).toHaveCount(30, { timeout: 15_000 })
+
+    await picker.getByRole('button', { name: /select all 30 matches/i }).click()
+    await picker.getByRole('button', { name: /^add 30$/i }).click()
+    await expect(picker).toBeHidden({ timeout: 15_000 })
+
+    await expect(page.getByText(/^new$/i)).toHaveCount(30, { timeout: 15_000 })
   })
 })

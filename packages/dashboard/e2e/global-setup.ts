@@ -84,6 +84,8 @@ const BOOTSTRAP_RUBY = [
   `Spree::Product.where(name: '${FIXTURE_BULK_PRODUCT_L}').first_or_create!(store: s, status: 'active').tap { |p| p.default_variant.set_price(s.default_currency, 9.99); p.update!(status: 'active') }`,
   `Spree::Product.where(name: '${FIXTURE_BULK_PRODUCT_M}').first_or_create!(store: s, status: 'active').tap { |p| p.default_variant.set_price(s.default_currency, 9.99); p.update!(status: 'active') }`,
   `Spree::Product.where(name: '${FIXTURE_BULK_PRODUCT_N}').first_or_create!(store: s, status: 'active').tap { |p| p.default_variant.set_price(s.default_currency, 9.99); p.update!(status: 'active') }`,
+  // Thirty products for catalog picker pagination/select-all specs.
+  `30.times { |i| Spree::Product.where(name: format('E2E Catalog Picker Product %02d', i + 1)).first_or_create!(store: s, status: 'active').tap { |p| p.default_variant.set_price(s.default_currency, 9.99) } }`,
   // Second channel beyond the seeded default; the channels bulk-action
   // and filter specs need a non-default channel to add/remove against.
   `bulk_channel = s.channels.where(code: '${FIXTURE_BULK_CHANNEL_CODE}').first_or_create!(name: '${FIXTURE_BULK_CHANNEL_NAME}')`,

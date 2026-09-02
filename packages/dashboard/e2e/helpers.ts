@@ -12,6 +12,7 @@ export const FIXTURE_PROMO_TAXON = 'E2E Promo Category'
 // permalink so it can never match an unrelated category.
 export const FIXTURE_PROMO_TAXON_PERMALINK = 'e2e-promo-category'
 export const FIXTURE_PROMO_PRODUCT = 'E2E Promo Product'
+export const FIXTURE_CATALOG_PICKER_PRODUCT_PREFIX = 'E2E Catalog Picker Product'
 // Active products used by products-bulk.spec.ts. Each test owns a disjoint
 // pair so the serial suite doesn't cross-contaminate (status mutations on
 // A/B don't shift the rows that the category/tag tests target). Kept here

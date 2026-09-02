@@ -270,7 +270,16 @@ export function DeferredProductMembershipCard({
             )
             if (fresh.length > 0) staging.setAdds([...pendingAdds, ...fresh])
           }}
-          search={(q) => adminClient.products.list({ name_cont: q, limit: 25, sort: 'name' })}
+          search={(query, page) => {
+            const excludeIds = rows.filter((row) => row.pending !== 'removed').map((row) => row.id)
+            return adminClient.products.list({
+              ...(query ? { name_cont: query } : {}),
+              limit: 25,
+              page,
+              sort: 'name',
+              ...(excludeIds.length > 0 ? { id_not_in: excludeIds } : {}),
+            })
+          }}
           getOptionLabel={(p) => p.name ?? p.id}
           getOptionImageUrl={(p) => p.thumbnail_url}
           getOptionSubtitle={(p) => p.slug ?? null}

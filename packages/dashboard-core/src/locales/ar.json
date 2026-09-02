@@ -1209,7 +1209,12 @@
       "add_count_other": "إضافة {{count}}",
       "already_added": "مُضاف",
       "empty": "لم يتم العثور على نتائج.",
+      "load_more": "تحميل المزيد",
       "search_placeholder": "بحث…",
+      "select_all_matching_one": "تحديد كل {{count}} نتيجة مطابقة",
+      "select_all_matching_other": "تحديد كل {{count}} نتائج مطابقة",
+      "select_page_one": "تحديد {{count}} في هذه الصفحة",
+      "select_page_other": "تحديد كل {{count}} في هذه الصفحة",
       "selected_count_one": "تم تحديد {{count}}",
       "selected_count_other": "تم تحديد {{count}}",
       "title": "إضافة منتجات"
