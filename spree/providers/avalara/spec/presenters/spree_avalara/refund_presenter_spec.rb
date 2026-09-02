@@ -80,6 +80,21 @@ RSpec.describe SpreeAvalara::RefundPresenter do
     it 'states the credit as net of tax' do
       expect(present.call[:lines].sole[:taxIncluded]).to be(false)
     end
+
+    # On an exclusive market the claim above holds either way, so it proves
+    # nothing on its own — this is the market where the mistake shows, and the
+    # one the legacy extension shipped it on: it sent the same net figure with
+    # the sale document's inclusive flag, crediting a fraction of the VAT.
+    it 'states the credit as net even where prices are sold gross' do
+      market = create(:market, store: @default_store, tax_inclusive: true)
+      market.update!(country_codes: ['DE'])
+      address = create(:address, country_code: 'DE', state_code: nil, city: 'Berlin', zipcode: '10115')
+      order.update!(market: market, ship_address: address, bill_address: address)
+
+      expect(SpreeAvalara.tax_inclusive?(order.reload)).to be(true)
+      expect(present.call[:lines].sole[:taxIncluded]).to be(false)
+      expect(present.call[:lines].sole[:amount]).to eq(-200)
+    end
   end
 
   # Every unit of every line came back, so the whole pre-tax worth is credited.
