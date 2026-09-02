@@ -57,8 +57,7 @@ module Spree
           def scoped_resource_name
             return unless parent_lookup
 
-            Spree.permissions.resource_for_subject(parent_lookup.klass)&.name ||
-              parent_lookup.segment.pluralize.to_sym
+            Spree::Translations.permission_resource_name(parent_lookup.klass)
           end
 
           # Translatable by class hierarchy, not strict equality, so a subclass

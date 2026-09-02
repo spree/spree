@@ -6,6 +6,7 @@ import type {
 } from '@spree/admin-sdk'
 import { adminClient, useResourceKey } from '@spree/dashboard-core'
 import { useQuery } from '@tanstack/react-query'
+import { useCallback } from 'react'
 
 /** The locales a merchant can translate content into (for nice display names). */
 export function useLocales() {
@@ -13,6 +14,19 @@ export function useLocales() {
     queryKey: useResourceKey('locales'),
     queryFn: () => adminClient.locales.list(),
   })
+}
+
+/**
+ * Resolves a locale code to the display name the server reports for it,
+ * falling back to the bare code while the locale list is still loading.
+ */
+export function useLocaleName() {
+  const { data: locales } = useLocales()
+
+  return useCallback(
+    (code: string) => locales?.find((locale) => locale.code === code)?.name ?? code,
+    [locales],
+  )
 }
 
 /**

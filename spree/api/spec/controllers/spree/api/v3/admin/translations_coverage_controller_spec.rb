@@ -125,6 +125,23 @@ RSpec.describe Spree::Api::V3::Admin::TranslationsCoverageController, type: :con
       end
     end
 
+    context 'with a resource scoped by a polymorphic owner' do
+      let!(:other_store) { create(:store) }
+      let!(:mine) { create(:policy, owner: store, name: 'Shipping Policy') }
+      let!(:theirs) { create(:policy, owner: other_store, name: 'Their Policy') }
+
+      it 'excludes another store\'s records' do
+        # spree_policies has no store_id column, so anything keying on the
+        # column alone would hand back every store's policies.
+        get :index, params: { resource_type: 'policy' }, as: :json
+
+        expect(response).to have_http_status(:ok)
+        labels = json_response['data']['records'].map { |r| r['label'] }
+        expect(labels).to include('Shipping Policy')
+        expect(labels).not_to include('Their Policy')
+      end
+    end
+
     context 'with a singleton resource type' do
       let!(:other_store) { create(:store, name: 'Some Other Store') }
 

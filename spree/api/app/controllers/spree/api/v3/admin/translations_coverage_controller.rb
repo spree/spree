@@ -20,7 +20,7 @@ module Spree
                 'resource_type' => Spree::Translations.public_resource_type(model_class),
                 'default_locale' => current_store.default_locale,
                 'locales' => locales,
-                'field_count' => Spree::Translations.field_count(model_class),
+                'field_count' => model_class.public_translatable_fields.size,
                 'search_field' => search_field,
                 'coverage' => Spree::Translations.coverage_for(scope, model_class, locales),
                 'records' => serialize_records(records, locales)
@@ -45,39 +45,24 @@ module Spree
           def scoped_resource_name
             return :settings if params[:resource_type].blank?
 
-            Spree.permissions.resource_for_subject(model_class)&.name ||
-              Spree::Translations.public_resource_type(model_class).pluralize.to_sym
+            Spree::Translations.permission_resource_name(model_class)
           end
 
-          # Store-scoped and ability-filtered, mirroring what the admin base
-          # class does — `accessible_by` included, so a host app's record-level
-          # rules still bind on this endpoint.
-          #
-          # `Spree::Base.for_store` cannot be used as a store-scoping test:
-          # every model responds to it, and it falls back to the UNSCOPED class
-          # when the store has no matching association — which for Spree::Store
-          # means every store in the installation. The store column is the
-          # honest test, since a model either carries one or is genuinely
-          # global reference data (option types) that is shared by design.
+          # Store-scoped by the model itself, then ability-filtered the way the
+          # admin base class does so a host app's record-level rules still bind.
           def scope
-            klass = model_class
-
-            base =
-              if klass <= Spree::Store
-                klass.where(id: current_store.id)
-              elsif klass.column_names.include?('store_id')
-                klass.where(store_id: current_store.id)
-              else
-                klass.all
-              end
-
-            base.accessible_by(current_ability, ability_action_for_request)
+            model_class.translatable_scope(current_store).
+              accessible_by(current_ability, ability_action_for_request)
           end
 
-          # Nothing to eager-load: coverage reads the translation tables in one
-          # grouped query, not through each record's association.
+          # Coverage itself reads the translation tables in one grouped query,
+          # so nothing needs eager-loading for it. The per-row label is a
+          # different matter: it is normally answered from the record's own
+          # column, but `always_use_translations` sends even the default locale
+          # through the translation table, which without a preload is a query
+          # per row.
           def collection_includes
-            []
+            Spree.always_use_translations? ? [:translations] : []
           end
 
           # The grid sends a plain `search` term and lets the server choose the
@@ -101,17 +86,19 @@ module Spree
           #
           # @return [String, nil]
           def search_field
+            return @search_field if defined?(@search_field)
+
             # `ransackable_attributes` is what Ransack actually consults — the
             # `whitelisted_` half omits the defaults, which already carry
             # `name`, so reading it would send collections to `permalink` and
             # leave option types with no search at all.
             attributes = model_class.ransackable_attributes
             field = %w[name presentation permalink slug].find { |candidate| attributes.include?(candidate) }
-            field && "#{field}_cont"
+            @search_field = field && "#{field}_cont"
           end
 
           def translatable_locales
-            (current_store.supported_locales_list - [current_store.default_locale]).sort
+            Spree::Translations.non_default_locales(current_store)
           end
 
           # Each record carries its identifying label (whatever its first

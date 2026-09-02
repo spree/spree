@@ -12,7 +12,7 @@ module Spree
     # @return [Hash{String=>Hash}] locale => { field => value, "translated_field_count" => Integer }
     def matrix_for(record, locales: nil)
       fields = field_keys(record)
-      locales ||= non_default_locales(record)
+      locales ||= non_default_locales(record.translatable_store)
 
       locales.index_with do |locale|
         translated = field_values(record, locale, fields)
@@ -86,14 +86,6 @@ module Spree
       end
     end
 
-    # The number of translatable fields a record of this type has, so a client
-    # can render "2/5" without counting the field list itself.
-    #
-    # @return [Integer]
-    def field_count(klass)
-      klass.public_translatable_fields.size
-    end
-
     # @return [Array<Hash>] registry made public: [{ "resource_type" => "product", "fields" => [{key,type}] }]
     def registry
       Spree.translatable_resources.map do |klass|
@@ -133,6 +125,17 @@ module Spree
       map[token.to_s]
     end
 
+    # The permission resource a translatable model is read under — an option
+    # type's translations ride `products`, a policy's ride `settings`. Shared
+    # by the per-resource and coverage endpoints so the rule has one home.
+    #
+    # @param klass [Class]
+    # @return [Symbol]
+    def permission_resource_name(klass)
+      Spree.permissions.resource_for_subject(klass)&.name ||
+        public_resource_type(klass).pluralize.to_sym
+    end
+
     # The editor type for a translatable field: +html+ when the model declares
     # it as rich text (drives a rich-text editor in the SPA), else +string+.
     # @param klass [Class] a translatable model
@@ -167,13 +170,16 @@ module Spree
     end
     private_class_method :default_locale
 
-    def non_default_locales(record)
-      store = record.translatable_store
+    # The locales a store translates INTO — everything it supports except the
+    # one its source content is written in.
+    #
+    # @param store [Spree::Store]
+    # @return [Array<String>] sorted locale codes
+    def non_default_locales(store)
       return [] unless store
 
       (store.supported_locales_list - [store.default_locale]).sort
     end
-    private_class_method :non_default_locales
 
     # How many records are fully translated, per locale, counted in the database
     # rather than by loading every record's ids into Ruby — the store-wide

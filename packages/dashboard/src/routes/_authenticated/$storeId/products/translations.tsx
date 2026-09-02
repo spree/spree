@@ -16,8 +16,6 @@ import {
   EmptyTitle,
   Pagination,
   Progress,
-  ProgressIndicator,
-  ProgressTrack,
   SearchInput,
   Select,
   SelectContent,
@@ -42,7 +40,7 @@ import { ResourceTranslationsDialog } from '../../../../components/spree/transla
 import {
   isTranslatableResourceType,
   type TranslatableResourceType,
-  useLocales,
+  useLocaleName,
   useTranslatableResources,
   useTranslationCoverage,
 } from '../../../../hooks/use-translations'
@@ -67,8 +65,11 @@ function TranslationsPage() {
 
   const resourceType = search.resource ?? 'product'
   const page = search.page ?? 1
+  // Defer the LOCAL value, the way ResourceTable does: deferring the URL
+  // param cannot coalesce, because writing it is already an urgent update, so
+  // every keystroke would issue its own request.
   const [searchInput, setSearchInput] = useState(search.search ?? '')
-  const deferredSearch = useDeferredValue(search.search ?? '')
+  const deferredSearch = useDeferredValue(searchInput)
 
   // Follow the URL when history navigation changes it out from under the
   // input; typing is a no-op here because patchSearch already synced them.
@@ -80,15 +81,19 @@ function TranslationsPage() {
   }
 
   const { data: resources } = useTranslatableResources()
-  const { data: locales } = useLocales()
 
   // A type needs both a dedicated read route and an SDK accessor before the
   // editor can open it — the registry reports the first, `isTranslatable`
   // the second. Offering a type without an accessor would open a dialog that
   // throws when it tries to fetch.
-  const readable = (resources ?? []).filter(
-    (resource) => resource.readable && isTranslatableResourceType(resource.resource_type),
-  )
+  const resourceOptions = (resources ?? [])
+    .filter((resource) => resource.readable && isTranslatableResourceType(resource.resource_type))
+    .map((resource) => ({
+      value: resource.resource_type,
+      label: t(`admin.pages.translations.resource_types.${resource.resource_type}`, {
+        defaultValue: resource.resource_type,
+      }),
+    }))
 
   // `search` rather than a predicate the client picks: the server knows which
   // one this resource type whitelists (`name` is ransackable on products and
@@ -103,10 +108,13 @@ function TranslationsPage() {
   // No whitelisted predicate means nothing to type into.
   const searchable = !!coverage?.search_field
 
-  const patchSearch = (patch: Record<string, unknown>) =>
-    navigate({ search: (prev: Record<string, unknown>) => ({ ...prev, ...patch }) as never })
+  const patchSearch = (patch: Record<string, unknown>, options?: { replace?: boolean }) =>
+    navigate({
+      search: (prev: Record<string, unknown>) => ({ ...prev, ...patch }) as never,
+      replace: options?.replace,
+    })
 
-  const localeName = (code: string) => locales?.find((l) => l.code === code)?.name ?? code
+  const localeName = useLocaleName()
 
   return (
     <>
@@ -135,7 +143,7 @@ function TranslationsPage() {
                 type="product_translations"
                 filters={[]}
                 search={deferredSearch}
-                searchParam="name_cont"
+                searchParam={coverage?.search_field ?? 'name_cont'}
                 columns={[]}
                 totalCount={data?.meta?.count}
               />
@@ -186,11 +194,7 @@ function TranslationsPage() {
                           <TableCell className="text-center">{row.total}</TableCell>
                           <TableCell>
                             <div className="flex items-center gap-3">
-                              <Progress value={percentage} className="flex-1">
-                                <ProgressTrack>
-                                  <ProgressIndicator />
-                                </ProgressTrack>
-                              </Progress>
+                              <Progress value={percentage} className="flex-1" />
                               <span className="whitespace-nowrap text-muted-foreground text-sm">
                                 {percentage}%
                               </span>
@@ -213,18 +217,18 @@ function TranslationsPage() {
                       value={searchInput}
                       onValueChange={(value: string) => {
                         setSearchInput(value)
-                        patchSearch({ search: value || undefined, page: undefined })
+                        // `replace` so a typed word leaves one history entry,
+                        // not one per keystroke.
+                        patchSearch(
+                          { search: value || undefined, page: undefined },
+                          { replace: true },
+                        )
                       }}
                       placeholder={t('admin.common.search_placeholder')}
                     />
                   )}
                   <Select
-                    items={readable.map((r) => ({
-                      value: r.resource_type,
-                      label: t(`admin.pages.translations.resource_types.${r.resource_type}`, {
-                        defaultValue: r.resource_type,
-                      }),
-                    }))}
+                    items={resourceOptions}
                     value={resourceType}
                     onValueChange={(value: string) =>
                       patchSearch({ resource: value, page: undefined })
@@ -234,11 +238,9 @@ function TranslationsPage() {
                       <SelectValue />
                     </SelectTrigger>
                     <SelectContent>
-                      {readable.map((r) => (
-                        <SelectItem key={r.resource_type} value={r.resource_type}>
-                          {t(`admin.pages.translations.resource_types.${r.resource_type}`, {
-                            defaultValue: r.resource_type,
-                          })}
+                      {resourceOptions.map((option) => (
+                        <SelectItem key={option.value} value={option.value}>
+                          {option.label}
                         </SelectItem>
                       ))}
                     </SelectContent>

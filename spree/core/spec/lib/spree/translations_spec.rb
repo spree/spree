@@ -85,6 +85,42 @@ RSpec.describe Spree::Translations do
     end
   end
 
+  describe '.translatable_scope' do
+    let(:other_store) { create(:store) }
+
+    it 'narrows a store-column model to the store' do
+      mine = create(:product, store: store)
+      theirs = create(:product, store: other_store)
+
+      scope = Spree::Product.translatable_scope(store)
+      expect(scope).to include(mine)
+      expect(scope).not_to include(theirs)
+    end
+
+    it 'narrows a polymorphic-owner model through its owner' do
+      # spree_policies has no store_id — it hangs off `owner` — so anything
+      # keying on the column would hand back every store's policies.
+      mine = create(:policy, owner: store)
+      theirs = create(:policy, owner: other_store)
+
+      scope = Spree::Policy.translatable_scope(store)
+      expect(scope).to include(mine)
+      expect(scope).not_to include(theirs)
+    end
+
+    it 'narrows Store to the store itself, not every store in the install' do
+      other_store
+
+      expect(Spree::Store.translatable_scope(store)).to contain_exactly(store)
+    end
+
+    it 'returns everything for global reference data' do
+      option_type = create(:option_type)
+
+      expect(Spree::OptionType.translatable_scope(store)).to include(option_type)
+    end
+  end
+
   describe '.coverage_for' do
     let!(:other_product) { create(:product, name: 'Drip Coffee Maker', store: store) }
 
@@ -125,10 +161,4 @@ RSpec.describe Spree::Translations do
     end
   end
 
-  describe '.field_count' do
-    it 'reports how many translatable fields a resource has' do
-      expect(described_class.field_count(Spree::Product)).to eq 5
-      expect(described_class.field_count(Spree::OptionType)).to eq 1
-    end
-  end
 end

@@ -30,7 +30,7 @@ import { useCallback, useEffect, useMemo, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import {
   type TranslatableResourceType,
-  useLocales,
+  useLocaleName,
   useResourceTranslations,
 } from '../../../hooks/use-translations'
 
@@ -96,7 +96,6 @@ export function ResourceTranslationsDialog({
 }: ResourceTranslationsDialogProps) {
   const { t } = useTranslation()
   const confirm = useConfirm()
-  const { data: locales } = useLocales()
   const { data, isLoading, isError, refetch } = useResourceTranslations(resourceType, resourceId)
 
   const rows = useMemo(() => (data ? flattenTree(data) : []), [data])
@@ -121,10 +120,7 @@ export function ResourceTranslationsDialog({
   }, [locale, targetLocales])
 
   const dirtyCount = edits.size
-  const localeName = useCallback(
-    (code: string) => locales?.find((l) => l.code === code)?.name ?? code,
-    [locales],
-  )
+  const localeName = useLocaleName()
 
   const handleOpenChange = useCallback(
     async (next: boolean) => {

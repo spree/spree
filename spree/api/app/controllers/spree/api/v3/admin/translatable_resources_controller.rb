@@ -34,18 +34,26 @@ module Spree
           # collections and policies).
           #
           # @return [Set<String>]
+          # Walked once and held on the class: the route set is immutable after
+          # boot, and in development the reloader replaces the class itself, so
+          # a route change is picked up without a cache to invalidate.
           def readable_resource_types
-            Spree::Core::Engine.routes.routes.each_with_object(Set.new) do |route, types|
-              next unless route.defaults[:controller] == 'spree/api/v3/admin/translations'
-              next unless route.defaults[:action] == 'index'
+            self.class.readable_resource_types
+          end
 
-              # ".../admin/<segment>/:<segment>_id/translations" — the parent
-              # segment is what the registry token has to match.
-              segment = route.path.spec.to_s[%r{/([^/]+)/:\w+_id/translations}, 1]
-              next if segment.blank?
+          def self.readable_resource_types
+            @readable_resource_types ||=
+              Spree::Core::Engine.routes.routes.each_with_object(Set.new) do |route, types|
+                next unless route.defaults[:controller] == 'spree/api/v3/admin/translations'
+                next unless route.defaults[:action] == 'index'
 
-              types << segment.singularize
-            end
+                # ".../admin/<segment>/:<segment>_id/translations" — the parent
+                # segment is what the registry token has to match.
+                segment = route.path.spec.to_s[%r{/([^/]+)/:\w+_id/translations}, 1]
+                next if segment.blank?
+
+                types << segment.singularize
+              end
           end
 
           def action_kind
