@@ -70,20 +70,12 @@ function TranslationsPage() {
   // otherwise reach the accessor map and throw inside the dialog's queryFn.
   const resourceType = isTranslatableResourceType(search.resource) ? search.resource : 'product'
 
-  // Defer the LOCAL value, the way ResourceTable does: deferring the URL
-  // param cannot coalesce, because writing it is already an urgent update, so
-  // every keystroke would issue its own request.
+  // The term is local state, never a URL param: writing it on each keystroke
+  // re-renders the route component, which remounts the input and takes focus
+  // away mid-word. Deferring it lets React coalesce fast typing into one
+  // fetch, and only what reads `deferredSearch` re-renders.
   const [searchInput, setSearchInput] = useState(search.search ?? '')
   const deferredSearch = useDeferredValue(searchInput)
-
-  // Follow the URL when history navigation changes it out from under the
-  // input; typing is a no-op here because patchSearch already synced them.
-  const urlSearch = search.search ?? ''
-  const [lastUrlSearch, setLastUrlSearch] = useState(urlSearch)
-  if (urlSearch !== lastUrlSearch) {
-    setLastUrlSearch(urlSearch)
-    setSearchInput(urlSearch)
-  }
 
   const { data: resources } = useTranslatableResources()
 
@@ -242,9 +234,9 @@ function TranslationsPage() {
                     value={searchInput}
                     onValueChange={(value: string) => {
                       setSearchInput(value)
-                      // `replace` so a typed word leaves one history entry,
-                      // not one per keystroke.
-                      patchSearch({ search: value || undefined, page: 1 }, { replace: true })
+                      // A narrowed list rarely has the page the merchant was
+                      // on; only touch the URL when there is one to leave.
+                      if (page !== 1) patchSearch({ page: 1 }, { replace: true })
                     }}
                     placeholder={t('admin.common.search_placeholder')}
                   />
