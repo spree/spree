@@ -118,10 +118,8 @@ export function ResourceCombobox<T extends ComboboxOption>({
     return filterOption ? merged.filter(filterOption) : merged
   }, [searchData, hydratedData, filterOption])
 
-  const hiddenCount =
-    searchData?.meta && searchData.meta.count > items.length
-      ? searchData.meta.count - items.length
-      : 0
+  const visibleSearchCount = searchData?.data.length ?? 0
+  const hiddenCount = Math.max(0, (searchData?.meta?.count ?? 0) - visibleSearchCount)
 
   return (
     <HeadlessResourceCombobox

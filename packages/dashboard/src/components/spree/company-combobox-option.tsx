@@ -12,7 +12,7 @@ export function CompanyComboboxOption({ company }: { company: Company }) {
 
   return (
     <div>
-      <div className="font-medium">{company.name}</div>
+      <div className="font-medium">{company.name ?? company.id}</div>
       {path && <div className="text-muted-foreground text-xs">{path}</div>}
     </div>
   )

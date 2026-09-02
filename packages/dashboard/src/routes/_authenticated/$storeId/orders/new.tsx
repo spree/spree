@@ -205,7 +205,7 @@ function NewOrderPage() {
                         // for. Clearing is the honest reset.
                         if (record?.id !== company?.id) setCustomer(null)
                       }}
-                      renderOption={(c) => <CompanyComboboxOption company={c} />}
+                      renderOption={(company) => <CompanyComboboxOption company={company} />}
                     />
                     <FieldDescription>{t('admin.pages.orders.new.company_help')}</FieldDescription>
                   </Field>
