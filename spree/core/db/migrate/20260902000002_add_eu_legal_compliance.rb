@@ -38,6 +38,7 @@ class AddEuLegalCompliance < ActiveRecord::Migration[8.1]
       t.belongs_to :store, null: false, index: true
       t.belongs_to :customer, null: false, index: true
       t.string :number, null: false
+      t.string :download_token
       t.string :kind, null: false
       t.string :status, null: false
       t.string :email, null: false
@@ -52,6 +53,7 @@ class AddEuLegalCompliance < ActiveRecord::Migration[8.1]
     end
 
     add_index :spree_data_requests, [:store_id, :number], unique: true
+    add_index :spree_data_requests, :download_token, unique: true
     add_index :spree_data_requests, [:customer_id, :kind, :status],
               name: 'index_spree_data_requests_on_customer_kind_status'
     add_index :spree_data_requests, :requested_by_id

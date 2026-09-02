@@ -158,6 +158,9 @@ Spree::Core::Engine.add_routes do
         # Digital Downloads
         # Access via token in URL
         get 'digital_links/:token', to: 'digital_links#show', as: :digital_link_download
+        # Token-addressed so the emailed link works from a device that was
+        # never signed in.
+        get 'data_requests/:token/download', to: 'data_request_downloads#show', as: :data_request_download
         # Legacy path — emailed and bookmarked URLs outlive the rename. Removed in 6.1.
         get 'digitals/:token', to: 'digital_links#show', as: :digital_download
 

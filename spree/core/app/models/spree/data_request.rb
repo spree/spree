@@ -32,6 +32,11 @@ module Spree
     # about them is not left lying around.
     DEFAULT_EXPIRY = 7.days
 
+    # Addresses the finished export. Plaintext like the digital-link token:
+    # the URL is the credential, it is only ever sent to the address that
+    # asked, and it stops working when the request expires.
+    has_secure_token :download_token
+
     belongs_to :store, class_name: 'Spree::Store'
     belongs_to :customer, class_name: Spree.customer_class.to_s
     # Null when the subject asked for it themselves; set when staff acted on a

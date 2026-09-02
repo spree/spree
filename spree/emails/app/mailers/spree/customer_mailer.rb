@@ -24,7 +24,10 @@ module Spree
     def data_export_email(data_request)
       @data_request = data_request
       @current_store = data_request.store
-      @download_url = data_request.export_file.url(expires_in: Spree::DataRequest::DEFAULT_EXPIRY)
+      # A store route rather than a raw storage URL: a signed storage link
+      # cannot be built off-request on the Disk service, and mailing one would
+      # put a direct object address in an inbox where it outlives the request.
+      @download_url = Spree::Api::DataRequestUrls.download_url(data_request, @current_store.formatted_url)
       @expires_at = data_request.expires_at
 
       with_store_locale(@current_store) do

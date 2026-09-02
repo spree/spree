@@ -1,0 +1,156 @@
+---
+title: Data Privacy
+description: How Spree supports GDPR subject requests, consent records, the EU Omnibus price history, and the right of withdrawal.
+---
+
+## Overview
+
+Spree ships the machinery an EU merchant needs to answer a data protection
+request, prove that consent was given, show a lawful sale price, and tell a
+buyer how long they have to change their mind.
+
+Core provides the data model, the services and the API. Management workflows
+built on top — a request queue, deadline tracking, automated retention runs —
+are left to your application or to Spree Enterprise.
+
+## Subject requests
+
+A person has the right to a copy of their data and the right to have it
+erased. Both arrive as a `Spree::DataRequest`, which records that the request
+was made and how it was answered.
+
+```
+POST /api/v3/store/customers/me/data_requests   { "kind": "access" }
+POST /api/v3/store/customers/me/data_requests   { "kind": "erasure", "current_password": "..." }
+```
+
+The response is `202 Accepted` with a pending request. Building the export
+reads a person's whole history, so it happens in the background and the file
+arrives by email as a signed link that expires. Asking again while a request
+of the same kind is still in flight returns the one already running, rather
+than starting a second.
+
+An erasure request needs the account password, because erasure cannot be
+undone and an unattended session should not be enough to trigger it.
+
+Most requests never reach the storefront. They arrive as email to the
+merchant, often from someone who can no longer sign in, so the same two
+actions exist in the admin:
+
+```
+GET  /api/v3/admin/customers/:id/export
+POST /api/v3/admin/customers/:id/anonymize
+```
+
+The dashboard exposes both on the customer page.
+
+### What erasure actually does
+
+Erasure means anonymization. `Spree::Customers::Anonymize` replaces every
+value that identifies a person — on the account, its address book, the address
+snapshots on past orders, saved cards, connected identities, live sessions and
+consent rows — and keeps everything that is a financial record.
+
+Orders, payments, tax lines and line items are never touched. They carry their
+own retention obligation under accounting and tax law, and deleting them would
+trade one legal duty for another. On order addresses the country, state and a
+truncated postal code survive deliberately, so the jurisdiction a past sale was
+taxed in stays provable.
+
+A `customer.anonymized` event is published when it completes.
+
+<Warning>
+Anonymization is the only supported erasure path. If your application adds a
+table holding customer-identifiable data, extend this flow in the same change.
+A spec in core fails when a personal-data column appears that the anonymizer
+does not reach.
+</Warning>
+
+### Extending the export
+
+Spree exports what Spree knows. If your application holds data of its own — a
+loyalty ledger, support history — add it through the hook:
+
+```ruby
+Spree.hooks.register('data_requests.fulfill.extend_payload', 'MyStore::LoyaltyExport')
+
+class MyStore::LoyaltyExport
+  def call(workflow)
+    { loyalty: { points: workflow.data_request.customer.loyalty_points } }
+  end
+end
+```
+
+Handlers return a hash, which is merged into the payload. A handler cannot
+drop what Spree contributes.
+
+You can also veto an erasure — an open dispute, a fraud investigation, a legal
+hold:
+
+```ruby
+Spree.hooks.register('customers.anonymize.validate', 'MyStore::LegalHold')
+
+class MyStore::LegalHold
+  def call(workflow)
+    workflow.reject!('This account is under legal hold') if on_hold?(workflow.customer)
+  end
+end
+```
+
+## Consent
+
+`accepts_email_marketing` says what is true now. Proving consent needs to know
+when it became true and where the person agreed, so the customer also carries
+`email_marketing_consent_updated_at` and `email_marketing_consent_source`, both
+written automatically whenever the flag moves.
+
+Acceptance itself is recorded as an event in `Spree::ConsentRecord` — at
+registration, and at checkout for guests who have no account. Each row keeps
+the purpose, the source, the moment, and a snapshot of the documents shown,
+including a digest of the text. A merchant who later edits their terms can
+still show which version a given person agreed to.
+
+Consent rows survive erasure. The proof that consent was given outlives the
+person's contact details, which are removed from the row.
+
+<Note>
+Cookie consent belongs to your storefront, not to Spree. These records cover
+consent your backend can act on, such as marketing permission and accepted
+terms.
+</Note>
+
+## Omnibus price history
+
+The Omnibus Directive requires that an announced price reduction shows the
+lowest price of the previous 30 days. Spree records every base price change in
+`Spree::PriceHistory` and exposes the lowest prior price on request:
+
+```
+GET /api/v3/store/products/:id?expand=prior_price
+```
+
+Recording is on by default and controlled per store with
+`track_price_history`, since a non-EU store has no use for it. Retention
+defaults to 30 days via `price_history_retention_days`; prune with:
+
+```bash
+bundle exec rake spree:price_history:prune
+```
+
+## Right of withdrawal
+
+EU buyers may withdraw from a distance sale within 14 days of receiving the
+goods. Orders expose the deadline:
+
+```json
+{ "withdrawal_period_ends_at": "2026-09-20T10:30:00Z", "within_withdrawal_period": true }
+```
+
+The window is set per market with `withdrawal_period_days`, because the right
+is regional law. It is deliberately separate from `return_window_days`: a
+return window is merchant policy running from purchase, often set to 30 days as
+goodwill, while withdrawal is a statutory right running from delivery.
+
+The deadline is computed on read from the order's latest delivery, falling back
+to completion while nothing has been delivered. A stored copy would be wrong
+the moment a parcel arrived.

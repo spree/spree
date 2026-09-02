@@ -26,10 +26,13 @@ module Spree
 
         # Present only while the file is still there — a link the storefront
         # can render without having to reason about expiry itself.
-        attribute :download_url do |data_request|
+        attribute :download_url do |data_request, params|
           next nil unless data_request.downloadable?
 
-          data_request.export_file.url(expires_in: Spree::DataRequest::DEFAULT_EXPIRY)
+          host = (params&.dig(:store) || data_request.store)&.formatted_url
+          next nil if host.blank?
+
+          Spree::Api::DataRequestUrls.download_url(data_request, host)
         end
       end
     end

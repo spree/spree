@@ -869,6 +869,8 @@ en:
     custom_field_definitions: Custom Field Definitions
     custom_fields: Custom Fields
     customer: Customer
+    customer_errors:
+      already_anonymized: This customer's personal data has already been erased
     customer_group: Customer Group
     customer_groups: Customer Groups
     customer_mailer:
@@ -891,9 +893,8 @@ en:
     cut: Cut
     cvv: CVV
     cvv_response: CVV Response
-    customer_errors:
-      already_anonymized: This customer's personal data has already been erased
     data_request_errors:
+      download_unavailable: This download link has expired or is no longer valid
       not_pending: This request has already been processed
     date: Date
     date_range: Date Range
