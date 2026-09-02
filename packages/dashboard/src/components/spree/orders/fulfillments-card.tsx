@@ -693,12 +693,14 @@ function FulfillmentPanel({
   return (
     <Card variant="nested">
       <CardHeader>
-        <CardTitle className="text-sm font-normal">
+        <CardTitle className="min-w-0 text-sm font-normal">
           <StatusBadge status={status} />
           {location && (
-            <div className="flex items-center gap-1.5 text-xs text-muted-foreground">
-              <MapPinIcon className="size-3" />
-              {location}
+            <div className="flex min-w-0 items-center gap-1.5 text-muted-foreground text-xs">
+              <MapPinIcon className="size-3 shrink-0" />
+              {/* The card clips its overflow, so a long warehouse name has to
+                  truncate here or it is simply cut off. */}
+              <span className="truncate">{location}</span>
             </div>
           )}
           {meta}

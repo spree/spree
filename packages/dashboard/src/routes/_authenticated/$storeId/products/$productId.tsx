@@ -339,11 +339,13 @@ function ProductSkeleton() {
       {/* Mirrors PageHeader: the name on its own line, the status below it. */}
       <div className="flex items-start gap-3">
         <Skeleton className="size-8 shrink-0 rounded-lg" />
-        <div className="flex flex-col gap-1">
-          <Skeleton className="h-8 w-48" />
+        {/* Yields width to the actions rather than pushing them off a narrow
+            viewport, which is what the real header does. */}
+        <div className="flex min-w-0 flex-1 flex-col gap-1">
+          <Skeleton className="h-8 w-full max-w-48" />
           <Skeleton className="h-5 w-20 rounded-md" />
         </div>
-        <div className="ml-auto flex items-center gap-2">
+        <div className="flex shrink-0 items-center gap-2">
           <Skeleton className="h-8 w-20 rounded-lg" />
           <Skeleton className="h-8 w-16 rounded-lg" />
         </div>

@@ -92,7 +92,7 @@ export function OrderExchangesCard({ order }: { order: Order }) {
           )}
           {exchanges.map((exchange: Exchange) => (
             <Card key={exchange.id} variant="nested">
-              <CardHeader className="p-0 pb-3">
+              <CardHeader>
                 <CardTitle className="text-sm font-medium">
                   <StatusBadge status={exchange.status} />
                   <span className="text-sm font-medium">{exchange.number}</span>
@@ -241,7 +241,7 @@ export function OrderClaimsCard({ order }: { order: Order }) {
           )}
           {claims.map((claim: Claim) => (
             <Card key={claim.id} variant="nested">
-              <CardHeader className="p-0 pb-3">
+              <CardHeader>
                 <CardTitle className="text-sm font-medium">
                   <StatusBadge status={claim.status} />
                   <span className="text-sm font-medium">{claim.number}</span>

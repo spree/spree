@@ -10,9 +10,11 @@ export function OrderSkeleton() {
         <Skeleton className="size-8 shrink-0 rounded-lg" />
         <div className="flex flex-col gap-1">
           <Skeleton className="h-8 w-40" />
-          <div className="flex items-center gap-3">
-            <Skeleton className="h-5 w-20 rounded-md" />
-            <Skeleton className="h-5 w-20 rounded-md" />
+          {/* Wraps like the real header's badge row, so a narrow viewport
+              does not reflow the moment the order lands. */}
+          <div className="flex flex-wrap items-center gap-3">
+            <Skeleton className="h-5 w-20 shrink-0 rounded-md" />
+            <Skeleton className="h-5 w-20 shrink-0 rounded-md" />
             <Skeleton className="h-4 w-32" />
           </div>
         </div>
