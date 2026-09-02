@@ -170,8 +170,11 @@ RSpec.describe 'AvaTax API contract', :vcr do
 
   describe 'refund' do
     let(:destination) { create(:address, city: 'New York', state_code: 'NY', country_code: 'US', zipcode: '10001') }
+    # Sold well in the past, so the tax-date override has something to prove: a
+    # credit taxed as of today would silently use today's rates.
+    let(:sold_on) { Time.utc(2024, 1, 15, 12, 0, 0) }
     let(:order) do
-      create(:order, store: @default_store, completed_at: Time.current,
+      create(:order, store: @default_store, completed_at: sold_on,
                      ship_address: destination, bill_address: destination)
     end
     let(:line_item) { create(:line_item, order: order, cart: nil, price: 100, quantity: 2) }
@@ -189,6 +192,27 @@ RSpec.describe 'AvaTax API contract', :vcr do
 
     it 'credits the returned line', vcr: { cassette_name: 'refund/return_invoice' } do
       expect { provider.refund(order, return_items) }.not_to raise_error
+    end
+
+    # AvaTax ignores an override key it does not recognise without complaining,
+    # so the only proof the override landed is the date it taxed the credit on.
+    it 'taxes the credit as of the original sale', vcr: { cassette_name: 'refund/tax_date_override' } do
+      # A fresh document code per recording: the other refund examples reuse the
+      # order factory's number, so they collide with documents recording left
+      # behind — which is what their duplicate handling wants, and what this
+      # example must avoid, since it needs a response to read.
+      order.update_column(:number, "R-TAXDATE-#{Time.now.to_i}")
+      credited = nil
+      allow(integration.client).to receive(:create_transaction).and_wrap_original do |original, model|
+        credited = original.call(model)
+      end
+
+      provider.refund(order, return_items)
+
+      # Asserted before reading it, so a swallowed refusal fails here rather than
+      # blowing up on nil.
+      expect(credited).to be_present
+      expect(credited['lines'].map { |line| line['taxDate'] }).to all(eq('2024-01-15'))
     end
 
     it 'accepts a replayed credit', vcr: { cassette_name: 'refund/duplicate' } do
