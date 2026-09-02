@@ -3703,6 +3703,7 @@
         "title": "员工"
       },
       "translations": {
+        "complete": "已完全翻译",
         "coverage": "翻译覆盖率",
         "description": "查看目录的翻译进度，并补齐缺失的内容。",
         "load_error": "无法加载翻译覆盖率。",

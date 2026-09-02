@@ -3711,6 +3711,7 @@
         "title": "Staff"
       },
       "translations": {
+        "complete": "Fully translated",
         "coverage": "Translation coverage",
         "description": "See how much of your catalog is translated, and fill the gaps.",
         "load_error": "Could not load translation coverage.",

@@ -54,7 +54,9 @@ export type TranslatableResourceType = keyof typeof TRANSLATIONS_ACCESSORS
 export function isTranslatableResourceType(
   resourceType: string,
 ): resourceType is TranslatableResourceType {
-  return resourceType in TRANSLATIONS_ACCESSORS
+  // `Object.hasOwn` rather than `in`: the latter walks the prototype chain, so
+  // "constructor" or "toString" would pass and then resolve to a non-accessor.
+  return Object.hasOwn(TRANSLATIONS_ACCESSORS, resourceType)
 }
 
 /**

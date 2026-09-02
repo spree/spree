@@ -3711,6 +3711,7 @@
         "title": "Team"
       },
       "translations": {
+        "complete": "Vollständig übersetzt",
         "coverage": "Übersetzungsabdeckung",
         "description": "Sehen Sie, wie viel Ihres Katalogs übersetzt ist, und schließen Sie die Lücken.",
         "load_error": "Übersetzungsabdeckung konnte nicht geladen werden.",

@@ -16,6 +16,7 @@ import {
   EmptyTitle,
   Pagination,
   Progress,
+  ResourceNameCell,
   SearchInput,
   Select,
   SelectContent,
@@ -29,6 +30,7 @@ import {
   TableHead,
   TableHeader,
   TableRow,
+  useRowClickBridge,
 } from '@spree/dashboard-ui'
 import { CheckIcon } from '@spree/dashboard-ui/icons'
 import { createFileRoute, useNavigate } from '@tanstack/react-router'
@@ -125,6 +127,8 @@ function TranslationsPage() {
   const editId = coverage?.records.some((record) => record.id === search.edit)
     ? search.edit
     : undefined
+
+  useRowClickBridge('data-translation-record-id', (id: string) => patchSearch({ edit: id }))
 
   return (
     <>
@@ -278,12 +282,14 @@ function TranslationsPage() {
                   </TableHeader>
                   <TableBody>
                     {(coverage?.records ?? []).map((record) => (
-                      <TableRow
-                        key={record.id}
-                        className="cursor-pointer"
-                        onClick={() => patchSearch({ edit: record.id })}
-                      >
-                        <TableCell className="font-medium">{record.label}</TableCell>
+                      <TableRow key={record.id} className="cursor-pointer">
+                        <TableCell>
+                          <ResourceNameCell
+                            id={record.id}
+                            dataAttr="data-translation-record-id"
+                            name={record.label ?? record.id}
+                          />
+                        </TableCell>
                         {targetLocales.map((locale) => (
                           <TableCell key={locale} className="text-center">
                             <CoverageCell
@@ -332,10 +338,17 @@ function TranslationsPage() {
  * count while partial, a dash at zero.
  */
 function CoverageCell({ translated, total }: { translated: number; total: number }) {
+  const { t } = useTranslation()
+
   if (translated === 0) return <span className="text-muted-foreground">&mdash;</span>
 
   if (translated >= total) {
-    return <CheckIcon className="mx-auto size-4 text-green-600" aria-label="complete" />
+    return (
+      <CheckIcon
+        className="mx-auto size-4 text-green-600"
+        aria-label={t('admin.pages.translations.complete')}
+      />
+    )
   }
 
   return (

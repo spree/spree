@@ -3711,6 +3711,7 @@
         "title": "Équipe"
       },
       "translations": {
+        "complete": "Entièrement traduit",
         "coverage": "Couverture des traductions",
         "description": "Voyez quelle part de votre catalogue est traduite et comblez les manques.",
         "load_error": "Impossible de charger la couverture des traductions.",

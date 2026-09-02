@@ -3755,6 +3755,7 @@
         "title": "Zespół"
       },
       "translations": {
+        "complete": "W pełni przetłumaczone",
         "coverage": "Pokrycie tłumaczeń",
         "description": "Zobacz, jaka część katalogu jest przetłumaczona, i uzupełnij braki.",
         "load_error": "Nie udało się wczytać pokrycia tłumaczeń.",
