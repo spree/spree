@@ -622,6 +622,17 @@ function ScheduleCard({ form }: { form: UseFormReturn<PromotionFormValues> }) {
 type RulesArray = ReturnType<typeof useFieldArray<PromotionFormValues, 'rules', '_key'>>
 type ActionsArray = ReturnType<typeof useFieldArray<PromotionFormValues, 'actions', '_key'>>
 
+/** Draft held in the editor until Save — nothing is appended to the form on pick. */
+type RuleEditorState =
+  | { mode: 'new'; draft: PromotionRuleFormDraft }
+  | { mode: 'edit'; index: number }
+  | null
+
+type ActionEditorState =
+  | { mode: 'new'; draft: PromotionActionFormDraft }
+  | { mode: 'edit'; index: number }
+  | null
+
 function RulesCard({
   form,
   rulesArray,
@@ -636,7 +647,7 @@ function RulesCard({
   const { data: typesData } = usePromotionRuleTypes()
   const { defaultCurrency } = useStore()
   const [pickerOpen, setPickerOpen] = useState(false)
-  const [editingIndex, setEditingIndex] = useState<number | null>(null)
+  const [editorState, setEditorState] = useState<RuleEditorState>(null)
 
   const types = typesData?.data ?? []
   // Use `watch` for the row drafts — `rulesArray.fields` is RHF's
@@ -700,7 +711,7 @@ function RulesCard({
               <RuleRow
                 key={field._key}
                 draft={(watchedRules[index] ?? field) as unknown as PromotionRuleFormDraft}
-                onEdit={() => setEditingIndex(index)}
+                onEdit={() => setEditorState({ mode: 'edit', index })}
                 onRemove={() => rulesArray.remove(index)}
               />
             ))
@@ -722,22 +733,30 @@ function RulesCard({
             onOpenChange={(o) => !o && setPickerOpen(false)}
             onPicked={(type) => {
               const draft = ruleDraftFromType(type, { currency: defaultCurrency })
-              rulesArray.append(draft)
               setPickerOpen(false)
-              setEditingIndex(rulesArray.fields.length)
+              setEditorState({ mode: 'new', draft })
             }}
           />
         )}
 
-        {editingIndex !== null && rulesArray.fields[editingIndex] && (
+        {editorState && (
           <RuleEditSheet
             draft={
-              (watchedRules[editingIndex] ??
-                rulesArray.fields[editingIndex]) as unknown as PromotionRuleFormDraft
+              editorState.mode === 'new'
+                ? editorState.draft
+                : ((watchedRules[editorState.index] ??
+                    rulesArray.fields[editorState.index]) as unknown as PromotionRuleFormDraft)
             }
             open
-            onOpenChange={(o) => !o && setEditingIndex(null)}
-            onSave={(next) => rulesArray.update(editingIndex, next)}
+            onOpenChange={(o) => !o && setEditorState(null)}
+            onSave={(next) => {
+              if (editorState.mode === 'new') {
+                rulesArray.append(next)
+              } else {
+                rulesArray.update(editorState.index, next)
+              }
+              setEditorState(null)
+            }}
           />
         )}
       </CardContent>
@@ -1022,7 +1041,7 @@ function DefaultRuleEditor({ draft, onSave, onClose }: PromotionRuleEditorContex
       onSave={handleSave}
       onCancel={onClose}
       pending={false}
-      saveDisabled={!hasPreferences}
+      saveLabel={hasPreferences ? undefined : t('admin.actions.add')}
     >
       {hasPreferences ? (
         <PreferencesForm schema={draft.preference_schema} values={values} onChange={setValues} />
@@ -1051,7 +1070,7 @@ function ActionsCard({
   const { data: typesData } = usePromotionActionTypes()
   const { defaultCurrency } = useStore()
   const [pickerOpen, setPickerOpen] = useState(false)
-  const [editingIndex, setEditingIndex] = useState<number | null>(null)
+  const [editorState, setEditorState] = useState<ActionEditorState>(null)
 
   const types = typesData?.data ?? []
   // See `RulesCard` — read row drafts from `watch` so unregistered
@@ -1078,7 +1097,7 @@ function ActionsCard({
               <ActionRow
                 key={field._key}
                 draft={(watchedActions[index] ?? field) as unknown as PromotionActionFormDraft}
-                onEdit={() => setEditingIndex(index)}
+                onEdit={() => setEditorState({ mode: 'edit', index })}
                 onRemove={() => actionsArray.remove(index)}
               />
             ))
@@ -1098,22 +1117,30 @@ function ActionsCard({
             onOpenChange={(o) => !o && setPickerOpen(false)}
             onPicked={(type) => {
               const draft = actionDraftFromType(type, { currency: defaultCurrency })
-              actionsArray.append(draft)
               setPickerOpen(false)
-              setEditingIndex(actionsArray.fields.length)
+              setEditorState({ mode: 'new', draft })
             }}
           />
         )}
 
-        {editingIndex !== null && actionsArray.fields[editingIndex] && (
+        {editorState && (
           <ActionEditSheet
             draft={
-              (watchedActions[editingIndex] ??
-                actionsArray.fields[editingIndex]) as unknown as PromotionActionFormDraft
+              editorState.mode === 'new'
+                ? editorState.draft
+                : ((watchedActions[editorState.index] ??
+                    actionsArray.fields[editorState.index]) as unknown as PromotionActionFormDraft)
             }
             open
-            onOpenChange={(o) => !o && setEditingIndex(null)}
-            onSave={(next) => actionsArray.update(editingIndex, next)}
+            onOpenChange={(o) => !o && setEditorState(null)}
+            onSave={(next) => {
+              if (editorState.mode === 'new') {
+                actionsArray.append(next)
+              } else {
+                actionsArray.update(editorState.index, next)
+              }
+              setEditorState(null)
+            }}
           />
         )}
       </CardContent>
@@ -1280,7 +1307,7 @@ function DefaultActionEditor({ draft, onSave, onClose }: PromotionActionEditorCo
       onSave={handleSave}
       onCancel={onClose}
       pending={false}
-      saveDisabled={!hasPreferences}
+      saveLabel={hasPreferences ? undefined : t('admin.actions.add')}
     >
       {hasPreferences ? (
         <PreferencesForm schema={draft.preference_schema} values={values} onChange={setValues} />
