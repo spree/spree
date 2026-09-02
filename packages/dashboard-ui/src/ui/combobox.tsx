@@ -48,7 +48,7 @@ function ComboboxButtonTrigger({ className, children, ...props }: ComboboxPrimit
     <ComboboxPrimitive.Trigger
       data-slot="combobox-button-trigger"
       className={cn(
-        "flex w-full min-h-8.5 cursor-pointer items-center justify-between gap-1.5 rounded-lg border border-border bg-card py-1.5 pr-2 pl-2.5 text-base font-normal leading-normal text-foreground transition-all duration-100 ease-in-out outline-none select-none focus:border-blue-500 focus:shadow-[0_0_0_3px_color-mix(in_srgb,var(--ring)_15%,transparent)] disabled:pointer-events-none disabled:cursor-not-allowed disabled:bg-muted disabled:border-border disabled:text-muted-foreground disabled:shadow-none aria-invalid:border-destructive [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4",
+        "flex w-full min-h-8.5 cursor-pointer items-center justify-between gap-1.5 rounded-lg border border-border bg-card py-1.5 pr-2 pl-2.5 text-base font-normal leading-normal text-foreground transition-all duration-100 ease-in-out outline-none select-none focus:border-blue-500 focus:shadow-[0_0_0_3px_color-mix(in_srgb,var(--ring)_15%,transparent)] disabled:pointer-events-none disabled:cursor-not-allowed disabled:bg-muted disabled:text-muted-foreground disabled:shadow-none aria-invalid:border-destructive [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4",
         className,
       )}
       {...props}
