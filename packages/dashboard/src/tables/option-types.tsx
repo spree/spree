@@ -12,6 +12,8 @@ const KIND_LABELS: Record<string, string> = {
 
 defineTable<OptionType>('option-types', {
   title: i18n.t('admin.nav.options'),
+  description: i18n.t('admin.table_descriptions.options'),
+  docsPath: 'manage-products/product-options',
   searchParam: 'name_cont',
   searchPlaceholder: i18n.t('admin.option_types.table.search_placeholder'),
   defaultSort: { field: 'position', direction: 'asc' },

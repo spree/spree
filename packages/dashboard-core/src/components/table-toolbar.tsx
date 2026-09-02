@@ -1,7 +1,7 @@
 import {
   Button,
-  CardTitle,
   Checkbox,
+  cn,
   DropdownMenu,
   DropdownMenuCheckboxItem,
   DropdownMenuContent,
@@ -54,6 +54,7 @@ import {
 } from '../lib/table-registry'
 import { useOptionalStore } from '../providers/store-provider'
 import { useTenantId } from '../providers/tenant-provider'
+import { SectionHeading } from './section-heading'
 import { StoreDatePicker } from './store-date-picker'
 
 interface TableToolbarProps {
@@ -72,6 +73,10 @@ interface TableToolbarProps {
   allColumns?: ColumnDef[]
   /** Title displayed in the toolbar header */
   title?: string
+  /** One line under the title saying what the list is for. */
+  description?: string
+  /** Documentation for the feature, linked at the end of the description. */
+  docsPath?: string
   actions?: React.ReactNode
   /** Hide the sort dropdown — used when the table is drag-reorderable, where free sorting would defeat the drag. */
   hideSort?: boolean
@@ -176,6 +181,8 @@ export function TableToolbar({
   onFiltersChange,
   allColumns,
   title,
+  description,
+  docsPath,
   actions,
   hideSort = false,
 }: TableToolbarProps) {
@@ -253,8 +260,15 @@ export function TableToolbar({
       {/* Title and page actions only. Every control that acts on the list —
           search, filters, sort, columns — lives on the row below, so the two
           rows split by what they are for rather than by how they are built. */}
-      <div className="flex flex-row items-center gap-2 border-b border-border-subtle p-3 pl-4 lg:justify-between">
-        {title && <CardTitle className="min-w-0 truncate text-lg">{title}</CardTitle>}
+      <div
+        className={cn(
+          'flex flex-row gap-2 border-b border-border-subtle p-3 pl-4 lg:justify-between',
+          description ? 'items-start' : 'items-center',
+        )}
+      >
+        {(title || description) && (
+          <SectionHeading title={title} description={description} docsPath={docsPath} />
+        )}
         <div className="ml-auto flex shrink-0 items-center gap-2">{actions}</div>
       </div>
 

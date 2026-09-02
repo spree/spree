@@ -7,6 +7,8 @@ import { sortOrderLabelKey } from '../schemas/collection'
 
 defineTable<Collection>('collections', {
   title: i18n.t('admin.collections.title'),
+  description: i18n.t('admin.table_descriptions.collections'),
+  docsPath: 'manage-products/product-taxonomies',
   searchParam: 'name_cont',
   searchPlaceholder: i18n.t('admin.collections.search_placeholder'),
   defaultSort: { field: 'position', direction: 'asc' },
@@ -29,9 +31,16 @@ defineTable<Collection>('collections', {
     },
     {
       key: 'automatic',
-      label: i18n.t('admin.collections.columns.membership'),
+      label: i18n.t('admin.collections.columns.kind'),
       filterable: true,
-      filterType: 'boolean',
+      quickFilter: true,
+      // Named values rather than a boolean: "Yes / No" against a column
+      // headed Kind says nothing about what is being asked.
+      filterType: 'enum',
+      filterOptions: [
+        { value: 'false', label: i18n.t('admin.collections.membership.manual') },
+        { value: 'true', label: i18n.t('admin.collections.membership.automatic') },
+      ],
       default: true,
       render: (collection) => (
         <Badge variant="outline">

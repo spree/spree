@@ -39,6 +39,7 @@ export * from './components/resource-combobox'
 export * from './components/resource-multi-autocomplete'
 export * from './components/resource-picker-sheet'
 export * from './components/resource-table'
+export * from './components/section-heading'
 export * from './components/settings-sidebar'
 export * from './components/slot'
 export * from './components/store-date-picker'
@@ -75,6 +76,7 @@ export * from './lib/date-presets'
 // ---------------------------------------------------------------------------
 // Helpers
 // ---------------------------------------------------------------------------
+export * from './lib/docs'
 export * from './lib/download'
 export * from './lib/filters-to-ransack'
 export * from './lib/form-errors'

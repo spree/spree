@@ -139,6 +139,18 @@ export interface SortOption {
 export interface TableDef<T = any> {
   key: string
   title?: string
+  /**
+   * One line under the title saying what the list is for. Worth writing for
+   * anything a merchant meets for the first time — catalogs, price lists,
+   * transfers — and worth leaving off a list that explains itself.
+   */
+  description?: string
+  /**
+   * Documentation for the feature, appended to `description` as a "Learn more"
+   * link. A path is relative to the user guide (`'catalogs'`); a full URL is
+   * used as given, so a plugin can point at its own docs.
+   */
+  docsPath?: string
   columns: ColumnDef<T>[]
   searchParam?: string
   searchPlaceholder?: string
