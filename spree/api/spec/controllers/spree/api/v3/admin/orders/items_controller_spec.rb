@@ -124,6 +124,19 @@ RSpec.describe Spree::Api::V3::Admin::Orders::ItemsController, type: :controller
         expect(response).to have_http_status(:unprocessable_entity)
         expect(json_response['error']['code']).to eq('price_override_not_allowed')
       end
+
+      context 'with a non-numeric price' do
+        subject do
+          post :create, params: { order_id: order.prefixed_id, variant_id: variant.prefixed_id, quantity: 1, price: 'NaN' }, as: :json
+        end
+
+        it 'still refuses with price_override_not_allowed' do
+          subject
+
+          expect(response).to have_http_status(:unprocessable_entity)
+          expect(json_response['error']['code']).to eq('price_override_not_allowed')
+        end
+      end
     end
   end
 
@@ -190,6 +203,17 @@ RSpec.describe Spree::Api::V3::Admin::Orders::ItemsController, type: :controller
         expect(json_response['error']['code']).to eq('price_override_not_allowed')
         expect(response.body).to include('placed order')
         expect(line_item.reload.price_source).to be_nil
+      end
+
+      context 'with a non-numeric price' do
+        subject { patch :update, params: { order_id: order.prefixed_id, id: line_item.prefixed_id, price: 'NaN' }, as: :json }
+
+        it 'still refuses with price_override_not_allowed' do
+          subject
+
+          expect(response).to have_http_status(:unprocessable_entity)
+          expect(json_response['error']['code']).to eq('price_override_not_allowed')
+        end
       end
     end
 

@@ -130,8 +130,10 @@ module Spree
         end
 
         # Maps symbolic line-item rejections onto the API error-code vocabulary.
-        # Callers pass a default for failures that carry no recognized symbol
-        # (stock, availability strings, and so on).
+        #
+        # @param errors [ActiveModel::Errors, Object] structured rejection from a workflow
+        # @param default [String] fallback when no recognized symbol is present
+        # @return [String] a value from {ERROR_CODES}
         def infer_line_item_error_code(errors, default:)
           return default unless errors.is_a?(ActiveModel::Errors)
 

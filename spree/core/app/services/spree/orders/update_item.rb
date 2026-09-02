@@ -58,6 +58,11 @@ module Spree
       # failure(record, message) drops the message when the record responds to
       # +errors+; :base rather than :price so Rails does not prefix the
       # attribute name onto it.
+      #
+      # @param line_item [Spree::LineItem]
+      # @param code [Symbol] symbolic rejection carried in +details+
+      # @param message [String] human-readable explanation
+      # @return [Spree::ServiceModule::Result]
       def reject_price(line_item, code, message)
         line_item.errors.add(:base, code, message: message)
         failure(line_item)

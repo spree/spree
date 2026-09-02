@@ -114,8 +114,16 @@ module Spree
 
       # Never coerced — "12,50".to_d is 12, a mispriced order. finite? is not
       # redundant: BigDecimal parses "NaN"/"Infinity" and neither is negative.
+      #
+      # @param value [Object] raw price from the request
+      # @return [BigDecimal, nil] parsed amount, or nil for an explicit revert
       def parse_manual_price(value)
         return nil if value.nil?
+
+        if cart.completed?
+          errors.add(:base, :price_override_not_allowed, message: Spree.t('cart_line_item.price_override_not_allowed'))
+          reject!(nil, cart)
+        end
 
         parsed = BigDecimal(value.to_s)
         if parsed.negative? || !parsed.finite?

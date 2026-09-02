@@ -89,6 +89,10 @@ module Spree
               @variant ||= current_store.variants.find_by_prefix_id!(permitted_params[:variant_id])
             end
 
+            # Renders a failed add/update with a code inferred from symbolic errors.
+            #
+            # @param result [Spree::ServiceModule::Result] failed service outcome
+            # @param default_code [String] fallback when the error carries no symbol
             def render_order_item_error(result, default_code:)
               error = result.error
               errors = error.respond_to?(:value) ? error.value : error
