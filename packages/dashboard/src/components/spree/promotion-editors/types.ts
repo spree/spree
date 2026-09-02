@@ -5,6 +5,7 @@ import type {
   Customer,
   CustomerGroup,
   Market,
+  OptionValue,
   PreferenceField,
   Product,
   PromotionAction,
@@ -44,6 +45,7 @@ export interface PromotionRuleFormDraft extends PromotionRuleDraft {
   countries?: Country[]
   channels?: Channel[]
   markets?: Market[]
+  option_values?: OptionValue[]
 }
 
 /** Mirrors `PromotionRuleFormDraft` for actions. */
@@ -192,6 +194,7 @@ export function ruleDraftFromRule(rule: PromotionRule): PromotionRuleFormDraft {
     countries: rule.countries,
     channels: rule.channels,
     markets: rule.markets,
+    option_values: rule.option_values,
   }
 }
 
@@ -233,6 +236,7 @@ export function ruleDraftToPayload(draft: PromotionRuleFormDraft): PromotionRule
     countries: ________,
     channels: _________,
     markets: __________,
+    option_values: ___________,
     ...rest
   } = draft
   return rest

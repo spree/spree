@@ -4262,6 +4262,11 @@
         "market": {
           "label": "市场"
         },
+        "option_value": {
+          "empty": "没有匹配的选项值",
+          "label": "选项值",
+          "search_placeholder": "搜索选项值…"
+        },
         "product": {
           "empty": "没有匹配的商品",
           "label": "商品",

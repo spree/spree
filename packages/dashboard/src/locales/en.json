@@ -4271,6 +4271,11 @@
         "market": {
           "label": "Markets"
         },
+        "option_value": {
+          "empty": "No option values match",
+          "label": "Option values",
+          "search_placeholder": "Search option values…"
+        },
         "product": {
           "empty": "No products match",
           "label": "Products",

@@ -6,6 +6,7 @@ import { ChannelRuleEditor } from './rule-channel'
 import { CountryRuleEditor } from './rule-country'
 import { CustomerGroupRuleEditor } from './rule-customer-group'
 import { MarketRuleEditor } from './rule-market'
+import { OptionValueRuleEditor } from './rule-option-value'
 import { ProductRuleEditor } from './rule-product'
 import { UserRuleEditor } from './rule-user'
 import { actionFormSlot, ruleFormSlot } from './types'
@@ -57,6 +58,11 @@ registerSlot(ruleFormSlot('channel'), {
 registerSlot(ruleFormSlot('market'), {
   id: 'builtin',
   component: MarketRuleEditor,
+})
+
+registerSlot(ruleFormSlot('option_value'), {
+  id: 'builtin',
+  component: OptionValueRuleEditor,
 })
 
 // Both adjustment actions wrap a calculator and share the same editor.

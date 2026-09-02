@@ -4271,6 +4271,11 @@
         "market": {
           "label": "Märkte"
         },
+        "option_value": {
+          "empty": "Keine passenden Optionswerte",
+          "label": "Optionswerte",
+          "search_placeholder": "Optionswerte suchen…"
+        },
         "product": {
           "empty": "Keine passenden Produkte",
           "label": "Produkte",

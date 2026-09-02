@@ -4325,6 +4325,11 @@
         "market": {
           "label": "Rynki"
         },
+        "option_value": {
+          "empty": "Brak pasujących wartości opcji",
+          "label": "Wartości opcji",
+          "search_placeholder": "Szukaj wartości opcji…"
+        },
         "product": {
           "empty": "Brak pasujących produktów",
           "label": "Produkty",
