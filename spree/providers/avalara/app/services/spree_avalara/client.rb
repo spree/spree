@@ -76,9 +76,8 @@ module SpreeAvalara
       # The two names remain unconfirmed — no recording has produced them.
       return true if error_code(error).in?(%w[DocumentAlreadyExists DuplicateDocumentException])
 
-      # What a replay actually answers, observed against the sandbox on
-      # 2026-09-01: a committed document with this code cannot be recreated or
-      # adjusted, so AvaTax refuses with GetTaxError / DocStatusError
+      # What a replay actually answers: a committed document with this code cannot
+      # be recreated or adjusted, so AvaTax refuses with GetTaxError / DocStatusError
       # ("Expected Saved|Posted") rather than naming a duplicate. The document
       # is filed, which is the state the caller wanted.
       fault_sub_codes(error).include?('DocStatusError')

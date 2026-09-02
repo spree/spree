@@ -81,24 +81,10 @@ RSpec.describe 'AvaTax API contract', :vcr do
       expect(rows.map(&:taxability_reason)).not_to include('customer_exempt')
     end
 
-    # Seller's use tax is collected tax, however Avalara spells the type. Not
-    # recorded: the sandbox company holds no remote-seller registration, so no
-    # destination returns collected use tax. Recording needs an account that has
-    # one — until then the predicate rests on the reasoning in the design doc.
-    it 'calls collected use tax standard_rated',
-       vcr: { cassette_name: 'estimate/registered_remote_seller' } do
-      cart = us_cart(state: 'AL', zipcode: '35203', city: 'Birmingham')
-      allow(SpreeAvalara::Integration).to receive(:active_for!).and_return(integration)
-
-      provider.estimate(cart)
-
-      rows = cart.tax_lines.reload.where('amount > 0')
-      expect(rows.map(&:taxability_reason)).to all(eq('standard_rated'))
-    end
-
-    # The sandbox company has no EU VAT registration, so the recorded response
-    # carries a 0% rate. What this pins is that the inclusive flag round-trips
-    # onto the row — not the VAT arithmetic, which needs a registered account.
+    # Narrow but real: it pins the whole inclusiveness chain — the DE market
+    # resolves as gross-priced, the request says taxIncluded, Avalara echoes it,
+    # and the row records it. It says nothing about VAT arithmetic, because the
+    # recording account has no EU registration and the rate comes back 0%.
     it 'marks rows included when the destination market prices gross',
        vcr: { cassette_name: 'estimate/eu_tax_inclusive' } do
       market = create(:market, store: @default_store, tax_inclusive: true)
@@ -110,7 +96,10 @@ RSpec.describe 'AvaTax API contract', :vcr do
 
       provider.estimate(cart.reload)
 
-      expect(cart.tax_lines.reload.map(&:included)).to all(be(true))
+      rows = cart.tax_lines.reload
+      # Guards the claim against going vacuous if the estimate ever writes nothing.
+      expect(rows).not_to be_empty
+      expect(rows.map(&:included)).to all(be(true))
     end
   end
 
