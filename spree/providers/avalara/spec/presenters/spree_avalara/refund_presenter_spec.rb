@@ -34,6 +34,16 @@ RSpec.describe SpreeAvalara::RefundPresenter do
     expect(payload[:lines].map { |line| line[:amount] }).to all(be_negative)
   end
 
+  # The same merchant preference governs the credit, so a store filing sales
+  # uncommitted files its credits the same way.
+  it 'files the credit with the status the merchant chose' do
+    expect(present.call[:commit]).to be(true)
+
+    integration.preferred_commit_transaction_enabled = false
+
+    expect(present.call[:commit]).to be(false)
+  end
+
   # A replayed Returns::Refund must adjust this document, not file a second credit.
   it 'keys the document to the order and the return' do
     expect(present.code).to eq("#{order.number}-RET1")

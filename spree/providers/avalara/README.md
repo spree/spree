@@ -26,7 +26,7 @@ host; switch `endpoint` to `https://rest.avatax.com` when you go live.
 | `account_number`, `license_key` | Your AvaTax credentials |
 | `endpoint` | Sandbox (default) or production host |
 | `company_code` | The company documents are filed against |
-| `commit_transaction_enabled` | File placed orders as committed (default on). Off files them uncommitted, which is the legacy extension's behaviour |
+| `commit_transaction_enabled` | Whether filed documents are *committed*, not whether they are filed. On (default) records a placed order as Committed; off records it as Saved, so it stays out of Avalara's filings until something commits it — the legacy extension's behaviour. Either way the sale reaches Avalara and the tax is the same. The same setting governs return credits |
 | `address_validation_enabled` | Refuse a checkout whose US or Canadian address Avalara cannot resolve (default off) |
 | `show_rate_in_label` | Reserved; carried over so upgraded settings survive |
 

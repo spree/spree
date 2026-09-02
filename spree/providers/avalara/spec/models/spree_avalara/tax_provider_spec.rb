@@ -258,6 +258,22 @@ RSpec.describe SpreeAvalara::TaxProvider do
       expect(order.reload.metadata['avalara_transaction_id']).to be_nil
     end
 
+    # The preference sets the document's status at Avalara, not whether the sale
+    # is filed: false records it as Saved rather than Committed, so it stays out
+    # of Avalara's filings until something commits it. Confirmed against the
+    # sandbox — both settings file a document and compute the same tax.
+    it 'files the sale uncommitted when the merchant turned committing off' do
+      integration.preferred_commit_transaction_enabled = false
+
+      provider.commit(order)
+
+      expect(client).to have_received(:create_or_adjust_transaction) do |args|
+        expect(args[:createTransactionModel][:commit]).to be(false)
+        expect(args[:createTransactionModel][:type]).to eq('SalesInvoice')
+      end
+      expect(order.reload.metadata['avalara_transaction_id']).to eq('987654')
+    end
+
     it 'raises on any other refusal' do
       allow(client).to receive(:create_or_adjust_transaction).
         and_raise(SpreeAvalara::RequestError.new('Company not found.', status: 400,
