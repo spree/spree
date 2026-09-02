@@ -13,15 +13,18 @@ import {
 } from '@spree/dashboard-ui'
 import { Loader2Icon } from '@spree/dashboard-ui/icons'
 import { useQuery } from '@tanstack/react-query'
-import { useDeferredValue, useEffect, useMemo, useState } from 'react'
+import { useDeferredValue, useEffect, useMemo, useRef, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 
 export interface PickerOption {
   id: string
 }
 
+/** One page of async picker search results, optionally with list pagination metadata. */
 export interface ResourcePickerSearchResult<T extends PickerOption> {
+  /** Rows returned for the requested page. */
   data: T[]
+  /** Total match count and page cursors when the search is paginated. */
   meta?: PaginationMeta
 }
 
@@ -83,7 +86,18 @@ export function ResourcePickerSheet<T extends PickerOption>({
 
   const [page, setPage] = useState(1)
   const [loadedResults, setLoadedResults] = useState<T[]>([])
+  const [currentPageResults, setCurrentPageResults] = useState<T[]>([])
   const [meta, setMeta] = useState<PaginationMeta | undefined>()
+  const selectAllGenerationRef = useRef(0)
+  const selectAllSessionRef = useRef({ query: trimmedQuery, open })
+
+  if (
+    selectAllSessionRef.current.query !== trimmedQuery ||
+    (selectAllSessionRef.current.open && !open)
+  ) {
+    selectAllGenerationRef.current += 1
+    selectAllSessionRef.current = { query: trimmedQuery, open }
+  }
 
   // Staging selection (ids picked in this session) + a label cache so the
   // "selected" chips keep their text even after the search results change.
@@ -102,6 +116,7 @@ export function ResourcePickerSheet<T extends PickerOption>({
   useEffect(() => {
     if (!data) return
     setMeta(data.meta)
+    setCurrentPageResults(data.data)
     setLoadedResults((previous) => {
       if (page === 1) return data.data
       const seen = new Set(previous.map((option) => option.id))
@@ -113,7 +128,7 @@ export function ResourcePickerSheet<T extends PickerOption>({
   const results = loadedResults
   const hasMore = meta?.next != null
   const matchCount = meta?.count ?? results.length
-  const selectableOnPage = results.filter((option) => !alreadyIn.has(option.id))
+  const selectableOnPage = currentPageResults.filter((option) => !alreadyIn.has(option.id))
   const allOnPageSelected =
     selectableOnPage.length > 0 && selectableOnPage.every((option) => staged.has(option.id))
 
@@ -141,6 +156,7 @@ export function ResourcePickerSheet<T extends PickerOption>({
 
   async function selectAllMatching() {
     if (matchCount === 0 || selectingAll) return
+    const generation = selectAllGenerationRef.current
     setSelectingAll(true)
     try {
       const collected = new Map<string, T>()
@@ -149,6 +165,7 @@ export function ResourcePickerSheet<T extends PickerOption>({
 
       while (true) {
         const response = await search(trimmedQuery, nextPage)
+        if (generation !== selectAllGenerationRef.current) return
         lastMeta = response.meta
         for (const option of response.data) {
           if (!alreadyIn.has(option.id)) collected.set(option.id, option)
@@ -157,12 +174,16 @@ export function ResourcePickerSheet<T extends PickerOption>({
         nextPage += 1
       }
 
+      if (generation !== selectAllGenerationRef.current) return
+
       setStaged((prev) => {
         const next = new Map(prev)
         for (const [id, option] of collected) next.set(id, option)
         return next
       })
       if (lastMeta) setMeta(lastMeta)
+    } catch (error) {
+      onConfirmError?.(error)
     } finally {
       setSelectingAll(false)
     }
@@ -177,6 +198,7 @@ export function ResourcePickerSheet<T extends PickerOption>({
       setInput('')
       setPage(1)
       setLoadedResults([])
+      setCurrentPageResults([])
       setMeta(undefined)
       onOpenChange(false)
     } catch (error) {
@@ -191,10 +213,12 @@ export function ResourcePickerSheet<T extends PickerOption>({
 
   function handleOpenChange(next: boolean) {
     if (!next) {
+      selectAllGenerationRef.current += 1
       setStaged(new Map())
       setInput('')
       setPage(1)
       setLoadedResults([])
+      setCurrentPageResults([])
       setMeta(undefined)
     }
     onOpenChange(next)
@@ -218,6 +242,7 @@ export function ResourcePickerSheet<T extends PickerOption>({
               setInput(value)
               setPage(1)
               setLoadedResults([])
+              setCurrentPageResults([])
               setMeta(undefined)
             }}
             // Enter has no action here; swallow it so it can't submit a host form.

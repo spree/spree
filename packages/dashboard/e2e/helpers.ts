@@ -12,6 +12,7 @@ export const FIXTURE_PROMO_TAXON = 'E2E Promo Category'
 // permalink so it can never match an unrelated category.
 export const FIXTURE_PROMO_TAXON_PERMALINK = 'e2e-promo-category'
 export const FIXTURE_PROMO_PRODUCT = 'E2E Promo Product'
+/** Name prefix for catalog picker pagination E2E products; each run appends a timestamp. */
 export const FIXTURE_CATALOG_PICKER_PRODUCT_PREFIX = 'E2E Catalog Picker Product'
 
 /** Count used by the catalog picker pagination/select-all E2E. */
@@ -34,8 +35,9 @@ export async function seedCatalogPickerProducts(
     Authorization: `Bearer ${accessToken}`,
   }
 
-  const ids = await Promise.all(
-    Array.from({ length: count }, async (_, index) => {
+  const ids: string[] = []
+  try {
+    for (let index = 0; index < count; index += 1) {
       const name = `${prefix} ${String(index + 1).padStart(2, '0')}`
       const res = await page.request.post('/api/v3/admin/products', {
         headers,
@@ -47,9 +49,14 @@ export async function seedCatalogPickerProducts(
         )
       }
       const body = (await res.json()) as { id: string }
-      return body.id
-    }),
-  )
+      ids.push(body.id)
+    }
+  } catch (error) {
+    if (ids.length > 0) {
+      await deleteCatalogPickerProducts(page, storeId, accessToken, ids).catch(() => undefined)
+    }
+    throw error
+  }
 
   return ids
 }

@@ -81,10 +81,15 @@ export function useDeactivatePriceList(id: string) {
 export function usePriceListProducts(priceListId: string | undefined, page = 1) {
   return useQuery({
     queryKey: useResourceKey('price-lists', priceListId ?? 'noop', 'products', `${page}`),
-    queryFn: () => adminClient.priceLists.products.list(priceListId as string, { page, limit: 25 }),
+    queryFn: () => listPriceListProductsPage(priceListId as string, page),
     enabled: !!priceListId,
     placeholderData: (previous) => previous,
   })
+}
+
+/** Paginated price-list membership fetch for picker exclusion. */
+export function listPriceListProductsPage(priceListId: string, page: number, limit = 100) {
+  return adminClient.priceLists.products.list(priceListId, { page, limit })
 }
 
 // Both flush mutations stay silent — they run inside the editor's Save,

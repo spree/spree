@@ -346,7 +346,7 @@ test.describe('catalogs', () => {
         name: new RegExp(productPrefix, 'i'),
       })
       await expect(productButtons.first()).toBeVisible({ timeout: 15_000 })
-      expect(await productButtons.count()).toBe(25)
+      await expect(productButtons).toHaveCount(25, { timeout: 15_000 })
 
       await picker.getByRole('button', { name: /load more/i }).click()
       await expect(productButtons).toHaveCount(FIXTURE_CATALOG_PICKER_PRODUCT_COUNT, {
