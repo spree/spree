@@ -108,7 +108,7 @@ module Spree
     # transaction_id is much easier to understand
     alias_attribute :transaction_id, :response_code
 
-    delegate :currency, to: :owner
+    delegate :currency, :store, to: :owner
 
     money_methods :amount, :credit_allowed
     alias money display_amount # for compatibility with older versions of Spree
@@ -403,14 +403,6 @@ module Spree
       return false if skip_source_requirement
 
       payment_method&.source_required?
-    end
-
-    # A payment has no store of its own; it reaches one through what it
-    # settles — an order, a cart still in checkout, or an order group. Without
-    # this its gateway-error custom field would be filed against whichever
-    # store the request named, which in a job is the default one.
-    def custom_field_definition_store
-      owner&.store || super
     end
 
     def add_gateway_processing_error(error_message)

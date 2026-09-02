@@ -144,23 +144,13 @@ module Spree
     end
 
     # Definitions are store-owned, so a record may only carry its own store's.
-    # This is the last gate every write path passes through — `custom_fields=`
-    # resolves the definition through the store, but Rails' own
-    # `custom_fields_attributes=` assigns the id straight onto the row.
-    #
-    # A resource with no store of its own (a customer, an address — both
-    # global) is left alone: there is nothing to compare against, and the
-    # definition it was given was resolved within a store already.
+    # Rails' `custom_fields_attributes=` assigns the id straight onto the row
+    # without passing the store-scoped resolver, so this is what covers it.
+    # A global resource — a customer, an address — has no store_id and is
+    # skipped: it can carry a field defined by any store it deals with.
     def custom_field_definition_must_belong_to_the_resource_store
-      return if custom_field_definition.blank? || resource.blank?
-
-      # Only a resource that genuinely belongs to a store is checked — its
-      # own, or its product's for a variant. A customer or an address is
-      # global: it can carry a field defined by any store it deals with, and
-      # there is no owning store to disagree with.
-      resource_store_id = resource.try(:store_id) || resource.try(:product)&.store_id
-      return if resource_store_id.blank?
-      return if custom_field_definition.store_id == resource_store_id
+      return if custom_field_definition.blank? || resource.try(:store_id).blank?
+      return if custom_field_definition.store_id == resource.store_id
 
       errors.add(:custom_field_definition, :must_belong_to_same_store)
     end

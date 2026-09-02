@@ -35,7 +35,7 @@ module Spree
     belongs_to :delivery_profile, class_name: 'Spree::DeliveryProfile', optional: true
 
     delegate :name, :name=, :description, :slug, :available_on, :make_active_at, :product_type_id,
-             :meta_description, :meta_keywords, :product_type, to: :product
+             :meta_description, :meta_keywords, :product_type, :store_id, to: :product
 
     normalizes :sku, with: ->(value) { value&.to_s&.strip }
     normalizes :hs_code, with: ->(value) { value&.to_s&.gsub(/[^0-9]/, '') }

@@ -292,12 +292,12 @@ module Spree
       set_custom_field(EXTERNAL_URL_CUSTOM_FIELD_KEY, url.strip)
     end
 
-    # `store_id` is filled in at before_validation, so a row still being built
-    # has none yet — and an image is given its external URL before it is
-    # saved. Reach for the same owner `ensure_store` will, rather than falling
-    # through to whichever store the current request names.
+    # An image is given its external URL before it is saved, so `store_id` is
+    # still unset at that point. Run the callback that fills it early rather
+    # than repeating how it picks the owner.
     def custom_field_definition_store
-      store || viewable.try(:store) || product&.store || super
+      ensure_store unless store_id?
+      store || Spree::Current.store
     end
 
     # Places a copy of this file on another product or variant, sharing the

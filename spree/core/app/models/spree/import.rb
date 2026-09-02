@@ -524,14 +524,9 @@ module Spree
     def custom_field_definitions_for_model
       return [] unless model_class.present?
 
-      # An unsaved import — the template CSV is built on one — has not been
-      # given a store yet, so fall back to the current request's. Without
-      # either there is no schema to read and the template carries the base
-      # columns only.
-      definitions_store = store || Spree::Current.store
-      return [] if definitions_store.nil?
-
-      definitions_store.custom_field_definitions.for_resource_type(model_class.name)
+      # `store` is assigned at before_validation, so the unsaved import the
+      # template CSV is built on has none yet.
+      (store || Spree::Current.store).custom_field_definitions.for_resource_type(model_class.name)
     end
   end
 end
