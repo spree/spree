@@ -1221,7 +1221,12 @@
       "add_count_other": "Ajouter {{count}}",
       "already_added": "Ajouté",
       "empty": "Aucun résultat trouvé.",
+      "load_more": "Charger plus",
       "search_placeholder": "Rechercher…",
+      "select_all_matching_one": "Sélectionner le résultat correspondant {{count}}",
+      "select_all_matching_other": "Sélectionner les {{count}} résultats correspondants",
+      "select_page_one": "Sélectionner {{count}} élément sur cette page",
+      "select_page_other": "Sélectionner les {{count}} éléments sur cette page",
       "selected_count_one": "{{count}} sélectionné",
       "selected_count_other": "{{count}} sélectionnés",
       "title": "Ajouter des produits"

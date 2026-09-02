@@ -48,6 +48,7 @@ import {
 } from '../../../../../components/spree/product-membership-staging'
 import { ResourceDetailSkeleton } from '../../../../../components/spree/route-pending'
 import {
+  listCatalogProductsPage,
   useActivateCatalog,
   useCatalog,
   useCatalogProducts,
@@ -291,6 +292,7 @@ function CatalogBody({ catalog }: { catalog: Catalog }) {
                 storeId={storeId}
                 canEdit={canEdit}
                 useProducts={useCatalogProducts}
+                listMembersPage={listCatalogProductsPage}
                 translationNamespace="admin.catalogs"
                 // What the agreement charges and what it demands, on the rows
                 // the merchant already curates. A product this catalog lists

@@ -106,6 +106,11 @@ export function useCatalogProducts(catalogId: string | undefined, page = 1) {
   })
 }
 
+/** Paginated catalog membership fetch for picker exclusion (ids only). */
+export function listCatalogProductsPage(catalogId: string, page: number, limit = 100) {
+  return adminClient.catalogs.products.list(catalogId, { page, limit })
+}
+
 export interface CatalogSavePayload {
   /** Settings PATCH body; omitted when the form is clean. */
   attributes?: CatalogParams

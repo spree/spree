@@ -68,6 +68,7 @@ import {
   Textarea,
 } from '@spree/dashboard-ui'
 import {
+  listPriceListProductsPage,
   useActivatePriceList,
   useAddPriceListProducts,
   useDeactivatePriceList,
@@ -267,6 +268,7 @@ export function PriceListForm({
                   storeId={storeId}
                   canEdit={canEdit}
                   useProducts={usePriceListProducts}
+                  listMembersPage={listPriceListProductsPage}
                   translationNamespace="admin.pages.products.price_lists"
                   description={
                     (priceList.prices_count ?? 0) > 0

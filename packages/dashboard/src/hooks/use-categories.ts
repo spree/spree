@@ -103,12 +103,17 @@ const categoryProductsKey = (categoryId: string) => ['categories', categoryId, '
 export function useCategoryProducts(categoryId: string | undefined, page = 1, limit = 25) {
   return useQuery({
     queryKey: useResourceKey('categories', categoryId ?? 'noop', 'products', `${page}:${limit}`),
-    queryFn: () => adminClient.categories.products.list(categoryId as string, { page, limit }),
+    queryFn: () => listCategoryProductsPage(categoryId as string, page, limit),
     enabled: !!categoryId,
     // Keep the current page visible while the next one loads, so the table
     // doesn't blank out between pages.
     placeholderData: (previous) => previous,
   })
+}
+
+/** Paginated category membership fetch for picker exclusion. */
+export function listCategoryProductsPage(categoryId: string, page: number, limit = 100) {
+  return adminClient.categories.products.list(categoryId, { page, limit })
 }
 
 /** Add one or many products to a category in a single request. */

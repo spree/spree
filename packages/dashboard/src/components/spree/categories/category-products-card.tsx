@@ -1,5 +1,9 @@
 import { useParams } from '@tanstack/react-router'
-import { useCategoryProducts, useRepositionCategoryProduct } from '../../../hooks/use-categories'
+import {
+  listCategoryProductsPage,
+  useCategoryProducts,
+  useRepositionCategoryProduct,
+} from '../../../hooks/use-categories'
 import { DeferredProductMembershipCard } from '../deferred-product-membership-card'
 
 /**
@@ -20,6 +24,7 @@ export function CategoryProductsCard({ categoryId }: { categoryId: string }) {
       parentId={categoryId}
       storeId={storeId}
       useProducts={useCategoryProducts}
+      listMembersPage={listCategoryProductsPage}
       onReorder={(productId, new_position) => reposition.mutateAsync({ productId, new_position })}
       translationNamespace="admin.categories"
     />
