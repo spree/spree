@@ -393,6 +393,7 @@ function NewCustomerSheet({
       navigate({
         to: '/$storeId/customers/$customerId',
         params: { storeId, customerId: customer.id },
+        replace: true,
       })
     },
   })

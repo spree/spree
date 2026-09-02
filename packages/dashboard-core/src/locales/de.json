@@ -155,10 +155,13 @@
       "deleted": "Gelöscht",
       "empty_value": "—",
       "inactive": "Inaktiv",
+      "learn_more": "Mehr erfahren",
       "loading": "Wird geladen…",
       "next": "Weiter",
       "no": "Nein",
       "no_results": "Keine Ergebnisse",
+      "combobox_more_results_one": "1 weiteres Ergebnis nicht angezeigt. Tippen zum Suchen.",
+      "combobox_more_results_other": "{{count}} weitere Ergebnisse nicht angezeigt. Tippen zum Suchen.",
       "none": "Keine",
       "optional": "Optional",
       "or": "oder",
@@ -461,6 +464,12 @@
         "label": "Design",
         "light": "Hell",
         "system": "System"
+      },
+      "wizard": {
+        "discard_cancel": "Weiter bearbeiten",
+        "discard_confirm": "Verwerfen",
+        "discard_message": "Alles bisher Eingegebene geht verloren. Das lässt sich nicht rückgängig machen.",
+        "discard_title": "Entwurf verwerfen?"
       }
     },
     "custom_field_definitions": {
@@ -895,6 +904,11 @@
         "pending": "Ausstehend",
         "processing": "In Bearbeitung"
       },
+      "step_descriptions": {
+        "complete": "Der Import ist abgeschlossen. Prüfen Sie, was erstellt und aktualisiert wurde.",
+        "map_fields": "Ordnen Sie jede Spalte Ihrer Datei einem Feld in Spree zu.",
+        "process_rows": "Ihre Zeilen werden importiert. Das kann einige Minuten dauern."
+      },
       "steps": {
         "complete": "Fertig",
         "map_fields": "Felder zuordnen",
@@ -1209,7 +1223,12 @@
       "add_count_other": "{{count}} hinzufügen",
       "already_added": "Hinzugefügt",
       "empty": "Keine Ergebnisse gefunden.",
+      "load_more": "Mehr laden",
       "search_placeholder": "Suchen…",
+      "select_all_matching_one": "Alle {{count}} Treffer auswählen",
+      "select_all_matching_other": "Alle {{count}} Treffer auswählen",
+      "select_page_one": "{{count}} auf dieser Seite auswählen",
+      "select_page_other": "Alle {{count}} auf dieser Seite auswählen",
       "selected_count_one": "{{count}} ausgewählt",
       "selected_count_other": "{{count}} ausgewählt",
       "title": "Produkte hinzufügen"

@@ -49,10 +49,15 @@
 :root {
   --brand-blue: oklch(0.5967 0.2212 258); /* #0077ff — site accent */
   --brand-blue-strong: oklch(0.5106 0.1868 257.7); /* #0060ce — site link hover */
+  /* Links in body copy. The plain accent measures 4.13:1 on white and 4.21:1
+     on the dark card — under 4.5 in BOTH themes — so a link takes its own
+     step rather than the accent. */
+  --link: oklch(0.5106 0.1868 257.7);
+  --link-hover: oklch(0.44 0.16 257.7);
 
-  --background: oklch(98.5% 0.001 106.423); /* stone-50 */
+  --background: oklch(0.9851 0 0); /* #fafafa — chrome sits one step below white */
   --foreground: oklch(0.145 0.0039 49.25); /* stone-950 */
-  --card: oklch(1 0 0); /* white, one step above the page */
+  --card: oklch(1 0 0); /* #ffffff — cards and inputs read as raised */
   --card-foreground: oklch(0.145 0.0039 49.25);
   --popover: oklch(1 0 0);
   --popover-foreground: oklch(0.145 0.0039 49.25);
@@ -60,9 +65,9 @@
   --primary-foreground: oklch(1 0 0);
   /* Filled surfaces (table headers, badges, secondary buttons) read as a
      whisper against the white card rather than a distinct band. */
-  --secondary: oklch(0.97 0.001 106.424); /* stone-100 */
+  --secondary: oklch(0.97 0 0);
   --secondary-foreground: oklch(0.145 0.0039 49.25);
-  --muted: oklch(0.985 0.001 106.423); /* stone-50 */
+  --muted: oklch(0.9851 0 0);
   /* Between stone-500 and -600. Clears 4.5:1 against every surface this text
      actually lands on — including --accent, the darkest of them — where the
      stone-500 step measured 4.15:1. Dark mode keeps its own value: it already
@@ -72,20 +77,26 @@
      stone-200: these sit on white surfaces, where that value reads as a
      pressed state rather than a hover. The sidebar shares this value via
      --sidebar-accent so a highlighted row looks the same wherever it is. */
-  --accent: oklch(0.95 0.0019 106.424);
+  --accent: oklch(0.9491 0 0);
   --accent-foreground: oklch(0.145 0.0039 49.25);
   --destructive: oklch(0.58 0.22 27); /* red-600 */
   --destructive-foreground: oklch(1 0 0); /* #ffffff */
-  /* stone-200 — rules stay legible but recede, so a dense table reads as
-     rows of content rather than a grid. */
-  --border: oklch(0.922 0.003 48.717);
+  /* The full-strength rule colour. Nothing styles with it directly — the two
+     tokens below are both a share of it, so neither compounds the other's
+     reduction. */
+  --border-base: oklch(0.922 0 0);
+  /* A container's own edge. Legible but receding, so a dense table reads as
+     rows of content rather than a grid. Carries its strength in the token, so
+     call sites never restate it — an `/80` utility would compound to 64%. */
+  --border: color-mix(in srgb, var(--border-base) 90%, transparent);
   /* Half-strength rule for dividers *inside* a container — card header/footer
-     splits, dialog and sheet separators, table chrome. Distinct from --border,
-     which draws a container's own edge. Resolved to a real colour rather than
-     an opacity utility so it also works inside arbitrary values such as the
-     sticky table header's inset shadow, where `/50` has no effect. */
-  --border-subtle: color-mix(in srgb, var(--border) 50%, transparent);
-  --input: oklch(0.922 0.003 48.717);
+     splits, dialog and sheet separators, table chrome. Half of the base, not
+     of --border, so it is a true 50% rather than 40%. Resolved to a real
+     colour rather than an opacity utility so it also works inside arbitrary
+     values such as the sticky table header's inset shadow, where `/50` has no
+     effect. */
+  --border-subtle: color-mix(in srgb, var(--border-base) 50%, transparent);
+  --input: color-mix(in srgb, var(--border-base) 80%, transparent);
   --ring: var(--brand-blue);
   --chart-1: oklch(0.7663 0.1067 254.4);
   --chart-2: oklch(0.5967 0.2212 258); /* brand blue */
@@ -98,7 +109,7 @@
      points at the page token it matches rather than repeating it, so the two
      cannot drift apart. */
   --sidebar: var(--background);
-  --sidebar-foreground: var(--foreground);
+  --sidebar-foreground: oklch(26.8% 0.007 34.298);
   --sidebar-primary: var(--primary);
   --sidebar-primary-foreground: var(--primary-foreground);
   --sidebar-accent: var(--accent);
@@ -171,10 +182,13 @@
   --accent: oklch(0.2645 0 0);
   --accent-foreground: oklch(0.95 0.0019 106.424);
   --destructive: oklch(0.704 0.191 22.216);
-  --border: oklch(1 0 0 / 12%);
-  --border-subtle: color-mix(in srgb, var(--border) 50%, transparent);
-  --input: oklch(1 0 0 / 15%);
+  --border-base: oklch(1 0 0 / 12%);
+  --border: color-mix(in srgb, var(--border-base) 80%, transparent);
+  --border-subtle: color-mix(in srgb, var(--border-base) 50%, transparent);
+  --input: color-mix(in srgb, var(--border-base) 80%, transparent);
   --ring: oklch(0.552 0.016 285); /* same blue ring as light, for focus parity */
+  --link: oklch(0.7 0.16 258);
+  --link-hover: oklch(0.78 0.14 258);
   --chart-1: oklch(0.809 0.105 251.813);
   --chart-2: oklch(0.623 0.214 259.815);
   --chart-3: oklch(0.546 0.245 262.881);
@@ -336,6 +350,8 @@
      incidental use such as charts and illustrations. */
   --color-blue-500: var(--brand-blue);
   --color-blue-600: var(--brand-blue-strong);
+  --color-link: var(--link);
+  --color-link-hover: var(--link-hover);
 }
 
 @utility focus-ring {

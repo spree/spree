@@ -20,16 +20,14 @@ async function createCategory(page: Page, name: string) {
   await page.locator('#category-name').fill(name)
   await page.getByRole('button', { name: /^save$/i }).click()
 
-  // On success the create route navigates to the edit page; go back to the
-  // tree and confirm the row landed.
-  await page.goto(CATEGORIES_PATH((await currentStoreId(page)) ?? ''))
+  // Create replaces the new-form route in history; back lands on the tree.
+  await expect(page.locator('#category-name')).toHaveValue(name, { timeout: 15_000 })
+  await page.getByRole('button', { name: /^back$/i }).click()
+  await expect(page).toHaveURL(/\/products\/categories(?:\?|$)/, { timeout: 15_000 })
+  // List page title is a CardTitle (not a heading role); the CTA proves we're on the tree.
+  await expect(page.getByRole('button', { name: CTA })).toBeVisible({ timeout: 15_000 })
+  await expect(page.getByRole('heading', { name: CTA })).toHaveCount(0)
   await expect(treeRow(page, name)).toBeVisible({ timeout: 15_000 })
-}
-
-// The store id is in the URL; read it so we can navigate back to the index.
-async function currentStoreId(page: Page): Promise<string | null> {
-  const match = page.url().match(/\/([^/]+)\/products\/categories/)
-  return match?.[1] ?? null
 }
 
 test.describe('categories management', () => {

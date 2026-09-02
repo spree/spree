@@ -331,7 +331,7 @@
     "collections": {
       "add_cta": "New collection",
       "columns": {
-        "membership": "Membership",
+        "kind": "Kind",
         "products_count": "Products",
         "sort_order": "Sorting"
       },
@@ -572,6 +572,12 @@
         "no_extra_settings": "This calculator has no extra settings.",
         "select_calculator": "Select a calculator",
         "settings_label": "Calculator settings"
+      },
+      "create_line_items_action_editor": {
+        "description": "When the promotion qualifies, these items are added to the cart.",
+        "empty": "No variants yet. Search below to add one.",
+        "search_placeholder": "Search variants by name or SKU…",
+        "variant_label": "Add variant"
       },
       "custom_fields": {
         "default_resource": "records",
@@ -4870,6 +4876,18 @@
         "lb": "Pound (lb)",
         "oz": "Ounce (oz)"
       }
+    },
+    "table_descriptions": {
+      "catalogs": "What a group of buyers can see and the prices they pay.",
+      "categories": "The browsing tree shoppers navigate your store by.",
+      "collections": "Groups of products you merchandise together, picked by hand or by rule.",
+      "companies": "Business buyers, their teams and the terms they buy on.",
+      "customer_groups": "Groups you sort customers into, for pricing and promotions.",
+      "delivery_profiles": "Rules for how a product ships, applied per product.",
+      "options": "Choices like size or colour that turn one product into variants.",
+      "price_lists": "Alternative prices that apply when their rules match.",
+      "product_types": "Templates that give new products their fields and options.",
+      "stock_transfers": "Stock moving between your locations, and what has arrived."
     },
     "tax_categories": {
       "add_cta": "Add tax category",

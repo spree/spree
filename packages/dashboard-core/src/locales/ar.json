@@ -155,10 +155,13 @@
       "deleted": "تم الحذف",
       "empty_value": "—",
       "inactive": "غير نشط",
+      "learn_more": "اعرف المزيد",
       "loading": "جارٍ التحميل…",
       "next": "التالي",
       "no": "لا",
       "no_results": "لا توجد نتائج",
+      "combobox_more_results_one": "لم تُعرض نتيجة واحدة أخرى. اكتب للبحث.",
+      "combobox_more_results_other": "لم تُعرض {{count}} نتائج أخرى. اكتب للبحث.",
       "none": "لا شيء",
       "optional": "اختياري",
       "or": "أو",
@@ -461,6 +464,12 @@
         "label": "المظهر",
         "light": "فاتح",
         "system": "النظام"
+      },
+      "wizard": {
+        "discard_cancel": "متابعة التحرير",
+        "discard_confirm": "تجاهل",
+        "discard_message": "سيُفقد كل ما أدخلته حتى الآن، ولا يمكن التراجع عن ذلك.",
+        "discard_title": "تجاهل هذه المسودة؟"
       }
     },
     "custom_field_definitions": {
@@ -895,6 +904,11 @@
         "pending": "قيد الانتظار",
         "processing": "قيد المعالجة"
       },
+      "step_descriptions": {
+        "complete": "اكتمل الاستيراد. راجع ما تم إنشاؤه وتحديثه.",
+        "map_fields": "طابق كل عمود في ملفك مع حقل في Spree.",
+        "process_rows": "يجري استيراد الصفوف. قد يستغرق ذلك بضع دقائق."
+      },
       "steps": {
         "complete": "اكتمل",
         "map_fields": "مطابقة الحقول",
@@ -1209,7 +1223,12 @@
       "add_count_other": "إضافة {{count}}",
       "already_added": "مُضاف",
       "empty": "لم يتم العثور على نتائج.",
+      "load_more": "تحميل المزيد",
       "search_placeholder": "بحث…",
+      "select_all_matching_one": "تحديد كل {{count}} نتيجة مطابقة",
+      "select_all_matching_other": "تحديد كل {{count}} نتائج مطابقة",
+      "select_page_one": "تحديد {{count}} في هذه الصفحة",
+      "select_page_other": "تحديد كل {{count}} في هذه الصفحة",
       "selected_count_one": "تم تحديد {{count}}",
       "selected_count_other": "تم تحديد {{count}}",
       "title": "إضافة منتجات"

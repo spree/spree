@@ -145,6 +145,10 @@ interface ResourceTableProps<T> {
   searchParams: ResourceSearch
   /** Title displayed in the toolbar header. Overrides the table definition's title. */
   title?: string
+  /** One line under the title. Overrides the table definition's description. */
+  description?: string
+  /** Docs for the feature, linked after the description. Overrides the table definition's. */
+  docsPath?: string
   /** Default params always sent with every request (e.g., { complete: 1 } for orders) */
   defaultParams?: Record<string, unknown>
   /**
@@ -205,6 +209,8 @@ export function ResourceTable<T extends Record<string, any>>({
   queryFn,
   searchParams,
   title,
+  description,
+  docsPath,
   defaultParams,
   actions,
   reorder,
@@ -497,6 +503,8 @@ export function ResourceTable<T extends Record<string, any>>({
         onFiltersChange={handleFiltersChange}
         allColumns={allColumns}
         title={title ?? table.title}
+        description={description ?? table.description}
+        docsPath={docsPath ?? table.docsPath}
         actions={resolvedActions}
         hideSort={reorderActive}
       />
@@ -511,7 +519,7 @@ export function ResourceTable<T extends Record<string, any>>({
               items={rows.map((r) => (r as any).id)}
               strategy={verticalListSortingStrategy}
             >
-              <Table stickyHeader>
+              <Table stickyHeader roundedBottom>
                 <TableHeader>
                   <TableHeaderRow>
                     <TableHead className="w-8" />
@@ -631,7 +639,7 @@ export function ResourceTable<T extends Record<string, any>>({
                 </section>,
                 document.body,
               )}
-            <Table stickyHeader>
+            <Table stickyHeader roundedBottom>
               <TableHeader>
                 {/* Column headers stay mounted with rows selected, and the bulk
                     bar is laid over them. Swapping them for one `colSpan` cell

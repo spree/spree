@@ -63,7 +63,7 @@ export function MobileBreadcrumbBar({
   const { crumbs, pathname, inSettings } = trail
 
   return (
-    <div className="flex h-11 shrink-0 items-center border-b border-border/75 bg-background px-4 md:hidden">
+    <div className="flex h-11 shrink-0 items-center border-b border-border bg-background px-4 md:hidden">
       <CrumbTrail
         crumbs={crumbs}
         pathname={pathname}

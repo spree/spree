@@ -331,7 +331,7 @@
     "collections": {
       "add_cta": "Neue Kollektion",
       "columns": {
-        "membership": "Zuordnung",
+        "kind": "Art",
         "products_count": "Produkte",
         "sort_order": "Sortierung"
       },
@@ -572,6 +572,12 @@
         "no_extra_settings": "Dieser Kalkulator hat keine zusätzlichen Einstellungen.",
         "select_calculator": "Kalkulator auswählen",
         "settings_label": "Kalkulator-Einstellungen"
+      },
+      "create_line_items_action_editor": {
+        "description": "Wenn die Promotion greift, werden diese Artikel dem Warenkorb hinzugefügt.",
+        "empty": "Noch keine Varianten. Suchen Sie unten, um eine hinzuzufügen.",
+        "search_placeholder": "Varianten nach Name oder SKU suchen…",
+        "variant_label": "Variante hinzufügen"
       },
       "custom_fields": {
         "default_resource": "Datensätzen",
@@ -4870,6 +4876,18 @@
         "lb": "Pfund (lb)",
         "oz": "Unze (oz)"
       }
+    },
+    "table_descriptions": {
+      "catalogs": "Was eine Käufergruppe sieht und welche Preise sie zahlt.",
+      "categories": "Der Navigationsbaum, über den Kunden Ihren Shop durchstöbern.",
+      "collections": "Produktgruppen, die Sie gemeinsam vermarkten — manuell oder per Regel.",
+      "companies": "Geschäftskunden, ihre Teams und die Konditionen, zu denen sie kaufen.",
+      "customer_groups": "Gruppen, in die Sie Kunden einteilen — für Preise und Aktionen.",
+      "delivery_profiles": "Regeln dafür, wie ein Produkt versendet wird, je Produkt angewendet.",
+      "options": "Auswahlmöglichkeiten wie Größe oder Farbe, aus denen Varianten entstehen.",
+      "price_lists": "Alternative Preise, die gelten, wenn ihre Regeln zutreffen.",
+      "product_types": "Vorlagen, die neuen Produkten ihre Felder und Optionen geben.",
+      "stock_transfers": "Bestand, der zwischen Ihren Lagern bewegt wird, und was angekommen ist."
     },
     "tax_categories": {
       "add_cta": "Steuerkategorie hinzufügen",

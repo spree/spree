@@ -1,5 +1,6 @@
 import { registerSlot } from '@spree/dashboard-core'
 import { AdjustmentActionEditor } from './action-adjustment'
+import { CreateLineItemsActionEditor } from './action-create-line-items'
 import { CategoryRuleEditor } from './rule-category'
 import { ChannelRuleEditor } from './rule-channel'
 import { CountryRuleEditor } from './rule-country'
@@ -67,4 +68,9 @@ registerSlot(actionFormSlot('create_adjustment'), {
 registerSlot(actionFormSlot('create_item_adjustments'), {
   id: 'builtin',
   component: AdjustmentActionEditor,
+})
+
+registerSlot(actionFormSlot('create_line_items'), {
+  id: 'builtin',
+  component: CreateLineItemsActionEditor,
 })

@@ -105,12 +105,17 @@ const collectionProductsKey = (collectionId: string) =>
 export function useCollectionProducts(collectionId: string | undefined, page = 1, limit = 25) {
   return useQuery({
     queryKey: useResourceKey('collections', collectionId ?? 'noop', 'products', `${page}:${limit}`),
-    queryFn: () => adminClient.collections.products.list(collectionId as string, { page, limit }),
+    queryFn: () => listCollectionProductsPage(collectionId as string, page, limit),
     enabled: !!collectionId,
     // Keep the current page visible while the next one loads, so the table
     // doesn't blank out between pages.
     placeholderData: (previous) => previous,
   })
+}
+
+/** Paginated collection membership fetch for picker exclusion. */
+export function listCollectionProductsPage(collectionId: string, page: number, limit = 100) {
+  return adminClient.collections.products.list(collectionId, { page, limit })
 }
 
 /** Add one or many products to a manual collection in a single request. */

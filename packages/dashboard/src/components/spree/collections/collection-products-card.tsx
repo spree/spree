@@ -1,6 +1,7 @@
 import { useParams } from '@tanstack/react-router'
 import { useTranslation } from 'react-i18next'
 import {
+  listCollectionProductsPage,
   useCollectionProducts,
   useRepositionCollectionProduct,
 } from '../../../hooks/use-collections'
@@ -35,6 +36,7 @@ export function CollectionProductsCard({
       storeId={storeId}
       readOnly={automatic}
       useProducts={useCollectionProducts}
+      listMembersPage={listCollectionProductsPage}
       onReorder={(productId, new_position) => reposition.mutateAsync({ productId, new_position })}
       translationNamespace="admin.collections"
       description={automatic ? t('admin.collections.products.automatic_hint') : undefined}

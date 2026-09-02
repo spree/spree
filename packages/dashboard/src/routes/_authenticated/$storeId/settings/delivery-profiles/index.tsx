@@ -75,6 +75,7 @@ function ShippingPage() {
 
   const closeDialog = () =>
     navigate({
+      replace: true,
       search: (prev: Record<string, unknown>) => {
         const { new: _n, ...rest } = prev
         return rest as never
@@ -176,6 +177,7 @@ function CreateProfileDialog({ onClose }: { onClose: () => void }) {
       navigate({
         to: '/$storeId/settings/delivery-profiles/$profileId',
         params: { storeId, profileId: profile.id },
+        replace: true,
       })
     } catch (err) {
       if (!mapSpreeErrorsToForm(err, form.setError)) throw err

@@ -141,9 +141,12 @@ export function ProductPage({ mode }: { mode: 'new' | 'edit' }) {
       void queryClient.invalidateQueries({ queryKey: ['seller', sellerId, 'product', saved.id] })
       toastManager.add({ type: 'success', title: t('products.saved') })
       if (!productId) {
+        // Replace history rather than pushing — otherwise back lands on the
+        // (now-stale) new product form.
         navigate({
           to: '/$sellerId/products/$productId',
           params: { sellerId, productId: saved.id },
+          replace: true,
         })
       }
     },

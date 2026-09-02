@@ -7,6 +7,8 @@ import { PriceListStatusBadge } from '../components/spree/price-list-editors/sta
 
 defineTable<PriceList>('price-lists', {
   title: i18n.t('admin.nav.price_lists'),
+  description: i18n.t('admin.table_descriptions.price_lists'),
+  docsPath: 'manage-products/price-lists',
   searchParam: 'name_cont',
   searchPlaceholder: i18n.t('admin.common.search_placeholder'),
   defaultSort: { field: 'position', direction: 'asc' },

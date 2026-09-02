@@ -7,6 +7,7 @@ import { CompanyKindBadge } from '../components/spree/company-kind-badge'
 
 defineTable<Company>('companies', {
   title: i18n.t('admin.nav.companies'),
+  description: i18n.t('admin.table_descriptions.companies'),
   searchParam: 'name_cont',
   searchPlaceholder: i18n.t('admin.companies.search_placeholder'),
   defaultSort: { field: 'name', direction: 'asc' },

@@ -335,7 +335,7 @@
     "collections": {
       "add_cta": "Nowa kolekcja",
       "columns": {
-        "membership": "Przypisanie",
+        "kind": "Rodzaj",
         "products_count": "Produkty",
         "sort_order": "Sortowanie"
       },
@@ -578,6 +578,12 @@
         "no_extra_settings": "Ten kalkulator nie ma dodatkowych ustawień.",
         "select_calculator": "Wybierz kalkulator",
         "settings_label": "Ustawienia kalkulatora"
+      },
+      "create_line_items_action_editor": {
+        "description": "Gdy promocja kwalifikuje się, te pozycje są dodawane do koszyka.",
+        "empty": "Brak wariantów. Wyszukaj poniżej, aby dodać.",
+        "search_placeholder": "Szukaj wariantów po nazwie lub SKU…",
+        "variant_label": "Dodaj wariant"
       },
       "custom_fields": {
         "default_resource": "rekordy",
@@ -4924,6 +4930,18 @@
         "lb": "Funt (lb)",
         "oz": "Uncja (oz)"
       }
+    },
+    "table_descriptions": {
+      "catalogs": "Co widzi dana grupa kupujących i jakie ceny płaci.",
+      "categories": "Drzewo nawigacji, po którym klienci przeglądają sklep.",
+      "collections": "Grupy produktów prezentowane razem, wybrane ręcznie lub regułą.",
+      "companies": "Klienci biznesowi, ich zespoły i warunki, na jakich kupują.",
+      "customer_groups": "Grupy, do których przypisujesz klientów — dla cen i promocji.",
+      "delivery_profiles": "Reguły wysyłki produktu, stosowane dla każdego produktu.",
+      "options": "Cechy takie jak rozmiar czy kolor, które tworzą warianty produktu.",
+      "price_lists": "Alternatywne ceny, które obowiązują, gdy pasują ich reguły.",
+      "product_types": "Szablony nadające nowym produktom pola i opcje.",
+      "stock_transfers": "Zapasy przemieszczane między lokalizacjami i to, co już dotarło."
     },
     "tax_categories": {
       "add_cta": "Dodaj kategorię podatkową",
