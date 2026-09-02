@@ -20,8 +20,8 @@ RSpec.describe Spree::Api::V3::Admin::VariantsController, type: :controller do
       expect(json_response['data'].map { |v| v['id'] }).to include(variant.prefixed_id)
     end
 
-    # The variant picker asks for only the three fields it renders; without
-    # this the autocomplete ships prices, stock and media it never shows.
+    # The variant picker asks for only the three fields it renders, which
+    # keeps the autocomplete's payload to what it displays.
     it 'returns only the requested fields, plus id' do
       get :index, params: { fields: 'product_name,sku,options_text' }, as: :json
 
@@ -35,8 +35,9 @@ RSpec.describe Spree::Api::V3::Admin::VariantsController, type: :controller do
     # and stock are read once per listed variant and nothing fails — so the
     # guard is that the cost does not grow with the number of rows.
     it 'reads prices and stock once, not once per variant' do
-      counts = [1, 4].map do |variant_count|
-        create_list(:variant, variant_count - 1, product: product) if variant_count > 1
+      rows = []
+      counts = [0, 3].map do |extra_variants|
+        create_list(:variant, extra_variants, product: product) if extra_variants > 0
 
         stock_and_price = 0
         subscription = ActiveSupport::Notifications.subscribe('sql.active_record') do |*, payload|
@@ -49,9 +50,13 @@ RSpec.describe Spree::Api::V3::Admin::VariantsController, type: :controller do
         ActiveSupport::Notifications.unsubscribe(subscription)
 
         expect(response).to have_http_status(:ok)
+        rows << json_response['data'].size
         stock_and_price
       end
 
+      # The second request really did list more variants — otherwise equal
+      # query counts would prove nothing.
+      expect(rows.last).to eq(rows.first + 3)
       expect(counts.last).to eq(counts.first)
     end
 
