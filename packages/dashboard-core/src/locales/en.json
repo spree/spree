@@ -464,6 +464,12 @@
         "label": "Theme",
         "light": "Light",
         "system": "System"
+      },
+      "wizard": {
+        "discard_cancel": "Keep editing",
+        "discard_confirm": "Discard",
+        "discard_message": "Everything you have filled in so far will be lost. This cannot be undone.",
+        "discard_title": "Discard this draft?"
       }
     },
     "custom_field_definitions": {

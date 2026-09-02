@@ -160,6 +160,7 @@ function CatalogWizard({
       steps={steps}
       current={step}
       onStepSelect={(key: string) => setStep(key as StepKey)}
+      hasUnsavedChanges={form.formState.isDirty}
       onSubmit={form.handleSubmit(handleCreate, () =>
         form.setError('root', { message: t('admin.catalogs.wizard.fix_this_step') }),
       )}

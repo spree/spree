@@ -462,6 +462,12 @@
         "label": "Motyw",
         "light": "Jasny",
         "system": "Systemowy"
+      },
+      "wizard": {
+        "discard_cancel": "Wróć do edycji",
+        "discard_confirm": "Odrzuć",
+        "discard_message": "Wszystko, co zostało wprowadzone, zostanie utracone. Nie można tego cofnąć.",
+        "discard_title": "Odrzucić szkic?"
       }
     },
     "custom_field_definitions": {

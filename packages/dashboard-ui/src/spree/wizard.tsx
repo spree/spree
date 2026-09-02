@@ -10,6 +10,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from '../ui/dialog'
+import { useConfirm } from './confirm-dialog'
 import { CheckIcon, XIcon } from './icons'
 
 /** One step in a wizard: what it is called, and how far in it sits. */
@@ -128,6 +129,7 @@ export function Wizard({
   children,
   back,
   forward,
+  hasUnsavedChanges = false,
 }: {
   open: boolean
   onOpenChange: (open: boolean) => void
@@ -148,11 +150,44 @@ export function Wizard({
   back: ReactNode
   /** Next, or the submit on the last step. */
   forward: ReactNode
+  /**
+   * Whether closing now would discard the merchant's work. The host decides,
+   * since only it knows what its steps have collected.
+   */
+  hasUnsavedChanges?: boolean
 }) {
   const { t } = useTranslation()
+  const confirm = useConfirm()
+
+  async function requestClose() {
+    if (hasUnsavedChanges) {
+      const discard = await confirm({
+        title: t('admin.components.wizard.discard_title'),
+        message: t('admin.components.wizard.discard_message'),
+        confirmLabel: t('admin.components.wizard.discard_confirm'),
+        cancelLabel: t('admin.components.wizard.discard_cancel'),
+        variant: 'destructive',
+      })
+      if (!discard) return
+    }
+    onOpenChange(false)
+  }
 
   return (
-    <Dialog open={open} onOpenChange={onOpenChange} modal>
+    <Dialog
+      open={open}
+      onOpenChange={(next, details) => {
+        if (next) return onOpenChange(true)
+        // A wizard holds several steps of work, so a stray Escape or a click
+        // past its edge must not throw that away without asking.
+        if (details?.reason === 'escape-key' || details?.reason === 'outside-press') {
+          void requestClose()
+          return
+        }
+        onOpenChange(false)
+      }}
+      modal
+    >
       <DialogContent
         // Edge-to-edge minus a gutter, like the import wizard and the bulk
         // price editor — every inset/translate/max is overridden.
@@ -176,7 +211,7 @@ export function Wizard({
               type="button"
               size="icon-sm"
               variant="ghost"
-              onClick={() => onOpenChange(false)}
+              onClick={() => void requestClose()}
               aria-label={t('admin.actions.close')}
             >
               <XIcon />
