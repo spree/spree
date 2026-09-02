@@ -85,6 +85,7 @@ function WebhooksPage() {
 
   const closeCreate = () =>
     navigate({
+      replace: true,
       search: (prev: Record<string, unknown>) => {
         const { new: _n, ...rest } = prev
         return rest as never
@@ -217,6 +218,7 @@ function WebhooksPage() {
             navigate({
               to: '/$storeId/settings/webhooks/$webhookEndpointId',
               params: { storeId, webhookEndpointId: id },
+              replace: true,
             })
           }
         }}

@@ -115,7 +115,13 @@ function NewOrderPage() {
       return adminClient.orders.create(payload)
     },
     onSuccess: (order) => {
-      navigate({ to: '/$storeId/orders/$orderId', params: { storeId, orderId: order.id } })
+      // Replace history rather than pushing — otherwise back lands on the
+      // (now-stale) new order form.
+      navigate({
+        to: '/$storeId/orders/$orderId',
+        params: { storeId, orderId: order.id },
+        replace: true,
+      })
     },
   })
 

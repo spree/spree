@@ -62,6 +62,7 @@ function SellersPage() {
 
   const closeSheet = () =>
     navigate({
+      replace: true,
       search: (prev: Record<string, unknown>) => {
         const { new: _n, ...rest } = prev
         return rest as never
@@ -153,6 +154,7 @@ function CreateSellerSheet({
       navigate({
         to: '/$storeId/sellers/$sellerId',
         params: { storeId, sellerId: seller.id },
+        replace: true,
       })
     } catch (err) {
       if (!mapSpreeErrorsToForm(err, form.setError)) throw err

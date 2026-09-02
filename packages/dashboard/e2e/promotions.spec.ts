@@ -96,6 +96,15 @@ test.describe('promotions', () => {
     await cancelEditor(page)
 
     await submitCreate(page, name)
+
+    // Creating replaces the new-form route in history; back goes to the list,
+    // not the stale create form (which would duplicate on re-save).
+    await page.getByRole('button', { name: /^back$/i }).click()
+    await expect(page).toHaveURL(new RegExp(`/${creds.store_id}/promotions(?:\\?|$)`), {
+      timeout: 15_000,
+    })
+    await expect(page.getByRole('heading', { name: /^new promotion$/i })).toHaveCount(0)
+    await expect(rowButton(page, name)).toBeVisible({ timeout: 15_000 })
   })
 
   test('removes a rule and an action while editing', async ({ page }) => {
