@@ -571,6 +571,12 @@
         "select_calculator": "选择一个计算器",
         "settings_label": "计算器设置"
       },
+      "create_line_items_action_editor": {
+        "description": "当促销符合条件时，这些商品会加入购物车。",
+        "empty": "尚无变体。请在下方搜索以添加。",
+        "search_placeholder": "按名称或 SKU 搜索变体…",
+        "variant_label": "添加变体"
+      },
       "custom_fields": {
         "default_resource": "记录",
         "empty_description": "记录结构化的详细信息，例如材质、版型或保养说明。",

@@ -573,6 +573,12 @@
         "select_calculator": "Sélectionner un calculateur",
         "settings_label": "Paramètres du calculateur"
       },
+      "create_line_items_action_editor": {
+        "description": "Lorsque la promotion est éligible, ces articles sont ajoutés au panier.",
+        "empty": "Aucune variante pour l'instant. Recherchez ci-dessous pour en ajouter une.",
+        "search_placeholder": "Rechercher des variantes par nom ou SKU…",
+        "variant_label": "Ajouter une variante"
+      },
       "custom_fields": {
         "default_resource": "enregistrements",
         "empty_description": "Suivez des détails structurés comme la matière, la coupe ou les instructions d’entretien.",
