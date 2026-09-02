@@ -462,6 +462,12 @@
         "label": "المظهر",
         "light": "فاتح",
         "system": "النظام"
+      },
+      "wizard": {
+        "discard_cancel": "متابعة التحرير",
+        "discard_confirm": "تجاهل",
+        "discard_message": "سيُفقد كل ما أدخلته حتى الآن، ولا يمكن التراجع عن ذلك.",
+        "discard_title": "تجاهل هذه المسودة؟"
       }
     },
     "custom_field_definitions": {

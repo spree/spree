@@ -59,6 +59,51 @@ test.describe('catalogs', () => {
     await expect(page.getByText(name)).toBeVisible({ timeout: 15_000 })
   })
 
+  // A wizard holds several steps of work, so dismissing it is not the cheap
+  // action it is for an ordinary dialog.
+  test('confirms before Escape discards a part-filled wizard', async ({ page }) => {
+    const creds = await login(page)
+    await gotoIndex(page, CATALOGS_PATH(creds.store_id), CTA)
+    await page.getByRole('button', { name: CTA }).click()
+
+    await expect(page.getByRole('heading', { name: /new catalog/i })).toBeVisible()
+    const draftName = `Escape guard ${Date.now()}`
+    await page.locator('#catalog-name').fill(draftName)
+
+    // Escape asks rather than closing, and keeping the draft leaves the work
+    // exactly where it was.
+    await page.keyboard.press('Escape')
+    const confirmDialog = page
+      .getByRole('dialog')
+      .filter({ has: page.getByRole('heading', { name: /discard this draft/i }) })
+    await expect(confirmDialog).toBeVisible()
+    await confirmDialog.getByRole('button', { name: /keep editing/i }).click()
+    await expect(page.getByRole('heading', { name: /new catalog/i })).toBeVisible()
+    // Keeping the draft has to keep the draft, not just the dialog.
+    await expect(page.locator('#catalog-name')).toHaveValue(draftName)
+
+    // Discarding is still one Escape and one confirmation away.
+    await page.keyboard.press('Escape')
+    await confirmDialog.getByRole('button', { name: /^discard$/i }).click()
+    await expect(page.getByRole('heading', { name: /new catalog/i })).toBeHidden({
+      timeout: 15_000,
+    })
+  })
+
+  // Nothing typed, nothing to lose: the wizard should not nag on the way out.
+  test('closes an untouched wizard without asking', async ({ page }) => {
+    const creds = await login(page)
+    await gotoIndex(page, CATALOGS_PATH(creds.store_id), CTA)
+    await page.getByRole('button', { name: CTA }).click()
+
+    await expect(page.getByRole('heading', { name: /new catalog/i })).toBeVisible()
+
+    await page.keyboard.press('Escape')
+    await expect(page.getByRole('heading', { name: /new catalog/i })).toBeHidden({
+      timeout: 15_000,
+    })
+  })
+
   test('stages product membership and persists it on Save', async ({ page }) => {
     const creds = await login(page)
     await gotoIndex(page, CATALOGS_PATH(creds.store_id), CTA)

@@ -160,6 +160,9 @@ function CatalogWizard({
       steps={steps}
       current={step}
       onStepSelect={(key: string) => setStep(key as StepKey)}
+      // The assortment is picked outside the form, so a merchant who has only
+      // added products is still part-way through something.
+      hasUnsavedChanges={form.formState.isDirty || products.length > 0}
       onSubmit={form.handleSubmit(handleCreate, () =>
         form.setError('root', { message: t('admin.catalogs.wizard.fix_this_step') }),
       )}

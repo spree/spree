@@ -25,6 +25,7 @@ import {
   TableHead,
   TableHeader,
   TableRow,
+  useConfirm,
   WizardProgress,
 } from '@spree/dashboard-ui'
 import {
@@ -74,8 +75,39 @@ interface ImportWizardDialogProps {
  * and reopens from the history page (or the same `?import=` URL).
  */
 export function ImportWizardDialog({ importId, onClose, onViewRecords }: ImportWizardDialogProps) {
+  const { t } = useTranslation()
+  const confirm = useConfirm()
+  // Only the mapping step holds anything unsaved. Once the import is running
+  // the work is server-side, so closing then is safe and asking would nag.
+  const [mappingUnsaved, setMappingUnsaved] = useState(false)
+
+  async function requestClose() {
+    if (mappingUnsaved) {
+      const discard = await confirm({
+        title: t('admin.components.wizard.discard_title'),
+        message: t('admin.components.wizard.discard_message'),
+        confirmLabel: t('admin.components.wizard.discard_confirm'),
+        cancelLabel: t('admin.components.wizard.discard_cancel'),
+        variant: 'destructive',
+      })
+      if (!discard) return
+    }
+    onClose()
+  }
+
   return (
-    <Dialog open={!!importId} onOpenChange={(next) => !next && onClose()} modal>
+    <Dialog
+      open={!!importId}
+      onOpenChange={(next, details) => {
+        if (next) return
+        if (details?.reason === 'escape-key' || details?.reason === 'outside-press') {
+          void requestClose()
+          return
+        }
+        onClose()
+      }}
+      modal
+    >
       <DialogContent
         // Edge-to-edge minus a 3-unit gutter — see BulkPriceEditorDialog for
         // why every inset/translate/max is overridden.
@@ -84,7 +116,12 @@ export function ImportWizardDialog({ importId, onClose, onViewRecords }: ImportW
         showCloseButton={false}
       >
         {importId && (
-          <ImportWizard importId={importId} onClose={onClose} onViewRecords={onViewRecords} />
+          <ImportWizard
+            importId={importId}
+            onClose={requestClose}
+            onViewRecords={onViewRecords}
+            onMappingDirtyChange={setMappingUnsaved}
+          />
         )}
       </DialogContent>
     </Dialog>
@@ -95,10 +132,13 @@ function ImportWizard({
   importId,
   onClose,
   onViewRecords,
+  onMappingDirtyChange,
 }: {
   importId: string
   onClose: () => void
   onViewRecords?: (type: string | null) => void
+  /** Reports whether the mapping has edits the dialog should protect. */
+  onMappingDirtyChange?: (dirty: boolean) => void
 }) {
   const { t } = useTranslation()
   const { data: imp, isLoading, isError, refetch } = useImport(importId)
@@ -121,6 +161,17 @@ function ImportWizard({
   }, [imp])
 
   const isMapping = imp?.status === 'mapping'
+
+  useEffect(() => {
+    if (!onMappingDirtyChange) return
+    const edited =
+      !!imp &&
+      imp.status === 'mapping' &&
+      Object.entries(initialAssignments(imp)).some(
+        ([field, column]) => (assignments[field] ?? null) !== (column ?? null),
+      )
+    onMappingDirtyChange(edited)
+  }, [imp, assignments, onMappingDirtyChange])
   const isCompleted = imp?.status === 'completed'
   const missingRequired = imp && isMapping ? missingRequiredFields(imp, assignments) : []
   const retryMutation = useRetryFailedRows(importId)

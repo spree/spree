@@ -462,6 +462,12 @@
         "label": "主题",
         "light": "浅色",
         "system": "系统"
+      },
+      "wizard": {
+        "discard_cancel": "继续编辑",
+        "discard_confirm": "放弃",
+        "discard_message": "已填写的内容将全部丢失，且无法恢复。",
+        "discard_title": "放弃此草稿？"
       }
     },
     "custom_field_definitions": {

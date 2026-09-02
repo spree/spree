@@ -462,6 +462,12 @@
         "label": "Thème",
         "light": "Clair",
         "system": "Système"
+      },
+      "wizard": {
+        "discard_cancel": "Continuer",
+        "discard_confirm": "Abandonner",
+        "discard_message": "Tout ce que vous avez saisi sera perdu. Cette action est irréversible.",
+        "discard_title": "Abandonner ce brouillon ?"
       }
     },
     "custom_field_definitions": {

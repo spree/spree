@@ -462,6 +462,12 @@
         "label": "Design",
         "light": "Hell",
         "system": "System"
+      },
+      "wizard": {
+        "discard_cancel": "Weiter bearbeiten",
+        "discard_confirm": "Verwerfen",
+        "discard_message": "Alles bisher Eingegebene geht verloren. Das lässt sich nicht rückgängig machen.",
+        "discard_title": "Entwurf verwerfen?"
       }
     },
     "custom_field_definitions": {
