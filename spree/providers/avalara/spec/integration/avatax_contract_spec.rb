@@ -88,6 +88,29 @@ RSpec.describe 'AvaTax API contract', :vcr do
       expect(row.data['avalara']['exemptNo']).to eq('C-100')
     end
 
+    # Avalara reflects a buyer registration nowhere in its response on an account
+    # with no EU registration — the whole response is byte-identical with and
+    # without it — so this cannot prove the key is honoured. What it does prove is
+    # that a registration on the sale reaches the request, and it leaves a
+    # recorded payload to compare against if an EU-registered account is ever
+    # available.
+    it 'sends the buyer registration it was given',
+       vcr: { cassette_name: 'estimate/business_identification_no' } do
+      cart = us_cart
+      allow(SpreeAvalara::Integration).to receive(:active_for).and_return(integration)
+      identifier = Spree::TaxIdentifier.new(kind: 'eu_vat', value: 'DE136695976')
+      sent = nil
+      allow(integration.client).to receive(:create_transaction).and_wrap_original do |original, model|
+        sent = model
+        original.call(model)
+      end
+
+      provider.estimate(cart, tax_identifier: identifier)
+
+      expect(sent[:businessIdentificationNo]).to eq('DE136695976')
+      expect(cart.tax_lines.reload).to be_present
+    end
+
     # The commonest zero-tax case, and the one the reason table originally got
     # wrong: the whole line reads exempt with no certificate behind it.
     it 'calls a destination with no nexus not_collecting',

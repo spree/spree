@@ -258,6 +258,28 @@ RSpec.describe SpreeAvalara::TaxProvider do
       expect(order.reload.metadata['avalara_transaction_id']).to be_nil
     end
 
+    # The presenter spec is handed an identifier directly, so nothing covered the
+    # link that matters here: commit reading the order's own frozen registration
+    # and putting it on the document. That is what decides whether an EU B2B sale
+    # is treated as reverse-charged.
+    it "files the sale under the buyer's own registration" do
+      order.create_tax_identifier!(kind: 'eu_vat', value: 'DE136695976')
+
+      provider.commit(order.reload)
+
+      expect(client).to have_received(:create_or_adjust_transaction) do |args|
+        expect(args[:createTransactionModel][:businessIdentificationNo]).to eq('DE136695976')
+      end
+    end
+
+    it 'claims no registration for a consumer sale' do
+      provider.commit(order)
+
+      expect(client).to have_received(:create_or_adjust_transaction) do |args|
+        expect(args[:createTransactionModel]).not_to have_key(:businessIdentificationNo)
+      end
+    end
+
     # The preference sets the document's status at Avalara, not whether the sale
     # is filed: false records it as Saved rather than Committed, so it stays out
     # of Avalara's filings until something commits it. Confirmed against the
