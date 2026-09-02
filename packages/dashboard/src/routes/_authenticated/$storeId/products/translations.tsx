@@ -32,7 +32,7 @@ import {
 } from '@spree/dashboard-ui'
 import { CheckIcon } from '@spree/dashboard-ui/icons'
 import { createFileRoute, useNavigate } from '@tanstack/react-router'
-import { useDeferredValue, useState } from 'react'
+import { useDeferredValue, useMemo, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { z } from 'zod'
 import { ImportWizardDialog } from '../../../../components/spree/imports/import-wizard-dialog'
@@ -47,7 +47,7 @@ import {
 
 const translationsSearchSchema = resourceSearchSchema.extend({
   /** Which translatable resource type the grid is showing. */
-  resource: z.string().optional(),
+  resource: z.string().optional().default('product'),
   /** Prefixed id of the record whose editor is open. */
   edit: z.string().optional(),
   import: z.string().optional(),
@@ -63,8 +63,7 @@ function TranslationsPage() {
   const navigate = useNavigate({ from: Route.fullPath })
   const search = Route.useSearch()
 
-  const resourceType = search.resource ?? 'product'
-  const page = search.page ?? 1
+  const { resource: resourceType, page } = search
   // Defer the LOCAL value, the way ResourceTable does: deferring the URL
   // param cannot coalesce, because writing it is already an urgent update, so
   // every keystroke would issue its own request.
@@ -98,10 +97,12 @@ function TranslationsPage() {
   // `search` rather than a predicate the client picks: the server knows which
   // one this resource type whitelists (`name` is ransackable on products and
   // categories but not on collections) and applies it, or ignores the term.
-  const { data, isLoading } = useTranslationCoverage(resourceType, {
-    page,
-    ...(deferredSearch.trim() ? { search: deferredSearch.trim() } : {}),
-  })
+  const trimmedSearch = deferredSearch.trim()
+  const coverageParams = useMemo(
+    () => ({ page, ...(trimmedSearch ? { search: trimmedSearch } : {}) }),
+    [page, trimmedSearch],
+  )
+  const { data, isLoading } = useTranslationCoverage(resourceType, coverageParams)
 
   const coverage = data?.data
   const targetLocales = coverage?.locales ?? []
@@ -230,9 +231,7 @@ function TranslationsPage() {
                   <Select
                     items={resourceOptions}
                     value={resourceType}
-                    onValueChange={(value: string) =>
-                      patchSearch({ resource: value, page: undefined })
-                    }
+                    onValueChange={(value: string) => patchSearch({ resource: value, page: 1 })}
                   >
                     <SelectTrigger className="w-48">
                       <SelectValue />

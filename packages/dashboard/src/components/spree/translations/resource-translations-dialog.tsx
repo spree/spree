@@ -5,7 +5,7 @@ import {
   type TranslatableField,
   type TranslationBatchEntry,
 } from '@spree/admin-sdk'
-import { adminClient } from '@spree/dashboard-core'
+import { adminClient, useResourceKey } from '@spree/dashboard-core'
 import {
   Button,
   cn,
@@ -26,6 +26,7 @@ import {
   useConfirm,
 } from '@spree/dashboard-ui'
 import { XIcon } from '@spree/dashboard-ui/icons'
+import { useQueryClient } from '@tanstack/react-query'
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import {
@@ -97,6 +98,8 @@ export function ResourceTranslationsDialog({
   const { t } = useTranslation()
   const confirm = useConfirm()
   const { data, isLoading, isError, refetch } = useResourceTranslations(resourceType, resourceId)
+  const queryClient = useQueryClient()
+  const coverageKey = useResourceKey('translations', 'coverage')
 
   const rows = useMemo(() => (data ? flattenTree(data) : []), [data])
   const targetLocales = useMemo(
@@ -163,6 +166,10 @@ export function ResourceTranslationsDialog({
       toastManager.add({ type: 'success', title: t('admin.translations.saved') })
       setEdits(new Map())
       refetch()
+      // A save changes how much of the catalog is translated, so the coverage
+      // grid behind this dialog is now stale — it is what the merchant returns
+      // to when they close.
+      queryClient.invalidateQueries({ queryKey: coverageKey })
     } catch (err) {
       // The grid has no form to render inline errors onto, so surface the
       // server's validation message (if any) in the toast rather than the
