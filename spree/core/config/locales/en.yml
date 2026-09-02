@@ -872,6 +872,13 @@ en:
     customer_group: Customer Group
     customer_groups: Customer Groups
     customer_mailer:
+      data_export_email:
+        action: Download Your Data
+        expiry_notice: This download link expires on %{date}.
+        greeting: Hello,
+        ignore_notice: If you did not request a copy of your data, please contact us.
+        instructions: Your copy of the personal data we hold about you is ready. Use the button below to download it.
+        subject: Your Data Is Ready to Download
       password_reset_email:
         action: Reset Password
         expiry_notice: This password reset link will expire shortly. If you did not request this, no action is needed.
@@ -884,6 +891,10 @@ en:
     cut: Cut
     cvv: CVV
     cvv_response: CVV Response
+    customer_errors:
+      already_anonymized: This customer's personal data has already been erased
+    data_request_errors:
+      not_pending: This request has already been processed
     date: Date
     date_range: Date Range
     default: Default

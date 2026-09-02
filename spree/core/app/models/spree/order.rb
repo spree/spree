@@ -441,6 +441,50 @@ module Spree
       refunds_total < total_minus_store_credits - additional_tax_total.abs
     end
 
+    # When the buyer's statutory right of withdrawal expires — the EU
+    # cooling-off period (Consumer Rights Directive 2011/83/EU Art. 9).
+    #
+    # Derived rather than stored. The clock starts when the buyer takes
+    # delivery, and a parcel delivered today would leave a value written at
+    # placement pointing at the wrong date; recomputing costs one comparison
+    # over fulfillments the order has usually already loaded.
+    #
+    # Falls back to completion while nothing has been delivered, which is the
+    # conservative reading: the period cannot have started earlier than the
+    # sale, so a deadline shown before dispatch never understates the right.
+    #
+    # @return [ActiveSupport::TimeWithZone, nil] nil when the market grants no
+    #   withdrawal right, or the order is not yet complete
+    def withdrawal_period_ends_at
+      return nil unless completed?
+
+      days = withdrawal_period_days
+      return nil if days.blank?
+
+      (withdrawal_period_starts_at || completed_at) + days.days
+    end
+
+    # @return [Boolean] whether the buyer may still withdraw
+    def within_withdrawal_period?
+      deadline = withdrawal_period_ends_at
+      deadline.present? && deadline.future?
+    end
+
+    # The moment the cooling-off period starts: receipt of the goods. Uses the
+    # last delivery, since a split shipment leaves the buyer waiting on the
+    # final parcel before the whole order is theirs to assess.
+    #
+    # @return [ActiveSupport::TimeWithZone, nil]
+    def withdrawal_period_starts_at
+      delivered = fulfillments.filter_map(&:delivered_at)
+      delivered.max
+    end
+
+    # @return [Integer, nil]
+    def withdrawal_period_days
+      (market || Spree::Market.new).preferred_withdrawal_period_days
+    end
+
     # Indicates whether or not the user is allowed to proceed to checkout.
     # Currently this is implemented as a check for whether or not there is at
     # least one LineItem in the Order.  Feel free to override this logic in your

@@ -39,6 +39,12 @@ module Spree
       before_validation :clone_billing_address, if: :use_billing?
       before_destroy :check_completed_orders
 
+      # GDPR Art. 7(1) puts the burden of demonstrating consent on the
+      # controller. The boolean says what is true now; the timestamp and
+      # source say when it became true and where the person agreed, which is
+      # what a supervisory authority asks for.
+      before_save :stamp_email_marketing_consent, if: :will_save_change_to_accepts_email_marketing?
+
       after_save_commit :sync_newsletter_subscription_with_marketing_consent,
                         if: :saved_change_to_accepts_email_marketing?
 
@@ -103,6 +109,13 @@ module Spree
       # Attributes
       #
       attr_accessor :confirm_email, :terms_of_service
+
+      # Where a consent change came from, when the caller knows. Set alongside
+      # `accepts_email_marketing` and consumed by the stamping callback.
+      attr_writer :email_marketing_consent_source_context
+
+      scope :anonymized, -> { where.not(anonymized_at: nil) }
+      scope :not_anonymized, -> { where(anonymized_at: nil) }
 
       # The company nodes this customer may act for within a store — their
       # memberships on that store's trees, expanded by subtree. Customers are
@@ -323,6 +336,23 @@ module Spree
       Spree::NewsletterSubscriber.for_store(store).find_by(customer_id: id)
     end
 
+    # @deprecated Superseded by {Spree::Customers::Anonymize}, which erases
+    #   every column carrying personal data rather than three on this row —
+    #   the address book, the address snapshots on past orders, gateway
+    #   profiles, OAuth identities and live sessions all outlived this method.
+    #   Removed in Spree 6.1.
+    def scramble_email_and_names
+      Spree::Deprecation.warn('Spree::CustomerMethods#scramble_email_and_names is deprecated and will be removed in Spree 6.1. Use Spree::Customers::Anonymize instead.')
+
+      Spree.customer_anonymize_workflow.call(customer: self).success?
+    end
+
+    # Whether this customer's personal data has been erased.
+    # @return [Boolean]
+    def anonymized?
+      anonymized_at.present?
+    end
+
     private
 
     def check_completed_orders
@@ -342,13 +372,9 @@ module Spree
       use_billing.in?([true, 'true', '1'])
     end
 
-    # Scrambles the email and names of the user
-    def scramble_email_and_names
-      self.email = "#{SecureRandom.uuid}@example.net"
-      self.first_name = 'Deleted'
-      self.last_name = 'User'
-      self.login = email if has_attribute?(:login)
-      save
+    def stamp_email_marketing_consent
+      self.email_marketing_consent_updated_at = Time.current
+      self.email_marketing_consent_source = @email_marketing_consent_source_context.presence || 'account'
     end
 
     def sync_newsletter_subscription_with_marketing_consent

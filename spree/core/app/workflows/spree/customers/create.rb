@@ -60,6 +60,7 @@ module Spree
         ApplicationRecord.transaction do
           step :create_customer
           step :link_order
+          step :record_consent
         end
 
         step :link_newsletter_subscriber
@@ -120,6 +121,46 @@ module Spree
 
       def create_customer
         failure(customer) unless customer.save
+      end
+
+      # Registration is where a person agrees to the terms, and where a
+      # marketing opt-in first has an account to attach to. Both are recorded
+      # as events so the store can show when consent was given, not merely
+      # that it currently holds.
+      #
+      # Inside the transaction: a customer that exists without the record of
+      # what they agreed to is exactly the gap these rows are meant to close.
+      def record_consent
+        Spree::ConsentRecord.record!(
+          store: store,
+          owner: customer,
+          purpose: Spree::ConsentRecord::TERMS_OF_SERVICE,
+          source: consent_source,
+          email: customer.email,
+          policies: consent_policies
+        )
+
+        return unless customer.accepts_email_marketing?
+
+        Spree::ConsentRecord.record!(
+          store: store,
+          owner: customer,
+          purpose: Spree::ConsentRecord::EMAIL_MARKETING,
+          source: consent_source,
+          email: customer.email
+        )
+      end
+
+      # An account created from a placed order was agreed to at checkout; one
+      # created directly was agreed to at registration.
+      def consent_source
+        order ? 'checkout' : 'registration'
+      end
+
+      # The documents as they read at the moment of agreement, so a merchant
+      # who later edits their terms can still show which text this person saw.
+      def consent_policies
+        store.policies.to_a
       end
 
       def link_order

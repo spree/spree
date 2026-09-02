@@ -23,14 +23,30 @@ namespace :spree do
       puts "Seeded #{count} price history records"
     end
 
-    desc 'Prune price history older than retention period'
+    # Retention is per store, because whether a shop records price history at
+    # all is (`track_price_history`). Pruning globally on one number would
+    # delete an EU store's Omnibus evidence on the schedule of its non-EU
+    # sibling.
+    desc 'Prune price history older than each store\'s retention period'
     task prune: :environment do
-      retention_days = Spree::Config[:price_history_retention_days] || 30
-      deleted = Spree::PriceHistory
-                .where('recorded_at < ?', retention_days.days.ago)
-                .delete_all
+      total = 0
 
-      puts "Pruned #{deleted} price history records older than #{retention_days} days"
+      Spree::Store.find_each do |store|
+        retention_days = store.preferred_price_history_retention_days
+        next if retention_days.blank?
+
+        variant_ids = Spree::Variant.joins(:product).where(spree_products: { store_id: store.id }).select(:id)
+
+        deleted = Spree::PriceHistory.
+                  where(variant_id: variant_ids).
+                  where(recorded_at: ...retention_days.days.ago).
+                  delete_all
+
+        total += deleted
+        puts "Store #{store.name}: pruned #{deleted} price history records older than #{retention_days} days"
+      end
+
+      puts "Pruned #{total} price history records"
     end
   end
 end
