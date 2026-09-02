@@ -160,6 +160,8 @@
       "next": "Next",
       "no": "No",
       "no_results": "No results",
+      "combobox_more_results_one": "1 more result not shown. Type to search.",
+      "combobox_more_results_other": "{{count}} more results not shown. Type to search.",
       "none": "None",
       "optional": "Optional",
       "or": "or",

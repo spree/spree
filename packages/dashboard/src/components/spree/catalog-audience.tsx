@@ -1,3 +1,4 @@
+import type { Company } from '@spree/admin-sdk'
 import { adminClient, ResourceCombobox, useStore } from '@spree/dashboard-core'
 import {
   Badge,
@@ -35,7 +36,9 @@ import { Link } from '@tanstack/react-router'
 import { useState } from 'react'
 import type { UseFormReturn } from 'react-hook-form'
 import { useTranslation } from 'react-i18next'
+import { companyAutocompleteProps } from '../../hooks/use-companies'
 import type { AssignmentEntry, CatalogFormValues } from '../../schemas/catalog'
+import { CompanyComboboxOption } from './company-combobox-option'
 
 const ASSIGNABLE_TYPES = ['company', 'customer_group'] as const
 type AssignableType = (typeof ASSIGNABLE_TYPES)[number]
@@ -275,22 +278,6 @@ interface AssignableOption {
   email?: string | null
 }
 
-function assignableSearch(type: AssignableType) {
-  switch (type) {
-    case 'company':
-      return {
-        search: (q: string) => adminClient.companies.list({ name_cont: q, limit: 10 }),
-        hydrate: (ids: string[]) => adminClient.companies.list({ id_in: ids, limit: ids.length }),
-      }
-    case 'customer_group':
-      return {
-        search: (q: string) => adminClient.customerGroups.list({ name_cont: q, limit: 10 }),
-        hydrate: (ids: string[]) =>
-          adminClient.customerGroups.list({ id_in: ids, limit: ids.length }),
-      }
-  }
-}
-
 /** Picking one audience. Its host decides whether this sits inline or in a dialog. */
 function AssignCatalogForm({
   assigned,
@@ -311,8 +298,6 @@ function AssignCatalogForm({
     value: type,
     label: t(`admin.catalogs.assignable_types.${type}`),
   }))
-
-  const { search, hydrate } = assignableSearch(assignableType)
 
   // A row staged for withdrawal is not a duplicate — picking it again is how
   // the merchant takes the removal back.
@@ -365,22 +350,35 @@ function AssignCatalogForm({
 
         <Field>
           <FieldLabel>{t('admin.catalogs.assignments.audience_label')}</FieldLabel>
-          <ResourceCombobox<AssignableOption>
-            key={assignableType}
-            queryKey={`catalog-assignables-${assignableType}`}
-            search={search}
-            hydrate={hydrate}
-            getOptionLabel={(option) => option.name ?? option.email ?? option.id}
-            placeholder={t('admin.catalogs.assignments.audience_placeholder')}
-            emptyText={t('admin.catalogs.assignments.audience_empty')}
-            value={assignableId || undefined}
-            // The record, not just the id: a staged row has to render a name
-            // before the assignment exists server-side.
-            onChange={(id, record) => {
-              setAssignableId(id ?? '')
-              setAssignableName(record ? (record.name ?? record.email ?? null) : null)
-            }}
-          />
+          {assignableType === 'company' ? (
+            <ResourceCombobox<Company>
+              key="company"
+              {...companyAutocompleteProps('catalog-assignables-company')}
+              renderOption={(company) => <CompanyComboboxOption company={company} />}
+              value={assignableId || undefined}
+              onChange={(id, record) => {
+                setAssignableId(id ?? '')
+                setAssignableName(record ? (record.name ?? null) : null)
+              }}
+            />
+          ) : (
+            <ResourceCombobox<AssignableOption>
+              key="customer_group"
+              queryKey="catalog-assignables-customer_group"
+              search={(q) =>
+                adminClient.customerGroups.list({ name_cont: q, limit: 100, sort: 'name' })
+              }
+              hydrate={(ids) => adminClient.customerGroups.list({ id_in: ids, limit: ids.length })}
+              getOptionLabel={(group) => group.name ?? group.id}
+              placeholder={t('admin.catalogs.assignments.audience_placeholder')}
+              emptyText={t('admin.catalogs.assignments.audience_empty')}
+              value={assignableId || undefined}
+              onChange={(id, record) => {
+                setAssignableId(id ?? '')
+                setAssignableName(record ? (record.name ?? record.email ?? null) : null)
+              }}
+            />
+          )}
           {duplicate && <FieldError>{t('admin.catalogs.assignments.already_assigned')}</FieldError>}
           {assignableType === 'company' && (
             <FieldDescription>

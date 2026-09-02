@@ -160,6 +160,8 @@
       "next": "Weiter",
       "no": "Nein",
       "no_results": "Keine Ergebnisse",
+      "combobox_more_results_one": "1 weiteres Ergebnis nicht angezeigt. Tippen zum Suchen.",
+      "combobox_more_results_other": "{{count}} weitere Ergebnisse nicht angezeigt. Tippen zum Suchen.",
       "none": "Keine",
       "optional": "Optional",
       "or": "oder",

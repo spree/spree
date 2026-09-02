@@ -39,6 +39,7 @@ import { useRef, useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { useTranslation } from 'react-i18next'
 import { ChannelSelect } from '../../../../components/spree/channel-select'
+import { CompanyComboboxOption } from '../../../../components/spree/company-combobox-option'
 import { useChannels } from '../../../../hooks/use-channels'
 import { companyAutocompleteProps } from '../../../../hooks/use-companies'
 import { customerAutocompleteProps } from '../../../../hooks/use-customers'
@@ -204,14 +205,7 @@ function NewOrderPage() {
                         // for. Clearing is the honest reset.
                         if (record?.id !== company?.id) setCustomer(null)
                       }}
-                      renderOption={(c) => (
-                        <div>
-                          <div className="font-medium">{c.name}</div>
-                          <div className="text-xs text-muted-foreground">
-                            {t(`admin.companies.kind.${c.kind}`)}
-                          </div>
-                        </div>
-                      )}
+                      renderOption={(company) => <CompanyComboboxOption company={company} />}
                     />
                     <FieldDescription>{t('admin.pages.orders.new.company_help')}</FieldDescription>
                   </Field>

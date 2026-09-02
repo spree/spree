@@ -49,6 +49,8 @@ export interface ResourceComboboxProps<T extends ComboboxOption> {
   placeholder?: string
   /** Empty state text shown in the dropdown when items is empty. */
   emptyText?: string
+  /** Optional footer below the list — e.g. a count of rows not shown. */
+  listFooter?: ReactNode
   disabled?: boolean
 
   /**
@@ -78,6 +80,7 @@ export function ResourceCombobox<T extends ComboboxOption>({
   renderOption,
   placeholder,
   emptyText,
+  listFooter,
   disabled,
   id,
 }: ResourceComboboxProps<T>) {
@@ -109,6 +112,7 @@ export function ResourceCombobox<T extends ComboboxOption>({
             </ComboboxItem>
           )}
         </ComboboxList>
+        {listFooter}
       </ComboboxContent>
     </Combobox>
   )
