@@ -96,7 +96,7 @@ describe Spree::Wishlist, type: :model do
     it 'deletes associated wishlist items' do
       expect do
         wishlist_item.wishlist.destroy
-      end.to change(Spree::WishedItem, :count).by(-1)
+      end.to change(Spree::WishlistItem, :count).by(-1)
     end
   end
 

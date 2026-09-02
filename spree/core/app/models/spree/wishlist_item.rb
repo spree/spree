@@ -2,6 +2,8 @@ module Spree
   class WishlistItem < Spree.base_class
     has_prefix_id :wli  # Spree-specific: wishlist item
 
+    include Spree::WishlistItem::CustomEvents
+
     extend DisplayMoney
     money_methods :total, :price
 
@@ -27,29 +29,6 @@ module Spree
       else
         quantity * variant_price
       end
-    end
-
-    private
-
-    # The legacy wished_item.* events are dual-emitted for one release
-    # (webhook contract bridge — removed in 6.1).
-    def publish_create_event
-      publish_event('wished_item.created')
-      super
-    end
-
-    # Cannot call super like its siblings: touch_only_update? clears its flags
-    # when read, so the guard must run exactly once for both event names.
-    def publish_update_event
-      return if touch_only_update?
-
-      publish_event('wished_item.updated')
-      publish_event("#{event_prefix}.updated")
-    end
-
-    def publish_delete_event
-      publish_event('wished_item.deleted', @_pre_destroy_payload || event_payload)
-      super
     end
   end
 end

@@ -94,7 +94,7 @@ function TranslationsPage() {
 
   // A plain term rather than a predicate the client picks: which column to
   // match varies by resource type (an option type is displayed by
-  // `presentation`, not `name`), and only the server knows which.
+  // `label`, not `name`), and only the server knows which.
   const trimmedSearch = deferredSearch.trim()
   const coverageParams = useMemo(
     () => ({ page, ...(trimmedSearch ? { search: trimmedSearch } : {}) }),

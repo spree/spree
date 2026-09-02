@@ -166,16 +166,16 @@ module Spree
             next if rows.blank?
 
             # rows: [id, option_type_id, name, label, position, color_code]
-            options = rows.filter_map do |id, _, name, column_label, position, color_code|
+            options = rows.filter_map do |id, _, name, label, position, color_code|
               count = counts[id] || 0
               next if count.zero?
 
-              label = ov_translations[id] || column_label
+              display_label = ov_translations[id] || label
 
               {
                 id: encode_prefixed_id(:optval, id),
                 name: name,
-                label: label,
+                label: display_label,
                 position: position,
                 color_code: color_code,
                 image_url: image_urls[id],

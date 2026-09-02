@@ -55,9 +55,9 @@ RSpec.describe Spree::TranslatableResource, type: :model do
     end
   end
 
-  # OptionType's translatable column is `label`, which is also its public
-  # name `label` — the matrix and upsert use the public name.
-  describe 'public field aliases' do
+  # OptionType's translatable column and public name are both `label` since
+  # 6.0, so this covers the identity case the alias mechanism falls back to.
+  describe 'public translatable fields' do
     let!(:option_type) { create(:option_type, name: 'size', label: 'Size') }
 
     it 'exposes the public field name' do
@@ -71,7 +71,7 @@ RSpec.describe Spree::TranslatableResource, type: :model do
       Mobility.with_locale(:en) { expect(option_type.reload.label).to eq 'Size' }
     end
 
-    it 'reports untranslated fields as nil in the matrix (fallback honored through the alias)' do
+    it 'reports untranslated fields as nil in the matrix' do
       matrix = Spree::Translations.matrix_for(option_type, locales: %w[de])
       expect(matrix.dig('de', 'label')).to be_nil
     end

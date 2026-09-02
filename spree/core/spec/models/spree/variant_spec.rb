@@ -847,17 +847,17 @@ describe Spree::Variant, type: :model do
     let(:option_value) { create(:option_value, name: 'medium', label: 'M', option_type: option_type) }
     let(:option_value2) { create(:option_value, name: 'wool', label: 'Wool', option_type: option_type2) }
 
-    it 'returns an array of hashes with option type name, value, and label ordered by option type position' do
+    it 'returns an array of hashes with option type name, value, and presentation ordered by option type position' do
       expect(variant.options).to eq([
                                       {
                                         name: 'size',
                                         value: 'medium',
-                                        label: 'M'
+                                        presentation: 'M'
                                       },
                                       {
                                         name: 'material',
                                         value: 'wool',
-                                        label: 'Wool'
+                                        presentation: 'Wool'
                                       }
                                     ])
     end

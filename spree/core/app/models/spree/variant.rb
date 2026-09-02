@@ -504,7 +504,12 @@ module Spree
       gallery_media.reject { |media| media.id == primary_media&.id }
     end
 
-    # Returns an array of hashes with the option type name, value and label
+    # Returns an array of hashes with the option type name, value and label.
+    #
+    # The +presentation+ key keeps its name through the 6.0 column rename: it
+    # is a return shape host apps read, nothing in Spree consumes it, and a
+    # renamed hash key breaks silently.
+    #
     # @return [Array<Hash>]
     def options
       @options ||= option_values.
@@ -515,7 +520,7 @@ module Spree
                      {
                        name: option_value.option_type.name,
                        value: option_value.name,
-                       label: option_value.label
+                       presentation: option_value.label
                      }
                    end
     end

@@ -22,7 +22,7 @@ RSpec.describe Spree::Api::V3::Store::WishlistItemsController, type: :controller
     it 'adds item to wishlist' do
       expect {
         post :create, params: { wishlist_id: wishlist.prefixed_id, variant_id: new_variant.prefixed_id, quantity: 3 }
-      }.to change(Spree::WishedItem, :count).by(1)
+      }.to change(Spree::WishlistItem, :count).by(1)
 
       expect(response).to have_http_status(:created)
       expect(json_response['variant_id']).to eq(new_variant.prefixed_id)
@@ -125,7 +125,7 @@ RSpec.describe Spree::Api::V3::Store::WishlistItemsController, type: :controller
     it 'removes item from wishlist' do
       expect {
         delete :destroy, params: { wishlist_id: wishlist.prefixed_id, id: wishlist_item.prefixed_id }
-      }.to change(Spree::WishedItem, :count).by(-1)
+      }.to change(Spree::WishlistItem, :count).by(-1)
 
       expect(response).to have_http_status(:no_content)
     end
