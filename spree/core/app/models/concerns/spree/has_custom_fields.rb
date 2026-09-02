@@ -272,7 +272,13 @@ module Spree
       def resolve_custom_field_definition_id(definition_or_key)
         case definition_or_key
         when Spree::CustomFieldDefinition
-          find_definition_id_in_store!(definition_or_key.id, definition_or_key.full_key)
+          # A loaded record already carries its store, so compare in memory
+          # rather than paying a lookup to learn what is in hand.
+          unless definition_or_key.store_id == custom_field_definition_store.id
+            raise ArgumentError, "Unknown custom field definition id: #{definition_or_key.full_key.inspect}"
+          end
+
+          definition_or_key.id
         when Integer
           find_definition_id_in_store!(definition_or_key, definition_or_key)
         when String
