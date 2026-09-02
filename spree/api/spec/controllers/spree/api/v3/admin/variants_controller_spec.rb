@@ -20,6 +20,41 @@ RSpec.describe Spree::Api::V3::Admin::VariantsController, type: :controller do
       expect(json_response['data'].map { |v| v['id'] }).to include(variant.prefixed_id)
     end
 
+    # The variant picker asks for only the three fields it renders; without
+    # this the autocomplete ships prices, stock and media it never shows.
+    it 'returns only the requested fields, plus id' do
+      get :index, params: { fields: 'product_name,sku,options_text' }, as: :json
+
+      expect(response).to have_http_status(:ok)
+      row = json_response['data'].first
+      expect(row.keys).to match_array(%w[id product_name sku options_text])
+    end
+
+    # The controller's `scope_includes` only applies if `scope` chains onto
+    # the base rather than rebuilding the relation. When it does not, prices
+    # and stock are read once per listed variant and nothing fails — so the
+    # guard is that the cost does not grow with the number of rows.
+    it 'reads prices and stock once, not once per variant' do
+      counts = [1, 4].map do |variant_count|
+        create_list(:variant, variant_count - 1, product: product) if variant_count > 1
+
+        stock_and_price = 0
+        subscription = ActiveSupport::Notifications.subscribe('sql.active_record') do |*, payload|
+          next if payload[:cached]
+          next unless payload[:name].to_s.match?(/Price|StockLevel|StockReservation/)
+
+          stock_and_price += 1
+        end
+        get :index, as: :json
+        ActiveSupport::Notifications.unsubscribe(subscription)
+
+        expect(response).to have_http_status(:ok)
+        stock_and_price
+      end
+
+      expect(counts.last).to eq(counts.first)
+    end
+
     it 'includes the default variant' do
       subject
       returned_ids = json_response['data'].map { |v| v['id'] }
