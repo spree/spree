@@ -107,6 +107,17 @@ RSpec.describe Spree::Translations do
       expect(row['coverage']).to eq 0.5
     end
 
+    it 'does not count a whitespace-only translation as complete' do
+      # The two counters must agree: a Ruby `present?` check treats " " as
+      # blank, so the SQL side trims too — otherwise the coverage card and the
+      # grid cells below it contradict each other.
+      Mobility.with_locale(:de) do
+        product.update!(description: '   ', meta_description: '   ')
+      end
+
+      expect(subject.find { |row| row['locale'] == 'de' }['translated']).to eq 0
+    end
+
     it 'reports zero coverage without dividing by zero on an empty scope' do
       rows = described_class.coverage_for(Spree::Product.none, Spree::Product, %w[de])
 

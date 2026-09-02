@@ -49,11 +49,29 @@ module Spree
               Spree::Translations.public_resource_type(model_class).pluralize.to_sym
           end
 
-          # Store-scoped where the model is store-owned; option types and other
-          # global reference data have no store column and are shared.
+          # Store-scoped and ability-filtered, mirroring what the admin base
+          # class does — `accessible_by` included, so a host app's record-level
+          # rules still bind on this endpoint.
+          #
+          # `Spree::Base.for_store` cannot be used as a store-scoping test:
+          # every model responds to it, and it falls back to the UNSCOPED class
+          # when the store has no matching association — which for Spree::Store
+          # means every store in the installation. The store column is the
+          # honest test, since a model either carries one or is genuinely
+          # global reference data (option types) that is shared by design.
           def scope
             klass = model_class
-            klass.respond_to?(:for_store) ? klass.for_store(current_store).all : klass.all
+
+            base =
+              if klass <= Spree::Store
+                klass.where(id: current_store.id)
+              elsif klass.column_names.include?('store_id')
+                klass.where(store_id: current_store.id)
+              else
+                klass.all
+              end
+
+            base.accessible_by(current_ability, ability_action_for_request)
           end
 
           # Nothing to eager-load: coverage reads the translation tables in one
@@ -83,8 +101,11 @@ module Spree
           #
           # @return [String, nil]
           def search_field
-            # A model that never declared a whitelist (option types) has none.
-            attributes = model_class.whitelisted_ransackable_attributes || []
+            # `ransackable_attributes` is what Ransack actually consults — the
+            # `whitelisted_` half omits the defaults, which already carry
+            # `name`, so reading it would send collections to `permalink` and
+            # leave option types with no search at all.
+            attributes = model_class.ransackable_attributes
             field = %w[name presentation permalink slug].find { |candidate| attributes.include?(candidate) }
             field && "#{field}_cont"
           end

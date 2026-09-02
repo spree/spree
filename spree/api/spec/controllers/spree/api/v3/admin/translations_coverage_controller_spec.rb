@@ -110,14 +110,32 @@ RSpec.describe Spree::Api::V3::Admin::TranslationsCoverageController, type: :con
       expect(json_response['data']['search_field']).to eq('name_cont')
     end
 
-    context 'with a model that does not whitelist name' do
-      it 'falls back to a predicate the model does whitelist' do
-        get :index, params: { resource_type: 'collection' }, as: :json
+    context 'with a model whose whitelist omits name' do
+      it 'still searches by name, which Ransack allows by default' do
+        collection = create(:collection, store: store, name: 'Summer Sale')
+
+        get :index, params: { resource_type: 'collection', search: 'Summer' }, as: :json
 
         expect(response).to have_http_status(:ok)
-        # Collection whitelists permalink but not name, so the grid is told to
-        # search that instead of a predicate Ransack would reject.
-        expect(json_response['data']['search_field']).to eq('permalink_cont')
+        # `whitelisted_ransackable_attributes` omits name, but the defaults
+        # Ransack unions in carry it — reading only the whitelist would send
+        # this grid to `permalink` and find nothing.
+        expect(json_response['data']['search_field']).to eq('name_cont')
+        expect(json_response['data']['records'].map { |r| r['label'] }).to eq([collection.name])
+      end
+    end
+
+    context 'with a singleton resource type' do
+      let!(:other_store) { create(:store, name: 'Some Other Store') }
+
+      it 'reports only the current store, never every store in the install' do
+        get :index, params: { resource_type: 'store' }, as: :json
+
+        expect(response).to have_http_status(:ok)
+        labels = json_response['data']['records'].map { |r| r['label'] }
+        expect(labels).to eq([store.name])
+        expect(labels).not_to include('Some Other Store')
+        expect(json_response['data']['coverage'].first['total']).to eq(1)
       end
     end
 

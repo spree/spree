@@ -69,9 +69,9 @@ module Spree
     # @param locales [Array<String>]
     # @return [Array<Hash>] one entry per locale
     def coverage_for(scope, klass, locales)
-      total = scope.count
       return [] if locales.empty?
 
+      total = scope.count
       complete = complete_counts_by_locale(scope, klass, locales)
 
       locales.map do |locale|
@@ -188,9 +188,12 @@ module Spree
       # translation row is non-blank. Columns come from the model's own
       # TRANSLATABLE_FIELDS, but they are quoted as identifiers regardless
       # rather than interpolated raw.
+      # TRIM so this agrees with the per-record counter, which uses Ruby's
+      # `present?` — otherwise a whitespace-only translation counts as complete
+      # in the totals while every grid cell below shows it as missing.
       all_present = columns.map { |column|
         quoted = "#{table.name}.#{klass.connection.quote_column_name(column)}"
-        "#{quoted} IS NOT NULL AND #{quoted} != ''"
+        "#{quoted} IS NOT NULL AND TRIM(#{quoted}) != ''"
       }.join(' AND ')
 
       translation_scope(klass).

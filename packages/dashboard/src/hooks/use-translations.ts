@@ -32,6 +32,18 @@ const TRANSLATIONS_ACCESSORS = {
 export type TranslatableResourceType = keyof typeof TRANSLATIONS_ACCESSORS
 
 /**
+ * Whether the dashboard can open the translation editor for a resource type.
+ * The server's registry says which types have a matrix route; this says which
+ * of those the SDK actually reaches, so a surface listing types from the
+ * registry never offers one whose editor would fail to fetch.
+ */
+export function isTranslatableResourceType(
+  resourceType: string,
+): resourceType is TranslatableResourceType {
+  return resourceType in TRANSLATIONS_ACCESSORS
+}
+
+/**
  * Full translation matrix for any translatable resource: source values +
  * content type per field, plus the translated value for every supported locale
  * (with nested translatable children, e.g. an option type's values). Writes go

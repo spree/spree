@@ -40,6 +40,7 @@ import { z } from 'zod'
 import { ImportWizardDialog } from '../../../../components/spree/imports/import-wizard-dialog'
 import { ResourceTranslationsDialog } from '../../../../components/spree/translations/resource-translations-dialog'
 import {
+  isTranslatableResourceType,
   type TranslatableResourceType,
   useLocales,
   useTranslatableResources,
@@ -69,12 +70,25 @@ function TranslationsPage() {
   const [searchInput, setSearchInput] = useState(search.search ?? '')
   const deferredSearch = useDeferredValue(search.search ?? '')
 
+  // Follow the URL when history navigation changes it out from under the
+  // input; typing is a no-op here because patchSearch already synced them.
+  const urlSearch = search.search ?? ''
+  const [lastUrlSearch, setLastUrlSearch] = useState(urlSearch)
+  if (urlSearch !== lastUrlSearch) {
+    setLastUrlSearch(urlSearch)
+    setSearchInput(urlSearch)
+  }
+
   const { data: resources } = useTranslatableResources()
   const { data: locales } = useLocales()
 
-  // Only resources with a dedicated read route can open the editor, so those
-  // are the only ones worth listing here.
-  const readable = (resources ?? []).filter((resource) => resource.readable)
+  // A type needs both a dedicated read route and an SDK accessor before the
+  // editor can open it — the registry reports the first, `isTranslatable`
+  // the second. Offering a type without an accessor would open a dialog that
+  // throws when it tries to fetch.
+  const readable = (resources ?? []).filter(
+    (resource) => resource.readable && isTranslatableResourceType(resource.resource_type),
+  )
 
   // `search` rather than a predicate the client picks: the server knows which
   // one this resource type whitelists (`name` is ransackable on products and
@@ -114,13 +128,16 @@ function TranslationsPage() {
               />
               {/* Exports what the grid is showing: the search box narrows the
                   file the same way it narrows the rows. */}
+              {/* `meta.count` follows the search, unlike the coverage totals,
+                  which are deliberately store-wide — so the confirm dialog
+                  reports the number of rows the file will actually contain. */}
               <ExportButton
                 type="product_translations"
                 filters={[]}
                 search={deferredSearch}
                 searchParam="name_cont"
                 columns={[]}
-                totalCount={coverage?.coverage[0]?.total}
+                totalCount={data?.meta?.count}
               />
             </div>
           )}
@@ -198,7 +215,7 @@ function TranslationsPage() {
                         setSearchInput(value)
                         patchSearch({ search: value || undefined, page: undefined })
                       }}
-                      placeholder={t('admin.common.search')}
+                      placeholder={t('admin.common.search_placeholder')}
                     />
                   )}
                   <Select
