@@ -15,7 +15,8 @@ module Spree
                    label: :string,
                    product_ids: 'Array<string> | null',
                    category_ids: 'Array<string> | null',
-                   customer_ids: 'Array<string> | null'
+                   customer_ids: 'Array<string> | null',
+                   option_value_ids: 'Array<string> | null'
 
           attributes created_at: :iso8601, updated_at: :iso8601
 
@@ -52,6 +53,10 @@ module Spree
             rule.users.map(&:prefixed_id) if rule.respond_to?(:users)
           end
 
+          attribute :option_value_ids do |rule|
+            rule.option_values.map(&:prefixed_id) if rule.respond_to?(:option_values)
+          end
+
           # Embed the related records so promotion-row summaries can render
           # names + extra info without a separate fetch. Rules that don't
           # carry a given collection (e.g. an ItemTotal rule has no
@@ -85,6 +90,10 @@ module Spree
           many :markets,
                resource: Spree.api.admin_market_serializer,
                if: proc { |rule| rule.respond_to?(:markets) }
+
+          many :option_values,
+               resource: proc { Spree.api.admin_option_value_serializer },
+               if: proc { |rule| rule.respond_to?(:option_values) }
         end
       end
     end
