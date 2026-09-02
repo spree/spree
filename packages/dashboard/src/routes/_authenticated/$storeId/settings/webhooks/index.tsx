@@ -85,6 +85,7 @@ function WebhooksPage() {
 
   const closeCreate = () =>
     navigate({
+      replace: true,
       search: (prev: Record<string, unknown>) => {
         const { new: _n, ...rest } = prev
         return rest as never
