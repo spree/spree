@@ -7,6 +7,11 @@ module Spree
 
           scoped_resource :customers
 
+          # Re-declaring a `before_action` for the same method REPLACES the
+          # inherited registration rather than adding to it, so the inherited
+          # actions have to be repeated here or show/update/destroy silently
+          # lose their record.
+          before_action :set_resource, only: [:show, :update, :destroy, :export, :anonymize]
           before_action :require_ids!, only: [:bulk_add_to_groups, :bulk_remove_from_groups]
 
           def create
@@ -45,6 +50,45 @@ module Spree
             )
           end
 
+          # POST /api/v3/admin/customers/:id/anonymize
+          #
+          # Erases the customer's personal data while leaving the financial
+          # record intact. This is what a merchant runs when an erasure request
+          # arrives by email — which is how most of them arrive, from people
+          # who often can no longer sign in.
+          #
+          # Irreversible, so it is its own action rather than a flag on update.
+          def anonymize
+            authorize_resource!(@resource)
+
+            result = Spree::Customers::Anonymize.call(
+              customer: @resource,
+              store: current_store,
+              requested_by: try_spree_current_user
+            )
+
+            if result.success?
+              render json: serialize_resource(@resource.reload)
+            else
+              render_result_error(result)
+            end
+          end
+
+          # GET /api/v3/admin/customers/:id/export
+          #
+          # The customer's data as JSON, for answering a subject access request
+          # the merchant received directly. Rendered inline rather than queued:
+          # a staff member is waiting on it, and unlike the storefront path
+          # there is no unauthenticated caller to rate-limit.
+          def export
+            authorize_resource!(@resource)
+
+            render json: Spree::Customers::DataExport.new(
+              customer: @resource,
+              store: current_store
+            ).call
+          end
+
           # Bulk add the given customers to the given groups. Idempotent —
           # customers already in a group are skipped at the model layer.
           def bulk_add_to_groups
@@ -68,6 +112,29 @@ module Spree
 
           def scope
             super.with_order_aggregates
+          end
+
+          # Producing the export reads the customer, so it is a read for the
+          # key gate and for CanCanCan alike. The latter needs saying twice:
+          # `read_actions` settles the required API-key scope, while
+          # `authorize_resource!` below maps the action onto an ability a role
+          # actually grants — CanCanCan's `:read` alias covers only index and
+          # show, so a staffer with read access would otherwise be refused.
+          def read_actions
+            super + ['export']
+          end
+
+          # `export` maps to `:show`; `anonymize` is a destructive write, so it
+          # maps to `:destroy` rather than `:update` — a role that may correct
+          # a customer's name should not thereby be able to erase their history.
+          def authorize_resource!(resource = @resource, action = action_name.to_sym)
+            mapped = case action
+                     when :export then :show
+                     when :anonymize then :destroy
+                     else action
+                     end
+
+            authorize!(mapped, resource || model_class)
           end
 
           # `customer_groups` is preloaded because the serializer's always-on

@@ -117,6 +117,9 @@ Spree::Core::Engine.add_routes do
           resources :tax_identifiers, only: [:index], controller: 'tax_identifiers'
           resource :tax_identifier, only: [:show, :update, :destroy], controller: 'tax_identifiers'
           resources :digital_links, only: [:index, :show]
+          # GDPR subject rights the customer exercises for themselves — a copy
+          # of their data, or its erasure.
+          resources :data_requests, only: [:index, :show, :create]
           resources :payment_setup_sessions, only: [:create, :show] do
             member do
               patch :complete
@@ -500,6 +503,14 @@ Spree::Core::Engine.add_routes do
             end
           end
 
+          member do
+            # GDPR: answer a subject access request, or carry out an erasure.
+            # Both are how these requests actually arrive — by email to the
+            # merchant, from people who often can no longer sign in.
+            get :export
+            post :anonymize
+          end
+
           collection do
             post :bulk_add_to_groups
             post :bulk_remove_from_groups
@@ -507,6 +518,12 @@ Spree::Core::Engine.add_routes do
             post :bulk_remove_tags
           end
         end
+
+        # GDPR compliance log. Requests are records of what happened, so they
+        # are created and read but never edited or deleted — an editable audit
+        # trail is not one.
+        resources :data_requests, only: [:index, :show, :create]
+        resources :consent_records, only: [:index, :show]
 
         # Customer groups (segmentation; used by promotion rules + bulk customer ops)
         resources :customer_groups
