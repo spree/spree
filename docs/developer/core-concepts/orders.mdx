@@ -120,6 +120,12 @@ await adminClient.orders.cancel('or_xxx', {
   cancel_note: 'Supplier could not deliver in time',
 })
 
+// Cancel and give the money back in the same call
+await adminClient.orders.cancel('or_xxx', {
+  cancel_reason_id: reason.id,
+  refund_payments: true,
+})
+
 // On a split checkout the payment is shared, so this gives back only this
 // order's share — all of it, or the part named by refund_amount
 await adminClient.orders.cancel('or_grouped_xxx', {
@@ -150,19 +156,17 @@ curl -X PATCH 'https://api.mystore.com/api/v3/admin/orders/or_xxx/cancel' \
 
 </CodeGroup>
 
-Canceling always puts stock back — the goods are not going out either way. Money
-is settled at the gateway: an uncaptured authorization is released, and a
-captured payment is refunded in full.
+Canceling always puts stock back — the goods are not going out either way. An
+authorization the gateway never drew on is always released.
 
-`refund_payments` and `refund_amount` matter on an order paid through a split
-checkout, where one payment is shared across several orders. There the amount is
-this order's own share, drawn from each payment in turn until it is met, so a
-partial refund never has to name a payment. Leave `refund_amount` out to give
-back the whole share, or set it to keep part back — a restocking fee, say.
-Without `refund_payments`, a shared authorization is written down but nothing is
-handed back.
+Money that *was* taken is a separate decision, as it is on every other major
+platform: pass `refund_payments: true` to return it. Without it the captured
+payment is left alone for an operator to refund deliberately.
 
-`refund_amount` is refused on an ordinary order rather than ignored: the gateway
+On a split checkout one payment is shared across several orders, so what comes
+back is this order's own share, drawn from each payment in turn until it is met.
+`refund_amount` names part of that share to return, keeping a restocking fee
+back, say. It is refused on an ordinary order rather than ignored: the gateway
 returns the whole captured payment there, so a cap could not be honoured, and
 accepting one would refund everything while you believed part was held back.
 

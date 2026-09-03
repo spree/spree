@@ -1009,6 +1009,8 @@ RSpec.describe Spree::Api::V3::Admin::OrdersController, type: :controller do
       end
     end
 
+    # Releasing the gateway's hold is automatic; handing back money already
+    # taken is asked for, as it is on every other major platform.
     it 'does not refund unless asked' do
       expect(Spree.order_cancel_workflow).to receive(:call).
         with(hash_including(refund_payments: false)).and_call_original

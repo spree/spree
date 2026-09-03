@@ -2,6 +2,7 @@ import { zodResolver } from '@hookform/resolvers/zod'
 import { adminClient, mapSpreeErrorsToForm, useResourceMutation } from '@spree/dashboard-core'
 import {
   Button,
+  Checkbox,
   Dialog,
   DialogBody,
   DialogContent,
@@ -37,6 +38,7 @@ export function OrderCancelDialog({ orderId, onClose }: { orderId: string; onClo
       adminClient.orders.cancel(orderId, {
         cancel_reason_id: values.cancel_reason_id || undefined,
         cancel_note: values.cancel_note.trim() || undefined,
+        refund_payments: values.refund_payments,
       }),
     invalidate: [orderQueryKey(orderId)],
     successMessage: t('admin.orders.detail.messages.canceled'),
@@ -102,6 +104,31 @@ export function OrderCancelDialog({ orderId, onClose }: { orderId: string; onClo
                   {...form.register('cancel_note')}
                 />
               </Field>
+
+              {/* An unclaimed authorization is released either way, so this
+                  only decides what happens to money actually taken. */}
+              <Controller
+                control={form.control}
+                name="refund_payments"
+                render={({ field }) => (
+                  <label
+                    htmlFor="order-cancel-refund"
+                    className="flex cursor-pointer items-start gap-2 text-sm"
+                  >
+                    <Checkbox
+                      id="order-cancel-refund"
+                      checked={field.value}
+                      onCheckedChange={(checked) => field.onChange(checked === true)}
+                    />
+                    <span>
+                      {t('admin.orders.detail.cancel.refund_payments')}
+                      <span className="block text-muted-foreground">
+                        {t('admin.orders.detail.cancel.refund_payments_help')}
+                      </span>
+                    </span>
+                  </label>
+                )}
+              />
             </div>
           </DialogBody>
 

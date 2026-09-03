@@ -2633,7 +2633,9 @@
           "no_reason": "No reason given",
           "note_label": "Note",
           "note_placeholder": "Only staff see this note",
-          "reason_label": "Reason"
+          "reason_label": "Reason",
+          "refund_payments": "Refund the customer",
+          "refund_payments_help": "Money already taken is returned. An unclaimed authorization is released either way."
         },
         "completed_prefix": "Completed",
         "confirm": {

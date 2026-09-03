@@ -2626,7 +2626,9 @@
           "no_reason": "未填写原因",
           "note_label": "备注",
           "note_placeholder": "此备注仅员工可见",
-          "reason_label": "原因"
+          "reason_label": "原因",
+          "refund_payments": "向客户退款",
+          "refund_payments_help": "已扣取的款项将退回。未使用的授权无论如何都会释放。"
         },
         "completed_prefix": "已完成",
         "confirm": {

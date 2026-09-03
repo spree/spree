@@ -127,6 +127,31 @@ module Spree
       end
     end
 
+    # The flag governs money, not just the record: it used to refund whatever
+    # the caller asked, because the ungrouped path called the gateway's
+    # settle verb unconditionally.
+    describe 'whether captured money comes back' do
+      let(:order) { create(:completed_order_with_totals) }
+      let!(:payment) { create(:payment, order: order, amount: order.total, status: 'completed') }
+
+      it 'releases the hold and leaves captured money alone by default' do
+        expect_any_instance_of(Spree::Payment).not_to receive(:cancel!)
+        allow(Spree.payment_void_workflow).to receive(:call).
+          and_return(Spree::ServiceModule::Result.new(true, nil, nil))
+
+        subject.call(order: order, canceler: user)
+
+        expect(Spree.payment_void_workflow).to have_received(:call).
+          with(hash_including(payment: payment))
+      end
+
+      it 'hands it back when asked' do
+        expect_any_instance_of(Spree::Payment).to receive(:cancel!)
+
+        subject.call(order: order, canceler: user, refund_payments: true)
+      end
+    end
+
     describe 'a capped refund on an ordinary order' do
       it 'is refused rather than silently refunding everything' do
         result = subject.call(order: order, canceler: user, refund_payments: true, refund_amount: '25.00')

@@ -16,7 +16,10 @@ module Spree
       # @param reason [Spree::OrderCancellationReason, nil] the merchant's own
       #   vocabulary; must belong to the order's store
       # @param note [String, nil] staff-facing note
-      # @param refund_payments [Boolean] whether to refund captured payments
+      # @param refund_payments [Boolean] whether captured money is handed back.
+      #   False by default: an authorization is always released, but returning
+      #   money already taken is its own decision — the shape Shopify, Vendure,
+      #   Saleor and WooCommerce all settled on.
       # @param refund_amount [BigDecimal, Numeric, nil] defaults to
       #   order.payment_total when refund_payments is true
       # @param notify_customer [Boolean] hint for subscribers
@@ -132,15 +135,15 @@ module Spree
       end
 
       # Gateway I/O. Payments fully covered by a gift card are only voided,
-      # never refunded; everything else cancels captured payments (void or
-      # refund at the gateway's discretion) and voids what never completed.
+      # never refunded; everything else releases what was never drawn and,
+      # when the caller asked for it, gives back what was.
       def settle_payments
         return settle_grouped_payments if order.grouped?
 
         if order.gift_card.present? && order.covered_by_store_credit?
           order.payments.completed.store_credits.each(&:void!)
         else
-          order.payments.completed.each(&:cancel!)
+          settle_completed_payments
           order.payments.incomplete.not_store_credits.each do |payment|
             # Failed and invalid payments hold nothing to release.
             next unless payment.can_void?
@@ -149,6 +152,25 @@ module Spree
             raise Spree::Core::GatewayError, result.error.value.to_s if result.failure?
           end
           order.payments.store_credits.pending.each(&:void!)
+        end
+      end
+
+      # A cancellation always releases the gateway's hold; whether it hands
+      # money back is the caller's call.
+      #
+      # `cancel!` is the gateway's own settle-this-payment verb, and on a
+      # captured payment that means a full refund — so it is reached only when
+      # a refund was actually asked for. Otherwise the authorization is voided,
+      # which releases an uncaptured hold and leaves captured money where it
+      # is, for an operator to refund deliberately.
+      def settle_completed_payments
+        order.payments.completed.each do |payment|
+          if refund_payments || payment.credit_allowed <= 0
+            payment.cancel!
+          elsif payment.can_void?
+            result = Spree.payment_void_workflow.call(payment: payment)
+            raise Spree::Core::GatewayError, result.error.value.to_s if result.failure?
+          end
         end
       end
 

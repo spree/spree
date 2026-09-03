@@ -6,13 +6,11 @@ const client = createAdminClient({
 })
 
 // region:example
-// A split checkout: the payment is shared, so this hands back only this
-// order's share of it.
+// A split checkout: the payment is shared, so what comes back is this order's
+// own share. refund_amount names part of that share, keeping the rest back.
 const order = await client.orders.cancel('or_UkLWZg9DAJ', {
   cancel_reason_id: 'ocr_UkLWZg9DAJ',
   cancel_note: 'Supplier could not deliver in time',
-  // Omit refund_amount to return the whole share. It is refused on an
-  // ordinary order, where the gateway returns the payment in full.
   refund_payments: true,
   refund_amount: '25.00',
 })

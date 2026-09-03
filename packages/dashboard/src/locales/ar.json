@@ -2651,7 +2651,9 @@
           "no_reason": "لم يُذكر سبب",
           "note_label": "ملاحظة",
           "note_placeholder": "يرى هذه الملاحظة الموظفون فقط",
-          "reason_label": "السبب"
+          "reason_label": "السبب",
+          "refund_payments": "رد المبلغ إلى العميل",
+          "refund_payments_help": "تُعاد الأموال التي جرى تحصيلها. أما التفويض غير المُحصَّل فيُحرَّر في كل الأحوال."
         },
         "completed_prefix": "مكتمل",
         "confirm": {

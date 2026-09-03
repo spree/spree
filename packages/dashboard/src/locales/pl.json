@@ -2653,7 +2653,9 @@
           "no_reason": "Nie podano powodu",
           "note_label": "Notatka",
           "note_placeholder": "Notatkę widzi tylko personel",
-          "reason_label": "Powód"
+          "reason_label": "Powód",
+          "refund_payments": "Zwróć pieniądze klientowi",
+          "refund_payments_help": "Pobrane środki zostaną zwrócone. Niewykorzystana autoryzacja i tak zostanie zwolniona."
         },
         "completed_prefix": "Zrealizowano",
         "confirm": {

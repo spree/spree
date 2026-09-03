@@ -2633,7 +2633,9 @@
           "no_reason": "Aucun motif indiqué",
           "note_label": "Note",
           "note_placeholder": "Cette note n'est visible que par le personnel",
-          "reason_label": "Motif"
+          "reason_label": "Motif",
+          "refund_payments": "Rembourser le client",
+          "refund_payments_help": "L'argent déjà encaissé est restitué. Une autorisation non utilisée est libérée dans tous les cas."
         },
         "completed_prefix": "Terminée",
         "confirm": {

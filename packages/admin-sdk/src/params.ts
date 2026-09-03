@@ -532,9 +532,9 @@ export interface OrderCancelParams {
   /** Staff-facing note shown on the order. */
   cancel_note?: string
   /**
-   * Hand back this order's share of a payment shared across a split checkout.
-   * An ordinary order settles at the gateway either way — an authorization is
-   * released, a captured payment refunded.
+   * Whether money the customer already paid is handed back. Defaults to false:
+   * the gateway's hold is always released, but returning captured money is its
+   * own decision.
    */
   refund_payments?: boolean
   /**
