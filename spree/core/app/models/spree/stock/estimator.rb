@@ -186,15 +186,12 @@ module Spree
         package_seller_id = package.stock_location&.seller_id
 
         methods.select do |delivery_method|
-          calculator = delivery_method.calculator
-
           offered_to_seller?(delivery_method, package_seller_id) &&
             delivery_method.available_to?(audience) &&
             delivery_method.include?(order.ship_address) &&
             delivery_method.serves_location?(package.stock_location) &&
             delivery_method.eligible_for_package?(package) &&
-            calculator.available?(package) &&
-            calculator.supports_currency?(currency)
+            calculator_offers?(delivery_method, package)
         end
       end
 
@@ -206,6 +203,21 @@ module Spree
         return true if delivery_method.seller_id == package_seller_id
 
         delivery_method.seller_id.nil? && delivery_method.available_to_sellers?
+      end
+
+      # The calculator's say in eligibility, for methods whose calculator IS
+      # the price. A provider-priced method carries a calculator too — the
+      # admin hides its form and nothing reads its amount — so letting its
+      # leftover currency hide the method would silence exactly the methods
+      # built for foreign trade: a freight method's default calculator speaks
+      # only the default store's currency, and international wholesale is
+      # what the freight provider exists for. Provider quotes get their
+      # currency check where it belongs, against the estimate itself.
+      def calculator_offers?(delivery_method, package)
+        return true unless delivery_method.rate_provider_instance.class.uses_calculator?
+
+        calculator = delivery_method.calculator
+        calculator.available?(package) && calculator.supports_currency?(currency)
       end
 
       # True when a subclass or decorator redefined the legacy seam, so its

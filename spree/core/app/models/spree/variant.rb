@@ -936,8 +936,11 @@ module Spree
 
     # Returns the weight unit for the variant
     # @return [String]
+    # Falls back to the variant's own store, like {#dimensions_unit} below —
+    # on a multi-store install the default store's unit is someone else's,
+    # and converting a kilogram catalog as pounds misweighs every quote.
     def weight_unit
-      attributes['weight_unit'] || Spree::Store.default.preferred_weight_unit
+      attributes['weight_unit'] || (preference_store || Spree::Store.default)&.preferred_weight_unit
     end
 
     # The unit this variant's width/height/depth are expressed in. Falls back
