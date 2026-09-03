@@ -67,6 +67,10 @@ module Spree
     validates :name, presence: true
     validates :kind, presence: true, inclusion: { in: KINDS }
     validates :value, numericality: { greater_than_or_equal_to: 0 }
+    # Commission is a share of the seller's revenue, not a surcharge on top of
+    # it — a figure above 100 reads as a typo (150 for 15) and bills the seller
+    # more than the sale was worth.
+    validates :value, numericality: { less_than_or_equal_to: 100 }, if: :percentage?
     # Stored lowercase so the database enforces the same uniqueness the
     # validation promises. A functional index over LOWER(code) would be the
     # alternative, but that is a MySQL-only construct MariaDB rejects — and

@@ -471,13 +471,17 @@
       },
       "edit_description": "Zaktualizuj opłatę, jej limity i objęte nią sprzedaże.",
       "empty": "Brak stawek prowizji",
+      "flat_fee_exceeds_sale_warning": "Ta opłata jest naliczana w pełni za każdą sprzedaną sztukę. Przy tanich produktach może przewyższyć to, co sprzedawca zarobił. Ustaw maksimum poniżej, aby ograniczyć opłatę za jedną pozycję sprzedaży.",
       "messages": {
         "created": "Utworzono stawkę prowizji",
         "deleted": "Usunięto stawkę prowizji",
         "updated": "Zaktualizowano stawkę prowizji"
       },
       "order_hint": "Nowe stawki trafiają na górę listy, a wygrywa pierwsza pasująca — przeciągnij, aby zmienić kolejność.",
-      "search_placeholder": "Szukaj po nazwie…"
+      "search_placeholder": "Szukaj po nazwie…",
+      "validation": {
+        "percentage_exceeds_one_hundred": "Procent prowizji nie może przekraczać 100%."
+      }
     },
     "companies": {
       "add_cta": "Dodaj firmę",
@@ -1137,6 +1141,10 @@
         },
         "enabled": {
           "help": "Wyłączone stawki są pomijane przy naliczaniu."
+        },
+        "flat_fee_cap": {
+          "help": "Opcjonalny limit na jedną pozycję sprzedaży. Zostaw puste, aby naliczać pełną kwotę stałą.",
+          "label": "Maksimum na pozycję sprzedaży (opcjonalnie)"
         },
         "include_shipping": {
           "help": "Nalicz prowizję również od przychodów sprzedawcy z dostawy.",

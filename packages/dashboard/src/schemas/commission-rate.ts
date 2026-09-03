@@ -3,13 +3,13 @@ import type {
   CommissionRateCreateParams,
   CommissionRateUpdateParams,
 } from '@spree/admin-sdk'
-import { blankToNull } from '@spree/dashboard-core'
+import { blankToNull, i18n } from '@spree/dashboard-core'
 import { requiredMessage } from '@spree/dashboard-ui'
 import { z } from 'zod/v4'
 
 export const COMMISSION_RATE_KINDS = ['percentage', 'fixed'] as const
 
-export const commissionRateFormSchema = z.object({
+const commissionRateFieldsSchema = z.object({
   name: z.string().min(1, { error: requiredMessage('name') }),
   code: z.string().optional(),
   enabled: z.boolean(),
@@ -41,6 +41,16 @@ export const commissionRateFormSchema = z.object({
       product_ids: z.array(z.string()).default([]),
     }),
   ),
+})
+
+export const commissionRateFormSchema = commissionRateFieldsSchema.superRefine((values, ctx) => {
+  if (values.kind === 'percentage' && values.value > 100) {
+    ctx.addIssue({
+      code: 'custom',
+      path: ['value'],
+      message: i18n.t('admin.commission_rates.validation.percentage_exceeds_one_hundred'),
+    })
+  }
 })
 
 export type CommissionRateFormValues = z.infer<typeof commissionRateFormSchema>

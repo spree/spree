@@ -18,6 +18,11 @@ RSpec.describe Spree::CommissionRate, type: :model do
       expect(build(:commission_rate, commission_tax_rate: 0.21)).to be_valid
     end
 
+    it 'refuses a percentage above one hundred' do
+      expect(build(:commission_rate, kind: 'percentage', value: 150)).not_to be_valid
+      expect(build(:commission_rate, kind: 'percentage', value: 100)).to be_valid
+    end
+
     it 'rejects a cap below the floor' do
       rate = create(:commission_rate, store: store)
       value = rate.commission_rate_values.build(currency: 'USD', min_amount: 10, max_amount: 5)

@@ -466,13 +466,17 @@
       },
       "edit_description": "更新费用、上下限以及适用的销售范围。",
       "empty": "暂无佣金费率",
+      "flat_fee_exceeds_sale_warning": "此费用按每件售出商品全额收取。对于低价商品，佣金可能超过卖家从该笔销售中获得的收入。请在下方设置最高限额，以限制单笔销售行的收费上限。",
       "messages": {
         "created": "佣金费率已创建",
         "deleted": "佣金费率已删除",
         "updated": "佣金费率已更新"
       },
       "order_hint": "新费率会添加到列表顶部，首个匹配的费率生效——拖动可调整顺序。",
-      "search_placeholder": "按名称搜索…"
+      "search_placeholder": "按名称搜索…",
+      "validation": {
+        "percentage_exceeds_one_hundred": "佣金百分比不能超过 100%。"
+      }
     },
     "companies": {
       "add_cta": "添加公司",
@@ -1118,6 +1122,10 @@
         },
         "enabled": {
           "help": "停用的费率在计费时会被跳过。"
+        },
+        "flat_fee_cap": {
+          "help": "可选的单笔销售行收费上限。留空则收取完整的固定费用。",
+          "label": "每笔销售行最高限额（可选）"
         },
         "include_shipping": {
           "help": "同时对卖家的配送收入收取佣金。",
