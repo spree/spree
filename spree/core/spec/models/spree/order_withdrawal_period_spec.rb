@@ -103,6 +103,26 @@ RSpec.describe 'Spree::Order withdrawal period' do
     end
   end
 
+  # Withdrawal is how a buyer ends a contract that is still standing, and
+  # cancellation has already ended this one. Without the guard, cancellation
+  # empties the live fulfillments and the open-ended reading would report the
+  # order as withdrawable forever.
+  describe 'a canceled order' do
+    before do
+      order.fulfillments.find_each { |f| f.update_columns(status: 'canceled') }
+      order.update_columns(status: 'canceled', canceled_at: Time.current)
+      order.reload
+    end
+
+    it 'is not within the withdrawal period' do
+      expect(order).not_to be_within_withdrawal_period
+    end
+
+    it 'advertises no deadline' do
+      expect(order.withdrawal_period_ends_at).to be_nil
+    end
+  end
+
   describe 'an order that is not complete' do
     let(:cart) { create(:order, store: store) }
 

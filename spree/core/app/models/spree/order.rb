@@ -458,6 +458,8 @@ module Spree
     #   withdrawal right, the order is not complete, or delivery is outstanding
     def withdrawal_period_ends_at
       return nil unless completed?
+      # Nothing left to withdraw from; see #within_withdrawal_period?.
+      return nil if canceled?
 
       days = withdrawal_period_days
       started_at = withdrawal_period_starts_at
@@ -472,9 +474,16 @@ module Spree
     # it started, so an order still in transit is always within its period even
     # though no deadline can be named yet.
     #
+    # A canceled order is not: withdrawal is how a buyer ends a contract that
+    # is still standing, and cancellation has already ended this one. Without
+    # the guard, cancellation empties the live fulfillments, no start date can
+    # be found, and the open-ended reading above would keep the order reporting
+    # itself as withdrawable forever.
+    #
     # @return [Boolean]
     def within_withdrawal_period?
       return false unless completed?
+      return false if canceled?
       return false if withdrawal_period_days.blank?
 
       deadline = withdrawal_period_ends_at

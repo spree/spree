@@ -14426,7 +14426,7 @@ paths:
                 id: or_UkLWZg9DAJ
                 market_id: mkt_UkLWZg9DAJ
                 withdrawal_period_ends_at:
-                within_withdrawal_period: true
+                within_withdrawal_period: false
                 cart_id:
                 channel_id: ch_UkLWZg9DAJ
                 company_id:
