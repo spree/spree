@@ -3,9 +3,10 @@ module Spree
     class Package
       attr_reader :stock_location, :contents
       attr_accessor :delivery_rates
-      # The cart or order this package is being quoted for. Set when a
-      # fulfillment builds the package; nil for proposed packages the
-      # coordinator builds before anything is persisted.
+      # The cart or order this package is being quoted for. Every builder sets
+      # it — a fulfillment, the allocator for a proposal — so the package takes
+      # its currency, store and destination from the real record instead of
+      # {#owner}'s fallback.
       attr_writer :owner
 
       def initialize(stock_location, contents = [])
@@ -16,11 +17,13 @@ module Spree
 
       # Who this package is for.
       #
-      # Prefers the owner the fulfillment supplied over walking to
-      # `inventory_unit.order`: during checkout a fulfillment belongs to a
-      # Cart, while its units can still carry an order_id from elsewhere, and
-      # following that returns a stranger's order — whose ship address would
-      # then stand in for the customer's.
+      # Prefers the owner it was built with. The walk to `inventory_unit.order`
+      # is only a safety net for packages built by code that sets none, and it
+      # answers badly in both directions: a cart's units carry no order_id, so
+      # it returns nil and the package has no store or currency of its own,
+      # while a unit carrying an order_id from elsewhere returns a stranger's
+      # order — whose currency and ship address would stand in for the
+      # customer's.
       #
       # @return [Spree::Cart, Spree::Order, nil]
       def owner

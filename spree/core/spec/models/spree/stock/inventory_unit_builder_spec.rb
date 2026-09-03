@@ -29,6 +29,17 @@ module Spree
         it 'sets the order_id on inventory units' do
           expect(subject.units.map(&:order_id).uniq).to eq [order.id]
         end
+
+        context 'when building for a cart' do
+          let(:cart) { create(:cart_with_line_items) }
+
+          subject { InventoryUnitBuilder.new(cart) }
+
+          it 'leaves the order_id blank rather than writing the cart id into it' do
+            expect(subject.units).to be_present
+            expect(subject.units.map(&:order_id).uniq).to eq [nil]
+          end
+        end
       end
     end
   end

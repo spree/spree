@@ -1,11 +1,18 @@
 module Spree
   module Stock
     class Prioritizer
-      attr_reader :packages
+      attr_reader :packages, :estimator
 
-      def initialize(packages, adjuster_class = Adjuster)
+      # @param packages [Array<Spree::Stock::Package>] candidate packages, in
+      #   the order the caller prefers them (routing rank, location order)
+      # @param adjuster_class [Class]
+      # @param estimator [Spree::Stock::Estimator, nil] consulted for
+      #   deliverability, so an origin that cannot serve the destination loses
+      #   to one that can. Omitted, the caller's order stands as given.
+      def initialize(packages, adjuster_class = Adjuster, estimator: nil)
         @packages = packages
         @adjuster_class = adjuster_class
+        @estimator = estimator
         @adjusters = {}
       end
 
@@ -36,8 +43,24 @@ module Spree
         @adjusters[hash_item item]
       end
 
+      # Origins that can deliver go first, so the Adjuster fills each unit from
+      # one of them and the origins that cannot are left empty and pruned. A
+      # profile with per-region origin groups would otherwise allocate to
+      # whichever warehouse came first, and when that warehouse's group has no
+      # method for the destination the item is dropped as undeliverable even
+      # though another warehouse could have shipped it.
+      #
+      # The caller's order survives within each group, so routing rank and the
+      # store's location order still decide between origins that can both
+      # deliver.
       def sort_packages
-        # order packages by preferred stock_locations
+        return if estimator.nil?
+
+        ranked = packages.each_with_index.sort_by do |package, index|
+          [estimator.deliverable?(package) ? 0 : 1, index]
+        end
+
+        packages.replace(ranked.map(&:first))
       end
 
       def prune_packages

@@ -20,6 +20,20 @@ module Spree
         sort_delivery_rates(rates)
       end
 
+      # Whether any delivery method is eligible to carry this package — the
+      # same eligibility a rate refresh applies, stopping short of asking any
+      # rate provider for a price. Allocation reads it to prefer an origin
+      # whose methods can actually reach the destination, so it must never
+      # cost a carrier API call.
+      #
+      # @param package [Spree::Stock::Package]
+      # @param audience [Symbol] {Spree::DeliveryMethod::STOREFRONT} (default)
+      #   or {Spree::DeliveryMethod::BACKOFFICE}
+      # @return [Boolean]
+      def deliverable?(package, audience = DeliveryMethod::STOREFRONT)
+        delivery_methods(package, audience).any?
+      end
+
       # @deprecated Use {#delivery_rates}; removed in 6.1.
       def shipping_rates(package, audience = DeliveryMethod::STOREFRONT)
         Spree::Deprecation.warn('Spree::Stock::Estimator#shipping_rates is deprecated and will be removed in Spree 6.1. Use #delivery_rates instead.')
