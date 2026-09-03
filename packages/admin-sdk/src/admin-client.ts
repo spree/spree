@@ -14,13 +14,20 @@ import { getParams, transformListParams } from '@spree/sdk-core'
 // Semantic reporting contract (docs/plans/6.0-analytics-semantic-layer.md)
 // ============================================
 
+export type ReportingGrain = 'day' | 'week' | 'month'
+
 export interface ReportingQuery {
   /** Registered metric names — discover via `reporting.schema()`. */
   metrics: string[]
-  dimensions?: Array<string | { name: string; grain?: 'day' | 'month' }>
+  dimensions?: Array<string | { name: string; grain?: ReportingGrain }>
   filters?: Array<{ dimension: string; op: 'eq' | 'in'; value: string | string[] }>
-  /** ISO datetimes/dates or relative (`"-30d"`); defaults to the last 30 days. */
-  time_range?: { since?: string; until?: string }
+  /**
+   * A named preset (`last_month`, `week_to_date`, `last_4_weeks`, any
+   * `last_<n>_<days|weeks|months>`), or ISO 8601 dates/datetimes in
+   * since/until (a bare date covers the store's whole day); defaults to the
+   * last 30 days. Everything resolves in the store timezone.
+   */
+  time_range?: { preset?: string; since?: string; until?: string }
   compare?: 'previous_period'
   /** Metric name, `-` prefix for descending. */
   sort?: string
@@ -64,9 +71,42 @@ export interface ReportingResult {
   rows: ReportingRow[]
 }
 
+export interface ReportingSchemaMetric {
+  name: string
+  label: string
+  description?: string
+  format: 'money' | 'integer' | 'decimal' | string
+  currency?: string
+  derived: boolean
+}
+
+export interface ReportingSchemaDimension {
+  name: string
+  label: string
+  description?: string
+  type: 'value' | 'time' | string
+  grains?: ReportingGrain[]
+  /** Set when rows carry hydrated `{ id, label, meta }` payloads for this dimension. */
+  lookup?: string
+  filter_ops: Array<'eq' | 'in'>
+  /** Enumerated raw values for status-like dimensions. */
+  values?: Array<{ name: string; label: string }>
+  /** Metrics this dimension can break down without double counting. */
+  compatible_metrics: string[]
+}
+
+/** The self-describing contract, filtered to what the caller may reference. */
 export interface ReportingSchema {
-  metrics: Array<{ name: string; format: string; derived: boolean }>
-  dimensions: Array<{ name: string; type: string; grains?: string[]; lookup?: string }>
+  meta: { currency: string; timezone: string; supported_currencies: string[] }
+  metrics: ReportingSchemaMetric[]
+  dimensions: ReportingSchemaDimension[]
+  time_range: {
+    presets: Array<{ name: string; label: string }>
+    relative: string[]
+    absolute: string
+  }
+  /** Ranking defaults the server applies (`limit` when omitted, and its ceiling). */
+  limits: { default: number; max: number }
 }
 
 export interface DashboardOperations {
@@ -259,6 +299,8 @@ import type {
   ReturnUpdateParams,
   RoleCreateParams,
   RoleUpdateParams,
+  SavedReportCreateParams,
+  SavedReportUpdateParams,
   SellerApproveParams,
   SellerCreateParams,
   SellerInviteParams,
@@ -372,6 +414,7 @@ import type {
   Return,
   ReturnReason,
   Role,
+  SavedReport,
   Seller,
   SellerPayout,
   SellerRequirement,
@@ -810,6 +853,37 @@ export class AdminClient {
     /** Registry introspection — drives pickers and agent tool schemas. */
     schema: (options?: RequestOptions): Promise<ReportingSchema> =>
       this.request<ReportingSchema>('GET', '/reporting/schema', options),
+
+    /** Store-wide saved reports: a contract query plus visualization config. */
+    savedReports: {
+      list: (
+        params?: ListParams & Record<string, unknown>,
+        options?: RequestOptions,
+      ): Promise<PaginatedResponse<SavedReport>> =>
+        this.request<PaginatedResponse<SavedReport>>('GET', '/reporting/saved_reports', {
+          ...options,
+          params: params ? transformListParams(params) : undefined,
+        }),
+
+      get: (id: string, options?: RequestOptions): Promise<SavedReport> =>
+        this.request<SavedReport>('GET', `/reporting/saved_reports/${id}`, options),
+
+      create: (params: SavedReportCreateParams, options?: RequestOptions): Promise<SavedReport> =>
+        this.request<SavedReport>('POST', '/reporting/saved_reports', { ...options, body: params }),
+
+      update: (
+        id: string,
+        params: SavedReportUpdateParams,
+        options?: RequestOptions,
+      ): Promise<SavedReport> =>
+        this.request<SavedReport>('PATCH', `/reporting/saved_reports/${id}`, {
+          ...options,
+          body: params,
+        }),
+
+      delete: (id: string, options?: RequestOptions): Promise<void> =>
+        this.request<void>('DELETE', `/reporting/saved_reports/${id}`, options),
+    },
   }
 
   readonly dashboard = {

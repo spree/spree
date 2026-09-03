@@ -1,6 +1,7 @@
 // Request parameter types for Admin API endpoints
 // Based on the Admin API OpenAPI specification
 
+import type { ReportingQuery } from './admin-client'
 import type { SellerRequirementStatus } from './types'
 
 /** One pricing or inventory engine a store can choose between. */
@@ -2851,6 +2852,8 @@ export interface SavedReportCreateParams {
   description?: string | null
   /** A reporting contract query — validated against the registry on save. */
   query: ReportingQuery
+  /** Visualization config; inferred from the query shape when omitted. */
+  viz?: Record<string, unknown> | null
 }
 
 export type SavedReportUpdateParams = Partial<SavedReportCreateParams>

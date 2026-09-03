@@ -3067,20 +3067,6 @@
           "sold": "Verkauft",
           "trend": "Trend"
         },
-        "metric_short": {
-          "avg_order_value": "Ø-Wert",
-          "orders": "Bestellungen",
-          "sales": "Umsatz",
-          "units": "Stück",
-          "customers": "Kunden"
-        },
-        "metrics": {
-          "avg_order_value": "Ø Bestellwert",
-          "orders": "Bestellungen gesamt",
-          "sales": "Gesamtumsatz",
-          "units": "Verkaufte Stück",
-          "customers": "Kunden"
-        },
         "subtitle": "Überblick über die Leistung Ihres Shops",
         "title": "Dashboard",
         "top_products": "Top-Produkte",
@@ -3114,6 +3100,10 @@
           "units_count_one": "{{count}} Stück",
           "units_count_other": "{{count}} Stück",
           "empty": "Noch keine Daten für diesen Zeitraum."
+        },
+        "unavailable": {
+          "title": "Berichte sind für Ihre Rolle nicht verfügbar",
+          "description": "Bitten Sie einen Administrator um die Berechtigung „Berichte“ (mit Zugriff auf Bestellungen), um hier Verkaufszahlen zu sehen."
         }
       },
       "orders": {
@@ -5149,6 +5139,80 @@
       "saved": "Übersetzungen gespeichert",
       "source": "Quelle",
       "title": "Übersetzungen"
+    },
+    "reports": {
+      "title": "Berichte",
+      "subtitle": "Gespeicherte Berichte zu Umsatz, Produkten und Kunden.",
+      "new_cta": "Neuer Bericht",
+      "new_title": "Neuer Bericht",
+      "copy_name": "Kopie von {{name}}",
+      "table": {
+        "search_placeholder": "Berichte durchsuchen…",
+        "empty": "Noch keine Berichte. Erstellen Sie einen, um loszulegen.",
+        "columns": {
+          "name": "Name",
+          "kind": "Typ",
+          "author": "Erstellt von"
+        }
+      },
+      "kind": {
+        "built_in": "Integriert",
+        "custom": "Benutzerdefiniert"
+      },
+      "builder": {
+        "metrics": "Kennzahlen",
+        "no_metrics": "Wählen Sie mindestens eine Kennzahl.",
+        "group_by": "Gruppieren nach",
+        "none": "Keine (nur Summen)",
+        "grain": "Intervall",
+        "time_range": "Zeitraum",
+        "custom_range": "Benutzerdefinierter Zeitraum",
+        "compare": "Mit Vorperiode vergleichen",
+        "filters": "Filter",
+        "add_filter": "Filter hinzufügen",
+        "remove_filter": "Filter entfernen",
+        "sort": "Sortieren nach",
+        "direction": "Reihenfolge",
+        "sort_desc": "Höchste zuerst",
+        "sort_asc": "Niedrigste zuerst",
+        "limit": "Zeilen",
+        "ids_placeholder": "Kommagetrennte IDs",
+        "title": "Berichtseinstellungen"
+      },
+      "grains": {
+        "day": "Täglich",
+        "week": "Wöchentlich",
+        "month": "Monatlich"
+      },
+      "view": {
+        "empty": "Keine Daten für diesen Zeitraum.",
+        "total": "Gesamt",
+        "change": "Veränderung",
+        "error": "Dieser Bericht konnte nicht geladen werden"
+      },
+      "actions": {
+        "save": "Speichern",
+        "save_copy": "Kopie speichern",
+        "export_csv": "CSV exportieren",
+        "rename": "Umbenennen"
+      },
+      "save_dialog": {
+        "title_create": "Bericht speichern",
+        "title_copy": "Kopie speichern",
+        "title_rename": "Bericht umbenennen",
+        "name_label": "Name",
+        "description_label": "Beschreibung"
+      },
+      "seeded_hint": "Integrierte Berichte können nicht geändert werden. Passen Sie die Einstellungen an und speichern Sie eine Kopie.",
+      "delete_confirm": "Bericht „{{name}}“ löschen? Dies kann nicht rückgängig gemacht werden.",
+      "messages": {
+        "created": "Bericht gespeichert",
+        "create_failed": "Bericht konnte nicht gespeichert werden",
+        "updated": "Bericht aktualisiert",
+        "update_failed": "Bericht konnte nicht aktualisiert werden",
+        "deleted": "Bericht gelöscht",
+        "delete_failed": "Bericht konnte nicht gelöscht werden"
+      }
     }
   }
 }

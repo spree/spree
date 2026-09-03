@@ -3084,20 +3084,6 @@
           "sold": "مُباع",
           "trend": "الاتجاه"
         },
-        "metric_short": {
-          "avg_order_value": "AOV",
-          "orders": "طلبات",
-          "sales": "مبيعات",
-          "units": "وحدات",
-          "customers": "عملاء"
-        },
-        "metrics": {
-          "avg_order_value": "متوسط ​​قيمة الطلب",
-          "orders": "إجمالي الطلبات",
-          "sales": "إجمالي المبيعات",
-          "units": "الوحدات المباعة",
-          "customers": "العملاء"
-        },
         "subtitle": "نظرة عامة على أداء متجرك",
         "title": "Dashboard",
         "top_products": "Top Products",
@@ -3139,6 +3125,10 @@
           "units_count_many": "{{count}} وحدة",
           "units_count_other": "{{count}} وحدة",
           "empty": "لا توجد بيانات لهذه الفترة بعد."
+        },
+        "unavailable": {
+          "title": "التقارير غير متاحة لدورك",
+          "description": "اطلب من المسؤول صلاحية «التقارير» (مع الوصول إلى الطلبات) لعرض أرقام المبيعات هنا."
         }
       },
       "orders": {
@@ -5179,6 +5169,80 @@
       "saved": "تم حفظ الترجمات",
       "source": "المصدر",
       "title": "الترجمات"
+    },
+    "reports": {
+      "title": "التقارير",
+      "subtitle": "تقارير محفوظة عن مبيعاتك ومنتجاتك وعملائك.",
+      "new_cta": "تقرير جديد",
+      "new_title": "تقرير جديد",
+      "copy_name": "نسخة من {{name}}",
+      "table": {
+        "search_placeholder": "البحث في التقارير…",
+        "empty": "لا توجد تقارير بعد. أنشئ تقريرًا للبدء.",
+        "columns": {
+          "name": "الاسم",
+          "kind": "النوع",
+          "author": "أنشأه"
+        }
+      },
+      "kind": {
+        "built_in": "مدمج",
+        "custom": "مخصص"
+      },
+      "builder": {
+        "metrics": "المقاييس",
+        "no_metrics": "اختر مقياسًا واحدًا على الأقل.",
+        "group_by": "تجميع حسب",
+        "none": "بدون (الإجماليات فقط)",
+        "grain": "الفاصل الزمني",
+        "time_range": "النطاق الزمني",
+        "custom_range": "نطاق مخصص",
+        "compare": "مقارنة بالفترة السابقة",
+        "filters": "عوامل التصفية",
+        "add_filter": "إضافة عامل تصفية",
+        "remove_filter": "إزالة عامل التصفية",
+        "sort": "ترتيب حسب",
+        "direction": "الترتيب",
+        "sort_desc": "الأعلى أولاً",
+        "sort_asc": "الأدنى أولاً",
+        "limit": "الصفوف",
+        "ids_placeholder": "معرّفات مفصولة بفواصل",
+        "title": "إعدادات التقرير"
+      },
+      "grains": {
+        "day": "يومي",
+        "week": "أسبوعي",
+        "month": "شهري"
+      },
+      "view": {
+        "empty": "لا توجد بيانات لهذه الفترة.",
+        "total": "الإجمالي",
+        "change": "التغير",
+        "error": "تعذر تحميل هذا التقرير"
+      },
+      "actions": {
+        "save": "حفظ",
+        "save_copy": "حفظ نسخة",
+        "export_csv": "تصدير CSV",
+        "rename": "إعادة تسمية"
+      },
+      "save_dialog": {
+        "title_create": "حفظ التقرير",
+        "title_copy": "حفظ نسخة",
+        "title_rename": "إعادة تسمية التقرير",
+        "name_label": "الاسم",
+        "description_label": "الوصف"
+      },
+      "seeded_hint": "لا يمكن تعديل التقارير المدمجة. عدّل الإعدادات واحفظ نسخة للاحتفاظ بنسختك.",
+      "delete_confirm": "حذف التقرير \"{{name}}\"؟ لا يمكن التراجع عن هذا الإجراء.",
+      "messages": {
+        "created": "تم حفظ التقرير",
+        "create_failed": "تعذر حفظ التقرير",
+        "updated": "تم تحديث التقرير",
+        "update_failed": "تعذر تحديث التقرير",
+        "deleted": "تم حذف التقرير",
+        "delete_failed": "تعذر حذف التقرير"
+      }
     }
   }
 }

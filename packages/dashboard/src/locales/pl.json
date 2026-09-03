@@ -3095,20 +3095,6 @@
           "sold": "Sprzedano",
           "trend": "Trend"
         },
-        "metric_short": {
-          "avg_order_value": "Śr. wart.",
-          "orders": "Zamówienia",
-          "sales": "Sprzedaż",
-          "units": "Sztuki",
-          "customers": "Klienci"
-        },
-        "metrics": {
-          "avg_order_value": "Śr. wartość zamówienia",
-          "orders": "Łączna liczba zamówień",
-          "sales": "Łączna sprzedaż",
-          "units": "Sprzedane sztuki",
-          "customers": "Klienci"
-        },
         "subtitle": "Przegląd wyników Twojego sklepu",
         "title": "Pulpit",
         "top_products": "Najlepsze produkty",
@@ -3146,6 +3132,10 @@
           "units_count_many": "{{count}} sztuk",
           "units_count_other": "{{count}} sztuki",
           "empty": "Brak danych dla tego okresu."
+        },
+        "unavailable": {
+          "title": "Raporty są niedostępne dla Twojej roli",
+          "description": "Poproś administratora o uprawnienie „Raporty” (z dostępem do zamówień), aby zobaczyć tutaj dane sprzedaży."
         }
       },
       "orders": {
@@ -5207,6 +5197,80 @@
       "saved": "Tłumaczenia zapisane",
       "source": "Źródło",
       "title": "Tłumaczenia"
+    },
+    "reports": {
+      "title": "Raporty",
+      "subtitle": "Zapisane raporty dotyczące sprzedaży, produktów i klientów.",
+      "new_cta": "Nowy raport",
+      "new_title": "Nowy raport",
+      "copy_name": "Kopia {{name}}",
+      "table": {
+        "search_placeholder": "Szukaj raportów…",
+        "empty": "Brak raportów. Utwórz pierwszy, aby zacząć.",
+        "columns": {
+          "name": "Nazwa",
+          "kind": "Typ",
+          "author": "Autor"
+        }
+      },
+      "kind": {
+        "built_in": "Wbudowany",
+        "custom": "Własny"
+      },
+      "builder": {
+        "metrics": "Metryki",
+        "no_metrics": "Wybierz co najmniej jedną metrykę.",
+        "group_by": "Grupuj według",
+        "none": "Brak (tylko sumy)",
+        "grain": "Interwał",
+        "time_range": "Zakres czasu",
+        "custom_range": "Własny zakres",
+        "compare": "Porównaj z poprzednim okresem",
+        "filters": "Filtry",
+        "add_filter": "Dodaj filtr",
+        "remove_filter": "Usuń filtr",
+        "sort": "Sortuj według",
+        "direction": "Kolejność",
+        "sort_desc": "Od najwyższych",
+        "sort_asc": "Od najniższych",
+        "limit": "Wiersze",
+        "ids_placeholder": "Identyfikatory rozdzielone przecinkami",
+        "title": "Ustawienia raportu"
+      },
+      "grains": {
+        "day": "Dziennie",
+        "week": "Tygodniowo",
+        "month": "Miesięcznie"
+      },
+      "view": {
+        "empty": "Brak danych dla tego okresu.",
+        "total": "Razem",
+        "change": "Zmiana",
+        "error": "Nie udało się wczytać tego raportu"
+      },
+      "actions": {
+        "save": "Zapisz",
+        "save_copy": "Zapisz kopię",
+        "export_csv": "Eksportuj CSV",
+        "rename": "Zmień nazwę"
+      },
+      "save_dialog": {
+        "title_create": "Zapisz raport",
+        "title_copy": "Zapisz kopię",
+        "title_rename": "Zmień nazwę raportu",
+        "name_label": "Nazwa",
+        "description_label": "Opis"
+      },
+      "seeded_hint": "Wbudowanych raportów nie można zmieniać. Dostosuj ustawienia i zapisz kopię, aby zachować swoją wersję.",
+      "delete_confirm": "Usunąć raport „{{name}}”? Tej operacji nie można cofnąć.",
+      "messages": {
+        "created": "Raport zapisany",
+        "create_failed": "Nie udało się zapisać raportu",
+        "updated": "Raport zaktualizowany",
+        "update_failed": "Nie udało się zaktualizować raportu",
+        "deleted": "Raport usunięty",
+        "delete_failed": "Nie udało się usunąć raportu"
+      }
     }
   }
 }

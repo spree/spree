@@ -25,6 +25,7 @@ export {
   Building2Icon,
   CalendarIcon,
   CalendarOffIcon,
+  ChartColumnIcon,
   CheckCircle2Icon,
   CheckCircleIcon,
   CheckIcon,
