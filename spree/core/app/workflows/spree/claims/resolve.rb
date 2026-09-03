@@ -6,6 +6,8 @@ module Spree
     # so the caller's intent is explicit at the call site and an admin can
     # decide at resolution time rather than at claim creation.
     class Resolve < Spree::Workflow
+      include Spree::RefundsOrderPayments
+
       hooks :validate, :before_settle, :after_resolve
 
       attr_reader :refunds, :fulfillments
@@ -142,28 +144,12 @@ module Spree
       end
 
       def refund_at_gateway
-        remaining = @amount_to_refund
-        claim.order.payments.completed.each do |payment|
-          break unless remaining.positive?
-
-          creditable = [payment.credit_allowed.to_d, remaining].min
-          next unless creditable.positive?
-
-          # One refund path for the whole system: Refunds::Create owns the
-          # row-lock balance check, the gateway credit, the declined-row
-          # compensation, the refund hooks and the payment.refunded event.
-          result = Spree.refund_create_workflow.call(
-            payment: payment,
-            amount: creditable,
-            reason: Spree::RefundReason.return_processing_reason(claim.store),
-            refunder: resolver,
-            originator: claim
-          )
-          failure(claim, result.error.value) if result.failure?
-
-          @refunds << result.value
-          remaining -= creditable
-        end
+        @refunds = refund_order_payments(
+          order: claim.order,
+          amount: @amount_to_refund,
+          originator: claim,
+          refunder: resolver
+        ) { |result| failure(claim, result.error.value) }
 
         failure(claim, :no_refundable_payments) if @refunds.empty?
       end

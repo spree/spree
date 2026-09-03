@@ -48,6 +48,20 @@ module Spree
       captured_amount - refunded_amount
     end
 
+    # The most this child order can still be given back from this payment.
+    #
+    # Counted from the refund rows rather than from {#refunded_amount}, which a
+    # subscriber writes after the fact: two refunds landing together would each
+    # read a share that still looked unrefunded. {Spree::Refunds::Create}
+    # re-checks the same figure under the payment's lock before any money
+    # moves — this is what a caller uses to decide how much to ask for.
+    #
+    # @return [BigDecimal]
+    def refundable_amount
+      already_refunded = Spree::Refund.where(payment_id: payment_id, order_id: order_id).sum(:amount)
+      captured_amount - already_refunded
+    end
+
     # What is left of this share for a parcel to draw on.
     #
     # Counts money already taken and money another parcel has reserved but not
