@@ -102,8 +102,14 @@ module Spree
         end
       end
 
+      # Reads the table rather than `customer.addresses`, which hides
+      # soft-deleted rows. An address the person removed is still an address
+      # this store holds, and erasure reaches it — so an access response that
+      # skipped it would understate what is on file.
       def addresses
-        customer.addresses.map { |address| address_hash(address) }
+        Spree::Address.
+          where(owner_type: customer.class.base_class.to_s, owner_id: customer.id).
+          map { |address| address_hash(address) }
       end
 
       # Batched: a long-standing customer's whole order history, its line items
@@ -112,7 +118,8 @@ module Spree
       def orders
         exported = []
 
-        customer.orders.complete.includes(:line_items, :bill_address, :ship_address).find_each do |order|
+        owned_purchases(Spree::Order).complete.
+          includes(:line_items, :bill_address, :ship_address).find_each do |order|
           exported << {
             number: order.number,
             email: order.email,
@@ -146,7 +153,7 @@ module Spree
       # request has to disclose them. Kept separate from orders: nothing was
       # bought, and listing them together would misrepresent both.
       def carts
-        scope = Spree::Cart.where(customer_id: customer.id)
+        scope = owned_purchases(Spree::Cart)
         scope = scope.where(store_id: store.id) if store
 
         scope.includes(:line_items).map do |cart|
@@ -235,6 +242,19 @@ module Spree
             created_at: membership.created_at&.iso8601
           }
         end
+      end
+
+      # Everything this person bought, however they were signed in at the time.
+      # Mirrors Spree::Customers::Anonymize#owned_purchases: a guest checkout
+      # leaves `customer_id` null, so an access response scoped to the account
+      # alone would omit history the store still holds — and that erasure will
+      # later wipe.
+      #
+      # @param model [Class]
+      # @return [ActiveRecord::Relation]
+      def owned_purchases(model)
+        model.where(customer_id: customer.id).
+          or(model.where(customer_id: nil, email: customer.email))
       end
 
       # @param address [Spree::Address, nil]

@@ -58,6 +58,7 @@ module Spree
           step :forget_gateway_profiles
           step :anonymize_identities
           step :anonymize_sessions
+          step :anonymize_merchant_annotations
           step :anonymize_consent_records
           step :anonymize_data_requests
           step :record_consent_withdrawal
@@ -209,6 +210,21 @@ module Spree
       # should not stay signed in anywhere.
       def anonymize_sessions
         Spree::RefreshToken.where(user_type: customer.class.base_class.to_s, user_id: customer.id).delete_all
+      end
+
+      # Merchant-defined data about the person: custom field values, the tags
+      # staff filed them under, and the lists they built.
+      #
+      # The access export discloses all three as this person's data, so
+      # erasure has to reach them or the two halves disagree about what the
+      # store holds. The schema tripwire cannot catch these — a custom field's
+      # value lives in a column called `value`, which no PII-shaped name
+      # pattern will ever match.
+      def anonymize_merchant_annotations
+        customer.custom_fields.destroy_all if customer.respond_to?(:custom_fields)
+        customer.tag_list = [] if customer.respond_to?(:tag_list)
+        customer.save(validate: false) if customer.changed?
+        customer.wishlists.destroy_all
       end
 
       # The consent rows keep their purpose, source and timestamp — the proof

@@ -80,6 +80,28 @@ RSpec.describe Spree::Customers::DataExport do
     end
   end
 
+  # Erasure reaches guest rows and removed addresses, so an access response
+  # that skipped them would understate what the store holds — and what it is
+  # about to wipe.
+  describe 'history the account does not own' do
+    let!(:guest_order) do
+      create(:completed_order_with_totals, store: store).tap do |order|
+        order.update_columns(customer_id: nil, email: 'buyer@example.com')
+      end
+    end
+
+    it 'includes an order placed as a guest' do
+      expect(payload[:orders].map { |o| o[:number] }).to include(guest_order.number)
+    end
+
+    it 'includes an address the person removed' do
+      removed = create(:address, owner: customer, address1: '1 Old Street')
+      removed.update_columns(deleted_at: 1.day.ago)
+
+      expect(payload[:addresses].map { |a| a[:address1] }).to include('1 Old Street')
+    end
+  end
+
   it 'produces a payload that survives a JSON round trip' do
     expect { JSON.parse(JSON.generate(payload)) }.not_to raise_error
   end

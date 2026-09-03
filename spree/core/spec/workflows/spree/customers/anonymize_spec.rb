@@ -335,6 +335,30 @@ RSpec.describe Spree::Customers::Anonymize do
     end
   end
 
+  # The access export discloses all three as this person's data, so leaving
+  # them would make the two halves disagree about what the store holds. The
+  # schema tripwire cannot catch these: a custom field's value lives in a
+  # column called `value`.
+  describe 'what the merchant recorded about them' do
+    before do
+      customer.tag_list = %w[vip complained-twice]
+      customer.save!
+      create(:wishlist, customer: customer)
+    end
+
+    it 'removes the tags staff filed them under' do
+      result
+
+      expect(customer.reload.tag_list.to_a).to be_empty
+    end
+
+    it 'removes the lists they built' do
+      result
+
+      expect(Spree::Wishlist.where(customer_id: customer.id)).to be_empty
+    end
+  end
+
   it 'announces the erasure' do
     expect(customer).to receive(:publish_event).with('customer.anonymized', hash_including(:store_id))
 
