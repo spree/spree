@@ -25,7 +25,7 @@ RSpec.describe Spree::Api::V3::Admin::CommissionRatesController, type: :controll
     end
 
     it 'returns rates in precedence order' do
-      second = create(:commission_rate, store: store, name: 'Second')
+      create(:commission_rate, store: store, name: 'Second')
       third = create(:commission_rate, store: store, name: 'Third')
       third.insert_at(1)
       rate.insert_at(2)

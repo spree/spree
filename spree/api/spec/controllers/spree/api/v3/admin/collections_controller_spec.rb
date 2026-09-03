@@ -26,7 +26,7 @@ RSpec.describe Spree::Api::V3::Admin::CollectionsController, type: :controller d
     end
 
     it 'returns collections in list order' do
-      second = create(:collection, store: store, name: 'Second collection')
+      create(:collection, store: store, name: 'Second collection')
       third = create(:collection, store: store, name: 'Third collection')
       third.insert_at(1)
       collection.insert_at(2)
@@ -35,6 +35,19 @@ RSpec.describe Spree::Api::V3::Admin::CollectionsController, type: :controller d
 
       expect(json_response['data'].pluck('name')).to eq(['Third collection', 'Summer Sale', 'Second collection'])
       expect(json_response['data'].pluck('position')).to eq([1, 2, 3])
+    end
+
+    it 'returns collections in list order when filtered by permalink' do
+      create(:collection, store: store, name: 'Second collection', permalink: 'second-sale')
+      third = create(:collection, store: store, name: 'Third collection', permalink: 'third-sale')
+      third.insert_at(1)
+      collection.update!(permalink: 'summer-sale')
+      collection.insert_at(2)
+
+      get :index, params: { q: { permalink_cont: 'sale' } }, as: :json
+
+      expect(response).to have_http_status(:ok)
+      expect(json_response['data'].pluck('name')).to eq(['Third collection', 'Summer Sale', 'Second collection'])
     end
 
     it 'exposes the merchandising config + timestamps (admin surface)' do

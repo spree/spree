@@ -38,7 +38,7 @@ RSpec.describe Spree::Api::V3::Admin::PriceListsController, type: :controller do
 
   describe 'GET #index' do
     it 'returns price lists in list order' do
-      second = create(:price_list, store: store, name: 'Second list')
+      create(:price_list, store: store, name: 'Second list')
       third = create(:price_list, store: store, name: 'Third list')
       third.insert_at(1)
       price_list.insert_at(2)

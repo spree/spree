@@ -182,7 +182,7 @@ RSpec.describe Spree::Api::V3::Admin::CatalogsController, type: :controller do
     end
 
     it 'returns catalogs in list order' do
-      second = create(:catalog, store: store, name: 'Second catalog')
+      create(:catalog, store: store, name: 'Second catalog')
       third = create(:catalog, store: store, name: 'Third catalog')
       third.insert_at(1)
       catalog.insert_at(2)

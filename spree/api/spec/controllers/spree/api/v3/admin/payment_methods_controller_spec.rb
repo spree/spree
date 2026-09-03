@@ -19,7 +19,7 @@ RSpec.describe Spree::Api::V3::Admin::PaymentMethodsController, type: :controlle
     end
 
     it 'returns payment methods in list order' do
-      second = create(:check_payment_method, store: store, name: 'Second method')
+      create(:check_payment_method, store: store, name: 'Second method')
       third = create(:check_payment_method, store: store, name: 'Third method')
       third.insert_at(1)
       payment_method.insert_at(2)

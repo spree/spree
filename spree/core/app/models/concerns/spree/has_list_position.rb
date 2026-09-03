@@ -9,7 +9,7 @@ module Spree
     extend ActiveSupport::Concern
 
     included do
-      scope :ordered, -> { order(position: :asc, id: :asc) }
+      scope :ordered, -> { order(Arel.sql("#{table_name}.position ASC, #{table_name}.id ASC")) }
     end
   end
 end
