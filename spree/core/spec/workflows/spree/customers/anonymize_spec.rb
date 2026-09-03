@@ -215,6 +215,40 @@ RSpec.describe Spree::Customers::Anonymize do
     end
   end
 
+  describe 'a purchase made as a guest, before the account existed' do
+    let!(:guest_order) do
+      create(:completed_order_with_totals, store: store).tap do |order|
+        order.update_columns(customer_id: nil, email: 'buyer@example.com',
+                             last_ip_address: '203.0.113.4')
+      end
+    end
+
+    it 'scrubs the order, which the account does not own' do
+      result
+      guest_order.reload
+
+      expect(guest_order.email).to eq(customer.reload.email)
+      expect(guest_order.last_ip_address).to be_nil
+    end
+
+    it 'redacts the address that came with it' do
+      address = guest_order.ship_address
+
+      result
+
+      expect(address.reload.address1).to eq('Redacted')
+    end
+
+    it 'leaves another person\'s guest order alone' do
+      other = create(:completed_order_with_totals, store: store)
+      other.update_columns(customer_id: nil, email: 'someone-else@example.com')
+
+      result
+
+      expect(other.reload.email).to eq('someone-else@example.com')
+    end
+  end
+
   describe 'traces left by guest checkout' do
     let!(:guest_subscriber) do
       create(:newsletter_subscriber, store: store, email: 'buyer@example.com').tap do |record|

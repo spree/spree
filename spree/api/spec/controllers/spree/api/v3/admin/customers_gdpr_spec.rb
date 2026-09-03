@@ -23,6 +23,28 @@ RSpec.describe Spree::Api::V3::Admin::CustomersController, type: :controller do
       expect(json_response.keys).to include('account', 'addresses', 'orders', 'marketing_consent', 'consent_records')
     end
 
+    # The export carries the customer's order history, which is otherwise
+    # gated on read_orders. Aggregating the two behind one key would hand
+    # order data to a role that was never granted it.
+    context 'when the caller may read customers but not orders' do
+      # Overrides the shared JWT rather than setting a header: the shared
+      # headers also carry a full-scope secret key, which outranks a JWT and
+      # would authorize the request whatever the staffer's roles say.
+      let(:admin_user) do
+        create(:admin_user, :without_admin_role).tap do |user|
+          create(:role_user, user: user,
+                             role: create(:role, name: 'Support', permissions: %w[read_customers], resource: store))
+        end
+      end
+
+      it 'refuses the export and says which permission is missing' do
+        get :export, params: { id: customer.prefixed_id }, as: :json
+
+        expect(response).to have_http_status(:forbidden)
+        expect(json_response.dig('error', 'details', 'required_permission')).to eq('read_orders')
+      end
+    end
+
     it '404s for a customer that does not exist' do
       get :export, params: { id: 'cust_nonexistent' }, as: :json
 

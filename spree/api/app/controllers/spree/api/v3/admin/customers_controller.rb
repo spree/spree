@@ -82,6 +82,7 @@ module Spree
           # there is no unauthenticated caller to rate-limit.
           def export
             authorize_resource!(@resource)
+            return unless authorized_for_order_history?
 
             render json: Spree.customer_data_export_service.new(
               customer: @resource,
@@ -122,6 +123,38 @@ module Spree
           # show, so a staffer with read access would otherwise be refused.
           def read_actions
             super + ['export']
+          end
+
+          # A subject access export carries the customer's order history, which
+          # is otherwise gated on `read_orders`. The controller's own scope only
+          # covers `read_customers`, so aggregating the two behind one key would
+          # hand order data to a role that was never granted it.
+          #
+          # @return [Boolean] false when the response has already been rendered
+          def authorized_for_order_history?
+            return true if holds_permission?('read_orders')
+
+            render_error(
+              code: Spree::Api::V3::ErrorHandler::ERROR_CODES[:access_denied],
+              message: 'Missing permission: read_orders',
+              status: :forbidden,
+              details: { required_permission: 'read_orders' }
+            )
+            false
+          end
+
+          # Mirrors the key gate's two principals: a secret key carries scopes,
+          # a signed-in staffer carries their roles' catalog keys.
+          #
+          # @param key [String]
+          # @return [Boolean]
+          def holds_permission?(key)
+            return current_api_key.has_scope?(key) if scope_limited_principal?
+
+            ability = current_ability
+            return true unless ability.respond_to?(:permission_keys)
+
+            ability.permission_keys.include?(key)
           end
 
           # `export` maps to `:show`; `anonymize` is a destructive write, so it

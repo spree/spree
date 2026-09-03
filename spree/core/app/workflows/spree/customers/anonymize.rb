@@ -132,8 +132,8 @@ module Spree
       # checkout holds its own copy of wherever the person was having it sent.
       def anonymize_order_addresses
         address_ids = [
-          Spree::Order.where(customer_id: customer.id).pluck(:bill_address_id, :ship_address_id),
-          Spree::Cart.where(customer_id: customer.id).pluck(:bill_address_id, :ship_address_id)
+          owned_purchases(Spree::Order).pluck(:bill_address_id, :ship_address_id),
+          owned_purchases(Spree::Cart).pluck(:bill_address_id, :ship_address_id)
         ].flatten.compact.uniq
         return if address_ids.empty?
 
@@ -158,11 +158,25 @@ module Spree
 
         # Orders carry a staff-written note that carts have no column for, so
         # each is scrubbed to the columns it actually has.
-        Spree::Order.where(customer_id: customer.id).update_all(scrubbed.merge(internal_note: nil))
-        Spree::Cart.where(customer_id: customer.id).update_all(scrubbed)
+        owned_purchases(Spree::Order).update_all(scrubbed.merge(internal_note: nil))
+        owned_purchases(Spree::Cart).update_all(scrubbed)
 
-        Spree::OrderGroup.where(customer_id: customer.id).
+        owned_purchases(Spree::OrderGroup).
           update_all(email: customer.email, updated_at: Time.current)
+      end
+
+      # Everything this person bought, however they were signed in at the time.
+      #
+      # Matched by email as well as by customer, because a guest checkout
+      # leaves `customer_id` null: someone who ordered as a guest and
+      # registered afterwards has purchases carrying their address and IP that
+      # the account does not own.
+      #
+      # @param model [Class]
+      # @return [ActiveRecord::Relation]
+      def owned_purchases(model)
+        model.where(customer_id: customer.id).
+          or(model.where(customer_id: nil, email: @original_email))
       end
 
       # Cards keep their last four digits and expiry — a refund against a
