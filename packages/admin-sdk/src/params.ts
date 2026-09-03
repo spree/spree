@@ -2841,3 +2841,16 @@ export interface TaxRateParams {
   show_rate_in_label?: boolean
   calculator_type?: string
 }
+
+// ============================================
+// Saved reports (semantic reporting layer)
+// ============================================
+
+export interface SavedReportCreateParams {
+  name: string
+  description?: string | null
+  /** A reporting contract query — validated against the registry on save. */
+  query: ReportingQuery
+}
+
+export type SavedReportUpdateParams = Partial<SavedReportCreateParams>

@@ -459,7 +459,7 @@ module Spree
                                     write: false, audiences: %i[seller])
       # Semantic reporting (docs/plans/6.0-analytics-semantic-layer.md). Staff
       # only until seller queries get a compiler-forced seller scope.
-      register_resource(:reports, group: :analytics, subjects: -> { [:reports] }, write: false)
+      register_resource(:reports, group: :analytics, subjects: -> { [:reports, Spree::SavedReport, Spree::Exports::Report] })
     end
     # rubocop:enable Metrics/MethodLength
   end

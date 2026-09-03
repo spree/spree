@@ -1654,6 +1654,34 @@ en:
         units_sold:
           description: Sum of line item quantities.
           label: Units sold
+      seeds:
+        sales_over_time:
+          name: Sales over time
+          description: Daily sales, orders and average order value for the last four weeks, compared with the previous period.
+        sales_by_channel:
+          name: Sales by channel
+          description: Sales and orders per sales channel over the last four weeks.
+        sales_by_market:
+          name: Sales by market
+          description: Sales and orders per market over the last four weeks.
+        sales_by_country:
+          name: Sales by country
+          description: Sales and orders by shipping country over the last four weeks.
+        top_products:
+          name: Top products
+          description: Best-selling products by net revenue over the last four weeks.
+        top_categories:
+          name: Top categories
+          description: Best-selling categories by net revenue over the last four weeks.
+        top_customers:
+          name: Top customers
+          description: Customers ranked by spend over the last four weeks.
+        orders_by_payment_status:
+          name: Orders by payment status
+          description: Order counts and sales grouped by payment status over the last four weeks.
+        orders_by_fulfillment_status:
+          name: Orders by fulfillment status
+          description: Order counts and sales grouped by fulfillment status over the last four weeks.
       presets:
         last_12_months:
           label: Last 12 months

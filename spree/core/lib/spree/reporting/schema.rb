@@ -37,6 +37,12 @@ module Spree
         }
       end
 
+      # @param group [Symbol] :metrics | :dimensions
+      # @return [String] localized label (humanized name when none registered)
+      def label_for(group, name)
+        translate(group, name, :label)
+      end
+
       private
 
       def metric_entry(metric)

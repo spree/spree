@@ -462,7 +462,8 @@ module Spree
           Spree::Exports::Customers,
           Spree::Exports::GiftCards,
           Spree::Exports::NewsletterSubscribers,
-          Spree::Exports::CouponCodes
+          Spree::Exports::CouponCodes,
+          Spree::Exports::Report
         ]
 
         Rails.application.config.spree.import_types = [
