@@ -33,6 +33,7 @@ module Spree
           orders: orders,
           carts: carts,
           payment_sources: payment_sources,
+          connected_logins: connected_logins,
           store_credits: store_credits,
           gift_cards: gift_cards,
           wishlists: wishlists,
@@ -167,13 +168,16 @@ module Spree
         scope = owned_purchases(Spree::Cart)
         scope = scope.where(store_id: store.id) if store
 
-        scope.includes(:line_items).map do |cart|
+        scope.includes(:line_items, :bill_address, :ship_address).map do |cart|
           {
             email: cart.email,
             currency: cart.currency,
             item_total: cart.item_total&.to_s,
+            customer_note: cart.customer_note,
             last_ip_address: cart.last_ip_address,
             metadata: cart.metadata.presence,
+            billing_address: address_hash(cart.bill_address),
+            shipping_address: address_hash(cart.ship_address),
             created_at: cart.created_at&.iso8601,
             line_items: cart.line_items.map do |line_item|
               { name: line_item.name, sku: line_item.sku, quantity: line_item.quantity }
@@ -193,6 +197,19 @@ module Spree
             month: card.month,
             year: card.year,
             created_at: card.created_at&.iso8601
+          }
+        end
+      end
+
+      # Accounts the person linked to sign in with. The tokens are credentials
+      # rather than data about them, so only the provider and the identifier it
+      # knows them by are disclosed.
+      def connected_logins
+        customer.identities.map do |identity|
+          {
+            provider: identity.provider,
+            uid: identity.uid,
+            created_at: identity.created_at&.iso8601
           }
         end
       end

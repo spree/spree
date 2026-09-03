@@ -5500,6 +5500,7 @@ paths:
                 orders: []
                 carts: []
                 payment_sources: []
+                connected_logins: []
                 store_credits: []
                 gift_cards: []
                 wishlists: []

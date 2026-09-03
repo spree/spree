@@ -163,6 +163,29 @@ RSpec.describe Spree::Customers::DataExport do
       expect(exported[:metadata]).to eq('source' => 'campaign')
     end
 
+    it 'discloses the accounts the person linked, without their tokens' do
+      create(:user_identity, user: customer, uid: 'linked-12345',
+                             access_token: 'secret-token')
+
+      exported = payload[:connected_logins].first
+
+      expect(exported[:provider]).to eq('email')
+      expect(exported[:uid]).to eq('linked-12345')
+      expect(exported.values).not_to include('secret-token')
+    end
+
+    it 'discloses where an abandoned checkout was going, and its note' do
+      cart = create(:cart, customer: customer, store: store)
+      address = create(:address, address1: '5 Baker Street')
+      cart.update_columns(bill_address_id: address.id, ship_address_id: address.id,
+                          customer_note: 'leave at the back door')
+
+      exported = payload[:carts].first
+
+      expect(exported[:customer_note]).to eq('leave at the back door')
+      expect(exported[:shipping_address][:address1]).to eq('5 Baker Street')
+    end
+
     it 'discloses the same for an abandoned checkout' do
       cart = create(:cart, customer: customer, store: store)
       cart.update_columns(last_ip_address: '203.0.113.9', metadata: { 'source' => 'campaign' })
