@@ -63,6 +63,32 @@ RSpec.describe 'freight serialization' do
     end
   end
 
+  describe Spree::Api::V3::FulfillmentSerializer do
+    # The rate says quoted-after-review; the fulfillment's own shipping line
+    # must not undercut it with $0.00.
+    it 'carries the unpriced flag and label through the fulfillment' do
+      fulfillment = create(:shipment)
+      create(:delivery_rate, fulfillment: fulfillment, cost: 0, unpriced: true, selected: true)
+      fulfillment.reload.update_amounts
+
+      json = described_class.new(fulfillment.reload, params: { store: store }).to_h
+
+      expect(json['unpriced']).to be(true)
+      expect(json['display_cost']).to eq(Spree.t('delivery_rates.quoted_after_review'))
+    end
+
+    it 'stays money for a priced fulfillment' do
+      fulfillment = create(:shipment)
+      create(:delivery_rate, fulfillment: fulfillment, cost: 12, selected: true)
+      fulfillment.reload.update_amounts
+
+      json = described_class.new(fulfillment.reload, params: { store: store }).to_h
+
+      expect(json['unpriced']).to be(false)
+      expect(json['display_cost'].to_s).to eq('$12.00')
+    end
+  end
+
   describe Spree::Api::V3::DeliveryRateSerializer do
     let(:fulfillment) { create(:shipment) }
 

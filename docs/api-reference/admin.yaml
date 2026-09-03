@@ -7527,6 +7527,7 @@ paths:
                   tracking_carrier_name:
                   pickup_point_data:
                   selected_delivery_rate_id: dr_gbHJdmfrXB
+                  unpriced: false
                   cost: '100.0'
                   display_cost: "$100.00"
                   total: '100.0'
@@ -7633,6 +7634,7 @@ paths:
                 tracking_carrier_name:
                 pickup_point_data:
                 selected_delivery_rate_id: dr_EfhxLZ9ck8
+                unpriced: false
                 cost: '100.0'
                 display_cost: "$100.00"
                 total: '100.0'
@@ -7809,6 +7811,7 @@ paths:
                 tracking_carrier_name:
                 pickup_point_data:
                 selected_delivery_rate_id: dr_gbHJdmfrXB
+                unpriced: false
                 cost: '100.0'
                 display_cost: "$100.00"
                 total: '100.0'
@@ -7907,6 +7910,7 @@ paths:
                 tracking_carrier_name: UPS
                 pickup_point_data:
                 selected_delivery_rate_id: dr_gbHJdmfrXB
+                unpriced: false
                 cost: '100.0'
                 display_cost: "$100.00"
                 total: '100.0'
@@ -8019,6 +8023,7 @@ paths:
                 tracking_carrier_name:
                 pickup_point_data:
                 selected_delivery_rate_id: dr_gbHJdmfrXB
+                unpriced: false
                 cost: '100.0'
                 display_cost: "$100.00"
                 total: '100.0'
@@ -8123,6 +8128,7 @@ paths:
                 tracking_carrier_name:
                 pickup_point_data:
                 selected_delivery_rate_id: dr_gbHJdmfrXB
+                unpriced: false
                 cost: '100.0'
                 display_cost: "$100.00"
                 total: '100.0'
@@ -8235,6 +8241,7 @@ paths:
                 tracking_carrier_name:
                 pickup_point_data:
                 selected_delivery_rate_id: dr_gbHJdmfrXB
+                unpriced: false
                 cost: '100.0'
                 display_cost: "$100.00"
                 total: '100.0'
@@ -8355,6 +8362,7 @@ paths:
                 tracking_carrier_name:
                 pickup_point_data:
                 selected_delivery_rate_id: dr_gbHJdmfrXB
+                unpriced: false
                 cost: '100.0'
                 display_cost: "$100.00"
                 total: '100.0'
@@ -8464,6 +8472,7 @@ paths:
                   tracking_carrier_name:
                   pickup_point_data:
                   selected_delivery_rate_id: dr_EfhxLZ9ck8
+                  unpriced: false
                   cost: '10.0'
                   display_cost: "$10.00"
                   total: '10.0'
@@ -38793,6 +38802,8 @@ components:
         selected_delivery_rate_id:
           type: string
           nullable: true
+        unpriced:
+          type: boolean
         cost:
           type: string
         display_cost:
@@ -38887,6 +38898,7 @@ components:
       - tracking_carrier_name
       - pickup_point_data
       - selected_delivery_rate_id
+      - unpriced
       - cost
       - display_cost
       - total

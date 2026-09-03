@@ -198,6 +198,26 @@ module Spree
 
     extend DisplayMoney
     money_methods :cost, :discounted_cost, :final_price, :item_cost, :additional_tax_total, :included_tax_total, :tax_total, :discount_total
+
+    # True while the shipping price is still the forwarder's to quote — the
+    # selected rate is a freight rate carrying logistics instead of an amount.
+    #
+    # @return [Boolean]
+    def unpriced?
+      selected_delivery_rate&.unpriced? || false
+    end
+
+    # An unpriced fulfillment's cost is zero only because nobody has priced
+    # it, and every display reading that zero as money — the order
+    # fulfillments card included — would call a container of goods free
+    # shipping. Same doctrine as the rate's own displays.
+    #
+    # @return [String, Spree::Money]
+    def display_cost(**options)
+      return Spree.t('delivery_rates.quoted_after_review') if unpriced?
+
+      Spree::Money.new(cost, { currency: currency }.merge(options))
+    end
     alias display_amount display_cost
     # Standardized column name (renamed in 6.0); the legacy reader stays one
     # release.

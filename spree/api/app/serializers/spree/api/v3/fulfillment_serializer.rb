@@ -7,6 +7,7 @@ module Spree
                  tracking_url: [:string, nullable: true], fulfilled_at: [:string, nullable: true],
                  delivered_at: [:string, nullable: true],
                  cost: [:string, nullable: true], display_cost: [:string, nullable: true],
+                 unpriced: :boolean,
                  total: [:string, nullable: true], display_total: [:string, nullable: true],
                  discount_total: [:string, nullable: true], display_discount_total: [:string, nullable: true],
                  additional_tax_total: [:string, nullable: true], display_additional_tax_total: [:string, nullable: true],
@@ -22,6 +23,10 @@ module Spree
 
         # Nulled for gated (prices_hidden) guests so a fulfillment can't leak the
         # shipping/tax amounts the cart/order totals already withhold.
+        # Says the shipping price is still to come, so a client need not
+        # infer it from a zero cost. Not price-gated — a flag, not an amount.
+        attribute :unpriced, &:unpriced?
+
         money_attributes :cost, :display_cost,
                          :total, :display_total,
                          :discount_total, :display_discount_total,
