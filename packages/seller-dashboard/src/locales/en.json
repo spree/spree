@@ -98,7 +98,8 @@
     "remove": "Remove",
     "retry": "Try again",
     "save": "Save",
-    "saving": "Saving…"
+    "saving": "Saving…",
+    "actions": "Actions"
   },
   "delivery_methods": {
     "add": "Add delivery method",
@@ -279,7 +280,111 @@
     "title": "Orders",
     "tracking": "Tracking {{number}}",
     "tracking_label": "Tracking number",
-    "tracking_placeholder": "Optional"
+    "tracking_placeholder": "Optional",
+    "billing_address": "Billing address",
+    "customer_note": "Customer note",
+    "fulfillments": {
+      "title": "Parcels",
+      "empty": "Nothing to send on this order.",
+      "carrier_label": "Carrier",
+      "carrier_auto": "Detect from number",
+      "add_tracking": "Add tracking",
+      "add_tracking_title": "Add tracking",
+      "edit_tracking": "Edit tracking",
+      "edit_tracking_title": "Edit tracking",
+      "tracking_description": "The number the customer follows the parcel with.",
+      "track_parcel": "Track parcel",
+      "notify_customer": "Email the customer",
+      "units_selected": "{{selected}} of {{total}} units selected",
+      "partial_warning": "Sending part of this parcel moves the rest onto a new one.",
+      "quantity_for": "Quantity for {{name}}",
+      "mark_delivered": "Mark as delivered",
+      "resume": "Resume",
+      "cancel": "Cancel parcel",
+      "cancel_title": "Cancel this parcel?",
+      "cancel_message": "The goods go back on the shelf and the carrier is stood down.",
+      "split": "Split",
+      "splitting": "Splitting…",
+      "split_title": "Split this parcel",
+      "split_description": "Move part of what this parcel holds onto one of its own.",
+      "split_item": "Item",
+      "split_quantity": "Quantity to move",
+      "split_would_empty": "Moving everything would leave this parcel empty.",
+      "confirm_split": "This takes effect immediately."
+    },
+    "summary": {
+      "title": "Summary",
+      "item_total": "Items",
+      "tax_total": "Tax",
+      "total": "Total"
+    },
+    "customer": {
+      "title": "Customer"
+    },
+    "post_sale": {
+      "reason": "Reason",
+      "memo": "Note",
+      "approve": "Approve",
+      "cancel": "Cancel",
+      "statuses": {
+        "requested": "Requested",
+        "approved": "Approved",
+        "received": "Received",
+        "refunded": "Refunded",
+        "fulfilled": "Fulfilled",
+        "open": "Open",
+        "resolved": "Resolved",
+        "denied": "Denied",
+        "canceled": "Canceled"
+      },
+      "returns": {
+        "title": "Returns",
+        "empty": "Nothing has come back from this order.",
+        "create": "New return",
+        "create_title": "Take goods back",
+        "receive": "Receive",
+        "receive_title": "What arrived?",
+        "received_quantity": "Quantity received",
+        "resellable": "Resellable",
+        "partially_received": "{{received}} of {{quantity}} received",
+        "not_resellable": "Not resellable",
+        "refund": "Refund",
+        "refund_title": "Give the money back",
+        "refund_method": "Refund to",
+        "refund_total": "Refund total: {{amount}}",
+        "amount": "Amount",
+        "original_payment": "Original payment",
+        "store_credit": "Store credit",
+        "cancel_title": "Cancel this return?",
+        "cancel_message": "The customer is told it will not go ahead."
+      },
+      "exchanges": {
+        "title": "Exchanges",
+        "receive": "Receive",
+        "fulfill": "Send replacement",
+        "price_difference": "Price difference: {{amount}}",
+        "cancel_title": "Cancel this exchange?",
+        "cancel_message": "The customer is told it will not go ahead."
+      },
+      "claims": {
+        "title": "Claims",
+        "empty": "Nothing has been reported on this order.",
+        "create": "New claim",
+        "create_title": "Report a problem",
+        "description": "What went wrong",
+        "resolve": "Resolve",
+        "resolve_title": "Put this right",
+        "resolution": "How to resolve",
+        "resolutions": {
+          "refund": "Refund",
+          "replacement": "Send a replacement",
+          "refund_and_replacement": "Refund and send a replacement"
+        },
+        "deny": "Deny",
+        "deny_title": "Deny this claim?",
+        "deny_message": "The customer is told the claim was not upheld."
+      }
+    }
   },
   "policies": {
     "add": "Add policy",
