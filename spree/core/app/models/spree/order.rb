@@ -491,11 +491,29 @@ module Spree
     # @return [ActiveSupport::TimeWithZone, nil] nil until every parcel that is
     #   still live has been delivered
     def withdrawal_period_starts_at
-      delivered = fulfillments.reject(&:canceled?).map(&:delivered_at)
+      live = fulfillments.reject(&:canceled?)
+      return nil if live.empty?
 
-      return nil if delivered.empty? || delivered.any?(&:blank?)
+      received = live.map { |fulfillment| withdrawal_receipt_of(fulfillment) }
+      return nil if received.any?(&:blank?)
 
-      delivered.max
+      received.max
+    end
+
+    # When one fulfillment counts as received.
+    #
+    # Digital content has no delivery event and no carrier to report one, so
+    # waiting for `delivered_at` would leave a mixed order's clock stopped
+    # forever — the physical parcel arrives and the deadline never appears.
+    # The Directive treats digital content differently from goods anyway
+    # (Art. 16(m)); handing it over is the moment it reaches the buyer.
+    #
+    # @param fulfillment [Spree::Fulfillment]
+    # @return [ActiveSupport::TimeWithZone, nil]
+    def withdrawal_receipt_of(fulfillment)
+      return fulfillment.delivered_at || fulfillment.fulfilled_at if fulfillment.digital?
+
+      fulfillment.delivered_at
     end
 
     # @return [Integer, nil] nil where no market says otherwise — a statutory

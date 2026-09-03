@@ -15,8 +15,12 @@ module Spree
       # @param kind [String] Spree::DataRequest::ACCESS or ERASURE
       # @param requested_by [Object, nil] the staff actor; nil when the
       #   subject asked for it themselves
+      # @param process [Boolean] whether to queue the work. False where the
+      #   caller fulfils the request itself — the admin export renders the file
+      #   inline for a waiting staffer, and queueing would additionally email
+      #   the customer a copy of something they did not ask for
       # @return [Spree::ServiceModule::Result]
-      def call(store:, customer:, kind:, requested_by: nil)
+      def call(store:, customer:, kind:, requested_by: nil, process: true)
         # Nothing useful is left to answer with: an export would return the
         # tombstone and email a link to an address that no longer receives,
         # and a second erasure has nothing to erase.
@@ -53,7 +57,7 @@ module Spree
 
         # Enqueued after the lock is released: the job may start immediately,
         # and it should not contend for the row this flow still holds.
-        Spree::DataRequests::ProcessJob.perform_later(data_request.prefixed_id)
+        Spree::DataRequests::ProcessJob.perform_later(data_request.prefixed_id) if process
 
         success(data_request)
       end

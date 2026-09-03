@@ -102,6 +102,19 @@ RSpec.describe Spree::Customers::DataExport do
     end
   end
 
+  it 'discloses a tax registration held on the account' do
+    create(:tax_identifier, owner: customer)
+
+    expect(payload[:tax_identifiers]).not_to be_empty
+  end
+
+  it 'includes a newsletter sign-up made before the account existed' do
+    create(:newsletter_subscriber, store: store, email: customer.email).
+      update_columns(customer_id: nil)
+
+    expect(payload[:marketing_consent][:newsletter_subscriptions]).not_to be_empty
+  end
+
   it 'produces a payload that survives a JSON round trip' do
     expect { JSON.parse(JSON.generate(payload)) }.not_to raise_error
   end

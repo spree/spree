@@ -59,6 +59,7 @@ module Spree
           step :anonymize_identities
           step :anonymize_sessions
           step :anonymize_merchant_annotations
+          step :remove_tax_identifiers
           step :anonymize_consent_records
           step :anonymize_data_requests
           step :record_consent_withdrawal
@@ -220,6 +221,13 @@ module Spree
       # store holds. The schema tripwire cannot catch these — a custom field's
       # value lives in a column called `value`, which no PII-shaped name
       # pattern will ever match.
+      # The registration on the account itself. Snapshots frozen onto orders
+      # stay put — they are part of the invoice, like the address beside them —
+      # but the profile copy is live identifying data with nothing keeping it.
+      def remove_tax_identifiers
+        customer.tax_identifiers.destroy_all if customer.respond_to?(:tax_identifiers)
+      end
+
       def anonymize_merchant_annotations
         customer.custom_fields.destroy_all if customer.respond_to?(:custom_fields)
         customer.tag_list = [] if customer.respond_to?(:tag_list)

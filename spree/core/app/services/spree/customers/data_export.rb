@@ -36,6 +36,7 @@ module Spree
           wishlists: wishlists,
           custom_fields: custom_fields,
           companies: companies,
+          tax_identifiers: tax_identifiers,
           exported_at: Time.current.iso8601
         }
       end
@@ -67,8 +68,13 @@ module Spree
         }
       end
 
+      # Matched by email as well as by customer, mirroring the anonymizer: a
+      # guest sign-up carries no customer id, and an access response that
+      # skipped it would omit data the store holds and is about to wipe.
       def newsletter_subscriptions
-        scope = Spree::NewsletterSubscriber.where(customer_id: customer.id)
+        scope = Spree::NewsletterSubscriber.
+                where(customer_id: customer.id).
+                or(Spree::NewsletterSubscriber.where(email: customer.email))
         scope = scope.where(store_id: store.id) if store
 
         scope.map do |subscriber|
@@ -232,6 +238,21 @@ module Spree
 
         customer.custom_fields.includes(:custom_field_definition).map do |field|
           { key: field.key, value: field.value.to_s }
+        end
+      end
+
+      # A VAT or business registration on the account identifies the person
+      # (or their business) as surely as an address does.
+      def tax_identifiers
+        return [] unless customer.respond_to?(:tax_identifiers)
+
+        customer.tax_identifiers.map do |identifier|
+          {
+            kind: identifier.kind,
+            value: identifier.value,
+            validation_status: identifier.validation_status,
+            created_at: identifier.created_at&.iso8601
+          }
         end
       end
 

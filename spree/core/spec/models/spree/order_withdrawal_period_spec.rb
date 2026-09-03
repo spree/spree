@@ -63,6 +63,31 @@ RSpec.describe 'Spree::Order withdrawal period' do
     end
   end
 
+  # A download has no carrier and no delivery event, so waiting for one would
+  # stop a mixed order's clock forever: the parcel arrives and the deadline
+  # never appears.
+  describe 'an order that includes digital content' do
+    let(:physical) { order.fulfillments.first || create(:fulfillment, order: order) }
+    let(:digital) { create(:fulfillment, order: order) }
+
+    before do
+      physical.update_columns(status: 'delivered', delivered_at: 2.days.ago)
+      digital.update_columns(status: 'fulfilled', fulfilled_at: 3.days.ago, delivered_at: nil)
+
+      allow(order).to receive(:fulfillments).and_return([physical, digital])
+      allow(digital).to receive(:digital?).and_return(true)
+      allow(physical).to receive(:digital?).and_return(false)
+    end
+
+    it 'counts the digital line as received when it was fulfilled' do
+      expect(order.withdrawal_period_ends_at).to be_within(1.minute).of(2.days.ago + 14.days)
+    end
+
+    it 'does not stall on the download waiting for a delivery that never comes' do
+      expect(order.withdrawal_period_starts_at).to be_present
+    end
+  end
+
   describe 'when the market grants no withdrawal right' do
     # Stubbed rather than persisted: a market row whose preferences column is
     # NULL cannot store a nil override — the getter falls back to the declared

@@ -88,7 +88,11 @@ module Spree
               store: current_store,
               customer: @resource,
               kind: Spree::DataRequest::ACCESS,
-              requested_by: try_spree_current_user
+              requested_by: try_spree_current_user,
+              # Staff receive the file in this response and forward it
+              # themselves. Queueing the job as well would email the customer a
+              # copy of something they never asked this shop for.
+              process: false
             )
 
             return render_result_error(result) unless result.success?
@@ -98,7 +102,11 @@ module Spree
             # same trace whoever produced it, and building through the workflow
             # is what runs the `extend_payload` hook a host app relies on to
             # complete the document.
-            render json: Spree::DataRequests::Fulfill.payload_for(result.value)
+            data_request = result.value
+            payload = Spree::DataRequests::Fulfill.payload_for(data_request)
+            data_request.update(status: 'completed', completed_at: Time.current) if data_request.pending?
+
+            render json: payload
           end
 
           # Bulk add the given customers to the given groups. Idempotent —

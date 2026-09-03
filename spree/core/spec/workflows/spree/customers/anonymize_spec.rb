@@ -359,6 +359,18 @@ RSpec.describe Spree::Customers::Anonymize do
     end
   end
 
+  describe 'a tax registration on the account' do
+    let!(:identifier) { create(:tax_identifier, owner: customer) }
+
+    # The snapshot frozen onto an order stays, like the address beside it —
+    # but the live profile copy has nothing keeping it.
+    it 'is removed' do
+      result
+
+      expect(Spree::TaxIdentifier.where(id: identifier.id)).to be_empty
+    end
+  end
+
   it 'announces the erasure' do
     expect(customer).to receive(:publish_event).with('customer.anonymized', hash_including(:store_id))
 
