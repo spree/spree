@@ -86,9 +86,10 @@ interface PageHeaderProps {
   slotContext?: Record<string, unknown>
   /**
    * Called after the user confirms the auto-rendered Delete action.
-   * When provided, the Delete item is enabled. The confirmation prompt is
-   * fixed ("Are you sure? This action cannot be undone.") — pass `dropdownItems`
-   * directly if you need a custom delete flow.
+   * When provided, the Delete item is enabled. The prompt defaults to
+   * "Are you sure? This action cannot be undone." — override the wording with
+   * `deleteConfirmMessage`, or pass `dropdownItems` directly if you need a
+   * different delete flow rather than different copy.
    */
   onDelete?: () => void | Promise<void>
   /** Override the destructive label ("Delete order", "Delete product", etc.). */
