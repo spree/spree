@@ -22,8 +22,8 @@ export function useFulfillmentActions(orderId: string) {
         queryClient.invalidateQueries({ queryKey: buildKey('seller-orders') })
       },
       onError: (error) => {
-        // A rejected workflow — a parcel that cannot be resumed, a split that
-        // would empty its source — otherwise looks like a dead button.
+        // A rejected workflow — a parcel that cannot ship, a split that would
+        // empty its source — otherwise looks like a dead button.
         toastManager.add({
           type: 'error',
           title: error instanceof Error ? error.message : String(error),
@@ -60,10 +60,6 @@ export function useFulfillmentActions(orderId: string) {
     sellerClient().orders.fulfillments.cancel(orderId, fulfillmentId),
   )
 
-  const resume = useFulfillmentMutation((fulfillmentId: string) =>
-    sellerClient().orders.fulfillments.resume(orderId, fulfillmentId),
-  )
-
   const split = useFulfillmentMutation(
     ({
       fulfillmentId,
@@ -76,5 +72,5 @@ export function useFulfillmentActions(orderId: string) {
     }) => sellerClient().orders.fulfillments.split(orderId, fulfillmentId, params),
   )
 
-  return { fulfill, update, cancel, resume, split }
+  return { fulfill, update, cancel, split }
 }

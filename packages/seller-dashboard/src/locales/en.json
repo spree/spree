@@ -301,7 +301,6 @@
       "units_selected": "{{selected}} of {{total}} units selected",
       "partial_warning": "Sending part of this parcel moves the rest onto a new one.",
       "quantity_for": "Quantity for {{name}}",
-      "resume": "Resume",
       "cancel": "Cancel parcel",
       "cancel_title": "Cancel this parcel?",
       "cancel_message": "The goods go back on the shelf and the carrier is stood down.",

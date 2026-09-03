@@ -67,7 +67,7 @@ export function FulfillmentsCard({ order }: { order: Order }) {
 function FulfillmentRow({ orderId, fulfillment }: { orderId: string; fulfillment: Fulfillment }) {
   const { t } = useTranslation()
   const confirm = useConfirm()
-  const { cancel, resume } = useFulfillmentActions(orderId)
+  const { cancel } = useFulfillmentActions(orderId)
 
   const [shipping, setShipping] = useState(false)
   const [trackingOpen, setTrackingOpen] = useState(false)
@@ -115,14 +115,6 @@ function FulfillmentRow({ orderId, fulfillment }: { orderId: string; fulfillment
               {splittable && (
                 <DropdownMenuItem onClick={() => setSplitOpen(true)}>
                   {t('orders.fulfillments.split')}
-                </DropdownMenuItem>
-              )}
-              {status === 'canceled' && (
-                <DropdownMenuItem
-                  disabled={resume.isPending}
-                  onClick={() => resume.mutate(fulfillment.id)}
-                >
-                  {t('orders.fulfillments.resume')}
                 </DropdownMenuItem>
               )}
               {cancelable && (

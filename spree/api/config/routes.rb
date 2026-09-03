@@ -870,7 +870,6 @@ Spree::Core::Engine.add_routes do
             member do
               patch :fulfill
               patch :cancel
-              patch :resume
               patch :split
             end
           end

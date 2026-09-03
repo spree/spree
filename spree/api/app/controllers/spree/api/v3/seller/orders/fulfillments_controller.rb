@@ -20,7 +20,7 @@ module Spree
 
             before_action :set_order
             before_action :set_fulfillment,
-                          only: [:show, :update, :fulfill, :cancel, :resume, :split]
+                          only: [:show, :update, :fulfill, :cancel, :split]
 
             def index
               # This action builds its own collection rather than going through
@@ -84,11 +84,6 @@ module Spree
               run_workflow(Spree.fulfillment_cancel_workflow)
             end
 
-            # PATCH /api/v3/seller/orders/:order_id/fulfillments/:id/resume
-            def resume
-              run_workflow(Spree.fulfillment_resume_workflow)
-            end
-
             # PATCH /api/v3/seller/orders/:order_id/fulfillments/:id/split
             #
             # Moves part of what this parcel holds onto one of its own, for
@@ -126,7 +121,7 @@ module Spree
               authorize! :show, @order
             end
 
-            WRITE_ACTIONS = %w[update fulfill cancel resume split].freeze
+            WRITE_ACTIONS = %w[update fulfill cancel split].freeze
 
             def set_fulfillment
               @fulfillment = @order.fulfillments.find_by_prefix_id!(params[:id])

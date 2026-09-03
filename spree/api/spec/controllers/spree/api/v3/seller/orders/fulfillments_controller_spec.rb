@@ -124,7 +124,7 @@ RSpec.describe Spree::Api::V3::Seller::Orders::FulfillmentsController, type: :co
     end
   end
 
-  describe 'PATCH #cancel and #resume' do
+  describe 'PATCH #cancel' do
     it 'cancels a parcel the seller will not send' do
       patch :cancel, params: { order_id: order.prefixed_id, id: fulfillment.prefixed_id }, as: :json
 
@@ -132,13 +132,13 @@ RSpec.describe Spree::Api::V3::Seller::Orders::FulfillmentsController, type: :co
       expect(fulfillment.reload).to be_canceled
     end
 
-    it 'resumes a canceled parcel' do
-      Spree::Fulfillments::Cancel.call(fulfillment: fulfillment)
-
-      patch :resume, params: { order_id: order.prefixed_id, id: fulfillment.prefixed_id }, as: :json
-
-      expect(response).to have_http_status(:ok)
-      expect(fulfillment.reload).not_to be_canceled
+    # Resuming a canceled parcel was removed from the platform: the goods went
+    # back on the shelf and the carrier was stood down, so the honest move is
+    # a new parcel rather than reviving that one.
+    it 'has no route for resuming one' do
+      expect {
+        patch :resume, params: { order_id: order.prefixed_id, id: fulfillment.prefixed_id }, as: :json
+      }.to raise_error(ActionController::UrlGenerationError)
     end
 
     it "404s cancelling through another seller's order" do
