@@ -34,6 +34,7 @@ module Spree
 
         step :ensure_cancellable
         step :ensure_reason_belongs_to_store
+        step :ensure_refund_amount_is_settleable
 
         # Veto point — seller policy, already-dispatched guards. Before the
         # transaction: nothing is written yet, and payment settlement has
@@ -41,7 +42,10 @@ module Spree
         run_hooks :before_cancel
 
         @decided_at = canceled_at || Time.current
-        @amount_to_refund = refund_amount
+        # Coerced because the amount arrives from JSON as a string, and it is
+        # compared against money further down — `[amount, remaining].min`
+        # raises on a String.
+        @amount_to_refund = refund_amount&.to_d
         @amount_to_refund ||= amount_paid if refund_payments
 
         ApplicationRecord.transaction do
@@ -65,6 +69,18 @@ module Spree
 
       def ensure_cancellable
         failure(order) unless order.allow_cancel?
+      end
+
+      # An ordinary order settles at the gateway, which returns the whole
+      # captured payment — there is nowhere to apply a cap. Honouring the
+      # request halfway would refund everything while the caller believed
+      # they had held part back, so it is refused instead. A shared payment
+      # is the case the amount exists for: there it names this order's share.
+      def ensure_refund_amount_is_settleable
+        return if refund_amount.blank? || order.grouped?
+
+        order.errors.add(:base, Spree.t('errors.messages.refund_amount_requires_shared_payment'))
+        failure(order)
       end
 
       # A reason from another store would label this order with a vocabulary

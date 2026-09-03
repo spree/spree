@@ -613,6 +613,7 @@ en:
       not_saved:
         one: '1 error prohibited this %{resource} from being saved:'
         other: "%{count} errors prohibited this %{resource} from being saved:"
+      refund_amount_requires_shared_payment: can only be set when the payment is shared across a split checkout
   number:
     currency:
       format:

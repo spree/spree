@@ -374,7 +374,9 @@ RSpec.describe 'Admin Orders API', type: :request, swagger_doc: 'api-reference/a
         `refund_payments` and `refund_amount` apply to an order paid through a
         split checkout, where one payment is shared across several orders.
         They hand back this order's own share — all of it, or the part named
-        by `refund_amount`.
+        by `refund_amount`. A `refund_amount` on an ordinary order is refused
+        with a 422: the gateway returns the whole captured payment there, so a
+        cap cannot be honoured.
 
         Set `notify_customer: true` to send the order cancellation email.
       DESC
@@ -393,7 +395,7 @@ RSpec.describe 'Admin Orders API', type: :request, swagger_doc: 'api-reference/a
           cancel_reason_id: { type: :string, description: "Why the order was canceled — the id of one of the store's cancellation reasons." },
           cancel_note: { type: :string, description: 'Staff-facing note about the cancellation.' },
           refund_payments: { type: :boolean, description: "Hand back this order's share of a payment shared across a split checkout." },
-          refund_amount: { type: :string, description: "How much of that share to return. Defaults to all of it." },
+          refund_amount: { type: :string, description: "How much of that share to return. Defaults to all of it; refused on an order whose payment is not shared." },
           notify_customer: { type: :boolean, description: 'Send the order cancellation email after canceling.' }
         }
       }

@@ -997,6 +997,15 @@ RSpec.describe Spree::Api::V3::Admin::OrdersController, type: :controller do
 
           subject
         end
+
+        # The gateway returns an ordinary order's payment in full, so a cap
+        # cannot be honoured and is refused rather than quietly ignored.
+        it 'refuses the cap on an order whose payment is not shared' do
+          subject
+
+          expect(response).to have_http_status(:unprocessable_content)
+          expect(order.reload).not_to be_canceled
+        end
       end
     end
 

@@ -538,7 +538,8 @@ export interface OrderCancelParams {
    */
   refund_payments?: boolean
   /**
-   * How much of that share to return, defaulting to all of it.
+   * How much of that share to return, defaulting to all of it. Refused on an
+   * ordinary order, where the gateway returns the payment in full.
    * Decimal amount; see `PaymentCreateParams.amount` for the string rationale.
    */
   refund_amount?: string | number

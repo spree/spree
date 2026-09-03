@@ -105,6 +105,38 @@ module Spree
       end
     end
 
+    # A split checkout is the one flow where the refund amount is read: the
+    # payment is shared, so what comes back is this order's own share.
+    describe 'refunding a share of a shared payment' do
+      let(:order) { create(:completed_order_with_totals, order_group: create(:order_group)) }
+      let!(:split) do
+        create(:payment_split, order: order, currency: order.currency,
+                               authorized_amount: BigDecimal(30), captured_amount: BigDecimal(30))
+      end
+
+      # The amount arrives from JSON as a string, and money comparison further
+      # down raises on one — so the workflow has to coerce before comparing.
+      it 'accepts the amount as a string, as the API delivers it' do
+        expect(Spree.refund_create_workflow).to receive(:call).
+          with(hash_including(amount: BigDecimal('25'))).
+          and_return(Spree::ServiceModule::Result.new(true, nil, nil))
+
+        result = subject.call(order: order, canceler: user, refund_payments: true, refund_amount: '25.00')
+
+        expect(result).to be_success
+      end
+    end
+
+    describe 'a capped refund on an ordinary order' do
+      it 'is refused rather than silently refunding everything' do
+        result = subject.call(order: order, canceler: user, refund_payments: true, refund_amount: '25.00')
+
+        expect(result).to be_failure
+        expect(order.errors[:base].join).to include('shared')
+        expect(order.reload).not_to be_canceled
+      end
+    end
+
     describe 'reason and note' do
       it 'records the canceler and leaves the reason unset when none is given' do
         result

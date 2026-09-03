@@ -14258,7 +14258,9 @@ paths:
         `refund_payments` and `refund_amount` apply to an order paid through a
         split checkout, where one payment is shared across several orders.
         They hand back this order's own share — all of it, or the part named
-        by `refund_amount`.
+        by `refund_amount`. A `refund_amount` on an ordinary order is refused
+        with a 422: the gateway returns the whole captured payment there, so a
+        cap cannot be honoured.
 
         Set `notify_customer: true` to send the order cancellation email.
 
@@ -14275,17 +14277,20 @@ paths:
             secretKey: 'sk_xxx',
           })
 
+          // A split checkout: the payment is shared, so this hands back only this
+          // order's share of it.
           const order = await client.orders.cancel('or_UkLWZg9DAJ', {
             cancel_reason_id: 'ocr_UkLWZg9DAJ',
             cancel_note: 'Supplier could not deliver in time',
-            // On a split checkout, hand back this order's share of the shared payment.
-            // Omit refund_amount to return the whole share.
+            // Omit refund_amount to return the whole share. It is refused on an
+            // ordinary order, where the gateway returns the payment in full.
             refund_payments: true,
             refund_amount: '25.00',
           })
       - lang: bash
         label: Spree CLI
-        source: spree api patch /orders/{id}/cancel
+        source: spree api patch /orders/{id}/cancel -d '{"cancel_reason_id":"ocr_UkLWZg9DAJ","cancel_note":"Supplier
+          could not deliver in time","refund_payments":true,"refund_amount":"25.00"}'
       parameters:
       - name: x-spree-api-key
         in: header
@@ -14416,7 +14421,7 @@ paths:
                 refund_amount:
                   type: string
                   description: How much of that share to return. Defaults to all of
-                    it.
+                    it; refused on an order whose payment is not shared.
                 notify_customer:
                   type: boolean
                   description: Send the order cancellation email after canceling.
