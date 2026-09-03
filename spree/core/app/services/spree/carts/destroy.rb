@@ -40,7 +40,7 @@ module Spree
       def release_gift_card(cart:)
         return success(cart: cart) if cart.gift_card.blank?
 
-        result = cart.remove_gift_card
+        result = Spree.gift_card_remove_workflow.call(order: cart)
         return failure(false, result.error) if result.failure?
 
         success(cart: cart)
