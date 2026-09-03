@@ -72,4 +72,18 @@ test.describe('order fulfillments', () => {
     await expect(card.getByText(new RegExp(FIXTURE_PROMO_PRODUCT, 'i')).first()).toBeVisible()
     await expect(card.getByRole('button', { name: /actions for/i })).toHaveCount(0)
   })
+  // Tracking is a Spree::Delivery since 6.0, and a draft has no fulfillment
+  // record to hang one off — so the card offers no tracking controls until
+  // the order is placed. Anything else would present an action that can only
+  // fail.
+  test('offers no tracking or label controls on a draft', async ({ page }) => {
+    const creds = await login(page)
+    await createDraftOrder(page, creds.store_id)
+
+    const card = fulfillmentsCard(page)
+    await expect(card.getByText(/unfulfilled \(\d+\)/i)).toBeVisible({ timeout: 15_000 })
+    await expect(card.getByRole('button', { name: /add tracking/i })).toHaveCount(0)
+    await expect(card.getByRole('button', { name: /buy label/i })).toHaveCount(0)
+    await expect(card.getByRole('button', { name: /print label/i })).toHaveCount(0)
+  })
 })
