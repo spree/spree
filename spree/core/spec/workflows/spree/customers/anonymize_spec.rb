@@ -258,6 +258,30 @@ RSpec.describe Spree::Customers::Anonymize do
 
       expect(other.reload.email).to eq('someone-else@example.com')
     end
+
+    # An order keeps the casing the address was typed in, so the same person
+    # can be recorded as both `buyer@` and `Buyer@`. Matching exactly would
+    # leave the guest checkout holding their name, street and IP address.
+    it 'scrubs one placed under a different casing of the same address' do
+      shouted = create(:completed_order_with_totals, store: store)
+      shouted.update_columns(customer_id: nil, email: 'BUYER@Example.com',
+                             last_ip_address: '203.0.113.4')
+
+      result
+      shouted.reload
+
+      expect(shouted.email).to eq(customer.reload.email)
+      expect(shouted.last_ip_address).to be_nil
+    end
+
+    it 'removes a newsletter sign-up stored under a different casing' do
+      subscriber = create(:newsletter_subscriber, store: store, email: 'buyer@example.com')
+      subscriber.update_columns(customer_id: nil, email: 'Buyer@Example.com')
+
+      result
+
+      expect(Spree::NewsletterSubscriber.where(id: subscriber.id)).to be_empty
+    end
   end
 
   describe 'traces left by guest checkout' do

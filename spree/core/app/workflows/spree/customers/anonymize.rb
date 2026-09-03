@@ -21,6 +21,8 @@ module Spree
     # carrying customer-identifiable data extends this flow in the same
     # change — there is a schema guard spec that fails when it does not.
     class Anonymize < Spree::Workflow
+      include Spree::PersonalDataMatching
+
       hooks :validate, :after_anonymize
 
       # What replaces a name. Recognisable as a tombstone rather than looking
@@ -182,8 +184,7 @@ module Spree
       # @param model [Class]
       # @return [ActiveRecord::Relation]
       def owned_purchases(model)
-        model.where(customer_id: customer.id).
-          or(model.where(customer_id: nil, email: @original_email))
+        rows_about_person(model, email: @original_email, customer_id: customer.id)
       end
 
       # Cards keep their last four digits and expiry — a refund against a
@@ -250,7 +251,7 @@ module Spree
       def anonymize_consent_records
         Spree::ConsentRecord.
           where(owner_type: customer.class.base_class.to_s, owner_id: customer.id).
-          or(Spree::ConsentRecord.where(email: @original_email)).
+          or(with_email(Spree::ConsentRecord, @original_email)).
           update_all(email: nil, ip_address: nil, user_agent: nil, updated_at: Time.current)
       end
 
@@ -305,7 +306,7 @@ module Spree
       def remove_newsletter_subscriptions
         Spree::NewsletterSubscriber.
           where(customer_id: customer.id).
-          or(Spree::NewsletterSubscriber.where(email: @original_email)).
+          or(with_email(Spree::NewsletterSubscriber, @original_email)).
           destroy_all
       end
 

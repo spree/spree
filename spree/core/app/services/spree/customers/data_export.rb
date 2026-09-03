@@ -12,6 +12,8 @@ module Spree
     # Read-only and side-effect free: the caller decides whether the result is
     # streamed, written to a file or attached to a request record.
     class DataExport
+      include Spree::PersonalDataMatching
+
       # @param customer [Spree::Customer]
       # @param store [Spree::Store, nil] narrows store-scoped records
       #   (newsletter subscriptions, consent). Orders are not narrowed — a
@@ -75,7 +77,7 @@ module Spree
       def newsletter_subscriptions
         scope = Spree::NewsletterSubscriber.
                 where(customer_id: customer.id).
-                or(Spree::NewsletterSubscriber.where(email: customer.email))
+                or(with_email(Spree::NewsletterSubscriber, customer.email))
         scope = scope.where(store_id: store.id) if store
 
         scope.map do |subscriber|
@@ -95,7 +97,7 @@ module Spree
       def consent_records
         scope = Spree::ConsentRecord.
                 where(owner_type: customer.class.base_class.to_s, owner_id: customer.id).
-                or(Spree::ConsentRecord.where(email: customer.email))
+                or(with_email(Spree::ConsentRecord, customer.email))
         scope = scope.where(store_id: store.id) if store
 
         scope.recent_first.map do |record|
@@ -279,8 +281,7 @@ module Spree
       # @param model [Class]
       # @return [ActiveRecord::Relation]
       def owned_purchases(model)
-        model.where(customer_id: customer.id).
-          or(model.where(customer_id: nil, email: customer.email))
+        rows_about_person(model, email: customer.email, customer_id: customer.id)
       end
 
       # @param address [Spree::Address, nil]

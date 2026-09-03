@@ -123,6 +123,29 @@ RSpec.describe Spree::Customers::DataExport do
   # disclose. The two answer the same question about the same columns, so a
   # field reachable by one and not the other is a defect in whichever is
   # behind — usually the export, which is written per-section by hand.
+  # Customer and order emails keep the casing they were typed in; newsletter
+  # addresses are stored downcased. One person can therefore be recorded under
+  # two spellings of the same address.
+  describe 'an address the person typed differently' do
+    let!(:guest_order) do
+      create(:completed_order_with_totals, store: store).
+        tap { |order| order.update_columns(customer_id: nil, email: customer.email.upcase) }
+    end
+
+    it 'includes a guest order placed under different casing' do
+      numbers = payload[:orders].map { |order| order[:number] }
+
+      expect(numbers).to include(guest_order.number)
+    end
+
+    it 'includes a newsletter sign-up under different casing' do
+      create(:newsletter_subscriber, store: store, email: customer.email.downcase).
+        update_columns(customer_id: nil)
+
+      expect(payload[:marketing_consent][:newsletter_subscriptions]).not_to be_empty
+    end
+  end
+
   describe 'agreement with what erasure removes' do
     it 'discloses the tracking and merchant notes held against the account' do
       customer.update_columns(metadata: { 'crm_segment' => 'wholesale' })
