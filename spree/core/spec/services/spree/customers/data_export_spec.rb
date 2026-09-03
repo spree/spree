@@ -163,6 +163,14 @@ RSpec.describe Spree::Customers::DataExport do
       expect(exported[:metadata]).to eq('source' => 'campaign')
     end
 
+    # A note staff wrote about someone is still about them, and erasure
+    # already treats it that way by clearing it.
+    it 'discloses the note staff kept on the account' do
+      customer.update_columns(internal_note: 'asked twice about the refund')
+
+      expect(payload[:account][:internal_note]).to eq('asked twice about the refund')
+    end
+
     it 'discloses where a split checkout was going' do
       address = create(:address, address1: '5 Baker Street')
       group = create(:order_group, store: store, customer: customer)

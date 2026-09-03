@@ -60,6 +60,7 @@ module Spree
           selected_locale: customer.selected_locale,
           tags: customer.tag_list.to_a,
           metadata: customer.metadata.presence,
+          internal_note: customer.internal_note,
           created_at: customer.created_at&.iso8601,
           anonymized_at: customer.anonymized_at&.iso8601
         }
@@ -148,6 +149,7 @@ module Spree
             po_number: order.po_number,
             last_ip_address: order.last_ip_address,
             metadata: order.metadata.presence,
+            internal_note: order.internal_note,
             billing_address: address_hash(order.bill_address),
             shipping_address: address_hash(order.ship_address),
             line_items: order.line_items.map do |line_item|
@@ -176,6 +178,7 @@ module Spree
             number: group.number,
             email: group.email,
             currency: group.currency,
+            metadata: group.metadata.presence,
             billing_address: address_hash(group.bill_address),
             shipping_address: address_hash(group.ship_address),
             created_at: group.created_at&.iso8601
@@ -197,6 +200,7 @@ module Spree
             customer_note: order.customer_note,
             last_ip_address: order.last_ip_address,
             metadata: order.metadata.presence,
+            internal_note: order.internal_note,
             billing_address: address_hash(order.bill_address),
             shipping_address: address_hash(order.ship_address),
             created_at: order.created_at&.iso8601,
@@ -247,6 +251,7 @@ module Spree
             name: card.name,
             month: card.month,
             year: card.year,
+            metadata: card.metadata.presence,
             created_at: card.created_at&.iso8601
           }
         end
