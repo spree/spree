@@ -60,6 +60,14 @@ RSpec.describe Spree::Api::V3::Store::Carts::DiscountCodesController, type: :con
         expect(order.reload.read_attribute(:coupon_code)).to eq('big50')
         expect(order.discounts.where(promotion_id: promotion.id)).to be_empty
       end
+
+      it 'returns the rule message in warnings' do
+        post :create, params: { cart_id: order.prefixed_id, code: 'BIG50' }
+
+        warning = json_response['warnings'].sole
+        expect(warning['code']).to eq('coupon_code_not_eligible')
+        expect(warning['message']).to be_present
+      end
     end
 
     context 'with a multi-code promotion' do
