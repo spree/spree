@@ -23,6 +23,51 @@ module Spree
         package
       end
 
+      describe 'deliverability' do
+        let(:other_location) { build(:stock_location) }
+
+        def deliverable_only(*deliverable_packages)
+          estimator = instance_double(Estimator)
+          allow(estimator).to receive(:deliverable?) { |package| deliverable_packages.include?(package) }
+          estimator
+        end
+
+        it 'fills the units from an origin that can deliver rather than the first one offered' do
+          2.times { build_inventory_unit }
+
+          undeliverable = pack { |package| inventory_units.each { |unit| package.add unit } }
+          deliverable = Package.new(other_location).tap do |package|
+            inventory_units.each { |unit| package.add unit }
+          end
+
+          packages = Prioritizer.new([undeliverable, deliverable],
+                                     estimator: deliverable_only(deliverable)).prioritized_packages
+
+          expect(packages).to eq [deliverable]
+          expect(packages.first.quantity).to eq 2
+        end
+
+        it 'keeps the order it was given between origins that can both deliver' do
+          2.times { build_inventory_unit }
+
+          first = pack { |package| package.add inventory_units.first }
+          second = Package.new(other_location).tap { |package| package.add inventory_units.last }
+
+          packages = Prioritizer.new([first, second],
+                                     estimator: deliverable_only(first, second)).prioritized_packages
+
+          expect(packages).to eq [first, second]
+        end
+
+        it 'leaves the order alone without an estimator to ask' do
+          build_inventory_unit
+          first = pack { |package| package.add inventory_units.first }
+          second = Package.new(other_location).tap { |package| package.add inventory_units.first }
+
+          expect(Prioritizer.new([first, second]).prioritized_packages).to eq [first]
+        end
+      end
+
       it 'keeps a single package' do
         package1 = pack do |package|
           package.add build_inventory_unit

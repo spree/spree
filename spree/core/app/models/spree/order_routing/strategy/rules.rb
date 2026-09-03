@@ -59,23 +59,28 @@ module Spree
         # rank order so the Prioritizer's first-package-wins-on-hand logic
         # honors the routing decision.
         def build_packages(locations)
-          locations.flat_map do |location|
+          packages = locations.flat_map do |location|
             Spree::Stock::Packer.new(location, inventory_units, Spree.stock_splitters).packages
           end
+          packages.each { |package| package.owner = order }
         end
 
         # Prioritizer's Adjuster distributes each inventory_unit across
         # packages: the first package with on-hand stock fulfills the unit,
         # and downstream packages have that unit removed. Packages whose
-        # items all get stripped are pruned.
+        # items all get stripped are pruned. Rank only decides between origins
+        # that can reach the destination — the Prioritizer demotes the rest.
         def prioritize_packages(packages)
-          Spree::Stock::Prioritizer.new(packages).prioritized_packages
+          Spree::Stock::Prioritizer.new(packages, estimator: estimator).prioritized_packages
         end
 
         def estimate_rates(packages)
-          estimator = Spree::Stock::Estimator.new(order)
           packages.each { |pkg| pkg.delivery_rates = estimator.delivery_rates(pkg) }
           packages
+        end
+
+        def estimator
+          @estimator ||= Spree::Stock::Estimator.new(order)
         end
       end
     end

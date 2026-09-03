@@ -43,6 +43,75 @@ module Spree
         end
       end
 
+      # Origin groups exist so different warehouses can serve different zones.
+      # The destination has to decide which warehouse packs the goods, or the
+      # cart allocates to one whose group has no method for the address and
+      # drops the item as undeliverable while the other could have shipped it.
+      describe 'multi-origin allocation' do
+        let(:profile) { store.default_delivery_profile }
+        let!(:us_warehouse) do
+          create(:stock_location, store: store, name: "US #{SecureRandom.hex(3)}",
+                                  propagate_all_variants: true, default: true)
+        end
+        let!(:eu_warehouse) do
+          create(:stock_location, store: store, name: "EU #{SecureRandom.hex(3)}",
+                                  propagate_all_variants: true, country: Spree::Country.by_iso('NL'))
+        end
+
+        let(:us_group) { profile.default_origin_group }
+        let(:eu_group) { profile.delivery_origin_groups.create!(name: 'EU Fulfillment') }
+
+        let(:netherlands) { Spree::Country.by_iso('NL') }
+        let(:dutch_address) { create(:address, country: netherlands, state: nil) }
+        let(:order) { create(:order_with_line_items, store: store, ship_address: dutch_address) }
+
+        before do
+          # Every method in this setup is zone-bound, as it is for a merchant
+          # who split their origins by region — the factory's worldwide method
+          # would make the US warehouse look able to deliver anywhere.
+          order
+          Spree::DeliveryMethod.delete_all
+
+          us_group.stock_locations = [us_warehouse]
+          eu_group.stock_locations = [eu_warehouse]
+
+          us_zone = create(
+            :delivery_zone_with_country,
+            store: store, delivery_profile: profile,
+            delivery_origin_group: us_group, country: Spree::Country.by_iso('US')
+          )
+          eu_zone = create(
+            :delivery_zone_with_country,
+            store: store, delivery_profile: profile,
+            delivery_origin_group: eu_group, country: netherlands
+          )
+
+          create(
+            :delivery_method,
+            name: 'US Standard', store: store, delivery_profile: profile,
+            delivery_origin_group: us_group, delivery_zone: us_zone
+          )
+          create(
+            :delivery_method,
+            name: 'EU Standard', store: store, delivery_profile: profile,
+            delivery_origin_group: eu_group, delivery_zone: eu_zone
+          )
+
+          order.variants.each do |variant|
+            [us_warehouse, eu_warehouse].each do |location|
+              location.stock_level_or_create(variant).adjust_count_on_hand(10)
+            end
+          end
+        end
+
+        it 'allocates from the origin whose group serves the destination' do
+          packages = subject.packages
+
+          expect(packages.map { |package| package.stock_location.name }).to eq [eu_warehouse.name]
+          expect(packages.first.delivery_rates.map(&:name)).to include('EU Standard')
+        end
+      end
+
       describe 'channel-scoped allocation' do
         let!(:warehouse) { create(:stock_location, store: store, name: "Warehouse #{SecureRandom.hex(3)}", backorderable_default: true, propagate_all_variants: true) }
         let(:channel) { create(:channel, store: store) }

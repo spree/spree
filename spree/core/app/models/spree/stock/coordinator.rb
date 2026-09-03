@@ -36,6 +36,11 @@ module Spree
           packages += packer.packages
         end
 
+        # A proposal's packages belong to the cart or order being allocated.
+        # Saying so is what gives them its currency, store and destination —
+        # Package#owner would otherwise fall back to guessing from a unit's
+        # order_id, which cart-phase units deliberately don't carry.
+        packages.each { |package| package.owner = order }
         packages
       end
 
@@ -97,16 +102,21 @@ module Spree
       end
 
       def prioritize_packages(packages)
-        prioritizer = Prioritizer.new(packages)
+        prioritizer = Prioritizer.new(packages, estimator: estimator)
         prioritizer.prioritized_packages
       end
 
       def estimate_packages(packages)
-        estimator = Estimator.new(order)
         packages.each do |package|
           package.delivery_rates = estimator.delivery_rates(package)
         end
         packages
+      end
+
+      # Shared between prioritization (which origins can deliver at all) and
+      # the rate refresh, so both answer with the same eligibility rules.
+      def estimator
+        @estimator ||= Estimator.new(order)
       end
 
       def build_packer(stock_location, inventory_units)
