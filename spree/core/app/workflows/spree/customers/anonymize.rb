@@ -176,7 +176,7 @@ module Spree
         owned_purchases(Spree::Cart).update_all(scrubbed)
 
         owned_purchases(Spree::OrderGroup).
-          update_all(email: customer.email, updated_at: Time.current)
+          update_all(email: customer.email, metadata: {}, updated_at: Time.current)
       end
 
       # Everything this person bought, however they were signed in at the time.

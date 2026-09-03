@@ -258,6 +258,14 @@ RSpec.describe Spree::Customers::Anonymize do
       end
     end
 
+    it 'clears the merchant notes the group carries' do
+      order_group.update_columns(metadata: { 'crm' => 'vip' })
+
+      result
+
+      expect(order_group.reload.metadata).to eq({})
+    end
+
     it 'redacts the addresses the group holds' do
       result
 

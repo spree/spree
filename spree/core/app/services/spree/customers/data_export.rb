@@ -15,9 +15,12 @@ module Spree
       include Spree::PersonalDataMatching
 
       # @param customer [Spree::Customer]
-      # @param store [Spree::Store, nil] narrows store-scoped records
-      #   (newsletter subscriptions, consent). Orders are not narrowed — a
-      #   subject access request covers everything the controller holds.
+      # @param store [Spree::Store, nil] the store the request came in through,
+      #   recorded on the request rather than used to narrow this payload.
+      #   Nothing here is scoped to one store: erasure never is, and an access
+      #   response that showed less than the erasure removes would understate
+      #   what the controller holds. Kept for host apps that override this
+      #   service and for the sections a multi-store build may want to label.
       def initialize(customer:, store: nil)
         @customer = customer
         @store = store
@@ -78,11 +81,11 @@ module Spree
       # Matched by email as well as by customer, mirroring the anonymizer: a
       # guest sign-up carries no customer id, and an access response that
       # skipped it would omit data the store holds and is about to wipe.
+      # Never narrowed to one store — erasure removes these rows everywhere.
       def newsletter_subscriptions
         scope = Spree::NewsletterSubscriber.
                 where(customer_id: customer.id).
                 or(with_email(Spree::NewsletterSubscriber, customer.email))
-        scope = scope.where(store_id: store.id) if store
 
         scope.map do |subscriber|
           {
@@ -102,7 +105,6 @@ module Spree
         scope = Spree::ConsentRecord.
                 where(owner_type: customer.class.base_class.to_s, owner_id: customer.id).
                 or(with_email(Spree::ConsentRecord, customer.email))
-        scope = scope.where(store_id: store.id) if store
 
         scope.recent_first.map do |record|
           {
@@ -374,7 +376,11 @@ module Spree
           state_name: address.state_name,
           postal_code: address.postal_code,
           country_code: address.country_code,
-          phone: address.phone
+          phone: address.phone,
+          alternative_phone: address.alternative_phone,
+          latitude: address.latitude,
+          longitude: address.longitude,
+          metadata: address.metadata.presence
         }
       end
     end

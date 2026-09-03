@@ -165,6 +165,34 @@ RSpec.describe Spree::Customers::DataExport do
 
     # A note staff wrote about someone is still about them, and erasure
     # already treats it that way by clearing it.
+    it 'discloses the address fields erasure clears' do
+      address = create(:address, owner: customer)
+      address.update_columns(alternative_phone: '555-0100', latitude: 51.52, longitude: -0.15)
+
+      exported = payload[:addresses].find { |row| row[:alternative_phone].present? }
+
+      expect(exported[:alternative_phone]).to eq('555-0100')
+      expect(exported[:latitude]).to be_present
+    end
+
+    # Erasure removes these rows in every store, so the export cannot show one.
+    it 'discloses a consent given in another store' do
+      other_store = create(:store)
+      Spree::ConsentRecord.create!(
+        store: other_store, owner: customer, purpose: Spree::ConsentRecord::EMAIL_MARKETING,
+        source: 'account', accepted: true, email: customer.email, recorded_at: Time.current
+      )
+
+      expect(payload[:consent_records]).not_to be_empty
+    end
+
+    it 'discloses a newsletter sign-up in another store' do
+      other_store = create(:store)
+      create(:newsletter_subscriber, store: other_store, email: customer.email)
+
+      expect(payload[:marketing_consent][:newsletter_subscriptions]).not_to be_empty
+    end
+
     it 'discloses the note staff kept on the account' do
       customer.update_columns(internal_note: 'asked twice about the refund')
 
