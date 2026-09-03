@@ -36,11 +36,6 @@ module Spree
           packages += packer.packages
         end
 
-        # A proposal's packages belong to the cart or order being allocated.
-        # Saying so is what gives them its currency, store and destination —
-        # Package#owner would otherwise fall back to guessing from a unit's
-        # order_id, which cart-phase units deliberately don't carry.
-        packages.each { |package| package.owner = order }
         packages
       end
 
