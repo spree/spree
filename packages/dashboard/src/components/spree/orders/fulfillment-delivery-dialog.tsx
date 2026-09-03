@@ -53,8 +53,11 @@ export function FulfillmentDeliveryDialog({
   const { createDelivery, updateDelivery } = useFulfillmentActions(orderId)
   const { data: carriersData } = useTrackingCarriers(open)
 
+  // The datalist suggests display names, but what is stored and submitted is
+  // the registry key — seeding the field with the name would rewrite a known
+  // carrier to its own label on the next save.
   const carrierOptions = (carriersData?.data ?? []).map((carrier) => ({
-    value: carrier.name,
+    value: carrier.id,
     label: carrier.name,
   }))
 
@@ -62,7 +65,7 @@ export function FulfillmentDeliveryDialog({
     resolver: zodResolver(deliverySchema),
     defaultValues: {
       tracking_number: delivery?.tracking_number ?? '',
-      carrier: delivery?.carrier_name ?? '',
+      carrier: delivery?.carrier ?? '',
       tracking_url: delivery?.tracking_url ?? '',
     },
   })
@@ -139,7 +142,7 @@ export function FulfillmentDeliveryDialog({
                 />
                 <datalist id="delivery-carrier-options">
                   {carrierOptions.map((option) => (
-                    <option key={option.value} value={option.value} />
+                    <option key={option.value} value={option.value} label={option.label} />
                   ))}
                 </datalist>
               </Field>

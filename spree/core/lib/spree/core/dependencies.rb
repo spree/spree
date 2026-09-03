@@ -94,6 +94,8 @@ module Spree
         shipping_label_store_file_service: 'Spree::ShippingLabels::StoreFile',
         delivery_update_tracking_workflow: 'Spree::Deliveries::UpdateTracking',
         delivery_create_service: 'Spree::Deliveries::Create',
+        delivery_upsert_primary_service: 'Spree::Deliveries::UpsertPrimary',
+        fulfillment_stand_down_service: 'Spree::Fulfillments::StandDownProvider',
         delivery_destroy_service: 'Spree::Deliveries::Destroy',
         return_purchase_label_workflow: 'Spree::Returns::PurchaseLabel',
 

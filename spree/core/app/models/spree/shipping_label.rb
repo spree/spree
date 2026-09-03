@@ -16,6 +16,7 @@ module Spree
 
     include Spree::SingleStoreResource
     include Spree::HasStatus
+    include Spree::HasTrackingCarrier
     include Spree::Metadata
 
     publishes_lifecycle_events

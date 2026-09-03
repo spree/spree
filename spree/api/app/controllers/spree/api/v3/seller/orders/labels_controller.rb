@@ -10,6 +10,7 @@ module Spree
           class LabelsController < Seller::BaseController
             include Spree::Api::V3::OrderLock
             include ActiveStorage::SetCurrent
+            include Spree::Api::V3::StreamsShippingLabel
 
             scoped_resource :fulfillments
 
@@ -64,16 +65,7 @@ module Spree
 
             # GET .../labels/:id/download
             def download
-              if @label.file.attached?
-                send_data(
-                  @label.file.download,
-                  filename: @label.download_filename,
-                  type: @label.file.content_type || 'application/octet-stream',
-                  disposition: 'attachment'
-                )
-              elsif @label.file_pending?
-                redirect_to @label.file_url, allow_other_host: true
-              else
+              stream_shipping_label(@label) do
                 render_error(
                   code: ERROR_CODES[:validation_error],
                   message: Spree.t('shipping_labels.errors.no_file_url'),

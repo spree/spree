@@ -29,8 +29,19 @@ class CreateSpreeShippingLabelsAndDeliveries < ActiveRecord::Migration[8.1]
       t.timestamps
     end
 
-    add_index :spree_shipping_labels, [:owner_type, :owner_id, :status],
-              name: 'index_spree_shipping_labels_on_owner_and_status'
+    add_index :spree_shipping_labels, [:owner_type, :owner_id]
+
+    # One live label per parcel, enforced where the race actually happens: two
+    # clicks on "buy label" both pass an application-level check, and the
+    # loser has to be refused before the carrier is charged. A refunded label
+    # is history and does not count, so the index is partial where the
+    # database supports it.
+    if connection.supports_partial_index?
+      add_index :spree_shipping_labels, [:owner_type, :owner_id],
+                unique: true,
+                where: "status <> 'refunded'",
+                name: 'index_spree_shipping_labels_on_active_owner'
+    end
 
     create_table :spree_deliveries do |t|
       t.references :owner, polymorphic: true, null: false

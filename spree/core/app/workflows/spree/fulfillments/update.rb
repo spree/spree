@@ -72,19 +72,8 @@ module Spree
       end
 
       def apply_tracking
-        return if @tracking.blank?
-
-        primary = @fulfillment.primary_delivery
-        if primary
-          attributes = { tracking_number: @tracking.to_s.squish }
-          attributes[:carrier] = @tracking_carrier if @tracking_carrier.present?
-          attributes[:status] = 'pending' if attributes[:tracking_number] != primary.tracking_number
-          failure(primary) unless primary.update(attributes)
-          return
-        end
-
-        result = Spree.delivery_create_service.call(
-          owner: @fulfillment, tracking_number: @tracking, carrier: @tracking_carrier
+        result = Spree.delivery_upsert_primary_service.call(
+          fulfillment: @fulfillment, tracking: @tracking, carrier: @tracking_carrier
         )
         failure(@fulfillment, result.error.to_s) if result.failure?
       end

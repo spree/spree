@@ -86,14 +86,8 @@ module Spree
       end
 
       def record_delivery
-        existing = owner.deliveries.find_by(tracking_number: shipping_label.tracking_number)
-
-        if existing
-          existing.update!(shipping_label: shipping_label, carrier: carrier.presence || existing.carrier)
-          return
-        end
-
         result = Spree.delivery_create_service.call(
+          adopt: true,
           owner: owner,
           tracking_number: shipping_label.tracking_number,
           carrier: carrier,

@@ -27,6 +27,7 @@ module Spree
         run_hooks :validate
 
         step :ensure_purchasable
+        step :claim_purchase, on_flow_failure: :release_claim
 
         # Carrier I/O — never inside a transaction.
         external_step :purchase
@@ -36,7 +37,7 @@ module Spree
           step :record_delivery
         end
 
-        external_step :store_file
+        step :store_file
 
         shipping_label.publish_event('shipping_label.purchased')
         run_hooks :after_purchase
@@ -49,16 +50,9 @@ module Spree
         @provider ||= owner.provider
       end
 
-      # The active-label check is the idempotency guard, so it reads under the
-      # owner's row lock: two clicks on "buy label" would otherwise both pass
-      # it and both charge the carrier. The lock is released before the
-      # purchase step, which must not hold one across network I/O.
       def ensure_purchasable
         failure(owner, Spree.t('shipping_labels.errors.provider_has_no_labels')) unless provider.class.generates_labels?
-
-        owner.with_lock do
-          failure(owner, Spree.t('shipping_labels.errors.already_purchased')) if owner.shipping_labels.active.exists?
-        end
+        failure(owner, Spree.t('shipping_labels.errors.already_purchased')) if owner.shipping_labels.active.exists?
 
         case owner
         when Spree::Fulfillment
@@ -67,6 +61,28 @@ module Spree
         when Spree::Return
           failure(owner, Spree.t('shipping_labels.errors.return_closed')) if owner.received? || owner.refunded? || owner.canceled?
         end
+      end
+
+      # The claim, not the check above, is what makes a double click buy one
+      # label: it inserts the row the uniqueness index guards before the
+      # carrier is called, so the loser of the race is refused by the
+      # database rather than by a read that has already gone stale.
+      def claim_purchase
+        @shipping_label = owner.shipping_labels.create!(
+          store: owner.store,
+          integration: provider.integration_for(owner),
+          source: 'purchased',
+          status: 'purchased'
+        )
+      rescue ActiveRecord::RecordNotUnique
+        failure(owner, Spree.t('shipping_labels.errors.already_purchased'))
+      end
+
+      # Undoes the claim when the carrier refuses, so a failed purchase does
+      # not leave a row that refuses every later attempt.
+      def release_claim
+        @shipping_label&.destroy
+        @shipping_label = nil
       end
 
       def purchase
@@ -78,11 +94,7 @@ module Spree
       end
 
       def record_label
-        @shipping_label = owner.shipping_labels.create!(
-          store: owner.store,
-          integration: provider.integration_for(owner),
-          source: 'purchased',
-          status: 'purchased',
+        shipping_label.update!(
           external_id: @purchase.external_id,
           carrier: @purchase.carrier,
           service: @purchase.service,
@@ -95,22 +107,11 @@ module Spree
       end
 
       # A label mints its own consignment. When the merchant already typed the
-      # same number by hand, that delivery becomes the label's rather than a
-      # duplicate row being refused.
+      # same number by hand, the delivery service binds that row rather than
+      # letting a duplicate be refused.
       def record_delivery
-        existing = owner.deliveries.find_by(tracking_number: @purchase.tracking_number)
-
-        if existing
-          existing.update!(
-            shipping_label: shipping_label,
-            carrier: @purchase.carrier.presence || existing.carrier,
-            service: @purchase.service.presence || existing.service,
-            tracking_url: @purchase.tracking_url.presence || existing.tracking_url
-          )
-          return
-        end
-
         result = Spree.delivery_create_service.call(
+          adopt: true,
           owner: owner,
           tracking_number: @purchase.tracking_number,
           carrier: @purchase.carrier,
@@ -121,13 +122,13 @@ module Spree
         failure(shipping_label, result.error.to_s) if result.failure?
       end
 
-      # The purchase is recorded whether or not the file comes down now — a
-      # slow carrier CDN must not lose a label the merchant has paid for.
+      # Fetched in the background rather than in the request: the merchant has
+      # already waited on one carrier call, and a slow label CDN would hold
+      # the order lock the controller took for as long as it stalls. Until it
+      # lands the download proxies the carrier's own copy, which is what
+      # +file_pending?+ is for.
       def store_file
         return if @purchase.file_url.blank?
-
-        result = Spree.shipping_label_store_file_service.call(shipping_label: shipping_label)
-        return if result.success?
 
         Spree::ShippingLabels::StoreFileJob.perform_later(shipping_label.id)
       end

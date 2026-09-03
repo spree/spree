@@ -39,8 +39,10 @@ module Spree
       # settle refunds asynchronously, and re-filing is how a request that
       # never came back is re-driven.
       def ensure_refundable
-        failure(shipping_label, Spree.t('shipping_labels.errors.uploaded_not_refundable')) if shipping_label.uploaded?
-        failure(shipping_label, Spree.t('shipping_labels.errors.not_refundable')) unless shipping_label.refundable?
+        return if shipping_label.refundable?
+
+        reason = shipping_label.uploaded? ? 'uploaded_not_refundable' : 'not_refundable'
+        failure(shipping_label, Spree.t("shipping_labels.errors.#{reason}"))
       end
 
       def refund

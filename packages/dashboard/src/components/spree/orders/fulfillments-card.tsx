@@ -431,8 +431,7 @@ function FulfillmentRow({ order, fulfillment }: { order: Order; fulfillment: Ful
   const canBuyLabel = shippable && fulfillment.provider_generates_labels && !activeLabel
   // Merchants without a carrier account buy postage elsewhere and still need
   // the file and the cost on the parcel.
-  const canUploadLabel =
-    !activeLabel && !CAN_MARK_DELIVERED.includes(fulfillment.status) ? shippable : false
+  const canUploadLabel = shippable && !activeLabel
 
   return (
     <FulfillmentPanel

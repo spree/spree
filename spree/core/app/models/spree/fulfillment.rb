@@ -612,7 +612,7 @@ module Spree
     #
     # @return [Spree::FulfillmentProvider::Base]
     def provider
-      delivery_method&.provider || Spree::FulfillmentProvider::Manual.new
+      @provider ||= delivery_method&.provider || Spree::FulfillmentProvider::Manual.new
     end
 
     # Commission base for multi-seller include_shipping: the cost net of
@@ -901,9 +901,7 @@ module Spree
       return if value.blank?
 
       deliveries.reset
-      return primary_delivery.update!(tracking_number: value, status: 'pending') if primary_delivery
-
-      result = Spree.delivery_create_service.call(owner: self, tracking_number: value)
+      result = Spree.delivery_upsert_primary_service.call(fulfillment: self, tracking: value)
       raise ActiveRecord::RecordInvalid, result.value if result.failure?
     end
 

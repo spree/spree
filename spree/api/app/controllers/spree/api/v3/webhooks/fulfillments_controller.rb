@@ -60,24 +60,22 @@ module Spree
           # tracking code can never address another tenant's parcel — and to
           # consignments whose parcel was not canceled, so a recycled code
           # cannot reopen an old one. The newest wins when a code was reused.
+          # Carriers reuse tracking numbers across years, so a code can match
+          # more than one consignment. The store-scoped index makes that
+          # candidate set tiny — almost always one row — and the stood-down
+          # ones are dropped from it rather than from every parcel in the
+          # database. The newest survivor wins.
+          CANDIDATE_LIMIT = 20
+
           def find_delivery(tracking_code)
             return if tracking_code.blank?
 
-            # Carriers reuse tracking numbers across years, so the filter runs
-            # in SQL rather than over every historic match: a canceled parcel
-            # is excluded per owner type, and the newest survivor wins.
-            live_fulfillments = Spree::Fulfillment.where.not(status: 'canceled').select(:id)
-            live_returns = Spree::Return.where.not(status: 'canceled').select(:id)
-
             current_store.deliveries.
               where(tracking_number: tracking_code).
-              where(
-                "(owner_type = 'Spree::Fulfillment' AND owner_id IN (?)) OR " \
-                "(owner_type = 'Spree::Return' AND owner_id IN (?))",
-                live_fulfillments, live_returns
-              ).
               order(created_at: :desc, id: :desc).
-              first
+              limit(CANDIDATE_LIMIT).
+              includes(:owner).
+              find { |delivery| delivery.owner.present? && !delivery.owner.canceled? }
           end
         end
       end

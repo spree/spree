@@ -25,7 +25,7 @@ module Spree
                    refunded_at: [:string, nullable: true],
                    metadata: 'Record<string, unknown>'
 
-          attributes :source, :status, :carrier, :service, :tracking_number, :currency, :format,
+          attributes :source, :status, :carrier, :carrier_name, :service, :tracking_number, :currency, :format,
                      :external_id, :metadata, refunded_at: :iso8601, created_at: :iso8601, updated_at: :iso8601
 
           attribute :owner_id do |shipping_label|
@@ -34,12 +34,6 @@ module Spree
 
           attribute :owner_type do |shipping_label|
             shipping_label.owner_type == 'Spree::Return' ? 'return' : 'fulfillment'
-          end
-
-          attribute :carrier_name do |shipping_label|
-            next if shipping_label.carrier.blank?
-
-            Spree.tracking_carriers.dig(shipping_label.carrier, :name) || shipping_label.carrier
           end
 
           attribute :cost do |shipping_label|

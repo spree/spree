@@ -15,6 +15,7 @@ module Spree
     has_prefix_id :dlv
 
     include Spree::SingleStoreResource
+    include Spree::HasTrackingCarrier
 
     publishes_lifecycle_events
 
@@ -46,11 +47,15 @@ module Spree
     scope :delivered, -> { where(status: 'delivered') }
     scope :undelivered, -> { where.not(status: 'delivered') }
 
-    self.whitelisted_ransackable_attributes = %w[tracking_number carrier status]
-
-    STATUSES.each do |value|
-      define_method(:"#{value}?") { status == value }
+    # The one status with a reader beyond the scopes: arrival is what the
+    # fulfillment rolls up from. The rest are read as `status`.
+    #
+    # @return [Boolean]
+    def delivered?
+      status == 'delivered'
     end
+
+    self.whitelisted_ransackable_attributes = %w[tracking_number carrier status]
 
     # The public page where this consignment can be followed, best answer
     # first: the link stored on the row (pasted by the merchant, or the
@@ -72,16 +77,6 @@ module Spree
         carrier_tracking_url.presence ||
         delivery_method_tracking_url.presence ||
         detected_tracking_url
-    end
-
-    # The carrier's display name — from the registry when the key is known,
-    # otherwise the free text as entered.
-    #
-    # @return [String, nil]
-    def carrier_name
-      return if carrier.blank?
-
-      Spree.tracking_carriers.dig(carrier, :name) || carrier
     end
 
     # @return [Boolean] whether the tracking value is a full link rather than a number
@@ -109,15 +104,21 @@ module Spree
     end
 
     def detected_tracking_url
-      service = Spree.tracking_number_service.new(tracking_number.upcase)
-      service.tracking_url if service.valid?
+      tracking_service&.tracking_url if tracking_service&.valid?
     end
 
     def detect_carrier
       return if pasted_link?
 
-      service = Spree.tracking_number_service.new(tracking_number.upcase)
-      self.carrier = service.tracking.courier_code.to_s if service.valid?
+      self.carrier = tracking_service.tracking.courier_code.to_s if tracking_service&.valid?
+    end
+
+    # Parsing a number runs the gem's whole carrier battery, and both the
+    # carrier and the URL want the answer.
+    def tracking_service
+      return if tracking_number.blank?
+
+      @tracking_service ||= Spree.tracking_number_service.new(tracking_number.upcase)
     end
   end
 end

@@ -15,6 +15,7 @@ module Spree
           # nothing to refund.
           class LabelsController < BaseController
             include ActiveStorage::SetCurrent
+            include Spree::Api::V3::StreamsShippingLabel
 
             before_action :set_resource, only: [:show, :download, :refund, :destroy]
 
@@ -44,16 +45,7 @@ module Spree
             # the label is never reachable without admin credentials. The
             # carrier's copy is proxied only while the fetch is still pending.
             def download
-              if @resource.file.attached?
-                send_data(
-                  @resource.file.download,
-                  filename: @resource.download_filename,
-                  type: @resource.file.content_type || 'application/octet-stream',
-                  disposition: 'attachment'
-                )
-              elsif @resource.file_pending?
-                redirect_to @resource.file_url, allow_other_host: true
-              else
+              stream_shipping_label(@resource) do
                 render_error(
                   code: ERROR_CODES[:validation_error],
                   message: Spree.t('shipping_labels.errors.no_file_url'),

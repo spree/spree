@@ -11,6 +11,8 @@ module Spree
           # Whether a customer may open a return at all is store policy, and
           # belongs in a `returns.create.validate` hook rather than here.
           class ReturnsController < Store::ResourceController
+            include Spree::Api::V3::StreamsShippingLabel
+
             # Re-declaring the filter replaces the inherited options, so the
             # standard actions are listed alongside the label download.
             before_action :set_resource, only: [:show, :update, :destroy, :label]
@@ -24,18 +26,7 @@ module Spree
               shipping_label = @resource.active_shipping_label
               return head :not_found if shipping_label.nil?
 
-              if shipping_label.file.attached?
-                send_data(
-                  shipping_label.file.download,
-                  filename: shipping_label.download_filename,
-                  type: shipping_label.file.content_type || 'application/octet-stream',
-                  disposition: 'attachment'
-                )
-              elsif shipping_label.file_pending?
-                redirect_to shipping_label.file_url, allow_other_host: true
-              else
-                head :not_found
-              end
+              stream_shipping_label(shipping_label) { head :not_found }
             end
 
             def create

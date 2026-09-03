@@ -35,12 +35,7 @@ module Spree
             # journey starts over.
             def update
               with_order_lock do
-                attributes = update_params.to_h
-                if attributes[:tracking_number].present? && attributes[:tracking_number].squish != @resource.tracking_number
-                  attributes[:status] = 'pending'
-                end
-
-                if @resource.update(attributes)
+                if @resource.update(corrected_attributes(update_params.to_h, @resource))
                   render json: serialize_resource(@resource.reload)
                 else
                   render_validation_error(@resource.errors)
@@ -82,6 +77,15 @@ module Spree
             end
 
             protected
+
+            # A corrected number is a different parcel as far as the carrier is
+            # concerned, so its journey starts over.
+            def corrected_attributes(attributes, delivery)
+              number = attributes[:tracking_number]
+              return attributes if number.blank? || number.squish == delivery.tracking_number
+
+              attributes.merge(status: 'pending')
+            end
 
             def model_class
               Spree::Delivery

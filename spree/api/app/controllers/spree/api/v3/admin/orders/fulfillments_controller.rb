@@ -171,6 +171,12 @@ module Spree
               :shipments
             end
 
+            # The serializer embeds both, and the tracking summary reads the
+            # first consignment.
+            def collection_includes
+              [:deliveries, { shipping_labels: { file_attachment: :blob } }]
+            end
+
             # State changes go through the dedicated `fulfill`/`cancel` member
             # actions, not mass assignment. `tracking` and `tracking_carrier`
             # are the one-parcel shortcut onto the primary delivery.

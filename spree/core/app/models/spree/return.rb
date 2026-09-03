@@ -85,9 +85,8 @@ module Spree
     def to_package
       package = Spree::Stock::Package.new(stock_location)
       package.owner = order
-      return_line_items.includes(:fulfillment_item).each do |line|
-        package.add(line.fulfillment_item) if line.fulfillment_item
-      end
+      units = return_line_items.includes(:fulfillment_item).filter_map(&:fulfillment_item)
+      units.group_by(&:status).each { |status, items| package.add_multiple(items, status.to_sym) }
       package
     end
 

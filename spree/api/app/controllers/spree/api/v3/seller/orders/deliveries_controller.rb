@@ -48,12 +48,7 @@ module Spree
               authorize! :update, @fulfillment
 
               with_order_lock do
-                attributes = delivery_params.to_h
-                if attributes[:tracking_number].present? && attributes[:tracking_number].squish != @delivery.tracking_number
-                  attributes[:status] = 'pending'
-                end
-
-                if @delivery.update(attributes)
+                if @delivery.update(corrected_attributes(delivery_params.to_h, @delivery))
                   render json: serialize(@delivery.reload)
                 else
                   render_validation_error(@delivery.errors)
@@ -83,6 +78,15 @@ module Spree
             end
 
             private
+
+            # A corrected number is a different parcel as far as the carrier is
+            # concerned, so its journey starts over.
+            def corrected_attributes(attributes, delivery)
+              number = attributes[:tracking_number]
+              return attributes if number.blank? || number.squish == delivery.tracking_number
+
+              attributes.merge(status: 'pending')
+            end
 
             def set_fulfillment
               @order = current_seller_orders.find_by_prefix_id!(params[:order_id])

@@ -19,7 +19,7 @@ module Spree
       )
     end
 
-    it 'records the label, mints its delivery and stores the file' do
+    it 'records the label, mints its delivery and fetches the file' do
       result = subject.call(owner: fulfillment)
 
       expect(result).to be_success
@@ -31,7 +31,9 @@ module Spree
       expect(label.cost).to eq(7.25)
       expect(label.currency).to eq('USD')
       expect(label.metadata).to include('tracker_id' => 'trk_1', 'file_url' => 'https://carrier.example/label.pdf')
-      expect(label.file).to be_attached
+      # The carrier's copy comes down in the background: the merchant has
+      # already waited on the purchase itself.
+      expect(Spree::ShippingLabels::StoreFileJob).to have_been_enqueued.with(label.id)
 
       delivery = label.delivery
       expect(delivery.tracking_number).to eq('1Z879E930346834440')
@@ -58,16 +60,24 @@ module Spree
       expect(Spree::Events).to have_received(:publish).with('shipping_label.purchased', anything, anything)
     end
 
-    # The purchase is a fact the moment the carrier charged for it; a slow
-    # label CDN must not lose it.
-    it 'keeps the purchase and retries the file in the background when the fetch fails' do
-      allow(SsrfFilter).to receive(:get).and_raise(SocketError.new('down'))
-
-      expect { subject.call(owner: fulfillment) }.to have_enqueued_job(Spree::ShippingLabels::StoreFileJob)
+    # The purchase is a fact the moment the carrier charged for it, and the
+    # download proxies the carrier's own copy until the file lands.
+    it 'leaves the label printable while the file is still pending' do
+      subject.call(owner: fulfillment)
 
       label = fulfillment.reload.active_shipping_label
       expect(label).to be_present
       expect(label).to be_file_pending
+    end
+
+    it 'releases the claim when the carrier refuses, so the merchant can retry' do
+      allow(provider).to receive(:purchase_label).and_return(nil)
+
+      expect(subject.call(owner: fulfillment)).to be_failure
+      expect(fulfillment.reload.shipping_labels).to be_empty
+
+      allow(provider).to receive(:purchase_label).and_call_original
+      expect(subject.call(owner: fulfillment)).to be_success
     end
 
     it 'refuses a second label while one is active — providers are never asked twice' do

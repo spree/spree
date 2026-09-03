@@ -130,7 +130,7 @@ module Spree
       # going out either way, and the failure surfaces through the provider.
       def notify_fulfillment_providers
         order.fulfillments.each do |fulfillment|
-          Spree::Fulfillments::StandDownProvider.new.call(fulfillment: fulfillment)
+          Spree.fulfillment_stand_down_service.call(fulfillment: fulfillment)
         end
       end
 
