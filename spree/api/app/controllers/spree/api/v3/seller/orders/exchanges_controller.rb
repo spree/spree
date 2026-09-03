@@ -88,7 +88,7 @@ module Spree
             end
 
             def collection_includes
-              [:reason, :stock_location, { exchange_line_items: [:variant, :new_variant, :line_item] }]
+              [:reason, :stock_location, { exchange_line_items: [:original_variant, :new_variant, :line_item] }]
             end
 
             private
