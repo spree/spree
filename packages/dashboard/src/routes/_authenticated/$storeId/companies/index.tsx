@@ -26,8 +26,8 @@ import {
   useConfirm,
   useRowClickBridge,
 } from '@spree/dashboard-ui'
+import { PlusIcon } from '@spree/dashboard-ui/icons'
 import { createFileRoute, useNavigate } from '@tanstack/react-router'
-import { PlusIcon } from 'lucide-react'
 import { useForm } from 'react-hook-form'
 import { useTranslation } from 'react-i18next'
 import { z } from 'zod/v4'
@@ -66,6 +66,7 @@ function CompaniesPage() {
 
   const closeSheet = () =>
     navigate({
+      replace: true,
       search: (prev: Record<string, unknown>) => {
         const { new: _n, ...rest } = prev
         return rest as never
@@ -152,6 +153,7 @@ function CreateCompanySheet({
       navigate({
         to: '/$storeId/companies/$companyId',
         params: { storeId, companyId: company.id },
+        replace: true,
       })
     } catch (err) {
       if (!mapSpreeErrorsToForm(err, form.setError)) throw err

@@ -155,10 +155,13 @@
       "deleted": "Deleted",
       "empty_value": "—",
       "inactive": "Inactive",
+      "learn_more": "Learn more",
       "loading": "Loading…",
       "next": "Next",
       "no": "No",
       "no_results": "No results",
+      "combobox_more_results_one": "1 more result not shown. Type to search.",
+      "combobox_more_results_other": "{{count}} more results not shown. Type to search.",
       "none": "None",
       "optional": "Optional",
       "or": "or",
@@ -463,6 +466,12 @@
         "label": "Theme",
         "light": "Light",
         "system": "System"
+      },
+      "wizard": {
+        "discard_cancel": "Keep editing",
+        "discard_confirm": "Discard",
+        "discard_message": "Everything you have filled in so far will be lost. This cannot be undone.",
+        "discard_title": "Discard this draft?"
       }
     },
     "custom_field_definitions": {
@@ -897,6 +906,11 @@
         "pending": "Pending",
         "processing": "Processing"
       },
+      "step_descriptions": {
+        "complete": "Your import has finished. Review what was created and updated.",
+        "map_fields": "Match each column in your file to a field in Spree.",
+        "process_rows": "We are importing your rows. This can take a few minutes."
+      },
       "steps": {
         "complete": "Complete",
         "map_fields": "Map fields",
@@ -1211,7 +1225,12 @@
       "add_count_other": "Add {{count}}",
       "already_added": "Added",
       "empty": "No results found.",
+      "load_more": "Load more",
       "search_placeholder": "Search…",
+      "select_all_matching_one": "Select all {{count}} match",
+      "select_all_matching_other": "Select all {{count}} matches",
+      "select_page_one": "Select {{count}} on this page",
+      "select_page_other": "Select all {{count}} on this page",
       "selected_count_one": "{{count}} selected",
       "selected_count_other": "{{count}} selected",
       "title": "Add products"

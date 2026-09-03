@@ -26,7 +26,7 @@ RSpec.describe Spree::CSV::CustomerPresenter do
            tag_list: ['premium', 'vip'])
   end
   let!(:orders) { create_list(:completed_order_with_totals, 3, customer: customer, store: store) }
-  let(:presenter) { described_class.new(customer) }
+  let(:presenter) { described_class.new(customer, store) }
 
   before do
     orders[0].update_column(:total, 100)
@@ -73,7 +73,7 @@ RSpec.describe Spree::CSV::CustomerPresenter do
                email: 'jane.smith@example.com',
                accepts_email_marketing: false)
       end
-      let(:presenter) { described_class.new(customer_without_address) }
+      let(:presenter) { described_class.new(customer_without_address, store) }
 
       it 'returns nil for address fields' do
         expect(subject[4]).to be_nil # company
@@ -95,7 +95,7 @@ RSpec.describe Spree::CSV::CustomerPresenter do
                last_name: 'Johnson',
                email: 'bob.johnson@example.com')
       end
-      let(:presenter) { described_class.new(customer_without_orders) }
+      let(:presenter) { described_class.new(customer_without_orders, store) }
 
       it 'returns zero for total orders and amount spent' do
         expect(subject[14]).to eq 0 # amount spent
@@ -153,7 +153,7 @@ RSpec.describe Spree::CSV::CustomerPresenter do
                last_name: 'Smith',
                email: 'jane.smith@example.com')
       end
-      let(:presenter) { described_class.new(customer_without_custom_field) }
+      let(:presenter) { described_class.new(customer_without_custom_field, store) }
 
       it 'returns nil for custom_field' do
         result = presenter.call

@@ -15,8 +15,8 @@ import {
   RadioGroup,
   RadioGroupItem,
 } from '@spree/dashboard-ui'
+import { DownloadIcon, FilterIcon, GlobeIcon } from '@spree/dashboard-ui/icons'
 import type { TFunction } from 'i18next'
-import { DownloadIcon, FilterIcon, GlobeIcon } from 'lucide-react'
 import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useExport } from '../hooks/use-export'

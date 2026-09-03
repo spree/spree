@@ -29,8 +29,15 @@ import {
   useCopyToClipboard,
   useRowClickBridge,
 } from '@spree/dashboard-ui'
+import {
+  AlertTriangleIcon,
+  BanIcon,
+  CheckIcon,
+  CopyIcon,
+  PlayIcon,
+  PlusIcon,
+} from '@spree/dashboard-ui/icons'
 import { createFileRoute, useNavigate } from '@tanstack/react-router'
-import { AlertTriangleIcon, BanIcon, CheckIcon, CopyIcon, PlayIcon, PlusIcon } from 'lucide-react'
 import { useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { useTranslation } from 'react-i18next'
@@ -78,6 +85,7 @@ function WebhooksPage() {
 
   const closeCreate = () =>
     navigate({
+      replace: true,
       search: (prev: Record<string, unknown>) => {
         const { new: _n, ...rest } = prev
         return rest as never
@@ -210,6 +218,7 @@ function WebhooksPage() {
             navigate({
               to: '/$storeId/settings/webhooks/$webhookEndpointId',
               params: { storeId, webhookEndpointId: id },
+              replace: true,
             })
           }
         }}

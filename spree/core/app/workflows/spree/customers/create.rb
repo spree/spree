@@ -93,8 +93,8 @@ module Spree
           email: email || order&.email,
           password: password,
           password_confirmation: password_confirmation,
-          first_name: first_name || order_address&.firstname,
-          last_name: last_name || order_address&.lastname,
+          first_name: first_name || order_address&.first_name,
+          last_name: last_name || order_address&.last_name,
           phone: phone || order_address&.phone,
           accepts_email_marketing: accepts_email_marketing.nil? ? order&.accept_marketing? : accepts_email_marketing,
           metadata: metadata

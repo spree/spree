@@ -48,8 +48,6 @@ import {
   StatusBadge,
   useConfirm,
 } from '@spree/dashboard-ui'
-import { parseISO } from 'date-fns'
-import { formatInTimeZone } from 'date-fns-tz'
 import {
   BadgeCheckIcon,
   BanIcon,
@@ -58,7 +56,9 @@ import {
   PaperclipIcon,
   PlusIcon,
   TrashIcon,
-} from 'lucide-react'
+} from '@spree/dashboard-ui/icons'
+import { parseISO } from 'date-fns'
+import { formatInTimeZone } from 'date-fns-tz'
 import { useEffect, useMemo, useState } from 'react'
 import { Controller, useForm } from 'react-hook-form'
 import { useTranslation } from 'react-i18next'

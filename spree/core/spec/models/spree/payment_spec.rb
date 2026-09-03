@@ -1333,6 +1333,26 @@ describe Spree::Payment, type: :model do
   describe '#add_gateway_processing_error' do
     subject { payment.add_gateway_processing_error('Insufficient balance on payment') }
 
+    # A payment has no store of its own and reaches one through what it
+    # settles. Resolving through `order` alone left a cart-owned payment
+    # filing its error against whichever store the request named — the
+    # default one in a job.
+    describe 'the store its custom fields are defined in' do
+      let(:other_store) { create(:store) }
+
+      it 'is the order it settles' do
+        order_payment = build(:payment, order: create(:order, store: other_store))
+
+        expect(order_payment.send(:custom_field_definition_store)).to eq(other_store)
+      end
+
+      it 'is the cart it settles while checkout is still open' do
+        cart_payment = build(:payment, order: nil, cart: create(:cart, store: other_store))
+
+        expect(cart_payment.send(:custom_field_definition_store)).to eq(other_store)
+      end
+    end
+
     it 'adds a gateway processing error' do
       subject
       expect(payment.get_custom_field('gateway.processing_errors').value).to eq([{ message: 'Insufficient balance on payment' }].to_json)

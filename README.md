@@ -148,10 +148,10 @@ Enterprise Edition is built on top of the same open-source REST API and BSD 3-Cl
 | Payment integrations: **Stripe**, **Adyen**, **PayPal** | ✅ | ✅ |
 | Automatic tax calculation with **Avatax** & **Stripe Tax** | ✅ | ✅ |
 | **B2B & Wholesale** — Price Lists, Customer Groups, gated storefronts | ✅ | ✅ |
-| **B2B Buyer organizations** (companies, locations, contacts) | Coming soon in Spree 6.0 | ✅ |
-| **B2B Catalogs** — curated per-segment product assortments | Coming soon in Spree 6.0 | ✅ |
+| **B2B Buyer organizations** (companies, locations, contacts) | ✅ | ✅ |
+| **B2B Catalogs** — curated per-segment product assortments | ✅ | ✅ |
 | **B2B approval workflows & ERP integrations** — role-based approval chains, procurement and ERP connectors | — | ✅ |
-| **Multi-seller Marketplace** — seller onboarding, seller panel, commissions, split payments, seller payouts | Coming soon in Spree 6.0 | ✅ |
+| **Multi-seller Marketplace** — seller onboarding, seller panel, commissions, split payments, seller payouts | ✅ | ✅ |
 | **Marketplace automations** — Shopify/WooCommerce seller sync, Stripe Connect onboarding, automated commission rules, advanced reporting | — | ✅ |
 | **Multi-tenant SaaS** — super-admin layer, tenant provisioning, white-label billing, central operations across hundreds of tenant stores | — | ✅ |
 | **Enterprise security** — SSO (SAML/OIDC), encryption at-rest, audit logging, PCI-compliant architecture | — | ✅ |

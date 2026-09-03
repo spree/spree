@@ -65,7 +65,7 @@ module Spree
       private
 
       def apply_search_and_filters(scope, query: nil, filters: {})
-        scope = scope.search(query) if query.present?
+        scope = scope.search(query, store) if query.present?
 
         filters = filters.to_unsafe_h if filters.respond_to?(:to_unsafe_h)
         scope, filters = scope.with_custom_field_filters(filters, schema: custom_field_schema)

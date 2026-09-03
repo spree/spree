@@ -67,7 +67,7 @@ const { data: products } = await client.products.list({ limit: 25 })
 
 <CardGroup cols={2}>
   <Card title="Catalog" icon="tag">
-    List, create, update, and delete the products they own outright.
+    List, create, update, and delete the products they own outright, picking a product type and a delivery profile from the marketplace's lists.
   </Card>
   <Card title="Profile" icon="store">
     Maintain presentation, contact details, addresses, and tax registration.
@@ -93,6 +93,6 @@ Some fields are readable but never writable, because they belong to the marketpl
 - **`status`** — the seller lifecycle belongs to the operator's workflows. A seller says they are ready via `POST /api/v3/seller/onboarding/submit_for_review`; the operator decides.
 - **`slug`** — renaming a storefront address would break every link pointing at it.
 - **Settlement and commission terms** — what the marketplace charges is the marketplace's to set.
-- **Tax category, delivery profile, and promotionability on products** — marketplace-wide merchandising settings.
+- **Tax category and promotionability on products** — marketplace-wide merchandising settings. A product's type and delivery profile, by contrast, are the seller's to assign — the marketplace defines the list, the seller picks from it.
 
 Sending these fields is not an error; they are simply ignored.

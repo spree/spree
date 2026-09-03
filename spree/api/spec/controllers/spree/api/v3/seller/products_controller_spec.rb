@@ -105,6 +105,46 @@ RSpec.describe Spree::Api::V3::Seller::ProductsController, type: :controller do
       currencies = Spree::Product.find_by(name: 'Euro Lamp').default_variant.prices.map(&:currency)
       expect(currencies).to eq(['EUR'])
     end
+
+    # Create is where the type's delivery profile is stamped — the template
+    # fires on create only, so a seller who picks a type gets its profile and
+    # nothing later moves it.
+    it "takes the type's delivery profile when the seller picks a type" do
+      profile = create(:delivery_profile, store: store, name: 'Oversized')
+      product_type = create(:product_type, store: store, delivery_profile: profile)
+
+      post :create,
+           params: { name: 'Typed Lamp', product_type_id: product_type.prefixed_id },
+           as: :json
+
+      expect(response).to have_http_status(:created)
+      product = Spree::Product.find_by(name: 'Typed Lamp')
+      expect(product.product_type).to eq(product_type)
+      expect(product.delivery_profile).to eq(profile)
+    end
+
+    # The seller's own pick wins over the type's template.
+    it 'ships under the profile the seller named' do
+      chosen = create(:delivery_profile, store: store, name: 'Pallet')
+
+      post :create,
+           params: { name: 'Heavy Lamp', delivery_profile_id: chosen.prefixed_id },
+           as: :json
+
+      expect(response).to have_http_status(:created)
+      expect(Spree::Product.find_by(name: 'Heavy Lamp').delivery_profile).to eq(chosen)
+    end
+
+    # Nothing regressed for a seller who picks neither: the store default is
+    # what every seller product landed on before this endpoint offered a
+    # choice at all.
+    it "falls back to the store's default profile when the seller picks none" do
+      post :create, params: { name: 'Plain Lamp' }, as: :json
+
+      expect(response).to have_http_status(:created)
+      expect(Spree::Product.find_by(name: 'Plain Lamp').delivery_profile).
+        to eq(Spree::DeliveryProfile.default_for(store))
+    end
   end
 
   # A seller lists; the marketplace decides what goes on sale. These are the
@@ -178,10 +218,13 @@ RSpec.describe Spree::Api::V3::Seller::ProductsController, type: :controller do
   # seller serializer adds none of it — a field a seller cannot change should
   # not be shown as though they could. (`tags` rides in from the storefront
   # serializer, where it is public product data; it is simply not writable.)
+  # The type and the delivery profile are the seller's to pick, so those two
+  # are read back for the form.
   it 'withholds the marketplace merchandising fields' do
     get :show, params: { id: mine.prefixed_id }, as: :json
 
-    expect(json_response).not_to include('product_type_id', 'category_ids', 'collection_ids')
+    expect(json_response).not_to include('category_ids', 'collection_ids')
+    expect(json_response).to include('product_type_id', 'delivery_profile_id')
   end
 
   # The form loads a product with everything it edits in one request, so each
@@ -283,13 +326,58 @@ RSpec.describe Spree::Api::V3::Seller::ProductsController, type: :controller do
       expect(mine.reload.categories).to be_empty
     end
 
-    it 'cannot set a product type' do
-      product_type = create(:product_type, store: store)
+    # The type is the seller's to pick: it is what hands their product its
+    # option types (docs/plans/6.0-multi-vendor-marketplace.md, Decision 13).
+    it "lists the product against one of the marketplace's types" do
+      product_type = create(:product_type_with_option_types, store: store)
 
       patch :update, params: { id: mine.prefixed_id, product_type_id: product_type.prefixed_id }, as: :json
 
       expect(response).to have_http_status(:ok)
+      expect(json_response['product_type_id']).to eq(product_type.prefixed_id)
+      expect(mine.reload.product_type).to eq(product_type)
+      expect(mine.option_types).to match_array(product_type.option_types)
+    end
+
+    it 'detaches the type when sent null' do
+      mine.update!(product_type: create(:product_type, store: store))
+
+      patch :update, params: { id: mine.prefixed_id, product_type_id: nil }, as: :json
+
+      expect(response).to have_http_status(:ok)
       expect(mine.reload.product_type).to be_nil
+    end
+
+    # 404, not 422: a type from another store cannot exist for this seller,
+    # and letting the model see it would seed that store's option types.
+    it "404s on another store's product type" do
+      elsewhere = create(:product_type, store: create(:store))
+
+      patch :update, params: { id: mine.prefixed_id, product_type_id: elsewhere.prefixed_id }, as: :json
+
+      expect(response).to have_http_status(:not_found)
+      expect(mine.reload.product_type).to be_nil
+    end
+
+    # The profile decides how the goods can be shipped, so a seller picks it
+    # rather than every listing landing on the store default.
+    it "ships the product under one of the marketplace's delivery profiles" do
+      profile = create(:delivery_profile, store: store, name: 'Oversized')
+
+      patch :update, params: { id: mine.prefixed_id, delivery_profile_id: profile.prefixed_id }, as: :json
+
+      expect(response).to have_http_status(:ok)
+      expect(json_response['delivery_profile_id']).to eq(profile.prefixed_id)
+      expect(mine.reload.delivery_profile).to eq(profile)
+    end
+
+    it "404s on another store's delivery profile" do
+      elsewhere = create(:delivery_profile, store: create(:store))
+
+      patch :update, params: { id: mine.prefixed_id, delivery_profile_id: elsewhere.prefixed_id }, as: :json
+
+      expect(response).to have_http_status(:not_found)
+      expect(mine.reload.delivery_profile).not_to eq(elsewhere)
     end
 
     # Marketplace configuration, not a seller's: silently ignored rather than

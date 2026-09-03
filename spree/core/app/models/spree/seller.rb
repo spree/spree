@@ -18,6 +18,9 @@ module Spree
     include Spree::Metadata
     include Spree::MemoizedData
     include Spree::SanitizableRichText
+    # The seller's account with whichever provider pays them — see
+    # #payout_account_reference.
+    include Spree::HasExternalReferences
 
     MEMOIZED_METHODS = %w[onboarding_requirements onboarding_progress products_count returns_location].freeze
 
@@ -102,6 +105,19 @@ module Spree
     has_many :stock_locations, class_name: 'Spree::StockLocation', dependent: :nullify,
                                inverse_of: :seller
 
+    # How this seller ships: their own methods, priced and retired by them,
+    # against the marketplace's profiles and zones
+    # (docs/plans/6.0-multi-vendor-marketplace.md, Decision 13).
+    #
+    # Deliberately NOT `dependent: :nullify`, unlike stock locations: a nil
+    # `seller_id` IS the marketplace's own method, so releasing a departed
+    # seller's rows would hand the operator their pricing and start quoting it
+    # on first-party packages. The seller is paranoid, so the rows keep
+    # pointing at a record that still resolves; retiring them is the
+    # operator's call.
+    has_many :delivery_methods, class_name: 'Spree::DeliveryMethod', dependent: nil,
+                                inverse_of: :seller
+
     # The seller's tax registrations — the VAT number the commission invoice
     # needs, with the validation verdict and evidence the model carries.
     #
@@ -134,6 +150,12 @@ module Spree
     has_many :orders, class_name: 'Spree::Order', dependent: nil
     has_many :payment_splits, through: :orders, class_name: 'Spree::PaymentSplit', source: :payment_splits
 
+    # The two levels of the fund ledger: what this seller has earned, and what
+    # has been settled to them. Left alone when the seller goes, for the same
+    # reason as their orders and commission — money that moved is a fact about
+    # the past.
+    has_many :seller_transfers, class_name: 'Spree::SellerTransfer', dependent: nil
+    has_many :seller_payouts, class_name: 'Spree::SellerPayout', dependent: nil
     # CSV files this seller asked for. Destroyed with the seller: an export is
     # a copy of records held elsewhere, so nothing is lost by dropping it, and
     # a file of one seller's orders should not outlive them.
@@ -218,6 +240,94 @@ module Spree
       terms_accepted_at.present?
     end
 
+    # What the marketplace still owes this seller in one currency.
+    #
+    # Derived rather than stored: it is the whole point of keeping both ledger
+    # levels, and a column would be a second answer that could disagree with
+    # the rows. Per currency because nothing is ever converted — a seller
+    # trading in two currencies accrues two balances and is paid twice.
+    #
+    # Only settlements known to have completed count against it, so one whose
+    # outcome was never established still reads as owed. That is the honest
+    # answer while nobody knows, and it cannot be paid twice by mistake: those
+    # earnings stay claimed by the settlement holding them until it resolves.
+    #
+    # @param currency [String]
+    # @return [BigDecimal]
+    def balance(currency)
+      earned = seller_transfers.completed.where(currency: currency).sum(:amount)
+      settled = seller_payouts.completed.where(currency: currency).sum(:amount)
+
+      earned - settled
+    end
+
+    # The seller's account with whichever provider pays them — a Stripe Connect
+    # `acct_…`, or whatever a SEPA or PayPal provider issues.
+    #
+    # Kept as an external reference rather than a column because that is
+    # exactly what it is: this seller's identity in somebody else's system.
+    # Keying it by the provider means a marketplace that migrates keeps the old
+    # account on the record instead of overwriting it, and the reverse lookup a
+    # webhook needs — "which seller is acct_123?" — is a uniquely indexed read
+    # rather than a scan.
+    #
+    # @param provider [Class] the payout provider whose account is wanted;
+    #   defaults to the one the store is configured to pay through
+    # @return [String, nil]
+    def payout_account_reference(provider = store.payout_provider_class)
+      external_id_for(provider.reference_system)
+    end
+
+    # Records the account a provider issued this seller.
+    #
+    # @param provider [Class] the provider that issued it — stated by the
+    #   caller rather than read from the store, since a gem writes the account
+    #   it minted whatever the store is currently configured to pay through
+    # @param account_reference [String, nil] blank forgets the account
+    # @return [void]
+    def set_payout_account_reference(provider, account_reference)
+      set_external_id(provider.reference_system, account_reference)
+    end
+
+    # Sellers holding an account with one provider, for the reverse lookup a
+    # provider webhook does — it knows the account, not the seller.
+    #
+    # @param store [Spree::Store]
+    # @param provider [Class]
+    # @param account_reference [String]
+    # @return [ActiveRecord::Relation]
+    def self.with_payout_account(store, provider, account_reference)
+      store.sellers.with_external_id(provider.reference_system, account_reference)
+    end
+
+    # Whether a provider says this seller may be sent money yet.
+    #
+    # A marketplace settling offline never asks, so a seller with no account
+    # reference is payable by definition — it is only a provider that executes
+    # transfers which can refuse one.
+    #
+    # @return [Boolean]
+    def payouts_enabled?
+      return true unless store.payout_provider_class.requires_payout_account?
+
+      payouts_enabled_at.present?
+    end
+
+    # What this seller's settlement schedule is, falling back to the store's.
+    #
+    # @return [String]
+    def resolved_payouts_schedule_interval
+      payouts_schedule_interval.presence || store.preferred_default_payouts_schedule_interval
+    end
+
+    # The balance a settlement must reach before it is worth sending, falling
+    # back to the store's. Below it, the balance simply carries to next time.
+    #
+    # @return [BigDecimal]
+    def resolved_minimum_payout_amount
+      (minimum_payout_amount || store.preferred_default_minimum_payout_amount).to_d
+    end
+
     # Where customers send returns — this seller's default stock location.
     #
     # A location rather than a loose address because a received return has to
@@ -260,8 +370,24 @@ module Spree
     # @return [Array<Spree::SellerRequirementStatus>]
     def onboarding_requirements
       @onboarding_requirements ||= Spree::Sellers::Requirements.new(
-        self, preloaded: store&.association(:seller_requirements)&.loaded? || false
+        self,
+        preloaded: store&.association(:seller_requirements)&.loaded? || false,
+        cached: onboarding_requirements_cached
       ).statuses
+    end
+
+    # Whether this seller's checklist may answer from what Spree already knows
+    # rather than asking a payment provider. Set by a caller rendering many
+    # sellers at once, where one network call per row is the difference
+    # between a list that loads and one that does not.
+    #
+    # Deliberately not inferred from the checklist being eager-loaded: a
+    # single-seller read shares that preload, and there the operator is
+    # looking at exactly this seller and wants the current answer.
+    attr_writer :onboarding_requirements_cached
+
+    def onboarding_requirements_cached
+      @onboarding_requirements_cached || false
     end
 
     # @return [Hash{Symbol => Integer}] done and total over the whole

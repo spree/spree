@@ -12,7 +12,7 @@ import {
   TooltipTrigger,
   useConfirm,
 } from '@spree/dashboard-ui'
-import { GlobeIcon, MapIcon, PlusIcon } from 'lucide-react'
+import { GlobeIcon, MapIcon, PlusIcon } from '@spree/dashboard-ui/icons'
 import { useMemo } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useDeleteDeliveryZone } from '../../../hooks/use-delivery-zones'

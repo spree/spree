@@ -49,10 +49,15 @@
 :root {
   --brand-blue: oklch(0.5967 0.2212 258); /* #0077ff — site accent */
   --brand-blue-strong: oklch(0.5106 0.1868 257.7); /* #0060ce — site link hover */
+  /* Links in body copy. The plain accent measures 4.13:1 on white and 4.21:1
+     on the dark card — under 4.5 in BOTH themes — so a link takes its own
+     step rather than the accent. */
+  --link: oklch(0.5106 0.1868 257.7);
+  --link-hover: oklch(0.44 0.16 257.7);
 
-  --background: oklch(98.5% 0.001 106.423); /* stone-50 */
+  --background: oklch(0.9851 0 0); /* #fafafa — chrome sits one step below white */
   --foreground: oklch(0.145 0.0039 49.25); /* stone-950 */
-  --card: oklch(1 0 0); /* white cards, one step above the page */
+  --card: oklch(1 0 0); /* #ffffff — cards and inputs read as raised */
   --card-foreground: oklch(0.145 0.0039 49.25);
   --popover: oklch(1 0 0);
   --popover-foreground: oklch(0.145 0.0039 49.25);
@@ -60,9 +65,9 @@
   --primary-foreground: oklch(1 0 0);
   /* Filled surfaces (table headers, badges, secondary buttons) read as a
      whisper against the white card rather than a distinct band. */
-  --secondary: oklch(0.97 0.001 106.424); /* stone-100 */
+  --secondary: oklch(0.97 0 0);
   --secondary-foreground: oklch(0.145 0.0039 49.25);
-  --muted: oklch(0.985 0.001 106.423); /* stone-50 */
+  --muted: oklch(0.9851 0 0);
   /* Between stone-500 and -600. Clears 4.5:1 against every surface this text
      actually lands on — including --accent, the darkest of them — where the
      stone-500 step measured 4.15:1. Dark mode keeps its own value: it already
@@ -72,20 +77,26 @@
      stone-200: these sit on white surfaces, where that value reads as a
      pressed state rather than a hover. The sidebar shares this value via
      --sidebar-accent so a highlighted row looks the same wherever it is. */
-  --accent: oklch(0.95 0.0019 106.424);
+  --accent: oklch(0.9491 0 0);
   --accent-foreground: oklch(0.145 0.0039 49.25);
   --destructive: oklch(0.58 0.22 27); /* red-600 */
   --destructive-foreground: oklch(1 0 0); /* #ffffff */
-  /* stone-200 — rules stay legible but recede, so a dense table reads as
-     rows of content rather than a grid. */
-  --border: oklch(0.922 0.003 48.717);
+  /* The full-strength rule colour. Nothing styles with it directly — the two
+     tokens below are both a share of it, so neither compounds the other's
+     reduction. */
+  --border-base: oklch(0.922 0 0);
+  /* A container's own edge. Legible but receding, so a dense table reads as
+     rows of content rather than a grid. Carries its strength in the token, so
+     call sites never restate it — an `/80` utility would compound to 64%. */
+  --border: color-mix(in srgb, var(--border-base) 90%, transparent);
   /* Half-strength rule for dividers *inside* a container — card header/footer
-     splits, dialog and sheet separators, table chrome. Distinct from --border,
-     which draws a container's own edge. Resolved to a real colour rather than
-     an opacity utility so it also works inside arbitrary values such as the
-     sticky table header's inset shadow, where `/50` has no effect. */
-  --border-subtle: color-mix(in srgb, var(--border) 50%, transparent);
-  --input: oklch(0.922 0.003 48.717);
+     splits, dialog and sheet separators, table chrome. Half of the base, not
+     of --border, so it is a true 50% rather than 40%. Resolved to a real
+     colour rather than an opacity utility so it also works inside arbitrary
+     values such as the sticky table header's inset shadow, where `/50` has no
+     effect. */
+  --border-subtle: color-mix(in srgb, var(--border-base) 50%, transparent);
+  --input: color-mix(in srgb, var(--border-base) 80%, transparent);
   --ring: var(--brand-blue);
   --chart-1: oklch(0.7663 0.1067 254.4);
   --chart-2: oklch(0.5967 0.2212 258); /* brand blue */
@@ -94,15 +105,19 @@
   --chart-5: oklch(0.3358 0.118 257.1);
   --radius: 0.75rem;
 
-  /* Sidebar — one step off the page, so it reads as its own surface. */
-  --sidebar: oklch(97% 0.001 106.424); /* stone-100 */
-  --sidebar-foreground: oklch(37.1% 0.0099 67.558);
-  --sidebar-primary: oklch(0.145 0.0039 49.25);
-  --sidebar-primary-foreground: oklch(1 0 0);
-  --sidebar-accent: oklch(0.922 0.003 48.717); /* stone-200 */
-  --sidebar-accent-foreground: oklch(0.145 0.0039 49.25);
-  --sidebar-border: oklch(0.9 0.0039 48.717);
-  --sidebar-ring: var(--brand-blue);
+  /* Sidebar — the same surface as the page, not a band beside it. Every value
+     points at the page token it matches rather than repeating it, so the two
+     cannot drift apart. */
+  --sidebar: var(--background);
+  --sidebar-foreground: oklch(26.8% 0.007 34.298);
+  --sidebar-primary: var(--primary);
+  --sidebar-primary-foreground: var(--primary-foreground);
+  --sidebar-accent: var(--accent);
+  --sidebar-accent-foreground: var(--accent-foreground);
+  /* Matches the rule the top bar draws, so every edge framing the shell —
+     the sidebar's, the top bar's, the settings header's — is one weight. */
+  --sidebar-border: color-mix(in srgb, var(--border) 75%, transparent);
+  --sidebar-ring: var(--ring);
 
   /* Status ramps, following Vercel's Geist colour system.
    *
@@ -145,11 +160,11 @@
 
 .dark {
   /* Vercel-style "true black" base, with surfaces stepping up in lightness. */
-  --background: oklch(0 0 0); /* #000000 */
+  --background: oklch(0.1913 0 0);
   --foreground: oklch(0.95 0.0019 106.424); /* stone-100-ish */
-  --card: oklch(0.145 0.0039 49.25); /* stone-950 — surface */
+  --card: oklch(0.209 0 0);
   --card-foreground: oklch(0.95 0.0019 106.424);
-  --popover: oklch(0.145 0.0039 49.25);
+  --popover: oklch(0.209 0 0);
   --popover-foreground: oklch(0.95 0.0019 106.424);
   /* Mirrors the light theme's primary: there a navy fill carries white text,
      so here the two swap rather than the button taking on its own colour. */
@@ -164,26 +179,31 @@
   --secondary-foreground: oklch(0.95 0.0019 106.424);
   --muted: oklch(0.185 0.0051 56.043);
   --muted-foreground: oklch(0.62 0.0117 58.071); /* stone-500-ish */
-  --accent: oklch(0.225 0.0062 56.043); /* hover surface, a step above --muted */
+  --accent: oklch(0.2645 0 0);
   --accent-foreground: oklch(0.95 0.0019 106.424);
   --destructive: oklch(0.704 0.191 22.216);
-  --border: oklch(1 0 0 / 12%);
-  --border-subtle: color-mix(in srgb, var(--border) 50%, transparent);
-  --input: oklch(1 0 0 / 15%);
+  --border-base: oklch(1 0 0 / 12%);
+  --border: color-mix(in srgb, var(--border-base) 80%, transparent);
+  --border-subtle: color-mix(in srgb, var(--border-base) 50%, transparent);
+  --input: color-mix(in srgb, var(--border-base) 80%, transparent);
   --ring: oklch(0.552 0.016 285); /* same blue ring as light, for focus parity */
+  --link: oklch(0.7 0.16 258);
+  --link-hover: oklch(0.78 0.14 258);
   --chart-1: oklch(0.809 0.105 251.813);
   --chart-2: oklch(0.623 0.214 259.815);
   --chart-3: oklch(0.546 0.245 262.881);
   --chart-4: oklch(0.488 0.243 264.376);
   --chart-5: oklch(0.424 0.199 265.638);
-  --sidebar: oklch(0.145 0.0039 49.25); /* stone-950 — slightly elevated from background */
-  --sidebar-foreground: oklch(0.95 0.0019 106.424);
-  --sidebar-primary: oklch(0.95 0.0019 106.424);
-  --sidebar-primary-foreground: oklch(0.145 0.0039 49.25);
-  --sidebar-accent: oklch(0.27 0.0071 34.298);
-  --sidebar-accent-foreground: oklch(0.95 0.0019 106.424);
-  --sidebar-border: oklch(1 0 0 / 10%);
-  --sidebar-ring: oklch(0.708 0.01 56.259);
+  --sidebar: var(--background);
+  --sidebar-foreground: var(--foreground);
+  --sidebar-primary: var(--primary);
+  --sidebar-primary-foreground: var(--primary-foreground);
+  --sidebar-accent: var(--accent);
+  --sidebar-accent-foreground: var(--accent-foreground);
+  /* Matches the rule the top bar draws, so every edge framing the shell —
+     the sidebar's, the top bar's, the settings header's — is one weight. */
+  --sidebar-border: color-mix(in srgb, var(--border) 75%, transparent);
+  --sidebar-ring: var(--ring);
 
   /* Geist's dark ramps are not the light ones dimmed — the fill becomes a deep
      shade of the hue and the text becomes brighter than its light-mode
@@ -227,17 +247,9 @@
   --text-3xl: 1.75rem;
   --text-4xl: 2rem;
 
-  /* Shadows are retired rather than removed. A card already carries its own
-     border, so the extra 1px of depth under it added no information — it just
-     softened an edge the border was drawing cleanly. The tokens stay defined,
-     at effectively nothing, so the components still carrying `shadow-xs`
-     flatten with the rest instead of each needing to be found and edited.
-     Floating surfaces are the exception and set their own shadow: a menu or
-     dialog genuinely is above the page, and that is the one place depth is
-     telling the truth. */
-  --shadow-xs: 0 0 0 0 transparent;
-  --shadow-sm: 0 0 0 0 transparent;
-  --shadow-nav: 0 0 0 1px var(--border);
+  --shadow-xs: rgba(43, 34, 51, 0.05) 0px 1px 1px;
+  --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+  --shadow-nav: rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0.04) 0px 0px 0px 1px, rgba(0, 0, 0, 0.04) 0px 1px 2px -1px, rgba(0, 0, 0, 0.02) 0px 2px 4px 0px;
 
   /* Floating surfaces — menus, popovers, dialogs, sheets. Wide and faint
      rather than tight and dark: the job is to say "this is above the page",
@@ -338,6 +350,8 @@
      incidental use such as charts and illustrations. */
   --color-blue-500: var(--brand-blue);
   --color-blue-600: var(--brand-blue-strong);
+  --color-link: var(--link);
+  --color-link-hover: var(--link-hover);
 }
 
 @utility focus-ring {

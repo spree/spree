@@ -1,6 +1,7 @@
 
 module Spree
   class Order < Spree.base_class
+    include Spree::CSV::CustomFieldsHelper
     has_prefix_id :or  # Stripe: or_
 
     # Legacy free-text `channel` column was replaced by the `channel_id` FK
@@ -260,7 +261,12 @@ module Spree
     #   {#recalculate_totals!}. Removed in 6.1.
     delegate :update_totals, :persist_totals, to: :updater
     delegate :merge!, to: :merger
-    delegate :firstname, :lastname, to: :bill_address, prefix: true, allow_nil: true
+    delegate :first_name, :last_name, to: :bill_address, prefix: true, allow_nil: true
+
+    # @deprecated The delegated names follow the renamed address columns since
+    #   6.0; removed in 6.1.
+    alias bill_address_firstname bill_address_first_name
+    alias bill_address_lastname bill_address_last_name
 
     class_attribute :update_hooks
     self.update_hooks = Set.new
@@ -299,14 +305,14 @@ module Spree
       # purchase order — and both have to find the same transaction.
       conditions << arel_table[:po_number].lower.matches(query_pattern)
 
-      conditions << search_condition(Spree::Address, :firstname, sanitized_query)
-      conditions << search_condition(Spree::Address, :lastname, sanitized_query)
+      conditions << search_condition(Spree::Address, :first_name, sanitized_query)
+      conditions << search_condition(Spree::Address, :last_name, sanitized_query)
 
       full_name = NameOfPerson::PersonName.full(sanitized_query)
 
       if full_name.first.present? && full_name.last.present?
-        conditions << search_condition(Spree::Address, :firstname, full_name.first)
-        conditions << search_condition(Spree::Address, :lastname, full_name.last)
+        conditions << search_condition(Spree::Address, :first_name, full_name.first)
+        conditions << search_condition(Spree::Address, :last_name, full_name.last)
       end
 
       left_joins(:bill_address).where(arel_table[:email].lower.eq(query.downcase)).or(where(conditions.reduce(:or)))
@@ -378,7 +384,7 @@ module Spree
     # It's a sum of the item total and the promo total
     # @return [Float]
     def analytics_subtotal
-      (item_total + line_items.sum(:promo_total)).to_f
+      (item_total + line_items.sum(:discount_total)).to_f
     end
 
 
@@ -1074,15 +1080,17 @@ module Spree
     # @param omit_headers [Array<String>] columns to leave out, named by their
     #   header. A seller's export drops the buyer's email this way — see
     #   Spree::Exports::Orders.
-    def to_csv(_store = nil, omit_headers: [])
-      custom_fields_for_csv ||= Spree::CustomFieldDefinition.for_resource_type('Spree::Order').order(:namespace, :key).map do |mf_def|
-        custom_fields.find { |mf| mf.custom_field_definition_id == mf_def.id }&.csv_value
-      end
+    def to_csv(store = nil, omit_headers: [])
+      store ||= self.store
+      # Through the shared helper so the value row is built from exactly the
+      # definitions, in exactly the order, that Export#custom_fields_headers
+      # used for the header row — a mismatch shifts every value column.
+      custom_field_values = custom_fields_for_csv(self, store)
 
       csv_lines = []
       line_items.each_with_index do |line_item, index|
         csv_lines << Spree::CSV::OrderLineItemPresenter.new(
-          self, line_item, index, custom_fields_for_csv, omit_headers: omit_headers
+          self, line_item, index, custom_field_values, omit_headers: omit_headers
         ).call
       end
       csv_lines

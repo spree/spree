@@ -1,7 +1,7 @@
 import type { Order } from '@spree/admin-sdk'
 import { Card, CardContent, CardHeader, CardTitle } from '@spree/dashboard-ui'
+import { StoreIcon } from '@spree/dashboard-ui/icons'
 import { Link } from '@tanstack/react-router'
-import { StoreIcon } from 'lucide-react'
 import { useTranslation } from 'react-i18next'
 import { useSeller } from '../../../hooks/use-sellers'
 import { orderGroupSearch } from '../../../lib/order-group-search'

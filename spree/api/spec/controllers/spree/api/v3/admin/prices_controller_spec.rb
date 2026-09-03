@@ -89,9 +89,9 @@ RSpec.describe Spree::Api::V3::Admin::PricesController, type: :controller do
     describe 'free-text search via q[search]' do
       let!(:red_option_value) do
         ot = Spree::OptionType.find_by(name: 'shirt-color') ||
-             create(:option_type, name: 'shirt-color', presentation: 'Color')
+             create(:option_type, name: 'shirt-color', label: 'Color')
         ot.option_values.find_by(name: 'red') ||
-          create(:option_value, option_type: ot, name: 'red', presentation: 'Red')
+          create(:option_value, option_type: ot, name: 'red', label: 'Red')
       end
       let!(:red_variant) do
         v = create(:variant, product: product, sku: 'TSHIRT-RED-XL')

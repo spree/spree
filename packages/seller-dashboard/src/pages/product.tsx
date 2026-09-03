@@ -1,5 +1,6 @@
 import { zodResolver } from '@hookform/resolvers/zod'
 import {
+  CategorizationCard,
   GeneralCard,
   InventoryCard,
   MediaCard,
@@ -35,9 +36,11 @@ const PRODUCT_EXPAND = 'variants,media,default_variant,submission'
  * The same cards the operator's dashboard renders, in the same order, from
  * `@spree/dashboard-core` — the two forms are one form, and the differences
  * are only what a seller may not do. Publishing to channels and tax category
- * are absent because they are marketplace configuration, and status is not a
- * field here at all: a seller submits for review and the marketplace decides
- * (docs/plans/6.0-seller-product-submission.md).
+ * are absent because they are marketplace configuration, the Categorization
+ * card offers only the product type and delivery profile (filing a listing
+ * under categories, collections and tags is the operator's at review), and
+ * status is not a field here at all: a seller submits for review and the
+ * marketplace decides (docs/plans/6.0-seller-product-submission.md).
  */
 export function ProductPage({ mode }: { mode: 'new' | 'edit' }) {
   const { t } = useTranslation()
@@ -99,6 +102,11 @@ export function ProductPage({ mode }: { mode: 'new' | 'edit' }) {
         slug: values.slug || undefined,
         meta_title: values.meta_title ?? undefined,
         meta_description: values.meta_description ?? undefined,
+        // Null is a real value here — it detaches the type. The profile has
+        // no such state: a product always ships under one, so an empty pick
+        // means "leave it".
+        product_type_id: values.product_type_id ?? null,
+        delivery_profile_id: values.delivery_profile_id ?? undefined,
         // Both lists are the whole intent: anything the seller removed is
         // absent here, which is what tells the API to drop it.
         // The video address and the focal point ride along because the
@@ -133,9 +141,12 @@ export function ProductPage({ mode }: { mode: 'new' | 'edit' }) {
       void queryClient.invalidateQueries({ queryKey: ['seller', sellerId, 'product', saved.id] })
       toastManager.add({ type: 'success', title: t('products.saved') })
       if (!productId) {
+        // Replace history rather than pushing — otherwise back lands on the
+        // (now-stale) new product form.
         navigate({
           to: '/$sellerId/products/$productId',
           params: { sellerId, productId: saved.id },
+          replace: true,
         })
       }
     },
@@ -208,16 +219,18 @@ export function ProductPage({ mode }: { mode: 'new' | 'edit' }) {
             </>
           }
           sidebar={
-            productId &&
-            product && (
-              <ProductStatusCard
-                product={product}
-                onDone={() => {
-                  void queryClient.invalidateQueries({ queryKey: productKey })
-                  void queryClient.invalidateQueries({ queryKey: ['seller-products'] })
-                }}
-              />
-            )
+            <>
+              {productId && product && (
+                <ProductStatusCard
+                  product={product}
+                  onDone={() => {
+                    void queryClient.invalidateQueries({ queryKey: productKey })
+                    void queryClient.invalidateQueries({ queryKey: ['seller-products'] })
+                  }}
+                />
+              )}
+              <CategorizationCard form={form} />
+            </>
           }
         />
       </form>

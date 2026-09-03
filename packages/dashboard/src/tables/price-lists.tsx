@@ -1,12 +1,14 @@
 import type { PriceList } from '@spree/admin-sdk'
 import { defineTable } from '@spree/dashboard-core'
 import { ResourceNameCell } from '@spree/dashboard-ui'
+import { TagsIcon } from '@spree/dashboard-ui/icons'
 import i18n from 'i18next'
-import { TagsIcon } from 'lucide-react'
 import { PriceListStatusBadge } from '../components/spree/price-list-editors/status-badge'
 
 defineTable<PriceList>('price-lists', {
   title: i18n.t('admin.nav.price_lists'),
+  description: i18n.t('admin.table_descriptions.price_lists'),
+  docsPath: 'manage-products/price-lists',
   searchParam: 'name_cont',
   searchPlaceholder: i18n.t('admin.common.search_placeholder'),
   defaultSort: { field: 'position', direction: 'asc' },

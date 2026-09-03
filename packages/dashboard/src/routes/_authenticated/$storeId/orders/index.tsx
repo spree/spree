@@ -5,8 +5,8 @@ import {
   resourceSearchSchema,
 } from '@spree/dashboard-core'
 import { Button } from '@spree/dashboard-ui'
+import { PlusIcon } from '@spree/dashboard-ui/icons'
 import { createFileRoute, Link } from '@tanstack/react-router'
-import { PlusIcon } from 'lucide-react'
 import '../../../../tables/orders'
 
 export const Route = createFileRoute('/_authenticated/$storeId/orders/')({

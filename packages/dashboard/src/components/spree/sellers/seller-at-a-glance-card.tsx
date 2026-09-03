@@ -1,6 +1,6 @@
 import type { Seller } from '@spree/admin-sdk'
 import { Card, CardContent, CardHeader, CardTitle, RelativeTime } from '@spree/dashboard-ui'
-import { PackageIcon, UsersIcon } from 'lucide-react'
+import { PackageIcon, UsersIcon } from '@spree/dashboard-ui/icons'
 import { useTranslation } from 'react-i18next'
 import { ReadRow } from './seller-read-row'
 

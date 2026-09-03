@@ -21,10 +21,10 @@ import {
   TableRow,
   Thumbnail,
 } from '@spree/dashboard-ui'
+import { PackageIcon } from '@spree/dashboard-ui/icons'
 import { useQuery } from '@tanstack/react-query'
 import { createFileRoute, Link } from '@tanstack/react-router'
 import { subDays } from 'date-fns'
-import { PackageIcon } from 'lucide-react'
 import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { Bar, BarChart, CartesianGrid, XAxis } from 'recharts'

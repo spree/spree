@@ -1,9 +1,9 @@
 import type { Claim, Exchange, Return } from '@spree/admin-sdk'
 import { defineTable } from '@spree/dashboard-core'
 import { RelativeTime, StatusBadge } from '@spree/dashboard-ui'
+import { RepeatIcon, RotateCcwIcon, ShieldAlertIcon } from '@spree/dashboard-ui/icons'
 import { Link } from '@tanstack/react-router'
 import i18n from 'i18next'
-import { RepeatIcon, RotateCcwIcon, ShieldAlertIcon } from 'lucide-react'
 
 /**
  * The record's own number, linking to the order it belongs to — that page is

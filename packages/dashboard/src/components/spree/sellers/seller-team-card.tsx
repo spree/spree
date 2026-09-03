@@ -11,7 +11,7 @@ import {
   RowActions,
   useConfirm,
 } from '@spree/dashboard-ui'
-import { UserPlusIcon } from 'lucide-react'
+import { UserPlusIcon } from '@spree/dashboard-ui/icons'
 import { useTranslation } from 'react-i18next'
 import {
   useRemoveSellerTeamMember,

@@ -341,12 +341,12 @@ RSpec.describe SpreeStripe::Gateway do
       let(:address) do
         create(
           :address,
-          firstname: 'Jane',
-          lastname: 'Zoe',
+          first_name: 'Jane',
+          last_name: 'Zoe',
           address1: '100 California Street',
           address2: nil,
           city: 'San Francisco',
-          zipcode: '94111',
+          postal_code: '94111',
           state: california_state,
           country: usa_country
         )
@@ -729,11 +729,11 @@ RSpec.describe SpreeStripe::Gateway do
         city: 'San Francisco',
         address1: '100 California Street',
         address2: 'Apt 1',
-        zipcode: '94111',
+        postal_code: '94111',
         state: california_state,
         country: usa_country,
-        firstname: 'John',
-        lastname: 'Doe',
+        first_name: 'John',
+        last_name: 'Doe',
         phone: '1234567890'
       )
     end
@@ -744,7 +744,7 @@ RSpec.describe SpreeStripe::Gateway do
         city: 'New York',
         address1: '100 Main Street',
         address2: 'Apt 2',
-        zipcode: '10001',
+        postal_code: '10001',
         state: new_york_state,
         country: usa_country
       )
@@ -852,11 +852,11 @@ RSpec.describe SpreeStripe::Gateway do
         city: 'San Francisco',
         address1: '200 California Street',
         address2: 'Apt 11',
-        zipcode: '94112',
+        postal_code: '94112',
         state: california_state,
         country: usa_country,
-        firstname: 'John',
-        lastname: 'Doe'
+        first_name: 'John',
+        last_name: 'Doe'
       )
     end
 
@@ -866,7 +866,7 @@ RSpec.describe SpreeStripe::Gateway do
         city: 'New York',
         address1: '200 Main Street',
         address2: 'Apt 22',
-        zipcode: '10002',
+        postal_code: '10002',
         state: new_york_state,
         country: usa_country
       )
@@ -1162,17 +1162,50 @@ RSpec.describe SpreeStripe::Gateway do
     end
   end
 
+  # Two endpoints, registered independently: the payment one for the
+  # marketplace's own charges, the Connect one for events originating inside
+  # sellers' accounts. Each holds its own signing secret, and each secret is
+  # the guard against registering that endpoint twice.
   describe 'webhook endpoint registration' do
-    it 'enqueues the registration job on create' do
-      expect { gateway }.to have_enqueued_job(SpreeStripe::CreateWebhookEndpointJob)
+    it 'enqueues the payment registration job on create' do
+      expect { gateway }.to have_enqueued_job(SpreeStripe::CreateWebhookEndpointJob).with(anything, connect: false)
     end
 
-    context 'when the signing secret is already stored' do
-      it 'does not enqueue the registration job' do
+    it 'enqueues the Connect registration job on create' do
+      expect { gateway }.to have_enqueued_job(SpreeStripe::CreateWebhookEndpointJob).with(anything, connect: true)
+    end
+
+    context 'when the payment signing secret is already stored' do
+      it 'does not register the payment endpoint again' do
         expect do
           create(:stripe_gateway, :with_webhook_signing_secret, store: store)
-        end.not_to have_enqueued_job(SpreeStripe::CreateWebhookEndpointJob)
+        end.not_to have_enqueued_job(SpreeStripe::CreateWebhookEndpointJob).with(anything, connect: false)
       end
+
+      # The Connect endpoint has its own secret, so it is still outstanding.
+      it 'still registers the Connect endpoint' do
+        expect do
+          create(:stripe_gateway, :with_webhook_signing_secret, store: store)
+        end.to have_enqueued_job(SpreeStripe::CreateWebhookEndpointJob).with(anything, connect: true)
+      end
+    end
+  end
+  # Stripe issues these when Spree registers an endpoint, and only reveals a
+  # signing secret at creation. An operator has nothing to type, and a value
+  # typed over one would break the signature check it exists to satisfy.
+  describe 'the credentials an operator supplies' do
+    it 'asks for the two keys only' do
+      keys = described_class.serialized_preference_schema.map { |field| field[:key] }
+
+      expect(keys).to contain_exactly(:publishable_key, :secret_key)
+    end
+
+    it 'still holds what Stripe hands back' do
+      gateway.preferred_webhook_signing_secret = 'whsec_payments'
+      gateway.preferred_connect_webhook_signing_secret = 'whsec_connect'
+
+      expect(gateway.preferred_webhook_signing_secret).to eq('whsec_payments')
+      expect(gateway.preferred_connect_webhook_signing_secret).to eq('whsec_connect')
     end
   end
 end

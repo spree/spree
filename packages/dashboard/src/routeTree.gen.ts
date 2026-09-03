@@ -41,6 +41,7 @@ import { Route as SettingsRolesRouteImport } from './routes/_authenticated/$stor
 import { Route as SettingsReasonsRouteImport } from './routes/_authenticated/$storeId/settings/reasons'
 import { Route as SettingsProductTypesRouteImport } from './routes/_authenticated/$storeId/settings/product-types'
 import { Route as SettingsPoliciesRouteImport } from './routes/_authenticated/$storeId/settings/policies'
+import { Route as SettingsPayoutsRouteImport } from './routes/_authenticated/$storeId/settings/payouts'
 import { Route as SettingsPaymentMethodsRouteImport } from './routes/_authenticated/$storeId/settings/payment-methods'
 import { Route as SettingsMarketsRouteImport } from './routes/_authenticated/$storeId/settings/markets'
 import { Route as SettingsIntegrationsRouteImport } from './routes/_authenticated/$storeId/settings/integrations'
@@ -54,6 +55,7 @@ import { Route as SellersSellerIdRouteImport } from './routes/_authenticated/$st
 import { Route as PromotionsNewRouteImport } from './routes/_authenticated/$storeId/promotions/new'
 import { Route as PromotionsGiftCardsRouteImport } from './routes/_authenticated/$storeId/promotions/gift-cards'
 import { Route as PromotionsPromotionIdRouteImport } from './routes/_authenticated/$storeId/promotions/$promotionId'
+import { Route as ProductsTranslationsRouteImport } from './routes/_authenticated/$storeId/products/translations'
 import { Route as ProductsTransfersRouteImport } from './routes/_authenticated/$storeId/products/transfers'
 import { Route as ProductsOptionsRouteImport } from './routes/_authenticated/$storeId/products/options'
 import { Route as ProductsNewRouteImport } from './routes/_authenticated/$storeId/products/new'
@@ -246,6 +248,11 @@ const SettingsPoliciesRoute = SettingsPoliciesRouteImport.update({
   path: '/policies',
   getParentRoute: () => SettingsRoute,
 } as any)
+const SettingsPayoutsRoute = SettingsPayoutsRouteImport.update({
+  id: '/payouts',
+  path: '/payouts',
+  getParentRoute: () => SettingsRoute,
+} as any)
 const SettingsPaymentMethodsRoute = SettingsPaymentMethodsRouteImport.update({
   id: '/payment-methods',
   path: '/payment-methods',
@@ -310,6 +317,11 @@ const PromotionsGiftCardsRoute = PromotionsGiftCardsRouteImport.update({
 const PromotionsPromotionIdRoute = PromotionsPromotionIdRouteImport.update({
   id: '/promotions/$promotionId',
   path: '/promotions/$promotionId',
+  getParentRoute: () => authenticatedStoreIdRoute,
+} as any)
+const ProductsTranslationsRoute = ProductsTranslationsRouteImport.update({
+  id: '/products/translations',
+  path: '/products/translations',
   getParentRoute: () => authenticatedStoreIdRoute,
 } as any)
 const ProductsTransfersRoute = ProductsTransfersRouteImport.update({
@@ -498,6 +510,7 @@ export interface FileRoutesByFullPath {
   '/$storeId/products/new': typeof ProductsNewRoute
   '/$storeId/products/options': typeof ProductsOptionsRoute
   '/$storeId/products/transfers': typeof ProductsTransfersRoute
+  '/$storeId/products/translations': typeof ProductsTranslationsRoute
   '/$storeId/promotions/$promotionId': typeof PromotionsPromotionIdRoute
   '/$storeId/promotions/gift-cards': typeof PromotionsGiftCardsRoute
   '/$storeId/promotions/new': typeof PromotionsNewRoute
@@ -511,6 +524,7 @@ export interface FileRoutesByFullPath {
   '/$storeId/settings/integrations': typeof SettingsIntegrationsRoute
   '/$storeId/settings/markets': typeof SettingsMarketsRoute
   '/$storeId/settings/payment-methods': typeof SettingsPaymentMethodsRoute
+  '/$storeId/settings/payouts': typeof SettingsPayoutsRoute
   '/$storeId/settings/policies': typeof SettingsPoliciesRoute
   '/$storeId/settings/product-types': typeof SettingsProductTypesRoute
   '/$storeId/settings/reasons': typeof SettingsReasonsRoute
@@ -572,6 +586,7 @@ export interface FileRoutesByTo {
   '/$storeId/products/new': typeof ProductsNewRoute
   '/$storeId/products/options': typeof ProductsOptionsRoute
   '/$storeId/products/transfers': typeof ProductsTransfersRoute
+  '/$storeId/products/translations': typeof ProductsTranslationsRoute
   '/$storeId/promotions/$promotionId': typeof PromotionsPromotionIdRoute
   '/$storeId/promotions/gift-cards': typeof PromotionsGiftCardsRoute
   '/$storeId/promotions/new': typeof PromotionsNewRoute
@@ -585,6 +600,7 @@ export interface FileRoutesByTo {
   '/$storeId/settings/integrations': typeof SettingsIntegrationsRoute
   '/$storeId/settings/markets': typeof SettingsMarketsRoute
   '/$storeId/settings/payment-methods': typeof SettingsPaymentMethodsRoute
+  '/$storeId/settings/payouts': typeof SettingsPayoutsRoute
   '/$storeId/settings/policies': typeof SettingsPoliciesRoute
   '/$storeId/settings/product-types': typeof SettingsProductTypesRoute
   '/$storeId/settings/reasons': typeof SettingsReasonsRoute
@@ -650,6 +666,7 @@ export interface FileRoutesById {
   '/_authenticated/$storeId/products/new': typeof ProductsNewRoute
   '/_authenticated/$storeId/products/options': typeof ProductsOptionsRoute
   '/_authenticated/$storeId/products/transfers': typeof ProductsTransfersRoute
+  '/_authenticated/$storeId/products/translations': typeof ProductsTranslationsRoute
   '/_authenticated/$storeId/promotions/$promotionId': typeof PromotionsPromotionIdRoute
   '/_authenticated/$storeId/promotions/gift-cards': typeof PromotionsGiftCardsRoute
   '/_authenticated/$storeId/promotions/new': typeof PromotionsNewRoute
@@ -663,6 +680,7 @@ export interface FileRoutesById {
   '/_authenticated/$storeId/settings/integrations': typeof SettingsIntegrationsRoute
   '/_authenticated/$storeId/settings/markets': typeof SettingsMarketsRoute
   '/_authenticated/$storeId/settings/payment-methods': typeof SettingsPaymentMethodsRoute
+  '/_authenticated/$storeId/settings/payouts': typeof SettingsPayoutsRoute
   '/_authenticated/$storeId/settings/policies': typeof SettingsPoliciesRoute
   '/_authenticated/$storeId/settings/product-types': typeof SettingsProductTypesRoute
   '/_authenticated/$storeId/settings/reasons': typeof SettingsReasonsRoute
@@ -728,6 +746,7 @@ export interface FileRouteTypes {
     | '/$storeId/products/new'
     | '/$storeId/products/options'
     | '/$storeId/products/transfers'
+    | '/$storeId/products/translations'
     | '/$storeId/promotions/$promotionId'
     | '/$storeId/promotions/gift-cards'
     | '/$storeId/promotions/new'
@@ -741,6 +760,7 @@ export interface FileRouteTypes {
     | '/$storeId/settings/integrations'
     | '/$storeId/settings/markets'
     | '/$storeId/settings/payment-methods'
+    | '/$storeId/settings/payouts'
     | '/$storeId/settings/policies'
     | '/$storeId/settings/product-types'
     | '/$storeId/settings/reasons'
@@ -802,6 +822,7 @@ export interface FileRouteTypes {
     | '/$storeId/products/new'
     | '/$storeId/products/options'
     | '/$storeId/products/transfers'
+    | '/$storeId/products/translations'
     | '/$storeId/promotions/$promotionId'
     | '/$storeId/promotions/gift-cards'
     | '/$storeId/promotions/new'
@@ -815,6 +836,7 @@ export interface FileRouteTypes {
     | '/$storeId/settings/integrations'
     | '/$storeId/settings/markets'
     | '/$storeId/settings/payment-methods'
+    | '/$storeId/settings/payouts'
     | '/$storeId/settings/policies'
     | '/$storeId/settings/product-types'
     | '/$storeId/settings/reasons'
@@ -879,6 +901,7 @@ export interface FileRouteTypes {
     | '/_authenticated/$storeId/products/new'
     | '/_authenticated/$storeId/products/options'
     | '/_authenticated/$storeId/products/transfers'
+    | '/_authenticated/$storeId/products/translations'
     | '/_authenticated/$storeId/promotions/$promotionId'
     | '/_authenticated/$storeId/promotions/gift-cards'
     | '/_authenticated/$storeId/promotions/new'
@@ -892,6 +915,7 @@ export interface FileRouteTypes {
     | '/_authenticated/$storeId/settings/integrations'
     | '/_authenticated/$storeId/settings/markets'
     | '/_authenticated/$storeId/settings/payment-methods'
+    | '/_authenticated/$storeId/settings/payouts'
     | '/_authenticated/$storeId/settings/policies'
     | '/_authenticated/$storeId/settings/product-types'
     | '/_authenticated/$storeId/settings/reasons'
@@ -1166,6 +1190,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof SettingsPoliciesRouteImport
       parentRoute: typeof SettingsRoute
     }
+    '/_authenticated/$storeId/settings/payouts': {
+      id: '/_authenticated/$storeId/settings/payouts'
+      path: '/payouts'
+      fullPath: '/$storeId/settings/payouts'
+      preLoaderRoute: typeof SettingsPayoutsRouteImport
+      parentRoute: typeof SettingsRoute
+    }
     '/_authenticated/$storeId/settings/payment-methods': {
       id: '/_authenticated/$storeId/settings/payment-methods'
       path: '/payment-methods'
@@ -1255,6 +1286,13 @@ declare module '@tanstack/react-router' {
       path: '/promotions/$promotionId'
       fullPath: '/$storeId/promotions/$promotionId'
       preLoaderRoute: typeof PromotionsPromotionIdRouteImport
+      parentRoute: typeof authenticatedStoreIdRoute
+    }
+    '/_authenticated/$storeId/products/translations': {
+      id: '/_authenticated/$storeId/products/translations'
+      path: '/products/translations'
+      fullPath: '/$storeId/products/translations'
+      preLoaderRoute: typeof ProductsTranslationsRouteImport
       parentRoute: typeof authenticatedStoreIdRoute
     }
     '/_authenticated/$storeId/products/transfers': {
@@ -1480,6 +1518,7 @@ interface SettingsRouteChildren {
   SettingsIntegrationsRoute: typeof SettingsIntegrationsRoute
   SettingsMarketsRoute: typeof SettingsMarketsRoute
   SettingsPaymentMethodsRoute: typeof SettingsPaymentMethodsRoute
+  SettingsPayoutsRoute: typeof SettingsPayoutsRoute
   SettingsPoliciesRoute: typeof SettingsPoliciesRoute
   SettingsProductTypesRoute: typeof SettingsProductTypesRoute
   SettingsReasonsRoute: typeof SettingsReasonsRoute
@@ -1510,6 +1549,7 @@ const SettingsRouteChildren: SettingsRouteChildren = {
   SettingsIntegrationsRoute: SettingsIntegrationsRoute,
   SettingsMarketsRoute: SettingsMarketsRoute,
   SettingsPaymentMethodsRoute: SettingsPaymentMethodsRoute,
+  SettingsPayoutsRoute: SettingsPayoutsRoute,
   SettingsPoliciesRoute: SettingsPoliciesRoute,
   SettingsProductTypesRoute: SettingsProductTypesRoute,
   SettingsReasonsRoute: SettingsReasonsRoute,
@@ -1556,6 +1596,7 @@ interface authenticatedStoreIdRouteChildren {
   ProductsNewRoute: typeof ProductsNewRoute
   ProductsOptionsRoute: typeof ProductsOptionsRoute
   ProductsTransfersRoute: typeof ProductsTransfersRoute
+  ProductsTranslationsRoute: typeof ProductsTranslationsRoute
   PromotionsPromotionIdRoute: typeof PromotionsPromotionIdRoute
   PromotionsGiftCardsRoute: typeof PromotionsGiftCardsRoute
   PromotionsNewRoute: typeof PromotionsNewRoute
@@ -1599,6 +1640,7 @@ const authenticatedStoreIdRouteChildren: authenticatedStoreIdRouteChildren = {
   ProductsNewRoute: ProductsNewRoute,
   ProductsOptionsRoute: ProductsOptionsRoute,
   ProductsTransfersRoute: ProductsTransfersRoute,
+  ProductsTranslationsRoute: ProductsTranslationsRoute,
   PromotionsPromotionIdRoute: PromotionsPromotionIdRoute,
   PromotionsGiftCardsRoute: PromotionsGiftCardsRoute,
   PromotionsNewRoute: PromotionsNewRoute,

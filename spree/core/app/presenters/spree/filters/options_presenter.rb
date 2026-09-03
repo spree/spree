@@ -8,7 +8,7 @@ module Spree
           {
             id: option_type.id,
             name: option_type.name,
-            presentation: option_type.presentation,
+            presentation: option_type.label,
             option_values: option_values.map { |e| option_value_hash(e) }
           }
         end
@@ -19,7 +19,7 @@ module Spree
           {
             id: option_value.id,
             name: option_value.name,
-            presentation: option_value.presentation,
+            presentation: option_value.label,
             position: option_value.position
           }
         end

@@ -143,6 +143,68 @@ RSpec.describe Spree::CustomFieldDefinition, type: :model do
 
       expect(custom_field_definition.filter_key).to eq('cf_custom_material')
     end
+
+    it 'persists the value so it can be queried' do
+      custom_field_definition = create(:custom_field_definition, namespace: 'custom', key: 'material')
+
+      expect(custom_field_definition.reload[:filter_key]).to eq('cf_custom_material')
+    end
+
+    it 'follows a renamed namespace or key' do
+      custom_field_definition = create(:custom_field_definition, namespace: 'custom', key: 'material')
+
+      custom_field_definition.update!(namespace: 'specs', key: 'fabric')
+
+      expect(custom_field_definition.reload[:filter_key]).to eq('cf_specs_fabric')
+    end
+
+    # The upgrade migration suffixes one of a colliding pair. Recomputing on an
+    # unrelated edit would undo that and leave the row permanently unsaveable.
+    it 'keeps a suffixed value when neither segment changes' do
+      custom_field_definition = create(:custom_field_definition, namespace: 'a', key: 'b_c')
+      described_class.where(id: custom_field_definition.id).update_all(filter_key: 'cf_a_b_c_2')
+
+      custom_field_definition.reload.update!(label: 'Renamed')
+
+      expect(custom_field_definition.reload[:filter_key]).to eq('cf_a_b_c_2')
+    end
+  end
+
+  describe 'store scoping' do
+    let(:other_store) { create(:store) }
+
+    it 'defaults to the current store' do
+      Spree::Current.store = @default_store
+
+      expect(create(:custom_field_definition, store: nil).store).to eq(@default_store)
+    ensure
+      Spree::Current.store = nil
+    end
+
+    it 'is reachable through the store association' do
+      custom_field_definition = create(:custom_field_definition, store: other_store)
+
+      expect(other_store.custom_field_definitions).to include(custom_field_definition)
+      expect(@default_store.custom_field_definitions).not_to include(custom_field_definition)
+    end
+
+    it 'allows the same namespace and key in two stores' do
+      create(:custom_field_definition, store: @default_store, resource_type: 'Spree::Product',
+                                       namespace: 'custom', key: 'material')
+      twin = build(:custom_field_definition, store: other_store, resource_type: 'Spree::Product',
+                                             namespace: 'custom', key: 'material')
+
+      expect(twin).to be_valid
+    end
+
+    it 'refuses to move a saved definition to another store' do
+      custom_field_definition = create(:custom_field_definition, store: @default_store)
+
+      custom_field_definition.store = other_store
+
+      expect(custom_field_definition).not_to be_valid
+      expect(custom_field_definition.errors[:store]).to be_present
+    end
   end
 
   describe 'filter_key uniqueness' do
@@ -153,7 +215,16 @@ RSpec.describe Spree::CustomFieldDefinition, type: :model do
       colliding = build(:custom_field_definition, resource_type: 'Spree::Product', namespace: 'a', key: 'b_c')
 
       expect(colliding).not_to be_valid
-      expect(colliding.errors[:key]).to be_present
+      expect(colliding.errors[:filter_key]).to be_present
+    end
+
+    it 'allows the same filter_key in a different store' do
+      create(:custom_field_definition, store: @default_store, resource_type: 'Spree::Product',
+                                       namespace: 'a_b', key: 'c')
+      other_store = build(:custom_field_definition, store: create(:store), resource_type: 'Spree::Product',
+                                                    namespace: 'a', key: 'b_c')
+
+      expect(other_store).to be_valid
     end
 
     it 'allows the same namespace/key split on a different resource type' do

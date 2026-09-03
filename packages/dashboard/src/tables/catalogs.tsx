@@ -1,11 +1,13 @@
 import type { Catalog } from '@spree/admin-sdk'
 import { defineTable } from '@spree/dashboard-core'
-import { Badge, RelativeTime, ResourceNameCell } from '@spree/dashboard-ui'
+import { ActiveBadge, Badge, RelativeTime, ResourceNameCell } from '@spree/dashboard-ui'
+import { BookOpenIcon } from '@spree/dashboard-ui/icons'
 import i18n from 'i18next'
-import { BookOpenIcon } from 'lucide-react'
 
 defineTable<Catalog>('catalogs', {
   title: i18n.t('admin.nav.catalogs'),
+  description: i18n.t('admin.table_descriptions.catalogs'),
+  docsPath: 'manage-products/catalogs',
   searchParam: 'name_cont',
   searchPlaceholder: i18n.t('admin.catalogs.search_placeholder'),
   defaultSort: { field: 'position', direction: 'asc' },
@@ -28,14 +30,44 @@ defineTable<Catalog>('catalogs', {
     },
     {
       key: 'active',
-      label: i18n.t('admin.fields.active.label'),
+      label: i18n.t('admin.fields.status.label'),
+      filterable: true,
+      filterType: 'boolean',
+      // The filter says what the rows say. Left to the generic Yes/No, a
+      // Status control would answer a question the column never asked.
+      booleanLabels: {
+        true: i18n.t('admin.common.active'),
+        false: i18n.t('admin.common.inactive'),
+      },
+      // Surfaced beside the search the way a price list's status is: which
+      // agreements are live is the first thing asked of this list. A catalog
+      // is only ever active or not — it has no dates, so nothing to schedule.
+      quickFilter: true,
       default: true,
-      render: (catalog) =>
-        catalog.active ? (
-          <Badge variant="outline">{i18n.t('admin.common.active')}</Badge>
-        ) : (
-          <Badge variant="secondary">{i18n.t('admin.common.inactive')}</Badge>
-        ),
+      // Named rather than left to the Yes/No default: the column asks whether
+      // the agreement applies, and "Active" is what that answer is called
+      // everywhere else it appears.
+      render: (catalog) => (
+        <ActiveBadge
+          active={catalog.active}
+          activeLabel={i18n.t('admin.common.active')}
+          inactiveLabel={i18n.t('admin.common.inactive')}
+        />
+      ),
+    },
+    {
+      key: 'pricing_strategy',
+      label: i18n.t('admin.fields.catalog.pricing_mode.label'),
+      default: true,
+      // What the agreement charges, in a word. `base` is the one worth
+      // reading differently: the catalog decides visibility and leaves the
+      // price alone, so it is not a pricing strategy so much as the absence
+      // of one.
+      render: (catalog) => (
+        <Badge variant={catalog.pricing_strategy === 'base' ? 'outline' : 'secondary'}>
+          {i18n.t(`admin.fields.catalog.pricing_mode.${catalog.pricing_strategy}`)}
+        </Badge>
+      ),
     },
     {
       key: 'products_count',

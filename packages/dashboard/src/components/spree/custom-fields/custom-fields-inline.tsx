@@ -60,8 +60,8 @@ import {
   Textarea,
   toastManager,
 } from '@spree/dashboard-ui'
+import { Loader2Icon, PencilIcon, PlusIcon, TagIcon } from '@spree/dashboard-ui/icons'
 import { Link, useParams } from '@tanstack/react-router'
-import { Loader2Icon, PencilIcon, PlusIcon, TagIcon } from 'lucide-react'
 import { createContext, type ReactNode, useCallback, useContext, useMemo, useState } from 'react'
 import { type UseFormReturn, useForm } from 'react-hook-form'
 import { useTranslation } from 'react-i18next'

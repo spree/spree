@@ -16,6 +16,7 @@ module SpreeStripe
     config.after_initialize do
       Rails.application.config.spree.payment_methods << SpreeStripe::Gateway
       Spree.subscribers << SpreeStripe::CustomerUpdatedSubscriber
+      Spree.payout_providers << SpreeStripe::PayoutProvider
     end
   end
 end

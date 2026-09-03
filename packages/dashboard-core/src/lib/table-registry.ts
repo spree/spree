@@ -12,6 +12,13 @@ interface ColumnDefBase<T = any> {
   sortable?: boolean
   filterable?: boolean
   default?: boolean
+  /**
+   * What a `boolean` column's two states are called, where the domain has
+   * better words than Yes and No — "Active" and "Inactive" on a catalog. The
+   * filter control then says what the rows say, instead of asking a question
+   * the column never posed. Ignored by every other filter type.
+   */
+  booleanLabels?: { true: string; false: string }
   /** Ransack attribute name if different from key (e.g., 'master_sku' for 'sku') */
   ransackAttribute?: string
   /** Send `ransackAttribute` as a Ransack scope: bare key, no operator suffix. */
@@ -132,6 +139,18 @@ export interface SortOption {
 export interface TableDef<T = any> {
   key: string
   title?: string
+  /**
+   * One line under the title saying what the list is for. Worth writing for
+   * anything a merchant meets for the first time — catalogs, price lists,
+   * transfers — and worth leaving off a list that explains itself.
+   */
+  description?: string
+  /**
+   * Documentation for the feature, appended to `description` as a "Learn more"
+   * link. A path is relative to the user guide (`'catalogs'`); a full URL is
+   * used as given, so a plugin can point at its own docs.
+   */
+  docsPath?: string
   columns: ColumnDef<T>[]
   searchParam?: string
   searchPlaceholder?: string

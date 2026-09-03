@@ -25,7 +25,6 @@ import {
   SelectValue,
   useConfirm,
 } from '@spree/dashboard-ui'
-import { createFileRoute, useNavigate } from '@tanstack/react-router'
 import {
   FolderMinusIcon,
   FolderPlusIcon,
@@ -35,7 +34,8 @@ import {
   TagIcon,
   TagsIcon,
   Trash2Icon,
-} from 'lucide-react'
+} from '@spree/dashboard-ui/icons'
+import { createFileRoute, useNavigate } from '@tanstack/react-router'
 import { useCallback, useMemo, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { z } from 'zod/v4'

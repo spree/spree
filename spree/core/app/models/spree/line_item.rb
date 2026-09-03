@@ -117,7 +117,7 @@ module Spree
     self.whitelisted_ransackable_associations = %w[variant order tax_category]
     self.whitelisted_ransackable_attributes = %w[variant_id order_id tax_category_id quantity
                                                  price cost_price cost_currency adjustment_total
-                                                 additional_tax_total promo_total included_tax_total
+                                                 additional_tax_total discount_total included_tax_total
                                                  pre_tax_amount taxable_adjustment_total
                                                  non_taxable_adjustment_total]
 
@@ -207,20 +207,21 @@ module Spree
 
     extend DisplayMoney
     money_methods :amount, :subtotal, :discounted_amount, :final_amount, :total, :price, :discounted_price,
-                  :adjustment_total, :additional_tax_total, :promo_total, :included_tax_total,
+                  :adjustment_total, :additional_tax_total, :discount_total, :included_tax_total,
                   :pre_tax_amount, :delivery_cost, :tax_total, :compare_at_amount
 
     alias single_money display_price
     alias single_display_amount display_price
 
-    # 5.5 API naming bridges (DB column rename in 6.0)
-    alias_attribute :discount_total, :promo_total
-    alias display_discount_total display_promo_total
+    # Standardized column name (renamed in 6.0); the legacy reader stays one
+    # release.
+    alias_attribute :promo_total, :discount_total
+    alias display_promo_total display_discount_total
 
     def discounted_price
       return price if quantity.zero?
 
-      price - (promo_total.abs / quantity)
+      price - (discount_total.abs / quantity)
     end
 
     # Returns the amount (price * quantity) of the line item

@@ -16,7 +16,7 @@ import {
   SelectValue,
   Switch,
 } from '@spree/dashboard-ui'
-import { PlusIcon, Trash2Icon } from 'lucide-react'
+import { PlusIcon, Trash2Icon } from '@spree/dashboard-ui/icons'
 import { Controller, type UseFormReturn, useFieldArray } from 'react-hook-form'
 import { useTranslation } from 'react-i18next'
 import { useCollectionRuleTypes } from '../../../hooks/use-collections'

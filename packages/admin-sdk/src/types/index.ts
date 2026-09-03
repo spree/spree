@@ -25,6 +25,8 @@ export type { default as AppliedPromotion } from './generated/AppliedPromotion'
 export type { default as Catalog } from './generated/Catalog'
 export type { default as CatalogAssignment } from './generated/CatalogAssignment'
 export type { default as CatalogOrderMinimum } from './generated/CatalogOrderMinimum'
+export type { default as CatalogPrice } from './generated/CatalogPrice'
+export type { default as CatalogProduct } from './generated/CatalogProduct'
 export type { default as CatalogProductTerm } from './generated/CatalogProductTerm'
 export type { default as CatalogQuantityRule } from './generated/CatalogQuantityRule'
 export type { default as Category } from './generated/Category'
@@ -99,10 +101,12 @@ export type { default as ReturnLineItem } from './generated/ReturnLineItem'
 export type { default as ReturnReason } from './generated/ReturnReason'
 export type { default as Role } from './generated/Role'
 export type { default as Seller } from './generated/Seller'
+export type { default as SellerPayout } from './generated/SellerPayout'
 export type { default as SellerRequirement } from './generated/SellerRequirement'
 export type { default as SellerRequirementStatus } from './generated/SellerRequirementStatus'
 export type { default as SellerRequirementSubmission } from './generated/SellerRequirementSubmission'
 export type { default as SellerTeamMember } from './generated/SellerTeamMember'
+export type { default as SellerTransfer } from './generated/SellerTransfer'
 export type { default as SetupTask } from './generated/SetupTask'
 export type { default as State } from './generated/State'
 export type { default as StockLevel } from './generated/StockLevel'
@@ -131,5 +135,8 @@ export type {
   TranslatableFieldType,
   TranslatableResource,
   TranslationBatchEntry,
+  TranslationCoverage,
+  TranslationCoverageRecord,
+  TranslationCoverageRow,
   TranslationsUpsertParams,
 } from './translations'

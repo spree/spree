@@ -1,12 +1,13 @@
 import type { Company } from '@spree/admin-sdk'
 import { defineTable } from '@spree/dashboard-core'
 import { RelativeTime, ResourceNameCell } from '@spree/dashboard-ui'
+import { Building2Icon } from '@spree/dashboard-ui/icons'
 import i18n from 'i18next'
-import { Building2Icon } from 'lucide-react'
 import { CompanyKindBadge } from '../components/spree/company-kind-badge'
 
 defineTable<Company>('companies', {
   title: i18n.t('admin.nav.companies'),
+  description: i18n.t('admin.table_descriptions.companies'),
   searchParam: 'name_cont',
   searchPlaceholder: i18n.t('admin.companies.search_placeholder'),
   defaultSort: { field: 'name', direction: 'asc' },

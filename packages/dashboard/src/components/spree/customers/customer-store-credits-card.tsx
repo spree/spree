@@ -30,7 +30,10 @@ import {
   FieldError,
   FieldGroup,
   FieldLabel,
-  Input,
+  InputGroup,
+  InputGroupAddon,
+  InputGroupInput,
+  InputGroupText,
   Table,
   TableBody,
   TableCell,
@@ -40,7 +43,7 @@ import {
   Textarea,
   useConfirm,
 } from '@spree/dashboard-ui'
-import { EllipsisVerticalIcon, PencilIcon, PlusIcon, TrashIcon } from 'lucide-react'
+import { EllipsisVerticalIcon, PencilIcon, PlusIcon, TrashIcon } from '@spree/dashboard-ui/icons'
 import { useEffect, useState } from 'react'
 import { Controller, useForm } from 'react-hook-form'
 import { useTranslation } from 'react-i18next'
@@ -192,7 +195,7 @@ function EditStoreCreditDialog({
   // canonical. Displaying in the same locale we normalize from keeps an
   // untouched amount from being mangled on save.
   const creditLocale = localeForCurrency(credit.currency) || 'en'
-  const { decimal } = currencyParts(credit.currency, creditLocale)
+  const { decimal, symbol } = currencyParts(credit.currency, creditLocale)
 
   const form = useForm<EditStoreCreditFormValues>({
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -250,14 +253,19 @@ function EditStoreCreditDialog({
                   <FieldLabel htmlFor="edit-sc-amount">
                     {t('admin.fields.store_credit.amount.label')}
                   </FieldLabel>
-                  <Input
-                    id="edit-sc-amount"
-                    type="text"
-                    inputMode="decimal"
-                    disabled={amountLocked}
-                    aria-invalid={!!errors.amount || undefined}
-                    {...form.register('amount')}
-                  />
+                  <InputGroup>
+                    <InputGroupAddon>
+                      <InputGroupText>{symbol}</InputGroupText>
+                    </InputGroupAddon>
+                    <InputGroupInput
+                      id="edit-sc-amount"
+                      type="text"
+                      inputMode="decimal"
+                      disabled={amountLocked}
+                      aria-invalid={!!errors.amount || undefined}
+                      {...form.register('amount')}
+                    />
+                  </InputGroup>
                   <FieldError errors={[errors.amount]} />
                 </Field>
                 <Field>
@@ -324,6 +332,8 @@ function IssueStoreCreditDialog({
 
   const mutation = useCreateCustomerStoreCredit(customerId)
   const localeForCurrency = useCurrencyLocale()
+  const selectedCurrency = form.watch('currency')
+  const { symbol } = currencyParts(selectedCurrency, localeForCurrency(selectedCurrency) || 'en')
 
   // Clear any prior submission state when the dialog re-opens so a fresh form
   // is presented (otherwise stale "Issue $20" values linger across opens).
@@ -390,14 +400,19 @@ function IssueStoreCreditDialog({
                   <FieldLabel htmlFor="sc-amount">
                     {t('admin.fields.store_credit.amount.label')}
                   </FieldLabel>
-                  <Input
-                    id="sc-amount"
-                    type="text"
-                    inputMode="decimal"
-                    required
-                    aria-invalid={!!errors.amount || undefined}
-                    {...form.register('amount')}
-                  />
+                  <InputGroup>
+                    <InputGroupAddon>
+                      <InputGroupText>{symbol}</InputGroupText>
+                    </InputGroupAddon>
+                    <InputGroupInput
+                      id="sc-amount"
+                      type="text"
+                      inputMode="decimal"
+                      required
+                      aria-invalid={!!errors.amount || undefined}
+                      {...form.register('amount')}
+                    />
+                  </InputGroup>
                   <FieldError errors={[errors.amount]} />
                 </Field>
                 <Field>

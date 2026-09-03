@@ -379,12 +379,23 @@ module Spree
       })
 
       register_resource(:settings, group: :settings, subjects: -> {
-        [Spree::Store, Spree::PaymentMethod, Spree::Gateway, Spree::DeliveryMethod,
-         Spree::DeliveryMethodRule, Spree::DeliveryZone, Spree::DeliveryZoneMember,
+        [Spree::Store, Spree::PaymentMethod, Spree::Gateway,
+         Spree::DeliveryZone, Spree::DeliveryZoneMember,
          Spree::StockLocation, Spree::DeliveryProfile,
          Spree::Market, Spree::TaxCategory, Spree::TaxRate, Spree::AllowedOrigin,
          Spree::RefundReason, Spree::ReturnReason, Spree::ClaimReason, Spree::Channel,
          Spree::OrderRoutingRule, Spree::CustomFieldDefinition, Spree::Policy]
+      })
+      # How goods actually get shipped and what that costs. Its own resource
+      # rather than part of `settings` because on a marketplace a seller owns
+      # their own methods, and `settings` is never seller-grantable — the rest
+      # of what it covers is store-wide administration
+      # (docs/plans/6.0-multi-vendor-marketplace.md, Decision 13).
+      #
+      # The profiles and zones these methods hang off stay in `settings`: the
+      # marketplace defines that vocabulary and a seller only reads it.
+      register_resource(:delivery_methods, group: :settings, audiences: %i[seller], subjects: -> {
+        [Spree::DeliveryMethod, Spree::DeliveryMethodRule, Spree::DeliveryMethodService]
       })
       register_resource(:webhooks, group: :settings, subjects: -> {
         [Spree::WebhookEndpoint, Spree::WebhookDelivery]
@@ -412,6 +423,16 @@ module Spree
       # set, what anyone is charged.
       register_resource(:commissions, group: :access, subjects: -> {
         [Spree::CommissionRate, Spree::CommissionRule, Spree::CommissionLine]
+      })
+
+      # What the marketplace owes its sellers, and what it has sent them.
+      # Separate from `commissions` because they are opposite directions of the
+      # same relationship, and a finance operator often needs one without the
+      # other. Closed to the seller audience: a seller reads their own earnings
+      # through their own branch, scope-fetched, never through a key that could
+      # reach the whole ledger.
+      register_resource(:payouts, group: :access, subjects: -> {
+        [Spree::SellerTransfer, Spree::SellerPayout]
       })
 
       # A seller editing their own record: profile, branding, addresses,

@@ -1,8 +1,8 @@
 import { Dialog as DialogPrimitive } from '@base-ui/react/dialog'
 import i18n from 'i18next'
-import { XIcon } from 'lucide-react'
 import * as React from 'react'
 import { cn } from '../lib/utils'
+import { XIcon } from '../spree/icons'
 import { Button } from './button'
 
 function Dialog({

@@ -6,12 +6,11 @@ module Spree
   # docs/plans/decisions.md). Read live by reference; no values are copied.
   class ProductTypeCustomFieldDefinition < Spree.base_class
     belongs_to :product_type, class_name: 'Spree::ProductType'
-    # Association and column carry the 6.0 custom-field vocabulary; the class is
-    # still named CustomFieldDefinition until the rename wave lands.
     belongs_to :custom_field_definition, class_name: 'Spree::CustomFieldDefinition'
 
     validates :custom_field_definition_id, uniqueness: { scope: :product_type_id }
     validate :custom_field_definition_applies_to_products
+    validate :custom_field_definition_belongs_to_same_store
 
     scope :required, -> { where(required: true) }
     scope :ordered, -> { order(:sort_order, :id) }
@@ -25,6 +24,16 @@ module Spree
       return if custom_field_definition.resource_type == 'Spree::Product'
 
       errors.add(:custom_field_definition, :must_apply_to_products)
+    end
+
+    # Both sides are store-owned, so a type may only use its own store's
+    # definitions — one from another store would render a field the product
+    # form can never save.
+    def custom_field_definition_belongs_to_same_store
+      return if custom_field_definition.blank? || product_type.blank?
+      return if custom_field_definition.store_id == product_type.store_id
+
+      errors.add(:custom_field_definition, :must_belong_to_same_store)
     end
   end
 end

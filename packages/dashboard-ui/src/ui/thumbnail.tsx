@@ -1,8 +1,7 @@
 import { cva, type VariantProps } from 'class-variance-authority'
-import { ImageIcon } from 'lucide-react'
 import type * as React from 'react'
-
 import { cn } from '../lib/utils'
+import { ImageIcon } from '../spree/icons'
 
 const thumbnailVariants = cva(
   // The wrapper always renders, so a record without an image keeps the same

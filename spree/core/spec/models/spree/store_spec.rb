@@ -1209,4 +1209,26 @@ describe Spree::Store, type: :model, without_global_store: true do
       it { is_expected.to be false }
     end
   end
+  describe '#payout_provider_instance' do
+    let(:payouts_store) { create(:store) }
+
+    it 'answers with the store’s own provider' do
+      expect(payouts_store.payout_provider_instance).to be_a(Spree::PayoutProvider::System)
+    end
+
+    # A store object held across a settings change must not keep paying
+    # through whoever was configured before.
+    it 'follows the setting when it changes' do
+      other = Class.new(Spree::PayoutProvider::Base) do
+        def self.name = 'TestOtherPayoutProvider'
+      end
+      stub_const('TestOtherPayoutProvider', other)
+      allow(Spree).to receive(:payout_providers).and_return([Spree::PayoutProvider::System, other])
+
+      payouts_store.payout_provider_instance
+      payouts_store.preferred_payout_provider = 'TestOtherPayoutProvider'
+
+      expect(payouts_store.payout_provider_instance).to be_a(other)
+    end
+  end
 end

@@ -1,4 +1,4 @@
-import { ChevronsUpDownIcon } from 'lucide-react'
+import { ChevronsUpDownIcon } from './icons'
 
 interface LanguageMenuItemsProps {
   /** Translated "Language" label for the row (passed by the app). */

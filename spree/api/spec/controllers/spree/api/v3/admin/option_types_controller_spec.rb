@@ -86,7 +86,7 @@ RSpec.describe Spree::Api::V3::Admin::OptionTypesController, type: :controller d
         # are valid (`name`/`label` set), and the failure surfaces under the
         # autosave key for the child association — not on a top-level parent
         # attribute. Without this check the test could pass via the parent's
-        # own `validates :presentation` if a future rename silently filtered
+        # own `validates :label` if a future rename silently filtered
         # `label` from `permitted_params`.
         expect(json_response['error']['details'].keys).to include('option_values.name')
         expect(Spree::OptionType.where(name: 'material')).to be_empty
@@ -125,7 +125,7 @@ RSpec.describe Spree::Api::V3::Admin::OptionTypesController, type: :controller d
     end
 
     it 'returns 422 (not 500) when a nested option_value is invalid' do
-      original_presentation = option_type.presentation
+      original_label = option_type.label
 
       patch :update, params: {
         id: option_type.prefixed_id,
@@ -142,7 +142,7 @@ RSpec.describe Spree::Api::V3::Admin::OptionTypesController, type: :controller d
       # rather than from a top-level parent attribute.
       expect(json_response['error']['details'].keys).to include('option_values.color_code')
       # Parent attribute change must roll back when option_values validation fails.
-      expect(option_type.reload.presentation).to eq(original_presentation)
+      expect(option_type.reload.label).to eq(original_label)
     end
   end
 

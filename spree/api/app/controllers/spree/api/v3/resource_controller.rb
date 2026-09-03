@@ -411,7 +411,7 @@ module Spree
         def authorize_parent!(parent); end
 
         # Override to specify the association name on @parent
-        # Defaults to controller_name (e.g., 'wished_items' for WishlistItemsController)
+        # Defaults to controller_name (e.g., 'wishlist_items' for WishlistItemsController)
         def parent_association
           controller_name
         end

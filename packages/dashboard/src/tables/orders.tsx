@@ -1,8 +1,8 @@
 import { defineTable, Subject } from '@spree/dashboard-core'
 import { RelativeTime, StatusBadge, TagList } from '@spree/dashboard-ui'
+import { ShoppingCartIcon } from '@spree/dashboard-ui/icons'
 import { Link } from '@tanstack/react-router'
 import i18n from 'i18next'
-import { ShoppingCartIcon } from 'lucide-react'
 import { channelAutocompleteProps } from '../hooks/use-channels'
 import { customerAutocompleteProps } from '../hooks/use-customers'
 import { sellerAutocompleteProps } from '../hooks/use-sellers'
@@ -249,14 +249,14 @@ defineTable('orders', {
       label: i18n.t('admin.fields.first_name.label'),
       filterable: true,
       displayable: false,
-      ransackAttribute: 'bill_address_firstname_i',
+      ransackAttribute: 'bill_address_first_name_i',
     },
     {
       key: 'last_name',
       label: i18n.t('admin.fields.last_name.label'),
       filterable: true,
       displayable: false,
-      ransackAttribute: 'bill_address_lastname',
+      ransackAttribute: 'bill_address_last_name',
     },
     {
       key: 'sku',

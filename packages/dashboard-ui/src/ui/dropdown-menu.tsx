@@ -1,9 +1,9 @@
 'use client'
 
 import { Menu as MenuPrimitive } from '@base-ui/react/menu'
-import { CheckIcon, ChevronRightIcon } from 'lucide-react'
 import * as React from 'react'
 import { cn } from '../lib/utils'
+import { CheckIcon, ChevronRightIcon } from '../spree/icons'
 
 function DropdownMenu({
   children,

@@ -16,10 +16,14 @@ module Spree
         # phase) and do not belong to this seller through `products`.
         #
         # What a seller may change is narrower than the operator's set. Tax
-        # category, delivery profile and `promotionable` are marketplace
-        # configuration, and so is how a product is filed: its type,
-        # categories, collections and tags are the marketplace's own
-        # merchandising, set when the operator reviews the listing.
+        # category and `promotionable` are marketplace configuration, and so
+        # is how a product is filed: categories, collections and tags are the
+        # marketplace's own merchandising, set when the operator reviews the
+        # listing. The product type and the delivery profile are the seller's
+        # to pick — from the marketplace's list — because the type is what
+        # hands their product its option types, and the profile is what
+        # decides how their goods can be shipped at all
+        # (docs/plans/6.0-multi-vendor-marketplace.md, Decision 13).
         #
         # Tags are the clearest case — they are tenanted to the store
         # (`acts_as_taggable_tenant :store_id`), so a seller typing one would
@@ -164,6 +168,7 @@ module Spree
             attrs = params.permit(
               :name, :description, :slug,
               :meta_title, :meta_description, :meta_keywords,
+              :product_type_id, :delivery_profile_id,
               metadata: {},
               prices: [:amount, :compare_at_amount, :currency],
               # Inline media, the same shape the operator sends. `external_url`
@@ -191,6 +196,8 @@ module Spree
             # `stock_levels` key reaches the association setter as nil, which
             # raises rather than meaning "leave alone".
             attrs[:prices] = default_price_currencies(attrs[:prices]) if attrs.key?(:prices)
+            attrs[:product_type_id] = own_product_type_id(attrs[:product_type_id]) if attrs.key?(:product_type_id)
+            attrs[:delivery_profile_id] = own_delivery_profile_id(attrs[:delivery_profile_id]) if attrs.key?(:delivery_profile_id)
 
             attrs[:variants] = attrs[:variants]&.map do |variant|
               variant = variant.merge(prices: default_price_currencies(variant[:prices])) if variant.key?(:prices)
@@ -213,6 +220,25 @@ module Spree
             prices.map do |price|
               price[:currency].present? ? price : price.merge(currency: Spree::Current.currency)
             end
+          end
+
+          # A type or a profile is picked from the marketplace's own list, so
+          # the id is resolved against this seller's store here rather than
+          # handed to the model: a type from another store would seed its
+          # option types onto the product, and a picker value that cannot
+          # exist for this seller is a 404, not a validation error. Blank
+          # detaches the type; a product always carries a profile, so blank
+          # there is left for the model to refuse.
+          def own_product_type_id(value)
+            return nil if value.blank?
+
+            current_store.product_types.find_by_prefix_id!(value).id
+          end
+
+          def own_delivery_profile_id(value)
+            return nil if value.blank?
+
+            current_store.delivery_profiles.find_by_prefix_id!(value).id
           end
 
           # Stock belongs to the warehouse it sits in, and a seller has their

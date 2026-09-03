@@ -76,6 +76,43 @@ RSpec.describe Spree::Export, :job, type: :model do
         expect { export.generate }.to change(export.attachment, :attached?).from(false).to(true)
       end
     end
+
+    # Header and value rows are built in different objects, so they have to
+    # agree about whose custom-field schema they describe or every value
+    # column silently shifts.
+    describe 'custom field columns' do
+      let!(:mine) do
+        create(:custom_field_definition, store: store, resource_type: 'Spree::Product',
+                                         namespace: 'custom', key: 'material')
+      end
+      let!(:theirs) do
+        create(:custom_field_definition, store: create(:store), resource_type: 'Spree::Product',
+                                         namespace: 'custom', key: 'supplier')
+      end
+      let!(:product) { create(:product, store: store) }
+
+      def generated_rows
+        export.save!
+        export.generate
+        ::CSV.parse(export.attachment.download)
+      end
+
+      it 'names only the exporting store definitions in the header' do
+        headers, = generated_rows
+
+        expect(headers).to include('custom_field.custom.material')
+        expect(headers).not_to include('custom_field.custom.supplier')
+      end
+
+      it 'lines each value up under its own header' do
+        product.set_custom_field(mine, 'Wool-Blend')
+
+        headers, *rows = generated_rows
+        column = headers.index('custom_field.custom.material')
+
+        expect(rows.map { |values| values[column] }).to include('Wool-Blend')
+      end
+    end
   end
 
   describe '#scope' do
@@ -224,6 +261,44 @@ RSpec.describe Spree::Export, :job, type: :model do
 
       it 'decodes each value' do
         expect(export.records_to_export).to match_array(targets)
+      end
+    end
+
+    # An export runs in a job, so nothing has named a store. A scope that reads
+    # the current one has to see the store being exported, not the default.
+    context 'with a free-text search param' do
+      it 'exports a searched customer list' do
+        create(:user, email: 'findme@example.com')
+        customer_export = Spree::Exports::Customers.create!(
+          store: store, user: user, format: 'csv', search_params: { search: 'findme' }.to_json
+        )
+
+        expect { customer_export.generate }.to change(customer_export.attachment, :attached?).from(false).to(true)
+      end
+
+      it 'exports a searched product list' do
+        create(:product, name: 'Findable Widget')
+        product_export = Spree::Exports::Products.create!(
+          store: store, user: user, format: 'csv', search_params: { multi_search: 'Findable' }.to_json
+        )
+
+        expect { product_export.generate }.to change(product_export.attachment, :attached?).from(false).to(true)
+      end
+
+      it 'names the exporting store while it runs' do
+        other_store = create(:store)
+        Spree::Current.store = other_store
+        seen = nil
+        export.save!
+        allow(export).to receive(:csv_headers).and_wrap_original do |original|
+          seen = Spree::Current.store
+          original.call
+        end
+
+        export.generate
+
+        expect(seen).to eq(store)
+        expect(Spree::Current.store).to eq(other_store)
       end
     end
 

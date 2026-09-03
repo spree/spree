@@ -14,9 +14,10 @@ module Spree
                    description: [:string, nullable: true],
                    required: :boolean, position: :number, status: :string,
                    blocking: :boolean, action_url: [:string, nullable: true],
+                   blocker: ['{ state: string; message: string | null } | null'],
                    required_policy_name: [:string, nullable: true]
 
-          attributes :id, :kind, :name, :description, :required, :position, :status, :action_url
+          attributes :id, :kind, :name, :description, :required, :position, :status, :action_url, :blocker
 
           # Whether this stands between the seller and approval. Serialized
           # rather than left to each client to derive, so the dashboard's

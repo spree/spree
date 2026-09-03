@@ -36,8 +36,8 @@ import {
   useConfirm,
   useRowClickBridge,
 } from '@spree/dashboard-ui'
+import { PlusIcon } from '@spree/dashboard-ui/icons'
 import { createFileRoute, useNavigate } from '@tanstack/react-router'
-import { PlusIcon } from 'lucide-react'
 import { Controller, useForm } from 'react-hook-form'
 import { useTranslation } from 'react-i18next'
 import { z } from 'zod/v4'
@@ -75,6 +75,7 @@ function ShippingPage() {
 
   const closeDialog = () =>
     navigate({
+      replace: true,
       search: (prev: Record<string, unknown>) => {
         const { new: _n, ...rest } = prev
         return rest as never
@@ -176,6 +177,7 @@ function CreateProfileDialog({ onClose }: { onClose: () => void }) {
       navigate({
         to: '/$storeId/settings/delivery-profiles/$profileId',
         params: { storeId, profileId: profile.id },
+        replace: true,
       })
     } catch (err) {
       if (!mapSpreeErrorsToForm(err, form.setError)) throw err

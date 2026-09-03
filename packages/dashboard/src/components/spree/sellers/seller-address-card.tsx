@@ -12,7 +12,7 @@ import {
   CardTitle,
   StatusBadge,
 } from '@spree/dashboard-ui'
-import { PencilIcon } from 'lucide-react'
+import { PencilIcon } from '@spree/dashboard-ui/icons'
 import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useUpdateSeller } from '../../../hooks/use-sellers'

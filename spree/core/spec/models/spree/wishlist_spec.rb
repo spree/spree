@@ -80,8 +80,8 @@ describe Spree::Wishlist, type: :model do
     let(:variant) { create(:variant) }
 
     before do
-      wished_item = create(:wished_item, variant: variant)
-      wishlist.wished_items << wished_item
+      wishlist_item = create(:wishlist_item, variant: variant)
+      wishlist.wishlist_items << wishlist_item
       wishlist.save
     end
 
@@ -91,12 +91,12 @@ describe Spree::Wishlist, type: :model do
   end
 
   describe '#destroy' do
-    let!(:wished_item) { create(:wished_item) }
+    let!(:wishlist_item) { create(:wishlist_item) }
 
-    it 'deletes associated wished variants' do
+    it 'deletes associated wishlist items' do
       expect do
-        wished_item.wishlist.destroy
-      end.to change(Spree::WishedItem, :count).by(-1)
+        wishlist_item.wishlist.destroy
+      end.to change(Spree::WishlistItem, :count).by(-1)
     end
   end
 
@@ -106,8 +106,8 @@ describe Spree::Wishlist, type: :model do
     let(:variant_2) { create(:variant, product: product) }
 
     before do
-      wishlist.wished_items << create(:wished_item, variant: variant)
-      wishlist.wished_items << create(:wished_item, variant: variant_2)
+      wishlist.wishlist_items << create(:wishlist_item, variant: variant)
+      wishlist.wishlist_items << create(:wishlist_item, variant: variant_2)
     end
 
     it 'returns the product ids' do
@@ -115,15 +115,15 @@ describe Spree::Wishlist, type: :model do
     end
   end
 
-  describe '#wished_items_count' do
+  describe '#wishlist_items_count' do
     let(:variant) { create(:variant) }
 
     before do
-      wishlist.wished_items << create(:wished_item, variant: variant)
+      wishlist.wishlist_items << create(:wishlist_item, variant: variant)
     end
 
-    it 'returns the wished items count' do
-      expect(wishlist.wished_items_count).to eq 1
+    it 'returns the wishlist items count' do
+      expect(wishlist.wishlist_items_count).to eq 1
     end
   end
 
@@ -132,12 +132,24 @@ describe Spree::Wishlist, type: :model do
     let(:variant_2) { create(:variant) }
 
     before do
-      wishlist.wished_items << create(:wished_item, variant: variant)
-      wishlist.wished_items << create(:wished_item, variant: variant_2)
+      wishlist.wishlist_items << create(:wishlist_item, variant: variant)
+      wishlist.wishlist_items << create(:wishlist_item, variant: variant_2)
     end
 
     it 'returns the variant ids' do
       expect(wishlist.variant_ids).to eq [variant.id, variant_2.id]
     end
   end
+
+  describe '#wished_items_count' do
+    # The pre-6.0 name stays callable for one release.
+    it 'delegates to the renamed counter' do
+      wishlist = create(:wishlist)
+      create(:wishlist_item, wishlist: wishlist)
+      expect(Spree::Deprecation).to receive(:warn).with(/wished_items_count/)
+
+      expect(wishlist.wished_items_count).to eq(1)
+    end
+  end
+
 end

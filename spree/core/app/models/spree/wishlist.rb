@@ -16,30 +16,36 @@ module Spree
     include Spree::DeprecatedCustomerAlias
     belongs_to :store, class_name: 'Spree::Store'
 
-    has_many :wished_items, class_name: 'Spree::WishedItem', dependent: :destroy
-    alias wishlist_items wished_items
-    has_many :variants, through: :wished_items, source: :variant, class_name: 'Spree::Variant'
+    has_many :wishlist_items, class_name: 'Spree::WishlistItem', dependent: :destroy
+    has_many :wished_items, class_name: 'Spree::WishlistItem', inverse_of: :wishlist, deprecated: true
+    has_many :variants, through: :wishlist_items, source: :variant, class_name: 'Spree::Variant'
     has_many :products, -> { distinct }, through: :variants, source: :product, class_name: 'Spree::Product'
 
     after_commit :ensure_default_exists_and_is_unique
     validates :name, presence: true
 
     def include?(variant_id)
-      wished_items.exists?(variant_id: variant_id)
+      wishlist_items.exists?(variant_id: variant_id)
     end
 
-    # returns the number of wished items in the wishlist
+    # returns the number of items in the wishlist
     #
     # @return [Integer]
+    def wishlist_items_count
+      @wishlist_items_count ||= variant_ids.count
+    end
+
+    # @deprecated Use {#wishlist_items_count}; removed in 6.1.
     def wished_items_count
-      @wished_items_count ||= variant_ids.count
+      Spree::Deprecation.warn('Spree::Wishlist#wished_items_count is deprecated and will be removed in Spree 6.1. Use #wishlist_items_count instead.')
+      wishlist_items_count
     end
 
     # returns the variant ids in the wishlist
     #
     # @return [Array<Integer>]
     def variant_ids
-      @variant_ids ||= wished_items.pluck(:variant_id)
+      @variant_ids ||= wishlist_items.pluck(:variant_id)
     end
 
     private

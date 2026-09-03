@@ -3,6 +3,7 @@ import type { Customer, GiftCard } from '@spree/admin-sdk'
 import {
   Can,
   CurrencySelect,
+  currencyParts,
   mapSpreeErrorsToForm,
   ResourceCombobox,
   ResourceTable,
@@ -19,6 +20,10 @@ import {
   FieldGroup,
   FieldLabel,
   Input,
+  InputGroup,
+  InputGroupAddon,
+  InputGroupInput,
+  InputGroupText,
   RowActions,
   Sheet,
   SheetContent,
@@ -29,8 +34,9 @@ import {
   useConfirm,
   useRowClickBridge,
 } from '@spree/dashboard-ui'
+import { PlusIcon } from '@spree/dashboard-ui/icons'
 import { createFileRoute, useNavigate } from '@tanstack/react-router'
-import { PlusIcon } from 'lucide-react'
+import i18n from 'i18next'
 import { useEffect, useRef } from 'react'
 import { Controller, type UseFormReturn, useForm } from 'react-hook-form'
 import { useTranslation } from 'react-i18next'
@@ -421,19 +427,28 @@ function AmountCurrencyRow<T extends GiftCardCreateFormValues | GiftCardEditForm
 }) {
   const { t } = useTranslation()
   const errors = form.formState.errors as Record<string, { message?: string } | undefined>
+  const { symbol: currencySymbol } = currencyParts(
+    (form.watch('currency' as never) as unknown as string) || 'USD',
+    i18n.language,
+  )
   return (
     <div className="grid grid-cols-2 gap-3">
       <Field>
         <FieldLabel htmlFor="amount">{t('admin.fields.gift_card.amount.label')}</FieldLabel>
-        <Input
-          id="amount"
-          type="number"
-          step="0.01"
-          min={0}
-          disabled={readOnly}
-          aria-invalid={!!errors.amount || undefined}
-          {...form.register('amount' as never)}
-        />
+        <InputGroup>
+          <InputGroupAddon>
+            <InputGroupText>{currencySymbol}</InputGroupText>
+          </InputGroupAddon>
+          <InputGroupInput
+            id="amount"
+            type="number"
+            step="0.01"
+            min={0}
+            disabled={readOnly}
+            aria-invalid={!!errors.amount || undefined}
+            {...form.register('amount' as never)}
+          />
+        </InputGroup>
         <FieldError errors={[errors.amount]} />
       </Field>
 

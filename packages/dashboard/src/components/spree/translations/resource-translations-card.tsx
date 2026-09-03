@@ -1,5 +1,5 @@
 import { Button, Card, CardContent, CardHeader, CardTitle } from '@spree/dashboard-ui'
-import { LanguagesIcon } from 'lucide-react'
+import { LanguagesIcon } from '@spree/dashboard-ui/icons'
 import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import {

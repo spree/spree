@@ -6,7 +6,7 @@ import type {
 } from '@spree/admin-sdk'
 import { Can, Subject, usePermissions, useStockLocations } from '@spree/dashboard-core'
 import { Button, RowActions, useConfirm } from '@spree/dashboard-ui'
-import { PlusIcon, WarehouseIcon } from 'lucide-react'
+import { PlusIcon, WarehouseIcon } from '@spree/dashboard-ui/icons'
 import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useDeleteDeliveryOriginGroup } from '../../../hooks/use-delivery-origin-groups'

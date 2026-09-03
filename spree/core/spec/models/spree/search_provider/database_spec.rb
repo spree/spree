@@ -162,12 +162,12 @@ module Spree
       end
 
       context 'with_option_value_ids disjunctive filtering' do
-        let(:color) { create(:option_type, name: 'color', presentation: 'Color', filterable: true) }
-        let(:size) { create(:option_type, name: 'size', presentation: 'Size', filterable: true) }
-        let(:blue) { create(:option_value, option_type: color, name: 'blue', presentation: 'Blue') }
-        let(:red) { create(:option_value, option_type: color, name: 'red', presentation: 'Red') }
-        let(:small) { create(:option_value, option_type: size, name: 's', presentation: 'S') }
-        let(:large) { create(:option_value, option_type: size, name: 'l', presentation: 'L') }
+        let(:color) { create(:option_type, name: 'color', label: 'Color', filterable: true) }
+        let(:size) { create(:option_type, name: 'size', label: 'Size', filterable: true) }
+        let(:blue) { create(:option_value, option_type: color, name: 'blue', label: 'Blue') }
+        let(:red) { create(:option_value, option_type: color, name: 'red', label: 'Red') }
+        let(:small) { create(:option_value, option_type: size, name: 's', label: 'S') }
+        let(:large) { create(:option_value, option_type: size, name: 'l', label: 'L') }
 
         before do
           create(:variant, product: product_1, option_values: [blue, small])  # product_1: Blue + S

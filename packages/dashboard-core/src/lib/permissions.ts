@@ -70,6 +70,8 @@ export const Subject = {
   CommissionRate: 'Spree::CommissionRate',
   CommissionRule: 'Spree::CommissionRule',
   CommissionLine: 'Spree::CommissionLine',
+  SellerPayout: 'Spree::SellerPayout',
+  SellerTransfer: 'Spree::SellerTransfer',
 } as const
 
 export type SubjectName = (typeof Subject)[keyof typeof Subject] | string

@@ -244,8 +244,8 @@ module Spree
             customer_note: cart.customer_note,
             po_number: cart.po_number,
             last_ip_address: cart.last_ip_address,
-            ship_address: cart.ship_address&.dup,
-            bill_address: cart.bill_address&.dup
+            ship_address: cart.ship_address&.snapshot,
+            bill_address: cart.bill_address&.snapshot
           )
           order.save!
 

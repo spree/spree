@@ -155,10 +155,14 @@
       "deleted": "Usunięto",
       "empty_value": "—",
       "inactive": "Nieaktywny",
+      "learn_more": "Dowiedz się więcej",
       "loading": "Ładowanie…",
       "next": "Następna",
       "no": "Nie",
       "no_results": "Brak wyników",
+      "combobox_more_results_one": "Nie pokazano 1 kolejnego wyniku. Wpisz, aby wyszukać.",
+      "combobox_more_results_few": "Nie pokazano {{count}} kolejnych wyników. Wpisz, aby wyszukać.",
+      "combobox_more_results_other": "Nie pokazano {{count}} kolejnych wyników. Wpisz, aby wyszukać.",
       "none": "Brak",
       "optional": "Opcjonalne",
       "or": "lub",
@@ -461,6 +465,12 @@
         "label": "Motyw",
         "light": "Jasny",
         "system": "Systemowy"
+      },
+      "wizard": {
+        "discard_cancel": "Wróć do edycji",
+        "discard_confirm": "Odrzuć",
+        "discard_message": "Wszystko, co zostało wprowadzone, zostanie utracone. Nie można tego cofnąć.",
+        "discard_title": "Odrzucić szkic?"
       }
     },
     "custom_field_definitions": {
@@ -895,6 +905,11 @@
         "pending": "Oczekujący",
         "processing": "Przetwarzanie"
       },
+      "step_descriptions": {
+        "complete": "Import zakończony. Sprawdź, co zostało utworzone i zaktualizowane.",
+        "map_fields": "Dopasuj każdą kolumnę pliku do pola w Spree.",
+        "process_rows": "Importujemy Twoje wiersze. Może to potrwać kilka minut."
+      },
       "steps": {
         "complete": "Gotowe",
         "map_fields": "Dopasuj pola",
@@ -1223,7 +1238,14 @@
       "add_count_other": "Dodaj {{count}}",
       "already_added": "Dodano",
       "empty": "Nie znaleziono wyników.",
+      "load_more": "Załaduj więcej",
       "search_placeholder": "Szukaj…",
+      "select_all_matching_one": "Zaznacz {{count}} dopasowanie",
+      "select_all_matching_few": "Zaznacz wszystkie {{count}} dopasowania",
+      "select_all_matching_many": "Zaznacz wszystkie {{count}} dopasowań",
+      "select_all_matching_other": "Zaznacz wszystkie {{count}} dopasowania",
+      "select_page_one": "Zaznacz {{count}} na tej stronie",
+      "select_page_other": "Zaznacz wszystkie {{count}} na tej stronie",
       "selected_count_one": "Wybrano {{count}}",
       "selected_count_other": "Wybrano {{count}}",
       "title": "Dodaj produkty"

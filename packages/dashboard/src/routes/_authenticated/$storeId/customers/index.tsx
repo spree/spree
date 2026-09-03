@@ -33,9 +33,9 @@ import {
   SheetTitle,
   useConfirm,
 } from '@spree/dashboard-ui'
+import { PlusIcon, TagsIcon, UserMinusIcon, UserPlusIcon } from '@spree/dashboard-ui/icons'
 import { useMutation } from '@tanstack/react-query'
 import { createFileRoute, useNavigate } from '@tanstack/react-router'
-import { PlusIcon, TagsIcon, UserMinusIcon, UserPlusIcon } from 'lucide-react'
 import { useState } from 'react'
 import { Controller, useForm } from 'react-hook-form'
 import { useTranslation } from 'react-i18next'
@@ -393,6 +393,7 @@ function NewCustomerSheet({
       navigate({
         to: '/$storeId/customers/$customerId',
         params: { storeId, customerId: customer.id },
+        replace: true,
       })
     },
   })

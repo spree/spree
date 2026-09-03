@@ -11,6 +11,45 @@ module Spree
       let(:order)            { build(:order_with_line_items, ship_address: ship_address) }
       let(:inventory_units)  { order.inventory_units }
 
+      # On a marketplace, which methods quote a package is decided here and
+      # nowhere else (docs/plans/6.0-multi-vendor-marketplace.md, Decision 13).
+      describe 'seller-owned methods' do
+        let(:seller) { create(:seller, store: @default_store) }
+        let(:other_seller) { create(:seller, store: @default_store) }
+        let(:sellers_warehouse) { create(:stock_location, store: @default_store, seller: seller) }
+        let(:package) do
+          build(:stock_package, stock_location: sellers_warehouse,
+                                contents: inventory_units.map { |_i| ContentItem.new(inventory_unit) })
+        end
+
+        let!(:own_method) { create(:delivery_method, store: @default_store, seller: seller) }
+        let!(:shared_method) { create(:delivery_method, store: @default_store, available_to_sellers: true) }
+        let!(:unshared_method) { create(:delivery_method, store: @default_store) }
+        let!(:rivals_method) { create(:delivery_method, store: @default_store, seller: other_seller) }
+
+        before do
+          allow(package).to receive_messages(
+            eligible_delivery_methods: [own_method, shared_method, unshared_method, rivals_method]
+          )
+        end
+
+        it "quotes a seller's package with their own methods and the shared ones" do
+          quoted = subject.delivery_rates(package).map(&:delivery_method)
+
+          expect(quoted).to contain_exactly(own_method, shared_method)
+        end
+
+        context 'when the package comes out of the marketplace’s own warehouse' do
+          let(:sellers_warehouse) { create(:stock_location, store: @default_store) }
+
+          it 'quotes the marketplace methods only' do
+            quoted = subject.delivery_rates(package).map(&:delivery_method)
+
+            expect(quoted).to contain_exactly(shared_method, unshared_method)
+          end
+        end
+      end
+
       # A free pickup option must not silently become every order's delivery
       # method — "delivery" means shipping unless the buyer says otherwise.
       describe 'default rate selection' do

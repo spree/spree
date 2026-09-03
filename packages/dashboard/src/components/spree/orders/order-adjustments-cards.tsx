@@ -1,5 +1,5 @@
 import type { Discount, Fee, Order } from '@spree/admin-sdk'
-import { adminClient, formatPrice } from '@spree/dashboard-core'
+import { adminClient, currencyParts, formatPrice } from '@spree/dashboard-core'
 import {
   Badge,
   Button,
@@ -23,6 +23,10 @@ import {
   FieldGroup,
   FieldLabel,
   Input,
+  InputGroup,
+  InputGroupAddon,
+  InputGroupInput,
+  InputGroupText,
   Select,
   SelectContent,
   SelectItem,
@@ -36,8 +40,15 @@ import {
   TableRow,
   useConfirm,
 } from '@spree/dashboard-ui'
+import {
+  BanknoteIcon,
+  EllipsisVerticalIcon,
+  PlusIcon,
+  ReceiptTextIcon,
+  TagIcon,
+  TrashIcon,
+} from '@spree/dashboard-ui/icons'
 import i18n from 'i18next'
-import { EllipsisVerticalIcon, PlusIcon, TrashIcon } from 'lucide-react'
 import { type FormEvent, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import {
@@ -132,7 +143,10 @@ export function TaxLinesCard({ order }: { order: Order }) {
   return (
     <Card>
       <CardHeader>
-        <CardTitle>{t('admin.orders.detail.adjustment_lines.taxes')}</CardTitle>
+        <CardTitle>
+          <ReceiptTextIcon className="size-4" />
+          {t('admin.orders.detail.adjustment_lines.taxes')}
+        </CardTitle>
       </CardHeader>
 
       {taxGroups.length === 0 ? (
@@ -216,7 +230,10 @@ export function OrderDiscountsCard({ order }: { order: Order }) {
   return (
     <Card>
       <CardHeader>
-        <CardTitle>{t('admin.orders.detail.adjustment_lines.discounts')}</CardTitle>
+        <CardTitle>
+          <TagIcon className="size-4" />
+          {t('admin.orders.detail.adjustment_lines.discounts')}
+        </CardTitle>
         <CardAction>
           <Button variant="outline" size="sm" onClick={() => setAddDiscountOpen(true)}>
             <PlusIcon className="size-4" />
@@ -300,7 +317,10 @@ export function FeesCard({ order }: { order: Order }) {
   return (
     <Card>
       <CardHeader>
-        <CardTitle>{t('admin.orders.detail.adjustment_lines.fees')}</CardTitle>
+        <CardTitle>
+          <BanknoteIcon className="size-4" />
+          {t('admin.orders.detail.adjustment_lines.fees')}
+        </CardTitle>
         <CardAction>
           <Button variant="outline" size="sm" onClick={() => setAddFeeOpen(true)}>
             <PlusIcon className="size-4" />
@@ -383,6 +403,7 @@ function AddDiscountDialog({
     { value: 'flat', label: t('admin.orders.detail.adjustment_lines.value_type_flat') },
     { value: 'percent', label: t('admin.orders.detail.adjustment_lines.value_type_percent') },
   ]
+  const { symbol: currencySymbol } = currencyParts(order.currency, i18n.language)
 
   function handleSubmit(e: FormEvent<HTMLFormElement>) {
     e.preventDefault()
@@ -445,16 +466,28 @@ function AddDiscountDialog({
                   <FieldLabel htmlFor="discount-value">
                     {t('admin.orders.detail.adjustment_lines.value_field')}
                   </FieldLabel>
-                  <Input
-                    id="discount-value"
-                    name="value"
-                    type="number"
-                    step="0.01"
-                    min="0.01"
-                    value={value}
-                    onChange={(e) => setValue(e.target.value)}
-                    required
-                  />
+                  <InputGroup>
+                    {valueType === 'percent' ? null : (
+                      <InputGroupAddon>
+                        <InputGroupText>{currencySymbol}</InputGroupText>
+                      </InputGroupAddon>
+                    )}
+                    <InputGroupInput
+                      id="discount-value"
+                      name="value"
+                      type="number"
+                      step="0.01"
+                      min="0.01"
+                      value={value}
+                      onChange={(e) => setValue(e.target.value)}
+                      required
+                    />
+                    {valueType === 'percent' ? (
+                      <InputGroupAddon align="inline-end">
+                        <InputGroupText>%</InputGroupText>
+                      </InputGroupAddon>
+                    ) : null}
+                  </InputGroup>
                 </Field>
                 <Field>
                   <FieldLabel>
@@ -554,6 +587,7 @@ function AddFeeDialog({
     value,
     label: t(`admin.orders.detail.adjustment_lines.fee_kind_${value}`),
   }))
+  const { symbol: currencySymbol } = currencyParts(order.currency, i18n.language)
 
   function handleSubmit(e: FormEvent<HTMLFormElement>) {
     e.preventDefault()
@@ -592,7 +626,19 @@ function AddFeeDialog({
                   <FieldLabel htmlFor="fee-amount">
                     {t('admin.orders.detail.adjustment_lines.amount_field')}
                   </FieldLabel>
-                  <Input id="fee-amount" name="amount" type="number" step="0.01" min="0" required />
+                  <InputGroup>
+                    <InputGroupAddon>
+                      <InputGroupText>{currencySymbol}</InputGroupText>
+                    </InputGroupAddon>
+                    <InputGroupInput
+                      id="fee-amount"
+                      name="amount"
+                      type="number"
+                      step="0.01"
+                      min="0"
+                      required
+                    />
+                  </InputGroup>
                 </Field>
                 <Field>
                   <FieldLabel>{t('admin.orders.detail.adjustment_lines.kind_field')}</FieldLabel>

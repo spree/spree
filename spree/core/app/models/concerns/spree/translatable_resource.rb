@@ -12,12 +12,12 @@ module Spree
         const_get(:TRANSLATABLE_FIELDS)
       end
 
-      # Maps a public API field name to the internal Mobility field, for models
-      # whose translatable column has a legacy name (e.g. OptionType exposes
-      # +label+ but stores +presentation+). The public name is what the API
-      # serializer and translation matrix use; the writer alias (+label=+)
-      # already routes to the internal field through Mobility. Override per
-      # model; default is identity.
+      # Maps a public API field name to the internal Mobility field, for a
+      # model whose translatable column is named differently from the field the
+      # API exposes. The public name is what the serializer and the translation
+      # matrix use. No core model needs this since the option types' and
+      # values' +presentation+ column became +label+ in 6.0; it stays as an
+      # extension point. Override per model; default is identity.
       #
       # @return [Hash{Symbol=>Symbol}] public_name => internal_field
       def translatable_field_aliases
@@ -43,6 +43,25 @@ module Spree
       # @return [Array<Symbol>] public field names
       def translatable_rich_text_fields
         const_defined?(:RICH_TEXT_TRANSLATABLE_FIELDS) ? const_get(:RICH_TEXT_TRANSLATABLE_FIELDS) : []
+      end
+
+      # Every record of this type belonging to +store+, for surfaces that read
+      # a whole translatable resource type at once (the coverage grid).
+      #
+      # +for_store+ resolves through the store's own association, so it is
+      # right for a store column (Product), a polymorphic owner (Policy) and
+      # genuinely global reference data alike (OptionType, which has no store
+      # dimension and returns everything by design). Its one blind spot is
+      # +Spree::Store+: with no `stores` association to follow it falls back to
+      # the UNSCOPED class, which would answer with every store in the
+      # installation, so that case is narrowed here.
+      #
+      # @param store [Spree::Store]
+      # @return [ActiveRecord::Relation]
+      def translatable_scope(store)
+        return where(id: store.id) if self <= Spree::Store
+
+        for_store(store).all
       end
 
       def translation_table_alias

@@ -6,9 +6,9 @@ RSpec.describe Spree::Api::V3::FiltersAggregator do
   let(:category) { create(:category) }
   let(:child_category) { create(:category, parent: category, name: 'Child') }
 
-  let(:option_type) { create(:option_type, name: 'size', presentation: 'Size', filterable: true) }
-  let(:option_value_s) { create(:option_value, option_type: option_type, name: 'small', presentation: 'S') }
-  let(:option_value_m) { create(:option_value, option_type: option_type, name: 'medium', presentation: 'M') }
+  let(:option_type) { create(:option_type, name: 'size', label: 'Size', filterable: true) }
+  let(:option_value_s) { create(:option_value, option_type: option_type, name: 'small', label: 'S') }
+  let(:option_value_m) { create(:option_value, option_type: option_type, name: 'medium', label: 'M') }
 
   let!(:product1) do
     create(:product, status: 'active', categories: [child_category]).tap do |p|
@@ -128,7 +128,7 @@ RSpec.describe Spree::Api::V3::FiltersAggregator do
 
       context 'with color swatch option type' do
         let(:color_type) { create(:option_type, :color_swatch, filterable: true) }
-        let(:red) { create(:option_value, option_type: color_type, name: 'red', presentation: 'Red', color_code: '#FF0000') }
+        let(:red) { create(:option_value, option_type: color_type, name: 'red', label: 'Red', color_code: '#FF0000') }
 
         let!(:red_product) do
           create(:product, status: 'active').tap do |p|
@@ -150,7 +150,7 @@ RSpec.describe Spree::Api::V3::FiltersAggregator do
       end
 
       it 'excludes option types with no values in scope' do
-        empty_option_type = create(:option_type, name: 'material', presentation: 'Material', filterable: true)
+        empty_option_type = create(:option_type, name: 'material', label: 'Material', filterable: true)
         create(:option_value, option_type: empty_option_type, name: 'cotton')
 
         material_filter = result[:filters].find { |f| f[:name] == 'material' }
@@ -161,9 +161,9 @@ RSpec.describe Spree::Api::V3::FiltersAggregator do
     describe 'option value translations' do
       before do
         # Create translations directly to avoid Mobility's column writer side effects
-        Spree::OptionValue::Translation.create!(spree_option_value_id: option_value_s.id, locale: 'pl', presentation: 'Mały')
-        Spree::OptionValue::Translation.create!(spree_option_value_id: option_value_m.id, locale: 'pl', presentation: 'Średni')
-        Spree::OptionType::Translation.create!(spree_option_type_id: option_type.id, locale: 'pl', presentation: 'Rozmiar')
+        Spree::OptionValue::Translation.create!(spree_option_value_id: option_value_s.id, locale: 'pl', label: 'Mały')
+        Spree::OptionValue::Translation.create!(spree_option_value_id: option_value_m.id, locale: 'pl', label: 'Średni')
+        Spree::OptionType::Translation.create!(spree_option_type_id: option_type.id, locale: 'pl', label: 'Rozmiar')
       end
 
       context 'with default locale' do
@@ -222,9 +222,9 @@ RSpec.describe Spree::Api::V3::FiltersAggregator do
     end
 
     describe 'disjunctive option facet counts' do
-      let(:color_type) { create(:option_type, name: 'color', presentation: 'Color', filterable: true) }
-      let(:blue) { create(:option_value, option_type: color_type, name: 'blue', presentation: 'Blue') }
-      let(:red) { create(:option_value, option_type: color_type, name: 'red', presentation: 'Red') }
+      let(:color_type) { create(:option_type, name: 'color', label: 'Color', filterable: true) }
+      let(:blue) { create(:option_value, option_type: color_type, name: 'blue', label: 'Blue') }
+      let(:red) { create(:option_value, option_type: color_type, name: 'red', label: 'Red') }
 
       let!(:blue_product) do
         create(:product, status: 'active', categories: [child_category]).tap do |p|

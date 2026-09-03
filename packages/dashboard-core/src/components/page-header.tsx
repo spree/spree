@@ -10,8 +10,14 @@ import {
   useCopyToClipboard,
   useScrolled,
 } from '@spree/dashboard-ui'
+import {
+  BracesIcon,
+  CheckIcon,
+  CopyIcon,
+  EllipsisVerticalIcon,
+  TrashIcon,
+} from '@spree/dashboard-ui/icons'
 import type { JsonPreviewDrawerProps } from '@spree/dashboard-ui/spree/json-preview-drawer'
-import { BracesIcon, CheckIcon, CopyIcon, EllipsisVerticalIcon, TrashIcon } from 'lucide-react'
 import { lazy, type ReactNode, Suspense, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useRegisterPageHeader } from '../providers/sticky-header-provider'
@@ -45,13 +51,13 @@ export interface PageHeaderResource {
 }
 
 interface PageHeaderProps {
-  /** Main title (left of any badges). */
+  /** Main title, on its own line. */
   title: ReactNode
-  /** Small text below or beside the title (updated_at badge, customer email, etc.). */
+  /** Small text beside the badges (updated_at badge, customer email, etc.). */
   subtitle?: ReactNode
   /** Back button target — passed to <BackButton fallback="..."/>. Omit for top-level pages. */
   backTo?: string
-  /** Status badges rendered next to the title. Use <StatusBadge /> for consistency. */
+  /** Status badges, on the line under the title. Use <StatusBadge />. */
   badges?: ReactNode
   /** Primary action buttons (rightmost, before the dropdown). Most pages use this for "Save". */
   actions?: ReactNode
@@ -185,26 +191,29 @@ export function PageHeader({
       <div className="flex min-w-0 flex-1 items-start gap-3">
         {backTo && <BackButton fallback={backTo} />}
 
-        {/* Title + badges share a line; subtitle drops underneath so
-            descriptive prose doesn't get crammed alongside the heading. Short
-            metadata subtitles (customer location, order status hint) read fine
-            on the second line too. */}
+        {/* The heading owns its line, with everything that qualifies it on
+            the line below, so the eye reads the name first rather than
+            picking it out of a row it shares. */}
         <div className="flex min-w-0 flex-1 flex-col gap-1">
-          <div className="flex flex-wrap items-center gap-x-3 gap-y-1">
-            {/* Smaller and clipped on a phone: sharing the row with the
-                actions leaves a long product name too little width to wrap
-                into anything readable. */}
-            <h1 className="min-w-0 truncate font-medium text-xl leading-tight sm:text-2xl sm:whitespace-normal">
-              {title}
-            </h1>
-            {badges}
-          </div>
-          {/* Clamped on a phone: a two line description beside the actions
-              makes the sticky band tall enough to eat the content below it. */}
-          {subtitle && (
-            <span className="line-clamp-2 text-sm text-muted-foreground sm:line-clamp-none">
-              {subtitle}
-            </span>
+          {/* Smaller and clipped on a phone: sharing the row with the actions
+              leaves a long product name too little width to wrap into
+              anything readable. */}
+          <h1 className="min-w-0 truncate font-medium text-xl leading-tight sm:text-2xl sm:whitespace-normal">
+            {title}
+          </h1>
+          {/* Statuses and the timestamp share the second line: both answer
+              "where is this now", so splitting them costs a row and reads as
+              two separate facts. The subtitle is clamped on a phone, where a
+              long one would make the sticky band tall enough to eat the page. */}
+          {(badges || subtitle) && (
+            <div className="flex flex-wrap items-center gap-x-3 gap-y-1">
+              {badges}
+              {subtitle && (
+                <span className="line-clamp-2 text-sm text-muted-foreground sm:line-clamp-none">
+                  {subtitle}
+                </span>
+              )}
+            </div>
           )}
         </div>
       </div>

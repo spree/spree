@@ -2,6 +2,9 @@ import type { ListParams, PaginatedResponse, RequestFn, RequestOptions } from '@
 import { transformListParams } from '@spree/sdk-core'
 import type {
   AuthTokens,
+  DeliveryMethod,
+  DeliveryProfile,
+  DeliveryZone,
   Export,
   Fulfillment,
   Import,
@@ -10,6 +13,7 @@ import type {
   Order,
   Policy,
   Product,
+  ProductType,
   Profile,
   RequirementStatus,
   RequirementSubmission,
@@ -218,6 +222,25 @@ export class SellerClient {
      */
     submitForReview: (options?: RequestOptions): Promise<OnboardingResponse> =>
       this.request<OnboardingResponse>('POST', '/onboarding/submit_for_review', options),
+
+    /**
+     * A fresh link to wherever the marketplace's payout provider collects
+     * what it needs before it will pay this seller.
+     *
+     * Asked for at the moment the seller acts, never rendered with the
+     * checklist: these links are short-lived and single-use, so one made
+     * while drawing a page is often dead before it is clicked. Answers
+     * `{ url: null }` when the provider hosts no onboarding — a marketplace
+     * paying by hand collects those details itself.
+     */
+    payoutAccount: (
+      data: { refresh_url: string; return_url: string },
+      options?: RequestOptions,
+    ): Promise<PayoutAccountLink> =>
+      this.request<PayoutAccountLink>('POST', '/onboarding/payout_account', {
+        ...options,
+        body: data,
+      }),
   }
 
   /**
@@ -433,6 +456,125 @@ export class SellerClient {
   }
 
   /**
+   * The types a seller may list a product against. Read only — defining a
+   * type is the operator's. A seller picks one because it is the template
+   * that hands their product its option types and delivery profile.
+   */
+  readonly productTypes = {
+    list: (
+      params?: ListParams & Record<string, unknown>,
+      options?: RequestOptions,
+    ): Promise<PaginatedResponse<ProductType>> =>
+      this.request<PaginatedResponse<ProductType>>('GET', '/product_types', {
+        ...options,
+        params: params ? transformListParams(params) : undefined,
+      }),
+
+    get: (id: string, options?: RequestOptions): Promise<ProductType> =>
+      this.request<ProductType>('GET', `/product_types/${id}`, options),
+  }
+
+  /**
+   * The marketplace's delivery profiles — what kind of goods a product is
+   * (parcel, digital, pallet). Read only: a seller assigns one to their
+   * product and never defines one.
+   */
+  readonly deliveryProfiles = {
+    list: (
+      params?: ListParams & Record<string, unknown>,
+      options?: RequestOptions,
+    ): Promise<PaginatedResponse<DeliveryProfile>> =>
+      this.request<PaginatedResponse<DeliveryProfile>>('GET', '/delivery_profiles', {
+        ...options,
+        params: params ? transformListParams(params) : undefined,
+      }),
+  }
+
+  /**
+   * The marketplace's delivery zones — where its methods may ship to.
+   *
+   * Read only, like profiles. Pass `delivery_profile_id` to list only the
+   * zones under one profile, which is what the method form's picker asks for.
+   */
+  readonly deliveryZones = {
+    list: (
+      params?: DeliveryZoneListParams,
+      options?: RequestOptions,
+    ): Promise<PaginatedResponse<DeliveryZone>> => {
+      // `delivery_profile_id` is sent alongside the Ransack query rather than
+      // through it: the endpoint reads it as a plain parameter, and
+      // `transformListParams` would wrap it into `q[...]` where the filter is
+      // silently ignored — leaving the picker offering every zone in the store.
+      const { delivery_profile_id: deliveryProfileId, ...listParams } = params ?? {}
+
+      return this.request<PaginatedResponse<DeliveryZone>>('GET', '/delivery_zones', {
+        ...options,
+        params: {
+          ...transformListParams(listParams),
+          ...(deliveryProfileId ? { delivery_profile_id: deliveryProfileId } : {}),
+        },
+      })
+    },
+  }
+
+  /**
+   * How this seller ships.
+   *
+   * `list()` carries the seller's own methods alongside the marketplace ones
+   * the operator shares with sellers; a shared row comes back with
+   * `editable: false` and every write against it is a 404.
+   *
+   * Neither the rate provider nor the fulfillment provider is settable — a
+   * seller prices their own rates and enters tracking numbers by hand,
+   * because carrier accounts belong to the marketplace.
+   */
+  readonly deliveryMethods = {
+    list: (
+      params?: ListParams & Record<string, unknown>,
+      options?: RequestOptions,
+    ): Promise<PaginatedResponse<DeliveryMethod>> =>
+      this.request<PaginatedResponse<DeliveryMethod>>('GET', '/delivery_methods', {
+        ...options,
+        params: params ? transformListParams(params) : undefined,
+      }),
+
+    get: (id: string, options?: RequestOptions): Promise<DeliveryMethod> =>
+      this.request<DeliveryMethod>('GET', `/delivery_methods/${id}`, options),
+
+    create: (params: DeliveryMethodParams, options?: RequestOptions): Promise<DeliveryMethod> =>
+      this.request<DeliveryMethod>('POST', '/delivery_methods', { ...options, body: params }),
+
+    update: (
+      id: string,
+      params: DeliveryMethodParams,
+      options?: RequestOptions,
+    ): Promise<DeliveryMethod> =>
+      this.request<DeliveryMethod>('PATCH', `/delivery_methods/${id}`, {
+        ...options,
+        body: params,
+      }),
+
+    delete: (id: string, options?: RequestOptions): Promise<void> =>
+      this.request<void>('DELETE', `/delivery_methods/${id}`, options),
+
+    /** The ways a method can be priced, with each one's preference schema. */
+    calculators: (options?: RequestOptions): Promise<{ data: DeliveryCalculatorType[] }> =>
+      this.request<{ data: DeliveryCalculatorType[] }>(
+        'GET',
+        '/delivery_methods/calculators',
+        options,
+      ),
+
+    /** The conditions a seller may put on their own method. */
+    ruleTypes: (options?: RequestOptions): Promise<{ data: DeliveryMethodRuleType[] }> =>
+      this.request<{ data: DeliveryMethodRuleType[] }>(
+        'GET',
+        '/delivery_methods/rule_types',
+        options,
+      ),
+  }
+
+  /**
    * Where this seller keeps stock, and so where their returns are sent.
    *
    * No delete: a location holds stock levels and is named on historical
@@ -619,6 +761,70 @@ export interface ImportCompleteMappingParams {
 }
 
 /** What a seller may write on one of their stock locations. */
+/**
+ * One condition on a delivery method as it is written.
+ *
+ * Omitting `id` marks a rule as new; dropping one from the array deletes it.
+ * `type` is a wire shorthand from `deliveryMethods.ruleTypes()` — a kind this
+ * branch does not offer is a 404, never a silent drop.
+ */
+export interface DeliveryMethodRuleParams {
+  id?: string
+  type: string
+  active?: boolean
+  preferences?: Record<string, unknown>
+}
+
+export interface DeliveryMethodParams {
+  name?: string
+  admin_name?: string | null
+  code?: string | null
+  /** One of the marketplace's delivery profiles. */
+  delivery_profile_id?: string
+  /** Narrows where the method ships; null serves everywhere the profile reaches. */
+  delivery_zone_id?: string | null
+  storefront_visible?: boolean
+  tracking_url?: string | null
+  estimated_transit_business_days_min?: number | null
+  estimated_transit_business_days_max?: number | null
+  calculator_type?: string
+  calculator_preferences?: Record<string, unknown>
+  /** Replaces the whole set; an empty array clears every condition. */
+  rules?: DeliveryMethodRuleParams[]
+}
+
+export interface DeliveryZoneListParams extends ListParams {
+  /** Only zones under this delivery profile. */
+  delivery_profile_id?: string
+  [key: string]: unknown
+}
+
+/**
+ * One field on a calculator's or rule's configuration form, as the server
+ * describes it. The same shape the generated `DeliveryMethodRule` type
+ * carries, so a schema from either endpoint renders through one form.
+ */
+export interface DeliveryPreferenceField {
+  key: string
+  type: string
+  default: unknown
+}
+
+/** One way a delivery method can be priced. */
+export interface DeliveryCalculatorType {
+  type: string
+  name: string
+  preference_schema: DeliveryPreferenceField[]
+}
+
+/** One condition a seller may put on their own method. */
+export interface DeliveryMethodRuleType {
+  type: string
+  name: string
+  description: string
+  preference_schema: DeliveryPreferenceField[]
+}
+
 export interface StockLocationParams {
   name?: string
   company?: string | null
@@ -684,6 +890,12 @@ export interface SellerCountry {
   states?: Array<{ abbr: string; name: string }>
 }
 
+/** Where to send a seller to set up how they get paid. */
+export interface PayoutAccountLink {
+  /** Null when the provider hosts no onboarding of its own. */
+  url: string | null
+}
+
 /** What `/seller/onboarding` answers. */
 export interface OnboardingResponse {
   /** The seller's lifecycle status, e.g. `onboarding`, `ready_for_review`. */
@@ -724,6 +936,18 @@ export interface ProductParams {
   meta_description?: string
   meta_keywords?: string
   metadata?: Record<string, unknown>
+  /**
+   * The marketplace's type this product is listed against, from
+   * `productTypes.list()`. `null` detaches it. Saving with a type seeds its
+   * option types onto the product.
+   */
+  product_type_id?: string | null
+  /**
+   * Which of the marketplace's delivery profiles the product ships under,
+   * from `deliveryProfiles.list()`. A new product sent without one lands on
+   * the profile marked `default`.
+   */
+  delivery_profile_id?: string
   /**
    * The gallery, as a whole. A file absent from the list is removed, so send
    * every image the product should end up with. `signed_id` attaches a fresh

@@ -51,7 +51,7 @@ module Spree
 
     # The kinds a marketplace starts with, in the order a seller meets them:
     # agree to the terms, say who you are, tell us where to invoice and where
-    # returns go, then list something.
+    # returns go, have a way to ship, then list something.
     #
     # Only the kinds that ask a question core already knows how to answer.
     # The generic ones (an attestation, a document, a manual check) are absent
@@ -62,6 +62,7 @@ module Spree
       Spree::SellerRequirements::CompleteProfile
       Spree::SellerRequirements::BillingAddress
       Spree::SellerRequirements::ReturnsAddress
+      Spree::SellerRequirements::DeliveryMethod
       Spree::SellerRequirements::MinimumProducts
     ].freeze
 
@@ -168,6 +169,17 @@ module Spree
     # never see that. Not overridable for exactly that reason; kinds
     # override {#met_by_seller?} instead.
     #
+    # Whether this evaluation may answer from what Spree already knows rather
+    # than asking the outside world. Set by `Spree::Sellers::Requirements` for
+    # a listing, where one network call per row is the difference between a
+    # page that loads and one that does not. A kind that never leaves the
+    # database can ignore it; one that calls a provider should read the value
+    # it last recorded instead.
+    #
+    # False everywhere it matters — the two approval gates and a seller's own
+    # page ask for the current answer.
+    attr_accessor :prefer_cached
+
     # @param seller [Spree::Seller]
     # @return [Boolean]
     def satisfied?(seller)
@@ -213,6 +225,17 @@ module Spree
     # @param _seller [Spree::Seller]
     # @return [String, nil]
     def action_url(_seller)
+      nil
+    end
+
+    # Why this line is not done, when the answer is somewhere the seller
+    # cannot see. Nil for every kind whose own description already says what
+    # is wanted, which is nearly all of them — a requirement asking for an
+    # address explains itself.
+    #
+    # @param _seller [Spree::Seller]
+    # @return [Hash, nil] `{ state:, message: }`
+    def blocker(_seller)
       nil
     end
 

@@ -1,6 +1,6 @@
 import { ActiveBadge, ResourceNameCell } from '@spree/dashboard-ui'
+import { WarehouseIcon } from '@spree/dashboard-ui/icons'
 import i18n from 'i18next'
-import { WarehouseIcon } from 'lucide-react'
 import type { PanelStockLocation } from '../api-client'
 import { defineTable } from '../lib/table-registry'
 

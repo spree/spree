@@ -21,6 +21,23 @@ RSpec.describe Spree::Api::V3::Seller::OnboardingController, type: :controller d
     request.headers['X-Spree-Seller-Id'] = seller.prefixed_id
   end
 
+  # The seller is looking at their own checklist to find out what is left to
+  # do, so a cached answer is the wrong one here: someone who has just
+  # finished with the provider must not be told they have not.
+  describe 'the payout account requirement' do
+    before do
+      Spree::SellerRequirements::PayoutAccount.create!(store: store, name: 'Payout account', required: true)
+    end
+
+    it 'asks the provider rather than reading the stamp' do
+      expect_any_instance_of(Spree::PayoutProvider::System).to receive(:onboarded?).at_least(:once).and_return(true)
+
+      get :show, as: :json
+
+      expect(response).to have_http_status(:ok)
+    end
+  end
+
   describe 'GET #show' do
     it 'reads as finished when the marketplace asks for nothing' do
       get :show, as: :json
@@ -116,6 +133,71 @@ RSpec.describe Spree::Api::V3::Seller::OnboardingController, type: :controller d
       expect(response).to have_http_status(:unprocessable_content)
       expect(response.body).to match(/billing address/i)
       expect(seller.reload).to be_onboarding
+    end
+  end
+
+  describe 'POST #payout_account' do
+    let(:urls) { { refresh_url: 'https://panel/onboarding', return_url: 'https://panel/onboarding?done=1' } }
+
+    # An operator settling by hand collects bank details themselves, so there
+    # is nowhere to send the seller.
+    # The panel has to tell "hosts nothing" from "the request failed".
+    it 'answers with no link when the provider hosts no onboarding' do
+      post :payout_account, params: urls, as: :json
+
+      expect(response).to have_http_status(:ok)
+      expect(json_response['url']).to be_nil
+    end
+
+    context 'with a provider that hosts its own onboarding' do
+      before do
+        allow_any_instance_of(Spree::PayoutProvider::System).to receive(:onboarding_url).
+          and_return('https://provider.example/setup/abc')
+      end
+
+      it 'answers with a fresh link' do
+        post :payout_account, params: urls, as: :json
+
+        expect(response).to have_http_status(:ok)
+        expect(json_response['url']).to eq('https://provider.example/setup/abc')
+      end
+
+      # The panel says where to come back to, within its own origin.
+      it 'sends back an address the panel actually serves' do
+        panel = Spree::Sellers::PanelUrl.call(store: store)
+
+        expect_any_instance_of(Spree::PayoutProvider::System).to receive(:onboarding_url).
+          with(anything, hash_including(return_url: "#{panel}/onboarding")).
+          and_return('https://provider.example/setup/abc')
+
+        post :payout_account,
+             params: { refresh_url: "#{panel}/onboarding", return_url: "#{panel}/onboarding" },
+             as: :json
+      end
+
+      # A seller could otherwise turn the marketplace's genuine provider flow
+      # into a redirect to a page of their choosing, which is a convincing
+      # place to ask somebody for their details.
+      it 'refuses to send the seller somewhere else entirely' do
+        panel = Spree::Sellers::PanelUrl.call(store: store)
+
+        expect_any_instance_of(Spree::PayoutProvider::System).to receive(:onboarding_url).
+          with(anything, hash_including(return_url: panel)).
+          and_return('https://provider.example/setup/abc')
+
+        post :payout_account,
+             params: { refresh_url: 'https://evil.test/steal', return_url: 'https://evil.test/steal' },
+             as: :json
+      end
+
+      it 'reports a provider that refuses rather than raising' do
+        allow_any_instance_of(Spree::PayoutProvider::System).to receive(:onboarding_url).
+          and_raise(Spree::Core::GatewayError, 'not configured')
+
+        post :payout_account, params: urls, as: :json
+
+        expect(response).to have_http_status(:unprocessable_content)
+      end
     end
   end
 end

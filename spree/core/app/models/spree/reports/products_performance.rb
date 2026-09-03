@@ -6,7 +6,7 @@ module Spree
                            select("
                              #{Spree::LineItem.table_name}.quantity as quantity,
                              #{Spree::LineItem.table_name}.pre_tax_amount as pre_tax_amount,
-                             #{Spree::LineItem.table_name}.promo_total as promo_total,
+                             #{Spree::LineItem.table_name}.discount_total as promo_total,
                              #{Spree::LineItem.table_name}.included_tax_total + #{Spree::LineItem.table_name}.additional_tax_total AS tax_total,
                              #{Spree::LineItem.table_name}.pre_tax_amount + #{Spree::LineItem.table_name}.adjustment_total AS total,
                              #{Spree::Variant.table_name}.product_id AS product_id

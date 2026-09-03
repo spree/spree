@@ -5,7 +5,6 @@ import * as MapLibreGL from 'maplibre-gl'
 import 'maplibre-gl/dist/maplibre-gl.css'
 
 import type * as GeoJSON from 'geojson'
-import { Loader2, Locate, Maximize, Minus, Plus, X } from 'lucide-react'
 // `?worker&url` hands the file to the bundler, which emits it as its own chunk
 // with the shared code it needs and gives back a same-origin URL.
 import workerUrl from 'maplibre-gl/dist/maplibre-gl-worker.mjs?worker&url'
@@ -24,6 +23,7 @@ import {
 } from 'react'
 import { createPortal } from 'react-dom'
 import { cn } from '../lib/utils'
+import { Loader2, Locate, Maximize, Minus, Plus, X } from '../spree/icons'
 
 // The worker ships in the package, so it is bundled and served from this
 // origin. The registry's default fetches it from unpkg at runtime, which means

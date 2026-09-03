@@ -2,6 +2,14 @@ FactoryBot.define do
   factory :catalog, class: Spree::Catalog do
     sequence(:name) { |n| "Wholesale Catalog #{n}" }
     store { Spree::Store.default || create(:store) }
+    # A catalog is born inactive and goes live through Catalogs::Activate, but
+    # a spec that builds one almost always wants an agreement that applies —
+    # `:inactive` is the trait for testing the other side.
+    active { true }
+
+    trait :inactive do
+      active { false }
+    end
   end
 
   factory :catalog_product, class: Spree::CatalogProduct do

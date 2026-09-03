@@ -11,9 +11,10 @@ import {
   type ProductMembershipListProps,
   type ProductMembershipRow,
 } from '@spree/dashboard-ui'
+import { PlusIcon, Trash2Icon } from '@spree/dashboard-ui/icons'
+import { useQuery } from '@tanstack/react-query'
 import { Link } from '@tanstack/react-router'
-import { PlusIcon, Trash2Icon } from 'lucide-react'
-import { useEffect, useMemo, useState } from 'react'
+import { type ReactNode, useEffect, useMemo, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useProductMembershipStaging } from './product-membership-staging'
 
@@ -22,6 +23,12 @@ export type ProductMembershipQuery = (
   parentId: string | undefined,
   page?: number,
 ) => { data?: { data: Product[]; meta: PaginationMeta }; isLoading: boolean }
+
+/** Raw paginated membership fetch for picker exclusion across every list page. */
+export type ProductMembershipListPage = (
+  parentId: string,
+  page: number,
+) => Promise<{ data: Product[]; meta: PaginationMeta }>
 
 /** Persists a drag-to-reorder. Resolve to commit, reject to roll back. */
 export type ProductMembershipReorder = (productId: string, position: number) => Promise<unknown>
@@ -54,10 +61,12 @@ export function DeferredProductMembershipCard({
   canEdit = true,
   readOnly = false,
   useProducts,
+  listMembersPage,
   onReorder,
   translationNamespace,
   description,
   extraColumns,
+  headerActions,
 }: {
   parentId: string
   storeId: string
@@ -66,6 +75,8 @@ export function DeferredProductMembershipCard({
   /** True when membership is rule-derived and cannot be curated at all. */
   readOnly?: boolean
   useProducts: ProductMembershipQuery
+  /** When set, every persisted member id is excluded from the picker, not just the current list page. */
+  listMembersPage?: ProductMembershipListPage
   onReorder?: ProductMembershipReorder
   /** Locale namespace holding the `products.*` copy, e.g. `admin.catalogs`. */
   translationNamespace: string
@@ -73,9 +84,23 @@ export function DeferredProductMembershipCard({
   description?: string
   /**
    * Extra per-row columns, for a parent whose membership carries data of its
-   * own — a catalog's quantity terms. Passed straight to the list.
+   * own — a catalog's quantity terms, or what its agreement charges.
+   *
+   * A function receives the server rows this page loaded, for a column whose
+   * value the listing itself carries rather than the form: the card owns that
+   * query, so lifting it out only to read a column back would mean fetching
+   * the same page twice.
    */
-  extraColumns?: ProductMembershipListProps['extraColumns']
+  extraColumns?:
+    | ProductMembershipListProps['extraColumns']
+    | ((products: Product[]) => ProductMembershipListProps['extraColumns'])
+  /**
+   * Extra controls beside Add products, for an action that belongs on these
+   * rows rather than in a card of its own — pricing a catalog's assortment.
+   * Hidden while a selection is active, since the header is then the bulk
+   * remove.
+   */
+  headerActions?: ReactNode
 }) {
   const { t } = useTranslation()
   const tr = (key: string, options?: Record<string, unknown>) =>
@@ -91,6 +116,27 @@ export function DeferredProductMembershipCard({
 
   const [pickerOpen, setPickerOpen] = useState(false)
   const [selected, setSelected] = useState<string[]>([])
+
+  const { data: allPersistedMemberIds } = useQuery({
+    queryKey: [translationNamespace, parentId, 'membership-picker-exclude-ids'],
+    queryFn: async () => {
+      if (!listMembersPage) return [] as string[]
+      const ids: string[] = []
+      let memberPage = 1
+      while (true) {
+        const response = await listMembersPage(parentId, memberPage)
+        ids.push(...response.data.map((product) => product.id))
+        const pages = response.meta?.pages ?? memberPage
+        if (!response.meta?.next || memberPage >= pages) break
+        memberPage += 1
+      }
+      return ids
+    },
+    enabled: pickerOpen && !!listMembersPage,
+    staleTime: 30_000,
+  })
+
+  const persistedMemberIds = allPersistedMemberIds ?? serverProducts.map((product) => product.id)
 
   const pendingRemoveSet = useMemo(() => new Set(pendingRemoves), [pendingRemoves])
   const pendingAddIds = useMemo(() => new Set(pendingAdds.map((p) => p.id)), [pendingAdds])
@@ -143,6 +189,14 @@ export function DeferredProductMembershipCard({
 
   const curatable = canEdit && !readOnly
 
+  const pickerSelectedIds = useMemo(() => {
+    const ids = new Set(pendingAdds.map((product) => product.id))
+    for (const id of persistedMemberIds) {
+      if (!pendingRemoveSet.has(id)) ids.add(id)
+    }
+    return Array.from(ids)
+  }, [pendingAdds, persistedMemberIds, pendingRemoveSet])
+
   // Only the persisted total — staged rows are marked in the list itself, and
   // netting them into the count reads as wrong next to the visible rows.
   const count = meta?.count ?? 0
@@ -178,10 +232,13 @@ export function DeferredProductMembershipCard({
               {tr('remove_selected', { count: selected.length })}
             </Button>
           ) : (
-            <Button type="button" variant="outline" size="sm" onClick={() => setPickerOpen(true)}>
-              <PlusIcon className="size-4" />
-              {tr('add_cta')}
-            </Button>
+            <div className="flex items-center gap-2">
+              {headerActions}
+              <Button type="button" variant="outline" size="sm" onClick={() => setPickerOpen(true)}>
+                <PlusIcon className="size-4" />
+                {tr('add_cta')}
+              </Button>
+            </div>
           ))}
       </CardHeader>
       <CardContent className="p-0">
@@ -200,7 +257,9 @@ export function DeferredProductMembershipCard({
           // change. Disabled until the staged changes are saved.
           reorderable={Boolean(onReorder) && curatable && !staging.dirty}
           onReorder={onReorder}
-          extraColumns={extraColumns}
+          extraColumns={
+            typeof extraColumns === 'function' ? extraColumns(serverProducts) : extraColumns
+          }
           renderTitle={(row) => (
             <Link
               to="/$storeId/products/$productId"
@@ -236,7 +295,7 @@ export function DeferredProductMembershipCard({
           // as "already in, not re-addable", so leaving them in would grey out
           // a product the merchant just removed and leave the row's restore
           // arrow as the only way back.
-          selectedIds={rows.filter((row) => row.pending !== 'removed').map((row) => row.id)}
+          selectedIds={pickerSelectedIds}
           onConfirm={(_, records) => {
             // Re-picking a product staged for removal cancels that removal —
             // it is still a member, so staging it as an addition too would
@@ -250,7 +309,16 @@ export function DeferredProductMembershipCard({
             )
             if (fresh.length > 0) staging.setAdds([...pendingAdds, ...fresh])
           }}
-          search={(q) => adminClient.products.list({ name_cont: q, limit: 25, sort: 'name' })}
+          search={(query, page) => {
+            const excludeIds = pickerSelectedIds
+            return adminClient.products.list({
+              ...(query ? { name_cont: query } : {}),
+              limit: 25,
+              page,
+              sort: 'name',
+              ...(excludeIds.length > 0 ? { id_not_in: excludeIds } : {}),
+            })
+          }}
           getOptionLabel={(p) => p.name ?? p.id}
           getOptionImageUrl={(p) => p.thumbnail_url}
           getOptionSubtitle={(p) => p.slug ?? null}

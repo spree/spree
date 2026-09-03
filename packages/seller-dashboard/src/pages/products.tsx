@@ -25,9 +25,9 @@ import {
   toastManager,
   useRowClickBridge,
 } from '@spree/dashboard-ui'
+import { ArchiveIcon, PlusIcon, SendIcon, Trash2Icon } from '@spree/dashboard-ui/icons'
 import type { BulkProductResult, Product } from '@spree/seller-sdk'
 import { useNavigate, useParams } from '@tanstack/react-router'
-import { ArchiveIcon, PlusIcon, SendIcon, Trash2Icon } from 'lucide-react'
 import { useMemo, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { sellerClient } from '../api-client'

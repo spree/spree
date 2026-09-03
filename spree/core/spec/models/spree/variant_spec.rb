@@ -349,19 +349,19 @@ describe Spree::Variant, type: :model do
       let(:product) { create(:product, name: 'Crewneck Sweater') }
       let(:color_type) do
         Spree::OptionType.find_by(name: 'spec-color') ||
-          create(:option_type, name: 'spec-color', presentation: 'Color')
+          create(:option_type, name: 'spec-color', label: 'Color')
       end
       let(:size_type) do
         Spree::OptionType.find_by(name: 'spec-size') ||
-          create(:option_type, name: 'spec-size', presentation: 'Size')
+          create(:option_type, name: 'spec-size', label: 'Size')
       end
       let(:red) do
         color_type.option_values.find_by(name: 'red') ||
-          create(:option_value, option_type: color_type, name: 'red', presentation: 'Red')
+          create(:option_value, option_type: color_type, name: 'red', label: 'Red')
       end
       let(:xl) do
         size_type.option_values.find_by(name: 'xl') ||
-          create(:option_value, option_type: size_type, name: 'xl', presentation: 'XL')
+          create(:option_value, option_type: size_type, name: 'xl', label: 'XL')
       end
       let!(:red_xl_variant) do
         v = create(:variant, product: product, sku: 'SWEATER-RED-XL')
@@ -384,7 +384,7 @@ describe Spree::Variant, type: :model do
         # "Red" hits the SKU too; assert against an option-value-only
         # variant to prove the option-value branch fires independently.
         blue = color_type.option_values.find_by(name: 'blue') ||
-               create(:option_value, option_type: color_type, name: 'blue', presentation: 'Blue')
+               create(:option_value, option_type: color_type, name: 'blue', label: 'Blue')
         plain_blue = create(:variant, product: other_product, sku: 'TEE-002', option_values: [blue])
         expect(described_class.search('Blue')).to include(plain_blue)
         expect(described_class.search('Blue')).not_to include(other_variant)
@@ -844,10 +844,10 @@ describe Spree::Variant, type: :model do
     let(:variant) { create(:variant, product: product, option_values: [option_value, option_value2]) }
     let!(:option_type2) { create(:option_type, name: 'material') }
     let!(:option_type) { Spree::OptionType.find_by(name: 'size') || create(:option_type, name: 'size') }
-    let(:option_value) { create(:option_value, name: 'medium', presentation: 'M', option_type: option_type) }
-    let(:option_value2) { create(:option_value, name: 'wool', presentation: 'Wool', option_type: option_type2) }
+    let(:option_value) { create(:option_value, name: 'medium', label: 'M', option_type: option_type) }
+    let(:option_value2) { create(:option_value, name: 'wool', label: 'Wool', option_type: option_type2) }
 
-    it 'returns an array of hashes with option type name, value, and presentation orderd by option type position' do
+    it 'returns an array of hashes with option type name, value, and presentation ordered by option type position' do
       expect(variant.options).to eq([
                                       {
                                         name: 'size',
@@ -875,7 +875,7 @@ describe Spree::Variant, type: :model do
     end
 
     context 'when the variant has option values' do
-      let(:variant) { build(:variant, option_values: [create(:option_value, name: 'Foo', presentation: 'Foo', option_type: create(:option_type, position: 2, name: 'Foo Type', presentation: 'Foo Type'))]) }
+      let(:variant) { build(:variant, option_values: [create(:option_value, name: 'Foo', label: 'Foo', option_type: create(:option_type, position: 2, name: 'Foo Type', label: 'Foo Type'))]) }
 
       it 'returns the options text of the variant' do
         expect(options_text).to eql 'Foo Type: Foo'
@@ -888,8 +888,8 @@ describe Spree::Variant, type: :model do
     let!(:variant) { build(:variant, option_values: []) }
 
     before do
-      variant.option_values << create(:option_value, name: 'Foo', presentation: 'Foo',
-                                                     option_type: create(:option_type, position: 2, name: 'Foo Type', presentation: 'Foo Type'))
+      variant.option_values << create(:option_value, name: 'Foo', label: 'Foo',
+                                                     option_type: create(:option_type, position: 2, name: 'Foo Type', label: 'Foo Type'))
       variant.save
     end
 
@@ -911,8 +911,8 @@ describe Spree::Variant, type: :model do
     let!(:variant) { build(:variant, option_values: []) }
 
     before do
-      variant.option_values << create(:option_value, name: 'Foo', presentation: 'Foo',
-                                                     option_type: create(:option_type, position: 2, name: 'Foo Type', presentation: 'Foo Type'))
+      variant.option_values << create(:option_value, name: 'Foo', label: 'Foo',
+                                                     option_type: create(:option_type, position: 2, name: 'Foo Type', label: 'Foo Type'))
       variant.save
     end
 

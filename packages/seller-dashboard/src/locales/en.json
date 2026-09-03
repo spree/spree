@@ -100,6 +100,62 @@
     "save": "Save",
     "saving": "Saving…"
   },
+  "delivery_methods": {
+    "add": "Add delivery method",
+    "columns": {
+      "name": "Name",
+      "owner": "Owner",
+      "visibility": "Visibility"
+    },
+    "conditions": {
+      "add": "Add a condition",
+      "description": "Without conditions this method is offered on every order it can ship.",
+      "remove": "Remove condition"
+    },
+    "delete_confirm": {
+      "title": "Delete delivery method?",
+      "message": "{{name}} will be removed. Orders already shipped with it keep their records."
+    },
+    "description": "How your orders reach your customers, and what shipping costs them.",
+    "empty": {
+      "title": "No delivery methods yet",
+      "description": "Add a way to ship, or use one this marketplace shares with its sellers."
+    },
+    "fields": {
+      "admin_name": "Internal name",
+      "calculator": "Pricing",
+      "delivery_profile": "Kind of goods",
+      "delivery_zone": "Ships to",
+      "name": "Name",
+      "storefront_visible": "Show at checkout"
+    },
+    "messages": {
+      "deleted": "Delivery method deleted",
+      "saved": "Delivery method saved"
+    },
+    "owner": {
+      "marketplace": "Marketplace",
+      "mine": "Yours"
+    },
+    "search_placeholder": "Search by name…",
+    "sections": {
+      "conditions": "When this method applies",
+      "goods": "What it ships",
+      "price": "What it costs"
+    },
+    "sheet": {
+      "new_title": "New delivery method",
+      "description": "Shoppers pick this at checkout, so name it the way you would describe it to them."
+    },
+    "title": "Delivery methods",
+    "visibility": {
+      "hidden": "Hidden",
+      "storefront": "Storefront"
+    },
+    "zone": {
+      "everywhere": "Everywhere this kind of goods reaches"
+    }
+  },
   "forgot_password": {
     "back_to_login": "Back to sign in",
     "email": "Email",
@@ -145,11 +201,15 @@
     "profile": "Profile",
     "settings": "Settings",
     "sign_out": "Sign out",
-    "team": "Team"
+    "team": "Team",
+    "delivery_methods": "Delivery methods"
   },
   "onboarding": {
     "accept_terms": "Accept the terms",
     "awaiting_review": "Waiting for the marketplace to review this.",
+    "connect_payout_account": "Set up how you get paid",
+    "payout_account_rejected": "Contact your payout provider",
+    "awaiting_payout_provider": "Waiting for your payout provider to finish checking your details.",
     "confirm": "Confirm",
     "document_help": "PDF or an image of the document.",
     "document_label": "Document",

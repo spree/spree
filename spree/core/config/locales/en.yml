@@ -21,14 +21,15 @@ en:
         city: City
         company: Company
         country: Country
-        firstname: First Name
+        first_name: First Name
         label: Address name
-        lastname: Last Name
+        last_name: Last Name
         phone: Phone
+        postal_code: Zip Code
         state: State
-        zipcode: Zip Code
       spree/calculator/tiered_flat_rate:
         preferred_base_amount: Base Amount
+        preferred_currency: Currency
         preferred_tiers: Tiers
       spree/calculator/tiered_percent:
         preferred_base_percent: Base Percent
@@ -81,11 +82,12 @@ en:
       spree/option_type:
         filterable: Filterable
         kind: Kind
+        label: Label
         name: Name
-        presentation: Presentation
       spree/option_value:
         color_code: Color Code
         image: Swatch Image
+        label: Label
       spree/order:
         checkout_complete: Checkout Complete
         completed_at: Completed At
@@ -106,19 +108,19 @@ en:
       spree/order/bill_address:
         address1: Billing address street
         city: Billing address city
-        firstname: Billing address first name
-        lastname: Billing address last name
+        first_name: Billing address first name
+        last_name: Billing address last name
         phone: Billing address phone
+        postal_code: Billing address zip code
         state: Billing address state
-        zipcode: Billing address zipcode
       spree/order/ship_address:
         address1: Shipping address street
         city: Shipping address city
-        firstname: Shipping address first name
-        lastname: Shipping address last name
+        first_name: Shipping address first name
+        last_name: Shipping address last name
         phone: Shipping address phone
+        postal_code: Shipping address zip code
         state: Shipping address state
-        zipcode: Shipping address zipcode
       spree/page_link:
         open_in_new_tab: Open in new tab
       spree/payment:
@@ -234,7 +236,7 @@ en:
         units_per_carton: Units per carton
         weight: Weight
         width: Width
-      spree/wished_item:
+      spree/wishlist_item:
         variant: ''
       spree/zone:
         description: Description
@@ -247,7 +249,9 @@ en:
       messages:
         blank: can't be blank
         must_apply_to_products: must be a custom field definition for products
+        must_belong_to_same_store: must belong to the same store
         not_registered: is not a registered provider
+        spree_content_type_not_allowed: is not a file type we accept
       models:
         spree/allowed_origin:
           attributes:
@@ -268,6 +272,8 @@ en:
               should_be_hash: should be a hash
         spree/catalog:
           attributes:
+            base:
+              no_audience: is not assigned to anyone, so activating it would reach no buyer. Assign a company or customer group first.
             price_list:
               owned_by_another_catalog: is already used by another catalog. Detach it there first.
         spree/catalog_quantity_rule:
@@ -431,7 +437,7 @@ en:
           attributes:
             url:
               internal_address_not_allowed: must not point to an internal or private network address
-        spree/wished_item:
+        spree/wishlist_item:
           attributes:
             variant:
               taken: You already added this item to your wishlist
@@ -1013,6 +1019,8 @@ en:
         promotion_discount_not_editable: promotion discounts are managed by recalculation and cannot be edited
         rate_provider_requires_shipping: "%{provider} quotes shipments, so this method must ship to an address"
         rate_provider_unavailable: is not available for this store — connect its integration first
+        seller_delivery_method_not_shareable: only the marketplace's own delivery methods can be shared with sellers
+        seller_delivery_method_provider: a seller's delivery method prices its own rates and is fulfilled by hand — carrier accounts belong to the marketplace
         seller_requirement_store_mismatch: must belong to the same store as the seller
         store_association_can_not_be_changed: The store association can not be changed
         store_is_already_set: Store is already set
@@ -1256,6 +1264,7 @@ en:
     next: Next
     no_cc_type: N/A
     no_payment_found: No payment found
+    no_refundable_payments: There is no payment left on this order to refund.
     no_report_data: No report data
     none: None
     normal_amount: Normal Amount
@@ -1263,7 +1272,9 @@ en:
     not_available: N/A
     not_enough_stock: There is not enough inventory at the source location to complete this transfer.
     not_found: "%{resource} is not found"
+    not_received: This return cannot be refunded until its items are marked received.
     note: Note
+    nothing_to_refund: There is nothing left to refund on this return.
     number: Number
     ok: OK
     on_hand: On Hand
@@ -1530,6 +1541,7 @@ en:
     reference: Reference
     refund: Refund
     refund_amount: Refund Amount
+    refund_exceeds_balance: That is more than the amount still refundable.
     refunds: Refunds
     register: Register
     registration: Registration
@@ -1644,6 +1656,9 @@ en:
       complete_profile:
         description: Fill in the public profile shoppers see
         name: Complete profile
+      delivery_method:
+        description: Offer at least one way to ship your orders
+        name: Delivery method
       document:
         description: Upload this document for the marketplace to review
         name: Document

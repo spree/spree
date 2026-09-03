@@ -1,5 +1,5 @@
 import { Thumbnail } from '@spree/dashboard-ui'
-import { PackageIcon } from 'lucide-react'
+import { PackageIcon } from '@spree/dashboard-ui/icons'
 import type { FulfillmentItemRow } from '../../../lib/fulfillment-items'
 
 /**

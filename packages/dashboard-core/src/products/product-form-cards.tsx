@@ -59,7 +59,7 @@ import {
   PencilIcon,
   PlayIcon,
   TrashIcon,
-} from 'lucide-react'
+} from '@spree/dashboard-ui/icons'
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { type Control, Controller, type UseFormReturn, useWatch } from 'react-hook-form'
 import { useTranslation } from 'react-i18next'
@@ -904,6 +904,10 @@ export function StatusCard({
 
 export function CategorizationCard({ form }: FormCardProps) {
   const { t } = useTranslation()
+  // Each picker shows only when the panel's client registers its source: a
+  // seller's registers types and delivery profiles but not the filing
+  // vocabulary (categories, collections, tags), which is the operator's.
+  const client = getApiClient()
   const { data: categoriesData } = useCategories()
   const { data: collectionsData } = useCollections()
   const { data: productTypesData } = useProductTypes()
@@ -928,15 +932,25 @@ export function CategorizationCard({ form }: FormCardProps) {
   // builder won't surface these, so the name is the only signal the merchant
   // gets about what the type contributes.
   const typeOptionTypeNames = useMemo(() => {
+    // Served already named where the panel has no option-type list to resolve
+    // ids against — a seller's API sends labels for exactly this reason.
+    const labels = selectedProductType?.option_type_labels
+    if (labels?.length) return labels
+
     const ids = selectedProductType?.option_type_ids ?? []
     return ids
       .map((id) => optionTypes.find((optionType) => optionType.id === id))
       .filter((optionType) => optionType !== undefined)
       .map((optionType) => optionType.label ?? optionType.name ?? '')
       .filter(Boolean)
-  }, [selectedProductType?.option_type_ids, optionTypes])
+  }, [selectedProductType?.option_type_labels, selectedProductType?.option_type_ids, optionTypes])
 
   useEffect(() => {
+    // Only where the panel files products at all: a seller's client registers
+    // no categories, so seeding them would dirty the form with ids their API
+    // drops on save — an unsaved-changes prompt over a field they cannot see.
+    if (!client.categories) return
+
     const categoryIds = selectedProductType?.category_ids
     if (!categoryIds?.length) return
 
@@ -945,7 +959,7 @@ export function CategorizationCard({ form }: FormCardProps) {
     if (missing.length === 0) return
 
     form.setValue('category_ids', [...current, ...missing], { shouldDirty: true })
-  }, [selectedProductType, form])
+  }, [selectedProductType, form, client.categories])
   // Automatic collections rebuild their members from rules, so a hand-picked
   // membership would be dropped on the next regeneration — offer manual only.
   // Memoized: `initialItems` feeds a useEffect + useMemo inside
@@ -961,48 +975,52 @@ export function CategorizationCard({ form }: FormCardProps) {
         <CardTitle>{t('admin.pages.products.section_categorization')}</CardTitle>
       </CardHeader>
       <CardContent className="flex flex-col gap-4">
-        <Field>
-          <FieldLabel>{t('admin.fields.product.product_type_id.label')}</FieldLabel>
-          <Controller
-            name="product_type_id"
-            control={form.control}
-            render={({ field }) => (
-              <Select value={field.value ?? ''} onValueChange={(v) => field.onChange(v || null)}>
-                <SelectTrigger className="w-full">
-                  <SelectValue placeholder={t('admin.products.product_type_placeholder')}>
-                    {(v) =>
-                      productTypes.find((pt) => pt.id === v)?.name ??
-                      t('admin.products.product_type_placeholder')
-                    }
-                  </SelectValue>
-                </SelectTrigger>
-                <SelectContent>
-                  {productTypes.map((productType) => (
-                    <SelectItem key={productType.id} value={productType.id}>
-                      {productType.name}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            )}
-          />
-          <span className="text-muted-foreground text-xs">
-            {t('admin.fields.product.product_type_id.help')}
-          </span>
-          {typeOptionTypeNames.length > 0 && (
+        {client.productTypes && (
+          <Field>
+            <FieldLabel>{t('admin.fields.product.product_type_id.label')}</FieldLabel>
+            <Controller
+              name="product_type_id"
+              control={form.control}
+              render={({ field }) => (
+                <Select value={field.value ?? ''} onValueChange={(v) => field.onChange(v || null)}>
+                  <SelectTrigger className="w-full">
+                    <SelectValue placeholder={t('admin.products.product_type_placeholder')}>
+                      {(v) =>
+                        productTypes.find((pt) => pt.id === v)?.name ??
+                        t('admin.products.product_type_placeholder')
+                      }
+                    </SelectValue>
+                  </SelectTrigger>
+                  <SelectContent>
+                    {productTypes.map((productType) => (
+                      <SelectItem key={productType.id} value={productType.id}>
+                        {productType.name}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              )}
+            />
             <span className="text-muted-foreground text-xs">
-              {t('admin.products.product_type_adds_options', {
-                options: typeOptionTypeNames.join(', '),
-                count: typeOptionTypeNames.length,
-              })}
+              {t('admin.fields.product.product_type_id.help')}
             </span>
-          )}
-        </Field>
+            {typeOptionTypeNames.length > 0 && (
+              <span className="text-muted-foreground text-xs">
+                {t('admin.products.product_type_adds_options', {
+                  options: typeOptionTypeNames.join(', '),
+                  count: typeOptionTypeNames.length,
+                })}
+              </span>
+            )}
+          </Field>
+        )}
 
-        {/* Marketplace configuration: a panel whose client registers no
-            delivery profiles cannot write one, so it does not offer the
-            field rather than showing an edit that goes nowhere. */}
-        {deliveryProfiles.length > 0 && (
+        {/* A panel whose client registers no delivery profiles cannot write
+            one, so it does not offer the field rather than showing an edit
+            that goes nowhere. Gated on the registration, not on the rows
+            having arrived: keyed on the list, the field would vanish and
+            reappear as the fetch settles. */}
+        {client.deliveryProfiles && (
           <Field>
             <FieldLabel>{t('admin.fields.product.delivery_profile_id.label')}</FieldLabel>
             <Controller
@@ -1034,44 +1052,48 @@ export function CategorizationCard({ form }: FormCardProps) {
           </Field>
         )}
 
-        <Field>
-          <FieldLabel>{t('admin.fields.product.category_ids.label')}</FieldLabel>
-          <Controller
-            name="category_ids"
-            control={form.control}
-            render={({ field }) => (
-              <ResourceMultiAutocomplete
-                {...categoryAutocompleteProps('product-edit-category-picker')}
-                initialItems={categoriesData?.data}
-                value={field.value ?? []}
-                onChange={field.onChange}
-              />
-            )}
-          />
-        </Field>
+        {client.categories && (
+          <Field>
+            <FieldLabel>{t('admin.fields.product.category_ids.label')}</FieldLabel>
+            <Controller
+              name="category_ids"
+              control={form.control}
+              render={({ field }) => (
+                <ResourceMultiAutocomplete
+                  {...categoryAutocompleteProps('product-edit-category-picker')}
+                  initialItems={categoriesData?.data}
+                  value={field.value ?? []}
+                  onChange={field.onChange}
+                />
+              )}
+            />
+          </Field>
+        )}
 
-        <Field>
-          <FieldLabel>{t('admin.fields.product.collection_ids.label')}</FieldLabel>
-          <Controller
-            name="collection_ids"
-            control={form.control}
-            render={({ field }) => (
-              <ResourceMultiAutocomplete
-                {...collectionAutocompleteProps('product-edit-collection-picker')}
-                initialItems={manualCollections}
-                value={field.value ?? []}
-                onChange={field.onChange}
-              />
-            )}
-          />
-          <span className="text-muted-foreground text-xs">
-            {t('admin.fields.product.collection_ids.help')}
-          </span>
-        </Field>
+        {client.collections && (
+          <Field>
+            <FieldLabel>{t('admin.fields.product.collection_ids.label')}</FieldLabel>
+            <Controller
+              name="collection_ids"
+              control={form.control}
+              render={({ field }) => (
+                <ResourceMultiAutocomplete
+                  {...collectionAutocompleteProps('product-edit-collection-picker')}
+                  initialItems={manualCollections}
+                  value={field.value ?? []}
+                  onChange={field.onChange}
+                />
+              )}
+            />
+            <span className="text-muted-foreground text-xs">
+              {t('admin.fields.product.collection_ids.help')}
+            </span>
+          </Field>
+        )}
 
         {/* Tags are the store's own vocabulary, so only a panel that manages
             it offers the field (docs/plans/6.0-multi-vendor-marketplace.md). */}
-        {getApiClient().tags && (
+        {client.tags && (
           <Field>
             <FieldLabel>{t('admin.fields.product.tags.label')}</FieldLabel>
             <Controller

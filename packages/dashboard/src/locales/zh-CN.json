@@ -88,6 +88,14 @@
       "tiered_percent": "阶梯百分比"
     },
     "catalogs": {
+      "actions": {
+        "activate": "启用",
+        "deactivate": "停用"
+      },
+      "activate_confirm": {
+        "title": "启用此目录？",
+        "message": "{{name}} 将开始生效：其受众将看到其商品并享受其价格。"
+      },
       "add_cta": "添加目录",
       "add_sheet_title": "新建目录",
       "assignable_types": {
@@ -97,22 +105,27 @@
       "assignments": {
         "add_cta": "分配",
         "add_title": "分配该目录",
+        "already_assigned": "该受众已添加到此目录。",
         "audience_empty": "未找到结果",
         "audience_label": "受众",
         "audience_placeholder": "搜索…",
         "company_subtree_help": "分配给公司将覆盖其整个子树。",
         "dialog_description": "谁能看到该目录。分配给公司将覆盖该节点及其下所有单位。",
         "empty": "尚未分配给任何受众——没有人能看到该目录。",
+        "empty_description": "指定公司或客户组，以决定本目录面向谁。",
         "remove_confirm": {
           "message": "{{name}} 将不再看到该目录。",
           "title": "移除该分配？"
         },
         "title": "受众",
-        "type_label": "受众类型",
-        "already_assigned": "该受众已添加到此目录。"
+        "type_label": "受众类型"
       },
       "create_description": "目录限定某类受众能看到什么，并通过价格表决定其价格。创建后可添加产品和受众。",
       "create_label": "创建目录",
+      "deactivate_confirm": {
+        "title": "停用此目录？",
+        "message": "{{name}} 将停止生效。其受众将回到店铺价格，目录中的所有内容都会保留。"
+      },
       "delete_confirm": {
         "message": "这将删除 {{name}} 及其分配。产品和价格表不受影响。",
         "title": "删除目录？"
@@ -130,13 +143,35 @@
       "edit_prices_help": "设置每件商品对此受众的价格。",
       "edit_prices_pending_save": "设置每件商品对此受众的价格。请先保存，才能为刚刚更改的商品定价。",
       "empty": "暂无目录",
+      "errors": {
+        "failed_to_activate": "无法启用该目录",
+        "failed_to_deactivate": "无法停用该目录"
+      },
       "messages": {
+        "activated": "目录已启用",
         "assigned": "目录已分配",
         "created": "目录已创建",
+        "deactivated": "目录已停用",
         "deleted": "目录已删除",
         "products_imported": "产品已导入",
         "unassigned": "分配已移除",
         "updated": "目录已更新"
+      },
+      "prices": {
+        "column_price": "价格",
+        "column_source": "来源",
+        "unpriced": "无价格",
+        "after_save": "保存后",
+        "source": {
+          "explicit": "已录入",
+          "automatic": "已调整",
+          "base": "店铺价"
+        },
+        "source_help": {
+          "explicit": "在本目录自有价格表中录入的金额。",
+          "automatic": "店铺价应用本目录百分比后的结果。",
+          "base": "普通店铺价 — 本目录未为该商品定价。"
+        }
       },
       "products": {
         "add_cta": "添加产品",
@@ -182,6 +217,42 @@
           "multiple": "递增步长。倍数为 24 时，买家可订购 24、48 或 72——但不能是 30。步长从最小起订量开始计算：最小 50、步长 24 时，允许 50、74 和 98。",
           "order_minimum": "整笔订单必须达到的最低金额，仅计算商品——运费和税费不计入。买家在选购时即可看到还差多少，未达到前无法结账。"
         }
+      },
+      "wizard": {
+        "audience_none_warning": "尚未设置受众，因此无人能看到本目录。可以现在或稍后指定。",
+        "description": "设置一份协议：它是什么、面向谁、收费多少。",
+        "fix_this_step": "请先修正标记的字段，然后继续。",
+        "help": {
+          "details": "为该协议命名，以便日后识别。",
+          "audience": "谁能看到本目录并享受其价格。",
+          "products": "本协议涵盖的范围。",
+          "pricing": "适用本协议的买家支付的金额。",
+          "review": "完成前不会创建任何内容。"
+        },
+        "products": {
+          "add": "添加 {{name}}",
+          "all_title": "全部商品",
+          "chosen_title": "本目录",
+          "count_other": "{{count}} 件商品",
+          "empty": "尚无商品",
+          "empty_description": "选择本协议涵盖的商品。留空则只定价，不限制买家可见范围。",
+          "remove": "移除 {{name}}"
+        },
+        "products_failed": "目录已创建，但未能添加其商品。请在目录页面添加。",
+        "products_none_warning": "尚未添加商品。空目录只定价、不隐藏任何内容 — 买家仍能看到整个商店。",
+        "review": {
+          "everyone": "所有人",
+          "everything": "整个商店",
+          "inactive": "目录创建后为停用状态。协议准备好后，请在其页面启用。"
+        },
+        "steps": {
+          "details": "详情",
+          "audience": "受众",
+          "products": "商品",
+          "pricing": "定价",
+          "review": "确认"
+        },
+        "title": "新建目录"
       }
     },
     "categories": {
@@ -259,7 +330,7 @@
     "collections": {
       "add_cta": "新建系列",
       "columns": {
-        "membership": "商品来源",
+        "kind": "类型",
         "products_count": "商品",
         "sort_order": "排序"
       },
@@ -500,6 +571,12 @@
         "select_calculator": "选择一个计算器",
         "settings_label": "计算器设置"
       },
+      "create_line_items_action_editor": {
+        "description": "当促销符合条件时，这些商品会加入购物车。",
+        "empty": "尚无变体。请在下方搜索以添加。",
+        "search_placeholder": "按名称或 SKU 搜索变体…",
+        "variant_label": "添加变体"
+      },
       "custom_fields": {
         "default_resource": "记录",
         "empty_description": "记录结构化的详细信息，例如材质、版型或保养说明。",
@@ -722,7 +799,8 @@
         "weight_between": "{{min}}–{{max}} {{unit}}",
         "weight_max": "低于 {{max}} {{unit}}",
         "weight_min": "{{min}} {{unit}} 及以上"
-      }
+      },
+      "shared_with_sellers_badge": "已共享给卖家"
     },
     "delivery_origin_groups": {
       "delete_confirm": {
@@ -1188,6 +1266,10 @@
       "delivery_method": {
         "admin_name": {
           "label": "内部名称"
+        },
+        "available_to_sellers": {
+          "help": "允许卖家的订单使用此配送方式。如果每位卖家自行安排配送，请保持关闭。",
+          "label": "卖家可用"
         },
         "calculator": {
           "label": "运费计算器"
@@ -1988,6 +2070,32 @@
           "help": "保留历史价格，以便店铺按欧盟规定显示最近 30 天的最低价。",
           "label": "记录价格历史"
         },
+        "payouts": {
+          "title": "卖家付款",
+          "description": "本平台如何向在此交易的卖家付款。",
+          "provider": {
+            "label": "付款方式",
+            "help": "由谁转移资金。自行记账时，由你自己转账并逐笔标记为已付。",
+            "requires_account": "卖家需先在该服务商开设账户，才能收到款项。"
+          },
+          "provider_none": "自行记账",
+          "provider_unavailable": "请先连接该服务商，然后才能通过它付款",
+          "schedule": {
+            "label": "结算卖家",
+            "help": "收益多久汇总为一笔付款。卖家也可以使用自己的周期。"
+          },
+          "schedule_intervals": {
+            "daily": "每天",
+            "weekly": "每周",
+            "biweekly": "每两周",
+            "monthly": "每月",
+            "manual": "仅在你指定时"
+          },
+          "minimum": {
+            "label": "最低付款额",
+            "help": "低于此金额时，卖家余额结转至下一周期而不发放。设为零则支付所有应付款项。"
+          }
+        },
         "limit_digital_download_count": {
           "help": "关闭后，买家可以不限次数下载。",
           "label": "限制下载次数"
@@ -2394,7 +2502,8 @@
       "returns": "退货",
       "sellers": "卖家",
       "settings": "设置",
-      "transfers": "调拨"
+      "transfers": "调拨",
+      "translations": "翻译"
     },
     "option_types": {
       "columns": {
@@ -2948,7 +3057,7 @@
             "create_title": "新建换货",
             "empty": "此订单暂无换货。",
             "price_difference": "差价",
-            "replacement_variant": "替换变体 ID"
+            "replacement_variant": "替换变体"
           },
           "no_delivery_method": "未选择配送方式。",
           "returns": {
@@ -3562,6 +3671,10 @@
             "url": "URL"
           },
           "title": "Webhooks"
+        },
+        "payouts": {
+          "title": "付款",
+          "subtitle": "本平台如何以及何时向卖家付款。"
         }
       },
       "staff": {
@@ -3593,6 +3706,25 @@
           "roles": "角色"
         },
         "title": "员工"
+      },
+      "translations": {
+        "complete": "已完全翻译",
+        "coverage": "翻译覆盖率",
+        "description": "查看目录的翻译进度，并补齐缺失的内容。",
+        "load_error": "无法加载翻译覆盖率。",
+        "no_locales_description": "为某个市场添加语言即可开始翻译。",
+        "no_locales_title": "尚无其他语言",
+        "progress": "进度",
+        "record": "记录",
+        "records": "记录",
+        "resource_types": {
+          "category": "分类",
+          "collection": "系列",
+          "option_type": "选项类型",
+          "product": "商品"
+        },
+        "total": "总计",
+        "translated": "已翻译"
       }
     },
     "payment_methods": {
@@ -4155,6 +4287,11 @@
         "market": {
           "label": "市场"
         },
+        "option_value": {
+          "empty": "没有匹配的选项值",
+          "label": "选项值",
+          "search_placeholder": "搜索选项值…"
+        },
         "product": {
           "empty": "没有匹配的商品",
           "label": "商品",
@@ -4576,17 +4713,18 @@
         "store": "店铺名称、时区、单位与区域默认值",
         "tax_categories": "分配给商品的税务类别",
         "tax_rates": "按市场和地区适用的税率",
-        "webhooks": "事件发生时接收通知的端点"
+        "webhooks": "事件发生时接收通知的端点",
+        "payouts": "由谁向卖家付款、多久一次，以及值得发放的最低金额"
       },
       "groups": {
         "audit": "审计",
         "developer": "开发者",
         "payments": "支付与税务",
-        "post_sale": "退货与卖家",
         "selling": "销售",
         "shipping": "配送与物流",
         "store": "店铺",
-        "team": "用户与权限"
+        "team": "用户与权限",
+        "marketplace": "平台"
       },
       "items": {
         "allowed_origins": "允许的来源",
@@ -4611,7 +4749,8 @@
         "store": "店铺",
         "tax_categories": "税收类别",
         "tax_rates": "税率",
-        "webhooks": "Webhooks"
+        "webhooks": "Webhooks",
+        "payouts": "付款"
       }
     },
     "setup": {
@@ -4758,6 +4897,18 @@
         "lb": "磅 (lb)",
         "oz": "盎司 (oz)"
       }
+    },
+    "table_descriptions": {
+      "catalogs": "某一类买家能看到的商品，以及他们支付的价格。",
+      "categories": "顾客浏览店铺所依循的分类树。",
+      "collections": "一起陈列的商品组合，可手动挑选或按规则生成。",
+      "companies": "企业买家、他们的团队，以及采购条款。",
+      "customer_groups": "用于定价和促销的客户分组。",
+      "delivery_profiles": "按商品应用的配送规则。",
+      "options": "尺码、颜色等选项，用于生成商品的多个款式。",
+      "price_lists": "规则匹配时生效的备选价格。",
+      "product_types": "为新商品预设字段和选项的模板。",
+      "stock_transfers": "在各地点之间调拨的库存，以及已到货的部分。"
     },
     "tax_categories": {
       "add_cta": "添加税务类别",

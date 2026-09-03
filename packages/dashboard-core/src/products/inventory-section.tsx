@@ -7,8 +7,8 @@ import {
   ReadOnlyCell,
   SwitchCell,
 } from '@spree/dashboard-ui'
+import { ExternalLinkIcon } from '@spree/dashboard-ui/icons'
 import type { ColumnDef } from '@tanstack/react-table'
-import { ExternalLinkIcon } from 'lucide-react'
 import { useCallback, useMemo } from 'react'
 import { type UseFormReturn, useWatch } from 'react-hook-form'
 import { useTranslation } from 'react-i18next'

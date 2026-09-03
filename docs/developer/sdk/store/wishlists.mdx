@@ -1,6 +1,6 @@
 ---
 title: Wishlists
-description: Manage wishlists and wished items with the Spree SDK
+description: Manage wishlists and wishlist items with the Spree SDK
 ---
 
 ## Wishlists
@@ -13,7 +13,7 @@ const { data: wishlists } = await client.wishlists.list({}, options);
 
 // Get wishlist by ID
 const wishlist = await client.wishlists.get('wl_xxx', {
-  expand: ['wished_items'],
+  expand: ['items'],
 }, options);
 
 // Create wishlist

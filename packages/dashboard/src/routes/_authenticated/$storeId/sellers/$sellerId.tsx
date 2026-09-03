@@ -9,8 +9,8 @@ import {
   StatusBadge,
   useConfirm,
 } from '@spree/dashboard-ui'
+import { BanIcon, MailIcon, PauseIcon, UndoIcon } from '@spree/dashboard-ui/icons'
 import { createFileRoute, useNavigate } from '@tanstack/react-router'
-import { BanIcon, MailIcon, PauseIcon, UndoIcon } from 'lucide-react'
 import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { ResourceDetailSkeleton } from '../../../../components/spree/route-pending'
@@ -196,16 +196,14 @@ function SellerBody({ seller }: { seller: Seller }) {
     </>
   ) : null
 
-  const dropdownItems = canEdit ? (
-    <>
-      {status === 'ready_for_review' && (
+  const dropdownItems = canEdit
+    ? status === 'ready_for_review' && (
         <DropdownMenuItem onClick={handleReopenOnboarding}>
           <UndoIcon className="size-4" />
           {t('admin.sellers.actions.reopen_onboarding')}
         </DropdownMenuItem>
-      )}
-    </>
-  ) : null
+      )
+    : null
 
   // Suspend and Reject both confirm destructively, so they read as destructive
   // in the menu too rather than as plain rows above the standard actions.

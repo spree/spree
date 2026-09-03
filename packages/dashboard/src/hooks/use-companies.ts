@@ -36,7 +36,7 @@ export function useCompany(id: string | undefined) {
 export function companyAutocompleteProps(queryKey: string) {
   return {
     queryKey,
-    search: (q: string) => adminClient.companies.list({ name_cont: q, limit: 20, sort: 'name' }),
+    search: (q: string) => adminClient.companies.list({ name_cont: q, limit: 100, sort: 'name' }),
     hydrate: (ids: string[]) => adminClient.companies.list({ id_in: ids, limit: ids.length }),
     getOptionLabel: (company: Company) => company.name ?? company.id,
     placeholder: i18n.t('admin.companies.autocomplete.placeholder'),

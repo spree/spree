@@ -60,13 +60,13 @@ RSpec.describe Spree::CSV::ProductVariantPresenter do
     context 'when index is not zero' do
       let(:presenter) { described_class.new(product, variant, 1, properties, taxons, store, custom_fields) }
 
-      let!(:color_option) { create(:option_type, name: 'Color', presentation: 'Color', products: [product]) }
-      let!(:size_option) { create(:option_type, name: 'Size', presentation: 'Size', products: [product]) }
+      let!(:color_option) { create(:option_type, name: 'Color', label: 'Color', products: [product]) }
+      let!(:size_option) { create(:option_type, name: 'Size', label: 'Size', products: [product]) }
 
       let(:variant) { create(:variant, product: product, track_inventory: false, option_values: [red_color, small_size]) }
 
-      let(:red_color) { create(:option_value, name: 'red', presentation: 'Red', option_type: color_option) }
-      let(:small_size) { create(:option_value, name: 'small', presentation: 'Small', option_type: size_option) }
+      let(:red_color) { create(:option_value, name: 'red', label: 'Red', option_type: color_option) }
+      let(:small_size) { create(:option_value, name: 'small', label: 'Small', option_type: size_option) }
 
       it 'returns nil for product-level fields' do
         expect(subject[2]).to be_nil # name
@@ -139,7 +139,7 @@ RSpec.describe Spree::CSV::ProductVariantPresenter do
     end
 
     it 'returns option value presentation for given option type' do
-      expect(presenter.option_value(option_type)).to eq option_value.presentation
+      expect(presenter.option_value(option_type)).to eq option_value.label
     end
 
     it 'returns nil for option type without value' do

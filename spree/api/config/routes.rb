@@ -203,6 +203,10 @@ Spree::Core::Engine.add_routes do
         # option values in one save). Flat list of independent registry writes.
         post 'translations/batch', to: 'translations/batches#create'
 
+        # Translation coverage across a whole resource type (?resource_type=),
+        # driving the centralized Translations page's grid.
+        get 'translations', to: 'translations_coverage#index'
+
         # Authentication
         post 'auth/login', to: 'auth#create'
         post 'auth/refresh', to: 'auth#refresh'
@@ -393,6 +397,9 @@ Spree::Core::Engine.add_routes do
 
         # Selectable tax engines and their declared limits (discovery only)
         resources :tax_providers, only: [:index]
+        # How sellers get paid. Discovery only — the choice itself is a store
+        # preference, so there is nothing here to create.
+        resources :payout_providers, only: [:index]
 
         # Return / claim / refund reasons (dropdowns + settings management)
         resources :return_reasons
@@ -556,6 +563,18 @@ Spree::Core::Engine.add_routes do
         end
         resources :commission_lines, only: [:index, :show]
 
+        # The fund ledger — what sellers earned, and what has been sent them.
+        # Both are written by fulfilment and by the sweep rather than by a
+        # caller, so both are read-only. The one thing an operator does is say
+        # a settlement landed, which the built-in provider depends on: it
+        # records what to send and waits to be told it went.
+        resources :seller_transfers, only: [:index, :show]
+        resources :seller_payouts, only: [:index, :show] do
+          member do
+            patch :complete
+          end
+        end
+
         # What one checkout produced when it reached several sellers. Read-only:
         # everything an operator acts on lives on the orders inside it.
         resources :order_groups, only: [:index, :show]
@@ -606,6 +625,11 @@ Spree::Core::Engine.add_routes do
           member do
             post :assign
             post :import_products
+            # Going live is its own act, not a column write: an agreement is
+            # checked before it starts reaching buyers, and what has to happen
+            # alongside hangs off the workflow's hooks.
+            patch :activate
+            patch :deactivate
           end
           # Assortment membership. Unordered: a catalog decides what a buyer
           # sees, never the order they see it in.
@@ -857,6 +881,31 @@ Spree::Core::Engine.add_routes do
           resources :rows, only: [:index], controller: 'import_rows'
         end
 
+        # The types a seller may list against. Read only — defining a type is
+        # the operator's (docs/plans/6.0-seller-product-submission.md).
+        resources :product_types, only: [:index, :show]
+
+        # The marketplace's delivery vocabulary, for the product form's picker.
+        # Read only: a seller assigns a profile, never creates one
+        # (docs/plans/6.0-multi-vendor-marketplace.md, Decision 13).
+        resources :delivery_profiles, only: [:index]
+
+        # The marketplace's zones, for the destination picker on a seller's
+        # own method. Read only for the same reason profiles are: where the
+        # marketplace ships is its own decision
+        # (docs/plans/6.0-multi-vendor-marketplace.md, Decision 13).
+        resources :delivery_zones, only: [:index]
+
+        # How this seller ships. The listing carries the marketplace methods
+        # shared with sellers alongside the seller's own; only the seller's
+        # own can be written.
+        resources :delivery_methods do
+          collection do
+            get :calculators
+            get :rule_types
+          end
+        end
+
         # No destroy: a location holds stock levels and is named on historical
         # fulfillments, so a seller retires one by deactivating it.
         resources :stock_locations, only: [:index, :show, :create, :update]
@@ -869,6 +918,10 @@ Spree::Core::Engine.add_routes do
         # Singular: the checklist is always `current_seller`'s.
         resource :onboarding, only: [:show], controller: 'onboarding' do
           post :submit_for_review
+          # A fresh link to the payout provider's own onboarding. A POST
+          # because asking for one creates the account at the provider if the
+          # seller has none.
+          post :payout_account
         end
 
         resources :requirements, only: [] do
@@ -885,6 +938,13 @@ Spree::Core::Engine.add_routes do
       namespace :webhooks do
         post 'payments/:payment_method_id', to: 'payments#create', as: :payment_webhook
         post 'fulfillments/:integration_id', to: 'fulfillments#create', as: :fulfillment_webhook
+        # Marketplace events about sellers rather than about a payment —
+        # whether a seller may be paid, and whether a payout reached their
+        # bank. A separate endpoint because providers scope these separately:
+        # events originating in a seller's own account arrive on a different
+        # subscription, with a different signing secret, than the
+        # marketplace's own payment events.
+        post 'payouts/:payment_method_id', to: 'payouts#create', as: :payout_webhook
       end
     end
   end

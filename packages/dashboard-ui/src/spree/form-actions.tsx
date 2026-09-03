@@ -1,9 +1,9 @@
 import { useHotkey } from '@tanstack/react-hotkeys'
-import { Loader2Icon } from 'lucide-react'
 import { useEffect } from 'react'
 import { type FieldValues, type UseFormReturn, useFormState } from 'react-hook-form'
 import { useTranslation } from 'react-i18next'
 import { Button } from '../ui/button'
+import { Loader2Icon } from './icons'
 
 /**
  * Submit button wired to a `react-hook-form` instance. Always rendered,

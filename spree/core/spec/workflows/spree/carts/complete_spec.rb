@@ -59,6 +59,23 @@ module Spree
         expect(order.token).to eq(ready_cart.token)
       end
 
+      # The order's addresses record where the parcel went. Filing them in the
+      # buyer's address book gave them two fresh copies of an address they had
+      # already saved, on every single order.
+      it 'leaves the addresses it copies out of the buyer\'s address book' do
+        customer = create(:customer)
+        ready_cart.update!(customer: customer)
+        ready_cart.ship_address.update!(owner: customer)
+        ready_cart.bill_address.update!(owner: customer)
+
+        expect { subject }.not_to change { customer.reload.addresses.count }
+
+        order = Spree::Order.find_by(cart_id: ready_cart.id)
+        expect(order.ship_address.owner).to be_nil
+        expect(order.bill_address.owner).to be_nil
+        expect(order.ship_address.address1).to eq(ready_cart.ship_address.address1)
+      end
+
       it 'is idempotent — replay returns the same order' do
         first = subject.value
         replay = described_class.call(cart: ready_cart.reload)

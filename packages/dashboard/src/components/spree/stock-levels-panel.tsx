@@ -13,8 +13,8 @@ import {
   TableHeader,
   TableRow,
 } from '@spree/dashboard-ui'
+import { ChevronDownIcon, ChevronRightIcon } from '@spree/dashboard-ui/icons'
 import { Link, useParams } from '@tanstack/react-router'
-import { ChevronDownIcon, ChevronRightIcon } from 'lucide-react'
 import { useEffect, useMemo, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useStockLevels, useUpdateStockLevel } from '../../hooks/use-stock-levels'

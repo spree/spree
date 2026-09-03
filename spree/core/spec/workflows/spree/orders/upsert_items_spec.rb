@@ -361,6 +361,16 @@ module Spree
           it 'refuses the price override — placed-order money edits are fees and discounts' do
             expect(subject).to be_failure
             expect(line_item.reload.price_source).to be_nil
+            expect(subject.error.value.details[:base].first[:error]).to eq(:price_override_not_allowed)
+          end
+
+          context 'with a non-numeric price' do
+            let(:items) { [{ variant_id: variant.prefixed_id, quantity: 2, price: 'NaN' }] }
+
+            it 'refuses with price_override_not_allowed rather than invalid_price' do
+              expect(subject).to be_failure
+              expect(subject.error.value.details[:base].first[:error]).to eq(:price_override_not_allowed)
+            end
           end
         end
       end

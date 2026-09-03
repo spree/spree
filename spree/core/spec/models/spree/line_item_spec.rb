@@ -860,7 +860,7 @@ describe Spree::LineItem, type: :model do
     let(:promo_total) { -5 }
 
     before do
-      line_item.update_column(:promo_total, promo_total)
+      line_item.update_column(:discount_total, promo_total)
     end
 
     it 'returns the discounted price for the line item' do

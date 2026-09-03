@@ -25,8 +25,20 @@ module Spree
 
     # we're not freezing this on purpose so developers can extend and manage
     # those attributes depending of the logic of their applications
-    ADDRESS_FIELDS = %w(firstname lastname company address1 address2 city state zipcode country phone)
-    EXCLUDED_KEYS_FOR_COMPARISON = %w(id updated_at created_at deleted_at label owner_type owner_id metadata)
+    ADDRESS_FIELDS = %w(first_name last_name company address1 address2 city state postal_code country phone)
+
+    # Beyond identity and ownership, three groups are excluded because they
+    # cannot tell two addresses apart. Latitude and longitude are derived from
+    # the address, so an entry whose geocoding has already run would otherwise
+    # never match the same address freshly typed in. country_id and state_id
+    # are the pre-6.0 foreign keys, which the upgrade task copies into codes
+    # and leaves populated: comparing them makes every migrated row differ
+    # from every new one. Both are handled the same way by .find_duplicate,
+    # which drops the legacy keys through .resolve_geo_params.
+    EXCLUDED_KEYS_FOR_COMPARISON = %w(
+      id updated_at created_at deleted_at label owner_type owner_id metadata
+      latitude longitude country_id state_id
+    )
     if defined?(Spree::Security::Addresses)
       include Spree::Security::Addresses
     end
@@ -78,10 +90,10 @@ module Spree
     after_commit :async_geocode
 
     with_options presence: true do
-      validates :firstname, :lastname, if: :require_name?
+      validates :first_name, :last_name, if: :require_name?
       validates :address1, if: :require_street?
       validates :city, :country
-      validates :zipcode, if: :require_zipcode?
+      validates :postal_code, if: :require_postal_code?
       validates :phone, if: :require_phone?
       validates :company, if: :require_company?
     end
@@ -103,21 +115,35 @@ module Spree
 
     delegate :name, :iso3, :iso_name, to: :country, prefix: true, allow_nil: true
 
-    alias_attribute :postal_code, :zipcode
-    alias_attribute :first_name, :firstname
-    alias_attribute :last_name, :lastname
+    # Standardized column names (renamed in 6.0); the legacy readers stay one
+    # release.
+    alias_attribute :zipcode, :postal_code
+    alias_attribute :firstname, :first_name
+    alias_attribute :lastname, :last_name
 
     # The single home for postal-code normalization (delivery-zone matching) —
-    # don't scatter zipcode munging elsewhere.
+    # don't scatter postal-code munging elsewhere.
     # @param value [String, nil]
     # @return [String] value with spaces/dashes stripped, upcased
-    def self.normalize_zipcode(value)
+    def self.normalize_postal_code(value)
       value.to_s.gsub(/[\s-]/, '').upcase
     end
 
-    # @return [String] this address's zipcode, normalized via {.normalize_zipcode}
+    # @deprecated Use {.normalize_postal_code}; removed in 6.1.
+    def self.normalize_zipcode(value)
+      Spree::Deprecation.warn('Spree::Address.normalize_zipcode is deprecated and will be removed in Spree 6.1. Use .normalize_postal_code instead.')
+      normalize_postal_code(value)
+    end
+
+    # @return [String] this address's postal code, normalized via {.normalize_postal_code}
+    def normalized_postal_code
+      self.class.normalize_postal_code(postal_code)
+    end
+
+    # @deprecated Use {#normalized_postal_code}; removed in 6.1.
     def normalized_zipcode
-      self.class.normalize_zipcode(zipcode)
+      Spree::Deprecation.warn('Spree::Address#normalized_zipcode is deprecated and will be removed in Spree 6.1. Use #normalized_postal_code instead.')
+      normalized_postal_code
     end
 
     # Normalizes a params hash for query builders like +find_or_create_by+,
@@ -137,7 +163,9 @@ module Spree
       params.delete(:state_id)
 
       # Legacy write names accepted until 6.1; the columns are country_code
-      # and state_code.
+      # and state_code. The renamed name and postal-code columns need no entry
+      # here — alias_attribute resolves those inside `where` too, while these
+      # two are not attribute aliases.
       params[:state_code] = params.delete(:state_abbr) if params.key?(:state_abbr)
       params[:country_code] = params.delete(:country_iso) if params.key?(:country_iso)
 
@@ -261,7 +289,7 @@ module Spree
     # first_name / last_name aliases are defined via alias_attribute above
 
     def full_name
-      "#{firstname} #{lastname}".strip
+      "#{first_name} #{last_name}".strip
     end
 
     def state_text
@@ -282,13 +310,63 @@ module Spree
         company,
         address1,
         address2,
-        "#{city}, #{state_text} #{zipcode}",
+        "#{city}, #{state_text} #{postal_code}",
         country.to_s
       ].reject(&:blank?).map { |attribute| ERB::Util.html_escape(attribute) }.join('<br/>')
     end
 
+    # @deprecated Overriding Ruby's +Object#clone+ was a mistake: this returns
+    #   a value copy with the owner, label and metadata stripped, which is not
+    #   what +clone+ means anywhere else in Ruby. The override is removed in
+    #   Spree 6.1 and +clone+ becomes the standard shallow copy. Use
+    #   {#snapshot} for the ownerless copy a purchase keeps.
     def clone
+      Spree::Deprecation.warn(
+        'Spree::Address#clone is deprecated. From Spree 6.1 it behaves as the standard Ruby Object#clone — a shallow copy keeping the owner and every other attribute. Use #snapshot for the ownerless copy a purchase keeps.'
+      )
+
       self.class.new(value_attributes)
+    end
+
+    # A copy of this address for a purchase to keep. An order's address records
+    # where the parcel actually went, so it belongs to the order and not to
+    # anyone's address book — a copy that kept the owner would file a second
+    # entry in the buyer's book on every order they place. Having no owner it
+    # carries no label either: a label is unique within one book, so every
+    # ownerless snapshot would compete for the same one.
+    #
+    # @return [Spree::Address]
+    def snapshot
+      dup.tap do |copy|
+        copy.owner = nil
+        copy.label = nil
+        copy.deleted_at = nil
+      end
+    end
+
+    # The entry the owner's book already holds for this, if there is one, so
+    # someone re-entering an address they already saved gets the entry they
+    # have back instead of a near-copy filed beside it.
+    #
+    # An entry is more than a place. Two rows match only when they mean the
+    # same place ({#==}) *and* agree on the things the owner attached to the
+    # entry itself — its label and its metadata. A company filing "Dock A" and
+    # "Dock B" at one site keeps two entries, and neither request silently
+    # loses the name it was filed under.
+    #
+    # Owners that keep no book, including no owner at all, have nothing to
+    # match against.
+    #
+    # @return [Spree::Address, nil]
+    def duplicate_in_address_book
+      return nil unless owner.respond_to?(:addresses)
+
+      owner.addresses.not_deleted.detect do |existing|
+        existing.id != id &&
+          existing == self &&
+          existing.label == label &&
+          existing.metadata.to_h == metadata.to_h
+      end
     end
 
     def ==(other)
@@ -315,7 +393,7 @@ module Spree
         address2: address2,
         city: city,
         state: state_text,
-        zip: zipcode,
+        zip: postal_code,
         country: country.try(:iso),
         phone: phone
       }
@@ -328,6 +406,16 @@ module Spree
       !quick_checkout && store_preference(:address_requires_phone, false)
     end
 
+    # A host app that overrode the pre-6.0 +require_zipcode?+ still decides:
+    # its override sits ahead of this class in the ancestry, so the shell below
+    # never runs and the answer comes from the decorator. Without the
+    # indirection that override would stop being called silently, and addresses
+    # that used to save would start failing validation with nothing in the log.
+    def require_postal_code?
+      require_zipcode?
+    end
+
+    # @deprecated Override {#require_postal_code?}; removed in 6.1.
     def require_zipcode?
       !quick_checkout && (country ? country.zipcode_required? : true)
     end
@@ -409,8 +497,8 @@ module Spree
     end
 
     def set_default_values
-      self.firstname ||= customer_owner.first_name
-      self.lastname ||= customer_owner.last_name
+      self.first_name ||= customer_owner.first_name
+      self.last_name ||= customer_owner.last_name
       self.phone ||= customer_owner.phone
     end
 
@@ -477,8 +565,8 @@ module Spree
     def set_user_attributes
       customer = customer_owner
       if customer.name.blank?
-        customer.first_name = firstname
-        customer.last_name = lastname
+        customer.first_name = first_name
+        customer.last_name = last_name
       end
       customer.phone = customer.phone.presence || phone.presence
 
@@ -509,15 +597,15 @@ module Spree
     end
 
     def postal_code_validate
-      return if country.blank? || country_code.blank? || !require_zipcode? || zipcode.blank?
+      return if country.blank? || country_code.blank? || !require_postal_code? || postal_code.blank?
       return unless ::ValidatesZipcode::CldrRegexpCollection::ZIPCODES_REGEX.keys.include?(country_code.upcase.to_sym)
 
       formatted_zip = ::ValidatesZipcode::Formatter.new(
-        zipcode: zipcode.to_s.strip,
+        zipcode: postal_code.to_s.strip,
         country_alpha2: country_code.upcase
       ).format
 
-      errors.add(:zipcode, :invalid) unless ::ValidatesZipcode.valid?(formatted_zip, country_code.upcase)
+      errors.add(:postal_code, :invalid) unless ::ValidatesZipcode.valid?(formatted_zip, country_code.upcase)
     end
 
     def assign_new_default_address_to_user

@@ -6,8 +6,8 @@ import {
   BreadcrumbPage,
   BreadcrumbSeparator,
 } from '@spree/dashboard-ui'
+import { MenuIcon } from '@spree/dashboard-ui/icons'
 import { Link, useParams, useRouterState } from '@tanstack/react-router'
-import { MenuIcon } from 'lucide-react'
 import { Fragment, type ReactNode, useMemo } from 'react'
 import { useTranslation } from 'react-i18next'
 import { isPathWithin, type NavEntry, resolveNavLabel, useNavEntries } from '../lib/nav-registry'
@@ -63,7 +63,7 @@ export function MobileBreadcrumbBar({
   const { crumbs, pathname, inSettings } = trail
 
   return (
-    <div className="flex h-11 shrink-0 items-center border-b border-border/75 bg-background px-4 md:hidden">
+    <div className="flex h-11 shrink-0 items-center border-b border-border bg-background px-4 md:hidden">
       <CrumbTrail
         crumbs={crumbs}
         pathname={pathname}

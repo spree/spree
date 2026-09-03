@@ -37,8 +37,8 @@ import {
   useFormSubmitShortcut,
   useRowClickBridge,
 } from '@spree/dashboard-ui'
+import { AlertTriangleIcon, PencilIcon, PlayIcon, RotateCcwIcon } from '@spree/dashboard-ui/icons'
 import { createFileRoute, useNavigate } from '@tanstack/react-router'
-import { AlertTriangleIcon, PencilIcon, PlayIcon, RotateCcwIcon } from 'lucide-react'
 import { lazy, Suspense } from 'react'
 import { type UseFormReturn, useForm } from 'react-hook-form'
 import { useTranslation } from 'react-i18next'

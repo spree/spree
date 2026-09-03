@@ -15,6 +15,8 @@ module Spree
                                :tax_providers,
                                :pricing_providers,
                                :inventory_providers,
+                               :default_payout_provider,
+                               :payout_providers,
                                :password_validator,
                                :fulfillment_providers,
                                :tracking_carriers,
@@ -170,6 +172,13 @@ module Spree
         app.config.spree.inventory_providers = []
       end
 
+      # How sellers get paid. A provider gem — the Stripe Connect one, or a
+      # marketplace's own — registers from an initializer file; core's
+      # record-only System concatenates below.
+      initializer 'spree.register.payout_providers', before: :load_config_initializers do |app|
+        app.config.spree.payout_providers = []
+      end
+
       initializer 'spree.register.digital_asset_providers', before: :load_config_initializers do |app|
         app.config.spree.digital_asset_providers = []
       end
@@ -273,6 +282,12 @@ module Spree
         # engine may answer under it — fail the boot rather than the checkout.
         Spree::PricingProvider.verify_registry!
 
+        # How sellers are paid when a store names nothing: the books are kept
+        # and the operator settles offline. Assigned only if an initializer has
+        # not already chosen one.
+        Rails.application.config.spree.default_payout_provider ||= Spree::PayoutProvider::System
+        Rails.application.config.spree.payout_providers.concat [Spree::PayoutProvider::System]
+
         # Password policy for the default auth models. Swap for corporate rules,
         # breach-list lookups or entropy scoring.
         Rails.application.config.spree.password_validator = Spree::PasswordLengthValidator
@@ -370,7 +385,9 @@ module Spree
           Spree::SellerRequirements::CompleteProfile,
           Spree::SellerRequirements::BillingAddress,
           Spree::SellerRequirements::ReturnsAddress,
+          Spree::SellerRequirements::DeliveryMethod,
           Spree::SellerRequirements::MinimumProducts,
+          Spree::SellerRequirements::PayoutAccount,
           Spree::SellerRequirements::RequiredCustomFields,
           Spree::SellerRequirements::Policy,
           Spree::SellerRequirements::Attestation,
@@ -590,6 +607,8 @@ module Spree
           Spree::OrderCommissionSubscriber,
           Spree::OrderStatusSubscriber,
           Spree::PaymentSplitSubscriber,
+          Spree::SellerTransferSubscriber,
+          Spree::SellerTransferReversalSubscriber,
           Spree::ExportSubscriber,
           Spree::ReportSubscriber,
           Spree::InvitationEmailSubscriber,

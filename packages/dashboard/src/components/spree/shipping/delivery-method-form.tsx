@@ -11,6 +11,7 @@ import type {
 import {
   type adminClient,
   Can,
+  currencyParts,
   PreferencesForm,
   ResourceMultiAutocomplete,
   Subject,
@@ -29,6 +30,10 @@ import {
   FieldError,
   FieldLabel,
   Input,
+  InputGroup,
+  InputGroupAddon,
+  InputGroupInput,
+  InputGroupText,
   RadioGroup,
   RadioGroupItem,
   Select,
@@ -43,8 +48,9 @@ import {
   SheetTitle,
   Switch,
 } from '@spree/dashboard-ui'
+import { PencilIcon, PlusIcon, Trash2Icon } from '@spree/dashboard-ui/icons'
 import { useQueryClient } from '@tanstack/react-query'
-import { PencilIcon, PlusIcon, Trash2Icon } from 'lucide-react'
+import i18n from 'i18next'
 import { useEffect, useMemo, useState } from 'react'
 import { Controller, type UseFormReturn, useFieldArray } from 'react-hook-form'
 import { useTranslation } from 'react-i18next'
@@ -57,6 +63,7 @@ import {
 } from '../../../hooks/use-delivery-methods'
 import { useIntegrations, useIntegrationTypes } from '../../../hooks/use-integrations'
 import { productAutocompleteProps } from '../../../hooks/use-products'
+import { useSellers } from '../../../hooks/use-sellers'
 import { useTaxCategories } from '../../../hooks/use-tax-categories'
 import { amountForCurrency, applyCurrencyAmount } from '../../../lib/delivery-method-summary'
 import type { DeliveryMethodFormValues } from '../../../schemas/delivery-method'
@@ -291,55 +298,84 @@ function CollectionLocationsCard({ form }: { form: UseFormReturn<DeliveryMethodF
 function GeneralCard({ form }: { form: UseFormReturn<DeliveryMethodFormValues> }) {
   const { t } = useTranslation()
   const { errors } = form.formState
+  // The sharing switch is a marketplace question, so it appears only on a
+  // store that has sellers — a single-merchant store has nobody to share with
+  // (docs/plans/6.0-multi-vendor-marketplace.md, Decision 13).
+  const { data: sellers } = useSellers({ limit: 1 })
+  const isMarketplace = (sellers?.meta?.count ?? 0) > 0
 
   return (
     <FormSection>
-      <>
-        {errors.root?.message && (
-          <p className="text-sm text-destructive" role="alert">
-            {errors.root.message}
-          </p>
-        )}
+      {errors.root?.message && (
+        <p className="text-sm text-destructive" role="alert">
+          {errors.root.message}
+        </p>
+      )}
+      <Field>
+        <FieldLabel htmlFor="name">{t('admin.fields.name.label')}</FieldLabel>
+        <Input
+          id="name"
+          autoFocus
+          aria-invalid={!!errors.name || undefined}
+          {...form.register('name')}
+        />
+        <FieldError errors={[errors.name]} />
+      </Field>
+
+      <div className="grid grid-cols-2 gap-3">
         <Field>
-          <FieldLabel htmlFor="name">{t('admin.fields.name.label')}</FieldLabel>
-          <Input
-            id="name"
-            autoFocus
-            aria-invalid={!!errors.name || undefined}
-            {...form.register('name')}
-          />
-          <FieldError errors={[errors.name]} />
+          <FieldLabel htmlFor="admin_name">
+            {t('admin.fields.delivery_method.admin_name.label')}
+          </FieldLabel>
+          <Input id="admin_name" {...form.register('admin_name')} />
         </Field>
+        <Field>
+          <FieldLabel htmlFor="code">{t('admin.fields.delivery_method.code.label')}</FieldLabel>
+          <Input id="code" {...form.register('code')} />
+        </Field>
+      </div>
 
-        <div className="grid grid-cols-2 gap-3">
-          <Field>
-            <FieldLabel htmlFor="admin_name">
-              {t('admin.fields.delivery_method.admin_name.label')}
+      <Field>
+        <div className="flex items-start justify-between gap-4">
+          <div className="flex flex-col">
+            <FieldLabel htmlFor="storefront_visible" className="cursor-pointer">
+              {t('admin.fields.storefront_visible.label')}
             </FieldLabel>
-            <Input id="admin_name" {...form.register('admin_name')} />
-          </Field>
-          <Field>
-            <FieldLabel htmlFor="code">{t('admin.fields.delivery_method.code.label')}</FieldLabel>
-            <Input id="code" {...form.register('code')} />
-          </Field>
+            <span className="text-xs text-muted-foreground">
+              {t('admin.fields.delivery_method.storefront_visible.help')}
+            </span>
+          </div>
+          <Controller
+            name="storefront_visible"
+            control={form.control}
+            render={({ field }) => (
+              <Switch
+                id="storefront_visible"
+                checked={!!field.value}
+                onCheckedChange={field.onChange}
+              />
+            )}
+          />
         </div>
+      </Field>
 
+      {isMarketplace && (
         <Field>
           <div className="flex items-start justify-between gap-4">
             <div className="flex flex-col">
-              <FieldLabel htmlFor="storefront_visible" className="cursor-pointer">
-                {t('admin.fields.storefront_visible.label')}
+              <FieldLabel htmlFor="available_to_sellers" className="cursor-pointer">
+                {t('admin.fields.delivery_method.available_to_sellers.label')}
               </FieldLabel>
               <span className="text-xs text-muted-foreground">
-                {t('admin.fields.delivery_method.storefront_visible.help')}
+                {t('admin.fields.delivery_method.available_to_sellers.help')}
               </span>
             </div>
             <Controller
-              name="storefront_visible"
+              name="available_to_sellers"
               control={form.control}
               render={({ field }) => (
                 <Switch
-                  id="storefront_visible"
+                  id="available_to_sellers"
                   checked={!!field.value}
                   onCheckedChange={field.onChange}
                 />
@@ -347,7 +383,7 @@ function GeneralCard({ form }: { form: UseFormReturn<DeliveryMethodFormValues> }
             />
           </div>
         </Field>
-      </>
+      )}
     </FormSection>
   )
 }
@@ -838,6 +874,8 @@ function ServiceOverridesSheet({
   onClose: () => void
 }) {
   const { t } = useTranslation()
+  const { defaultCurrency } = useStore()
+  const { symbol: currencySymbol } = currencyParts(defaultCurrency, i18n.language)
 
   return (
     <Sheet open onOpenChange={(open) => !open && onClose()}>
@@ -862,27 +900,37 @@ function ServiceOverridesSheet({
             <FieldLabel htmlFor={`service-markup-flat-${index}`}>
               {t('admin.fields.delivery_method.markup_flat.label')}
             </FieldLabel>
-            <Input
-              id={`service-markup-flat-${index}`}
-              type="number"
-              step="0.01"
-              min="0"
-              placeholder="0"
-              {...form.register(`services.${index}.markup_flat`)}
-            />
+            <InputGroup>
+              <InputGroupAddon>
+                <InputGroupText>{currencySymbol}</InputGroupText>
+              </InputGroupAddon>
+              <InputGroupInput
+                id={`service-markup-flat-${index}`}
+                type="number"
+                step="0.01"
+                min="0"
+                placeholder="0"
+                {...form.register(`services.${index}.markup_flat`)}
+              />
+            </InputGroup>
           </Field>
           <Field>
             <FieldLabel htmlFor={`service-markup-percent-${index}`}>
               {t('admin.fields.delivery_method.markup_percent.label')}
             </FieldLabel>
-            <Input
-              id={`service-markup-percent-${index}`}
-              type="number"
-              step="0.01"
-              min="0"
-              placeholder="0"
-              {...form.register(`services.${index}.markup_percent`)}
-            />
+            <InputGroup>
+              <InputGroupInput
+                id={`service-markup-percent-${index}`}
+                type="number"
+                step="0.01"
+                min="0"
+                placeholder="0"
+                {...form.register(`services.${index}.markup_percent`)}
+              />
+              <InputGroupAddon align="inline-end">
+                <InputGroupText>%</InputGroupText>
+              </InputGroupAddon>
+            </InputGroup>
           </Field>
         </div>
         <SheetFooter>
@@ -948,8 +996,11 @@ function CurrencyAmountsField({
       </FieldLabel>
       <div className="flex flex-col gap-2">
         {codes.map((code) => (
-          <div key={code} className="flex items-center gap-2">
-            <Input
+          <InputGroup key={code}>
+            <InputGroupAddon>
+              <InputGroupText>{currencyParts(code, i18n.language).symbol}</InputGroupText>
+            </InputGroupAddon>
+            <InputGroupInput
               id={`calculator-amount-${code}`}
               type="number"
               step="any"
@@ -960,8 +1011,10 @@ function CurrencyAmountsField({
               value={amountFor(code)}
               onChange={(event) => setAmount(code, event.target.value)}
             />
-            <span className="w-12 shrink-0 text-muted-foreground text-xs">{code}</span>
-          </div>
+            <InputGroupAddon align="inline-end">
+              <InputGroupText>{code}</InputGroupText>
+            </InputGroupAddon>
+          </InputGroup>
         ))}
       </div>
       {multiCurrency && (
@@ -975,6 +1028,8 @@ function CurrencyAmountsField({
 
 function PricingCard({ form }: { form: UseFormReturn<DeliveryMethodFormValues> }) {
   const { t } = useTranslation()
+  const { defaultCurrency } = useStore()
+  const { symbol: currencySymbol } = currencyParts(defaultCurrency, i18n.language)
   const { data: calculators } = useDeliveryCalculators()
   const { data: taxCategories } = useTaxCategories()
   const selectedRateProvider = useSelectedRateProvider(form)
@@ -1063,27 +1118,37 @@ function PricingCard({ form }: { form: UseFormReturn<DeliveryMethodFormValues> }
               <FieldLabel htmlFor="markup_percent">
                 {t('admin.fields.delivery_method.markup_percent.label')}
               </FieldLabel>
-              <Input
-                id="markup_percent"
-                type="number"
-                step="0.01"
-                min="0"
-                placeholder="0"
-                {...form.register('markup_percent')}
-              />
+              <InputGroup>
+                <InputGroupInput
+                  id="markup_percent"
+                  type="number"
+                  step="0.01"
+                  min="0"
+                  placeholder="0"
+                  {...form.register('markup_percent')}
+                />
+                <InputGroupAddon align="inline-end">
+                  <InputGroupText>%</InputGroupText>
+                </InputGroupAddon>
+              </InputGroup>
             </Field>
             <Field>
               <FieldLabel htmlFor="markup_flat">
                 {t('admin.fields.delivery_method.markup_flat.label')}
               </FieldLabel>
-              <Input
-                id="markup_flat"
-                type="number"
-                step="0.01"
-                min="0"
-                placeholder="0"
-                {...form.register('markup_flat')}
-              />
+              <InputGroup>
+                <InputGroupAddon>
+                  <InputGroupText>{currencySymbol}</InputGroupText>
+                </InputGroupAddon>
+                <InputGroupInput
+                  id="markup_flat"
+                  type="number"
+                  step="0.01"
+                  min="0"
+                  placeholder="0"
+                  {...form.register('markup_flat')}
+                />
+              </InputGroup>
             </Field>
           </div>
           <span className="text-xs text-muted-foreground">

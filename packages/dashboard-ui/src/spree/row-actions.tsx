@@ -1,4 +1,3 @@
-import { CopyIcon, EllipsisVerticalIcon, EyeIcon, PencilIcon, Trash2Icon } from 'lucide-react'
 import type { ReactNode } from 'react'
 import { useTranslation } from 'react-i18next'
 import { Button } from '../ui/button'
@@ -8,6 +7,7 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from '../ui/dropdown-menu'
+import { CopyIcon, EllipsisVerticalIcon, EyeIcon, PencilIcon, Trash2Icon } from './icons'
 
 export interface RowAction {
   /** Stable key for React reconciliation. Doubles as the i18n action slug

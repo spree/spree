@@ -3,7 +3,7 @@ import {
   adminClient,
   Can,
   ImageUploadField,
-  PageHeader,
+  SectionHeading,
   Subject,
   useDirectUpload,
   usePermissions,
@@ -11,6 +11,8 @@ import {
 import {
   Badge,
   Button,
+  Card,
+  CardContent,
   ContextMenu,
   ContextMenuContent,
   ContextMenuItem,
@@ -36,7 +38,6 @@ import {
   toastManager,
   useConfirm,
 } from '@spree/dashboard-ui'
-import { createFileRoute, Link, useNavigate } from '@tanstack/react-router'
 import {
   DownloadIcon,
   FilmIcon,
@@ -46,7 +47,8 @@ import {
   PlayIcon,
   TrashIcon,
   UploadIcon,
-} from 'lucide-react'
+} from '@spree/dashboard-ui/icons'
+import { createFileRoute, Link, useNavigate } from '@tanstack/react-router'
 import { useDeferredValue, useRef, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { z } from 'zod'
@@ -212,170 +214,174 @@ function MediaLibraryPage() {
 
   return (
     <>
-      <PageHeader
-        title={t('admin.media_library.title')}
-        subtitle={t('admin.media_library.description')}
-        actions={
-          <Can I="update" a={Subject.Media}>
-            <input
-              ref={fileInputRef}
-              type="file"
-              multiple
-              accept="image/png,image/jpeg,image/webp,image/gif,video/mp4,video/webm"
-              className="hidden"
-              onChange={(e) => handleUpload(e.target.files)}
-            />
-            <Button
-              type="button"
-              disabled={uploading}
-              onClick={() => fileInputRef.current?.click()}
-            >
-              {uploading ? (
-                <Loader2Icon className="size-4 animate-spin" />
-              ) : (
-                <UploadIcon className="size-4" />
-              )}
-              {t('admin.media_library.upload')}
-            </Button>
-          </Can>
-        }
-      />
-
-      <div className="flex flex-col gap-3 px-4 pb-4 sm:flex-row sm:items-center">
-        <SearchInput
-          value={searchInput}
-          onValueChange={(value) => {
-            setSearchInput(value)
-            patchSearch({ search: value || undefined }, true)
-          }}
-          placeholder={t('admin.media_library.search_placeholder')}
-          clearLabel={t('admin.common.clear')}
-          className="sm:max-w-xs"
-        />
-
-        <Select
-          items={PLACEMENT_FILTERS.map((value) => ({
-            value,
-            label: t(`admin.media_library.placement.${value}`),
-          }))}
-          value={placement}
-          onValueChange={(value) => patchSearch({ placement: value as PlacementFilter })}
-        >
-          <SelectTrigger className="sm:w-44">
-            <SelectValue />
-          </SelectTrigger>
-          <SelectContent>
-            {PLACEMENT_FILTERS.map((value) => (
-              <SelectItem key={value} value={value}>
-                {t(`admin.media_library.placement.${value}`)}
-              </SelectItem>
-            ))}
-          </SelectContent>
-        </Select>
-
-        <Select
-          items={TYPE_FILTERS.map((value) => ({
-            value,
-            label: t(`admin.media_library.type.${value}`),
-          }))}
-          value={mediaType}
-          onValueChange={(value) => patchSearch({ type: value as TypeFilter })}
-        >
-          <SelectTrigger className="sm:w-44">
-            <SelectValue />
-          </SelectTrigger>
-          <SelectContent>
-            {TYPE_FILTERS.map((value) => (
-              <SelectItem key={value} value={value}>
-                {t(`admin.media_library.type.${value}`)}
-              </SelectItem>
-            ))}
-          </SelectContent>
-        </Select>
-      </div>
-
-      <div className="px-4 pb-8">
-        {query.isLoading ? (
-          <div className="flex items-center justify-center py-16 text-muted-foreground">
-            <Loader2Icon className="size-5 animate-spin" />
+      {/* Same shell as every other list page: the title, its description and
+          the filters all live inside one card rather than floating above it. */}
+      <Card className="-mx-4 rounded-none border-0 bg-transparent sm:mx-0 sm:rounded-xl sm:border sm:bg-card">
+        <div className="flex flex-row items-start gap-2 border-b border-border-subtle p-3 pl-4 lg:justify-between">
+          <SectionHeading
+            title={t('admin.media_library.title')}
+            description={t('admin.media_library.description')}
+          />
+          <div className="ml-auto flex shrink-0 items-center gap-2">
+            <Can I="update" a={Subject.Media}>
+              <input
+                ref={fileInputRef}
+                type="file"
+                multiple
+                accept="image/png,image/jpeg,image/webp,image/gif,video/mp4,video/webm"
+                className="hidden"
+                onChange={(e) => handleUpload(e.target.files)}
+              />
+              <Button
+                type="button"
+                disabled={uploading}
+                onClick={() => fileInputRef.current?.click()}
+              >
+                {uploading ? (
+                  <Loader2Icon className="size-4 animate-spin" />
+                ) : (
+                  <UploadIcon className="size-4" />
+                )}
+                {t('admin.media_library.upload')}
+              </Button>
+            </Can>
           </div>
-        ) : files.length === 0 ? (
-          <p className="py-16 text-center text-muted-foreground text-sm">
-            {deferredSearch.trim() || placement !== 'all' || mediaType !== 'all'
-              ? t('admin.media_library.no_results')
-              : t('admin.media_library.empty')}
-          </p>
-        ) : (
-          <ul className="grid grid-cols-2 gap-4 sm:grid-cols-4 lg:grid-cols-6">
-            {files.map((media) => (
-              <li key={media.id}>
-                <ContextMenu>
-                  <ContextMenuTrigger
-                    render={
-                      <button
-                        type="button"
-                        onClick={() => setSelected(media)}
-                        className="block w-full cursor-pointer text-left overflow-hidden rounded-md border border-border transition-colors hover:border-muted-foreground focus-visible:outline-2 focus-visible:outline-ring focus-visible:outline-offset-2"
-                      />
-                    }
-                  >
-                    <MediaTile media={media} />
-                    <span className="block truncate px-2 py-1.5 text-xs">
-                      {media.alt || media.filename || ''}
-                    </span>
-                  </ContextMenuTrigger>
+        </div>
 
-                  {/* A shortcut to what the detail panel already offers —
+        <div className="flex flex-col gap-3 border-b border-border-subtle px-3 py-2 sm:flex-row sm:items-center">
+          <SearchInput
+            value={searchInput}
+            onValueChange={(value) => {
+              setSearchInput(value)
+              patchSearch({ search: value || undefined }, true)
+            }}
+            placeholder={t('admin.media_library.search_placeholder')}
+            clearLabel={t('admin.common.clear')}
+            className="sm:max-w-xs"
+          />
+
+          <Select
+            items={PLACEMENT_FILTERS.map((value) => ({
+              value,
+              label: t(`admin.media_library.placement.${value}`),
+            }))}
+            value={placement}
+            onValueChange={(value) => patchSearch({ placement: value as PlacementFilter })}
+          >
+            <SelectTrigger className="sm:w-44">
+              <SelectValue />
+            </SelectTrigger>
+            <SelectContent>
+              {PLACEMENT_FILTERS.map((value) => (
+                <SelectItem key={value} value={value}>
+                  {t(`admin.media_library.placement.${value}`)}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+
+          <Select
+            items={TYPE_FILTERS.map((value) => ({
+              value,
+              label: t(`admin.media_library.type.${value}`),
+            }))}
+            value={mediaType}
+            onValueChange={(value) => patchSearch({ type: value as TypeFilter })}
+          >
+            <SelectTrigger className="sm:w-44">
+              <SelectValue />
+            </SelectTrigger>
+            <SelectContent>
+              {TYPE_FILTERS.map((value) => (
+                <SelectItem key={value} value={value}>
+                  {t(`admin.media_library.type.${value}`)}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+        </div>
+
+        <CardContent className="p-4">
+          {query.isLoading ? (
+            <div className="flex items-center justify-center py-16 text-muted-foreground">
+              <Loader2Icon className="size-5 animate-spin" />
+            </div>
+          ) : files.length === 0 ? (
+            <p className="py-16 text-center text-muted-foreground text-sm">
+              {deferredSearch.trim() || placement !== 'all' || mediaType !== 'all'
+                ? t('admin.media_library.no_results')
+                : t('admin.media_library.empty')}
+            </p>
+          ) : (
+            <ul className="grid grid-cols-2 gap-4 sm:grid-cols-4 lg:grid-cols-6">
+              {files.map((media) => (
+                <li key={media.id}>
+                  <ContextMenu>
+                    <ContextMenuTrigger
+                      render={
+                        <button
+                          type="button"
+                          onClick={() => setSelected(media)}
+                          className="block w-full cursor-pointer text-left overflow-hidden rounded-md border border-border transition-colors hover:border-muted-foreground focus-visible:outline-2 focus-visible:outline-ring focus-visible:outline-offset-2"
+                        />
+                      }
+                    >
+                      <MediaTile media={media} />
+                      <span className="block truncate px-2 py-1.5 text-xs">
+                        {media.alt || media.filename || ''}
+                      </span>
+                    </ContextMenuTrigger>
+
+                    {/* A shortcut to what the detail panel already offers —
                       right-click is undiscoverable and absent on touch. */}
-                  <ContextMenuContent>
-                    <ContextMenuItem onClick={() => setSelected(media)}>
-                      <PencilIcon />
-                      {t('admin.actions.edit')}
-                    </ContextMenuItem>
-                    {media.download_url && (
-                      // A click rather than an anchor: Base UI's `render`
-                      // replaces the item, and the URL already carries a
-                      // Content-Disposition attachment header, so navigating
-                      // to it downloads rather than opening a page.
-                      <ContextMenuItem
-                        onClick={() => {
-                          window.location.href = media.download_url as string
-                        }}
-                      >
-                        <DownloadIcon />
-                        {t('admin.media_library.download')}
+                    <ContextMenuContent>
+                      <ContextMenuItem onClick={() => setSelected(media)}>
+                        <PencilIcon />
+                        {t('admin.actions.edit')}
                       </ContextMenuItem>
-                    )}
-                    {canWrite && (
-                      <>
-                        <ContextMenuSeparator />
+                      {media.download_url && (
+                        // A click rather than an anchor: Base UI's `render`
+                        // replaces the item, and the URL already carries a
+                        // Content-Disposition attachment header, so navigating
+                        // to it downloads rather than opening a page.
                         <ContextMenuItem
-                          variant="destructive"
-                          onClick={() => handleDeleteFromGrid(media)}
+                          onClick={() => {
+                            window.location.href = media.download_url as string
+                          }}
                         >
-                          <TrashIcon />
-                          {t('admin.actions.delete')}
+                          <DownloadIcon />
+                          {t('admin.media_library.download')}
                         </ContextMenuItem>
-                      </>
-                    )}
-                  </ContextMenuContent>
-                </ContextMenu>
-              </li>
-            ))}
-          </ul>
-        )}
+                      )}
+                      {canWrite && (
+                        <>
+                          <ContextMenuSeparator />
+                          <ContextMenuItem
+                            variant="destructive"
+                            onClick={() => handleDeleteFromGrid(media)}
+                          >
+                            <TrashIcon />
+                            {t('admin.actions.delete')}
+                          </ContextMenuItem>
+                        </>
+                      )}
+                    </ContextMenuContent>
+                  </ContextMenu>
+                </li>
+              ))}
+            </ul>
+          )}
+        </CardContent>
 
         {meta && files.length > 0 && (
-          <div className="pt-4">
-            <Pagination
-              meta={meta}
-              pageSizeOptions={PAGE_SIZES}
-              onPageChange={(next) => patchSearch({ page: next })}
-              onPageSizeChange={(size) => patchSearch({ limit: size })}
-            />
-          </div>
+          <Pagination
+            meta={meta}
+            pageSizeOptions={PAGE_SIZES}
+            onPageChange={(next) => patchSearch({ page: next })}
+            onPageSizeChange={(size) => patchSearch({ limit: size })}
+          />
         )}
-      </div>
+      </Card>
 
       <MediaDetailSheet
         media={selected}

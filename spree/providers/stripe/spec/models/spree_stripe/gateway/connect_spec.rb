@@ -1,0 +1,359 @@
+require 'spec_helper'
+
+RSpec.describe SpreeStripe::Gateway::Connect do
+  let(:store) { @default_store }
+  let(:gateway) { create(:stripe_gateway, store: store) }
+  let(:seller) do
+    create(:seller, :approved, store: store).tap do |record|
+      record.set_payout_account_reference(SpreeStripe::PayoutProvider, 'acct_seller')
+    end
+  end
+  let(:headers) { { 'HTTP_STRIPE_SIGNATURE' => 'sig_test' } }
+  let(:raw_body) { '{"id": "evt_test"}' }
+
+  before { gateway.preferences = gateway.preferences.merge(connect_webhook_signing_secret: 'whsec_connect') }
+
+  def stripe_event(type, object, account: nil)
+    Stripe::StripeObject.construct_from({ type: type, account: account, data: { object: object } }.compact)
+  end
+
+  describe '#handle_payout_webhook' do
+    context 'account.updated' do
+      it 'lets a seller be paid once Stripe says the account can receive transfers' do
+        allow(Stripe::Webhook).to receive(:construct_event).and_return(
+          stripe_event('account.updated', { id: 'acct_seller', payouts_enabled: true })
+        )
+
+        expect { gateway.handle_payout_webhook(raw_body, headers) }.
+          to change { seller.reload.payouts_enabled_at }.from(nil)
+      end
+
+      # A seller whose documents expire stops being payable, and the ledger has
+      # to stop crediting them rather than promise money nothing can send.
+      it 'stops a seller being paid when Stripe withdraws the capability' do
+        seller.update!(payouts_enabled_at: 2.days.ago)
+        allow(Stripe::Webhook).to receive(:construct_event).and_return(
+          stripe_event('account.updated', { id: 'acct_seller', payouts_enabled: false })
+        )
+
+        gateway.handle_payout_webhook(raw_body, headers)
+
+        expect(seller.reload.payouts_enabled_at).to be_nil
+      end
+
+      it 'leaves an already-payable seller alone rather than restamping them' do
+        stamped = 3.days.ago.round
+        seller.update!(payouts_enabled_at: stamped)
+        allow(Stripe::Webhook).to receive(:construct_event).and_return(
+          stripe_event('account.updated', { id: 'acct_seller', payouts_enabled: true })
+        )
+
+        gateway.handle_payout_webhook(raw_body, headers)
+
+        expect(seller.reload.payouts_enabled_at).to be_within(1.second).of(stamped)
+      end
+
+      it 'ignores an account belonging to no seller here' do
+        allow(Stripe::Webhook).to receive(:construct_event).and_return(
+          stripe_event('account.updated', { id: 'acct_stranger', payouts_enabled: true })
+        )
+
+        expect { gateway.handle_payout_webhook(raw_body, headers) }.not_to raise_error
+      end
+    end
+
+    context 'payout.paid' do
+      let!(:payout) { create(:seller_payout, seller: seller, currency: 'USD', reference: 'po_1') }
+
+      it 'completes the settlement the seller was owed' do
+        allow(Stripe::Webhook).to receive(:construct_event).and_return(
+          stripe_event('payout.paid', { id: 'po_1', currency: 'usd', amount: 2_000 }, account: 'acct_seller')
+        )
+
+        gateway.handle_payout_webhook(raw_body, headers)
+
+        expect(payout.reload).to be_completed
+        expect(payout.reference).to eq('po_1')
+      end
+
+      # Spree created the payout and stored Stripe's id for it, so an event
+      # naming an id we hold nothing for is about somebody else's payout —
+      # guessing which of ours it meant would complete the wrong one.
+      it 'leaves settlements alone when it names an id we do not hold' do
+        allow(Stripe::Webhook).to receive(:construct_event).and_return(
+          stripe_event('payout.paid', { id: 'po_elsewhere', currency: 'usd', amount: 2_000 }, account: 'acct_seller')
+        )
+
+        gateway.handle_payout_webhook(raw_body, headers)
+
+        expect(payout.reload).to be_pending
+      end
+
+      # When the answer to the create call was lost, Stripe's id was never
+      # stored — and that is the settlement most in need of this event, since
+      # nothing else can say whether the money moved. Stripe echoes back the id
+      # we sent, so the row is still identifiable.
+      context 'when the settlement never recorded Stripe’s id' do
+        let!(:unresolved) do
+          create(:seller_payout, seller: seller, currency: 'USD', reference: nil, status: 'unresolved')
+        end
+
+        before do
+          allow(Stripe::Webhook).to receive(:construct_event).and_return(
+            stripe_event(
+              'payout.paid',
+              { id: 'po_lost', currency: 'usd', amount: 2_000,
+                metadata: { 'spree_seller_payout_id' => unresolved.id.to_s } },
+              account: 'acct_seller'
+            )
+          )
+        end
+
+        it 'finds it by the id we sent and completes it' do
+          gateway.handle_payout_webhook(raw_body, headers)
+
+          expect(unresolved.reload).to be_completed
+        end
+
+        it 'writes down the id Stripe assigned it' do
+          gateway.handle_payout_webhook(raw_body, headers)
+
+          expect(unresolved.reload.reference).to eq('po_lost')
+        end
+
+        # The fallback exists for rows that never got an id. One that has a
+        # different id is a different settlement, and matching it by metadata
+        # would complete the wrong one.
+        it 'leaves a settlement that already holds another id alone' do
+          unresolved.update!(reference: 'po_other')
+
+          gateway.handle_payout_webhook(raw_body, headers)
+
+          expect(unresolved.reload).not_to be_completed
+        end
+      end
+    end
+
+    context 'payout.failed' do
+      let!(:payout) { create(:seller_payout, seller: seller, currency: 'USD', reference: 'po_1') }
+
+      before do
+        allow(Stripe::Webhook).to receive(:construct_event).and_return(
+          stripe_event('payout.failed', { id: 'po_1', currency: 'usd', amount: 2_000 }, account: 'acct_seller')
+        )
+      end
+
+      it 'marks the settlement failed so it is visible rather than silently stuck' do
+        gateway.handle_payout_webhook(raw_body, headers)
+
+        expect(payout.reload).to be_failed
+      end
+
+      # Left stamped to a failed settlement the earnings are unreachable: the
+      # sweep only ever collects unstamped rows, while the balance still says
+      # the seller is owed them.
+      it 'releases the earnings so the next sweep is the retry' do
+        create(:seller_transfer, :completed, seller: seller, payout: payout, amount: 40,
+                                             order: create(:order, store: store, seller: seller))
+
+        gateway.handle_payout_webhook(raw_body, headers)
+
+        expect(seller.seller_transfers.unsettled.sum(:amount)).to eq(40)
+      end
+
+      # The settlement whose outcome was never known has been holding its
+      # earnings precisely so nothing could send them twice. Stripe saying the
+      # money did not move is the definite answer that frees them.
+      context 'for a settlement nobody knew the outcome of' do
+        let!(:payout) do
+          create(:seller_payout, seller: seller, currency: 'USD', reference: 'po_1', status: 'unresolved')
+        end
+
+        it 'releases the earnings it was holding' do
+          create(:seller_transfer, :completed, seller: seller, payout: payout, amount: 40,
+                                               order: create(:order, store: store, seller: seller))
+
+          gateway.handle_payout_webhook(raw_body, headers)
+
+          expect(seller.seller_transfers.unsettled.sum(:amount)).to eq(40)
+        end
+      end
+    end
+
+    # Stripe redelivers on any non-2xx or timeout. Without matching on its own
+    # payout id, a second delivery would skip the settlement it already
+    # completed and land on the next one still owed.
+    context 'when payout.paid is delivered twice' do
+      let!(:first) { create(:seller_payout, seller: seller, currency: 'USD', amount: 40, reference: 'po_1') }
+      let!(:second) { create(:seller_payout, seller: seller, currency: 'USD', amount: 40, reference: 'po_2') }
+
+      before do
+        allow(Stripe::Webhook).to receive(:construct_event).and_return(
+          stripe_event('payout.paid', { id: 'po_1', currency: 'usd', amount: 4_000 }, account: 'acct_seller')
+        )
+      end
+
+      it 'leaves the settlement it did not name alone' do
+        gateway.handle_payout_webhook(raw_body, headers)
+        gateway.handle_payout_webhook(raw_body, headers)
+
+        expect(first.reload).to be_completed
+        expect(second.reload).to be_pending
+      end
+    end
+
+    it 'refuses an unsigned report — it could otherwise mark a seller payable' do
+      allow(Stripe::Webhook).to receive(:construct_event).
+        and_raise(Stripe::SignatureVerificationError.new('bad', 'sig_test'))
+
+      expect { gateway.handle_payout_webhook(raw_body, headers) }.
+        to raise_error(Spree::PaymentMethod::WebhookSignatureError)
+    end
+
+    # The two endpoints carry different traffic signed with different secrets,
+    # so a payment event verified against the payment secret must not verify
+    # here.
+    it 'verifies against the Connect secret rather than the payment one' do
+      expect(Stripe::Webhook).to receive(:construct_event).with(raw_body, 'sig_test', 'whsec_connect').
+        and_return(stripe_event('account.updated', { id: 'acct_seller', payouts_enabled: true }))
+
+      gateway.handle_payout_webhook(raw_body, headers)
+    end
+  end
+
+  describe '#create_connect_account_link' do
+    it 'creates an Express account for a seller who has none, then links to onboarding' do
+      seller = create(:seller, :approved, store: store)
+      allow(Stripe::Account).to receive(:create).and_return(Stripe::StripeObject.construct_from(id: 'acct_new'))
+      allow(Stripe::AccountLink).to receive(:create).
+        and_return(Stripe::StripeObject.construct_from(url: 'https://connect.stripe.com/setup/x'))
+
+      url = gateway.create_connect_account_link(seller: seller, refresh_url: 'https://s/r', return_url: 'https://s/d')
+
+      expect(url).to eq('https://connect.stripe.com/setup/x')
+      expect(seller.reload.payout_account_reference(SpreeStripe::PayoutProvider)).to eq('acct_new')
+    end
+
+    it 'reuses the account a seller already holds' do
+      allow(Stripe::AccountLink).to receive(:create).
+        and_return(Stripe::StripeObject.construct_from(url: 'https://connect.stripe.com/setup/y'))
+
+      expect(Stripe::Account).not_to receive(:create)
+
+      gateway.create_connect_account_link(seller: seller, refresh_url: 'https://s/r', return_url: 'https://s/d')
+    end
+
+    # Stripe caches a refusal against the key for a day. A key that does not
+    # move with what is being sent would replay yesterday's failure at a
+    # seller who has since corrected the thing that caused it.
+    describe 'the idempotency key' do
+      let(:new_seller) { create(:seller, :approved, store: store, contact_email: 'first@sparks.example') }
+
+      def keys_from_two_attempts
+        keys = []
+        allow(Stripe::Account).to receive(:create) do |_params, options|
+          keys << options[:idempotency_key]
+          raise Stripe::InvalidRequestError.new('bad email', 'email')
+        end
+
+        2.times do
+          gateway.create_connect_account_link(seller: new_seller, refresh_url: 'https://s/r',
+                                              return_url: 'https://s/d')
+        rescue Stripe::StripeError, Spree::Core::GatewayError
+          next
+        end
+
+        keys
+      end
+
+      it 'repeats for an identical request, so two clicks open one account' do
+        expect(keys_from_two_attempts.uniq.size).to eq(1)
+      end
+
+      it 'moves once the seller corrects what the request carried' do
+        first = keys_from_two_attempts.first
+        new_seller.update!(contact_email: 'corrected@sparks.example')
+
+        expect(keys_from_two_attempts.first).not_to eq(first)
+      end
+    end
+  end
+
+  describe 'the account a seller is onboarded to' do
+    let(:new_seller) { create(:seller, :approved, store: store) }
+
+    before do
+      allow(Stripe::AccountLink).to receive(:create).
+        and_return(Stripe::StripeObject.construct_from(url: 'https://connect.stripe.com/setup/x'))
+      allow(Stripe::Account).to receive(:create).and_return(Stripe::StripeObject.construct_from(id: 'acct_new'))
+      store.update!(default_country_code: 'US')
+    end
+
+    def onboard(seller = new_seller)
+      gateway.create_connect_account_link(seller: seller, refresh_url: 'https://s/r', return_url: 'https://s/d')
+    end
+
+    # Spree decides when a seller is settled, so Stripe must not also be paying
+    # their balance out on a schedule of its own.
+    it 'never pays out on a schedule of its own' do
+      expect(Stripe::Account).to receive(:create).
+        with(hash_including(settings: { payouts: { schedule: { interval: 'manual' } } }), anything).
+        and_return(Stripe::StripeObject.construct_from(id: 'acct_new'))
+
+      onboard
+    end
+
+    # Stripe would otherwise assume the platform's country, and a seller ends
+    # up with an account no local bank can receive.
+    it 'is created where the seller trades' do
+      new_seller.update!(billing_address: create(:address, country_code: 'FR', state_code: nil))
+
+      expect(Stripe::Account).to receive(:create).
+        with(hash_including(country: 'FR'), anything).
+        and_return(Stripe::StripeObject.construct_from(id: 'acct_new'))
+
+      onboard
+    end
+
+    it 'falls back to the marketplace’s own country' do
+      expect(Stripe::Account).to receive(:create).
+        with(hash_including(country: 'US'), anything).
+        and_return(Stripe::StripeObject.construct_from(id: 'acct_new'))
+
+      onboard
+    end
+
+    # Which service agreement a seller abroad needs depends on which payouts
+    # product the marketplace is on, which a country code cannot tell us — so
+    # core sends none and lets Stripe apply its own default.
+    it 'states no service agreement' do
+      new_seller.update!(billing_address: create(:address, country_code: 'FR', state_code: nil))
+
+      expect(Stripe::Account).to receive(:create) do |params, _options|
+        expect(params).not_to have_key(:tos_acceptance)
+        Stripe::StripeObject.construct_from(id: 'acct_new')
+      end
+
+      onboard
+    end
+
+    # Mutually exclusive with `controller`, and deprecated besides — sending
+    # both is a 400 that stops any seller onboarding at all.
+    it 'states the controller properties rather than an account type' do
+      expect(Stripe::Account).to receive(:create) do |params, _options|
+        expect(params).not_to have_key(:type)
+        expect(params[:controller]).to include(stripe_dashboard: { type: 'express' })
+        Stripe::StripeObject.construct_from(id: 'acct_new')
+      end
+
+      onboard
+    end
+  end
+
+  describe '#connect_webhook_url' do
+    it 'is its own endpoint, separate from the payment one' do
+      expect(gateway.connect_webhook_url).to end_with("/api/v3/webhooks/payouts/#{gateway.prefixed_id}")
+      expect(gateway.connect_webhook_url).not_to eq(gateway.webhook_url)
+    end
+  end
+end

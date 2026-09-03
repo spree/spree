@@ -1,3 +1,39 @@
+## 2026-09-02: A 6.0 column rename is earned by public leakage, not by completeness
+
+**Context:** `5.4-store-api-naming-standardization.md` listed six database renames as its remaining 6.0 work — roughly 1,900 references. But the 5.4 model aliases already make every API response speak the new names, so the honest question was not "which renames are left" but "which ones still change anything a caller can see".
+
+**Decision:** Rename only where the old name still reaches a public surface. Three things bypass an attribute alias: **Ransack filter keys** (the whitelist publishes the column, not the alias), **validation error keys** (a client sending `postal_code` got its error back under `zipcode`, so it could not map the error to the field it sent), and **delegated method names** (`bill_address_firstname`, which the dashboard's own order table sorts by). Renamed on that test: the address name and postal-code columns, and the option type/value `presentation` column with its two Mobility translation tables. Two more rode along for consistency rather than leakage — `Spree::WishedItem` (its class and table were the only ones that never matched the serializer the API already ships) and the last two `promo_total` columns (Order aliased one way, LineItem and Fulfillment the other, a reading trap). Deferred to 6.1: `spree_credit_cards.cc_type`/`last_digits` and the order/cart address foreign keys — absent from the v3 contract, never validated, aliases complete, and the FK pair alone is ~1,000 references.
+
+**Consequences:** Two bridge shapes now coexist and the difference is load-bearing. `alias_attribute` resolves inside `where` and `find_by`, so the address and total bridges are complete. The option bridge cannot be an `alias_attribute` — Mobility owns `label` — so it is a plain method and `where(presentation:)` raises; that asymmetry is documented in the concern and the upgrade guide rather than papered over. The wishlist item's `wi_` prefix stays put (amended 2026-09-03): a prefixed ID is a Store API identifier a client holds, and `decode_own_prefixed_id` rejects a foreign prefix, so moving it 404s every ID already issued. The `si_` → `sl_` precedent does not transfer — `StockLevel` is admin-side. An existing model keeps the prefix it issued; only a new model picks one. The leakage test is the reusable part: before renaming a column that an alias already hides, check whether Ransack, an error key, or a delegation still publishes the old name — if none do, the rename is churn.
+
+## 2026-09-02: Translation staleness tracking is cut, not deferred with a design
+
+**Context:** `5.5-6.0-resource-translations-api.md` had carried a Phase 2 commitment to server-side staleness since 2026-07-27 — a `source_digest` per translation cell, a `stale` flag computed at read time, and a `?include=staleness` verbose read shape — described as "Shopify's idea minus its mandatory-digest footgun". The business case is genuine: coverage answers "is there a translation?", nothing answers "is it still about the current source?", so a merchant who edits English copy after translation serves stale copy in every other locale indefinitely, with the coverage grid still reading 100%. But when Phase 2 came up for implementation the case did not survive scrutiny.
+
+**Decision:** Cut it. Ship the coverage endpoint, the generalized CSV import/export and the centralized dashboard page; build no staleness. Three reasons. Only Shopify tracks drift at all — Vendure, Medusa and Saleor ship nothing, so one-of-four is thin evidence of merchant demand. Shopify's mechanism is not the one we would have built: its digest is required on every write and serves as an optimistic-concurrency guard, whereas ours would have been a display flag alone, meaning we would ship something no platform has validated in that form. And it was the largest build in the phase — a migration, a write path on every cell, a read-time comparison, a verbose response mode and a backfill task — for the only item nothing else depends on.
+
+**Consequences:** No `source_digest` column, no `stale` key, no `?include=staleness`. The matrix keeps its flat `{ field → value }` shape and `translated_field_count` stays the only completeness signal. Nothing forecloses a revival: two findings from the cut are recorded in the plan for whoever picks it up — a shared polymorphic digest table beats a column per `*_translations` table (per-field rather than per-row granularity, and future registry members need no migration), and the flag stays advisory, never required on write. Revisit when merchants using the coverage page report source drift as an actual complaint.
+
+## 2026-09-02: Custom field definitions become store-owned, with a persisted filter_key
+
+**Context:** `Spree::CustomFieldDefinition` (formerly `MetafieldDefinition`) was the last piece of merchant-facing schema with no owner. Every store in an installation shared one set of definitions, and the admin endpoint had no `scope` override, so any store's staff read and edited every other store's custom-field schema. Alongside it, `filter_key` — the `cf_<namespace>_<key>` identifier the product listing sorts and filters on — was computed in Ruby on every call, which left its uniqueness resting on a `CONCAT`-based validation with no index behind it. Both were deferred out of the 5.6 search/sort/filter work because they are schema changes and that shipped as a patch release.
+
+**Decision:** The definition becomes a `Spree::SingleStoreResource` with a persisted `filter_key`, and uniqueness becomes `(store_id, resource_type, filter_key)` behind a real unique index. Three sub-rulings settled today:
+
+1. **Existing definitions all move to the default store.** No per-store copies. Copying would have produced N duplicate rows whose values still pointed at the originals, so every non-default store would show the same blank fields it shows under the simpler backfill — at N times the rows and with a re-pointing pass over `spree_custom_fields` to write. Multi-store operators re-create the fields they want on their other stores.
+2. **The migration backfills and enforces NOT NULL itself**, with `spree:upgrade:backfill_custom_field_definition_stores` in the 5.6→6.0 manifest as the recovery path for installs that migrated before any store existed. This follows the return/refund reason precedent shipped earlier in 6.0 and closes the window the plan's original two-phase path left open: a nullable scope column voids the unique index outright, because SQL treats NULLs as distinct, so uniqueness would look enforced while not holding.
+3. **A custom field's value is validated to agree with its definition's store** (revised during implementation). The original ruling was that resolution is store-scoped at every path, making a validation redundant — that turned out to be false. `custom_fields=` routes through the store-scoped resolver, but Rails' own `accepts_nested_attributes_for` writer assigns `custom_field_definition_id` straight onto the row and reaches no resolver at all, so a foreign definition was accepted through the nested path. The validation now sits on `Spree::CustomField`, beside the `resource_type` agreement check that was already there for the same reason, and it is the one gate every write path passes. It skips resources with no store of their own (a customer, an address are global), which is the partial-guarantee objection from the original ruling — but a partial guarantee at the convergence point beats none, and the skipped types were resolved within a store on the way in.
+
+**Consequences:** `store.custom_field_definitions` is the reading mechanism — no `for_store` scope of its own, and no unscoped `Spree::CustomFieldDefinition` reads anywhere (the store-scope tripwire now watches the table). `filter_key` is a real column: it can be selected, indexed and ordered on, and the `CONCAT` validation is gone. `Spree::SearchProvider::CustomFieldSchema` takes the store it describes, so two stores no longer share one filter vocabulary. CSV header and value rows must be produced from the same store's definitions or they misalign.
+
+## 2026-09-01: Seller delivery — the marketplace owns the profiles, the seller owns their methods
+
+**Context:** `6.0-multi-vendor-marketplace.md` had promised `DeliveryMethod#seller_id` since 2026-08-15 without ever designing it, and the shipped code went the other way: every delivery record is store-scoped, the estimator knows nothing about sellers, a seller's only delivery lever is where their stock sits, and `Carts::SplitBySeller#divide_delivery_cost` apportions one quote after payment. Meanwhile the seller branch had taken product type and delivery profile off the product form (2026-08-26), so every seller product landed on the store's default profile. The legacy multi-vendor module owned methods per vendor and kept zones and categories global; of the two marketplace platforms studied, one lets sellers build the whole shipping tree themselves and the other keeps an operator vocabulary the seller prices within.
+
+**Decision:** Two questions, two owners. "What kind of goods is this" — `DeliveryProfile`, with its zones and origin groups — is the marketplace's vocabulary and never carries a `seller_id`; a seller assigns a profile (and a product type) to their product, shipped the same day. "Who ships it, how, at what price" — `DeliveryMethod` — is the seller's: nullable `seller_id`, plus an `available_to_sellers` switch on marketplace methods so an operator who runs shipping for everyone shares theirs. A package's seller is its stock location's, and the methods it is offered are decided in `Stock::Estimator#filter_delivery_methods` alone. Seller methods price through the internal rate provider and fulfil manually; carrier accounts stay on the store-scoped `Integration` until a seller-owned integration is needed. `DeliveryOriginGroup#covers_location?` answers true for seller locations, fixing the narrowed-group defect that made seller stock unallocatable. "At least one way to ship" becomes a computed seller requirement, and `delivery_methods` its own seller-grantable catalog resource.
+
+**Consequences:** No per-seller profile, zone or origin-group layer, ever; no seller checks outside the estimator; the post-payment cost division stays only as the fallback for a first-party location holding several sellers' goods; carrier-backed seller methods are refused by validation rather than half-supported. Full design: `6.0-multi-vendor-marketplace.md`, Decision 13.
+
 ## 2026-08-23: BusinessAddress stays a table-sharing subclass, not STI
 
 **Context:** `Spree::BusinessAddress` overrides three predicates on `Spree::Address` — `require_name?` false, `require_company?` true, `show_company_address_field?` true — and is used by a seller's billing address. It was briefly converted to real STI (a `type` column on `spree_addresses`, an index, a backfill, `CompanyLocation`'s two addresses typed to it), on the argument that the rules should travel with the row so a company address copied onto a cart's base-typed `bill_address` would still validate as a business address. That was reverted the next day.
@@ -4673,3 +4709,48 @@ policy the gem restates. And the gem's upgrade task points **only blank**
 `Market#tax_provider` values at Avalara — a value someone set, including
 an explicit Internal, is never rewritten.
 
+## 2026-08-31 — Catalog phase 4: the agreement's prices are shown where it is curated, and a new one is built in steps
+
+Settling the last of the catalog agreement rework
+(`6.0-catalog-agreement-rework.md`), whose remaining work was the
+products-with-prices view and a create flow worth the name.
+
+**The resolved price and its source ride the catalog's own products
+endpoint, behind `expand`.** A catalog's nested membership listing answers
+`?expand=catalog_price` with the amount a buyer on this agreement pays and
+where that amount came from: an explicit row on the owned list, the list's
+±% adjustment, or the variant's base price. Resolution stays server-side —
+an adjusted price is derived on read and never stored, so a dashboard
+inferring the source from the price rows would be re-implementing the
+resolver against a shape it cannot observe, and would be wrong the moment
+base prices move. `expand` rather than a bespoke query flag, because every
+other optional payload on this API is asked for that way.
+
+**Those prices are columns on the assortment card, not a second surface.**
+Assortment↔pricing divergence — a product in the agreement that the
+agreement does not actually price — is what the view exists to expose, so
+it belongs on the rows the merchant already curates. A parallel prices
+card, or a tab beside the assortment, both turn the divergence into
+something to go looking for, which is the state before this work.
+
+**The transitional `price_list_id` accessors on `Spree::Catalog` are
+removed.** They kept the admin API's pre-inversion write shape working
+until phase 4 reshaped the payload; the inline `price_list` object has
+done that, so the accessors, the pending-assignment machinery behind them
+and the serializer attribute all go. Catalogs are unreleased, so no bridge
+is owed — the same reasoning that let the migration be rewritten in place.
+
+**New catalog becomes a linear four-step wizard: Details → Audience →
+Pricing → Review.** Back and Next only, with one create request on Finish
+carrying the whole agreement. Nothing is written until then, so abandoning
+midway leaves nothing behind — the staged-until-Save model the agreement
+editor already uses, and the reason a create-then-configure wizard was
+rejected. The assortment is deliberately not a step: product membership
+stages against a saved parent through the nested endpoints, and a first
+catalog is more usefully curated on the agreement editor the wizard lands
+on. Rejected alternatives: one sectioned create page (consistent with
+other create screens, but it asks a merchant standing up their first
+agreement to understand every part of it at once); skippable steps (a
+"create now" escape hatch competing with Next on every step).
+
+Plans amended: `6.0-catalog-agreement-rework.md` (phase 4 completed).

@@ -33,13 +33,21 @@ describe Spree::Address, type: :model do
 
       it 'sets user_id and first/last name from user' do
         expect(address.user_id).to eq(user.id)
-        expect(address.firstname).to eq('John')
-        expect(address.lastname).to eq('Snow')
+        expect(address.first_name).to eq('John')
+        expect(address.last_name).to eq('Snow')
       end
     end
   end
 
-  describe 'clone' do
+  describe 'clone (deprecated, becomes the standard Ruby clone in 6.1)' do
+    before { allow(Spree::Deprecation).to receive(:warn) }
+
+    it 'warns and points at #snapshot' do
+      create(:address).clone
+
+      expect(Spree::Deprecation).to have_received(:warn).with(/#snapshot/)
+    end
+
     it 'creates a copy of the address with the exception of the id, label, owner, updated_at and created_at attributes' do
       state = create(:state)
       original = create(:address,
@@ -50,13 +58,13 @@ describe Spree::Address, type: :model do
                         alternative_phone: FFaker::PhoneNumberAU.mobile_phone_number,
                         city: FFaker::AddressUS.city,
                         country: Spree::Country.by_iso('US'),
-                        firstname: FFaker::Name.first_name,
-                        lastname: FFaker::Name.last_name,
+                        first_name: FFaker::Name.first_name,
+                        last_name: FFaker::Name.last_name,
                         company: FFaker::Company.name,
                         phone: FFaker::PhoneNumber.short_phone_number,
                         state: state,
                         state_name: state.name,
-                        zipcode: Spree::TestingSupport::CountryPool.postal_code_for('US'))
+                        postal_code: Spree::TestingSupport::CountryPool.postal_code_for('US'))
 
       cloned = original.clone
 
@@ -65,13 +73,13 @@ describe Spree::Address, type: :model do
       expect(cloned.alternative_phone).to eq(original.alternative_phone)
       expect(cloned.city).to eq(original.city)
       expect(cloned.country_code).to eq(original.country_code)
-      expect(cloned.firstname).to eq(original.firstname)
-      expect(cloned.lastname).to eq(original.lastname)
+      expect(cloned.first_name).to eq(original.first_name)
+      expect(cloned.last_name).to eq(original.last_name)
       expect(cloned.company).to eq(original.company)
       expect(cloned.phone).to eq(original.phone)
       expect(cloned.state_abbr).to eq(original.state_abbr)
       expect(cloned.state_name).to eq(original.state_name)
-      expect(cloned.zipcode).to eq(original.zipcode)
+      expect(cloned.postal_code).to eq(original.postal_code)
 
       expect(cloned.user_id).to be_nil
       expect(cloned.label).to be_nil
@@ -117,12 +125,12 @@ describe Spree::Address, type: :model do
     let(:address) { Spree::Address.new }
 
     it 'first_name' do
-      address.firstname = 'Ryan'
+      address.first_name = 'Ryan'
       expect(address.first_name).to eq('Ryan')
     end
 
     it 'last_name' do
-      address.lastname = 'Bigg'
+      address.last_name = 'Bigg'
       expect(address.last_name).to eq('Bigg')
     end
   end
@@ -138,7 +146,7 @@ describe Spree::Address, type: :model do
 
     it 'state_name is not nil and country does not have any states' do
       address.country_code = stateless_country.iso
-      address.zipcode = Spree::TestingSupport::CountryPool.postal_code_for('PL')
+      address.postal_code = Spree::TestingSupport::CountryPool.postal_code_for('PL')
       address.state_code = nil
       address.state_name = 'Somewhere'
       expect(address).to be_valid
@@ -167,7 +175,7 @@ describe Spree::Address, type: :model do
     it 'state is entered but country does not contain that state' do
       address.state_code = state.abbr
       address.country_code = 'CA'
-      address.zipcode = Spree::TestingSupport::CountryPool.postal_code_for('CA')
+      address.postal_code = Spree::TestingSupport::CountryPool.postal_code_for('CA')
       address.valid?
       # The Maryland code means nothing in Canada, so it is dropped and the
       # address is left with no subdivision at all.
@@ -178,7 +186,7 @@ describe Spree::Address, type: :model do
       address.state_code = state.abbr
       address.state_name = 'maryland'
       address.country_code = stateless_country.iso
-      address.zipcode = Spree::TestingSupport::CountryPool.postal_code_for('PL')
+      address.postal_code = Spree::TestingSupport::CountryPool.postal_code_for('PL')
       expect(address).to be_valid
       expect(address.state_abbr).to be_nil
     end
@@ -192,7 +200,7 @@ describe Spree::Address, type: :model do
 
     it 'does not require a state when the country does not require one' do
       address.country_code = stateless_country.iso
-      address.zipcode = Spree::TestingSupport::CountryPool.postal_code_for(stateless_country.iso)
+      address.postal_code = Spree::TestingSupport::CountryPool.postal_code_for(stateless_country.iso)
       address.state_code = nil
       address.state_name = nil
       expect(address).to be_valid
@@ -236,88 +244,88 @@ describe Spree::Address, type: :model do
       end
     end
 
-    it 'requires zipcode' do
-      address.zipcode = ''
+    it 'requires postal_code' do
+      address.postal_code = ''
       address.valid?
-      expect(address.errors['zipcode']).to include("can't be blank")
+      expect(address.errors['postal_code']).to include("can't be blank")
     end
 
-    it 'requires firstname' do
-      address.firstname = ''
+    it 'requires first_name' do
+      address.first_name = ''
       address.valid?
-      expect(address.errors['firstname']).to include("can't be blank")
+      expect(address.errors['first_name']).to include("can't be blank")
     end
 
-    it 'requires lastname' do
-      address.lastname = ''
+    it 'requires last_name' do
+      address.last_name = ''
       address.valid?
-      expect(address.errors['lastname']).to include("can't be blank")
+      expect(address.errors['last_name']).to include("can't be blank")
     end
 
-    context 'zipcode validation' do
-      it 'validates the zipcode' do
+    context 'postal code validation' do
+      it 'validates the postal code' do
         allow(address.country).to receive(:iso).and_return('US')
-        address.zipcode = 'abc'
+        address.postal_code = 'abc'
         address.valid?
-        expect(address.errors['zipcode']).to include('is invalid')
+        expect(address.errors['postal_code']).to include('is invalid')
       end
 
       it 'accepts a zip code with surrounding white space' do
         allow(address.country).to receive(:iso).and_return('US')
-        address.zipcode = ' 12345 '
+        address.postal_code = ' 12345 '
         address.valid?
-        expect(address.errors['zipcode']).not_to include('is invalid')
+        expect(address.errors['postal_code']).not_to include('is invalid')
       end
 
       it 'accepts an unformatted zip code' do
         address.country_code = 'GB'
-        address.zipcode = '	AL38QE'
+        address.postal_code = '	AL38QE'
         address.valid?
-        expect(address.errors['zipcode']).not_to include('is invalid')
+        expect(address.errors['postal_code']).not_to include('is invalid')
       end
 
       context 'does not validate' do
         it 'is for quick checkout' do
-          address.zipcode = 'abc'
+          address.postal_code = 'abc'
           address.quick_checkout = true
           address.valid?
-          expect(address.errors['zipcode']).not_to include('is invalid')
+          expect(address.errors['postal_code']).not_to include('is invalid')
         end
 
         it 'does not have a country' do
           address.country_code = nil
           address.valid?
-          expect(address.errors['zipcode']).not_to include('is invalid')
+          expect(address.errors['postal_code']).not_to include('is invalid')
         end
 
-        it 'country does not requires zipcode' do
+        it 'country does not require a postal code' do
           allow(address.country).to receive(:zipcode_required?).and_return(false)
           address.valid?
-          expect(address.errors['zipcode']).not_to include('is invalid')
+          expect(address.errors['postal_code']).not_to include('is invalid')
         end
 
         it 'does not have an iso' do
           allow(address.country).to receive(:iso).and_return(nil)
           address.valid?
-          expect(address.errors['zipcode']).not_to include('is invalid')
+          expect(address.errors['postal_code']).not_to include('is invalid')
         end
 
-        it 'does not have a zipcode' do
-          address.zipcode = ''
+        it 'does not have a postal code' do
+          address.postal_code = ''
           address.valid?
-          expect(address.errors['zipcode']).not_to include('is invalid')
+          expect(address.errors['postal_code']).not_to include('is invalid')
         end
 
-        it 'zipcode is nil' do
-          address.zipcode = nil
+        it 'postal code is nil' do
+          address.postal_code = nil
           address.valid?
-          expect(address.errors['zipcode']).not_to include('is invalid')
+          expect(address.errors['postal_code']).not_to include('is invalid')
         end
 
         it 'does not have a supported country iso' do
           allow(address.country).to receive(:iso).and_return('XX')
           address.valid?
-          expect(address.errors['zipcode']).not_to include('is invalid')
+          expect(address.errors['postal_code']).not_to include('is invalid')
         end
       end
     end
@@ -332,13 +340,13 @@ describe Spree::Address, type: :model do
       end
     end
 
-    context 'zipcode not required' do
-      before { allow(address).to receive_messages require_zipcode?: false }
+    context 'postal code not required' do
+      before { allow(address).to receive_messages require_postal_code?: false }
 
       it 'shows no errors when phone is blank' do
-        address.zipcode = ''
+        address.postal_code = ''
         address.valid?
-        expect(address.errors[:zipcode].size).to eq 0
+        expect(address.errors[:postal_code].size).to eq 0
       end
     end
   end
@@ -347,7 +355,7 @@ describe Spree::Address, type: :model do
     context 'when user is assigned and it has default name' do
       it 'should assign address name to the user' do
         user = create(:user, first_name: nil, last_name: nil)
-        create(:address, customer: user, firstname: 'John', lastname: 'Doe')
+        create(:address, customer: user, first_name: 'John', last_name: 'Doe')
 
         expect(user.reload.first_name).to eq 'John'
         expect(user.reload.last_name).to eq 'Doe'
@@ -357,7 +365,7 @@ describe Spree::Address, type: :model do
 
   context '#full_name' do
     context 'both first and last names are present' do
-      let(:address) { create(:address, firstname: 'Michael', lastname: 'Jackson') }
+      let(:address) { create(:address, first_name: 'Michael', last_name: 'Jackson') }
 
       specify { expect(address.full_name).to eq('Michael Jackson') }
     end
@@ -369,7 +377,7 @@ describe Spree::Address, type: :model do
 
     context 'state is blank' do
       # A country that requires no subdivision keeps free text as-is.
-      let(:address) { create(:address, country: Spree::Country.by_iso('PL'), zipcode: '00-001', state: nil, state_name: 'Somewhere Else') }
+      let(:address) { create(:address, country: Spree::Country.by_iso('PL'), postal_code: '00-001', state: nil, state_name: 'Somewhere Else') }
 
       specify { expect(address.state_text).to eq('Somewhere Else') }
     end
@@ -391,7 +399,7 @@ describe Spree::Address, type: :model do
     end
 
     context 'state is blank' do
-      let(:address) { create(:address, country: Spree::Country.by_iso('PL'), zipcode: '00-001', state: nil, state_name: 'Somewhere Else') }
+      let(:address) { create(:address, country: Spree::Country.by_iso('PL'), postal_code: '00-001', state: nil, state_name: 'Somewhere Else') }
 
       specify { expect(address.state_name_text).to eq('Somewhere Else') }
     end
@@ -466,7 +474,7 @@ describe Spree::Address, type: :model do
           # Japan's subdivision codes are numeric, so a US code cannot
           # coincidentally be valid there.
           address.country_code = 'JP'
-          address.zipcode = Spree::TestingSupport::CountryPool.postal_code_for('JP')
+          address.postal_code = Spree::TestingSupport::CountryPool.postal_code_for('JP')
           clear_state_entities
         end
 
@@ -526,7 +534,7 @@ describe Spree::Address, type: :model do
 
   context '#==' do
     let(:address) { create(:address) }
-    let(:address2) { address.clone }
+    let(:address2) { address.snapshot }
 
     context 'same addresses' do
       it { expect(address == address2).to eq(true) }
@@ -554,7 +562,7 @@ describe Spree::Address, type: :model do
     it 'has required attributes' do
       # Every conditionally-required field, whatever the store's settings —
       # phone and company both default to off.
-      expect(Spree::Address.required_fields).to eq([:firstname, :lastname, :address1, :city, :country, :zipcode, :phone, :company])
+      expect(Spree::Address.required_fields).to eq([:first_name, :last_name, :address1, :city, :country, :postal_code, :phone, :company])
     end
 
     it 'is editable' do
@@ -667,7 +675,7 @@ describe Spree::Address, type: :model do
 
         context 'when the only address left is invalid' do
           before do
-            address2.update_columns(address1: nil, city: nil, zipcode: nil, phone: nil)
+            address2.update_columns(address1: nil, city: nil, postal_code: nil, phone: nil)
             user.update_columns(bill_address_id: address.id, ship_address_id: address.id)
           end
 
@@ -736,10 +744,10 @@ describe Spree::Address, type: :model do
     end
   end
 
-  describe '#normalized_zipcode' do
+  describe '#normalized_postal_code' do
     it 'strips spaces and dashes and upcases' do
-      expect(build(:address, zipcode: ' sw1a 1-aa ').normalized_zipcode).to eq('SW1A1AA')
-      expect(build(:address, zipcode: nil).normalized_zipcode).to eq('')
+      expect(build(:address, postal_code: ' sw1a 1-aa ').normalized_postal_code).to eq('SW1A1AA')
+      expect(build(:address, postal_code: nil).normalized_postal_code).to eq('')
     end
   end
 
@@ -748,9 +756,9 @@ describe Spree::Address, type: :model do
 
     it 'is displayed as string' do
       a = address
-      expect(address.to_s).to eq("#{a.full_name}<br/>#{a.company}<br/>#{a.address1}<br/>#{a.address2}<br/>#{a.city}, #{a.state_text} #{a.zipcode}<br/>#{a.country}")
+      expect(address.to_s).to eq("#{a.full_name}<br/>#{a.company}<br/>#{a.address1}<br/>#{a.address2}<br/>#{a.city}, #{a.state_text} #{a.postal_code}<br/>#{a.country}")
       address.company = nil
-      expect(address.to_s).to eq("#{a.full_name}<br/>#{a.address1}<br/>#{a.address2}<br/>#{a.city}, #{a.state_text} #{a.zipcode}<br/>#{a.country}")
+      expect(address.to_s).to eq("#{a.full_name}<br/>#{a.address1}<br/>#{a.address2}<br/>#{a.city}, #{a.state_text} #{a.postal_code}<br/>#{a.country}")
     end
 
     context 'address contains HTML' do
@@ -910,11 +918,11 @@ describe Spree::Address, type: :model do
 
       it 'works with new address creation' do
         address = Spree::Address.new(
-          firstname: 'John',
-          lastname: 'Doe',
+          first_name: 'John',
+          last_name: 'Doe',
           address1: '123 Main St',
           city: 'New York',
-          zipcode: '10001',
+          postal_code: '10001',
           phone: '555-1234',
           country_code: 'US',
           state_abbr: 'NY'
@@ -934,20 +942,52 @@ describe Spree::Address, type: :model do
     end
   end
 
+  # The pre-6.0 names stay callable for one release. Nothing in core calls
+  # them, so without these they could break unnoticed.
+  describe 'deprecated postal-code helpers' do
+    it 'normalizes through the class-level shell' do
+      expect(Spree::Deprecation).to receive(:warn).with(/normalize_zipcode/)
+
+      expect(described_class.normalize_zipcode(' sw1a 1-aa ')).to eq('SW1A1AA')
+    end
+
+    it 'normalizes this address through the instance shell' do
+      address = build(:address, postal_code: ' sw1a 1-aa ')
+      expect(Spree::Deprecation).to receive(:warn).with(/normalized_zipcode/)
+
+      expect(address.normalized_zipcode).to eq('SW1A1AA')
+    end
+  end
+
+  describe '#require_postal_code?' do
+    # The pre-6.0 name stays overridable for one release: a decorator's
+    # require_zipcode? sits ahead of Spree::Address in the ancestry, so it
+    # still decides. Otherwise the override would stop being called silently.
+    it 'honors a host app override of the pre-6.0 require_zipcode?' do
+      overridden = Class.new(Spree::Address) do
+        def require_zipcode?
+          false
+        end
+      end
+
+      expect(overridden.new.require_postal_code?).to be(false)
+    end
+  end
+
   describe '.find_duplicate' do
     let(:country) { create(:country, iso: 'US') }
     let(:state) { create(:state, country: country, abbr: 'NY', name: 'New York') }
     let!(:address) { create(:address, country: country, state: state, address1: '1 Dup Lane') }
 
     it 'finds an address matching the given attributes' do
-      attributes = address.attributes.symbolize_keys.slice(:firstname, :lastname, :address1, :city, :zipcode, :country_code, :state_code)
+      attributes = address.attributes.symbolize_keys.slice(:first_name, :last_name, :address1, :city, :postal_code, :country_code, :state_code)
 
       expect(described_class.find_duplicate(attributes)).to eq(address)
     end
 
     it 'matches a state given by name rather than code' do
       attributes = address.attributes.symbolize_keys.
-                   slice(:firstname, :lastname, :address1, :city, :zipcode, :country_code).
+                   slice(:first_name, :last_name, :address1, :city, :postal_code, :country_code).
                    merge(state_name: 'New York')
 
       expect(described_class.find_duplicate(attributes)).to eq(address)
@@ -955,7 +995,7 @@ describe Spree::Address, type: :model do
 
     it 'ignores identity and timestamp keys' do
       attributes = address.attributes.symbolize_keys.
-                   slice(:firstname, :lastname, :address1, :city, :zipcode, :country_code, :state_code).
+                   slice(:first_name, :last_name, :address1, :city, :postal_code, :country_code, :state_code).
                    merge(id: 0, created_at: 1.day.ago, updated_at: 1.day.ago)
 
       expect(described_class.find_duplicate(attributes)).to eq(address)
@@ -963,13 +1003,129 @@ describe Spree::Address, type: :model do
 
     it 'does not match a deleted address' do
       address.update_column(:deleted_at, Time.current)
-      attributes = address.attributes.symbolize_keys.slice(:firstname, :lastname, :address1, :city, :zipcode, :country_code, :state_code)
+      attributes = address.attributes.symbolize_keys.slice(:first_name, :last_name, :address1, :city, :postal_code, :country_code, :state_code)
 
       expect(described_class.find_duplicate(attributes)).to be_nil
     end
 
     it 'returns nil when nothing matches' do
       expect(described_class.find_duplicate(address1: 'nowhere at all')).to be_nil
+    end
+
+    # The renamed columns are still accepted under their pre-6.0 write names,
+    # and a query builder matches on the literal key rather than the alias.
+    it 'matches attributes given under the legacy write names' do
+      attributes = address.attributes.symbolize_keys.
+                   slice(:address1, :city, :country_code, :state_code).
+                   merge(firstname: address.first_name, lastname: address.last_name, zipcode: address.postal_code)
+
+      expect(described_class.find_duplicate(attributes)).to eq(address)
+    end
+  end
+
+  describe '#snapshot' do
+    let(:customer) { create(:customer) }
+    let(:address) { create(:address, owner: customer, label: 'Home') }
+
+    subject(:snapshot) { address.snapshot }
+
+    it 'copies the address without an owner, so it stays out of the book it came from' do
+      expect(snapshot.owner).to be_nil
+      expect(snapshot.address1).to eq(address.address1)
+      expect(snapshot.city).to eq(address.city)
+      expect(snapshot.postal_code).to eq(address.postal_code)
+    end
+
+    it 'drops the label, which belongs to the entry in the book' do
+      expect(snapshot.label).to be_nil
+    end
+
+    it 'is a new record' do
+      expect(snapshot).to be_new_record
+    end
+
+    it 'lets two snapshots of the same labelled address be saved side by side' do
+      expect(address.snapshot.save).to be(true)
+      expect(address.snapshot.save).to be(true)
+    end
+  end
+
+  describe '#duplicate_in_address_book' do
+    let(:customer) { create(:customer) }
+    let(:attributes) do
+      { first_name: 'John', last_name: 'Doe', company: 'Company', address1: '1 Main St',
+        address2: 'Northwest', city: 'New York', postal_code: '10001', state_code: 'NY',
+        country_code: 'US', phone: '555-1212', alternative_phone: '555-1213' }
+    end
+    let!(:saved) { create(:address, attributes.merge(owner: customer)) }
+
+    def build_for(owner, overrides = {})
+      described_class.new(attributes.merge(overrides)).tap do |address|
+        address.owner = owner
+        address.valid?
+      end
+    end
+
+    it 'finds the entry the book already holds' do
+      expect(build_for(customer).duplicate_in_address_book).to eq(saved)
+    end
+
+    it 'ignores geocoding, which is derived from the address' do
+      saved.update_columns(latitude: 40.7, longitude: -74.0)
+
+      expect(build_for(customer).duplicate_in_address_book).to eq(saved)
+    end
+
+    it 'returns nil when the address differs' do
+      expect(build_for(customer, address1: '2 Main St').duplicate_in_address_book).to be_nil
+    end
+
+    it 'returns nil for a deleted entry' do
+      saved.update_column(:deleted_at, Time.current)
+
+      expect(build_for(customer).duplicate_in_address_book).to be_nil
+    end
+
+    it 'never reaches into another owner\'s book' do
+      expect(build_for(create(:customer)).duplicate_in_address_book).to be_nil
+    end
+
+    it 'returns nil without an owner' do
+      expect(build_for(nil).duplicate_in_address_book).to be_nil
+    end
+
+    it 'does not match the address against itself' do
+      expect(saved.duplicate_in_address_book).to be_nil
+    end
+
+    # The upgrade task copies the pre-6.0 foreign keys into codes and leaves
+    # them populated, so comparing them would make every migrated entry differ
+    # from every newly typed one and silently disable deduplication.
+    it 'matches an entry still carrying the pre-6.0 country and state ids' do
+      saved.update_columns(country_id: 42, state_id: 7)
+
+      expect(build_for(customer).duplicate_in_address_book).to eq(saved)
+    end
+
+    # A label names the entry, not the place: "Dock A" and "Dock B" at one site
+    # are two entries a company is entitled to keep.
+    it 'does not match an entry filed under a different label' do
+      saved.update!(label: 'Dock A')
+
+      expect(build_for(customer, label: 'Dock B').duplicate_in_address_book).to be_nil
+    end
+
+    it 'matches an entry filed under the same label' do
+      saved.update!(label: 'Dock A')
+
+      expect(build_for(customer, label: 'Dock A').duplicate_in_address_book).to eq(saved)
+    end
+
+    it 'does not match when the request carries metadata the entry lacks' do
+      built = build_for(customer)
+      built.metadata = { 'gate_code' => '1234' }
+
+      expect(built.duplicate_in_address_book).to be_nil
     end
   end
 end

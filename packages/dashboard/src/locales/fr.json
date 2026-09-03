@@ -88,6 +88,14 @@
       "tiered_percent": "Pourcentage par paliers"
     },
     "catalogs": {
+      "actions": {
+        "activate": "Activer",
+        "deactivate": "Désactiver"
+      },
+      "activate_confirm": {
+        "title": "Activer ce catalogue ?",
+        "message": "{{name}} entre en vigueur : son audience verra son assortiment et bénéficiera de ses prix."
+      },
       "add_cta": "Ajouter un catalogue",
       "add_sheet_title": "Nouveau catalogue",
       "assignable_types": {
@@ -97,22 +105,27 @@
       "assignments": {
         "add_cta": "Affecter",
         "add_title": "Affecter ce catalogue",
+        "already_assigned": "Ce public est déjà associé à ce catalogue.",
         "audience_empty": "Rien trouvé",
         "audience_label": "Audience",
         "audience_placeholder": "Rechercher…",
         "company_subtree_help": "L’affectation à une entreprise couvre tout son sous-arbre.",
         "dialog_description": "Qui voit ce catalogue. Une affectation à une entreprise couvre le nœud et tout ce qui se trouve en dessous.",
         "empty": "Affecté à aucune audience — personne ne voit ce catalogue.",
+        "empty_description": "Assignez une entreprise ou un groupe de clients pour définir à qui s’adresse ce catalogue.",
         "remove_confirm": {
           "message": "{{name}} ne verra plus ce catalogue.",
           "title": "Retirer cette affectation ?"
         },
         "title": "Audiences",
-        "type_label": "Type d’audience",
-        "already_assigned": "Ce public est déjà associé à ce catalogue."
+        "type_label": "Type d’audience"
       },
       "create_description": "Un catalogue restreint ce qu’une audience voit et, via une liste de prix, ce qu’elle paie. Ajoutez ensuite produits et audiences.",
       "create_label": "Créer le catalogue",
+      "deactivate_confirm": {
+        "title": "Désactiver ce catalogue ?",
+        "message": "{{name}} cesse de s’appliquer. Son audience revient aux prix boutique et tout le contenu du catalogue est conservé."
+      },
       "delete_confirm": {
         "message": "Cela supprime {{name}} et ses affectations. Les produits et listes de prix ne sont pas affectés.",
         "title": "Supprimer le catalogue ?"
@@ -130,13 +143,35 @@
       "edit_prices_help": "Définissez le prix de chaque produit pour cette audience.",
       "edit_prices_pending_save": "Définissez le prix de chaque produit pour cette audience. Enregistrez d'abord pour fixer le prix des produits que vous venez de modifier.",
       "empty": "Aucun catalogue pour le moment",
+      "errors": {
+        "failed_to_activate": "Impossible d’activer le catalogue",
+        "failed_to_deactivate": "Impossible de désactiver le catalogue"
+      },
       "messages": {
+        "activated": "Catalogue activé",
         "assigned": "Catalogue affecté",
         "created": "Catalogue créé",
+        "deactivated": "Catalogue désactivé",
         "deleted": "Catalogue supprimé",
         "products_imported": "Produits importés",
         "unassigned": "Affectation retirée",
         "updated": "Catalogue mis à jour"
+      },
+      "prices": {
+        "column_price": "Prix",
+        "column_source": "Source",
+        "unpriced": "Aucun prix",
+        "after_save": "Après enregistrement",
+        "source": {
+          "explicit": "Saisi",
+          "automatic": "Ajusté",
+          "base": "Prix boutique"
+        },
+        "source_help": {
+          "explicit": "Un montant saisi dans la liste de prix propre à ce catalogue.",
+          "automatic": "Le prix boutique avec le pourcentage de ce catalogue.",
+          "base": "Le prix boutique normal — ce catalogue ne fixe pas de prix pour ce produit."
+        }
       },
       "products": {
         "add_cta": "Ajouter des produits",
@@ -182,6 +217,43 @@
           "multiple": "Le pas. Avec un multiple de 24, un acheteur commande 24, 48 ou 72 — jamais 30. Les paliers partent du minimum : un minimum de 50 par pas de 24 autorise 50, 74 et 98.",
           "order_minimum": "Le montant minimal d'une commande entière, articles seuls — la livraison et la taxe n'y contribuent pas. Les acheteurs voient ce qu'il leur manque et la commande est refusée en dessous."
         }
+      },
+      "wizard": {
+        "audience_none_warning": "Aucune audience pour l’instant, donc personne ne voit ce catalogue. Vous pouvez en assigner une maintenant ou plus tard.",
+        "description": "Créer un accord : ce qu’il est, à qui il s’adresse et ce qu’il facture.",
+        "fix_this_step": "Corrigez le champ signalé avant de continuer.",
+        "help": {
+          "details": "Nommez cet accord pour le reconnaître plus tard.",
+          "audience": "Qui voit ce catalogue et bénéficie de ses prix.",
+          "products": "Ce que couvre cet accord.",
+          "pricing": "Ce que paient les acheteurs de cet accord.",
+          "review": "Rien n’est créé tant que vous n’avez pas terminé."
+        },
+        "products": {
+          "add": "Ajouter {{name}}",
+          "all_title": "Tous les produits",
+          "chosen_title": "Ce catalogue",
+          "count_one": "{{count}} produit",
+          "count_other": "{{count}} produits",
+          "empty": "Aucun produit",
+          "empty_description": "Choisissez ce que couvre cet accord. Laissez vide pour fixer des prix sans restreindre la visibilité.",
+          "remove": "Retirer {{name}}"
+        },
+        "products_failed": "Le catalogue a été créé, mais ses produits n’ont pas pu être ajoutés. Ajoutez-les depuis la page du catalogue.",
+        "products_none_warning": "Aucun produit pour l’instant. Un catalogue vide fixe des prix sans rien masquer — tous les acheteurs voient encore toute la boutique.",
+        "review": {
+          "everyone": "Tout le monde",
+          "everything": "Toute la boutique",
+          "inactive": "Le catalogue est créé inactif. Activez-le depuis sa page lorsque l’accord est prêt."
+        },
+        "steps": {
+          "details": "Détails",
+          "audience": "Audience",
+          "products": "Produits",
+          "pricing": "Tarification",
+          "review": "Vérification"
+        },
+        "title": "Nouveau catalogue"
       }
     },
     "categories": {
@@ -259,7 +331,7 @@
     "collections": {
       "add_cta": "Nouvelle collection",
       "columns": {
-        "membership": "Composition",
+        "kind": "Type",
         "products_count": "Produits",
         "sort_order": "Tri"
       },
@@ -501,6 +573,12 @@
         "select_calculator": "Sélectionner un calculateur",
         "settings_label": "Paramètres du calculateur"
       },
+      "create_line_items_action_editor": {
+        "description": "Lorsque la promotion est éligible, ces articles sont ajoutés au panier.",
+        "empty": "Aucune variante pour l'instant. Recherchez ci-dessous pour en ajouter une.",
+        "search_placeholder": "Rechercher des variantes par nom ou SKU…",
+        "variant_label": "Ajouter une variante"
+      },
       "custom_fields": {
         "default_resource": "enregistrements",
         "empty_description": "Suivez des détails structurés comme la matière, la coupe ou les instructions d’entretien.",
@@ -723,7 +801,8 @@
         "weight_between": "{{min}}–{{max}} {{unit}}",
         "weight_max": "Moins de {{max}} {{unit}}",
         "weight_min": "À partir de {{min}} {{unit}}"
-      }
+      },
+      "shared_with_sellers_badge": "Partagée avec les vendeurs"
     },
     "delivery_origin_groups": {
       "delete_confirm": {
@@ -1192,6 +1271,10 @@
       "delivery_method": {
         "admin_name": {
           "label": "Nom interne"
+        },
+        "available_to_sellers": {
+          "help": "Permet d'expédier les commandes des vendeurs avec cette méthode. Laissez désactivé si chaque vendeur organise sa propre expédition.",
+          "label": "Disponible pour les vendeurs"
         },
         "calculator": {
           "label": "Calculateur de tarif"
@@ -1992,6 +2075,32 @@
           "help": "Conserver les anciens prix afin d’afficher le prix le plus bas des 30 derniers jours, comme l’exige la réglementation européenne.",
           "label": "Enregistrer l’historique des prix"
         },
+        "payouts": {
+          "title": "Paiements aux vendeurs",
+          "description": "Comment cette marketplace paie les vendeurs qui y vendent.",
+          "provider": {
+            "label": "Payé via",
+            "help": "Qui déplace l’argent. Avec vos propres comptes, vous effectuez les virements et marquez chacun comme payé.",
+            "requires_account": "Les vendeurs doivent créer un compte chez ce prestataire avant d’être payés."
+          },
+          "provider_none": "Vos propres comptes",
+          "provider_unavailable": "Connectez ce prestataire avant de pouvoir payer par son intermédiaire",
+          "schedule": {
+            "label": "Régler les vendeurs",
+            "help": "À quelle fréquence les gains sont regroupés en un paiement. Un vendeur peut avoir son propre rythme."
+          },
+          "schedule_intervals": {
+            "daily": "Chaque jour",
+            "weekly": "Chaque semaine",
+            "biweekly": "Toutes les deux semaines",
+            "monthly": "Chaque mois",
+            "manual": "Uniquement sur votre demande"
+          },
+          "minimum": {
+            "label": "Paiement minimum",
+            "help": "En dessous, le solde du vendeur est reporté à la période suivante. Zéro paie tout ce qui est dû."
+          }
+        },
         "limit_digital_download_count": {
           "help": "Désactivé, les acheteurs peuvent télécharger autant de fois qu'ils le souhaitent.",
           "label": "Limiter le nombre de téléchargements"
@@ -2400,7 +2509,8 @@
       "returns": "Retours",
       "sellers": "Vendeurs",
       "settings": "Paramètres",
-      "transfers": "Transferts"
+      "transfers": "Transferts",
+      "translations": "Traductions"
     },
     "option_types": {
       "columns": {
@@ -2955,7 +3065,7 @@
             "create_title": "Nouvel échange",
             "empty": "Aucun échange pour cette commande.",
             "price_difference": "Différence de prix",
-            "replacement_variant": "ID de la variante de remplacement"
+            "replacement_variant": "Variante de remplacement"
           },
           "no_delivery_method": "Aucune méthode de livraison sélectionnée.",
           "returns": {
@@ -3569,6 +3679,10 @@
             "url": "URL"
           },
           "title": "Webhooks"
+        },
+        "payouts": {
+          "title": "Paiements",
+          "subtitle": "Comment et quand cette marketplace paie ses vendeurs."
         }
       },
       "staff": {
@@ -3600,6 +3714,25 @@
           "roles": "Rôles"
         },
         "title": "Équipe"
+      },
+      "translations": {
+        "complete": "Entièrement traduit",
+        "coverage": "Couverture des traductions",
+        "description": "Voyez quelle part de votre catalogue est traduite et comblez les manques.",
+        "load_error": "Impossible de charger la couverture des traductions.",
+        "no_locales_description": "Ajoutez une langue à l'un de vos marchés pour commencer à traduire.",
+        "no_locales_title": "Pas encore d'autres langues",
+        "progress": "Progression",
+        "record": "Enregistrement",
+        "records": "Enregistrements",
+        "resource_types": {
+          "category": "Catégories",
+          "collection": "Collections",
+          "option_type": "Types d'options",
+          "product": "Produits"
+        },
+        "total": "Total",
+        "translated": "Traduit"
       }
     },
     "payment_methods": {
@@ -4163,6 +4296,11 @@
         "market": {
           "label": "Marchés"
         },
+        "option_value": {
+          "empty": "Aucune valeur d'option correspondante",
+          "label": "Valeurs d'option",
+          "search_placeholder": "Rechercher des valeurs d'option…"
+        },
         "product": {
           "empty": "Aucun produit ne correspond",
           "label": "Produits",
@@ -4584,17 +4722,18 @@
         "store": "Nom de la boutique, fuseau horaire, unités et valeurs régionales",
         "tax_categories": "Classes de taxe attribuées aux produits",
         "tax_rates": "Taux appliqués par marché et région",
-        "webhooks": "Points de terminaison notifiés lors d'événements"
+        "webhooks": "Points de terminaison notifiés lors d'événements",
+        "payouts": "Qui paie vos vendeurs, à quelle fréquence et à partir de quel montant"
       },
       "groups": {
         "audit": "Audit",
         "developer": "Développeur",
         "payments": "Paiements et taxes",
-        "post_sale": "Retours et vendeurs",
         "selling": "Vente",
         "shipping": "Expédition et livraison",
         "store": "Boutique",
-        "team": "Utilisateurs et autorisations"
+        "team": "Utilisateurs et autorisations",
+        "marketplace": "Marketplace"
       },
       "items": {
         "allowed_origins": "Origines autorisées",
@@ -4619,7 +4758,8 @@
         "store": "Boutique",
         "tax_categories": "Catégories de taxe",
         "tax_rates": "Taux de taxe",
-        "webhooks": "Webhooks"
+        "webhooks": "Webhooks",
+        "payouts": "Paiements"
       }
     },
     "setup": {
@@ -4766,6 +4906,18 @@
         "lb": "Livre (lb)",
         "oz": "Once (oz)"
       }
+    },
+    "table_descriptions": {
+      "catalogs": "Ce qu’un groupe d’acheteurs voit et les prix qu’il paie.",
+      "categories": "L’arborescence de navigation par laquelle vos clients parcourent la boutique.",
+      "collections": "Des groupes de produits mis en avant ensemble, choisis à la main ou par règle.",
+      "companies": "Les acheteurs professionnels, leurs équipes et leurs conditions d’achat.",
+      "customer_groups": "Les groupes dans lesquels vous classez vos clients, pour les prix et les promotions.",
+      "delivery_profiles": "Les règles d’expédition d’un produit, appliquées produit par produit.",
+      "options": "Des choix comme la taille ou la couleur qui déclinent un produit en variantes.",
+      "price_lists": "Des prix alternatifs qui s’appliquent quand leurs règles correspondent.",
+      "product_types": "Des modèles qui donnent aux nouveaux produits leurs champs et leurs options.",
+      "stock_transfers": "Le stock qui circule entre vos entrepôts, et ce qui est arrivé."
     },
     "tax_categories": {
       "add_cta": "Ajouter une catégorie de taxe",

@@ -1,5 +1,5 @@
 import { i18n, settingsNav } from '@spree/dashboard-core'
-import { ScrollTextIcon, UsersRoundIcon, WarehouseIcon } from 'lucide-react'
+import { ScrollTextIcon, TruckIcon, UsersRoundIcon, WarehouseIcon } from '@spree/dashboard-ui/icons'
 
 // The panel's settings rail, registered into the same registry the operator's
 // dashboard writes to — so a marketplace adds, removes or reorders entries
@@ -37,6 +37,20 @@ settingsNav.add({
   // The seller-branch subject the API's `/me` serializes. A member without
   // stock permission never sees the entry.
   subject: 'Spree::StockLocation',
+})
+
+// How this seller's goods ship. Beside stock locations because the two are
+// one question asked twice — where the goods are, and how they leave.
+settingsNav.add({
+  key: 'settings.delivery-methods',
+  label: i18n.t('nav.delivery_methods'),
+  path: '/delivery-methods',
+  icon: TruckIcon,
+  group: 'fulfillment',
+  position: 200,
+  // The seller-branch subject the API's `/me` serializes. A member without
+  // delivery permission never sees the entry.
+  subject: 'Spree::DeliveryMethod',
 })
 
 // Who runs this seller. Under settings rather than in the main rail, matching

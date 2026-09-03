@@ -15,12 +15,26 @@ module Spree
                    calculator_type: [:string, nullable: true],
                    calculator_preferences: ['Record<string, unknown>', nullable: true],
                    markup_flat: [:string, nullable: true],
-                   markup_percent: [:string, nullable: true]
+                   markup_percent: [:string, nullable: true],
+                   available_to_sellers: :boolean,
+                   seller_id: [:string, nullable: true],
+                   seller_name: [:string, nullable: true]
 
           attributes :admin_name, :fulfillment_provider, :pickup_point_provider,
                      :rate_provider, :storefront_visible, :tracking_url,
-                     :markup_flat, :markup_percent,
+                     :markup_flat, :markup_percent, :available_to_sellers,
                      created_at: :iso8601, updated_at: :iso8601, deleted_at: :iso8601
+
+          # Which seller runs this method, so the operator's list can say
+          # whose it is. Null is the marketplace's own
+          # (docs/plans/6.0-multi-vendor-marketplace.md, Decision 13).
+          attribute :seller_id do |record|
+            record.seller&.prefixed_id
+          end
+
+          attribute :seller_name do |record|
+            record.seller&.name
+          end
 
           many :services, resource: proc { Spree.api.admin_delivery_method_service_serializer }
 

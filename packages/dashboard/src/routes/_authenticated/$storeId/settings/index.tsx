@@ -9,8 +9,8 @@ import {
   useSettingsNav,
 } from '@spree/dashboard-core'
 import { Card, SearchInput } from '@spree/dashboard-ui'
+import { PackageIcon } from '@spree/dashboard-ui/icons'
 import { createFileRoute, Link } from '@tanstack/react-router'
-import { PackageIcon } from 'lucide-react'
 import { useMemo, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 

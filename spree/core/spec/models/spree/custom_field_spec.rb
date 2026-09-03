@@ -135,6 +135,55 @@ RSpec.describe Spree::CustomField, type: :model do
     end
   end
 
+  # The last gate every write path passes through. `custom_fields=` resolves
+  # the definition through the store, but Rails' own nested-attributes writer
+  # assigns the id straight onto the row and reaches nothing else.
+  describe 'store agreement validation' do
+    let(:product) { create(:product) }
+
+    it 'rejects a definition owned by another store' do
+      foreign = create(:custom_field_definition, store: create(:store), resource_type: 'Spree::Product')
+      custom_field = build(:custom_field, resource: product, custom_field_definition: foreign)
+
+      expect(custom_field).not_to be_valid
+      expect(custom_field.errors[:custom_field_definition]).to include('must belong to the same store')
+    end
+
+    it 'accepts a definition owned by the resource store' do
+      own = create(:custom_field_definition, store: product.store, resource_type: 'Spree::Product')
+      custom_field = build(:custom_field, resource: product, custom_field_definition: own, value: 'x')
+
+      expect(custom_field).to be_valid
+    end
+
+    it 'refuses one assigned through nested attributes' do
+      foreign = create(:custom_field_definition, store: create(:store), resource_type: 'Spree::Product')
+
+      product.custom_fields_attributes = [{ custom_field_definition_id: foreign.id, value: 'x' }]
+
+      expect(product).not_to be_valid
+    end
+
+    it 'refuses a foreign definition on a variant, which belongs to its product store' do
+      variant = create(:variant, product: product)
+      foreign = create(:custom_field_definition, store: create(:store), resource_type: 'Spree::Variant', key: 'vk')
+      custom_field = build(:custom_field, resource: variant, custom_field_definition: foreign, value: 'x')
+
+      expect(custom_field).not_to be_valid
+      expect(custom_field.errors[:custom_field_definition]).to include('must belong to the same store')
+    end
+
+    # A customer is global, so there is no store to compare against — and the
+    # definition it was given was resolved within one already.
+    it 'leaves a resource without a store of its own alone' do
+      customer = create(:user)
+      definition = create(:custom_field_definition, :for_user, store: create(:store))
+      custom_field = build(:custom_field, resource: customer, custom_field_definition: definition, value: 'x')
+
+      expect(custom_field).to be_valid
+    end
+  end
+
   describe 'deprecated definition writer' do
     it 'assigns through metafield_definition=' do
       definition = create(:custom_field_definition)

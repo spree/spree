@@ -3,7 +3,7 @@ import type { Store } from '@spree/admin-sdk'
 // re-renders on language change — see app-sidebar.tsx for resolution.
 import { hasVisibleSettingsEntries, nav, Subject } from '@spree/dashboard-core'
 import {
-  BarChart3Icon,
+  AnalyticsIcon,
   HomeIcon,
   InboxIcon,
   MapIcon,
@@ -12,7 +12,7 @@ import {
   StoreIcon,
   TagIcon,
   UsersIcon,
-} from 'lucide-react'
+} from '@spree/dashboard-ui/icons'
 import { GettingStartedNavBadge } from '../components/spree/getting-started-nav-badge'
 import {
   ClaimsNavBadge,
@@ -141,6 +141,13 @@ nav.add({
       position: 450,
     },
     {
+      key: 'products.translations',
+      labelKey: 'admin.nav.translations',
+      path: '/products/translations',
+      subject: Subject.Product,
+      position: 475,
+    },
+    {
       key: 'products.transfers',
       labelKey: 'admin.nav.transfers',
       path: '/products/transfers',
@@ -208,7 +215,7 @@ nav.add({
   key: 'reports',
   labelKey: 'admin.nav.reports',
   path: '/reports',
-  icon: BarChart3Icon,
+  icon: AnalyticsIcon,
   position: 600,
 })
 

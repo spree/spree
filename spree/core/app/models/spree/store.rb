@@ -76,6 +76,25 @@ module Spree
     # same reason as auto_approve_sellers: what the marketplace lists is what
     # it vouches for.
     preference :auto_approve_seller_products, :boolean, default: false
+    # Who pays this store's sellers. Blank means core's record-only provider,
+    # so a marketplace that has connected nothing still keeps a correct ledger
+    # and settles by hand.
+    preference :payout_provider, :string, default: nil
+    # Refused at write time rather than silently falling back at read time: an
+    # operator who mistypes a provider would otherwise get a bookkeeping-only
+    # ledger and no indication anywhere that their choice was ignored.
+    validates :preferred_payout_provider,
+              inclusion: { in: ->(_store) { Spree.payout_providers.map(&:to_s) } }, allow_blank: true
+    # How often sellers are settled, unless one carries its own schedule.
+    # Monthly by default because it is the interval that needs least of an
+    # operator paying by hand, which is what the built-in provider expects.
+    preference :default_payouts_schedule_interval, :string, default: 'monthly'
+    validates :preferred_default_payouts_schedule_interval,
+              inclusion: { in: Spree::Seller::PAYOUT_INTERVALS }, allow_blank: true
+    # What a seller's balance must reach before a settlement is worth sending;
+    # below it the balance carries to the next period. Zero pays whatever is
+    # owed, which is right for a provider that moves money for free.
+    preference :default_minimum_payout_amount, :decimal, default: 0
     # Checkout preferences
     # Store-level fallback for the channel-owned `guest_checkout` preference
     # (see Spree::Channel::Gating). Retained so existing accessors keep working.
@@ -183,6 +202,11 @@ module Spree
     # restrict, not destroy — a type in use is refused deletion, so wiping a
     # store's types out from under its products would contradict that guard.
     has_many :product_types, class_name: 'Spree::ProductType', dependent: :restrict_with_error
+
+    # The store's custom-field schema. Destroying a definition takes its values
+    # with it, which is a large fan-out on a busy store, so it runs in a job.
+    has_many :custom_field_definitions, class_name: 'Spree::CustomFieldDefinition',
+             inverse_of: :store, dependent: :destroy_async
 
     # @deprecated Use #categories; removed in 6.1.
     def taxons
@@ -380,6 +404,50 @@ module Spree
 
     def unique_name
       @unique_name ||= "#{name} (#{code})"
+    end
+
+    # Who pays this store's sellers, ready to be asked.
+    #
+    # Who moves money to this store's sellers.
+    #
+    # Memoized per record, and cleared on reload — `reload` leaves plain
+    # instance variables alone, so without that a provider holding its own
+    # cache (Stripe's account lookups do) would answer from a snapshot taken
+    # arbitrarily long ago, and an operator changing the setting would not be
+    # picked up by a store object already in hand.
+    #
+    # @return [Spree::PayoutProvider::Base]
+    def payout_provider_instance
+      resolved = payout_provider_class
+      # Keyed by the class it was built from, so changing the setting on a
+      # store already in hand cannot keep answering with the old provider —
+      # which would route real money through whoever was configured before.
+      if @payout_provider_instance.nil? || @payout_provider_instance.class != resolved
+        @payout_provider_instance = resolved.new
+      end
+
+      @payout_provider_instance
+    end
+
+    def reload(*)
+      @payout_provider_instance = nil
+      super
+    end
+
+    # The class alone, for the questions that are about the provider rather
+    # than about a movement — there is no need to build one to ask what it
+    # requires.
+    #
+    # @return [Class]
+    def payout_provider_class
+      configured = preferred_payout_provider.presence
+      # A name no longer in the registry — a typo, or a gem since removed —
+      # would otherwise raise inside a subscriber on every fulfillment and stop
+      # the ledger recording anything. The built-in provider keeps the books
+      # until an operator fixes the setting.
+      configured = nil unless Spree.payout_providers.any? { |provider| provider.to_s == configured }
+
+      (configured || Spree.default_payout_provider.to_s).constantize
     end
 
     def formatted_url

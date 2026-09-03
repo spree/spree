@@ -1,10 +1,12 @@
 import type { Order, Return, ReturnLineItem } from '@spree/admin-sdk'
+import { currencyParts, useStore } from '@spree/dashboard-core'
 import {
   Badge,
   Button,
   Card,
   CardAction,
   CardContent,
+  CardFooter,
   CardHeader,
   CardTitle,
   Dialog,
@@ -21,6 +23,10 @@ import {
   Field,
   FieldLabel,
   Input,
+  InputGroup,
+  InputGroupAddon,
+  InputGroupInput,
+  InputGroupText,
   Select,
   SelectContent,
   SelectItem,
@@ -38,7 +44,8 @@ import {
   PlusIcon,
   RotateCcwIcon,
   XCircleIcon,
-} from 'lucide-react'
+} from '@spree/dashboard-ui/icons'
+import i18n from 'i18next'
 import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useOrderReturns, useReturnActions } from '../../hooks/use-returns'
@@ -110,80 +117,82 @@ export function OrderReturnsCard({ order }: { order: Order }) {
             </p>
           )}
           {returns.map((returnRecord) => (
-            <div key={returnRecord.id} className="rounded-lg border p-4 flex flex-col gap-3">
-              <div className="flex items-center justify-between">
-                <div className="flex items-center gap-2">
+            <Card key={returnRecord.id} variant="nested">
+              <CardHeader>
+                <CardTitle className="text-sm font-medium">
                   <StatusBadge status={returnRecord.status} />
                   <span className="text-sm font-medium">{returnRecord.number}</span>
-                </div>
+                </CardTitle>
 
                 {RETURN_ACTIONABLE.includes(returnRecord.status) && (
-                  <DropdownMenu>
-                    <DropdownMenuTrigger asChild>
-                      <Button variant="ghost" size="icon-xs">
-                        <EllipsisVerticalIcon className="size-4" />
-                        <span className="sr-only">{t('admin.actions.actions_menu')}</span>
-                      </Button>
-                    </DropdownMenuTrigger>
-                    <DropdownMenuContent align="end">
-                      {returnRecord.status === 'requested' && (
-                        <DropdownMenuItem onClick={() => approve.mutate(returnRecord.id)}>
-                          <CheckCircleIcon className="size-4" />
-                          {t('admin.pages.orders.detail.returns.actions.approve')}
-                        </DropdownMenuItem>
-                      )}
-                      {returnRecord.status === 'approved' && (
-                        <DropdownMenuItem onClick={() => setReceiving(returnRecord)}>
-                          <PackageCheckIcon className="size-4" />
-                          {t('admin.pages.orders.detail.returns.actions.receive')}
-                        </DropdownMenuItem>
-                      )}
-                      {returnRecord.status === 'received' && (
-                        <DropdownMenuItem onClick={() => setRefunding(returnRecord)}>
-                          <BanknoteIcon className="size-4" />
-                          {t('admin.pages.orders.detail.returns.actions.refund')}
-                        </DropdownMenuItem>
-                      )}
-                      {['requested', 'approved'].includes(returnRecord.status) && (
-                        <>
-                          <DropdownMenuSeparator />
-                          <DropdownMenuItem
-                            variant="destructive"
-                            onClick={async () => {
-                              if (
-                                await confirm({
-                                  message: t('admin.pages.orders.detail.returns.confirm.cancel'),
-                                  variant: 'destructive',
-                                  confirmLabel: t('admin.actions.cancel'),
-                                })
-                              ) {
-                                cancel.mutate({ returnId: returnRecord.id })
-                              }
-                            }}
-                          >
-                            <XCircleIcon className="size-4" />
-                            {t('admin.actions.cancel')}
+                  <CardAction>
+                    <DropdownMenu>
+                      <DropdownMenuTrigger asChild>
+                        <Button variant="ghost" size="icon-xs">
+                          <EllipsisVerticalIcon className="size-4" />
+                          <span className="sr-only">{t('admin.actions.actions_menu')}</span>
+                        </Button>
+                      </DropdownMenuTrigger>
+                      <DropdownMenuContent align="end">
+                        {returnRecord.status === 'requested' && (
+                          <DropdownMenuItem onClick={() => approve.mutate(returnRecord.id)}>
+                            <CheckCircleIcon className="size-4" />
+                            {t('admin.pages.orders.detail.returns.actions.approve')}
                           </DropdownMenuItem>
-                        </>
-                      )}
-                    </DropdownMenuContent>
-                  </DropdownMenu>
+                        )}
+                        {returnRecord.status === 'approved' && (
+                          <DropdownMenuItem onClick={() => setReceiving(returnRecord)}>
+                            <PackageCheckIcon className="size-4" />
+                            {t('admin.pages.orders.detail.returns.actions.receive')}
+                          </DropdownMenuItem>
+                        )}
+                        {returnRecord.status === 'received' && (
+                          <DropdownMenuItem onClick={() => setRefunding(returnRecord)}>
+                            <BanknoteIcon className="size-4" />
+                            {t('admin.pages.orders.detail.returns.actions.refund')}
+                          </DropdownMenuItem>
+                        )}
+                        {['requested', 'approved'].includes(returnRecord.status) && (
+                          <>
+                            <DropdownMenuSeparator />
+                            <DropdownMenuItem
+                              variant="destructive"
+                              onClick={async () => {
+                                if (
+                                  await confirm({
+                                    message: t('admin.pages.orders.detail.returns.confirm.cancel'),
+                                    variant: 'destructive',
+                                    confirmLabel: t('admin.actions.cancel'),
+                                  })
+                                ) {
+                                  cancel.mutate({ returnId: returnRecord.id })
+                                }
+                              }}
+                            >
+                              <XCircleIcon className="size-4" />
+                              {t('admin.actions.cancel')}
+                            </DropdownMenuItem>
+                          </>
+                        )}
+                      </DropdownMenuContent>
+                    </DropdownMenu>
+                  </CardAction>
                 )}
-              </div>
+              </CardHeader>
 
-              <div className="flex flex-col gap-1.5">
+              <CardContent className="flex flex-col gap-1.5">
                 {(returnRecord.return_line_items ?? []).map((line) => (
                   <ReturnLineRow key={line.id} line={line} status={returnRecord.status} />
                 ))}
-              </div>
+              </CardContent>
 
-              <div className="flex items-center justify-between text-sm border-t pt-3">
+              <CardFooter className="justify-between text-sm">
                 <span className="text-muted-foreground">
                   {t('admin.pages.orders.detail.returns.refund_total')}
                 </span>
                 <span className="font-medium">{returnRecord.display_refund_total}</span>
-              </div>
-            </div>
+              </CardFooter>
+            </Card>
           ))}
         </CardContent>
       </Card>
@@ -280,10 +289,10 @@ function ReceiveDialog({
         </DialogHeader>
         <DialogBody className="flex flex-col gap-4">
           {lines.map((line) => (
-            <div key={line.id} className="flex flex-col gap-2 rounded-lg border p-3">
+            <div key={line.id} className="flex flex-col gap-3">
               <span className="text-sm font-medium">{variantLabel(line)}</span>
-              <div className="flex items-center gap-4">
-                <Field className="flex-1">
+              <div className="flex flex-col gap-3">
+                <Field>
                   <FieldLabel htmlFor={`qty-${line.id}`}>
                     {t('admin.pages.orders.detail.returns.received_quantity')}
                   </FieldLabel>
@@ -363,6 +372,8 @@ function RefundDialog({
     'original_payment',
   )
   const [amount, setAmount] = useState(returnRecord.refundable_total)
+  const { defaultCurrency } = useStore()
+  const { symbol: currencySymbol } = currencyParts(defaultCurrency, i18n.language)
 
   const methodOptions = [
     {
@@ -386,11 +397,19 @@ function RefundDialog({
             <FieldLabel htmlFor="refund-amount">
               {t('admin.pages.orders.detail.returns.refund_amount')}
             </FieldLabel>
-            <Input
-              id="refund-amount"
-              value={amount}
-              onChange={(event) => setAmount(event.target.value)}
-            />
+            <InputGroup>
+              <InputGroupAddon>
+                <InputGroupText>{currencySymbol}</InputGroupText>
+              </InputGroupAddon>
+              <InputGroupInput
+                id="refund-amount"
+                type="number"
+                step="0.01"
+                min="0"
+                value={amount}
+                onChange={(event) => setAmount(event.target.value)}
+              />
+            </InputGroup>
           </Field>
           <Field>
             <FieldLabel htmlFor="refund-method">

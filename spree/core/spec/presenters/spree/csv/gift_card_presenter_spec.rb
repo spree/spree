@@ -14,7 +14,7 @@ RSpec.describe Spree::CSV::GiftCardPresenter, type: :model do
            user: user,
            store: store)
   end
-  let(:presenter) { described_class.new(gift_card) }
+  let(:presenter) { described_class.new(gift_card, store) }
 
   describe '#call' do
     subject { presenter.call }
@@ -88,7 +88,7 @@ RSpec.describe Spree::CSV::GiftCardPresenter, type: :model do
 
     context 'when gift card has no custom_field value' do
       let(:gift_card_without_custom_field) { create(:gift_card, store: store) }
-      let(:presenter) { described_class.new(gift_card_without_custom_field) }
+      let(:presenter) { described_class.new(gift_card_without_custom_field, store) }
 
       it 'returns nil for custom_field' do
         result = presenter.call

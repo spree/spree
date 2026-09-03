@@ -1,11 +1,13 @@
 import type { DeliveryProfile } from '@spree/admin-sdk'
 import { defineTable } from '@spree/dashboard-core'
 import { Badge, ResourceNameCell } from '@spree/dashboard-ui'
+import { TruckIcon } from '@spree/dashboard-ui/icons'
 import i18n from 'i18next'
-import { TruckIcon } from 'lucide-react'
 
 defineTable<DeliveryProfile>('delivery-profiles', {
   title: i18n.t('admin.settings_nav.items.delivery_profiles'),
+  description: i18n.t('admin.table_descriptions.delivery_profiles'),
+  docsPath: 'settings/shipping-methods',
   searchParam: 'name_cont',
   searchPlaceholder: i18n.t('admin.delivery_profiles.search_placeholder'),
   defaultSort: { field: 'position', direction: 'asc' },

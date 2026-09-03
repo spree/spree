@@ -275,6 +275,21 @@ steps:
       with one statement scoped to the rows still missing a code, so an
       interrupted run picks up where it stopped.
 
+  - id: migrate_promotion_option_value_rules
+    name: "Rewrite Option Value promotion rules to stable option value ids"
+    task: "spree:upgrade:migrate_promotion_option_value_rules"
+    notes: |
+      Spree 6.0 stores Option Value promotion rules against Spree::OptionValue
+      ids. Upgrades from 5.6 may still carry join-row ids from
+      spree_option_value_variants in the eligible_values preference — those
+      rows shift whenever variants are reconfigured, so a saved rule can start
+      matching different SKUs without warning.
+
+      Rewrites each rule's eligible_values array in place, mapping legacy
+      join-row ids to their option_value_id and leaving rows that already
+      name an option value untouched. Idempotent — re-running is a no-op once
+      every value resolves to an option value id.
+
   - id: migrate_adjustments_to_typed_rows
     name: "Convert adjustments to typed rows"
     task: "spree:migrate_adjustments_to_typed_rows"
@@ -563,3 +578,28 @@ steps:
       store, and their seller_id column is new for everyone.
 
       Idempotent — imports that already carry a store are skipped.
+
+  - id: backfill_custom_field_definition_stores
+    name: "Bind custom field definitions to the default store"
+    task: "spree:upgrade:backfill_custom_field_definition_stores"
+    notes: |
+      Custom field definitions are store-owned in Spree 6.0, and their
+      sort/filter identifier is now a real column rather than a value computed
+      on every read. The migration backfills both and enforces NOT NULL, so
+      this is a safety net for installs whose migration ran before any store
+      existed.
+
+      Until this runs, a definition without a store is invisible to every
+      scoped query — the admin list, the CSV export's header row, and the
+      product listing's custom-field sorts and filters all read through the
+      store.
+
+      A multi-store install ends up with every definition on the default
+      store. Fields wanted on another store are re-created there; nothing is
+      copied automatically, because the values still point at the originals
+      and the copies would render blank either way.
+
+      Reports and skips any definition whose namespace/key pair flattens to a
+      filter_key another row in the same store already owns — only one of them
+      can be addressed as a sort or filter param. Rename one and re-run.
+      Idempotent.

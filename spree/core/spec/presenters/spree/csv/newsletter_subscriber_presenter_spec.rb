@@ -1,6 +1,8 @@
 require 'spec_helper'
 
 RSpec.describe Spree::CSV::NewsletterSubscriberPresenter do
+  let(:store) { @default_store }
+
   let(:user) do
     create(
       :user,
@@ -22,7 +24,7 @@ RSpec.describe Spree::CSV::NewsletterSubscriberPresenter do
     )
   end
 
-  let(:presenter) { described_class.new(newsletter_subscriber) }
+  let(:presenter) { described_class.new(newsletter_subscriber, store) }
 
   describe '#call' do
     subject(:row) { presenter.call }
@@ -103,7 +105,7 @@ RSpec.describe Spree::CSV::NewsletterSubscriberPresenter do
         create(:newsletter_subscriber,
                email: 'nofield@example.com')
       end
-      let(:presenter) { described_class.new(subscriber_without_custom_field) }
+      let(:presenter) { described_class.new(subscriber_without_custom_field, store) }
 
       it 'returns nil for custom_field' do
         result = presenter.call

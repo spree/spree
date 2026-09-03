@@ -107,7 +107,7 @@ RSpec.describe Spree::Storefront::AccessPolicy, type: :model do
     it 'fails closed for records with no customer_id column' do
       # WishedItem has no ownership column — it is authorized through its
       # parent wishlist, never directly. The bare policy denies it.
-      item = build(:wished_item)
+      item = build(:wishlist_item)
       expect(item).not_to respond_to(:customer_id)
       expect(policy.readable?(item)).to be false
     end

@@ -16,7 +16,7 @@ import {
   TableRow,
   useConfirm,
 } from '@spree/dashboard-ui'
-import { MailIcon, RotateCcwIcon } from 'lucide-react'
+import { MailIcon, RotateCcwIcon } from '@spree/dashboard-ui/icons'
 import { useTranslation } from 'react-i18next'
 import { useResendDigitalLinks, useResetDigitalLink } from '../../hooks/use-digital-assets'
 

@@ -1,7 +1,7 @@
 import {
   Button,
-  CardTitle,
   Checkbox,
+  cn,
   DropdownMenu,
   DropdownMenuCheckboxItem,
   DropdownMenuContent,
@@ -25,7 +25,6 @@ import {
   TooltipContent,
   TooltipTrigger,
 } from '@spree/dashboard-ui'
-import { useQuery } from '@tanstack/react-query'
 import {
   ArrowUpDownIcon,
   CheckIcon,
@@ -34,7 +33,8 @@ import {
   Columns3Icon,
   ListFilter,
   XIcon,
-} from 'lucide-react'
+} from '@spree/dashboard-ui/icons'
+import { useQuery } from '@tanstack/react-query'
 import { useCallback, useDeferredValue, useMemo, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { getApiClient } from '../api-client'
@@ -54,6 +54,7 @@ import {
 } from '../lib/table-registry'
 import { useOptionalStore } from '../providers/store-provider'
 import { useTenantId } from '../providers/tenant-provider'
+import { SectionHeading } from './section-heading'
 import { StoreDatePicker } from './store-date-picker'
 
 interface TableToolbarProps {
@@ -72,6 +73,10 @@ interface TableToolbarProps {
   allColumns?: ColumnDef[]
   /** Title displayed in the toolbar header */
   title?: string
+  /** One line under the title saying what the list is for. */
+  description?: string
+  /** Documentation for the feature, linked at the end of the description. */
+  docsPath?: string
   actions?: React.ReactNode
   /** Hide the sort dropdown — used when the table is drag-reorderable, where free sorting would defeat the drag. */
   hideSort?: boolean
@@ -176,6 +181,8 @@ export function TableToolbar({
   onFiltersChange,
   allColumns,
   title,
+  description,
+  docsPath,
   actions,
   hideSort = false,
 }: TableToolbarProps) {
@@ -253,8 +260,15 @@ export function TableToolbar({
       {/* Title and page actions only. Every control that acts on the list —
           search, filters, sort, columns — lives on the row below, so the two
           rows split by what they are for rather than by how they are built. */}
-      <div className="flex flex-row items-center gap-2 border-b border-border-subtle p-3 pl-4 lg:justify-between">
-        {title && <CardTitle className="min-w-0 truncate text-lg">{title}</CardTitle>}
+      <div
+        className={cn(
+          'flex flex-row gap-2 border-b border-border-subtle p-3 pl-4 lg:justify-between',
+          description ? 'items-start' : 'items-center',
+        )}
+      >
+        {(title || description) && (
+          <SectionHeading title={title} description={description} docsPath={docsPath} />
+        )}
         <div className="ml-auto flex shrink-0 items-center gap-2">{actions}</div>
       </div>
 
@@ -641,16 +655,17 @@ function QuickEnumFilter({
 }) {
   const { t } = useTranslation()
   // A boolean column carries no `filterOptions` — its two values are fixed, so
-  // the control supplies them rather than every such column restating them.
+  // the control supplies them. `booleanLabels` names them where the domain has
+  // better words than Yes and No.
   const options = useMemo(
     () =>
       column.filterType === 'boolean'
         ? [
-            { value: 'true', label: t('admin.common.yes') },
-            { value: 'false', label: t('admin.common.no') },
+            { value: 'true', label: column.booleanLabels?.true ?? t('admin.common.yes') },
+            { value: 'false', label: column.booleanLabels?.false ?? t('admin.common.no') },
           ]
         : (column.filterOptions ?? []),
-    [column.filterType, column.filterOptions, t],
+    [column.filterType, column.filterOptions, column.booleanLabels, t],
   )
   const existing = filters.find((f) => f.field === column.key && f.operator === 'in')
 
@@ -1182,14 +1197,14 @@ function FilterPanel({
     const options =
       type === 'boolean'
         ? [
-            { value: 'true', label: t('admin.common.yes') },
-            { value: 'false', label: t('admin.common.no') },
+            { value: 'true', label: column?.booleanLabels?.true ?? t('admin.common.yes') },
+            { value: 'false', label: column?.booleanLabels?.false ?? t('admin.common.no') },
           ]
         : (column?.filterOptions ?? [])
     if (!query.trim()) return options
     const needle = query.trim().toLowerCase()
     return options.filter((o) => o.label.toLowerCase().includes(needle))
-  }, [type, column?.filterOptions, query, t])
+  }, [type, column?.filterOptions, column?.booleanLabels, query, t])
 
   const visibleFields = useMemo(() => {
     if (!query.trim()) return columns

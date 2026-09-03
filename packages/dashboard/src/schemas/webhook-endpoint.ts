@@ -252,12 +252,12 @@ export const WEBHOOK_EVENT_GROUPS: readonly WebhookEventGroup[] = [
   {
     labelKey: 'admin.pages.settings.webhooks.event_groups.wishlist',
     events: [
-      'wished_item.created',
-      'wished_item.deleted',
-      'wished_item.updated',
       'wishlist.created',
       'wishlist.deleted',
       'wishlist.updated',
+      'wishlist_item.created',
+      'wishlist_item.deleted',
+      'wishlist_item.updated',
     ],
   },
 ]

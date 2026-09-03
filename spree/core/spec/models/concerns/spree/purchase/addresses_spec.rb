@@ -50,6 +50,68 @@ RSpec.shared_examples 'an addresses host' do
 
       expect(user.ship_address).to be_nil
     end
+
+    # Reuse means "an address this buyer already owns". A guest owns none, so
+    # the ownerless rows around them — other guests' cart addresses, and the
+    # snapshots placed orders keep — must stay out of reach.
+    context 'on a guest record' do
+      it 'writes its own row rather than reusing an ownerless one' do
+        ownerless = Spree::Address.create!(address_attributes)
+
+        guest_record.ship_address_attributes = address_attributes
+
+        expect(guest_record.ship_address).to be_persisted
+        expect(guest_record.ship_address.id).not_to eq(ownerless.id)
+      end
+
+      it 'ignores an id naming an ownerless address it does not hold' do
+        ownerless = Spree::Address.create!(address_attributes)
+
+        guest_record.ship_address_attributes = { id: ownerless.id, first_name: 'Renamed' }
+
+        expect(guest_record.ship_address.id).not_to eq(ownerless.id)
+        expect(ownerless.reload.first_name).not_to eq('Renamed')
+      end
+
+      # The row already in the slot is the one address a guest owns, so a
+      # correction edits it rather than leaving it behind carrying someone's
+      # name and street.
+      it 'edits the row already in the slot' do
+        guest_record.update!(ship_address_attributes: address_attributes)
+        own = guest_record.ship_address
+
+        expect do
+          guest_record.update!(ship_address_attributes: address_attributes.merge(address1: '2 Other Street'))
+        end.not_to change(Spree::Address, :count)
+
+        expect(guest_record.ship_address.id).to eq(own.id)
+        expect(own.reload.address1).to eq('2 Other Street')
+      end
+
+      it 'accepts a partial payload naming the row it holds' do
+        guest_record.update!(ship_address_attributes: address_attributes)
+        own = guest_record.ship_address
+
+        expect(guest_record.update(ship_address_attributes: { id: own.id, zipcode: '10118' })).to be(true)
+        expect(own.reload.zipcode).to eq('10118')
+        expect(own.reload.address1).to eq(address_attributes[:address1])
+      end
+
+      # use_shipping points both slots at one row; editing it for billing
+      # would move the parcel as well as the invoice.
+      it 'does not edit a row the other slot points at too' do
+        guest_record.update!(ship_address_attributes: address_attributes)
+        guest_record.update!(use_shipping: true)
+        shared = guest_record.reload.ship_address
+        expect(guest_record.bill_address_id).to eq(shared.id)
+
+        guest_record.use_shipping = false
+        guest_record.update!(bill_address_attributes: address_attributes.merge(address1: '2 Other Street'))
+
+        expect(guest_record.bill_address.id).not_to eq(shared.id)
+        expect(shared.reload.address1).to eq(address_attributes[:address1])
+      end
+    end
   end
 
   describe '#bill_address_attributes=' do
@@ -279,9 +341,9 @@ RSpec.shared_examples 'an addresses host' do
       expect(
         record.update(
           bill_address_attributes: {
-            firstname: 'New name',
+            first_name: 'New name',
             **address.attributes.except(
-              'firstname', 'created_at', 'updated_at', 'deleted_at', 'quick_checkout',
+              'first_name', 'created_at', 'updated_at', 'deleted_at', 'quick_checkout',
               'metadata', 'latitude', 'longitude', 'preferences'
             )
           }
@@ -289,7 +351,7 @@ RSpec.shared_examples 'an addresses host' do
       ).to be_truthy
 
       expect(record.bill_address_id).not_to eq address.id
-      expect(record.bill_address.firstname).to eq 'New name'
+      expect(record.bill_address.first_name).to eq 'New name'
     end
   end
 end

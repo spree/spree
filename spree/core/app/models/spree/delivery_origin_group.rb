@@ -44,6 +44,12 @@ module Spree
     def covers_location?(stock_location)
       return false if stock_location.nil?
       return true if member_stock_location_ids.empty?
+      # A narrowed group names which of the *operator's* warehouses ship this
+      # kind of goods ("pallets go out of Warehouse B"), and says nothing
+      # about where a seller keeps stock. Reading it as a store-wide allowlist
+      # would make every seller's inventory unallocatable
+      # (docs/plans/6.0-multi-vendor-marketplace.md, Decision 13).
+      return true if stock_location.seller_id.present?
 
       member_stock_location_ids.include?(stock_location.id)
     end

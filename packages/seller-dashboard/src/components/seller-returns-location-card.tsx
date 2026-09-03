@@ -11,10 +11,10 @@ import {
   StatusBadge,
   toastManager,
 } from '@spree/dashboard-ui'
+import { PencilIcon, PlusIcon } from '@spree/dashboard-ui/icons'
 import type { StockLocation, StockLocationParams } from '@spree/seller-sdk'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { useParams } from '@tanstack/react-router'
-import { PencilIcon, PlusIcon } from 'lucide-react'
 import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { sellerClient } from '../api-client'

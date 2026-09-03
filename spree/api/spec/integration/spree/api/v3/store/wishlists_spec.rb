@@ -8,7 +8,7 @@ RSpec.describe 'Wishlists API', type: :request, swagger_doc: 'api-reference/stor
   let!(:wishlist) { create(:wishlist, customer: user, store: store, name: 'My Wishlist') }
   let!(:product) { create(:product) }
   let!(:variant) { product.default_variant }
-  let!(:wished_item) { create(:wished_item, wishlist: wishlist, variant: variant) }
+  let!(:wishlist_item) { create(:wishlist_item, wishlist: wishlist, variant: variant) }
 
   path '/api/v3/store/wishlists' do
     get 'List wishlists' do
@@ -244,7 +244,7 @@ RSpec.describe 'Wishlists API', type: :request, swagger_doc: 'api-reference/stor
         let(:'x-spree-api-key') { api_key.token }
         let(:'Authorization') { "Bearer #{jwt_token}" }
         let(:wishlist_id) { wishlist.to_param }
-        let(:id) { wished_item.to_param }
+        let(:id) { wishlist_item.to_param }
 
         run_test!
       end

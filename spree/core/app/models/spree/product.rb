@@ -14,6 +14,8 @@
 
 module Spree
   class Product < Spree.base_class
+    include Spree::CSV::CustomFieldsHelper
+
     has_prefix_id :prod # Stripe: prod_
 
     acts_as_paranoid
@@ -273,12 +275,16 @@ module Spree
                         where("#{Spree::Price.table_name}.compare_at_amount > #{Spree::Price.table_name}.amount")
                     }
 
-    scope :search, ->(query) {
+    # @param store [Spree::Store] whose custom-field definitions take part in
+    #   the search. Definitions are store-owned, so the caller says which store
+    #   is searching; `Spree::Current.store` is the request's answer and a
+    #   background caller (an export, say) passes its own.
+    scope :search, ->(query, store = Spree::Current.store) {
       next none if query.blank?
 
       product_ids = Spree::Variant.search_by_product_name_or_sku(query).pluck(:product_id)
 
-      searchable_definitions = Spree::CustomFieldDefinition.
+      searchable_definitions = store.custom_field_definitions.
                                for_resource_type('Spree::Product').
                                searchable
 
@@ -446,6 +452,17 @@ module Spree
       @buy_box_variants[key] = Spree::Dependencies.product_buy_box_service.constantize.call(
         product: self, currency: currency, option_value_ids: option_value_ids
       ).value
+    end
+
+    # The variant this product leads with in a currency: the buy-box winner,
+    # else the default. One definition, because a caller that prices a page and
+    # a caller that preloads for it must land on the same variant — otherwise
+    # the preload misses and every row falls back to a query of its own.
+    #
+    # @param currency [String, nil]
+    # @return [Spree::Variant, nil]
+    def featured_variant(currency: nil)
+      buy_box_variant(currency: currency) || default_variant
     end
 
     # Availability asks whether *anyone who is selling today* has this on the
@@ -788,9 +805,10 @@ module Spree
                            else
                              []
                            end
-      custom_fields_for_csv ||= Spree::CustomFieldDefinition.for_resource_type('Spree::Product').order(:namespace, :key).map do |mf_def|
-        custom_fields.find { |mf| mf.custom_field_definition_id == mf_def.id }&.csv_value
-      end
+      # Through the shared helper so the value row is built from exactly the
+      # definitions, in exactly the order, that Export#custom_fields_headers
+      # used for the header row — a mismatch shifts every value column.
+      custom_field_values = custom_fields_for_csv(self, store)
       categories_for_csv ||= categories.reorder(depth: :desc).first(3).pluck(:pretty_name)
       categories_for_csv.fill(nil, categories_for_csv.size...3)
 
@@ -802,7 +820,7 @@ module Spree
       # Primary rows in the store's default currency
       all_variants.each_with_index do |variant, index|
         csv_lines << Spree::CSV::ProductVariantPresenter.new(self, variant, index, properties_for_csv, categories_for_csv, store,
-                                                             custom_fields_for_csv).call
+                                                             custom_field_values).call
       end
 
       # Price-only rows for each additional currency

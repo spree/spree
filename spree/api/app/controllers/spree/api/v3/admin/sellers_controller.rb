@@ -109,6 +109,15 @@ module Spree
             [:users]
           end
 
+          # A checklist kind may ask a payment provider whether a seller can be
+          # paid, which is one network call — fine for one seller, but a page
+          # of them would make the list as slow as the operator's connection.
+          # Marked here rather than inferred from the eager-loaded checklist,
+          # which a single-seller read shares.
+          def collection
+            @marked_collection ||= super.each { |seller| seller.onboarding_requirements_cached = true }
+          end
+
           # What the serializer's onboarding progress reads for every seller,
           # on the list and on the profile alike: the checklist's kinds look
           # at addresses, branding and the seller's own submissions, and the

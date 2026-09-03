@@ -115,6 +115,12 @@ module Spree
             preferences.each do |key, value|
               pref_name = key.to_sym
               next unless resource.has_preference?(pref_name)
+              # Internal preferences are Spree's to write — a secret a
+              # provider issued, an id it gave back. They are absent from the
+              # schema, so no form offers them; ignoring them here is what
+              # stops a client writing one anyway and breaking the signature
+              # check that depends on it.
+              next if resource.preference_internal(pref_name)
               # Round-trip guard: clients fetching a record see masked
               # `:password` values. Submitting the mask back unchanged
               # must NOT overwrite the real secret with `••••cret`.

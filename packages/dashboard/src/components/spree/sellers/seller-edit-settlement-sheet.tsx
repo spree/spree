@@ -1,6 +1,11 @@
 import { zodResolver } from '@hookform/resolvers/zod'
 import type { Seller } from '@spree/admin-sdk'
-import { mapSpreeErrorsToForm, StoreDatePicker } from '@spree/dashboard-core'
+import {
+  currencyParts,
+  mapSpreeErrorsToForm,
+  StoreDatePicker,
+  useStore,
+} from '@spree/dashboard-core'
 import {
   Button,
   Field,
@@ -8,7 +13,10 @@ import {
   FieldError,
   FieldGroup,
   FieldLabel,
-  Input,
+  InputGroup,
+  InputGroupAddon,
+  InputGroupInput,
+  InputGroupText,
   Select,
   SelectContent,
   SelectItem,
@@ -21,6 +29,7 @@ import {
   SheetHeader,
   SheetTitle,
 } from '@spree/dashboard-ui'
+import i18n from 'i18next'
 import { Controller, useForm } from 'react-hook-form'
 import { useTranslation } from 'react-i18next'
 import { useOnSheetOpen } from '../../../hooks/use-on-sheet-open'
@@ -44,6 +53,8 @@ export function SellerEditSettlementSheet({
   onOpenChange: (open: boolean) => void
 }) {
   const { t } = useTranslation()
+  const { defaultCurrency } = useStore()
+  const { symbol: currencySymbol } = currencyParts(defaultCurrency, i18n.language)
   const updateMutation = useUpdateSeller(seller.id)
 
   const form = useForm<SellerFormValues>({
@@ -183,12 +194,20 @@ export function SellerEditSettlementSheet({
                 <FieldLabel htmlFor="minimum_payout_amount">
                   {t('admin.fields.seller.minimum_payout_amount.label')}
                 </FieldLabel>
-                <Input
-                  id="minimum_payout_amount"
-                  inputMode="decimal"
-                  aria-invalid={!!errors.minimum_payout_amount || undefined}
-                  {...form.register('minimum_payout_amount')}
-                />
+                <InputGroup>
+                  <InputGroupAddon>
+                    <InputGroupText>{currencySymbol}</InputGroupText>
+                  </InputGroupAddon>
+                  <InputGroupInput
+                    id="minimum_payout_amount"
+                    type="number"
+                    step="0.01"
+                    min="0"
+                    inputMode="decimal"
+                    aria-invalid={!!errors.minimum_payout_amount || undefined}
+                    {...form.register('minimum_payout_amount')}
+                  />
+                </InputGroup>
                 <FieldDescription>
                   {t('admin.fields.seller.minimum_payout_amount.help')}
                 </FieldDescription>

@@ -168,8 +168,13 @@ RSpec.describe Spree::Api::V3::Admin::CustomFieldsController, type: :controller 
   describe 'cross-store IDOR — a product in another store' do
     let(:other_store) { create(:store) }
     let(:other_product) { create(:product, store: other_store) }
+    # The other store's own definition: a record may only carry one from the
+    # store that owns it, so this is the only shape the row can take.
+    let(:other_store_definition) do
+      create(:custom_field_definition, :short_text_field, store: other_store)
+    end
     let!(:foreign_field) do
-      create(:custom_field, resource: other_product, custom_field_definition: short_text_definition, value: 'secret')
+      create(:custom_field, resource: other_product, custom_field_definition: other_store_definition, value: 'secret')
     end
 
     it 'does not list custom fields of another store\'s product' do

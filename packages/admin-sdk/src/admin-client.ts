@@ -3,6 +3,7 @@ import type {
   ListParams,
   LoginCredentials,
   PaginatedResponse,
+  PaginationMeta,
   ProviderLogin,
   RequestFn,
   RequestOptions,
@@ -240,6 +241,7 @@ import type {
   StockTransferCreateParams,
   StoreCreditApplyParams,
   StoreDataSources,
+  StorePayoutProvider,
   StoreUpdateParams,
   TaxCategoryCreateParams,
   TaxCategoryUpdateParams,
@@ -261,6 +263,7 @@ import type {
   Catalog,
   CatalogAssignment,
   CatalogOrderMinimum,
+  CatalogProduct,
   CatalogProductTerm,
   CatalogQuantityRule,
   Category,
@@ -326,9 +329,11 @@ import type {
   ReturnReason,
   Role,
   Seller,
+  SellerPayout,
   SellerRequirement,
   SellerRequirementSubmission,
   SellerTeamMember,
+  SellerTransfer,
   StockLevel,
   StockLocation,
   StockMovement,
@@ -343,6 +348,7 @@ import type {
   TaxRate,
   TranslatableResource,
   TranslationBatchEntry,
+  TranslationCoverage,
   Variant,
   WebhookDelivery,
   WebhookEndpoint,
@@ -474,14 +480,19 @@ export class AdminClient {
    * (already-present ids don't fail an add, non-members don't fail a
    * remove).
    */
-  private productMembership(basePath: string) {
+  private productMembership<Row = Product>(basePath: string) {
     return {
+      /**
+       * A parent whose listing says more about a member than the plain
+       * product does — a catalog reports what its agreement charges — types
+       * `Row` accordingly.
+       */
       list: (
         parentId: string,
         params?: ListParams & Record<string, unknown>,
         options?: RequestOptions,
-      ): Promise<PaginatedResponse<Product>> =>
-        this.request<PaginatedResponse<Product>>('GET', `${basePath}/${parentId}/products`, {
+      ): Promise<PaginatedResponse<Row>> =>
+        this.request<PaginatedResponse<Row>>('GET', `${basePath}/${parentId}/products`, {
           ...options,
           params: params ? transformListParams(params) : undefined,
         }),
@@ -802,6 +813,40 @@ export class AdminClient {
    * resource_type + resource_id; all succeed or none do.
    */
   readonly translations = {
+    /**
+     * Translation coverage across a whole resource type, for the centralized
+     * Translations page.
+     *
+     * `resource_type` is sent as a plain param rather than through
+     * `transformListParams`, which would wrap it into `q[resource_type]` and
+     * leave the server without the one param it requires.
+     */
+    coverage: (
+      resourceType: string,
+      params?: ListParams & { search?: string } & Record<string, unknown>,
+      options?: RequestOptions,
+    ): Promise<{ data: TranslationCoverage; meta: PaginationMeta }> => {
+      // `resource_type` and `search` are read as plain params by the server;
+      // routing them through `transformListParams` would wrap both into
+      // Ransack predicates (`q[resource_type]`) the controller never sees.
+      const { page, limit, search, ...filters } = params ?? {}
+
+      return this.request<{ data: TranslationCoverage; meta: PaginationMeta }>(
+        'GET',
+        '/translations',
+        {
+          ...options,
+          params: {
+            resource_type: resourceType,
+            ...(page === undefined ? {} : { page: page as number }),
+            ...(limit === undefined ? {} : { limit: limit as number }),
+            ...(search === undefined ? {} : { search: search as string }),
+            ...transformListParams(filters),
+          },
+        },
+      )
+    },
+
     batch: (
       entries: TranslationBatchEntry[],
       options?: RequestOptions,
@@ -2880,6 +2925,73 @@ export class AdminClient {
   }
 
   // ============================================
+  // Seller fund ledger
+  // ============================================
+
+  /**
+   * Read-only view of `Spree::SellerTransfer` — what one order earned one
+   * seller, credited when the goods went out. There is no write path: a
+   * refund writes a reversal, which is another row rather than an edit.
+   */
+  readonly sellerTransfers = {
+    list: (
+      params?: ListParams & Record<string, unknown>,
+      options?: RequestOptions,
+    ): Promise<PaginatedResponse<SellerTransfer>> =>
+      this.request<PaginatedResponse<SellerTransfer>>('GET', '/seller_transfers', {
+        ...options,
+        params: params ? transformListParams(params) : undefined,
+      }),
+
+    get: (
+      id: string,
+      params?: { expand?: string[] },
+      options?: RequestOptions,
+    ): Promise<SellerTransfer> =>
+      this.request<SellerTransfer>('GET', `/seller_transfers/${id}`, {
+        ...options,
+        params: getParams(params),
+      }),
+  }
+
+  /**
+   * `Spree::SellerPayout` — one settlement to one seller. Created by the
+   * sweep on that seller's own schedule rather than by a caller, so there is
+   * no create or update. `complete` is what the built-in provider waits for:
+   * the operator saying the bank transfer went out.
+   */
+  readonly sellerPayouts = {
+    list: (
+      params?: ListParams & Record<string, unknown>,
+      options?: RequestOptions,
+    ): Promise<PaginatedResponse<SellerPayout>> =>
+      this.request<PaginatedResponse<SellerPayout>>('GET', '/seller_payouts', {
+        ...options,
+        params: params ? transformListParams(params) : undefined,
+      }),
+
+    get: (
+      id: string,
+      params?: { expand?: string[] },
+      options?: RequestOptions,
+    ): Promise<SellerPayout> =>
+      this.request<SellerPayout>('GET', `/seller_payouts/${id}`, {
+        ...options,
+        params: getParams(params),
+      }),
+
+    complete: (
+      id: string,
+      data?: { reference?: string },
+      options?: RequestOptions,
+    ): Promise<SellerPayout> =>
+      this.request<SellerPayout>('PATCH', `/seller_payouts/${id}/complete`, {
+        ...options,
+        body: data,
+      }),
+  }
+
+  // ============================================
   // Gift cards (admin-issued)
   // ============================================
 
@@ -3052,6 +3164,19 @@ export class AdminClient {
   readonly taxProviders = {
     list: (options?: RequestOptions): Promise<PaginatedResponse<Record<string, unknown>>> =>
       this.request<PaginatedResponse<Record<string, unknown>>>('GET', '/tax_providers', options),
+  }
+
+  /**
+   * How this installation can pay its sellers. Discovery only — which one a
+   * store uses is a store preference, so there is nothing here to create.
+   *
+   * Each says whether it is usable by this store today, and whether it needs
+   * sellers to hold an account with it: choosing one changes what the
+   * marketplace has to ask of its sellers before it can pay them.
+   */
+  readonly payoutProviders = {
+    list: (options?: RequestOptions): Promise<PaginatedResponse<StorePayoutProvider>> =>
+      this.request<PaginatedResponse<StorePayoutProvider>>('GET', '/payout_providers', options),
   }
 
   // ============================================
@@ -3415,8 +3540,24 @@ export class AdminClient {
     delete: (id: string, options?: RequestOptions): Promise<void> =>
       this.request<void>('DELETE', `/catalogs/${id}`, options),
 
-    /** The catalog's assortment, in the merchant's manual order. */
-    products: this.productMembership('/catalogs'),
+    /**
+     * The catalog's assortment. Rows carry `catalog_price` when asked for
+     * with `expand: ['catalog_price']` — what a buyer on this agreement pays
+     * and where the amount comes from.
+     */
+    products: this.productMembership<CatalogProduct>('/catalogs'),
+
+    /**
+     * Puts the agreement into effect: its audience starts seeing its
+     * assortment and paying its prices. Refused for a catalog nobody is
+     * assigned to, which would reach no buyer.
+     */
+    activate: (id: string, options?: RequestOptions): Promise<Catalog> =>
+      this.request<Catalog>('PATCH', `/catalogs/${id}/activate`, options),
+
+    /** Takes it out of effect; everything it holds survives untouched. */
+    deactivate: (id: string, options?: RequestOptions): Promise<Catalog> =>
+      this.request<Catalog>('PATCH', `/catalogs/${id}/deactivate`, options),
 
     /**
      * Copies the attached price list's products into the assortment.

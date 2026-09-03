@@ -44,9 +44,10 @@ async function cancelEditor(page: Page) {
 }
 
 async function saveEditor(page: Page) {
+  // Zero-config rule/action editors label the confirm button "Add"; the rest use "Save".
   await page
     .getByRole('dialog')
-    .getByRole('button', { name: /^save$/i })
+    .getByRole('button', { name: /^(save|add)$/i })
     .click()
 }
 
@@ -83,19 +84,45 @@ test.describe('promotions', () => {
 
     await startNewPromotion(page, creds.store_id, name)
 
-    // No-preference rule + action: pick the type to append the draft, then
-    // cancel to close the editor (Save is disabled when there's nothing to
-    // configure).
+    // No-preference rule + action: confirm in the editor so the row is appended.
+    await pickRule(page, /^first order$/i)
+    await expect(page.getByRole('heading', { name: /^first order$/i })).toBeVisible({
+      timeout: 5_000,
+    })
+    await saveEditor(page)
+
+    await pickAction(page, /^free shipping$/i)
+    await saveEditor(page)
+
+    await submitCreate(page, name)
+
+    // Creating replaces the new-form route in history; back goes to the list,
+    // not the stale create form (which would duplicate on re-save).
+    await page.getByRole('button', { name: /^back$/i }).click()
+    await expect(page).toHaveURL(new RegExp(`/${creds.store_id}/promotions(?:\\?|$)`), {
+      timeout: 15_000,
+    })
+    await expect(page.getByRole('heading', { name: /^new promotion$/i })).toHaveCount(0)
+    await expect(rowButton(page, name)).toBeVisible({ timeout: 15_000 })
+  })
+
+  test('cancelling a rule or action editor does not add a row', async ({ page }) => {
+    const creds = await login(page)
+    await gotoIndex(page, PROMOTIONS_PATH(creds.store_id), CTA)
+
+    const name = `E2E Promo Cancel ${Date.now()}`
+    await startNewPromotion(page, creds.store_id, name)
+
     await pickRule(page, /^first order$/i)
     await expect(page.getByRole('heading', { name: /^first order$/i })).toBeVisible({
       timeout: 5_000,
     })
     await cancelEditor(page)
+    await expect(page.getByText(/^first order$/i)).toHaveCount(0)
 
     await pickAction(page, /^free shipping$/i)
     await cancelEditor(page)
-
-    await submitCreate(page, name)
+    await expect(page.getByText(/^free shipping$/i)).toHaveCount(0)
   })
 
   test('removes a rule and an action while editing', async ({ page }) => {
@@ -107,10 +134,10 @@ test.describe('promotions', () => {
     await startNewPromotion(page, creds.store_id, name)
 
     await pickRule(page, /^first order$/i)
-    await cancelEditor(page)
+    await saveEditor(page)
 
     await pickAction(page, /^free shipping$/i)
-    await cancelEditor(page)
+    await saveEditor(page)
 
     await submitCreate(page, name)
 
@@ -328,6 +355,26 @@ test.describe('promotions', () => {
     await saveEditor(page)
 
     await expect(page.getByText(/^create per-line-item adjustment$/i).first()).toBeVisible()
+
+    await submitCreate(page, name)
+  })
+
+  test('creates a promotion with a Create Line Items action', async ({ page }) => {
+    const creds = await login(page)
+    await gotoIndex(page, PROMOTIONS_PATH(creds.store_id), CTA)
+
+    const name = `E2E Line Items Promo ${Date.now()}`
+    await startNewPromotion(page, creds.store_id, name)
+
+    await pickAction(page, /^create line items$/i)
+    await expect(page.getByRole('heading', { name: /^create line items$/i })).toBeVisible({
+      timeout: 5_000,
+    })
+
+    await pickAutocompleteOption(page, /search variants by name or sku/i, FIXTURE_PROMO_PRODUCT)
+    await saveEditor(page)
+
+    await expect(page.getByText(/1 variants/i).first()).toBeVisible({ timeout: 5_000 })
 
     await submitCreate(page, name)
   })

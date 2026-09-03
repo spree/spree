@@ -53,9 +53,12 @@ function NewCategoryPage() {
       })
       form.reset(values)
       // Land on the edit page so images + products can be managed next.
+      // Replace history rather than pushing — otherwise back lands on the
+      // (now-stale) new category form.
       await navigate({
         to: '/$storeId/products/categories/$categoryId',
         params: { storeId, categoryId: created.id },
+        replace: true,
       })
     } catch (err) {
       if (mapSpreeErrorsToForm(err, form.setError)) return

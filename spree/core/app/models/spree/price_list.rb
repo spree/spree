@@ -180,6 +180,35 @@ module Spree
       1 + (price_adjustment_percentage / 100)
     end
 
+    # This list's price for a base price, derived rather than stored: the base
+    # amount times the adjustment factor, rounded to the currency's own minor
+    # unit. Deriving on read is what keeps an adjustment list from drifting
+    # when base prices move (docs/plans/6.0-price-list-automatic-pricing.md).
+    #
+    # Built unsaved and never written. Lives here because how a list makes its
+    # numbers is the list's own business — every caller asking "what does this
+    # list charge for that base price" gets the same arithmetic, so a merchant
+    # reading an agreement and a shopper being charged cannot disagree.
+    #
+    # @param base [Spree::Price] the variant's base price
+    # @return [Spree::Price, nil] nil when the base carries no amount
+    def derived_price_from(base)
+      return if base.nil? || base.amount.nil?
+
+      compare_at =
+        if adjust_compare_at && base.compare_at_amount.present?
+          Spree::Money::Rounding.to_currency(base.compare_at_amount * adjustment_factor, base.currency)
+        end
+
+      Spree::Price.new(
+        variant_id: base.variant_id,
+        currency: base.currency,
+        amount: Spree::Money::Rounding.to_currency(base.amount * adjustment_factor, base.currency),
+        compare_at_amount: compare_at,
+        price_list_id: id
+      )
+    end
+
     # Returns true if the price list is active or scheduled
     # @return [Boolean]
     def active_or_scheduled?

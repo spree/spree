@@ -17,7 +17,7 @@ import {
   SelectValue,
   Thumbnail,
 } from '@spree/dashboard-ui'
-import { PackageIcon, TriangleAlertIcon } from 'lucide-react'
+import { PackageIcon, TriangleAlertIcon } from '@spree/dashboard-ui/icons'
 import { useEffect, useRef } from 'react'
 import { Controller, type UseFormReturn, useForm } from 'react-hook-form'
 import { useTranslation } from 'react-i18next'
@@ -59,7 +59,9 @@ function ItemQuantityRow({
   const checkboxId = `${idPrefix}-item-${index}`
 
   return (
-    <div className={cn('flex items-center gap-3 p-3', selected && 'bg-accent')}>
+    <div
+      className={cn('flex items-center gap-3 py-2 my-2 pl-2 rounded-lg', selected && 'bg-accent')}
+    >
       <Controller
         control={form.control}
         name={`items.${index}.selected`}
@@ -246,7 +248,7 @@ export function FulfillmentFulfillForm({
         </div>
       )}
 
-      <div className="grid grid-cols-1 gap-4 p-3 border-t sm:grid-cols-2">
+      <div className="grid grid-cols-1 gap-4 py-3 border-t border-border-subtle sm:grid-cols-2">
         <Field>
           <FieldLabel htmlFor={`${idPrefix}-tracking`}>
             {t('admin.orders.fulfill.tracking_label')}
@@ -293,7 +295,7 @@ export function FulfillmentFulfillForm({
         render={({ field }) => (
           <label
             htmlFor={`${idPrefix}-notify`}
-            className="flex cursor-pointer items-center gap-2 text-sm p-3"
+            className="flex cursor-pointer items-center gap-2 text-sm py-3"
           >
             <Checkbox
               id={`${idPrefix}-notify`}
@@ -314,7 +316,7 @@ export function FulfillmentFulfillForm({
         </div>
       )}
 
-      <div className="flex items-center justify-end gap-2 p-3 border-t">
+      <div className="flex items-center justify-end gap-2 py-3 border-t border-border-subtle">
         <span className="mr-auto text-sm text-muted-foreground">
           {t('admin.orders.fulfill.units_selected')}: {totalSelected} / {totalAvailable}
         </span>

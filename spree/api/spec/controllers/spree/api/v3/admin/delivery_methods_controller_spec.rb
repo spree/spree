@@ -170,6 +170,21 @@ RSpec.describe Spree::Api::V3::Admin::DeliveryMethodsController, type: :controll
       expect(delivery_method.calculator.preferred_amount).to eq(12.5)
     end
 
+    # The model only builds the default calculator at validation, so a payload
+    # carrying preferences without naming a calculator used to drop them and
+    # save a free rate over the amount the merchant typed.
+    it 'keeps the amount when no calculator is named' do
+      post :create, params: {
+        name: 'Priced by default',
+        calculator_preferences: { amount: 7.25 }
+      }, as: :json
+
+      expect(response).to have_http_status(:created)
+
+      delivery_method = Spree::DeliveryMethod.find_by_prefix_id(json_response['id'])
+      expect(delivery_method.calculator.preferred_amount).to eq(7.25)
+    end
+
     it 'creates a pickup method without a calculator requirement' do
       post :create, params: {
         name: 'Store pickup',

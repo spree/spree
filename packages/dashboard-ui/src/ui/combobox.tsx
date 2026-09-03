@@ -2,9 +2,9 @@
 
 import { Combobox as ComboboxPrimitive } from '@base-ui/react'
 import i18n from 'i18next'
-import { CheckIcon, ChevronDownIcon, XIcon } from 'lucide-react'
 import * as React from 'react'
 import { cn } from '../lib/utils'
+import { CheckIcon, ChevronDownIcon, XIcon } from '../spree/icons'
 import { Button } from './button'
 import { InputGroup, InputGroupAddon, InputGroupButton, InputGroupInput } from './input-group'
 
@@ -48,7 +48,7 @@ function ComboboxButtonTrigger({ className, children, ...props }: ComboboxPrimit
     <ComboboxPrimitive.Trigger
       data-slot="combobox-button-trigger"
       className={cn(
-        "flex w-full min-h-8.5 cursor-pointer items-center justify-between gap-1.5 rounded-lg border border-border bg-card py-1.5 pr-2 pl-2.5 text-base font-normal leading-normal text-foreground shadow-xs transition-all duration-100 ease-in-out outline-none select-none focus:border-blue-500 focus:shadow-[0_0_0_3px_color-mix(in_srgb,var(--ring)_15%,transparent)] disabled:pointer-events-none disabled:cursor-not-allowed disabled:bg-muted disabled:border-border disabled:text-muted-foreground disabled:shadow-none aria-invalid:border-destructive [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4",
+        "flex w-full min-h-8.5 cursor-pointer items-center justify-between gap-1.5 rounded-lg border border-border bg-card py-1.5 pr-2 pl-2.5 text-base font-normal leading-normal text-foreground transition-all duration-100 ease-in-out outline-none select-none focus:border-blue-500 focus:shadow-[0_0_0_3px_color-mix(in_srgb,var(--ring)_15%,transparent)] disabled:pointer-events-none disabled:cursor-not-allowed disabled:bg-muted disabled:text-muted-foreground disabled:shadow-none aria-invalid:border-destructive [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4",
         className,
       )}
       {...props}
@@ -286,7 +286,7 @@ function ComboboxChips({
         // resize lets the positioner follow the anchor smoothly; making it
         // instant jumps the open popup out from under the pointer, so the next
         // option click lands on nothing.
-        'flex flex-wrap items-center gap-1.5 rounded-lg border border-border bg-card text-foreground shadow-xs px-2.5 py-1.5 text-base transition-all duration-100 ease-out focus-within:border-blue-500 focus-within:shadow-[0_0_0_3px_color-mix(in_srgb,var(--ring)_15%,transparent)] has-aria-invalid:border-destructive has-data-[slot=combobox-chip]:p-1.5',
+        'flex flex-wrap items-center gap-1.5 rounded-lg border border-border bg-card text-foreground px-2.5 py-1.5 text-base transition-all duration-100 ease-out focus-within:border-blue-500 focus-within:shadow-[0_0_0_3px_color-mix(in_srgb,var(--ring)_15%,transparent)] has-aria-invalid:border-destructive has-data-[slot=combobox-chip]:p-1.5',
         className,
       )}
       {...props}

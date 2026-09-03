@@ -1,0 +1,437 @@
+---
+http_interactions:
+- request:
+    method: post
+    uri: https://api.stripe.com/v1/accounts
+    body:
+      encoding: UTF-8
+      string: country=US&business_profile[name]=Sparks+Audio&controller[fees][payer]=application&controller[losses][payments]=application&controller[stripe_dashboard][type]=express&capabilities[transfers][requested]=true&settings[payouts][schedule][interval]=manual&metadata[spree_seller_id]=1
+    headers:
+      User-Agent:
+      - Stripe/v1 RubyBindings/18.4.2 Spree Stripe/6.0.0.alpha (https://spreecommerce.org)
+        AIAgent/claude_code
+      Authorization:
+      - Bearer <STRIPE_SECRET_KEY>
+      Idempotency-Key:
+      - spree-seller-sel_UkLWZg9DAJ-1787840582
+      Stripe-Version:
+      - '2023-10-16'
+      X-Stripe-Client-User-Agent:
+      - "<FILTERED>"
+      Content-Type:
+      - application/x-www-form-urlencoded
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+      Accept:
+      - "*/*"
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Server:
+      - nginx
+      Date:
+      - Thu, 27 Aug 2026 14:23:04 GMT
+      Content-Type:
+      - application/json
+      Content-Length:
+      - '3562'
+      Connection:
+      - keep-alive
+      Access-Control-Allow-Credentials:
+      - 'true'
+      Access-Control-Allow-Methods:
+      - GET, HEAD, PUT, PATCH, POST, DELETE
+      Access-Control-Allow-Origin:
+      - "*"
+      Access-Control-Expose-Headers:
+      - Request-Id, Stripe-Manage-Version, Stripe-Should-Retry, X-Stripe-External-Auth-Required,
+        X-Stripe-Privileged-Session-Required
+      Access-Control-Max-Age:
+      - '300'
+      Cache-Control:
+      - no-cache, no-store
+      Content-Security-Policy:
+      - base-uri 'none'; default-src 'none'; form-action 'none'; frame-ancestors 'none';
+        img-src 'self'; script-src 'self' 'report-sample'; style-src 'self'; worker-src
+        'none'; upgrade-insecure-requests; report-uri https://q.stripe.com/csp-violation?q=0OHf2PhACypjnVQTb-vlZf0g-IS6QN-RuP3BBl-HXquz1ogFB5-lWpvYNW7dPLgIZ1cjgBQN51dQ4qWj;
+        report-to csp
+      Idempotency-Key:
+      - spree-seller-sel_UkLWZg9DAJ-1787840582
+      Original-Request:
+      - req_eR0M10YFJFRpRn
+      Report-To:
+      - '{"group":"csp","max_age":8640,"endpoints":[{"url":"https://q.stripe.com/csp-report-v2?q=0OHf2PhACypjnVQTb-vlZf0g-IS6QN-RuP3BBl-HXquz1ogFB5-lWpvYNW7dPLgIZ1cjgBQN51dQ4qWj&t=1"}],"include_subdomains":true}'
+      Reporting-Endpoints:
+      - csp="https://q.stripe.com/csp-report-v2?q=0OHf2PhACypjnVQTb-vlZf0g-IS6QN-RuP3BBl-HXquz1ogFB5-lWpvYNW7dPLgIZ1cjgBQN51dQ4qWj&t=1"
+      Request-Id:
+      - req_eR0M10YFJFRpRn
+      Stripe-Notice:
+      - '2 notices for this request: (1) You are using an outdated API version (2023-10-16).
+        We recommend upgrading to the latest API version, 2026-07-29.dahlia. See https://docs.stripe.com/upgrades
+        (2) We recommend building your integration using Accounts v2. See https://docs.stripe.com/api/v2/core/accounts'
+      Stripe-Should-Retry:
+      - 'false'
+      Stripe-Version:
+      - '2023-10-16'
+      Vary:
+      - Origin
+      X-Stripe-Priority-Routing-Enabled:
+      - 'true'
+      X-Stripe-Routing-Context-Priority-Tier:
+      - api-testmode
+      X-Wc:
+      - 3c3
+      Strict-Transport-Security:
+      - max-age=63072000; includeSubDomains; preload
+    body:
+      encoding: UTF-8
+      string: |-
+        {
+          "id": "acct_1U94CoEfikSLUyjD",
+          "object": "account",
+          "business_profile": {
+            "annual_revenue": null,
+            "estimated_worker_count": null,
+            "mcc": null,
+            "minority_owned_business_designation": null,
+            "name": "Sparks Audio",
+            "product_description": null,
+            "specified_commercial_transactions_act_url": null,
+            "support_address": null,
+            "support_email": null,
+            "support_phone": null,
+            "support_url": null,
+            "url": null
+          },
+          "business_type": null,
+          "capabilities": {
+            "transfers": "inactive"
+          },
+          "charges_enabled": false,
+          "controller": {
+            "fees": {
+              "payer": "application"
+            },
+            "is_controller": true,
+            "losses": {
+              "payments": "application"
+            },
+            "requirement_collection": "stripe",
+            "stripe_dashboard": {
+              "type": "express"
+            },
+            "type": "application"
+          },
+          "country": "US",
+          "created": 1787840583,
+          "default_currency": "usd",
+          "details_submitted": false,
+          "email": null,
+          "external_accounts": {
+            "object": "list",
+            "data": [],
+            "has_more": false,
+            "total_count": 0,
+            "url": "/v1/accounts/acct_1U94CoEfikSLUyjD/external_accounts"
+          },
+          "future_requirements": {
+            "alternatives": [],
+            "current_deadline": null,
+            "currently_due": [],
+            "disabled_reason": null,
+            "errors": [],
+            "eventually_due": [],
+            "past_due": [],
+            "pending_verification": []
+          },
+          "login_links": {
+            "object": "list",
+            "data": [],
+            "has_more": false,
+            "total_count": 0,
+            "url": "/v1/accounts/acct_1U94CoEfikSLUyjD/login_links"
+          },
+          "metadata": {
+            "spree_seller_id": "1"
+          },
+          "payouts_enabled": false,
+          "requirements": {
+            "alternatives": [],
+            "current_deadline": null,
+            "currently_due": [
+              "business_profile.url",
+              "business_type",
+              "external_account",
+              "tos_acceptance.date",
+              "tos_acceptance.ip"
+            ],
+            "disabled_reason": "requirements.past_due",
+            "errors": [],
+            "eventually_due": [
+              "business_profile.url",
+              "business_type",
+              "external_account",
+              "tos_acceptance.date",
+              "tos_acceptance.ip"
+            ],
+            "past_due": [
+              "business_profile.url",
+              "business_type",
+              "external_account",
+              "tos_acceptance.date",
+              "tos_acceptance.ip"
+            ],
+            "pending_verification": []
+          },
+          "settings": {
+            "bacs_debit_payments": {
+              "display_name": null,
+              "service_user_number": null
+            },
+            "branding": {
+              "icon": null,
+              "logo": null,
+              "primary_color": null,
+              "secondary_color": null
+            },
+            "card_issuing": {
+              "tos_acceptance": {
+                "date": null,
+                "ip": null
+              }
+            },
+            "card_payments": {
+              "decline_on": {
+                "avs_failure": false,
+                "cvc_failure": false
+              },
+              "statement_descriptor_prefix": "SPARKS AUD",
+              "statement_descriptor_prefix_kana": null,
+              "statement_descriptor_prefix_kanji": null
+            },
+            "dashboard": {
+              "display_name": "Sparks Audio",
+              "timezone": "Etc/UTC"
+            },
+            "invoices": {
+              "default_account_tax_ids": null,
+              "hosted_payment_method_save": "offer"
+            },
+            "payments": {
+              "statement_descriptor": "SPARKS AUDIO",
+              "statement_descriptor_kana": null,
+              "statement_descriptor_kanji": null
+            },
+            "payouts": {
+              "debit_negative_balances": true,
+              "schedule": {
+                "delay_days": 2,
+                "interval": "manual"
+              },
+              "statement_descriptor": null
+            },
+            "sepa_debit_payments": {}
+          },
+          "tos_acceptance": {
+            "date": null,
+            "ip": null,
+            "user_agent": null
+          },
+          "type": "none"
+        }
+  recorded_at: Thu, 27 Aug 2026 14:23:04 GMT
+- request:
+    method: post
+    uri: https://api.stripe.com/v1/account_links
+    body:
+      encoding: UTF-8
+      string: account=acct_1U94CoEfikSLUyjD&refresh_url=https%3A%2F%2Fexample.test%2Fonboarding&return_url=https%3A%2F%2Fexample.test%2Fonboarding&type=account_onboarding
+    headers:
+      User-Agent:
+      - Stripe/v1 RubyBindings/18.4.2 Spree Stripe/6.0.0.alpha (https://spreecommerce.org)
+        AIAgent/claude_code
+      Authorization:
+      - Bearer <STRIPE_SECRET_KEY>
+      X-Stripe-Client-Telemetry:
+      - '{"last_request_metrics":{"request_id":"req_eR0M10YFJFRpRn","request_duration_ms":2457}}'
+      Idempotency-Key:
+      - d0fa24b4-029e-4a9d-b3f6-5efd6278b9aa
+      Stripe-Version:
+      - '2023-10-16'
+      X-Stripe-Client-User-Agent:
+      - "<FILTERED>"
+      Content-Type:
+      - application/x-www-form-urlencoded
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+      Accept:
+      - "*/*"
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Server:
+      - nginx
+      Date:
+      - Thu, 27 Aug 2026 14:23:05 GMT
+      Content-Type:
+      - application/json
+      Content-Length:
+      - '165'
+      Connection:
+      - keep-alive
+      Access-Control-Allow-Credentials:
+      - 'true'
+      Access-Control-Allow-Methods:
+      - GET, HEAD, PUT, PATCH, POST, DELETE
+      Access-Control-Allow-Origin:
+      - "*"
+      Access-Control-Expose-Headers:
+      - Request-Id, Stripe-Manage-Version, Stripe-Should-Retry, X-Stripe-External-Auth-Required,
+        X-Stripe-Privileged-Session-Required
+      Access-Control-Max-Age:
+      - '300'
+      Cache-Control:
+      - no-cache, no-store
+      Content-Security-Policy:
+      - base-uri 'none'; default-src 'none'; form-action 'none'; frame-ancestors 'none';
+        img-src 'self'; script-src 'self' 'report-sample'; style-src 'self'; worker-src
+        'none'; upgrade-insecure-requests; report-uri https://q.stripe.com/csp-violation?q=pHWZVt400jlEdZSQtUVFMNvx3X0l2HJDJVYLmCz89OhzTugKHXSGn6-bod2xIVZPTL1dDjaY-5lMA0XJ;
+        report-to csp
+      Idempotency-Key:
+      - d0fa24b4-029e-4a9d-b3f6-5efd6278b9aa
+      Original-Request:
+      - req_evHdcT6k2A8NNw
+      Report-To:
+      - '{"group":"csp","max_age":8640,"endpoints":[{"url":"https://q.stripe.com/csp-report-v2?q=pHWZVt400jlEdZSQtUVFMNvx3X0l2HJDJVYLmCz89OhzTugKHXSGn6-bod2xIVZPTL1dDjaY-5lMA0XJ&t=1"}],"include_subdomains":true}'
+      Reporting-Endpoints:
+      - csp="https://q.stripe.com/csp-report-v2?q=pHWZVt400jlEdZSQtUVFMNvx3X0l2HJDJVYLmCz89OhzTugKHXSGn6-bod2xIVZPTL1dDjaY-5lMA0XJ&t=1"
+      Request-Id:
+      - req_evHdcT6k2A8NNw
+      Stripe-Notice:
+      - You are using an outdated API version (2023-10-16). We recommend upgrading
+        to the latest API version, 2026-07-29.dahlia. See https://docs.stripe.com/upgrades
+      Stripe-Should-Retry:
+      - 'false'
+      Stripe-Version:
+      - '2023-10-16'
+      Vary:
+      - Origin
+      X-Stripe-Priority-Routing-Enabled:
+      - 'true'
+      X-Stripe-Routing-Context-Priority-Tier:
+      - api-testmode
+      X-Wc:
+      - 3c3
+      Strict-Transport-Security:
+      - max-age=63072000; includeSubDomains; preload
+    body:
+      encoding: UTF-8
+      string: |-
+        {
+          "object": "account_link",
+          "created": 1787840585,
+          "expires_at": 1787840885,
+          "url": "https://connect.stripe.com/setup/e/acct_1U94CoEfikSLUyjD/UKP6NsKQ2lGb"
+        }
+  recorded_at: Thu, 27 Aug 2026 14:23:05 GMT
+- request:
+    method: post
+    uri: https://api.stripe.com/v1/account_links
+    body:
+      encoding: UTF-8
+      string: account=acct_1U94CoEfikSLUyjD&refresh_url=https%3A%2F%2Fexample.test%2Fonboarding&return_url=https%3A%2F%2Fexample.test%2Fonboarding&type=account_onboarding
+    headers:
+      User-Agent:
+      - Stripe/v1 RubyBindings/18.4.2 Spree Stripe/6.0.0.alpha (https://spreecommerce.org)
+        AIAgent/claude_code
+      Authorization:
+      - Bearer <STRIPE_SECRET_KEY>
+      X-Stripe-Client-Telemetry:
+      - '{"last_request_metrics":{"request_id":"req_evHdcT6k2A8NNw","request_duration_ms":576}}'
+      Idempotency-Key:
+      - 328715ac-cb8d-4b83-bb59-3809a9d214ba
+      Stripe-Version:
+      - '2023-10-16'
+      X-Stripe-Client-User-Agent:
+      - "<FILTERED>"
+      Content-Type:
+      - application/x-www-form-urlencoded
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+      Accept:
+      - "*/*"
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Server:
+      - nginx
+      Date:
+      - Thu, 27 Aug 2026 14:23:05 GMT
+      Content-Type:
+      - application/json
+      Content-Length:
+      - '165'
+      Connection:
+      - keep-alive
+      Access-Control-Allow-Credentials:
+      - 'true'
+      Access-Control-Allow-Methods:
+      - GET, HEAD, PUT, PATCH, POST, DELETE
+      Access-Control-Allow-Origin:
+      - "*"
+      Access-Control-Expose-Headers:
+      - Request-Id, Stripe-Manage-Version, Stripe-Should-Retry, X-Stripe-External-Auth-Required,
+        X-Stripe-Privileged-Session-Required
+      Access-Control-Max-Age:
+      - '300'
+      Cache-Control:
+      - no-cache, no-store
+      Content-Security-Policy:
+      - base-uri 'none'; default-src 'none'; form-action 'none'; frame-ancestors 'none';
+        img-src 'self'; script-src 'self' 'report-sample'; style-src 'self'; worker-src
+        'none'; upgrade-insecure-requests; report-uri https://q.stripe.com/csp-violation?q=pHWZVt400jlEdZSQtUVFMNvx3X0l2HJDJVYLmCz89OhzTugKHXSGn6-bod2xIVZPTL1dDjaY-5lMA0XJ;
+        report-to csp
+      Idempotency-Key:
+      - 328715ac-cb8d-4b83-bb59-3809a9d214ba
+      Original-Request:
+      - req_NY9zqv9KgPhlNL
+      Report-To:
+      - '{"group":"csp","max_age":8640,"endpoints":[{"url":"https://q.stripe.com/csp-report-v2?q=pHWZVt400jlEdZSQtUVFMNvx3X0l2HJDJVYLmCz89OhzTugKHXSGn6-bod2xIVZPTL1dDjaY-5lMA0XJ&t=1"}],"include_subdomains":true}'
+      Reporting-Endpoints:
+      - csp="https://q.stripe.com/csp-report-v2?q=pHWZVt400jlEdZSQtUVFMNvx3X0l2HJDJVYLmCz89OhzTugKHXSGn6-bod2xIVZPTL1dDjaY-5lMA0XJ&t=1"
+      Request-Id:
+      - req_NY9zqv9KgPhlNL
+      Stripe-Notice:
+      - You are using an outdated API version (2023-10-16). We recommend upgrading
+        to the latest API version, 2026-07-29.dahlia. See https://docs.stripe.com/upgrades
+      Stripe-Should-Retry:
+      - 'false'
+      Stripe-Version:
+      - '2023-10-16'
+      Vary:
+      - Origin
+      X-Stripe-Priority-Routing-Enabled:
+      - 'true'
+      X-Stripe-Routing-Context-Priority-Tier:
+      - api-testmode
+      X-Wc:
+      - 3c3
+      Strict-Transport-Security:
+      - max-age=63072000; includeSubDomains; preload
+    body:
+      encoding: UTF-8
+      string: |-
+        {
+          "object": "account_link",
+          "created": 1787840585,
+          "expires_at": 1787840885,
+          "url": "https://connect.stripe.com/setup/e/acct_1U94CoEfikSLUyjD/yPhBlUflCJD6"
+        }
+  recorded_at: Thu, 27 Aug 2026 14:23:05 GMT
+recorded_with: VCR 6.4.0

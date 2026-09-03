@@ -12,6 +12,78 @@ export const FIXTURE_PROMO_TAXON = 'E2E Promo Category'
 // permalink so it can never match an unrelated category.
 export const FIXTURE_PROMO_TAXON_PERMALINK = 'e2e-promo-category'
 export const FIXTURE_PROMO_PRODUCT = 'E2E Promo Product'
+/** Name prefix for catalog picker pagination E2E products; each run appends a timestamp. */
+export const FIXTURE_CATALOG_PICKER_PRODUCT_PREFIX = 'E2E Catalog Picker Product'
+
+/** Count used by the catalog picker pagination/select-all E2E. */
+export const FIXTURE_CATALOG_PICKER_PRODUCT_COUNT = 30
+
+/**
+ * Seed products for the catalog picker pagination test via the Admin API.
+ * Kept out of global-setup so the extra rows do not push bulk-operation
+ * fixtures off the products index first page (default limit 25, newest first).
+ */
+export async function seedCatalogPickerProducts(
+  page: Page,
+  storeId: string,
+  prefix: string,
+  accessToken: string,
+  count = FIXTURE_CATALOG_PICKER_PRODUCT_COUNT,
+): Promise<string[]> {
+  const headers = {
+    'X-Spree-Store-Id': storeId,
+    Authorization: `Bearer ${accessToken}`,
+  }
+
+  const ids: string[] = []
+  try {
+    for (let index = 0; index < count; index += 1) {
+      const name = `${prefix} ${String(index + 1).padStart(2, '0')}`
+      const res = await page.request.post('/api/v3/admin/products', {
+        headers,
+        data: { name, status: 'active', price: 9.99 },
+      })
+      if (!res.ok()) {
+        throw new Error(
+          `Failed to seed catalog picker product "${name}": ${res.status()} ${await res.text()}`,
+        )
+      }
+      const body = (await res.json()) as { id: string }
+      ids.push(body.id)
+    }
+  } catch (error) {
+    if (ids.length > 0) {
+      await deleteCatalogPickerProducts(page, storeId, accessToken, ids).catch(() => undefined)
+    }
+    throw error
+  }
+
+  return ids
+}
+
+/** Remove picker seed rows so they do not push bulk fixtures off the products index. */
+export async function deleteCatalogPickerProducts(
+  page: Page,
+  storeId: string,
+  accessToken: string,
+  productIds: string[],
+) {
+  const headers = {
+    'X-Spree-Store-Id': storeId,
+    Authorization: `Bearer ${accessToken}`,
+  }
+
+  await Promise.all(
+    productIds.map(async (id) => {
+      const res = await page.request.delete(`/api/v3/admin/products/${id}`, { headers })
+      if (!res.ok()) {
+        throw new Error(
+          `Failed to delete catalog picker product ${id}: ${res.status()} ${await res.text()}`,
+        )
+      }
+    }),
+  )
+}
 // Active products used by products-bulk.spec.ts. Each test owns a disjoint
 // pair so the serial suite doesn't cross-contaminate (status mutations on
 // A/B don't shift the rows that the category/tag tests target). Kept here
@@ -56,6 +128,9 @@ export interface E2ECredentials {
   store_name: string
 }
 
+/** Credentials plus the JWT from the login response (Admin API Bearer auth). */
+export type E2ELoginSession = E2ECredentials & { accessToken: string }
+
 let cached: E2ECredentials | null = null
 
 export function getCredentials(): E2ECredentials {
@@ -79,13 +154,17 @@ export function getCredentials(): E2ECredentials {
  *
  * Not used by `auth.spec.ts` — that spec exercises the login form itself.
  */
-export async function login(page: Page): Promise<E2ECredentials> {
+export async function login(page: Page): Promise<E2ELoginSession> {
   const creds = getCredentials()
   const res = await page.request.post('/api/v3/admin/auth/login', {
     data: { email: creds.admin_email, password: creds.admin_password },
   })
   if (!res.ok()) {
     throw new Error(`API login failed with ${res.status()}: ${await res.text()}`)
+  }
+  const { token: accessToken } = (await res.json()) as { token: string }
+  if (!accessToken) {
+    throw new Error('API login response missing token')
   }
   await page.goto('/')
   // Wait for the authenticated redirect to the store-scoped home — not just
@@ -96,7 +175,7 @@ export async function login(page: Page): Promise<E2ECredentials> {
   // page to /login. The redirect only fires after auth init settles, so it
   // doubles as the refresh-complete barrier.
   await expect(page).toHaveURL(new RegExp(`/${creds.store_id}`), { timeout: 15_000 })
-  return creds
+  return { ...creds, accessToken }
 }
 
 /**

@@ -15,6 +15,24 @@ export interface StoreDataSourceProvider {
   available: boolean
 }
 
+/**
+ * How sellers get paid. A different shape from the pricing and inventory
+ * providers: a payout provider is chosen directly rather than through an
+ * integration, and what matters at selection time is whether it will need
+ * sellers to hold an account with it.
+ */
+export interface StorePayoutProvider {
+  /** What the store preference stores — the provider's class name. */
+  id: string
+  name: string
+  /** False when the store has not connected what this provider needs. */
+  available: boolean
+  /** True when sellers must onboard with the provider before it will pay them. */
+  requires_payout_account: boolean
+  /** True for the provider used when the store has named none. */
+  default: boolean
+}
+
 export interface StoreDataSources {
   pricing_providers: StoreDataSourceProvider[]
   inventory_providers: StoreDataSourceProvider[]
@@ -98,6 +116,10 @@ export interface StoreUpdateParams {
   preferred_pricing_provider_failure_policy?: 'strict' | 'fallback'
   /** `fallback` sells on the local snapshot when the provider cannot answer; `strict` refuses. */
   preferred_inventory_provider_failure_policy?: 'strict' | 'fallback'
+  /** Blank means the built-in provider: the marketplace settles by hand. */
+  preferred_payout_provider?: string
+  preferred_default_payouts_schedule_interval?: string
+  preferred_default_minimum_payout_amount?: number
 }
 
 export interface OptionValueParams {
@@ -2479,6 +2501,12 @@ export interface DeliveryMethodParams {
    */
   rate_provider?: string | null
   storefront_visible?: boolean
+  /**
+   * Marketplace only: whether a seller's packages may be quoted by this
+   * method. Off by default — sharing shipping is a decision, not a starting
+   * point — and refused on a method that belongs to a seller.
+   */
+  available_to_sellers?: boolean
   tracking_url?: string | null
   estimated_transit_business_days_min?: number | null
   estimated_transit_business_days_max?: number | null
@@ -2621,13 +2649,6 @@ export interface CatalogParams {
   active?: boolean
   position?: number
   /**
-   * Price list (pl_...) pricing this catalog; null = assortment-only, base
-   * prices. A catalog with an EMPTY assortment is a pricing-only overlay —
-   * its list applies and nothing is hidden; curate products (or call
-   * importProducts) to make it restrictive.
-   */
-  price_list_id?: string | null
-  /**
    * The price list this catalog prices through, written inline: an object
    * creates the owned list or updates the one already there. An explicit
    * `null` **deletes** that list — an owned list is matched by its catalog
@@ -2636,9 +2657,9 @@ export interface CatalogParams {
    * stay recoverable. Omit the key, or send `{}`, to leave the pricing
    * alone.
    *
-   * Do not send this together with `price_list_id`: a catalog may only own
-   * its own list, and the pair is refused rather than letting one catalog
-   * edit another's pricing.
+   * A catalog with an EMPTY assortment is a pricing-only overlay — its list
+   * applies and nothing is hidden; curate products (or call importProducts)
+   * to make it restrictive.
    */
   price_list?: CatalogPriceListParams | null
   metadata?: Record<string, unknown>

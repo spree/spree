@@ -7,9 +7,9 @@ import {
   toastManager,
   useConfirm,
 } from '@spree/dashboard-ui'
+import { EllipsisVerticalIcon } from '@spree/dashboard-ui/icons'
 import type { QueryKey } from '@tanstack/react-query'
 import { useQueryClient } from '@tanstack/react-query'
-import { EllipsisVerticalIcon } from 'lucide-react'
 import type { ReactNode } from 'react'
 import { useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react'
 import { useTranslation } from 'react-i18next'

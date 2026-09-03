@@ -1,4 +1,5 @@
-import type { Claim, Order } from '@spree/admin-sdk'
+import type { Claim, Order, Variant } from '@spree/admin-sdk'
+import { adminClient, currencyParts, ResourceCombobox, useStore } from '@spree/dashboard-core'
 import {
   Button,
   Dialog,
@@ -10,6 +11,10 @@ import {
   Field,
   FieldLabel,
   Input,
+  InputGroup,
+  InputGroupAddon,
+  InputGroupInput,
+  InputGroupText,
   Select,
   SelectContent,
   SelectItem,
@@ -18,6 +23,7 @@ import {
   Switch,
   Textarea,
 } from '@spree/dashboard-ui'
+import i18n from 'i18next'
 import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { type ReasonKind, useReasons } from '../../hooks/use-reasons'
@@ -36,6 +42,9 @@ export type FulfilledUnit = {
  * order is complete and not canceled, and a merchant may well open a return
  * on something still in the warehouse.
  */
+/** `id` always comes back, so it need not be listed. */
+const VARIANT_PICKER_FIELDS = ['product_name', 'sku', 'options_text']
+
 export function fulfilledUnits(order: Order): FulfilledUnit[] {
   return (order.fulfillments ?? []).flatMap((fulfillment) =>
     (fulfillment.fulfillment_items ?? []).map((item) => ({
@@ -261,13 +270,38 @@ export function CreateExchangeDialog({
                   <FieldLabel htmlFor={`replacement-${unit.id}`}>
                     {t('admin.pages.orders.detail.exchanges.replacement_variant')}
                   </FieldLabel>
-                  <Input
-                    id={`replacement-${unit.id}`}
-                    placeholder="variant_..."
+                  <ResourceCombobox<Variant>
+                    queryKey={`exchange-replacement-${unit.id}`}
                     value={replacements[unit.id] ?? ''}
-                    onChange={(event) =>
-                      setReplacements({ ...replacements, [unit.id]: event.target.value })
+                    onChange={(id) => setReplacements({ ...replacements, [unit.id]: id ?? '' })}
+                    // Only what the option renders. This trims the response;
+                    // the server still computes the rest.
+                    search={(query) =>
+                      adminClient.variants.list({
+                        search: query,
+                        limit: 8,
+                        fields: VARIANT_PICKER_FIELDS,
+                      })
                     }
+                    hydrate={(ids) =>
+                      adminClient.variants.list({
+                        id_in: ids,
+                        limit: ids.length,
+                        fields: VARIANT_PICKER_FIELDS,
+                      })
+                    }
+                    getOptionLabel={(variant) => variant.product_name ?? variant.sku ?? variant.id}
+                    renderOption={(variant) => (
+                      <div className="flex flex-col">
+                        <span className="font-medium">
+                          {variant.product_name ?? variant.sku ?? variant.id}
+                        </span>
+                        <span className="text-xs text-muted-foreground">
+                          {variant.options_text && <span>{variant.options_text} · </span>}
+                          {t('admin.orders.detail.variant_search.sku_prefix')}: {variant.sku || '—'}
+                        </span>
+                      </div>
+                    )}
                   />
                 </Field>
               )}
@@ -334,6 +368,8 @@ export function CreateClaimDialog({
   const items = order.items ?? []
   const [selection, setSelection] = useState<Selection>({})
   const [amounts, setAmounts] = useState<Record<string, string>>({})
+  const { defaultCurrency } = useStore()
+  const { symbol: currencySymbol } = currencyParts(defaultCurrency, i18n.language)
   const [memo, setMemo] = useState('')
   const [reasonId, setReasonId] = useState('')
 
@@ -386,13 +422,21 @@ export function CreateClaimDialog({
                       <FieldLabel htmlFor={`claim-amount-${item.id}`}>
                         {t('admin.pages.orders.detail.claims.refund_amount')}
                       </FieldLabel>
-                      <Input
-                        id={`claim-amount-${item.id}`}
-                        value={amounts[item.id] ?? ''}
-                        onChange={(event) =>
-                          setAmounts({ ...amounts, [item.id]: event.target.value })
-                        }
-                      />
+                      <InputGroup>
+                        <InputGroupAddon>
+                          <InputGroupText>{currencySymbol}</InputGroupText>
+                        </InputGroupAddon>
+                        <InputGroupInput
+                          id={`claim-amount-${item.id}`}
+                          type="number"
+                          step="0.01"
+                          min="0"
+                          value={amounts[item.id] ?? ''}
+                          onChange={(event) =>
+                            setAmounts({ ...amounts, [item.id]: event.target.value })
+                          }
+                        />
+                      </InputGroup>
                     </Field>
                   )}
                 </div>
@@ -458,6 +502,8 @@ export function ResolveClaimDialog({
 }) {
   const { t } = useTranslation()
   const lines = claim.claim_line_items ?? []
+  const { defaultCurrency } = useStore()
+  const { symbol: currencySymbol } = currencyParts(defaultCurrency, i18n.language)
 
   const [resolution, setResolution] = useState<'refund' | 'replacement' | 'refund_and_replacement'>(
     'refund',
@@ -543,11 +589,19 @@ export function ResolveClaimDialog({
                 <FieldLabel htmlFor="claim-resolve-amount">
                   {t('admin.pages.orders.detail.claims.refund_amount')}
                 </FieldLabel>
-                <Input
-                  id="claim-resolve-amount"
-                  value={amount}
-                  onChange={(event) => setAmount(event.target.value)}
-                />
+                <InputGroup>
+                  <InputGroupAddon>
+                    <InputGroupText>{currencySymbol}</InputGroupText>
+                  </InputGroupAddon>
+                  <InputGroupInput
+                    id="claim-resolve-amount"
+                    type="number"
+                    step="0.01"
+                    min="0"
+                    value={amount}
+                    onChange={(event) => setAmount(event.target.value)}
+                  />
+                </InputGroup>
               </Field>
               <Field>
                 <FieldLabel htmlFor="claim-refund-method">

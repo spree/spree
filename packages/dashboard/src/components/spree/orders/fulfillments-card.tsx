@@ -6,6 +6,7 @@ import {
   Card,
   CardAction,
   CardContent,
+  CardFooter,
   CardHeader,
   CardTitle,
   Dialog,
@@ -38,7 +39,6 @@ import {
   EllipsisVerticalIcon,
   MapPinIcon,
   PackageCheckIcon,
-  PackageIcon,
   PencilIcon,
   PlusIcon,
   PrinterIcon,
@@ -47,8 +47,8 @@ import {
   TagIcon,
   TruckIcon,
   XCircleIcon,
-} from 'lucide-react'
-import { useState } from 'react'
+} from '@spree/dashboard-ui/icons'
+import { type ReactNode, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useFulfillmentActions } from '../../../hooks/use-fulfillments'
 import {
@@ -425,27 +425,21 @@ function FulfillmentRow({ order, fulfillment }: { order: Order; fulfillment: Ful
   const trackable = deliverable && !fulfillment.tracking
 
   return (
-    <div className="rounded-lg border flex flex-col">
-      <div className="flex items-center justify-between border-b p-3">
-        <div className="flex items-center gap-2">
-          <StatusBadge status={fulfillment.status} />
-          {fulfillment.stock_location && (
-            <div className="flex items-center gap-1.5 text-xs text-muted-foreground">
-              <MapPinIcon className="size-3" />
-              {fulfillment.stock_location.name}
-            </div>
-          )}
-
-          {fulfillment.fulfilled_at && (
-            <span className="text-xs text-muted-foreground">
-              <RelativeTime
-                iso={fulfillment.fulfilled_at}
-                prefix={t('admin.orders.detail.tracking.shipped_prefix')}
-                fallback=""
-              />
-            </span>
-          )}
-        </div>
+    <FulfillmentPanel
+      status={fulfillment.status}
+      location={fulfillment.stock_location?.name}
+      meta={
+        fulfillment.fulfilled_at && (
+          <span className="text-muted-foreground text-xs">
+            <RelativeTime
+              iso={fulfillment.fulfilled_at}
+              prefix={t('admin.orders.detail.tracking.shipped_prefix')}
+              fallback=""
+            />
+          </span>
+        )
+      }
+      actions={
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
             <Button variant="ghost" size="icon-xs">
@@ -511,10 +505,10 @@ function FulfillmentRow({ order, fulfillment }: { order: Order; fulfillment: Ful
             )}
           </DropdownMenuContent>
         </DropdownMenu>
-      </div>
-
+      }
+    >
       {(fulfillment.delivery_method || Number.parseFloat(fulfillment.cost) > 0) && (
-        <div className="flex items-center justify-between text-sm p-3 border-b">
+        <CardContent className="flex items-center justify-between border-b border-border-subtle py-3 text-sm">
           <span className="text-muted-foreground">
             {/* The selected rate names the carrier service that actually
                 carries this parcel ("USPS GroundAdvantage"); the method is
@@ -525,11 +519,11 @@ function FulfillmentRow({ order, fulfillment }: { order: Order; fulfillment: Ful
               t('admin.pages.orders.detail.no_delivery_method')}
           </span>
           <span>{fulfillment.display_cost}</span>
-        </div>
+        </CardContent>
       )}
 
       {fulfillment.tracking && !fulfilling && (
-        <div className="text-sm p-3 border-b">
+        <CardContent className="border-b border-border-subtle py-3 text-sm">
           <span className="text-muted-foreground">
             {fulfillment.tracking_carrier_name ?? t('admin.orders.detail.tracking.prefix')}:{' '}
           </span>
@@ -545,7 +539,7 @@ function FulfillmentRow({ order, fulfillment }: { order: Order; fulfillment: Ful
           ) : (
             <span>{fulfillment.tracking}</span>
           )}
-        </div>
+        </CardContent>
       )}
 
       {fulfilling ? (
@@ -559,7 +553,7 @@ function FulfillmentRow({ order, fulfillment }: { order: Order; fulfillment: Ful
           <FulfillmentItemList rows={fulfillmentItemRows(fulfillment, order.items ?? [])} />
 
           {shippable && (
-            <div className="flex justify-end gap-2 p-3 border-t">
+            <CardFooter className="justify-end gap-2 py-3">
               {canBuyLabel && (
                 <Button
                   type="button"
@@ -604,22 +598,22 @@ function FulfillmentRow({ order, fulfillment }: { order: Order; fulfillment: Ful
                 <TruckIcon data-icon="inline-start" />
                 {t('admin.orders.fulfill.action')}
               </Button>
-            </div>
+            </CardFooter>
           )}
 
           {!shippable && labelDocument && (
-            <div className="flex justify-end p-3 border-t">
+            <CardFooter className="justify-end py-3">
               <Button type="button" size="sm" variant="outline" asChild>
                 <a href={labelDocument.url} target="_blank" rel="noopener noreferrer">
                   <PrinterIcon data-icon="inline-start" />
                   {t('admin.orders.detail.fulfillments.print_label')}
                 </a>
               </Button>
-            </div>
+            </CardFooter>
           )}
 
           {deliverable && (
-            <div className="flex justify-end gap-2 p-3 border-t">
+            <CardFooter className="justify-end gap-2 py-3">
               <Button
                 type="button"
                 size="sm"
@@ -637,7 +631,7 @@ function FulfillmentRow({ order, fulfillment }: { order: Order; fulfillment: Ful
                   {t('admin.orders.detail.fulfillments.add_tracking')}
                 </Button>
               )}
-            </div>
+            </CardFooter>
           )}
         </>
       )}
@@ -668,7 +662,53 @@ function FulfillmentRow({ order, fulfillment }: { order: Order; fulfillment: Ful
           onOpenChange={setTrackingOpen}
         />
       )}
-    </div>
+    </FulfillmentPanel>
+  )
+}
+
+/**
+ * The chrome every fulfillment panel shares: a status badge, where it ships
+ * from, and the items in it.
+ *
+ * A draft order has no `Fulfillment` record yet — no id, no location, nothing
+ * to act on — so the two callers pass what they have rather than one of them
+ * inventing a record. What they do share is how it looks.
+ */
+function FulfillmentPanel({
+  status,
+  location,
+  meta,
+  actions,
+  children,
+}: {
+  status: string
+  /** Where it ships from. Absent until a fulfillment exists. */
+  location?: string | null
+  /** Trailing header detail, e.g. when it shipped. */
+  meta?: ReactNode
+  /** The panel's own menu. Absent when there is nothing to act on. */
+  actions?: ReactNode
+  children: ReactNode
+}) {
+  return (
+    <Card variant="nested">
+      <CardHeader>
+        <CardTitle className="min-w-0 text-sm font-normal">
+          <StatusBadge status={status} />
+          {location && (
+            <div className="flex min-w-0 items-center gap-1.5 text-muted-foreground text-xs">
+              <MapPinIcon className="size-3 shrink-0" />
+              {/* The card clips its overflow, so a long warehouse name has to
+                  truncate here or it is simply cut off. */}
+              <span className="truncate">{location}</span>
+            </div>
+          )}
+          {meta}
+        </CardTitle>
+        {actions && <CardAction>{actions}</CardAction>}
+      </CardHeader>
+      {children}
+    </Card>
   )
 }
 
@@ -679,20 +719,23 @@ function FulfillmentRow({ order, fulfillment }: { order: Order; fulfillment: Ful
  */
 function UnfulfilledGroup({ rows }: { rows: FulfillmentItemRow[] }) {
   const { t } = useTranslation()
-
   const totalUnits = rows.reduce((sum, row) => sum + row.quantity, 0)
 
   return (
-    <div className="rounded-lg border p-4 flex flex-col gap-3">
-      <div className="flex items-center gap-2">
-        <PackageIcon className="size-4 text-muted-foreground" />
-        <span className="text-sm font-medium">
+    <FulfillmentPanel
+      status="unfulfilled"
+      // The badge names the state; the count says how much is in it, which a
+      // real fulfillment carries in its own rows instead.
+      meta={
+        <span className="text-muted-foreground text-xs">
           {t('admin.orders.detail.fulfillments.unfulfilled', { count: totalUnits })}
         </span>
-      </div>
-
-      <FulfillmentItemList rows={rows} />
-    </div>
+      }
+    >
+      <CardContent className="px-0 py-3">
+        <FulfillmentItemList rows={rows} />
+      </CardContent>
+    </FulfillmentPanel>
   )
 }
 

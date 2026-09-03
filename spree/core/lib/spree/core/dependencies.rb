@@ -158,6 +158,8 @@ module Spree
         catalog_create_workflow: 'Spree::Catalogs::Create',
         catalog_update_workflow: 'Spree::Catalogs::Update',
         catalog_price_list_workflow: 'Spree::Catalogs::SetPriceList',
+        catalog_activate_workflow: 'Spree::Catalogs::Activate',
+        catalog_deactivate_workflow: 'Spree::Catalogs::Deactivate',
 
         # price lists
         price_list_create_workflow: 'Spree::PriceLists::Create',
@@ -204,6 +206,10 @@ module Spree
         payment_capture_workflow: 'Spree::Payments::Capture',
         payment_void_workflow: 'Spree::Payments::Void',
         refund_create_workflow: 'Spree::Refunds::Create',
+        seller_transfer_create_workflow: 'Spree::SellerTransfers::Create',
+        seller_transfer_reverse_workflow: 'Spree::SellerTransfers::Reverse',
+        seller_payout_sweep_workflow: 'Spree::SellerPayouts::Sweep',
+        seller_payout_complete_workflow: 'Spree::SellerPayouts::Complete',
         payments_handle_webhook_workflow: 'Spree::Payments::HandleWebhook',
         payment_session_complete_workflow: 'Spree::PaymentSessions::Complete',
 

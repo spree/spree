@@ -6,7 +6,7 @@ import {
   useDirectUpload,
 } from '@spree/dashboard-core'
 import { Button } from '@spree/dashboard-ui'
-import { LibraryIcon } from 'lucide-react'
+import { LibraryIcon } from '@spree/dashboard-ui/icons'
 import { useMemo, useState } from 'react'
 import type { UseFormReturn } from 'react-hook-form'
 import { useTranslation } from 'react-i18next'

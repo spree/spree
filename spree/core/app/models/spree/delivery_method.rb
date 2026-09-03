@@ -53,6 +53,17 @@ module Spree
 
     belongs_to :tax_category, -> { with_deleted }, class_name: 'Spree::TaxCategory', optional: true
 
+    # On a marketplace, who quotes and ships with this method. Nil is the
+    # operator's own method — the only kind that existed before sellers, and
+    # the only kind a first-party package is ever offered
+    # (docs/plans/6.0-multi-vendor-marketplace.md, Decision 13).
+    # `with_deleted` because a seller is paranoid and this association
+    # deliberately survives one: the rows keep pointing at a departed seller
+    # rather than being released, so without it the operator's list would show
+    # a seller-owned method with no owner and read it as their own.
+    belongs_to :seller, -> { with_deleted }, class_name: 'Spree::Seller', optional: true,
+               inverse_of: :delivery_methods
+
     attribute :storefront_visible, :boolean, default: true
 
     # Every method carries a calculator — the Estimator consults its
@@ -80,12 +91,32 @@ module Spree
     scope :storefront_visible, -> { where(storefront_visible: true) }
     scope :admin_only, -> { where(storefront_visible: false) }
 
+    # The operator's own methods, and the sellers' own.
+    scope :first_party, -> { where(seller_id: nil) }
+    scope :for_seller, ->(seller) { where(seller_id: seller.respond_to?(:id) ? seller.id : seller) }
+    # Marketplace methods the operator has opened up to sellers' packages.
+    scope :shared_with_sellers, -> { first_party.where(available_to_sellers: true) }
+
+    # Every method a package sourced from the given seller's location may be
+    # quoted by: that seller's own, plus whatever the operator shares. A
+    # first-party package (nil seller) sees the operator's methods only —
+    # including the shared ones, which are the operator's to begin with.
+    #
+    # @param seller [Spree::Seller, nil]
+    # @return [ActiveRecord::Relation<Spree::DeliveryMethod>]
+    scope :available_to_seller, ->(seller) {
+      seller.nil? ? first_party : where(seller_id: seller.id).or(shared_with_sellers)
+    }
+
     # Legacy association names — removed in 6.1.
     has_many :shipping_rates, class_name: 'Spree::DeliveryRate', foreign_key: :delivery_method_id, deprecated: true
     has_many :shipments, through: :delivery_rates, source: :fulfillment, deprecated: true
 
-    # Real column, so admin clients filter it directly — no ransacker needed.
-    self.whitelisted_ransackable_attributes = %w[storefront_visible]
+    # Real columns, so admin clients filter them directly — no ransacker
+    # needed. `seller_id` is what the operator's list filters by to see one
+    # seller's methods, or (blank) the marketplace's own.
+    self.whitelisted_ransackable_attributes = %w[storefront_visible available_to_sellers seller_id]
+    self.whitelisted_ransackable_associations = %w[seller]
 
     validates :name, presence: true
     validates :storefront_visible, inclusion: { in: [true, false] }
@@ -116,6 +147,16 @@ module Spree
              if: -> { fulfillment_provider_changed? || delivery_profile_id_changed? }
     validate :rate_provider_must_ship,
              if: -> { rate_provider_changed? || fulfillment_provider_changed? }
+    validate :seller_must_belong_to_store, if: -> { seller_id_changed? || store_id_changed? }
+    # Carrier credentials live on the store-scoped `Spree::Integration`, so a
+    # seller's method prices through the internal rate provider and ships
+    # through the manual one. Refused at save time rather than surfacing as a
+    # missing rate at checkout.
+    validate :seller_methods_use_own_providers,
+             if: -> { seller_id.present? && (seller_id_changed? || rate_provider_changed? || fulfillment_provider_changed?) }
+    # Sharing is the operator's switch to throw. A seller cannot hand their
+    # own method to the rest of the marketplace.
+    validate :only_marketplace_methods_are_shared, if: -> { seller_id_changed? || available_to_sellers_changed? }
 
     scope :digital, -> { with_provider(:digital?) }
 
@@ -159,6 +200,13 @@ module Spree
 
     def pickup?
       provider_class.pickup?
+    end
+
+    # Whether this method belongs to a seller rather than the marketplace.
+    #
+    # @return [Boolean]
+    def seller_owned?
+      seller_id.present?
     end
 
     def ensure_calculator
@@ -484,6 +532,29 @@ module Spree
       return if rate_provider_class.available_for_store?(store)
 
       errors.add(:rate_provider, Spree.t('errors.messages.rate_provider_unavailable'))
+    end
+
+    def seller_must_belong_to_store
+      return if seller.nil? || store.nil?
+      return if seller.store_id == store_id
+
+      errors.add(:seller, :invalid)
+    end
+
+    def seller_methods_use_own_providers
+      unless rate_provider.blank? || rate_provider == DEFAULT_RATE_PROVIDER
+        errors.add(:rate_provider, Spree.t('errors.messages.seller_delivery_method_provider'))
+      end
+
+      return if fulfillment_provider.blank? || fulfillment_provider == DEFAULT_FULFILLMENT_PROVIDER
+
+      errors.add(:fulfillment_provider, Spree.t('errors.messages.seller_delivery_method_provider'))
+    end
+
+    def only_marketplace_methods_are_shared
+      return unless available_to_sellers? && seller_owned?
+
+      errors.add(:available_to_sellers, Spree.t('errors.messages.seller_delivery_method_not_shareable'))
     end
   end
 end

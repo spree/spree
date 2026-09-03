@@ -9,12 +9,12 @@ RSpec.describe Spree::Api::V3::Store::Products::FiltersController, type: :contro
   let!(:child_taxon1) { create(:category, parent: category, name: 'Shirts') }
   let!(:child_taxon2) { create(:category, parent: category, name: 'Pants') }
 
-  let(:option_type_size) { create(:option_type, name: 'size', presentation: 'Size', filterable: true, position: 1) }
-  let(:option_type_color) { create(:option_type, name: 'color', presentation: 'Color', filterable: true, position: 2) }
-  let(:option_value_small) { create(:option_value, option_type: option_type_size, name: 'small', presentation: 'S', position: 1) }
-  let(:option_value_medium) { create(:option_value, option_type: option_type_size, name: 'medium', presentation: 'M', position: 2) }
-  let(:option_value_red) { create(:option_value, option_type: option_type_color, name: 'red', presentation: 'Red', position: 1) }
-  let(:option_value_blue) { create(:option_value, option_type: option_type_color, name: 'blue', presentation: 'Blue', position: 2) }
+  let(:option_type_size) { create(:option_type, name: 'size', label: 'Size', filterable: true, position: 1) }
+  let(:option_type_color) { create(:option_type, name: 'color', label: 'Color', filterable: true, position: 2) }
+  let(:option_value_small) { create(:option_value, option_type: option_type_size, name: 'small', label: 'S', position: 1) }
+  let(:option_value_medium) { create(:option_value, option_type: option_type_size, name: 'medium', label: 'M', position: 2) }
+  let(:option_value_red) { create(:option_value, option_type: option_type_color, name: 'red', label: 'Red', position: 1) }
+  let(:option_value_blue) { create(:option_value, option_type: option_type_color, name: 'blue', label: 'Blue', position: 2) }
 
   let!(:product1) do
     create(:product, status: 'active', categories: [child_taxon1]).tap do |p|

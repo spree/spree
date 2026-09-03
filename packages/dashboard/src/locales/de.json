@@ -88,6 +88,14 @@
       "tiered_percent": "Gestaffelter Prozentsatz"
     },
     "catalogs": {
+      "actions": {
+        "activate": "Aktivieren",
+        "deactivate": "Deaktivieren"
+      },
+      "activate_confirm": {
+        "title": "Diesen Katalog aktivieren?",
+        "message": "{{name}} beginnt zu gelten: Die Zielgruppe sieht das Sortiment und erhält die Preise."
+      },
       "add_cta": "Katalog hinzufügen",
       "add_sheet_title": "Neuer Katalog",
       "assignable_types": {
@@ -97,22 +105,27 @@
       "assignments": {
         "add_cta": "Zuweisen",
         "add_title": "Diesen Katalog zuweisen",
+        "already_assigned": "Diese Zielgruppe ist diesem Katalog bereits zugeordnet.",
         "audience_empty": "Nichts gefunden",
         "audience_label": "Zielgruppe",
         "audience_placeholder": "Suchen…",
         "company_subtree_help": "Die Zuweisung an ein Unternehmen gilt für dessen gesamten Teilbaum.",
         "dialog_description": "Wer diesen Katalog sieht. Eine Unternehmens-Zuweisung gilt für den Knoten und alles darunter.",
         "empty": "Noch keiner Zielgruppe zugewiesen — niemand sieht diesen Katalog.",
+        "empty_description": "Weisen Sie ein Unternehmen oder eine Kundengruppe zu, um festzulegen, für wen dieser Katalog gilt.",
         "remove_confirm": {
           "message": "{{name}} sieht diesen Katalog dann nicht mehr.",
           "title": "Diese Zuweisung entfernen?"
         },
         "title": "Zielgruppen",
-        "type_label": "Zielgruppen-Typ",
-        "already_assigned": "Diese Zielgruppe ist diesem Katalog bereits zugeordnet."
+        "type_label": "Zielgruppen-Typ"
       },
       "create_description": "Ein Katalog bestimmt, was eine Zielgruppe sieht und — über eine Preisliste — was sie zahlt. Produkte und Zielgruppen fügen Sie danach hinzu.",
       "create_label": "Katalog erstellen",
+      "deactivate_confirm": {
+        "title": "Diesen Katalog deaktivieren?",
+        "message": "{{name}} gilt nicht mehr. Die Zielgruppe zahlt wieder die Ladenpreise; alle Inhalte des Katalogs bleiben erhalten."
+      },
       "delete_confirm": {
         "message": "Dies löscht {{name}} und seine Zuweisungen. Produkte und Preislisten bleiben unberührt.",
         "title": "Katalog löschen?"
@@ -130,13 +143,35 @@
       "edit_prices_help": "Legen Sie fest, was jedes Produkt diese Zielgruppe kostet.",
       "edit_prices_pending_save": "Legen Sie fest, was jedes Produkt diese Zielgruppe kostet. Speichern Sie zuerst, um die soeben geänderten Produkte zu bepreisen.",
       "empty": "Noch keine Kataloge",
+      "errors": {
+        "failed_to_activate": "Katalog konnte nicht aktiviert werden",
+        "failed_to_deactivate": "Katalog konnte nicht deaktiviert werden"
+      },
       "messages": {
+        "activated": "Katalog aktiviert",
         "assigned": "Katalog zugewiesen",
         "created": "Katalog erstellt",
+        "deactivated": "Katalog deaktiviert",
         "deleted": "Katalog gelöscht",
         "products_imported": "Produkte importiert",
         "unassigned": "Zuweisung entfernt",
         "updated": "Katalog aktualisiert"
+      },
+      "prices": {
+        "column_price": "Preis",
+        "column_source": "Von",
+        "unpriced": "Kein Preis",
+        "after_save": "Nach dem Speichern",
+        "source": {
+          "explicit": "Eingegeben",
+          "automatic": "Angepasst",
+          "base": "Ladenpreis"
+        },
+        "source_help": {
+          "explicit": "Ein Betrag, der in der eigenen Preisliste dieses Katalogs eingegeben wurde.",
+          "automatic": "Der Ladenpreis mit dem Prozentsatz dieses Katalogs.",
+          "base": "Der normale Ladenpreis — dieser Katalog setzt für dieses Produkt keinen Preis."
+        }
       },
       "products": {
         "add_cta": "Produkte hinzufügen",
@@ -182,6 +217,43 @@
           "multiple": "Die Schrittweite. Bei einem Vielfachen von 24 bestellt ein Käufer 24, 48 oder 72 — nie 30. Die Schritte zählen ab der Mindestmenge: bei Minimum 50 und Schritten von 24 sind 50, 74 und 98 erlaubt.",
           "order_minimum": "Der Mindestwert einer gesamten Bestellung, nur Artikel — Versand und Steuern zählen nicht mit. Käufer sehen beim Einkaufen, wie viel noch fehlt, und der Checkout wird bis dahin abgelehnt."
         }
+      },
+      "wizard": {
+        "audience_none_warning": "Noch keine Zielgruppe, daher sieht niemand diesen Katalog. Sie können jetzt oder später eine zuweisen.",
+        "description": "Eine Vereinbarung einrichten: was sie ist, für wen sie gilt und was sie kostet.",
+        "fix_this_step": "Korrigieren Sie das markierte Feld, bevor Sie fortfahren.",
+        "help": {
+          "details": "Benennen Sie diese Vereinbarung, damit Sie sie später wiedererkennen.",
+          "audience": "Wer diesen Katalog sieht und seine Preise erhält.",
+          "products": "Was diese Vereinbarung umfasst.",
+          "pricing": "Was Käufer mit dieser Vereinbarung zahlen.",
+          "review": "Es wird nichts erstellt, bevor Sie abschließen."
+        },
+        "products": {
+          "add": "{{name}} hinzufügen",
+          "all_title": "Alle Produkte",
+          "chosen_title": "Dieser Katalog",
+          "count_one": "{{count}} Produkt",
+          "count_other": "{{count}} Produkte",
+          "empty": "Noch keine Produkte",
+          "empty_description": "Wählen Sie, was diese Vereinbarung umfasst. Leer lassen, um Preise zu setzen, ohne die Sichtbarkeit einzuschränken.",
+          "remove": "{{name}} entfernen"
+        },
+        "products_failed": "Der Katalog wurde erstellt, aber seine Produkte konnten nicht hinzugefügt werden. Fügen Sie sie auf der Katalogseite hinzu.",
+        "products_none_warning": "Noch keine Produkte. Ein leerer Katalog setzt Preise, ohne etwas zu verbergen — alle Käufer sehen weiterhin das gesamte Sortiment.",
+        "review": {
+          "everyone": "Alle",
+          "everything": "Das gesamte Sortiment",
+          "inactive": "Der Katalog wird inaktiv erstellt. Aktivieren Sie ihn auf seiner Seite, sobald die Vereinbarung bereit ist."
+        },
+        "steps": {
+          "details": "Details",
+          "audience": "Zielgruppe",
+          "products": "Produkte",
+          "pricing": "Preise",
+          "review": "Überprüfen"
+        },
+        "title": "Neuer Katalog"
       }
     },
     "categories": {
@@ -259,7 +331,7 @@
     "collections": {
       "add_cta": "Neue Kollektion",
       "columns": {
-        "membership": "Zuordnung",
+        "kind": "Art",
         "products_count": "Produkte",
         "sort_order": "Sortierung"
       },
@@ -501,6 +573,12 @@
         "select_calculator": "Kalkulator auswählen",
         "settings_label": "Kalkulator-Einstellungen"
       },
+      "create_line_items_action_editor": {
+        "description": "Wenn die Promotion greift, werden diese Artikel dem Warenkorb hinzugefügt.",
+        "empty": "Noch keine Varianten. Suchen Sie unten, um eine hinzuzufügen.",
+        "search_placeholder": "Varianten nach Name oder SKU suchen…",
+        "variant_label": "Variante hinzufügen"
+      },
       "custom_fields": {
         "default_resource": "Datensätzen",
         "empty_description": "Erfassen Sie strukturierte Details wie Material, Passform oder Pflegehinweise.",
@@ -723,7 +801,8 @@
         "weight_between": "{{min}}–{{max}} {{unit}}",
         "weight_max": "Unter {{max}} {{unit}}",
         "weight_min": "Ab {{min}} {{unit}}"
-      }
+      },
+      "shared_with_sellers_badge": "Für Verkäufer freigegeben"
     },
     "delivery_origin_groups": {
       "delete_confirm": {
@@ -1192,6 +1271,10 @@
       "delivery_method": {
         "admin_name": {
           "label": "Interner Name"
+        },
+        "available_to_sellers": {
+          "help": "Erlaubt den Versand von Verkäuferbestellungen mit dieser Methode. Deaktiviert lassen, wenn jeder Verkäufer seinen Versand selbst organisiert.",
+          "label": "Für Verkäufer verfügbar"
         },
         "calculator": {
           "label": "Tarifrechner"
@@ -1992,6 +2075,32 @@
           "help": "Frühere Preise speichern, damit der Shop den niedrigsten Preis der letzten 30 Tage anzeigen kann, wie es EU-Regeln verlangen.",
           "label": "Preisverlauf aufzeichnen"
         },
+        "payouts": {
+          "title": "Auszahlungen an Verkäufer",
+          "description": "Wie dieser Marktplatz die Verkäufer bezahlt, die auf ihm handeln.",
+          "provider": {
+            "label": "Bezahlt über",
+            "help": "Wer das Geld bewegt. Bei eigener Buchführung überweisen Sie selbst und markieren jede Zahlung als erledigt.",
+            "requires_account": "Verkäufer müssen bei diesem Anbieter ein Konto einrichten, bevor er sie bezahlt."
+          },
+          "provider_none": "Eigene Buchführung",
+          "provider_unavailable": "Verbinden Sie diesen Anbieter, bevor Sie darüber bezahlen können",
+          "schedule": {
+            "label": "Verkäufer abrechnen",
+            "help": "Wie oft Einnahmen zu einer Zahlung gebündelt werden. Ein Verkäufer kann einen eigenen Rhythmus haben."
+          },
+          "schedule_intervals": {
+            "daily": "Täglich",
+            "weekly": "Wöchentlich",
+            "biweekly": "Alle zwei Wochen",
+            "monthly": "Monatlich",
+            "manual": "Nur auf Ihre Anweisung"
+          },
+          "minimum": {
+            "label": "Mindestauszahlung",
+            "help": "Darunter wird das Guthaben in die nächste Periode übertragen statt ausgezahlt. Null zahlt jeden offenen Betrag."
+          }
+        },
         "limit_digital_download_count": {
           "help": "Aus bedeutet, dass Käufer beliebig oft herunterladen können.",
           "label": "Anzahl der Downloads begrenzen"
@@ -2400,7 +2509,8 @@
       "returns": "Retouren",
       "sellers": "Verkäufer",
       "settings": "Einstellungen",
-      "transfers": "Umlagerungen"
+      "transfers": "Umlagerungen",
+      "translations": "Übersetzungen"
     },
     "option_types": {
       "columns": {
@@ -2955,7 +3065,7 @@
             "create_title": "Neuer Umtausch",
             "empty": "Kein Umtausch für diese Bestellung.",
             "price_difference": "Preisdifferenz",
-            "replacement_variant": "Varianten-ID des Ersatzes"
+            "replacement_variant": "Ersatzvariante"
           },
           "no_delivery_method": "Keine Versandmethode ausgewählt.",
           "returns": {
@@ -3569,6 +3679,10 @@
             "url": "URL"
           },
           "title": "Webhooks"
+        },
+        "payouts": {
+          "title": "Auszahlungen",
+          "subtitle": "Wie und wann dieser Marktplatz seine Verkäufer bezahlt."
         }
       },
       "staff": {
@@ -3600,6 +3714,25 @@
           "roles": "Rollen"
         },
         "title": "Team"
+      },
+      "translations": {
+        "complete": "Vollständig übersetzt",
+        "coverage": "Übersetzungsabdeckung",
+        "description": "Sehen Sie, wie viel Ihres Katalogs übersetzt ist, und schließen Sie die Lücken.",
+        "load_error": "Übersetzungsabdeckung konnte nicht geladen werden.",
+        "no_locales_description": "Fügen Sie einem Ihrer Märkte eine Sprache hinzu, um mit dem Übersetzen zu beginnen.",
+        "no_locales_title": "Noch keine weiteren Sprachen",
+        "progress": "Fortschritt",
+        "record": "Datensatz",
+        "records": "Datensätze",
+        "resource_types": {
+          "category": "Kategorien",
+          "collection": "Kollektionen",
+          "option_type": "Optionstypen",
+          "product": "Produkte"
+        },
+        "total": "Gesamt",
+        "translated": "Übersetzt"
       }
     },
     "payment_methods": {
@@ -4163,6 +4296,11 @@
         "market": {
           "label": "Märkte"
         },
+        "option_value": {
+          "empty": "Keine passenden Optionswerte",
+          "label": "Optionswerte",
+          "search_placeholder": "Optionswerte suchen…"
+        },
         "product": {
           "empty": "Keine passenden Produkte",
           "label": "Produkte",
@@ -4584,17 +4722,18 @@
         "store": "Shopname, Zeitzone, Einheiten und regionale Standards",
         "tax_categories": "Steuerklassen für Produkte",
         "tax_rates": "Sätze pro Markt und Region",
-        "webhooks": "Endpunkte, die bei Ereignissen benachrichtigt werden"
+        "webhooks": "Endpunkte, die bei Ereignissen benachrichtigt werden",
+        "payouts": "Wer Ihre Verkäufer bezahlt, wie oft und ab welchem Betrag"
       },
       "groups": {
         "audit": "Audit",
         "developer": "Entwickler",
         "payments": "Zahlungen & Steuern",
-        "post_sale": "Retouren & Verkäufer",
         "selling": "Verkauf",
         "shipping": "Versand & Lieferung",
         "store": "Shop",
-        "team": "Benutzer & Berechtigungen"
+        "team": "Benutzer & Berechtigungen",
+        "marketplace": "Marktplatz"
       },
       "items": {
         "allowed_origins": "Zugelassene Ursprünge",
@@ -4619,7 +4758,8 @@
         "store": "Shop",
         "tax_categories": "Steuerkategorien",
         "tax_rates": "Steuersätze",
-        "webhooks": "Webhooks"
+        "webhooks": "Webhooks",
+        "payouts": "Auszahlungen"
       }
     },
     "setup": {
@@ -4766,6 +4906,18 @@
         "lb": "Pfund (lb)",
         "oz": "Unze (oz)"
       }
+    },
+    "table_descriptions": {
+      "catalogs": "Was eine Käufergruppe sieht und welche Preise sie zahlt.",
+      "categories": "Der Navigationsbaum, über den Kunden Ihren Shop durchstöbern.",
+      "collections": "Produktgruppen, die Sie gemeinsam vermarkten — manuell oder per Regel.",
+      "companies": "Geschäftskunden, ihre Teams und die Konditionen, zu denen sie kaufen.",
+      "customer_groups": "Gruppen, in die Sie Kunden einteilen — für Preise und Aktionen.",
+      "delivery_profiles": "Regeln dafür, wie ein Produkt versendet wird, je Produkt angewendet.",
+      "options": "Auswahlmöglichkeiten wie Größe oder Farbe, aus denen Varianten entstehen.",
+      "price_lists": "Alternative Preise, die gelten, wenn ihre Regeln zutreffen.",
+      "product_types": "Vorlagen, die neuen Produkten ihre Felder und Optionen geben.",
+      "stock_transfers": "Bestand, der zwischen Ihren Lagern bewegt wird, und was angekommen ist."
     },
     "tax_categories": {
       "add_cta": "Steuerkategorie hinzufügen",

@@ -1,12 +1,14 @@
 import type { StockTransfer } from '@spree/admin-sdk'
 import { defineTable } from '@spree/dashboard-core'
 import { Badge, RelativeTime, ResourceNameCell } from '@spree/dashboard-ui'
+import { ArrowLeftRightIcon } from '@spree/dashboard-ui/icons'
 import i18n from 'i18next'
-import { ArrowLeftRightIcon } from 'lucide-react'
 
 defineTable<StockTransfer>('stock-transfers', {
   title: i18n.t('admin.stock_transfers.title'),
-  searchParam: 'number_cont',
+  description: i18n.t('admin.table_descriptions.stock_transfers'),
+  docsPath: 'manage-products/stock-transfers',
+  searchParam: 'number_or_reference_cont',
   searchPlaceholder: i18n.t('admin.stock_transfers.table.search_placeholder'),
   defaultSort: { field: 'created_at', direction: 'desc' },
   emptyIcon: <ArrowLeftRightIcon className="size-8 text-muted-foreground" />,
@@ -42,7 +44,6 @@ defineTable<StockTransfer>('stock-transfers', {
     {
       key: 'reference',
       label: i18n.t('admin.stock_transfers.columns.reference'),
-      filterable: true,
       default: true,
       render: (st) => st.reference ?? '—',
     },
