@@ -18,6 +18,31 @@ RSpec.describe SpreeAvalara::ItemPresenter do
       expect(payload[:amount]).to eq(line_item.taxable_basis)
     end
 
+    # Without these a merchant opening the transaction in Avalara sees a column
+    # of prefixed ids and cannot tell what was taxed.
+    it 'names the item and carries its SKU' do
+      line_item.variant.update!(sku: 'PROBE-SKU-1')
+
+      payload = present(line_item.reload)
+
+      expect(payload[:description]).to eq(line_item.name)
+      expect(payload[:itemCode]).to eq('PROBE-SKU-1')
+    end
+
+    # Avalara reads an item code against the company's own catalogue, so an
+    # invented one would occupy a namespace the merchant never assigned.
+    it 'sends no item code when the variant has no SKU' do
+      line_item.variant.update!(sku: '')
+
+      expect(present(line_item.reload)).not_to have_key(:itemCode)
+    end
+
+    it 'cuts a description Avalara would refuse' do
+      line_item.variant.product.update!(name: 'W' * 400)
+
+      expect(present(line_item.reload)[:description].length).to eq(described_class::DESCRIPTION_LIMIT)
+    end
+
     # The basis already has order-level promotions distributed into it, so
     # telling Avalara to discount the line again would take it twice.
     it 'never asks Avalara to discount the line' do
@@ -68,6 +93,15 @@ RSpec.describe SpreeAvalara::ItemPresenter do
       expect(present(fulfillment)[:taxCode]).to eq('FR')
     end
 
+    # A delivery line that says only "shipping" is no more readable than the id
+    # it replaced, so the method the buyer actually chose is named.
+    it 'names the delivery the buyer chose, and claims no item code' do
+      payload = present(fulfillment)
+
+      expect(payload[:description]).to start_with('Delivery')
+      expect(payload).not_to have_key(:itemCode)
+    end
+
     it 'ships from its own stock location' do
       expect(present(fulfillment)[:addresses][:shipFrom]).to include(
         country: fulfillment.stock_location.country_code
@@ -91,6 +125,14 @@ RSpec.describe SpreeAvalara::ItemPresenter do
     it 'is priced at its amount' do
       expect(present(fee)[:amount]).to eq(7.5)
       expect(present(fee)[:quantity]).to eq(1)
+    end
+
+    it 'is named by its label, and claims no item code' do
+      fee.update!(label: 'Import duty')
+      payload = present(fee.reload)
+
+      expect(payload[:description]).to eq('Import duty')
+      expect(payload).not_to have_key(:itemCode)
     end
 
     # Parity with the Internal engine, which taxes a category-less fee with the

@@ -7,6 +7,11 @@ module SpreeAvalara
     DEFAULT_TAX_CODE = 'P0000000'.freeze
     FREIGHT_TAX_CODE = 'FR'.freeze
 
+    # Avalara's own field limits. A line longer than these is refused outright,
+    # so both are cut rather than sent whole.
+    DESCRIPTION_LIMIT = 256
+    ITEM_CODE_LIMIT = 50
+
     # @param item [Spree::LineItem, Spree::Fulfillment, Spree::Fee]
     # @param owner [Spree::Cart, Spree::Order]
     # @param tax_included [Boolean] resolved through the tax destination
@@ -33,6 +38,8 @@ module SpreeAvalara
         discount: 0
       }
 
+      payload[:description] = description if description.present?
+      payload[:itemCode] = item_code if item_code.present?
       payload[:taxCode] = tax_code if tax_code.present?
       payload[:addresses] = line_addresses if line_addresses
       payload.merge!(exemption_payload)
@@ -93,6 +100,39 @@ module SpreeAvalara
       when Spree::Fulfillment then delivery_tax_code.presence || FREIGHT_TAX_CODE
       else default_tax_code
       end
+    end
+
+    # What a merchant reads when they open the transaction in Avalara. Without
+    # it every line is an opaque prefixed id, so a filed document cannot be
+    # checked against the sale it came from — which is the whole reason for
+    # looking at one. Avalara echoes both fields back and neither changes what
+    # is taxed: the line's own taxCode still governs, confirmed against the
+    # sandbox by pricing the same line with and without an item code, including
+    # one coded non-taxable.
+    def description
+      text = case item
+             when Spree::LineItem then item.name
+             when Spree::Fulfillment then delivery_description
+             when Spree::Fee then item.label.presence || item.kind
+             end
+
+      text.to_s.truncate(DESCRIPTION_LIMIT).presence
+    end
+
+    def delivery_description
+      name = item.selected_delivery_rate&.name.presence ||
+             item.selected_delivery_rate&.delivery_method&.name.presence
+      name ? "Delivery: #{name}" : 'Delivery'
+    end
+
+    # Only where the merchant has a real identifier for the thing sold. Avalara
+    # reads an item code against the company's own item catalogue, so inventing
+    # one for a fulfillment or a fee would put a value into that namespace that
+    # the merchant never assigned.
+    def item_code
+      return unless item.is_a?(Spree::LineItem)
+
+      item.variant&.sku.presence&.first(ITEM_CODE_LIMIT)
     end
 
     # A fulfillment carries no tax category of its own — the delivery method it
