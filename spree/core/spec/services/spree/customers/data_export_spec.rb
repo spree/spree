@@ -163,6 +163,39 @@ RSpec.describe Spree::Customers::DataExport do
       expect(exported[:metadata]).to eq('source' => 'campaign')
     end
 
+    it 'discloses where a split checkout was going' do
+      address = create(:address, address1: '5 Baker Street')
+      group = create(:order_group, store: store, customer: customer)
+      group.update_columns(bill_address_id: address.id, ship_address_id: address.id)
+
+      exported = payload[:order_groups].find { |row| row[:number] == group.number }
+
+      expect(exported[:shipping_address][:address1]).to eq('5 Baker Street')
+    end
+
+    it 'discloses the contact and device details on a consent record' do
+      Spree::ConsentRecord.create!(
+        store: store, owner: customer, purpose: Spree::ConsentRecord::EMAIL_MARKETING,
+        source: 'account', accepted: true, email: customer.email,
+        ip_address: '203.0.113.9', user_agent: 'Mozilla/5.0', recorded_at: Time.current
+      )
+
+      exported = payload[:consent_records].first
+
+      expect(exported[:ip_address]).to eq('203.0.113.9')
+      expect(exported[:user_agent]).to eq('Mozilla/5.0')
+    end
+
+    # Erasure never narrows a purchase to one store, so neither may the export.
+    it 'discloses an abandoned checkout left in another store' do
+      other_store = create(:store)
+      cart = create(:cart, customer: customer, store: other_store)
+
+      numbers = payload[:carts].map { |row| row[:email] }
+
+      expect(numbers).to include(cart.email)
+    end
+
     it 'discloses an order staff drafted but never placed' do
       draft = create(:order, customer: customer, store: store)
       draft.update_columns(customer_note: 'quote for Ada', last_ip_address: '203.0.113.9')

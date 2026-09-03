@@ -79,6 +79,61 @@ RSpec.describe 'personal data coverage' do
     MESSAGE
   end
 
+  # The other direction, and the one this feature kept getting wrong.
+  #
+  # A table the erasure scrubs is by definition personal data, so an access
+  # request has to disclose it. The export is assembled section by section by
+  # hand while the anonymizer works from the schema, so the export is what
+  # falls behind — repeatedly, and each time it looked like a different bug.
+  #
+  # Every covered table maps to the export section that answers for it.
+  EXPORT_SECTIONS = {
+    'spree_customers' => %i[account marketing_consent custom_fields],
+    'spree_addresses' => %i[addresses orders draft_orders carts order_groups],
+    'spree_orders' => %i[orders draft_orders],
+    'spree_order_groups' => %i[order_groups],
+    'spree_carts' => %i[carts],
+    'spree_credit_cards' => %i[payment_sources],
+    'spree_gateway_customers' => %i[payment_sources],
+    'spree_user_identities' => %i[connected_logins],
+    'spree_consent_records' => %i[consent_records],
+    'spree_newsletter_subscribers' => %i[marketing_consent],
+    'spree_data_requests' => %i[],
+    'spree_refresh_tokens' => %i[]
+  }.freeze
+
+  it 'discloses every table that erasure scrubs' do
+    payload = Spree::Customers::DataExport.new(
+      customer: create(:customer), store: @default_store
+    ).call
+
+    missing = COVERED_TABLES.keys.reject do |table|
+      sections = EXPORT_SECTIONS[table]
+      sections.nil? || sections.empty? || sections.all? { |section| payload.key?(section) }
+    end
+
+    undeclared = COVERED_TABLES.keys - EXPORT_SECTIONS.keys
+
+    expect(undeclared).to be_empty, <<~MESSAGE
+      These tables are erased but no export section is declared for them:
+
+        #{undeclared.join("\n  ")}
+
+      Add them to EXPORT_SECTIONS. A table with nothing to disclose (a
+      credential, an operational record) maps to an empty list, with the
+      reason in a comment.
+    MESSAGE
+
+    expect(missing).to be_empty, <<~MESSAGE
+      These tables are erased but the export no longer has the section that
+      disclosed them:
+
+        #{missing.join("\n  ")}
+
+      An access request has to name whatever an erasure removes.
+    MESSAGE
+  end
+
   it 'names a real table in every entry, so the lists cannot rot' do
     tables = ActiveRecord::Base.connection.tables
     declared = COVERED_TABLES.keys + EXEMPT_TABLES.keys

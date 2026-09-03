@@ -32,6 +32,7 @@ module Spree
           addresses: addresses,
           orders: orders,
           draft_orders: draft_orders,
+          order_groups: order_groups,
           carts: carts,
           payment_sources: payment_sources,
           connected_logins: connected_logins,
@@ -107,6 +108,9 @@ module Spree
             purpose: record.purpose,
             source: record.source,
             accepted: record.accepted,
+            email: record.email,
+            ip_address: record.ip_address,
+            user_agent: record.user_agent,
             recorded_at: record.recorded_at&.iso8601,
             documents: record.documents_list
           }
@@ -162,6 +166,23 @@ module Spree
         exported
       end
 
+      # A checkout split across sellers becomes one order per seller under a
+      # group, and the group keeps its own copy of where the whole thing was
+      # going.
+      def order_groups
+        owned_purchases(Spree::OrderGroup).
+          includes(:bill_address, :ship_address).map do |group|
+          {
+            number: group.number,
+            email: group.email,
+            currency: group.currency,
+            billing_address: address_hash(group.bill_address),
+            shipping_address: address_hash(group.ship_address),
+            created_at: group.created_at&.iso8601
+          }
+        end
+      end
+
       # An order a staff member started for this person but never placed. It is
       # not an abandoned checkout — those are carts, on their own table — and
       # it holds the same personal data a placed order does.
@@ -190,10 +211,8 @@ module Spree
       # request has to disclose them. Kept separate from orders: nothing was
       # bought, and listing them together would misrepresent both.
       def carts
-        scope = owned_purchases(Spree::Cart)
-        scope = scope.where(store_id: store.id) if store
-
-        scope.includes(:line_items, :bill_address, :ship_address).map do |cart|
+        owned_purchases(Spree::Cart).
+          includes(:line_items, :bill_address, :ship_address).map do |cart|
           {
             email: cart.email,
             currency: cart.currency,
