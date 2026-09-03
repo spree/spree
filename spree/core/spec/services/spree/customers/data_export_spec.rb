@@ -163,6 +163,26 @@ RSpec.describe Spree::Customers::DataExport do
       expect(exported[:metadata]).to eq('source' => 'campaign')
     end
 
+    it 'discloses an order staff drafted but never placed' do
+      draft = create(:order, customer: customer, store: store)
+      draft.update_columns(customer_note: 'quote for Ada', last_ip_address: '203.0.113.9')
+
+      exported = payload[:draft_orders].find { |order| order[:number] == draft.number }
+
+      expect(exported[:customer_note]).to eq('quote for Ada')
+      expect(exported[:last_ip_address]).to eq('203.0.113.9')
+    end
+
+    it 'discloses a card used at guest checkout' do
+      guest_order = create(:completed_order_with_totals, store: store)
+      guest_order.update_columns(customer_id: nil, email: customer.email)
+      card = create(:credit_card, name: 'Ada Lovelace')
+      card.update_columns(customer_id: nil)
+      create(:payment, order: guest_order, source: card)
+
+      expect(payload[:payment_sources].map { |source| source[:name] }).to include('Ada Lovelace')
+    end
+
     it 'discloses the accounts the person linked, without their tokens' do
       create(:user_identity, user: customer, uid: 'linked-12345',
                              access_token: 'secret-token')

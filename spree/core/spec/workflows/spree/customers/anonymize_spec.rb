@@ -228,6 +228,28 @@ RSpec.describe Spree::Customers::Anonymize do
 
   # A split checkout keeps its own address snapshots on the group, beside the
   # ones on each seller's order.
+  # A card saved during guest checkout carries no customer, so it is reachable
+  # only through the payment on the order it paid for.
+  describe 'a card used at guest checkout' do
+    let!(:guest_order) do
+      create(:completed_order_with_totals, store: store).
+        tap { |order| order.update_columns(customer_id: nil, email: 'buyer@example.com') }
+    end
+
+    let!(:card) do
+      create(:credit_card, name: 'Ada Lovelace').tap do |credit_card|
+        credit_card.update_columns(customer_id: nil)
+        create(:payment, order: guest_order, source: credit_card)
+      end
+    end
+
+    it 'redacts the cardholder name' do
+      result
+
+      expect(card.reload.name).to eq('Redacted')
+    end
+  end
+
   describe 'a checkout split across sellers' do
     let!(:address) { create(:address, address1: '5 Baker Street', first_name: 'Ada') }
     let!(:order_group) do

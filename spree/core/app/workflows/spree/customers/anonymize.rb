@@ -55,8 +55,10 @@ module Spree
           step :anonymize_account
           step :anonymize_address_book
           step :anonymize_order_addresses
-          step :anonymize_purchases
+          # Both read the purchases by email, so they run before the step that
+          # rewrites it.
           step :anonymize_payment_sources
+          step :anonymize_purchases
           step :forget_gateway_profiles
           step :anonymize_identities
           step :anonymize_sessions
@@ -199,7 +201,19 @@ module Spree
       # name is what this step is for; hiding the row would break the ledger
       # the rest of the flow is preserving.
       def anonymize_payment_sources
-        customer.credit_cards.update_all(name: REDACTED_NAME, updated_at: Time.current)
+        Spree::CreditCard.where(id: card_ids).update_all(name: REDACTED_NAME, updated_at: Time.current)
+      end
+
+      # Cards saved to the account, plus the ones used at guest checkout: those
+      # carry no customer and are reachable only through the payment on the
+      # order they paid for.
+      def card_ids
+        payment_card_ids = Spree::Payment.
+          where(order_id: owned_purchases(Spree::Order).select(:id),
+                source_type: 'Spree::CreditCard').
+          pluck(:source_id)
+
+        (customer.credit_cards.ids + payment_card_ids).compact.uniq
       end
 
       # Drops the local mapping to the customer object the processor holds.

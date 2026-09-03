@@ -5498,6 +5498,7 @@ paths:
                 consent_records: []
                 addresses: []
                 orders: []
+                draft_orders: []
                 carts: []
                 payment_sources: []
                 connected_logins: []

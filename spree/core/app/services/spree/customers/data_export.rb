@@ -31,6 +31,7 @@ module Spree
           consent_records: consent_records,
           addresses: addresses,
           orders: orders,
+          draft_orders: draft_orders,
           carts: carts,
           payment_sources: payment_sources,
           connected_logins: connected_logins,
@@ -161,6 +162,30 @@ module Spree
         exported
       end
 
+      # An order a staff member started for this person but never placed. It is
+      # not an abandoned checkout — those are carts, on their own table — and
+      # it holds the same personal data a placed order does.
+      def draft_orders
+        owned_purchases(Spree::Order).incomplete.
+          includes(:line_items, :bill_address, :ship_address).map do |order|
+          {
+            number: order.number,
+            email: order.email,
+            currency: order.currency,
+            item_total: order.item_total&.to_s,
+            customer_note: order.customer_note,
+            last_ip_address: order.last_ip_address,
+            metadata: order.metadata.presence,
+            billing_address: address_hash(order.bill_address),
+            shipping_address: address_hash(order.ship_address),
+            created_at: order.created_at&.iso8601,
+            line_items: order.line_items.map do |line_item|
+              { name: line_item.name, sku: line_item.sku, quantity: line_item.quantity }
+            end
+          }
+        end
+      end
+
       # Abandoned checkouts are retained data about this person, so an access
       # request has to disclose them. Kept separate from orders: nothing was
       # bought, and listing them together would misrepresent both.
@@ -189,7 +214,14 @@ module Spree
       # Card numbers were never stored, so this is the metadata that was: the
       # brand, the last four digits and the expiry a person would recognise.
       def payment_sources
-        customer.credit_cards.map do |card|
+        payment_card_ids = Spree::Payment.
+          where(order_id: owned_purchases(Spree::Order).select(:id),
+                source_type: 'Spree::CreditCard').
+          pluck(:source_id)
+
+        card_ids = (customer.credit_cards.ids + payment_card_ids).compact.uniq
+
+        Spree::CreditCard.where(id: card_ids).map do |card|
           {
             brand: card.cc_type,
             last_digits: card.last_digits,
