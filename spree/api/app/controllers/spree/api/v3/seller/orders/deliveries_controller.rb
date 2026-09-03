@@ -79,13 +79,18 @@ module Spree
 
             private
 
-            # A corrected number is a different parcel as far as the carrier is
-            # concerned, so its journey starts over.
+            # A corrected number is a different parcel as far as the carrier
+            # is concerned: its journey starts over, and the carrier and link
+            # that belonged to the old number go with it unless this request
+            # supplies new ones.
             def corrected_attributes(attributes, delivery)
               number = attributes[:tracking_number]
               return attributes if number.blank? || number.squish == delivery.tracking_number
 
-              attributes.merge(status: 'pending')
+              corrected = attributes.merge(status: 'pending')
+              corrected[:carrier] = nil if corrected[:carrier].blank?
+              corrected[:tracking_url] = nil if corrected[:tracking_url].blank?
+              corrected
             end
 
             def set_fulfillment

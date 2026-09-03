@@ -167,15 +167,30 @@ module Spree
         expect(fulfillment.reload.shipping_labels).to be_empty
       end
     end
-    # A provider whose dispatch IS the label must not also be asked to
-    # dispatch, or the fulfill path buys a second one.
-    it 'is the only provider call the fulfill path makes for a label provider' do
+    # Buying the label and telling the provider the parcel went out are
+    # different acts — a provider that does both still hears both — but the
+    # label is bought exactly once.
+    it 'buys one label on the fulfill path, and still notifies the provider' do
       allow(provider).to receive(:create_fulfillment).and_call_original
 
       Spree.fulfillment_fulfill_workflow.call(fulfillment: fulfillment)
 
-      expect(provider).not_to have_received(:create_fulfillment)
+      expect(provider).to have_received(:create_fulfillment).with(fulfillment)
       expect(fulfillment.reload.shipping_labels.count).to eq(1)
+    end
+    # Once the carrier has charged, the row is the merchant's only record of
+    # the label — a later failure must never destroy it, or the merchant is
+    # left with postage paid and nothing to print or refund.
+    it 'keeps a bought label when recording its consignment fails' do
+      allow(Spree::Delivery).to receive(:new).and_wrap_original do |original, *args|
+        original.call(*args).tap { |delivery| delivery.define_singleton_method(:save) { false } }
+      end
+
+      expect(subject.call(owner: fulfillment)).to be_failure
+
+      label = fulfillment.reload.shipping_labels.last
+      expect(label).to be_present
+      expect(label.status).to eq('purchased')
     end
   end
 end

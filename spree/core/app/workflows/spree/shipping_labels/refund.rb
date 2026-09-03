@@ -60,14 +60,7 @@ module Spree
       end
 
       def remove_delivery_if_never_moved
-        delivery = shipping_label.delivery
-        return if delivery.nil?
-
-        owner = shipping_label.owner
-        moved = owner.is_a?(Spree::Fulfillment) ? owner.fulfilled_or_delivered? : owner.received?
-        return if moved
-
-        delivery.destroy!
+        shipping_label.release_unmoved_delivery
       end
     end
   end

@@ -122,7 +122,11 @@ module SpreeEasyPost
     # @param owner [Spree::Fulfillment, Spree::Return]
     # @return [Array<Hash>]
     def documents(owner)
-      forms = owner.active_shipping_label&.metadata&.dig('easypost_forms')
+      # Read from the loaded association rather than re-scoping it: this is
+      # called once per parcel while serializing an order, and a fresh query
+      # each time defeats the controller's preload.
+      label = owner.shipping_labels.detect { |candidate| !candidate.refunded? }
+      forms = label&.metadata&.dig('easypost_forms')
       Array(forms).filter_map do |form|
         next if form['url'].blank?
 

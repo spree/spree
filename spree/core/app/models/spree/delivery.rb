@@ -35,6 +35,9 @@ module Spree
     validates :owner_type, inclusion: { in: OWNER_TYPES }
 
     normalizes :tracking_number, with: ->(value) { value&.to_s&.squish&.presence }
+    # An emptied carrier or link is a cleared column, not an empty string —
+    # a blank carrier is what asks for detection to run again.
+    normalizes :carrier, :tracking_url, :service, with: ->(value) { value&.to_s&.strip&.presence }
 
     # Numbers from the big carriers encode who they belong to; pinning the
     # detected carrier means the badge and the URL survive when the merchant
@@ -114,11 +117,16 @@ module Spree
     end
 
     # Parsing a number runs the gem's whole carrier battery, and both the
-    # carrier and the URL want the answer.
+    # carrier and the URL want the answer — but a corrected number is a
+    # different parcel, so the cache is keyed on the number it parsed.
     def tracking_service
       return if tracking_number.blank?
 
-      @tracking_service ||= Spree.tracking_number_service.new(tracking_number.upcase)
+      number = tracking_number.upcase
+      return @tracking_service if @tracking_service_number == number
+
+      @tracking_service_number = number
+      @tracking_service = Spree.tracking_number_service.new(number)
     end
   end
 end

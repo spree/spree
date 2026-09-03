@@ -95,7 +95,14 @@ export function FulfillmentLabelUploadDialog({
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent>
-        <form onSubmit={form.handleSubmit(onSubmit)}>
+        <form
+          onSubmit={(event) => {
+            // The order page renders its cards inside their own forms — without
+            // stopping the bubble the browser submits the outer one.
+            form.handleSubmit(onSubmit)(event)
+            event.stopPropagation()
+          }}
+        >
           <DialogHeader>
             <DialogTitle>{t('admin.orders.detail.fulfillments.upload_label_title')}</DialogTitle>
             <DialogDescription>

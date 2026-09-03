@@ -74,16 +74,27 @@ export function FulfillmentDeliveryDialog({
 
   async function onSubmit(values: DeliveryFormValues) {
     try {
-      const params = {
-        tracking_number: values.tracking_number.trim(),
-        carrier: values.carrier.trim() || undefined,
-        tracking_url: values.tracking_url.trim() || undefined,
-      }
+      const tracking_number = values.tracking_number.trim()
+      const carrier = values.carrier.trim()
+      const tracking_url = values.tracking_url.trim()
 
       if (delivery) {
-        await updateDelivery.mutateAsync({ fulfillmentId, deliveryId: delivery.id, ...params })
+        // Sent even when empty: clearing the carrier is how a merchant asks
+        // for it to be detected from the number again.
+        await updateDelivery.mutateAsync({
+          fulfillmentId,
+          deliveryId: delivery.id,
+          tracking_number,
+          carrier,
+          tracking_url,
+        })
       } else {
-        await createDelivery.mutateAsync({ fulfillmentId, ...params })
+        await createDelivery.mutateAsync({
+          fulfillmentId,
+          tracking_number,
+          carrier: carrier || undefined,
+          tracking_url: tracking_url || undefined,
+        })
       }
       onOpenChange(false)
     } catch (err) {
@@ -94,7 +105,14 @@ export function FulfillmentDeliveryDialog({
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent>
-        <form onSubmit={form.handleSubmit(onSubmit)}>
+        <form
+          onSubmit={(event) => {
+            // The order page renders its cards inside their own forms — without
+            // stopping the bubble the browser submits the outer one.
+            form.handleSubmit(onSubmit)(event)
+            event.stopPropagation()
+          }}
+        >
           <DialogHeader>
             <DialogTitle>
               {delivery

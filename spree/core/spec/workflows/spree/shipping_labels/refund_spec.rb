@@ -60,7 +60,9 @@ module Spree
     end
 
     it 'refuses an uploaded label' do
-      uploaded = create(:shipping_label, :uploaded, owner: fulfillment)
+      # Its own parcel: one live label per parcel is a database constraint,
+      # and this fulfillment already carries the purchased one above.
+      uploaded = create(:shipping_label, :uploaded, owner: create(:fulfillment, order: order, tracking: nil))
 
       result = subject.call(shipping_label: uploaded)
 

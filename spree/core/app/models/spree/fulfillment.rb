@@ -893,16 +893,21 @@ module Spree
     # way still lands where every reader looks, on the primary delivery.
     # Runs after commit rather than inside the save chain: writing a second
     # record from within this one's callbacks is what the workflows exist to
-    # avoid, and the association has to see a committed fulfillment. A
-    # rejection is raised rather than dropped — the caller assigned a number
-    # and has to hear that it did not land.
+    # avoid, and the association has to see a committed fulfillment.
+    #
+    # A rejection surfaces on the fulfillment's own errors rather than as an
+    # exception: the save has already committed by the time this runs, and
+    # raising here would report a persisted write as a failure. Code that
+    # needs the rejection to abort creates the delivery directly.
     def apply_pending_tracking
       value = remove_instance_variable(:@pending_tracking)
       return if value.blank?
 
       deliveries.reset
       result = Spree.delivery_upsert_primary_service.call(fulfillment: self, tracking: value)
-      raise ActiveRecord::RecordInvalid, result.value if result.failure?
+      return if result.success?
+
+      errors.merge!(result.value.errors) if result.value.respond_to?(:errors)
     end
 
     def exactly_one_owner

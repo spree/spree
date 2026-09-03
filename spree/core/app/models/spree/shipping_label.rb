@@ -72,6 +72,18 @@ module Spree
       !uploaded? && !refunded?
     end
 
+    # Drops the consignment this label minted, when the parcel never moved.
+    # Postage voided before anything travelled leaves nothing behind; once it
+    # has travelled the journey is history and stays, label or no label.
+    #
+    # @return [void]
+    def release_unmoved_delivery
+      return if delivery.nil?
+      return if owner.is_a?(Spree::Fulfillment) ? owner.fulfilled_or_delivered? : owner.received?
+
+      delivery.destroy!
+    end
+
     # @return [Boolean] whether the file is still to be fetched from the
     #   provider's URL
     def file_pending?

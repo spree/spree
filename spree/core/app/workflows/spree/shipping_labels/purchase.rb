@@ -64,23 +64,35 @@ module Spree
       end
 
       # The claim, not the check above, is what makes a double click buy one
-      # label: it inserts the row the uniqueness index guards before the
-      # carrier is called, so the loser of the race is refused by the
-      # database rather than by a read that has already gone stale.
+      # label: it inserts the row before the carrier is called, so the loser
+      # of the race is refused rather than charged. A partial unique index
+      # settles it where the database has one; everywhere else the owner's
+      # row lock serializes the two claims, which is why the check is
+      # re-read inside it.
       def claim_purchase
-        @shipping_label = owner.shipping_labels.create!(
-          store: owner.store,
-          integration: provider.integration_for(owner),
-          source: 'purchased',
-          status: 'purchased'
-        )
+        owner.with_lock do
+          failure(owner, Spree.t('shipping_labels.errors.already_purchased')) if owner.shipping_labels.active.exists?
+
+          @shipping_label = owner.shipping_labels.create!(
+            store: owner.store,
+            integration: provider.integration_for(owner),
+            source: 'purchased',
+            status: 'purchased'
+          )
+        end
       rescue ActiveRecord::RecordNotUnique
         failure(owner, Spree.t('shipping_labels.errors.already_purchased'))
       end
 
       # Undoes the claim when the carrier refuses, so a failed purchase does
       # not leave a row that refuses every later attempt.
+      #
+      # Only while nothing has been bought: once the carrier has charged for a
+      # label, the row is the merchant's only record of it — destroying it
+      # would leave postage paid and nothing to print or refund.
       def release_claim
+        return if @purchase.present?
+
         @shipping_label&.destroy
         @shipping_label = nil
       end

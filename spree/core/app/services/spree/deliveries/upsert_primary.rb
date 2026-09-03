@@ -20,9 +20,18 @@ module Spree
         primary = fulfillment.primary_delivery
         return Spree.delivery_create_service.call(owner: fulfillment, tracking_number: tracking, carrier: carrier) if primary.nil?
 
-        attributes = { tracking_number: tracking.to_s.squish }
+        number = tracking.to_s.squish
+        attributes = { tracking_number: number }
         attributes[:carrier] = carrier if carrier.present?
-        attributes[:status] = 'pending' if attributes[:tracking_number] != primary.tracking_number
+
+        # A corrected number is a different parcel: its journey starts over,
+        # and the carrier and link belonging to the old number go with it —
+        # otherwise a UPS badge and a UPS page survive onto a FedEx number.
+        if number != primary.tracking_number
+          attributes[:status] = 'pending'
+          attributes[:carrier] = nil if carrier.blank?
+          attributes[:tracking_url] = nil
+        end
 
         primary.update(attributes) ? success(primary) : failure(primary)
       end

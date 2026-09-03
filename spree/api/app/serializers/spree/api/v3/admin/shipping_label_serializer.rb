@@ -61,13 +61,17 @@ module Spree
 
             helpers = Spree::Core::Engine.routes.url_helpers
             owner = shipping_label.owner
+            # Both paths are nested under an order; a fulfillment still on a
+            # cart has none, so there is nowhere to download it from yet.
+            next nil if owner.order.nil?
+
             if owner.is_a?(Spree::Return)
               helpers.download_api_v3_admin_order_return_label_path(
                 order_id: owner.order.prefixed_id, return_id: owner.prefixed_id, id: shipping_label.prefixed_id
               )
             else
               helpers.download_api_v3_admin_order_fulfillment_label_path(
-                order_id: owner.order&.prefixed_id, fulfillment_id: owner.prefixed_id, id: shipping_label.prefixed_id
+                order_id: owner.order.prefixed_id, fulfillment_id: owner.prefixed_id, id: shipping_label.prefixed_id
               )
             end
           end

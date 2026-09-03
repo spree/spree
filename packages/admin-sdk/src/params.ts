@@ -280,11 +280,6 @@ export interface FulfillmentFulfillParams {
   force?: boolean
 }
 
-/**
- * Records that the customer received the goods — the end of the fulfillment
- * lifecycle. Reached by a carrier reporting delivery, by staff who know the
- * parcel arrived, or by a customer collecting a pickup order.
- */
 /** Buying a label takes no body; recording an uploaded one takes at least a file and a number. */
 export interface ShippingLabelCreateParams {
   /** Signed blob id from `directUploads.create()`. Its presence records an uploaded label instead of buying one. */
@@ -329,6 +324,11 @@ export interface DeliveryMarkDeliveredParams {
   notify_customer?: boolean
 }
 
+/**
+ * Records that the customer received the goods — the end of the fulfillment
+ * lifecycle. Reached by a carrier reporting delivery, by staff who know the
+ * parcel arrived, or by a customer collecting a pickup order.
+ */
 export interface FulfillmentMarkDeliveredParams {
   /**
    * When it arrived, as an ISO 8601 string. Defaults to now. Carriers report a

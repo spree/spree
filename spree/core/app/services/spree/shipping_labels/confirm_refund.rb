@@ -18,7 +18,11 @@ module Spree
           return failure(shipping_label)
         end
 
-        shipping_label.update!(status: 'refunded', refunded_at: refunded_at || Time.current)
+        ApplicationRecord.transaction do
+          shipping_label.update!(status: 'refunded', refunded_at: refunded_at || Time.current)
+          shipping_label.release_unmoved_delivery
+        end
+
         shipping_label.publish_event('shipping_label.refunded')
         success(shipping_label)
       end

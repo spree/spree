@@ -23,4 +23,23 @@ RSpec.describe Spree::ShippingLabels::ConfirmRefund do
     expect(service.call(shipping_label: label)).to be_failure
     expect(label.reload).to be_purchased
   end
+  # Same rule as the synchronous refund: postage voided before the parcel
+  # moved leaves no consignment behind.
+  it 'drops the consignment when the parcel never shipped' do
+    label = create(:shipping_label, :with_delivery, owner: fulfillment, status: 'refund_requested')
+
+    service.call(shipping_label: label)
+
+    expect(label.reload).to be_refunded
+    expect(label.delivery).to be_nil
+  end
+
+  it 'keeps the consignment once the parcel has travelled' do
+    label = create(:shipping_label, :with_delivery, owner: fulfillment, status: 'refund_requested')
+    fulfillment.update!(status: 'fulfilled', fulfilled_at: Time.current)
+
+    service.call(shipping_label: label)
+
+    expect(label.reload.delivery).to be_present
+  end
 end
