@@ -134,15 +134,15 @@ module Spree
       let(:order) { create(:completed_order_with_totals) }
       let!(:payment) { create(:payment, order: order, amount: order.total, status: 'completed') }
 
-      it 'releases the hold and leaves captured money alone by default' do
+      # Not voided either: the gateway refuses to cancel money it has already
+      # drawn, so touching it would fail the cancellation after the order was
+      # already marked canceled.
+      it 'leaves captured money alone by default, without calling the gateway' do
         expect_any_instance_of(Spree::Payment).not_to receive(:cancel!)
-        allow(Spree.payment_void_workflow).to receive(:call).
-          and_return(Spree::ServiceModule::Result.new(true, nil, nil))
+        expect(Spree.payment_void_workflow).not_to receive(:call).
+          with(hash_including(payment: payment))
 
         subject.call(order: order, canceler: user)
-
-        expect(Spree.payment_void_workflow).to have_received(:call).
-          with(hash_including(payment: payment))
       end
 
       it 'hands it back when asked' do

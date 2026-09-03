@@ -155,23 +155,19 @@ module Spree
         end
       end
 
-      # A cancellation always releases the gateway's hold; whether it hands
-      # money back is the caller's call.
+      # Whether captured money goes back is the caller's call. `cancel!` is
+      # the gateway's own settle-this-payment verb, and on a completed payment
+      # that means a refund, so it is reached only when one was asked for.
       #
-      # `cancel!` is the gateway's own settle-this-payment verb, and on a
-      # captured payment that means a full refund — so it is reached only when
-      # a refund was actually asked for. Otherwise the authorization is voided,
-      # which releases an uncaptured hold and leaves captured money where it
-      # is, for an operator to refund deliberately.
+      # Otherwise nothing is called at all: a completed payment is money
+      # already drawn, which a gateway will not void — Stripe rejects
+      # cancelling a captured PaymentIntent — so there is no hold to release
+      # here and an operator refunds it deliberately. Authorizations never
+      # drawn on are `incomplete`, and the caller above voids those.
       def settle_completed_payments
-        order.payments.completed.each do |payment|
-          if refund_payments || payment.credit_allowed <= 0
-            payment.cancel!
-          elsif payment.can_void?
-            result = Spree.payment_void_workflow.call(payment: payment)
-            raise Spree::Core::GatewayError, result.error.value.to_s if result.failure?
-          end
-        end
+        return unless refund_payments
+
+        order.payments.completed.each(&:cancel!)
       end
 
       # What this order has actually been paid. An order placed in a split
