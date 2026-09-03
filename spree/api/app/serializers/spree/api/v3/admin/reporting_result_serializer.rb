@@ -40,12 +40,22 @@ module Spree
 
           def metric_payload(name, payload)
             output = payload.dup
-            output[:display] = money(payload[:value]) if Spree.reporting.metrics[name]&.money?
+            output[:display] = money(payload[:value]) if money_metrics.include?(name)
             output
           end
 
+          # Resolved once per response rather than per cell — a 1000-row report
+          # with five metrics would otherwise build 5000 Money objects.
+          def money_metrics
+            @money_metrics ||= result.meta[:metrics].select { |name| Spree.reporting.metrics[name]&.money? }.to_set
+          end
+
+          def currency
+            @currency ||= ::Money::Currency.find(result.meta[:currency])
+          end
+
           def money(amount)
-            Spree::Money.new(amount, currency: result.meta[:currency]).to_s
+            Spree::Money.new(amount, currency: currency).to_s
           end
 
           def dimension_value(name, raw)

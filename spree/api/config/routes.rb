@@ -249,6 +249,7 @@ Spree::Core::Engine.add_routes do
         namespace :reporting do
           post :query
           get :schema
+          resources :saved_reports, only: %i[index show create update destroy]
         end
 
         # Dashboard (point-in-time operational counts)
