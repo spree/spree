@@ -47,7 +47,7 @@ module Spree
     has_many :deliveries, -> { order(:created_at, :id) }, class_name: 'Spree::Delivery', as: :owner, dependent: :destroy
 
     after_save :update_adjustments
-    after_save :apply_pending_tracking, if: -> { defined?(@pending_tracking) }
+    after_commit :apply_pending_tracking, if: -> { defined?(@pending_tracking) }
 
     before_validation :set_cost_zero_when_nil
 
@@ -691,7 +691,7 @@ module Spree
     #
     # @return [String, nil]
     def tracking_url
-      primary_delivery&.tracking_url
+      primary_delivery&.resolved_tracking_url
     end
 
     # The label that currently binds this parcel — bought or uploaded, and not
@@ -891,15 +891,20 @@ module Spree
 
     # The deprecated writer's other half: a tracking number assigned the old
     # way still lands where every reader looks, on the primary delivery.
+    # Runs after commit rather than inside the save chain: writing a second
+    # record from within this one's callbacks is what the workflows exist to
+    # avoid, and the association has to see a committed fulfillment. A
+    # rejection is raised rather than dropped — the caller assigned a number
+    # and has to hear that it did not land.
     def apply_pending_tracking
       value = remove_instance_variable(:@pending_tracking)
       return if value.blank?
 
-      if primary_delivery
-        primary_delivery.update!(tracking_number: value, status: 'pending')
-      else
-        Spree.delivery_create_service.call(owner: self, tracking_number: value)
-      end
+      deliveries.reset
+      return primary_delivery.update!(tracking_number: value, status: 'pending') if primary_delivery
+
+      result = Spree.delivery_create_service.call(owner: self, tracking_number: value)
+      raise ActiveRecord::RecordInvalid, result.value if result.failure?
     end
 
     def exactly_one_owner

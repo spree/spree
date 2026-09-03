@@ -35,9 +35,12 @@ module Spree
 
       private
 
+      # A label the carrier is still deciding on is re-askable: some carriers
+      # settle refunds asynchronously, and re-filing is how a request that
+      # never came back is re-driven.
       def ensure_refundable
         failure(shipping_label, Spree.t('shipping_labels.errors.uploaded_not_refundable')) if shipping_label.uploaded?
-        failure(shipping_label, Spree.t('shipping_labels.errors.not_refundable')) unless shipping_label.purchased?
+        failure(shipping_label, Spree.t('shipping_labels.errors.not_refundable')) unless shipping_label.refundable?
       end
 
       def refund

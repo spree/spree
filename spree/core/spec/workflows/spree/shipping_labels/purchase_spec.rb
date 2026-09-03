@@ -157,5 +157,15 @@ module Spree
         expect(fulfillment.reload.shipping_labels).to be_empty
       end
     end
+    # A provider whose dispatch IS the label must not also be asked to
+    # dispatch, or the fulfill path buys a second one.
+    it 'is the only provider call the fulfill path makes for a label provider' do
+      allow(provider).to receive(:create_fulfillment).and_call_original
+
+      Spree.fulfillment_fulfill_workflow.call(fulfillment: fulfillment)
+
+      expect(provider).not_to have_received(:create_fulfillment)
+      expect(fulfillment.reload.shipping_labels.count).to eq(1)
+    end
   end
 end

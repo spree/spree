@@ -822,6 +822,11 @@ module Spree
     # sees why there is no label.
     class LabelPurchaseFailed < RuntimeError; end
 
+    # A label the carrier refused to refund while a parcel was being
+    # cancelled. The cancellation proceeds; the postage is the merchant's to
+    # chase, so it is reported rather than dropped.
+    class LabelRefundFailed < RuntimeError; end
+
     # The call may or may not have taken effect — a timeout, a dropped
     # connection, anything that leaves the answer at the provider rather than
     # in the response. Distinct from its parent because the safe reaction is

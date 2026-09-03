@@ -23,9 +23,9 @@ namespace :spree do
     fulfillments.includes(:order, :cart).find_in_batches(batch_size: batch_size) do |batch|
       batch.each do |fulfillment|
         tracking = fulfillment.read_attribute(:tracking).to_s.squish
-        store = fulfillment.owner&.store
-        if store.nil?
+        if fulfillment.owner&.store.nil?
           skipped += 1
+          say.call "  skipped #{fulfillment.number}: its order or cart is gone, so it has no store"
           next
         end
 

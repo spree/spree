@@ -53,15 +53,20 @@ module Spree
     end
 
     # The public page where this consignment can be followed, best answer
-    # first: a link the merchant pasted or the provider's tracker page (the
-    # column), the pinned carrier's registered tracking page, the delivery
-    # method's configured format, then detection from the number's format.
+    # first: the link stored on the row (pasted by the merchant, or the
+    # provider's tracker page), the pinned carrier's registered tracking
+    # page, the delivery method's configured format, then detection from the
+    # number's format.
+    #
+    # Distinct from the +tracking_url+ column so that clearing the column
+    # means "no link I chose" rather than "no link at all" — the derived
+    # answer still applies, and a merchant can always store one explicitly.
     #
     # @return [String, nil]
-    def tracking_url
+    def resolved_tracking_url
       return if tracking_number.blank?
 
-      super.presence ||
+      tracking_url.presence ||
         (tracking_number if pasted_link?) ||
         provider_tracking_url.presence ||
         carrier_tracking_url.presence ||

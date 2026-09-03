@@ -14,7 +14,13 @@ module Spree
                  estimated_delivery_at: [:string, nullable: true],
                  delivered_at: [:string, nullable: true]
 
-        attributes :tracking_number, :tracking_url, :carrier, :carrier_name, :service, :status
+        attributes :tracking_number, :carrier, :carrier_name, :service, :status
+
+        # The best link for this consignment: the one stored on the row, or
+        # the one derived from its carrier and number.
+        attribute :tracking_url do |delivery|
+          delivery.resolved_tracking_url
+        end
 
         attributes estimated_delivery_at: :iso8601, delivered_at: :iso8601
       end

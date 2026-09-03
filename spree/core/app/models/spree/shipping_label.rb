@@ -64,10 +64,11 @@ module Spree
       source == 'uploaded'
     end
 
-    # @return [Boolean] whether a refund can still be requested from the
-    #   carrier — only a purchased label that has not been refunded
+    # @return [Boolean] whether a refund can still be asked of the carrier.
+    #   A label the carrier is still deciding on counts: some settle refunds
+    #   asynchronously and a re-ask is how a stuck one is re-driven.
     def refundable?
-      purchased? && !uploaded?
+      !uploaded? && !refunded?
     end
 
     # @return [Boolean] whether the file is still to be fetched from the
@@ -79,9 +80,20 @@ module Spree
     # The provider's hosted copy of the label, kept only until the file has
     # been fetched into Spree's own storage.
     #
+    # Answered only for an `https` URL: the value is whatever the provider
+    # wrote, and it is followed by a browser on a print click and fetched
+    # server-side by Spree::ShippingLabels::StoreFile, so a `javascript:` or
+    # `file:` value would be an open redirect wearing a label's clothes.
+    #
     # @return [String, nil]
     def file_url
-      metadata['file_url']
+      value = metadata['file_url'].to_s
+      return if value.blank?
+
+      uri = URI.parse(value)
+      value if uri.is_a?(URI::HTTPS) && uri.host.present?
+    rescue URI::InvalidURIError
+      nil
     end
 
     # @return [Spree::Money]

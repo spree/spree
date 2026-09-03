@@ -48,4 +48,21 @@ RSpec.describe Spree::ShippingLabels::StoreFile do
 
     expect(service.call(shipping_label: stored)).to be_success
   end
+  # The purchase behind the file is already a fact, so a carrier CDN that is
+  # down is a failed fetch carrying its own reason, never a raised exception.
+  it 'reports the reason when the carrier cannot be reached' do
+    allow(SsrfFilter).to receive(:get).and_raise(SocketError.new('getaddrinfo failed'))
+
+    result = service.call(shipping_label: label)
+
+    expect(result).to be_failure
+    expect(result.error.to_s).to include('getaddrinfo failed')
+    expect(label.reload.file).not_to be_attached
+  end
+
+  it 'reports a blocked address the same way' do
+    allow(SsrfFilter).to receive(:get).and_raise(SsrfFilter::PrivateIPAddress.new('private'))
+
+    expect(service.call(shipping_label: label)).to be_failure
+  end
 end

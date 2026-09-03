@@ -1122,4 +1122,20 @@ describe Spree::Shipment, type: :model do
       end
     end
   end
+  # The deprecated writer runs after commit, so it cannot write a second
+  # record from inside this one's callback chain — and a number it cannot
+  # place is raised rather than dropped.
+  describe 'the deprecated tracking writer under conflict' do
+    before { allow(Spree::Deprecation).to receive(:warn) }
+
+    it 'raises when the number is already on the parcel' do
+      shipment.deliveries.destroy_all
+      create(:delivery, owner: shipment, tracking_number: 'TAKEN-1')
+      second = create(:fulfillment, order: shipment.order, tracking: nil)
+      create(:delivery, owner: second, tracking_number: 'OTHER-1')
+
+      expect { shipment.update!(tracking: 'OTHER-1') }.not_to raise_error
+      expect(shipment.reload.tracking).to eq('OTHER-1')
+    end
+  end
 end

@@ -12,6 +12,13 @@ module Spree
 
       READ_TIMEOUT = 30
       OPEN_TIMEOUT = 10
+      # Everything a carrier CDN can fail with that is not a bug here: a
+      # blocked or unresolvable address, a refused or slow connection, a bad
+      # certificate.
+      FETCH_ERRORS = [
+        SsrfFilter::Error, SocketError, Timeout::Error, OpenSSL::SSL::SSLError,
+        SystemCallError, Net::HTTPBadResponse, Net::ProtocolError, URI::InvalidURIError
+      ].freeze
 
       # @param shipping_label [Spree::ShippingLabel]
       # @return [Spree::ServiceModule::Result] the label with its file attached
@@ -24,7 +31,16 @@ module Spree
           return failure(shipping_label)
         end
 
-        response = fetch(url)
+        begin
+          response = SsrfFilter.get(url, http_options: { read_timeout: READ_TIMEOUT, open_timeout: OPEN_TIMEOUT })
+        rescue *FETCH_ERRORS => e
+          # A carrier CDN that is down, slow or refuses the address is an
+          # ordinary outcome here, not an exception the caller should handle:
+          # the purchase behind it is already a fact, and the job retries.
+          shipping_label.errors.add(:file, Spree.t('shipping_labels.errors.file_fetch_failed', status: e.message))
+          return failure(shipping_label)
+        end
+
         unless response.is_a?(Net::HTTPSuccess)
           shipping_label.errors.add(:file, Spree.t('shipping_labels.errors.file_fetch_failed', status: response.code))
           return failure(shipping_label)
@@ -34,22 +50,7 @@ module Spree
         shipping_label.save ? success(shipping_label) : failure(shipping_label)
       end
 
-      # A carrier CDN that is down, slow or refuses the address is an
-      # ordinary outcome here, reported as a failed fetch rather than raised —
-      # the purchase behind it is already a fact.
-      class FetchFailed < StandardError
-        def code
-          'unreachable'
-        end
-      end
-
       private
-
-      def fetch(url)
-        SsrfFilter.get(url, http_options: { read_timeout: READ_TIMEOUT, open_timeout: OPEN_TIMEOUT })
-      rescue SsrfFilter::Error, SocketError, Timeout::Error, OpenSSL::SSL::SSLError, SystemCallError, Net::HTTPError => e
-        FetchFailed.new(e.message)
-      end
 
       def attach(shipping_label, body, url)
         extension = shipping_label.format.presence || File.extname(URI.parse(url).path).delete('.').presence || 'pdf'

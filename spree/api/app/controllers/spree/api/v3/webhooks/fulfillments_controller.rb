@@ -63,11 +63,21 @@ module Spree
           def find_delivery(tracking_code)
             return if tracking_code.blank?
 
+            # Carriers reuse tracking numbers across years, so the filter runs
+            # in SQL rather than over every historic match: a canceled parcel
+            # is excluded per owner type, and the newest survivor wins.
+            live_fulfillments = Spree::Fulfillment.where.not(status: 'canceled').select(:id)
+            live_returns = Spree::Return.where.not(status: 'canceled').select(:id)
+
             current_store.deliveries.
               where(tracking_number: tracking_code).
+              where(
+                "(owner_type = 'Spree::Fulfillment' AND owner_id IN (?)) OR " \
+                "(owner_type = 'Spree::Return' AND owner_id IN (?))",
+                live_fulfillments, live_returns
+              ).
               order(created_at: :desc, id: :desc).
-              includes(:owner).
-              detect { |delivery| !delivery.owner.try(:canceled?) }
+              first
           end
         end
       end

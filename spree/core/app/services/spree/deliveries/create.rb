@@ -29,7 +29,7 @@ module Spree
           shipping_label: shipping_label,
           status: status
         )
-        delivery[:tracking_url] ||= delivery.tracking_number if delivery.pasted_link?
+        delivery.tracking_url ||= delivery.tracking_number if delivery.pasted_link?
 
         delivery.save ? success(delivery) : failure(delivery)
       end

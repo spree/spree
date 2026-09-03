@@ -61,7 +61,7 @@ module Spree
           carrier: carrier,
           service: service,
           tracking_number: tracking_number,
-          cost: cost.presence || 0,
+          cost: cost || 0,
           currency: currency.presence || owner.store.default_currency,
           file: file
         )

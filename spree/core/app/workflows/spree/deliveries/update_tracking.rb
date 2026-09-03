@@ -83,6 +83,10 @@ module Spree
         owner = delivery.owner
         return unless owner.is_a?(Spree::Fulfillment)
         return unless owner.can_mark_delivered?
+
+        # update_columns above left any loaded association holding the old
+        # status, and this decides whether the parcel is done.
+        owner.deliveries.reset
         return if owner.deliveries.undelivered.exists?
 
         result = Spree.fulfillment_mark_delivered_workflow.call(

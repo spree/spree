@@ -49,9 +49,16 @@ module Spree
         @provider ||= owner.provider
       end
 
+      # The active-label check is the idempotency guard, so it reads under the
+      # owner's row lock: two clicks on "buy label" would otherwise both pass
+      # it and both charge the carrier. The lock is released before the
+      # purchase step, which must not hold one across network I/O.
       def ensure_purchasable
         failure(owner, Spree.t('shipping_labels.errors.provider_has_no_labels')) unless provider.class.generates_labels?
-        failure(owner, Spree.t('shipping_labels.errors.already_purchased')) if owner.shipping_labels.active.exists?
+
+        owner.with_lock do
+          failure(owner, Spree.t('shipping_labels.errors.already_purchased')) if owner.shipping_labels.active.exists?
+        end
 
         case owner
         when Spree::Fulfillment
@@ -98,7 +105,7 @@ module Spree
             shipping_label: shipping_label,
             carrier: @purchase.carrier.presence || existing.carrier,
             service: @purchase.service.presence || existing.service,
-            tracking_url: @purchase.tracking_url.presence || existing.read_attribute(:tracking_url)
+            tracking_url: @purchase.tracking_url.presence || existing.tracking_url
           )
           return
         end

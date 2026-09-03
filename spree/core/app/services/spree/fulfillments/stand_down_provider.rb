@@ -17,7 +17,17 @@ module Spree
         fulfillment.shipping_labels.active.each do |shipping_label|
           next unless shipping_label.refundable?
 
-          Spree.shipping_label_refund_workflow.call(shipping_label: shipping_label)
+          result = Spree.shipping_label_refund_workflow.call(shipping_label: shipping_label)
+          next if result.success?
+
+          # The goods are not going out either way, so a carrier that refuses
+          # the refund never blocks the cancellation — but the merchant is out
+          # of pocket, so it is reported rather than swallowed.
+          Rails.error.report(
+            Spree::Core::LabelRefundFailed.new(result.error.to_s),
+            context: { shipping_label_id: shipping_label.id, fulfillment_id: fulfillment.id },
+            source: 'spree.fulfillments.stand_down'
+          )
         end
 
         fulfillment.provider.cancel_fulfillment(fulfillment)

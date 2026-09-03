@@ -65,17 +65,26 @@ RSpec.describe Spree::Delivery, type: :model do
     end
   end
 
-  describe '#tracking_url' do
+  describe '#resolved_tracking_url' do
     it 'returns a pasted link as-is' do
       delivery = create(:delivery, owner: fulfillment, tracking_number: 'https://carrier.example/track/ABC')
 
-      expect(delivery.tracking_url).to eq('https://carrier.example/track/ABC')
+      expect(delivery.resolved_tracking_url).to eq('https://carrier.example/track/ABC')
     end
 
     it 'prefers the stored link' do
       delivery = create(:delivery, owner: fulfillment, tracking_number: '1Z879E930346834440', tracking_url: 'https://tracker.example/t/1')
 
-      expect(delivery.tracking_url).to eq('https://tracker.example/t/1')
+      expect(delivery.resolved_tracking_url).to eq('https://tracker.example/t/1')
+    end
+
+    # The column says what the merchant chose; the reader says what to show.
+    # Keeping them apart is what lets a cleared field stay cleared.
+    it 'leaves the stored column alone' do
+      delivery = create(:delivery, owner: fulfillment, tracking_number: '1Z879E930346834440')
+
+      expect(delivery.tracking_url).to be_nil
+      expect(delivery.resolved_tracking_url).to include('ups.com')
     end
 
     # The provider bought the label, so its tracker page wins over anything
@@ -87,13 +96,13 @@ RSpec.describe Spree::Delivery, type: :model do
       )
       delivery.owner = fulfillment
 
-      expect(delivery.tracking_url).to eq('https://provider.example/t/1')
+      expect(delivery.resolved_tracking_url).to eq('https://provider.example/t/1')
     end
 
     it 'builds from the pinned carrier registry entry' do
       delivery = create(:delivery, owner: fulfillment, tracking_number: '421432', carrier: 'inpost')
 
-      expect(delivery.tracking_url).to eq('https://inpost.pl/sledzenie-przesylek?number=421432')
+      expect(delivery.resolved_tracking_url).to eq('https://inpost.pl/sledzenie-przesylek?number=421432')
     end
 
     it 'uses the delivery method format when there is no carrier' do
@@ -101,7 +110,7 @@ RSpec.describe Spree::Delivery, type: :model do
       delivery = create(:delivery, owner: fulfillment, tracking_number: 'ABC-1')
       delivery.owner = fulfillment
 
-      expect(delivery.tracking_url).to eq('https://method.example/ABC-1')
+      expect(delivery.resolved_tracking_url).to eq('https://method.example/ABC-1')
     end
 
     # No method, no carrier, no provider — a recognisable number still yields
@@ -111,7 +120,7 @@ RSpec.describe Spree::Delivery, type: :model do
       allow(fulfillment).to receive(:delivery_method).and_return(nil)
       delivery.owner = fulfillment
 
-      expect(delivery.tracking_url).to include('ups.com')
+      expect(delivery.resolved_tracking_url).to include('ups.com')
     end
   end
 

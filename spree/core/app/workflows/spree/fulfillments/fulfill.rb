@@ -332,10 +332,14 @@ module Spree
         )
       end
 
-      # Non-label dispatch — a 3PL pick, digital links. Tracking the provider
-      # discovers becomes the primary delivery unless an admin already typed
-      # one in — a human who entered a number meant it.
+      # Non-label dispatch — a 3PL pick, digital links. A provider whose
+      # dispatch IS the label was already asked for it above, and asking it
+      # again would buy a second one. Tracking the provider discovers becomes
+      # the primary delivery unless an admin already typed one in — a human
+      # who entered a number meant it.
       def tell_provider_it_shipped
+        return if @fulfillment.provider.class.generates_labels?
+
         result = @fulfillment.provider.create_fulfillment(@fulfillment)
         return unless result.is_a?(Hash)
 
