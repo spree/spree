@@ -109,6 +109,21 @@ RSpec.describe Spree::Api::V3::Admin::CustomersController, type: :controller do
       expect(json_response['anonymized']).to be(true)
     end
 
+    # The request log is what an Art. 30 enquiry reads, and the ordinary
+    # merchant path — an email from someone who cannot sign in — was leaving
+    # only an event behind.
+    it 'records the request it answered' do
+      expect {
+        post :anonymize, params: { id: customer.prefixed_id }, as: :json
+      }.to change { Spree::DataRequest.erasure.where(customer_id: customer.id).count }.by(1)
+    end
+
+    it 'marks that record completed' do
+      post :anonymize, params: { id: customer.prefixed_id }, as: :json
+
+      expect(Spree::DataRequest.erasure.where(customer_id: customer.id).last).to be_completed
+    end
+
     it 'refuses a customer already erased' do
       post :anonymize, params: { id: customer.prefixed_id }, as: :json
 

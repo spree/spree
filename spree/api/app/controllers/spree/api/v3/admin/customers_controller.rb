@@ -61,17 +61,27 @@ module Spree
           def anonymize
             authorize_resource!(@resource)
 
+            # Recorded like the export beside it. The erasure itself is the
+            # obligation and runs whatever happens to the record, but a
+            # merchant answering an emailed request should not have to
+            # remember they did — the request log is what an Art. 30 enquiry
+            # reads, and an erasure that left only an event was invisible to it.
+            data_request = open_erasure_record
+
             result = Spree::Customers::Anonymize.call(
               customer: @resource,
               store: current_store,
               requested_by: try_spree_current_user
             )
 
-            if result.success?
-              render json: serialize_resource(@resource.reload)
-            else
-              render_result_error(result)
+            unless result.success?
+              data_request&.update(status: 'failed', error_message: result.error.to_s.first(1000))
+              return render_result_error(result)
             end
+
+            data_request&.update(status: 'completed', completed_at: Time.current)
+
+            render json: serialize_resource(@resource.reload)
           end
 
           # GET /api/v3/admin/customers/:id/export
@@ -149,6 +159,26 @@ module Spree
           # show, so a staffer with read access would otherwise be refused.
           def read_actions
             super + ['export']
+          end
+
+          # Its own row rather than one the customer has in flight, for the
+          # same reason the export opens its own: completing theirs here would
+          # close a request whose file was never delivered.
+          #
+          # @return [Spree::DataRequest, nil] nil when the record cannot be
+          #   written — the erasure is the obligation and still runs
+          def open_erasure_record
+            Spree::DataRequest.create(
+              store: current_store,
+              customer: @resource,
+              kind: Spree::DataRequest::ERASURE,
+              email: @resource.email,
+              requested_by: try_spree_current_user,
+              status: 'processing'
+            ).presence
+          rescue ActiveRecord::RecordInvalid, ActiveRecord::RecordNotUnique => e
+            Rails.logger.warn { "[Spree] Could not record erasure request: #{e.message}" }
+            nil
           end
 
           # A subject access export carries the customer's order history, which
