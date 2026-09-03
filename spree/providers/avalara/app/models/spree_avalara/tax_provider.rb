@@ -53,6 +53,8 @@ module SpreeAvalara
         sweep!(owner)
         write_lines(owner, taxable, lines)
       end
+    rescue SpreeAvalara::RequestError => error
+      raise tax_failure(error)
     end
 
     # Files the sale with Avalara once it is placed.
@@ -87,7 +89,7 @@ module SpreeAvalara
 
       stamp_document_id(order, body['id'])
     rescue SpreeAvalara::RequestError => error
-      raise unless integration.client.duplicate_document_error?(error)
+      raise tax_failure(error) unless integration.client.duplicate_document_error?(error)
     end
 
     # Reverses the filed document when the order is cancelled.
@@ -104,7 +106,7 @@ module SpreeAvalara
 
       integration.client.void_transaction(order.number)
     rescue SpreeAvalara::RequestError => error
-      raise unless integration.client.already_voided_error?(error)
+      raise tax_failure(error) unless integration.client.already_voided_error?(error)
     end
 
     # Credits the returned lines against the filed document.
@@ -128,10 +130,31 @@ module SpreeAvalara
 
       integration.client.create_transaction(presenter.call)
     rescue SpreeAvalara::RequestError => error
-      raise unless integration.client.duplicate_document_error?(error)
+      raise tax_failure(error) unless integration.client.duplicate_document_error?(error)
     end
 
     private
+
+    # Which of core's two failures an AvaTax error is, decided by whether
+    # Avalara answered at all.
+    #
+    # No status means nothing was answered — the network, a timeout, retries
+    # exhausted — and a later attempt may well succeed. A 5xx is the same
+    # shape: Avalara's own fault, not the request's.
+    #
+    # Anything else is Avalara saying no to this particular request: an address
+    # it will not accept, a company code that does not exist. The service is
+    # working and retrying is pointless, so the caller must be able to tell the
+    # customer what was wrong instead of asking them to try again. Avalara's own
+    # message is carried across, because it names the problem better than
+    # anything this gem could invent.
+    def tax_failure(error)
+      status = error.status.to_i
+      unavailable = error.status.nil? || status >= 500
+
+      failure = unavailable ? Spree::Tax::ProviderUnavailable : Spree::Tax::CalculationRefused
+      failure.new(error.message, provider_key: SpreeAvalara::PROVIDER_ID)
+    end
 
     # A market calculating through Avalara with nothing connected produces no tax
     # at all, which is visible in the storefront and the dashboard — but the

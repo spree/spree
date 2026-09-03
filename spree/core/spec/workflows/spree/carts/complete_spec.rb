@@ -121,6 +121,61 @@ module Spree
         expect(provider).to have_received(:commit).with(order)
       end
 
+      # An engine that cannot answer must not read to a customer as a broken
+      # checkout: before this, the exception escaped as a 500 and a storefront
+      # could not tell an outage from a platform bug.
+      it 'refuses the sale when the tax engine cannot be reached' do
+        # Built before the stub: creating a line item estimates tax, so a
+        # provider that raises would take the factory down instead of the sale.
+        cart = ready_cart
+        provider = instance_double(Spree::TaxProvider::Internal, commit: nil)
+        allow(provider).to receive(:estimate).
+          and_raise(Spree::Tax::ProviderUnavailable.new('could not be reached', provider_key: 'probe'))
+        allow_any_instance_of(Spree::Cart).to receive(:tax_provider).and_return(provider)
+
+        result = described_class.call(cart: cart)
+
+        expect(result).to be_failure
+        expect(result.error.value[:code]).to eq('tax_provider_unavailable')
+        # The endpoint and the transport stay out of the response.
+        expect(result.error.value[:message]).not_to include('could not be reached')
+        expect(cart.reload).not_to be_completed
+      end
+
+      # The other half of the split: the engine answered and said no, so there
+      # is nothing to retry and its own message is what the customer needs.
+      it 'passes on what the engine said when it refuses the calculation' do
+        cart = ready_cart
+        provider = instance_double(Spree::TaxProvider::Internal, commit: nil)
+        allow(provider).to receive(:estimate).and_raise(
+          Spree::Tax::CalculationRefused.new('Zip is not valid for the state.', provider_key: 'probe')
+        )
+        allow_any_instance_of(Spree::Cart).to receive(:tax_provider).and_return(provider)
+
+        result = described_class.call(cart: cart)
+
+        expect(result).to be_failure
+        expect(result.error.value[:code]).to eq('tax_calculation_refused')
+        expect(result.error.value[:message]).to eq('Zip is not valid for the state.')
+      end
+
+      # The opposite call: the sale has happened and been paid for, so refusing
+      # it now would deny a customer an order they were charged for. Filing is
+      # idempotent, so the document can follow later.
+      it 'still places the order when filing the sale fails' do
+        cart = ready_cart
+        provider = instance_double(Spree::TaxProvider::Internal, estimate: nil)
+        allow(provider).to receive(:commit).
+          and_raise(Spree::Tax::ProviderUnavailable.new('could not be reached'))
+        allow_any_instance_of(Spree::Order).to receive(:tax_provider).and_return(provider)
+        allow_any_instance_of(Spree::Cart).to receive(:tax_provider).and_return(provider)
+
+        result = described_class.call(cart: cart)
+
+        expect(result).to be_success
+        expect(result.value).to be_completed
+      end
+
       it 'does not re-estimate while copying the cart onto the order' do
         provider = instance_double(Spree::TaxProvider::Internal, estimate: nil, commit: nil)
         allow_any_instance_of(Spree::Order).to receive(:tax_provider).and_return(provider)

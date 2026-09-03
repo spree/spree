@@ -131,6 +131,26 @@ module Spree
       def recalculate_in_lock
         Spree::Carts::PriceItems.apply(@confirmed_prices) if @confirmed_prices.present?
         cart.recalculate_totals!
+      rescue Spree::Tax::ProviderError => error
+        # The engine that decides this sale's tax did not produce any.
+        # Completing anyway would place an order whose tax nobody computed, so
+        # the sale is refused — as a failure the caller can render, not as an
+        # exception that reads like a broken checkout.
+        Rails.error.report(error, context: { order_id: cart.id }, source: 'spree.checkout')
+
+        if error.is_a?(Spree::Tax::CalculationRefused)
+          # The engine said no to this request. Its message names the problem —
+          # the postcode, the missing company code — and asking the customer to
+          # retry would be asking them to repeat something that cannot work.
+          failure(cart, code: 'tax_calculation_refused', message: error.message.to_s)
+        else
+          # It could not be asked. Retrying may work, and the reason belongs in
+          # the error tracker rather than the response: the raw message names
+          # the endpoint and the transport, which tells a shopper nothing and
+          # tells everyone else too much.
+          failure(cart, code: 'tax_provider_unavailable',
+                        message: Spree.t('cart_line_item.tax_unavailable'))
+        end
       end
 
       def verify_expected_total
@@ -478,7 +498,16 @@ module Spree
       # separate sale with its own tax, and an unfiled sibling is a hole in the
       # merchant's return that only surfaces at filing time.
       def commit_tax
-        placed_orders.each { |placed| placed.tax_provider.commit(placed) }
+        placed_orders.each do |placed|
+          placed.tax_provider.commit(placed)
+        rescue Spree::Tax::ProviderError => error
+          # Deliberately not a failure. The order is placed and paid; refusing
+          # now would leave the customer charged for a sale the platform denies
+          # having taken. Filing is idempotent and replayable, so the document
+          # can follow — an unfiled sale is a reporting gap to chase, not a
+          # reason to break the checkout that produced it.
+          Rails.error.report(error, context: { order_id: placed.id }, source: 'spree.checkout')
+        end
       end
 
       # What this checkout produced: the children of a split, or the one order

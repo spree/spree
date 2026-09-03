@@ -738,6 +738,7 @@ en:
       out_of_stock: "%{li_name} was removed because it was sold out"
       price_override_not_allowed: Prices cannot be changed on a placed order — use fees or discounts instead
       pricing_unavailable: Prices could not be confirmed. Please try again.
+      tax_unavailable: Tax could not be calculated. Please try again.
       quantity_must_be_positive: Quantity must be at least 1. Use DELETE to remove the item.
       quantity_rule_violated: "%{li_name} cannot be ordered in that quantity. Try %{quantities}."
     catalogs:

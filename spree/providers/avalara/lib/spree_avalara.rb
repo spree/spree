@@ -32,6 +32,10 @@ module SpreeAvalara
   # An AvaTax call that did not succeed, carrying the HTTP status and Avalara's
   # own parsed error payload so callers can tell a duplicate document from a
   # rejected credential without re-reading the response.
+  # An AvaTax call that did not do what was asked — deliberately this gem's own
+  # class and nothing of core's. Whether a given failure means "could not ask"
+  # or "was told no" is a judgement about status codes, and TaxProvider makes it
+  # at the contract boundary rather than the hierarchy making it here.
   class RequestError < Error
     attr_reader :status, :details
 

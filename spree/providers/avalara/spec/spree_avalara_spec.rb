@@ -74,7 +74,11 @@ RSpec.describe SpreeAvalara do
     it 'carries the AvaTax status and details on a request failure' do
       error = described_class::RequestError.new('boom', status: 401, details: { 'code' => 'AuthenticationIncomplete' })
 
+      # This gem's own class, not core's: whether a failure means "could not
+      # ask" or "was told no" depends on the status, and TaxProvider decides
+      # that at the contract boundary.
       expect(error).to be_a(described_class::Error)
+      expect(error).not_to be_a(Spree::Tax::ProviderError)
       expect(error.message).to eq('boom')
       expect(error.status).to eq(401)
       expect(error.details).to eq('code' => 'AuthenticationIncomplete')

@@ -232,7 +232,24 @@ RSpec.describe SpreeAvalara::TaxProvider do
       allow(client).to receive(:create_transaction).
         and_raise(SpreeAvalara::RequestError.new('Company not found.', status: 400))
 
-      expect { provider.estimate(cart) }.to raise_error(SpreeAvalara::RequestError)
+      # Reported in core's vocabulary: Avalara answered and refused, so the
+      # caller can say what was wrong instead of asking for a retry that cannot
+      # work.
+      expect { provider.estimate(cart) }.to raise_error(Spree::Tax::CalculationRefused, /Company not found/)
+    end
+
+    it 'reports a service it could not reach as unavailable, so a retry is worth offering' do
+      allow(integration.client).to receive(:create_transaction).
+        and_raise(SpreeAvalara::RequestError.new('Failed to open TCP connection', status: nil))
+
+      expect { provider.estimate(cart) }.to raise_error(Spree::Tax::ProviderUnavailable)
+    end
+
+    it 'reports Avalara-side faults as unavailable too' do
+      allow(integration.client).to receive(:create_transaction).
+        and_raise(SpreeAvalara::RequestError.new('AvaTax request failed with status 503', status: 503))
+
+      expect { provider.estimate(cart) }.to raise_error(Spree::Tax::ProviderUnavailable)
     end
 
     it 'raises when Avalara prices a line that was never sent' do
@@ -316,7 +333,7 @@ RSpec.describe SpreeAvalara::TaxProvider do
         and_raise(SpreeAvalara::RequestError.new('Company not found.', status: 400,
                                                  details: { 'code' => 'EntityNotFoundError' }))
 
-      expect { provider.commit(order) }.to raise_error(SpreeAvalara::RequestError)
+      expect { provider.commit(order) }.to raise_error(Spree::Tax::CalculationRefused)
     end
   end
 
