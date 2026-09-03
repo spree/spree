@@ -468,7 +468,7 @@ module Spree
           Spree::Exports::NewsletterSubscribers,
           Spree::Exports::CouponCodes,
           Spree::Exports::PriceListPrices,
-          Spree::Exports::PurchaseOrders
+          Spree::Exports::PurchaseOrders,
           Spree::Exports::Report
         ]
 

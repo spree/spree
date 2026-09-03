@@ -12,11 +12,14 @@ export type {
   MeResponse,
   PermissionRule,
   ReportingDimensionValue,
+  ReportingGrain,
   ReportingMetricValue,
   ReportingQuery,
   ReportingResult,
   ReportingRow,
   ReportingSchema,
+  ReportingSchemaDimension,
+  ReportingSchemaMetric,
 } from './admin-client'
 // Admin client class (for advanced use / subclassing)
 export { AdminClient } from './admin-client'

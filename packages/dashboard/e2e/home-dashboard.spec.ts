@@ -14,8 +14,8 @@ test.describe('home dashboard', () => {
 
     // KPI metric tiles (buttons that switch the chart metric)
     await expect(page.getByRole('button', { name: /total sales/i })).toBeVisible()
-    await expect(page.getByRole('button', { name: /total orders/i })).toBeVisible()
-    await expect(page.getByRole('button', { name: /avg order value/i })).toBeVisible()
+    await expect(page.getByRole('button', { name: /^orders\b/i })).toBeVisible()
+    await expect(page.getByRole('button', { name: /average order value/i })).toBeVisible()
     await expect(page.getByRole('button', { name: /units sold/i })).toBeVisible()
 
     // Comparison legend under the chart
@@ -23,7 +23,7 @@ test.describe('home dashboard', () => {
     await expect(page.getByText(/^previous period$/i)).toBeVisible()
 
     // Switching the active metric keeps the chart rendered
-    await page.getByRole('button', { name: /total orders/i }).click()
+    await page.getByRole('button', { name: /^orders\b/i }).click()
     await expect(page.getByText(/^this period$/i)).toBeVisible()
   })
 
@@ -44,8 +44,8 @@ test.describe('home dashboard', () => {
 
     // Rankings card with customer/category tabs
     await expect(page.getByText('Rankings', { exact: true })).toBeVisible()
-    await page.getByRole('button', { name: /^categories$/i }).click()
-    await page.getByRole('button', { name: /^customers$/i }).click()
+    await page.getByRole('tab', { name: /^categories$/i }).click()
+    await page.getByRole('tab', { name: /^customers$/i }).click()
   })
 
   test('scopes metrics by channel via the switcher', async ({ page }) => {
