@@ -190,6 +190,16 @@ function CreateCommissionRateSheet({
     defaultValues: COMMISSION_RATE_DEFAULTS,
   })
 
+  // Auto-derive code from name while the user hasn't touched code yet.
+  // The watch stops mirroring as soon as the user edits code directly, so
+  // we never clobber a deliberate value. Only runs during create — saved
+  // rates keep the code the operator chose.
+  const name = form.watch('name')
+  useEffect(() => {
+    if (form.getFieldState('code').isDirty) return
+    form.setValue('code', slugify(name ?? ''))
+  }, [name, form])
+
   async function onSubmit(values: CommissionRateFormValues) {
     try {
       await createMutation.mutateAsync(
@@ -319,15 +329,6 @@ function CommissionRateFormFields({ form }: { form: UseFormReturn<CommissionRate
   const { t } = useTranslation()
   const { errors } = form.formState
   const kind = form.watch('kind')
-  const name = form.watch('name')
-  // "Base Commission" becomes "base-commission" while the operator types, and
-  // stops the moment they write a code of their own — matching how a channel's
-  // code is derived.
-  useEffect(() => {
-    if (form.getFieldState('code').isDirty) return
-
-    form.setValue('code', slugify(name ?? ''))
-  }, [name, form])
 
   const kindOptions = COMMISSION_RATE_KINDS.map((value) => ({
     value,
