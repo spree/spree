@@ -71,10 +71,15 @@ export function OrderSummaryCard({ order }: { order: Order }) {
           />
         )}
 
-        {/* Set apart from the timestamps above: a cancellation is its own
+        {/* Keyed on the status rather than the timestamp: resuming an order
+            puts it back to placed but leaves the cancellation stamps as
+            history, and that history should stop being reported as the order's
+            current state.
+
+            Set apart from the timestamps above: a cancellation is its own
             story — when, who, why — and four rows of it run together with the
             order's own dates otherwise. */}
-        {order.canceled_at && (
+        {order.status === 'canceled' && order.canceled_at && (
           <>
             <Separator />
             <SummaryRow
