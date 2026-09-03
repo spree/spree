@@ -9460,7 +9460,7 @@ paths:
           content:
             application/json:
               example:
-                id: wli_gbHJdmfrXB
+                id: wi_gbHJdmfrXB
                 variant_id: variant_gbHJdmfrXB
                 product_id: prod_gbHJdmfrXB
                 wishlist_id: wl_UkLWZg9DAJ
@@ -9534,7 +9534,7 @@ paths:
             publishableKey: '<api-key>',
           })
 
-          await client.wishlists.items.delete('wl_abc123', 'wli_abc123', {
+          await client.wishlists.items.delete('wl_abc123', 'wi_abc123', {
             token: '<token>',
           })
       parameters:

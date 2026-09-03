@@ -6,7 +6,7 @@ const client = createClient({
 })
 
 // region:example
-await client.wishlists.items.delete('wl_abc123', 'wli_abc123', {
+await client.wishlists.items.delete('wl_abc123', 'wi_abc123', {
   token: '<token>',
 })
 // endregion:example

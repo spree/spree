@@ -569,7 +569,7 @@ Every rename keeps the legacy name working for one release with a deprecation wa
 | `OptionValue#option_type_presentation` | `#option_type_label` |
 | `q[presentation_cont]` (option type / value filters) | `q[label_cont]` — the Ransack whitelist publishes the column, so the filter key moves with it |
 | `Spree::PresentationTranslatable` | `Spree::LabelTranslatable` |
-| `Spree::WishedItem`, `Wishlist#wished_items`, `#wished_items_count` | `Spree::WishlistItem`, `#wishlist_items`, `#wishlist_items_count` (table renamed; the prefixed ID change is a **breaking** change — see below) |
+| `Spree::WishedItem`, `Wishlist#wished_items`, `#wished_items_count` | `Spree::WishlistItem`, `#wishlist_items`, `#wishlist_items_count` (class and table renamed; the `wi_` prefixed IDs are unchanged, so client-held IDs keep resolving) |
 | `use_billing` / `clone_billing_address` | `use_shipping` (shipping address is canonical) |
 | `Fulfillment#ship`, `#ship!`, `#shipped?`, `#can_ship?`, `#shipping_method`, `#add_shipping_method` | `#fulfill`, `#fulfill!`, `#fulfilled?`, `#can_fulfill?`, `#delivery_method`, `#add_delivery_method` |
 | `LineItem#target_shipment` | `#target_fulfillment` |
@@ -596,12 +596,6 @@ Every rename keeps the legacy name working for one release with a deprecation wa
 | `digital.created` / `.updated` / `.deleted` events | `digital_asset.*` (both emitted for one release) |
 | `PermittedAttributes.digital_attributes` | `.digital_asset_attributes` |
 | `GET /api/v3/store/digitals/:token` | `GET /api/v3/store/digital_links/:token` (old path keeps working) |
-
-### Breaking: wishlist item IDs change prefix
-
-`Spree::WishlistItem` prefixed IDs move from `wi_` to `wli_`, and unlike the renames above **this one has no bridge** — ID decoding rejects a prefix that does not match, so a previously issued `wi_...` ID returns 404 on `PATCH`/`DELETE /store/wishlists/:id/items/:item_id`.
-
-Prefixed IDs are computed from the primary key rather than stored, so nothing needs migrating: the same record answers to its new ID immediately. What breaks is a client holding an old one. If your storefront persists wishlist item IDs (a cached list, an optimistic update, a deep link), clear them on upgrade and re-read the wishlist. Every 6.0 prefix change follows this rule — `Spree::StockLevel` moved `si_` → `sl_` the same way.
 
 ## Meilisearch moved to its own gem
 

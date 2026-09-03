@@ -44,12 +44,12 @@ describe('wishlists', () => {
     })
 
     it('updates an item', async () => {
-      const result = await client.wishlists.items.update('wl_1', 'wli_1', { quantity: 3 }, opts)
+      const result = await client.wishlists.items.update('wl_1', 'wi_1', { quantity: 3 }, opts)
       expect(result.quantity).toBe(3)
     })
 
     it('removes an item', async () => {
-      await expect(client.wishlists.items.delete('wl_1', 'wli_1', opts)).resolves.toBeUndefined()
+      await expect(client.wishlists.items.delete('wl_1', 'wi_1', opts)).resolves.toBeUndefined()
     })
   })
 })

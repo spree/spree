@@ -1,6 +1,9 @@
 module Spree
   class WishlistItem < Spree.base_class
-    has_prefix_id :wli  # Spree-specific: wishlist item
+    # The prefix stays wi_ through the rename: prefixed IDs are a Store API
+    # identifier clients hold, and decode_own_prefixed_id rejects a foreign
+    # prefix, so moving it would 404 every ID already issued.
+    has_prefix_id :wi  # Spree-specific: wishlist item
 
     include Spree::WishlistItem::CustomEvents
 
