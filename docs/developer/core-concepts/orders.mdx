@@ -120,8 +120,9 @@ await adminClient.orders.cancel('or_xxx', {
   cancel_note: 'Supplier could not deliver in time',
 })
 
-// Cancel and give the money back in the same call
-await adminClient.orders.cancel('or_xxx', {
+// On a split checkout the payment is shared, so refund_payments decides
+// whether this order's share of it comes back
+await adminClient.orders.cancel('or_grouped_xxx', {
   cancel_reason_id: reason.id,
   refund_payments: true,
 })
@@ -156,12 +157,10 @@ curl -X PATCH 'https://api.mystore.com/api/v3/admin/orders/or_xxx/cancel' \
 
 </CodeGroup>
 
-Canceling always puts stock back — the goods are not going out either way. An
-authorization the gateway never drew on is always released.
-
-Money that *was* taken is a separate decision, as it is on every other major
-platform: pass `refund_payments: true` to return it. Without it the captured
-payment is left alone for an operator to refund deliberately.
+Canceling always puts stock back — the goods are not going out either way — and
+every payment is settled at the gateway. What that means is the gateway's
+decision: an authorization it never drew on is released, and a captured charge
+it cannot release is refunded instead.
 
 On a split checkout one payment is shared across several orders, so what comes
 back is this order's own share, drawn from each payment in turn until it is met.

@@ -368,17 +368,13 @@ RSpec.describe 'Admin Orders API', type: :request, swagger_doc: 'api-reference/a
         staff-facing note; both are shown on the order afterwards.
 
         Stock is always released — the goods are not going out either way — and
-        so is an authorization the gateway never drew on.
+        every payment is settled at the gateway, which releases an
+        authorization it never drew on and refunds a charge it cannot release.
 
-        Money already taken is a separate decision: send
-        `refund_payments: true` to return it. Without it the payment is left
-        for an operator to refund deliberately.
-
-        On a split checkout the payment is shared across several orders, so
-        what comes back is this order's own share; `refund_amount` names part
-        of that share. A `refund_amount` on an ordinary order is refused with a
-        422, since the gateway returns the whole captured payment there and a
-        cap cannot be honoured.
+        `refund_payments` and `refund_amount` govern the shared payment of a
+        split checkout, where one payment covers several orders: they decide
+        whether this order's share comes back, and how much of it. A
+        `refund_amount` on an ordinary order is refused with a 422.
 
         Set `notify_customer: true` to send the order cancellation email.
       DESC
@@ -396,7 +392,7 @@ RSpec.describe 'Admin Orders API', type: :request, swagger_doc: 'api-reference/a
         properties: {
           cancel_reason_id: { type: :string, description: "Why the order was canceled — the id of one of the store's cancellation reasons." },
           cancel_note: { type: :string, description: 'Staff-facing note about the cancellation.' },
-          refund_payments: { type: :boolean, default: false, description: 'Whether captured money is handed back. An authorization is released either way.' },
+          refund_payments: { type: :boolean, default: false, description: "Whether this order's share of a payment shared across a split checkout is handed back." },
           refund_amount: { type: :string, description: "How much of that share to return. Defaults to all of it; refused on an order whose payment is not shared." },
           notify_customer: { type: :boolean, default: false, description: 'Send the order cancellation email after canceling.' }
         }

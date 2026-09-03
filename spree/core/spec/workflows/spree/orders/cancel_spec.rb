@@ -127,28 +127,24 @@ module Spree
       end
     end
 
-    # The flag governs money, not just the record: it used to refund whatever
-    # the caller asked, because the ungrouped path called the gateway's
-    # settle verb unconditionally.
-    describe 'whether captured money comes back' do
+    # Every completed payment is settled through the gateway's own cancel verb,
+    # whatever `refund_payments` says: a plain gateway voids it, and Stripe —
+    # which cannot void a drawn charge — refunds. The flag governs the shared
+    # payment of a split checkout, which is settled by hand below.
+    describe 'settling a completed payment' do
       let(:order) { create(:completed_order_with_totals) }
       let!(:payment) { create(:payment, order: order, amount: order.total, status: 'completed') }
 
-      # Not voided either: the gateway refuses to cancel money it has already
-      # drawn, so touching it would fail the cancellation after the order was
-      # already marked canceled.
-      it 'leaves captured money alone by default, without calling the gateway' do
-        expect_any_instance_of(Spree::Payment).not_to receive(:cancel!)
-        expect(Spree.payment_void_workflow).not_to receive(:call).
-          with(hash_including(payment: payment))
+      it 'hands it to the gateway to settle' do
+        expect_any_instance_of(Spree::Payment).to receive(:cancel!)
 
         subject.call(order: order, canceler: user)
       end
 
-      it 'hands it back when asked' do
-        expect_any_instance_of(Spree::Payment).to receive(:cancel!)
+      it 'voids it on a gateway that can, leaving nothing half-settled' do
+        subject.call(order: order, canceler: user)
 
-        subject.call(order: order, canceler: user, refund_payments: true)
+        expect(payment.reload).to be_void
       end
     end
 

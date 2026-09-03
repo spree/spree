@@ -422,6 +422,20 @@ RSpec.describe SpreeStripe::Gateway do
         end
       end
 
+      # Stripe cannot void a drawn charge, so it refunds on cancellation — but
+      # an operator who asked to keep the money must not have it sent back
+      # anyway.
+      context 'when the caller asked to keep the money' do
+        subject { gateway.cancel(payment_intent_id, payment, refund: false) }
+
+        it 'leaves the charge standing' do
+          expect { subject }.not_to change(Spree::Refund, :count)
+
+          expect(subject.success?).to be true
+          expect(subject.authorization).to eq(payment_intent_id)
+        end
+      end
+
       context 'if amount to refund is zero' do
         let!(:refund) { create(:refund, payment: payment, amount: payment.amount) }
 

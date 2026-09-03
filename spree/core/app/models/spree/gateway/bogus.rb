@@ -63,7 +63,8 @@ module Spree
       Spree::PaymentResponse.new(true, 'Bogus Gateway: Forced success', {}, test: true, authorization: "void-#{generate_authorization}")
     end
 
-    def cancel(_response_code, _payment = nil)
+    # Voids outright, so there is no captured charge for `refund:` to govern.
+    def cancel(_response_code, _payment = nil, refund: true)
       Spree::PaymentResponse.new(true, 'Bogus Gateway: Forced success', {}, test: true, authorization: generate_authorization)
     end
 
