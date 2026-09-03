@@ -23,6 +23,7 @@ module Spree
                 if coupon_handler.successful? || pending_eligibility?
                   @cart.save!(validate: false) if @cart.changed?
                   @cart.reload
+                  attach_pending_coupon_warning if pending_eligibility?
                   render_cart(status: :created)
                 else
                   @cart.update_column(:coupon_code, nil) if @cart.read_attribute(:coupon_code).present?
@@ -56,6 +57,15 @@ module Spree
             # kept and recalculation activates it later.
             def pending_eligibility?
               coupon_handler.status_code == :coupon_code_not_eligible
+            end
+
+            # The code is kept for Shopify-parity retry-on-recalculation, but
+            # the shopper still needs to hear why nothing applied yet.
+            def attach_pending_coupon_warning
+              @cart.warnings |= [{
+                code: coupon_handler.status_code.to_s,
+                message: coupon_handler.error.presence || Spree.t(:coupon_code_not_eligible)
+              }]
             end
 
             def permitted_params
