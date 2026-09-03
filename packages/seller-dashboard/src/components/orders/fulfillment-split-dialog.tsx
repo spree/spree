@@ -45,11 +45,14 @@ export function FulfillmentSplitDialog({
   const confirm = useConfirm()
   const { split } = useFulfillmentActions(orderId)
 
-  const units = (fulfillment.fulfillment_items ?? []).map((item) => ({
-    value: item.variant_id ?? item.id,
-    label: unitLabel(item),
-    quantity: item.quantity,
-  }))
+  // The endpoint addresses what to move by variant, so a row without one is
+  // not splittable — offering it would 404 on a unit the seller just picked
+  // out of their own parcel.
+  const units = (fulfillment.fulfillment_items ?? []).flatMap((item) =>
+    item.variant_id
+      ? [{ value: item.variant_id, label: unitLabel(item), quantity: item.quantity }]
+      : [],
+  )
 
   const [variantId, setVariantId] = useState(units[0]?.value ?? '')
   const [quantity, setQuantity] = useState(1)

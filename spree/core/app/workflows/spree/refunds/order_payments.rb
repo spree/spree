@@ -22,30 +22,34 @@ module Spree
 
       private
 
-      # Puts `amount` back on `order`, newest payment first, until it is
+      # Puts `amount` back on `order`, oldest payment first, until it is
       # covered.
       #
       # A split-tender order needs more than one refund, so this drains rather
-      # than picking one payment. Every row goes through
-      # {Spree::Refunds::Create}, which owns the row-locked balance check, the
-      # gateway credit, the declined-row compensation, the refund hooks and
-      # the `payment.refunded` event — so nothing here talks to a gateway
-      # itself.
+      # than picking one payment; oldest first, which is the order the customer
+      # paid in and the order both branches below read in.
+      #
+      # Every row goes through {Spree::Refunds::Create}, which owns the
+      # row-locked balance check, the gateway credit, the declined-row
+      # compensation, the refund hooks and the `payment.refunded` event — so
+      # nothing here talks to a gateway itself.
       #
       # @param order [Spree::Order] the order being put right
       # @param amount [BigDecimal] how much to give back
       # @param record [Spree::Return, Spree::Claim, Spree::Exchange] what asked
       #   for the refund; it originates the rows and carries any failure
       # @param refunder [Object, nil] whoever is issuing it
-      # @return [Array<Spree::Refund>] the refunds written, newest payment first
+      # @return [Array<Spree::Refund>] the refunds written, in drain order
       def refund_order_payments(order:, amount:, record:, refunder: nil)
         remaining = amount.to_d
         refunds = []
-        # The same for every row in the run, and a find_or_create_by — so it
-        # is resolved once rather than per payment.
-        reason = Spree::RefundReason.return_processing_reason(record.store)
+        shares = refundable_shares(order)
+        # Resolved once rather than per payment — but only once there is
+        # something to refund, since it is a find_or_create_by and a run that
+        # refunds nothing should leave no reason row behind.
+        reason = Spree::RefundReason.return_processing_reason(record.store) if shares.any?
 
-        refundable_shares(order).each do |payment, refundable|
+        shares.each do |payment, refundable|
           break unless remaining.positive?
 
           creditable = [refundable, remaining].min
@@ -83,19 +87,20 @@ module Spree
       # @return [Hash{Spree::Payment => BigDecimal}]
       def refundable_shares(order)
         unless order.grouped?
-          return order.payments.completed.to_h { |payment| [payment, payment.credit_allowed.to_d] }
+          return order.payments.completed.order(:created_at).
+                 to_h { |payment| [payment, payment.credit_allowed.to_d] }
         end
 
-        # One query for the whole run rather than one per share: this is on
-        # the refund path inside the order's lock, where every round trip
-        # holds it longer.
+        # One query for the whole run rather than one per share — this runs
+        # ahead of a gateway round trip per payment, and there is no reason to
+        # add N more of its own.
         refunded = Spree::Refund.where(order_id: order.id).group(:payment_id).sum(:amount)
 
-        order.payment_splits.includes(:payment).each_with_object({}) do |split, shares|
+        order.payment_splits.includes(:payment).order(:created_at).each_with_object({}) do |split, found|
           next unless split.payment&.completed?
           next if capture_in_flight?(order, split)
 
-          shares[split.payment] = split.captured_amount - refunded.fetch(split.payment_id, 0)
+          found[split.payment] = split.captured_amount - refunded.fetch(split.payment_id, 0)
         end
       end
 

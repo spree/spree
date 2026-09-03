@@ -384,7 +384,9 @@
         },
         "deny": "Deny",
         "deny_title": "Deny this claim?",
-        "deny_message": "The customer is told the claim was not upheld."
+        "deny_message": "The customer is told the claim was not upheld.",
+        "cancel_title": "Cancel this claim?",
+        "cancel_message": "The customer is told it will not go ahead."
       }
     }
   },

@@ -11,8 +11,6 @@ module Spree
           # the claimed lines and any replacement variant resolved through the
           # order and the seller's own catalogue.
           class ClaimsController < Seller::ResourceController
-            include Spree::Api::V3::OrderLock
-
             # Claims are a subject of the `orders` catalog resource.
             scoped_resource :orders
 
@@ -47,14 +45,12 @@ module Spree
             #
             # Settles the claim: a refund, a replacement shipment, or both.
             def resolve
-              with_order_lock do
-                run_workflow(Spree.claim_resolve_workflow,
-                             resolution: params[:resolution],
-                             refund_method: params[:refund_method] || 'store_credit',
-                             amount: params[:amount],
-                             replacement_line_item_ids: replacement_line_item_ids,
-                             resolver: try_spree_current_user)
-              end
+              run_workflow(Spree.claim_resolve_workflow,
+                           resolution: params[:resolution],
+                           refund_method: params[:refund_method] || 'store_credit',
+                           amount: params[:amount],
+                           replacement_line_item_ids: replacement_line_item_ids,
+                           resolver: try_spree_current_user)
             end
 
             # PATCH /api/v3/seller/orders/:order_id/claims/:id/deny

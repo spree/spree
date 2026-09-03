@@ -67,10 +67,12 @@ module Spree
             # marketplace's arrangements, so this deliberately does not accept
             # the origin and rate the operator's endpoint does.
             def update
-              if @fulfillment.update(update_params)
-                render json: serialize(@fulfillment.reload)
-              else
-                render_validation_error(@fulfillment.errors)
+              with_order_lock do
+                render_workflow_result(
+                  Spree.fulfillment_update_workflow.call(
+                    fulfillment: @fulfillment, fulfillment_attributes: update_params.to_h
+                  )
+                )
               end
             end
 

@@ -199,12 +199,18 @@ function FulfillmentRow({ orderId, fulfillment }: { orderId: string; fulfillment
         )}
       </CardContent>
 
-      <FulfillmentTrackingDialog
-        orderId={orderId}
-        fulfillment={fulfillment}
-        open={trackingOpen}
-        onOpenChange={setTrackingOpen}
-      />
+      {/* Mounted only while open, so the form seeds from the parcel as it is
+          now. Left mounted, its defaults froze at first render — and after
+          shipping through the fulfil form, "Edit tracking" would open empty
+          and save that emptiness over a real number. */}
+      {trackingOpen && (
+        <FulfillmentTrackingDialog
+          orderId={orderId}
+          fulfillment={fulfillment}
+          open
+          onOpenChange={setTrackingOpen}
+        />
+      )}
       {splittable && (
         <FulfillmentSplitDialog
           orderId={orderId}

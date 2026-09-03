@@ -175,6 +175,17 @@ export function ClaimsCard({ order }: { order: Order }) {
   const claims = data?.data ?? []
   const canCreate = (order.items ?? []).length > 0
 
+  async function handleCancel(id: string) {
+    const ok = await confirm({
+      title: t('orders.post_sale.claims.cancel_title'),
+      message: t('orders.post_sale.claims.cancel_message'),
+      variant: 'destructive',
+      confirmLabel: t('orders.post_sale.cancel'),
+    })
+    if (!ok) return
+    cancel.mutate(id)
+  }
+
   async function handleDeny(id: string) {
     const ok = await confirm({
       title: t('orders.post_sale.claims.deny_title'),
@@ -245,7 +256,7 @@ export function ClaimsCard({ order }: { order: Order }) {
                         <DropdownMenuSeparator />
                         <DropdownMenuItem
                           variant="destructive"
-                          onClick={() => cancel.mutate(claim.id)}
+                          onClick={() => handleCancel(claim.id)}
                         >
                           {t('orders.post_sale.cancel')}
                         </DropdownMenuItem>
@@ -307,13 +318,23 @@ function ResolveClaimDialog({
   const [amount, setAmount] = useState('')
   const [method, setMethod] = useState<'original_payment' | 'store_credit'>('store_credit')
 
+  // A replacement resolution only works when a line was opened asking for
+  // one, and nothing on this branch flags a line yet — so offering it would
+  // guarantee a 422 for a choice the seller made in good faith. The options
+  // follow what the claim actually carries.
+  const replaceable = (claim.claim_line_items ?? []).some((line) => line.send_replacement)
+
   const resolutionOptions = [
     { value: 'refund', label: t('orders.post_sale.claims.resolutions.refund') },
-    { value: 'replacement', label: t('orders.post_sale.claims.resolutions.replacement') },
-    {
-      value: 'refund_and_replacement',
-      label: t('orders.post_sale.claims.resolutions.refund_and_replacement'),
-    },
+    ...(replaceable
+      ? [
+          { value: 'replacement', label: t('orders.post_sale.claims.resolutions.replacement') },
+          {
+            value: 'refund_and_replacement',
+            label: t('orders.post_sale.claims.resolutions.refund_and_replacement'),
+          },
+        ]
+      : []),
   ]
   const methodOptions = [
     { value: 'store_credit', label: t('orders.post_sale.returns.store_credit') },

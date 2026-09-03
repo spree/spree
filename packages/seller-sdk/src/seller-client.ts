@@ -577,13 +577,13 @@ export class SellerClient {
           ...options,
           // The nested collections are expand-gated server-side, so a bare
           // list answers with the record and none of its contents.
-          params: { expand: ['return_line_items', 'return_line_items.variant', 'reason'] },
+          params: { expand: 'return_line_items,return_line_items.variant,reason' },
         }),
 
       get: (orderId: string, id: string, options?: RequestOptions): Promise<Return> =>
         this.request<Return>('GET', `/orders/${orderId}/returns/${id}`, {
           ...options,
-          params: { expand: ['return_line_items', 'return_line_items.variant', 'reason'] },
+          params: { expand: 'return_line_items,return_line_items.variant,reason' },
         }),
 
       create: (
@@ -647,12 +647,8 @@ export class SellerClient {
           // The nested collections are expand-gated server-side, so a bare
           // list answers with the record and none of its contents.
           params: {
-            expand: [
-              'exchange_line_items',
-              'exchange_line_items.original_variant',
-              'exchange_line_items.new_variant',
-              'reason',
-            ],
+            expand:
+              'exchange_line_items,exchange_line_items.original_variant,exchange_line_items.new_variant,reason',
           },
         }),
 
@@ -660,12 +656,8 @@ export class SellerClient {
         this.request<Exchange>('GET', `/orders/${orderId}/exchanges/${id}`, {
           ...options,
           params: {
-            expand: [
-              'exchange_line_items',
-              'exchange_line_items.original_variant',
-              'exchange_line_items.new_variant',
-              'reason',
-            ],
+            expand:
+              'exchange_line_items,exchange_line_items.original_variant,exchange_line_items.new_variant,reason',
           },
         }),
 
@@ -734,13 +726,13 @@ export class SellerClient {
           ...options,
           // The nested collections are expand-gated server-side, so a bare
           // list answers with the record and none of its contents.
-          params: { expand: ['claim_line_items', 'claim_line_items.variant', 'reason'] },
+          params: { expand: 'claim_line_items,claim_line_items.variant,reason' },
         }),
 
       get: (orderId: string, id: string, options?: RequestOptions): Promise<Claim> =>
         this.request<Claim>('GET', `/orders/${orderId}/claims/${id}`, {
           ...options,
-          params: { expand: ['claim_line_items', 'claim_line_items.variant', 'reason'] },
+          params: { expand: 'claim_line_items,claim_line_items.variant,reason' },
         }),
 
       create: (

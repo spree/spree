@@ -12,8 +12,6 @@ module Spree
           # catalogue, and reaching a rival's variant here would put that
           # seller's stock on this seller's order.
           class ExchangesController < Seller::ResourceController
-            include Spree::Api::V3::OrderLock
-
             # Exchanges are a subject of the `orders` catalog resource.
             scoped_resource :orders
 
@@ -57,11 +55,9 @@ module Spree
             # Sends the replacement. Settles a price difference at the same
             # time, which is why it takes a refund method.
             def fulfill
-              with_order_lock do
-                run_workflow(Spree.exchange_fulfill_workflow,
-                             refund_method: params[:refund_method] || 'store_credit',
-                             refunder: try_spree_current_user)
-              end
+              run_workflow(Spree.exchange_fulfill_workflow,
+                           refund_method: params[:refund_method] || 'store_credit',
+                           refunder: try_spree_current_user)
             end
 
             # PATCH /api/v3/seller/orders/:order_id/exchanges/:id/cancel
@@ -124,7 +120,9 @@ module Spree
             end
 
             def items_for_receive
-              return nil if params[:items].blank?
+              # `nil` means "receive it all as requested"; an empty list means the
+              # caller named no units, which must not fall through to that.
+              return nil unless params.key?(:items)
 
               params.permit(items: [:exchange_line_item_id, :quantity, :resellable])[:items].map do |item|
                 {

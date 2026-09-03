@@ -15,8 +15,6 @@ module Spree
           # the tax credit, the refund and the ledger reversal all happen
           # exactly as they do when the marketplace handles the return itself.
           class ReturnsController < Seller::ResourceController
-            include Spree::Api::V3::OrderLock
-
             # Returns are a subject of the `orders` catalog resource, so
             # `read_orders`/`write_orders` gate these endpoints. Naming
             # `:returns` here would name a key no catalog knows.
@@ -67,12 +65,10 @@ module Spree
             # itself and, on a split checkout, by this order's share of the
             # group's payment — never a sibling's.
             def refund
-              with_order_lock do
-                run_workflow(Spree.return_refund_workflow,
-                             amount: params[:amount],
-                             refund_method: params[:refund_method] || 'original_payment',
-                             refunder: try_spree_current_user)
-              end
+              run_workflow(Spree.return_refund_workflow,
+                           amount: params[:amount],
+                           refund_method: params[:refund_method] || 'original_payment',
+                           refunder: try_spree_current_user)
             end
 
             # PATCH /api/v3/seller/orders/:order_id/returns/:id/cancel
@@ -136,7 +132,9 @@ module Spree
             end
 
             def items_for_receive
-              return nil if params[:items].blank?
+              # `nil` means "receive it all as requested"; an empty list means the
+              # caller named no units, which must not fall through to that.
+              return nil unless params.key?(:items)
 
               params.permit(items: [:return_line_item_id, :quantity, :resellable])[:items].map do |item|
                 {
