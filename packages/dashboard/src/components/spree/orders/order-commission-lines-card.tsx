@@ -1,5 +1,5 @@
 import type { CommissionLine, Order } from '@spree/admin-sdk'
-import { currencyParts } from '@spree/dashboard-core'
+import { formatPrice } from '@spree/dashboard-core'
 import {
   Card,
   CardHeader,
@@ -31,7 +31,6 @@ function commissionSubjectLabel(line: CommissionLine, order: Order, t: (key: str
 function commissionRateLabel(
   line: CommissionLine,
   t: (key: string, options?: Record<string, unknown>) => string,
-  locale: string,
 ) {
   const name = line.commission_rate?.name ?? t('admin.orders.detail.commission_lines.rate_unknown')
 
@@ -42,15 +41,23 @@ function commissionRateLabel(
     })
   }
 
-  const { symbol } = currencyParts(line.currency, locale)
+  const fixedAmount = line.commission_rate?.amounts?.[line.currency]
+  const amount = fixedAmount
+    ? formatPrice({
+        amount: fixedAmount,
+        currency: line.currency,
+        display_amount: null,
+      })
+    : '—'
+
   return t('admin.orders.detail.commission_lines.rate_named_fixed', {
     name,
-    amount: `${symbol}${line.rate}`,
+    amount,
   })
 }
 
 export function CommissionLinesCard({ order }: { order: Order }) {
-  const { t, i18n } = useTranslation()
+  const { t } = useTranslation()
   const { data, isSuccess } = useOrderCommissionLines(order.id, {
     enabled: !!order.completed_at,
   })
@@ -90,7 +97,7 @@ export function CommissionLinesCard({ order }: { order: Order }) {
             <TableRow key={line.id}>
               <TableCell>{commissionSubjectLabel(line, order, t)}</TableCell>
               <TableCell className="text-muted-foreground">
-                {commissionRateLabel(line, t, i18n.language)}
+                {commissionRateLabel(line, t)}
               </TableCell>
               <TableCell className="text-right tabular-nums">{line.display_amount}</TableCell>
               <TableCell className="text-right tabular-nums">{line.display_tax_amount}</TableCell>
