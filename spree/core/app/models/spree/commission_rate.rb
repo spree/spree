@@ -196,7 +196,6 @@ module Spree
     # @return [void]
     def amounts=(values)
       @pending_amounts = (values || {}).to_h.transform_keys { |key| key.to_s.upcase }
-      apply_pending_amounts if persisted?
     end
 
     # Replaces the floors and caps wholesale, on the same rows the flat fee
@@ -207,7 +206,6 @@ module Spree
     # @return [void]
     def bounds=(values)
       @pending_bounds = (values || {}).to_h.transform_keys { |key| key.to_s.upcase }
-      apply_pending_bounds if persisted?
     end
 
     # Whether this rate charges every sale, having named nothing to narrow it.
@@ -298,11 +296,12 @@ module Spree
       wanted = @pending_amounts.compact_blank
       @pending_amounts = nil
 
-      # A row carrying bounds outlives the amount it was written with: the two
-      # are written by different fields, and dropping a currency from the flat
-      # fee must not silently uncap a percentage.
+      # A percentage's bounds outlive clearing +amounts+ — the two are different
+      # fields and dropping a currency from amounts must not silently uncap it.
+      # A flat fee's cap lives on the same row as its amount; clearing the amount
+      # retires the whole currency.
       commission_rate_values.
-        reject { |value| wanted.key?(value.currency) || value.bounded? }.
+        reject { |value| wanted.key?(value.currency) || (!fixed? && value.bounded?) }.
         each(&:destroy)
 
       wanted.each do |currency, amount|
@@ -331,7 +330,8 @@ module Spree
 
         # A flat fee applies only where it states an amount. Writing bounds alone
         # would create a zero-amount row that still matches and blocks fallthrough.
-        if fixed? && amount_for(currency).to_d <= 0
+        # +amounts=+ may run after +bounds=+ on update, so pending amounts count.
+        if fixed? && effective_amount_for(currency) <= 0
           commission_rate_values.find { |value| value.currency == currency }&.destroy
           next
         end
@@ -346,6 +346,14 @@ module Spree
     def row_for_currency(currency)
       commission_rate_values.find { |value| value.currency == currency } ||
         commission_rate_values.build(currency: currency)
+    end
+
+    def effective_amount_for(currency)
+      if @pending_amounts&.key?(currency)
+        @pending_amounts[currency].to_d
+      else
+        amount_for(currency).to_d
+      end
     end
 
     def flat_fee_does_not_charge_delivery
