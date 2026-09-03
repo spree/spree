@@ -11,6 +11,7 @@ module Spree
         rewrite_input!(remove: [:order], cart: cart)
         run :check_if_can_be_destroyed
         run :cancel_shipments
+        run :release_gift_card
         run :void_payments
         run :clear_addresses
         run :destroy_order
@@ -29,6 +30,18 @@ module Spree
       # workflow's restock and carrier stand-down.
       def cancel_shipments(cart:)
         cart.fulfillments.each { |fulfillment| fulfillment.update!(status: 'canceled') }
+
+        success(cart: cart)
+      end
+
+      # Apply draws the card down while the cart is open; deleting the cart
+      # must put that balance back through the same Remove path as an explicit
+      # detach, not only void the checkout payment.
+      def release_gift_card(cart:)
+        return success(cart: cart) if cart.gift_card.blank?
+
+        result = cart.remove_gift_card
+        return failure(false, result.error) if result.failure?
 
         success(cart: cart)
       end
