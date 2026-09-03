@@ -37,6 +37,11 @@ module Spree
                                  dependent: :destroy, inverse_of: :return
     has_many :refunds, class_name: 'Spree::Refund', as: :originator, dependent: :nullify
     has_many :store_credits, class_name: 'Spree::StoreCredit', as: :originator, dependent: :nullify
+    # The return label and the inbound parcel's journey
+    # (docs/plans/6.0-shipping-labels-and-deliveries.md). A delivery reporting
+    # arrival never receives the return: arrival is not inspection.
+    has_many :shipping_labels, -> { order(:created_at, :id) }, class_name: 'Spree::ShippingLabel', as: :owner, dependent: :destroy
+    has_many :deliveries, -> { order(:created_at, :id) }, class_name: 'Spree::Delivery', as: :owner, dependent: :destroy
 
     validates :return_line_items, presence: true, on: :create
 
@@ -46,6 +51,45 @@ module Spree
 
     self.whitelisted_ransackable_attributes = %w[number status created_at]
     self.whitelisted_ransackable_associations = %w[order reason]
+
+    # The label that currently binds the inbound parcel — bought or uploaded,
+    # not refunded. The label workflows refuse a second active one.
+    #
+    # @return [Spree::ShippingLabel, nil]
+    def active_shipping_label
+      shipping_labels.active.last
+    end
+
+    # The provider that ships this return's label — the one that handled the
+    # outbound parcel the returned items travelled in, since that is the
+    # carrier account the merchant connected. Manual when nothing shipped
+    # through a provider.
+    #
+    # @return [Spree::FulfillmentProvider::Base]
+    def provider
+      return_line_items.first&.fulfillment_item&.fulfillment&.provider || Spree::FulfillmentProvider::Manual.new
+    end
+
+    # The address the inbound parcel leaves from: where the order shipped to.
+    #
+    # @return [Spree::Address, nil]
+    def ship_from_address
+      order.ship_address
+    end
+
+    # The returned goods as a package, for providers that need a weight and
+    # dimensions to rate a return label. Built at the return's stock
+    # location, which is where the parcel is going.
+    #
+    # @return [Spree::Stock::Package]
+    def to_package
+      package = Spree::Stock::Package.new(stock_location)
+      package.owner = order
+      return_line_items.includes(:fulfillment_item).each do |line|
+        package.add(line.fulfillment_item) if line.fulfillment_item
+      end
+      package
+    end
 
     # What the customer is owed for the items being returned.
     def refund_total

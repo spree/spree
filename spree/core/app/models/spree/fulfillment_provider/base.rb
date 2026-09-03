@@ -61,7 +61,31 @@ module Spree
         group.covers_location?(stock_location)
       end
 
-      # Performs the provider-side dispatch when a fulfillment fulfills.
+      # Buys a carrier label for the owner — a +Spree::Fulfillment+ for an
+      # outbound parcel, a +Spree::Return+ for the inbound one. Core turns the
+      # answer into a +Spree::ShippingLabel+ and its +Spree::Delivery+, and
+      # never asks twice for an owner that already holds an active label, so
+      # a provider needs no idempotency bookkeeping of its own. Only
+      # providers answering +generates_labels?+ are asked.
+      #
+      # @param _owner [Spree::Fulfillment, Spree::Return]
+      # @return [Spree::LabelPurchase, nil] nil when no label could be bought
+      def purchase_label(_owner)
+        nil
+      end
+
+      # Asks the carrier to refund a purchased label.
+      #
+      # @param _shipping_label [Spree::ShippingLabel]
+      # @return [String, false] +'refunded'+ when the carrier settled it,
+      #   +'refund_requested'+ when it will answer later, false when refused
+      def refund_label(_shipping_label)
+        false
+      end
+
+      # Performs the provider-side dispatch when a fulfillment fulfills — a
+      # 3PL pick, a pickup counter, digital links. Label-generating providers
+      # implement +purchase_label+ instead.
       #
       # @return [Hash] optionally { tracking_number:, tracking_url: }
       def create_fulfillment(_fulfillment)
@@ -73,28 +97,33 @@ module Spree
         raise NotImplementedError, "Please implement 'cancel_fulfillment' in your fulfillment provider: #{self.class.name}"
       end
 
-      # @return [String, nil] provider-computed tracking URL
-      def tracking_url(_fulfillment)
+      # The provider's own tracker page for a consignment.
+      #
+      # @param _delivery [Spree::Delivery]
+      # @return [String, nil]
+      def tracking_url(_delivery)
         nil
       end
 
-      # @return [Array] provider documents (labels, customs forms, ...)
-      def documents(_fulfillment)
+      # Documents the provider produced beside the label — customs forms,
+      # commercial invoices. The label itself is a +Spree::ShippingLabel+ and
+      # is never reported here.
+      #
+      # @param _owner [Spree::Fulfillment, Spree::Return]
+      # @return [Array<Hash>] `{ kind:, url: }` entries
+      def documents(_owner)
         []
       end
 
-      private
-
       # The connected, active integration carrying this provider's
-      # credentials, resolved from the fulfillment's store.
+      # credentials, resolved from the owner's store.
       #
-      # @param fulfillment [Spree::Fulfillment]
+      # @param owner [Spree::Fulfillment, Spree::Return]
       # @return [Spree::Integration, nil]
-      def integration_for(fulfillment)
+      def integration_for(owner)
         return if self.class.integration_class.blank?
 
-        store = fulfillment.order&.store || fulfillment.cart&.store
-        store&.integrations&.active&.find_by(type: self.class.integration_class)
+        owner.store&.integrations&.active&.find_by(type: self.class.integration_class)
       end
     end
   end

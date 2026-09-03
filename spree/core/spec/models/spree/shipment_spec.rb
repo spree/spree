@@ -183,20 +183,31 @@ describe Spree::Shipment, type: :model do
     end
   end
 
-  describe 'tracking_status' do
-    it 'accepts a carrier status' do
-      shipment.tracking_status = 'in_transit'
-      expect(shipment).to be_valid
+  # The carrier axis lives on Spree::Delivery; the fulfillment only ever
+  # summarizes its primary delivery.
+  describe 'tracking summary' do
+    it 'reads the primary delivery' do
+      shipment.deliveries.destroy_all
+      first = create(:delivery, owner: shipment, tracking_number: 'FIRST-1', tracking_url: 'https://t.example/1', created_at: 1.day.ago)
+      create(:delivery, owner: shipment, tracking_number: 'SECOND-2')
+
+      expect(shipment.reload.primary_delivery).to eq(first)
+      expect(shipment.tracking).to eq('FIRST-1')
+      expect(shipment.tracking_url).to eq('https://t.example/1')
+      expect(shipment).to be_tracked
     end
 
-    it 'rejects one outside the carrier vocabulary' do
-      shipment.tracking_status = 'lost_in_space'
-      expect(shipment).not_to be_valid
+    it 'is nil without a delivery' do
+      shipment.deliveries.destroy_all
+
+      expect(shipment.reload.tracking).to be_nil
+      expect(shipment.tracking_url).to be_nil
+      expect(shipment).not_to be_tracked
     end
 
-    it 'is optional' do
-      shipment.tracking_status = nil
-      expect(shipment).to be_valid
+    it 'has no carrier axis of its own' do
+      expect(shipment).not_to respond_to(:tracking_status)
+      expect(shipment).not_to respond_to(:tracking_carrier)
     end
   end
 
@@ -962,77 +973,26 @@ describe Spree::Shipment, type: :model do
     end
   end
 
-  describe '#tracking_url' do
-    it 'uses shipping method to determine url' do
-      allow(shipping_method).to receive(:build_tracking_url).with('1Z12345').and_return(:some_url)
-      shipment.tracking = '1Z12345'
+  # Legacy writer — removed in 6.1. Host code assigning tracking the old way
+  # still lands it where every reader looks.
+  describe '#tracking= (deprecated)' do
+    before { allow(Spree::Deprecation).to receive(:warn) }
 
-      expect(shipment.tracking_url).to eq(:some_url)
-    end
+    it 'creates the primary delivery on save' do
+      shipment.deliveries.destroy_all
 
-    it 'returns the tracking value as-is when it is already a full URL' do
-      shipment.tracking = 'https://carrier.example/track/ABC'
-
-      expect(shipment.tracking_url).to eq('https://carrier.example/track/ABC')
-    end
-
-    it 'is nil without a tracking number' do
-      shipment.tracking = nil
-
-      expect(shipment.tracking_url).to be_nil
-    end
-
-    # The provider bought the label, so its tracker page wins over anything
-    # derived — it is the one link guaranteed to show this parcel.
-    it 'prefers the fulfillment provider answer' do
-      allow(shipment.provider).to receive(:tracking_url).with(shipment).and_return('https://provider.example/t/1')
-      shipment.tracking = 'RANDOM123'
-
-      expect(shipment.tracking_url).to eq('https://provider.example/t/1')
-    end
-
-    it 'builds from the pinned carrier registry entry' do
-      shipment.tracking = '421432'
-      shipment.tracking_carrier = 'inpost'
-
-      expect(shipment.tracking_url).to eq('https://inpost.pl/sledzenie-przesylek?number=421432')
-    end
-
-    # No method, no carrier, no provider — a recognisable number still yields
-    # its carrier's page through the tracking_number gem.
-    it 'falls back to detection from the number format' do
-      allow(shipment).to receive(:delivery_method).and_return(nil)
-      shipment.tracking = '1Z879E930346834440'
-
-      expect(shipment.tracking_url).to include('ups.com')
-    end
-  end
-
-  describe 'tracking carrier detection' do
-    it 'pins the detected carrier when a recognisable number is saved' do
       shipment.update!(tracking: '1Z879E930346834440')
 
-      expect(shipment.tracking_carrier).to eq('ups')
-      expect(shipment.tracking_carrier_name).to eq('UPS')
+      expect(Spree::Deprecation).to have_received(:warn).with(/tracking=/)
+      expect(shipment.reload.tracking).to eq('1Z879E930346834440')
+      expect(shipment.primary_delivery.carrier).to eq('ups')
     end
 
-    it 'leaves an explicit pick alone' do
-      shipment.update!(tracking: '1Z879E930346834440', tracking_carrier: 'inpost')
+    it 'corrects the primary delivery when one exists' do
+      shipment.update!(tracking: 'CORRECTED-1')
 
-      expect(shipment.tracking_carrier).to eq('inpost')
-      expect(shipment.tracking_carrier_name).to eq('InPost')
-    end
-
-    it 'pins nothing for an unrecognisable number' do
-      shipment.update!(tracking: '421432')
-
-      expect(shipment.tracking_carrier).to be_nil
-    end
-
-    it 'titleizes a carrier the registry does not know' do
-      shipment.tracking_carrier = 'some_courier'
-
-      expect(shipment.tracking_carrier_name).to eq('Some Courier')
+      expect(shipment.reload.deliveries.count).to eq(1)
+      expect(shipment.tracking).to eq('CORRECTED-1')
     end
   end
 

@@ -1,7 +1,10 @@
 import {
+  type DeliveryCreateParams,
+  type DeliveryUpdateParams,
   type FulfillmentCreateParams,
   type FulfillmentFulfillParams,
   type FulfillmentSplitParams,
+  type ShippingLabelCreateParams,
   SpreeError,
 } from '@spree/admin-sdk'
 import { adminClient, useResourceKeyBuilder } from '@spree/dashboard-core'
@@ -91,9 +94,66 @@ export function useFulfillmentActions(orderId: string) {
     adminClient.orders.fulfillments.markDelivered(orderId, fulfillmentId),
   )
 
-  const purchaseLabel = useFulfillmentMutation(orderId, (fulfillmentId: string) =>
-    adminClient.orders.fulfillments.purchaseLabel(orderId, fulfillmentId),
+  // Buying with no body; a `file` records postage bought elsewhere instead.
+  const buyLabel = useFulfillmentMutation(
+    orderId,
+    ({ fulfillmentId, ...params }: { fulfillmentId: string } & ShippingLabelCreateParams) =>
+      adminClient.orders.fulfillments.labels.create(orderId, fulfillmentId, params),
   )
 
-  return { create, update, split, fulfill, cancel, markDelivered, purchaseLabel }
+  const refundLabel = useFulfillmentMutation(
+    orderId,
+    ({ fulfillmentId, labelId }: { fulfillmentId: string; labelId: string }) =>
+      adminClient.orders.fulfillments.labels.refund(orderId, fulfillmentId, labelId),
+  )
+
+  const deleteLabel = useFulfillmentMutation(
+    orderId,
+    ({ fulfillmentId, labelId }: { fulfillmentId: string; labelId: string }) =>
+      adminClient.orders.fulfillments.labels.delete(orderId, fulfillmentId, labelId),
+  )
+
+  const createDelivery = useFulfillmentMutation(
+    orderId,
+    ({ fulfillmentId, ...params }: { fulfillmentId: string } & DeliveryCreateParams) =>
+      adminClient.orders.fulfillments.deliveries.create(orderId, fulfillmentId, params),
+  )
+
+  const updateDelivery = useFulfillmentMutation(
+    orderId,
+    ({
+      fulfillmentId,
+      deliveryId,
+      ...params
+    }: { fulfillmentId: string; deliveryId: string } & DeliveryUpdateParams) =>
+      adminClient.orders.fulfillments.deliveries.update(orderId, fulfillmentId, deliveryId, params),
+  )
+
+  const deleteDelivery = useFulfillmentMutation(
+    orderId,
+    ({ fulfillmentId, deliveryId }: { fulfillmentId: string; deliveryId: string }) =>
+      adminClient.orders.fulfillments.deliveries.delete(orderId, fulfillmentId, deliveryId),
+  )
+
+  const markDeliveryDelivered = useFulfillmentMutation(
+    orderId,
+    ({ fulfillmentId, deliveryId }: { fulfillmentId: string; deliveryId: string }) =>
+      adminClient.orders.fulfillments.deliveries.markDelivered(orderId, fulfillmentId, deliveryId),
+  )
+
+  return {
+    create,
+    update,
+    split,
+    fulfill,
+    cancel,
+    markDelivered,
+    buyLabel,
+    refundLabel,
+    deleteLabel,
+    createDelivery,
+    updateDelivery,
+    deleteDelivery,
+    markDeliveryDelivered,
+  }
 }

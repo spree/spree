@@ -78,8 +78,9 @@ module Spree
         fulfillment.publish_fulfillment_canceled_event
       end
 
+      # Refunds every active label, then drops any non-label dispatch.
       def tell_provider_to_stand_down
-        fulfillment.provider.cancel_fulfillment(fulfillment)
+        Spree::Fulfillments::StandDownProvider.new.call(fulfillment: fulfillment)
       end
     end
   end

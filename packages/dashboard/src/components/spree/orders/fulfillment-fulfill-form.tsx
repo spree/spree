@@ -159,7 +159,9 @@ export function FulfillmentFulfillForm({
     defaultValues: {
       items: rows.map((row) => ({ item_id: row.itemId, selected: true, quantity: row.quantity })),
       tracking: fulfillment.tracking ?? '',
-      tracking_carrier: fulfillment.tracking_carrier ?? '',
+      // The carrier is detected from the number, or picked in the tracking
+      // dialog once the parcel has one.
+      tracking_carrier: '',
       notify_customer: true,
     },
   })

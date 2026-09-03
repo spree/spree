@@ -794,6 +794,16 @@ export class StoreClient {
           ...options,
           body: params,
         }),
+
+      /**
+       * The prepaid return label the merchant bought, if there is one — the
+       * path to fetch it from. The bytes are streamed through the API rather
+       * than served from storage, so fetch this with the customer's
+       * credentials and drive the browser download from a Blob; a 404 means no
+       * label was bought.
+       */
+      labelPath: (orderId: string, id: string): string =>
+        `/api/v3/store/orders/${orderId}/returns/${id}/label`,
     },
 
     /**

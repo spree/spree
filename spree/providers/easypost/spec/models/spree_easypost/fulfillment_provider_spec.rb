@@ -15,7 +15,6 @@ end
 
 def recorded_rate_or_default = recorded_rates.first
 
-
 RSpec.describe SpreeEasyPost::FulfillmentProvider do
   let(:store) { @default_store }
   let!(:integration) do
@@ -39,34 +38,20 @@ RSpec.describe SpreeEasyPost::FulfillmentProvider do
     expect(Spree.fulfillment_providers).to include(described_class)
     expect(described_class.digital?).to be false
     expect(described_class.pickup?).to be false
+    expect(described_class.generates_labels?).to be true
     expect(described_class.new.requires_address?).to be true
     expect(described_class.provider_name).to eq('EasyPost')
   end
 
-  describe '#create_fulfillment' do
-    it 'does not buy twice — an already-purchased label is returned as-is' do
-      fulfillment.update_columns(
-        tracking: 'EXISTING-123',
-        metadata: fulfillment.metadata.merge(
-          'easypost_purchased_shipment_id' => 'shp_bought',
-          'easypost_tracker_url' => 'https://track.example/t/1'
-        )
-      )
-
-      expect(client).not_to receive(:shipment)
-
-      result = provider.create_fulfillment(fulfillment)
-
-      expect(result[:tracking_number]).to eq('EXISTING-123')
-      expect(result[:tracking_url]).to eq('https://track.example/t/1')
-    end
-
+  describe '#purchase_label' do
     let(:purchased_shipment) do
       double(
         id: 'shp_recorded1',
         tracking_code: '9405500207552012345678',
-        postage_label: double(label_url: 'https://example.com/label.png'),
-        tracker: double(public_url: 'https://track.easypost.com/abc')
+        selected_rate: double(id: 'rate_recorded1', carrier: 'USPS', service: 'Priority', rate: '7.25', currency: 'USD'),
+        postage_label: double(label_url: 'https://example.com/label.png', label_file_type: 'image/png'),
+        tracker: double(id: 'trk_1', public_url: 'https://track.easypost.com/abc'),
+        forms: []
       )
     end
     let(:shipment_service) { double }
@@ -80,20 +65,35 @@ RSpec.describe SpreeEasyPost::FulfillmentProvider do
       allow(end_shipper_service).to receive(:create).and_return(double(id: 'es_test1'))
     end
 
-    it 'buys the rate quoted at checkout and hands back tracking' do
+    it 'buys the rate quoted at checkout and answers with a typed purchase' do
       allow(shipment_service).to receive(:buy).
         with('shp_recorded1', rate: { id: 'rate_recorded1' }, end_shipper_id: 'es_test1').
         and_return(purchased_shipment)
 
-      result = provider.create_fulfillment(fulfillment)
+      purchase = provider.purchase_label(fulfillment)
 
-      expect(result[:tracking_number]).to eq('9405500207552012345678')
-      # update_columns silently no-ops on an unknown column, so a rename
-      # upstream would leave the label details unwritten rather than raise.
-      expect(fulfillment.reload.metadata['easypost_purchased_shipment_id']).to eq('shp_recorded1')
-      expect(fulfillment.metadata['easypost_label_url']).to eq('https://example.com/label.png')
-      expect(provider.documents(fulfillment)).to eq([{ kind: 'label', url: 'https://example.com/label.png' }])
-      expect(provider.tracking_url(fulfillment)).to eq('https://track.easypost.com/abc')
+      expect(purchase).to be_a(Spree::LabelPurchase)
+      expect(purchase).to be_valid
+      expect(purchase.tracking_number).to eq('9405500207552012345678')
+      expect(purchase.external_id).to eq('shp_recorded1')
+      # Mapped onto the Spree.tracking_carriers key, so a bought label gets
+      # the same badge a hand-entered number would.
+      expect(purchase.carrier).to eq('usps')
+      expect(purchase.service).to eq('Priority')
+      expect(purchase.cost).to eq(7.25)
+      expect(purchase.currency).to eq('USD')
+      expect(purchase.format).to eq('png')
+      expect(purchase.file_url).to eq('https://example.com/label.png')
+      expect(purchase.tracking_url).to eq('https://track.easypost.com/abc')
+      expect(purchase.metadata).to include('easypost_tracker_url' => 'https://track.easypost.com/abc')
+    end
+
+    # Core refuses a second purchase while a label is active, so the provider
+    # keeps no state of its own.
+    it 'writes nothing onto the fulfillment' do
+      allow(shipment_service).to receive(:buy).and_return(purchased_shipment)
+
+      expect { provider.purchase_label(fulfillment) }.not_to change { fulfillment.reload.metadata }
     end
 
     # EasyPost quotes expire; a stale quote re-quotes from the fulfillment
@@ -107,8 +107,6 @@ RSpec.describe SpreeEasyPost::FulfillmentProvider do
           with('shp_recorded1', rate: { id: 'rate_recorded1' }, end_shipper_id: 'es_test1').
           and_raise(EasyPost::Errors::EasyPostError.new('rate expired'))
         allow(shipment_service).to receive(:create).and_return(fresh_shipment)
-        # The selected rate carries the carrier service the customer chose —
-        # the re-quote must buy exactly that.
         fulfillment.selected_delivery_rate.update_columns(carrier: 'UPS', service_level: 'Ground')
       end
 
@@ -117,15 +115,13 @@ RSpec.describe SpreeEasyPost::FulfillmentProvider do
           with('shp_fresh', rate: { id: 'rate_fresh' }, end_shipper_id: 'es_test1').
           and_return(purchased_shipment)
 
-        result = provider.create_fulfillment(fulfillment)
-
-        expect(result[:tracking_number]).to eq('9405500207552012345678')
+        expect(provider.purchase_label(fulfillment).tracking_number).to eq('9405500207552012345678')
       end
 
       it 'buys nothing when the exact service is not offered' do
         allow(fresh_rate).to receive(:service).and_return('Express')
 
-        expect(provider.create_fulfillment(fulfillment)).to eq({})
+        expect(provider.purchase_label(fulfillment)).to be_nil
       end
     end
 
@@ -135,7 +131,7 @@ RSpec.describe SpreeEasyPost::FulfillmentProvider do
     it 'registers an end shipper from the warehouse with store contact fallbacks' do
       allow(shipment_service).to receive(:buy).and_return(purchased_shipment)
 
-      provider.create_fulfillment(fulfillment)
+      provider.purchase_label(fulfillment)
 
       expect(end_shipper_service).to have_received(:create).with(
         hash_including(
@@ -152,68 +148,125 @@ RSpec.describe SpreeEasyPost::FulfillmentProvider do
       allow(shipment_service).to receive(:buy).
         with('shp_recorded1', rate: { id: 'rate_recorded1' }).and_return(purchased_shipment)
 
-      result = provider.create_fulfillment(fulfillment)
-
-      expect(result[:tracking_number]).to be_present
+      expect(provider.purchase_label(fulfillment)).to be_present
       expect(end_shipper_service).not_to have_received(:create)
     end
 
-    # An end-shipper hiccup must not lose the label — the buy proceeds bare
-    # and only carriers that insist on one reject it, with their message.
-    it 'degrades to a bare buy when the end shipper cannot be registered' do
-      allow(end_shipper_service).to receive(:create).
-        and_raise(EasyPost::Errors::EasyPostError.new('nope'))
-      allow(Rails.error).to receive(:report)
-      allow(shipment_service).to receive(:buy).
-        with('shp_recorded1', rate: { id: 'rate_recorded1' }).and_return(purchased_shipment)
-
-      expect(provider.create_fulfillment(fulfillment)[:tracking_number]).to be_present
-      expect(Rails.error).to have_received(:report)
-    end
-
-    # Runs inside the ship transition — a purchase failure must degrade to
-    # "no label yet", never break the fulfillment.
-    it 'reports and returns empty on an API failure' do
+    it 'reports and answers nil on an API failure' do
       allow(shipment_service).to receive(:buy).and_raise(StandardError.new('boom'))
       allow(shipment_service).to receive(:create).and_raise(StandardError.new('boom'))
       allow(Rails.error).to receive(:report)
 
-      expect(provider.create_fulfillment(fulfillment)).to eq({})
+      expect(provider.purchase_label(fulfillment)).to be_nil
       expect(Rails.error).to have_received(:report)
     end
 
     it 'does nothing without a connected integration' do
       integration.destroy!
 
-      expect(provider.create_fulfillment(fulfillment)).to eq({})
+      expect(provider.purchase_label(fulfillment)).to be_nil
+    end
+
+    describe 'for a return' do
+      let(:shipped) { create(:shipped_order, store: store) }
+      let(:return_record) { create(:return, order: shipped) }
+      let(:return_shipment) do
+        double(
+          id: 'shp_return1',
+          rates: [
+            double(id: 'rate_cheap', carrier: 'USPS', service: 'Ground', rate: '4.10', currency: 'USD'),
+            double(id: 'rate_dear', carrier: 'UPS', service: 'Express', rate: '19.00', currency: 'USD')
+          ]
+        )
+      end
+
+      before do
+        allow(shipment_service).to receive(:create).and_return(return_shipment)
+        allow(shipment_service).to receive(:buy).and_return(purchased_shipment)
+      end
+
+      # Return postage is the merchant's own money and no service was ever
+      # chosen for it, so the cheapest the account offers wins.
+      it 'buys an inbound shipment at the cheapest rate' do
+        purchase = provider.purchase_label(return_record)
+
+        expect(purchase.tracking_number).to be_present
+        expect(shipment_service).to have_received(:create).with(hash_including(is_return: true))
+        expect(shipment_service).to have_received(:buy).with('shp_return1', hash_including(rate: { id: 'rate_cheap' }))
+      end
+
+      it 'ships from the customer address back to the return stock location' do
+        provider.purchase_label(return_record)
+
+        expect(shipment_service).to have_received(:create).with(
+          hash_including(
+            from_address: hash_including(zip: shipped.ship_address.zipcode),
+            to_address: hash_including(zip: return_record.stock_location.zipcode)
+          )
+        )
+      end
     end
   end
 
-  describe '#cancel_fulfillment' do
+  describe '#refund_label' do
     let(:shipment_service) { double }
     let(:client) { instance_double(EasyPost::Client, shipment: shipment_service) }
+    let(:shipping_label) { create(:shipping_label, owner: fulfillment, store: store, external_id: 'shp_recorded1') }
 
     before { allow_any_instance_of(SpreeEasyPost::Integration).to receive(:client).and_return(client) }
 
-    it 'refunds the purchased label' do
-      fulfillment.update_columns(metadata: { 'easypost_purchased_shipment_id' => 'shp_recorded1' })
-      allow(shipment_service).to receive(:refund).with('shp_recorded1').and_return(double)
+    it 'reports a settled refund' do
+      allow(shipment_service).to receive(:refund).with('shp_recorded1').and_return(double(refund_status: 'refunded'))
 
-      expect(provider.cancel_fulfillment(fulfillment)).to be(true)
-      expect(shipment_service).to have_received(:refund)
+      expect(provider.refund_label(shipping_label)).to eq('refunded')
     end
 
-    it 'is a no-op without a purchase' do
-      expect(provider.cancel_fulfillment(fulfillment)).to be(true)
+    # USPS settles refunds later; the label waits in refund_requested until a
+    # webhook confirms it.
+    it 'reports a submitted refund as pending' do
+      allow(shipment_service).to receive(:refund).and_return(double(refund_status: 'submitted'))
+
+      expect(provider.refund_label(shipping_label)).to eq('refund_requested')
     end
 
-    it 'never blocks cancellation on a refund failure' do
-      fulfillment.update_columns(metadata: { 'easypost_purchased_shipment_id' => 'shp_recorded1' })
+    it 'reports a rejection as a failure' do
+      allow(shipment_service).to receive(:refund).and_return(double(refund_status: 'rejected'))
+
+      expect(provider.refund_label(shipping_label)).to be(false)
+    end
+
+    it 'never raises on an API failure' do
       allow(shipment_service).to receive(:refund).and_raise(StandardError.new('boom'))
       allow(Rails.error).to receive(:report)
 
-      expect(provider.cancel_fulfillment(fulfillment)).to be(false)
+      expect(provider.refund_label(shipping_label)).to be(false)
       expect(Rails.error).to have_received(:report)
+    end
+  end
+
+  describe '#tracking_url' do
+    it 'answers the tracker page recorded on the delivery label' do
+      label = create(:shipping_label, :with_delivery, owner: fulfillment, store: store,
+                                                      metadata: { 'easypost_tracker_url' => 'https://track.easypost.com/abc' })
+
+      expect(provider.tracking_url(label.delivery)).to eq('https://track.easypost.com/abc')
+    end
+  end
+
+  describe '#documents' do
+    # The label is a Spree::ShippingLabel; only the paperwork beside it is
+    # reported here.
+    it 'lists customs forms and never the label' do
+      create(
+        :shipping_label, owner: fulfillment, store: store,
+                         metadata: { 'easypost_forms' => [{ 'form_type' => 'commercial_invoice', 'url' => 'https://forms.example/ci.pdf' }] }
+      )
+
+      expect(provider.documents(fulfillment)).to eq([{ kind: 'commercial_invoice', url: 'https://forms.example/ci.pdf' }])
+    end
+
+    it 'is empty without a label' do
+      expect(provider.documents(fulfillment)).to eq([])
     end
   end
 
@@ -221,8 +274,6 @@ RSpec.describe SpreeEasyPost::FulfillmentProvider do
   # calls against EasyPost's wire format. Ids come from the recorded rate
   # quote so a re-record against any account stays self-consistent.
   describe 'API contract (VCR)' do
-    # USPS purchases demand an EndShipper; the provider registers one from
-    # the warehouse before buying, so any recorded USPS service works.
     let(:recorded_rate) do
       rates = recorded_rates
       rates.find { |rate| rate['service'] == 'Priority' } || rates.first
@@ -239,21 +290,21 @@ RSpec.describe SpreeEasyPost::FulfillmentProvider do
 
     it 'buys the quoted rate end to end' do
       VCR.use_cassette('buy_shipment') do
-        result = provider.create_fulfillment(fulfillment)
+        purchase = provider.purchase_label(fulfillment)
 
-        expect(result[:tracking_number]).to be_present
-        expect(fulfillment.metadata['easypost_purchased_shipment_id']).to be_present
-        expect(fulfillment.metadata['easypost_label_url']).to include('http')
+        expect(purchase.tracking_number).to be_present
+        expect(purchase.external_id).to be_present
+        expect(purchase.file_url).to include('http')
       end
     end
 
     it 'refunds end to end' do
-      fulfillment.update_columns(
-        metadata: { 'easypost_purchased_shipment_id' => recorded_rate['shipment_id'] }
+      shipping_label = create(
+        :shipping_label, owner: fulfillment, store: store, external_id: recorded_rate['shipment_id']
       )
 
       VCR.use_cassette('refund_shipment') do
-        expect(provider.cancel_fulfillment(fulfillment)).to be(true)
+        expect(provider.refund_label(shipping_label)).to be_present
       end
     end
   end

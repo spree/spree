@@ -52,6 +52,24 @@ module Spree
       subject.call(fulfillment: fulfillment)
     end
 
+    it 'refunds every active label first' do
+      label = create(:shipping_label, :with_delivery, owner: fulfillment)
+      allow(fulfillment).to receive(:provider).and_return(provider)
+      allow(provider).to receive(:refund_label).with(label).and_return('refunded')
+
+      subject.call(fulfillment: fulfillment)
+
+      expect(label.reload).to be_refunded
+      expect(provider).to have_received(:cancel_fulfillment)
+    end
+
+    it 'leaves the carrier alone when the caller batches provider calls' do
+      allow(fulfillment).to receive(:provider).and_return(provider)
+      expect(provider).not_to receive(:cancel_fulfillment)
+
+      subject.call(fulfillment: fulfillment, notify_provider: false)
+    end
+
     # The whole reason this moved out of the transition callback: a slow or
     # failing carrier must not hold the stock movements' row locks, and must
     # not roll back a release that already happened.

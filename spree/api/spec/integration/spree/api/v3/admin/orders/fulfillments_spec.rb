@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 require 'swagger_helper'
+require 'spree/testing_support/label_provider'
 
 RSpec.describe 'Admin Order Fulfillments API', type: :request, swagger_doc: 'api-reference/admin.yaml' do
   include_context 'API v3 Admin'
@@ -234,11 +235,12 @@ RSpec.describe 'Admin Order Fulfillments API', type: :request, swagger_doc: 'api
   end
 
   path '/api/v3/admin/orders/{order_id}/fulfillments/{id}/purchase_label' do
-    patch 'Buy the shipping label' do
+    patch 'Buy the shipping label (deprecated)' do
       tags 'Fulfillments'
       produces 'application/json'
       security [{ api_key: [], bearer_auth: [] }]
-      description 'Buys the shipping label for a parcel that has not shipped yet — print it, pack the box, then mark the fulfillment fulfilled. Only delivery methods whose provider produces labels accept this.'
+      description 'Deprecated alias of POST /labels, answering with the fulfillment instead of the label. Removed in Spree 6.1.'
+      deprecated true
       admin_scope :write, :fulfillments
 
       admin_sdk_example 'order-fulfillments/purchase-label'
@@ -257,27 +259,16 @@ RSpec.describe 'Admin Order Fulfillments API', type: :request, swagger_doc: 'api
         let(:id) { shipment.prefixed_id }
 
         before do
-          shipment.update_column(:tracking, nil)
-          label_provider = Class.new(Spree::FulfillmentProvider::Base) do
-            def self.generates_labels?
-              true
-            end
-
-            def create_fulfillment(_fulfillment)
-              { tracking_number: 'LBL-123' }
-            end
-
-            def documents(_fulfillment)
-              [{ kind: 'label', url: 'https://carrier.example/label.pdf' }]
-            end
-          end
-          allow_any_instance_of(Spree::Fulfillment).to receive(:provider).and_return(label_provider.new)
+          shipment.deliveries.destroy_all
+          allow(SsrfFilter).to receive(:get).and_raise(SocketError.new('offline'))
+          allow_any_instance_of(Spree::Fulfillment).to receive(:provider).
+            and_return(Spree::TestingSupport::LabelProvider.new)
         end
 
         run_test! do |response|
           data = JSON.parse(response.body)
           expect(data['status']).to eq('unfulfilled')
-          expect(data['documents'].first['kind']).to eq('label')
+          expect(data['labels'].first['source']).to eq('purchased')
         end
       end
 

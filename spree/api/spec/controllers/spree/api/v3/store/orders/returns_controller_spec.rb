@@ -93,4 +93,34 @@ RSpec.describe Spree::Api::V3::Store::Orders::ReturnsController, type: :controll
       expect(response).to have_http_status(:not_found)
     end
   end
+  describe 'GET #label' do
+    let(:return_record) { create(:return, order: order) }
+
+    it 'streams the return label to the order customer' do
+      create(:shipping_label, :with_file, owner: return_record, store: store)
+
+      get :label, params: { order_id: order.to_param, id: return_record.prefixed_id }
+
+      expect(response).to have_http_status(:ok)
+      expect(response.headers['Content-Disposition']).to include('attachment')
+      expect(response.body).to include('%PDF')
+    end
+
+    it 'is missing when no label was bought' do
+      get :label, params: { order_id: order.to_param, id: return_record.prefixed_id }
+
+      expect(response).to have_http_status(:not_found)
+    end
+
+    # The label row is merchant data — cost, provider ids — so only the file
+    # is ever reachable from the storefront.
+    it 'never serializes the label onto the return' do
+      create(:shipping_label, :with_file, owner: return_record, store: store)
+
+      get :show, params: { order_id: order.to_param, id: return_record.prefixed_id }, as: :json
+
+      expect(json_response).not_to have_key('labels')
+      expect(json_response).not_to have_key('shipping_labels')
+    end
+  end
 end

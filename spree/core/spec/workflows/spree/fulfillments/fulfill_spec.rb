@@ -1,4 +1,5 @@
 require 'spec_helper'
+require 'spree/testing_support/label_provider'
 
 module Spree
   describe Fulfillments::Fulfill do
@@ -219,10 +220,21 @@ module Spree
     end
 
     describe 'tracking' do
-      it 'stores the tracking number on the fulfillment that ships' do
+      it 'records the tracking number as the primary delivery of the fulfillment that ships' do
+        fulfillment.deliveries.destroy_all
+
         subject.call(fulfillment: fulfillment, tracking: '1Z999')
 
         expect(fulfillment.reload.tracking).to eq('1Z999')
+        expect(fulfillment.deliveries.count).to eq(1)
+        expect(fulfillment.primary_delivery.status).to eq('pending')
+      end
+
+      it 'corrects the primary delivery rather than adding a second one' do
+        subject.call(fulfillment: fulfillment, tracking: '1Z999')
+
+        expect(fulfillment.reload.deliveries.count).to eq(1)
+        expect(fulfillment.tracking).to eq('1Z999')
       end
 
       it 'puts tracking on the split fulfillment, not the remainder' do
@@ -289,7 +301,7 @@ module Spree
       # The shipped email renders from the fulfilled event — it used to race
       # the label purchase for the tracking number and sometimes lose.
       it 'publishes the fulfilled event only after provider tracking is persisted' do
-        fulfillment.update_column(:tracking, nil)
+        fulfillment.deliveries.destroy_all
         allow_any_instance_of(Spree::Fulfillment).to receive(:provider).and_return(label_provider)
 
         tracking_at_publish = :never_published
@@ -321,14 +333,56 @@ module Spree
       it 'stores an explicit carrier beside the number' do
         subject.call(fulfillment: fulfillment, tracking: '421432', tracking_carrier: 'inpost')
 
-        expect(fulfillment.reload.tracking_carrier).to eq('inpost')
+        expect(fulfillment.reload.primary_delivery.carrier).to eq('inpost')
         expect(fulfillment.tracking_url).to include('inpost.pl')
       end
 
       it 'detects the carrier from a recognisable number' do
+        fulfillment.deliveries.destroy_all
+
         subject.call(fulfillment: fulfillment, tracking: '1Z879E930346834440')
 
-        expect(fulfillment.reload.tracking_carrier).to eq('ups')
+        expect(fulfillment.reload.primary_delivery.carrier).to eq('ups')
+      end
+    end
+
+    describe 'buying the label on the way out' do
+      before do
+        Spree::TestingSupport::LabelProvider.reset!
+        allow_any_instance_of(Spree::Fulfillment).to receive(:provider).and_return(Spree::TestingSupport::LabelProvider.new)
+        allow(SsrfFilter).to receive(:get).and_raise(SocketError.new('offline'))
+        fulfillment.deliveries.destroy_all
+      end
+
+      it 'buys the label before marking fulfilled and ships with its tracking' do
+        result = subject.call(fulfillment: fulfillment)
+
+        expect(result).to be_success
+        expect(fulfillment.reload).to be_fulfilled
+        expect(fulfillment.active_shipping_label).to be_present
+        expect(fulfillment.tracking).to eq('1Z879E930346834440')
+      end
+
+      it 'does not buy twice when a label was bought beforehand' do
+        Spree.fulfillment_purchase_label_workflow.call(fulfillment: fulfillment)
+
+        subject.call(fulfillment: fulfillment)
+
+        expect(fulfillment.reload.shipping_labels.count).to eq(1)
+      end
+
+      # A carrier outage must never stop a merchant recording a parcel that
+      # physically left.
+      it 'still fulfills when the purchase fails, and reports it' do
+        allow_any_instance_of(Spree::TestingSupport::LabelProvider).to receive(:purchase_label).and_return(nil)
+        allow(Rails.error).to receive(:report)
+
+        result = subject.call(fulfillment: fulfillment)
+
+        expect(result).to be_success
+        expect(fulfillment.reload).to be_fulfilled
+        expect(fulfillment.shipping_labels).to be_empty
+        expect(Rails.error).to have_received(:report)
       end
     end
 

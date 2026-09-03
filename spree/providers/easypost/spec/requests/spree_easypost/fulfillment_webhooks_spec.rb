@@ -23,9 +23,12 @@ RSpec.describe 'EasyPost fulfillment webhooks', type: :request do
   let(:order) { create(:order_ready_to_ship, store: store) }
   let(:fulfillment) { order.fulfillments.first }
 
+  let(:delivery) { fulfillment.reload.primary_delivery }
+
   before do
+    fulfillment.deliveries.destroy_all
+    Spree::Deliveries::Create.new.call(owner: fulfillment, tracking_number: 'EZ1000000001')
     Spree.fulfillment_fulfill_workflow.call(fulfillment: fulfillment)
-    fulfillment.reload.update!(tracking: 'EZ1000000001')
     host! store.url
   end
 
@@ -45,11 +48,12 @@ RSpec.describe 'EasyPost fulfillment webhooks', type: :request do
          headers: { 'CONTENT_TYPE' => 'application/json', 'X-Hmac-Signature' => sign(body, secret: secret) }
   end
 
-  it 'records the carrier update on the fulfillment' do
+  it 'records the carrier update on the consignment' do
     post_tracker(status: 'out_for_delivery')
 
     expect(response).to have_http_status(:ok)
-    expect(fulfillment.reload.tracking_status).to eq('out_for_delivery')
+    expect(delivery.reload.status).to eq('out_for_delivery')
+    expect(fulfillment.reload).to be_fulfilled
   end
 
   it 'confirms receipt when the carrier reports delivery' do
@@ -65,8 +69,8 @@ RSpec.describe 'EasyPost fulfillment webhooks', type: :request do
   it 'records a bounce without moving the fulfillment backwards' do
     post_tracker(status: 'return_to_sender')
 
-    expect(fulfillment.reload.tracking_status).to eq('return_to_sender')
-    expect(fulfillment).to be_fulfilled
+    expect(delivery.reload.status).to eq('return_to_sender')
+    expect(fulfillment.reload).to be_fulfilled
   end
 
   describe 'signature verification' do
@@ -74,7 +78,7 @@ RSpec.describe 'EasyPost fulfillment webhooks', type: :request do
       post_tracker(status: 'delivered', secret: 'not-the-secret')
 
       expect(response).to have_http_status(:unauthorized)
-      expect(fulfillment.reload.tracking_status).to be_nil
+      expect(delivery.reload.status).to eq('pending')
     end
 
     it 'refuses an unsigned request' do
@@ -116,6 +120,19 @@ RSpec.describe 'EasyPost fulfillment webhooks', type: :request do
 
       expect(response).to have_http_status(:ok)
     end
+  end
+
+  # A tracking code can never address another tenant's parcel: the delivery
+  # is resolved inside the verified integration's own store.
+  it 'ignores a consignment belonging to another store' do
+    other_fulfillment = create(:order_ready_to_ship, store: create(:store, code: "other-#{SecureRandom.hex(4)}")).fulfillments.first
+    other_fulfillment.deliveries.destroy_all
+    Spree::Deliveries::Create.new.call(owner: other_fulfillment, tracking_number: 'EZ_OTHER_STORE')
+
+    post_tracker(status: 'delivered', tracking_code: 'EZ_OTHER_STORE')
+
+    expect(response).to have_http_status(:ok)
+    expect(other_fulfillment.reload.primary_delivery.status).to eq('pending')
   end
 
   it 'answers 404 for an unknown integration' do

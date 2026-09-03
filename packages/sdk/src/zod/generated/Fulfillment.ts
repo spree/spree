@@ -1,5 +1,6 @@
 // This file is auto-generated. Do not edit directly.
 import { z } from 'zod';
+import { DeliverySchema } from './Delivery';
 import { DeliveryMethodSchema } from './DeliveryMethod';
 import { DeliveryRateSchema } from './DeliveryRate';
 import { StockLocationSchema } from './StockLocation';
@@ -10,8 +11,6 @@ export const FulfillmentSchema = z.object({
   number: z.string(),
   tracking: z.string().nullable(),
   tracking_url: z.string().nullable(),
-  tracking_carrier: z.string().nullable(),
-  tracking_carrier_name: z.string().nullable(),
   pickup_point_data: z.record(z.string(), z.unknown()).nullable(),
   selected_delivery_rate_id: z.string().nullable(),
   cost: z.string().nullable(),
@@ -29,10 +28,9 @@ export const FulfillmentSchema = z.object({
   status: z.string(),
   fulfillment_type: z.string(),
   fulfilled_at: z.string().nullable(),
-  tracking_status: z.string().nullable(),
-  estimated_delivery_at: z.string().nullable(),
   delivered_at: z.string().nullable(),
   items: z.array(z.object({ item_id: z.any() })),
+  deliveries: z.array(DeliverySchema),
   delivery_method: DeliveryMethodSchema,
   stock_location: StockLocationSchema,
   delivery_rates: z.array(DeliveryRateSchema),

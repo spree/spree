@@ -81,12 +81,12 @@ module Spree
 
             # PATCH /api/v3/admin/orders/:order_id/fulfillments/:id/purchase_label
             #
-            # Buys the shipping label for a parcel that has not shipped yet, so
-            # the merchant can print it, pack the box and hand it over before
-            # anything tells the customer it shipped. Only providers that
-            # produce labels accept this; failures are loud (422), unlike the
-            # one-click fulfill path which degrades to "no label yet".
+            # @deprecated Labels are a nested resource since 6.0 —
+            #   POST .../fulfillments/:id/labels buys one and answers with the
+            #   label. This alias answers with the fulfillment for one release
+            #   and is removed in 6.1.
             def purchase_label
+              response.headers['Deprecation'] = 'true'
               with_order_lock do
                 result = Spree.fulfillment_purchase_label_workflow.call(fulfillment: @resource)
 
@@ -171,8 +171,9 @@ module Spree
               :shipments
             end
 
-            # State changes go through the dedicated `fulfill`/`cancel`/`resume`
-            # member actions, not mass assignment.
+            # State changes go through the dedicated `fulfill`/`cancel` member
+            # actions, not mass assignment. `tracking` and `tracking_carrier`
+            # are the one-parcel shortcut onto the primary delivery.
             def permitted_params
               params.permit(:tracking, :tracking_carrier, :selected_delivery_rate_id, :stock_location_id)
             end

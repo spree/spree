@@ -1098,6 +1098,24 @@ en:
         order_not_paid: This order is not paid for yet
         provider_has_no_labels: This delivery method's provider does not produce labels
         unknown_tracking_status: "%{status} is not a known tracking status"
+    deliveries:
+      errors:
+        has_label: This delivery was created by a shipping label — refund the label instead of deleting the delivery
+        not_found: This fulfillment has no delivery to track yet
+    shipping_labels:
+      errors:
+        already_purchased: This parcel already has an active shipping label
+        file_fetch_failed: The label file could not be fetched from the carrier (HTTP %{status})
+        file_required: An uploaded label needs a file
+        no_file_url: The carrier did not provide a file for this label
+        not_refund_requested: Only a label awaiting the carrier's refund decision can be confirmed refunded
+        not_refundable: Only a purchased label that has not been refunded can be refunded
+        provider_has_no_labels: This delivery method's provider does not produce labels
+        purchased_not_deletable: A purchased label is refunded, never deleted
+        refund_failed: The carrier refused to refund this label
+        return_closed: A return label can only be bought while the return is open
+        tracking_number_required: An uploaded label needs its tracking number
+        uploaded_not_refundable: An uploaded label was not bought through Spree and cannot be refunded — delete it instead
     gateway: Gateway
     gateway_error: Gateway Error
     general: General

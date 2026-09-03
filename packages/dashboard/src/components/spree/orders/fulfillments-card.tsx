@@ -1,4 +1,4 @@
-import type { Fulfillment, Order } from '@spree/admin-sdk'
+import type { Delivery, Fulfillment, Order } from '@spree/admin-sdk'
 import { useStockLocations } from '@spree/dashboard-core'
 import {
   Badge,
@@ -56,10 +56,13 @@ import {
   unfulfilledItemRows,
 } from '../../../lib/fulfillment-items'
 import { printPackingSlip } from '../../../lib/packing-slip'
+import { FulfillmentDeliveries } from './fulfillment-deliveries'
+import { FulfillmentDeliveryDialog } from './fulfillment-delivery-dialog'
 import { FulfillmentEditDialog } from './fulfillment-edit-dialog'
 import { FulfillmentFulfillForm } from './fulfillment-fulfill-form'
 import { FulfillmentItemList } from './fulfillment-item-list'
-import { FulfillmentTrackingDialog } from './fulfillment-tracking-dialog'
+import { FulfillmentLabel } from './fulfillment-label'
+import { FulfillmentLabelUploadDialog } from './fulfillment-label-upload-dialog'
 
 /**
  * A unit sitting in one fulfillment. Splitting moves units per variant rather
@@ -398,11 +401,13 @@ function FulfillmentRow({ order, fulfillment }: { order: Order; fulfillment: Ful
   const { t } = useTranslation()
   const confirm = useConfirm()
   const orderId = order.id
-  const { cancel, markDelivered, purchaseLabel } = useFulfillmentActions(orderId)
+  const { cancel, markDelivered, buyLabel } = useFulfillmentActions(orderId)
 
   const [editOpen, setEditOpen] = useState(false)
   const [splitOpen, setSplitOpen] = useState(false)
-  const [trackingOpen, setTrackingOpen] = useState(false)
+  const [deliveryOpen, setDeliveryOpen] = useState(false)
+  const [editingDelivery, setEditingDelivery] = useState<Delivery | undefined>()
+  const [uploadOpen, setUploadOpen] = useState(false)
   const [fulfilling, setFulfilling] = useState(false)
 
   const editable = CAN_EDIT.includes(fulfillment.status)
@@ -417,11 +422,17 @@ function FulfillmentRow({ order, fulfillment }: { order: Order; fulfillment: Ful
     (rate) => rate.id === fulfillment.selected_delivery_rate_id,
   )
   const deliverable = CAN_MARK_DELIVERED.includes(fulfillment.status)
+  const deliveries = fulfillment.deliveries ?? []
+  // At most one label binds a parcel: the workflows refuse a second while one
+  // is active, and a refunded one stays as history.
+  const activeLabel = (fulfillment.labels ?? []).find((label) => label.status !== 'refunded')
   // The label leads, fulfilled follows: print the label, pack the box, hand
   // it over — so buying the label is offered before the parcel ships.
-  const labelDocument = (fulfillment.documents ?? []).find((doc) => doc.kind === 'label')
-  const canBuyLabel = shippable && fulfillment.provider_generates_labels && !labelDocument
-  const trackable = deliverable && !fulfillment.tracking
+  const canBuyLabel = shippable && fulfillment.provider_generates_labels && !activeLabel
+  // Merchants without a carrier account buy postage elsewhere and still need
+  // the file and the cost on the parcel.
+  const canUploadLabel =
+    !activeLabel && !CAN_MARK_DELIVERED.includes(fulfillment.status) ? shippable : false
 
   return (
     <FulfillmentPanel
@@ -466,10 +477,20 @@ function FulfillmentRow({ order, fulfillment }: { order: Order; fulfillment: Ful
               {t('admin.orders.detail.fulfillments.print_packing_slip')}
             </DropdownMenuItem>
 
-            {deliverable && fulfillment.tracking && (
-              <DropdownMenuItem onClick={() => setTrackingOpen(true)}>
-                <TruckIcon className="size-4" />
-                {t('admin.orders.detail.fulfillments.edit_tracking_title')}
+            <DropdownMenuItem
+              onClick={() => {
+                setEditingDelivery(undefined)
+                setDeliveryOpen(true)
+              }}
+            >
+              <TruckIcon className="size-4" />
+              {t('admin.orders.detail.fulfillments.add_delivery')}
+            </DropdownMenuItem>
+
+            {canUploadLabel && (
+              <DropdownMenuItem onClick={() => setUploadOpen(true)}>
+                <TagIcon className="size-4" />
+                {t('admin.orders.detail.fulfillments.upload_label')}
               </DropdownMenuItem>
             )}
 
@@ -514,24 +535,21 @@ function FulfillmentRow({ order, fulfillment }: { order: Order; fulfillment: Ful
         </CardContent>
       )}
 
-      {fulfillment.tracking && !fulfilling && (
-        <CardContent className="border-b border-border-subtle py-3 text-sm">
-          <span className="text-muted-foreground">
-            {fulfillment.tracking_carrier_name ?? t('admin.orders.detail.tracking.prefix')}:{' '}
-          </span>
-          {fulfillment.tracking_url ? (
-            <a
-              href={fulfillment.tracking_url}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="text-blue-600 hover:underline"
-            >
-              {fulfillment.tracking}
-            </a>
-          ) : (
-            <span>{fulfillment.tracking}</span>
-          )}
-        </CardContent>
+      {activeLabel && !fulfilling && (
+        <FulfillmentLabel orderId={orderId} fulfillmentId={fulfillment.id} label={activeLabel} />
+      )}
+
+      {!fulfilling && (
+        <FulfillmentDeliveries
+          orderId={orderId}
+          fulfillmentId={fulfillment.id}
+          deliveries={deliveries}
+          canMarkDelivered={deliverable}
+          onEdit={(delivery) => {
+            setEditingDelivery(delivery)
+            setDeliveryOpen(true)
+          }}
+        />
       )}
 
       {fulfilling ? (
@@ -551,7 +569,7 @@ function FulfillmentRow({ order, fulfillment }: { order: Order; fulfillment: Ful
                   type="button"
                   size="sm"
                   variant="outline"
-                  disabled={purchaseLabel.isPending}
+                  disabled={buyLabel.isPending}
                   onClick={async () => {
                     // Buying a label charges the carrier account, so it gets
                     // an explicit yes even though nothing is destroyed.
@@ -566,23 +584,14 @@ function FulfillmentRow({ order, fulfillment }: { order: Order; fulfillment: Ful
                         confirmLabel: t('admin.orders.detail.fulfillments.buy_label'),
                       })
                     ) {
-                      purchaseLabel.mutate(fulfillment.id)
+                      buyLabel.mutate({ fulfillmentId: fulfillment.id })
                     }
                   }}
                 >
                   <TagIcon data-icon="inline-start" />
-                  {purchaseLabel.isPending
+                  {buyLabel.isPending
                     ? t('admin.actions.saving')
                     : t('admin.orders.detail.fulfillments.buy_label')}
-                </Button>
-              )}
-
-              {labelDocument && (
-                <Button type="button" size="sm" variant="outline" asChild>
-                  <a href={labelDocument.url} target="_blank" rel="noopener noreferrer">
-                    <PrinterIcon data-icon="inline-start" />
-                    {t('admin.orders.detail.fulfillments.print_label')}
-                  </a>
                 </Button>
               )}
 
@@ -593,23 +602,12 @@ function FulfillmentRow({ order, fulfillment }: { order: Order; fulfillment: Ful
             </CardFooter>
           )}
 
-          {!shippable && labelDocument && (
-            <CardFooter className="justify-end py-3">
-              <Button type="button" size="sm" variant="outline" asChild>
-                <a href={labelDocument.url} target="_blank" rel="noopener noreferrer">
-                  <PrinterIcon data-icon="inline-start" />
-                  {t('admin.orders.detail.fulfillments.print_label')}
-                </a>
-              </Button>
-            </CardFooter>
-          )}
-
           {deliverable && (
             <CardFooter className="justify-end gap-2 py-3">
               <Button
                 type="button"
                 size="sm"
-                variant={trackable ? 'outline' : 'default'}
+                variant={deliveries.length === 0 ? 'outline' : 'default'}
                 disabled={markDelivered.isPending}
                 onClick={() => markDelivered.mutate(fulfillment.id)}
               >
@@ -617,12 +615,18 @@ function FulfillmentRow({ order, fulfillment }: { order: Order; fulfillment: Ful
                 {t('admin.orders.detail.fulfillments.mark_delivered')}
               </Button>
 
-              {trackable && (
-                <Button type="button" size="sm" onClick={() => setTrackingOpen(true)}>
-                  <PlusIcon data-icon="inline-start" />
-                  {t('admin.orders.detail.fulfillments.add_tracking')}
-                </Button>
-              )}
+              <Button
+                type="button"
+                size="sm"
+                variant={deliveries.length === 0 ? 'default' : 'outline'}
+                onClick={() => {
+                  setEditingDelivery(undefined)
+                  setDeliveryOpen(true)
+                }}
+              >
+                <PlusIcon data-icon="inline-start" />
+                {t('admin.orders.detail.fulfillments.add_tracking')}
+              </Button>
             </CardFooter>
           )}
         </>
@@ -646,12 +650,26 @@ function FulfillmentRow({ order, fulfillment }: { order: Order; fulfillment: Ful
         />
       )}
 
-      {trackingOpen && (
-        <FulfillmentTrackingDialog
+      {deliveryOpen && (
+        <FulfillmentDeliveryDialog
           orderId={orderId}
-          fulfillment={fulfillment}
-          open={trackingOpen}
-          onOpenChange={setTrackingOpen}
+          fulfillmentId={fulfillment.id}
+          delivery={editingDelivery}
+          open={deliveryOpen}
+          onOpenChange={(open) => {
+            setDeliveryOpen(open)
+            if (!open) setEditingDelivery(undefined)
+          }}
+        />
+      )}
+
+      {uploadOpen && (
+        <FulfillmentLabelUploadDialog
+          orderId={orderId}
+          fulfillmentId={fulfillment.id}
+          currency={order.currency}
+          open={uploadOpen}
+          onOpenChange={setUploadOpen}
         />
       )}
     </FulfillmentPanel>

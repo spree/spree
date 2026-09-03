@@ -103,11 +103,15 @@ module Spree
 
         @fulfillment = order.fulfillments.new(
           stock_location: stock_location,
-          address_id: order.ship_address_id,
-          tracking: tracking
+          address_id: order.ship_address_id
         )
         @fulfillment.metadata = metadata if metadata.present?
         @fulfillment.save!
+
+        return if tracking.blank?
+
+        result = Spree.delivery_create_service.call(owner: @fulfillment, tracking_number: tracking)
+        failure(@fulfillment, result.error.to_s) if result.failure?
       end
 
       def move_requested_units

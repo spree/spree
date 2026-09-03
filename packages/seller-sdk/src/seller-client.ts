@@ -2,6 +2,7 @@ import type { ListParams, PaginatedResponse, RequestFn, RequestOptions } from '@
 import { transformListParams } from '@spree/sdk-core'
 import type {
   AuthTokens,
+  Delivery,
   DeliveryMethod,
   DeliveryProfile,
   DeliveryZone,
@@ -18,6 +19,7 @@ import type {
   RequirementStatus,
   RequirementSubmission,
   SellerSummary,
+  ShippingLabel,
   StockLocation,
   TaxIdentifier,
   TeamMember,
@@ -417,6 +419,148 @@ export class SellerClient {
           ...options,
           body: params,
         }),
+
+      /**
+       * The tracked consignments of one of the seller's parcels. A seller
+       * ships on manual methods, so tracking numbers are entered here by hand.
+       */
+      deliveries: {
+        list: (
+          orderId: string,
+          fulfillmentId: string,
+          options?: RequestOptions,
+        ): Promise<{ data: Delivery[] }> =>
+          this.request<{ data: Delivery[] }>(
+            'GET',
+            `/orders/${orderId}/fulfillments/${fulfillmentId}/deliveries`,
+            options,
+          ),
+
+        get: (
+          orderId: string,
+          fulfillmentId: string,
+          id: string,
+          options?: RequestOptions,
+        ): Promise<Delivery> =>
+          this.request<Delivery>(
+            'GET',
+            `/orders/${orderId}/fulfillments/${fulfillmentId}/deliveries/${id}`,
+            options,
+          ),
+
+        create: (
+          orderId: string,
+          fulfillmentId: string,
+          params: {
+            tracking_number: string
+            carrier?: string
+            service?: string
+            tracking_url?: string
+          },
+          options?: RequestOptions,
+        ): Promise<Delivery> =>
+          this.request<Delivery>(
+            'POST',
+            `/orders/${orderId}/fulfillments/${fulfillmentId}/deliveries`,
+            { ...options, body: params },
+          ),
+
+        update: (
+          orderId: string,
+          fulfillmentId: string,
+          id: string,
+          params: {
+            tracking_number?: string
+            carrier?: string
+            service?: string
+            tracking_url?: string
+          },
+          options?: RequestOptions,
+        ): Promise<Delivery> =>
+          this.request<Delivery>(
+            'PATCH',
+            `/orders/${orderId}/fulfillments/${fulfillmentId}/deliveries/${id}`,
+            { ...options, body: params },
+          ),
+
+        delete: (
+          orderId: string,
+          fulfillmentId: string,
+          id: string,
+          options?: RequestOptions,
+        ): Promise<void> =>
+          this.request<void>(
+            'DELETE',
+            `/orders/${orderId}/fulfillments/${fulfillmentId}/deliveries/${id}`,
+            options,
+          ),
+      },
+
+      /**
+       * Labels on the seller's own parcels. Sellers upload postage they bought
+       * elsewhere and print it back; buying and refunding need the operator's
+       * carrier account, so neither is offered here.
+       *
+       * Upload the file with `directUploads.create()` and pass the returned
+       * `signed_id` as `file`.
+       */
+      labels: {
+        list: (
+          orderId: string,
+          fulfillmentId: string,
+          options?: RequestOptions,
+        ): Promise<{ data: ShippingLabel[] }> =>
+          this.request<{ data: ShippingLabel[] }>(
+            'GET',
+            `/orders/${orderId}/fulfillments/${fulfillmentId}/labels`,
+            options,
+          ),
+
+        get: (
+          orderId: string,
+          fulfillmentId: string,
+          id: string,
+          options?: RequestOptions,
+        ): Promise<ShippingLabel> =>
+          this.request<ShippingLabel>(
+            'GET',
+            `/orders/${orderId}/fulfillments/${fulfillmentId}/labels/${id}`,
+            options,
+          ),
+
+        create: (
+          orderId: string,
+          fulfillmentId: string,
+          params: {
+            file: string
+            tracking_number: string
+            carrier?: string
+            service?: string
+            cost?: string | number
+            currency?: string
+            file_format?: string
+            tracking_url?: string
+          },
+          options?: RequestOptions,
+        ): Promise<ShippingLabel> =>
+          this.request<ShippingLabel>(
+            'POST',
+            `/orders/${orderId}/fulfillments/${fulfillmentId}/labels`,
+            { ...options, body: params },
+          ),
+
+        delete: (
+          orderId: string,
+          fulfillmentId: string,
+          id: string,
+          options?: RequestOptions,
+        ): Promise<void> =>
+          this.request<void>(
+            'DELETE',
+            `/orders/${orderId}/fulfillments/${fulfillmentId}/labels/${id}`,
+            options,
+          ),
+      },
     },
   }
 

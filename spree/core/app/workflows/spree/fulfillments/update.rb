@@ -20,7 +20,9 @@ module Spree
 
       # @param fulfillment [Spree::Fulfillment] the fulfillment to update
       # @param fulfillment_attributes [Hash] attributes to assign; +stock_location_id+
-      #   moves the fulfillment, +selected_delivery_rate_id+ changes its rate
+      #   moves the fulfillment, +selected_delivery_rate_id+ changes its rate,
+      #   +tracking+ (with +tracking_carrier+) creates or corrects the primary
+      #   delivery — a corrected number starts its carrier journey over
       # @param shipment [Spree::Fulfillment, nil] @deprecated use +fulfillment+
       # @param shipment_attributes [Hash, nil] @deprecated use +fulfillment_attributes+
       # @return [Spree::ServiceModule::Result] the updated fulfillment on success
@@ -35,7 +37,9 @@ module Spree
         end
 
         @fulfillment = fulfillment || shipment
-        @attributes = (fulfillment_attributes || shipment_attributes || {}).to_h
+        @attributes = (fulfillment_attributes || shipment_attributes || {}).to_h.with_indifferent_access
+        @tracking = @attributes.delete(:tracking)
+        @tracking_carrier = @attributes.delete(:tracking_carrier)
         @origin_changed = origin_change?
 
         # Veto point — per-location policy, 3PL capacity, cut-off windows.
@@ -44,6 +48,7 @@ module Spree
 
         ApplicationRecord.transaction do
           step :assign_attributes
+          step :apply_tracking
           step :requote_after_origin_change
           step :reprice_after_rate_change
         end
@@ -64,6 +69,24 @@ module Spree
 
       def assign_attributes
         failure(@fulfillment) unless @fulfillment.update(@attributes)
+      end
+
+      def apply_tracking
+        return if @tracking.blank?
+
+        primary = @fulfillment.primary_delivery
+        if primary
+          attributes = { tracking_number: @tracking.to_s.squish }
+          attributes[:carrier] = @tracking_carrier if @tracking_carrier.present?
+          attributes[:status] = 'pending' if attributes[:tracking_number] != primary.tracking_number
+          failure(primary) unless primary.update(attributes)
+          return
+        end
+
+        result = Spree.delivery_create_service.call(
+          owner: @fulfillment, tracking_number: @tracking, carrier: @tracking_carrier
+        )
+        failure(@fulfillment, result.error.to_s) if result.failure?
       end
 
       def requote_after_origin_change
@@ -95,14 +118,13 @@ module Spree
       end
 
       def rate_change?
-        @attributes.key?(:selected_shipping_rate_id) || @attributes.key?('selected_shipping_rate_id') ||
-          @attributes.key?(:selected_delivery_rate_id) || @attributes.key?('selected_delivery_rate_id')
+        @attributes.key?(:selected_shipping_rate_id) || @attributes.key?(:selected_delivery_rate_id)
       end
 
       # True only when the caller is actually moving the fulfillment, not
       # resubmitting the location it already has.
       def origin_change?
-        requested = @attributes[:stock_location_id] || @attributes['stock_location_id']
+        requested = @attributes[:stock_location_id]
         return false if requested.blank?
 
         requested.to_s != @fulfillment.stock_location_id.to_s

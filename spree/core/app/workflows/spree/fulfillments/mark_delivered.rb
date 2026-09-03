@@ -30,7 +30,11 @@ module Spree
         run_hooks :validate
 
         step :ensure_deliverable
-        step :mark_delivered
+
+        ApplicationRecord.transaction do
+          step :close_open_deliveries
+          step :mark_delivered
+        end
 
         run_hooks :after_mark_delivered
         success(fulfillment.reload)
@@ -42,6 +46,14 @@ module Spree
         return if fulfillment.can_mark_delivered?
 
         failure(fulfillment, Spree.t('fulfillments.errors.cannot_mark_delivered'))
+      end
+
+      # A human saying "it arrived" outranks a carrier that never sent the
+      # last scan: every consignment still open is closed at the same time.
+      def close_open_deliveries
+        fulfillment.deliveries.undelivered.update_all(
+          status: 'delivered', delivered_at: delivered_at || Time.current, updated_at: Time.current
+        )
       end
 
       def mark_delivered
