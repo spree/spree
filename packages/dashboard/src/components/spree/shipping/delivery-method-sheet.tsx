@@ -116,6 +116,7 @@ export function DeliveryMethodSheet({
         method.fulfillment_provider ?? DELIVERY_METHOD_DEFAULTS.fulfillment_provider,
       rate_provider: method.rate_provider ?? DELIVERY_METHOD_DEFAULTS.rate_provider,
       storefront_visible: method.storefront_visible,
+      available_to_sellers: method.available_to_sellers ?? false,
       tracking_url: method.tracking_url ?? '',
       estimated_transit_business_days_min:
         method.estimated_transit_business_days_min?.toString() ?? '',

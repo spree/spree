@@ -886,6 +886,22 @@ Spree::Core::Engine.add_routes do
         # (docs/plans/6.0-multi-vendor-marketplace.md, Decision 13).
         resources :delivery_profiles, only: [:index]
 
+        # The marketplace's zones, for the destination picker on a seller's
+        # own method. Read only for the same reason profiles are: where the
+        # marketplace ships is its own decision
+        # (docs/plans/6.0-multi-vendor-marketplace.md, Decision 13).
+        resources :delivery_zones, only: [:index]
+
+        # How this seller ships. The listing carries the marketplace methods
+        # shared with sellers alongside the seller's own; only the seller's
+        # own can be written.
+        resources :delivery_methods do
+          collection do
+            get :calculators
+            get :rule_types
+          end
+        end
+
         # No destroy: a location holds stock levels and is named on historical
         # fulfillments, so a seller retires one by deactivating it.
         resources :stock_locations, only: [:index, :show, :create, :update]

@@ -105,6 +105,19 @@ module Spree
     has_many :stock_locations, class_name: 'Spree::StockLocation', dependent: :nullify,
                                inverse_of: :seller
 
+    # How this seller ships: their own methods, priced and retired by them,
+    # against the marketplace's profiles and zones
+    # (docs/plans/6.0-multi-vendor-marketplace.md, Decision 13).
+    #
+    # Deliberately NOT `dependent: :nullify`, unlike stock locations: a nil
+    # `seller_id` IS the marketplace's own method, so releasing a departed
+    # seller's rows would hand the operator their pricing and start quoting it
+    # on first-party packages. The seller is paranoid, so the rows keep
+    # pointing at a record that still resolves; retiring them is the
+    # operator's call.
+    has_many :delivery_methods, class_name: 'Spree::DeliveryMethod', dependent: nil,
+                                inverse_of: :seller
+
     # The seller's tax registrations — the VAT number the commission invoice
     # needs, with the validation verdict and evidence the model carries.
     #

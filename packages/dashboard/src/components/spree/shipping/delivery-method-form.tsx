@@ -63,6 +63,7 @@ import {
 } from '../../../hooks/use-delivery-methods'
 import { useIntegrations, useIntegrationTypes } from '../../../hooks/use-integrations'
 import { productAutocompleteProps } from '../../../hooks/use-products'
+import { useSellers } from '../../../hooks/use-sellers'
 import { useTaxCategories } from '../../../hooks/use-tax-categories'
 import { amountForCurrency, applyCurrencyAmount } from '../../../lib/delivery-method-summary'
 import type { DeliveryMethodFormValues } from '../../../schemas/delivery-method'
@@ -297,6 +298,11 @@ function CollectionLocationsCard({ form }: { form: UseFormReturn<DeliveryMethodF
 function GeneralCard({ form }: { form: UseFormReturn<DeliveryMethodFormValues> }) {
   const { t } = useTranslation()
   const { errors } = form.formState
+  // The sharing switch is a marketplace question, so it appears only on a
+  // store that has sellers — a single-merchant store has nobody to share with
+  // (docs/plans/6.0-multi-vendor-marketplace.md, Decision 13).
+  const { data: sellers } = useSellers({ limit: 1 })
+  const isMarketplace = (sellers?.meta?.count ?? 0) > 0
 
   return (
     <FormSection>
@@ -352,6 +358,32 @@ function GeneralCard({ form }: { form: UseFormReturn<DeliveryMethodFormValues> }
           />
         </div>
       </Field>
+
+      {isMarketplace && (
+        <Field>
+          <div className="flex items-start justify-between gap-4">
+            <div className="flex flex-col">
+              <FieldLabel htmlFor="available_to_sellers" className="cursor-pointer">
+                {t('admin.fields.delivery_method.available_to_sellers.label')}
+              </FieldLabel>
+              <span className="text-xs text-muted-foreground">
+                {t('admin.fields.delivery_method.available_to_sellers.help')}
+              </span>
+            </div>
+            <Controller
+              name="available_to_sellers"
+              control={form.control}
+              render={({ field }) => (
+                <Switch
+                  id="available_to_sellers"
+                  checked={!!field.value}
+                  onCheckedChange={field.onChange}
+                />
+              )}
+            />
+          </div>
+        </Field>
+      )}
     </FormSection>
   )
 }

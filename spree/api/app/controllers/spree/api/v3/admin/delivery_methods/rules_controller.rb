@@ -6,7 +6,7 @@ module Spree
           # Eligibility rules nested under a delivery method. `type` is the
           # wire shorthand from GET /delivery_method_rules/types.
           class RulesController < ResourceController
-            scoped_resource :settings
+            scoped_resource :delivery_methods
 
             def create
               rule_class = Spree.delivery_method_rules.detect do |klass|

@@ -808,7 +808,8 @@
         "weight_between": "{{min}}–{{max}} {{unit}}",
         "weight_max": "أقل من {{max}} {{unit}}",
         "weight_min": "{{min}} {{unit}} فأكثر"
-      }
+      },
+      "shared_with_sellers_badge": "مشتركة مع البائعين"
     },
     "delivery_origin_groups": {
       "delete_confirm": {
@@ -1288,6 +1289,10 @@
       "delivery_method": {
         "admin_name": {
           "label": "الاسم الداخلي"
+        },
+        "available_to_sellers": {
+          "help": "يسمح بشحن طلبات البائعين بهذه الطريقة. اتركه معطلاً إذا كان كل بائع ينظم الشحن بنفسه.",
+          "label": "متاح للبائعين"
         },
         "calculator": {
           "label": "حاسبة الأسعار"

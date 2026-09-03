@@ -11,7 +11,7 @@ import {
 import { useMemo, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useDisplayName } from '../hooks/use-display-name'
-import { useStore } from '../providers/store-provider'
+import { useOptionalStore } from '../providers/store-provider'
 
 /**
  * Every ISO 4217 currency code the runtime knows about — the active-currency
@@ -89,7 +89,15 @@ export function CurrencySelect({
   onBlur,
 }: CurrencySelectProps) {
   const { t } = useTranslation()
-  const { currencies, defaultCurrency } = useStore()
+  // Optional: the operator's dashboard always has a store, the seller panel
+  // has none — its tenant is a seller and the store is derived server-side.
+  // Without one the picker renders from the `options` its caller passes,
+  // rather than refusing to render at all. It deliberately does NOT fall back
+  // to every ISO code: a currency the store does not trade in saves fine and
+  // then quotes nothing.
+  const store = useOptionalStore()
+  const currencies = store?.currencies ?? []
+  const defaultCurrency = store?.defaultCurrency ?? ''
   const [internalValue, setInternalValue] = useState(defaultValue ?? defaultCurrency)
   const isControlled = controlledValue !== undefined
   // Controlled callers that pass an empty value still see the store default

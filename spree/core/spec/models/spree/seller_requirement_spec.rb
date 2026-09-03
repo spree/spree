@@ -150,6 +150,7 @@ RSpec.describe Spree::SellerRequirement, type: :model do
           Spree::SellerRequirements::CompleteProfile,
           Spree::SellerRequirements::BillingAddress,
           Spree::SellerRequirements::ReturnsAddress,
+          Spree::SellerRequirements::DeliveryMethod,
           Spree::SellerRequirements::MinimumProducts
         ]
       )

@@ -50,6 +50,14 @@ interface PreferencesFormProps {
   redactPasswords?: boolean
   /** Optional human-readable name overrides keyed by preference key. */
   labelOverrides?: Record<string, string>
+  /**
+   * Currencies a currency-typed preference may be set to. Defaults to the
+   * store's when a `StoreProvider` is mounted. Panels without one (the
+   * marketplace seller panel) pass their own list — an unconstrained picker
+   * would let a currency the store does not trade in be saved, and a
+   * calculator set to one quotes no rate at all.
+   */
+  currencyOptions?: string[]
 }
 
 /**
@@ -70,6 +78,7 @@ export function PreferencesForm({
   onChange,
   redactPasswords = false,
   labelOverrides,
+  currencyOptions,
 }: PreferencesFormProps) {
   if (!schema?.length) return null
 
@@ -88,6 +97,7 @@ export function PreferencesForm({
           label={labelOverrides?.[field.key]}
           onChange={(v) => setValue(field.key, v)}
           redactPasswords={redactPasswords}
+          currencyOptions={currencyOptions}
         />
       ))}
     </FieldGroup>
@@ -100,6 +110,7 @@ interface PreferenceFieldProps {
   label?: string
   onChange: (value: unknown) => void
   redactPasswords?: boolean
+  currencyOptions?: string[]
 }
 
 export function PreferenceField({
@@ -108,6 +119,7 @@ export function PreferenceField({
   label,
   onChange,
   redactPasswords,
+  currencyOptions,
 }: PreferenceFieldProps) {
   const { t, i18n } = useTranslation()
   const id = `preference-${field.key}`
@@ -125,7 +137,12 @@ export function PreferenceField({
     return (
       <Field>
         <FieldLabel htmlFor={id}>{displayLabel}</FieldLabel>
-        <CurrencySelect id={id} value={(value as string) ?? ''} onChange={onChange} />
+        <CurrencySelect
+          id={id}
+          value={(value as string) ?? ''}
+          onChange={onChange}
+          options={currencyOptions}
+        />
       </Field>
     )
   }
