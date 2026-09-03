@@ -8387,104 +8387,6 @@ paths:
                 stock_location_id: sloc_UkLWZg9DAJ
                 documents: []
                 provider_generates_labels: false
-  "/api/v3/admin/orders/{order_id}/fulfillments/{id}/resume":
-    patch:
-      summary: Resume a fulfillment
-      tags:
-      - Fulfillments
-      security:
-      - api_key: []
-        bearer_auth: []
-      description: |-
-        Resumes a canceled fulfillment.
-
-        **Required scope:** `write_fulfillments` (for API-key authentication).
-      x-codeSamples:
-      - lang: javascript
-        label: Spree Admin SDK
-        source: |-
-          import { createAdminClient } from '@spree/admin-sdk'
-
-          const client = createAdminClient({
-            baseUrl: 'https://your-store.com',
-            secretKey: 'sk_xxx',
-          })
-
-          const fulfillment = await client.orders.fulfillments.resume('or_UkLWZg9DAJ', 'ful_UkLWZg9DAJ')
-      - lang: bash
-        label: Spree CLI
-        source: spree api patch /orders/{order_id}/fulfillments/{id}/resume -d '{
-          ... }'
-      parameters:
-      - name: x-spree-api-key
-        in: header
-        required: true
-        schema:
-          type: string
-      - name: Authorization
-        in: header
-        required: true
-        description: Bearer token for admin authentication
-        schema:
-          type: string
-      - name: order_id
-        in: path
-        required: true
-        description: Order ID
-        schema:
-          type: string
-      - name: id
-        in: path
-        required: true
-        description: Fulfillment ID
-        schema:
-          type: string
-      responses:
-        '200':
-          description: fulfillment resumed
-          content:
-            application/json:
-              example:
-                id: ful_UkLWZg9DAJ
-                number: R1001-F1
-                tracking: U10000
-                tracking_url:
-                tracking_carrier:
-                tracking_carrier_name:
-                pickup_point_data:
-                selected_delivery_rate_id: dr_gbHJdmfrXB
-                cost: '100.0'
-                display_cost: "$100.00"
-                total: '100.0'
-                display_total: "$100.00"
-                discount_total: '0.0'
-                display_discount_total: "$0.00"
-                additional_tax_total: '0.0'
-                display_additional_tax_total: "$0.00"
-                included_tax_total: '0.0'
-                display_included_tax_total: "$0.00"
-                tax_total: '0.0'
-                display_tax_total: "$0.00"
-                status: unfulfilled
-                fulfillment_type: shipping
-                fulfilled_at:
-                tracking_status:
-                estimated_delivery_at:
-                delivered_at:
-                items:
-                - item_id: li_UkLWZg9DAJ
-                  variant_id: variant_UkLWZg9DAJ
-                  quantity: 1
-                metadata: {}
-                tracking_details:
-                adjustment_total: '0.0'
-                pre_tax_amount: '100.0'
-                created_at: '2026-01-15T12:00:00.000Z'
-                updated_at: '2026-01-15T12:00:00.000Z'
-                order_id: or_UkLWZg9DAJ
-                stock_location_id: sloc_UkLWZg9DAJ
-                documents: []
-                provider_generates_labels: false
   "/api/v3/admin/orders/{order_id}/fulfillments/{id}/split":
     patch:
       summary: Split a fulfillment
@@ -12460,8 +12362,8 @@ paths:
                   preorder_ships_at:
                   quantity: 2
                   currency: USD
-                  name: Product 509180
-                  slug: product-509180
+                  name: Product 499180
+                  slug: product-499180
                   options_text: 'Size: S'
                   price: '10.0'
                   display_price: "$10.00"
@@ -12573,8 +12475,8 @@ paths:
                 preorder_ships_at:
                 quantity: 3
                 currency: USD
-                name: Product 5299
-                slug: product-5299
+                name: Product 5199
+                slug: product-5199
                 options_text: 'Size: S'
                 price: '19.99'
                 display_price: "$19.99"
@@ -12708,8 +12610,8 @@ paths:
                 preorder_ships_at:
                 quantity: 2
                 currency: USD
-                name: Product 532714
-                slug: product-532714
+                name: Product 522714
+                slug: product-522714
                 options_text: 'Size: S'
                 price: '10.0'
                 display_price: "$10.00"
@@ -12816,8 +12718,8 @@ paths:
                 preorder_ships_at:
                 quantity: 5
                 currency: USD
-                name: Product 549758
-                slug: product-549758
+                name: Product 539758
+                slug: product-539758
                 options_text: 'Size: S'
                 price: '19.99'
                 display_price: "$19.99"
@@ -13042,6 +12944,7 @@ paths:
                 payment_total: '0.0'
                 display_payment_total: "$0.00"
                 metadata: {}
+                cancel_note:
                 canceled_at:
                 approved_at:
                 created_at: '2026-01-15T12:00:00.000Z'
@@ -13055,6 +12958,8 @@ paths:
                 internal_note_html:
                 approver_id:
                 canceler_id:
+                cancel_reason_id:
+                cancel_reason_name:
                 created_by_id:
                 customer_id: cust_UkLWZg9DAJ
       requestBody:
@@ -13292,6 +13197,7 @@ paths:
                   payment_total: '0.0'
                   display_payment_total: "$0.00"
                   metadata: {}
+                  cancel_note:
                   canceled_at:
                   approved_at:
                   created_at: '2026-01-15T12:00:00.000Z'
@@ -13305,6 +13211,8 @@ paths:
                   internal_note_html:
                   approver_id:
                   canceler_id:
+                  cancel_reason_id:
+                  cancel_reason_name:
                   created_by_id:
                   customer_id: cust_UkLWZg9DAJ
                 meta:
@@ -13519,6 +13427,7 @@ paths:
                 payment_total: '0.0'
                 display_payment_total: "$0.00"
                 metadata: {}
+                cancel_note:
                 canceled_at:
                 approved_at:
                 created_at: '2026-01-15T12:00:00.000Z'
@@ -13532,6 +13441,8 @@ paths:
                 internal_note_html:
                 approver_id:
                 canceler_id:
+                cancel_reason_id:
+                cancel_reason_name:
                 created_by_id: adm_UkLWZg9DAJ
                 customer_id:
       requestBody:
@@ -13779,6 +13690,7 @@ paths:
                 payment_total: '0.0'
                 display_payment_total: "$0.00"
                 metadata: {}
+                cancel_note:
                 canceled_at:
                 approved_at:
                 created_at: '2026-01-15T12:00:00.000Z'
@@ -13792,6 +13704,8 @@ paths:
                 internal_note_html:
                 approver_id:
                 canceler_id:
+                cancel_reason_id:
+                cancel_reason_name:
                 created_by_id:
                 customer_id: cust_UkLWZg9DAJ
         '404':
@@ -13927,6 +13841,7 @@ paths:
                 payment_total: '0.0'
                 display_payment_total: "$0.00"
                 metadata: {}
+                cancel_note:
                 canceled_at:
                 approved_at:
                 created_at: '2026-01-15T12:00:00.000Z'
@@ -13940,6 +13855,8 @@ paths:
                 internal_note_html:
                 approver_id:
                 canceler_id:
+                cancel_reason_id:
+                cancel_reason_name:
                 created_by_id:
                 customer_id: cust_UkLWZg9DAJ
       requestBody:
@@ -14187,6 +14104,7 @@ paths:
                 payment_total: '110.0'
                 display_payment_total: "$110.00"
                 metadata: {}
+                cancel_note:
                 canceled_at:
                 approved_at:
                 created_at: '2026-01-15T12:00:00.000Z'
@@ -14200,6 +14118,8 @@ paths:
                 internal_note_html:
                 approver_id:
                 canceler_id:
+                cancel_reason_id:
+                cancel_reason_name:
                 created_by_id:
                 customer_id: cust_UkLWZg9DAJ
         '422':
@@ -14235,6 +14155,19 @@ paths:
       description: |-
         Cancels a completed order.
 
+        `cancel_reason_id` records why, from the store's own cancellation-reason
+        vocabulary (`/admin/order_cancellation_reasons`), and `cancel_note` is a
+        staff-facing note; both are shown on the order afterwards.
+
+        Stock is always released — the goods are not going out either way — and
+        every payment is settled at the gateway, which releases an
+        authorization it never drew on and refunds a charge it cannot release.
+
+        `refund_payments` and `refund_amount` govern the shared payment of a
+        split checkout, where one payment covers several orders: they decide
+        whether this order's share comes back, and how much of it. A
+        `refund_amount` on an ordinary order is refused with a 422.
+
         Set `notify_customer: true` to send the order cancellation email.
 
 
@@ -14250,10 +14183,18 @@ paths:
             secretKey: 'sk_xxx',
           })
 
-          const order = await client.orders.cancel('or_UkLWZg9DAJ')
+          // A split checkout: the payment is shared, so what comes back is this order's
+          // own share. refund_amount names part of that share, keeping the rest back.
+          const order = await client.orders.cancel('or_UkLWZg9DAJ', {
+            cancel_reason_id: 'ocr_UkLWZg9DAJ',
+            cancel_note: 'Supplier could not deliver in time',
+            refund_payments: true,
+            refund_amount: '25.00',
+          })
       - lang: bash
         label: Spree CLI
-        source: spree api patch /orders/{id}/cancel -d '{ ... }'
+        source: spree api patch /orders/{id}/cancel -d '{"cancel_reason_id":"ocr_UkLWZg9DAJ","cancel_note":"Supplier
+          could not deliver in time","refund_payments":true,"refund_amount":"25.00"}'
       parameters:
       - name: x-spree-api-key
         in: header
@@ -14347,6 +14288,7 @@ paths:
                 payment_total: '0.0'
                 display_payment_total: "$0.00"
                 metadata: {}
+                cancel_note:
                 canceled_at: '2026-01-15T12:00:00.000Z'
                 approved_at:
                 created_at: '2026-01-15T12:00:00.000Z'
@@ -14360,6 +14302,8 @@ paths:
                 internal_note_html:
                 approver_id:
                 canceler_id: adm_UkLWZg9DAJ
+                cancel_reason_id:
+                cancel_reason_name:
                 created_by_id:
                 customer_id: cust_UkLWZg9DAJ
       requestBody:
@@ -14368,8 +14312,25 @@ paths:
             schema:
               type: object
               properties:
+                cancel_reason_id:
+                  type: string
+                  description: Why the order was canceled — the id of one of the store's
+                    cancellation reasons.
+                cancel_note:
+                  type: string
+                  description: Staff-facing note about the cancellation.
+                refund_payments:
+                  type: boolean
+                  default: false
+                  description: Whether this order's share of a payment shared across
+                    a split checkout is handed back.
+                refund_amount:
+                  type: string
+                  description: How much of that share to return. Defaults to all of
+                    it; refused on an order whose payment is not shared.
                 notify_customer:
                   type: boolean
+                  default: false
                   description: Send the order cancellation email after canceling.
   "/api/v3/admin/orders/{id}/approve":
     patch:
@@ -14491,6 +14452,7 @@ paths:
                 payment_total: '0.0'
                 display_payment_total: "$0.00"
                 metadata: {}
+                cancel_note:
                 canceled_at:
                 approved_at: '2026-01-15T12:00:00.000Z'
                 created_at: '2026-01-15T12:00:00.000Z'
@@ -14504,141 +14466,8 @@ paths:
                 internal_note_html:
                 approver_id: adm_UkLWZg9DAJ
                 canceler_id:
-                created_by_id:
-                customer_id: cust_UkLWZg9DAJ
-  "/api/v3/admin/orders/{id}/resume":
-    patch:
-      summary: Resume a canceled order
-      tags:
-      - Orders
-      security:
-      - api_key: []
-        bearer_auth: []
-      description: |-
-        Resumes a previously canceled order.
-
-        **Required scope:** `write_orders` (for API-key authentication).
-      x-codeSamples:
-      - lang: javascript
-        label: Spree Admin SDK
-        source: |-
-          import { createAdminClient } from '@spree/admin-sdk'
-
-          const client = createAdminClient({
-            baseUrl: 'https://your-store.com',
-            secretKey: 'sk_xxx',
-          })
-
-          const order = await client.orders.resume('or_UkLWZg9DAJ')
-      - lang: bash
-        label: Spree CLI
-        source: spree api patch /orders/{id}/resume -d '{ ... }'
-      parameters:
-      - name: x-spree-api-key
-        in: header
-        required: true
-        schema:
-          type: string
-      - name: Authorization
-        in: header
-        required: true
-        description: Bearer token for admin authentication
-        schema:
-          type: string
-      - name: id
-        in: path
-        required: true
-        description: Order ID
-        schema:
-          type: string
-      responses:
-        '200':
-          description: order resumed
-          content:
-            application/json:
-              example:
-                id: or_UkLWZg9DAJ
-                market_id: mkt_UkLWZg9DAJ
-                cart_id:
-                channel_id: ch_UkLWZg9DAJ
-                company_id:
-                company_name:
-                po_document_filename:
-                po_document_byte_size:
-                freight_summary:
-                number: R1001
-                email: maire@prosaccodeckow.co.uk
-                customer_note:
-                po_number:
-                currency: USD
-                locale: en
-                total_quantity: 1
-                coupon_code:
-                fulfillment_status: unfulfilled
-                payment_status: none
-                completed_at: '2026-01-15T12:00:00.000Z'
-                item_total: '10.0'
-                display_item_total: "$10.00"
-                adjustment_total: '0.0'
-                display_adjustment_total: "$0.00"
-                discount_total: '0.0'
-                display_discount_total: "$0.00"
-                tax_total: '0.0'
-                display_tax_total: "$0.00"
-                included_tax_total: '0.0'
-                display_included_tax_total: "$0.00"
-                additional_tax_total: '0.0'
-                display_additional_tax_total: "$0.00"
-                total: '110.0'
-                display_total: "$110.00"
-                gift_card_total: '0.0'
-                display_gift_card_total: "$0.00"
-                amount_due: '110.0'
-                display_amount_due: "$110.00"
-                delivery_total: '100.0'
-                display_delivery_total: "$100.00"
-                fee_total: '0.0'
-                display_fee_total: "$0.00"
-                store_credit_total: '0.0'
-                display_store_credit_total: "$0.00"
-                covered_by_store_credit: false
-                gift_card:
-                market:
-                  id: mkt_UkLWZg9DAJ
-                  name: United States
-                  currency: USD
-                  default_locale: en
-                  tax_inclusive: false
-                  default: true
-                  country_codes:
-                  - US
-                  supported_locales:
-                  - en
-                  tax_provider:
-                  created_at: '2026-01-15T12:00:00.000Z'
-                  updated_at: '2026-01-15T12:00:00.000Z'
-                external_references: {}
-                status: placed
-                last_ip_address:
-                considered_risky: false
-                confirmation_delivered: false
-                store_owner_notification_delivered:
-                payment_total: '0.0'
-                display_payment_total: "$0.00"
-                metadata: {}
-                canceled_at: '2026-01-15T12:00:00.000Z'
-                approved_at:
-                created_at: '2026-01-15T12:00:00.000Z'
-                updated_at: '2026-01-15T12:00:00.000Z'
-                preferred_stock_location_id:
-                po_document_url:
-                seller_id:
-                order_group_id:
-                tags: []
-                internal_note:
-                internal_note_html:
-                approver_id:
-                canceler_id: adm_UkLWZg9DAJ
+                cancel_reason_id:
+                cancel_reason_name:
                 created_by_id:
                 customer_id: cust_UkLWZg9DAJ
   "/api/v3/admin/orders/{id}/resend_confirmation":
@@ -14761,6 +14590,7 @@ paths:
                 payment_total: '0.0'
                 display_payment_total: "$0.00"
                 metadata: {}
+                cancel_note:
                 canceled_at:
                 approved_at:
                 created_at: '2026-01-15T12:00:00.000Z'
@@ -14774,6 +14604,8 @@ paths:
                 internal_note_html:
                 approver_id:
                 canceler_id:
+                cancel_reason_id:
+                cancel_reason_name:
                 created_by_id:
                 customer_id: cust_UkLWZg9DAJ
   "/api/v3/admin/payment_methods":
@@ -17351,8 +17183,8 @@ paths:
               example:
                 data:
                 - id: prod_UkLWZg9DAJ
-                  name: Product 926550
-                  slug: product-926550
+                  name: Product 906550
+                  slug: product-906550
                   meta_title:
                   meta_description:
                   meta_keywords:
@@ -17745,8 +17577,8 @@ paths:
             application/json:
               example:
                 id: prod_UkLWZg9DAJ
-                name: Product 962061
-                slug: product-962061
+                name: Product 942061
+                slug: product-942061
                 meta_title:
                 meta_description:
                 meta_keywords:
@@ -17859,7 +17691,7 @@ paths:
               example:
                 id: prod_UkLWZg9DAJ
                 name: Updated Name
-                slug: product-985339
+                slug: product-965339
                 meta_title:
                 meta_description:
                 meta_keywords:
@@ -19308,6 +19140,1462 @@ paths:
       responses:
         '204':
           description: policy deleted
+  "/api/v3/admin/claim_reasons":
+    get:
+      summary: List claim reasons
+      tags:
+      - Reasons
+      security:
+      - api_key: []
+        bearer_auth: []
+      description: |-
+        Why a customer raised a claim — what the merchant got wrong, rather than a change of mind.
+
+        The vocabulary is the merchant's own — seeded with a starting set and
+        edited from the dashboard. Inactive rows stay for the records that
+        already reference them, but are not offered on new ones.
+
+
+        **Required scope:** `read_settings` (for API-key authentication).
+      x-codeSamples:
+      - lang: javascript
+        label: Spree Admin SDK
+        source: |-
+          import { createAdminClient } from '@spree/admin-sdk'
+
+          const client = createAdminClient({
+            baseUrl: 'https://your-store.com',
+            secretKey: 'sk_xxx',
+          })
+
+          const { data: reasons } = await client.claimReasons.list()
+      - lang: bash
+        label: Spree CLI
+        source: spree api get /claim_reasons
+      parameters:
+      - name: x-spree-api-key
+        in: header
+        required: true
+        schema:
+          type: string
+      - name: Authorization
+        in: header
+        required: true
+        description: Bearer token for admin authentication
+        schema:
+          type: string
+      - name: page
+        in: query
+        required: false
+        description: Page number
+        schema:
+          type: integer
+      - name: limit
+        in: query
+        required: false
+        description: Number of records per page
+        schema:
+          type: integer
+      - name: q[name_cont]
+        in: query
+        required: false
+        description: Filter by name (contains)
+        schema:
+          type: string
+      - name: q[active_eq]
+        in: query
+        required: false
+        description: Filter by active flag
+        schema:
+          type: boolean
+      - name: sort
+        in: query
+        required: false
+        description: Sort by field. Prefix with `-` for descending (e.g., `-created_at`).
+        schema:
+          type: string
+      responses:
+        '200':
+          description: claim reasons found
+          content:
+            application/json:
+              example:
+                data:
+                - id: clr_UkLWZg9DAJ
+                  name: Arrived damaged
+                  active: true
+                  created_at: '2026-01-15T12:00:00.000Z'
+                  updated_at: '2026-01-15T12:00:00.000Z'
+                  can_be_deleted: true
+                meta:
+                  page: 1
+                  limit: 25
+                  count: 1
+                  pages: 1
+                  from: 1
+                  to: 1
+                  in: 1
+                  previous:
+                  next:
+        '401':
+          description: unauthorized
+          content:
+            application/json:
+              example:
+                error:
+                  code: authentication_required
+                  message: Authentication required
+              schema:
+                "$ref": "#/components/schemas/ErrorResponse"
+    post:
+      summary: Create a claim reason
+      tags:
+      - Reasons
+      security:
+      - api_key: []
+        bearer_auth: []
+      description: |-
+        Adds a claim reason to this store. Names are unique per store, ignoring case.
+
+        **Required scope:** `write_settings` (for API-key authentication).
+      x-codeSamples:
+      - lang: javascript
+        label: Spree Admin SDK
+        source: |-
+          import { createAdminClient } from '@spree/admin-sdk'
+
+          const client = createAdminClient({
+            baseUrl: 'https://your-store.com',
+            secretKey: 'sk_xxx',
+          })
+
+          const reason = await client.claimReasons.create({
+            name: 'Arrived damaged',
+          })
+      - lang: bash
+        label: Spree CLI
+        source: spree api post /claim_reasons -d '{"name":"Arrived damaged"}'
+      parameters:
+      - name: x-spree-api-key
+        in: header
+        required: true
+        schema:
+          type: string
+      - name: Authorization
+        in: header
+        required: true
+        description: Bearer token for admin authentication
+        schema:
+          type: string
+      responses:
+        '201':
+          description: claim reason created
+          content:
+            application/json:
+              example:
+                id: clr_gbHJdmfrXB
+                name: A new reason
+                active: true
+                created_at: '2026-01-15T12:00:00.000Z'
+                updated_at: '2026-01-15T12:00:00.000Z'
+                can_be_deleted: true
+        '422':
+          description: validation error
+          content:
+            application/json:
+              example:
+                error:
+                  code: validation_error
+                  message: Name can't be blank
+                  details:
+                    name:
+                    - can't be blank
+              schema:
+                "$ref": "#/components/schemas/ErrorResponse"
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+              - name
+              properties:
+                name:
+                  type: string
+                  example: Arrived damaged
+                active:
+                  type: boolean
+                  example: true
+                  description: Inactive reasons are hidden from the pickers on new
+                    records.
+  "/api/v3/admin/claim_reasons/{id}":
+    parameters:
+    - name: id
+      in: path
+      required: true
+      description: Claim reason ID
+      schema:
+        type: string
+    get:
+      summary: Get a claim reason
+      tags:
+      - Reasons
+      security:
+      - api_key: []
+        bearer_auth: []
+      description: |-
+        Returns a single claim reason by prefixed ID.
+
+        **Required scope:** `read_settings` (for API-key authentication).
+      x-codeSamples:
+      - lang: javascript
+        label: Spree Admin SDK
+        source: |-
+          import { createAdminClient } from '@spree/admin-sdk'
+
+          const client = createAdminClient({
+            baseUrl: 'https://your-store.com',
+            secretKey: 'sk_xxx',
+          })
+
+          const reason = await client.claimReasons.get('clr_UkLWZg9DAJ')
+      - lang: bash
+        label: Spree CLI
+        source: spree api get /claim_reasons/{id}
+      parameters:
+      - name: x-spree-api-key
+        in: header
+        required: true
+        schema:
+          type: string
+      - name: Authorization
+        in: header
+        required: true
+        description: Bearer token for admin authentication
+        schema:
+          type: string
+      responses:
+        '200':
+          description: claim reason found
+          content:
+            application/json:
+              example:
+                id: clr_UkLWZg9DAJ
+                name: Arrived damaged
+                active: true
+                created_at: '2026-01-15T12:00:00.000Z'
+                updated_at: '2026-01-15T12:00:00.000Z'
+                can_be_deleted: true
+        '404':
+          description: claim reason not found
+          content:
+            application/json:
+              example:
+                error:
+                  code: record_not_found
+                  message: Claim reason not found
+              schema:
+                "$ref": "#/components/schemas/ErrorResponse"
+    patch:
+      summary: Update a claim reason
+      tags:
+      - Reasons
+      security:
+      - api_key: []
+        bearer_auth: []
+      description: |-
+        Renames a claim reason or retires it. Deactivating keeps it on the records
+        that already carry it while removing it from the pickers.
+
+
+        **Required scope:** `write_settings` (for API-key authentication).
+      x-codeSamples:
+      - lang: javascript
+        label: Spree Admin SDK
+        source: |-
+          import { createAdminClient } from '@spree/admin-sdk'
+
+          const client = createAdminClient({
+            baseUrl: 'https://your-store.com',
+            secretKey: 'sk_xxx',
+          })
+
+          const reason = await client.claimReasons.update('clr_UkLWZg9DAJ', {
+            active: false,
+          })
+      - lang: bash
+        label: Spree CLI
+        source: spree api patch /claim_reasons/{id} -d '{"active":false}'
+      parameters:
+      - name: x-spree-api-key
+        in: header
+        required: true
+        schema:
+          type: string
+      - name: Authorization
+        in: header
+        required: true
+        description: Bearer token for admin authentication
+        schema:
+          type: string
+      responses:
+        '200':
+          description: claim reason updated
+          content:
+            application/json:
+              example:
+                id: clr_UkLWZg9DAJ
+                name: Arrived damaged
+                active: false
+                created_at: '2026-01-15T12:00:00.000Z'
+                updated_at: '2026-01-15T12:00:00.000Z'
+                can_be_deleted: true
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                active:
+                  type: boolean
+    delete:
+      summary: Delete a claim reason
+      tags:
+      - Reasons
+      security:
+      - api_key: []
+        bearer_auth: []
+      description: |-
+        Removes a claim reason the store no longer uses. A reason already recorded
+        on a document is refused — deactivate it instead, so the history it
+        explains stays readable.
+
+
+        **Required scope:** `write_settings` (for API-key authentication).
+      x-codeSamples:
+      - lang: javascript
+        label: Spree Admin SDK
+        source: |-
+          import { createAdminClient } from '@spree/admin-sdk'
+
+          const client = createAdminClient({
+            baseUrl: 'https://your-store.com',
+            secretKey: 'sk_xxx',
+          })
+
+          await client.claimReasons.delete('clr_UkLWZg9DAJ')
+      - lang: bash
+        label: Spree CLI
+        source: spree api delete /claim_reasons/{id}
+      parameters:
+      - name: x-spree-api-key
+        in: header
+        required: true
+        schema:
+          type: string
+      - name: Authorization
+        in: header
+        required: true
+        description: Bearer token for admin authentication
+        schema:
+          type: string
+      responses:
+        '204':
+          description: claim reason deleted
+  "/api/v3/admin/order_cancellation_reasons":
+    get:
+      summary: List order cancellation reasons
+      tags:
+      - Reasons
+      security:
+      - api_key: []
+        bearer_auth: []
+      description: |-
+        Why an order was called off before it shipped. Staff pick one when canceling.
+
+        The vocabulary is the merchant's own — seeded with a starting set and
+        edited from the dashboard. Inactive rows stay for the records that
+        already reference them, but are not offered on new ones.
+
+
+        **Required scope:** `read_settings` (for API-key authentication).
+      x-codeSamples:
+      - lang: javascript
+        label: Spree Admin SDK
+        source: |-
+          import { createAdminClient } from '@spree/admin-sdk'
+
+          const client = createAdminClient({
+            baseUrl: 'https://your-store.com',
+            secretKey: 'sk_xxx',
+          })
+
+          const { data: reasons } = await client.orderCancellationReasons.list()
+      - lang: bash
+        label: Spree CLI
+        source: spree api get /order_cancellation_reasons
+      parameters:
+      - name: x-spree-api-key
+        in: header
+        required: true
+        schema:
+          type: string
+      - name: Authorization
+        in: header
+        required: true
+        description: Bearer token for admin authentication
+        schema:
+          type: string
+      - name: page
+        in: query
+        required: false
+        description: Page number
+        schema:
+          type: integer
+      - name: limit
+        in: query
+        required: false
+        description: Number of records per page
+        schema:
+          type: integer
+      - name: q[name_cont]
+        in: query
+        required: false
+        description: Filter by name (contains)
+        schema:
+          type: string
+      - name: q[active_eq]
+        in: query
+        required: false
+        description: Filter by active flag
+        schema:
+          type: boolean
+      - name: sort
+        in: query
+        required: false
+        description: Sort by field. Prefix with `-` for descending (e.g., `-created_at`).
+        schema:
+          type: string
+      responses:
+        '200':
+          description: order cancellation reasons found
+          content:
+            application/json:
+              example:
+                data:
+                - id: ocr_UkLWZg9DAJ
+                  name: Out of stock
+                  active: true
+                  created_at: '2026-01-15T12:00:00.000Z'
+                  updated_at: '2026-01-15T12:00:00.000Z'
+                  can_be_deleted: true
+                meta:
+                  page: 1
+                  limit: 25
+                  count: 1
+                  pages: 1
+                  from: 1
+                  to: 1
+                  in: 1
+                  previous:
+                  next:
+        '401':
+          description: unauthorized
+          content:
+            application/json:
+              example:
+                error:
+                  code: authentication_required
+                  message: Authentication required
+              schema:
+                "$ref": "#/components/schemas/ErrorResponse"
+    post:
+      summary: Create a order cancellation reason
+      tags:
+      - Reasons
+      security:
+      - api_key: []
+        bearer_auth: []
+      description: |-
+        Adds a order cancellation reason to this store. Names are unique per store, ignoring case.
+
+        **Required scope:** `write_settings` (for API-key authentication).
+      x-codeSamples:
+      - lang: javascript
+        label: Spree Admin SDK
+        source: |-
+          import { createAdminClient } from '@spree/admin-sdk'
+
+          const client = createAdminClient({
+            baseUrl: 'https://your-store.com',
+            secretKey: 'sk_xxx',
+          })
+
+          const reason = await client.orderCancellationReasons.create({
+            name: 'Out of stock',
+          })
+      - lang: bash
+        label: Spree CLI
+        source: spree api post /order_cancellation_reasons -d '{"name":"Out of stock"}'
+      parameters:
+      - name: x-spree-api-key
+        in: header
+        required: true
+        schema:
+          type: string
+      - name: Authorization
+        in: header
+        required: true
+        description: Bearer token for admin authentication
+        schema:
+          type: string
+      responses:
+        '201':
+          description: order cancellation reason created
+          content:
+            application/json:
+              example:
+                id: ocr_gbHJdmfrXB
+                name: A new reason
+                active: true
+                created_at: '2026-01-15T12:00:00.000Z'
+                updated_at: '2026-01-15T12:00:00.000Z'
+                can_be_deleted: true
+        '422':
+          description: validation error
+          content:
+            application/json:
+              example:
+                error:
+                  code: validation_error
+                  message: Name can't be blank
+                  details:
+                    name:
+                    - can't be blank
+              schema:
+                "$ref": "#/components/schemas/ErrorResponse"
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+              - name
+              properties:
+                name:
+                  type: string
+                  example: Out of stock
+                active:
+                  type: boolean
+                  example: true
+                  description: Inactive reasons are hidden from the pickers on new
+                    records.
+  "/api/v3/admin/order_cancellation_reasons/{id}":
+    parameters:
+    - name: id
+      in: path
+      required: true
+      description: Order cancellation reason ID
+      schema:
+        type: string
+    get:
+      summary: Get a order cancellation reason
+      tags:
+      - Reasons
+      security:
+      - api_key: []
+        bearer_auth: []
+      description: |-
+        Returns a single order cancellation reason by prefixed ID.
+
+        **Required scope:** `read_settings` (for API-key authentication).
+      x-codeSamples:
+      - lang: javascript
+        label: Spree Admin SDK
+        source: |-
+          import { createAdminClient } from '@spree/admin-sdk'
+
+          const client = createAdminClient({
+            baseUrl: 'https://your-store.com',
+            secretKey: 'sk_xxx',
+          })
+
+          const reason = await client.orderCancellationReasons.get('ocr_UkLWZg9DAJ')
+      - lang: bash
+        label: Spree CLI
+        source: spree api get /order_cancellation_reasons/{id}
+      parameters:
+      - name: x-spree-api-key
+        in: header
+        required: true
+        schema:
+          type: string
+      - name: Authorization
+        in: header
+        required: true
+        description: Bearer token for admin authentication
+        schema:
+          type: string
+      responses:
+        '200':
+          description: order cancellation reason found
+          content:
+            application/json:
+              example:
+                id: ocr_UkLWZg9DAJ
+                name: Out of stock
+                active: true
+                created_at: '2026-01-15T12:00:00.000Z'
+                updated_at: '2026-01-15T12:00:00.000Z'
+                can_be_deleted: true
+        '404':
+          description: order cancellation reason not found
+          content:
+            application/json:
+              example:
+                error:
+                  code: record_not_found
+                  message: Order cancellation reason not found
+              schema:
+                "$ref": "#/components/schemas/ErrorResponse"
+    patch:
+      summary: Update a order cancellation reason
+      tags:
+      - Reasons
+      security:
+      - api_key: []
+        bearer_auth: []
+      description: |-
+        Renames a order cancellation reason or retires it. Deactivating keeps it on the records
+        that already carry it while removing it from the pickers.
+
+
+        **Required scope:** `write_settings` (for API-key authentication).
+      x-codeSamples:
+      - lang: javascript
+        label: Spree Admin SDK
+        source: |-
+          import { createAdminClient } from '@spree/admin-sdk'
+
+          const client = createAdminClient({
+            baseUrl: 'https://your-store.com',
+            secretKey: 'sk_xxx',
+          })
+
+          const reason = await client.orderCancellationReasons.update('ocr_UkLWZg9DAJ', {
+            active: false,
+          })
+      - lang: bash
+        label: Spree CLI
+        source: spree api patch /order_cancellation_reasons/{id} -d '{"active":false}'
+      parameters:
+      - name: x-spree-api-key
+        in: header
+        required: true
+        schema:
+          type: string
+      - name: Authorization
+        in: header
+        required: true
+        description: Bearer token for admin authentication
+        schema:
+          type: string
+      responses:
+        '200':
+          description: order cancellation reason updated
+          content:
+            application/json:
+              example:
+                id: ocr_UkLWZg9DAJ
+                name: Out of stock
+                active: false
+                created_at: '2026-01-15T12:00:00.000Z'
+                updated_at: '2026-01-15T12:00:00.000Z'
+                can_be_deleted: true
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                active:
+                  type: boolean
+    delete:
+      summary: Delete a order cancellation reason
+      tags:
+      - Reasons
+      security:
+      - api_key: []
+        bearer_auth: []
+      description: |-
+        Removes a order cancellation reason the store no longer uses. A reason already recorded
+        on a document is refused — deactivate it instead, so the history it
+        explains stays readable.
+
+
+        **Required scope:** `write_settings` (for API-key authentication).
+      x-codeSamples:
+      - lang: javascript
+        label: Spree Admin SDK
+        source: |-
+          import { createAdminClient } from '@spree/admin-sdk'
+
+          const client = createAdminClient({
+            baseUrl: 'https://your-store.com',
+            secretKey: 'sk_xxx',
+          })
+
+          await client.orderCancellationReasons.delete('ocr_UkLWZg9DAJ')
+      - lang: bash
+        label: Spree CLI
+        source: spree api delete /order_cancellation_reasons/{id}
+      parameters:
+      - name: x-spree-api-key
+        in: header
+        required: true
+        schema:
+          type: string
+      - name: Authorization
+        in: header
+        required: true
+        description: Bearer token for admin authentication
+        schema:
+          type: string
+      responses:
+        '204':
+          description: order cancellation reason deleted
+  "/api/v3/admin/refund_reasons":
+    get:
+      summary: List refund reasons
+      tags:
+      - Reasons
+      security:
+      - api_key: []
+        bearer_auth: []
+      description: |-
+        Why money went back. Some rows are seeded and looked up by name, so they refuse renaming and deletion.
+
+        The vocabulary is the merchant's own — seeded with a starting set and
+        edited from the dashboard. Inactive rows stay for the records that
+        already reference them, but are not offered on new ones.
+
+
+        **Required scope:** `read_settings` (for API-key authentication).
+      x-codeSamples:
+      - lang: javascript
+        label: Spree Admin SDK
+        source: |-
+          import { createAdminClient } from '@spree/admin-sdk'
+
+          const client = createAdminClient({
+            baseUrl: 'https://your-store.com',
+            secretKey: 'sk_xxx',
+          })
+
+          const { data: reasons } = await client.refundReasons.list()
+      - lang: bash
+        label: Spree CLI
+        source: spree api get /refund_reasons
+      parameters:
+      - name: x-spree-api-key
+        in: header
+        required: true
+        schema:
+          type: string
+      - name: Authorization
+        in: header
+        required: true
+        description: Bearer token for admin authentication
+        schema:
+          type: string
+      - name: page
+        in: query
+        required: false
+        description: Page number
+        schema:
+          type: integer
+      - name: limit
+        in: query
+        required: false
+        description: Number of records per page
+        schema:
+          type: integer
+      - name: q[name_cont]
+        in: query
+        required: false
+        description: Filter by name (contains)
+        schema:
+          type: string
+      - name: q[active_eq]
+        in: query
+        required: false
+        description: Filter by active flag
+        schema:
+          type: boolean
+      - name: sort
+        in: query
+        required: false
+        description: Sort by field. Prefix with `-` for descending (e.g., `-created_at`).
+        schema:
+          type: string
+      responses:
+        '200':
+          description: refund reasons found
+          content:
+            application/json:
+              example:
+                data:
+                - id: rr_UkLWZg9DAJ
+                  name: Goodwill gesture
+                  active: true
+                  created_at: '2026-01-15T12:00:00.000Z'
+                  updated_at: '2026-01-15T12:00:00.000Z'
+                  can_be_deleted: true
+                meta:
+                  page: 1
+                  limit: 25
+                  count: 1
+                  pages: 1
+                  from: 1
+                  to: 1
+                  in: 1
+                  previous:
+                  next:
+        '401':
+          description: unauthorized
+          content:
+            application/json:
+              example:
+                error:
+                  code: authentication_required
+                  message: Authentication required
+              schema:
+                "$ref": "#/components/schemas/ErrorResponse"
+    post:
+      summary: Create a refund reason
+      tags:
+      - Reasons
+      security:
+      - api_key: []
+        bearer_auth: []
+      description: |-
+        Adds a refund reason to this store. Names are unique per store, ignoring case.
+
+        **Required scope:** `write_settings` (for API-key authentication).
+      x-codeSamples:
+      - lang: javascript
+        label: Spree Admin SDK
+        source: |-
+          import { createAdminClient } from '@spree/admin-sdk'
+
+          const client = createAdminClient({
+            baseUrl: 'https://your-store.com',
+            secretKey: 'sk_xxx',
+          })
+
+          const reason = await client.refundReasons.create({
+            name: 'Goodwill gesture',
+          })
+      - lang: bash
+        label: Spree CLI
+        source: spree api post /refund_reasons -d '{"name":"Goodwill gesture"}'
+      parameters:
+      - name: x-spree-api-key
+        in: header
+        required: true
+        schema:
+          type: string
+      - name: Authorization
+        in: header
+        required: true
+        description: Bearer token for admin authentication
+        schema:
+          type: string
+      responses:
+        '201':
+          description: refund reason created
+          content:
+            application/json:
+              example:
+                id: rr_gbHJdmfrXB
+                name: A new reason
+                active: true
+                created_at: '2026-01-15T12:00:00.000Z'
+                updated_at: '2026-01-15T12:00:00.000Z'
+                can_be_deleted: true
+        '422':
+          description: validation error
+          content:
+            application/json:
+              example:
+                error:
+                  code: validation_error
+                  message: Name can't be blank
+                  details:
+                    name:
+                    - can't be blank
+              schema:
+                "$ref": "#/components/schemas/ErrorResponse"
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+              - name
+              properties:
+                name:
+                  type: string
+                  example: Goodwill gesture
+                active:
+                  type: boolean
+                  example: true
+                  description: Inactive reasons are hidden from the pickers on new
+                    records.
+  "/api/v3/admin/refund_reasons/{id}":
+    parameters:
+    - name: id
+      in: path
+      required: true
+      description: Refund reason ID
+      schema:
+        type: string
+    get:
+      summary: Get a refund reason
+      tags:
+      - Reasons
+      security:
+      - api_key: []
+        bearer_auth: []
+      description: |-
+        Returns a single refund reason by prefixed ID.
+
+        **Required scope:** `read_settings` (for API-key authentication).
+      x-codeSamples:
+      - lang: javascript
+        label: Spree Admin SDK
+        source: |-
+          import { createAdminClient } from '@spree/admin-sdk'
+
+          const client = createAdminClient({
+            baseUrl: 'https://your-store.com',
+            secretKey: 'sk_xxx',
+          })
+
+          const reason = await client.refundReasons.get('rr_UkLWZg9DAJ')
+      - lang: bash
+        label: Spree CLI
+        source: spree api get /refund_reasons/{id}
+      parameters:
+      - name: x-spree-api-key
+        in: header
+        required: true
+        schema:
+          type: string
+      - name: Authorization
+        in: header
+        required: true
+        description: Bearer token for admin authentication
+        schema:
+          type: string
+      responses:
+        '200':
+          description: refund reason found
+          content:
+            application/json:
+              example:
+                id: rr_UkLWZg9DAJ
+                name: Goodwill gesture
+                active: true
+                created_at: '2026-01-15T12:00:00.000Z'
+                updated_at: '2026-01-15T12:00:00.000Z'
+                can_be_deleted: true
+        '404':
+          description: refund reason not found
+          content:
+            application/json:
+              example:
+                error:
+                  code: record_not_found
+                  message: Refund reason not found
+              schema:
+                "$ref": "#/components/schemas/ErrorResponse"
+    patch:
+      summary: Update a refund reason
+      tags:
+      - Reasons
+      security:
+      - api_key: []
+        bearer_auth: []
+      description: |-
+        Renames a refund reason or retires it. Deactivating keeps it on the records
+        that already carry it while removing it from the pickers.
+
+
+        **Required scope:** `write_settings` (for API-key authentication).
+      x-codeSamples:
+      - lang: javascript
+        label: Spree Admin SDK
+        source: |-
+          import { createAdminClient } from '@spree/admin-sdk'
+
+          const client = createAdminClient({
+            baseUrl: 'https://your-store.com',
+            secretKey: 'sk_xxx',
+          })
+
+          const reason = await client.refundReasons.update('rr_UkLWZg9DAJ', {
+            active: false,
+          })
+      - lang: bash
+        label: Spree CLI
+        source: spree api patch /refund_reasons/{id} -d '{"active":false}'
+      parameters:
+      - name: x-spree-api-key
+        in: header
+        required: true
+        schema:
+          type: string
+      - name: Authorization
+        in: header
+        required: true
+        description: Bearer token for admin authentication
+        schema:
+          type: string
+      responses:
+        '200':
+          description: refund reason updated
+          content:
+            application/json:
+              example:
+                id: rr_UkLWZg9DAJ
+                name: Goodwill gesture
+                active: false
+                created_at: '2026-01-15T12:00:00.000Z'
+                updated_at: '2026-01-15T12:00:00.000Z'
+                can_be_deleted: true
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                active:
+                  type: boolean
+    delete:
+      summary: Delete a refund reason
+      tags:
+      - Reasons
+      security:
+      - api_key: []
+        bearer_auth: []
+      description: |-
+        Removes a refund reason the store no longer uses. A reason already recorded
+        on a document is refused — deactivate it instead, so the history it
+        explains stays readable.
+
+
+        **Required scope:** `write_settings` (for API-key authentication).
+      x-codeSamples:
+      - lang: javascript
+        label: Spree Admin SDK
+        source: |-
+          import { createAdminClient } from '@spree/admin-sdk'
+
+          const client = createAdminClient({
+            baseUrl: 'https://your-store.com',
+            secretKey: 'sk_xxx',
+          })
+
+          await client.refundReasons.delete('rr_UkLWZg9DAJ')
+      - lang: bash
+        label: Spree CLI
+        source: spree api delete /refund_reasons/{id}
+      parameters:
+      - name: x-spree-api-key
+        in: header
+        required: true
+        schema:
+          type: string
+      - name: Authorization
+        in: header
+        required: true
+        description: Bearer token for admin authentication
+        schema:
+          type: string
+      responses:
+        '204':
+          description: refund reason deleted
+  "/api/v3/admin/return_reasons":
+    get:
+      summary: List return reasons
+      tags:
+      - Reasons
+      security:
+      - api_key: []
+        bearer_auth: []
+      description: |-
+        Why a customer is sending items back. Shared by returns and exchanges.
+
+        The vocabulary is the merchant's own — seeded with a starting set and
+        edited from the dashboard. Inactive rows stay for the records that
+        already reference them, but are not offered on new ones.
+
+
+        **Required scope:** `read_settings` (for API-key authentication).
+      x-codeSamples:
+      - lang: javascript
+        label: Spree Admin SDK
+        source: |-
+          import { createAdminClient } from '@spree/admin-sdk'
+
+          const client = createAdminClient({
+            baseUrl: 'https://your-store.com',
+            secretKey: 'sk_xxx',
+          })
+
+          const { data: reasons } = await client.returnReasons.list()
+      - lang: bash
+        label: Spree CLI
+        source: spree api get /return_reasons
+      parameters:
+      - name: x-spree-api-key
+        in: header
+        required: true
+        schema:
+          type: string
+      - name: Authorization
+        in: header
+        required: true
+        description: Bearer token for admin authentication
+        schema:
+          type: string
+      - name: page
+        in: query
+        required: false
+        description: Page number
+        schema:
+          type: integer
+      - name: limit
+        in: query
+        required: false
+        description: Number of records per page
+        schema:
+          type: integer
+      - name: q[name_cont]
+        in: query
+        required: false
+        description: Filter by name (contains)
+        schema:
+          type: string
+      - name: q[active_eq]
+        in: query
+        required: false
+        description: Filter by active flag
+        schema:
+          type: boolean
+      - name: sort
+        in: query
+        required: false
+        description: Sort by field. Prefix with `-` for descending (e.g., `-created_at`).
+        schema:
+          type: string
+      responses:
+        '200':
+          description: return reasons found
+          content:
+            application/json:
+              example:
+                data:
+                - id: rar_UkLWZg9DAJ
+                  name: Damaged in transit
+                  active: true
+                  created_at: '2026-01-15T12:00:00.000Z'
+                  updated_at: '2026-01-15T12:00:00.000Z'
+                  can_be_deleted: true
+                meta:
+                  page: 1
+                  limit: 25
+                  count: 1
+                  pages: 1
+                  from: 1
+                  to: 1
+                  in: 1
+                  previous:
+                  next:
+        '401':
+          description: unauthorized
+          content:
+            application/json:
+              example:
+                error:
+                  code: authentication_required
+                  message: Authentication required
+              schema:
+                "$ref": "#/components/schemas/ErrorResponse"
+    post:
+      summary: Create a return reason
+      tags:
+      - Reasons
+      security:
+      - api_key: []
+        bearer_auth: []
+      description: |-
+        Adds a return reason to this store. Names are unique per store, ignoring case.
+
+        **Required scope:** `write_settings` (for API-key authentication).
+      x-codeSamples:
+      - lang: javascript
+        label: Spree Admin SDK
+        source: |-
+          import { createAdminClient } from '@spree/admin-sdk'
+
+          const client = createAdminClient({
+            baseUrl: 'https://your-store.com',
+            secretKey: 'sk_xxx',
+          })
+
+          const reason = await client.returnReasons.create({
+            name: 'Damaged in transit',
+          })
+      - lang: bash
+        label: Spree CLI
+        source: spree api post /return_reasons -d '{"name":"Damaged in transit"}'
+      parameters:
+      - name: x-spree-api-key
+        in: header
+        required: true
+        schema:
+          type: string
+      - name: Authorization
+        in: header
+        required: true
+        description: Bearer token for admin authentication
+        schema:
+          type: string
+      responses:
+        '201':
+          description: return reason created
+          content:
+            application/json:
+              example:
+                id: rar_gbHJdmfrXB
+                name: A new reason
+                active: true
+                created_at: '2026-01-15T12:00:00.000Z'
+                updated_at: '2026-01-15T12:00:00.000Z'
+                can_be_deleted: true
+        '422':
+          description: validation error
+          content:
+            application/json:
+              example:
+                error:
+                  code: validation_error
+                  message: Name can't be blank
+                  details:
+                    name:
+                    - can't be blank
+              schema:
+                "$ref": "#/components/schemas/ErrorResponse"
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+              - name
+              properties:
+                name:
+                  type: string
+                  example: Damaged in transit
+                active:
+                  type: boolean
+                  example: true
+                  description: Inactive reasons are hidden from the pickers on new
+                    records.
+  "/api/v3/admin/return_reasons/{id}":
+    parameters:
+    - name: id
+      in: path
+      required: true
+      description: Return reason ID
+      schema:
+        type: string
+    get:
+      summary: Get a return reason
+      tags:
+      - Reasons
+      security:
+      - api_key: []
+        bearer_auth: []
+      description: |-
+        Returns a single return reason by prefixed ID.
+
+        **Required scope:** `read_settings` (for API-key authentication).
+      x-codeSamples:
+      - lang: javascript
+        label: Spree Admin SDK
+        source: |-
+          import { createAdminClient } from '@spree/admin-sdk'
+
+          const client = createAdminClient({
+            baseUrl: 'https://your-store.com',
+            secretKey: 'sk_xxx',
+          })
+
+          const reason = await client.returnReasons.get('rar_UkLWZg9DAJ')
+      - lang: bash
+        label: Spree CLI
+        source: spree api get /return_reasons/{id}
+      parameters:
+      - name: x-spree-api-key
+        in: header
+        required: true
+        schema:
+          type: string
+      - name: Authorization
+        in: header
+        required: true
+        description: Bearer token for admin authentication
+        schema:
+          type: string
+      responses:
+        '200':
+          description: return reason found
+          content:
+            application/json:
+              example:
+                id: rar_UkLWZg9DAJ
+                name: Damaged in transit
+                active: true
+                created_at: '2026-01-15T12:00:00.000Z'
+                updated_at: '2026-01-15T12:00:00.000Z'
+                can_be_deleted: true
+        '404':
+          description: return reason not found
+          content:
+            application/json:
+              example:
+                error:
+                  code: record_not_found
+                  message: Return reason not found
+              schema:
+                "$ref": "#/components/schemas/ErrorResponse"
+    patch:
+      summary: Update a return reason
+      tags:
+      - Reasons
+      security:
+      - api_key: []
+        bearer_auth: []
+      description: |-
+        Renames a return reason or retires it. Deactivating keeps it on the records
+        that already carry it while removing it from the pickers.
+
+
+        **Required scope:** `write_settings` (for API-key authentication).
+      x-codeSamples:
+      - lang: javascript
+        label: Spree Admin SDK
+        source: |-
+          import { createAdminClient } from '@spree/admin-sdk'
+
+          const client = createAdminClient({
+            baseUrl: 'https://your-store.com',
+            secretKey: 'sk_xxx',
+          })
+
+          const reason = await client.returnReasons.update('rar_UkLWZg9DAJ', {
+            active: false,
+          })
+      - lang: bash
+        label: Spree CLI
+        source: spree api patch /return_reasons/{id} -d '{"active":false}'
+      parameters:
+      - name: x-spree-api-key
+        in: header
+        required: true
+        schema:
+          type: string
+      - name: Authorization
+        in: header
+        required: true
+        description: Bearer token for admin authentication
+        schema:
+          type: string
+      responses:
+        '200':
+          description: return reason updated
+          content:
+            application/json:
+              example:
+                id: rar_UkLWZg9DAJ
+                name: Damaged in transit
+                active: false
+                created_at: '2026-01-15T12:00:00.000Z'
+                updated_at: '2026-01-15T12:00:00.000Z'
+                can_be_deleted: true
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                active:
+                  type: boolean
+    delete:
+      summary: Delete a return reason
+      tags:
+      - Reasons
+      security:
+      - api_key: []
+        bearer_auth: []
+      description: |-
+        Removes a return reason the store no longer uses. A reason already recorded
+        on a document is refused — deactivate it instead, so the history it
+        explains stays readable.
+
+
+        **Required scope:** `write_settings` (for API-key authentication).
+      x-codeSamples:
+      - lang: javascript
+        label: Spree Admin SDK
+        source: |-
+          import { createAdminClient } from '@spree/admin-sdk'
+
+          const client = createAdminClient({
+            baseUrl: 'https://your-store.com',
+            secretKey: 'sk_xxx',
+          })
+
+          await client.returnReasons.delete('rar_UkLWZg9DAJ')
+      - lang: bash
+        label: Spree CLI
+        source: spree api delete /return_reasons/{id}
+      parameters:
+      - name: x-spree-api-key
+        in: header
+        required: true
+        schema:
+          type: string
+      - name: Authorization
+        in: header
+        required: true
+        description: Bearer token for admin authentication
+        schema:
+          type: string
+      responses:
+        '204':
+          description: return reason deleted
   "/api/v3/admin/promotions/{promotion_id}/coupon_codes":
     parameters:
     - name: promotion_id
@@ -24142,7 +25430,7 @@ paths:
                 data:
                 - id: variant_UkLWZg9DAJ
                   product_id: prod_UkLWZg9DAJ
-                  sku: SKU-155
+                  sku: SKU-153
                   options_text: ''
                   track_inventory: true
                   media_count: 0
@@ -24197,11 +25485,11 @@ paths:
                   available_stock: 0
                   reserved_quantity: 0
                   total_on_hand: 0
-                  product_name: Product 1236804
+                  product_name: Product 1216804
                   delivery_profile_id: fp_UkLWZg9DAJ
                 - id: variant_gbHJdmfrXB
                   product_id: prod_UkLWZg9DAJ
-                  sku: SKU-156
+                  sku: SKU-154
                   options_text: 'Size: S'
                   track_inventory: true
                   media_count: 0
@@ -24268,7 +25556,7 @@ paths:
                   available_stock: 0
                   reserved_quantity: 0
                   total_on_hand: 0
-                  product_name: Product 1236804
+                  product_name: Product 1216804
                   delivery_profile_id: fp_UkLWZg9DAJ
                 meta:
                   page: 1
@@ -24414,7 +25702,7 @@ paths:
                 available_stock: 0
                 reserved_quantity: 0
                 total_on_hand: 0
-                product_name: Product 1241771
+                product_name: Product 1221771
                 delivery_profile_id: fp_UkLWZg9DAJ
         '422':
           description: validation error
@@ -24593,7 +25881,7 @@ paths:
               example:
                 id: variant_gbHJdmfrXB
                 product_id: prod_UkLWZg9DAJ
-                sku: SKU-162
+                sku: SKU-160
                 options_text: 'Size: S'
                 track_inventory: true
                 media_count: 0
@@ -24660,7 +25948,7 @@ paths:
                 available_stock: 0
                 reserved_quantity: 0
                 total_on_hand: 0
-                product_name: Product 1264025
+                product_name: Product 1244025
                 delivery_profile_id: fp_UkLWZg9DAJ
         '404':
           description: variant not found
@@ -24800,7 +26088,7 @@ paths:
                 available_stock: 0
                 reserved_quantity: 0
                 total_on_hand: 0
-                product_name: Product 1285672
+                product_name: Product 1265672
                 delivery_profile_id: fp_UkLWZg9DAJ
       requestBody:
         content:
@@ -27891,6 +29179,12 @@ paths:
         description: Sort by field. Prefix with `-` for descending (e.g., `-created_at`).
         schema:
           type: string
+      - name: expand
+        in: query
+        required: false
+        description: Comma-separated associations to embed (e.g., `commission_rate`).
+        schema:
+          type: string
       responses:
         '200':
           description: commission lines found
@@ -30672,14 +31966,14 @@ paths:
                   type: carrier
                   group: shipping
                   preferences:
-                    api_key: "•••••cret"
                     account_number: '42'
+                    api_key: "•••••cret"
                   preference_schema:
-                  - key: api_key
-                    type: password
-                    default:
                   - key: account_number
                     type: string
+                    default:
+                  - key: api_key
+                    type: password
                     default:
                 meta:
                   page: 1
@@ -30745,14 +32039,14 @@ paths:
                 type: carrier
                 group: shipping
                 preferences:
-                  api_key: "•••••cret"
                   account_number:
+                  api_key: "•••••cret"
                 preference_schema:
-                - key: api_key
-                  type: password
-                  default:
                 - key: account_number
                   type: string
+                  default:
+                - key: api_key
+                  type: password
                   default:
       requestBody:
         content:
@@ -30825,11 +32119,11 @@ paths:
                   description:
                   logo_url:
                   preference_schema:
-                  - key: api_key
-                    type: password
-                    default:
                   - key: account_number
                     type: string
+                    default:
+                  - key: api_key
+                    type: password
                     default:
   "/api/v3/admin/integrations/{id}/test":
     post:
@@ -30942,13 +32236,13 @@ paths:
                   video_embed_url:
                   video_url:
                   poster_url:
-                  original_url: http://localhost:3000/rails/active_storage/blobs/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--ace434315bd7ceca3bf6f89900586c87ca982aa9/thinking-cat.jpg
-                  mini_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--ace434315bd7ceca3bf6f89900586c87ca982aa9/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOlsxMjgsMTI4XSwic2F2ZXIiOnsic3RyaXAiOnRydWUsInF1YWxpdHkiOjc1LCJsb3NzbGVzcyI6ZmFsc2UsImFscGhhX3EiOjg1LCJyZWR1Y3Rpb25fZWZmb3J0Ijo2LCJzbWFydF9zdWJzYW1wbGUiOnRydWV9fSwicHVyIjoidmFyaWF0aW9uIn19--50f930ccecfd125f3ddf7db504d22b945a99d891/thinking-cat.jpg
-                  small_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--ace434315bd7ceca3bf6f89900586c87ca982aa9/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOlsyNTYsMjU2XSwic2F2ZXIiOnsic3RyaXAiOnRydWUsInF1YWxpdHkiOjc1LCJsb3NzbGVzcyI6ZmFsc2UsImFscGhhX3EiOjg1LCJyZWR1Y3Rpb25fZWZmb3J0Ijo2LCJzbWFydF9zdWJzYW1wbGUiOnRydWV9fSwicHVyIjoidmFyaWF0aW9uIn19--d1d1cf39fc886e7480cfd8e916d1a0685ec4c857/thinking-cat.jpg
-                  medium_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--ace434315bd7ceca3bf6f89900586c87ca982aa9/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOls0MDAsNDAwXSwic2F2ZXIiOnsic3RyaXAiOnRydWUsInF1YWxpdHkiOjc1LCJsb3NzbGVzcyI6ZmFsc2UsImFscGhhX3EiOjg1LCJyZWR1Y3Rpb25fZWZmb3J0Ijo2LCJzbWFydF9zdWJzYW1wbGUiOnRydWV9fSwicHVyIjoidmFyaWF0aW9uIn19--9638775e47dbccefcce68415de301381a24cf6cb/thinking-cat.jpg
-                  large_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--ace434315bd7ceca3bf6f89900586c87ca982aa9/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOls3MjAsNzIwXSwic2F2ZXIiOnsic3RyaXAiOnRydWUsInF1YWxpdHkiOjc1LCJsb3NzbGVzcyI6ZmFsc2UsImFscGhhX3EiOjg1LCJyZWR1Y3Rpb25fZWZmb3J0Ijo2LCJzbWFydF9zdWJzYW1wbGUiOnRydWV9fSwicHVyIjoidmFyaWF0aW9uIn19--7ccff41336c788441963bb037ab6df91a7a0916a/thinking-cat.jpg
-                  xlarge_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--ace434315bd7ceca3bf6f89900586c87ca982aa9/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOlsyMDAwLDIwMDBdLCJzYXZlciI6eyJzdHJpcCI6dHJ1ZSwicXVhbGl0eSI6NzUsImxvc3NsZXNzIjpmYWxzZSwiYWxwaGFfcSI6ODUsInJlZHVjdGlvbl9lZmZvcnQiOjYsInNtYXJ0X3N1YnNhbXBsZSI6dHJ1ZX19LCJwdXIiOiJ2YXJpYXRpb24ifX0=--544bf5659d88d021415cb409f5e5c3a3487a3ad6/thinking-cat.jpg
-                  og_image_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--ace434315bd7ceca3bf6f89900586c87ca982aa9/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOlsxMjAwLDYzMF0sInNhdmVyIjp7InN0cmlwIjp0cnVlLCJxdWFsaXR5Ijo3NSwibG9zc2xlc3MiOmZhbHNlLCJhbHBoYV9xIjo4NSwicmVkdWN0aW9uX2VmZm9ydCI6Niwic21hcnRfc3Vic2FtcGxlIjp0cnVlfX0sInB1ciI6InZhcmlhdGlvbiJ9fQ==--038fd6f5ee034c98e4b1c64a7088f177f392376b/thinking-cat.jpg
+                  original_url: http://localhost:3000/rails/active_storage/blobs/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--e2b9d3423fcc7ef12dc22ca681561bb7441a1b28/thinking-cat.jpg
+                  mini_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--e2b9d3423fcc7ef12dc22ca681561bb7441a1b28/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOlsxMjgsMTI4XSwic2F2ZXIiOnsic3RyaXAiOnRydWUsInF1YWxpdHkiOjc1LCJsb3NzbGVzcyI6ZmFsc2UsImFscGhhX3EiOjg1LCJyZWR1Y3Rpb25fZWZmb3J0Ijo2LCJzbWFydF9zdWJzYW1wbGUiOnRydWV9fSwicHVyIjoidmFyaWF0aW9uIn19--da38cae0616f9463732313f1036e8ba6e39de397/thinking-cat.jpg
+                  small_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--e2b9d3423fcc7ef12dc22ca681561bb7441a1b28/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOlsyNTYsMjU2XSwic2F2ZXIiOnsic3RyaXAiOnRydWUsInF1YWxpdHkiOjc1LCJsb3NzbGVzcyI6ZmFsc2UsImFscGhhX3EiOjg1LCJyZWR1Y3Rpb25fZWZmb3J0Ijo2LCJzbWFydF9zdWJzYW1wbGUiOnRydWV9fSwicHVyIjoidmFyaWF0aW9uIn19--854d21ba03e9fbcdeb118a3328190044a41a7be2/thinking-cat.jpg
+                  medium_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--e2b9d3423fcc7ef12dc22ca681561bb7441a1b28/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOls0MDAsNDAwXSwic2F2ZXIiOnsic3RyaXAiOnRydWUsInF1YWxpdHkiOjc1LCJsb3NzbGVzcyI6ZmFsc2UsImFscGhhX3EiOjg1LCJyZWR1Y3Rpb25fZWZmb3J0Ijo2LCJzbWFydF9zdWJzYW1wbGUiOnRydWV9fSwicHVyIjoidmFyaWF0aW9uIn19--015518e905d30d0488e383fdbf3bff9b01ea511f/thinking-cat.jpg
+                  large_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--e2b9d3423fcc7ef12dc22ca681561bb7441a1b28/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOls3MjAsNzIwXSwic2F2ZXIiOnsic3RyaXAiOnRydWUsInF1YWxpdHkiOjc1LCJsb3NzbGVzcyI6ZmFsc2UsImFscGhhX3EiOjg1LCJyZWR1Y3Rpb25fZWZmb3J0Ijo2LCJzbWFydF9zdWJzYW1wbGUiOnRydWV9fSwicHVyIjoidmFyaWF0aW9uIn19--c0bb240c5e833aaa1d69c96d2a8564feac660dcd/thinking-cat.jpg
+                  xlarge_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--e2b9d3423fcc7ef12dc22ca681561bb7441a1b28/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOlsyMDAwLDIwMDBdLCJzYXZlciI6eyJzdHJpcCI6dHJ1ZSwicXVhbGl0eSI6NzUsImxvc3NsZXNzIjpmYWxzZSwiYWxwaGFfcSI6ODUsInJlZHVjdGlvbl9lZmZvcnQiOjYsInNtYXJ0X3N1YnNhbXBsZSI6dHJ1ZX19LCJwdXIiOiJ2YXJpYXRpb24ifX0=--0813161949ca9e43d581901421094f4e9b1c945d/thinking-cat.jpg
+                  og_image_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--e2b9d3423fcc7ef12dc22ca681561bb7441a1b28/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOlsxMjAwLDYzMF0sInNhdmVyIjp7InN0cmlwIjp0cnVlLCJxdWFsaXR5Ijo3NSwibG9zc2xlc3MiOmZhbHNlLCJhbHBoYV9xIjo4NSwicmVkdWN0aW9uX2VmZm9ydCI6Niwic21hcnRfc3Vic2FtcGxlIjp0cnVlfX0sInB1ciI6InZhcmlhdGlvbiJ9fQ==--2a213ff73caecf619081f766907aa78aaed54aeb/thinking-cat.jpg
                   external_references: {}
                   created_at: '2026-01-15T12:00:00.000Z'
                   updated_at: '2026-01-15T12:00:00.000Z'
@@ -30956,10 +32250,10 @@ paths:
                   filename: thinking-cat.jpg
                   content_type: image/jpeg
                   byte_size: 18090
-                  embed_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--ace434315bd7ceca3bf6f89900586c87ca982aa9/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2xpbWl0IjpbMTIwMCwxMjAwXSwic2F2ZXIiOnsic3RyaXAiOnRydWUsInF1YWxpdHkiOjc1LCJsb3NzbGVzcyI6ZmFsc2UsImFscGhhX3EiOjg1LCJyZWR1Y3Rpb25fZWZmb3J0Ijo2LCJzbWFydF9zdWJzYW1wbGUiOnRydWV9fSwicHVyIjoidmFyaWF0aW9uIn19--98205246c10f63c34c6b2245a09752c6664d104d/thinking-cat.jpg
-                  signed_id: eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--ace434315bd7ceca3bf6f89900586c87ca982aa9
+                  embed_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--e2b9d3423fcc7ef12dc22ca681561bb7441a1b28/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2xpbWl0IjpbMTIwMCwxMjAwXSwic2F2ZXIiOnsic3RyaXAiOnRydWUsInF1YWxpdHkiOjc1LCJsb3NzbGVzcyI6ZmFsc2UsImFscGhhX3EiOjg1LCJyZWR1Y3Rpb25fZWZmb3J0Ijo2LCJzbWFydF9zdWJzYW1wbGUiOnRydWV9fSwicHVyIjoidmFyaWF0aW9uIn19--5c1fec5ac6e319124bc46ef8fddb1ae741e2ffe8/thinking-cat.jpg
+                  signed_id: eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--e2b9d3423fcc7ef12dc22ca681561bb7441a1b28
                   viewable_id: prod_UkLWZg9DAJ
-                  download_url: http://localhost:3000/rails/active_storage/blobs/redirect/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--ace434315bd7ceca3bf6f89900586c87ca982aa9/thinking-cat.jpg?disposition=attachment
+                  download_url: http://localhost:3000/rails/active_storage/blobs/redirect/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--e2b9d3423fcc7ef12dc22ca681561bb7441a1b28/thinking-cat.jpg?disposition=attachment
                   metadata: {}
                   viewable_type: product
                 meta:
@@ -31030,13 +32324,13 @@ paths:
                 video_embed_url:
                 video_url:
                 poster_url:
-                original_url: http://localhost:3000/rails/active_storage/blobs/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MiwicHVyIjoiYmxvYl9pZCJ9fQ==--a22d48a8bd861bea39fc00b3a750cbc4cbdd80cb/library-upload.jpg
-                mini_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MiwicHVyIjoiYmxvYl9pZCJ9fQ==--a22d48a8bd861bea39fc00b3a750cbc4cbdd80cb/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOlsxMjgsMTI4XSwic2F2ZXIiOnsic3RyaXAiOnRydWUsInF1YWxpdHkiOjc1LCJsb3NzbGVzcyI6ZmFsc2UsImFscGhhX3EiOjg1LCJyZWR1Y3Rpb25fZWZmb3J0Ijo2LCJzbWFydF9zdWJzYW1wbGUiOnRydWV9fSwicHVyIjoidmFyaWF0aW9uIn19--50f930ccecfd125f3ddf7db504d22b945a99d891/library-upload.jpg
-                small_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MiwicHVyIjoiYmxvYl9pZCJ9fQ==--a22d48a8bd861bea39fc00b3a750cbc4cbdd80cb/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOlsyNTYsMjU2XSwic2F2ZXIiOnsic3RyaXAiOnRydWUsInF1YWxpdHkiOjc1LCJsb3NzbGVzcyI6ZmFsc2UsImFscGhhX3EiOjg1LCJyZWR1Y3Rpb25fZWZmb3J0Ijo2LCJzbWFydF9zdWJzYW1wbGUiOnRydWV9fSwicHVyIjoidmFyaWF0aW9uIn19--d1d1cf39fc886e7480cfd8e916d1a0685ec4c857/library-upload.jpg
-                medium_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MiwicHVyIjoiYmxvYl9pZCJ9fQ==--a22d48a8bd861bea39fc00b3a750cbc4cbdd80cb/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOls0MDAsNDAwXSwic2F2ZXIiOnsic3RyaXAiOnRydWUsInF1YWxpdHkiOjc1LCJsb3NzbGVzcyI6ZmFsc2UsImFscGhhX3EiOjg1LCJyZWR1Y3Rpb25fZWZmb3J0Ijo2LCJzbWFydF9zdWJzYW1wbGUiOnRydWV9fSwicHVyIjoidmFyaWF0aW9uIn19--9638775e47dbccefcce68415de301381a24cf6cb/library-upload.jpg
-                large_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MiwicHVyIjoiYmxvYl9pZCJ9fQ==--a22d48a8bd861bea39fc00b3a750cbc4cbdd80cb/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOls3MjAsNzIwXSwic2F2ZXIiOnsic3RyaXAiOnRydWUsInF1YWxpdHkiOjc1LCJsb3NzbGVzcyI6ZmFsc2UsImFscGhhX3EiOjg1LCJyZWR1Y3Rpb25fZWZmb3J0Ijo2LCJzbWFydF9zdWJzYW1wbGUiOnRydWV9fSwicHVyIjoidmFyaWF0aW9uIn19--7ccff41336c788441963bb037ab6df91a7a0916a/library-upload.jpg
-                xlarge_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MiwicHVyIjoiYmxvYl9pZCJ9fQ==--a22d48a8bd861bea39fc00b3a750cbc4cbdd80cb/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOlsyMDAwLDIwMDBdLCJzYXZlciI6eyJzdHJpcCI6dHJ1ZSwicXVhbGl0eSI6NzUsImxvc3NsZXNzIjpmYWxzZSwiYWxwaGFfcSI6ODUsInJlZHVjdGlvbl9lZmZvcnQiOjYsInNtYXJ0X3N1YnNhbXBsZSI6dHJ1ZX19LCJwdXIiOiJ2YXJpYXRpb24ifX0=--544bf5659d88d021415cb409f5e5c3a3487a3ad6/library-upload.jpg
-                og_image_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MiwicHVyIjoiYmxvYl9pZCJ9fQ==--a22d48a8bd861bea39fc00b3a750cbc4cbdd80cb/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOlsxMjAwLDYzMF0sInNhdmVyIjp7InN0cmlwIjp0cnVlLCJxdWFsaXR5Ijo3NSwibG9zc2xlc3MiOmZhbHNlLCJhbHBoYV9xIjo4NSwicmVkdWN0aW9uX2VmZm9ydCI6Niwic21hcnRfc3Vic2FtcGxlIjp0cnVlfX0sInB1ciI6InZhcmlhdGlvbiJ9fQ==--038fd6f5ee034c98e4b1c64a7088f177f392376b/library-upload.jpg
+                original_url: http://localhost:3000/rails/active_storage/blobs/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MiwicHVyIjoiYmxvYl9pZCJ9fQ==--4c41a6d6bd6ec23a50dfd0d84817c1fe3832d518/library-upload.jpg
+                mini_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MiwicHVyIjoiYmxvYl9pZCJ9fQ==--4c41a6d6bd6ec23a50dfd0d84817c1fe3832d518/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOlsxMjgsMTI4XSwic2F2ZXIiOnsic3RyaXAiOnRydWUsInF1YWxpdHkiOjc1LCJsb3NzbGVzcyI6ZmFsc2UsImFscGhhX3EiOjg1LCJyZWR1Y3Rpb25fZWZmb3J0Ijo2LCJzbWFydF9zdWJzYW1wbGUiOnRydWV9fSwicHVyIjoidmFyaWF0aW9uIn19--da38cae0616f9463732313f1036e8ba6e39de397/library-upload.jpg
+                small_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MiwicHVyIjoiYmxvYl9pZCJ9fQ==--4c41a6d6bd6ec23a50dfd0d84817c1fe3832d518/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOlsyNTYsMjU2XSwic2F2ZXIiOnsic3RyaXAiOnRydWUsInF1YWxpdHkiOjc1LCJsb3NzbGVzcyI6ZmFsc2UsImFscGhhX3EiOjg1LCJyZWR1Y3Rpb25fZWZmb3J0Ijo2LCJzbWFydF9zdWJzYW1wbGUiOnRydWV9fSwicHVyIjoidmFyaWF0aW9uIn19--854d21ba03e9fbcdeb118a3328190044a41a7be2/library-upload.jpg
+                medium_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MiwicHVyIjoiYmxvYl9pZCJ9fQ==--4c41a6d6bd6ec23a50dfd0d84817c1fe3832d518/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOls0MDAsNDAwXSwic2F2ZXIiOnsic3RyaXAiOnRydWUsInF1YWxpdHkiOjc1LCJsb3NzbGVzcyI6ZmFsc2UsImFscGhhX3EiOjg1LCJyZWR1Y3Rpb25fZWZmb3J0Ijo2LCJzbWFydF9zdWJzYW1wbGUiOnRydWV9fSwicHVyIjoidmFyaWF0aW9uIn19--015518e905d30d0488e383fdbf3bff9b01ea511f/library-upload.jpg
+                large_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MiwicHVyIjoiYmxvYl9pZCJ9fQ==--4c41a6d6bd6ec23a50dfd0d84817c1fe3832d518/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOls3MjAsNzIwXSwic2F2ZXIiOnsic3RyaXAiOnRydWUsInF1YWxpdHkiOjc1LCJsb3NzbGVzcyI6ZmFsc2UsImFscGhhX3EiOjg1LCJyZWR1Y3Rpb25fZWZmb3J0Ijo2LCJzbWFydF9zdWJzYW1wbGUiOnRydWV9fSwicHVyIjoidmFyaWF0aW9uIn19--c0bb240c5e833aaa1d69c96d2a8564feac660dcd/library-upload.jpg
+                xlarge_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MiwicHVyIjoiYmxvYl9pZCJ9fQ==--4c41a6d6bd6ec23a50dfd0d84817c1fe3832d518/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOlsyMDAwLDIwMDBdLCJzYXZlciI6eyJzdHJpcCI6dHJ1ZSwicXVhbGl0eSI6NzUsImxvc3NsZXNzIjpmYWxzZSwiYWxwaGFfcSI6ODUsInJlZHVjdGlvbl9lZmZvcnQiOjYsInNtYXJ0X3N1YnNhbXBsZSI6dHJ1ZX19LCJwdXIiOiJ2YXJpYXRpb24ifX0=--0813161949ca9e43d581901421094f4e9b1c945d/library-upload.jpg
+                og_image_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MiwicHVyIjoiYmxvYl9pZCJ9fQ==--4c41a6d6bd6ec23a50dfd0d84817c1fe3832d518/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOlsxMjAwLDYzMF0sInNhdmVyIjp7InN0cmlwIjp0cnVlLCJxdWFsaXR5Ijo3NSwibG9zc2xlc3MiOmZhbHNlLCJhbHBoYV9xIjo4NSwicmVkdWN0aW9uX2VmZm9ydCI6Niwic21hcnRfc3Vic2FtcGxlIjp0cnVlfX0sInB1ciI6InZhcmlhdGlvbiJ9fQ==--2a213ff73caecf619081f766907aa78aaed54aeb/library-upload.jpg
                 external_references: {}
                 created_at: '2026-01-15T12:00:00.000Z'
                 updated_at: '2026-01-15T12:00:00.000Z'
@@ -31044,10 +32338,10 @@ paths:
                 filename: library-upload.jpg
                 content_type: image/jpeg
                 byte_size: 18090
-                embed_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MiwicHVyIjoiYmxvYl9pZCJ9fQ==--a22d48a8bd861bea39fc00b3a750cbc4cbdd80cb/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2xpbWl0IjpbMTIwMCwxMjAwXSwic2F2ZXIiOnsic3RyaXAiOnRydWUsInF1YWxpdHkiOjc1LCJsb3NzbGVzcyI6ZmFsc2UsImFscGhhX3EiOjg1LCJyZWR1Y3Rpb25fZWZmb3J0Ijo2LCJzbWFydF9zdWJzYW1wbGUiOnRydWV9fSwicHVyIjoidmFyaWF0aW9uIn19--98205246c10f63c34c6b2245a09752c6664d104d/library-upload.jpg
-                signed_id: eyJfcmFpbHMiOnsiZGF0YSI6MiwicHVyIjoiYmxvYl9pZCJ9fQ==--a22d48a8bd861bea39fc00b3a750cbc4cbdd80cb
+                embed_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MiwicHVyIjoiYmxvYl9pZCJ9fQ==--4c41a6d6bd6ec23a50dfd0d84817c1fe3832d518/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2xpbWl0IjpbMTIwMCwxMjAwXSwic2F2ZXIiOnsic3RyaXAiOnRydWUsInF1YWxpdHkiOjc1LCJsb3NzbGVzcyI6ZmFsc2UsImFscGhhX3EiOjg1LCJyZWR1Y3Rpb25fZWZmb3J0Ijo2LCJzbWFydF9zdWJzYW1wbGUiOnRydWV9fSwicHVyIjoidmFyaWF0aW9uIn19--5c1fec5ac6e319124bc46ef8fddb1ae741e2ffe8/library-upload.jpg
+                signed_id: eyJfcmFpbHMiOnsiZGF0YSI6MiwicHVyIjoiYmxvYl9pZCJ9fQ==--4c41a6d6bd6ec23a50dfd0d84817c1fe3832d518
                 viewable_id:
-                download_url: http://localhost:3000/rails/active_storage/blobs/redirect/eyJfcmFpbHMiOnsiZGF0YSI6MiwicHVyIjoiYmxvYl9pZCJ9fQ==--a22d48a8bd861bea39fc00b3a750cbc4cbdd80cb/library-upload.jpg?disposition=attachment
+                download_url: http://localhost:3000/rails/active_storage/blobs/redirect/eyJfcmFpbHMiOnsiZGF0YSI6MiwicHVyIjoiYmxvYl9pZCJ9fQ==--4c41a6d6bd6ec23a50dfd0d84817c1fe3832d518/library-upload.jpg?disposition=attachment
                 metadata: {}
                 viewable_type:
               schema:
@@ -31204,13 +32498,13 @@ paths:
                 video_embed_url:
                 video_url:
                 poster_url:
-                original_url: http://localhost:3000/rails/active_storage/blobs/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--ace434315bd7ceca3bf6f89900586c87ca982aa9/thinking-cat.jpg
-                mini_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--ace434315bd7ceca3bf6f89900586c87ca982aa9/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOlsxMjgsMTI4XSwic2F2ZXIiOnsic3RyaXAiOnRydWUsInF1YWxpdHkiOjc1LCJsb3NzbGVzcyI6ZmFsc2UsImFscGhhX3EiOjg1LCJyZWR1Y3Rpb25fZWZmb3J0Ijo2LCJzbWFydF9zdWJzYW1wbGUiOnRydWV9fSwicHVyIjoidmFyaWF0aW9uIn19--50f930ccecfd125f3ddf7db504d22b945a99d891/thinking-cat.jpg
-                small_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--ace434315bd7ceca3bf6f89900586c87ca982aa9/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOlsyNTYsMjU2XSwic2F2ZXIiOnsic3RyaXAiOnRydWUsInF1YWxpdHkiOjc1LCJsb3NzbGVzcyI6ZmFsc2UsImFscGhhX3EiOjg1LCJyZWR1Y3Rpb25fZWZmb3J0Ijo2LCJzbWFydF9zdWJzYW1wbGUiOnRydWV9fSwicHVyIjoidmFyaWF0aW9uIn19--d1d1cf39fc886e7480cfd8e916d1a0685ec4c857/thinking-cat.jpg
-                medium_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--ace434315bd7ceca3bf6f89900586c87ca982aa9/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOls0MDAsNDAwXSwic2F2ZXIiOnsic3RyaXAiOnRydWUsInF1YWxpdHkiOjc1LCJsb3NzbGVzcyI6ZmFsc2UsImFscGhhX3EiOjg1LCJyZWR1Y3Rpb25fZWZmb3J0Ijo2LCJzbWFydF9zdWJzYW1wbGUiOnRydWV9fSwicHVyIjoidmFyaWF0aW9uIn19--9638775e47dbccefcce68415de301381a24cf6cb/thinking-cat.jpg
-                large_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--ace434315bd7ceca3bf6f89900586c87ca982aa9/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOls3MjAsNzIwXSwic2F2ZXIiOnsic3RyaXAiOnRydWUsInF1YWxpdHkiOjc1LCJsb3NzbGVzcyI6ZmFsc2UsImFscGhhX3EiOjg1LCJyZWR1Y3Rpb25fZWZmb3J0Ijo2LCJzbWFydF9zdWJzYW1wbGUiOnRydWV9fSwicHVyIjoidmFyaWF0aW9uIn19--7ccff41336c788441963bb037ab6df91a7a0916a/thinking-cat.jpg
-                xlarge_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--ace434315bd7ceca3bf6f89900586c87ca982aa9/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOlsyMDAwLDIwMDBdLCJzYXZlciI6eyJzdHJpcCI6dHJ1ZSwicXVhbGl0eSI6NzUsImxvc3NsZXNzIjpmYWxzZSwiYWxwaGFfcSI6ODUsInJlZHVjdGlvbl9lZmZvcnQiOjYsInNtYXJ0X3N1YnNhbXBsZSI6dHJ1ZX19LCJwdXIiOiJ2YXJpYXRpb24ifX0=--544bf5659d88d021415cb409f5e5c3a3487a3ad6/thinking-cat.jpg
-                og_image_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--ace434315bd7ceca3bf6f89900586c87ca982aa9/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOlsxMjAwLDYzMF0sInNhdmVyIjp7InN0cmlwIjp0cnVlLCJxdWFsaXR5Ijo3NSwibG9zc2xlc3MiOmZhbHNlLCJhbHBoYV9xIjo4NSwicmVkdWN0aW9uX2VmZm9ydCI6Niwic21hcnRfc3Vic2FtcGxlIjp0cnVlfX0sInB1ciI6InZhcmlhdGlvbiJ9fQ==--038fd6f5ee034c98e4b1c64a7088f177f392376b/thinking-cat.jpg
+                original_url: http://localhost:3000/rails/active_storage/blobs/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--e2b9d3423fcc7ef12dc22ca681561bb7441a1b28/thinking-cat.jpg
+                mini_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--e2b9d3423fcc7ef12dc22ca681561bb7441a1b28/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOlsxMjgsMTI4XSwic2F2ZXIiOnsic3RyaXAiOnRydWUsInF1YWxpdHkiOjc1LCJsb3NzbGVzcyI6ZmFsc2UsImFscGhhX3EiOjg1LCJyZWR1Y3Rpb25fZWZmb3J0Ijo2LCJzbWFydF9zdWJzYW1wbGUiOnRydWV9fSwicHVyIjoidmFyaWF0aW9uIn19--da38cae0616f9463732313f1036e8ba6e39de397/thinking-cat.jpg
+                small_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--e2b9d3423fcc7ef12dc22ca681561bb7441a1b28/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOlsyNTYsMjU2XSwic2F2ZXIiOnsic3RyaXAiOnRydWUsInF1YWxpdHkiOjc1LCJsb3NzbGVzcyI6ZmFsc2UsImFscGhhX3EiOjg1LCJyZWR1Y3Rpb25fZWZmb3J0Ijo2LCJzbWFydF9zdWJzYW1wbGUiOnRydWV9fSwicHVyIjoidmFyaWF0aW9uIn19--854d21ba03e9fbcdeb118a3328190044a41a7be2/thinking-cat.jpg
+                medium_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--e2b9d3423fcc7ef12dc22ca681561bb7441a1b28/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOls0MDAsNDAwXSwic2F2ZXIiOnsic3RyaXAiOnRydWUsInF1YWxpdHkiOjc1LCJsb3NzbGVzcyI6ZmFsc2UsImFscGhhX3EiOjg1LCJyZWR1Y3Rpb25fZWZmb3J0Ijo2LCJzbWFydF9zdWJzYW1wbGUiOnRydWV9fSwicHVyIjoidmFyaWF0aW9uIn19--015518e905d30d0488e383fdbf3bff9b01ea511f/thinking-cat.jpg
+                large_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--e2b9d3423fcc7ef12dc22ca681561bb7441a1b28/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOls3MjAsNzIwXSwic2F2ZXIiOnsic3RyaXAiOnRydWUsInF1YWxpdHkiOjc1LCJsb3NzbGVzcyI6ZmFsc2UsImFscGhhX3EiOjg1LCJyZWR1Y3Rpb25fZWZmb3J0Ijo2LCJzbWFydF9zdWJzYW1wbGUiOnRydWV9fSwicHVyIjoidmFyaWF0aW9uIn19--c0bb240c5e833aaa1d69c96d2a8564feac660dcd/thinking-cat.jpg
+                xlarge_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--e2b9d3423fcc7ef12dc22ca681561bb7441a1b28/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOlsyMDAwLDIwMDBdLCJzYXZlciI6eyJzdHJpcCI6dHJ1ZSwicXVhbGl0eSI6NzUsImxvc3NsZXNzIjpmYWxzZSwiYWxwaGFfcSI6ODUsInJlZHVjdGlvbl9lZmZvcnQiOjYsInNtYXJ0X3N1YnNhbXBsZSI6dHJ1ZX19LCJwdXIiOiJ2YXJpYXRpb24ifX0=--0813161949ca9e43d581901421094f4e9b1c945d/thinking-cat.jpg
+                og_image_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--e2b9d3423fcc7ef12dc22ca681561bb7441a1b28/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOlsxMjAwLDYzMF0sInNhdmVyIjp7InN0cmlwIjp0cnVlLCJxdWFsaXR5Ijo3NSwibG9zc2xlc3MiOmZhbHNlLCJhbHBoYV9xIjo4NSwicmVkdWN0aW9uX2VmZm9ydCI6Niwic21hcnRfc3Vic2FtcGxlIjp0cnVlfX0sInB1ciI6InZhcmlhdGlvbiJ9fQ==--2a213ff73caecf619081f766907aa78aaed54aeb/thinking-cat.jpg
                 external_references: {}
                 created_at: '2026-01-15T12:00:00.000Z'
                 updated_at: '2026-01-15T12:00:00.000Z'
@@ -31218,10 +32512,10 @@ paths:
                 filename: thinking-cat.jpg
                 content_type: image/jpeg
                 byte_size: 18090
-                embed_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--ace434315bd7ceca3bf6f89900586c87ca982aa9/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2xpbWl0IjpbMTIwMCwxMjAwXSwic2F2ZXIiOnsic3RyaXAiOnRydWUsInF1YWxpdHkiOjc1LCJsb3NzbGVzcyI6ZmFsc2UsImFscGhhX3EiOjg1LCJyZWR1Y3Rpb25fZWZmb3J0Ijo2LCJzbWFydF9zdWJzYW1wbGUiOnRydWV9fSwicHVyIjoidmFyaWF0aW9uIn19--98205246c10f63c34c6b2245a09752c6664d104d/thinking-cat.jpg
-                signed_id: eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--ace434315bd7ceca3bf6f89900586c87ca982aa9
+                embed_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--e2b9d3423fcc7ef12dc22ca681561bb7441a1b28/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2xpbWl0IjpbMTIwMCwxMjAwXSwic2F2ZXIiOnsic3RyaXAiOnRydWUsInF1YWxpdHkiOjc1LCJsb3NzbGVzcyI6ZmFsc2UsImFscGhhX3EiOjg1LCJyZWR1Y3Rpb25fZWZmb3J0Ijo2LCJzbWFydF9zdWJzYW1wbGUiOnRydWV9fSwicHVyIjoidmFyaWF0aW9uIn19--5c1fec5ac6e319124bc46ef8fddb1ae741e2ffe8/thinking-cat.jpg
+                signed_id: eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--e2b9d3423fcc7ef12dc22ca681561bb7441a1b28
                 viewable_id: prod_gbHJdmfrXB
-                download_url: http://localhost:3000/rails/active_storage/blobs/redirect/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--ace434315bd7ceca3bf6f89900586c87ca982aa9/thinking-cat.jpg?disposition=attachment
+                download_url: http://localhost:3000/rails/active_storage/blobs/redirect/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--e2b9d3423fcc7ef12dc22ca681561bb7441a1b28/thinking-cat.jpg?disposition=attachment
                 metadata: {}
                 viewable_type: product
               schema:
@@ -34381,6 +35675,9 @@ tags:
     product operations
 - name: Policies
   description: The store's legal documents — terms of service, privacy, returns, shipping
+- name: Reasons
+  description: Merchant-owned vocabularies for why a return, claim, refund or cancellation
+    happened
 - name: Promotions
   description: Promotions, promotion rules, promotion actions, and coupon codes
 - name: Refunds
@@ -36047,6 +37344,8 @@ components:
         seller_name:
           type: string
           nullable: true
+        commission_rate:
+          "$ref": "#/components/schemas/CommissionRate"
       required:
       - id
       - kind
@@ -38386,6 +39685,29 @@ components:
       - created_at
       - updated_at
       x-typelizer: true
+    OrderCancellationReason:
+      type: object
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+        active:
+          type: boolean
+        created_at:
+          type: string
+        updated_at:
+          type: string
+        can_be_deleted:
+          type: boolean
+      required:
+      - id
+      - name
+      - active
+      - created_at
+      - updated_at
+      - can_be_deleted
+      x-typelizer: true
     OrderGroup:
       type: object
       properties:
@@ -38665,6 +39987,9 @@ components:
           type: string
         metadata:
           type: object
+        cancel_note:
+          type: string
+          nullable: true
         canceled_at:
           type: string
           nullable: true
@@ -38705,6 +40030,12 @@ components:
         canceler_id:
           type: string
           nullable: true
+        cancel_reason_id:
+          type: string
+          nullable: true
+        cancel_reason_name:
+          type: string
+          nullable: true
         created_by_id:
           type: string
           nullable: true
@@ -38731,6 +40062,8 @@ components:
           "$ref": "#/components/schemas/AdminUser"
         canceler:
           "$ref": "#/components/schemas/AdminUser"
+        cancel_reason:
+          "$ref": "#/components/schemas/OrderCancellationReason"
         created_by:
           "$ref": "#/components/schemas/AdminUser"
         returns:
@@ -38802,6 +40135,7 @@ components:
       - payment_total
       - display_payment_total
       - metadata
+      - cancel_note
       - canceled_at
       - approved_at
       - created_at
@@ -38815,6 +40149,8 @@ components:
       - internal_note_html
       - approver_id
       - canceler_id
+      - cancel_reason_id
+      - cancel_reason_name
       - created_by_id
       - customer_id
       x-typelizer: true
