@@ -2647,7 +2647,6 @@
           "remove_gift_card_message": "Retirer cette carte cadeau de la commande ?",
           "remove_item_message": "Retirer cet article de la commande ?",
           "remove_store_credit_message": "Retirer l'avoir de la commande ?",
-          "resume_message": "Reprendre cette commande annulée ?",
           "ship_message": "Expédier cet envoi ?",
           "void_message": "Annuler ce paiement ?"
         },
@@ -2672,8 +2671,7 @@
           "approve_failed": "Échec de l'approbation de la commande",
           "cancel_failed": "Échec de l'annulation de la commande",
           "complete_failed": "Échec de la finalisation de la commande",
-          "confirmation_send_failed": "Échec de l'envoi de la confirmation",
-          "resume_failed": "Échec de la reprise de la commande"
+          "confirmation_send_failed": "Échec de l'envoi de la confirmation"
         },
         "fulfillments": {
           "add_tracking": "Ajouter un suivi",
@@ -2732,7 +2730,6 @@
           "captured": "Paiement capturé",
           "completed": "Commande finalisée",
           "confirmation_sent": "Confirmation envoyée",
-          "resumed": "Commande reprise",
           "shipped": "Envoi expédié",
           "voided": "Paiement annulé"
         },
@@ -3034,7 +3031,6 @@
             "capture": "Capturer",
             "mark_paid": "Marquer comme payée",
             "refund": "Rembourser",
-            "resume": "Reprendre",
             "ship": "Marquer comme expédiée",
             "void": "Annuler"
           },

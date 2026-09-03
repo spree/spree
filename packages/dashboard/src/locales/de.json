@@ -2647,7 +2647,6 @@
           "remove_gift_card_message": "Diese Geschenkkarte aus dem Auftrag entfernen?",
           "remove_item_message": "Diesen Artikel aus dem Auftrag entfernen?",
           "remove_store_credit_message": "Guthaben aus dem Auftrag entfernen?",
-          "resume_message": "Diesen stornierten Auftrag wieder aufnehmen?",
           "ship_message": "Diese Lieferung versenden?",
           "void_message": "Diese Zahlung stornieren?"
         },
@@ -2672,8 +2671,7 @@
           "approve_failed": "Auftrag konnte nicht genehmigt werden",
           "cancel_failed": "Auftrag konnte nicht storniert werden",
           "complete_failed": "Auftrag konnte nicht abgeschlossen werden",
-          "confirmation_send_failed": "Bestätigung konnte nicht gesendet werden",
-          "resume_failed": "Auftrag konnte nicht wieder aufgenommen werden"
+          "confirmation_send_failed": "Bestätigung konnte nicht gesendet werden"
         },
         "fulfillments": {
           "add_tracking": "Sendungsverfolgung hinzufügen",
@@ -2732,7 +2730,6 @@
           "captured": "Zahlung eingezogen",
           "completed": "Auftrag abgeschlossen",
           "confirmation_sent": "Bestätigung gesendet",
-          "resumed": "Auftrag wieder aufgenommen",
           "shipped": "Lieferung versendet",
           "voided": "Zahlung storniert"
         },
@@ -3034,7 +3031,6 @@
             "capture": "Einziehen",
             "mark_paid": "Als bezahlt markieren",
             "refund": "Erstatten",
-            "resume": "Fortsetzen",
             "ship": "Als versendet markieren",
             "void": "Stornieren"
           },

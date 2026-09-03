@@ -437,36 +437,6 @@ RSpec.describe 'Admin Orders API', type: :request, swagger_doc: 'api-reference/a
     end
   end
 
-  path '/api/v3/admin/orders/{id}/resume' do
-    patch 'Resume a canceled order' do
-      tags 'Orders'
-      produces 'application/json'
-      security [api_key: [], bearer_auth: []]
-      description 'Resumes a previously canceled order.'
-      admin_scope :write, :orders
-
-      admin_sdk_example 'orders/resume'
-
-      parameter name: 'x-spree-api-key', in: :header, type: :string, required: true
-      parameter name: :Authorization, in: :header, type: :string, required: true,
-                description: 'Bearer token for admin authentication'
-      parameter name: :id, in: :path, type: :string, required: true,
-                description: 'Order ID'
-
-      response '200', 'order resumed' do
-        let(:'x-spree-api-key') { secret_api_key.plaintext_token }
-        let!(:order) { create(:completed_order_with_totals, store: store) }
-        let(:id) { order.prefixed_id }
-
-        before do
-          Spree.order_cancel_workflow.call(order: order, canceler: admin_user)
-        end
-
-        run_test!
-      end
-    end
-  end
-
   path '/api/v3/admin/orders/{id}/resend_confirmation' do
     post 'Resend confirmation email' do
       tags 'Orders'

@@ -474,8 +474,12 @@ RSpec.describe Spree::Api::V3::Admin::OrdersController, type: :controller do
         end
       end
 
-      let!(:default_location)   { create(:stock_location, name: 'NYC default', default: true,  country: country, state: state) }
-      let!(:preferred_location) { create(:stock_location, name: 'LA preferred', default: false, country: country, state: state) }
+      let!(:default_location) do
+        create(:stock_location, name: 'NYC default', default: true, country: country, state: state)
+      end
+      let!(:preferred_location) do
+        create(:stock_location, name: 'LA preferred', default: false, country: country, state: state)
+      end
 
       let(:variant) { create(:variant) }
 
@@ -980,8 +984,8 @@ RSpec.describe Spree::Api::V3::Admin::OrdersController, type: :controller do
       let(:params) { { id: order.prefixed_id, refund_payments: 'true' } }
 
       it 'asks the workflow to refund what the order has been paid' do
-        expect(Spree.order_cancel_workflow).to receive(:call).
-          with(hash_including(refund_payments: true, refund_amount: nil)).and_call_original
+        expect(Spree.order_cancel_workflow).to receive(:call)
+          .with(hash_including(refund_payments: true, refund_amount: nil)).and_call_original
 
         subject
 
@@ -992,8 +996,8 @@ RSpec.describe Spree::Api::V3::Admin::OrdersController, type: :controller do
         let(:params) { { id: order.prefixed_id, refund_payments: 'true', refund_amount: '10.00' } }
 
         it 'passes the cap through' do
-          expect(Spree.order_cancel_workflow).to receive(:call).
-            with(hash_including(refund_payments: true, refund_amount: '10.00')).and_call_original
+          expect(Spree.order_cancel_workflow).to receive(:call)
+            .with(hash_including(refund_payments: true, refund_amount: '10.00')).and_call_original
 
           subject
         end
@@ -1012,8 +1016,8 @@ RSpec.describe Spree::Api::V3::Admin::OrdersController, type: :controller do
     # Releasing the gateway's hold is automatic; handing back money already
     # taken is asked for, as it is on every other major platform.
     it 'does not refund unless asked' do
-      expect(Spree.order_cancel_workflow).to receive(:call).
-        with(hash_including(refund_payments: false)).and_call_original
+      expect(Spree.order_cancel_workflow).to receive(:call)
+        .with(hash_including(refund_payments: false)).and_call_original
 
       subject
     end
@@ -1072,24 +1076,6 @@ RSpec.describe Spree::Api::V3::Admin::OrdersController, type: :controller do
 
       expect(response).to have_http_status(:ok)
       expect(json_response['approved_at']).to be_present
-    end
-  end
-
-  describe 'PATCH #resume' do
-    let!(:order) { create(:completed_order_with_totals, store: store) }
-
-    subject { patch :resume, params: { id: order.prefixed_id }, as: :json }
-
-    before do
-      request.headers.merge!(headers)
-      Spree.order_cancel_workflow.call(order: order, canceler: admin_user)
-    end
-
-    it 'resumes the canceled order' do
-      subject
-
-      expect(response).to have_http_status(:ok)
-      expect(order.reload).not_to be_canceled
     end
   end
 

@@ -1251,9 +1251,6 @@ export class AdminClient {
     approve: (id: string, options?: RequestOptions): Promise<Order> =>
       this.request<Order>('PATCH', `/orders/${id}/approve`, options),
 
-    resume: (id: string, options?: RequestOptions): Promise<Order> =>
-      this.request<Order>('PATCH', `/orders/${id}/resume`, options),
-
     resendConfirmation: (id: string, options?: RequestOptions): Promise<void> =>
       this.request<void>('POST', `/orders/${id}/resend_confirmation`, options),
 

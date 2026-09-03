@@ -12,7 +12,6 @@ import {
   ExternalLinkIcon,
   MailIcon,
   PencilIcon,
-  RotateCcwIcon,
   ShieldCheckIcon,
   XCircleIcon,
 } from '@spree/dashboard-ui/icons'
@@ -44,12 +43,6 @@ export function OrderHeader({ order }: { order: Order }) {
     invalidate: [orderQueryKey(orderId)],
     successMessage: t('admin.orders.detail.messages.approved'),
     errorMessage: t('admin.orders.detail.errors.approve_failed'),
-  })
-  const resumeMutation = useResourceMutation({
-    mutationFn: () => adminClient.orders.resume(orderId),
-    invalidate: [orderQueryKey(orderId)],
-    successMessage: t('admin.orders.detail.messages.resumed'),
-    errorMessage: t('admin.orders.detail.errors.resume_failed'),
   })
   const resendMutation = useResourceMutation({
     mutationFn: () => adminClient.orders.resendConfirmation(orderId, {}),
@@ -87,24 +80,6 @@ export function OrderHeader({ order }: { order: Order }) {
         >
           <ShieldCheckIcon className="size-4" />
           {t('admin.pages.orders.detail.actions.approve')}
-        </DropdownMenuItem>
-      )}
-      {order.status === 'canceled' && (
-        <DropdownMenuItem
-          onClick={async () => {
-            if (
-              await confirm({
-                message: t('admin.orders.detail.confirm.resume_message'),
-                confirmLabel: t('admin.pages.orders.detail.actions.resume'),
-              })
-            ) {
-              resumeMutation.mutate(undefined)
-            }
-          }}
-          disabled={resumeMutation.isPending}
-        >
-          <RotateCcwIcon className="size-4" />
-          {t('admin.pages.orders.detail.actions.resume')}
         </DropdownMenuItem>
       )}
       {order.completed_at && (

@@ -50,7 +50,6 @@ describe('orders', () => {
       ['complete', 'complete'],
       ['cancel', 'cancel'],
       ['approve', 'approve'],
-      ['resume', 'resume'],
     ] as const)('PATCHes /orders/:id/%s', async (method, segment) => {
       let hit = false
       server.use(
@@ -60,7 +59,6 @@ describe('orders', () => {
         }),
       )
 
-      // resume takes no params; the others accept an optional params arg.
       await (createTestClient().orders as Record<string, (...args: unknown[]) => Promise<unknown>>)[
         method
       ]('order_abc123')

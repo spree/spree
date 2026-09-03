@@ -2665,7 +2665,6 @@
           "remove_gift_card_message": "هل تريد إزالة بطاقة الهدايا هذه من الطلب؟",
           "remove_item_message": "هل تريد إزالة هذا العنصر من الطلب؟",
           "remove_store_credit_message": "هل تريد إزالة رصيد المتجر من الطلب؟",
-          "resume_message": "هل تريد استئناف هذا الطلب الملغى؟",
           "ship_message": "شحن هذا الوفاء؟",
           "void_message": "Void هذه الدفعة؟"
         },
@@ -2690,8 +2689,7 @@
           "approve_failed": "فشلت الموافقة على الطلب",
           "cancel_failed": "فشل في إلغاء الطلب",
           "complete_failed": "فشل في إكمال الطلب",
-          "confirmation_send_failed": "فشل في إرسال التأكيد",
-          "resume_failed": "فشل في استئناف الطلب"
+          "confirmation_send_failed": "فشل في إرسال التأكيد"
         },
         "fulfillments": {
           "add_tracking": "إضافة تتبع",
@@ -2749,7 +2747,6 @@
           "captured": "القبض على الدفع",
           "completed": "اكتمل الطلب",
           "confirmation_sent": "تم إرسال التأكيد",
-          "resumed": "تم استئناف الطلب",
           "shipped": "Fulfillment تم الشحن",
           "voided": "تم إلغاء الدفع"
         },
@@ -3051,7 +3048,6 @@
             "capture": "يأسر",
             "mark_paid": "وضع علامة على أنه مدفوع",
             "refund": "استرداد",
-            "resume": "سيرة ذاتية",
             "ship": "وضع علامة على أنه تم الشحن",
             "void": "Void"
           },

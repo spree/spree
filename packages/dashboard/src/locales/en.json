@@ -2647,7 +2647,6 @@
           "remove_gift_card_message": "Remove this gift card from the order?",
           "remove_item_message": "Remove this item from the order?",
           "remove_store_credit_message": "Remove store credit from the order?",
-          "resume_message": "Resume this canceled order?",
           "ship_message": "Ship this fulfillment?",
           "void_message": "Void this payment?"
         },
@@ -2672,8 +2671,7 @@
           "approve_failed": "Failed to approve order",
           "cancel_failed": "Failed to cancel order",
           "complete_failed": "Failed to complete order",
-          "confirmation_send_failed": "Failed to send confirmation",
-          "resume_failed": "Failed to resume order"
+          "confirmation_send_failed": "Failed to send confirmation"
         },
         "fulfillments": {
           "add_tracking": "Add tracking",
@@ -2732,7 +2730,6 @@
           "captured": "Payment captured",
           "completed": "Order completed",
           "confirmation_sent": "Confirmation sent",
-          "resumed": "Order resumed",
           "shipped": "Fulfillment shipped",
           "voided": "Payment voided"
         },
@@ -3034,7 +3031,6 @@
             "capture": "Capture",
             "mark_paid": "Mark as paid",
             "refund": "Refund",
-            "resume": "Resume",
             "ship": "Mark as shipped",
             "void": "Void"
           },

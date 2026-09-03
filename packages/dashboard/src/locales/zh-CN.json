@@ -2640,7 +2640,6 @@
           "remove_gift_card_message": "从订单中移除此礼品卡吗？",
           "remove_item_message": "从订单中移除此商品吗？",
           "remove_store_credit_message": "从订单中移除商店积分吗？",
-          "resume_message": "恢复此已取消的订单吗？",
           "ship_message": "发货此履约单吗？",
           "void_message": "作废此付款吗？"
         },
@@ -2665,8 +2664,7 @@
           "approve_failed": "批准订单失败",
           "cancel_failed": "取消订单失败",
           "complete_failed": "完成订单失败",
-          "confirmation_send_failed": "发送确认失败",
-          "resume_failed": "恢复订单失败"
+          "confirmation_send_failed": "发送确认失败"
         },
         "fulfillments": {
           "add_tracking": "添加物流跟踪",
@@ -2724,7 +2722,6 @@
           "captured": "付款已收取",
           "completed": "订单已完成",
           "confirmation_sent": "确认信息已发送",
-          "resumed": "订单已恢复",
           "shipped": "发货已发出",
           "voided": "付款已作废"
         },
@@ -3026,7 +3023,6 @@
             "capture": "扣款",
             "mark_paid": "标记为已付款",
             "refund": "退款",
-            "resume": "恢复",
             "ship": "标记为已发货",
             "void": "作废"
           },

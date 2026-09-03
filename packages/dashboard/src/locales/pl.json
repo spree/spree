@@ -2667,7 +2667,6 @@
           "remove_gift_card_message": "Usunąć tę kartę podarunkową z zamówienia?",
           "remove_item_message": "Usunąć tę pozycję z zamówienia?",
           "remove_store_credit_message": "Usunąć kredyt sklepowy z zamówienia?",
-          "resume_message": "Wznowić to anulowane zamówienie?",
           "ship_message": "Wysłać tę realizację?",
           "void_message": "Unieważnić tę płatność?"
         },
@@ -2692,8 +2691,7 @@
           "approve_failed": "Nie udało się zatwierdzić zamówienia",
           "cancel_failed": "Nie udało się anulować zamówienia",
           "complete_failed": "Nie udało się sfinalizować zamówienia",
-          "confirmation_send_failed": "Nie udało się wysłać potwierdzenia",
-          "resume_failed": "Nie udało się wznowić zamówienia"
+          "confirmation_send_failed": "Nie udało się wysłać potwierdzenia"
         },
         "fulfillments": {
           "add_tracking": "Dodaj śledzenie",
@@ -2754,7 +2752,6 @@
           "captured": "Płatność pobrana",
           "completed": "Zamówienie sfinalizowane",
           "confirmation_sent": "Potwierdzenie wysłane",
-          "resumed": "Zamówienie wznowione",
           "shipped": "Realizacja wysłana",
           "voided": "Płatność unieważniona"
         },
@@ -3062,7 +3059,6 @@
             "capture": "Pobierz",
             "mark_paid": "Oznacz jako opłacone",
             "refund": "Zwrot środków",
-            "resume": "Wznów",
             "ship": "Oznacz jako wysłane",
             "void": "Unieważnij"
           },

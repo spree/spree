@@ -97,14 +97,6 @@ module Spree
             end
           end
 
-          # PATCH /api/v3/admin/orders/:id/resume
-          def resume
-            with_order_lock do
-              @resource.resume!
-              render json: serialize_resource(@resource.reload)
-            end
-          end
-
           # POST /api/v3/admin/orders/:id/resend_confirmation
           def resend_confirmation
             @resource.publish_event('order.resend_confirmation_email')

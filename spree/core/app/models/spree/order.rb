@@ -969,22 +969,14 @@ module Spree
     end
 
     # Machine-free lifecycle: cancellation runs through the
-    # {Spree::Orders::Cancel} workflow; resume flips +status+ back and runs
-    # the same side effects the machine transition ran.
+    # {Spree::Orders::Cancel} workflow. There is no way back — a canceled
+    # order stays canceled, as it does on every comparable platform.
     def cancel
       Spree.order_cancel_workflow.call(order: self).success?
     end
 
     def cancel!
       cancel || raise(ActiveRecord::RecordInvalid.new(self))
-    end
-
-    def resume
-      Spree.order_resume_workflow.call(order: self).success?
-    end
-
-    def resume!
-      resume || raise(ActiveRecord::RecordInvalid.new(self))
     end
 
     # Approves the order and records the approver.
