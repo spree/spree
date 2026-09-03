@@ -86,4 +86,20 @@ RSpec.describe Spree::DataRequests::Create do
 
     expect(erasure.value).to be_erasure
   end
+
+  # A staff export opens its own row and answers it inline. That row is not the
+  # customer's request, so it must not stand in for one: handing it back would
+  # close their request with a file they can never download.
+  it 'does not hand back a request a staff member opened' do
+    staff_row = Spree::DataRequest.create!(
+      store: store, customer: customer, kind: Spree::DataRequest::ACCESS,
+      email: customer.email, requested_by: create(:admin_user)
+    )
+
+    result = described_class.call(store: store, customer: customer,
+                                  kind: Spree::DataRequest::ACCESS, process: false)
+
+    expect(result.value).not_to eq(staff_row)
+    expect(result.value.requested_by).to be_nil
+  end
 end

@@ -226,6 +226,23 @@ RSpec.describe Spree::Customers::Anonymize do
     end
   end
 
+  # A split checkout keeps its own address snapshots on the group, beside the
+  # ones on each seller's order.
+  describe 'a checkout split across sellers' do
+    let!(:address) { create(:address, address1: '5 Baker Street', first_name: 'Ada') }
+    let!(:order_group) do
+      create(:order_group, store: store, customer: customer).tap do |group|
+        group.update_columns(bill_address_id: address.id, ship_address_id: address.id)
+      end
+    end
+
+    it 'redacts the addresses the group holds' do
+      result
+
+      expect(address.reload.address1).to eq('Redacted')
+    end
+  end
+
   describe 'a purchase made as a guest, before the account existed' do
     let!(:guest_order) do
       create(:completed_order_with_totals, store: store).tap do |order|

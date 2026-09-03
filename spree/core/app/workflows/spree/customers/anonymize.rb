@@ -138,11 +138,14 @@ module Spree
       # order keeps them.
       #
       # Carts are their own table since the Cart/Order split, so an abandoned
-      # checkout holds its own copy of wherever the person was having it sent.
+      # checkout holds its own copy of wherever the person was having it sent,
+      # and a checkout split across sellers keeps one on the group beside the
+      # copies on each seller's order.
       def anonymize_order_addresses
         address_ids = [
           owned_purchases(Spree::Order).pluck(:bill_address_id, :ship_address_id),
-          owned_purchases(Spree::Cart).pluck(:bill_address_id, :ship_address_id)
+          owned_purchases(Spree::Cart).pluck(:bill_address_id, :ship_address_id),
+          owned_purchases(Spree::OrderGroup).pluck(:bill_address_id, :ship_address_id)
         ].flatten.compact.uniq
         return if address_ids.empty?
 

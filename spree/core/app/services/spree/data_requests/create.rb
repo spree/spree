@@ -64,8 +64,12 @@ module Spree
 
       private
 
+      # Only the person's own requests. A staff member exporting from the admin
+      # opens their own row and answers it inline, and handing that back here
+      # would close the customer's request with a file they can never download.
       def in_flight_request(store:, customer:, kind:)
-        Spree::DataRequest.where(store_id: store.id, customer_id: customer.id, kind: kind.to_s).
+        Spree::DataRequest.where(store_id: store.id, customer_id: customer.id, kind: kind.to_s,
+                                 requested_by_id: nil).
           in_progress.recent_first.first
       end
     end
