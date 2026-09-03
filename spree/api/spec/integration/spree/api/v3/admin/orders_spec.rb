@@ -366,6 +366,13 @@ RSpec.describe 'Admin Orders API', type: :request, swagger_doc: 'api-reference/a
         `cancel_reason_id` records why, from the store's own cancellation-reason
         vocabulary (`/admin/order_cancellation_reasons`), and `cancel_note` is a
         staff-facing note; both are shown on the order afterwards.
+
+        Stock is always released — the goods are not going out either way.
+        Money is not: set `refund_payments: true` to give back what the order
+        has been paid, optionally capped by `refund_amount`. Without it,
+        captured payments are canceled at the gateway and any authorization is
+        released, but nothing is refunded.
+
         Set `notify_customer: true` to send the order cancellation email.
       DESC
       admin_scope :write, :orders
@@ -382,6 +389,8 @@ RSpec.describe 'Admin Orders API', type: :request, swagger_doc: 'api-reference/a
         properties: {
           cancel_reason_id: { type: :string, description: "Why the order was canceled — the id of one of the store's cancellation reasons." },
           cancel_note: { type: :string, description: 'Staff-facing note about the cancellation.' },
+          refund_payments: { type: :boolean, description: 'Refund captured payments as part of the cancellation.' },
+          refund_amount: { type: :string, description: 'How much to refund. Defaults to everything the order has been paid.' },
           notify_customer: { type: :boolean, description: 'Send the order cancellation email after canceling.' }
         }
       }

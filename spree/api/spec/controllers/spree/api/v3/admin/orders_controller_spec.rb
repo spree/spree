@@ -975,6 +975,38 @@ RSpec.describe Spree::Api::V3::Admin::OrdersController, type: :controller do
       end
     end
 
+    context 'with refund_payments' do
+      let!(:order) { create(:completed_order_with_totals, store: store) }
+      let(:params) { { id: order.prefixed_id, refund_payments: 'true' } }
+
+      it 'asks the workflow to refund what the order has been paid' do
+        expect(Spree.order_cancel_workflow).to receive(:call).
+          with(hash_including(refund_payments: true, refund_amount: nil)).and_call_original
+
+        subject
+
+        expect(response).to have_http_status(:ok)
+      end
+
+      context 'capped by refund_amount' do
+        let(:params) { { id: order.prefixed_id, refund_payments: 'true', refund_amount: '10.00' } }
+
+        it 'passes the cap through' do
+          expect(Spree.order_cancel_workflow).to receive(:call).
+            with(hash_including(refund_payments: true, refund_amount: '10.00')).and_call_original
+
+          subject
+        end
+      end
+    end
+
+    it 'does not refund unless asked' do
+      expect(Spree.order_cancel_workflow).to receive(:call).
+        with(hash_including(refund_payments: false)).and_call_original
+
+      subject
+    end
+
     context 'with a reason belonging to another store' do
       let(:reason) { create(:order_cancellation_reason, store: create(:store)) }
       let(:params) { { id: order.prefixed_id, cancel_reason_id: reason.prefixed_id } }

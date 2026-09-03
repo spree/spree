@@ -531,6 +531,13 @@ export interface OrderCancelParams {
   cancel_reason_id?: string
   /** Staff-facing note shown on the order. */
   cancel_note?: string
+  /** Refund captured payments as part of the cancellation. */
+  refund_payments?: boolean
+  /**
+   * How much to refund, defaulting to everything the order has been paid.
+   * Decimal amount; see `PaymentCreateParams.amount` for the string rationale.
+   */
+  refund_amount?: string | number
   notify_customer?: boolean
 }
 

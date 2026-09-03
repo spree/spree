@@ -76,6 +76,8 @@ module Spree
                 canceler: try_spree_current_user,
                 reason: cancel_reason,
                 note: params[:cancel_note].presence,
+                refund_payments: params[:refund_payments].to_b,
+                refund_amount: params[:refund_amount].presence,
                 notify_customer: params[:notify_customer].to_b
               )
 
