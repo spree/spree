@@ -127,6 +127,59 @@ module Spree
       end
     end
 
+    describe 'gift card' do
+      let(:customer) { create(:user) }
+      let(:cart) { create(:cart_ready_for_delivery, store: store, line_items_count: 1, customer: customer) }
+
+      before do
+        create(:store_credit_payment_method, store: store) unless Spree::PaymentMethod::StoreCredit.exists?
+        cart.recalculate_totals!
+      end
+
+      context 'when the gift card fully covers the order' do
+        let(:gift_card) { create(:gift_card, store: store, amount: cart.total, customer: customer) }
+        let(:ready_cart) do
+          cart.apply_gift_card(gift_card)
+          cart.reload
+        end
+
+        it 'carries the gift card onto the completed order' do
+          order = described_class.call(cart: ready_cart).value
+
+          expect(order.gift_card_id).to eq(gift_card.id)
+          expect(order.gift_card).to eq(gift_card)
+          expect(order.gift_card_total).to eq(ready_cart.total)
+        end
+
+        it 'redeems the gift card when the order is placed' do
+          expect { described_class.call(cart: ready_cart) }
+            .to change { gift_card.reload.status }.from('active').to('redeemed')
+
+          expect(gift_card.amount_used).to eq(ready_cart.total)
+          expect(gift_card.redeemed_at).to be_present
+        end
+      end
+
+      context 'when the gift card covers only part of the total' do
+        let(:gift_card) { create(:gift_card, store: store, amount: cart.total + 1, customer: customer) }
+        let(:ready_cart) do
+          cart.apply_gift_card(gift_card)
+          cart.reload
+        end
+
+        it 'marks the gift card partially redeemed' do
+          expect { described_class.call(cart: ready_cart) }
+            .to change { gift_card.reload.status }.from('active').to('partially_redeemed')
+
+          order = Spree::Order.find_by(cart_id: ready_cart.id)
+          expect(order.gift_card_id).to eq(gift_card.id)
+          expect(order.gift_card_total).to eq(ready_cart.total)
+          expect(gift_card.amount_used).to eq(ready_cart.total)
+          expect(gift_card.redeemed_at).to be_nil
+        end
+      end
+    end
+
     describe 'tax lifecycle' do
       it 'tells the tax engine the sale is final' do
         provider = instance_double(Spree::TaxProvider::Internal, estimate: nil, commit: nil)

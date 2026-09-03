@@ -223,6 +223,7 @@ module Spree
             preferred_stock_location_id: cart.preferred_stock_location_id,
             customer_note: cart.customer_note,
             po_number: cart.po_number,
+            gift_card: cart.gift_card,
             last_ip_address: cart.last_ip_address,
             ship_address: cart.ship_address&.snapshot,
             bill_address: cart.bill_address&.snapshot
