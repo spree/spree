@@ -1418,9 +1418,6 @@ export class AdminClient {
       cancel: (orderId: string, id: string, options?: RequestOptions): Promise<Fulfillment> =>
         this.request<Fulfillment>('PATCH', `/orders/${orderId}/fulfillments/${id}/cancel`, options),
 
-      resume: (orderId: string, id: string, options?: RequestOptions): Promise<Fulfillment> =>
-        this.request<Fulfillment>('PATCH', `/orders/${orderId}/fulfillments/${id}/resume`, options),
-
       // Returns every fulfillment on the order, since a split re-shapes the
       // source as well as creating the new one (and destroys the source when
       // it is fully drained).

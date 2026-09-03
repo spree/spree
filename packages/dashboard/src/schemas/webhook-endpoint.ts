@@ -220,7 +220,6 @@ export const WEBHOOK_EVENT_GROUPS: readonly WebhookEventGroup[] = [
       'fulfillment.deleted',
       'fulfillment.fulfilled',
       'fulfillment.ready',
-      'fulfillment.resumed',
       'fulfillment.updated',
     ],
   },

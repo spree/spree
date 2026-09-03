@@ -133,6 +133,17 @@ describe Spree::Shipment, type: :model do
     end
   end
 
+  # Cancellation is final for a fulfillment, as it is for an order: the
+  # record stays as the history of an attempt that was called off, and the
+  # goods go out again on a new fulfillment, never on this one.
+  describe '#can_fulfill?' do
+    it 'is false once canceled' do
+      shipment.update!(status: 'canceled')
+
+      expect(shipment.can_fulfill?).to be false
+    end
+  end
+
   # The guards are stated negatively — anything not yet handed over can be
   # fulfilled or canceled — precisely so a status an extension inserts before
   # `fulfilled` works with the core workflows out of the box.
@@ -705,39 +716,6 @@ describe Spree::Shipment, type: :model do
     end
   end
 
-  describe '#resume' do
-    let(:inventory_unit) { create(:inventory_unit, quantity: 1, line_item: line_item, variant: variant) }
-
-    # One target now: the old machine asked the order's payment state to choose
-    # between pending and ready, which is exactly the coupling that was removed.
-    it 'returns a canceled shipment to unfulfilled regardless of payment' do
-      allow(shipment.order).to receive(:recalculate_totals!)
-      shipment.update_column(:status, 'canceled')
-
-      Spree.fulfillment_resume_workflow.call(fulfillment: shipment)
-
-      expect(shipment.reload.status).to eq 'unfulfilled'
-    end
-
-    it 're-promises the items' do
-      allow(shipment).to receive(:fulfillment_items).and_return([inventory_unit])
-      shipment.stock_location = create(:stock_location)
-      expect(shipment.stock_location).to receive(:allocate).with(variant, 1, shipment)
-      shipment.after_resume
-    end
-
-    context 'for a shipment item that does not track inventory' do
-      before { variant.update(track_inventory: false) }
-
-      it 'skips allocating the shipment item' do
-        allow(shipment).to receive(:fulfillment_items).and_return([inventory_unit])
-        shipment.stock_location = create(:stock_location)
-        expect(shipment.stock_location).not_to receive(:allocate)
-        shipment.after_resume
-      end
-    end
-  end
-
   describe '#ship' do
     context 'when the shipment is canceled' do
       let(:shipment_with_inventory_units) { create(:shipment, order: create(:order_with_line_items), state: 'canceled') }
@@ -757,26 +735,23 @@ describe Spree::Shipment, type: :model do
       end
     end
 
-    ['unfulfilled', 'canceled'].each do |status|
-      context "from #{status}" do
-        let(:paid_order) { create(:order_ready_to_ship) }
-        let(:fulfillment) { paid_order.fulfillments.first }
+    context 'from unfulfilled' do
+      let(:paid_order) { create(:order_ready_to_ship) }
+      let(:fulfillment) { paid_order.fulfillments.first }
 
-        before do
-          # A placed order's goods were on the shelf when it was placed; the
-          # factory never puts them there, and a dispatch the shelf cannot
-          # cover is refused unless it is forced.
-          fulfillment.manifest.each do |item|
-            fulfillment.stock_location.stock_level_or_create(item.variant).update_column(:count_on_hand, 10)
-          end
-          fulfillment.update_column(:status, status)
+      before do
+        # A placed order's goods were on the shelf when it was placed; the
+        # factory never puts them there, and a dispatch the shelf cannot
+        # cover is refused unless it is forced.
+        fulfillment.manifest.each do |item|
+          fulfillment.stock_location.stock_level_or_create(item.variant).update_column(:count_on_hand, 10)
         end
+      end
 
-        it 'updates fulfilled_at timestamp' do
-          Spree.fulfillment_fulfill_workflow.call(fulfillment: fulfillment)
+      it 'updates fulfilled_at timestamp' do
+        Spree.fulfillment_fulfill_workflow.call(fulfillment: fulfillment)
 
-          expect(fulfillment.reload.fulfilled_at).not_to be_nil
-        end
+        expect(fulfillment.reload.fulfilled_at).not_to be_nil
       end
     end
   end
@@ -1184,17 +1159,6 @@ describe Spree::Shipment, type: :model do
         allow(shipment).to receive(:publish_event).with(anything)
 
         shipment.publish_fulfillment_canceled_event
-      end
-    end
-
-    describe 'resumed state transition' do
-      before { shipment.update!(status: 'canceled') }
-
-      it 'publishes shipment.resumed event' do
-        expect(shipment).to receive(:publish_event).with('shipment.resumed')
-        allow(shipment).to receive(:publish_event).with(anything)
-
-        shipment.publish_fulfillment_resumed_event
       end
     end
   end

@@ -92,7 +92,10 @@ module Spree
         return if statuses.empty?
 
         live = statuses - ['canceled']
-        return 'canceled' if live.empty?
+        # Every parcel recalled: on a canceled order that is the end of the
+        # story, on a placed one the goods are still owed and a new fulfillment
+        # is how they go out — so it reads as work remaining, not as canceled.
+        return (order.canceled? ? 'canceled' : 'unfulfilled') if live.empty?
         return live.first if live.size == 1
 
         live.intersect?(%w[fulfilled delivered]) ? 'partial' : 'unfulfilled'

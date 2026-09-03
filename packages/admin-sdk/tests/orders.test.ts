@@ -202,11 +202,7 @@ describe('orders', () => {
       expect(body).toEqual({ tracking: 'DPD-42', selected_delivery_rate_id: 'dr_1' })
     })
 
-    it.each([
-      'fulfill',
-      'cancel',
-      'resume',
-    ] as const)('PATCHes /fulfillments/:id/%s', async (action) => {
+    it.each(['fulfill', 'cancel'] as const)('PATCHes /fulfillments/:id/%s', async (action) => {
       let hit = false
       server.use(
         http.patch(`${API_PREFIX}/orders/order_abc123/fulfillments/ful_1/${action}`, () => {

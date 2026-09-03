@@ -15,7 +15,7 @@ RSpec.describe 'Admin Order Fulfillments API', type: :request, swagger_doc: 'api
     get 'List fulfillments' do
       tags 'Fulfillments'
       produces 'application/json'
-      security [api_key: [], bearer_auth: []]
+      security [{ api_key: [], bearer_auth: [] }]
       description 'Returns all shipments for an order.'
       admin_scope :read, :fulfillments
 
@@ -46,7 +46,7 @@ RSpec.describe 'Admin Order Fulfillments API', type: :request, swagger_doc: 'api
       tags 'Fulfillments'
       consumes 'application/json'
       produces 'application/json'
-      security [api_key: [], bearer_auth: []]
+      security [{ api_key: [], bearer_auth: [] }]
       description 'Manually creates a fulfillment on a completed order, bypassing order routing — for example to mirror a shipment handled by an external carrier or 3PL. ' \
                   'Moves the requested line item quantities out of their current fulfillments; when `items` is omitted, every not-yet-shipped unit is moved. ' \
                   "Pass `status: 'shipped'` to register an already-shipped fulfillment (fires shipped webhooks and freezes cost/carrier). " \
@@ -68,10 +68,14 @@ RSpec.describe 'Admin Order Fulfillments API', type: :request, swagger_doc: 'api
         required: %w[stock_location_id],
         properties: {
           stock_location_id: { type: :string, description: 'Stock location the fulfillment ships from' },
-          tracking: { type: :string, example: 'INPOST-12345', description: 'Carrier tracking number, or a full https:// tracking link — a full URL is served back as tracking_url unchanged instead of being templated into the delivery method tracking URL' },
-          delivery_method_id: { type: :string, description: 'Delivery method (carrier) to attach as the selected rate. Defaults to the delivery method of the fully drained source fulfillment(s)' },
-          cost: { type: :string, example: '7.42', description: "Explicit shipping cost. Defaults to the summed cost of the fully drained source fulfillment(s), which keeps the order total unchanged; an explicit cost changes the order total and payment state. Guaranteed to persist only with status: 'shipped' — pending fulfillments are re-priced by the rate engine" },
-          status: { type: :string, enum: %w[shipped], description: "Pass 'shipped' to register the fulfillment as already shipped" },
+          tracking: { type: :string, example: 'INPOST-12345',
+                      description: 'Carrier tracking number, or a full https:// tracking link — a full URL is served back as tracking_url unchanged instead of being templated into the delivery method tracking URL' },
+          delivery_method_id: { type: :string,
+                                description: 'Delivery method (carrier) to attach as the selected rate. Defaults to the delivery method of the fully drained source fulfillment(s)' },
+          cost: { type: :string, example: '7.42',
+                  description: "Explicit shipping cost. Defaults to the summed cost of the fully drained source fulfillment(s), which keeps the order total unchanged; an explicit cost changes the order total and payment state. Guaranteed to persist only with status: 'shipped' — pending fulfillments are re-priced by the rate engine" },
+          status: { type: :string, enum: %w[shipped],
+                    description: "Pass 'shipped' to register the fulfillment as already shipped" },
           items: {
             type: :array,
             description: 'Line item quantities to fulfill. Omit to fulfill every not-yet-shipped unit.',
@@ -127,7 +131,7 @@ RSpec.describe 'Admin Order Fulfillments API', type: :request, swagger_doc: 'api
     get 'Show a shipment' do
       tags 'Fulfillments'
       produces 'application/json'
-      security [api_key: [], bearer_auth: []]
+      security [{ api_key: [], bearer_auth: [] }]
       description 'Returns details of a specific shipment.'
       admin_scope :read, :fulfillments
 
@@ -160,7 +164,7 @@ RSpec.describe 'Admin Order Fulfillments API', type: :request, swagger_doc: 'api
       tags 'Fulfillments'
       consumes 'application/json'
       produces 'application/json'
-      security [api_key: [], bearer_auth: []]
+      security [{ api_key: [], bearer_auth: [] }]
       description 'Updates a fulfillment (tracking, delivery rate).'
       admin_scope :write, :fulfillments
 
@@ -176,7 +180,8 @@ RSpec.describe 'Admin Order Fulfillments API', type: :request, swagger_doc: 'api
       parameter name: :body, in: :body, schema: {
         type: :object,
         properties: {
-          tracking: { type: :string, example: '1Z999AA10123456784', description: 'Carrier tracking number, or a full https:// tracking link served back as tracking_url unchanged' },
+          tracking: { type: :string, example: '1Z999AA10123456784',
+                      description: 'Carrier tracking number, or a full https:// tracking link served back as tracking_url unchanged' },
           selected_delivery_rate_id: { type: :string, description: 'Delivery rate ID (dr_...) to select' }
         }
       }
@@ -197,7 +202,7 @@ RSpec.describe 'Admin Order Fulfillments API', type: :request, swagger_doc: 'api
     patch 'Fulfill a fulfillment' do
       tags 'Fulfillments'
       produces 'application/json'
-      security [api_key: [], bearer_auth: []]
+      security [{ api_key: [], bearer_auth: [] }]
       description 'Marks a fulfillment as fulfilled.'
       admin_scope :write, :fulfillments
 
@@ -232,7 +237,7 @@ RSpec.describe 'Admin Order Fulfillments API', type: :request, swagger_doc: 'api
     patch 'Buy the shipping label' do
       tags 'Fulfillments'
       produces 'application/json'
-      security [api_key: [], bearer_auth: []]
+      security [{ api_key: [], bearer_auth: [] }]
       description 'Buys the shipping label for a parcel that has not shipped yet — print it, pack the box, then mark the fulfillment fulfilled. Only delivery methods whose provider produces labels accept this.'
       admin_scope :write, :fulfillments
 
@@ -291,7 +296,7 @@ RSpec.describe 'Admin Order Fulfillments API', type: :request, swagger_doc: 'api
       tags 'Fulfillments'
       produces 'application/json'
       consumes 'application/json'
-      security [api_key: [], bearer_auth: []]
+      security [{ api_key: [], bearer_auth: [] }]
       description 'Records that the customer received the goods. Only a fulfilled shipment can be marked delivered.'
       admin_scope :write, :fulfillments
 
@@ -349,7 +354,7 @@ RSpec.describe 'Admin Order Fulfillments API', type: :request, swagger_doc: 'api
     patch 'Cancel a fulfillment' do
       tags 'Fulfillments'
       produces 'application/json'
-      security [api_key: [], bearer_auth: []]
+      security [{ api_key: [], bearer_auth: [] }]
       description 'Cancels a fulfillment.'
       admin_scope :write, :fulfillments
 
@@ -376,47 +381,12 @@ RSpec.describe 'Admin Order Fulfillments API', type: :request, swagger_doc: 'api
     end
   end
 
-  path '/api/v3/admin/orders/{order_id}/fulfillments/{id}/resume' do
-    patch 'Resume a fulfillment' do
-      tags 'Fulfillments'
-      produces 'application/json'
-      security [api_key: [], bearer_auth: []]
-      description 'Resumes a canceled fulfillment.'
-      admin_scope :write, :fulfillments
-
-      admin_sdk_example 'order-fulfillments/resume'
-
-      parameter name: 'x-spree-api-key', in: :header, type: :string, required: true
-      parameter name: :Authorization, in: :header, type: :string, required: true,
-                description: 'Bearer token for admin authentication'
-      parameter name: :order_id, in: :path, type: :string, required: true,
-                description: 'Order ID'
-      parameter name: :id, in: :path, type: :string, required: true,
-                description: 'Fulfillment ID'
-
-      response '200', 'fulfillment resumed' do
-        let(:'x-spree-api-key') { secret_api_key.plaintext_token }
-        let(:order_id) { order.prefixed_id }
-        let(:id) { shipment.prefixed_id }
-
-        before do
-          shipment.update!(status: 'canceled')
-        end
-
-        run_test! do |response|
-          data = JSON.parse(response.body)
-          expect(data['status']).to eq('unfulfilled')
-        end
-      end
-    end
-  end
-
   path '/api/v3/admin/orders/{order_id}/fulfillments/{id}/split' do
     patch 'Split a fulfillment' do
       tags 'Fulfillments'
       consumes 'application/json'
       produces 'application/json'
-      security [api_key: [], bearer_auth: []]
+      security [{ api_key: [], bearer_auth: [] }]
       description 'Transfers items from this shipment to a new shipment at a different stock location.'
       admin_scope :write, :fulfillments
 

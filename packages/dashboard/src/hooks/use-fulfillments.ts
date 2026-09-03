@@ -87,10 +87,6 @@ export function useFulfillmentActions(orderId: string) {
     adminClient.orders.fulfillments.cancel(orderId, fulfillmentId),
   )
 
-  const resume = useFulfillmentMutation(orderId, (fulfillmentId: string) =>
-    adminClient.orders.fulfillments.resume(orderId, fulfillmentId),
-  )
-
   const markDelivered = useFulfillmentMutation(orderId, (fulfillmentId: string) =>
     adminClient.orders.fulfillments.markDelivered(orderId, fulfillmentId),
   )
@@ -99,5 +95,5 @@ export function useFulfillmentActions(orderId: string) {
     adminClient.orders.fulfillments.purchaseLabel(orderId, fulfillmentId),
   )
 
-  return { create, update, split, fulfill, cancel, resume, markDelivered, purchaseLabel }
+  return { create, update, split, fulfill, cancel, markDelivered, purchaseLabel }
 }

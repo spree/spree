@@ -8387,104 +8387,6 @@ paths:
                 stock_location_id: sloc_UkLWZg9DAJ
                 documents: []
                 provider_generates_labels: false
-  "/api/v3/admin/orders/{order_id}/fulfillments/{id}/resume":
-    patch:
-      summary: Resume a fulfillment
-      tags:
-      - Fulfillments
-      security:
-      - api_key: []
-        bearer_auth: []
-      description: |-
-        Resumes a canceled fulfillment.
-
-        **Required scope:** `write_fulfillments` (for API-key authentication).
-      x-codeSamples:
-      - lang: javascript
-        label: Spree Admin SDK
-        source: |-
-          import { createAdminClient } from '@spree/admin-sdk'
-
-          const client = createAdminClient({
-            baseUrl: 'https://your-store.com',
-            secretKey: 'sk_xxx',
-          })
-
-          const fulfillment = await client.orders.fulfillments.resume('or_UkLWZg9DAJ', 'ful_UkLWZg9DAJ')
-      - lang: bash
-        label: Spree CLI
-        source: spree api patch /orders/{order_id}/fulfillments/{id}/resume -d '{
-          ... }'
-      parameters:
-      - name: x-spree-api-key
-        in: header
-        required: true
-        schema:
-          type: string
-      - name: Authorization
-        in: header
-        required: true
-        description: Bearer token for admin authentication
-        schema:
-          type: string
-      - name: order_id
-        in: path
-        required: true
-        description: Order ID
-        schema:
-          type: string
-      - name: id
-        in: path
-        required: true
-        description: Fulfillment ID
-        schema:
-          type: string
-      responses:
-        '200':
-          description: fulfillment resumed
-          content:
-            application/json:
-              example:
-                id: ful_UkLWZg9DAJ
-                number: R1001-F1
-                tracking: U10000
-                tracking_url:
-                tracking_carrier:
-                tracking_carrier_name:
-                pickup_point_data:
-                selected_delivery_rate_id: dr_gbHJdmfrXB
-                cost: '100.0'
-                display_cost: "$100.00"
-                total: '100.0'
-                display_total: "$100.00"
-                discount_total: '0.0'
-                display_discount_total: "$0.00"
-                additional_tax_total: '0.0'
-                display_additional_tax_total: "$0.00"
-                included_tax_total: '0.0'
-                display_included_tax_total: "$0.00"
-                tax_total: '0.0'
-                display_tax_total: "$0.00"
-                status: unfulfilled
-                fulfillment_type: shipping
-                fulfilled_at:
-                tracking_status:
-                estimated_delivery_at:
-                delivered_at:
-                items:
-                - item_id: li_UkLWZg9DAJ
-                  variant_id: variant_UkLWZg9DAJ
-                  quantity: 1
-                metadata: {}
-                tracking_details:
-                adjustment_total: '0.0'
-                pre_tax_amount: '100.0'
-                created_at: '2026-01-15T12:00:00.000Z'
-                updated_at: '2026-01-15T12:00:00.000Z'
-                order_id: or_UkLWZg9DAJ
-                stock_location_id: sloc_UkLWZg9DAJ
-                documents: []
-                provider_generates_labels: false
   "/api/v3/admin/orders/{order_id}/fulfillments/{id}/split":
     patch:
       summary: Split a fulfillment
@@ -12460,8 +12362,8 @@ paths:
                   preorder_ships_at:
                   quantity: 2
                   currency: USD
-                  name: Product 509180
-                  slug: product-509180
+                  name: Product 499180
+                  slug: product-499180
                   options_text: 'Size: S'
                   price: '10.0'
                   display_price: "$10.00"
@@ -12573,8 +12475,8 @@ paths:
                 preorder_ships_at:
                 quantity: 3
                 currency: USD
-                name: Product 5299
-                slug: product-5299
+                name: Product 5199
+                slug: product-5199
                 options_text: 'Size: S'
                 price: '19.99'
                 display_price: "$19.99"
@@ -12708,8 +12610,8 @@ paths:
                 preorder_ships_at:
                 quantity: 2
                 currency: USD
-                name: Product 532714
-                slug: product-532714
+                name: Product 522714
+                slug: product-522714
                 options_text: 'Size: S'
                 price: '10.0'
                 display_price: "$10.00"
@@ -12816,8 +12718,8 @@ paths:
                 preorder_ships_at:
                 quantity: 5
                 currency: USD
-                name: Product 549758
-                slug: product-549758
+                name: Product 539758
+                slug: product-539758
                 options_text: 'Size: S'
                 price: '19.99'
                 display_price: "$19.99"
@@ -17272,8 +17174,8 @@ paths:
               example:
                 data:
                 - id: prod_UkLWZg9DAJ
-                  name: Product 916550
-                  slug: product-916550
+                  name: Product 906550
+                  slug: product-906550
                   meta_title:
                   meta_description:
                   meta_keywords:
@@ -17666,8 +17568,8 @@ paths:
             application/json:
               example:
                 id: prod_UkLWZg9DAJ
-                name: Product 952061
-                slug: product-952061
+                name: Product 942061
+                slug: product-942061
                 meta_title:
                 meta_description:
                 meta_keywords:
@@ -17780,7 +17682,7 @@ paths:
               example:
                 id: prod_UkLWZg9DAJ
                 name: Updated Name
-                slug: product-975339
+                slug: product-965339
                 meta_title:
                 meta_description:
                 meta_keywords:
@@ -25527,7 +25429,7 @@ paths:
                 data:
                 - id: variant_UkLWZg9DAJ
                   product_id: prod_UkLWZg9DAJ
-                  sku: SKU-154
+                  sku: SKU-153
                   options_text: ''
                   track_inventory: true
                   media_count: 0
@@ -25578,11 +25480,11 @@ paths:
                   available_stock: 0
                   reserved_quantity: 0
                   total_on_hand: 0
-                  product_name: Product 1226804
+                  product_name: Product 1216804
                   delivery_profile_id: fp_UkLWZg9DAJ
                 - id: variant_gbHJdmfrXB
                   product_id: prod_UkLWZg9DAJ
-                  sku: SKU-155
+                  sku: SKU-154
                   options_text: 'Size: S'
                   track_inventory: true
                   media_count: 0
@@ -25645,7 +25547,7 @@ paths:
                   available_stock: 0
                   reserved_quantity: 0
                   total_on_hand: 0
-                  product_name: Product 1226804
+                  product_name: Product 1216804
                   delivery_profile_id: fp_UkLWZg9DAJ
                 meta:
                   page: 1
@@ -25787,7 +25689,7 @@ paths:
                 available_stock: 0
                 reserved_quantity: 0
                 total_on_hand: 0
-                product_name: Product 1231771
+                product_name: Product 1221771
                 delivery_profile_id: fp_UkLWZg9DAJ
         '422':
           description: validation error
@@ -25966,7 +25868,7 @@ paths:
               example:
                 id: variant_gbHJdmfrXB
                 product_id: prod_UkLWZg9DAJ
-                sku: SKU-161
+                sku: SKU-160
                 options_text: 'Size: S'
                 track_inventory: true
                 media_count: 0
@@ -26029,7 +25931,7 @@ paths:
                 available_stock: 0
                 reserved_quantity: 0
                 total_on_hand: 0
-                product_name: Product 1254025
+                product_name: Product 1244025
                 delivery_profile_id: fp_UkLWZg9DAJ
         '404':
           description: variant not found
@@ -26165,7 +26067,7 @@ paths:
                 available_stock: 0
                 reserved_quantity: 0
                 total_on_hand: 0
-                product_name: Product 1275672
+                product_name: Product 1265672
                 delivery_profile_id: fp_UkLWZg9DAJ
       requestBody:
         content:

@@ -336,6 +336,18 @@ and Saleor make the state terminal by construction. Where an order needs to
 live again, place a new one; the canceled record stays as the history of what
 happened.
 
+The same applies one level down. `Spree::Fulfillments::Resume`, the
+`fulfillment_resume_workflow` key, the `fulfillment.resumed` event and
+`PATCH /api/v3/admin/orders/:id/fulfillments/:id/resume` are removed, and a
+canceled fulfillment can no longer be fulfilled either — `Fulfillment#can_fulfill?`
+is false once canceled. Cancelling a parcel ends that *attempt* to ship, not
+the obligation: its units are offered to the next fulfillment you create for
+the order, which promises the stock afresh. This is how Shopify and Medusa
+recover from a mistaken cancellation too — a new fulfillment, never a revived
+one. An order whose every parcel was recalled now reads
+`fulfillment_status: unfulfilled` rather than `canceled`; only a canceled
+order reads `canceled`.
+
 ## Removed in 6.0
 
 These were deprecated in 5.x and are **gone now** — there is no bridge, so calls raise `NoMethodError`. Most were one-line delegations to a replacement that already exists.

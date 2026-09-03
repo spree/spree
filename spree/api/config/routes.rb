@@ -721,7 +721,6 @@ Spree::Core::Engine.add_routes do
               patch :purchase_label
               patch :mark_delivered
               patch :cancel
-              patch :resume
               patch :split
             end
           end
