@@ -13,6 +13,13 @@ module Spree
     #
     belongs_to :store, class_name: 'Spree::Store', touch: true, inverse_of: :markets
     has_many :market_countries, class_name: 'Spree::MarketCountry', dependent: :destroy, autosave: true
+    # Channel allowlist rows go with the market; a channel left with none
+    # reverts to serving every market (docs/plans/6.0-channel-markets.md).
+    has_many :channel_markets, class_name: 'Spree::ChannelMarket', dependent: :destroy, inverse_of: :market
+    has_many :channels, through: :channel_markets, class_name: 'Spree::Channel'
+    # Channels pinned to this market fall back to deriving their default.
+    has_many :defaulting_channels, class_name: 'Spree::Channel',
+             foreign_key: :default_market_id, dependent: :nullify, inverse_of: :default_market
 
     # Countries are reference data, so this reads the join rows' codes back
     # through the registry rather than being a has_many :through.

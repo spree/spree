@@ -40,6 +40,10 @@ export const channelFormSchema = z.object({
   // Empty means every location of the store serves this channel, which is how
   // the API reads an empty array.
   stock_location_ids: z.array(z.string()),
+  // Empty means the channel sells into every market of the store.
+  market_ids: z.array(z.string()),
+  // Empty derives the default from the allowlist; see resolved_default_market.
+  default_market_id: z.string(),
 })
 
 export type ChannelFormValues = z.infer<typeof channelFormSchema>
@@ -54,6 +58,8 @@ export const CHANNEL_DEFAULTS: ChannelFormValues = {
   preferred_guest_checkout: '',
   default_catalog_id: '',
   stock_location_ids: [],
+  market_ids: [],
+  default_market_id: '',
 }
 
 /**
@@ -77,6 +83,11 @@ export function channelValuesToParams(
     // '' → no default catalog: shoppers outside any assigned catalog see
     // every product published on the channel.
     default_catalog_id: v.default_catalog_id || null,
+    // Replace-set: an empty array clears the narrowing, so the channel sells
+    // into every market again.
+    market_ids: v.market_ids,
+    // '' → derive the default from the allowlist rather than pinning one.
+    default_market_id: v.default_market_id || null,
     // Replace-set: an empty array clears the narrowing, so every location
     // serves the channel again.
     stock_location_ids: v.stock_location_ids,

@@ -1063,6 +1063,11 @@
           "label": "Catalogue par défaut",
           "placeholder": "Tous les produits publiés"
         },
+        "default_market": {
+          "derived": "Automatique (selon les marchés de ce canal)",
+          "help": "Marché utilisé lorsqu’un acheteur se trouve dans un pays qui ne correspond à aucun marché de ce canal.",
+          "label": "Marché par défaut"
+        },
         "fulfillment_locations": {
           "all": "Tous les sites",
           "help": "Quels entrepôts et points de retrait traitent les commandes passées sur ce canal de vente.",
@@ -1078,6 +1083,14 @@
             "false": "Non autorisé",
             "true": "Autorisé"
           }
+        },
+        "markets": {
+          "all": "Tous les marchés",
+          "help": "Les marchés sur lesquels ce canal vend. Les acheteurs ailleurs voient son marché par défaut.",
+          "label": "Marchés",
+          "none": "Cette boutique n’a encore aucun marché.",
+          "none_selected_hint": "Sélectionnez au moins un marché, ou choisissez « Tous les marchés ».",
+          "selected": "Marchés sélectionnés"
         },
         "name": {
           "placeholder": "ex. POS, Vente en gros, Meta Shop"

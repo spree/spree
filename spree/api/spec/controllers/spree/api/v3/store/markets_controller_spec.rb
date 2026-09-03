@@ -111,4 +111,90 @@ RSpec.describe Spree::Api::V3::Store::MarketsController, type: :controller do
       expect(response).to have_http_status(:not_found)
     end
   end
+
+  # docs/plans/6.0-channel-markets.md — an allowlist narrows what the
+  # storefront may see; no allowlist leaves every market visible.
+  describe 'channel market allowlist' do
+    let!(:channel) { create(:channel, store: store, code: 'wholesale') }
+
+    before { request.headers['X-Spree-Channel'] = 'wholesale' }
+
+    context 'when the channel serves every market' do
+      it 'lists them all' do
+        get :index
+
+        names = json_response['data'].map { |market| market['name'] }
+        expect(names).to include('North America', 'Europe')
+      end
+    end
+
+    context 'when the channel is narrowed' do
+      before { channel.markets << eu_market }
+
+      it 'lists only the served markets' do
+        get :index
+
+        names = json_response['data'].map { |market| market['name'] }
+        expect(names).to contain_exactly('Europe')
+      end
+
+      it '404s an unserved market by id' do
+        get :show, params: { id: na_market.prefixed_id }
+
+        expect(response).to have_http_status(:not_found)
+      end
+
+      it 'still shows a served market by id' do
+        get :show, params: { id: eu_market.prefixed_id }
+
+        expect(response).to have_http_status(:ok)
+      end
+
+      # The resolve action reaches market_for_country directly, so it needs
+      # its own guard — the 404 is indistinguishable from "no market here".
+      it '404s resolving a country whose market the channel does not serve' do
+        get :resolve, params: { country: 'US' }
+
+        expect(response).to have_http_status(:not_found)
+      end
+
+      it 'still resolves a served country' do
+        get :resolve, params: { country: 'DE' }
+
+        expect(response).to have_http_status(:ok)
+        expect(json_response['name']).to eq('Europe')
+      end
+
+      # Currency and locale derive from the resolved market, and their
+      # callbacks run before the channel one. Rejecting an unserved market
+      # therefore has to write the channel's own default rather than fall
+      # through to Spree::Current, whose channel is still the store default
+      # at that point — otherwise a narrowed channel prices in the wrong
+      # currency (docs/plans/6.0-channel-markets.md).
+      it 'puts a shopper from an unserved country on the channel default market' do
+        seen = nil
+        allow(Spree.api.market_serializer).to receive(:new).and_wrap_original do |original, *args, **kwargs|
+          seen ||= [Spree::Current.market, Spree::Current.currency]
+          original.call(*args, **kwargs)
+        end
+
+        request.headers['x-spree-country'] = 'US'
+        get :index
+
+        expect(seen.first).to eq(eu_market)
+        expect(seen.last).to eq('EUR')
+      end
+
+      # The channel's markets are the sellable set, so a currency header for a
+      # market it does not serve is not on offer and must be refused rather
+      # than accepted as the request currency.
+      it 'refuses a currency header outside the channel markets' do
+        request.headers['x-spree-currency'] = 'USD'
+        get :index
+
+        expect(controller.send(:supported_currency?, 'USD')).to be false
+        expect(controller.send(:supported_currency?, 'EUR')).to be true
+      end
+    end
+  end
 end

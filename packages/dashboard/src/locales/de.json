@@ -1063,6 +1063,11 @@
           "label": "Standardkatalog",
           "placeholder": "Alle veröffentlichten Produkte"
         },
+        "default_market": {
+          "derived": "Automatisch (nach den Märkten dieses Kanals)",
+          "help": "Wo ein Käufer landet, dessen Land zu keinem Markt dieses Kanals passt.",
+          "label": "Standardmarkt"
+        },
         "fulfillment_locations": {
           "all": "Alle Standorte",
           "help": "Welche Lager und Abholstationen Bestellungen aus diesem Verkaufskanal erfüllen.",
@@ -1078,6 +1083,14 @@
             "false": "Nicht erlaubt",
             "true": "Erlaubt"
           }
+        },
+        "markets": {
+          "all": "Alle Märkte",
+          "help": "In welche Märkte dieser Kanal verkauft. Käufer anderswo sehen seinen Standardmarkt.",
+          "label": "Märkte",
+          "none": "Dieser Store hat noch keine Märkte.",
+          "none_selected_hint": "Wählen Sie mindestens einen Markt oder „Alle Märkte“.",
+          "selected": "Ausgewählte Märkte"
         },
         "name": {
           "placeholder": "z. B. POS, Großhandel, Meta Shop"

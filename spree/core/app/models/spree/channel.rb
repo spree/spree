@@ -31,6 +31,15 @@ module Spree
     has_many :channel_stock_locations, class_name: 'Spree::ChannelStockLocation',
              dependent: :destroy, inverse_of: :channel
     has_many :stock_locations, through: :channel_stock_locations, class_name: 'Spree::StockLocation'
+    # Optional market allowlist: no rows means the channel serves every market
+    # of its store (docs/plans/6.0-channel-markets.md).
+    has_many :channel_markets, class_name: 'Spree::ChannelMarket',
+             dependent: :destroy, inverse_of: :channel
+    has_many :markets, through: :channel_markets, class_name: 'Spree::Market'
+    # Which served market a visitor lands in when their country resolves to
+    # none. Read +resolved_default_market+, never this association — an
+    # explicit default can drift out of the allowlist.
+    belongs_to :default_market, class_name: 'Spree::Market', optional: true
 
     attribute :active, :boolean, default: true
 
@@ -155,6 +164,51 @@ module Spree
       return store.stock_locations if served_stock_location_ids.empty?
 
       store.stock_locations.where(id: served_stock_location_ids)
+    end
+
+    # Whether this channel sells into the given market. No linked markets
+    # means every market of the store.
+    #
+    # @param market [Spree::Market, nil]
+    # @return [Boolean]
+    def serves_market?(market)
+      return false if market.nil?
+      # A market from another store is never served, allowlist or not — this
+      # predicate is what purchase validation trusts, so it has to carry the
+      # tenancy check rather than assume the caller made it.
+      return false unless market.store_id == store_id
+      return true if served_market_ids.empty?
+
+      served_market_ids.include?(market.id)
+    end
+
+    # @return [Array<Integer>] ids of the markets this channel is limited to
+    def served_market_ids
+      @served_market_ids ||= channel_markets.map(&:market_id)
+    end
+
+    # The markets this channel sells into.
+    #
+    # @return [ActiveRecord::Relation<Spree::Market>]
+    def allowed_markets
+      return store.markets.ordered if served_market_ids.empty?
+
+      store.markets.where(id: served_market_ids).ordered
+    end
+
+    # Where a visitor lands when their country resolves to no served market.
+    # An explicit default counts only while the channel still serves it —
+    # narrowing the allowlist must not strand traffic in a market the channel
+    # no longer sells into.
+    #
+    # @return [Spree::Market, nil]
+    def resolved_default_market
+      return default_market if default_market && serves_market?(default_market)
+
+      store_default = store&.default_market
+      return store_default if store_default && serves_market?(store_default)
+
+      allowed_markets.first
     end
 
     private
