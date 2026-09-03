@@ -57,6 +57,20 @@ RSpec.describe 'Spree::Variant carton details', type: :model do
     end
   end
 
+  describe '#weight_unit' do
+    # The default store's unit is someone else's on a multi-store install;
+    # a kilogram catalog converted as pounds misweighs every freight quote.
+    it 'falls back to the variant own store, not the default store' do
+      other_store = create(:store)
+      stub_store_preferences(other_store, weight_unit: 'kg')
+      product = create(:product, store: other_store)
+      variant = product.default_variant
+      variant.update_columns(weight_unit: nil)
+
+      expect(variant.reload.weight_unit).to eq('kg')
+    end
+  end
+
   describe '#dimensions_unit' do
     it 'keeps the variant own unit when set' do
       expect(build(:variant, dimensions_unit: 'mm').dimensions_unit).to eq('mm')

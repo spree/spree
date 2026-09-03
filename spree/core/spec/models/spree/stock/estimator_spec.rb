@@ -435,6 +435,39 @@ module Spree
           end
         end
 
+        # A provider-priced method carries a calculator nobody reads; its
+        # leftover currency must not hide the method from foreign carts —
+        # freight exists for exactly those.
+        describe 'a freight method on a foreign-currency cart' do
+          let(:eur_order) { create(:order_with_line_items, currency: 'EUR') }
+
+          before do
+            # A relation, not the outer describe's array: an order with a
+            # store reaches the store-methods merge, which arrays cannot.
+            allow(package).to receive_messages(
+              eligible_delivery_methods: Spree::DeliveryMethod.where(id: delivery_method.id)
+            )
+          end
+
+          it 'is offered although its unused calculator only speaks the store currency' do
+            delivery_method.update!(rate_provider: 'Spree::DeliveryRateProvider::Freight')
+            expect(delivery_method.calculator.supports_currency?('EUR')).to be(false)
+
+            rates = Spree::Stock::Estimator.new(eur_order).delivery_rates(package)
+
+            expect(rates.map(&:delivery_method)).to include(delivery_method)
+            expect(rates.detect { |rate| rate.delivery_method == delivery_method }.unpriced).to be(true)
+          end
+
+          it 'still hides a calculator-priced method that cannot price the currency' do
+            expect(delivery_method.calculator.supports_currency?('EUR')).to be(false)
+
+            rates = Spree::Stock::Estimator.new(eur_order).delivery_rates(package)
+
+            expect(rates.map(&:delivery_method)).not_to include(delivery_method)
+          end
+        end
+
         describe 'unpriced rates' do
           before do
             stub_const('UnpricedRateProvider', unpriced_provider_class)
