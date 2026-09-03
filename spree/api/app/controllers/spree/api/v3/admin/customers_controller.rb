@@ -84,10 +84,21 @@ module Spree
             authorize_resource!(@resource)
             return unless authorized_for_order_history?
 
-            render json: Spree.customer_data_export_service.new(
+            result = Spree::DataRequests::Create.call(
+              store: current_store,
               customer: @resource,
-              store: current_store
-            ).call
+              kind: Spree::DataRequest::ACCESS,
+              requested_by: try_spree_current_user
+            )
+
+            return render_result_error(result) unless result.success?
+
+            # Rendered inline because a staff member is waiting on it, but the
+            # request row is opened first: an Art. 15 response should leave the
+            # same trace whoever produced it, and building through the workflow
+            # is what runs the `extend_payload` hook a host app relies on to
+            # complete the document.
+            render json: Spree::DataRequests::Fulfill.payload_for(result.value)
           end
 
           # Bulk add the given customers to the given groups. Idempotent —

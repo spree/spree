@@ -23,6 +23,34 @@ RSpec.describe Spree::Api::V3::Admin::CustomersController, type: :controller do
       expect(json_response.keys).to include('account', 'addresses', 'orders', 'marketing_consent', 'consent_records')
     end
 
+    # The hook is documented as the way to complete a subject access response
+    # with host-app data. The admin path is the one merchants actually use, so
+    # skipping it there would silently omit exactly what it exists to add.
+    describe 'the payload extension hook' do
+      let(:handler) { ->(_workflow) { { loyalty: { points: 120 } } } }
+
+      before { Spree.hooks.register('data_requests.fulfill.extend_payload', handler) }
+      after { Spree.hooks.unregister('data_requests.fulfill.extend_payload', handler) }
+
+      it 'runs on the admin export too' do
+        get :export, params: { id: customer.prefixed_id }, as: :json
+
+        expect(json_response.dig('loyalty', 'points')).to eq(120)
+      end
+
+      it 'still includes what Spree knows' do
+        get :export, params: { id: customer.prefixed_id }, as: :json
+
+        expect(json_response.dig('account', 'email')).to eq(customer.email)
+      end
+    end
+
+    it 'leaves a record that the request was answered' do
+      expect {
+        get :export, params: { id: customer.prefixed_id }, as: :json
+      }.to change { Spree::DataRequest.where(customer_id: customer.id).count }.by(1)
+    end
+
     # The export carries the customer's order history, which is otherwise
     # gated on read_orders. Aggregating the two behind one key would hand
     # order data to a role that was never granted it.
