@@ -194,7 +194,8 @@
         "selected": "{{count}} ausgewählt"
       },
       "channel_select": {
-        "placeholder": "Verkaufskanal auswählen"
+        "placeholder": "Verkaufskanal auswählen",
+        "all_channels": "Alle Kanäle"
       },
       "command_palette": {
         "create": {

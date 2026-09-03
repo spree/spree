@@ -58,40 +58,60 @@ describe('me', () => {
   })
 })
 
-describe('dashboard', () => {
-  describe('analytics', () => {
-    it('GETs /dashboard/analytics', async () => {
-      let hit = false
+describe('reporting', () => {
+  describe('query', () => {
+    it('POSTs the query body to /reporting/query', async () => {
+      let body: Record<string, unknown> | null = null
       server.use(
-        http.get(`${API_PREFIX}/dashboard/analytics`, () => {
-          hit = true
-          return HttpResponse.json({ orders_count: 0, total_sales: '0.0' })
+        http.post(`${API_PREFIX}/reporting/query`, async ({ request }) => {
+          body = (await request.json()) as Record<string, unknown>
+          return HttpResponse.json({ meta: {}, totals: {}, rows: [] })
         }),
       )
 
-      await createTestClient().dashboard.analytics()
+      await createTestClient().reporting.query({
+        metrics: ['gross_revenue'],
+        dimensions: [{ name: 'completed_at', grain: 'day' }],
+        compare: 'previous_period',
+      })
+
+      expect(body!.metrics).toEqual(['gross_revenue'])
+      expect(body!.compare).toBe('previous_period')
+    })
+  })
+
+  describe('schema', () => {
+    it('GETs /reporting/schema', async () => {
+      let hit = false
+      server.use(
+        http.get(`${API_PREFIX}/reporting/schema`, () => {
+          hit = true
+          return HttpResponse.json({ metrics: [], dimensions: [] })
+        }),
+      )
+
+      await createTestClient().reporting.schema()
 
       expect(hit).toBe(true)
     })
+  })
+})
 
-    it('forwards optional query params', async () => {
+describe('dashboard', () => {
+  describe('operations', () => {
+    it('GETs /dashboard/operations and forwards optional params', async () => {
       let url: URL | null = null
       server.use(
-        http.get(`${API_PREFIX}/dashboard/analytics`, ({ request }) => {
+        http.get(`${API_PREFIX}/dashboard/operations`, ({ request }) => {
           url = new URL(request.url)
-          return HttpResponse.json({ orders_count: 0, total_sales: '0.0' })
+          return HttpResponse.json({ orders_to_fulfill: 0 })
         }),
       )
 
-      await createTestClient().dashboard.analytics({
-        date_from: '2026-05-01',
-        date_to: '2026-05-31',
-        currency: 'EUR',
-      })
+      await createTestClient().dashboard.operations({ channel_id: 'ch_1', low_stock_threshold: 3 })
 
-      expect(url!.searchParams.get('date_from')).toBe('2026-05-01')
-      expect(url!.searchParams.get('date_to')).toBe('2026-05-31')
-      expect(url!.searchParams.get('currency')).toBe('EUR')
+      expect(url!.searchParams.get('channel_id')).toBe('ch_1')
+      expect(url!.searchParams.get('low_stock_threshold')).toBe('3')
     })
   })
 })

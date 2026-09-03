@@ -7,10 +7,16 @@ export type {
   AuthProvider,
   AuthProvidersResponse,
   AuthTokens,
-  DashboardAnalytics,
+  DashboardOperations,
   LoginCredentials,
   MeResponse,
   PermissionRule,
+  ReportingDimensionValue,
+  ReportingMetricValue,
+  ReportingQuery,
+  ReportingResult,
+  ReportingRow,
+  ReportingSchema,
 } from './admin-client'
 // Admin client class (for advanced use / subclassing)
 export { AdminClient } from './admin-client'
