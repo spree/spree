@@ -1,3 +1,11 @@
+## 2026-09-03: Labels and parcels are records; the carrier axis moves onto `Spree::Delivery` in 6.0 (supersedes 2026-08-11 "multiple trackings deferred to 6.1")
+
+**Context:** A shipping label was three EasyPost-private keys in `fulfillment.metadata`, surfaced by a per-read `provider.documents` call and bought through `PATCH .../purchase_label`. Spree never knew the postage cost, could not reprint once the carrier's hosted URL expired, could not buy a second label after a refund (idempotency keyed off the metadata), and had nowhere to put a return label — the returns plan had already sent that to "the URL in `metadata`". Tracking lived in seven columns on `spree_fulfillments`, one number per parcel, with a `spree_fulfillment_trackings` model deferred to 6.1 and required to absorb the whole axis when it came. Both were candidates for "promote to a model with RESTful routes"; only one of them is a thing.
+
+**Decision:** Two new tables, both with a **polymorphic `owner`** (`Fulfillment` | `Return`) on the 2026-08-22 tax-identifier reasoning — one concept held by different parties, not a type string hiding several meanings. `Spree::ShippingLabel` is the purchased or uploaded carrier document: cost and currency (merchant accounting, admin-only), the file in private storage fetched from the provider at purchase, `purchased → refund_requested → refunded`, an `external_id`, and a frozen `tracking_number`. `Spree::Delivery` is one parcel's carrier journey — tracking number, carrier, carrier status (`pending` instead of nil), estimate, arrival, scan details — optionally minted by a label. `delivered` on the fulfillment stays a transition, not a model: marking delivered is the fulfillment's own status changing, and the fulfillment rolls it up from its deliveries (or from staff, for parcels that have none). Idempotency of the label buy moves into core — the workflow refuses on an active label, so providers stop keeping `metadata` keys. The provider contract grows a typed `purchase_label(owner) → Spree::LabelPurchase` and `refund_label(label)`; `create_fulfillment` stays for non-label dispatch. The 6.0 edge's fulfillment-level `tracking_carrier`/`tracking_status`/`tracking_details`/`estimated_delivery_at` are removed in place rather than bridged (never released); `tracking` and `tracking_url` (5.6 API) stay forever as the primary delivery's summary.
+
+**Consequences:** The 2026-08-11 deferral's constraint held — the delivery takes the entire axis, nothing stays split between fulfillment and row — but the model lands in 6.0 and under a different name, because a `Return` owns parcels too and `FulfillmentTracking` cannot say so. The name was tested twice: `Delivery` was questioned for leaning toward the arrival event, `Parcel` was chosen and then withdrawn the same day when checked against `6.0-b2b-wholesale-shipping.md`, which uses "parcel" as the antonym of freight — a PRO number covering three pallets is not a parcel. `Tracking` collides with the 5.6 `Fulfillment#tracking` string that stays forever. `Delivery` is the modality-neutral word carriers use for a parcel and a pallet alike; the two-meanings cost beside `DeliveryMethod`/`DeliveryRate` is accepted. The same check settled that freight paperwork (bill of lading, placards, packing lists) is never a `ShippingLabel` — it belongs to `OrderDocument` in `6.1-b2b-order-documents.md` — and that `Delivery#carrier` is free text, never validated against the carrier registry, or a forwarder's number becomes unenterable. Return labels ship now on the same table (EasyPost `is_return`), with a `Return` delivery that never auto-receives: arrival is not inspection. Uploaded labels are in scope, so merchants on the Manual provider get a place for postage they bought elsewhere; `POST .../labels` purchases without a body and records with a `file`. Sellers may upload and track but never purchase or refund — those need the operator's carrier account. The routing rule this settles for the whole Admin API: a durable record with its own identity (label, delivery, refund) is a nested resource created by `POST`; a lifecycle transition (`fulfill`, `cancel`, `mark_delivered`, `capture`, `approve`) stays a `PATCH` member action. Plan: `6.0-shipping-labels-and-deliveries.md`.
+
 ## 2026-09-02: A 6.0 column rename is earned by public leakage, not by completeness
 
 **Context:** `5.4-store-api-naming-standardization.md` listed six database renames as its remaining 6.0 work — roughly 1,900 references. But the 5.4 model aliases already make every API response speak the new names, so the honest question was not "which renames are left" but "which ones still change anything a caller can see".
@@ -4705,3 +4713,51 @@ agreement to understand every part of it at once); skippable steps (a
 "create now" escape hatch competing with Next on every step).
 
 Plans amended: `6.0-catalog-agreement-rework.md` (phase 4 completed).
+
+## 2026-09-02 — Order cancellation and approval history tables are dropped; the reason lives on the order
+
+Reassessing `5.5-6.0-order-cancellation-and-approval.md` before its 6.0
+half (drop the `canceled_at`/`approved_at` columns, multi-level approvals).
+The two tables it added in 5.5 turned out to be write-only: the cancel and
+approve services inserted a row and nothing ever read one — no endpoint,
+serializer, view, mail, export or task — and the cancel endpoint never
+accepted a reason, so every row said `other`. Worse, the record's
+`restock_items` and `refund_payments` flags described decisions the
+workflow did not take (items are always restocked through fulfillment
+cancellation; an ordinary order's captured payments are always canceled),
+so as an audit trail it misstated what happened.
+
+**Decision:** drop both tables in 6.0 (`if_exists`, the 5.5 migrations
+deleted so fresh installs never create them) and keep the cancellation on
+the order itself — the shape every major platform uses and the one the
+codebase already needs, since Ransack, sorting, the CSV export and staff
+anonymization read `canceled_at` as a column. Nothing is carried over: no
+row ever held more than the default.
+
+**The reason is merchant data, in its own table.** `cancel_reason_id`
+points at a new **`Spree::OrderCancellationReason`** — the fourth
+`NamedType` vocabulary beside return, claim and refund reasons:
+store-scoped, seeded per store, `restrict_with_error` while orders
+reference it, managed on the Settings → Reasons page that already renders
+its siblings, and optional like `Return#reason`. A fixed string list was
+written first and rejected on the 2026-08-07 `Claim#claim_type` grounds —
+nothing branches on the value, so a closed vocabulary asks the merchant a
+question it will not act on, while the neighbouring reasons are theirs to
+write. Merging the four into one table behind a `kind` was also rejected:
+they carry different associations and delete guards, `RefundReason` has
+named lookups core itself attaches to refunds, `NamedType` already factors
+out everything shared, and one wider index replaces four DB-enforced ones
+— typed tables per grain, as the quantity-rules plan puts it. The workflow
+refuses a reason from another store, so console and extension callers get
+the scoping the controllers apply to every incidental id. `Orders::Approve`
+stays what it was, the risk-review clearance (`considered_risky` +
+`approved_at`); a merchant-side multi-level approval of a placed order has
+no industry precedent (the nearest thing elsewhere is a fulfillment hold),
+and buyer-side company approvals are Enterprise (2026-08-30). `level:` /
+`note:` on Approve and `restock_items:` on Cancel warn and are ignored
+until 6.1.
+
+**Constraints now:** no cancellation or approval history tables; a future
+customer self-cancel makes the actor on the order polymorphic — a column
+change, never a side table; company approval flows stay Enterprise and
+carry their own record.

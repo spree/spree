@@ -73,7 +73,6 @@ module Spree
         external_step :tell_provider_it_shipped
 
         ApplicationRecord.transaction do
-          step :reallocate_if_resuming_from_canceled
           step :ship_allocated_units
           step :mark_fulfilled
           step :capture_payment_if_configured
@@ -187,13 +186,7 @@ module Spree
       def dispatch_quantity_by_variant
         held = @source.fulfillment_items.group(:variant_id).sum(:quantity)
 
-        # A canceled fulfillment gets its promise back on the way out (see
-        # #reallocate_if_resuming_from_canceled), so what it is about to take
-        # is its whole manifest rather than the nothing it holds right now —
-        # minus the variants that keep no stock, which the writes skip and the
-        # check must skip too, or it would refuse a dispatch over a shelf that
-        # was never kept for them.
-        allocated = @source.canceled? ? tracked_only(held) : @source.allocated_quantities
+        allocated = @source.allocated_quantities
         return {} if allocated.empty?
 
         wanted =
@@ -209,18 +202,6 @@ module Spree
           quantity = [promised, wanted[variant_id].to_i].min
           totals[variant_id] = quantity if quantity.positive?
         end
-      end
-
-      # @param quantities [Hash{Integer => Integer}]
-      # @return [Hash{Integer => Integer}]
-      def tracked_only(quantities)
-        return quantities if quantities.empty?
-
-        tracked = Spree::Variant.with_deleted.where(id: quantities.keys).select do |variant|
-          variant.should_track_inventory?
-        end.map(&:id)
-
-        quantities.slice(*tracked)
       end
 
       # Each requested quantity has to exist in *this* fulfillment. Without
@@ -271,22 +252,6 @@ module Spree
         requested = @requested.to_h { |item| [item[:line_item].id, item[:quantity]] }
 
         held.all? { |line_item_id, quantity| requested[line_item_id].to_i >= quantity }
-      end
-
-      # A canceled fulfillment gave its promise back, so shipping it directly
-      # has to make that promise again before the units can leave — canceled ->
-      # fulfilled is allowed precisely so goods that went out anyway can be
-      # recorded. Ordering matters: the ledger should read as a re-promise
-      # followed by a departure, which is what happened.
-      def reallocate_if_resuming_from_canceled
-        return unless @source.canceled?
-
-        @fulfillment.manifest.each do |item|
-          next unless item.variant.track_inventory?
-          next unless item.quantity.positive?
-
-          @fulfillment.stock_location.allocate(item.variant, item.quantity, @fulfillment)
-        end
       end
 
       # The shelf empties when the parcel leaves, for the units this

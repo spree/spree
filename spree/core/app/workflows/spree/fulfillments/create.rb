@@ -141,15 +141,18 @@ module Spree
       end
 
       # Units that can still be moved into a manual fulfillment: on-hand or
-      # backordered units sitting in shipments that haven't shipped or been
-      # canceled (canceled shipments already restocked their stock). Loaded
-      # in one query, on-hand first so moved units stay shippable, grouped
-      # by line item for both validation and moving.
+      # backordered units sitting in shipments that haven't shipped. A
+      # canceled shipment's units are included — cancellation kills that
+      # attempt, not the obligation to ship, so the goods are still owed and
+      # a fresh fulfillment is the only way left to send them (the canceled
+      # record itself can never be fulfilled). Loaded in one query, on-hand
+      # first so moved units stay shippable, grouped by line item for both
+      # validation and moving.
       def fulfillable_units(order)
         order.fulfillment_items.
           on_hand_or_backordered.
           joins(:fulfillment).
-          merge(Spree::Fulfillment.ready_or_pending).
+          merge(Spree::Fulfillment.ready_or_pending.or(Spree::Fulfillment.canceled)).
           preload(:fulfillment, :variant).
           order(Arel.sql("CASE WHEN #{Spree::FulfillmentItem.table_name}.status = 'on_hand' THEN 0 ELSE 1 END"), :id).
           group_by(&:line_item_id)
@@ -246,6 +249,14 @@ module Spree
         # or one created before typed movements, carries nothing.
         stock_moves.each do |(source_shipment, variant), quantity|
           next unless variant.track_inventory?
+
+          # A canceled source gave its promise back when it was canceled, so
+          # there is nothing to carry: the new fulfillment promises the units
+          # afresh, which is what makes them shippable again.
+          if source_shipment.canceled?
+            fulfillment.stock_location.allocate(variant, quantity, fulfillment)
+            next
+          end
 
           carried = [source_shipment.allocated_quantities[variant.id].to_i, quantity].min
           next unless carried.positive?

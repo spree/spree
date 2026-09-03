@@ -168,6 +168,7 @@ module Spree
     belongs_to :created_by, class_name: "::#{Spree.admin_user_class}", optional: true
     belongs_to :approver, class_name: "::#{Spree.admin_user_class}", optional: true
     belongs_to :canceler, class_name: "::#{Spree.admin_user_class}", optional: true
+    belongs_to :cancel_reason, class_name: 'Spree::OrderCancellationReason', optional: true, inverse_of: :orders
 
     belongs_to :preferred_stock_location, class_name: 'Spree::StockLocation', optional: true
 
@@ -178,8 +179,6 @@ module Spree
       has_many :returns, -> { order(:created_at) }, inverse_of: :order, class_name: 'Spree::Return'
       has_many :exchanges, -> { order(:created_at) }, inverse_of: :order, class_name: 'Spree::Exchange'
       has_many :claims, -> { order(:created_at) }, inverse_of: :order, class_name: 'Spree::Claim'
-      has_many :cancellations, -> { order(:created_at) }, inverse_of: :order, class_name: 'Spree::OrderCancellation'
-      has_many :approvals, -> { order(:created_at) }, inverse_of: :order, class_name: 'Spree::OrderApproval'
     end
     has_many :fulfillment_items, inverse_of: :order, class_name: 'Spree::FulfillmentItem'
     has_many :inventory_units, class_name: 'Spree::FulfillmentItem', inverse_of: :order, deprecated: true
@@ -959,8 +958,8 @@ module Spree
     # Delegates to {Spree::Orders::Cancel} workflow.
     #
     # @deprecated Call {Spree.order_cancel_workflow} directly — it exposes the
-    #   full cancellation vocabulary (reason, note, restock_items,
-    #   refund_payments, notify_customer) this wrapper cannot pass through.
+    #   full cancellation vocabulary (reason, note, refund_payments,
+    #   notify_customer) this wrapper cannot pass through.
     # @param user [Spree.customer_class, nil] the user who canceled the order
     # @param canceled_at [Time, nil] the time of cancellation (defaults to current time)
     # @return [Spree::ServiceModule::Result]
@@ -970,23 +969,14 @@ module Spree
     end
 
     # Machine-free lifecycle: cancellation runs through the
-    # {Spree::Orders::Cancel} workflow (which also records a
-    # Spree::OrderCancellation row); resume flips +status+ back and runs
-    # the same side effects the machine transition ran.
+    # {Spree::Orders::Cancel} workflow. There is no way back — a canceled
+    # order stays canceled, as it does on every comparable platform.
     def cancel
       Spree.order_cancel_workflow.call(order: self).success?
     end
 
     def cancel!
       cancel || raise(ActiveRecord::RecordInvalid.new(self))
-    end
-
-    def resume
-      Spree.order_resume_workflow.call(order: self).success?
-    end
-
-    def resume!
-      resume || raise(ActiveRecord::RecordInvalid.new(self))
     end
 
     # Approves the order and records the approver.

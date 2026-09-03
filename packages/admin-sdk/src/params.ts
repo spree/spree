@@ -527,18 +527,22 @@ export interface OrderCompleteParams {
 }
 
 export interface OrderCancelParams {
-  reason?: 'customer' | 'declined' | 'fraud' | 'inventory' | 'staff' | 'other' | 'expired'
-  note?: string
-  restock_items?: boolean
+  /** Why the order was canceled — an id from the store's cancellation reasons. */
+  cancel_reason_id?: string
+  /** Staff-facing note shown on the order. */
+  cancel_note?: string
+  /**
+   * Whether this order's share of a payment shared across a split checkout is
+   * handed back. An ordinary order settles at the gateway either way.
+   */
   refund_payments?: boolean
-  /** Decimal amount; see `PaymentCreateParams.amount` for the string rationale. */
+  /**
+   * How much of that share to return, defaulting to all of it. Refused on an
+   * ordinary order, where the gateway returns the payment in full.
+   * Decimal amount; see `PaymentCreateParams.amount` for the string rationale.
+   */
   refund_amount?: string | number
   notify_customer?: boolean
-}
-
-export interface OrderApproveParams {
-  level?: string
-  note?: string
 }
 
 export interface GiftCardApplyParams {

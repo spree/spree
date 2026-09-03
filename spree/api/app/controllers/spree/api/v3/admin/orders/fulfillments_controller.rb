@@ -132,19 +132,6 @@ module Spree
               end
             end
 
-            # PATCH /api/v3/admin/orders/:order_id/fulfillments/:id/resume
-            def resume
-              with_order_lock do
-                result = Spree.fulfillment_resume_workflow.call(fulfillment: @resource)
-
-                if result.success?
-                  render json: serialize_resource(result.value)
-                else
-                  render_result_error(result)
-                end
-              end
-            end
-
             # PATCH /api/v3/admin/orders/:order_id/fulfillments/:id/split
             def split
               with_order_lock do

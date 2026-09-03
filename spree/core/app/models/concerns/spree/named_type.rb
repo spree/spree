@@ -1,7 +1,8 @@
 module Spree
-  # Shared behaviour for the reason vocabularies — return, claim and refund.
+  # Shared behaviour for the reason vocabularies — return, claim, refund and
+  # order cancellation.
   #
-  # All three are store-owned, so the scoping lives here rather than being
+  # All of them are store-owned, so the scoping lives here rather than being
   # repeated per model. `UniqueName` stays the general concern for globally
   # unique named records (Role, OptionType, Zone); this one narrows it to
   # per-store names.
@@ -17,7 +18,7 @@ module Spree
       normalizes :name, with: ->(value) { value&.to_s&.squish&.presence }
 
       # Per store, not global: two stores can each have their own "Damaged".
-      # Backed by a unique (store_id, name) index on all three tables.
+      # Backed by a unique (store_id, name) index on each table.
       validates :name, presence: true,
                        uniqueness: {
                          case_sensitive: false,

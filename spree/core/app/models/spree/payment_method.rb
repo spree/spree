@@ -252,7 +252,16 @@ module Spree
       true
     end
 
-    def cancel(_response)
+    # Settles a payment for a canceled order. A gateway releases what it never
+    # drew on; what it does with money already taken depends on `refund:`,
+    # which is false when the operator asked to keep it — an adapter that
+    # cannot void a captured charge must then leave it alone rather than
+    # refunding anyway.
+    #
+    # @param _response [String] the gateway's authorization for the payment
+    # @param _payment [Spree::Payment, nil]
+    # @param refund [Boolean] whether money already captured may be returned
+    def cancel(_response, _payment = nil, refund: true)
       raise ::NotImplementedError, 'You must implement cancel method for this payment method.'
     end
 

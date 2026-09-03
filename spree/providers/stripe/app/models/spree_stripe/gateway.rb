@@ -94,11 +94,15 @@ module SpreeStripe
     end
 
     # A completed payment can no longer be voided, so cancellation refunds it
-    # instead. Refunds for a fulfillment are skipped — the delivery cost is
-    # refunded as a whole elsewhere.
-    def cancel(payment_intent_id, payment = nil)
+    # instead — unless the operator asked to keep the money, in which case the
+    # charge is left standing for them to refund deliberately. Refunds for a
+    # fulfillment are skipped — the delivery cost is refunded as a whole
+    # elsewhere.
+    def cancel(payment_intent_id, payment = nil, refund: true)
       protect_from_error do
         if payment&.completed?
+          return success(payment_intent_id, {}) unless refund
+
           amount = payment.credit_allowed
           return success(payment_intent_id, {}) if amount.zero?
           return success(payment_intent_id, {}) if payment.respond_to?(:for_shipment?) && payment.for_shipment?

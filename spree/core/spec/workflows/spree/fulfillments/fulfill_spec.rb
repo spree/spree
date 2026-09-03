@@ -102,16 +102,14 @@ module Spree
         expect(fulfillment.reload).not_to be_fulfilled
       end
 
-      # Shipping a canceled fulfillment is deliberate — the goods went out
-      # anyway — so the workflow must not second-guess it.
-      it 'fulfills a canceled fulfillment' do
+      it 'does not allow to fulfill a canceled fulfillment' do
         stock_the_shelf(fulfillment)
         fulfillment.update!(status: 'canceled')
 
         result = subject.call(fulfillment: fulfillment)
 
-        expect(result.success?).to eq(true)
-        expect(fulfillment.reload).to be_fulfilled
+        expect(result.success?).to eq(false)
+        expect(fulfillment.reload).not_to be_fulfilled
       end
 
       # force exists for unpaid invoices; a draft has not been agreed at all,
@@ -153,55 +151,6 @@ module Spree
         }.to change { order.reload.fulfillments.count }.by(1)
 
         expect(order.fulfillments.reload.map(&:status)).to all(eq('unfulfilled'))
-      end
-    end
-
-    # A canceled fulfillment gave its promise back, so shipping it directly
-    # has to re-promise the units before they can leave. This used to ride on
-    # the resume transition callback.
-    describe 'fulfilling a canceled fulfillment' do
-      before { fulfillment.update!(status: 'canceled') }
-
-      # A variant that keeps no stock is skipped by every write, so the
-      # shelf-cover check has to skip it too — otherwise a canceled dispatch of
-      # untracked goods is refused over a level nobody maintains.
-      it 'dispatches when the goods are untracked and no shelf is kept for them' do
-        fulfillment.manifest.each do |item|
-          item.variant.update!(track_inventory: false)
-          fulfillment.stock_location.stock_level(item.variant)&.update_columns(count_on_hand: 0)
-        end
-
-        result = subject.call(fulfillment: fulfillment)
-
-        expect(result).to be_success
-        expect(fulfillment.reload).to be_fulfilled
-      end
-
-      it 're-promises the units and then ships them' do
-        stock_the_shelf(fulfillment)
-        variant = fulfillment.fulfillment_items.first.variant
-        stock_level = fulfillment.stock_location.stock_level(variant)
-
-        expect { subject.call(fulfillment: fulfillment) }.
-          to change { stock_level.reload.count_on_hand }.by(
-            -fulfillment.fulfillment_items.where(variant_id: variant.id).sum(:quantity)
-          )
-        expect(fulfillment.reload).to be_fulfilled
-      end
-
-      # Resuming already re-promised the units, so fulfilling afterwards
-      # takes them off the shelf exactly once rather than twice.
-      it 'ships the re-promised units only once when the fulfillment was resumed' do
-        stock_the_shelf(fulfillment)
-        Spree.fulfillment_resume_workflow.call(fulfillment: fulfillment)
-        variant = fulfillment.fulfillment_items.first.variant
-        quantity = fulfillment.fulfillment_items.where(variant_id: variant.id).sum(:quantity)
-        stock_level = fulfillment.stock_location.stock_level(variant)
-
-        expect { subject.call(fulfillment: fulfillment) }.
-          to change { stock_level.reload.count_on_hand }.by(-quantity)
-
-        expect(stock_level.reload.allocated_count).to eq(0)
       end
     end
 

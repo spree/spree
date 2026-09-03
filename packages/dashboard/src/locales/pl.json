@@ -2647,6 +2647,16 @@
           "value_type_flat": "Kwota",
           "value_type_percent": "Procent"
         },
+        "cancel": {
+          "description": "Powód i notatka zostaną zapisane przy zamówieniu, a płatności zostaną rozliczone.",
+          "keep_order": "Zachowaj zamówienie",
+          "no_reason": "Nie podano powodu",
+          "note_label": "Notatka",
+          "note_placeholder": "Notatkę widzi tylko personel",
+          "reason_label": "Powód",
+          "refund_payments": "Zwróć pieniądze klientowi",
+          "refund_payments_help": "Pobrane środki zostaną zwrócone. Niewykorzystana autoryzacja i tak zostanie zwolniona."
+        },
         "commission_lines": {
           "column_fee": "Prowizja",
           "column_rate": "Stawka",
@@ -2673,7 +2683,6 @@
           "remove_gift_card_message": "Usunąć tę kartę podarunkową z zamówienia?",
           "remove_item_message": "Usunąć tę pozycję z zamówienia?",
           "remove_store_credit_message": "Usunąć kredyt sklepowy z zamówienia?",
-          "resume_message": "Wznowić to anulowane zamówienie?",
           "ship_message": "Wysłać tę realizację?",
           "void_message": "Unieważnić tę płatność?"
         },
@@ -2698,8 +2707,7 @@
           "approve_failed": "Nie udało się zatwierdzić zamówienia",
           "cancel_failed": "Nie udało się anulować zamówienia",
           "complete_failed": "Nie udało się sfinalizować zamówienia",
-          "confirmation_send_failed": "Nie udało się wysłać potwierdzenia",
-          "resume_failed": "Nie udało się wznowić zamówienia"
+          "confirmation_send_failed": "Nie udało się wysłać potwierdzenia"
         },
         "fulfillments": {
           "add_tracking": "Dodaj śledzenie",
@@ -2760,7 +2768,6 @@
           "captured": "Płatność pobrana",
           "completed": "Zamówienie sfinalizowane",
           "confirmation_sent": "Potwierdzenie wysłane",
-          "resumed": "Zamówienie wznowione",
           "shipped": "Realizacja wysłana",
           "voided": "Płatność unieważniona"
         },
@@ -2798,6 +2805,8 @@
         "summary": {
           "adjustments": "Korekty",
           "approved_by": "Zatwierdzone przez",
+          "cancel_note": "Notatka o anulowaniu",
+          "cancel_reason": "Powód anulowania",
           "canceled_at": "Anulowano",
           "canceler": "Anulujący",
           "commission_fee": "Prowizja (opłata)",
@@ -3069,7 +3078,6 @@
             "capture": "Pobierz",
             "mark_paid": "Oznacz jako opłacone",
             "refund": "Zwrot środków",
-            "resume": "Wznów",
             "ship": "Oznacz jako wysłane",
             "void": "Unieważnij"
           },
@@ -4438,7 +4446,7 @@
         "message": "{{name}} nie będzie już proponowany. Istniejące zgłoszenia go zachowują.",
         "title": "Usunąć powód?"
       },
-      "description": "Listy, z których zespół wybiera przy zwrotach, reklamacjach i zwrotach pieniędzy.",
+      "description": "Listy powodów, z których korzysta zespół przy zwrotach, reklamacjach, refundacjach i anulowaniach.",
       "edit_sheet_title": "Edytuj powód",
       "empty": "Brak powodów",
       "in_use": "W użyciu",
@@ -4450,6 +4458,10 @@
         "updated": "Powód zaktualizowany"
       },
       "name_placeholder": "np. Zły rozmiar",
+      "order_cancellation": {
+        "help": "Dlaczego zamówienie zostało odwołane przed wysyłką. Personel wybiera powód podczas anulowania.",
+        "title": "Powody anulowania zamówień"
+      },
       "refund": {
         "help": "Dlaczego pieniądze wróciły. Używane w raportach o wszystkich zwrotach.",
         "title": "Powody zwrotu pieniędzy"

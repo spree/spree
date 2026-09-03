@@ -2627,6 +2627,16 @@
           "value_type_flat": "Amount",
           "value_type_percent": "Percent"
         },
+        "cancel": {
+          "description": "The reason and note are recorded on the order, and any payments are settled.",
+          "keep_order": "Keep order",
+          "no_reason": "No reason given",
+          "note_label": "Note",
+          "note_placeholder": "Only staff see this note",
+          "reason_label": "Reason",
+          "refund_payments": "Refund the customer",
+          "refund_payments_help": "Money already taken is returned. An unclaimed authorization is released either way."
+        },
         "commission_lines": {
           "column_fee": "Fee",
           "column_rate": "Rate",
@@ -2653,7 +2663,6 @@
           "remove_gift_card_message": "Remove this gift card from the order?",
           "remove_item_message": "Remove this item from the order?",
           "remove_store_credit_message": "Remove store credit from the order?",
-          "resume_message": "Resume this canceled order?",
           "ship_message": "Ship this fulfillment?",
           "void_message": "Void this payment?"
         },
@@ -2678,8 +2687,7 @@
           "approve_failed": "Failed to approve order",
           "cancel_failed": "Failed to cancel order",
           "complete_failed": "Failed to complete order",
-          "confirmation_send_failed": "Failed to send confirmation",
-          "resume_failed": "Failed to resume order"
+          "confirmation_send_failed": "Failed to send confirmation"
         },
         "fulfillments": {
           "add_tracking": "Add tracking",
@@ -2738,7 +2746,6 @@
           "captured": "Payment captured",
           "completed": "Order completed",
           "confirmation_sent": "Confirmation sent",
-          "resumed": "Order resumed",
           "shipped": "Fulfillment shipped",
           "voided": "Payment voided"
         },
@@ -2776,6 +2783,8 @@
         "summary": {
           "adjustments": "Adjustments",
           "approved_by": "Approved by",
+          "cancel_note": "Cancellation note",
+          "cancel_reason": "Cancellation reason",
           "canceled_at": "Canceled at",
           "canceler": "Canceler",
           "commission_fee": "Commission (fee)",
@@ -3041,7 +3050,6 @@
             "capture": "Capture",
             "mark_paid": "Mark as paid",
             "refund": "Refund",
-            "resume": "Resume",
             "ship": "Mark as shipped",
             "void": "Void"
           },
@@ -4384,7 +4392,7 @@
         "message": "{{name}} will no longer be offered. Records already using it keep it.",
         "title": "Delete reason?"
       },
-      "description": "The vocabularies your team picks from when handling returns, claims and refunds.",
+      "description": "The vocabularies your team picks from when handling returns, claims, refunds and cancellations.",
       "edit_sheet_title": "Edit reason",
       "empty": "No reasons yet",
       "in_use": "In use",
@@ -4396,6 +4404,10 @@
         "updated": "Reason updated"
       },
       "name_placeholder": "e.g. Wrong size",
+      "order_cancellation": {
+        "help": "Why an order was called off before it shipped. Staff pick one when canceling.",
+        "title": "Order cancellation reasons"
+      },
       "refund": {
         "help": "Why money went back. Used for reporting across every refund.",
         "title": "Refund reasons"

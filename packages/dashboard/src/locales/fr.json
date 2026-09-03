@@ -2627,6 +2627,16 @@
           "value_type_flat": "Montant",
           "value_type_percent": "Pourcentage"
         },
+        "cancel": {
+          "description": "Le motif et la note sont enregistrés sur la commande, et les paiements sont soldés.",
+          "keep_order": "Conserver la commande",
+          "no_reason": "Aucun motif indiqué",
+          "note_label": "Note",
+          "note_placeholder": "Cette note n'est visible que par le personnel",
+          "reason_label": "Motif",
+          "refund_payments": "Rembourser le client",
+          "refund_payments_help": "L'argent déjà encaissé est restitué. Une autorisation non utilisée est libérée dans tous les cas."
+        },
         "commission_lines": {
           "column_fee": "Commission",
           "column_rate": "Taux",
@@ -2653,7 +2663,6 @@
           "remove_gift_card_message": "Retirer cette carte cadeau de la commande ?",
           "remove_item_message": "Retirer cet article de la commande ?",
           "remove_store_credit_message": "Retirer l'avoir de la commande ?",
-          "resume_message": "Reprendre cette commande annulée ?",
           "ship_message": "Expédier cet envoi ?",
           "void_message": "Annuler ce paiement ?"
         },
@@ -2678,8 +2687,7 @@
           "approve_failed": "Échec de l'approbation de la commande",
           "cancel_failed": "Échec de l'annulation de la commande",
           "complete_failed": "Échec de la finalisation de la commande",
-          "confirmation_send_failed": "Échec de l'envoi de la confirmation",
-          "resume_failed": "Échec de la reprise de la commande"
+          "confirmation_send_failed": "Échec de l'envoi de la confirmation"
         },
         "fulfillments": {
           "add_tracking": "Ajouter un suivi",
@@ -2738,7 +2746,6 @@
           "captured": "Paiement capturé",
           "completed": "Commande finalisée",
           "confirmation_sent": "Confirmation envoyée",
-          "resumed": "Commande reprise",
           "shipped": "Envoi expédié",
           "voided": "Paiement annulé"
         },
@@ -2776,6 +2783,8 @@
         "summary": {
           "adjustments": "Ajustements",
           "approved_by": "Approuvé par",
+          "cancel_note": "Note d'annulation",
+          "cancel_reason": "Motif d'annulation",
           "canceled_at": "Annulée le",
           "canceler": "Annulé par",
           "commission_fee": "Commission (honoraire)",
@@ -3041,7 +3050,6 @@
             "capture": "Capturer",
             "mark_paid": "Marquer comme payée",
             "refund": "Rembourser",
-            "resume": "Reprendre",
             "ship": "Marquer comme expédiée",
             "void": "Annuler"
           },
@@ -4384,7 +4392,7 @@
         "message": "{{name}} ne sera plus proposé. Les enregistrements existants le conservent.",
         "title": "Supprimer le motif ?"
       },
-      "description": "Les listes de motifs que votre équipe utilise pour les retours, réclamations et remboursements.",
+      "description": "Les listes de motifs utilisées par votre équipe pour les retours, réclamations, remboursements et annulations.",
       "edit_sheet_title": "Modifier le motif",
       "empty": "Aucun motif pour l'instant",
       "in_use": "Utilisé",
@@ -4396,6 +4404,10 @@
         "updated": "Motif mis à jour"
       },
       "name_placeholder": "ex. Mauvaise taille",
+      "order_cancellation": {
+        "help": "Pourquoi une commande a été annulée avant son expédition. Le personnel en choisit un lors de l'annulation.",
+        "title": "Motifs d'annulation de commande"
+      },
       "refund": {
         "help": "Pourquoi l'argent a été rendu. Utilisé pour le suivi de tous les remboursements.",
         "title": "Motifs de remboursement"

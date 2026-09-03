@@ -139,6 +139,7 @@ module Spree
         admin_return_reason_serializer: 'Spree::Api::V3::Admin::ReturnReasonSerializer',
         admin_claim_reason_serializer: 'Spree::Api::V3::Admin::ClaimReasonSerializer',
         admin_refund_reason_serializer: 'Spree::Api::V3::Admin::RefundReasonSerializer',
+        admin_order_cancellation_reason_serializer: 'Spree::Api::V3::Admin::OrderCancellationReasonSerializer',
         admin_return_serializer: 'Spree::Api::V3::Admin::ReturnSerializer',
         admin_return_line_item_serializer: 'Spree::Api::V3::Admin::ReturnLineItemSerializer',
         admin_exchange_serializer: 'Spree::Api::V3::Admin::ExchangeSerializer',

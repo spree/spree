@@ -363,6 +363,19 @@ RSpec.describe 'Admin Orders API', type: :request, swagger_doc: 'api-reference/a
       description <<~DESC
         Cancels a completed order.
 
+        `cancel_reason_id` records why, from the store's own cancellation-reason
+        vocabulary (`/admin/order_cancellation_reasons`), and `cancel_note` is a
+        staff-facing note; both are shown on the order afterwards.
+
+        Stock is always released — the goods are not going out either way — and
+        every payment is settled at the gateway, which releases an
+        authorization it never drew on and refunds a charge it cannot release.
+
+        `refund_payments` and `refund_amount` govern the shared payment of a
+        split checkout, where one payment covers several orders: they decide
+        whether this order's share comes back, and how much of it. A
+        `refund_amount` on an ordinary order is refused with a 422.
+
         Set `notify_customer: true` to send the order cancellation email.
       DESC
       admin_scope :write, :orders
@@ -377,7 +390,11 @@ RSpec.describe 'Admin Orders API', type: :request, swagger_doc: 'api-reference/a
       parameter name: :body, in: :body, required: false, schema: {
         type: :object,
         properties: {
-          notify_customer: { type: :boolean, description: 'Send the order cancellation email after canceling.' }
+          cancel_reason_id: { type: :string, description: "Why the order was canceled — the id of one of the store's cancellation reasons." },
+          cancel_note: { type: :string, description: 'Staff-facing note about the cancellation.' },
+          refund_payments: { type: :boolean, default: false, description: "Whether this order's share of a payment shared across a split checkout is handed back." },
+          refund_amount: { type: :string, description: "How much of that share to return. Defaults to all of it; refused on an order whose payment is not shared." },
+          notify_customer: { type: :boolean, default: false, description: 'Send the order cancellation email after canceling.' }
         }
       }
 
@@ -416,36 +433,6 @@ RSpec.describe 'Admin Orders API', type: :request, swagger_doc: 'api-reference/a
           data = JSON.parse(response.body)
           expect(data['approved_at']).to be_present
         end
-      end
-    end
-  end
-
-  path '/api/v3/admin/orders/{id}/resume' do
-    patch 'Resume a canceled order' do
-      tags 'Orders'
-      produces 'application/json'
-      security [api_key: [], bearer_auth: []]
-      description 'Resumes a previously canceled order.'
-      admin_scope :write, :orders
-
-      admin_sdk_example 'orders/resume'
-
-      parameter name: 'x-spree-api-key', in: :header, type: :string, required: true
-      parameter name: :Authorization, in: :header, type: :string, required: true,
-                description: 'Bearer token for admin authentication'
-      parameter name: :id, in: :path, type: :string, required: true,
-                description: 'Order ID'
-
-      response '200', 'order resumed' do
-        let(:'x-spree-api-key') { secret_api_key.plaintext_token }
-        let!(:order) { create(:completed_order_with_totals, store: store) }
-        let(:id) { order.prefixed_id }
-
-        before do
-          Spree.order_cancel_workflow.call(order: order, canceler: admin_user)
-        end
-
-        run_test!
       end
     end
   end

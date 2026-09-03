@@ -265,8 +265,6 @@ is reported through `Rails.error` so it's visible rather than mysterious.
 | `carts.recalculate_totals` | `set_tax_line_context` | context | Before tax is estimated |
 | `orders.cancel` | `before_cancel` | validate | Before the cancellation is recorded |
 | `orders.cancel` | `after_cancel` | lifecycle | With the cancellation, in transaction |
-| `orders.resume` | `before_resume` | validate | Before the order is un-cancelled |
-| `orders.resume` | `after_resume` | lifecycle | With the status flip, in transaction |
 | `fulfillments.create` | `validate` | validate | Before the order is locked |
 | `fulfillments.create` | `get_provider_data` | context | Before the fulfillment is built |
 | `fulfillments.create` | `after_create` | lifecycle | After the fulfillment is created and totals recalculated |
@@ -320,7 +318,7 @@ is reported through `Rails.error` so it's visible rather than mysterious.
 | `imports.retry_failed_rows` | `validate` | validate | Before failed rows are queued again |
 | `imports.retry_failed_rows` | `after_retry` | lifecycle | After the import returns to processing, before re-dispatch (in transaction) |
 
-`before_cancel` and `before_resume` accept `reject!` like a `validate` hook.
+`before_cancel` accept `reject!` like a `validate` hook.
 
 Draft-order editing in the admin uses **twin workflows** with their own keys —
 `orders.add_item`, `orders.upsert_items`, `orders.recalculate`,

@@ -19,7 +19,7 @@ module Spree
   #
   # @example Multi-event subscriber
   #   class OrderAuditLogger < Spree::Subscriber
-  #     subscribes_to 'order.placed', 'order.canceled', 'order.resumed'
+  #     subscribes_to 'order.placed', 'order.canceled'
   #
   #     def call(event)
   #       AuditLog.create!(

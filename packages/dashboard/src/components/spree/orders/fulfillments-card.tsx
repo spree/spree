@@ -42,7 +42,6 @@ import {
   PencilIcon,
   PlusIcon,
   PrinterIcon,
-  RotateCcwIcon,
   SplitIcon,
   TagIcon,
   TruckIcon,
@@ -399,7 +398,7 @@ function FulfillmentRow({ order, fulfillment }: { order: Order; fulfillment: Ful
   const { t } = useTranslation()
   const confirm = useConfirm()
   const orderId = order.id
-  const { cancel, resume, markDelivered, purchaseLabel } = useFulfillmentActions(orderId)
+  const { cancel, markDelivered, purchaseLabel } = useFulfillmentActions(orderId)
 
   const [editOpen, setEditOpen] = useState(false)
   const [splitOpen, setSplitOpen] = useState(false)
@@ -471,13 +470,6 @@ function FulfillmentRow({ order, fulfillment }: { order: Order; fulfillment: Ful
               <DropdownMenuItem onClick={() => setTrackingOpen(true)}>
                 <TruckIcon className="size-4" />
                 {t('admin.orders.detail.fulfillments.edit_tracking_title')}
-              </DropdownMenuItem>
-            )}
-
-            {fulfillment.status === 'canceled' && (
-              <DropdownMenuItem onClick={() => resume.mutate(fulfillment.id)}>
-                <RotateCcwIcon className="size-4" />
-                {t('admin.pages.orders.detail.actions.resume')}
               </DropdownMenuItem>
             )}
 

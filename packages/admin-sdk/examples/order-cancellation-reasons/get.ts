@@ -6,8 +6,8 @@ const client = createAdminClient({
 })
 
 // region:example
-const fulfillment = await client.orders.fulfillments.resume('or_UkLWZg9DAJ', 'ful_UkLWZg9DAJ')
+const reason = await client.orderCancellationReasons.get('ocr_UkLWZg9DAJ')
 
 // endregion:example
 
-export { fulfillment }
+export { reason }

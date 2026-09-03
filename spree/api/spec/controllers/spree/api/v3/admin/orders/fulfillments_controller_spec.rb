@@ -301,20 +301,6 @@ RSpec.describe Spree::Api::V3::Admin::Orders::FulfillmentsController, type: :con
     end
   end
 
-  describe 'PATCH #resume' do
-    it 'resumes a canceled fulfillment' do
-      shipment.update!(status: 'canceled')
-
-      patch :resume, params: {
-        order_id: order.prefixed_id,
-        id: shipment.prefixed_id
-      }, as: :json
-
-      expect(response).to have_http_status(:ok)
-      expect(json_response['status']).to eq('unfulfilled')
-    end
-  end
-
   describe 'PATCH #purchase_label' do
     let(:label_provider_class) do
       Class.new(Spree::FulfillmentProvider::Base) do

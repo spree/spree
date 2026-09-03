@@ -474,8 +474,12 @@ RSpec.describe Spree::Api::V3::Admin::OrdersController, type: :controller do
         end
       end
 
-      let!(:default_location)   { create(:stock_location, name: 'NYC default', default: true,  country: country, state: state) }
-      let!(:preferred_location) { create(:stock_location, name: 'LA preferred', default: false, country: country, state: state) }
+      let!(:default_location) do
+        create(:stock_location, name: 'NYC default', default: true, country: country, state: state)
+      end
+      let!(:preferred_location) do
+        create(:stock_location, name: 'LA preferred', default: false, country: country, state: state)
+      end
 
       let(:variant) { create(:variant) }
 
@@ -949,31 +953,102 @@ RSpec.describe Spree::Api::V3::Admin::OrdersController, type: :controller do
       expect(order.reload).to be_canceled
     end
 
-    context 'when notify_customer is not passed' do
-      it 'does not flag the cancellation for customer notification' do
+    it 'leaves the reason unset when none is given' do
+      subject
+
+      expect(order.reload.cancel_reason).to be_nil
+      expect(order.cancel_note).to be_nil
+      expect(json_response['cancel_reason_id']).to be_nil
+    end
+
+    context 'with a reason and note' do
+      let(:reason) { create(:order_cancellation_reason, store: store, name: 'Out of stock') }
+      let(:params) do
+        { id: order.prefixed_id, cancel_reason_id: reason.prefixed_id, cancel_note: 'Supplier let us down' }
+      end
+
+      it 'stamps them on the order' do
         subject
 
-        expect(order.cancellations.last.notify_customer).to be false
+        expect(response).to have_http_status(:ok)
+        expect(order.reload.cancel_reason).to eq(reason)
+        expect(order.cancel_note).to eq('Supplier let us down')
+        expect(json_response['cancel_reason_id']).to eq(reason.prefixed_id)
+        expect(json_response['cancel_reason_name']).to eq('Out of stock')
+        expect(json_response['cancel_note']).to eq('Supplier let us down')
+      end
+    end
+
+    context 'with refund_payments' do
+      let!(:order) { create(:completed_order_with_totals, store: store) }
+      let(:params) { { id: order.prefixed_id, refund_payments: 'true' } }
+
+      it 'asks the workflow to refund what the order has been paid' do
+        expect(Spree.order_cancel_workflow).to receive(:call)
+          .with(hash_including(refund_payments: true, refund_amount: nil)).and_call_original
+
+        subject
+
+        expect(response).to have_http_status(:ok)
+      end
+
+      context 'capped by refund_amount' do
+        let(:params) { { id: order.prefixed_id, refund_payments: 'true', refund_amount: '10.00' } }
+
+        it 'passes the cap through' do
+          expect(Spree.order_cancel_workflow).to receive(:call)
+            .with(hash_including(refund_payments: true, refund_amount: '10.00')).and_call_original
+
+          subject
+        end
+
+        # The gateway returns an ordinary order's payment in full, so a cap
+        # cannot be honoured and is refused rather than quietly ignored.
+        it 'refuses the cap on an order whose payment is not shared' do
+          subject
+
+          expect(response).to have_http_status(:unprocessable_content)
+          expect(order.reload).not_to be_canceled
+        end
+      end
+    end
+
+    # Releasing the gateway's hold is automatic; handing back money already
+    # taken is asked for, as it is on every other major platform.
+    it 'does not refund unless asked' do
+      expect(Spree.order_cancel_workflow).to receive(:call)
+        .with(hash_including(refund_payments: false)).and_call_original
+
+      subject
+    end
+
+    context 'with a reason belonging to another store' do
+      let(:reason) { create(:order_cancellation_reason, store: create(:store)) }
+      let(:params) { { id: order.prefixed_id, cancel_reason_id: reason.prefixed_id } }
+
+      it 'returns 404 and leaves the order untouched' do
+        subject
+
+        expect(response).to have_http_status(:not_found)
+        expect(order.reload).not_to be_canceled
+      end
+    end
+
+    context 'when notify_customer is not passed' do
+      it 'asks the workflow not to notify the customer' do
+        expect(Spree.order_cancel_workflow).to receive(:call).with(hash_including(notify_customer: false)).and_call_original
+
+        subject
       end
     end
 
     context 'when notify_customer is truthy' do
       let(:params) { { id: order.prefixed_id, notify_customer: 'true' } }
 
-      it 'flags the cancellation for customer notification' do
+      it 'asks the workflow to notify the customer' do
+        expect(Spree.order_cancel_workflow).to receive(:call).with(hash_including(notify_customer: true)).and_call_original
+
         subject
-
-        expect(order.cancellations.last.notify_customer).to be true
-      end
-    end
-
-    context 'when notify_customer is falsy' do
-      let(:params) { { id: order.prefixed_id, notify_customer: 'false' } }
-
-      it 'does not flag the cancellation for customer notification' do
-        subject
-
-        expect(order.cancellations.last.notify_customer).to be false
       end
     end
 
@@ -1001,24 +1076,6 @@ RSpec.describe Spree::Api::V3::Admin::OrdersController, type: :controller do
 
       expect(response).to have_http_status(:ok)
       expect(json_response['approved_at']).to be_present
-    end
-  end
-
-  describe 'PATCH #resume' do
-    let!(:order) { create(:completed_order_with_totals, store: store) }
-
-    subject { patch :resume, params: { id: order.prefixed_id }, as: :json }
-
-    before do
-      request.headers.merge!(headers)
-      Spree.order_cancel_workflow.call(order: order, canceler: admin_user)
-    end
-
-    it 'resumes the canceled order' do
-      subject
-
-      expect(response).to have_http_status(:ok)
-      expect(order.reload).not_to be_canceled
     end
   end
 

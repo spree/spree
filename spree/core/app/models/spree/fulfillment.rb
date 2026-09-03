@@ -159,7 +159,7 @@ module Spree
     #
     # @return [Boolean]
     def can_fulfill?
-      !fulfilled_or_delivered? && provider.can_fulfill?(self)
+      !fulfilled_or_delivered? && !canceled? && provider.can_fulfill?(self)
     end
 
     # Whether the package can still be recalled: anything that has neither
@@ -169,11 +169,6 @@ module Spree
     # @return [Boolean]
     def can_cancel?
       !fulfilled_or_delivered? && !canceled?
-    end
-
-    # @return [Boolean] whether a canceled fulfillment can be reinstated
-    def can_resume?
-      canceled?
     end
 
     # @return [Boolean] whether receipt can still be confirmed
@@ -261,12 +256,6 @@ module Spree
       Spree::Deprecation.warn('Spree::Fulfillment#after_cancel is deprecated and will be removed in Spree 6.1. Cancel through Spree::Fulfillments::Cancel instead.')
       manifest.each { |item| manifest_restock(item) }
       provider.cancel_fulfillment(self)
-    end
-
-    # @deprecated Resume through {Spree::Fulfillments::Resume}; removed in 6.1.
-    def after_resume
-      Spree::Deprecation.warn('Spree::Fulfillment#after_resume is deprecated and will be removed in Spree 6.1. Resume through Spree::Fulfillments::Resume instead.')
-      manifest.each { |item| manifest_unstock(item) }
     end
 
     # Returns true if the shipment has any backordered inventory units
@@ -869,9 +858,6 @@ module Spree
 
       order.update_statuses!
     end
-
-    # publish_shipment_shipped_event, publish_shipment_canceled_event, and
-    # publish_shipment_resumed_event are defined in Spree::Fulfillment::CustomEvents
 
     def can_get_rates?
       return true unless owner&.shipping_address_required?

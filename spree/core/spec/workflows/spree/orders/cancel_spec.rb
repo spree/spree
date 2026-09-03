@@ -105,50 +105,95 @@ module Spree
       end
     end
 
-    describe 'OrderCancellation record creation' do
-      it 'creates a cancellation record with default reason' do
-        expect { result }.to change(order.cancellations, :count).by(1)
-        cancellation = order.cancellations.last
-        expect(cancellation.reason).to eq('other')
-        expect(cancellation.canceled_by).to eq(user)
+    # A split checkout is the one flow where the refund amount is read: the
+    # payment is shared, so what comes back is this order's own share.
+    describe 'refunding a share of a shared payment' do
+      let(:order) { create(:completed_order_with_totals, order_group: create(:order_group)) }
+      let!(:split) do
+        create(:payment_split, order: order, currency: order.currency,
+                               authorized_amount: BigDecimal(30), captured_amount: BigDecimal(30))
       end
 
-      context 'with all new keyword arguments' do
+      # The amount arrives from JSON as a string, and money comparison further
+      # down raises on one — so the workflow has to coerce before comparing.
+      it 'accepts the amount as a string, as the API delivers it' do
+        expect(Spree.refund_create_workflow).to receive(:call).
+          with(hash_including(amount: BigDecimal('25'))).
+          and_return(Spree::ServiceModule::Result.new(true, nil, nil))
+
+        result = subject.call(order: order, canceler: user, refund_payments: true, refund_amount: '25.00')
+
+        expect(result).to be_success
+      end
+    end
+
+    # Every completed payment is settled through the gateway's own cancel verb,
+    # whatever `refund_payments` says: a plain gateway voids it, and Stripe —
+    # which cannot void a drawn charge — refunds. The flag governs the shared
+    # payment of a split checkout, which is settled by hand below.
+    describe 'settling a completed payment' do
+      let(:order) { create(:completed_order_with_totals) }
+      let!(:payment) { create(:payment, order: order, amount: order.total, status: 'completed') }
+
+      it 'hands it to the gateway to settle' do
+        expect_any_instance_of(Spree::Payment).to receive(:cancel!)
+
+        subject.call(order: order, canceler: user)
+      end
+
+      it 'voids it on a gateway that can, leaving nothing half-settled' do
+        subject.call(order: order, canceler: user)
+
+        expect(payment.reload).to be_void
+      end
+    end
+
+    describe 'a capped refund on an ordinary order' do
+      it 'is refused rather than silently refunding everything' do
+        result = subject.call(order: order, canceler: user, refund_payments: true, refund_amount: '25.00')
+
+        expect(result).to be_failure
+        expect(order.errors[:base].join).to include('shared')
+        expect(order.reload).not_to be_canceled
+      end
+    end
+
+    describe 'reason and note' do
+      it 'records the canceler and leaves the reason unset when none is given' do
+        result
+
+        order.reload
+        expect(order.cancel_reason).to be_nil
+        expect(order.cancel_note).to be_nil
+        expect(order.canceler).to eq(user)
+      end
+
+      context 'with a reason and note' do
+        let(:reason) { create(:order_cancellation_reason, store: order.store) }
         let(:result) do
-          subject.call(
-            order: order,
-            canceler: user,
-            reason: 'inventory',
-            note: 'Out of stock',
-            restock_items: true,
-            refund_payments: true,
-            refund_amount: 25.00,
-            notify_customer: true
-          )
+          subject.call(order: order, canceler: user, reason: reason, note: 'Supplier let us down')
         end
 
-        it 'records all fields on the cancellation' do
+        it 'records them on the order' do
           result
-          cancellation = order.cancellations.last
-          expect(cancellation.reason).to eq('inventory')
-          expect(cancellation.note).to eq('Out of stock')
-          expect(cancellation.restock_items).to be true
-          expect(cancellation.refund_payments).to be true
-          expect(cancellation.refund_amount).to eq(25.00)
-          expect(cancellation.notify_customer).to be true
-          expect(cancellation.canceled_by).to eq(user)
+
+          order.reload
+          expect(order.cancel_reason).to eq(reason)
+          expect(order.cancel_note).to eq('Supplier let us down')
         end
       end
 
-      context 'when the cancellation is invalid' do
+      context 'with a reason belonging to another store' do
+        let(:reason) { create(:order_cancellation_reason, store: create(:store)) }
         let(:result) do
-          subject.call(order: order, canceler: user, reason: 'not_a_real_reason')
+          subject.call(order: order, canceler: user, reason: reason)
         end
 
-        it 'returns a failure result and rolls back' do
+        it 'refuses before anything is written' do
           expect(result).to be_failure
+          expect(order.errors[:cancel_reason]).to be_present
           expect(order.reload.canceled_at).to be_nil
-          expect(order.cancellations).to be_empty
+          expect(order.cancel_reason).to be_nil
         end
       end
     end
