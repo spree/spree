@@ -15,7 +15,11 @@ export function useOrder(orderId: string) {
 
 /** Withdrawing from an order this seller cannot fulfil. */
 export function useCancelOrder(orderId: string) {
-  return useOrderMutation(orderId, () => sellerClient().orders.cancel(orderId))
+  return useOrderMutation(
+    orderId,
+    (params?: { cancel_reason_id?: string; cancel_note?: string; notify_customer?: boolean }) =>
+      sellerClient().orders.cancel(orderId, params),
+  )
 }
 
 /**

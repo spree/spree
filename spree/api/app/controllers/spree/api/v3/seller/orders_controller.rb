@@ -25,17 +25,21 @@ module Spree
 
           # PATCH /api/v3/seller/orders/:id/cancel
           #
-          # A seller withdrawing from an order they cannot fulfil.
+          # A seller withdrawing from an order they cannot fulfil, naming a
+          # reason from the marketplace's own list.
           #
-          # Restocking and refunding are not asked for here, matching the
-          # operator's own cancel endpoint: the marketplace owns the money and
-          # settles with the customer separately, and a seller must not be the
-          # one deciding a refund.
+          # Deliberately takes no `refund_payments` or `refund_amount`: the
+          # workflow releases the authorization either way, but returning money
+          # already taken is the operator's decision, and leaving the arguments
+          # off is what keeps that true rather than a default a caller could
+          # override.
           def cancel
             with_order_lock do
               result = Spree.order_cancel_workflow.call(
                 order: @resource,
                 canceler: try_spree_current_user,
+                reason: cancel_reason,
+                note: params[:cancel_note].presence,
                 notify_customer: params[:notify_customer].to_b
               )
 
@@ -73,6 +77,16 @@ module Spree
           end
 
           private
+
+          # The reason a seller picked, resolved through the store's own list so
+          # a reason belonging to another store reads as missing. Optional —
+          # the workflow accepts a cancellation with none.
+          def cancel_reason
+            id = params[:cancel_reason_id].presence
+            return if id.nil?
+
+            current_store.order_cancellation_reasons.find_by_prefix_id!(id)
+          end
 
           def set_resource
             @resource = find_resource

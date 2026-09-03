@@ -387,6 +387,13 @@
         "cancel_title": "Cancel this claim?",
         "cancel_message": "The customer is told it will not go ahead."
       }
+    },
+    "cancel_dialog": {
+      "description": "The goods go back on the shelf and the customer is no longer charged for them. Any money already taken is returned by the marketplace, not here.",
+      "reason_label": "Reason",
+      "no_reason": "No reason given",
+      "note_label": "Note",
+      "notify_customer": "Email the customer"
     }
   },
   "policies": {

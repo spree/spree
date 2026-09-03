@@ -107,16 +107,25 @@ RSpec.describe 'Seller Orders API', type: :request, swagger_doc: 'api-reference/
       produces 'application/json'
       security [bearer_auth: []]
       description <<~DESC
-        Withdraws from an order this seller cannot fulfil.
+        Withdraws from an order this seller cannot fulfil, naming a reason from
+        the marketplace's own list.
 
-        Restocking and any refund are the cancellation's own concern, so a
-        seller cannot cancel without the money and the stock following.
+        The goods go back on the shelf and the payment authorization is
+        released. Money already taken is **not** returned: that is the
+        operator's decision, so this endpoint accepts no refund arguments at
+        all rather than defaulting one a caller could override.
       DESC
 
       parameter name: 'X-Spree-Seller-Id', in: :header, type: :string, required: true
       parameter name: :body, in: :body, required: false, schema: {
         type: :object,
         properties: {
+          cancel_reason_id: {
+            type: :string,
+            nullable: true,
+            description: 'A reason from GET /order_cancellation_reasons'
+          },
+          cancel_note: { type: :string, nullable: true, description: 'Free text beside the reason' },
           notify_customer: { type: :boolean, description: 'Email the customer about the cancellation' }
         }
       }
@@ -132,6 +141,37 @@ RSpec.describe 'Seller Orders API', type: :request, swagger_doc: 'api-reference/
         run_test! do
           expect(order.reload).to be_canceled
         end
+      end
+    end
+  end
+
+  path '/api/v3/seller/order_cancellation_reasons' do
+    get 'List order cancellation reasons' do
+      tags 'Orders'
+      produces 'application/json'
+      security [bearer_auth: []]
+      description <<~DESC
+        Why an order was called off, as the marketplace defines it.
+
+        Read-only: a seller picks one when cancelling, and the operator decides
+        what the list holds. Retired reasons are left out.
+      DESC
+
+      parameter name: 'X-Spree-Seller-Id', in: :header, type: :string, required: true
+
+      response '200', 'reasons listed' do
+        let(:Authorization) { "Bearer #{seller_jwt_token}" }
+        let(:'X-Spree-Seller-Id') { seller.prefixed_id }
+
+        before { create(:order_cancellation_reason, store: store, name: 'Out of stock') }
+
+        schema type: :object,
+               properties: {
+                 data: { type: :array, items: { '$ref' => '#/components/schemas/Reason' } }
+               },
+               required: %w[data]
+
+        run_test!
       end
     end
   end

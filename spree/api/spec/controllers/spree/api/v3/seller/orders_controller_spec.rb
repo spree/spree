@@ -136,4 +136,43 @@ RSpec.describe Spree::Api::V3::Seller::OrdersController, type: :controller do
       expect(theirs.reload).not_to be_canceled
     end
   end
+
+  describe 'PATCH #cancel with a reason' do
+    let!(:order) { create(:completed_order_with_totals, store: store, seller: seller) }
+    let(:reason) { create(:order_cancellation_reason, store: store, name: 'Out of stock') }
+
+    it 'records the reason and note the seller picked' do
+      patch :cancel, params: {
+        id: order.prefixed_id,
+        cancel_reason_id: reason.prefixed_id,
+        cancel_note: 'Supplier let us down'
+      }, as: :json
+
+      expect(response).to have_http_status(:ok)
+      expect(order.reload.cancel_reason).to eq(reason)
+      expect(order.cancel_note).to eq('Supplier let us down')
+    end
+
+    # The vocabulary is the marketplace's, and a reason from another store
+    # would label this order with words its operator never chose.
+    it 'refuses a reason belonging to another store' do
+      elsewhere = create(:order_cancellation_reason, store: create(:store), name: 'Elsewhere')
+
+      patch :cancel, params: { id: order.prefixed_id, cancel_reason_id: elsewhere.prefixed_id }, as: :json
+
+      expect(response).to have_http_status(:not_found)
+      expect(order.reload).not_to be_canceled
+    end
+
+    # Releasing the authorization is the cancel's job; giving back money
+    # already taken is the operator's, so the seller endpoint passes no refund
+    # arguments at all and the workflow's default holds.
+    it 'refunds nothing' do
+      expect {
+        patch :cancel, params: { id: order.prefixed_id }, as: :json
+      }.not_to change(Spree::Refund, :count)
+
+      expect(order.reload).to be_canceled
+    end
+  end
 end

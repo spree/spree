@@ -388,10 +388,16 @@ export class SellerClient {
     get: (id: string, options?: RequestOptions): Promise<Order> =>
       this.request<Order>('GET', `/orders/${id}`, options),
 
-    /** Withdraws from an order this seller cannot fulfil. */
+    /**
+     * Withdraws from an order this seller cannot fulfil.
+     *
+     * Takes a reason from the marketplace's own list and an optional note.
+     * Never a refund: the authorization is released either way, but returning
+     * money already taken is the operator's decision.
+     */
     cancel: (
       id: string,
-      params?: { notify_customer?: boolean },
+      params?: { cancel_reason_id?: string; cancel_note?: string; notify_customer?: boolean },
       options?: RequestOptions,
     ): Promise<Order> =>
       this.request<Order>('PATCH', `/orders/${id}/cancel`, { ...options, body: params }),
@@ -809,6 +815,11 @@ export class SellerClient {
   readonly claimReasons = {
     list: (options?: RequestOptions): Promise<{ data: Reason[] }> =>
       this.request<{ data: Reason[] }>('GET', '/claim_reasons', options),
+  }
+
+  readonly orderCancellationReasons = {
+    list: (options?: RequestOptions): Promise<{ data: Reason[] }> =>
+      this.request<{ data: Reason[] }>('GET', '/order_cancellation_reasons', options),
   }
 
   readonly trackingCarriers = {

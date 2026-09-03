@@ -420,7 +420,7 @@ paths:
                   avatar_url:
                 sellers:
                 - id: sel_UkLWZg9DAJ
-                  name: Seller 64
+                  name: Seller 65
                   status: approved
               schema:
                 "$ref": "#/components/schemas/AuthResponse"
@@ -13540,8 +13540,8 @@ paths:
               example:
                 data:
                 - id: prod_UkLWZg9DAJ
-                  name: Product 1583250
-                  slug: product-1583250
+                  name: Product 1573250
+                  slug: product-1573250
                   meta_title:
                   meta_description:
                   meta_keywords:
@@ -13784,8 +13784,8 @@ paths:
             application/json:
               example:
                 id: prod_UkLWZg9DAJ
-                name: Product 1616710
-                slug: product-1616710
+                name: Product 1606710
+                slug: product-1606710
                 meta_title:
                 meta_description:
                 meta_keywords:
@@ -13864,7 +13864,7 @@ paths:
               example:
                 id: prod_UkLWZg9DAJ
                 name: Hand-thrown mug, large
-                slug: product-1648212
+                slug: product-1638212
                 meta_title:
                 meta_description:
                 meta_keywords:
@@ -13977,8 +13977,8 @@ paths:
             application/json:
               example:
                 id: sel_UkLWZg9DAJ
-                name: Seller 81
-                slug: seller-81
+                name: Seller 82
+                slug: seller-82
                 about: ''
                 about_html: ''
                 logo_url:
@@ -14050,7 +14050,7 @@ paths:
               example:
                 id: sel_UkLWZg9DAJ
                 name: Acme Supplies
-                slug: seller-83
+                slug: seller-84
                 about: ''
                 about_html: ''
                 logo_url:
@@ -14793,10 +14793,10 @@ paths:
             application/json:
               example:
                 direct_upload:
-                  url: http://www.example.com/rails/active_storage/disk/eyJfcmFpbHMiOnsiZGF0YSI6eyJrZXkiOiJuem5oOGdra3VxendvbDc1ODBxNHNwZmpmMjVxIiwiY29udGVudF90eXBlIjoiYXBwbGljYXRpb24vcGRmIiwiY29udGVudF9sZW5ndGgiOjUxMjM0LCJjaGVja3N1bSI6IlZqaHowNGxRdUVHdXY0bkR2aHNhTlE9PSIsInNlcnZpY2VfbmFtZSI6InRlc3QifSwiZXhwIjoiMjAyNi0wMS0xNVQxMjowNTowMC4wMDBaIiwicHVyIjoiYmxvYl90b2tlbiJ9fQ==--646a62035fe9802198cc67c2a36c19e463e623d9
+                  url: http://www.example.com/rails/active_storage/disk/eyJfcmFpbHMiOnsiZGF0YSI6eyJrZXkiOiJuem5oOGdra3VxendvbDc1ODBxNHNwZmpmMjVxIiwiY29udGVudF90eXBlIjoiYXBwbGljYXRpb24vcGRmIiwiY29udGVudF9sZW5ndGgiOjUxMjM0LCJjaGVja3N1bSI6IlZqaHowNGxRdUVHdXY0bkR2aHNhTlE9PSIsInNlcnZpY2VfbmFtZSI6InRlc3QifSwiZXhwIjoiMjAyNi0wMS0xNVQxMjowNTowMC4wMDBaIiwicHVyIjoiYmxvYl90b2tlbiJ9fQ==--af763bb4884a5488e212eee0e3d07ee6a4e74776
                   headers:
                     Content-Type: application/pdf
-                signed_id: eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--05abc4a54ff4795f9255952c049b07263b96fc22
+                signed_id: eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--f775c2b1a726398884efebb8c4a9d44c7ddcb413
               schema:
                 "$ref": "#/components/schemas/DirectUploadResponse"
       requestBody:
@@ -15601,8 +15601,8 @@ paths:
                     quantity: 1
                     line_item_id: li_UkLWZg9DAJ
                     variant_id: variant_UkLWZg9DAJ
-                    name: Product 1489315
-                    sku: SKU-190
+                    name: Product 1469315
+                    sku: SKU-188
                     options_text: ''
               schema:
                 type: object
@@ -15672,8 +15672,8 @@ paths:
                   quantity: 1
                   line_item_id: li_UkLWZg9DAJ
                   variant_id: variant_UkLWZg9DAJ
-                  name: Product 149961
-                  sku: SKU-191
+                  name: Product 147961
+                  sku: SKU-189
                   options_text: ''
               schema:
                 "$ref": "#/components/schemas/Fulfillment"
@@ -15760,8 +15760,8 @@ paths:
                   quantity: 1
                   line_item_id: li_UkLWZg9DAJ
                   variant_id: variant_UkLWZg9DAJ
-                  name: Product 1503170
-                  sku: SKU-192
+                  name: Product 1483170
+                  sku: SKU-190
                   options_text: ''
               schema:
                 "$ref": "#/components/schemas/Fulfillment"
@@ -15828,8 +15828,8 @@ paths:
                   quantity: 1
                   line_item_id: li_UkLWZg9DAJ
                   variant_id: variant_UkLWZg9DAJ
-                  name: Product 1517276
-                  sku: SKU-193
+                  name: Product 1497276
+                  sku: SKU-191
                   options_text: ''
               schema:
                 "$ref": "#/components/schemas/Fulfillment"
@@ -15972,7 +15972,7 @@ paths:
                   display_total: "$110.00"
                   items:
                   - id: li_UkLWZg9DAJ
-                    name: Product 15395
+                    name: Product 15195
                     options_text: ''
                     quantity: 1
                     currency: USD
@@ -15981,7 +15981,7 @@ paths:
                     total: '10.0'
                     display_total: "$10.00"
                     variant_id: variant_UkLWZg9DAJ
-                    sku: SKU-195
+                    sku: SKU-193
                     thumbnail_url:
                   fulfillments:
                   - id: ful_UkLWZg9DAJ
@@ -16002,8 +16002,8 @@ paths:
                       quantity: 1
                       line_item_id: li_UkLWZg9DAJ
                       variant_id: variant_UkLWZg9DAJ
-                      name: Product 15395
-                      sku: SKU-195
+                      name: Product 15195
+                      sku: SKU-193
                       options_text: ''
                   shipping_address:
                     id: addr_gbHJdmfrXB
@@ -16011,7 +16011,7 @@ paths:
                     first_name: John
                     last_name: Doe
                     full_name: John Doe
-                    address1: 141 Lovely Street
+                    address1: 137 Lovely Street
                     address2: Northwest
                     postal_code: '10118'
                     city: New York
@@ -16033,7 +16033,7 @@ paths:
                     first_name: John
                     last_name: Doe
                     full_name: John Doe
-                    address1: 140 Lovely Street
+                    address1: 136 Lovely Street
                     address2: Northwest
                     postal_code: '10118'
                     city: New York
@@ -16122,7 +16122,7 @@ paths:
                 display_total: "$110.00"
                 items:
                 - id: li_UkLWZg9DAJ
-                  name: Product 1549755
+                  name: Product 1529755
                   options_text: ''
                   quantity: 1
                   currency: USD
@@ -16131,7 +16131,7 @@ paths:
                   total: '10.0'
                   display_total: "$10.00"
                   variant_id: variant_UkLWZg9DAJ
-                  sku: SKU-196
+                  sku: SKU-194
                   thumbnail_url:
                 fulfillments:
                 - id: ful_UkLWZg9DAJ
@@ -16152,8 +16152,8 @@ paths:
                     quantity: 1
                     line_item_id: li_UkLWZg9DAJ
                     variant_id: variant_UkLWZg9DAJ
-                    name: Product 1549755
-                    sku: SKU-196
+                    name: Product 1529755
+                    sku: SKU-194
                     options_text: ''
                 shipping_address:
                   id: addr_gbHJdmfrXB
@@ -16161,7 +16161,7 @@ paths:
                   first_name: John
                   last_name: Doe
                   full_name: John Doe
-                  address1: 143 Lovely Street
+                  address1: 139 Lovely Street
                   address2: Northwest
                   postal_code: '10118'
                   city: New York
@@ -16183,7 +16183,7 @@ paths:
                   first_name: John
                   last_name: Doe
                   full_name: John Doe
-                  address1: 142 Lovely Street
+                  address1: 138 Lovely Street
                   address2: Northwest
                   postal_code: '10118'
                   city: New York
@@ -16226,10 +16226,13 @@ paths:
       security:
       - bearer_auth: []
       description: |
-        Withdraws from an order this seller cannot fulfil.
+        Withdraws from an order this seller cannot fulfil, naming a reason from
+        the marketplace's own list.
 
-        Restocking and any refund are the cancellation's own concern, so a
-        seller cannot cancel without the money and the stock following.
+        The goods go back on the shelf and the payment authorization is
+        released. Money already taken is **not** returned: that is the
+        operator's decision, so this endpoint accepts no refund arguments at
+        all rather than defaulting one a caller could override.
       parameters:
       - name: X-Spree-Seller-Id
         in: header
@@ -16261,7 +16264,7 @@ paths:
                 display_total: "$110.00"
                 items:
                 - id: li_UkLWZg9DAJ
-                  name: Product 1576554
+                  name: Product 1556554
                   options_text: ''
                   quantity: 1
                   currency: USD
@@ -16270,7 +16273,7 @@ paths:
                   total: '10.0'
                   display_total: "$10.00"
                   variant_id: variant_UkLWZg9DAJ
-                  sku: SKU-199
+                  sku: SKU-197
                   thumbnail_url:
                 fulfillments:
                 - id: ful_UkLWZg9DAJ
@@ -16291,8 +16294,8 @@ paths:
                     quantity: 1
                     line_item_id: li_UkLWZg9DAJ
                     variant_id: variant_UkLWZg9DAJ
-                    name: Product 1576554
-                    sku: SKU-199
+                    name: Product 1556554
+                    sku: SKU-197
                     options_text: ''
                 shipping_address:
                   id: addr_gbHJdmfrXB
@@ -16300,7 +16303,7 @@ paths:
                   first_name: John
                   last_name: Doe
                   full_name: John Doe
-                  address1: 149 Lovely Street
+                  address1: 145 Lovely Street
                   address2: Northwest
                   postal_code: '10118'
                   city: New York
@@ -16322,7 +16325,7 @@ paths:
                   first_name: John
                   last_name: Doe
                   full_name: John Doe
-                  address1: 148 Lovely Street
+                  address1: 144 Lovely Street
                   address2: Northwest
                   postal_code: '10118'
                   city: New York
@@ -16346,9 +16349,64 @@ paths:
             schema:
               type: object
               properties:
+                cancel_reason_id:
+                  type: string
+                  nullable: true
+                  description: A reason from GET /order_cancellation_reasons
+                cancel_note:
+                  type: string
+                  nullable: true
+                  description: Free text beside the reason
                 notify_customer:
                   type: boolean
                   description: Email the customer about the cancellation
+  "/api/v3/seller/order_cancellation_reasons":
+    get:
+      summary: List order cancellation reasons
+      tags:
+      - Orders
+      security:
+      - bearer_auth: []
+      description: |
+        Why an order was called off, as the marketplace defines it.
+
+        Read-only: a seller picks one when cancelling, and the operator decides
+        what the list holds. Retired reasons are left out.
+      parameters:
+      - name: X-Spree-Seller-Id
+        in: header
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: reasons listed
+          content:
+            application/json:
+              example:
+                data:
+                - id: ocr_UkLWZg9DAJ
+                  name: Out of stock
+                  active: true
+                meta:
+                  page: 1
+                  limit: 25
+                  count: 1
+                  pages: 1
+                  from: 1
+                  to: 1
+                  in: 1
+                  previous:
+                  next:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      "$ref": "#/components/schemas/Reason"
+                required:
+                - data
   "/api/v3/seller/orders/{order_id}/returns":
     parameters:
     - name: order_id
@@ -16467,7 +16525,7 @@ paths:
               example:
                 error:
                   code: processing_error
-                  message: Only 1 of Product 1687120 can be returned
+                  message: Only 1 of Product 1677120 can be returned
       requestBody:
         content:
           application/json:
