@@ -58,6 +58,10 @@ module Spree
             Spree.api.admin_delivery_profile_serializer
           end
 
+          def scope
+            super.order_default
+          end
+
           def permitted_params
             params.permit(*model_additional_permitted_attributes, :name, :default, :position, :kind, stock_location_ids: [])
           end

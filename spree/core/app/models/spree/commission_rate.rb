@@ -34,6 +34,7 @@ module Spree
     acts_as_list scope: :store_id, add_new_at: :top
 
     include Spree::SingleStoreResource
+    include Spree::HasListPosition
     include Spree::Metadata
     include Spree::TypedAssociations
 
@@ -96,9 +97,6 @@ module Spree
     # Scopes
     #
     scope :enabled, -> { where(enabled: true) }
-    # The resolution order, top-down. Ties break on id so two rates sharing a
-    # position resolve the same way on every read.
-    scope :ordered, -> { order(position: :asc, id: :asc) }
 
     self.whitelisted_ransackable_attributes = %w[name code kind enabled position value
                                                  tax_inclusive include_shipping]

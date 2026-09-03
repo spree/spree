@@ -18,6 +18,19 @@ RSpec.describe Spree::Api::V3::Admin::PaymentMethodsController, type: :controlle
       expect(json_response['data'].map { |pm| pm['id'] }).to include(payment_method.prefixed_id)
     end
 
+    it 'returns payment methods in list order' do
+      second = create(:check_payment_method, store: store, name: 'Second method')
+      third = create(:check_payment_method, store: store, name: 'Third method')
+      third.insert_at(1)
+      payment_method.insert_at(2)
+
+      get :index, as: :json
+
+      names = json_response['data'].pluck('name')
+      expect(names).to eq(['Third method', payment_method.name, 'Second method'])
+      expect(json_response['data'].pluck('position')).to eq([1, 2, 3])
+    end
+
     context 'when payment method belongs to a different store' do
       let!(:other_store) { create(:store) }
       let!(:other_payment_method) { create(:check_payment_method, store: other_store) }

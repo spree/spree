@@ -42,7 +42,7 @@ module Spree
             end
 
             def scope
-              parent_profile.delivery_origin_groups
+              parent_profile.delivery_origin_groups.ordered
             end
 
             def permitted_params

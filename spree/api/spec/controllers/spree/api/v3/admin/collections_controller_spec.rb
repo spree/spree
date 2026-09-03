@@ -25,6 +25,18 @@ RSpec.describe Spree::Api::V3::Admin::CollectionsController, type: :controller d
       expect(ids).not_to include(other_collection.prefixed_id)
     end
 
+    it 'returns collections in list order' do
+      second = create(:collection, store: store, name: 'Second collection')
+      third = create(:collection, store: store, name: 'Third collection')
+      third.insert_at(1)
+      collection.insert_at(2)
+
+      get :index, as: :json
+
+      expect(json_response['data'].pluck('name')).to eq(['Third collection', 'Summer Sale', 'Second collection'])
+      expect(json_response['data'].pluck('position')).to eq([1, 2, 3])
+    end
+
     it 'exposes the merchandising config + timestamps (admin surface)' do
       get :index, params: {}, as: :json
 

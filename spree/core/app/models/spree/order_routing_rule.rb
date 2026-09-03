@@ -23,6 +23,7 @@ module Spree
     has_prefix_id :orule
 
     include Spree::SingleStoreResource
+    include Spree::HasListPosition
 
     belongs_to :store, class_name: 'Spree::Store'
     belongs_to :channel, class_name: 'Spree::Channel'
@@ -42,7 +43,6 @@ module Spree
     validate :channel_belongs_to_store
 
     scope :active, -> { where(active: true) }
-    scope :ordered, -> { order(:position) }
     scope :for_channel, ->(channel) { where(channel_id: channel.id) }
 
     acts_as_list scope: :channel_id

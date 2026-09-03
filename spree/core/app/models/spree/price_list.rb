@@ -6,6 +6,7 @@ module Spree
     acts_as_list scope: :store_id
 
     include Spree::SingleStoreResource
+    include Spree::HasListPosition
 
     MATCH_POLICIES = %w[all any].freeze
 
@@ -58,7 +59,7 @@ module Spree
     # actually available — unowned, plus the one the catalog already holds.
     self.whitelisted_ransackable_attributes = %w[status match_policy starts_at ends_at catalog_id]
 
-    scope :by_position, -> { order(position: :asc) }
+    scope :by_position, -> { ordered }
     scope :for_store, ->(store) { where(store: store) }
     scope :standalone, -> { where(catalog_id: nil) }
     scope :current, lambda { |timezone = nil|

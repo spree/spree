@@ -11,6 +11,7 @@ module Spree
     has_prefix_id :cat
 
     include Spree::SingleStoreResource
+    include Spree::HasListPosition
     include Spree::HasCustomFields
     include Spree::Metadata
 
@@ -72,7 +73,7 @@ module Spree
     after_commit -> { Spree::Current.reset_catalog_memos }
 
     scope :active, -> { where(active: true) }
-    scope :by_position, -> { order(position: :asc) }
+    scope :by_position, -> { ordered }
 
     self.whitelisted_ransackable_attributes = %w[name active]
 
