@@ -34,7 +34,7 @@ function commissionRateLabel(
   t: (key: string, options?: Record<string, unknown>) => string,
   locale: string,
 ) {
-  const name = line.commission_rate_name ?? t('admin.orders.detail.commission_lines.rate_unknown')
+  const name = line.commission_rate?.name ?? t('admin.orders.detail.commission_lines.rate_unknown')
 
   if (line.kind === 'percentage') {
     return t('admin.orders.detail.commission_lines.rate_named_percentage', {

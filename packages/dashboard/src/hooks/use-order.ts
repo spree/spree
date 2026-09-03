@@ -86,6 +86,7 @@ export function useOrderCommissionLines(orderId: string, options?: { enabled?: b
       adminClient.commissionLines.list({
         q: { order_id_eq: orderId },
         limit: 100,
+        expand: ['commission_rate'],
       }),
     enabled: !!orderId && (options?.enabled ?? true),
   })

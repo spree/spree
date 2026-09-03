@@ -16,7 +16,6 @@ module Spree
           typelize order_id: :string,
                    seller_id: :string,
                    seller_name: 'string | null',
-                   commission_rate_name: 'string | null',
                    line_item_id: 'string | null',
                    fulfillment_id: 'string | null',
                    commission_rate_id: 'string | null',
@@ -58,10 +57,9 @@ module Spree
             line.seller&.name
           end
 
-          # The rate that applied, so an order's commission reads without expanding.
-          attribute :commission_rate_name do |line|
-            line.commission_rate&.name
-          end
+          one :commission_rate,
+              resource: proc { Spree.api.admin_commission_rate_serializer },
+              if: proc { expand?('commission_rate') }
         end
       end
     end

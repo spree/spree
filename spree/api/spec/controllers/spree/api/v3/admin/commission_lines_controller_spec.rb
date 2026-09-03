@@ -25,7 +25,15 @@ RSpec.describe Spree::Api::V3::Admin::CommissionLinesController, type: :controll
       row = json_response['data'].first
       expect(row['id']).to start_with('cline_')
       expect(row['seller_name']).to eq('Sparks Audio')
-      expect(row['commission_rate_name']).to eq('Standard commission')
+      expect(row).not_to have_key('commission_rate')
+    end
+
+    it 'expands the rate that applied' do
+      get :index, params: { expand: 'commission_rate' }, as: :json
+
+      expect(response).to have_http_status(:ok)
+      row = json_response['data'].first
+      expect(row['commission_rate']['name']).to eq('Standard commission')
       expect(row['amount']).to eq('10.0')
       expect(row['tax_amount']).to eq('2.1')
       expect(row['total']).to eq('12.1')

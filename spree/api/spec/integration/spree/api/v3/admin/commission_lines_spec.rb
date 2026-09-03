@@ -49,6 +49,8 @@ RSpec.describe 'Admin Commission Lines API', type: :request, swagger_doc: 'api-r
                 description: 'Filter to one order'
       parameter name: :sort, in: :query, type: :string, required: false,
                 description: 'Sort by field. Prefix with `-` for descending (e.g., `-created_at`).'
+      parameter name: :expand, in: :query, type: :string, required: false,
+                description: 'Comma-separated associations to embed (e.g., `commission_rate`).'
 
       response '200', 'commission lines found' do
         let(:'x-spree-api-key') { secret_api_key.plaintext_token }
