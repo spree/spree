@@ -146,7 +146,10 @@ module Spree
       # request has to disclose them. Kept separate from orders: nothing was
       # bought, and listing them together would misrepresent both.
       def carts
-        Spree::Cart.where(customer_id: customer.id).includes(:line_items).map do |cart|
+        scope = Spree::Cart.where(customer_id: customer.id)
+        scope = scope.where(store_id: store.id) if store
+
+        scope.includes(:line_items).map do |cart|
           {
             email: cart.email,
             currency: cart.currency,

@@ -57,13 +57,26 @@ RSpec.describe Spree::DataRequests::Create do
     end
   end
 
-  # Two requests racing both pass the in-flight check, so the loser has to be
-  # retired rather than queueing a second export of the same history.
-  it 'keeps only one request when two are opened concurrently' do
-    described_class.call(store: store, customer: customer, kind: Spree::DataRequest::ACCESS)
-    described_class.call(store: store, customer: customer, kind: Spree::DataRequest::ACCESS)
+  # Real threads on a real connection each: the check-then-create window is
+  # invisible to sequential calls, because the second one returns from the
+  # in-flight check before the race can happen. SQLite serializes writes, so
+  # this proves the lock is taken rather than proving it is needed.
+  it 'opens one request when two callers race', :db_threads do
+    barrier = Concurrent::CyclicBarrier.new(2)
 
-    expect(Spree::DataRequest.where(customer_id: customer.id, kind: Spree::DataRequest::ACCESS).count).to eq(1)
+    threads = Array.new(2) do
+      Thread.new do
+        ActiveRecord::Base.connection_pool.with_connection do
+          barrier.wait
+          described_class.call(store: store, customer: customer, kind: Spree::DataRequest::ACCESS)
+        end
+      end
+    end
+    threads.each(&:join)
+
+    requests = Spree::DataRequest.where(customer_id: customer.id, kind: Spree::DataRequest::ACCESS)
+
+    expect(requests.count).to eq(1)
   end
 
   it 'treats access and erasure as different requests' do

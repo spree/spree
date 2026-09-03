@@ -30,17 +30,20 @@ module Spree
               )
             end
 
-            # The response points at a person's whole personal-data export, so
-            # no shared cache or browser history should hold on to it.
+            # Streamed rather than redirected to a storage URL. A redirect only
+            # carries `no-store` on itself — the browser then fetches the
+            # storage response separately, under whatever cache policy that
+            # bucket happens to have, and a person's entire personal-data
+            # export is not something to leave to that. Streaming also keeps
+            # the file behind this token check rather than behind a URL that
+            # outlives the request.
             response.headers['Cache-Control'] = 'no-store'
 
-            redirect_to(
-              data_request.export_file.url(
-                expires_in: 5.minutes,
-                disposition: :attachment,
-                filename: ActiveStorage::Filename.new("#{data_request.number.downcase}.json")
-              ),
-              allow_other_host: true
+            send_data(
+              data_request.export_file.download,
+              filename: "#{data_request.number.downcase}.json",
+              type: 'application/json',
+              disposition: 'attachment'
             )
           end
         end

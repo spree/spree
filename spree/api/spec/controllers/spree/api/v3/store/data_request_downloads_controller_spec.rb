@@ -9,10 +9,25 @@ RSpec.describe Spree::Api::V3::Store::DataRequestDownloadsController, type: :con
     context 'once the export is ready' do
       before { Spree::DataRequests::Fulfill.call(data_request: data_request) }
 
-      it 'hands over the file' do
+      it 'hands over the file itself' do
         get :show, params: { token: data_request.reload.download_token }
 
-        expect(response).to have_http_status(:found)
+        expect(response).to have_http_status(:ok)
+        expect(JSON.parse(response.body).dig('account', 'email')).to eq(user.email)
+      end
+
+      it 'offers it as a download rather than rendering it' do
+        get :show, params: { token: data_request.reload.download_token }
+
+        expect(response.headers['Content-Disposition']).to include('attachment')
+      end
+
+      # Streamed rather than redirected to storage, so the export never lands
+      # in a shared cache under some bucket's own policy.
+      it 'tells caches not to keep it' do
+        get :show, params: { token: data_request.reload.download_token }
+
+        expect(response.headers['Cache-Control']).to include('no-store')
       end
 
       it 'needs no signed-in session, because the link arrives by email' do
@@ -20,7 +35,7 @@ RSpec.describe Spree::Api::V3::Store::DataRequestDownloadsController, type: :con
 
         get :show, params: { token: data_request.reload.download_token }
 
-        expect(response).to have_http_status(:found)
+        expect(response).to have_http_status(:ok)
       end
 
       it 'refuses once the request has expired' do

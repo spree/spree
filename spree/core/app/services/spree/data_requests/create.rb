@@ -26,28 +26,33 @@ module Spree
           return failure(data_request)
         end
 
-        existing = in_flight_request(store: store, customer: customer, kind: kind)
-        return success(existing) if existing
+        data_request = nil
+        existing = nil
 
-        data_request = Spree::DataRequest.new(
-          store: store,
-          customer: customer,
-          kind: kind.to_s,
-          email: customer.email,
-          requested_by: requested_by
-        )
+        # Serialized on the customer row. A check-then-create leaves a window
+        # where two callers both see nothing in flight and both queue an export
+        # of the same person's whole history; taking the lock closes it without
+        # a partial unique index, which MySQL does not support.
+        customer.with_lock do
+          existing = in_flight_request(store: store, customer: customer, kind: kind)
 
-        return failure(data_request) unless data_request.save
-
-        # Two requests racing both pass the in-flight check above, so the loser
-        # is retired here rather than queueing a second export of the same
-        # person's history.
-        duplicate = in_flight_request(store: store, customer: customer, kind: kind)
-        if duplicate && duplicate.id != data_request.id
-          data_request.destroy
-          return success(duplicate)
+          unless existing
+            data_request = Spree::DataRequest.new(
+              store: store,
+              customer: customer,
+              kind: kind.to_s,
+              email: customer.email,
+              requested_by: requested_by
+            )
+            data_request.save
+          end
         end
 
+        return success(existing) if existing
+        return failure(data_request) unless data_request.persisted?
+
+        # Enqueued after the lock is released: the job may start immediately,
+        # and it should not contend for the row this flow still holds.
         Spree::DataRequests::ProcessJob.perform_later(data_request.prefixed_id)
 
         success(data_request)
