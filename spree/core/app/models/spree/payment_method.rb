@@ -9,6 +9,7 @@ module Spree
     acts_as_list scope: :store_id
 
     include Spree::SingleStoreResource
+    include Spree::HasListPosition
     include Spree::StorePreferences
     include Spree::HasCustomFields
     include Spree::Metadata

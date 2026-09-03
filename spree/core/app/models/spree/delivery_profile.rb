@@ -10,6 +10,7 @@ module Spree
   # docs/plans/6.0-delivery-profiles.md).
   class DeliveryProfile < Spree.base_class
     include Spree::SingleStoreResource
+    include Spree::HasListPosition
 
     has_prefix_id :fp
 

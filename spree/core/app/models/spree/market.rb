@@ -3,6 +3,7 @@ module Spree
     has_prefix_id :mkt
 
     include Spree::SingleStoreResource
+    include Spree::HasListPosition
 
     acts_as_paranoid
     acts_as_list scope: :store_id

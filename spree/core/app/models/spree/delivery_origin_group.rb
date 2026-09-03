@@ -10,6 +10,8 @@ module Spree
 
     acts_as_list scope: :delivery_profile
 
+    include Spree::HasListPosition
+
     belongs_to :delivery_profile, class_name: 'Spree::DeliveryProfile', inverse_of: :delivery_origin_groups
 
     has_many :delivery_origin_group_locations, class_name: 'Spree::DeliveryOriginGroupLocation',

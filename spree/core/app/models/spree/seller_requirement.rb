@@ -13,6 +13,7 @@ module Spree
   # {Spree::SellerRequirementSubmission}.
   class SellerRequirement < Spree.base_class
     include Spree::SingleStoreResource
+    include Spree::HasListPosition
     include Spree::PreferenceSchema
     include Spree::Metadata
 

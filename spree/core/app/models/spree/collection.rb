@@ -5,6 +5,7 @@ require 'stringex'
 module Spree
   class Collection < Spree.base_class
     include Spree::SingleStoreResource
+    include Spree::HasListPosition
 
     has_prefix_id :coll
 

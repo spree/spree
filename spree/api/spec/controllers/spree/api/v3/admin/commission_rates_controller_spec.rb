@@ -24,6 +24,19 @@ RSpec.describe Spree::Api::V3::Admin::CommissionRatesController, type: :controll
       expect(row['rules'].first).to include('type' => 'seller_rule', 'label' => 'Seller')
     end
 
+    it 'returns rates in precedence order' do
+      create(:commission_rate, store: store, name: 'Second')
+      third = create(:commission_rate, store: store, name: 'Third')
+      third.insert_at(1)
+      rate.insert_at(2)
+
+      get :index, as: :json
+
+      expect(response).to have_http_status(:ok)
+      expect(json_response['data'].pluck('name')).to eq(['Third', 'Standard', 'Second'])
+      expect(json_response['data'].pluck('position')).to eq([1, 2, 3])
+    end
+
     it "hides another marketplace's rates" do
       other = create(:commission_rate, store: create(:store))
 

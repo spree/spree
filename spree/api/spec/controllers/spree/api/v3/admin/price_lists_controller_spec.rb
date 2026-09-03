@@ -36,6 +36,21 @@ RSpec.describe Spree::Api::V3::Admin::PriceListsController, type: :controller do
     end
   end
 
+  describe 'GET #index' do
+    it 'returns price lists in list order' do
+      create(:price_list, store: store, name: 'Second list')
+      third = create(:price_list, store: store, name: 'Third list')
+      third.insert_at(1)
+      price_list.insert_at(2)
+
+      get :index, as: :json
+
+      expect(response).to have_http_status(:ok)
+      expect(json_response['data'].pluck('name')).to eq(['Third list', 'Wholesale', 'Second list'])
+      expect(json_response['data'].pluck('position')).to eq([1, 2, 3])
+    end
+  end
+
   describe 'POST #create — one-shot creation' do
     let(:customer_group) { create(:customer_group, store: store) }
 
