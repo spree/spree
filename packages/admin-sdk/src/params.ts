@@ -531,10 +531,14 @@ export interface OrderCancelParams {
   cancel_reason_id?: string
   /** Staff-facing note shown on the order. */
   cancel_note?: string
-  /** Refund captured payments as part of the cancellation. */
+  /**
+   * Hand back this order's share of a payment shared across a split checkout.
+   * An ordinary order settles at the gateway either way — an authorization is
+   * released, a captured payment refunded.
+   */
   refund_payments?: boolean
   /**
-   * How much to refund, defaulting to everything the order has been paid.
+   * How much of that share to return, defaulting to all of it.
    * Decimal amount; see `PaymentCreateParams.amount` for the string rationale.
    */
   refund_amount?: string | number

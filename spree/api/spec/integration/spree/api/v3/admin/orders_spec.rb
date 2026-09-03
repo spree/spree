@@ -367,11 +367,14 @@ RSpec.describe 'Admin Orders API', type: :request, swagger_doc: 'api-reference/a
         vocabulary (`/admin/order_cancellation_reasons`), and `cancel_note` is a
         staff-facing note; both are shown on the order afterwards.
 
-        Stock is always released — the goods are not going out either way.
-        Money is not: set `refund_payments: true` to give back what the order
-        has been paid, optionally capped by `refund_amount`. Without it,
-        captured payments are canceled at the gateway and any authorization is
-        released, but nothing is refunded.
+        Stock is always released — the goods are not going out either way, and
+        money is settled at the gateway: an uncaptured authorization is
+        released, a captured payment refunded.
+
+        `refund_payments` and `refund_amount` apply to an order paid through a
+        split checkout, where one payment is shared across several orders.
+        They hand back this order's own share — all of it, or the part named
+        by `refund_amount`.
 
         Set `notify_customer: true` to send the order cancellation email.
       DESC
@@ -389,8 +392,8 @@ RSpec.describe 'Admin Orders API', type: :request, swagger_doc: 'api-reference/a
         properties: {
           cancel_reason_id: { type: :string, description: "Why the order was canceled — the id of one of the store's cancellation reasons." },
           cancel_note: { type: :string, description: 'Staff-facing note about the cancellation.' },
-          refund_payments: { type: :boolean, description: 'Refund captured payments as part of the cancellation.' },
-          refund_amount: { type: :string, description: 'How much to refund. Defaults to everything the order has been paid.' },
+          refund_payments: { type: :boolean, description: "Hand back this order's share of a payment shared across a split checkout." },
+          refund_amount: { type: :string, description: "How much of that share to return. Defaults to all of it." },
           notify_customer: { type: :boolean, description: 'Send the order cancellation email after canceling.' }
         }
       }

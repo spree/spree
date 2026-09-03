@@ -118,7 +118,14 @@ const [reason] = (await adminClient.orderCancellationReasons.list()).data
 await adminClient.orders.cancel('or_xxx', {
   cancel_reason_id: reason.id,
   cancel_note: 'Supplier could not deliver in time',
+})
+
+// On a split checkout, give back this order's share of the shared payment —
+// all of it, or the part named by refund_amount
+await adminClient.orders.cancel('or_xxx', {
+  cancel_reason_id: reason.id,
   refund_payments: true,
+  refund_amount: '25.00',
 })
 
 // Take an authorized payment
@@ -138,16 +145,22 @@ curl 'https://api.mystore.com/api/v3/admin/orders?filter[payment_status_eq]=paid
 curl -X PATCH 'https://api.mystore.com/api/v3/admin/orders/or_xxx/cancel' \
   -H 'X-Spree-API-Key: sk_xxx' \
   -H 'Content-Type: application/json' \
-  -d '{ "cancel_reason_id": "ocr_xxx", "refund_payments": true }'
+  -d '{ "cancel_reason_id": "ocr_xxx", "refund_payments": true, "refund_amount": "25.00" }'
 ```
 
 </CodeGroup>
 
 Canceling always puts stock back — the goods are not going out either way. Money
-is a separate decision: pass `refund_payments` to give back what the order has
-been paid, optionally capped by `refund_amount`. Without it, captured payments
-are canceled at the gateway and any authorization is released, but nothing is
-refunded.
+is settled at the gateway: an uncaptured authorization is released, and a
+captured payment is refunded in full.
+
+`refund_payments` and `refund_amount` matter on an order paid through a split
+checkout, where one payment is shared across several orders. There the amount is
+this order's own share, drawn from each payment in turn until it is met, so a
+partial refund never has to name a payment. Leave `refund_amount` out to give
+back the whole share, or set it to keep part back — a restocking fee, say.
+Without `refund_payments`, a shared authorization is written down but nothing is
+handed back.
 
 It records who canceled, and optionally why: the reason comes from a list you
 manage yourself under Settings, so it can say what your team actually means. A
