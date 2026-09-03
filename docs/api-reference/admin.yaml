@@ -374,6 +374,8 @@ paths:
                 - write_customers
                 - read_settings
                 - write_settings
+                - read_delivery_methods
+                - write_delivery_methods
                 - read_webhooks
                 - write_webhooks
                 - read_integrations
@@ -386,6 +388,8 @@ paths:
                 - write_sellers
                 - read_commissions
                 - write_commissions
+                - read_payouts
+                - write_payouts
                 - read_seller_profile
                 - write_seller_profile
                 - read_dashboard
@@ -503,6 +507,8 @@ paths:
                 - write_customers
                 - read_settings
                 - write_settings
+                - read_delivery_methods
+                - write_delivery_methods
                 - read_webhooks
                 - write_webhooks
                 - read_integrations
@@ -515,6 +521,8 @@ paths:
                 - write_sellers
                 - read_commissions
                 - write_commissions
+                - read_payouts
+                - write_payouts
                 - read_seller_profile
                 - write_seller_profile
                 - read_dashboard
@@ -11589,11 +11597,11 @@ paths:
               example:
                 error:
                   code: validation_error
-                  message: Name can't be blank and Presentation can't be blank
+                  message: Name can't be blank and Label can't be blank
                   details:
                     name:
                     - can't be blank
-                    presentation:
+                    label:
                     - can't be blank
               schema:
                 "$ref": "#/components/schemas/ErrorResponse"
@@ -11788,9 +11796,9 @@ paths:
               example:
                 error:
                   code: validation_error
-                  message: Presentation can't be blank
+                  message: Label can't be blank
                   details:
-                    presentation:
+                    label:
                     - can't be blank
               schema:
                 "$ref": "#/components/schemas/ErrorResponse"
@@ -12452,8 +12460,8 @@ paths:
                   preorder_ships_at:
                   quantity: 2
                   currency: USD
-                  name: Product 499180
-                  slug: product-499180
+                  name: Product 509180
+                  slug: product-509180
                   options_text: 'Size: S'
                   price: '10.0'
                   display_price: "$10.00"
@@ -12565,8 +12573,8 @@ paths:
                 preorder_ships_at:
                 quantity: 3
                 currency: USD
-                name: Product 5199
-                slug: product-5199
+                name: Product 5299
+                slug: product-5299
                 options_text: 'Size: S'
                 price: '19.99'
                 display_price: "$19.99"
@@ -12700,8 +12708,8 @@ paths:
                 preorder_ships_at:
                 quantity: 2
                 currency: USD
-                name: Product 522714
-                slug: product-522714
+                name: Product 532714
+                slug: product-532714
                 options_text: 'Size: S'
                 price: '10.0'
                 display_price: "$10.00"
@@ -12808,8 +12816,8 @@ paths:
                 preorder_ships_at:
                 quantity: 5
                 currency: USD
-                name: Product 539758
-                slug: product-539758
+                name: Product 549758
+                slug: product-549758
                 options_text: 'Size: S'
                 price: '19.99'
                 display_price: "$19.99"
@@ -16174,7 +16182,7 @@ paths:
             application/json:
               example:
                 id: pl_UkLWZg9DAJ
-                name: Price List 1
+                name: Price List 2
                 description:
                 status: inactive
                 position: 1
@@ -17343,8 +17351,8 @@ paths:
               example:
                 data:
                 - id: prod_UkLWZg9DAJ
-                  name: Product 916550
-                  slug: product-916550
+                  name: Product 926550
+                  slug: product-926550
                   meta_title:
                   meta_description:
                   meta_keywords:
@@ -17737,8 +17745,8 @@ paths:
             application/json:
               example:
                 id: prod_UkLWZg9DAJ
-                name: Product 952061
-                slug: product-952061
+                name: Product 962061
+                slug: product-962061
                 meta_title:
                 meta_description:
                 meta_keywords:
@@ -17851,7 +17859,7 @@ paths:
               example:
                 id: prod_UkLWZg9DAJ
                 name: Updated Name
-                slug: product-975339
+                slug: product-985339
                 meta_title:
                 meta_description:
                 meta_keywords:
@@ -18793,6 +18801,93 @@ paths:
                   type: array
                   items:
                     type: string
+  "/api/v3/admin/translations":
+    get:
+      summary: Translation coverage for a resource type
+      tags:
+      - Products
+      security:
+      - api_key: []
+        bearer_auth: []
+      description: |-
+        Reports how much of each record is translated into each of the store's non-default locales, plus per-locale totals. A record counts as covered for a locale only when every one of its translatable fields is filled in.
+
+        **Required scope:** `read_products` (for API-key authentication).
+      parameters:
+      - name: x-spree-api-key
+        in: header
+        required: true
+        schema:
+          type: string
+      - name: Authorization
+        in: header
+        required: true
+        schema:
+          type: string
+      - name: resource_type
+        in: query
+        required: true
+        description: A translatable resource type, e.g. `product`, `category`, `option_type`.
+        schema:
+          type: string
+      - name: page
+        in: query
+        required: false
+        schema:
+          type: integer
+      - name: limit
+        in: query
+        required: false
+        schema:
+          type: integer
+      - name: search
+        in: query
+        required: false
+        description: Free-text term, applied through whichever predicate the resource
+          type whitelists (reported back as `search_field`).
+        schema:
+          type: string
+      responses:
+        '200':
+          description: coverage found
+          content:
+            application/json:
+              example:
+                data:
+                  resource_type: product
+                  default_locale: en
+                  locales:
+                  - de
+                  field_count: 5
+                  search_field: name_cont
+                  coverage:
+                  - locale: de
+                    translated: 0
+                    total: 1
+                    coverage: 0.0
+                  records:
+                  - id: prod_UkLWZg9DAJ
+                    label: Espresso Machine
+                    locales:
+                      de: 2
+                meta:
+                  page: 1
+                  limit: 25
+                  count: 1
+                  pages: 1
+                  from: 1
+                  to: 1
+                  in: 1
+                  previous:
+                  next:
+        '404':
+          description: resource type is not translatable
+          content:
+            application/json:
+              example:
+                error:
+                  code: record_not_found
+                  message: record not found
   "/api/v3/admin/policies":
     get:
       summary: List policies
@@ -19545,6 +19640,7 @@ paths:
                   product_ids:
                   category_ids:
                   customer_ids:
+                  option_value_ids:
                 meta:
                   page: 1
                   limit: 25
@@ -19616,6 +19712,7 @@ paths:
                 product_ids:
                 category_ids:
                 customer_ids:
+                option_value_ids:
         '422':
           description: unknown rule type
           content:
@@ -19708,6 +19805,7 @@ paths:
                 product_ids:
                 category_ids:
                 customer_ids:
+                option_value_ids:
       requestBody:
         content:
           application/json:
@@ -20518,6 +20616,9 @@ paths:
                   label: Item total
                   description:
                   preference_schema:
+                  - key: amount_min
+                    type: decimal
+                    default: 100.0
                   - key: operator_min
                     type: string
                     default: ">"
@@ -20527,9 +20628,6 @@ paths:
                   - key: operator_max
                     type: string
                     default: "<"
-                  - key: amount_min
-                    type: decimal
-                    default: 100.0
                 - type: market
                   label: Market(s)
                   description:
@@ -20840,6 +20938,9 @@ paths:
                 preferred_inventory_provider: internal
                 preferred_pricing_provider_failure_policy: strict
                 preferred_inventory_provider_failure_policy: fallback
+                preferred_payout_provider:
+                preferred_default_payouts_schedule_interval: monthly
+                preferred_default_minimum_payout_amount: 0
                 preferred_document_number_format: sequential
                 preferred_order_number_prefix: R
                 preferred_order_number_suffix: ''
@@ -21162,6 +21263,9 @@ paths:
                 preferred_inventory_provider: internal
                 preferred_pricing_provider_failure_policy: strict
                 preferred_inventory_provider_failure_policy: fallback
+                preferred_payout_provider:
+                preferred_default_payouts_schedule_interval: monthly
+                preferred_default_minimum_payout_amount: 0
                 preferred_document_number_format: sequential
                 preferred_order_number_prefix: R
                 preferred_order_number_suffix: ''
@@ -21919,7 +22023,7 @@ paths:
                     type: html
                   - key: permalink
                     type: string
-                  readable: false
+                  readable: true
                 - resource_type: category
                   fields:
                   - key: name
@@ -21954,7 +22058,7 @@ paths:
                     type: string
                   - key: body
                     type: html
-                  readable: false
+                  readable: true
                 - resource_type: seller
                   fields:
                   - key: name
@@ -22841,6 +22945,20 @@ paths:
                   group_label: Settings
                   label: Store settings
                   description: Store, payment, delivery, tax and channel configuration
+                - key: read_delivery_methods
+                  resource: delivery_methods
+                  kind: read
+                  group: settings
+                  group_label: Settings
+                  label: Delivery methods
+                  description: ''
+                - key: write_delivery_methods
+                  resource: delivery_methods
+                  kind: write
+                  group: settings
+                  group_label: Settings
+                  label: Delivery methods
+                  description: ''
                 - key: read_webhooks
                   resource: webhooks
                   kind: read
@@ -22925,6 +23043,20 @@ paths:
                   group_label: Access
                   label: Commissions
                   description: ''
+                - key: read_payouts
+                  resource: payouts
+                  kind: read
+                  group: access
+                  group_label: Access
+                  label: Payouts
+                  description: ''
+                - key: write_payouts
+                  resource: payouts
+                  kind: write
+                  group: access
+                  group_label: Access
+                  label: Payouts
+                  description: ''
                 - key: read_seller_profile
                   resource: seller_profile
                   kind: read
@@ -22947,7 +23079,7 @@ paths:
                   label: Analytics dashboard
                   description: Sales and performance analytics
                 meta:
-                  count: 47
+                  count: 51
   "/api/v3/admin/roles":
     get:
       summary: List roles
@@ -23031,6 +23163,8 @@ paths:
                   - write_customers
                   - read_settings
                   - write_settings
+                  - read_delivery_methods
+                  - write_delivery_methods
                   - read_webhooks
                   - write_webhooks
                   - read_integrations
@@ -23043,6 +23177,8 @@ paths:
                   - write_sellers
                   - read_commissions
                   - write_commissions
+                  - read_payouts
+                  - write_payouts
                   - read_seller_profile
                   - write_seller_profile
                   - read_dashboard
@@ -24006,7 +24142,7 @@ paths:
                 data:
                 - id: variant_UkLWZg9DAJ
                   product_id: prod_UkLWZg9DAJ
-                  sku: SKU-153
+                  sku: SKU-155
                   options_text: ''
                   track_inventory: true
                   media_count: 0
@@ -24061,11 +24197,11 @@ paths:
                   available_stock: 0
                   reserved_quantity: 0
                   total_on_hand: 0
-                  product_name: Product 1226804
+                  product_name: Product 1236804
                   delivery_profile_id: fp_UkLWZg9DAJ
                 - id: variant_gbHJdmfrXB
                   product_id: prod_UkLWZg9DAJ
-                  sku: SKU-154
+                  sku: SKU-156
                   options_text: 'Size: S'
                   track_inventory: true
                   media_count: 0
@@ -24132,7 +24268,7 @@ paths:
                   available_stock: 0
                   reserved_quantity: 0
                   total_on_hand: 0
-                  product_name: Product 1226804
+                  product_name: Product 1236804
                   delivery_profile_id: fp_UkLWZg9DAJ
                 meta:
                   page: 1
@@ -24278,7 +24414,7 @@ paths:
                 available_stock: 0
                 reserved_quantity: 0
                 total_on_hand: 0
-                product_name: Product 1231771
+                product_name: Product 1241771
                 delivery_profile_id: fp_UkLWZg9DAJ
         '422':
           description: validation error
@@ -24457,7 +24593,7 @@ paths:
               example:
                 id: variant_gbHJdmfrXB
                 product_id: prod_UkLWZg9DAJ
-                sku: SKU-160
+                sku: SKU-162
                 options_text: 'Size: S'
                 track_inventory: true
                 media_count: 0
@@ -24524,7 +24660,7 @@ paths:
                 available_stock: 0
                 reserved_quantity: 0
                 total_on_hand: 0
-                product_name: Product 1254025
+                product_name: Product 1264025
                 delivery_profile_id: fp_UkLWZg9DAJ
         '404':
           description: variant not found
@@ -24664,7 +24800,7 @@ paths:
                 available_stock: 0
                 reserved_quantity: 0
                 total_on_hand: 0
-                product_name: Product 1275672
+                product_name: Product 1285672
                 delivery_profile_id: fp_UkLWZg9DAJ
       requestBody:
         content:
@@ -25978,7 +26114,7 @@ paths:
                 id: cat_gbHJdmfrXB
                 name: VIP Assortment
                 description:
-                active: true
+                active: false
                 position: 2
                 metadata: {}
                 minimum_order_quantity:
@@ -26379,8 +26515,8 @@ paths:
                   created_at: '2026-01-15T12:00:00.000Z'
                   updated_at: '2026-01-15T12:00:00.000Z'
                   variant_id: variant_gbHJdmfrXB
-                  variant_sku: SKU-4
-                  product_name: Product 35457
+                  variant_sku: SKU-5
+                  product_name: Product 45457
                   options_text: 'Size: S'
                 meta:
                   page: 1
@@ -26431,8 +26567,8 @@ paths:
                 created_at: '2026-01-15T12:00:00.000Z'
                 updated_at: '2026-01-15T12:00:00.000Z'
                 variant_id: variant_gbHJdmfrXB
-                variant_sku: SKU-6
-                product_name: Product 41599
+                variant_sku: SKU-7
+                product_name: Product 51599
                 options_text: 'Size: S'
         '422':
           description: invalid request
@@ -26628,8 +26764,8 @@ paths:
                 created_at: '2026-01-15T12:00:00.000Z'
                 updated_at: '2026-01-15T12:00:00.000Z'
                 variant_id: variant_gbHJdmfrXB
-                variant_sku: SKU-10
-                product_name: Product 61912
+                variant_sku: SKU-11
+                product_name: Product 71912
                 options_text: 'Size: S'
       requestBody:
         content:
@@ -26806,7 +26942,7 @@ paths:
                 data:
                 - id: prod_UkLWZg9DAJ
                   product_id: prod_UkLWZg9DAJ
-                  product_name: Product 83986
+                  product_name: Product 93986
                   minimum_order_quantity: 48
                   order_multiple: 24
                   mixed: true
@@ -26846,7 +26982,7 @@ paths:
                 data:
                 - id: prod_UkLWZg9DAJ
                   product_id: prod_UkLWZg9DAJ
-                  product_name: Product 97053
+                  product_name: Product 107053
                   minimum_order_quantity: 48
                   order_multiple: 24
                   mixed: false
@@ -30076,9 +30212,12 @@ paths:
                   tracking_url:
                   markup_flat: '0.0'
                   markup_percent: '0.0'
+                  available_to_sellers: false
                   created_at: '2026-01-15T12:00:00.000Z'
                   updated_at: '2026-01-15T12:00:00.000Z'
                   deleted_at:
+                  seller_id:
+                  seller_name:
                   services: []
                   rules: []
                   tax_category_id:
@@ -30088,9 +30227,9 @@ paths:
                   stock_location_ids: []
                   calculator_type: Spree::Calculator::Shipping::FlatRate
                   calculator_preferences:
+                    amounts: {}
                     amount: '10.0'
                     currency: USD
-                    amounts: {}
                 meta:
                   page: 1
                   limit: 25
@@ -30165,9 +30304,12 @@ paths:
                 tracking_url:
                 markup_flat: '0.0'
                 markup_percent: '0.0'
+                available_to_sellers: false
                 created_at: '2026-01-15T12:00:00.000Z'
                 updated_at: '2026-01-15T12:00:00.000Z'
                 deleted_at:
+                seller_id:
+                seller_name:
                 services: []
                 rules: []
                 tax_category_id:
@@ -30177,9 +30319,9 @@ paths:
                 stock_location_ids: []
                 calculator_type: Spree::Calculator::Shipping::FlatRate
                 calculator_preferences:
+                  amounts: {}
                   amount: '12.5'
                   currency: USD
-                  amounts: {}
       requestBody:
         content:
           application/json:
@@ -30284,21 +30426,18 @@ paths:
                 - type: Spree::Calculator::Shipping::FlatRate
                   name: Flat rate
                   preference_schema:
+                  - key: amounts
+                    type: hash
+                    default: {}
                   - key: amount
                     type: decimal
                     default: 0
                   - key: currency
                     type: string
                     default: USD
-                  - key: amounts
-                    type: hash
-                    default: {}
                 - type: Spree::Calculator::Shipping::FlexiRate
                   name: Flexible Rate per package item
                   preference_schema:
-                  - key: currency
-                    type: string
-                    default: USD
                   - key: first_item
                     type: decimal
                     default: 0.0
@@ -30308,45 +30447,48 @@ paths:
                   - key: max_items
                     type: integer
                     default: 0
+                  - key: currency
+                    type: string
+                    default: USD
                 - type: Spree::Calculator::Shipping::PerItem
                   name: Flat rate per package item
                   preference_schema:
+                  - key: amounts
+                    type: hash
+                    default: {}
                   - key: amount
                     type: decimal
                     default: 0
                   - key: currency
                     type: string
                     default: USD
-                  - key: amounts
-                    type: hash
-                    default: {}
                 - type: Spree::Calculator::Shipping::PriceSack
                   name: Price sack
                   preference_schema:
-                  - key: normal_amount
+                  - key: minimal_amount
                     type: decimal
                     default: 0
-                  - key: discount_amount
+                  - key: normal_amount
                     type: decimal
                     default: 0
                   - key: currency
                     type: string
                     default: USD
-                  - key: minimal_amount
+                  - key: discount_amount
                     type: decimal
                     default: 0
                 - type: Spree::Calculator::Shipping::DigitalDelivery
                   name: Digital Delivery
                   preference_schema:
+                  - key: amounts
+                    type: hash
+                    default: {}
                   - key: amount
                     type: decimal
                     default: 0
                   - key: currency
                     type: string
                     default: USD
-                  - key: amounts
-                    type: hash
-                    default: {}
   "/api/v3/admin/delivery_zones":
     post:
       summary: Create delivery zone
@@ -30800,13 +30942,13 @@ paths:
                   video_embed_url:
                   video_url:
                   poster_url:
-                  original_url: http://localhost:3000/rails/active_storage/blobs/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--bc30a562c4f9c38fad1949c9c3be2188baad829f/thinking-cat.jpg
-                  mini_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--bc30a562c4f9c38fad1949c9c3be2188baad829f/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOlsxMjgsMTI4XSwic2F2ZXIiOnsic3RyaXAiOnRydWUsInF1YWxpdHkiOjc1LCJsb3NzbGVzcyI6ZmFsc2UsImFscGhhX3EiOjg1LCJyZWR1Y3Rpb25fZWZmb3J0Ijo2LCJzbWFydF9zdWJzYW1wbGUiOnRydWV9fSwicHVyIjoidmFyaWF0aW9uIn19--ebd85d46c5b44c0d5875496f97f70e6c1b671ef6/thinking-cat.jpg
-                  small_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--bc30a562c4f9c38fad1949c9c3be2188baad829f/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOlsyNTYsMjU2XSwic2F2ZXIiOnsic3RyaXAiOnRydWUsInF1YWxpdHkiOjc1LCJsb3NzbGVzcyI6ZmFsc2UsImFscGhhX3EiOjg1LCJyZWR1Y3Rpb25fZWZmb3J0Ijo2LCJzbWFydF9zdWJzYW1wbGUiOnRydWV9fSwicHVyIjoidmFyaWF0aW9uIn19--fd0e7540b7fa45722b8c0573de13dabab4459055/thinking-cat.jpg
-                  medium_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--bc30a562c4f9c38fad1949c9c3be2188baad829f/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOls0MDAsNDAwXSwic2F2ZXIiOnsic3RyaXAiOnRydWUsInF1YWxpdHkiOjc1LCJsb3NzbGVzcyI6ZmFsc2UsImFscGhhX3EiOjg1LCJyZWR1Y3Rpb25fZWZmb3J0Ijo2LCJzbWFydF9zdWJzYW1wbGUiOnRydWV9fSwicHVyIjoidmFyaWF0aW9uIn19--c377ab499fc8ca5f490842b5ebc7008c2cbbd769/thinking-cat.jpg
-                  large_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--bc30a562c4f9c38fad1949c9c3be2188baad829f/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOls3MjAsNzIwXSwic2F2ZXIiOnsic3RyaXAiOnRydWUsInF1YWxpdHkiOjc1LCJsb3NzbGVzcyI6ZmFsc2UsImFscGhhX3EiOjg1LCJyZWR1Y3Rpb25fZWZmb3J0Ijo2LCJzbWFydF9zdWJzYW1wbGUiOnRydWV9fSwicHVyIjoidmFyaWF0aW9uIn19--d1bcc6cd8cf1156abfe417376600cbeaddca7ad0/thinking-cat.jpg
-                  xlarge_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--bc30a562c4f9c38fad1949c9c3be2188baad829f/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOlsyMDAwLDIwMDBdLCJzYXZlciI6eyJzdHJpcCI6dHJ1ZSwicXVhbGl0eSI6NzUsImxvc3NsZXNzIjpmYWxzZSwiYWxwaGFfcSI6ODUsInJlZHVjdGlvbl9lZmZvcnQiOjYsInNtYXJ0X3N1YnNhbXBsZSI6dHJ1ZX19LCJwdXIiOiJ2YXJpYXRpb24ifX0=--c4270e77893a3b0940043e2dc067a44961c678f9/thinking-cat.jpg
-                  og_image_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--bc30a562c4f9c38fad1949c9c3be2188baad829f/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOlsxMjAwLDYzMF0sInNhdmVyIjp7InN0cmlwIjp0cnVlLCJxdWFsaXR5Ijo3NSwibG9zc2xlc3MiOmZhbHNlLCJhbHBoYV9xIjo4NSwicmVkdWN0aW9uX2VmZm9ydCI6Niwic21hcnRfc3Vic2FtcGxlIjp0cnVlfX0sInB1ciI6InZhcmlhdGlvbiJ9fQ==--4db163885bdaa9f50fd6ffb94c4ae7f6e980fda3/thinking-cat.jpg
+                  original_url: http://localhost:3000/rails/active_storage/blobs/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--ace434315bd7ceca3bf6f89900586c87ca982aa9/thinking-cat.jpg
+                  mini_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--ace434315bd7ceca3bf6f89900586c87ca982aa9/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOlsxMjgsMTI4XSwic2F2ZXIiOnsic3RyaXAiOnRydWUsInF1YWxpdHkiOjc1LCJsb3NzbGVzcyI6ZmFsc2UsImFscGhhX3EiOjg1LCJyZWR1Y3Rpb25fZWZmb3J0Ijo2LCJzbWFydF9zdWJzYW1wbGUiOnRydWV9fSwicHVyIjoidmFyaWF0aW9uIn19--50f930ccecfd125f3ddf7db504d22b945a99d891/thinking-cat.jpg
+                  small_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--ace434315bd7ceca3bf6f89900586c87ca982aa9/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOlsyNTYsMjU2XSwic2F2ZXIiOnsic3RyaXAiOnRydWUsInF1YWxpdHkiOjc1LCJsb3NzbGVzcyI6ZmFsc2UsImFscGhhX3EiOjg1LCJyZWR1Y3Rpb25fZWZmb3J0Ijo2LCJzbWFydF9zdWJzYW1wbGUiOnRydWV9fSwicHVyIjoidmFyaWF0aW9uIn19--d1d1cf39fc886e7480cfd8e916d1a0685ec4c857/thinking-cat.jpg
+                  medium_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--ace434315bd7ceca3bf6f89900586c87ca982aa9/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOls0MDAsNDAwXSwic2F2ZXIiOnsic3RyaXAiOnRydWUsInF1YWxpdHkiOjc1LCJsb3NzbGVzcyI6ZmFsc2UsImFscGhhX3EiOjg1LCJyZWR1Y3Rpb25fZWZmb3J0Ijo2LCJzbWFydF9zdWJzYW1wbGUiOnRydWV9fSwicHVyIjoidmFyaWF0aW9uIn19--9638775e47dbccefcce68415de301381a24cf6cb/thinking-cat.jpg
+                  large_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--ace434315bd7ceca3bf6f89900586c87ca982aa9/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOls3MjAsNzIwXSwic2F2ZXIiOnsic3RyaXAiOnRydWUsInF1YWxpdHkiOjc1LCJsb3NzbGVzcyI6ZmFsc2UsImFscGhhX3EiOjg1LCJyZWR1Y3Rpb25fZWZmb3J0Ijo2LCJzbWFydF9zdWJzYW1wbGUiOnRydWV9fSwicHVyIjoidmFyaWF0aW9uIn19--7ccff41336c788441963bb037ab6df91a7a0916a/thinking-cat.jpg
+                  xlarge_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--ace434315bd7ceca3bf6f89900586c87ca982aa9/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOlsyMDAwLDIwMDBdLCJzYXZlciI6eyJzdHJpcCI6dHJ1ZSwicXVhbGl0eSI6NzUsImxvc3NsZXNzIjpmYWxzZSwiYWxwaGFfcSI6ODUsInJlZHVjdGlvbl9lZmZvcnQiOjYsInNtYXJ0X3N1YnNhbXBsZSI6dHJ1ZX19LCJwdXIiOiJ2YXJpYXRpb24ifX0=--544bf5659d88d021415cb409f5e5c3a3487a3ad6/thinking-cat.jpg
+                  og_image_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--ace434315bd7ceca3bf6f89900586c87ca982aa9/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOlsxMjAwLDYzMF0sInNhdmVyIjp7InN0cmlwIjp0cnVlLCJxdWFsaXR5Ijo3NSwibG9zc2xlc3MiOmZhbHNlLCJhbHBoYV9xIjo4NSwicmVkdWN0aW9uX2VmZm9ydCI6Niwic21hcnRfc3Vic2FtcGxlIjp0cnVlfX0sInB1ciI6InZhcmlhdGlvbiJ9fQ==--038fd6f5ee034c98e4b1c64a7088f177f392376b/thinking-cat.jpg
                   external_references: {}
                   created_at: '2026-01-15T12:00:00.000Z'
                   updated_at: '2026-01-15T12:00:00.000Z'
@@ -30814,10 +30956,10 @@ paths:
                   filename: thinking-cat.jpg
                   content_type: image/jpeg
                   byte_size: 18090
-                  embed_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--bc30a562c4f9c38fad1949c9c3be2188baad829f/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2xpbWl0IjpbMTIwMCwxMjAwXSwic2F2ZXIiOnsic3RyaXAiOnRydWUsInF1YWxpdHkiOjc1LCJsb3NzbGVzcyI6ZmFsc2UsImFscGhhX3EiOjg1LCJyZWR1Y3Rpb25fZWZmb3J0Ijo2LCJzbWFydF9zdWJzYW1wbGUiOnRydWV9fSwicHVyIjoidmFyaWF0aW9uIn19--2a75d2689c9ac587832bb64bcab9f8ac1a36a80c/thinking-cat.jpg
-                  signed_id: eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--bc30a562c4f9c38fad1949c9c3be2188baad829f
+                  embed_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--ace434315bd7ceca3bf6f89900586c87ca982aa9/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2xpbWl0IjpbMTIwMCwxMjAwXSwic2F2ZXIiOnsic3RyaXAiOnRydWUsInF1YWxpdHkiOjc1LCJsb3NzbGVzcyI6ZmFsc2UsImFscGhhX3EiOjg1LCJyZWR1Y3Rpb25fZWZmb3J0Ijo2LCJzbWFydF9zdWJzYW1wbGUiOnRydWV9fSwicHVyIjoidmFyaWF0aW9uIn19--98205246c10f63c34c6b2245a09752c6664d104d/thinking-cat.jpg
+                  signed_id: eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--ace434315bd7ceca3bf6f89900586c87ca982aa9
                   viewable_id: prod_UkLWZg9DAJ
-                  download_url: http://localhost:3000/rails/active_storage/blobs/redirect/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--bc30a562c4f9c38fad1949c9c3be2188baad829f/thinking-cat.jpg?disposition=attachment
+                  download_url: http://localhost:3000/rails/active_storage/blobs/redirect/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--ace434315bd7ceca3bf6f89900586c87ca982aa9/thinking-cat.jpg?disposition=attachment
                   metadata: {}
                   viewable_type: product
                 meta:
@@ -30888,13 +31030,13 @@ paths:
                 video_embed_url:
                 video_url:
                 poster_url:
-                original_url: http://localhost:3000/rails/active_storage/blobs/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MiwicHVyIjoiYmxvYl9pZCJ9fQ==--aeaf95c09c97d3b9c3a39b8a995bb4128820a58d/library-upload.jpg
-                mini_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MiwicHVyIjoiYmxvYl9pZCJ9fQ==--aeaf95c09c97d3b9c3a39b8a995bb4128820a58d/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOlsxMjgsMTI4XSwic2F2ZXIiOnsic3RyaXAiOnRydWUsInF1YWxpdHkiOjc1LCJsb3NzbGVzcyI6ZmFsc2UsImFscGhhX3EiOjg1LCJyZWR1Y3Rpb25fZWZmb3J0Ijo2LCJzbWFydF9zdWJzYW1wbGUiOnRydWV9fSwicHVyIjoidmFyaWF0aW9uIn19--ebd85d46c5b44c0d5875496f97f70e6c1b671ef6/library-upload.jpg
-                small_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MiwicHVyIjoiYmxvYl9pZCJ9fQ==--aeaf95c09c97d3b9c3a39b8a995bb4128820a58d/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOlsyNTYsMjU2XSwic2F2ZXIiOnsic3RyaXAiOnRydWUsInF1YWxpdHkiOjc1LCJsb3NzbGVzcyI6ZmFsc2UsImFscGhhX3EiOjg1LCJyZWR1Y3Rpb25fZWZmb3J0Ijo2LCJzbWFydF9zdWJzYW1wbGUiOnRydWV9fSwicHVyIjoidmFyaWF0aW9uIn19--fd0e7540b7fa45722b8c0573de13dabab4459055/library-upload.jpg
-                medium_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MiwicHVyIjoiYmxvYl9pZCJ9fQ==--aeaf95c09c97d3b9c3a39b8a995bb4128820a58d/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOls0MDAsNDAwXSwic2F2ZXIiOnsic3RyaXAiOnRydWUsInF1YWxpdHkiOjc1LCJsb3NzbGVzcyI6ZmFsc2UsImFscGhhX3EiOjg1LCJyZWR1Y3Rpb25fZWZmb3J0Ijo2LCJzbWFydF9zdWJzYW1wbGUiOnRydWV9fSwicHVyIjoidmFyaWF0aW9uIn19--c377ab499fc8ca5f490842b5ebc7008c2cbbd769/library-upload.jpg
-                large_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MiwicHVyIjoiYmxvYl9pZCJ9fQ==--aeaf95c09c97d3b9c3a39b8a995bb4128820a58d/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOls3MjAsNzIwXSwic2F2ZXIiOnsic3RyaXAiOnRydWUsInF1YWxpdHkiOjc1LCJsb3NzbGVzcyI6ZmFsc2UsImFscGhhX3EiOjg1LCJyZWR1Y3Rpb25fZWZmb3J0Ijo2LCJzbWFydF9zdWJzYW1wbGUiOnRydWV9fSwicHVyIjoidmFyaWF0aW9uIn19--d1bcc6cd8cf1156abfe417376600cbeaddca7ad0/library-upload.jpg
-                xlarge_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MiwicHVyIjoiYmxvYl9pZCJ9fQ==--aeaf95c09c97d3b9c3a39b8a995bb4128820a58d/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOlsyMDAwLDIwMDBdLCJzYXZlciI6eyJzdHJpcCI6dHJ1ZSwicXVhbGl0eSI6NzUsImxvc3NsZXNzIjpmYWxzZSwiYWxwaGFfcSI6ODUsInJlZHVjdGlvbl9lZmZvcnQiOjYsInNtYXJ0X3N1YnNhbXBsZSI6dHJ1ZX19LCJwdXIiOiJ2YXJpYXRpb24ifX0=--c4270e77893a3b0940043e2dc067a44961c678f9/library-upload.jpg
-                og_image_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MiwicHVyIjoiYmxvYl9pZCJ9fQ==--aeaf95c09c97d3b9c3a39b8a995bb4128820a58d/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOlsxMjAwLDYzMF0sInNhdmVyIjp7InN0cmlwIjp0cnVlLCJxdWFsaXR5Ijo3NSwibG9zc2xlc3MiOmZhbHNlLCJhbHBoYV9xIjo4NSwicmVkdWN0aW9uX2VmZm9ydCI6Niwic21hcnRfc3Vic2FtcGxlIjp0cnVlfX0sInB1ciI6InZhcmlhdGlvbiJ9fQ==--4db163885bdaa9f50fd6ffb94c4ae7f6e980fda3/library-upload.jpg
+                original_url: http://localhost:3000/rails/active_storage/blobs/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MiwicHVyIjoiYmxvYl9pZCJ9fQ==--a22d48a8bd861bea39fc00b3a750cbc4cbdd80cb/library-upload.jpg
+                mini_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MiwicHVyIjoiYmxvYl9pZCJ9fQ==--a22d48a8bd861bea39fc00b3a750cbc4cbdd80cb/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOlsxMjgsMTI4XSwic2F2ZXIiOnsic3RyaXAiOnRydWUsInF1YWxpdHkiOjc1LCJsb3NzbGVzcyI6ZmFsc2UsImFscGhhX3EiOjg1LCJyZWR1Y3Rpb25fZWZmb3J0Ijo2LCJzbWFydF9zdWJzYW1wbGUiOnRydWV9fSwicHVyIjoidmFyaWF0aW9uIn19--50f930ccecfd125f3ddf7db504d22b945a99d891/library-upload.jpg
+                small_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MiwicHVyIjoiYmxvYl9pZCJ9fQ==--a22d48a8bd861bea39fc00b3a750cbc4cbdd80cb/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOlsyNTYsMjU2XSwic2F2ZXIiOnsic3RyaXAiOnRydWUsInF1YWxpdHkiOjc1LCJsb3NzbGVzcyI6ZmFsc2UsImFscGhhX3EiOjg1LCJyZWR1Y3Rpb25fZWZmb3J0Ijo2LCJzbWFydF9zdWJzYW1wbGUiOnRydWV9fSwicHVyIjoidmFyaWF0aW9uIn19--d1d1cf39fc886e7480cfd8e916d1a0685ec4c857/library-upload.jpg
+                medium_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MiwicHVyIjoiYmxvYl9pZCJ9fQ==--a22d48a8bd861bea39fc00b3a750cbc4cbdd80cb/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOls0MDAsNDAwXSwic2F2ZXIiOnsic3RyaXAiOnRydWUsInF1YWxpdHkiOjc1LCJsb3NzbGVzcyI6ZmFsc2UsImFscGhhX3EiOjg1LCJyZWR1Y3Rpb25fZWZmb3J0Ijo2LCJzbWFydF9zdWJzYW1wbGUiOnRydWV9fSwicHVyIjoidmFyaWF0aW9uIn19--9638775e47dbccefcce68415de301381a24cf6cb/library-upload.jpg
+                large_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MiwicHVyIjoiYmxvYl9pZCJ9fQ==--a22d48a8bd861bea39fc00b3a750cbc4cbdd80cb/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOls3MjAsNzIwXSwic2F2ZXIiOnsic3RyaXAiOnRydWUsInF1YWxpdHkiOjc1LCJsb3NzbGVzcyI6ZmFsc2UsImFscGhhX3EiOjg1LCJyZWR1Y3Rpb25fZWZmb3J0Ijo2LCJzbWFydF9zdWJzYW1wbGUiOnRydWV9fSwicHVyIjoidmFyaWF0aW9uIn19--7ccff41336c788441963bb037ab6df91a7a0916a/library-upload.jpg
+                xlarge_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MiwicHVyIjoiYmxvYl9pZCJ9fQ==--a22d48a8bd861bea39fc00b3a750cbc4cbdd80cb/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOlsyMDAwLDIwMDBdLCJzYXZlciI6eyJzdHJpcCI6dHJ1ZSwicXVhbGl0eSI6NzUsImxvc3NsZXNzIjpmYWxzZSwiYWxwaGFfcSI6ODUsInJlZHVjdGlvbl9lZmZvcnQiOjYsInNtYXJ0X3N1YnNhbXBsZSI6dHJ1ZX19LCJwdXIiOiJ2YXJpYXRpb24ifX0=--544bf5659d88d021415cb409f5e5c3a3487a3ad6/library-upload.jpg
+                og_image_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MiwicHVyIjoiYmxvYl9pZCJ9fQ==--a22d48a8bd861bea39fc00b3a750cbc4cbdd80cb/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOlsxMjAwLDYzMF0sInNhdmVyIjp7InN0cmlwIjp0cnVlLCJxdWFsaXR5Ijo3NSwibG9zc2xlc3MiOmZhbHNlLCJhbHBoYV9xIjo4NSwicmVkdWN0aW9uX2VmZm9ydCI6Niwic21hcnRfc3Vic2FtcGxlIjp0cnVlfX0sInB1ciI6InZhcmlhdGlvbiJ9fQ==--038fd6f5ee034c98e4b1c64a7088f177f392376b/library-upload.jpg
                 external_references: {}
                 created_at: '2026-01-15T12:00:00.000Z'
                 updated_at: '2026-01-15T12:00:00.000Z'
@@ -30902,10 +31044,10 @@ paths:
                 filename: library-upload.jpg
                 content_type: image/jpeg
                 byte_size: 18090
-                embed_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MiwicHVyIjoiYmxvYl9pZCJ9fQ==--aeaf95c09c97d3b9c3a39b8a995bb4128820a58d/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2xpbWl0IjpbMTIwMCwxMjAwXSwic2F2ZXIiOnsic3RyaXAiOnRydWUsInF1YWxpdHkiOjc1LCJsb3NzbGVzcyI6ZmFsc2UsImFscGhhX3EiOjg1LCJyZWR1Y3Rpb25fZWZmb3J0Ijo2LCJzbWFydF9zdWJzYW1wbGUiOnRydWV9fSwicHVyIjoidmFyaWF0aW9uIn19--2a75d2689c9ac587832bb64bcab9f8ac1a36a80c/library-upload.jpg
-                signed_id: eyJfcmFpbHMiOnsiZGF0YSI6MiwicHVyIjoiYmxvYl9pZCJ9fQ==--aeaf95c09c97d3b9c3a39b8a995bb4128820a58d
+                embed_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MiwicHVyIjoiYmxvYl9pZCJ9fQ==--a22d48a8bd861bea39fc00b3a750cbc4cbdd80cb/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2xpbWl0IjpbMTIwMCwxMjAwXSwic2F2ZXIiOnsic3RyaXAiOnRydWUsInF1YWxpdHkiOjc1LCJsb3NzbGVzcyI6ZmFsc2UsImFscGhhX3EiOjg1LCJyZWR1Y3Rpb25fZWZmb3J0Ijo2LCJzbWFydF9zdWJzYW1wbGUiOnRydWV9fSwicHVyIjoidmFyaWF0aW9uIn19--98205246c10f63c34c6b2245a09752c6664d104d/library-upload.jpg
+                signed_id: eyJfcmFpbHMiOnsiZGF0YSI6MiwicHVyIjoiYmxvYl9pZCJ9fQ==--a22d48a8bd861bea39fc00b3a750cbc4cbdd80cb
                 viewable_id:
-                download_url: http://localhost:3000/rails/active_storage/blobs/redirect/eyJfcmFpbHMiOnsiZGF0YSI6MiwicHVyIjoiYmxvYl9pZCJ9fQ==--aeaf95c09c97d3b9c3a39b8a995bb4128820a58d/library-upload.jpg?disposition=attachment
+                download_url: http://localhost:3000/rails/active_storage/blobs/redirect/eyJfcmFpbHMiOnsiZGF0YSI6MiwicHVyIjoiYmxvYl9pZCJ9fQ==--a22d48a8bd861bea39fc00b3a750cbc4cbdd80cb/library-upload.jpg?disposition=attachment
                 metadata: {}
                 viewable_type:
               schema:
@@ -30979,7 +31121,7 @@ paths:
               example:
                 data:
                 - kind: media
-                  name: Product 243397
+                  name: Product 253397
                   owner_type: Spree::Product
                   owner_id: prod_UkLWZg9DAJ
                   field: attachment
@@ -31062,13 +31204,13 @@ paths:
                 video_embed_url:
                 video_url:
                 poster_url:
-                original_url: http://localhost:3000/rails/active_storage/blobs/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--bc30a562c4f9c38fad1949c9c3be2188baad829f/thinking-cat.jpg
-                mini_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--bc30a562c4f9c38fad1949c9c3be2188baad829f/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOlsxMjgsMTI4XSwic2F2ZXIiOnsic3RyaXAiOnRydWUsInF1YWxpdHkiOjc1LCJsb3NzbGVzcyI6ZmFsc2UsImFscGhhX3EiOjg1LCJyZWR1Y3Rpb25fZWZmb3J0Ijo2LCJzbWFydF9zdWJzYW1wbGUiOnRydWV9fSwicHVyIjoidmFyaWF0aW9uIn19--ebd85d46c5b44c0d5875496f97f70e6c1b671ef6/thinking-cat.jpg
-                small_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--bc30a562c4f9c38fad1949c9c3be2188baad829f/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOlsyNTYsMjU2XSwic2F2ZXIiOnsic3RyaXAiOnRydWUsInF1YWxpdHkiOjc1LCJsb3NzbGVzcyI6ZmFsc2UsImFscGhhX3EiOjg1LCJyZWR1Y3Rpb25fZWZmb3J0Ijo2LCJzbWFydF9zdWJzYW1wbGUiOnRydWV9fSwicHVyIjoidmFyaWF0aW9uIn19--fd0e7540b7fa45722b8c0573de13dabab4459055/thinking-cat.jpg
-                medium_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--bc30a562c4f9c38fad1949c9c3be2188baad829f/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOls0MDAsNDAwXSwic2F2ZXIiOnsic3RyaXAiOnRydWUsInF1YWxpdHkiOjc1LCJsb3NzbGVzcyI6ZmFsc2UsImFscGhhX3EiOjg1LCJyZWR1Y3Rpb25fZWZmb3J0Ijo2LCJzbWFydF9zdWJzYW1wbGUiOnRydWV9fSwicHVyIjoidmFyaWF0aW9uIn19--c377ab499fc8ca5f490842b5ebc7008c2cbbd769/thinking-cat.jpg
-                large_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--bc30a562c4f9c38fad1949c9c3be2188baad829f/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOls3MjAsNzIwXSwic2F2ZXIiOnsic3RyaXAiOnRydWUsInF1YWxpdHkiOjc1LCJsb3NzbGVzcyI6ZmFsc2UsImFscGhhX3EiOjg1LCJyZWR1Y3Rpb25fZWZmb3J0Ijo2LCJzbWFydF9zdWJzYW1wbGUiOnRydWV9fSwicHVyIjoidmFyaWF0aW9uIn19--d1bcc6cd8cf1156abfe417376600cbeaddca7ad0/thinking-cat.jpg
-                xlarge_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--bc30a562c4f9c38fad1949c9c3be2188baad829f/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOlsyMDAwLDIwMDBdLCJzYXZlciI6eyJzdHJpcCI6dHJ1ZSwicXVhbGl0eSI6NzUsImxvc3NsZXNzIjpmYWxzZSwiYWxwaGFfcSI6ODUsInJlZHVjdGlvbl9lZmZvcnQiOjYsInNtYXJ0X3N1YnNhbXBsZSI6dHJ1ZX19LCJwdXIiOiJ2YXJpYXRpb24ifX0=--c4270e77893a3b0940043e2dc067a44961c678f9/thinking-cat.jpg
-                og_image_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--bc30a562c4f9c38fad1949c9c3be2188baad829f/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOlsxMjAwLDYzMF0sInNhdmVyIjp7InN0cmlwIjp0cnVlLCJxdWFsaXR5Ijo3NSwibG9zc2xlc3MiOmZhbHNlLCJhbHBoYV9xIjo4NSwicmVkdWN0aW9uX2VmZm9ydCI6Niwic21hcnRfc3Vic2FtcGxlIjp0cnVlfX0sInB1ciI6InZhcmlhdGlvbiJ9fQ==--4db163885bdaa9f50fd6ffb94c4ae7f6e980fda3/thinking-cat.jpg
+                original_url: http://localhost:3000/rails/active_storage/blobs/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--ace434315bd7ceca3bf6f89900586c87ca982aa9/thinking-cat.jpg
+                mini_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--ace434315bd7ceca3bf6f89900586c87ca982aa9/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOlsxMjgsMTI4XSwic2F2ZXIiOnsic3RyaXAiOnRydWUsInF1YWxpdHkiOjc1LCJsb3NzbGVzcyI6ZmFsc2UsImFscGhhX3EiOjg1LCJyZWR1Y3Rpb25fZWZmb3J0Ijo2LCJzbWFydF9zdWJzYW1wbGUiOnRydWV9fSwicHVyIjoidmFyaWF0aW9uIn19--50f930ccecfd125f3ddf7db504d22b945a99d891/thinking-cat.jpg
+                small_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--ace434315bd7ceca3bf6f89900586c87ca982aa9/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOlsyNTYsMjU2XSwic2F2ZXIiOnsic3RyaXAiOnRydWUsInF1YWxpdHkiOjc1LCJsb3NzbGVzcyI6ZmFsc2UsImFscGhhX3EiOjg1LCJyZWR1Y3Rpb25fZWZmb3J0Ijo2LCJzbWFydF9zdWJzYW1wbGUiOnRydWV9fSwicHVyIjoidmFyaWF0aW9uIn19--d1d1cf39fc886e7480cfd8e916d1a0685ec4c857/thinking-cat.jpg
+                medium_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--ace434315bd7ceca3bf6f89900586c87ca982aa9/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOls0MDAsNDAwXSwic2F2ZXIiOnsic3RyaXAiOnRydWUsInF1YWxpdHkiOjc1LCJsb3NzbGVzcyI6ZmFsc2UsImFscGhhX3EiOjg1LCJyZWR1Y3Rpb25fZWZmb3J0Ijo2LCJzbWFydF9zdWJzYW1wbGUiOnRydWV9fSwicHVyIjoidmFyaWF0aW9uIn19--9638775e47dbccefcce68415de301381a24cf6cb/thinking-cat.jpg
+                large_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--ace434315bd7ceca3bf6f89900586c87ca982aa9/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOls3MjAsNzIwXSwic2F2ZXIiOnsic3RyaXAiOnRydWUsInF1YWxpdHkiOjc1LCJsb3NzbGVzcyI6ZmFsc2UsImFscGhhX3EiOjg1LCJyZWR1Y3Rpb25fZWZmb3J0Ijo2LCJzbWFydF9zdWJzYW1wbGUiOnRydWV9fSwicHVyIjoidmFyaWF0aW9uIn19--7ccff41336c788441963bb037ab6df91a7a0916a/thinking-cat.jpg
+                xlarge_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--ace434315bd7ceca3bf6f89900586c87ca982aa9/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOlsyMDAwLDIwMDBdLCJzYXZlciI6eyJzdHJpcCI6dHJ1ZSwicXVhbGl0eSI6NzUsImxvc3NsZXNzIjpmYWxzZSwiYWxwaGFfcSI6ODUsInJlZHVjdGlvbl9lZmZvcnQiOjYsInNtYXJ0X3N1YnNhbXBsZSI6dHJ1ZX19LCJwdXIiOiJ2YXJpYXRpb24ifX0=--544bf5659d88d021415cb409f5e5c3a3487a3ad6/thinking-cat.jpg
+                og_image_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--ace434315bd7ceca3bf6f89900586c87ca982aa9/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOlsxMjAwLDYzMF0sInNhdmVyIjp7InN0cmlwIjp0cnVlLCJxdWFsaXR5Ijo3NSwibG9zc2xlc3MiOmZhbHNlLCJhbHBoYV9xIjo4NSwicmVkdWN0aW9uX2VmZm9ydCI6Niwic21hcnRfc3Vic2FtcGxlIjp0cnVlfX0sInB1ciI6InZhcmlhdGlvbiJ9fQ==--038fd6f5ee034c98e4b1c64a7088f177f392376b/thinking-cat.jpg
                 external_references: {}
                 created_at: '2026-01-15T12:00:00.000Z'
                 updated_at: '2026-01-15T12:00:00.000Z'
@@ -31076,10 +31218,10 @@ paths:
                 filename: thinking-cat.jpg
                 content_type: image/jpeg
                 byte_size: 18090
-                embed_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--bc30a562c4f9c38fad1949c9c3be2188baad829f/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2xpbWl0IjpbMTIwMCwxMjAwXSwic2F2ZXIiOnsic3RyaXAiOnRydWUsInF1YWxpdHkiOjc1LCJsb3NzbGVzcyI6ZmFsc2UsImFscGhhX3EiOjg1LCJyZWR1Y3Rpb25fZWZmb3J0Ijo2LCJzbWFydF9zdWJzYW1wbGUiOnRydWV9fSwicHVyIjoidmFyaWF0aW9uIn19--2a75d2689c9ac587832bb64bcab9f8ac1a36a80c/thinking-cat.jpg
-                signed_id: eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--bc30a562c4f9c38fad1949c9c3be2188baad829f
+                embed_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--ace434315bd7ceca3bf6f89900586c87ca982aa9/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2xpbWl0IjpbMTIwMCwxMjAwXSwic2F2ZXIiOnsic3RyaXAiOnRydWUsInF1YWxpdHkiOjc1LCJsb3NzbGVzcyI6ZmFsc2UsImFscGhhX3EiOjg1LCJyZWR1Y3Rpb25fZWZmb3J0Ijo2LCJzbWFydF9zdWJzYW1wbGUiOnRydWV9fSwicHVyIjoidmFyaWF0aW9uIn19--98205246c10f63c34c6b2245a09752c6664d104d/thinking-cat.jpg
+                signed_id: eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--ace434315bd7ceca3bf6f89900586c87ca982aa9
                 viewable_id: prod_gbHJdmfrXB
-                download_url: http://localhost:3000/rails/active_storage/blobs/redirect/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--bc30a562c4f9c38fad1949c9c3be2188baad829f/thinking-cat.jpg?disposition=attachment
+                download_url: http://localhost:3000/rails/active_storage/blobs/redirect/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--ace434315bd7ceca3bf6f89900586c87ca982aa9/thinking-cat.jpg?disposition=attachment
                 metadata: {}
                 viewable_type: product
               schema:
@@ -32473,6 +32615,17 @@ paths:
                   accepted_content_types: []
                   association_fields: []
                   preference_schema: []
+                - type: delivery_method
+                  name: Delivery method
+                  description: Offer at least one way to ship your orders
+                  allow_multiple: false
+                  accepts_submissions: false
+                  reviewed_by_operator: false
+                  configured: false
+                  addable: true
+                  accepted_content_types: []
+                  association_fields: []
+                  preference_schema: []
                 - type: minimum_products
                   name: Minimum products
                   description: List at least this many products
@@ -32487,6 +32640,17 @@ paths:
                   - key: minimum_count
                     type: integer
                     default: 1
+                - type: payout_account
+                  name: Payout Account
+                  description: ''
+                  allow_multiple: false
+                  accepts_submissions: false
+                  reviewed_by_operator: false
+                  configured: false
+                  addable: true
+                  accepted_content_types: []
+                  association_fields: []
+                  preference_schema: []
                 - type: required_custom_fields
                   name: Required custom fields
                   description: Fill in the details the marketplace asks for
@@ -36545,12 +36709,20 @@ components:
         markup_percent:
           type: string
           nullable: true
+        available_to_sellers:
+          type: boolean
         created_at:
           type: string
         updated_at:
           type: string
         deleted_at:
           type: string
+        seller_id:
+          type: string
+          nullable: true
+        seller_name:
+          type: string
+          nullable: true
         services:
           type: array
           items:
@@ -36597,9 +36769,12 @@ components:
       - tracking_url
       - markup_flat
       - markup_percent
+      - available_to_sellers
       - created_at
       - updated_at
       - deleted_at
+      - seller_id
+      - seller_name
       - services
       - rules
       - tax_category_id
@@ -39538,6 +39713,11 @@ components:
           items:
             type: string
           nullable: true
+        option_value_ids:
+          type: array
+          items:
+            type: string
+          nullable: true
         products:
           type: array
           items:
@@ -39566,6 +39746,10 @@ components:
           type: array
           items:
             "$ref": "#/components/schemas/Market"
+        option_values:
+          type: array
+          items:
+            "$ref": "#/components/schemas/OptionValue"
       required:
       - id
       - created_at
@@ -39578,6 +39762,7 @@ components:
       - product_ids
       - category_ids
       - customer_ids
+      - option_value_ids
       x-typelizer: true
     Promotion:
       type: object
@@ -39911,6 +40096,60 @@ components:
       - mutable
       - users_count
       x-typelizer: true
+    SellerPayout:
+      type: object
+      properties:
+        id:
+          type: string
+        status:
+          type: string
+        currency:
+          type: string
+        provider:
+          type: string
+        reference:
+          type: string
+          nullable: true
+        metadata:
+          type: object
+        period_start:
+          type: string
+          nullable: true
+        period_end:
+          type: string
+          nullable: true
+        created_at:
+          type: string
+        updated_at:
+          type: string
+        amount:
+          type: string
+        display_amount:
+          type: string
+        seller_id:
+          type: string
+        seller_name:
+          type: string
+          nullable: true
+        transfers_count:
+          type: number
+      required:
+      - id
+      - status
+      - currency
+      - provider
+      - reference
+      - metadata
+      - period_start
+      - period_end
+      - created_at
+      - updated_at
+      - amount
+      - display_amount
+      - seller_id
+      - seller_name
+      - transfers_count
+      x-typelizer: true
     SellerRequirement:
       type: object
       properties:
@@ -39986,6 +40225,9 @@ components:
         action_url:
           type: string
           nullable: true
+        blocker:
+          type: object
+          nullable: true
         blocking:
           type: boolean
         required_policy_name:
@@ -40004,6 +40246,7 @@ components:
       - position
       - status
       - action_url
+      - blocker
       - blocking
       - required_policy_name
       x-typelizer: true
@@ -40199,6 +40442,72 @@ components:
       - created_at
       - updated_at
       - avatar_url
+      x-typelizer: true
+    SellerTransfer:
+      type: object
+      properties:
+        id:
+          type: string
+        kind:
+          type: string
+        status:
+          type: string
+        currency:
+          type: string
+        provider:
+          type: string
+        reference:
+          type: string
+          nullable: true
+        metadata:
+          type: object
+        created_at:
+          type: string
+        updated_at:
+          type: string
+        amount:
+          type: string
+        display_amount:
+          type: string
+        seller_id:
+          type: string
+        order_id:
+          type: string
+          nullable: true
+        payout_id:
+          type: string
+          nullable: true
+        reversed_from_id:
+          type: string
+          nullable: true
+        refund_id:
+          type: string
+          nullable: true
+        seller_name:
+          type: string
+          nullable: true
+        order_number:
+          type: string
+          nullable: true
+      required:
+      - id
+      - kind
+      - status
+      - currency
+      - provider
+      - reference
+      - metadata
+      - created_at
+      - updated_at
+      - amount
+      - display_amount
+      - seller_id
+      - order_id
+      - payout_id
+      - reversed_from_id
+      - refund_id
+      - seller_name
+      - order_number
       x-typelizer: true
     SetupTask:
       type: object
@@ -40623,6 +40932,13 @@ components:
           type: string
         preferred_inventory_provider_failure_policy:
           type: string
+        preferred_payout_provider:
+          type: string
+          nullable: true
+        preferred_default_payouts_schedule_interval:
+          type: string
+        preferred_default_minimum_payout_amount:
+          type: number
         preferred_document_number_format:
           type: string
         preferred_order_number_prefix:
@@ -40705,6 +41021,9 @@ components:
       - preferred_inventory_provider
       - preferred_pricing_provider_failure_policy
       - preferred_inventory_provider_failure_policy
+      - preferred_payout_provider
+      - preferred_default_payouts_schedule_interval
+      - preferred_default_minimum_payout_amount
       - preferred_document_number_format
       - preferred_order_number_prefix
       - preferred_order_number_suffix
