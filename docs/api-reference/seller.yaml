@@ -12681,10 +12681,10 @@ paths:
                   description: Limits the delivery method to carts within an item
                     total range
                   preference_schema:
-                  - key: maximum_amount
+                  - key: minimum_amount
                     type: decimal
                     default:
-                  - key: minimum_amount
+                  - key: maximum_amount
                     type: decimal
                     default:
                 - type: weight_rule
@@ -12692,10 +12692,10 @@ paths:
                   description: Limits the delivery method to packages within a weight
                     range
                   preference_schema:
-                  - key: minimum_weight
+                  - key: maximum_weight
                     type: decimal
                     default:
-                  - key: maximum_weight
+                  - key: minimum_weight
                     type: decimal
                     default:
               schema:
@@ -12774,15 +12774,15 @@ paths:
                 - type: Spree::Calculator::Shipping::PerItem
                   name: Flat rate per package item
                   preference_schema:
+                  - key: amount
+                    type: decimal
+                    default: 0
                   - key: currency
                     type: string
                     default: USD
                   - key: amounts
                     type: hash
                     default: {}
-                  - key: amount
-                    type: decimal
-                    default: 0
                 - type: Spree::Calculator::Shipping::PriceSack
                   name: Price sack
                   preference_schema:
@@ -12801,15 +12801,15 @@ paths:
                 - type: Spree::Calculator::Shipping::DigitalDelivery
                   name: Digital Delivery
                   preference_schema:
+                  - key: amount
+                    type: decimal
+                    default: 0
                   - key: currency
                     type: string
                     default: USD
                   - key: amounts
                     type: hash
                     default: {}
-                  - key: amount
-                    type: decimal
-                    default: 0
               schema:
                 type: object
                 properties:
@@ -14793,10 +14793,10 @@ paths:
             application/json:
               example:
                 direct_upload:
-                  url: http://www.example.com/rails/active_storage/disk/eyJfcmFpbHMiOnsiZGF0YSI6eyJrZXkiOiJuem5oOGdra3VxendvbDc1ODBxNHNwZmpmMjVxIiwiY29udGVudF90eXBlIjoiYXBwbGljYXRpb24vcGRmIiwiY29udGVudF9sZW5ndGgiOjUxMjM0LCJjaGVja3N1bSI6IlZqaHowNGxRdUVHdXY0bkR2aHNhTlE9PSIsInNlcnZpY2VfbmFtZSI6InRlc3QifSwiZXhwIjoiMjAyNi0wMS0xNVQxMjowNTowMC4wMDBaIiwicHVyIjoiYmxvYl90b2tlbiJ9fQ==--0999b31de504e51e37776a23128b32ff11ec621d
+                  url: http://www.example.com/rails/active_storage/disk/eyJfcmFpbHMiOnsiZGF0YSI6eyJrZXkiOiJuem5oOGdra3VxendvbDc1ODBxNHNwZmpmMjVxIiwiY29udGVudF90eXBlIjoiYXBwbGljYXRpb24vcGRmIiwiY29udGVudF9sZW5ndGgiOjUxMjM0LCJjaGVja3N1bSI6IlZqaHowNGxRdUVHdXY0bkR2aHNhTlE9PSIsInNlcnZpY2VfbmFtZSI6InRlc3QifSwiZXhwIjoiMjAyNi0wMS0xNVQxMjowNTowMC4wMDBaIiwicHVyIjoiYmxvYl90b2tlbiJ9fQ==--205ce53a6882cd44b83819f15922d14e24f5be14
                   headers:
                     Content-Type: application/pdf
-                signed_id: eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--a1689188affb3c98dc45106c9959697130244e6c
+                signed_id: eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--a7d403db863f21fac54e1b947412f6a0dc87fc16
               schema:
                 "$ref": "#/components/schemas/DirectUploadResponse"
       requestBody:
@@ -15061,7 +15061,7 @@ paths:
                     quantity: 1
                     line_item_id: li_UkLWZg9DAJ
                     name: Product 1369315
-                    sku: SKU-174
+                    sku: SKU-175
                     options_text: ''
               schema:
                 type: object
@@ -15131,7 +15131,7 @@ paths:
                   quantity: 1
                   line_item_id: li_UkLWZg9DAJ
                   name: Product 137961
-                  sku: SKU-175
+                  sku: SKU-176
                   options_text: ''
               schema:
                 "$ref": "#/components/schemas/Fulfillment"
@@ -15240,7 +15240,7 @@ paths:
                     total: '10.0'
                     display_total: "$10.00"
                     variant_id: variant_UkLWZg9DAJ
-                    sku: SKU-176
+                    sku: SKU-177
                     thumbnail_url:
                   fulfillments:
                   - id: ful_UkLWZg9DAJ
@@ -15261,7 +15261,7 @@ paths:
                       quantity: 1
                       line_item_id: li_UkLWZg9DAJ
                       name: Product 13895
-                      sku: SKU-176
+                      sku: SKU-177
                       options_text: ''
                   shipping_address:
                     id: addr_gbHJdmfrXB
@@ -15389,7 +15389,7 @@ paths:
                   total: '10.0'
                   display_total: "$10.00"
                   variant_id: variant_UkLWZg9DAJ
-                  sku: SKU-177
+                  sku: SKU-178
                   thumbnail_url:
                 fulfillments:
                 - id: ful_UkLWZg9DAJ
@@ -15410,7 +15410,7 @@ paths:
                     quantity: 1
                     line_item_id: li_UkLWZg9DAJ
                     name: Product 1399755
-                    sku: SKU-177
+                    sku: SKU-178
                     options_text: ''
                 shipping_address:
                   id: addr_gbHJdmfrXB
@@ -15527,7 +15527,7 @@ paths:
                   total: '10.0'
                   display_total: "$10.00"
                   variant_id: variant_UkLWZg9DAJ
-                  sku: SKU-180
+                  sku: SKU-181
                   thumbnail_url:
                 fulfillments:
                 - id: ful_UkLWZg9DAJ
@@ -15548,7 +15548,7 @@ paths:
                     quantity: 1
                     line_item_id: li_UkLWZg9DAJ
                     name: Product 1426554
-                    sku: SKU-180
+                    sku: SKU-181
                     options_text: ''
                 shipping_address:
                   id: addr_gbHJdmfrXB
