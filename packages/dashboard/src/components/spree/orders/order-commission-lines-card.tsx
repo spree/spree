@@ -1,7 +1,7 @@
 import type { CommissionLine, Order } from '@spree/admin-sdk'
-import { formatPrice } from '@spree/dashboard-core'
 import {
   Card,
+  CardContent,
   CardHeader,
   CardTitle,
   Table,
@@ -14,6 +14,7 @@ import {
 import { PercentIcon } from '@spree/dashboard-ui/icons'
 import { useTranslation } from 'react-i18next'
 import { useOrderCommissionLines } from '../../../hooks/use-order'
+import { commissionRateLabel } from '../../../lib/commission-line-rate-label'
 
 function commissionSubjectLabel(line: CommissionLine, order: Order, t: (key: string) => string) {
   if (line.line_item_id) {
@@ -28,43 +29,31 @@ function commissionSubjectLabel(line: CommissionLine, order: Order, t: (key: str
   return t('admin.orders.detail.commission_lines.subject_fallback')
 }
 
-function commissionRateLabel(
-  line: CommissionLine,
-  t: (key: string, options?: Record<string, unknown>) => string,
-) {
-  const name = line.commission_rate?.name ?? t('admin.orders.detail.commission_lines.rate_unknown')
-
-  if (line.kind === 'percentage') {
-    return t('admin.orders.detail.commission_lines.rate_named_percentage', {
-      name,
-      rate: line.rate,
-    })
-  }
-
-  const fixedAmount = line.commission_rate?.amounts?.[line.currency]
-  const amount = fixedAmount
-    ? formatPrice({
-        amount: fixedAmount,
-        currency: line.currency,
-        display_amount: null,
-      })
-    : '—'
-
-  return t('admin.orders.detail.commission_lines.rate_named_fixed', {
-    name,
-    amount,
-  })
-}
-
 export function CommissionLinesCard({ order }: { order: Order }) {
   const { t } = useTranslation()
-  const { data, isSuccess } = useOrderCommissionLines(order.id, {
+  const { data, isSuccess, isError, isPending } = useOrderCommissionLines(order.id, {
     enabled: !!order.completed_at,
   })
 
   if (!order.completed_at) return null
 
   const lines = data?.data ?? []
+  if (isPending) return null
+  if (isError) {
+    return (
+      <Card>
+        <CardHeader>
+          <CardTitle>
+            <PercentIcon className="size-4" />
+            {t('admin.orders.detail.commission_lines.title')}
+          </CardTitle>
+        </CardHeader>
+        <CardContent>
+          <p className="text-sm text-muted-foreground">{t('admin.errors.failed_to_load')}</p>
+        </CardContent>
+      </Card>
+    )
+  }
   if (!isSuccess || lines.length === 0) return null
 
   return (
@@ -97,7 +86,7 @@ export function CommissionLinesCard({ order }: { order: Order }) {
             <TableRow key={line.id}>
               <TableCell>{commissionSubjectLabel(line, order, t)}</TableCell>
               <TableCell className="text-muted-foreground">
-                {commissionRateLabel(line, t)}
+                {commissionRateLabel(line, order, t)}
               </TableCell>
               <TableCell className="text-right tabular-nums">{line.display_amount}</TableCell>
               <TableCell className="text-right tabular-nums">{line.display_tax_amount}</TableCell>

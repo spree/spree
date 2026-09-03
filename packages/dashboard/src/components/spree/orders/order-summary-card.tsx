@@ -48,10 +48,11 @@ export function OrderSummaryCard({ order }: { order: Order }) {
   const { t } = useTranslation()
   const { storeId } = useStore()
   const outstandingBalance = Number.parseFloat(order.amount_due)
-  const { data: commissionLinesData, isSuccess: commissionLinesLoaded } = useOrderCommissionLines(
-    order.id,
-    { enabled: !!order.completed_at },
-  )
+  const {
+    data: commissionLinesData,
+    isSuccess: commissionLinesLoaded,
+    isError: commissionLinesError,
+  } = useOrderCommissionLines(order.id, { enabled: !!order.completed_at })
   const commissionLines = commissionLinesData?.data ?? []
   const commissionTotals =
     commissionLinesLoaded && commissionLines.length > 0
@@ -207,6 +208,18 @@ export function OrderSummaryCard({ order }: { order: Order }) {
         <Separator />
 
         <SummaryRow label={t('admin.fields.total.label')} value={order.display_total} bold />
+
+        {commissionLinesError && (
+          <>
+            <Separator />
+            <SummaryRow
+              label={t('admin.orders.detail.summary.commission_total')}
+              value={
+                <span className="text-muted-foreground">{t('admin.errors.failed_to_load')}</span>
+              }
+            />
+          </>
+        )}
 
         {commissionTotals && (
           <>

@@ -79,15 +79,29 @@ export function useOrderFees(orderId: string) {
   })
 }
 
+async function listAllCommissionLines(orderId: string) {
+  const params = {
+    q: { order_id_eq: orderId },
+    limit: 100,
+    expand: ['commission_rate'],
+  }
+  const first = await adminClient.commissionLines.list({ ...params, page: 1 })
+  const rest = await Promise.all(
+    Array.from({ length: (first.meta?.pages ?? 1) - 1 }, (_, index) =>
+      adminClient.commissionLines.list({ ...params, page: index + 2 }),
+    ),
+  )
+
+  return {
+    ...first,
+    data: [...first.data, ...rest.flatMap((page) => page.data)],
+  }
+}
+
 export function useOrderCommissionLines(orderId: string, options?: { enabled?: boolean }) {
   return useQuery({
     queryKey: useResourceKey('orders', orderId, 'commission_lines'),
-    queryFn: () =>
-      adminClient.commissionLines.list({
-        q: { order_id_eq: orderId },
-        limit: 100,
-        expand: ['commission_rate'],
-      }),
+    queryFn: () => listAllCommissionLines(orderId),
     enabled: !!orderId && (options?.enabled ?? true),
   })
 }
