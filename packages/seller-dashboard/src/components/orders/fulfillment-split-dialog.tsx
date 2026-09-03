@@ -22,6 +22,7 @@ import type { Fulfillment } from '@spree/seller-sdk'
 import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useFulfillmentActions } from '../../hooks/use-fulfillments'
+import { unitLabel } from './line-label'
 
 /**
  * Moves part of a parcel onto one of its own, for goods leaving separately.
@@ -46,7 +47,7 @@ export function FulfillmentSplitDialog({
 
   const units = (fulfillment.fulfillment_items ?? []).map((item) => ({
     value: item.variant_id ?? item.id,
-    label: [item.name, item.options_text].filter(Boolean).join(' — ') || item.id,
+    label: unitLabel(item),
     quantity: item.quantity,
   }))
 

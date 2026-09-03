@@ -13,9 +13,9 @@ export function useOrder(orderId: string) {
   })
 }
 
-/** The key a mutation elsewhere invalidates to refresh this order. */
-export function useOrderKeyBuilder() {
-  return useResourceKeyBuilder()
+/** Withdrawing from an order this seller cannot fulfil. */
+export function useCancelOrder(orderId: string) {
+  return useOrderMutation(orderId, () => sellerClient().orders.cancel(orderId))
 }
 
 /**

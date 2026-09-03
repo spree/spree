@@ -74,11 +74,7 @@ module Spree
         split = order && payment.payment_splits.find_by(order_id: order.id)
         return 0 if split.nil?
 
-        # Refunds already written are counted from the rows rather than from
-        # the split's own figure, which a subscriber updates after the fact —
-        # two refunds in quick succession must not each see an unrefunded share.
-        already_refunded = Spree::Refund.where(payment_id: payment.id, order_id: order.id).sum(:amount)
-        split.captured_amount - already_refunded
+        split.refundable_amount
       end
 
       # The row is what reserves the balance — credit_allowed sums refund rows —

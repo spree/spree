@@ -8,7 +8,7 @@ module Spree
     # a pure database write outside the transaction would open a window where
     # a crash leaves a refunded return with no credit issued.
     class Refund < Spree::Workflow
-      include Spree::RefundsOrderPayments
+      include Spree::Refunds::OrderPayments
 
       hooks :validate, :before_refund, :after_refund
 
@@ -119,9 +119,9 @@ module Spree
         @refunds = refund_order_payments(
           order: return_record.order,
           amount: @amount_to_refund,
-          originator: return_record,
+          record: return_record,
           refunder: refunder
-        ) { |result| failure(return_record, result.error.value) }
+        )
 
         failure(return_record, :no_refundable_payments) if @refunds.empty?
       end

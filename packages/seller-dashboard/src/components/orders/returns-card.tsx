@@ -34,25 +34,12 @@ import type { Order, Return, ReturnLineItem } from '@spree/seller-sdk'
 import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useOrderReturns, useReturnActions } from '../../hooks/use-post-sale'
+import { lineLabel } from './line-label'
 import { CreateReturnDialog, fulfilledUnits } from './post-sale-create-dialogs'
 
 // Refunded and canceled returns are finished; offering a menu on them would
 // open onto nothing.
 const ACTIONABLE = ['requested', 'approved', 'received']
-
-/**
- * How a returned line reads. The product name comes from the line itself —
- * a variant carries a SKU and its options but never a name — with the
- * option values after it so two sizes of one product are distinguishable.
- */
-function postSaleLabel(line: ReturnLineItem): string {
-  return (
-    [line.name, line.variant?.options_text].filter(Boolean).join(' · ') ||
-    line.variant?.sku ||
-    line.variant_id ||
-    ''
-  )
-}
 
 /**
  * Goods coming back on this order.
@@ -193,7 +180,7 @@ export function ReturnsCard({ order }: { order: Order }) {
 
 function ReturnLineRow({ line }: { line: ReturnLineItem }) {
   const { t } = useTranslation()
-  const label = postSaleLabel(line)
+  const label = lineLabel(line.name, line.variant, line.variant_id)
 
   return (
     <div className="flex items-center justify-between gap-3 text-sm">
@@ -262,7 +249,9 @@ function ReceiveDialog({
           <div className="flex flex-col gap-3">
             {lines.map((line) => (
               <div key={line.id} className="flex items-center justify-between gap-3">
-                <span className="min-w-0 truncate text-sm">{postSaleLabel(line)}</span>
+                <span className="min-w-0 truncate text-sm">
+                  {lineLabel(line.name, line.variant, line.variant_id)}
+                </span>
                 <div className="flex shrink-0 items-center gap-3">
                   <label className="flex items-center gap-2 text-xs" htmlFor={`resell-${line.id}`}>
                     {t('orders.post_sale.returns.resellable')}

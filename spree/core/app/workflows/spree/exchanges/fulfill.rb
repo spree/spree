@@ -8,7 +8,7 @@ module Spree
     # for the merchant to collect — charging a stored card without a fresh
     # authorization is not something core should do silently.
     class Fulfill < Spree::Workflow
-      include Spree::RefundsOrderPayments
+      include Spree::Refunds::OrderPayments
 
       hooks :validate, :before_settle, :after_fulfill
 
@@ -129,9 +129,9 @@ module Spree
         @refunds = refund_order_payments(
           order: exchange.order,
           amount: credit_amount,
-          originator: exchange,
+          record: exchange,
           refunder: refunder
-        ) { |result| failure(exchange, result.error.value) }
+        )
       end
 
       def mark_fulfilled

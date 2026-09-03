@@ -21,6 +21,7 @@ import { useFulfillmentActions } from '../../hooks/use-fulfillments'
 import { FulfillmentFulfillForm } from './fulfillment-fulfill-form'
 import { FulfillmentSplitDialog } from './fulfillment-split-dialog'
 import { FulfillmentTrackingDialog } from './fulfillment-tracking-dialog'
+import { unitLabel } from './line-label'
 
 // A parcel that has not gone out is the only one still to ship or cancel;
 // one that has is the only one that can be confirmed delivered. Reading
@@ -163,9 +164,7 @@ function FulfillmentRow({ orderId, fulfillment }: { orderId: string; fulfillment
           <>
             {fulfillment.fulfillment_items?.map((item) => (
               <div key={item.id} className="flex items-center justify-between gap-3 text-sm">
-                <span className="truncate">
-                  {[item.name, item.options_text].filter(Boolean).join(' — ')}
-                </span>
+                <span className="truncate">{unitLabel(item)}</span>
                 <span className="shrink-0 text-muted-foreground">× {item.quantity}</span>
               </div>
             ))}

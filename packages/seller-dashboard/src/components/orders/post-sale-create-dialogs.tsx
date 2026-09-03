@@ -21,13 +21,14 @@ import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useClaimActions, useReturnActions } from '../../hooks/use-post-sale'
 import { type ReasonKind, useReasons } from '../../hooks/use-reasons'
+import { unitLabel } from './line-label'
 
 /** Units that actually went out, which is all that can come back. */
 export function fulfilledUnits(order: Order) {
   return (order.fulfillments ?? []).flatMap((fulfillment) =>
     (fulfillment.fulfillment_items ?? []).map((item) => ({
       id: item.id,
-      label: [item.name, item.options_text].filter(Boolean).join(' — ') || item.id,
+      label: unitLabel(item),
       quantity: item.quantity,
     })),
   )
@@ -207,7 +208,7 @@ export function CreateClaimDialog({
   // never arrived are exactly what one is for.
   const units = (order.items ?? []).map((item) => ({
     id: item.id,
-    label: [item.name, item.options_text].filter(Boolean).join(' — ') || item.id,
+    label: unitLabel(item),
     quantity: item.quantity,
   }))
 

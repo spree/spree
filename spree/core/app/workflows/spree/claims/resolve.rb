@@ -6,7 +6,7 @@ module Spree
     # so the caller's intent is explicit at the call site and an admin can
     # decide at resolution time rather than at claim creation.
     class Resolve < Spree::Workflow
-      include Spree::RefundsOrderPayments
+      include Spree::Refunds::OrderPayments
 
       hooks :validate, :before_settle, :after_resolve
 
@@ -147,9 +147,9 @@ module Spree
         @refunds = refund_order_payments(
           order: claim.order,
           amount: @amount_to_refund,
-          originator: claim,
+          record: claim,
           refunder: resolver
-        ) { |result| failure(claim, result.error.value) }
+        )
 
         failure(claim, :no_refundable_payments) if @refunds.empty?
       end

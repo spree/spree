@@ -9,10 +9,9 @@ module Spree
         # Built on the shared V3 serializer rather than the admin one, which
         # expands the order and the customer behind it.
         class ClaimSerializer < V3::ClaimSerializer
-          typelize memo: [:string, nullable: true],
-                   resolution: [:string, nullable: true]
+          typelize memo: [:string, nullable: true]
 
-          attributes :memo, :resolution
+          attributes :memo
 
           many :claim_line_items,
                resource: proc { Spree.api.seller_claim_line_item_serializer },

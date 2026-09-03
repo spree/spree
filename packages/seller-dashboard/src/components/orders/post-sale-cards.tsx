@@ -43,20 +43,8 @@ import {
   useOrderClaims,
   useOrderExchanges,
 } from '../../hooks/use-post-sale'
+import { lineLabel } from './line-label'
 import { CreateClaimDialog } from './post-sale-create-dialogs'
-
-/**
- * How a post-sale line reads. The product name comes from the line itself —
- * a variant carries a SKU and its option values but never a name — falling
- * back to the SKU and then the raw id.
- */
-function lineLabel(
-  name: string | null | undefined,
-  variant: { sku?: string | null; options_text?: string | null } | undefined,
-  fallback: string | null | undefined,
-): string {
-  return [name, variant?.options_text].filter(Boolean).join(' · ') || variant?.sku || fallback || ''
-}
 
 const EXCHANGE_ACTIONABLE = ['requested', 'approved', 'received']
 const CLAIM_ACTIONABLE = ['open', 'approved']

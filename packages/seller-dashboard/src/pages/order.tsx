@@ -8,7 +8,6 @@ import {
 } from '@spree/dashboard-ui'
 import { useParams } from '@tanstack/react-router'
 import { useTranslation } from 'react-i18next'
-import { sellerClient } from '../api-client'
 import { CenteredMessage } from '../components/centered-message'
 import { FulfillmentsCard } from '../components/orders/fulfillments-card'
 import {
@@ -20,7 +19,7 @@ import {
 import { ClaimsCard, ExchangesCard } from '../components/orders/post-sale-cards'
 import { ReturnsCard } from '../components/orders/returns-card'
 import { RetryableError } from '../components/retryable-error'
-import { useOrder, useOrderMutation } from '../hooks/use-order'
+import { useCancelOrder, useOrder } from '../hooks/use-order'
 
 /**
  * One order, as the seller needs it to pack, post, and put right.
@@ -37,7 +36,7 @@ export function OrderPage() {
 
   const { data: order, isLoading, isError, refetch } = useOrder(orderId)
 
-  const cancel = useOrderMutation(orderId, () => sellerClient().orders.cancel(orderId))
+  const cancel = useCancelOrder(orderId)
 
   if (isLoading) return <CenteredMessage>{t('common.loading')}</CenteredMessage>
   if (isError) return <RetryableError onRetry={() => refetch()} />

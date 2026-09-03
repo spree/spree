@@ -22,6 +22,7 @@ import { useTranslation } from 'react-i18next'
 import { useFulfillmentActions } from '../../hooks/use-fulfillments'
 import { useTrackingCarriers } from '../../hooks/use-reasons'
 import { type FulfillItemsFormValues, fulfillItemsFormSchema } from '../../schemas/fulfillment'
+import { unitLabel } from './line-label'
 
 type Row = { itemId: string; label: string; available: number }
 
@@ -47,7 +48,7 @@ function fulfillableRows(fulfillment: Fulfillment): Row[] {
     } else {
       byLineItem.set(itemId, {
         itemId,
-        label: [item.name, item.options_text].filter(Boolean).join(' — ') || item.id,
+        label: unitLabel(item),
         available: item.quantity,
       })
     }

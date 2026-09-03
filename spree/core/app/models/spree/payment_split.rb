@@ -42,19 +42,26 @@ module Spree
     extend Spree::DisplayMoney
     money_methods :authorized_amount, :captured_amount, :refunded_amount
 
-    # @return [BigDecimal] what this child still has captured against it after
-    #   refunds — the figure a seller's earnings are computed from
+    # This child's reported position: what it has captured, less the refunds a
+    # subscriber has already written back to {#refunded_amount}.
+    #
+    # The *reported* figure, which is what makes it right for reading — a
+    # seller's earnings, an order's payment total — and wrong for bounding a
+    # refund, since the column trails the rows. Reach for {#refundable_amount}
+    # before moving money.
+    #
+    # @return [BigDecimal]
     def net_captured_amount
       captured_amount - refunded_amount
     end
 
     # The most this child order can still be given back from this payment.
     #
-    # Counted from the refund rows rather than from {#refunded_amount}, which a
-    # subscriber writes after the fact: two refunds landing together would each
-    # read a share that still looked unrefunded. {Spree::Refunds::Create}
-    # re-checks the same figure under the payment's lock before any money
-    # moves — this is what a caller uses to decide how much to ask for.
+    # The same quantity as {#net_captured_amount} counted from the refund rows
+    # instead of the denormalized column, because that column is written by a
+    # subscriber after the fact: two refunds landing together would each read a
+    # share that still looked unrefunded. {Spree::Refunds::Create} bounds every
+    # refund by this under the payment's lock.
     #
     # @return [BigDecimal]
     def refundable_amount
