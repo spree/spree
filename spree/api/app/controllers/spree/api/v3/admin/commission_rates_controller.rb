@@ -66,7 +66,7 @@ module Spree
           end
 
           def scope
-            super.for_store(current_store)
+            super.for_store(current_store).ordered
           end
 
           def collection_includes
