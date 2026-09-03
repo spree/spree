@@ -173,6 +173,7 @@ module Spree
     has_many :return_reasons, class_name: 'Spree::ReturnReason', inverse_of: :store, dependent: :destroy
     has_many :claim_reasons, class_name: 'Spree::ClaimReason', inverse_of: :store, dependent: :destroy
     has_many :refund_reasons, class_name: 'Spree::RefundReason', inverse_of: :store, dependent: :destroy
+    has_many :order_cancellation_reasons, class_name: 'Spree::OrderCancellationReason', inverse_of: :store, dependent: :destroy
 
     # :nullify (not :destroy) — clearing the collection must not cascade into
     # Promotion#not_used? / payment records; orphaned rows are detached, not deleted.

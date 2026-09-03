@@ -6,8 +6,10 @@ const client = createAdminClient({
 })
 
 // region:example
-const order = await client.orders.resume('or_UkLWZg9DAJ')
+const reason = await client.refundReasons.create({
+  name: 'Goodwill gesture',
+})
 
 // endregion:example
 
-export { order }
+export { reason }

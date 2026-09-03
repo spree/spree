@@ -26,7 +26,7 @@ import {
 import i18n from 'i18next'
 import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
-import { type ReasonKind, useReasons } from '../../hooks/use-reasons'
+import { ReasonField } from './reason-field'
 
 /** A fulfilled unit the customer could send back. */
 export type FulfilledUnit = {
@@ -91,54 +91,6 @@ function QuantityPicker({
         </div>
       ))}
     </div>
-  )
-}
-
-/**
- * Reason dropdown. Optional by design — the API accepts a record without one,
- * and a merchant mid-return should not be blocked because nobody has curated
- * the list yet. Inactive reasons are excluded so retired vocabulary stops
- * appearing on new records.
- */
-function ReasonField({
-  kind,
-  value,
-  onChange,
-}: {
-  kind: ReasonKind
-  value: string
-  onChange: (value: string) => void
-}) {
-  const { t } = useTranslation()
-  const { data } = useReasons(kind)
-
-  // Filtered in memory rather than through the query so this shares the
-  // settings page's cache entry — the lists are a handful of rows.
-  const reasons = (data?.data ?? []).filter((reason) => reason.active)
-  if (reasons.length === 0) return null
-
-  // Base UI's <Select> needs `items` to resolve the trigger label; without it
-  // the closed trigger renders the raw id (see CLAUDE.md).
-  const options = reasons.map((reason) => ({ value: reason.id, label: reason.name }))
-
-  return (
-    <Field>
-      <FieldLabel htmlFor={`reason-${kind}`}>
-        {t('admin.pages.orders.detail.returns.reason')}
-      </FieldLabel>
-      <Select items={options} value={value} onValueChange={onChange}>
-        <SelectTrigger id={`reason-${kind}`}>
-          <SelectValue placeholder={t('admin.common.select_placeholder')} />
-        </SelectTrigger>
-        <SelectContent>
-          {options.map((option) => (
-            <SelectItem key={option.value} value={option.value}>
-              {option.label}
-            </SelectItem>
-          ))}
-        </SelectContent>
-      </Select>
-    </Field>
   )
 }
 

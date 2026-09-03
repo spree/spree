@@ -12,30 +12,26 @@ import {
   ExternalLinkIcon,
   MailIcon,
   PencilIcon,
-  RotateCcwIcon,
   ShieldCheckIcon,
   XCircleIcon,
 } from '@spree/dashboard-ui/icons'
 import { Link } from '@tanstack/react-router'
+import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { orderQueryKey } from '../../../hooks/use-order'
 import { GONE_STATUSES } from '../../../lib/fulfillment-items'
 import { spreeJsonLinkResolver } from '../../../lib/json-link-resolver'
+import { OrderCancelDialog } from './order-cancel-dialog'
 
 export function OrderHeader({ order }: { order: Order }) {
   const { t } = useTranslation()
   const orderId = order.id
   const { storeId } = useStore()
   const confirm = useConfirm()
+  const [cancelOpen, setCancelOpen] = useState(false)
 
   const backFallback = order.completed_at ? 'orders' : 'orders/drafts'
 
-  const cancelMutation = useResourceMutation({
-    mutationFn: () => adminClient.orders.cancel(orderId),
-    invalidate: [orderQueryKey(orderId)],
-    successMessage: t('admin.orders.detail.messages.canceled'),
-    errorMessage: t('admin.orders.detail.errors.cancel_failed'),
-  })
   const completeMutation = useResourceMutation({
     mutationFn: () => adminClient.orders.complete(orderId),
     invalidate: [orderQueryKey(orderId)],
@@ -47,12 +43,6 @@ export function OrderHeader({ order }: { order: Order }) {
     invalidate: [orderQueryKey(orderId)],
     successMessage: t('admin.orders.detail.messages.approved'),
     errorMessage: t('admin.orders.detail.errors.approve_failed'),
-  })
-  const resumeMutation = useResourceMutation({
-    mutationFn: () => adminClient.orders.resume(orderId),
-    invalidate: [orderQueryKey(orderId)],
-    successMessage: t('admin.orders.detail.messages.resumed'),
-    errorMessage: t('admin.orders.detail.errors.resume_failed'),
   })
   const resendMutation = useResourceMutation({
     mutationFn: () => adminClient.orders.resendConfirmation(orderId, {}),
@@ -92,24 +82,6 @@ export function OrderHeader({ order }: { order: Order }) {
           {t('admin.pages.orders.detail.actions.approve')}
         </DropdownMenuItem>
       )}
-      {order.status === 'canceled' && (
-        <DropdownMenuItem
-          onClick={async () => {
-            if (
-              await confirm({
-                message: t('admin.orders.detail.confirm.resume_message'),
-                confirmLabel: t('admin.pages.orders.detail.actions.resume'),
-              })
-            ) {
-              resumeMutation.mutate(undefined)
-            }
-          }}
-          disabled={resumeMutation.isPending}
-        >
-          <RotateCcwIcon className="size-4" />
-          {t('admin.pages.orders.detail.actions.resume')}
-        </DropdownMenuItem>
-      )}
       {order.completed_at && (
         <>
           <DropdownMenuItem>
@@ -131,22 +103,7 @@ export function OrderHeader({ order }: { order: Order }) {
   const destructiveItems = (
     <>
       {order.status !== 'canceled' && (
-        <DropdownMenuItem
-          variant="destructive"
-          onClick={async () => {
-            if (
-              await confirm({
-                title: t('admin.pages.orders.detail.dialogs.cancel_title'),
-                message: t('admin.orders.detail.confirm.cancel_message'),
-                variant: 'destructive',
-                confirmLabel: t('admin.pages.orders.detail.actions.cancel'),
-              })
-            ) {
-              cancelMutation.mutate(undefined)
-            }
-          }}
-          disabled={cancelMutation.isPending}
-        >
+        <DropdownMenuItem variant="destructive" onClick={() => setCancelOpen(true)}>
           <XCircleIcon className="size-4" />
           {t('admin.pages.orders.detail.actions.cancel')}
         </DropdownMenuItem>
@@ -155,53 +112,56 @@ export function OrderHeader({ order }: { order: Order }) {
   )
 
   return (
-    <PageHeader
-      title={order.number}
-      subtitle={subtitle}
-      backTo={backFallback}
-      badges={badges}
-      actions={
-        <>
-          {/* Fully fulfilled means every unit has shipped, so there is
+    <>
+      {cancelOpen && <OrderCancelDialog orderId={orderId} onClose={() => setCancelOpen(false)} />}
+      <PageHeader
+        title={order.number}
+        subtitle={subtitle}
+        backTo={backFallback}
+        badges={badges}
+        actions={
+          <>
+            {/* Fully fulfilled means every unit has shipped, so there is
               nothing left an edit could lawfully change. */}
-          {!GONE_STATUSES.includes(order.fulfillment_status ?? '') && (
-            <Button variant="outline" asChild>
-              <Link to="/$storeId/orders/$orderId/edit" params={{ storeId, orderId }}>
-                <PencilIcon className="size-4" />
-                {t('admin.orders.edit.action_label')}
-              </Link>
-            </Button>
-          )}
+            {!GONE_STATUSES.includes(order.fulfillment_status ?? '') && (
+              <Button variant="outline" asChild>
+                <Link to="/$storeId/orders/$orderId/edit" params={{ storeId, orderId }}>
+                  <PencilIcon className="size-4" />
+                  {t('admin.orders.edit.action_label')}
+                </Link>
+              </Button>
+            )}
 
-          {order.status === 'draft' && (
-            <Button
-              onClick={async () => {
-                if (
-                  await confirm({
-                    message: t('admin.orders.detail.confirm.complete_message'),
-                    confirmLabel: t('admin.orders.detail.dropdown.complete_order'),
-                  })
-                ) {
-                  completeMutation.mutate(undefined)
-                }
-              }}
-              disabled={completeMutation.isPending}
-            >
-              <CheckCircleIcon />
-              {t('admin.orders.detail.dropdown.complete_order')}
-            </Button>
-          )}
-        </>
-      }
-      dropdownItems={dropdownItems}
-      destructiveItems={destructiveItems}
-      resource={{ id: order.id, number: order.number }}
-      jsonPreview={{
-        title: `Order ${order.number}`,
-        fetch: () => adminClient.orders.get(orderId),
-        endpoint: `/api/v3/admin/orders/${orderId}`,
-        resolveLink: spreeJsonLinkResolver(storeId),
-      }}
-    />
+            {order.status === 'draft' && (
+              <Button
+                onClick={async () => {
+                  if (
+                    await confirm({
+                      message: t('admin.orders.detail.confirm.complete_message'),
+                      confirmLabel: t('admin.orders.detail.dropdown.complete_order'),
+                    })
+                  ) {
+                    completeMutation.mutate(undefined)
+                  }
+                }}
+                disabled={completeMutation.isPending}
+              >
+                <CheckCircleIcon />
+                {t('admin.orders.detail.dropdown.complete_order')}
+              </Button>
+            )}
+          </>
+        }
+        dropdownItems={dropdownItems}
+        destructiveItems={destructiveItems}
+        resource={{ id: order.id, number: order.number }}
+        jsonPreview={{
+          title: `Order ${order.number}`,
+          fetch: () => adminClient.orders.get(orderId),
+          endpoint: `/api/v3/admin/orders/${orderId}`,
+          resolveLink: spreeJsonLinkResolver(storeId),
+        }}
+      />
+    </>
   )
 }

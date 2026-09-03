@@ -383,7 +383,8 @@ module Spree
          Spree::DeliveryZone, Spree::DeliveryZoneMember,
          Spree::StockLocation, Spree::DeliveryProfile,
          Spree::Market, Spree::TaxCategory, Spree::TaxRate, Spree::AllowedOrigin,
-         Spree::RefundReason, Spree::ReturnReason, Spree::ClaimReason, Spree::Channel,
+         Spree::RefundReason, Spree::ReturnReason, Spree::ClaimReason,
+         Spree::OrderCancellationReason, Spree::Channel,
          Spree::OrderRoutingRule, Spree::CustomFieldDefinition, Spree::Policy]
       })
       # How goods actually get shipped and what that costs. Its own resource

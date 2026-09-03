@@ -270,23 +270,6 @@ describe Spree::Order, type: :model do
     end
   end
 
-  describe '#resume!' do
-    let(:order) { create(:completed_order_with_totals, store: store) }
-
-    before { order.cancel! }
-
-    it 'publishes order.resumed event', :events do
-      allow(Spree::Events).to receive(:publish)
-      order.resume!
-      expect(Spree::Events).to have_received(:publish).with('order.resumed', any_args)
-    end
-
-    it 'restores status to placed' do
-      order.resume!
-      expect(order.reload.status).to eq('placed')
-    end
-  end
-
   describe '#canceled_by' do
     subject { order.canceled_by(admin_user) }
 

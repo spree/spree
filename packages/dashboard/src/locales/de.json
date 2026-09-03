@@ -2627,6 +2627,16 @@
           "value_type_flat": "Betrag",
           "value_type_percent": "Prozent"
         },
+        "cancel": {
+          "description": "Grund und Notiz werden bei der Bestellung gespeichert, und offene Zahlungen werden abgewickelt.",
+          "keep_order": "Bestellung behalten",
+          "no_reason": "Kein Grund angegeben",
+          "note_label": "Notiz",
+          "note_placeholder": "Diese Notiz sehen nur Mitarbeiter",
+          "reason_label": "Grund",
+          "refund_payments": "Kundin oder Kunden erstatten",
+          "refund_payments_help": "Bereits eingezogenes Geld wird zurückgezahlt. Eine nicht eingelöste Autorisierung wird ohnehin freigegeben."
+        },
         "completed_prefix": "Abgeschlossen",
         "confirm": {
           "approve_message": "Diesen Auftrag genehmigen?",
@@ -2637,7 +2647,6 @@
           "remove_gift_card_message": "Diese Geschenkkarte aus dem Auftrag entfernen?",
           "remove_item_message": "Diesen Artikel aus dem Auftrag entfernen?",
           "remove_store_credit_message": "Guthaben aus dem Auftrag entfernen?",
-          "resume_message": "Diesen stornierten Auftrag wieder aufnehmen?",
           "ship_message": "Diese Lieferung versenden?",
           "void_message": "Diese Zahlung stornieren?"
         },
@@ -2662,8 +2671,7 @@
           "approve_failed": "Auftrag konnte nicht genehmigt werden",
           "cancel_failed": "Auftrag konnte nicht storniert werden",
           "complete_failed": "Auftrag konnte nicht abgeschlossen werden",
-          "confirmation_send_failed": "Bestätigung konnte nicht gesendet werden",
-          "resume_failed": "Auftrag konnte nicht wieder aufgenommen werden"
+          "confirmation_send_failed": "Bestätigung konnte nicht gesendet werden"
         },
         "fulfillments": {
           "add_tracking": "Sendungsverfolgung hinzufügen",
@@ -2722,7 +2730,6 @@
           "captured": "Zahlung eingezogen",
           "completed": "Auftrag abgeschlossen",
           "confirmation_sent": "Bestätigung gesendet",
-          "resumed": "Auftrag wieder aufgenommen",
           "shipped": "Lieferung versendet",
           "voided": "Zahlung storniert"
         },
@@ -2760,6 +2767,8 @@
         "summary": {
           "adjustments": "Anpassungen",
           "approved_by": "Genehmigt von",
+          "cancel_note": "Stornierungsnotiz",
+          "cancel_reason": "Stornierungsgrund",
           "canceled_at": "Storniert am",
           "canceler": "Storniert von",
           "outstanding_balance": "Offener Saldo",
@@ -3022,7 +3031,6 @@
             "capture": "Einziehen",
             "mark_paid": "Als bezahlt markieren",
             "refund": "Erstatten",
-            "resume": "Fortsetzen",
             "ship": "Als versendet markieren",
             "void": "Stornieren"
           },
@@ -4365,7 +4373,7 @@
         "message": "{{name}} wird nicht mehr angeboten. Bestehende Vorgänge behalten ihn.",
         "title": "Grund löschen?"
       },
-      "description": "Die Auswahllisten, aus denen Ihr Team bei Rücksendungen, Reklamationen und Rückerstattungen wählt.",
+      "description": "Die Auswahllisten, aus denen Ihr Team bei Rücksendungen, Reklamationen, Erstattungen und Stornierungen wählt.",
       "edit_sheet_title": "Grund bearbeiten",
       "empty": "Noch keine Gründe",
       "in_use": "In Verwendung",
@@ -4377,6 +4385,10 @@
         "updated": "Grund aktualisiert"
       },
       "name_placeholder": "z. B. Falsche Größe",
+      "order_cancellation": {
+        "help": "Warum eine Bestellung vor dem Versand abgebrochen wurde. Mitarbeitende wählen beim Stornieren einen Grund.",
+        "title": "Stornierungsgründe"
+      },
       "refund": {
         "help": "Warum Geld zurückging. Für Auswertungen über alle Rückerstattungen.",
         "title": "Rückerstattungsgründe"

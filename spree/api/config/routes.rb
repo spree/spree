@@ -401,10 +401,11 @@ Spree::Core::Engine.add_routes do
         # preference, so there is nothing here to create.
         resources :payout_providers, only: [:index]
 
-        # Return / claim / refund reasons (dropdowns + settings management)
+        # Return / claim / refund / cancellation reasons (dropdowns + settings management)
         resources :return_reasons
         resources :claim_reasons
         resources :refund_reasons
+        resources :order_cancellation_reasons
 
         # Markets
         resources :markets
@@ -706,7 +707,6 @@ Spree::Core::Engine.add_routes do
             patch :complete
             patch :cancel
             patch :approve
-            patch :resume
             post :resend_confirmation
             post :resend_digital_links
             # The buyer's purchase order, streamed through the API so it is
@@ -721,7 +721,6 @@ Spree::Core::Engine.add_routes do
               patch :purchase_label
               patch :mark_delivered
               patch :cancel
-              patch :resume
               patch :split
             end
           end

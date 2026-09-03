@@ -74,6 +74,10 @@ module Spree
               result = Spree.order_cancel_workflow.call(
                 order: @resource,
                 canceler: try_spree_current_user,
+                reason: cancel_reason,
+                note: params[:cancel_note].presence,
+                refund_payments: params[:refund_payments].to_b,
+                refund_amount: params[:refund_amount].presence,
                 notify_customer: params[:notify_customer].to_b
               )
 
@@ -89,14 +93,6 @@ module Spree
           def approve
             with_order_lock do
               @resource.approved_by(try_spree_current_user)
-              render json: serialize_resource(@resource.reload)
-            end
-          end
-
-          # PATCH /api/v3/admin/orders/:id/resume
-          def resume
-            with_order_lock do
-              @resource.resume!
               render json: serialize_resource(@resource.reload)
             end
           end
@@ -196,8 +192,17 @@ module Spree
           # reads the base catalog price for every row (the negotiated-price
           # comparison); without it each line costs its own price query.
           def collection_includes
-            [:customer, :channel, :seller, :external_references,
+            [:customer, :channel, :seller, :external_references, :cancel_reason,
              { line_items: { variant: :prices } }, { po_document_attachment: :blob }]
+          end
+
+          # Read through the store's own vocabulary, so a reason belonging to
+          # another store is a 404 rather than a silent mislabel.
+          def cancel_reason
+            id = params[:cancel_reason_id].presence
+            return if id.nil?
+
+            current_store.order_cancellation_reasons.find_by_prefix_id!(id)
           end
 
           private

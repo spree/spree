@@ -83,11 +83,14 @@ module Spree
       end
 
       # Settles the payment for a canceled order: releases an uncaptured
-      # authorization, refunds a captured one. The gateway decides which —
-      # payment_method.cancel routes refunds through Refunds::Create.
-      def cancel!
+      # authorization, and refunds a captured one when `refund` allows it —
+      # payment_method.cancel routes refunds through Refunds::Create. An
+      # adapter that can void the payment outright does so either way.
+      #
+      # @param refund [Boolean] whether money already captured may be returned
+      def cancel!(refund: true)
         response = instrument_gateway_call(:cancel, payment_method) do
-          payment_method.cancel(response_code, self)
+          payment_method.cancel(response_code, self, refund: refund)
         end
         handle_response(response, :void)
       end

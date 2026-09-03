@@ -15,6 +15,18 @@ module Spree
         'Unauthorized purchase'
       ].freeze
 
+      # Why an order was called off before it shipped — a different question
+      # from why goods came back; see Spree::OrderCancellationReason.
+      ORDER_CANCELLATION_REASONS = [
+        'Customer changed their mind',
+        'Payment declined',
+        'Suspected fraud',
+        'Out of stock',
+        'Duplicate order',
+        'Staff error',
+        'Order expired'
+      ].freeze
+
       # Why the merchant got it wrong, rather than why the customer changed
       # their mind — see Spree::ClaimReason.
       CLAIM_REASONS = [
@@ -26,7 +38,7 @@ module Spree
       ].freeze
 
       def call
-        # All three vocabularies are store-owned, so every store gets its own.
+        # Every vocabulary is store-owned, so every store gets its own.
         Spree::Store.all.find_each do |store|
           # Through the model helper, not a literal — the workflows look this
           # row up by the same constant, so a hard-coded string here would
@@ -35,6 +47,7 @@ module Spree
 
           RETURN_REASONS.each { |name| Spree::ReturnReason.where(store: store).find_or_create_by!(name: name) }
           CLAIM_REASONS.each { |name| Spree::ClaimReason.where(store: store).find_or_create_by!(name: name) }
+          ORDER_CANCELLATION_REASONS.each { |name| Spree::OrderCancellationReason.where(store: store).find_or_create_by!(name: name) }
         end
       end
     end

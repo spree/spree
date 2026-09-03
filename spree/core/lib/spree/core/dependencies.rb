@@ -61,7 +61,6 @@ module Spree
         # order
         order_approve_service: 'Spree::Orders::Approve',
         order_cancel_workflow: 'Spree::Orders::Cancel',
-        order_resume_workflow: 'Spree::Orders::Resume',
         order_complete_workflow: 'Spree::Orders::Complete',
         order_discount_create_service: 'Spree::Orders::Discounts::Create',
         order_discount_update_service: 'Spree::Orders::Discounts::Update',
@@ -80,7 +79,6 @@ module Spree
         fulfillment_update_workflow: 'Spree::Fulfillments::Update',
         fulfillment_fulfill_workflow: 'Spree::Fulfillments::Fulfill',
         fulfillment_cancel_workflow: 'Spree::Fulfillments::Cancel',
-        fulfillment_resume_workflow: 'Spree::Fulfillments::Resume',
         fulfillment_mark_delivered_workflow: 'Spree::Fulfillments::MarkDelivered',
         fulfillment_purchase_label_workflow: 'Spree::Fulfillments::PurchaseLabel',
         fulfillment_update_tracking_workflow: 'Spree::Fulfillments::UpdateTracking',

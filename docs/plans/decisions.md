@@ -4705,3 +4705,51 @@ agreement to understand every part of it at once); skippable steps (a
 "create now" escape hatch competing with Next on every step).
 
 Plans amended: `6.0-catalog-agreement-rework.md` (phase 4 completed).
+
+## 2026-09-02 — Order cancellation and approval history tables are dropped; the reason lives on the order
+
+Reassessing `5.5-6.0-order-cancellation-and-approval.md` before its 6.0
+half (drop the `canceled_at`/`approved_at` columns, multi-level approvals).
+The two tables it added in 5.5 turned out to be write-only: the cancel and
+approve services inserted a row and nothing ever read one — no endpoint,
+serializer, view, mail, export or task — and the cancel endpoint never
+accepted a reason, so every row said `other`. Worse, the record's
+`restock_items` and `refund_payments` flags described decisions the
+workflow did not take (items are always restocked through fulfillment
+cancellation; an ordinary order's captured payments are always canceled),
+so as an audit trail it misstated what happened.
+
+**Decision:** drop both tables in 6.0 (`if_exists`, the 5.5 migrations
+deleted so fresh installs never create them) and keep the cancellation on
+the order itself — the shape every major platform uses and the one the
+codebase already needs, since Ransack, sorting, the CSV export and staff
+anonymization read `canceled_at` as a column. Nothing is carried over: no
+row ever held more than the default.
+
+**The reason is merchant data, in its own table.** `cancel_reason_id`
+points at a new **`Spree::OrderCancellationReason`** — the fourth
+`NamedType` vocabulary beside return, claim and refund reasons:
+store-scoped, seeded per store, `restrict_with_error` while orders
+reference it, managed on the Settings → Reasons page that already renders
+its siblings, and optional like `Return#reason`. A fixed string list was
+written first and rejected on the 2026-08-07 `Claim#claim_type` grounds —
+nothing branches on the value, so a closed vocabulary asks the merchant a
+question it will not act on, while the neighbouring reasons are theirs to
+write. Merging the four into one table behind a `kind` was also rejected:
+they carry different associations and delete guards, `RefundReason` has
+named lookups core itself attaches to refunds, `NamedType` already factors
+out everything shared, and one wider index replaces four DB-enforced ones
+— typed tables per grain, as the quantity-rules plan puts it. The workflow
+refuses a reason from another store, so console and extension callers get
+the scoping the controllers apply to every incidental id. `Orders::Approve`
+stays what it was, the risk-review clearance (`considered_risky` +
+`approved_at`); a merchant-side multi-level approval of a placed order has
+no industry precedent (the nearest thing elsewhere is a fulfillment hold),
+and buyer-side company approvals are Enterprise (2026-08-30). `level:` /
+`note:` on Approve and `restock_items:` on Cancel warn and are ignored
+until 6.1.
+
+**Constraints now:** no cancellation or approval history tables; a future
+customer self-cancel makes the actor on the order polymorphic — a column
+change, never a side table; company approval flows stay Enterprise and
+carry their own record.

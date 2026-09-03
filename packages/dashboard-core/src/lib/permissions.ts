@@ -41,6 +41,7 @@ export const Subject = {
   ReturnReason: 'Spree::ReturnReason',
   ClaimReason: 'Spree::ClaimReason',
   RefundReason: 'Spree::RefundReason',
+  OrderCancellationReason: 'Spree::OrderCancellationReason',
   CustomFieldDefinition: 'Spree::CustomFieldDefinition',
   Integration: 'Spree::Integration',
   PaymentMethod: 'Spree::PaymentMethod',
