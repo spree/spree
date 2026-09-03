@@ -189,6 +189,38 @@ RSpec.describe Spree::FreightSummary do
       expect(merged.total_volume).to eq(BigDecimal('0.03'))
     end
 
+    # Goods scale with units and sum correctly; the packaging scales with
+    # cartons, and a carton the merge collapses must give its share back.
+    it 're-derives a declared gross weight from the recombined cartons' do
+      heavy = create(:variant, units_per_carton: 12, carton_package_type: carton,
+                               carton_weight: 10, weight_unit: 'kg')
+      merged = described_class.merge([summary_for([[heavy, 3]]), summary_for([[heavy, 9]])])
+
+      expect(merged.total_cartons).to eq(1)
+      expect(merged.total_weight).to eq(BigDecimal('10'))
+    end
+
+    it 'counts a collapsed carton tare once, while the goods keep summing' do
+      tared_carton = create(:carton_package_type, store: store, length: 40, width: 30, height: 25,
+                                                  weight: 0.4, weight_unit: 'kg')
+      variant = create(:variant, units_per_carton: 12, carton_package_type: tared_carton,
+                                 carton_weight: nil, weight: 1, weight_unit: 'kg')
+      merged = described_class.merge([summary_for([[variant, 3]]), summary_for([[variant, 9]])])
+
+      expect(merged.total_weight).to eq(BigDecimal('12.4'))
+    end
+
+    # A snapshot frozen before the component existed carries no
+    # weight_per_carton; it must keep the old plain sum, not raise or guess.
+    it 'keeps the plain sum for snapshots that predate the component' do
+      old_line = { 'units' => 3, 'cartons' => 1, 'units_per_carton' => 12,
+                   'weight' => '10.0', 'volume' => '0.03', 'complete' => true }
+      halves = [described_class.from_metadata({ 'lines' => [old_line] }),
+                described_class.from_metadata({ 'lines' => [old_line.merge('units' => 9)] })]
+
+      expect(described_class.merge(halves).total_weight).to eq(BigDecimal('20'))
+    end
+
     it 'keeps distinct variants as separate lines' do
       other = create(:variant, units_per_carton: 6, carton_package_type: carton)
       merged = described_class.merge([summary_for([[packed_variant, 12]]), summary_for([[other, 6]])])

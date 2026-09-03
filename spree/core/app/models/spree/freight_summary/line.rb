@@ -20,6 +20,12 @@ module Spree
       # it was frozen away from.
       attribute :units_per_carton, :integer
       attribute :cartons_per_pallet, :integer
+      # The part of the weight that scales with cartons rather than units —
+      # the declared gross where the merchant recorded one, else the empty
+      # carton's own weight. Carried for the same reason as the divisors: it
+      # is what lets two part-full cartons collapse into one without keeping
+      # both packagings' weight.
+      attribute :weight_per_carton, :decimal
       attribute :volume, :decimal, default: 0
       attribute :weight, :decimal, default: 0
       # False when the variant declares no carton, so volume and weight came
@@ -51,6 +57,7 @@ module Spree
           pallets: pallets_for(variant, cartons),
           volume: carton_volume * cartons,
           weight: carton_weight_for(variant, cartons, quantity),
+          weight_per_carton: weight_per_carton_for(variant),
           complete: true
         )
       end
@@ -72,6 +79,7 @@ module Spree
           # blank would drop the pallet count for the whole summary, not just
           # for this line.
           pallets: (pallets_for(variant, cartons) if cartons),
+          weight_per_carton: (weight_per_carton_for(variant) if cartons),
           volume: (unit_volume || 0) * quantity,
           # A merchant who recorded what a packed carton weighs knows more
           # than the loose goods do, even when the carton itself is
@@ -114,10 +122,28 @@ module Spree
           # the count itself does: adding two part-full cartons' volumes
           # reports space the combined shipment does not take.
           volume: combined_volume(parts, recombined),
-          weight: parts.sum(&:weight),
+          weight: combined_weight(parts, cartons),
+          weight_per_carton: parts.filter_map(&:weight_per_carton).first,
           complete: parts.all?(&:complete?)
         )
       end
+
+      # Goods weight scales with units, so summing the parts is right for it;
+      # the packaging scales with cartons, so each carton the merge collapses
+      # must give its share back — otherwise two part-full cartons folded into
+      # one keep both packagings' weight. A snapshot frozen before the
+      # component was recorded has nil here and keeps the plain sum.
+      def self.combined_weight(parts, cartons)
+        summed = parts.sum(&:weight)
+        per_carton = parts.filter_map(&:weight_per_carton).first
+        return summed if cartons.nil? || per_carton.nil?
+
+        collapsed = parts.filter_map(&:cartons).sum - cartons
+        return summed unless collapsed.positive?
+
+        summed - (per_carton * collapsed)
+      end
+      private_class_method :combined_weight
 
       # Per-carton volume from whichever part recorded one, scaled to the
       # combined count. Falls back to the plain sum for lines measured loose,
@@ -171,6 +197,17 @@ module Spree
       end
       private_class_method :carton_weight_for
 
+      # The carton-scaling component of this variant's weight: the declared
+      # gross when one is recorded (it counts per carton, goods included),
+      # else the empty carton's own weight (the goods then count per unit).
+      def self.weight_per_carton_for(variant)
+        declared = Spree::Measurement.to_kilograms(variant.carton_weight, unit: variant.weight_unit)
+        return declared if declared&.positive?
+
+        carton_tare(variant)
+      end
+      private_class_method :weight_per_carton_for
+
       # The empty carton's own weight, in the kilograms the summary reports.
       def self.carton_tare(variant)
         Spree::Measurement.to_kilograms(
@@ -203,6 +240,7 @@ module Spree
           'pallets' => pallets,
           'units_per_carton' => units_per_carton,
           'cartons_per_pallet' => cartons_per_pallet,
+          'weight_per_carton' => weight_per_carton && BigDecimal(weight_per_carton.to_s).to_s('F'),
           'volume' => BigDecimal(volume.to_s).to_s('F'),
           'weight' => BigDecimal(weight.to_s).to_s('F'),
           'complete' => complete
