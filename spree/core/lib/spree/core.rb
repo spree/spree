@@ -726,6 +726,18 @@ module Spree
     Rails.application.config.spree.seller_authentication_strategies = value
   end
 
+  # Semantic reporting registry — the queryable metric/dimension vocabulary.
+  # Not to be confused with +Spree.analytics+ (storefront event tracking).
+  #
+  # @return [Spree::Reporting::Registry]
+  def self.reporting
+    Rails.application.config.spree.reporting
+  end
+
+  def self.reporting=(value)
+    Rails.application.config.spree.reporting = value
+  end
+
   def self.analytics
     @analytics ||= AnalyticsConfig.new
   end
@@ -845,6 +857,7 @@ require 'spree/money'
 require 'spree/service_module'
 require 'spree/workflow'
 require 'spree/analytics'
+require 'spree/reporting'
 require 'spree/events'
 require 'spree/store_scope_guard'
 

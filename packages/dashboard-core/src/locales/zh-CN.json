@@ -192,7 +192,8 @@
         "selected": "已选择 {{count}} 项"
       },
       "channel_select": {
-        "placeholder": "选择销售渠道"
+        "placeholder": "选择销售渠道",
+        "all_channels": "全部渠道"
       },
       "command_palette": {
         "create": {

@@ -2997,22 +2997,57 @@
         "columns": {
           "price": "Preis",
           "product": "Produkt",
-          "sold": "Verkauft"
+          "sold": "Verkauft",
+          "trend": "Trend"
         },
         "metric_short": {
           "avg_order_value": "Ø-Wert",
           "orders": "Bestellungen",
-          "sales": "Umsatz"
+          "sales": "Umsatz",
+          "units": "Stück",
+          "customers": "Kunden"
         },
         "metrics": {
           "avg_order_value": "Ø Bestellwert",
           "orders": "Bestellungen gesamt",
-          "sales": "Gesamtumsatz"
+          "sales": "Gesamtumsatz",
+          "units": "Verkaufte Stück",
+          "customers": "Kunden"
         },
         "subtitle": "Überblick über die Leistung Ihres Shops",
         "title": "Dashboard",
         "top_products": "Top-Produkte",
-        "top_products_description": "Meistverkaufte Produkte in Ihrem Shop."
+        "top_products_description": "Meistverkaufte Produkte in Ihrem Shop.",
+        "legend": {
+          "current": "Dieser Zeitraum",
+          "previous": "Vorheriger Zeitraum"
+        },
+        "growth": {
+          "new": "Neu",
+          "vs_previous": "vs. vorheriger Zeitraum"
+        },
+        "operations": {
+          "title": "Aufgaben",
+          "subtitle": "Was gerade Ihre Aufmerksamkeit braucht.",
+          "orders_to_fulfill": "Zu versendende Bestellungen",
+          "payments_to_collect": "Ausstehende Zahlungen",
+          "open_returns": "Offene Retouren",
+          "low_stock_items": "Varianten mit niedrigem Bestand",
+          "out_of_stock_items": "Nicht vorrätige Varianten"
+        },
+        "rankings": {
+          "title": "Rangliste",
+          "subtitle": "Top-Performer im ausgewählten Zeitraum.",
+          "tabs": {
+            "customers": "Kunden",
+            "categories": "Kategorien"
+          },
+          "orders_count_one": "{{count}} Bestellung",
+          "orders_count_other": "{{count}} Bestellungen",
+          "units_count_one": "{{count}} Stück",
+          "units_count_other": "{{count}} Stück",
+          "empty": "Noch keine Daten für diesen Zeitraum."
+        }
       },
       "orders": {
         "detail": {

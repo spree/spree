@@ -2997,22 +2997,57 @@
         "columns": {
           "price": "Price",
           "product": "Product",
-          "sold": "Sold"
+          "sold": "Sold",
+          "trend": "Trend"
         },
         "metric_short": {
           "avg_order_value": "AOV",
           "orders": "Orders",
-          "sales": "Sales"
+          "sales": "Sales",
+          "units": "Units",
+          "customers": "Customers"
         },
         "metrics": {
           "avg_order_value": "Avg Order Value",
           "orders": "Total Orders",
-          "sales": "Total Sales"
+          "sales": "Total Sales",
+          "units": "Units Sold",
+          "customers": "Customers"
         },
         "subtitle": "Overview of your store performance",
         "title": "Dashboard",
         "top_products": "Top Products",
-        "top_products_description": "Best-selling products in your store."
+        "top_products_description": "Best-selling products in your store.",
+        "legend": {
+          "current": "This period",
+          "previous": "Previous period"
+        },
+        "growth": {
+          "new": "New",
+          "vs_previous": "vs previous period"
+        },
+        "operations": {
+          "title": "Operations",
+          "subtitle": "What needs your attention right now.",
+          "orders_to_fulfill": "Orders to fulfill",
+          "payments_to_collect": "Payments to collect",
+          "open_returns": "Open returns",
+          "low_stock_items": "Low stock variants",
+          "out_of_stock_items": "Out of stock variants"
+        },
+        "rankings": {
+          "title": "Rankings",
+          "subtitle": "Top performers in the selected period.",
+          "tabs": {
+            "customers": "Customers",
+            "categories": "Categories"
+          },
+          "orders_count_one": "{{count}} order",
+          "orders_count_other": "{{count}} orders",
+          "units_count_one": "{{count}} unit",
+          "units_count_other": "{{count}} units",
+          "empty": "No data for this period yet."
+        }
       },
       "orders": {
         "detail": {

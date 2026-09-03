@@ -7,6 +7,9 @@ module Spree
         # ability (staff / back-office authorization)
         ability_class: 'Spree::Ability',
 
+        # reporting (see docs/plans/6.0-analytics-semantic-layer.md)
+        reporting_adapter: 'Spree::Reporting::Adapters::Live',
+
         # storefront record access (ownership + guest tokens); the B2B seam —
         # see Spree::Storefront::AccessPolicy
         storefront_access_policy_class: 'Spree::Storefront::AccessPolicy',

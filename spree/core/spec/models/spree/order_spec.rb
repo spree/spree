@@ -69,6 +69,16 @@ describe Spree::Order, type: :model do
       it { expect(Spree::Order.not_canceled).not_to include canceled_order }
     end
 
+    describe '.for_channel' do
+      let!(:channel) { create(:channel) }
+      let!(:channeled_order) { create(:order, user: user, channel: channel) }
+
+      it 'filters by the given channel and returns all orders for nil' do
+        expect(described_class.for_channel(channel)).to contain_exactly(channeled_order)
+        expect(described_class.for_channel(nil)).to include(channeled_order, completed_order)
+      end
+    end
+
     describe '.search' do
       let!(:order_1) { create(:order, number: 'R100', user: create(:user, email: 'don.roe@example.com'), bill_address: create(:address, first_name: 'Don', last_name: 'Roe')) }
       let!(:order_2) { create(:order, number: 'R101', user: create(:user, email: 'jane.gone@example.com'), bill_address: create(:address, first_name: 'Jane', last_name: 'Gone')) }

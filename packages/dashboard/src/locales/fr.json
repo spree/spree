@@ -2997,22 +2997,57 @@
         "columns": {
           "price": "Prix",
           "product": "Produit",
-          "sold": "Vendu"
+          "sold": "Vendu",
+          "trend": "Tendance"
         },
         "metric_short": {
           "avg_order_value": "Panier moy.",
           "orders": "Commandes",
-          "sales": "Ventes"
+          "sales": "Ventes",
+          "units": "Unités",
+          "customers": "Clients"
         },
         "metrics": {
           "avg_order_value": "Panier moyen",
           "orders": "Commandes totales",
-          "sales": "Ventes totales"
+          "sales": "Ventes totales",
+          "units": "Unités vendues",
+          "customers": "Clients"
         },
         "subtitle": "Aperçu des performances de votre boutique",
         "title": "Tableau de bord",
         "top_products": "Meilleurs produits",
-        "top_products_description": "Produits les plus vendus de votre boutique."
+        "top_products_description": "Produits les plus vendus de votre boutique.",
+        "legend": {
+          "current": "Période actuelle",
+          "previous": "Période précédente"
+        },
+        "growth": {
+          "new": "Nouveau",
+          "vs_previous": "vs période précédente"
+        },
+        "operations": {
+          "title": "Opérations",
+          "subtitle": "Ce qui demande votre attention en ce moment.",
+          "orders_to_fulfill": "Commandes à expédier",
+          "payments_to_collect": "Paiements à encaisser",
+          "open_returns": "Retours ouverts",
+          "low_stock_items": "Variantes en stock faible",
+          "out_of_stock_items": "Variantes en rupture de stock"
+        },
+        "rankings": {
+          "title": "Classements",
+          "subtitle": "Meilleures performances sur la période sélectionnée.",
+          "tabs": {
+            "customers": "Clients",
+            "categories": "Catégories"
+          },
+          "orders_count_one": "{{count}} commande",
+          "orders_count_other": "{{count}} commandes",
+          "units_count_one": "{{count}} unité",
+          "units_count_other": "{{count}} unités",
+          "empty": "Pas encore de données pour cette période."
+        }
       },
       "orders": {
         "detail": {
