@@ -19,7 +19,8 @@ module Spree
             scoped_resource :fulfillments
 
             before_action :set_order
-            before_action :set_fulfillment, only: [:show, :fulfill]
+            before_action :set_fulfillment,
+                          only: [:show, :update, :fulfill, :cancel, :resume, :split, :mark_delivered]
 
             def index
               # This action builds its own collection rather than going through
@@ -59,6 +60,74 @@ module Spree
               end
             end
 
+            # PATCH /api/v3/seller/orders/:order_id/fulfillments/:id
+            #
+            # The tracking number and its carrier, and nothing else. Where a
+            # parcel ships from and which service carries it are the
+            # marketplace's arrangements, so this deliberately does not accept
+            # the origin and rate the operator's endpoint does.
+            def update
+              if @fulfillment.update(update_params)
+                render json: serialize(@fulfillment.reload)
+              else
+                render_validation_error(@fulfillment.errors)
+              end
+            end
+
+            # PATCH /api/v3/seller/orders/:order_id/fulfillments/:id/cancel
+            #
+            # A parcel this seller is not going to send after all. Restocking
+            # and standing the carrier down happen inside the workflow.
+            def cancel
+              run_workflow(Spree.fulfillment_cancel_workflow)
+            end
+
+            # PATCH /api/v3/seller/orders/:order_id/fulfillments/:id/resume
+            def resume
+              run_workflow(Spree.fulfillment_resume_workflow)
+            end
+
+            # PATCH /api/v3/seller/orders/:order_id/fulfillments/:id/mark_delivered
+            #
+            # Confirms the customer received the goods — the anchor the
+            # returns window runs from, and recordable by hand for a seller
+            # posting parcels without a carrier integration.
+            def mark_delivered
+              with_order_lock do
+                result = Spree.fulfillment_mark_delivered_workflow.call(
+                  fulfillment: @fulfillment,
+                  delivered_at: params[:delivered_at],
+                  notify_customer: notify_customer?(params[:notify_customer])
+                )
+
+                render_workflow_result(result)
+              end
+            end
+
+            # PATCH /api/v3/seller/orders/:order_id/fulfillments/:id/split
+            #
+            # Moves part of what this parcel holds onto one of its own, for
+            # goods leaving separately. The variant is resolved through the
+            # order rather than the catalogue: what may be split is what this
+            # parcel is actually carrying.
+            def split
+              with_order_lock do
+                variant = @order.variants.find_by_prefix_id!(params[:variant_id])
+
+                changer = @fulfillment.transfer_to_location(
+                  variant, params[:quantity].to_i, split_stock_location
+                )
+
+                if changer.run!
+                  render json: {
+                    data: @order.reload.fulfillments.map { |fulfillment| serialize(fulfillment) }
+                  }
+                else
+                  render_validation_error(changer.errors)
+                end
+              end
+            end
+
             protected
 
             def read_actions
@@ -72,15 +141,43 @@ module Spree
               authorize! :show, @order
             end
 
+            WRITE_ACTIONS = %w[update fulfill cancel resume split mark_delivered].freeze
+
             def set_fulfillment
               @fulfillment = @order.fulfillments.find_by_prefix_id!(params[:id])
-              authorize! :update, @fulfillment if action_name == 'fulfill'
+              authorize! :update, @fulfillment if WRITE_ACTIONS.include?(action_name)
             end
 
             def fulfill_params
               @fulfill_params ||= params.permit(
                 :tracking, :tracking_carrier, :notify_customer, items: [:item_id, :quantity]
               )
+            end
+
+            def update_params
+              params.permit(:tracking, :tracking_carrier)
+            end
+
+            # Where the split half ships from. The seller's own shelves only —
+            # defaulting to where this parcel already sits.
+            def split_stock_location
+              return @fulfillment.stock_location if params[:stock_location_id].blank?
+
+              current_seller.stock_locations.find_by_prefix_id!(params[:stock_location_id])
+            end
+
+            def run_workflow(workflow)
+              with_order_lock do
+                render_workflow_result(workflow.call(fulfillment: @fulfillment))
+              end
+            end
+
+            def render_workflow_result(result)
+              if result.success?
+                render json: serialize(result.value)
+              else
+                render_service_error(@fulfillment.errors.presence || result.error)
+              end
             end
 
             # The workflow addresses what to ship by line item, and the lookup

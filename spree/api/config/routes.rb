@@ -863,9 +863,46 @@ Spree::Core::Engine.add_routes do
             patch :cancel
           end
 
-          resources :fulfillments, only: [:index, :show], controller: 'orders/fulfillments' do
+          resources :fulfillments, only: [:index, :show, :update], controller: 'orders/fulfillments' do
             member do
               patch :fulfill
+              patch :cancel
+              patch :resume
+              patch :split
+              patch :mark_delivered
+            end
+          end
+
+          # Putting a sale right. The seller is merchant of record for their
+          # own child order, so taking the goods back and giving the money
+          # back are theirs (docs/plans/6.0-seller-order-management.md).
+          # Every status move is its own action, because each carries
+          # arguments of its own — receiving records what actually arrived,
+          # refunding names a method and an amount.
+          resources :returns, only: [:index, :show, :create], controller: 'orders/returns' do
+            member do
+              patch :approve
+              patch :receive
+              patch :refund
+              patch :cancel
+            end
+          end
+
+          resources :exchanges, only: [:index, :show, :create], controller: 'orders/exchanges' do
+            member do
+              patch :approve
+              patch :receive
+              patch :fulfill
+              patch :cancel
+            end
+          end
+
+          resources :claims, only: [:index, :show, :create], controller: 'orders/claims' do
+            member do
+              patch :approve
+              patch :resolve
+              patch :deny
+              patch :cancel
             end
 
             resources :deliveries, controller: 'orders/deliveries', only: [:index, :show, :create, :update, :destroy]
@@ -876,6 +913,14 @@ Spree::Core::Engine.add_routes do
             end
           end
         end
+
+        # The marketplace's own vocabularies. Read-only: a seller picks a
+        # reason, the operator decides what the reasons are.
+        resources :return_reasons, only: [:index]
+        resources :claim_reasons, only: [:index]
+
+        # Registry data — which carriers a tracking number can be pinned to.
+        resources :tracking_carriers, only: [:index]
 
         resources :direct_uploads, only: [:create]
 
