@@ -1,9 +1,12 @@
+import { zodResolver } from '@hookform/resolvers/zod'
+import { mapSpreeErrorsToForm } from '@spree/dashboard-core'
 import {
   Alert,
   AlertDescription,
   Button,
   Checkbox,
   Field,
+  FieldError,
   FieldLabel,
   Input,
   Select,
@@ -13,12 +16,14 @@ import {
   SelectValue,
 } from '@spree/dashboard-ui'
 import type { Fulfillment } from '@spree/seller-sdk'
-import { useState } from 'react'
+import { useEffect, useRef } from 'react'
+import { Controller, useForm } from 'react-hook-form'
 import { useTranslation } from 'react-i18next'
 import { useFulfillmentActions } from '../../hooks/use-fulfillments'
 import { useTrackingCarriers } from '../../hooks/use-reasons'
+import { type FulfillItemsFormValues, fulfillItemsFormSchema } from '../../schemas/fulfillment'
 
-type Row = { itemId: string; label: string; available: number; quantity: number }
+type Row = { itemId: string; label: string; available: number }
 
 /**
  * One row per line item, not per fulfillment item.
@@ -30,7 +35,7 @@ type Row = { itemId: string; label: string; available: number; quantity: number 
  * payload sends the same `item_id` twice, where last-wins makes a seller who
  * selected everything ship only half of it.
  */
-function initialRows(fulfillment: Fulfillment): Row[] {
+function fulfillableRows(fulfillment: Fulfillment): Row[] {
   const byLineItem = new Map<string, Row>()
 
   for (const item of fulfillment.fulfillment_items ?? []) {
@@ -39,13 +44,11 @@ function initialRows(fulfillment: Fulfillment): Row[] {
 
     if (existing) {
       existing.available += item.quantity
-      existing.quantity += item.quantity
     } else {
       byLineItem.set(itemId, {
         itemId,
         label: [item.name, item.options_text].filter(Boolean).join(' — ') || item.id,
         available: item.quantity,
-        quantity: item.quantity,
       })
     }
   }
@@ -73,88 +76,133 @@ export function FulfillmentFulfillForm({
   const { fulfill } = useFulfillmentActions(orderId)
   const { data: carriersData } = useTrackingCarriers()
 
-  const [tracking, setTracking] = useState('')
-  const [carrier, setCarrier] = useState('')
-  const [notifyCustomer, setNotifyCustomer] = useState(true)
-
-  // What the seller has chosen to ship, keyed by line item — empty until they
-  // change something, which is when a row starts differing from the default.
-  const [chosen, setChosen] = useState<Record<string, number>>({})
-
-  // Shipping part of a parcel splits the rest onto a new one, and the source
-  // keeps its id with fewer items. Deriving the rows on every render rather
-  // than seeding state once is what keeps them true after a partial ship —
-  // `useState` would still be showing the pre-split quantities.
-  const rows = initialRows(fulfillment).map((row) => ({
-    ...row,
-    quantity: chosen[row.itemId] ?? row.quantity,
-  }))
-
   const carrierOptions = [
     { value: '', label: t('orders.fulfillments.carrier_auto') },
     ...(carriersData?.data ?? []).map((option) => ({ value: option.id, label: option.name })),
   ]
 
-  const selectedUnits = rows.reduce((total, row) => total + row.quantity, 0)
+  const rows = fulfillableRows(fulfillment)
+
+  const form = useForm<FulfillItemsFormValues>({
+    resolver: zodResolver(fulfillItemsFormSchema),
+    defaultValues: {
+      items: rows.map((row) => ({ item_id: row.itemId, selected: true, quantity: row.available })),
+      tracking: '',
+      tracking_carrier: '',
+      notify_customer: true,
+    },
+  })
+  const { errors } = form.formState
+
+  // Sending part of a parcel splits the rest onto a new one, and the source
+  // keeps its id with fewer units — so the values this form mirrors have to
+  // follow. Keyed on the parcel's composition rather than the rows array, so
+  // a refetch returning the same units does not wipe what was typed.
+  const rowsRef = useRef(rows)
+  rowsRef.current = rows
+  const rowsKey = rows.map((row) => `${row.itemId}:${row.available}`).join('|')
+  const seededKey = useRef(rowsKey)
+
+  useEffect(() => {
+    if (seededKey.current === rowsKey) return
+    seededKey.current = rowsKey
+    form.reset({
+      ...form.getValues(),
+      items: rowsRef.current.map((row) => ({
+        item_id: row.itemId,
+        selected: true,
+        quantity: row.available,
+      })),
+    })
+  }, [rowsKey, form])
+
+  const watched = form.watch('items')
+  const selectedUnits = watched.reduce(
+    (total, item) => total + (item.selected ? item.quantity || 0 : 0),
+    0,
+  )
   const totalUnits = rows.reduce((total, row) => total + row.available, 0)
   const partial = selectedUnits > 0 && selectedUnits < totalUnits
 
-  function setQuantity(itemId: string, quantity: number) {
-    const available = rows.find((row) => row.itemId === itemId)?.available ?? 0
+  async function onSubmit(values: FulfillItemsFormValues) {
+    const items = values.items
+      .filter((item) => item.selected && item.quantity > 0)
+      .map((item) => ({ item_id: item.item_id, quantity: item.quantity }))
+    if (items.length === 0) return
 
-    setChosen((current) => ({
-      ...current,
-      [itemId]: Math.max(0, Math.min(available, quantity)),
-    }))
-  }
+    // Recomputed from what is being sent rather than the watched total, so
+    // the branch is decided by exactly this payload.
+    const everything = items.reduce((total, item) => total + item.quantity, 0) === totalUnits
+    const tracking = values.tracking.trim()
 
-  async function handleShip() {
-    await fulfill
-      .mutateAsync({
+    try {
+      // Omitting `items` is how the whole parcel ships, and it avoids a
+      // pointless split when every unit was selected anyway.
+      await fulfill.mutateAsync({
         fulfillmentId: fulfillment.id,
-        tracking: tracking.trim() || undefined,
-        tracking_carrier: carrier || undefined,
-        notify_customer: notifyCustomer,
-        // Omitted entirely when everything is going, so the server ships the
-        // parcel as it stands rather than splitting it against itself.
-        items: partial
-          ? rows
-              .filter((row) => row.quantity > 0)
-              .map((row) => ({ item_id: row.itemId, quantity: row.quantity }))
-          : undefined,
+        items: everything ? undefined : items,
+        tracking: tracking || undefined,
+        tracking_carrier: values.tracking_carrier || undefined,
+        notify_customer: values.notify_customer,
       })
-      .then(onDone)
-      .catch(() => undefined)
+      onDone()
+    } catch (err) {
+      if (!mapSpreeErrorsToForm(err, form.setError)) throw err
+    }
   }
 
   return (
-    <div className="flex flex-col gap-4">
+    <form onSubmit={form.handleSubmit(onSubmit)} className="flex flex-col gap-4">
+      {errors.root?.message && (
+        <p className="text-sm text-destructive" role="alert">
+          {errors.root.message}
+        </p>
+      )}
+
       <div className="flex flex-col gap-2">
-        {rows.map((row) => (
+        {rows.map((row, index) => (
           <div key={row.itemId} className="flex items-center justify-between gap-3">
             <label
               className="flex min-w-0 items-center gap-2 text-sm"
               htmlFor={`ship-${row.itemId}`}
             >
-              <Checkbox
-                id={`ship-${row.itemId}`}
-                checked={row.quantity > 0}
-                onCheckedChange={(checked) => setQuantity(row.itemId, checked ? row.available : 0)}
+              <Controller
+                control={form.control}
+                name={`items.${index}.selected`}
+                render={({ field }) => (
+                  <Checkbox
+                    id={`ship-${row.itemId}`}
+                    checked={field.value}
+                    onCheckedChange={(checked) => field.onChange(!!checked)}
+                  />
+                )}
               />
               <span className="truncate">{row.label}</span>
             </label>
-            <Input
-              type="number"
-              min={0}
-              max={row.available}
-              value={row.quantity}
-              className="w-20"
-              aria-label={t('orders.fulfillments.quantity_for', { name: row.label })}
-              onChange={(event) => setQuantity(row.itemId, Number(event.target.value))}
+            <Controller
+              control={form.control}
+              name={`items.${index}.quantity`}
+              render={({ field }) => (
+                <Input
+                  type="number"
+                  min={0}
+                  max={row.available}
+                  className="w-20"
+                  aria-label={t('orders.fulfillments.quantity_for', { name: row.label })}
+                  value={field.value}
+                  onChange={(event) =>
+                    field.onChange(
+                      Math.max(0, Math.min(row.available, Number(event.target.value) || 0)),
+                    )
+                  }
+                />
+              )}
             />
           </div>
         ))}
       </div>
+
+      <FieldError errors={[errors.items?.message ? errors.items : undefined]} />
 
       <p className="text-muted-foreground text-xs">
         {t('orders.fulfillments.units_selected', { selected: selectedUnits, total: totalUnits })}
@@ -173,9 +221,8 @@ export function FulfillmentFulfillForm({
           </FieldLabel>
           <Input
             id={`fulfill-tracking-${fulfillment.id}`}
-            value={tracking}
             placeholder={t('orders.tracking_placeholder')}
-            onChange={(event) => setTracking(event.target.value)}
+            {...form.register('tracking')}
           />
         </Field>
 
@@ -183,30 +230,42 @@ export function FulfillmentFulfillForm({
           <FieldLabel htmlFor={`fulfill-carrier-${fulfillment.id}`}>
             {t('orders.fulfillments.carrier_label')}
           </FieldLabel>
-          <Select
-            items={carrierOptions}
-            value={carrier}
-            onValueChange={(value) => setCarrier((value as string) ?? '')}
-          >
-            <SelectTrigger id={`fulfill-carrier-${fulfillment.id}`}>
-              <SelectValue />
-            </SelectTrigger>
-            <SelectContent>
-              {carrierOptions.map((option) => (
-                <SelectItem key={option.value} value={option.value}>
-                  {option.label}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
+          <Controller
+            control={form.control}
+            name="tracking_carrier"
+            render={({ field }) => (
+              <Select
+                items={carrierOptions}
+                value={field.value}
+                onValueChange={(value) => field.onChange(value ?? '')}
+              >
+                <SelectTrigger id={`fulfill-carrier-${fulfillment.id}`}>
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  {carrierOptions.map((option) => (
+                    <SelectItem key={option.value} value={option.value}>
+                      {option.label}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            )}
+          />
         </Field>
       </div>
 
       <label className="flex items-center gap-2 text-sm" htmlFor={`notify-${fulfillment.id}`}>
-        <Checkbox
-          id={`notify-${fulfillment.id}`}
-          checked={notifyCustomer}
-          onCheckedChange={(checked) => setNotifyCustomer(!!checked)}
+        <Controller
+          control={form.control}
+          name="notify_customer"
+          render={({ field }) => (
+            <Checkbox
+              id={`notify-${fulfillment.id}`}
+              checked={field.value}
+              onCheckedChange={(checked) => field.onChange(!!checked)}
+            />
+          )}
         />
         {t('orders.fulfillments.notify_customer')}
       </label>
@@ -215,14 +274,10 @@ export function FulfillmentFulfillForm({
         <Button type="button" variant="outline" onClick={onDone}>
           {t('common.cancel')}
         </Button>
-        <Button
-          type="button"
-          disabled={fulfill.isPending || selectedUnits === 0}
-          onClick={handleShip}
-        >
+        <Button type="submit" disabled={fulfill.isPending || selectedUnits === 0}>
           {fulfill.isPending ? t('orders.fulfilling') : t('orders.fulfill')}
         </Button>
       </div>
-    </div>
+    </form>
   )
 }

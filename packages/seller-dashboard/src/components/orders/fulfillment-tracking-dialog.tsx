@@ -1,3 +1,5 @@
+import { zodResolver } from '@hookform/resolvers/zod'
+import { mapSpreeErrorsToForm } from '@spree/dashboard-core'
 import {
   Button,
   Dialog,
@@ -8,6 +10,7 @@ import {
   DialogHeader,
   DialogTitle,
   Field,
+  FieldError,
   FieldLabel,
   Input,
   Select,
@@ -17,10 +20,11 @@ import {
   SelectValue,
 } from '@spree/dashboard-ui'
 import type { Fulfillment } from '@spree/seller-sdk'
-import { useState } from 'react'
+import { Controller, useForm } from 'react-hook-form'
 import { useTranslation } from 'react-i18next'
 import { useFulfillmentActions } from '../../hooks/use-fulfillments'
 import { useTrackingCarriers } from '../../hooks/use-reasons'
+import { type TrackingFormValues, trackingFormSchema } from '../../schemas/fulfillment'
 
 /**
  * Adds or corrects a parcel's tracking number after it has gone out.
@@ -44,83 +48,105 @@ export function FulfillmentTrackingDialog({
   const { update } = useFulfillmentActions(orderId)
   const { data: carriersData } = useTrackingCarriers(open)
 
-  const [tracking, setTracking] = useState(fulfillment.tracking ?? '')
-  // '' means "work it out from the number" — the server pins the carrier
-  // itself when the format is recognisable.
-  const [carrier, setCarrier] = useState(fulfillment.tracking_carrier ?? '')
-
   const carrierOptions = [
+    // '' means "work it out from the number" — the server pins the carrier
+    // itself when the format is recognisable.
     { value: '', label: t('orders.fulfillments.carrier_auto') },
     ...(carriersData?.data ?? []).map((option) => ({ value: option.id, label: option.name })),
   ]
 
-  async function handleSave() {
-    await update
-      .mutateAsync({
+  const form = useForm<TrackingFormValues>({
+    resolver: zodResolver(trackingFormSchema),
+    defaultValues: {
+      tracking: fulfillment.tracking ?? '',
+      tracking_carrier: fulfillment.tracking_carrier ?? '',
+    },
+  })
+
+  async function onSubmit(values: TrackingFormValues) {
+    try {
+      await update.mutateAsync({
         fulfillmentId: fulfillment.id,
-        tracking: tracking.trim(),
-        tracking_carrier: carrier,
+        tracking: values.tracking.trim(),
+        tracking_carrier: values.tracking_carrier,
       })
-      .then(() => onOpenChange(false))
-      .catch(() => undefined)
+      onOpenChange(false)
+    } catch (err) {
+      if (!mapSpreeErrorsToForm(err, form.setError)) throw err
+    }
   }
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent>
-        <DialogHeader>
-          <DialogTitle>
-            {fulfillment.tracking
-              ? t('orders.fulfillments.edit_tracking_title')
-              : t('orders.fulfillments.add_tracking_title')}
-          </DialogTitle>
-          <DialogDescription>{t('orders.fulfillments.tracking_description')}</DialogDescription>
-        </DialogHeader>
+        <form onSubmit={form.handleSubmit(onSubmit)}>
+          <DialogHeader>
+            <DialogTitle>
+              {fulfillment.tracking
+                ? t('orders.fulfillments.edit_tracking_title')
+                : t('orders.fulfillments.add_tracking_title')}
+            </DialogTitle>
+            <DialogDescription>{t('orders.fulfillments.tracking_description')}</DialogDescription>
+          </DialogHeader>
 
-        <DialogBody>
-          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-            <Field>
-              <FieldLabel htmlFor="tracking-number">{t('orders.tracking_label')}</FieldLabel>
-              <Input
-                id="tracking-number"
-                value={tracking}
-                placeholder={t('orders.tracking_placeholder')}
-                onChange={(event) => setTracking(event.target.value)}
-              />
-            </Field>
+          <DialogBody>
+            {form.formState.errors.root?.message && (
+              <p className="text-sm text-destructive" role="alert">
+                {form.formState.errors.root.message}
+              </p>
+            )}
 
-            <Field>
-              <FieldLabel htmlFor="tracking-carrier">
-                {t('orders.fulfillments.carrier_label')}
-              </FieldLabel>
-              <Select
-                items={carrierOptions}
-                value={carrier}
-                onValueChange={(value) => setCarrier((value as string) ?? '')}
-              >
-                <SelectTrigger id="tracking-carrier">
-                  <SelectValue />
-                </SelectTrigger>
-                <SelectContent>
-                  {carrierOptions.map((option) => (
-                    <SelectItem key={option.value} value={option.value}>
-                      {option.label}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </Field>
-          </div>
-        </DialogBody>
+            <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+              <Field>
+                <FieldLabel htmlFor="tracking-number">{t('orders.tracking_label')}</FieldLabel>
+                <Input
+                  id="tracking-number"
+                  placeholder={t('orders.tracking_placeholder')}
+                  aria-invalid={!!form.formState.errors.tracking}
+                  {...form.register('tracking')}
+                />
+                <FieldError errors={[form.formState.errors.tracking]} />
+              </Field>
 
-        <DialogFooter>
-          <Button type="button" variant="outline" onClick={() => onOpenChange(false)}>
-            {t('common.cancel')}
-          </Button>
-          <Button type="button" disabled={update.isPending} onClick={handleSave}>
-            {update.isPending ? t('common.saving') : t('common.save')}
-          </Button>
-        </DialogFooter>
+              <Field>
+                <FieldLabel htmlFor="tracking-carrier">
+                  {t('orders.fulfillments.carrier_label')}
+                </FieldLabel>
+                <Controller
+                  control={form.control}
+                  name="tracking_carrier"
+                  render={({ field }) => (
+                    <Select
+                      items={carrierOptions}
+                      value={field.value}
+                      onValueChange={(value) => field.onChange(value ?? '')}
+                    >
+                      <SelectTrigger id="tracking-carrier">
+                        <SelectValue />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {carrierOptions.map((option) => (
+                          <SelectItem key={option.value} value={option.value}>
+                            {option.label}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  )}
+                />
+              </Field>
+            </div>
+          </DialogBody>
+
+          <DialogFooter>
+            <Button type="button" variant="outline" onClick={() => onOpenChange(false)}>
+              {t('common.cancel')}
+            </Button>
+            <Button type="submit" disabled={update.isPending}>
+              {update.isPending ? t('common.saving') : t('common.save')}
+            </Button>
+          </DialogFooter>
+        </form>
       </DialogContent>
     </Dialog>
   )
