@@ -2627,6 +2627,22 @@
           "value_type_flat": "Betrag",
           "value_type_percent": "Prozent"
         },
+        "commission_lines": {
+          "column_fee": "Provision",
+          "column_rate": "Satz",
+          "column_subject": "Artikel",
+          "column_tax": "Steuer",
+          "column_total": "Summe",
+          "delivery": "Lieferung",
+          "empty": "Für diese Bestellung wurde keine Provision berechnet.",
+          "line_item_fallback": "Position",
+          "rate_named_fixed": "{{name}} · {{amount}}",
+          "rate_named_percentage": "{{name}} · {{rate}} %",
+          "rate_unknown": "Gelöschter Satz",
+          "subject_fallback": "Verkauf",
+          "title": "Provision",
+          "total": "Summe"
+        },
         "completed_prefix": "Abgeschlossen",
         "confirm": {
           "approve_message": "Diesen Auftrag genehmigen?",

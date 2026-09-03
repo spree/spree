@@ -2620,6 +2620,22 @@
           "value_type_flat": "金额",
           "value_type_percent": "百分比"
         },
+        "commission_lines": {
+          "column_fee": "佣金",
+          "column_rate": "费率",
+          "column_subject": "商品",
+          "column_tax": "税费",
+          "column_total": "合计",
+          "delivery": "配送",
+          "empty": "此订单未收取佣金。",
+          "line_item_fallback": "订单行",
+          "rate_named_fixed": "{{name}} · {{amount}}",
+          "rate_named_percentage": "{{name}} · {{rate}}%",
+          "rate_unknown": "已删除的费率",
+          "subject_fallback": "销售",
+          "title": "佣金",
+          "total": "合计"
+        },
         "completed_prefix": "已完成",
         "confirm": {
           "approve_message": "批准此订单吗？",

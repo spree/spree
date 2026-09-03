@@ -2645,6 +2645,22 @@
           "value_type_flat": "مبلغ",
           "value_type_percent": "نسبة مئوية"
         },
+        "commission_lines": {
+          "column_fee": "العمولة",
+          "column_rate": "المعدل",
+          "column_subject": "الصنف",
+          "column_tax": "الضريبة",
+          "column_total": "الإجمالي",
+          "delivery": "التوصيل",
+          "empty": "لم تُفرض أي عمولة على هذا الطلب.",
+          "line_item_fallback": "بند",
+          "rate_named_fixed": "{{name}} · {{amount}}",
+          "rate_named_percentage": "{{name}} · {{rate}}%",
+          "rate_unknown": "معدل محذوف",
+          "subject_fallback": "البيع",
+          "title": "العمولة",
+          "total": "الإجمالي"
+        },
         "completed_prefix": "مكتمل",
         "confirm": {
           "approve_message": "هل توافق على هذا الطلب؟",

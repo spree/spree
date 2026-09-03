@@ -2647,6 +2647,22 @@
           "value_type_flat": "Kwota",
           "value_type_percent": "Procent"
         },
+        "commission_lines": {
+          "column_fee": "Prowizja",
+          "column_rate": "Stawka",
+          "column_subject": "Pozycja",
+          "column_tax": "Podatek",
+          "column_total": "Razem",
+          "delivery": "Dostawa",
+          "empty": "Dla tego zamówienia nie naliczono prowizji.",
+          "line_item_fallback": "Pozycja",
+          "rate_named_fixed": "{{name}} · {{amount}}",
+          "rate_named_percentage": "{{name}} · {{rate}}%",
+          "rate_unknown": "Usunięta stawka",
+          "subject_fallback": "Sprzedaż",
+          "title": "Prowizja",
+          "total": "Razem"
+        },
         "completed_prefix": "Zrealizowano",
         "confirm": {
           "approve_message": "Zatwierdzić to zamówienie?",

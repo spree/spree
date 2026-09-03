@@ -79,6 +79,18 @@ export function useOrderFees(orderId: string) {
   })
 }
 
+export function useOrderCommissionLines(orderId: string, options?: { enabled?: boolean }) {
+  return useQuery({
+    queryKey: useResourceKey('orders', orderId, 'commission_lines'),
+    queryFn: () =>
+      adminClient.commissionLines.list({
+        q: { order_id_eq: orderId },
+        limit: 100,
+      }),
+    enabled: !!orderId && (options?.enabled ?? true),
+  })
+}
+
 /**
  * Mutation for typed adjustment rows: invalidates the order detail AND the
  * nested tax_lines/discounts/fees lists (totals change server-side on every

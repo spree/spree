@@ -2627,6 +2627,22 @@
           "value_type_flat": "Amount",
           "value_type_percent": "Percent"
         },
+        "commission_lines": {
+          "column_fee": "Fee",
+          "column_rate": "Rate",
+          "column_subject": "Item",
+          "column_tax": "Tax",
+          "column_total": "Total",
+          "delivery": "Delivery",
+          "empty": "No commission was charged on this order.",
+          "line_item_fallback": "Line item",
+          "rate_named_fixed": "{{name}} · {{amount}}",
+          "rate_named_percentage": "{{name}} · {{rate}}%",
+          "rate_unknown": "Deleted rate",
+          "subject_fallback": "Sale",
+          "title": "Commission",
+          "total": "Total"
+        },
         "completed_prefix": "Completed",
         "confirm": {
           "approve_message": "Approve this order?",

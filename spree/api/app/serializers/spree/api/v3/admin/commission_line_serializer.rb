@@ -16,6 +16,7 @@ module Spree
           typelize order_id: :string,
                    seller_id: :string,
                    seller_name: 'string | null',
+                   commission_rate_name: 'string | null',
                    line_item_id: 'string | null',
                    fulfillment_id: 'string | null',
                    commission_rate_id: 'string | null',
@@ -55,6 +56,11 @@ module Spree
           # The seller's name, so a commission table reads without expanding.
           attribute :seller_name do |line|
             line.seller&.name
+          end
+
+          # The rate that applied, so an order's commission reads without expanding.
+          attribute :commission_rate_name do |line|
+            line.commission_rate&.name
           end
         end
       end

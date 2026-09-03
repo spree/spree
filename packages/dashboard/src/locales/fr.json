@@ -2627,6 +2627,22 @@
           "value_type_flat": "Montant",
           "value_type_percent": "Pourcentage"
         },
+        "commission_lines": {
+          "column_fee": "Commission",
+          "column_rate": "Taux",
+          "column_subject": "Article",
+          "column_tax": "Taxe",
+          "column_total": "Total",
+          "delivery": "Livraison",
+          "empty": "Aucune commission n'a été facturée sur cette commande.",
+          "line_item_fallback": "Ligne",
+          "rate_named_fixed": "{{name}} · {{amount}}",
+          "rate_named_percentage": "{{name}} · {{rate}} %",
+          "rate_unknown": "Taux supprimé",
+          "subject_fallback": "Vente",
+          "title": "Commission",
+          "total": "Total"
+        },
         "completed_prefix": "Terminée",
         "confirm": {
           "approve_message": "Approuver cette commande ?",
