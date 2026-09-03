@@ -120,6 +120,29 @@ module Spree
             expect(cart.destroyed?).to be true
           end
         end
+
+        context 'when a gift card is applied' do
+          let(:gift_card) { create(:gift_card, amount: 50, store: cart.store) }
+
+          before do
+            Spree::Config[:geocode_addresses] = false
+            cart.reload.recalculate_totals!
+            Spree::GiftCards::Apply.call(gift_card: gift_card, order: cart)
+          end
+
+          after do
+            Spree::Config[:geocode_addresses] = true
+          end
+
+          it 'releases the gift card balance before destroying the cart' do
+            expect(gift_card.reload.amount_used).to be_positive
+
+            subject
+
+            expect(gift_card.reload.amount_remaining).to eq(50)
+            expect(gift_card.amount_used).to eq(0)
+          end
+        end
       end
 
       context 'when it cannot be destroyed' do
