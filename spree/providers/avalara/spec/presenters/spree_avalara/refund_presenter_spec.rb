@@ -86,9 +86,9 @@ RSpec.describe SpreeAvalara::RefundPresenter do
     # one the legacy extension shipped it on: it sent the same net figure with
     # the sale document's inclusive flag, crediting a fraction of the VAT.
     it 'states the credit as net even where prices are sold gross' do
-      market = create(:market, store: @default_store, tax_inclusive: true)
-      market.update!(country_codes: ['DE'])
-      address = create(:address, country_code: 'DE', state_code: nil, city: 'Berlin', zipcode: '10115')
+      market = create(:market, store: @default_store, tax_inclusive: true, currency: 'PLN')
+      market.update!(country_codes: ['PL'])
+      address = create(:address, country_code: 'PL', state_code: nil, city: 'Warszawa', zipcode: '00-526')
       order.update!(market: market, ship_address: address, bill_address: address)
 
       expect(SpreeAvalara.tax_inclusive?(order.reload)).to be(true)

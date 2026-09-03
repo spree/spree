@@ -126,25 +126,54 @@ RSpec.describe 'AvaTax API contract', :vcr do
       expect(rows.map(&:taxability_reason)).not_to include('customer_exempt')
     end
 
-    # Narrow but real: it pins the whole inclusiveness chain — the DE market
-    # resolves as gross-priced, the request says taxIncluded, Avalara echoes it,
-    # and the row records it. It says nothing about VAT arithmetic, because the
-    # recording account has no EU registration and the rate comes back 0%.
-    it 'marks rows included when the destination market prices gross',
-       vcr: { cassette_name: 'estimate/eu_tax_inclusive' } do
-      market = create(:market, store: @default_store, tax_inclusive: true)
-      market.update!(country_codes: ['DE'])
-      address = create(:address, country_code: 'DE', state_code: nil, city: 'Berlin', zipcode: '10115')
-      cart = create(:cart, store: @default_store, ship_address: address, bill_address: address, market: market)
+    # A domestic Polish sale, because Poland is where the recording account
+    # actually holds a VAT registration — so 23% comes back for real and the
+    # arithmetic can be checked rather than a flag round-tripped against a zero.
+    # Shipped from Warsaw deliberately: from the California warehouse the same
+    # sale is an export, and an export is not taxed at 23%.
+    it 'reports the VAT that is already inside a gross price',
+       vcr: { cassette_name: 'estimate/pl_tax_inclusive' } do
+      market = create(:market, store: @default_store, tax_inclusive: true, currency: 'PLN')
+      market.update!(country_codes: ['PL'])
+      address = create(:address, country_code: 'PL', state_code: nil, city: 'Warszawa',
+                                 zipcode: '00-526', address1: 'Krucza 16')
+      create(:stock_location, store: @default_store, default: true, country_code: 'PL', state_code: nil,
+                              city: 'Warszawa', zipcode: '00-838', address1: 'Prosta 51')
+      # A store instance memoizes the currencies its markets support, and this
+      # one was loaded before the Polish market existed — so the cart is built
+      # against a freshly read store rather than a stale copy. Per-request in a
+      # real app, which is why nothing outside a spec sees it.
+      store = Spree::Store.find(@default_store.id)
+      cart = create(:cart, store: store, ship_address: address, bill_address: address,
+                           market: market, currency: 'PLN')
       create(:line_item, cart: cart, order: nil, price: 100)
       allow(SpreeAvalara::Integration).to receive(:active_for).and_return(integration)
+      sent = nil
+      allow(integration.client).to receive(:create_transaction).and_wrap_original do |original, model|
+        sent = model
+        original.call(model)
+      end
 
       provider.estimate(cart.reload)
+
+      # The request has to be asserted, not just the answer: VCR matches a
+      # cassette by method and URL and never by body, so a sale that stopped
+      # declaring itself gross would still be replayed this inclusive response
+      # and every figure below would still line up.
+      expect(sent[:lines].map { |line| line[:taxIncluded] }).to all(be(true))
 
       rows = cart.tax_lines.reload
       # Guards the claim against going vacuous if the estimate ever writes nothing.
       expect(rows).not_to be_empty
       expect(rows.map(&:included)).to all(be(true))
+      expect(rows.map(&:country_code)).to all(eq('PL'))
+      expect(rows.map(&:rate)).to all(eq(0.23.to_d))
+      # 100.00 gross at 23% is 81.30 net carrying 18.70 of VAT. The tax being a
+      # share of the price rather than an addition to it is the whole point of
+      # an inclusive market, and it is what a 0%-rated destination could never
+      # have shown.
+      expect(rows.sum(&:amount)).to eq(18.70.to_d)
+      expect(cart.reload.line_items.sum(&:pre_tax_amount)).to eq(81.30.to_d)
     end
   end
 
