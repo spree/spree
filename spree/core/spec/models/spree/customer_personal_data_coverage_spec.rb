@@ -51,8 +51,6 @@ RSpec.describe 'personal data coverage' do
     'spree_stock_locations' => 'a warehouse contact number, not a customer',
     'spree_webhook_deliveries' => 'operational log with its own retention; payloads expire on their own schedule',
     'spree_seller_requirement_submissions' => 'seller onboarding evidence, not customer data',
-    'spree_order_approvals' => 'B2B approval notes, written by staff about an order',
-    'spree_order_cancellations' => 'cancellation notes, written by staff about an order',
     'spree_sellers' => 'marketplace seller contact details, not a shopper',
     'spree_stores' => 'the merchant\'s own support and notification addresses',
     'spree_store_translations' => 'translated copies of the merchant\'s own addresses',
