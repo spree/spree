@@ -45,6 +45,20 @@ RSpec.describe Spree::Api::V3::Admin::CustomersController, type: :controller do
       end
     end
 
+    # Completing the customer's own request here would close it without ever
+    # delivering their file: the queued job then refuses it as no longer
+    # pending, and they wait for an email that never arrives.
+    it 'leaves a request the customer already made alone' do
+      pending_request = Spree::DataRequests::Create.call(
+        store: store, customer: customer, kind: Spree::DataRequest::ACCESS
+      ).value
+
+      get :export, params: { id: customer.prefixed_id }, as: :json
+
+      expect(response).to have_http_status(:ok)
+      expect(pending_request.reload).to be_pending
+    end
+
     it 'leaves a record that the request was answered' do
       expect {
         get :export, params: { id: customer.prefixed_id }, as: :json

@@ -84,27 +84,34 @@ module Spree
             authorize_resource!(@resource)
             return unless authorized_for_order_history?
 
-            result = Spree::DataRequests::Create.call(
+            if @resource.anonymized?
+              return render_error(
+                code: ERROR_CODES[:validation_error],
+                message: Spree.t('data_request_errors.already_anonymized'),
+                status: :unprocessable_content
+              )
+            end
+
+            # Its own record, never an existing one. `DataRequests::Create`
+            # would hand back whatever the customer already has in flight, and
+            # completing that here would close their request without ever
+            # delivering their file — the queued job would then refuse it as no
+            # longer pending.
+            data_request = Spree::DataRequest.create!(
               store: current_store,
               customer: @resource,
               kind: Spree::DataRequest::ACCESS,
-              requested_by: try_spree_current_user,
-              # Staff receive the file in this response and forward it
-              # themselves. Queueing the job as well would email the customer a
-              # copy of something they never asked this shop for.
-              process: false
+              email: @resource.email,
+              requested_by: try_spree_current_user
             )
-
-            return render_result_error(result) unless result.success?
 
             # Rendered inline because a staff member is waiting on it, but the
             # request row is opened first: an Art. 15 response should leave the
             # same trace whoever produced it, and building through the workflow
             # is what runs the `extend_payload` hook a host app relies on to
             # complete the document.
-            data_request = result.value
             payload = Spree::DataRequests::Fulfill.payload_for(data_request)
-            data_request.update(status: 'completed', completed_at: Time.current) if data_request.pending?
+            data_request.update(status: 'completed', completed_at: Time.current)
 
             render json: payload
           end

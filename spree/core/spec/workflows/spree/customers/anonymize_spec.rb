@@ -32,6 +32,17 @@ RSpec.describe Spree::Customers::Anonymize do
       expect(customer.email_marketing_consent_source).to eq('anonymization')
     end
 
+    # Leaving the credential would make the erasure reversible: whoever knew
+    # the old password could sign back in, write the name and phone back, and
+    # a second erasure would be refused as already done.
+    it 'stops the old password working' do
+      expect(customer.valid_password?('secret123')).to be(true)
+
+      result
+
+      expect(customer.reload.valid_password?('secret123')).to be(false)
+    end
+
     it 'refuses a customer already anonymized' do
       described_class.call(customer: customer, store: store)
 

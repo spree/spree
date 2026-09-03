@@ -106,6 +106,11 @@ module Spree
           selected_locale: nil,
           metadata: {},
           internal_note: nil,
+          # The credential goes with the identity. Left in place, whoever knew
+          # the old password could sign back in and write the name and phone
+          # straight back — and a second erasure would then be refused as
+          # already done.
+          password_digest: nil,
           updated_at: Time.current
         )
 
