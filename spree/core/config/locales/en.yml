@@ -21,12 +21,12 @@ en:
         city: City
         company: Company
         country: Country
-        firstname: First Name
+        first_name: First Name
         label: Address name
-        lastname: Last Name
+        last_name: Last Name
         phone: Phone
+        postal_code: Zip Code
         state: State
-        zipcode: Zip Code
       spree/calculator/tiered_flat_rate:
         preferred_base_amount: Base Amount
         preferred_currency: Currency
@@ -82,11 +82,12 @@ en:
       spree/option_type:
         filterable: Filterable
         kind: Kind
+        label: Label
         name: Name
-        presentation: Presentation
       spree/option_value:
         color_code: Color Code
         image: Swatch Image
+        label: Label
       spree/order:
         checkout_complete: Checkout Complete
         completed_at: Completed At
@@ -107,19 +108,19 @@ en:
       spree/order/bill_address:
         address1: Billing address street
         city: Billing address city
-        firstname: Billing address first name
-        lastname: Billing address last name
+        first_name: Billing address first name
+        last_name: Billing address last name
         phone: Billing address phone
+        postal_code: Billing address zip code
         state: Billing address state
-        zipcode: Billing address zipcode
       spree/order/ship_address:
         address1: Shipping address street
         city: Shipping address city
-        firstname: Shipping address first name
-        lastname: Shipping address last name
+        first_name: Shipping address first name
+        last_name: Shipping address last name
         phone: Shipping address phone
+        postal_code: Shipping address zip code
         state: Shipping address state
-        zipcode: Shipping address zipcode
       spree/page_link:
         open_in_new_tab: Open in new tab
       spree/payment:
@@ -235,7 +236,7 @@ en:
         units_per_carton: Units per carton
         weight: Weight
         width: Width
-      spree/wished_item:
+      spree/wishlist_item:
         variant: ''
       spree/zone:
         description: Description
@@ -436,7 +437,7 @@ en:
           attributes:
             url:
               internal_address_not_allowed: must not point to an internal or private network address
-        spree/wished_item:
+        spree/wishlist_item:
           attributes:
             variant:
               taken: You already added this item to your wishlist

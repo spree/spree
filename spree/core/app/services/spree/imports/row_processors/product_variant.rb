@@ -274,26 +274,26 @@ module Spree
         # Recover the losing worker by re-fetching the peer's row whether the conflict
         # surfaces via the DB unique index (RecordNotUnique) or the AR uniqueness
         # validator (RecordInvalid with a :taken error on the relevant attribute).
-        def find_or_create_option_type!(presentation)
-          cached_lookup(:option_type, presentation) do
+        def find_or_create_option_type!(label)
+          cached_lookup(:option_type, label) do
             begin
-              Spree::OptionType.search_by_name(presentation).first || Spree::OptionType.create!(presentation: presentation)
+              Spree::OptionType.search_by_name(label).first || Spree::OptionType.create!(label: label)
             rescue ActiveRecord::RecordNotUnique, ActiveRecord::RecordInvalid => e
               raise unless uniqueness_conflict?(e, :name)
 
-              Spree::OptionType.search_by_name(presentation).first!
+              Spree::OptionType.search_by_name(label).first!
             end
           end
         end
 
-        def find_or_create_option_value!(option_type, presentation)
-          cached_lookup(:option_value, option_type.id, presentation) do
+        def find_or_create_option_value!(option_type, label)
+          cached_lookup(:option_value, option_type.id, label) do
             begin
-              option_type.option_values.search_by_name(presentation).first || option_type.option_values.create!(presentation: presentation)
+              option_type.option_values.search_by_name(label).first || option_type.option_values.create!(label: label)
             rescue ActiveRecord::RecordNotUnique, ActiveRecord::RecordInvalid => e
               raise unless uniqueness_conflict?(e, :name)
 
-              option_type.option_values.search_by_name(presentation).first!
+              option_type.option_values.search_by_name(label).first!
             end
           end
         end

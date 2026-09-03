@@ -256,8 +256,8 @@ RSpec.describe Spree::Api::V3::Store::ProductsController, type: :controller do
 
       context 'filtering by option values' do
         let(:option_type) { create(:option_type, :color) }
-        let(:option_value_red) { create(:option_value, option_type: option_type, name: 'red', presentation: 'Red') }
-        let(:option_value_blue) { create(:option_value, option_type: option_type, name: 'blue', presentation: 'Blue') }
+        let(:option_value_red) { create(:option_value, option_type: option_type, name: 'red', label: 'Red') }
+        let(:option_value_blue) { create(:option_value, option_type: option_type, name: 'blue', label: 'Blue') }
         let!(:product_with_red) do
           create(:product, status: 'active', option_types: [option_type]).tap do |p|
             create(:variant, product: p, option_values: [option_value_red], price: 25.0)

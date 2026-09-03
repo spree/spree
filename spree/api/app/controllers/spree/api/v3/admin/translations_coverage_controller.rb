@@ -90,9 +90,9 @@ module Spree
           # @return [String, nil]
           # The predicate the grid filters by. It has to match the column the
           # grid DISPLAYS, which is the record's first public translatable
-          # field — for an option type that is `label`, stored as
-          # `presentation`, while `name` holds a slug. Searching `name` there
-          # means typing the visible label ("Shirt Size") returns nothing.
+          # field — for an option type that is `label`, while `name` holds a
+          # slug. Searching `name` there means typing the visible label
+          # ("Shirt Size") returns nothing.
           #
           # Falls back to `name` when the displayed column is not ransackable,
           # since Ransack's defaults always carry it.
@@ -108,7 +108,7 @@ module Spree
           end
 
           # The internal column behind the record's displayed label, resolving
-          # any public-name alias (`label` -> `presentation`).
+          # any public-name alias.
           #
           # @return [String, nil]
           def displayed_column

@@ -341,9 +341,9 @@ RSpec.shared_examples 'an addresses host' do
       expect(
         record.update(
           bill_address_attributes: {
-            firstname: 'New name',
+            first_name: 'New name',
             **address.attributes.except(
-              'firstname', 'created_at', 'updated_at', 'deleted_at', 'quick_checkout',
+              'first_name', 'created_at', 'updated_at', 'deleted_at', 'quick_checkout',
               'metadata', 'latitude', 'longitude', 'preferences'
             )
           }
@@ -351,7 +351,7 @@ RSpec.shared_examples 'an addresses host' do
       ).to be_truthy
 
       expect(record.bill_address_id).not_to eq address.id
-      expect(record.bill_address.firstname).to eq 'New name'
+      expect(record.bill_address.first_name).to eq 'New name'
     end
   end
 end

@@ -80,11 +80,11 @@ RSpec.describe Spree::Api::V3::Admin::TranslationsController, type: :controller 
   end
 
   context 'when the parent has translatable children (option type → values)' do
-    let!(:option_type) { create(:option_type, name: 'size', presentation: 'Size') }
-    let!(:option_value) { create(:option_value, name: 'small', presentation: 'Small', option_type: option_type) }
+    let!(:option_type) { create(:option_type, name: 'size', label: 'Size') }
+    let!(:option_value) { create(:option_value, name: 'small', label: 'Small', option_type: option_type) }
 
     it 'nests each option value matrix under the option type translations' do
-      Mobility.with_locale(:de) { option_value.update!(presentation: 'Klein') }
+      Mobility.with_locale(:de) { option_value.update!(label: 'Klein') }
 
       get :index, params: { option_type_id: option_type.prefixed_id }, as: :json
 

@@ -415,7 +415,7 @@ describe Spree::Product, type: :model do
     context 'when a product type with option types is supplied' do
       def build_option_type_with_values(name, values)
         values.each_with_object(create(:option_type, name: name)) do |val, ot|
-          ot.option_values.create(name: val.downcase, presentation: val)
+          ot.option_values.create(name: val.downcase, label: val)
         end
       end
 

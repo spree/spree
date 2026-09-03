@@ -72,15 +72,15 @@ RSpec.describe Spree::Translations do
       expect(described_class.translated_counts(Spree::Product.all, Spree::Product, [])).to eq({})
     end
 
-    it 'uses the internal column for a publicly aliased field' do
-      option_type = create(:option_type, presentation: 'Color')
-      Mobility.with_locale(:de) { option_type.update!(presentation: 'Farbe') }
+    it 'uses the public field name when it is also the column' do
+      option_type = create(:option_type, label: 'Color')
+      Mobility.with_locale(:de) { option_type.update!(label: 'Farbe') }
 
       counts = described_class.translated_counts(
         Spree::OptionType.where(id: option_type.id), Spree::OptionType, %w[de]
       )
 
-      # `label` is the public name; the column it reads is `presentation`
+      # `label` is both the public name and the column
       expect(counts[option_type.id]['de']).to eq 1
     end
   end

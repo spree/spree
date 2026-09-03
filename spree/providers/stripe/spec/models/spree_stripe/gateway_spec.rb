@@ -341,12 +341,12 @@ RSpec.describe SpreeStripe::Gateway do
       let(:address) do
         create(
           :address,
-          firstname: 'Jane',
-          lastname: 'Zoe',
+          first_name: 'Jane',
+          last_name: 'Zoe',
           address1: '100 California Street',
           address2: nil,
           city: 'San Francisco',
-          zipcode: '94111',
+          postal_code: '94111',
           state: california_state,
           country: usa_country
         )
@@ -729,11 +729,11 @@ RSpec.describe SpreeStripe::Gateway do
         city: 'San Francisco',
         address1: '100 California Street',
         address2: 'Apt 1',
-        zipcode: '94111',
+        postal_code: '94111',
         state: california_state,
         country: usa_country,
-        firstname: 'John',
-        lastname: 'Doe',
+        first_name: 'John',
+        last_name: 'Doe',
         phone: '1234567890'
       )
     end
@@ -744,7 +744,7 @@ RSpec.describe SpreeStripe::Gateway do
         city: 'New York',
         address1: '100 Main Street',
         address2: 'Apt 2',
-        zipcode: '10001',
+        postal_code: '10001',
         state: new_york_state,
         country: usa_country
       )
@@ -852,11 +852,11 @@ RSpec.describe SpreeStripe::Gateway do
         city: 'San Francisco',
         address1: '200 California Street',
         address2: 'Apt 11',
-        zipcode: '94112',
+        postal_code: '94112',
         state: california_state,
         country: usa_country,
-        firstname: 'John',
-        lastname: 'Doe'
+        first_name: 'John',
+        last_name: 'Doe'
       )
     end
 
@@ -866,7 +866,7 @@ RSpec.describe SpreeStripe::Gateway do
         city: 'New York',
         address1: '200 Main Street',
         address2: 'Apt 22',
-        zipcode: '10002',
+        postal_code: '10002',
         state: new_york_state,
         country: usa_country
       )

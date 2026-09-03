@@ -8,10 +8,9 @@ module Spree
     include Spree::UniqueName
     include Spree::HasCustomFields
     include Spree::Metadata
-    # presentation column, exposed publicly as `label` + translated via Mobility.
-    include Spree::PresentationTranslatable
+    include Spree::LabelTranslatable
 
-    TRANSLATABLE_FIELDS = Spree::PresentationTranslatable::TRANSLATABLE_FIELDS
+    TRANSLATABLE_FIELDS = Spree::LabelTranslatable::TRANSLATABLE_FIELDS
 
     # Option values are translated alongside their type — the translations
     # endpoint nests their matrices so the editor fetches both in one read.
@@ -19,17 +18,13 @@ module Spree
       :option_values
     end
 
-    self::Translation.class_eval do
-      normalizes :presentation, with: ->(value) { value&.to_s&.squish&.presence }
-    end
-
     #
     # Magic methods
     #
     self.whitelisted_ransackable_scopes = %w[search_by_name]
-    # `presentation` is what admin surfaces display (as `label`), so it has to
-    # be filterable — matching Spree::OptionValue, which already allows it.
-    self.whitelisted_ransackable_attributes = %w[presentation]
+    # `label` is what admin surfaces display, so it has to be filterable —
+    # matching Spree::OptionValue, which already allows it.
+    self.whitelisted_ransackable_attributes = %w[label]
     acts_as_list
 
     #
@@ -49,13 +44,10 @@ module Spree
     has_many :option_type_product_types, class_name: 'Spree::OptionTypeProductType', dependent: :destroy
     has_many :product_types, through: :option_type_product_types, class_name: 'Spree::ProductType'
 
-    # 5.5 API naming bridge (`label` → `presentation`) lives in
-    # Spree::PresentationTranslatable.
-
     #
     # Validations
     #
-    validates :presentation, presence: true
+    validates :label, presence: true
     validates :kind, presence: true, inclusion: { in: KINDS }
 
     #
@@ -68,14 +60,14 @@ module Spree
     # Attributes
     #
     accepts_nested_attributes_for :option_values, reject_if: lambda { |ov|
-      ov[:id].blank? && (ov[:name].blank? || ov[:presentation].blank?)
+      ov[:id].blank? && (ov[:name].blank? || ov[:label].blank?)
     }, allow_destroy: true
 
     #
     # Callbacks
     #
     after_touch :touch_all_products
-    after_update :touch_all_products, if: -> { saved_changes.key?(:presentation) }
+    after_update :touch_all_products, if: -> { saved_changes.key?(:label) }
     after_destroy :touch_all_products
 
     def color_swatch?

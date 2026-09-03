@@ -38,13 +38,13 @@ module Spree
           user.save! if user.new_record?
 
           address = user.bill_address || user.addresses.build
-          address.firstname = attributes['first_name'].presence || user.first_name
-          address.lastname = attributes['last_name'].presence || user.last_name
+          address.first_name = attributes['first_name'].presence || user.first_name
+          address.last_name = attributes['last_name'].presence || user.last_name
           address.company = attributes['company'].strip if attributes['company'].present?
           address.address1 = attributes['address1'].strip if attributes['address1'].present?
           address.address2 = attributes['address2'].strip if attributes['address2'].present?
           address.city = attributes['city'].strip if attributes['city'].present?
-          address.zipcode = attributes['zip'].strip if attributes['zip'].present?
+          address.postal_code = attributes['zip'].strip if attributes['zip'].present?
           address.phone = attributes['phone'].presence || user.phone
 
           if attributes['country_code'].present?

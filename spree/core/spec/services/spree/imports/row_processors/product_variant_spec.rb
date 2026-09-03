@@ -130,8 +130,8 @@ RSpec.describe Spree::Imports::RowProcessors::ProductVariant, type: :service do
       # Pre-create the product and associate to the store
       p = create(:product, slug: 'denim-shirt', name: 'Denim Shirt')
       # Add Color and Size option types
-      color = create(:option_type, name: 'color', presentation: 'Color')
-      size = create(:option_type, name: 'size', presentation: 'Size')
+      color = create(:option_type, name: 'color', label: 'Color')
+      size = create(:option_type, name: 'size', label: 'Size')
       p.option_types << color
       p.option_types << size
       p
@@ -158,15 +158,15 @@ RSpec.describe Spree::Imports::RowProcessors::ProductVariant, type: :service do
       expect(variant.sku).to eq 'DENIM-SHIRT-XS-BLUE'
       expect(variant.price_in('USD').amount.to_f).to eq 62.99
 
-      expect(variant.option_values.map(&:presentation).sort).to contain_exactly('Blue', 'XS')
+      expect(variant.option_values.map(&:label).sort).to contain_exactly('Blue', 'XS')
 
       # Option values should exist for those names
       color_option_type = Spree::OptionType.search_by_name('Color').first
       size_option_type = Spree::OptionType.search_by_name('Size').first
       expect(color_option_type).to be_present
       expect(size_option_type).to be_present
-      expect(color_option_type.option_values.find_by(presentation: 'Blue')).to be_present
-      expect(size_option_type.option_values.find_by(presentation: 'XS')).to be_present
+      expect(color_option_type.option_values.find_by(label: 'Blue')).to be_present
+      expect(size_option_type.option_values.find_by(label: 'XS')).to be_present
     end
 
     context 'when a concurrent worker has already created the option type/value' do
@@ -184,7 +184,7 @@ RSpec.describe Spree::Imports::RowProcessors::ProductVariant, type: :service do
 
       it 'recovers from the AR uniqueness validator and reuses existing records' do
         expect { subject.process! }.not_to raise_error
-        expect(variant.option_values.map(&:presentation).sort).to contain_exactly('Blue', 'XS')
+        expect(variant.option_values.map(&:label).sort).to contain_exactly('Blue', 'XS')
         expect(Spree::OptionType.where(name: 'color').count).to eq 1
         expect(Spree::OptionType.where(name: 'size').count).to eq 1
       end
@@ -194,8 +194,8 @@ RSpec.describe Spree::Imports::RowProcessors::ProductVariant, type: :service do
         # the INSERT collides at the DB once the peer commits. Pre-create the peer rows
         # so find_by!/search_by_name can locate them on retry.
         # Option values are pre-created, so search_by_name naturally finds them.
-        let!(:color_blue) { create(:option_value, name: 'Blue', presentation: 'Blue', option_type: Spree::OptionType.find_by(name: 'color')) }
-        let!(:size_xs) { create(:option_value, name: 'XS', presentation: 'XS', option_type: Spree::OptionType.find_by(name: 'size')) }
+        let!(:color_blue) { create(:option_value, name: 'Blue', label: 'Blue', option_type: Spree::OptionType.find_by(name: 'color')) }
+        let!(:size_xs) { create(:option_value, name: 'XS', label: 'XS', option_type: Spree::OptionType.find_by(name: 'size')) }
 
         before do
           allow(Spree::OptionType).to receive(:create!).and_raise(ActiveRecord::RecordNotUnique)
@@ -203,7 +203,7 @@ RSpec.describe Spree::Imports::RowProcessors::ProductVariant, type: :service do
 
         it 'recovers and reuses existing records' do
           expect { subject.process! }.not_to raise_error
-          expect(variant.option_values.map(&:presentation).sort).to contain_exactly('Blue', 'XS')
+          expect(variant.option_values.map(&:label).sort).to contain_exactly('Blue', 'XS')
           expect(Spree::OptionType.where(name: 'color').count).to eq 1
           expect(Spree::OptionType.where(name: 'size').count).to eq 1
           expect(Spree::OptionValue.where(name: 'blue').count).to eq 1
@@ -223,21 +223,21 @@ RSpec.describe Spree::Imports::RowProcessors::ProductVariant, type: :service do
 
         it 'recovers and reuses the existing product option type' do
           expect { subject.process! }.not_to raise_error
-          expect(variant.option_values.map(&:presentation).sort).to contain_exactly('Blue', 'XS')
+          expect(variant.option_values.map(&:label).sort).to contain_exactly('Blue', 'XS')
         end
       end
     end
 
     context 'when importing a variant row for existing variant' do
-      let(:color_option_type) { Spree::OptionType.find_by(name: 'color') || create(:option_type, name: 'color', presentation: 'Color') }
-      let(:size_option_type) { Spree::OptionType.find_by(name: 'size') || create(:option_type, name: 'size', presentation: 'Size') }
-      let(:blue_option_value) { create(:option_value, name: 'Blue', presentation: 'Blue', option_type: color_option_type) }
-      let(:xs_option_value) { create(:option_value, name: 'XS', presentation: 'XS', option_type: size_option_type) }
+      let(:color_option_type) { Spree::OptionType.find_by(name: 'color') || create(:option_type, name: 'color', label: 'Color') }
+      let(:size_option_type) { Spree::OptionType.find_by(name: 'size') || create(:option_type, name: 'size', label: 'Size') }
+      let(:blue_option_value) { create(:option_value, name: 'Blue', label: 'Blue', option_type: color_option_type) }
+      let(:xs_option_value) { create(:option_value, name: 'XS', label: 'XS', option_type: size_option_type) }
       let!(:variant) { create(:variant, product: product, sku: 'DENIM-SHIRT-XS-BLUE', price: 50.99, option_values: [blue_option_value, xs_option_value]) }
 
       it 'updates the variant' do
         expect { subject.process! }.to change { variant.reload.amount_in(variant.cost_currency) }.from(50.99).to(62.99)
-        expect(variant.option_values.map(&:presentation).sort).to contain_exactly('Blue', 'XS')
+        expect(variant.option_values.map(&:label).sort).to contain_exactly('Blue', 'XS')
       end
 
       context 'when updating inventory values' do
@@ -264,8 +264,8 @@ RSpec.describe Spree::Imports::RowProcessors::ProductVariant, type: :service do
   end
 
   context 'when importing price-only rows in a different currency' do
-    let(:color_option_type) { create(:option_type, name: 'color', presentation: 'Color') }
-    let(:blue_option_value) { create(:option_value, name: 'Blue', presentation: 'Blue', option_type: color_option_type) }
+    let(:color_option_type) { create(:option_type, name: 'color', label: 'Color') }
+    let(:blue_option_value) { create(:option_value, name: 'Blue', label: 'Blue', option_type: color_option_type) }
 
     let!(:product) do
       p = create(:product, slug: 'denim-shirt', name: 'Denim Shirt')
@@ -301,7 +301,7 @@ RSpec.describe Spree::Imports::RowProcessors::ProductVariant, type: :service do
 
     it 'preserves option values on the variant' do
       subject.process!
-      expect(existing_variant.reload.option_values.map(&:presentation)).to eq ['Blue']
+      expect(existing_variant.reload.option_values.map(&:label)).to eq ['Blue']
     end
 
     it 'preserves product taxons' do
@@ -385,12 +385,12 @@ RSpec.describe Spree::Imports::RowProcessors::ProductVariant, type: :service do
     it 'creates a new option type and value as needed' do
       expect do
         subject.process!
-      end.to change { Spree::OptionType.where(presentation: 'Finish').count }.by(1)
-        .and change { Spree::OptionValue.where(presentation: 'Green').count }.by(1)
+      end.to change { Spree::OptionType.where(label: 'Finish').count }.by(1)
+        .and change { Spree::OptionValue.where(label: 'Green').count }.by(1)
 
       variant = subject.process!
 
-      expect(variant.option_values.map(&:presentation)).to include('Green')
+      expect(variant.option_values.map(&:label)).to include('Green')
     end
   end
 
@@ -421,8 +421,8 @@ RSpec.describe Spree::Imports::RowProcessors::ProductVariant, type: :service do
     let!(:product) do
       create(:product, slug: 'denim-shirt', name: 'Denim Shirt')
     end
-    let!(:option_type) { create(:option_type, name: 'color', presentation: 'Color') }
-    let!(:option_value) { create(:option_value, name: 'blue', presentation: 'Blue', option_type: option_type) }
+    let!(:option_type) { create(:option_type, name: 'color', label: 'Color') }
+    let!(:option_value) { create(:option_value, name: 'blue', label: 'Blue', option_type: option_type) }
 
     let(:row_data) do
       csv_row_hash(
@@ -441,7 +441,7 @@ RSpec.describe Spree::Imports::RowProcessors::ProductVariant, type: :service do
         .to have_enqueued_job(Spree::Images::SaveFromUrlJob).exactly(1).times
 
       created_variant = result
-      expect(created_variant.option_values.map(&:presentation)).to contain_exactly('Blue')
+      expect(created_variant.option_values.map(&:label)).to contain_exactly('Blue')
       expect(Spree::Images::SaveFromUrlJob).to have_been_enqueued
         .with(product.id, 'Spree::Product', row_data['image1_src'], nil, nil, created_variant.id)
     end
@@ -975,7 +975,7 @@ RSpec.describe Spree::Imports::RowProcessors::ProductVariant, type: :service do
       let!(:clothing_tax) { create(:tax_category, name: 'Clothing') }
       let!(:product) do
         p = create(:product, slug: 'denim-shirt', name: 'Denim Shirt')
-        color = create(:option_type, name: 'color', presentation: 'Color')
+        color = create(:option_type, name: 'color', label: 'Color')
         p.option_types << color
         p
       end
@@ -993,7 +993,7 @@ RSpec.describe Spree::Imports::RowProcessors::ProductVariant, type: :service do
       end
 
       it 'assigns the tax category to the option variant' do
-        expect(variant.option_values.map(&:presentation)).to contain_exactly('Blue')
+        expect(variant.option_values.map(&:label)).to contain_exactly('Blue')
         expect(variant.tax_category).to eq clothing_tax
       end
     end

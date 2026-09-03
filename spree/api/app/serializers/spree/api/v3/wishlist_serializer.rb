@@ -14,7 +14,7 @@ module Spree
           wishlist.is_private?
         end
 
-        many :wished_items,
+        many :wishlist_items,
              key: :items,
              resource: proc { Spree.api.wishlist_item_serializer },
              if: proc { expand?('items') }

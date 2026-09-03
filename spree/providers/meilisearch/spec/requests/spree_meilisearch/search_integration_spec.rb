@@ -23,12 +23,12 @@ RSpec.describe 'Meilisearch Integration', type: :controller, if: ENV['MEILISEARC
   let(:shoes_category) { create(:category, name: 'Shoes') }
 
   # Option types
-  let(:color_option) { create(:option_type, name: 'color', presentation: 'Color', filterable: true) }
-  let(:size_option) { create(:option_type, name: 'size', presentation: 'Size', filterable: true) }
-  let(:red) { create(:option_value, option_type: color_option, name: 'red', presentation: 'Red') }
-  let(:blue) { create(:option_value, option_type: color_option, name: 'blue', presentation: 'Blue') }
-  let(:small) { create(:option_value, option_type: size_option, name: 'small', presentation: 'S') }
-  let(:large) { create(:option_value, option_type: size_option, name: 'large', presentation: 'L') }
+  let(:color_option) { create(:option_type, name: 'color', label: 'Color', filterable: true) }
+  let(:size_option) { create(:option_type, name: 'size', label: 'Size', filterable: true) }
+  let(:red) { create(:option_value, option_type: color_option, name: 'red', label: 'Red') }
+  let(:blue) { create(:option_value, option_type: color_option, name: 'blue', label: 'Blue') }
+  let(:small) { create(:option_value, option_type: size_option, name: 'small', label: 'S') }
+  let(:large) { create(:option_value, option_type: size_option, name: 'large', label: 'L') }
 
   # create(:product) seeds an option-less placeholder default variant priced by
   # the factory. Once real option variants exist that placeholder is meaningless
@@ -236,10 +236,10 @@ RSpec.describe 'Meilisearch Integration', type: :controller, if: ENV['MEILISEARC
       # than as its pairs.
       context 'with a third option type' do
         let(:condition_option) do
-          create(:option_type, name: 'condition', presentation: 'Condition', filterable: true)
+          create(:option_type, name: 'condition', label: 'Condition', filterable: true)
         end
-        let(:used) { create(:option_value, option_type: condition_option, name: 'used', presentation: 'Used') }
-        let(:brand_new) { create(:option_value, option_type: condition_option, name: 'new', presentation: 'New') }
+        let(:used) { create(:option_value, option_type: condition_option, name: 'used', label: 'Used') }
+        let(:brand_new) { create(:option_value, option_type: condition_option, name: 'new', label: 'New') }
 
         let!(:three_axis_shirt) do
           p = create(:product, name: 'Three Axis Shirt', status: 'active', store: store,

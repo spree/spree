@@ -96,9 +96,9 @@ describe Spree::Product, type: :model do
     end
 
     it 'answers per option combination, so used and new have their own winners' do
-      condition = create(:option_type, name: 'condition', presentation: 'Condition')
-      used = create(:option_value, option_type: condition, name: 'used', presentation: 'Used')
-      new_value = create(:option_value, option_type: condition, name: 'new', presentation: 'New')
+      condition = create(:option_type, name: 'condition', label: 'Condition')
+      used = create(:option_value, option_type: condition, name: 'used', label: 'Used')
+      new_value = create(:option_value, option_type: condition, name: 'new', label: 'New')
 
       used_variant = create(:variant, product: product, seller: seller, sku: 'U-1', price: 4,
                                       option_values: [used])

@@ -202,10 +202,12 @@ module Spree
     self.whitelisted_ransackable_attributes = ['number']
 
     extend DisplayMoney
-    money_methods :cost, :discounted_cost, :final_price, :item_cost, :additional_tax_total, :included_tax_total, :tax_total, :promo_total
+    money_methods :cost, :discounted_cost, :final_price, :item_cost, :additional_tax_total, :included_tax_total, :tax_total, :discount_total
     alias display_amount display_cost
-    alias_attribute :discount_total, :promo_total
-    alias display_discount_total display_promo_total
+    # Standardized column name (renamed in 6.0); the legacy reader stays one
+    # release.
+    alias_attribute :promo_total, :discount_total
+    alias display_promo_total display_discount_total
 
     normalizes :tracking, with: ->(value) { value&.to_s&.squish&.presence }
 
@@ -299,7 +301,7 @@ module Spree
     end
 
     def discounted_cost
-      cost + promo_total
+      cost + discount_total
     end
     alias discounted_amount discounted_cost
 

@@ -164,7 +164,7 @@ module Spree
             adjustable,
             taxable_adjustment_total: rows.sum(&:amount),
             non_taxable_adjustment_total: fee_rows.sum(&:amount),
-            promo_total: rows.select(&:promotion?).sum(&:amount)
+            discount_total: rows.select(&:promotion?).sum(&:amount)
           )
         end
       end

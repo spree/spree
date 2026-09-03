@@ -1,7 +1,7 @@
 FactoryBot.define do
   factory :address, aliases: [:bill_address, :ship_address], class: Spree::Address do
-    firstname         { 'John' }
-    lastname          { 'Doe' }
+    first_name         { 'John' }
+    last_name          { 'Doe' }
     company           { 'Company' }
     sequence(:address1) { |n| "#{n} Lovely Street" }
     address2          { 'Northwest' }
@@ -41,7 +41,7 @@ FactoryBot.define do
     # Countries now carry their real postal formats, so a US ZIP would be
     # rejected everywhere else. Specs that care about a particular code pass
     # one; the rest just need something the country accepts.
-    zipcode { Spree::TestingSupport::CountryPool.postal_code_for(country&.iso) }
+    postal_code { Spree::TestingSupport::CountryPool.postal_code_for(country&.iso) }
 
     after(:build) do |address, evaluator|
       owner = evaluator.customer || evaluator.user
@@ -52,8 +52,8 @@ FactoryBot.define do
     # for follows from its owner, so naming one is the whole difference.
     factory :business_address do
       association :owner, factory: :seller
-      firstname { nil }
-      lastname  { nil }
+      first_name { nil }
+      last_name  { nil }
       company   { 'Acme Industrial' }
     end
   end

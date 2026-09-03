@@ -237,7 +237,7 @@ module SpreeStripe
             country: ship_address.country_code,
             line1: ship_address.address1,
             line2: ship_address.address2,
-            postal_code: ship_address.zipcode,
+            postal_code: ship_address.postal_code,
             state: ship_address.state_code
           },
           name: ship_address.full_name
@@ -289,7 +289,7 @@ module SpreeStripe
         owner.bill_address.address1 ||= address.line1
         owner.bill_address.address2 ||= address.line2
         owner.bill_address.city ||= address.city
-        owner.bill_address.zipcode ||= address.postal_code
+        owner.bill_address.postal_code ||= address.postal_code
 
         # Stripe sends whatever the wallet had — a code or a full name — so it
         # is resolved to a current subdivision code. The free-text state_name

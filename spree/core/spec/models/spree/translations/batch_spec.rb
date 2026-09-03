@@ -2,8 +2,8 @@ require 'spec_helper'
 
 RSpec.describe Spree::Translations::Batch do
   let(:store) { @default_store }
-  let!(:option_type) { create(:option_type, name: 'size', presentation: 'Size') }
-  let!(:option_value) { create(:option_value, name: 'small', presentation: 'Small', option_type: option_type) }
+  let!(:option_type) { create(:option_type, name: 'size', label: 'Size') }
+  let!(:option_value) { create(:option_value, name: 'small', label: 'Small', option_type: option_type) }
 
   before do
     store.update!(supported_locales: 'en,de,fr')
@@ -25,8 +25,8 @@ RSpec.describe Spree::Translations::Batch do
 
       expect(records).to contain_exactly(option_type, option_value)
       Mobility.with_locale(:de) do
-        expect(option_type.reload.presentation).to eq('Größe')
-        expect(option_value.reload.presentation).to eq('Klein')
+        expect(option_type.reload.label).to eq('Größe')
+        expect(option_value.reload.label).to eq('Klein')
       end
     end
 
@@ -39,8 +39,8 @@ RSpec.describe Spree::Translations::Batch do
 
       expect { batch.process! }.to raise_error(described_class::EntryError) { |e| expect(e.index).to eq(1) }
       # The de write rolled back — no German translation persisted.
-      Mobility.with_locale(:de) { expect(option_type.reload.presentation(fallback: false)).to be_nil }
-      expect(option_type.presentation).to eq('Size')
+      Mobility.with_locale(:de) { expect(option_type.reload.label(fallback: false)).to be_nil }
+      expect(option_type.label).to eq('Size')
     end
 
     it 'raises EntryError with the index for an unknown resource type' do

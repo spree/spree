@@ -11,7 +11,7 @@ RSpec.describe SpreeStripe::CustomerPresenter do
       address1: '100 California Street',
       address2: 'Apt 1',
       city: 'San Francisco',
-      zipcode: '94111',
+      postal_code: '94111',
       country: Spree::Country.by_iso('US'),
       state: Spree::Country.by_iso('US').states.find { |state| state.abbr == 'CA' }
     )

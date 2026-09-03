@@ -15,15 +15,15 @@ module Spree
           end
 
           def parent_association
-            :wished_items
+            :wishlist_items
           end
 
           def model_class
-            Spree::WishedItem
+            Spree::WishlistItem
           end
 
           def serializer_class
-            Spree.api.wished_item_serializer
+            Spree.api.wishlist_item_serializer
           end
 
           def resource_permitted_attributes

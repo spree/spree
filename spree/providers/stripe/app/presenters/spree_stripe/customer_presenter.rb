@@ -27,7 +27,7 @@ module SpreeStripe
         city: address.city,
         line1: address.address1,
         line2: address.address2,
-        postal_code: address.zipcode,
+        postal_code: address.postal_code,
         country: address.country_code,
         state: address.state_code.presence || address.state_name_text
       }

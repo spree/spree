@@ -7,8 +7,8 @@ RSpec.describe 'Admin Translations Batch API', type: :request, swagger_doc: 'api
 
   let(:Authorization) { "Bearer #{admin_jwt_token}" }
 
-  let!(:option_type) { create(:option_type, name: 'size', presentation: 'Size') }
-  let!(:option_value) { create(:option_value, name: 'small', presentation: 'Small', option_type: option_type) }
+  let!(:option_type) { create(:option_type, name: 'size', label: 'Size') }
+  let!(:option_value) { create(:option_value, name: 'small', label: 'Small', option_type: option_type) }
 
   before { configure_supported_locales(store, %w[en de fr]) }
 
@@ -60,7 +60,7 @@ RSpec.describe 'Admin Translations Batch API', type: :request, swagger_doc: 'api
         run_test! do |response|
           data = JSON.parse(response.body)['data']
           expect(data.size).to eq(2)
-          Mobility.with_locale(:de) { expect(option_type.reload.presentation).to eq('Größe') }
+          Mobility.with_locale(:de) { expect(option_type.reload.label).to eq('Größe') }
         end
       end
 

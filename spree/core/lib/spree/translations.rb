@@ -146,7 +146,7 @@ module Spree
     end
 
     # Public field names, so the matrix read/write keys match the serializer
-    # (e.g. OptionType exposes `label`, not the internal `presentation`).
+    # (e.g. a model whose column has a legacy name).
     def field_keys(record)
       record.class.public_translatable_fields.map(&:to_s)
     end
@@ -223,7 +223,7 @@ module Spree
 
     # Translation-table columns for the model's translatable fields, mapped from
     # the PUBLIC field names to the internal ones (OptionType exposes `label`,
-    # the column is `presentation`).
+    # the column has a legacy name).
     def internal_field_columns(klass)
       aliases = klass.translatable_field_aliases
       klass.public_translatable_fields.map { |field| (aliases[field] || field).to_s }

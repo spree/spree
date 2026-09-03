@@ -119,7 +119,7 @@ RSpec.describe SpreeEasyPost::DeliveryRateProvider do
       expect(estimates.size).to eq(2)
       # The destination must be the CART's address — the regression had it
       # reading a stranger order's (nil) address instead.
-      expect(sent_to_address[:zip]).to eq(cart.ship_address.zipcode)
+      expect(sent_to_address[:zip]).to eq(cart.ship_address.postal_code)
     end
 
     it 'declines to quote when the owner has no ship address yet' do

@@ -6,8 +6,8 @@ RSpec.describe Spree::Api::V3::Admin::Translations::BatchesController, type: :co
   include_context 'API v3 Admin authenticated'
 
   let!(:product) { create(:product, name: 'Espresso Machine', store: store) }
-  let!(:option_type) { create(:option_type, name: 'size', presentation: 'Size') }
-  let!(:option_value) { create(:option_value, name: 'small', presentation: 'Small', option_type: option_type) }
+  let!(:option_type) { create(:option_type, name: 'size', label: 'Size') }
+  let!(:option_value) { create(:option_value, name: 'small', label: 'Small', option_type: option_type) }
 
   before do
     configure_supported_locales(store, %w[en de fr])
@@ -29,8 +29,8 @@ RSpec.describe Spree::Api::V3::Admin::Translations::BatchesController, type: :co
 
       Mobility.with_locale(:de) do
         expect(product.reload.name).to eq('Espressomaschine')
-        expect(option_type.reload.presentation).to eq('Größe')
-        expect(option_value.reload.presentation).to eq('Klein')
+        expect(option_type.reload.label).to eq('Größe')
+        expect(option_value.reload.label).to eq('Klein')
       end
     end
 
@@ -44,7 +44,7 @@ RSpec.describe Spree::Api::V3::Admin::Translations::BatchesController, type: :co
       }, as: :json
 
       expect(response).to have_http_status(:unprocessable_content)
-      Mobility.with_locale(:de) { expect(option_type.reload.presentation).to eq('Size') }
+      Mobility.with_locale(:de) { expect(option_type.reload.label).to eq('Size') }
     end
 
     it 'reports the offending entry index for an unknown resource type' do

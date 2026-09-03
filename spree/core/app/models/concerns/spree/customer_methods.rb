@@ -66,7 +66,7 @@ module Spree
       has_many :completed_order_line_items, through: :completed_orders, source: :line_items, class_name: 'Spree::LineItem'
       has_many :digital_links, through: :completed_order_line_items, source: :digital_links, class_name: 'Spree::DigitalLink'
       has_many :wishlists, class_name: 'Spree::Wishlist', foreign_key: :customer_id, dependent: :destroy
-      has_many :wished_items, through: :wishlists, source: :wished_items
+      has_many :wishlist_items, through: :wishlists, source: :wishlist_items
       has_many :gateway_customers, class_name: 'Spree::GatewayCustomer', foreign_key: :customer_id
       has_many :gift_cards, class_name: 'Spree::GiftCard', foreign_key: :customer_id, dependent: :destroy
       has_many :customer_group_users, class_name: 'Spree::CustomerGroupUser', as: :customer, dependent: :destroy
@@ -210,13 +210,13 @@ module Spree
 
       def self.with_address(query, address = :ship_address)
         left_outer_joins(address).
-          where("#{Spree::Address.table_name}.firstname like ?", "%#{query}%").
-          or(left_outer_joins(address).where("#{Spree::Address.table_name}.lastname like ?", "%#{query}%"))
+          where("#{Spree::Address.table_name}.first_name like ?", "%#{query}%").
+          or(left_outer_joins(address).where("#{Spree::Address.table_name}.last_name like ?", "%#{query}%"))
       end
 
       def self.with_email_or_address(email, address)
         left_outer_joins(:addresses).
-          where("#{Spree::Address.table_name}.firstname LIKE ? or #{Spree::Address.table_name}.lastname LIKE ? or #{table_name}.email LIKE ?",
+          where("#{Spree::Address.table_name}.first_name LIKE ? or #{Spree::Address.table_name}.last_name LIKE ? or #{table_name}.email LIKE ?",
                 "%#{address}%", "%#{address}%", "%#{email}%")
       end
 
