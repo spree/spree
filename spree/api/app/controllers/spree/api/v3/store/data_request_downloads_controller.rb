@@ -20,7 +20,12 @@ module Spree
 
           # GET /api/v3/store/data_requests/:token/download
           def show
-            data_request = Spree::DataRequest.find_by(download_token: params[:token])
+            # Guarded rather than trusting the route to reject an empty
+            # segment: erasure clears the token, and a blank lookup matching a
+            # cleared row would hand back the very export it was meant to
+            # withdraw.
+            token = params[:token].presence
+            data_request = token && Spree::DataRequest.find_by(download_token: token)
 
             unless data_request&.downloadable?
               return render_error(

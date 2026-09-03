@@ -309,6 +309,32 @@ RSpec.describe Spree::Customers::Anonymize do
     end
   end
 
+  # Each finished export is a complete copy of everything being erased, behind
+  # a link that stays live for days. Leaving it would make the erasure a
+  # formality.
+  describe 'exports produced before the erasure' do
+    let(:data_request) { create(:data_request, store: store, customer: customer) }
+
+    before { Spree::DataRequests::Fulfill.call(data_request: data_request) }
+
+    it 'stops being downloadable' do
+      expect { result }.to change { data_request.reload.downloadable? }.from(true).to(false)
+    end
+
+    it 'drops the token, so a link already emailed stops resolving' do
+      result
+
+      expect(data_request.reload.download_token).to be_nil
+    end
+
+    it 'keeps the record that the request was answered' do
+      result
+
+      expect(data_request.reload).to be_completed
+      expect(data_request.requested_at).to be_present
+    end
+  end
+
   it 'announces the erasure' do
     expect(customer).to receive(:publish_event).with('customer.anonymized', hash_including(:store_id))
 

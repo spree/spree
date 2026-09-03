@@ -230,8 +230,24 @@ module Spree
       # it answered one — but the address on it is the very thing being
       # erased, so it becomes the anonymized one.
       def anonymize_data_requests
-        Spree::DataRequest.where(customer_id: customer.id).
-          update_all(email: customer.email, updated_at: Time.current)
+        requests = Spree::DataRequest.where(customer_id: customer.id)
+
+        # The export files are the erasure's blind spot: each one is a
+        # complete copy of everything being erased, sitting behind a link that
+        # stays live for days. Rewriting the row's email would leave the
+        # payload itself untouched and still fetchable.
+        requests.each do |data_request|
+          data_request.export_file.purge_later if data_request.export_file.attached?
+        end
+
+        # The token goes too, so a link already emailed stops resolving rather
+        # than waiting out its expiry.
+        requests.update_all(
+          email: customer.email,
+          download_token: nil,
+          expires_at: nil,
+          updated_at: Time.current
+        )
       end
 
       # Matched by email as well as by customer: guest checkout subscribes with
