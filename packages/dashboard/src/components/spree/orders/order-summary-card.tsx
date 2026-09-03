@@ -71,8 +71,12 @@ export function OrderSummaryCard({ order }: { order: Order }) {
           />
         )}
 
+        {/* Set apart from the timestamps above: a cancellation is its own
+            story — when, who, why — and four rows of it run together with the
+            order's own dates otherwise. */}
         {order.canceled_at && (
           <>
+            <Separator />
             <SummaryRow
               label={t('admin.orders.detail.summary.canceled_at')}
               value={formatDate(order.canceled_at)}
@@ -81,6 +85,18 @@ export function OrderSummaryCard({ order }: { order: Order }) {
               <SummaryRow
                 label={t('admin.orders.detail.summary.canceler')}
                 value={order.canceler.full_name || order.canceler.email}
+              />
+            )}
+            {order.cancel_reason_name && (
+              <SummaryRow
+                label={t('admin.orders.detail.summary.cancel_reason')}
+                value={order.cancel_reason_name}
+              />
+            )}
+            {order.cancel_note && (
+              <SummaryRow
+                label={t('admin.orders.detail.summary.cancel_note')}
+                value={order.cancel_note}
               />
             )}
           </>

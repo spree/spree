@@ -13041,6 +13041,7 @@ paths:
                 payment_total: '0.0'
                 display_payment_total: "$0.00"
                 metadata: {}
+                cancel_note:
                 canceled_at:
                 approved_at:
                 created_at: '2026-01-15T12:00:00.000Z'
@@ -13054,6 +13055,8 @@ paths:
                 internal_note_html:
                 approver_id:
                 canceler_id:
+                cancel_reason_id:
+                cancel_reason_name:
                 created_by_id:
                 customer_id: cust_UkLWZg9DAJ
       requestBody:
@@ -13290,6 +13293,7 @@ paths:
                   payment_total: '0.0'
                   display_payment_total: "$0.00"
                   metadata: {}
+                  cancel_note:
                   canceled_at:
                   approved_at:
                   created_at: '2026-01-15T12:00:00.000Z'
@@ -13303,6 +13307,8 @@ paths:
                   internal_note_html:
                   approver_id:
                   canceler_id:
+                  cancel_reason_id:
+                  cancel_reason_name:
                   created_by_id:
                   customer_id: cust_UkLWZg9DAJ
                 meta:
@@ -13516,6 +13522,7 @@ paths:
                 payment_total: '0.0'
                 display_payment_total: "$0.00"
                 metadata: {}
+                cancel_note:
                 canceled_at:
                 approved_at:
                 created_at: '2026-01-15T12:00:00.000Z'
@@ -13529,6 +13536,8 @@ paths:
                 internal_note_html:
                 approver_id:
                 canceler_id:
+                cancel_reason_id:
+                cancel_reason_name:
                 created_by_id: adm_UkLWZg9DAJ
                 customer_id:
       requestBody:
@@ -13775,6 +13784,7 @@ paths:
                 payment_total: '0.0'
                 display_payment_total: "$0.00"
                 metadata: {}
+                cancel_note:
                 canceled_at:
                 approved_at:
                 created_at: '2026-01-15T12:00:00.000Z'
@@ -13788,6 +13798,8 @@ paths:
                 internal_note_html:
                 approver_id:
                 canceler_id:
+                cancel_reason_id:
+                cancel_reason_name:
                 created_by_id:
                 customer_id: cust_UkLWZg9DAJ
         '404':
@@ -13922,6 +13934,7 @@ paths:
                 payment_total: '0.0'
                 display_payment_total: "$0.00"
                 metadata: {}
+                cancel_note:
                 canceled_at:
                 approved_at:
                 created_at: '2026-01-15T12:00:00.000Z'
@@ -13935,6 +13948,8 @@ paths:
                 internal_note_html:
                 approver_id:
                 canceler_id:
+                cancel_reason_id:
+                cancel_reason_name:
                 created_by_id:
                 customer_id: cust_UkLWZg9DAJ
       requestBody:
@@ -14181,6 +14196,7 @@ paths:
                 payment_total: '110.0'
                 display_payment_total: "$110.00"
                 metadata: {}
+                cancel_note:
                 canceled_at:
                 approved_at:
                 created_at: '2026-01-15T12:00:00.000Z'
@@ -14194,6 +14210,8 @@ paths:
                 internal_note_html:
                 approver_id:
                 canceler_id:
+                cancel_reason_id:
+                cancel_reason_name:
                 created_by_id:
                 customer_id: cust_UkLWZg9DAJ
         '422':
@@ -14229,6 +14247,9 @@ paths:
       description: |-
         Cancels a completed order.
 
+        `cancel_reason_id` records why, from the store's own cancellation-reason
+        vocabulary (`/admin/order_cancellation_reasons`), and `cancel_note` is a
+        staff-facing note; both are shown on the order afterwards.
         Set `notify_customer: true` to send the order cancellation email.
 
 
@@ -14340,6 +14361,7 @@ paths:
                 payment_total: '0.0'
                 display_payment_total: "$0.00"
                 metadata: {}
+                cancel_note:
                 canceled_at: '2026-01-15T12:00:00.000Z'
                 approved_at:
                 created_at: '2026-01-15T12:00:00.000Z'
@@ -14353,6 +14375,8 @@ paths:
                 internal_note_html:
                 approver_id:
                 canceler_id: adm_UkLWZg9DAJ
+                cancel_reason_id:
+                cancel_reason_name:
                 created_by_id:
                 customer_id: cust_UkLWZg9DAJ
       requestBody:
@@ -14361,6 +14385,13 @@ paths:
             schema:
               type: object
               properties:
+                cancel_reason_id:
+                  type: string
+                  description: Why the order was canceled — the id of one of the store's
+                    cancellation reasons.
+                cancel_note:
+                  type: string
+                  description: Staff-facing note about the cancellation.
                 notify_customer:
                   type: boolean
                   description: Send the order cancellation email after canceling.
@@ -14483,6 +14514,7 @@ paths:
                 payment_total: '0.0'
                 display_payment_total: "$0.00"
                 metadata: {}
+                cancel_note:
                 canceled_at:
                 approved_at: '2026-01-15T12:00:00.000Z'
                 created_at: '2026-01-15T12:00:00.000Z'
@@ -14496,6 +14528,8 @@ paths:
                 internal_note_html:
                 approver_id: adm_UkLWZg9DAJ
                 canceler_id:
+                cancel_reason_id:
+                cancel_reason_name:
                 created_by_id:
                 customer_id: cust_UkLWZg9DAJ
   "/api/v3/admin/orders/{id}/resume":
@@ -14617,6 +14651,7 @@ paths:
                 payment_total: '0.0'
                 display_payment_total: "$0.00"
                 metadata: {}
+                cancel_note:
                 canceled_at: '2026-01-15T12:00:00.000Z'
                 approved_at:
                 created_at: '2026-01-15T12:00:00.000Z'
@@ -14630,6 +14665,8 @@ paths:
                 internal_note_html:
                 approver_id:
                 canceler_id: adm_UkLWZg9DAJ
+                cancel_reason_id:
+                cancel_reason_name:
                 created_by_id:
                 customer_id: cust_UkLWZg9DAJ
   "/api/v3/admin/orders/{id}/resend_confirmation":
@@ -14751,6 +14788,7 @@ paths:
                 payment_total: '0.0'
                 display_payment_total: "$0.00"
                 metadata: {}
+                cancel_note:
                 canceled_at:
                 approved_at:
                 created_at: '2026-01-15T12:00:00.000Z'
@@ -14764,6 +14802,8 @@ paths:
                 internal_note_html:
                 approver_id:
                 canceler_id:
+                cancel_reason_id:
+                cancel_reason_name:
                 created_by_id:
                 customer_id: cust_UkLWZg9DAJ
   "/api/v3/admin/payment_methods":
@@ -19298,6 +19338,1462 @@ paths:
       responses:
         '204':
           description: policy deleted
+  "/api/v3/admin/claim_reasons":
+    get:
+      summary: List claim reasons
+      tags:
+      - Reasons
+      security:
+      - api_key: []
+        bearer_auth: []
+      description: |-
+        Why a customer raised a claim — what the merchant got wrong, rather than a change of mind.
+
+        The vocabulary is the merchant's own — seeded with a starting set and
+        edited from the dashboard. Inactive rows stay for the records that
+        already reference them, but are not offered on new ones.
+
+
+        **Required scope:** `read_settings` (for API-key authentication).
+      x-codeSamples:
+      - lang: javascript
+        label: Spree Admin SDK
+        source: |-
+          import { createAdminClient } from '@spree/admin-sdk'
+
+          const client = createAdminClient({
+            baseUrl: 'https://your-store.com',
+            secretKey: 'sk_xxx',
+          })
+
+          const { data: reasons } = await client.claimReasons.list()
+      - lang: bash
+        label: Spree CLI
+        source: spree api get /claim_reasons
+      parameters:
+      - name: x-spree-api-key
+        in: header
+        required: true
+        schema:
+          type: string
+      - name: Authorization
+        in: header
+        required: true
+        description: Bearer token for admin authentication
+        schema:
+          type: string
+      - name: page
+        in: query
+        required: false
+        description: Page number
+        schema:
+          type: integer
+      - name: limit
+        in: query
+        required: false
+        description: Number of records per page
+        schema:
+          type: integer
+      - name: q[name_cont]
+        in: query
+        required: false
+        description: Filter by name (contains)
+        schema:
+          type: string
+      - name: q[active_eq]
+        in: query
+        required: false
+        description: Filter by active flag
+        schema:
+          type: boolean
+      - name: sort
+        in: query
+        required: false
+        description: Sort by field. Prefix with `-` for descending (e.g., `-created_at`).
+        schema:
+          type: string
+      responses:
+        '200':
+          description: claim reasons found
+          content:
+            application/json:
+              example:
+                data:
+                - id: clr_UkLWZg9DAJ
+                  name: Arrived damaged
+                  active: true
+                  created_at: '2026-01-15T12:00:00.000Z'
+                  updated_at: '2026-01-15T12:00:00.000Z'
+                  can_be_deleted: true
+                meta:
+                  page: 1
+                  limit: 25
+                  count: 1
+                  pages: 1
+                  from: 1
+                  to: 1
+                  in: 1
+                  previous:
+                  next:
+        '401':
+          description: unauthorized
+          content:
+            application/json:
+              example:
+                error:
+                  code: authentication_required
+                  message: Authentication required
+              schema:
+                "$ref": "#/components/schemas/ErrorResponse"
+    post:
+      summary: Create a claim reason
+      tags:
+      - Reasons
+      security:
+      - api_key: []
+        bearer_auth: []
+      description: |-
+        Adds a claim reason to this store. Names are unique per store, ignoring case.
+
+        **Required scope:** `write_settings` (for API-key authentication).
+      x-codeSamples:
+      - lang: javascript
+        label: Spree Admin SDK
+        source: |-
+          import { createAdminClient } from '@spree/admin-sdk'
+
+          const client = createAdminClient({
+            baseUrl: 'https://your-store.com',
+            secretKey: 'sk_xxx',
+          })
+
+          const reason = await client.claimReasons.create({
+            name: 'Arrived damaged',
+          })
+      - lang: bash
+        label: Spree CLI
+        source: spree api post /claim_reasons -d '{"name":"Arrived damaged"}'
+      parameters:
+      - name: x-spree-api-key
+        in: header
+        required: true
+        schema:
+          type: string
+      - name: Authorization
+        in: header
+        required: true
+        description: Bearer token for admin authentication
+        schema:
+          type: string
+      responses:
+        '201':
+          description: claim reason created
+          content:
+            application/json:
+              example:
+                id: clr_gbHJdmfrXB
+                name: A new reason
+                active: true
+                created_at: '2026-01-15T12:00:00.000Z'
+                updated_at: '2026-01-15T12:00:00.000Z'
+                can_be_deleted: true
+        '422':
+          description: validation error
+          content:
+            application/json:
+              example:
+                error:
+                  code: validation_error
+                  message: Name can't be blank
+                  details:
+                    name:
+                    - can't be blank
+              schema:
+                "$ref": "#/components/schemas/ErrorResponse"
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+              - name
+              properties:
+                name:
+                  type: string
+                  example: Arrived damaged
+                active:
+                  type: boolean
+                  example: true
+                  description: Inactive reasons are hidden from the pickers on new
+                    records.
+  "/api/v3/admin/claim_reasons/{id}":
+    parameters:
+    - name: id
+      in: path
+      required: true
+      description: Claim reason ID
+      schema:
+        type: string
+    get:
+      summary: Get a claim reason
+      tags:
+      - Reasons
+      security:
+      - api_key: []
+        bearer_auth: []
+      description: |-
+        Returns a single claim reason by prefixed ID.
+
+        **Required scope:** `read_settings` (for API-key authentication).
+      x-codeSamples:
+      - lang: javascript
+        label: Spree Admin SDK
+        source: |-
+          import { createAdminClient } from '@spree/admin-sdk'
+
+          const client = createAdminClient({
+            baseUrl: 'https://your-store.com',
+            secretKey: 'sk_xxx',
+          })
+
+          const reason = await client.claimReasons.get('clr_UkLWZg9DAJ')
+      - lang: bash
+        label: Spree CLI
+        source: spree api get /claim_reasons/{id}
+      parameters:
+      - name: x-spree-api-key
+        in: header
+        required: true
+        schema:
+          type: string
+      - name: Authorization
+        in: header
+        required: true
+        description: Bearer token for admin authentication
+        schema:
+          type: string
+      responses:
+        '200':
+          description: claim reason found
+          content:
+            application/json:
+              example:
+                id: clr_UkLWZg9DAJ
+                name: Arrived damaged
+                active: true
+                created_at: '2026-01-15T12:00:00.000Z'
+                updated_at: '2026-01-15T12:00:00.000Z'
+                can_be_deleted: true
+        '404':
+          description: claim reason not found
+          content:
+            application/json:
+              example:
+                error:
+                  code: record_not_found
+                  message: Claim reason not found
+              schema:
+                "$ref": "#/components/schemas/ErrorResponse"
+    patch:
+      summary: Update a claim reason
+      tags:
+      - Reasons
+      security:
+      - api_key: []
+        bearer_auth: []
+      description: |-
+        Renames a claim reason or retires it. Deactivating keeps it on the records
+        that already carry it while removing it from the pickers.
+
+
+        **Required scope:** `write_settings` (for API-key authentication).
+      x-codeSamples:
+      - lang: javascript
+        label: Spree Admin SDK
+        source: |-
+          import { createAdminClient } from '@spree/admin-sdk'
+
+          const client = createAdminClient({
+            baseUrl: 'https://your-store.com',
+            secretKey: 'sk_xxx',
+          })
+
+          const reason = await client.claimReasons.update('clr_UkLWZg9DAJ', {
+            active: false,
+          })
+      - lang: bash
+        label: Spree CLI
+        source: spree api patch /claim_reasons/{id} -d '{"active":false}'
+      parameters:
+      - name: x-spree-api-key
+        in: header
+        required: true
+        schema:
+          type: string
+      - name: Authorization
+        in: header
+        required: true
+        description: Bearer token for admin authentication
+        schema:
+          type: string
+      responses:
+        '200':
+          description: claim reason updated
+          content:
+            application/json:
+              example:
+                id: clr_UkLWZg9DAJ
+                name: Arrived damaged
+                active: false
+                created_at: '2026-01-15T12:00:00.000Z'
+                updated_at: '2026-01-15T12:00:00.000Z'
+                can_be_deleted: true
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                active:
+                  type: boolean
+    delete:
+      summary: Delete a claim reason
+      tags:
+      - Reasons
+      security:
+      - api_key: []
+        bearer_auth: []
+      description: |-
+        Removes a claim reason the store no longer uses. A reason already recorded
+        on a document is refused — deactivate it instead, so the history it
+        explains stays readable.
+
+
+        **Required scope:** `write_settings` (for API-key authentication).
+      x-codeSamples:
+      - lang: javascript
+        label: Spree Admin SDK
+        source: |-
+          import { createAdminClient } from '@spree/admin-sdk'
+
+          const client = createAdminClient({
+            baseUrl: 'https://your-store.com',
+            secretKey: 'sk_xxx',
+          })
+
+          await client.claimReasons.delete('clr_UkLWZg9DAJ')
+      - lang: bash
+        label: Spree CLI
+        source: spree api delete /claim_reasons/{id}
+      parameters:
+      - name: x-spree-api-key
+        in: header
+        required: true
+        schema:
+          type: string
+      - name: Authorization
+        in: header
+        required: true
+        description: Bearer token for admin authentication
+        schema:
+          type: string
+      responses:
+        '204':
+          description: claim reason deleted
+  "/api/v3/admin/order_cancellation_reasons":
+    get:
+      summary: List order cancellation reasons
+      tags:
+      - Reasons
+      security:
+      - api_key: []
+        bearer_auth: []
+      description: |-
+        Why an order was called off before it shipped. Staff pick one when canceling.
+
+        The vocabulary is the merchant's own — seeded with a starting set and
+        edited from the dashboard. Inactive rows stay for the records that
+        already reference them, but are not offered on new ones.
+
+
+        **Required scope:** `read_settings` (for API-key authentication).
+      x-codeSamples:
+      - lang: javascript
+        label: Spree Admin SDK
+        source: |-
+          import { createAdminClient } from '@spree/admin-sdk'
+
+          const client = createAdminClient({
+            baseUrl: 'https://your-store.com',
+            secretKey: 'sk_xxx',
+          })
+
+          const { data: reasons } = await client.orderCancellationReasons.list()
+      - lang: bash
+        label: Spree CLI
+        source: spree api get /order_cancellation_reasons
+      parameters:
+      - name: x-spree-api-key
+        in: header
+        required: true
+        schema:
+          type: string
+      - name: Authorization
+        in: header
+        required: true
+        description: Bearer token for admin authentication
+        schema:
+          type: string
+      - name: page
+        in: query
+        required: false
+        description: Page number
+        schema:
+          type: integer
+      - name: limit
+        in: query
+        required: false
+        description: Number of records per page
+        schema:
+          type: integer
+      - name: q[name_cont]
+        in: query
+        required: false
+        description: Filter by name (contains)
+        schema:
+          type: string
+      - name: q[active_eq]
+        in: query
+        required: false
+        description: Filter by active flag
+        schema:
+          type: boolean
+      - name: sort
+        in: query
+        required: false
+        description: Sort by field. Prefix with `-` for descending (e.g., `-created_at`).
+        schema:
+          type: string
+      responses:
+        '200':
+          description: order cancellation reasons found
+          content:
+            application/json:
+              example:
+                data:
+                - id: ocr_UkLWZg9DAJ
+                  name: Out of stock
+                  active: true
+                  created_at: '2026-01-15T12:00:00.000Z'
+                  updated_at: '2026-01-15T12:00:00.000Z'
+                  can_be_deleted: true
+                meta:
+                  page: 1
+                  limit: 25
+                  count: 1
+                  pages: 1
+                  from: 1
+                  to: 1
+                  in: 1
+                  previous:
+                  next:
+        '401':
+          description: unauthorized
+          content:
+            application/json:
+              example:
+                error:
+                  code: authentication_required
+                  message: Authentication required
+              schema:
+                "$ref": "#/components/schemas/ErrorResponse"
+    post:
+      summary: Create a order cancellation reason
+      tags:
+      - Reasons
+      security:
+      - api_key: []
+        bearer_auth: []
+      description: |-
+        Adds a order cancellation reason to this store. Names are unique per store, ignoring case.
+
+        **Required scope:** `write_settings` (for API-key authentication).
+      x-codeSamples:
+      - lang: javascript
+        label: Spree Admin SDK
+        source: |-
+          import { createAdminClient } from '@spree/admin-sdk'
+
+          const client = createAdminClient({
+            baseUrl: 'https://your-store.com',
+            secretKey: 'sk_xxx',
+          })
+
+          const reason = await client.orderCancellationReasons.create({
+            name: 'Out of stock',
+          })
+      - lang: bash
+        label: Spree CLI
+        source: spree api post /order_cancellation_reasons -d '{"name":"Out of stock"}'
+      parameters:
+      - name: x-spree-api-key
+        in: header
+        required: true
+        schema:
+          type: string
+      - name: Authorization
+        in: header
+        required: true
+        description: Bearer token for admin authentication
+        schema:
+          type: string
+      responses:
+        '201':
+          description: order cancellation reason created
+          content:
+            application/json:
+              example:
+                id: ocr_gbHJdmfrXB
+                name: A new reason
+                active: true
+                created_at: '2026-01-15T12:00:00.000Z'
+                updated_at: '2026-01-15T12:00:00.000Z'
+                can_be_deleted: true
+        '422':
+          description: validation error
+          content:
+            application/json:
+              example:
+                error:
+                  code: validation_error
+                  message: Name can't be blank
+                  details:
+                    name:
+                    - can't be blank
+              schema:
+                "$ref": "#/components/schemas/ErrorResponse"
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+              - name
+              properties:
+                name:
+                  type: string
+                  example: Out of stock
+                active:
+                  type: boolean
+                  example: true
+                  description: Inactive reasons are hidden from the pickers on new
+                    records.
+  "/api/v3/admin/order_cancellation_reasons/{id}":
+    parameters:
+    - name: id
+      in: path
+      required: true
+      description: Order cancellation reason ID
+      schema:
+        type: string
+    get:
+      summary: Get a order cancellation reason
+      tags:
+      - Reasons
+      security:
+      - api_key: []
+        bearer_auth: []
+      description: |-
+        Returns a single order cancellation reason by prefixed ID.
+
+        **Required scope:** `read_settings` (for API-key authentication).
+      x-codeSamples:
+      - lang: javascript
+        label: Spree Admin SDK
+        source: |-
+          import { createAdminClient } from '@spree/admin-sdk'
+
+          const client = createAdminClient({
+            baseUrl: 'https://your-store.com',
+            secretKey: 'sk_xxx',
+          })
+
+          const reason = await client.orderCancellationReasons.get('ocr_UkLWZg9DAJ')
+      - lang: bash
+        label: Spree CLI
+        source: spree api get /order_cancellation_reasons/{id}
+      parameters:
+      - name: x-spree-api-key
+        in: header
+        required: true
+        schema:
+          type: string
+      - name: Authorization
+        in: header
+        required: true
+        description: Bearer token for admin authentication
+        schema:
+          type: string
+      responses:
+        '200':
+          description: order cancellation reason found
+          content:
+            application/json:
+              example:
+                id: ocr_UkLWZg9DAJ
+                name: Out of stock
+                active: true
+                created_at: '2026-01-15T12:00:00.000Z'
+                updated_at: '2026-01-15T12:00:00.000Z'
+                can_be_deleted: true
+        '404':
+          description: order cancellation reason not found
+          content:
+            application/json:
+              example:
+                error:
+                  code: record_not_found
+                  message: Order cancellation reason not found
+              schema:
+                "$ref": "#/components/schemas/ErrorResponse"
+    patch:
+      summary: Update a order cancellation reason
+      tags:
+      - Reasons
+      security:
+      - api_key: []
+        bearer_auth: []
+      description: |-
+        Renames a order cancellation reason or retires it. Deactivating keeps it on the records
+        that already carry it while removing it from the pickers.
+
+
+        **Required scope:** `write_settings` (for API-key authentication).
+      x-codeSamples:
+      - lang: javascript
+        label: Spree Admin SDK
+        source: |-
+          import { createAdminClient } from '@spree/admin-sdk'
+
+          const client = createAdminClient({
+            baseUrl: 'https://your-store.com',
+            secretKey: 'sk_xxx',
+          })
+
+          const reason = await client.orderCancellationReasons.update('ocr_UkLWZg9DAJ', {
+            active: false,
+          })
+      - lang: bash
+        label: Spree CLI
+        source: spree api patch /order_cancellation_reasons/{id} -d '{"active":false}'
+      parameters:
+      - name: x-spree-api-key
+        in: header
+        required: true
+        schema:
+          type: string
+      - name: Authorization
+        in: header
+        required: true
+        description: Bearer token for admin authentication
+        schema:
+          type: string
+      responses:
+        '200':
+          description: order cancellation reason updated
+          content:
+            application/json:
+              example:
+                id: ocr_UkLWZg9DAJ
+                name: Out of stock
+                active: false
+                created_at: '2026-01-15T12:00:00.000Z'
+                updated_at: '2026-01-15T12:00:00.000Z'
+                can_be_deleted: true
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                active:
+                  type: boolean
+    delete:
+      summary: Delete a order cancellation reason
+      tags:
+      - Reasons
+      security:
+      - api_key: []
+        bearer_auth: []
+      description: |-
+        Removes a order cancellation reason the store no longer uses. A reason already recorded
+        on a document is refused — deactivate it instead, so the history it
+        explains stays readable.
+
+
+        **Required scope:** `write_settings` (for API-key authentication).
+      x-codeSamples:
+      - lang: javascript
+        label: Spree Admin SDK
+        source: |-
+          import { createAdminClient } from '@spree/admin-sdk'
+
+          const client = createAdminClient({
+            baseUrl: 'https://your-store.com',
+            secretKey: 'sk_xxx',
+          })
+
+          await client.orderCancellationReasons.delete('ocr_UkLWZg9DAJ')
+      - lang: bash
+        label: Spree CLI
+        source: spree api delete /order_cancellation_reasons/{id}
+      parameters:
+      - name: x-spree-api-key
+        in: header
+        required: true
+        schema:
+          type: string
+      - name: Authorization
+        in: header
+        required: true
+        description: Bearer token for admin authentication
+        schema:
+          type: string
+      responses:
+        '204':
+          description: order cancellation reason deleted
+  "/api/v3/admin/refund_reasons":
+    get:
+      summary: List refund reasons
+      tags:
+      - Reasons
+      security:
+      - api_key: []
+        bearer_auth: []
+      description: |-
+        Why money went back. Some rows are seeded and looked up by name, so they refuse renaming and deletion.
+
+        The vocabulary is the merchant's own — seeded with a starting set and
+        edited from the dashboard. Inactive rows stay for the records that
+        already reference them, but are not offered on new ones.
+
+
+        **Required scope:** `read_settings` (for API-key authentication).
+      x-codeSamples:
+      - lang: javascript
+        label: Spree Admin SDK
+        source: |-
+          import { createAdminClient } from '@spree/admin-sdk'
+
+          const client = createAdminClient({
+            baseUrl: 'https://your-store.com',
+            secretKey: 'sk_xxx',
+          })
+
+          const { data: reasons } = await client.refundReasons.list()
+      - lang: bash
+        label: Spree CLI
+        source: spree api get /refund_reasons
+      parameters:
+      - name: x-spree-api-key
+        in: header
+        required: true
+        schema:
+          type: string
+      - name: Authorization
+        in: header
+        required: true
+        description: Bearer token for admin authentication
+        schema:
+          type: string
+      - name: page
+        in: query
+        required: false
+        description: Page number
+        schema:
+          type: integer
+      - name: limit
+        in: query
+        required: false
+        description: Number of records per page
+        schema:
+          type: integer
+      - name: q[name_cont]
+        in: query
+        required: false
+        description: Filter by name (contains)
+        schema:
+          type: string
+      - name: q[active_eq]
+        in: query
+        required: false
+        description: Filter by active flag
+        schema:
+          type: boolean
+      - name: sort
+        in: query
+        required: false
+        description: Sort by field. Prefix with `-` for descending (e.g., `-created_at`).
+        schema:
+          type: string
+      responses:
+        '200':
+          description: refund reasons found
+          content:
+            application/json:
+              example:
+                data:
+                - id: rr_UkLWZg9DAJ
+                  name: Goodwill gesture
+                  active: true
+                  created_at: '2026-01-15T12:00:00.000Z'
+                  updated_at: '2026-01-15T12:00:00.000Z'
+                  can_be_deleted: true
+                meta:
+                  page: 1
+                  limit: 25
+                  count: 1
+                  pages: 1
+                  from: 1
+                  to: 1
+                  in: 1
+                  previous:
+                  next:
+        '401':
+          description: unauthorized
+          content:
+            application/json:
+              example:
+                error:
+                  code: authentication_required
+                  message: Authentication required
+              schema:
+                "$ref": "#/components/schemas/ErrorResponse"
+    post:
+      summary: Create a refund reason
+      tags:
+      - Reasons
+      security:
+      - api_key: []
+        bearer_auth: []
+      description: |-
+        Adds a refund reason to this store. Names are unique per store, ignoring case.
+
+        **Required scope:** `write_settings` (for API-key authentication).
+      x-codeSamples:
+      - lang: javascript
+        label: Spree Admin SDK
+        source: |-
+          import { createAdminClient } from '@spree/admin-sdk'
+
+          const client = createAdminClient({
+            baseUrl: 'https://your-store.com',
+            secretKey: 'sk_xxx',
+          })
+
+          const reason = await client.refundReasons.create({
+            name: 'Goodwill gesture',
+          })
+      - lang: bash
+        label: Spree CLI
+        source: spree api post /refund_reasons -d '{"name":"Goodwill gesture"}'
+      parameters:
+      - name: x-spree-api-key
+        in: header
+        required: true
+        schema:
+          type: string
+      - name: Authorization
+        in: header
+        required: true
+        description: Bearer token for admin authentication
+        schema:
+          type: string
+      responses:
+        '201':
+          description: refund reason created
+          content:
+            application/json:
+              example:
+                id: rr_gbHJdmfrXB
+                name: A new reason
+                active: true
+                created_at: '2026-01-15T12:00:00.000Z'
+                updated_at: '2026-01-15T12:00:00.000Z'
+                can_be_deleted: true
+        '422':
+          description: validation error
+          content:
+            application/json:
+              example:
+                error:
+                  code: validation_error
+                  message: Name can't be blank
+                  details:
+                    name:
+                    - can't be blank
+              schema:
+                "$ref": "#/components/schemas/ErrorResponse"
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+              - name
+              properties:
+                name:
+                  type: string
+                  example: Goodwill gesture
+                active:
+                  type: boolean
+                  example: true
+                  description: Inactive reasons are hidden from the pickers on new
+                    records.
+  "/api/v3/admin/refund_reasons/{id}":
+    parameters:
+    - name: id
+      in: path
+      required: true
+      description: Refund reason ID
+      schema:
+        type: string
+    get:
+      summary: Get a refund reason
+      tags:
+      - Reasons
+      security:
+      - api_key: []
+        bearer_auth: []
+      description: |-
+        Returns a single refund reason by prefixed ID.
+
+        **Required scope:** `read_settings` (for API-key authentication).
+      x-codeSamples:
+      - lang: javascript
+        label: Spree Admin SDK
+        source: |-
+          import { createAdminClient } from '@spree/admin-sdk'
+
+          const client = createAdminClient({
+            baseUrl: 'https://your-store.com',
+            secretKey: 'sk_xxx',
+          })
+
+          const reason = await client.refundReasons.get('rr_UkLWZg9DAJ')
+      - lang: bash
+        label: Spree CLI
+        source: spree api get /refund_reasons/{id}
+      parameters:
+      - name: x-spree-api-key
+        in: header
+        required: true
+        schema:
+          type: string
+      - name: Authorization
+        in: header
+        required: true
+        description: Bearer token for admin authentication
+        schema:
+          type: string
+      responses:
+        '200':
+          description: refund reason found
+          content:
+            application/json:
+              example:
+                id: rr_UkLWZg9DAJ
+                name: Goodwill gesture
+                active: true
+                created_at: '2026-01-15T12:00:00.000Z'
+                updated_at: '2026-01-15T12:00:00.000Z'
+                can_be_deleted: true
+        '404':
+          description: refund reason not found
+          content:
+            application/json:
+              example:
+                error:
+                  code: record_not_found
+                  message: Refund reason not found
+              schema:
+                "$ref": "#/components/schemas/ErrorResponse"
+    patch:
+      summary: Update a refund reason
+      tags:
+      - Reasons
+      security:
+      - api_key: []
+        bearer_auth: []
+      description: |-
+        Renames a refund reason or retires it. Deactivating keeps it on the records
+        that already carry it while removing it from the pickers.
+
+
+        **Required scope:** `write_settings` (for API-key authentication).
+      x-codeSamples:
+      - lang: javascript
+        label: Spree Admin SDK
+        source: |-
+          import { createAdminClient } from '@spree/admin-sdk'
+
+          const client = createAdminClient({
+            baseUrl: 'https://your-store.com',
+            secretKey: 'sk_xxx',
+          })
+
+          const reason = await client.refundReasons.update('rr_UkLWZg9DAJ', {
+            active: false,
+          })
+      - lang: bash
+        label: Spree CLI
+        source: spree api patch /refund_reasons/{id} -d '{"active":false}'
+      parameters:
+      - name: x-spree-api-key
+        in: header
+        required: true
+        schema:
+          type: string
+      - name: Authorization
+        in: header
+        required: true
+        description: Bearer token for admin authentication
+        schema:
+          type: string
+      responses:
+        '200':
+          description: refund reason updated
+          content:
+            application/json:
+              example:
+                id: rr_UkLWZg9DAJ
+                name: Goodwill gesture
+                active: false
+                created_at: '2026-01-15T12:00:00.000Z'
+                updated_at: '2026-01-15T12:00:00.000Z'
+                can_be_deleted: true
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                active:
+                  type: boolean
+    delete:
+      summary: Delete a refund reason
+      tags:
+      - Reasons
+      security:
+      - api_key: []
+        bearer_auth: []
+      description: |-
+        Removes a refund reason the store no longer uses. A reason already recorded
+        on a document is refused — deactivate it instead, so the history it
+        explains stays readable.
+
+
+        **Required scope:** `write_settings` (for API-key authentication).
+      x-codeSamples:
+      - lang: javascript
+        label: Spree Admin SDK
+        source: |-
+          import { createAdminClient } from '@spree/admin-sdk'
+
+          const client = createAdminClient({
+            baseUrl: 'https://your-store.com',
+            secretKey: 'sk_xxx',
+          })
+
+          await client.refundReasons.delete('rr_UkLWZg9DAJ')
+      - lang: bash
+        label: Spree CLI
+        source: spree api delete /refund_reasons/{id}
+      parameters:
+      - name: x-spree-api-key
+        in: header
+        required: true
+        schema:
+          type: string
+      - name: Authorization
+        in: header
+        required: true
+        description: Bearer token for admin authentication
+        schema:
+          type: string
+      responses:
+        '204':
+          description: refund reason deleted
+  "/api/v3/admin/return_reasons":
+    get:
+      summary: List return reasons
+      tags:
+      - Reasons
+      security:
+      - api_key: []
+        bearer_auth: []
+      description: |-
+        Why a customer is sending items back. Shared by returns and exchanges.
+
+        The vocabulary is the merchant's own — seeded with a starting set and
+        edited from the dashboard. Inactive rows stay for the records that
+        already reference them, but are not offered on new ones.
+
+
+        **Required scope:** `read_settings` (for API-key authentication).
+      x-codeSamples:
+      - lang: javascript
+        label: Spree Admin SDK
+        source: |-
+          import { createAdminClient } from '@spree/admin-sdk'
+
+          const client = createAdminClient({
+            baseUrl: 'https://your-store.com',
+            secretKey: 'sk_xxx',
+          })
+
+          const { data: reasons } = await client.returnReasons.list()
+      - lang: bash
+        label: Spree CLI
+        source: spree api get /return_reasons
+      parameters:
+      - name: x-spree-api-key
+        in: header
+        required: true
+        schema:
+          type: string
+      - name: Authorization
+        in: header
+        required: true
+        description: Bearer token for admin authentication
+        schema:
+          type: string
+      - name: page
+        in: query
+        required: false
+        description: Page number
+        schema:
+          type: integer
+      - name: limit
+        in: query
+        required: false
+        description: Number of records per page
+        schema:
+          type: integer
+      - name: q[name_cont]
+        in: query
+        required: false
+        description: Filter by name (contains)
+        schema:
+          type: string
+      - name: q[active_eq]
+        in: query
+        required: false
+        description: Filter by active flag
+        schema:
+          type: boolean
+      - name: sort
+        in: query
+        required: false
+        description: Sort by field. Prefix with `-` for descending (e.g., `-created_at`).
+        schema:
+          type: string
+      responses:
+        '200':
+          description: return reasons found
+          content:
+            application/json:
+              example:
+                data:
+                - id: rar_UkLWZg9DAJ
+                  name: Damaged in transit
+                  active: true
+                  created_at: '2026-01-15T12:00:00.000Z'
+                  updated_at: '2026-01-15T12:00:00.000Z'
+                  can_be_deleted: true
+                meta:
+                  page: 1
+                  limit: 25
+                  count: 1
+                  pages: 1
+                  from: 1
+                  to: 1
+                  in: 1
+                  previous:
+                  next:
+        '401':
+          description: unauthorized
+          content:
+            application/json:
+              example:
+                error:
+                  code: authentication_required
+                  message: Authentication required
+              schema:
+                "$ref": "#/components/schemas/ErrorResponse"
+    post:
+      summary: Create a return reason
+      tags:
+      - Reasons
+      security:
+      - api_key: []
+        bearer_auth: []
+      description: |-
+        Adds a return reason to this store. Names are unique per store, ignoring case.
+
+        **Required scope:** `write_settings` (for API-key authentication).
+      x-codeSamples:
+      - lang: javascript
+        label: Spree Admin SDK
+        source: |-
+          import { createAdminClient } from '@spree/admin-sdk'
+
+          const client = createAdminClient({
+            baseUrl: 'https://your-store.com',
+            secretKey: 'sk_xxx',
+          })
+
+          const reason = await client.returnReasons.create({
+            name: 'Damaged in transit',
+          })
+      - lang: bash
+        label: Spree CLI
+        source: spree api post /return_reasons -d '{"name":"Damaged in transit"}'
+      parameters:
+      - name: x-spree-api-key
+        in: header
+        required: true
+        schema:
+          type: string
+      - name: Authorization
+        in: header
+        required: true
+        description: Bearer token for admin authentication
+        schema:
+          type: string
+      responses:
+        '201':
+          description: return reason created
+          content:
+            application/json:
+              example:
+                id: rar_gbHJdmfrXB
+                name: A new reason
+                active: true
+                created_at: '2026-01-15T12:00:00.000Z'
+                updated_at: '2026-01-15T12:00:00.000Z'
+                can_be_deleted: true
+        '422':
+          description: validation error
+          content:
+            application/json:
+              example:
+                error:
+                  code: validation_error
+                  message: Name can't be blank
+                  details:
+                    name:
+                    - can't be blank
+              schema:
+                "$ref": "#/components/schemas/ErrorResponse"
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+              - name
+              properties:
+                name:
+                  type: string
+                  example: Damaged in transit
+                active:
+                  type: boolean
+                  example: true
+                  description: Inactive reasons are hidden from the pickers on new
+                    records.
+  "/api/v3/admin/return_reasons/{id}":
+    parameters:
+    - name: id
+      in: path
+      required: true
+      description: Return reason ID
+      schema:
+        type: string
+    get:
+      summary: Get a return reason
+      tags:
+      - Reasons
+      security:
+      - api_key: []
+        bearer_auth: []
+      description: |-
+        Returns a single return reason by prefixed ID.
+
+        **Required scope:** `read_settings` (for API-key authentication).
+      x-codeSamples:
+      - lang: javascript
+        label: Spree Admin SDK
+        source: |-
+          import { createAdminClient } from '@spree/admin-sdk'
+
+          const client = createAdminClient({
+            baseUrl: 'https://your-store.com',
+            secretKey: 'sk_xxx',
+          })
+
+          const reason = await client.returnReasons.get('rar_UkLWZg9DAJ')
+      - lang: bash
+        label: Spree CLI
+        source: spree api get /return_reasons/{id}
+      parameters:
+      - name: x-spree-api-key
+        in: header
+        required: true
+        schema:
+          type: string
+      - name: Authorization
+        in: header
+        required: true
+        description: Bearer token for admin authentication
+        schema:
+          type: string
+      responses:
+        '200':
+          description: return reason found
+          content:
+            application/json:
+              example:
+                id: rar_UkLWZg9DAJ
+                name: Damaged in transit
+                active: true
+                created_at: '2026-01-15T12:00:00.000Z'
+                updated_at: '2026-01-15T12:00:00.000Z'
+                can_be_deleted: true
+        '404':
+          description: return reason not found
+          content:
+            application/json:
+              example:
+                error:
+                  code: record_not_found
+                  message: Return reason not found
+              schema:
+                "$ref": "#/components/schemas/ErrorResponse"
+    patch:
+      summary: Update a return reason
+      tags:
+      - Reasons
+      security:
+      - api_key: []
+        bearer_auth: []
+      description: |-
+        Renames a return reason or retires it. Deactivating keeps it on the records
+        that already carry it while removing it from the pickers.
+
+
+        **Required scope:** `write_settings` (for API-key authentication).
+      x-codeSamples:
+      - lang: javascript
+        label: Spree Admin SDK
+        source: |-
+          import { createAdminClient } from '@spree/admin-sdk'
+
+          const client = createAdminClient({
+            baseUrl: 'https://your-store.com',
+            secretKey: 'sk_xxx',
+          })
+
+          const reason = await client.returnReasons.update('rar_UkLWZg9DAJ', {
+            active: false,
+          })
+      - lang: bash
+        label: Spree CLI
+        source: spree api patch /return_reasons/{id} -d '{"active":false}'
+      parameters:
+      - name: x-spree-api-key
+        in: header
+        required: true
+        schema:
+          type: string
+      - name: Authorization
+        in: header
+        required: true
+        description: Bearer token for admin authentication
+        schema:
+          type: string
+      responses:
+        '200':
+          description: return reason updated
+          content:
+            application/json:
+              example:
+                id: rar_UkLWZg9DAJ
+                name: Damaged in transit
+                active: false
+                created_at: '2026-01-15T12:00:00.000Z'
+                updated_at: '2026-01-15T12:00:00.000Z'
+                can_be_deleted: true
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                active:
+                  type: boolean
+    delete:
+      summary: Delete a return reason
+      tags:
+      - Reasons
+      security:
+      - api_key: []
+        bearer_auth: []
+      description: |-
+        Removes a return reason the store no longer uses. A reason already recorded
+        on a document is refused — deactivate it instead, so the history it
+        explains stays readable.
+
+
+        **Required scope:** `write_settings` (for API-key authentication).
+      x-codeSamples:
+      - lang: javascript
+        label: Spree Admin SDK
+        source: |-
+          import { createAdminClient } from '@spree/admin-sdk'
+
+          const client = createAdminClient({
+            baseUrl: 'https://your-store.com',
+            secretKey: 'sk_xxx',
+          })
+
+          await client.returnReasons.delete('rar_UkLWZg9DAJ')
+      - lang: bash
+        label: Spree CLI
+        source: spree api delete /return_reasons/{id}
+      parameters:
+      - name: x-spree-api-key
+        in: header
+        required: true
+        schema:
+          type: string
+      - name: Authorization
+        in: header
+        required: true
+        description: Bearer token for admin authentication
+        schema:
+          type: string
+      responses:
+        '204':
+          description: return reason deleted
   "/api/v3/admin/promotions/{promotion_id}/coupon_codes":
     parameters:
     - name: promotion_id
@@ -33885,6 +35381,9 @@ tags:
     product operations
 - name: Policies
   description: The store's legal documents — terms of service, privacy, returns, shipping
+- name: Reasons
+  description: Merchant-owned vocabularies for why a return, claim, refund or cancellation
+    happened
 - name: Promotions
   description: Promotions, promotion rules, promotion actions, and coupon codes
 - name: Refunds
@@ -37879,6 +39378,29 @@ components:
       - created_at
       - updated_at
       x-typelizer: true
+    OrderCancellationReason:
+      type: object
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+        active:
+          type: boolean
+        created_at:
+          type: string
+        updated_at:
+          type: string
+        can_be_deleted:
+          type: boolean
+      required:
+      - id
+      - name
+      - active
+      - created_at
+      - updated_at
+      - can_be_deleted
+      x-typelizer: true
     OrderGroup:
       type: object
       properties:
@@ -38155,6 +39677,9 @@ components:
           type: string
         metadata:
           type: object
+        cancel_note:
+          type: string
+          nullable: true
         canceled_at:
           type: string
           nullable: true
@@ -38195,6 +39720,12 @@ components:
         canceler_id:
           type: string
           nullable: true
+        cancel_reason_id:
+          type: string
+          nullable: true
+        cancel_reason_name:
+          type: string
+          nullable: true
         created_by_id:
           type: string
           nullable: true
@@ -38221,6 +39752,8 @@ components:
           "$ref": "#/components/schemas/AdminUser"
         canceler:
           "$ref": "#/components/schemas/AdminUser"
+        cancel_reason:
+          "$ref": "#/components/schemas/OrderCancellationReason"
         created_by:
           "$ref": "#/components/schemas/AdminUser"
         returns:
@@ -38291,6 +39824,7 @@ components:
       - payment_total
       - display_payment_total
       - metadata
+      - cancel_note
       - canceled_at
       - approved_at
       - created_at
@@ -38304,6 +39838,8 @@ components:
       - internal_note_html
       - approver_id
       - canceler_id
+      - cancel_reason_id
+      - cancel_reason_name
       - created_by_id
       - customer_id
       x-typelizer: true

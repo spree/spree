@@ -2627,6 +2627,14 @@
           "value_type_flat": "Amount",
           "value_type_percent": "Percent"
         },
+        "cancel": {
+          "description": "The reason and note are recorded on the order, and any payments are settled.",
+          "keep_order": "Keep order",
+          "no_reason": "No reason given",
+          "note_label": "Note",
+          "note_placeholder": "Only staff see this note",
+          "reason_label": "Reason"
+        },
         "completed_prefix": "Completed",
         "confirm": {
           "approve_message": "Approve this order?",
@@ -2760,6 +2768,8 @@
         "summary": {
           "adjustments": "Adjustments",
           "approved_by": "Approved by",
+          "cancel_note": "Cancellation note",
+          "cancel_reason": "Cancellation reason",
           "canceled_at": "Canceled at",
           "canceler": "Canceler",
           "outstanding_balance": "Outstanding balance",
@@ -4365,7 +4375,7 @@
         "message": "{{name}} will no longer be offered. Records already using it keep it.",
         "title": "Delete reason?"
       },
-      "description": "The vocabularies your team picks from when handling returns, claims and refunds.",
+      "description": "The vocabularies your team picks from when handling returns, claims, refunds and cancellations.",
       "edit_sheet_title": "Edit reason",
       "empty": "No reasons yet",
       "in_use": "In use",
@@ -4377,6 +4387,10 @@
         "updated": "Reason updated"
       },
       "name_placeholder": "e.g. Wrong size",
+      "order_cancellation": {
+        "help": "Why an order was called off before it shipped. Staff pick one when canceling.",
+        "title": "Order cancellation reasons"
+      },
       "refund": {
         "help": "Why money went back. Used for reporting across every refund.",
         "title": "Refund reasons"

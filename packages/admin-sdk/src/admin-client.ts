@@ -175,7 +175,6 @@ import type {
   MeUpdateParams,
   OptionTypeCreateParams,
   OptionTypeUpdateParams,
-  OrderApproveParams,
   OrderCancelParams,
   OrderCompleteParams,
   OrderCreateParams,
@@ -309,6 +308,7 @@ import type {
   Media,
   OptionType,
   Order,
+  OrderCancellationReason,
   OrderRoutingRule,
   Payment,
   PaymentMethod,
@@ -1248,8 +1248,8 @@ export class AdminClient {
     cancel: (id: string, params?: OrderCancelParams, options?: RequestOptions): Promise<Order> =>
       this.request<Order>('PATCH', `/orders/${id}/cancel`, { ...options, body: params }),
 
-    approve: (id: string, params?: OrderApproveParams, options?: RequestOptions): Promise<Order> =>
-      this.request<Order>('PATCH', `/orders/${id}/approve`, { ...options, body: params }),
+    approve: (id: string, options?: RequestOptions): Promise<Order> =>
+      this.request<Order>('PATCH', `/orders/${id}/approve`, options),
 
     resume: (id: string, options?: RequestOptions): Promise<Order> =>
       this.request<Order>('PATCH', `/orders/${id}/resume`, options),
@@ -4401,6 +4401,47 @@ export class AdminClient {
 
     delete: (id: string, options?: RequestOptions): Promise<void> =>
       this.request<void>('DELETE', `/claim_reasons/${id}`, options),
+  }
+
+  /** Why an order was called off before it shipped. */
+  readonly orderCancellationReasons = {
+    list: (
+      params?: ListParams & Record<string, unknown>,
+      options?: RequestOptions,
+    ): Promise<PaginatedResponse<OrderCancellationReason>> =>
+      this.request<PaginatedResponse<OrderCancellationReason>>(
+        'GET',
+        '/order_cancellation_reasons',
+        {
+          ...options,
+          params: params ? transformListParams(params) : undefined,
+        },
+      ),
+
+    get: (id: string, options?: RequestOptions): Promise<OrderCancellationReason> =>
+      this.request<OrderCancellationReason>('GET', `/order_cancellation_reasons/${id}`, options),
+
+    create: (
+      params: ReasonCreateParams,
+      options?: RequestOptions,
+    ): Promise<OrderCancellationReason> =>
+      this.request<OrderCancellationReason>('POST', '/order_cancellation_reasons', {
+        ...options,
+        body: params,
+      }),
+
+    update: (
+      id: string,
+      params: ReasonUpdateParams,
+      options?: RequestOptions,
+    ): Promise<OrderCancellationReason> =>
+      this.request<OrderCancellationReason>('PATCH', `/order_cancellation_reasons/${id}`, {
+        ...options,
+        body: params,
+      }),
+
+    delete: (id: string, options?: RequestOptions): Promise<void> =>
+      this.request<void>('DELETE', `/order_cancellation_reasons/${id}`, options),
   }
 
   /**

@@ -31,6 +31,22 @@ export const newOrderFormSchema = z.object({
 
 export type NewOrderFormValues = z.infer<typeof newOrderFormSchema>
 
+/**
+ * Cancelling an order. The reason is an id from the store's own cancellation
+ * vocabulary, and an empty string means the merchant gave none.
+ */
+export const cancelOrderFormSchema = z.object({
+  cancel_reason_id: z.string(),
+  cancel_note: z.string(),
+})
+
+export type CancelOrderFormValues = z.infer<typeof cancelOrderFormSchema>
+
+export const CANCEL_ORDER_DEFAULTS: CancelOrderFormValues = {
+  cancel_reason_id: '',
+  cancel_note: '',
+}
+
 export const NEW_ORDER_DEFAULTS: NewOrderFormValues = {
   email: '',
   customer_note: '',

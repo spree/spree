@@ -2620,6 +2620,14 @@
           "value_type_flat": "金额",
           "value_type_percent": "百分比"
         },
+        "cancel": {
+          "description": "取消原因和备注将记录在订单上，相关付款也会一并结清。",
+          "keep_order": "保留订单",
+          "no_reason": "未填写原因",
+          "note_label": "备注",
+          "note_placeholder": "此备注仅员工可见",
+          "reason_label": "原因"
+        },
         "completed_prefix": "已完成",
         "confirm": {
           "approve_message": "批准此订单吗？",
@@ -2752,6 +2760,8 @@
         "summary": {
           "adjustments": "调整",
           "approved_by": "审批人",
+          "cancel_note": "取消备注",
+          "cancel_reason": "取消原因",
           "canceled_at": "取消时间",
           "canceler": "取消人",
           "outstanding_balance": "未结余额",
@@ -4356,7 +4366,7 @@
         "message": "将不再提供 {{name}}。已使用它的记录保持不变。",
         "title": "删除原因？"
       },
-      "description": "团队处理退货、理赔和退款时可选择的原因列表。",
+      "description": "团队在处理退货、理赔、退款和取消时可选用的原因列表。",
       "edit_sheet_title": "编辑原因",
       "empty": "暂无原因",
       "in_use": "使用中",
@@ -4368,6 +4378,10 @@
         "updated": "原因已更新"
       },
       "name_placeholder": "例如：尺码不合适",
+      "order_cancellation": {
+        "help": "订单在发货前被取消的原因。员工取消订单时从中选择。",
+        "title": "订单取消原因"
+      },
       "refund": {
         "help": "退款的原因。用于所有退款的统计分析。",
         "title": "退款原因"

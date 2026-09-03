@@ -363,6 +363,9 @@ RSpec.describe 'Admin Orders API', type: :request, swagger_doc: 'api-reference/a
       description <<~DESC
         Cancels a completed order.
 
+        `cancel_reason_id` records why, from the store's own cancellation-reason
+        vocabulary (`/admin/order_cancellation_reasons`), and `cancel_note` is a
+        staff-facing note; both are shown on the order afterwards.
         Set `notify_customer: true` to send the order cancellation email.
       DESC
       admin_scope :write, :orders
@@ -377,6 +380,8 @@ RSpec.describe 'Admin Orders API', type: :request, swagger_doc: 'api-reference/a
       parameter name: :body, in: :body, required: false, schema: {
         type: :object,
         properties: {
+          cancel_reason_id: { type: :string, description: "Why the order was canceled — the id of one of the store's cancellation reasons." },
+          cancel_note: { type: :string, description: 'Staff-facing note about the cancellation.' },
           notify_customer: { type: :boolean, description: 'Send the order cancellation email after canceling.' }
         }
       }

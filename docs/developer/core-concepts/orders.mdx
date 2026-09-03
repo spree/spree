@@ -113,11 +113,11 @@ const orders = await adminClient.orders.list({
   filter: { payment_status_eq: 'paid', fulfillment_status_eq: 'unfulfilled' },
 })
 
-// Cancel an order
+// Cancel an order, recording why from your own list of reasons
+const [reason] = (await adminClient.orderCancellationReasons.list()).data
 await adminClient.orders.cancel('or_xxx', {
-  reason: 'customer',
-  restock_items: true,
-  refund_payments: true,
+  cancel_reason_id: reason.id,
+  cancel_note: 'Supplier could not deliver in time',
 })
 
 // Take an authorized payment
@@ -137,12 +137,15 @@ curl 'https://api.mystore.com/api/v3/admin/orders?filter[payment_status_eq]=paid
 curl -X PATCH 'https://api.mystore.com/api/v3/admin/orders/or_xxx/cancel' \
   -H 'X-Spree-API-Key: sk_xxx' \
   -H 'Content-Type: application/json' \
-  -d '{ "reason": "customer", "restock_items": true }'
+  -d '{ "cancel_reason_id": "ocr_xxx", "cancel_note": "Supplier could not deliver in time" }'
 ```
 
 </CodeGroup>
 
-Canceling records who canceled and why, puts stock back, and settles any payments.
+Canceling puts stock back and settles any payments. It records who canceled, and
+optionally why: the reason comes from a list you manage yourself under
+Settings, so it can say what your team actually means. A staff-facing note can
+go alongside it.
 
 ## Orders don't change quietly
 

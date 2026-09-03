@@ -1,38 +1,39 @@
 module Spree
   module Orders
     # Cancels an order — the orchestration that used to hide inside
-    # Order#after_cancel: the cancellation record, the status flip and
-    # fulfillment cancellation commit atomically (with the after_cancel
-    # hook inside the transaction), then payment settlement runs as
-    # external I/O — voids and refunds are gateway calls and must never
-    # share a database transaction — followed by money and status
+    # Order#after_cancel: the status flip (stamping the reason and note on
+    # the order) and fulfillment cancellation commit atomically (with the
+    # after_cancel hook inside the transaction), then payment settlement
+    # runs as external I/O — voids and refunds are gateway calls and must
+    # never share a database transaction — followed by money and status
     # recomputation and the order.canceled event.
     class Cancel < Spree::Workflow
-      DEFAULT_REASON = 'other'.freeze
-
       hooks :before_cancel, :after_cancel
-
-      # Hook handlers read this plus the argument readers. Nil when
-      # before_cancel runs — the record does not exist yet.
-      attr_reader :cancellation
 
       # @param order [Spree::Order]
       # @param canceler [Object, nil] the user/admin who initiated the cancellation
       # @param canceled_at [Time, nil] timestamp (defaults to Time.current)
-      # @param reason [String] one of Spree::OrderCancellation::REASONS
+      # @param reason [Spree::OrderCancellationReason, nil] the merchant's own
+      #   vocabulary; must belong to the order's store
       # @param note [String, nil] staff-facing note
-      # @param restock_items [Boolean] whether to return inventory
       # @param refund_payments [Boolean] whether to refund captured payments
       # @param refund_amount [BigDecimal, Numeric, nil] defaults to
       #   order.payment_total when refund_payments is true
       # @param notify_customer [Boolean] hint for subscribers
+      # @param restock_items [Boolean, nil] deprecated and ignored — items
+      #   always return to stock when their fulfillment is canceled
       def perform(order:, canceler: nil, canceled_at: nil,
-                  reason: DEFAULT_REASON, note: nil,
-                  restock_items: false, refund_payments: false, refund_amount: nil,
-                  notify_customer: false)
+                  reason: nil, note: nil,
+                  refund_payments: false, refund_amount: nil,
+                  notify_customer: false, restock_items: nil)
         super
 
+        unless restock_items.nil?
+          Spree::Deprecation.warn('Spree::Orders::Cancel no longer accepts restock_items — it never changed behavior and will be removed in Spree 6.1.')
+        end
+
         step :ensure_cancellable
+        step :ensure_reason_belongs_to_store
 
         # Veto point — seller policy, already-dispatched guards. Before the
         # transaction: nothing is written yet, and payment settlement has
@@ -44,7 +45,6 @@ module Spree
         @amount_to_refund ||= amount_paid if refund_payments
 
         ApplicationRecord.transaction do
-          step :record_cancellation
           step :mark_canceled
           step :cancel_fulfillments
           run_hooks :after_cancel
@@ -67,21 +67,19 @@ module Spree
         failure(order) unless order.allow_cancel?
       end
 
-      def record_cancellation
-        @cancellation = order.cancellations.create!(
-          reason: reason,
-          note: note,
-          restock_items: restock_items,
-          refund_payments: refund_payments,
-          refund_amount: @amount_to_refund,
-          notify_customer: notify_customer,
-          canceled_by: canceler,
-          created_at: @decided_at
-        )
+      # A reason from another store would label this order with a vocabulary
+      # its merchant never wrote — the same scoping rule the controllers apply
+      # to every incidental id, enforced here so console and extension callers
+      # get it too.
+      def ensure_reason_belongs_to_store
+        return if reason.nil? || reason.store_id == order.store_id
+
+        order.errors.add(:cancel_reason, :invalid)
+        failure(order)
       end
 
       def mark_canceled
-        changes = { status: 'canceled', canceled_at: @decided_at }
+        changes = { status: 'canceled', canceled_at: @decided_at, cancel_reason_id: reason&.id, cancel_note: note }
         changes[:canceler_id] = canceler.id if canceler.present?
         order.update_columns(changes)
       end

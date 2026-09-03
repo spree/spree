@@ -2627,6 +2627,14 @@
           "value_type_flat": "Betrag",
           "value_type_percent": "Prozent"
         },
+        "cancel": {
+          "description": "Grund und Notiz werden bei der Bestellung gespeichert, und offene Zahlungen werden abgewickelt.",
+          "keep_order": "Bestellung behalten",
+          "no_reason": "Kein Grund angegeben",
+          "note_label": "Notiz",
+          "note_placeholder": "Diese Notiz sehen nur Mitarbeiter",
+          "reason_label": "Grund"
+        },
         "completed_prefix": "Abgeschlossen",
         "confirm": {
           "approve_message": "Diesen Auftrag genehmigen?",
@@ -2760,6 +2768,8 @@
         "summary": {
           "adjustments": "Anpassungen",
           "approved_by": "Genehmigt von",
+          "cancel_note": "Stornierungsnotiz",
+          "cancel_reason": "Stornierungsgrund",
           "canceled_at": "Storniert am",
           "canceler": "Storniert von",
           "outstanding_balance": "Offener Saldo",
@@ -4365,7 +4375,7 @@
         "message": "{{name}} wird nicht mehr angeboten. Bestehende Vorgänge behalten ihn.",
         "title": "Grund löschen?"
       },
-      "description": "Die Auswahllisten, aus denen Ihr Team bei Rücksendungen, Reklamationen und Rückerstattungen wählt.",
+      "description": "Die Auswahllisten, aus denen Ihr Team bei Rücksendungen, Reklamationen, Erstattungen und Stornierungen wählt.",
       "edit_sheet_title": "Grund bearbeiten",
       "empty": "Noch keine Gründe",
       "in_use": "In Verwendung",
@@ -4377,6 +4387,10 @@
         "updated": "Grund aktualisiert"
       },
       "name_placeholder": "z. B. Falsche Größe",
+      "order_cancellation": {
+        "help": "Warum eine Bestellung vor dem Versand abgebrochen wurde. Mitarbeitende wählen beim Stornieren einen Grund.",
+        "title": "Stornierungsgründe"
+      },
       "refund": {
         "help": "Warum Geld zurückging. Für Auswertungen über alle Rückerstattungen.",
         "title": "Rückerstattungsgründe"

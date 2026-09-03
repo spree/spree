@@ -949,31 +949,59 @@ RSpec.describe Spree::Api::V3::Admin::OrdersController, type: :controller do
       expect(order.reload).to be_canceled
     end
 
-    context 'when notify_customer is not passed' do
-      it 'does not flag the cancellation for customer notification' do
+    it 'leaves the reason unset when none is given' do
+      subject
+
+      expect(order.reload.cancel_reason).to be_nil
+      expect(order.cancel_note).to be_nil
+      expect(json_response['cancel_reason_id']).to be_nil
+    end
+
+    context 'with a reason and note' do
+      let(:reason) { create(:order_cancellation_reason, store: store, name: 'Out of stock') }
+      let(:params) do
+        { id: order.prefixed_id, cancel_reason_id: reason.prefixed_id, cancel_note: 'Supplier let us down' }
+      end
+
+      it 'stamps them on the order' do
         subject
 
-        expect(order.cancellations.last.notify_customer).to be false
+        expect(response).to have_http_status(:ok)
+        expect(order.reload.cancel_reason).to eq(reason)
+        expect(order.cancel_note).to eq('Supplier let us down')
+        expect(json_response['cancel_reason_id']).to eq(reason.prefixed_id)
+        expect(json_response['cancel_reason_name']).to eq('Out of stock')
+        expect(json_response['cancel_note']).to eq('Supplier let us down')
+      end
+    end
+
+    context 'with a reason belonging to another store' do
+      let(:reason) { create(:order_cancellation_reason, store: create(:store)) }
+      let(:params) { { id: order.prefixed_id, cancel_reason_id: reason.prefixed_id } }
+
+      it 'returns 404 and leaves the order untouched' do
+        subject
+
+        expect(response).to have_http_status(:not_found)
+        expect(order.reload).not_to be_canceled
+      end
+    end
+
+    context 'when notify_customer is not passed' do
+      it 'asks the workflow not to notify the customer' do
+        expect(Spree.order_cancel_workflow).to receive(:call).with(hash_including(notify_customer: false)).and_call_original
+
+        subject
       end
     end
 
     context 'when notify_customer is truthy' do
       let(:params) { { id: order.prefixed_id, notify_customer: 'true' } }
 
-      it 'flags the cancellation for customer notification' do
+      it 'asks the workflow to notify the customer' do
+        expect(Spree.order_cancel_workflow).to receive(:call).with(hash_including(notify_customer: true)).and_call_original
+
         subject
-
-        expect(order.cancellations.last.notify_customer).to be true
-      end
-    end
-
-    context 'when notify_customer is falsy' do
-      let(:params) { { id: order.prefixed_id, notify_customer: 'false' } }
-
-      it 'does not flag the cancellation for customer notification' do
-        subject
-
-        expect(order.cancellations.last.notify_customer).to be false
       end
     end
 

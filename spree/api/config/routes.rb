@@ -401,10 +401,11 @@ Spree::Core::Engine.add_routes do
         # preference, so there is nothing here to create.
         resources :payout_providers, only: [:index]
 
-        # Return / claim / refund reasons (dropdowns + settings management)
+        # Return / claim / refund / cancellation reasons (dropdowns + settings management)
         resources :return_reasons
         resources :claim_reasons
         resources :refund_reasons
+        resources :order_cancellation_reasons
 
         # Markets
         resources :markets

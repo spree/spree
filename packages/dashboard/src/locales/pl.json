@@ -2647,6 +2647,14 @@
           "value_type_flat": "Kwota",
           "value_type_percent": "Procent"
         },
+        "cancel": {
+          "description": "Powód i notatka zostaną zapisane przy zamówieniu, a płatności zostaną rozliczone.",
+          "keep_order": "Zachowaj zamówienie",
+          "no_reason": "Nie podano powodu",
+          "note_label": "Notatka",
+          "note_placeholder": "Notatkę widzi tylko personel",
+          "reason_label": "Powód"
+        },
         "completed_prefix": "Zrealizowano",
         "confirm": {
           "approve_message": "Zatwierdzić to zamówienie?",
@@ -2782,6 +2790,8 @@
         "summary": {
           "adjustments": "Korekty",
           "approved_by": "Zatwierdzone przez",
+          "cancel_note": "Notatka o anulowaniu",
+          "cancel_reason": "Powód anulowania",
           "canceled_at": "Anulowano",
           "canceler": "Anulujący",
           "outstanding_balance": "Pozostałe saldo",
@@ -4419,7 +4429,7 @@
         "message": "{{name}} nie będzie już proponowany. Istniejące zgłoszenia go zachowują.",
         "title": "Usunąć powód?"
       },
-      "description": "Listy, z których zespół wybiera przy zwrotach, reklamacjach i zwrotach pieniędzy.",
+      "description": "Listy powodów, z których korzysta zespół przy zwrotach, reklamacjach, refundacjach i anulowaniach.",
       "edit_sheet_title": "Edytuj powód",
       "empty": "Brak powodów",
       "in_use": "W użyciu",
@@ -4431,6 +4441,10 @@
         "updated": "Powód zaktualizowany"
       },
       "name_placeholder": "np. Zły rozmiar",
+      "order_cancellation": {
+        "help": "Dlaczego zamówienie zostało odwołane przed wysyłką. Personel wybiera powód podczas anulowania.",
+        "title": "Powody anulowania zamówień"
+      },
       "refund": {
         "help": "Dlaczego pieniądze wróciły. Używane w raportach o wszystkich zwrotach.",
         "title": "Powody zwrotu pieniędzy"

@@ -39,6 +39,9 @@ module Spree
                    customer_id: [:string, nullable: true],
                    preferred_stock_location_id: [:string, nullable: true],
                    canceled_at: [:string, nullable: true], approved_at: [:string, nullable: true],
+                   cancel_reason_id: [:string, nullable: true],
+                   cancel_reason_name: [:string, nullable: true],
+                   cancel_note: [:string, nullable: true],
                    payment_total: :string, display_payment_total: :string,
                    tags: [:string, multi: true],
                    metadata: 'Record<string, unknown>'
@@ -47,6 +50,7 @@ module Spree
           attributes :status, :last_ip_address, :considered_risky,
                      :confirmation_delivered, :store_owner_notification_delivered,
                      :payment_total, :display_payment_total, :metadata,
+                     :cancel_note,
                      canceled_at: :iso8601, approved_at: :iso8601,
                      created_at: :iso8601, updated_at: :iso8601
 
@@ -115,6 +119,17 @@ module Spree
             order.canceler&.prefixed_id
           end
 
+          attribute :cancel_reason_id do |order|
+            order.cancel_reason&.prefixed_id
+          end
+
+          # The reason's name alongside its id, so an order list can show why
+          # each canceled order was called off without expanding a record per
+          # row.
+          attribute :cancel_reason_name do |order|
+            order.cancel_reason&.name
+          end
+
           attribute :created_by_id do |order|
             order.created_by&.prefixed_id
           end
@@ -162,6 +177,10 @@ module Spree
           one :canceler,
               resource: proc { Spree.api.admin_admin_user_serializer },
               if: proc { expand?('canceler') }
+
+          one :cancel_reason,
+              resource: proc { Spree.api.admin_order_cancellation_reason_serializer },
+              if: proc { expand?('cancel_reason') }
 
           one :created_by,
               resource: proc { Spree.api.admin_admin_user_serializer },

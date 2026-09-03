@@ -2627,6 +2627,14 @@
           "value_type_flat": "Montant",
           "value_type_percent": "Pourcentage"
         },
+        "cancel": {
+          "description": "Le motif et la note sont enregistrés sur la commande, et les paiements sont soldés.",
+          "keep_order": "Conserver la commande",
+          "no_reason": "Aucun motif indiqué",
+          "note_label": "Note",
+          "note_placeholder": "Cette note n'est visible que par le personnel",
+          "reason_label": "Motif"
+        },
         "completed_prefix": "Terminée",
         "confirm": {
           "approve_message": "Approuver cette commande ?",
@@ -2760,6 +2768,8 @@
         "summary": {
           "adjustments": "Ajustements",
           "approved_by": "Approuvé par",
+          "cancel_note": "Note d'annulation",
+          "cancel_reason": "Motif d'annulation",
           "canceled_at": "Annulée le",
           "canceler": "Annulé par",
           "outstanding_balance": "Solde restant dû",
@@ -4365,7 +4375,7 @@
         "message": "{{name}} ne sera plus proposé. Les enregistrements existants le conservent.",
         "title": "Supprimer le motif ?"
       },
-      "description": "Les listes de motifs que votre équipe utilise pour les retours, réclamations et remboursements.",
+      "description": "Les listes de motifs utilisées par votre équipe pour les retours, réclamations, remboursements et annulations.",
       "edit_sheet_title": "Modifier le motif",
       "empty": "Aucun motif pour l'instant",
       "in_use": "Utilisé",
@@ -4377,6 +4387,10 @@
         "updated": "Motif mis à jour"
       },
       "name_placeholder": "ex. Mauvaise taille",
+      "order_cancellation": {
+        "help": "Pourquoi une commande a été annulée avant son expédition. Le personnel en choisit un lors de l'annulation.",
+        "title": "Motifs d'annulation de commande"
+      },
       "refund": {
         "help": "Pourquoi l'argent a été rendu. Utilisé pour le suivi de tous les remboursements.",
         "title": "Motifs de remboursement"

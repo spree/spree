@@ -527,18 +527,11 @@ export interface OrderCompleteParams {
 }
 
 export interface OrderCancelParams {
-  reason?: 'customer' | 'declined' | 'fraud' | 'inventory' | 'staff' | 'other' | 'expired'
-  note?: string
-  restock_items?: boolean
-  refund_payments?: boolean
-  /** Decimal amount; see `PaymentCreateParams.amount` for the string rationale. */
-  refund_amount?: string | number
+  /** Why the order was canceled — an id from the store's cancellation reasons. */
+  cancel_reason_id?: string
+  /** Staff-facing note shown on the order. */
+  cancel_note?: string
   notify_customer?: boolean
-}
-
-export interface OrderApproveParams {
-  level?: string
-  note?: string
 }
 
 export interface GiftCardApplyParams {

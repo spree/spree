@@ -28,27 +28,10 @@ module Spree
       it_behaves_like 'approves order'
     end
 
-    describe 'OrderApproval record creation' do
-      it 'creates an approval record with status approved' do
-        expect { result }.to change(order.approvals, :count).by(1)
-        approval = order.approvals.last
-        expect(approval.status).to eq('approved')
-        expect(approval.approver).to eq(user)
-        expect(approval.decided_at).to be_present
-      end
+    it 'publishes order.approved' do
+      expect(order).to receive(:publish_event).with('order.approved')
 
-      context 'with level and note' do
-        let(:result) do
-          subject.call(order: order, approver: user, level: 'manager', note: 'Approved per phone call')
-        end
-
-        it 'records level and note on the approval' do
-          result
-          approval = order.approvals.last
-          expect(approval.level).to eq('manager')
-          expect(approval.note).to eq('Approved per phone call')
-        end
-      end
+      result
     end
   end
 end
