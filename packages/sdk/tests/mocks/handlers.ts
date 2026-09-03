@@ -135,7 +135,7 @@ export const fixtures = {
     is_default: true,
   },
   wishlistItem: {
-    id: 'wi_1',
+    id: 'wli_1',
     quantity: 1,
     variant_id: 'var_1',
   },

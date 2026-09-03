@@ -497,7 +497,7 @@ module Spree
           rule = schemas['PromotionRule'] || schemas[:PromotionRule]
           return unless rule
 
-          patch_id_arrays(rule, %w[product_ids category_ids customer_ids])
+          patch_id_arrays(rule, %w[product_ids category_ids customer_ids option_value_ids])
           patch_preference_schema(rule)
         end
 

@@ -9534,7 +9534,7 @@ paths:
             publishableKey: '<api-key>',
           })
 
-          await client.wishlists.items.delete('wl_abc123', 'wi_abc123', {
+          await client.wishlists.items.delete('wl_abc123', 'wli_abc123', {
             token: '<token>',
           })
       parameters:
