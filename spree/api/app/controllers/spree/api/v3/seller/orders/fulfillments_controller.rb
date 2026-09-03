@@ -176,7 +176,7 @@ module Spree
               if result.success?
                 render json: serialize(result.value)
               else
-                render_service_error(@fulfillment.errors.presence || result.error)
+                render_result_error(result)
               end
             end
 

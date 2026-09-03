@@ -46,16 +46,16 @@ import {
 import { CreateClaimDialog } from './post-sale-create-dialogs'
 
 /**
- * How a variant reads on a post-sale line. A seller's variant serializer
- * carries the SKU and its option values, never a name — the name lives on the
- * product — so the label is built from what is actually there.
+ * How a post-sale line reads. The product name comes from the line itself —
+ * a variant carries a SKU and its option values but never a name — falling
+ * back to the SKU and then the raw id.
  */
-function variantLabel(
+function lineLabel(
+  name: string | null | undefined,
   variant: { sku?: string | null; options_text?: string | null } | undefined,
   fallback: string | null | undefined,
 ): string {
-  const parts = [variant?.sku, variant?.options_text].filter(Boolean)
-  return parts.length > 0 ? parts.join(' · ') : (fallback ?? '')
+  return [name, variant?.options_text].filter(Boolean).join(' · ') || variant?.sku || fallback || ''
 }
 
 const EXCHANGE_ACTIONABLE = ['requested', 'approved', 'received']
@@ -155,8 +155,8 @@ export function ExchangesCard({ order }: { order: Order }) {
               {exchange.exchange_line_items?.map((line) => (
                 <div key={line.id} className="flex items-center justify-between gap-3 text-sm">
                   <span className="truncate">
-                    {variantLabel(line.original_variant, line.original_variant_id)} →{' '}
-                    {variantLabel(line.new_variant, line.new_variant_id)}
+                    {lineLabel(line.name, line.original_variant, line.original_variant_id)} →{' '}
+                    {lineLabel(line.new_variant_name, line.new_variant, line.new_variant_id)}
                   </span>
                   <span className="shrink-0 text-muted-foreground">× {line.quantity}</span>
                 </div>
@@ -271,7 +271,7 @@ export function ClaimsCard({ order }: { order: Order }) {
                 {claim.claim_line_items?.map((line) => (
                   <div key={line.id} className="flex items-center justify-between gap-3 text-sm">
                     <span className="min-w-0 truncate">
-                      {variantLabel(line.variant, line.variant_id)}
+                      {lineLabel(line.name, line.variant, line.variant_id)}
                       {line.description && (
                         <span className="text-muted-foreground"> — {line.description}</span>
                       )}

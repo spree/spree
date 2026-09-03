@@ -78,13 +78,17 @@ export function OrderPage() {
               {order.fulfillment_status && (
                 <StatusBadge
                   status={order.fulfillment_status}
-                  label={t(`orders.fulfillment_statuses.${order.fulfillment_status}`)}
+                  label={t(`orders.fulfillment_statuses.${order.fulfillment_status}`, {
+                    defaultValue: order.fulfillment_status,
+                  })}
                 />
               )}
               {order.payment_status && (
                 <StatusBadge
                   status={order.payment_status}
-                  label={t(`orders.payment_statuses.${order.payment_status}`)}
+                  label={t(`orders.payment_statuses.${order.payment_status}`, {
+                    defaultValue: order.payment_status,
+                  })}
                 />
               )}
             </>

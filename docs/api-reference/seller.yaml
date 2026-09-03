@@ -17316,6 +17316,9 @@ components:
           nullable: true
         variant:
           "$ref": "#/components/schemas/Variant"
+        name:
+          type: string
+          nullable: true
       required:
       - id
       - quantity
@@ -17327,6 +17330,7 @@ components:
       - variant_id
       - replacement_variant_id
       - line_item_id
+      - name
       x-typelizer: true
     Claim:
       type: object
@@ -17433,6 +17437,12 @@ components:
           "$ref": "#/components/schemas/Variant"
         new_variant:
           "$ref": "#/components/schemas/Variant"
+        name:
+          type: string
+          nullable: true
+        new_variant_name:
+          type: string
+          nullable: true
       required:
       - id
       - quantity
@@ -17445,6 +17455,8 @@ components:
       - new_variant_id
       - line_item_id
       - fulfillment_item_id
+      - name
+      - new_variant_name
       x-typelizer: true
     Exchange:
       type: object
@@ -18510,6 +18522,9 @@ components:
           nullable: true
         variant:
           "$ref": "#/components/schemas/Variant"
+        name:
+          type: string
+          nullable: true
       required:
       - id
       - quantity
@@ -18520,6 +18535,7 @@ components:
       - variant_id
       - line_item_id
       - fulfillment_item_id
+      - name
       x-typelizer: true
     Return:
       type: object

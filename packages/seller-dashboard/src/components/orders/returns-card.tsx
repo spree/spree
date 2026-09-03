@@ -41,6 +41,20 @@ import { CreateReturnDialog, fulfilledUnits } from './post-sale-create-dialogs'
 const ACTIONABLE = ['requested', 'approved', 'received']
 
 /**
+ * How a returned line reads. The product name comes from the line itself —
+ * a variant carries a SKU and its options but never a name — with the
+ * option values after it so two sizes of one product are distinguishable.
+ */
+function postSaleLabel(line: ReturnLineItem): string {
+  return (
+    [line.name, line.variant?.options_text].filter(Boolean).join(' · ') ||
+    line.variant?.sku ||
+    line.variant_id ||
+    ''
+  )
+}
+
+/**
  * Goods coming back on this order.
  *
  * Each status change is its own action rather than an editable field, because
@@ -179,10 +193,7 @@ export function ReturnsCard({ order }: { order: Order }) {
 
 function ReturnLineRow({ line }: { line: ReturnLineItem }) {
   const { t } = useTranslation()
-  const label =
-    [line.variant?.sku, line.variant?.options_text].filter(Boolean).join(' · ') ||
-    line.variant_id ||
-    ''
+  const label = postSaleLabel(line)
 
   return (
     <div className="flex items-center justify-between gap-3 text-sm">
@@ -251,10 +262,7 @@ function ReceiveDialog({
           <div className="flex flex-col gap-3">
             {lines.map((line) => (
               <div key={line.id} className="flex items-center justify-between gap-3">
-                <span className="min-w-0 truncate text-sm">
-                  {[line.variant?.sku, line.variant?.options_text].filter(Boolean).join(' · ') ||
-                    line.variant_id}
-                </span>
+                <span className="min-w-0 truncate text-sm">{postSaleLabel(line)}</span>
                 <div className="flex shrink-0 items-center gap-3">
                   <label className="flex items-center gap-2 text-xs" htmlFor={`resell-${line.id}`}>
                     {t('orders.post_sale.returns.resellable')}

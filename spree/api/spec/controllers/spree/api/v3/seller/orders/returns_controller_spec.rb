@@ -169,4 +169,29 @@ RSpec.describe Spree::Api::V3::Seller::Orders::ReturnsController, type: :control
       expect(response).to have_http_status(:forbidden)
     end
   end
+
+  # The cards render a return's contents, and every nested collection is
+  # expand-gated — a bare list answers with the record and nothing in it.
+  describe 'expanding the contents' do
+    it 'returns the line items and their variants when asked' do
+      open_return
+
+      get :index, params: {
+        order_id: order.prefixed_id,
+        expand: 'return_line_items,return_line_items.variant'
+      }, as: :json
+
+      row = json_response['data'].first
+      expect(row['return_line_items']).to be_present
+      expect(row['return_line_items'].first['variant']).to be_present
+    end
+
+    it 'omits them when not asked' do
+      open_return
+
+      get :index, params: { order_id: order.prefixed_id }, as: :json
+
+      expect(json_response['data'].first).not_to have_key('return_line_items')
+    end
+  end
 end

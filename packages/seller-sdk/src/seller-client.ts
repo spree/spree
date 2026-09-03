@@ -573,10 +573,18 @@ export class SellerClient {
      */
     returns: {
       list: (orderId: string, options?: RequestOptions): Promise<{ data: Return[] }> =>
-        this.request<{ data: Return[] }>('GET', `/orders/${orderId}/returns`, options),
+        this.request<{ data: Return[] }>('GET', `/orders/${orderId}/returns`, {
+          ...options,
+          // The nested collections are expand-gated server-side, so a bare
+          // list answers with the record and none of its contents.
+          params: { expand: ['return_line_items', 'return_line_items.variant', 'reason'] },
+        }),
 
       get: (orderId: string, id: string, options?: RequestOptions): Promise<Return> =>
-        this.request<Return>('GET', `/orders/${orderId}/returns/${id}`, options),
+        this.request<Return>('GET', `/orders/${orderId}/returns/${id}`, {
+          ...options,
+          params: { expand: ['return_line_items', 'return_line_items.variant', 'reason'] },
+        }),
 
       create: (
         orderId: string,
@@ -634,10 +642,32 @@ export class SellerClient {
     /** Goods swapped for different ones. */
     exchanges: {
       list: (orderId: string, options?: RequestOptions): Promise<{ data: Exchange[] }> =>
-        this.request<{ data: Exchange[] }>('GET', `/orders/${orderId}/exchanges`, options),
+        this.request<{ data: Exchange[] }>('GET', `/orders/${orderId}/exchanges`, {
+          ...options,
+          // The nested collections are expand-gated server-side, so a bare
+          // list answers with the record and none of its contents.
+          params: {
+            expand: [
+              'exchange_line_items',
+              'exchange_line_items.original_variant',
+              'exchange_line_items.new_variant',
+              'reason',
+            ],
+          },
+        }),
 
       get: (orderId: string, id: string, options?: RequestOptions): Promise<Exchange> =>
-        this.request<Exchange>('GET', `/orders/${orderId}/exchanges/${id}`, options),
+        this.request<Exchange>('GET', `/orders/${orderId}/exchanges/${id}`, {
+          ...options,
+          params: {
+            expand: [
+              'exchange_line_items',
+              'exchange_line_items.original_variant',
+              'exchange_line_items.new_variant',
+              'reason',
+            ],
+          },
+        }),
 
       create: (
         orderId: string,
@@ -700,10 +730,18 @@ export class SellerClient {
      */
     claims: {
       list: (orderId: string, options?: RequestOptions): Promise<{ data: Claim[] }> =>
-        this.request<{ data: Claim[] }>('GET', `/orders/${orderId}/claims`, options),
+        this.request<{ data: Claim[] }>('GET', `/orders/${orderId}/claims`, {
+          ...options,
+          // The nested collections are expand-gated server-side, so a bare
+          // list answers with the record and none of its contents.
+          params: { expand: ['claim_line_items', 'claim_line_items.variant', 'reason'] },
+        }),
 
       get: (orderId: string, id: string, options?: RequestOptions): Promise<Claim> =>
-        this.request<Claim>('GET', `/orders/${orderId}/claims/${id}`, options),
+        this.request<Claim>('GET', `/orders/${orderId}/claims/${id}`, {
+          ...options,
+          params: { expand: ['claim_line_items', 'claim_line_items.variant', 'reason'] },
+        }),
 
       create: (
         orderId: string,

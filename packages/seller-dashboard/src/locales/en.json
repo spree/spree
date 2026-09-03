@@ -268,11 +268,14 @@
     "items": "Items",
     "not_found": "That order could not be found.",
     "payment_statuses": {
-      "balance_due": "Balance due",
-      "credit_owed": "Credit owed",
-      "failed": "Failed",
+      "none": "Unpaid",
+      "authorized": "Authorized",
+      "partially_paid": "Partially paid",
       "paid": "Paid",
-      "void": "Void"
+      "partially_refunded": "Partially refunded",
+      "refunded": "Refunded",
+      "overcharged": "Overcharged",
+      "voided": "Voided"
     },
     "search_placeholder": "Search by order number…",
     "shipping_address": "Ships to",

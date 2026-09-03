@@ -20,14 +20,37 @@ import { useTrackingCarriers } from '../../hooks/use-reasons'
 
 type Row = { itemId: string; label: string; available: number; quantity: number }
 
+/**
+ * One row per line item, not per fulfillment item.
+ *
+ * A parcel routinely holds two rows for the same line item — the packer
+ * splits a partly-stocked line into an on-hand unit and a backordered one —
+ * and the server addresses what to ship by line item. Left unmerged, the two
+ * rows share a React key, one stepper silently moves the other, and the
+ * payload sends the same `item_id` twice, where last-wins makes a seller who
+ * selected everything ship only half of it.
+ */
 function initialRows(fulfillment: Fulfillment): Row[] {
-  return (fulfillment.fulfillment_items ?? []).map((item) => ({
-    // The server addresses what to ship by line item, not by fulfillment item.
-    itemId: item.line_item_id ?? item.id,
-    label: [item.name, item.options_text].filter(Boolean).join(' — ') || item.id,
-    available: item.quantity,
-    quantity: item.quantity,
-  }))
+  const byLineItem = new Map<string, Row>()
+
+  for (const item of fulfillment.fulfillment_items ?? []) {
+    const itemId = item.line_item_id ?? item.id
+    const existing = byLineItem.get(itemId)
+
+    if (existing) {
+      existing.available += item.quantity
+      existing.quantity += item.quantity
+    } else {
+      byLineItem.set(itemId, {
+        itemId,
+        label: [item.name, item.options_text].filter(Boolean).join(' — ') || item.id,
+        available: item.quantity,
+        quantity: item.quantity,
+      })
+    }
+  }
+
+  return [...byLineItem.values()]
 }
 
 /**
@@ -50,10 +73,22 @@ export function FulfillmentFulfillForm({
   const { fulfill } = useFulfillmentActions(orderId)
   const { data: carriersData } = useTrackingCarriers()
 
-  const [rows, setRows] = useState<Row[]>(() => initialRows(fulfillment))
   const [tracking, setTracking] = useState('')
   const [carrier, setCarrier] = useState('')
   const [notifyCustomer, setNotifyCustomer] = useState(true)
+
+  // What the seller has chosen to ship, keyed by line item — empty until they
+  // change something, which is when a row starts differing from the default.
+  const [chosen, setChosen] = useState<Record<string, number>>({})
+
+  // Shipping part of a parcel splits the rest onto a new one, and the source
+  // keeps its id with fewer items. Deriving the rows on every render rather
+  // than seeding state once is what keeps them true after a partial ship —
+  // `useState` would still be showing the pre-split quantities.
+  const rows = initialRows(fulfillment).map((row) => ({
+    ...row,
+    quantity: chosen[row.itemId] ?? row.quantity,
+  }))
 
   const carrierOptions = [
     { value: '', label: t('orders.fulfillments.carrier_auto') },
@@ -65,13 +100,12 @@ export function FulfillmentFulfillForm({
   const partial = selectedUnits > 0 && selectedUnits < totalUnits
 
   function setQuantity(itemId: string, quantity: number) {
-    setRows((current) =>
-      current.map((row) =>
-        row.itemId === itemId
-          ? { ...row, quantity: Math.max(0, Math.min(row.available, quantity)) }
-          : row,
-      ),
-    )
+    const available = rows.find((row) => row.itemId === itemId)?.available ?? 0
+
+    setChosen((current) => ({
+      ...current,
+      [itemId]: Math.max(0, Math.min(available, quantity)),
+    }))
   }
 
   async function handleShip() {
