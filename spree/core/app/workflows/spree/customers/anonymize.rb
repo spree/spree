@@ -258,8 +258,8 @@ module Spree
       # @param deleted [Boolean] whether to soft-delete it as well
       def redact_address(address, deleted:)
         attributes = {
-          firstname: REDACTED_NAME,
-          lastname: REDACTED_NAME,
+          first_name: REDACTED_NAME,
+          last_name: REDACTED_NAME,
           address1: REDACTED_NAME,
           address2: nil,
           phone: nil,
@@ -268,7 +268,7 @@ module Spree
           label: nil,
           latitude: nil,
           longitude: nil,
-          zipcode: truncated_zipcode(address.zipcode),
+          postal_code: truncated_postal_code(address.postal_code),
           metadata: {},
           updated_at: Time.current
         }
@@ -281,12 +281,12 @@ module Spree
       # points at a household. The leading characters are the coarse part of
       # every postcode system we serve.
       #
-      # @param zipcode [String, nil]
+      # @param postal_code [String, nil]
       # @return [String, nil]
-      def truncated_zipcode(zipcode)
-        return nil if zipcode.blank?
+      def truncated_postal_code(postal_code)
+        return nil if postal_code.blank?
 
-        zipcode.to_s.strip.first(2)
+        postal_code.to_s.strip.first(2)
       end
 
       def anonymous_email

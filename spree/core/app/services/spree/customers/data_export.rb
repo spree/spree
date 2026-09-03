@@ -244,15 +244,15 @@ module Spree
 
         {
           label: address.label,
-          first_name: address.firstname,
-          last_name: address.lastname,
+          first_name: address.first_name,
+          last_name: address.last_name,
           company: address.company,
           address1: address.address1,
           address2: address.address2,
           city: address.city,
           state_code: address.state_code,
           state_name: address.state_name,
-          postal_code: address.zipcode,
+          postal_code: address.postal_code,
           country_code: address.country_code,
           phone: address.phone
         }

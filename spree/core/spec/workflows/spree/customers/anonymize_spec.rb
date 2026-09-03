@@ -42,7 +42,7 @@ RSpec.describe Spree::Customers::Anonymize do
   end
 
   describe 'the address book' do
-    let!(:address) { create(:address, owner: customer, firstname: 'Ada', address1: '5 Baker Street', zipcode: '90210', phone: '+1 555 0142') }
+    let!(:address) { create(:address, owner: customer, first_name: 'Ada', address1: '5 Baker Street', postal_code: '90210', phone: '+1 555 0142') }
 
     it 'redacts the street line and phone but keeps the jurisdiction' do
       original_country = address.country_code
@@ -52,7 +52,7 @@ RSpec.describe Spree::Customers::Anonymize do
       address.reload
 
       expect(address.address1).to eq('Redacted')
-      expect(address.firstname).to eq('Redacted')
+      expect(address.first_name).to eq('Redacted')
       expect(address.phone).to be_nil
       expect(address.country_code).to eq(original_country)
       expect(address.city).to eq(original_city)
@@ -61,7 +61,7 @@ RSpec.describe Spree::Customers::Anonymize do
     it 'truncates the postcode rather than clearing it' do
       result
 
-      expect(address.reload.zipcode).to eq('90')
+      expect(address.reload.postal_code).to eq('90')
     end
 
     it 'soft-deletes the customer\'s own entries' do
@@ -71,14 +71,14 @@ RSpec.describe Spree::Customers::Anonymize do
     end
 
     it 'reaches an address the customer had already removed' do
-      old_address = create(:address, owner: customer, address1: '1 Old Street', firstname: 'Ada')
+      old_address = create(:address, owner: customer, address1: '1 Old Street', first_name: 'Ada')
       old_address.update_columns(deleted_at: 1.day.ago)
 
       result
       old_address.reload
 
       expect(old_address.address1).to eq('Redacted')
-      expect(old_address.firstname).to eq('Redacted')
+      expect(old_address.first_name).to eq('Redacted')
     end
   end
 
@@ -121,7 +121,7 @@ RSpec.describe Spree::Customers::Anonymize do
       ship_address.reload
 
       expect(ship_address.address1).to eq('Redacted')
-      expect(ship_address.lastname).to eq('Redacted')
+      expect(ship_address.last_name).to eq('Redacted')
       expect(ship_address.state_code).to eq(original_state)
       expect(ship_address.country_code).to eq(original_country)
     end

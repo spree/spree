@@ -21,7 +21,7 @@ RSpec.describe 'personal data coverage' do
     /\Afirst_?name\z/, /\Alast_?name\z/, /\Afull_name\z/,
     /\Aip_address\z/, /_ip_address\z/,
     /\Auser_agent\z/,
-    /\Aaddress\d?\z/, /\Azipcode\z/, /\Apostal_code\z/,
+    /\Aaddress\d?\z/, /\Apostal_code\z/,
     /\Anote\z/, /_note\z/
   ].freeze
 
