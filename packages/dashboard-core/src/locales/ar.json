@@ -192,7 +192,8 @@
         "selected": "تم تحديد {{count}}"
       },
       "channel_select": {
-        "placeholder": "اختر قناة مبيعات"
+        "placeholder": "اختر قناة مبيعات",
+        "all_channels": "جميع القنوات"
       },
       "command_palette": {
         "create": {

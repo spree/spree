@@ -192,7 +192,8 @@
         "selected": "{{count}} selected"
       },
       "channel_select": {
-        "placeholder": "Select a sales channel"
+        "placeholder": "Select a sales channel",
+        "all_channels": "All channels"
       },
       "command_palette": {
         "create": {

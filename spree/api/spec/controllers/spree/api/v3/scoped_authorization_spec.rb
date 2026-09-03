@@ -188,7 +188,7 @@ RSpec.describe Spree::Api::V3::Admin::DashboardController, type: :controller do
       let(:scopes) { ['read_dashboard'] }
 
       it 'enforces the scope and allows the read' do
-        get :analytics, as: :json
+        get :operations, as: :json
         expect(response).to have_http_status(:ok)
       end
     end
@@ -197,7 +197,7 @@ RSpec.describe Spree::Api::V3::Admin::DashboardController, type: :controller do
       let(:scopes) { ['read_orders'] }
 
       it 'denies rather than silently skipping the scope check' do
-        get :analytics, as: :json
+        get :operations, as: :json
 
         expect(response).to have_http_status(:forbidden)
         body = JSON.parse(response.body)
@@ -214,7 +214,7 @@ RSpec.describe Spree::Api::V3::Admin::DashboardController, type: :controller do
     end
 
     it 'passes the key gate (admin holds the full catalog)' do
-      get :analytics, as: :json
+      get :operations, as: :json
       expect(response).to have_http_status(:ok)
     end
   end

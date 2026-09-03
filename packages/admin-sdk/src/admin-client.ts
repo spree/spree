@@ -10,35 +10,74 @@ import type {
 } from '@spree/sdk-core'
 import { getParams, transformListParams } from '@spree/sdk-core'
 
-export interface DashboardAnalytics {
-  currency: string
-  date_from: string
-  date_to: string
-  summary: {
-    sales_total: number
-    display_sales_total: string
-    sales_growth: number
-    orders_count: number
-    orders_growth: number
-    avg_order_value: number
-    display_avg_order_value: string
-    avg_order_value_growth: number
+// ============================================
+// Semantic reporting contract (docs/plans/6.0-analytics-semantic-layer.md)
+// ============================================
+
+export interface ReportingQuery {
+  /** Registered metric names — discover via `reporting.schema()`. */
+  metrics: string[]
+  dimensions?: Array<string | { name: string; grain?: 'day' | 'month' }>
+  filters?: Array<{ dimension: string; op: 'eq' | 'in'; value: string | string[] }>
+  /** ISO datetimes/dates or relative (`"-30d"`); defaults to the last 30 days. */
+  time_range?: { since?: string; until?: string }
+  compare?: 'previous_period'
+  /** Metric name, `-` prefix for descending. */
+  sort?: string
+  limit?: number
+  currency?: string
+}
+
+export interface ReportingMetricValue {
+  value: number
+  /** Formatted money string — present on money metrics only. */
+  display?: string
+  /** Present when the query requested a comparison. */
+  previous?: number
+  /** Percentage change vs the previous period; null when there is no baseline. */
+  growth?: number | null
+}
+
+/** Hydrated display payload for lookup-backed dimensions. */
+export interface ReportingDimensionValue {
+  /** Prefixed id (e.g. `cust_…`); null when the underlying record is gone (e.g. guest customers). */
+  id: string | null
+  label: string
+  meta: Record<string, unknown>
+}
+
+export interface ReportingRow {
+  /** Raw values for plain dimensions (time buckets, statuses); display payloads for lookups. */
+  dimensions: Record<string, string | ReportingDimensionValue>
+  metrics: Record<string, ReportingMetricValue>
+}
+
+export interface ReportingResult {
+  meta: {
+    currency: string
+    time_range: { since: string; until: string }
+    previous_time_range: { since: string; until: string } | null
+    metrics: string[]
+    dimensions: Array<{ name: string; grain?: string }>
   }
-  chart_data: Array<{
-    date: string
-    sales: number
-    orders: number
-    avg_order_value: number
-  }>
-  top_products: Array<{
-    id: string
-    name: string
-    slug: string
-    image_url: string | null
-    price: string | null
-    quantity: number
-    total: string
-  }>
+  totals: Record<string, ReportingMetricValue>
+  rows: ReportingRow[]
+}
+
+export interface ReportingSchema {
+  metrics: Array<{ name: string; format: string; derived: boolean }>
+  dimensions: Array<{ name: string; type: string; grains?: string[]; lookup?: string }>
+}
+
+export interface DashboardOperations {
+  /** Prefixed channel id the order-based counts are scoped to; null means all channels. Stock counts are always store-wide. */
+  channel_id: string | null
+  low_stock_threshold: number
+  orders_to_fulfill: number
+  payments_to_collect: number
+  open_returns: number
+  low_stock_items: number
+  out_of_stock_items: number
 }
 
 export interface AuthTokens {
@@ -763,15 +802,22 @@ export class AdminClient {
   // Dashboard
   // ============================================
 
+  readonly reporting = {
+    /** Run a semantic reporting query against the registered metric/dimension vocabulary. */
+    query: (query: ReportingQuery, options?: RequestOptions): Promise<ReportingResult> =>
+      this.request<ReportingResult>('POST', '/reporting/query', { ...options, body: query }),
+
+    /** Registry introspection — drives pickers and agent tool schemas. */
+    schema: (options?: RequestOptions): Promise<ReportingSchema> =>
+      this.request<ReportingSchema>('GET', '/reporting/schema', options),
+  }
+
   readonly dashboard = {
-    analytics: (
-      params?: { date_from?: string; date_to?: string; currency?: string },
+    operations: (
+      params?: { low_stock_threshold?: number; channel_id?: string },
       options?: RequestOptions,
-    ): Promise<DashboardAnalytics> =>
-      this.request<DashboardAnalytics>('GET', '/dashboard/analytics', {
-        ...options,
-        params: params as Record<string, string>,
-      }),
+    ): Promise<DashboardOperations> =>
+      this.request<DashboardOperations>('GET', '/dashboard/operations', { ...options, params }),
   }
 
   // ============================================

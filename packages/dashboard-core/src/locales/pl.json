@@ -193,7 +193,8 @@
         "selected": "Wybrano: {{count}}"
       },
       "channel_select": {
-        "placeholder": "Wybierz kanał sprzedaży"
+        "placeholder": "Wybierz kanał sprzedaży",
+        "all_channels": "Wszystkie kanały"
       },
       "command_palette": {
         "create": {

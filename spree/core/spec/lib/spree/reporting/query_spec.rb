@@ -1,0 +1,229 @@
+require 'spec_helper'
+
+RSpec.describe Spree::Reporting::Query do
+  let(:store) { @default_store }
+
+  def run(params)
+    described_class.new(store: store, params: params).execute
+  end
+
+  describe 'validation' do
+    it 'rejects unknown metrics naming the valid ones' do
+      expect { run(metrics: %w[nope]) }.to raise_error(Spree::Reporting::UnknownMember, /net_revenue/)
+    end
+
+    it 'rejects unknown dimensions' do
+      expect { run(metrics: %w[orders_count], dimensions: %w[nope]) }.to raise_error(Spree::Reporting::UnknownMember)
+    end
+
+    it 'rejects empty metrics' do
+      expect { run(metrics: []) }.to raise_error(Spree::Reporting::InvalidQuery, /metrics/)
+    end
+
+    it 'rejects invalid grains' do
+      expect { run(metrics: %w[orders_count], dimensions: [{ name: 'completed_at', grain: 'decade' }]) }
+        .to raise_error(Spree::Reporting::InvalidQuery, /grain/)
+    end
+
+    it 'rejects invalid filter ops' do
+      expect { run(metrics: %w[orders_count], filters: [{ dimension: 'channel', op: 'matches', value: 'x' }]) }
+        .to raise_error(Spree::Reporting::InvalidQuery, /op/)
+    end
+
+    it 'rejects order-based metrics grouped by line-item dimensions' do
+      expect { run(metrics: %w[gross_revenue], dimensions: %w[category]) }
+        .to raise_error(Spree::Reporting::InvalidQuery, /cannot be grouped/)
+    end
+
+    it 'rejects sorting by a metric that was not requested' do
+      expect { run(metrics: %w[orders_count], dimensions: %w[customer], sort: '-net_revenue') }
+        .to raise_error(Spree::Reporting::InvalidQuery, /sort/)
+    end
+
+    it 'raises on a channel filter from another store' do
+      foreign_channel = create(:channel, store: create(:store))
+      expect { run(metrics: %w[orders_count], filters: [{ dimension: 'channel', op: 'eq', value: foreign_channel.prefixed_id }]) }
+        .to raise_error(ActiveRecord::RecordNotFound)
+    end
+  end
+
+  describe '#required_subjects' do
+    it 'includes order data plus every referenced member subject' do
+      query = described_class.new(store: store, params: { metrics: %w[net_revenue], dimensions: %w[product] })
+      expect(query.required_subjects).to contain_exactly(Spree::Order, Spree::Product)
+
+      query = described_class.new(store: store, params: { metrics: %w[orders_count] })
+      expect(query.required_subjects).to contain_exactly(Spree::Order)
+    end
+  end
+
+  describe '#required_key_scopes' do
+    it 'collects the key scopes of referenced members, including filters' do
+      query = described_class.new(store: store, params: {
+        metrics: %w[net_revenue],
+        dimensions: %w[product],
+        filters: [{ dimension: 'category', op: 'eq', value: 'ctg_x' }]
+      })
+      expect(query.required_key_scopes).to contain_exactly('read_products', 'read_categories')
+
+      query = described_class.new(store: store, params: { metrics: %w[orders_count], dimensions: %w[channel] })
+      expect(query.required_key_scopes).to be_empty
+    end
+  end
+
+  describe 'execution' do
+    context 'with no orders' do
+      it 'returns zero totals and zero-filled day rows' do
+        result = run(metrics: %w[gross_revenue orders_count aov], dimensions: [{ name: 'completed_at', grain: 'day' }])
+
+        expect(result.totals[:gross_revenue][:value]).to eq(0.0)
+        expect(result.totals[:orders_count][:value]).to eq(0)
+        expect(result.totals[:aov][:value]).to eq(0.0)
+        expect(result.rows.length).to eq(31) # default 30 days + today
+        expect(result.rows).to all(satisfy { |row| row[:metrics][:orders_count][:value].zero? })
+      end
+    end
+
+    context 'with completed orders' do
+      # Distinct line item prices keep ranking expectations deterministic.
+      let!(:order1) { create(:completed_order_with_totals, store: store, completed_at: 5.days.ago, line_items_price: 25) }
+      let!(:order2) { create(:completed_order_with_totals, store: store, completed_at: 2.days.ago) }
+
+      it 'computes whole-period totals' do
+        result = run(metrics: %w[gross_revenue orders_count units_sold customers_count aov])
+
+        expected_gross = (order1.total + order2.total).to_f.round(2)
+        expected_units = order1.line_items.sum(:quantity) + order2.line_items.sum(:quantity)
+
+        expect(result.totals[:gross_revenue][:value]).to eq(expected_gross)
+        expect(result.totals[:orders_count][:value]).to eq(2)
+        expect(result.totals[:units_sold][:value]).to eq(expected_units)
+        expect(result.totals[:customers_count][:value]).to eq(2)
+        expect(result.totals[:aov][:value]).to eq((expected_gross / 2).round(2))
+      end
+
+      it 'reports nil growth without a previous-period baseline' do
+        result = run(metrics: %w[gross_revenue orders_count], compare: 'previous_period')
+
+        expect(result.totals[:gross_revenue][:growth]).to be_nil
+        expect(result.totals[:orders_count][:growth]).to be_nil
+        expect(result.meta[:previous_time_range]).to be_present
+      end
+
+      it 'buckets day rows in order and fills empty days with zeros' do
+        result = run(
+          metrics: %w[gross_revenue orders_count units_sold],
+          dimensions: [{ name: 'completed_at', grain: 'day' }],
+          compare: 'previous_period'
+        )
+
+        expect(result.rows.length).to eq(31)
+        day = result.rows.find { |row| row[:dimensions][:completed_at] == 5.days.ago.to_date.to_s }
+        expect(day[:metrics][:orders_count][:value]).to eq(1)
+        expect(day[:metrics][:gross_revenue][:value]).to eq(order1.total.to_f.round(2))
+        expect(day[:metrics][:units_sold][:value]).to be > 0
+        expect(day[:metrics].values).to all(have_key(:previous))
+      end
+
+      it 'respects an explicit time_range' do
+        result = run(metrics: %w[orders_count], dimensions: [{ name: 'completed_at', grain: 'day' }],
+                     time_range: { since: 7.days.ago.to_date.to_s, until: Time.current.to_date.to_s })
+
+        expect(result.rows.length).to eq(8)
+      end
+
+      it 'filters by channel' do
+        channel = create(:channel, store: store)
+        create(:completed_order_with_totals, store: store, channel: channel, completed_at: 3.days.ago)
+
+        result = run(metrics: %w[orders_count], filters: [{ dimension: 'channel', op: 'eq', value: channel.prefixed_id }])
+        expect(result.totals[:orders_count][:value]).to eq(1)
+      end
+
+      it 'ranks customers by revenue with sort and limit' do
+        result = run(metrics: %w[gross_revenue orders_count], dimensions: %w[customer], sort: '-gross_revenue', limit: 1)
+
+        expect(result.rows.length).to eq(1)
+        top_email = result.rows.first[:dimensions][:customer]
+        top_order = [order1, order2].max_by(&:total)
+        expect(top_email).to eq(top_order.email)
+        expect(result.rows.first[:metrics][:orders_count][:value]).to eq(1)
+      end
+
+      it 'ranks products by net revenue with per-row growth' do
+        result = run(metrics: %w[net_revenue units_sold], dimensions: %w[product],
+                     compare: 'previous_period', sort: '-net_revenue', limit: 5)
+
+        expect(result.rows).to be_present
+        row = result.rows.first
+        expect(row[:dimensions][:product]).to be_present
+        expect(row[:metrics][:net_revenue][:value]).to be > 0
+        expect(row[:metrics][:units_sold][:value]).to be > 0
+        expect(row[:metrics][:net_revenue][:growth]).to be_nil # no previous-period sales
+      end
+
+      it 'ranks categories by net revenue' do
+        category = create(:category, store: store)
+        order1.products.each { |product| product.categories << category }
+
+        result = run(metrics: %w[net_revenue units_sold], dimensions: %w[category], sort: '-net_revenue')
+
+        expect(result.rows.length).to eq(1)
+        expect(result.rows.first[:dimensions][:category]).to eq(category.id)
+        expect(result.rows.first[:metrics][:units_sold][:value]).to be > 0
+      end
+
+      it 'groups by payment status without a lookup' do
+        result = run(metrics: %w[orders_count], dimensions: %w[payment_status])
+        expect(result.rows.sum { |row| row[:metrics][:orders_count][:value] }).to eq(2)
+      end
+    end
+
+    context 'with orders in both periods' do
+      let!(:recent_order) { create(:completed_order_with_totals, store: store, completed_at: 5.days.ago) }
+      let!(:older_order) { create(:completed_order_with_totals, store: store, completed_at: 35.days.ago) }
+
+      it 'computes numeric growth against the previous period' do
+        result = run(metrics: %w[gross_revenue orders_count], compare: 'previous_period')
+
+        expect(result.totals[:orders_count][:previous]).to eq(1)
+        expect(result.totals[:gross_revenue][:growth]).to be_a(Numeric)
+      end
+
+      it 'aligns previous-period day buckets by range offset' do
+        result = run(metrics: %w[orders_count], dimensions: [{ name: 'completed_at', grain: 'day' }],
+                     compare: 'previous_period')
+
+        aligned = result.rows.find { |row| row[:metrics][:orders_count][:previous].to_i == 1 }
+        expect(aligned).to be_present
+      end
+    end
+
+    context 'scoping' do
+      # Reassigned after creation: the factory pipeline needs a fully configured
+      # store (delivery setup, prices in currency) and only the stored store_id /
+      # currency columns matter for scoping.
+      let!(:foreign_order) do
+        create(:completed_order_with_totals, store: store, completed_at: 3.days.ago).tap do |order|
+          order.update_columns(store_id: create(:store).id)
+        end
+      end
+      let!(:other_currency_order) do
+        create(:completed_order_with_totals, store: store, completed_at: 3.days.ago).tap do |order|
+          order.update_columns(currency: 'EUR')
+        end
+      end
+
+      it 'never counts other stores or other currencies' do
+        result = run(metrics: %w[orders_count gross_revenue])
+        expect(result.totals[:orders_count][:value]).to eq(0)
+      end
+
+      it 'reports the requested currency' do
+        result = run(metrics: %w[orders_count], currency: 'EUR')
+        expect(result.totals[:orders_count][:value]).to eq(1)
+        expect(result.meta[:currency]).to eq('EUR')
+      end
+    end
+  end
+end

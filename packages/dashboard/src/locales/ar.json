@@ -3081,22 +3081,65 @@
         "columns": {
           "price": "سعر",
           "product": "منتج",
-          "sold": "مُباع"
+          "sold": "مُباع",
+          "trend": "الاتجاه"
         },
         "metric_short": {
           "avg_order_value": "AOV",
           "orders": "طلبات",
-          "sales": "مبيعات"
+          "sales": "مبيعات",
+          "units": "وحدات",
+          "customers": "عملاء"
         },
         "metrics": {
           "avg_order_value": "متوسط ​​قيمة الطلب",
           "orders": "إجمالي الطلبات",
-          "sales": "إجمالي المبيعات"
+          "sales": "إجمالي المبيعات",
+          "units": "الوحدات المباعة",
+          "customers": "العملاء"
         },
         "subtitle": "نظرة عامة على أداء متجرك",
         "title": "Dashboard",
         "top_products": "Top Products",
-        "top_products_description": "المنتجات الأكثر مبيعا في متجرك."
+        "top_products_description": "المنتجات الأكثر مبيعا في متجرك.",
+        "legend": {
+          "current": "الفترة الحالية",
+          "previous": "الفترة السابقة"
+        },
+        "growth": {
+          "new": "جديد",
+          "vs_previous": "مقارنة بالفترة السابقة"
+        },
+        "operations": {
+          "title": "العمليات",
+          "subtitle": "ما يتطلب انتباهك الآن.",
+          "orders_to_fulfill": "طلبات بانتظار الشحن",
+          "payments_to_collect": "مدفوعات مستحقة التحصيل",
+          "open_returns": "مرتجعات مفتوحة",
+          "low_stock_items": "متغيرات ذات مخزون منخفض",
+          "out_of_stock_items": "متغيرات نفد مخزونها"
+        },
+        "rankings": {
+          "title": "التصنيفات",
+          "subtitle": "الأفضل أداءً في الفترة المحددة.",
+          "tabs": {
+            "customers": "العملاء",
+            "categories": "الفئات"
+          },
+          "orders_count_zero": "لا طلبات",
+          "orders_count_one": "طلب واحد",
+          "orders_count_two": "طلبان",
+          "orders_count_few": "{{count}} طلبات",
+          "orders_count_many": "{{count}} طلبًا",
+          "orders_count_other": "{{count}} طلب",
+          "units_count_zero": "لا وحدات",
+          "units_count_one": "وحدة واحدة",
+          "units_count_two": "وحدتان",
+          "units_count_few": "{{count}} وحدات",
+          "units_count_many": "{{count}} وحدة",
+          "units_count_other": "{{count}} وحدة",
+          "empty": "لا توجد بيانات لهذه الفترة بعد."
+        }
       },
       "orders": {
         "detail": {
