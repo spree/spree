@@ -5,6 +5,8 @@ import { Link } from '@tanstack/react-router'
 import i18n from 'i18next'
 import type { ReactNode } from 'react'
 import { useTranslation } from 'react-i18next'
+import { useOrderCommissionLines } from '../../../hooks/use-order'
+import { commissionLineTotals } from '../../../lib/commission-line-totals'
 
 function formatDate(iso: string | null) {
   if (!iso) return '—'
@@ -46,6 +48,16 @@ export function OrderSummaryCard({ order }: { order: Order }) {
   const { t } = useTranslation()
   const { storeId } = useStore()
   const outstandingBalance = Number.parseFloat(order.amount_due)
+  const {
+    data: commissionLinesData,
+    isSuccess: commissionLinesLoaded,
+    isError: commissionLinesError,
+  } = useOrderCommissionLines(order.id, { enabled: !!order.completed_at })
+  const commissionLines = commissionLinesData?.data ?? []
+  const commissionTotals =
+    commissionLinesLoaded && commissionLines.length > 0
+      ? commissionLineTotals(commissionLines, order.currency)
+      : null
 
   return (
     <Card>
@@ -196,6 +208,39 @@ export function OrderSummaryCard({ order }: { order: Order }) {
         <Separator />
 
         <SummaryRow label={t('admin.fields.total.label')} value={order.display_total} bold />
+
+        {commissionLinesError && (
+          <>
+            <Separator />
+            <SummaryRow
+              label={t('admin.orders.detail.summary.commission_total')}
+              value={
+                <span className="text-muted-foreground">{t('admin.errors.failed_to_load')}</span>
+              }
+            />
+          </>
+        )}
+
+        {commissionTotals && (
+          <>
+            <Separator />
+            <SummaryRow
+              label={t('admin.orders.detail.summary.commission_fee')}
+              value={commissionTotals.displayAmount}
+            />
+            {commissionTotals.tax > 0 && (
+              <SummaryRow
+                label={t('admin.orders.detail.summary.commission_tax')}
+                value={commissionTotals.displayTax}
+              />
+            )}
+            <SummaryRow
+              label={t('admin.orders.detail.summary.commission_total')}
+              value={commissionTotals.displayTotal}
+              bold
+            />
+          </>
+        )}
 
         <Separator />
 

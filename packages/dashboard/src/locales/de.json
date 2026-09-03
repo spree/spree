@@ -2637,6 +2637,22 @@
           "refund_payments": "Kundin oder Kunden erstatten",
           "refund_payments_help": "Bereits eingezogenes Geld wird zurückgezahlt. Eine nicht eingelöste Autorisierung wird ohnehin freigegeben."
         },
+        "commission_lines": {
+          "column_fee": "Provision",
+          "column_rate": "Satz",
+          "column_subject": "Artikel",
+          "column_tax": "Steuer",
+          "column_total": "Summe",
+          "delivery": "Lieferung",
+          "empty": "Für diese Bestellung wurde keine Provision berechnet.",
+          "line_item_fallback": "Position",
+          "rate_named_fixed": "{{name}} · {{amount}}",
+          "rate_named_percentage": "{{name}} · {{rate}} %",
+          "rate_unknown": "Gelöschter Satz",
+          "subject_fallback": "Verkauf",
+          "title": "Provision",
+          "total": "Summe"
+        },
         "completed_prefix": "Abgeschlossen",
         "confirm": {
           "approve_message": "Diesen Auftrag genehmigen?",
@@ -2771,6 +2787,9 @@
           "cancel_reason": "Stornierungsgrund",
           "canceled_at": "Storniert am",
           "canceler": "Storniert von",
+          "commission_fee": "Provision (Gebühr)",
+          "commission_tax": "Provision (Steuer)",
+          "commission_total": "Provision gesamt",
           "outstanding_balance": "Offener Saldo",
           "payment_total": "Zahlungssumme",
           "promotions": "Aktionen",

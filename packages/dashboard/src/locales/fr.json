@@ -2637,6 +2637,22 @@
           "refund_payments": "Rembourser le client",
           "refund_payments_help": "L'argent déjà encaissé est restitué. Une autorisation non utilisée est libérée dans tous les cas."
         },
+        "commission_lines": {
+          "column_fee": "Commission",
+          "column_rate": "Taux",
+          "column_subject": "Article",
+          "column_tax": "Taxe",
+          "column_total": "Total",
+          "delivery": "Livraison",
+          "empty": "Aucune commission n'a été facturée sur cette commande.",
+          "line_item_fallback": "Ligne",
+          "rate_named_fixed": "{{name}} · {{amount}}",
+          "rate_named_percentage": "{{name}} · {{rate}} %",
+          "rate_unknown": "Taux supprimé",
+          "subject_fallback": "Vente",
+          "title": "Commission",
+          "total": "Total"
+        },
         "completed_prefix": "Terminée",
         "confirm": {
           "approve_message": "Approuver cette commande ?",
@@ -2771,6 +2787,9 @@
           "cancel_reason": "Motif d'annulation",
           "canceled_at": "Annulée le",
           "canceler": "Annulé par",
+          "commission_fee": "Commission (honoraire)",
+          "commission_tax": "Commission (taxe)",
+          "commission_total": "Total commission",
           "outstanding_balance": "Solde restant dû",
           "payment_total": "Total des paiements",
           "promotions": "Promotions",

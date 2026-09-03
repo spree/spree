@@ -2630,6 +2630,22 @@
           "refund_payments": "向客户退款",
           "refund_payments_help": "已扣取的款项将退回。未使用的授权无论如何都会释放。"
         },
+        "commission_lines": {
+          "column_fee": "佣金",
+          "column_rate": "费率",
+          "column_subject": "商品",
+          "column_tax": "税费",
+          "column_total": "合计",
+          "delivery": "配送",
+          "empty": "此订单未收取佣金。",
+          "line_item_fallback": "订单行",
+          "rate_named_fixed": "{{name}} · {{amount}}",
+          "rate_named_percentage": "{{name}} · {{rate}}%",
+          "rate_unknown": "已删除的费率",
+          "subject_fallback": "销售",
+          "title": "佣金",
+          "total": "合计"
+        },
         "completed_prefix": "已完成",
         "confirm": {
           "approve_message": "批准此订单吗？",
@@ -2763,6 +2779,9 @@
           "cancel_reason": "取消原因",
           "canceled_at": "取消时间",
           "canceler": "取消人",
+          "commission_fee": "佣金（费用）",
+          "commission_tax": "佣金（税）",
+          "commission_total": "佣金合计",
           "outstanding_balance": "未结余额",
           "payment_total": "支付总额",
           "promotions": "优惠",

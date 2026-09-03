@@ -8,8 +8,10 @@ RSpec.describe Spree::Api::V3::Admin::CommissionLinesController, type: :controll
   let(:seller) { create(:seller, :approved, store: store, name: 'Sparks Audio') }
   let(:order) { create(:order, store: store) }
   let(:line_item) { create(:line_item, order: order) }
+  let(:commission_rate) { create(:commission_rate, store: store, name: 'Standard commission') }
   let!(:commission_line) do
     create(:commission_line, order: order, seller: seller, line_item: line_item,
+                             commission_rate: commission_rate,
                              amount: 10, tax_amount: 2.1, total: 12.1, currency: 'USD')
   end
 
@@ -23,6 +25,15 @@ RSpec.describe Spree::Api::V3::Admin::CommissionLinesController, type: :controll
       row = json_response['data'].first
       expect(row['id']).to start_with('cline_')
       expect(row['seller_name']).to eq('Sparks Audio')
+      expect(row).not_to have_key('commission_rate')
+    end
+
+    it 'expands the rate that applied' do
+      get :index, params: { expand: 'commission_rate' }, as: :json
+
+      expect(response).to have_http_status(:ok)
+      row = json_response['data'].first
+      expect(row['commission_rate']['name']).to eq('Standard commission')
       expect(row['amount']).to eq('10.0')
       expect(row['tax_amount']).to eq('2.1')
       expect(row['total']).to eq('12.1')
