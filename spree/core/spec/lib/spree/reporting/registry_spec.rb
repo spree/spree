@@ -41,16 +41,6 @@ RSpec.describe Spree::Reporting::Registry do
     end
   end
 
-  describe '#schema' do
-    it 'serializes registered members for introspection' do
-      registry.metric :margin, sql: 'SUM(x)', base: :orders, format: :money
-      registry.dimension :day, base: :orders, column: :completed_at, type: :time, grains: %i[day]
-
-      expect(registry.schema[:metrics]).to contain_exactly({ name: :margin, format: :money, derived: false })
-      expect(registry.schema[:dimensions]).to contain_exactly({ name: :day, type: :time, grains: %i[day] })
-    end
-  end
-
   describe 'core starter vocabulary' do
     it 'is registered on Spree.reporting' do
       expect(Spree.reporting.metric!(:net_revenue).base).to eq(:line_items)

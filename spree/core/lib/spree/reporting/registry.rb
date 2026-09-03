@@ -47,9 +47,17 @@ module Spree
     #   API-key scope (e.g. 'read_products') required alongside `read_reports`
     #   for secret keys to reference the member. Mandatory whenever `subject`
     #   is declared, so key access is decided at registration, never skipped.
+    # @!attribute values
+    #   Enumerable raw values for status-like dimensions (an Array, or a lambda
+    #   returning one so model constants load lazily). Published in the schema
+    #   as the filter value list.
     Dimension = Struct.new(:name, :base, :column, :joins, :type, :grains, :lookup,
-                           :resolve, :hydrate, :subject, :key_scope, keyword_init: true) do
+                           :resolve, :hydrate, :subject, :key_scope, :values, keyword_init: true) do
       def time? = type == :time
+
+      def enumerated_values
+        values.respond_to?(:call) ? values.call : values
+      end
     end
 
     # Allowlist of queryable metrics + dimensions. One global instance lives at
@@ -90,16 +98,21 @@ module Spree
         @dimensions[name.to_sym] || raise(UnknownMember.new(:dimension, name, @dimensions.keys))
       end
 
-      # Serializable introspection payload — drives `GET /reporting/schema`,
-      # admin pickers, and the AI tool schema.
-      def schema
-        {
-          metrics: @metrics.values.map { |m| { name: m.name, format: m.format, derived: m.derived? } },
-          dimensions: @dimensions.values.map do |d|
-            { name: d.name, type: d.type, grains: d.grains, lookup: d.lookup }.compact
-          end
-        }
+      # Whether a metric can be grouped or filtered by a dimension: order-based
+      # dimensions suit every metric, line-item dimensions only metrics whose
+      # aggregated components all live on line items (order totals per product
+      # would double count). The single rule the schema and the compiler share.
+      #
+      # @param metric [Metric]
+      # @param dimension [Dimension]
+      # @return [Boolean]
+      def compatible?(metric, dimension)
+        return true if dimension.base == :orders
+
+        components = metric.derived? ? metric.ratio.map { |name| metric!(name) } : [metric]
+        components.all? { |component| component.base == :line_items }
       end
+
     end
   end
 end

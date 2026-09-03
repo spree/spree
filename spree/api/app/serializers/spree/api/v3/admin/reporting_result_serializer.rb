@@ -3,9 +3,8 @@ module Spree
     module V3
       module Admin
         # Decorates a Spree::Reporting::Result for the wire: money display
-        # strings, ISO ranges, and dimension hydration — raw group keys become
-        # { id, label, meta } display payloads via each dimension's registered
-        # `hydrate` lambda, batched once per dimension across all rows.
+        # strings, ISO ranges, and dimension hydration (raw group keys become
+        # { id, label, meta } display payloads — see Spree::Reporting::Hydration).
         class ReportingResultSerializer
           attr_reader :result, :store, :params
 
@@ -50,29 +49,11 @@ module Spree
           end
 
           def dimension_value(name, raw)
-            return raw unless dimension_defs[name].hydrate
-
-            hydrated_dimensions[name][raw] || { id: nil, label: raw.to_s, meta: {} }
+            hydration.value(name, raw)
           end
 
-          def dimension_defs
-            @dimension_defs ||= Hash.new { |cache, name| cache[name] = Spree.reporting.dimension!(name) }
-          end
-
-          # One batched `hydrate` call per hydrated dimension across all rows.
-          def hydrated_dimensions
-            @hydrated_dimensions ||= begin
-              keys = Hash.new { |h, k| h[k] = [] }
-              result.rows.each do |row|
-                row[:dimensions].each do |name, raw|
-                  keys[name] << raw if dimension_defs[name].hydrate
-                end
-              end
-
-              keys.to_h do |name, raws|
-                [name, dimension_defs[name].hydrate.call(store, raws.uniq, params)]
-              end
-            end
+          def hydration
+            @hydration ||= Spree::Reporting::Hydration.new(result, store: store, params: params)
           end
         end
       end

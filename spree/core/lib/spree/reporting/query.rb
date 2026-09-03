@@ -12,7 +12,13 @@ module Spree
       MAX_DIMENSIONS = 2
       FILTER_OPS = %w[eq in].freeze
       COMPARE_MODES = %w[previous_period].freeze
-      RELATIVE_RANGE = /\A-(\d+)d\z/
+      LAST_N_RANGE = /\Alast_(\d+)_(days|weeks|months)\z/
+      # Named presets, resolved in the store's timezone (see #time_zone).
+      PRESETS = %w[today yesterday week_to_date month_to_date quarter_to_date year_to_date
+                   last_week last_month last_quarter].freeze
+      # The `last_<n>_<unit>` ranges worth a labelled entry in pickers; any
+      # other count/unit pair is accepted through LAST_N_RANGE.
+      RELATIVE_PRESETS = %w[last_7_days last_30_days last_4_weeks last_90_days last_12_months].freeze
 
       attr_reader :store, :registry, :currency, :metrics, :dimensions, :filters,
                   :time_range, :compare, :sort, :limit
@@ -20,7 +26,9 @@ module Spree
       def initialize(store:, params:, registry: Spree.reporting)
         @store = store
         @registry = registry
-        params = params.deep_symbolize_keys
+        raise InvalidQuery, 'query must be an object' unless params.respond_to?(:to_h)
+
+        params = params.to_h.deep_symbolize_keys
 
         @currency = params[:currency].presence || store.default_currency
         @metrics = normalize_metrics(params[:metrics])
@@ -54,12 +62,28 @@ module Spree
         dimensions.find { |d| d[:dimension].time? }
       end
 
+      # Day+ grains and relative ranges resolve in the store's timezone
+      # (Decision 7); adapters read it from here so every consumer agrees.
+      def time_zone
+        @time_zone ||= Time.find_zone(store.preferred_timezone) || Time.zone
+      end
+
       # Authorization subjects for this query: order data (the floor for all
       # reporting) plus every referenced member's declared subject. Every
       # consumer — API controller, saved reports, agent tools — must ensure
       # `:read` on each before executing.
       def required_subjects
         ([Spree::Order] + referenced_dimensions.filter_map(&:subject).map(&:call)).uniq
+      end
+
+      # The subjects a given ability may not read — empty when the query is
+      # fully authorized. The one rule every consumer (API, exports, agent
+      # tools) applies, so member-level authorization cannot drift.
+      #
+      # @param ability [CanCan::Ability]
+      # @return [Array<Class, Symbol>]
+      def unreadable_subjects(ability)
+        required_subjects.reject { |subject| ability.can?(:read, subject) }
       end
 
       # API-key scopes required beyond `read_reports` (which gates the
@@ -73,10 +97,14 @@ module Spree
         (dimensions.map { |d| d[:dimension] } + filters.map { |f| f[:dimension] }).uniq
       end
 
-      # The immediately preceding period of equal length.
+      # The immediately preceding period of equal length, shifted by calendar
+      # days in the store zone so a range that spans a DST change keeps its
+      # midnight edges instead of drifting by an hour.
       def previous_time_range
-        duration = time_range.last - time_range.first
-        (time_range.first - duration)..(time_range.last - duration)
+        first = time_range.first.in_time_zone(time_zone)
+        last = time_range.last.in_time_zone(time_zone)
+        days = (last.to_date - first.to_date).to_i + 1
+        (first - days.days)..(last - days.days)
       end
 
       def compare?
@@ -94,15 +122,25 @@ module Spree
       private
 
       def normalize_metrics(names)
-        raise InvalidQuery, 'metrics must be a non-empty array' if names.blank?
+        raise InvalidQuery, 'metrics must be a non-empty array of metric names' unless names.is_a?(Array) && names.any?
 
-        Array(names).map { |name| registry.metric!(name) }
+        names.map { |name| registry.metric!(member_name(name, 'metric')) }
+      end
+
+      # Member references are plain strings; anything else is a malformed
+      # contract, not an unknown member.
+      def member_name(value, kind)
+        raise InvalidQuery, "#{kind} names must be strings" unless value.is_a?(String) || value.is_a?(Symbol)
+
+        value
       end
 
       def normalize_dimensions(list)
+        raise InvalidQuery, 'dimensions must be an array' unless list.nil? || list.is_a?(Array)
+
         dims = Array(list).map do |entry|
           name, grain = entry.is_a?(Hash) ? [entry[:name], entry[:grain]] : [entry, nil]
-          dimension = registry.dimension!(name)
+          dimension = registry.dimension!(member_name(name, 'dimension'))
 
           if dimension.time?
             grain = (grain || dimension.grains.first).to_sym
@@ -123,8 +161,12 @@ module Spree
       end
 
       def normalize_filters(list)
+        raise InvalidQuery, 'filters must be an array' unless list.nil? || list.is_a?(Array)
+
         Array(list).map do |filter|
-          dimension = registry.dimension!(filter[:dimension])
+          raise InvalidQuery, 'each filter must be an object with dimension, op and value' unless filter.is_a?(Hash)
+
+          dimension = registry.dimension!(member_name(filter[:dimension], 'dimension'))
           op = filter[:op].to_s
           raise InvalidQuery, "invalid filter op #{op}. Valid ops: #{FILTER_OPS.join(', ')}" unless FILTER_OPS.include?(op)
           raise InvalidQuery, "filter on #{dimension.name} requires a value" if filter[:value].blank?
@@ -137,31 +179,58 @@ module Spree
         dimension.resolve ? dimension.resolve.call(store, value) : value
       end
 
+      # Accepts `{ preset: "last_month" }` (named or `last_<n>_<unit>`) or
+      # `{ since:, until: }` with ISO 8601 dates/datetimes.
+      # Everything resolves in the store's timezone so "yesterday" means the
+      # merchant's yesterday.
       def normalize_time_range(range)
         range ||= {}
-        from = parse_time(range[:since], edge: :begin) || 30.days.ago.beginning_of_day
-        to = parse_time(range[:until], edge: :end) || Time.current.end_of_day
+        raise InvalidQuery, 'time_range must be an object' unless range.is_a?(Hash)
+        return preset_range(range[:preset]) if range[:preset].present?
+
+        from = parse_time(range[:since], edge: :begin) || 30.days.ago.in_time_zone(time_zone).beginning_of_day
+        to = parse_time(range[:until], edge: :end) || Time.current.in_time_zone(time_zone).end_of_day
         raise InvalidQuery, 'time_range.since must precede time_range.until' if from > to
 
         from..to
       end
 
+      def preset_range(name)
+        now = Time.current.in_time_zone(time_zone)
+        case name.to_s
+        when 'today' then now.beginning_of_day..now.end_of_day
+        when 'yesterday' then (now - 1.day).beginning_of_day..(now - 1.day).end_of_day
+        when 'week_to_date' then now.beginning_of_week..now.end_of_day
+        when 'month_to_date' then now.beginning_of_month..now.end_of_day
+        when 'quarter_to_date' then now.beginning_of_quarter..now.end_of_day
+        when 'year_to_date' then now.beginning_of_year..now.end_of_day
+        when 'last_week' then (now - 1.week).beginning_of_week..(now - 1.week).end_of_week
+        when 'last_month' then (now - 1.month).beginning_of_month..(now - 1.month).end_of_month
+        when 'last_quarter' then (now - 3.months).beginning_of_quarter..(now - 3.months).end_of_quarter
+        else
+          if (match = LAST_N_RANGE.match(name.to_s))
+            count, unit = match[1].to_i, match[2]
+            (now - count.public_send(unit)).beginning_of_day..now.end_of_day
+          else
+            raise InvalidQuery, "invalid time_range preset #{name}. Valid presets: #{PRESETS.join(', ')}, last_<n>_<days|weeks|months>"
+          end
+        end
+      end
+
       def parse_time(value, edge:)
         return if value.blank?
 
-        if (match = RELATIVE_RANGE.match(value.to_s))
-          return match[1].to_i.days.ago.beginning_of_day
-        end
-
-        time = Time.zone.parse(value.to_s) || raise(InvalidQuery, "invalid time: #{value}")
-        # Date-only inputs cover the whole day on either edge.
-        if value.to_s !~ /\d:\d/
+        # `iso8601`, never `parse`: parse fills in whatever a value omits, so
+        # "09:00" would become today at nine and a saved window would move
+        # every midnight. A bare date covers the whole day on either edge.
+        time = time_zone.iso8601(value.to_s)
+        if value.to_s.match?(/\A\d{4}-\d{2}-\d{2}\z/)
           edge == :begin ? time.beginning_of_day : time.end_of_day
         else
           time
         end
-      rescue ArgumentError
-        raise InvalidQuery, "invalid time: #{value}"
+      rescue ArgumentError, TypeError, KeyError
+        raise InvalidQuery, "invalid time: #{value} (expected an ISO 8601 date or datetime)"
       end
 
       def normalize_compare(value)
@@ -190,15 +259,12 @@ module Spree
       # :orders-based metrics cannot be grouped or filtered by :line_items
       # dimensions (order totals per product/category would double count).
       def validate_bases!
-        line_item_dims = (dimensions.map { |d| d[:dimension] } + filters.map { |f| f[:dimension] })
-          .select { |d| d.base == :line_items }.uniq
-        return if line_item_dims.empty?
+        incompatible = referenced_dimensions.reject { |d| metrics.all? { |m| registry.compatible?(m, d) } }
+        return if incompatible.empty?
 
-        offenders = aggregated_metrics.select { |m| m.base == :orders }
-        return if offenders.empty?
-
+        offenders = metrics.reject { |m| incompatible.all? { |d| registry.compatible?(m, d) } }
         raise InvalidQuery,
-              "metrics #{offenders.map(&:name).join(', ')} cannot be grouped by #{line_item_dims.map(&:name).join(', ')}"
+              "metrics #{offenders.map(&:name).join(', ')} cannot be grouped by #{incompatible.map(&:name).join(', ')}"
       end
     end
   end

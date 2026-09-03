@@ -8,6 +8,15 @@ RSpec.describe Spree::Api::V3::Admin::ReportingController, type: :controller do
   before { request.headers.merge!(headers) }
 
   describe 'POST #query' do
+    it 'hydrates enumerated dimensions with labels' do
+      create(:completed_order_with_totals, store: store, completed_at: 2.days.ago).update_columns(payment_status: 'partially_paid')
+
+      post :query, params: { metrics: %w[orders_count], dimensions: %w[payment_status] }, as: :json
+
+      expect(response).to have_http_status(:ok)
+      expect(json_response['rows'].first['dimensions']['payment_status']).to eq('id' => 'partially_paid', 'label' => 'Partially paid', 'meta' => {})
+    end
+
     subject { post :query, params: query_params, as: :json }
 
     let(:query_params) do
@@ -171,14 +180,40 @@ RSpec.describe Spree::Api::V3::Admin::ReportingController, type: :controller do
   end
 
   describe 'GET #schema' do
-    it 'returns the registry introspection payload' do
+    it 'returns the self-describing contract' do
       get :schema, as: :json
 
       expect(response).to have_http_status(:ok)
-      metric_names = json_response['metrics'].map { |m| m['name'] }
-      expect(metric_names).to include('net_revenue', 'orders_count', 'aov')
+      metric = json_response['metrics'].find { |m| m['name'] == 'gross_revenue' }
+      expect(metric).to include('label', 'description', 'format', 'currency')
       dimension = json_response['dimensions'].find { |d| d['name'] == 'completed_at' }
-      expect(dimension['grains']).to include('day')
+      expect(dimension['grains']).to include('day', 'week', 'month')
+      expect(json_response['time_range']['presets']).to be_present
+      expect(json_response['meta']).to include('currency', 'timezone')
+    end
+
+    it 'omits members a secret key cannot reference' do
+      key = create(:api_key, :secret, store: store, scopes: %w[read_reports])
+      request.headers['x-spree-api-key'] = key.plaintext_token
+      request.headers['Authorization'] = nil
+
+      get :schema, as: :json
+      names = json_response['dimensions'].map { |d| d['name'] }
+      expect(names).to include('channel', 'completed_at')
+      expect(names).not_to include('product', 'customer', 'category')
+    end
+
+    context 'for a limited staff role' do
+      include_context 'API v3 Admin with custom permissions'
+
+      let(:custom_permissions) { %w[read_reports read_orders] }
+
+      it 'omits dimensions whose subject the role cannot read' do
+        get :schema, as: :json
+        names = json_response['dimensions'].map { |d| d['name'] }
+        expect(names).to include('channel', 'market', 'country')
+        expect(names).not_to include('product', 'customer')
+      end
     end
   end
 end
