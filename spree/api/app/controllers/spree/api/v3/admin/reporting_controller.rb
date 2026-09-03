@@ -28,8 +28,14 @@ module Spree
           end
 
           # GET /api/v3/admin/reporting/schema
+          #
+          # Filtered to what this caller may reference: pickers never offer,
+          # and agents never propose, a member that would be refused.
           def schema
-            render json: Spree.reporting.schema
+            render json: Spree::Reporting::Schema.new(
+              store: current_store,
+              allowed: ->(dimension) { dimension_allowed?(dimension) }
+            ).to_h
           end
 
           private
@@ -63,7 +69,16 @@ module Spree
               )
             else
               authorize!(:read, :reports)
-              reporting_query.required_subjects.each { |subject| authorize!(:read, subject) }
+              forbidden = reporting_query.unreadable_subjects(current_ability).first
+              raise CanCan::AccessDenied.new(nil, :read, forbidden) if forbidden
+            end
+          end
+
+          def dimension_allowed?(dimension)
+            if current_api_key.present?
+              dimension.key_scope.blank? || current_api_key.has_scope?(dimension.key_scope)
+            else
+              dimension.subject.nil? || can?(:read, dimension.subject.call)
             end
           end
 

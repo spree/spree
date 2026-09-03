@@ -47,6 +47,136 @@ RSpec.describe Spree::Reporting::Query do
     end
   end
 
+  describe 'contract shape' do
+    it 'rejects malformed shapes as invalid queries, never as server errors' do
+      expect { run(metrics: { a: 'b' }) }.to raise_error(Spree::Reporting::InvalidQuery)
+      expect { run(metrics: %w[orders_count], dimensions: [{ grain: 'day' }]) }.to raise_error(Spree::Reporting::InvalidQuery)
+      expect { run(metrics: %w[orders_count], filters: %w[channel]) }.to raise_error(Spree::Reporting::InvalidQuery)
+      expect { run(metrics: %w[orders_count], time_range: 'last_month') }.to raise_error(Spree::Reporting::InvalidQuery)
+    end
+
+    it 'refuses partial times instead of filling in today' do
+      expect { run(metrics: %w[orders_count], time_range: { since: '09:00' }) }
+        .to raise_error(Spree::Reporting::InvalidQuery, /ISO 8601/)
+    end
+
+    it 'widens a date-only until to the end of that day' do
+      create(:completed_order_with_totals, store: store, completed_at: 1.hour.ago)
+      result = run(metrics: %w[orders_count], time_range: { since: 2.days.ago.to_date.to_s, until: Date.current.to_s })
+      expect(result.totals[:orders_count][:value]).to eq(1)
+    end
+  end
+
+  describe '#previous_time_range' do
+    it 'keeps midnight edges across a DST change by shifting whole days' do
+      allow(store).to receive(:preferred_timezone).and_return('Europe/Warsaw')
+      query = described_class.new(store: store, params: { metrics: %w[orders_count], time_range: { since: '2026-03-20', until: '2026-04-02' } })
+
+      previous = query.previous_time_range
+      expect(previous.first.in_time_zone('Europe/Warsaw').strftime('%F %T')).to eq('2026-03-06 00:00:00')
+      expect(previous.last.in_time_zone('Europe/Warsaw').strftime('%F %T')).to eq('2026-03-19 23:59:59')
+    end
+  end
+
+  describe 'time presets' do
+    it 'resolves named presets in the store timezone' do
+      query = described_class.new(store: store, params: { metrics: %w[orders_count], time_range: { preset: 'yesterday' } })
+      expect(query.time_range.first).to eq(1.day.ago.in_time_zone(query.time_zone).beginning_of_day)
+      expect(query.time_range.last).to eq(1.day.ago.in_time_zone(query.time_zone).end_of_day)
+
+      query = described_class.new(store: store, params: { metrics: %w[orders_count], time_range: { preset: 'last_month' } })
+      expect(query.time_range.first).to eq(1.month.ago.in_time_zone(query.time_zone).beginning_of_month)
+
+      query = described_class.new(store: store, params: { metrics: %w[orders_count], time_range: { preset: 'last_4_weeks' } })
+      expect(query.time_range.first.to_date).to eq(4.weeks.ago.in_time_zone(query.time_zone).to_date)
+    end
+
+    it 'rejects unknown presets naming the valid ones' do
+      expect { described_class.new(store: store, params: { metrics: %w[orders_count], time_range: { preset: 'fortnight' } }) }
+        .to raise_error(Spree::Reporting::InvalidQuery, /last_month/)
+    end
+  end
+
+  describe 'week grain' do
+    let!(:order) { create(:completed_order_with_totals, store: store, completed_at: 3.days.ago) }
+
+    it 'buckets by ISO week start and zero-fills the range' do
+      result = run(metrics: %w[orders_count], dimensions: [{ name: 'completed_at', grain: 'week' }],
+                   time_range: { since: 3.weeks.ago.to_date.to_s, until: Time.current.to_date.to_s })
+
+      buckets = result.rows.map { |row| row[:dimensions][:completed_at] }
+      expect(buckets).to all(satisfy { |b| Date.parse(b).monday? })
+      expect(buckets.length).to be_between(4, 5)
+      expect(result.rows.sum { |row| row[:metrics][:orders_count][:value] }).to eq(1)
+    end
+  end
+
+  describe 'extended vocabulary' do
+    let!(:order) { create(:completed_order_with_totals, store: store, completed_at: 3.days.ago) }
+
+    it 'groups by shipping country from the line-items base too' do
+      by_orders = run(metrics: %w[orders_count], dimensions: %w[country])
+      by_items = run(metrics: %w[units_sold], dimensions: %w[country])
+
+      code = order.ship_address.country_code
+      expect(by_orders.rows.first[:dimensions][:country]).to eq(code)
+      expect(by_items.rows.first[:dimensions][:country]).to eq(code)
+    end
+
+    it 'exposes money breakdown metrics' do
+      result = run(metrics: %w[discounts_total delivery_total tax_total])
+      expect(result.totals[:delivery_total][:value]).to eq(order.delivery_total.to_f.round(2))
+      expect(result.totals.keys).to contain_exactly(:discounts_total, :delivery_total, :tax_total)
+    end
+
+    it 'ranks variants' do
+      result = run(metrics: %w[units_sold], dimensions: %w[variant], sort: '-units_sold')
+      expect(result.rows.first[:dimensions][:variant]).to eq(order.line_items.first.variant_id)
+    end
+  end
+
+  describe 'joins that are not one-to-one' do
+    let!(:order) { create(:completed_order_with_totals, store: store, completed_at: 3.days.ago) }
+    let(:product) { order.line_items.first.variant.product }
+    let!(:categories) { create_list(:category, 2).each { |category| product.categories << category } }
+
+    it 'keeps the totals on the base rows while grouping still fans out per category' do
+      result = run(metrics: %w[net_revenue units_sold], dimensions: %w[category])
+      ungrouped = run(metrics: %w[net_revenue units_sold])
+
+      expect(result.rows.length).to eq(2)
+      expect(result.totals[:units_sold][:value]).to eq(ungrouped.totals[:units_sold][:value])
+      expect(result.totals[:net_revenue][:value]).to eq(ungrouped.totals[:net_revenue][:value])
+    end
+
+    it 'counts a line item once when a filter matches it through several categories' do
+      result = run(metrics: %w[units_sold],
+                   filters: [{ dimension: 'category', op: 'in', value: categories.map(&:prefixed_id) }])
+      expect(result.totals[:units_sold][:value]).to eq(order.line_items.sum(:quantity))
+    end
+  end
+
+  describe 'customer filter' do
+    let!(:order) { create(:completed_order_with_totals, store: store, completed_at: 3.days.ago) }
+
+    it 'resolves a prefixed customer id to the order email key' do
+      customer = order.customer
+      result = run(metrics: %w[orders_count], filters: [{ dimension: 'customer', op: 'eq', value: customer.prefixed_id }])
+      expect(result.totals[:orders_count][:value]).to eq(1)
+    end
+
+    it 'accepts a customer with no orders in this store as an empty filter' do
+      stranger = create(:user)
+      result = run(metrics: %w[orders_count], filters: [{ dimension: 'customer', op: 'eq', value: stranger.prefixed_id }])
+      expect(result.totals[:orders_count][:value]).to eq(0)
+    end
+
+    it 'still accepts a plain email' do
+      result = run(metrics: %w[orders_count], filters: [{ dimension: 'customer', op: 'eq', value: order.email }])
+      expect(result.totals[:orders_count][:value]).to eq(1)
+    end
+  end
+
   describe '#required_subjects' do
     it 'includes order data plus every referenced member subject' do
       query = described_class.new(store: store, params: { metrics: %w[net_revenue], dimensions: %w[product] })
@@ -190,12 +320,104 @@ RSpec.describe Spree::Reporting::Query do
         expect(result.totals[:gross_revenue][:growth]).to be_a(Numeric)
       end
 
+      it 'aligns previous buckets when a value dimension sits beside the time dimension' do
+        # Exactly one range length (31 days) before recent_order — without
+        # zero-filled buckets only the observed keys can carry a previous value.
+        create(:completed_order_with_totals, store: store, completed_at: 36.days.ago)
+        result = run(metrics: %w[orders_count],
+                     dimensions: [{ name: 'completed_at', grain: 'day' }, 'channel'],
+                     compare: 'previous_period')
+
+        row = result.rows.find { |r| r[:dimensions][:completed_at] == 5.days.ago.to_date.to_s }
+        expect(row[:metrics][:orders_count][:previous]).to eq(1)
+      end
+
       it 'aligns previous-period day buckets by range offset' do
         result = run(metrics: %w[orders_count], dimensions: [{ name: 'completed_at', grain: 'day' }],
                      compare: 'previous_period')
 
         aligned = result.rows.find { |row| row[:metrics][:orders_count][:previous].to_i == 1 }
         expect(aligned).to be_present
+      end
+    end
+
+    context 'with a canceled order' do
+      let!(:order) { create(:completed_order_with_totals, store: store, completed_at: 3.days.ago) }
+      let!(:canceled) { create(:completed_order_with_totals, store: store, completed_at: 2.days.ago) }
+
+      before { canceled.update_columns(status: 'canceled') }
+
+      it 'counts only what stayed sold on both bases' do
+        result = run(metrics: %w[gross_revenue orders_count units_sold])
+        expect(result.totals[:orders_count][:value]).to eq(1)
+        expect(result.totals[:gross_revenue][:value]).to eq(order.total.to_f.round(2))
+        expect(result.totals[:units_sold][:value]).to eq(order.line_items.sum(:quantity))
+      end
+    end
+
+    context 'with buckets that do not divide the range evenly' do
+      # Aug 5 – Sep 3 is 30 days: the first week bucket starts Aug 3, before
+      # the range. Its counterpart must be the previous period's first bucket,
+      # not that Monday shifted back 30 days (which falls outside the window).
+      let!(:recent_order) { create(:completed_order_with_totals, store: store, completed_at: '2026-08-06 12:00'.in_time_zone) }
+      let!(:previous_order) { create(:completed_order_with_totals, store: store, completed_at: '2026-07-07 12:00'.in_time_zone) }
+
+      it 'pairs week buckets by position so no counterpart falls outside the previous period' do
+        result = run(metrics: %w[orders_count], dimensions: [{ name: 'completed_at', grain: 'week' }],
+                     compare: 'previous_period', time_range: { since: '2026-08-05', until: '2026-09-03' })
+
+        bucket = result.rows.find { |row| row[:dimensions][:completed_at] == '2026-08-03' }
+        expect(bucket[:metrics][:orders_count][:value]).to eq(1)
+        expect(bucket[:metrics][:orders_count][:previous]).to eq(1)
+      end
+
+      it 'pairs month buckets by position on a rolling range that starts on the 1st' do
+        # Sep 1 – Oct 1 is 31 days, so the previous period is Aug 1 – Aug 31:
+        # September must compare with August, never with a July outside it.
+        create(:completed_order_with_totals, store: store, completed_at: '2026-09-15 12:00'.in_time_zone)
+        create(:completed_order_with_totals, store: store, completed_at: '2026-08-15 12:00'.in_time_zone)
+
+        result = run(metrics: %w[orders_count], dimensions: [{ name: 'completed_at', grain: 'month' }],
+                     compare: 'previous_period', time_range: { since: '2026-09-01', until: '2026-10-01' })
+
+        august_orders = store.orders.complete.where(completed_at: '2026-08-01'.in_time_zone..'2026-08-31'.in_time_zone.end_of_day).count
+        september = result.rows.find { |row| row[:dimensions][:completed_at] == '2026-09-01' }
+        expect(september[:metrics][:orders_count][:value]).to eq(1)
+        expect(september[:metrics][:orders_count][:previous]).to eq(august_orders)
+        expect(august_orders).to be_positive
+      end
+    end
+
+    context 'with a quarter-to-date style range at month grain' do
+      # Range: the 1st of the month before last → today, spanning three
+      # calendar months with the current one partial. Each month bucket must
+      # compare with the month three back, never with a month inside the
+      # current period.
+      let(:from) { 2.months.ago.beginning_of_month.to_date }
+      let!(:recent_order) { create(:completed_order_with_totals, store: store, completed_at: (from + 45).in_time_zone.change(hour: 12)) }
+      let!(:previous_order) { create(:completed_order_with_totals, store: store, completed_at: ((from + 45) << 3).in_time_zone.change(hour: 12)) }
+
+      it 'compares each month with the month one period earlier, never a neighbour' do
+        result = run(metrics: %w[orders_count], dimensions: [{ name: 'completed_at', grain: 'month' }],
+                     compare: 'previous_period', time_range: { since: from.to_s, until: Date.current.to_s })
+
+        bucket = result.rows.find { |row| row[:dimensions][:completed_at] == (from + 45).beginning_of_month.to_s }
+        expect(bucket[:metrics][:orders_count][:value]).to eq(1)
+        expect(bucket[:metrics][:orders_count][:previous]).to eq(1)
+      end
+    end
+
+    context 'with a range that is not whole weeks' do
+      let!(:recent_order) { create(:completed_order_with_totals, store: store, completed_at: 3.days.ago) }
+      let!(:previous_order) { create(:completed_order_with_totals, store: store, completed_at: 10.days.ago) }
+
+      it 'aligns week buckets by the exact range length snapped to the week start' do
+        result = run(metrics: %w[orders_count], dimensions: [{ name: 'completed_at', grain: 'week' }],
+                     compare: 'previous_period',
+                     time_range: { since: 6.days.ago.to_date.to_s, until: Date.current.to_s })
+
+        bucket = result.rows.find { |row| row[:dimensions][:completed_at] == 3.days.ago.to_date.beginning_of_week.to_s }
+        expect(bucket[:metrics][:orders_count][:previous]).to eq(1)
       end
     end
 

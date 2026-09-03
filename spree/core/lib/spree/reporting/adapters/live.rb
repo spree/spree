@@ -13,7 +13,6 @@ module Spree
       class Live < Base
         def execute(query)
           @query = query
-          @store = query.store
 
           current = period_data(query.time_range, push_sort: sql_sortable?)
           previous = query.compare? ? period_data(query.previous_time_range, key_filter: compare_key_filter(current)) : nil
@@ -33,8 +32,6 @@ module Spree
 
         private
 
-        attr_reader :store
-
         # ---- period execution ----
 
         def period_data(range, push_sort: false, key_filter: nil)
@@ -51,15 +48,15 @@ module Spree
           rows = Hash.new { |h, k| h[k] = {} }
 
           query.aggregated_metrics.group_by(&:base).each do |base, metrics|
-            scope = base_scope(base, range)
+            scope = base_scope(base, range, grouped: grouped)
             selects = metrics.map { |m| "#{resolve_sql(m.sql)} AS #{metric_alias(m)}" }
 
             if grouped
               dimension_selects = query.dimensions.map do |d|
-                "#{dimension_expression(d, base)} AS #{dimension_alias(d)}"
+                "#{dimension_expression(d)} AS #{dimension_alias(d)}"
               end
-              scope = scope.group(query.dimensions.map { |d| Arel.sql(dimension_expression(d, base)) })
-              scope = apply_key_filter(scope, base, key_filter) if key_filter
+              scope = scope.group(query.dimensions.map { |d| Arel.sql(dimension_expression(d)) })
+              scope = apply_key_filter(scope, key_filter) if key_filter
               scope = apply_sql_sort(scope, metrics) if push_sort
               selects = dimension_selects + selects
             end
@@ -74,24 +71,36 @@ module Spree
           rows
         end
 
+        # The grouped query carries the dimension joins; the ungrouped totals
+        # deliberately do not — a join that is not 1:1 with the base rows (a
+        # product in three categories, an order without a shipping address)
+        # would otherwise multiply or drop rows, and the Total row must equal
+        # the dimensionless figure for the same range and filters.
+        def base_scope(base, range, grouped:)
+          scope = base_relation(base, range)
+          scope = apply_dimension_joins(scope, base) if grouped
+          apply_filters(scope, base, range)
+        end
+
         # The completed_at range predicate implies completeness, so neither
         # base needs the `complete` scope on top (merging it would replace the
-        # range condition — Rails merge overwrites same-column wheres).
-        def base_scope(base, range)
+        # range condition — Rails merge overwrites same-column wheres). A
+        # canceled order keeps its completed_at, so it is excluded explicitly:
+        # sales figures count what stayed sold.
+        def base_relation(base, range)
+          order_conditions = { currency: query.currency, completed_at: range }
           scope = case base
                   when :orders
-                    store.orders.where(currency: query.currency, completed_at: range)
+                    query.store.orders.not_canceled.where(order_conditions)
                   when :line_items
-                    store.line_items
-                      .where(Spree::Order.table_name => { currency: query.currency, completed_at: range })
+                    query.store.line_items.merge(Spree::Order.not_canceled)
+                      .where(Spree::Order.table_name => order_conditions)
                   else
                     raise InvalidQuery, "unknown metric base #{base}"
                   end
 
           # Association default orderings break grouped selects on PostgreSQL.
-          scope = scope.reorder(nil)
-          scope = apply_dimension_joins(scope, base)
-          apply_filters(scope, base)
+          scope.reorder(nil)
         end
 
         # Dimension joins are declared from their own base; they only apply
@@ -99,18 +108,40 @@ module Spree
         # joins line-item tables — validate_bases! guarantees compatibility).
         def apply_dimension_joins(scope, base)
           query.dimensions.each do |d|
-            joins = d[:dimension].joins
-            scope = scope.joins(joins) if joins.present? && d[:dimension].base == base
+            scope = join_for(scope, d[:dimension], base)
           end
           scope
         end
 
-        def apply_filters(scope, base)
+        # A filter on a joined dimension narrows through an id subquery rather
+        # than joining the aggregating scope itself: `category IN (a, b)` must
+        # keep a line item once even when its product sits in both categories.
+        def apply_filters(scope, base, range)
           query.filters.each do |filter|
-            column = qualified_column(filter[:dimension], base)
-            scope = scope.joins(filter[:dimension].joins) if filter[:dimension].joins.present? && base == :line_items
-            scope = scope.where("#{column} IN (?)", filter[:values])
+            dimension = filter[:dimension]
+            predicate = ["#{qualified_column(dimension)} IN (?)", filter[:values]]
+
+            if dimension.joins.blank?
+              scope = scope.where(*predicate)
+            else
+              # Bounded like the outer query (store, currency, range) so the
+              # planner starts from the same indexed slice.
+              table = scope.klass.table_name
+              ids = join_for(base_relation(base, range), dimension, base).where(*predicate).select("#{table}.id")
+              scope = scope.where("#{table}.id IN (#{ids.to_sql})")
+            end
           end
+          scope
+        end
+
+        # Dimension joins are declared from the dimension's own base. Reaching
+        # an :orders dimension (e.g. the ship address) from the :line_items
+        # base goes through the order association.
+        def join_for(scope, dimension, base)
+          return scope if dimension.joins.blank?
+          return scope.joins(dimension.joins) if dimension.base == base
+          return scope.joins(order: dimension.joins) if base == :line_items && dimension.base == :orders
+
           scope
         end
 
@@ -120,12 +151,14 @@ module Spree
         # aggregated metric (so the sort metric and the limit apply to the
         # same query) and the grouping is by value, not time buckets.
         def sql_sortable?
-          query.sort && query.limit && query.time_dimension.nil? && query.dimensions.any? &&
-            !sort_metric.derived? && query.aggregated_metrics.map(&:base).uniq.one?
+          return @sql_sortable unless @sql_sortable.nil?
+
+          @sql_sortable = query.sort && query.limit && query.time_dimension.nil? && query.dimensions.any? &&
+            !sort_metric.derived? && query.aggregated_metrics.map(&:base).uniq.one? || false
         end
 
         def sort_metric
-          query.registry.metric!(query.sort[:metric])
+          @sort_metric ||= query.registry.metric!(query.sort[:metric])
         end
 
         def apply_sql_sort(scope, metrics)
@@ -146,9 +179,9 @@ module Spree
           keys if keys.any?
         end
 
-        def apply_key_filter(scope, base, keys)
+        def apply_key_filter(scope, keys)
           dim = query.dimensions.first
-          scope.where("#{dimension_expression(dim, base)} IN (?)", keys)
+          scope.where("#{dimension_expression(dim)} IN (?)", keys)
         end
 
         # ---- SQL expressions ----
@@ -165,6 +198,7 @@ module Spree
                  line_items: Spree::LineItem.table_name,
                  variants: Spree::Variant.table_name,
                  products: Spree::Product.table_name,
+                 addresses: Spree::Address.table_name,
                  product_categories: Spree::ProductCategory.table_name)
         end
 
@@ -172,14 +206,14 @@ module Spree
           "d_#{dim[:dimension].name}"
         end
 
-        def dimension_expression(dim, base)
+        def dimension_expression(dim)
           dimension = dim[:dimension]
-          return time_bucket_sql(qualified_column(dimension, base), dim[:grain]) if dimension.time?
+          return time_bucket_sql(qualified_column(dimension), dim[:grain]) if dimension.time?
 
-          qualified_column(dimension, base)
+          qualified_column(dimension)
         end
 
-        def qualified_column(dimension, _base)
+        def qualified_column(dimension)
           return resolve_sql(dimension.column) if dimension.column.is_a?(String)
 
           table = dimension.base == :orders ? Spree::Order.table_name : Spree::LineItem.table_name
@@ -198,31 +232,31 @@ module Spree
         def time_bucket_sql(column, grain)
           case connection.adapter_name
           when /postgres/i
-            tz = store_time_zone.tzinfo.identifier
+            local = "#{column} AT TIME ZONE 'UTC' AT TIME ZONE '#{query.time_zone.tzinfo.identifier}'"
             case grain
-            when :day then "(#{column} AT TIME ZONE 'UTC' AT TIME ZONE '#{tz}')::date"
-            when :month then "date_trunc('month', #{column} AT TIME ZONE 'UTC' AT TIME ZONE '#{tz}')::date"
+            when :day then "(#{local})::date"
+            when :week then "date_trunc('week', #{local})::date"
+            when :month then "date_trunc('month', #{local})::date"
             end
           when /mysql/i
-            offset = format_offset(utc_offset)
+            local = "CONVERT_TZ(#{column}, '+00:00', '#{format_offset(utc_offset)}')"
             case grain
-            when :day then "DATE(CONVERT_TZ(#{column}, '+00:00', '#{offset}'))"
-            when :month then "DATE_FORMAT(CONVERT_TZ(#{column}, '+00:00', '#{offset}'), '%Y-%m-01')"
+            when :day then "DATE(#{local})"
+            when :week then "DATE(DATE_SUB(#{local}, INTERVAL WEEKDAY(#{local}) DAY))"
+            when :month then "DATE_FORMAT(#{local}, '%Y-%m-01')"
             end
-          else # SQLite
+          else # SQLite — weeks start on Monday (ISO), matching the other adapters
             case grain
             when :day then "DATE(#{column}, '#{utc_offset} seconds')"
+            when :week then "DATE(#{column}, '#{utc_offset} seconds', '+1 day', 'weekday 1', '-7 days')"
             when :month then "strftime('%Y-%m-01', #{column}, '#{utc_offset} seconds')"
             end
           end
         end
 
-        def store_time_zone
-          @store_time_zone ||= ActiveSupport::TimeZone[store.preferred_timezone.presence || 'UTC'] || ActiveSupport::TimeZone['UTC']
-        end
 
         def utc_offset
-          @utc_offset ||= store_time_zone.now.utc_offset
+          @utc_offset ||= query.time_zone.now.utc_offset
         end
 
         def format_offset(seconds)
@@ -274,44 +308,58 @@ module Spree
         end
 
         def expected_buckets(range, grain)
-          from = range.first.in_time_zone(store_time_zone).to_date
-          to = range.last.in_time_zone(store_time_zone).to_date
+          from = range.first.in_time_zone(query.time_zone).to_date
+          to = range.last.in_time_zone(query.time_zone).to_date
 
           case grain
           when :day then (from..to).map(&:to_s)
-          when :month
-            months = []
-            cursor = from.beginning_of_month
-            while cursor <= to
-              months << cursor.to_s
-              cursor = cursor.next_month
-            end
-            months
+          when :week then step_buckets(from.beginning_of_week(:monday), to) { |d| d + 7 }
+          when :month then step_buckets(from.beginning_of_month, to, &:next_month)
           end
         end
 
-        # Aligns each current bucket with its previous-period counterpart
-        # (same offset from the range start); value-dimension keys align 1:1.
+        def step_buckets(cursor, to)
+          buckets = []
+          while cursor <= to
+            buckets << cursor.to_s
+            cursor = yield(cursor)
+          end
+          buckets
+        end
+
+        # Aligns each current bucket with its previous-period counterpart by
+        # POSITION: the nth bucket of this period pairs with the nth bucket of
+        # the previous one. Date arithmetic on the bucket itself cannot do this
+        # — a range starting mid-week or mid-month has a partial first bucket
+        # whose start lies before the range, so shifting it lands outside the
+        # comparison window and orphans real data. Only the time component of
+        # a key moves; value-dimension components align 1:1.
         def previous_key_map(keys)
           time_dim = query.time_dimension
-          return {} unless time_dim && query.dimensions.size == 1
+          return {} unless time_dim
 
-          span = offset_span(time_dim[:grain])
-          keys.to_h do |key|
-            date = Date.parse(key.first.to_s)
-            prev = time_dim[:grain] == :day ? date - span : date << span
-            [key, [prev.to_s]]
-          end
+          index = query.dimensions.index(time_dim)
+          pairs = bucket_pairs(time_dim[:grain])
+
+          keys.filter_map do |key|
+            counterpart = pairs[key[index].to_s]
+            next unless counterpart
+
+            shifted = key.dup
+            shifted[index] = counterpart
+            [key, shifted]
+          end.to_h
         end
 
-        def offset_span(grain)
-          from = query.time_range.first.in_time_zone(store_time_zone).to_date
-          to = query.time_range.last.in_time_zone(store_time_zone).to_date
+        # Both periods span the same number of days, so their bucket counts
+        # differ by at most one partial edge; pairing from the end keeps the
+        # most recent buckets — the ones a merchant reads first — aligned.
+        def bucket_pairs(grain)
+          current = expected_buckets(query.time_range, grain)
+          previous = expected_buckets(query.previous_time_range, grain)
+          offset = previous.size - current.size
 
-          case grain
-          when :day then (to - from).to_i + 1
-          when :month then ((to.year - from.year) * 12) + (to.month - from.month) + 1
-          end
+          current.each_with_index.to_h { |bucket, position| [bucket, previous[position + offset]] }
         end
 
         # SQL already ordered/limited the pushdown case; this re-sort is a
