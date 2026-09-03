@@ -863,13 +863,15 @@ Spree::Core::Engine.add_routes do
             patch :cancel
           end
 
+          # No `mark_delivered`: that a parcel arrived is the buyer's word,
+          # not the sender's, so confirming receipt stays with the operator
+          # and the carrier feed.
           resources :fulfillments, only: [:index, :show, :update], controller: 'orders/fulfillments' do
             member do
               patch :fulfill
               patch :cancel
               patch :resume
               patch :split
-              patch :mark_delivered
             end
           end
 

@@ -20,7 +20,7 @@ module Spree
 
             before_action :set_order
             before_action :set_fulfillment,
-                          only: [:show, :update, :fulfill, :cancel, :resume, :split, :mark_delivered]
+                          only: [:show, :update, :fulfill, :cancel, :resume, :split]
 
             def index
               # This action builds its own collection rather than going through
@@ -87,23 +87,6 @@ module Spree
               run_workflow(Spree.fulfillment_resume_workflow)
             end
 
-            # PATCH /api/v3/seller/orders/:order_id/fulfillments/:id/mark_delivered
-            #
-            # Confirms the customer received the goods — the anchor the
-            # returns window runs from, and recordable by hand for a seller
-            # posting parcels without a carrier integration.
-            def mark_delivered
-              with_order_lock do
-                result = Spree.fulfillment_mark_delivered_workflow.call(
-                  fulfillment: @fulfillment,
-                  delivered_at: params[:delivered_at],
-                  notify_customer: notify_customer?(params[:notify_customer])
-                )
-
-                render_workflow_result(result)
-              end
-            end
-
             # PATCH /api/v3/seller/orders/:order_id/fulfillments/:id/split
             #
             # Moves part of what this parcel holds onto one of its own, for
@@ -141,7 +124,7 @@ module Spree
               authorize! :show, @order
             end
 
-            WRITE_ACTIONS = %w[update fulfill cancel resume split mark_delivered].freeze
+            WRITE_ACTIONS = %w[update fulfill cancel resume split].freeze
 
             def set_fulfillment
               @fulfillment = @order.fulfillments.find_by_prefix_id!(params[:id])

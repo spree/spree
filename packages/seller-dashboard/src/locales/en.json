@@ -301,7 +301,6 @@
       "units_selected": "{{selected}} of {{total}} units selected",
       "partial_warning": "Sending part of this parcel moves the rest onto a new one.",
       "quantity_for": "Quantity for {{name}}",
-      "mark_delivered": "Mark as delivered",
       "resume": "Resume",
       "cancel": "Cancel parcel",
       "cancel_title": "Cancel this parcel?",

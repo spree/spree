@@ -181,48 +181,6 @@ RSpec.describe 'Seller Fulfillments API', type: :request, swagger_doc: 'api-refe
     end
   end
 
-  path '/api/v3/seller/orders/{order_id}/fulfillments/{id}/mark_delivered' do
-    parameter name: :order_id, in: :path, type: :string
-    parameter name: :id, in: :path, type: :string
-
-    patch 'Confirm delivery' do
-      tags 'Fulfillments'
-      consumes 'application/json'
-      produces 'application/json'
-      security [bearer_auth: []]
-      description <<~DESC
-        Confirms the customer received the goods — the point the returns
-        window runs from, and recordable by hand for a seller posting parcels
-        without a carrier integration.
-      DESC
-
-      parameter name: 'X-Spree-Seller-Id', in: :header, type: :string, required: true
-      parameter name: :body, in: :body, required: false, schema: {
-        type: :object,
-        properties: {
-          delivered_at: { type: :string, nullable: true },
-          notify_customer: { type: :boolean }
-        }
-      }
-
-      response '200', 'delivery confirmed' do
-        let(:Authorization) { "Bearer #{seller_jwt_token}" }
-        let(:'X-Spree-Seller-Id') { seller.prefixed_id }
-        let(:order_id) { order.prefixed_id }
-        let(:id) { fulfillment.prefixed_id }
-        let(:body) { {} }
-
-        before { Spree.fulfillment_fulfill_workflow.call(fulfillment: fulfillment) }
-
-        schema '$ref' => '#/components/schemas/Fulfillment'
-
-        run_test! do
-          expect(fulfillment.reload).to be_delivered
-        end
-      end
-    end
-  end
-
   path '/api/v3/seller/tracking_carriers' do
     get 'List tracking carriers' do
       tags 'Fulfillments'

@@ -151,14 +151,13 @@ RSpec.describe Spree::Api::V3::Seller::Orders::FulfillmentsController, type: :co
     end
   end
 
-  describe 'PATCH #mark_delivered' do
-    it 'confirms the customer received the goods' do
-      Spree.fulfillment_fulfill_workflow.call(fulfillment: fulfillment)
-
-      patch :mark_delivered, params: { order_id: order.prefixed_id, id: fulfillment.prefixed_id }, as: :json
-
-      expect(response).to have_http_status(:ok)
-      expect(fulfillment.reload).to be_delivered
+  # Confirming receipt is deliberately not on this branch: a parcel having
+  # arrived is the buyer's word, not the sender's.
+  describe 'marking delivered' do
+    it 'has no route' do
+      expect {
+        patch :mark_delivered, params: { order_id: order.prefixed_id, id: fulfillment.prefixed_id }, as: :json
+      }.to raise_error(ActionController::UrlGenerationError)
     end
   end
 

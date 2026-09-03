@@ -64,10 +64,6 @@ export function useFulfillmentActions(orderId: string) {
     sellerClient().orders.fulfillments.resume(orderId, fulfillmentId),
   )
 
-  const markDelivered = useFulfillmentMutation((fulfillmentId: string) =>
-    sellerClient().orders.fulfillments.markDelivered(orderId, fulfillmentId),
-  )
-
   const split = useFulfillmentMutation(
     ({
       fulfillmentId,
@@ -80,5 +76,5 @@ export function useFulfillmentActions(orderId: string) {
     }) => sellerClient().orders.fulfillments.split(orderId, fulfillmentId, params),
   )
 
-  return { fulfill, update, cancel, resume, markDelivered, split }
+  return { fulfill, update, cancel, resume, split }
 }

@@ -27,7 +27,6 @@ import { FulfillmentTrackingDialog } from './fulfillment-tracking-dialog'
 // these off "not unfulfilled" once badged a canceled parcel as a success.
 const CAN_SHIP = ['unfulfilled']
 const CAN_CANCEL = ['unfulfilled']
-const CAN_MARK_DELIVERED = ['fulfilled']
 
 /** Every parcel owed on this order, and what the seller can do with each. */
 export function FulfillmentsCard({ order }: { order: Order }) {
@@ -67,7 +66,7 @@ export function FulfillmentsCard({ order }: { order: Order }) {
 function FulfillmentRow({ orderId, fulfillment }: { orderId: string; fulfillment: Fulfillment }) {
   const { t } = useTranslation()
   const confirm = useConfirm()
-  const { cancel, resume, markDelivered } = useFulfillmentActions(orderId)
+  const { cancel, resume } = useFulfillmentActions(orderId)
 
   const [shipping, setShipping] = useState(false)
   const [trackingOpen, setTrackingOpen] = useState(false)
@@ -76,7 +75,6 @@ function FulfillmentRow({ orderId, fulfillment }: { orderId: string; fulfillment
   const status = fulfillment.status ?? ''
   const shippable = CAN_SHIP.includes(status)
   const cancelable = CAN_CANCEL.includes(status)
-  const deliverable = CAN_MARK_DELIVERED.includes(status)
   const splittable = shippable && (fulfillment.fulfillment_items?.length ?? 0) > 0
 
   async function handleCancel() {
@@ -116,14 +114,6 @@ function FulfillmentRow({ orderId, fulfillment }: { orderId: string; fulfillment
               {splittable && (
                 <DropdownMenuItem onClick={() => setSplitOpen(true)}>
                   {t('orders.fulfillments.split')}
-                </DropdownMenuItem>
-              )}
-              {deliverable && (
-                <DropdownMenuItem
-                  disabled={markDelivered.isPending}
-                  onClick={() => markDelivered.mutate(fulfillment.id)}
-                >
-                  {t('orders.fulfillments.mark_delivered')}
                 </DropdownMenuItem>
               )}
               {status === 'canceled' && (
