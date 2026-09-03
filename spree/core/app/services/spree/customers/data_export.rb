@@ -54,6 +54,7 @@ module Spree
           phone: customer.phone,
           selected_locale: customer.selected_locale,
           tags: customer.tag_list.to_a,
+          metadata: customer.metadata.presence,
           created_at: customer.created_at&.iso8601,
           anonymized_at: customer.anonymized_at&.iso8601
         }
@@ -137,6 +138,8 @@ module Spree
             completed_at: order.completed_at&.iso8601,
             customer_note: order.customer_note,
             po_number: order.po_number,
+            last_ip_address: order.last_ip_address,
+            metadata: order.metadata.presence,
             billing_address: address_hash(order.bill_address),
             shipping_address: address_hash(order.ship_address),
             line_items: order.line_items.map do |line_item|
@@ -167,6 +170,8 @@ module Spree
             email: cart.email,
             currency: cart.currency,
             item_total: cart.item_total&.to_s,
+            last_ip_address: cart.last_ip_address,
+            metadata: cart.metadata.presence,
             created_at: cart.created_at&.iso8601,
             line_items: cart.line_items.map do |line_item|
               { name: line_item.name, sku: line_item.sku, quantity: line_item.quantity }

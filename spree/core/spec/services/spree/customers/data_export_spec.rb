@@ -118,4 +118,36 @@ RSpec.describe Spree::Customers::DataExport do
   it 'produces a payload that survives a JSON round trip' do
     expect { JSON.parse(JSON.generate(payload)) }.not_to raise_error
   end
+
+  # Whatever erasure treats as personal data, an access request has to
+  # disclose. The two answer the same question about the same columns, so a
+  # field reachable by one and not the other is a defect in whichever is
+  # behind — usually the export, which is written per-section by hand.
+  describe 'agreement with what erasure removes' do
+    it 'discloses the tracking and merchant notes held against the account' do
+      customer.update_columns(metadata: { 'crm_segment' => 'wholesale' })
+
+      expect(payload[:account][:metadata]).to eq('crm_segment' => 'wholesale')
+    end
+
+    it 'discloses the address an order was placed from and its annotations' do
+      order = create(:completed_order_with_totals, customer: customer, store: store)
+      order.update_columns(last_ip_address: '203.0.113.9', metadata: { 'source' => 'campaign' })
+
+      exported = payload[:orders].first
+
+      expect(exported[:last_ip_address]).to eq('203.0.113.9')
+      expect(exported[:metadata]).to eq('source' => 'campaign')
+    end
+
+    it 'discloses the same for an abandoned checkout' do
+      cart = create(:cart, customer: customer, store: store)
+      cart.update_columns(last_ip_address: '203.0.113.9', metadata: { 'source' => 'campaign' })
+
+      exported = payload[:carts].first
+
+      expect(exported[:last_ip_address]).to eq('203.0.113.9')
+      expect(exported[:metadata]).to eq('source' => 'campaign')
+    end
+  end
 end
