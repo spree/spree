@@ -89,15 +89,50 @@ RSpec.describe 'AvaTax API contract', :vcr do
       expect(row.data['avalara']['exemptNo']).to eq('C-100')
     end
 
-    # Avalara reflects a buyer registration nowhere in its response on an account
-    # with no EU registration — the whole response is byte-identical with and
-    # without it — so this cannot prove the key is honoured. What it does prove is
-    # that a registration on the sale reaches the request, and it leaves a
-    # recorded payload to compare against if an EU-registered account is ever
-    # available.
-    it 'sends the buyer registration it was given',
-       vcr: { cassette_name: 'estimate/business_identification_no' } do
-      cart = us_cart
+    # A Polish seller shipping into Germany, which is the shape that makes a
+    # buyer registration mean anything: the recording account holds a Polish VAT
+    # registration, so Avalara actually applies the intra-community rules rather
+    # than accepting the field and ignoring it.
+    #
+    # The pair matters more than either half. A zero on its own is what a broken
+    # call, a dropped line or an unrecognised key would all produce; it is only
+    # evidence next to the same sale taxed at 23% with nothing changed but the
+    # registration.
+    def eu_cart
+      market = create(:market, store: @default_store, tax_inclusive: true, currency: 'PLN')
+      market.update!(country_codes: ['PL'])
+      create(:stock_location, store: @default_store, default: true, country_code: 'PL', state_code: nil,
+                              city: 'Warszawa', zipcode: '00-838', address1: 'Prosta 51')
+      address = create(:address, country_code: 'DE', state_code: nil, city: 'Berlin',
+                                 zipcode: '10117', address1: 'Unter den Linden 1')
+      # A store instance memoizes its markets' currencies — see the inclusive
+      # example above.
+      store = Spree::Store.find(@default_store.id)
+      cart = create(:cart, store: store, ship_address: address, bill_address: address,
+                           market: market, currency: 'PLN')
+      create(:line_item, cart: cart, order: nil, price: 100)
+      cart.reload
+    end
+
+    it 'charges the seller\'s VAT to a consumer across an internal border',
+       vcr: { cassette_name: 'estimate/eu_cross_border_consumer' } do
+      cart = eu_cart
+      allow(SpreeAvalara::Integration).to receive(:active_for).and_return(integration)
+
+      provider.estimate(cart)
+
+      row = cart.tax_lines.reload.sole
+      expect(row.amount).to eq(18.70.to_d)
+      expect(row.taxability_reason).to eq('standard_rated')
+      # Poland's, not Germany's: the tax is owed where the supply was made, and
+      # a row naming the destination would file the sale on the wrong return.
+      expect(row.country_code).to eq('PL')
+      expect(row.included).to be(true)
+    end
+
+    it 'zero-rates the same sale as an intra-community supply when the buyer is registered',
+       vcr: { cassette_name: 'estimate/eu_intra_community_supply' } do
+      cart = eu_cart
       allow(SpreeAvalara::Integration).to receive(:active_for).and_return(integration)
       identifier = Spree::TaxIdentifier.new(kind: 'eu_vat', value: 'DE136695976')
       sent = nil
@@ -108,8 +143,18 @@ RSpec.describe 'AvaTax API contract', :vcr do
 
       provider.estimate(cart, tax_identifier: identifier)
 
+      # The request, because a cassette is matched by method and URL and never
+      # by body: a build that stopped sending the number would still be replayed
+      # this zero-rated answer.
       expect(sent[:businessIdentificationNo]).to eq('DE136695976')
-      expect(cart.tax_lines.reload).to be_present
+
+      row = cart.tax_lines.reload.sole
+      expect(row.amount).to eq(0.to_d)
+      # Not merely zero_rated: the regime is what an EU invoice cites, and it is
+      # derived from the request because Avalara reports the zero rate without
+      # saying which zero it is.
+      expect(row.taxability_reason).to eq('intra_community_supply')
+      expect(row.country_code).to eq('PL')
     end
 
     # The commonest zero-tax case, and the one the reason table originally got
