@@ -328,6 +328,14 @@ module Spree
 
       wanted.each do |currency, bound|
         bound = (bound || {}).symbolize_keys
+
+        # A flat fee applies only where it states an amount. Writing bounds alone
+        # would create a zero-amount row that still matches and blocks fallthrough.
+        if fixed? && amount_for(currency).to_d <= 0
+          commission_rate_values.find { |value| value.currency == currency }&.destroy
+          next
+        end
+
         row_for_currency(currency).update!(
           min_amount: bound[:min_amount].presence, max_amount: bound[:max_amount].presence
         )

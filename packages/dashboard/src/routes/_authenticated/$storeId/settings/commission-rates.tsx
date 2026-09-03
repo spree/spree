@@ -575,6 +575,14 @@ function FlatFeeAmountsField({ form }: { form: UseFormReturn<CommissionRateFormV
 function FlatFeeCapField({ form }: { form: UseFormReturn<CommissionRateFormValues> }) {
   const { t } = useTranslation()
   const { currencies } = useStore()
+  const amounts = form.watch('amounts')
+  const cappedCurrencies = currencies.filter(
+    (currency) => String(amounts?.[currency] ?? '').trim() !== '',
+  )
+
+  if (cappedCurrencies.length === 0) {
+    return null
+  }
 
   return (
     <Field>
@@ -583,7 +591,7 @@ function FlatFeeCapField({ form }: { form: UseFormReturn<CommissionRateFormValue
         {t('admin.fields.commission_rate.flat_fee_cap.help')}
       </span>
       <div className="flex flex-col gap-2 pt-1">
-        {currencies.map((currency) => (
+        {cappedCurrencies.map((currency) => (
           <div key={currency} className="flex items-center gap-2">
             <span className="w-12 shrink-0 text-sm text-muted-foreground">{currency}</span>
             <Controller

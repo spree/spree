@@ -137,6 +137,15 @@ RSpec.describe Spree::CommissionRate, type: :model do
 
       expect(rate.reload.bounds.keys).to eq(['USD'])
     end
+
+    it 'ignores a flat-fee cap for a currency with no stated amount' do
+      rate = create(:commission_rate, :fixed, store: store, amounts: { 'USD' => 5 })
+
+      rate.update!(bounds: { 'EUR' => { max_amount: 20 } })
+
+      expect(rate.bounds.keys).to eq([])
+      expect(rate.applies_to_currency?('EUR')).to be false
+    end
   end
 
   describe 'flat fee amounts' do

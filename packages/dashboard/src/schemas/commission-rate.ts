@@ -138,12 +138,19 @@ export function commissionRateValuesToParams(
             max_amount: decimalOrNull(bound.max_amount),
           },
         ])
-        .filter(([, bound]) => {
-          const { min_amount, max_amount } = bound as {
-            min_amount: number | null
-            max_amount: number | null
+        .filter((entry) => {
+          const [currencyCode, bound] = entry as [
+            string,
+            { min_amount: number | null; max_amount: number | null },
+          ]
+          const { min_amount, max_amount } = bound
+          const hasBound = min_amount !== null || max_amount !== null
+          if (!hasBound) return false
+          // A flat fee cap without a stated amount would match at zero on the server.
+          if (v.kind === 'fixed') {
+            return String(v.amounts[currencyCode] ?? '').trim() !== ''
           }
-          return min_amount !== null || max_amount !== null
+          return true
         }),
     ),
     commission_tax_rate: taxPercentage === null ? null : taxPercentage / 100,
