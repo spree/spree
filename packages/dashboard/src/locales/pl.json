@@ -668,6 +668,7 @@
           "delete_confirm_message": "Usunąć ten adres?"
         },
         "customer_since": "Klient od",
+        "delete_confirm_message": "To usuwa konto w całości i nie jest możliwe po zakończonym zamówieniu. Aby odpowiedzieć na wniosek o usunięcie danych od osoby, która już kupiła, użyj „Usuń dane osobowe”.",
         "delete_label": "Usuń klienta",
         "edit_profile_description": "Zaktualizuj dane profilu klienta.",
         "groups": {
@@ -740,7 +741,7 @@
         "anonymize_confirm_message": "Imię i nazwisko, adres e-mail, telefon oraz adresy zostaną wszędzie zastąpione, a klient zostanie wylogowany. Zamówienia i zapisy płatności pozostaną, bez danych osobowych. Tej operacji nie można cofnąć.",
         "anonymize_confirm_title": "Usunąć dane osobowe tego klienta?",
         "consent_updated": "Zgoda marketingowa ostatnio zmieniona {{date}}",
-        "description": "Odpowiedz na wniosek tego klienta dotyczący ochrony danych.",
+        "description": "Odpowiedz na wniosek dotyczący ochrony danych. Usunięcie danych zachowuje zamówienia i kasuje dane osobowe — czego usunięcie konta nie potrafi już po pierwszym zakupie.",
         "export": "Eksportuj dane",
         "export_failed": "Nie udało się wyeksportować danych",
         "messages": {

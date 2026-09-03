@@ -660,6 +660,7 @@
           "delete_confirm_message": "删除此地址？"
         },
         "customer_since": "注册时间",
+        "delete_confirm_message": "此操作会完全移除账户，客户完成订单后将不再可用。若要回应已购买客户的删除请求，请改用“抹除个人数据”。",
         "delete_label": "删除客户",
         "edit_profile_description": "更新客户的个人资料信息。",
         "groups": {
@@ -730,7 +731,7 @@
         "anonymize_confirm_message": "其姓名、邮箱、电话和地址将在所有位置被替换，并且该客户会被登出。订单和付款记录将保留，但不含个人信息。此操作无法撤销。",
         "anonymize_confirm_title": "确定抹除该客户的个人数据吗？",
         "consent_updated": "营销同意最近更新于 {{date}}",
-        "description": "回应该客户的数据保护请求。",
+        "description": "回应数据保护请求。抹除会保留订单并移除个人信息，这是客户下单后删除账户所无法做到的。",
         "export": "导出数据",
         "export_failed": "无法导出数据",
         "messages": {

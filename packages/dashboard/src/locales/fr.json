@@ -662,6 +662,7 @@
           "delete_confirm_message": "Supprimer cette adresse ?"
         },
         "customer_since": "Client depuis",
+        "delete_confirm_message": "Cela supprime entièrement le compte et devient impossible dès qu'une commande est finalisée. Pour répondre à une demande d'effacement d'un client ayant déjà acheté, utilisez « Effacer les données personnelles ».",
         "delete_label": "Supprimer le client",
         "edit_profile_description": "Mettez à jour les informations du profil du client.",
         "groups": {
@@ -732,7 +733,7 @@
         "anonymize_confirm_message": "Son nom, son adresse e-mail, son téléphone et ses adresses seront remplacés partout, et sa session sera fermée. Les commandes et les enregistrements de paiement sont conservés, sans les données personnelles. Cette action est irréversible.",
         "anonymize_confirm_title": "Effacer les données personnelles de ce client ?",
         "consent_updated": "Consentement marketing modifié pour la dernière fois le {{date}}",
-        "description": "Répondez à une demande de protection des données de ce client.",
+        "description": "Répondez à une demande de protection des données. L'effacement conserve les commandes et supprime les données personnelles, ce que la suppression ne permet plus dès qu'un achat a eu lieu.",
         "export": "Exporter les données",
         "export_failed": "Impossible d'exporter les données",
         "messages": {

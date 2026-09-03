@@ -662,6 +662,7 @@
           "delete_confirm_message": "Delete this address?"
         },
         "customer_since": "Customer since",
+        "delete_confirm_message": "This removes the account entirely and is refused once the customer has completed an order. To answer an erasure request from someone who has bought something, use Erase personal data instead.",
         "delete_label": "Delete customer",
         "edit_profile_description": "Update the customer's profile information.",
         "groups": {
@@ -732,7 +733,7 @@
         "anonymize_confirm_message": "Their name, email, phone and addresses will be replaced everywhere, and they will be signed out. Orders and payment records are kept, with the personal details removed. This cannot be undone.",
         "anonymize_confirm_title": "Erase this customer's personal data?",
         "consent_updated": "Marketing consent last changed {{date}}",
-        "description": "Answer a data protection request from this customer.",
+        "description": "Answer a data protection request. Erasing keeps the customer's orders and removes their personal details, which is what deleting cannot do once they have bought something.",
         "export": "Export data",
         "export_failed": "Could not export the data",
         "messages": {

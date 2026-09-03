@@ -105,7 +105,7 @@ export function CustomerPrivacyCard({ customer }: { customer: Customer }) {
               {t('admin.customers.privacy.export')}
             </Button>
             <Button
-              variant="outline"
+              variant="destructive"
               size="sm"
               onClick={handleAnonymize}
               disabled={anonymizeMutation.isPending}

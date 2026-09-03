@@ -662,7 +662,8 @@
           "delete_confirm_message": "Diese Adresse löschen?"
         },
         "customer_since": "Kunde seit",
-        "delete_label": "Kunde löschen",
+        "delete_confirm_message": "Damit wird das Konto vollständig entfernt; nach einer abgeschlossenen Bestellung ist das nicht mehr möglich. Für eine Löschanfrage einer Person, die bereits gekauft hat, nutzen Sie stattdessen „Personenbezogene Daten löschen“.",
+        "delete_label": "Kundin oder Kunden löschen",
         "edit_profile_description": "Aktualisieren Sie die Profilinformationen des Kunden.",
         "groups": {
           "edit_description": "Gruppen hinzufügen oder entfernen, denen dieser Kunde angehört.",
@@ -732,7 +733,7 @@
         "anonymize_confirm_message": "Name, E-Mail-Adresse, Telefonnummer und Anschriften werden überall ersetzt und die Person wird abgemeldet. Bestellungen und Zahlungsbelege bleiben erhalten, ohne die persönlichen Angaben. Dies kann nicht rückgängig gemacht werden.",
         "anonymize_confirm_title": "Personenbezogene Daten dieser Person löschen?",
         "consent_updated": "Marketing-Einwilligung zuletzt geändert am {{date}}",
-        "description": "Beantworten Sie eine Datenschutzanfrage dieser Kundin oder dieses Kunden.",
+        "description": "Beantworten Sie eine Datenschutzanfrage. Beim Löschen der Daten bleiben die Bestellungen erhalten und die persönlichen Angaben werden entfernt — was ein Löschen des Kontos nach dem ersten Kauf nicht mehr leisten kann.",
         "export": "Daten exportieren",
         "export_failed": "Die Daten konnten nicht exportiert werden",
         "messages": {

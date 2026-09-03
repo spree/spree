@@ -78,6 +78,11 @@ function CustomerBody({ customer }: { customer: Customer }) {
             resource={{ id: customer.id }}
             onDelete={handleDelete}
             deleteLabel={t('admin.customers.detail.delete_label')}
+            // Says what deleting is, and is not: it removes the account
+            // outright and is refused once the customer has bought something.
+            // Erasing personal data, on the privacy card, is the action that
+            // still works then.
+            deleteConfirmMessage={t('admin.customers.detail.delete_confirm_message')}
             jsonPreview={{
               title: `Customer ${customer.email}`,
               // Reuse what `useCustomer` already loaded — opening the drawer
