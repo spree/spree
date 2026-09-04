@@ -110,6 +110,8 @@
         "audience_label": "Audience",
         "audience_placeholder": "Rechercher…",
         "company_subtree_help": "L’affectation à une entreprise couvre tout son sous-arbre.",
+        "customer_group_help": "Les catalogues affectés à un groupe de clients ne touchent que les acheteurs dont l’entreprise n’a pas de catalogue propre.",
+        "customer_group_precedence": "Les affectations à une entreprise l’emportent. Si l’entreprise d’un acheteur — ou une entreprise au-dessus — possède un catalogue, ce sont ces catalogues qui s’appliquent, et son groupe de clients n’est pas consulté. Pour donner des tarifs par palier aux acheteurs d’entreprise, affectez plutôt ce catalogue à leurs entreprises ou à leurs divisions.",
         "dialog_description": "Qui voit ce catalogue. Une affectation à une entreprise couvre le nœud et tout ce qui se trouve en dessous.",
         "empty": "Affecté à aucune audience — personne ne voit ce catalogue.",
         "empty_description": "Assignez une entreprise ou un groupe de clients pour définir à qui s’adresse ce catalogue.",

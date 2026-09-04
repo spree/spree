@@ -131,6 +131,51 @@ describe Spree::Catalog, type: :model do
 
       expect(described_class.for_context(store: store, channel: channel)).to eq([catalog])
     end
+
+    # The audiences are alternatives, not layers: a buyer purchasing
+    # for a company is on that company's agreement alone. Merchants express
+    # trade tiers by assigning the tier catalog to the companies in it.
+    describe 'company and customer group together' do
+      let(:division) { create(:company, store: store, kind: 'division', parent: company) }
+      let(:group) { create(:customer_group, store: store) }
+      let(:buyer) { create(:customer) }
+
+      let!(:company_catalog) do
+        create(:catalog, store: store).tap do |catalog|
+          create(:catalog_assignment, catalog: catalog, assignable: company)
+        end
+      end
+
+      let!(:group_catalog) do
+        create(:catalog, store: store).tap do |catalog|
+          create(:catalog_assignment, catalog: catalog, assignable: group)
+        end
+      end
+
+      before do
+        Spree::CompanyMembership.create!(company: division, customer: buyer)
+        Spree::CustomerGroupUser.create!(customer_group: group, customer: buyer)
+      end
+
+      it 'leaves the group out once the company subtree carries a catalog' do
+        expect(described_class.for_context(store: store, company: division, user: buyer)).
+          to eq([company_catalog])
+      end
+
+      it 'consults the group when no company catalog applies' do
+        company_catalog.catalog_assignments.destroy_all
+
+        expect(described_class.for_context(store: store, company: division, user: buyer)).
+          to eq([group_catalog])
+      end
+
+      it 'unions the subtree, nearest node first, when the tier is a company assignment' do
+        create(:catalog_assignment, catalog: group_catalog, assignable: division)
+
+        expect(described_class.for_context(store: store, company: division, user: buyer)).
+          to eq([group_catalog, company_catalog])
+      end
+    end
   end
 
   describe 'assignments' do

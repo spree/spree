@@ -110,6 +110,8 @@
         "audience_label": "Zielgruppe",
         "audience_placeholder": "Suchen…",
         "company_subtree_help": "Die Zuweisung an ein Unternehmen gilt für dessen gesamten Teilbaum.",
+        "customer_group_help": "Kundengruppen-Kataloge erreichen nur Käufer, deren Unternehmen keinen eigenen Katalog hat.",
+        "customer_group_precedence": "Unternehmens-Zuweisungen haben Vorrang. Hat das Unternehmen eines Käufers — oder ein übergeordnetes — irgendeinen Katalog, gelten diese Kataloge, und seine Kundengruppe wird nicht berücksichtigt. Um Unternehmens-Käufern Staffelpreise zu geben, weisen Sie diesen Katalog stattdessen ihren Unternehmen oder Abteilungen zu.",
         "dialog_description": "Wer diesen Katalog sieht. Eine Unternehmens-Zuweisung gilt für den Knoten und alles darunter.",
         "empty": "Noch keiner Zielgruppe zugewiesen — niemand sieht diesen Katalog.",
         "empty_description": "Weisen Sie ein Unternehmen oder eine Kundengruppe zu, um festzulegen, für wen dieser Katalog gilt.",

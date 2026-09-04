@@ -112,6 +112,8 @@
         "audience_label": "Odbiorca",
         "audience_placeholder": "Szukaj…",
         "company_subtree_help": "Przypisanie do firmy obejmuje całe jej poddrzewo.",
+        "customer_group_help": "Katalogi przypisane do grupy klientów obejmują tylko kupujących, których firma nie ma własnego katalogu.",
+        "customer_group_precedence": "Przypisania do firmy mają pierwszeństwo. Jeśli firma kupującego — lub firma nad nią — ma jakikolwiek katalog, obowiązują te katalogi, a grupa klientów nie jest brana pod uwagę. Aby dać kupującym firmowym ceny progowe, przypisz ten katalog do ich firm lub oddziałów.",
         "dialog_description": "Kto widzi ten katalog. Przypisanie do firmy obejmuje węzeł i wszystko poniżej.",
         "empty": "Nie przypisano do żadnego odbiorcy — nikt nie widzi tego katalogu.",
         "empty_description": "Przypisz firmę lub grupę klientów, aby określić, dla kogo jest ten katalog.",

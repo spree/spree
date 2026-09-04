@@ -109,7 +109,7 @@ await adminClient.catalogs.assign(catalog.id, {
 
 ## What a shopper ends up seeing
 
-When several catalogs could apply, they combine rather than compete:
+The three ways of reaching a buyer are tried in turn, and the first one that finds a catalog answers on its own. Once that's settled, everything it found combines:
 
 <Steps>
   <Step title="Find the catalogs that apply">
@@ -124,6 +124,14 @@ When several catalogs could apply, they combine rather than compete:
 </Steps>
 
 Gated storefront access is checked before any of this — a shopper who has to sign in never reaches catalog resolution.
+
+<Warning>
+**A company buyer never picks up their customer group's catalogs.** As soon as any catalog is assigned to their company or one above it, that is their agreement, and group assignments are not consulted for them.
+
+So don't express trade tiers as customer groups over a company tree — the tier catalogs would be unreachable for exactly the buyers they were meant for. Model tiers as company assignments: the group-wide range on the root, and each tier's catalog on the member companies or divisions in that tier. One tier catalog can carry as many company assignments as the tier has members, and nearest-first pricing means a buyer's own node beats anything inherited.
+
+Customer group assignments are for buyers who aren't purchasing for a company at all — a retail loyalty tier, a staff discount.
+</Warning>
 
 ## How pricing resolves
 
