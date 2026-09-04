@@ -55,6 +55,12 @@ brakeman-*.*
 */app/assets/builds
 .claude/worktrees
 server/
+.server/
+# Never commit environment files: a leading-dot copy of server/ once slipped
+# past the line above carrying a live API key.
+.env
+.env.*
+!.env.example
 # Per-worktree clone of spree/storefront (branch 6-0-dev), provisioned by
 # scripts/worktree/setup.sh. Keeps its own .git — commit and push from inside it.
 storefront/

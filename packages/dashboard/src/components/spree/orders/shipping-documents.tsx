@@ -3,8 +3,9 @@ import { FileTextIcon } from 'lucide-react'
 import { useTranslation } from 'react-i18next'
 
 /**
- * Customs paperwork the carrier produced beside the label — a commercial
- * invoice, a declaration — for parcels that cross a border.
+ * Paperwork the carrier produced beside the label. Customs forms are the
+ * common case — a commercial invoice, a declaration, for anything crossing a
+ * border — but what a provider files here is its own to decide.
  *
  * Owner-agnostic like the label row beside it: an export and a cross-border
  * return are declared the same way. The files are hosted by the carrier
@@ -21,7 +22,7 @@ export function ShippingDocuments({
   if (!documents?.length) return null
 
   return (
-    <CardContent className="flex flex-col gap-1.5 border-t pt-3">
+    <CardContent className="flex flex-col gap-1.5 border-b border-border-subtle pt-3">
       <p className="text-sm font-medium">{t('admin.orders.detail.fulfillments.documents_title')}</p>
       {documents.map((document) => (
         <a

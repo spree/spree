@@ -40,8 +40,8 @@ module Spree
           one :stock_location, resource: proc { Spree.api.admin_stock_location_serializer }, if: proc { expand?('stock_location') }
           many :refunds, resource: proc { Spree.api.admin_refund_serializer }, if: proc { expand?('refunds') }
 
-          # Customs paperwork the provider produced beside the label: a
-          # cross-border return is declared like any other export.
+          # Paperwork the provider produced beside the label: a cross-border
+          # return is declared like any other export.
           attribute :documents do |return_record|
             return_record.provider.documents(return_record).map(&:as_json)
           end

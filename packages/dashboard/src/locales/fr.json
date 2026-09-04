@@ -2741,7 +2741,7 @@
             "customs_form": "Formulaire douanier",
             "form": "Document"
           },
-          "documents_title": "Documents douaniers",
+          "documents_title": "Documents d'expédition",
           "edit_description": "Modifiez le lieu d'expédition et le mode de livraison de cette expédition.",
           "edit_title": "Modifier l'expédition",
           "edit_tracking_title": "Modifier le suivi",

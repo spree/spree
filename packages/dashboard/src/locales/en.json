@@ -2741,7 +2741,7 @@
             "customs_form": "Customs form",
             "form": "Document"
           },
-          "documents_title": "Customs documents",
+          "documents_title": "Shipping documents",
           "edit_description": "Change where this fulfillment ships from and which delivery method carries it.",
           "edit_title": "Edit fulfillment",
           "edit_tracking_title": "Edit tracking",

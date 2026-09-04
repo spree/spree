@@ -1,7 +1,7 @@
 require 'spec_helper'
 require 'spree/testing_support/label_provider'
 
-# Customs paperwork reaches the merchant through the provider, not a column,
+# Paperwork reaches the merchant through the provider, not a column,
 # so what matters is that both owners of a label actually ask for it: an
 # international return is declared like any other export, and for a long
 # while only fulfillments exposed it.

@@ -9,9 +9,9 @@ module Spree
   # change to this class rather than to every provider and serializer.
   #
   # +kind+ is the carrier's own word for the document and is deliberately not
-  # validated against a list: what paperwork a border wants is not Spree's
-  # vocabulary to fix, and an unknown kind renders humanised rather than
-  # being dropped.
+  # validated against a list: which papers a shipment needs is the carrier's
+  # and the border's business, not Spree's vocabulary to fix, and an unknown
+  # kind renders humanised rather than being dropped.
   class ShippingDocument
     include ActiveModel::Model
     include ActiveModel::Attributes
