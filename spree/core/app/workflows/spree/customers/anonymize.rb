@@ -201,7 +201,8 @@ module Spree
       # name is what this step is for; hiding the row would break the ledger
       # the rest of the flow is preserving.
       def anonymize_payment_sources
-        Spree::CreditCard.where(id: card_ids).update_all(name: REDACTED_NAME, updated_at: Time.current)
+        Spree::CreditCard.where(id: card_ids).
+          update_all(name: REDACTED_NAME, metadata: {}, updated_at: Time.current)
       end
 
       # Cards saved to the account, plus the ones used at guest checkout: those

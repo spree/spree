@@ -134,6 +134,58 @@ RSpec.describe 'personal data coverage' do
     MESSAGE
   end
 
+  # Field level, where the section-level check above cannot see.
+  #
+  # Most of what went wrong on this feature was one field reaching one side
+  # and not the other — card metadata disclosed but never erased, a group's
+  # notes erased but never disclosed. Both directions are defects.
+  #
+  # Rather than compare two hand-written lists, which would agree with each
+  # other while both disagreed with the code, this runs the real erasure over
+  # a customer with data in every one of these places and asserts the export
+  # named whatever the erasure changed.
+  it 'discloses every field its erasure goes on to clear' do
+    customer = create(:customer, email: 'subject@example.com')
+    card = create(:credit_card, name: 'Ada Lovelace')
+    card.update_columns(customer_id: customer.id, metadata: { 'wallet' => 'apple-pay' })
+    group = create(:order_group, store: @default_store, customer: customer)
+    group.update_columns(metadata: { 'crm' => 'vip' })
+    Spree::ConsentRecord.create!(
+      store: @default_store, owner: customer, purpose: Spree::ConsentRecord::EMAIL_MARKETING,
+      source: 'account', accepted: true, email: customer.email,
+      ip_address: '203.0.113.9', user_agent: 'Mozilla/5.0', recorded_at: Time.current
+    )
+
+    payload = Spree::Customers::DataExport.new(customer: customer, store: @default_store).call
+    disclosed = JSON.generate(payload)
+
+    # Every value about to be wiped should appear somewhere in the response.
+    values = ['Ada Lovelace', 'apple-pay', 'vip', '203.0.113.9', 'Mozilla/5.0']
+    undisclosed = values.reject { |value| disclosed.include?(value) }
+
+    expect(undisclosed).to be_empty, <<~MESSAGE
+      The access response does not mention these values, but erasure clears
+      them:
+
+        #{undisclosed.join("\n  ")}
+    MESSAGE
+
+    Spree::Customers::Anonymize.call(customer: customer, store: @default_store)
+
+    surviving = values.select do |value|
+      [card.reload.name, card.metadata.to_s, group.reload.metadata.to_s,
+       Spree::ConsentRecord.where(owner: customer).pluck(:ip_address, :user_agent).to_s].
+        any? { |held| held.include?(value) }
+    end
+
+    expect(surviving).to be_empty, <<~MESSAGE
+      The access response disclosed these values but erasure left them in the
+      database:
+
+        #{surviving.join("\n  ")}
+    MESSAGE
+  end
+
   it 'names a real table in every entry, so the lists cannot rot' do
     tables = ActiveRecord::Base.connection.tables
     declared = COVERED_TABLES.keys + EXEMPT_TABLES.keys
