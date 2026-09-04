@@ -37,7 +37,15 @@ export function ShippingLabelRow({
   const confirm = useConfirm()
   const { token } = useAuth()
 
-  const refundable = label.source === 'purchased' && label.status === 'purchased'
+  // Mirrors Spree::ShippingLabel#refundable? — a label the carrier is still
+  // deciding on stays askable, because re-filing is the only way to re-drive a
+  // refund whose confirmation never arrived.
+  const refundable = label.source === 'purchased' && label.status !== 'refunded'
+  // A refund already filed and not yet settled: the same action re-files it.
+  const refundPending = label.status === 'refund_requested'
+  const refundLabelKey = refundPending
+    ? 'admin.orders.detail.fulfillments.retry_refund_label'
+    : 'admin.orders.detail.fulfillments.refund_label'
   const deletable = label.source === 'uploaded'
 
   async function print() {
@@ -95,14 +103,14 @@ export function ShippingLabelRow({
                 await confirm({
                   message: t('admin.orders.detail.fulfillments.confirm_refund_label'),
                   variant: 'destructive',
-                  confirmLabel: t('admin.orders.detail.fulfillments.refund_label'),
+                  confirmLabel: t(refundLabelKey),
                 })
               ) {
                 onRefund()
               }
             }}
           >
-            {t('admin.orders.detail.fulfillments.refund_label')}
+            {t(refundLabelKey)}
           </Button>
         )}
 

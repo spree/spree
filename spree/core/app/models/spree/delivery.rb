@@ -61,9 +61,10 @@ module Spree
     # What changes when a merchant corrects the tracking number: to the
     # carrier a different number is a different parcel, so the journey starts
     # over and everything belonging to the old number goes with it — its
-    # status, its arrival, and the carrier and link that described it.
-    # Otherwise a UPS badge and a UPS page survive onto a FedEx number, and a
-    # stale arrival keeps dating the returns window.
+    # status, its arrival and ETA, the scans it collected, and the carrier and
+    # link that described it. Otherwise a UPS badge and a UPS page survive
+    # onto a FedEx number, a stale arrival keeps dating the returns window,
+    # and the new parcel shows the old one's scan history.
     #
     # @param attributes [Hash] the merchant's edit
     # @return [Hash] the edit, widened when the number really changed
@@ -71,7 +72,9 @@ module Spree
       number = attributes[:tracking_number] || attributes['tracking_number']
       return attributes if number.blank? || number.to_s.squish == tracking_number
 
-      corrected = attributes.merge(status: 'pending', delivered_at: nil)
+      corrected = attributes.merge(
+        status: 'pending', delivered_at: nil, estimated_delivery_at: nil, details: nil
+      )
       corrected[:carrier] = nil if corrected[:carrier].blank? && corrected['carrier'].blank?
       corrected[:tracking_url] = nil if corrected[:tracking_url].blank? && corrected['tracking_url'].blank?
       corrected

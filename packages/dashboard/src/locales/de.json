@@ -2762,6 +2762,7 @@
           "print_packing_slip": "Lieferschein drucken",
           "rates_pending_origin": "Speichern Sie den neuen Ursprung, um die dort verfügbaren Versandarten zu sehen.",
           "refund_label": "Etikett erstatten",
+          "retry_refund_label": "Erstattung erneut anfordern",
           "ship_to": "Lieferadresse",
           "ships_from": "Versand ab",
           "split": "Aufteilen",

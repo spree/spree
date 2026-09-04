@@ -2755,6 +2755,7 @@
           "print_packing_slip": "打印装箱单",
           "rates_pending_origin": "保存新的发货地后即可查看该地可用的配送方式。",
           "refund_label": "退还面单",
+          "retry_refund_label": "重试退款",
           "ship_to": "收货地址",
           "ships_from": "发货地",
           "split": "拆分",

@@ -21,6 +21,11 @@ module Spree
           step :mark_canceled
         end
 
+        # Carrier I/O, after the status is committed: a customer who abandons
+        # a return must not be left holding live prepaid postage the merchant
+        # is still paying for.
+        external_step :refund_prepaid_label
+
         run_hooks :after_cancel
         return_record.publish_event('return.canceled')
         success(return_record.reload)
@@ -32,6 +37,10 @@ module Spree
         return if return_record.requested? || return_record.approved?
 
         failure(return_record, :not_cancellable)
+      end
+
+      def refund_prepaid_label
+        Spree::Fulfillments::StandDownProvider.refund_labels(return_record)
       end
 
       def mark_canceled

@@ -139,7 +139,8 @@ RSpec.describe Spree::Delivery, type: :model do
     let(:delivery) do
       create(:delivery, owner: fulfillment, store: store, tracking_number: '1Z_OLD',
                         carrier: 'ups', tracking_url: 'https://ups.example/1Z_OLD',
-                        status: 'delivered', delivered_at: 2.days.ago)
+                        status: 'delivered', delivered_at: 2.days.ago,
+                        estimated_delivery_at: 1.day.ago, details: { 'scans' => ['Left facility'] })
     end
 
     # To a carrier a different number is a different parcel, so nothing about
@@ -152,6 +153,9 @@ RSpec.describe Spree::Delivery, type: :model do
       expect(corrected[:delivered_at]).to be_nil
       expect(corrected[:carrier]).to be_nil
       expect(corrected[:tracking_url]).to be_nil
+      # The old parcel's ETA and scans describe a journey this number never made.
+      expect(corrected[:estimated_delivery_at]).to be_nil
+      expect(corrected[:details]).to be_nil
     end
 
     it 'leaves an edit that is not a correction alone' do

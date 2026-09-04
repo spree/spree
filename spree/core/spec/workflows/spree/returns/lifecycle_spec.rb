@@ -314,5 +314,29 @@ RSpec.describe 'Spree::Returns workflows' do
 
       expect(create_return).to be_success
     end
+
+    # A customer who abandons a return must not be left holding live prepaid
+    # postage: the label still works and the merchant is still paying for it.
+    it 'gives back the postage on a prepaid label' do
+      return_record = create_return.value
+      label = create(:shipping_label, owner: return_record, store: store)
+      allow(Spree.shipping_label_refund_workflow).to receive(:call).and_call_original
+
+      Spree::Returns::Cancel.call(return_record: return_record)
+
+      expect(Spree.shipping_label_refund_workflow).to have_received(:call).
+        with(shipping_label: label)
+    end
+
+    it 'cancels even when the carrier refuses the refund' do
+      return_record = create_return.value
+      create(:shipping_label, owner: return_record, store: store)
+      allow(Spree.shipping_label_refund_workflow).to receive(:call).
+        and_return(Spree::ServiceModule::Result.new(false, nil, 'carrier said no'))
+      allow(Rails.error).to receive(:report)
+
+      expect(Spree::Returns::Cancel.call(return_record: return_record)).to be_success
+      expect(Rails.error).to have_received(:report)
+    end
   end
 end

@@ -2762,6 +2762,7 @@
           "print_packing_slip": "Imprimer le bordereau de colisage",
           "rates_pending_origin": "Enregistrez la nouvelle origine pour voir les modes de livraison proposés.",
           "refund_label": "Rembourser l'étiquette",
+          "retry_refund_label": "Relancer le remboursement",
           "ship_to": "Livrer à",
           "ships_from": "Expédié depuis",
           "split": "Diviser",

@@ -2782,6 +2782,7 @@
           "print_packing_slip": "Drukuj list przewozowy",
           "rates_pending_origin": "Zapisz nowe miejsce wysyłki, aby zobaczyć dostępne dla niego sposoby dostawy.",
           "refund_label": "Zwrot za etykietę",
+          "retry_refund_label": "Ponów zwrot kosztów",
           "ship_to": "Adres dostawy",
           "ships_from": "Wysyłka z",
           "split": "Podziel",

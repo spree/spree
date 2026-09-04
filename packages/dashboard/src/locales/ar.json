@@ -2780,6 +2780,7 @@
           "print_packing_slip": "طباعة قائمة التعبئة",
           "rates_pending_origin": "احفظ مصدر الشحن الجديد لعرض طرق التوصيل المتاحة منه.",
           "refund_label": "استرداد الملصق",
+          "retry_refund_label": "إعادة محاولة الاسترداد",
           "ship_to": "الشحن إلى",
           "ships_from": "الشحن من",
           "split": "تقسيم",
