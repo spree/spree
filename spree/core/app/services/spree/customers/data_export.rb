@@ -239,11 +239,6 @@ module Spree
       # Card numbers were never stored, so this is the metadata that was: the
       # brand, the last four digits and the expiry a person would recognise.
       def payment_sources
-        payment_card_ids = Spree::Payment.
-          where(order_id: owned_purchases(Spree::Order).select(:id),
-                source_type: 'Spree::CreditCard').
-          pluck(:source_id)
-
         card_ids = (customer.credit_cards.ids + payment_card_ids).compact.uniq
 
         Spree::CreditCard.where(id: card_ids).map do |card|
@@ -270,6 +265,21 @@ module Spree
             created_at: identity.created_at&.iso8601
           }
         end
+      end
+
+      # Mirrors the anonymizer: a payment holds a cart id until completion
+      # repoints it to the order, so an abandoned checkout's card is reachable
+      # only through the cart.
+      def payment_card_ids
+        Spree::Payment.
+          where(source_type: 'Spree::CreditCard').
+          where(order_id: owned_purchases(Spree::Order).select(:id)).
+          or(
+            Spree::Payment.
+              where(source_type: 'Spree::CreditCard').
+              where(cart_id: owned_purchases(Spree::Cart).select(:id))
+          ).
+          pluck(:source_id)
       end
 
       def store_credits

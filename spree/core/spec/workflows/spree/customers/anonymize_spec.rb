@@ -243,6 +243,17 @@ RSpec.describe Spree::Customers::Anonymize do
       end
     end
 
+    it 'redacts a card left on a checkout that was never finished' do
+      cart = create(:cart, customer: customer, store: store)
+      abandoned_card = create(:credit_card, name: 'Ada Lovelace')
+      abandoned_card.update_columns(customer_id: nil)
+      create(:payment, order: nil, cart: cart, source: abandoned_card, amount: 0)
+
+      result
+
+      expect(abandoned_card.reload.name).to eq('Redacted')
+    end
+
     it 'redacts the cardholder name' do
       result
 

@@ -208,12 +208,22 @@ module Spree
       # carry no customer and are reachable only through the payment on the
       # order they paid for.
       def card_ids
-        payment_card_ids = Spree::Payment.
-          where(order_id: owned_purchases(Spree::Order).select(:id),
-                source_type: 'Spree::CreditCard').
-          pluck(:source_id)
-
         (customer.credit_cards.ids + payment_card_ids).compact.uniq
+      end
+
+      # A payment carries a cart id or an order id, never both, and it keeps
+      # the cart one until completion repoints it — so a checkout the person
+      # abandoned holds a card that following orders alone would never reach.
+      def payment_card_ids
+        Spree::Payment.
+          where(source_type: 'Spree::CreditCard').
+          where(order_id: owned_purchases(Spree::Order).select(:id)).
+          or(
+            Spree::Payment.
+              where(source_type: 'Spree::CreditCard').
+              where(cart_id: owned_purchases(Spree::Cart).select(:id))
+          ).
+          pluck(:source_id)
       end
 
       # Drops the local mapping to the customer object the processor holds.

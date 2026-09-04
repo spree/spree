@@ -242,6 +242,15 @@ RSpec.describe Spree::Customers::DataExport do
       expect(exported[:last_ip_address]).to eq('203.0.113.9')
     end
 
+    it 'discloses a card left on an unfinished checkout' do
+      cart = create(:cart, customer: customer, store: store)
+      card = create(:credit_card, name: 'Ada Abandoned')
+      card.update_columns(customer_id: nil)
+      create(:payment, order: nil, cart: cart, source: card, amount: 0)
+
+      expect(payload[:payment_sources].map { |source| source[:name] }).to include('Ada Abandoned')
+    end
+
     it 'discloses a card used at guest checkout' do
       guest_order = create(:completed_order_with_totals, store: store)
       guest_order.update_columns(customer_id: nil, email: customer.email)
