@@ -92,6 +92,19 @@ RSpec.describe Spree::DataRequests::Fulfill do
       expect(data_request.reload).to be_completed
     end
 
+    # The check before the workflow runs is a convenience, not a guarantee: a
+    # staff erasure can claim the account between it and the call, and the
+    # refusal that comes back looks the same as any other.
+    it 'completes when another erasure claimed the account mid-flight' do
+      allow(Spree.customer_anonymize_workflow).to receive(:call) do
+        customer.update_columns(anonymized_at: Time.current)
+        double(success?: false, error: 'already anonymized')
+      end
+
+      expect(described_class.call(data_request: data_request)).to be_success
+      expect(data_request.reload).to be_completed
+    end
+
     it 'fails the request when the erasure is refused' do
       allow(Spree.customer_anonymize_workflow).to receive(:call).
         and_return(double(success?: false, error: 'legal hold'))

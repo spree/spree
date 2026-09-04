@@ -99,20 +99,28 @@ module Spree
       end
 
       def erase_customer
+        customer = data_request.customer
+
         # Already erased is the outcome this request asked for, however it came
         # about — staff may have run it while this job sat in the queue, or the
         # person may have asked twice. Recording that as a failure would leave
         # someone whose data IS gone holding a failed request, and a failed
         # request is what stops them opening another.
-        return if data_request.customer.anonymized?
+        return if customer.anonymized?
 
         result = Spree.customer_anonymize_workflow.call(
-          customer: data_request.customer,
+          customer: customer,
           store: data_request.store,
           requested_by: data_request.requested_by
         )
 
         return if result.success?
+
+        # The erasure can also be refused because a concurrent one claimed the
+        # account after the check above — the two are not distinguishable from
+        # the refusal itself, so the state is what answers. Only a person who
+        # is still identified represents a request this flow failed to serve.
+        return if customer.reload.anonymized?
 
         failure(data_request, result.error.to_s)
       end
