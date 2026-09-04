@@ -136,6 +136,48 @@ RSpec.describe SpreeAvalara::RefundPresenter do
     end
   end
 
+  describe 'the buyer registration' do
+    let(:registration) { instance_double(Spree::TaxIdentifier, value: 'DE123456789') }
+
+    # Dropping it re-prices the credit as a consumer refund, declaring VAT the
+    # zero-rated sale never collected.
+    it 'files the credit under the registration the sale was filed under' do
+      expect(present(tax_identifier: registration).call[:businessIdentificationNo]).to eq('DE123456789')
+    end
+
+    it 'says nothing where the sale carried no registration' do
+      expect(present.call).not_to have_key(:businessIdentificationNo)
+      expect(present(tax_identifier: instance_double(Spree::TaxIdentifier, value: nil)).call).
+        not_to have_key(:businessIdentificationNo)
+    end
+  end
+
+  # Rounding each line on its own credits a cent nobody refunded, which the
+  # cap exists to prevent.
+  describe 'rounding a short refund across lines' do
+    let(:cheap_line) { create(:line_item, order: order, cart: nil, price: 1, quantity: 1) }
+    let(:two_cheap_lines) do
+      [instance_double(Spree::ReturnLineItem, line_item: line_item, received_quantity: 1,
+                                              return: instance_double(Spree::Return, number: 'RET1')),
+       instance_double(Spree::ReturnLineItem, line_item: cheap_line, received_quantity: 1,
+                                              return: instance_double(Spree::Return, number: 'RET1'))]
+    end
+
+    before do
+      line_item.update_column(:pre_tax_amount, 1)
+      line_item.update_column(:quantity, 1)
+      cheap_line.update_column(:pre_tax_amount, 1)
+    end
+
+    it 'never credits more than the refund carried' do
+      presenter = present(return_items: two_cheap_lines, amount: 1.03)
+      credited = presenter.call[:lines].sum { |line| line[:amount] }
+
+      expect(credited).to eq(-1.03)
+      expect(presenter.call[:lines].map { |line| line[:amount] }).to eq([-0.52, -0.51])
+    end
+  end
+
   describe 'when the refund is short of the returned lines' do
     # An admin keeping a restocking fee refunded less than came back, and no more
     # tax may be credited than the refund actually carried.

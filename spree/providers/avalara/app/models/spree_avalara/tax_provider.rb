@@ -47,7 +47,9 @@ module SpreeAvalara
       end
 
       body = fetch(owner, taxable, integration, tax_date, tax_identifier, exemptions)
-      lines = TransactionLine.from_response(body, context: response_context(owner, tax_identifier, exemptions))
+      lines = TransactionLine.from_response(
+        body, context: response_context(owner, taxable, tax_identifier, exemptions)
+      )
 
       ApplicationRecord.transaction do
         sweep!(owner)
@@ -124,7 +126,10 @@ module SpreeAvalara
 
       presenter = RefundPresenter.new(
         order: order, integration: integration, return_items: return_items,
-        amount: amount, tax_date: tax_date, exemptions: order.usable_exemptions
+        amount: amount, tax_date: tax_date, exemptions: order.usable_exemptions,
+        # The order's frozen snapshot, as commit uses: the credit has to be
+        # filed under the registration the sale was.
+        tax_identifier: order.resolved_tax_identifier
       )
       return if presenter.nothing_to_credit?
 
@@ -242,13 +247,28 @@ module SpreeAvalara
 
     # What the response cannot say for itself: whether a registration was sent,
     # whether an exemption was claimed, and the two ends of the supply.
-    def response_context(owner, tax_identifier, exemptions)
+    #
+    # Origins are per line as well as owner-wide, because the request sends a
+    # shipFrom per line: an order allocated across warehouses in different
+    # countries has no single origin, and classifying every line against one of
+    # them reads a domestic line as an intra-community supply, or the reverse.
+    # The owner-level value stays as the fallback for a line whose item is not
+    # in this set.
+    def response_context(owner, taxable, tax_identifier, exemptions)
       {
         identifier_sent: tax_identifier&.value.present?,
         exemption_reasons: Array(exemptions).map(&:reason_code).compact,
         ship_from_country: SpreeAvalara.origin_location(owner)&.country_code,
+        ship_from_countries: origin_countries_by_line(owner, taxable),
         ship_to_country: owner.tax_address&.country_code
       }
+    end
+
+    # Keyed by the line number the request used, which is the item's prefixed id.
+    def origin_countries_by_line(owner, taxable)
+      taxable.each_with_object({}) do |item, countries|
+        countries[item.prefixed_id.to_s] = SpreeAvalara.origin_location(owner, item: item)&.country_code
+      end
     end
   end
 end

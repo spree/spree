@@ -195,10 +195,19 @@ module SpreeAvalara
     end
 
     def cross_border?
-      from = context[:ship_from_country].to_s
+      from = ship_from_country.to_s
       to = context[:ship_to_country].to_s
 
       from.present? && to.present? && from != to
+    end
+
+    # This line's own origin, since the request sent one per line. Falls back to
+    # the owner's origin for a line the caller did not map.
+    def ship_from_country
+      per_line = context[:ship_from_countries]
+      return context[:ship_from_country] unless per_line.is_a?(Hash)
+
+      per_line.fetch(line_number.to_s) { context[:ship_from_country] }
     end
 
     def export?

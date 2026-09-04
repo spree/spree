@@ -63,6 +63,23 @@ RSpec.describe SpreeAvalara::Integration do
       expect(integration).not_to be_valid
       expect(integration.errors[:preferred_company_code]).to be_present
     end
+
+    # The dashboard picker offers two hosts, but the admin API takes a free-form
+    # preferences hash — so without this an admin could point the client, and the
+    # credentials, at any host they liked and read the reply back through the
+    # connection test.
+    it 'refuses an endpoint that is not one of Avalara own hosts' do
+      integration = build(:avalara_integration, preferred_endpoint: 'http://169.254.169.254/latest/meta-data')
+
+      expect(integration).not_to be_valid
+      expect(integration.errors[:preferred_endpoint]).to be_present
+    end
+
+    it 'accepts either host Avalara publishes' do
+      [described_class::SANDBOX_ENDPOINT, described_class::PRODUCTION_ENDPOINT].each do |endpoint|
+        expect(build(:avalara_integration, preferred_endpoint: endpoint)).to be_valid
+      end
+    end
   end
 
   # Avalara publishes these two and no others, under these names — the same

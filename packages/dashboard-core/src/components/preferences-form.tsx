@@ -65,6 +65,10 @@ interface PreferencesFormProps {
   currencyOptions?: string[]
 }
 
+// The preference types the option picker can represent: it reads and writes
+// strings, so anything else keeps its own editor.
+const OPTION_FIELD_TYPES = ['string', 'text']
+
 /**
  * Renders a generic configuration form from a `preference_schema` payload.
  * Used by the Payment Methods edit sheet and the Promotion editor's action
@@ -153,8 +157,11 @@ export function PreferenceField({
   }
 
   // A preference whose declaring class named its values gets a picker rather
-  // than a text box.
-  if (field.options?.length && field.type !== 'password' && field.type !== 'boolean') {
+  // than a text box. Only where the value is text: the picker reads and writes
+  // strings, so a numeric or structured preference that named its values would
+  // arrive with a value this field cannot show and leave with one of the wrong
+  // type.
+  if (field.options?.length && OPTION_FIELD_TYPES.includes(field.type)) {
     return (
       <OptionField
         id={id}

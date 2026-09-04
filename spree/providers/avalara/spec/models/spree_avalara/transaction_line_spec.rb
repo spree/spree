@@ -271,6 +271,33 @@ RSpec.describe SpreeAvalara::TransactionLine do
 
         expect(reason(zero_vat, context)).to eq('zero_rated')
       end
+
+      # An order allocated across warehouses in different countries has no one
+      # origin, and the request already sends a shipFrom per line. Reading the
+      # owner's origin for every line calls a domestic sale an intra-community
+      # supply, or the reverse.
+      describe 'when the order ships from more than one country' do
+        it "reads the line's own origin rather than the order's" do
+          context = { identifier_sent: true, ship_from_country: 'DE', ship_to_country: 'FR',
+                      ship_from_countries: { 'li_abc123' => 'FR' } }
+
+          expect(reason(zero_vat, context)).to eq('zero_rated')
+        end
+
+        it 'still crosses a border for a line shipped from elsewhere' do
+          context = { identifier_sent: true, ship_from_country: 'FR', ship_to_country: 'FR',
+                      ship_from_countries: { 'li_abc123' => 'DE' } }
+
+          expect(reason(zero_vat, context)).to eq('intra_community_supply')
+        end
+
+        it "falls back to the order's origin for a line it was not given" do
+          context = { identifier_sent: true, ship_from_country: 'DE', ship_to_country: 'FR',
+                      ship_from_countries: { 'li_elsewhere' => 'FR' } }
+
+          expect(reason(zero_vat, context)).to eq('intra_community_supply')
+        end
+      end
     end
 
     it 'only produces reasons core accepts' do

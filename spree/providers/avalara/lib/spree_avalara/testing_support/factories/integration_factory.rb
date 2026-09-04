@@ -7,7 +7,10 @@ FactoryBot.define do
 
     preferred_account_number { ENV.fetch('AVATAX_ACCOUNT_NUMBER', '2000000000') }
     preferred_license_key { ENV.fetch('AVATAX_LICENSE_KEY', 'test_license_key') }
-    preferred_endpoint { ENV.fetch('AVATAX_ENDPOINT', SpreeAvalara::Integration::SANDBOX_ENDPOINT) }
+    # Not ENV-driven like the credentials: the model now allows only Avalara's
+    # two published hosts, so an override could only ever build an invalid
+    # record. Cassettes are recorded against the sandbox.
+    preferred_endpoint { SpreeAvalara::Integration::SANDBOX_ENDPOINT }
     preferred_company_code { ENV.fetch('AVATAX_COMPANY_CODE', 'DEFAULT') }
     preferred_commit_transaction_enabled { true }
     preferred_address_validation_enabled { false }

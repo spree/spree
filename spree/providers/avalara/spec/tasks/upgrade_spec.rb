@@ -3,7 +3,17 @@ require 'rake'
 
 RSpec.describe 'spree_avalara:upgrade' do
   # The legacy extension's schema no longer exists anywhere, so the spec builds
-  # just enough of it to migrate from.
+  # just enough of it to migrate from — column by column, because the table
+  # itself may already be there. Core keeps an empty `spree_users` through the
+  # Customer rename, so a fresh install has the table without any of the legacy
+  # columns; assuming its absence left every example that reads one failing on a
+  # newly built database, and passing on a second run only because the previous
+  # run had dropped the table on its way out.
+  def legacy_user_columns
+    { email: :string, vat_id: :string, exemption_number: :string,
+      avatax_entity_use_code_id: :integer }
+  end
+
   before(:all) do
     # The upgrader ships inside the task, following core's own upgrade tasks.
     Rake::Task.define_task(:environment)
@@ -11,19 +21,27 @@ RSpec.describe 'spree_avalara:upgrade' do
 
     connection = ActiveRecord::Base.connection
 
-    unless connection.table_exists?(:spree_users)
-      connection.create_table :spree_users do |t|
-        t.string :email
-        t.string :vat_id
-        t.string :exemption_number
-        t.integer :avatax_entity_use_code_id
-      end
+    @built_legacy_user_table = !connection.table_exists?(:spree_users)
+    connection.create_table(:spree_users) if @built_legacy_user_table
+
+    legacy_user_columns.each do |column, type|
+      connection.add_column(:spree_users, column, type) unless connection.column_exists?(:spree_users, column)
     end
   end
 
+  # Leaves the schema as it was found: the table goes only if this spec built it,
+  # and otherwise just the columns it added come off. Dropping a table the dummy
+  # app owns takes it away from every spec that runs afterwards.
   after(:all) do
     connection = ActiveRecord::Base.connection
-    connection.drop_table(:spree_users) if connection.table_exists?(:spree_users)
+
+    if @built_legacy_user_table
+      connection.drop_table(:spree_users) if connection.table_exists?(:spree_users)
+    else
+      legacy_user_columns.each_key do |column|
+        connection.remove_column(:spree_users, column) if connection.column_exists?(:spree_users, column)
+      end
+    end
   end
 
   let(:upgrader) { SpreeAvalara::Upgrader.new }
@@ -163,6 +181,16 @@ RSpec.describe 'spree_avalara:upgrade' do
   end
 
   describe 'drop_legacy_schema!' do
+    # Dropping a column is real DDL: it commits instead of rolling back with the
+    # example's fixture transaction, so the legacy column has to be put back by
+    # hand. Without this, every example that migrates a legacy user loses the
+    # column it reads — and whether it does depends on the random order.
+    after do
+      connection = ActiveRecord::Base.connection
+      connection.add_column(:spree_users, :vat_id, :string) unless connection.column_exists?(:spree_users, :vat_id)
+      connection.schema_cache.clear! if connection.respond_to?(:schema_cache)
+    end
+
     it 'drops the migrated columns and keeps the exemption source' do
       upgrader.drop_legacy_schema!
 
