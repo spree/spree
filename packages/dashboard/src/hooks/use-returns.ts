@@ -61,12 +61,19 @@ export function useReturnActions(orderId: string) {
     orderId,
     ({
       reasonId,
+      stockLocationId,
       ...params
     }: {
       items: Array<{ fulfillment_item_id: string; quantity: number }>
       memo?: string
       reasonId?: string
-    }) => adminClient.orders.returns.create(orderId, { ...params, reason_id: reasonId }),
+      stockLocationId?: string
+    }) =>
+      adminClient.orders.returns.create(orderId, {
+        ...params,
+        reason_id: reasonId,
+        stock_location_id: stockLocationId,
+      }),
   )
 
   const approve = useReturnMutation(orderId, (returnId: string) =>
