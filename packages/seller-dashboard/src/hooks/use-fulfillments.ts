@@ -54,6 +54,7 @@ export function useFulfillmentActions(orderId: string) {
       tracking?: string
       tracking_carrier?: string
       stock_location_id?: string
+      selected_delivery_rate_id?: string
     }) => sellerClient().orders.fulfillments.update(orderId, fulfillmentId, params),
   )
 

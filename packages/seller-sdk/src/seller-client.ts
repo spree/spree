@@ -402,6 +402,22 @@ export class SellerClient {
     ): Promise<Order> =>
       this.request<Order>('PATCH', `/orders/${id}/cancel`, { ...options, body: params }),
 
+    /**
+     * Corrects where the goods go or who the invoice names.
+     *
+     * Send only the lines that change: the rest of the address is carried
+     * over. Nothing else about the order is writable here.
+     */
+    address: (
+      id: string,
+      params: {
+        shipping_address?: OrderAddressParams
+        billing_address?: OrderAddressParams
+      },
+      options?: RequestOptions,
+    ): Promise<Order> =>
+      this.request<Order>('PATCH', `/orders/${id}/address`, { ...options, body: params }),
+
     /** The parcels owed on one order. */
     fulfillments: {
       list: (orderId: string, options?: RequestOptions): Promise<{ data: Fulfillment[] }> =>
@@ -431,13 +447,8 @@ export class SellerClient {
         }),
 
       /**
-       * The tracked consignments of one of the seller's parcels. A seller
-       * ships on manual methods, so tracking numbers are entered here by hand.
-       */
-      /**
-       * The tracking number and its carrier. Where a parcel ships from and
-       * which service carries it are the marketplace's arrangements, so they
-       * are not editable here.
+       * The tracking pair, where the parcel ships from, and which quoted
+       * service carries it.
        */
       update: (
         orderId: string,
@@ -445,8 +456,10 @@ export class SellerClient {
         params: {
           tracking?: string
           tracking_carrier?: string
-          /** One of this seller's own shelves; the rate requotes from there. */
+          /** One of this seller's own shelves; the rates requote from there. */
           stock_location_id?: string
+          /** One of the rates quoted for this parcel from its current origin. */
+          selected_delivery_rate_id?: string
         },
         options?: RequestOptions,
       ): Promise<Fulfillment> =>
@@ -476,6 +489,10 @@ export class SellerClient {
           { ...options, body: params },
         ),
 
+      /**
+       * The tracked consignments of one of the seller's parcels. A seller
+       * ships on manual methods, so tracking numbers are entered here by hand.
+       */
       deliveries: {
         list: (
           orderId: string,
@@ -1523,6 +1540,27 @@ export interface ProfileUpdateParams {
    * records that it happened, so sending `false` does not unmake it.
    */
   accept_terms?: boolean
+}
+
+/**
+ * A correction to one of an order's addresses. Every field is optional: send
+ * the lines that change and the rest of the address is carried over.
+ */
+export interface OrderAddressParams {
+  first_name?: string
+  last_name?: string
+  company?: string
+  address1?: string
+  address2?: string
+  city?: string
+  postal_code?: string
+  zipcode?: string
+  phone?: string
+  alternative_phone?: string
+  country_code?: string
+  state_code?: string
+  state_name?: string
+  label?: string
 }
 
 export interface SellerAddressParams {

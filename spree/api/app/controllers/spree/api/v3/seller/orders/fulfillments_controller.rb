@@ -62,10 +62,10 @@ module Spree
 
             # PATCH /api/v3/seller/orders/:order_id/fulfillments/:id
             #
-            # The tracking pair, and which of the seller's own shelves the
-            # parcel ships from — a seller who picks from a different warehouse
-            # than the split assumed needs to say so, and the rate is requoted
-            # from there.
+            # The tracking pair, which of the seller's own shelves the parcel
+            # ships from, and which quoted service carries it — a seller who
+            # picks from a different warehouse than the split assumed needs to
+            # say so, and the rates are requoted from there.
             #
             # The origin is resolved through `current_seller.stock_locations`,
             # so a marketplace warehouse is unreachable however the id arrives.
@@ -142,10 +142,13 @@ module Spree
                             :selected_delivery_rate_id)
             end
 
-            # The payload the workflow gets. The workflow takes a raw
-            # `stock_location_id`, so the prefixed id is resolved through the
-            # seller's own shelves first — a marketplace warehouse 404s here
-            # rather than reaching the assignment.
+            # The payload the workflow gets. The workflow assigns the origin
+            # raw, so the prefixed id is resolved through the seller's own
+            # shelves first — a marketplace warehouse 404s here rather than
+            # reaching the assignment. The rate needs no such resolution: the
+            # model's own writer takes the prefixed id and looks it up among
+            # this parcel's quotes, so a rate belonging to another package is
+            # already unreachable.
             def update_attributes
               attributes = update_params.to_h
 

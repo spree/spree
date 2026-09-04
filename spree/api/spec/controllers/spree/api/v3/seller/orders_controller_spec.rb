@@ -83,6 +83,72 @@ RSpec.describe Spree::Api::V3::Seller::OrdersController, type: :controller do
     end
   end
 
+  # A seller is merchant of record for their own child order, so a delivery
+  # address the buyer got wrong is theirs to correct.
+  describe 'PATCH #address' do
+    it 'corrects the shipping address, keeping the lines it was not sent' do
+      original = mine.ship_address
+      original_line = original.address1
+
+      patch :address, params: {
+        id: mine.prefixed_id,
+        shipping_address: { address1: '9 Corrected Way', city: 'Fixedton' }
+      }, as: :json
+
+      expect(response).to have_http_status(:ok)
+      address = mine.reload.ship_address
+      expect(address.address1).to eq('9 Corrected Way')
+      expect(address.city).to eq('Fixedton')
+      # A request naming two lines must not blank out the rest of the address.
+      expect(address.country_code).to eq(original.country_code)
+      expect(address.postal_code).to eq(original.postal_code)
+      # The order points at a new row: an order-level fix is not a rewrite of
+      # the address the customer may also have saved in their own book.
+      expect(address.id).not_to eq(original.id)
+      expect(original.reload.address1).to eq(original_line)
+    end
+
+    it 'corrects the billing address' do
+      patch :address, params: {
+        id: mine.prefixed_id,
+        billing_address: { address1: '4 Invoice Street' }
+      }, as: :json
+
+      expect(response).to have_http_status(:ok)
+      expect(mine.reload.bill_address.address1).to eq('4 Invoice Street')
+    end
+
+    # Nothing else about the order is the seller's to write, so an attribute
+    # that is not one of the two addresses is simply not read.
+    it 'ignores anything that is not an address' do
+      original_total = mine.total
+
+      patch :address, params: {
+        id: mine.prefixed_id,
+        shipping_address: { city: 'Fixedton' },
+        total: '0.01',
+        customer_note: 'rewritten'
+      }, as: :json
+
+      expect(response).to have_http_status(:ok)
+      expect(mine.reload.total).to eq(original_total)
+    end
+
+    it 'refuses a request naming neither address' do
+      patch :address, params: { id: mine.prefixed_id }, as: :json
+
+      expect(response).to have_http_status(:unprocessable_content)
+    end
+
+    it "404s on another seller's order" do
+      patch :address, params: {
+        id: theirs.prefixed_id, shipping_address: { city: 'Fixedton' }
+      }, as: :json
+
+      expect(response).to have_http_status(:not_found)
+    end
+  end
+
   describe 'GET #show' do
     it 'renders what the seller needs to pack the parcel' do
       get :show, params: { id: mine.prefixed_id }, as: :json

@@ -8,7 +8,6 @@ import { FulfillmentsCard } from '../components/orders/fulfillments-card'
 import { OrderCancelDialog } from '../components/orders/order-cancel-dialog'
 import {
   OrderCustomerCard,
-  OrderItemsCard,
   OrderNoteCard,
   OrderSummaryCard,
 } from '../components/orders/order-cards'
@@ -95,7 +94,6 @@ export function OrderPage() {
                 <ClaimsCard order={order} />
               </>
             )}
-            <OrderItemsCard order={order} />
             <OrderSummaryCard order={order} />
           </>
         }

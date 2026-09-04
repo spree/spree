@@ -420,7 +420,7 @@ paths:
                   avatar_url:
                 sellers:
                 - id: sel_UkLWZg9DAJ
-                  name: Seller 65
+                  name: Seller 67
                   status: approved
               schema:
                 "$ref": "#/components/schemas/AuthResponse"
@@ -13540,8 +13540,8 @@ paths:
               example:
                 data:
                 - id: prod_UkLWZg9DAJ
-                  name: Product 1683250
-                  slug: product-1683250
+                  name: Product 1703250
+                  slug: product-1703250
                   meta_title:
                   meta_description:
                   meta_keywords:
@@ -13784,8 +13784,8 @@ paths:
             application/json:
               example:
                 id: prod_UkLWZg9DAJ
-                name: Product 1716710
-                slug: product-1716710
+                name: Product 1736710
+                slug: product-1736710
                 meta_title:
                 meta_description:
                 meta_keywords:
@@ -13864,7 +13864,7 @@ paths:
               example:
                 id: prod_UkLWZg9DAJ
                 name: Hand-thrown mug, large
-                slug: product-1748212
+                slug: product-1768212
                 meta_title:
                 meta_description:
                 meta_keywords:
@@ -13977,8 +13977,8 @@ paths:
             application/json:
               example:
                 id: sel_UkLWZg9DAJ
-                name: Seller 82
-                slug: seller-82
+                name: Seller 84
+                slug: seller-84
                 about: ''
                 about_html: ''
                 logo_url:
@@ -14050,7 +14050,7 @@ paths:
               example:
                 id: sel_UkLWZg9DAJ
                 name: Acme Supplies
-                slug: seller-84
+                slug: seller-86
                 about: ''
                 about_html: ''
                 logo_url:
@@ -15608,6 +15608,18 @@ paths:
                     name: Product 1579315
                     sku: SKU-199
                     options_text: ''
+                  selected_delivery_rate_id: dr_gbHJdmfrXB
+                  delivery_rates:
+                  - id: dr_gbHJdmfrXB
+                    name: UPS Ground
+                    selected: true
+                    cost: '10.0'
+                    total: '10.0'
+                    carrier:
+                    service_level:
+                    estimated_delivery_date:
+                    display_cost: "$10.00"
+                    display_total: "$10.00"
                   deliveries:
                   - id: dlv_UkLWZg9DAJ
                     tracking_number: U10000
@@ -15693,6 +15705,18 @@ paths:
                   name: Product 158961
                   sku: SKU-200
                   options_text: ''
+                selected_delivery_rate_id: dr_gbHJdmfrXB
+                delivery_rates:
+                - id: dr_gbHJdmfrXB
+                  name: UPS Ground
+                  selected: true
+                  cost: '10.0'
+                  total: '10.0'
+                  carrier:
+                  service_level:
+                  estimated_delivery_date:
+                  display_cost: "$10.00"
+                  display_total: "$10.00"
                 deliveries:
                 - id: dlv_UkLWZg9DAJ
                   tracking_number: TRACK-1
@@ -15795,6 +15819,18 @@ paths:
                   name: Product 1593170
                   sku: SKU-201
                   options_text: ''
+                selected_delivery_rate_id: dr_gbHJdmfrXB
+                delivery_rates:
+                - id: dr_gbHJdmfrXB
+                  name: UPS Ground
+                  selected: true
+                  cost: '10.0'
+                  total: '10.0'
+                  carrier:
+                  service_level:
+                  estimated_delivery_date:
+                  display_cost: "$10.00"
+                  display_total: "$10.00"
                 deliveries:
                 - id: dlv_UkLWZg9DAJ
                   tracking_number: TRACK-2
@@ -15877,6 +15913,18 @@ paths:
                   name: Product 1607276
                   sku: SKU-202
                   options_text: ''
+                selected_delivery_rate_id: dr_gbHJdmfrXB
+                delivery_rates:
+                - id: dr_gbHJdmfrXB
+                  name: UPS Ground
+                  selected: true
+                  cost: '10.0'
+                  total: '10.0'
+                  carrier:
+                  service_level:
+                  estimated_delivery_date:
+                  display_cost: "$10.00"
+                  display_total: "$10.00"
                 deliveries:
                 - id: dlv_UkLWZg9DAJ
                   tracking_number: U10000
@@ -16026,10 +16074,27 @@ paths:
                   updated_at: '2026-01-15T12:00:00.000Z'
                   item_total: '10.0'
                   display_item_total: "$10.00"
+                  delivery_total: '100.0'
+                  display_delivery_total: "$100.00"
+                  discount_total: '0.0'
+                  display_discount_total: "$0.00"
+                  adjustment_total: '0.0'
+                  display_adjustment_total: "$0.00"
+                  included_tax_total: '0.0'
+                  display_included_tax_total: "$0.00"
+                  additional_tax_total: '0.0'
+                  display_additional_tax_total: "$0.00"
                   tax_total: '0.0'
                   display_tax_total: "$0.00"
                   total: '110.0'
                   display_total: "$110.00"
+                  payment_total: '0.0'
+                  display_payment_total: "$0.00"
+                  amount_due: '110.0'
+                  display_amount_due: "$110.00"
+                  canceled_at:
+                  cancel_reason_name:
+                  cancel_note:
                   items:
                   - id: li_UkLWZg9DAJ
                     name: Product 16295
@@ -16065,6 +16130,18 @@ paths:
                       name: Product 16295
                       sku: SKU-204
                       options_text: ''
+                    selected_delivery_rate_id: dr_gbHJdmfrXB
+                    delivery_rates:
+                    - id: dr_gbHJdmfrXB
+                      name: UPS Ground
+                      selected: true
+                      cost: '10.0'
+                      total: '10.0'
+                      carrier:
+                      service_level:
+                      estimated_delivery_date:
+                      display_cost: "$10.00"
+                      display_total: "$10.00"
                     deliveries:
                     - id: dlv_UkLWZg9DAJ
                       tracking_number: U10000
@@ -16190,10 +16267,27 @@ paths:
                 updated_at: '2026-01-15T12:00:00.000Z'
                 item_total: '10.0'
                 display_item_total: "$10.00"
+                delivery_total: '100.0'
+                display_delivery_total: "$100.00"
+                discount_total: '0.0'
+                display_discount_total: "$0.00"
+                adjustment_total: '0.0'
+                display_adjustment_total: "$0.00"
+                included_tax_total: '0.0'
+                display_included_tax_total: "$0.00"
+                additional_tax_total: '0.0'
+                display_additional_tax_total: "$0.00"
                 tax_total: '0.0'
                 display_tax_total: "$0.00"
                 total: '110.0'
                 display_total: "$110.00"
+                payment_total: '0.0'
+                display_payment_total: "$0.00"
+                amount_due: '110.0'
+                display_amount_due: "$110.00"
+                canceled_at:
+                cancel_reason_name:
+                cancel_note:
                 items:
                 - id: li_UkLWZg9DAJ
                   name: Product 1639755
@@ -16229,6 +16323,18 @@ paths:
                     name: Product 1639755
                     sku: SKU-205
                     options_text: ''
+                  selected_delivery_rate_id: dr_gbHJdmfrXB
+                  delivery_rates:
+                  - id: dr_gbHJdmfrXB
+                    name: UPS Ground
+                    selected: true
+                    cost: '10.0'
+                    total: '10.0'
+                    carrier:
+                    service_level:
+                    estimated_delivery_date:
+                    display_cost: "$10.00"
+                    display_total: "$10.00"
                   deliveries:
                   - id: dlv_UkLWZg9DAJ
                     tracking_number: U10000
@@ -16346,10 +16452,27 @@ paths:
                 updated_at: '2026-01-15T12:00:00.000Z'
                 item_total: '10.0'
                 display_item_total: "$10.00"
+                delivery_total: '100.0'
+                display_delivery_total: "$100.00"
+                discount_total: '0.0'
+                display_discount_total: "$0.00"
+                adjustment_total: '0.0'
+                display_adjustment_total: "$0.00"
+                included_tax_total: '0.0'
+                display_included_tax_total: "$0.00"
+                additional_tax_total: '0.0'
+                display_additional_tax_total: "$0.00"
                 tax_total: '0.0'
                 display_tax_total: "$0.00"
                 total: '110.0'
                 display_total: "$110.00"
+                payment_total: '0.0'
+                display_payment_total: "$0.00"
+                amount_due: "-0.0"
+                display_amount_due: "$0.00"
+                canceled_at: '2026-01-15T12:00:00Z'
+                cancel_reason_name:
+                cancel_note:
                 items:
                 - id: li_UkLWZg9DAJ
                   name: Product 1666554
@@ -16385,6 +16508,18 @@ paths:
                     name: Product 1666554
                     sku: SKU-208
                     options_text: ''
+                  selected_delivery_rate_id: dr_gbHJdmfrXB
+                  delivery_rates:
+                  - id: dr_gbHJdmfrXB
+                    name: UPS Ground
+                    selected: true
+                    cost: '10.0'
+                    total: '10.0'
+                    carrier:
+                    service_level:
+                    estimated_delivery_date:
+                    display_cost: "$10.00"
+                    display_total: "$10.00"
                   deliveries:
                   - id: dlv_UkLWZg9DAJ
                     tracking_number: U10000
@@ -16462,6 +16597,268 @@ paths:
                 notify_customer:
                   type: boolean
                   description: Email the customer about the cancellation
+  "/api/v3/seller/orders/{id}/address":
+    parameters:
+    - name: id
+      in: path
+      description: Prefixed order ID
+      required: true
+      schema:
+        type: string
+    patch:
+      summary: Correct an order address
+      tags:
+      - Orders
+      security:
+      - bearer_auth: []
+      description: |
+        Corrects where the goods go or who the invoice names.
+
+        The seller is merchant of record for their own child order, so a
+        delivery address the buyer got wrong is theirs to fix. Send only the
+        lines that change — the rest of the address is carried over.
+
+        This is the only write against the order itself besides cancelling:
+        nothing else about it, its totals included, is the seller's to change.
+      parameters:
+      - name: X-Spree-Seller-Id
+        in: header
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: address corrected
+          content:
+            application/json:
+              example:
+                id: or_UkLWZg9DAJ
+                number: R1001
+                customer_note:
+                currency: USD
+                total_quantity: 1
+                status: placed
+                fulfillment_status:
+                payment_status:
+                completed_at: '2026-01-15T12:00:00.000Z'
+                created_at: '2026-01-15T12:00:00.000Z'
+                updated_at: '2026-01-15T12:00:00.000Z'
+                item_total: '10.0'
+                display_item_total: "$10.00"
+                delivery_total: '100.0'
+                display_delivery_total: "$100.00"
+                discount_total: '0.0'
+                display_discount_total: "$0.00"
+                adjustment_total: '0.0'
+                display_adjustment_total: "$0.00"
+                included_tax_total: '0.0'
+                display_included_tax_total: "$0.00"
+                additional_tax_total: '0.0'
+                display_additional_tax_total: "$0.00"
+                tax_total: '0.0'
+                display_tax_total: "$0.00"
+                total: '110.0'
+                display_total: "$110.00"
+                payment_total: '0.0'
+                display_payment_total: "$0.00"
+                amount_due: '110.0'
+                display_amount_due: "$110.00"
+                canceled_at:
+                cancel_reason_name:
+                cancel_note:
+                items:
+                - id: li_UkLWZg9DAJ
+                  name: Product 1675038
+                  options_text: ''
+                  quantity: 1
+                  currency: USD
+                  price: '10.0'
+                  display_price: "$10.00"
+                  total: '10.0'
+                  display_total: "$10.00"
+                  variant_id: variant_UkLWZg9DAJ
+                  sku: SKU-209
+                  thumbnail_url:
+                fulfillments:
+                - id: ful_UkLWZg9DAJ
+                  number: R1001-F1
+                  status: unfulfilled
+                  tracking: U10000
+                  tracking_url:
+                  fulfilled_at:
+                  delivered_at:
+                  created_at: '2026-01-15T12:00:00.000Z'
+                  updated_at: '2026-01-15T12:00:00.000Z'
+                  fulfillment_type: shipping
+                  delivery_method_name: UPS Ground
+                  stock_location_name: Rudy Mosciski
+                  stock_location_id: sloc_UkLWZg9DAJ
+                  fulfillment_items:
+                  - id: fi_UkLWZg9DAJ
+                    quantity: 1
+                    line_item_id: li_UkLWZg9DAJ
+                    variant_id: variant_UkLWZg9DAJ
+                    name: Product 1675038
+                    sku: SKU-209
+                    options_text: ''
+                  selected_delivery_rate_id: dr_gbHJdmfrXB
+                  delivery_rates:
+                  - id: dr_gbHJdmfrXB
+                    name: UPS Ground
+                    selected: true
+                    cost: '10.0'
+                    total: '10.0'
+                    carrier:
+                    service_level:
+                    estimated_delivery_date:
+                    display_cost: "$10.00"
+                    display_total: "$10.00"
+                  deliveries:
+                  - id: dlv_UkLWZg9DAJ
+                    tracking_number: U10000
+                    carrier:
+                    carrier_name:
+                    service:
+                    status: pending
+                    tracking_url:
+                    estimated_delivery_at:
+                    delivered_at:
+                    created_at: '2026-01-15T12:00:00.000Z'
+                    updated_at: '2026-01-15T12:00:00.000Z'
+                    shipping_label_id:
+                  labels: []
+                shipping_address:
+                  id: addr_EfhxLZ9ck8
+                  label:
+                  first_name: John
+                  last_name: Doe
+                  full_name: John Doe
+                  address1: 9 Corrected Way
+                  address2: Northwest
+                  postal_code: '10118'
+                  city: Fixedton
+                  phone: 555-555-0199
+                  company: Company
+                  country_name: United States
+                  country_code: US
+                  state_text: NY
+                  state_code: NY
+                  quick_checkout: false
+                  is_default_billing: false
+                  is_default_shipping: true
+                  state_abbr: NY
+                  country_iso: US
+                  state_name: New York
+                billing_address:
+                  id: addr_UkLWZg9DAJ
+                  label:
+                  first_name: John
+                  last_name: Doe
+                  full_name: John Doe
+                  address1: 168 Lovely Street
+                  address2: Northwest
+                  postal_code: '10118'
+                  city: New York
+                  phone: 555-555-0199
+                  company: Company
+                  country_name: United States
+                  country_code: US
+                  state_text: NY
+                  state_code: NY
+                  quick_checkout: false
+                  is_default_billing: false
+                  is_default_shipping: false
+                  state_abbr: NY
+                  country_iso: US
+                  state_name: New York
+              schema:
+                "$ref": "#/components/schemas/Order"
+        '422':
+          description: neither address named
+          content:
+            application/json:
+              example:
+                error:
+                  code: validation_error
+                  message: shipping_address or billing_address is required
+                  details:
+                    base:
+                    - shipping_address or billing_address is required
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                shipping_address:
+                  type: object
+                  description: Only the lines that change; the rest is carried over
+                  properties:
+                    first_name:
+                      type: string
+                    last_name:
+                      type: string
+                    company:
+                      type: string
+                      nullable: true
+                    address1:
+                      type: string
+                    address2:
+                      type: string
+                      nullable: true
+                    city:
+                      type: string
+                    postal_code:
+                      type: string
+                    country_code:
+                      type: string
+                    state_code:
+                      type: string
+                      nullable: true
+                    state_name:
+                      type: string
+                      nullable: true
+                    phone:
+                      type: string
+                      nullable: true
+                    label:
+                      type: string
+                      nullable: true
+                billing_address:
+                  type: object
+                  description: Only the lines that change; the rest is carried over
+                  properties:
+                    first_name:
+                      type: string
+                    last_name:
+                      type: string
+                    company:
+                      type: string
+                      nullable: true
+                    address1:
+                      type: string
+                    address2:
+                      type: string
+                      nullable: true
+                    city:
+                      type: string
+                    postal_code:
+                      type: string
+                    country_code:
+                      type: string
+                    state_code:
+                      type: string
+                      nullable: true
+                    state_name:
+                      type: string
+                      nullable: true
+                    phone:
+                      type: string
+                      nullable: true
+                    label:
+                      type: string
+                      nullable: true
+        required: true
   "/api/v3/seller/order_cancellation_reasons":
     get:
       summary: List order cancellation reasons
@@ -16627,7 +17024,7 @@ paths:
               example:
                 error:
                   code: processing_error
-                  message: Only 1 of Product 1787120 can be returned
+                  message: Only 1 of Product 1807120 can be returned
       requestBody:
         content:
           application/json:
@@ -18213,6 +18610,44 @@ components:
       - default
       - digital
       x-typelizer: true
+    DeliveryRate:
+      type: object
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+        selected:
+          type: boolean
+        cost:
+          type: string
+        total:
+          type: string
+        carrier:
+          type: string
+          nullable: true
+        service_level:
+          type: string
+          nullable: true
+        estimated_delivery_date:
+          type: string
+          nullable: true
+        display_cost:
+          type: string
+        display_total:
+          type: string
+      required:
+      - id
+      - name
+      - selected
+      - cost
+      - total
+      - carrier
+      - service_level
+      - estimated_delivery_date
+      - display_cost
+      - display_total
+      x-typelizer: true
     Delivery:
       type: object
       properties:
@@ -18507,6 +18942,13 @@ components:
           type: array
           items:
             "$ref": "#/components/schemas/FulfillmentItem"
+        selected_delivery_rate_id:
+          type: string
+          nullable: true
+        delivery_rates:
+          type: array
+          items:
+            "$ref": "#/components/schemas/DeliveryRate"
         deliveries:
           type: array
           items:
@@ -18530,6 +18972,8 @@ components:
       - stock_location_name
       - stock_location_id
       - fulfillment_items
+      - selected_delivery_rate_id
+      - delivery_rates
       - deliveries
       - labels
       x-typelizer: true
@@ -18880,6 +19324,36 @@ components:
         display_item_total:
           type: string
           nullable: true
+        delivery_total:
+          type: string
+          nullable: true
+        display_delivery_total:
+          type: string
+          nullable: true
+        discount_total:
+          type: string
+          nullable: true
+        display_discount_total:
+          type: string
+          nullable: true
+        adjustment_total:
+          type: string
+          nullable: true
+        display_adjustment_total:
+          type: string
+          nullable: true
+        included_tax_total:
+          type: string
+          nullable: true
+        display_included_tax_total:
+          type: string
+          nullable: true
+        additional_tax_total:
+          type: string
+          nullable: true
+        display_additional_tax_total:
+          type: string
+          nullable: true
         tax_total:
           type: string
           nullable: true
@@ -18890,6 +19364,27 @@ components:
           type: string
           nullable: true
         display_total:
+          type: string
+          nullable: true
+        payment_total:
+          type: string
+          nullable: true
+        display_payment_total:
+          type: string
+          nullable: true
+        amount_due:
+          type: string
+          nullable: true
+        display_amount_due:
+          type: string
+          nullable: true
+        canceled_at:
+          type: string
+          nullable: true
+        cancel_reason_name:
+          type: string
+          nullable: true
+        cancel_note:
           type: string
           nullable: true
         items:
@@ -18918,10 +19413,27 @@ components:
       - updated_at
       - item_total
       - display_item_total
+      - delivery_total
+      - display_delivery_total
+      - discount_total
+      - display_discount_total
+      - adjustment_total
+      - display_adjustment_total
+      - included_tax_total
+      - display_included_tax_total
+      - additional_tax_total
+      - display_additional_tax_total
       - tax_total
       - display_tax_total
       - total
       - display_total
+      - payment_total
+      - display_payment_total
+      - amount_due
+      - display_amount_due
+      - canceled_at
+      - cancel_reason_name
+      - cancel_note
       - items
       - fulfillments
       - shipping_address

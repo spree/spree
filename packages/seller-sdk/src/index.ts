@@ -16,6 +16,7 @@ export type {
   DeliveryZoneListParams,
   MeResponse,
   OnboardingResponse,
+  OrderAddressParams,
   PermissionRule,
   ProductParams,
   ProfileUpdateParams,

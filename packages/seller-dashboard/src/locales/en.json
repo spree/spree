@@ -83,6 +83,19 @@
         "unverified": "Not valid",
         "verified": "Verified"
       }
+    },
+    "orders": {
+      "detail": {
+        "fulfillments": {
+          "delivery_method": "Delivery method",
+          "edit_description": "Change where this fulfillment ships from and which delivery method carries it.",
+          "edit_title": "Edit fulfillment",
+          "move_and_requote": "Move and re-quote",
+          "no_rates": "No delivery methods are quoted for this fulfillment.",
+          "rates_pending_origin": "Save the new origin to see the delivery methods it offers.",
+          "ships_from": "Ships from"
+        }
+      }
     }
   },
   "app": {
@@ -241,10 +254,22 @@
     "under_review": "The marketplace is reviewing your application. We will email you when there is news."
   },
   "orders": {
+    "address_edit": {
+      "billing_title": "Edit Billing Address",
+      "shipping_title": "Edit Shipping Address"
+    },
+    "billing_address": "Billing address",
     "cancel": "Cancel order",
     "cancel_confirm": {
       "message": "The customer is refunded and any stock goes back on the shelf. This cannot be undone.",
       "title": "Cancel this order?"
+    },
+    "cancel_dialog": {
+      "description": "The goods go back on the shelf and the customer is no longer charged for them. Any money already taken is returned by the marketplace, not here.",
+      "reason_label": "Reason",
+      "no_reason": "No reason given",
+      "note_label": "Note",
+      "notify_customer": "Email the customer"
     },
     "canceled": "Order canceled",
     "columns": {
@@ -252,8 +277,13 @@
       "number": "Order",
       "payment": "Payment",
       "placed": "Placed",
+      "quantity": "Quantity",
       "total": "Total"
     },
+    "customer": {
+      "title": "Customer"
+    },
+    "customer_note": "Customer note",
     "empty": "No orders yet. They appear here as customers buy from you.",
     "fulfill": "Mark as shipped",
     "fulfilled": "Marked as shipped",
@@ -266,6 +296,61 @@
       "partial": "Partial",
       "unfulfilled": "Unfulfilled"
     },
+    "fulfillments": {
+      "add_delivery": "Add tracking number",
+      "add_tracking": "Add tracking",
+      "add_tracking_title": "Add tracking",
+      "cancel": "Cancel parcel",
+      "cancel_message": "The goods go back on the shelf and the carrier is stood down.",
+      "cancel_title": "Cancel this parcel?",
+      "carrier_auto": "Detect from number",
+      "carrier_label": "Carrier",
+      "carrier_search": "Search carriers…",
+      "carrier_status_available_for_pickup": "Available for pickup",
+      "carrier_status_delivered": "Delivered",
+      "carrier_status_failure": "Failed",
+      "carrier_status_in_transit": "In transit",
+      "carrier_status_out_for_delivery": "Out for delivery",
+      "carrier_status_pending": "Pending",
+      "carrier_status_pre_transit": "Pre-transit",
+      "carrier_status_return_to_sender": "Return to sender",
+      "carrier_status_unknown": "Unknown",
+      "confirm_delete_delivery": "Remove this tracking number?",
+      "confirm_delete_label": "Remove this label? The file is deleted and cannot be printed again.",
+      "confirm_split": "This takes effect immediately.",
+      "delete_label": "Remove label",
+      "edit_tracking": "Edit tracking",
+      "edit_tracking_title": "Edit tracking",
+      "empty": "Nothing to send on this order.",
+      "free": "Free",
+      "label_cost": "Cost {{amount}}",
+      "label_cost_label": "What it cost",
+      "label_title": "Label",
+      "label_uploaded": "Uploaded",
+      "notify_customer": "Email the customer",
+      "packing_slip_title": "Packing slip — order {{number}}",
+      "partial_warning": "Sending part of this parcel moves the rest onto a new one.",
+      "print_label": "Print label",
+      "print_packing_slip": "Print packing slip",
+      "quantity_for": "Quantity for {{name}}",
+      "ship_to": "Ship to",
+      "ships_from_label": "Ships from",
+      "split": "Split",
+      "split_description": "Move part of what this parcel holds onto one of its own.",
+      "split_item": "Item",
+      "split_quantity": "Quantity to move",
+      "split_title": "Split this parcel",
+      "split_would_empty": "Moving everything would leave this parcel empty.",
+      "splitting": "Splitting…",
+      "title": "Parcels",
+      "track_parcel": "Track parcel",
+      "tracking_description": "The number the customer follows the parcel with.",
+      "units_selected": "{{selected}} of {{total}} units selected",
+      "upload_label": "Upload postage",
+      "upload_label_description": "Record a label you bought elsewhere, so the parcel carries its file and tracking number.",
+      "upload_label_file": "Label file",
+      "upload_label_title": "Upload postage"
+    },
     "items": "Items",
     "not_found": "That order could not be found.",
     "payment_statuses": {
@@ -277,78 +362,6 @@
       "refunded": "Refunded",
       "overcharged": "Overcharged",
       "voided": "Voided"
-    },
-    "search_placeholder": "Search by order number…",
-    "shipping_address": "Ships to",
-    "ships_from": "Ships from {{name}}",
-    "title": "Orders",
-    "tracking": "Tracking {{number}}",
-    "tracking_label": "Tracking number",
-    "tracking_placeholder": "Optional",
-    "billing_address": "Billing address",
-    "customer_note": "Customer note",
-    "fulfillments": {
-      "title": "Parcels",
-      "empty": "Nothing to send on this order.",
-      "carrier_label": "Carrier",
-      "carrier_auto": "Detect from number",
-      "add_tracking": "Add tracking",
-      "add_tracking_title": "Add tracking",
-      "edit_tracking": "Edit tracking",
-      "edit_tracking_title": "Edit tracking",
-      "tracking_description": "The number the customer follows the parcel with.",
-      "track_parcel": "Track parcel",
-      "notify_customer": "Email the customer",
-      "units_selected": "{{selected}} of {{total}} units selected",
-      "partial_warning": "Sending part of this parcel moves the rest onto a new one.",
-      "quantity_for": "Quantity for {{name}}",
-      "cancel": "Cancel parcel",
-      "cancel_title": "Cancel this parcel?",
-      "cancel_message": "The goods go back on the shelf and the carrier is stood down.",
-      "split": "Split",
-      "splitting": "Splitting…",
-      "split_title": "Split this parcel",
-      "split_description": "Move part of what this parcel holds onto one of its own.",
-      "split_item": "Item",
-      "split_quantity": "Quantity to move",
-      "split_would_empty": "Moving everything would leave this parcel empty.",
-      "confirm_split": "This takes effect immediately.",
-      "add_delivery": "Add tracking number",
-      "carrier_search": "Search carriers…",
-      "confirm_delete_delivery": "Remove this tracking number?",
-      "carrier_status_pending": "Pending",
-      "carrier_status_pre_transit": "Pre-transit",
-      "carrier_status_in_transit": "In transit",
-      "carrier_status_out_for_delivery": "Out for delivery",
-      "carrier_status_available_for_pickup": "Available for pickup",
-      "carrier_status_delivered": "Delivered",
-      "carrier_status_return_to_sender": "Return to sender",
-      "carrier_status_failure": "Failed",
-      "carrier_status_unknown": "Unknown",
-      "upload_label": "Upload postage",
-      "upload_label_title": "Upload postage",
-      "upload_label_description": "Record a label you bought elsewhere, so the parcel carries its file and tracking number.",
-      "upload_label_file": "Label file",
-      "label_title": "Label",
-      "label_uploaded": "Uploaded",
-      "label_cost": "Cost {{amount}}",
-      "label_cost_label": "What it cost",
-      "print_label": "Print label",
-      "delete_label": "Remove label",
-      "confirm_delete_label": "Remove this label? The file is deleted and cannot be printed again.",
-      "move_origin": "Change where it ships from",
-      "move_origin_title": "Change where it ships from",
-      "move_origin_description": "Pick the shelf this parcel is actually picked from. The delivery rate is requoted from there.",
-      "ships_from_label": "Ships from"
-    },
-    "summary": {
-      "title": "Summary",
-      "item_total": "Items",
-      "tax_total": "Tax",
-      "total": "Total"
-    },
-    "customer": {
-      "title": "Customer"
     },
     "post_sale": {
       "reason": "Reason",
@@ -416,13 +429,33 @@
         "cancel_message": "The customer is told it will not go ahead."
       }
     },
-    "cancel_dialog": {
-      "description": "The goods go back on the shelf and the customer is no longer charged for them. Any money already taken is returned by the marketplace, not here.",
-      "reason_label": "Reason",
-      "no_reason": "No reason given",
-      "note_label": "Note",
-      "notify_customer": "Email the customer"
-    }
+    "search_placeholder": "Search by order number…",
+    "shipping_address": "Ships to",
+    "ships_from": "Ships from {{name}}",
+    "summary": {
+      "adjustments": "Adjustments",
+      "cancel_note": "Cancellation note",
+      "cancel_reason": "Cancellation reason",
+      "canceled_at": "Canceled at",
+      "completed_at": "Completed at",
+      "created_at": "Created at",
+      "currency": "Currency",
+      "item_total": "Items",
+      "outstanding_balance": "Outstanding balance",
+      "payment_total": "Payment total",
+      "promotions": "Promotions",
+      "shipping": "Shipping",
+      "subtotal": "Subtotal",
+      "tax_additional": "Tax (additional)",
+      "tax_included": "Tax (included)",
+      "tax_total": "Tax",
+      "title": "Summary",
+      "total": "Total"
+    },
+    "title": "Orders",
+    "tracking": "Tracking {{number}}",
+    "tracking_label": "Tracking number",
+    "tracking_placeholder": "Optional"
   },
   "policies": {
     "add": "Add policy",

@@ -858,9 +858,16 @@ Spree::Core::Engine.add_routes do
         # What this seller has sold. Cancelling is a member action because it
         # is a workflow with its own arguments, and fulfilling is nested: a
         # parcel means nothing outside the order it belongs to.
+        #
+        # No `update`: an order is created by a shopper checking out and its
+        # terms are the marketplace's, so the branch routes no general write.
+        # Correcting a delivery address is the one exception a merchant of
+        # record needs, and it is its own named action rather than a PATCH
+        # that would accept whatever the order serializer happens to permit.
         resources :orders, only: [:index, :show] do
           member do
             patch :cancel
+            patch :address
           end
 
           # No `mark_delivered`: that a parcel arrived is the buyer's word,

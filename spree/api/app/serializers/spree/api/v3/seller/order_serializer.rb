@@ -28,8 +28,18 @@ module Spree
                    payment_status: [:string, nullable: true],
                    status: :string,
                    item_total: [:string, nullable: true], display_item_total: [:string, nullable: true],
+                   delivery_total: [:string, nullable: true], display_delivery_total: [:string, nullable: true],
+                   discount_total: [:string, nullable: true], display_discount_total: [:string, nullable: true],
+                   adjustment_total: [:string, nullable: true], display_adjustment_total: [:string, nullable: true],
+                   included_tax_total: [:string, nullable: true], display_included_tax_total: [:string, nullable: true],
+                   additional_tax_total: [:string, nullable: true], display_additional_tax_total: [:string, nullable: true],
                    tax_total: [:string, nullable: true], display_tax_total: [:string, nullable: true],
-                   total: [:string, nullable: true], display_total: [:string, nullable: true]
+                   total: [:string, nullable: true], display_total: [:string, nullable: true],
+                   payment_total: [:string, nullable: true], display_payment_total: [:string, nullable: true],
+                   amount_due: [:string, nullable: true], display_amount_due: [:string, nullable: true],
+                   canceled_at: [:string, nullable: true],
+                   cancel_reason_name: [:string, nullable: true],
+                   cancel_note: [:string, nullable: true]
 
           attributes :number, :customer_note, :currency, :total_quantity,
                      :status, :fulfillment_status, :payment_status,
@@ -39,8 +49,28 @@ module Spree
           # them. Deliberately not the whole money surface: gift cards, store
           # credit and the payment breakdown belong to the marketplace.
           money_attributes :item_total, :display_item_total,
+                           :delivery_total, :display_delivery_total,
+                           :discount_total, :display_discount_total,
+                           :adjustment_total, :display_adjustment_total,
+                           :included_tax_total, :display_included_tax_total,
+                           :additional_tax_total, :display_additional_tax_total,
                            :tax_total, :display_tax_total,
-                           :total, :display_total
+                           :total, :display_total,
+                           :payment_total, :display_payment_total,
+                           :amount_due, :display_amount_due
+
+          # Why the sale was called off, when it was. The reason is the
+          # marketplace's vocabulary, so it is rendered as a name rather than
+          # an id a seller has nothing else to do with.
+          attribute :canceled_at do |order|
+            order.canceled_at&.iso8601
+          end
+
+          attribute :cancel_reason_name do |order|
+            order.cancel_reason&.name
+          end
+
+          attributes :cancel_note
 
           many :line_items, key: :items, resource: proc { Spree.api.seller_order_line_item_serializer }
           many :fulfillments, resource: proc { Spree.api.seller_fulfillment_serializer }

@@ -139,6 +139,35 @@ RSpec.describe Spree::Api::V3::Seller::Orders::FulfillmentsController, type: :co
       expect(response).to have_http_status(:not_found)
       expect(fulfillment.reload.stock_location_id).to eq(original)
     end
+
+    # A seller chooses between the services quoted for their own parcel.
+    it 'selects one of the rates quoted for the parcel' do
+      rate = create(:delivery_rate, fulfillment: fulfillment)
+
+      patch :update, params: {
+        order_id: order.prefixed_id, id: fulfillment.prefixed_id,
+        selected_delivery_rate_id: rate.prefixed_id
+      }, as: :json
+
+      expect(response).to have_http_status(:ok)
+      expect(fulfillment.reload.selected_delivery_rate).to eq(rate)
+    end
+
+    # Rates are quoted per parcel, so one belonging to another package is not
+    # a choice this fulfillment has — the id reads as missing rather than
+    # being assigned to a rate the parcel never offered.
+    it 'refuses a rate quoted for another parcel' do
+      other_fulfillment = create(:fulfillment, order: create(:order, store: store))
+      other_rate = create(:delivery_rate, fulfillment: other_fulfillment)
+
+      patch :update, params: {
+        order_id: order.prefixed_id, id: fulfillment.prefixed_id,
+        selected_delivery_rate_id: other_rate.prefixed_id
+      }, as: :json
+
+      expect(response).to have_http_status(:not_found)
+      expect(fulfillment.reload.selected_delivery_rate).not_to eq(other_rate)
+    end
   end
 
   describe 'PATCH #cancel' do

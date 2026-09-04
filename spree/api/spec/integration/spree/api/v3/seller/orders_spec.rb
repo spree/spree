@@ -145,6 +145,77 @@ RSpec.describe 'Seller Orders API', type: :request, swagger_doc: 'api-reference/
     end
   end
 
+  path '/api/v3/seller/orders/{id}/address' do
+    parameter name: :id, in: :path, type: :string, description: 'Prefixed order ID'
+
+    patch 'Correct an order address' do
+      tags 'Orders'
+      consumes 'application/json'
+      produces 'application/json'
+      security [bearer_auth: []]
+      description <<~DESC
+        Corrects where the goods go or who the invoice names.
+
+        The seller is merchant of record for their own child order, so a
+        delivery address the buyer got wrong is theirs to fix. Send only the
+        lines that change — the rest of the address is carried over.
+
+        This is the only write against the order itself besides cancelling:
+        nothing else about it, its totals included, is the seller's to change.
+      DESC
+
+      address_correction = {
+        type: :object,
+        description: 'Only the lines that change; the rest is carried over',
+        properties: {
+          first_name: { type: :string },
+          last_name: { type: :string },
+          company: { type: :string, nullable: true },
+          address1: { type: :string },
+          address2: { type: :string, nullable: true },
+          city: { type: :string },
+          postal_code: { type: :string },
+          country_code: { type: :string },
+          state_code: { type: :string, nullable: true },
+          state_name: { type: :string, nullable: true },
+          phone: { type: :string, nullable: true },
+          label: { type: :string, nullable: true }
+        }
+      }
+
+      parameter name: 'X-Spree-Seller-Id', in: :header, type: :string, required: true
+      parameter name: :body, in: :body, required: true, schema: {
+        type: :object,
+        properties: {
+          shipping_address: address_correction,
+          billing_address: address_correction
+        }
+      }
+
+      response '200', 'address corrected' do
+        let(:Authorization) { "Bearer #{seller_jwt_token}" }
+        let(:'X-Spree-Seller-Id') { seller.prefixed_id }
+        let(:id) { order.prefixed_id }
+        let(:body) { { shipping_address: { address1: '9 Corrected Way', city: 'Fixedton' } } }
+
+        schema '$ref' => '#/components/schemas/Order'
+
+        run_test! do
+          expect(order.reload.ship_address.city).to eq('Fixedton')
+        end
+      end
+
+      response '422', 'neither address named' do
+        let(:Authorization) { "Bearer #{seller_jwt_token}" }
+        let(:'X-Spree-Seller-Id') { seller.prefixed_id }
+        let(:id) { order.prefixed_id }
+        let(:body) { {} }
+
+        run_test!
+      end
+    end
+  end
+
   path '/api/v3/seller/order_cancellation_reasons' do
     get 'List order cancellation reasons' do
       tags 'Orders'

@@ -189,6 +189,7 @@ module Spree
         seller_fulfillment_serializer: 'Spree::Api::V3::Seller::FulfillmentSerializer',
         seller_fulfillment_item_serializer: 'Spree::Api::V3::Seller::FulfillmentItemSerializer',
         seller_delivery_serializer: 'Spree::Api::V3::Seller::DeliverySerializer',
+        seller_delivery_rate_serializer: 'Spree::Api::V3::Seller::DeliveryRateSerializer',
         seller_shipping_label_serializer: 'Spree::Api::V3::Seller::ShippingLabelSerializer',
         seller_return_serializer: 'Spree::Api::V3::Seller::ReturnSerializer',
         seller_return_line_item_serializer: 'Spree::Api::V3::Seller::ReturnLineItemSerializer',

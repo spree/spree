@@ -13,16 +13,26 @@ import {
   StatusBadge,
   useConfirm,
 } from '@spree/dashboard-ui'
-import { EllipsisVerticalIcon, MapPinIcon, TruckIcon } from '@spree/dashboard-ui/icons'
+import {
+  EllipsisVerticalIcon,
+  MapPinIcon,
+  PencilIcon,
+  PrinterIcon,
+  SplitIcon,
+  TagIcon,
+  TruckIcon,
+  XCircleIcon,
+} from '@spree/dashboard-ui/icons'
 import type { Delivery, Fulfillment, Order } from '@spree/seller-sdk'
 import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useFulfillmentActions } from '../../hooks/use-fulfillments'
+import { printPackingSlip } from '../../lib/packing-slip'
 import { FulfillmentDeliveries } from './fulfillment-deliveries'
 import { FulfillmentDeliveryDialog } from './fulfillment-delivery-dialog'
+import { FulfillmentEditDialog } from './fulfillment-edit-dialog'
 import { FulfillmentFulfillForm } from './fulfillment-fulfill-form'
 import { FulfillmentLabelUploadDialog } from './fulfillment-label-upload-dialog'
-import { FulfillmentOriginDialog } from './fulfillment-origin-dialog'
 import { FulfillmentSplitDialog } from './fulfillment-split-dialog'
 import { unitLabel } from './line-label'
 import { ShippingLabelRow } from './shipping-label-row'
@@ -62,7 +72,7 @@ export function FulfillmentsCard({ order }: { order: Order }) {
           fulfillments.map((fulfillment) => (
             <FulfillmentRow
               key={fulfillment.id}
-              orderId={order.id}
+              order={order}
               currency={order.currency}
               fulfillment={fulfillment}
             />
@@ -74,14 +84,15 @@ export function FulfillmentsCard({ order }: { order: Order }) {
 }
 
 function FulfillmentRow({
-  orderId,
+  order,
   currency,
   fulfillment,
 }: {
-  orderId: string
+  order: Order
   currency: string
   fulfillment: Fulfillment
 }) {
+  const orderId = order.id
   const { t } = useTranslation()
   const confirm = useConfirm()
   const { cancel } = useFulfillmentActions(orderId)
@@ -90,7 +101,7 @@ function FulfillmentRow({
   const [deliveryOpen, setDeliveryOpen] = useState(false)
   const [editingDelivery, setEditingDelivery] = useState<Delivery | undefined>()
   const [labelOpen, setLabelOpen] = useState(false)
-  const [originOpen, setOriginOpen] = useState(false)
+  const [editOpen, setEditOpen] = useState(false)
   const [splitOpen, setSplitOpen] = useState(false)
 
   const status = fulfillment.status ?? ''
@@ -127,27 +138,35 @@ function FulfillmentRow({
               }
             />
             <DropdownMenuContent align="end">
+              {shippable && (
+                <DropdownMenuItem onClick={() => setEditOpen(true)}>
+                  <PencilIcon className="size-4" />
+                  {t('admin.actions.edit')}
+                </DropdownMenuItem>
+              )}
+              {splittable && (
+                <DropdownMenuItem onClick={() => setSplitOpen(true)}>
+                  <SplitIcon className="size-4" />
+                  {t('orders.fulfillments.split')}
+                </DropdownMenuItem>
+              )}
+              <DropdownMenuItem onClick={() => printPackingSlip(order, fulfillment, t)}>
+                <PrinterIcon className="size-4" />
+                {t('orders.fulfillments.print_packing_slip')}
+              </DropdownMenuItem>
               <DropdownMenuItem
                 onClick={() => {
                   setEditingDelivery(undefined)
                   setDeliveryOpen(true)
                 }}
               >
+                <TruckIcon className="size-4" />
                 {t('orders.fulfillments.add_delivery')}
               </DropdownMenuItem>
               <DropdownMenuItem onClick={() => setLabelOpen(true)}>
+                <TagIcon className="size-4" />
                 {t('orders.fulfillments.upload_label')}
               </DropdownMenuItem>
-              {shippable && (
-                <DropdownMenuItem onClick={() => setOriginOpen(true)}>
-                  {t('orders.fulfillments.move_origin')}
-                </DropdownMenuItem>
-              )}
-              {splittable && (
-                <DropdownMenuItem onClick={() => setSplitOpen(true)}>
-                  {t('orders.fulfillments.split')}
-                </DropdownMenuItem>
-              )}
               {cancelable && (
                 <>
                   <DropdownMenuSeparator />
@@ -156,6 +175,7 @@ function FulfillmentRow({
                     disabled={cancel.isPending}
                     onClick={handleCancel}
                   >
+                    <XCircleIcon className="size-4" />
                     {t('orders.fulfillments.cancel')}
                   </DropdownMenuItem>
                 </>
@@ -238,12 +258,12 @@ function FulfillmentRow({
           }}
         />
       )}
-      {originOpen && (
-        <FulfillmentOriginDialog
+      {editOpen && (
+        <FulfillmentEditDialog
           orderId={orderId}
           fulfillment={fulfillment}
           open
-          onOpenChange={setOriginOpen}
+          onOpenChange={setEditOpen}
         />
       )}
       {labelOpen && (

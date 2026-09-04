@@ -12,16 +12,16 @@ module Spree
         # neither an in-flight checkout nor the operator's working document —
         # and are unreachable from every endpoint on this branch.
         #
-        # Read and cancel only. Fulfilling is the fulfillments endpoint under
-        # the order, and everything that settles money with the customer —
-        # approving, resuming, refunds, payments — stays with the operator,
-        # who owns that relationship.
+        # Read, cancel, and correct an address. Fulfilling is the
+        # fulfillments endpoint under the order, and everything that settles
+        # money with the customer — approving, resuming, refunds, payments —
+        # stays with the operator, who owns that relationship.
         class OrdersController < Seller::ResourceController
           include Spree::Api::V3::OrderLock
 
           scoped_resource :orders
 
-          before_action :set_resource, only: [:show, :cancel]
+          before_action :set_resource, only: [:show, :cancel, :address]
 
           # PATCH /api/v3/seller/orders/:id/cancel
           #
@@ -48,6 +48,26 @@ module Spree
               else
                 render_service_error(@resource.errors.presence || result.error)
               end
+            end
+          end
+
+          # PATCH /api/v3/seller/orders/:id/address
+          #
+          # Corrects where the goods go or who the invoice names. The seller is
+          # merchant of record for their own child order, so a delivery address
+          # the buyer got wrong is theirs to fix.
+          #
+          # Its own action rather than a general PATCH: an order's terms are
+          # the marketplace's, and a write that took whatever the serializer
+          # permits would quietly grow into one a seller could reprice with.
+          def address
+            attributes = address_params
+            return render_validation_error(missing_address_errors) if attributes.blank?
+
+            if @resource.update(attributes)
+              render json: serialize_resource(@resource.reload)
+            else
+              render_validation_error(@resource.errors)
             end
           end
 
@@ -78,6 +98,61 @@ module Spree
 
           private
 
+          # Either address, as a correction rather than a replacement: the
+          # sent fields are laid over what the order already holds, so a
+          # request naming one line does not blank out the country and
+          # postcode beside it. The nested writer builds a fresh address row
+          # either way, which is what keeps a shared customer address book
+          # entry from being rewritten by an order-level fix.
+          def address_params
+            permitted = params.permit(
+              shipping_address: address_permitted_keys,
+              billing_address: address_permitted_keys
+            )
+
+            {}.tap do |attributes|
+              if permitted[:shipping_address].present?
+                attributes[:ship_address_attributes] =
+                  merged_address(@resource.ship_address, permitted[:shipping_address])
+              end
+
+              if permitted[:billing_address].present?
+                attributes[:bill_address_attributes] =
+                  merged_address(@resource.bill_address, permitted[:billing_address])
+              end
+            end
+          end
+
+          def merged_address(address, sent)
+            current = address ? address.attributes.slice(*address_attribute_names) : {}
+            current.merge(sent.to_h)
+          end
+
+          # The permitted keys that are real columns; the rest are the writer
+          # aliases a client may send, which have no value to carry over.
+          def address_attribute_names
+            @address_attribute_names ||=
+              address_permitted_keys.map(&:to_s) & Spree::Address.column_names
+          end
+
+          def address_permitted_keys
+            [
+              :firstname, :lastname, :first_name, :last_name,
+              :address1, :address2, :city,
+              :country_code, :state_code,
+              :zipcode, :postal_code, :phone, :alternative_phone,
+              :state_name, :company, :label
+            ]
+          end
+
+          # A request naming neither address has asked for nothing; saying so
+          # beats a 200 that changed nothing.
+          def missing_address_errors
+            ActiveModel::Errors.new(@resource).tap do |errors|
+              errors.add(:base, :blank, message: 'shipping_address or billing_address is required')
+            end
+          end
+
           # The reason a seller picked, resolved through the store's own list so
           # a reason belonging to another store reads as missing. Optional —
           # the workflow accepts a cancellation with none.
@@ -94,10 +169,10 @@ module Spree
             authorize_resource!(@resource)
           end
 
-          # Cancelling is a change to the order, so it needs the write key
-          # rather than a key of its own.
+          # Cancelling and correcting an address are both changes to the
+          # order, so they need the write key rather than a key of their own.
           def authorize_resource!(resource = @resource, action = action_name.to_sym)
-            authorize!(action == :cancel ? :update : action, resource)
+            authorize!(%i[cancel address].include?(action) ? :update : action, resource)
           end
         end
       end

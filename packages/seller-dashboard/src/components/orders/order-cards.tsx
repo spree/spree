@@ -1,84 +1,179 @@
+import { AddressFormDialog } from '@spree/dashboard-core'
 import {
   AddressBlock,
+  Button,
   Card,
-  CardContent,
+  CardAction,
   CardHeader,
   CardTitle,
-  Thumbnail,
+  cn,
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+  Separator,
 } from '@spree/dashboard-ui'
-import type { Order } from '@spree/seller-sdk'
+import { EllipsisVerticalIcon, PencilIcon } from '@spree/dashboard-ui/icons'
+import type { Order, OrderAddressParams } from '@spree/seller-sdk'
+import { type ReactNode, useState } from 'react'
 import { useTranslation } from 'react-i18next'
+import { sellerClient } from '../../api-client'
+import { useOrderMutation } from '../../hooks/use-order'
 
-/** What was bought. */
-export function OrderItemsCard({ order }: { order: Order }) {
-  const { t } = useTranslation()
-
+function SummaryRow({
+  label,
+  value,
+  bold,
+  danger,
+  highlight,
+}: {
+  label: string
+  value: ReactNode
+  bold?: boolean
+  danger?: boolean
+  highlight?: boolean
+}) {
   return (
-    <Card>
-      <CardHeader>
-        <CardTitle>{t('orders.items')}</CardTitle>
-      </CardHeader>
-      <CardContent className="flex flex-col gap-3">
-        {(order.items ?? []).map((item) => (
-          <div key={item.id} className="flex items-center justify-between gap-3">
-            <div className="flex min-w-0 items-center gap-3">
-              {item.thumbnail_url && <Thumbnail src={item.thumbnail_url} alt={item.name ?? ''} />}
-              <div className="min-w-0">
-                <div className="truncate text-sm font-medium">{item.name}</div>
-                <div className="truncate text-muted-foreground text-xs">
-                  {[item.sku, item.options_text].filter(Boolean).join(' · ')}
-                </div>
-              </div>
-            </div>
-            <div className="flex shrink-0 items-center gap-4 text-sm">
-              <span className="text-muted-foreground">× {item.quantity}</span>
-              <span>{item.display_total}</span>
-            </div>
-          </div>
-        ))}
-      </CardContent>
-    </Card>
+    <div
+      className={cn('flex items-center justify-between px-5 py-2.5', highlight && 'bg-muted/50')}
+    >
+      <span className="text-sm">{label}</span>
+      <span
+        className={cn('text-sm tabular-nums', bold && 'font-bold', danger && 'text-destructive')}
+      >
+        {value}
+      </span>
+    </div>
   )
 }
 
+function formatDate(iso: string | null | undefined) {
+  if (!iso) return '—'
+  return new Date(iso).toLocaleString()
+}
+
 /**
- * What the sale came to.
+ * What the sale came to, and what has been paid against it.
  *
- * The seller's own figures — what the goods were worth, the tax on them and
- * the total. How the customer paid the marketplace is not shown here: that is
- * the group's payment, and what the seller is owed is the commission ledger.
+ * The same rows the operator sees on their own order page, so a seller
+ * reconciling a payout is reading the same arithmetic — a row appears only
+ * when it carries a figure, which is why a simple order shows three lines and
+ * a discounted, taxed, shipped one shows eight.
+ *
+ * The items themselves are listed on the parcels above rather than repeated
+ * here: what a seller needs from a line is which parcel it travels in.
  */
 export function OrderSummaryCard({ order }: { order: Order }) {
   const { t } = useTranslation()
 
-  const rows = [
-    { label: t('orders.summary.item_total'), value: order.display_item_total },
-    { label: t('orders.summary.tax_total'), value: order.display_tax_total },
-  ].filter((row) => !!row.value)
+  const amount = (value: string | null | undefined) => Number.parseFloat(value ?? '0')
+  const outstanding = amount(order.amount_due)
+  const placed = Boolean(order.completed_at)
 
   return (
-    <Card>
-      <CardHeader>
+    <Card className="py-0">
+      <CardHeader className="px-5 py-4">
         <CardTitle>{t('orders.summary.title')}</CardTitle>
       </CardHeader>
-      <CardContent className="flex flex-col gap-2 text-sm">
-        {rows.map((row) => (
-          <div key={row.label} className="flex items-center justify-between gap-3">
-            <span className="text-muted-foreground">{row.label}</span>
-            <span>{row.value}</span>
-          </div>
-        ))}
-        <div className="flex items-center justify-between gap-3 border-t pt-2 font-medium">
-          <span>{t('orders.summary.total')}</span>
-          <span>{order.display_total}</span>
-        </div>
-      </CardContent>
+
+      <div className="flex flex-col pb-2">
+        <Separator />
+
+        <SummaryRow label={t('orders.summary.created_at')} value={formatDate(order.created_at)} />
+        {order.completed_at && (
+          <SummaryRow
+            label={t('orders.summary.completed_at')}
+            value={formatDate(order.completed_at)}
+          />
+        )}
+
+        {order.canceled_at && (
+          <>
+            <Separator />
+            <SummaryRow
+              label={t('orders.summary.canceled_at')}
+              value={formatDate(order.canceled_at)}
+            />
+            {order.cancel_reason_name && (
+              <SummaryRow
+                label={t('orders.summary.cancel_reason')}
+                value={order.cancel_reason_name}
+              />
+            )}
+            {order.cancel_note && (
+              <SummaryRow label={t('orders.summary.cancel_note')} value={order.cancel_note} />
+            )}
+          </>
+        )}
+
+        <Separator />
+
+        <SummaryRow label={t('orders.summary.currency')} value={order.currency} />
+
+        <Separator />
+
+        <SummaryRow label={t('orders.summary.subtotal')} value={order.display_item_total} />
+
+        {amount(order.delivery_total) > 0 && (
+          <SummaryRow label={t('orders.summary.shipping')} value={order.display_delivery_total} />
+        )}
+
+        {amount(order.discount_total) !== 0 && (
+          <SummaryRow label={t('orders.summary.promotions')} value={order.display_discount_total} />
+        )}
+
+        {amount(order.adjustment_total) !== 0 && (
+          <SummaryRow
+            label={t('orders.summary.adjustments')}
+            value={order.display_adjustment_total}
+          />
+        )}
+
+        {amount(order.included_tax_total) > 0 && (
+          <SummaryRow
+            label={t('orders.summary.tax_included')}
+            value={order.display_included_tax_total}
+          />
+        )}
+
+        {/* Shown on a placed order even at zero, so "no tax was charged" reads
+            as an answer rather than a missing row. */}
+        {(amount(order.additional_tax_total) > 0 ||
+          (placed && amount(order.included_tax_total) === 0)) && (
+          <SummaryRow
+            label={t('orders.summary.tax_additional')}
+            value={order.display_additional_tax_total}
+          />
+        )}
+
+        <Separator />
+
+        <SummaryRow label={t('orders.summary.total')} value={order.display_total} bold />
+
+        <Separator />
+
+        <SummaryRow
+          label={t('orders.summary.payment_total')}
+          value={order.display_payment_total}
+          highlight
+        />
+        <SummaryRow
+          label={t('orders.summary.outstanding_balance')}
+          value={order.display_amount_due}
+          highlight
+          danger={outstanding > 0}
+        />
+      </div>
     </Card>
   )
 }
 
 /**
- * Where the parcel goes and who the invoice is for.
+ * Where the parcel goes and who the invoice is for, and correcting either.
+ *
+ * The seller is merchant of record for their own child order, so a delivery
+ * address the buyer got wrong is theirs to fix and the invoice address is
+ * what they bill against.
  *
  * No email address: a seller reaching the customer about a delivery has the
  * phone on the shipping address, and an email is the one contact detail that
@@ -86,29 +181,72 @@ export function OrderSummaryCard({ order }: { order: Order }) {
  */
 export function OrderCustomerCard({ order }: { order: Order }) {
   const { t } = useTranslation()
+  const [editing, setEditing] = useState<'shipping_address' | 'billing_address' | null>(null)
+
+  const save = useOrderMutation(order.id, (params: { type: string; address: OrderAddressParams }) =>
+    sellerClient().orders.address(order.id, { [params.type]: params.address }),
+  )
+
+  const editable = !order.canceled_at
 
   return (
-    <Card>
-      <CardHeader>
-        <CardTitle>{t('orders.customer.title')}</CardTitle>
-      </CardHeader>
-      <CardContent className="flex flex-col gap-4">
-        {order.shipping_address && (
-          <div className="flex flex-col gap-1">
-            <p className="text-muted-foreground text-xs uppercase">
-              {t('orders.shipping_address')}
-            </p>
-            <AddressBlock address={order.shipping_address} />
-          </div>
-        )}
-        {order.billing_address && (
-          <div className="flex flex-col gap-1">
-            <p className="text-muted-foreground text-xs uppercase">{t('orders.billing_address')}</p>
-            <AddressBlock address={order.billing_address} />
-          </div>
-        )}
-      </CardContent>
-    </Card>
+    <>
+      <Card>
+        <CardHeader>
+          <CardTitle>{t('orders.customer.title')}</CardTitle>
+          {editable && (
+            <CardAction>
+              <DropdownMenu>
+                <DropdownMenuTrigger
+                  render={
+                    <Button variant="ghost" size="icon-xs" aria-label={t('common.actions')}>
+                      <EllipsisVerticalIcon className="size-4" />
+                    </Button>
+                  }
+                />
+                <DropdownMenuContent align="end">
+                  <DropdownMenuItem onClick={() => setEditing('shipping_address')}>
+                    <PencilIcon className="size-4" />
+                    {t('orders.address_edit.shipping_title')}
+                  </DropdownMenuItem>
+                  <DropdownMenuItem onClick={() => setEditing('billing_address')}>
+                    <PencilIcon className="size-4" />
+                    {t('orders.address_edit.billing_title')}
+                  </DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
+            </CardAction>
+          )}
+        </CardHeader>
+        <div className="flex flex-col gap-4 px-6 pb-6">
+          <AddressBlock title={t('orders.shipping_address')} address={order.shipping_address} />
+          <AddressBlock title={t('orders.billing_address')} address={order.billing_address} />
+        </div>
+      </Card>
+
+      {/* Mounted only while open, so the form seeds from the address as it is
+          now rather than freezing at first render. */}
+      {editing && (
+        <AddressFormDialog
+          title={
+            editing === 'shipping_address'
+              ? t('orders.address_edit.shipping_title')
+              : t('orders.address_edit.billing_title')
+          }
+          address={editing === 'shipping_address' ? order.shipping_address : order.billing_address}
+          open
+          onOpenChange={(open) => !open && setEditing(null)}
+          onSave={(address) =>
+            save.mutate(
+              { type: editing, address },
+              // Kept open on failure so the entered address is not lost.
+              { onSuccess: () => setEditing(null) },
+            )
+          }
+          isPending={save.isPending}
+        />
+      )}
+    </>
   )
 }
 
@@ -122,9 +260,9 @@ export function OrderNoteCard({ order }: { order: Order }) {
       <CardHeader>
         <CardTitle>{t('orders.customer_note')}</CardTitle>
       </CardHeader>
-      <CardContent>
-        <p className="text-sm whitespace-pre-wrap">{order.customer_note}</p>
-      </CardContent>
+      <div className="px-6 pb-6">
+        <p className="whitespace-pre-wrap text-sm">{order.customer_note}</p>
+      </div>
     </Card>
   )
 }
