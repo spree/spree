@@ -87,16 +87,10 @@ module Spree
               end
 
               with_order_lock do
-                # The label's own consignment goes with it, but only while the
-                # parcel never moved: a journey that happened is a fact.
-                if @label.delivery && !@label.release_unmoved_delivery
-                  return render_error(
-                    code: ERROR_CODES[:validation_error],
-                    message: Spree.t('shipping_labels.errors.delivery_has_moved'),
-                    status: :unprocessable_content
-                  )
-                end
-
+                # The consignment goes with the label only while the parcel
+                # never moved — a journey that happened is a fact. Once it has,
+                # the delivery stays and is simply unlinked.
+                @label.release_unmoved_delivery
                 @label.destroy!
                 head :no_content
               end

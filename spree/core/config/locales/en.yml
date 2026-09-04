@@ -1730,7 +1730,6 @@ en:
     shipping_labels:
       errors:
         already_purchased: This parcel already has an active shipping label
-        delivery_has_moved: This label's parcel is already on its way, so its tracking cannot be removed with the label.
         file_fetch_failed: The label file could not be fetched from the carrier (HTTP %{status})
         file_required: An uploaded label needs a file
         no_file_url: The carrier did not provide a file for this label
