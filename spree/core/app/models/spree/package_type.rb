@@ -33,6 +33,7 @@ module Spree
     # Demote any prior default in the same transaction so the partial unique
     # index ("one default per store") never sees two TRUE rows, and MySQL —
     # which cannot enforce that index — arrives at the same place.
+    validate :kind_cannot_leave_the_products_packed_in_it, on: :update
     before_save :demote_other_defaults, if: -> { default? && will_save_change_to_default? }
     validate :default_cannot_be_given_up, on: :update
     # prepend so this runs before the association callbacks Rails registers,
@@ -108,6 +109,18 @@ module Spree
 
       errors.add(:base, Spree.t('errors.messages.cannot_delete_default_package_type'))
       throw(:abort)
+    end
+
+    # A variant may only be packed into a carton, and that is checked when the
+    # variant is saved — so letting a carton become a pallet later would leave
+    # every product already packed in it pointing at a row it could no longer
+    # choose, its geometry still feeding their freight rollups. Repack them
+    # first.
+    def kind_cannot_leave_the_products_packed_in_it
+      return unless kind_changed? && kind_was == 'carton' && kind != 'carton'
+      return unless variants.exists?
+
+      errors.add(:kind, :cannot_stop_being_a_carton)
     end
 
     # Clearing the flag on the only default leaves the store with no box at

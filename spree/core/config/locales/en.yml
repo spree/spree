@@ -363,6 +363,8 @@ en:
           attributes:
             default:
               cannot_be_given_up: cannot be turned off on the only default package — make another one the default instead
+            kind:
+              cannot_stop_being_a_carton: cannot change while products are packed into this carton — repack them first
         spree/payment:
           attributes:
             amount:
