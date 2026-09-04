@@ -228,6 +228,35 @@ RSpec.describe Spree::Customers::Anonymize do
 
   # A split checkout keeps its own address snapshots on the group, beside the
   # ones on each seller's order.
+  describe 'a purchase order the buyer uploaded' do
+    let!(:order) do
+      create(:completed_order_with_totals, customer: customer, store: store).tap do |placed|
+        placed.po_document.attach(
+          io: StringIO.new('%PDF-1.4 letterhead with a name and an address'),
+          filename: 'po.pdf', content_type: 'application/pdf'
+        )
+      end
+    end
+
+    it 'removes the file, which is the buyer\'s own document' do
+      expect(order.po_document).to be_attached
+
+      result
+
+      expect(order.reload.po_document).not_to be_attached
+    end
+  end
+
+  describe 'a place on a company roster' do
+    let!(:membership) { create(:company_membership, customer: customer) }
+
+    it 'gives up the membership, which names the person at a small firm' do
+      result
+
+      expect(Spree::CompanyMembership.where(id: membership.id)).to be_empty
+    end
+  end
+
   describe 'a store credit balance' do
     let!(:store_credit) do
       create(:store_credit, customer: customer, store: store).

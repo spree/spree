@@ -149,6 +149,7 @@ module Spree
             completed_at: order.completed_at&.iso8601,
             customer_note: order.customer_note,
             po_number: order.po_number,
+            po_document: order.po_document.attached? ? order.po_document.filename.to_s : nil,
             last_ip_address: order.last_ip_address,
             metadata: order.metadata.presence,
             internal_note: order.internal_note,

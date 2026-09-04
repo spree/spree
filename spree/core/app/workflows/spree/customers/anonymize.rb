@@ -57,6 +57,7 @@ module Spree
           step :anonymize_order_addresses
           # Both read the purchases by email, so they run before the step that
           # rewrites it.
+          step :remove_purchase_order_documents
           step :anonymize_payment_sources
           step :anonymize_purchases
           step :forget_gateway_profiles
@@ -200,6 +201,19 @@ module Spree
       # or void on a past order would lose the source it needs. Erasing the
       # name is what this step is for; hiding the row would break the ledger
       # the rest of the flow is preserving.
+      # The buyer uploaded it, so it is theirs: a purchase order routinely
+      # carries letterhead, a name and an address, and redacting the text
+      # columns around it would leave the document itself in private storage.
+      # The order keeps its `po_number` — that reference is the merchant's
+      # record of the sale, not a file about the person.
+      def remove_purchase_order_documents
+        [Spree::Order, Spree::Cart].each do |model|
+          owned_purchases(model).find_each do |purchase|
+            purchase.po_document.purge_later if purchase.po_document.attached?
+          end
+        end
+      end
+
       def anonymize_payment_sources
         # Cards are soft-deleted, so a wallet the person emptied still holds
         # their name until this reads past the default scope.
@@ -269,6 +283,12 @@ module Spree
         customer.tag_list = [] if customer.respond_to?(:tag_list)
         customer.save(validate: false) if customer.changed?
         customer.wishlists.destroy_all
+
+        # A membership is only a link between this person and a company, and
+        # after an erasure it would leave a Redacted account on the roster —
+        # which at a one-person firm still says who they were. The orders keep
+        # their own company reference, so the tax trail is unaffected.
+        customer.company_memberships.destroy_all
 
         # The balance is money and survives, but the note beside it is free
         # text a staff member wrote about this person — the same reasoning

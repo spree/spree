@@ -193,6 +193,18 @@ RSpec.describe Spree::Customers::DataExport do
       expect(payload[:marketing_consent][:newsletter_subscriptions]).not_to be_empty
     end
 
+    it 'names a purchase order the buyer uploaded' do
+      order = create(:completed_order_with_totals, customer: customer, store: store)
+      order.po_document.attach(
+        io: StringIO.new('%PDF-1.4 letterhead'),
+        filename: 'acme-po.pdf', content_type: 'application/pdf'
+      )
+
+      exported = payload[:orders].find { |row| row[:number] == order.number }
+
+      expect(exported[:po_document]).to eq('acme-po.pdf')
+    end
+
     it 'discloses the note staff kept on the account' do
       customer.update_columns(internal_note: 'asked twice about the refund')
 
