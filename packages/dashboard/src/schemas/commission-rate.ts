@@ -3,13 +3,13 @@ import type {
   CommissionRateCreateParams,
   CommissionRateUpdateParams,
 } from '@spree/admin-sdk'
-import { blankToNull } from '@spree/dashboard-core'
+import { blankToNull, i18n } from '@spree/dashboard-core'
 import { requiredMessage } from '@spree/dashboard-ui'
 import { z } from 'zod/v4'
 
 export const COMMISSION_RATE_KINDS = ['percentage', 'fixed'] as const
 
-export const commissionRateFormSchema = z.object({
+const commissionRateFieldsSchema = z.object({
   name: z.string().min(1, { error: requiredMessage('name') }),
   code: z.string().optional(),
   enabled: z.boolean(),
@@ -41,6 +41,16 @@ export const commissionRateFormSchema = z.object({
       product_ids: z.array(z.string()).default([]),
     }),
   ),
+})
+
+export const commissionRateFormSchema = commissionRateFieldsSchema.superRefine((values, ctx) => {
+  if (values.kind === 'percentage' && values.value > 100) {
+    ctx.addIssue({
+      code: 'custom',
+      path: ['value'],
+      message: i18n.t('admin.commission_rates.validation.percentage_exceeds_one_hundred'),
+    })
+  }
 })
 
 export type CommissionRateFormValues = z.infer<typeof commissionRateFormSchema>
@@ -128,12 +138,19 @@ export function commissionRateValuesToParams(
             max_amount: decimalOrNull(bound.max_amount),
           },
         ])
-        .filter(([, bound]) => {
-          const { min_amount, max_amount } = bound as {
-            min_amount: number | null
-            max_amount: number | null
+        .filter((entry) => {
+          const [currencyCode, bound] = entry as [
+            string,
+            { min_amount: number | null; max_amount: number | null },
+          ]
+          const { min_amount, max_amount } = bound
+          const hasBound = min_amount !== null || max_amount !== null
+          if (!hasBound) return false
+          // A flat fee cap without a stated amount would match at zero on the server.
+          if (v.kind === 'fixed') {
+            return String(v.amounts[currencyCode] ?? '').trim() !== ''
           }
-          return min_amount !== null || max_amount !== null
+          return true
         }),
     ),
     commission_tax_rate: taxPercentage === null ? null : taxPercentage / 100,

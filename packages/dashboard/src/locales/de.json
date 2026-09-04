@@ -467,13 +467,17 @@
       },
       "edit_description": "Gebühr, Grenzen und betroffene Verkäufe aktualisieren.",
       "empty": "Noch keine Provisionssätze",
+      "flat_fee_exceeds_sale_warning": "Diese Gebühr wird pro verkaufter Einheit voll berechnet. Bei günstigen Artikeln kann sie höher sein als der Erlös des Verkäufers. Setzen Sie unten ein Maximum, um die Gebühr pro Verkaufszeile zu begrenzen.",
       "messages": {
         "created": "Provisionssatz erstellt",
         "deleted": "Provisionssatz gelöscht",
         "updated": "Provisionssatz aktualisiert"
       },
       "order_hint": "Neue Sätze stehen oben in der Liste, und der erste passende gilt — zum Umsortieren ziehen.",
-      "search_placeholder": "Nach Namen suchen…"
+      "search_placeholder": "Nach Namen suchen…",
+      "validation": {
+        "percentage_exceeds_one_hundred": "Der Provisionsprozentsatz darf 100 % nicht überschreiten."
+      }
     },
     "companies": {
       "add_cta": "Unternehmen hinzufügen",
@@ -1123,6 +1127,10 @@
         },
         "enabled": {
           "help": "Deaktivierte Sätze werden bei der Berechnung übersprungen."
+        },
+        "flat_fee_cap": {
+          "help": "Optionale Obergrenze pro Verkaufszeile. Leer lassen, um die volle Pauschale zu berechnen.",
+          "label": "Maximum pro Verkaufszeile (optional)"
         },
         "include_shipping": {
           "help": "Provision auch auf die Versanderlöse des Verkäufers berechnen.",

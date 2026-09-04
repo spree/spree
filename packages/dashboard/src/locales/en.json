@@ -467,13 +467,17 @@
       },
       "edit_description": "Update the charge, its limits, and which sales it applies to.",
       "empty": "No commission rates yet",
+      "flat_fee_exceeds_sale_warning": "This fee is charged in full for every unit sold. On a cheap item it can cost the seller more than they earned from the sale. Set a maximum below to cap what one sale line can be charged.",
       "messages": {
         "created": "Commission rate created",
         "deleted": "Commission rate deleted",
         "updated": "Commission rate updated"
       },
       "order_hint": "New rates go to the top of the list, and the first one that matches a sale wins — drag to reorder.",
-      "search_placeholder": "Search by name…"
+      "search_placeholder": "Search by name…",
+      "validation": {
+        "percentage_exceeds_one_hundred": "Commission percentage cannot exceed 100%."
+      }
     },
     "companies": {
       "add_cta": "Add company",
@@ -1123,6 +1127,10 @@
         },
         "enabled": {
           "help": "Disabled rates are skipped when charging a sale."
+        },
+        "flat_fee_cap": {
+          "help": "Optional ceiling on what one sale line can be charged. Leave empty to charge the full flat fee.",
+          "label": "Maximum per sale line (optional)"
         },
         "include_shipping": {
           "help": "Also charge commission on the seller's delivery revenue.",

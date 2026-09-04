@@ -467,13 +467,17 @@
       },
       "edit_description": "Modifiez les frais, leurs limites et les ventes concernées.",
       "empty": "Aucun taux de commission",
+      "flat_fee_exceeds_sale_warning": "Ce montant est facturé intégralement pour chaque unité vendue. Sur un article bon marché, il peut dépasser ce que le vendeur a gagné. Définissez un plafond ci-dessous pour limiter le montant par ligne de vente.",
       "messages": {
         "created": "Taux de commission créé",
         "deleted": "Taux de commission supprimé",
         "updated": "Taux de commission mis à jour"
       },
       "order_hint": "Les nouveaux taux se placent en haut de la liste, et le premier qui correspond l'emporte — glissez pour réordonner.",
-      "search_placeholder": "Rechercher par nom…"
+      "search_placeholder": "Rechercher par nom…",
+      "validation": {
+        "percentage_exceeds_one_hundred": "Le pourcentage de commission ne peut pas dépasser 100 %."
+      }
     },
     "companies": {
       "add_cta": "Ajouter une entreprise",
@@ -1123,6 +1127,10 @@
         },
         "enabled": {
           "help": "Les taux désactivés sont ignorés lors de la facturation."
+        },
+        "flat_fee_cap": {
+          "help": "Plafond optionnel par ligne de vente. Laissez vide pour facturer le montant forfaitaire complet.",
+          "label": "Maximum par ligne de vente (facultatif)"
         },
         "include_shipping": {
           "help": "Facturer aussi la commission sur les revenus de livraison du vendeur.",

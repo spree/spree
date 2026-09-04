@@ -76,6 +76,13 @@ RSpec.describe Spree::Api::V3::Admin::CommissionRatesController, type: :controll
       expect(response).to have_http_status(:unprocessable_entity)
     end
 
+    it 'refuses a percentage above one hundred' do
+      post :create, params: { name: 'Too high', kind: 'percentage', value: 150 }, as: :json
+
+      expect(response).to have_http_status(:unprocessable_entity)
+      expect(json_response['error']['code']).to eq('validation_error')
+    end
+
     it 'writes a floor and a cap per currency' do
       post :create, params: {
         name: 'Bounded', kind: 'percentage', value: 10,

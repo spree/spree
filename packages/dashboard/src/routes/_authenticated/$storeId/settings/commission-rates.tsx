@@ -17,6 +17,8 @@ import {
   useStore,
 } from '@spree/dashboard-core'
 import {
+  Alert,
+  AlertDescription,
   Button,
   DropdownMenu,
   DropdownMenuContent,
@@ -47,7 +49,7 @@ import {
   useConfirm,
   useRowClickBridge,
 } from '@spree/dashboard-ui'
-import { PlusIcon, Trash2Icon } from '@spree/dashboard-ui/icons'
+import { PlusIcon, Trash2Icon, TriangleAlertIcon } from '@spree/dashboard-ui/icons'
 import { useQueryClient } from '@tanstack/react-query'
 import { createFileRoute, useNavigate } from '@tanstack/react-router'
 import { useEffect } from 'react'
@@ -399,6 +401,7 @@ function CommissionRateFormFields({ form }: { form: UseFormReturn<CommissionRate
               type="number"
               step="0.01"
               min="0"
+              max="100"
               aria-invalid={!!errors.value || undefined}
               {...form.register('value')}
             />
@@ -412,7 +415,10 @@ function CommissionRateFormFields({ form }: { form: UseFormReturn<CommissionRate
           <FieldError errors={[errors.value]} />
         </Field>
       ) : (
-        <FlatFeeAmountsField form={form} />
+        <>
+          <FlatFeeAmountsField form={form} />
+          <FlatFeeCapField form={form} />
+        </>
       )}
 
       <CommissionRulesField form={form} />
@@ -514,6 +520,10 @@ function ToggleField({
 function FlatFeeAmountsField({ form }: { form: UseFormReturn<CommissionRateFormValues> }) {
   const { t } = useTranslation()
   const { currencies } = useStore()
+  const amounts = form.watch('amounts')
+  const hasAmount = Object.values(amounts ?? {}).some(
+    (amount) => String(amount ?? '').trim() !== '',
+  )
 
   return (
     <Field>
@@ -521,6 +531,14 @@ function FlatFeeAmountsField({ form }: { form: UseFormReturn<CommissionRateFormV
       <span className="text-xs text-muted-foreground">
         {t('admin.fields.commission_rate.amounts.help')}
       </span>
+      {hasAmount && (
+        <Alert variant="warning" className="mt-2">
+          <TriangleAlertIcon />
+          <AlertDescription>
+            {t('admin.commission_rates.flat_fee_exceeds_sale_warning')}
+          </AlertDescription>
+        </Alert>
+      )}
       <div className="flex flex-col gap-2 pt-1">
         {currencies.map((currency) => (
           <div key={currency} className="flex items-center gap-2">
@@ -540,6 +558,65 @@ function FlatFeeAmountsField({ form }: { form: UseFormReturn<CommissionRateFormV
                   }
                 />
               )}
+            />
+          </div>
+        ))}
+      </div>
+    </Field>
+  )
+}
+
+/**
+ * Optional cap on a flat fee per sale line. The engine already clamps the
+ * computed fee to this ceiling — surfacing it here is what makes a minimum
+ * fee larger than a cheap item's price a deliberate choice rather than a
+ * silent overcharge.
+ */
+function FlatFeeCapField({ form }: { form: UseFormReturn<CommissionRateFormValues> }) {
+  const { t } = useTranslation()
+  const { currencies } = useStore()
+  const amounts = form.watch('amounts')
+  const cappedCurrencies = currencies.filter(
+    (currency) => String(amounts?.[currency] ?? '').trim() !== '',
+  )
+
+  if (cappedCurrencies.length === 0) {
+    return null
+  }
+
+  return (
+    <Field>
+      <FieldLabel>{t('admin.fields.commission_rate.flat_fee_cap.label')}</FieldLabel>
+      <span className="text-xs text-muted-foreground">
+        {t('admin.fields.commission_rate.flat_fee_cap.help')}
+      </span>
+      <div className="flex flex-col gap-2 pt-1">
+        {cappedCurrencies.map((currency) => (
+          <div key={currency} className="flex items-center gap-2">
+            <span className="w-12 shrink-0 text-sm text-muted-foreground">{currency}</span>
+            <Controller
+              control={form.control}
+              name="bounds"
+              render={({ field }) => {
+                const bound = field.value?.[currency] ?? { min_amount: '', max_amount: '' }
+
+                return (
+                  <Input
+                    type="number"
+                    step="0.01"
+                    min="0"
+                    aria-label={`${currency} ${t('admin.fields.commission_rate.max_amount.label')}`}
+                    placeholder={t('admin.fields.commission_rate.max_amount.label')}
+                    value={bound.max_amount}
+                    onChange={(event) =>
+                      field.onChange({
+                        ...field.value,
+                        [currency]: { ...bound, max_amount: event.target.value },
+                      })
+                    }
+                  />
+                )
+              }}
             />
           </div>
         ))}
