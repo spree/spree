@@ -77,6 +77,20 @@ RSpec.describe 'freight serialization' do
       expect(json['display_cost']).to eq(Spree.t('delivery_rates.quoted_after_review'))
     end
 
+    # display_cost and display_total sit side by side in the same payload;
+    # one saying "quoted after review" while the other says $0.00 is the
+    # free-shipping lie in a different field.
+    it 'says the same on every money display, and is not free' do
+      fulfillment = create(:shipment)
+      create(:delivery_rate, fulfillment: fulfillment, cost: 0, unpriced: true, selected: true)
+      fulfillment.reload.update_amounts
+
+      json = described_class.new(fulfillment.reload, params: { store: store }).to_h
+
+      expect(json['display_total']).to eq(Spree.t('delivery_rates.quoted_after_review'))
+      expect(fulfillment.reload).not_to be_free
+    end
+
     it 'stays money for a priced fulfillment' do
       fulfillment = create(:shipment)
       create(:delivery_rate, fulfillment: fulfillment, cost: 12, selected: true)

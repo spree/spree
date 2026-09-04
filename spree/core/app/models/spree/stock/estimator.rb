@@ -205,19 +205,25 @@ module Spree
         delivery_method.seller_id.nil? && delivery_method.available_to_sellers?
       end
 
-      # The calculator's say in eligibility, for methods whose calculator IS
-      # the price. A provider-priced method carries a calculator too — the
-      # admin hides its form and nothing reads its amount — so letting its
-      # leftover currency hide the method would silence exactly the methods
-      # built for foreign trade: a freight method's default calculator speaks
-      # only the default store's currency, and international wholesale is
-      # what the freight provider exists for. Provider quotes get their
-      # currency check where it belongs, against the estimate itself.
+      # The calculator's say in eligibility.
+      #
+      # `available?` is a documented extension point — a host app overrides it
+      # to refuse a method for a package — so it applies to every method,
+      # however the method is priced.
+      #
+      # The currency check does not. A provider-priced method carries a
+      # calculator the admin hides and nothing reads an amount from, so its
+      # leftover currency would silence exactly the methods built for foreign
+      # trade: a freight method's default calculator speaks only the default
+      # store's currency, and international wholesale is what the freight
+      # provider exists for. Provider quotes get their currency check where it
+      # belongs, against the estimate itself.
       def calculator_offers?(delivery_method, package)
+        calculator = delivery_method.calculator
+        return false unless calculator.available?(package)
         return true unless delivery_method.rate_provider_instance.class.uses_calculator?
 
-        calculator = delivery_method.calculator
-        calculator.available?(package) && calculator.supports_currency?(currency)
+        calculator.supports_currency?(currency)
       end
 
       # True when a subclass or decorator redefined the legacy seam, so its
