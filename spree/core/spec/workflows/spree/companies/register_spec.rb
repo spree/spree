@@ -131,11 +131,14 @@ RSpec.describe Spree::Companies::Register do
       Spree.hooks.register('companies.register.validate') { |_workflow| fired = true }
       invitation = create(:company_invitation, company: create(:company, store: store))
 
-      Spree::CompanyInvitations::Accept.call(
+      result = Spree::CompanyInvitations::Accept.call(
         invitation: invitation,
         customer_attributes: { password: 'password123', password_confirmation: 'password123' }
       )
 
+      # Asserted, so an acceptance that failed before the hooks could run
+      # cannot pass this example by never reaching them.
+      expect(result).to be_success
       expect(fired).to be(false)
     end
   end
