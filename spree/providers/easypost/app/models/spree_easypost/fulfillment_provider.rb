@@ -208,9 +208,7 @@ module SpreeEasyPost
     # Labels bought on EasyPost's own carrier accounts (USPS) require an
     # EndShipper — the legally responsible shipping party. Created fresh per
     # purchase so it always matches the current warehouse address; label buys
-    # are rare enough that caching one would only buy staleness. When the
-    # mandatory contact fields cannot be assembled the purchase proceeds
-    # without one, and carriers that insist reject with their own message.
+    # are rare enough that caching one would only buy staleness.
     def buy(integration, stock_location, store, shipment_id, rate_id)
       buy_params = { rate: { id: rate_id } }
       end_shipper_id = end_shipper_id(integration, stock_location, store)
@@ -219,9 +217,15 @@ module SpreeEasyPost
       integration.client.shipment.buy(shipment_id, **buy_params)
     end
 
-    # A rejected address is the merchant's to fix and says so by name: the
-    # carrier's own answer to a buy without an end shipper is a bare
-    # "malformed syntax", which sends them looking at the wrong thing.
+    # Both ways this can fail are the merchant's to fix, so both say what to
+    # fix and where. Buying without an end shipper was the alternative, and a
+    # carrier that requires one answers that with a bare "malformed syntax"
+    # naming no field at all.
+    # Whatever the warehouse can supply is sent and EasyPost judges it: what
+    # it requires here is its rule to change, and a local copy of that list
+    # would quietly disagree with the real one the first time it moved. Its
+    # answer names the field ("Phone number is empty"), which is what the
+    # merchant needs, so it is passed through with the location that owns it.
     def end_shipper_id(integration, stock_location, store)
       params = SpreeEasyPost.end_shipper_params(stock_location, store)
       return if params.nil?
@@ -230,8 +234,26 @@ module SpreeEasyPost
     rescue EasyPost::Errors::EasyPostError => e
       report(e, stock_location)
       raise Spree::Core::LabelPurchaseRefused,
-            Spree.t('easypost.errors.origin_address_rejected',
-                    location: stock_location.try(:name).presence || stock_location.try(:address1))
+            Spree.t('easypost.errors.origin_address_refused',
+                    location: location_name(stock_location), reason: carrier_reason(e))
+    end
+
+    # EasyPost's summary line is often generic ("Missing required parameter")
+    # while the field it means sits in the errors array, so the detail is
+    # preferred and the summary is the fallback.
+    def carrier_reason(error)
+      details = Array(error.try(:errors)).filter_map do |detail|
+        next detail if detail.is_a?(String)
+
+        field = detail['field'].to_s.split('.').last
+        [field.presence&.humanize, detail['message']].compact_blank.join(' ')
+      end
+
+      details.compact_blank.presence&.to_sentence || error.message
+    end
+
+    def location_name(stock_location)
+      stock_location.try(:name).presence || stock_location.try(:address1)
     end
 
     def label_purchase(shipment)

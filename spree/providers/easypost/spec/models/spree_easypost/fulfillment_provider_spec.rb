@@ -146,14 +146,20 @@ RSpec.describe SpreeEasyPost::FulfillmentProvider do
       )
     end
 
-    it 'buys without an end shipper when the contact details cannot be assembled' do
+    # Which fields EasyPost demands is EasyPost's rule, so an incomplete
+    # warehouse is still sent and its answer — which names the field — is
+    # what the merchant is shown.
+    it 'passes the carrier reason through when the warehouse is incomplete' do
       fulfillment.stock_location.update_columns(phone: nil)
       store.update_columns(contact_phone: nil)
-      allow(shipment_service).to receive(:buy).
-        with('shp_recorded1', rate: { id: 'rate_recorded1' }).and_return(purchased_shipment)
+      allow(Rails.error).to receive(:report)
+      allow(end_shipper_service).to receive(:create).and_raise(
+        EasyPost::Errors::EasyPostError.new('PHONENUMBER.EMPTY: Phone number is empty.')
+      )
 
-      expect(provider.purchase_label(fulfillment)).to be_present
-      expect(end_shipper_service).not_to have_received(:create)
+      expect { provider.purchase_label(fulfillment) }.
+        to raise_error(Spree::Core::LabelPurchaseRefused, /Phone number is empty/)
+      expect(end_shipper_service).to have_received(:create)
     end
 
     # The carrier's own answer to a buy without an end shipper is a bare

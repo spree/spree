@@ -4,7 +4,7 @@ en:
     easypost:
       errors:
         no_destination: This parcel has no delivery address, so no carrier can quote it.
-        origin_address_rejected: "The carrier could not verify the address for %{location}. Check that this location's street address, city, state and postcode are a real, deliverable address."
+        origin_address_refused: "%{location} cannot be used as the shipping origin: %{reason}"
         rate_not_quoted: This delivery rate was not quoted by EasyPost. Re-quote the fulfillment and pick a carrier service before buying a label.
         service_unavailable: "%{service} is no longer offered for this parcel. Re-quote the fulfillment and pick another service."
     integrations:
