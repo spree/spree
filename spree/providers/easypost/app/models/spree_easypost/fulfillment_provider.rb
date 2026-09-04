@@ -76,6 +76,11 @@ module SpreeEasyPost
       # fix it. Passed through rather than reported as a connection problem.
       report(e, owner)
       raise Spree::Core::LabelPurchaseRefused, e.message
+    rescue Spree::Core::LabelPurchaseRefused
+      # Already the merchant's answer, raised by name from further in. It is a
+      # StandardError, so without this it would be swallowed as nil below and
+      # the buy would fail with no reason given.
+      raise
     rescue StandardError => e
       report(e, owner)
       nil
@@ -214,6 +219,9 @@ module SpreeEasyPost
       integration.client.shipment.buy(shipment_id, **buy_params)
     end
 
+    # A rejected address is the merchant's to fix and says so by name: the
+    # carrier's own answer to a buy without an end shipper is a bare
+    # "malformed syntax", which sends them looking at the wrong thing.
     def end_shipper_id(integration, stock_location, store)
       params = SpreeEasyPost.end_shipper_params(stock_location, store)
       return if params.nil?
@@ -221,7 +229,9 @@ module SpreeEasyPost
       integration.client.end_shipper.create(**params).id
     rescue EasyPost::Errors::EasyPostError => e
       report(e, stock_location)
-      nil
+      raise Spree::Core::LabelPurchaseRefused,
+            Spree.t('easypost.errors.origin_address_rejected',
+                    location: stock_location.try(:name).presence || stock_location.try(:address1))
     end
 
     def label_purchase(shipment)

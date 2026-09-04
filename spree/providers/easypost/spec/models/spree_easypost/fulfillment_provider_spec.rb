@@ -118,10 +118,14 @@ RSpec.describe SpreeEasyPost::FulfillmentProvider do
         expect(provider.purchase_label(fulfillment).tracking_number).to eq('9405500207552012345678')
       end
 
-      it 'buys nothing when the exact service is not offered' do
+      # Silently buying a different service than the customer paid for is
+      # worse than no label, so the refusal names the service rather than
+      # answering nil with no reason given.
+      it 'refuses by name when the exact service is not offered' do
         allow(fresh_rate).to receive(:service).and_return('Express')
 
-        expect(provider.purchase_label(fulfillment)).to be_nil
+        expect { provider.purchase_label(fulfillment) }.
+          to raise_error(Spree::Core::LabelPurchaseRefused, /Ground/)
       end
     end
 
@@ -150,6 +154,21 @@ RSpec.describe SpreeEasyPost::FulfillmentProvider do
 
       expect(provider.purchase_label(fulfillment)).to be_present
       expect(end_shipper_service).not_to have_received(:create)
+    end
+
+    # The carrier's own answer to a buy without an end shipper is a bare
+    # "malformed syntax", which sends a merchant looking at the integration
+    # rather than at the warehouse address that was actually refused.
+    it 'names the location when the carrier will not verify its address' do
+      allow(Rails.error).to receive(:report)
+      fresh_rate = double(id: 'rate_fresh', carrier: 'USPS', service: 'Priority')
+      allow(shipment_service).to receive(:create).and_return(double(id: 'shp_fresh', rates: [fresh_rate]))
+      fulfillment.selected_delivery_rate.update_columns(carrier: 'USPS', service_level: 'Priority')
+      allow(end_shipper_service).to receive(:create).
+        and_raise(EasyPost::Errors::EasyPostError.new('Unable to verify address.'))
+
+      expect { provider.purchase_label(fulfillment) }.
+        to raise_error(Spree::Core::LabelPurchaseRefused, /#{Regexp.escape(fulfillment.stock_location.name)}/)
     end
 
     it 'reports and answers nil on an API failure' do
