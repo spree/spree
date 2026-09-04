@@ -6,7 +6,7 @@ module Spree
           class FulfillmentsController < BaseController
             scoped_resource :fulfillments
 
-            before_action :set_resource, only: [:show, :update, :fulfill, :purchase_label, :mark_delivered, :cancel, :resume, :split]
+            before_action :set_resource, only: [:show, :update, :fulfill, :purchase_label, :mark_delivered, :cancel, :split]
 
             # POST /api/v3/admin/orders/:order_id/fulfillments
             #

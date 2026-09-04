@@ -14,7 +14,7 @@ module Spree
           rescue_from ActiveSupport::MessageVerifier::InvalidSignature, with: :render_invalid_po_document
 
           skip_before_action :set_resource, only: [:index, :create]
-          before_action :set_resource, only: [:show, :update, :destroy, :complete, :cancel, :approve, :resume, :resend_confirmation, :resend_digital_links, :po_document]
+          before_action :set_resource, only: [:show, :update, :destroy, :complete, :cancel, :approve, :resend_confirmation, :resend_digital_links, :po_document]
 
           # POST /api/v3/admin/orders
           def create
@@ -175,7 +175,7 @@ module Spree
           # Map state transition actions to :update permission
           def authorize_resource!(resource = @resource, action = action_name.to_sym)
             mapped_action = case action
-                            when :complete, :cancel, :approve, :resume, :resend_confirmation, :resend_digital_links
+                            when :complete, :cancel, :approve, :resend_confirmation, :resend_digital_links
                               :update
                             when :po_document
                               :show
