@@ -239,9 +239,9 @@ module Spree
       # Card numbers were never stored, so this is the metadata that was: the
       # brand, the last four digits and the expiry a person would recognise.
       def payment_sources
-        card_ids = (customer.credit_cards.ids + payment_card_ids).compact.uniq
+        card_ids = (customer.credit_cards.with_deleted.ids + payment_card_ids).compact.uniq
 
-        Spree::CreditCard.where(id: card_ids).map do |card|
+        Spree::CreditCard.with_deleted.where(id: card_ids).map do |card|
           {
             brand: card.cc_type,
             last_digits: card.last_digits,

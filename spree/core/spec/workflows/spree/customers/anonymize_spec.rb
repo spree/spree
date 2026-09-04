@@ -228,6 +228,21 @@ RSpec.describe Spree::Customers::Anonymize do
 
   # A split checkout keeps its own address snapshots on the group, beside the
   # ones on each seller's order.
+  describe 'a store credit balance' do
+    let!(:store_credit) do
+      create(:store_credit, customer: customer, store: store).
+        tap { |credit| credit.update_columns(memo: 'goodwill after the complaint') }
+    end
+
+    it 'keeps the money but clears the note written beside it' do
+      result
+      store_credit.reload
+
+      expect(store_credit.amount).to be_present
+      expect(store_credit.memo).to be_nil
+    end
+  end
+
   # A card saved during guest checkout carries no customer, so it is reachable
   # only through the payment on the order it paid for.
   describe 'a card used at guest checkout' do
@@ -241,6 +256,18 @@ RSpec.describe Spree::Customers::Anonymize do
         credit_card.update_columns(customer_id: nil)
         create(:payment, order: guest_order, source: credit_card)
       end
+    end
+
+    # Cards are soft-deleted, so a wallet the person emptied still holds their
+    # name. The address book has no such scope, which is why only this path
+    # needs to say so.
+    it 'redacts a card the person removed from their wallet' do
+      removed = create(:credit_card, name: 'Ada Lovelace')
+      removed.update_columns(customer_id: customer.id, deleted_at: Time.current)
+
+      result
+
+      expect(removed.reload.name).to eq('Redacted')
     end
 
     it 'redacts a card left on a checkout that was never finished' do

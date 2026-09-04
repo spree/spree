@@ -201,7 +201,9 @@ module Spree
       # name is what this step is for; hiding the row would break the ledger
       # the rest of the flow is preserving.
       def anonymize_payment_sources
-        Spree::CreditCard.where(id: card_ids).
+        # Cards are soft-deleted, so a wallet the person emptied still holds
+        # their name until this reads past the default scope.
+        Spree::CreditCard.with_deleted.where(id: card_ids).
           update_all(name: REDACTED_NAME, metadata: {}, updated_at: Time.current)
       end
 
@@ -209,7 +211,7 @@ module Spree
       # carry no customer and are reachable only through the payment on the
       # order they paid for.
       def card_ids
-        (customer.credit_cards.ids + payment_card_ids).compact.uniq
+        (customer.credit_cards.with_deleted.ids + payment_card_ids).compact.uniq
       end
 
       # A payment carries a cart id or an order id, never both, and it keeps
@@ -267,6 +269,11 @@ module Spree
         customer.tag_list = [] if customer.respond_to?(:tag_list)
         customer.save(validate: false) if customer.changed?
         customer.wishlists.destroy_all
+
+        # The balance is money and survives, but the note beside it is free
+        # text a staff member wrote about this person — the same reasoning
+        # that clears the note on the account itself.
+        customer.store_credits.update_all(memo: nil, updated_at: Time.current)
       end
 
       # The consent rows keep their purpose, source and timestamp — the proof
