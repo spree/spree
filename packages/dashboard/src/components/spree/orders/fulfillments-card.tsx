@@ -743,25 +743,29 @@ function FulfillmentPanel({
  * so the eye can compare it against the real ones, minus the status and number
  * it does not have.
  */
-function UnfulfilledGroup({ rows }: { rows: FulfillmentItemRow[] }) {
+function UnfulfilledItems({ rows, canCreate }: { rows: FulfillmentItemRow[]; canCreate: boolean }) {
   const { t } = useTranslation()
   const totalUnits = rows.reduce((sum, row) => sum + row.quantity, 0)
 
+  // Deliberately not a FulfillmentPanel: these units have no fulfillment, and
+  // borrowing the panel's status badge and location slot made them read as a
+  // record that already exists. What the operator needs to see is that
+  // something is owed and nothing is carrying it yet.
   return (
-    <FulfillmentPanel
-      status="unfulfilled"
-      // The badge names the state; the count says how much is in it, which a
-      // real fulfillment carries in its own rows instead.
-      meta={
-        <span className="text-muted-foreground text-xs">
-          {t('admin.orders.detail.fulfillments.unfulfilled', { count: totalUnits })}
+    <div className="flex flex-col gap-2 rounded-lg border border-border-subtle border-dashed p-4">
+      <div className="flex flex-wrap items-baseline justify-between gap-2">
+        <span className="font-medium text-sm">
+          {t('admin.orders.detail.fulfillments.awaiting_fulfillment', { count: totalUnits })}
         </span>
-      }
-    >
-      <CardContent className="px-0 py-3">
-        <FulfillmentItemList rows={rows} />
-      </CardContent>
-    </FulfillmentPanel>
+        <span className="text-muted-foreground text-xs">
+          {canCreate
+            ? t('admin.orders.detail.fulfillments.awaiting_hint')
+            : t('admin.orders.detail.fulfillments.awaiting_hint_draft')}
+        </span>
+      </div>
+
+      <FulfillmentItemList rows={rows} />
+    </div>
   )
 }
 
@@ -819,7 +823,9 @@ export function FulfillmentsCard({ order }: { order: Order }) {
           </CardContent>
         ) : (
           <CardContent className="flex flex-col gap-4">
-            {unfulfilled.length > 0 && <UnfulfilledGroup rows={unfulfilled} />}
+            {unfulfilled.length > 0 && (
+              <UnfulfilledItems rows={unfulfilled} canCreate={canCreate} />
+            )}
             {fulfillments.map((fulfillment) => (
               <FulfillmentRow key={fulfillment.id} order={order} fulfillment={fulfillment} />
             ))}
