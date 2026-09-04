@@ -62,6 +62,29 @@ module Spree
       override_for(item)&.reason_code.presence || reason_code
     end
 
+    # The claim as plain data, for freezing onto a placed order. Certificates
+    # lapse, get revoked and are edited, so a provider filing or crediting that
+    # sale later has to read the evidence the sale was priced with rather than
+    # whatever resolves on the day.
+    #
+    # @return [Hash]
+    def to_snapshot
+      attributes.except('item_overrides').
+        merge('item_overrides' => Array(item_overrides).map(&:to_snapshot))
+    end
+
+    # Unknown keys are dropped rather than raising: a snapshot is read back long
+    # after it was written, possibly by a different version of Spree.
+    #
+    # @param snapshot [Hash]
+    # @return [Spree::TaxExemption]
+    def self.from_snapshot(snapshot)
+      snapshot = snapshot.to_h.stringify_keys
+      overrides = Array(snapshot['item_overrides']).map { |override| ItemOverride.from_snapshot(override) }
+
+      new(snapshot.slice(*attribute_names).symbolize_keys.merge(item_overrides: overrides))
+    end
+
     private
 
     # An override that cannot say which line it applies to does not narrow this

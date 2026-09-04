@@ -155,26 +155,53 @@ RSpec.describe SpreeAvalara::RefundPresenter do
   # Rounding each line on its own credits a cent nobody refunded, which the
   # cap exists to prevent.
   describe 'rounding a short refund across lines' do
-    let(:cheap_line) { create(:line_item, order: order, cart: nil, price: 1, quantity: 1) }
-    let(:two_cheap_lines) do
-      [instance_double(Spree::ReturnLineItem, line_item: line_item, received_quantity: 1,
-                                              return: instance_double(Spree::Return, number: 'RET1')),
-       instance_double(Spree::ReturnLineItem, line_item: cheap_line, received_quantity: 1,
-                                              return: instance_double(Spree::Return, number: 'RET1'))]
+    # Two lines a penny apart from the refund, so per-line rounding would round
+    # both up. Sold net, so gross and net worth agree and only the rounding is
+    # under test.
+    let(:penny_lines) { create_list(:line_item, 2, order: order, cart: nil, price: 1, quantity: 1) }
+    let(:both_penny_lines) do
+      penny_lines.map do |line|
+        instance_double(Spree::ReturnLineItem, line_item: line, received_quantity: 1,
+                                               return: instance_double(Spree::Return, number: 'RET1'))
+      end
     end
 
-    before do
-      line_item.update_column(:pre_tax_amount, 1)
-      line_item.update_column(:quantity, 1)
-      cheap_line.update_column(:pre_tax_amount, 1)
-    end
+    before { penny_lines.each { |line| line.update_column(:pre_tax_amount, 1) } }
 
     it 'never credits more than the refund carried' do
-      presenter = present(return_items: two_cheap_lines, amount: 1.03)
+      presenter = present(return_items: both_penny_lines, amount: 1.03)
       credited = presenter.call[:lines].sum { |line| line[:amount] }
 
       expect(credited).to eq(-1.03)
       expect(presenter.call[:lines].map { |line| line[:amount] }).to eq([-0.52, -0.51])
+    end
+  end
+
+  # `amount` is money the customer receives, so where the sale carried its tax
+  # inside the price the refund figure does too. Scaling it against the net
+  # basis credited full tax for any shortfall smaller than the tax.
+  describe 'a short refund of a line sold gross' do
+    # 100.00 gross at 23%: 81.30 net, 18.70 tax inside the price.
+    let(:gross_line) { create(:line_item, order: order, cart: nil, price: 100, quantity: 1) }
+    let(:returned_gross) do
+      [instance_double(Spree::ReturnLineItem, line_item: gross_line, received_quantity: 1,
+                                              return: instance_double(Spree::Return, number: 'RET1'))]
+    end
+
+    before { gross_line.update_column(:pre_tax_amount, 81.30) }
+
+    it 'credits the refunded share of the net basis, not all of it' do
+      presenter = present(return_items: returned_gross, amount: 90)
+
+      expect(presenter.scale).to eq(0.9)
+      expect(presenter.call[:lines].sole[:amount]).to eq(-73.17)
+    end
+
+    it 'still credits the whole basis when the refund is the whole price' do
+      presenter = present(return_items: returned_gross, amount: 100)
+
+      expect(presenter.scale).to eq(1)
+      expect(presenter.call[:lines].sole[:amount]).to eq(-81.30)
     end
   end
 

@@ -112,8 +112,18 @@ module Spree
       # document after placement, and resolving again there could file an
       # exemption the estimate never applied.
       #
+      # A placed order answers from its frozen snapshot for that reason, the way
+      # +resolved_tax_identifier+ does. Resolving live months later is not the
+      # same evidence: a certificate lapses on its own date with nothing written
+      # to it, can be revoked, and goes with its company when that is deleted —
+      # so a credit for an exempt sale would be filed as a consumer refund and
+      # declare tax the sale never collected. Orders placed before the snapshot
+      # existed have none, and still resolve live.
+      #
       # @return [Array]
       def usable_exemptions
+        return frozen_tax_exemptions if frozen_tax_exemptions?
+
         resolved = Array(Spree.tax_resolve_exemptions_service.new.call(order: self).value)
 
         resolved.select do |exemption|
@@ -133,6 +143,16 @@ module Spree
       end
 
       private
+
+      # Carts always resolve live — a buyer's certificates legitimately change
+      # while they shop, and the cart is priced again each time.
+      def frozen_tax_exemptions?
+        is_a?(Spree::Order) && completed? && applied_tax_exemptions.present?
+      end
+
+      def frozen_tax_exemptions
+        Array(applied_tax_exemptions).map { |snapshot| Spree::TaxExemption.from_snapshot(snapshot) }
+      end
 
       # Read through the legal entity, never the node — a division holds no
       # registrations of its own.

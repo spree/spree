@@ -324,6 +324,32 @@ module Spree
         expect(result.value.tax_identifier.value).to eq('GB123456789')
       end
 
+      # The evidence has to survive the certificate it came from: it lapses on
+      # its own date, so re-resolving at refund time would file a credit for an
+      # exempt sale as a consumer refund.
+      it 'freezes the exemptions the sale was priced with onto the order' do
+        claim = Spree::TaxExemption.new(reason_code: 'resale', certificate_number: 'CERT-9',
+                                        country_code: 'US', state_code: 'CA')
+        allow(Spree.tax_resolve_exemptions_service).to receive(:new).
+          and_return(instance_double(Spree::Tax::ResolveExemptions,
+                                     call: Spree::ServiceModule::Result.new(true, [claim], nil)))
+
+        order = described_class.call(cart: ready_cart).value
+
+        expect(order.applied_tax_exemptions).to eq(
+          [{ 'reason_code' => 'resale', 'certificate_number' => 'CERT-9',
+             'country_code' => 'US', 'state_code' => 'CA', 'item_overrides' => [] }]
+        )
+      end
+
+      # A consumer sale freezes nothing, so the column stays empty rather than
+      # holding an empty list that reads as "resolved and found none".
+      it 'freezes nothing when the sale claimed no exemption' do
+        order = described_class.call(cart: ready_cart).value
+
+        expect(order.applied_tax_exemptions).to be_blank
+      end
+
       it 'records a checkout override as such' do
         create(:tax_identifier, owner: customer, kind: 'eu_vat', value: customer_vat)
         create(:tax_identifier, owner: ready_cart, kind: 'eu_vat', value: override_vat)

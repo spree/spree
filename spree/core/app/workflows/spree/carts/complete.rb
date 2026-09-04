@@ -254,6 +254,7 @@ module Spree
           copy_typed_lines!(cart, order, line_item_map, fulfillment_map)
           copy_promotions!(cart, order)
           copy_tax_identifier!(cart, order)
+          copy_tax_exemptions!(cart, order)
           copy_po_document!(cart, order)
           repoint_money_records!(cart, order)
 
@@ -286,6 +287,19 @@ module Spree
         attributes = resolved.attributes.except('id', 'owner_type', 'owner_id',
                                                 'created_at', 'updated_at')
         order.create_tax_identifier!(attributes.merge('source' => source_of(resolved)))
+      end
+
+      # Freezes the exemption evidence the sale was priced with, beside the
+      # registration and for the same reason. A certificate lapses on its own
+      # date with nothing written to it, can be revoked, and is destroyed with
+      # its company — so a provider re-resolving at commit or refund time would
+      # file a credit for an exempt sale as a consumer refund and declare tax
+      # that was never collected. Read from the cart, which is what was priced.
+      def copy_tax_exemptions!(cart, order)
+        claims = cart.usable_exemptions.map(&:to_snapshot)
+        return if claims.empty?
+
+        order.update_column(:applied_tax_exemptions, claims)
       end
 
       # The buyer's purchase order follows the number onto the order. The same
