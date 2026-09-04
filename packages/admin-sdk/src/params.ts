@@ -280,12 +280,8 @@ export interface FulfillmentFulfillParams {
   force?: boolean
 }
 
-/** Buying a label takes no body; recording an uploaded one takes at least a file and a number. */
-export interface ShippingLabelCreateParams {
-  /** Signed blob id from `directUploads.create()`. Its presence records an uploaded label instead of buying one. */
-  file?: string
-  /** The number printed on an uploaded label. */
-  tracking_number?: string
+/** What a label records, whether it was bought or uploaded. */
+interface ShippingLabelDetails {
   /** Free text — a forwarder's name is as valid as a carrier slug. Detected from the number when omitted. */
   carrier?: string
   /** Carrier service the label was bought at. */
@@ -299,6 +295,27 @@ export interface ShippingLabelCreateParams {
   /** Tracking page for the consignment the label mints. */
   tracking_url?: string
 }
+
+/**
+ * Recording a label bought elsewhere. The number printed on it is required:
+ * a label with no tracking number mints no consignment, and the server
+ * refuses it.
+ */
+export interface ShippingLabelUploadParams extends ShippingLabelDetails {
+  /** Signed blob id from `directUploads.create()`. Its presence records an uploaded label instead of buying one. */
+  file: string
+  /** The number printed on an uploaded label. */
+  tracking_number: string
+}
+
+/** Buying through the carrier. The carrier supplies the file and the number. */
+export interface ShippingLabelPurchaseParams extends ShippingLabelDetails {
+  file?: never
+  tracking_number?: never
+}
+
+/** Buying a label takes no body; recording an uploaded one takes at least a file and a number. */
+export type ShippingLabelCreateParams = ShippingLabelUploadParams | ShippingLabelPurchaseParams
 
 export interface DeliveryCreateParams {
   /** A carrier tracking number, a freight PRO or container number, or a full tracking link. */
