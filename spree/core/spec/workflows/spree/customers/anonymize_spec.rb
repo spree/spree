@@ -257,6 +257,46 @@ RSpec.describe Spree::Customers::Anonymize do
     end
   end
 
+  # Deleting a file is not something a rollback can undo.
+  describe 'when a later step fails' do
+    let!(:order) do
+      create(:completed_order_with_totals, customer: customer, store: store).tap do |placed|
+        placed.po_document.attach(
+          io: StringIO.new('%PDF-1.4 letterhead'),
+          filename: 'po.pdf', content_type: 'application/pdf'
+        )
+      end
+    end
+
+    before do
+      allow_any_instance_of(described_class).to receive(:remove_newsletter_subscriptions).
+        and_raise(ActiveRecord::Rollback)
+    end
+
+    it 'leaves the buyer\'s document where it was' do
+      described_class.call(customer: customer, store: store) rescue nil
+
+      expect(order.reload.po_document).to be_attached
+    end
+
+    it 'leaves the person erasable' do
+      described_class.call(customer: customer, store: store) rescue nil
+
+      expect(customer.reload.anonymized_at).to be_nil
+    end
+  end
+
+  it 'tells subscribers the person is anonymized, not that they still are not' do
+    seen = nil
+    allow(customer).to receive(:publish_event) do |name, *|
+      seen = customer.anonymized_at if name == 'customer.anonymized'
+    end
+
+    result
+
+    expect(seen).to be_present
+  end
+
   describe 'a store credit balance' do
     let!(:store_credit) do
       create(:store_credit, customer: customer, store: store).

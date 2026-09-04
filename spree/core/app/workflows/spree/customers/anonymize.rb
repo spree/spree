@@ -51,6 +51,8 @@ module Spree
         # an open dispute, a fraud investigation or a legal hold rejects here.
         run_hooks :validate
 
+        committed = false
+
         ApplicationRecord.transaction do
           # Inside the transaction so the claim rolls back with the redaction
           # it guards. Claimed before any of it, so a second erasure racing
@@ -73,7 +75,20 @@ module Spree
           step :anonymize_data_requests
           step :record_consent_withdrawal
           step :remove_newsletter_subscriptions
+          committed = true
         end
+
+        # Deleting a file is not something a rollback can undo, so the files
+        # are only released once the redaction they belong to has committed.
+        # `ActiveRecord::Rollback` is swallowed by the block above, so the flag
+        # is what distinguishes a commit from a silent unwind.
+        purge_collected_attachments if committed
+
+        # Before the event and the hooks: the claim and the redaction were
+        # written by UPDATE statements that leave this instance holding the
+        # old values, so a subscriber reading `anonymized_at` off the payload
+        # would be told the person is still identified.
+        customer.reload
 
         customer.publish_event(
           'customer.anonymized',
@@ -82,7 +97,7 @@ module Spree
         )
 
         run_hooks :after_anonymize
-        success(customer.reload)
+        success(customer)
       end
 
       private
@@ -138,7 +153,7 @@ module Spree
           updated_at: Time.current
         )
 
-        customer.avatar.purge_later if customer.avatar.attached?
+        purge_after_commit(customer.avatar)
       end
 
       # The customer's own address book — soft-deleted as well as scrubbed,
@@ -233,7 +248,7 @@ module Spree
           ActiveStorage::Attachment.
             where(record_type: model.name, name: 'po_document',
                   record_id: owned_purchases(model).select(:id)).
-            find_each(&:purge_later)
+            find_each { |attachment| purge_after_commit(attachment) }
         end
       end
 
@@ -322,7 +337,7 @@ module Spree
         # stays live for days. Rewriting the row's email would leave the
         # payload itself untouched and still fetchable.
         requests.each do |data_request|
-          data_request.export_file.purge_later if data_request.export_file.attached?
+          purge_after_commit(data_request.export_file)
         end
 
         # The token goes too, so a link already emailed stops resolving rather
@@ -360,6 +375,19 @@ module Spree
 
       def remove_newsletter_subscriptions
         personal_newsletter_subscribers(customer, email: @original_email).destroy_all
+      end
+
+      # @param attachment [ActiveStorage::Attached::One, ActiveStorage::Attachment]
+      def purge_after_commit(attachment)
+        return if attachment.respond_to?(:attached?) && !attachment.attached?
+
+        @attachments_to_purge ||= []
+        @attachments_to_purge << attachment
+      end
+
+      def purge_collected_attachments
+        Array(@attachments_to_purge).each(&:purge_later)
+        @attachments_to_purge = nil
       end
 
       # @param address [Spree::Address]
