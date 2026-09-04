@@ -110,6 +110,8 @@
         "audience_label": "Audience",
         "audience_placeholder": "Search…",
         "company_subtree_help": "Assigning to a company covers its whole subtree.",
+        "customer_group_help": "Customer group catalogs reach only buyers whose company has no catalog of its own.",
+        "customer_group_precedence": "Company assignments win. A buyer whose company — or one above it — has any catalog gets those catalogs, and their customer group is not consulted. To give company buyers tier pricing, assign this catalog to their companies or divisions instead.",
         "dialog_description": "Who sees this catalog. A company assignment covers the node and everything below it.",
         "empty": "Not assigned to any audience yet — nobody sees this catalog.",
         "empty_description": "Assign a company or customer group to decide who this catalog is for.",

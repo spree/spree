@@ -110,6 +110,8 @@
         "audience_label": "受众",
         "audience_placeholder": "搜索…",
         "company_subtree_help": "分配给公司将覆盖其整个子树。",
+        "customer_group_help": "分配给客户组的目录只对所属公司没有自己目录的买家生效。",
+        "customer_group_precedence": "公司分配优先。如果买家所属公司（或其上级公司）有任何目录，则以这些目录为准，其客户组不会被考虑。若要为公司买家设置分级价格，请将该目录改为分配给他们的公司或下属单位。",
         "dialog_description": "谁能看到该目录。分配给公司将覆盖该节点及其下所有单位。",
         "empty": "尚未分配给任何受众——没有人能看到该目录。",
         "empty_description": "指定公司或客户组，以决定本目录面向谁。",

@@ -54,9 +54,11 @@ module Spree
         end
 
         # Price lists reached through the buyer's effective catalogs, in
-        # catalog resolution order — company subtree first, then customer
-        # groups, then the channel's default catalog (the same fallback
-        # chain visibility uses).
+        # catalog resolution order — the company subtree, or failing that the
+        # customer's groups, or failing that the channel's default catalog.
+        # The same chain visibility uses, and its steps are alternatives: a
+        # company buyer is priced by their company's agreement and never
+        # also by their customer group's ({Spree::Catalog.for_context}).
         #
         # A catalog-attached list applies because the catalog applies: its
         # audience rules are not consulted, since the assignment already
