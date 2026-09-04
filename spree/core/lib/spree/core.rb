@@ -828,6 +828,11 @@ module Spree
     # instead of being sent to check a connection that is fine.
     class LabelPurchaseRefused < RuntimeError; end
 
+    # A carrier refusing to void a label, in its own words — a parcel it has
+    # already collected, a label past its void window. Raised by a provider
+    # when it knows why, so the merchant reads the reason.
+    class LabelRefundRefused < RuntimeError; end
+
     # A label the carrier refused to refund while a parcel was being
     # cancelled. The cancellation proceeds; the postage is the merchant's to
     # chase, so it is reported rather than dropped.

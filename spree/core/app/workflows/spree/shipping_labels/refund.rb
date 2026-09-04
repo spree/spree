@@ -45,12 +45,16 @@ module Spree
         failure(shipping_label, Spree.t("shipping_labels.errors.#{reason}"))
       end
 
+      # A provider that knows why the carrier said no raises with its words;
+      # anything else falls back to the generic line.
       def refund
         @outcome = shipping_label.provider.refund_label(shipping_label).to_s
 
         return if %w[refunded refund_requested].include?(@outcome)
 
         failure(shipping_label, Spree.t('shipping_labels.errors.refund_failed'))
+      rescue Spree::Core::LabelRefundRefused => e
+        failure(shipping_label, e.message)
       end
 
       def record_outcome

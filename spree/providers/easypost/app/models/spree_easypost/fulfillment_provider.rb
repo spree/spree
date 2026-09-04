@@ -87,11 +87,19 @@ module SpreeEasyPost
     # @param shipping_label [Spree::ShippingLabel]
     # @return [String, false]
     def refund_label(shipping_label)
-      integration = integration_for(shipping_label.owner)
+      # The account that sold the label, not whichever one the parcel's
+      # current method points at — a rerouted parcel still owes its postage
+      # back to the carrier it was bought from.
+      integration = shipping_label.integration || integration_for(shipping_label.owner)
       return false if integration.nil? || shipping_label.external_id.blank?
 
       shipment = integration.client.shipment.refund(shipping_label.external_id)
       refund_outcome(shipment.try(:refund_status))
+    rescue EasyPost::Errors::EasyPostError => e
+      # A parcel already in the carrier's hands, a label too old to void:
+      # EasyPost says which, and only the merchant can act on it.
+      report(e, shipping_label.owner)
+      raise Spree::Core::LabelRefundRefused, e.message
     rescue StandardError => e
       report(e, shipping_label.owner)
       false

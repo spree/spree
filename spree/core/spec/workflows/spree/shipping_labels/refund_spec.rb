@@ -76,5 +76,17 @@ module Spree
 
       expect(subject.call(shipping_label: label)).to be_failure
     end
+    # "The carrier refused" is not useful when the carrier said exactly why.
+    it 'reports the carrier own reason when the provider knows it' do
+      allow(label).to receive(:provider).and_return(provider)
+      allow(provider).to receive(:refund_label).
+        and_raise(Spree::Core::LabelRefundRefused, 'Unable to request refund. The parcel has been shipped.')
+
+      result = subject.call(shipping_label: label)
+
+      expect(result).to be_failure
+      expect(result.error.to_s).to eq('Unable to request refund. The parcel has been shipped.')
+      expect(label.reload).to be_purchased
+    end
   end
 end
