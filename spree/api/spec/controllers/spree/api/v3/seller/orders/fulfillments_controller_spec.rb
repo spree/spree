@@ -104,8 +104,11 @@ RSpec.describe Spree::Api::V3::Seller::Orders::FulfillmentsController, type: :co
       }, as: :json
 
       expect(response).to have_http_status(:ok)
+      # Tracking lives on the parcel's consignment since 6.0; `tracking` and
+      # `tracking_url` on the fulfillment summarize the primary one.
       expect(fulfillment.reload.tracking).to eq('TRACK123')
-      expect(fulfillment.tracking_carrier).to eq('ups')
+      expect(fulfillment.deliveries.first.carrier).to eq('ups')
+      expect(fulfillment.tracking_url).to include('TRACK123')
     end
 
     # Where a parcel ships from and which service carries it are the

@@ -434,6 +434,43 @@ export class SellerClient {
        * The tracked consignments of one of the seller's parcels. A seller
        * ships on manual methods, so tracking numbers are entered here by hand.
        */
+      /**
+       * The tracking number and its carrier. Where a parcel ships from and
+       * which service carries it are the marketplace's arrangements, so they
+       * are not editable here.
+       */
+      update: (
+        orderId: string,
+        id: string,
+        params: { tracking?: string; tracking_carrier?: string },
+        options?: RequestOptions,
+      ): Promise<Fulfillment> =>
+        this.request<Fulfillment>('PATCH', `/orders/${orderId}/fulfillments/${id}`, {
+          ...options,
+          body: params,
+        }),
+
+      /** A parcel this seller is not going to send after all. */
+      cancel: (orderId: string, id: string, options?: RequestOptions): Promise<Fulfillment> =>
+        this.request<Fulfillment>('PATCH', `/orders/${orderId}/fulfillments/${id}/cancel`, options),
+
+      /**
+       * Moves part of what this parcel holds onto one of its own, for goods
+       * leaving separately. Answers with every fulfillment on the order, since
+       * splitting rewrites more than one.
+       */
+      split: (
+        orderId: string,
+        id: string,
+        params: { variant_id: string; quantity: number; stock_location_id?: string },
+        options?: RequestOptions,
+      ): Promise<{ data: Fulfillment[] }> =>
+        this.request<{ data: Fulfillment[] }>(
+          'PATCH',
+          `/orders/${orderId}/fulfillments/${id}/split`,
+          { ...options, body: params },
+        ),
+
       deliveries: {
         list: (
           orderId: string,

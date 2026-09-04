@@ -59,7 +59,9 @@ export function FulfillmentTrackingDialog({
     resolver: zodResolver(trackingFormSchema),
     defaultValues: {
       tracking: fulfillment.tracking ?? '',
-      tracking_carrier: fulfillment.tracking_carrier ?? '',
+      // The carrier lives on the parcel's consignment since 6.0; `tracking`
+      // on the fulfillment summarizes the first of them.
+      tracking_carrier: fulfillment.deliveries?.[0]?.carrier ?? '',
     },
   })
 

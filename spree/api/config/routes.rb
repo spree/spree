@@ -872,6 +872,15 @@ Spree::Core::Engine.add_routes do
               patch :cancel
               patch :split
             end
+
+            # A parcel's consignments and its postage. Both hang off the
+            # fulfillment because that is what actually travels.
+            resources :deliveries, controller: 'orders/deliveries', only: [:index, :show, :create, :update, :destroy]
+            resources :labels, controller: 'orders/labels', only: [:index, :show, :create, :destroy] do
+              member do
+                get :download
+              end
+            end
           end
 
           # Putting a sale right. The seller is merchant of record for their
@@ -904,13 +913,6 @@ Spree::Core::Engine.add_routes do
               patch :resolve
               patch :deny
               patch :cancel
-            end
-
-            resources :deliveries, controller: 'orders/deliveries', only: [:index, :show, :create, :update, :destroy]
-            resources :labels, controller: 'orders/labels', only: [:index, :show, :create, :destroy] do
-              member do
-                get :download
-              end
             end
           end
         end
