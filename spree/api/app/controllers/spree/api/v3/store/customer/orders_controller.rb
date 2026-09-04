@@ -6,12 +6,10 @@ module Spree
           class OrdersController < ResourceController
             prepend_before_action :require_authentication!
 
-            protected
+            # Order history is a receipt surface.
+            renders_receipts!
 
-            # Order history is a receipt surface — see StorefrontGating#renders_receipts?.
-            def renders_receipts?
-              true
-            end
+            protected
 
             def model_class
               Spree::Order

@@ -22,6 +22,8 @@ module Spree
 
         included do
           before_action :enforce_storefront_login_required!
+
+          class_attribute :storefront_renders_receipts, instance_writer: false, default: false
         end
 
         class_methods do
@@ -31,6 +33,15 @@ module Spree
           # locales, markets, newsletter, tokenized digital downloads).
           def allow_guest_storefront_access!
             skip_before_action :enforce_storefront_login_required!, raise: false
+          end
+
+          # Opts a controller out of the +approval_required+ price gate. Use
+          # for receipt surfaces — completed purchases and the customer's own
+          # stored value, money already taken. The posture protects catalog
+          # prices, never a buyer's record of what they were charged; the
+          # shipped +prices_hidden+ guest semantics stay untouched.
+          def renders_receipts!
+            self.storefront_renders_receipts = true
           end
         end
 
@@ -70,18 +81,6 @@ module Spree
           )
         end
 
-        # Whether this controller serves receipts — completed purchases and
-        # the customer's own stored value, money already taken. The
-        # +approval_required+ posture protects catalog prices, never a
-        # buyer's record of what they were charged, so receipt surfaces opt
-        # out of its per-customer gating. The shipped +prices_hidden+
-        # guest semantics stay untouched. Override to return true.
-        #
-        # @return [Boolean]
-        def renders_receipts?
-          false
-        end
-
         private
 
         def compute_pricing_access
@@ -90,7 +89,7 @@ module Spree
 
           if channel.storefront_prices_hidden?
             'login_required' if try_spree_current_user.blank?
-          elsif channel.storefront_approval_required? && !renders_receipts?
+          elsif channel.storefront_approval_required? && !storefront_renders_receipts
             Spree.company_activation_policy.pricing_access_code(
               user: try_spree_current_user, store: current_store
             )
