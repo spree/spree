@@ -38550,7 +38550,6 @@ components:
       - requested_at
       - completed_at
       - expires_at
-      - download_url
       - email
       - error_message
       - created_at

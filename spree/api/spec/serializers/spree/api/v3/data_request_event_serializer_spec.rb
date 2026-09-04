@@ -17,6 +17,20 @@ RSpec.describe Spree::Api::V3::DataRequestEventSerializer do
     expect(payload.to_s).not_to include(data_request.download_token)
   end
 
+  # Same credential, a different way out. Listing requests in the admin needs
+  # only `read_customers`, while downloading the export asks for four
+  # permissions — so rendering the link on those rows would hand the whole
+  # file to a role that was never granted it.
+  it 'keeps the download credential off the admin payload but leaves the customer theirs' do
+    admin = Spree::Api::V3::Admin::DataRequestSerializer.new(data_request.reload).
+            serializable_hash.keys.map(&:to_s)
+    storefront = Spree::Api::V3::DataRequestSerializer.new(data_request).
+                 serializable_hash.keys.map(&:to_s)
+
+    expect(admin).not_to include('download_url')
+    expect(storefront).to include('download_url')
+  end
+
   it 'still says which request finished and how' do
     payload = data_request.reload.event_payload
 

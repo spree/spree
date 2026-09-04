@@ -4,6 +4,14 @@ module Spree
       module Admin
         # Admin API Data Request Serializer
         class DataRequestSerializer < V3::DataRequestSerializer
+          # The inherited link needs no authentication of its own, so rendering
+          # it here would hand the whole export to anyone who can list requests
+          # — `read_customers` alone, rather than the four permissions the
+          # export action asks for. Staff download through that action instead.
+          # This is the same reasoning that keeps the link out of event
+          # payloads and the webhook delivery log.
+          attributes :download_url, if: proc { false }
+
           typelize email: :string,
                    error_message: [:string, nullable: true],
                    customer_id: [:string, nullable: true],
