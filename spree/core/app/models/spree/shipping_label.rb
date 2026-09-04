@@ -65,6 +65,21 @@ module Spree
       source == 'uploaded'
     end
 
+    # The provider that sold this label, which is the only one that can refund
+    # it. Resolved from the connected account it was bought through rather
+    # than from the parcel's current delivery method: a merchant who reroutes
+    # a parcel after buying postage still has to give that postage back to the
+    # carrier who sold it.
+    #
+    # @return [Spree::FulfillmentProvider::Base]
+    def provider
+      klass = integration && Spree.fulfillment_providers.find do |candidate|
+        candidate.integration_class.to_s == integration.type
+      end
+
+      klass ? klass.new : owner.provider
+    end
+
     # @return [Boolean] whether a refund can still be asked of the carrier.
     #   A label the carrier is still deciding on counts: some settle refunds
     #   asynchronously and a re-ask is how a stuck one is re-driven.

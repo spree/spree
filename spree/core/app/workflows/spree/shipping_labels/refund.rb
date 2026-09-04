@@ -46,7 +46,7 @@ module Spree
       end
 
       def refund
-        @outcome = shipping_label.owner.provider.refund_label(shipping_label).to_s
+        @outcome = shipping_label.provider.refund_label(shipping_label).to_s
 
         return if %w[refunded refund_requested].include?(@outcome)
 

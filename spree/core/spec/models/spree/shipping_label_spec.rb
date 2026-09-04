@@ -82,4 +82,35 @@ RSpec.describe Spree::ShippingLabel, type: :model do
       end
     end
   end
+  # A merchant who reroutes a parcel after buying postage still owes that
+  # postage back to the carrier who sold it, not to whoever carries the parcel
+  # now — and the Manual provider refunds nothing at all.
+  describe '#provider' do
+    # A carrier gem registers a provider that names the integration holding
+    # its credentials; the label resolves back through that pairing.
+    let(:selling_provider) do
+      Class.new(Spree::FulfillmentProvider::Base) do
+        def self.name = 'SpecSellingProvider'
+        def self.integration_class = 'Spree::Integration'
+        def self.generates_labels? = true
+      end
+    end
+
+    it 'is the one behind the integration that sold the label' do
+      allow(Spree).to receive(:fulfillment_providers).and_return([selling_provider])
+      # Stood in rather than created: the only concrete integration in the
+      # suite belongs to a provider gem core does not load.
+      integration = instance_double(Spree::Integration, type: 'Spree::Integration')
+      label = build(:shipping_label, owner: fulfillment)
+      allow(label).to receive(:integration).and_return(integration)
+
+      expect(label.provider).to be_a(selling_provider)
+    end
+
+    it 'falls back to the parcel own provider for an uploaded label' do
+      label = build(:shipping_label, :uploaded, owner: fulfillment, integration: nil)
+
+      expect(label.provider.class).to eq(fulfillment.provider.class)
+    end
+  end
 end

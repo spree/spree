@@ -59,6 +59,7 @@ module Spree
       expect(label.reload).to be_purchased
     end
 
+
     it 'refuses an uploaded label' do
       # Its own parcel: one live label per parcel is a database constraint,
       # and this fulfillment already carries the purchased one above.

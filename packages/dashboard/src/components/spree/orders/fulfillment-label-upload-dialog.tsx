@@ -7,6 +7,15 @@ import {
 } from '@spree/dashboard-core'
 import {
   Button,
+  Combobox,
+  ComboboxButtonTrigger,
+  ComboboxContent,
+  ComboboxEmpty,
+  ComboboxItem,
+  ComboboxList,
+  ComboboxSearch,
+  ComboboxTriggerPlaceholder,
+  ComboboxValue,
   Dialog,
   DialogBody,
   DialogContent,
@@ -24,10 +33,11 @@ import {
   InputGroupText,
 } from '@spree/dashboard-ui'
 import { useState } from 'react'
-import { useForm } from 'react-hook-form'
+import { Controller, useForm } from 'react-hook-form'
 import { useTranslation } from 'react-i18next'
 import { z } from 'zod'
 import { useFulfillmentActions } from '../../../hooks/use-fulfillments'
+import { useTrackingCarriers } from '../../../hooks/use-tracking-carriers'
 
 /** What a carrier label plausibly arrives as — mirrors the server allowlist. */
 const LABEL_ACCEPT = 'application/pdf,image/png,text/plain'
@@ -60,6 +70,18 @@ export function FulfillmentLabelUploadDialog({
 }) {
   const { t } = useTranslation()
   const { buyLabel } = useFulfillmentActions(orderId)
+  const { data: carriersData } = useTrackingCarriers(open)
+
+  // The registry's carriers, stored by key and shown by name. Anything it
+  // does not know is still typeable — a forwarder's own name is a legal
+  // carrier, and an empty value asks the server to detect one.
+  const carrierOptions = (carriersData?.data ?? []).map((carrier) => ({
+    value: carrier.id,
+    label: carrier.name,
+  }))
+
+  const carrierLabel = (value: string) =>
+    carrierOptions.find((option) => option.value === value)?.label ?? value
 
   const [file, setFile] = useState<FileUploadValue>(EMPTY_FILE_UPLOAD_VALUE)
   // The signed id does not exist until the upload resolves, so saving during
@@ -168,10 +190,40 @@ export function FulfillmentLabelUploadDialog({
               <FieldLabel htmlFor="label-carrier">
                 {t('admin.orders.detail.fulfillments.carrier_label')}
               </FieldLabel>
-              <Input
-                id="label-carrier"
-                placeholder={t('admin.orders.detail.fulfillments.carrier_auto')}
-                {...form.register('carrier')}
+              <Controller
+                control={form.control}
+                name="carrier"
+                render={({ field }) => (
+                  <Combobox
+                    items={carrierOptions.map((option) => option.value)}
+                    value={field.value}
+                    onValueChange={(value: string | null) => field.onChange(value ?? '')}
+                    itemToStringLabel={carrierLabel}
+                  >
+                    <ComboboxButtonTrigger id="label-carrier" onBlur={field.onBlur}>
+                      {field.value ? (
+                        <ComboboxValue />
+                      ) : (
+                        <ComboboxTriggerPlaceholder>
+                          {t('admin.orders.detail.fulfillments.carrier_auto')}
+                        </ComboboxTriggerPlaceholder>
+                      )}
+                    </ComboboxButtonTrigger>
+                    <ComboboxContent>
+                      <ComboboxSearch
+                        placeholder={t('admin.orders.detail.fulfillments.carrier_search')}
+                      />
+                      <ComboboxEmpty>{t('admin.common.no_results')}</ComboboxEmpty>
+                      <ComboboxList>
+                        {(value: string) => (
+                          <ComboboxItem key={value} value={value}>
+                            {carrierLabel(value)}
+                          </ComboboxItem>
+                        )}
+                      </ComboboxList>
+                    </ComboboxContent>
+                  </Combobox>
+                )}
               />
             </Field>
           </DialogBody>
