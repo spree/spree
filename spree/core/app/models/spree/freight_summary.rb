@@ -36,10 +36,20 @@ module Spree
       # Rolls up a cart or an order directly, for surfaces that have no stock
       # package to hand — a cart summary shown before checkout picks a rate.
       #
+      # Preloads what every line is about to read: the carton row its volume
+      # comes from, and the option values its name is built from. Serializers
+      # ask for this on each cart response, so leaving it to lazy loading is a
+      # query per variant on a surface retail carts hit too.
+      #
       # @param purchase [Spree::Cart, Spree::Order]
       # @return [Spree::FreightSummary]
       def for_purchase(purchase)
-        from_pairs(purchase.line_items.map { |line_item| [line_item.variant, line_item.quantity] })
+        line_items = purchase.line_items
+        unless line_items.loaded?
+          line_items = line_items.preload(variant: [:carton_package_type, { option_values: :option_type }])
+        end
+
+        from_pairs(line_items.map { |line_item| [line_item.variant, line_item.quantity] })
       end
 
       # Combines the summaries several fulfillments froze into the one load
@@ -83,10 +93,21 @@ module Spree
 
       private
 
+      # One line per variant, whatever the packer split it into. A stock
+      # package holds a separate content item for the on-hand and backordered
+      # halves of the same variant, and each half would round its own part
+      # carton up — reporting three cartons for thirty units that fill two.
       def from_pairs(pairs)
-        lines = pairs.filter_map do |variant, quantity|
-          Spree::FreightSummary::Line.build(variant, quantity) if variant && quantity.to_i.positive?
+        quantities = Hash.new(0)
+        variants = {}
+        pairs.each do |variant, quantity|
+          next unless variant && quantity.to_i.positive?
+
+          variants[variant.id] ||= variant
+          quantities[variant.id] += quantity.to_i
         end
+
+        lines = quantities.map { |variant_id, quantity| Spree::FreightSummary::Line.build(variants[variant_id], quantity) }
 
         new(lines: lines)
       end

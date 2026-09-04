@@ -106,7 +106,12 @@ module Spree
         first = parts.first
         units = parts.sum(&:units)
         recombined = divide(units, first.units_per_carton)
-        cartons = recombined || parts.filter_map(&:cartons).sum.presence
+        # `presence` is no help on an Integer — zero is present — so the
+        # "no part counted cartons" case has to be spelled out, or a line
+        # nobody packed reports zero cartons where every unmerged line
+        # reports none at all.
+        counted = parts.filter_map(&:cartons)
+        cartons = recombined || (counted.sum if counted.any?)
         pallets = cartons && divide(cartons, first.cartons_per_pallet)
 
         new(

@@ -133,6 +133,23 @@ describe Spree::DeliveryMethodRule, type: :model do
       expect(rule.eligible?(package)).to be(true)
     end
 
+    # One measured SKU among unmeasured ones reports a fraction of the real
+    # load; failing a minimum on that hides the method from the wholesale
+    # order it exists for.
+    it 'offers the method when the measurement is only partial' do
+      measured = create(:variant, units_per_carton: 6, carton_package_type: carton)
+      unmeasured = create(:variant, width: nil, height: nil, depth: nil, weight: 0)
+      order = create(:order, store: store)
+      create(:line_item, order: order, variant: measured, quantity: 6)
+      create(:line_item, order: order, variant: unmeasured, quantity: 40)
+      package = Spree::Stock::Coordinator.new(order.reload).packages.first
+
+      rule = described_class.new(delivery_method: delivery_method, preferred_minimum_volume: 5)
+
+      expect(package.freight_summary).not_to be_complete
+      expect(rule.eligible?(package)).to be(true)
+    end
+
     it 'bounds by the packed volume in cubic meters' do
       rule = described_class.new(delivery_method: delivery_method)
       expect(rule.eligible?(freight_package)).to be(true)

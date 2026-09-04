@@ -17,14 +17,15 @@ module Spree
         summary = package.freight_summary
         volume = summary.total_volume
 
-        # An unmeasured catalog rolls up to zero cubic meters, which is not
-        # the same as a small shipment. Failing a minimum on it would hide
-        # the method from checkout with nothing for the merchant to see,
-        # which is the opposite of how the other rules treat a gap in their
-        # own configuration.
-        return true if volume.zero? && !summary.complete?
-
-        return false if preferred_minimum_volume.present? && volume < preferred_minimum_volume
+        # A partly measured catalog understates the load — wholly unmeasured
+        # goods roll up to zero, and one measured SKU among five reports a
+        # fraction of the truth. Either way the figure is a floor, not a
+        # measurement, so it may raise a shipment into a tier but never
+        # exclude it from one: failing a minimum on an understated volume
+        # hides the method from exactly the order it was built for, with
+        # nothing for the merchant to see. A maximum still applies, since
+        # passing one on too small a number errs toward offering the method.
+        return false if preferred_minimum_volume.present? && summary.complete? && volume < preferred_minimum_volume
         return false if preferred_maximum_volume.present? && volume > preferred_maximum_volume
 
         true

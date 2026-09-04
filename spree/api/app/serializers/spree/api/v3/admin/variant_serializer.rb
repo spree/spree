@@ -60,8 +60,10 @@ module Spree
             variant[:dimensions_unit]
           end
 
+          # Encoded from the foreign key: loading the carton row just to
+          # re-encode its id is a query per variant on the product listing.
           attribute :carton_package_type_id do |variant|
-            variant.carton_package_type&.prefixed_id
+            Spree::PackageType.prefixed_id_for(variant.carton_package_type_id)
           end
 
           # How many units a full pallet holds — the far end of the packing

@@ -235,10 +235,27 @@ module Spree
 
         if (selected = fulfillment.selected_delivery_rate)
           rate_attributes = selected.attributes.except('id', 'created_at', 'updated_at')
-          replacement.delivery_rates.create!(rate_attributes.merge('fulfillment_id' => replacement.id))
+          replacement.delivery_rates.create!(
+            rate_attributes.merge(
+              'fulfillment_id' => replacement.id,
+              'metadata' => rate_metadata_for(selected, replacement)
+            )
+          )
         end
 
         replacement
+      end
+
+      # A freight summary describes one consignment's load, so a sibling that
+      # carries only part of the goods must not inherit the whole shipment's
+      # cartons and cubic meters — two forwarders would each be asked to book
+      # the entire load. Rebuilt from what this sibling actually ships.
+      def rate_metadata_for(selected, replacement)
+        metadata = selected.metadata
+        return metadata if metadata.blank? || metadata['freight_summary'].blank?
+
+        summary = Spree::FreightSummary.build(replacement.to_package.contents)
+        metadata.merge('freight_summary' => summary.as_json)
       end
 
       # Tax lines, discounts and fees follow whatever they hang off. Rows

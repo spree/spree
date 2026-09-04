@@ -325,13 +325,26 @@ module Spree
       cost + adjustment_total
     end
     alias total final_price
+    # Every money display on an unpriced fulfillment says the same thing, for
+    # the same reason display_cost does: a container nobody has quoted must
+    # not render as free.
+    #
+    # @return [String, Spree::Money]
+    def display_final_price(**options)
+      return Spree.t('delivery_rates.quoted_after_review') if unpriced?
+
+      Spree::Money.new(final_price, { currency: currency }.merge(options))
+    end
     alias display_total display_final_price
 
     def final_price_with_items
       item_cost + final_price
     end
 
+    # An unpriced fulfillment is never free — its cost is zero only because
+    # the forwarder has not quoted it yet.
     def free?
+      return false if unpriced?
       return true if final_price == BigDecimal(0)
 
       with_free_shipping_promotion?
