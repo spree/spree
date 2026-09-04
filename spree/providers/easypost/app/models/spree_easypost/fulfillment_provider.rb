@@ -70,6 +70,12 @@ module SpreeEasyPost
       return if shipment.nil?
 
       label_purchase(shipment)
+    rescue EasyPost::Errors::EasyPostError => e
+      # EasyPost says exactly what is wrong — an incomplete origin address, an
+      # unserviceable destination — and the merchant is the only one who can
+      # fix it. Passed through rather than reported as a connection problem.
+      report(e, owner)
+      raise Spree::Core::LabelPurchaseRefused, e.message
     rescue StandardError => e
       report(e, owner)
       nil
@@ -144,7 +150,14 @@ module SpreeEasyPost
       # the delivery method no longer pins one (it offers many).
       selected = fulfillment.selected_delivery_rate
       address = fulfillment.address || fulfillment.order&.ship_address
-      return if selected&.carrier.blank? || selected.service_level.blank? || address.nil?
+
+      # Each of these is the merchant's to fix, so each says so rather than
+      # failing as "check the carrier connection".
+      raise Spree::Core::LabelPurchaseRefused, Spree.t('easypost.errors.no_destination') if address.nil?
+
+      if selected&.carrier.blank? || selected.service_level.blank?
+        raise Spree::Core::LabelPurchaseRefused, Spree.t('easypost.errors.rate_not_quoted')
+      end
 
       shipment = integration.client.shipment.create(
         **SpreeEasyPost.shipment_params(
@@ -154,7 +167,13 @@ module SpreeEasyPost
       rate = shipment.rates.find do |candidate|
         candidate.carrier == selected.carrier && candidate.service == selected.service_level
       end
-      return if rate.nil?
+
+      # Silently buying a different service than the customer paid for is
+      # worse than no label, so this refuses and names the service.
+      if rate.nil?
+        raise Spree::Core::LabelPurchaseRefused,
+              Spree.t('easypost.errors.service_unavailable', service: "#{selected.carrier} #{selected.service_level}")
+      end
 
       buy(integration, fulfillment.stock_location, fulfillment.store, shipment.id, rate.id)
     end

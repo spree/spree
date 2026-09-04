@@ -16,12 +16,16 @@ import { useMutation, useQueryClient } from '@tanstack/react-query'
  * units, re-prices the fulfillment, or both, and the order totals and
  * fulfillment status are derived from that.
  *
- * A 422 is left untoasted: the caller is a form that renders the same message
- * next to the offending input, so toasting it too would say it twice.
+ * A 422 is left untoasted for a mutation a form drives, since the form renders
+ * the same message next to the offending input and toasting it would say it
+ * twice. A mutation driven by a plain button has nowhere to put it, so those
+ * opt out with `toastValidationErrors` — silence there reads as a button that
+ * simply did nothing.
  */
 function useFulfillmentMutation<TParams>(
   orderId: string,
   mutationFn: (params: TParams) => Promise<unknown>,
+  { toastValidationErrors = false }: { toastValidationErrors?: boolean } = {},
 ) {
   const queryClient = useQueryClient()
   const buildKey = useResourceKeyBuilder()
@@ -32,7 +36,7 @@ function useFulfillmentMutation<TParams>(
       queryClient.invalidateQueries({ queryKey: buildKey('orders', orderId) })
     },
     onError: (error) => {
-      if (error instanceof SpreeError && error.status === 422) return
+      if (!toastValidationErrors && error instanceof SpreeError && error.status === 422) return
       toastManager.add({
         type: 'error',
         title: error instanceof Error ? error.message : String(error),
@@ -86,12 +90,17 @@ export function useFulfillmentActions(orderId: string) {
     },
   )
 
-  const cancel = useFulfillmentMutation(orderId, (fulfillmentId: string) =>
-    adminClient.orders.fulfillments.cancel(orderId, fulfillmentId),
+  const cancel = useFulfillmentMutation(
+    orderId,
+    (fulfillmentId: string) => adminClient.orders.fulfillments.cancel(orderId, fulfillmentId),
+    { toastValidationErrors: true },
   )
 
-  const markDelivered = useFulfillmentMutation(orderId, (fulfillmentId: string) =>
-    adminClient.orders.fulfillments.markDelivered(orderId, fulfillmentId),
+  const markDelivered = useFulfillmentMutation(
+    orderId,
+    (fulfillmentId: string) =>
+      adminClient.orders.fulfillments.markDelivered(orderId, fulfillmentId),
+    { toastValidationErrors: true },
   )
 
   // Buying with no body; a `file` records postage bought elsewhere instead.
@@ -105,12 +114,14 @@ export function useFulfillmentActions(orderId: string) {
     orderId,
     ({ fulfillmentId, labelId }: { fulfillmentId: string; labelId: string }) =>
       adminClient.orders.fulfillments.labels.refund(orderId, fulfillmentId, labelId),
+    { toastValidationErrors: true },
   )
 
   const deleteLabel = useFulfillmentMutation(
     orderId,
     ({ fulfillmentId, labelId }: { fulfillmentId: string; labelId: string }) =>
       adminClient.orders.fulfillments.labels.delete(orderId, fulfillmentId, labelId),
+    { toastValidationErrors: true },
   )
 
   const createDelivery = useFulfillmentMutation(
@@ -133,12 +144,14 @@ export function useFulfillmentActions(orderId: string) {
     orderId,
     ({ fulfillmentId, deliveryId }: { fulfillmentId: string; deliveryId: string }) =>
       adminClient.orders.fulfillments.deliveries.delete(orderId, fulfillmentId, deliveryId),
+    { toastValidationErrors: true },
   )
 
   const markDeliveryDelivered = useFulfillmentMutation(
     orderId,
     ({ fulfillmentId, deliveryId }: { fulfillmentId: string; deliveryId: string }) =>
       adminClient.orders.fulfillments.deliveries.markDelivered(orderId, fulfillmentId, deliveryId),
+    { toastValidationErrors: true },
   )
 
   return {

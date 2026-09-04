@@ -109,6 +109,19 @@ module Spree
       expect(fulfillment.reload.shipping_labels).to be_empty
     end
 
+    # "Check the carrier connection" is the wrong advice when the connection
+    # is fine and the warehouse simply has no address on it.
+    it 'reports the carrier own reason when the provider knows it' do
+      allow(provider).to receive(:purchase_label).
+        and_raise(Spree::Core::LabelPurchaseRefused, 'Origin address is missing a street')
+
+      result = subject.call(owner: fulfillment)
+
+      expect(result).to be_failure
+      expect(result.error.to_s).to eq('Origin address is missing a street')
+      expect(fulfillment.reload.shipping_labels).to be_empty
+    end
+
     it 'refuses a provider without labels' do
       allow_any_instance_of(Spree::Fulfillment).to receive(:provider).and_return(Spree::FulfillmentProvider::Manual.new)
 

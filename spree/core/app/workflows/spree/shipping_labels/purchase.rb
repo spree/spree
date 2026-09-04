@@ -97,12 +97,17 @@ module Spree
         @shipping_label = nil
       end
 
+      # A provider that knows why the carrier said no raises with its words;
+      # anything else falls back to the generic line, since a nil tells us
+      # nothing worth passing on.
       def purchase
         @purchase = provider.purchase_label(owner)
 
         return if @purchase.is_a?(Spree::LabelPurchase) && @purchase.valid?
 
         failure(owner, Spree.t('fulfillments.errors.label_purchase_failed'))
+      rescue Spree::Core::LabelPurchaseRefused => e
+        failure(owner, e.message)
       end
 
       def record_label

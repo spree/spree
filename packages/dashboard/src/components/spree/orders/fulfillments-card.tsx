@@ -33,6 +33,7 @@ import {
   SelectTrigger,
   SelectValue,
   StatusBadge,
+  toastManager,
   useConfirm,
 } from '@spree/dashboard-ui'
 import {
@@ -600,7 +601,23 @@ function FulfillmentRow({ order, fulfillment }: { order: Order; fulfillment: Ful
                         confirmLabel: t('admin.orders.detail.fulfillments.buy_label'),
                       })
                     ) {
-                      buyLabel.mutate({ fulfillmentId: fulfillment.id })
+                      // Toasted here rather than on the hook: the same
+                      // mutation backs the upload sheet, which shows its
+                      // rejection inline. A button has nowhere to put one.
+                      buyLabel.mutate(
+                        { fulfillmentId: fulfillment.id },
+                        {
+                          onError: (mutationError) => {
+                            toastManager.add({
+                              type: 'error',
+                              title:
+                                mutationError instanceof Error
+                                  ? mutationError.message
+                                  : t('admin.errors.unexpected'),
+                            })
+                          },
+                        },
+                      )
                     }
                   }}
                 >

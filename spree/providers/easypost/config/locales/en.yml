@@ -1,6 +1,11 @@
 ---
 en:
   spree:
+    easypost:
+      errors:
+        no_destination: This parcel has no delivery address, so no carrier can quote it.
+        rate_not_quoted: This delivery rate was not quoted by EasyPost. Re-quote the fulfillment and pick a carrier service before buying a label.
+        service_unavailable: "%{service} is no longer offered for this parcel. Re-quote the fulfillment and pick another service."
     integrations:
       easy_post:
         description: Live multi-carrier delivery rates at checkout through your EasyPost account, including your own negotiated carrier contracts.

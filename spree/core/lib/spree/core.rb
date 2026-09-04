@@ -822,6 +822,12 @@ module Spree
     # sees why there is no label.
     class LabelPurchaseFailed < RuntimeError; end
 
+    # A carrier refusing to sell a label, in its own words. Raised by a
+    # provider when it knows why — a warehouse with no address, an
+    # unserviceable destination — so the merchant reads the actual reason
+    # instead of being sent to check a connection that is fine.
+    class LabelPurchaseRefused < RuntimeError; end
+
     # A label the carrier refused to refund while a parcel was being
     # cancelled. The cancellation proceeds; the postage is the merchant's to
     # chase, so it is reported rather than dropped.
