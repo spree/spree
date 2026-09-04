@@ -27,11 +27,16 @@ module Spree
     # which claims the person did it themselves — recording one as the other
     # is evidence of a gesture that never happened.
     ADMIN = 'admin'.freeze
+    # The person confirmed a newsletter sign-up, which is a different gesture
+    # from editing their profile and is the stronger evidence of the two: a
+    # double opt-in proves the address reaches them.
+    NEWSLETTER = 'newsletter'.freeze
     # Core's own: erasure withdraws marketing consent on the person's behalf,
     # and that withdrawal is a consent event like any other.
     ANONYMIZATION = 'anonymization'.freeze
 
-    SOURCES = [CHECKOUT, REGISTRATION, ACCOUNT, ADMIN, ANONYMIZATION, 'import', 'storefront'].freeze
+    SOURCES = [CHECKOUT, REGISTRATION, ACCOUNT, ADMIN, NEWSLETTER, ANONYMIZATION,
+               'import', 'storefront'].freeze
 
     belongs_to :store, class_name: 'Spree::Store'
     belongs_to :owner, polymorphic: true

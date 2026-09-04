@@ -24,7 +24,11 @@ module Spree
       def set_user_email_marketing_to_true
         return if subscriber.customer.blank?
 
-        subscriber.customer.update!(accepts_email_marketing: true)
+        customer = subscriber.customer
+        # Confirming a newsletter sign-up, not editing a profile — left unset
+        # the stamp would say the person changed this from their account page.
+        customer.consent_source = Spree::ConsentRecord::NEWSLETTER
+        customer.update!(accepts_email_marketing: true)
       end
 
       def publish_event
