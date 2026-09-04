@@ -3169,7 +3169,8 @@
             },
             "refund_title": "Retoure erstatten",
             "refund_total": "Erstattungssumme",
-            "resellable": "Wiederverkäuflich"
+            "resellable": "Wiederverkäuflich",
+            "returning_to": "Rücksendung an {{name}}"
           },
           "section_billing_address": "Rechnungsadresse",
           "section_claims": "Reklamationen",

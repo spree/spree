@@ -3169,7 +3169,8 @@
             },
             "refund_title": "Rembourser le retour",
             "refund_total": "Total du remboursement",
-            "resellable": "Revendable"
+            "resellable": "Revendable",
+            "returning_to": "Retour vers {{name}}"
           },
           "section_billing_address": "Adresse de facturation",
           "section_claims": "Réclamations",

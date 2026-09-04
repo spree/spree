@@ -3197,7 +3197,8 @@
             },
             "refund_title": "Zwrot płatności",
             "refund_total": "Kwota zwrotu",
-            "resellable": "Nadaje się do sprzedaży"
+            "resellable": "Nadaje się do sprzedaży",
+            "returning_to": "Zwrot do {{name}}"
           },
           "section_billing_address": "Adres rozliczeniowy",
           "section_claims": "Reklamacje",

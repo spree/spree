@@ -3169,7 +3169,8 @@
             },
             "refund_title": "Refund return",
             "refund_total": "Refund total",
-            "resellable": "Resellable"
+            "resellable": "Resellable",
+            "returning_to": "Returning to {{name}}"
           },
           "section_billing_address": "Billing address",
           "section_claims": "Claims",

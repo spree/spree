@@ -196,6 +196,13 @@ export function OrderReturnsCard({ order }: { order: Order }) {
                 {(returnRecord.return_line_items ?? []).map((line) => (
                   <ReturnLineRow key={line.id} line={line} status={returnRecord.status} />
                 ))}
+                {returnRecord.stock_location?.name && (
+                  <p className="text-sm text-muted-foreground">
+                    {t('admin.pages.orders.detail.returns.returning_to', {
+                      name: returnRecord.stock_location.name,
+                    })}
+                  </p>
+                )}
               </CardContent>
 
               <CardFooter className="justify-between text-sm">

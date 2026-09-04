@@ -3186,7 +3186,8 @@
             },
             "refund_title": "استرداد المرتجع",
             "refund_total": "إجمالي الاسترداد",
-            "resellable": "قابل لإعادة البيع"
+            "resellable": "قابل لإعادة البيع",
+            "returning_to": "الإرجاع إلى {{name}}"
           },
           "section_billing_address": "عنوان إرسال الفواتير",
           "section_claims": "المطالبات",

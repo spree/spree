@@ -12,7 +12,7 @@ export function useOrderReturns(orderId: string) {
     queryKey: useResourceKey('order-returns', orderId),
     queryFn: () =>
       adminClient.orders.returns.list(orderId, {
-        expand: ['return_line_items', 'return_line_items.variant'],
+        expand: ['return_line_items', 'return_line_items.variant', 'stock_location'],
       }),
     enabled: !!orderId,
   })

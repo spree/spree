@@ -3161,7 +3161,8 @@
             },
             "refund_title": "退货退款",
             "refund_total": "退款总额",
-            "resellable": "可再销售"
+            "resellable": "可再销售",
+            "returning_to": "退回至 {{name}}"
           },
           "section_billing_address": "账单地址",
           "section_claims": "索赔",
