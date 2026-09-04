@@ -63,7 +63,13 @@ module Spree
         shipping_label.update!(attributes)
       end
 
+      # Only once the carrier has actually refunded. A refund the carrier is
+      # still deciding on may never settle, and the parcel keeps travelling
+      # under this tracking number meanwhile — ShippingLabels::ConfirmRefund
+      # releases it when the answer arrives.
       def remove_delivery_if_never_moved
+        return unless shipping_label.refunded?
+
         shipping_label.release_unmoved_delivery
       end
     end

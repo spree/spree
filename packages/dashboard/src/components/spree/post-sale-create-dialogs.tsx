@@ -132,12 +132,15 @@ export function CreateReturnDialog({
   // somewhere even when no location is flagged.
   const locationOptions = (stockLocationData?.data ?? [])
     .filter((location) => location.active)
-    .sort((a, b) => Number(b.returns_enabled) - Number(a.returns_enabled))
+    // A location that predates the flag accepts returns, which is how goods
+    // behaved before it existed — the same default the form applies.
+    .sort((a, b) => Number(b.returns_enabled ?? true) - Number(a.returns_enabled ?? true))
     .map((location) => ({
       value: location.id,
-      label: location.returns_enabled
-        ? location.name
-        : t('admin.pages.orders.detail.returns.location_no_returns', { name: location.name }),
+      label:
+        (location.returns_enabled ?? true)
+          ? location.name
+          : t('admin.pages.orders.detail.returns.location_no_returns', { name: location.name }),
     }))
 
   const chosen = selectedItems(selection)

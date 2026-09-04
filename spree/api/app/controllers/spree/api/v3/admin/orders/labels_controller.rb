@@ -79,10 +79,20 @@ module Spree
               end
 
               with_order_lock do
-                ApplicationRecord.transaction do
-                  @resource.delivery&.destroy!
-                  @resource.destroy!
+                # The label's own consignment goes with it, but only while the
+                # parcel never moved: a journey that happened is a fact, and
+                # Deliveries::Destroy is what knows that and rolls the
+                # fulfillment up afterwards.
+                delivery = @resource.delivery
+                if delivery && !@resource.release_unmoved_delivery
+                  return render_error(
+                    code: ERROR_CODES[:validation_error],
+                    message: Spree.t('shipping_labels.errors.delivery_has_moved'),
+                    status: :unprocessable_content
+                  )
                 end
+
+                @resource.destroy!
                 head :no_content
               end
             end

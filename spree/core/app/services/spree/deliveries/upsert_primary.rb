@@ -27,13 +27,16 @@ module Spree
         # A corrected number is a different parcel: its journey starts over,
         # and the carrier and link belonging to the old number go with it —
         # otherwise a UPS badge and a UPS page survive onto a FedEx number.
-        if number != primary.tracking_number
-          attributes[:status] = 'pending'
-          attributes[:carrier] = nil if carrier.blank?
-          attributes[:tracking_url] = nil
-        end
+        corrected = number != primary.tracking_number
+        attributes = primary.correction_attributes(attributes)
 
-        primary.update(attributes) ? success(primary) : failure(primary)
+        return failure(primary) unless primary.update(attributes)
+
+        # A consignment that started over may have been the one holding the
+        # fulfillment at delivered.
+        Spree.fulfillment_recalculate_delivery_service.call(fulfillment: fulfillment) if corrected
+
+        success(primary)
       end
     end
   end

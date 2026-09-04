@@ -35,7 +35,8 @@ module Spree
             # journey starts over.
             def update
               with_order_lock do
-                if @resource.update(corrected_attributes(update_params.to_h, @resource))
+                if @resource.update(@resource.correction_attributes(update_params.to_h))
+                  recalculate_delivery
                   render json: serialize_resource(@resource.reload)
                 else
                   render_validation_error(@resource.errors)
@@ -82,14 +83,12 @@ module Spree
             # is concerned: its journey starts over, and the carrier and link
             # that belonged to the old number go with it unless this request
             # supplies new ones.
-            def corrected_attributes(attributes, delivery)
-              number = attributes[:tracking_number]
-              return attributes if number.blank? || number.squish == delivery.tracking_number
+            # A consignment that started over may have been the one holding
+            # the fulfillment at delivered.
+            def recalculate_delivery
+              return unless @parent.is_a?(Spree::Fulfillment)
 
-              corrected = attributes.merge(status: 'pending')
-              corrected[:carrier] = nil if corrected[:carrier].blank?
-              corrected[:tracking_url] = nil if corrected[:tracking_url].blank?
-              corrected
+              Spree.fulfillment_recalculate_delivery_service.call(fulfillment: @parent)
             end
 
             def model_class

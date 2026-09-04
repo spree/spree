@@ -48,7 +48,8 @@ module Spree
               authorize! :update, @fulfillment
 
               with_order_lock do
-                if @delivery.update(corrected_attributes(delivery_params.to_h, @delivery))
+                if @delivery.update(@delivery.correction_attributes(delivery_params.to_h))
+                  Spree.fulfillment_recalculate_delivery_service.call(fulfillment: @fulfillment)
                   render json: serialize(@delivery.reload)
                 else
                   render_validation_error(@delivery.errors)
@@ -83,15 +84,6 @@ module Spree
             # is concerned: its journey starts over, and the carrier and link
             # that belonged to the old number go with it unless this request
             # supplies new ones.
-            def corrected_attributes(attributes, delivery)
-              number = attributes[:tracking_number]
-              return attributes if number.blank? || number.squish == delivery.tracking_number
-
-              corrected = attributes.merge(status: 'pending')
-              corrected[:carrier] = nil if corrected[:carrier].blank?
-              corrected[:tracking_url] = nil if corrected[:tracking_url].blank?
-              corrected
-            end
 
             def set_fulfillment
               @order = current_seller_orders.find_by_prefix_id!(params[:order_id])

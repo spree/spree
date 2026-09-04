@@ -85,9 +85,29 @@ module Spree
     def to_package
       package = Spree::Stock::Package.new(stock_location)
       package.owner = order
-      units = return_line_items.includes(:fulfillment_item).filter_map(&:fulfillment_item)
+      units = returned_units
       units.group_by(&:status).each { |status, items| package.add_multiple(items, status.to_sym) }
       package
+    end
+
+    # The units as the parcel coming back holds them: a partial return sends
+    # back what the customer is returning, not everything that shipped. The
+    # copies are never saved — the shipment's own record of what left is not
+    # ours to rewrite, and it is what a second return is measured against.
+    #
+    # @return [Array<Spree::FulfillmentItem>]
+    def returned_units
+      return_line_items.includes(:fulfillment_item).filter_map do |return_line_item|
+        unit = return_line_item.fulfillment_item
+        next if unit.nil?
+
+        quantity = return_line_item.quantity.to_i
+        next unit if quantity <= 0 || quantity == unit.quantity.to_i
+
+        # `dup` rather than a new record: the packer reads variant, line item
+        # and status off the unit, and a copy carries all of it.
+        unit.dup.tap { |returned| returned.quantity = quantity }
+      end
     end
 
     # What the customer is owed for the items being returned.

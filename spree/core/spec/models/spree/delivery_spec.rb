@@ -135,4 +135,37 @@ RSpec.describe Spree::Delivery, type: :model do
       expect(fulfillment.deliveries.undelivered).to eq([first])
     end
   end
+  describe '#correction_attributes' do
+    let(:delivery) do
+      create(:delivery, owner: fulfillment, store: store, tracking_number: '1Z_OLD',
+                        carrier: 'ups', tracking_url: 'https://ups.example/1Z_OLD',
+                        status: 'delivered', delivered_at: 2.days.ago)
+    end
+
+    # To a carrier a different number is a different parcel, so nothing about
+    # the old one may survive onto it — least of all an arrival, which is what
+    # the returns window counts from.
+    it 'starts the journey over and drops the old parcel arrival' do
+      corrected = delivery.correction_attributes(tracking_number: '9400_NEW')
+
+      expect(corrected[:status]).to eq('pending')
+      expect(corrected[:delivered_at]).to be_nil
+      expect(corrected[:carrier]).to be_nil
+      expect(corrected[:tracking_url]).to be_nil
+    end
+
+    it 'leaves an edit that is not a correction alone' do
+      expect(delivery.correction_attributes(carrier: 'fedex')).to eq(carrier: 'fedex')
+    end
+
+    it 'keeps a carrier the merchant supplied with the new number' do
+      corrected = delivery.correction_attributes(tracking_number: '9400_NEW', carrier: 'fedex')
+
+      expect(corrected[:carrier]).to eq('fedex')
+    end
+
+    it 'treats the same number with stray whitespace as no correction' do
+      expect(delivery.correction_attributes(tracking_number: ' 1Z_OLD ')).not_to have_key(:status)
+    end
+  end
 end

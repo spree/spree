@@ -83,7 +83,7 @@ defineTable<PanelStockLocation>('stock-locations', {
       filterType: 'boolean',
       render: (sl) => (
         <ActiveBadge
-          active={sl.returns_enabled}
+          active={sl.returns_enabled ?? true}
           activeLabel={i18n.t('admin.stock_locations.badges.enabled')}
           dashWhenInactive
         />

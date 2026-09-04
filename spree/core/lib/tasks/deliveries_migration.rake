@@ -33,7 +33,7 @@ namespace :spree do
         # still has the column; anywhere else it never existed.
         carrier = fulfillment.has_attribute?(:tracking_carrier) ? fulfillment.read_attribute(:tracking_carrier) : nil
 
-        result = Spree::Deliveries::Create.new.call(
+        result = Spree.delivery_create_service.call(
           owner: fulfillment, tracking_number: tracking, carrier: carrier
         )
 

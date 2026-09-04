@@ -70,11 +70,15 @@ module Spree
           def find_delivery(tracking_code)
             return if tracking_code.blank?
 
+            # Paged rather than capped: a tracking number reused across
+            # canceled owners would otherwise fill the window and hide the
+            # live delivery behind them, and the webhook would be
+            # acknowledged without applying the carrier's update.
             current_store.deliveries.
               where(tracking_number: tracking_code).
               order(created_at: :desc, id: :desc).
-              limit(CANDIDATE_LIMIT).
               includes(:owner).
+              find_each(batch_size: CANDIDATE_LIMIT, order: :desc).
               find { |delivery| delivery.owner.present? && !delivery.owner.canceled? }
           end
         end

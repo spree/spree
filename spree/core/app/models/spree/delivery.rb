@@ -58,6 +58,25 @@ module Spree
       status == 'delivered'
     end
 
+    # What changes when a merchant corrects the tracking number: to the
+    # carrier a different number is a different parcel, so the journey starts
+    # over and everything belonging to the old number goes with it — its
+    # status, its arrival, and the carrier and link that described it.
+    # Otherwise a UPS badge and a UPS page survive onto a FedEx number, and a
+    # stale arrival keeps dating the returns window.
+    #
+    # @param attributes [Hash] the merchant's edit
+    # @return [Hash] the edit, widened when the number really changed
+    def correction_attributes(attributes)
+      number = attributes[:tracking_number] || attributes['tracking_number']
+      return attributes if number.blank? || number.to_s.squish == tracking_number
+
+      corrected = attributes.merge(status: 'pending', delivered_at: nil)
+      corrected[:carrier] = nil if corrected[:carrier].blank? && corrected['carrier'].blank?
+      corrected[:tracking_url] = nil if corrected[:tracking_url].blank? && corrected['tracking_url'].blank?
+      corrected
+    end
+
     self.whitelisted_ransackable_attributes = %w[tracking_number carrier status]
 
     # The public page where this consignment can be followed, best answer

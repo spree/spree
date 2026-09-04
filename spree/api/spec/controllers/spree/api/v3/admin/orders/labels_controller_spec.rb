@@ -147,6 +147,21 @@ RSpec.describe Spree::Api::V3::Admin::Orders::LabelsController, type: :controlle
 
       expect(response).to have_http_status(:unprocessable_content)
     end
+
+    # A journey that happened is a fact: deleting the label a parcel shipped
+    # under must not erase where that parcel went.
+    it 'keeps the consignment once the parcel has shipped' do
+      label = create(:shipping_label, :uploaded, :with_delivery, owner: fulfillment)
+      fulfillment.update!(status: 'fulfilled', fulfilled_at: Time.current)
+
+      delete :destroy, params: {
+        order_id: order.prefixed_id, fulfillment_id: fulfillment.prefixed_id, id: label.prefixed_id
+      }, as: :json
+
+      expect(response).to have_http_status(:unprocessable_content)
+      expect(Spree::ShippingLabel.exists?(label.id)).to be(true)
+      expect(fulfillment.reload.deliveries).to be_present
+    end
   end
 
   describe 'return labels' do

@@ -564,6 +564,10 @@ module Spree
       # Reload associations to pick up the new selected shipping rate
       delivery_rates.reset
       association(:selected_delivery_rate).reset
+      # A different rate can be a different carrier, and the provider is
+      # derived from the method behind it — a stale one buys, tracks or
+      # cancels through the account the parcel is no longer shipping on.
+      @provider = nil
       # Update shipment cost and owner totals only during checkout.
       # For completed orders, totals are managed separately (e.g., in tests or admin adjustments)
       return if owner.nil? || owner.completed?
