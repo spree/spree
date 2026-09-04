@@ -21,6 +21,8 @@ erDiagram
     Order ||--o{ Exchange : "has many"
     Order ||--o{ Claim : "has many"
     Return ||--o{ ReturnLineItem : "has many"
+    Return ||--o{ ShippingLabel : "prepays"
+    Return ||--o{ Delivery : "comes back as"
     Return }o--|| StockLocation : "received at"
 
     Return {
@@ -117,6 +119,51 @@ curl -X PATCH 'https://api.mystore.com/api/v3/admin/orders/or_xxx/returns/ret_xx
 Receiving takes the quantities the warehouse actually counted, because partial and damaged returns are normal rather than exceptional. A customer says three items are coming; two arrive; one of those can't be sold again. Only resellable goods go back into stock.
 
 Leave `items` out to receive everything as requested. Refunds default to whatever the return is still owed, and can go back to the original payment method or to store credit.
+
+### Where the goods come back to
+
+A return is received at a stock location. By default that is wherever the goods
+shipped from, which is right until a merchant inspects and restocks returns at
+one processing centre — so locations carry a `returns_enabled` flag, and a
+return routes to one that accepts them: the seller's for a seller's goods, the
+operator's own otherwise. Pass `stock_location_id` when opening the return to
+choose explicitly.
+
+### Prepaid return labels
+
+A return can carry its own postage. The label is bought against the same
+carrier account the outbound parcel shipped on, and the shipment is booked in
+reverse — from the customer's address back to the return's stock location.
+
+Buying one mints a delivery on the return, so the inbound parcel is tracked the
+same way an outbound one is. A delivery reporting arrival never receives the
+return: arrival is not inspection, and what actually turned up is still counted
+by hand.
+
+<CodeGroup>
+
+```typescript Admin SDK
+// Buy prepaid postage for the parcel coming back
+const label = await adminClient.orders.returns.labels.create('or_xxx', 'ret_xxx')
+
+// Or record one bought elsewhere
+await adminClient.orders.returns.labels.create('or_xxx', 'ret_xxx', {
+  file: signedBlobId,
+  tracking_number: '1Z999AA10123456784',
+})
+```
+
+```bash cURL
+curl -X POST 'https://api.mystore.com/api/v3/admin/orders/or_xxx/returns/ret_xxx/labels' \
+  -H 'X-Spree-API-Key: sk_xxx'
+```
+
+</CodeGroup>
+
+Customers download the label from the storefront, so a return request can end
+with "print this and drop it off" rather than an email exchange. See
+[shipping labels](/developer/core-concepts/fulfillments#shipping-labels) for
+how postage records work in general.
 
 ## Resolving a claim
 
