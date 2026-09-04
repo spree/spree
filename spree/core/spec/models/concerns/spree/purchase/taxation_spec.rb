@@ -251,9 +251,17 @@ RSpec.describe Spree::Purchase::Taxation do
         expect(claim.covers_item?(line_item)).to be(false)
       end
 
-      # Orders placed before the snapshot existed have to keep working.
-      it 'resolves live when it holds no claims' do
-        expect(record.applied_tax_exemptions).to be_blank
+      # An empty snapshot records "found no claim", not an absence. Read as
+      # absent, a certificate added later would explain a sale it never touched.
+      it 'keeps answering nothing when it froze nothing' do
+        record.update_column(:applied_tax_exemptions, [])
+
+        expect(record.reload.usable_exemptions).to eq([])
+      end
+
+      # Only nil is the legacy state — orders placed before the column existed.
+      it 'resolves live only when it holds no snapshot at all' do
+        expect(record.applied_tax_exemptions).to be_nil
         expect(record.usable_exemptions.map(&:reason_code)).to eq(['resolved_live'])
       end
     end

@@ -251,10 +251,10 @@ module Spree
 
           line_item_map = copy_line_items!(cart, order)
           fulfillment_map = copy_fulfillments!(cart, order, line_item_map)
-          copy_typed_lines!(cart, order, line_item_map, fulfillment_map)
+          fee_map = copy_typed_lines!(cart, order, line_item_map, fulfillment_map)
           copy_promotions!(cart, order)
           copy_tax_identifier!(cart, order)
-          copy_tax_exemptions!(cart, order)
+          copy_tax_exemptions!(cart, order, line_item_map, fulfillment_map, fee_map)
           copy_po_document!(cart, order)
           repoint_money_records!(cart, order)
 
@@ -295,11 +295,63 @@ module Spree
       # its company — so a provider re-resolving at commit or refund time would
       # file a credit for an exempt sale as a consumer refund and declare tax
       # that was never collected. Read from the cart, which is what was priced.
-      def copy_tax_exemptions!(cart, order)
-        claims = cart.usable_exemptions.map(&:to_snapshot)
-        return if claims.empty?
+      #
+      # An empty list is still written: "found no claim" and "placed before this
+      # existed" are different facts, and the reader tells them apart.
+      def copy_tax_exemptions!(cart, order, line_item_map, fulfillment_map, fee_map)
+        translation = exemption_item_ids(line_item_map, fulfillment_map, fee_map)
+        claims = cart.usable_exemptions.map { |claim| reown_claim(claim, translation) }
 
         order.update_column(:applied_tax_exemptions, claims)
+      end
+
+      # An override names its line by prefixed id, and completion mints new ones.
+      # Left as the cart's it matches nothing — which widens the claim rather
+      # than narrowing it, exempting every line instead of carving one out.
+      def reown_claim(claim, translation)
+        snapshot = claim.to_snapshot
+        overrides = Array(snapshot['item_overrides'])
+        return snapshot if overrides.empty?
+
+        snapshot.merge(
+          'item_overrides' => overrides.map do |override|
+            reowned = translation[override['item_id'].to_s]
+            next override.merge('item_id' => reowned) if reowned
+
+            # It narrowed nothing while the cart was priced either, so it is
+            # left alone and reported rather than dropped.
+            report_unmatched_override(override)
+            override
+          end
+        )
+      end
+
+      # Cart prefixed id → order prefixed id, encoded from the ids the copy maps
+      # already carry rather than by reloading the records.
+      def exemption_item_ids(line_item_map, fulfillment_map, fee_map)
+        translation = {}
+
+        line_item_map.each do |cart_line_item, order_line_item|
+          translation[cart_line_item.prefixed_id] = order_line_item.prefixed_id
+        end
+        { Spree::Fulfillment => fulfillment_map, Spree::Fee => fee_map }.each do |klass, ids|
+          ids.each do |cart_id, order_id|
+            translation[klass.prefixed_id_for(cart_id)] = klass.prefixed_id_for(order_id)
+          end
+        end
+
+        translation
+      end
+
+      def report_unmatched_override(override)
+        Rails.error.report(
+          Spree::Tax::UnusableExemptionError.new(
+            "A tax exemption override named #{override['item_id'].inspect}, which is not part of this sale"
+          ),
+          handled: true,
+          context: { item_id: override['item_id'] },
+          source: 'spree.core'
+        )
       end
 
       # The buyer's purchase order follows the number onto the order. The same
@@ -375,8 +427,12 @@ module Spree
 
       # The cart's rows are the record of what the sale was costed at, so the
       # order receives them verbatim rather than being re-estimated.
+      #
+      # @return [Hash{Integer => Integer}] cart fee id → order fee id, which an
+      #   exemption override may name
       def copy_typed_lines!(cart, order, line_item_map, fulfillment_map)
         line_item_id_map = line_item_map.transform_keys(&:id).transform_values(&:id)
+        fee_map = {}
 
         [Spree::TaxLine, Spree::Discount, Spree::Fee].each do |klass|
           klass.where(cart_id: cart.id).find_each do |row|
@@ -392,9 +448,12 @@ module Spree
               next if attributes['fulfillment_id'].nil?
             end
 
-            klass.create!(attributes)
+            created = klass.create!(attributes)
+            fee_map[row.id] = created.id if klass == Spree::Fee
           end
         end
+
+        fee_map
       end
 
       def copy_promotions!(cart, order)

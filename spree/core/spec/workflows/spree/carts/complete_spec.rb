@@ -342,12 +342,56 @@ module Spree
         )
       end
 
-      # A consumer sale freezes nothing, so the column stays empty rather than
-      # holding an empty list that reads as "resolved and found none".
-      it 'freezes nothing when the sale claimed no exemption' do
+      # An empty list, not nil: the reader has to tell "found no claim" apart
+      # from an order placed before the column existed.
+      it 'freezes an empty list when the sale claimed no exemption' do
         order = described_class.call(cart: ready_cart).value
 
-        expect(order.applied_tax_exemptions).to be_blank
+        expect(order.applied_tax_exemptions).to eq([])
+      end
+
+      # Completion mints new prefixed ids, and an override that matches nothing
+      # widens its claim instead of narrowing it — exempting every line.
+      it 'renames a per-item carve-out onto the line the order now owns' do
+        cart_line_item = ready_cart.line_items.first
+        claim = Spree::TaxExemption.new(
+          reason_code: 'resale',
+          item_overrides: [Spree::TaxExemption::ItemOverride.new(item_id: cart_line_item.prefixed_id,
+                                                                 exempt: false)]
+        )
+        allow(Spree.tax_resolve_exemptions_service).to receive(:new).
+          and_return(instance_double(Spree::Tax::ResolveExemptions,
+                                     call: Spree::ServiceModule::Result.new(true, [claim], nil)))
+
+        order = described_class.call(cart: ready_cart).value
+        order_line_item = order.line_items.first
+        frozen = order.usable_exemptions.sole
+
+        expect(order.applied_tax_exemptions.sole['item_overrides'].sole['item_id']).
+          to eq(order_line_item.prefixed_id)
+        expect(order_line_item.prefixed_id).not_to eq(cart_line_item.prefixed_id)
+        expect(frozen.covers_item?(order_line_item)).to be(false)
+      end
+
+      # It narrowed nothing while the cart was priced either, so the order is
+      # taxed the same way — and reported, since nobody can act on it.
+      it 'reports a carve-out naming something the sale never had' do
+        claim = Spree::TaxExemption.new(
+          reason_code: 'resale',
+          item_overrides: [Spree::TaxExemption::ItemOverride.new(item_id: 'li_notinthissale',
+                                                                 exempt: false)]
+        )
+        allow(Spree.tax_resolve_exemptions_service).to receive(:new).
+          and_return(instance_double(Spree::Tax::ResolveExemptions,
+                                     call: Spree::ServiceModule::Result.new(true, [claim], nil)))
+        allow(Rails.error).to receive(:report)
+
+        order = described_class.call(cart: ready_cart).value
+
+        expect(order.applied_tax_exemptions.sole['item_overrides'].sole['item_id']).
+          to eq('li_notinthissale')
+        expect(Rails.error).to have_received(:report).
+          with(instance_of(Spree::Tax::UnusableExemptionError), hash_including(handled: true))
       end
 
       it 'records a checkout override as such' do

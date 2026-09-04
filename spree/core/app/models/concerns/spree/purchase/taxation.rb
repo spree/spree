@@ -146,8 +146,12 @@ module Spree
 
       # Carts always resolve live — a buyer's certificates legitimately change
       # while they shop, and the cart is priced again each time.
+      #
+      # Only nil is an absent snapshot. An empty one records that the sale found
+      # no claim, and reading that as absent would let a certificate added later
+      # explain a sale it was never part of.
       def frozen_tax_exemptions?
-        is_a?(Spree::Order) && completed? && applied_tax_exemptions.present?
+        is_a?(Spree::Order) && completed? && !applied_tax_exemptions.nil?
       end
 
       def frozen_tax_exemptions
