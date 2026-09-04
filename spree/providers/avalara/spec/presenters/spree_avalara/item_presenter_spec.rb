@@ -38,9 +38,11 @@ RSpec.describe SpreeAvalara::ItemPresenter do
     end
 
     it 'cuts a description Avalara would refuse' do
-      line_item.variant.product.update!(name: 'W' * 400)
+      # Set in memory, not saved: a name this long is wider than the column on
+      # MySQL, and the truncation is what is under test rather than the write.
+      line_item.product.name = 'W' * 400
 
-      expect(present(line_item.reload)[:description].length).to eq(described_class::DESCRIPTION_LIMIT)
+      expect(present(line_item)[:description].length).to eq(described_class::DESCRIPTION_LIMIT)
     end
 
     # The basis already has order-level promotions distributed into it, so
