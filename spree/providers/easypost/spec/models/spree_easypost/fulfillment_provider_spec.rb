@@ -332,5 +332,34 @@ RSpec.describe SpreeEasyPost::FulfillmentProvider do
         expect(provider.refund_label(shipping_label)).to be_present
       end
     end
+
+    # What a merchant is told when a purchase fails is as much the contract as
+    # what they get when it succeeds, and these two are the failures they will
+    # actually hit. Recorded against the live API because the field-level
+    # detail these read lives in the response body: a stubbed exception would
+    # only prove the code handles a shape invented here.
+    context 'when the warehouse cannot ship' do
+      it 'names the detail a carrier requires but the location lacks' do
+        fulfillment.stock_location.update_columns(phone: nil)
+        store.update_columns(contact_phone: nil)
+
+        VCR.use_cassette('end_shipper_missing_phone') do
+          expect { provider.purchase_label(fulfillment) }.
+            to raise_error(Spree::Core::LabelPurchaseRefused, /phone/i)
+        end
+      end
+
+      it 'says the address could not be verified' do
+        fulfillment.stock_location.update_columns(
+          address1: '9 Nowhere Road', city: 'Reno', state_code: 'NV', zipcode: '89501',
+          country_code: 'US', phone: '7755551234'
+        )
+
+        VCR.use_cassette('end_shipper_bad_address') do
+          expect { provider.purchase_label(fulfillment) }.
+            to raise_error(Spree::Core::LabelPurchaseRefused, /address/i)
+        end
+      end
+    end
   end
 end

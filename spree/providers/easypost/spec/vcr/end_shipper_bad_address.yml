@@ -1,0 +1,74 @@
+---
+http_interactions:
+- request:
+    method: post
+    uri: https://api.easypost.com/v2/end_shippers
+    body:
+      encoding: UTF-8
+      string: '{"address":{"name":"Risa Macejkovic","street1":"9 Nowhere Road","city":"Reno","state":"NV","zip":"89501","country":"US","phone":"7755551234","email":"no-reply@example.com"}}'
+    headers:
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+      Accept:
+      - "*/*"
+      User-Agent:
+      - EasyPost/v2 RubyClient/7.7.0 Ruby/4.0.1-p0 OS/Darwin OSVersion/23 OSArch/arm64
+      Host:
+      - api.easypost.com
+      Content-Type:
+      - application/json
+      Authorization:
+      - "<FILTERED>"
+  response:
+    status:
+      code: 422
+      message: Unprocessable Entity
+    headers:
+      X-Frame-Options:
+      - SAMEORIGIN
+      X-Xss-Protection:
+      - 1; mode=block
+      X-Content-Type-Options:
+      - nosniff
+      X-Download-Options:
+      - noopen
+      X-Permitted-Cross-Domain-Policies:
+      - none
+      Referrer-Policy:
+      - strict-origin-when-cross-origin
+      Easypost-Api-Version:
+      - '2015-01-01'
+      Vary:
+      - EasyPost-Api-Version
+      X-Ep-Request-Uuid:
+      - a3e55f4b6a9ac787ff1b8e8e0109dce2
+      Cache-Control:
+      - private, no-cache, no-store
+      Pragma:
+      - no-cache
+      Expires:
+      - '0'
+      Content-Type:
+      - application/json; charset=utf-8
+      X-Runtime:
+      - '0.057235'
+      Transfer-Encoding:
+      - chunked
+      X-Node:
+      - web110azw
+      X-Version-Label:
+      - easypost-202609032312-c09450d2bb-main
+      X-Backend:
+      - easypost
+      X-Proxied:
+      - extlb1azw dcaa0f86f7
+      - intlb2azw f881cede8e
+      Strict-Transport-Security:
+      - max-age=31536000; includeSubDomains; preload
+    body:
+      encoding: ASCII-8BIT
+      string: '{"error":{"code":"ADDRESS.VERIFY.FAILURE","message":"Unable to verify
+        address.","errors":[{"code":"E.ADDRESS.NOT_FOUND","field":"address","message":"Address
+        not found","suggestion":null}]}}'
+  recorded_at: Fri, 04 Sep 2026 13:28:40 GMT
+recorded_with: VCR 6.4.0
