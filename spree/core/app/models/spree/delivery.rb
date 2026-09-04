@@ -93,7 +93,7 @@ module Spree
     def resolved_tracking_url
       return if tracking_number.blank?
 
-      tracking_url.presence ||
+      safe_tracking_url ||
         (tracking_number if pasted_link?) ||
         provider_tracking_url.presence ||
         carrier_tracking_url.presence ||
@@ -107,6 +107,21 @@ module Spree
     end
 
     private
+
+    # The stored link is free text a merchant or seller pasted, and it is
+    # rendered as an href by every consumer of this field. Only an http(s)
+    # address with a host is handed back, so a `javascript:` or `data:` value
+    # is dropped rather than executed — the same guard ShippingLabel#file_url
+    # applies to a provider-supplied URL.
+    def safe_tracking_url
+      value = tracking_url.presence
+      return if value.blank?
+
+      uri = URI.parse(value)
+      value if %w[http https].include?(uri.scheme) && uri.host.present?
+    rescue URI::InvalidURIError
+      nil
+    end
 
     def provider_tracking_url
       return unless owner.respond_to?(:provider)

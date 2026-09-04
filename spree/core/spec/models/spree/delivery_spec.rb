@@ -168,4 +168,23 @@ RSpec.describe Spree::Delivery, type: :model do
       expect(delivery.correction_attributes(tracking_number: ' 1Z_OLD ')).not_to have_key(:status)
     end
   end
+  describe '#resolved_tracking_url' do
+    # The column is free text a merchant or seller pastes, and every consumer
+    # renders it as a link — so a scripting scheme must never come back out.
+    it 'drops a link that is not a real http address' do
+      ['javascript:alert(1)', 'data:text/html,<script>alert(1)</script>', 'file:///etc/passwd'].each do |hostile|
+        delivery = build(:delivery, owner: fulfillment, store: store,
+                                    tracking_number: '1Z999', tracking_url: hostile)
+
+        expect(delivery.resolved_tracking_url).not_to eq(hostile)
+      end
+    end
+
+    it 'keeps a link the merchant legitimately pasted' do
+      delivery = build(:delivery, owner: fulfillment, store: store, tracking_number: '1Z999',
+                                  tracking_url: 'https://forwarder.example/track/1Z999')
+
+      expect(delivery.resolved_tracking_url).to eq('https://forwarder.example/track/1Z999')
+    end
+  end
 end
