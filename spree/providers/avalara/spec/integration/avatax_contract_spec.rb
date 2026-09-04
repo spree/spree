@@ -8,6 +8,18 @@ require 'spec_helper'
 #
 # Recording: see the README. Never hand-author a cassette.
 RSpec.describe 'AvaTax API contract', :vcr do
+  # Every recorded response echoes back the line number the recording sent, and
+  # each of these cassettes was recorded against a line item that happened to be
+  # id 1. VCR never matches on body, so the played-back number is fixed while the
+  # item's is not: SQLite restarts its ids between examples, a real database does
+  # not. The id is pinned rather than left to luck — a re-recording that lands on
+  # a different one fails here loudly, which is the right place to notice.
+  RECORDED_LINE_ITEM_ID = 1
+
+  def recorded_line_item(cart, **attributes)
+    create(:line_item, { id: RECORDED_LINE_ITEM_ID, cart: cart, order: nil, price: 100 }.merge(attributes))
+  end
+
   let(:credentials) do
     { preferred_account_number: ENV.fetch('AVATAX_ACCOUNT_NUMBER', 'recorded'),
       preferred_license_key: ENV.fetch('AVATAX_LICENSE_KEY', 'recorded'),
@@ -19,7 +31,7 @@ RSpec.describe 'AvaTax API contract', :vcr do
   def us_cart(state: 'WA', zipcode: '98109', city: 'Seattle')
     address = create(:address, city: city, state_code: state, country_code: 'US', zipcode: zipcode)
     cart = create(:cart, store: @default_store, ship_address: address, bill_address: address)
-    create(:line_item, cart: cart, order: nil, price: 100)
+    recorded_line_item(cart)
     create(:stock_location, store: @default_store, default: true, country_code: 'US',
                             state_code: 'CA', city: 'Irvine', zipcode: '92614', address1: '2000 Main Street')
     cart.reload
@@ -110,7 +122,7 @@ RSpec.describe 'AvaTax API contract', :vcr do
       store = Spree::Store.find(@default_store.id)
       cart = create(:cart, store: store, ship_address: address, bill_address: address,
                            market: market, currency: 'PLN')
-      create(:line_item, cart: cart, order: nil, price: 100)
+      recorded_line_item(cart)
       cart.reload
     end
 
@@ -191,7 +203,7 @@ RSpec.describe 'AvaTax API contract', :vcr do
       store = Spree::Store.find(@default_store.id)
       cart = create(:cart, store: store, ship_address: address, bill_address: address,
                            market: market, currency: 'PLN')
-      create(:line_item, cart: cart, order: nil, price: 100)
+      recorded_line_item(cart)
       allow(SpreeAvalara::Integration).to receive(:active_for).and_return(integration)
       sent = nil
       allow(integration.client).to receive(:create_transaction).and_wrap_original do |original, model|
