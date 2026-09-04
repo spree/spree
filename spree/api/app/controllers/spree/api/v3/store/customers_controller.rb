@@ -23,6 +23,10 @@ module Spree
               # params rather than permitted: it is evidence the workflow acts
               # on, not an attribute of the customer row.
               terms_of_service: params[:terms_of_service],
+              # Where and from what the agreement was made. A consent record
+              # without them says only that someone ticked a box.
+              ip_address: request.remote_ip,
+              user_agent: request.user_agent,
               **permitted_params.except(:current_password).to_h.symbolize_keys
             )
 

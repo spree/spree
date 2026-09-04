@@ -50,7 +50,7 @@ module Spree
                   first_name: nil, last_name: nil, phone: nil,
                   accepts_email_marketing: nil, metadata: nil,
                   order: nil, password_required: nil, created_by: nil,
-                  terms_of_service: nil)
+                  terms_of_service: nil, ip_address: nil, user_agent: nil)
         super
 
         step :adopt_existing_customer
@@ -148,6 +148,8 @@ module Spree
             purpose: Spree::ConsentRecord::TERMS_OF_SERVICE,
             source: consent_source,
             email: customer.email,
+            ip_address: ip_address,
+            user_agent: user_agent,
             policies: consent_policies
           )
         end
@@ -163,7 +165,9 @@ module Spree
           owner: customer,
           purpose: Spree::ConsentRecord::EMAIL_MARKETING,
           source: consent_source,
-          email: customer.email
+          email: customer.email,
+          ip_address: ip_address,
+          user_agent: user_agent
         )
       end
 
