@@ -135,23 +135,17 @@ module Spree
       companies = where(store_id: store.id).
                   joins(:memberships).
                   where(Spree::CompanyMembership.table_name => { customer_id: customer.id }).
-                  distinct.
-                  to_a
+                  distinct
 
       # Only policy-active companies count: a buyer whose second membership
       # is on a not-yet-approved business is still unambiguous, and an
       # inactive company must not price or exempt a sale
       # (docs/plans/6.0-b2b-company-self-registration.md). The question is
       # still "exactly one, or not", so the walk stops at the second active
-      # node rather than consulting the policy for every membership.
+      # node — lazily, because a replacement policy may hit the database for
+      # each one it is asked about.
       policy = Spree.company_activation_policy
-      active_companies = []
-      companies.each do |company|
-        next unless policy.active?(company)
-
-        active_companies << company
-        break if active_companies.length > 1
-      end
+      active_companies = companies.lazy.select { |company| policy.active?(company) }.first(2)
 
       active_companies.one? ? active_companies.first : nil
     end

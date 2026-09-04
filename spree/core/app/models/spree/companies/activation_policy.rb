@@ -41,12 +41,17 @@ module Spree
         # Company.sole_standing_for's type check.
         return 'company_required' unless user.is_a?(Spree.customer_class)
 
+        # Standing is store-scoped, so without a store there is nothing to
+        # hold standing in.
+        return 'company_required' if store.nil?
+
         # The membership nodes are enough: a conforming policy suspending a
         # parent answers inactive for everything below it, so expanding to
         # the standing subtree could not change the answer — it would only
-        # load it.
-        memberships = store && user.companies.where(store_id: store.id)
-        return nil if memberships&.any? { |company| active?(company) }
+        # load it. Lazily, so a policy that reads persisted state is asked
+        # about as few nodes as the answer needs.
+        memberships = user.companies.where(store_id: store.id)
+        return nil if memberships.lazy.any? { |company| active?(company) }
 
         'company_required'
       end
