@@ -160,6 +160,23 @@ RSpec.describe 'Spree::Returns workflows' do
       expect(result.error.value).to eq(:refund_exceeds_balance)
     end
 
+    # The money has moved and the return is marked refunded before the credit
+    # is filed, so a filing failure used to fail a refund that had gone through.
+    it 'refunds even when the tax engine cannot be reached', :events do
+      provider = instance_double(Spree::TaxProvider::Internal, estimate: nil)
+      allow(provider).to receive(:refund).
+        and_raise(Spree::Tax::ProviderUnavailable.new('Failed to open TCP connection'))
+      allow_any_instance_of(Spree::Order).to receive(:tax_provider).and_return(provider)
+      allow(Rails.error).to receive(:report)
+
+      result = Spree::Returns::Refund.call(return_record: return_record, refund_method: 'store_credit')
+
+      expect(result).to be_success
+      expect(result.value).to be_refunded
+      expect(Rails.error).to have_received(:report).
+        with(instance_of(Spree::Tax::ProviderUnavailable), hash_including(source: 'spree.returns.refund'))
+    end
+
     context 'to store credit' do
       it 'issues credit inside the transaction and marks the return refunded' do
         result = Spree::Returns::Refund.call(return_record: return_record, refund_method: 'store_credit')

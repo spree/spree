@@ -2,13 +2,18 @@ module Spree::Preferences
   module PreferableClassMethods
     def preference(name, type, *args)
       options = args.extract_options!
-      options.assert_valid_keys(:default, :deprecated, :internal, :nullable, :parse_on_set)
+      options.assert_valid_keys(:default, :deprecated, :internal, :nullable, :options, :parse_on_set)
       default = options[:default]
       default = -> { options[:default] } unless default.is_a?(Proc)
       deprecated = options[:deprecated]
       internal = options[:internal]
       nullable = options[:nullable]
       parse_on_set = options[:parse_on_set]
+      # The values this preference may hold, as `{ value => label }` — the
+      # shape used wherever this codebase maps a stored value to what a person
+      # reads. An admin UI renders a picker instead of a text box. A plain list
+      # is accepted too, and labels each value with itself.
+      choices = options[:options]
 
       # cache_key will be nil for new objects, then if we check if there
       # is a pending preference before going to default
@@ -44,6 +49,10 @@ module Spree::Preferences
 
       define_method preference_type_getter_method(name) do
         type
+      end
+
+      define_method preference_options_getter_method(name) do
+        choices
       end
 
       define_method preference_deprecated_getter_method(name) do
@@ -112,6 +121,10 @@ module Spree::Preferences
 
     def preference_type_getter_method(name)
       "preferred_#{name}_type".to_sym
+    end
+
+    def preference_options_getter_method(name)
+      "preferred_#{name}_options".to_sym
     end
 
     def prefers_query_method(name)

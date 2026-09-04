@@ -101,6 +101,44 @@ module Spree
 
       # The buyer's reference and the paperwork behind it have to travel
       # together: the reference on every order with the document on only one
+      # Each child pins claims of its own through Orders::Complete either way.
+      # What the split must hand on is the *cart's* snapshot: resolving again
+      # takes the resolver's cart-side override ids, which match nothing the
+      # child owns — widening the claim over every line it holds.
+      context 'when the sale was exempt for all but one line' do
+        # A *sibling's* line: the adopted first partition keeps the cart's
+        # snapshot anyway, so it would pass either way.
+        let(:carved_out) { cart.line_items.reload.find { |item| item.seller_id == seller.id } }
+
+        before do
+          claim = Spree::TaxExemption.new(
+            reason_code: 'resale', certificate_number: 'C-1',
+            item_overrides: [Spree::TaxExemption::ItemOverride.new(item_id: carved_out.prefixed_id,
+                                                                   exempt: false)]
+          )
+          allow(Spree.tax_resolve_exemptions_service).to receive(:new).
+            and_return(instance_double(Spree::Tax::ResolveExemptions,
+                                       call: Spree::ServiceModule::Result.new(true, [claim], nil)))
+        end
+
+        it 'hands every child the claims the cart was priced with' do
+          group.orders.each do |order|
+            expect(order.applied_tax_exemptions&.sole).to include('certificate_number' => 'C-1')
+          end
+        end
+
+        it 'leaves the carve-out naming a line its own order holds' do
+          # Completion copies line items, so the id no longer matches.
+          owning = group.orders.find { |order| order.line_items.any? { |item| item.variant_id == carved_out.variant_id } }
+          line_item = owning.line_items.find { |item| item.variant_id == carved_out.variant_id }
+          named = owning.applied_tax_exemptions.sole['item_overrides'].sole['item_id']
+
+          expect(named).to eq(line_item.prefixed_id)
+          expect(named).not_to eq(carved_out.prefixed_id)
+          expect(owning.usable_exemptions.sole.covers_item?(line_item)).to be(false)
+        end
+      end
+
       # is the reconciliation problem the field exists to solve.
       context 'when the buyer supplied a purchase order' do
         before do

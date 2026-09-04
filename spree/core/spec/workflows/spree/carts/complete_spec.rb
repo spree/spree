@@ -191,6 +191,61 @@ module Spree
         expect(provider).to have_received(:commit).with(order)
       end
 
+      # An engine that cannot answer must not read to a customer as a broken
+      # checkout: before this, the exception escaped as a 500 and a storefront
+      # could not tell an outage from a platform bug.
+      it 'refuses the sale when the tax engine cannot be reached' do
+        # Built before the stub: creating a line item estimates tax, so a
+        # provider that raises would take the factory down instead of the sale.
+        cart = ready_cart
+        provider = instance_double(Spree::TaxProvider::Internal, commit: nil)
+        allow(provider).to receive(:estimate).
+          and_raise(Spree::Tax::ProviderUnavailable.new('could not be reached', provider_key: 'probe'))
+        allow_any_instance_of(Spree::Cart).to receive(:tax_provider).and_return(provider)
+
+        result = described_class.call(cart: cart)
+
+        expect(result).to be_failure
+        expect(result.error.value[:code]).to eq('tax_provider_unavailable')
+        # The endpoint and the transport stay out of the response.
+        expect(result.error.value[:message]).not_to include('could not be reached')
+        expect(cart.reload).not_to be_completed
+      end
+
+      # The other half of the split: the engine answered and said no, so there
+      # is nothing to retry and its own message is what the customer needs.
+      it 'passes on what the engine said when it refuses the calculation' do
+        cart = ready_cart
+        provider = instance_double(Spree::TaxProvider::Internal, commit: nil)
+        allow(provider).to receive(:estimate).and_raise(
+          Spree::Tax::CalculationRefused.new('Zip is not valid for the state.', provider_key: 'probe')
+        )
+        allow_any_instance_of(Spree::Cart).to receive(:tax_provider).and_return(provider)
+
+        result = described_class.call(cart: cart)
+
+        expect(result).to be_failure
+        expect(result.error.value[:code]).to eq('tax_calculation_refused')
+        expect(result.error.value[:message]).to eq('Zip is not valid for the state.')
+      end
+
+      # The opposite call: the sale has happened and been paid for, so refusing
+      # it now would deny a customer an order they were charged for. Filing is
+      # idempotent, so the document can follow later.
+      it 'still places the order when filing the sale fails' do
+        cart = ready_cart
+        provider = instance_double(Spree::TaxProvider::Internal, estimate: nil)
+        allow(provider).to receive(:commit).
+          and_raise(Spree::Tax::ProviderUnavailable.new('could not be reached'))
+        allow_any_instance_of(Spree::Order).to receive(:tax_provider).and_return(provider)
+        allow_any_instance_of(Spree::Cart).to receive(:tax_provider).and_return(provider)
+
+        result = described_class.call(cart: cart)
+
+        expect(result).to be_success
+        expect(result.value).to be_completed
+      end
+
       it 'does not re-estimate while copying the cart onto the order' do
         provider = instance_double(Spree::TaxProvider::Internal, estimate: nil, commit: nil)
         allow_any_instance_of(Spree::Order).to receive(:tax_provider).and_return(provider)
@@ -320,6 +375,87 @@ module Spree
 
         expect(result).to be_success
         expect(result.value.tax_identifier.value).to eq('GB123456789')
+      end
+
+      # The evidence has to survive the certificate it came from: it lapses on
+      # its own date, so re-resolving at refund time would file a credit for an
+      # exempt sale as a consumer refund.
+      it 'freezes the exemptions the sale was priced with onto the order' do
+        claim = Spree::TaxExemption.new(reason_code: 'resale', certificate_number: 'CERT-9',
+                                        country_code: 'US', state_code: 'CA')
+        allow(Spree.tax_resolve_exemptions_service).to receive(:new).
+          and_return(instance_double(Spree::Tax::ResolveExemptions,
+                                     call: Spree::ServiceModule::Result.new(true, [claim], nil)))
+
+        order = described_class.call(cart: ready_cart).value
+
+        expect(order.applied_tax_exemptions).to eq(
+          [{ 'reason_code' => 'resale', 'certificate_number' => 'CERT-9',
+             'country_code' => 'US', 'state_code' => 'CA', 'item_overrides' => [] }]
+        )
+      end
+
+      # A draft leaves before FINALIZE, where the document is filed.
+      it 'files a draft order with the tax engine' do
+        draft = create(:order_ready_to_ship, store: store)
+        draft.update_columns(status: 'draft', completed_at: nil)
+        provider = instance_double(Spree::TaxProvider::Internal, commit: nil, estimate: nil)
+        allow_any_instance_of(Spree::Order).to receive(:tax_provider).and_return(provider)
+
+        expect(described_class.call(cart: draft)).to be_success
+        expect(provider).to have_received(:commit).with(draft)
+      end
+
+      # An empty list, not nil: the reader has to tell "found no claim" apart
+      # from an order placed before the column existed.
+      it 'freezes an empty list when the sale claimed no exemption' do
+        order = described_class.call(cart: ready_cart).value
+
+        expect(order.applied_tax_exemptions).to eq([])
+      end
+
+      # Completion mints new prefixed ids, and an override that matches nothing
+      # widens its claim instead of narrowing it — exempting every line.
+      it 'renames a per-item carve-out onto the line the order now owns' do
+        cart_line_item = ready_cart.line_items.first
+        claim = Spree::TaxExemption.new(
+          reason_code: 'resale',
+          item_overrides: [Spree::TaxExemption::ItemOverride.new(item_id: cart_line_item.prefixed_id,
+                                                                 exempt: false)]
+        )
+        allow(Spree.tax_resolve_exemptions_service).to receive(:new).
+          and_return(instance_double(Spree::Tax::ResolveExemptions,
+                                     call: Spree::ServiceModule::Result.new(true, [claim], nil)))
+
+        order = described_class.call(cart: ready_cart).value
+        order_line_item = order.line_items.first
+        frozen = order.usable_exemptions.sole
+
+        expect(order.applied_tax_exemptions.sole['item_overrides'].sole['item_id']).
+          to eq(order_line_item.prefixed_id)
+        expect(order_line_item.prefixed_id).not_to eq(cart_line_item.prefixed_id)
+        expect(frozen.covers_item?(order_line_item)).to be(false)
+      end
+
+      # It narrowed nothing while the cart was priced either, so the order is
+      # taxed the same way — and reported, since nobody can act on it.
+      it 'reports a carve-out naming something the sale never had' do
+        claim = Spree::TaxExemption.new(
+          reason_code: 'resale',
+          item_overrides: [Spree::TaxExemption::ItemOverride.new(item_id: 'li_notinthissale',
+                                                                 exempt: false)]
+        )
+        allow(Spree.tax_resolve_exemptions_service).to receive(:new).
+          and_return(instance_double(Spree::Tax::ResolveExemptions,
+                                     call: Spree::ServiceModule::Result.new(true, [claim], nil)))
+        allow(Rails.error).to receive(:report)
+
+        order = described_class.call(cart: ready_cart).value
+
+        expect(order.applied_tax_exemptions.sole['item_overrides'].sole['item_id']).
+          to eq('li_notinthissale')
+        expect(Rails.error).to have_received(:report).
+          with(instance_of(Spree::Tax::UnusableExemptionError), hash_including(handled: true))
       end
 
       it 'records a checkout override as such' do

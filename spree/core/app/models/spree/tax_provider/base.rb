@@ -82,8 +82,13 @@ module Spree
       #   registration, nil for a consumer sale
       # @param exemptions [Array] exemption evidence to apply
       # @param context [Hash] untyped provider extras from set_tax_line_context
-      # @return [void] the written rows are the output; raise when the
-      #   calculation cannot be completed
+      # @return [void] the written rows are the output
+      # @raise [Spree::Tax::ProviderUnavailable] when the engine could not
+      #   answer — refused, timed out, unreachable. Raise this (or a subclass,
+      #   as `SpreeAvalara::RequestError` does) rather than a bare error: core
+      #   turns it into a refusal the customer can retry, where anything else
+      #   reaches them as a broken checkout. A provider a merchant switched off
+      #   is not this — it has no opinion and writes no rows.
       def estimate(owner, items = nil, tax_date: nil, tax_identifier: nil, exemptions: [], context: {})
         raise NotImplementedError, "Please implement 'estimate' in your tax provider: #{self.class.name}"
       end

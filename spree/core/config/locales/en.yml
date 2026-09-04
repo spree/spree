@@ -747,6 +747,7 @@ en:
       pricing_unavailable: Prices could not be confirmed. Please try again.
       quantity_must_be_positive: Quantity must be at least 1. Use DELETE to remove the item.
       quantity_rule_violated: "%{li_name} cannot be ordered in that quantity. Try %{quantities}."
+      tax_unavailable: Tax could not be calculated. Please try again.
     catalogs:
       no_price_list_to_import: This catalog has no price list to import products from.
       product_not_in_store: One of those products belongs to another store.

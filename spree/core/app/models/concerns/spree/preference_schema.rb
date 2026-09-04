@@ -75,6 +75,7 @@ module Spree
 
         @serialized_preference_schema ||= fields.map do |field|
           wire = { key: field[:key], type: field[:type], default: field[:default] }
+          wire[:options] = field[:options] if field[:options].present?
           wire[:default] = nil if field[:type] == :password
           wire.freeze
         end.freeze
@@ -117,12 +118,27 @@ module Spree
           # signature verification depends on.
           next if instance.preference_internal(pref)
 
-          {
+          field = {
             key: pref,
             key_string: pref.to_s.freeze,
             type: instance.preference_type(pref),
             default: safe_preference_default(instance, pref)
-          }.freeze
+          }
+          choices = normalized_preference_options(instance.preference_options(pref))
+          field[:options] = choices if choices.present?
+          field.freeze
+        end
+      end
+
+      # `{ value => label }` or a plain list, both to `[{ value:, label: }]` —
+      # one shape for a client to render, whichever the declaring class found
+      # more natural to write.
+      def normalized_preference_options(declared)
+        case declared
+        when Hash
+          declared.map { |value, label| { value: value.to_s, label: label.to_s }.freeze }.freeze
+        when Array
+          declared.map { |value| { value: value.to_s, label: value.to_s }.freeze }.freeze
         end
       end
 

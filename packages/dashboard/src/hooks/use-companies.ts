@@ -263,6 +263,21 @@ export function useValidateCompanyTaxIdentifier(companyId: string) {
 // Exemption certificates
 // ---------------------------------------------------------------------------
 
+/**
+ * Exemption reasons a merchant may pick, grouped by the tax provider that
+ * understands them. Server-supplied rather than hardcoded, so a store gets its
+ * own engine's vocabulary instead of a list that engine has never heard of.
+ */
+export function useTaxExemptionReasonCodes(companyId: string | undefined) {
+  return useQuery({
+    queryKey: useResourceKey('companies', companyId ?? 'noop', 'tax-exemption-reason-codes'),
+    queryFn: () => adminClient.companies.taxExemptionCertificates.reasonCodes(companyId as string),
+    enabled: !!companyId,
+    // The vocabulary changes when a provider gem is installed, not during a session.
+    staleTime: 5 * 60 * 1000,
+  })
+}
+
 export function useTaxExemptionCertificates(companyId: string | undefined) {
   return useQuery({
     queryKey: useResourceKey('companies', companyId ?? 'noop', 'tax-exemption-certificates'),

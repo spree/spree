@@ -76,6 +76,13 @@ module Spree
       def complete_draft_order
         result = Spree.order_complete_workflow.call(order: cart, payment_pending: payment_pending)
         failure(result.value, result.error) if result.failure?
+
+        # A draft leaves before FINALIZE, so the document that phase files is
+        # filed here — otherwise it charged tax that never reached the return.
+        # Never split, so it is the only order to file.
+        @order = result.value
+        external_step :commit_tax
+
         halt!(result.value)
       end
 
@@ -131,6 +138,26 @@ module Spree
       def recalculate_in_lock
         Spree::Carts::PriceItems.apply(@confirmed_prices) if @confirmed_prices.present?
         cart.recalculate_totals!
+      rescue Spree::Tax::ProviderError => error
+        # The engine that decides this sale's tax did not produce any.
+        # Completing anyway would place an order whose tax nobody computed, so
+        # the sale is refused — as a failure the caller can render, not as an
+        # exception that reads like a broken checkout.
+        Rails.error.report(error, context: { order_id: cart.id }, source: 'spree.checkout')
+
+        if error.is_a?(Spree::Tax::CalculationRefused)
+          # The engine said no to this request. Its message names the problem —
+          # the postcode, the missing company code — and asking the customer to
+          # retry would be asking them to repeat something that cannot work.
+          failure(cart, code: 'tax_calculation_refused', message: error.message.to_s)
+        else
+          # It could not be asked. Retrying may work, and the reason belongs in
+          # the error tracker rather than the response: the raw message names
+          # the endpoint and the transport, which tells a shopper nothing and
+          # tells everyone else too much.
+          failure(cart, code: 'tax_provider_unavailable',
+                        message: Spree.t('cart_line_item.tax_unavailable'))
+        end
       end
 
       def verify_expected_total
@@ -232,9 +259,10 @@ module Spree
 
           line_item_map = copy_line_items!(cart, order)
           fulfillment_map = copy_fulfillments!(cart, order, line_item_map)
-          copy_typed_lines!(cart, order, line_item_map, fulfillment_map)
+          fee_map = copy_typed_lines!(cart, order, line_item_map, fulfillment_map)
           copy_promotions!(cart, order)
           copy_tax_identifier!(cart, order)
+          copy_tax_exemptions!(cart, order, line_item_map, fulfillment_map, fee_map)
           copy_po_document!(cart, order)
           repoint_money_records!(cart, order)
 
@@ -267,6 +295,71 @@ module Spree
         attributes = resolved.attributes.except('id', 'owner_type', 'owner_id',
                                                 'created_at', 'updated_at')
         order.create_tax_identifier!(attributes.merge('source' => source_of(resolved)))
+      end
+
+      # Freezes the exemption evidence the sale was priced with, beside the
+      # registration and for the same reason. A certificate lapses on its own
+      # date with nothing written to it, can be revoked, and is destroyed with
+      # its company — so a provider re-resolving at commit or refund time would
+      # file a credit for an exempt sale as a consumer refund and declare tax
+      # that was never collected. Read from the cart, which is what was priced.
+      #
+      # An empty list is still written: "found no claim" and "placed before this
+      # existed" are different facts, and the reader tells them apart.
+      def copy_tax_exemptions!(cart, order, line_item_map, fulfillment_map, fee_map)
+        translation = exemption_item_ids(line_item_map, fulfillment_map, fee_map)
+        claims = cart.usable_exemptions.map { |claim| reown_claim(claim, translation) }
+
+        order.update_column(:applied_tax_exemptions, claims)
+      end
+
+      # An override names its line by prefixed id, and completion mints new ones.
+      # Left as the cart's it matches nothing — which widens the claim rather
+      # than narrowing it, exempting every line instead of carving one out.
+      def reown_claim(claim, translation)
+        snapshot = claim.to_snapshot
+        overrides = Array(snapshot['item_overrides'])
+        return snapshot if overrides.empty?
+
+        snapshot.merge(
+          'item_overrides' => overrides.map do |override|
+            reowned = translation[override['item_id'].to_s]
+            next override.merge('item_id' => reowned) if reowned
+
+            # It narrowed nothing while the cart was priced either, so it is
+            # left alone and reported rather than dropped.
+            report_unmatched_override(override)
+            override
+          end
+        )
+      end
+
+      # Cart prefixed id → order prefixed id, encoded from the ids the copy maps
+      # already carry rather than by reloading the records.
+      def exemption_item_ids(line_item_map, fulfillment_map, fee_map)
+        translation = {}
+
+        line_item_map.each do |cart_line_item, order_line_item|
+          translation[cart_line_item.prefixed_id] = order_line_item.prefixed_id
+        end
+        { Spree::Fulfillment => fulfillment_map, Spree::Fee => fee_map }.each do |klass, ids|
+          ids.each do |cart_id, order_id|
+            translation[klass.prefixed_id_for(cart_id)] = klass.prefixed_id_for(order_id)
+          end
+        end
+
+        translation
+      end
+
+      def report_unmatched_override(override)
+        Rails.error.report(
+          Spree::Tax::UnusableExemptionError.new(
+            "A tax exemption override named #{override['item_id'].inspect}, which is not part of this sale"
+          ),
+          handled: true,
+          context: { item_id: override['item_id'] },
+          source: 'spree.core'
+        )
       end
 
       # The buyer's purchase order follows the number onto the order. The same
@@ -342,10 +435,16 @@ module Spree
 
       # The cart's rows are the record of what the sale was costed at, so the
       # order receives them verbatim rather than being re-estimated.
+      #
+      # @return [Hash{Integer => Integer}] cart fee id → order fee id, which an
+      #   exemption override may name
       def copy_typed_lines!(cart, order, line_item_map, fulfillment_map)
         line_item_id_map = line_item_map.transform_keys(&:id).transform_values(&:id)
+        fee_map = {}
 
-        [Spree::TaxLine, Spree::Discount, Spree::Fee].each do |klass|
+        # Fees first: a tax line can be levied on one, and copied the other way
+        # round its `fee_id` would still name the cart's row.
+        [Spree::Fee, Spree::TaxLine, Spree::Discount].each do |klass|
           klass.where(cart_id: cart.id).find_each do |row|
             attributes = row.attributes.except('id', 'cart_id', 'created_at', 'updated_at')
             attributes['order_id'] = order.id
@@ -358,10 +457,17 @@ module Spree
               attributes['fulfillment_id'] = fulfillment_map[row.fulfillment_id]
               next if attributes['fulfillment_id'].nil?
             end
+            if row.respond_to?(:fee_id) && row.fee_id
+              attributes['fee_id'] = fee_map[row.fee_id]
+              next if attributes['fee_id'].nil?
+            end
 
-            klass.create!(attributes)
+            created = klass.create!(attributes)
+            fee_map[row.id] = created.id if klass == Spree::Fee
           end
         end
+
+        fee_map
       end
 
       def copy_promotions!(cart, order)
@@ -479,7 +585,16 @@ module Spree
       # separate sale with its own tax, and an unfiled sibling is a hole in the
       # merchant's return that only surfaces at filing time.
       def commit_tax
-        placed_orders.each { |placed| placed.tax_provider.commit(placed) }
+        placed_orders.each do |placed|
+          placed.tax_provider.commit(placed)
+        rescue Spree::Tax::ProviderError => error
+          # Deliberately not a failure. The order is placed and paid; refusing
+          # now would leave the customer charged for a sale the platform denies
+          # having taken. Filing is idempotent and replayable, so the document
+          # can follow — an unfiled sale is a reporting gap to chase, not a
+          # reason to break the checkout that produced it.
+          Rails.error.report(error, context: { order_id: placed.id }, source: 'spree.checkout')
+        end
       end
 
       # What this checkout produced: the children of a split, or the one order
