@@ -342,6 +342,17 @@ module Spree
         )
       end
 
+      # A draft leaves before FINALIZE, where the document is filed.
+      it 'files a draft order with the tax engine' do
+        draft = create(:order_ready_to_ship, store: store)
+        draft.update_columns(status: 'draft', completed_at: nil)
+        provider = instance_double(Spree::TaxProvider::Internal, commit: nil, estimate: nil)
+        allow_any_instance_of(Spree::Order).to receive(:tax_provider).and_return(provider)
+
+        expect(described_class.call(cart: draft)).to be_success
+        expect(provider).to have_received(:commit).with(draft)
+      end
+
       # An empty list, not nil: the reader has to tell "found no claim" apart
       # from an order placed before the column existed.
       it 'freezes an empty list when the sale claimed no exemption' do

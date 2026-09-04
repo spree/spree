@@ -76,6 +76,13 @@ module Spree
       def complete_draft_order
         result = Spree.order_complete_workflow.call(order: cart, payment_pending: payment_pending)
         failure(result.value, result.error) if result.failure?
+
+        # A draft leaves before FINALIZE, so the document that phase files is
+        # filed here — otherwise it charged tax that never reached the return.
+        # Never split, so it is the only order to file.
+        @order = result.value
+        external_step :commit_tax
+
         halt!(result.value)
       end
 
@@ -434,7 +441,9 @@ module Spree
         line_item_id_map = line_item_map.transform_keys(&:id).transform_values(&:id)
         fee_map = {}
 
-        [Spree::TaxLine, Spree::Discount, Spree::Fee].each do |klass|
+        # Fees first: a tax line can be levied on one, and copied the other way
+        # round its `fee_id` would still name the cart's row.
+        [Spree::Fee, Spree::TaxLine, Spree::Discount].each do |klass|
           klass.where(cart_id: cart.id).find_each do |row|
             attributes = row.attributes.except('id', 'cart_id', 'created_at', 'updated_at')
             attributes['order_id'] = order.id
@@ -446,6 +455,10 @@ module Spree
             if row.respond_to?(:fulfillment_id) && row.fulfillment_id
               attributes['fulfillment_id'] = fulfillment_map[row.fulfillment_id]
               next if attributes['fulfillment_id'].nil?
+            end
+            if row.respond_to?(:fee_id) && row.fee_id
+              attributes['fee_id'] = fee_map[row.fee_id]
+              next if attributes['fee_id'].nil?
             end
 
             created = klass.create!(attributes)
