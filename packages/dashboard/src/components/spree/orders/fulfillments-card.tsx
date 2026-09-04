@@ -62,8 +62,8 @@ import { FulfillmentDeliveryDialog } from './fulfillment-delivery-dialog'
 import { FulfillmentEditDialog } from './fulfillment-edit-dialog'
 import { FulfillmentFulfillForm } from './fulfillment-fulfill-form'
 import { FulfillmentItemList } from './fulfillment-item-list'
-import { FulfillmentLabel } from './fulfillment-label'
 import { FulfillmentLabelUploadDialog } from './fulfillment-label-upload-dialog'
+import { ShippingLabelRow } from './shipping-label-row'
 
 /**
  * A unit sitting in one fulfillment. Splitting moves units per variant rather
@@ -420,7 +420,8 @@ function FulfillmentRow({ order, fulfillment }: { order: Order; fulfillment: Ful
   const { t } = useTranslation()
   const confirm = useConfirm()
   const orderId = order.id
-  const { cancel, markDelivered, buyLabel } = useFulfillmentActions(orderId)
+  const { cancel, markDelivered, buyLabel, refundLabel, deleteLabel } =
+    useFulfillmentActions(orderId)
 
   const [editOpen, setEditOpen] = useState(false)
   const [splitOpen, setSplitOpen] = useState(false)
@@ -554,7 +555,16 @@ function FulfillmentRow({ order, fulfillment }: { order: Order; fulfillment: Ful
       )}
 
       {activeLabel && !fulfilling && (
-        <FulfillmentLabel orderId={orderId} fulfillmentId={fulfillment.id} label={activeLabel} />
+        <ShippingLabelRow
+          label={activeLabel}
+          isRefunding={refundLabel.isPending}
+          onRefund={() =>
+            refundLabel.mutate({ fulfillmentId: fulfillment.id, labelId: activeLabel.id })
+          }
+          onDelete={() =>
+            deleteLabel.mutate({ fulfillmentId: fulfillment.id, labelId: activeLabel.id })
+          }
+        />
       )}
 
       {!fulfilling && (

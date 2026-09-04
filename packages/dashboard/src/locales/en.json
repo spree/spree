@@ -3143,6 +3143,8 @@
               "receive": "Receive items",
               "refund": "Refund"
             },
+            "buy_label": "Buy return label",
+            "buy_label_confirm": "Buy a prepaid return label? Your carrier account is charged as soon as the label is issued.",
             "confirm": {
               "cancel": "Cancel this return? Nothing will be restocked and no money will move."
             },
@@ -3150,6 +3152,7 @@
             "empty": "No returns for this order.",
             "empty_no_units": "This order has no fulfillment records to return against.",
             "memo": "Note",
+            "no_label": "No return label yet.",
             "not_resellable": "Not resellable",
             "reason": "Reason",
             "receive_title": "Receive returned items",

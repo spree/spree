@@ -3135,6 +3135,8 @@
               "receive": "接收商品",
               "refund": "退款"
             },
+            "buy_label": "购买退货面单",
+            "buy_label_confirm": "购买预付退货面单？面单一经出具即从您的承运商账户扣款。",
             "confirm": {
               "cancel": "取消此退货？不会恢复库存，也不会退款。"
             },
@@ -3142,6 +3144,7 @@
             "empty": "此订单暂无退货。",
             "empty_no_units": "此订单没有可用于退货的履约记录。",
             "memo": "备注",
+            "no_label": "尚无退货面单。",
             "not_resellable": "不可再销售",
             "reason": "原因",
             "receive_title": "接收退回的商品",

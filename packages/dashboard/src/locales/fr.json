@@ -3143,6 +3143,8 @@
               "receive": "Réceptionner les articles",
               "refund": "Rembourser"
             },
+            "buy_label": "Acheter une étiquette de retour",
+            "buy_label_confirm": "Acheter une étiquette de retour prépayée ? Votre compte transporteur est débité dès son émission.",
             "confirm": {
               "cancel": "Annuler ce retour ? Aucun article ne sera remis en stock et aucun montant ne sera remboursé."
             },
@@ -3150,6 +3152,7 @@
             "empty": "Aucun retour pour cette commande.",
             "empty_no_units": "Cette commande n’a aucun enregistrement de traitement sur lequel baser un retour.",
             "memo": "Note",
+            "no_label": "Pas encore d'étiquette de retour.",
             "not_resellable": "Non revendable",
             "reason": "Motif",
             "receive_title": "Réceptionner les articles retournés",

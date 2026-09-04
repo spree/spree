@@ -1,3 +1,4 @@
+import type { ShippingLabelCreateParams } from '@spree/admin-sdk'
 import { adminClient, useResourceKey, useResourceKeyBuilder } from '@spree/dashboard-core'
 import { toastManager } from '@spree/dashboard-ui'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
@@ -106,5 +107,25 @@ export function useReturnActions(orderId: string) {
       adminClient.orders.returns.cancel(orderId, returnId, { reason }),
   )
 
-  return { create, approve, receive, refund, cancel }
+  // The prepaid label for the parcel coming back. Buying takes no body; a
+  // `file` records postage the merchant bought elsewhere instead.
+  const buyLabel = useReturnMutation(
+    orderId,
+    ({ returnId, ...params }: { returnId: string } & ShippingLabelCreateParams) =>
+      adminClient.orders.returns.labels.create(orderId, returnId, params),
+  )
+
+  const refundLabel = useReturnMutation(
+    orderId,
+    ({ returnId, labelId }: { returnId: string; labelId: string }) =>
+      adminClient.orders.returns.labels.refund(orderId, returnId, labelId),
+  )
+
+  const deleteLabel = useReturnMutation(
+    orderId,
+    ({ returnId, labelId }: { returnId: string; labelId: string }) =>
+      adminClient.orders.returns.labels.delete(orderId, returnId, labelId),
+  )
+
+  return { create, approve, receive, refund, cancel, buyLabel, refundLabel, deleteLabel }
 }

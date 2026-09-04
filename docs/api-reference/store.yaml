@@ -1051,8 +1051,8 @@ paths:
               example:
                 data:
                 - id: prod_UkLWZg9DAJ
-                  name: Product 2329085
-                  slug: product-2329085
+                  name: Product 2339085
+                  slug: product-2339085
                   meta_title:
                   meta_description:
                   meta_keywords:
@@ -1083,8 +1083,8 @@ paths:
                   original_price:
                   seller_id:
                 - id: prod_gbHJdmfrXB
-                  name: Product 2338209
-                  slug: product-2338209
+                  name: Product 2348209
+                  slug: product-2348209
                   meta_title:
                   meta_description:
                   meta_keywords:
@@ -1213,8 +1213,8 @@ paths:
             application/json:
               example:
                 id: prod_UkLWZg9DAJ
-                name: Product 2606885
-                slug: product-2606885
+                name: Product 2616885
+                slug: product-2616885
                 meta_title:
                 meta_description:
                 meta_keywords:
@@ -2971,7 +2971,7 @@ paths:
           type: string
       responses:
         '201':
-          description: discount code applied
+          description: real code kept pending with eligibility warning
           content:
             application/json:
               example:
@@ -2985,33 +2985,35 @@ paths:
                 po_document_filename:
                 po_document_byte_size:
                 number: cart_UkLWZg9DAJ
-                token: 4ryA4ms4Nim9TfxNW4fZi3au
+                token: x1oKZCt9usDGTWQZZQiL1XQ1
                 email:
                 customer_note:
                 po_number:
                 currency: USD
                 locale: en
                 total_quantity: 1
-                warnings: []
-                coupon_code: save10
+                warnings:
+                - code: coupon_code_not_eligible
+                  message: This coupon code can't be applied to orders less than $1,000,000.00.
+                coupon_code: big50
                 item_total: '10.0'
                 display_item_total: "$10.00"
-                adjustment_total: "-10.0"
-                display_adjustment_total: "-$10.00"
-                discount_total: "-10.0"
-                display_discount_total: "-$10.00"
+                adjustment_total: '0.0'
+                display_adjustment_total: "$0.00"
+                discount_total: '0.0'
+                display_discount_total: "$0.00"
                 tax_total: '0.0'
                 display_tax_total: "$0.00"
                 included_tax_total: '0.0'
                 display_included_tax_total: "$0.00"
                 additional_tax_total: '0.0'
                 display_additional_tax_total: "$0.00"
-                total: '0.0'
-                display_total: "$0.00"
+                total: '10.0'
+                display_total: "$10.00"
                 gift_card_total: '0.0'
                 display_gift_card_total: "$0.00"
-                amount_due: '0.0'
-                display_amount_due: "$0.00"
+                amount_due: '10.0'
+                display_amount_due: "$10.00"
                 delivery_total: '0.0'
                 display_delivery_total: "$0.00"
                 fee_total: '0.0'
@@ -3030,18 +3032,15 @@ paths:
                   step: delivery
                   field: delivery_method
                   message: Select a delivery method for all fulfillments
+                - code: payment_required
+                  step: payment
+                  field: payment
+                  message: Add a payment method
                 order_minimum:
                 order_minimum_shortfall:
                 below_order_minimum: false
                 shipping_eq_billing_address: true
-                discounts:
-                - id: discount_UkLWZg9DAJ
-                  promotion_id: promo_UkLWZg9DAJ
-                  name: Promo
-                  description:
-                  code: save10
-                  amount: "-10.0"
-                  display_amount: "-$10.00"
+                discounts: []
                 fees: []
                 items:
                 - id: li_UkLWZg9DAJ
@@ -3051,25 +3050,25 @@ paths:
                   preorder_ships_at:
                   quantity: 1
                   currency: USD
-                  name: Product 1984241
-                  slug: product-1984241
+                  name: Product 2002614
+                  slug: product-2002614
                   options_text: ''
                   price: '10.0'
                   display_price: "$10.00"
-                  total: '0.0'
-                  display_total: "$0.00"
-                  adjustment_total: "-10.0"
-                  display_adjustment_total: "-$10.00"
+                  total: '10.0'
+                  display_total: "$10.00"
+                  adjustment_total: '0.0'
+                  display_adjustment_total: "$0.00"
                   additional_tax_total: '0.0'
                   display_additional_tax_total: "$0.00"
                   included_tax_total: '0.0'
                   display_included_tax_total: "$0.00"
-                  discount_total: "-10.0"
-                  display_discount_total: "-$10.00"
-                  pre_tax_amount: '0.0'
-                  display_pre_tax_amount: "$0.00"
-                  discounted_amount: '0.0'
-                  display_discounted_amount: "$0.00"
+                  discount_total: '0.0'
+                  display_discount_total: "$0.00"
+                  pre_tax_amount: '10.0'
+                  display_pre_tax_amount: "$10.00"
+                  discounted_amount: '10.0'
+                  display_discounted_amount: "$10.00"
                   display_compare_at_amount: "$0.00"
                   compare_at_amount:
                   thumbnail_url:
@@ -3249,8 +3248,8 @@ paths:
                   preorder_ships_at:
                   quantity: 1
                   currency: USD
-                  name: Product 2003461
-                  slug: product-2003461
+                  name: Product 2013461
+                  slug: product-2013461
                   options_text: ''
                   price: '10.0'
                   display_price: "$10.00"
@@ -3435,8 +3434,8 @@ paths:
                   preorder_ships_at:
                   quantity: 1
                   currency: USD
-                  name: Product 2028182
-                  slug: product-2028182
+                  name: Product 2038182
+                  slug: product-2038182
                   options_text: ''
                   price: '10.0'
                   display_price: "$10.00"
@@ -3543,7 +3542,7 @@ paths:
                   first_name: John
                   last_name: Doe
                   full_name: John Doe
-                  address1: 270 Lovely Street
+                  address1: 272 Lovely Street
                   address2: Northwest
                   postal_code: '10118'
                   city: New York
@@ -3728,8 +3727,8 @@ paths:
                   preorder_ships_at:
                   quantity: 1
                   currency: USD
-                  name: Product 2045702
-                  slug: product-2045702
+                  name: Product 2055702
+                  slug: product-2055702
                   options_text: ''
                   price: '10.0'
                   display_price: "$10.00"
@@ -3981,8 +3980,8 @@ paths:
                   preorder_ships_at:
                   quantity: 1
                   currency: USD
-                  name: Product 2089569
-                  slug: product-2089569
+                  name: Product 2099569
+                  slug: product-2099569
                   options_text: ''
                   price: '10.0'
                   display_price: "$10.00"
@@ -4135,10 +4134,10 @@ paths:
                 total_quantity: 2
                 warnings:
                 - code: delivery_unavailable
-                  message: Product 21163 cannot be delivered to the selected address
+                  message: Product 21263 cannot be delivered to the selected address
                   line_item_id: li_UkLWZg9DAJ
                 - code: delivery_unavailable
-                  message: Product 212298 cannot be delivered to the selected address
+                  message: Product 213298 cannot be delivered to the selected address
                   line_item_id: li_gbHJdmfrXB
                 coupon_code:
                 item_total: '29.99'
@@ -4195,8 +4194,8 @@ paths:
                   preorder_ships_at:
                   quantity: 1
                   currency: USD
-                  name: Product 21163
-                  slug: product-21163
+                  name: Product 21263
+                  slug: product-21263
                   options_text: ''
                   price: '10.0'
                   display_price: "$10.00"
@@ -4226,8 +4225,8 @@ paths:
                   preorder_ships_at:
                   quantity: 1
                   currency: USD
-                  name: Product 212298
-                  slug: product-212298
+                  name: Product 213298
+                  slug: product-213298
                   options_text: ''
                   price: '19.99'
                   display_price: "$19.99"
@@ -4455,8 +4454,8 @@ paths:
                   preorder_ships_at:
                   quantity: 1
                   currency: USD
-                  name: Product 2189165
-                  slug: product-2189165
+                  name: Product 2199165
+                  slug: product-2199165
                   options_text: ''
                   price: '10.0'
                   display_price: "$10.00"
@@ -5283,8 +5282,8 @@ paths:
                   preorder_ships_at:
                   quantity: 1
                   currency: USD
-                  name: Product 2809789
-                  slug: product-2809789
+                  name: Product 2819789
+                  slug: product-2819789
                   options_text: ''
                   price: '10.0'
                   display_price: "$10.00"
@@ -5500,8 +5499,8 @@ paths:
                   preorder_ships_at:
                   quantity: 1
                   currency: USD
-                  name: Product 282179
-                  slug: product-282179
+                  name: Product 283179
+                  slug: product-283179
                   options_text: ''
                   price: '10.0'
                   display_price: "$10.00"
@@ -5670,8 +5669,8 @@ paths:
                   preorder_ships_at:
                   quantity: 1
                   currency: USD
-                  name: Product 222496
-                  slug: product-222496
+                  name: Product 223496
+                  slug: product-223496
                   options_text: ''
                   price: '10.0'
                   display_price: "$10.00"
@@ -5786,7 +5785,7 @@ paths:
                   first_name: John
                   last_name: Doe
                   full_name: John Doe
-                  address1: 326 Lovely Street
+                  address1: 328 Lovely Street
                   address2: Northwest
                   postal_code: '10118'
                   city: New York
@@ -5808,7 +5807,7 @@ paths:
                   first_name: John
                   last_name: Doe
                   full_name: John Doe
-                  address1: 327 Lovely Street
+                  address1: 329 Lovely Street
                   address2: Northwest
                   postal_code: '10118'
                   city: New York
@@ -9480,7 +9479,7 @@ paths:
                 variant:
                   id: variant_gbHJdmfrXB
                   product_id: prod_gbHJdmfrXB
-                  sku: SKU-343
+                  sku: SKU-344
                   options_text: ''
                   track_inventory: true
                   media_count: 0

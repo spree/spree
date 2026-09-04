@@ -38,6 +38,13 @@ module Spree
           one :order, resource: proc { Spree.api.admin_order_serializer }, if: proc { expand?('order') }
           one :stock_location, resource: proc { Spree.api.admin_stock_location_serializer }, if: proc { expand?('stock_location') }
           many :refunds, resource: proc { Spree.api.admin_refund_serializer }, if: proc { expand?('refunds') }
+
+          # The prepaid label for the parcel coming back, refunded ones
+          # included — the postage history of the return.
+          many :shipping_labels, key: :labels, resource: proc { Spree.api.admin_shipping_label_serializer }
+
+          # Where the inbound parcel is, as the carrier last reported it.
+          many :deliveries, resource: proc { Spree.api.admin_delivery_serializer }
         end
       end
     end

@@ -43,12 +43,14 @@ import {
   PackageCheckIcon,
   PlusIcon,
   RotateCcwIcon,
+  TagIcon,
   XCircleIcon,
 } from '@spree/dashboard-ui/icons'
 import i18n from 'i18next'
 import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useOrderReturns, useReturnActions } from '../../hooks/use-returns'
+import { ShippingLabelRow } from './orders/shipping-label-row'
 import { CreateReturnDialog, fulfilledUnits } from './post-sale-create-dialogs'
 
 type ReceiptRow = { quantity: number; resellable: boolean }
@@ -77,7 +79,8 @@ export function OrderReturnsCard({ order }: { order: Order }) {
   const { t } = useTranslation()
   const confirm = useConfirm()
   const { data } = useOrderReturns(orderId)
-  const { create, approve, receive, refund, cancel } = useReturnActions(orderId)
+  const { create, approve, receive, refund, cancel, buyLabel, refundLabel, deleteLabel } =
+    useReturnActions(orderId)
 
   const [creating, setCreating] = useState(false)
   const [receiving, setReceiving] = useState<Return | null>(null)
@@ -180,6 +183,15 @@ export function OrderReturnsCard({ order }: { order: Order }) {
                 )}
               </CardHeader>
 
+              <ReturnLabel
+                returnRecord={returnRecord}
+                onBuy={() => buyLabel.mutate({ returnId: returnRecord.id })}
+                onRefund={(labelId) => refundLabel.mutate({ returnId: returnRecord.id, labelId })}
+                onDelete={(labelId) => deleteLabel.mutate({ returnId: returnRecord.id, labelId })}
+                isBuying={buyLabel.isPending}
+                isRefunding={refundLabel.isPending}
+              />
+
               <CardContent className="flex flex-col gap-1.5">
                 {(returnRecord.return_line_items ?? []).map((line) => (
                   <ReturnLineRow key={line.id} line={line} status={returnRecord.status} />
@@ -230,6 +242,80 @@ export function OrderReturnsCard({ order }: { order: Order }) {
         />
       )}
     </>
+  )
+}
+
+/** A return is only worth a label while the goods are still coming back. */
+const RETURN_LABEL_STATUSES = ['requested', 'approved']
+
+/**
+ * The prepaid label for the parcel coming back, and the button to buy one.
+ *
+ * Bought through the carrier that shipped the goods out, since that is the
+ * account the merchant has. Refunding and printing are the same actions an
+ * outbound label offers, so they share a component.
+ */
+function ReturnLabel({
+  returnRecord,
+  onBuy,
+  onRefund,
+  onDelete,
+  isBuying,
+  isRefunding,
+}: {
+  returnRecord: Return
+  onBuy: () => void
+  onRefund: (labelId: string) => void
+  onDelete: (labelId: string) => void
+  isBuying: boolean
+  isRefunding: boolean
+}) {
+  const { t } = useTranslation()
+  const confirm = useConfirm()
+
+  const activeLabel = (returnRecord.labels ?? []).find((label) => label.status !== 'refunded')
+  const canBuy = !activeLabel && RETURN_LABEL_STATUSES.includes(returnRecord.status)
+
+  if (activeLabel) {
+    return (
+      <ShippingLabelRow
+        label={activeLabel}
+        isRefunding={isRefunding}
+        onRefund={() => onRefund(activeLabel.id)}
+        onDelete={() => onDelete(activeLabel.id)}
+      />
+    )
+  }
+
+  if (!canBuy) return null
+
+  return (
+    <CardContent className="flex items-center justify-between border-b border-border-subtle py-3 text-sm">
+      <span className="text-muted-foreground">
+        {t('admin.pages.orders.detail.returns.no_label')}
+      </span>
+      <Button
+        type="button"
+        size="sm"
+        variant="outline"
+        disabled={isBuying}
+        onClick={async () => {
+          // Buying charges the carrier account, so it gets an explicit yes
+          // even though nothing is destroyed.
+          if (
+            await confirm({
+              message: t('admin.pages.orders.detail.returns.buy_label_confirm'),
+              confirmLabel: t('admin.pages.orders.detail.returns.buy_label'),
+            })
+          ) {
+            onBuy()
+          }
+        }}
+      >
+        <TagIcon data-icon="inline-start" />
+        {isBuying ? t('admin.actions.saving') : t('admin.pages.orders.detail.returns.buy_label')}
+      </Button>
+    </CardContent>
   )
 }
 

@@ -12,26 +12,30 @@ import {
 } from '@spree/dashboard-ui'
 import { EllipsisVerticalIcon, PrinterIcon, ReceiptIcon, TrashIcon } from 'lucide-react'
 import { useTranslation } from 'react-i18next'
-import { useFulfillmentActions } from '../../../hooks/use-fulfillments'
 
 /**
  * The label bound to a parcel: what it cost, how to print it, and how to give
  * it back. A purchased label is refunded through the carrier; an uploaded one
  * has nothing to refund, so it is deleted instead.
+ *
+ * Owner-agnostic on purpose — an outbound parcel and a return's inbound one
+ * are the same record with the same actions, so the caller passes the
+ * mutations for whichever owns this label.
  */
-export function FulfillmentLabel({
-  orderId,
-  fulfillmentId,
+export function ShippingLabelRow({
   label,
+  onRefund,
+  onDelete,
+  isRefunding = false,
 }: {
-  orderId: string
-  fulfillmentId: string
   label: ShippingLabel
+  onRefund: () => void
+  onDelete: () => void
+  isRefunding?: boolean
 }) {
   const { t } = useTranslation()
   const confirm = useConfirm()
   const { token } = useAuth()
-  const { refundLabel, deleteLabel } = useFulfillmentActions(orderId)
 
   const refundable = label.source === 'purchased' && label.status === 'purchased'
   const deletable = label.source === 'uploaded'
@@ -85,7 +89,7 @@ export function FulfillmentLabel({
             type="button"
             size="sm"
             variant="outline"
-            disabled={refundLabel.isPending}
+            disabled={isRefunding}
             onClick={async () => {
               if (
                 await confirm({
@@ -94,7 +98,7 @@ export function FulfillmentLabel({
                   confirmLabel: t('admin.orders.detail.fulfillments.refund_label'),
                 })
               ) {
-                refundLabel.mutate({ fulfillmentId, labelId: label.id })
+                onRefund()
               }
             }}
           >
@@ -121,7 +125,7 @@ export function FulfillmentLabel({
                       confirmLabel: t('admin.actions.delete'),
                     })
                   ) {
-                    deleteLabel.mutate({ fulfillmentId, labelId: label.id })
+                    onDelete()
                   }
                 }}
               >

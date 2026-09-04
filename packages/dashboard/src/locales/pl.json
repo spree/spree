@@ -3171,6 +3171,8 @@
               "receive": "Przyjmij produkty",
               "refund": "Zwróć płatność"
             },
+            "buy_label": "Kup etykietę zwrotną",
+            "buy_label_confirm": "Kupić opłaconą etykietę zwrotną? Twoje konto zostanie obciążone w momencie jej wystawienia.",
             "confirm": {
               "cancel": "Anulować ten zwrot? Nic nie wróci do magazynu i żadne pieniądze nie zostaną zwrócone."
             },
@@ -3178,6 +3180,7 @@
             "empty": "Brak zwrotów dla tego zamówienia.",
             "empty_no_units": "To zamówienie nie ma pozycji realizacji, do których można odnieść zwrot.",
             "memo": "Notatka",
+            "no_label": "Brak etykiety zwrotnej.",
             "not_resellable": "Nie nadaje się do sprzedaży",
             "reason": "Powód",
             "receive_title": "Przyjmij zwrócone produkty",

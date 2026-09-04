@@ -3143,6 +3143,8 @@
               "receive": "Artikel annehmen",
               "refund": "Erstatten"
             },
+            "buy_label": "Rücksendeetikett kaufen",
+            "buy_label_confirm": "Ein vorfrankiertes Rücksendeetikett kaufen? Ihr Konto wird belastet, sobald das Etikett ausgestellt ist.",
             "confirm": {
               "cancel": "Diese Retoure stornieren? Es wird nichts eingelagert und kein Geld bewegt."
             },
@@ -3150,6 +3152,7 @@
             "empty": "Keine Retouren für diese Bestellung.",
             "empty_no_units": "Für diese Bestellung gibt es keine Fulfillment-Einträge, auf die sich eine Retoure beziehen könnte.",
             "memo": "Notiz",
+            "no_label": "Noch kein Rücksendeetikett.",
             "not_resellable": "Nicht wiederverkäuflich",
             "reason": "Grund",
             "receive_title": "Retournierte Artikel annehmen",

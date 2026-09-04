@@ -1668,6 +1668,76 @@ export class AdminClient {
           ...options,
           body: params,
         }),
+
+      /**
+       * The prepaid label for the parcel coming back. Bought through the
+       * carrier that shipped the goods out, or recorded from a file when the
+       * merchant bought postage elsewhere — the same shape as a fulfillment's
+       * labels, owned by the return instead.
+       *
+       * The customer downloads it from the storefront; this is the merchant's
+       * side of the same record.
+       */
+      labels: {
+        list: (
+          orderId: string,
+          returnId: string,
+          options?: RequestOptions,
+        ): Promise<{ data: ShippingLabel[] }> =>
+          this.request<{ data: ShippingLabel[] }>(
+            'GET',
+            `/orders/${orderId}/returns/${returnId}/labels`,
+            options,
+          ),
+
+        get: (
+          orderId: string,
+          returnId: string,
+          id: string,
+          options?: RequestOptions,
+        ): Promise<ShippingLabel> =>
+          this.request<ShippingLabel>(
+            'GET',
+            `/orders/${orderId}/returns/${returnId}/labels/${id}`,
+            options,
+          ),
+
+        create: (
+          orderId: string,
+          returnId: string,
+          params?: ShippingLabelCreateParams,
+          options?: RequestOptions,
+        ): Promise<ShippingLabel> =>
+          this.request<ShippingLabel>('POST', `/orders/${orderId}/returns/${returnId}/labels`, {
+            ...options,
+            body: params,
+          }),
+
+        refund: (
+          orderId: string,
+          returnId: string,
+          id: string,
+          options?: RequestOptions,
+        ): Promise<ShippingLabel> =>
+          this.request<ShippingLabel>(
+            'PATCH',
+            `/orders/${orderId}/returns/${returnId}/labels/${id}/refund`,
+            options,
+          ),
+
+        /** Uploaded labels only — a purchased label is refunded instead. */
+        delete: (
+          orderId: string,
+          returnId: string,
+          id: string,
+          options?: RequestOptions,
+        ): Promise<void> =>
+          this.request<void>(
+            'DELETE',
+            `/orders/${orderId}/returns/${returnId}/labels/${id}`,
+            options,
+          ),
+      },
     },
 
     exchanges: {
