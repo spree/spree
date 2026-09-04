@@ -450,6 +450,8 @@ export interface PanelStockLocation {
   /** Rendered read-only in the table; either panel's serializer derives it. */
   state_text?: string | null
   pickup_enabled?: boolean
+  /** Whether this location accepts goods coming back. */
+  returns_enabled?: boolean
   /** Open on read — a serializer answers whatever is stored. */
   pickup_stock_policy?: string
   pickup_ready_in_minutes?: number | null

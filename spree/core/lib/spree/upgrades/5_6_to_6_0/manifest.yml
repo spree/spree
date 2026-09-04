@@ -241,6 +241,19 @@ steps:
       migrate_delivery_profiles (it reads delivery-method providers to tell
       pickup methods apart). Idempotent.
 
+  - id: migrate_deliveries
+    name: "Move tracking numbers onto deliveries"
+    task: "spree:migrate_deliveries"
+    notes: |
+      Every fulfillment carrying a 5.6 tracking number gets one delivery row
+      with that number: the carrier axis (tracking number, carrier, carrier
+      status, estimate, arrival) lives on spree_deliveries in 6.0, and the
+      fulfillment only summarizes its primary delivery. A pasted tracking link
+      lands in the delivery's tracking_url; the carrier is detected from the
+      number's format. Run after migrate_fulfillment_statuses. Idempotent —
+      a fulfillment that already has a delivery is skipped. No labels are
+      backfilled: nothing before 6.0 recorded one.
+
   - id: migrate_zones_to_delivery_zones
     name: "Convert delivery zones"
     task: "spree:migrate_zones_to_delivery_zones"

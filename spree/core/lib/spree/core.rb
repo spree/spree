@@ -817,6 +817,27 @@ module Spree
   module Core
     class GatewayError < RuntimeError; end
 
+    # A label purchase that failed inside the one-click fulfill path, where
+    # the parcel ships regardless — reported so the merchant's error tracker
+    # sees why there is no label.
+    class LabelPurchaseFailed < RuntimeError; end
+
+    # A carrier refusing to sell a label, in its own words. Raised by a
+    # provider when it knows why — a warehouse with no address, an
+    # unserviceable destination — so the merchant reads the actual reason
+    # instead of being sent to check a connection that is fine.
+    class LabelPurchaseRefused < RuntimeError; end
+
+    # A carrier refusing to void a label, in its own words — a parcel it has
+    # already collected, a label past its void window. Raised by a provider
+    # when it knows why, so the merchant reads the reason.
+    class LabelRefundRefused < RuntimeError; end
+
+    # A label the carrier refused to refund while a parcel was being
+    # cancelled. The cancellation proceeds; the postage is the merchant's to
+    # chase, so it is reported rather than dropped.
+    class LabelRefundFailed < RuntimeError; end
+
     # The call may or may not have taken effect — a timeout, a dropped
     # connection, anything that leaves the answer at the provider rather than
     # in the response. Distinct from its parent because the safe reaction is

@@ -2718,24 +2718,60 @@
           "confirmation_send_failed": "فشل في إرسال التأكيد"
         },
         "fulfillments": {
+          "add_delivery": "إضافة رقم تتبع",
           "add_tracking": "إضافة تتبع",
           "add_tracking_title": "إضافة تتبع",
+          "awaiting_fulfillment_one": "ما زال هناك {{count}} عنصر للتنفيذ",
+          "awaiting_fulfillment_other": "ما زال هناك {{count}} عناصر للتنفيذ",
+          "awaiting_hint": "أضف تنفيذًا لشحنها.",
+          "awaiting_hint_draft": "يمكن تنفيذها بمجرد تقديم الطلب.",
           "buy_label": "شراء الملصق",
           "buy_label_confirm": "شراء ملصق شحن لهذه الشحنة؟ سيتم الخصم من حساب شركة الشحن الخاص بك فور إصدار الملصق.",
           "buy_label_confirm_rate": "شراء ملصق {{rate}} مقابل {{cost}}؟ سيتم الخصم من حساب شركة الشحن الخاص بك فور إصدار الملصق.",
+          "buy_label_pending_file": "لا تزال نسخة شركة الشحن قيد التنزيل؛ ستفتح الطباعة رابط شركة الشحن نفسه.",
           "carrier_auto": "اكتشاف تلقائي",
           "carrier_label": "شركة الشحن",
+          "carrier_search": "البحث عن شركة شحن",
+          "carrier_status_available_for_pickup": "جاهز للاستلام",
+          "carrier_status_delivered": "تم التسليم",
+          "carrier_status_failure": "فشل التسليم",
+          "carrier_status_in_transit": "في الطريق",
+          "carrier_status_out_for_delivery": "قيد التسليم",
+          "carrier_status_pending": "بانتظار شركة الشحن",
+          "carrier_status_pre_transit": "تم إنشاء الملصق",
+          "carrier_status_return_to_sender": "إعادة إلى المرسل",
+          "carrier_status_unknown": "الحالة غير معروفة",
+          "confirm_delete_delivery": "إزالة رقم التتبع هذا؟ يسري المفعول فورًا.",
+          "confirm_delete_label": "حذف هذا الملصق؟ سيُزال الملف من الطلب. يسري المفعول فورًا.",
+          "confirm_refund_label": "طلب استرداد قيمة هذا الملصق من شركة الشحن؟ ستُعاد أجرة الشحن إلى حسابك.",
           "confirm_split": "نقل هذه الوحدات إلى شحنة جديدة؟ يسري هذا فوراً.",
           "create_description": "تنشئ شحنة وتنقل إليها الكميات المختارة.",
           "create_items": "العناصر",
           "create_title": "إضافة شحنة",
+          "delete_label": "حذف الملصق",
+          "deliveries_title": "التتبع",
           "delivery_method": "طريقة التوصيل",
+          "document_kinds": {
+            "certificate_of_origin": "شهادة المنشأ",
+            "cn22": "نموذج جمركي CN22",
+            "cn23": "نموذج جمركي CN23",
+            "commercial_invoice": "فاتورة تجارية",
+            "customs_form": "نموذج جمركي",
+            "form": "مستند"
+          },
+          "documents_title": "مستندات الشحن",
           "edit_description": "غيّر مكان شحن هذه الشحنة وطريقة التوصيل التي تنقلها.",
           "edit_title": "تعديل الشحنة",
           "edit_tracking_title": "تعديل التتبع",
           "empty": "لا توجد شحنات لهذا الطلب بعد.",
           "free": "مجاني",
+          "label_cost": "أجرة الشحن",
+          "label_refund_requested": "تم طلب الاسترداد",
+          "label_refunded": "تم الاسترداد",
+          "label_title": "ملصق الشحن",
+          "label_uploaded": "مرفوع",
           "mark_delivered": "وضع علامة كمُسلَّم",
+          "mark_delivery_delivered": "وضع علامة وصل",
           "move_and_requote": "نقل وإعادة التسعير",
           "no_rates": "لا توجد طرق توصيل متاحة لهذه الشحنة.",
           "out_of_stock": "غير متوفر في المخزون",
@@ -2743,6 +2779,8 @@
           "print_label": "طباعة الملصق",
           "print_packing_slip": "طباعة قائمة التعبئة",
           "rates_pending_origin": "احفظ مصدر الشحن الجديد لعرض طرق التوصيل المتاحة منه.",
+          "refund_label": "استرداد الملصق",
+          "retry_refund_label": "إعادة محاولة الاسترداد",
           "ship_to": "الشحن إلى",
           "ships_from": "الشحن من",
           "split": "تقسيم",
@@ -2752,7 +2790,12 @@
           "split_title": "تقسيم الشحنة",
           "split_would_empty": "اترك وحدة واحدة على الأقل، أو غيّر مصدر الشحنة بالكامل بدلاً من ذلك.",
           "tracking_description": "رقم تتبع شركة الشحن، أو رابط تتبع كامل.",
-          "unfulfilled_other": "غير مُنفَّذ ({{count}})"
+          "unfulfilled_other": "غير مُنفَّذ ({{count}})",
+          "upload_label": "رفع ملصق",
+          "upload_label_cost": "تكلفة أجرة الشحن",
+          "upload_label_description": "سجّل ملصقًا اشتريته من مكان آخر، ليكون للطرد ملفه ورقم تتبعه وتكلفته.",
+          "upload_label_file": "ملف الملصق",
+          "upload_label_title": "رفع ملصق"
         },
         "gift_card_section": {
           "applied_suffix": "مُطبَّق",
@@ -2773,7 +2816,6 @@
           "captured": "القبض على الدفع",
           "completed": "اكتمل الطلب",
           "confirmation_sent": "تم إرسال التأكيد",
-          "shipped": "Fulfillment تم الشحن",
           "voided": "تم إلغاء الدفع"
         },
         "no_customer": "لا توجد معلومات العميل",
@@ -2824,8 +2866,8 @@
           "tax_included": "الضريبة (متضمنة)"
         },
         "tracking": {
-          "prefix": "Tracking",
-          "shipped_prefix": "تم الشحن"
+          "fulfilled_prefix": "تم التنفيذ",
+          "prefix": "Tracking"
         },
         "variant_search": {
           "description": "ابحث عن متغير منتج لإضافته إلى هذا الطلب.",
@@ -2880,7 +2922,7 @@
       },
       "fulfill": {
         "action": "وضع علامة كمشحون",
-        "empty": "لا تحتوي هذه الشحنة على عناصر قابلة للشحن.",
+        "empty": "لا يحتوي هذا التنفيذ على عناصر يمكن تنفيذها.",
         "include_item": "شحن {{name}}",
         "notify_customer": "إرسال إشعار الشحن إلى العميل",
         "of_units": "من {{count}}",
@@ -3077,7 +3119,6 @@
             "capture": "يأسر",
             "mark_paid": "وضع علامة على أنه مدفوع",
             "refund": "استرداد",
-            "ship": "وضع علامة على أنه تم الشحن",
             "void": "Void"
           },
           "claims": {
@@ -3129,13 +3170,19 @@
               "receive": "استلام العناصر",
               "refund": "استرداد"
             },
+            "buy_label": "شراء ملصق إرجاع",
+            "buy_label_confirm": "شراء ملصق إرجاع مدفوع مسبقًا؟ سيُخصم من حساب شركة الشحن فور إصداره.",
             "confirm": {
               "cancel": "إلغاء هذا المرتجع؟ لن تتم إعادة أي مخزون ولن يتم تحويل أي مبلغ."
             },
             "create_title": "مرتجع جديد",
             "empty": "لا توجد مرتجعات لهذا الطلب.",
             "empty_no_units": "لا توجد سجلات تنفيذ في هذا الطلب يمكن الرجوع إليها.",
+            "location": "إرجاع إلى",
+            "location_default": "موقع الإرجاع الافتراضي",
+            "location_no_returns": "{{name}} (لا يقبل المرتجعات)",
             "memo": "ملاحظة",
+            "no_label": "لا يوجد ملصق إرجاع بعد.",
             "not_resellable": "غير قابل لإعادة البيع",
             "reason": "السبب",
             "receive_title": "استلام العناصر المرتجعة",
@@ -3149,7 +3196,8 @@
             },
             "refund_title": "استرداد المرتجع",
             "refund_total": "إجمالي الاسترداد",
-            "resellable": "قابل لإعادة البيع"
+            "resellable": "قابل لإعادة البيع",
+            "returning_to": "الإرجاع إلى {{name}}"
           },
           "section_billing_address": "عنوان إرسال الفواتير",
           "section_claims": "المطالبات",
@@ -3918,12 +3966,42 @@
     "preferences": {
       "additional_item": "Additional Item Cost",
       "amount": "كمية",
+      "api_key": "مفتاح API",
+      "api_key_description": "يوجد في لوحة تحكم EasyPost. مفتاح الاختبار والمفتاح الحي يعملان بشكل مختلف — المفتاح نفسه يحدد الوضع.",
       "base_amount": "Base Amount",
       "base_percent": "Base Percent",
       "currency": "Currency",
+      "customs_contents_type": "نوع محتويات البيان الجمركي",
+      "customs_contents_type_description": "ما يحتويه الطرد الدولي وفق تصنيف الجمارك.",
+      "customs_contents_type_options": {
+        "dangerous_goods": "بضائع خطرة",
+        "documents": "مستندات",
+        "gift": "هدية",
+        "humanitarian_donation": "تبرع إنساني",
+        "merchandise": "بضائع",
+        "returned_goods": "بضائع مرتجعة",
+        "sample": "عينة"
+      },
+      "customs_signer": "موقّع البيان الجمركي",
+      "customs_signer_description": "الشخص في شركتك الذي يتحمل المسؤولية القانونية عما يصرّح به الطرد الدولي.",
       "discount_amount": "Discount Amount",
       "first_item": "First Item Cost",
       "flat_percent": "Flat Percent",
+      "incoterm": "الرسوم والضرائب (إنكوترمز)",
+      "incoterm_description": "من يدفع الرسوم عند الوصول. DAP تُحمّل المستلم، وDDP تُحمّلك أنت — لا تختر DDP إلا إذا كنت تحصّل الرسوم عند الدفع.",
+      "incoterm_options": {
+        "CFR": "CFR",
+        "CIF": "CIF",
+        "CIP": "CIP",
+        "CPT": "CPT",
+        "DAT": "DAT",
+        "DAP": "DAP",
+        "DDP": "DDP",
+        "EXW": "EXW",
+        "FAS": "FAS",
+        "FCA": "FCA",
+        "FOB": "FOB"
+      },
       "max_items": "Max Items",
       "max_quantity": "الحد الأقصى للكمية",
       "maximum_item_total": "الحد الأقصى لإجمالي المنتجات",
@@ -3935,7 +4013,9 @@
       "normal_amount": "Normal Amount",
       "percent": "نسبة مئوية",
       "preferred_amount": "كمية",
-      "preferred_percent": "نسبة مئوية"
+      "preferred_percent": "نسبة مئوية",
+      "webhook_secret": "مفتاح توقيع الويب هوك",
+      "webhook_secret_description": "السر الذي ضبطته على ويب هوك EasyPost. بدونه تُرفض تحديثات شركة الشحن."
     },
     "product_types": {
       "add_cta": "إضافة نوع منتج",
@@ -4895,6 +4975,7 @@
         "default": "تقصير",
         "location": "موقع",
         "pickup": "يلتقط",
+        "returns": "المرتجعات",
         "type": "يكتب"
       },
       "create_description": "أضف مستودعًا أو متجرًا أو نقطة استلام لتلبية الطلبات منها.",

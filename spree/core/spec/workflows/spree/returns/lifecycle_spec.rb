@@ -29,6 +29,43 @@ RSpec.describe 'Spree::Returns workflows' do
       expect(create_return.value.stock_location).to eq(order.shipments.first.stock_location)
     end
 
+    # A merchant who inspects and restocks returns at one processing centre
+    # turns the flag off everywhere else, and goods stop coming back to the
+    # warehouse that shipped them.
+    context 'when the shipping location does not accept returns' do
+      let!(:returns_centre) do
+        create(:stock_location, store: store, name: "Returns centre #{SecureRandom.hex(3)}",
+                                returns_enabled: true, default: false)
+      end
+
+      before { order.shipments.first.stock_location.update!(returns_enabled: false) }
+
+      it 'sends them to a location that does' do
+        expect(create_return.value.stock_location).to eq(returns_centre)
+      end
+
+      # A store's locations include every seller's own warehouses, and an
+      # operator's goods must never be routed into one.
+      it 'never routes first-party goods into a seller warehouse' do
+        seller_location = create(:stock_location, store: store, name: "Seller depot #{SecureRandom.hex(3)}",
+                                                  seller: create(:seller, store: store),
+                                                  returns_enabled: true, default: true)
+
+        result = create_return
+        expect(result).to be_success, result.error.to_s
+        expect(result.value.stock_location).not_to eq(seller_location)
+        expect(result.value.stock_location).to eq(returns_centre)
+      end
+
+      # Somewhere has to take the parcel, even on a store that has turned
+      # every flag off.
+      it 'falls back to where they shipped from when nowhere accepts returns' do
+        returns_centre.update!(returns_enabled: false)
+
+        expect(create_return.value.stock_location).to eq(order.shipments.first.stock_location)
+      end
+    end
+
     it 'refuses an order that was never completed' do
       cart_order = create(:order, store: store)
 
@@ -276,6 +313,30 @@ RSpec.describe 'Spree::Returns workflows' do
       create_return.value.then { |r| Spree::Returns::Cancel.call(return_record: r) }
 
       expect(create_return).to be_success
+    end
+
+    # A customer who abandons a return must not be left holding live prepaid
+    # postage: the label still works and the merchant is still paying for it.
+    it 'gives back the postage on a prepaid label' do
+      return_record = create_return.value
+      label = create(:shipping_label, owner: return_record, store: store)
+      allow(Spree.shipping_label_refund_workflow).to receive(:call).and_call_original
+
+      Spree::Returns::Cancel.call(return_record: return_record)
+
+      expect(Spree.shipping_label_refund_workflow).to have_received(:call).
+        with(shipping_label: label)
+    end
+
+    it 'cancels even when the carrier refuses the refund' do
+      return_record = create_return.value
+      create(:shipping_label, owner: return_record, store: store)
+      allow(Spree.shipping_label_refund_workflow).to receive(:call).
+        and_return(Spree::ServiceModule::Result.new(false, nil, 'carrier said no'))
+      allow(Rails.error).to receive(:report)
+
+      expect(Spree::Returns::Cancel.call(return_record: return_record)).to be_success
+      expect(Rails.error).to have_received(:report)
     end
   end
 end

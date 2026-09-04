@@ -75,7 +75,14 @@ An order tracks payment and delivery separately, because they genuinely move at 
 | `delivered` | The customer has all of it |
 | `canceled` | Nothing will be sent |
 
-A canceled parcel is ignored while others are still live, so an order whose second parcel was recalled is described by the first.
+A canceled parcel is ignored while others are still live, so an order whose
+second parcel was recalled is described by the first.
+
+`delivered` means every parcel arrived. A fulfillment that travels as several
+consignments — a machine in three boxes, a pallet under one freight number —
+is only delivered when the last of them lands, and the order follows from
+there. See [where the parcel actually
+is](/developer/core-concepts/fulfillments#where-the-parcel-actually-is).
 
 Both are worked out automatically from the order's payments, refunds and fulfillments. You change an order's status by acting on those — taking a payment, sending a parcel, issuing a refund — never by setting the status yourself.
 

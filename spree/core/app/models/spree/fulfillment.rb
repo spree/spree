@@ -40,11 +40,16 @@ module Spree
     # stock by the time it is destroyed.
     has_many :stock_movements, class_name: 'Spree::StockMovement', inverse_of: :fulfillment
     has_one :selected_delivery_rate, -> { where(selected: true).order(:cost) }, class_name: 'Spree::DeliveryRate'
+    # The carrier documents bought or uploaded for this parcel, and its
+    # consignments in flight (docs/plans/6.0-shipping-labels-and-deliveries.md).
+    # The first delivery is the primary one that #tracking summarizes.
+    has_many :shipping_labels, -> { order(:created_at, :id) }, class_name: 'Spree::ShippingLabel', as: :owner, dependent: :destroy
+    has_many :deliveries, -> { order(:created_at, :id) }, class_name: 'Spree::Delivery', as: :owner, dependent: :destroy
 
     after_save :update_adjustments
+    after_commit :apply_pending_tracking, if: -> { defined?(@pending_tracking) }
 
     before_validation :set_cost_zero_when_nil
-    before_save :detect_tracking_carrier, if: -> { will_save_change_to_tracking? && tracking_carrier.blank? }
 
     validate :exactly_one_owner
 
@@ -65,7 +70,7 @@ module Spree
     # has confirmed receipt — the natural set for reporting and for skipping
     # work that only applies to packages still on the shelf.
     scope :fulfilled_or_delivered, -> { where(status: %w(fulfilled delivered)) }
-    scope :trackable, -> { where("tracking IS NOT NULL AND tracking != ''") }
+    scope :trackable, -> { where(id: Spree::Delivery.where(owner_type: name).select(:owner_id)) }
     scope :with_state, ->(*s) { where(status: s) }
     # sort by most recent fulfilled_at, falling back to created_at. add "id desc" to make specs that involve this scope more deterministic.
     scope :reverse_chronological, -> { order(Arel.sql("coalesce(#{table_name}.fulfilled_at, #{table_name}.created_at) desc"), id: :desc) }
@@ -119,15 +124,6 @@ module Spree
     # app/workflows/spree/fulfillments (docs/plans/6.0-fulfillment-and-delivery.md).
     include Spree::HasStatus
     has_status :unfulfilled, :fulfilled, :delivered, :canceled, default: :unfulfilled
-
-    # What the carrier reports, kept apart from the merchant lifecycle: a bounced
-    # or damaged package changes this, never #status.
-    TRACKING_STATUSES = %w(
-      pre_transit in_transit out_for_delivery available_for_pickup
-      delivered return_to_sender failure unknown
-    ).freeze
-
-    validates :tracking_status, inclusion: { in: TRACKING_STATUSES }, allow_blank: true
 
     # @deprecated Use {Spree::Fulfillments::Fulfill}; removed in 6.1.
     def ship(*args)
@@ -187,7 +183,6 @@ module Spree
     # @deprecated the column is +status+ since 6.0
     alias_attribute :state, :status
     alias_attribute :shipped_at, :fulfilled_at
-    after_save { @tracking_url = nil }
     # Legacy association names — removed in 6.1.
     has_many :inventory_units, class_name: 'Spree::FulfillmentItem', foreign_key: :fulfillment_id, inverse_of: :fulfillment, deprecated: true
     has_many :shipping_rates, -> { order(:cost) }, class_name: 'Spree::DeliveryRate', foreign_key: :fulfillment_id, deprecated: true
@@ -203,8 +198,6 @@ module Spree
     # release.
     alias_attribute :promo_total, :discount_total
     alias display_promo_total display_discount_total
-
-    normalizes :tracking, with: ->(value) { value&.to_s&.squish&.presence }
 
     # Returns the shipment number and shipping method name
     #
@@ -571,6 +564,10 @@ module Spree
       # Reload associations to pick up the new selected shipping rate
       delivery_rates.reset
       association(:selected_delivery_rate).reset
+      # A different rate can be a different carrier, and the provider is
+      # derived from the method behind it — a stale one buys, tracks or
+      # cancels through the account the parcel is no longer shipping on.
+      @provider = nil
       # Update shipment cost and owner totals only during checkout.
       # For completed orders, totals are managed separately (e.g., in tests or admin adjustments)
       return if owner.nil? || owner.completed?
@@ -616,7 +613,7 @@ module Spree
     #
     # @return [Spree::FulfillmentProvider::Base]
     def provider
-      delivery_method&.provider || Spree::FulfillmentProvider::Manual.new
+      @provider ||= delivery_method&.provider || Spree::FulfillmentProvider::Manual.new
     end
 
     # Commission base for multi-seller include_shipping: the cost net of
@@ -661,43 +658,49 @@ module Spree
       package
     end
 
-    # External systems (3PLs, courier APIs) often hand over a complete
-    # tracking link rather than a bare tracking code — returned as-is
-    # instead of being templated into the delivery method's tracking URL.
+    # The consignment the 5.6 +tracking+/+tracking_url+ summary describes —
+    # the earliest delivery. Every other delivery is read through
+    # #deliveries; the fulfillment only ever summarizes this one.
+    #
+    # @return [Spree::Delivery, nil]
+    def primary_delivery
+      deliveries.first
+    end
+
+    # The primary delivery's tracking number. Read-only since 6.0: tracking is
+    # a {Spree::Delivery} created through Spree::Deliveries::Create or the
+    # +tracking:+ shortcut on Spree::Fulfillments::Fulfill / Update.
     #
     # @return [String, nil]
-    # The public page where this parcel can be followed, best answer first:
-    #
-    # 1. The tracking value is already a link — pasted in whole.
-    # 2. The provider that bought the label knows its own tracker page.
-    # 3. The carrier pinned on this fulfillment (picked or detected) has a
-    #    registered tracking page.
-    # 4. The delivery method's configured format string, or detection from the
-    #    number's format — the legacy path, still right for single-carrier
-    #    methods.
+    def tracking
+      primary_delivery&.tracking_number
+    end
+
+    # @deprecated Assigning tracking writes a delivery on save; removed in
+    #   6.1. Use Spree::Deliveries::Create or the +tracking:+ keyword on
+    #   Spree::Fulfillments::Fulfill / Update instead.
+    def tracking=(value)
+      Spree::Deprecation.warn(
+        'Spree::Fulfillment#tracking= is deprecated and will be removed in Spree 6.1. ' \
+        'Tracking is a Spree::Delivery — use Spree::Deliveries::Create or the tracking: keyword ' \
+        'on Spree::Fulfillments::Fulfill / Update.'
+      )
+      @pending_tracking = value
+    end
+
+    # The public page where the primary consignment can be followed.
     #
     # @return [String, nil]
     def tracking_url
-      return if tracking.blank?
-
-      @tracking_url ||= if tracking.start_with?('https://', 'http://')
-                          tracking
-                        else
-                          provider.tracking_url(self).presence ||
-                            carrier_tracking_url.presence ||
-                            delivery_method&.build_tracking_url(tracking).presence ||
-                            detected_tracking_url
-                        end
+      primary_delivery&.resolved_tracking_url
     end
 
-    # The pinned carrier's display name, for storefronts and admin UIs
-    # showing "InPost: 421432" rather than a bare number.
+    # The label that currently binds this parcel — bought or uploaded, and not
+    # refunded. At most one exists: the label workflows refuse a second one.
     #
-    # @return [String, nil]
-    def tracking_carrier_name
-      return if tracking_carrier.blank?
-
-      Spree.tracking_carriers.dig(tracking_carrier, :name) || tracking_carrier.titleize
+    # @return [Spree::ShippingLabel, nil]
+    def active_shipping_label
+      shipping_labels.active.last
     end
 
     def update_amounts
@@ -844,13 +847,17 @@ module Spree
     end
 
     # Lets the provider perform its dispatch mechanics; tracking data it
-    # returns is persisted unless an admin already entered one.
+    # returns becomes the primary delivery unless an admin already entered one.
     def run_provider_create_fulfillment
       result = provider.create_fulfillment(self)
       return unless result.is_a?(Hash)
 
       new_tracking = result[:tracking_number].presence
-      update_column(:tracking, new_tracking) if new_tracking && tracking.blank?
+      return if new_tracking.blank? || tracking.present?
+
+      Spree.delivery_create_service.call(
+        owner: self, tracking_number: new_tracking, tracking_url: result[:tracking_url]
+      )
     end
 
     def update_order_fulfillment_status
@@ -883,25 +890,25 @@ module Spree
       self.cost = 0 unless cost
     end
 
-    def carrier_tracking_url
-      template = Spree.tracking_carriers.dig(tracking_carrier.to_s, :url)
-      template&.gsub(':tracking', ERB::Util.url_encode(tracking))
-    end
+    # The deprecated writer's other half: a tracking number assigned the old
+    # way still lands where every reader looks, on the primary delivery.
+    # Runs after commit rather than inside the save chain: writing a second
+    # record from within this one's callbacks is what the workflows exist to
+    # avoid, and the association has to see a committed fulfillment.
+    #
+    # A rejection surfaces on the fulfillment's own errors rather than as an
+    # exception: the save has already committed by the time this runs, and
+    # raising here would report a persisted write as a failure. Code that
+    # needs the rejection to abort creates the delivery directly.
+    def apply_pending_tracking
+      value = remove_instance_variable(:@pending_tracking)
+      return if value.blank?
 
-    def detected_tracking_url
-      service = Spree.tracking_number_service.new(tracking.upcase)
-      service.tracking_url if service.valid?
-    end
+      deliveries.reset
+      result = Spree.delivery_upsert_primary_service.call(fulfillment: self, tracking: value)
+      return if result.success?
 
-    # Numbers from the big carriers encode who they belong to; pinning the
-    # detected carrier means the badge and the URL survive even when the
-    # merchant only pasted a number. Only fills a blank — a merchant's
-    # explicit pick, or a provider's, is never second-guessed.
-    def detect_tracking_carrier
-      return if tracking.blank? || tracking.start_with?('https://', 'http://')
-
-      service = Spree.tracking_number_service.new(tracking.upcase)
-      self.tracking_carrier = service.tracking.courier_code.to_s if service.valid?
+      errors.merge!(result.value.errors) if result.value.respond_to?(:errors)
     end
 
     def exactly_one_owner

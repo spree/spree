@@ -14,6 +14,9 @@ erDiagram
     Order ||--o{ Fulfillment : "has many"
     Fulfillment ||--o{ FulfillmentItem : "has many"
     Fulfillment ||--o{ DeliveryRate : "offers"
+    Fulfillment ||--o{ Delivery : "travels as"
+    Fulfillment ||--o{ ShippingLabel : "buys"
+    ShippingLabel ||--o| Delivery : "mints"
     Fulfillment }o--|| StockLocation : "sourced from"
     DeliveryRate }o--|| DeliveryMethod : "priced by"
     DeliveryMethod }o--o{ DeliveryZone : "serves"
@@ -24,6 +27,19 @@ erDiagram
         string tracking
         string cost
         datetime fulfilled_at
+        datetime delivered_at
+    }
+    Delivery {
+        string tracking_number
+        string carrier
+        string status
+        datetime delivered_at
+    }
+    ShippingLabel {
+        string source
+        string status
+        string cost
+        string tracking_number
     }
 ```
 
@@ -34,11 +50,14 @@ erDiagram
 | `id` | Fulfillment ID, e.g. `ful_86Rf07xd4z` |
 | `number` | Fulfillment number, e.g. `F123456789` |
 | `status` | See [statuses](#statuses) below |
-| `tracking` | Carrier tracking number, once it's on its way |
+| `tracking` / `tracking_url` | The first consignment's tracking number and link, summarised for convenience |
+| `deliveries` | Every consignment this batch travels as — see [consignments](#where-the-parcel-actually-is) |
+| `labels` | Postage bought or uploaded for it |
 | `cost` / `display_cost` | Delivery cost for this fulfillment |
 | `delivery_rates` | The options the customer can choose from |
 | `selected_delivery_rate_id` | The chosen option |
 | `fulfilled_at` | When it went out |
+| `delivered_at` | When the customer got it — what return windows count from |
 
 ## Statuses
 
@@ -57,7 +76,12 @@ Whether a fulfillment *can* go out — the order is paid, nothing is on backorde
 
 ### Where the parcel actually is
 
-Carrier reports live on a second field, `tracking_status`, and never change `status`:
+One fulfillment can travel as several parcels — a gym machine that arrives in
+three boxes, or a pallet moving under one freight PRO number. Each is a
+**delivery**: its own tracking number, its own carrier, its own journey.
+
+A delivery's `status` is what the carrier reports, and it never changes the
+fulfillment's own `status`:
 
 | Value | Meaning |
 |---|---|
@@ -70,11 +94,109 @@ Carrier reports live on a second field, `tracking_status`, and never change `sta
 | `failure` | Delivery failed — a bad address, damage, a refused parcel |
 | `unknown` | The carrier said something we don't recognise |
 
-Keeping the two apart is the point. A parcel that bounces still shows `fulfilled`, because you did hand it over; the trouble shows up as `return_to_sender` and you decide what to do about it. The one report that crosses over is delivery, which also sets `delivered` and `delivered_at`.
+Keeping the two apart is the point. A parcel that bounces still shows
+`fulfilled`, because you did hand it over; the trouble shows up as
+`return_to_sender` on that delivery and you decide what to do about it.
 
-`delivered_at` is what return windows and the EU withdrawal period count from, so it records when the carrier says the parcel arrived rather than when you heard about it.
+The fulfillment rolls up from its deliveries: it becomes `delivered` when
+**every** consignment has arrived, so a machine that arrives in three boxes is
+only delivered when the third one lands. That rollup is recomputed whenever
+deliveries are added, removed or corrected — including when a tracking number
+is fixed, which starts that consignment's journey over.
 
-Carriers set this through their provider's webhook. With no carrier integration, staff mark receipt by hand — `markDelivered` in the Admin SDK — which is also how pickup orders get closed out.
+`delivered_at` is what return windows and the EU withdrawal period count from,
+so it records when the carrier says the parcel arrived rather than when you
+heard about it.
+
+Carriers report this through their provider's webhook, matched to the delivery
+by tracking number. With no carrier integration, staff mark receipt by hand —
+`markDelivered` in the Admin SDK, on a single delivery or the whole
+fulfillment — which is also how pickup orders get closed out.
+
+A fulfillment keeps `tracking` and `tracking_url` as a summary of its first
+consignment, so a storefront showing one tracking link needs no changes.
+
+<CodeGroup>
+
+```typescript Admin SDK
+// Add a second parcel to the same fulfillment
+await adminClient.orders.fulfillments.deliveries.create('or_xxx', 'ful_xxx', {
+  tracking_number: '1Z999AA10123456784',
+})
+
+// Correct a number — the consignment's journey starts over
+await adminClient.orders.fulfillments.deliveries.update('or_xxx', 'ful_xxx', 'dlv_xxx', {
+  tracking_number: '9400100000000000000000',
+})
+
+// Confirm one parcel arrived
+await adminClient.orders.fulfillments.deliveries.markDelivered('or_xxx', 'ful_xxx', 'dlv_xxx')
+```
+
+```bash cURL
+curl -X POST 'https://api.mystore.com/api/v3/admin/orders/or_xxx/fulfillments/ful_xxx/deliveries' \
+  -H 'X-Spree-API-Key: sk_xxx' \
+  -H 'Content-Type: application/json' \
+  -d '{ "tracking_number": "1Z999AA10123456784" }'
+```
+
+</CodeGroup>
+
+## Shipping labels
+
+Postage is its own record. A label is either **purchased** through a carrier
+integration or **uploaded** — bought elsewhere and recorded so the PDF and its
+cost live with the consignment.
+
+Buying one mints the delivery it covers, so you never enter the tracking number
+yourself. The file is fetched into Spree's own storage right after purchase, so
+a merchant can reprint after the carrier's link has expired or the integration
+has been disconnected.
+
+A label's `cost` is what **you** paid the carrier. It is admin-only accounting
+data and never appears in a store API response or on the customer's order.
+
+| Field | Meaning |
+|---|---|
+| `source` | `purchased` or `uploaded` |
+| `status` | `purchased`, `refund_requested` or `refunded` |
+| `cost` / `currency` | What the merchant paid the carrier |
+| `tracking_number` | Frozen once bought |
+| `download_url` | Streamed through the API, never served from storage |
+
+A purchased label is given back by refunding it with the carrier; an uploaded
+one has nothing to refund, so it is deleted instead. Either way the consignment
+it minted goes with it only while the parcel never moved — once it is on its
+way, that journey is a fact and stays.
+
+<CodeGroup>
+
+```typescript Admin SDK
+// Buy postage through the carrier integration
+const label = await adminClient.orders.fulfillments.labels.create('or_xxx', 'ful_xxx')
+
+// Or record one bought elsewhere
+await adminClient.orders.fulfillments.labels.create('or_xxx', 'ful_xxx', {
+  file: signedBlobId,
+  tracking_number: '1Z999AA10123456784',
+  cost: '12.50',
+  currency: 'USD',
+})
+
+// Give the postage back
+await adminClient.orders.fulfillments.labels.refund('or_xxx', 'ful_xxx', label.id)
+```
+
+```bash cURL
+curl -X POST 'https://api.mystore.com/api/v3/admin/orders/or_xxx/fulfillments/ful_xxx/labels' \
+  -H 'X-Spree-API-Key: sk_xxx'
+```
+
+</CodeGroup>
+
+Some carriers also produce paperwork beside the label — a commercial invoice or
+a customs declaration for anything crossing a border. Those come back on the
+fulfillment's `documents`, each with a `kind` and a `url`.
 
 ## Delivery types
 
@@ -151,7 +273,9 @@ curl 'https://api.mystore.com/api/v3/store/delivery_methods/dm_xxx/pickup_locati
 // What's still with you
 const fulfillments = await adminClient.orders.fulfillments.list('or_xxx')
 
-// Add tracking, then mark it sent
+// Add tracking, then mark it sent. `tracking` is a shortcut that creates or
+// corrects the fulfillment's first consignment; use the deliveries endpoints
+// when a batch travels as more than one parcel.
 await adminClient.orders.fulfillments.update('or_xxx', 'ful_xxx', {
   tracking: '1Z999AA10123456784',
 })
@@ -190,33 +314,10 @@ curl -X PATCH 'https://api.mystore.com/api/v3/admin/orders/or_xxx/fulfillments/f
 
 </CodeGroup>
 
-## Delivery methods and zones
+## How delivery is set up
 
-A **delivery method** is what the customer picks — "Standard", "Express", "Collect in store". A **delivery zone** decides where it's available.
-
-Zones match on country and state, and also on postal code prefixes and ranges, so you can offer same-day delivery to a handful of city postcodes without listing every one:
-
-```typescript Admin SDK
-await adminClient.deliveryZones.create({
-  name: 'London same-day',
-  members: [
-    { member_type: 'postal_code', country_code: 'GB', postal_code_prefix: 'SW1' },
-    { member_type: 'postal_code', country_code: 'GB', postal_code_from: 'EC1A', postal_code_to: 'EC1V' },
-  ],
-})
-```
-
-A zone member is either a whole country, a state, or a postal code prefix or range.
-
-<Note>
-Delivery zones cover delivery only. Tax is handled separately — see [Taxes](/developer/core-concepts/taxes).
-</Note>
-
-### Pricing and rules
-
-Delivery is priced either by a rule you configure in the dashboard — flat rate, per item, price bands — or by asking a carrier for live rates.
-
-Methods can also carry conditions that decide when they're offered at all: free shipping over a certain order value, or heavy items excluded from letter post. These are applied in one place, so both kinds of pricing respect them.
+Which methods a customer is offered, what they cost and where they reach is
+configured separately — see [delivery setup](/developer/core-concepts/delivery-setup).
 
 ## Adding your own statuses
 
@@ -246,8 +347,7 @@ orders render `fulfilled` as "ready for pickup".
 by it, reports group by it, or webhooks fire on entering it, make it a
 first-class status:
 
-```ruby
-# an initializer
+```ruby config/initializers/spree.rb
 Spree::Fulfillment.add_status('in_production', after: 'unfulfilled')
 ```
 

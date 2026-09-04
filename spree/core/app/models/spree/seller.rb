@@ -335,8 +335,12 @@ module Spree
     # location, so an address alone would leave the goods arriving nowhere.
     #
     # @return [Spree::StockLocation, nil]
+    # Where this seller's goods come back to. Prefers a location that accepts
+    # returns; falls back to any active one, since a seller with none marked
+    # still has to receive what customers send back.
     def returns_location
-      @returns_location ||= stock_locations.active.order_default.first
+      @returns_location ||= stock_locations.active.returns_enabled.order_default.first ||
+                            stock_locations.active.order_default.first
     end
 
     # The postal address a shopper is given for returns.

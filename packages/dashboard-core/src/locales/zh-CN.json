@@ -700,6 +700,10 @@
         "propagate_all_variants": {
           "help": "为每个商品变体在此地点创建库存项。",
           "label": "为所有变体自动创建库存项"
+        },
+        "returns_enabled": {
+          "help": "退回的商品将送到此地点。如果在别处验收退货，请关闭此项。",
+          "label": "在此接收退货"
         }
       },
       "storefront_visible": {
@@ -1266,6 +1270,7 @@
         "default": "默认",
         "location": "地点",
         "pickup": "自提",
+        "returns": "退货",
         "seller": "卖家",
         "type": "类型"
       },
@@ -1288,6 +1293,7 @@
       },
       "search_placeholder": "按名称搜索…",
       "section_pickup": "自提",
+      "section_returns": "退货",
       "stock_levels": {
         "empty": "此地点暂无库存水平。",
         "empty_search": "没有与搜索匹配的库存水平。",

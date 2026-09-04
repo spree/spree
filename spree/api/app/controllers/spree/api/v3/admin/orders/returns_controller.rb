@@ -92,8 +92,15 @@ module Spree
               :returns
             end
 
+            # `documents` resolves the provider through the returned units and
+            # reads the labels it produced, so both are preloaded: without them
+            # a page of returns is a query per row.
             def collection_includes
-              [:reason, :stock_location, { return_line_items: [:variant, :line_item] }]
+              [
+                :reason, :stock_location, :deliveries,
+                { shipping_labels: { file_attachment: :blob } },
+                { return_line_items: [:variant, :line_item, { fulfillment_item: :fulfillment }] }
+              ]
             end
 
             def permitted_params

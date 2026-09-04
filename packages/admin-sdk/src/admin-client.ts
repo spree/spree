@@ -135,9 +135,12 @@ import type {
   CustomFieldOwnerType,
   CustomFieldResourceType,
   CustomFieldUpdateParams,
+  DeliveryCreateParams,
+  DeliveryMarkDeliveredParams,
   DeliveryMethodParams,
   DeliveryOriginGroupParams,
   DeliveryProfileParams,
+  DeliveryUpdateParams,
   DeliveryZoneParams,
   DigitalAssetCreateParams,
   DigitalAssetProvider,
@@ -233,6 +236,7 @@ import type {
   SetupCountries,
   SetupParams,
   SetupStatus,
+  ShippingLabelCreateParams,
   StockLevelBulkUpsertRow,
   StockLevelUpdateParams,
   StockLocationCreateParams,
@@ -282,6 +286,7 @@ import type {
   CustomerGroup,
   CustomField,
   CustomFieldDefinition,
+  Delivery,
   DeliveryMethod,
   DeliveryMethodRule,
   DeliveryOriginGroup,
@@ -334,6 +339,7 @@ import type {
   SellerRequirementSubmission,
   SellerTeamMember,
   SellerTransfer,
+  ShippingLabel,
   StockLevel,
   StockLocation,
   StockMovement,
@@ -1386,21 +1392,6 @@ export class AdminClient {
           body: params,
         }),
 
-      // Buys the shipping label for a parcel that has not shipped yet, so the
-      // merchant prints it and packs before anything tells the customer it
-      // shipped. Only providers that produce labels accept this; failures are
-      // loud (422), unlike fulfill's degrade-to-no-label path.
-      purchaseLabel: (
-        orderId: string,
-        id: string,
-        options?: RequestOptions,
-      ): Promise<Fulfillment> =>
-        this.request<Fulfillment>(
-          'PATCH',
-          `/orders/${orderId}/fulfillments/${id}/purchase_label`,
-          options,
-        ),
-
       // Confirms the customer received the goods. Staff can record this by
       // hand — a merchant with no carrier integration still needs a delivered
       // state — and carriers reach the same endpoint through their webhooks.
@@ -1417,6 +1408,168 @@ export class AdminClient {
 
       cancel: (orderId: string, id: string, options?: RequestOptions): Promise<Fulfillment> =>
         this.request<Fulfillment>('PATCH', `/orders/${orderId}/fulfillments/${id}/cancel`, options),
+
+      /**
+       * The carrier documents bought or uploaded for a parcel. Creating one
+       * with no body buys it through the parcel's carrier account; creating it
+       * with a `file` (a signed blob id from `directUploads.create()`) records
+       * postage the merchant bought elsewhere. To print one, fetch
+       * `download_url` with the `Authorization` header and drive the browser
+       * download from a Blob — the bytes are streamed through the API rather
+       * than served from storage.
+       */
+      labels: {
+        list: (
+          orderId: string,
+          fulfillmentId: string,
+          options?: RequestOptions,
+        ): Promise<{ data: ShippingLabel[] }> =>
+          this.request<{ data: ShippingLabel[] }>(
+            'GET',
+            `/orders/${orderId}/fulfillments/${fulfillmentId}/labels`,
+            options,
+          ),
+
+        get: (
+          orderId: string,
+          fulfillmentId: string,
+          id: string,
+          options?: RequestOptions,
+        ): Promise<ShippingLabel> =>
+          this.request<ShippingLabel>(
+            'GET',
+            `/orders/${orderId}/fulfillments/${fulfillmentId}/labels/${id}`,
+            options,
+          ),
+
+        create: (
+          orderId: string,
+          fulfillmentId: string,
+          params?: ShippingLabelCreateParams,
+          options?: RequestOptions,
+        ): Promise<ShippingLabel> =>
+          this.request<ShippingLabel>(
+            'POST',
+            `/orders/${orderId}/fulfillments/${fulfillmentId}/labels`,
+            { ...options, body: params },
+          ),
+
+        /**
+         * Asks the carrier to refund a purchased label. The answer is
+         * `refunded` when the carrier settled at once, `refund_requested` when
+         * it will decide later. Uploaded labels cannot be refunded.
+         */
+        refund: (
+          orderId: string,
+          fulfillmentId: string,
+          id: string,
+          options?: RequestOptions,
+        ): Promise<ShippingLabel> =>
+          this.request<ShippingLabel>(
+            'PATCH',
+            `/orders/${orderId}/fulfillments/${fulfillmentId}/labels/${id}/refund`,
+            options,
+          ),
+
+        /** Uploaded labels only — a purchased label is refunded instead. */
+        delete: (
+          orderId: string,
+          fulfillmentId: string,
+          id: string,
+          options?: RequestOptions,
+        ): Promise<void> =>
+          this.request<void>(
+            'DELETE',
+            `/orders/${orderId}/fulfillments/${fulfillmentId}/labels/${id}`,
+            options,
+          ),
+      },
+
+      /**
+       * The tracked consignments of a parcel — one per tracking number, each
+       * carrying the carrier status last reported. A fulfillment's own
+       * `tracking` field summarizes the first of them.
+       */
+      deliveries: {
+        list: (
+          orderId: string,
+          fulfillmentId: string,
+          options?: RequestOptions,
+        ): Promise<{ data: Delivery[] }> =>
+          this.request<{ data: Delivery[] }>(
+            'GET',
+            `/orders/${orderId}/fulfillments/${fulfillmentId}/deliveries`,
+            options,
+          ),
+
+        get: (
+          orderId: string,
+          fulfillmentId: string,
+          id: string,
+          options?: RequestOptions,
+        ): Promise<Delivery> =>
+          this.request<Delivery>(
+            'GET',
+            `/orders/${orderId}/fulfillments/${fulfillmentId}/deliveries/${id}`,
+            options,
+          ),
+
+        create: (
+          orderId: string,
+          fulfillmentId: string,
+          params: DeliveryCreateParams,
+          options?: RequestOptions,
+        ): Promise<Delivery> =>
+          this.request<Delivery>(
+            'POST',
+            `/orders/${orderId}/fulfillments/${fulfillmentId}/deliveries`,
+            { ...options, body: params },
+          ),
+
+        /** A corrected tracking number starts the carrier journey over. */
+        update: (
+          orderId: string,
+          fulfillmentId: string,
+          id: string,
+          params: DeliveryUpdateParams,
+          options?: RequestOptions,
+        ): Promise<Delivery> =>
+          this.request<Delivery>(
+            'PATCH',
+            `/orders/${orderId}/fulfillments/${fulfillmentId}/deliveries/${id}`,
+            { ...options, body: params },
+          ),
+
+        /** Refused for a consignment a label minted — refund the label. */
+        delete: (
+          orderId: string,
+          fulfillmentId: string,
+          id: string,
+          options?: RequestOptions,
+        ): Promise<void> =>
+          this.request<void>(
+            'DELETE',
+            `/orders/${orderId}/fulfillments/${fulfillmentId}/deliveries/${id}`,
+            options,
+          ),
+
+        /**
+         * Staff confirming one consignment arrived. The parcel becomes
+         * delivered once every one of its consignments has.
+         */
+        markDelivered: (
+          orderId: string,
+          fulfillmentId: string,
+          id: string,
+          params?: DeliveryMarkDeliveredParams,
+          options?: RequestOptions,
+        ): Promise<Delivery> =>
+          this.request<Delivery>(
+            'PATCH',
+            `/orders/${orderId}/fulfillments/${fulfillmentId}/deliveries/${id}/mark_delivered`,
+            { ...options, body: params },
+          ),
+      },
 
       // Returns every fulfillment on the order, since a split re-shapes the
       // source as well as creating the new one (and destroys the source when
@@ -1515,6 +1668,76 @@ export class AdminClient {
           ...options,
           body: params,
         }),
+
+      /**
+       * The prepaid label for the parcel coming back. Bought through the
+       * carrier that shipped the goods out, or recorded from a file when the
+       * merchant bought postage elsewhere — the same shape as a fulfillment's
+       * labels, owned by the return instead.
+       *
+       * The customer downloads it from the storefront; this is the merchant's
+       * side of the same record.
+       */
+      labels: {
+        list: (
+          orderId: string,
+          returnId: string,
+          options?: RequestOptions,
+        ): Promise<{ data: ShippingLabel[] }> =>
+          this.request<{ data: ShippingLabel[] }>(
+            'GET',
+            `/orders/${orderId}/returns/${returnId}/labels`,
+            options,
+          ),
+
+        get: (
+          orderId: string,
+          returnId: string,
+          id: string,
+          options?: RequestOptions,
+        ): Promise<ShippingLabel> =>
+          this.request<ShippingLabel>(
+            'GET',
+            `/orders/${orderId}/returns/${returnId}/labels/${id}`,
+            options,
+          ),
+
+        create: (
+          orderId: string,
+          returnId: string,
+          params?: ShippingLabelCreateParams,
+          options?: RequestOptions,
+        ): Promise<ShippingLabel> =>
+          this.request<ShippingLabel>('POST', `/orders/${orderId}/returns/${returnId}/labels`, {
+            ...options,
+            body: params,
+          }),
+
+        refund: (
+          orderId: string,
+          returnId: string,
+          id: string,
+          options?: RequestOptions,
+        ): Promise<ShippingLabel> =>
+          this.request<ShippingLabel>(
+            'PATCH',
+            `/orders/${orderId}/returns/${returnId}/labels/${id}/refund`,
+            options,
+          ),
+
+        /** Uploaded labels only — a purchased label is refunded instead. */
+        delete: (
+          orderId: string,
+          returnId: string,
+          id: string,
+          options?: RequestOptions,
+        ): Promise<void> =>
+          this.request<void>(
+            'DELETE',
+            `/orders/${orderId}/returns/${returnId}/labels/${id}`,
+            options,
+          ),
+      },
     },
 
     exchanges: {

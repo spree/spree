@@ -168,6 +168,8 @@ module Spree
     has_many :shipments, through: :orders, class_name: 'Spree::Fulfillment', source: :fulfillments, deprecated: true
     has_many :payments, through: :orders, class_name: 'Spree::Payment'
     has_many :returns, class_name: 'Spree::Return', inverse_of: :store
+    has_many :shipping_labels, class_name: 'Spree::ShippingLabel', inverse_of: :store
+    has_many :deliveries, class_name: 'Spree::Delivery', inverse_of: :store
     has_many :exchanges, class_name: 'Spree::Exchange', inverse_of: :store
     has_many :claims, class_name: 'Spree::Claim', inverse_of: :store
     has_many :return_reasons, class_name: 'Spree::ReturnReason', inverse_of: :store, dependent: :destroy

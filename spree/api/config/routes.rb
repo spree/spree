@@ -71,7 +71,11 @@ Spree::Core::Engine.add_routes do
         resources :orders, only: [:show] do
           # Customer self-service returns — opening and viewing only; the
           # merchant approves, receives and refunds through the Admin API.
-          resources :returns, only: [:index, :show, :create], controller: 'orders/returns'
+          resources :returns, only: [:index, :show, :create], controller: 'orders/returns' do
+            member do
+              get :label
+            end
+          end
           resources :claims, only: [:index, :show, :create], controller: 'orders/claims'
           # Read-only — the registration frozen onto the order at completion.
           resource :tax_identifier, only: [:show], controller: 'orders/tax_identifiers'
@@ -718,10 +722,21 @@ Spree::Core::Engine.add_routes do
           resources :fulfillments, controller: 'orders/fulfillments', only: [:index, :show, :create, :update] do
             member do
               patch :fulfill
-              patch :purchase_label
               patch :mark_delivered
               patch :cancel
               patch :split
+            end
+
+            resources :labels, controller: 'orders/labels', only: [:index, :show, :create, :destroy] do
+              member do
+                get :download
+                patch :refund
+              end
+            end
+            resources :deliveries, controller: 'orders/deliveries', only: [:index, :show, :create, :update, :destroy] do
+              member do
+                patch :mark_delivered
+              end
             end
           end
           resources :returns, controller: 'orders/returns', only: [:index, :show, :create, :update] do
@@ -730,6 +745,13 @@ Spree::Core::Engine.add_routes do
               patch :receive
               patch :refund
               patch :cancel
+            end
+
+            resources :labels, controller: 'orders/labels', only: [:index, :show, :create, :destroy] do
+              member do
+                get :download
+                patch :refund
+              end
             end
           end
           resources :exchanges, controller: 'orders/exchanges', only: [:index, :show, :create, :update] do
@@ -844,6 +866,13 @@ Spree::Core::Engine.add_routes do
           resources :fulfillments, only: [:index, :show], controller: 'orders/fulfillments' do
             member do
               patch :fulfill
+            end
+
+            resources :deliveries, controller: 'orders/deliveries', only: [:index, :show, :create, :update, :destroy]
+            resources :labels, controller: 'orders/labels', only: [:index, :show, :create, :destroy] do
+              member do
+                get :download
+              end
             end
           end
         end

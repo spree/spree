@@ -13,15 +13,14 @@ module Spree
                    status: :string,
                    tracking: [:string, nullable: true],
                    tracking_url: [:string, nullable: true],
-                   tracking_carrier: [:string, nullable: true],
-                   tracking_status: [:string, nullable: true],
                    fulfillment_type: [:string, nullable: true],
                    delivery_method_name: [:string, nullable: true],
                    stock_location_name: [:string, nullable: true]
 
-          attributes :number, :status, :tracking, :tracking_url, :tracking_carrier,
-                     :tracking_status,
-                     fulfilled_at: :iso8601, created_at: :iso8601, updated_at: :iso8601
+          attributes :number, :status, :tracking, :tracking_url,
+                     fulfilled_at: :iso8601, delivered_at: :iso8601, created_at: :iso8601, updated_at: :iso8601
+
+          typelize delivered_at: [:string, nullable: true]
 
           # Null until the parcel actually ships, which is most of its life.
           typelize fulfilled_at: [:string, nullable: true]
@@ -46,6 +45,11 @@ module Spree
           # else's. These are the persisted fulfillment items, so they say so.
           many :fulfillment_items,
                resource: proc { Spree.api.seller_fulfillment_item_serializer }
+
+          # The consignments and labels on this parcel — what a seller adds
+          # when they ship it themselves.
+          many :deliveries, resource: proc { Spree.api.seller_delivery_serializer }
+          many :shipping_labels, key: :labels, resource: proc { Spree.api.seller_shipping_label_serializer }
         end
       end
     end

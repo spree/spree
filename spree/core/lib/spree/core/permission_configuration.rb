@@ -297,7 +297,9 @@ module Spree
          Spree::CustomField, Spree::DigitalLink]
       })
       register_resource(:payments, group: :orders, subjects: -> { [Spree::Payment, Spree::PaymentSplit] })
-      register_resource(:fulfillments, group: :orders, audiences: %i[seller], subjects: -> { [Spree::Fulfillment] })
+      register_resource(:fulfillments, group: :orders, audiences: %i[seller], subjects: -> {
+        [Spree::Fulfillment, Spree::ShippingLabel, Spree::Delivery]
+      })
       register_resource(:refunds, group: :orders, subjects: -> { [Spree::Refund] })
       register_resource(:gift_cards, group: :orders, subjects: -> {
         [Spree::GiftCard, Spree::GiftCardBatch]

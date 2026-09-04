@@ -1,4 +1,4 @@
-import type { Fulfillment, Order } from '@spree/admin-sdk'
+import type { Delivery, Fulfillment, Order } from '@spree/admin-sdk'
 import { useStockLocations } from '@spree/dashboard-core'
 import {
   Badge,
@@ -33,6 +33,7 @@ import {
   SelectTrigger,
   SelectValue,
   StatusBadge,
+  toastManager,
   useConfirm,
 } from '@spree/dashboard-ui'
 import {
@@ -56,10 +57,14 @@ import {
   unfulfilledItemRows,
 } from '../../../lib/fulfillment-items'
 import { printPackingSlip } from '../../../lib/packing-slip'
+import { FulfillmentDeliveries } from './fulfillment-deliveries'
+import { FulfillmentDeliveryDialog } from './fulfillment-delivery-dialog'
 import { FulfillmentEditDialog } from './fulfillment-edit-dialog'
 import { FulfillmentFulfillForm } from './fulfillment-fulfill-form'
 import { FulfillmentItemList } from './fulfillment-item-list'
-import { FulfillmentTrackingDialog } from './fulfillment-tracking-dialog'
+import { FulfillmentLabelUploadDialog } from './fulfillment-label-upload-dialog'
+import { ShippingDocuments } from './shipping-documents'
+import { ShippingLabelRow } from './shipping-label-row'
 
 /**
  * A unit sitting in one fulfillment. Splitting moves units per variant rather
@@ -274,6 +279,7 @@ function CreateFulfillmentDialog({
   const units = orderUnits(order)
   const locations = data?.data ?? []
   const [stockLocationId, setStockLocationId] = useState('')
+  const [error, setError] = useState<string | null>(null)
   const [selection, setSelection] = useState<Record<string, number>>({})
 
   const items = Object.entries(selection)
@@ -287,6 +293,7 @@ function CreateFulfillmentDialog({
 
   function handleSubmit() {
     if (!stockLocationId) return
+    setError(null)
     create.mutate(
       {
         stock_location_id: stockLocationId,
@@ -298,7 +305,17 @@ function CreateFulfillmentDialog({
         onSuccess: () => {
           setSelection({})
           setStockLocationId('')
+          setError(null)
           onOpenChange(false)
+        },
+        // The mutation hook leaves a 422 untoasted because a form usually
+        // shows it beside the offending field. This dialog has no such
+        // field — the reason lives on the server ("that item has no
+        // unfulfilled quantity") — so it is rendered here or nowhere.
+        onError: (mutationError) => {
+          setError(
+            mutationError instanceof Error ? mutationError.message : t('admin.errors.unexpected'),
+          )
         },
       },
     )
@@ -315,6 +332,12 @@ function CreateFulfillmentDialog({
         </DialogHeader>
         <DialogBody>
           <FieldGroup>
+            {error && (
+              <p className="text-sm text-destructive" role="alert">
+                {error}
+              </p>
+            )}
+
             <Field>
               <FieldLabel htmlFor="create-location">
                 {t('admin.orders.detail.fulfillments.ships_from')}
@@ -398,11 +421,14 @@ function FulfillmentRow({ order, fulfillment }: { order: Order; fulfillment: Ful
   const { t } = useTranslation()
   const confirm = useConfirm()
   const orderId = order.id
-  const { cancel, markDelivered, purchaseLabel } = useFulfillmentActions(orderId)
+  const { cancel, markDelivered, buyLabel, refundLabel, deleteLabel } =
+    useFulfillmentActions(orderId)
 
   const [editOpen, setEditOpen] = useState(false)
   const [splitOpen, setSplitOpen] = useState(false)
-  const [trackingOpen, setTrackingOpen] = useState(false)
+  const [deliveryOpen, setDeliveryOpen] = useState(false)
+  const [editingDelivery, setEditingDelivery] = useState<Delivery | undefined>()
+  const [uploadOpen, setUploadOpen] = useState(false)
   const [fulfilling, setFulfilling] = useState(false)
 
   const editable = CAN_EDIT.includes(fulfillment.status)
@@ -417,11 +443,16 @@ function FulfillmentRow({ order, fulfillment }: { order: Order; fulfillment: Ful
     (rate) => rate.id === fulfillment.selected_delivery_rate_id,
   )
   const deliverable = CAN_MARK_DELIVERED.includes(fulfillment.status)
+  const deliveries = fulfillment.deliveries ?? []
+  // At most one label binds a parcel: the workflows refuse a second while one
+  // is active, and a refunded one stays as history.
+  const activeLabel = (fulfillment.labels ?? []).find((label) => label.status !== 'refunded')
   // The label leads, fulfilled follows: print the label, pack the box, hand
   // it over — so buying the label is offered before the parcel ships.
-  const labelDocument = (fulfillment.documents ?? []).find((doc) => doc.kind === 'label')
-  const canBuyLabel = shippable && fulfillment.provider_generates_labels && !labelDocument
-  const trackable = deliverable && !fulfillment.tracking
+  const canBuyLabel = shippable && fulfillment.provider_generates_labels && !activeLabel
+  // Merchants without a carrier account buy postage elsewhere and still need
+  // the file and the cost on the parcel.
+  const canUploadLabel = shippable && !activeLabel
 
   return (
     <FulfillmentPanel
@@ -432,7 +463,7 @@ function FulfillmentRow({ order, fulfillment }: { order: Order; fulfillment: Ful
           <span className="text-muted-foreground text-xs">
             <RelativeTime
               iso={fulfillment.fulfilled_at}
-              prefix={t('admin.orders.detail.tracking.shipped_prefix')}
+              prefix={t('admin.orders.detail.tracking.fulfilled_prefix')}
               fallback=""
             />
           </span>
@@ -466,10 +497,20 @@ function FulfillmentRow({ order, fulfillment }: { order: Order; fulfillment: Ful
               {t('admin.orders.detail.fulfillments.print_packing_slip')}
             </DropdownMenuItem>
 
-            {deliverable && fulfillment.tracking && (
-              <DropdownMenuItem onClick={() => setTrackingOpen(true)}>
-                <TruckIcon className="size-4" />
-                {t('admin.orders.detail.fulfillments.edit_tracking_title')}
+            <DropdownMenuItem
+              onClick={() => {
+                setEditingDelivery(undefined)
+                setDeliveryOpen(true)
+              }}
+            >
+              <TruckIcon className="size-4" />
+              {t('admin.orders.detail.fulfillments.add_delivery')}
+            </DropdownMenuItem>
+
+            {canUploadLabel && (
+              <DropdownMenuItem onClick={() => setUploadOpen(true)}>
+                <TagIcon className="size-4" />
+                {t('admin.orders.detail.fulfillments.upload_label')}
               </DropdownMenuItem>
             )}
 
@@ -514,24 +555,31 @@ function FulfillmentRow({ order, fulfillment }: { order: Order; fulfillment: Ful
         </CardContent>
       )}
 
-      {fulfillment.tracking && !fulfilling && (
-        <CardContent className="border-b border-border-subtle py-3 text-sm">
-          <span className="text-muted-foreground">
-            {fulfillment.tracking_carrier_name ?? t('admin.orders.detail.tracking.prefix')}:{' '}
-          </span>
-          {fulfillment.tracking_url ? (
-            <a
-              href={fulfillment.tracking_url}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="text-blue-600 hover:underline"
-            >
-              {fulfillment.tracking}
-            </a>
-          ) : (
-            <span>{fulfillment.tracking}</span>
-          )}
-        </CardContent>
+      {activeLabel && !fulfilling && (
+        <ShippingLabelRow
+          label={activeLabel}
+          isRefunding={refundLabel.isPending}
+          onRefund={() =>
+            refundLabel.mutate({ fulfillmentId: fulfillment.id, labelId: activeLabel.id })
+          }
+          onDelete={() =>
+            deleteLabel.mutate({ fulfillmentId: fulfillment.id, labelId: activeLabel.id })
+          }
+        />
+      )}
+
+      {!fulfilling && <ShippingDocuments documents={fulfillment.documents} />}
+
+      {!fulfilling && (
+        <FulfillmentDeliveries
+          orderId={orderId}
+          fulfillmentId={fulfillment.id}
+          deliveries={deliveries}
+          onEdit={(delivery) => {
+            setEditingDelivery(delivery)
+            setDeliveryOpen(true)
+          }}
+        />
       )}
 
       {fulfilling ? (
@@ -551,7 +599,7 @@ function FulfillmentRow({ order, fulfillment }: { order: Order; fulfillment: Ful
                   type="button"
                   size="sm"
                   variant="outline"
-                  disabled={purchaseLabel.isPending}
+                  disabled={buyLabel.isPending}
                   onClick={async () => {
                     // Buying a label charges the carrier account, so it gets
                     // an explicit yes even though nothing is destroyed.
@@ -566,23 +614,30 @@ function FulfillmentRow({ order, fulfillment }: { order: Order; fulfillment: Ful
                         confirmLabel: t('admin.orders.detail.fulfillments.buy_label'),
                       })
                     ) {
-                      purchaseLabel.mutate(fulfillment.id)
+                      // Toasted here rather than on the hook: the same
+                      // mutation backs the upload sheet, which shows its
+                      // rejection inline. A button has nowhere to put one.
+                      buyLabel.mutate(
+                        { fulfillmentId: fulfillment.id },
+                        {
+                          onError: (mutationError) => {
+                            toastManager.add({
+                              type: 'error',
+                              title:
+                                mutationError instanceof Error
+                                  ? mutationError.message
+                                  : t('admin.errors.unexpected'),
+                            })
+                          },
+                        },
+                      )
                     }
                   }}
                 >
                   <TagIcon data-icon="inline-start" />
-                  {purchaseLabel.isPending
+                  {buyLabel.isPending
                     ? t('admin.actions.saving')
                     : t('admin.orders.detail.fulfillments.buy_label')}
-                </Button>
-              )}
-
-              {labelDocument && (
-                <Button type="button" size="sm" variant="outline" asChild>
-                  <a href={labelDocument.url} target="_blank" rel="noopener noreferrer">
-                    <PrinterIcon data-icon="inline-start" />
-                    {t('admin.orders.detail.fulfillments.print_label')}
-                  </a>
                 </Button>
               )}
 
@@ -593,23 +648,12 @@ function FulfillmentRow({ order, fulfillment }: { order: Order; fulfillment: Ful
             </CardFooter>
           )}
 
-          {!shippable && labelDocument && (
-            <CardFooter className="justify-end py-3">
-              <Button type="button" size="sm" variant="outline" asChild>
-                <a href={labelDocument.url} target="_blank" rel="noopener noreferrer">
-                  <PrinterIcon data-icon="inline-start" />
-                  {t('admin.orders.detail.fulfillments.print_label')}
-                </a>
-              </Button>
-            </CardFooter>
-          )}
-
           {deliverable && (
             <CardFooter className="justify-end gap-2 py-3">
               <Button
                 type="button"
                 size="sm"
-                variant={trackable ? 'outline' : 'default'}
+                variant={deliveries.length === 0 ? 'outline' : 'default'}
                 disabled={markDelivered.isPending}
                 onClick={() => markDelivered.mutate(fulfillment.id)}
               >
@@ -617,12 +661,18 @@ function FulfillmentRow({ order, fulfillment }: { order: Order; fulfillment: Ful
                 {t('admin.orders.detail.fulfillments.mark_delivered')}
               </Button>
 
-              {trackable && (
-                <Button type="button" size="sm" onClick={() => setTrackingOpen(true)}>
-                  <PlusIcon data-icon="inline-start" />
-                  {t('admin.orders.detail.fulfillments.add_tracking')}
-                </Button>
-              )}
+              <Button
+                type="button"
+                size="sm"
+                variant={deliveries.length === 0 ? 'default' : 'outline'}
+                onClick={() => {
+                  setEditingDelivery(undefined)
+                  setDeliveryOpen(true)
+                }}
+              >
+                <PlusIcon data-icon="inline-start" />
+                {t('admin.orders.detail.fulfillments.add_tracking')}
+              </Button>
             </CardFooter>
           )}
         </>
@@ -646,12 +696,26 @@ function FulfillmentRow({ order, fulfillment }: { order: Order; fulfillment: Ful
         />
       )}
 
-      {trackingOpen && (
-        <FulfillmentTrackingDialog
+      {deliveryOpen && (
+        <FulfillmentDeliveryDialog
           orderId={orderId}
-          fulfillment={fulfillment}
-          open={trackingOpen}
-          onOpenChange={setTrackingOpen}
+          fulfillmentId={fulfillment.id}
+          delivery={editingDelivery}
+          open={deliveryOpen}
+          onOpenChange={(open) => {
+            setDeliveryOpen(open)
+            if (!open) setEditingDelivery(undefined)
+          }}
+        />
+      )}
+
+      {uploadOpen && (
+        <FulfillmentLabelUploadDialog
+          orderId={orderId}
+          fulfillmentId={fulfillment.id}
+          currency={order.currency}
+          open={uploadOpen}
+          onOpenChange={setUploadOpen}
         />
       )}
     </FulfillmentPanel>
@@ -709,25 +773,29 @@ function FulfillmentPanel({
  * so the eye can compare it against the real ones, minus the status and number
  * it does not have.
  */
-function UnfulfilledGroup({ rows }: { rows: FulfillmentItemRow[] }) {
+function UnfulfilledItems({ rows, canCreate }: { rows: FulfillmentItemRow[]; canCreate: boolean }) {
   const { t } = useTranslation()
   const totalUnits = rows.reduce((sum, row) => sum + row.quantity, 0)
 
+  // Deliberately not a FulfillmentPanel: these units have no fulfillment, and
+  // borrowing the panel's status badge and location slot made them read as a
+  // record that already exists. What the operator needs to see is that
+  // something is owed and nothing is carrying it yet.
   return (
-    <FulfillmentPanel
-      status="unfulfilled"
-      // The badge names the state; the count says how much is in it, which a
-      // real fulfillment carries in its own rows instead.
-      meta={
-        <span className="text-muted-foreground text-xs">
-          {t('admin.orders.detail.fulfillments.unfulfilled', { count: totalUnits })}
+    <div className="flex flex-col gap-2 rounded-lg border border-border-subtle border-dashed p-4">
+      <div className="flex flex-wrap items-baseline justify-between gap-2">
+        <span className="font-medium text-sm">
+          {t('admin.orders.detail.fulfillments.awaiting_fulfillment', { count: totalUnits })}
         </span>
-      }
-    >
-      <CardContent className="px-0 py-3">
-        <FulfillmentItemList rows={rows} />
-      </CardContent>
-    </FulfillmentPanel>
+        <span className="text-muted-foreground text-xs">
+          {canCreate
+            ? t('admin.orders.detail.fulfillments.awaiting_hint')
+            : t('admin.orders.detail.fulfillments.awaiting_hint_draft')}
+        </span>
+      </div>
+
+      <FulfillmentItemList rows={rows} />
+    </div>
   )
 }
 
@@ -785,7 +853,9 @@ export function FulfillmentsCard({ order }: { order: Order }) {
           </CardContent>
         ) : (
           <CardContent className="flex flex-col gap-4">
-            {unfulfilled.length > 0 && <UnfulfilledGroup rows={unfulfilled} />}
+            {unfulfilled.length > 0 && (
+              <UnfulfilledItems rows={unfulfilled} canCreate={canCreate} />
+            )}
             {fulfillments.map((fulfillment) => (
               <FulfillmentRow key={fulfillment.id} order={order} fulfillment={fulfillment} />
             ))}

@@ -22,9 +22,15 @@ module Spree
             before_action :set_fulfillment, only: [:show, :fulfill]
 
             def index
-              render json: {
-                data: @order.fulfillments.map { |fulfillment| serialize(fulfillment) }
-              }
+              # This action builds its own collection rather than going through
+              # the base controller, so it preloads what the serializer reads —
+              # otherwise every parcel costs a query for its consignments and
+              # another for its labels.
+              fulfillments = @order.fulfillments.
+                             includes(:deliveries, :shipping_labels, :fulfillment_items).
+                             preload_associations_lazily
+
+              render json: { data: fulfillments.map { |fulfillment| serialize(fulfillment) } }
             end
 
             def show

@@ -75,6 +75,7 @@ module Spree
 
         @serialized_preference_schema ||= fields.map do |field|
           wire = { key: field[:key], type: field[:type], default: field[:default] }
+          wire[:choices] = field[:choices] if field[:choices].present?
           wire[:default] = nil if field[:type] == :password
           wire.freeze
         end.freeze
@@ -90,6 +91,17 @@ module Spree
         @password_preference_keys ||= fields
                                       .each_with_object(Set.new) { |field, set| set << field[:key] if field[:type] == :password }
                                       .freeze
+      end
+
+      # Declared order first, so a form reads the way its author grouped the
+      # fields; anything the macro did not record (an association writer that
+      # looks like a preference) keeps its existing place at the end.
+      def ordered_preferences(instance)
+        defined = instance.defined_preferences
+        return defined unless respond_to?(:declared_preference_order)
+
+        declared = declared_preference_order & defined
+        declared + (defined - declared)
       end
 
       def compute_preference_schema
@@ -109,7 +121,7 @@ module Spree
           return nil
         end
 
-        instance.defined_preferences.filter_map do |pref|
+        ordered_preferences(instance).filter_map do |pref|
           next if instance.preference_deprecated(pref)
           # Written by Spree, not supplied by the operator — a value a
           # provider hands back after we register something with it. Offering
@@ -121,8 +133,9 @@ module Spree
             key: pref,
             key_string: pref.to_s.freeze,
             type: instance.preference_type(pref),
-            default: safe_preference_default(instance, pref)
-          }.freeze
+            default: safe_preference_default(instance, pref),
+            choices: instance.preference_choices(pref)
+          }.compact.freeze
         end
       end
 

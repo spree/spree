@@ -523,6 +523,7 @@
                         "group": "Fulfillment",
                         "pages": [
                           "developer/core-concepts/fulfillments",
+                          "developer/core-concepts/delivery-setup",
                           "developer/core-concepts/returns-exchanges-claims",
                           "developer/core-concepts/addresses",
                           "developer/core-concepts/calculators"
@@ -559,6 +560,7 @@
                         "group": "Shipping & WMS",
                         "pages": [
                           "developer/providers/fulfillment",
+                          "integrations/shipping/easypost",
                           "developer/how-to/custom-delivery-rate-provider"
                         ]
                       },
@@ -1900,6 +1902,7 @@
                 "icon": "truck",
                 "pages": [
                   "developer/core-concepts/fulfillments",
+                  "developer/core-concepts/delivery-setup",
                   "developer/core-concepts/returns-exchanges-claims",
                   "developer/core-concepts/addresses",
                   "developer/core-concepts/calculators"

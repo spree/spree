@@ -2700,24 +2700,60 @@
           "confirmation_send_failed": "Failed to send confirmation"
         },
         "fulfillments": {
+          "add_delivery": "Add tracking",
           "add_tracking": "Add tracking",
           "add_tracking_title": "Add tracking",
+          "awaiting_fulfillment_one": "{{count}} item still to fulfill",
+          "awaiting_fulfillment_other": "{{count}} items still to fulfill",
+          "awaiting_hint": "Add a fulfillment to ship them.",
+          "awaiting_hint_draft": "They can be fulfilled once the order is placed.",
           "buy_label": "Buy label",
           "buy_label_confirm": "Buy a shipping label for this fulfillment? Your carrier account is charged as soon as the label is issued.",
           "buy_label_confirm_rate": "Buy a {{rate}} label for {{cost}}? Your carrier account is charged as soon as the label is issued.",
+          "buy_label_pending_file": "The carrier's copy is still downloading; printing opens the carrier's own link.",
           "carrier_auto": "Detect automatically",
           "carrier_label": "Shipping carrier",
+          "carrier_search": "Search carriers",
+          "carrier_status_available_for_pickup": "Available for pickup",
+          "carrier_status_delivered": "Delivered",
+          "carrier_status_failure": "Delivery failed",
+          "carrier_status_in_transit": "In transit",
+          "carrier_status_out_for_delivery": "Out for delivery",
+          "carrier_status_pending": "Awaiting carrier",
+          "carrier_status_pre_transit": "Label created",
+          "carrier_status_return_to_sender": "Returning to sender",
+          "carrier_status_unknown": "Status unknown",
+          "confirm_delete_delivery": "Remove this tracking number? This takes effect immediately.",
+          "confirm_delete_label": "Delete this label? The file is removed from the order. This takes effect immediately.",
+          "confirm_refund_label": "Ask the carrier to refund this label? Postage is credited back to your carrier account.",
           "confirm_split": "Move these units into a new fulfillment? This takes effect immediately.",
           "create_description": "Creates a fulfillment and moves the chosen quantities into it.",
           "create_items": "Items",
           "create_title": "Add fulfillment",
+          "delete_label": "Delete label",
+          "deliveries_title": "Tracking",
           "delivery_method": "Delivery method",
+          "document_kinds": {
+            "certificate_of_origin": "Certificate of origin",
+            "cn22": "Customs form CN22",
+            "cn23": "Customs form CN23",
+            "commercial_invoice": "Commercial invoice",
+            "customs_form": "Customs form",
+            "form": "Document"
+          },
+          "documents_title": "Shipping documents",
           "edit_description": "Change where this fulfillment ships from and which delivery method carries it.",
           "edit_title": "Edit fulfillment",
           "edit_tracking_title": "Edit tracking",
           "empty": "No fulfillments on this order yet.",
           "free": "Free",
+          "label_cost": "Postage",
+          "label_refund_requested": "Refund requested",
+          "label_refunded": "Refunded",
+          "label_title": "Shipping label",
+          "label_uploaded": "Uploaded",
           "mark_delivered": "Mark as delivered",
+          "mark_delivery_delivered": "Mark arrived",
           "move_and_requote": "Move and re-quote",
           "no_rates": "No delivery methods are quoted for this fulfillment.",
           "out_of_stock": "Out of stock",
@@ -2725,6 +2761,8 @@
           "print_label": "Print label",
           "print_packing_slip": "Print packing slip",
           "rates_pending_origin": "Save the new origin to see the delivery methods it offers.",
+          "refund_label": "Refund label",
+          "retry_refund_label": "Retry refund",
           "ship_to": "Ship to",
           "ships_from": "Ships from",
           "split": "Split",
@@ -2735,7 +2773,12 @@
           "split_would_empty": "Leave at least one unit behind, or change the origin of the whole fulfillment instead.",
           "tracking_description": "The carrier tracking number, or a full tracking link.",
           "unfulfilled_one": "Unfulfilled ({{count}})",
-          "unfulfilled_other": "Unfulfilled ({{count}})"
+          "unfulfilled_other": "Unfulfilled ({{count}})",
+          "upload_label": "Upload label",
+          "upload_label_cost": "Postage cost",
+          "upload_label_description": "Record a label you bought elsewhere, so the parcel has its file, its tracking number and what it cost.",
+          "upload_label_file": "Label file",
+          "upload_label_title": "Upload label"
         },
         "gift_card_section": {
           "applied_suffix": "applied",
@@ -2756,7 +2799,6 @@
           "captured": "Payment captured",
           "completed": "Order completed",
           "confirmation_sent": "Confirmation sent",
-          "shipped": "Fulfillment shipped",
           "voided": "Payment voided"
         },
         "no_customer": "No customer information",
@@ -2807,8 +2849,8 @@
           "tax_included": "Tax (included)"
         },
         "tracking": {
-          "prefix": "Tracking",
-          "shipped_prefix": "Shipped"
+          "fulfilled_prefix": "Fulfilled",
+          "prefix": "Tracking"
         },
         "variant_search": {
           "description": "Search for a product variant to add to this order.",
@@ -2863,7 +2905,7 @@
       },
       "fulfill": {
         "action": "Mark as fulfilled",
-        "empty": "This fulfillment holds no items that can be shipped.",
+        "empty": "This fulfillment holds no items that can be fulfilled.",
         "include_item": "Ship {{name}}",
         "notify_customer": "Send shipment notification to customer",
         "of_units": "of {{count}}",
@@ -3060,7 +3102,6 @@
             "capture": "Capture",
             "mark_paid": "Mark as paid",
             "refund": "Refund",
-            "ship": "Mark as shipped",
             "void": "Void"
           },
           "claims": {
@@ -3112,13 +3153,19 @@
               "receive": "Receive items",
               "refund": "Refund"
             },
+            "buy_label": "Buy return label",
+            "buy_label_confirm": "Buy a prepaid return label? Your carrier account is charged as soon as the label is issued.",
             "confirm": {
               "cancel": "Cancel this return? Nothing will be restocked and no money will move."
             },
             "create_title": "New return",
             "empty": "No returns for this order.",
             "empty_no_units": "This order has no fulfillment records to return against.",
+            "location": "Return to",
+            "location_default": "Default returns location",
+            "location_no_returns": "{{name}} (does not accept returns)",
             "memo": "Note",
+            "no_label": "No return label yet.",
             "not_resellable": "Not resellable",
             "reason": "Reason",
             "receive_title": "Receive returned items",
@@ -3132,7 +3179,8 @@
             },
             "refund_title": "Refund return",
             "refund_total": "Refund total",
-            "resellable": "Resellable"
+            "resellable": "Resellable",
+            "returning_to": "Returning to {{name}}"
           },
           "section_billing_address": "Billing address",
           "section_claims": "Claims",
@@ -3901,12 +3949,42 @@
     "preferences": {
       "additional_item": "Additional Item Cost",
       "amount": "Amount",
+      "api_key": "API key",
+      "api_key_description": "Found in your EasyPost dashboard. A test key and a live key behave differently — the key itself decides the mode.",
       "base_amount": "Base Amount",
       "base_percent": "Base Percent",
       "currency": "Currency",
+      "customs_contents_type": "Customs contents type",
+      "customs_contents_type_description": "What an international parcel holds, as customs classifies it.",
+      "customs_contents_type_options": {
+        "dangerous_goods": "Dangerous goods",
+        "documents": "Documents",
+        "gift": "Gift",
+        "humanitarian_donation": "Humanitarian donation",
+        "merchandise": "Merchandise",
+        "returned_goods": "Returned goods",
+        "sample": "Sample"
+      },
+      "customs_signer": "Customs signer",
+      "customs_signer_description": "The person at your company who takes legal responsibility for what an international parcel declares.",
       "discount_amount": "Discount Amount",
       "first_item": "First Item Cost",
       "flat_percent": "Flat Percent",
+      "incoterm": "Duties and taxes (Incoterm)",
+      "incoterm_description": "Who pays duties on arrival. DAP bills the recipient; DDP bills you, so only pick it if you collect duties at checkout.",
+      "incoterm_options": {
+        "CFR": "CFR",
+        "CIF": "CIF",
+        "CIP": "CIP",
+        "CPT": "CPT",
+        "DAT": "DAT",
+        "DAP": "DAP",
+        "DDP": "DDP",
+        "EXW": "EXW",
+        "FAS": "FAS",
+        "FCA": "FCA",
+        "FOB": "FOB"
+      },
       "max_items": "Max Items",
       "max_quantity": "Maximum quantity",
       "maximum_item_total": "Maximum item total",
@@ -3918,7 +3996,9 @@
       "normal_amount": "Normal Amount",
       "percent": "Percent",
       "preferred_amount": "Amount",
-      "preferred_percent": "Percent"
+      "preferred_percent": "Percent",
+      "webhook_secret": "Webhook signing secret",
+      "webhook_secret_description": "The secret you set on the EasyPost webhook. Carrier updates are refused without it."
     },
     "product_types": {
       "add_cta": "Add product type",
@@ -4873,6 +4953,7 @@
         "default": "Default",
         "location": "Location",
         "pickup": "Pickup",
+        "returns": "Returns",
         "type": "Type"
       },
       "create_description": "Add a warehouse, store, or pickup point to fulfill orders from.",

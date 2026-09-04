@@ -99,24 +99,38 @@ module Spree
         failure(@return_record) unless @return_record.save
       end
 
-      # Where the goods should physically come back to.
-      #
-      # The fulfillment's own location is the best answer — it is where they
-      # left from. Failing that, the seller of the items being returned, read
-      # off the line item rather than the order: `Order` carries no seller of
-      # its own, and after the marketplace split every line on one order
-      # belongs to the same seller anyway.
+      # Where goods come back to when nobody said. Goods return where they
+      # shipped from, which is right until a merchant runs a dedicated
+      # returns centre — so a location that has opted out of receiving them
+      # is skipped, and the seller's or the store's returns location answers
+      # instead. The store default is the last resort: somewhere has to
+      # take the parcel even if every flag is off.
       def default_stock_location
-        @normalized_items.first[:fulfillment_item].fulfillment&.stock_location ||
-          seller_returns_location ||
+        shipped_from = @normalized_items.first[:fulfillment_item].fulfillment&.stock_location
+
+        return shipped_from if shipped_from&.returns_enabled?
+
+        seller_returns_location ||
+          store_returns_location ||
+          shipped_from ||
           order.store.default_stock_location
       end
 
+      # Read off the line item rather than the order: `Order` carries no seller
+      # of its own, and after the marketplace split every line on one order
+      # belongs to the same seller anyway.
       def seller_returns_location
         @normalized_items.
           lazy.
           filter_map { |item| item[:fulfillment_item].line_item&.seller }.
           first&.returns_location
+      end
+
+      # First-party only: `store.stock_locations` includes every seller's own
+      # warehouses, and an operator's goods must never be routed into one.
+      # A seller's return is answered by seller_returns_location above.
+      def store_returns_location
+        order.store.stock_locations.active.first_party.returns_enabled.order_default.first
       end
     end
   end

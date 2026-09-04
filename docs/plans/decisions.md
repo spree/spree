@@ -6,6 +6,34 @@
 
 **Consequences:** No behaviour change; the fix is that the code and the dashboard now say so. The class comment is corrected (it was the only place claiming the two audiences combine), the `for_context` and pricing-resolver comments read "or failing that" rather than "then", and the fallback carries an inline note. The dashboard states the precedence where a merchant can act on it: help text under the audience picker when a customer group is chosen, and a standing note on the audience card and wizard step whenever a group assignment is present, pointing at the company route for tier pricing. The developer docs stop framing the three ways of reaching a buyer as combining and carry the tier recipe as a warning. Three examples in `catalog_spec.rb` lock the ruling — the group dropping out once a company catalog exists, the group still applying when none does, and the subtree union when the tier is a company assignment. What is *not* solved: nothing detects a catalog assigned only to groups whose members are all company buyers, so such a catalog is still silently unreachable; a reachability warning needs the buyer population and is a separate piece of work.
 
+## 2026-09-03: A return label buys the cheapest rate; the fulfillment's tracking becomes a read-through summary
+
+**Context:** Implementing `6.0-shipping-labels-and-deliveries.md` raised two
+questions the design left open — which rate a return label buys, and what
+happens to code that assigns `fulfillment.tracking`.
+
+**Decision:** A return label buys the **cheapest rate the connected account
+offers** across every carrier. Unlike an outbound parcel there is no rate the
+customer selected: return postage is the merchant's own money and nobody chose
+a service for it. Reusing the outbound carrier was rejected because a parcel
+whose tracking was hand-entered has no carrier to reuse, and mirroring the
+outbound service inbound is usually the most expensive answer to a question the
+merchant never asked; a merchant wanting a fixed return service configures it on
+the integration later, which is additive. Separately, `Spree::Fulfillment#tracking`
+becomes a **read-through summary of the primary delivery** and `#tracking=` a
+deprecated shell that writes that delivery on save — the 5.6 field keeps
+working for host code and the storefront one more release, and both go in 6.1
+with the column. One naming consequence: the label's file format is written as
+**`file_format`** on the API, because `format` is Rails' own request-format
+parameter and a controller permitting it receives `"json"`.
+
+**Consequences:** Return labels need no configuration to work, which is what
+makes the customer-facing return-label download usable the day the plan ships.
+The deprecated `tracking=` writer is the reason the upgrade is quiet: an
+extension or host app that sets a tracking number the old way still lands it
+where every reader looks, with a warning naming the replacement. Plan:
+`6.0-shipping-labels-and-deliveries.md`.
+
 ## 2026-09-03: Labels and parcels are records; the carrier axis moves onto `Spree::Delivery` in 6.0 (supersedes 2026-08-11 "multiple trackings deferred to 6.1")
 
 **Context:** A shipping label was three EasyPost-private keys in `fulfillment.metadata`, surfaced by a per-read `provider.documents` call and bought through `PATCH .../purchase_label`. Spree never knew the postage cost, could not reprint once the carrier's hosted URL expired, could not buy a second label after a refund (idempotency keyed off the metadata), and had nowhere to put a return label — the returns plan had already sent that to "the URL in `metadata`". Tracking lived in seven columns on `spree_fulfillments`, one number per parcel, with a `spree_fulfillment_trackings` model deferred to 6.1 and required to absorb the whole axis when it came. Both were candidates for "promote to a model with RESTful routes"; only one of them is a thing.

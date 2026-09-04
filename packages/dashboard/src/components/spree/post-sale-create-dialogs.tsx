@@ -1,5 +1,11 @@
 import type { Claim, Order, Variant } from '@spree/admin-sdk'
-import { adminClient, currencyParts, ResourceCombobox, useStore } from '@spree/dashboard-core'
+import {
+  adminClient,
+  currencyParts,
+  ResourceCombobox,
+  useStockLocations,
+  useStore,
+} from '@spree/dashboard-core'
 import {
   Button,
   Dialog,
@@ -109,6 +115,7 @@ export function CreateReturnDialog({
     items: Array<{ fulfillment_item_id: string; quantity: number }>
     memo?: string
     reasonId?: string
+    stockLocationId?: string
   }) => void
 }) {
   const { t } = useTranslation()
@@ -116,6 +123,25 @@ export function CreateReturnDialog({
   const [selection, setSelection] = useState<Selection>({})
   const [memo, setMemo] = useState('')
   const [reasonId, setReasonId] = useState('')
+  const [stockLocationId, setStockLocationId] = useState('')
+  const { data: stockLocationData } = useStockLocations()
+
+  // Locations that accept returns lead, and one of them is the default: a
+  // merchant sending goods anywhere else is making a deliberate exception.
+  // The rest stay selectable, since a one-off return has to be routable
+  // somewhere even when no location is flagged.
+  const locationOptions = (stockLocationData?.data ?? [])
+    .filter((location) => location.active)
+    // A location that predates the flag accepts returns, which is how goods
+    // behaved before it existed — the same default the form applies.
+    .sort((a, b) => Number(b.returns_enabled ?? true) - Number(a.returns_enabled ?? true))
+    .map((location) => ({
+      value: location.id,
+      label:
+        (location.returns_enabled ?? true)
+          ? location.name
+          : t('admin.pages.orders.detail.returns.location_no_returns', { name: location.name }),
+    }))
 
   const chosen = selectedItems(selection)
 
@@ -128,6 +154,29 @@ export function CreateReturnDialog({
         <DialogBody className="flex flex-col gap-4">
           <QuantityPicker units={units} selection={selection} onChange={setSelection} />
           <ReasonField kind="return-reasons" value={reasonId} onChange={setReasonId} />
+          <Field>
+            <FieldLabel htmlFor="return-location">
+              {t('admin.pages.orders.detail.returns.location')}
+            </FieldLabel>
+            <Select
+              items={locationOptions}
+              value={stockLocationId}
+              onValueChange={(value) => setStockLocationId(value as string)}
+            >
+              <SelectTrigger id="return-location">
+                <SelectValue
+                  placeholder={t('admin.pages.orders.detail.returns.location_default')}
+                />
+              </SelectTrigger>
+              <SelectContent>
+                {locationOptions.map((option) => (
+                  <SelectItem key={option.value} value={option.value}>
+                    {option.label}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </Field>
           <Field>
             <FieldLabel htmlFor="return-memo">
               {t('admin.pages.orders.detail.returns.memo')}
@@ -153,6 +202,7 @@ export function CreateReturnDialog({
                 })),
                 memo: memo || undefined,
                 reasonId: reasonId || undefined,
+                stockLocationId: stockLocationId || undefined,
               })
             }
           >

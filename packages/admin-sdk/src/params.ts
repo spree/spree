@@ -280,6 +280,67 @@ export interface FulfillmentFulfillParams {
   force?: boolean
 }
 
+/** What a label records, whether it was bought or uploaded. */
+interface ShippingLabelDetails {
+  /** Free text — a forwarder's name is as valid as a carrier slug. Detected from the number when omitted. */
+  carrier?: string
+  /** Carrier service the label was bought at. */
+  service?: string
+  /** What the merchant paid the carrier. Admin-only accounting data; it never touches the order's shipping charge. */
+  cost?: string | number
+  /** Currency of the cost. */
+  currency?: string
+  /** `pdf`, `png` or `zpl`; taken from the file when omitted. */
+  file_format?: string
+  /** Tracking page for the consignment the label mints. */
+  tracking_url?: string
+}
+
+/**
+ * Recording a label bought elsewhere. The number printed on it is required:
+ * a label with no tracking number mints no consignment, and the server
+ * refuses it.
+ */
+export interface ShippingLabelUploadParams extends ShippingLabelDetails {
+  /** Signed blob id from `directUploads.create()`. Its presence records an uploaded label instead of buying one. */
+  file: string
+  /** The number printed on an uploaded label. */
+  tracking_number: string
+}
+
+/** Buying through the carrier. The carrier supplies the file and the number. */
+export interface ShippingLabelPurchaseParams extends ShippingLabelDetails {
+  file?: never
+  tracking_number?: never
+}
+
+/** Buying a label takes no body; recording an uploaded one takes at least a file and a number. */
+export type ShippingLabelCreateParams = ShippingLabelUploadParams | ShippingLabelPurchaseParams
+
+export interface DeliveryCreateParams {
+  /** A carrier tracking number, a freight PRO or container number, or a full tracking link. */
+  tracking_number: string
+  /** Free text; detected from the number's format when omitted. */
+  carrier?: string
+  service?: string
+  tracking_url?: string
+}
+
+/** A corrected tracking number resets the consignment's carrier status to `pending`. */
+export interface DeliveryUpdateParams {
+  tracking_number?: string
+  carrier?: string
+  service?: string
+  tracking_url?: string
+}
+
+export interface DeliveryMarkDeliveredParams {
+  /** When it arrived. Defaults to now. */
+  delivered_at?: string
+  /** Whether the customer gets a delivery notification once the parcel completes. Defaults to true. */
+  notify_customer?: boolean
+}
+
 /**
  * Records that the customer received the goods — the end of the fulfillment
  * lifecycle. Reached by a carrier reporting delivery, by staff who know the
@@ -1916,6 +1977,12 @@ export interface PreferenceField {
   key: string
   type: string
   default: unknown
+  /**
+   * The fixed set this value must come from, when the preference declares
+   * one. Present only for constrained preferences; an admin form renders a
+   * picker for these rather than a free-text box.
+   */
+  choices?: string[]
 }
 
 /**

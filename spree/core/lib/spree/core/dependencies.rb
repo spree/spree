@@ -81,7 +81,20 @@ module Spree
         fulfillment_cancel_workflow: 'Spree::Fulfillments::Cancel',
         fulfillment_mark_delivered_workflow: 'Spree::Fulfillments::MarkDelivered',
         fulfillment_purchase_label_workflow: 'Spree::Fulfillments::PurchaseLabel',
-        fulfillment_update_tracking_workflow: 'Spree::Fulfillments::UpdateTracking',
+
+        # shipping labels + deliveries
+        shipping_label_purchase_workflow: 'Spree::ShippingLabels::Purchase',
+        shipping_label_refund_workflow: 'Spree::ShippingLabels::Refund',
+        shipping_label_record_workflow: 'Spree::ShippingLabels::Record',
+        shipping_label_confirm_refund_service: 'Spree::ShippingLabels::ConfirmRefund',
+        shipping_label_store_file_service: 'Spree::ShippingLabels::StoreFile',
+        delivery_update_tracking_workflow: 'Spree::Deliveries::UpdateTracking',
+        delivery_create_service: 'Spree::Deliveries::Create',
+        delivery_upsert_primary_service: 'Spree::Deliveries::UpsertPrimary',
+        fulfillment_stand_down_service: 'Spree::Fulfillments::StandDownProvider',
+        fulfillment_recalculate_delivery_service: 'Spree::Fulfillments::RecalculateDelivery',
+        delivery_destroy_service: 'Spree::Deliveries::Destroy',
+        return_purchase_label_workflow: 'Spree::Returns::PurchaseLabel',
 
         # returns
         return_create_workflow: 'Spree::Returns::Create',

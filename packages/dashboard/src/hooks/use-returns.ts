@@ -1,3 +1,4 @@
+import type { ShippingLabelCreateParams } from '@spree/admin-sdk'
 import { adminClient, useResourceKey, useResourceKeyBuilder } from '@spree/dashboard-core'
 import { toastManager } from '@spree/dashboard-ui'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
@@ -11,7 +12,7 @@ export function useOrderReturns(orderId: string) {
     queryKey: useResourceKey('order-returns', orderId),
     queryFn: () =>
       adminClient.orders.returns.list(orderId, {
-        expand: ['return_line_items', 'return_line_items.variant'],
+        expand: ['return_line_items', 'return_line_items.variant', 'stock_location'],
       }),
     enabled: !!orderId,
   })
@@ -60,12 +61,19 @@ export function useReturnActions(orderId: string) {
     orderId,
     ({
       reasonId,
+      stockLocationId,
       ...params
     }: {
       items: Array<{ fulfillment_item_id: string; quantity: number }>
       memo?: string
       reasonId?: string
-    }) => adminClient.orders.returns.create(orderId, { ...params, reason_id: reasonId }),
+      stockLocationId?: string
+    }) =>
+      adminClient.orders.returns.create(orderId, {
+        ...params,
+        reason_id: reasonId,
+        stock_location_id: stockLocationId,
+      }),
   )
 
   const approve = useReturnMutation(orderId, (returnId: string) =>
@@ -106,5 +114,25 @@ export function useReturnActions(orderId: string) {
       adminClient.orders.returns.cancel(orderId, returnId, { reason }),
   )
 
-  return { create, approve, receive, refund, cancel }
+  // The prepaid label for the parcel coming back. Buying takes no body; a
+  // `file` records postage the merchant bought elsewhere instead.
+  const buyLabel = useReturnMutation(
+    orderId,
+    ({ returnId, ...params }: { returnId: string } & ShippingLabelCreateParams) =>
+      adminClient.orders.returns.labels.create(orderId, returnId, params),
+  )
+
+  const refundLabel = useReturnMutation(
+    orderId,
+    ({ returnId, labelId }: { returnId: string; labelId: string }) =>
+      adminClient.orders.returns.labels.refund(orderId, returnId, labelId),
+  )
+
+  const deleteLabel = useReturnMutation(
+    orderId,
+    ({ returnId, labelId }: { returnId: string; labelId: string }) =>
+      adminClient.orders.returns.labels.delete(orderId, returnId, labelId),
+  )
+
+  return { create, approve, receive, refund, cancel, buyLabel, refundLabel, deleteLabel }
 }

@@ -2700,24 +2700,60 @@
           "confirmation_send_failed": "Bestätigung konnte nicht gesendet werden"
         },
         "fulfillments": {
+          "add_delivery": "Sendungsnummer hinzufügen",
           "add_tracking": "Sendungsverfolgung hinzufügen",
           "add_tracking_title": "Sendungsverfolgung hinzufügen",
+          "awaiting_fulfillment_one": "{{count}} Artikel noch zu erfüllen",
+          "awaiting_fulfillment_other": "{{count}} Artikel noch zu erfüllen",
+          "awaiting_hint": "Fügen Sie eine Erfüllung hinzu, um sie zu versenden.",
+          "awaiting_hint_draft": "Sie können erfüllt werden, sobald die Bestellung aufgegeben ist.",
           "buy_label": "Label kaufen",
           "buy_label_confirm": "Versandlabel für diese Sendung kaufen? Ihr Versanddienstleister-Konto wird belastet, sobald das Label ausgestellt ist.",
           "buy_label_confirm_rate": "Label {{rate}} für {{cost}} kaufen? Ihr Versanddienstleister-Konto wird belastet, sobald das Label ausgestellt ist.",
+          "buy_label_pending_file": "Die Kopie des Transportunternehmens wird noch geladen; beim Drucken öffnet sich dessen eigener Link.",
           "carrier_auto": "Automatisch erkennen",
           "carrier_label": "Versanddienstleister",
+          "carrier_search": "Transportunternehmen suchen",
+          "carrier_status_available_for_pickup": "Zur Abholung bereit",
+          "carrier_status_delivered": "Zugestellt",
+          "carrier_status_failure": "Zustellung fehlgeschlagen",
+          "carrier_status_in_transit": "Unterwegs",
+          "carrier_status_out_for_delivery": "In Zustellung",
+          "carrier_status_pending": "Wartet auf Transportunternehmen",
+          "carrier_status_pre_transit": "Etikett erstellt",
+          "carrier_status_return_to_sender": "Rücksendung an Absender",
+          "carrier_status_unknown": "Status unbekannt",
+          "confirm_delete_delivery": "Diese Sendungsnummer entfernen? Die Änderung wird sofort wirksam.",
+          "confirm_delete_label": "Dieses Etikett löschen? Die Datei wird von der Bestellung entfernt. Die Änderung wird sofort wirksam.",
+          "confirm_refund_label": "Erstattung dieses Etiketts beim Transportunternehmen beantragen? Das Porto wird Ihrem Konto gutgeschrieben.",
           "confirm_split": "Diese Einheiten in eine neue Sendung verschieben? Die Änderung wird sofort wirksam.",
           "create_description": "Erstellt eine Sendung und verschiebt die gewählten Mengen hinein.",
           "create_items": "Artikel",
           "create_title": "Sendung hinzufügen",
+          "delete_label": "Etikett löschen",
+          "deliveries_title": "Sendungsverfolgung",
           "delivery_method": "Versandart",
+          "document_kinds": {
+            "certificate_of_origin": "Ursprungszeugnis",
+            "cn22": "Zollformular CN22",
+            "cn23": "Zollformular CN23",
+            "commercial_invoice": "Handelsrechnung",
+            "customs_form": "Zollformular",
+            "form": "Dokument"
+          },
+          "documents_title": "Versanddokumente",
           "edit_description": "Ändern Sie, von wo diese Sendung versandt wird und welche Versandart sie befördert.",
           "edit_title": "Sendung bearbeiten",
           "edit_tracking_title": "Sendungsverfolgung bearbeiten",
           "empty": "Noch keine Sendungen für diese Bestellung.",
           "free": "Kostenlos",
+          "label_cost": "Porto",
+          "label_refund_requested": "Erstattung beantragt",
+          "label_refunded": "Erstattet",
+          "label_title": "Versandetikett",
+          "label_uploaded": "Hochgeladen",
           "mark_delivered": "Als zugestellt markieren",
+          "mark_delivery_delivered": "Als angekommen markieren",
           "move_and_requote": "Verschieben und neu berechnen",
           "no_rates": "Für diese Sendung liegen keine Versandarten vor.",
           "out_of_stock": "Nicht auf Lager",
@@ -2725,6 +2761,8 @@
           "print_label": "Label drucken",
           "print_packing_slip": "Lieferschein drucken",
           "rates_pending_origin": "Speichern Sie den neuen Ursprung, um die dort verfügbaren Versandarten zu sehen.",
+          "refund_label": "Etikett erstatten",
+          "retry_refund_label": "Erstattung erneut anfordern",
           "ship_to": "Lieferadresse",
           "ships_from": "Versand ab",
           "split": "Aufteilen",
@@ -2735,7 +2773,12 @@
           "split_would_empty": "Lassen Sie mindestens eine Einheit zurück oder ändern Sie stattdessen den Ursprung der gesamten Sendung.",
           "tracking_description": "Die Sendungsnummer des Zustellers oder ein vollständiger Tracking-Link.",
           "unfulfilled_one": "Nicht versandt ({{count}})",
-          "unfulfilled_other": "Nicht versandt ({{count}})"
+          "unfulfilled_other": "Nicht versandt ({{count}})",
+          "upload_label": "Etikett hochladen",
+          "upload_label_cost": "Portokosten",
+          "upload_label_description": "Erfassen Sie ein anderswo gekauftes Etikett, damit die Sendung ihre Datei, ihre Sendungsnummer und ihre Kosten hat.",
+          "upload_label_file": "Etikettendatei",
+          "upload_label_title": "Etikett hochladen"
         },
         "gift_card_section": {
           "applied_suffix": "angewendet",
@@ -2756,7 +2799,6 @@
           "captured": "Zahlung eingezogen",
           "completed": "Auftrag abgeschlossen",
           "confirmation_sent": "Bestätigung gesendet",
-          "shipped": "Lieferung versendet",
           "voided": "Zahlung storniert"
         },
         "no_customer": "Keine Kundeninformationen",
@@ -2807,8 +2849,8 @@
           "tax_included": "Steuer (inklusive)"
         },
         "tracking": {
-          "prefix": "Tracking",
-          "shipped_prefix": "Versendet"
+          "fulfilled_prefix": "Erfüllt",
+          "prefix": "Tracking"
         },
         "variant_search": {
           "description": "Suchen Sie nach einer Produktvariante, die diesem Auftrag hinzugefügt werden soll.",
@@ -2863,7 +2905,7 @@
       },
       "fulfill": {
         "action": "Als versendet markieren",
-        "empty": "Diese Sendung enthält keine versandfähigen Artikel.",
+        "empty": "Diese Erfüllung enthält keine Artikel, die erfüllt werden können.",
         "include_item": "{{name}} versenden",
         "notify_customer": "Versandbenachrichtigung an Kundin oder Kunden senden",
         "of_units": "von {{count}}",
@@ -3060,7 +3102,6 @@
             "capture": "Einziehen",
             "mark_paid": "Als bezahlt markieren",
             "refund": "Erstatten",
-            "ship": "Als versendet markieren",
             "void": "Stornieren"
           },
           "claims": {
@@ -3112,13 +3153,19 @@
               "receive": "Artikel annehmen",
               "refund": "Erstatten"
             },
+            "buy_label": "Rücksendeetikett kaufen",
+            "buy_label_confirm": "Ein vorfrankiertes Rücksendeetikett kaufen? Ihr Konto wird belastet, sobald das Etikett ausgestellt ist.",
             "confirm": {
               "cancel": "Diese Retoure stornieren? Es wird nichts eingelagert und kein Geld bewegt."
             },
             "create_title": "Neue Retoure",
             "empty": "Keine Retouren für diese Bestellung.",
             "empty_no_units": "Für diese Bestellung gibt es keine Fulfillment-Einträge, auf die sich eine Retoure beziehen könnte.",
+            "location": "Rücksendung an",
+            "location_default": "Standard-Rücksendeort",
+            "location_no_returns": "{{name}} (nimmt keine Rücksendungen an)",
             "memo": "Notiz",
+            "no_label": "Noch kein Rücksendeetikett.",
             "not_resellable": "Nicht wiederverkäuflich",
             "reason": "Grund",
             "receive_title": "Retournierte Artikel annehmen",
@@ -3132,7 +3179,8 @@
             },
             "refund_title": "Retoure erstatten",
             "refund_total": "Erstattungssumme",
-            "resellable": "Wiederverkäuflich"
+            "resellable": "Wiederverkäuflich",
+            "returning_to": "Rücksendung an {{name}}"
           },
           "section_billing_address": "Rechnungsadresse",
           "section_claims": "Reklamationen",
@@ -3901,12 +3949,42 @@
     "preferences": {
       "additional_item": "Kosten für jeden weiteren Artikel",
       "amount": "Betrag",
+      "api_key": "API-Schlüssel",
+      "api_key_description": "In Ihrem EasyPost-Dashboard zu finden. Test- und Live-Schlüssel verhalten sich unterschiedlich — der Schlüssel bestimmt den Modus.",
       "base_amount": "Grundbetrag",
       "base_percent": "Grundprozentsatz",
       "currency": "Währung",
+      "customs_contents_type": "Zollinhaltsart",
+      "customs_contents_type_description": "Was eine internationale Sendung enthält, wie der Zoll es einstuft.",
+      "customs_contents_type_options": {
+        "dangerous_goods": "Gefahrgut",
+        "documents": "Dokumente",
+        "gift": "Geschenk",
+        "humanitarian_donation": "Humanitäre Spende",
+        "merchandise": "Handelsware",
+        "returned_goods": "Rücksendung",
+        "sample": "Muster"
+      },
+      "customs_signer": "Zollunterzeichner",
+      "customs_signer_description": "Die Person in Ihrem Unternehmen, die rechtlich für die Zollangaben einer internationalen Sendung verantwortlich ist.",
       "discount_amount": "Rabattbetrag",
       "first_item": "Kosten für den ersten Artikel",
       "flat_percent": "Fester Prozentsatz",
+      "incoterm": "Zölle und Steuern (Incoterm)",
+      "incoterm_description": "Wer die Zölle bei Ankunft zahlt. DAP belastet den Empfänger, DDP Sie selbst — wählen Sie DDP nur, wenn Sie Zölle im Checkout erheben.",
+      "incoterm_options": {
+        "CFR": "CFR",
+        "CIF": "CIF",
+        "CIP": "CIP",
+        "CPT": "CPT",
+        "DAT": "DAT",
+        "DAP": "DAP",
+        "DDP": "DDP",
+        "EXW": "EXW",
+        "FAS": "FAS",
+        "FCA": "FCA",
+        "FOB": "FOB"
+      },
       "max_items": "Maximale Artikelanzahl",
       "max_quantity": "Höchstmenge",
       "maximum_item_total": "Maximale Artikelsumme",
@@ -3918,7 +3996,9 @@
       "normal_amount": "Normalbetrag",
       "percent": "Prozent",
       "preferred_amount": "Betrag",
-      "preferred_percent": "Prozent"
+      "preferred_percent": "Prozent",
+      "webhook_secret": "Webhook-Signaturschlüssel",
+      "webhook_secret_description": "Das Geheimnis, das Sie im EasyPost-Webhook festgelegt haben. Ohne es werden Carrier-Updates abgelehnt."
     },
     "product_types": {
       "add_cta": "Produkttyp hinzufügen",
@@ -4873,6 +4953,7 @@
         "default": "Standard",
         "location": "Standort",
         "pickup": "Abholung",
+        "returns": "Rücksendungen",
         "type": "Typ"
       },
       "create_description": "Fügen Sie ein Lager, ein Geschäft oder einen Abholpunkt hinzu, von dem aus Bestellungen abgewickelt werden.",

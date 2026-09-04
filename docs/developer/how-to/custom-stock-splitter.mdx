@@ -87,7 +87,7 @@ So the splitter's job is "look at each package's contents, decide which contents
 
 ### Step 2: Register the Splitter
 
-Splitters are registered globally on `Rails.application.config.spree.stock_splitters` — every order runs through the full chain. Add yours via an initializer:
+Splitters are registered globally on `Rails.application.config.spree.stock_splitters` — every order runs through the full chain. Add yours in `config/initializers/spree.rb`:
 
 ```ruby config/initializers/spree.rb
 Rails.application.config.to_prepare do

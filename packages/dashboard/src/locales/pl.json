@@ -2720,24 +2720,60 @@
           "confirmation_send_failed": "Nie udało się wysłać potwierdzenia"
         },
         "fulfillments": {
+          "add_delivery": "Dodaj numer przesyłki",
           "add_tracking": "Dodaj śledzenie",
           "add_tracking_title": "Dodaj śledzenie",
+          "awaiting_fulfillment_one": "{{count}} pozycja do zrealizowania",
+          "awaiting_fulfillment_other": "{{count}} pozycji do zrealizowania",
+          "awaiting_hint": "Dodaj realizację, aby je wysłać.",
+          "awaiting_hint_draft": "Będzie je można zrealizować po złożeniu zamówienia.",
           "buy_label": "Kup etykietę",
           "buy_label_confirm": "Kupić etykietę wysyłkową dla tej przesyłki? Twoje konto przewoźnika zostanie obciążone w momencie wystawienia etykiety.",
           "buy_label_confirm_rate": "Kupić etykietę {{rate}} za {{cost}}? Twoje konto przewoźnika zostanie obciążone w momencie wystawienia etykiety.",
+          "buy_label_pending_file": "Kopia przewoźnika jest jeszcze pobierana; drukowanie otworzy jego własny link.",
           "carrier_auto": "Wykryj automatycznie",
           "carrier_label": "Przewoźnik",
+          "carrier_search": "Szukaj przewoźnika",
+          "carrier_status_available_for_pickup": "Gotowa do odbioru",
+          "carrier_status_delivered": "Dostarczona",
+          "carrier_status_failure": "Doręczenie nieudane",
+          "carrier_status_in_transit": "W drodze",
+          "carrier_status_out_for_delivery": "W doręczeniu",
+          "carrier_status_pending": "Oczekuje na przewoźnika",
+          "carrier_status_pre_transit": "Etykieta utworzona",
+          "carrier_status_return_to_sender": "Powrót do nadawcy",
+          "carrier_status_unknown": "Status nieznany",
+          "confirm_delete_delivery": "Usunąć ten numer przesyłki? Zmiana obowiązuje natychmiast.",
+          "confirm_delete_label": "Usunąć tę etykietę? Plik zostanie usunięty z zamówienia. Zmiana obowiązuje natychmiast.",
+          "confirm_refund_label": "Poprosić przewoźnika o zwrot za tę etykietę? Opłata wróci na Twoje konto.",
           "confirm_split": "Przenieść te sztuki do nowej przesyłki? Zmiana zadziała natychmiast.",
           "create_description": "Tworzy przesyłkę i przenosi do niej wybrane ilości.",
           "create_items": "Pozycje",
           "create_title": "Dodaj przesyłkę",
+          "delete_label": "Usuń etykietę",
+          "deliveries_title": "Śledzenie",
           "delivery_method": "Sposób dostawy",
+          "document_kinds": {
+            "certificate_of_origin": "Świadectwo pochodzenia",
+            "cn22": "Formularz celny CN22",
+            "cn23": "Formularz celny CN23",
+            "commercial_invoice": "Faktura handlowa",
+            "customs_form": "Formularz celny",
+            "form": "Dokument"
+          },
+          "documents_title": "Dokumenty przewozowe",
           "edit_description": "Zmień miejsce wysyłki tej przesyłki oraz sposób dostawy, którym jest realizowana.",
           "edit_title": "Edytuj przesyłkę",
           "edit_tracking_title": "Edytuj śledzenie",
           "empty": "Brak przesyłek dla tego zamówienia.",
           "free": "Za darmo",
+          "label_cost": "Opłata pocztowa",
+          "label_refund_requested": "Zgłoszono zwrot",
+          "label_refunded": "Zwrócono",
+          "label_title": "Etykieta wysyłkowa",
+          "label_uploaded": "Wgrana",
           "mark_delivered": "Oznacz jako dostarczone",
+          "mark_delivery_delivered": "Oznacz jako dostarczoną",
           "move_and_requote": "Przenieś i przelicz",
           "no_rates": "Dla tej przesyłki nie ma dostępnych sposobów dostawy.",
           "out_of_stock": "Brak w magazynie",
@@ -2745,6 +2781,8 @@
           "print_label": "Drukuj etykietę",
           "print_packing_slip": "Drukuj list przewozowy",
           "rates_pending_origin": "Zapisz nowe miejsce wysyłki, aby zobaczyć dostępne dla niego sposoby dostawy.",
+          "refund_label": "Zwrot za etykietę",
+          "retry_refund_label": "Ponów zwrot kosztów",
           "ship_to": "Adres dostawy",
           "ships_from": "Wysyłka z",
           "split": "Podziel",
@@ -2757,7 +2795,12 @@
           "unfulfilled_few": "Niezrealizowane ({{count}})",
           "unfulfilled_many": "Niezrealizowane ({{count}})",
           "unfulfilled_one": "Niezrealizowane ({{count}})",
-          "unfulfilled_other": "Niezrealizowane ({{count}})"
+          "unfulfilled_other": "Niezrealizowane ({{count}})",
+          "upload_label": "Wgraj etykietę",
+          "upload_label_cost": "Koszt opłaty pocztowej",
+          "upload_label_description": "Zapisz etykietę kupioną gdzie indziej, aby przesyłka miała swój plik, numer i koszt.",
+          "upload_label_file": "Plik etykiety",
+          "upload_label_title": "Wgraj etykietę"
         },
         "gift_card_section": {
           "applied_suffix": "zastosowano",
@@ -2778,7 +2821,6 @@
           "captured": "Płatność pobrana",
           "completed": "Zamówienie sfinalizowane",
           "confirmation_sent": "Potwierdzenie wysłane",
-          "shipped": "Realizacja wysłana",
           "voided": "Płatność unieważniona"
         },
         "no_customer": "Brak informacji o kliencie",
@@ -2829,8 +2871,8 @@
           "tax_included": "Podatek (wliczony)"
         },
         "tracking": {
-          "prefix": "Śledzenie",
-          "shipped_prefix": "Wysłano"
+          "fulfilled_prefix": "Zrealizowano",
+          "prefix": "Śledzenie"
         },
         "variant_search": {
           "description": "Wyszukaj wariant produktu, aby dodać go do tego zamówienia.",
@@ -2889,7 +2931,7 @@
       },
       "fulfill": {
         "action": "Oznacz jako wysłane",
-        "empty": "Ta przesyłka nie zawiera pozycji, które można wysłać.",
+        "empty": "Ta realizacja nie zawiera pozycji, które można zrealizować.",
         "include_item": "Wyślij: {{name}}",
         "notify_customer": "Wyślij klientowi powiadomienie o wysyłce",
         "of_units": "z {{count}}",
@@ -3088,7 +3130,6 @@
             "capture": "Pobierz",
             "mark_paid": "Oznacz jako opłacone",
             "refund": "Zwrot środków",
-            "ship": "Oznacz jako wysłane",
             "void": "Unieważnij"
           },
           "claims": {
@@ -3140,13 +3181,19 @@
               "receive": "Przyjmij produkty",
               "refund": "Zwróć płatność"
             },
+            "buy_label": "Kup etykietę zwrotną",
+            "buy_label_confirm": "Kupić opłaconą etykietę zwrotną? Twoje konto zostanie obciążone w momencie jej wystawienia.",
             "confirm": {
               "cancel": "Anulować ten zwrot? Nic nie wróci do magazynu i żadne pieniądze nie zostaną zwrócone."
             },
             "create_title": "Nowy zwrot",
             "empty": "Brak zwrotów dla tego zamówienia.",
             "empty_no_units": "To zamówienie nie ma pozycji realizacji, do których można odnieść zwrot.",
+            "location": "Zwrot do",
+            "location_default": "Domyślne miejsce zwrotów",
+            "location_no_returns": "{{name}} (nie przyjmuje zwrotów)",
             "memo": "Notatka",
+            "no_label": "Brak etykiety zwrotnej.",
             "not_resellable": "Nie nadaje się do sprzedaży",
             "reason": "Powód",
             "receive_title": "Przyjmij zwrócone produkty",
@@ -3160,7 +3207,8 @@
             },
             "refund_title": "Zwrot płatności",
             "refund_total": "Kwota zwrotu",
-            "resellable": "Nadaje się do sprzedaży"
+            "resellable": "Nadaje się do sprzedaży",
+            "returning_to": "Zwrot do {{name}}"
           },
           "section_billing_address": "Adres rozliczeniowy",
           "section_claims": "Reklamacje",
@@ -3945,12 +3993,42 @@
     "preferences": {
       "additional_item": "Koszt każdej kolejnej pozycji",
       "amount": "Kwota",
+      "api_key": "Klucz API",
+      "api_key_description": "Znajdziesz go w panelu EasyPost. Klucz testowy i produkcyjny działają inaczej — to klucz decyduje o trybie.",
       "base_amount": "Kwota podstawowa",
       "base_percent": "Procent podstawowy",
       "currency": "Waluta",
+      "customs_contents_type": "Rodzaj zawartości celnej",
+      "customs_contents_type_description": "Co zawiera przesyłka międzynarodowa według klasyfikacji celnej.",
+      "customs_contents_type_options": {
+        "dangerous_goods": "Towary niebezpieczne",
+        "documents": "Dokumenty",
+        "gift": "Prezent",
+        "humanitarian_donation": "Dar humanitarny",
+        "merchandise": "Towar handlowy",
+        "returned_goods": "Towar zwrócony",
+        "sample": "Próbka"
+      },
+      "customs_signer": "Osoba podpisująca zgłoszenie celne",
+      "customs_signer_description": "Osoba w Twojej firmie odpowiedzialna prawnie za treść zgłoszenia celnego przesyłki międzynarodowej.",
       "discount_amount": "Kwota rabatu",
       "first_item": "Koszt pierwszej pozycji",
       "flat_percent": "Stały procent",
+      "incoterm": "Cła i podatki (Incoterm)",
+      "incoterm_description": "Kto płaci cło przy odbiorze. DAP obciąża odbiorcę, DDP Ciebie — wybierz DDP tylko, jeśli pobierasz cło przy zamówieniu.",
+      "incoterm_options": {
+        "CFR": "CFR",
+        "CIF": "CIF",
+        "CIP": "CIP",
+        "CPT": "CPT",
+        "DAT": "DAT",
+        "DAP": "DAP",
+        "DDP": "DDP",
+        "EXW": "EXW",
+        "FAS": "FAS",
+        "FCA": "FCA",
+        "FOB": "FOB"
+      },
       "max_items": "Maksymalna liczba pozycji",
       "max_quantity": "Maksymalna ilość",
       "maximum_item_total": "Maksymalna wartość produktów",
@@ -3962,7 +4040,9 @@
       "normal_amount": "Kwota normalna",
       "percent": "Procent",
       "preferred_amount": "Kwota",
-      "preferred_percent": "Procent"
+      "preferred_percent": "Procent",
+      "webhook_secret": "Sekret podpisu webhooka",
+      "webhook_secret_description": "Sekret ustawiony na webhooku EasyPost. Bez niego aktualizacje od przewoźnika są odrzucane."
     },
     "product_types": {
       "add_cta": "Dodaj typ produktu",
@@ -4927,6 +5007,7 @@
         "default": "Domyślna",
         "location": "Lokalizacja",
         "pickup": "Odbiór",
+        "returns": "Zwroty",
         "type": "Typ"
       },
       "create_description": "Dodaj magazyn, sklep lub punkt odbioru, z którego będą realizowane zamówienia.",

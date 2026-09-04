@@ -222,24 +222,21 @@ module SpreeEasyPost
 
   # EndShipper payload — the party legally responsible for the shipment,
   # required when buying labels on EasyPost's own carrier accounts (USPS
-  # refuses the purchase without one). Unlike a plain address, EasyPost
-  # makes every field mandatory here including phone and email, so the
-  # store's contact details fill in what the stock location does not carry.
+  # refuses the purchase without one). Whatever the warehouse and store can
+  # supply is sent as-is: which fields EasyPost demands is its rule, and it
+  # answers a payload it cannot accept by naming the field, which is more
+  # use to a merchant than a list maintained here that would drift out of
+  # step the first time that rule changed.
   #
   # @param stock_location [Spree::StockLocation, nil]
   # @param store [Spree::Store, nil]
-  # @return [Hash, nil] nil when the mandatory fields cannot be assembled
+  # @return [Hash, nil] nil only when there is no location to describe
   def self.end_shipper_params(stock_location, store)
     return if stock_location.nil?
 
-    params = address_params(stock_location)
-    params[:phone] = stock_location.phone.presence || store&.contact_phone.presence
-    params[:email] = store&.mail_from_address.presence || store&.customer_support_email.presence
-
-    mandatory = params.values_at(:street1, :city, :state, :zip, :country, :phone, :email)
-    mandatory << (params[:name].presence || params[:company].presence)
-    return if mandatory.any?(&:blank?)
-
-    params.compact_blank
+    address_params(stock_location).merge(
+      phone: stock_location.phone.presence || store&.contact_phone.presence,
+      email: store&.mail_from_address.presence || store&.customer_support_email.presence
+    ).compact_blank
   end
 end

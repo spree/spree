@@ -6,14 +6,14 @@ const client = createAdminClient({
 })
 
 // region:example
-const fulfillment = await client.orders.fulfillments.purchaseLabel(
+// Staff confirming one consignment arrived. The fulfillment follows once
+// every one of its consignments has.
+const delivery = await client.orders.fulfillments.deliveries.markDelivered(
   'or_UkLWZg9DAJ',
   'ful_UkLWZg9DAJ',
+  'dlv_UkLWZg9DAJ',
 )
-
-// The label is ready to print; the parcel is still unfulfilled.
-const label = fulfillment.documents.find((document) => document.kind === 'label')
 
 // endregion:example
 
-export { label }
+export { delivery }
