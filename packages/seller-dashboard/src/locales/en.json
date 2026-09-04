@@ -335,7 +335,11 @@
       "label_cost_label": "What it cost",
       "print_label": "Print label",
       "delete_label": "Remove label",
-      "confirm_delete_label": "Remove this label? The file is deleted and cannot be printed again."
+      "confirm_delete_label": "Remove this label? The file is deleted and cannot be printed again.",
+      "move_origin": "Change where it ships from",
+      "move_origin_title": "Change where it ships from",
+      "move_origin_description": "Pick the shelf this parcel is actually picked from. The delivery rate is requoted from there.",
+      "ships_from_label": "Ships from"
     },
     "summary": {
       "title": "Summary",

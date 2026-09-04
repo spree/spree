@@ -15,7 +15,8 @@ module Spree
                    tracking_url: [:string, nullable: true],
                    fulfillment_type: [:string, nullable: true],
                    delivery_method_name: [:string, nullable: true],
-                   stock_location_name: [:string, nullable: true]
+                   stock_location_name: [:string, nullable: true],
+                   stock_location_id: [:string, nullable: true]
 
           attributes :number, :status, :tracking, :tracking_url,
                      fulfilled_at: :iso8601, delivered_at: :iso8601, created_at: :iso8601, updated_at: :iso8601
@@ -37,6 +38,12 @@ module Spree
 
           attribute :stock_location_name do |fulfillment|
             fulfillment.stock_location&.name
+          end
+
+          # The id as well as the name, so a seller moving the parcel to
+          # another of their shelves can see which one it is on now.
+          attribute :stock_location_id do |fulfillment|
+            fulfillment.stock_location&.prefixed_id
           end
 
           # Deliberately not `items`: the store's fulfillment answers with a

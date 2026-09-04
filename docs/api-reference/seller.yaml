@@ -15599,6 +15599,7 @@ paths:
                   fulfillment_type: shipping
                   delivery_method_name: UPS Ground
                   stock_location_name: Vernie Lehner
+                  stock_location_id: sloc_UkLWZg9DAJ
                   fulfillment_items:
                   - id: fi_UkLWZg9DAJ
                     quantity: 1
@@ -15683,6 +15684,7 @@ paths:
                 fulfillment_type: shipping
                 delivery_method_name: UPS Ground
                 stock_location_name: Mirta Herman
+                stock_location_id: sloc_UkLWZg9DAJ
                 fulfillment_items:
                 - id: fi_UkLWZg9DAJ
                   quantity: 1
@@ -15784,6 +15786,7 @@ paths:
                 fulfillment_type: shipping
                 delivery_method_name: UPS Ground
                 stock_location_name: Eugena Schultz
+                stock_location_id: sloc_UkLWZg9DAJ
                 fulfillment_items:
                 - id: fi_UkLWZg9DAJ
                   quantity: 1
@@ -15865,6 +15868,7 @@ paths:
                 fulfillment_type: shipping
                 delivery_method_name: UPS Ground
                 stock_location_name: Karyn Moore
+                stock_location_id: sloc_UkLWZg9DAJ
                 fulfillment_items:
                 - id: fi_UkLWZg9DAJ
                   quantity: 1
@@ -16052,6 +16056,7 @@ paths:
                     fulfillment_type: shipping
                     delivery_method_name: UPS Ground
                     stock_location_name: Roseline Roberts
+                    stock_location_id: sloc_UkLWZg9DAJ
                     fulfillment_items:
                     - id: fi_UkLWZg9DAJ
                       quantity: 1
@@ -16215,6 +16220,7 @@ paths:
                   fulfillment_type: shipping
                   delivery_method_name: UPS Ground
                   stock_location_name: Woodrow Hand
+                  stock_location_id: sloc_UkLWZg9DAJ
                   fulfillment_items:
                   - id: fi_UkLWZg9DAJ
                     quantity: 1
@@ -16370,6 +16376,7 @@ paths:
                   fulfillment_type: shipping
                   delivery_method_name: UPS Ground
                   stock_location_name: Ricky Kutch
+                  stock_location_id: sloc_UkLWZg9DAJ
                   fulfillment_items:
                   - id: fi_UkLWZg9DAJ
                     quantity: 1
@@ -18493,6 +18500,9 @@ components:
         stock_location_name:
           type: string
           nullable: true
+        stock_location_id:
+          type: string
+          nullable: true
         fulfillment_items:
           type: array
           items:
@@ -18518,6 +18528,7 @@ components:
       - fulfillment_type
       - delivery_method_name
       - stock_location_name
+      - stock_location_id
       - fulfillment_items
       - deliveries
       - labels

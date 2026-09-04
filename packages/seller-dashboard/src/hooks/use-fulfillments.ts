@@ -53,6 +53,7 @@ export function useFulfillmentActions(orderId: string) {
       fulfillmentId: string
       tracking?: string
       tracking_carrier?: string
+      stock_location_id?: string
     }) => sellerClient().orders.fulfillments.update(orderId, fulfillmentId, params),
   )
 

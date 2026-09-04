@@ -442,7 +442,12 @@ export class SellerClient {
       update: (
         orderId: string,
         id: string,
-        params: { tracking?: string; tracking_carrier?: string },
+        params: {
+          tracking?: string
+          tracking_carrier?: string
+          /** One of this seller's own shelves; the rate requotes from there. */
+          stock_location_id?: string
+        },
         options?: RequestOptions,
       ): Promise<Fulfillment> =>
         this.request<Fulfillment>('PATCH', `/orders/${orderId}/fulfillments/${id}`, {

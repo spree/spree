@@ -22,6 +22,7 @@ import { FulfillmentDeliveries } from './fulfillment-deliveries'
 import { FulfillmentDeliveryDialog } from './fulfillment-delivery-dialog'
 import { FulfillmentFulfillForm } from './fulfillment-fulfill-form'
 import { FulfillmentLabelUploadDialog } from './fulfillment-label-upload-dialog'
+import { FulfillmentOriginDialog } from './fulfillment-origin-dialog'
 import { FulfillmentSplitDialog } from './fulfillment-split-dialog'
 import { unitLabel } from './line-label'
 import { ShippingLabelRow } from './shipping-label-row'
@@ -89,6 +90,7 @@ function FulfillmentRow({
   const [deliveryOpen, setDeliveryOpen] = useState(false)
   const [editingDelivery, setEditingDelivery] = useState<Delivery | undefined>()
   const [labelOpen, setLabelOpen] = useState(false)
+  const [originOpen, setOriginOpen] = useState(false)
   const [splitOpen, setSplitOpen] = useState(false)
 
   const status = fulfillment.status ?? ''
@@ -136,6 +138,11 @@ function FulfillmentRow({
               <DropdownMenuItem onClick={() => setLabelOpen(true)}>
                 {t('orders.fulfillments.upload_label')}
               </DropdownMenuItem>
+              {shippable && (
+                <DropdownMenuItem onClick={() => setOriginOpen(true)}>
+                  {t('orders.fulfillments.move_origin')}
+                </DropdownMenuItem>
+              )}
               {splittable && (
                 <DropdownMenuItem onClick={() => setSplitOpen(true)}>
                   {t('orders.fulfillments.split')}
@@ -229,6 +236,14 @@ function FulfillmentRow({
             setDeliveryOpen(next)
             if (!next) setEditingDelivery(undefined)
           }}
+        />
+      )}
+      {originOpen && (
+        <FulfillmentOriginDialog
+          orderId={orderId}
+          fulfillment={fulfillment}
+          open
+          onOpenChange={setOriginOpen}
         />
       )}
       {labelOpen && (
