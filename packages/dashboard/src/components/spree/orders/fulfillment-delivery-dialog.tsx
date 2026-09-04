@@ -3,6 +3,15 @@ import type { Delivery } from '@spree/admin-sdk'
 import { mapSpreeErrorsToForm } from '@spree/dashboard-core'
 import {
   Button,
+  Combobox,
+  ComboboxButtonTrigger,
+  ComboboxContent,
+  ComboboxEmpty,
+  ComboboxItem,
+  ComboboxList,
+  ComboboxSearch,
+  ComboboxTriggerPlaceholder,
+  ComboboxValue,
   Dialog,
   DialogBody,
   DialogContent,
@@ -15,7 +24,7 @@ import {
   FieldLabel,
   Input,
 } from '@spree/dashboard-ui'
-import { useForm } from 'react-hook-form'
+import { Controller, useForm } from 'react-hook-form'
 import { useTranslation } from 'react-i18next'
 import { z } from 'zod'
 import { useFulfillmentActions } from '../../../hooks/use-fulfillments'
@@ -26,7 +35,6 @@ const deliverySchema = z.object({
   // Free text: a forwarder's own name is as valid as a registered carrier,
   // and an empty value asks the server to detect one from the number.
   carrier: z.string(),
-  tracking_url: z.string(),
 })
 
 type DeliveryFormValues = z.infer<typeof deliverySchema>
@@ -53,20 +61,23 @@ export function FulfillmentDeliveryDialog({
   const { createDelivery, updateDelivery } = useFulfillmentActions(orderId)
   const { data: carriersData } = useTrackingCarriers(open)
 
-  // The datalist suggests display names, but what is stored and submitted is
-  // the registry key — seeding the field with the name would rewrite a known
-  // carrier to its own label on the next save.
+  // The picker offers what the registry knows, but the value stored is the
+  // carrier's key — seeding it with the display name would rewrite a known
+  // carrier to its own label on the next save. Anything not on the list is
+  // still typeable, because a forwarder's own name has to be enterable.
   const carrierOptions = (carriersData?.data ?? []).map((carrier) => ({
     value: carrier.id,
     label: carrier.name,
   }))
+
+  const carrierLabel = (value: string) =>
+    carrierOptions.find((option) => option.value === value)?.label ?? value
 
   const form = useForm<DeliveryFormValues>({
     resolver: zodResolver(deliverySchema),
     defaultValues: {
       tracking_number: delivery?.tracking_number ?? '',
       carrier: delivery?.carrier ?? '',
-      tracking_url: delivery?.tracking_url ?? '',
     },
   })
 
@@ -76,24 +87,21 @@ export function FulfillmentDeliveryDialog({
     try {
       const tracking_number = values.tracking_number.trim()
       const carrier = values.carrier.trim()
-      const tracking_url = values.tracking_url.trim()
 
       if (delivery) {
-        // Sent even when empty: clearing the carrier is how a merchant asks
+        // Carrier is sent even when empty: clearing it is how a merchant asks
         // for it to be detected from the number again.
         await updateDelivery.mutateAsync({
           fulfillmentId,
           deliveryId: delivery.id,
           tracking_number,
           carrier,
-          tracking_url,
         })
       } else {
         await createDelivery.mutateAsync({
           fulfillmentId,
           tracking_number,
           carrier: carrier || undefined,
-          tracking_url: tracking_url || undefined,
         })
       }
       onOpenChange(false)
@@ -124,7 +132,7 @@ export function FulfillmentDeliveryDialog({
             </DialogDescription>
           </DialogHeader>
 
-          <DialogBody>
+          <DialogBody className="flex flex-col gap-4">
             {form.formState.errors.root?.message && (
               <p className="text-sm text-destructive" role="alert">
                 {form.formState.errors.root.message}
@@ -149,35 +157,43 @@ export function FulfillmentDeliveryDialog({
                 <FieldLabel htmlFor="delivery-carrier">
                   {t('admin.orders.detail.fulfillments.carrier_label')}
                 </FieldLabel>
-                {/* Free text with the registered carriers as suggestions: a
-                    forwarder's own name has to be enterable, and an empty
-                    value asks the server to detect one from the number. */}
-                <Input
-                  id="delivery-carrier"
-                  list="delivery-carrier-options"
-                  placeholder={t('admin.orders.detail.fulfillments.carrier_auto')}
-                  {...form.register('carrier')}
+                <Controller
+                  control={form.control}
+                  name="carrier"
+                  render={({ field }) => (
+                    <Combobox
+                      items={carrierOptions.map((option) => option.value)}
+                      value={field.value}
+                      onValueChange={(value: string | null) => field.onChange(value ?? '')}
+                      itemToStringLabel={carrierLabel}
+                    >
+                      <ComboboxButtonTrigger id="delivery-carrier" onBlur={field.onBlur}>
+                        {field.value ? (
+                          <ComboboxValue />
+                        ) : (
+                          <ComboboxTriggerPlaceholder>
+                            {t('admin.orders.detail.fulfillments.carrier_auto')}
+                          </ComboboxTriggerPlaceholder>
+                        )}
+                      </ComboboxButtonTrigger>
+                      <ComboboxContent>
+                        <ComboboxSearch
+                          placeholder={t('admin.orders.detail.fulfillments.carrier_search')}
+                        />
+                        <ComboboxEmpty>{t('admin.common.no_results')}</ComboboxEmpty>
+                        <ComboboxList>
+                          {(value: string) => (
+                            <ComboboxItem key={value} value={value}>
+                              {carrierLabel(value)}
+                            </ComboboxItem>
+                          )}
+                        </ComboboxList>
+                      </ComboboxContent>
+                    </Combobox>
+                  )}
                 />
-                <datalist id="delivery-carrier-options">
-                  {carrierOptions.map((option) => (
-                    <option key={option.value} value={option.value} label={option.label} />
-                  ))}
-                </datalist>
               </Field>
             </div>
-
-            <Field>
-              <FieldLabel htmlFor="delivery-tracking-url">
-                {t('admin.orders.detail.fulfillments.tracking_url_label')}
-              </FieldLabel>
-              <Input
-                id="delivery-tracking-url"
-                placeholder={t('admin.orders.detail.fulfillments.tracking_url_placeholder')}
-                aria-invalid={!!form.formState.errors.tracking_url}
-                {...form.register('tracking_url')}
-              />
-              <FieldError errors={[form.formState.errors.tracking_url]} />
-            </Field>
           </DialogBody>
 
           <DialogFooter>

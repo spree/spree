@@ -95,6 +95,18 @@ RSpec.describe Spree::Api::V3::Admin::Orders::DeliveriesController, type: :contr
 
       expect(response).to have_http_status(:unprocessable_content)
     end
+    it 'refuses one that already arrived' do
+      delivery = fulfillment.deliveries.first
+      delivery.update_columns(status: 'delivered', delivered_at: Time.current)
+
+      delete :destroy, params: {
+        order_id: order.prefixed_id, fulfillment_id: fulfillment.prefixed_id, id: delivery.prefixed_id
+      }, as: :json
+
+      expect(response).to have_http_status(:unprocessable_content)
+      expect(Spree::Delivery.exists?(delivery.id)).to be(true)
+    end
+
   end
 
   describe 'PATCH #mark_delivered' do

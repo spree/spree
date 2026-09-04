@@ -1,6 +1,6 @@
 module SpreeEasyPost
   # One `tracker.updated` webhook, translated into the vocabulary
-  # Spree::Fulfillments::UpdateTracking speaks.
+  # Spree::Deliveries::UpdateTracking speaks.
   #
   # Translating carrier status names is the provider's job precisely so core
   # never learns any one carrier's spelling — EasyPost's own vocabulary happens
@@ -54,7 +54,7 @@ module SpreeEasyPost
       )
     end
 
-    # The shape {Spree::Fulfillments::UpdateTracking} takes, plus the
+    # The shape {Spree::Deliveries::UpdateTracking} takes, plus the
     # tracking code the endpoint matches the fulfillment on.
     #
     # @return [Hash]

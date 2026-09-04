@@ -22,4 +22,16 @@ RSpec.describe Spree::Deliveries::Destroy do
     expect(result.error.to_s).to eq(Spree.t('deliveries.errors.has_label'))
     expect(label.reload.delivery).to be_present
   end
+  # Arrival is what the returns window and the withdrawal period count from,
+  # so it is a fact to correct rather than erase.
+  it 'refuses one that already arrived' do
+    delivery = fulfillment.deliveries.first
+    delivery.update_columns(status: 'delivered', delivered_at: Time.current)
+
+    result = service.call(delivery: delivery)
+
+    expect(result).to be_failure
+    expect(result.error.to_s).to eq(Spree.t('deliveries.errors.delivered'))
+    expect(Spree::Delivery.exists?(delivery.id)).to be(true)
+  end
 end

@@ -442,7 +442,7 @@ function FulfillmentRow({ order, fulfillment }: { order: Order; fulfillment: Ful
           <span className="text-muted-foreground text-xs">
             <RelativeTime
               iso={fulfillment.fulfilled_at}
-              prefix={t('admin.orders.detail.tracking.shipped_prefix')}
+              prefix={t('admin.orders.detail.tracking.fulfilled_prefix')}
               fallback=""
             />
           </span>
@@ -543,7 +543,6 @@ function FulfillmentRow({ order, fulfillment }: { order: Order; fulfillment: Ful
           orderId={orderId}
           fulfillmentId={fulfillment.id}
           deliveries={deliveries}
-          canMarkDelivered={deliverable}
           onEdit={(delivery) => {
             setEditingDelivery(delivery)
             setDeliveryOpen(true)

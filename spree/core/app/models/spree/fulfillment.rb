@@ -125,9 +125,6 @@ module Spree
     include Spree::HasStatus
     has_status :unfulfilled, :fulfilled, :delivered, :canceled, default: :unfulfilled
 
-    # @deprecated The carrier vocabulary lives on {Spree::Delivery::STATUSES}; removed in 6.1.
-    TRACKING_STATUSES = Spree::Delivery::STATUSES
-
     # @deprecated Use {Spree::Fulfillments::Fulfill}; removed in 6.1.
     def ship(*args)
       Spree::Deprecation.warn('Spree::Fulfillment#ship is deprecated and will be removed in Spree 6.1. Use Spree::Fulfillments::Fulfill instead.')

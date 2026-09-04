@@ -1,7 +1,16 @@
 import type { ShippingLabel } from '@spree/admin-sdk'
 import { downloadFromApi, getApiClient, useAuth } from '@spree/dashboard-core'
-import { Badge, Button, CardContent, useConfirm } from '@spree/dashboard-ui'
-import { PrinterIcon, ReceiptIcon, TrashIcon } from 'lucide-react'
+import {
+  Badge,
+  Button,
+  CardContent,
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+  useConfirm,
+} from '@spree/dashboard-ui'
+import { EllipsisVerticalIcon, PrinterIcon, ReceiptIcon, TrashIcon } from 'lucide-react'
 import { useTranslation } from 'react-i18next'
 import { useFulfillmentActions } from '../../../hooks/use-fulfillments'
 
@@ -94,25 +103,33 @@ export function FulfillmentLabel({
         )}
 
         {deletable && (
-          <Button
-            type="button"
-            size="icon-xs"
-            variant="ghost"
-            onClick={async () => {
-              if (
-                await confirm({
-                  message: t('admin.orders.detail.fulfillments.confirm_delete_label'),
-                  variant: 'destructive',
-                  confirmLabel: t('admin.actions.delete'),
-                })
-              ) {
-                deleteLabel.mutate({ fulfillmentId, labelId: label.id })
-              }
-            }}
-          >
-            <TrashIcon className="size-4" />
-            <span className="sr-only">{t('admin.orders.detail.fulfillments.delete_label')}</span>
-          </Button>
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button type="button" variant="ghost" size="icon-xs">
+                <EllipsisVerticalIcon className="size-4" />
+                <span className="sr-only">{t('admin.actions.actions_menu')}</span>
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end">
+              <DropdownMenuItem
+                variant="destructive"
+                onClick={async () => {
+                  if (
+                    await confirm({
+                      message: t('admin.orders.detail.fulfillments.confirm_delete_label'),
+                      variant: 'destructive',
+                      confirmLabel: t('admin.actions.delete'),
+                    })
+                  ) {
+                    deleteLabel.mutate({ fulfillmentId, labelId: label.id })
+                  }
+                }}
+              >
+                <TrashIcon className="size-4" />
+                {t('admin.orders.detail.fulfillments.delete_label')}
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
         )}
       </div>
     </CardContent>

@@ -4,7 +4,7 @@ module Spree
     # which used to stop at handover.
     #
     # Three things reach it: a carrier reporting delivery (through
-    # {Spree::Fulfillments::UpdateTracking}), a staff member pressing a button
+    # {Spree::Deliveries::UpdateTracking}), a staff member pressing a button
     # because they know the parcel arrived, and — for pickup — the customer
     # collecting it. Merchants without any carrier integration still get a
     # usable delivered state that way.

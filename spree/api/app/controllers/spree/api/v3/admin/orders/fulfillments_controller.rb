@@ -6,7 +6,7 @@ module Spree
           class FulfillmentsController < BaseController
             scoped_resource :fulfillments
 
-            before_action :set_resource, only: [:show, :update, :fulfill, :purchase_label, :mark_delivered, :cancel, :split]
+            before_action :set_resource, only: [:show, :update, :fulfill, :mark_delivered, :cancel, :split]
 
             # POST /api/v3/admin/orders/:order_id/fulfillments
             #
@@ -70,25 +70,6 @@ module Spree
                   notify_customer: notify_customer?(fulfill_params[:notify_customer]),
                   force: fulfill_params[:force].to_b
                 )
-
-                if result.success?
-                  render json: serialize_resource(result.value)
-                else
-                  render_result_error(result)
-                end
-              end
-            end
-
-            # PATCH /api/v3/admin/orders/:order_id/fulfillments/:id/purchase_label
-            #
-            # @deprecated Labels are a nested resource since 6.0 —
-            #   POST .../fulfillments/:id/labels buys one and answers with the
-            #   label. This alias answers with the fulfillment for one release
-            #   and is removed in 6.1.
-            def purchase_label
-              response.headers['Deprecation'] = 'true'
-              with_order_lock do
-                result = Spree.fulfillment_purchase_label_workflow.call(fulfillment: @resource)
 
                 if result.success?
                   render json: serialize_resource(result.value)

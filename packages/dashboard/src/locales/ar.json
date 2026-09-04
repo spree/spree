@@ -2727,6 +2727,7 @@
           "buy_label_pending_file": "لا تزال نسخة شركة الشحن قيد التنزيل؛ ستفتح الطباعة رابط شركة الشحن نفسه.",
           "carrier_auto": "اكتشاف تلقائي",
           "carrier_label": "شركة الشحن",
+          "carrier_search": "البحث عن شركة شحن",
           "carrier_status_available_for_pickup": "جاهز للاستلام",
           "carrier_status_delivered": "تم التسليم",
           "carrier_status_failure": "فشل التسليم",
@@ -2775,8 +2776,6 @@
           "split_title": "تقسيم الشحنة",
           "split_would_empty": "اترك وحدة واحدة على الأقل، أو غيّر مصدر الشحنة بالكامل بدلاً من ذلك.",
           "tracking_description": "رقم تتبع شركة الشحن، أو رابط تتبع كامل.",
-          "tracking_url_label": "رابط التتبع",
-          "tracking_url_placeholder": "https://carrier.example/track/...",
           "unfulfilled_other": "غير مُنفَّذ ({{count}})",
           "upload_label": "رفع ملصق",
           "upload_label_cost": "تكلفة أجرة الشحن",
@@ -2803,7 +2802,6 @@
           "captured": "القبض على الدفع",
           "completed": "اكتمل الطلب",
           "confirmation_sent": "تم إرسال التأكيد",
-          "shipped": "Fulfillment تم الشحن",
           "voided": "تم إلغاء الدفع"
         },
         "no_customer": "لا توجد معلومات العميل",
@@ -2854,8 +2852,8 @@
           "tax_included": "الضريبة (متضمنة)"
         },
         "tracking": {
-          "prefix": "Tracking",
-          "shipped_prefix": "تم الشحن"
+          "fulfilled_prefix": "تم التنفيذ",
+          "prefix": "Tracking"
         },
         "variant_search": {
           "description": "ابحث عن متغير منتج لإضافته إلى هذا الطلب.",
@@ -2910,7 +2908,7 @@
       },
       "fulfill": {
         "action": "وضع علامة كمشحون",
-        "empty": "لا تحتوي هذه الشحنة على عناصر قابلة للشحن.",
+        "empty": "لا يحتوي هذا التنفيذ على عناصر يمكن تنفيذها.",
         "include_item": "شحن {{name}}",
         "notify_customer": "إرسال إشعار الشحن إلى العميل",
         "of_units": "من {{count}}",
@@ -3107,7 +3105,6 @@
             "capture": "يأسر",
             "mark_paid": "وضع علامة على أنه مدفوع",
             "refund": "استرداد",
-            "ship": "وضع علامة على أنه تم الشحن",
             "void": "Void"
           },
           "claims": {

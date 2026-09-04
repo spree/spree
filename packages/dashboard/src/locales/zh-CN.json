@@ -2702,6 +2702,7 @@
           "buy_label_pending_file": "承运商的副本仍在下载中；打印将打开承运商自己的链接。",
           "carrier_auto": "自动识别",
           "carrier_label": "承运商",
+          "carrier_search": "搜索承运商",
           "carrier_status_available_for_pickup": "可自提",
           "carrier_status_delivered": "已送达",
           "carrier_status_failure": "投递失败",
@@ -2750,8 +2751,6 @@
           "split_title": "拆分发货单",
           "split_would_empty": "请至少保留一件，或改为修改整个发货单的发货地。",
           "tracking_description": "承运商的物流单号，或完整的跟踪链接。",
-          "tracking_url_label": "跟踪链接",
-          "tracking_url_placeholder": "https://carrier.example/track/...",
           "unfulfilled_other": "未发货（{{count}}）",
           "upload_label": "上传面单",
           "upload_label_cost": "邮资费用",
@@ -2778,7 +2777,6 @@
           "captured": "付款已收取",
           "completed": "订单已完成",
           "confirmation_sent": "确认信息已发送",
-          "shipped": "发货已发出",
           "voided": "付款已作废"
         },
         "no_customer": "无客户信息",
@@ -2829,8 +2827,8 @@
           "tax_included": "税（含）"
         },
         "tracking": {
-          "prefix": "物流",
-          "shipped_prefix": "已发货"
+          "fulfilled_prefix": "已履行",
+          "prefix": "物流"
         },
         "variant_search": {
           "description": "搜索要添加到此订单的商品变体。",
@@ -2885,7 +2883,7 @@
       },
       "fulfill": {
         "action": "标记为已发货",
-        "empty": "此发货单中没有可发货的商品。",
+        "empty": "此履行项中没有可履行的商品。",
         "include_item": "发货 {{name}}",
         "notify_customer": "向客户发送发货通知",
         "of_units": "共 {{count}}",
@@ -3082,7 +3080,6 @@
             "capture": "扣款",
             "mark_paid": "标记为已付款",
             "refund": "退款",
-            "ship": "标记为已发货",
             "void": "作废"
           },
           "claims": {

@@ -2709,6 +2709,7 @@
           "buy_label_pending_file": "The carrier's copy is still downloading; printing opens the carrier's own link.",
           "carrier_auto": "Detect automatically",
           "carrier_label": "Shipping carrier",
+          "carrier_search": "Search carriers",
           "carrier_status_available_for_pickup": "Available for pickup",
           "carrier_status_delivered": "Delivered",
           "carrier_status_failure": "Delivery failed",
@@ -2757,8 +2758,6 @@
           "split_title": "Split fulfillment",
           "split_would_empty": "Leave at least one unit behind, or change the origin of the whole fulfillment instead.",
           "tracking_description": "The carrier tracking number, or a full tracking link.",
-          "tracking_url_label": "Tracking link",
-          "tracking_url_placeholder": "https://carrier.example/track/...",
           "unfulfilled_one": "Unfulfilled ({{count}})",
           "unfulfilled_other": "Unfulfilled ({{count}})",
           "upload_label": "Upload label",
@@ -2786,7 +2785,6 @@
           "captured": "Payment captured",
           "completed": "Order completed",
           "confirmation_sent": "Confirmation sent",
-          "shipped": "Fulfillment shipped",
           "voided": "Payment voided"
         },
         "no_customer": "No customer information",
@@ -2837,8 +2835,8 @@
           "tax_included": "Tax (included)"
         },
         "tracking": {
-          "prefix": "Tracking",
-          "shipped_prefix": "Shipped"
+          "fulfilled_prefix": "Fulfilled",
+          "prefix": "Tracking"
         },
         "variant_search": {
           "description": "Search for a product variant to add to this order.",
@@ -2893,7 +2891,7 @@
       },
       "fulfill": {
         "action": "Mark as fulfilled",
-        "empty": "This fulfillment holds no items that can be shipped.",
+        "empty": "This fulfillment holds no items that can be fulfilled.",
         "include_item": "Ship {{name}}",
         "notify_customer": "Send shipment notification to customer",
         "of_units": "of {{count}}",
@@ -3090,7 +3088,6 @@
             "capture": "Capture",
             "mark_paid": "Mark as paid",
             "refund": "Refund",
-            "ship": "Mark as shipped",
             "void": "Void"
           },
           "claims": {

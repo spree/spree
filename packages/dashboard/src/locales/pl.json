@@ -2729,6 +2729,7 @@
           "buy_label_pending_file": "Kopia przewoźnika jest jeszcze pobierana; drukowanie otworzy jego własny link.",
           "carrier_auto": "Wykryj automatycznie",
           "carrier_label": "Przewoźnik",
+          "carrier_search": "Szukaj przewoźnika",
           "carrier_status_available_for_pickup": "Gotowa do odbioru",
           "carrier_status_delivered": "Dostarczona",
           "carrier_status_failure": "Doręczenie nieudane",
@@ -2777,8 +2778,6 @@
           "split_title": "Podziel przesyłkę",
           "split_would_empty": "Pozostaw co najmniej jedną sztukę albo zmień miejsce wysyłki całej przesyłki.",
           "tracking_description": "Numer przesyłki od przewoźnika lub pełny link do śledzenia.",
-          "tracking_url_label": "Link do śledzenia",
-          "tracking_url_placeholder": "https://carrier.example/track/...",
           "unfulfilled_few": "Niezrealizowane ({{count}})",
           "unfulfilled_many": "Niezrealizowane ({{count}})",
           "unfulfilled_one": "Niezrealizowane ({{count}})",
@@ -2808,7 +2807,6 @@
           "captured": "Płatność pobrana",
           "completed": "Zamówienie sfinalizowane",
           "confirmation_sent": "Potwierdzenie wysłane",
-          "shipped": "Realizacja wysłana",
           "voided": "Płatność unieważniona"
         },
         "no_customer": "Brak informacji o kliencie",
@@ -2859,8 +2857,8 @@
           "tax_included": "Podatek (wliczony)"
         },
         "tracking": {
-          "prefix": "Śledzenie",
-          "shipped_prefix": "Wysłano"
+          "fulfilled_prefix": "Zrealizowano",
+          "prefix": "Śledzenie"
         },
         "variant_search": {
           "description": "Wyszukaj wariant produktu, aby dodać go do tego zamówienia.",
@@ -2919,7 +2917,7 @@
       },
       "fulfill": {
         "action": "Oznacz jako wysłane",
-        "empty": "Ta przesyłka nie zawiera pozycji, które można wysłać.",
+        "empty": "Ta realizacja nie zawiera pozycji, które można zrealizować.",
         "include_item": "Wyślij: {{name}}",
         "notify_customer": "Wyślij klientowi powiadomienie o wysyłce",
         "of_units": "z {{count}}",
@@ -3118,7 +3116,6 @@
             "capture": "Pobierz",
             "mark_paid": "Oznacz jako opłacone",
             "refund": "Zwrot środków",
-            "ship": "Oznacz jako wysłane",
             "void": "Unieważnij"
           },
           "claims": {

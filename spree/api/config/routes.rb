@@ -722,8 +722,6 @@ Spree::Core::Engine.add_routes do
           resources :fulfillments, controller: 'orders/fulfillments', only: [:index, :show, :create, :update] do
             member do
               patch :fulfill
-              # Deprecated alias of POST .../labels — removed in 6.1.
-              patch :purchase_label
               patch :mark_delivered
               patch :cancel
               patch :split

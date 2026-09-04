@@ -2709,6 +2709,7 @@
           "buy_label_pending_file": "La copie du transporteur est en cours de téléchargement ; l'impression ouvre son propre lien.",
           "carrier_auto": "Détecter automatiquement",
           "carrier_label": "Transporteur",
+          "carrier_search": "Rechercher un transporteur",
           "carrier_status_available_for_pickup": "Disponible au retrait",
           "carrier_status_delivered": "Livré",
           "carrier_status_failure": "Échec de la livraison",
@@ -2757,8 +2758,6 @@
           "split_title": "Diviser l'expédition",
           "split_would_empty": "Laissez au moins une unité, ou modifiez plutôt l'origine de toute l'expédition.",
           "tracking_description": "Le numéro de suivi du transporteur, ou un lien de suivi complet.",
-          "tracking_url_label": "Lien de suivi",
-          "tracking_url_placeholder": "https://carrier.example/track/...",
           "unfulfilled_one": "Non expédié ({{count}})",
           "unfulfilled_other": "Non expédiés ({{count}})",
           "upload_label": "Téléverser une étiquette",
@@ -2786,7 +2785,6 @@
           "captured": "Paiement capturé",
           "completed": "Commande finalisée",
           "confirmation_sent": "Confirmation envoyée",
-          "shipped": "Envoi expédié",
           "voided": "Paiement annulé"
         },
         "no_customer": "Aucune information client",
@@ -2837,8 +2835,8 @@
           "tax_included": "Taxe (incluse)"
         },
         "tracking": {
-          "prefix": "Suivi",
-          "shipped_prefix": "Expédié"
+          "fulfilled_prefix": "Traité",
+          "prefix": "Suivi"
         },
         "variant_search": {
           "description": "Recherchez une variante de produit à ajouter à cette commande.",
@@ -2893,7 +2891,7 @@
       },
       "fulfill": {
         "action": "Marquer comme expédié",
-        "empty": "Cette expédition ne contient aucun article expédiable.",
+        "empty": "Ce traitement ne contient aucun article pouvant être traité.",
         "include_item": "Expédier {{name}}",
         "notify_customer": "Envoyer la notification d'expédition au client",
         "of_units": "sur {{count}}",
@@ -3090,7 +3088,6 @@
             "capture": "Capturer",
             "mark_paid": "Marquer comme payée",
             "refund": "Rembourser",
-            "ship": "Marquer comme expédiée",
             "void": "Annuler"
           },
           "claims": {

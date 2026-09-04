@@ -105,14 +105,6 @@ module SpreeEasyPost
     # @param delivery [Spree::Delivery]
     # @return [String, nil]
     def tracking_url(delivery)
-      if delivery.is_a?(Spree::Fulfillment)
-        Spree::Deprecation.warn(
-          'SpreeEasyPost::FulfillmentProvider#tracking_url takes a Spree::Delivery since 6.0; ' \
-          'passing a fulfillment will be removed in Spree 6.1.'
-        )
-        delivery = delivery.primary_delivery
-      end
-
       delivery&.shipping_label&.metadata&.dig('easypost_tracker_url')
     end
 

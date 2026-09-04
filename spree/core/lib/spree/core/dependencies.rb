@@ -81,10 +81,6 @@ module Spree
         fulfillment_cancel_workflow: 'Spree::Fulfillments::Cancel',
         fulfillment_mark_delivered_workflow: 'Spree::Fulfillments::MarkDelivered',
         fulfillment_purchase_label_workflow: 'Spree::Fulfillments::PurchaseLabel',
-        # @deprecated Tracking is a delivery since 6.0 — see
-        #   delivery_update_tracking_workflow. The shell resolves the primary
-        #   delivery one release; removed in 6.1.
-        fulfillment_update_tracking_workflow: 'Spree::Fulfillments::UpdateTracking',
 
         # shipping labels + deliveries
         shipping_label_purchase_workflow: 'Spree::ShippingLabels::Purchase',

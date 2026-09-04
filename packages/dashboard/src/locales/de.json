@@ -2709,6 +2709,7 @@
           "buy_label_pending_file": "Die Kopie des Transportunternehmens wird noch geladen; beim Drucken öffnet sich dessen eigener Link.",
           "carrier_auto": "Automatisch erkennen",
           "carrier_label": "Versanddienstleister",
+          "carrier_search": "Transportunternehmen suchen",
           "carrier_status_available_for_pickup": "Zur Abholung bereit",
           "carrier_status_delivered": "Zugestellt",
           "carrier_status_failure": "Zustellung fehlgeschlagen",
@@ -2757,8 +2758,6 @@
           "split_title": "Sendung aufteilen",
           "split_would_empty": "Lassen Sie mindestens eine Einheit zurück oder ändern Sie stattdessen den Ursprung der gesamten Sendung.",
           "tracking_description": "Die Sendungsnummer des Zustellers oder ein vollständiger Tracking-Link.",
-          "tracking_url_label": "Sendungsverfolgungs-Link",
-          "tracking_url_placeholder": "https://carrier.example/track/...",
           "unfulfilled_one": "Nicht versandt ({{count}})",
           "unfulfilled_other": "Nicht versandt ({{count}})",
           "upload_label": "Etikett hochladen",
@@ -2786,7 +2785,6 @@
           "captured": "Zahlung eingezogen",
           "completed": "Auftrag abgeschlossen",
           "confirmation_sent": "Bestätigung gesendet",
-          "shipped": "Lieferung versendet",
           "voided": "Zahlung storniert"
         },
         "no_customer": "Keine Kundeninformationen",
@@ -2837,8 +2835,8 @@
           "tax_included": "Steuer (inklusive)"
         },
         "tracking": {
-          "prefix": "Tracking",
-          "shipped_prefix": "Versendet"
+          "fulfilled_prefix": "Erfüllt",
+          "prefix": "Tracking"
         },
         "variant_search": {
           "description": "Suchen Sie nach einer Produktvariante, die diesem Auftrag hinzugefügt werden soll.",
@@ -2893,7 +2891,7 @@
       },
       "fulfill": {
         "action": "Als versendet markieren",
-        "empty": "Diese Sendung enthält keine versandfähigen Artikel.",
+        "empty": "Diese Erfüllung enthält keine Artikel, die erfüllt werden können.",
         "include_item": "{{name}} versenden",
         "notify_customer": "Versandbenachrichtigung an Kundin oder Kunden senden",
         "of_units": "von {{count}}",
@@ -3090,7 +3088,6 @@
             "capture": "Einziehen",
             "mark_paid": "Als bezahlt markieren",
             "refund": "Erstatten",
-            "ship": "Als versendet markieren",
             "void": "Stornieren"
           },
           "claims": {

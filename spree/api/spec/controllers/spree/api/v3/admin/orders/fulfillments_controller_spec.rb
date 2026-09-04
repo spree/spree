@@ -302,33 +302,6 @@ RSpec.describe Spree::Api::V3::Admin::Orders::FulfillmentsController, type: :con
     end
   end
 
-  describe 'PATCH #purchase_label (deprecated alias of POST labels)' do
-    before do
-      Spree::TestingSupport::LabelProvider.reset!
-      allow_any_instance_of(Spree::Fulfillment).to receive(:provider).and_return(Spree::TestingSupport::LabelProvider.new)
-      allow(SsrfFilter).to receive(:get).and_raise(SocketError.new('offline'))
-      shipment.deliveries.destroy_all
-    end
-
-    it 'buys the label without fulfilling and answers with the fulfillment' do
-      patch :purchase_label, params: { order_id: order.prefixed_id, id: shipment.prefixed_id }, as: :json
-
-      expect(response).to have_http_status(:ok)
-      expect(response.headers['Deprecation']).to eq('true')
-      expect(json_response['status']).to eq('unfulfilled')
-      expect(json_response['tracking']).to eq('1Z879E930346834440')
-      expect(json_response['labels'].first['source']).to eq('purchased')
-    end
-
-    it 'fails loudly when the provider cannot produce a label' do
-      allow_any_instance_of(Spree::TestingSupport::LabelProvider).to receive(:purchase_label).and_return(nil)
-
-      patch :purchase_label, params: { order_id: order.prefixed_id, id: shipment.prefixed_id }, as: :json
-
-      expect(response).to have_http_status(:unprocessable_content)
-    end
-  end
-
   describe 'PATCH #mark_delivered' do
     before do
       Spree.fulfillment_fulfill_workflow.call(fulfillment: shipment)

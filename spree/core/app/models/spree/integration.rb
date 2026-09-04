@@ -141,7 +141,7 @@ module Spree
     # webhooks overrides this, verifies the signature against its own secret
     # (raising {WebhookSignatureError} when it is missing or wrong), and
     # returns the event translated into vocabulary core understands. Carrier
-    # integrations return {Spree::Fulfillments::UpdateTracking} keyword
+    # integrations return {Spree::Deliveries::UpdateTracking} keyword
     # arguments plus +tracking_code+; +nil+ means "not an event we act on",
     # which the endpoint acknowledges without doing anything.
     #

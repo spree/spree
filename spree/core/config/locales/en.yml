@@ -900,6 +900,7 @@ en:
     deleted: Deleted
     deliveries:
       errors:
+        delivered: This consignment has already arrived — its arrival is what the returns window counts from, so it cannot be deleted
         has_label: This delivery was created by a shipping label — refund the label instead of deleting the delivery
         not_found: This fulfillment has no delivery to track yet
     delivery: Delivery

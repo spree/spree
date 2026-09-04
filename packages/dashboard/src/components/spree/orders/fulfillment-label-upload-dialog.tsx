@@ -110,7 +110,7 @@ export function FulfillmentLabelUploadDialog({
             </DialogDescription>
           </DialogHeader>
 
-          <DialogBody>
+          <DialogBody className="flex flex-col gap-4">
             {form.formState.errors.root?.message && (
               <p className="text-sm text-destructive" role="alert">
                 {form.formState.errors.root.message}
