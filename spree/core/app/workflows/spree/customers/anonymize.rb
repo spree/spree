@@ -45,13 +45,17 @@ module Spree
         super
 
         step :capture_original_email
-        step :ensure_not_already_anonymized
+        step :refuse_if_already_anonymized
 
         # Veto point — a host app that must keep a customer identifiable for
         # an open dispute, a fraud investigation or a legal hold rejects here.
         run_hooks :validate
 
         ApplicationRecord.transaction do
+          # Inside the transaction so the claim rolls back with the redaction
+          # it guards. Claimed before any of it, so a second erasure racing
+          # this one finds the row taken rather than rewriting the same person.
+          step :claim_erasure
           step :anonymize_account
           step :anonymize_address_book
           step :anonymize_order_addresses
@@ -69,7 +73,6 @@ module Spree
           step :anonymize_data_requests
           step :record_consent_withdrawal
           step :remove_newsletter_subscriptions
-          step :stamp_anonymized
         end
 
         customer.publish_event(
@@ -90,8 +93,24 @@ module Spree
         @accepted_marketing = customer.accepts_email_marketing?
       end
 
-      def ensure_not_already_anonymized
+      # Cheap refusal before any work, for the ordinary case of someone asking
+      # twice. The race is closed by #claim_erasure, not here.
+      def refuse_if_already_anonymized
         return if customer.anonymized_at.nil?
+
+        failure(customer, Spree.t('customer_errors.already_anonymized'))
+      end
+
+      # Claimed by a conditional UPDATE rather than a read: two erasures for
+      # one person can be in flight at once — they are not scoped to a store,
+      # and staff can run one while the subject's own queued job is waiting —
+      # and a plain read lets both pass and rewrite the same account. Whoever
+      # wins the write proceeds; the loser is told it is already done.
+      def claim_erasure
+        claimed = customer.class.where(id: customer.id, anonymized_at: nil).
+                  update_all(anonymized_at: Time.current, updated_at: Time.current)
+
+        return if claimed == 1
 
         failure(customer, Spree.t('customer_errors.already_anonymized'))
       end
@@ -341,10 +360,6 @@ module Spree
 
       def remove_newsletter_subscriptions
         personal_newsletter_subscribers(customer, email: @original_email).destroy_all
-      end
-
-      def stamp_anonymized
-        customer.update_columns(anonymized_at: Time.current, updated_at: Time.current)
       end
 
       # @param address [Spree::Address]

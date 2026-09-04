@@ -81,8 +81,20 @@ RSpec.describe Spree::DataRequests::Fulfill do
       expect(data_request.reload.export_file).not_to be_attached
     end
 
-    it 'fails the request when the erasure is refused' do
+    # Staff may have erased this person while their own request sat in the
+    # queue. The outcome they asked for has happened, so the request is
+    # answered — recording a failure would leave someone whose data IS gone
+    # holding a failed request, which is what stops them opening another.
+    it 'completes when the person was already erased by another route' do
       customer.update_columns(anonymized_at: Time.current)
+
+      expect(described_class.call(data_request: data_request)).to be_success
+      expect(data_request.reload).to be_completed
+    end
+
+    it 'fails the request when the erasure is refused' do
+      allow(Spree.customer_anonymize_workflow).to receive(:call).
+        and_return(double(success?: false, error: 'legal hold'))
 
       expect(described_class.call(data_request: data_request)).to be_failure
     end

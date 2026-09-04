@@ -23,11 +23,15 @@ module Spree
     CHECKOUT = 'checkout'.freeze
     REGISTRATION = 'registration'.freeze
     ACCOUNT = 'account'.freeze
+    # A staff member changed it on the person's behalf. Distinct from ACCOUNT,
+    # which claims the person did it themselves — recording one as the other
+    # is evidence of a gesture that never happened.
+    ADMIN = 'admin'.freeze
     # Core's own: erasure withdraws marketing consent on the person's behalf,
     # and that withdrawal is a consent event like any other.
     ANONYMIZATION = 'anonymization'.freeze
 
-    SOURCES = [CHECKOUT, REGISTRATION, ACCOUNT, ANONYMIZATION, 'admin', 'import', 'storefront'].freeze
+    SOURCES = [CHECKOUT, REGISTRATION, ACCOUNT, ADMIN, ANONYMIZATION, 'import', 'storefront'].freeze
 
     belongs_to :store, class_name: 'Spree::Store'
     belongs_to :owner, polymorphic: true

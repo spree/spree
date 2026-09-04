@@ -31,6 +31,12 @@ module Spree
           def update
             authorize_resource!(@resource)
 
+            # A staff member is making this change, so a marketing-consent flip
+            # is recorded as theirs. Left unset it would stamp `account`, which
+            # says the person changed their own permission — evidence of a
+            # gesture they never made.
+            @resource.consent_source = Spree::ConsentRecord::ADMIN
+
             if @resource.update(permitted_params)
               render json: serialize_resource(@resource.reload)
             else

@@ -106,6 +106,12 @@ RSpec.describe Spree::Api::V3::Admin::CustomersController, type: :controller do
       end
     end
 
+    it 'records a staff marketing change as the staff member\'s, not the customer\'s' do
+      patch :update, params: { id: customer.prefixed_id, accepts_email_marketing: true }, as: :json
+
+      expect(customer.reload.email_marketing_consent_source).to eq(Spree::ConsentRecord::ADMIN)
+    end
+
     it '404s for a customer that does not exist' do
       get :export, params: { id: 'cust_nonexistent' }, as: :json
 
