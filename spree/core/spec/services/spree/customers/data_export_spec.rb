@@ -176,6 +176,21 @@ RSpec.describe Spree::Customers::DataExport do
     end
 
     # Erasure removes these rows in every store, so the export cannot show one.
+    # The email branch is for consent given before an account existed. A row
+    # another account owns is that person's, however the address now reads.
+    it 'leaves another account\'s consent alone' do
+      neighbour = create(:customer, email: customer.email.sub('@', '+other@'))
+      theirs = Spree::ConsentRecord.create!(
+        store: store, owner: neighbour, purpose: Spree::ConsentRecord::EMAIL_MARKETING,
+        source: 'account', accepted: true, email: customer.email,
+        ip_address: '198.51.100.7', recorded_at: Time.current
+      )
+
+      addresses = payload[:consent_records].map { |row| row[:ip_address] }
+
+      expect(addresses).not_to include(theirs.ip_address)
+    end
+
     it 'discloses a consent given in another store' do
       other_store = create(:store)
       Spree::ConsentRecord.create!(

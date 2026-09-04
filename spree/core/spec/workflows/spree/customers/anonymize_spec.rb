@@ -299,6 +299,17 @@ RSpec.describe Spree::Customers::Anonymize do
       expect(removed.reload.name).to eq('Redacted')
     end
 
+    it 'redacts a card charged against a split checkout' do
+      group = create(:order_group, store: store, customer: customer)
+      split_card = create(:credit_card, name: 'Ada Lovelace')
+      split_card.update_columns(customer_id: nil)
+      create(:payment, order: nil, order_group: group, source: split_card, amount: 0)
+
+      result
+
+      expect(split_card.reload.name).to eq('Redacted')
+    end
+
     it 'redacts a card left on a checkout that was never finished' do
       cart = create(:cart, customer: customer, store: store)
       abandoned_card = create(:credit_card, name: 'Ada Lovelace')

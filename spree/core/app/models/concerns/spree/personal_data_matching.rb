@@ -39,5 +39,25 @@ module Spree
     def with_email(model, email)
       model.where(model.arel_table[:email].lower.eq(email.to_s.downcase))
     end
+
+    # Rows at this address that no *other* person already owns.
+    #
+    # Consent given before an account existed is owned by nothing, or by the
+    # order it was given during — both are this person's. A row owned by a
+    # different customer is theirs, however the address now reads: addresses
+    # get reused, and someone signing up at a colleague's old one must not
+    # inherit their consent history or be able to erase it.
+    #
+    # @param model [Class] an ActiveRecord class with a polymorphic `owner`
+    # @param email [String]
+    # @param customer_type [String] the owner type that denotes an account
+    # @param customer_id [String, Integer]
+    # @return [ActiveRecord::Relation]
+    def with_email_not_owned_by_others(model, email, customer_type:, customer_id:)
+      with_email(model, email).
+        where.not(owner_type: customer_type).
+        or(with_email(model, email).where(owner_type: customer_type, owner_id: customer_id)).
+        or(with_email(model, email).where(owner_type: nil))
+    end
   end
 end

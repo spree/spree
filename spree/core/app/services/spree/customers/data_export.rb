@@ -104,7 +104,9 @@ module Spree
       def consent_records
         scope = Spree::ConsentRecord.
                 where(owner_type: customer.class.base_class.to_s, owner_id: customer.id).
-                or(with_email(Spree::ConsentRecord, customer.email))
+                or(with_email_not_owned_by_others(Spree::ConsentRecord, customer.email,
+                                                  customer_type: customer.class.base_class.to_s,
+                                                  customer_id: customer.id))
 
         scope.recent_first.map do |record|
           {
@@ -268,18 +270,15 @@ module Spree
         end
       end
 
-      # Mirrors the anonymizer: a payment holds a cart id until completion
-      # repoints it to the order, so an abandoned checkout's card is reachable
-      # only through the cart.
+      # Mirrors the anonymizer: a payment names exactly one of a cart, an
+      # order or a group, so a card is reachable only through whichever one
+      # its payment happens to carry.
       def payment_card_ids
-        Spree::Payment.
-          where(source_type: 'Spree::CreditCard').
-          where(order_id: owned_purchases(Spree::Order).select(:id)).
-          or(
-            Spree::Payment.
-              where(source_type: 'Spree::CreditCard').
-              where(cart_id: owned_purchases(Spree::Cart).select(:id))
-          ).
+        cards = Spree::Payment.where(source_type: 'Spree::CreditCard')
+
+        cards.where(order_id: owned_purchases(Spree::Order).select(:id)).
+          or(cards.where(cart_id: owned_purchases(Spree::Cart).select(:id))).
+          or(cards.where(order_group_id: owned_purchases(Spree::OrderGroup).select(:id))).
           pluck(:source_id)
       end
 

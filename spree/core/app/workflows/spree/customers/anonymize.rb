@@ -228,18 +228,16 @@ module Spree
         (customer.credit_cards.with_deleted.ids + payment_card_ids).compact.uniq
       end
 
-      # A payment carries a cart id or an order id, never both, and it keeps
-      # the cart one until completion repoints it — so a checkout the person
-      # abandoned holds a card that following orders alone would never reach.
+      # A payment names exactly one of a cart, an order or a group, and it
+      # keeps the cart one until completion repoints it. Following orders
+      # alone would miss both the checkout somebody abandoned and the charge
+      # a split marketplace order puts on its group.
       def payment_card_ids
-        Spree::Payment.
-          where(source_type: 'Spree::CreditCard').
-          where(order_id: owned_purchases(Spree::Order).select(:id)).
-          or(
-            Spree::Payment.
-              where(source_type: 'Spree::CreditCard').
-              where(cart_id: owned_purchases(Spree::Cart).select(:id))
-          ).
+        cards = Spree::Payment.where(source_type: 'Spree::CreditCard')
+
+        cards.where(order_id: owned_purchases(Spree::Order).select(:id)).
+          or(cards.where(cart_id: owned_purchases(Spree::Cart).select(:id))).
+          or(cards.where(order_group_id: owned_purchases(Spree::OrderGroup).select(:id))).
           pluck(:source_id)
       end
 
@@ -306,7 +304,9 @@ module Spree
       def anonymize_consent_records
         Spree::ConsentRecord.
           where(owner_type: customer.class.base_class.to_s, owner_id: customer.id).
-          or(with_email(Spree::ConsentRecord, @original_email)).
+          or(with_email_not_owned_by_others(Spree::ConsentRecord, @original_email,
+                                                  customer_type: customer.class.base_class.to_s,
+                                                  customer_id: customer.id)).
           update_all(email: nil, ip_address: nil, user_agent: nil, updated_at: Time.current)
       end
 
