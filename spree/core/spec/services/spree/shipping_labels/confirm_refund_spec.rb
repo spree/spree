@@ -42,4 +42,18 @@ RSpec.describe Spree::ShippingLabels::ConfirmRefund do
 
     expect(label.reload.delivery).to be_present
   end
+
+  # Carriers retry webhooks. Two confirmations for the same label must settle
+  # it once and announce it once, or downstream handlers run twice.
+  it 'settles once when the carrier confirms twice' do
+    label = create(:shipping_label, owner: fulfillment, status: 'refund_requested')
+    second_view = Spree::ShippingLabel.find(label.id)
+
+    expect(label).to receive(:publish_event).with('shipping_label.refunded').once.and_call_original
+    expect(second_view).not_to receive(:publish_event)
+
+    expect(service.call(shipping_label: label)).to be_success
+    expect(service.call(shipping_label: second_view)).to be_success
+    expect(label.reload).to be_refunded
+  end
 end

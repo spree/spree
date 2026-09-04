@@ -44,7 +44,7 @@ test.describe('order fulfillments', () => {
     await createDraftOrder(page, creds.store_id)
 
     const card = fulfillmentsCard(page)
-    await expect(card.getByText(/unfulfilled \(\d+\)/i)).toBeVisible({ timeout: 15_000 })
+    await expect(card.getByText(/\d+ items? still to fulfill/i)).toBeVisible({ timeout: 15_000 })
     await expect(card.getByText(new RegExp(FIXTURE_PROMO_PRODUCT, 'i')).first()).toBeVisible()
   })
 
@@ -56,7 +56,7 @@ test.describe('order fulfillments', () => {
     await createDraftOrder(page, creds.store_id)
 
     const card = fulfillmentsCard(page)
-    await expect(card.getByText(/unfulfilled \(\d+\)/i)).toBeVisible({ timeout: 15_000 })
+    await expect(card.getByText(/\d+ items? still to fulfill/i)).toBeVisible({ timeout: 15_000 })
     await expect(card.getByRole('button', { name: /^add fulfillment$/i })).toHaveCount(0)
   })
 
@@ -68,7 +68,7 @@ test.describe('order fulfillments', () => {
     await createDraftOrder(page, creds.store_id)
 
     const card = fulfillmentsCard(page)
-    await expect(card.getByText(/unfulfilled \(\d+\)/i)).toBeVisible({ timeout: 15_000 })
+    await expect(card.getByText(/\d+ items? still to fulfill/i)).toBeVisible({ timeout: 15_000 })
     await expect(card.getByText(new RegExp(FIXTURE_PROMO_PRODUCT, 'i')).first()).toBeVisible()
     await expect(card.getByRole('button', { name: /actions for/i })).toHaveCount(0)
   })
@@ -81,7 +81,7 @@ test.describe('order fulfillments', () => {
     await createDraftOrder(page, creds.store_id)
 
     const card = fulfillmentsCard(page)
-    await expect(card.getByText(/unfulfilled \(\d+\)/i)).toBeVisible({ timeout: 15_000 })
+    await expect(card.getByText(/\d+ items? still to fulfill/i)).toBeVisible({ timeout: 15_000 })
     await expect(card.getByRole('button', { name: /add tracking/i })).toHaveCount(0)
     await expect(card.getByRole('button', { name: /buy label/i })).toHaveCount(0)
     await expect(card.getByRole('button', { name: /print label/i })).toHaveCount(0)

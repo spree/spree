@@ -18,11 +18,18 @@ module Spree
           return failure(shipping_label)
         end
 
-        ApplicationRecord.transaction do
-          shipping_label.update!(status: 'refunded', refunded_at: refunded_at || Time.current)
-          shipping_label.release_unmoved_delivery
-        end
+        # Carriers retry webhooks, so two confirmations can arrive at once and
+        # both read `refund_requested`. The settle is a conditional UPDATE:
+        # exactly one call moves the row, and only that one releases the
+        # delivery and announces the refund.
+        settled = Spree::ShippingLabel.
+          where(id: shipping_label.id, status: 'refund_requested').
+          update_all(status: 'refunded', refunded_at: refunded_at || Time.current, updated_at: Time.current)
 
+        return success(shipping_label.reload) if settled.zero?
+
+        shipping_label.reload
+        shipping_label.release_unmoved_delivery
         shipping_label.publish_event('shipping_label.refunded')
         success(shipping_label)
       end
