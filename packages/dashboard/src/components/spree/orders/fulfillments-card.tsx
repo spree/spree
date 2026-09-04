@@ -63,6 +63,7 @@ import { FulfillmentEditDialog } from './fulfillment-edit-dialog'
 import { FulfillmentFulfillForm } from './fulfillment-fulfill-form'
 import { FulfillmentItemList } from './fulfillment-item-list'
 import { FulfillmentLabelUploadDialog } from './fulfillment-label-upload-dialog'
+import { ShippingDocuments } from './shipping-documents'
 import { ShippingLabelRow } from './shipping-label-row'
 
 /**
@@ -566,6 +567,8 @@ function FulfillmentRow({ order, fulfillment }: { order: Order; fulfillment: Ful
           }
         />
       )}
+
+      {!fulfilling && <ShippingDocuments documents={fulfillment.documents} />}
 
       {!fulfilling && (
         <FulfillmentDeliveries

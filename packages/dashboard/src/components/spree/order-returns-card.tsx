@@ -50,6 +50,7 @@ import i18n from 'i18next'
 import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useOrderReturns, useReturnActions } from '../../hooks/use-returns'
+import { ShippingDocuments } from './orders/shipping-documents'
 import { ShippingLabelRow } from './orders/shipping-label-row'
 import { CreateReturnDialog, fulfilledUnits } from './post-sale-create-dialogs'
 
@@ -285,12 +286,15 @@ function ReturnLabel({
 
   if (activeLabel) {
     return (
-      <ShippingLabelRow
-        label={activeLabel}
-        isRefunding={isRefunding}
-        onRefund={() => onRefund(activeLabel.id)}
-        onDelete={() => onDelete(activeLabel.id)}
-      />
+      <>
+        <ShippingLabelRow
+          label={activeLabel}
+          isRefunding={isRefunding}
+          onRefund={() => onRefund(activeLabel.id)}
+          onDelete={() => onDelete(activeLabel.id)}
+        />
+        <ShippingDocuments documents={returnRecord.documents} />
+      </>
     )
   }
 

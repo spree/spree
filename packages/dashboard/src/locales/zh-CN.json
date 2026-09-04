@@ -2726,6 +2726,15 @@
           "delete_label": "删除面单",
           "deliveries_title": "物流跟踪",
           "delivery_method": "配送方式",
+          "document_kinds": {
+            "certificate_of_origin": "原产地证书",
+            "cn22": "报关单 CN22",
+            "cn23": "报关单 CN23",
+            "commercial_invoice": "商业发票",
+            "customs_form": "报关单",
+            "form": "文件"
+          },
+          "documents_title": "报关文件",
           "edit_description": "修改此发货单的发货地以及承运的配送方式。",
           "edit_title": "编辑发货单",
           "edit_tracking_title": "编辑物流跟踪",

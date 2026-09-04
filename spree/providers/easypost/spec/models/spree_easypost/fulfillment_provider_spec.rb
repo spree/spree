@@ -287,7 +287,11 @@ RSpec.describe SpreeEasyPost::FulfillmentProvider do
                          metadata: { 'easypost_forms' => [{ 'form_type' => 'commercial_invoice', 'url' => 'https://forms.example/ci.pdf' }] }
       )
 
-      expect(provider.documents(fulfillment)).to eq([{ kind: 'commercial_invoice', url: 'https://forms.example/ci.pdf' }])
+      documents = provider.documents(fulfillment)
+
+      expect(documents.map(&:kind)).to eq(['commercial_invoice'])
+      expect(documents.map(&:url)).to eq(['https://forms.example/ci.pdf'])
+      expect(documents).to all(be_a(Spree::ShippingDocument))
     end
 
     it 'is empty without a label' do

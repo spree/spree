@@ -2733,6 +2733,15 @@
           "delete_label": "Supprimer l'étiquette",
           "deliveries_title": "Suivi",
           "delivery_method": "Mode de livraison",
+          "document_kinds": {
+            "certificate_of_origin": "Certificat d'origine",
+            "cn22": "Formulaire douanier CN22",
+            "cn23": "Formulaire douanier CN23",
+            "commercial_invoice": "Facture commerciale",
+            "customs_form": "Formulaire douanier",
+            "form": "Document"
+          },
+          "documents_title": "Documents douaniers",
           "edit_description": "Modifiez le lieu d'expédition et le mode de livraison de cette expédition.",
           "edit_title": "Modifier l'expédition",
           "edit_tracking_title": "Modifier le suivi",

@@ -34,7 +34,7 @@ module Spree
           # Customs forms and other paperwork the provider produced beside the
           # label; the labels themselves are listed under +labels+.
           attribute :documents do |fulfillment|
-            fulfillment.provider.documents(fulfillment)
+            fulfillment.provider.documents(fulfillment).map(&:as_json)
           end
 
           # Every label bought or uploaded for this parcel, refunded ones

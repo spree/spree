@@ -131,7 +131,7 @@ module SpreeEasyPost
     # itself is the Spree::ShippingLabel, never listed here.
     #
     # @param owner [Spree::Fulfillment, Spree::Return]
-    # @return [Array<Hash>]
+    # @return [Array<Spree::ShippingDocument>]
     def documents(owner)
       # Read from the loaded association rather than re-scoping it: this is
       # called once per parcel while serializing an order, and a fresh query
@@ -141,7 +141,7 @@ module SpreeEasyPost
       Array(forms).filter_map do |form|
         next if form['url'].blank?
 
-        { kind: form['form_type'].presence || 'form', url: form['url'] }
+        Spree::ShippingDocument.new(kind: form['form_type'].presence || 'form', url: form['url'])
       end
     end
 

@@ -2751,6 +2751,15 @@
           "delete_label": "حذف الملصق",
           "deliveries_title": "التتبع",
           "delivery_method": "طريقة التوصيل",
+          "document_kinds": {
+            "certificate_of_origin": "شهادة المنشأ",
+            "cn22": "نموذج جمركي CN22",
+            "cn23": "نموذج جمركي CN23",
+            "commercial_invoice": "فاتورة تجارية",
+            "customs_form": "نموذج جمركي",
+            "form": "مستند"
+          },
+          "documents_title": "المستندات الجمركية",
           "edit_description": "غيّر مكان شحن هذه الشحنة وطريقة التوصيل التي تنقلها.",
           "edit_title": "تعديل الشحنة",
           "edit_tracking_title": "تعديل التتبع",

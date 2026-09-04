@@ -7,6 +7,7 @@ module Spree
         class ReturnSerializer < V3::ReturnSerializer
           typelize memo: [:string, nullable: true],
                    metadata: 'Record<string, unknown>',
+                   documents: "Array<{ kind: string; url: string }>",
                    stock_location_id: [:string, nullable: true],
                    created_by_id: [:string, nullable: true],
                    refunded_total: :string,
@@ -38,6 +39,12 @@ module Spree
           one :order, resource: proc { Spree.api.admin_order_serializer }, if: proc { expand?('order') }
           one :stock_location, resource: proc { Spree.api.admin_stock_location_serializer }, if: proc { expand?('stock_location') }
           many :refunds, resource: proc { Spree.api.admin_refund_serializer }, if: proc { expand?('refunds') }
+
+          # Customs paperwork the provider produced beside the label: a
+          # cross-border return is declared like any other export.
+          attribute :documents do |return_record|
+            return_record.provider.documents(return_record).map(&:as_json)
+          end
 
           # The prepaid label for the parcel coming back, refunded ones
           # included — the postage history of the return.

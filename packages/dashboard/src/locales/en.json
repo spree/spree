@@ -2733,6 +2733,15 @@
           "delete_label": "Delete label",
           "deliveries_title": "Tracking",
           "delivery_method": "Delivery method",
+          "document_kinds": {
+            "certificate_of_origin": "Certificate of origin",
+            "cn22": "Customs form CN22",
+            "cn23": "Customs form CN23",
+            "commercial_invoice": "Commercial invoice",
+            "customs_form": "Customs form",
+            "form": "Document"
+          },
+          "documents_title": "Customs documents",
           "edit_description": "Change where this fulfillment ships from and which delivery method carries it.",
           "edit_title": "Edit fulfillment",
           "edit_tracking_title": "Edit tracking",

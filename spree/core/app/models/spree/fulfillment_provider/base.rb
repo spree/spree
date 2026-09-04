@@ -110,7 +110,7 @@ module Spree
       # is never reported here.
       #
       # @param _owner [Spree::Fulfillment, Spree::Return]
-      # @return [Array<Hash>] `{ kind:, url: }` entries
+      # @return [Array<Spree::ShippingDocument>]
       def documents(_owner)
         []
       end

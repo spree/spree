@@ -2733,6 +2733,15 @@
           "delete_label": "Etikett löschen",
           "deliveries_title": "Sendungsverfolgung",
           "delivery_method": "Versandart",
+          "document_kinds": {
+            "certificate_of_origin": "Ursprungszeugnis",
+            "cn22": "Zollformular CN22",
+            "cn23": "Zollformular CN23",
+            "commercial_invoice": "Handelsrechnung",
+            "customs_form": "Zollformular",
+            "form": "Dokument"
+          },
+          "documents_title": "Zolldokumente",
           "edit_description": "Ändern Sie, von wo diese Sendung versandt wird und welche Versandart sie befördert.",
           "edit_title": "Sendung bearbeiten",
           "edit_tracking_title": "Sendungsverfolgung bearbeiten",

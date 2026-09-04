@@ -2753,6 +2753,15 @@
           "delete_label": "Usuń etykietę",
           "deliveries_title": "Śledzenie",
           "delivery_method": "Sposób dostawy",
+          "document_kinds": {
+            "certificate_of_origin": "Świadectwo pochodzenia",
+            "cn22": "Formularz celny CN22",
+            "cn23": "Formularz celny CN23",
+            "commercial_invoice": "Faktura handlowa",
+            "customs_form": "Formularz celny",
+            "form": "Dokument"
+          },
+          "documents_title": "Dokumenty celne",
           "edit_description": "Zmień miejsce wysyłki tej przesyłki oraz sposób dostawy, którym jest realizowana.",
           "edit_title": "Edytuj przesyłkę",
           "edit_tracking_title": "Edytuj śledzenie",
