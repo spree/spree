@@ -176,7 +176,7 @@ module Spree
       # An account created from a placed order was agreed to at checkout; one
       # created directly was agreed to at registration.
       def consent_source
-        order ? 'checkout' : 'registration'
+        order ? Spree::ConsentRecord::CHECKOUT : Spree::ConsentRecord::REGISTRATION
       end
 
       # The documents as they read at the moment of agreement, so a merchant

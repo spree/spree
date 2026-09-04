@@ -103,7 +103,7 @@ RSpec.describe 'personal data coverage' do
   }.freeze
 
   it 'discloses every table that erasure scrubs' do
-    payload = Spree::Customers::DataExport.new(
+    payload = Spree.customer_data_export_service.new(
       customer: create(:customer), store: @default_store
     ).call
 
@@ -156,7 +156,7 @@ RSpec.describe 'personal data coverage' do
       ip_address: '203.0.113.9', user_agent: 'Mozilla/5.0', recorded_at: Time.current
     )
 
-    payload = Spree::Customers::DataExport.new(customer: customer, store: @default_store).call
+    payload = Spree.customer_data_export_service.new(customer: customer, store: @default_store).call
     disclosed = JSON.generate(payload)
 
     # Every value about to be wiped should appear somewhere in the response.
@@ -170,7 +170,7 @@ RSpec.describe 'personal data coverage' do
         #{undisclosed.join("\n  ")}
     MESSAGE
 
-    Spree::Customers::Anonymize.call(customer: customer, store: @default_store)
+    Spree.customer_anonymize_workflow.call(customer: customer, store: @default_store)
 
     surviving = values.select do |value|
       [card.reload.name, card.metadata.to_s, group.reload.metadata.to_s,

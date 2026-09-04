@@ -37,8 +37,6 @@ module Spree
     validates :recorded_at, presence: true
 
     scope :for_purpose, ->(purpose) { where(purpose: purpose.to_s) }
-    scope :accepted, -> { where(accepted: true) }
-    scope :withdrawn, -> { where(accepted: false) }
     scope :recent_first, -> { order(recorded_at: :desc) }
 
     self.whitelisted_ransackable_attributes = %w[purpose source accepted email recorded_at]

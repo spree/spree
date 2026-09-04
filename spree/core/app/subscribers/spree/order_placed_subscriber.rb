@@ -36,7 +36,7 @@ module Spree
         store: order.store,
         owner: order,
         purpose: Spree::ConsentRecord::EMAIL_MARKETING,
-        source: 'checkout',
+        source: Spree::ConsentRecord::CHECKOUT,
         email: order.email,
         ip_address: order.last_ip_address
       )

@@ -31,6 +31,63 @@ module Spree
         or(with_email(model, email).where(customer_id: nil))
     end
 
+    # Every card this person used: saved to the account — including ones they
+    # removed, since cards are soft-deleted — plus the ones a guest checkout
+    # left behind, which carry no customer and are reachable only through the
+    # payment that spent them. A payment names exactly one of a cart, an order
+    # or a group, and keeps the cart one until completion repoints it.
+    #
+    # @param customer [Spree::Customer]
+    # @param email [String] the address to match, before any redaction
+    # @return [Array<Integer, String>]
+    def personal_card_ids(customer, email:)
+      cards = Spree::Payment.where(source_type: 'Spree::CreditCard')
+
+      from_payments = cards.where(order_id: purchases_about_person(Spree::Order, customer, email: email).select(:id)).
+                      or(cards.where(cart_id: purchases_about_person(Spree::Cart, customer, email: email).select(:id))).
+                      or(cards.where(order_group_id: purchases_about_person(Spree::OrderGroup, customer, email: email).select(:id))).
+                      pluck(:source_id)
+
+      (customer.credit_cards.with_deleted.ids + from_payments).compact.uniq
+    end
+
+    # Consent this person gave, whether the account recorded it or an order did
+    # before the account existed.
+    #
+    # @param customer [Spree::Customer]
+    # @param email [String]
+    # @return [ActiveRecord::Relation]
+    def personal_consent_records(customer, email:)
+      Spree::ConsentRecord.
+        where(owner_type: customer.class.base_class.to_s, owner_id: customer.id).
+        or(with_email_not_owned_by_others(Spree::ConsentRecord, email,
+                                          customer_type: customer.class.base_class.to_s,
+                                          customer_id: customer.id))
+    end
+
+    # Newsletter sign-ups. Unlike a purchase, a sign-up at this address is this
+    # person's whoever owns the row — the address IS the subscription, so there
+    # is no unowned-only narrowing here.
+    #
+    # @param customer [Spree::Customer]
+    # @param email [String]
+    # @return [ActiveRecord::Relation]
+    def personal_newsletter_subscribers(customer, email:)
+      Spree::NewsletterSubscriber.where(customer_id: customer.id).
+        or(with_email(Spree::NewsletterSubscriber, email))
+    end
+
+    # Named for the two callers that spell the email differently: the export
+    # reads the live address, the erasure the one captured before redaction.
+    #
+    # @param model [Class]
+    # @param customer [Spree::Customer]
+    # @param email [String]
+    # @return [ActiveRecord::Relation]
+    def purchases_about_person(model, customer, email:)
+      rows_about_person(model, email: email, customer_id: customer.id)
+    end
+
     # Rows of `model` whose `email` is this address, whatever its casing.
     #
     # @param model [Class]

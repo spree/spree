@@ -457,15 +457,12 @@ module Spree
     # @return [ActiveSupport::TimeWithZone, nil] nil when the market grants no
     #   withdrawal right, the order is not complete, or delivery is outstanding
     def withdrawal_period_ends_at
-      return nil unless completed?
-      # Nothing left to withdraw from; see #within_withdrawal_period?.
-      return nil if canceled?
+      return nil unless withdrawal_right_applies?
 
-      days = withdrawal_period_days
       started_at = withdrawal_period_starts_at
-      return nil if days.blank? || started_at.nil?
+      return nil if started_at.nil?
 
-      started_at + days.days
+      started_at + withdrawal_period_days.days
     end
 
     # Whether the buyer may still withdraw.
@@ -482,12 +479,20 @@ module Spree
     #
     # @return [Boolean]
     def within_withdrawal_period?
-      return false unless completed?
-      return false if canceled?
-      return false if withdrawal_period_days.blank?
+      return false unless withdrawal_right_applies?
 
       deadline = withdrawal_period_ends_at
+      # No deadline yet means nothing has been delivered, so the clock that
+      # would end the right has not started.
       deadline.nil? || deadline.future?
+    end
+
+    # Whether a statutory right to withdraw exists on this order at all. A
+    # cancelled order has already ended the contract the right would end, and
+    # a market that sets no period grants none. Stated once because both
+    # readers above need the same answer.
+    def withdrawal_right_applies?
+      completed? && !canceled? && withdrawal_period_days.present?
     end
 
     # The moment the cooling-off period starts: receipt of the goods. The

@@ -83,11 +83,7 @@ module Spree
       # skipped it would omit data the store holds and is about to wipe.
       # Never narrowed to one store — erasure removes these rows everywhere.
       def newsletter_subscriptions
-        scope = Spree::NewsletterSubscriber.
-                where(customer_id: customer.id).
-                or(with_email(Spree::NewsletterSubscriber, customer.email))
-
-        scope.map do |subscriber|
+        personal_newsletter_subscribers(customer, email: customer.email).map do |subscriber|
           {
             email: subscriber.email,
             verified_at: subscriber.verified_at&.iso8601,
@@ -102,13 +98,7 @@ module Spree
       # against the ORDER, so a person who bought before registering has rows
       # that are about them but which this account does not own.
       def consent_records
-        scope = Spree::ConsentRecord.
-                where(owner_type: customer.class.base_class.to_s, owner_id: customer.id).
-                or(with_email_not_owned_by_others(Spree::ConsentRecord, customer.email,
-                                                  customer_type: customer.class.base_class.to_s,
-                                                  customer_id: customer.id))
-
-        scope.recent_first.map do |record|
+        personal_consent_records(customer, email: customer.email).recent_first.map do |record|
           {
             purpose: record.purpose,
             source: record.source,
@@ -138,8 +128,8 @@ module Spree
       def orders
         exported = []
 
-        owned_purchases(Spree::Order).complete.
-          includes(:line_items, :bill_address, :ship_address).find_each do |order|
+        owned_purchases(Spree::Order).complete.with_attached_po_document.
+          includes(:bill_address, :ship_address, line_items: { variant: :product }).find_each do |order|
           exported << {
             number: order.number,
             email: order.email,
@@ -196,7 +186,7 @@ module Spree
       # it holds the same personal data a placed order does.
       def draft_orders
         owned_purchases(Spree::Order).incomplete.
-          includes(:line_items, :bill_address, :ship_address).map do |order|
+          includes(:bill_address, :ship_address, line_items: { variant: :product }).map do |order|
           {
             number: order.number,
             email: order.email,
@@ -221,7 +211,7 @@ module Spree
       # bought, and listing them together would misrepresent both.
       def carts
         owned_purchases(Spree::Cart).
-          includes(:line_items, :bill_address, :ship_address).map do |cart|
+          includes(:bill_address, :ship_address, line_items: { variant: :product }).map do |cart|
           {
             email: cart.email,
             currency: cart.currency,
@@ -242,9 +232,8 @@ module Spree
       # Card numbers were never stored, so this is the metadata that was: the
       # brand, the last four digits and the expiry a person would recognise.
       def payment_sources
-        card_ids = (customer.credit_cards.with_deleted.ids + payment_card_ids).compact.uniq
-
-        Spree::CreditCard.with_deleted.where(id: card_ids).map do |card|
+        Spree::CreditCard.with_deleted.
+          where(id: personal_card_ids(customer, email: customer.email)).map do |card|
           {
             brand: card.cc_type,
             last_digits: card.last_digits,
@@ -268,18 +257,6 @@ module Spree
             created_at: identity.created_at&.iso8601
           }
         end
-      end
-
-      # Mirrors the anonymizer: a payment names exactly one of a cart, an
-      # order or a group, so a card is reachable only through whichever one
-      # its payment happens to carry.
-      def payment_card_ids
-        cards = Spree::Payment.where(source_type: 'Spree::CreditCard')
-
-        cards.where(order_id: owned_purchases(Spree::Order).select(:id)).
-          or(cards.where(cart_id: owned_purchases(Spree::Cart).select(:id))).
-          or(cards.where(order_group_id: owned_purchases(Spree::OrderGroup).select(:id))).
-          pluck(:source_id)
       end
 
       def store_credits
@@ -310,12 +287,12 @@ module Spree
       def wishlists
         # Through to the product: a variant's name delegates to it, so
         # stopping at the variant costs a query per distinct item.
-        customer.wishlists.includes(wished_items: { variant: :product }).map do |wishlist|
+        customer.wishlists.includes(wishlist_items: { variant: :product }).map do |wishlist|
           {
             name: wishlist.name,
             is_private: wishlist.is_private,
             created_at: wishlist.created_at&.iso8601,
-            items: wishlist.wished_items.map do |wished_item|
+            items: wishlist.wishlist_items.map do |wished_item|
               { sku: wished_item.variant&.sku, name: wished_item.variant&.name }
             end
           }
@@ -366,7 +343,7 @@ module Spree
       # @param model [Class]
       # @return [ActiveRecord::Relation]
       def owned_purchases(model)
-        rows_about_person(model, email: customer.email, customer_id: customer.id)
+        purchases_about_person(model, customer, email: customer.email)
       end
 
       # @param address [Spree::Address, nil]

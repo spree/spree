@@ -116,7 +116,6 @@ module Spree
       # a plain profile update is.
       attr_writer :consent_source
 
-      scope :anonymized, -> { where.not(anonymized_at: nil) }
 
       # The company nodes this customer may act for within a store — their
       # memberships on that store's trees, expanded by subtree. Customers are

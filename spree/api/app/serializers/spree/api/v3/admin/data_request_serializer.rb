@@ -10,7 +10,7 @@ module Spree
           # export action asks for. Staff download through that action instead.
           # This is the same reasoning that keeps the link out of event
           # payloads and the webhook delivery log.
-          attributes :download_url, if: proc { false }
+          _attributes.delete(:download_url)
 
           typelize email: :string,
                    error_message: [:string, nullable: true],

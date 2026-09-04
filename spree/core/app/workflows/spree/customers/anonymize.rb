@@ -190,7 +190,7 @@ module Spree
       # @param model [Class]
       # @return [ActiveRecord::Relation]
       def owned_purchases(model)
-        rows_about_person(model, email: @original_email, customer_id: customer.id)
+        purchases_about_person(model, customer, email: @original_email)
       end
 
       # Cards keep their last four digits and expiry — a refund against a
@@ -208,38 +208,23 @@ module Spree
       # record of the sale, not a file about the person.
       def remove_purchase_order_documents
         [Spree::Order, Spree::Cart].each do |model|
-          owned_purchases(model).find_each do |purchase|
-            purchase.po_document.purge_later if purchase.po_document.attached?
-          end
+          # Asked of the attachments table rather than by loading every
+          # purchase to find the few that carry a file: most people have none,
+          # and this step runs inside the erasure's transaction.
+          ActiveStorage::Attachment.
+            where(record_type: model.name, name: 'po_document',
+                  record_id: owned_purchases(model).select(:id)).
+            find_each(&:purge_later)
         end
       end
 
       def anonymize_payment_sources
         # Cards are soft-deleted, so a wallet the person emptied still holds
         # their name until this reads past the default scope.
-        Spree::CreditCard.with_deleted.where(id: card_ids).
+        Spree::CreditCard.with_deleted.where(id: personal_card_ids(customer, email: @original_email)).
           update_all(name: REDACTED_NAME, metadata: {}, updated_at: Time.current)
       end
 
-      # Cards saved to the account, plus the ones used at guest checkout: those
-      # carry no customer and are reachable only through the payment on the
-      # order they paid for.
-      def card_ids
-        (customer.credit_cards.with_deleted.ids + payment_card_ids).compact.uniq
-      end
-
-      # A payment names exactly one of a cart, an order or a group, and it
-      # keeps the cart one until completion repoints it. Following orders
-      # alone would miss both the checkout somebody abandoned and the charge
-      # a split marketplace order puts on its group.
-      def payment_card_ids
-        cards = Spree::Payment.where(source_type: 'Spree::CreditCard')
-
-        cards.where(order_id: owned_purchases(Spree::Order).select(:id)).
-          or(cards.where(cart_id: owned_purchases(Spree::Cart).select(:id))).
-          or(cards.where(order_group_id: owned_purchases(Spree::OrderGroup).select(:id))).
-          pluck(:source_id)
-      end
 
       # Drops the local mapping to the customer object the processor holds.
       #
@@ -302,11 +287,7 @@ module Spree
       # against the ORDER, not the account, so a person who bought as a guest
       # before registering has rows this customer does not own.
       def anonymize_consent_records
-        Spree::ConsentRecord.
-          where(owner_type: customer.class.base_class.to_s, owner_id: customer.id).
-          or(with_email_not_owned_by_others(Spree::ConsentRecord, @original_email,
-                                                  customer_type: customer.class.base_class.to_s,
-                                                  customer_id: customer.id)).
+        personal_consent_records(customer, email: @original_email).
           update_all(email: nil, ip_address: nil, user_agent: nil, updated_at: Time.current)
       end
 
@@ -359,10 +340,7 @@ module Spree
       end
 
       def remove_newsletter_subscriptions
-        Spree::NewsletterSubscriber.
-          where(customer_id: customer.id).
-          or(with_email(Spree::NewsletterSubscriber, @original_email)).
-          destroy_all
+        personal_newsletter_subscribers(customer, email: @original_email).destroy_all
       end
 
       def stamp_anonymized
