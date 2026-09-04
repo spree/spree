@@ -62,15 +62,18 @@ module Spree
 
             # PATCH /api/v3/seller/orders/:order_id/fulfillments/:id
             #
-            # The tracking number and its carrier, and nothing else. Where a
-            # parcel ships from and which service carries it are the
-            # marketplace's arrangements, so this deliberately does not accept
-            # the origin and rate the operator's endpoint does.
+            # The tracking pair, and which of the seller's own shelves the
+            # parcel ships from — a seller who picks from a different warehouse
+            # than the split assumed needs to say so, and the rate is requoted
+            # from there.
+            #
+            # The origin is resolved through `current_seller.stock_locations`,
+            # so a marketplace warehouse is unreachable however the id arrives.
             def update
               with_order_lock do
                 render_workflow_result(
                   Spree.fulfillment_update_workflow.call(
-                    fulfillment: @fulfillment, fulfillment_attributes: update_params.to_h
+                    fulfillment: @fulfillment, fulfillment_attributes: update_attributes
                   )
                 )
               end
@@ -135,7 +138,24 @@ module Spree
             end
 
             def update_params
-              params.permit(:tracking, :tracking_carrier)
+              params.permit(:tracking, :tracking_carrier, :stock_location_id,
+                            :selected_delivery_rate_id)
+            end
+
+            # The payload the workflow gets. The workflow takes a raw
+            # `stock_location_id`, so the prefixed id is resolved through the
+            # seller's own shelves first — a marketplace warehouse 404s here
+            # rather than reaching the assignment.
+            def update_attributes
+              attributes = update_params.to_h
+
+              if update_params[:stock_location_id].present?
+                location = current_seller.stock_locations.
+                           find_by_prefix_id!(update_params[:stock_location_id])
+                attributes['stock_location_id'] = location.id
+              end
+
+              attributes
             end
 
             # Where the split half ships from. The seller's own shelves only —

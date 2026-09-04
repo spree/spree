@@ -14,14 +14,17 @@ import {
   useConfirm,
 } from '@spree/dashboard-ui'
 import { EllipsisVerticalIcon, MapPinIcon, TruckIcon } from '@spree/dashboard-ui/icons'
-import type { Fulfillment, Order } from '@spree/seller-sdk'
+import type { Delivery, Fulfillment, Order } from '@spree/seller-sdk'
 import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useFulfillmentActions } from '../../hooks/use-fulfillments'
+import { FulfillmentDeliveries } from './fulfillment-deliveries'
+import { FulfillmentDeliveryDialog } from './fulfillment-delivery-dialog'
 import { FulfillmentFulfillForm } from './fulfillment-fulfill-form'
+import { FulfillmentLabelUploadDialog } from './fulfillment-label-upload-dialog'
 import { FulfillmentSplitDialog } from './fulfillment-split-dialog'
-import { FulfillmentTrackingDialog } from './fulfillment-tracking-dialog'
 import { unitLabel } from './line-label'
+import { ShippingLabelRow } from './shipping-label-row'
 
 // A parcel that has not gone out is the only one still to ship or cancel;
 // one that has is the only one that can be confirmed delivered. Reading
@@ -56,7 +59,12 @@ export function FulfillmentsCard({ order }: { order: Order }) {
           <p className="text-muted-foreground text-sm">{t('orders.fulfillments.empty')}</p>
         ) : (
           fulfillments.map((fulfillment) => (
-            <FulfillmentRow key={fulfillment.id} orderId={order.id} fulfillment={fulfillment} />
+            <FulfillmentRow
+              key={fulfillment.id}
+              orderId={order.id}
+              currency={order.currency}
+              fulfillment={fulfillment}
+            />
           ))
         )}
       </CardContent>
@@ -64,13 +72,23 @@ export function FulfillmentsCard({ order }: { order: Order }) {
   )
 }
 
-function FulfillmentRow({ orderId, fulfillment }: { orderId: string; fulfillment: Fulfillment }) {
+function FulfillmentRow({
+  orderId,
+  currency,
+  fulfillment,
+}: {
+  orderId: string
+  currency: string
+  fulfillment: Fulfillment
+}) {
   const { t } = useTranslation()
   const confirm = useConfirm()
   const { cancel } = useFulfillmentActions(orderId)
 
   const [shipping, setShipping] = useState(false)
-  const [trackingOpen, setTrackingOpen] = useState(false)
+  const [deliveryOpen, setDeliveryOpen] = useState(false)
+  const [editingDelivery, setEditingDelivery] = useState<Delivery | undefined>()
+  const [labelOpen, setLabelOpen] = useState(false)
   const [splitOpen, setSplitOpen] = useState(false)
 
   const status = fulfillment.status ?? ''
@@ -107,10 +125,16 @@ function FulfillmentRow({ orderId, fulfillment }: { orderId: string; fulfillment
               }
             />
             <DropdownMenuContent align="end">
-              <DropdownMenuItem onClick={() => setTrackingOpen(true)}>
-                {fulfillment.tracking
-                  ? t('orders.fulfillments.edit_tracking')
-                  : t('orders.fulfillments.add_tracking')}
+              <DropdownMenuItem
+                onClick={() => {
+                  setEditingDelivery(undefined)
+                  setDeliveryOpen(true)
+                }}
+              >
+                {t('orders.fulfillments.add_delivery')}
+              </DropdownMenuItem>
+              <DropdownMenuItem onClick={() => setLabelOpen(true)}>
+                {t('orders.fulfillments.upload_label')}
               </DropdownMenuItem>
               {splittable && (
                 <DropdownMenuItem onClick={() => setSplitOpen(true)}>
@@ -133,6 +157,25 @@ function FulfillmentRow({ orderId, fulfillment }: { orderId: string; fulfillment
           </DropdownMenu>
         </CardAction>
       </CardHeader>
+
+      {(fulfillment.labels ?? []).map((label) => (
+        <ShippingLabelRow
+          key={label.id}
+          orderId={orderId}
+          fulfillmentId={fulfillment.id}
+          label={label}
+        />
+      ))}
+
+      <FulfillmentDeliveries
+        orderId={orderId}
+        fulfillmentId={fulfillment.id}
+        deliveries={fulfillment.deliveries ?? []}
+        onEdit={(delivery) => {
+          setEditingDelivery(delivery)
+          setDeliveryOpen(true)
+        }}
+      />
 
       <CardContent className="flex flex-col gap-3">
         {fulfillment.stock_location_name && (
@@ -161,25 +204,6 @@ function FulfillmentRow({ orderId, fulfillment }: { orderId: string; fulfillment
               </div>
             ))}
 
-            {fulfillment.tracking && (
-              <p className="text-sm">
-                {t('orders.tracking', { number: fulfillment.tracking })}
-                {fulfillment.tracking_url && (
-                  <>
-                    {' · '}
-                    <a
-                      href={fulfillment.tracking_url}
-                      target="_blank"
-                      rel="noreferrer"
-                      className="underline"
-                    >
-                      {t('orders.fulfillments.track_parcel')}
-                    </a>
-                  </>
-                )}
-              </p>
-            )}
-
             {shippable && (
               <div className="flex justify-end">
                 <Button type="button" onClick={() => setShipping(true)}>
@@ -191,16 +215,29 @@ function FulfillmentRow({ orderId, fulfillment }: { orderId: string; fulfillment
         )}
       </CardContent>
 
-      {/* Mounted only while open, so the form seeds from the parcel as it is
-          now. Left mounted, its defaults froze at first render — and after
-          shipping through the fulfil form, "Edit tracking" would open empty
-          and save that emptiness over a real number. */}
-      {trackingOpen && (
-        <FulfillmentTrackingDialog
+      {/* Mounted only while open, so each form seeds from the parcel as it is
+          now. Left mounted, their defaults froze at first render — and after
+          shipping, an edit would open empty and save that emptiness over a
+          real number. */}
+      {deliveryOpen && (
+        <FulfillmentDeliveryDialog
           orderId={orderId}
-          fulfillment={fulfillment}
+          fulfillmentId={fulfillment.id}
+          delivery={editingDelivery}
           open
-          onOpenChange={setTrackingOpen}
+          onOpenChange={(next) => {
+            setDeliveryOpen(next)
+            if (!next) setEditingDelivery(undefined)
+          }}
+        />
+      )}
+      {labelOpen && (
+        <FulfillmentLabelUploadDialog
+          orderId={orderId}
+          fulfillmentId={fulfillment.id}
+          currency={currency}
+          open
+          onOpenChange={setLabelOpen}
         />
       )}
       {splittable && (

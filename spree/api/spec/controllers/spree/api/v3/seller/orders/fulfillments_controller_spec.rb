@@ -111,18 +111,32 @@ RSpec.describe Spree::Api::V3::Seller::Orders::FulfillmentsController, type: :co
       expect(fulfillment.tracking_url).to include('TRACK123')
     end
 
-    # Where a parcel ships from and which service carries it are the
-    # marketplace's arrangements — this endpoint takes the tracking pair only.
-    it 'ignores an attempt to move the parcel to another origin' do
+    # A seller picking from a different shelf than the split assumed needs to
+    # say so, and the rate requotes from there.
+    it 'moves the parcel to another of the seller’s shelves' do
       elsewhere = create(:stock_location, store: store, seller: seller)
+
+      patch :update, params: {
+        order_id: order.prefixed_id, id: fulfillment.prefixed_id,
+        stock_location_id: elsewhere.prefixed_id
+      }, as: :json
+
+      expect(response).to have_http_status(:ok)
+      expect(fulfillment.reload.stock_location_id).to eq(elsewhere.id)
+    end
+
+    # The marketplace's own warehouses are not the seller's to ship from,
+    # whatever id arrives.
+    it 'refuses a shelf belonging to the marketplace' do
+      theirs = create(:stock_location, store: store)
       original = fulfillment.stock_location_id
 
       patch :update, params: {
         order_id: order.prefixed_id, id: fulfillment.prefixed_id,
-        tracking: 'TRACK123', stock_location_id: elsewhere.prefixed_id
+        stock_location_id: theirs.prefixed_id
       }, as: :json
 
-      expect(response).to have_http_status(:ok)
+      expect(response).to have_http_status(:not_found)
       expect(fulfillment.reload.stock_location_id).to eq(original)
     end
   end

@@ -29,11 +29,3 @@ export const fulfillItemsFormSchema = z.object({
 })
 
 export type FulfillItemsFormValues = z.infer<typeof fulfillItemsFormSchema>
-
-/** The tracking pair, edited after a parcel has gone out. */
-export const trackingFormSchema = z.object({
-  tracking: z.string(),
-  tracking_carrier: z.string(),
-})
-
-export type TrackingFormValues = z.infer<typeof trackingFormSchema>

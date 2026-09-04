@@ -99,7 +99,8 @@
     "retry": "Try again",
     "save": "Save",
     "saving": "Saving…",
-    "actions": "Actions"
+    "actions": "Actions",
+    "edit": "Edit"
   },
   "delivery_methods": {
     "add": "Add delivery method",
@@ -311,7 +312,30 @@
       "split_item": "Item",
       "split_quantity": "Quantity to move",
       "split_would_empty": "Moving everything would leave this parcel empty.",
-      "confirm_split": "This takes effect immediately."
+      "confirm_split": "This takes effect immediately.",
+      "add_delivery": "Add tracking number",
+      "carrier_search": "Search carriers…",
+      "confirm_delete_delivery": "Remove this tracking number?",
+      "carrier_status_pending": "Pending",
+      "carrier_status_pre_transit": "Pre-transit",
+      "carrier_status_in_transit": "In transit",
+      "carrier_status_out_for_delivery": "Out for delivery",
+      "carrier_status_available_for_pickup": "Available for pickup",
+      "carrier_status_delivered": "Delivered",
+      "carrier_status_return_to_sender": "Return to sender",
+      "carrier_status_failure": "Failed",
+      "carrier_status_unknown": "Unknown",
+      "upload_label": "Upload postage",
+      "upload_label_title": "Upload postage",
+      "upload_label_description": "Record a label you bought elsewhere, so the parcel carries its file and tracking number.",
+      "upload_label_file": "Label file",
+      "label_title": "Label",
+      "label_uploaded": "Uploaded",
+      "label_cost": "Cost {{amount}}",
+      "label_cost_label": "What it cost",
+      "print_label": "Print label",
+      "delete_label": "Remove label",
+      "confirm_delete_label": "Remove this label? The file is deleted and cannot be printed again."
     },
     "summary": {
       "title": "Summary",
