@@ -92,6 +92,7 @@ module Spree
         delivery_create_service: 'Spree::Deliveries::Create',
         delivery_upsert_primary_service: 'Spree::Deliveries::UpsertPrimary',
         fulfillment_stand_down_service: 'Spree::Fulfillments::StandDownProvider',
+        fulfillment_recalculate_delivery_service: 'Spree::Fulfillments::RecalculateDelivery',
         delivery_destroy_service: 'Spree::Deliveries::Destroy',
         return_purchase_label_workflow: 'Spree::Returns::PurchaseLabel',
 

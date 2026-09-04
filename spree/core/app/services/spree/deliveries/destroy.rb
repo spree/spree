@@ -24,7 +24,15 @@ module Spree
           return failure(delivery)
         end
 
-        delivery.destroy ? success(delivery) : failure(delivery)
+        owner = delivery.owner
+        return failure(delivery) unless delivery.destroy
+
+        # Removing the last parcel still travelling completes the fulfillment.
+        if owner.is_a?(Spree::Fulfillment)
+          Spree.fulfillment_recalculate_delivery_service.call(fulfillment: owner)
+        end
+
+        success(delivery)
       end
     end
   end

@@ -36,7 +36,20 @@ module Spree
         delivery.shipping_label = shipping_label if shipping_label
         delivery.tracking_url ||= delivery.tracking_number if delivery.pasted_link?
 
-        delivery.save ? success(delivery) : failure(delivery)
+        return failure(delivery) unless delivery.save
+
+        # A parcel that has not arrived makes a delivered fulfillment untrue.
+        recalculate(owner)
+
+        success(delivery)
+      end
+
+      private
+
+      def recalculate(owner)
+        return unless owner.is_a?(Spree::Fulfillment)
+
+        Spree.fulfillment_recalculate_delivery_service.call(fulfillment: owner)
       end
     end
   end

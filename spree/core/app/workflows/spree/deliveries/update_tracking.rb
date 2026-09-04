@@ -73,26 +73,16 @@ module Spree
         delivery.update_columns(attributes.merge(updated_at: Time.current))
       end
 
-      # Delivery is the one carrier report that is also a merchant fact, so it
+      # Arrival is the one carrier report that is also a merchant fact, so it
       # crosses over to the fulfillment's status — once every consignment has
-      # arrived, and only from `fulfilled`, which MarkDelivered enforces. A
-      # carrier reporting delivery on a canceled parcel is noise on this axis.
+      # arrived. A Return owner never transitions: goods coming back is not
+      # goods inspected.
       def roll_up_owner_delivery
-        return unless reported_delivered?
-
         owner = delivery.owner
         return unless owner.is_a?(Spree::Fulfillment)
-        return unless owner.can_mark_delivered?
 
-        # update_columns above left any loaded association holding the old
-        # status, and this decides whether the parcel is done.
-        owner.deliveries.reset
-        return if owner.deliveries.undelivered.exists?
-
-        result = Spree.fulfillment_mark_delivered_workflow.call(
-          fulfillment: owner,
-          delivered_at: owner.deliveries.maximum(:delivered_at),
-          notify_customer: notify_customer
+        result = Spree.fulfillment_recalculate_delivery_service.call(
+          fulfillment: owner, notify_customer: notify_customer
         )
 
         failure(delivery, result.error.to_s) if result.failure?
