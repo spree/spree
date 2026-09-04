@@ -252,6 +252,23 @@ RSpec.describe SpreeAvalara::TaxProvider do
       expect { provider.estimate(cart) }.to raise_error(Spree::Tax::ProviderUnavailable)
     end
 
+    # Rate limiting and a timeout arrive as 4xx but describe a moment, not the
+    # request: telling a shopper their address is wrong when the next attempt
+    # would have worked sends them to fix something that is not broken.
+    it 'treats being rate limited as worth retrying' do
+      allow(integration.client).to receive(:create_transaction).
+        and_raise(SpreeAvalara::RequestError.new('Too many requests', status: 429))
+
+      expect { provider.estimate(cart) }.to raise_error(Spree::Tax::ProviderUnavailable)
+    end
+
+    it 'treats a timeout Avalara reported itself as worth retrying' do
+      allow(integration.client).to receive(:create_transaction).
+        and_raise(SpreeAvalara::RequestError.new('Request timeout', status: 408))
+
+      expect { provider.estimate(cart) }.to raise_error(Spree::Tax::ProviderUnavailable)
+    end
+
     it 'raises when Avalara prices a line that was never sent' do
       allow(client).to receive(:create_transaction).and_return(response(line_number: 'li_never_sent'))
 

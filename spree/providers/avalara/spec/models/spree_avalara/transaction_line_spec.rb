@@ -272,6 +272,39 @@ RSpec.describe SpreeAvalara::TransactionLine do
         expect(reason(zero_vat, context)).to eq('zero_rated')
       end
 
+      # Both reasons are EU constructs describing a supply across an internal
+      # border. A zero-rated business sale leaving the union is an export, and
+      # these are e-invoice categories, so filing one as the other is wrong
+      # where the distinction is actually read.
+      describe 'when one end is outside the union' do
+        it 'is an export rather than an intra-community supply' do
+          context = { identifier_sent: true, ship_from_country: 'PL', ship_to_country: 'US' }
+
+          expect(reason(zero_vat, context)).not_to eq('intra_community_supply')
+        end
+
+        it 'treats Great Britain as outside it' do
+          context = { identifier_sent: true, ship_from_country: 'PL', ship_to_country: 'GB' }
+
+          expect(reason(zero_vat, context)).not_to eq('intra_community_supply')
+        end
+
+        it 'does not reverse-charge a service sold out of the union either' do
+          context = { identifier_sent: true, ship_from_country: 'PL', ship_to_country: 'US' }
+
+          expect(build_line(zero_vat, context).taxability_reason(build_stubbed(:fee))).
+            not_to eq('reverse_charge')
+        end
+
+        # Greece is GR in an address and EL only as a VAT prefix, so a list
+        # built from prefixes would drop it out of the union.
+        it 'keeps Greece inside it' do
+          context = { identifier_sent: true, ship_from_country: 'GR', ship_to_country: 'DE' }
+
+          expect(reason(zero_vat, context)).to eq('intra_community_supply')
+        end
+      end
+
       # An order allocated across warehouses in different countries has no one
       # origin, and the request already sends a shipFrom per line. Reading the
       # owner's origin for every line calls a domestic sale an intra-community

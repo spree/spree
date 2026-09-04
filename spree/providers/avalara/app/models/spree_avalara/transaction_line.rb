@@ -10,6 +10,14 @@ module SpreeAvalara
     include ActiveModel::Model
     include ActiveModel::Attributes
 
+    # The member states, as ISO alpha-2 — which is what an address carries.
+    # Deliberately not the upgrade task's `EU_VAT_PREFIXES`: that list is VAT
+    # prefixes, where Greece is `EL` and Northern Ireland has an `XI` of its own,
+    # and neither is a country code. Great Britain is absent by virtue of Brexit,
+    # so a sale there reads as an export.
+    EU_COUNTRY_CODES = %w[AT BE BG CY CZ DE DK EE ES FI FR GR HR HU IE IT LT LU
+                          LV MT NL PL PT RO SE SI SK].freeze
+
     # Avalara says "absent" with an empty string or a zero, never a null, so
     # every predicate below tests presence rather than nil-ness.
     attribute :payload, default: -> { {} }
@@ -168,7 +176,7 @@ module SpreeAvalara
     # comes from what the request described: a registered buyer, goods crossing
     # an internal border.
     def intra_community_supply?(item)
-      zero_vat? && context[:identifier_sent] == true && goods?(item) && cross_border?
+      zero_vat? && context[:identifier_sent] == true && goods?(item) && intra_eu?
     end
 
     # A cross-border supply to a registered buyer that is not goods: the service
@@ -181,7 +189,7 @@ module SpreeAvalara
     # from zero-rating in the payload, so it reads zero_rated until a cassette
     # shows a marker that separates them.
     def reverse_charge?(item)
-      zero_vat? && context[:identifier_sent] == true && cross_border? && !goods?(item)
+      zero_vat? && context[:identifier_sent] == true && intra_eu? && !goods?(item)
     end
 
     def zero_vat?
@@ -199,6 +207,18 @@ module SpreeAvalara
       to = context[:ship_to_country].to_s
 
       from.present? && to.present? && from != to
+    end
+
+    # Intra-community supply and reverse charge are EU constructs: they describe
+    # a supply crossing an *internal* border, between two member states. A
+    # zero-rated business sale out of the union — Poland to the United States,
+    # or to Great Britain since Brexit — is an export, and these reasons are
+    # e-invoice categories rather than labels, so filing one as the other is
+    # wrong in the place the distinction is read.
+    def intra_eu?
+      EU_COUNTRY_CODES.include?(ship_from_country.to_s.upcase) &&
+        EU_COUNTRY_CODES.include?(context[:ship_to_country].to_s.upcase) &&
+        cross_border?
     end
 
     # This line's own origin, since the request sent one per line. Falls back to

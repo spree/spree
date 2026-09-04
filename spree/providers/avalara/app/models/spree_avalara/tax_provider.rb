@@ -8,6 +8,12 @@ module SpreeAvalara
   # the subset provided it rewrites everything it deletes — and the response
   # cache is what keeps the single-item call sites affordable.
   class TaxProvider < Spree::TaxProvider::Base
+    # Answers that name a temporary condition rather than a problem with the
+    # request: rate limiting and a timeout Avalara reported itself. They arrive
+    # as 4xx, but telling a shopper their address is wrong when the next attempt
+    # would have worked is the wrong end of the contract.
+    RETRYABLE_STATUSES = [408, 429].freeze
+
     # AvaTax handles US local tax, reverse charge and proportional delivery tax
     # natively. EU one-stop-shop thresholds depend on the merchant's own Avalara
     # company profile rather than on this gem, so there is nothing here to warn
@@ -155,7 +161,7 @@ module SpreeAvalara
     # anything this gem could invent.
     def tax_failure(error)
       status = error.status.to_i
-      unavailable = error.status.nil? || status >= 500
+      unavailable = error.status.nil? || status >= 500 || RETRYABLE_STATUSES.include?(status)
 
       failure = unavailable ? Spree::Tax::ProviderUnavailable : Spree::Tax::CalculationRefused
       failure.new(error.message, provider_key: SpreeAvalara::PROVIDER_ID)
