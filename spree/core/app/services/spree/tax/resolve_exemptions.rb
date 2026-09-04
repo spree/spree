@@ -31,11 +31,16 @@ module Spree
         company = node&.legal_entity
         address = order.tax_address
         return success([]) if company.nil? || address.nil?
-        # An inactive company must not exempt a sale: the certificates stay
-        # on file, they just stop applying while the activation policy says
-        # the business may not act commercially
+        # An inactive company must not exempt a sale in flight: the
+        # certificates stay on file, they just stop applying while the
+        # activation policy says the business may not act commercially
         # (docs/plans/6.0-b2b-company-self-registration.md).
-        return success([]) unless Spree.company_activation_policy.active?(node)
+        #
+        # A placed order is exempt from the question, the way its tax
+        # registration is (Purchase::Taxation#resolved_tax_identifier):
+        # deactivating a company months later must not restate the tax on a
+        # sale that was legitimately exempt when it was placed.
+        return success([]) if in_flight?(order) && !Spree.company_activation_policy.active?(node)
 
         success(
           company.tax_exemption_certificates.active.for_address(address).map do |certificate|
@@ -47,6 +52,14 @@ module Spree
             )
           end
         )
+      end
+
+      private
+
+      # A cart, or an order that has not been placed yet. A completed order is
+      # history: its tax has to stay explainable.
+      def in_flight?(order)
+        !(order.is_a?(Spree::Order) && order.completed?)
       end
     end
   end
