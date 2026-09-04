@@ -3928,12 +3928,42 @@
     "preferences": {
       "additional_item": "Additional Item Cost",
       "amount": "Amount",
+      "api_key": "API key",
+      "api_key_description": "Found in your EasyPost dashboard. A test key and a live key behave differently — the key itself decides the mode.",
       "base_amount": "Base Amount",
       "base_percent": "Base Percent",
       "currency": "Currency",
+      "customs_contents_type": "Customs contents type",
+      "customs_contents_type_description": "What an international parcel holds, as customs classifies it.",
+      "customs_contents_type_options": {
+        "dangerous_goods": "Dangerous goods",
+        "documents": "Documents",
+        "gift": "Gift",
+        "humanitarian_donation": "Humanitarian donation",
+        "merchandise": "Merchandise",
+        "returned_goods": "Returned goods",
+        "sample": "Sample"
+      },
+      "customs_signer": "Customs signer",
+      "customs_signer_description": "The person at your company who takes legal responsibility for what an international parcel declares.",
       "discount_amount": "Discount Amount",
       "first_item": "First Item Cost",
       "flat_percent": "Flat Percent",
+      "incoterm": "Duties and taxes (Incoterm)",
+      "incoterm_description": "Who pays duties on arrival. DAP bills the recipient; DDP bills you, so only pick it if you collect duties at checkout.",
+      "incoterm_options": {
+        "CFR": "CFR",
+        "CIF": "CIF",
+        "CIP": "CIP",
+        "CPT": "CPT",
+        "DAT": "DAT",
+        "DAP": "DAP",
+        "DDP": "DDP",
+        "EXW": "EXW",
+        "FAS": "FAS",
+        "FCA": "FCA",
+        "FOB": "FOB"
+      },
       "max_items": "Max Items",
       "max_quantity": "Maximum quantity",
       "maximum_item_total": "Maximum item total",
@@ -3945,7 +3975,9 @@
       "normal_amount": "Normal Amount",
       "percent": "Percent",
       "preferred_amount": "Amount",
-      "preferred_percent": "Percent"
+      "preferred_percent": "Percent",
+      "webhook_secret": "Webhook signing secret",
+      "webhook_secret_description": "The secret you set on the EasyPost webhook. Carrier updates are refused without it."
     },
     "product_types": {
       "add_cta": "Add product type",

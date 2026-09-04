@@ -21879,12 +21879,12 @@ paths:
                   label: Option Value(s)
                   description:
                   preference_schema:
-                  - key: eligible_values
-                    type: array
-                    default: []
                   - key: match_policy
                     type: string
                     default: any
+                  - key: eligible_values
+                    type: array
+                    default: []
                 - type: product
                   label: Product(s)
                   description:
@@ -31447,9 +31447,9 @@ paths:
                   stock_location_ids: []
                   calculator_type: Spree::Calculator::Shipping::FlatRate
                   calculator_preferences:
+                    amounts: {}
                     amount: '10.0'
                     currency: USD
-                    amounts: {}
                 meta:
                   page: 1
                   limit: 25
@@ -31539,9 +31539,9 @@ paths:
                 stock_location_ids: []
                 calculator_type: Spree::Calculator::Shipping::FlatRate
                 calculator_preferences:
+                  amounts: {}
                   amount: '12.5'
                   currency: USD
-                  amounts: {}
       requestBody:
         content:
           application/json:
@@ -31646,21 +31646,18 @@ paths:
                 - type: Spree::Calculator::Shipping::FlatRate
                   name: Flat rate
                   preference_schema:
+                  - key: amounts
+                    type: hash
+                    default: {}
                   - key: amount
                     type: decimal
                     default: 0
                   - key: currency
                     type: string
                     default: USD
-                  - key: amounts
-                    type: hash
-                    default: {}
                 - type: Spree::Calculator::Shipping::FlexiRate
                   name: Flexible Rate per package item
                   preference_schema:
-                  - key: currency
-                    type: string
-                    default: USD
                   - key: first_item
                     type: decimal
                     default: 0.0
@@ -31670,18 +31667,21 @@ paths:
                   - key: max_items
                     type: integer
                     default: 0
+                  - key: currency
+                    type: string
+                    default: USD
                 - type: Spree::Calculator::Shipping::PerItem
                   name: Flat rate per package item
                   preference_schema:
+                  - key: amounts
+                    type: hash
+                    default: {}
                   - key: amount
                     type: decimal
                     default: 0
                   - key: currency
                     type: string
                     default: USD
-                  - key: amounts
-                    type: hash
-                    default: {}
                 - type: Spree::Calculator::Shipping::PriceSack
                   name: Price sack
                   preference_schema:
@@ -31700,15 +31700,15 @@ paths:
                 - type: Spree::Calculator::Shipping::DigitalDelivery
                   name: Digital Delivery
                   preference_schema:
+                  - key: amounts
+                    type: hash
+                    default: {}
                   - key: amount
                     type: decimal
                     default: 0
                   - key: currency
                     type: string
                     default: USD
-                  - key: amounts
-                    type: hash
-                    default: {}
   "/api/v3/admin/delivery_zones":
     post:
       summary: Create delivery zone
@@ -34173,16 +34173,16 @@ paths:
                   accepted_content_types: []
                   association_fields: []
                   preference_schema:
-                  - key: require_cover_photo
-                    type: boolean
-                    default: false
-                  - key: require_contact_email
-                    type: boolean
-                    default: true
                   - key: require_about
                     type: boolean
                     default: true
                   - key: require_logo
+                    type: boolean
+                    default: true
+                  - key: require_cover_photo
+                    type: boolean
+                    default: false
+                  - key: require_contact_email
                     type: boolean
                     default: true
                 - type: billing_address

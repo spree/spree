@@ -2,10 +2,16 @@ import type { PreferenceField as PreferenceFieldDef } from '@spree/admin-sdk'
 import {
   Button,
   Field,
+  FieldDescription,
   FieldGroup,
   FieldLabel,
   Input,
   SecretInput,
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
   Switch,
   Textarea,
 } from '@spree/dashboard-ui'
@@ -129,6 +135,11 @@ export function PreferenceField({
   const preferenceKey = `admin.preferences.${field.key}`
   const displayLabel =
     label ?? (i18n.exists(preferenceKey) ? t(preferenceKey) : humanizeKey(field.key))
+  // Optional one-line help, under the same key convention as the label. Most
+  // preferences say what they are in their name; the ones that do not — a
+  // customs signer, an incoterm — are unguessable without it.
+  const descriptionKey = `${preferenceKey}_description`
+  const description = i18n.exists(descriptionKey) ? t(descriptionKey) : undefined
 
   // Currency-typed preferences (`currency`, `default_currency`,
   // `display_currency`, …) get the store's CurrencySelect — same
@@ -245,6 +256,41 @@ export function PreferenceField({
       )
 
     default:
+      // A preference that declares a fixed set is a picker, not a text box:
+      // the set is what the server validates against, so typing anything
+      // else can only fail on save.
+      if (field.choices?.length) {
+        const options = field.choices.map((choice) => ({
+          value: choice,
+          label: i18n.exists(`${preferenceKey}_options.${choice}`)
+            ? t(`${preferenceKey}_options.${choice}`)
+            : humanizeKey(choice),
+        }))
+
+        return (
+          <Field>
+            <FieldLabel htmlFor={id}>{displayLabel}</FieldLabel>
+            <Select
+              items={options}
+              value={(value as string) ?? ''}
+              onValueChange={(next) => onChange(next ?? '')}
+            >
+              <SelectTrigger id={id}>
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                {options.map((option) => (
+                  <SelectItem key={option.value} value={option.value}>
+                    {option.label}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+            {description && <FieldDescription>{description}</FieldDescription>}
+          </Field>
+        )
+      }
+
       return (
         <Field>
           <FieldLabel htmlFor={id}>{displayLabel}</FieldLabel>
@@ -253,6 +299,7 @@ export function PreferenceField({
             value={(value as string) ?? ''}
             onChange={(e) => onChange(e.target.value)}
           />
+          {description && <FieldDescription>{description}</FieldDescription>}
         </Field>
       )
   }

@@ -12351,9 +12351,9 @@ paths:
                   delivery_zone_id:
                   calculator_type: Spree::Calculator::Shipping::FlatRate
                   calculator_preferences:
+                    amounts: {}
                     amount: '10.0'
                     currency: USD
-                    amounts: {}
                 - id: dm_gbHJdmfrXB
                   name: Marketplace post
                   code: UPS_GROUND
@@ -12373,9 +12373,9 @@ paths:
                   delivery_zone_id:
                   calculator_type: Spree::Calculator::Shipping::FlatRate
                   calculator_preferences:
+                    amounts: {}
                     amount: '10.0'
                     currency: USD
-                    amounts: {}
                 meta:
                   page: 1
                   limit: 25
@@ -12442,9 +12442,9 @@ paths:
                 delivery_zone_id:
                 calculator_type: Spree::Calculator::Shipping::FlatRate
                 calculator_preferences:
+                  amounts: {}
                   amount: '9.99'
                   currency: USD
-                  amounts: {}
               schema:
                 "$ref": "#/components/schemas/DeliveryMethod"
         '422':
@@ -12552,9 +12552,9 @@ paths:
                 delivery_zone_id:
                 calculator_type: Spree::Calculator::Shipping::FlatRate
                 calculator_preferences:
+                  amounts: {}
                   amount: '10.0'
                   currency: USD
-                  amounts: {}
               schema:
                 "$ref": "#/components/schemas/DeliveryMethod"
     patch:
@@ -12591,9 +12591,9 @@ paths:
                 delivery_zone_id:
                 calculator_type: Spree::Calculator::Shipping::FlatRate
                 calculator_preferences:
+                  amounts: {}
                   amount: '10.0'
                   currency: USD
-                  amounts: {}
               schema:
                 "$ref": "#/components/schemas/DeliveryMethod"
       requestBody:
@@ -12692,10 +12692,10 @@ paths:
                   description: Limits the delivery method to packages within a weight
                     range
                   preference_schema:
-                  - key: maximum_weight
+                  - key: minimum_weight
                     type: decimal
                     default:
-                  - key: minimum_weight
+                  - key: maximum_weight
                     type: decimal
                     default:
               schema:
@@ -12747,21 +12747,18 @@ paths:
                 - type: Spree::Calculator::Shipping::FlatRate
                   name: Flat rate
                   preference_schema:
+                  - key: amounts
+                    type: hash
+                    default: {}
                   - key: amount
                     type: decimal
                     default: 0
                   - key: currency
                     type: string
                     default: USD
-                  - key: amounts
-                    type: hash
-                    default: {}
                 - type: Spree::Calculator::Shipping::FlexiRate
                   name: Flexible Rate per package item
                   preference_schema:
-                  - key: currency
-                    type: string
-                    default: USD
                   - key: first_item
                     type: decimal
                     default: 0.0
@@ -12771,18 +12768,21 @@ paths:
                   - key: max_items
                     type: integer
                     default: 0
+                  - key: currency
+                    type: string
+                    default: USD
                 - type: Spree::Calculator::Shipping::PerItem
                   name: Flat rate per package item
                   preference_schema:
+                  - key: amounts
+                    type: hash
+                    default: {}
                   - key: amount
                     type: decimal
                     default: 0
                   - key: currency
                     type: string
                     default: USD
-                  - key: amounts
-                    type: hash
-                    default: {}
                 - type: Spree::Calculator::Shipping::PriceSack
                   name: Price sack
                   preference_schema:
@@ -12801,15 +12801,15 @@ paths:
                 - type: Spree::Calculator::Shipping::DigitalDelivery
                   name: Digital Delivery
                   preference_schema:
+                  - key: amounts
+                    type: hash
+                    default: {}
                   - key: amount
                     type: decimal
                     default: 0
                   - key: currency
                     type: string
                     default: USD
-                  - key: amounts
-                    type: hash
-                    default: {}
               schema:
                 type: object
                 properties:

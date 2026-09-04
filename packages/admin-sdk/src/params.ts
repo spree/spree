@@ -1960,6 +1960,12 @@ export interface PreferenceField {
   key: string
   type: string
   default: unknown
+  /**
+   * The fixed set this value must come from, when the preference declares
+   * one. Present only for constrained preferences; an admin form renders a
+   * picker for these rather than a free-text box.
+   */
+  choices?: string[]
 }
 
 /**

@@ -3945,12 +3945,42 @@
     "preferences": {
       "additional_item": "Additional Item Cost",
       "amount": "كمية",
+      "api_key": "مفتاح API",
+      "api_key_description": "يوجد في لوحة تحكم EasyPost. مفتاح الاختبار والمفتاح الحي يعملان بشكل مختلف — المفتاح نفسه يحدد الوضع.",
       "base_amount": "Base Amount",
       "base_percent": "Base Percent",
       "currency": "Currency",
+      "customs_contents_type": "نوع محتويات البيان الجمركي",
+      "customs_contents_type_description": "ما يحتويه الطرد الدولي وفق تصنيف الجمارك.",
+      "customs_contents_type_options": {
+        "dangerous_goods": "بضائع خطرة",
+        "documents": "مستندات",
+        "gift": "هدية",
+        "humanitarian_donation": "تبرع إنساني",
+        "merchandise": "بضائع",
+        "returned_goods": "بضائع مرتجعة",
+        "sample": "عينة"
+      },
+      "customs_signer": "موقّع البيان الجمركي",
+      "customs_signer_description": "الشخص في شركتك الذي يتحمل المسؤولية القانونية عما يصرّح به الطرد الدولي.",
       "discount_amount": "Discount Amount",
       "first_item": "First Item Cost",
       "flat_percent": "Flat Percent",
+      "incoterm": "الرسوم والضرائب (إنكوترمز)",
+      "incoterm_description": "من يدفع الرسوم عند الوصول. DAP تُحمّل المستلم، وDDP تُحمّلك أنت — لا تختر DDP إلا إذا كنت تحصّل الرسوم عند الدفع.",
+      "incoterm_options": {
+        "CFR": "CFR",
+        "CIF": "CIF",
+        "CIP": "CIP",
+        "CPT": "CPT",
+        "DAT": "DAT",
+        "DAP": "DAP",
+        "DDP": "DDP",
+        "EXW": "EXW",
+        "FAS": "FAS",
+        "FCA": "FCA",
+        "FOB": "FOB"
+      },
       "max_items": "Max Items",
       "max_quantity": "الحد الأقصى للكمية",
       "maximum_item_total": "الحد الأقصى لإجمالي المنتجات",
@@ -3962,7 +3992,9 @@
       "normal_amount": "Normal Amount",
       "percent": "نسبة مئوية",
       "preferred_amount": "كمية",
-      "preferred_percent": "نسبة مئوية"
+      "preferred_percent": "نسبة مئوية",
+      "webhook_secret": "مفتاح توقيع الويب هوك",
+      "webhook_secret_description": "السر الذي ضبطته على ويب هوك EasyPost. بدونه تُرفض تحديثات شركة الشحن."
     },
     "product_types": {
       "add_cta": "إضافة نوع منتج",

@@ -81,6 +81,22 @@ module Spree::Preferences::Preferable
     send(getter)
   end
 
+  # The fixed set this preference's value must come from, when it has one.
+  # Carried into the schema so an admin form renders a picker rather than a
+  # text box the operator can only get wrong.
+  #
+  # @return [Array, nil]
+  def preference_choices(name)
+    has_preference! name
+    getter = self.class.preference_choices_getter_method(name)
+    # A preference declared before this option existed has no such reader.
+    # Treated as unconstrained rather than raising, so one old declaration
+    # cannot take a whole class's preference schema down with it.
+    return unless respond_to?(getter)
+
+    send(getter)
+  end
+
   def has_preference!(name)
     raise NoMethodError, "#{name} preference not defined" unless has_preference? name
   end

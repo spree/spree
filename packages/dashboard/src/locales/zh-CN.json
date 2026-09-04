@@ -3920,12 +3920,42 @@
     "preferences": {
       "additional_item": "附加件费用",
       "amount": "金额",
+      "api_key": "API 密钥",
+      "api_key_description": "在您的 EasyPost 控制台中获取。测试密钥与正式密钥行为不同——密钥本身决定模式。",
       "base_amount": "基础金额",
       "base_percent": "基础百分比",
       "currency": "货币",
+      "customs_contents_type": "报关内容类型",
+      "customs_contents_type_description": "按海关分类，国际包裹所含物品的类型。",
+      "customs_contents_type_options": {
+        "dangerous_goods": "危险品",
+        "documents": "文件",
+        "gift": "礼品",
+        "humanitarian_donation": "人道主义捐赠",
+        "merchandise": "商品",
+        "returned_goods": "退回商品",
+        "sample": "样品"
+      },
+      "customs_signer": "报关签署人",
+      "customs_signer_description": "贵公司中对国际包裹申报内容承担法律责任的人员。",
       "discount_amount": "折扣金额",
       "first_item": "首件费用",
       "flat_percent": "固定百分比",
+      "incoterm": "关税与税费（贸易术语）",
+      "incoterm_description": "谁支付到货关税。DAP 向收件人收取，DDP 向您收取——仅在结账时代收关税才选择 DDP。",
+      "incoterm_options": {
+        "CFR": "CFR",
+        "CIF": "CIF",
+        "CIP": "CIP",
+        "CPT": "CPT",
+        "DAT": "DAT",
+        "DAP": "DAP",
+        "DDP": "DDP",
+        "EXW": "EXW",
+        "FAS": "FAS",
+        "FCA": "FCA",
+        "FOB": "FOB"
+      },
       "max_items": "最大件数",
       "max_quantity": "最大数量",
       "maximum_item_total": "最高商品总额",
@@ -3937,7 +3967,9 @@
       "normal_amount": "标准金额",
       "percent": "百分比",
       "preferred_amount": "金额",
-      "preferred_percent": "百分比"
+      "preferred_percent": "百分比",
+      "webhook_secret": "Webhook 签名密钥",
+      "webhook_secret_description": "您在 EasyPost webhook 上设置的密钥。缺少它，承运商更新将被拒绝。"
     },
     "product_types": {
       "add_cta": "添加商品类型",

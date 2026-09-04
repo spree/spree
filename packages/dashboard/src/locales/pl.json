@@ -3972,12 +3972,42 @@
     "preferences": {
       "additional_item": "Koszt każdej kolejnej pozycji",
       "amount": "Kwota",
+      "api_key": "Klucz API",
+      "api_key_description": "Znajdziesz go w panelu EasyPost. Klucz testowy i produkcyjny działają inaczej — to klucz decyduje o trybie.",
       "base_amount": "Kwota podstawowa",
       "base_percent": "Procent podstawowy",
       "currency": "Waluta",
+      "customs_contents_type": "Rodzaj zawartości celnej",
+      "customs_contents_type_description": "Co zawiera przesyłka międzynarodowa według klasyfikacji celnej.",
+      "customs_contents_type_options": {
+        "dangerous_goods": "Towary niebezpieczne",
+        "documents": "Dokumenty",
+        "gift": "Prezent",
+        "humanitarian_donation": "Dar humanitarny",
+        "merchandise": "Towar handlowy",
+        "returned_goods": "Towar zwrócony",
+        "sample": "Próbka"
+      },
+      "customs_signer": "Osoba podpisująca zgłoszenie celne",
+      "customs_signer_description": "Osoba w Twojej firmie odpowiedzialna prawnie za treść zgłoszenia celnego przesyłki międzynarodowej.",
       "discount_amount": "Kwota rabatu",
       "first_item": "Koszt pierwszej pozycji",
       "flat_percent": "Stały procent",
+      "incoterm": "Cła i podatki (Incoterm)",
+      "incoterm_description": "Kto płaci cło przy odbiorze. DAP obciąża odbiorcę, DDP Ciebie — wybierz DDP tylko, jeśli pobierasz cło przy zamówieniu.",
+      "incoterm_options": {
+        "CFR": "CFR",
+        "CIF": "CIF",
+        "CIP": "CIP",
+        "CPT": "CPT",
+        "DAT": "DAT",
+        "DAP": "DAP",
+        "DDP": "DDP",
+        "EXW": "EXW",
+        "FAS": "FAS",
+        "FCA": "FCA",
+        "FOB": "FOB"
+      },
       "max_items": "Maksymalna liczba pozycji",
       "max_quantity": "Maksymalna ilość",
       "maximum_item_total": "Maksymalna wartość produktów",
@@ -3989,7 +4019,9 @@
       "normal_amount": "Kwota normalna",
       "percent": "Procent",
       "preferred_amount": "Kwota",
-      "preferred_percent": "Procent"
+      "preferred_percent": "Procent",
+      "webhook_secret": "Sekret podpisu webhooka",
+      "webhook_secret_description": "Sekret ustawiony na webhooku EasyPost. Bez niego aktualizacje od przewoźnika są odrzucane."
     },
     "product_types": {
       "add_cta": "Dodaj typ produktu",
