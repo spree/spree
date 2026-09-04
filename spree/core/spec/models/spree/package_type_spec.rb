@@ -115,6 +115,33 @@ RSpec.describe Spree::PackageType, type: :model do
     end
   end
 
+  describe 'changing kind' do
+    # The variant validation only runs when the variant is saved, so a carton
+    # that turned into a pallet would leave its products pointing at a row
+    # they could no longer choose.
+    it 'refuses to stop being a carton while products are packed into it' do
+      carton = create(:carton_package_type, store: store)
+      create(:variant, carton_package_type: carton)
+
+      expect(carton.update(kind: 'pallet')).to be(false)
+      expect(carton.errors[:kind]).to be_present
+      expect(carton.reload.kind).to eq('carton')
+    end
+
+    it 'allows the change once nothing is packed into it' do
+      carton = create(:carton_package_type, store: store)
+
+      expect(carton.update(kind: 'pallet')).to be(true)
+    end
+
+    it 'leaves other edits to a carton in use alone' do
+      carton = create(:carton_package_type, store: store)
+      create(:variant, carton_package_type: carton)
+
+      expect(carton.update(name: 'Renamed carton', length: 50)).to be(true)
+    end
+  end
+
   describe 'deletion' do
     # Deleting it would leave every quote with no tare and no dimensions,
     # which under-prices bulky shipments with nothing to notice.
