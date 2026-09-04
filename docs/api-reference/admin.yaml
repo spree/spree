@@ -7523,8 +7523,6 @@ paths:
                   number: R1001-F1
                   tracking: U10000
                   tracking_url:
-                  tracking_carrier:
-                  tracking_carrier_name:
                   pickup_point_data:
                   selected_delivery_rate_id: dr_gbHJdmfrXB
                   unpriced: false
@@ -7543,15 +7541,26 @@ paths:
                   status: unfulfilled
                   fulfillment_type: shipping
                   fulfilled_at:
-                  tracking_status:
-                  estimated_delivery_at:
                   delivered_at:
                   items:
                   - item_id: li_UkLWZg9DAJ
                     variant_id: variant_UkLWZg9DAJ
                     quantity: 1
+                  deliveries:
+                  - id: dlv_UkLWZg9DAJ
+                    tracking_number: U10000
+                    carrier:
+                    carrier_name:
+                    service:
+                    status: pending
+                    tracking_url:
+                    estimated_delivery_at:
+                    delivered_at:
+                    details:
+                    created_at: '2026-01-15T12:00:00.000Z'
+                    updated_at: '2026-01-15T12:00:00.000Z'
+                    shipping_label_id:
                   metadata: {}
-                  tracking_details:
                   adjustment_total: '0.0'
                   pre_tax_amount: '100.0'
                   created_at: '2026-01-15T12:00:00.000Z'
@@ -7559,6 +7568,7 @@ paths:
                   order_id: or_UkLWZg9DAJ
                   stock_location_id: sloc_UkLWZg9DAJ
                   documents: []
+                  labels: []
                   provider_generates_labels: false
                 meta:
                   page: 1
@@ -7630,8 +7640,6 @@ paths:
                 number: R1001-F1
                 tracking: INPOST-12345
                 tracking_url:
-                tracking_carrier:
-                tracking_carrier_name:
                 pickup_point_data:
                 selected_delivery_rate_id: dr_EfhxLZ9ck8
                 unpriced: false
@@ -7650,15 +7658,26 @@ paths:
                 status: fulfilled
                 fulfillment_type: shipping
                 fulfilled_at: '2026-01-15T12:00:00.000Z'
-                tracking_status:
-                estimated_delivery_at:
                 delivered_at:
                 items:
                 - item_id: li_UkLWZg9DAJ
                   variant_id: variant_UkLWZg9DAJ
                   quantity: 1
+                deliveries:
+                - id: dlv_gbHJdmfrXB
+                  tracking_number: INPOST-12345
+                  carrier:
+                  carrier_name:
+                  service:
+                  status: pending
+                  tracking_url:
+                  estimated_delivery_at:
+                  delivered_at:
+                  details:
+                  created_at: '2026-01-15T12:00:00.000Z'
+                  updated_at: '2026-01-15T12:00:00.000Z'
+                  shipping_label_id:
                 metadata: {}
-                tracking_details:
                 adjustment_total: '0.0'
                 pre_tax_amount: '0.0'
                 created_at: '2026-01-15T12:00:00.000Z'
@@ -7666,6 +7685,7 @@ paths:
                 order_id: or_UkLWZg9DAJ
                 stock_location_id: sloc_UkLWZg9DAJ
                 documents: []
+                labels: []
                 provider_generates_labels: false
         '422':
           description: order not completed
@@ -7807,8 +7827,6 @@ paths:
                 number: R1001-F1
                 tracking: U10000
                 tracking_url:
-                tracking_carrier:
-                tracking_carrier_name:
                 pickup_point_data:
                 selected_delivery_rate_id: dr_gbHJdmfrXB
                 unpriced: false
@@ -7827,15 +7845,26 @@ paths:
                 status: unfulfilled
                 fulfillment_type: shipping
                 fulfilled_at:
-                tracking_status:
-                estimated_delivery_at:
                 delivered_at:
                 items:
                 - item_id: li_UkLWZg9DAJ
                   variant_id: variant_UkLWZg9DAJ
                   quantity: 1
+                deliveries:
+                - id: dlv_UkLWZg9DAJ
+                  tracking_number: U10000
+                  carrier:
+                  carrier_name:
+                  service:
+                  status: pending
+                  tracking_url:
+                  estimated_delivery_at:
+                  delivered_at:
+                  details:
+                  created_at: '2026-01-15T12:00:00.000Z'
+                  updated_at: '2026-01-15T12:00:00.000Z'
+                  shipping_label_id:
                 metadata: {}
-                tracking_details:
                 adjustment_total: '0.0'
                 pre_tax_amount: '100.0'
                 created_at: '2026-01-15T12:00:00.000Z'
@@ -7843,6 +7872,7 @@ paths:
                 order_id: or_UkLWZg9DAJ
                 stock_location_id: sloc_UkLWZg9DAJ
                 documents: []
+                labels: []
                 provider_generates_labels: false
     patch:
       summary: Update a shipment
@@ -7906,8 +7936,6 @@ paths:
                 number: R1001-F1
                 tracking: 1Z999AA10123456784
                 tracking_url: https://www.ups.com/track?tracknum=1Z999AA10123456784
-                tracking_carrier: ups
-                tracking_carrier_name: UPS
                 pickup_point_data:
                 selected_delivery_rate_id: dr_gbHJdmfrXB
                 unpriced: false
@@ -7926,15 +7954,26 @@ paths:
                 status: unfulfilled
                 fulfillment_type: shipping
                 fulfilled_at:
-                tracking_status:
-                estimated_delivery_at:
                 delivered_at:
                 items:
                 - item_id: li_UkLWZg9DAJ
                   variant_id: variant_UkLWZg9DAJ
                   quantity: 1
+                deliveries:
+                - id: dlv_UkLWZg9DAJ
+                  tracking_number: 1Z999AA10123456784
+                  carrier: ups
+                  carrier_name: UPS
+                  service:
+                  status: pending
+                  tracking_url: https://www.ups.com/track?tracknum=1Z999AA10123456784
+                  estimated_delivery_at:
+                  delivered_at:
+                  details:
+                  created_at: '2026-01-15T12:00:00.000Z'
+                  updated_at: '2026-01-15T12:00:00.000Z'
+                  shipping_label_id:
                 metadata: {}
-                tracking_details:
                 adjustment_total: '0.0'
                 pre_tax_amount: '100.0'
                 created_at: '2026-01-15T12:00:00.000Z'
@@ -7942,6 +7981,7 @@ paths:
                 order_id: or_UkLWZg9DAJ
                 stock_location_id: sloc_UkLWZg9DAJ
                 documents: []
+                labels: []
                 provider_generates_labels: false
       requestBody:
         content:
@@ -8019,8 +8059,6 @@ paths:
                 number: R1001-F1
                 tracking: U10000
                 tracking_url:
-                tracking_carrier:
-                tracking_carrier_name:
                 pickup_point_data:
                 selected_delivery_rate_id: dr_gbHJdmfrXB
                 unpriced: false
@@ -8039,15 +8077,26 @@ paths:
                 status: fulfilled
                 fulfillment_type: shipping
                 fulfilled_at: '2026-01-15T12:00:00.000Z'
-                tracking_status:
-                estimated_delivery_at:
                 delivered_at:
                 items:
                 - item_id: li_UkLWZg9DAJ
                   variant_id: variant_UkLWZg9DAJ
                   quantity: 1
+                deliveries:
+                - id: dlv_UkLWZg9DAJ
+                  tracking_number: U10000
+                  carrier:
+                  carrier_name:
+                  service:
+                  status: pending
+                  tracking_url:
+                  estimated_delivery_at:
+                  delivered_at:
+                  details:
+                  created_at: '2026-01-15T12:00:00.000Z'
+                  updated_at: '2026-01-15T12:00:00.000Z'
+                  shipping_label_id:
                 metadata: {}
-                tracking_details:
                 adjustment_total: '0.0'
                 pre_tax_amount: '100.0'
                 created_at: '2026-01-15T12:00:00.000Z'
@@ -8055,122 +8104,8 @@ paths:
                 order_id: or_UkLWZg9DAJ
                 stock_location_id: sloc_UkLWZg9DAJ
                 documents: []
+                labels: []
                 provider_generates_labels: false
-  "/api/v3/admin/orders/{order_id}/fulfillments/{id}/purchase_label":
-    patch:
-      summary: Buy the shipping label
-      tags:
-      - Fulfillments
-      security:
-      - api_key: []
-        bearer_auth: []
-      description: |-
-        Buys the shipping label for a parcel that has not shipped yet — print it, pack the box, then mark the fulfillment fulfilled. Only delivery methods whose provider produces labels accept this.
-
-        **Required scope:** `write_fulfillments` (for API-key authentication).
-      x-codeSamples:
-      - lang: javascript
-        label: Spree Admin SDK
-        source: |-
-          import { createAdminClient } from '@spree/admin-sdk'
-
-          const client = createAdminClient({
-            baseUrl: 'https://your-store.com',
-            secretKey: 'sk_xxx',
-          })
-
-          const fulfillment = await client.orders.fulfillments.purchaseLabel(
-            'or_UkLWZg9DAJ',
-            'ful_UkLWZg9DAJ',
-          )
-
-          // The label is ready to print; the parcel is still unfulfilled.
-          const label = fulfillment.documents.find((document) => document.kind === 'label')
-      - lang: bash
-        label: Spree CLI
-        source: spree api patch /orders/{order_id}/fulfillments/{id}/purchase_label
-          -d '{ ... }'
-      parameters:
-      - name: x-spree-api-key
-        in: header
-        required: true
-        schema:
-          type: string
-      - name: Authorization
-        in: header
-        required: true
-        description: Bearer token for admin authentication
-        schema:
-          type: string
-      - name: order_id
-        in: path
-        required: true
-        description: Order ID
-        schema:
-          type: string
-      - name: id
-        in: path
-        required: true
-        description: Fulfillment ID
-        schema:
-          type: string
-      responses:
-        '200':
-          description: label purchased
-          content:
-            application/json:
-              example:
-                id: ful_UkLWZg9DAJ
-                number: R1001-F1
-                tracking: LBL-123
-                tracking_url:
-                tracking_carrier:
-                tracking_carrier_name:
-                pickup_point_data:
-                selected_delivery_rate_id: dr_gbHJdmfrXB
-                unpriced: false
-                cost: '100.0'
-                display_cost: "$100.00"
-                total: '100.0'
-                display_total: "$100.00"
-                discount_total: '0.0'
-                display_discount_total: "$0.00"
-                additional_tax_total: '0.0'
-                display_additional_tax_total: "$0.00"
-                included_tax_total: '0.0'
-                display_included_tax_total: "$0.00"
-                tax_total: '0.0'
-                display_tax_total: "$0.00"
-                status: unfulfilled
-                fulfillment_type: shipping
-                fulfilled_at:
-                tracking_status:
-                estimated_delivery_at:
-                delivered_at:
-                items:
-                - item_id: li_UkLWZg9DAJ
-                  variant_id: variant_UkLWZg9DAJ
-                  quantity: 1
-                metadata: {}
-                tracking_details:
-                adjustment_total: '0.0'
-                pre_tax_amount: '100.0'
-                created_at: '2026-01-15T12:00:00.000Z'
-                updated_at: '2026-01-15T12:00:00.000Z'
-                order_id: or_UkLWZg9DAJ
-                stock_location_id: sloc_UkLWZg9DAJ
-                documents:
-                - kind: label
-                  url: https://carrier.example/label.pdf
-                provider_generates_labels: true
-        '422':
-          description: provider does not produce labels
-          content:
-            application/json:
-              example:
-                error:
-                  code: processing_error
-                  message: This delivery method's provider does not produce labels
   "/api/v3/admin/orders/{order_id}/fulfillments/{id}/mark_delivered":
     patch:
       summary: Mark a fulfillment delivered
@@ -8237,8 +8172,6 @@ paths:
                 number: R1001-F1
                 tracking: U10000
                 tracking_url:
-                tracking_carrier:
-                tracking_carrier_name:
                 pickup_point_data:
                 selected_delivery_rate_id: dr_gbHJdmfrXB
                 unpriced: false
@@ -8257,15 +8190,26 @@ paths:
                 status: delivered
                 fulfillment_type: shipping
                 fulfilled_at: '2026-01-15T12:00:00.000Z'
-                tracking_status:
-                estimated_delivery_at:
                 delivered_at: '2026-01-15T12:00:00.000Z'
                 items:
                 - item_id: li_UkLWZg9DAJ
                   variant_id: variant_UkLWZg9DAJ
                   quantity: 1
+                deliveries:
+                - id: dlv_UkLWZg9DAJ
+                  tracking_number: U10000
+                  carrier:
+                  carrier_name:
+                  service:
+                  status: delivered
+                  tracking_url:
+                  estimated_delivery_at:
+                  delivered_at: '2026-01-15T12:00:00.000Z'
+                  details:
+                  created_at: '2026-01-15T12:00:00.000Z'
+                  updated_at: '2026-01-15T12:00:00.000Z'
+                  shipping_label_id:
                 metadata: {}
-                tracking_details:
                 adjustment_total: '0.0'
                 pre_tax_amount: '100.0'
                 created_at: '2026-01-15T12:00:00.000Z'
@@ -8273,6 +8217,7 @@ paths:
                 order_id: or_UkLWZg9DAJ
                 stock_location_id: sloc_UkLWZg9DAJ
                 documents: []
+                labels: []
                 provider_generates_labels: false
         '422':
           description: fulfillment has not shipped
@@ -8358,8 +8303,6 @@ paths:
                 number: R1001-F1
                 tracking: U10000
                 tracking_url:
-                tracking_carrier:
-                tracking_carrier_name:
                 pickup_point_data:
                 selected_delivery_rate_id: dr_gbHJdmfrXB
                 unpriced: false
@@ -8378,15 +8321,26 @@ paths:
                 status: canceled
                 fulfillment_type: shipping
                 fulfilled_at:
-                tracking_status:
-                estimated_delivery_at:
                 delivered_at:
                 items:
                 - item_id: li_UkLWZg9DAJ
                   variant_id: variant_UkLWZg9DAJ
                   quantity: 1
+                deliveries:
+                - id: dlv_UkLWZg9DAJ
+                  tracking_number: U10000
+                  carrier:
+                  carrier_name:
+                  service:
+                  status: pending
+                  tracking_url:
+                  estimated_delivery_at:
+                  delivered_at:
+                  details:
+                  created_at: '2026-01-15T12:00:00.000Z'
+                  updated_at: '2026-01-15T12:00:00.000Z'
+                  shipping_label_id:
                 metadata: {}
-                tracking_details:
                 adjustment_total: '0.0'
                 pre_tax_amount: '100.0'
                 created_at: '2026-01-15T12:00:00.000Z'
@@ -8394,6 +8348,7 @@ paths:
                 order_id: or_UkLWZg9DAJ
                 stock_location_id: sloc_UkLWZg9DAJ
                 documents: []
+                labels: []
                 provider_generates_labels: false
   "/api/v3/admin/orders/{order_id}/fulfillments/{id}/split":
     patch:
@@ -8468,8 +8423,6 @@ paths:
                   number: R1001-F1
                   tracking:
                   tracking_url:
-                  tracking_carrier:
-                  tracking_carrier_name:
                   pickup_point_data:
                   selected_delivery_rate_id: dr_EfhxLZ9ck8
                   unpriced: false
@@ -8488,15 +8441,13 @@ paths:
                   status: unfulfilled
                   fulfillment_type: shipping
                   fulfilled_at:
-                  tracking_status:
-                  estimated_delivery_at:
                   delivered_at:
                   items:
                   - item_id: li_UkLWZg9DAJ
                     variant_id: variant_UkLWZg9DAJ
                     quantity: 1
+                  deliveries: []
                   metadata: {}
-                  tracking_details:
                   adjustment_total: '0.0'
                   pre_tax_amount: '0.0'
                   created_at: '2026-01-15T12:00:00.000Z'
@@ -8504,6 +8455,7 @@ paths:
                   order_id: or_UkLWZg9DAJ
                   stock_location_id: sloc_gbHJdmfrXB
                   documents: []
+                  labels: []
                   provider_generates_labels: false
       requestBody:
         content:
@@ -12371,8 +12323,8 @@ paths:
                   preorder_ships_at:
                   quantity: 2
                   currency: USD
-                  name: Product 499180
-                  slug: product-499180
+                  name: Product 539180
+                  slug: product-539180
                   options_text: 'Size: S'
                   price: '10.0'
                   display_price: "$10.00"
@@ -12484,8 +12436,8 @@ paths:
                 preorder_ships_at:
                 quantity: 3
                 currency: USD
-                name: Product 5199
-                slug: product-5199
+                name: Product 5599
+                slug: product-5599
                 options_text: 'Size: S'
                 price: '19.99'
                 display_price: "$19.99"
@@ -12619,8 +12571,8 @@ paths:
                 preorder_ships_at:
                 quantity: 2
                 currency: USD
-                name: Product 522714
-                slug: product-522714
+                name: Product 562714
+                slug: product-562714
                 options_text: 'Size: S'
                 price: '10.0'
                 display_price: "$10.00"
@@ -12727,8 +12679,8 @@ paths:
                 preorder_ships_at:
                 quantity: 5
                 currency: USD
-                name: Product 539758
-                slug: product-539758
+                name: Product 579758
+                slug: product-579758
                 options_text: 'Size: S'
                 price: '19.99'
                 display_price: "$19.99"
@@ -17192,8 +17144,8 @@ paths:
               example:
                 data:
                 - id: prod_UkLWZg9DAJ
-                  name: Product 906550
-                  slug: product-906550
+                  name: Product 1016550
+                  slug: product-1016550
                   meta_title:
                   meta_description:
                   meta_keywords:
@@ -17586,8 +17538,8 @@ paths:
             application/json:
               example:
                 id: prod_UkLWZg9DAJ
-                name: Product 942061
-                slug: product-942061
+                name: Product 1052061
+                slug: product-1052061
                 meta_title:
                 meta_description:
                 meta_keywords:
@@ -17700,7 +17652,7 @@ paths:
               example:
                 id: prod_UkLWZg9DAJ
                 name: Updated Name
-                slug: product-965339
+                slug: product-1075339
                 meta_title:
                 meta_description:
                 meta_keywords:
@@ -21944,12 +21896,12 @@ paths:
                   label: Option Value(s)
                   description:
                   preference_schema:
-                  - key: eligible_values
-                    type: array
-                    default: []
                   - key: match_policy
                     type: string
                     default: any
+                  - key: eligible_values
+                    type: array
+                    default: []
                 - type: product
                   label: Product(s)
                   description:
@@ -24835,6 +24787,7 @@ paths:
                   kind: warehouse
                   pickup_enabled: false
                   pickup_stock_policy: local
+                  returns_enabled: true
                   created_at: '2026-01-15T12:00:00.000Z'
                   updated_at: '2026-01-15T12:00:00.000Z'
                   seller_id:
@@ -24953,6 +24906,7 @@ paths:
                 kind: store
                 pickup_enabled: true
                 pickup_stock_policy: local
+                returns_enabled: true
                 created_at: '2026-01-15T12:00:00.000Z'
                 updated_at: '2026-01-15T12:00:00.000Z'
                 seller_id:
@@ -25134,6 +25088,7 @@ paths:
                 kind: warehouse
                 pickup_enabled: false
                 pickup_stock_policy: local
+                returns_enabled: true
                 created_at: '2026-01-15T12:00:00.000Z'
                 updated_at: '2026-01-15T12:00:00.000Z'
                 seller_id:
@@ -25227,6 +25182,7 @@ paths:
                 kind: warehouse
                 pickup_enabled: true
                 pickup_stock_policy: local
+                returns_enabled: true
                 created_at: '2026-01-15T12:00:00.000Z'
                 updated_at: '2026-01-15T12:00:00.000Z'
                 seller_id:
@@ -25439,7 +25395,7 @@ paths:
                 data:
                 - id: variant_UkLWZg9DAJ
                   product_id: prod_UkLWZg9DAJ
-                  sku: SKU-153
+                  sku: SKU-164
                   options_text: ''
                   track_inventory: true
                   media_count: 0
@@ -25494,11 +25450,11 @@ paths:
                   available_stock: 0
                   reserved_quantity: 0
                   total_on_hand: 0
-                  product_name: Product 1216804
+                  product_name: Product 1326804
                   delivery_profile_id: fp_UkLWZg9DAJ
                 - id: variant_gbHJdmfrXB
                   product_id: prod_UkLWZg9DAJ
-                  sku: SKU-154
+                  sku: SKU-165
                   options_text: 'Size: S'
                   track_inventory: true
                   media_count: 0
@@ -25565,7 +25521,7 @@ paths:
                   available_stock: 0
                   reserved_quantity: 0
                   total_on_hand: 0
-                  product_name: Product 1216804
+                  product_name: Product 1326804
                   delivery_profile_id: fp_UkLWZg9DAJ
                 meta:
                   page: 1
@@ -25711,7 +25667,7 @@ paths:
                 available_stock: 0
                 reserved_quantity: 0
                 total_on_hand: 0
-                product_name: Product 1221771
+                product_name: Product 1331771
                 delivery_profile_id: fp_UkLWZg9DAJ
         '422':
           description: validation error
@@ -25890,7 +25846,7 @@ paths:
               example:
                 id: variant_gbHJdmfrXB
                 product_id: prod_UkLWZg9DAJ
-                sku: SKU-160
+                sku: SKU-171
                 options_text: 'Size: S'
                 track_inventory: true
                 media_count: 0
@@ -25957,7 +25913,7 @@ paths:
                 available_stock: 0
                 reserved_quantity: 0
                 total_on_hand: 0
-                product_name: Product 1244025
+                product_name: Product 1354025
                 delivery_profile_id: fp_UkLWZg9DAJ
         '404':
           description: variant not found
@@ -26097,7 +26053,7 @@ paths:
                 available_stock: 0
                 reserved_quantity: 0
                 total_on_hand: 0
-                product_name: Product 1265672
+                product_name: Product 1375672
                 delivery_profile_id: fp_UkLWZg9DAJ
       requestBody:
         content:
@@ -31774,12 +31730,12 @@ paths:
                   - key: normal_amount
                     type: decimal
                     default: 0
-                  - key: currency
-                    type: string
-                    default: USD
                   - key: discount_amount
                     type: decimal
                     default: 0
+                  - key: currency
+                    type: string
+                    default: USD
                 - type: Spree::Calculator::Shipping::DigitalDelivery
                   name: Digital Delivery
                   preference_schema:
@@ -31975,14 +31931,14 @@ paths:
                   type: carrier
                   group: shipping
                   preferences:
-                    account_number: '42'
                     api_key: "•••••cret"
+                    account_number: '42'
                   preference_schema:
-                  - key: account_number
-                    type: string
-                    default:
                   - key: api_key
                     type: password
+                    default:
+                  - key: account_number
+                    type: string
                     default:
                 meta:
                   page: 1
@@ -32048,14 +32004,14 @@ paths:
                 type: carrier
                 group: shipping
                 preferences:
-                  account_number:
                   api_key: "•••••cret"
+                  account_number:
                 preference_schema:
-                - key: account_number
-                  type: string
-                  default:
                 - key: api_key
                   type: password
+                  default:
+                - key: account_number
+                  type: string
                   default:
       requestBody:
         content:
@@ -32128,11 +32084,11 @@ paths:
                   description:
                   logo_url:
                   preference_schema:
-                  - key: account_number
-                    type: string
-                    default:
                   - key: api_key
                     type: password
+                    default:
+                  - key: account_number
+                    type: string
                     default:
   "/api/v3/admin/integrations/{id}/test":
     post:
@@ -32245,13 +32201,13 @@ paths:
                   video_embed_url:
                   video_url:
                   poster_url:
-                  original_url: http://localhost:3000/rails/active_storage/blobs/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--e2b9d3423fcc7ef12dc22ca681561bb7441a1b28/thinking-cat.jpg
-                  mini_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--e2b9d3423fcc7ef12dc22ca681561bb7441a1b28/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOlsxMjgsMTI4XSwic2F2ZXIiOnsic3RyaXAiOnRydWUsInF1YWxpdHkiOjc1LCJsb3NzbGVzcyI6ZmFsc2UsImFscGhhX3EiOjg1LCJyZWR1Y3Rpb25fZWZmb3J0Ijo2LCJzbWFydF9zdWJzYW1wbGUiOnRydWV9fSwicHVyIjoidmFyaWF0aW9uIn19--da38cae0616f9463732313f1036e8ba6e39de397/thinking-cat.jpg
-                  small_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--e2b9d3423fcc7ef12dc22ca681561bb7441a1b28/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOlsyNTYsMjU2XSwic2F2ZXIiOnsic3RyaXAiOnRydWUsInF1YWxpdHkiOjc1LCJsb3NzbGVzcyI6ZmFsc2UsImFscGhhX3EiOjg1LCJyZWR1Y3Rpb25fZWZmb3J0Ijo2LCJzbWFydF9zdWJzYW1wbGUiOnRydWV9fSwicHVyIjoidmFyaWF0aW9uIn19--854d21ba03e9fbcdeb118a3328190044a41a7be2/thinking-cat.jpg
-                  medium_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--e2b9d3423fcc7ef12dc22ca681561bb7441a1b28/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOls0MDAsNDAwXSwic2F2ZXIiOnsic3RyaXAiOnRydWUsInF1YWxpdHkiOjc1LCJsb3NzbGVzcyI6ZmFsc2UsImFscGhhX3EiOjg1LCJyZWR1Y3Rpb25fZWZmb3J0Ijo2LCJzbWFydF9zdWJzYW1wbGUiOnRydWV9fSwicHVyIjoidmFyaWF0aW9uIn19--015518e905d30d0488e383fdbf3bff9b01ea511f/thinking-cat.jpg
-                  large_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--e2b9d3423fcc7ef12dc22ca681561bb7441a1b28/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOls3MjAsNzIwXSwic2F2ZXIiOnsic3RyaXAiOnRydWUsInF1YWxpdHkiOjc1LCJsb3NzbGVzcyI6ZmFsc2UsImFscGhhX3EiOjg1LCJyZWR1Y3Rpb25fZWZmb3J0Ijo2LCJzbWFydF9zdWJzYW1wbGUiOnRydWV9fSwicHVyIjoidmFyaWF0aW9uIn19--c0bb240c5e833aaa1d69c96d2a8564feac660dcd/thinking-cat.jpg
-                  xlarge_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--e2b9d3423fcc7ef12dc22ca681561bb7441a1b28/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOlsyMDAwLDIwMDBdLCJzYXZlciI6eyJzdHJpcCI6dHJ1ZSwicXVhbGl0eSI6NzUsImxvc3NsZXNzIjpmYWxzZSwiYWxwaGFfcSI6ODUsInJlZHVjdGlvbl9lZmZvcnQiOjYsInNtYXJ0X3N1YnNhbXBsZSI6dHJ1ZX19LCJwdXIiOiJ2YXJpYXRpb24ifX0=--0813161949ca9e43d581901421094f4e9b1c945d/thinking-cat.jpg
-                  og_image_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--e2b9d3423fcc7ef12dc22ca681561bb7441a1b28/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOlsxMjAwLDYzMF0sInNhdmVyIjp7InN0cmlwIjp0cnVlLCJxdWFsaXR5Ijo3NSwibG9zc2xlc3MiOmZhbHNlLCJhbHBoYV9xIjo4NSwicmVkdWN0aW9uX2VmZm9ydCI6Niwic21hcnRfc3Vic2FtcGxlIjp0cnVlfX0sInB1ciI6InZhcmlhdGlvbiJ9fQ==--2a213ff73caecf619081f766907aa78aaed54aeb/thinking-cat.jpg
+                  original_url: http://localhost:3000/rails/active_storage/blobs/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--1163a14a921bc6b9d54fe1499de4d97e9d0527ca/thinking-cat.jpg
+                  mini_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--1163a14a921bc6b9d54fe1499de4d97e9d0527ca/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOlsxMjgsMTI4XSwic2F2ZXIiOnsic3RyaXAiOnRydWUsInF1YWxpdHkiOjc1LCJsb3NzbGVzcyI6ZmFsc2UsImFscGhhX3EiOjg1LCJyZWR1Y3Rpb25fZWZmb3J0Ijo2LCJzbWFydF9zdWJzYW1wbGUiOnRydWV9fSwicHVyIjoidmFyaWF0aW9uIn19--3731278b1c86329b37f6e92b953ddd35adc39d8e/thinking-cat.jpg
+                  small_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--1163a14a921bc6b9d54fe1499de4d97e9d0527ca/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOlsyNTYsMjU2XSwic2F2ZXIiOnsic3RyaXAiOnRydWUsInF1YWxpdHkiOjc1LCJsb3NzbGVzcyI6ZmFsc2UsImFscGhhX3EiOjg1LCJyZWR1Y3Rpb25fZWZmb3J0Ijo2LCJzbWFydF9zdWJzYW1wbGUiOnRydWV9fSwicHVyIjoidmFyaWF0aW9uIn19--ae05085b0615bb4066b2bed0130d155f3ecdfab6/thinking-cat.jpg
+                  medium_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--1163a14a921bc6b9d54fe1499de4d97e9d0527ca/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOls0MDAsNDAwXSwic2F2ZXIiOnsic3RyaXAiOnRydWUsInF1YWxpdHkiOjc1LCJsb3NzbGVzcyI6ZmFsc2UsImFscGhhX3EiOjg1LCJyZWR1Y3Rpb25fZWZmb3J0Ijo2LCJzbWFydF9zdWJzYW1wbGUiOnRydWV9fSwicHVyIjoidmFyaWF0aW9uIn19--7213e35846ca3bf13cdf7d00e08fd09f22fcf5fe/thinking-cat.jpg
+                  large_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--1163a14a921bc6b9d54fe1499de4d97e9d0527ca/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOls3MjAsNzIwXSwic2F2ZXIiOnsic3RyaXAiOnRydWUsInF1YWxpdHkiOjc1LCJsb3NzbGVzcyI6ZmFsc2UsImFscGhhX3EiOjg1LCJyZWR1Y3Rpb25fZWZmb3J0Ijo2LCJzbWFydF9zdWJzYW1wbGUiOnRydWV9fSwicHVyIjoidmFyaWF0aW9uIn19--d687409147b99f1769646dce2390a6976048bd41/thinking-cat.jpg
+                  xlarge_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--1163a14a921bc6b9d54fe1499de4d97e9d0527ca/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOlsyMDAwLDIwMDBdLCJzYXZlciI6eyJzdHJpcCI6dHJ1ZSwicXVhbGl0eSI6NzUsImxvc3NsZXNzIjpmYWxzZSwiYWxwaGFfcSI6ODUsInJlZHVjdGlvbl9lZmZvcnQiOjYsInNtYXJ0X3N1YnNhbXBsZSI6dHJ1ZX19LCJwdXIiOiJ2YXJpYXRpb24ifX0=--cc44c538cfc30b7f8786d5d34a0358ae91ba76b1/thinking-cat.jpg
+                  og_image_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--1163a14a921bc6b9d54fe1499de4d97e9d0527ca/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOlsxMjAwLDYzMF0sInNhdmVyIjp7InN0cmlwIjp0cnVlLCJxdWFsaXR5Ijo3NSwibG9zc2xlc3MiOmZhbHNlLCJhbHBoYV9xIjo4NSwicmVkdWN0aW9uX2VmZm9ydCI6Niwic21hcnRfc3Vic2FtcGxlIjp0cnVlfX0sInB1ciI6InZhcmlhdGlvbiJ9fQ==--433a1aa4c93b82845a6ff99c4698a37cf073e3c4/thinking-cat.jpg
                   external_references: {}
                   created_at: '2026-01-15T12:00:00.000Z'
                   updated_at: '2026-01-15T12:00:00.000Z'
@@ -32259,10 +32215,10 @@ paths:
                   filename: thinking-cat.jpg
                   content_type: image/jpeg
                   byte_size: 18090
-                  embed_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--e2b9d3423fcc7ef12dc22ca681561bb7441a1b28/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2xpbWl0IjpbMTIwMCwxMjAwXSwic2F2ZXIiOnsic3RyaXAiOnRydWUsInF1YWxpdHkiOjc1LCJsb3NzbGVzcyI6ZmFsc2UsImFscGhhX3EiOjg1LCJyZWR1Y3Rpb25fZWZmb3J0Ijo2LCJzbWFydF9zdWJzYW1wbGUiOnRydWV9fSwicHVyIjoidmFyaWF0aW9uIn19--5c1fec5ac6e319124bc46ef8fddb1ae741e2ffe8/thinking-cat.jpg
-                  signed_id: eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--e2b9d3423fcc7ef12dc22ca681561bb7441a1b28
+                  embed_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--1163a14a921bc6b9d54fe1499de4d97e9d0527ca/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2xpbWl0IjpbMTIwMCwxMjAwXSwic2F2ZXIiOnsic3RyaXAiOnRydWUsInF1YWxpdHkiOjc1LCJsb3NzbGVzcyI6ZmFsc2UsImFscGhhX3EiOjg1LCJyZWR1Y3Rpb25fZWZmb3J0Ijo2LCJzbWFydF9zdWJzYW1wbGUiOnRydWV9fSwicHVyIjoidmFyaWF0aW9uIn19--242558639bf438d8b844fd8c3df85abc76c30928/thinking-cat.jpg
+                  signed_id: eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--1163a14a921bc6b9d54fe1499de4d97e9d0527ca
                   viewable_id: prod_UkLWZg9DAJ
-                  download_url: http://localhost:3000/rails/active_storage/blobs/redirect/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--e2b9d3423fcc7ef12dc22ca681561bb7441a1b28/thinking-cat.jpg?disposition=attachment
+                  download_url: http://localhost:3000/rails/active_storage/blobs/redirect/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--1163a14a921bc6b9d54fe1499de4d97e9d0527ca/thinking-cat.jpg?disposition=attachment
                   metadata: {}
                   viewable_type: product
                 meta:
@@ -32333,13 +32289,13 @@ paths:
                 video_embed_url:
                 video_url:
                 poster_url:
-                original_url: http://localhost:3000/rails/active_storage/blobs/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MiwicHVyIjoiYmxvYl9pZCJ9fQ==--4c41a6d6bd6ec23a50dfd0d84817c1fe3832d518/library-upload.jpg
-                mini_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MiwicHVyIjoiYmxvYl9pZCJ9fQ==--4c41a6d6bd6ec23a50dfd0d84817c1fe3832d518/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOlsxMjgsMTI4XSwic2F2ZXIiOnsic3RyaXAiOnRydWUsInF1YWxpdHkiOjc1LCJsb3NzbGVzcyI6ZmFsc2UsImFscGhhX3EiOjg1LCJyZWR1Y3Rpb25fZWZmb3J0Ijo2LCJzbWFydF9zdWJzYW1wbGUiOnRydWV9fSwicHVyIjoidmFyaWF0aW9uIn19--da38cae0616f9463732313f1036e8ba6e39de397/library-upload.jpg
-                small_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MiwicHVyIjoiYmxvYl9pZCJ9fQ==--4c41a6d6bd6ec23a50dfd0d84817c1fe3832d518/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOlsyNTYsMjU2XSwic2F2ZXIiOnsic3RyaXAiOnRydWUsInF1YWxpdHkiOjc1LCJsb3NzbGVzcyI6ZmFsc2UsImFscGhhX3EiOjg1LCJyZWR1Y3Rpb25fZWZmb3J0Ijo2LCJzbWFydF9zdWJzYW1wbGUiOnRydWV9fSwicHVyIjoidmFyaWF0aW9uIn19--854d21ba03e9fbcdeb118a3328190044a41a7be2/library-upload.jpg
-                medium_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MiwicHVyIjoiYmxvYl9pZCJ9fQ==--4c41a6d6bd6ec23a50dfd0d84817c1fe3832d518/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOls0MDAsNDAwXSwic2F2ZXIiOnsic3RyaXAiOnRydWUsInF1YWxpdHkiOjc1LCJsb3NzbGVzcyI6ZmFsc2UsImFscGhhX3EiOjg1LCJyZWR1Y3Rpb25fZWZmb3J0Ijo2LCJzbWFydF9zdWJzYW1wbGUiOnRydWV9fSwicHVyIjoidmFyaWF0aW9uIn19--015518e905d30d0488e383fdbf3bff9b01ea511f/library-upload.jpg
-                large_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MiwicHVyIjoiYmxvYl9pZCJ9fQ==--4c41a6d6bd6ec23a50dfd0d84817c1fe3832d518/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOls3MjAsNzIwXSwic2F2ZXIiOnsic3RyaXAiOnRydWUsInF1YWxpdHkiOjc1LCJsb3NzbGVzcyI6ZmFsc2UsImFscGhhX3EiOjg1LCJyZWR1Y3Rpb25fZWZmb3J0Ijo2LCJzbWFydF9zdWJzYW1wbGUiOnRydWV9fSwicHVyIjoidmFyaWF0aW9uIn19--c0bb240c5e833aaa1d69c96d2a8564feac660dcd/library-upload.jpg
-                xlarge_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MiwicHVyIjoiYmxvYl9pZCJ9fQ==--4c41a6d6bd6ec23a50dfd0d84817c1fe3832d518/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOlsyMDAwLDIwMDBdLCJzYXZlciI6eyJzdHJpcCI6dHJ1ZSwicXVhbGl0eSI6NzUsImxvc3NsZXNzIjpmYWxzZSwiYWxwaGFfcSI6ODUsInJlZHVjdGlvbl9lZmZvcnQiOjYsInNtYXJ0X3N1YnNhbXBsZSI6dHJ1ZX19LCJwdXIiOiJ2YXJpYXRpb24ifX0=--0813161949ca9e43d581901421094f4e9b1c945d/library-upload.jpg
-                og_image_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MiwicHVyIjoiYmxvYl9pZCJ9fQ==--4c41a6d6bd6ec23a50dfd0d84817c1fe3832d518/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOlsxMjAwLDYzMF0sInNhdmVyIjp7InN0cmlwIjp0cnVlLCJxdWFsaXR5Ijo3NSwibG9zc2xlc3MiOmZhbHNlLCJhbHBoYV9xIjo4NSwicmVkdWN0aW9uX2VmZm9ydCI6Niwic21hcnRfc3Vic2FtcGxlIjp0cnVlfX0sInB1ciI6InZhcmlhdGlvbiJ9fQ==--2a213ff73caecf619081f766907aa78aaed54aeb/library-upload.jpg
+                original_url: http://localhost:3000/rails/active_storage/blobs/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MiwicHVyIjoiYmxvYl9pZCJ9fQ==--c5c44fe3a545f6fc7ca81e21faf249bf89806f20/library-upload.jpg
+                mini_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MiwicHVyIjoiYmxvYl9pZCJ9fQ==--c5c44fe3a545f6fc7ca81e21faf249bf89806f20/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOlsxMjgsMTI4XSwic2F2ZXIiOnsic3RyaXAiOnRydWUsInF1YWxpdHkiOjc1LCJsb3NzbGVzcyI6ZmFsc2UsImFscGhhX3EiOjg1LCJyZWR1Y3Rpb25fZWZmb3J0Ijo2LCJzbWFydF9zdWJzYW1wbGUiOnRydWV9fSwicHVyIjoidmFyaWF0aW9uIn19--3731278b1c86329b37f6e92b953ddd35adc39d8e/library-upload.jpg
+                small_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MiwicHVyIjoiYmxvYl9pZCJ9fQ==--c5c44fe3a545f6fc7ca81e21faf249bf89806f20/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOlsyNTYsMjU2XSwic2F2ZXIiOnsic3RyaXAiOnRydWUsInF1YWxpdHkiOjc1LCJsb3NzbGVzcyI6ZmFsc2UsImFscGhhX3EiOjg1LCJyZWR1Y3Rpb25fZWZmb3J0Ijo2LCJzbWFydF9zdWJzYW1wbGUiOnRydWV9fSwicHVyIjoidmFyaWF0aW9uIn19--ae05085b0615bb4066b2bed0130d155f3ecdfab6/library-upload.jpg
+                medium_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MiwicHVyIjoiYmxvYl9pZCJ9fQ==--c5c44fe3a545f6fc7ca81e21faf249bf89806f20/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOls0MDAsNDAwXSwic2F2ZXIiOnsic3RyaXAiOnRydWUsInF1YWxpdHkiOjc1LCJsb3NzbGVzcyI6ZmFsc2UsImFscGhhX3EiOjg1LCJyZWR1Y3Rpb25fZWZmb3J0Ijo2LCJzbWFydF9zdWJzYW1wbGUiOnRydWV9fSwicHVyIjoidmFyaWF0aW9uIn19--7213e35846ca3bf13cdf7d00e08fd09f22fcf5fe/library-upload.jpg
+                large_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MiwicHVyIjoiYmxvYl9pZCJ9fQ==--c5c44fe3a545f6fc7ca81e21faf249bf89806f20/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOls3MjAsNzIwXSwic2F2ZXIiOnsic3RyaXAiOnRydWUsInF1YWxpdHkiOjc1LCJsb3NzbGVzcyI6ZmFsc2UsImFscGhhX3EiOjg1LCJyZWR1Y3Rpb25fZWZmb3J0Ijo2LCJzbWFydF9zdWJzYW1wbGUiOnRydWV9fSwicHVyIjoidmFyaWF0aW9uIn19--d687409147b99f1769646dce2390a6976048bd41/library-upload.jpg
+                xlarge_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MiwicHVyIjoiYmxvYl9pZCJ9fQ==--c5c44fe3a545f6fc7ca81e21faf249bf89806f20/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOlsyMDAwLDIwMDBdLCJzYXZlciI6eyJzdHJpcCI6dHJ1ZSwicXVhbGl0eSI6NzUsImxvc3NsZXNzIjpmYWxzZSwiYWxwaGFfcSI6ODUsInJlZHVjdGlvbl9lZmZvcnQiOjYsInNtYXJ0X3N1YnNhbXBsZSI6dHJ1ZX19LCJwdXIiOiJ2YXJpYXRpb24ifX0=--cc44c538cfc30b7f8786d5d34a0358ae91ba76b1/library-upload.jpg
+                og_image_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MiwicHVyIjoiYmxvYl9pZCJ9fQ==--c5c44fe3a545f6fc7ca81e21faf249bf89806f20/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOlsxMjAwLDYzMF0sInNhdmVyIjp7InN0cmlwIjp0cnVlLCJxdWFsaXR5Ijo3NSwibG9zc2xlc3MiOmZhbHNlLCJhbHBoYV9xIjo4NSwicmVkdWN0aW9uX2VmZm9ydCI6Niwic21hcnRfc3Vic2FtcGxlIjp0cnVlfX0sInB1ciI6InZhcmlhdGlvbiJ9fQ==--433a1aa4c93b82845a6ff99c4698a37cf073e3c4/library-upload.jpg
                 external_references: {}
                 created_at: '2026-01-15T12:00:00.000Z'
                 updated_at: '2026-01-15T12:00:00.000Z'
@@ -32347,10 +32303,10 @@ paths:
                 filename: library-upload.jpg
                 content_type: image/jpeg
                 byte_size: 18090
-                embed_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MiwicHVyIjoiYmxvYl9pZCJ9fQ==--4c41a6d6bd6ec23a50dfd0d84817c1fe3832d518/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2xpbWl0IjpbMTIwMCwxMjAwXSwic2F2ZXIiOnsic3RyaXAiOnRydWUsInF1YWxpdHkiOjc1LCJsb3NzbGVzcyI6ZmFsc2UsImFscGhhX3EiOjg1LCJyZWR1Y3Rpb25fZWZmb3J0Ijo2LCJzbWFydF9zdWJzYW1wbGUiOnRydWV9fSwicHVyIjoidmFyaWF0aW9uIn19--5c1fec5ac6e319124bc46ef8fddb1ae741e2ffe8/library-upload.jpg
-                signed_id: eyJfcmFpbHMiOnsiZGF0YSI6MiwicHVyIjoiYmxvYl9pZCJ9fQ==--4c41a6d6bd6ec23a50dfd0d84817c1fe3832d518
+                embed_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MiwicHVyIjoiYmxvYl9pZCJ9fQ==--c5c44fe3a545f6fc7ca81e21faf249bf89806f20/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2xpbWl0IjpbMTIwMCwxMjAwXSwic2F2ZXIiOnsic3RyaXAiOnRydWUsInF1YWxpdHkiOjc1LCJsb3NzbGVzcyI6ZmFsc2UsImFscGhhX3EiOjg1LCJyZWR1Y3Rpb25fZWZmb3J0Ijo2LCJzbWFydF9zdWJzYW1wbGUiOnRydWV9fSwicHVyIjoidmFyaWF0aW9uIn19--242558639bf438d8b844fd8c3df85abc76c30928/library-upload.jpg
+                signed_id: eyJfcmFpbHMiOnsiZGF0YSI6MiwicHVyIjoiYmxvYl9pZCJ9fQ==--c5c44fe3a545f6fc7ca81e21faf249bf89806f20
                 viewable_id:
-                download_url: http://localhost:3000/rails/active_storage/blobs/redirect/eyJfcmFpbHMiOnsiZGF0YSI6MiwicHVyIjoiYmxvYl9pZCJ9fQ==--4c41a6d6bd6ec23a50dfd0d84817c1fe3832d518/library-upload.jpg?disposition=attachment
+                download_url: http://localhost:3000/rails/active_storage/blobs/redirect/eyJfcmFpbHMiOnsiZGF0YSI6MiwicHVyIjoiYmxvYl9pZCJ9fQ==--c5c44fe3a545f6fc7ca81e21faf249bf89806f20/library-upload.jpg?disposition=attachment
                 metadata: {}
                 viewable_type:
               schema:
@@ -32507,13 +32463,13 @@ paths:
                 video_embed_url:
                 video_url:
                 poster_url:
-                original_url: http://localhost:3000/rails/active_storage/blobs/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--e2b9d3423fcc7ef12dc22ca681561bb7441a1b28/thinking-cat.jpg
-                mini_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--e2b9d3423fcc7ef12dc22ca681561bb7441a1b28/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOlsxMjgsMTI4XSwic2F2ZXIiOnsic3RyaXAiOnRydWUsInF1YWxpdHkiOjc1LCJsb3NzbGVzcyI6ZmFsc2UsImFscGhhX3EiOjg1LCJyZWR1Y3Rpb25fZWZmb3J0Ijo2LCJzbWFydF9zdWJzYW1wbGUiOnRydWV9fSwicHVyIjoidmFyaWF0aW9uIn19--da38cae0616f9463732313f1036e8ba6e39de397/thinking-cat.jpg
-                small_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--e2b9d3423fcc7ef12dc22ca681561bb7441a1b28/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOlsyNTYsMjU2XSwic2F2ZXIiOnsic3RyaXAiOnRydWUsInF1YWxpdHkiOjc1LCJsb3NzbGVzcyI6ZmFsc2UsImFscGhhX3EiOjg1LCJyZWR1Y3Rpb25fZWZmb3J0Ijo2LCJzbWFydF9zdWJzYW1wbGUiOnRydWV9fSwicHVyIjoidmFyaWF0aW9uIn19--854d21ba03e9fbcdeb118a3328190044a41a7be2/thinking-cat.jpg
-                medium_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--e2b9d3423fcc7ef12dc22ca681561bb7441a1b28/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOls0MDAsNDAwXSwic2F2ZXIiOnsic3RyaXAiOnRydWUsInF1YWxpdHkiOjc1LCJsb3NzbGVzcyI6ZmFsc2UsImFscGhhX3EiOjg1LCJyZWR1Y3Rpb25fZWZmb3J0Ijo2LCJzbWFydF9zdWJzYW1wbGUiOnRydWV9fSwicHVyIjoidmFyaWF0aW9uIn19--015518e905d30d0488e383fdbf3bff9b01ea511f/thinking-cat.jpg
-                large_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--e2b9d3423fcc7ef12dc22ca681561bb7441a1b28/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOls3MjAsNzIwXSwic2F2ZXIiOnsic3RyaXAiOnRydWUsInF1YWxpdHkiOjc1LCJsb3NzbGVzcyI6ZmFsc2UsImFscGhhX3EiOjg1LCJyZWR1Y3Rpb25fZWZmb3J0Ijo2LCJzbWFydF9zdWJzYW1wbGUiOnRydWV9fSwicHVyIjoidmFyaWF0aW9uIn19--c0bb240c5e833aaa1d69c96d2a8564feac660dcd/thinking-cat.jpg
-                xlarge_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--e2b9d3423fcc7ef12dc22ca681561bb7441a1b28/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOlsyMDAwLDIwMDBdLCJzYXZlciI6eyJzdHJpcCI6dHJ1ZSwicXVhbGl0eSI6NzUsImxvc3NsZXNzIjpmYWxzZSwiYWxwaGFfcSI6ODUsInJlZHVjdGlvbl9lZmZvcnQiOjYsInNtYXJ0X3N1YnNhbXBsZSI6dHJ1ZX19LCJwdXIiOiJ2YXJpYXRpb24ifX0=--0813161949ca9e43d581901421094f4e9b1c945d/thinking-cat.jpg
-                og_image_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--e2b9d3423fcc7ef12dc22ca681561bb7441a1b28/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOlsxMjAwLDYzMF0sInNhdmVyIjp7InN0cmlwIjp0cnVlLCJxdWFsaXR5Ijo3NSwibG9zc2xlc3MiOmZhbHNlLCJhbHBoYV9xIjo4NSwicmVkdWN0aW9uX2VmZm9ydCI6Niwic21hcnRfc3Vic2FtcGxlIjp0cnVlfX0sInB1ciI6InZhcmlhdGlvbiJ9fQ==--2a213ff73caecf619081f766907aa78aaed54aeb/thinking-cat.jpg
+                original_url: http://localhost:3000/rails/active_storage/blobs/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--1163a14a921bc6b9d54fe1499de4d97e9d0527ca/thinking-cat.jpg
+                mini_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--1163a14a921bc6b9d54fe1499de4d97e9d0527ca/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOlsxMjgsMTI4XSwic2F2ZXIiOnsic3RyaXAiOnRydWUsInF1YWxpdHkiOjc1LCJsb3NzbGVzcyI6ZmFsc2UsImFscGhhX3EiOjg1LCJyZWR1Y3Rpb25fZWZmb3J0Ijo2LCJzbWFydF9zdWJzYW1wbGUiOnRydWV9fSwicHVyIjoidmFyaWF0aW9uIn19--3731278b1c86329b37f6e92b953ddd35adc39d8e/thinking-cat.jpg
+                small_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--1163a14a921bc6b9d54fe1499de4d97e9d0527ca/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOlsyNTYsMjU2XSwic2F2ZXIiOnsic3RyaXAiOnRydWUsInF1YWxpdHkiOjc1LCJsb3NzbGVzcyI6ZmFsc2UsImFscGhhX3EiOjg1LCJyZWR1Y3Rpb25fZWZmb3J0Ijo2LCJzbWFydF9zdWJzYW1wbGUiOnRydWV9fSwicHVyIjoidmFyaWF0aW9uIn19--ae05085b0615bb4066b2bed0130d155f3ecdfab6/thinking-cat.jpg
+                medium_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--1163a14a921bc6b9d54fe1499de4d97e9d0527ca/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOls0MDAsNDAwXSwic2F2ZXIiOnsic3RyaXAiOnRydWUsInF1YWxpdHkiOjc1LCJsb3NzbGVzcyI6ZmFsc2UsImFscGhhX3EiOjg1LCJyZWR1Y3Rpb25fZWZmb3J0Ijo2LCJzbWFydF9zdWJzYW1wbGUiOnRydWV9fSwicHVyIjoidmFyaWF0aW9uIn19--7213e35846ca3bf13cdf7d00e08fd09f22fcf5fe/thinking-cat.jpg
+                large_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--1163a14a921bc6b9d54fe1499de4d97e9d0527ca/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOls3MjAsNzIwXSwic2F2ZXIiOnsic3RyaXAiOnRydWUsInF1YWxpdHkiOjc1LCJsb3NzbGVzcyI6ZmFsc2UsImFscGhhX3EiOjg1LCJyZWR1Y3Rpb25fZWZmb3J0Ijo2LCJzbWFydF9zdWJzYW1wbGUiOnRydWV9fSwicHVyIjoidmFyaWF0aW9uIn19--d687409147b99f1769646dce2390a6976048bd41/thinking-cat.jpg
+                xlarge_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--1163a14a921bc6b9d54fe1499de4d97e9d0527ca/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOlsyMDAwLDIwMDBdLCJzYXZlciI6eyJzdHJpcCI6dHJ1ZSwicXVhbGl0eSI6NzUsImxvc3NsZXNzIjpmYWxzZSwiYWxwaGFfcSI6ODUsInJlZHVjdGlvbl9lZmZvcnQiOjYsInNtYXJ0X3N1YnNhbXBsZSI6dHJ1ZX19LCJwdXIiOiJ2YXJpYXRpb24ifX0=--cc44c538cfc30b7f8786d5d34a0358ae91ba76b1/thinking-cat.jpg
+                og_image_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--1163a14a921bc6b9d54fe1499de4d97e9d0527ca/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOlsxMjAwLDYzMF0sInNhdmVyIjp7InN0cmlwIjp0cnVlLCJxdWFsaXR5Ijo3NSwibG9zc2xlc3MiOmZhbHNlLCJhbHBoYV9xIjo4NSwicmVkdWN0aW9uX2VmZm9ydCI6Niwic21hcnRfc3Vic2FtcGxlIjp0cnVlfX0sInB1ciI6InZhcmlhdGlvbiJ9fQ==--433a1aa4c93b82845a6ff99c4698a37cf073e3c4/thinking-cat.jpg
                 external_references: {}
                 created_at: '2026-01-15T12:00:00.000Z'
                 updated_at: '2026-01-15T12:00:00.000Z'
@@ -32521,10 +32477,10 @@ paths:
                 filename: thinking-cat.jpg
                 content_type: image/jpeg
                 byte_size: 18090
-                embed_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--e2b9d3423fcc7ef12dc22ca681561bb7441a1b28/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2xpbWl0IjpbMTIwMCwxMjAwXSwic2F2ZXIiOnsic3RyaXAiOnRydWUsInF1YWxpdHkiOjc1LCJsb3NzbGVzcyI6ZmFsc2UsImFscGhhX3EiOjg1LCJyZWR1Y3Rpb25fZWZmb3J0Ijo2LCJzbWFydF9zdWJzYW1wbGUiOnRydWV9fSwicHVyIjoidmFyaWF0aW9uIn19--5c1fec5ac6e319124bc46ef8fddb1ae741e2ffe8/thinking-cat.jpg
-                signed_id: eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--e2b9d3423fcc7ef12dc22ca681561bb7441a1b28
+                embed_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--1163a14a921bc6b9d54fe1499de4d97e9d0527ca/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2xpbWl0IjpbMTIwMCwxMjAwXSwic2F2ZXIiOnsic3RyaXAiOnRydWUsInF1YWxpdHkiOjc1LCJsb3NzbGVzcyI6ZmFsc2UsImFscGhhX3EiOjg1LCJyZWR1Y3Rpb25fZWZmb3J0Ijo2LCJzbWFydF9zdWJzYW1wbGUiOnRydWV9fSwicHVyIjoidmFyaWF0aW9uIn19--242558639bf438d8b844fd8c3df85abc76c30928/thinking-cat.jpg
+                signed_id: eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--1163a14a921bc6b9d54fe1499de4d97e9d0527ca
                 viewable_id: prod_gbHJdmfrXB
-                download_url: http://localhost:3000/rails/active_storage/blobs/redirect/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--e2b9d3423fcc7ef12dc22ca681561bb7441a1b28/thinking-cat.jpg?disposition=attachment
+                download_url: http://localhost:3000/rails/active_storage/blobs/redirect/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--1163a14a921bc6b9d54fe1499de4d97e9d0527ca/thinking-cat.jpg?disposition=attachment
                 metadata: {}
                 viewable_type: product
               schema:
@@ -32546,6 +32502,852 @@ paths:
                   example: 1
               required:
               - source_media_id
+  "/api/v3/admin/orders/{order_id}/fulfillments/{fulfillment_id}/deliveries":
+    get:
+      summary: List deliveries
+      tags:
+      - Deliveries
+      security:
+      - api_key: []
+        bearer_auth: []
+      description: |-
+        The consignments of a parcel — one per tracking number, each with the carrier status last reported.
+
+        **Required scope:** `read_fulfillments` (for API-key authentication).
+      x-codeSamples:
+      - lang: javascript
+        label: Spree Admin SDK
+        source: |-
+          import { createAdminClient } from '@spree/admin-sdk'
+
+          const client = createAdminClient({
+            baseUrl: 'https://your-store.com',
+            secretKey: 'sk_xxx',
+          })
+
+          const { data: deliveries } = await client.orders.fulfillments.deliveries.list(
+            'or_UkLWZg9DAJ',
+            'ful_UkLWZg9DAJ',
+          )
+
+          // Each carries its own carrier status: pending, in_transit, delivered, ...
+      - lang: bash
+        label: Spree CLI
+        source: spree api get /orders/{order_id}/fulfillments/{fulfillment_id}/deliveries
+      parameters:
+      - name: x-spree-api-key
+        in: header
+        required: true
+        schema:
+          type: string
+      - name: Authorization
+        in: header
+        required: true
+        description: Bearer token for admin authentication
+        schema:
+          type: string
+      - name: order_id
+        in: path
+        required: true
+        description: Order ID
+        schema:
+          type: string
+      - name: fulfillment_id
+        in: path
+        required: true
+        description: Fulfillment ID
+        schema:
+          type: string
+      responses:
+        '200':
+          description: deliveries found
+          content:
+            application/json:
+              example:
+                data:
+                - id: dlv_UkLWZg9DAJ
+                  tracking_number: U10000
+                  carrier:
+                  carrier_name:
+                  service:
+                  status: pending
+                  tracking_url:
+                  estimated_delivery_at:
+                  delivered_at:
+                  details:
+                  created_at: '2026-01-15T12:00:00.000Z'
+                  updated_at: '2026-01-15T12:00:00.000Z'
+                  shipping_label_id:
+                meta:
+                  page: 1
+                  limit: 25
+                  count: 1
+                  pages: 1
+                  from: 1
+                  to: 1
+                  in: 1
+                  previous:
+                  next:
+    post:
+      summary: Record a delivery
+      tags:
+      - Deliveries
+      security:
+      - api_key: []
+        bearer_auth: []
+      description: |-
+        Adds a tracked consignment to a parcel — a second box, or a freight PRO number covering several pallets. The carrier is free text.
+
+        **Required scope:** `write_fulfillments` (for API-key authentication).
+      x-codeSamples:
+      - lang: javascript
+        label: Spree Admin SDK
+        source: |-
+          import { createAdminClient } from '@spree/admin-sdk'
+
+          const client = createAdminClient({
+            baseUrl: 'https://your-store.com',
+            secretKey: 'sk_xxx',
+          })
+
+          // A second box, or a freight consignment: the carrier is free text, so a
+          // forwarder's PRO number is as valid as a parcel number.
+          const delivery = await client.orders.fulfillments.deliveries.create(
+            'or_UkLWZg9DAJ',
+            'ful_UkLWZg9DAJ',
+            { tracking_number: 'PRO-4471923', carrier: 'Estes Freight' },
+          )
+      - lang: bash
+        label: Spree CLI
+        source: spree api post /orders/{order_id}/fulfillments/{fulfillment_id}/deliveries
+          -d '{"tracking_number":"PRO-4471923","carrier":"Estes Freight"}'
+      parameters:
+      - name: x-spree-api-key
+        in: header
+        required: true
+        schema:
+          type: string
+      - name: Authorization
+        in: header
+        required: true
+        description: Bearer token for admin authentication
+        schema:
+          type: string
+      - name: order_id
+        in: path
+        required: true
+        description: Order ID
+        schema:
+          type: string
+      - name: fulfillment_id
+        in: path
+        required: true
+        description: Fulfillment ID
+        schema:
+          type: string
+      responses:
+        '201':
+          description: delivery recorded
+          content:
+            application/json:
+              example:
+                id: dlv_gbHJdmfrXB
+                tracking_number: 1Z879E930346834440
+                carrier: ups
+                carrier_name: UPS
+                service:
+                status: pending
+                tracking_url: https://www.ups.com/track?tracknum=1Z879E930346834440
+                estimated_delivery_at:
+                delivered_at:
+                details:
+                created_at: '2026-01-15T12:00:00.000Z'
+                updated_at: '2026-01-15T12:00:00.000Z'
+                shipping_label_id:
+        '422':
+          description: tracking number already recorded on this parcel
+          content:
+            application/json:
+              example:
+                error:
+                  code: validation_error
+                  message: Tracking number has already been taken
+                  details:
+                    tracking_number:
+                    - has already been taken
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+              - tracking_number
+              properties:
+                tracking_number:
+                  type: string
+                  description: Carrier tracking number, freight PRO number, or a full
+                    tracking link
+                carrier:
+                  type: string
+                  description: Free-text carrier; detected from the number when omitted
+                service:
+                  type: string
+                  description: Carrier service
+                tracking_url:
+                  type: string
+                  description: Tracking page for this consignment
+        required: true
+  "/api/v3/admin/orders/{order_id}/fulfillments/{fulfillment_id}/deliveries/{id}":
+    patch:
+      summary: Correct a delivery
+      tags:
+      - Deliveries
+      security:
+      - api_key: []
+        bearer_auth: []
+      description: |-
+        Corrects the tracking number, carrier or link. A corrected number starts the carrier journey over.
+
+        **Required scope:** `write_fulfillments` (for API-key authentication).
+      parameters:
+      - name: x-spree-api-key
+        in: header
+        required: true
+        schema:
+          type: string
+      - name: Authorization
+        in: header
+        required: true
+        description: Bearer token for admin authentication
+        schema:
+          type: string
+      - name: order_id
+        in: path
+        required: true
+        description: Order ID
+        schema:
+          type: string
+      - name: fulfillment_id
+        in: path
+        required: true
+        description: Fulfillment ID
+        schema:
+          type: string
+      - name: id
+        in: path
+        required: true
+        description: Delivery ID
+        schema:
+          type: string
+      responses:
+        '200':
+          description: delivery updated
+          content:
+            application/json:
+              example:
+                id: dlv_UkLWZg9DAJ
+                tracking_number: CORRECTED-1
+                carrier:
+                carrier_name:
+                service:
+                status: pending
+                tracking_url:
+                estimated_delivery_at:
+                delivered_at:
+                details:
+                created_at: '2026-01-15T12:00:00.000Z'
+                updated_at: '2026-01-15T12:00:00.000Z'
+                shipping_label_id:
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                tracking_number:
+                  type: string
+                carrier:
+                  type: string
+                service:
+                  type: string
+                tracking_url:
+                  type: string
+        required: true
+    delete:
+      summary: Delete a delivery
+      tags:
+      - Deliveries
+      security:
+      - api_key: []
+        bearer_auth: []
+      description: |-
+        Removes a hand-entered consignment. One a label minted is refused — refund the label instead.
+
+        **Required scope:** `write_fulfillments` (for API-key authentication).
+      parameters:
+      - name: x-spree-api-key
+        in: header
+        required: true
+        schema:
+          type: string
+      - name: Authorization
+        in: header
+        required: true
+        description: Bearer token for admin authentication
+        schema:
+          type: string
+      - name: order_id
+        in: path
+        required: true
+        description: Order ID
+        schema:
+          type: string
+      - name: fulfillment_id
+        in: path
+        required: true
+        description: Fulfillment ID
+        schema:
+          type: string
+      - name: id
+        in: path
+        required: true
+        description: Delivery ID
+        schema:
+          type: string
+      responses:
+        '204':
+          description: delivery deleted
+  "/api/v3/admin/orders/{order_id}/fulfillments/{fulfillment_id}/deliveries/{id}/mark_delivered":
+    patch:
+      summary: Mark a delivery delivered
+      tags:
+      - Deliveries
+      security:
+      - api_key: []
+        bearer_auth: []
+      description: |-
+        Staff confirming one consignment arrived. The parcel becomes delivered once every one of its consignments has.
+
+        **Required scope:** `write_fulfillments` (for API-key authentication).
+      x-codeSamples:
+      - lang: javascript
+        label: Spree Admin SDK
+        source: |-
+          import { createAdminClient } from '@spree/admin-sdk'
+
+          const client = createAdminClient({
+            baseUrl: 'https://your-store.com',
+            secretKey: 'sk_xxx',
+          })
+
+          // Staff confirming one consignment arrived. The fulfillment follows once
+          // every one of its consignments has.
+          const delivery = await client.orders.fulfillments.deliveries.markDelivered(
+            'or_UkLWZg9DAJ',
+            'ful_UkLWZg9DAJ',
+            'dlv_UkLWZg9DAJ',
+          )
+      - lang: bash
+        label: Spree CLI
+        source: spree api patch /orders/{order_id}/fulfillments/{fulfillment_id}/deliveries/{id}/mark_delivered
+          -d '{ ... }'
+      parameters:
+      - name: x-spree-api-key
+        in: header
+        required: true
+        schema:
+          type: string
+      - name: Authorization
+        in: header
+        required: true
+        description: Bearer token for admin authentication
+        schema:
+          type: string
+      - name: order_id
+        in: path
+        required: true
+        description: Order ID
+        schema:
+          type: string
+      - name: fulfillment_id
+        in: path
+        required: true
+        description: Fulfillment ID
+        schema:
+          type: string
+      - name: id
+        in: path
+        required: true
+        description: Delivery ID
+        schema:
+          type: string
+      responses:
+        '200':
+          description: delivery marked delivered
+          content:
+            application/json:
+              example:
+                id: dlv_UkLWZg9DAJ
+                tracking_number: U10000
+                carrier:
+                carrier_name:
+                service:
+                status: delivered
+                tracking_url:
+                estimated_delivery_at:
+                delivered_at: '2026-01-15T12:00:00.000Z'
+                details:
+                created_at: '2026-01-15T12:00:00.000Z'
+                updated_at: '2026-01-15T12:00:00.000Z'
+                shipping_label_id:
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                delivered_at:
+                  type: string
+                  format: date-time
+                  description: When it arrived. Defaults to now.
+                notify_customer:
+                  type: boolean
+                  description: Whether the customer gets a delivery notification when
+                    the parcel completes.
+  "/api/v3/admin/orders/{order_id}/fulfillments/{fulfillment_id}/labels":
+    get:
+      summary: List shipping labels
+      tags:
+      - Shipping Labels
+      security:
+      - api_key: []
+        bearer_auth: []
+      description: |-
+        Every label bought or uploaded for a parcel, refunded ones included.
+
+        **Required scope:** `read_fulfillments` (for API-key authentication).
+      x-codeSamples:
+      - lang: javascript
+        label: Spree Admin SDK
+        source: |-
+          import { createAdminClient } from '@spree/admin-sdk'
+
+          const client = createAdminClient({
+            baseUrl: 'https://your-store.com',
+            secretKey: 'sk_xxx',
+          })
+
+          const { data: labels } = await client.orders.fulfillments.labels.list(
+            'or_UkLWZg9DAJ',
+            'ful_UkLWZg9DAJ',
+          )
+      - lang: bash
+        label: Spree CLI
+        source: spree api get /orders/{order_id}/fulfillments/{fulfillment_id}/labels
+      parameters:
+      - name: x-spree-api-key
+        in: header
+        required: true
+        schema:
+          type: string
+      - name: Authorization
+        in: header
+        required: true
+        description: Bearer token for admin authentication
+        schema:
+          type: string
+      - name: order_id
+        in: path
+        required: true
+        description: Order ID
+        schema:
+          type: string
+      - name: fulfillment_id
+        in: path
+        required: true
+        description: Fulfillment ID
+        schema:
+          type: string
+      responses:
+        '200':
+          description: labels found
+          content:
+            application/json:
+              example:
+                data:
+                - id: lbl_UkLWZg9DAJ
+                  source: purchased
+                  status: purchased
+                  carrier: ups
+                  carrier_name: UPS
+                  service: Ground
+                  tracking_number: 1Z879E930346830001
+                  currency: USD
+                  format: pdf
+                  external_id: shp_1
+                  metadata: {}
+                  refunded_at:
+                  created_at: '2026-01-15T12:00:00.000Z'
+                  updated_at: '2026-01-15T12:00:00.000Z'
+                  owner_id: ful_UkLWZg9DAJ
+                  owner_type: fulfillment
+                  cost: '7.25'
+                  display_cost: "$7.25"
+                  integration_id:
+                  file_pending: false
+                  download_url:
+                meta:
+                  page: 1
+                  limit: 25
+                  count: 1
+                  pages: 1
+                  from: 1
+                  to: 1
+                  in: 1
+                  previous:
+                  next:
+    post:
+      summary: Buy or record a shipping label
+      tags:
+      - Shipping Labels
+      security:
+      - api_key: []
+        bearer_auth: []
+      description: |-
+        With no body, buys the label through the parcel's carrier account. With a `file`, records a label bought elsewhere. Either way the tracking number becomes a delivery on the parcel.
+
+        **Required scope:** `write_fulfillments` (for API-key authentication).
+      x-codeSamples:
+      - lang: javascript
+        label: Spree Admin SDK
+        source: |-
+          import { createAdminClient } from '@spree/admin-sdk'
+
+          const client = createAdminClient({
+            baseUrl: 'https://your-store.com',
+            secretKey: 'sk_xxx',
+          })
+
+          // With no body, the parcel's carrier account buys the label.
+          const label = await client.orders.fulfillments.labels.create('or_UkLWZg9DAJ', 'ful_UkLWZg9DAJ')
+
+          // The tracking number is now on the parcel's first delivery, and the label is
+          // ready to print. What the merchant paid the carrier is label.display_cost.
+      - lang: bash
+        label: Spree CLI
+        source: spree api post /orders/{order_id}/fulfillments/{fulfillment_id}/labels
+          -d '{ ... }'
+      parameters:
+      - name: x-spree-api-key
+        in: header
+        required: true
+        schema:
+          type: string
+      - name: Authorization
+        in: header
+        required: true
+        description: Bearer token for admin authentication
+        schema:
+          type: string
+      - name: order_id
+        in: path
+        required: true
+        description: Order ID
+        schema:
+          type: string
+      - name: fulfillment_id
+        in: path
+        required: true
+        description: Fulfillment ID
+        schema:
+          type: string
+      responses:
+        '201':
+          description: label purchased
+          content:
+            application/json:
+              example:
+                id: lbl_UkLWZg9DAJ
+                source: purchased
+                status: purchased
+                carrier: ups
+                carrier_name: UPS
+                service: Ground
+                tracking_number: 1Z879E930346834440
+                currency: USD
+                format: pdf
+                external_id: shp_1
+                metadata:
+                  tracker_id: trk_1
+                  file_url: https://carrier.example/label.pdf
+                refunded_at:
+                created_at: '2026-01-15T12:00:00.000Z'
+                updated_at: '2026-01-15T12:00:00.000Z'
+                owner_id: ful_UkLWZg9DAJ
+                owner_type: fulfillment
+                cost: '7.25'
+                display_cost: "$7.25"
+                integration_id:
+                file_pending: true
+                download_url: "/api/v3/admin/orders/or_UkLWZg9DAJ/fulfillments/ful_UkLWZg9DAJ/labels/lbl_UkLWZg9DAJ/download"
+        '422':
+          description: provider does not produce labels
+          content:
+            application/json:
+              example:
+                error:
+                  code: processing_error
+                  message: This delivery method's provider does not produce labels
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                file:
+                  type: string
+                  description: Signed blob id of an uploaded label file; its presence
+                    records rather than buys
+                tracking_number:
+                  type: string
+                  description: Number printed on an uploaded label
+                carrier:
+                  type: string
+                  description: Free-text carrier; detected from the number when omitted
+                service:
+                  type: string
+                  description: Carrier service the label was bought at
+                cost:
+                  type: string
+                  description: What the merchant paid the carrier
+                currency:
+                  type: string
+                  description: Currency of the cost
+                file_format:
+                  type: string
+                  enum:
+                  - pdf
+                  - png
+                  - zpl
+                  description: Label file format; taken from the file when omitted
+                tracking_url:
+                  type: string
+                  description: Tracking page for the consignment
+  "/api/v3/admin/orders/{order_id}/fulfillments/{fulfillment_id}/labels/{id}":
+    get:
+      summary: Get a shipping label
+      tags:
+      - Shipping Labels
+      security:
+      - api_key: []
+        bearer_auth: []
+      description: |-
+        One label, with what it cost and where to print it from.
+
+        **Required scope:** `read_fulfillments` (for API-key authentication).
+      parameters:
+      - name: x-spree-api-key
+        in: header
+        required: true
+        schema:
+          type: string
+      - name: Authorization
+        in: header
+        required: true
+        description: Bearer token for admin authentication
+        schema:
+          type: string
+      - name: order_id
+        in: path
+        required: true
+        description: Order ID
+        schema:
+          type: string
+      - name: fulfillment_id
+        in: path
+        required: true
+        description: Fulfillment ID
+        schema:
+          type: string
+      - name: id
+        in: path
+        required: true
+        description: Shipping label ID
+        schema:
+          type: string
+      responses:
+        '200':
+          description: label found
+          content:
+            application/json:
+              example:
+                id: lbl_UkLWZg9DAJ
+                source: uploaded
+                status: purchased
+                carrier: ups
+                carrier_name: UPS
+                service: Ground
+                tracking_number: 1Z879E930346830002
+                currency: USD
+                format: pdf
+                external_id:
+                metadata: {}
+                refunded_at:
+                created_at: '2026-01-15T12:00:00.000Z'
+                updated_at: '2026-01-15T12:00:00.000Z'
+                owner_id: ful_UkLWZg9DAJ
+                owner_type: fulfillment
+                cost: '7.25'
+                display_cost: "$7.25"
+                integration_id:
+                file_pending: false
+                download_url:
+    delete:
+      summary: Delete an uploaded label
+      tags:
+      - Shipping Labels
+      security:
+      - api_key: []
+        bearer_auth: []
+      description: |-
+        Removes an uploaded label. A purchased label is refunded instead, so the postage history stays honest.
+
+        **Required scope:** `write_fulfillments` (for API-key authentication).
+      parameters:
+      - name: x-spree-api-key
+        in: header
+        required: true
+        schema:
+          type: string
+      - name: Authorization
+        in: header
+        required: true
+        description: Bearer token for admin authentication
+        schema:
+          type: string
+      - name: order_id
+        in: path
+        required: true
+        description: Order ID
+        schema:
+          type: string
+      - name: fulfillment_id
+        in: path
+        required: true
+        description: Fulfillment ID
+        schema:
+          type: string
+      - name: id
+        in: path
+        required: true
+        description: Shipping label ID
+        schema:
+          type: string
+      responses:
+        '204':
+          description: label deleted
+  "/api/v3/admin/orders/{order_id}/fulfillments/{fulfillment_id}/labels/{id}/refund":
+    patch:
+      summary: Refund a shipping label
+      tags:
+      - Shipping Labels
+      security:
+      - api_key: []
+        bearer_auth: []
+      description: |-
+        Asks the carrier to refund a purchased label. The consignment it minted is removed when the parcel never shipped.
+
+        **Required scope:** `write_fulfillments` (for API-key authentication).
+      x-codeSamples:
+      - lang: javascript
+        label: Spree Admin SDK
+        source: |-
+          import { createAdminClient } from '@spree/admin-sdk'
+
+          const client = createAdminClient({
+            baseUrl: 'https://your-store.com',
+            secretKey: 'sk_xxx',
+          })
+
+          const label = await client.orders.fulfillments.labels.refund(
+            'or_UkLWZg9DAJ',
+            'ful_UkLWZg9DAJ',
+            'lbl_UkLWZg9DAJ',
+          )
+
+          // 'refunded' when the carrier settled at once, 'refund_requested' when it
+          // will answer later.
+          const outcome = label.status
+      - lang: bash
+        label: Spree CLI
+        source: spree api patch /orders/{order_id}/fulfillments/{fulfillment_id}/labels/{id}/refund
+          -d '{ ... }'
+      parameters:
+      - name: x-spree-api-key
+        in: header
+        required: true
+        schema:
+          type: string
+      - name: Authorization
+        in: header
+        required: true
+        description: Bearer token for admin authentication
+        schema:
+          type: string
+      - name: order_id
+        in: path
+        required: true
+        description: Order ID
+        schema:
+          type: string
+      - name: fulfillment_id
+        in: path
+        required: true
+        description: Fulfillment ID
+        schema:
+          type: string
+      - name: id
+        in: path
+        required: true
+        description: Shipping label ID
+        schema:
+          type: string
+      responses:
+        '200':
+          description: refund filed
+          content:
+            application/json:
+              example:
+                id: lbl_UkLWZg9DAJ
+                source: purchased
+                status: refunded
+                carrier: ups
+                carrier_name: UPS
+                service: Ground
+                tracking_number: 1Z879E930346830004
+                currency: USD
+                format: pdf
+                external_id: shp_2
+                metadata: {}
+                refunded_at: '2026-01-15T12:00:00.000Z'
+                created_at: '2026-01-15T12:00:00.000Z'
+                updated_at: '2026-01-15T12:00:00.000Z'
+                owner_id: ful_UkLWZg9DAJ
+                owner_type: fulfillment
+                cost: '7.25'
+                display_cost: "$7.25"
+                integration_id:
+                file_pending: false
+                download_url:
+        '422':
+          description: uploaded labels cannot be refunded
+          content:
+            application/json:
+              example:
+                error:
+                  code: processing_error
+                  message: An uploaded label was not bought through Spree and cannot
+                    be refunded — delete it instead
   "/api/v3/admin/package_types":
     get:
       summary: List package types
@@ -38289,6 +39091,58 @@ components:
       - created_at
       - updated_at
       x-typelizer: true
+    Delivery:
+      type: object
+      properties:
+        id:
+          type: string
+        tracking_number:
+          type: string
+        carrier:
+          type: string
+          nullable: true
+        carrier_name:
+          type: string
+          nullable: true
+        service:
+          type: string
+          nullable: true
+        status:
+          type: string
+        tracking_url:
+          type: string
+          nullable: true
+        estimated_delivery_at:
+          type: string
+          nullable: true
+        delivered_at:
+          type: string
+          nullable: true
+        details:
+          type: object
+          nullable: true
+        created_at:
+          type: string
+        updated_at:
+          type: string
+        shipping_label_id:
+          type: string
+          nullable: true
+      required:
+      - id
+      - tracking_number
+      - carrier
+      - carrier_name
+      - service
+      - status
+      - tracking_url
+      - estimated_delivery_at
+      - delivered_at
+      - details
+      - created_at
+      - updated_at
+      - shipping_label_id
+      x-typelizer: true
     DeliveryZoneMember:
       type: object
       properties:
@@ -38790,12 +39644,6 @@ components:
         tracking_url:
           type: string
           nullable: true
-        tracking_carrier:
-          type: string
-          nullable: true
-        tracking_carrier_name:
-          type: string
-          nullable: true
         pickup_point_data:
           type: object
           nullable: true
@@ -38835,12 +39683,6 @@ components:
         fulfilled_at:
           type: string
           nullable: true
-        tracking_status:
-          type: string
-          nullable: true
-        estimated_delivery_at:
-          type: string
-          nullable: true
         delivered_at:
           type: string
           nullable: true
@@ -38848,6 +39690,10 @@ components:
           type: array
           items:
             "$ref": "#/components/schemas/FulfillmentManifestItem"
+        deliveries:
+          type: array
+          items:
+            "$ref": "#/components/schemas/Delivery"
         delivery_method:
           "$ref": "#/components/schemas/DeliveryMethod"
         stock_location:
@@ -38862,9 +39708,6 @@ components:
             "$ref": "#/components/schemas/TaxLine"
         metadata:
           type: object
-        tracking_details:
-          type: object
-          nullable: true
         adjustment_total:
           type: string
         pre_tax_amount:
@@ -38881,6 +39724,10 @@ components:
           nullable: true
         documents:
           type: object
+        labels:
+          type: array
+          items:
+            "$ref": "#/components/schemas/ShippingLabel"
         provider_generates_labels:
           type: boolean
         fulfillment_items:
@@ -38894,8 +39741,6 @@ components:
       - number
       - tracking
       - tracking_url
-      - tracking_carrier
-      - tracking_carrier_name
       - pickup_point_data
       - selected_delivery_rate_id
       - unpriced
@@ -38914,12 +39759,10 @@ components:
       - status
       - fulfillment_type
       - fulfilled_at
-      - tracking_status
-      - estimated_delivery_at
       - delivered_at
       - items
+      - deliveries
       - metadata
-      - tracking_details
       - adjustment_total
       - pre_tax_amount
       - created_at
@@ -38927,6 +39770,7 @@ components:
       - order_id
       - stock_location_id
       - documents
+      - labels
       - provider_generates_labels
       x-typelizer: true
     GiftCardBatch:
@@ -41391,6 +42235,16 @@ components:
           type: array
           items:
             "$ref": "#/components/schemas/Refund"
+        documents:
+          type: object
+        labels:
+          type: array
+          items:
+            "$ref": "#/components/schemas/ShippingLabel"
+        deliveries:
+          type: array
+          items:
+            "$ref": "#/components/schemas/Delivery"
       required:
       - id
       - number
@@ -41411,6 +42265,9 @@ components:
       - created_by_id
       - refunded_total
       - refundable_total
+      - documents
+      - labels
+      - deliveries
       x-typelizer: true
     Role:
       type: object
@@ -41868,6 +42725,84 @@ components:
       - name
       - done
       x-typelizer: true
+    ShippingLabel:
+      type: object
+      properties:
+        id:
+          type: string
+        source:
+          type: string
+        status:
+          type: string
+        carrier:
+          type: string
+          nullable: true
+        carrier_name:
+          type: string
+          nullable: true
+        service:
+          type: string
+          nullable: true
+        tracking_number:
+          type: string
+          nullable: true
+        currency:
+          type: string
+          nullable: true
+        format:
+          type: string
+          nullable: true
+        external_id:
+          type: string
+          nullable: true
+        metadata:
+          type: object
+        refunded_at:
+          type: string
+          nullable: true
+        created_at:
+          type: string
+        updated_at:
+          type: string
+        owner_id:
+          type: string
+        owner_type:
+          type: string
+        cost:
+          type: string
+        display_cost:
+          type: string
+        integration_id:
+          type: string
+          nullable: true
+        file_pending:
+          type: boolean
+        download_url:
+          type: string
+          nullable: true
+      required:
+      - id
+      - source
+      - status
+      - carrier
+      - carrier_name
+      - service
+      - tracking_number
+      - currency
+      - format
+      - external_id
+      - metadata
+      - refunded_at
+      - created_at
+      - updated_at
+      - owner_id
+      - owner_type
+      - cost
+      - display_cost
+      - integration_id
+      - file_pending
+      - download_url
+      x-typelizer: true
     State:
       type: object
       properties:
@@ -41988,6 +42923,8 @@ components:
           type: boolean
         pickup_stock_policy:
           type: string
+        returns_enabled:
+          type: boolean
         created_at:
           type: string
         updated_at:
@@ -42025,6 +42962,7 @@ components:
       - kind
       - pickup_enabled
       - pickup_stock_policy
+      - returns_enabled
       - created_at
       - updated_at
       - seller_id

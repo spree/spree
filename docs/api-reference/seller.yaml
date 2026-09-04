@@ -12703,10 +12703,10 @@ paths:
                   description: Limits the delivery method to shipments within a volume
                     range, in cubic meters
                   preference_schema:
-                  - key: maximum_volume
+                  - key: minimum_volume
                     type: decimal
                     default:
-                  - key: minimum_volume
+                  - key: maximum_volume
                     type: decimal
                     default:
                 - type: company_rule
@@ -12811,12 +12811,12 @@ paths:
                   - key: normal_amount
                     type: decimal
                     default: 0
-                  - key: currency
-                    type: string
-                    default: USD
                   - key: discount_amount
                     type: decimal
                     default: 0
+                  - key: currency
+                    type: string
+                    default: USD
                 - type: Spree::Calculator::Shipping::DigitalDelivery
                   name: Digital Delivery
                   preference_schema:
@@ -13559,8 +13559,8 @@ paths:
               example:
                 data:
                 - id: prod_UkLWZg9DAJ
-                  name: Product 1413250
-                  slug: product-1413250
+                  name: Product 1523250
+                  slug: product-1523250
                   meta_title:
                   meta_description:
                   meta_keywords:
@@ -13803,8 +13803,8 @@ paths:
             application/json:
               example:
                 id: prod_UkLWZg9DAJ
-                name: Product 1446710
-                slug: product-1446710
+                name: Product 1556710
+                slug: product-1556710
                 meta_title:
                 meta_description:
                 meta_keywords:
@@ -13883,7 +13883,7 @@ paths:
               example:
                 id: prod_UkLWZg9DAJ
                 name: Hand-thrown mug, large
-                slug: product-1478212
+                slug: product-1588212
                 meta_title:
                 meta_description:
                 meta_keywords:
@@ -14226,6 +14226,7 @@ paths:
                   active: true
                   default: false
                   kind: warehouse
+                  returns_enabled: true
                   created_at: '2026-01-15T12:00:00.000Z'
                   updated_at: '2026-01-15T12:00:00.000Z'
                 meta:
@@ -14291,6 +14292,7 @@ paths:
                 active: true
                 default: false
                 kind: warehouse
+                returns_enabled: true
                 created_at: '2026-01-15T12:00:00.000Z'
                 updated_at: '2026-01-15T12:00:00.000Z'
               schema:
@@ -14406,6 +14408,7 @@ paths:
                 active: true
                 default: false
                 kind: warehouse
+                returns_enabled: true
                 created_at: '2026-01-15T12:00:00.000Z'
                 updated_at: '2026-01-15T12:00:00.000Z'
               schema:
@@ -14462,6 +14465,7 @@ paths:
                 active: true
                 default: false
                 kind: warehouse
+                returns_enabled: true
                 created_at: '2026-01-15T12:00:00.000Z'
                 updated_at: '2026-01-15T12:00:00.000Z'
               schema:
@@ -14812,10 +14816,10 @@ paths:
             application/json:
               example:
                 direct_upload:
-                  url: http://www.example.com/rails/active_storage/disk/eyJfcmFpbHMiOnsiZGF0YSI6eyJrZXkiOiJuem5oOGdra3VxendvbDc1ODBxNHNwZmpmMjVxIiwiY29udGVudF90eXBlIjoiYXBwbGljYXRpb24vcGRmIiwiY29udGVudF9sZW5ndGgiOjUxMjM0LCJjaGVja3N1bSI6IlZqaHowNGxRdUVHdXY0bkR2aHNhTlE9PSIsInNlcnZpY2VfbmFtZSI6InRlc3QifSwiZXhwIjoiMjAyNi0wMS0xNVQxMjowNTowMC4wMDBaIiwicHVyIjoiYmxvYl90b2tlbiJ9fQ==--38fa611110df03ebf6db3b02bc5bfd73a60344d6
+                  url: http://www.example.com/rails/active_storage/disk/eyJfcmFpbHMiOnsiZGF0YSI6eyJrZXkiOiJuem5oOGdra3VxendvbDc1ODBxNHNwZmpmMjVxIiwiY29udGVudF90eXBlIjoiYXBwbGljYXRpb24vcGRmIiwiY29udGVudF9sZW5ndGgiOjUxMjM0LCJjaGVja3N1bSI6IlZqaHowNGxRdUVHdXY0bkR2aHNhTlE9PSIsInNlcnZpY2VfbmFtZSI6InRlc3QifSwiZXhwIjoiMjAyNi0wMS0xNVQxMjowNTowMC4wMDBaIiwicHVyIjoiYmxvYl90b2tlbiJ9fQ==--60cec2612f5d32c4a0ff1d00c3edffe6f49039e7
                   headers:
                     Content-Type: application/pdf
-                signed_id: eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--e2b9d3423fcc7ef12dc22ca681561bb7441a1b28
+                signed_id: eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--1163a14a921bc6b9d54fe1499de4d97e9d0527ca
               schema:
                 "$ref": "#/components/schemas/DirectUploadResponse"
       requestBody:
@@ -15067,9 +15071,8 @@ paths:
                   status: unfulfilled
                   tracking: U10000
                   tracking_url:
-                  tracking_carrier:
-                  tracking_status:
                   fulfilled_at:
+                  delivered_at:
                   created_at: '2026-01-15T12:00:00.000Z'
                   updated_at: '2026-01-15T12:00:00.000Z'
                   fulfillment_type: shipping
@@ -15079,9 +15082,23 @@ paths:
                   - id: fi_UkLWZg9DAJ
                     quantity: 1
                     line_item_id: li_UkLWZg9DAJ
-                    name: Product 1349315
-                    sku: SKU-173
+                    name: Product 1459315
+                    sku: SKU-184
                     options_text: ''
+                  deliveries:
+                  - id: dlv_UkLWZg9DAJ
+                    tracking_number: U10000
+                    carrier:
+                    carrier_name:
+                    service:
+                    status: pending
+                    tracking_url:
+                    estimated_delivery_at:
+                    delivered_at:
+                    created_at: '2026-01-15T12:00:00.000Z'
+                    updated_at: '2026-01-15T12:00:00.000Z'
+                    shipping_label_id:
+                  labels: []
               schema:
                 type: object
                 properties:
@@ -15137,9 +15154,8 @@ paths:
                 status: fulfilled
                 tracking: TRACK-1
                 tracking_url:
-                tracking_carrier:
-                tracking_status:
                 fulfilled_at: '2026-01-15T12:00:00.000Z'
+                delivered_at:
                 created_at: '2026-01-15T12:00:00.000Z'
                 updated_at: '2026-01-15T12:00:00.000Z'
                 fulfillment_type: shipping
@@ -15149,9 +15165,23 @@ paths:
                 - id: fi_UkLWZg9DAJ
                   quantity: 1
                   line_item_id: li_UkLWZg9DAJ
-                  name: Product 135961
-                  sku: SKU-174
+                  name: Product 146961
+                  sku: SKU-185
                   options_text: ''
+                deliveries:
+                - id: dlv_UkLWZg9DAJ
+                  tracking_number: TRACK-1
+                  carrier:
+                  carrier_name:
+                  service:
+                  status: pending
+                  tracking_url:
+                  estimated_delivery_at:
+                  delivered_at:
+                  created_at: '2026-01-15T12:00:00.000Z'
+                  updated_at: '2026-01-15T12:00:00.000Z'
+                  shipping_label_id:
+                labels: []
               schema:
                 "$ref": "#/components/schemas/Fulfillment"
       requestBody:
@@ -15250,7 +15280,7 @@ paths:
                   display_total: "$110.00"
                   items:
                   - id: li_UkLWZg9DAJ
-                    name: Product 13695
+                    name: Product 14795
                     options_text: ''
                     quantity: 1
                     currency: USD
@@ -15259,7 +15289,7 @@ paths:
                     total: '10.0'
                     display_total: "$10.00"
                     variant_id: variant_UkLWZg9DAJ
-                    sku: SKU-175
+                    sku: SKU-186
                     thumbnail_url:
                   fulfillments:
                   - id: ful_UkLWZg9DAJ
@@ -15267,9 +15297,8 @@ paths:
                     status: unfulfilled
                     tracking: U10000
                     tracking_url:
-                    tracking_carrier:
-                    tracking_status:
                     fulfilled_at:
+                    delivered_at:
                     created_at: '2026-01-15T12:00:00.000Z'
                     updated_at: '2026-01-15T12:00:00.000Z'
                     fulfillment_type: shipping
@@ -15279,16 +15308,30 @@ paths:
                     - id: fi_UkLWZg9DAJ
                       quantity: 1
                       line_item_id: li_UkLWZg9DAJ
-                      name: Product 13695
-                      sku: SKU-175
+                      name: Product 14795
+                      sku: SKU-186
                       options_text: ''
+                    deliveries:
+                    - id: dlv_UkLWZg9DAJ
+                      tracking_number: U10000
+                      carrier:
+                      carrier_name:
+                      service:
+                      status: pending
+                      tracking_url:
+                      estimated_delivery_at:
+                      delivered_at:
+                      created_at: '2026-01-15T12:00:00.000Z'
+                      updated_at: '2026-01-15T12:00:00.000Z'
+                      shipping_label_id:
+                    labels: []
                   shipping_address:
                     id: addr_gbHJdmfrXB
                     label:
                     first_name: John
                     last_name: Doe
                     full_name: John Doe
-                    address1: 113 Lovely Street
+                    address1: 135 Lovely Street
                     address2: Northwest
                     postal_code: '10118'
                     city: New York
@@ -15310,7 +15353,7 @@ paths:
                     first_name: John
                     last_name: Doe
                     full_name: John Doe
-                    address1: 112 Lovely Street
+                    address1: 134 Lovely Street
                     address2: Northwest
                     postal_code: '10118'
                     city: New York
@@ -15399,7 +15442,7 @@ paths:
                 display_total: "$110.00"
                 items:
                 - id: li_UkLWZg9DAJ
-                  name: Product 1379755
+                  name: Product 1489755
                   options_text: ''
                   quantity: 1
                   currency: USD
@@ -15408,7 +15451,7 @@ paths:
                   total: '10.0'
                   display_total: "$10.00"
                   variant_id: variant_UkLWZg9DAJ
-                  sku: SKU-176
+                  sku: SKU-187
                   thumbnail_url:
                 fulfillments:
                 - id: ful_UkLWZg9DAJ
@@ -15416,9 +15459,8 @@ paths:
                   status: unfulfilled
                   tracking: U10000
                   tracking_url:
-                  tracking_carrier:
-                  tracking_status:
                   fulfilled_at:
+                  delivered_at:
                   created_at: '2026-01-15T12:00:00.000Z'
                   updated_at: '2026-01-15T12:00:00.000Z'
                   fulfillment_type: shipping
@@ -15428,16 +15470,30 @@ paths:
                   - id: fi_UkLWZg9DAJ
                     quantity: 1
                     line_item_id: li_UkLWZg9DAJ
-                    name: Product 1379755
-                    sku: SKU-176
+                    name: Product 1489755
+                    sku: SKU-187
                     options_text: ''
+                  deliveries:
+                  - id: dlv_UkLWZg9DAJ
+                    tracking_number: U10000
+                    carrier:
+                    carrier_name:
+                    service:
+                    status: pending
+                    tracking_url:
+                    estimated_delivery_at:
+                    delivered_at:
+                    created_at: '2026-01-15T12:00:00.000Z'
+                    updated_at: '2026-01-15T12:00:00.000Z'
+                    shipping_label_id:
+                  labels: []
                 shipping_address:
                   id: addr_gbHJdmfrXB
                   label:
                   first_name: John
                   last_name: Doe
                   full_name: John Doe
-                  address1: 115 Lovely Street
+                  address1: 137 Lovely Street
                   address2: Northwest
                   postal_code: '10118'
                   city: New York
@@ -15459,7 +15515,7 @@ paths:
                   first_name: John
                   last_name: Doe
                   full_name: John Doe
-                  address1: 114 Lovely Street
+                  address1: 136 Lovely Street
                   address2: Northwest
                   postal_code: '10118'
                   city: New York
@@ -15537,7 +15593,7 @@ paths:
                 display_total: "$110.00"
                 items:
                 - id: li_UkLWZg9DAJ
-                  name: Product 1406554
+                  name: Product 1516554
                   options_text: ''
                   quantity: 1
                   currency: USD
@@ -15546,7 +15602,7 @@ paths:
                   total: '10.0'
                   display_total: "$10.00"
                   variant_id: variant_UkLWZg9DAJ
-                  sku: SKU-179
+                  sku: SKU-190
                   thumbnail_url:
                 fulfillments:
                 - id: ful_UkLWZg9DAJ
@@ -15554,9 +15610,8 @@ paths:
                   status: canceled
                   tracking: U10000
                   tracking_url:
-                  tracking_carrier:
-                  tracking_status:
                   fulfilled_at:
+                  delivered_at:
                   created_at: '2026-01-15T12:00:00.000Z'
                   updated_at: '2026-01-15T12:00:00.000Z'
                   fulfillment_type: shipping
@@ -15566,16 +15621,30 @@ paths:
                   - id: fi_UkLWZg9DAJ
                     quantity: 1
                     line_item_id: li_UkLWZg9DAJ
-                    name: Product 1406554
-                    sku: SKU-179
+                    name: Product 1516554
+                    sku: SKU-190
                     options_text: ''
+                  deliveries:
+                  - id: dlv_UkLWZg9DAJ
+                    tracking_number: U10000
+                    carrier:
+                    carrier_name:
+                    service:
+                    status: pending
+                    tracking_url:
+                    estimated_delivery_at:
+                    delivered_at:
+                    created_at: '2026-01-15T12:00:00.000Z'
+                    updated_at: '2026-01-15T12:00:00.000Z'
+                    shipping_label_id:
+                  labels: []
                 shipping_address:
                   id: addr_gbHJdmfrXB
                   label:
                   first_name: John
                   last_name: Doe
                   full_name: John Doe
-                  address1: 121 Lovely Street
+                  address1: 143 Lovely Street
                   address2: Northwest
                   postal_code: '10118'
                   city: New York
@@ -15597,7 +15666,7 @@ paths:
                   first_name: John
                   last_name: Doe
                   full_name: John Doe
-                  address1: 120 Lovely Street
+                  address1: 142 Lovely Street
                   address2: Northwest
                   postal_code: '10118'
                   city: New York
@@ -16783,6 +16852,54 @@ components:
       - default
       - digital
       x-typelizer: true
+    Delivery:
+      type: object
+      properties:
+        id:
+          type: string
+        tracking_number:
+          type: string
+        carrier:
+          type: string
+          nullable: true
+        carrier_name:
+          type: string
+          nullable: true
+        service:
+          type: string
+          nullable: true
+        status:
+          type: string
+        tracking_url:
+          type: string
+          nullable: true
+        estimated_delivery_at:
+          type: string
+          nullable: true
+        delivered_at:
+          type: string
+          nullable: true
+        created_at:
+          type: string
+        updated_at:
+          type: string
+        shipping_label_id:
+          type: string
+          nullable: true
+      required:
+      - id
+      - tracking_number
+      - carrier
+      - carrier_name
+      - service
+      - status
+      - tracking_url
+      - estimated_delivery_at
+      - delivered_at
+      - created_at
+      - updated_at
+      - shipping_label_id
+      x-typelizer: true
     DeliveryZone:
       type: object
       properties:
@@ -16887,13 +17004,10 @@ components:
         tracking_url:
           type: string
           nullable: true
-        tracking_carrier:
-          type: string
-          nullable: true
-        tracking_status:
-          type: string
-          nullable: true
         fulfilled_at:
+          type: string
+          nullable: true
+        delivered_at:
           type: string
           nullable: true
         created_at:
@@ -16913,21 +17027,30 @@ components:
           type: array
           items:
             "$ref": "#/components/schemas/FulfillmentItem"
+        deliveries:
+          type: array
+          items:
+            "$ref": "#/components/schemas/Delivery"
+        labels:
+          type: array
+          items:
+            "$ref": "#/components/schemas/ShippingLabel"
       required:
       - id
       - number
       - status
       - tracking
       - tracking_url
-      - tracking_carrier
-      - tracking_status
       - fulfilled_at
+      - delivered_at
       - created_at
       - updated_at
       - fulfillment_type
       - delivery_method_name
       - stock_location_name
       - fulfillment_items
+      - deliveries
+      - labels
       x-typelizer: true
     ImportMapping:
       type: object
@@ -17763,6 +17886,84 @@ components:
       - file_url
       - file_name
       x-typelizer: true
+    ShippingLabel:
+      type: object
+      properties:
+        id:
+          type: string
+        source:
+          type: string
+        status:
+          type: string
+        carrier:
+          type: string
+          nullable: true
+        carrier_name:
+          type: string
+          nullable: true
+        service:
+          type: string
+          nullable: true
+        tracking_number:
+          type: string
+          nullable: true
+        currency:
+          type: string
+          nullable: true
+        format:
+          type: string
+          nullable: true
+        external_id:
+          type: string
+          nullable: true
+        metadata:
+          type: object
+        refunded_at:
+          type: string
+          nullable: true
+        created_at:
+          type: string
+        updated_at:
+          type: string
+        owner_id:
+          type: string
+        owner_type:
+          type: string
+        cost:
+          type: string
+        display_cost:
+          type: string
+        integration_id:
+          type: string
+          nullable: true
+        file_pending:
+          type: boolean
+        download_url:
+          type: string
+          nullable: true
+      required:
+      - id
+      - source
+      - status
+      - carrier
+      - carrier_name
+      - service
+      - tracking_number
+      - currency
+      - format
+      - external_id
+      - metadata
+      - refunded_at
+      - created_at
+      - updated_at
+      - owner_id
+      - owner_type
+      - cost
+      - display_cost
+      - integration_id
+      - file_pending
+      - download_url
+      x-typelizer: true
     StockLevel:
       type: object
       properties:
@@ -17851,6 +18052,8 @@ components:
           type: boolean
         kind:
           type: string
+        returns_enabled:
+          type: boolean
         created_at:
           type: string
         updated_at:
@@ -17874,6 +18077,7 @@ components:
       - active
       - default
       - kind
+      - returns_enabled
       - created_at
       - updated_at
       x-typelizer: true
