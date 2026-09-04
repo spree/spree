@@ -45,6 +45,12 @@ module Spree
       # what a supervisory authority asks for.
       before_save :stamp_email_marketing_consent, if: :will_save_change_to_accepts_email_marketing?
 
+      # An erased account has no supported way back: a second erasure is
+      # refused as already done, so anything written here afterwards would
+      # stay. Guarded on the model rather than in one controller, since every
+      # write path leads to the same row.
+      validate :refuse_personal_data_on_erased_account, if: :anonymized?
+
       after_save_commit :sync_newsletter_subscription_with_marketing_consent,
                         if: :saved_change_to_accepts_email_marketing?
 
@@ -370,6 +376,19 @@ module Spree
 
     def use_billing?
       use_billing.in?([true, 'true', '1'])
+    end
+
+    # The columns the erasure rewrote. Marketing flags, locale and the rest of
+    # the row stay editable — it is only identifying data that must not return.
+    ERASED_PERSONAL_ATTRIBUTES = %w[email first_name last_name phone].freeze
+
+    def refuse_personal_data_on_erased_account
+      returning = ERASED_PERSONAL_ATTRIBUTES.select { |attribute| will_save_change_to_attribute?(attribute) }
+      return if returning.empty?
+
+      returning.each do |attribute|
+        errors.add(attribute, :erased_account, message: Spree.t('customer_errors.erased_account'))
+      end
     end
 
     def stamp_email_marketing_consent

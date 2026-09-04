@@ -297,6 +297,20 @@ RSpec.describe Spree::Customers::Anonymize do
     expect(seen).to be_present
   end
 
+  # A second erasure is refused as already done, so anything written back
+  # afterwards would stay with no supported way to remove it.
+  describe 'an account that has already been erased' do
+    before { result }
+
+    it 'refuses personal data written back onto it' do
+      expect(customer.reload.update(first_name: 'Ada', last_name: 'Lovelace')).to be(false)
+    end
+
+    it 'still allows the rest of the row to be edited' do
+      expect(customer.reload.update(selected_locale: 'fr')).to be(true)
+    end
+  end
+
   describe 'a store credit balance' do
     let!(:store_credit) do
       create(:store_credit, customer: customer, store: store).
