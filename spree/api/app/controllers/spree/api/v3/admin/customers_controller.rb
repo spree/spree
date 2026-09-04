@@ -92,7 +92,7 @@ module Spree
           # there is no unauthenticated caller to rate-limit.
           def export
             authorize_resource!(@resource)
-            return unless authorized_for_order_history?
+            return unless authorized_for_export?
 
             if @resource.anonymized?
               return render_error(
@@ -187,14 +187,26 @@ module Spree
           # hand order data to a role that was never granted it.
           #
           # @return [Boolean] false when the response has already been rendered
-          def authorized_for_order_history?
-            return true if holds_permission?('read_orders')
+          # Everything the subject access response gathers, and the permission
+          # that guards it elsewhere in the API. Seeing a customer's name is not
+          # the same as downloading their order history, their saved cards and
+          # their balances in one file, so the export asks for each of them.
+          EXPORT_PERMISSIONS = %w[
+            read_orders
+            read_payments
+            read_store_credits
+            read_gift_cards
+          ].freeze
+
+          def authorized_for_export?
+            missing = EXPORT_PERMISSIONS.reject { |permission| holds_permission?(permission) }
+            return true if missing.empty?
 
             render_error(
               code: Spree::Api::V3::ErrorHandler::ERROR_CODES[:access_denied],
-              message: 'Missing permission: read_orders',
+              message: "Missing permission: #{missing.first}",
               status: :forbidden,
-              details: { required_permission: 'read_orders' }
+              details: { required_permission: missing.first }
             )
             false
           end

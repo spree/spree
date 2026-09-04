@@ -87,6 +87,25 @@ RSpec.describe Spree::Api::V3::Admin::CustomersController, type: :controller do
       end
     end
 
+    # The response reaches past orders into saved cards, balances and gift
+    # cards, each of which has its own key elsewhere in the API.
+    context 'when the caller may read customers and orders but nothing else' do
+      let(:admin_user) do
+        create(:admin_user, :without_admin_role).tap do |user|
+          create(:role_user, user: user,
+                             role: create(:role, name: 'Orders', resource: store,
+                                                 permissions: %w[read_customers read_orders]))
+        end
+      end
+
+      it 'refuses the export and names the first permission it lacks' do
+        get :export, params: { id: customer.prefixed_id }, as: :json
+
+        expect(response).to have_http_status(:forbidden)
+        expect(json_response.dig('error', 'details', 'required_permission')).to eq('read_payments')
+      end
+    end
+
     it '404s for a customer that does not exist' do
       get :export, params: { id: 'cust_nonexistent' }, as: :json
 
