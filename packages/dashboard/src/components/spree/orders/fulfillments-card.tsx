@@ -277,6 +277,7 @@ function CreateFulfillmentDialog({
   const units = orderUnits(order)
   const locations = data?.data ?? []
   const [stockLocationId, setStockLocationId] = useState('')
+  const [error, setError] = useState<string | null>(null)
   const [selection, setSelection] = useState<Record<string, number>>({})
 
   const items = Object.entries(selection)
@@ -290,6 +291,7 @@ function CreateFulfillmentDialog({
 
   function handleSubmit() {
     if (!stockLocationId) return
+    setError(null)
     create.mutate(
       {
         stock_location_id: stockLocationId,
@@ -301,7 +303,17 @@ function CreateFulfillmentDialog({
         onSuccess: () => {
           setSelection({})
           setStockLocationId('')
+          setError(null)
           onOpenChange(false)
+        },
+        // The mutation hook leaves a 422 untoasted because a form usually
+        // shows it beside the offending field. This dialog has no such
+        // field — the reason lives on the server ("that item has no
+        // unfulfilled quantity") — so it is rendered here or nowhere.
+        onError: (mutationError) => {
+          setError(
+            mutationError instanceof Error ? mutationError.message : t('admin.errors.unexpected'),
+          )
         },
       },
     )
@@ -318,6 +330,12 @@ function CreateFulfillmentDialog({
         </DialogHeader>
         <DialogBody>
           <FieldGroup>
+            {error && (
+              <p className="text-sm text-destructive" role="alert">
+                {error}
+              </p>
+            )}
+
             <Field>
               <FieldLabel htmlFor="create-location">
                 {t('admin.orders.detail.fulfillments.ships_from')}
