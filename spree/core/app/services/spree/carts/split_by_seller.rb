@@ -29,10 +29,12 @@ module Spree
       # blocklist would carry every future column onto siblings by default.
       # Adding a column here is a decision that it describes the checkout
       # rather than one seller's part of it.
+      # `applied_tax_exemptions` rides along, or a sibling resolves again and
+      # takes override ids that match nothing it owns.
       CARRIED_TO_SIBLING = %w[
         email currency locale market_id channel_id company_id
         customer_id token accept_marketing preferred_stock_location_id
-        customer_note last_ip_address po_number
+        customer_note last_ip_address po_number applied_tax_exemptions
       ].freeze
 
       # @param cart [Spree::Cart]
