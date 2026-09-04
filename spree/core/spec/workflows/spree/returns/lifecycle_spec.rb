@@ -29,6 +29,43 @@ RSpec.describe 'Spree::Returns workflows' do
       expect(create_return.value.stock_location).to eq(order.shipments.first.stock_location)
     end
 
+    # A merchant who inspects and restocks returns at one processing centre
+    # turns the flag off everywhere else, and goods stop coming back to the
+    # warehouse that shipped them.
+    context 'when the shipping location does not accept returns' do
+      let!(:returns_centre) do
+        create(:stock_location, store: store, name: "Returns centre #{SecureRandom.hex(3)}",
+                                returns_enabled: true, default: false)
+      end
+
+      before { order.shipments.first.stock_location.update!(returns_enabled: false) }
+
+      it 'sends them to a location that does' do
+        expect(create_return.value.stock_location).to eq(returns_centre)
+      end
+
+      # A store's locations include every seller's own warehouses, and an
+      # operator's goods must never be routed into one.
+      it 'never routes first-party goods into a seller warehouse' do
+        seller_location = create(:stock_location, store: store, name: "Seller depot #{SecureRandom.hex(3)}",
+                                                  seller: create(:seller, store: store),
+                                                  returns_enabled: true, default: true)
+
+        result = create_return
+        expect(result).to be_success, result.error.to_s
+        expect(result.value.stock_location).not_to eq(seller_location)
+        expect(result.value.stock_location).to eq(returns_centre)
+      end
+
+      # Somewhere has to take the parcel, even on a store that has turned
+      # every flag off.
+      it 'falls back to where they shipped from when nowhere accepts returns' do
+        returns_centre.update!(returns_enabled: false)
+
+        expect(create_return.value.stock_location).to eq(order.shipments.first.stock_location)
+      end
+    end
+
     it 'refuses an order that was never completed' do
       cart_order = create(:order, store: store)
 

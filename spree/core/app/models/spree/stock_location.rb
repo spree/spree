@@ -46,7 +46,7 @@ module Spree
               allow_nil: true
 
     self.whitelisted_ransackable_attributes = %w[
-      name active default kind pickup_enabled
+      name active default kind pickup_enabled returns_enabled
       country_code state_code created_at updated_at
       seller_id
     ]
@@ -54,6 +54,7 @@ module Spree
 
     scope :active, -> { where(active: true) }
     scope :pickup_enabled, -> { where(pickup_enabled: true) }
+    scope :returns_enabled, -> { where(returns_enabled: true) }
     scope :order_default, -> { order(default: :desc, name: :asc) }
     # The operator's own locations — a marketplace's first-party stock.
     scope :first_party, -> { where(seller_id: nil) }

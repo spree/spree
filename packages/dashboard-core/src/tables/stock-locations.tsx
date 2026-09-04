@@ -75,6 +75,21 @@ defineTable<PanelStockLocation>('stock-locations', {
       ),
     },
     {
+      key: 'returns_enabled',
+      label: i18n.t('admin.stock_locations.columns.returns'),
+      sortable: true,
+      filterable: true,
+      default: true,
+      filterType: 'boolean',
+      render: (sl) => (
+        <ActiveBadge
+          active={sl.returns_enabled}
+          activeLabel={i18n.t('admin.stock_locations.badges.enabled')}
+          dashWhenInactive
+        />
+      ),
+    },
+    {
       key: 'active',
       label: i18n.t('admin.fields.active.label'),
       sortable: true,

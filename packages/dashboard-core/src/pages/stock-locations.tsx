@@ -544,6 +544,19 @@ function StockLocationFormFields({ form }: { form: UseFormReturn<StockLocationFo
       </div>
 
       <div className="border-t border-border pt-4">
+        <h3 className="mb-3 text-sm font-medium">{t('admin.stock_locations.section_returns')}</h3>
+        <FieldGroup>
+          <BooleanRow
+            id="returns-enabled"
+            label={t('admin.fields.stock_location.returns_enabled.label')}
+            help={t('admin.fields.stock_location.returns_enabled.help')}
+            form={form}
+            name="returns_enabled"
+          />
+        </FieldGroup>
+      </div>
+
+      <div className="border-t border-border pt-4">
         <h3 className="mb-3 text-sm font-medium">{t('admin.stock_locations.section_pickup')}</h3>
         <FieldGroup>
           <BooleanRow

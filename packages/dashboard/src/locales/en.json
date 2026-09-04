@@ -4939,6 +4939,7 @@
         "default": "Default",
         "location": "Location",
         "pickup": "Pickup",
+        "returns": "Returns",
         "type": "Type"
       },
       "create_description": "Add a warehouse, store, or pickup point to fulfill orders from.",

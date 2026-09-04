@@ -14207,6 +14207,7 @@ paths:
                   active: true
                   default: false
                   kind: warehouse
+                  returns_enabled: true
                   created_at: '2026-01-15T12:00:00.000Z'
                   updated_at: '2026-01-15T12:00:00.000Z'
                 meta:
@@ -14272,6 +14273,7 @@ paths:
                 active: true
                 default: false
                 kind: warehouse
+                returns_enabled: true
                 created_at: '2026-01-15T12:00:00.000Z'
                 updated_at: '2026-01-15T12:00:00.000Z'
               schema:
@@ -14387,6 +14389,7 @@ paths:
                 active: true
                 default: false
                 kind: warehouse
+                returns_enabled: true
                 created_at: '2026-01-15T12:00:00.000Z'
                 updated_at: '2026-01-15T12:00:00.000Z'
               schema:
@@ -14443,6 +14446,7 @@ paths:
                 active: true
                 default: false
                 kind: warehouse
+                returns_enabled: true
                 created_at: '2026-01-15T12:00:00.000Z'
                 updated_at: '2026-01-15T12:00:00.000Z'
               schema:
@@ -14793,10 +14797,10 @@ paths:
             application/json:
               example:
                 direct_upload:
-                  url: http://www.example.com/rails/active_storage/disk/eyJfcmFpbHMiOnsiZGF0YSI6eyJrZXkiOiJuem5oOGdra3VxendvbDc1ODBxNHNwZmpmMjVxIiwiY29udGVudF90eXBlIjoiYXBwbGljYXRpb24vcGRmIiwiY29udGVudF9sZW5ndGgiOjUxMjM0LCJjaGVja3N1bSI6IlZqaHowNGxRdUVHdXY0bkR2aHNhTlE9PSIsInNlcnZpY2VfbmFtZSI6InRlc3QifSwiZXhwIjoiMjAyNi0wMS0xNVQxMjowNTowMC4wMDBaIiwicHVyIjoiYmxvYl90b2tlbiJ9fQ==--e0120a532755bc946163fdc57ba789f916d511ee
+                  url: http://www.example.com/rails/active_storage/disk/eyJfcmFpbHMiOnsiZGF0YSI6eyJrZXkiOiJuem5oOGdra3VxendvbDc1ODBxNHNwZmpmMjVxIiwiY29udGVudF90eXBlIjoiYXBwbGljYXRpb24vcGRmIiwiY29udGVudF9sZW5ndGgiOjUxMjM0LCJjaGVja3N1bSI6IlZqaHowNGxRdUVHdXY0bkR2aHNhTlE9PSIsInNlcnZpY2VfbmFtZSI6InRlc3QifSwiZXhwIjoiMjAyNi0wMS0xNVQxMjowNTowMC4wMDBaIiwicHVyIjoiYmxvYl90b2tlbiJ9fQ==--b33be3bbd7c68338e1261455d7d9de2a4b5bcc08
                   headers:
                     Content-Type: application/pdf
-                signed_id: eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--8af05e21e5ac07b056ef78374a34818478f084f6
+                signed_id: eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--37ded779b38909aa9884ca2c10ae2835eb97e766
               schema:
                 "$ref": "#/components/schemas/DirectUploadResponse"
       requestBody:
@@ -18029,6 +18033,8 @@ components:
           type: boolean
         kind:
           type: string
+        returns_enabled:
+          type: boolean
         created_at:
           type: string
         updated_at:
@@ -18052,6 +18058,7 @@ components:
       - active
       - default
       - kind
+      - returns_enabled
       - created_at
       - updated_at
       x-typelizer: true

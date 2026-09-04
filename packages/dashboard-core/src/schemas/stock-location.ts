@@ -31,6 +31,7 @@ export const stockLocationFormSchema = z.object({
   state_code: z.string().optional(),
   state_name: z.string().optional(),
   pickup_enabled: z.boolean(),
+  returns_enabled: z.boolean(),
   pickup_stock_policy: z.enum(PICKUP_STOCK_POLICIES),
   pickup_ready_in_minutes: z.preprocess(
     emptyToUndefined,
@@ -59,6 +60,9 @@ export const STOCK_LOCATION_DEFAULTS: StockLocationFormValues = {
   state_code: '',
   state_name: '',
   pickup_enabled: false,
+  // Locations accept returns unless a merchant narrows it, which is how
+  // goods behaved before the flag existed.
+  returns_enabled: true,
   pickup_stock_policy: 'local',
   pickup_ready_in_minutes: null,
   pickup_instructions: '',
@@ -85,6 +89,7 @@ export function stockLocationToFormValues(sl: PanelStockLocation): StockLocation
     state_code: sl.state_code ?? '',
     state_name: sl.state_name ?? '',
     pickup_enabled: sl.pickup_enabled ?? false,
+    returns_enabled: sl.returns_enabled ?? true,
     pickup_stock_policy: PICKUP_STOCK_POLICIES.includes(sl.pickup_stock_policy as PickupStockPolicy)
       ? (sl.pickup_stock_policy as PickupStockPolicy)
       : 'local',
@@ -113,6 +118,7 @@ export function formValuesToParams(v: StockLocationFormValues): PanelStockLocati
     state_code: blankToUndefined(v.state_code),
     state_name: blankToUndefined(v.state_name),
     pickup_enabled: v.pickup_enabled,
+    returns_enabled: v.returns_enabled,
     pickup_stock_policy: v.pickup_stock_policy,
     pickup_ready_in_minutes: v.pickup_ready_in_minutes ?? null,
     pickup_instructions: blankToUndefined(v.pickup_instructions),

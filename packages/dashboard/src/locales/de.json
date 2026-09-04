@@ -4939,6 +4939,7 @@
         "default": "Standard",
         "location": "Standort",
         "pickup": "Abholung",
+        "returns": "Rücksendungen",
         "type": "Typ"
       },
       "create_description": "Fügen Sie ein Lager, ein Geschäft oder einen Abholpunkt hinzu, von dem aus Bestellungen abgewickelt werden.",

@@ -701,6 +701,10 @@
         "propagate_all_variants": {
           "help": "Twórz pozycje magazynowe w tej lokalizacji dla każdego wariantu produktu.",
           "label": "Automatycznie twórz pozycje magazynowe dla wszystkich wariantów"
+        },
+        "returns_enabled": {
+          "help": "Zwracany towar wraca do tej lokalizacji. Wyłącz, jeśli zwroty są sprawdzane gdzie indziej.",
+          "label": "Przyjmuj tu zwroty"
         }
       },
       "storefront_visible": {
@@ -1283,6 +1287,7 @@
         "default": "Domyślna",
         "location": "Lokalizacja",
         "pickup": "Odbiór",
+        "returns": "Zwroty",
         "seller": "Sprzedawca",
         "type": "Typ"
       },
@@ -1305,6 +1310,7 @@
       },
       "search_placeholder": "Szukaj według nazwy…",
       "section_pickup": "Odbiór",
+      "section_returns": "Zwroty",
       "stock_levels": {
         "empty": "Brak stanów magazynowych w tej lokalizacji.",
         "empty_search": "Żadne stany magazynowe nie pasują do wyszukiwania.",

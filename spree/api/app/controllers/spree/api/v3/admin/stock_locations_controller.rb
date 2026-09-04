@@ -32,7 +32,7 @@ module Spree
               :kind, :propagate_all_variants, :backorderable_default,
               :address1, :address2, :city, :zipcode, :phone, :company,
               :country_code, :state_code, :state_name,
-              :pickup_enabled, :pickup_stock_policy,
+              :pickup_enabled, :pickup_stock_policy, :returns_enabled,
               :pickup_ready_in_minutes, :pickup_instructions
             )
           end

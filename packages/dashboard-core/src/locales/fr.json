@@ -700,6 +700,10 @@
         "propagate_all_variants": {
           "help": "Créer des articles en stock à cet emplacement pour chaque variante de produit.",
           "label": "Créer automatiquement des articles en stock pour toutes les variantes"
+        },
+        "returns_enabled": {
+          "help": "Les marchandises retournées reviennent à cet emplacement. Désactivez si les retours sont contrôlés ailleurs.",
+          "label": "Accepter les retours ici"
         }
       },
       "storefront_visible": {
@@ -1266,6 +1270,7 @@
         "default": "Par défaut",
         "location": "Emplacement",
         "pickup": "Retrait",
+        "returns": "Retours",
         "seller": "Vendeur",
         "type": "Type"
       },
@@ -1288,6 +1293,7 @@
       },
       "search_placeholder": "Rechercher par nom…",
       "section_pickup": "Retrait",
+      "section_returns": "Retours",
       "stock_levels": {
         "empty": "Aucun niveau de stock à cet emplacement pour le moment.",
         "empty_search": "Aucun niveau de stock ne correspond à votre recherche.",

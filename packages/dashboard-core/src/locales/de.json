@@ -700,6 +700,10 @@
         "propagate_all_variants": {
           "help": "Lagerbestände an diesem Standort für jede Produktvariante anlegen.",
           "label": "Lagerbestände für alle Varianten automatisch anlegen"
+        },
+        "returns_enabled": {
+          "help": "Zurückgesendete Ware kommt an diesen Standort. Deaktivieren Sie dies, wenn Rücksendungen anderswo geprüft werden.",
+          "label": "Rücksendungen hier annehmen"
         }
       },
       "storefront_visible": {
@@ -1266,6 +1270,7 @@
         "default": "Standard",
         "location": "Standort",
         "pickup": "Abholung",
+        "returns": "Rücksendungen",
         "seller": "Verkäufer",
         "type": "Typ"
       },
@@ -1288,6 +1293,7 @@
       },
       "search_placeholder": "Nach Name suchen…",
       "section_pickup": "Abholung",
+      "section_returns": "Rücksendungen",
       "stock_levels": {
         "empty": "An diesem Standort sind noch keine Lagerbestände vorhanden.",
         "empty_search": "Keine Lagerbestände entsprechen Ihrer Suche.",

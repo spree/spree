@@ -4939,6 +4939,7 @@
         "default": "Par défaut",
         "location": "Emplacement",
         "pickup": "Retrait",
+        "returns": "Retours",
         "type": "Type"
       },
       "create_description": "Ajoutez un entrepôt, un magasin ou un point de retrait pour traiter les commandes.",

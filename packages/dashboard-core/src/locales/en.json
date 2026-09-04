@@ -702,6 +702,10 @@
         "propagate_all_variants": {
           "help": "Create stock levels at this location for every product variant.",
           "label": "Auto-create stock levels for all variants"
+        },
+        "returns_enabled": {
+          "help": "Returned goods come back to this location. Turn it off if returns are inspected somewhere else.",
+          "label": "Accept returns here"
         }
       },
       "storefront_visible": {
@@ -1268,6 +1272,7 @@
         "default": "Default",
         "location": "Location",
         "pickup": "Pickup",
+        "returns": "Returns",
         "seller": "Seller",
         "type": "Type"
       },
@@ -1290,6 +1295,7 @@
       },
       "search_placeholder": "Search by name…",
       "section_pickup": "Pickup",
+      "section_returns": "Returns",
       "stock_levels": {
         "empty": "No stock levels at this location yet.",
         "empty_search": "No stock levels match your search.",

@@ -4930,6 +4930,7 @@
         "default": "默认",
         "location": "地点",
         "pickup": "自提",
+        "returns": "退货",
         "type": "类型"
       },
       "create_description": "添加仓库、门店或自提点，用于履行订单。",

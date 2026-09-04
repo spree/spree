@@ -4993,6 +4993,7 @@
         "default": "Domyślna",
         "location": "Lokalizacja",
         "pickup": "Odbiór",
+        "returns": "Zwroty",
         "type": "Typ"
       },
       "create_description": "Dodaj magazyn, sklep lub punkt odbioru, z którego będą realizowane zamówienia.",
