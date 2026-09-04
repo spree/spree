@@ -144,7 +144,7 @@ end
 
 ## Step 2: Register the Strategy
 
-Add the strategy to a registry in an initializer. **This is the only line that decides which API the provider serves** — `store_authentication_strategies` for customer login, `admin_authentication_strategies` for staff login. Register with both to allow the same provider on either surface. The key you choose here is what clients send as `provider` in the login payload.
+Add the strategy to a registry in `config/initializers/spree.rb`. **This is the only line that decides which API the provider serves** — `store_authentication_strategies` for customer login, `admin_authentication_strategies` for staff login. Register with both to allow the same provider on either surface. The key you choose here is what clients send as `provider` in the login payload.
 
 <CodeGroup>
 

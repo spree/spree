@@ -1,0 +1,171 @@
+---
+title: EasyPost
+description: "Set up EasyPost in Spree for live carrier rates at checkout, label purchase and refunds, customs declarations, and carrier tracking updates by webhook."
+---
+
+## Overview
+
+[EasyPost](https://www.easypost.com/) is a multi-carrier shipping API. One
+account reaches USPS, UPS, FedEx, DHL and a hundred or so regional carriers,
+either on EasyPost's own accounts or on rates you have negotiated yourself.
+
+Spree ships an EasyPost provider that does four jobs:
+
+- **Live rates at checkout** — real carrier prices for the actual parcel,
+  instead of a flat rate you maintain by hand
+- **Labels** — bought when a parcel ships, refunded when it does not
+- **Customs** — declarations on international labels, from data on the variant
+- **Tracking** — carrier updates arrive by webhook and move the parcel along
+
+**When to use it:** you ship physical goods with more than one carrier or
+service, or your prices need to reflect weight and distance.
+
+**When the built-in rates are enough:** flat or free delivery, one carrier at
+one price, or digital-only stores.
+
+## Setup
+
+### 1. Add the gem
+
+```ruby Gemfile
+gem 'spree_easypost'
+```
+
+```bash
+bundle install
+```
+
+### 2. Get an API key
+
+Sign up at [easypost.com](https://www.easypost.com/) and copy a key from
+**API Keys** in their dashboard.
+
+EasyPost issues separate **test** and **production** keys, and the key itself
+decides the mode — there is no toggle in Spree. Test keys produce real rates
+and real-looking labels without ever charging you or moving a parcel.
+
+<Warning>
+A production key buys real postage the moment a label is purchased. Use a test
+key (`EZTK…`) anywhere that is not production.
+</Warning>
+
+### 3. Connect it in the dashboard
+
+Go to **Settings → Integrations**, choose **EasyPost**, and paste the API key.
+Saving with **Active** ticked verifies the key against EasyPost before the
+integration is enabled, so a bad key fails immediately rather than at checkout.
+
+| Setting | What it does |
+|---|---|
+| **API key** | Your EasyPost key. Decides test or production mode |
+| **Webhook secret** | Shared secret that signs carrier tracking updates |
+| **Customs signer** | The person at your company taking legal responsibility for declarations |
+| **Customs contents type** | What international parcels usually contain — merchandise, gift, sample, returned goods |
+| **Incoterm** | Who pays duties on arrival. `DAP` bills the recipient, `DDP` bills you |
+
+<Warning>
+Choose `DDP` only if you actually collect duties from the customer at checkout.
+Otherwise the carrier bills you and the margin disappears quietly.
+</Warning>
+
+### 4. Add a delivery method that uses it
+
+Create a delivery method under **Settings → Delivery** and set its rate
+provider to EasyPost. The method now quotes live rates instead of a
+calculator: at checkout each carrier service comes back as its own option, so
+one method can offer Ground, 2-Day and Overnight.
+
+Narrow or rename what customers see with delivery method services — hide the
+services you never use, rename "FEDEX_GROUND" to "Standard", or add a markup.
+
+### 5. Set your origin address
+
+Rates and labels are quoted **from** a stock location, so every location that
+ships needs a complete, real address including a phone number. Carriers verify
+it and refuse anything they cannot find.
+
+<Info>
+A missing phone number or an unverifiable street address is the most common
+reason a first label purchase fails. Spree passes the carrier's own words
+straight back — "Phone is required but missing" names exactly what to fix.
+</Info>
+
+### 6. Receive tracking updates
+
+Carrier updates arrive by webhook. In EasyPost's dashboard add a webhook
+pointing at your store:
+
+```
+https://your-store.com/api/v3/webhooks/fulfillments/<integration_id>
+```
+
+The integration id is shown on the integration's page in Spree. Set a secret
+on the EasyPost webhook and paste the same value into **Webhook secret**.
+
+<Warning>
+Without a webhook secret, Spree refuses every incoming update. That is
+deliberate: an unauthenticated report could mark parcels delivered, and
+delivery is what return windows and the EU withdrawal period count from.
+</Warning>
+
+## Buying labels
+
+Once a fulfillment has a selected rate, buy its postage from the order page or
+through the API. Buying records the tracking number and mints the consignment,
+so nothing is typed by hand.
+
+```typescript Admin SDK
+const label = await adminClient.orders.fulfillments.labels.create('or_xxx', 'ful_xxx')
+
+// Changed your mind before it shipped
+await adminClient.orders.fulfillments.labels.refund('or_xxx', 'ful_xxx', label.id)
+```
+
+The label file is fetched into Spree's own storage right after purchase, so it
+stays printable after EasyPost's link expires or the integration is
+disconnected. What you paid is recorded on the label as merchant accounting
+data and never shown to the customer.
+
+Refunds go back through the account that sold the label, even if the parcel's
+delivery method changed afterwards. USPS settles refunds asynchronously, so a
+label can sit at `refund_requested` until the carrier answers.
+
+See [shipping labels](/developer/core-concepts/fulfillments#shipping-labels)
+for how postage records behave in general.
+
+## Return labels
+
+A return can carry prepaid postage. EasyPost books it in reverse — from the
+customer's address back to the return's stock location — and the customer
+downloads it from the storefront.
+
+```typescript Admin SDK
+await adminClient.orders.returns.labels.create('or_xxx', 'ret_xxx')
+```
+
+## Customs
+
+International labels carry a customs declaration built from the variant's
+`hs_code`, `country_of_origin` and `customs_description`, plus the defaults on
+the integration. Fill those in on any product you ship across a border —
+without them the carrier decides how to classify your goods, and duties follow
+from that classification.
+
+EasyPost declares; it does not estimate. To show duties to a customer before
+they buy, see [duties and fees](/developer/core-concepts/fees).
+
+## Troubleshooting
+
+| Symptom | Cause |
+|---|---|
+| No rates at checkout | Origin address incomplete, or the parcel exceeds carrier limits |
+| "Address not found" | The origin is not a real deliverable address — carriers verify it |
+| "Phone is required but missing" | A stock location with no phone number |
+| Label buy refused naming a service | The quote expired and that service is no longer offered — re-quote |
+| Tracking never updates | Webhook not configured, or its secret does not match |
+
+## Related
+
+- [Fulfillments](/developer/core-concepts/fulfillments) — parcels, consignments and labels
+- [Custom delivery rate provider](/developer/how-to/custom-delivery-rate-provider) — writing your own
+- [Returns](/developer/core-concepts/returns-exchanges-claims) — prepaid return labels

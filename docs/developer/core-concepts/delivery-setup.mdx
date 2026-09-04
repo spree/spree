@@ -1,0 +1,130 @@
+---
+title: Delivery setup
+description: How delivery is configured in Spree — profiles that decide how a product ships, zones that decide where, methods the customer picks, and where rates come from.
+---
+
+## Overview
+
+Four pieces decide what a customer is offered at checkout:
+
+| Piece | Question it answers |
+|---|---|
+| **Delivery profile** | How does this product ship at all? |
+| **Delivery zone** | Where can it go? |
+| **Delivery method** | What does the customer pick? |
+| **Rate provider** | What does it cost? |
+
+A product belongs to one profile. The profile decides which methods are even
+possible, the zone decides where they apply, and the rate provider prices them.
+
+```mermaid
+erDiagram
+    Product }o--|| DeliveryProfile : "ships as"
+    DeliveryProfile ||--o{ DeliveryMethod : "offers"
+    DeliveryProfile ||--o{ DeliveryZone : "reaches"
+    DeliveryProfile ||--o{ DeliveryOriginGroup : "ships from"
+    DeliveryOriginGroup }o--o{ StockLocation : "covers"
+    DeliveryMethod }o--o| DeliveryZone : "limited to"
+
+    DeliveryProfile {
+        string name
+        string type
+        boolean default
+    }
+```
+
+## Delivery profiles
+
+A **delivery profile** is how a product ships. Every product has exactly one,
+and it is required — a new product gets its product type's profile, or the
+store default.
+
+Two kinds ship with Spree:
+
+| Kind | Behaviour |
+|---|---|
+| `DeliveryProfiles::Shipping` | Physical goods. Offers carriers and counters, produces a parcel |
+| `DeliveryProfiles::Digital` | Downloads and entitlements. No address, no carrier, available on payment |
+
+Whether checkout collects a shipping address is decided by the methods on the
+profile rather than the kind, so a shipping profile offering only click-and-
+collect asks for no address either.
+
+This is what lets one order contain a vinyl record and its download without
+special handling in your storefront: the cart splits by profile, so the
+download is ready immediately and the record gets a tracking number. A cart
+holding only digital goods skips the delivery step at checkout entirely.
+
+A profile also decides **where a product ships from**, through its origin
+groups. A group is a named set of stock locations with its own zones and
+methods, so "ships from the EU warehouse" and "ships from the US warehouse"
+can offer different carriers at different prices. With no groups, every
+location qualifies.
+
+That is how a store with a refrigerated warehouse keeps chilled goods from
+being picked at a dry one: order routing only allocates from locations the
+profile covers.
+
+```typescript Admin SDK
+// What profiles the store has
+const profiles = await adminClient.deliveryProfiles.list()
+
+// Ship a product as a download
+await adminClient.products.update('prod_xxx', {
+  delivery_profile_id: 'dp_digital',
+})
+```
+
+<Note>
+Profiles are a template at creation time, not a live binding: changing a
+profile does not rewrite products already assigned to it. Reassign a product
+explicitly when it should ship differently.
+</Note>
+
+## Delivery methods and zones
+
+A **delivery method** is what the customer picks — "Standard", "Express", "Collect in store". A **delivery zone** decides where it's available.
+
+Zones match on country and state, and also on postal code prefixes and ranges, so you can offer same-day delivery to a handful of city postcodes without listing every one:
+
+```typescript Admin SDK
+await adminClient.deliveryZones.create({
+  name: 'London same-day',
+  members: [
+    { member_type: 'postal_code', country_code: 'GB', postal_code_prefix: 'SW1' },
+    { member_type: 'postal_code', country_code: 'GB', postal_code_from: 'EC1A', postal_code_to: 'EC1V' },
+  ],
+})
+```
+
+A zone member is either a whole country, a state, or a postal code prefix or range.
+
+<Note>
+Delivery zones cover delivery only. Tax is handled separately — see [Taxes](/developer/core-concepts/taxes).
+</Note>
+
+### Pricing and rules
+
+Delivery is priced either by a rule you configure in the dashboard — flat rate, per item, price bands — or by asking a carrier for live rates.
+
+Methods can also carry conditions that decide when they're offered at all: free shipping over a certain order value, or heavy items excluded from letter post. These are applied in one place, so both kinds of pricing respect them.
+
+## Rates
+
+A method is priced one of two ways, and the choice is per method:
+
+- **A calculator** you configure — flat rate, per item, price bands. Predictable,
+  no network call, no carrier account. See [calculators](/developer/core-concepts/calculators).
+- **A rate provider** that asks a carrier what this parcel actually costs.
+  See [EasyPost](/integrations/shipping/easypost), or write your own with
+  [custom delivery rate providers](/developer/how-to/custom-delivery-rate-provider).
+
+A carrier-priced method returns one option per service, so a single "Carrier
+rates" method can offer Ground, 2-Day and Overnight as separate choices.
+
+## Related
+
+- [Fulfillments](/developer/core-concepts/fulfillments) — what happens to the parcel afterwards
+- [Calculators](/developer/core-concepts/calculators) — how a price is worked out
+- [EasyPost](/integrations/shipping/easypost) — live carrier rates and labels
+- [Selling digital products](/developer/how-to/sell-digital-products) — the digital profile end to end

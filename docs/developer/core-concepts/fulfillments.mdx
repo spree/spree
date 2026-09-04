@@ -314,33 +314,10 @@ curl -X PATCH 'https://api.mystore.com/api/v3/admin/orders/or_xxx/fulfillments/f
 
 </CodeGroup>
 
-## Delivery methods and zones
+## How delivery is set up
 
-A **delivery method** is what the customer picks — "Standard", "Express", "Collect in store". A **delivery zone** decides where it's available.
-
-Zones match on country and state, and also on postal code prefixes and ranges, so you can offer same-day delivery to a handful of city postcodes without listing every one:
-
-```typescript Admin SDK
-await adminClient.deliveryZones.create({
-  name: 'London same-day',
-  members: [
-    { member_type: 'postal_code', country_code: 'GB', postal_code_prefix: 'SW1' },
-    { member_type: 'postal_code', country_code: 'GB', postal_code_from: 'EC1A', postal_code_to: 'EC1V' },
-  ],
-})
-```
-
-A zone member is either a whole country, a state, or a postal code prefix or range.
-
-<Note>
-Delivery zones cover delivery only. Tax is handled separately — see [Taxes](/developer/core-concepts/taxes).
-</Note>
-
-### Pricing and rules
-
-Delivery is priced either by a rule you configure in the dashboard — flat rate, per item, price bands — or by asking a carrier for live rates.
-
-Methods can also carry conditions that decide when they're offered at all: free shipping over a certain order value, or heavy items excluded from letter post. These are applied in one place, so both kinds of pricing respect them.
+Which methods a customer is offered, what they cost and where they reach is
+configured separately — see [delivery setup](/developer/core-concepts/delivery-setup).
 
 ## Adding your own statuses
 
@@ -370,8 +347,7 @@ orders render `fulfilled` as "ready for pickup".
 by it, reports group by it, or webhooks fire on entering it, make it a
 first-class status:
 
-```ruby
-# an initializer
+```ruby config/initializers/spree.rb
 Spree::Fulfillment.add_status('in_production', after: 'unfulfilled')
 ```
 
