@@ -22,14 +22,23 @@ module Spree
         # both read `refund_requested`. The settle is a conditional UPDATE:
         # exactly one call moves the row, and only that one releases the
         # delivery and announces the refund.
-        settled = Spree::ShippingLabel.
-          where(id: shipping_label.id, status: 'refund_requested').
-          update_all(status: 'refunded', refunded_at: refunded_at || Time.current, updated_at: Time.current)
+        settled = ApplicationRecord.transaction do
+          claimed = Spree::ShippingLabel.
+            where(id: shipping_label.id, status: 'refund_requested').
+            update_all(status: 'refunded', refunded_at: refunded_at || Time.current, updated_at: Time.current)
+
+          # The delivery goes with the settle or neither happens: a refunded
+          # label still holding the consignment it minted is the state a
+          # retry cannot detect, since the status already reads refunded.
+          shipping_label.reload.release_unmoved_delivery if claimed.positive?
+          claimed
+        end
 
         return success(shipping_label.reload) if settled.zero?
 
-        shipping_label.reload
-        shipping_label.release_unmoved_delivery
+        # Outside the transaction deliberately — subscribers do their own
+        # work, and a slow or failing one must not roll back a refund the
+        # carrier has already made.
         shipping_label.publish_event('shipping_label.refunded')
         success(shipping_label)
       end
