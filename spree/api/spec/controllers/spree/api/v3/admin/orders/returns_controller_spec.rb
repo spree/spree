@@ -103,6 +103,19 @@ RSpec.describe Spree::Api::V3::Admin::Orders::ReturnsController, type: :controll
       expect(json_response['status']).to eq('received')
     end
 
+    # Omitting `items` means "everything as requested"; naming an empty list
+    # means the caller named no units, which must not fall through to that.
+    it 'refuses an explicitly empty item list rather than receiving everything' do
+      line = return_record.return_line_items.first
+
+      patch :receive, params: {
+        order_id: order.prefixed_id, id: return_record.prefixed_id, items: []
+      }, as: :json
+
+      expect(response).to have_http_status(:unprocessable_content)
+      expect(line.reload.received_quantity).to eq(0)
+    end
+
     it 'records a partial, non-resellable receipt' do
       line = return_record.return_line_items.first
 

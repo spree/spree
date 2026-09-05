@@ -3,36 +3,26 @@ module Spree
     module V3
       module Seller
         module Orders
-          # Labels on a parcel the seller ships themselves. Sellers fulfill on
-          # manual methods only, so they upload a label bought elsewhere and
-          # print it back — never purchase or refund, which need the
-          # operator's carrier account.
-          class LabelsController < Seller::BaseController
-            include Spree::Api::V3::OrderLock
-            include ActiveStorage::SetCurrent
-            include Spree::Api::V3::StreamsShippingLabel
+          # Labels on a parcel the seller ships themselves.
+          #
+          # Recording, printing and deleting are shared with the operator's
+          # branch through the concern. Buying and refunding are not: they
+          # need the operator's carrier account, so a seller uploads a label
+          # bought elsewhere and prints it back.
+          #
+          # Rooted at the order fetched through `current_seller_orders`, so a
+          # fulfillment on somebody else's order reads as missing.
+          class LabelsController < BaseController
+            include Spree::Api::V3::Orders::ShippingLabelActions
 
-            scoped_resource :fulfillments
+            before_action :set_resource, only: [:show, :download, :destroy]
 
-            before_action :set_fulfillment
-            before_action :set_label, only: [:show, :download, :destroy]
-
-            rescue_from ActiveSupport::MessageVerifier::InvalidSignature, with: :render_invalid_signature
-
-            def index
-              render json: { data: @fulfillment.shipping_labels.map { |label| serialize(label) } }
-            end
-
-            def show
-              render json: serialize(@label)
-            end
-
-            # POST /api/v3/seller/orders/:order_id/fulfillments/:fulfillment_id/labels
+            # POST .../labels
             #
             # Records an uploaded label; a request without a file is refused,
             # since purchase is the operator's.
             def create
-              authorize! :update, @fulfillment
+              authorize!(:create, Spree::ShippingLabel)
 
               if label_params[:file].blank?
                 return render_error(
@@ -42,88 +32,20 @@ module Spree
                 )
               end
 
-              with_order_lock do
-                result = Spree.shipping_label_record_workflow.call(
-                  owner: @fulfillment,
-                  file: label_params[:file],
-                  tracking_number: label_params[:tracking_number],
-                  carrier: label_params[:carrier],
-                  service: label_params[:service],
-                  cost: label_params[:cost],
-                  currency: label_params[:currency],
-                  file_format: label_params[:file_format],
-                  tracking_url: label_params[:tracking_url]
-                )
-
-                if result.success?
-                  render json: serialize(result.value), status: :created
-                else
-                  render_result_error(result)
-                end
-              end
-            end
-
-            # GET .../labels/:id/download
-            def download
-              stream_shipping_label(@label) do
-                render_error(
-                  code: ERROR_CODES[:validation_error],
-                  message: Spree.t('shipping_labels.errors.no_file_url'),
-                  status: :unprocessable_content
-                )
-              end
-            end
-
-            # DELETE .../labels/:id — uploaded labels only.
-            def destroy
-              authorize! :update, @fulfillment
-
-              unless @label.uploaded?
-                return render_error(
-                  code: ERROR_CODES[:validation_error],
-                  message: Spree.t('shipping_labels.errors.purchased_not_deletable'),
-                  status: :unprocessable_content
-                )
-              end
-
-              with_order_lock do
-                # The consignment goes with the label only while the parcel
-                # never moved — a journey that happened is a fact. Once it has,
-                # the delivery stays and is simply unlinked.
-                @label.release_unmoved_delivery
-                @label.destroy!
-                head :no_content
-              end
+              record_uploaded_label
             end
 
             protected
 
-            def read_actions
-              %w[index show download]
+            def serializer_class
+              Spree.api.seller_shipping_label_serializer
             end
 
-            private
-
-            def set_fulfillment
-              @order = current_seller_orders.find_by_prefix_id!(params[:order_id])
-              authorize! :show, @order
-              @fulfillment = @order.fulfillments.find_by_prefix_id!(params[:fulfillment_id])
-            end
-
-            def set_label
-              @label = @fulfillment.shipping_labels.find_by_prefix_id!(params[:id])
-            end
-
-            def label_params
-              @label_params ||= params.permit(:file, :tracking_number, :carrier, :service, :cost, :currency, :file_format, :tracking_url)
-            end
-
-            def serialize(label)
-              Spree.api.seller_shipping_label_serializer.new(label, params: { store: current_store }).to_h
-            end
-
-            def render_invalid_signature
-              render_error(code: ERROR_CODES[:parameter_invalid], message: Spree.t('shipping_labels.errors.file_required'), status: :unprocessable_content)
+            # The labels and consignments hang off the fulfillment, not the
+            # order, so the parent is narrowed one step past the base's.
+            def set_parent
+              super
+              @parent = @order.fulfillments.find_by_prefix_id!(params[:fulfillment_id])
             end
           end
         end
