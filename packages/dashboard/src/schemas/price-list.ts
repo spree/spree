@@ -80,8 +80,6 @@ const priceRuleDraftSchema: z.ZodType<PriceRuleFormDraft> = z.object({
   _localId: z.string(),
   id: z.string().optional(),
   type: z.string().min(1),
-  label: z.string(),
-  description: z.string().nullable().optional(),
   preference_schema: z.array(z.any()).default([]),
   preferences: z.record(z.string(), z.unknown()).default({}),
   customers: z.array(z.any()).optional(),
