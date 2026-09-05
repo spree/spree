@@ -98,7 +98,22 @@ module Spree
       def release_open_holds
         @released_holds = []
 
-        gift_card.open_holds(except: order).each do |hold|
+        gift_card.open_holds(except: order).each { |hold| release_hold(hold) }
+
+        gift_card.reload
+      end
+
+      # Re-reads the hold under its own lock before removing anything. The
+      # list was gathered outside that lock, so by now the other shopper may
+      # have taken this card off, or swapped a different one on — and Remove
+      # detaches whatever card the record carries at the time, not the one we
+      # meant. A hold that has moved on is simply skipped.
+      def release_hold(hold)
+        hold.with_lock do
+          hold.reload
+          next unless hold.gift_card_id == gift_card.id
+          next if hold.completed?
+
           result = Spree.gift_card_remove_workflow.call(order: hold)
 
           if result.success?
@@ -108,8 +123,6 @@ module Spree
             failure(order, :gift_card_held_by_another_order)
           end
         end
-
-        gift_card.reload
       end
 
       def report_unreleased_hold(hold, result)
@@ -124,6 +137,10 @@ module Spree
       end
 
       def ensure_amount_available
+        # Releasing a hold changed amount_remaining, so drop anything computed
+        # before that — a stale positive would let a zero balance reach
+        # issue_store_credit and raise there instead of failing here.
+        @amount = nil
         return if amount.positive? || order.total.zero?
 
         # Distinguish a spent card from one whose balance is briefly locked
@@ -132,8 +149,13 @@ module Spree
         failure(order, :gift_card_no_amount_remaining)
       end
 
+      # Read fresh rather than from the snapshot the release worked from. A
+      # hold created since then was never offered for release, so reporting
+      # the card as spent would be wrong — the balance is recoverable and the
+      # customer should be told to retry.
       def held_elsewhere?
-        gift_card.holds_being_completed(except: order).any?
+        gift_card.holds_being_completed(except: order).any? ||
+          gift_card.open_holds(except: order).any?
       end
 
       def amount

@@ -223,6 +223,35 @@ RSpec.describe Spree::GiftCards::Apply do
     end
   end
 
+  context 'when a hold no longer carries this card' do
+    let!(:other_cart) { create(:cart, store: store, customer: order_user) }
+    let!(:replacement_card) { create(:gift_card, amount: 50, store: store) }
+
+    before do
+      other_cart.update_column(:total, 50)
+      expect(Spree.gift_card_apply_workflow.call(gift_card: gift_card, order: other_cart)).to be_success
+    end
+
+    # The hold list is gathered before each hold is locked. Spree::GiftCards::
+    # Remove detaches whatever card the record carries at the time, so without
+    # a re-check a card swapped in by the other shopper would be stripped and
+    # the wrong balance restored.
+    it 'skips a hold whose card changed after the list was gathered' do
+      workflow = described_class.new
+      workflow.send(:instance_variable_set, :@gift_card, gift_card)
+      workflow.send(:instance_variable_set, :@order, order)
+      workflow.send(:instance_variable_set, :@released_holds, [])
+
+      Spree::Cart.where(id: other_cart.id).update_all(gift_card_id: replacement_card.id)
+
+      expect(Spree.gift_card_remove_workflow).not_to receive(:call)
+      workflow.send(:release_hold, other_cart)
+
+      expect(other_cart.reload.gift_card_id).to eq(replacement_card.id)
+      expect(replacement_card.reload.amount_used).to eq(0)
+    end
+  end
+
   context 'lock ordering' do
     let(:other_cart) { create(:cart, store: store, customer: order_user) }
 
