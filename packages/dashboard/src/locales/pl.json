@@ -3984,6 +3984,8 @@
       "api_key_description": "Znajdziesz go w panelu EasyPost. Klucz testowy i produkcyjny działają inaczej — to klucz decyduje o trybie.",
       "base_amount": "Kwota podstawowa",
       "base_percent": "Procent podstawowy",
+      "company_orders_only": "Tylko dla zamówień firmowych",
+      "company_orders_only_description": "Włączone — ta metoda jest oferowana wyłącznie zamówieniom składanym na firmę; wyłączone — tylko pozostałym. Bez tej reguły obowiązuje dla obu.",
       "currency": "Waluta",
       "customs_contents_type": "Rodzaj zawartości celnej",
       "customs_contents_type_description": "Co zawiera przesyłka międzynarodowa według klasyfikacji celnej.",

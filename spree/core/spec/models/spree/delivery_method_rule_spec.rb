@@ -178,32 +178,27 @@ describe Spree::DeliveryMethodRule, type: :model do
       fulfillment.to_package
     end
 
-    it 'restricts nothing while unconfigured' do
+    # Adding the rule at all is what states a split, so it defaults to the
+    # side that needs stating: freight is for company orders.
+    it 'is for company orders by default' do
       rule = described_class.new(delivery_method: delivery_method)
-
-      expect(rule.eligible?(company_package)).to be(true)
-      expect(rule.eligible?(package)).to be(true)
-    end
-
-    it 'hides a freight method from a retail cart when a company is required' do
-      rule = described_class.new(delivery_method: delivery_method, preferred_company_presence: 'required')
 
       expect(rule.eligible?(company_package)).to be(true)
       expect(rule.eligible?(package)).to be(false)
     end
 
-    it 'hides a parcel method from a company cart when a company must be absent' do
-      rule = described_class.new(delivery_method: delivery_method, preferred_company_presence: 'absent')
+    it 'hides a freight method from a retail cart' do
+      rule = described_class.new(delivery_method: delivery_method, preferred_company_orders_only: true)
+
+      expect(rule.eligible?(company_package)).to be(true)
+      expect(rule.eligible?(package)).to be(false)
+    end
+
+    it 'hides a parcel method from a company cart when turned off' do
+      rule = described_class.new(delivery_method: delivery_method, preferred_company_orders_only: false)
 
       expect(rule.eligible?(company_package)).to be(false)
       expect(rule.eligible?(package)).to be(true)
-    end
-
-    it 'refuses a presence value outside the two it knows' do
-      rule = described_class.new(delivery_method: delivery_method, preferred_company_presence: 'maybe')
-
-      expect(rule).not_to be_valid
-      expect(rule.errors[:preferred_company_presence]).to be_present
     end
   end
 

@@ -12714,9 +12714,9 @@ paths:
                   description: Offers the delivery method only to orders placed for
                     a company, or only to orders that are not
                   preference_schema:
-                  - key: company_presence
-                    type: string
-                    default:
+                  - key: company_orders_only
+                    type: boolean
+                    default: true
               schema:
                 type: object
                 properties:
