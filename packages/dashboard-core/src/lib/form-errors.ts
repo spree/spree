@@ -21,12 +21,98 @@ function resolveDetailMessage(field: string, entry: string | ValidationErrorDeta
   if (typeof entry === 'string') return entry
 
   const { code, message, ...interpolation } = entry
-  if (code) {
-    for (const key of [`admin.validation.${field}.${code}`, `admin.validation.${code}`]) {
-      if (i18n.exists(key)) return i18n.t(key, interpolation)
+  if (!code) return message
+
+  // Per-attribute first: `admin.validation.url.invalid` is written for this
+  // one field and always beats both the generic key and the server.
+  const attributeKey = `admin.validation.${field}.${code}`
+  if (i18n.exists(attributeKey)) return i18n.t(attributeKey, interpolation)
+
+  // The generic key renders the code's own meaning ("is invalid"), which is
+  // right until a model overrides that message with something more useful
+  // ("must be a valid http or https URL"). A server message that differs from
+  // our generic wording is that override, so let it through rather than
+  // flattening it back to the generic sentence.
+  const genericKey = `admin.validation.${code}`
+  if (!i18n.exists(genericKey)) return message
+
+  const generic = i18n.t(genericKey, interpolation)
+  return isGenericServerMessage(code, message) ? generic : message
+}
+
+// English wording for the Rails codes whose message a model may override.
+// Comparing against it is what tells a plain "can't be blank" apart from a
+// model's own sentence carrying the same code.
+const GENERIC_SERVER_MESSAGES: Record<string, string> = {
+  accepted: 'must be accepted',
+  blank: "can't be blank",
+  confirmation: "doesn't match",
+  empty: "can't be empty",
+  inclusion: 'is not included in the list',
+  invalid: 'is invalid',
+  not_a_number: 'is not a number',
+  not_an_integer: 'must be an integer',
+  present: 'must be blank',
+  required: 'must exist',
+  taken: 'has already been taken',
+}
+
+function isGenericServerMessage(code: string, message: string): boolean {
+  const generic = GENERIC_SERVER_MESSAGES[code]
+  // A code we hold no English for (`greater_than`, and every Spree code) is
+  // always specific enough to translate: its message is generated from the
+  // same key our translation replaces.
+  if (generic === undefined) return true
+  return message.trim().toLowerCase() === generic
+}
+
+/**
+ * The failure summary in the admin's own language: "Name can't be blank,
+ * Quantity must be greater than 0", assembled from the translated entries and
+ * the attribute names the dashboard already publishes.
+ *
+ * Returns null when any entry has no translation, in which case the server's
+ * sentence is left alone rather than half-rebuilt.
+ *
+ * @param details the API's per-attribute failures
+ * @returns the assembled summary, or null to keep the server's
+ */
+function translatedSummary(
+  details: Record<string, Array<string | ValidationErrorDetail>>,
+): string | null {
+  const sentences: string[] = []
+
+  for (const [field, entries] of Object.entries(details)) {
+    for (const entry of entries ?? []) {
+      // A plain string predates the coded shape and carries nothing to
+      // translate; a missing code is a message added as bare text.
+      if (typeof entry === 'string' || !entry.code) return null
+
+      const { code, message, ...interpolation } = entry
+      const key = [`admin.validation.${field}.${code}`, `admin.validation.${code}`].find((k) =>
+        i18n.exists(k),
+      )
+      // No translation, or a server message more specific than our generic
+      // copy — either way the assembled summary would lose meaning.
+      if (!key || !isGenericServerMessage(code, message)) return null
+
+      sentences.push(`${attributeLabel(field)} ${i18n.t(key, interpolation)}`.trim())
     }
   }
-  return message
+
+  return sentences.length > 0 ? sentences.join(', ') : null
+}
+
+/**
+ * Display name for an attribute, from the same keys the forms label their
+ * inputs with. Falls back to the humanized attribute, which is what Rails
+ * would have produced anyway.
+ */
+function attributeLabel(field: string): string {
+  const key = `admin.fields.${field}.label`
+  if (i18n.exists(key)) return i18n.t(key)
+  if (field === 'base') return ''
+  return field.replace(/_/g, ' ').replace(/^./, (c) => c.toUpperCase())
 }
 
 /**
@@ -96,11 +182,13 @@ export function mapSpreeErrorsToForm<TFieldValues extends FieldValues>(
 
   const { details, message } = error
 
-  // Always seed the root error with the server's top-level message. Even
-  // when details exist, the top-level message is the readable summary —
-  // and it's the only place nested/association errors will reliably show.
-  if (message) {
-    setError('root' as Path<TFieldValues>, { type: 'server', message })
+  // The summary banner is the line a merchant actually reads, so it follows
+  // their interface language too. It is rebuilt from the translated entries
+  // when every one of them translated; a single untranslated code means the
+  // server's own sentence is still the more complete summary, and it stays.
+  const summary = (details && translatedSummary(details)) || message
+  if (summary) {
+    setError('root' as Path<TFieldValues>, { type: 'server', message: summary })
   }
 
   if (!details) return true

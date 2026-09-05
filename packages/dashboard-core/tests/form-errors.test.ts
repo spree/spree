@@ -16,10 +16,12 @@ beforeAll(async () => {
           admin: {
             validation: {
               blank: 'Required',
+              invalid: 'Is not valid',
               greater_than: 'Must be more than {{count}}',
               // A per-attribute override of the same code.
               quantity: { blank: 'Enter how many' },
             },
+            fields: { name: { label: 'Name' }, quantity: { label: 'Quantity' } },
           },
         },
       },
@@ -113,5 +115,71 @@ describe('mapSpreeErrorsToForm', () => {
     const setError = vi.fn()
     expect(mapSpreeErrorsToForm(new TypeError('offline'), setError)).toBe(false)
     expect(setError).not.toHaveBeenCalled()
+  })
+})
+
+describe('specific server copy', () => {
+  it('keeps a model message that overrides its generic code', () => {
+    // The webhook URL validation reports `invalid`, but its message says what
+    // a valid URL looks like. Rendering the generic key would lose that.
+    const setError = vi.fn()
+    mapSpreeErrorsToForm(
+      spreeError({
+        url: [{ code: 'invalid', message: 'must be a valid http or https URL' }],
+      }),
+      setError,
+    )
+
+    expect(setError).toHaveBeenCalledWith('url', {
+      type: 'server',
+      message: 'must be a valid http or https URL',
+    })
+  })
+
+  it('translates the code when the server only restated it', () => {
+    const setError = vi.fn()
+    mapSpreeErrorsToForm(
+      spreeError({ sku: [{ code: 'invalid', message: 'is invalid' }] }),
+      setError,
+    )
+
+    expect(setError).toHaveBeenCalledWith('sku', { type: 'server', message: 'Is not valid' })
+  })
+})
+
+describe('the summary banner', () => {
+  it("is rebuilt in the admin's language when every entry translated", () => {
+    const setError = vi.fn()
+    mapSpreeErrorsToForm(
+      spreeError(
+        {
+          name: [{ code: 'blank', message: "can't be blank" }],
+          quantity: [{ code: 'greater_than', message: 'must be greater than 0', count: 0 }],
+        },
+        "Name can't be blank, Quantity must be greater than 0",
+      ),
+      setError,
+    )
+
+    const root = setError.mock.calls.find(([field]) => field === 'root')
+    expect(root?.[1].message).toBe('Name Required, Quantity Must be more than 0')
+  })
+
+  it("keeps the server's sentence when an entry has no translation", () => {
+    // Half-rebuilding would drop the untranslated failure from the summary.
+    const setError = vi.fn()
+    mapSpreeErrorsToForm(
+      spreeError(
+        {
+          name: [{ code: 'blank', message: "can't be blank" }],
+          sku: [{ code: 'reserved_by_supplier', message: 'is claimed by a supplier' }],
+        },
+        "Name can't be blank, Sku is claimed by a supplier",
+      ),
+      setError,
+    )
+
+    const root = setError.mock.calls.find(([field]) => field === 'root')
+    expect(root?.[1].message).toBe("Name can't be blank, Sku is claimed by a supplier")
   })
 })
