@@ -18896,10 +18896,6 @@ components:
           type: boolean
         type:
           type: string
-        name:
-          type: string
-        description:
-          type: string
         preferences:
           type: object
         preference_schema:
@@ -18908,8 +18904,6 @@ components:
       - id
       - active
       - type
-      - name
-      - description
       - preferences
       - preference_schema
       x-typelizer: true

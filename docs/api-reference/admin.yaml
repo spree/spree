@@ -2325,7 +2325,8 @@ paths:
                   message: Origin is invalid
                   details:
                     origin:
-                    - is invalid
+                    - code: invalid
+                      message: is invalid
               schema:
                 "$ref": "#/components/schemas/ErrorResponse"
       requestBody:
@@ -2476,8 +2477,9 @@ paths:
                     query, or fragment
                   details:
                     origin:
-                    - must be an origin (scheme and host) without path, query, or
-                      fragment
+                    - code: must_be_origin_only
+                      message: must be an origin (scheme and host) without path, query,
+                        or fragment
               schema:
                 "$ref": "#/components/schemas/ErrorResponse"
       requestBody:
@@ -2697,9 +2699,11 @@ paths:
                   message: Name can't be blank and Scopes can't be blank
                   details:
                     name:
-                    - can't be blank
+                    - code: blank
+                      message: can't be blank
                     scopes:
-                    - can't be blank
+                    - code: blank
+                      message: can't be blank
       requestBody:
         content:
           application/json:
@@ -3172,7 +3176,8 @@ paths:
                   message: Name can't be blank
                   details:
                     name:
-                    - can't be blank
+                    - code: blank
+                      message: can't be blank
               schema:
                 "$ref": "#/components/schemas/ErrorResponse"
       requestBody:
@@ -4298,9 +4303,6 @@ paths:
                   channel_id: ch_UkLWZg9DAJ
                   preferences: {}
                   preference_schema: []
-                  label: Preferred location
-                  description: Fulfill from the location pinned on the order, when
-                    one is set
                 - id: orule_gbHJdmfrXB
                   position: 2
                   active: true
@@ -4310,9 +4312,6 @@ paths:
                   channel_id: ch_UkLWZg9DAJ
                   preferences: {}
                   preference_schema: []
-                  label: Minimize splits
-                  description: Prefer the location that can fulfill the most items
-                    on its own, avoiding split shipments
                 - id: orule_EfhxLZ9ck8
                   position: 3
                   active: true
@@ -4322,8 +4321,6 @@ paths:
                   channel_id: ch_UkLWZg9DAJ
                   preferences: {}
                   preference_schema: []
-                  label: Default location
-                  description: Prefer the stock location marked as default
                 meta:
                   page: 1
                   limit: 25
@@ -4388,8 +4385,6 @@ paths:
                 channel_id: ch_UkLWZg9DAJ
                 preferences: {}
                 preference_schema: []
-                label: Default location
-                description: Prefer the stock location marked as default
         '422':
           description: unknown rule type
           content:
@@ -4484,9 +4479,6 @@ paths:
                 channel_id: ch_UkLWZg9DAJ
                 preferences: {}
                 preference_schema: []
-                label: Preferred location
-                description: Fulfill from the location pinned on the order, when one
-                  is set
       requestBody:
         content:
           application/json:
@@ -5176,7 +5168,8 @@ paths:
                   message: Name can't be blank
                   details:
                     name:
-                    - can't be blank
+                    - code: blank
+                      message: can't be blank
               schema:
                 "$ref": "#/components/schemas/ErrorResponse"
       requestBody:
@@ -5385,7 +5378,8 @@ paths:
                   message: Name can't be blank
                   details:
                     name:
-                    - can't be blank
+                    - code: blank
+                      message: can't be blank
               schema:
                 "$ref": "#/components/schemas/ErrorResponse"
       requestBody:
@@ -8840,7 +8834,8 @@ paths:
                   message: Prefix can't be blank
                   details:
                     prefix:
-                    - can't be blank
+                    - code: blank
+                      message: can't be blank
               schema:
                 "$ref": "#/components/schemas/ErrorResponse"
       requestBody:
@@ -9187,7 +9182,10 @@ paths:
                   message: Amount must be greater than 0
                   details:
                     amount:
-                    - must be greater than 0
+                    - code: greater_than
+                      message: must be greater than 0
+                      value: '0.0'
+                      count: 0
               schema:
                 "$ref": "#/components/schemas/ErrorResponse"
       requestBody:
@@ -9989,7 +9987,8 @@ paths:
                   message: Type can't be blank
                   details:
                     type:
-                    - can't be blank
+                    - code: blank
+                      message: can't be blank
       requestBody:
         content:
           application/json:
@@ -11154,13 +11153,17 @@ paths:
                     can't be blank, and Countries can't be blank
                   details:
                     name:
-                    - can't be blank
+                    - code: blank
+                      message: can't be blank
                     currency:
-                    - can't be blank
+                    - code: blank
+                      message: can't be blank
                     default_locale:
-                    - can't be blank
+                    - code: blank
+                      message: can't be blank
                     countries:
-                    - can't be blank
+                    - code: blank
+                      message: can't be blank
               schema:
                 "$ref": "#/components/schemas/ErrorResponse"
       requestBody:
@@ -11372,7 +11375,8 @@ paths:
                   message: Name can't be blank
                   details:
                     name:
-                    - can't be blank
+                    - code: blank
+                      message: can't be blank
               schema:
                 "$ref": "#/components/schemas/ErrorResponse"
       requestBody:
@@ -11648,9 +11652,11 @@ paths:
                   message: Name can't be blank and Label can't be blank
                   details:
                     name:
-                    - can't be blank
+                    - code: blank
+                      message: can't be blank
                     label:
-                    - can't be blank
+                    - code: blank
+                      message: can't be blank
               schema:
                 "$ref": "#/components/schemas/ErrorResponse"
       requestBody:
@@ -11847,7 +11853,8 @@ paths:
                   message: Label can't be blank
                   details:
                     label:
-                    - can't be blank
+                    - code: blank
+                      message: can't be blank
               schema:
                 "$ref": "#/components/schemas/ErrorResponse"
       requestBody:
@@ -12264,7 +12271,9 @@ paths:
                   message: Kind is not included in the list
                   details:
                     kind:
-                    - is not included in the list
+                    - code: inclusion
+                      message: is not included in the list
+                      value: nonsense
       requestBody:
         content:
           application/json:
@@ -14284,7 +14293,8 @@ paths:
                   message: No payment found
                   details:
                     base:
-                    - No payment found
+                    - code:
+                      message: No payment found
               schema:
                 "$ref": "#/components/schemas/ErrorResponse"
       requestBody:
@@ -15712,7 +15722,8 @@ paths:
                   message: Name can't be blank
                   details:
                     name:
-                    - can't be blank
+                    - code: blank
+                      message: can't be blank
               schema:
                 "$ref": "#/components/schemas/ErrorResponse"
       requestBody:
@@ -16953,7 +16964,9 @@ paths:
                   message: Custom field definition has already been taken
                   details:
                     custom_field_definition_id:
-                    - has already been taken
+                    - code: taken
+                      message: has already been taken
+                      value: 1
       requestBody:
         content:
           application/json:
@@ -17541,7 +17554,8 @@ paths:
                   message: Name can't be blank
                   details:
                     name:
-                    - can't be blank
+                    - code: blank
+                      message: can't be blank
               schema:
                 "$ref": "#/components/schemas/ErrorResponse"
       requestBody:
@@ -17913,7 +17927,8 @@ paths:
                   message: Name can't be blank
                   details:
                     name:
-                    - can't be blank
+                    - code: blank
+                      message: can't be blank
               schema:
                 "$ref": "#/components/schemas/ErrorResponse"
       requestBody:
@@ -18091,7 +18106,8 @@ paths:
                   message: This product is under an active supplier contract.
                   details:
                     base:
-                    - This product is under an active supplier contract.
+                    - code: under_contract
+                      message: This product is under an active supplier contract.
               schema:
                 "$ref": "#/components/schemas/ErrorResponse"
   "/api/v3/admin/products/bulk_status_update":
@@ -19092,7 +19108,8 @@ paths:
                   message: Name can't be blank
                   details:
                     name:
-                    - can't be blank
+                    - code: blank
+                      message: can't be blank
               schema:
                 "$ref": "#/components/schemas/ErrorResponse"
       requestBody:
@@ -19464,7 +19481,8 @@ paths:
                   message: Name can't be blank
                   details:
                     name:
-                    - can't be blank
+                    - code: blank
+                      message: can't be blank
               schema:
                 "$ref": "#/components/schemas/ErrorResponse"
       requestBody:
@@ -19828,7 +19846,8 @@ paths:
                   message: Name can't be blank
                   details:
                     name:
-                    - can't be blank
+                    - code: blank
+                      message: can't be blank
               schema:
                 "$ref": "#/components/schemas/ErrorResponse"
       requestBody:
@@ -20192,7 +20211,8 @@ paths:
                   message: Name can't be blank
                   details:
                     name:
-                    - can't be blank
+                    - code: blank
+                      message: can't be blank
               schema:
                 "$ref": "#/components/schemas/ErrorResponse"
       requestBody:
@@ -20556,7 +20576,8 @@ paths:
                   message: Name can't be blank
                   details:
                     name:
-                    - can't be blank
+                    - code: blank
+                      message: can't be blank
               schema:
                 "$ref": "#/components/schemas/ErrorResponse"
       requestBody:
@@ -20881,7 +20902,6 @@ paths:
                   promotion_id: promo_UkLWZg9DAJ
                   preferences: {}
                   preference_schema: []
-                  label: Free shipping
                   calculator:
                   line_items:
                 meta:
@@ -20946,7 +20966,6 @@ paths:
                 promotion_id: promo_UkLWZg9DAJ
                 preferences: {}
                 preference_schema: []
-                label: Free shipping
                 calculator:
                 line_items:
         '422':
@@ -21079,7 +21098,6 @@ paths:
                   - key: currency
                     type: string
                     default:
-                  label: Currency
                   product_ids:
                   category_ids:
                   customer_ids:
@@ -21151,7 +21169,6 @@ paths:
                 - key: currency
                   type: string
                   default:
-                label: Currency
                 product_ids:
                 category_ids:
                 customer_ids:
@@ -21244,7 +21261,6 @@ paths:
                 - key: currency
                   type: string
                   default:
-                label: Currency
                 product_ids:
                 category_ids:
                 customer_ids:
@@ -21493,9 +21509,11 @@ paths:
                   message: Name can't be blank and Code can't be blank
                   details:
                     name:
-                    - can't be blank
+                    - code: blank
+                      message: can't be blank
                     code:
-                    - can't be blank
+                    - code: blank
+                      message: can't be blank
       requestBody:
         content:
           application/json:
@@ -22960,7 +22978,8 @@ paths:
                   message: Site Name can't be blank
                   details:
                     name:
-                    - can't be blank
+                    - code: blank
+                      message: can't be blank
               schema:
                 "$ref": "#/components/schemas/ErrorResponse"
       requestBody:
@@ -23231,9 +23250,11 @@ paths:
                   message: Tax category must exist and Name can't be blank
                   details:
                     tax_category:
-                    - must exist
+                    - code: blank
+                      message: must exist
                     name:
-                    - can't be blank
+                    - code: blank
+                      message: can't be blank
               schema:
                 "$ref": "#/components/schemas/ErrorResponse"
       requestBody:
@@ -24713,7 +24734,8 @@ paths:
                   message: 'Permissions contains unknown permissions: write_bogus'
                   details:
                     permissions:
-                    - 'contains unknown permissions: write_bogus'
+                    - code: role_permissions_unknown
+                      message: 'contains unknown permissions: write_bogus'
       requestBody:
         content:
           application/json:
@@ -25125,7 +25147,8 @@ paths:
                   message: Name can't be blank
                   details:
                     name:
-                    - can't be blank
+                    - code: blank
+                      message: can't be blank
               schema:
                 "$ref": "#/components/schemas/ErrorResponse"
       requestBody:
@@ -25401,7 +25424,9 @@ paths:
                   message: Pickup stock policy is not included in the list
                   details:
                     pickup_stock_policy:
-                    - is not included in the list
+                    - code: inclusion
+                      message: is not included in the list
+                      value: invalid
               schema:
                 "$ref": "#/components/schemas/ErrorResponse"
       requestBody:
@@ -25869,7 +25894,9 @@ paths:
                   message: SKU has already been taken
                   details:
                     sku:
-                    - has already been taken
+                    - code: taken
+                      message: has already been taken
+                      value: SKU-169
               schema:
                 "$ref": "#/components/schemas/ErrorResponse"
       requestBody:
@@ -26921,13 +26948,15 @@ paths:
                     - en.errors.messages.invalid_url
                   details:
                     url:
-                    - |-
-                      Translation missing. Options considered were:
-                      - en.activerecord.errors.models.spree/webhook_endpoint.attributes.url.invalid_url
-                      - en.activerecord.errors.models.spree/webhook_endpoint.invalid_url
-                      - en.activerecord.errors.messages.invalid_url
-                      - en.errors.attributes.url.invalid_url
-                      - en.errors.messages.invalid_url
+                    - code: invalid
+                      message: |-
+                        Translation missing. Options considered were:
+                        - en.activerecord.errors.models.spree/webhook_endpoint.attributes.url.invalid_url
+                        - en.activerecord.errors.models.spree/webhook_endpoint.invalid_url
+                        - en.activerecord.errors.messages.invalid_url
+                        - en.errors.attributes.url.invalid_url
+                        - en.errors.messages.invalid_url
+                      value: not a url
               schema:
                 "$ref": "#/components/schemas/ErrorResponse"
       requestBody:
@@ -27127,13 +27156,15 @@ paths:
                     - en.errors.messages.invalid_url
                   details:
                     url:
-                    - |-
-                      Translation missing. Options considered were:
-                      - en.activerecord.errors.models.spree/webhook_endpoint.attributes.url.invalid_url
-                      - en.activerecord.errors.models.spree/webhook_endpoint.invalid_url
-                      - en.activerecord.errors.messages.invalid_url
-                      - en.errors.attributes.url.invalid_url
-                      - en.errors.messages.invalid_url
+                    - code: invalid
+                      message: |-
+                        Translation missing. Options considered were:
+                        - en.activerecord.errors.models.spree/webhook_endpoint.attributes.url.invalid_url
+                        - en.activerecord.errors.models.spree/webhook_endpoint.invalid_url
+                        - en.activerecord.errors.messages.invalid_url
+                        - en.errors.attributes.url.invalid_url
+                        - en.errors.messages.invalid_url
+                      value: not a url
               schema:
                 "$ref": "#/components/schemas/ErrorResponse"
       requestBody:
@@ -27568,7 +27599,8 @@ paths:
                   message: Name can't be blank
                   details:
                     name:
-                    - can't be blank
+                    - code: blank
+                      message: can't be blank
       requestBody:
         content:
           application/json:
@@ -28015,7 +28047,9 @@ paths:
                   message: Set a minimum order quantity, an order multiple, or both
                   details:
                     base:
-                    - Set a minimum order quantity, an order multiple, or both
+                    - code: quantity_rule_states_nothing
+                      message: Set a minimum order quantity, an order multiple, or
+                        both
       requestBody:
         content:
           application/json:
@@ -28138,7 +28172,10 @@ paths:
                   message: Amount must be greater than 0
                   details:
                     amount:
-                    - must be greater than 0
+                    - code: greater_than
+                      message: must be greater than 0
+                      value: 0
+                      count: 0
       requestBody:
         content:
           application/json:
@@ -28730,7 +28767,8 @@ paths:
                   message: Name can't be blank
                   details:
                     name:
-                    - can't be blank
+                    - code: blank
+                      message: can't be blank
               schema:
                 "$ref": "#/components/schemas/ErrorResponse"
       requestBody:
@@ -29694,7 +29732,8 @@ paths:
                   message: needs a flat fee amount in at least one currency
                   details:
                     base:
-                    - needs a flat fee amount in at least one currency
+                    - code: commission_rate_needs_an_amount
+                      message: needs a flat fee amount in at least one currency
               schema:
                 "$ref": "#/components/schemas/ErrorResponse"
       requestBody:
@@ -30427,7 +30466,8 @@ paths:
                   message: Certificate number can't be blank
                   details:
                     certificate_number:
-                    - can't be blank
+                    - code: blank
+                      message: can't be blank
       requestBody:
         content:
           application/json:
@@ -30815,7 +30855,9 @@ paths:
                   message: Registration type has already been taken
                   details:
                     kind:
-                    - has already been taken
+                    - code: taken
+                      message: has already been taken
+                      value: eu_vat
       requestBody:
         content:
           application/json:
@@ -31036,7 +31078,8 @@ paths:
                   message: Name can't be blank
                   details:
                     name:
-                    - can't be blank
+                    - code: blank
+                      message: can't be blank
       requestBody:
         content:
           application/json:
@@ -31362,7 +31405,8 @@ paths:
                   message: Name can't be blank
                   details:
                     name:
-                    - can't be blank
+                    - code: blank
+                      message: can't be blank
       requestBody:
         content:
           application/json:
@@ -32856,7 +32900,9 @@ paths:
                   message: Tracking number has already been taken
                   details:
                     tracking_number:
-                    - has already been taken
+                    - code: taken
+                      message: has already been taken
+                      value: U10000
       requestBody:
         content:
           application/json:
@@ -33828,7 +33874,8 @@ paths:
                   message: Name can't be blank
                   details:
                     name:
-                    - can't be blank
+                    - code: blank
+                      message: can't be blank
               schema:
                 "$ref": "#/components/schemas/ErrorResponse"
       requestBody:
@@ -34954,9 +35001,11 @@ paths:
                   message: Name can't be blank and Slug can't be blank
                   details:
                     name:
-                    - can't be blank
+                    - code: blank
+                      message: can't be blank
                     slug:
-                    - can't be blank
+                    - code: blank
+                      message: can't be blank
               schema:
                 "$ref": "#/components/schemas/ErrorResponse"
       requestBody:
@@ -35222,7 +35271,8 @@ paths:
                   message: Name can't be blank
                   details:
                     name:
-                    - can't be blank
+                    - code: blank
+                      message: can't be blank
               schema:
                 "$ref": "#/components/schemas/ErrorResponse"
       requestBody:
@@ -37967,11 +38017,6 @@ components:
           type: object
         preference_schema:
           type: object
-        label:
-          type: string
-        description:
-          type: string
-          nullable: true
         product_ids:
           type: array
           items:
@@ -37984,8 +38029,6 @@ components:
       - commission_rate_id
       - preferences
       - preference_schema
-      - label
-      - description
       x-typelizer: true
     CompanyInvitation:
       type: object
@@ -38557,10 +38600,6 @@ components:
           type: string
         type:
           type: string
-        name:
-          type: string
-        description:
-          type: string
         preferences:
           type: object
         preference_schema:
@@ -38575,8 +38614,6 @@ components:
       - created_at
       - updated_at
       - type
-      - name
-      - description
       - preferences
       - preference_schema
       - product_ids
@@ -40467,10 +40504,6 @@ components:
           type: object
         preference_schema:
           type: object
-        label:
-          type: string
-        description:
-          type: string
       required:
       - id
       - position
@@ -40481,8 +40514,6 @@ components:
       - channel_id
       - preferences
       - preference_schema
-      - label
-      - description
       x-typelizer: true
     Order:
       type: object
@@ -41153,11 +41184,6 @@ components:
           type: array
           items:
             "$ref": "#/components/schemas/PreferenceField"
-        label:
-          type: string
-        description:
-          type: string
-          nullable: true
         markets:
           type: array
           items:
@@ -41182,8 +41208,6 @@ components:
       - price_list_id
       - preferences
       - preference_schema
-      - label
-      - description
       x-typelizer: true
     Price:
       type: object
@@ -41588,8 +41612,6 @@ components:
           type: array
           items:
             "$ref": "#/components/schemas/PreferenceField"
-        label:
-          type: string
         calculator:
           allOf:
           - "$ref": "#/components/schemas/PromotionActionCalculator"
@@ -41607,7 +41629,6 @@ components:
       - promotion_id
       - preferences
       - preference_schema
-      - label
       - calculator
       - line_items
       x-typelizer: true
@@ -41630,8 +41651,6 @@ components:
           type: array
           items:
             "$ref": "#/components/schemas/PreferenceField"
-        label:
-          type: string
         product_ids:
           type: array
           items:
@@ -41692,7 +41711,6 @@ components:
       - promotion_id
       - preferences
       - preference_schema
-      - label
       - product_ids
       - category_ids
       - customer_ids
