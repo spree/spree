@@ -132,9 +132,12 @@ module Spree
         # (docs/plans/6.0-seller-master-catalog-listings.md, Decision 3).
         many :variants,
              resource: proc { Spree.api.variant_serializer },
-             if: proc { expand?('variants') } do |product|
-          product.listed_variants
-        end
+             # `source:`, not a block — a block on an association defines the
+             # resource class, so it would leave the records unchanged and the
+             # rows in review visible. The proc is instance_exec'd on the
+             # product, so `self` is the record rather than an argument.
+             source: proc { listed_variants },
+             if: proc { expand?('variants') }
 
         one :default_variant,
             resource: proc { Spree.api.variant_serializer },

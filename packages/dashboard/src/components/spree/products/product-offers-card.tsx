@@ -6,6 +6,7 @@ import {
   CardHeader,
   CardTitle,
   Input,
+  Pagination,
   StatusBadge,
   Table,
   TableBody,
@@ -37,13 +38,22 @@ export function ProductOffersCard({ productId }: { productId: string }) {
   const queryClient = useQueryClient()
   const [rejectingId, setRejectingId] = useState<string | null>(null)
   const [reason, setReason] = useState('')
+  const [page, setPage] = useState(1)
 
-  const queryKey = useResourceKey('product-offers', productId)
+  // Paged, never capped: a popular master product carries the marketplace's
+  // own rows plus every seller's offer in one collection, and an offer past a
+  // cap could never be approved because nobody could see it.
+  const queryKey = useResourceKey('product-offers', `${productId}-${page}`)
   const { data } = useQuery({
     queryKey,
-    queryFn: () =>
-      adminClient.products.variants.list(productId, { expand: ['seller'], limit: 100 }),
+    queryFn: () => adminClient.products.variants.list(productId, { expand: ['seller'], page }),
   })
+
+  // A reason typed for one offer must not follow the operator to the next.
+  const openRejectFor = (variantId: string | null) => {
+    setRejectingId(variantId)
+    setReason('')
+  }
 
   const decide = useMutation({
     mutationFn: ({
@@ -61,8 +71,7 @@ export function ProductOffersCard({ productId }: { productId: string }) {
     onSuccess: () => {
       void queryClient.invalidateQueries({ queryKey })
       toastManager.add({ type: 'success', title: t('admin.products.offers.decided') })
-      setRejectingId(null)
-      setReason('')
+      openRejectFor(null)
     },
     onError: (err) =>
       toastManager.add({
@@ -127,7 +136,7 @@ export function ProductOffersCard({ productId }: { productId: string }) {
                       >
                         {t('admin.products.offers.reject')}
                       </Button>
-                      <Button variant="ghost" size="sm" onClick={() => setRejectingId(null)}>
+                      <Button variant="ghost" size="sm" onClick={() => openRejectFor(null)}>
                         {t('admin.common.cancel')}
                       </Button>
                     </div>
@@ -159,7 +168,7 @@ export function ProductOffersCard({ productId }: { productId: string }) {
                           variant="outline"
                           size="sm"
                           disabled={decide.isPending}
-                          onClick={() => setRejectingId(offer.id)}
+                          onClick={() => openRejectFor(offer.id)}
                         >
                           {t('admin.products.offers.reject')}
                         </Button>
@@ -171,6 +180,11 @@ export function ProductOffersCard({ productId }: { productId: string }) {
             ))}
           </TableBody>
         </Table>
+        {data?.meta && (
+          <div className="p-4">
+            <Pagination meta={data.meta} onPageChange={setPage} />
+          </div>
+        )}
       </CardContent>
     </Card>
   )
