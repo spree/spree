@@ -798,28 +798,6 @@
           "label": "Code SH",
           "placeholder": "ex. 640411"
         },
-        "preorder_ships_at": {
-          "help": "Date à laquelle vous prévoyez d'expédier les précommandes. Affichée aux clients comme promesse de livraison ; la précommande se termine une fois cette date passée.",
-          "label": "Expédié avant le",
-          "placeholder": "Choisir une date"
-        },
-        "preorderable": {
-          "help": "Vendez cette variante avant qu'elle soit en stock. Plafonnez les quantités avec la limite de réassort, saisissez le stock à recevoir comme quantité, ou laissez vide pour un nombre illimité.",
-          "label": "Disponible en précommande"
-        },
-        "sku": {
-          "label": "SKU",
-          "placeholder": "PRODUIT-ROUGE-S"
-        },
-        "weight": {
-          "label": "Poids"
-        },
-        "weight_unit": {
-          "label": "Unité"
-        },
-        "width": {
-          "label": "Largeur"
-        },
         "minimum_order_quantity": {
           "label": "Quantité minimale de commande",
           "placeholder": "Aucun minimum",
@@ -830,6 +808,15 @@
           "placeholder": "Aucun multiple",
           "help": "Chaque palier au-dessus du minimum. Laisser vide pour toute quantité."
         },
+        "preorder_ships_at": {
+          "help": "Date à laquelle vous prévoyez d'expédier les précommandes. Affichée aux clients comme promesse de livraison ; la précommande se termine une fois cette date passée.",
+          "label": "Expédié avant le",
+          "placeholder": "Choisir une date"
+        },
+        "preorderable": {
+          "help": "Vendez cette variante avant qu'elle soit en stock. Plafonnez les quantités avec la limite de réassort, saisissez le stock à recevoir comme quantité, ou laissez vide pour un nombre illimité.",
+          "label": "Disponible en précommande"
+        },
         "purchase_unit": {
           "label": "Unité de vente",
           "options": {
@@ -837,10 +824,26 @@
             "carton": "Cartons"
           }
         },
+        "quantity_rule_invalid": "Saisissez un nombre entier supérieur à zéro, ou laissez vide.",
+        "sku": {
+          "label": "SKU",
+          "placeholder": "PRODUIT-ROUGE-S"
+        },
+        "track_inventory": {
+          "label": "Suivre le stock"
+        },
         "units_per_carton": {
           "label": "Unités par carton"
         },
-        "quantity_rule_invalid": "Saisissez un nombre entier supérieur à zéro, ou laissez vide."
+        "weight": {
+          "label": "Poids"
+        },
+        "weight_unit": {
+          "label": "Unité"
+        },
+        "width": {
+          "label": "Largeur"
+        }
       },
       "minimum_order_quantity": {
         "label": "Quantité minimale de commande",
