@@ -27,7 +27,12 @@ module Spree
     #
     # Associations
     #
-    belongs_to :product, class_name: 'Spree::Product', inverse_of: :submissions
+    belongs_to :product, class_name: 'Spree::Product', inverse_of: :all_submissions
+    # Set when the row reviews one seller's offer rather than the product
+    # itself. The product is named either way, so a marketplace reads the
+    # whole trail for a listing from one place
+    # (docs/plans/6.0-seller-master-catalog-listings.md, Decision 3).
+    belongs_to :variant, class_name: 'Spree::Variant', optional: true, inverse_of: :submissions
     belongs_to :submitted_by, class_name: Spree.admin_user_class.to_s, optional: true
     belongs_to :reviewed_by, class_name: Spree.admin_user_class.to_s, optional: true
 
@@ -39,7 +44,15 @@ module Spree
     # winner to insertion order.
     scope :latest_first, -> { order(created_at: :desc, id: :desc) }
 
+    # A product's own trail, as opposed to its offers'.
+    scope :for_product_itself, -> { where(variant_id: nil) }
+
     self.whitelisted_ransackable_attributes = %w[status reviewed_at created_at]
+
+    # A row built through `variant.submissions` names only the variant, and
+    # the product column is NOT NULL — so the product comes from the variant
+    # rather than from every caller remembering to pass both.
+    before_validation :derive_product_from_variant
 
     # An approval nobody made: the store approves listings automatically, and
     # a blank reviewer must not read as a lost name.
@@ -67,6 +80,14 @@ module Spree
     # @return [Class]
     def event_serializer_class
       Spree::Api::V3::Seller::ProductSubmissionSerializer
+    end
+
+    private
+
+    def derive_product_from_variant
+      return if product_id.present? || variant.nil?
+
+      self.product_id = variant.product_id
     end
   end
 end
