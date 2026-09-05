@@ -9,6 +9,7 @@ const PRODUCT_STATUSES = ['active', 'draft', 'proposed', 'rejected', 'archived']
 
 defineTable<Product>('seller-products', {
   title: i18n.t('products.title'),
+  description: i18n.t('products.description'),
   searchParam: 'name_cont',
   searchPlaceholder: i18n.t('products.search_placeholder'),
   defaultSort: { field: 'created_at', direction: 'desc' },
