@@ -4797,3 +4797,44 @@ until 6.1.
 customer self-cancel makes the actor on the order polymorphic — a column
 change, never a side table; company approval flows stay Enterprise and
 carry their own record.
+
+## 2026-09-05 — The dashboard owns every string it shows; the Admin API sends codes
+
+Type names and descriptions for pluggable kinds (price, promotion, collection,
+routing, delivery-method and commission rules, promotion actions, calculators,
+seller requirement kinds, integrations, the permission catalog) and the text
+inside Admin 422 responses were produced in Ruby through `Spree.t`, in the
+request locale, which the dashboard never sets. Interface language and rule
+labels therefore disagreed whenever the two locales differed, and each type was
+being fixed one `en.yml` key at a time (PR #14575). The Admin API was a preview
+and can change: type catalogs and records are identified by their stable `type`
+code, validation details carry the Rails error `code` with its parameters, and
+the dashboard translates both from its own locale files. `label`, `description`
+and `message` remain on the wire as fallback text for integrations and for
+extension types without a dashboard translation, never as UI copy. The Store
+API is untouched: the richer 422 shape lives in the Admin base controller, not
+in the shared error handler. The dashboard keeps its UI language out of
+`x-spree-locale`, which selects the content locale a merchant edits. Plan:
+`6.0-admin-ui-owns-its-copy.md`.
+
+Four follow-on questions were settled the same day when the plan came up for
+implementation. The type catalogs **keep** `label`/`description` as a
+documented fallback: dropping them would force every extension gem shipping a
+Ruby type to also ship a dashboard plugin with locales, or merchants read a raw
+code, and the fallback gives the migration itself a safety net. Built-in types
+still lose the Ruby copy methods that exist only to feed the wire. `reject!`
+takes the code as its **first argument** (`reject!(:not_awaiting_review)`,
+`reject!(:below_minimum, count: 5)`), reusing `errors.add(:base, symbol,
+**params)` unchanged rather than growing a second keyword signature; strings
+keep working so conversion is incremental. **Every** core error call site
+converts in one run, so no `message`-only fallback path remains in core and
+specs assert on `errors.details` codes instead of English sentences. Shared
+type-label and validation keys live in `@spree/dashboard-core`, which already
+ships all six locale files, so the Seller Panel inherits every language by
+importing the helper instead of duplicating locales.
+
+**Constraints now:** new pluggable types ship their `admin.types.<family>.<code>`
+keys in every dashboard locale, not a `Spree.t` label; new validation errors in
+core use a symbol and parameters, never a preformatted string; nothing in the
+dashboard prints an API `label`/`name`/`description` directly; shared admin copy
+goes in `dashboard-core` locales, never in `packages/seller-dashboard`.
