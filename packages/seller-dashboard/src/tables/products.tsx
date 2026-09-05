@@ -8,9 +8,7 @@ import i18n from 'i18next'
 const PRODUCT_STATUSES = ['active', 'draft', 'proposed', 'rejected', 'archived'] as const
 
 defineTable<Product>('seller-products', {
-  // No `title`: the page header above the card already names the page,
-  // and repeating it on the card said the same word twice. The
-  // description is what the card contributes.
+  title: i18n.t('products.title'),
   description: i18n.t('products.description'),
   searchParam: 'name_cont',
   searchPlaceholder: i18n.t('products.search_placeholder'),
