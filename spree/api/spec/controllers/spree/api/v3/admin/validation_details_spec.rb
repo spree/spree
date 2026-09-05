@@ -18,6 +18,10 @@ class Spree::Api::V3::Admin::ValidationProbeController < Spree::Api::V3::Admin::
     # A validation may pass its own `code:` option; ActiveModel keeps it in
     # `details` alongside the error symbol.
     probe.errors.add(:sku, :taken, code: 'supplier-side', message: 'is already taken')
+    # A Spree code: its copy lives under `spree.errors.messages`, where Rails
+    # never looks for a default. The message is still that code's own text.
+    probe.errors.add(:seller, :seller_delivery_method_provider,
+                     message: Spree.t('errors.messages.seller_delivery_method_provider'))
     probe.errors
   end
 end
@@ -25,7 +29,7 @@ end
 class Spree::Api::V3::Admin::ValidationProbe
   include ActiveModel::Model
 
-  attr_accessor :name, :quantity, :sku, :handle
+  attr_accessor :name, :quantity, :sku, :handle, :seller
 
   validates :name, presence: true
   validates :quantity, numericality: { greater_than: 0 }
@@ -102,6 +106,18 @@ RSpec.describe Spree::Api::V3::Admin::ValidationDetails, type: :controller do
       # invalid", so the server says which it is.
       expect(details['handle']).to include(
         hash_including('code' => 'invalid', 'specific' => true)
+      )
+    end
+
+    it 'does not mark a code whose copy Rails has no default for' do
+      post :create
+
+      # Every Spree code is this shape. `generate_message` answers a
+      # "Translation missing" string for them rather than raising, so a naive
+      # comparison would call all of them overrides and the dashboard would
+      # skip the translations it holds.
+      expect(details['seller'].first).to include(
+        'code' => 'seller_delivery_method_provider', 'specific' => false
       )
     end
 

@@ -18132,7 +18132,7 @@ paths:
                     base:
                     - code: under_contract
                       message: This product is under an active supplier contract.
-                      specific: true
+                      specific: false
               schema:
                 "$ref": "#/components/schemas/ErrorResponse"
   "/api/v3/admin/products/bulk_status_update":
@@ -24771,7 +24771,7 @@ paths:
                     permissions:
                     - code: role_permissions_unknown
                       message: 'contains unknown permissions: write_bogus'
-                      specific: true
+                      specific: false
       requestBody:
         content:
           application/json:
@@ -29755,7 +29755,7 @@ paths:
                     base:
                     - code: commission_rate_needs_an_amount
                       message: needs a flat fee amount in at least one currency
-                      specific: true
+                      specific: false
               schema:
                 "$ref": "#/components/schemas/ErrorResponse"
       requestBody:

@@ -36,7 +36,8 @@ module Spree
                 detail.except(:error).merge(
                   code: code,
                   message: message,
-                  specific: code.present? && specific_message?(errors, attribute, code, message)
+                  specific: code.present? &&
+                            specific_message?(errors, attribute, code, message, detail.except(:error))
                 )
               end
             end
@@ -56,12 +57,25 @@ module Spree
           # store trading in any language. A client cannot do it — it would
           # have to recognise the default wording in every locale it supports.
           #
+          # `raise: true` matters. Without it a code Rails has no default for
+          # — every Spree code, whose copy lives under `spree.errors.messages`
+          # — comes back as a "Translation missing" string, which differs from
+          # the message and would mark every one of them as an override.
+          #
+          # The validation's own options come along: rebuilding the default for
+          # `greater_than` without its `count` raises on the missing value.
+          #
           # @return [Boolean] true when the model supplied its own wording
-          def specific_message?(errors, attribute, code, message)
-            message != errors.generate_message(attribute, code)
-          rescue StandardError
-            # An unknown code has no default to compare against; treat the
-            # message as the code's own so the client may translate it.
+          def specific_message?(errors, attribute, code, message, options = {})
+            message != errors.generate_message(attribute, code, **options.symbolize_keys, raise: true)
+          rescue NoMethodError
+            # A nested attribute (`option_values.name`) names no method on the
+            # record, and generating its default reads one. Nothing to compare
+            # against, so treat the message as the code's own.
+            false
+          rescue I18n::MissingTranslationData
+            # No default to compare against, so the message *is* the code's own
+            # copy: the client may translate the code and lose nothing.
             false
           end
         end

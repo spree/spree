@@ -2299,9 +2299,12 @@ RSpec.describe Spree::Api::V3::Admin::ProductsController, type: :controller do
       expect(response).to have_http_status(:unprocessable_content)
       # Admin details carry the symbolic code beside the text so the dashboard
       # renders its own copy; the message stays for everyone else.
+      # `specific` is false: `reserved_word` is the handler's own code, with no
+      # Rails default the message could be overriding, so a client holding a
+      # translation for that code should use it.
       expect(json_response['error']['details']['name']).to eq(
         [{ 'code' => 'reserved_word', 'message' => 'may not mention a competitor',
-           'specific' => true }]
+           'specific' => false }]
       )
     end
 
