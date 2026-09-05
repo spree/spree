@@ -5620,16 +5620,6 @@ paths:
                   anonymized_at:
                     type: string
                     nullable: true
-        '422':
-          description: already anonymized
-          content:
-            application/json:
-              example:
-                error:
-                  code: processing_error
-                  message: This customer's personal data has already been erased
-              schema:
-                "$ref": "#/components/schemas/ErrorResponse"
   "/api/v3/admin/customers/{customer_id}/addresses":
     get:
       summary: List customer addresses

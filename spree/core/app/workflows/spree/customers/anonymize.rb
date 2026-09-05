@@ -45,7 +45,6 @@ module Spree
         super
 
         step :capture_original_email
-        step :refuse_if_already_anonymized
 
         # Veto point — a host app that must keep a customer identifiable for
         # an open dispute, a fraud investigation or a legal hold rejects here.
@@ -118,26 +117,22 @@ module Spree
         @accepted_marketing = customer.accepts_email_marketing?
       end
 
-      # Cheap refusal before any work, for the ordinary case of someone asking
-      # twice. The race is closed by #claim_erasure, not here.
-      def refuse_if_already_anonymized
-        return if customer.anonymized_at.nil?
-
-        failure(customer, Spree.t('customer_errors.already_anonymized'))
-      end
-
-      # Claimed by a conditional UPDATE rather than a read: two erasures for
-      # one person can be in flight at once — they are not scoped to a store,
-      # and staff can run one while the subject's own queued job is waiting —
-      # and a plain read lets both pass and rewrite the same account. Whoever
-      # wins the write proceeds; the loser is told it is already done.
+      # Stamped rather than claimed, because erasing an already-erased person
+      # has to stay possible. Personal data can come back onto an account after
+      # the fact — a new address, a tax registration, a note — and refusing a
+      # second run would leave it there with nothing able to remove it.
+      # Re-scrubbing someone already scrubbed costs nothing and is the only
+      # cleanup path there is.
+      #
+      # Two erasures racing each other therefore both run, which is safe: every
+      # step overwrites rather than accumulating, so whichever finishes last
+      # leaves the same row. What the timestamp must not do is move backwards
+      # on a re-run — it records when the person was first forgotten.
       def claim_erasure
-        claimed = customer.class.where(id: customer.id, anonymized_at: nil).
-                  update_all(anonymized_at: Time.current, updated_at: Time.current)
+        return if customer.anonymized_at.present?
 
-        return if claimed == 1
-
-        failure(customer, Spree.t('customer_errors.already_anonymized'))
+        customer.class.where(id: customer.id, anonymized_at: nil).
+          update_all(anonymized_at: Time.current, updated_at: Time.current)
       end
 
       # The account itself. `update_columns` throughout this flow: validations

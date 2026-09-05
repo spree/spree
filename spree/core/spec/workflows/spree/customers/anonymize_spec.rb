@@ -43,12 +43,29 @@ RSpec.describe Spree::Customers::Anonymize do
       expect(customer.reload.valid_password?('secret123')).to be(false)
     end
 
-    it 'refuses a customer already anonymized' do
+    # Personal data can come back onto an erased account — a new address, a
+    # tax registration, a note typed by staff. Refusing a second run would
+    # leave it there with nothing able to remove it, so erasing again is
+    # allowed and is the cleanup path.
+    it 'erases again, because data can come back afterwards' do
       described_class.call(customer: customer, store: store)
+      create(:address, owner: customer.reload, first_name: 'Ada', address1: '10 Downing Street')
 
       second = described_class.call(customer: customer.reload, store: store)
 
-      expect(second).to be_failure
+      expect(second).to be_success
+      expect(Spree::Address.where(owner: customer).pluck(:address1).uniq).to eq(['Redacted'])
+    end
+
+    it 'keeps the date the person was first forgotten' do
+      described_class.call(customer: customer, store: store)
+      first_erased_at = customer.reload.anonymized_at
+
+      Timecop.travel(1.day.from_now) do
+        described_class.call(customer: customer.reload, store: store)
+      end
+
+      expect(customer.reload.anonymized_at).to be_within(1.second).of(first_erased_at)
     end
   end
 
@@ -307,17 +324,19 @@ RSpec.describe Spree::Customers::Anonymize do
     expect(seen).to be_present
   end
 
-  # A second erasure is refused as already done, so anything written back
-  # afterwards would stay with no supported way to remove it.
+  # Data can come back onto an erased account — staff correcting a record, an
+  # address added to complete an old order. Writing it is allowed, because the
+  # erasure can simply be run again; refusing the write while also refusing
+  # the re-run was what left it stranded.
   describe 'an account that has already been erased' do
     before { result }
 
-    it 'refuses personal data written back onto it' do
-      expect(customer.reload.update(first_name: 'Ada', last_name: 'Lovelace')).to be(false)
-    end
+    it 'takes the data back off on a second run' do
+      customer.reload.update!(first_name: 'Ada', last_name: 'Lovelace')
 
-    it 'still allows the rest of the row to be edited' do
-      expect(customer.reload.update(selected_locale: 'fr')).to be(true)
+      described_class.call(customer: customer.reload, store: store)
+
+      expect(customer.reload.first_name).to eq('Redacted')
     end
   end
 

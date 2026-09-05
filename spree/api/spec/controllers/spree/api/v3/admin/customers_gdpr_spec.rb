@@ -158,12 +158,17 @@ RSpec.describe Spree::Api::V3::Admin::CustomersController, type: :controller do
       expect(Spree::DataRequest.erasure.where(customer_id: customer.id).last).to be_completed
     end
 
-    it 'refuses a customer already erased' do
+    # Erasing again is how personal data that came back afterwards — a new
+    # address, a note typed by staff — gets taken off. Refusing the second run
+    # would leave it with nothing able to remove it.
+    it 'erases a customer again, since data can come back afterwards' do
       post :anonymize, params: { id: customer.prefixed_id }, as: :json
+      customer.reload.update!(first_name: 'Ada')
 
       post :anonymize, params: { id: customer.prefixed_id }, as: :json
 
-      expect(response).to have_http_status(:unprocessable_content)
+      expect(response).to have_http_status(:ok)
+      expect(customer.reload.first_name).to eq('Redacted')
     end
 
     it 'keeps a completed order the customer placed' do

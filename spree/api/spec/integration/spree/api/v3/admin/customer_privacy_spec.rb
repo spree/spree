@@ -93,16 +93,6 @@ RSpec.describe 'Admin Customer Privacy API', type: :request, swagger_doc: 'api-r
         end
       end
 
-      response '422', 'already anonymized' do
-        let(:'x-spree-api-key') { secret_api_key.plaintext_token }
-        let(:id) { customer.prefixed_id }
-
-        before { Spree::Customers::Anonymize.call(customer: customer, store: store) }
-
-        schema '$ref' => '#/components/schemas/ErrorResponse'
-
-        run_test!
-      end
     end
   end
 end
