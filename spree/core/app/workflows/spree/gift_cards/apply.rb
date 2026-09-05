@@ -36,16 +36,24 @@ module Spree
         step :ensure_applicable
         run_hooks :validate
 
-        order.with_lock do
-          step :lock_gift_card
+        # One transaction so a refused release rolls back the ones that
+        # already succeeded. Holds are released BEFORE the card is locked:
+        # Spree::GiftCards::Remove locks its record and then the card, so
+        # taking the card first here would invert that order and deadlock
+        # against any concurrent remove of the same card.
+        ApplicationRecord.transaction do
           step :release_open_holds
           run_hooks :release_holds
-          step :ensure_amount_available
-          step :issue_store_credit
-          step :draw_down_gift_card
-          step :create_payment
-          step :recalculate_order
-          run_hooks :after_apply
+
+          order.with_lock do
+            step :lock_gift_card
+            step :ensure_amount_available
+            step :issue_store_credit
+            step :draw_down_gift_card
+            step :create_payment
+            step :recalculate_order
+            run_hooks :after_apply
+          end
         end
 
         success(order.reload)
@@ -83,13 +91,10 @@ module Spree
       # that did succeed. Emptying one shopper's cart and then not spending
       # the balance would be the worst of both outcomes.
       #
-      # Holds are locked in id order, and the card's own lock is taken first,
-      # so two applies of the SAME card serialize and cannot deadlock. Two
-      # applies of DIFFERENT cards can still cross when each target already
-      # holds the other's card; the database aborts one and the API layer
-      # turns that into a retryable conflict (Spree::Api::V3::OrderLock).
-      # Releasing outside the target's lock would remove the crossing but
-      # give up the all-or-nothing rollback above, which matters more.
+      # Holds are released in id order, each through the same record-then-card
+      # sequence Spree::GiftCards::Remove uses on its own, so a concurrent
+      # remove of the same card queues behind this one rather than crossing
+      # with it.
       def release_open_holds
         @released_holds = []
 

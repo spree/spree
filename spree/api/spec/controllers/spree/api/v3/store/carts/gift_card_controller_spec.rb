@@ -58,7 +58,7 @@ RSpec.describe Spree::Api::V3::Store::Carts::GiftCardsController, type: :control
 
       before do
         other_cart.update_column(:total, 50)
-        Spree.gift_card_apply_workflow.call(gift_card: gift_card, order: other_cart)
+        expect(Spree.gift_card_apply_workflow.call(gift_card: gift_card, order: other_cart)).to be_success
       end
 
       it 'moves the card onto this cart' do
@@ -75,7 +75,7 @@ RSpec.describe Spree::Api::V3::Store::Carts::GiftCardsController, type: :control
 
       before do
         other_cart.update_column(:total, 50)
-        Spree.gift_card_apply_workflow.call(gift_card: gift_card, order: other_cart)
+        expect(Spree.gift_card_apply_workflow.call(gift_card: gift_card, order: other_cart)).to be_success
         other_cart.update_column(:completing_at, Time.current)
       end
 

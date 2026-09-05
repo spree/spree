@@ -223,6 +223,34 @@ RSpec.describe Spree::GiftCards::Apply do
     end
   end
 
+  context 'lock ordering' do
+    let(:other_cart) { create(:cart, store: store, customer: order_user) }
+
+    before do
+      other_cart.update_column(:total, 50)
+      expect(Spree.gift_card_apply_workflow.call(gift_card: gift_card, order: other_cart)).to be_success
+    end
+
+    # Spree::GiftCards::Remove locks its record and then the card. Holding the
+    # card while reaching for another record would invert that and deadlock
+    # against a concurrent remove of the same card.
+    it 'releases holds before locking the gift card' do
+      locked = []
+
+      allow_any_instance_of(Spree::GiftCard).to receive(:lock!) do |card|
+        locked << :gift_card
+        card
+      end
+      allow(Spree.gift_card_remove_workflow).to receive(:call).and_wrap_original do |original, **kwargs|
+        locked << :hold_released
+        original.call(**kwargs)
+      end
+
+      expect(subject).to be_success
+      expect(locked.first).to eq(:hold_released)
+    end
+  end
+
   context 'when the other cart is mid-completion' do
     let(:other_cart) { create(:cart, store: store, customer: order_user) }
 
