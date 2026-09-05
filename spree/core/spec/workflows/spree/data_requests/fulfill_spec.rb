@@ -5,6 +5,17 @@ RSpec.describe Spree::DataRequests::Fulfill do
   let(:customer) { create(:customer, email: 'buyer@example.com') }
 
   describe 'an access request' do
+
+    # An erasure can land while this sits in the queue. Answering it would put
+    # a file about someone who asked to be forgotten into private storage —
+    # behind a token the erasure already cleared, so nobody could open it, but
+    # a file about them all the same.
+    it 'refuses to build an export for a person who was erased meanwhile' do
+      Spree::Customers::Anonymize.call(customer: customer, store: store)
+
+      expect(described_class.call(data_request: data_request)).to be_failure
+      expect(data_request.reload.export_file).not_to be_attached
+    end
     let(:data_request) { create(:data_request, store: store, customer: customer) }
 
     subject(:result) { described_class.call(data_request: data_request) }

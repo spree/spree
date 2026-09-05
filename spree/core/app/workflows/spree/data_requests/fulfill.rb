@@ -65,6 +65,15 @@ module Spree
       end
 
       def build_export
+        # An erasure can land while this sits in the queue. Answering now would
+        # write a file into private storage for someone who asked to be
+        # forgotten — redacted, and behind a token the erasure already cleared,
+        # so nobody could open it, but a file about them all the same and a
+        # request they can never collect. Refusing says what happened.
+        if data_request.customer&.anonymized?
+          return failure(data_request, Spree.t('data_request_errors.already_anonymized'))
+        end
+
         payload = export_payload(data_request)
 
         data_request.export_file.attach(

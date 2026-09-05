@@ -82,7 +82,17 @@ module Spree
         # are only released once the redaction they belong to has committed.
         # `ActiveRecord::Rollback` is swallowed by the block above, so the flag
         # is what distinguishes a commit from a silent unwind.
-        purge_collected_attachments if committed
+        # Nothing below this line describes what happened unless the redaction
+        # actually stuck. `ActiveRecord::Rollback` is swallowed by the block
+        # above rather than re-raised, so without the flag a rolled-back
+        # erasure would purge the person's files, announce `customer.anonymized`
+        # to every subscriber, run the hooks that release gateway data, and
+        # hand back success — for a row that is still fully identified.
+        unless committed
+          return failure(customer, Spree.t('customer_errors.anonymize_failed'))
+        end
+
+        purge_collected_attachments
 
         # Before the event and the hooks: the claim and the redaction were
         # written by UPDATE statements that leave this instance holding the

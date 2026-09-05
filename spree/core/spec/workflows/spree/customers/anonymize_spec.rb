@@ -279,6 +279,16 @@ RSpec.describe Spree::Customers::Anonymize do
       expect(order.reload.po_document).to be_attached
     end
 
+    it 'does not announce an erasure that did not happen' do
+      expect(customer).not_to receive(:publish_event).with('customer.anonymized', anything)
+
+      described_class.call(customer: customer, store: store) rescue nil
+    end
+
+    it 'reports the failure rather than success' do
+      expect(described_class.call(customer: customer, store: store)).to be_failure
+    end
+
     it 'leaves the person erasable' do
       described_class.call(customer: customer, store: store) rescue nil
 
