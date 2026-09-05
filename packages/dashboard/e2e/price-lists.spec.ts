@@ -234,7 +234,7 @@ test.describe('price lists', () => {
     // and verify the row disappears. The rule list and the picker share
     // a single `<RuleRow>` div with `items-stretch`; scope to it so we
     // don't pick up unrelated buttons.
-    const ruleRow = page.locator('div.items-stretch').filter({ hasText: 'Volume Rule' }).first()
+    const ruleRow = page.locator('div.items-stretch').filter({ hasText: 'Volume pricing' }).first()
     await ruleRow.getByRole('button').last().click()
     await expect(page.getByRole('heading', { name: /remove rule\?/i })).toBeVisible()
     await page
