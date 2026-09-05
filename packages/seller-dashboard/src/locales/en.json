@@ -48,6 +48,15 @@
     },
     "orders": {
       "detail": {
+        "cancel": {
+          "description": "The goods go back on the shelf and the customer is no longer charged for them. Any money already taken is returned by the marketplace, not here.",
+          "note_label": "Note",
+          "note_placeholder": "Only staff see this note",
+          "notify_customer": "Email the customer",
+          "keep_order": "Keep order",
+          "reason_label": "Reason",
+          "no_reason": "No reason given"
+        },
         "fulfillments": {
           "add_tracking_title": "Add tracking",
           "carrier_auto": "Detect automatically",
@@ -61,8 +70,14 @@
           "no_rates": "No delivery methods are quoted for this fulfillment.",
           "rates_pending_origin": "Save the new origin to see the delivery methods it offers.",
           "ships_from": "Ships from",
-          "tracking_description": "The carrier tracking number, or a full tracking link."
-        }
+          "tracking_description": "The carrier tracking number, or a full tracking link.",
+          "upload_label_cost": "Postage cost",
+          "upload_label_description": "Record a label you bought elsewhere, so the parcel has its file, its tracking number and what it cost.",
+          "upload_label_file": "Label file",
+          "upload_label_title": "Upload label"
+        },
+        "section_customer_note": "Special Instructions",
+        "section_internal_note": "Internal Note"
       },
       "fulfill": {
         "include_item": "Ship {{name}}",
@@ -155,6 +170,12 @@
               "create": "New claim"
             },
             "create_title": "New claim"
+          },
+          "dialogs": {
+            "cancel_title": "Cancel order?"
+          },
+          "actions": {
+            "cancel": "Cancel order"
           }
         }
       }
@@ -322,18 +343,6 @@
     },
     "billing_address": "Billing address",
     "cancel": "Cancel order",
-    "cancel_confirm": {
-      "message": "The customer is refunded and any stock goes back on the shelf. This cannot be undone.",
-      "title": "Cancel this order?"
-    },
-    "cancel_dialog": {
-      "description": "The goods go back on the shelf and the customer is no longer charged for them. Any money already taken is returned by the marketplace, not here.",
-      "reason_label": "Reason",
-      "no_reason": "No reason given",
-      "note_label": "Note",
-      "notify_customer": "Email the customer"
-    },
-    "canceled": "Order canceled",
     "columns": {
       "fulfillment": "Fulfillment",
       "number": "Order",
@@ -362,9 +371,6 @@
       "cancel": "Cancel parcel",
       "cancel_message": "The goods go back on the shelf and the carrier is stood down.",
       "cancel_title": "Cancel this parcel?",
-      "carrier_auto": "Detect from number",
-      "carrier_label": "Carrier",
-      "carrier_search": "Search carriers…",
       "carrier_status_available_for_pickup": "Available for pickup",
       "carrier_status_delivered": "Delivered",
       "carrier_status_failure": "Delivery failed",
@@ -381,7 +387,6 @@
       "empty": "Nothing to send on this order.",
       "free": "Free",
       "label_cost": "Cost {{amount}}",
-      "label_cost_label": "What it cost",
       "label_title": "Shipping label",
       "label_uploaded": "Uploaded",
       "packing_slip_title": "Packing slip — order {{number}}",
@@ -397,10 +402,7 @@
       "split_would_empty": "Moving everything would leave this parcel empty.",
       "splitting": "Splitting…",
       "title": "Fulfillments",
-      "upload_label": "Upload label",
-      "upload_label_description": "Record a label you bought elsewhere, so the parcel carries its file and tracking number.",
-      "upload_label_file": "Label file",
-      "upload_label_title": "Upload postage"
+      "upload_label": "Upload label"
     },
     "items": "Items",
     "not_found": "That order could not be found.",
@@ -415,10 +417,40 @@
       "voided": "Voided"
     },
     "post_sale": {
-      "reason": "Reason",
-      "memo": "Note",
       "approve": "Approve",
       "cancel": "Cancel",
+      "claims": {
+        "cancel_message": "The customer is told it will not go ahead.",
+        "cancel_title": "Cancel this claim?",
+        "create": "New claim",
+        "deny": "Deny",
+        "deny_message": "The customer is told the claim was not upheld.",
+        "deny_title": "Deny this claim?",
+        "empty": "Nothing has been reported on this order.",
+        "resolve": "Resolve",
+        "title": "Claims"
+      },
+      "exchanges": {
+        "title": "Exchanges",
+        "receive": "Receive",
+        "fulfill": "Send replacement",
+        "price_difference": "Price difference: {{amount}}",
+        "cancel_title": "Cancel this exchange?",
+        "cancel_message": "The customer is told it will not go ahead."
+      },
+      "reason": "Reason",
+      "returns": {
+        "cancel_message": "The customer is told it will not go ahead.",
+        "cancel_title": "Cancel this return?",
+        "create": "New return",
+        "empty": "Nothing has come back from this order.",
+        "not_resellable": "Not resellable",
+        "partially_received": "{{received}} of {{quantity}} received",
+        "receive": "Receive",
+        "refund": "Refund",
+        "refund_total": "Refund total: {{amount}}",
+        "title": "Returns"
+      },
       "statuses": {
         "requested": "Requested",
         "approved": "Approved",
@@ -429,40 +461,6 @@
         "resolved": "Resolved",
         "denied": "Denied",
         "canceled": "Canceled"
-      },
-      "returns": {
-        "cancel_message": "The customer is told it will not go ahead.",
-        "cancel_title": "Cancel this return?",
-        "create": "New return",
-        "create_title": "Take goods back",
-        "empty": "Nothing has come back from this order.",
-        "not_resellable": "Not resellable",
-        "partially_received": "{{received}} of {{quantity}} received",
-        "receive": "Receive",
-        "refund": "Refund",
-        "refund_total": "Refund total: {{amount}}",
-        "title": "Returns"
-      },
-      "exchanges": {
-        "title": "Exchanges",
-        "receive": "Receive",
-        "fulfill": "Send replacement",
-        "price_difference": "Price difference: {{amount}}",
-        "cancel_title": "Cancel this exchange?",
-        "cancel_message": "The customer is told it will not go ahead."
-      },
-      "claims": {
-        "cancel_message": "The customer is told it will not go ahead.",
-        "cancel_title": "Cancel this claim?",
-        "create": "New claim",
-        "create_title": "Report a problem",
-        "deny": "Deny",
-        "deny_message": "The customer is told the claim was not upheld.",
-        "deny_title": "Deny this claim?",
-        "description": "What went wrong",
-        "empty": "Nothing has been reported on this order.",
-        "resolve": "Resolve",
-        "title": "Claims"
       }
     },
     "search_placeholder": "Search by order number…",
@@ -489,9 +487,7 @@
       "total": "Total"
     },
     "title": "Orders",
-    "tracking": "Tracking {{number}}",
-    "tracking_label": "Tracking number",
-    "tracking_placeholder": "Optional"
+    "tracking_label": "Tracking number"
   },
   "policies": {
     "add": "Add policy",

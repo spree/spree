@@ -66,6 +66,7 @@ export * from './hooks/use-resource-mutation'
 export * from './hooks/use-stock-locations'
 export * from './hooks/use-switch-admin-locale'
 export * from './hooks/use-visual-viewport-offset'
+export * from './lib/cancel-order-form'
 export * from './lib/create-action-registry'
 // ---------------------------------------------------------------------------
 // Registries — pluggable extension points (nav, route, slot, table,
@@ -90,6 +91,7 @@ export * from './lib/fulfillment-items'
 // `i18n.addResourceBundle`) get it via the named re-export.
 export * from './lib/i18n'
 export * from './lib/import-types'
+export * from './lib/label-upload-form'
 export * from './lib/nav-registry'
 export * from './lib/permissions'
 export * from './lib/progress'
