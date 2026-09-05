@@ -2643,6 +2643,7 @@
           "no_reason": "No reason given",
           "note_label": "Note",
           "note_placeholder": "Only staff see this note",
+          "notify_customer": "Email the customer",
           "reason_label": "Reason",
           "refund_payments": "Refund the customer",
           "refund_payments_help": "Money already taken is returned. An unclaimed authorization is released either way."

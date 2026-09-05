@@ -499,6 +499,7 @@
       "failed_to_update_staff": "Échec de la mise à jour du personnel",
       "failed_to_update_store": "Échec de la mise à jour des paramètres de la boutique",
       "generic": "Une erreur s'est produite",
+      "label_download_failed": "Impossible de télécharger l'étiquette",
       "network": "Erreur réseau — veuillez réessayer",
       "not_found": "Introuvable",
       "required": "Ce champ est obligatoire",

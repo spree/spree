@@ -3,104 +3,32 @@ module Spree
     module V3
       module Seller
         module Orders
-          # The consignments on a parcel the seller ships themselves. Rooted
-          # at the order fetched through `current_seller_orders`, so a
-          # fulfillment on somebody else's order reads as missing.
-          class DeliveriesController < Seller::BaseController
-            include Spree::Api::V3::OrderLock
+          # The consignments on a parcel the seller ships themselves.
+          #
+          # CRUD is shared with the operator's branch through the concern.
+          # What is here is what makes it the seller's: the order comes from
+          # `current_seller_orders`, so a fulfillment on somebody else's order
+          # reads as missing rather than denied.
+          #
+          # No `mark_delivered`: that a parcel arrived is the buyer's word,
+          # not the sender's, so confirming receipt stays with the operator
+          # and the carrier feed.
+          class DeliveriesController < BaseController
+            include Spree::Api::V3::Orders::DeliveryActions
 
-            scoped_resource :fulfillments
-
-            before_action :set_fulfillment
-            before_action :set_delivery, only: [:show, :update, :destroy]
-
-            def index
-              render json: { data: @fulfillment.deliveries.map { |delivery| serialize(delivery) } }
-            end
-
-            def show
-              render json: serialize(@delivery)
-            end
-
-            # POST /api/v3/seller/orders/:order_id/fulfillments/:fulfillment_id/deliveries
-            def create
-              authorize! :update, @fulfillment
-
-              with_order_lock do
-                result = Spree.delivery_create_service.call(
-                  owner: @fulfillment,
-                  tracking_number: delivery_params[:tracking_number],
-                  carrier: delivery_params[:carrier],
-                  service: delivery_params[:service],
-                  tracking_url: delivery_params[:tracking_url]
-                )
-
-                if result.success?
-                  render json: serialize(result.value), status: :created
-                else
-                  render_result_error(result)
-                end
-              end
-            end
-
-            # PATCH .../deliveries/:id
-            def update
-              authorize! :update, @fulfillment
-
-              with_order_lock do
-                if @delivery.update(@delivery.correction_attributes(delivery_params.to_h))
-                  Spree.fulfillment_recalculate_delivery_service.call(fulfillment: @fulfillment)
-                  render json: serialize(@delivery.reload)
-                else
-                  render_validation_error(@delivery.errors)
-                end
-              end
-            end
-
-            # DELETE .../deliveries/:id — 422 when a label minted it.
-            def destroy
-              authorize! :update, @fulfillment
-
-              with_order_lock do
-                result = Spree.delivery_destroy_service.call(delivery: @delivery)
-
-                if result.success?
-                  head :no_content
-                else
-                  render_result_error(result)
-                end
-              end
-            end
+            before_action :set_resource, only: [:show, :update, :destroy]
 
             protected
 
-            def read_actions
-              %w[index show]
+            def serializer_class
+              Spree.api.seller_delivery_serializer
             end
 
-            private
-
-            # A corrected number is a different parcel as far as the carrier
-            # is concerned: its journey starts over, and the carrier and link
-            # that belonged to the old number go with it unless this request
-            # supplies new ones.
-
-            def set_fulfillment
-              @order = current_seller_orders.find_by_prefix_id!(params[:order_id])
-              authorize! :show, @order
-              @fulfillment = @order.fulfillments.find_by_prefix_id!(params[:fulfillment_id])
-            end
-
-            def set_delivery
-              @delivery = @fulfillment.deliveries.find_by_prefix_id!(params[:id])
-            end
-
-            def delivery_params
-              @delivery_params ||= params.permit(:tracking_number, :carrier, :service, :tracking_url)
-            end
-
-            def serialize(delivery)
-              Spree.api.seller_delivery_serializer.new(delivery, params: { store: current_store }).to_h
+            # The labels and consignments hang off the fulfillment, not the
+            # order, so the parent is narrowed one step past the base's.
+            def set_parent
+              super
+              @parent = @order.fulfillments.find_by_prefix_id!(params[:fulfillment_id])
             end
           end
         end

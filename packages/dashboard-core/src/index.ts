@@ -66,6 +66,7 @@ export * from './hooks/use-resource-mutation'
 export * from './hooks/use-stock-locations'
 export * from './hooks/use-switch-admin-locale'
 export * from './hooks/use-visual-viewport-offset'
+export * from './lib/cancel-order-form'
 export * from './lib/create-action-registry'
 // ---------------------------------------------------------------------------
 // Registries — pluggable extension points (nav, route, slot, table,
@@ -73,6 +74,7 @@ export * from './lib/create-action-registry'
 // ---------------------------------------------------------------------------
 export * from './lib/custom-field-components'
 export * from './lib/date-presets'
+export * from './lib/delivery-form'
 // ---------------------------------------------------------------------------
 // Helpers
 // ---------------------------------------------------------------------------
@@ -83,11 +85,13 @@ export * from './lib/form-errors'
 export * from './lib/form-fields-registry'
 export * from './lib/form-mappers'
 export * from './lib/formatters'
+export * from './lib/fulfillment-items'
 // i18n side-effect import bootstraps i18next + React adapter on first import.
 // Consumers that need the singleton (e.g. plugin authors calling
 // `i18n.addResourceBundle`) get it via the named re-export.
 export * from './lib/i18n'
 export * from './lib/import-types'
+export * from './lib/label-upload-form'
 export * from './lib/nav-registry'
 export * from './lib/permissions'
 export * from './lib/progress'

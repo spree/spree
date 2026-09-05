@@ -1,5 +1,11 @@
 import type { Order } from '@spree/admin-sdk'
-import { adminClient, PageHeader, useResourceMutation, useStore } from '@spree/dashboard-core'
+import {
+  adminClient,
+  GONE_STATUSES,
+  PageHeader,
+  useResourceMutation,
+  useStore,
+} from '@spree/dashboard-core'
 import {
   Button,
   DropdownMenuItem,
@@ -19,7 +25,6 @@ import { Link } from '@tanstack/react-router'
 import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { orderQueryKey } from '../../../hooks/use-order'
-import { GONE_STATUSES } from '../../../lib/fulfillment-items'
 import { spreeJsonLinkResolver } from '../../../lib/json-link-resolver'
 import { OrderCancelDialog } from './order-cancel-dialog'
 

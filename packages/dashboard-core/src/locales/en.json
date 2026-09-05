@@ -501,6 +501,7 @@
       "failed_to_update_staff": "Failed to update staff",
       "failed_to_update_store": "Failed to update store settings",
       "generic": "Something went wrong",
+      "label_download_failed": "Could not download the label",
       "network": "Network error — please retry",
       "not_found": "Not found",
       "required": "This field is required",

@@ -499,6 +499,7 @@
       "failed_to_update_staff": "更新员工失败",
       "failed_to_update_store": "更新店铺设置失败",
       "generic": "出错了",
+      "label_download_failed": "无法下载标签",
       "network": "网络错误 — 请重试",
       "not_found": "未找到",
       "required": "此字段为必填项",

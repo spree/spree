@@ -8,11 +8,14 @@ import {
   CardContent,
   CardHeader,
   CardTitle,
+  EditableNoteCard,
+  NoteHtml,
+  NoteText,
   RichTextEditor,
   Textarea,
 } from '@spree/dashboard-ui'
 import { PencilIcon } from '@spree/dashboard-ui/icons'
-import { type FormEvent, useEffect, useState } from 'react'
+import { useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useOrderMutation } from '../../../hooks/use-order'
 
@@ -21,54 +24,36 @@ export function SpecialInstructionsCard({ order }: { order: Order }) {
   const orderId = order.id
 
   const [editing, setEditing] = useState(false)
+  const [note, setNote] = useState(order.customer_note ?? '')
+  const serverNote = order.customer_note ?? ''
+
+  // Track the server value only while the editor is closed: any order
+  // mutation refetches this record, and adopting the incoming value mid-edit
+  // would throw away whatever the user is part-way through typing.
+  useEffect(() => {
+    if (!editing) setNote(serverNote)
+  }, [editing, serverNote])
+
   const mutation = useOrderMutation(orderId, (params: { customer_note: string }) =>
     adminClient.orders.update(orderId, params),
   )
 
-  function handleSubmit(e: FormEvent<HTMLFormElement>) {
-    e.preventDefault()
-    const fd = new FormData(e.currentTarget)
-    mutation.mutate(
-      { customer_note: fd.get('customer_note') as string },
-      { onSuccess: () => setEditing(false) },
-    )
-  }
-
   return (
-    <Card>
-      <CardHeader>
-        <CardTitle>{t('admin.orders.detail.section_customer_note')}</CardTitle>
-        <CardAction>
-          <Button
-            variant="ghost"
-            size="icon-sm"
-            onClick={() => setEditing(!editing)}
-            aria-label={t('admin.actions.edit')}
-          >
-            <PencilIcon className="size-4" />
-          </Button>
-        </CardAction>
-      </CardHeader>
-      <CardContent>
-        {editing ? (
-          <form onSubmit={handleSubmit} className="flex flex-col gap-3">
-            <Textarea name="customer_note" defaultValue={order.customer_note ?? ''} />
-            <div className="flex justify-end gap-2">
-              <Button type="button" variant="outline" size="sm" onClick={() => setEditing(false)}>
-                {t('admin.actions.cancel')}
-              </Button>
-              <Button type="submit" size="sm" disabled={mutation.isPending}>
-                {mutation.isPending ? t('admin.actions.saving') : t('admin.actions.save')}
-              </Button>
-            </div>
-          </form>
-        ) : order.customer_note ? (
-          <p className="text-sm text-muted-foreground whitespace-pre-wrap">{order.customer_note}</p>
-        ) : (
-          <p className="text-sm text-muted-foreground">{t('admin.common.none')}</p>
-        )}
-      </CardContent>
-    </Card>
+    <EditableNoteCard
+      title={t('admin.orders.detail.section_customer_note')}
+      editing={editing}
+      onEditingChange={(next) => {
+        if (!next) setNote(serverNote)
+        setEditing(next)
+      }}
+      editor={<Textarea value={note} onChange={(event) => setNote(event.target.value)} />}
+      pending={mutation.isPending}
+      onSave={() =>
+        mutation.mutate({ customer_note: note }, { onSuccess: () => setEditing(false) })
+      }
+    >
+      {serverNote ? <NoteText value={serverNote} /> : null}
+    </EditableNoteCard>
   )
 }
 
@@ -143,9 +128,6 @@ export function InternalNoteCard({ order }: { order: Order }) {
   const [note, setNote] = useState(order.internal_note_html ?? '')
   const serverNote = order.internal_note_html ?? ''
 
-  // Track the server value only while the editor is closed. Any order mutation
-  // refetches this record, and adopting the incoming value mid-edit would throw
-  // away whatever the user is part-way through typing.
   useEffect(() => {
     if (!editing) setNote(serverNote)
   }, [editing, serverNote])
@@ -154,61 +136,23 @@ export function InternalNoteCard({ order }: { order: Order }) {
     adminClient.orders.update(orderId, params),
   )
 
-  function handleSubmit(e: FormEvent<HTMLFormElement>) {
-    e.preventDefault()
-    mutation.mutate({ internal_note: note }, { onSuccess: () => setEditing(false) })
-  }
+  const title = t('admin.orders.detail.section_internal_note')
 
   return (
-    <Card>
-      <CardHeader>
-        <CardTitle>{t('admin.orders.detail.section_internal_note')}</CardTitle>
-        <CardAction>
-          <Button
-            variant="ghost"
-            size="icon-sm"
-            onClick={() => setEditing(!editing)}
-            aria-label={t('admin.actions.edit')}
-          >
-            <PencilIcon className="size-4" />
-          </Button>
-        </CardAction>
-      </CardHeader>
-      <CardContent>
-        {editing ? (
-          <form onSubmit={handleSubmit} className="flex flex-col gap-3">
-            <RichTextEditor
-              ariaLabel={t('admin.orders.detail.section_internal_note')}
-              value={note}
-              onChange={setNote}
-            />
-            <div className="flex justify-end gap-2">
-              <Button
-                type="button"
-                variant="outline"
-                size="sm"
-                onClick={() => {
-                  setNote(serverNote)
-                  setEditing(false)
-                }}
-              >
-                {t('admin.actions.cancel')}
-              </Button>
-              <Button type="submit" size="sm" disabled={mutation.isPending}>
-                {mutation.isPending ? t('admin.actions.saving') : t('admin.actions.save')}
-              </Button>
-            </div>
-          </form>
-        ) : order.internal_note_html ? (
-          <div
-            className="prose prose-sm max-w-none text-muted-foreground dark:prose-invert"
-            // biome-ignore lint/security/noDangerouslySetInnerHtml: HTML is sanitized server-side via the rich-text pipeline
-            dangerouslySetInnerHTML={{ __html: order.internal_note_html }}
-          />
-        ) : (
-          <p className="text-sm text-muted-foreground">{t('admin.common.none')}</p>
-        )}
-      </CardContent>
-    </Card>
+    <EditableNoteCard
+      title={title}
+      editing={editing}
+      onEditingChange={(next) => {
+        if (!next) setNote(serverNote)
+        setEditing(next)
+      }}
+      editor={<RichTextEditor ariaLabel={title} value={note} onChange={setNote} />}
+      pending={mutation.isPending}
+      onSave={() =>
+        mutation.mutate({ internal_note: note }, { onSuccess: () => setEditing(false) })
+      }
+    >
+      {serverNote ? <NoteHtml html={serverNote} /> : null}
+    </EditableNoteCard>
   )
 }

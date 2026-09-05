@@ -858,16 +858,34 @@ Spree::Core::Engine.add_routes do
         # What this seller has sold. Cancelling is a member action because it
         # is a workflow with its own arguments, and fulfilling is nested: a
         # parcel means nothing outside the order it belongs to.
+        #
+        # No `update`: an order is created by a shopper checking out and its
+        # terms are the marketplace's, so the branch routes no general write.
+        # Correcting a delivery address is the one exception a merchant of
+        # record needs, and it is its own named action rather than a PATCH
+        # that would accept whatever the order serializer happens to permit.
         resources :orders, only: [:index, :show] do
           member do
             patch :cancel
+            patch :address
           end
 
-          resources :fulfillments, only: [:index, :show], controller: 'orders/fulfillments' do
+          # Singular: an order has one set of notes, so they are a resource to
+          # read and update rather than a verb on the order.
+          resource :notes, only: [:show, :update], controller: 'orders/notes'
+
+          # No `mark_delivered`: that a parcel arrived is the buyer's word,
+          # not the sender's, so confirming receipt stays with the operator
+          # and the carrier feed.
+          resources :fulfillments, only: [:index, :show, :update], controller: 'orders/fulfillments' do
             member do
               patch :fulfill
+              patch :cancel
+              patch :split
             end
 
+            # A parcel's consignments and its postage. Both hang off the
+            # fulfillment because that is what actually travels.
             resources :deliveries, controller: 'orders/deliveries', only: [:index, :show, :create, :update, :destroy]
             resources :labels, controller: 'orders/labels', only: [:index, :show, :create, :destroy] do
               member do
@@ -875,7 +893,49 @@ Spree::Core::Engine.add_routes do
               end
             end
           end
+
+          # Putting a sale right. The seller is merchant of record for their
+          # own child order, so taking the goods back and giving the money
+          # back are theirs (docs/plans/6.0-seller-order-management.md).
+          # Every status move is its own action, because each carries
+          # arguments of its own — receiving records what actually arrived,
+          # refunding names a method and an amount.
+          resources :returns, only: [:index, :show, :create], controller: 'orders/returns' do
+            member do
+              patch :approve
+              patch :receive
+              patch :refund
+              patch :cancel
+            end
+          end
+
+          resources :exchanges, only: [:index, :show, :create], controller: 'orders/exchanges' do
+            member do
+              patch :approve
+              patch :receive
+              patch :fulfill
+              patch :cancel
+            end
+          end
+
+          resources :claims, only: [:index, :show, :create], controller: 'orders/claims' do
+            member do
+              patch :approve
+              patch :resolve
+              patch :deny
+              patch :cancel
+            end
+          end
         end
+
+        # The marketplace's own vocabularies. Read-only: a seller picks a
+        # reason, the operator decides what the reasons are.
+        resources :return_reasons, only: [:index]
+        resources :claim_reasons, only: [:index]
+        resources :order_cancellation_reasons, only: [:index]
+
+        # Registry data — which carriers a tracking number can be pinned to.
+        resources :tracking_carriers, only: [:index]
 
         resources :direct_uploads, only: [:create]
 

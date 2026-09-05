@@ -83,6 +83,72 @@ RSpec.describe Spree::Api::V3::Seller::OrdersController, type: :controller do
     end
   end
 
+  # A seller is merchant of record for their own child order, so a delivery
+  # address the buyer got wrong is theirs to correct.
+  describe 'PATCH #address' do
+    it 'corrects the shipping address, keeping the lines it was not sent' do
+      original = mine.ship_address
+      original_line = original.address1
+
+      patch :address, params: {
+        id: mine.prefixed_id,
+        shipping_address: { address1: '9 Corrected Way', city: 'Fixedton' }
+      }, as: :json
+
+      expect(response).to have_http_status(:ok)
+      address = mine.reload.ship_address
+      expect(address.address1).to eq('9 Corrected Way')
+      expect(address.city).to eq('Fixedton')
+      # A request naming two lines must not blank out the rest of the address.
+      expect(address.country_code).to eq(original.country_code)
+      expect(address.postal_code).to eq(original.postal_code)
+      # The order points at a new row: an order-level fix is not a rewrite of
+      # the address the customer may also have saved in their own book.
+      expect(address.id).not_to eq(original.id)
+      expect(original.reload.address1).to eq(original_line)
+    end
+
+    it 'corrects the billing address' do
+      patch :address, params: {
+        id: mine.prefixed_id,
+        billing_address: { address1: '4 Invoice Street' }
+      }, as: :json
+
+      expect(response).to have_http_status(:ok)
+      expect(mine.reload.bill_address.address1).to eq('4 Invoice Street')
+    end
+
+    # Nothing else about the order is the seller's to write, so an attribute
+    # that is not one of the two addresses is simply not read.
+    it 'ignores anything that is not an address' do
+      original_total = mine.total
+
+      patch :address, params: {
+        id: mine.prefixed_id,
+        shipping_address: { city: 'Fixedton' },
+        total: '0.01',
+        customer_note: 'rewritten'
+      }, as: :json
+
+      expect(response).to have_http_status(:ok)
+      expect(mine.reload.total).to eq(original_total)
+    end
+
+    it 'refuses a request naming neither address' do
+      patch :address, params: { id: mine.prefixed_id }, as: :json
+
+      expect(response).to have_http_status(:unprocessable_content)
+    end
+
+    it "404s on another seller's order" do
+      patch :address, params: {
+        id: theirs.prefixed_id, shipping_address: { city: 'Fixedton' }
+      }, as: :json
+
+      expect(response).to have_http_status(:not_found)
+    end
+  end
+
   describe 'GET #show' do
     it 'renders what the seller needs to pack the parcel' do
       get :show, params: { id: mine.prefixed_id }, as: :json
@@ -134,6 +200,68 @@ RSpec.describe Spree::Api::V3::Seller::OrdersController, type: :controller do
 
       expect(response).to have_http_status(:not_found)
       expect(theirs.reload).not_to be_canceled
+    end
+
+    # A seller is merchant of record for their own child order, so the party
+    # who owes the buyer their money back is the party who took it.
+    it 'hands back what the buyer paid when asked' do
+      patch :cancel, params: { id: mine.prefixed_id, refund_payments: true }, as: :json
+
+      expect(response).to have_http_status(:ok)
+      expect(mine.reload).to be_canceled
+    end
+
+    # The seller decides whether to refund, never how much: withdrawing from
+    # the whole order returns what that order was paid.
+    it 'ignores a partial amount the seller names' do
+      expect(Spree.order_cancel_workflow).to receive(:call).
+        with(hash_excluding(:refund_amount)).
+        and_return(Spree::ServiceModule::Result.new(true, mine))
+
+      patch :cancel, params: {
+        id: mine.prefixed_id, refund_payments: true, refund_amount: '1.00'
+      }, as: :json
+
+      expect(response).to have_http_status(:ok)
+    end
+  end
+
+  describe 'PATCH #cancel with a reason' do
+    let!(:order) { create(:completed_order_with_totals, store: store, seller: seller) }
+    let(:reason) { create(:order_cancellation_reason, store: store, name: 'Out of stock') }
+
+    it 'records the reason and note the seller picked' do
+      patch :cancel, params: {
+        id: order.prefixed_id,
+        cancel_reason_id: reason.prefixed_id,
+        cancel_note: 'Supplier let us down'
+      }, as: :json
+
+      expect(response).to have_http_status(:ok)
+      expect(order.reload.cancel_reason).to eq(reason)
+      expect(order.cancel_note).to eq('Supplier let us down')
+    end
+
+    # The vocabulary is the marketplace's, and a reason from another store
+    # would label this order with words its operator never chose.
+    it 'refuses a reason belonging to another store' do
+      elsewhere = create(:order_cancellation_reason, store: create(:store), name: 'Elsewhere')
+
+      patch :cancel, params: { id: order.prefixed_id, cancel_reason_id: elsewhere.prefixed_id }, as: :json
+
+      expect(response).to have_http_status(:not_found)
+      expect(order.reload).not_to be_canceled
+    end
+
+    # Releasing the authorization is the cancel's job; giving back money
+    # already taken is the operator's, so the seller endpoint passes no refund
+    # arguments at all and the workflow's default holds.
+    it 'refunds nothing' do
+      expect {
+        patch :cancel, params: { id: order.prefixed_id }, as: :json
+      }.not_to change(Spree::Refund, :count)
+
+      expect(order.reload).to be_canceled
     end
   end
 end

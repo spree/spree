@@ -1,5 +1,10 @@
 import type { Delivery, Fulfillment, Order } from '@spree/admin-sdk'
-import { useStockLocations } from '@spree/dashboard-core'
+import {
+  type FulfillmentItemRow,
+  fulfillmentItemRows,
+  unfulfilledItemRows,
+  useStockLocations,
+} from '@spree/dashboard-core'
 import {
   Badge,
   Button,
@@ -25,6 +30,8 @@ import {
   FieldError,
   FieldGroup,
   FieldLabel,
+  FulfillmentItemList,
+  FulfillmentPanel,
   Input,
   RelativeTime,
   Select,
@@ -38,7 +45,6 @@ import {
 } from '@spree/dashboard-ui'
 import {
   EllipsisVerticalIcon,
-  MapPinIcon,
   PackageCheckIcon,
   PencilIcon,
   PlusIcon,
@@ -48,20 +54,14 @@ import {
   TruckIcon,
   XCircleIcon,
 } from '@spree/dashboard-ui/icons'
-import { type ReactNode, useState } from 'react'
+import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useFulfillmentActions } from '../../../hooks/use-fulfillments'
-import {
-  type FulfillmentItemRow,
-  fulfillmentItemRows,
-  unfulfilledItemRows,
-} from '../../../lib/fulfillment-items'
 import { printPackingSlip } from '../../../lib/packing-slip'
 import { FulfillmentDeliveries } from './fulfillment-deliveries'
 import { FulfillmentDeliveryDialog } from './fulfillment-delivery-dialog'
 import { FulfillmentEditDialog } from './fulfillment-edit-dialog'
 import { FulfillmentFulfillForm } from './fulfillment-fulfill-form'
-import { FulfillmentItemList } from './fulfillment-item-list'
 import { FulfillmentLabelUploadDialog } from './fulfillment-label-upload-dialog'
 import { ShippingDocuments } from './shipping-documents'
 import { ShippingLabelRow } from './shipping-label-row'
@@ -730,44 +730,6 @@ function FulfillmentRow({ order, fulfillment }: { order: Order; fulfillment: Ful
  * to act on — so the two callers pass what they have rather than one of them
  * inventing a record. What they do share is how it looks.
  */
-function FulfillmentPanel({
-  status,
-  location,
-  meta,
-  actions,
-  children,
-}: {
-  status: string
-  /** Where it ships from. Absent until a fulfillment exists. */
-  location?: string | null
-  /** Trailing header detail, e.g. when it shipped. */
-  meta?: ReactNode
-  /** The panel's own menu. Absent when there is nothing to act on. */
-  actions?: ReactNode
-  children: ReactNode
-}) {
-  return (
-    <Card variant="nested">
-      <CardHeader>
-        <CardTitle className="min-w-0 text-sm font-normal">
-          <StatusBadge status={status} />
-          {location && (
-            <div className="flex min-w-0 items-center gap-1.5 text-muted-foreground text-xs">
-              <MapPinIcon className="size-3 shrink-0" />
-              {/* The card clips its overflow, so a long warehouse name has to
-                  truncate here or it is simply cut off. */}
-              <span className="truncate">{location}</span>
-            </div>
-          )}
-          {meta}
-        </CardTitle>
-        {actions && <CardAction>{actions}</CardAction>}
-      </CardHeader>
-      {children}
-    </Card>
-  )
-}
-
 /**
  * Units nobody has put into a fulfillment yet. Reads like a fulfillment group
  * so the eye can compare it against the real ones, minus the status and number

@@ -46,6 +46,54 @@
         }
       }
     },
+    "orders": {
+      "detail": {
+        "cancel": {
+          "description": "The reason and note are recorded on the order, and any payments are settled.",
+          "keep_order": "Keep order",
+          "no_reason": "No reason given",
+          "note_label": "Note",
+          "note_placeholder": "Only staff see this note",
+          "notify_customer": "Email the customer",
+          "reason_label": "Reason",
+          "refund_payments": "Refund the customer",
+          "refund_payments_help": "Money already taken is returned. An unclaimed authorization is released either way."
+        },
+        "fulfillments": {
+          "add_tracking_title": "Add tracking",
+          "carrier_auto": "Detect automatically",
+          "carrier_label": "Shipping carrier",
+          "carrier_search": "Search carriers",
+          "delivery_method": "Delivery method",
+          "edit_description": "Change where this fulfillment ships from and which delivery method carries it.",
+          "edit_title": "Edit fulfillment",
+          "edit_tracking_title": "Edit tracking",
+          "move_and_requote": "Move and re-quote",
+          "no_rates": "No delivery methods are quoted for this fulfillment.",
+          "rates_pending_origin": "Save the new origin to see the delivery methods it offers.",
+          "ships_from": "Ships from",
+          "tracking_description": "The carrier tracking number, or a full tracking link.",
+          "upload_label_cost": "Postage cost",
+          "upload_label_description": "Record a label you bought elsewhere, so the parcel has its file, its tracking number and what it cost.",
+          "upload_label_file": "Label file",
+          "upload_label_title": "Upload label"
+        },
+        "section_customer_note": "Special Instructions",
+        "section_internal_note": "Internal Note"
+      },
+      "fulfill": {
+        "include_item": "Ship {{name}}",
+        "quantity_for": "Quantity to ship of {{name}}",
+        "of_units": "of {{count}}",
+        "empty": "This fulfillment holds no items that can be fulfilled.",
+        "tracking_label": "Tracking number",
+        "tracking_placeholder": "Tracking number or link",
+        "notify_customer": "Send shipment notification to customer",
+        "partial_hint": "The units you picked move into a new fulfillment that ships now. The rest stay on this one, still open.",
+        "units_selected": "Units to ship",
+        "submit": "Fulfill items"
+      }
+    },
     "tax_identifiers": {
       "add_cta": "Add registration",
       "add_title": "Add tax registration",
@@ -83,6 +131,56 @@
         "unverified": "Not valid",
         "verified": "Verified"
       }
+    },
+    "pages": {
+      "orders": {
+        "detail": {
+          "returns": {
+            "receive_title": "Receive returned items",
+            "received_quantity": "Received",
+            "resellable": "Resellable",
+            "actions": {
+              "receive": "Receive items",
+              "refund": "Refund"
+            },
+            "refund_title": "Refund return",
+            "refund_amount": "Amount",
+            "refund_method": "Refund to",
+            "refund_methods": {
+              "original_payment": "Original payment",
+              "store_credit": "Store credit"
+            },
+            "reason": "Reason",
+            "location": "Return to",
+            "location_default": "Default returns location",
+            "location_no_returns": "{{name}} (does not accept returns)",
+            "memo": "Note",
+            "create_title": "New return"
+          },
+          "claims": {
+            "resolve_title": "Resolve claim",
+            "resolution": "How to resolve",
+            "resolutions": {
+              "refund": "Refund",
+              "replacement": "Replacement",
+              "refund_and_replacement": "Refund and replacement"
+            },
+            "refund_amount": "Refund amount",
+            "replacement_items": "Send a replacement for",
+            "actions": {
+              "resolve": "Resolve",
+              "create": "New claim"
+            },
+            "create_title": "New claim"
+          },
+          "dialogs": {
+            "cancel_title": "Cancel order?"
+          },
+          "actions": {
+            "cancel": "Cancel order"
+          }
+        }
+      }
     }
   },
   "app": {
@@ -98,7 +196,9 @@
     "remove": "Remove",
     "retry": "Try again",
     "save": "Save",
-    "saving": "Saving…"
+    "saving": "Saving…",
+    "actions": "Actions",
+    "edit": "Edit"
   },
   "delivery_methods": {
     "add": "Add delivery method",
@@ -239,23 +339,25 @@
     "under_review": "The marketplace is reviewing your application. We will email you when there is news."
   },
   "orders": {
-    "cancel": "Cancel order",
-    "cancel_confirm": {
-      "message": "The customer is refunded and any stock goes back on the shelf. This cannot be undone.",
-      "title": "Cancel this order?"
+    "address_edit": {
+      "billing_title": "Edit Billing Address",
+      "shipping_title": "Edit Shipping Address"
     },
-    "canceled": "Order canceled",
+    "billing_address": "Billing address",
     "columns": {
       "fulfillment": "Fulfillment",
       "number": "Order",
       "payment": "Payment",
       "placed": "Placed",
+      "quantity": "Quantity",
       "total": "Total"
     },
+    "customer": {
+      "title": "Customer"
+    },
+    "customer_note": "Customer note",
     "empty": "No orders yet. They appear here as customers buy from you.",
-    "fulfill": "Mark as shipped",
-    "fulfilled": "Marked as shipped",
-    "fulfilling": "Marking…",
+    "fulfill": "Mark as fulfilled",
     "fulfillment_statuses": {
       "backorder": "Backorder",
       "canceled": "Canceled",
@@ -264,22 +366,129 @@
       "partial": "Partial",
       "unfulfilled": "Unfulfilled"
     },
+    "fulfillments": {
+      "add_delivery": "Add tracking",
+      "add_tracking": "Add tracking",
+      "cancel": "Cancel parcel",
+      "cancel_message": "The goods go back on the shelf and the carrier is stood down.",
+      "cancel_title": "Cancel this parcel?",
+      "carrier_status_available_for_pickup": "Available for pickup",
+      "carrier_status_delivered": "Delivered",
+      "carrier_status_failure": "Delivery failed",
+      "carrier_status_in_transit": "In transit",
+      "carrier_status_out_for_delivery": "Out for delivery",
+      "carrier_status_pending": "Awaiting carrier",
+      "carrier_status_pre_transit": "Label created",
+      "carrier_status_return_to_sender": "Returning to sender",
+      "carrier_status_unknown": "Status unknown",
+      "confirm_delete_delivery": "Remove this tracking number?",
+      "confirm_delete_label": "Remove this label? The file is deleted and cannot be printed again.",
+      "confirm_split": "This takes effect immediately.",
+      "delete_label": "Remove label",
+      "empty": "Nothing to send on this order.",
+      "free": "Free",
+      "label_cost": "Cost {{amount}}",
+      "label_title": "Shipping label",
+      "label_uploaded": "Uploaded",
+      "packing_slip_title": "Packing slip — order {{number}}",
+      "print_label": "Print label",
+      "print_packing_slip": "Print packing slip",
+      "ship_to": "Ship to",
+      "ships_from_label": "Ships from",
+      "split": "Split",
+      "split_description": "Move part of what this parcel holds onto one of its own.",
+      "split_item": "Item",
+      "split_quantity": "Quantity to move",
+      "split_title": "Split this parcel",
+      "split_would_empty": "Moving everything would leave this parcel empty.",
+      "splitting": "Splitting…",
+      "title": "Fulfillments",
+      "upload_label": "Upload label"
+    },
     "items": "Items",
     "not_found": "That order could not be found.",
     "payment_statuses": {
-      "balance_due": "Balance due",
-      "credit_owed": "Credit owed",
-      "failed": "Failed",
+      "none": "Unpaid",
+      "authorized": "Authorized",
+      "partially_paid": "Partially paid",
       "paid": "Paid",
-      "void": "Void"
+      "partially_refunded": "Partially refunded",
+      "refunded": "Refunded",
+      "overcharged": "Overcharged",
+      "voided": "Voided"
+    },
+    "post_sale": {
+      "approve": "Approve",
+      "cancel": "Cancel",
+      "claims": {
+        "cancel_message": "The customer is told it will not go ahead.",
+        "cancel_title": "Cancel this claim?",
+        "create": "New claim",
+        "deny": "Deny",
+        "deny_message": "The customer is told the claim was not upheld.",
+        "deny_title": "Deny this claim?",
+        "empty": "Nothing has been reported on this order.",
+        "resolve": "Resolve",
+        "title": "Claims"
+      },
+      "exchanges": {
+        "title": "Exchanges",
+        "receive": "Receive",
+        "fulfill": "Send replacement",
+        "price_difference": "Price difference: {{amount}}",
+        "cancel_title": "Cancel this exchange?",
+        "cancel_message": "The customer is told it will not go ahead."
+      },
+      "reason": "Reason",
+      "returns": {
+        "cancel_message": "The customer is told it will not go ahead.",
+        "cancel_title": "Cancel this return?",
+        "create": "New return",
+        "empty": "Nothing has come back from this order.",
+        "not_resellable": "Not resellable",
+        "partially_received": "{{received}} of {{quantity}} received",
+        "receive": "Receive",
+        "refund": "Refund",
+        "refund_total": "Refund total: {{amount}}",
+        "title": "Returns"
+      },
+      "statuses": {
+        "requested": "Requested",
+        "approved": "Approved",
+        "received": "Received",
+        "refunded": "Refunded",
+        "fulfilled": "Fulfilled",
+        "open": "Open",
+        "resolved": "Resolved",
+        "denied": "Denied",
+        "canceled": "Canceled"
+      }
     },
     "search_placeholder": "Search by order number…",
     "shipping_address": "Ships to",
     "ships_from": "Ships from {{name}}",
+    "summary": {
+      "adjustments": "Adjustments",
+      "cancel_note": "Cancellation note",
+      "cancel_reason": "Cancellation reason",
+      "canceled_at": "Canceled at",
+      "completed_at": "Completed at",
+      "created_at": "Created at",
+      "currency": "Currency",
+      "item_total": "Items",
+      "outstanding_balance": "Outstanding balance",
+      "payment_total": "Payment total",
+      "promotions": "Promotions",
+      "shipping": "Shipping",
+      "subtotal": "Subtotal",
+      "tax_additional": "Tax (additional)",
+      "tax_included": "Tax (included)",
+      "tax_total": "Tax",
+      "title": "Summary",
+      "total": "Total"
+    },
     "title": "Orders",
-    "tracking": "Tracking {{number}}",
-    "tracking_label": "Tracking number",
-    "tracking_placeholder": "Optional"
+    "tracking_label": "Tracking number"
   },
   "policies": {
     "add": "Add policy",

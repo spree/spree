@@ -2663,6 +2663,7 @@
           "no_reason": "Nie podano powodu",
           "note_label": "Notatka",
           "note_placeholder": "Notatkę widzi tylko personel",
+          "notify_customer": "Wyślij klientowi wiadomość e-mail",
           "reason_label": "Powód",
           "refund_payments": "Zwróć pieniądze klientowi",
           "refund_payments_help": "Pobrane środki zostaną zwrócone. Niewykorzystana autoryzacja i tak zostanie zwolniona."

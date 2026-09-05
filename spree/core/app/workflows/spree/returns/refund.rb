@@ -8,6 +8,8 @@ module Spree
     # a pure database write outside the transaction would open a window where
     # a crash leaves a refunded return with no credit issued.
     class Refund < Spree::Workflow
+      include Spree::Refunds::OrderPayments
+
       hooks :validate, :before_refund, :after_refund
 
       # Refunds created by this run — hook handlers read them.
@@ -112,32 +114,14 @@ module Spree
       end
 
       # Each refund row commits, then Refund#perform! credits it at the
-      # gateway — explicitly, never from a callback. Payments are drained
-      # newest-first until the amount is covered — a split-tender order needs
-      # more than one refund.
+      # gateway — explicitly, never from a callback.
       def refund_at_gateway
-        remaining = @amount_to_refund
-        return_record.order.payments.completed.each do |payment|
-          break unless remaining.positive?
-
-          creditable = [payment.credit_allowed.to_d, remaining].min
-          next unless creditable.positive?
-
-          # One refund path for the whole system: Refunds::Create owns the
-          # row-lock balance check, the gateway credit, the declined-row
-          # compensation, the refund hooks and the payment.refunded event.
-          result = Spree.refund_create_workflow.call(
-            payment: payment,
-            amount: creditable,
-            reason: Spree::RefundReason.return_processing_reason(return_record.store),
-            refunder: refunder,
-            originator: return_record
-          )
-          failure(return_record, result.error.value) if result.failure?
-
-          @refunds << result.value
-          remaining -= creditable
-        end
+        @refunds = refund_order_payments(
+          order: return_record.order,
+          amount: @amount_to_refund,
+          record: return_record,
+          refunder: refunder
+        )
 
         failure(return_record, :no_refundable_payments) if @refunds.empty?
       end

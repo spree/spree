@@ -2643,6 +2643,7 @@
           "no_reason": "Kein Grund angegeben",
           "note_label": "Notiz",
           "note_placeholder": "Diese Notiz sehen nur Mitarbeiter",
+          "notify_customer": "Kundin oder Kunden per E-Mail benachrichtigen",
           "reason_label": "Grund",
           "refund_payments": "Kundin oder Kunden erstatten",
           "refund_payments_help": "Bereits eingezogenes Geld wird zurückgezahlt. Eine nicht eingelöste Autorisierung wird ohnehin freigegeben."

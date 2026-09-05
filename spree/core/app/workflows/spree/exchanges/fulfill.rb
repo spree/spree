@@ -8,6 +8,8 @@ module Spree
     # for the merchant to collect — charging a stored card without a fresh
     # authorization is not something core should do silently.
     class Fulfill < Spree::Workflow
+      include Spree::Refunds::OrderPayments
+
       hooks :validate, :before_settle, :after_fulfill
 
       # Fulfillments created for the replacement items.
@@ -124,28 +126,12 @@ module Spree
       end
 
       def refund_at_gateway
-        remaining = credit_amount
-        exchange.order.payments.completed.each do |payment|
-          break unless remaining.positive?
-
-          creditable = [payment.credit_allowed.to_d, remaining].min
-          next unless creditable.positive?
-
-          # One refund path for the whole system: Refunds::Create owns the
-          # row-lock balance check, the gateway credit, the declined-row
-          # compensation, the refund hooks and the payment.refunded event.
-          result = Spree.refund_create_workflow.call(
-            payment: payment,
-            amount: creditable,
-            reason: Spree::RefundReason.return_processing_reason(exchange.store),
-            refunder: refunder,
-            originator: exchange
-          )
-          failure(exchange, result.error.value) if result.failure?
-
-          @refunds << result.value
-          remaining -= creditable
-        end
+        @refunds = refund_order_payments(
+          order: exchange.order,
+          amount: credit_amount,
+          record: exchange,
+          refunder: refunder
+        )
       end
 
       def mark_fulfilled

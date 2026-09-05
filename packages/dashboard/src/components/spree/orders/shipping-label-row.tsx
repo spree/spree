@@ -8,6 +8,7 @@ import {
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
+  toastManager,
   useConfirm,
 } from '@spree/dashboard-ui'
 import { EllipsisVerticalIcon, PrinterIcon, ReceiptIcon, TrashIcon } from 'lucide-react'
@@ -51,12 +52,22 @@ export function ShippingLabelRow({
   async function print() {
     if (!label.download_url) return
 
-    await downloadFromApi(
-      token,
-      label.download_url,
-      `${label.tracking_number ?? 'label'}.${label.format ?? 'pdf'}`,
-      getApiClient().downloadHeaders?.() ?? {},
-    )
+    // A rejected download inside a click handler is otherwise unhandled, so
+    // the file silently never arrives.
+    try {
+      await downloadFromApi(
+        token,
+        label.download_url,
+        `${label.tracking_number ?? 'label'}.${label.format ?? 'pdf'}`,
+        getApiClient().downloadHeaders?.() ?? {},
+      )
+    } catch {
+      // Deliberately not the thrown message: `downloadFromApi` reports the
+      // transport in English ("Download failed: 404"), which would land
+      // untranslated in a localized panel and tells the merchant nothing they
+      // can act on.
+      toastManager.add({ type: 'error', title: t('admin.errors.label_download_failed') })
+    }
   }
 
   return (
