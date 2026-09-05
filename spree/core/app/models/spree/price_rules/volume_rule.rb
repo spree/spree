@@ -13,8 +13,12 @@ module Spree
         true
       end
 
+      def self.human_name
+        Spree.t('price_rules.volume_rule.name')
+      end
+
       def self.description
-        'Apply pricing based on quantity purchased'
+        Spree.t('price_rules.volume_rule.description')
       end
 
       # Quantity is a fact about the purchase, not the buyer, so this rule

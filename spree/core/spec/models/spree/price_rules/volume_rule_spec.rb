@@ -61,4 +61,16 @@ describe Spree::PriceRules::VolumeRule, type: :model do
       expect(described_class.new.geographic?).to be(false)
     end
   end
+
+  describe '.human_name' do
+    it 'returns the translated name' do
+      expect(described_class.human_name).to eq(Spree.t('price_rules.volume_rule.name'))
+    end
+  end
+
+  describe '.description' do
+    it 'returns the translated description' do
+      expect(described_class.description).to eq(Spree.t('price_rules.volume_rule.description'))
+    end
+  end
 end
