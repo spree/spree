@@ -56,6 +56,31 @@ RSpec.describe Spree::Api::V3::Store::ProductsController, type: :controller do
 
       expect(json_response['seller']['policies'].pluck('name')).to include('Returns')
     end
+
+    # An offer nobody has approved must not reach a shopper. Asserted over the
+    # rendered response rather than on the model, because the model was right
+    # while the serializer was still handing back every row
+    # (docs/plans/6.0-seller-master-catalog-listings.md, Decision 3).
+    context 'with an offer awaiting review' do
+      let!(:master) { create(:product, store: store, status: 'active', seller: nil) }
+      let!(:offer) do
+        create(:variant, product: master, seller: seller, sku: 'IN-REVIEW-1', status: 'proposed')
+      end
+
+      it 'hides it from the variants expand' do
+        get :show, params: { id: master.slug, expand: 'variants' }, as: :json
+
+        expect(json_response['variants'].pluck('sku')).not_to include('IN-REVIEW-1')
+      end
+
+      it 'shows it once the marketplace approves it' do
+        offer.update!(status: 'active')
+
+        get :show, params: { id: master.slug, expand: 'variants' }, as: :json
+
+        expect(json_response['variants'].pluck('sku')).to include('IN-REVIEW-1')
+      end
+    end
   end
 
   describe 'catalog narrowing' do
