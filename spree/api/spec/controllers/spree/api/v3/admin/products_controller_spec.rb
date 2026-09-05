@@ -2300,7 +2300,8 @@ RSpec.describe Spree::Api::V3::Admin::ProductsController, type: :controller do
       # Admin details carry the symbolic code beside the text so the dashboard
       # renders its own copy; the message stays for everyone else.
       expect(json_response['error']['details']['name']).to eq(
-        [{ 'code' => 'reserved_word', 'message' => 'may not mention a competitor' }]
+        [{ 'code' => 'reserved_word', 'message' => 'may not mention a competitor',
+           'specific' => true }]
       )
     end
 

@@ -12,7 +12,7 @@ class Spree::Api::V3::Admin::ValidationProbeController < Spree::Api::V3::Admin::
   private
 
   def probe_errors
-    probe = Spree::Api::V3::Admin::ValidationProbe.new(quantity: -1)
+    probe = Spree::Api::V3::Admin::ValidationProbe.new(quantity: -1, handle: 'lower case')
     probe.validate
     probe.errors.add(:base, 'Something specific went wrong')
     # A validation may pass its own `code:` option; ActiveModel keeps it in
@@ -25,10 +25,14 @@ end
 class Spree::Api::V3::Admin::ValidationProbe
   include ActiveModel::Model
 
-  attr_accessor :name, :quantity, :sku
+  attr_accessor :name, :quantity, :sku, :handle
 
   validates :name, presence: true
   validates :quantity, numericality: { greater_than: 0 }
+  # Same `:invalid` code as any format check, but with its own wording — the
+  # shape the `specific` flag exists to describe.
+  validates :handle, format: { with: /\A[A-Z]+\z/, message: 'must be upper case letters' },
+                     allow_nil: true
 end
 
 class Spree::Api::V3::Store::ValidationProbeController < Spree::Api::V3::Store::BaseController
@@ -60,7 +64,9 @@ RSpec.describe Spree::Api::V3::Admin::ValidationDetails, type: :controller do
       post :create
 
       expect(response).to have_http_status(:unprocessable_content)
-      expect(details['name']).to eq([{ 'code' => 'blank', 'message' => "can't be blank" }])
+      expect(details['name']).to eq(
+        [{ 'code' => 'blank', 'message' => "can't be blank", 'specific' => false }]
+      )
     end
 
     it "carries the validation's interpolation values so the client can build its own sentence" do
@@ -76,7 +82,7 @@ RSpec.describe Spree::Api::V3::Admin::ValidationDetails, type: :controller do
 
       # Nothing to translate: the dashboard falls back to rendering `message`.
       expect(details['base']).to eq(
-        [{ 'code' => nil, 'message' => 'Something specific went wrong' }]
+        [{ 'code' => nil, 'message' => 'Something specific went wrong', 'specific' => false }]
       )
     end
 
@@ -86,6 +92,25 @@ RSpec.describe Spree::Api::V3::Admin::ValidationDetails, type: :controller do
       # The validation's own `code:` is interpolation data, not the error
       # identity — it must not displace the symbol the dashboard translates.
       expect(details['sku'].first).to include('code' => 'taken', 'message' => 'is already taken')
+    end
+
+    it 'marks a message the model worded itself, so a client keeps it' do
+      post :create
+
+      # `invalid` is generic; this message is not. A client translating the
+      # code alone would replace "must be upper case letters" with "is
+      # invalid", so the server says which it is.
+      expect(details['handle']).to include(
+        hash_including('code' => 'invalid', 'specific' => true)
+      )
+    end
+
+    it "does not mark a message that is only the code's own default" do
+      post :create
+
+      # The dashboard translates these, and must be able to tell them apart
+      # from an override in a store trading in any language.
+      expect(details['name'].first).to include('code' => 'blank', 'specific' => false)
     end
 
     it 'keeps the readable summary for clients that do not translate' do

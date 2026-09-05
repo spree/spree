@@ -119,13 +119,13 @@ describe('mapSpreeErrorsToForm', () => {
 })
 
 describe('specific server copy', () => {
-  it('keeps a model message that overrides its generic code', () => {
+  it('keeps a model message the server marked as its own wording', () => {
     // The webhook URL validation reports `invalid`, but its message says what
     // a valid URL looks like. Rendering the generic key would lose that.
     const setError = vi.fn()
     mapSpreeErrorsToForm(
       spreeError({
-        url: [{ code: 'invalid', message: 'must be a valid http or https URL' }],
+        url: [{ code: 'invalid', message: 'must be a valid http or https URL', specific: true }],
       }),
       setError,
     )
@@ -136,14 +136,27 @@ describe('specific server copy', () => {
     })
   })
 
-  it('translates the code when the server only restated it', () => {
+  it('translates the code when the message is the code default', () => {
     const setError = vi.fn()
     mapSpreeErrorsToForm(
-      spreeError({ sku: [{ code: 'invalid', message: 'is invalid' }] }),
+      spreeError({ sku: [{ code: 'invalid', message: 'is invalid', specific: false }] }),
       setError,
     )
 
     expect(setError).toHaveBeenCalledWith('sku', { type: 'server', message: 'Is not valid' })
+  })
+
+  it('translates a code default that the server resolved in the store locale', () => {
+    // The regression this contract exists for: on a German store `blank`
+    // arrives as "darf nicht leer sein", which no English comparison could
+    // recognise as the default. The server's flag says so in any locale.
+    const setError = vi.fn()
+    mapSpreeErrorsToForm(
+      spreeError({ name: [{ code: 'blank', message: 'darf nicht leer sein', specific: false }] }),
+      setError,
+    )
+
+    expect(setError).toHaveBeenCalledWith('name', { type: 'server', message: 'Required' })
   })
 })
 

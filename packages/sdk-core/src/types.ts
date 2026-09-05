@@ -38,6 +38,15 @@ export interface PaginatedResponse<T> extends ListResponse<T> {
 export interface ValidationErrorDetail {
   code: string | null
   message: string
+  /**
+   * True when the model gave this code its own wording rather than using the
+   * code's default — a webhook URL reports `invalid` but answers "must be a
+   * valid http or https URL". A client holding its own translation of `code`
+   * should render `message` instead when this is set, or it loses what the
+   * override was for. The server decides it, since the comparison is against
+   * the code's default in the locale the message was resolved in.
+   */
+  specific?: boolean
   [interpolation: string]: unknown
 }
 

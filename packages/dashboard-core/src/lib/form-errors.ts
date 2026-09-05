@@ -20,50 +20,23 @@ import type { FieldValues, Path, UseFormSetError } from 'react-hook-form'
 function resolveDetailMessage(field: string, entry: string | ValidationErrorDetail): string {
   if (typeof entry === 'string') return entry
 
-  const { code, message, ...interpolation } = entry
+  const { code, message, specific, ...interpolation } = entry
   if (!code) return message
 
   // Per-attribute first: `admin.validation.url.invalid` is written for this
-  // one field and always beats both the generic key and the server.
+  // one field and beats both the generic key and the server.
   const attributeKey = `admin.validation.${field}.${code}`
   if (i18n.exists(attributeKey)) return i18n.t(attributeKey, interpolation)
 
-  // The generic key renders the code's own meaning ("is invalid"), which is
-  // right until a model overrides that message with something more useful
-  // ("must be a valid http or https URL"). A server message that differs from
-  // our generic wording is that override, so let it through rather than
-  // flattening it back to the generic sentence.
+  // `specific` means the model overrode the code's own wording with something
+  // more useful — the webhook URL validation reports `invalid` but answers
+  // "must be a valid http or https URL". Translating the code would throw
+  // that away. The server decides this, because only it can compare against
+  // the code's default in the locale the message was resolved in.
+  if (specific) return message
+
   const genericKey = `admin.validation.${code}`
-  if (!i18n.exists(genericKey)) return message
-
-  const generic = i18n.t(genericKey, interpolation)
-  return isGenericServerMessage(code, message) ? generic : message
-}
-
-// English wording for the Rails codes whose message a model may override.
-// Comparing against it is what tells a plain "can't be blank" apart from a
-// model's own sentence carrying the same code.
-const GENERIC_SERVER_MESSAGES: Record<string, string> = {
-  accepted: 'must be accepted',
-  blank: "can't be blank",
-  confirmation: "doesn't match",
-  empty: "can't be empty",
-  inclusion: 'is not included in the list',
-  invalid: 'is invalid',
-  not_a_number: 'is not a number',
-  not_an_integer: 'must be an integer',
-  present: 'must be blank',
-  required: 'must exist',
-  taken: 'has already been taken',
-}
-
-function isGenericServerMessage(code: string, message: string): boolean {
-  const generic = GENERIC_SERVER_MESSAGES[code]
-  // A code we hold no English for (`greater_than`, and every Spree code) is
-  // always specific enough to translate: its message is generated from the
-  // same key our translation replaces.
-  if (generic === undefined) return true
-  return message.trim().toLowerCase() === generic
+  return i18n.exists(genericKey) ? i18n.t(genericKey, interpolation) : message
 }
 
 /**
@@ -92,9 +65,9 @@ function translatedSummary(
       const key = [`admin.validation.${field}.${code}`, `admin.validation.${code}`].find((k) =>
         i18n.exists(k),
       )
-      // No translation, or a server message more specific than our generic
-      // copy — either way the assembled summary would lose meaning.
-      if (!key || !isGenericServerMessage(code, message)) return null
+      // No translation, or a message the model made more specific than its
+      // code — either way the assembled summary would lose meaning.
+      if (!key || entry.specific) return null
 
       sentences.push(`${attributeLabel(field)} ${i18n.t(key, interpolation)}`.trim())
     }

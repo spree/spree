@@ -2327,6 +2327,7 @@ paths:
                     origin:
                     - code: invalid
                       message: is invalid
+                      specific: false
               schema:
                 "$ref": "#/components/schemas/ErrorResponse"
       requestBody:
@@ -2480,6 +2481,7 @@ paths:
                     - code: must_be_origin_only
                       message: must be an origin (scheme and host) without path, query,
                         or fragment
+                      specific: false
               schema:
                 "$ref": "#/components/schemas/ErrorResponse"
       requestBody:
@@ -2701,9 +2703,11 @@ paths:
                     name:
                     - code: blank
                       message: can't be blank
+                      specific: false
                     scopes:
                     - code: blank
                       message: can't be blank
+                      specific: false
       requestBody:
         content:
           application/json:
@@ -3178,6 +3182,7 @@ paths:
                     name:
                     - code: blank
                       message: can't be blank
+                      specific: false
               schema:
                 "$ref": "#/components/schemas/ErrorResponse"
       requestBody:
@@ -5170,6 +5175,7 @@ paths:
                     name:
                     - code: blank
                       message: can't be blank
+                      specific: false
               schema:
                 "$ref": "#/components/schemas/ErrorResponse"
       requestBody:
@@ -5380,6 +5386,7 @@ paths:
                     name:
                     - code: blank
                       message: can't be blank
+                      specific: false
               schema:
                 "$ref": "#/components/schemas/ErrorResponse"
       requestBody:
@@ -8836,6 +8843,7 @@ paths:
                     prefix:
                     - code: blank
                       message: can't be blank
+                      specific: false
               schema:
                 "$ref": "#/components/schemas/ErrorResponse"
       requestBody:
@@ -9186,6 +9194,7 @@ paths:
                       count: 0
                       code: greater_than
                       message: must be greater than 0
+                      specific: false
               schema:
                 "$ref": "#/components/schemas/ErrorResponse"
       requestBody:
@@ -9989,6 +9998,7 @@ paths:
                     type:
                     - code: blank
                       message: can't be blank
+                      specific: false
       requestBody:
         content:
           application/json:
@@ -11155,15 +11165,19 @@ paths:
                     name:
                     - code: blank
                       message: can't be blank
+                      specific: false
                     currency:
                     - code: blank
                       message: can't be blank
+                      specific: false
                     default_locale:
                     - code: blank
                       message: can't be blank
+                      specific: false
                     countries:
                     - code: blank
                       message: can't be blank
+                      specific: false
               schema:
                 "$ref": "#/components/schemas/ErrorResponse"
       requestBody:
@@ -11377,6 +11391,7 @@ paths:
                     name:
                     - code: blank
                       message: can't be blank
+                      specific: false
               schema:
                 "$ref": "#/components/schemas/ErrorResponse"
       requestBody:
@@ -11654,9 +11669,11 @@ paths:
                     name:
                     - code: blank
                       message: can't be blank
+                      specific: false
                     label:
                     - code: blank
                       message: can't be blank
+                      specific: false
               schema:
                 "$ref": "#/components/schemas/ErrorResponse"
       requestBody:
@@ -11855,6 +11872,7 @@ paths:
                     label:
                     - code: blank
                       message: can't be blank
+                      specific: false
               schema:
                 "$ref": "#/components/schemas/ErrorResponse"
       requestBody:
@@ -12274,6 +12292,7 @@ paths:
                     - value: nonsense
                       code: inclusion
                       message: is not included in the list
+                      specific: false
       requestBody:
         content:
           application/json:
@@ -14295,6 +14314,7 @@ paths:
                     base:
                     - code:
                       message: No payment found
+                      specific: false
               schema:
                 "$ref": "#/components/schemas/ErrorResponse"
       requestBody:
@@ -15724,6 +15744,7 @@ paths:
                     name:
                     - code: blank
                       message: can't be blank
+                      specific: false
               schema:
                 "$ref": "#/components/schemas/ErrorResponse"
       requestBody:
@@ -16967,6 +16988,7 @@ paths:
                     - value: 1
                       code: taken
                       message: has already been taken
+                      specific: false
       requestBody:
         content:
           application/json:
@@ -17556,6 +17578,7 @@ paths:
                     name:
                     - code: blank
                       message: can't be blank
+                      specific: false
               schema:
                 "$ref": "#/components/schemas/ErrorResponse"
       requestBody:
@@ -17929,6 +17952,7 @@ paths:
                     name:
                     - code: blank
                       message: can't be blank
+                      specific: false
               schema:
                 "$ref": "#/components/schemas/ErrorResponse"
       requestBody:
@@ -18108,6 +18132,7 @@ paths:
                     base:
                     - code: under_contract
                       message: This product is under an active supplier contract.
+                      specific: true
               schema:
                 "$ref": "#/components/schemas/ErrorResponse"
   "/api/v3/admin/products/bulk_status_update":
@@ -19110,6 +19135,7 @@ paths:
                     name:
                     - code: blank
                       message: can't be blank
+                      specific: false
               schema:
                 "$ref": "#/components/schemas/ErrorResponse"
       requestBody:
@@ -19483,6 +19509,7 @@ paths:
                     name:
                     - code: blank
                       message: can't be blank
+                      specific: false
               schema:
                 "$ref": "#/components/schemas/ErrorResponse"
       requestBody:
@@ -19848,6 +19875,7 @@ paths:
                     name:
                     - code: blank
                       message: can't be blank
+                      specific: false
               schema:
                 "$ref": "#/components/schemas/ErrorResponse"
       requestBody:
@@ -20213,6 +20241,7 @@ paths:
                     name:
                     - code: blank
                       message: can't be blank
+                      specific: false
               schema:
                 "$ref": "#/components/schemas/ErrorResponse"
       requestBody:
@@ -20578,6 +20607,7 @@ paths:
                     name:
                     - code: blank
                       message: can't be blank
+                      specific: false
               schema:
                 "$ref": "#/components/schemas/ErrorResponse"
       requestBody:
@@ -21511,9 +21541,11 @@ paths:
                     name:
                     - code: blank
                       message: can't be blank
+                      specific: false
                     code:
                     - code: blank
                       message: can't be blank
+                      specific: false
       requestBody:
         content:
           application/json:
@@ -22980,6 +23012,7 @@ paths:
                     name:
                     - code: blank
                       message: can't be blank
+                      specific: false
               schema:
                 "$ref": "#/components/schemas/ErrorResponse"
       requestBody:
@@ -23252,9 +23285,11 @@ paths:
                     tax_category:
                     - code: blank
                       message: must exist
+                      specific: true
                     name:
                     - code: blank
                       message: can't be blank
+                      specific: false
               schema:
                 "$ref": "#/components/schemas/ErrorResponse"
       requestBody:
@@ -24736,6 +24771,7 @@ paths:
                     permissions:
                     - code: role_permissions_unknown
                       message: 'contains unknown permissions: write_bogus'
+                      specific: true
       requestBody:
         content:
           application/json:
@@ -25149,6 +25185,7 @@ paths:
                     name:
                     - code: blank
                       message: can't be blank
+                      specific: false
               schema:
                 "$ref": "#/components/schemas/ErrorResponse"
       requestBody:
@@ -25427,6 +25464,7 @@ paths:
                     - value: invalid
                       code: inclusion
                       message: is not included in the list
+                      specific: false
               schema:
                 "$ref": "#/components/schemas/ErrorResponse"
       requestBody:
@@ -25897,6 +25935,7 @@ paths:
                     - value: SKU-169
                       code: taken
                       message: has already been taken
+                      specific: false
               schema:
                 "$ref": "#/components/schemas/ErrorResponse"
       requestBody:
@@ -26945,6 +26984,7 @@ paths:
                     - value: not a url
                       code: invalid
                       message: must be a valid http or https URL
+                      specific: true
               schema:
                 "$ref": "#/components/schemas/ErrorResponse"
       requestBody:
@@ -27141,6 +27181,7 @@ paths:
                     - value: not a url
                       code: invalid
                       message: must be a valid http or https URL
+                      specific: true
               schema:
                 "$ref": "#/components/schemas/ErrorResponse"
       requestBody:
@@ -27577,6 +27618,7 @@ paths:
                     name:
                     - code: blank
                       message: can't be blank
+                      specific: false
       requestBody:
         content:
           application/json:
@@ -28026,6 +28068,7 @@ paths:
                     - code: quantity_rule_states_nothing
                       message: Set a minimum order quantity, an order multiple, or
                         both
+                      specific: false
       requestBody:
         content:
           application/json:
@@ -28152,6 +28195,7 @@ paths:
                       count: 0
                       code: greater_than
                       message: must be greater than 0
+                      specific: false
       requestBody:
         content:
           application/json:
@@ -28745,6 +28789,7 @@ paths:
                     name:
                     - code: blank
                       message: can't be blank
+                      specific: false
               schema:
                 "$ref": "#/components/schemas/ErrorResponse"
       requestBody:
@@ -29710,6 +29755,7 @@ paths:
                     base:
                     - code: commission_rate_needs_an_amount
                       message: needs a flat fee amount in at least one currency
+                      specific: true
               schema:
                 "$ref": "#/components/schemas/ErrorResponse"
       requestBody:
@@ -30444,6 +30490,7 @@ paths:
                     certificate_number:
                     - code: blank
                       message: can't be blank
+                      specific: false
       requestBody:
         content:
           application/json:
@@ -30834,6 +30881,7 @@ paths:
                     - value: eu_vat
                       code: taken
                       message: has already been taken
+                      specific: false
       requestBody:
         content:
           application/json:
@@ -31056,6 +31104,7 @@ paths:
                     name:
                     - code: blank
                       message: can't be blank
+                      specific: false
       requestBody:
         content:
           application/json:
@@ -31383,6 +31432,7 @@ paths:
                     name:
                     - code: blank
                       message: can't be blank
+                      specific: false
       requestBody:
         content:
           application/json:
@@ -32879,6 +32929,7 @@ paths:
                     - value: U10000
                       code: taken
                       message: has already been taken
+                      specific: false
       requestBody:
         content:
           application/json:
@@ -33852,6 +33903,7 @@ paths:
                     name:
                     - code: blank
                       message: can't be blank
+                      specific: false
               schema:
                 "$ref": "#/components/schemas/ErrorResponse"
       requestBody:
@@ -34979,9 +35031,11 @@ paths:
                     name:
                     - code: blank
                       message: can't be blank
+                      specific: false
                     slug:
                     - code: blank
                       message: can't be blank
+                      specific: false
               schema:
                 "$ref": "#/components/schemas/ErrorResponse"
       requestBody:
@@ -35249,6 +35303,7 @@ paths:
                     name:
                     - code: blank
                       message: can't be blank
+                      specific: false
               schema:
                 "$ref": "#/components/schemas/ErrorResponse"
       requestBody:

@@ -28,15 +28,41 @@ module Spree
 
               result[attribute] = messages.each_with_index.map do |message, index|
                 detail = details[index] || {}
-                # Interpolation values first, so `code` and `message` are the
-                # ones this formatter computed: a validation may itself carry a
+                code = detail[:error] if detail[:error].is_a?(Symbol)
+
+                # Interpolation values first, so the keys below are the ones
+                # this formatter computed: a validation may itself carry a
                 # `code:` option, and it must not displace the Rails error.
                 detail.except(:error).merge(
-                  code: detail[:error].is_a?(Symbol) ? detail[:error] : nil,
-                  message: message
+                  code: code,
+                  message: message,
+                  specific: code.present? && specific_message?(errors, attribute, code, message)
                 )
               end
             end
+          end
+
+          # Whether `message` says more than its `code` alone would.
+          #
+          # A code like `:invalid` is generic, and a client holding its own
+          # translation of that code should prefer it. But a model may override
+          # the message for the same code with something far more useful — the
+          # webhook URL validation reports `:invalid` and answers "must be a
+          # valid http or https URL". Replacing that with a translated "is
+          # invalid" loses what the merchant needs.
+          #
+          # Only the server can tell the two apart: the comparison is against
+          # the code's default *in the request's locale*, so it holds for a
+          # store trading in any language. A client cannot do it — it would
+          # have to recognise the default wording in every locale it supports.
+          #
+          # @return [Boolean] true when the model supplied its own wording
+          def specific_message?(errors, attribute, code, message)
+            message != errors.generate_message(attribute, code)
+          rescue StandardError
+            # An unknown code has no default to compare against; treat the
+            # message as the code's own so the client may translate it.
+            false
           end
         end
       end
