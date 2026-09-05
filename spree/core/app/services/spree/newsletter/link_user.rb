@@ -42,6 +42,7 @@ module Spree
       end
 
       def propagate_marketing_consent
+        user.consent_source = Spree::ConsentRecord::NEWSLETTER
         return if user.update(accepts_email_marketing: true)
 
         Rails.logger.warn(

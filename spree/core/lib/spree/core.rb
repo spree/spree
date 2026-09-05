@@ -137,6 +137,7 @@ module Spree
       search: :default,
       stock_reservations: :default,
       tax_identifiers: :default,
+      data_requests: :default,
       payouts: :default
     ).tap do |queues|
       # @deprecated The taxons queue was renamed to categories in 6.0; removed in 6.1.

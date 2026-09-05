@@ -80,11 +80,13 @@ export function useUpdateCustomerGroups(customerId: string) {
   })
 }
 
-export function useDeleteCustomer(customerId: string) {
+// GDPR subject requests. Erasure is irreversible, so the caller is expected
+// to confirm before running the mutation.
+export function useAnonymizeCustomer(customerId: string) {
   return useResourceMutation({
-    mutationFn: () => adminClient.customers.delete(customerId),
+    mutationFn: () => adminClient.customers.anonymize(customerId),
     invalidate: [['customers'], ['customers', customerId]],
-    successMessage: i18n.t('admin.messages.customer_deleted'),
+    successMessage: i18n.t('admin.customers.privacy.messages.anonymized'),
   })
 }
 

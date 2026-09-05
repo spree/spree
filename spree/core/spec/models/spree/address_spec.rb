@@ -158,6 +158,18 @@ describe Spree::Address, type: :model do
       expect(address).not_to be_valid
     end
 
+    # Erasure truncates a postcode to the part that establishes where a sale
+    # was taxed, so a stored value can be shorter than its country's format.
+    # The formatter indexes backwards to place the separator and raises on a
+    # short one — saving such a row has to fail validation, not blow up.
+    it 'refuses a postcode too short for its country without raising' do
+      short = build(:address, country_code: 'GB', state_code: nil, state_name: 'London',
+                              postal_code: 'NW')
+
+      expect { short.valid? }.not_to raise_error
+      expect(short).not_to be_valid
+    end
+
     it 'full state name is in state_name and country does contain that state' do
       address.state_name = 'Maryland'
       expect(address).to be_valid

@@ -1,0 +1,9 @@
+<%= Spree.t('customer_mailer.data_export_email.greeting') %>
+
+<%= Spree.t('customer_mailer.data_export_email.instructions') %>
+
+<% if @download_url %><%= @download_url %><% end %>
+
+<% if @expires_at %><%= Spree.t('customer_mailer.data_export_email.expiry_notice', date: I18n.l(@expires_at.to_date, format: :long)) %><% end %>
+
+<%= Spree.t('customer_mailer.data_export_email.ignore_notice') %>

@@ -441,6 +441,101 @@ module Spree
       refunds_total < total_minus_store_credits - additional_tax_total.abs
     end
 
+    # When the buyer's statutory right of withdrawal expires — the EU
+    # cooling-off period (Consumer Rights Directive 2011/83/EU Art. 9).
+    #
+    # Derived rather than stored, because the clock starts when the buyer takes
+    # physical possession: a value written at placement would be wrong the
+    # moment a parcel arrived.
+    #
+    # Nil until the last live parcel is delivered. Counting from completion
+    # instead would expire the deadline before the statutory period had even
+    # begun — the buyer would be told their right had run out while they were
+    # still waiting for the goods. A right whose start has not happened yet has
+    # no end date to report.
+    #
+    # @return [ActiveSupport::TimeWithZone, nil] nil when the market grants no
+    #   withdrawal right, the order is not complete, or delivery is outstanding
+    def withdrawal_period_ends_at
+      return nil unless withdrawal_right_applies?
+
+      started_at = withdrawal_period_starts_at
+      return nil if started_at.nil?
+
+      started_at + withdrawal_period_days.days
+    end
+
+    # Whether the buyer may still withdraw.
+    #
+    # True while delivery is outstanding: the right cannot have lapsed before
+    # it started, so an order still in transit is always within its period even
+    # though no deadline can be named yet.
+    #
+    # A canceled order is not: withdrawal is how a buyer ends a contract that
+    # is still standing, and cancellation has already ended this one. Without
+    # the guard, cancellation empties the live fulfillments, no start date can
+    # be found, and the open-ended reading above would keep the order reporting
+    # itself as withdrawable forever.
+    #
+    # @return [Boolean]
+    def within_withdrawal_period?
+      return false unless withdrawal_right_applies?
+
+      deadline = withdrawal_period_ends_at
+      # No deadline yet means nothing has been delivered, so the clock that
+      # would end the right has not started.
+      deadline.nil? || deadline.future?
+    end
+
+    # Whether a statutory right to withdraw exists on this order at all. A
+    # cancelled order has already ended the contract the right would end, and
+    # a market that sets no period grants none. Stated once because both
+    # readers above need the same answer.
+    def withdrawal_right_applies?
+      completed? && !canceled? && withdrawal_period_days.present?
+    end
+
+    # The moment the cooling-off period starts: receipt of the goods. The
+    # Consumer Rights Directive treats an order delivered in instalments as
+    # received when the LAST one arrives, so a partly-delivered order has not
+    # started its clock at all — reading the max over the delivered subset
+    # would start it at the first parcel and could expire the right while the
+    # buyer is still waiting for the rest.
+    #
+    # @return [ActiveSupport::TimeWithZone, nil] nil until every parcel that is
+    #   still live has been delivered
+    def withdrawal_period_starts_at
+      live = fulfillments.reject(&:canceled?)
+      return nil if live.empty?
+
+      received = live.map { |fulfillment| withdrawal_receipt_of(fulfillment) }
+      return nil if received.any?(&:blank?)
+
+      received.max
+    end
+
+    # When one fulfillment counts as received.
+    #
+    # Digital content has no delivery event and no carrier to report one, so
+    # waiting for `delivered_at` would leave a mixed order's clock stopped
+    # forever — the physical parcel arrives and the deadline never appears.
+    # The Directive treats digital content differently from goods anyway
+    # (Art. 16(m)); handing it over is the moment it reaches the buyer.
+    #
+    # @param fulfillment [Spree::Fulfillment]
+    # @return [ActiveSupport::TimeWithZone, nil]
+    def withdrawal_receipt_of(fulfillment)
+      return fulfillment.delivered_at || fulfillment.fulfilled_at if fulfillment.digital?
+
+      fulfillment.delivered_at
+    end
+
+    # @return [Integer, nil] nil where no market says otherwise — a statutory
+    #   notice is not something to assume on an order with no region attached
+    def withdrawal_period_days
+      market&.preferred_withdrawal_period_days
+    end
+
     # Indicates whether or not the user is allowed to proceed to checkout.
     # Currently this is implemented as a check for whether or not there is at
     # least one LineItem in the Order.  Feel free to override this logic in your

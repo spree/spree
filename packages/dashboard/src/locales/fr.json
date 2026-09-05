@@ -651,6 +651,7 @@
       },
       "columns": {
         "companies": "Entreprises",
+        "erased": "Effacé",
         "groups": "Groupes",
         "last_order": "Dernière commande",
         "newsletter": "Newsletter",
@@ -662,7 +663,7 @@
           "delete_confirm_message": "Supprimer cette adresse ?"
         },
         "customer_since": "Client depuis",
-        "delete_label": "Supprimer le client",
+        "delete_confirm_message": "Cela supprime entièrement le compte et devient impossible dès qu'une commande est finalisée. Pour répondre à une demande d'effacement d'un client ayant déjà acheté, utilisez « Effacer les données personnelles ».",
         "edit_profile_description": "Mettez à jour les informations du profil du client.",
         "groups": {
           "edit_description": "Ajoutez ou retirez les groupes auxquels ce client appartient.",
@@ -691,6 +692,14 @@
           "title": "Avoir en boutique"
         },
         "subscribed_to_marketing": "Abonné au marketing"
+      },
+      "erased": {
+        "badge": "Effacé",
+        "name": "(effacé)"
+      },
+      "filters": {
+        "erased": "Effacé",
+        "not_erased": "Non effacé"
       },
       "groups": {
         "bulk_add_action": "Ajouter au groupe…",
@@ -726,8 +735,20 @@
         "view_members": "Voir les membres"
       },
       "new_sheet_description": "Les clients créés ici n'ont aucun mot de passe défini. Ils recevront un lien magique lors de leur première connexion.",
-      "row_actions": {
-        "delete_confirm": "Supprimer {{email}} ? Les clients ayant des commandes finalisées ne peuvent pas être supprimés."
+      "privacy": {
+        "already_anonymized": "Les données personnelles ont été effacées le {{date}}",
+        "anonymize": "Effacer les données personnelles",
+        "anonymize_confirm_message": "Son nom, son adresse e-mail, son téléphone et ses adresses seront remplacés partout, et sa session sera fermée. Les commandes et les enregistrements de paiement sont conservés, sans les données personnelles. Cette action est irréversible.",
+        "anonymize_confirm_title": "Effacer les données personnelles de ce client ?",
+        "consent_updated": "Consentement marketing modifié pour la dernière fois le {{date}}",
+        "description": "Répondez à une demande de protection des données. Les commandes et les soldes du client sont conservés ; ses données personnelles sont supprimées partout où la boutique les détient.",
+        "export": "Exporter les données",
+        "export_failed": "Impossible d'exporter les données",
+        "messages": {
+          "anonymized": "Données personnelles effacées"
+        },
+        "title": "Confidentialité et données",
+        "anonymize_again": "Effacer à nouveau"
       },
       "table": {
         "empty": "Aucun client pour le moment",

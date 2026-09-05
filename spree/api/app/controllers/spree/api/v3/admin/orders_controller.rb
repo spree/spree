@@ -192,7 +192,10 @@ module Spree
           # reads the base catalog price for every row (the negotiated-price
           # comparison); without it each line costs its own price query.
           def collection_includes
+            # `market` and `fulfillments` are the withdrawal deadline's inputs,
+            # which the serializer emits on every row.
             [:customer, :channel, :seller, :external_references, :cancel_reason,
+             :market, :fulfillments,
              { line_items: { variant: :prices } }, { po_document_attachment: :blob }]
           end
 

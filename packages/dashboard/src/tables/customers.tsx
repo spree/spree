@@ -5,6 +5,7 @@ import { Link } from '@tanstack/react-router'
 import i18n from 'i18next'
 import { companyAutocompleteProps } from '../hooks/use-companies'
 import { customerGroupAutocompleteProps } from '../hooks/use-customer-groups'
+import { customerDisplayName, erasedFieldValue } from '../lib/erased-customer'
 
 defineTable('customers', {
   title: i18n.t('admin.nav.customers'),
@@ -25,7 +26,7 @@ defineTable('customers', {
           params={{ customerId: c.id }}
           className="font-medium text-foreground no-underline"
         >
-          {c.email}
+          {erasedFieldValue(c.email, c.anonymized)}
         </Link>
       ),
     },
@@ -34,7 +35,7 @@ defineTable('customers', {
       label: i18n.t('admin.fields.name.label'),
       sortable: true,
       default: true,
-      render: (c) => c.full_name ?? ([c.first_name, c.last_name].filter(Boolean).join(' ') || '—'),
+      render: (c) => customerDisplayName(c, i18n.t('admin.customers.erased.name')),
     },
     {
       key: 'phone',
@@ -45,7 +46,7 @@ defineTable('customers', {
       // up by number.
       filterable: true,
       default: false,
-      render: (c) => c.phone ?? '—',
+      render: (c) => erasedFieldValue(c.phone, c.anonymized),
     },
     {
       key: 'orders_count',
@@ -127,6 +128,36 @@ defineTable('customers', {
       taggableType: Subject.Customer,
       default: false,
       render: (c) => <TagList tags={c.tags} />,
+    },
+    {
+      // A person whose data was erased keeps their orders and their totals, so
+      // the row still means something — but they are not a customer anyone can
+      // contact, and leaving them in the list makes every search noisier. Off
+      // by default (see `defaultParams` on the customers route), findable when
+      // someone needs to confirm an erasure happened.
+      key: 'anonymized',
+      label: i18n.t('admin.customers.columns.erased'),
+      // A scope, not a predicate on `anonymized_at`: the question is whether
+      // an erasure happened, and a boolean control needs something that takes
+      // one of its two states as a value.
+      ransackAttribute: 'anonymized',
+      ransackScope: true,
+      sortable: false,
+      filterable: true,
+      filterType: 'boolean',
+      booleanLabels: {
+        true: i18n.t('admin.customers.filters.erased'),
+        false: i18n.t('admin.customers.filters.not_erased'),
+      },
+      default: false,
+      render: (c) =>
+        c.anonymized_at ? (
+          <Badge variant="secondary">
+            <RelativeTime iso={c.anonymized_at} />
+          </Badge>
+        ) : (
+          '—'
+        ),
     },
     {
       key: 'accepts_email_marketing',

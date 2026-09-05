@@ -377,6 +377,9 @@ module Spree
          Spree::Company, Spree::CompanyMembership,
          Spree::CompanyInvitation,
          Spree::TaxIdentifier, Spree::TaxExemptionCertificate,
+         # GDPR records are about a customer and read alongside one, so they
+         # ride the same key rather than becoming a resource of their own.
+         Spree::DataRequest, Spree::ConsentRecord,
          Spree::CustomField]
       })
 
