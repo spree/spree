@@ -71,6 +71,7 @@ export function useReturnActions(orderId: string) {
       items: Array<{ fulfillment_item_id: string; quantity: number }>
       memo?: string
       reason_id?: string
+      stock_location_id?: string
     }) => returns().create(orderId, params),
   )
 

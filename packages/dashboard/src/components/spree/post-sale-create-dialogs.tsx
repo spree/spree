@@ -19,11 +19,6 @@ import {
   Field,
   FieldLabel,
   Input,
-  InputGroup,
-  InputGroupAddon,
-  InputGroupInput,
-  InputGroupText,
-  QuantityPicker,
   type RefundMethod,
   Select,
   SelectContent,
@@ -31,6 +26,8 @@ import {
   type PostSaleSelection as Selection,
   SelectTrigger,
   SelectValue,
+  CreateClaimDialog as SharedCreateClaimDialog,
+  CreateReturnDialog as SharedCreateReturnDialog,
   selectedUnits as selectedItems,
   Textarea,
 } from '@spree/dashboard-ui'
@@ -81,9 +78,6 @@ export function CreateReturnDialog({
   }) => void
 }) {
   const { t } = useTranslation()
-  const units = fulfilledUnits(order)
-  const [selection, setSelection] = useState<Selection>({})
-  const [memo, setMemo] = useState('')
   const [reasonId, setReasonId] = useState('')
   const [stockLocationId, setStockLocationId] = useState('')
   const { data: stockLocationData } = useStockLocations()
@@ -105,74 +99,43 @@ export function CreateReturnDialog({
           : t('admin.pages.orders.detail.returns.location_no_returns', { name: location.name }),
     }))
 
-  const chosen = selectedItems(selection)
-
   return (
-    <Dialog open onOpenChange={(open) => !open && onClose()}>
-      <DialogContent>
-        <DialogHeader>
-          <DialogTitle>{t('admin.pages.orders.detail.returns.create_title')}</DialogTitle>
-        </DialogHeader>
-        <DialogBody className="flex flex-col gap-4">
-          <QuantityPicker units={units} selection={selection} onChange={setSelection} />
-          <ReasonField kind="return-reasons" value={reasonId} onChange={setReasonId} />
-          <Field>
-            <FieldLabel htmlFor="return-location">
-              {t('admin.pages.orders.detail.returns.location')}
-            </FieldLabel>
-            <Select
-              items={locationOptions}
-              value={stockLocationId}
-              onValueChange={(value) => setStockLocationId(value as string)}
-            >
-              <SelectTrigger id="return-location">
-                <SelectValue
-                  placeholder={t('admin.pages.orders.detail.returns.location_default')}
-                />
-              </SelectTrigger>
-              <SelectContent>
-                {locationOptions.map((option) => (
-                  <SelectItem key={option.value} value={option.value}>
-                    {option.label}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-          </Field>
-          <Field>
-            <FieldLabel htmlFor="return-memo">
-              {t('admin.pages.orders.detail.returns.memo')}
-            </FieldLabel>
-            <Textarea
-              id="return-memo"
-              value={memo}
-              onChange={(event) => setMemo(event.target.value)}
-            />
-          </Field>
-        </DialogBody>
-        <DialogFooter>
-          <Button variant="outline" onClick={onClose}>
-            {t('admin.actions.cancel')}
-          </Button>
-          <Button
-            disabled={chosen.length === 0}
-            onClick={() =>
-              onSubmit({
-                items: chosen.map(([id, quantity]) => ({
-                  fulfillment_item_id: id,
-                  quantity,
-                })),
-                memo: memo || undefined,
-                reasonId: reasonId || undefined,
-                stockLocationId: stockLocationId || undefined,
-              })
-            }
+    <SharedCreateReturnDialog
+      units={fulfilledUnits(order)}
+      reasonField={<ReasonField kind="return-reasons" value={reasonId} onChange={setReasonId} />}
+      extraFields={
+        <Field>
+          <FieldLabel htmlFor="return-location">
+            {t('admin.pages.orders.detail.returns.location')}
+          </FieldLabel>
+          <Select
+            items={locationOptions}
+            value={stockLocationId}
+            onValueChange={(value) => setStockLocationId(value as string)}
           >
-            {t('admin.pages.orders.detail.returns.actions.create')}
-          </Button>
-        </DialogFooter>
-      </DialogContent>
-    </Dialog>
+            <SelectTrigger id="return-location">
+              <SelectValue placeholder={t('admin.pages.orders.detail.returns.location_default')} />
+            </SelectTrigger>
+            <SelectContent>
+              {locationOptions.map((option) => (
+                <SelectItem key={option.value} value={option.value}>
+                  {option.label}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+        </Field>
+      }
+      onClose={onClose}
+      onSubmit={({ items, memo }) =>
+        onSubmit({
+          items,
+          memo,
+          reasonId: reasonId || undefined,
+          stockLocationId: stockLocationId || undefined,
+        })
+      }
+    />
   )
 }
 
@@ -328,128 +291,26 @@ export function CreateClaimDialog({
     reasonId?: string
   }) => void
 }) {
-  const { t } = useTranslation()
-  const items = order.items ?? []
-  const [selection, setSelection] = useState<Selection>({})
-  const [amounts, setAmounts] = useState<Record<string, string>>({})
+  const [reasonId, setReasonId] = useState('')
   const { defaultCurrency } = useStore()
   const { symbol: currencySymbol } = currencyParts(defaultCurrency, i18n.language)
-  const [memo, setMemo] = useState('')
-  const [reasonId, setReasonId] = useState('')
-
-  const chosen = selectedItems(selection)
 
   return (
-    <Dialog open onOpenChange={(open) => !open && onClose()}>
-      <DialogContent>
-        <DialogHeader>
-          <DialogTitle>{t('admin.pages.orders.detail.claims.create_title')}</DialogTitle>
-        </DialogHeader>
-        <DialogBody className="flex flex-col gap-4">
-          <div className="flex flex-col gap-2">
-            {items.map((item) => {
-              const label = [item.name, item.options_text].filter(Boolean).join(' — ') || item.id
-              const chosenQuantity = selection[item.id] ?? 0
-
-              return (
-                <div key={item.id} className="flex flex-col gap-2 rounded-lg border p-3">
-                  <div className="flex items-center justify-between gap-4">
-                    <span className="text-sm truncate">{label}</span>
-                    <Input
-                      type="number"
-                      min={0}
-                      max={item.quantity}
-                      className="w-20"
-                      value={chosenQuantity}
-                      onChange={(event) => {
-                        const quantity = Math.max(
-                          0,
-                          Math.min(Number(event.target.value), item.quantity),
-                        )
-                        setSelection({ ...selection, [item.id]: quantity })
-                        // Default the refund to what was paid for those units;
-                        // the merchant can still overwrite it.
-                        if (quantity > 0 && !amounts[item.id]) {
-                          const unitPrice = Number(item.price)
-                          if (Number.isFinite(unitPrice)) {
-                            setAmounts((current) => ({
-                              ...current,
-                              [item.id]: (unitPrice * quantity).toFixed(2),
-                            }))
-                          }
-                        }
-                      }}
-                    />
-                  </div>
-                  {chosenQuantity > 0 && (
-                    <Field>
-                      <FieldLabel htmlFor={`claim-amount-${item.id}`}>
-                        {t('admin.pages.orders.detail.claims.refund_amount')}
-                      </FieldLabel>
-                      <InputGroup>
-                        <InputGroupAddon>
-                          <InputGroupText>{currencySymbol}</InputGroupText>
-                        </InputGroupAddon>
-                        <InputGroupInput
-                          id={`claim-amount-${item.id}`}
-                          type="number"
-                          step="0.01"
-                          min="0"
-                          value={amounts[item.id] ?? ''}
-                          onChange={(event) =>
-                            setAmounts({ ...amounts, [item.id]: event.target.value })
-                          }
-                        />
-                      </InputGroup>
-                    </Field>
-                  )}
-                </div>
-              )
-            })}
-          </div>
-
-          <ReasonField kind="claim-reasons" value={reasonId} onChange={setReasonId} />
-          <Field>
-            <FieldLabel htmlFor="claim-memo">
-              {t('admin.pages.orders.detail.returns.memo')}
-            </FieldLabel>
-            <Textarea
-              id="claim-memo"
-              value={memo}
-              onChange={(event) => setMemo(event.target.value)}
-            />
-          </Field>
-        </DialogBody>
-        <DialogFooter>
-          <Button variant="outline" onClick={onClose}>
-            {t('admin.actions.cancel')}
-          </Button>
-          <Button
-            disabled={chosen.length === 0}
-            onClick={() =>
-              onSubmit({
-                items: chosen.map(([id, quantity]) => ({
-                  line_item_id: id,
-                  quantity,
-                  refund_amount: amounts[id] || undefined,
-                })),
-                memo: memo || undefined,
-                reasonId: reasonId || undefined,
-              })
-            }
-          >
-            {t('admin.pages.orders.detail.claims.actions.create')}
-          </Button>
-        </DialogFooter>
-      </DialogContent>
-    </Dialog>
+    <SharedCreateClaimDialog
+      lines={(order.items ?? []).map((item) => ({
+        id: item.id,
+        label: [item.name, item.options_text].filter(Boolean).join(' — ') || item.id,
+        quantity: item.quantity,
+        price: item.price,
+      }))}
+      currencySymbol={currencySymbol}
+      reasonField={<ReasonField kind="claim-reasons" value={reasonId} onChange={setReasonId} />}
+      onClose={onClose}
+      onSubmit={({ items, memo }) => onSubmit({ items, memo, reasonId: reasonId || undefined })}
+    />
   )
 }
 
-/**
- * Deciding how to make a claim right. This is where the merchant chooses —
- * not at claim creation, when only the customer's complaint is known.
- */
 export function ResolveClaimDialog({
   claim,
   onClose,

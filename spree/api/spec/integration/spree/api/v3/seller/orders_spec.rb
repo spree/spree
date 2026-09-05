@@ -216,6 +216,88 @@ RSpec.describe 'Seller Orders API', type: :request, swagger_doc: 'api-reference/
     end
   end
 
+  path '/api/v3/seller/orders/{order_id}/notes' do
+    parameter name: :order_id, in: :path, type: :string, description: 'Prefixed order ID'
+
+    get 'Get order notes' do
+      tags 'Orders'
+      produces 'application/json'
+      security [bearer_auth: []]
+      description <<~DESC
+        The instructions the buyer left, and the seller's own working note.
+
+        A marketplace basket splits into one order per seller, so the internal
+        note here is this seller's alone rather than the operator's note about
+        the whole sale.
+      DESC
+
+      parameter name: 'X-Spree-Seller-Id', in: :header, type: :string, required: true
+
+      response '200', 'notes' do
+        let(:Authorization) { "Bearer #{seller_jwt_token}" }
+        let(:'X-Spree-Seller-Id') { seller.prefixed_id }
+        let(:order_id) { order.prefixed_id }
+
+        schema '$ref' => '#/components/schemas/Order'
+
+        run_test!
+      end
+    end
+
+    patch 'Update order notes' do
+      tags 'Orders'
+      consumes 'application/json'
+      produces 'application/json'
+      security [bearer_auth: []]
+      description <<~DESC
+        Send only the note that changes: an absent key leaves the other alone,
+        while an empty string clears it.
+
+        `internal_note` accepts HTML and is sanitized on save;
+        `internal_note_html` reads it back.
+      DESC
+
+      parameter name: 'X-Spree-Seller-Id', in: :header, type: :string, required: true
+      parameter name: :body, in: :body, required: true, schema: {
+        type: :object,
+        properties: {
+          customer_note: {
+            type: :string,
+            nullable: true,
+            description: "What the buyer asked for"
+          },
+          internal_note: {
+            type: :string,
+            nullable: true,
+            description: "The seller's own working note, as HTML"
+          }
+        }
+      }
+
+      response '200', 'notes updated' do
+        let(:Authorization) { "Bearer #{seller_jwt_token}" }
+        let(:'X-Spree-Seller-Id') { seller.prefixed_id }
+        let(:order_id) { order.prefixed_id }
+        let(:body) { { internal_note: '<p>Packed with the fragile insert.</p>' } }
+
+        schema '$ref' => '#/components/schemas/Order'
+
+        run_test! do
+          expect(order.reload.internal_note.to_s).to include('fragile insert')
+        end
+      end
+
+      response '422', 'neither note named' do
+        let(:Authorization) { "Bearer #{seller_jwt_token}" }
+        let(:'X-Spree-Seller-Id') { seller.prefixed_id }
+        let(:order_id) { order.prefixed_id }
+        let(:body) { {} }
+
+        run_test!
+      end
+    end
+  end
+
   path '/api/v3/seller/order_cancellation_reasons' do
     get 'List order cancellation reasons' do
       tags 'Orders'

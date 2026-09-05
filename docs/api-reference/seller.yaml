@@ -420,7 +420,7 @@ paths:
                   avatar_url:
                 sellers:
                 - id: sel_UkLWZg9DAJ
-                  name: Seller 67
+                  name: Seller 70
                   status: approved
               schema:
                 "$ref": "#/components/schemas/AuthResponse"
@@ -13540,8 +13540,8 @@ paths:
               example:
                 data:
                 - id: prod_UkLWZg9DAJ
-                  name: Product 1703250
-                  slug: product-1703250
+                  name: Product 1733250
+                  slug: product-1733250
                   meta_title:
                   meta_description:
                   meta_keywords:
@@ -13784,8 +13784,8 @@ paths:
             application/json:
               example:
                 id: prod_UkLWZg9DAJ
-                name: Product 1736710
-                slug: product-1736710
+                name: Product 1766710
+                slug: product-1766710
                 meta_title:
                 meta_description:
                 meta_keywords:
@@ -13864,7 +13864,7 @@ paths:
               example:
                 id: prod_UkLWZg9DAJ
                 name: Hand-thrown mug, large
-                slug: product-1768212
+                slug: product-1798212
                 meta_title:
                 meta_description:
                 meta_keywords:
@@ -13977,8 +13977,8 @@ paths:
             application/json:
               example:
                 id: sel_UkLWZg9DAJ
-                name: Seller 84
-                slug: seller-84
+                name: Seller 87
+                slug: seller-87
                 about: ''
                 about_html: ''
                 logo_url:
@@ -14050,7 +14050,7 @@ paths:
               example:
                 id: sel_UkLWZg9DAJ
                 name: Acme Supplies
-                slug: seller-86
+                slug: seller-89
                 about: ''
                 about_html: ''
                 logo_url:
@@ -15634,6 +15634,16 @@ paths:
                     updated_at: '2026-01-15T12:00:00.000Z'
                     shipping_label_id:
                   labels: []
+                meta:
+                  page: 1
+                  limit: 25
+                  count: 1
+                  pages: 1
+                  from: 1
+                  to: 1
+                  in: 1
+                  previous:
+                  next:
               schema:
                 type: object
                 properties:
@@ -16072,6 +16082,8 @@ paths:
                   completed_at: '2026-01-15T12:00:00.000Z'
                   created_at: '2026-01-15T12:00:00.000Z'
                   updated_at: '2026-01-15T12:00:00.000Z'
+                  internal_note:
+                  internal_note_html:
                   item_total: '10.0'
                   display_item_total: "$10.00"
                   delivery_total: '100.0'
@@ -16265,6 +16277,8 @@ paths:
                 completed_at: '2026-01-15T12:00:00.000Z'
                 created_at: '2026-01-15T12:00:00.000Z'
                 updated_at: '2026-01-15T12:00:00.000Z'
+                internal_note:
+                internal_note_html:
                 item_total: '10.0'
                 display_item_total: "$10.00"
                 delivery_total: '100.0'
@@ -16450,6 +16464,8 @@ paths:
                 completed_at: '2026-01-15T12:00:00.000Z'
                 created_at: '2026-01-15T12:00:00.000Z'
                 updated_at: '2026-01-15T12:00:00.000Z'
+                internal_note:
+                internal_note_html:
                 item_total: '10.0'
                 display_item_total: "$10.00"
                 delivery_total: '100.0'
@@ -16643,6 +16659,8 @@ paths:
                 completed_at: '2026-01-15T12:00:00.000Z'
                 created_at: '2026-01-15T12:00:00.000Z'
                 updated_at: '2026-01-15T12:00:00.000Z'
+                internal_note:
+                internal_note_html:
                 item_total: '10.0'
                 display_item_total: "$10.00"
                 delivery_total: '100.0'
@@ -16859,6 +16877,374 @@ paths:
                       type: string
                       nullable: true
         required: true
+  "/api/v3/seller/orders/{order_id}/notes":
+    parameters:
+    - name: order_id
+      in: path
+      description: Prefixed order ID
+      required: true
+      schema:
+        type: string
+    get:
+      summary: Get order notes
+      tags:
+      - Orders
+      security:
+      - bearer_auth: []
+      description: |
+        The instructions the buyer left, and the seller's own working note.
+
+        A marketplace basket splits into one order per seller, so the internal
+        note here is this seller's alone rather than the operator's note about
+        the whole sale.
+      parameters:
+      - name: X-Spree-Seller-Id
+        in: header
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: notes
+          content:
+            application/json:
+              example:
+                id: or_UkLWZg9DAJ
+                number: R1001
+                customer_note:
+                currency: USD
+                total_quantity: 1
+                status: placed
+                fulfillment_status:
+                payment_status:
+                completed_at: '2026-01-15T12:00:00.000Z'
+                created_at: '2026-01-15T12:00:00.000Z'
+                updated_at: '2026-01-15T12:00:00.000Z'
+                internal_note:
+                internal_note_html:
+                item_total: '10.0'
+                display_item_total: "$10.00"
+                delivery_total: '100.0'
+                display_delivery_total: "$100.00"
+                discount_total: '0.0'
+                display_discount_total: "$0.00"
+                adjustment_total: '0.0'
+                display_adjustment_total: "$0.00"
+                included_tax_total: '0.0'
+                display_included_tax_total: "$0.00"
+                additional_tax_total: '0.0'
+                display_additional_tax_total: "$0.00"
+                tax_total: '0.0'
+                display_tax_total: "$0.00"
+                total: '110.0'
+                display_total: "$110.00"
+                payment_total: '0.0'
+                display_payment_total: "$0.00"
+                amount_due: '110.0'
+                display_amount_due: "$110.00"
+                canceled_at:
+                cancel_reason_name:
+                cancel_note:
+                items:
+                - id: li_UkLWZg9DAJ
+                  name: Product 1693962
+                  options_text: ''
+                  quantity: 1
+                  currency: USD
+                  price: '10.0'
+                  display_price: "$10.00"
+                  total: '10.0'
+                  display_total: "$10.00"
+                  variant_id: variant_UkLWZg9DAJ
+                  sku: SKU-211
+                  thumbnail_url:
+                fulfillments:
+                - id: ful_UkLWZg9DAJ
+                  number: R1001-F1
+                  status: unfulfilled
+                  tracking: U10000
+                  tracking_url:
+                  fulfilled_at:
+                  delivered_at:
+                  created_at: '2026-01-15T12:00:00.000Z'
+                  updated_at: '2026-01-15T12:00:00.000Z'
+                  fulfillment_type: shipping
+                  delivery_method_name: UPS Ground
+                  stock_location_name: Kecia Pollich
+                  stock_location_id: sloc_UkLWZg9DAJ
+                  fulfillment_items:
+                  - id: fi_UkLWZg9DAJ
+                    quantity: 1
+                    line_item_id: li_UkLWZg9DAJ
+                    variant_id: variant_UkLWZg9DAJ
+                    name: Product 1693962
+                    sku: SKU-211
+                    options_text: ''
+                  selected_delivery_rate_id: dr_gbHJdmfrXB
+                  delivery_rates:
+                  - id: dr_gbHJdmfrXB
+                    name: UPS Ground
+                    selected: true
+                    cost: '10.0'
+                    total: '10.0'
+                    carrier:
+                    service_level:
+                    estimated_delivery_date:
+                    display_cost: "$10.00"
+                    display_total: "$10.00"
+                  deliveries:
+                  - id: dlv_UkLWZg9DAJ
+                    tracking_number: U10000
+                    carrier:
+                    carrier_name:
+                    service:
+                    status: pending
+                    tracking_url:
+                    estimated_delivery_at:
+                    delivered_at:
+                    created_at: '2026-01-15T12:00:00.000Z'
+                    updated_at: '2026-01-15T12:00:00.000Z'
+                    shipping_label_id:
+                  labels: []
+                shipping_address:
+                  id: addr_gbHJdmfrXB
+                  label:
+                  first_name: John
+                  last_name: Doe
+                  full_name: John Doe
+                  address1: 173 Lovely Street
+                  address2: Northwest
+                  postal_code: '10118'
+                  city: New York
+                  phone: 555-555-0199
+                  company: Company
+                  country_name: United States
+                  country_code: US
+                  state_text: NY
+                  state_code: NY
+                  quick_checkout: false
+                  is_default_billing: false
+                  is_default_shipping: false
+                  state_abbr: NY
+                  country_iso: US
+                  state_name: New York
+                billing_address:
+                  id: addr_UkLWZg9DAJ
+                  label:
+                  first_name: John
+                  last_name: Doe
+                  full_name: John Doe
+                  address1: 172 Lovely Street
+                  address2: Northwest
+                  postal_code: '10118'
+                  city: New York
+                  phone: 555-555-0199
+                  company: Company
+                  country_name: United States
+                  country_code: US
+                  state_text: NY
+                  state_code: NY
+                  quick_checkout: false
+                  is_default_billing: false
+                  is_default_shipping: false
+                  state_abbr: NY
+                  country_iso: US
+                  state_name: New York
+              schema:
+                "$ref": "#/components/schemas/Order"
+    patch:
+      summary: Update order notes
+      tags:
+      - Orders
+      security:
+      - bearer_auth: []
+      description: |
+        Send only the note that changes: an absent key leaves the other alone,
+        while an empty string clears it.
+
+        `internal_note` accepts HTML and is sanitized on save;
+        `internal_note_html` reads it back.
+      parameters:
+      - name: X-Spree-Seller-Id
+        in: header
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: notes updated
+          content:
+            application/json:
+              example:
+                id: or_UkLWZg9DAJ
+                number: R1001
+                customer_note:
+                currency: USD
+                total_quantity: 1
+                status: placed
+                fulfillment_status:
+                payment_status:
+                completed_at: '2026-01-15T12:00:00.000Z'
+                created_at: '2026-01-15T12:00:00.000Z'
+                updated_at: '2026-01-15T12:00:00.000Z'
+                internal_note: Packed with the fragile insert.
+                internal_note_html: "<p>Packed with the fragile insert.</p>"
+                item_total: '10.0'
+                display_item_total: "$10.00"
+                delivery_total: '100.0'
+                display_delivery_total: "$100.00"
+                discount_total: '0.0'
+                display_discount_total: "$0.00"
+                adjustment_total: '0.0'
+                display_adjustment_total: "$0.00"
+                included_tax_total: '0.0'
+                display_included_tax_total: "$0.00"
+                additional_tax_total: '0.0'
+                display_additional_tax_total: "$0.00"
+                tax_total: '0.0'
+                display_tax_total: "$0.00"
+                total: '110.0'
+                display_total: "$110.00"
+                payment_total: '0.0'
+                display_payment_total: "$0.00"
+                amount_due: '110.0'
+                display_amount_due: "$110.00"
+                canceled_at:
+                cancel_reason_name:
+                cancel_note:
+                items:
+                - id: li_UkLWZg9DAJ
+                  name: Product 1705749
+                  options_text: ''
+                  quantity: 1
+                  currency: USD
+                  price: '10.0'
+                  display_price: "$10.00"
+                  total: '10.0'
+                  display_total: "$10.00"
+                  variant_id: variant_UkLWZg9DAJ
+                  sku: SKU-212
+                  thumbnail_url:
+                fulfillments:
+                - id: ful_UkLWZg9DAJ
+                  number: R1001-F1
+                  status: unfulfilled
+                  tracking: U10000
+                  tracking_url:
+                  fulfilled_at:
+                  delivered_at:
+                  created_at: '2026-01-15T12:00:00.000Z'
+                  updated_at: '2026-01-15T12:00:00.000Z'
+                  fulfillment_type: shipping
+                  delivery_method_name: UPS Ground
+                  stock_location_name: Ophelia Hartmann
+                  stock_location_id: sloc_UkLWZg9DAJ
+                  fulfillment_items:
+                  - id: fi_UkLWZg9DAJ
+                    quantity: 1
+                    line_item_id: li_UkLWZg9DAJ
+                    variant_id: variant_UkLWZg9DAJ
+                    name: Product 1705749
+                    sku: SKU-212
+                    options_text: ''
+                  selected_delivery_rate_id: dr_gbHJdmfrXB
+                  delivery_rates:
+                  - id: dr_gbHJdmfrXB
+                    name: UPS Ground
+                    selected: true
+                    cost: '10.0'
+                    total: '10.0'
+                    carrier:
+                    service_level:
+                    estimated_delivery_date:
+                    display_cost: "$10.00"
+                    display_total: "$10.00"
+                  deliveries:
+                  - id: dlv_UkLWZg9DAJ
+                    tracking_number: U10000
+                    carrier:
+                    carrier_name:
+                    service:
+                    status: pending
+                    tracking_url:
+                    estimated_delivery_at:
+                    delivered_at:
+                    created_at: '2026-01-15T12:00:00.000Z'
+                    updated_at: '2026-01-15T12:00:00.000Z'
+                    shipping_label_id:
+                  labels: []
+                shipping_address:
+                  id: addr_gbHJdmfrXB
+                  label:
+                  first_name: John
+                  last_name: Doe
+                  full_name: John Doe
+                  address1: 175 Lovely Street
+                  address2: Northwest
+                  postal_code: '10118'
+                  city: New York
+                  phone: 555-555-0199
+                  company: Company
+                  country_name: United States
+                  country_code: US
+                  state_text: NY
+                  state_code: NY
+                  quick_checkout: false
+                  is_default_billing: false
+                  is_default_shipping: false
+                  state_abbr: NY
+                  country_iso: US
+                  state_name: New York
+                billing_address:
+                  id: addr_UkLWZg9DAJ
+                  label:
+                  first_name: John
+                  last_name: Doe
+                  full_name: John Doe
+                  address1: 174 Lovely Street
+                  address2: Northwest
+                  postal_code: '10118'
+                  city: New York
+                  phone: 555-555-0199
+                  company: Company
+                  country_name: United States
+                  country_code: US
+                  state_text: NY
+                  state_code: NY
+                  quick_checkout: false
+                  is_default_billing: false
+                  is_default_shipping: false
+                  state_abbr: NY
+                  country_iso: US
+                  state_name: New York
+              schema:
+                "$ref": "#/components/schemas/Order"
+        '422':
+          description: neither note named
+          content:
+            application/json:
+              example:
+                error:
+                  code: validation_error
+                  message: customer_note or internal_note is required
+                  details:
+                    base:
+                    - customer_note or internal_note is required
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                customer_note:
+                  type: string
+                  nullable: true
+                  description: What the buyer asked for
+                internal_note:
+                  type: string
+                  nullable: true
+                  description: The seller's own working note, as HTML
+        required: true
   "/api/v3/seller/order_cancellation_reasons":
     get:
       summary: List order cancellation reasons
@@ -17024,7 +17410,7 @@ paths:
               example:
                 error:
                   code: processing_error
-                  message: Only 1 of Product 1807120 can be returned
+                  message: Only 1 of Product 1837120 can be returned
       requestBody:
         content:
           application/json:
@@ -19318,6 +19704,12 @@ components:
           type: string
         updated_at:
           type: string
+        internal_note:
+          type: string
+          nullable: true
+        internal_note_html:
+          type: string
+          nullable: true
         item_total:
           type: string
           nullable: true
@@ -19411,6 +19803,8 @@ components:
       - completed_at
       - created_at
       - updated_at
+      - internal_note
+      - internal_note_html
       - item_total
       - display_item_total
       - delivery_total

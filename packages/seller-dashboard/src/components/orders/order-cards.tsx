@@ -247,20 +247,3 @@ export function OrderCustomerCard({ order }: { order: Order }) {
     </>
   )
 }
-
-/** What the customer asked for when they placed the order. */
-export function OrderNoteCard({ order }: { order: Order }) {
-  const { t } = useTranslation()
-  if (!order.customer_note) return null
-
-  return (
-    <Card>
-      <CardHeader>
-        <CardTitle>{t('orders.customer_note')}</CardTitle>
-      </CardHeader>
-      <div className="px-6 pb-6">
-        <p className="whitespace-pre-wrap text-sm">{order.customer_note}</p>
-      </div>
-    </Card>
-  )
-}

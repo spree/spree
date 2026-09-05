@@ -870,6 +870,10 @@ Spree::Core::Engine.add_routes do
             patch :address
           end
 
+          # Singular: an order has one set of notes, so they are a resource to
+          # read and update rather than a verb on the order.
+          resource :notes, only: [:show, :update], controller: 'orders/notes'
+
           # No `mark_delivered`: that a parcel arrived is the buyer's word,
           # not the sender's, so confirming receipt stays with the operator
           # and the carrier feed.

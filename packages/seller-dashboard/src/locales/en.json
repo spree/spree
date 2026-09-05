@@ -133,7 +133,12 @@
               "original_payment": "Original payment",
               "store_credit": "Store credit"
             },
-            "reason": "Reason"
+            "reason": "Reason",
+            "location": "Return to",
+            "location_default": "Default returns location",
+            "location_no_returns": "{{name}} (does not accept returns)",
+            "memo": "Note",
+            "create_title": "New return"
           },
           "claims": {
             "resolve_title": "Resolve claim",
@@ -146,8 +151,10 @@
             "refund_amount": "Refund amount",
             "replacement_items": "Send a replacement for",
             "actions": {
-              "resolve": "Resolve"
-            }
+              "resolve": "Resolve",
+              "create": "New claim"
+            },
+            "create_title": "New claim"
           }
         }
       }

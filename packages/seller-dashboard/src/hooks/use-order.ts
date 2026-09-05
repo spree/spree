@@ -22,6 +22,13 @@ export function useCancelOrder(orderId: string) {
   )
 }
 
+/** The seller's working note, and what the buyer asked for. */
+export function useUpdateOrderNotes(orderId: string) {
+  return useOrderMutation(orderId, (params: { customer_note?: string; internal_note?: string }) =>
+    sellerClient().orders.notes.update(orderId, params),
+  )
+}
+
 /**
  * A write against the order itself. Refreshes the order and the list behind
  * it — a canceled order reads differently in both places.

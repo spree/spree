@@ -6,11 +6,8 @@ import { useTranslation } from 'react-i18next'
 import { CenteredMessage } from '../components/centered-message'
 import { FulfillmentsCard } from '../components/orders/fulfillments-card'
 import { OrderCancelDialog } from '../components/orders/order-cancel-dialog'
-import {
-  OrderCustomerCard,
-  OrderNoteCard,
-  OrderSummaryCard,
-} from '../components/orders/order-cards'
+import { OrderCustomerCard, OrderSummaryCard } from '../components/orders/order-cards'
+import { InternalNoteCard, SpecialInstructionsCard } from '../components/orders/order-notes-cards'
 import { ClaimsCard, ExchangesCard } from '../components/orders/post-sale-cards'
 import { ReturnsCard } from '../components/orders/returns-card'
 import { RetryableError } from '../components/retryable-error'
@@ -100,7 +97,8 @@ export function OrderPage() {
         sidebar={
           <>
             <OrderCustomerCard order={order} />
-            <OrderNoteCard order={order} />
+            <SpecialInstructionsCard order={order} />
+            <InternalNoteCard order={order} />
           </>
         }
       />

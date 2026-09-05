@@ -39,11 +39,24 @@ module Spree
                    amount_due: [:string, nullable: true], display_amount_due: [:string, nullable: true],
                    canceled_at: [:string, nullable: true],
                    cancel_reason_name: [:string, nullable: true],
-                   cancel_note: [:string, nullable: true]
+                   cancel_note: [:string, nullable: true],
+                   internal_note: [:string, nullable: true],
+                   internal_note_html: [:string, nullable: true]
 
           attributes :number, :customer_note, :currency, :total_quantity,
                      :status, :fulfillment_status, :payment_status,
                      completed_at: :iso8601, created_at: :iso8601, updated_at: :iso8601
+
+          # The seller's own working note. A marketplace basket is split into
+          # one order per seller, so this row — and the note on it — is theirs
+          # alone; it is never the operator's note about the whole sale.
+          attribute :internal_note do |order|
+            Spree::RichTextHelper.to_plain_text(order.internal_note).presence
+          end
+
+          attribute :internal_note_html do |order|
+            order.internal_note.presence
+          end
 
           # What this seller is owed for the goods, and what the buyer paid for
           # them. Deliberately not the whole money surface: gift cards, store

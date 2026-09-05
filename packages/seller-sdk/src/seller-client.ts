@@ -418,6 +418,30 @@ export class SellerClient {
     ): Promise<Order> =>
       this.request<Order>('PATCH', `/orders/${id}/address`, { ...options, body: params }),
 
+    /**
+     * The notes on an order: the instructions the buyer left, and the
+     * seller's own working note.
+     *
+     * A marketplace basket splits into one order per seller, so the internal
+     * note here is the seller's alone.
+     */
+    notes: {
+      get: (orderId: string, options?: RequestOptions): Promise<Order> =>
+        this.request<Order>('GET', `/orders/${orderId}/notes`, options),
+
+      /**
+       * Send only the note that changes: an absent key leaves the other
+       * alone, while an empty string clears it. `internal_note` takes HTML
+       * and is sanitized on save — `internal_note_html` reads it back.
+       */
+      update: (
+        orderId: string,
+        params: { customer_note?: string; internal_note?: string },
+        options?: RequestOptions,
+      ): Promise<Order> =>
+        this.request<Order>('PATCH', `/orders/${orderId}/notes`, { ...options, body: params }),
+    },
+
     /** The parcels owed on one order. */
     fulfillments: {
       list: (orderId: string, options?: RequestOptions): Promise<{ data: Fulfillment[] }> =>
