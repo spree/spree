@@ -13,7 +13,7 @@ import {
   useSortable,
 } from '@dnd-kit/sortable'
 import { CSS } from '@dnd-kit/utilities'
-import type { MediaType, ProductFormValues } from '@spree/dashboard-core'
+import type { MediaType, ProductFormValues, VariantsFormShape } from '@spree/dashboard-core'
 import {
   getApiClient,
   MediaPickerSheet,
@@ -171,12 +171,14 @@ export function VariantsCard({ form, seedFromType }: FormCardProps & { seedFromT
 // already holds every currency's prices for every variant.
 // ---------------------------------------------------------------------------
 
-export function PricesCard({
+export function PricesCard<TFieldValues extends VariantsFormShape>({
   form,
   productName,
   currencies: currenciesProp,
   defaultCurrency: defaultCurrencyProp,
-}: FormCardProps & {
+}: {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  form: UseFormReturn<TFieldValues, any, any>
   productName: string
   /**
    * A panel with no store context supplies these itself. The operator's has a
@@ -762,11 +764,19 @@ function SortableMediaThumbnail({
 // Inventory
 // ---------------------------------------------------------------------------
 
-export function InventoryCard({
+export function InventoryCard<TFieldValues extends VariantsFormShape>({
   form,
   stockLocationHref,
   actions,
-}: FormCardProps & { stockLocationHref?: (id: string) => string; actions?: React.ReactNode }) {
+}: {
+  // Spelled out rather than `FormCardProps`, which pins the form to
+  // `ProductFormValues`: the seller panel renders this card against its own
+  // offer form, whose root IS the variant.
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  form: UseFormReturn<TFieldValues, any, any>
+  stockLocationHref?: (id: string) => string
+  actions?: React.ReactNode
+}) {
   const { t } = useTranslation()
   return (
     <Card>
