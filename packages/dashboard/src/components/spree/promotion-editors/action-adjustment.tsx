@@ -71,7 +71,10 @@ export function AdjustmentActionEditor({ draft, onSave, onClose }: PromotionActi
         preferences,
         // Display-only — lets `<ActionSummary>` render the row preview
         // without fetching `/calculators` again. Stripped at payload time.
-        // The name is resolved from `type` where the summary is rendered.
+        // The summary resolves the name from `type`; the catalog's English
+        // name rides along as the fallback for a calculator shipped by an
+        // extension that carries no dashboard translation.
+        label: selectedCalculator?.label,
         preference_schema: selectedCalculator?.preference_schema,
       },
     })

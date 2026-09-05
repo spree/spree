@@ -8989,10 +8989,10 @@ paths:
                   message: Amount must be greater than 0
                   details:
                     amount:
-                    - code: greater_than
-                      message: must be greater than 0
-                      value: '0.0'
+                    - value: '0.0'
                       count: 0
+                      code: greater_than
+                      message: must be greater than 0
               schema:
                 "$ref": "#/components/schemas/ErrorResponse"
       requestBody:
@@ -12078,9 +12078,9 @@ paths:
                   message: Kind is not included in the list
                   details:
                     kind:
-                    - code: inclusion
+                    - value: nonsense
+                      code: inclusion
                       message: is not included in the list
-                      value: nonsense
       requestBody:
         content:
           application/json:
@@ -16753,9 +16753,9 @@ paths:
                   message: Custom field definition has already been taken
                   details:
                     custom_field_definition_id:
-                    - code: taken
+                    - value: 1
+                      code: taken
                       message: has already been taken
-                      value: 1
       requestBody:
         content:
           application/json:
@@ -25213,9 +25213,9 @@ paths:
                   message: Pickup stock policy is not included in the list
                   details:
                     pickup_stock_policy:
-                    - code: inclusion
+                    - value: invalid
+                      code: inclusion
                       message: is not included in the list
-                      value: invalid
               schema:
                 "$ref": "#/components/schemas/ErrorResponse"
       requestBody:
@@ -25683,9 +25683,9 @@ paths:
                   message: SKU has already been taken
                   details:
                     sku:
-                    - code: taken
+                    - value: SKU-169
+                      code: taken
                       message: has already been taken
-                      value: SKU-169
               schema:
                 "$ref": "#/components/schemas/ErrorResponse"
       requestBody:
@@ -26728,24 +26728,12 @@ paths:
               example:
                 error:
                   code: validation_error
-                  message: |-
-                    Url Translation missing. Options considered were:
-                    - en.activerecord.errors.models.spree/webhook_endpoint.attributes.url.invalid_url
-                    - en.activerecord.errors.models.spree/webhook_endpoint.invalid_url
-                    - en.activerecord.errors.messages.invalid_url
-                    - en.errors.attributes.url.invalid_url
-                    - en.errors.messages.invalid_url
+                  message: Url must be a valid http or https URL
                   details:
                     url:
-                    - code: invalid
-                      message: |-
-                        Translation missing. Options considered were:
-                        - en.activerecord.errors.models.spree/webhook_endpoint.attributes.url.invalid_url
-                        - en.activerecord.errors.models.spree/webhook_endpoint.invalid_url
-                        - en.activerecord.errors.messages.invalid_url
-                        - en.errors.attributes.url.invalid_url
-                        - en.errors.messages.invalid_url
-                      value: not a url
+                    - value: not a url
+                      code: invalid
+                      message: must be a valid http or https URL
               schema:
                 "$ref": "#/components/schemas/ErrorResponse"
       requestBody:
@@ -26936,24 +26924,12 @@ paths:
               example:
                 error:
                   code: validation_error
-                  message: |-
-                    Url Translation missing. Options considered were:
-                    - en.activerecord.errors.models.spree/webhook_endpoint.attributes.url.invalid_url
-                    - en.activerecord.errors.models.spree/webhook_endpoint.invalid_url
-                    - en.activerecord.errors.messages.invalid_url
-                    - en.errors.attributes.url.invalid_url
-                    - en.errors.messages.invalid_url
+                  message: Url must be a valid http or https URL
                   details:
                     url:
-                    - code: invalid
-                      message: |-
-                        Translation missing. Options considered were:
-                        - en.activerecord.errors.models.spree/webhook_endpoint.attributes.url.invalid_url
-                        - en.activerecord.errors.models.spree/webhook_endpoint.invalid_url
-                        - en.activerecord.errors.messages.invalid_url
-                        - en.errors.attributes.url.invalid_url
-                        - en.errors.messages.invalid_url
-                      value: not a url
+                    - value: not a url
+                      code: invalid
+                      message: must be a valid http or https URL
               schema:
                 "$ref": "#/components/schemas/ErrorResponse"
       requestBody:
@@ -27961,10 +27937,10 @@ paths:
                   message: Amount must be greater than 0
                   details:
                     amount:
-                    - code: greater_than
-                      message: must be greater than 0
-                      value: 0
+                    - value: 0
                       count: 0
+                      code: greater_than
+                      message: must be greater than 0
       requestBody:
         content:
           application/json:
@@ -30644,9 +30620,9 @@ paths:
                   message: Registration type has already been taken
                   details:
                     kind:
-                    - code: taken
+                    - value: eu_vat
+                      code: taken
                       message: has already been taken
-                      value: eu_vat
       requestBody:
         content:
           application/json:
@@ -32689,9 +32665,9 @@ paths:
                   message: Tracking number has already been taken
                   details:
                     tracking_number:
-                    - code: taken
+                    - value: U10000
+                      code: taken
                       message: has already been taken
-                      value: U10000
       requestBody:
         content:
           application/json:

@@ -62,6 +62,12 @@ export interface PromotionActionFormDraft extends Omit<PromotionActionDraft, 'ca
 
 export interface PromotionActionCalculatorFormDraft extends PromotionActionCalculatorParams {
   preference_schema?: PreferenceField[]
+  /**
+   * The catalog's English name, carried only as the fallback for a
+   * calculator this dashboard has no translation for. Display resolves from
+   * `type` first. Stripped at payload time.
+   */
+  label?: string
 }
 
 /**

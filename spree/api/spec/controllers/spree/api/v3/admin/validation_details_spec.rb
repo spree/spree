@@ -15,6 +15,9 @@ class Spree::Api::V3::Admin::ValidationProbeController < Spree::Api::V3::Admin::
     probe = Spree::Api::V3::Admin::ValidationProbe.new(quantity: -1)
     probe.validate
     probe.errors.add(:base, 'Something specific went wrong')
+    # A validation may pass its own `code:` option; ActiveModel keeps it in
+    # `details` alongside the error symbol.
+    probe.errors.add(:sku, :taken, code: 'supplier-side', message: 'is already taken')
     probe.errors
   end
 end
@@ -22,7 +25,7 @@ end
 class Spree::Api::V3::Admin::ValidationProbe
   include ActiveModel::Model
 
-  attr_accessor :name, :quantity
+  attr_accessor :name, :quantity, :sku
 
   validates :name, presence: true
   validates :quantity, numericality: { greater_than: 0 }
@@ -75,6 +78,14 @@ RSpec.describe Spree::Api::V3::Admin::ValidationDetails, type: :controller do
       expect(details['base']).to eq(
         [{ 'code' => nil, 'message' => 'Something specific went wrong' }]
       )
+    end
+
+    it "reports the Rails error code even when the validation carries a code of its own" do
+      post :create
+
+      # The validation's own `code:` is interpolation data, not the error
+      # identity — it must not displace the symbol the dashboard translates.
+      expect(details['sku'].first).to include('code' => 'taken', 'message' => 'is already taken')
     end
 
     it 'keeps the readable summary for clients that do not translate' do

@@ -3,6 +3,7 @@ import { defineTable, typeLabel } from '@spree/dashboard-core'
 import { ActiveBadge, Badge, ResourceNameCell } from '@spree/dashboard-ui'
 import { ClipboardCheckIcon } from '@spree/dashboard-ui/icons'
 import i18n from 'i18next'
+import { useSellerRequirementTypes } from '../hooks/use-seller-requirements'
 
 defineTable<SellerRequirement>('seller-requirements', {
   title: i18n.t('admin.seller_requirements.title'),
@@ -29,9 +30,7 @@ defineTable<SellerRequirement>('seller-requirements', {
       key: 'kind',
       label: i18n.t('admin.seller_requirements.columns.kind'),
       default: true,
-      render: (requirement) => (
-        <Badge variant="outline">{typeLabel('seller_requirement', requirement.kind)}</Badge>
-      ),
+      render: (requirement) => <SellerRequirementKind requirement={requirement} />,
     },
     {
       key: 'required',
@@ -59,3 +58,18 @@ defineTable<SellerRequirement>('seller-requirements', {
     },
   ],
 })
+
+/**
+ * The requirement's kind. Loads the kind catalog so a kind this dashboard has
+ * no translation for still reads as words rather than its wire code.
+ */
+function SellerRequirementKind({ requirement }: { requirement: SellerRequirement }) {
+  const { data } = useSellerRequirementTypes()
+  const entry = (data?.data ?? []).find((type) => type.type === requirement.kind)
+
+  return (
+    <Badge variant="outline">
+      {typeLabel('seller_requirement', requirement.kind, entry?.name)}
+    </Badge>
+  )
+}

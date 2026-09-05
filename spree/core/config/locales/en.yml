@@ -437,6 +437,7 @@ en:
           attributes:
             url:
               internal_address_not_allowed: must not point to an internal or private network address
+              invalid_url: must be a valid http or https URL
         spree/wishlist_item:
           attributes:
             variant:
