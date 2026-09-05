@@ -27,6 +27,16 @@ module Spree
           end
         end
 
+        # Declares the +pricing_access+ reason code on a payload that nulls
+        # prices — +login_required+ | +company_required+ | a code the
+        # registered activation policy supplies — so a storefront renders
+        # "sign in" / "register your business" from the code instead of
+        # interpreting bare nulls. Null when prices are visible.
+        def self.pricing_access_attribute
+          typelize pricing_access: [:string, nullable: true]
+          attribute(:pricing_access) { |_object| params[:pricing_access] }
+        end
+
         # Context accessors
         def current_store
           params[:store]

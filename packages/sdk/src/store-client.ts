@@ -1226,6 +1226,18 @@ export class StoreClient {
   }
 
   readonly companies = {
+    /**
+     * Registers a company: the signed-in customer founds a root node and
+     * becomes its first member in one call. Free-form answers from the
+     * merchant's registration form ride `registration`. At most one
+     * self-registered company per customer per store.
+     */
+    create: (
+      params: { name: string; registration?: Record<string, unknown> },
+      options?: RequestOptions,
+    ): Promise<Company> =>
+      this.request<Company>('POST', '/companies', { ...options, body: params }),
+
     get: (id: string, options?: RequestOptions): Promise<Company> =>
       this.request<Company>('GET', `/companies/${id}`, options),
 

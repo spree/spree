@@ -40,6 +40,8 @@ module Spree
           line_item.variant&.preorder_ships_at&.iso8601 if line_item.variant&.preorder?
         end
 
+        pricing_access_attribute
+
         attributes :quantity, :currency, :name, :slug, :options_text
 
         # Nulled for gated (prices_hidden) guests so the cart's line items can't

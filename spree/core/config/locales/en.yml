@@ -270,6 +270,10 @@ en:
               values_should_be_percent: Tier values should all be percentages between 0% and 100%
             preferred_tiers:
               should_be_hash: should be a hash
+        spree/cart:
+          attributes:
+            company:
+              not_active: has not been activated for purchasing yet
         spree/catalog:
           attributes:
             base:
@@ -759,6 +763,8 @@ en:
     charged: Charged
     checkout: Checkout
     checkout_requirements:
+      company_activation_required: An active company account is required to place orders on this store
+      company_selection_required: Choose which company this order is for
       delivery_method_required: Select a delivery method for all fulfillments
       email_required: Email address is required
       line_items_required: Add at least one item to your cart
@@ -814,6 +820,8 @@ en:
         instructions: You have been invited to join %{company} on %{store}. Accept the invitation to start purchasing on the company's behalf.
         subject: invitation to join %{company}
         title: Join %{company}
+    company_registration:
+      already_registered: You have already registered a company on this store
     compare_at_amount: Compare at amount
     compare_at_price: Compare at price
     complete: complete

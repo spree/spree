@@ -20,6 +20,8 @@ module Spree
           variant.product&.prefixed_id
         end
 
+        pricing_access_attribute
+
         attributes :sku, :options_text, :track_inventory, :media_count
 
         # Customer-facing "ships by" promise — only while the variant is a
