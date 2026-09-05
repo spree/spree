@@ -10,8 +10,20 @@ module Spree
     # kind a store overrides — who may spend a card, on what, and up to how
     # much — and because it writes several records that must stand or fall
     # together.
+    #
+    # A card already sitting on another open cart is released rather than
+    # refused. That hold is not a payment — nobody has been charged — so
+    # whoever presents the code now takes it, and whoever completes an order
+    # first keeps it. Refusing instead would strand the balance whenever the
+    # other cart is unreachable (another device, a guest session), because
+    # holds never expire on their own. Override the +release_holds+ hook to
+    # refuse instead.
     class Apply < Spree::Workflow
-      hooks :validate, :after_apply
+      hooks :validate, :release_holds, :after_apply
+
+      # Carts and draft orders whose hold on the card this apply released.
+      # @return [Array<Spree::Cart, Spree::Order>]
+      attr_reader :released_holds
 
       attr_reader :store_credit, :payment
 
@@ -24,14 +36,30 @@ module Spree
         step :ensure_applicable
         run_hooks :validate
 
-        order.with_lock do
-          step :lock_gift_card
-          step :ensure_amount_available
-          step :issue_store_credit
-          step :draw_down_gift_card
-          step :create_payment
-          step :recalculate_order
-          run_hooks :after_apply
+        # One transaction so a refused release rolls back the ones that
+        # already succeeded. Holds are released BEFORE the card is locked:
+        # Spree::GiftCards::Remove locks its record and then the card, so
+        # taking the card first here would invert that order and deadlock
+        # against any concurrent remove of the same card.
+        ApplicationRecord.transaction do
+          # The target is locked with the holds, before anything takes the
+          # gift-card lock. Releasing a hold acquires that lock and the
+          # transaction keeps it, so locking the target afterwards would be
+          # card-then-record — the reverse of Spree::GiftCards::Remove and of
+          # a concurrent apply whose hold list includes this target.
+          step :lock_order
+          step :release_open_holds
+          run_hooks :release_holds
+
+          order.with_lock do
+            step :lock_gift_card
+            step :ensure_amount_available
+            step :issue_store_credit
+            step :draw_down_gift_card
+            step :create_payment
+            step :recalculate_order
+            run_hooks :after_apply
+          end
         end
 
         success(order.reload)
@@ -63,10 +91,97 @@ module Spree
         gift_card.lock!
       end
 
+      # Runs before the balance is read, so the released amount is available
+      # to this order. Releasing is all or nothing with the apply itself: a
+      # refused release fails the whole workflow, which rolls back the ones
+      # that did succeed. Emptying one shopper's cart and then not spending
+      # the balance would be the worst of both outcomes.
+      #
+      # Holds are released in id order, each through the same record-then-card
+      # sequence Spree::GiftCards::Remove uses on its own, so a concurrent
+      # remove of the same card queues behind this one rather than crossing
+      # with it.
+      def lock_order
+        order.lock!
+      end
+
+      def release_open_holds
+        @released_holds = []
+
+        holds = gift_card.open_holds(except: order)
+        return if holds.empty?
+
+        # Every hold row is locked up front, in id order, before the first
+        # removal takes the gift-card lock. That card lock is then held for
+        # the rest of this transaction, so acquiring a hold lock after it
+        # would invert the record-then-card order Spree::GiftCards::Remove
+        # uses and could deadlock against a concurrent removal.
+        lock_holds(holds).each { |hold| release_hold(hold) }
+
+        gift_card.reload
+      end
+
+      # Locks in id order within each class so two workflows racing over the
+      # same holds queue rather than cross.
+      def lock_holds(holds)
+        holds.group_by(&:class).flat_map do |klass, records|
+          klass.where(id: records.map(&:id)).order(:id).lock.to_a
+        end
+      end
+
+      # Re-reads the hold under its own lock before removing anything. The
+      # list was gathered outside that lock, so by now the other shopper may
+      # have taken this card off, or swapped a different one on — and Remove
+      # detaches whatever card the record carries at the time, not the one we
+      # meant. A hold that has moved on is simply skipped.
+      def release_hold(hold)
+        hold.with_lock do
+          hold.reload
+          next unless hold.gift_card_id == gift_card.id
+          next if hold.completed?
+
+          result = Spree.gift_card_remove_workflow.call(order: hold)
+
+          if result.success?
+            @released_holds << hold
+          else
+            report_unreleased_hold(hold, result)
+            failure(order, :gift_card_held_by_another_order)
+          end
+        end
+      end
+
+      def report_unreleased_hold(hold, result)
+        Rails.error.report(
+          Spree::Core::GiftCardHoldReleaseFailed.new(
+            "Gift card #{gift_card.id} could not be released from #{hold.class.name} #{hold.id}: #{result.error}"
+          ),
+          handled: true,
+          context: { order_id: order.id, gift_card_id: gift_card.id, hold_id: hold.id, hold_type: hold.class.name },
+          source: 'spree.core'
+        )
+      end
+
       def ensure_amount_available
+        # Releasing a hold changed amount_remaining, so drop anything computed
+        # before that — a stale positive would let a zero balance reach
+        # issue_store_credit and raise there instead of failing here.
+        @amount = nil
         return if amount.positive? || order.total.zero?
 
+        # Distinguish a spent card from one whose balance is briefly locked
+        # up elsewhere — the customer can retry the second, not the first.
+        failure(order, :gift_card_held_by_another_order) if held_elsewhere?
         failure(order, :gift_card_no_amount_remaining)
+      end
+
+      # Read fresh rather than from the snapshot the release worked from. A
+      # hold created since then was never offered for release, so reporting
+      # the card as spent would be wrong — the balance is recoverable and the
+      # customer should be told to retry.
+      def held_elsewhere?
+        gift_card.holds_being_completed(except: order).any? ||
+          gift_card.open_holds(except: order).any?
       end
 
       def amount
