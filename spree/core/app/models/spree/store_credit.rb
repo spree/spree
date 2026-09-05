@@ -140,7 +140,8 @@ module Spree
         )
         true
       else
-        errors.add(:base, :unable_to_void, message: Spree.t('store_credit_payment_method.unable_to_void', auth_code: authorization_code))
+        errors.add(:base, :unable_to_void, auth_code: authorization_code,
+                   message: Spree.t('store_credit_payment_method.unable_to_void', auth_code: authorization_code))
         false
       end
     end
@@ -162,7 +163,8 @@ module Spree
         create_credit_record(amount, action_attributes)
         true
       else
-        errors.add(:base, :unable_to_credit, message: Spree.t('store_credit_payment_method.unable_to_credit', auth_code: authorization_code))
+        errors.add(:base, :unable_to_credit, auth_code: authorization_code,
+                   message: Spree.t('store_credit_payment_method.unable_to_credit', auth_code: authorization_code))
         false
       end
     end

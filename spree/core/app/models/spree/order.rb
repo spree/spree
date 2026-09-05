@@ -1235,7 +1235,9 @@ module Spree
         fulfillments.destroy_all
 
         if undeliverable_line_items.present?
-          errors.add(:base, :products_cannot_be_shipped, message: Spree.t(:products_cannot_be_shipped, product_names: undeliverable_line_items.map(&:name).to_sentence))
+          product_names = undeliverable_line_items.map(&:name).to_sentence
+          errors.add(:base, :products_cannot_be_shipped, product_names: product_names,
+                     message: Spree.t(:products_cannot_be_shipped, product_names: product_names))
           self.warnings |= undeliverable_line_items.map do |line_item|
             {
               code: 'delivery_unavailable',
