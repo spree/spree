@@ -657,6 +657,7 @@
       },
       "columns": {
         "companies": "Firmy",
+        "erased": "Usunięte",
         "groups": "Grupy",
         "last_order": "Ostatnie zamówienie",
         "newsletter": "Newsletter",
@@ -668,6 +669,7 @@
           "delete_confirm_message": "Usunąć ten adres?"
         },
         "customer_since": "Klient od",
+        "delete_confirm_message": "To usuwa konto w całości i nie jest możliwe po zakończonym zamówieniu. Aby odpowiedzieć na wniosek o usunięcie danych od osoby, która już kupiła, użyj „Usuń dane osobowe”.",
         "delete_label": "Usuń klienta",
         "edit_profile_description": "Zaktualizuj dane profilu klienta.",
         "groups": {
@@ -697,6 +699,14 @@
           "title": "Kredyt sklepowy"
         },
         "subscribed_to_marketing": "Zapisany do newslettera marketingowego"
+      },
+      "erased": {
+        "badge": "Usunięte",
+        "name": "(usunięte)"
+      },
+      "filters": {
+        "erased": "Usunięte",
+        "not_erased": "Nieusunięte"
       },
       "groups": {
         "bulk_add_action": "Dodaj do grupy…",
@@ -734,6 +744,21 @@
         "view_members": "Wyświetl członków"
       },
       "new_sheet_description": "Klienci utworzeni w tym miejscu nie mają ustawionego hasła. Przy pierwszym logowaniu otrzymają magiczny link.",
+      "privacy": {
+        "already_anonymized": "Dane osobowe usunięto {{date}}",
+        "anonymize": "Usuń dane osobowe",
+        "anonymize_confirm_message": "Imię i nazwisko, adres e-mail, telefon oraz adresy zostaną wszędzie zastąpione, a klient zostanie wylogowany. Zamówienia i zapisy płatności pozostaną, bez danych osobowych. Tej operacji nie można cofnąć.",
+        "anonymize_confirm_title": "Usunąć dane osobowe tego klienta?",
+        "consent_updated": "Zgoda marketingowa ostatnio zmieniona {{date}}",
+        "description": "Odpowiedz na wniosek o ochronę danych. Zamówienia i salda klienta zostają zachowane; jego dane osobowe są usuwane wszędzie tam, gdzie sklep je przechowuje.",
+        "export": "Eksportuj dane",
+        "export_failed": "Nie udało się wyeksportować danych",
+        "messages": {
+          "anonymized": "Dane osobowe usunięte"
+        },
+        "title": "Prywatność i dane",
+        "anonymize_again": "Usuń ponownie"
+      },
       "row_actions": {
         "delete_confirm": "Usunąć {{email}}? Klientów ze zrealizowanymi zamówieniami nie można usunąć."
       },

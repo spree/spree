@@ -143,6 +143,8 @@ module Spree
 
         # customers
         customer_create_workflow: 'Spree::Customers::Create',
+        customer_anonymize_workflow: 'Spree::Customers::Anonymize',
+        customer_data_export_service: 'Spree::Customers::DataExport',
 
         # products — every server-side write path runs through these, so a
         # :validate handler sees dashboard edits, CSV imports and seeds alike

@@ -131,6 +131,10 @@ module Spree
     # Records price changes so the storefront can show the lowest price of the
     # last 30 days, as the EU Omnibus Directive requires.
     preference :track_price_history, :boolean, default: true
+    # How long recorded prices are kept. 30 days is what the Omnibus Directive
+    # asks a shop to be able to show; a longer window is a merchant's own
+    # evidentiary choice.
+    preference :price_history_retention_days, :integer, default: 30
     # Address preferences
     preference :company_field_enabled, :boolean, default: false
     # Showing the company field and requiring it are separate decisions: a

@@ -18,6 +18,8 @@ export { CurrencySchema, type Currency } from './Currency';
 export { CustomFieldSchema, type CustomField } from './CustomField';
 export { CustomerSchema, type Customer } from './Customer';
 export { CustomerGroupSchema, type CustomerGroup } from './CustomerGroup';
+export { DataRequestSchema, type DataRequest } from './DataRequest';
+export { DataRequestEventSchema, type DataRequestEvent } from './DataRequestEvent';
 export { DeliverySchema, type Delivery } from './Delivery';
 export { DeliveryMethodSchema, type DeliveryMethod } from './DeliveryMethod';
 export { DeliveryRateSchema, type DeliveryRate } from './DeliveryRate';

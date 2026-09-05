@@ -15,11 +15,22 @@ module Spree
                    last_order_completed_at: [:string, nullable: true],
                    default_billing_address_id: [:string, nullable: true],
                    default_shipping_address_id: [:string, nullable: true],
-                   customer_group_ids: [:string, multi: true]
+                   customer_group_ids: [:string, multi: true],
+                   email_marketing_consent_source: [:string, nullable: true],
+                   anonymized_at: [:string, nullable: true],
+                   anonymized: :boolean
 
           # Admin-only attributes
-          attributes :failed_attempts, :metadata,
+          attributes :failed_attempts, :metadata, :email_marketing_consent_source,
                      created_at: :iso8601, updated_at: :iso8601
+
+          attribute :anonymized_at do |user|
+            user.anonymized_at&.iso8601
+          end
+
+          attribute :anonymized do |user|
+            user.anonymized?
+          end
 
           attribute :tags do |user|
             user.tags.map(&:name) # not pluck as we preload tags

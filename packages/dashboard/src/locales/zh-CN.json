@@ -649,6 +649,7 @@
       },
       "columns": {
         "companies": "公司",
+        "erased": "已抹除",
         "groups": "分组",
         "last_order": "最近订单",
         "newsletter": "订阅资讯",
@@ -660,6 +661,7 @@
           "delete_confirm_message": "删除此地址？"
         },
         "customer_since": "注册时间",
+        "delete_confirm_message": "此操作会完全移除账户，客户完成订单后将不再可用。若要回应已购买客户的删除请求，请改用“抹除个人数据”。",
         "delete_label": "删除客户",
         "edit_profile_description": "更新客户的个人资料信息。",
         "groups": {
@@ -689,6 +691,14 @@
           "title": "商店积分"
         },
         "subscribed_to_marketing": "已订阅营销资讯"
+      },
+      "erased": {
+        "badge": "已抹除",
+        "name": "(已抹除)"
+      },
+      "filters": {
+        "erased": "已抹除",
+        "not_erased": "未抹除"
       },
       "groups": {
         "bulk_add_action": "添加到分组…",
@@ -724,6 +734,21 @@
         "view_members": "查看成员"
       },
       "new_sheet_description": "在此创建的客户未设置密码。他们首次登录时将收到一个魔法链接。",
+      "privacy": {
+        "already_anonymized": "个人数据已于 {{date}} 抹除",
+        "anonymize": "抹除个人数据",
+        "anonymize_confirm_message": "其姓名、邮箱、电话和地址将在所有位置被替换，并且该客户会被登出。订单和付款记录将保留，但不含个人信息。此操作无法撤销。",
+        "anonymize_confirm_title": "确定抹除该客户的个人数据吗？",
+        "consent_updated": "营销同意最近更新于 {{date}}",
+        "description": "响应数据保护请求。客户的订单和余额将保留；其个人信息会从商店保存的所有位置移除。",
+        "export": "导出数据",
+        "export_failed": "无法导出数据",
+        "messages": {
+          "anonymized": "个人数据已抹除"
+        },
+        "title": "隐私与数据",
+        "anonymize_again": "再次抹除"
+      },
       "row_actions": {
         "delete_confirm": "删除 {{email}}？已有已完成订单的客户无法被移除。"
       },

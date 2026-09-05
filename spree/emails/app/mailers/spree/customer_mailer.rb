@@ -17,5 +17,26 @@ module Spree
         )
       end
     end
+
+    # The finished subject access export (GDPR Art. 15). The link is signed
+    # and expires with the request, so the file is reachable by the person who
+    # asked for it and not by anyone who later reads the mailbox.
+    def data_export_email(data_request)
+      @data_request = data_request
+      @current_store = data_request.store
+      # A store route rather than a raw storage URL: a signed storage link
+      # cannot be built off-request on the Disk service, and mailing one would
+      # put a direct object address in an inbox where it outlives the request.
+      @download_url = Spree::Api::DataRequestUrls.download_url(data_request, @current_store.formatted_url)
+      @expires_at = data_request.expires_at
+
+      with_store_locale(@current_store) do
+        mail(
+          to: data_request.email,
+          subject: "#{@current_store.name} #{Spree.t('customer_mailer.data_export_email.subject')}",
+          store_url: @current_store.storefront_url
+        )
+      end
+    end
   end
 end

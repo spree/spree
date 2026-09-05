@@ -9,9 +9,17 @@ module Spree
                  phone: [:string, nullable: true], accepts_email_marketing: :boolean,
                  available_store_credit_total: :string, display_available_store_credit_total: :string,
                  default_billing_address: { nullable: true }, default_shipping_address: { nullable: true },
-                 newsletter_subscriber: { nullable: true }
+                 newsletter_subscriber: { nullable: true },
+                 email_marketing_consent_updated_at: [:string, nullable: true]
 
         attributes :email, :first_name, :last_name, :phone, :accepts_email_marketing
+
+        # When the opt-in last moved. Customer-facing because a person asking
+        # "when did I agree to this?" is exercising a right, not reading
+        # operational data.
+        attribute :email_marketing_consent_updated_at do |user|
+          user.email_marketing_consent_updated_at&.iso8601
+        end
 
         attribute :full_name do |user|
           user.full_name.presence || user.email

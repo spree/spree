@@ -651,6 +651,7 @@
       },
       "columns": {
         "companies": "Firmen",
+        "erased": "Gelöscht",
         "groups": "Gruppen",
         "last_order": "Letzte Bestellung",
         "newsletter": "Newsletter",
@@ -662,7 +663,8 @@
           "delete_confirm_message": "Diese Adresse löschen?"
         },
         "customer_since": "Kunde seit",
-        "delete_label": "Kunde löschen",
+        "delete_confirm_message": "Damit wird das Konto vollständig entfernt; nach einer abgeschlossenen Bestellung ist das nicht mehr möglich. Für eine Löschanfrage einer Person, die bereits gekauft hat, nutzen Sie stattdessen „Personenbezogene Daten löschen“.",
+        "delete_label": "Kundin oder Kunden löschen",
         "edit_profile_description": "Aktualisieren Sie die Profilinformationen des Kunden.",
         "groups": {
           "edit_description": "Gruppen hinzufügen oder entfernen, denen dieser Kunde angehört.",
@@ -691,6 +693,14 @@
           "title": "Guthaben"
         },
         "subscribed_to_marketing": "Marketing abonniert"
+      },
+      "erased": {
+        "badge": "Gelöscht",
+        "name": "(gelöscht)"
+      },
+      "filters": {
+        "erased": "Gelöscht",
+        "not_erased": "Nicht gelöscht"
       },
       "groups": {
         "bulk_add_action": "Zu Gruppe hinzufügen…",
@@ -726,6 +736,21 @@
         "view_members": "Mitglieder anzeigen"
       },
       "new_sheet_description": "Hier angelegte Kunden haben kein Passwort festgelegt. Sie erhalten beim ersten Anmelden einen Magic Link.",
+      "privacy": {
+        "already_anonymized": "Personenbezogene Daten wurden am {{date}} gelöscht",
+        "anonymize": "Personenbezogene Daten löschen",
+        "anonymize_confirm_message": "Name, E-Mail-Adresse, Telefonnummer und Anschriften werden überall ersetzt und die Person wird abgemeldet. Bestellungen und Zahlungsbelege bleiben erhalten, ohne die persönlichen Angaben. Dies kann nicht rückgängig gemacht werden.",
+        "anonymize_confirm_title": "Personenbezogene Daten dieser Person löschen?",
+        "consent_updated": "Marketing-Einwilligung zuletzt geändert am {{date}}",
+        "description": "Beantworten Sie eine Datenschutzanfrage. Bestellungen und Guthaben des Kunden bleiben erhalten; seine personenbezogenen Daten werden überall dort entfernt, wo der Shop sie speichert.",
+        "export": "Daten exportieren",
+        "export_failed": "Die Daten konnten nicht exportiert werden",
+        "messages": {
+          "anonymized": "Personenbezogene Daten gelöscht"
+        },
+        "title": "Datenschutz und Daten",
+        "anonymize_again": "Erneut löschen"
+      },
       "row_actions": {
         "delete_confirm": "{{email}} löschen? Kunden mit abgeschlossenen Bestellungen können nicht entfernt werden."
       },

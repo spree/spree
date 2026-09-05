@@ -29,11 +29,24 @@ module Spree
                  total: [:string, nullable: true], display_total: [:string, nullable: true],
                  amount_due: [:string, nullable: true], display_amount_due: [:string, nullable: true],
                  completed_at: [:string, nullable: true],
+                 withdrawal_period_ends_at: [:string, nullable: true],
+                 within_withdrawal_period: :boolean,
                  billing_address: { nullable: true }, shipping_address: { nullable: true },
                  gift_card: { nullable: true }, market: { nullable: true }
 
         attribute :market_id do |order|
           order.market&.prefixed_id
+        end
+
+        # The EU cooling-off deadline. Customer-facing by design: a buyer
+        # deciding whether they can still send something back should not have
+        # to work the date out from a policy page.
+        attribute :withdrawal_period_ends_at do |order|
+          order.withdrawal_period_ends_at&.iso8601
+        end
+
+        attribute :within_withdrawal_period do |order|
+          order.within_withdrawal_period?
         end
 
         # The checkout handle this order was born from (nil for admin drafts).

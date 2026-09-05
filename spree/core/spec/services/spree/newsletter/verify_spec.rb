@@ -19,6 +19,16 @@ module Spree
     context 'with associated user' do
       let(:user) { create(:user, accepts_email_marketing: false) }
 
+      # Confirming a sign-up is a different gesture from editing a profile,
+      # and the stronger evidence of the two — a double opt-in proves the
+      # address reaches them.
+      it 'records the opt-in as a newsletter confirmation' do
+        service
+
+        expect(user.reload.email_marketing_consent_source).
+          to eq(Spree::ConsentRecord::NEWSLETTER)
+      end
+
       it 'verifies a subscription' do
         expect { service }.to change { subscriber.reload.verified_at }.from(nil).to('2137-01-01'.to_datetime).
           and change { subscriber.reload.verification_token }.to(nil)
