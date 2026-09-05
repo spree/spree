@@ -152,6 +152,14 @@ export interface PanelApiClient {
     list(params?: Record<string, unknown>): Promise<{ data: PanelDeliveryProfile[] }>
   }
   /**
+   * The store's packaging vocabulary. Read by the variant editor to offer
+   * the carton a product is packed into; the panel passes `kind` through so
+   * only cartons are listed.
+   */
+  packageTypes?: {
+    list(params?: Record<string, unknown>): Promise<{ data: PanelPackageType[] }>
+  }
+  /**
    * Headers a file download must carry beyond the bearer token.
    *
    * A download is a bare `fetch`, not an SDK call, so it bypasses whatever
@@ -266,6 +274,10 @@ export interface PanelApiClient {
 
 export interface PanelDeliveryProfile extends PanelNamedRecord {
   default?: boolean
+}
+
+export interface PanelPackageType extends PanelNamedRecord {
+  kind?: string
 }
 
 /**

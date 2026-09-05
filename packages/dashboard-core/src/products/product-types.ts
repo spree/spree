@@ -60,6 +60,9 @@ export interface PanelVariant {
   order_multiple?: number | null
   purchase_unit?: string | null
   units_per_carton?: number | null
+  cartons_per_pallet?: number | null
+  carton_weight?: string | number | null
+  carton_package_type_id?: string | null
   track_inventory?: boolean
   preorderable?: boolean
   preorder_ships_at?: string | null

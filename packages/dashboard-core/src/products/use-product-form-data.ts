@@ -5,6 +5,7 @@ import type {
   PanelMarket,
   PanelNamedRecord,
   PanelOptionType,
+  PanelPackageType,
   PanelProductType,
 } from '../api-client'
 import { getApiClient } from '../api-client'
@@ -124,6 +125,18 @@ export function useFormDeliveryProfiles() {
     queryFn: async (): Promise<{ data: PanelDeliveryProfile[] }> =>
       (await client.deliveryProfiles?.list({ limit: 100 })) ?? { data: [] },
     enabled: Boolean(client.deliveryProfiles),
+    staleTime: FIVE_MINUTES,
+  })
+}
+
+export function useFormCartonPackageTypes() {
+  const client = getApiClient()
+
+  return useQuery({
+    queryKey: useResourceKey('panel-form-carton-package-types'),
+    queryFn: async (): Promise<{ data: PanelPackageType[] }> =>
+      (await client.packageTypes?.list({ limit: 100, kind: 'carton' })) ?? { data: [] },
+    enabled: Boolean(client.packageTypes),
     staleTime: FIVE_MINUTES,
   })
 }

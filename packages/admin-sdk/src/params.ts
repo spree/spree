@@ -955,6 +955,16 @@ export interface ProductVariantInput {
    *  pre-orders. Null = unlimited. */
   backorder_limit?: number | null
   tax_category_id?: string
+  /** The carton this variant is packed into — a `PackageType` of kind
+   *  `carton`. Its dimensions are shared by every product packed the same
+   *  way, so a corrected carton size fixes all of them at once. */
+  carton_package_type_id?: string | null
+  /** How many units fill one carton. */
+  units_per_carton?: number | null
+  /** What one packed carton weighs, in the variant's weight unit. */
+  carton_weight?: string | number | null
+  /** How many cartons stack on one pallet. */
+  cartons_per_pallet?: number | null
   position?: number
   barcode?: string
   /** Omit for a simple no-options product (upserts onto the default variant). */
@@ -1152,6 +1162,16 @@ export interface VariantCreateParams {
   preorder_ships_at?: string | null
   backorder_limit?: number | null
   tax_category_id?: string
+  /** The carton this variant is packed into — a `PackageType` of kind
+   *  `carton`. Its dimensions are shared by every product packed the same
+   *  way, so a corrected carton size fixes all of them at once. */
+  carton_package_type_id?: string | null
+  /** How many units fill one carton. */
+  units_per_carton?: number | null
+  /** What one packed carton weighs, in the variant's weight unit. */
+  carton_weight?: string | number | null
+  /** How many cartons stack on one pallet. */
+  cartons_per_pallet?: number | null
   position?: number
   barcode?: string
   /**
@@ -1183,6 +1203,16 @@ export interface VariantUpdateParams {
   preorder_ships_at?: string | null
   backorder_limit?: number | null
   tax_category_id?: string
+  /** The carton this variant is packed into — a `PackageType` of kind
+   *  `carton`. Its dimensions are shared by every product packed the same
+   *  way, so a corrected carton size fixes all of them at once. */
+  carton_package_type_id?: string | null
+  /** How many units fill one carton. */
+  units_per_carton?: number | null
+  /** What one packed carton weighs, in the variant's weight unit. */
+  carton_weight?: string | number | null
+  /** How many cartons stack on one pallet. */
+  cartons_per_pallet?: number | null
   position?: number
   barcode?: string
   /** Partial update — omit to leave option values untouched. */

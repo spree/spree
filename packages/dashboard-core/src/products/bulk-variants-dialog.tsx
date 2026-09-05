@@ -16,6 +16,7 @@ import { type UseFormReturn, useWatch } from 'react-hook-form'
 import { useTranslation } from 'react-i18next'
 import { normalizeCustomsDescription, normalizeHsCode } from './normalize-customs'
 import {
+  useFormCartonPackageTypes as useCartonPackageTypes,
   useFormOptionTypes as useOptionTypes,
   useFormTaxCategories as useTaxCategories,
 } from './use-product-form-data'
@@ -50,6 +51,8 @@ export function BulkVariantsDialog({ form, open, onOpenChange }: Props) {
   const optionTypes = useMemo(() => optionTypesData?.data ?? [], [optionTypesData])
   const { data: taxCategoriesResponse } = useTaxCategories()
   const taxCategories = taxCategoriesResponse?.data ?? []
+  const { data: cartonTypesResponse } = useCartonPackageTypes()
+  const cartonTypes = cartonTypesResponse?.data ?? []
   const { countries } = useCountries()
   const countryName = useCountryDisplayName()
 
@@ -112,6 +115,9 @@ export function BulkVariantsDialog({ form, open, onOpenChange }: Props) {
         hsCode: v.hs_code ?? null,
         countryOfOrigin: v.country_of_origin ?? null,
         customsDescription: v.customs_description ?? null,
+        cartonPackageTypeId: v.carton_package_type_id ?? null,
+        cartonWeight: v.carton_weight != null ? String(v.carton_weight) : null,
+        cartonsPerPallet: v.cartons_per_pallet != null ? String(v.cartons_per_pallet) : null,
       })),
     [variants, optionTypes],
   )
@@ -151,6 +157,24 @@ export function BulkVariantsDialog({ form, open, onOpenChange }: Props) {
         case 'customsDescription':
           set(`variants.${idx}.customs_description`, normalizeCustomsDescription(change.value))
           break
+        case 'cartonPackageTypeId':
+          set(`variants.${idx}.carton_package_type_id`, change.value)
+          break
+        // Counts are held as typed strings so an unusable entry can be
+        // reported rather than silently coerced away.
+        case 'cartonsPerPallet':
+          set(`variants.${idx}.cartons_per_pallet`, change.value)
+          break
+        case 'cartonWeight': {
+          if (change.value == null || change.value.trim() === '') {
+            set(`variants.${idx}.carton_weight`, null)
+            break
+          }
+          const parsed = Number(change.value.trim().replace(',', '.'))
+          if (!Number.isFinite(parsed) || parsed < 0) break
+          set(`variants.${idx}.carton_weight`, parsed)
+          break
+        }
         case 'preorderable':
           set(`variants.${idx}.preorderable`, change.value)
           break
@@ -218,6 +242,11 @@ export function BulkVariantsDialog({ form, open, onOpenChange }: Props) {
                 : undefined
             }
             countryOptions={countryOptions.length > 0 ? countryOptions : undefined}
+            cartonOptions={
+              cartonTypes.length > 0
+                ? cartonTypes.map((carton) => ({ value: carton.id, label: carton.name }))
+                : undefined
+            }
             labels={{
               variant: t('admin.pages.products.price_lists.edit_prices.columns.variant'),
               sku: t('admin.fields.variant.sku.label'),
@@ -234,10 +263,14 @@ export function BulkVariantsDialog({ form, open, onOpenChange }: Props) {
               hsCode: t('admin.fields.variant.hs_code.label'),
               countryOfOrigin: t('admin.fields.variant.country_of_origin.label'),
               customsDescription: t('admin.fields.variant.customs_description.label'),
+              cartonPackageType: t('admin.fields.variant.carton_package_type_id.label'),
+              cartonWeight: t('admin.fields.variant.carton_weight.label'),
+              cartonsPerPallet: t('admin.fields.variant.cartons_per_pallet.label'),
               variantDefault: t('admin.products.variants.default_variant'),
               unitDefault: t('admin.products.variants.bulk_edit.unset'),
               taxCategoryNone: t('admin.products.variants.sheet.tax_category_placeholder'),
               countryOfOriginNone: t('admin.products.variants.bulk_edit.unset'),
+              cartonPackageTypeNone: t('admin.products.variants.bulk_edit.unset'),
               gridAriaLabel: t('admin.products.variants.bulk_edit.grid_aria'),
             }}
           />

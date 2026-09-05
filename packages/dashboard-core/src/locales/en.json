@@ -842,7 +842,18 @@
         "units_per_carton": {
           "label": "Units per carton"
         },
-        "quantity_rule_invalid": "Enter a whole number greater than zero, or leave blank."
+        "quantity_rule_invalid": "Enter a whole number greater than zero, or leave blank.",
+        "carton_package_type_id": {
+          "label": "Carton",
+          "help": "The carton this product is packed into. Its size is shared by everything packed the same way."
+        },
+        "carton_weight": {
+          "label": "Carton weight",
+          "help": "What one packed carton weighs."
+        },
+        "cartons_per_pallet": {
+          "label": "Cartons per pallet"
+        }
       },
       "minimum_order_quantity": {
         "label": "Minimum order quantity",
@@ -1512,7 +1523,10 @@
           "identity": "Identity",
           "tax_category_placeholder": "Inherit from product",
           "ordering": "B2B ordering",
-          "ordering_help": "How much a buyer must take. Stock is still counted in units."
+          "ordering_help": "How much a buyer must take. Stock is still counted in units.",
+          "packing": "Packing",
+          "packing_help": "How this product leaves the warehouse in bulk. Freight quotes are built from these numbers.",
+          "carton_placeholder": "No carton"
         },
         "title": "Variants",
         "variant_label": "Variant"

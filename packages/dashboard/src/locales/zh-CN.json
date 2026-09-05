@@ -2260,7 +2260,18 @@
         "units_per_carton": {
           "label": "每箱件数"
         },
-        "quantity_rule_invalid": "请输入大于零的整数，或留空。"
+        "quantity_rule_invalid": "请输入大于零的整数，或留空。",
+        "carton_package_type_id": {
+          "label": "纸箱",
+          "help": "此商品所装的纸箱。同样装法的商品共用它的尺寸。"
+        },
+        "carton_weight": {
+          "label": "整箱重量",
+          "help": "装满一箱后的重量。"
+        },
+        "cartons_per_pallet": {
+          "label": "每托盘箱数"
+        }
       },
       "webhook_endpoint": {
         "active": {
@@ -4237,7 +4248,10 @@
           "identity": "标识",
           "tax_category_placeholder": "继承自商品",
           "ordering": "B2B 订购",
-          "ordering_help": "买家必须订购的数量。库存仍以件计算。"
+          "ordering_help": "买家必须订购的数量。库存仍以件计算。",
+          "packing": "装箱",
+          "packing_help": "此商品成批出库的方式。货运报价依据这些数字计算。",
+          "carton_placeholder": "未装箱"
         },
         "title": "变体",
         "variant_label": "变体"

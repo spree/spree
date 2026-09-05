@@ -21,6 +21,9 @@ export interface BulkVariantsRow {
   /** ISO 3166-1 alpha-2 code, never a country record id. */
   countryOfOrigin?: string | null
   customsDescription?: string | null
+  cartonPackageTypeId?: string | null
+  cartonWeight?: string | null
+  cartonsPerPallet?: string | null
 }
 
 export type BulkVariantsField =
@@ -38,6 +41,9 @@ export type BulkVariantsField =
   | 'hsCode'
   | 'countryOfOrigin'
   | 'customsDescription'
+  | 'cartonPackageTypeId'
+  | 'cartonWeight'
+  | 'cartonsPerPallet'
 
 export type BulkVariantsChange =
   | { field: Exclude<BulkVariantsField, 'preorderable'>; value: string | null }
@@ -60,6 +66,9 @@ export interface BulkVariantsTableLabels {
   hsCode: string
   countryOfOrigin: string
   customsDescription: string
+  cartonPackageType: string
+  cartonWeight: string
+  cartonsPerPallet: string
   /** Placeholder for a variant row with no options text (e.g. "Default"). */
   variantDefault: string
   /** Shown in unit cells with no explicit value ("inherit the default"). */
@@ -68,6 +77,8 @@ export interface BulkVariantsTableLabels {
   taxCategoryNone: string
   /** Shown in the country-of-origin cell when none is set. */
   countryOfOriginNone: string
+  /** Shown in the carton cell when the variant is packed into none. */
+  cartonPackageTypeNone: string
   /** Aria label on the DataGrid for screen readers. */
   gridAriaLabel?: string
 }
@@ -80,6 +91,8 @@ export interface BulkVariantsTableProps {
   dimensionUnitOptions: ReadonlyArray<{ value: string; label: string }>
   /** Omit to hide the tax-category column (no tax categories configured). */
   taxCategoryOptions?: ReadonlyArray<{ value: string; label: string }>
+  /** The store's cartons. Omit to hide the packing columns entirely. */
+  cartonOptions?: ReadonlyArray<{ value: string; label: string }>
   /**
    * Countries as `{ value: ISO, label: name }`. Omit to hide the customs
    * columns entirely (e.g. the country list has not loaded yet). Values are
@@ -116,13 +129,15 @@ export function BulkVariantsTable({
   dimensionUnitOptions,
   taxCategoryOptions,
   countryOptions,
+  cartonOptions,
   onChange,
 }: BulkVariantsTableProps) {
   const columns = useMemo<ColumnDef<BulkVariantsRow>[]>(() => {
     // Keyboard column coordinates, fixed per column: variant label is
     // read-only (unregistered), then sku=1, barcode=2, weight=3, unit=4,
     // height=5, width=6, depth=7, unit=8, preorderable=9, backorder=10,
-    // tax=11, hs code=12, origin=13, customs description=14.
+    // tax=11, hs code=12, origin=13, customs description=14, carton=15,
+    // carton weight=16, cartons per pallet=17.
     const numericHeader = (label: string) => () => <span className="block text-right">{label}</span>
     const rowLabel = (r: BulkVariantsRow) => r.variantLabel ?? labels.variantDefault
 
@@ -292,6 +307,55 @@ export function BulkVariantsTable({
       )
     }
 
+    // The packing chain travels together: a carton weight or a pallet count
+    // means nothing without the carton they describe.
+    if (cartonOptions) {
+      defs.push(
+        {
+          id: 'carton_package_type',
+          header: labels.cartonPackageType,
+          cell: ({ row }) => (
+            <SelectCell
+              coords={{ row: row.index, col: 15 }}
+              value={row.original.cartonPackageTypeId ?? null}
+              options={cartonOptions}
+              nullLabel={labels.cartonPackageTypeNone}
+              onChange={(next) =>
+                onChange(row.original.id, { field: 'cartonPackageTypeId', value: next })
+              }
+              ariaLabel={`${labels.cartonPackageType} — ${rowLabel(row.original)}`}
+            />
+          ),
+        },
+        {
+          id: 'carton_weight',
+          header: numericHeader(labels.cartonWeight),
+          cell: ({ row }) => (
+            <DecimalCell
+              coords={{ row: row.index, col: 16 }}
+              value={row.original.cartonWeight ?? null}
+              onChange={(next) => onChange(row.original.id, { field: 'cartonWeight', value: next })}
+              ariaLabel={`${labels.cartonWeight} — ${rowLabel(row.original)}`}
+            />
+          ),
+        },
+        {
+          id: 'cartons_per_pallet',
+          header: numericHeader(labels.cartonsPerPallet),
+          cell: ({ row }) => (
+            <DecimalCell
+              coords={{ row: row.index, col: 17 }}
+              value={row.original.cartonsPerPallet ?? null}
+              onChange={(next) =>
+                onChange(row.original.id, { field: 'cartonsPerPallet', value: next })
+              }
+              ariaLabel={`${labels.cartonsPerPallet} — ${rowLabel(row.original)}`}
+            />
+          ),
+        },
+      )
+    }
+
     // Reorder to visual sequence: the coordinate map above is stable, but
     // the defs array built column groups out of order for concision.
     const order = [
@@ -310,6 +374,9 @@ export function BulkVariantsTable({
       'hs_code',
       'country_of_origin',
       'customs_description',
+      'carton_package_type',
+      'carton_weight',
+      'cartons_per_pallet',
     ]
     return defs.sort((a, b) => order.indexOf(a.id as string) - order.indexOf(b.id as string))
   }, [
@@ -319,6 +386,7 @@ export function BulkVariantsTable({
     dimensionUnitOptions,
     taxCategoryOptions,
     countryOptions,
+    cartonOptions,
   ])
 
   return (
@@ -327,7 +395,9 @@ export function BulkVariantsTable({
         rows={rows}
         columns={columns}
         getRowId={(row) => row.id}
-        className={countryOptions ? 'min-w-[1500px]' : 'min-w-[1100px]'}
+        className={
+          cartonOptions ? 'min-w-[1900px]' : countryOptions ? 'min-w-[1500px]' : 'min-w-[1100px]'
+        }
         aria-label={labels.gridAriaLabel}
       />
     </div>

@@ -9396,6 +9396,18 @@ paths:
                   - name: customs_description
                     label: Customs Description
                     required: false
+                  - name: carton
+                    label: Carton
+                    required: false
+                  - name: units_per_carton
+                    label: Units per Carton
+                    required: false
+                  - name: carton_weight
+                    label: Carton Weight
+                    required: false
+                  - name: cartons_per_pallet
+                    label: Cartons per Pallet
+                    required: false
                   - name: image1_src
                     label: Image 1 URL
                     required: false
@@ -9587,6 +9599,18 @@ paths:
                 - name: customs_description
                   label: Customs Description
                   required: false
+                - name: carton
+                  label: Carton
+                  required: false
+                - name: units_per_carton
+                  label: Units per Carton
+                  required: false
+                - name: carton_weight
+                  label: Carton Weight
+                  required: false
+                - name: cartons_per_pallet
+                  label: Cartons per Pallet
+                  required: false
                 - name: image1_src
                   label: Image 1 URL
                   required: false
@@ -9747,50 +9771,66 @@ paths:
                   file_column:
                   required: false
                 - id: immap_5CQZnCRf8J
-                  schema_field: image1_src
+                  schema_field: carton
                   file_column:
                   required: false
                 - id: immap_M2nyloHRUQ
-                  schema_field: image2_src
+                  schema_field: units_per_carton
                   file_column:
                   required: false
                 - id: immap_prklVeMgbn
-                  schema_field: image3_src
+                  schema_field: carton_weight
                   file_column:
                   required: false
                 - id: immap_so8jaGonyx
-                  schema_field: option1_name
+                  schema_field: cartons_per_pallet
                   file_column:
                   required: false
                 - id: immap_rsClYtECFI
-                  schema_field: option1_value
+                  schema_field: image1_src
                   file_column:
                   required: false
                 - id: immap_8DR0I7fEbw
-                  schema_field: option2_name
+                  schema_field: image2_src
                   file_column:
                   required: false
                 - id: immap_aAtNvLSUAr
-                  schema_field: option2_value
+                  schema_field: image3_src
                   file_column:
                   required: false
                 - id: immap_QiA48cIW7A
-                  schema_field: option3_name
+                  schema_field: option1_name
                   file_column:
                   required: false
                 - id: immap_QDA48cIW7A
-                  schema_field: option3_value
+                  schema_field: option1_value
                   file_column:
                   required: false
                 - id: immap_8cR0I7fEbw
-                  schema_field: category1
+                  schema_field: option2_name
                   file_column:
                   required: false
                 - id: immap_oqlrKdXjaP
-                  schema_field: category2
+                  schema_field: option2_value
                   file_column:
                   required: false
                 - id: immap_48Olu6p4zZ
+                  schema_field: option3_name
+                  file_column:
+                  required: false
+                - id: immap_qp31JYFduR
+                  schema_field: option3_value
+                  file_column:
+                  required: false
+                - id: immap_JgaEBgznCp
+                  schema_field: category1
+                  file_column:
+                  required: false
+                - id: immap_tXyJwvFCuK
+                  schema_field: category2
+                  file_column:
+                  required: false
+                - id: immap_NJzXvxTk8u
                   schema_field: category3
                   file_column:
                   required: false
@@ -10049,6 +10089,18 @@ paths:
                 - name: customs_description
                   label: Customs Description
                   required: false
+                - name: carton
+                  label: Carton
+                  required: false
+                - name: units_per_carton
+                  label: Units per Carton
+                  required: false
+                - name: carton_weight
+                  label: Carton Weight
+                  required: false
+                - name: cartons_per_pallet
+                  label: Cartons per Pallet
+                  required: false
                 - name: image1_src
                   label: Image 1 URL
                   required: false
@@ -10298,6 +10350,18 @@ paths:
                 - name: customs_description
                   label: Customs Description
                   required: false
+                - name: carton
+                  label: Carton
+                  required: false
+                - name: units_per_carton
+                  label: Units per Carton
+                  required: false
+                - name: carton_weight
+                  label: Carton Weight
+                  required: false
+                - name: cartons_per_pallet
+                  label: Cartons per Pallet
+                  required: false
                 - name: image1_src
                   label: Image 1 URL
                   required: false
@@ -10450,50 +10514,66 @@ paths:
                   file_column:
                   required: false
                 - id: immap_5CQZnCRf8J
+                  schema_field: carton
+                  file_column:
+                  required: false
+                - id: immap_M2nyloHRUQ
+                  schema_field: units_per_carton
+                  file_column:
+                  required: false
+                - id: immap_prklVeMgbn
+                  schema_field: carton_weight
+                  file_column:
+                  required: false
+                - id: immap_so8jaGonyx
+                  schema_field: cartons_per_pallet
+                  file_column:
+                  required: false
+                - id: immap_rsClYtECFI
                   schema_field: image1_src
                   file_column: image1_src
                   required: false
-                - id: immap_M2nyloHRUQ
+                - id: immap_8DR0I7fEbw
                   schema_field: image2_src
                   file_column: image2_src
                   required: false
-                - id: immap_prklVeMgbn
+                - id: immap_aAtNvLSUAr
                   schema_field: image3_src
                   file_column: image3_src
                   required: false
-                - id: immap_so8jaGonyx
+                - id: immap_QiA48cIW7A
                   schema_field: option1_name
                   file_column: option1_name
                   required: false
-                - id: immap_rsClYtECFI
+                - id: immap_QDA48cIW7A
                   schema_field: option1_value
                   file_column: option1_value
                   required: false
-                - id: immap_8DR0I7fEbw
+                - id: immap_8cR0I7fEbw
                   schema_field: option2_name
                   file_column: option2_name
                   required: false
-                - id: immap_aAtNvLSUAr
+                - id: immap_oqlrKdXjaP
                   schema_field: option2_value
                   file_column: option2_value
                   required: false
-                - id: immap_QiA48cIW7A
+                - id: immap_48Olu6p4zZ
                   schema_field: option3_name
                   file_column: option3_name
                   required: false
-                - id: immap_QDA48cIW7A
+                - id: immap_qp31JYFduR
                   schema_field: option3_value
                   file_column: option3_value
                   required: false
-                - id: immap_8cR0I7fEbw
+                - id: immap_JgaEBgznCp
                   schema_field: category1
                   file_column: category1
                   required: false
-                - id: immap_oqlrKdXjaP
+                - id: immap_tXyJwvFCuK
                   schema_field: category2
                   file_column: category2
                   required: false
-                - id: immap_48Olu6p4zZ
+                - id: immap_NJzXvxTk8u
                   schema_field: category3
                   file_column: category3
                   required: false
@@ -10657,6 +10737,18 @@ paths:
                   required: false
                 - name: customs_description
                   label: Customs Description
+                  required: false
+                - name: carton
+                  label: Carton
+                  required: false
+                - name: units_per_carton
+                  label: Units per Carton
+                  required: false
+                - name: carton_weight
+                  label: Carton Weight
+                  required: false
+                - name: cartons_per_pallet
+                  label: Cartons per Pallet
                   required: false
                 - name: image1_src
                   label: Image 1 URL

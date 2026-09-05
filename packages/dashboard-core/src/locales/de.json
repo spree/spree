@@ -840,7 +840,18 @@
         "units_per_carton": {
           "label": "Stück pro Karton"
         },
-        "quantity_rule_invalid": "Geben Sie eine ganze Zahl größer als null ein oder lassen Sie das Feld leer."
+        "quantity_rule_invalid": "Geben Sie eine ganze Zahl größer als null ein oder lassen Sie das Feld leer.",
+        "carton_package_type_id": {
+          "label": "Karton",
+          "help": "Der Karton, in den dieses Produkt verpackt wird. Seine Maße gelten für alles, was gleich verpackt wird."
+        },
+        "carton_weight": {
+          "label": "Kartongewicht",
+          "help": "Das Gewicht eines gepackten Kartons."
+        },
+        "cartons_per_pallet": {
+          "label": "Kartons pro Palette"
+        }
       },
       "minimum_order_quantity": {
         "label": "Mindestbestellmenge",
@@ -1510,7 +1521,10 @@
           "identity": "Identität",
           "tax_category_placeholder": "Vom Produkt übernehmen",
           "ordering": "B2B-Bestellung",
-          "ordering_help": "Wie viel ein Käufer abnehmen muss. Der Bestand wird weiterhin in Stück gezählt."
+          "ordering_help": "Wie viel ein Käufer abnehmen muss. Der Bestand wird weiterhin in Stück gezählt.",
+          "packing": "Verpackung",
+          "packing_help": "Wie dieses Produkt als Großmenge das Lager verlässt. Frachtangebote beruhen auf diesen Zahlen.",
+          "carton_placeholder": "Kein Karton"
         },
         "title": "Varianten",
         "variant_label": "Variante"

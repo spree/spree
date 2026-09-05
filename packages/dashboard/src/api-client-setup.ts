@@ -66,6 +66,7 @@ setApiClient({
   },
   taxCategories: { list: (params) => adminClient.taxCategories.list(params) },
   deliveryProfiles: { list: (params) => adminClient.deliveryProfiles.list(params) },
+  packageTypes: { list: (params) => adminClient.packageTypes.list(params) },
   deleteProductMedia: (productId, mediaId) => adminClient.products.media.delete(productId, mediaId),
   mediaLibrary: { list: (params) => adminClient.media.list(params) },
   markets: { list: (params) => adminClient.markets.list(params) },

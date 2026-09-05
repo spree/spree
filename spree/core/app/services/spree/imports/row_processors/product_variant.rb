@@ -34,7 +34,15 @@ module Spree
           variant.hs_code = attributes['hs_code'] if attributes['hs_code'].present?
           variant.country_of_origin = attributes['country_of_origin'] if attributes['country_of_origin'].present?
           variant.customs_description = attributes['customs_description'] if attributes['customs_description'].present?
+          variant.units_per_carton = attributes['units_per_carton'] if attributes['units_per_carton'].present?
+          variant.carton_weight = attributes['carton_weight'] if attributes['carton_weight'].present?
+          variant.cartons_per_pallet = attributes['cartons_per_pallet'] if attributes['cartons_per_pallet'].present?
           variant.option_value_variants = prepare_option_value_variants if options.any?
+
+          if attributes['carton'].present?
+            carton = prepare_carton
+            variant.carton_package_type = carton if carton.present?
+          end
 
           if attributes['tax_category'].present?
             tax_category = prepare_tax_category
@@ -206,6 +214,15 @@ module Spree
             next existing if seller.present?
 
             existing || Spree::ProductType.create!(name: product_type_name, store_id: store.id)
+          end
+        end
+
+        # Named rather than referenced by id, like the tax category beside it —
+        # a merchant's spreadsheet says "Large carton", not a prefixed id.
+        def prepare_carton
+          carton_name = attributes['carton'].strip
+          cached_lookup(:carton_package_type, carton_name) do
+            store.package_types.find_by(name: carton_name, kind: 'carton')
           end
         end
 
