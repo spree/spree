@@ -21,7 +21,10 @@ RSpec.describe Spree::Api::V3::Admin::CommissionRatesController, type: :controll
       expect(row['id']).to start_with('crate_')
       expect(row['name']).to eq('Standard')
       expect(row['kind']).to eq('percentage')
-      expect(row['rules'].first).to include('type' => 'seller_rule', 'label' => 'Seller')
+      # The rule is identified by `type` alone — the dashboard names it from
+      # its own locale files rather than from a server-resolved label.
+      expect(row['rules'].first).to include('type' => 'seller_rule')
+      expect(row['rules'].first).not_to have_key('label')
     end
 
     it 'returns rates in precedence order' do
