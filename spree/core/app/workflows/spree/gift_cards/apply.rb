@@ -98,9 +98,25 @@ module Spree
       def release_open_holds
         @released_holds = []
 
-        gift_card.open_holds(except: order).each { |hold| release_hold(hold) }
+        holds = gift_card.open_holds(except: order)
+        return if holds.empty?
+
+        # Every hold row is locked up front, in id order, before the first
+        # removal takes the gift-card lock. That card lock is then held for
+        # the rest of this transaction, so acquiring a hold lock after it
+        # would invert the record-then-card order Spree::GiftCards::Remove
+        # uses and could deadlock against a concurrent removal.
+        lock_holds(holds).each { |hold| release_hold(hold) }
 
         gift_card.reload
+      end
+
+      # Locks in id order within each class so two workflows racing over the
+      # same holds queue rather than cross.
+      def lock_holds(holds)
+        holds.group_by(&:class).flat_map do |klass, records|
+          klass.where(id: records.map(&:id)).order(:id).lock.to_a
+        end
       end
 
       # Re-reads the hold under its own lock before removing anything. The

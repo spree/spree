@@ -252,6 +252,51 @@ RSpec.describe Spree::GiftCards::Apply do
     end
   end
 
+  context 'when several carts hold the card' do
+    let!(:first_hold) { create(:cart, store: store, customer: order_user) }
+    let!(:second_hold) { create(:cart, store: store, customer: order_user) }
+
+    # Applying twice would move the card rather than leave both holding it,
+    # so the second hold is attached directly — the state this workflow has
+    # to cope with when older data or an extension left two rows behind.
+    before do
+      [first_hold, second_hold].each { |hold| hold.update_column(:total, 10) }
+      expect(Spree.gift_card_apply_workflow.call(gift_card: gift_card, order: first_hold)).to be_success
+      second_hold.update_column(:gift_card_id, gift_card.id)
+    end
+
+    it 'releases every hold and reclaims the balance' do
+      expect(subject).to be_success
+
+      expect(first_hold.reload.gift_card).to be_nil
+      expect(second_hold.reload.gift_card).to be_nil
+      expect(order.reload.gift_card).to eq(gift_card)
+      expect(order.gift_card_total).to eq(30)
+    end
+
+    # Every hold row is locked before the first removal takes the card lock,
+    # which the transaction then holds. Locking a hold after that would invert
+    # the record-then-card order Remove uses.
+    it 'locks every hold before the first removal' do
+      locked_holds = 0
+      removals = 0
+
+      allow_any_instance_of(described_class).to receive(:release_hold).and_wrap_original do |original, *args|
+        removals += 1
+        expect(locked_holds).to eq(2)
+        original.call(*args)
+      end
+      allow_any_instance_of(described_class).to receive(:lock_holds).and_wrap_original do |original, *args|
+        result = original.call(*args)
+        locked_holds = result.size
+        result
+      end
+
+      expect(subject).to be_success
+      expect(removals).to eq(2)
+    end
+  end
+
   context 'lock ordering' do
     let(:other_cart) { create(:cart, store: store, customer: order_user) }
 
