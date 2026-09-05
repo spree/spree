@@ -111,9 +111,13 @@ RSpec.describe 'Seller Orders API', type: :request, swagger_doc: 'api-reference/
         the marketplace's own list.
 
         The goods go back on the shelf and the payment authorization is
-        released. Money already taken is **not** returned: that is the
-        operator's decision, so this endpoint accepts no refund arguments at
-        all rather than defaulting one a caller could override.
+        released either way. `refund_payments` also hands back what the buyer
+        paid for these goods — a seller is merchant of record for their own
+        child order, and on a split checkout only that order's share of the
+        group's payment is settled.
+
+        There is no `refund_amount`: withdrawing from the whole order returns
+        what that order was paid, and a partial figure is a return.
       DESC
 
       parameter name: 'X-Spree-Seller-Id', in: :header, type: :string, required: true
@@ -126,6 +130,10 @@ RSpec.describe 'Seller Orders API', type: :request, swagger_doc: 'api-reference/
             description: 'A reason from GET /order_cancellation_reasons'
           },
           cancel_note: { type: :string, nullable: true, description: 'Free text beside the reason' },
+          refund_payments: {
+            type: :boolean,
+            description: "Hand back what the buyer paid for this order's goods"
+          },
           notify_customer: { type: :boolean, description: 'Email the customer about the cancellation' }
         }
       }

@@ -201,6 +201,29 @@ RSpec.describe Spree::Api::V3::Seller::OrdersController, type: :controller do
       expect(response).to have_http_status(:not_found)
       expect(theirs.reload).not_to be_canceled
     end
+
+    # A seller is merchant of record for their own child order, so the party
+    # who owes the buyer their money back is the party who took it.
+    it 'hands back what the buyer paid when asked' do
+      patch :cancel, params: { id: mine.prefixed_id, refund_payments: true }, as: :json
+
+      expect(response).to have_http_status(:ok)
+      expect(mine.reload).to be_canceled
+    end
+
+    # The seller decides whether to refund, never how much: withdrawing from
+    # the whole order returns what that order was paid.
+    it 'ignores a partial amount the seller names' do
+      expect(Spree.order_cancel_workflow).to receive(:call).
+        with(hash_excluding(:refund_amount)).
+        and_return(Spree::ServiceModule::Result.new(true, mine))
+
+      patch :cancel, params: {
+        id: mine.prefixed_id, refund_payments: true, refund_amount: '1.00'
+      }, as: :json
+
+      expect(response).to have_http_status(:ok)
+    end
   end
 
   describe 'PATCH #cancel with a reason' do

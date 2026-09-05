@@ -17,8 +17,12 @@ export function useOrder(orderId: string) {
 export function useCancelOrder(orderId: string) {
   return useOrderMutation(
     orderId,
-    (params?: { cancel_reason_id?: string; cancel_note?: string; notify_customer?: boolean }) =>
-      sellerClient().orders.cancel(orderId, params),
+    (params?: {
+      cancel_reason_id?: string
+      cancel_note?: string
+      refund_payments?: boolean
+      notify_customer?: boolean
+    }) => sellerClient().orders.cancel(orderId, params),
   )
 }
 

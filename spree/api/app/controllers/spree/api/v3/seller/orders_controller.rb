@@ -28,11 +28,17 @@ module Spree
           # A seller withdrawing from an order they cannot fulfil, naming a
           # reason from the marketplace's own list.
           #
-          # Deliberately takes no `refund_payments` or `refund_amount`: the
-          # workflow releases the authorization either way, but returning money
-          # already taken is the operator's decision, and leaving the arguments
-          # off is what keeps that true rather than a default a caller could
-          # override.
+          # `refund_payments` hands back what the buyer paid for these goods.
+          # A seller is merchant of record for their own child order, so the
+          # party who owes that money back is the party who took it — and on a
+          # split checkout the workflow settles through this order's own
+          # payment splits, capped at each share, so a seller can never reach
+          # a sibling's money.
+          #
+          # Deliberately takes no `refund_amount`: withdrawing from the whole
+          # order returns what that order was paid, and a seller choosing a
+          # partial figure is a return, which has its own endpoint and its own
+          # bound.
           def cancel
             with_order_lock do
               result = Spree.order_cancel_workflow.call(
@@ -40,6 +46,7 @@ module Spree
                 canceler: try_spree_current_user,
                 reason: cancel_reason,
                 note: params[:cancel_note].presence,
+                refund_payments: params[:refund_payments].to_b,
                 notify_customer: params[:notify_customer].to_b
               )
 

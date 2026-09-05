@@ -153,4 +153,41 @@ RSpec.describe 'refunding a child order of a split checkout' do
       expect(Spree::Refund.where(originator: exchange).map(&:payment).uniq).to eq([payment])
     end
   end
+
+  # Cancelling a child order is the other way money goes back, and a seller
+  # may cancel their own. The bound has to hold there too: the workflow reads
+  # this order's shares, never the whole payment.
+  describe Spree::Orders::Cancel do
+    # A dispatched order cannot be withdrawn from, so these use orders that
+    # have not gone out — which is the case a seller actually cancels.
+    before do
+      [order, sibling].each do |placed|
+        placed.fulfillments.update_all(status: 'unfulfilled')
+        placed.update_columns(fulfillment_status: 'unfulfilled')
+        placed.reload
+      end
+    end
+
+    it 'refunds only this order’s share of the group payment' do
+      result = described_class.call(order: order, refund_payments: true)
+
+      expect(result).to be_success
+
+      refunds = Spree::Refund.where(order_id: order.id)
+      expect(refunds.sum(&:amount)).to eq(100)
+      # The sibling's captured share is untouched, and its own order has no
+      # refund written against it.
+      expect(Spree::Refund.where(order_id: sibling.id)).to be_empty
+      expect(sibling_split.reload.captured_amount).to eq(100)
+    end
+
+    it 'releases the authorization without refunding when not asked' do
+      result = described_class.call(order: order, refund_payments: false)
+
+      expect(result).to be_success
+      expect(Spree::Refund.where(order_id: order.id)).to be_empty
+      # The share it reserved but never drew is given up.
+      expect(split.reload.authorized_amount).to eq(split.captured_amount)
+    end
+  end
 end

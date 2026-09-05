@@ -1,5 +1,6 @@
 import { PageHeader } from '@spree/dashboard-core'
 import { DropdownMenuItem, ResourceLayout, StatusBadge } from '@spree/dashboard-ui'
+import { XCircleIcon } from '@spree/dashboard-ui/icons'
 import { useParams } from '@tanstack/react-router'
 import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
@@ -75,7 +76,8 @@ export function OrderPage() {
             destructiveItems={
               cancelable ? (
                 <DropdownMenuItem variant="destructive" onClick={() => setCanceling(true)}>
-                  {t('orders.cancel')}
+                  <XCircleIcon className="size-4" />
+                  {t('admin.pages.orders.detail.actions.cancel')}
                 </DropdownMenuItem>
               ) : undefined
             }

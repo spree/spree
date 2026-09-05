@@ -49,13 +49,15 @@
     "orders": {
       "detail": {
         "cancel": {
-          "description": "The goods go back on the shelf and the customer is no longer charged for them. Any money already taken is returned by the marketplace, not here.",
+          "description": "The reason and note are recorded on the order, and any payments are settled.",
+          "keep_order": "Keep order",
+          "no_reason": "No reason given",
           "note_label": "Note",
           "note_placeholder": "Only staff see this note",
           "notify_customer": "Email the customer",
-          "keep_order": "Keep order",
           "reason_label": "Reason",
-          "no_reason": "No reason given"
+          "refund_payments": "Refund the customer",
+          "refund_payments_help": "Money already taken is returned. An unclaimed authorization is released either way."
         },
         "fulfillments": {
           "add_tracking_title": "Add tracking",
@@ -342,7 +344,6 @@
       "shipping_title": "Edit Shipping Address"
     },
     "billing_address": "Billing address",
-    "cancel": "Cancel order",
     "columns": {
       "fulfillment": "Fulfillment",
       "number": "Order",

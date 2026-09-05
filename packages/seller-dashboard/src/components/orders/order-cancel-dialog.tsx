@@ -14,11 +14,10 @@ import { useReasons } from '../../hooks/use-reasons'
 /**
  * Withdrawing from an order this seller cannot fulfil.
  *
- * Deliberately offers no refund control: the goods return to the shelf and
- * the authorization is released either way, but giving back money already
- * taken is the operator's decision, and the endpoint accepts no refund
- * argument at all rather than showing a seller a switch that would be
- * refused.
+ * The refund is offered because a seller is merchant of record for their own
+ * child order — the party who owes the buyer their money back is the party
+ * who took it. On a split checkout the workflow settles through this order's
+ * own payment shares, so a seller can never reach a sibling's money.
  */
 export function OrderCancelDialog({ orderId, onClose }: { orderId: string; onClose: () => void }) {
   const { t } = useTranslation()
@@ -35,6 +34,7 @@ export function OrderCancelDialog({ orderId, onClose }: { orderId: string; onClo
       await cancel.mutateAsync({
         cancel_reason_id: values.cancel_reason_id || undefined,
         cancel_note: values.cancel_note.trim() || undefined,
+        refund_payments: values.refund_payments,
         notify_customer: values.notify_customer,
       })
       onClose()
@@ -46,6 +46,7 @@ export function OrderCancelDialog({ orderId, onClose }: { orderId: string; onClo
   return (
     <SharedOrderCancelDialog
       form={form}
+      showRefund
       reasonField={
         /* The reasons are the marketplace's — the operator decides what they
            are. A marketplace that has not curated them can still be pulled

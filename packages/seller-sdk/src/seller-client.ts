@@ -391,13 +391,20 @@ export class SellerClient {
     /**
      * Withdraws from an order this seller cannot fulfil.
      *
-     * Takes a reason from the marketplace's own list and an optional note.
-     * Never a refund: the authorization is released either way, but returning
-     * money already taken is the operator's decision.
+     * `refund_payments` hands back what the buyer paid for these goods — a
+     * seller is merchant of record for their own child order, and on a split
+     * checkout only that order's share is settled. There is no
+     * `refund_amount`: withdrawing from the whole order returns what that
+     * order was paid, and a partial figure is a return.
      */
     cancel: (
       id: string,
-      params?: { cancel_reason_id?: string; cancel_note?: string; notify_customer?: boolean },
+      params?: {
+        cancel_reason_id?: string
+        cancel_note?: string
+        refund_payments?: boolean
+        notify_customer?: boolean
+      },
       options?: RequestOptions,
     ): Promise<Order> =>
       this.request<Order>('PATCH', `/orders/${id}/cancel`, { ...options, body: params }),
