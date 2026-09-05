@@ -586,6 +586,9 @@ function RulesCard({
               <RuleRow
                 key={field._key}
                 draft={(watchedRules[index] ?? field) as unknown as PriceRuleFormDraft}
+                definition={registeredTypes.find(
+                  (type) => type.type === (watchedRules[index] ?? field)?.type,
+                )}
                 onEdit={() => setEditingIndex(index)}
                 onRemove={() => rulesArray.remove(index)}
               />
@@ -624,6 +627,10 @@ function RulesCard({
               (watchedRules[editingIndex] ??
                 rulesArray.fields[editingIndex]) as unknown as PriceRuleFormDraft
             }
+            definition={registeredTypes.find(
+              (type) =>
+                type.type === (watchedRules[editingIndex] ?? rulesArray.fields[editingIndex])?.type,
+            )}
             open
             onOpenChange={(o) => !o && setEditingIndex(null)}
             onSave={(next) => rulesArray.update(editingIndex, next)}
@@ -636,10 +643,13 @@ function RulesCard({
 
 function RuleRow({
   draft,
+  definition,
   onEdit,
   onRemove,
 }: {
   draft: PriceRuleFormDraft
+  /** Catalog entry for `draft.type` — the fallback for a rule with no dashboard translation. */
+  definition?: ResourceTypeDefinition
   onEdit: () => void
   onRemove: () => void
 }) {
@@ -666,10 +676,12 @@ function RuleRow({
         className="min-w-0 flex-1 px-3 py-2 text-left focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring rounded-l-md"
       >
         <div className="flex items-center gap-2">
-          <span className="text-sm font-medium">{typeLabel('price_rule', draft.type)}</span>
+          <span className="text-sm font-medium">
+            {typeLabel('price_rule', draft.type, definition?.label)}
+          </span>
           <PencilIcon className="size-3 text-muted-foreground" />
         </div>
-        <RuleSummary draft={draft} />
+        <RuleSummary draft={draft} definition={definition} />
       </button>
       <Can I="destroy" a={Subject.PriceRule}>
         <div className="flex items-center pr-1.5">
@@ -726,7 +738,13 @@ const RULE_EMBEDS: readonly RuleEmbed[] = [
 
 const PREFS_SHOWN_VIA_EMBED: ReadonlySet<string> = new Set(RULE_EMBEDS.map((e) => e.prefKey))
 
-function RuleSummary({ draft }: { draft: PriceRuleFormDraft }) {
+function RuleSummary({
+  draft,
+  definition,
+}: {
+  draft: PriceRuleFormDraft
+  definition?: ResourceTypeDefinition
+}) {
   const { t } = useTranslation()
   const parts: string[] = []
 
@@ -748,7 +766,7 @@ function RuleSummary({ draft }: { draft: PriceRuleFormDraft }) {
   if (parts.length === 0) {
     return (
       <div className="truncate text-xs text-muted-foreground">
-        {typeDescription('price_rule', draft.type) ||
+        {typeDescription('price_rule', draft.type, definition?.description) ||
           t('admin.pages.products.price_lists.rule_click_to_configure')}
       </div>
     )
@@ -847,11 +865,14 @@ function RulePickerSheet({
 
 function RuleEditSheet({
   draft,
+  definition,
   open,
   onOpenChange,
   onSave,
 }: {
   draft: PriceRuleFormDraft
+  /** Catalog entry for `draft.type` — the fallback for a rule with no dashboard translation. */
+  definition?: ResourceTypeDefinition
   open: boolean
   onOpenChange: (open: boolean) => void
   onSave: (next: PriceRuleFormDraft) => void
@@ -864,9 +885,9 @@ function RuleEditSheet({
     <Sheet open={open} onOpenChange={onOpenChange}>
       <SheetContent>
         <SheetHeader>
-          <SheetTitle>{typeLabel('price_rule', draft.type)}</SheetTitle>
+          <SheetTitle>{typeLabel('price_rule', draft.type, definition?.label)}</SheetTitle>
           <SheetDescription>
-            {typeDescription('price_rule', draft.type) ||
+            {typeDescription('price_rule', draft.type, definition?.description) ||
               t('admin.pages.products.price_lists.rule_default_description')}
           </SheetDescription>
         </SheetHeader>

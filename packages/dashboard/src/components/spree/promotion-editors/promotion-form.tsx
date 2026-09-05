@@ -1210,7 +1210,7 @@ function ActionSummary({ draft }: { draft: PromotionActionFormDraft }) {
     draft.calculator?.type
       ? {
           ...draft.calculator,
-          label: typeLabel('calculator', draft.calculator.type),
+          label: typeLabel('calculator', draft.calculator.type, draft.calculator.label),
         }
       : draft.calculator,
   )

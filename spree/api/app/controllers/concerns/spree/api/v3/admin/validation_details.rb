@@ -28,8 +28,13 @@ module Spree
 
               result[attribute] = messages.each_with_index.map do |message, index|
                 detail = details[index] || {}
-                entry = { code: detail[:error].is_a?(Symbol) ? detail[:error] : nil, message: message }
-                entry.merge(detail.except(:error))
+                # Interpolation values first, so `code` and `message` are the
+                # ones this formatter computed: a validation may itself carry a
+                # `code:` option, and it must not displace the Rails error.
+                detail.except(:error).merge(
+                  code: detail[:error].is_a?(Symbol) ? detail[:error] : nil,
+                  message: message
+                )
               end
             end
           end
