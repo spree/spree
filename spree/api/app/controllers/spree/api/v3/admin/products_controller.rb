@@ -78,6 +78,24 @@ module Spree
             render json: payload
           end
 
+          # POST /api/v3/admin/products/bulk_open_to_sellers
+          # Body: { ids: [...] }
+          #
+          # Letting sellers compete on a selection of the marketplace's own
+          # products (docs/plans/6.0-seller-master-catalog-listings.md).
+          def bulk_open_to_sellers
+            set_open_to_sellers(true)
+          end
+
+          # POST /api/v3/admin/products/bulk_close_to_sellers
+          # Body: { ids: [...] }
+          #
+          # Closing them again. Offers already on a product stay — withdrawing
+          # one is a review decision, not a side effect of this.
+          def bulk_close_to_sellers
+            set_open_to_sellers(false)
+          end
+
           # POST /api/v3/admin/products/bulk_add_to_categories
           # Body: { ids: [...], category_ids: [...] }
           def bulk_add_to_categories
@@ -216,6 +234,11 @@ module Spree
               :meta_title, :meta_description, :meta_keywords,
               :tax_category_id, :product_type_id, :delivery_profile_id,
               :promotionable,
+              # Whether sellers may list their own offers against this product.
+              # Closed by default, so opening the shared catalog is always the
+              # operator's explicit act
+              # (docs/plans/6.0-seller-master-catalog-listings.md, Decision 2).
+              :open_to_sellers,
               tags: [],
               category_ids: [],
               # Manual collection membership only — the model setter ignores
@@ -297,6 +320,22 @@ module Spree
             else
               render_service_error(@resource.errors.presence || result.error)
             end
+          end
+
+          # Only first-party products can be opened: a product a seller owns
+          # outright is theirs, and inviting rival offers onto it would be the
+          # marketplace reselling someone else's listing.
+          def set_open_to_sellers(open)
+            authorize! :update, model_class
+
+            eligible = bulk_collection.where(seller_id: nil)
+            skipped = bulk_collection.where.not(seller_id: nil).count
+
+            count = eligible.update_all(open_to_sellers: open, updated_at: Time.current)
+
+            payload = { product_count: count, open_to_sellers: open }
+            payload[:skipped_seller_owned_count] = skipped if skipped.positive?
+            render json: payload
           end
 
           def search_provider

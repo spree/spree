@@ -10,6 +10,7 @@ module Spree
         class ProductSubmissionSerializer < BaseSerializer
           typelize status: :string,
                    product_id: :string,
+                   variant_id: [:string, nullable: true],
                    review_note: [:string, nullable: true],
                    reviewed_at: [:string, nullable: true]
 
@@ -22,6 +23,13 @@ module Spree
           # fetch the row back to learn which product was decided on.
           attribute :product_id do |submission|
             submission.product&.prefixed_id
+          end
+
+          # Set when the decision was about one seller's offer rather than the
+          # product itself, so a subscriber can tell the two apart
+          # (docs/plans/6.0-seller-master-catalog-listings.md).
+          attribute :variant_id do |submission|
+            submission.variant&.prefixed_id
           end
         end
       end

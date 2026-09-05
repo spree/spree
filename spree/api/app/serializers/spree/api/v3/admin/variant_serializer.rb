@@ -21,6 +21,8 @@ module Spree
                    country_of_origin: [:string, nullable: true],
                    customs_description: [:string, nullable: true],
                    deleted_at: [:string, nullable: true],
+                   status: :string,
+                   submission: ['ProductSubmission', nullable: true],
                    delivery_profile_id: [:string, nullable: true],
                    minimum_order_quantity: ['number | null'], order_multiple: ['number | null'],
                    purchase_unit: [:string, nullable: true],
@@ -29,7 +31,8 @@ module Spree
           # The last three override the store serializer's buyer-resolved
           # values with the variant's OWN: a merchant edits what is stored on
           # the row, not what some catalog resolves to for a buyer they are not.
-          attributes :metadata, :position, :cost_price, :cost_currency,
+          attributes :status,
+                     :metadata, :position, :cost_price, :cost_currency,
                      :barcode, :weight_unit, :dimensions_unit, :backorder_limit,
                      :hs_code, :country_of_origin, :customs_description,
                      :minimum_order_quantity, :order_multiple, :purchase_unit,
@@ -77,6 +80,15 @@ module Spree
               if: proc { expand?('seller') } do |variant|
             variant.resolved_seller
           end
+
+          # The live row in this offer's review trail — who submitted, who
+          # decided, when, and what the seller was told. Nil on a first-party
+          # row, which nobody reviews
+          # (docs/plans/6.0-seller-master-catalog-listings.md).
+          one :latest_submission,
+              key: :submission,
+              resource: proc { Spree.api.admin_product_submission_serializer },
+              if: proc { expand?('submission') }
 
           # Override inherited associations to use admin serializers
           one :primary_media,

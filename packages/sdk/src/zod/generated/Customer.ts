@@ -1,0 +1,24 @@
+// This file is auto-generated. Do not edit directly.
+import { z } from 'zod';
+import { AddressSchema } from './Address';
+import { CustomerGroupSchema } from './CustomerGroup';
+import { NewsletterSubscriberSchema } from './NewsletterSubscriber';
+
+export const CustomerSchema = z.object({
+  id: z.string(),
+  email: z.string(),
+  first_name: z.string().nullable(),
+  last_name: z.string().nullable(),
+  phone: z.string().nullable(),
+  accepts_email_marketing: z.boolean(),
+  full_name: z.string(),
+  available_store_credit_total: z.string(),
+  display_available_store_credit_total: z.string(),
+  addresses: z.array(AddressSchema),
+  default_billing_address: AddressSchema.nullable(),
+  default_shipping_address: AddressSchema.nullable(),
+  newsletter_subscriber: NewsletterSubscriberSchema.nullable(),
+  customer_groups: z.array(CustomerGroupSchema),
+});
+
+export type Customer = z.infer<typeof CustomerSchema>;
