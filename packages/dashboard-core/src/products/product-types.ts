@@ -86,6 +86,12 @@ export interface PanelProduct {
   product_type_id?: string | null
   variant_count?: number
   /**
+   * Operator-only: whether sellers may list their own offers against this
+   * product. Absent on a seller's own listing, which nobody competes on
+   * (docs/plans/6.0-seller-master-catalog-listings.md).
+   */
+  open_to_sellers?: boolean
+  /**
    * Either shape: the operator's serializer expands the records, a seller's
    * answers plain ids. The mapper reads whichever it was given.
    */

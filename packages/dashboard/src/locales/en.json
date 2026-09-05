@@ -1670,6 +1670,10 @@
           "label": "Name",
           "placeholder": "Product name"
         },
+        "open_to_sellers": {
+          "label": "Open to sellers",
+          "help": "Let sellers list their own offers against this product."
+        },
         "product_type_id": {
           "help": "Controls which delivery options are offered at checkout.",
           "label": "Product type"
@@ -4064,6 +4068,9 @@
         "on_hand_aria": "On hand at {{location}}",
         "unknown_location": "Unknown location"
       },
+      "marketplace": {
+        "title": "Marketplace"
+      },
       "media": {
         "add_from_library": "Add from library",
         "add_video": "Add video link",
@@ -4086,6 +4093,36 @@
       },
       "no_categories_found": "No categories found",
       "no_collections_found": "No collections found",
+      "offers": {
+        "approve": "Approve",
+        "approve_confirm_message": "It goes on sale as soon as you approve it.",
+        "approve_confirm_title": "Approve this offer?",
+        "awaiting_review_filter": "Offers awaiting review",
+        "bulk_close": "Close to sellers",
+        "bulk_closed": "Closed {{count}} product to sellers",
+        "bulk_closed_plural": "Closed {{count}} products to sellers",
+        "bulk_failed": "Could not change these products",
+        "bulk_open": "Open to sellers",
+        "bulk_opened": "Opened {{count}} product to sellers",
+        "bulk_opened_plural": "Opened {{count}} products to sellers",
+        "columns": {
+          "options": "Variation",
+          "price": "Price",
+          "seller": "Seller",
+          "status": "Status"
+        },
+        "decided": "Offer updated",
+        "reason_placeholder": "What should the seller change?",
+        "reject": "Send back",
+        "statuses": {
+          "active": "On sale",
+          "archived": "Archived",
+          "draft": "Draft",
+          "proposed": "In review",
+          "rejected": "Needs changes"
+        },
+        "title": "Seller offers"
+      },
       "options": {
         "add_cta": "Add option type",
         "count_one": "{{count}} value",
