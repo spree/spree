@@ -11,7 +11,10 @@ export const CustomerSchema = z.object({
   last_name: z.string().nullable(),
   phone: z.string().nullable(),
   accepts_email_marketing: z.boolean(),
+<<<<<<< HEAD
   email_marketing_consent_updated_at: z.string().nullable(),
+=======
+>>>>>>> 7974eea213 (Let a seller list and manage offers through the API)
   full_name: z.string(),
   available_store_credit_total: z.string(),
   display_available_store_credit_total: z.string(),
