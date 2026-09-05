@@ -3,24 +3,18 @@ module Spree
     # Builds the export (or runs the erasure) for a data subject request off
     # the request cycle.
     #
-    # Not retry-safe by design, the same reasoning as the CSV export job: each
-    # run attaches a fresh blob and enqueues another email, so a transient
-    # failure that retried would leave the subject with two copies of
-    # everything a shop knows about them.
-    #
     # A request that fails is recorded as `failed` with its message rather
     # than left in `processing`, because a request stuck mid-flight would
     # block the subject from asking again — the pending-request check is what
-    # rate-limits them.
+    # rate-limits them. That is why the work is wrapped rather than left to
+    # raise: the base class's retries cover the transient database errors, and
+    # anything else has to leave the request in a state the subject can act on.
+    #
+    # Its own queue: an export reads a person's whole history and a statutory
+    # clock is running on it, so a shop with a long import backlog should be
+    # able to give these their own workers.
     class ProcessJob < Spree::BaseJob
-      queue_as Spree.queues.default
-
-      retry_on ActiveRecord::Deadlocked,
-               ActiveRecord::LockWaitTimeout,
-               ActiveRecord::ConnectionNotEstablished,
-               ActiveRecord::ConnectionFailed,
-               ActiveRecord::RecordNotFound,
-               attempts: 1
+      queue_as Spree.queues.data_requests
 
       def perform(data_request_id)
         data_request = Spree::DataRequest.find_by_prefix_id!(data_request_id)
