@@ -1,4 +1,8 @@
-import type { ProductFormValues, StockLevelFormValues } from '@spree/dashboard-core'
+import type {
+  StockLevelFormValues,
+  VariantFormValues,
+  VariantsFormShape,
+} from '@spree/dashboard-core'
 import { useStockLocations } from '@spree/dashboard-core'
 import {
   DataGrid,
@@ -35,9 +39,9 @@ interface InventoryRow {
 
 const LOW_STOCK_THRESHOLD = 5
 
-interface InventorySectionProps {
+interface InventorySectionProps<TFieldValues extends VariantsFormShape> {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  form: UseFormReturn<ProductFormValues, any, any>
+  form: UseFormReturn<TFieldValues, any, any>
   /**
    * Where a stock location is managed, if this panel has such a page. Built
    * by the caller because each panel's router owns its own paths and the
@@ -47,12 +51,20 @@ interface InventorySectionProps {
   stockLocationHref?: (stockLocationId: string) => string
 }
 
-export function InventorySection({ form, stockLocationHref }: InventorySectionProps) {
+export function InventorySection<TFieldValues extends VariantsFormShape>({
+  form,
+  stockLocationHref,
+}: InventorySectionProps<TFieldValues>) {
   const { t } = useTranslation()
   // Subscribe to the array so the rows recompute when the user adds/removes
   // a variant or edits a stock item. Cell edits route through findOrCreate
   // below, which calls form.setValue and re-triggers this watch.
-  const variants = useWatch({ control: form.control, name: 'variants' }) ?? []
+  // Cast at this one boundary: the component is generic over any form that
+  // carries `variants`, and `useWatch`'s path types cannot express that.
+  // Everything below reads the array through the concrete row types.
+  const variants =
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    (useWatch({ control: form.control, name: 'variants' as any }) ?? []) as VariantFormValues[]
   const { data: stockLocationsData, isLoading: stockLocationsLoading } = useStockLocations()
   const stockLocations = stockLocationsData?.data ?? []
   const { data: optionTypesData } = useOptionTypes()
@@ -111,7 +123,12 @@ export function InventorySection({ form, stockLocationHref }: InventorySectionPr
       field: 'count_on_hand' | 'backorderable',
       next: number | boolean,
     ) => {
-      const current = form.getValues(`variants.${variantIndex}.stock_levels`) ?? []
+      // Same generic boundary as the watch above: the path is well-formed
+      // for any form carrying `variants`, which RHF's `Path<T>` cannot say.
+      const current = (form.getValues(
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        `variants.${variantIndex}.stock_levels` as any,
+      ) ?? []) as StockLevelFormValues[]
       const existingIdx = current.findIndex((si) => si.stock_location_id === stockLocationId)
       const nextItems: StockLevelFormValues[] = [...current]
       if (existingIdx === -1) {
@@ -130,7 +147,10 @@ export function InventorySection({ form, stockLocationHref }: InventorySectionPr
             : { backorderable: next as boolean }),
         }
       }
-      form.setValue(`variants.${variantIndex}.stock_levels`, nextItems, { shouldDirty: true })
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      form.setValue(`variants.${variantIndex}.stock_levels` as any, nextItems as any, {
+        shouldDirty: true,
+      })
     },
     [form],
   )
