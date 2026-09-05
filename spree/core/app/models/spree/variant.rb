@@ -231,6 +231,13 @@ module Spree
     # (docs/plans/6.0-seller-master-catalog-listings.md, Decision 3).
     scope :listed, -> { where(status: 'active') }
 
+    # A seller's own row on a shared product, as opposed to the marketplace's.
+    # A scope rather than a `seller_id` filter because the raw column is the
+    # override and reading it directly misses nothing here — an offer is
+    # exactly a row that carries one
+    # (docs/plans/6.0-seller-master-catalog-listings.md).
+    scope :offers, -> { where.not(seller_id: nil) }
+
     scope :with_option_value, lambda { |option_name, option_value|
       option_type_ids = OptionType.where(name: option_name).ids
       return none if option_type_ids.empty?
@@ -307,7 +314,7 @@ module Spree
                                                  weight depth width height sku discontinue_on cost_price cost_currency track_inventory
                                                  deleted_at product_id hs_code country_of_origin
                                                  minimum_order_quantity order_multiple purchase_unit units_per_carton]
-    self.whitelisted_ransackable_scopes = %i(product_name_or_sku_cont search_by_product_name_or_sku search)
+    self.whitelisted_ransackable_scopes = %i(product_name_or_sku_cont search_by_product_name_or_sku search offers)
 
     def self.product_name_or_sku_cont(query)
       sanitized_query = ActiveRecord::Base.sanitize_sql_like(query.to_s.downcase.strip)

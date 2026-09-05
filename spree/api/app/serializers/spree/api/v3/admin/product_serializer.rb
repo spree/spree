@@ -99,7 +99,12 @@ module Spree
                resource: proc { Spree.api.admin_option_type_serializer },
                if: proc { expand?('option_types') }
 
+          # Every axis the product carries, including values only a draft or a
+          # proposed row uses: the storefront's `option_values` is narrowed to
+          # what a shopper may see, and a back-office read must not inherit
+          # that (docs/plans/6.0-seller-master-catalog-listings.md).
           many :option_values,
+               source: proc { variants.flat_map(&:option_values).uniq },
                resource: proc { Spree.api.admin_option_value_serializer },
                if: proc { expand?('option_values') }
 

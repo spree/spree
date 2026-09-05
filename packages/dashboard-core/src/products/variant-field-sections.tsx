@@ -130,6 +130,7 @@ export function VariantShippingFields<TFieldValues extends FieldValues>({
             id={fieldId(prefix, 'weight')}
             type="number"
             step="0.01"
+            min="0"
             {...form.register(path<TFieldValues>(prefix, 'weight'))}
           />
           <FieldError errors={[errors?.weight]} />
@@ -173,6 +174,7 @@ export function VariantShippingFields<TFieldValues extends FieldValues>({
               id={fieldId(prefix, dimension)}
               type="number"
               step="0.01"
+              min="0"
               {...form.register(path<TFieldValues>(prefix, dimension))}
             />
             <FieldError errors={[errors?.[dimension]]} />
