@@ -6,7 +6,9 @@ import type { Product } from '@spree/seller-sdk'
 import i18n from 'i18next'
 
 defineTable<Product>('seller-products', {
-  title: i18n.t('products.title'),
+  // No `title`: the page header above the card already names the page,
+  // and repeating it on the card said the same word twice. The
+  // description is what the card contributes.
   description: i18n.t('products.description'),
   searchParam: 'search',
   searchPlaceholder: i18n.t('products.search_placeholder'),
