@@ -186,6 +186,25 @@ RSpec.describe 'personal data coverage' do
     MESSAGE
   end
 
+  # Deleting the account outright is the other way personal data leaves, and
+  # it only reaches what an association points at. A privacy table left behind
+  # keeps an email, an address and a browser string that nothing can now find.
+  it 'takes the privacy records with the account when it is destroyed' do
+    customer = create(:customer)
+    Spree::ConsentRecord.record!(
+      store: @default_store, owner: customer,
+      purpose: Spree::ConsentRecord::EMAIL_MARKETING, source: Spree::ConsentRecord::ACCOUNT,
+      email: customer.email, ip_address: '203.0.113.9'
+    )
+    create(:data_request, store: @default_store, customer: customer, email: customer.email)
+    customer_id = customer.id
+
+    customer.destroy!
+
+    expect(Spree::ConsentRecord.where(owner_type: 'Spree::Customer', owner_id: customer_id)).to be_empty
+    expect(Spree::DataRequest.where(customer_id: customer_id)).to be_empty
+  end
+
   it 'names a real table in every entry, so the lists cannot rot' do
     tables = ActiveRecord::Base.connection.tables
     declared = COVERED_TABLES.keys + EXEMPT_TABLES.keys

@@ -78,6 +78,14 @@ module Spree
       has_many :customer_group_users, class_name: 'Spree::CustomerGroupUser', as: :customer, dependent: :destroy
       has_many :customer_groups, through: :customer_group_users, class_name: 'Spree::CustomerGroup'
       has_many :identities, class_name: 'Spree::UserIdentity', as: :user, dependent: :destroy
+      # Destroying the account takes the privacy records with it. They exist to
+      # say what this person agreed to and what was done about their requests,
+      # which is nothing once the person is gone — and left behind they would
+      # keep an email, an address and a browser string that nothing reaches.
+      has_many :consent_records, class_name: 'Spree::ConsentRecord', as: :owner,
+                                 dependent: :destroy, inverse_of: :owner
+      has_many :data_requests, class_name: 'Spree::DataRequest', foreign_key: :customer_id,
+                               dependent: :destroy, inverse_of: :customer
       # One per registration kind — a business can hold both an EU and a UK VAT number.
       has_many :tax_identifiers, class_name: 'Spree::TaxIdentifier', as: :owner,
                                  dependent: :destroy, inverse_of: :owner
