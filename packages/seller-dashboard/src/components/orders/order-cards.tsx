@@ -71,14 +71,12 @@ export function OrderSummaryCard({ order }: { order: Order }) {
   const placed = Boolean(order.completed_at)
 
   return (
-    <Card className="py-0">
-      <CardHeader className="px-5 py-4">
+    <Card>
+      <CardHeader>
         <CardTitle>{t('orders.summary.title')}</CardTitle>
       </CardHeader>
 
-      <div className="flex flex-col pb-2">
-        <Separator />
-
+      <div className="py-1">
         <SummaryRow label={t('orders.summary.created_at')} value={formatDate(order.created_at)} />
         {order.completed_at && (
           <SummaryRow

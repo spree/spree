@@ -73,6 +73,7 @@ export * from './lib/create-action-registry'
 // ---------------------------------------------------------------------------
 export * from './lib/custom-field-components'
 export * from './lib/date-presets'
+export * from './lib/delivery-form'
 // ---------------------------------------------------------------------------
 // Helpers
 // ---------------------------------------------------------------------------
@@ -83,6 +84,7 @@ export * from './lib/form-errors'
 export * from './lib/form-fields-registry'
 export * from './lib/form-mappers'
 export * from './lib/formatters'
+export * from './lib/fulfillment-items'
 // i18n side-effect import bootstraps i18next + React adapter on first import.
 // Consumers that need the singleton (e.g. plugin authors calling
 // `i18n.addResourceBundle`) get it via the named re-export.

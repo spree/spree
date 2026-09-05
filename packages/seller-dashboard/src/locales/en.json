@@ -46,6 +46,37 @@
         }
       }
     },
+    "orders": {
+      "detail": {
+        "fulfillments": {
+          "add_tracking_title": "Add tracking",
+          "carrier_auto": "Detect automatically",
+          "carrier_label": "Shipping carrier",
+          "carrier_search": "Search carriers",
+          "delivery_method": "Delivery method",
+          "edit_description": "Change where this fulfillment ships from and which delivery method carries it.",
+          "edit_title": "Edit fulfillment",
+          "edit_tracking_title": "Edit tracking",
+          "move_and_requote": "Move and re-quote",
+          "no_rates": "No delivery methods are quoted for this fulfillment.",
+          "rates_pending_origin": "Save the new origin to see the delivery methods it offers.",
+          "ships_from": "Ships from",
+          "tracking_description": "The carrier tracking number, or a full tracking link."
+        }
+      },
+      "fulfill": {
+        "include_item": "Ship {{name}}",
+        "quantity_for": "Quantity to ship of {{name}}",
+        "of_units": "of {{count}}",
+        "empty": "This fulfillment holds no items that can be fulfilled.",
+        "tracking_label": "Tracking number",
+        "tracking_placeholder": "Tracking number or link",
+        "notify_customer": "Send shipment notification to customer",
+        "partial_hint": "The units you picked move into a new fulfillment that ships now. The rest stay on this one, still open.",
+        "units_selected": "Units to ship",
+        "submit": "Fulfill items"
+      }
+    },
     "tax_identifiers": {
       "add_cta": "Add registration",
       "add_title": "Add tax registration",
@@ -82,19 +113,6 @@
         "unsupported": "Cannot be checked",
         "unverified": "Not valid",
         "verified": "Verified"
-      }
-    },
-    "orders": {
-      "detail": {
-        "fulfillments": {
-          "delivery_method": "Delivery method",
-          "edit_description": "Change where this fulfillment ships from and which delivery method carries it.",
-          "edit_title": "Edit fulfillment",
-          "move_and_requote": "Move and re-quote",
-          "no_rates": "No delivery methods are quoted for this fulfillment.",
-          "rates_pending_origin": "Save the new origin to see the delivery methods it offers.",
-          "ships_from": "Ships from"
-        }
       }
     }
   },
@@ -285,9 +303,7 @@
     },
     "customer_note": "Customer note",
     "empty": "No orders yet. They appear here as customers buy from you.",
-    "fulfill": "Mark as shipped",
-    "fulfilled": "Marked as shipped",
-    "fulfilling": "Marking…",
+    "fulfill": "Mark as fulfilled",
     "fulfillment_statuses": {
       "backorder": "Backorder",
       "canceled": "Canceled",
@@ -297,9 +313,8 @@
       "unfulfilled": "Unfulfilled"
     },
     "fulfillments": {
-      "add_delivery": "Add tracking number",
+      "add_delivery": "Add tracking",
       "add_tracking": "Add tracking",
-      "add_tracking_title": "Add tracking",
       "cancel": "Cancel parcel",
       "cancel_message": "The goods go back on the shelf and the carrier is stood down.",
       "cancel_title": "Cancel this parcel?",
@@ -308,31 +323,26 @@
       "carrier_search": "Search carriers…",
       "carrier_status_available_for_pickup": "Available for pickup",
       "carrier_status_delivered": "Delivered",
-      "carrier_status_failure": "Failed",
+      "carrier_status_failure": "Delivery failed",
       "carrier_status_in_transit": "In transit",
       "carrier_status_out_for_delivery": "Out for delivery",
-      "carrier_status_pending": "Pending",
-      "carrier_status_pre_transit": "Pre-transit",
-      "carrier_status_return_to_sender": "Return to sender",
-      "carrier_status_unknown": "Unknown",
+      "carrier_status_pending": "Awaiting carrier",
+      "carrier_status_pre_transit": "Label created",
+      "carrier_status_return_to_sender": "Returning to sender",
+      "carrier_status_unknown": "Status unknown",
       "confirm_delete_delivery": "Remove this tracking number?",
       "confirm_delete_label": "Remove this label? The file is deleted and cannot be printed again.",
       "confirm_split": "This takes effect immediately.",
       "delete_label": "Remove label",
-      "edit_tracking": "Edit tracking",
-      "edit_tracking_title": "Edit tracking",
       "empty": "Nothing to send on this order.",
       "free": "Free",
       "label_cost": "Cost {{amount}}",
       "label_cost_label": "What it cost",
-      "label_title": "Label",
+      "label_title": "Shipping label",
       "label_uploaded": "Uploaded",
-      "notify_customer": "Email the customer",
       "packing_slip_title": "Packing slip — order {{number}}",
-      "partial_warning": "Sending part of this parcel moves the rest onto a new one.",
       "print_label": "Print label",
       "print_packing_slip": "Print packing slip",
-      "quantity_for": "Quantity for {{name}}",
       "ship_to": "Ship to",
       "ships_from_label": "Ships from",
       "split": "Split",
@@ -342,11 +352,8 @@
       "split_title": "Split this parcel",
       "split_would_empty": "Moving everything would leave this parcel empty.",
       "splitting": "Splitting…",
-      "title": "Parcels",
-      "track_parcel": "Track parcel",
-      "tracking_description": "The number the customer follows the parcel with.",
-      "units_selected": "{{selected}} of {{total}} units selected",
-      "upload_label": "Upload postage",
+      "title": "Fulfillments",
+      "upload_label": "Upload label",
       "upload_label_description": "Record a label you bought elsewhere, so the parcel carries its file and tracking number.",
       "upload_label_file": "Label file",
       "upload_label_title": "Upload postage"

@@ -1,7 +1,6 @@
 import type { LineItem, OrderUpdateParams } from '@spree/admin-sdk'
-import { i18n } from '@spree/dashboard-core'
+import { fulfilledQuantities, type GroupableFulfillment, i18n } from '@spree/dashboard-core'
 import { z } from 'zod/v4'
-import { fulfilledQuantities, type GroupableFulfillment } from '../lib/fulfillment-items'
 
 /**
  * New-order form schema. The "customer OR email" rule is enforced at the

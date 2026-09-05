@@ -75,7 +75,7 @@ export function ReturnsCard({ order }: { order: Order }) {
   return (
     <Card>
       <CardHeader>
-        <CardTitle className="flex items-center gap-2">
+        <CardTitle>
           <RotateCcwIcon className="size-4" />
           {t('orders.post_sale.returns.title')}
         </CardTitle>
@@ -89,14 +89,14 @@ export function ReturnsCard({ order }: { order: Order }) {
         )}
       </CardHeader>
 
-      <CardContent className="flex flex-col gap-3">
+      <CardContent className="flex flex-col gap-4">
         {returns.length === 0 ? (
           <p className="text-muted-foreground text-sm">{t('orders.post_sale.returns.empty')}</p>
         ) : (
           returns.map((returnRecord) => (
             <Card key={returnRecord.id} variant="nested">
               <CardHeader>
-                <CardTitle className="text-sm">{returnRecord.number}</CardTitle>
+                <CardTitle className="text-sm font-medium">{returnRecord.number}</CardTitle>
                 <CardAction className="flex items-center gap-2">
                   <StatusBadge
                     status={returnRecord.status}
@@ -106,13 +106,12 @@ export function ReturnsCard({ order }: { order: Order }) {
                   />
                   {ACTIONABLE.includes(returnRecord.status) && (
                     <DropdownMenu>
-                      <DropdownMenuTrigger
-                        render={
-                          <Button variant="ghost" size="icon" aria-label={t('common.actions')}>
-                            <EllipsisVerticalIcon className="size-4" />
-                          </Button>
-                        }
-                      />
+                      <DropdownMenuTrigger asChild>
+                        <Button variant="ghost" size="icon-xs">
+                          <EllipsisVerticalIcon className="size-4" />
+                          <span className="sr-only">{t('admin.actions.actions_menu')}</span>
+                        </Button>
+                      </DropdownMenuTrigger>
                       <DropdownMenuContent align="end">
                         {returnRecord.status === 'requested' && (
                           <DropdownMenuItem onClick={() => approve.mutate(returnRecord.id)}>
@@ -142,7 +141,7 @@ export function ReturnsCard({ order }: { order: Order }) {
                 </CardAction>
               </CardHeader>
 
-              <CardContent className="flex flex-col gap-2">
+              <CardContent className="flex flex-col gap-1.5">
                 {returnRecord.return_line_items?.map((line) => (
                   <ReturnLineRow key={line.id} line={line} />
                 ))}

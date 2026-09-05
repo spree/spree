@@ -6,7 +6,6 @@ import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
-  DropdownMenuSeparator,
   DropdownMenuTrigger,
   useConfirm,
 } from '@spree/dashboard-ui'
@@ -66,7 +65,7 @@ export function ShippingLabelRow({
   }
 
   return (
-    <CardContent className="flex flex-wrap items-center justify-between gap-2 border-b py-3 text-sm">
+    <CardContent className="flex flex-wrap items-center justify-between gap-2 border-border-subtle border-b py-3 text-sm">
       <div className="flex flex-wrap items-center gap-2">
         <ReceiptTextIcon className="size-4 text-muted-foreground" />
         <span className="text-muted-foreground">{t('orders.fulfillments.label_title')}</span>
@@ -80,25 +79,23 @@ export function ShippingLabelRow({
         )}
       </div>
 
-      <div className="flex items-center gap-1">
+      <div className="flex items-center gap-2">
         {label.download_url && (
           <Button type="button" variant="outline" size="sm" onClick={print}>
-            <PrinterIcon className="size-4" />
+            <PrinterIcon data-icon="inline-start" />
             {t('orders.fulfillments.print_label')}
           </Button>
         )}
 
         {deletable && (
           <DropdownMenu>
-            <DropdownMenuTrigger
-              render={
-                <Button variant="ghost" size="icon" aria-label={t('common.actions')}>
-                  <EllipsisVerticalIcon className="size-4" />
-                </Button>
-              }
-            />
+            <DropdownMenuTrigger asChild>
+              <Button variant="ghost" size="icon-xs">
+                <EllipsisVerticalIcon className="size-4" />
+                <span className="sr-only">{t('admin.actions.actions_menu')}</span>
+              </Button>
+            </DropdownMenuTrigger>
             <DropdownMenuContent align="end">
-              <DropdownMenuSeparator />
               <DropdownMenuItem
                 variant="destructive"
                 disabled={deleteLabel.isPending}

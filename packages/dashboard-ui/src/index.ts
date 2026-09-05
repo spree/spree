@@ -36,10 +36,14 @@ export * from './spree/confirm-dialog'
 export * from './spree/copy-to-clipboard-button'
 export * from './spree/country-flag'
 export * from './spree/data-grid'
+export * from './spree/delivery-form-dialog'
 export * from './spree/drag-handle'
 export * from './spree/file-type-icon'
 export * from './spree/form-actions'
+export * from './spree/fulfill-items-form'
 export * from './spree/fulfillment-edit-dialog'
+export * from './spree/fulfillment-item-list'
+export * from './spree/fulfillment-panel'
 
 // JsonPreviewDrawer and JsonValueView are intentionally NOT re-exported from
 // this barrel: they pull in `@uiw/react-json-view` (~30KB gzip), and

@@ -50,7 +50,7 @@ export function FulfillmentDeliveries({
   }
 
   return (
-    <CardContent className="flex flex-col gap-2 border-b py-3 text-sm">
+    <CardContent className="flex flex-col gap-2 border-border-subtle border-b py-3 text-sm">
       {deliveries.map((delivery) => (
         <div key={delivery.id} className="flex flex-wrap items-center justify-between gap-2">
           <div className="flex min-w-0 flex-wrap items-center gap-2">
@@ -78,13 +78,12 @@ export function FulfillmentDeliveries({
           </div>
 
           <DropdownMenu>
-            <DropdownMenuTrigger
-              render={
-                <Button variant="ghost" size="icon" aria-label={t('common.actions')}>
-                  <EllipsisVerticalIcon className="size-4" />
-                </Button>
-              }
-            />
+            <DropdownMenuTrigger asChild>
+              <Button variant="ghost" size="icon-xs">
+                <EllipsisVerticalIcon className="size-4" />
+                <span className="sr-only">{t('admin.actions.actions_menu')}</span>
+              </Button>
+            </DropdownMenuTrigger>
             <DropdownMenuContent align="end">
               <DropdownMenuItem onClick={() => onEdit(delivery)}>
                 <PencilIcon className="size-4" />

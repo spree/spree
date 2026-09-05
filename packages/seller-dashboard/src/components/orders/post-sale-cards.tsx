@@ -79,17 +79,17 @@ export function ExchangesCard({ order }: { order: Order }) {
   return (
     <Card>
       <CardHeader>
-        <CardTitle className="flex items-center gap-2">
+        <CardTitle>
           <ArrowLeftRightIcon className="size-4" />
           {t('orders.post_sale.exchanges.title')}
         </CardTitle>
       </CardHeader>
 
-      <CardContent className="flex flex-col gap-3">
+      <CardContent className="flex flex-col gap-4">
         {exchanges.map((exchange) => (
           <Card key={exchange.id} variant="nested">
             <CardHeader>
-              <CardTitle className="text-sm">{exchange.number}</CardTitle>
+              <CardTitle className="text-sm font-medium">{exchange.number}</CardTitle>
               <CardAction className="flex items-center gap-2">
                 <StatusBadge
                   status={exchange.status}
@@ -99,13 +99,12 @@ export function ExchangesCard({ order }: { order: Order }) {
                 />
                 {EXCHANGE_ACTIONABLE.includes(exchange.status) && (
                   <DropdownMenu>
-                    <DropdownMenuTrigger
-                      render={
-                        <Button variant="ghost" size="icon" aria-label={t('common.actions')}>
-                          <EllipsisVerticalIcon className="size-4" />
-                        </Button>
-                      }
-                    />
+                    <DropdownMenuTrigger asChild>
+                      <Button variant="ghost" size="icon-xs">
+                        <EllipsisVerticalIcon className="size-4" />
+                        <span className="sr-only">{t('admin.actions.actions_menu')}</span>
+                      </Button>
+                    </DropdownMenuTrigger>
                     <DropdownMenuContent align="end">
                       {exchange.status === 'requested' && (
                         <DropdownMenuItem onClick={() => approve.mutate(exchange.id)}>
@@ -139,7 +138,7 @@ export function ExchangesCard({ order }: { order: Order }) {
               </CardAction>
             </CardHeader>
 
-            <CardContent className="flex flex-col gap-2">
+            <CardContent className="flex flex-col gap-1.5">
               {exchange.exchange_line_items?.map((line) => (
                 <div key={line.id} className="flex items-center justify-between gap-3 text-sm">
                   <span className="truncate">
@@ -200,7 +199,7 @@ export function ClaimsCard({ order }: { order: Order }) {
   return (
     <Card>
       <CardHeader>
-        <CardTitle className="flex items-center gap-2">
+        <CardTitle>
           <ShieldAlertIcon className="size-4" />
           {t('orders.post_sale.claims.title')}
         </CardTitle>
@@ -214,14 +213,14 @@ export function ClaimsCard({ order }: { order: Order }) {
         )}
       </CardHeader>
 
-      <CardContent className="flex flex-col gap-3">
+      <CardContent className="flex flex-col gap-4">
         {claims.length === 0 ? (
           <p className="text-muted-foreground text-sm">{t('orders.post_sale.claims.empty')}</p>
         ) : (
           claims.map((claim) => (
             <Card key={claim.id} variant="nested">
               <CardHeader>
-                <CardTitle className="text-sm">{claim.number}</CardTitle>
+                <CardTitle className="text-sm font-medium">{claim.number}</CardTitle>
                 <CardAction className="flex items-center gap-2">
                   <StatusBadge
                     status={claim.status}
@@ -231,13 +230,12 @@ export function ClaimsCard({ order }: { order: Order }) {
                   />
                   {CLAIM_ACTIONABLE.includes(claim.status) && (
                     <DropdownMenu>
-                      <DropdownMenuTrigger
-                        render={
-                          <Button variant="ghost" size="icon" aria-label={t('common.actions')}>
-                            <EllipsisVerticalIcon className="size-4" />
-                          </Button>
-                        }
-                      />
+                      <DropdownMenuTrigger asChild>
+                        <Button variant="ghost" size="icon-xs">
+                          <EllipsisVerticalIcon className="size-4" />
+                          <span className="sr-only">{t('admin.actions.actions_menu')}</span>
+                        </Button>
+                      </DropdownMenuTrigger>
                       <DropdownMenuContent align="end">
                         {claim.status === 'open' && (
                           <DropdownMenuItem onClick={() => approve.mutate(claim.id)}>
@@ -266,7 +264,7 @@ export function ClaimsCard({ order }: { order: Order }) {
                 </CardAction>
               </CardHeader>
 
-              <CardContent className="flex flex-col gap-2">
+              <CardContent className="flex flex-col gap-1.5">
                 {claim.claim_line_items?.map((line) => (
                   <div key={line.id} className="flex items-center justify-between gap-3 text-sm">
                     <span className="min-w-0 truncate">

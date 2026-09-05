@@ -1,8 +1,11 @@
+import { fulfillmentItemRows } from '@spree/dashboard-core'
 import {
+  Badge,
   Button,
   Card,
   CardAction,
   CardContent,
+  CardFooter,
   CardHeader,
   CardTitle,
   DropdownMenu,
@@ -10,13 +13,15 @@ import {
   DropdownMenuItem,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
+  FulfillmentItemList,
+  FulfillmentPanel,
   StatusBadge,
   useConfirm,
 } from '@spree/dashboard-ui'
 import {
   EllipsisVerticalIcon,
-  MapPinIcon,
   PencilIcon,
+  PlusIcon,
   PrinterIcon,
   SplitIcon,
   TagIcon,
@@ -34,12 +39,11 @@ import { FulfillmentEditDialog } from './fulfillment-edit-dialog'
 import { FulfillmentFulfillForm } from './fulfillment-fulfill-form'
 import { FulfillmentLabelUploadDialog } from './fulfillment-label-upload-dialog'
 import { FulfillmentSplitDialog } from './fulfillment-split-dialog'
-import { unitLabel } from './line-label'
 import { ShippingLabelRow } from './shipping-label-row'
 
-// A parcel that has not gone out is the only one still to ship or cancel;
-// one that has is the only one that can be confirmed delivered. Reading
-// these off "not unfulfilled" once badged a canceled parcel as a success.
+// A parcel that has not gone out is the only one still to ship or cancel.
+// Reading these off "not unfulfilled" once badged a canceled parcel as a
+// success.
 const CAN_SHIP = ['unfulfilled']
 const CAN_CANCEL = ['unfulfilled']
 
@@ -51,53 +55,45 @@ export function FulfillmentsCard({ order }: { order: Order }) {
   return (
     <Card>
       <CardHeader>
-        <CardTitle className="flex items-center gap-2">
+        <CardTitle>
           <TruckIcon className="size-4" />
           {t('orders.fulfillments.title')}
+          {fulfillments.length > 0 && <Badge variant="outline">{fulfillments.length}</Badge>}
         </CardTitle>
-        {order.fulfillment_status && (
-          <CardAction>
+        <CardAction>
+          {order.fulfillment_status && (
             <StatusBadge
               status={order.fulfillment_status}
-              label={t(`orders.fulfillment_statuses.${order.fulfillment_status}`)}
+              label={t(`orders.fulfillment_statuses.${order.fulfillment_status}`, {
+                defaultValue: order.fulfillment_status,
+              })}
             />
-          </CardAction>
-        )}
+          )}
+        </CardAction>
       </CardHeader>
 
-      <CardContent className="flex flex-col gap-3">
-        {fulfillments.length === 0 ? (
-          <p className="text-muted-foreground text-sm">{t('orders.fulfillments.empty')}</p>
-        ) : (
-          fulfillments.map((fulfillment) => (
-            <FulfillmentRow
-              key={fulfillment.id}
-              order={order}
-              currency={order.currency}
-              fulfillment={fulfillment}
-            />
-          ))
-        )}
-      </CardContent>
+      {fulfillments.length === 0 ? (
+        <CardContent>
+          <p className="py-8 text-center text-muted-foreground">{t('orders.fulfillments.empty')}</p>
+        </CardContent>
+      ) : (
+        <CardContent className="flex flex-col gap-4">
+          {fulfillments.map((fulfillment) => (
+            <FulfillmentRow key={fulfillment.id} order={order} fulfillment={fulfillment} />
+          ))}
+        </CardContent>
+      )}
     </Card>
   )
 }
 
-function FulfillmentRow({
-  order,
-  currency,
-  fulfillment,
-}: {
-  order: Order
-  currency: string
-  fulfillment: Fulfillment
-}) {
+function FulfillmentRow({ order, fulfillment }: { order: Order; fulfillment: Fulfillment }) {
   const orderId = order.id
   const { t } = useTranslation()
   const confirm = useConfirm()
   const { cancel } = useFulfillmentActions(orderId)
 
-  const [shipping, setShipping] = useState(false)
+  const [fulfilling, setFulfilling] = useState(false)
   const [deliveryOpen, setDeliveryOpen] = useState(false)
   const [editingDelivery, setEditingDelivery] = useState<Delivery | undefined>()
   const [labelOpen, setLabelOpen] = useState(false)
@@ -108,6 +104,13 @@ function FulfillmentRow({
   const shippable = CAN_SHIP.includes(status)
   const cancelable = CAN_CANCEL.includes(status)
   const splittable = shippable && (fulfillment.fulfillment_items?.length ?? 0) > 0
+  const deliveries = fulfillment.deliveries ?? []
+  // At most one label binds a parcel: the workflows refuse a second while one
+  // is active, and a refunded one stays as history.
+  const activeLabel = (fulfillment.labels ?? []).find((label) => label.status !== 'refunded')
+  // A seller buys postage elsewhere and uploads it, so the slot is offered
+  // only while the parcel has no label and has not gone out.
+  const canUploadLabel = shippable && !activeLabel
 
   async function handleCancel() {
     const ok = await confirm({
@@ -121,126 +124,124 @@ function FulfillmentRow({
   }
 
   return (
-    <Card variant="nested">
-      <CardHeader>
-        <CardTitle className="text-sm">{fulfillment.number}</CardTitle>
-        <CardAction className="flex items-center gap-2">
-          <StatusBadge
-            status={status}
-            label={t(`orders.fulfillment_statuses.${status}`, { defaultValue: status })}
-          />
-          <DropdownMenu>
-            <DropdownMenuTrigger
-              render={
-                <Button variant="ghost" size="icon" aria-label={t('common.actions')}>
-                  <EllipsisVerticalIcon className="size-4" />
-                </Button>
-              }
-            />
-            <DropdownMenuContent align="end">
-              {shippable && (
-                <DropdownMenuItem onClick={() => setEditOpen(true)}>
-                  <PencilIcon className="size-4" />
-                  {t('admin.actions.edit')}
-                </DropdownMenuItem>
-              )}
-              {splittable && (
-                <DropdownMenuItem onClick={() => setSplitOpen(true)}>
-                  <SplitIcon className="size-4" />
-                  {t('orders.fulfillments.split')}
-                </DropdownMenuItem>
-              )}
-              <DropdownMenuItem onClick={() => printPackingSlip(order, fulfillment, t)}>
-                <PrinterIcon className="size-4" />
-                {t('orders.fulfillments.print_packing_slip')}
+    <FulfillmentPanel
+      status={status}
+      statusLabel={t(`orders.fulfillment_statuses.${status}`, { defaultValue: status })}
+      location={fulfillment.stock_location_name}
+      actions={
+        <DropdownMenu>
+          <DropdownMenuTrigger asChild>
+            <Button variant="ghost" size="icon-xs">
+              <EllipsisVerticalIcon className="size-4" />
+              <span className="sr-only">{t('admin.actions.actions_menu')}</span>
+            </Button>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent align="end">
+            {shippable && (
+              <DropdownMenuItem onClick={() => setEditOpen(true)}>
+                <PencilIcon className="size-4" />
+                {t('admin.actions.edit')}
               </DropdownMenuItem>
-              <DropdownMenuItem
-                onClick={() => {
-                  setEditingDelivery(undefined)
-                  setDeliveryOpen(true)
-                }}
-              >
-                <TruckIcon className="size-4" />
-                {t('orders.fulfillments.add_delivery')}
+            )}
+            {splittable && (
+              <DropdownMenuItem onClick={() => setSplitOpen(true)}>
+                <SplitIcon className="size-4" />
+                {t('orders.fulfillments.split')}
               </DropdownMenuItem>
+            )}
+            <DropdownMenuItem onClick={() => printPackingSlip(order, fulfillment, t)}>
+              <PrinterIcon className="size-4" />
+              {t('orders.fulfillments.print_packing_slip')}
+            </DropdownMenuItem>
+            <DropdownMenuItem
+              onClick={() => {
+                setEditingDelivery(undefined)
+                setDeliveryOpen(true)
+              }}
+            >
+              <TruckIcon className="size-4" />
+              {t('orders.fulfillments.add_delivery')}
+            </DropdownMenuItem>
+            {canUploadLabel && (
               <DropdownMenuItem onClick={() => setLabelOpen(true)}>
                 <TagIcon className="size-4" />
                 {t('orders.fulfillments.upload_label')}
               </DropdownMenuItem>
-              {cancelable && (
-                <>
-                  <DropdownMenuSeparator />
-                  <DropdownMenuItem
-                    variant="destructive"
-                    disabled={cancel.isPending}
-                    onClick={handleCancel}
-                  >
-                    <XCircleIcon className="size-4" />
-                    {t('orders.fulfillments.cancel')}
-                  </DropdownMenuItem>
-                </>
-              )}
-            </DropdownMenuContent>
-          </DropdownMenu>
-        </CardAction>
-      </CardHeader>
+            )}
+            {cancelable && (
+              <>
+                <DropdownMenuSeparator />
+                <DropdownMenuItem
+                  variant="destructive"
+                  disabled={cancel.isPending}
+                  onClick={handleCancel}
+                >
+                  <XCircleIcon className="size-4" />
+                  {t('orders.fulfillments.cancel')}
+                </DropdownMenuItem>
+              </>
+            )}
+          </DropdownMenuContent>
+        </DropdownMenu>
+      }
+    >
+      {fulfillment.delivery_method_name && (
+        <CardContent className="flex items-center justify-between border-border-subtle border-b py-3 text-sm">
+          <span className="text-muted-foreground">{fulfillment.delivery_method_name}</span>
+        </CardContent>
+      )}
 
-      {(fulfillment.labels ?? []).map((label) => (
-        <ShippingLabelRow
-          key={label.id}
-          orderId={orderId}
-          fulfillmentId={fulfillment.id}
-          label={label}
-        />
-      ))}
+      {activeLabel && !fulfilling && (
+        <ShippingLabelRow orderId={orderId} fulfillmentId={fulfillment.id} label={activeLabel} />
+      )}
 
       <FulfillmentDeliveries
         orderId={orderId}
         fulfillmentId={fulfillment.id}
-        deliveries={fulfillment.deliveries ?? []}
+        deliveries={deliveries}
         onEdit={(delivery) => {
           setEditingDelivery(delivery)
           setDeliveryOpen(true)
         }}
       />
 
-      <CardContent className="flex flex-col gap-3">
-        {fulfillment.stock_location_name && (
-          <p className="flex items-center gap-1.5 text-muted-foreground text-sm">
-            <MapPinIcon className="size-3.5 shrink-0" />
-            {t('orders.ships_from', { name: fulfillment.stock_location_name })}
-          </p>
-        )}
+      {fulfilling ? (
+        <FulfillmentFulfillForm
+          order={order}
+          fulfillment={fulfillment}
+          onDone={() => setFulfilling(false)}
+        />
+      ) : (
+        <>
+          <FulfillmentItemList rows={fulfillmentItemRows(fulfillment, order.items ?? [])} />
 
-        {fulfillment.delivery_method_name && (
-          <p className="text-muted-foreground text-sm">{fulfillment.delivery_method_name}</p>
-        )}
+          {shippable && (
+            <CardFooter className="justify-end gap-2 py-3">
+              <Button type="button" size="sm" onClick={() => setFulfilling(true)}>
+                <TruckIcon data-icon="inline-start" />
+                {t('orders.fulfill')}
+              </Button>
+            </CardFooter>
+          )}
 
-        {shipping ? (
-          <FulfillmentFulfillForm
-            orderId={orderId}
-            fulfillment={fulfillment}
-            onDone={() => setShipping(false)}
-          />
-        ) : (
-          <>
-            {fulfillment.fulfillment_items?.map((item) => (
-              <div key={item.id} className="flex items-center justify-between gap-3 text-sm">
-                <span className="truncate">{unitLabel(item)}</span>
-                <span className="shrink-0 text-muted-foreground">× {item.quantity}</span>
-              </div>
-            ))}
-
-            {shippable && (
-              <div className="flex justify-end">
-                <Button type="button" onClick={() => setShipping(true)}>
-                  {t('orders.fulfill')}
-                </Button>
-              </div>
-            )}
-          </>
-        )}
-      </CardContent>
+          {!shippable && deliveries.length === 0 && (
+            <CardFooter className="justify-end gap-2 py-3">
+              <Button
+                type="button"
+                size="sm"
+                variant="outline"
+                onClick={() => {
+                  setEditingDelivery(undefined)
+                  setDeliveryOpen(true)
+                }}
+              >
+                <PlusIcon data-icon="inline-start" />
+                {t('orders.fulfillments.add_tracking')}
+              </Button>
+            </CardFooter>
+          )}
+        </>
+      )}
 
       {/* Mounted only while open, so each form seeds from the parcel as it is
           now. Left mounted, their defaults froze at first render — and after
@@ -270,7 +271,7 @@ function FulfillmentRow({
         <FulfillmentLabelUploadDialog
           orderId={orderId}
           fulfillmentId={fulfillment.id}
-          currency={currency}
+          currency={order.currency}
           open
           onOpenChange={setLabelOpen}
         />
@@ -283,6 +284,6 @@ function FulfillmentRow({
           onOpenChange={setSplitOpen}
         />
       )}
-    </Card>
+    </FulfillmentPanel>
   )
 }
