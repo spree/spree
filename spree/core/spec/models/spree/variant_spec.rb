@@ -1214,17 +1214,27 @@ describe Spree::Variant, type: :model do
     end
   end
 
+  # Cubic meters, converted from the unit the merchant recorded — never the
+  # product of the raw columns, which reads inches as centimeters and is out
+  # by a factor of sixteen.
   describe '#volume' do
     let(:variant_zero_width) { create(:variant, width: 0) }
-    let(:variant) { create(:variant) }
 
     it 'is zero if any dimension parameter is zero' do
       expect(variant_zero_width.volume).to eq 0
     end
 
-    it 'return the volume if the dimension parameters are different of zero' do
-      volume_expected = variant.width * variant.depth * variant.height
-      expect(variant.volume).to eq volume_expected
+    it 'reports cubic meters from the recorded unit' do
+      variant = create(:variant, width: 100, height: 100, depth: 100, dimensions_unit: 'cm')
+
+      expect(variant.volume).to eq(BigDecimal('1'))
+    end
+
+    it 'reads the same numbers in inches as a larger volume' do
+      metric = create(:variant, width: 10, height: 10, depth: 10, dimensions_unit: 'cm')
+      imperial = create(:variant, width: 10, height: 10, depth: 10, dimensions_unit: 'in')
+
+      expect(imperial.volume / metric.volume).to be_within(0.01).of(16.387)
     end
   end
 

@@ -12698,6 +12698,25 @@ paths:
                   - key: maximum_weight
                     type: decimal
                     default:
+                - type: volume_rule
+                  name: Volume
+                  description: Limits the delivery method to shipments within a volume
+                    range, in cubic meters
+                  preference_schema:
+                  - key: minimum_volume
+                    type: decimal
+                    default:
+                  - key: maximum_volume
+                    type: decimal
+                    default:
+                - type: company_rule
+                  name: Company
+                  description: Offers the delivery method only to orders placed for
+                    a company, or only to orders that are not
+                  preference_schema:
+                  - key: company_orders_only
+                    type: boolean
+                    default: true
               schema:
                 type: object
                 properties:
@@ -14797,10 +14816,10 @@ paths:
             application/json:
               example:
                 direct_upload:
-                  url: http://www.example.com/rails/active_storage/disk/eyJfcmFpbHMiOnsiZGF0YSI6eyJrZXkiOiJuem5oOGdra3VxendvbDc1ODBxNHNwZmpmMjVxIiwiY29udGVudF90eXBlIjoiYXBwbGljYXRpb24vcGRmIiwiY29udGVudF9sZW5ndGgiOjUxMjM0LCJjaGVja3N1bSI6IlZqaHowNGxRdUVHdXY0bkR2aHNhTlE9PSIsInNlcnZpY2VfbmFtZSI6InRlc3QifSwiZXhwIjoiMjAyNi0wMS0xNVQxMjowNTowMC4wMDBaIiwicHVyIjoiYmxvYl90b2tlbiJ9fQ==--b33be3bbd7c68338e1261455d7d9de2a4b5bcc08
+                  url: http://www.example.com/rails/active_storage/disk/eyJfcmFpbHMiOnsiZGF0YSI6eyJrZXkiOiJuem5oOGdra3VxendvbDc1ODBxNHNwZmpmMjVxIiwiY29udGVudF90eXBlIjoiYXBwbGljYXRpb24vcGRmIiwiY29udGVudF9sZW5ndGgiOjUxMjM0LCJjaGVja3N1bSI6IlZqaHowNGxRdUVHdXY0bkR2aHNhTlE9PSIsInNlcnZpY2VfbmFtZSI6InRlc3QifSwiZXhwIjoiMjAyNi0wMS0xNVQxMjowNTowMC4wMDBaIiwicHVyIjoiYmxvYl90b2tlbiJ9fQ==--60cec2612f5d32c4a0ff1d00c3edffe6f49039e7
                   headers:
                     Content-Type: application/pdf
-                signed_id: eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--37ded779b38909aa9884ca2c10ae2835eb97e766
+                signed_id: eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--1163a14a921bc6b9d54fe1499de4d97e9d0527ca
               schema:
                 "$ref": "#/components/schemas/DirectUploadResponse"
       requestBody:

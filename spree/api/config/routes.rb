@@ -441,6 +441,7 @@ Spree::Core::Engine.add_routes do
           end
         end
         resources :delivery_zones
+        resources :package_types
 
         resources :delivery_profiles do
           collection do

@@ -2045,17 +2045,6 @@
           "label": "Język panelu administracyjnego",
           "placeholder": "Użyj języka domyślnego"
         },
-        "preferred_default_package_dimensions": {
-          "height": "Wysokość",
-          "help": "Karton, w którym zwykle wysyłasz, używany przez przewoźników do wyceny wagi wymiarowej — cale dla systemu imperialnego, centymetry dla metrycznego. Działa dopiero po podaniu wszystkich trzech.",
-          "label": "Domyślne wymiary paczki",
-          "length": "Długość",
-          "width": "Szerokość"
-        },
-        "preferred_default_package_weight": {
-          "help": "Waga opakowania (karton i wypełnienie) dodawana do zawartości każdej paczki przy wyliczaniu stawek dostawy. 0 wyłącza.",
-          "label": "Domyślna waga paczki"
-        },
         "preferred_send_consumer_transactional_emails": {
           "help": "Gdy wyłączone, nie są wysyłane żadne wiadomości z potwierdzeniem zamówienia, wysyłki ani zwrotu.",
           "label": "Wysyłaj wiadomości transakcyjne do klientów"
@@ -3650,11 +3639,9 @@
           "search_placeholder": "Szukaj lokalizacji magazynowych…"
         },
         "store": {
-          "default_package_description": "Karton, w którym zwykle wysyłasz. Dostawcy stawek przewoźników dodają jego wagę do każdej paczki i używają wymiarów do wyceny wagi wymiarowej.",
           "subtitle": "Ogólna konfiguracja i domyślne ustawienia dla całego sklepu.",
           "tab_addresses": "Adresy",
           "tab_catalog": "Katalog",
-          "tab_default_package": "Domyślna paczka",
           "tab_general": "Ogólne",
           "tab_inventory": "Stan magazynowy",
           "tab_order_numbers": "Numery zamówień",
@@ -3997,6 +3984,8 @@
       "api_key_description": "Znajdziesz go w panelu EasyPost. Klucz testowy i produkcyjny działają inaczej — to klucz decyduje o trybie.",
       "base_amount": "Kwota podstawowa",
       "base_percent": "Procent podstawowy",
+      "company_orders_only": "Tylko dla zamówień firmowych",
+      "company_orders_only_description": "Włączone — ta metoda jest oferowana wyłącznie zamówieniom składanym na firmę; wyłączone — tylko pozostałym. Bez tej reguły obowiązuje dla obu.",
       "currency": "Waluta",
       "customs_contents_type": "Rodzaj zawartości celnej",
       "customs_contents_type_description": "Co zawiera przesyłka międzynarodowa według klasyfikacji celnej.",

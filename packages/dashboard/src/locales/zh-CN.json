@@ -2026,17 +2026,6 @@
           "label": "后台语言",
           "placeholder": "使用默认语言"
         },
-        "preferred_default_package_dimensions": {
-          "height": "高",
-          "help": "常用的发货纸箱尺寸,承运商费率提供方据此计算体积重量——英制为英寸,公制为厘米。三项都填写后才生效。",
-          "label": "默认包裹尺寸",
-          "length": "长",
-          "width": "宽"
-        },
-        "preferred_default_package_weight": {
-          "help": "计算配送费率时加到每个包裹内容上的包装重量(纸箱与填充物)。设为 0 可停用。",
-          "label": "默认包裹重量"
-        },
         "preferred_send_consumer_transactional_emails": {
           "help": "关闭后，将不会发送订单确认、发货或退款邮件。",
           "label": "向客户发送交易类邮件"
@@ -3604,11 +3593,9 @@
           "search_placeholder": "搜索库存位置…"
         },
         "store": {
-          "default_package_description": "常用的发货纸箱。承运商费率提供方会将其重量加到每个包裹上,并使用其尺寸计算体积重量。",
           "subtitle": "通用配置与店铺级默认设置。",
           "tab_addresses": "地址",
           "tab_catalog": "商品目录",
-          "tab_default_package": "默认包裹",
           "tab_general": "通用",
           "tab_inventory": "库存",
           "tab_order_numbers": "订单编号",
@@ -3945,6 +3932,8 @@
       "api_key_description": "在您的 EasyPost 控制台中获取。测试密钥与正式密钥行为不同——密钥本身决定模式。",
       "base_amount": "基础金额",
       "base_percent": "基础百分比",
+      "company_orders_only": "仅限公司订单",
+      "company_orders_only_description": "开启后，此配送方式仅提供给以公司名义下的订单；关闭后仅提供给其他订单。移除此规则则两者都可使用。",
       "currency": "货币",
       "customs_contents_type": "报关内容类型",
       "customs_contents_type_description": "按海关分类，国际包裹所含物品的类型。",

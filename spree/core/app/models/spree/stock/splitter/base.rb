@@ -21,8 +21,10 @@ module Spree
           next_splitter ? next_splitter.split(packages) : packages
         end
 
+        # Through the packer, so a derived package carries the same owner as
+        # the one it was split from.
         def build_package(contents = [])
-          Spree::Stock::Package.new(stock_location, contents)
+          packer.build_package(contents)
         end
       end
     end

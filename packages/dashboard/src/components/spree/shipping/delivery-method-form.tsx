@@ -702,7 +702,13 @@ function CarrierServicesCard({ form }: { form: UseFormReturn<DeliveryMethodFormV
     if (rows.length > 0) setScope('selected')
   }, [rows.length])
 
+  // A provider that names no services has nothing to narrow. Freight is the
+  // case: a forwarder booking has no service list, and its tiers are separate
+  // delivery methods with volume rules. Offering the picker anyway would let
+  // a merchant choose "specific services" with none available, which filters
+  // every quote out and silently disables the method.
   if (!carrierPriced) return null
+  if (catalog.length === 0 && !catalogError && rows.length === 0) return null
 
   const rowIndex = (entry: DeliveryRateProviderCatalogEntry) =>
     rows.findIndex((row) => row.carrier === entry.carrier && row.service === entry.service)

@@ -359,6 +359,12 @@ en:
               not_allowed_content_type: has not allowed content type
             external_video_url:
               unsupported_video_provider: must be a YouTube or Vimeo link
+        spree/package_type:
+          attributes:
+            default:
+              cannot_be_given_up: cannot be turned off on the only default package — make another one the default instead
+            kind:
+              cannot_stop_being_a_carton: cannot change while products are packed into this carton — repack them first
         spree/payment:
           attributes:
             amount:
@@ -429,6 +435,8 @@ en:
           attributes:
             base:
               cannot_destroy_if_attached_to_line_items: Cannot delete Variants that are added to placed Orders. In such cases, please discontinue them.
+            carton_package_type:
+              must_be_a_carton: must be a package type of kind carton
             order_multiple:
               incompatible_with_carton: must divide into or be a multiple of %{units_per_carton} units per carton
             units_per_carton:
@@ -908,15 +916,23 @@ en:
       channel_rule:
         description: Offers the delivery method only on the selected channels
         name: Channel
+      company_rule:
+        description: Offers the delivery method only to orders placed for a company, or only to orders that are not
+        name: Company
       excluded_products_rule:
         description: Blocks the delivery method for packages containing the selected products
         name: Excluded products
       item_total_rule:
         description: Limits the delivery method to carts within an item total range
         name: Item total
+      volume_rule:
+        description: Limits the delivery method to shipments within a volume range, in cubic meters
+        name: Volume
       weight_rule:
         description: Limits the delivery method to packages within a weight range
         name: Weight
+    delivery_rates:
+      quoted_after_review: Quoted after review
     depth: Depth
     description: Description
     destination: Destination
@@ -983,6 +999,7 @@ en:
       messages:
         cannot_delete_channel_with_active_api_keys: Channel cannot be deleted while active API keys are bound to it. Revoke those keys first.
         cannot_delete_default_channel: Default channel cannot be deleted. Promote another channel to default first.
+        cannot_delete_default_package_type: Default package cannot be deleted. Make another package the default first.
         cart_currency_mismatch: carts in different currencies cannot be merged
         channel_store_mismatch: must belong to the same store
         commission_rate_needs_an_amount: needs a flat fee amount in at least one currency
@@ -1348,6 +1365,8 @@ en:
     other: Other
     out_of_stock: Out of Stock
     outstanding_balance: Outstanding Balance
+    package_types:
+      default_name: Shipping box
     page: Page
     pages: Pages
     password: Password

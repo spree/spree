@@ -15,6 +15,8 @@ export const DeliveryRateSchema = z.object({
   carrier: z.string().nullable(),
   service_level: z.string().nullable(),
   estimated_delivery_date: z.string().nullable(),
+  unpriced: z.boolean(),
+  freight_summary: z.record(z.string(), z.unknown()).nullable(),
   display_cost: z.string(),
   display_total: z.string(),
   display_additional_tax_total: z.string(),

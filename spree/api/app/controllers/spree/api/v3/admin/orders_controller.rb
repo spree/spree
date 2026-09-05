@@ -192,7 +192,11 @@ module Spree
           # reads the base catalog price for every row (the negotiated-price
           # comparison); without it each line costs its own price query.
           def collection_includes
+            # The freight summary reads each fulfillment's selected rate, so
+            # both ride along — otherwise a page of orders costs a query per
+            # fulfillment for a field that is nil on every parcel order.
             [:customer, :channel, :seller, :external_references, :cancel_reason,
+             { fulfillments: :selected_delivery_rate },
              { line_items: { variant: :prices } }, { po_document_attachment: :blob }]
           end
 

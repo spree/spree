@@ -7525,6 +7525,7 @@ paths:
                   tracking_url:
                   pickup_point_data:
                   selected_delivery_rate_id: dr_gbHJdmfrXB
+                  unpriced: false
                   cost: '100.0'
                   display_cost: "$100.00"
                   total: '100.0'
@@ -7641,6 +7642,7 @@ paths:
                 tracking_url:
                 pickup_point_data:
                 selected_delivery_rate_id: dr_EfhxLZ9ck8
+                unpriced: false
                 cost: '100.0'
                 display_cost: "$100.00"
                 total: '100.0'
@@ -7827,6 +7829,7 @@ paths:
                 tracking_url:
                 pickup_point_data:
                 selected_delivery_rate_id: dr_gbHJdmfrXB
+                unpriced: false
                 cost: '100.0'
                 display_cost: "$100.00"
                 total: '100.0'
@@ -7935,6 +7938,7 @@ paths:
                 tracking_url: https://www.ups.com/track?tracknum=1Z999AA10123456784
                 pickup_point_data:
                 selected_delivery_rate_id: dr_gbHJdmfrXB
+                unpriced: false
                 cost: '100.0'
                 display_cost: "$100.00"
                 total: '100.0'
@@ -8057,6 +8061,7 @@ paths:
                 tracking_url:
                 pickup_point_data:
                 selected_delivery_rate_id: dr_gbHJdmfrXB
+                unpriced: false
                 cost: '100.0'
                 display_cost: "$100.00"
                 total: '100.0'
@@ -8169,6 +8174,7 @@ paths:
                 tracking_url:
                 pickup_point_data:
                 selected_delivery_rate_id: dr_gbHJdmfrXB
+                unpriced: false
                 cost: '100.0'
                 display_cost: "$100.00"
                 total: '100.0'
@@ -8299,6 +8305,7 @@ paths:
                 tracking_url:
                 pickup_point_data:
                 selected_delivery_rate_id: dr_gbHJdmfrXB
+                unpriced: false
                 cost: '100.0'
                 display_cost: "$100.00"
                 total: '100.0'
@@ -8418,6 +8425,7 @@ paths:
                   tracking_url:
                   pickup_point_data:
                   selected_delivery_rate_id: dr_EfhxLZ9ck8
+                  unpriced: false
                   cost: '10.0'
                   display_cost: "$10.00"
                   total: '10.0'
@@ -12836,6 +12844,7 @@ paths:
                 company_name:
                 po_document_filename:
                 po_document_byte_size:
+                freight_summary:
                 number: R1001
                 email: ghislaine_labadie@carroll.info
                 customer_note:
@@ -13088,6 +13097,7 @@ paths:
                   company_name:
                   po_document_filename:
                   po_document_byte_size:
+                  freight_summary:
                   number: R1001
                   email: viki_reichel@moorecummerata.us
                   customer_note:
@@ -13317,6 +13327,7 @@ paths:
                 company_name:
                 po_document_filename:
                 po_document_byte_size:
+                freight_summary:
                 number: R1002
                 email: pinned@example.com
                 customer_note:
@@ -13579,6 +13590,7 @@ paths:
                 company_name:
                 po_document_filename:
                 po_document_byte_size:
+                freight_summary:
                 number: R1001
                 email: angelic@ogaromaguera.co.uk
                 customer_note:
@@ -13729,6 +13741,7 @@ paths:
                 company_name:
                 po_document_filename:
                 po_document_byte_size:
+                freight_summary:
                 number: R1001
                 email: updated@example.com
                 customer_note:
@@ -13991,6 +14004,7 @@ paths:
                 company_name:
                 po_document_filename:
                 po_document_byte_size:
+                freight_summary:
                 number: R1001
                 email: lisandra.blanda@grahamryan.biz
                 customer_note:
@@ -14174,6 +14188,7 @@ paths:
                 company_name:
                 po_document_filename:
                 po_document_byte_size:
+                freight_summary:
                 number: R1001
                 email: eleanor@zulaufdavis.com
                 customer_note:
@@ -14337,6 +14352,7 @@ paths:
                 company_name:
                 po_document_filename:
                 po_document_byte_size:
+                freight_summary:
                 number: R1001
                 email: del@bashirian.us
                 customer_note:
@@ -14474,6 +14490,7 @@ paths:
                 company_name:
                 po_document_filename:
                 po_document_byte_size:
+                freight_summary:
                 number: R1001
                 email: michal.cartwright@hintzdeckow.info
                 customer_note:
@@ -22152,10 +22169,6 @@ paths:
                 preferred_admin_locale:
                 preferred_timezone: UTC
                 preferred_weight_unit: lb
-                preferred_default_package_weight: 0
-                preferred_default_package_length: 0
-                preferred_default_package_width: 0
-                preferred_default_package_height: 0
                 preferred_unit_system: imperial
                 preferred_storefront_access: public
                 preferred_guest_checkout: true
@@ -22481,10 +22494,6 @@ paths:
                 preferred_admin_locale:
                 preferred_timezone: UTC
                 preferred_weight_unit: lb
-                preferred_default_package_weight: 0
-                preferred_default_package_length: 0
-                preferred_default_package_width: 0
-                preferred_default_package_height: 0
                 preferred_unit_system: imperial
                 preferred_storefront_access: public
                 preferred_guest_checkout: true
@@ -25423,17 +25432,21 @@ paths:
                   cost_price: '17.0'
                   cost_currency: USD
                   barcode:
-                  weight_unit: lb
-                  dimensions_unit:
                   backorder_limit:
                   hs_code:
                   country_of_origin:
                   customs_description:
+                  carton_weight:
+                  cartons_per_pallet:
                   deleted_at:
                   created_at: '2026-01-15T12:00:00.000Z'
                   updated_at: '2026-01-15T12:00:00.000Z'
                   preorderable: false
                   tax_category_id: taxcat_UkLWZg9DAJ
+                  weight_unit:
+                  dimensions_unit:
+                  carton_package_type_id:
+                  units_per_pallet:
                   available_stock: 0
                   reserved_quantity: 0
                   total_on_hand: 0
@@ -25490,17 +25503,21 @@ paths:
                   cost_price: '17.0'
                   cost_currency: USD
                   barcode:
-                  weight_unit: lb
-                  dimensions_unit:
                   backorder_limit:
                   hs_code:
                   country_of_origin:
                   customs_description:
+                  carton_weight:
+                  cartons_per_pallet:
                   deleted_at:
                   created_at: '2026-01-15T12:00:00.000Z'
                   updated_at: '2026-01-15T12:00:00.000Z'
                   preorderable: false
                   tax_category_id: taxcat_UkLWZg9DAJ
+                  weight_unit:
+                  dimensions_unit:
+                  carton_package_type_id:
+                  units_per_pallet:
                   available_stock: 0
                   reserved_quantity: 0
                   total_on_hand: 0
@@ -25632,17 +25649,21 @@ paths:
                 cost_price:
                 cost_currency: USD
                 barcode:
-                weight_unit: lb
-                dimensions_unit:
                 backorder_limit:
                 hs_code:
                 country_of_origin:
                 customs_description:
+                carton_weight:
+                cartons_per_pallet:
                 deleted_at:
                 created_at: '2026-01-15T12:00:00.000Z'
                 updated_at: '2026-01-15T12:00:00.000Z'
                 preorderable: false
                 tax_category_id: taxcat_UkLWZg9DAJ
+                weight_unit:
+                dimensions_unit:
+                carton_package_type_id:
+                units_per_pallet:
                 available_stock: 0
                 reserved_quantity: 0
                 total_on_hand: 0
@@ -25874,17 +25895,21 @@ paths:
                 cost_price: '17.0'
                 cost_currency: USD
                 barcode:
-                weight_unit: lb
-                dimensions_unit:
                 backorder_limit:
                 hs_code:
                 country_of_origin:
                 customs_description:
+                carton_weight:
+                cartons_per_pallet:
                 deleted_at:
                 created_at: '2026-01-15T12:00:00.000Z'
                 updated_at: '2026-01-15T12:00:00.000Z'
                 preorderable: false
                 tax_category_id: taxcat_UkLWZg9DAJ
+                weight_unit:
+                dimensions_unit:
+                carton_package_type_id:
+                units_per_pallet:
                 available_stock: 0
                 reserved_quantity: 0
                 total_on_hand: 0
@@ -26010,17 +26035,21 @@ paths:
                 cost_price: '17.0'
                 cost_currency: USD
                 barcode:
-                weight_unit: lb
-                dimensions_unit:
                 backorder_limit:
                 hs_code:
                 country_of_origin:
                 customs_description:
+                carton_weight:
+                cartons_per_pallet:
                 deleted_at:
                 created_at: '2026-01-15T12:00:00.000Z'
                 updated_at: '2026-01-15T12:00:00.000Z'
                 preorderable: false
                 tax_category_id: taxcat_UkLWZg9DAJ
+                weight_unit:
+                dimensions_unit:
+                carton_package_type_id:
+                units_per_pallet:
                 available_stock: 0
                 reserved_quantity: 0
                 total_on_hand: 0
@@ -32172,13 +32201,13 @@ paths:
                   video_embed_url:
                   video_url:
                   poster_url:
-                  original_url: http://localhost:3000/rails/active_storage/blobs/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--37ded779b38909aa9884ca2c10ae2835eb97e766/thinking-cat.jpg
-                  mini_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--37ded779b38909aa9884ca2c10ae2835eb97e766/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOlsxMjgsMTI4XSwic2F2ZXIiOnsic3RyaXAiOnRydWUsInF1YWxpdHkiOjc1LCJsb3NzbGVzcyI6ZmFsc2UsImFscGhhX3EiOjg1LCJyZWR1Y3Rpb25fZWZmb3J0Ijo2LCJzbWFydF9zdWJzYW1wbGUiOnRydWV9fSwicHVyIjoidmFyaWF0aW9uIn19--a7ec073caa417463b3ad6a8292cad94ffff355d6/thinking-cat.jpg
-                  small_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--37ded779b38909aa9884ca2c10ae2835eb97e766/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOlsyNTYsMjU2XSwic2F2ZXIiOnsic3RyaXAiOnRydWUsInF1YWxpdHkiOjc1LCJsb3NzbGVzcyI6ZmFsc2UsImFscGhhX3EiOjg1LCJyZWR1Y3Rpb25fZWZmb3J0Ijo2LCJzbWFydF9zdWJzYW1wbGUiOnRydWV9fSwicHVyIjoidmFyaWF0aW9uIn19--bad8f72856d72637ae6e72cf6d14b2a3ffb5e43a/thinking-cat.jpg
-                  medium_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--37ded779b38909aa9884ca2c10ae2835eb97e766/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOls0MDAsNDAwXSwic2F2ZXIiOnsic3RyaXAiOnRydWUsInF1YWxpdHkiOjc1LCJsb3NzbGVzcyI6ZmFsc2UsImFscGhhX3EiOjg1LCJyZWR1Y3Rpb25fZWZmb3J0Ijo2LCJzbWFydF9zdWJzYW1wbGUiOnRydWV9fSwicHVyIjoidmFyaWF0aW9uIn19--f0e647823dcf5a183cf25b19a9ea7d9fcc919410/thinking-cat.jpg
-                  large_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--37ded779b38909aa9884ca2c10ae2835eb97e766/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOls3MjAsNzIwXSwic2F2ZXIiOnsic3RyaXAiOnRydWUsInF1YWxpdHkiOjc1LCJsb3NzbGVzcyI6ZmFsc2UsImFscGhhX3EiOjg1LCJyZWR1Y3Rpb25fZWZmb3J0Ijo2LCJzbWFydF9zdWJzYW1wbGUiOnRydWV9fSwicHVyIjoidmFyaWF0aW9uIn19--f73073e1e5f215fb58af173f4fad0bf17879bfed/thinking-cat.jpg
-                  xlarge_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--37ded779b38909aa9884ca2c10ae2835eb97e766/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOlsyMDAwLDIwMDBdLCJzYXZlciI6eyJzdHJpcCI6dHJ1ZSwicXVhbGl0eSI6NzUsImxvc3NsZXNzIjpmYWxzZSwiYWxwaGFfcSI6ODUsInJlZHVjdGlvbl9lZmZvcnQiOjYsInNtYXJ0X3N1YnNhbXBsZSI6dHJ1ZX19LCJwdXIiOiJ2YXJpYXRpb24ifX0=--8b9d446114666c6f4e1e2ba1fc7ad4e2f5fd9374/thinking-cat.jpg
-                  og_image_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--37ded779b38909aa9884ca2c10ae2835eb97e766/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOlsxMjAwLDYzMF0sInNhdmVyIjp7InN0cmlwIjp0cnVlLCJxdWFsaXR5Ijo3NSwibG9zc2xlc3MiOmZhbHNlLCJhbHBoYV9xIjo4NSwicmVkdWN0aW9uX2VmZm9ydCI6Niwic21hcnRfc3Vic2FtcGxlIjp0cnVlfX0sInB1ciI6InZhcmlhdGlvbiJ9fQ==--955d03ec2412e9d7ddf6a15cb866c798ef931c7d/thinking-cat.jpg
+                  original_url: http://localhost:3000/rails/active_storage/blobs/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--1163a14a921bc6b9d54fe1499de4d97e9d0527ca/thinking-cat.jpg
+                  mini_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--1163a14a921bc6b9d54fe1499de4d97e9d0527ca/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOlsxMjgsMTI4XSwic2F2ZXIiOnsic3RyaXAiOnRydWUsInF1YWxpdHkiOjc1LCJsb3NzbGVzcyI6ZmFsc2UsImFscGhhX3EiOjg1LCJyZWR1Y3Rpb25fZWZmb3J0Ijo2LCJzbWFydF9zdWJzYW1wbGUiOnRydWV9fSwicHVyIjoidmFyaWF0aW9uIn19--3731278b1c86329b37f6e92b953ddd35adc39d8e/thinking-cat.jpg
+                  small_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--1163a14a921bc6b9d54fe1499de4d97e9d0527ca/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOlsyNTYsMjU2XSwic2F2ZXIiOnsic3RyaXAiOnRydWUsInF1YWxpdHkiOjc1LCJsb3NzbGVzcyI6ZmFsc2UsImFscGhhX3EiOjg1LCJyZWR1Y3Rpb25fZWZmb3J0Ijo2LCJzbWFydF9zdWJzYW1wbGUiOnRydWV9fSwicHVyIjoidmFyaWF0aW9uIn19--ae05085b0615bb4066b2bed0130d155f3ecdfab6/thinking-cat.jpg
+                  medium_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--1163a14a921bc6b9d54fe1499de4d97e9d0527ca/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOls0MDAsNDAwXSwic2F2ZXIiOnsic3RyaXAiOnRydWUsInF1YWxpdHkiOjc1LCJsb3NzbGVzcyI6ZmFsc2UsImFscGhhX3EiOjg1LCJyZWR1Y3Rpb25fZWZmb3J0Ijo2LCJzbWFydF9zdWJzYW1wbGUiOnRydWV9fSwicHVyIjoidmFyaWF0aW9uIn19--7213e35846ca3bf13cdf7d00e08fd09f22fcf5fe/thinking-cat.jpg
+                  large_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--1163a14a921bc6b9d54fe1499de4d97e9d0527ca/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOls3MjAsNzIwXSwic2F2ZXIiOnsic3RyaXAiOnRydWUsInF1YWxpdHkiOjc1LCJsb3NzbGVzcyI6ZmFsc2UsImFscGhhX3EiOjg1LCJyZWR1Y3Rpb25fZWZmb3J0Ijo2LCJzbWFydF9zdWJzYW1wbGUiOnRydWV9fSwicHVyIjoidmFyaWF0aW9uIn19--d687409147b99f1769646dce2390a6976048bd41/thinking-cat.jpg
+                  xlarge_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--1163a14a921bc6b9d54fe1499de4d97e9d0527ca/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOlsyMDAwLDIwMDBdLCJzYXZlciI6eyJzdHJpcCI6dHJ1ZSwicXVhbGl0eSI6NzUsImxvc3NsZXNzIjpmYWxzZSwiYWxwaGFfcSI6ODUsInJlZHVjdGlvbl9lZmZvcnQiOjYsInNtYXJ0X3N1YnNhbXBsZSI6dHJ1ZX19LCJwdXIiOiJ2YXJpYXRpb24ifX0=--cc44c538cfc30b7f8786d5d34a0358ae91ba76b1/thinking-cat.jpg
+                  og_image_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--1163a14a921bc6b9d54fe1499de4d97e9d0527ca/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOlsxMjAwLDYzMF0sInNhdmVyIjp7InN0cmlwIjp0cnVlLCJxdWFsaXR5Ijo3NSwibG9zc2xlc3MiOmZhbHNlLCJhbHBoYV9xIjo4NSwicmVkdWN0aW9uX2VmZm9ydCI6Niwic21hcnRfc3Vic2FtcGxlIjp0cnVlfX0sInB1ciI6InZhcmlhdGlvbiJ9fQ==--433a1aa4c93b82845a6ff99c4698a37cf073e3c4/thinking-cat.jpg
                   external_references: {}
                   created_at: '2026-01-15T12:00:00.000Z'
                   updated_at: '2026-01-15T12:00:00.000Z'
@@ -32186,10 +32215,10 @@ paths:
                   filename: thinking-cat.jpg
                   content_type: image/jpeg
                   byte_size: 18090
-                  embed_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--37ded779b38909aa9884ca2c10ae2835eb97e766/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2xpbWl0IjpbMTIwMCwxMjAwXSwic2F2ZXIiOnsic3RyaXAiOnRydWUsInF1YWxpdHkiOjc1LCJsb3NzbGVzcyI6ZmFsc2UsImFscGhhX3EiOjg1LCJyZWR1Y3Rpb25fZWZmb3J0Ijo2LCJzbWFydF9zdWJzYW1wbGUiOnRydWV9fSwicHVyIjoidmFyaWF0aW9uIn19--05c4f268b89a5cbdf1a8cc47a8b391841c53ec0c/thinking-cat.jpg
-                  signed_id: eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--37ded779b38909aa9884ca2c10ae2835eb97e766
+                  embed_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--1163a14a921bc6b9d54fe1499de4d97e9d0527ca/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2xpbWl0IjpbMTIwMCwxMjAwXSwic2F2ZXIiOnsic3RyaXAiOnRydWUsInF1YWxpdHkiOjc1LCJsb3NzbGVzcyI6ZmFsc2UsImFscGhhX3EiOjg1LCJyZWR1Y3Rpb25fZWZmb3J0Ijo2LCJzbWFydF9zdWJzYW1wbGUiOnRydWV9fSwicHVyIjoidmFyaWF0aW9uIn19--242558639bf438d8b844fd8c3df85abc76c30928/thinking-cat.jpg
+                  signed_id: eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--1163a14a921bc6b9d54fe1499de4d97e9d0527ca
                   viewable_id: prod_UkLWZg9DAJ
-                  download_url: http://localhost:3000/rails/active_storage/blobs/redirect/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--37ded779b38909aa9884ca2c10ae2835eb97e766/thinking-cat.jpg?disposition=attachment
+                  download_url: http://localhost:3000/rails/active_storage/blobs/redirect/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--1163a14a921bc6b9d54fe1499de4d97e9d0527ca/thinking-cat.jpg?disposition=attachment
                   metadata: {}
                   viewable_type: product
                 meta:
@@ -32260,13 +32289,13 @@ paths:
                 video_embed_url:
                 video_url:
                 poster_url:
-                original_url: http://localhost:3000/rails/active_storage/blobs/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MiwicHVyIjoiYmxvYl9pZCJ9fQ==--a196189531b55fd901bfd875c314c3d316caa9d7/library-upload.jpg
-                mini_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MiwicHVyIjoiYmxvYl9pZCJ9fQ==--a196189531b55fd901bfd875c314c3d316caa9d7/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOlsxMjgsMTI4XSwic2F2ZXIiOnsic3RyaXAiOnRydWUsInF1YWxpdHkiOjc1LCJsb3NzbGVzcyI6ZmFsc2UsImFscGhhX3EiOjg1LCJyZWR1Y3Rpb25fZWZmb3J0Ijo2LCJzbWFydF9zdWJzYW1wbGUiOnRydWV9fSwicHVyIjoidmFyaWF0aW9uIn19--a7ec073caa417463b3ad6a8292cad94ffff355d6/library-upload.jpg
-                small_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MiwicHVyIjoiYmxvYl9pZCJ9fQ==--a196189531b55fd901bfd875c314c3d316caa9d7/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOlsyNTYsMjU2XSwic2F2ZXIiOnsic3RyaXAiOnRydWUsInF1YWxpdHkiOjc1LCJsb3NzbGVzcyI6ZmFsc2UsImFscGhhX3EiOjg1LCJyZWR1Y3Rpb25fZWZmb3J0Ijo2LCJzbWFydF9zdWJzYW1wbGUiOnRydWV9fSwicHVyIjoidmFyaWF0aW9uIn19--bad8f72856d72637ae6e72cf6d14b2a3ffb5e43a/library-upload.jpg
-                medium_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MiwicHVyIjoiYmxvYl9pZCJ9fQ==--a196189531b55fd901bfd875c314c3d316caa9d7/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOls0MDAsNDAwXSwic2F2ZXIiOnsic3RyaXAiOnRydWUsInF1YWxpdHkiOjc1LCJsb3NzbGVzcyI6ZmFsc2UsImFscGhhX3EiOjg1LCJyZWR1Y3Rpb25fZWZmb3J0Ijo2LCJzbWFydF9zdWJzYW1wbGUiOnRydWV9fSwicHVyIjoidmFyaWF0aW9uIn19--f0e647823dcf5a183cf25b19a9ea7d9fcc919410/library-upload.jpg
-                large_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MiwicHVyIjoiYmxvYl9pZCJ9fQ==--a196189531b55fd901bfd875c314c3d316caa9d7/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOls3MjAsNzIwXSwic2F2ZXIiOnsic3RyaXAiOnRydWUsInF1YWxpdHkiOjc1LCJsb3NzbGVzcyI6ZmFsc2UsImFscGhhX3EiOjg1LCJyZWR1Y3Rpb25fZWZmb3J0Ijo2LCJzbWFydF9zdWJzYW1wbGUiOnRydWV9fSwicHVyIjoidmFyaWF0aW9uIn19--f73073e1e5f215fb58af173f4fad0bf17879bfed/library-upload.jpg
-                xlarge_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MiwicHVyIjoiYmxvYl9pZCJ9fQ==--a196189531b55fd901bfd875c314c3d316caa9d7/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOlsyMDAwLDIwMDBdLCJzYXZlciI6eyJzdHJpcCI6dHJ1ZSwicXVhbGl0eSI6NzUsImxvc3NsZXNzIjpmYWxzZSwiYWxwaGFfcSI6ODUsInJlZHVjdGlvbl9lZmZvcnQiOjYsInNtYXJ0X3N1YnNhbXBsZSI6dHJ1ZX19LCJwdXIiOiJ2YXJpYXRpb24ifX0=--8b9d446114666c6f4e1e2ba1fc7ad4e2f5fd9374/library-upload.jpg
-                og_image_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MiwicHVyIjoiYmxvYl9pZCJ9fQ==--a196189531b55fd901bfd875c314c3d316caa9d7/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOlsxMjAwLDYzMF0sInNhdmVyIjp7InN0cmlwIjp0cnVlLCJxdWFsaXR5Ijo3NSwibG9zc2xlc3MiOmZhbHNlLCJhbHBoYV9xIjo4NSwicmVkdWN0aW9uX2VmZm9ydCI6Niwic21hcnRfc3Vic2FtcGxlIjp0cnVlfX0sInB1ciI6InZhcmlhdGlvbiJ9fQ==--955d03ec2412e9d7ddf6a15cb866c798ef931c7d/library-upload.jpg
+                original_url: http://localhost:3000/rails/active_storage/blobs/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MiwicHVyIjoiYmxvYl9pZCJ9fQ==--c5c44fe3a545f6fc7ca81e21faf249bf89806f20/library-upload.jpg
+                mini_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MiwicHVyIjoiYmxvYl9pZCJ9fQ==--c5c44fe3a545f6fc7ca81e21faf249bf89806f20/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOlsxMjgsMTI4XSwic2F2ZXIiOnsic3RyaXAiOnRydWUsInF1YWxpdHkiOjc1LCJsb3NzbGVzcyI6ZmFsc2UsImFscGhhX3EiOjg1LCJyZWR1Y3Rpb25fZWZmb3J0Ijo2LCJzbWFydF9zdWJzYW1wbGUiOnRydWV9fSwicHVyIjoidmFyaWF0aW9uIn19--3731278b1c86329b37f6e92b953ddd35adc39d8e/library-upload.jpg
+                small_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MiwicHVyIjoiYmxvYl9pZCJ9fQ==--c5c44fe3a545f6fc7ca81e21faf249bf89806f20/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOlsyNTYsMjU2XSwic2F2ZXIiOnsic3RyaXAiOnRydWUsInF1YWxpdHkiOjc1LCJsb3NzbGVzcyI6ZmFsc2UsImFscGhhX3EiOjg1LCJyZWR1Y3Rpb25fZWZmb3J0Ijo2LCJzbWFydF9zdWJzYW1wbGUiOnRydWV9fSwicHVyIjoidmFyaWF0aW9uIn19--ae05085b0615bb4066b2bed0130d155f3ecdfab6/library-upload.jpg
+                medium_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MiwicHVyIjoiYmxvYl9pZCJ9fQ==--c5c44fe3a545f6fc7ca81e21faf249bf89806f20/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOls0MDAsNDAwXSwic2F2ZXIiOnsic3RyaXAiOnRydWUsInF1YWxpdHkiOjc1LCJsb3NzbGVzcyI6ZmFsc2UsImFscGhhX3EiOjg1LCJyZWR1Y3Rpb25fZWZmb3J0Ijo2LCJzbWFydF9zdWJzYW1wbGUiOnRydWV9fSwicHVyIjoidmFyaWF0aW9uIn19--7213e35846ca3bf13cdf7d00e08fd09f22fcf5fe/library-upload.jpg
+                large_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MiwicHVyIjoiYmxvYl9pZCJ9fQ==--c5c44fe3a545f6fc7ca81e21faf249bf89806f20/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOls3MjAsNzIwXSwic2F2ZXIiOnsic3RyaXAiOnRydWUsInF1YWxpdHkiOjc1LCJsb3NzbGVzcyI6ZmFsc2UsImFscGhhX3EiOjg1LCJyZWR1Y3Rpb25fZWZmb3J0Ijo2LCJzbWFydF9zdWJzYW1wbGUiOnRydWV9fSwicHVyIjoidmFyaWF0aW9uIn19--d687409147b99f1769646dce2390a6976048bd41/library-upload.jpg
+                xlarge_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MiwicHVyIjoiYmxvYl9pZCJ9fQ==--c5c44fe3a545f6fc7ca81e21faf249bf89806f20/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOlsyMDAwLDIwMDBdLCJzYXZlciI6eyJzdHJpcCI6dHJ1ZSwicXVhbGl0eSI6NzUsImxvc3NsZXNzIjpmYWxzZSwiYWxwaGFfcSI6ODUsInJlZHVjdGlvbl9lZmZvcnQiOjYsInNtYXJ0X3N1YnNhbXBsZSI6dHJ1ZX19LCJwdXIiOiJ2YXJpYXRpb24ifX0=--cc44c538cfc30b7f8786d5d34a0358ae91ba76b1/library-upload.jpg
+                og_image_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MiwicHVyIjoiYmxvYl9pZCJ9fQ==--c5c44fe3a545f6fc7ca81e21faf249bf89806f20/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOlsxMjAwLDYzMF0sInNhdmVyIjp7InN0cmlwIjp0cnVlLCJxdWFsaXR5Ijo3NSwibG9zc2xlc3MiOmZhbHNlLCJhbHBoYV9xIjo4NSwicmVkdWN0aW9uX2VmZm9ydCI6Niwic21hcnRfc3Vic2FtcGxlIjp0cnVlfX0sInB1ciI6InZhcmlhdGlvbiJ9fQ==--433a1aa4c93b82845a6ff99c4698a37cf073e3c4/library-upload.jpg
                 external_references: {}
                 created_at: '2026-01-15T12:00:00.000Z'
                 updated_at: '2026-01-15T12:00:00.000Z'
@@ -32274,10 +32303,10 @@ paths:
                 filename: library-upload.jpg
                 content_type: image/jpeg
                 byte_size: 18090
-                embed_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MiwicHVyIjoiYmxvYl9pZCJ9fQ==--a196189531b55fd901bfd875c314c3d316caa9d7/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2xpbWl0IjpbMTIwMCwxMjAwXSwic2F2ZXIiOnsic3RyaXAiOnRydWUsInF1YWxpdHkiOjc1LCJsb3NzbGVzcyI6ZmFsc2UsImFscGhhX3EiOjg1LCJyZWR1Y3Rpb25fZWZmb3J0Ijo2LCJzbWFydF9zdWJzYW1wbGUiOnRydWV9fSwicHVyIjoidmFyaWF0aW9uIn19--05c4f268b89a5cbdf1a8cc47a8b391841c53ec0c/library-upload.jpg
-                signed_id: eyJfcmFpbHMiOnsiZGF0YSI6MiwicHVyIjoiYmxvYl9pZCJ9fQ==--a196189531b55fd901bfd875c314c3d316caa9d7
+                embed_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MiwicHVyIjoiYmxvYl9pZCJ9fQ==--c5c44fe3a545f6fc7ca81e21faf249bf89806f20/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2xpbWl0IjpbMTIwMCwxMjAwXSwic2F2ZXIiOnsic3RyaXAiOnRydWUsInF1YWxpdHkiOjc1LCJsb3NzbGVzcyI6ZmFsc2UsImFscGhhX3EiOjg1LCJyZWR1Y3Rpb25fZWZmb3J0Ijo2LCJzbWFydF9zdWJzYW1wbGUiOnRydWV9fSwicHVyIjoidmFyaWF0aW9uIn19--242558639bf438d8b844fd8c3df85abc76c30928/library-upload.jpg
+                signed_id: eyJfcmFpbHMiOnsiZGF0YSI6MiwicHVyIjoiYmxvYl9pZCJ9fQ==--c5c44fe3a545f6fc7ca81e21faf249bf89806f20
                 viewable_id:
-                download_url: http://localhost:3000/rails/active_storage/blobs/redirect/eyJfcmFpbHMiOnsiZGF0YSI6MiwicHVyIjoiYmxvYl9pZCJ9fQ==--a196189531b55fd901bfd875c314c3d316caa9d7/library-upload.jpg?disposition=attachment
+                download_url: http://localhost:3000/rails/active_storage/blobs/redirect/eyJfcmFpbHMiOnsiZGF0YSI6MiwicHVyIjoiYmxvYl9pZCJ9fQ==--c5c44fe3a545f6fc7ca81e21faf249bf89806f20/library-upload.jpg?disposition=attachment
                 metadata: {}
                 viewable_type:
               schema:
@@ -32434,13 +32463,13 @@ paths:
                 video_embed_url:
                 video_url:
                 poster_url:
-                original_url: http://localhost:3000/rails/active_storage/blobs/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--37ded779b38909aa9884ca2c10ae2835eb97e766/thinking-cat.jpg
-                mini_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--37ded779b38909aa9884ca2c10ae2835eb97e766/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOlsxMjgsMTI4XSwic2F2ZXIiOnsic3RyaXAiOnRydWUsInF1YWxpdHkiOjc1LCJsb3NzbGVzcyI6ZmFsc2UsImFscGhhX3EiOjg1LCJyZWR1Y3Rpb25fZWZmb3J0Ijo2LCJzbWFydF9zdWJzYW1wbGUiOnRydWV9fSwicHVyIjoidmFyaWF0aW9uIn19--a7ec073caa417463b3ad6a8292cad94ffff355d6/thinking-cat.jpg
-                small_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--37ded779b38909aa9884ca2c10ae2835eb97e766/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOlsyNTYsMjU2XSwic2F2ZXIiOnsic3RyaXAiOnRydWUsInF1YWxpdHkiOjc1LCJsb3NzbGVzcyI6ZmFsc2UsImFscGhhX3EiOjg1LCJyZWR1Y3Rpb25fZWZmb3J0Ijo2LCJzbWFydF9zdWJzYW1wbGUiOnRydWV9fSwicHVyIjoidmFyaWF0aW9uIn19--bad8f72856d72637ae6e72cf6d14b2a3ffb5e43a/thinking-cat.jpg
-                medium_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--37ded779b38909aa9884ca2c10ae2835eb97e766/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOls0MDAsNDAwXSwic2F2ZXIiOnsic3RyaXAiOnRydWUsInF1YWxpdHkiOjc1LCJsb3NzbGVzcyI6ZmFsc2UsImFscGhhX3EiOjg1LCJyZWR1Y3Rpb25fZWZmb3J0Ijo2LCJzbWFydF9zdWJzYW1wbGUiOnRydWV9fSwicHVyIjoidmFyaWF0aW9uIn19--f0e647823dcf5a183cf25b19a9ea7d9fcc919410/thinking-cat.jpg
-                large_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--37ded779b38909aa9884ca2c10ae2835eb97e766/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOls3MjAsNzIwXSwic2F2ZXIiOnsic3RyaXAiOnRydWUsInF1YWxpdHkiOjc1LCJsb3NzbGVzcyI6ZmFsc2UsImFscGhhX3EiOjg1LCJyZWR1Y3Rpb25fZWZmb3J0Ijo2LCJzbWFydF9zdWJzYW1wbGUiOnRydWV9fSwicHVyIjoidmFyaWF0aW9uIn19--f73073e1e5f215fb58af173f4fad0bf17879bfed/thinking-cat.jpg
-                xlarge_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--37ded779b38909aa9884ca2c10ae2835eb97e766/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOlsyMDAwLDIwMDBdLCJzYXZlciI6eyJzdHJpcCI6dHJ1ZSwicXVhbGl0eSI6NzUsImxvc3NsZXNzIjpmYWxzZSwiYWxwaGFfcSI6ODUsInJlZHVjdGlvbl9lZmZvcnQiOjYsInNtYXJ0X3N1YnNhbXBsZSI6dHJ1ZX19LCJwdXIiOiJ2YXJpYXRpb24ifX0=--8b9d446114666c6f4e1e2ba1fc7ad4e2f5fd9374/thinking-cat.jpg
-                og_image_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--37ded779b38909aa9884ca2c10ae2835eb97e766/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOlsxMjAwLDYzMF0sInNhdmVyIjp7InN0cmlwIjp0cnVlLCJxdWFsaXR5Ijo3NSwibG9zc2xlc3MiOmZhbHNlLCJhbHBoYV9xIjo4NSwicmVkdWN0aW9uX2VmZm9ydCI6Niwic21hcnRfc3Vic2FtcGxlIjp0cnVlfX0sInB1ciI6InZhcmlhdGlvbiJ9fQ==--955d03ec2412e9d7ddf6a15cb866c798ef931c7d/thinking-cat.jpg
+                original_url: http://localhost:3000/rails/active_storage/blobs/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--1163a14a921bc6b9d54fe1499de4d97e9d0527ca/thinking-cat.jpg
+                mini_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--1163a14a921bc6b9d54fe1499de4d97e9d0527ca/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOlsxMjgsMTI4XSwic2F2ZXIiOnsic3RyaXAiOnRydWUsInF1YWxpdHkiOjc1LCJsb3NzbGVzcyI6ZmFsc2UsImFscGhhX3EiOjg1LCJyZWR1Y3Rpb25fZWZmb3J0Ijo2LCJzbWFydF9zdWJzYW1wbGUiOnRydWV9fSwicHVyIjoidmFyaWF0aW9uIn19--3731278b1c86329b37f6e92b953ddd35adc39d8e/thinking-cat.jpg
+                small_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--1163a14a921bc6b9d54fe1499de4d97e9d0527ca/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOlsyNTYsMjU2XSwic2F2ZXIiOnsic3RyaXAiOnRydWUsInF1YWxpdHkiOjc1LCJsb3NzbGVzcyI6ZmFsc2UsImFscGhhX3EiOjg1LCJyZWR1Y3Rpb25fZWZmb3J0Ijo2LCJzbWFydF9zdWJzYW1wbGUiOnRydWV9fSwicHVyIjoidmFyaWF0aW9uIn19--ae05085b0615bb4066b2bed0130d155f3ecdfab6/thinking-cat.jpg
+                medium_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--1163a14a921bc6b9d54fe1499de4d97e9d0527ca/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOls0MDAsNDAwXSwic2F2ZXIiOnsic3RyaXAiOnRydWUsInF1YWxpdHkiOjc1LCJsb3NzbGVzcyI6ZmFsc2UsImFscGhhX3EiOjg1LCJyZWR1Y3Rpb25fZWZmb3J0Ijo2LCJzbWFydF9zdWJzYW1wbGUiOnRydWV9fSwicHVyIjoidmFyaWF0aW9uIn19--7213e35846ca3bf13cdf7d00e08fd09f22fcf5fe/thinking-cat.jpg
+                large_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--1163a14a921bc6b9d54fe1499de4d97e9d0527ca/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOls3MjAsNzIwXSwic2F2ZXIiOnsic3RyaXAiOnRydWUsInF1YWxpdHkiOjc1LCJsb3NzbGVzcyI6ZmFsc2UsImFscGhhX3EiOjg1LCJyZWR1Y3Rpb25fZWZmb3J0Ijo2LCJzbWFydF9zdWJzYW1wbGUiOnRydWV9fSwicHVyIjoidmFyaWF0aW9uIn19--d687409147b99f1769646dce2390a6976048bd41/thinking-cat.jpg
+                xlarge_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--1163a14a921bc6b9d54fe1499de4d97e9d0527ca/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOlsyMDAwLDIwMDBdLCJzYXZlciI6eyJzdHJpcCI6dHJ1ZSwicXVhbGl0eSI6NzUsImxvc3NsZXNzIjpmYWxzZSwiYWxwaGFfcSI6ODUsInJlZHVjdGlvbl9lZmZvcnQiOjYsInNtYXJ0X3N1YnNhbXBsZSI6dHJ1ZX19LCJwdXIiOiJ2YXJpYXRpb24ifX0=--cc44c538cfc30b7f8786d5d34a0358ae91ba76b1/thinking-cat.jpg
+                og_image_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--1163a14a921bc6b9d54fe1499de4d97e9d0527ca/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOlsxMjAwLDYzMF0sInNhdmVyIjp7InN0cmlwIjp0cnVlLCJxdWFsaXR5Ijo3NSwibG9zc2xlc3MiOmZhbHNlLCJhbHBoYV9xIjo4NSwicmVkdWN0aW9uX2VmZm9ydCI6Niwic21hcnRfc3Vic2FtcGxlIjp0cnVlfX0sInB1ciI6InZhcmlhdGlvbiJ9fQ==--433a1aa4c93b82845a6ff99c4698a37cf073e3c4/thinking-cat.jpg
                 external_references: {}
                 created_at: '2026-01-15T12:00:00.000Z'
                 updated_at: '2026-01-15T12:00:00.000Z'
@@ -32448,10 +32477,10 @@ paths:
                 filename: thinking-cat.jpg
                 content_type: image/jpeg
                 byte_size: 18090
-                embed_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--37ded779b38909aa9884ca2c10ae2835eb97e766/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2xpbWl0IjpbMTIwMCwxMjAwXSwic2F2ZXIiOnsic3RyaXAiOnRydWUsInF1YWxpdHkiOjc1LCJsb3NzbGVzcyI6ZmFsc2UsImFscGhhX3EiOjg1LCJyZWR1Y3Rpb25fZWZmb3J0Ijo2LCJzbWFydF9zdWJzYW1wbGUiOnRydWV9fSwicHVyIjoidmFyaWF0aW9uIn19--05c4f268b89a5cbdf1a8cc47a8b391841c53ec0c/thinking-cat.jpg
-                signed_id: eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--37ded779b38909aa9884ca2c10ae2835eb97e766
+                embed_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--1163a14a921bc6b9d54fe1499de4d97e9d0527ca/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2xpbWl0IjpbMTIwMCwxMjAwXSwic2F2ZXIiOnsic3RyaXAiOnRydWUsInF1YWxpdHkiOjc1LCJsb3NzbGVzcyI6ZmFsc2UsImFscGhhX3EiOjg1LCJyZWR1Y3Rpb25fZWZmb3J0Ijo2LCJzbWFydF9zdWJzYW1wbGUiOnRydWV9fSwicHVyIjoidmFyaWF0aW9uIn19--242558639bf438d8b844fd8c3df85abc76c30928/thinking-cat.jpg
+                signed_id: eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--1163a14a921bc6b9d54fe1499de4d97e9d0527ca
                 viewable_id: prod_gbHJdmfrXB
-                download_url: http://localhost:3000/rails/active_storage/blobs/redirect/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--37ded779b38909aa9884ca2c10ae2835eb97e766/thinking-cat.jpg?disposition=attachment
+                download_url: http://localhost:3000/rails/active_storage/blobs/redirect/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--1163a14a921bc6b9d54fe1499de4d97e9d0527ca/thinking-cat.jpg?disposition=attachment
                 metadata: {}
                 viewable_type: product
               schema:
@@ -33319,6 +33348,480 @@ paths:
                   code: processing_error
                   message: An uploaded label was not bought through Spree and cannot
                     be refunded — delete it instead
+  "/api/v3/admin/package_types":
+    get:
+      summary: List package types
+      tags:
+      - Package Types
+      security:
+      - api_key: []
+        bearer_auth: []
+      description: |-
+        Returns the store's packaging vocabulary: the box it ships parcels in
+        and the cartons, pallets and containers a wholesale order leaves on.
+
+        `volume` is the cubic meters the package occupies, converted from
+        whatever unit its dimensions were recorded in — the figure freight
+        volume rules compare against. It is null until all three sides are
+        measured.
+
+
+        **Required scope:** `read_settings` (for API-key authentication).
+      x-codeSamples:
+      - lang: javascript
+        label: Spree Admin SDK
+        source: |-
+          import { createAdminClient } from '@spree/admin-sdk'
+
+          const client = createAdminClient({
+            baseUrl: 'https://your-store.com',
+            secretKey: 'sk_xxx',
+          })
+
+          const { data: packageTypes } = await client.packageTypes.list()
+      - lang: bash
+        label: Spree CLI
+        source: spree api get /package_types
+      parameters:
+      - name: x-spree-api-key
+        in: header
+        required: true
+        schema:
+          type: string
+      - name: Authorization
+        in: header
+        required: true
+        description: Bearer token for admin authentication
+        schema:
+          type: string
+      - name: page
+        in: query
+        required: false
+        description: Page number
+        schema:
+          type: integer
+      - name: limit
+        in: query
+        required: false
+        description: Number of records per page
+        schema:
+          type: integer
+      - name: q[kind_eq]
+        in: query
+        required: false
+        description: Filter by kind (`box`, `envelope`, `carton`, `pallet`, `container`)
+        schema:
+          type: string
+      - name: sort
+        in: query
+        required: false
+        description: Sort by field. Prefix with `-` for descending (e.g., `-created_at`).
+        schema:
+          type: string
+      responses:
+        '200':
+          description: package types found
+          content:
+            application/json:
+              example:
+                data:
+                - id: pkgtype_UkLWZg9DAJ
+                  name: Master carton
+                  kind: carton
+                  length: '40.0'
+                  width: '30.0'
+                  height: '25.0'
+                  weight:
+                  max_weight: '20.0'
+                  default: false
+                  metadata: {}
+                  created_at: '2026-01-15T12:00:00.000Z'
+                  updated_at: '2026-01-15T12:00:00.000Z'
+                  dimensions_unit: cm
+                  weight_unit: kg
+                  volume: '0.03'
+                meta:
+                  page: 1
+                  limit: 25
+                  count: 1
+                  pages: 1
+                  from: 1
+                  to: 1
+                  in: 1
+                  previous:
+                  next:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      "$ref": "#/components/schemas/PackageType"
+                  meta:
+                    "$ref": "#/components/schemas/PaginationMeta"
+                required:
+                - data
+                - meta
+        '401':
+          description: unauthorized
+          content:
+            application/json:
+              example:
+                error:
+                  code: authentication_required
+                  message: Authentication required
+              schema:
+                "$ref": "#/components/schemas/ErrorResponse"
+    post:
+      summary: Create a package type
+      tags:
+      - Package Types
+      security:
+      - api_key: []
+        bearer_auth: []
+      description: |-
+        Adds a kind of packaging to the store.
+
+        `weight` is the empty package's own weight, added to content weight on
+        every quote; `max_weight` is what it can hold. Setting `default` makes
+        this the box every parcel quote is built on, and demotes whichever row
+        held that before.
+
+        A variant references a `carton`-kind row to say what it is packed
+        into; other kinds are the merchant's own vocabulary.
+
+
+        **Required scope:** `write_settings` (for API-key authentication).
+      x-codeSamples:
+      - lang: javascript
+        label: Spree Admin SDK
+        source: |-
+          import { createAdminClient } from '@spree/admin-sdk'
+
+          const client = createAdminClient({
+            baseUrl: 'https://your-store.com',
+            secretKey: 'sk_xxx',
+          })
+
+          const carton = await client.packageTypes.create({
+            name: 'Master carton',
+            kind: 'carton',
+            length: 40,
+            width: 30,
+            height: 25,
+            dimensions_unit: 'cm',
+            max_weight: 20,
+            weight_unit: 'kg',
+          })
+      - lang: bash
+        label: Spree CLI
+        source: spree api post /package_types -d '{"name":"Master carton","kind":"carton","length":40,"width":30,"height":25,"dimensions_unit":"cm","max_weight":20,"weight_unit":"kg"}'
+      parameters:
+      - name: x-spree-api-key
+        in: header
+        required: true
+        schema:
+          type: string
+      - name: Authorization
+        in: header
+        required: true
+        description: Bearer token for admin authentication
+        schema:
+          type: string
+      responses:
+        '201':
+          description: package type created
+          content:
+            application/json:
+              example:
+                id: pkgtype_gbHJdmfrXB
+                name: Euro pallet
+                kind: pallet
+                length: '120.0'
+                width: '80.0'
+                height: '15.0'
+                weight:
+                max_weight:
+                default: false
+                metadata: {}
+                created_at: '2026-01-15T12:00:00.000Z'
+                updated_at: '2026-01-15T12:00:00.000Z'
+                dimensions_unit: cm
+                weight_unit: lb
+                volume: '0.144'
+              schema:
+                "$ref": "#/components/schemas/PackageType"
+        '422':
+          description: validation error
+          content:
+            application/json:
+              example:
+                error:
+                  code: validation_error
+                  message: Kind is not included in the list
+                  details:
+                    kind:
+                    - is not included in the list
+              schema:
+                "$ref": "#/components/schemas/ErrorResponse"
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                  example: Euro pallet
+                kind:
+                  type: string
+                  enum:
+                  - box
+                  - envelope
+                  - carton
+                  - pallet
+                  - container
+                  example: pallet
+                length:
+                  type: number
+                  example: 120
+                width:
+                  type: number
+                  example: 80
+                height:
+                  type: number
+                  example: 15
+                dimensions_unit:
+                  type: string
+                  enum:
+                  - mm
+                  - cm
+                  - in
+                  - ft
+                  example: cm
+                weight:
+                  type: number
+                  example: 25
+                max_weight:
+                  type: number
+                  example: 1500
+                weight_unit:
+                  type: string
+                  enum:
+                  - g
+                  - kg
+                  - lb
+                  - oz
+                  example: kg
+                default:
+                  type: boolean
+                  example: false
+              required:
+              - name
+              - kind
+  "/api/v3/admin/package_types/{id}":
+    parameters:
+    - name: id
+      in: path
+      required: true
+      description: Package type ID
+      schema:
+        type: string
+    get:
+      summary: Get a package type
+      tags:
+      - Package Types
+      security:
+      - api_key: []
+        bearer_auth: []
+      description: |-
+        Returns a single package type by prefixed ID.
+
+        **Required scope:** `read_settings` (for API-key authentication).
+      x-codeSamples:
+      - lang: javascript
+        label: Spree Admin SDK
+        source: |-
+          import { createAdminClient } from '@spree/admin-sdk'
+
+          const client = createAdminClient({
+            baseUrl: 'https://your-store.com',
+            secretKey: 'sk_xxx',
+          })
+
+          const packageType = await client.packageTypes.get('pkgtype_123')
+      - lang: bash
+        label: Spree CLI
+        source: spree api get /package_types/{id}
+      parameters:
+      - name: x-spree-api-key
+        in: header
+        required: true
+        schema:
+          type: string
+      - name: Authorization
+        in: header
+        required: true
+        description: Bearer token for admin authentication
+        schema:
+          type: string
+      responses:
+        '200':
+          description: package type found
+          content:
+            application/json:
+              example:
+                id: pkgtype_UkLWZg9DAJ
+                name: Master carton
+                kind: carton
+                length: '40.0'
+                width: '30.0'
+                height: '25.0'
+                weight:
+                max_weight: '20.0'
+                default: false
+                metadata: {}
+                created_at: '2026-01-15T12:00:00.000Z'
+                updated_at: '2026-01-15T12:00:00.000Z'
+                dimensions_unit: cm
+                weight_unit: kg
+                volume: '0.03'
+              schema:
+                "$ref": "#/components/schemas/PackageType"
+        '404':
+          description: package type not found
+          content:
+            application/json:
+              example:
+                error:
+                  code: record_not_found
+                  message: Package type not found
+              schema:
+                "$ref": "#/components/schemas/ErrorResponse"
+    patch:
+      summary: Update a package type
+      tags:
+      - Package Types
+      security:
+      - api_key: []
+        bearer_auth: []
+      description: |-
+        Updates a package type. Every product packed in it follows the new geometry.
+
+        **Required scope:** `write_settings` (for API-key authentication).
+      x-codeSamples:
+      - lang: javascript
+        label: Spree Admin SDK
+        source: |-
+          import { createAdminClient } from '@spree/admin-sdk'
+
+          const client = createAdminClient({
+            baseUrl: 'https://your-store.com',
+            secretKey: 'sk_xxx',
+          })
+
+          const carton = await client.packageTypes.update('pkgtype_123', {
+            max_weight: 25,
+          })
+      - lang: bash
+        label: Spree CLI
+        source: spree api patch /package_types/{id} -d '{"max_weight":25}'
+      parameters:
+      - name: x-spree-api-key
+        in: header
+        required: true
+        schema:
+          type: string
+      - name: Authorization
+        in: header
+        required: true
+        description: Bearer token for admin authentication
+        schema:
+          type: string
+      responses:
+        '200':
+          description: package type updated
+          content:
+            application/json:
+              example:
+                id: pkgtype_UkLWZg9DAJ
+                name: Master carton
+                kind: carton
+                length: '40.0'
+                width: '30.0'
+                height: '25.0'
+                weight:
+                max_weight: '25.0'
+                default: false
+                metadata: {}
+                created_at: '2026-01-15T12:00:00.000Z'
+                updated_at: '2026-01-15T12:00:00.000Z'
+                dimensions_unit: cm
+                weight_unit: kg
+                volume: '0.03'
+              schema:
+                "$ref": "#/components/schemas/PackageType"
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                length:
+                  type: number
+                width:
+                  type: number
+                height:
+                  type: number
+                max_weight:
+                  type: number
+                default:
+                  type: boolean
+    delete:
+      summary: Delete a package type
+      tags:
+      - Package Types
+      security:
+      - api_key: []
+        bearer_auth: []
+      description: |-
+        Removes a kind of packaging. Refused while any variant is packed into
+        it — repack those products first.
+
+
+        **Required scope:** `write_settings` (for API-key authentication).
+      x-codeSamples:
+      - lang: javascript
+        label: Spree Admin SDK
+        source: |-
+          import { createAdminClient } from '@spree/admin-sdk'
+
+          const client = createAdminClient({
+            baseUrl: 'https://your-store.com',
+            secretKey: 'sk_xxx',
+          })
+
+          await client.packageTypes.delete('pkgtype_123')
+      - lang: bash
+        label: Spree CLI
+        source: spree api delete /package_types/{id}
+      parameters:
+      - name: x-spree-api-key
+        in: header
+        required: true
+        schema:
+          type: string
+      - name: Authorization
+        in: header
+        required: true
+        description: Bearer token for admin authentication
+        schema:
+          type: string
+      responses:
+        '204':
+          description: package type deleted
   "/api/v3/admin/price_lists/{price_list_id}/products":
     get:
       summary: List price list products
@@ -36737,6 +37240,9 @@ components:
         below_order_minimum:
           type: boolean
           nullable: true
+        freight_summary:
+          type: object
+          nullable: true
         shipping_eq_billing_address:
           type: boolean
         items:
@@ -36817,6 +37323,7 @@ components:
       - order_minimum
       - order_minimum_shortfall
       - below_order_minimum
+      - freight_summary
       - shipping_eq_billing_address
       - items
       - billing_address
@@ -38536,6 +39043,11 @@ components:
         estimated_delivery_date:
           type: string
           nullable: true
+        unpriced:
+          type: boolean
+        freight_summary:
+          type: object
+          nullable: true
         display_cost:
           type: string
         display_total:
@@ -38568,6 +39080,8 @@ components:
       - carrier
       - service_level
       - estimated_delivery_date
+      - unpriced
+      - freight_summary
       - display_cost
       - display_total
       - display_additional_tax_total
@@ -39136,6 +39650,8 @@ components:
         selected_delivery_rate_id:
           type: string
           nullable: true
+        unpriced:
+          type: boolean
         cost:
           type: string
         display_cost:
@@ -39227,6 +39743,7 @@ components:
       - tracking_url
       - pickup_point_data
       - selected_delivery_rate_id
+      - unpriced
       - cost
       - display_cost
       - total
@@ -40197,6 +40714,9 @@ components:
         po_document_byte_size:
           type: number
           nullable: true
+        freight_summary:
+          type: object
+          nullable: true
         number:
           type: string
         email:
@@ -40423,6 +40943,7 @@ components:
       - company_name
       - po_document_filename
       - po_document_byte_size
+      - freight_summary
       - number
       - email
       - customer_note
@@ -40488,6 +41009,63 @@ components:
       - cancel_reason_name
       - created_by_id
       - customer_id
+      x-typelizer: true
+    PackageType:
+      type: object
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+        kind:
+          type: string
+        length:
+          type: string
+          nullable: true
+        width:
+          type: string
+          nullable: true
+        height:
+          type: string
+          nullable: true
+        weight:
+          type: string
+          nullable: true
+        max_weight:
+          type: string
+          nullable: true
+        default:
+          type: boolean
+        metadata:
+          type: object
+          nullable: true
+        created_at:
+          type: string
+        updated_at:
+          type: string
+        dimensions_unit:
+          type: string
+        weight_unit:
+          type: string
+        volume:
+          type: string
+          nullable: true
+      required:
+      - id
+      - name
+      - kind
+      - length
+      - width
+      - height
+      - weight
+      - max_weight
+      - default
+      - metadata
+      - created_at
+      - updated_at
+      - dimensions_unit
+      - weight_unit
+      - volume
       x-typelizer: true
     PaymentMethod:
       type: object
@@ -41657,6 +42235,8 @@ components:
           type: array
           items:
             "$ref": "#/components/schemas/Refund"
+        documents:
+          type: object
         labels:
           type: array
           items:
@@ -41685,6 +42265,7 @@ components:
       - created_by_id
       - refunded_total
       - refundable_total
+      - documents
       - labels
       - deliveries
       x-typelizer: true
@@ -42601,14 +43182,6 @@ components:
           type: string
         preferred_weight_unit:
           type: string
-        preferred_default_package_weight:
-          type: number
-        preferred_default_package_length:
-          type: number
-        preferred_default_package_width:
-          type: number
-        preferred_default_package_height:
-          type: number
         preferred_unit_system:
           type: string
         preferred_storefront_access:
@@ -42716,10 +43289,6 @@ components:
       - preferred_admin_locale
       - preferred_timezone
       - preferred_weight_unit
-      - preferred_default_package_weight
-      - preferred_default_package_length
-      - preferred_default_package_width
-      - preferred_default_package_height
       - preferred_unit_system
       - preferred_storefront_access
       - preferred_guest_checkout
@@ -43133,12 +43702,6 @@ components:
         barcode:
           type: string
           nullable: true
-        weight_unit:
-          type: string
-          nullable: true
-        dimensions_unit:
-          type: string
-          nullable: true
         backorder_limit:
           type: number
           nullable: true
@@ -43151,6 +43714,12 @@ components:
         customs_description:
           type: string
           nullable: true
+        carton_weight:
+          type: string
+          nullable: true
+        cartons_per_pallet:
+          type: number
+          nullable: true
         deleted_at:
           type: string
           nullable: true
@@ -43162,6 +43731,18 @@ components:
           type: boolean
         tax_category_id:
           type: string
+          nullable: true
+        weight_unit:
+          type: string
+          nullable: true
+        dimensions_unit:
+          type: string
+          nullable: true
+        carton_package_type_id:
+          type: string
+          nullable: true
+        units_per_pallet:
+          type: number
           nullable: true
         available_stock:
           type: number
@@ -43215,17 +43796,21 @@ components:
       - cost_price
       - cost_currency
       - barcode
-      - weight_unit
-      - dimensions_unit
       - backorder_limit
       - hs_code
       - country_of_origin
       - customs_description
+      - carton_weight
+      - cartons_per_pallet
       - deleted_at
       - created_at
       - updated_at
       - preorderable
       - tax_category_id
+      - weight_unit
+      - dimensions_unit
+      - carton_package_type_id
+      - units_per_pallet
       - available_stock
       - reserved_quantity
       - total_on_hand
