@@ -82,6 +82,14 @@ module Spree
       # refused release fails the whole workflow, which rolls back the ones
       # that did succeed. Emptying one shopper's cart and then not spending
       # the balance would be the worst of both outcomes.
+      #
+      # Holds are locked in id order, and the card's own lock is taken first,
+      # so two applies of the SAME card serialize and cannot deadlock. Two
+      # applies of DIFFERENT cards can still cross when each target already
+      # holds the other's card; the database aborts one and the API layer
+      # turns that into a retryable conflict (Spree::Api::V3::OrderLock).
+      # Releasing outside the target's lock would remove the crossing but
+      # give up the all-or-nothing rollback above, which matters more.
       def release_open_holds
         @released_holds = []
 
