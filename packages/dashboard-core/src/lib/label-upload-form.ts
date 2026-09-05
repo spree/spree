@@ -8,7 +8,10 @@ import { z } from 'zod'
  * number.
  */
 export const labelUploadFormSchema = z.object({
-  tracking_number: z.string().min(1),
+  // Trimmed before the length check: every consumer trims before sending, so
+  // validating the raw value would let a field of spaces pass and submit
+  // blank.
+  tracking_number: z.string().trim().min(1),
   carrier: z.string(),
   cost: z.string(),
 })

@@ -154,6 +154,10 @@ export function FulfillItemsForm({
   )
   const totalAvailable = rows.reduce((sum, row) => sum + row.quantity, 0)
   const shipsEverything = totalSelected === totalAvailable
+  // A parcel whose items cannot be addressed by line item has nothing to pick
+  // from, but it still ships — the workflow reads an empty selection as
+  // "everything". Blocking submit would leave it unshippable.
+  const shipsWholeParcel = rows.length === 0
 
   return (
     <form onSubmit={form.handleSubmit(onSubmit)} className="flex flex-col">
@@ -255,7 +259,11 @@ export function FulfillItemsForm({
         <Button type="button" size="sm" variant="outline" onClick={onCancel}>
           {t('admin.actions.cancel')}
         </Button>
-        <Button type="submit" size="sm" disabled={totalSelected === 0 || pending}>
+        <Button
+          type="submit"
+          size="sm"
+          disabled={(totalSelected === 0 && !shipsWholeParcel) || pending}
+        >
           {pending ? t('admin.actions.saving') : t('admin.orders.fulfill.submit')}
         </Button>
       </div>

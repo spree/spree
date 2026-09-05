@@ -118,7 +118,10 @@ export function FulfillmentSplitDialog({
                 min={1}
                 max={selected?.quantity ?? 1}
                 value={quantity}
-                onChange={(event) => setQuantity(Number(event.target.value))}
+                // Clearing the field yields NaN, which fails every comparison
+                // below — so `invalid` would read false and the split would
+                // send a null quantity.
+                onChange={(event) => setQuantity(Number(event.target.value) || 0)}
               />
               {wouldEmpty && <FieldError>{t('orders.fulfillments.split_would_empty')}</FieldError>}
             </Field>

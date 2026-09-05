@@ -81,11 +81,10 @@ module Spree
 
           # What the warehouse counted, resolved through the return itself.
           def items_for_receive
-            # `nil` means "receive it all as requested"; an empty list means
-            # the caller named no units, which must not fall through to that.
-            return nil unless params.key?(:items)
+            sent = received_items([:return_line_item_id, :quantity, :resellable])
+            return nil if sent.nil?
 
-            params.permit(items: [:return_line_item_id, :quantity, :resellable])[:items].map do |item|
+            sent.map do |item|
               {
                 return_line_item: @resource.return_line_items.find_by_prefix_id!(item[:return_line_item_id]),
                 quantity: item[:quantity].to_i,

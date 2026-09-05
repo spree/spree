@@ -195,10 +195,11 @@ export function ClaimResolveDialog({
           )}
         </DialogBody>
         <DialogFooter>
-          <Button variant="outline" onClick={onClose} disabled={pending}>
+          <Button type="button" variant="outline" onClick={onClose} disabled={pending}>
             {t('admin.actions.cancel')}
           </Button>
           <Button
+            type="button"
             disabled={!ready || pending}
             onClick={() =>
               onSubmit({

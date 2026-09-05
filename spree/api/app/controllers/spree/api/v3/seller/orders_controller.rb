@@ -68,13 +68,20 @@ module Spree
           # the marketplace's, and a write that took whatever the serializer
           # permits would quietly grow into one a seller could reprice with.
           def address
-            attributes = address_params
-            return render_validation_error(missing_address_errors) if attributes.blank?
+            # Checked before the lock: an empty payload needs no serialization,
+            # and returning out of a locked block is worth avoiding.
+            return render_validation_error(missing_address_errors) if sent_addresses.blank?
 
-            if @resource.update(attributes)
-              render json: serialize_resource(@resource.reload)
-            else
-              render_validation_error(@resource.errors)
+            # The merge reads the address it is about to replace, so it runs
+            # under the order's lock: two corrections landing together would
+            # each lay their fields over the same snapshot, and the later one
+            # would undo the earlier one's lines.
+            with_order_lock do
+              if @resource.update(address_params)
+                render json: serialize_resource(@resource.reload)
+              else
+                render_validation_error(@resource.errors)
+              end
             end
           end
 
@@ -111,11 +118,15 @@ module Spree
           # postcode beside it. The nested writer builds a fresh address row
           # either way, which is what keeps a shared customer address book
           # entry from being rewritten by an order-level fix.
-          def address_params
-            permitted = params.permit(
+          def sent_addresses
+            @sent_addresses ||= params.permit(
               shipping_address: address_permitted_keys,
               billing_address: address_permitted_keys
-            )
+            ).slice(:shipping_address, :billing_address).reject { |_key, value| value.blank? }
+          end
+
+          def address_params
+            permitted = sent_addresses
 
             {}.tap do |attributes|
               if permitted[:shipping_address].present?

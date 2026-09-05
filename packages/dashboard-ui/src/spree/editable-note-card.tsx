@@ -39,6 +39,9 @@ export function EditableNoteCard({
         <CardTitle>{title}</CardTitle>
         <CardAction>
           <Button
+            // Explicit: a card on the order page sits inside that page's own
+            // form, and a button with no type submits it.
+            type="button"
             variant="ghost"
             size="icon-sm"
             onClick={() => onEditingChange(!editing)}

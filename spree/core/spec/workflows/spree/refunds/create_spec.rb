@@ -110,4 +110,66 @@ RSpec.describe Spree::Refunds::Create do
       expect(seen.amount).to eq(5)
     end
   end
+  # A marketplace basket is taken with one charge against the order group, so
+  # a child order holds no payment of its own — only its share. The
+  # whole-payment balance says nothing about whose money it is, which is what
+  # these cover.
+  describe 'a payment shared by a split checkout' do
+    let(:store) { @default_store }
+    let(:group) { create(:order_group, store: store) }
+    let!(:order) { grouped_order(1) }
+    let!(:sibling) { grouped_order(2) }
+
+    let!(:shared_payment) do
+      create(:payment, order: nil, cart: nil, order_group: group, amount: 200, status: 'completed')
+    end
+    let!(:split) do
+      create(:payment_split, payment: shared_payment, order: order,
+                             authorized_amount: 100, captured_amount: 100)
+    end
+    let!(:sibling_split) do
+      create(:payment_split, payment: shared_payment, order: sibling,
+                             authorized_amount: 100, captured_amount: 100)
+    end
+
+    def grouped_order(suffix)
+      create(:completed_order_with_totals, store: store).tap do |placed|
+        placed.update_columns(order_group_id: group.id, number: "#{group.number}-#{suffix}")
+        placed.reload
+      end
+    end
+
+    it "refunds up to the named order's own share" do
+      result = described_class.call(payment: shared_payment, order: order, amount: 100)
+
+      expect(result).to be_success
+      expect(result.value.amount).to eq(100)
+    end
+
+    it "refuses an amount above the named order's share, even though the payment covers it" do
+      result = described_class.call(payment: shared_payment, order: order, amount: 150)
+
+      expect(result).to be_failure
+      expect(result.error.value).to eq(:refund_amount_exceeds_balance)
+      expect(shared_payment.refunds).to be_empty
+    end
+
+    # The pre-flight check reads the share before the payment row is locked, so
+    # a sibling refund landing in between would otherwise let both commit and
+    # together overdraw this child. `Spree::Refund` cannot catch it: it
+    # validates `credit_allowed`, which is the whole payment's balance.
+    it 'refuses when another refund claimed the share after the pre-flight check' do
+      allow(shared_payment).to receive(:with_lock).and_wrap_original do |original, &block|
+        create(:refund, payment: shared_payment, order: order, amount: 100)
+        original.call(&block)
+      end
+
+      result = described_class.call(payment: shared_payment, order: order, amount: 100)
+
+      expect(result).to be_failure
+      expect(result.error.value).to eq(:refund_amount_exceeds_balance)
+      # Only the refund that got there first survives.
+      expect(Spree::Refund.where(order_id: order.id).sum(:amount)).to eq(100)
+    end
+  end
 end

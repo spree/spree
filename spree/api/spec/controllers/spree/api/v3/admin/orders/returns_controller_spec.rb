@@ -116,6 +116,27 @@ RSpec.describe Spree::Api::V3::Admin::Orders::ReturnsController, type: :controll
       expect(line.reload.received_quantity).to eq(0)
     end
 
+    # A present-but-null `items` is the same statement as an empty list, and
+    # must not be iterated — that answered a 500 to a client mistake.
+    it 'treats an explicit null item list as naming no units' do
+      line = return_record.return_line_items.first
+
+      patch :receive, params: {
+        order_id: order.prefixed_id, id: return_record.prefixed_id, items: nil
+      }, as: :json
+
+      expect(response).to have_http_status(:unprocessable_content)
+      expect(line.reload.received_quantity).to eq(0)
+    end
+
+    it 'refuses an item list that is not a list' do
+      patch :receive, params: {
+        order_id: order.prefixed_id, id: return_record.prefixed_id, items: 'everything'
+      }, as: :json
+
+      expect(response).to have_http_status(:unprocessable_content)
+    end
+
     it 'records a partial, non-resellable receipt' do
       line = return_record.return_line_items.first
 

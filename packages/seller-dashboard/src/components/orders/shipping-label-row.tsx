@@ -7,6 +7,7 @@ import {
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
+  toastManager,
   useConfirm,
 } from '@spree/dashboard-ui'
 import {
@@ -46,12 +47,21 @@ export function ShippingLabelRow({
   async function print() {
     if (!label.download_url) return
 
-    await downloadFromApi(
-      token,
-      label.download_url,
-      `${label.tracking_number ?? 'label'}.${label.format ?? 'pdf'}`,
-      getApiClient().downloadHeaders?.() ?? {},
-    )
+    // A rejected download inside a click handler is otherwise unhandled, so
+    // the file silently never arrives.
+    try {
+      await downloadFromApi(
+        token,
+        label.download_url,
+        `${label.tracking_number ?? 'label'}.${label.format ?? 'pdf'}`,
+        getApiClient().downloadHeaders?.() ?? {},
+      )
+    } catch (error) {
+      toastManager.add({
+        type: 'error',
+        title: error instanceof Error ? error.message : t('admin.errors.unexpected'),
+      })
+    }
   }
 
   async function handleDelete() {

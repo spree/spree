@@ -80,11 +80,10 @@ module Spree
           end
 
           def items_for_receive
-            # `nil` means "receive it all as requested"; an empty list means
-            # the caller named no units, which must not fall through to that.
-            return nil unless params.key?(:items)
+            sent = received_items([:exchange_line_item_id, :quantity, :resellable])
+            return nil if sent.nil?
 
-            params.permit(items: [:exchange_line_item_id, :quantity, :resellable])[:items].map do |item|
+            sent.map do |item|
               {
                 exchange_line_item: @resource.exchange_line_items.find_by_prefix_id!(item[:exchange_line_item_id]),
                 quantity: item[:quantity].to_i,

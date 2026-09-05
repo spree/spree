@@ -80,7 +80,12 @@ export function ReturnReceiveDialog({
                       setRows((current) => ({
                         ...current,
                         [line.id]: {
-                          quantity: Math.min(Number(event.target.value), line.quantity),
+                          // `min`/`max` bind the stepper only — a typed value
+                          // reaches onChange unclamped.
+                          quantity: Math.max(
+                            0,
+                            Math.min(Number(event.target.value) || 0, line.quantity),
+                          ),
                           resellable: current[line.id]?.resellable ?? true,
                         },
                       }))
@@ -110,10 +115,11 @@ export function ReturnReceiveDialog({
           ))}
         </DialogBody>
         <DialogFooter>
-          <Button variant="outline" onClick={onClose} disabled={pending}>
+          <Button type="button" variant="outline" onClick={onClose} disabled={pending}>
             {t('admin.actions.cancel')}
           </Button>
           <Button
+            type="button"
             disabled={pending}
             onClick={() =>
               onSubmit(
@@ -215,10 +221,14 @@ export function ReturnRefundDialog({
           </Field>
         </DialogBody>
         <DialogFooter>
-          <Button variant="outline" onClick={onClose} disabled={pending}>
+          <Button type="button" variant="outline" onClick={onClose} disabled={pending}>
             {t('admin.actions.cancel')}
           </Button>
-          <Button disabled={pending} onClick={() => onSubmit({ refundMethod, amount })}>
+          <Button
+            type="button"
+            disabled={pending}
+            onClick={() => onSubmit({ refundMethod, amount })}
+          >
             {t('admin.pages.orders.detail.returns.actions.refund')}
           </Button>
         </DialogFooter>

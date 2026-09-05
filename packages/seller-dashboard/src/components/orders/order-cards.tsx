@@ -15,6 +15,7 @@ import {
 } from '@spree/dashboard-ui'
 import { EllipsisVerticalIcon, PencilIcon } from '@spree/dashboard-ui/icons'
 import type { Order, OrderAddressParams } from '@spree/seller-sdk'
+import i18n from 'i18next'
 import { type ReactNode, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { sellerClient } from '../../api-client'
@@ -49,7 +50,15 @@ function SummaryRow({
 
 function formatDate(iso: string | null | undefined) {
   if (!iso) return '—'
-  return new Date(iso).toLocaleString()
+  // The panel's own locale, not the browser's — otherwise a seller reading
+  // German sees day and month in the other order.
+  return new Date(iso).toLocaleDateString(i18n.language, {
+    month: 'short',
+    day: 'numeric',
+    year: 'numeric',
+    hour: 'numeric',
+    minute: '2-digit',
+  })
 }
 
 /**

@@ -2,6 +2,7 @@ import { PageHeader } from '@spree/dashboard-core'
 import { DropdownMenuItem, ResourceLayout, StatusBadge } from '@spree/dashboard-ui'
 import { XCircleIcon } from '@spree/dashboard-ui/icons'
 import { useParams } from '@tanstack/react-router'
+import i18n from 'i18next'
 import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { CenteredMessage } from '../components/centered-message'
@@ -50,7 +51,15 @@ export function OrderPage() {
             title={order.number}
             backTo="orders"
             subtitle={
-              order.completed_at ? new Date(order.completed_at).toLocaleString() : undefined
+              order.completed_at
+                ? new Date(order.completed_at).toLocaleDateString(i18n.language, {
+                    month: 'short',
+                    day: 'numeric',
+                    year: 'numeric',
+                    hour: 'numeric',
+                    minute: '2-digit',
+                  })
+                : undefined
             }
             badges={
               <>
