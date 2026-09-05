@@ -79,6 +79,21 @@ RSpec.describe Spree::Api::V3::Admin::CommissionRatesController, type: :controll
       expect(response).to have_http_status(:unprocessable_entity)
     end
 
+    it 'names the unknown rule type in the code and its value, not just the sentence' do
+      post :create, params: {
+        name: 'Bad rule', kind: 'percentage', value: 10,
+        rules: [{ type: 'wishlist_rule', preferences: {} }]
+      }, as: :json
+
+      expect(response).to have_http_status(:unprocessable_content)
+      # The dashboard picks its copy from `code`, and needs `type` to name the
+      # kind the operator sent — a generic `invalid` would tell it neither.
+      expect(json_response['error']['details']['rules'].first).to include(
+        'code' => 'invalid_commission_rule_type',
+        'type' => 'wishlist_rule'
+      )
+    end
+
     it 'refuses a percentage above one hundred' do
       post :create, params: { name: 'Too high', kind: 'percentage', value: 150 }, as: :json
 
