@@ -327,6 +327,7 @@
     },
     "delivery_help": "Leave this blank to ship the way the marketplace ships this product.",
     "delivery_title": "Delivery",
+    "description": "Sell the same product the marketplace already lists. You set your own price, stock and condition, and the marketplace reviews each offer before it goes on sale.",
     "details_title": "Offer details",
     "empty": "You have no offers yet. Find a product the marketplace sells and list yours against it.",
     "fields": {

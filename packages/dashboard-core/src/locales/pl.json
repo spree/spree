@@ -799,28 +799,6 @@
           "label": "Kod HS",
           "placeholder": "np. 640411"
         },
-        "preorder_ships_at": {
-          "help": "Kiedy planujesz wysłać zamówienia przedpremierowe. Pokazywane klientom jako obietnica dostawy; przedsprzedaż kończy się po upływie tej daty.",
-          "label": "Wysyłka do",
-          "placeholder": "Wybierz datę"
-        },
-        "preorderable": {
-          "help": "Sprzedawaj ten wariant, zanim trafi do magazynu. Ogranicz liczbę limitem zamówień oczekujących, wpisz przychodzący stan jako ilość lub pozostaw puste dla nieograniczonej liczby.",
-          "label": "Dostępne w przedsprzedaży"
-        },
-        "sku": {
-          "label": "SKU",
-          "placeholder": "PRODUKT-CZERWONY-S"
-        },
-        "weight": {
-          "label": "Waga"
-        },
-        "weight_unit": {
-          "label": "Jednostka"
-        },
-        "width": {
-          "label": "Szerokość"
-        },
         "minimum_order_quantity": {
           "label": "Minimalna wielkość zamówienia",
           "placeholder": "Brak minimum",
@@ -831,6 +809,15 @@
           "placeholder": "Brak wielokrotności",
           "help": "Każdy kolejny krok powyżej minimum. Pozostaw puste, aby dopuścić dowolną ilość."
         },
+        "preorder_ships_at": {
+          "help": "Kiedy planujesz wysłać zamówienia przedpremierowe. Pokazywane klientom jako obietnica dostawy; przedsprzedaż kończy się po upływie tej daty.",
+          "label": "Wysyłka do",
+          "placeholder": "Wybierz datę"
+        },
+        "preorderable": {
+          "help": "Sprzedawaj ten wariant, zanim trafi do magazynu. Ogranicz liczbę limitem zamówień oczekujących, wpisz przychodzący stan jako ilość lub pozostaw puste dla nieograniczonej liczby.",
+          "label": "Dostępne w przedsprzedaży"
+        },
         "purchase_unit": {
           "label": "Jednostka sprzedaży",
           "options": {
@@ -838,10 +825,26 @@
             "carton": "Kartony"
           }
         },
+        "quantity_rule_invalid": "Podaj liczbę całkowitą większą od zera lub pozostaw pole puste.",
+        "sku": {
+          "label": "SKU",
+          "placeholder": "PRODUKT-CZERWONY-S"
+        },
+        "track_inventory": {
+          "label": "Śledź stan magazynowy"
+        },
         "units_per_carton": {
           "label": "Sztuk w kartonie"
         },
-        "quantity_rule_invalid": "Podaj liczbę całkowitą większą od zera lub pozostaw pole puste."
+        "weight": {
+          "label": "Waga"
+        },
+        "weight_unit": {
+          "label": "Jednostka"
+        },
+        "width": {
+          "label": "Szerokość"
+        }
       },
       "minimum_order_quantity": {
         "label": "Minimalna wielkość zamówienia",

@@ -85,6 +85,16 @@ namespace :spree do
 
         offer = seller.variants.find_by(product: master, sku: 'SAMPLE-OFFER-1')
 
+        # A value for every axis the product is sold by, taken from what it
+        # already carries — an offer missing one lands in a different buy box
+        # from the rows it is meant to compete with, which is exactly what the
+        # seller endpoint refuses
+        # (docs/plans/6.0-seller-master-catalog-listings.md, Decision 7).
+        options = master.option_types.includes(:option_values).filter_map do |option_type|
+          value = option_type.option_values.first
+          { name: option_type.name, value: value.name } if value
+        end
+
         if offer.nil?
           result = Spree.variant_create_workflow.call(
             product: master,
@@ -92,6 +102,7 @@ namespace :spree do
               sku: 'SAMPLE-OFFER-1',
               seller_id: seller.id,
               status: 'draft',
+              options: options,
               # Under the marketplace's own price, so the buy box has a real
               # decision to make once the offer is approved.
               prices: [{ currency: store.default_currency, amount: 9.5 }],

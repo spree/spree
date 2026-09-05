@@ -798,28 +798,6 @@
           "label": "HS-Code",
           "placeholder": "z. B. 640411"
         },
-        "preorder_ships_at": {
-          "help": "Wann du Vorbestellungen voraussichtlich versendest. Wird Kunden als Lieferversprechen angezeigt; die Vorbestellung endet, sobald dieses Datum verstreicht.",
-          "label": "Versand bis",
-          "placeholder": "Datum wählen"
-        },
-        "preorderable": {
-          "help": "Verkaufe diese Variante, bevor sie auf Lager ist. Begrenze die Menge mit dem Nachbestellungslimit, gib eingehenden Bestand als Lagerbestand ein oder lass es für unbegrenzt leer.",
-          "label": "Für Vorbestellung verfügbar"
-        },
-        "sku": {
-          "label": "SKU",
-          "placeholder": "PRODUCT-RED-S"
-        },
-        "weight": {
-          "label": "Gewicht"
-        },
-        "weight_unit": {
-          "label": "Einheit"
-        },
-        "width": {
-          "label": "Breite"
-        },
         "minimum_order_quantity": {
           "label": "Mindestbestellmenge",
           "placeholder": "Kein Minimum",
@@ -830,6 +808,15 @@
           "placeholder": "Kein Vielfaches",
           "help": "Jeder Schritt über der Mindestmenge. Leer lassen für beliebige Mengen."
         },
+        "preorder_ships_at": {
+          "help": "Wann du Vorbestellungen voraussichtlich versendest. Wird Kunden als Lieferversprechen angezeigt; die Vorbestellung endet, sobald dieses Datum verstreicht.",
+          "label": "Versand bis",
+          "placeholder": "Datum wählen"
+        },
+        "preorderable": {
+          "help": "Verkaufe diese Variante, bevor sie auf Lager ist. Begrenze die Menge mit dem Nachbestellungslimit, gib eingehenden Bestand als Lagerbestand ein oder lass es für unbegrenzt leer.",
+          "label": "Für Vorbestellung verfügbar"
+        },
         "purchase_unit": {
           "label": "Verkaufseinheit",
           "options": {
@@ -837,10 +824,26 @@
             "carton": "Kartons"
           }
         },
+        "quantity_rule_invalid": "Geben Sie eine ganze Zahl größer als null ein oder lassen Sie das Feld leer.",
+        "sku": {
+          "label": "SKU",
+          "placeholder": "PRODUCT-RED-S"
+        },
+        "track_inventory": {
+          "label": "Bestand verfolgen"
+        },
         "units_per_carton": {
           "label": "Stück pro Karton"
         },
-        "quantity_rule_invalid": "Geben Sie eine ganze Zahl größer als null ein oder lassen Sie das Feld leer."
+        "weight": {
+          "label": "Gewicht"
+        },
+        "weight_unit": {
+          "label": "Einheit"
+        },
+        "width": {
+          "label": "Breite"
+        }
       },
       "minimum_order_quantity": {
         "label": "Mindestbestellmenge",
