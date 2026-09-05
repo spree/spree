@@ -92,7 +92,18 @@ module Spree
             end
 
             def permitted_params
-              params.permit(*permitted_attributes)
+              params.permit(*permitted_attributes).tap { |attrs| attrs.delete(:status) if review_status?(attrs[:status]) }
+            end
+
+            # A review status is an outcome, not a value to assign: `proposed`
+            # means a seller asked, and `rejected` means somebody decided.
+            # Both are reached through the workflows behind `approve`/`reject`,
+            # which record who decided and settle the submission row — writing
+            # one here would leave a seller looking at a rejected offer with no
+            # reason and no trail
+            # (docs/plans/6.0-seller-master-catalog-listings.md).
+            def review_status?(status)
+              status.present? && Spree::Variant::REVIEW_STATUSES.include?(status.to_s)
             end
           end
         end

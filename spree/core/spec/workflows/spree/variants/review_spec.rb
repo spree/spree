@@ -174,6 +174,16 @@ RSpec.describe 'Spree::Variants review workflows' do
       expect(offer.latest_submission).to be_withdrawn
     end
 
+    # A first-party variant's availability is its product's business, so an
+    # offer workflow must not be a way to write a status onto one.
+    it 'refuses a first-party variant' do
+      first_party = create(:variant, product: master, status: 'active')
+
+      expect(Spree.variant_draft_workflow.call(variant: first_party)).not_to be_success
+      expect(Spree.variant_archive_workflow.call(variant: first_party)).not_to be_success
+      expect(first_party.reload).to be_active
+    end
+
     # A rejected offer has already been decided; inventing a withdrawn row
     # for it would bury that decision under an entry nobody made.
     it 'leaves a decided submission alone' do
