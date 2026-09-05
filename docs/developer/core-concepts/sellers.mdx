@@ -125,6 +125,66 @@ await sellerClient.products.submit(product.id)
 
 Stores that trust their vendors can turn auto-approval on and skip the queue.
 
+## Several sellers, one product
+
+The section above covers a seller listing something of their own. The other
+shape is several sellers competing on the **same** item — the same book, the
+same phone, the same part. Both sit in one catalog and neither needs a mode
+switch.
+
+A product the marketplace owns can be **opened to sellers**. Sellers then list
+their own **offers** against it: their price, their stock, their condition,
+shipped their way. An offer is a variant of that product, so a shopper adds it
+to a basket like anything else, and the order splits to whoever sold it.
+
+```mermaid
+flowchart TB
+    P["Product — the marketplace's listing"] --> V0["Marketplace's own — £12"]
+    P --> V1["Seller A, used — £7"]
+    P --> V2["Seller B, new — £11"]
+
+    style P fill:#e3f2fd,stroke:#0077ff
+```
+
+Opening a product is deliberate: every product is closed to sellers until an
+operator says otherwise, so admitting your first seller never exposes your
+whole catalog. Open one from the product page, or a selection from the
+products list.
+
+Offers are reviewed the way products are — a seller submits, the marketplace
+decides — because an offer names a price and a condition against a listing
+customers already trust. Until an offer is approved it is neither buyable nor
+visible anywhere: not in search, not in filters, and never in the buy box.
+
+```typescript Seller SDK
+// Find something to sell
+const { data } = await sellerClient.masterProducts.list({ name_cont: 'vase' })
+
+// List your offer against it — it opens as a draft
+const offer = await sellerClient.variants.create(data[0].id, {
+  sku: 'MY-VASE-1',
+  prices: [{ amount: '9.99' }],
+  options: [{ name: 'condition', value: 'used' }],
+})
+
+await sellerClient.variants.submit(offer.id)
+```
+
+A seller picks option values from what the product already carries rather than
+inventing them, so one seller cannot add a spelling of "X-Large" that every
+storefront filter then shows.
+
+Which offer a product leads with is the **buy box**: the marketplace's own
+listing first, then the cheapest that is actually buyable, never a seller who
+is suspended or away. A store selling only its own goods has one variant per
+combination and never notices any of this.
+
+<Info>
+Condition (new, used, refurbished) is an ordinary option type, shipped as
+sample data rather than a seed. Nothing in Spree keys on the word, so a
+marketplace that sorts its offers some other way just uses a different option.
+</Info>
+
 ## One checkout, several sellers
 
 This is the part that makes a marketplace different from a shop, and it's worth understanding before you build a storefront against it.

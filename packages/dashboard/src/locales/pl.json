@@ -1678,6 +1678,10 @@
           "label": "Nazwa",
           "placeholder": "Nazwa produktu"
         },
+        "open_to_sellers": {
+          "label": "Otwarty dla sprzedawców",
+          "help": "Pozwól sprzedawcom wystawiać własne oferty przy tym produkcie."
+        },
         "product_type_id": {
           "help": "Określa, które opcje dostawy są oferowane przy zamówieniu.",
           "label": "Typ produktu"
@@ -4114,6 +4118,9 @@
         "on_hand_aria": "Na stanie w lokalizacji {{location}}",
         "unknown_location": "Nieznana lokalizacja"
       },
+      "marketplace": {
+        "title": "Marketplace"
+      },
       "media": {
         "add_from_library": "Dodaj z biblioteki",
         "add_video": "Dodaj link do wideo",
@@ -4136,6 +4143,36 @@
       },
       "no_categories_found": "Nie znaleziono kategorii",
       "no_collections_found": "Nie znaleziono kolekcji",
+      "offers": {
+        "approve": "Zatwierdź",
+        "approve_confirm_message": "Trafi do sprzedaży od razu po zatwierdzeniu.",
+        "approve_confirm_title": "Zatwierdzić tę ofertę?",
+        "awaiting_review_filter": "Oferty czekające na weryfikację",
+        "bulk_close": "Zamknij dla sprzedawców",
+        "bulk_closed": "Zamknięto {{count}} produkt dla sprzedawców",
+        "bulk_closed_plural": "Zamknięto {{count}} produktów dla sprzedawców",
+        "bulk_failed": "Nie udało się zmienić tych produktów",
+        "bulk_open": "Otwórz dla sprzedawców",
+        "bulk_opened": "Otwarto {{count}} produkt dla sprzedawców",
+        "bulk_opened_plural": "Otwarto {{count}} produktów dla sprzedawców",
+        "columns": {
+          "options": "Wariant",
+          "price": "Cena",
+          "seller": "Sprzedawca",
+          "status": "Status"
+        },
+        "decided": "Oferta zaktualizowana",
+        "reason_placeholder": "Co sprzedawca ma poprawić?",
+        "reject": "Odeślij",
+        "statuses": {
+          "active": "W sprzedaży",
+          "archived": "Zarchiwizowana",
+          "draft": "Szkic",
+          "proposed": "W weryfikacji",
+          "rejected": "Wymaga zmian"
+        },
+        "title": "Oferty sprzedawców"
+      },
       "options": {
         "add_cta": "Dodaj typ opcji",
         "count_few": "{{count}} wartości",

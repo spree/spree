@@ -1682,6 +1682,10 @@
           "label": "الاسم",
           "placeholder": "اسم المنتج"
         },
+        "open_to_sellers": {
+          "label": "مفتوح للبائعين",
+          "help": "السماح للبائعين بعرض منتجاتهم الخاصة على هذا المنتج."
+        },
         "product_type_id": {
           "help": "يحدد خيارات التسليم المتاحة عند إتمام الشراء.",
           "label": "نوع المنتج"
@@ -4089,6 +4093,9 @@
         "on_hand_aria": "في متناول اليد في {{location}}",
         "unknown_location": "موقع غير معروف"
       },
+      "marketplace": {
+        "title": "السوق"
+      },
       "media": {
         "add_from_library": "إضافة من المكتبة",
         "add_video": "إضافة رابط فيديو",
@@ -4110,6 +4117,36 @@
       },
       "no_categories_found": "لم يتم العثور على فئات",
       "no_collections_found": "لم يتم العثور على مجموعات",
+      "offers": {
+        "approve": "الموافقة",
+        "approve_confirm_message": "سيُعرض للبيع فور الموافقة عليه.",
+        "approve_confirm_title": "الموافقة على هذا العرض؟",
+        "awaiting_review_filter": "عروض بانتظار المراجعة",
+        "bulk_close": "إغلاق أمام البائعين",
+        "bulk_closed": "تم إغلاق {{count}} منتج أمام البائعين",
+        "bulk_closed_plural": "تم إغلاق {{count}} منتجات أمام البائعين",
+        "bulk_failed": "تعذّر تعديل هذه المنتجات",
+        "bulk_open": "فتح للبائعين",
+        "bulk_opened": "تم فتح {{count}} منتج للبائعين",
+        "bulk_opened_plural": "تم فتح {{count}} منتجات للبائعين",
+        "columns": {
+          "options": "النوع",
+          "price": "السعر",
+          "seller": "البائع",
+          "status": "الحالة"
+        },
+        "decided": "تم تحديث العرض",
+        "reason_placeholder": "ما الذي يجب أن يغيّره البائع؟",
+        "reject": "إعادة",
+        "statuses": {
+          "active": "معروض للبيع",
+          "archived": "مؤرشف",
+          "draft": "مسودة",
+          "proposed": "قيد المراجعة",
+          "rejected": "يحتاج تعديلاً"
+        },
+        "title": "عروض البائعين"
+      },
       "options": {
         "add_cta": "إضافة نوع الخيار",
         "count_one": "قيمة {{count}}",

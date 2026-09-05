@@ -927,6 +927,34 @@ export class AdminClient {
     ): Promise<{ product_count: number; status: string }> =>
       this.request('POST', '/products/bulk_status_update', { ...options, body: params }),
 
+    /**
+     * Let sellers list their own offers against every product in `ids`.
+     *
+     * Only the marketplace's own products can be opened; ids naming a product
+     * a seller owns outright are reported as skipped.
+     */
+    bulkOpenToSellers: (
+      params: { ids: string[] },
+      options?: RequestOptions,
+    ): Promise<{
+      product_count: number
+      open_to_sellers: boolean
+      skipped_seller_owned_count?: number
+    }> => this.request('POST', '/products/bulk_open_to_sellers', { ...options, body: params }),
+
+    /**
+     * Close them again. Offers already on a product stay — withdrawing one is
+     * a review decision, not a side effect of this.
+     */
+    bulkCloseToSellers: (
+      params: { ids: string[] },
+      options?: RequestOptions,
+    ): Promise<{
+      product_count: number
+      open_to_sellers: boolean
+      skipped_seller_owned_count?: number
+    }> => this.request('POST', '/products/bulk_close_to_sellers', { ...options, body: params }),
+
     /** Attach every product in `ids` to every category in `category_ids`. */
     bulkAddToCategories: (
       params: { ids: string[]; category_ids: string[] },
@@ -1127,6 +1155,35 @@ export class AdminClient {
 
       delete: (productId: string, id: string, options?: RequestOptions): Promise<void> =>
         this.request<void>('DELETE', `/products/${productId}/variants/${id}`, options),
+
+      /**
+       * Accept a seller's offer on this product, putting it on sale.
+       *
+       * An offer reaches `active` only this way: a plain status write is
+       * refused while it is in review, so every decision records who made it.
+       */
+      approve: (
+        productId: string,
+        id: string,
+        params?: { note?: string },
+        options?: RequestOptions,
+      ): Promise<Variant> =>
+        this.request<Variant>('PATCH', `/products/${productId}/variants/${id}/approve`, {
+          ...options,
+          body: params ?? {},
+        }),
+
+      /** Send a seller's offer back. The reason is shown to the seller. */
+      reject: (
+        productId: string,
+        id: string,
+        params?: { reason?: string },
+        options?: RequestOptions,
+      ): Promise<Variant> =>
+        this.request<Variant>('PATCH', `/products/${productId}/variants/${id}/reject`, {
+          ...options,
+          body: params ?? {},
+        }),
 
       media: {
         list: (
