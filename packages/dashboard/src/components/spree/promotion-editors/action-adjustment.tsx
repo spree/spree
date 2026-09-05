@@ -71,10 +71,7 @@ export function AdjustmentActionEditor({ draft, onSave, onClose }: PromotionActi
         preferences,
         // Display-only — lets `<ActionSummary>` render the row preview
         // without fetching `/calculators` again. Stripped at payload time.
-        // Localized so the row summary matches the (localized) picker.
-        label: selectedCalculator
-          ? typeLabel('calculator', selectedCalculator.type, selectedCalculator.label)
-          : undefined,
+        // The name is resolved from `type` where the summary is rendered.
         preference_schema: selectedCalculator?.preference_schema,
       },
     })

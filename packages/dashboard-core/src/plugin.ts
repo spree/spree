@@ -31,6 +31,7 @@
 //       ],
 //     })
 
+import i18n from 'i18next'
 import type { CustomFieldComponent } from './lib/custom-field-components'
 import { customFieldComponents } from './lib/custom-field-components'
 import type { FormFieldRegistration } from './lib/form-fields-registry'
@@ -126,6 +127,21 @@ export interface DashboardPluginConfig {
    * custom-fields card renders it.
    */
   customFieldComponents?: Record<string, CustomFieldComponent>
+  /**
+   * Translations for the plugin's own copy, keyed by language tag:
+   *
+   *     locales: {
+   *       en: { admin: { types: { promotion_rule: { wishlist: { name: 'Wishlist' } } } } },
+   *       de: { admin: { types: { promotion_rule: { wishlist: { name: 'Wunschliste' } } } } },
+   *     }
+   *
+   * Merged into the base namespace, so a plugin adds keys without dropping
+   * the dashboard's own. This is where a gem that registers a Ruby rule,
+   * calculator or requirement kind puts the name merchants read: without it
+   * the dashboard falls back to the English label the API sends, which is
+   * resolved in the store's locale rather than the admin's.
+   */
+  locales?: Record<string, Record<string, unknown>>
 }
 
 /**
@@ -153,6 +169,19 @@ export function defineDashboardPlugin(config: DashboardPluginConfig): void {
       fn(...args)
     } catch (err) {
       errors.push(err)
+    }
+  }
+
+  // Before anything else: a nav entry or table column registered below may
+  // read a key this plugin ships.
+  if (config.locales) {
+    for (const [language, resources] of Object.entries(config.locales)) {
+      safely(
+        (lng: string, bundle: Record<string, unknown>) =>
+          i18n.addResourceBundle(lng, 'translation', bundle, true, true),
+        language,
+        resources,
+      )
     }
   }
 

@@ -801,9 +801,7 @@ function RuleRow({
         onClick={onEdit}
         className="min-w-0 flex-1 px-3 py-2 text-left focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring rounded-l-md"
       >
-        <div className="text-sm font-medium">
-          {typeLabel('promotion_rule', draft.type, draft.label)}
-        </div>
+        <div className="text-sm font-medium">{typeLabel('promotion_rule', draft.type)}</div>
         <RuleSummary draft={draft} />
       </button>
       <Can I="destroy" a={Subject.PromotionRule}>
@@ -1019,7 +1017,7 @@ function RuleEditSheet({
     <Sheet open={open} onOpenChange={onOpenChange}>
       <SheetContent>
         <SheetHeader>
-          <SheetTitle>{typeLabel('promotion_rule', draft.type, draft.label)}</SheetTitle>
+          <SheetTitle>{typeLabel('promotion_rule', draft.type)}</SheetTitle>
           <SheetDescription>{t('admin.promotions.rule_edit.description')}</SheetDescription>
         </SheetHeader>
         <Slot
@@ -1185,9 +1183,7 @@ function ActionRow({
         onClick={onEdit}
         className="min-w-0 flex-1 px-3 py-2 text-left focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring rounded-l-md"
       >
-        <div className="text-sm font-medium">
-          {typeLabel('promotion_action', draft.type, draft.label)}
-        </div>
+        <div className="text-sm font-medium">{typeLabel('promotion_action', draft.type)}</div>
         <ActionSummary draft={draft} />
       </button>
       <Can I="destroy" a={Subject.PromotionAction}>
@@ -1214,7 +1210,7 @@ function ActionSummary({ draft }: { draft: PromotionActionFormDraft }) {
     draft.calculator?.type
       ? {
           ...draft.calculator,
-          label: typeLabel('calculator', draft.calculator.type, draft.calculator.label),
+          label: typeLabel('calculator', draft.calculator.type),
         }
       : draft.calculator,
   )
@@ -1294,7 +1290,7 @@ function ActionEditSheet({
     <Sheet open={open} onOpenChange={onOpenChange}>
       <SheetContent>
         <SheetHeader>
-          <SheetTitle>{typeLabel('promotion_action', draft.type, draft.label)}</SheetTitle>
+          <SheetTitle>{typeLabel('promotion_action', draft.type)}</SheetTitle>
           <SheetDescription>{t('admin.promotions.action_edit.description')}</SheetDescription>
         </SheetHeader>
         <Slot

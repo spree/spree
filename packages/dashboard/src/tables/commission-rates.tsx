@@ -53,7 +53,7 @@ defineTable<CommissionRate>('commission-rates', {
       render: (rate) =>
         rate.rules?.length ? (
           rate.rules
-            .map((rule) => typeLabel('commission_rule', rule.type, rule.label))
+            .map((rule) => typeLabel('commission_rule', rule.type))
             .filter(Boolean)
             .join(', ')
         ) : (

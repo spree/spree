@@ -194,6 +194,12 @@ module Spree
       # for stable output. Uses `serialized_preference_schema` so
       # `:password` defaults are redacted — `/types` is an unauthenticated
       # discovery surface and must never leak gateway-shipped defaults.
+      #
+      # `label` and `description` are a fallback, not the admin UI's copy:
+      # they resolve in the request's locale, which is the store's rather
+      # than the admin's interface language. The dashboard renders `type`
+      # from its own locale files and reads these only for a type it has no
+      # translation for — an extension gem shipping no dashboard locales.
       def subclasses_with_preference_schema
         registered_subclasses.map do |klass|
           entry = {

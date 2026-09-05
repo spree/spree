@@ -99,7 +99,7 @@ export function OrderRoutingRulesSection({ channelId }: { channelId: string }) {
     const ok = await confirm({
       title: t('admin.pages.channels.order_routing_rules.delete_confirm.title'),
       message: t('admin.pages.channels.order_routing_rules.delete_confirm.message', {
-        name: typeLabel('order_routing_rule', rule.type, rule.label),
+        name: typeLabel('order_routing_rule', rule.type),
       }),
       variant: 'destructive',
       confirmLabel: t('admin.actions.delete'),
@@ -209,8 +209,8 @@ function SortableRuleRow({
   })
   const style: CSSProperties = { transform: CSS.Transform.toString(transform), transition }
   const hasPreferences = rule.preference_schema.length > 0
-  const label = typeLabel('order_routing_rule', rule.type, rule.label)
-  const description = typeDescription('order_routing_rule', rule.type, rule.description)
+  const label = typeLabel('order_routing_rule', rule.type)
+  const description = typeDescription('order_routing_rule', rule.type)
 
   return (
     <li
