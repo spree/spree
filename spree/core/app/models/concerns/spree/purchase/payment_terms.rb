@@ -60,11 +60,13 @@ module Spree
       def resolved_payment_terms
         return if is_a?(Spree::Order)
 
-        Spree::PaymentTerms.from_delivery_rate(selected_delivery_rate_for_terms)
-      end
-
-      def selected_delivery_rate_for_terms
-        fulfillments.filter_map(&:selected_delivery_rate).first
+        # Any shipment asking for a deposit sets the terms for the purchase.
+        # Taking whichever rate happened to be created first would lose the
+        # deposit the moment a wholesale buyer added one parcel item, since
+        # carts split per delivery profile.
+        fulfillments.filter_map(&:selected_delivery_rate).
+          filter_map { |rate| Spree::PaymentTerms.from_delivery_rate(rate) }.
+          find(&:deposit?)
       end
     end
   end

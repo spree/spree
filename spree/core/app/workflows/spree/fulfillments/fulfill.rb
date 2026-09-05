@@ -135,7 +135,10 @@ module Spree
           failure(@source, Spree.t('fulfillments.errors.backordered_units'))
         end
 
-        return if order.paid?
+        # What was due at checkout, not the whole total: a wholesale order
+        # placed on a deposit is deliberately unpaid in part, and refusing to
+        # dispatch it would make the deposit unusable.
+        return if order.total.positive? && order.payment_total >= order.amount_due_at_checkout
 
         # Charging later is a deliberate choice, so an authorized-but-uncaptured
         # order is ready to hand over: on dispatch the money is taken below,

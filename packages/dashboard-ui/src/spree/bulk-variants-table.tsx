@@ -21,6 +21,7 @@ export interface BulkVariantsRow {
   /** ISO 3166-1 alpha-2 code, never a country record id. */
   countryOfOrigin?: string | null
   customsDescription?: string | null
+  unitsPerCarton?: string | null
   cartonPackageTypeId?: string | null
   cartonWeight?: string | null
   cartonsPerPallet?: string | null
@@ -41,6 +42,7 @@ export type BulkVariantsField =
   | 'hsCode'
   | 'countryOfOrigin'
   | 'customsDescription'
+  | 'unitsPerCarton'
   | 'cartonPackageTypeId'
   | 'cartonWeight'
   | 'cartonsPerPallet'
@@ -66,6 +68,7 @@ export interface BulkVariantsTableLabels {
   hsCode: string
   countryOfOrigin: string
   customsDescription: string
+  unitsPerCarton: string
   cartonPackageType: string
   cartonWeight: string
   cartonsPerPallet: string
@@ -137,7 +140,7 @@ export function BulkVariantsTable({
     // read-only (unregistered), then sku=1, barcode=2, weight=3, unit=4,
     // height=5, width=6, depth=7, unit=8, preorderable=9, backorder=10,
     // tax=11, hs code=12, origin=13, customs description=14, carton=15,
-    // carton weight=16, cartons per pallet=17.
+    // carton weight=16, cartons per pallet=17, units per carton=18.
     const numericHeader = (label: string) => () => <span className="block text-right">{label}</span>
     const rowLabel = (r: BulkVariantsRow) => r.variantLabel ?? labels.variantDefault
 
@@ -312,6 +315,20 @@ export function BulkVariantsTable({
     if (cartonOptions) {
       defs.push(
         {
+          id: 'units_per_carton',
+          header: numericHeader(labels.unitsPerCarton),
+          cell: ({ row }) => (
+            <DecimalCell
+              coords={{ row: row.index, col: 18 }}
+              value={row.original.unitsPerCarton ?? null}
+              onChange={(next) =>
+                onChange(row.original.id, { field: 'unitsPerCarton', value: next })
+              }
+              ariaLabel={`${labels.unitsPerCarton} — ${rowLabel(row.original)}`}
+            />
+          ),
+        },
+        {
           id: 'carton_package_type',
           header: labels.cartonPackageType,
           cell: ({ row }) => (
@@ -374,6 +391,7 @@ export function BulkVariantsTable({
       'hs_code',
       'country_of_origin',
       'customs_description',
+      'units_per_carton',
       'carton_package_type',
       'carton_weight',
       'cartons_per_pallet',

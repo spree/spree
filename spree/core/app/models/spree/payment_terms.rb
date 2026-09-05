@@ -25,6 +25,11 @@ module Spree
     # Where the percentage came from, so a merchant reading an old order can
     # tell a method default from something negotiated.
     attribute :source, :string
+    # The total the deposit was struck against, stamped at placement. Without
+    # it the deposit would be re-derived from a live total, and the forwarder's
+    # freight charge landing later as a Fee would retroactively claim the buyer
+    # agreed to a larger deposit than they paid.
+    attribute :base_total, :decimal
 
     class << self
       # Reads the terms a delivery rate's method declares. The only source in
@@ -72,11 +77,15 @@ module Spree
     # remainder — the two always sum back to the total exactly
     # (decisions.md 2026-09-05).
     #
+    # Once placed, the deposit is measured against the total it was struck
+    # against, never the live one — a freight charge recorded afterwards
+    # raises what is owed, not what was already agreed and paid.
+    #
     # @param total [BigDecimal]
     # @param currency [String]
     # @return [BigDecimal]
     def amount_due_now(total, currency:)
-      total = total.to_d
+      total = (base_total || total).to_d
       return total unless deposit?
 
       unit = smallest_unit(currency)
@@ -90,7 +99,8 @@ module Spree
         'kind' => kind,
         'deposit_percentage' => deposit_percentage&.to_s,
         'balance_due_label' => balance_due_label,
-        'source' => source
+        'source' => source,
+        'base_total' => base_total&.to_s
       }
     end
 

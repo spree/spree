@@ -505,8 +505,14 @@ module Spree
       errors.add(:base, :exactly_one_of_cart_or_order, message: Spree.t('errors.messages.exactly_one_of_cart_or_order')) unless [order, cart, order_group].compact.one?
     end
 
+    # What is left to collect now, which on deposit terms is a fraction of
+    # the total: charging the whole of it would take money the buyer never
+    # agreed to pay up front and leave the deposit decorative.
     def set_amount
-      self.amount = owner.total - owner.payment_total
+      # An order group settles several orders at once and carries no terms of
+      # its own, so it still owes its whole remainder.
+      due = owner.respond_to?(:amount_due_at_checkout) ? owner.amount_due_at_checkout : owner.total
+      self.amount = due - owner.payment_total
     end
 
     def amount_must_be_less_than_or_equal_to_max_amount

@@ -325,12 +325,27 @@ export function VariantEditSheet({ form, variantIndex, open, onOpenChange }: Pro
                   <FieldLabel htmlFor={`variant-${variantIndex}-carton-weight`}>
                     {t('admin.fields.variant.carton_weight.label')}
                   </FieldLabel>
-                  <Input
-                    id={`variant-${variantIndex}-carton-weight`}
-                    type="number"
-                    step="0.01"
-                    min="0"
-                    {...form.register(`variants.${variantIndex}.carton_weight`)}
+                  {/* Cleared means unmeasured, not zero — and a zero carton
+                      weight is refused, so coercing a blank to 0 would leave
+                      the merchant unable to undo their own entry. */}
+                  <Controller
+                    name={`variants.${variantIndex}.carton_weight`}
+                    control={form.control}
+                    render={({ field }) => (
+                      <Input
+                        id={`variant-${variantIndex}-carton-weight`}
+                        type="number"
+                        step="0.01"
+                        min="0"
+                        value={field.value ?? ''}
+                        onChange={(event) => {
+                          const parsed = Number(event.target.value)
+                          field.onChange(
+                            event.target.value === '' || Number.isNaN(parsed) ? null : parsed,
+                          )
+                        }}
+                      />
+                    )}
                   />
                   <FieldDescription>
                     {t('admin.fields.variant.carton_weight.help')}

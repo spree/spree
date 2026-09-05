@@ -312,6 +312,10 @@ en:
             ship_address_id:
               belongs_to_other_user: belongs to other user
               deprecated_in_completed_order: deprecated in completed order
+        spree/delivery_method:
+          attributes:
+            deposit_percentage:
+              unsupported_by_rate_provider: can only be collected by a rate provider that quotes freight
         spree/exchange_line_item:
           attributes:
             new_variant:

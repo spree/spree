@@ -135,7 +135,7 @@ export function useFormCartonPackageTypes() {
   return useQuery({
     queryKey: useResourceKey('panel-form-carton-package-types'),
     queryFn: async (): Promise<{ data: PanelPackageType[] }> =>
-      (await client.packageTypes?.list({ limit: 100, kind: 'carton' })) ?? { data: [] },
+      (await client.packageTypes?.list({ limit: 100, kind_eq: 'carton' })) ?? { data: [] },
     enabled: Boolean(client.packageTypes),
     staleTime: FIVE_MINUTES,
   })

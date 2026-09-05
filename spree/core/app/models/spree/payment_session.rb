@@ -221,9 +221,18 @@ module Spree
     def set_defaults_from_order
       return unless owner
 
-      self.amount ||= owner.total_minus_store_credits if amount.blank? || amount.zero?
+      # Capped at what checkout collects, so a gateway session on deposit
+      # terms asks the buyer for the deposit rather than the whole total.
+      self.amount ||= default_collectable_amount if amount.blank? || amount.zero?
       self.currency ||= owner.currency
       self.customer ||= owner.customer
+    end
+
+    def default_collectable_amount
+      collectable = owner.total_minus_store_credits
+      return collectable unless owner.respond_to?(:amount_due_at_checkout)
+
+      [owner.amount_due_at_checkout, collectable].min
     end
   end
 end

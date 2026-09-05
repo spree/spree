@@ -71,6 +71,17 @@ module Spree
 
       private
 
+      # The terms as agreed, with the total they were measured against
+      # stamped in. Reading the order's total later would let a freight fee
+      # recorded after placement claim a bigger deposit than the buyer paid.
+      def frozen_payment_terms(cart)
+        terms = cart.payment_terms_snapshot
+        return if terms.nil?
+
+        terms.base_total = cart.total
+        terms.as_json
+      end
+
       # Admin/B2B draft orders bypass the cart — the order-side completion
       # workflow (Spree::Orders::Complete) owns that path end to end.
       def complete_draft_order
@@ -227,9 +238,10 @@ module Spree
             customer_note: cart.customer_note,
             po_number: cart.po_number,
             # Frozen here, never resolved again: the buyer agreed to this
-            # deposit at this moment, and a method whose terms change next
-            # month must not rewrite what they owe.
-            payment_terms: cart.payment_terms_snapshot&.as_json,
+            # deposit, against this total, at this moment. A method whose
+            # terms change next month must not rewrite what they owe, and
+            # neither must the forwarder's charge landing later as a fee.
+            payment_terms: frozen_payment_terms(cart),
             gift_card: cart.gift_card,
             last_ip_address: cart.last_ip_address,
             ship_address: cart.ship_address&.snapshot,

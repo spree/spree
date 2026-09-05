@@ -4,6 +4,25 @@ class DummyShippingCalculator < Spree::ShippingCalculator
 end
 
 describe Spree::DeliveryMethod, type: :model do
+  describe 'deposit terms' do
+    # A merchant who types a deposit onto a parcel method has set nothing —
+    # only a freight provider ever reads it — so say so rather than saving a
+    # number that quietly does nothing.
+    it 'refuses a deposit on a method whose provider never collects one' do
+      method = build(:delivery_method, store: @default_store, deposit_percentage: 50)
+
+      expect(method).not_to be_valid
+      expect(method.errors[:deposit_percentage]).to be_present
+    end
+
+    it 'accepts a deposit on a freight method' do
+      method = build(:delivery_method, store: @default_store, deposit_percentage: 50,
+                                       rate_provider: 'Spree::DeliveryRateProvider::Freight')
+
+      expect(method).to be_valid
+    end
+  end
+
 
   describe 'carrier services' do
     let(:delivery_method) { create(:delivery_method) }
