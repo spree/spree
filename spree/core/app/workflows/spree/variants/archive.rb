@@ -10,6 +10,12 @@ module Spree
       def perform(variant:)
         super
 
+        # Offers only. A first-party variant's availability is its product's
+        # business, and taking one off sale through an offer workflow would
+        # write a status nothing in the operator's catalog put there
+        # (docs/plans/6.0-seller-master-catalog-listings.md).
+        reject!(I18n.t('activerecord.errors.models.spree/variant.attributes.base.not_an_offer')) unless variant.offer?
+
         run_hooks :validate
 
         ApplicationRecord.transaction do
