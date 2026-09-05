@@ -25,9 +25,7 @@ const PAYMENT_STATUSES = [
 ] as const
 
 defineTable<Order>('seller-orders', {
-  // No `title`: the page header above the card already names the page,
-  // and repeating it on the card said the same word twice. The
-  // description is what the card contributes.
+  title: i18n.t('orders.title'),
   description: i18n.t('orders.description'),
   searchParam: 'number_cont',
   searchPlaceholder: i18n.t('orders.search_placeholder'),
