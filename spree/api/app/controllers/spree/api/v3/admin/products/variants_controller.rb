@@ -4,6 +4,8 @@ module Spree
       module Admin
         module Products
           class VariantsController < ResourceController
+            include Spree::Api::V3::StatusActions
+
             scoped_resource :products
 
             # PATCH /api/v3/admin/products/:product_id/variants/:id/approve
@@ -11,14 +13,18 @@ module Spree
             # Accepting a seller's offer on a master product, putting it on
             # sale (docs/plans/6.0-seller-master-catalog-listings.md).
             def approve
-              run_review_workflow(Spree.variant_approve_workflow, note: params[:note])
+              set_status_resource
+              run_status_workflow(Spree.variant_approve_workflow,
+                                  reviewer: try_spree_current_user, note: params[:note])
             end
 
             # PATCH /api/v3/admin/products/:product_id/variants/:id/reject
             #
             # Turning an offer down. The reason goes back to the seller.
             def reject
-              run_review_workflow(Spree.variant_reject_workflow, reason: params[:reason])
+              set_status_resource
+              run_status_workflow(Spree.variant_reject_workflow,
+                                  reviewer: try_spree_current_user, reason: params[:reason])
             end
 
             protected
@@ -40,8 +46,11 @@ module Spree
               :variants
             end
 
+            # `submissions` rides along because the serializer's review expand
+            # reads the latest row per variant — without it a review queue
+            # costs one query per offer.
             def scope_includes
-              [:prices, stock_levels: :stock_location]
+              [:prices, :submissions, { stock_levels: :stock_location }]
             end
 
             def create_workflow
@@ -60,18 +69,6 @@ module Spree
               { product: @parent, attributes: permitted_params }
             end
 
-            def run_review_workflow(workflow, **arguments)
-              @resource = find_resource
-              authorize!(:update, @resource)
-
-              result = workflow.call(variant: @resource, reviewer: try_spree_current_user, **arguments)
-
-              if result.success?
-                render json: serialize_resource(@resource.reload)
-              else
-                render_service_error(@resource.errors.presence || result.error)
-              end
-            end
 
             def permitted_params
               params.permit(
@@ -93,16 +90,6 @@ module Spree
               ).tap { |attrs| attrs.delete(:status) if review_status?(attrs[:status]) }
             end
 
-            # A review status is an outcome, not a value to assign: `proposed`
-            # means a seller asked, and `rejected` means somebody decided.
-            # Both are reached through the workflows behind `approve`/`reject`,
-            # which record who decided and settle the submission row — writing
-            # one here would leave a seller looking at a rejected offer with no
-            # reason and no trail
-            # (docs/plans/6.0-seller-master-catalog-listings.md).
-            def review_status?(status)
-              status.present? && Spree::Variant::REVIEW_STATUSES.include?(status.to_s)
-            end
           end
         end
       end

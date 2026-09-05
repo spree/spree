@@ -60,9 +60,29 @@ RSpec.describe 'variant status and shopper-facing visibility' do
   end
 
   describe 'the product rollups' do
-    it 'leaves an offer awaiting review out of listed_variants' do
+    # Both routes, because they are different code: the association narrows in
+    # SQL, and `visible_variants` answers from the preloaded array so a
+    # storefront listing pays no second query per product.
+    it 'leaves an offer awaiting review out of the listed association' do
       expect(master.listed_variants).to include(first_party)
       expect(master.listed_variants).not_to include(offer)
+    end
+
+    it 'leaves it out of the in-memory reader too' do
+      preloaded = Spree::Product.includes(:variants).find(master.id)
+
+      expect(preloaded.variants).to be_loaded
+      expect(preloaded.visible_variants).to include(first_party)
+      expect(preloaded.visible_variants).not_to include(offer)
+    end
+
+    # The facet values a shopper is offered come through the same narrowing.
+    it 'leaves its option values off the product' do
+      size = create(:option_type, name: 'size', label: 'Size')
+      only_on_offer = create(:option_value, option_type: size, name: 'xxl', label: 'XXL')
+      offer.option_values << only_on_offer
+
+      expect(master.reload.option_values).not_to include(only_on_offer)
     end
 
     it 'leaves it out of sellable_variants' do

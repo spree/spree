@@ -35,6 +35,7 @@ module Spree
         # (docs/plans/6.0-multi-vendor-marketplace.md).
         class ProductsController < Seller::ResourceController
           include Spree::Api::V3::Seller::CatalogParams
+          include Spree::Api::V3::StatusActions
 
           # The statuses a seller may move a selection to, each paired with the
           # workflow that gets it there. A map rather than a status list
@@ -323,26 +324,6 @@ module Spree
             end
           end
 
-          # Named apart from the base class's own resource lookup: overriding
-          # that one changes every action, and these three are the only ones
-          # that move a status.
-          def set_status_resource
-            @resource = find_resource
-            # A status move is a change to the product, so it needs the write
-            # key rather than one of its own — a read-only seller role cannot
-            # submit, take down or archive.
-            authorize!(:update, @resource)
-          end
-
-          def run_status_workflow(workflow, **arguments)
-            result = workflow.call(product: @resource, **arguments)
-
-            if result.success?
-              render json: serialize_resource(@resource.reload)
-            else
-              render_service_error(@resource.errors.presence || result.error)
-            end
-          end
         end
       end
     end
