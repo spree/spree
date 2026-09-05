@@ -817,6 +817,11 @@ module Spree
   module Core
     class GatewayError < RuntimeError; end
 
+    # A gift card that could not be taken back off a cart or draft order
+    # holding its balance. No gateway is involved — reported separately so a
+    # money discrepancy is not triaged alongside payment outages.
+    class GiftCardHoldReleaseFailed < RuntimeError; end
+
     # A label purchase that failed inside the one-click fulfill path, where
     # the parcel ships regardless — reported so the merchant's error tracker
     # sees why there is no label.

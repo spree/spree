@@ -1115,6 +1115,7 @@ en:
     gift_card_canceled: The Gift Card has been canceled.
     gift_card_customer_not_logged_in: Gift Card cannot be applied with guest user.
     gift_card_expired: The Gift Card has expired.
+    gift_card_held_by_another_order: The Gift Card is being used by another order that is still being placed. Please try again in a few minutes.
     gift_card_mismatched_currency: Gift Card cannot be applied with current currency.
     gift_card_mismatched_customer: This gift card is associated with another user.
     gift_card_no_amount_remaining: The Gift Card has no amount remaining.

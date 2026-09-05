@@ -172,6 +172,133 @@ RSpec.describe Spree::GiftCards::Apply do
     end
   end
 
+  context 'when the gift card is already held by another open cart' do
+    let(:other_cart) { create(:cart, store: store, customer: order_user) }
+
+    before do
+      other_cart.update_column(:total, 50)
+      expect(Spree.gift_card_apply_workflow.call(gift_card: gift_card, order: other_cart)).to be_success
+    end
+
+    it 'releases the other hold and applies the freed balance here' do
+      expect(gift_card.reload.amount_remaining).to eq(0)
+
+      expect(subject).to be_success
+
+      expect(other_cart.reload.gift_card).to be_nil
+      expect(other_cart.payments.store_credits.checkout).to be_empty
+
+      expect(order.reload.gift_card).to eq(gift_card)
+      expect(order.gift_card_total).to eq(30)
+      expect(gift_card.reload.amount_remaining).to eq(20)
+    end
+
+    it 'reports the released holds' do
+      workflow = described_class.new
+      expect(workflow.call(gift_card: gift_card, order: order)).to be_success
+      expect(workflow.released_holds.map(&:id)).to eq([other_cart.id])
+    end
+
+    context 'when the other hold cannot be released' do
+      before do
+        allow(Spree).to receive(:gift_card_remove_workflow).and_return(failing_remove_workflow)
+      end
+
+      let(:failing_remove_workflow) do
+        double(call: Spree::ServiceModule::Result.new(false, nil, Spree::ServiceModule::ResultError.new('nope')))
+      end
+
+      it 'reports the discrepancy and refuses the apply' do
+        expect(Rails.error).to receive(:report).with(
+          an_instance_of(Spree::Core::GiftCardHoldReleaseFailed),
+          hash_including(handled: true)
+        )
+
+        expect(subject).to be_failure
+        expect(subject.error.value).to eq(:gift_card_held_by_another_order)
+
+        expect(other_cart.reload.gift_card).to eq(gift_card)
+        expect(order.reload.gift_card).to be_nil
+      end
+    end
+  end
+
+  context 'when the other cart is mid-completion' do
+    let(:other_cart) { create(:cart, store: store, customer: order_user) }
+
+    before do
+      other_cart.update_column(:total, 50)
+      expect(Spree.gift_card_apply_workflow.call(gift_card: gift_card, order: other_cart)).to be_success
+      other_cart.update_column(:completing_at, Time.current)
+    end
+
+    it 'leaves the claimed hold alone and says the card is in use' do
+      expect(subject).to be_failure
+      expect(subject.error.value).to eq(:gift_card_held_by_another_order)
+
+      expect(other_cart.reload.gift_card).to eq(gift_card)
+      expect(order.reload.gift_card).to be_nil
+    end
+
+    context 'when the completion claim has gone stale' do
+      before { other_cart.update_column(:completing_at, 1.day.ago) }
+
+      it 'releases the abandoned hold' do
+        expect(subject).to be_success
+
+        expect(other_cart.reload.gift_card).to be_nil
+        expect(order.reload.gift_card).to eq(gift_card)
+      end
+    end
+  end
+
+  context 'when a draft order from an in-flight checkout holds the card' do
+    let(:completing_cart) { create(:cart, store: store, customer: order_user) }
+    let!(:draft_order) do
+      create(:order, store: store, customer: order_user, cart: completing_cart, status: 'draft').tap do |draft|
+        draft.update_column(:total, 50)
+        expect(Spree.gift_card_apply_workflow.call(gift_card: gift_card, order: draft)).to be_success
+      end
+    end
+
+    before { completing_cart.update_column(:completing_at, Time.current) }
+
+    it 'leaves the draft alone while its cart is being completed' do
+      expect(subject).to be_failure
+      expect(subject.error.value).to eq(:gift_card_held_by_another_order)
+
+      expect(draft_order.reload.gift_card).to eq(gift_card)
+      expect(draft_order.payments.checkout.store_credits).to be_present
+      expect(order.reload.gift_card).to be_nil
+    end
+
+    it 'releases the draft once the completion claim goes stale' do
+      completing_cart.update_column(:completing_at, 1.day.ago)
+
+      expect(subject).to be_success
+
+      expect(draft_order.reload.gift_card).to be_nil
+      expect(order.reload.gift_card).to eq(gift_card)
+    end
+  end
+
+  context 'when the gift card is held by a completed order' do
+    let!(:completed_order) do
+      create(:order, store: store, customer: order_user).tap do |other|
+        other.update_column(:total, 50)
+        expect(Spree.gift_card_apply_workflow.call(gift_card: gift_card, order: other)).to be_success
+        other.update_column(:completed_at, Time.current)
+      end
+    end
+
+    it 'leaves the settled hold alone' do
+      expect(subject).to be_failure
+      expect(subject.error.value).to eq(:gift_card_no_amount_remaining)
+
+      expect(completed_order.reload.gift_card).to eq(gift_card)
+    end
+  end
+
   context 'when the order belongs to a non-default store' do
     let(:other_store) { create(:store, default: false) }
     let(:order) { create(:order, store: other_store, customer: order_user) }

@@ -53,6 +53,43 @@ RSpec.describe Spree::Api::V3::Store::Carts::GiftCardsController, type: :control
       expect(response).to have_http_status(:unprocessable_content)
     end
 
+    context 'when the card is already held by the customer\'s other cart' do
+      let!(:other_cart) { create(:cart_with_line_items, store: store, customer: user) }
+
+      before do
+        other_cart.update_column(:total, 50)
+        Spree.gift_card_apply_workflow.call(gift_card: gift_card, order: other_cart)
+      end
+
+      it 'moves the card onto this cart' do
+        post :create, params: { cart_id: order.prefixed_id, code: 'giftcard123' }
+
+        expect(response).to have_http_status(:created)
+        expect(order.reload.gift_card).to eq(gift_card)
+        expect(other_cart.reload.gift_card).to be_nil
+      end
+    end
+
+    context 'when the other cart is being completed' do
+      let!(:other_cart) { create(:cart_with_line_items, store: store, customer: user) }
+
+      before do
+        other_cart.update_column(:total, 50)
+        Spree.gift_card_apply_workflow.call(gift_card: gift_card, order: other_cart)
+        other_cart.update_column(:completing_at, Time.current)
+      end
+
+      it 'refuses and tells the customer to retry' do
+        post :create, params: { cart_id: order.prefixed_id, code: 'giftcard123' }
+
+        expect(response).to have_http_status(:unprocessable_content)
+        expect(json_response['error']).to be_present
+
+        expect(order.reload.gift_card).to be_nil
+        expect(other_cart.reload.gift_card).to eq(gift_card)
+      end
+    end
+
     context 'with guest spree token' do
       let(:guest_order) { create(:cart_with_line_items, store: store, customer: nil) }
 

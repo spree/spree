@@ -10,8 +10,20 @@ module Spree
     # kind a store overrides — who may spend a card, on what, and up to how
     # much — and because it writes several records that must stand or fall
     # together.
+    #
+    # A card already sitting on another open cart is released rather than
+    # refused. That hold is not a payment — nobody has been charged — so
+    # whoever presents the code now takes it, and whoever completes an order
+    # first keeps it. Refusing instead would strand the balance whenever the
+    # other cart is unreachable (another device, a guest session), because
+    # holds never expire on their own. Override the +release_holds+ hook to
+    # refuse instead.
     class Apply < Spree::Workflow
-      hooks :validate, :after_apply
+      hooks :validate, :release_holds, :after_apply
+
+      # Carts and draft orders whose hold on the card this apply released.
+      # @return [Array<Spree::Cart, Spree::Order>]
+      attr_reader :released_holds
 
       attr_reader :store_credit, :payment
 
@@ -26,6 +38,8 @@ module Spree
 
         order.with_lock do
           step :lock_gift_card
+          step :release_open_holds
+          run_hooks :release_holds
           step :ensure_amount_available
           step :issue_store_credit
           step :draw_down_gift_card
@@ -63,10 +77,50 @@ module Spree
         gift_card.lock!
       end
 
+      # Runs before the balance is read, so the released amount is available
+      # to this order. Releasing is all or nothing with the apply itself: a
+      # refused release fails the whole workflow, which rolls back the ones
+      # that did succeed. Emptying one shopper's cart and then not spending
+      # the balance would be the worst of both outcomes.
+      def release_open_holds
+        @released_holds = []
+
+        gift_card.open_holds(except: order).each do |hold|
+          result = Spree.gift_card_remove_workflow.call(order: hold)
+
+          if result.success?
+            @released_holds << hold
+          else
+            report_unreleased_hold(hold, result)
+            failure(order, :gift_card_held_by_another_order)
+          end
+        end
+
+        gift_card.reload
+      end
+
+      def report_unreleased_hold(hold, result)
+        Rails.error.report(
+          Spree::Core::GiftCardHoldReleaseFailed.new(
+            "Gift card #{gift_card.id} could not be released from #{hold.class.name} #{hold.id}: #{result.error}"
+          ),
+          handled: true,
+          context: { order_id: order.id, gift_card_id: gift_card.id, hold_id: hold.id, hold_type: hold.class.name },
+          source: 'spree.core'
+        )
+      end
+
       def ensure_amount_available
         return if amount.positive? || order.total.zero?
 
+        # Distinguish a spent card from one whose balance is briefly locked
+        # up elsewhere — the customer can retry the second, not the first.
+        failure(order, :gift_card_held_by_another_order) if held_elsewhere?
         failure(order, :gift_card_no_amount_remaining)
+      end
+
+      def held_elsewhere?
+        gift_card.holds_being_completed(except: order).any?
       end
 
       def amount
