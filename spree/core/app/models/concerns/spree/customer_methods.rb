@@ -181,7 +181,33 @@ module Spree
       self.whitelisted_ransackable_associations = %w[bill_address ship_address addresses tags spree_roles orders customer_groups]
       self.whitelisted_ransackable_attributes = %w[id email first_name last_name phone accepts_email_marketing
                                                     created_at updated_at last_sign_in_at]
-      self.whitelisted_ransackable_scopes = %w[search multi_search with_min_total_spent with_standing_for_company]
+      self.whitelisted_ransackable_scopes = %w[search multi_search with_min_total_spent with_standing_for_company
+                                               anonymized]
+
+      # Ransack casts a scope's argument before calling it, and then declines
+      # to apply the scope at all when that cast produces `false` — which is
+      # exactly the half of this filter that hides erased accounts. Opting out
+      # of the cast keeps the value a string, so the scope decides for itself.
+      def self.ransackable_scopes_skip_sanitize_args
+        %i[anonymized]
+      end
+
+      # Whether an erasure has been carried out. A scope rather than a
+      # ransackable `anonymized_at`, because the question a merchant asks is
+      # "has this been erased", not "is this timestamp null" — and a filter
+      # control that offers two named states needs a predicate that takes one
+      # of them as its value.
+      # Defaulted because Ransack invokes a scope with no argument when the
+      # value it was given is simply `true`, and passes the value through only
+      # when it is something else — so both `anonymized: true` and
+      # `anonymized: 'false'` have to land here.
+      scope :anonymized, ->(value = true) {
+        if ActiveModel::Type::Boolean.new.cast(value)
+          where.not(anonymized_at: nil)
+        else
+          where(anonymized_at: nil)
+        end
+      }
 
       scope :with_min_total_spent, ->(amount) {
         joins(:orders).where.not(spree_orders: { completed_at: nil }).

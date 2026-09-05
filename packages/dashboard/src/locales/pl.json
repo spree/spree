@@ -657,6 +657,7 @@
       },
       "columns": {
         "companies": "Firmy",
+        "erased": "Usunięte",
         "groups": "Grupy",
         "last_order": "Ostatnie zamówienie",
         "newsletter": "Newsletter",
@@ -698,6 +699,14 @@
           "title": "Kredyt sklepowy"
         },
         "subscribed_to_marketing": "Zapisany do newslettera marketingowego"
+      },
+      "erased": {
+        "badge": "Usunięte",
+        "name": "(usunięte)"
+      },
+      "filters": {
+        "erased": "Usunięte",
+        "not_erased": "Nieusunięte"
       },
       "groups": {
         "bulk_add_action": "Dodaj do grupy…",

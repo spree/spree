@@ -651,6 +651,7 @@
       },
       "columns": {
         "companies": "Entreprises",
+        "erased": "Effacé",
         "groups": "Groupes",
         "last_order": "Dernière commande",
         "newsletter": "Newsletter",
@@ -692,6 +693,14 @@
           "title": "Avoir en boutique"
         },
         "subscribed_to_marketing": "Abonné au marketing"
+      },
+      "erased": {
+        "badge": "Effacé",
+        "name": "(effacé)"
+      },
+      "filters": {
+        "erased": "Effacé",
+        "not_erased": "Non effacé"
       },
       "groups": {
         "bulk_add_action": "Ajouter au groupe…",

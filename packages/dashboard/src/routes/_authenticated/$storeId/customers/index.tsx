@@ -212,7 +212,12 @@ function CustomersPage() {
         queryKey="customers"
         queryFn={(params) => adminClient.customers.list(params)}
         searchParams={search}
-        defaultParams={{ expand: ['customer_groups'] }}
+        // Erased accounts stay out of the list unless asked for. They keep
+        // their orders, so the row still means something, but nobody can be
+        // reached through it and leaving them in makes every search noisier.
+        // The Erased filter overrides this: filters are applied over
+        // the defaults.
+        defaultParams={{ expand: ['customer_groups'], anonymized: 'false' }}
         bulkActions={bulkActions}
         rowActions={(customer) => <CustomerRowActions customer={customer} storeId={storeId} />}
         actions={(ctx) => (

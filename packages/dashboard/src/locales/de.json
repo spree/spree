@@ -651,6 +651,7 @@
       },
       "columns": {
         "companies": "Firmen",
+        "erased": "Gelöscht",
         "groups": "Gruppen",
         "last_order": "Letzte Bestellung",
         "newsletter": "Newsletter",
@@ -692,6 +693,14 @@
           "title": "Guthaben"
         },
         "subscribed_to_marketing": "Marketing abonniert"
+      },
+      "erased": {
+        "badge": "Gelöscht",
+        "name": "(gelöscht)"
+      },
+      "filters": {
+        "erased": "Gelöscht",
+        "not_erased": "Nicht gelöscht"
       },
       "groups": {
         "bulk_add_action": "Zu Gruppe hinzufügen…",

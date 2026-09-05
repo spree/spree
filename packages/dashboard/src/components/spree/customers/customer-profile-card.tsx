@@ -28,6 +28,7 @@ import { Controller, useForm } from 'react-hook-form'
 import { useTranslation } from 'react-i18next'
 import { useUpdateCustomer } from '../../../hooks/use-customers'
 import { useOnSheetOpen } from '../../../hooks/use-on-sheet-open'
+import { erasedFieldValue } from '../../../lib/erased-customer'
 import {
   type CustomerProfileFormValues,
   customerProfileFormSchema,
@@ -56,9 +57,11 @@ export function CustomerProfileCard({ customer }: { customer: Customer }) {
         <CardContent className="flex flex-col gap-3">
           <div className="flex items-center gap-2 text-sm">
             <MailIcon className="size-4 text-muted-foreground" />
-            <span>{customer.email}</span>
+            <span className={customer.anonymized ? 'text-muted-foreground' : undefined}>
+              {erasedFieldValue(customer.email, customer.anonymized)}
+            </span>
           </div>
-          {customer.phone && (
+          {customer.phone && !customer.anonymized && (
             <div className="flex items-center gap-2 text-sm">
               <PhoneIcon className="size-4 text-muted-foreground" />
               <span>{customer.phone}</span>

@@ -19,6 +19,7 @@ import { CustomerStoreCreditsCard } from '../../../../components/spree/customers
 import { CustomerTaxIdentifiersCard } from '../../../../components/spree/customers/customer-tax-identifiers-card'
 import { ResourceDetailSkeleton } from '../../../../components/spree/route-pending'
 import { useCustomer, useCustomerOrders, useDeleteCustomer } from '../../../../hooks/use-customers'
+import { customerDisplayName } from '../../../../lib/erased-customer'
 import { spreeJsonLinkResolver } from '../../../../lib/json-link-resolver'
 
 export const Route = createFileRoute('/_authenticated/$storeId/customers/$customerId')({
@@ -71,10 +72,23 @@ function CustomerBody({ customer }: { customer: Customer }) {
       header={
         <>
           <PageHeader
-            title={customer.full_name ?? customer.email}
+            title={customerDisplayName(customer, t('admin.customers.erased.name'))}
             subtitle={location || undefined}
             backTo="customers"
-            badges={customer.tags?.map((tag) => <Badge key={tag}>{tag}</Badge>)}
+            badges={[
+              // First, and in the warning colour: everything else on this page
+              // reads differently once you know the person asked to be
+              // forgotten — the blank fields are an answered request, not
+              // missing data.
+              ...(customer.anonymized
+                ? [
+                    <Badge key="erased" variant="destructive">
+                      {t('admin.customers.erased.badge')}
+                    </Badge>,
+                  ]
+                : []),
+              ...(customer.tags?.map((tag) => <Badge key={tag}>{tag}</Badge>) ?? []),
+            ]}
             resource={{ id: customer.id }}
             onDelete={handleDelete}
             deleteLabel={t('admin.customers.detail.delete_label')}

@@ -649,6 +649,7 @@
       },
       "columns": {
         "companies": "公司",
+        "erased": "已抹除",
         "groups": "分组",
         "last_order": "最近订单",
         "newsletter": "订阅资讯",
@@ -690,6 +691,14 @@
           "title": "商店积分"
         },
         "subscribed_to_marketing": "已订阅营销资讯"
+      },
+      "erased": {
+        "badge": "已抹除",
+        "name": "(已抹除)"
+      },
+      "filters": {
+        "erased": "已抹除",
+        "not_erased": "未抹除"
       },
       "groups": {
         "bulk_add_action": "添加到分组…",

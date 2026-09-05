@@ -658,6 +658,7 @@
       },
       "columns": {
         "companies": "الشركات",
+        "erased": "محذوف",
         "groups": "المجموعات",
         "last_order": "الطلب الأخير",
         "newsletter": "النشرة الإخبارية",
@@ -699,6 +700,14 @@
           "title": "Store credit"
         },
         "subscribed_to_marketing": "اشتركت في التسويق"
+      },
+      "erased": {
+        "badge": "محذوف",
+        "name": "(محذوف)"
+      },
+      "filters": {
+        "erased": "محذوف",
+        "not_erased": "غير محذوف"
       },
       "groups": {
         "bulk_add_action": "إضافة إلى المجموعة…",

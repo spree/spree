@@ -651,6 +651,7 @@
       },
       "columns": {
         "companies": "Companies",
+        "erased": "Erased",
         "groups": "Groups",
         "last_order": "Last order",
         "newsletter": "Newsletter",
@@ -692,6 +693,14 @@
           "title": "Store credit"
         },
         "subscribed_to_marketing": "Subscribed to marketing"
+      },
+      "erased": {
+        "badge": "Erased",
+        "name": "(erased)"
+      },
+      "filters": {
+        "erased": "Erased",
+        "not_erased": "Not erased"
       },
       "groups": {
         "bulk_add_action": "Add to group…",
