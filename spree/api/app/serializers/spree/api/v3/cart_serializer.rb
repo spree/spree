@@ -16,6 +16,7 @@ module Spree
                  order_minimum: ['number | null'], order_minimum_shortfall: ['number | null'],
                  below_order_minimum: ['boolean | null'],
                  freight_summary: ['Record<string, unknown>', nullable: true],
+                 payment_schedule: ['Record<string, unknown>', nullable: true],
                  requirements: 'Array<{step: string, field: string, code: string, message: string}>',
                  item_total: [:string, nullable: true], display_item_total: [:string, nullable: true],
                  delivery_total: [:string, nullable: true], display_delivery_total: [:string, nullable: true],
@@ -151,6 +152,14 @@ module Spree
         # storefront that hides prices; the per-line SKU and product name do
         # not, being the catalog identity such a storefront exists to
         # withhold.
+        # What is due now versus what is owed after — the deposit story, told
+        # once so a storefront need not derive it from a total and a
+        # percentage. Null unless terms say a deposit, which is every retail
+        # order. Price-gated with the rest of the money surface.
+        attribute :payment_schedule do |purchase|
+          purchase.payment_schedule.as_json if purchase.payment_terms_snapshot&.deposit? && !params[:hide_prices]
+        end
+
         attribute :freight_summary do |purchase|
           purchase.freight_summary&.as_json(identify_lines: !params[:hide_prices])
         end

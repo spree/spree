@@ -1564,6 +1564,7 @@ paths:
                   order_minimum:
                   order_minimum_shortfall:
                   below_order_minimum: false
+                  payment_schedule:
                   freight_summary:
                   shipping_eq_billing_address: true
                   discounts: []
@@ -1683,6 +1684,7 @@ paths:
                   order_minimum:
                   order_minimum_shortfall:
                   below_order_minimum: false
+                  payment_schedule:
                   freight_summary:
                   shipping_eq_billing_address: true
                   discounts: []
@@ -1865,6 +1867,7 @@ paths:
                 order_minimum:
                 order_minimum_shortfall:
                 below_order_minimum: false
+                payment_schedule:
                 freight_summary:
                 shipping_eq_billing_address: true
                 discounts: []
@@ -2047,6 +2050,7 @@ paths:
                 order_minimum:
                 order_minimum_shortfall:
                 below_order_minimum: false
+                payment_schedule:
                 freight_summary:
                 shipping_eq_billing_address: true
                 discounts: []
@@ -2214,6 +2218,7 @@ paths:
                 order_minimum:
                 order_minimum_shortfall:
                 below_order_minimum: false
+                payment_schedule:
                 freight_summary:
                 shipping_eq_billing_address: true
                 discounts: []
@@ -2500,6 +2505,7 @@ paths:
                 order_minimum:
                 order_minimum_shortfall:
                 below_order_minimum: false
+                payment_schedule:
                 freight_summary:
                 shipping_eq_billing_address: false
                 discounts: []
@@ -2679,6 +2685,7 @@ paths:
                 company_name:
                 po_document_filename:
                 po_document_byte_size:
+                payment_schedule:
                 freight_summary:
                 number: R1001
                 email: marvel@bruen.com
@@ -3054,6 +3061,7 @@ paths:
                 order_minimum:
                 order_minimum_shortfall:
                 below_order_minimum: false
+                payment_schedule:
                 freight_summary:
                 shipping_eq_billing_address: true
                 discounts: []
@@ -3253,6 +3261,7 @@ paths:
                 order_minimum:
                 order_minimum_shortfall:
                 below_order_minimum: false
+                payment_schedule:
                 freight_summary:
                 shipping_eq_billing_address: true
                 discounts: []
@@ -3440,6 +3449,7 @@ paths:
                 order_minimum:
                 order_minimum_shortfall:
                 below_order_minimum: false
+                payment_schedule:
                 freight_summary:
                 shipping_eq_billing_address: false
                 discounts: []
@@ -3737,6 +3747,7 @@ paths:
                 order_minimum:
                 order_minimum_shortfall:
                 below_order_minimum: false
+                payment_schedule:
                 freight_summary:
                 shipping_eq_billing_address: true
                 discounts: []
@@ -3991,6 +4002,7 @@ paths:
                 order_minimum:
                 order_minimum_shortfall:
                 below_order_minimum: false
+                payment_schedule:
                 freight_summary:
                 shipping_eq_billing_address: true
                 discounts: []
@@ -4206,6 +4218,7 @@ paths:
                 order_minimum:
                 order_minimum_shortfall:
                 below_order_minimum: false
+                payment_schedule:
                 freight_summary:
                 shipping_eq_billing_address: true
                 discounts: []
@@ -4467,6 +4480,7 @@ paths:
                 order_minimum:
                 order_minimum_shortfall:
                 below_order_minimum: false
+                payment_schedule:
                 freight_summary:
                 shipping_eq_billing_address: true
                 discounts: []
@@ -4651,6 +4665,7 @@ paths:
                 order_minimum:
                 order_minimum_shortfall:
                 below_order_minimum: false
+                payment_schedule:
                 freight_summary:
                 shipping_eq_billing_address: true
                 discounts: []
@@ -5297,6 +5312,7 @@ paths:
                 order_minimum:
                 order_minimum_shortfall:
                 below_order_minimum: false
+                payment_schedule:
                 freight_summary:
                 shipping_eq_billing_address: true
                 discounts: []
@@ -5515,6 +5531,7 @@ paths:
                 order_minimum:
                 order_minimum_shortfall:
                 below_order_minimum: false
+                payment_schedule:
                 freight_summary:
                 shipping_eq_billing_address: true
                 discounts: []
@@ -5653,6 +5670,7 @@ paths:
                 company_name:
                 po_document_filename:
                 po_document_byte_size:
+                payment_schedule:
                 freight_summary:
                 number: R1001
                 email: guest@example.com
@@ -6778,6 +6796,7 @@ paths:
                   company_name:
                   po_document_filename:
                   po_document_byte_size:
+                  payment_schedule:
                   freight_summary:
                   number: R1001
                   email: idella.ratke@runolfsdottir.us
@@ -7101,6 +7120,7 @@ paths:
                 company_name:
                 po_document_filename:
                 po_document_byte_size:
+                payment_schedule:
                 freight_summary:
                 number: R1001
                 email: whitney_homenick@leschwhite.co.uk
@@ -10844,6 +10864,7 @@ paths:
                   company_name: Acme Industrial
                   po_document_filename:
                   po_document_byte_size:
+                  payment_schedule:
                   freight_summary:
                   number: R1001
                   email: chanell_langosh@schamberger.info
@@ -12123,6 +12144,9 @@ components:
         below_order_minimum:
           type: boolean
           nullable: true
+        payment_schedule:
+          type: object
+          nullable: true
         freight_summary:
           type: object
           nullable: true
@@ -12219,6 +12243,7 @@ components:
       - order_minimum
       - order_minimum_shortfall
       - below_order_minimum
+      - payment_schedule
       - freight_summary
       - shipping_eq_billing_address
       - discounts
@@ -13862,6 +13887,9 @@ components:
         po_document_byte_size:
           type: number
           nullable: true
+        payment_schedule:
+          type: object
+          nullable: true
         freight_summary:
           type: object
           nullable: true
@@ -14015,6 +14043,7 @@ components:
       - company_name
       - po_document_filename
       - po_document_byte_size
+      - payment_schedule
       - freight_summary
       - number
       - email

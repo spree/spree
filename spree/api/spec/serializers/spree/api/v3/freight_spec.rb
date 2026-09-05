@@ -30,6 +30,50 @@ RSpec.describe 'freight serialization' do
     end
   end
 
+  describe 'the deposit schedule' do
+    let(:freight_method) do
+      create(:delivery_method, store: store, rate_provider: 'Spree::DeliveryRateProvider::Freight',
+                               deposit_percentage: 40, balance_due_label: 'Before shipping')
+    end
+
+    def schedule_for(cart, **params)
+      Spree::Api::V3::CartSerializer.new(cart.reload, params: { store: store, **params }).to_h['payment_schedule']
+    end
+
+    it 'tells a buyer what is due now and what is owed after' do
+      cart = create(:cart, store: store)
+      create(:line_item, cart: cart, order: nil, price: 100, quantity: 1)
+      fulfillment = create(:shipment, cart: cart, order: nil)
+      create(:delivery_rate, fulfillment: fulfillment, delivery_method: freight_method,
+                             selected: true, unpriced: true)
+      Spree::Carts::RecalculateTotals.call(cart: cart.reload)
+
+      schedule = schedule_for(cart)
+
+      expect(schedule['amount_due_now'].to_d).to eq(cart.reload.total * BigDecimal('0.4'))
+      expect(schedule['balance_due_label']).to eq('Before shipping')
+      expect(schedule['deposit_paid']).to be(false)
+    end
+
+    it 'says nothing on a retail cart, which owes its whole total' do
+      cart = create(:cart, store: store)
+      create(:line_item, cart: cart, order: nil, price: 100, quantity: 1)
+
+      expect(schedule_for(cart)).to be_nil
+    end
+
+    it 'is withheld where prices are hidden' do
+      cart = create(:cart, store: store)
+      create(:line_item, cart: cart, order: nil, price: 100, quantity: 1)
+      fulfillment = create(:shipment, cart: cart, order: nil)
+      create(:delivery_rate, fulfillment: fulfillment, delivery_method: freight_method,
+                             selected: true, unpriced: true)
+      Spree::Carts::RecalculateTotals.call(cart: cart.reload)
+
+      expect(schedule_for(cart, hide_prices: true)).to be_nil
+    end
+  end
+
   describe Spree::Api::V3::CartSerializer do
     let(:cart) { create(:cart, store: store) }
 

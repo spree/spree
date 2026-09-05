@@ -13,6 +13,7 @@ module Spree
                  po_document_filename: [:string, nullable: true],
                  po_document_byte_size: ['number | null'],
                  freight_summary: ['Record<string, unknown>', nullable: true],
+                 payment_schedule: ['Record<string, unknown>', nullable: true],
                  currency: :string, locale: [:string, nullable: true], total_quantity: :number,
                  coupon_code: [:string, nullable: true],
                  fulfillment_status: [:string, nullable: true], payment_status: [:string, nullable: true],
@@ -85,6 +86,14 @@ module Spree
         # this order shipped under. Never re-derived, so repacking a product
         # cannot rewrite what an order that already left the warehouse held.
         # Per-line identity is withheld where prices are, as on the cart.
+        # What is due now versus what is owed after — the deposit story, told
+        # once so a storefront need not derive it from a total and a
+        # percentage. Null unless terms say a deposit, which is every retail
+        # order. Price-gated with the rest of the money surface.
+        attribute :payment_schedule do |order|
+          order.payment_schedule.as_json if order.payment_terms_snapshot&.deposit? && !params[:hide_prices]
+        end
+
         attribute :freight_summary do |order|
           order.freight_summary&.as_json(identify_lines: !params[:hide_prices])
         end
