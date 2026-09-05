@@ -9,6 +9,7 @@ const OFFER_STATUSES = ['active', 'draft', 'proposed', 'rejected', 'archived'] a
 
 defineTable<Variant>('seller-offers', {
   title: i18n.t('offers.title'),
+  description: i18n.t('offers.description'),
   // Searches the SKU rather than the product name: the product is the
   // marketplace's and a seller finds their own row by what they called it.
   searchParam: 'sku_cont',
