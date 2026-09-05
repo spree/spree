@@ -6,6 +6,21 @@ module Spree
           class VariantsController < ResourceController
             scoped_resource :products
 
+            # PATCH /api/v3/admin/products/:product_id/variants/:id/approve
+            #
+            # Accepting a seller's offer on a master product, putting it on
+            # sale (docs/plans/6.0-seller-master-catalog-listings.md).
+            def approve
+              run_review_workflow(Spree.variant_approve_workflow, note: params[:note])
+            end
+
+            # PATCH /api/v3/admin/products/:product_id/variants/:id/reject
+            #
+            # Turning an offer down. The reason goes back to the seller.
+            def reject
+              run_review_workflow(Spree.variant_reject_workflow, reason: params[:reason])
+            end
+
             protected
 
             def model_class
@@ -45,9 +60,26 @@ module Spree
               { product: @parent, attributes: permitted_params }
             end
 
+            def run_review_workflow(workflow, **arguments)
+              @resource = find_resource
+              authorize!(:update, @resource)
+
+              result = workflow.call(variant: @resource, reviewer: try_spree_current_user, **arguments)
+
+              if result.success?
+                render json: serialize_resource(@resource.reload)
+              else
+                render_service_error(@resource.errors.presence || result.error)
+              end
+            end
+
             def permitted_params
               params.permit(
                 *model_additional_permitted_attributes,
+                # An operator's own rows move status freely; a row in review
+                # is refused by Variants::Update, so a decision always runs
+                # through approve/reject and records who made it.
+                :status,
                 :sku, :barcode,
                 :cost_price, :cost_currency,
                 :weight, :height, :width, :depth, :weight_unit, :dimensions_unit,
