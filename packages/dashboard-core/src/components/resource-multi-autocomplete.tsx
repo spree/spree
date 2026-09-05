@@ -20,9 +20,8 @@ export interface ResourceMultiAutocompleteProps<T extends AutocompleteOption>
     | 'disabled'
   > {
   /**
-   * Server-side search. Receives the trimmed query string. Should return
-   * `{ data: T[] }`. Called any time the user types (with debouncing
-   * provided by the caller's queryClient if needed).
+   * Server-side search. Receives the trimmed query string (empty on open).
+   * Should return `{ data: T[] }`. Called on mount and as the user types.
    */
   search: (query: string) => Promise<{ data: T[] }>
 
@@ -105,10 +104,12 @@ export function ResourceMultiAutocomplete<T extends AutocompleteOption>({
 
   const trimmedInput = inputValue.trim()
 
+  // Match ResourceCombobox: run search with an empty query on open so the
+  // dropdown shows the first page instead of a false "nothing found" state.
   const { data: searchData, isFetching } = useQuery({
     queryKey: [queryKey, 'search', trimmedInput],
     queryFn: () => search(trimmedInput),
-    enabled: trimmedInput.length > 0,
+    staleTime: 30_000,
   })
 
   // Mirror query results into the local id→option cache via an effect, not
