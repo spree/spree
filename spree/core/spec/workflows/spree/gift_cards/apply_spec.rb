@@ -277,23 +277,49 @@ RSpec.describe Spree::GiftCards::Apply do
     # Every hold row is locked before the first removal takes the card lock,
     # which the transaction then holds. Locking a hold after that would invert
     # the record-then-card order Remove uses.
-    it 'locks every hold before the first removal' do
-      locked_holds = 0
-      removals = 0
+    it 'locks every affected record before the first removal' do
+      events = []
 
-      allow_any_instance_of(described_class).to receive(:release_hold).and_wrap_original do |original, *args|
-        removals += 1
-        expect(locked_holds).to eq(2)
+      allow_any_instance_of(Spree::Cart).to receive(:lock!).and_wrap_original do |original, *args|
+        events << :locked
         original.call(*args)
       end
-      allow_any_instance_of(described_class).to receive(:lock_holds).and_wrap_original do |original, *args|
-        result = original.call(*args)
-        locked_holds = result.size
-        result
+      allow(Spree.gift_card_remove_workflow).to receive(:call).and_wrap_original do |original, **kwargs|
+        events << :released
+        original.call(**kwargs)
       end
 
       expect(subject).to be_success
-      expect(removals).to eq(2)
+
+      # Both holds and the target are locked in the ordered pass before the
+      # first release runs; Remove then re-locks its own record.
+      expect(events.index(:released)).to be > 0
+      expect(events.count(:released)).to eq(2)
+    end
+  end
+
+  context 'when a hold claims completion after the list is gathered' do
+    let!(:other_cart) { create(:cart, store: store, customer: order_user) }
+
+    before do
+      other_cart.update_column(:total, 50)
+      expect(Spree.gift_card_apply_workflow.call(gift_card: gift_card, order: other_cart)).to be_success
+    end
+
+    # open_holds reads before the locks are taken, so a checkout that claims
+    # in that window must still keep its card: its totals are fixed and money
+    # may already be at the gateway.
+    it 'leaves it alone' do
+      allow_any_instance_of(Spree::GiftCard).to receive(:open_holds).and_wrap_original do |original, **kwargs|
+        holds = original.call(**kwargs)
+        Spree::Cart.where(id: other_cart.id).update_all(completing_at: Time.current)
+        holds
+      end
+
+      subject
+
+      expect(other_cart.reload.gift_card).to eq(gift_card)
+      expect(other_cart.payments.checkout.store_credits).to be_present
     end
   end
 
@@ -307,20 +333,19 @@ RSpec.describe Spree::GiftCards::Apply do
 
     # Releasing a hold takes the gift-card lock and the transaction keeps it,
     # so the target must be locked before any release rather than after.
-    it 'locks the target before releasing any hold' do
-      target_locked_before_release = nil
+    it 'locks the target in the same pass as the holds' do
+      locked_ids = []
 
-      allow(order).to receive(:lock!).and_wrap_original do |original, *args|
-        @target_locked = true
-        original.call(*args)
-      end
-      allow(Spree.gift_card_remove_workflow).to receive(:call).and_wrap_original do |original, **kwargs|
-        target_locked_before_release = @target_locked if target_locked_before_release.nil?
-        original.call(**kwargs)
+      allow(Spree::Order).to receive(:where).and_wrap_original do |original, *args|
+        relation = original.call(*args)
+        locked_ids << args.first[:id] if args.first.is_a?(Hash) && args.first.key?(:id)
+        relation
       end
 
       expect(subject).to be_success
-      expect(target_locked_before_release).to be(true)
+
+      # The ordered lock pass covers the target, not just the holds.
+      expect(locked_ids.flatten).to include(order.id)
     end
 
     # Spree::GiftCards::Remove locks its record and then the card. Holding the
