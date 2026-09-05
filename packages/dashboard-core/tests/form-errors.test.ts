@@ -1,0 +1,117 @@
+import { SpreeError } from '@spree/admin-sdk'
+import i18n from 'i18next'
+import { beforeAll, describe, expect, it, vi } from 'vitest'
+import { mapSpreeErrorsToForm } from '../src/lib/form-errors'
+
+function spreeError(details: Record<string, unknown[]>, message = 'Something went wrong') {
+  return new SpreeError({ error: { code: 'validation_error', message, details } } as never, 422)
+}
+
+beforeAll(async () => {
+  await i18n.init({
+    lng: 'en',
+    resources: {
+      en: {
+        translation: {
+          admin: {
+            validation: {
+              blank: 'Required',
+              greater_than: 'Must be more than {{count}}',
+              // A per-attribute override of the same code.
+              quantity: { blank: 'Enter how many' },
+            },
+          },
+        },
+      },
+    },
+  })
+})
+
+describe('mapSpreeErrorsToForm', () => {
+  it('translates the error code rather than showing the server message', () => {
+    const setError = vi.fn()
+    mapSpreeErrorsToForm(
+      spreeError({ name: [{ code: 'blank', message: "can't be blank" }] }),
+      setError,
+    )
+
+    expect(setError).toHaveBeenCalledWith('name', { type: 'server', message: 'Required' })
+  })
+
+  it("interpolates the validation's own values into the translation", () => {
+    const setError = vi.fn()
+    mapSpreeErrorsToForm(
+      spreeError({
+        price: [{ code: 'greater_than', message: 'must be greater than 0', count: 0 }],
+      }),
+      setError,
+    )
+
+    expect(setError).toHaveBeenCalledWith('price', {
+      type: 'server',
+      message: 'Must be more than 0',
+    })
+  })
+
+  it('prefers a per-attribute key over the general one', () => {
+    const setError = vi.fn()
+    mapSpreeErrorsToForm(
+      spreeError({ quantity: [{ code: 'blank', message: "can't be blank" }] }),
+      setError,
+    )
+
+    expect(setError).toHaveBeenCalledWith('quantity', {
+      type: 'server',
+      message: 'Enter how many',
+    })
+  })
+
+  it("falls back to the server's message for a code it has no translation for", () => {
+    // The extension case: a gem validates something the dashboard never heard of.
+    const setError = vi.fn()
+    mapSpreeErrorsToForm(
+      spreeError({ sku: [{ code: 'reserved_by_supplier', message: 'is claimed by a supplier' }] }),
+      setError,
+    )
+
+    expect(setError).toHaveBeenCalledWith('sku', {
+      type: 'server',
+      message: 'is claimed by a supplier',
+    })
+  })
+
+  it('renders a message that carries no code', () => {
+    const setError = vi.fn()
+    mapSpreeErrorsToForm(spreeError({ sku: [{ code: null, message: 'is not usable' }] }), setError)
+
+    expect(setError).toHaveBeenCalledWith('sku', { type: 'server', message: 'is not usable' })
+  })
+
+  it('still reads the flat string shape', () => {
+    // Older payloads, and anything proxied from the Store API.
+    const setError = vi.fn()
+    mapSpreeErrorsToForm(spreeError({ name: ["can't be blank"] }), setError)
+
+    expect(setError).toHaveBeenCalledWith('name', { type: 'server', message: "can't be blank" })
+  })
+
+  it('keeps record-level and nested errors on the root summary', () => {
+    const setError = vi.fn()
+    mapSpreeErrorsToForm(
+      spreeError({
+        base: [{ code: 'order_cannot_be_deleted', message: 'cannot be deleted' }],
+        'line_items.0.quantity': [{ code: 'blank', message: "can't be blank" }],
+      }),
+      setError,
+    )
+
+    const fields = setError.mock.calls.map(([field]) => field)
+    expect(fields).toEqual(['root'])
+  })
+
+  it('returns false for anything that is not a SpreeError', () => {
+    const setError = vi.fn()
+    expect(mapSpreeErrorsToForm(new TypeError('offline'), setError)).toBe(false)
+    expect(setError).not.toHaveBeenCalled()
+  })
+})

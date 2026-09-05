@@ -14,7 +14,7 @@ module Spree
         return success(shipping_label) if shipping_label.refunded?
 
         unless shipping_label.refund_requested?
-          shipping_label.errors.add(:base, Spree.t('shipping_labels.errors.not_refund_requested'))
+          shipping_label.errors.add(:base, :not_refund_requested, message: Spree.t('shipping_labels.errors.not_refund_requested'))
           return failure(shipping_label)
         end
 

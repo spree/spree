@@ -219,11 +219,15 @@ module Spree
     #   workflow.errors.add(:quantity, :purchase_limit_exceeded, message: '…')
     #   workflow.reject!
     #
-    # @param message [String, Symbol, nil] legacy flat rejection; recorded on
-    #   :base so it renders through the same field-error payload
+    # @param message [String, Symbol, nil] the rejection. Prefer a symbol: it
+    #   lands in `errors.details` as a code the dashboard translates itself.
+    #   Spree's copy lives outside the scopes Rails resolves a bare symbol
+    #   against, so pass the text alongside it as `message:`.
     # @param value [Object, nil] subject of the failure Result
-    def reject!(message = nil, value = nil)
-      errors.add(:base, message) if message.present?
+    # @param options [Hash] forwarded to `errors.add` — `message:` for the
+    #   resolved text, plus any interpolation values
+    def reject!(message = nil, value = nil, **options)
+      errors.add(:base, message, **options) if message.present?
       failure(value, errors)
     end
 

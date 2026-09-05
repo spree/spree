@@ -98,7 +98,7 @@ module Spree
           cart.po_document.attach(value)
         end
       rescue ActiveStorage::FileNotFoundError
-        cart.errors.add(:po_document, Spree.t(:po_document_upload_incomplete))
+        cart.errors.add(:po_document, :po_document_upload_incomplete, message: Spree.t(:po_document_upload_incomplete))
         raise ActiveRecord::RecordInvalid, cart
       end
 

@@ -507,8 +507,7 @@ module Spree
       return if delivery_profile.accepts_provider?(provider_class)
 
       errors.add(
-        :fulfillment_provider,
-        Spree.t('errors.messages.profile_does_not_accept_provider',
+        :fulfillment_provider, :profile_does_not_accept_provider, message: Spree.t('errors.messages.profile_does_not_accept_provider',
                 provider: provider_class.provider_name, profile: delivery_profile.name)
       )
     end
@@ -520,8 +519,7 @@ module Spree
       return if provider_class.new.requires_address?
 
       errors.add(
-        :rate_provider,
-        Spree.t('errors.messages.rate_provider_requires_shipping',
+        :rate_provider, :rate_provider_requires_shipping, message: Spree.t('errors.messages.rate_provider_requires_shipping',
                 provider: rate_provider_class.provider_name)
       )
     end
@@ -531,7 +529,7 @@ module Spree
       return unless Spree.delivery_rate_providers.map(&:to_s).include?(rate_provider)
       return if rate_provider_class.available_for_store?(store)
 
-      errors.add(:rate_provider, Spree.t('errors.messages.rate_provider_unavailable'))
+      errors.add(:rate_provider, :rate_provider_unavailable, message: Spree.t('errors.messages.rate_provider_unavailable'))
     end
 
     def seller_must_belong_to_store
@@ -543,18 +541,18 @@ module Spree
 
     def seller_methods_use_own_providers
       unless rate_provider.blank? || rate_provider == DEFAULT_RATE_PROVIDER
-        errors.add(:rate_provider, Spree.t('errors.messages.seller_delivery_method_provider'))
+        errors.add(:rate_provider, :seller_delivery_method_provider, message: Spree.t('errors.messages.seller_delivery_method_provider'))
       end
 
       return if fulfillment_provider.blank? || fulfillment_provider == DEFAULT_FULFILLMENT_PROVIDER
 
-      errors.add(:fulfillment_provider, Spree.t('errors.messages.seller_delivery_method_provider'))
+      errors.add(:fulfillment_provider, :seller_delivery_method_provider, message: Spree.t('errors.messages.seller_delivery_method_provider'))
     end
 
     def only_marketplace_methods_are_shared
       return unless available_to_sellers? && seller_owned?
 
-      errors.add(:available_to_sellers, Spree.t('errors.messages.seller_delivery_method_not_shareable'))
+      errors.add(:available_to_sellers, :seller_delivery_method_not_shareable, message: Spree.t('errors.messages.seller_delivery_method_not_shareable'))
     end
   end
 end

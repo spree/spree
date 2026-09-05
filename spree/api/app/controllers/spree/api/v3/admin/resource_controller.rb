@@ -16,6 +16,7 @@ module Spree
           # (readable references, unaddressable member paths) by forgetting an
           # include.
           include Spree::Api::V3::Admin::Concerns::ExternalReferences
+          include Spree::Api::V3::Admin::ValidationDetails
 
           protected
 
