@@ -8,7 +8,7 @@ Instructions: $ARGUMENTS
 4. Apply the requested changes while preserving the document structure
 5. **Resolve open questions interactively before finishing** — see below
 6. Update the `Last updated` date
-7. If status changed, update the reference in root `CLAUDE.md`
+7. If status changed, update the plan's status accordingly
 
 ## Resolving open questions (required)
 

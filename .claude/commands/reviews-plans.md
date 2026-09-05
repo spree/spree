@@ -2,7 +2,7 @@ Review all active architecture plans relevant to the current task.
 
 Context: $ARGUMENTS
 
-1. Read the "Architecture Plans" section from root `CLAUDE.md`
+1. Read the plans in `docs/plans/` and any linked plans or decisions that touch the same models, tables, or endpoints
 2. Based on the context provided, identify which plans are relevant
 3. Read those specific plan files
 4. Summarize the key constraints that apply to the current work

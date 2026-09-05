@@ -33,8 +33,7 @@ user steering it.
 
 ## 1. Read the plan carefully
 
-- Read the plan file in full. Then read every plan it links to or names, the
-  matching entry in the "Architecture Plans" section of the root `CLAUDE.md`,
+- Read the plan file in full. Then read every plan it links to or names 
   and the dated entries in `docs/plans/decisions.md` that touch it.
 - Work out exactly what is still unbuilt: which phases are marked implemented,
   which are pending, what "6.0 scope" versus "6.1 scope" means for this run.
