@@ -89,6 +89,23 @@ export function useBulkProductStatusUpdate() {
   return useBulkProductMutation((p: BulkStatusParams) => adminClient.products.bulkStatusUpdate(p))
 }
 
+/**
+ * Let sellers list their own offers against a selection, or stop them.
+ *
+ * Only the marketplace's own products can be opened — a product a seller owns
+ * outright is theirs — so the response reports what it skipped
+ * (docs/plans/6.0-seller-master-catalog-listings.md, Decision 2).
+ */
+export function useBulkOpenProductsToSellers() {
+  return useBulkProductMutation((p: { ids: string[] }) => adminClient.products.bulkOpenToSellers(p))
+}
+
+export function useBulkCloseProductsToSellers() {
+  return useBulkProductMutation((p: { ids: string[] }) =>
+    adminClient.products.bulkCloseToSellers(p),
+  )
+}
+
 export function useBulkAddProductsToCategories() {
   return useBulkProductMutation((p: BulkCategoriesParams) =>
     adminClient.products.bulkAddToCategories(p),
