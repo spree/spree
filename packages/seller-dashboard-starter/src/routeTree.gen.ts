@@ -23,6 +23,7 @@ import { Route as OnboardingRouteImport } from './../../seller-dashboard/src/rou
 import { Route as SettingsIndexRouteImport } from './../../seller-dashboard/src/routes/_authenticated/$sellerId/settings/index'
 import { Route as ProductsIndexRouteImport } from './../../seller-dashboard/src/routes/_authenticated/$sellerId/products/index'
 import { Route as OrdersIndexRouteImport } from './../../seller-dashboard/src/routes/_authenticated/$sellerId/orders/index'
+import { Route as OffersIndexRouteImport } from './../../seller-dashboard/src/routes/_authenticated/$sellerId/offers/index'
 import { Route as SettingsTeamRouteImport } from './../../seller-dashboard/src/routes/_authenticated/$sellerId/settings/team'
 import { Route as SettingsStockLocationsRouteImport } from './../../seller-dashboard/src/routes/_authenticated/$sellerId/settings/stock-locations'
 import { Route as SettingsPoliciesRouteImport } from './../../seller-dashboard/src/routes/_authenticated/$sellerId/settings/policies'
@@ -30,6 +31,8 @@ import { Route as SettingsDeliveryMethodsRouteImport } from './../../seller-dash
 import { Route as ProductsNewRouteImport } from './../../seller-dashboard/src/routes/_authenticated/$sellerId/products/new'
 import { Route as ProductsProductIdRouteImport } from './../../seller-dashboard/src/routes/_authenticated/$sellerId/products/$productId'
 import { Route as OrdersOrderIdRouteImport } from './../../seller-dashboard/src/routes/_authenticated/$sellerId/orders/$orderId'
+import { Route as OffersNewRouteImport } from './../../seller-dashboard/src/routes/_authenticated/$sellerId/offers/new'
+import { Route as OffersVariantIdRouteImport } from './../../seller-dashboard/src/routes/_authenticated/$sellerId/offers/$variantId'
 
 const resetPasswordRoute = resetPasswordRouteImport.update({
   id: '/reset-password',
@@ -101,6 +104,11 @@ const OrdersIndexRoute = OrdersIndexRouteImport.update({
   path: '/orders/',
   getParentRoute: () => authenticatedSellerIdRoute,
 } as any)
+const OffersIndexRoute = OffersIndexRouteImport.update({
+  id: '/offers/',
+  path: '/offers/',
+  getParentRoute: () => authenticatedSellerIdRoute,
+} as any)
 const SettingsTeamRoute = SettingsTeamRouteImport.update({
   id: '/team',
   path: '/team',
@@ -136,6 +144,16 @@ const OrdersOrderIdRoute = OrdersOrderIdRouteImport.update({
   path: '/orders/$orderId',
   getParentRoute: () => authenticatedSellerIdRoute,
 } as any)
+const OffersNewRoute = OffersNewRouteImport.update({
+  id: '/offers/new',
+  path: '/offers/new',
+  getParentRoute: () => authenticatedSellerIdRoute,
+} as any)
+const OffersVariantIdRoute = OffersVariantIdRouteImport.update({
+  id: '/offers/$variantId',
+  path: '/offers/$variantId',
+  getParentRoute: () => authenticatedSellerIdRoute,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof authenticatedIndexRoute
@@ -148,6 +166,8 @@ export interface FileRoutesByFullPath {
   '/$sellerId/profile': typeof ProfileRoute
   '/$sellerId/settings': typeof SettingsRouteWithChildren
   '/$sellerId/': typeof IndexRoute
+  '/$sellerId/offers/$variantId': typeof OffersVariantIdRoute
+  '/$sellerId/offers/new': typeof OffersNewRoute
   '/$sellerId/orders/$orderId': typeof OrdersOrderIdRoute
   '/$sellerId/products/$productId': typeof ProductsProductIdRoute
   '/$sellerId/products/new': typeof ProductsNewRoute
@@ -155,6 +175,7 @@ export interface FileRoutesByFullPath {
   '/$sellerId/settings/policies': typeof SettingsPoliciesRoute
   '/$sellerId/settings/stock-locations': typeof SettingsStockLocationsRoute
   '/$sellerId/settings/team': typeof SettingsTeamRoute
+  '/$sellerId/offers/': typeof OffersIndexRoute
   '/$sellerId/orders/': typeof OrdersIndexRoute
   '/$sellerId/products/': typeof ProductsIndexRoute
   '/$sellerId/settings/': typeof SettingsIndexRoute
@@ -168,6 +189,8 @@ export interface FileRoutesByTo {
   '/$sellerId/onboarding': typeof OnboardingRoute
   '/$sellerId/profile': typeof ProfileRoute
   '/$sellerId': typeof IndexRoute
+  '/$sellerId/offers/$variantId': typeof OffersVariantIdRoute
+  '/$sellerId/offers/new': typeof OffersNewRoute
   '/$sellerId/orders/$orderId': typeof OrdersOrderIdRoute
   '/$sellerId/products/$productId': typeof ProductsProductIdRoute
   '/$sellerId/products/new': typeof ProductsNewRoute
@@ -175,6 +198,7 @@ export interface FileRoutesByTo {
   '/$sellerId/settings/policies': typeof SettingsPoliciesRoute
   '/$sellerId/settings/stock-locations': typeof SettingsStockLocationsRoute
   '/$sellerId/settings/team': typeof SettingsTeamRoute
+  '/$sellerId/offers': typeof OffersIndexRoute
   '/$sellerId/orders': typeof OrdersIndexRoute
   '/$sellerId/products': typeof ProductsIndexRoute
   '/$sellerId/settings': typeof SettingsIndexRoute
@@ -192,6 +216,8 @@ export interface FileRoutesById {
   '/_authenticated/$sellerId/profile': typeof ProfileRoute
   '/_authenticated/$sellerId/settings': typeof SettingsRouteWithChildren
   '/_authenticated/$sellerId/': typeof IndexRoute
+  '/_authenticated/$sellerId/offers/$variantId': typeof OffersVariantIdRoute
+  '/_authenticated/$sellerId/offers/new': typeof OffersNewRoute
   '/_authenticated/$sellerId/orders/$orderId': typeof OrdersOrderIdRoute
   '/_authenticated/$sellerId/products/$productId': typeof ProductsProductIdRoute
   '/_authenticated/$sellerId/products/new': typeof ProductsNewRoute
@@ -199,6 +225,7 @@ export interface FileRoutesById {
   '/_authenticated/$sellerId/settings/policies': typeof SettingsPoliciesRoute
   '/_authenticated/$sellerId/settings/stock-locations': typeof SettingsStockLocationsRoute
   '/_authenticated/$sellerId/settings/team': typeof SettingsTeamRoute
+  '/_authenticated/$sellerId/offers/': typeof OffersIndexRoute
   '/_authenticated/$sellerId/orders/': typeof OrdersIndexRoute
   '/_authenticated/$sellerId/products/': typeof ProductsIndexRoute
   '/_authenticated/$sellerId/settings/': typeof SettingsIndexRoute
@@ -216,6 +243,8 @@ export interface FileRouteTypes {
     | '/$sellerId/profile'
     | '/$sellerId/settings'
     | '/$sellerId/'
+    | '/$sellerId/offers/$variantId'
+    | '/$sellerId/offers/new'
     | '/$sellerId/orders/$orderId'
     | '/$sellerId/products/$productId'
     | '/$sellerId/products/new'
@@ -223,6 +252,7 @@ export interface FileRouteTypes {
     | '/$sellerId/settings/policies'
     | '/$sellerId/settings/stock-locations'
     | '/$sellerId/settings/team'
+    | '/$sellerId/offers/'
     | '/$sellerId/orders/'
     | '/$sellerId/products/'
     | '/$sellerId/settings/'
@@ -236,6 +266,8 @@ export interface FileRouteTypes {
     | '/$sellerId/onboarding'
     | '/$sellerId/profile'
     | '/$sellerId'
+    | '/$sellerId/offers/$variantId'
+    | '/$sellerId/offers/new'
     | '/$sellerId/orders/$orderId'
     | '/$sellerId/products/$productId'
     | '/$sellerId/products/new'
@@ -243,6 +275,7 @@ export interface FileRouteTypes {
     | '/$sellerId/settings/policies'
     | '/$sellerId/settings/stock-locations'
     | '/$sellerId/settings/team'
+    | '/$sellerId/offers'
     | '/$sellerId/orders'
     | '/$sellerId/products'
     | '/$sellerId/settings'
@@ -259,6 +292,8 @@ export interface FileRouteTypes {
     | '/_authenticated/$sellerId/profile'
     | '/_authenticated/$sellerId/settings'
     | '/_authenticated/$sellerId/'
+    | '/_authenticated/$sellerId/offers/$variantId'
+    | '/_authenticated/$sellerId/offers/new'
     | '/_authenticated/$sellerId/orders/$orderId'
     | '/_authenticated/$sellerId/products/$productId'
     | '/_authenticated/$sellerId/products/new'
@@ -266,6 +301,7 @@ export interface FileRouteTypes {
     | '/_authenticated/$sellerId/settings/policies'
     | '/_authenticated/$sellerId/settings/stock-locations'
     | '/_authenticated/$sellerId/settings/team'
+    | '/_authenticated/$sellerId/offers/'
     | '/_authenticated/$sellerId/orders/'
     | '/_authenticated/$sellerId/products/'
     | '/_authenticated/$sellerId/settings/'
@@ -379,6 +415,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof OrdersIndexRouteImport
       parentRoute: typeof authenticatedSellerIdRoute
     }
+    '/_authenticated/$sellerId/offers/': {
+      id: '/_authenticated/$sellerId/offers/'
+      path: '/offers'
+      fullPath: '/$sellerId/offers/'
+      preLoaderRoute: typeof OffersIndexRouteImport
+      parentRoute: typeof authenticatedSellerIdRoute
+    }
     '/_authenticated/$sellerId/settings/team': {
       id: '/_authenticated/$sellerId/settings/team'
       path: '/team'
@@ -428,6 +471,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof OrdersOrderIdRouteImport
       parentRoute: typeof authenticatedSellerIdRoute
     }
+    '/_authenticated/$sellerId/offers/new': {
+      id: '/_authenticated/$sellerId/offers/new'
+      path: '/offers/new'
+      fullPath: '/$sellerId/offers/new'
+      preLoaderRoute: typeof OffersNewRouteImport
+      parentRoute: typeof authenticatedSellerIdRoute
+    }
+    '/_authenticated/$sellerId/offers/$variantId': {
+      id: '/_authenticated/$sellerId/offers/$variantId'
+      path: '/offers/$variantId'
+      fullPath: '/$sellerId/offers/$variantId'
+      preLoaderRoute: typeof OffersVariantIdRouteImport
+      parentRoute: typeof authenticatedSellerIdRoute
+    }
   }
 }
 
@@ -456,9 +513,12 @@ interface authenticatedSellerIdRouteChildren {
   ProfileRoute: typeof ProfileRoute
   SettingsRoute: typeof SettingsRouteWithChildren
   IndexRoute: typeof IndexRoute
+  OffersVariantIdRoute: typeof OffersVariantIdRoute
+  OffersNewRoute: typeof OffersNewRoute
   OrdersOrderIdRoute: typeof OrdersOrderIdRoute
   ProductsProductIdRoute: typeof ProductsProductIdRoute
   ProductsNewRoute: typeof ProductsNewRoute
+  OffersIndexRoute: typeof OffersIndexRoute
   OrdersIndexRoute: typeof OrdersIndexRoute
   ProductsIndexRoute: typeof ProductsIndexRoute
 }
@@ -468,9 +528,12 @@ const authenticatedSellerIdRouteChildren: authenticatedSellerIdRouteChildren = {
   ProfileRoute: ProfileRoute,
   SettingsRoute: SettingsRouteWithChildren,
   IndexRoute: IndexRoute,
+  OffersVariantIdRoute: OffersVariantIdRoute,
+  OffersNewRoute: OffersNewRoute,
   OrdersOrderIdRoute: OrdersOrderIdRoute,
   ProductsProductIdRoute: ProductsProductIdRoute,
   ProductsNewRoute: ProductsNewRoute,
+  OffersIndexRoute: OffersIndexRoute,
   OrdersIndexRoute: OrdersIndexRoute,
   ProductsIndexRoute: ProductsIndexRoute,
 }
