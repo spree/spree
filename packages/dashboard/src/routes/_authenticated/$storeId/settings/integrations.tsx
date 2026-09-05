@@ -1,5 +1,5 @@
 import type { Integration, IntegrationTypeDefinition } from '@spree/admin-sdk'
-import { PageHeader, Subject, usePermissions } from '@spree/dashboard-core'
+import { PageHeader, Subject, typeDescription, usePermissions } from '@spree/dashboard-core'
 import {
   Avatar,
   AvatarFallback,
@@ -161,8 +161,10 @@ function IntegrationCard({
                 : t('admin.integrations.view_cta')}
           </Button>
         </div>
-        {type.description && (
-          <p className="line-clamp-2 text-muted-foreground text-xs">{type.description}</p>
+        {typeDescription('integration', type.type, type.description) && (
+          <p className="line-clamp-2 text-muted-foreground text-xs">
+            {typeDescription('integration', type.type, type.description)}
+          </p>
         )}
       </CardContent>
     </Card>

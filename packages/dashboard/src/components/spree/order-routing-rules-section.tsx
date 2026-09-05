@@ -20,6 +20,8 @@ import {
   Can,
   PreferencesForm,
   Subject,
+  typeDescription,
+  typeLabel,
   usePermissions,
   useResourceKeyBuilder,
 } from '@spree/dashboard-core'
@@ -35,7 +37,6 @@ import {
   useOrderRoutingRuleTypes,
   useUpdateOrderRoutingRule,
 } from '../../hooks/use-order-routing-rules'
-import { typeDescription, typeLabel } from '../../lib/type-labels'
 
 /**
  * Per-channel routing-rules editor rendered inside the channel edit sheet.
@@ -98,7 +99,7 @@ export function OrderRoutingRulesSection({ channelId }: { channelId: string }) {
     const ok = await confirm({
       title: t('admin.pages.channels.order_routing_rules.delete_confirm.title'),
       message: t('admin.pages.channels.order_routing_rules.delete_confirm.message', {
-        name: typeLabel('order_routing_rule_types', rule.type, rule.label),
+        name: typeLabel('order_routing_rule', rule.type, rule.label),
       }),
       variant: 'destructive',
       confirmLabel: t('admin.actions.delete'),
@@ -208,8 +209,8 @@ function SortableRuleRow({
   })
   const style: CSSProperties = { transform: CSS.Transform.toString(transform), transition }
   const hasPreferences = rule.preference_schema.length > 0
-  const label = typeLabel('order_routing_rule_types', rule.type, rule.label)
-  const description = typeDescription('order_routing_rule_types', rule.type, rule.description)
+  const label = typeLabel('order_routing_rule', rule.type, rule.label)
+  const description = typeDescription('order_routing_rule', rule.type, rule.description)
 
   return (
     <li
@@ -310,11 +311,7 @@ function RuleTypePicker({
         {t('admin.pages.channels.order_routing_rules.picker_title')}
       </span>
       {types.map((type) => {
-        const description = typeDescription(
-          'order_routing_rule_types',
-          type.type,
-          type.description ?? '',
-        )
+        const description = typeDescription('order_routing_rule', type.type, type.description ?? '')
         return (
           <button
             key={type.type}
@@ -324,7 +321,7 @@ function RuleTypePicker({
             onClick={() => onPick(type)}
           >
             <span className="block text-sm">
-              {typeLabel('order_routing_rule_types', type.type, type.label)}
+              {typeLabel('order_routing_rule', type.type, type.label)}
             </span>
             {description && (
               <span className="block text-xs text-muted-foreground">{description}</span>

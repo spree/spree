@@ -74,19 +74,6 @@
       },
       "warning_treat_like_password": "Behandeln Sie diesen Schlüssel wie ein Passwort. Speichern Sie ihn in Ihrem Secrets-Manager – wir können ihn nicht erneut anzeigen."
     },
-    "calculators": {
-      "default_refund_amount": "Standard-Erstattungsbetrag",
-      "default_tax": "Standardsteuer",
-      "digital_delivery": "Digitale Lieferung",
-      "flat_percent_item_total": "Pauschaler Prozentsatz",
-      "flat_rate": "Pauschalbetrag",
-      "flexi_rate": "Flexibler Tarif",
-      "per_item": "Pro Artikel",
-      "percent_on_line_item": "Prozentsatz pro Position",
-      "price_sack": "Preisstaffel",
-      "tiered_flat_rate": "Gestaffelter Pauschalbetrag",
-      "tiered_percent": "Gestaffelter Prozentsatz"
-    },
     "catalogs": {
       "actions": {
         "activate": "Aktivieren",
@@ -408,20 +395,6 @@
         "does_not_contain": "enthält nicht",
         "is_equal_to": "ist gleich",
         "is_not_equal_to": "ist ungleich"
-      },
-      "rule_types": {
-        "available_on": {
-          "description": "Produkte, die in den letzten N Tagen veröffentlicht wurden",
-          "name": "Kürzlich veröffentlicht"
-        },
-        "sale": {
-          "description": "Produkte, die derzeit unter ihrem Vergleichspreis liegen",
-          "name": "Im Angebot"
-        },
-        "tag": {
-          "description": "Produkte mit einem passenden Schlagwort",
-          "name": "Schlagwort"
-        }
       },
       "rules": {
         "add": "Regel hinzufügen",
@@ -2568,20 +2541,6 @@
       "messages": {
         "created": "Routing-Regel hinzugefügt",
         "deleted": "Routing-Regel entfernt"
-      },
-      "types": {
-        "default_location": {
-          "description": "Bevorzugt den als Standard markierten Lagerort",
-          "name": "Standard-Lagerort"
-        },
-        "minimize_splits": {
-          "description": "Bevorzugt den Lagerort, der die meisten Artikel allein liefern kann, und vermeidet Teillieferungen",
-          "name": "Teillieferungen minimieren"
-        },
-        "preferred_location": {
-          "description": "Versand vom am Auftrag hinterlegten Lagerort, sofern gesetzt",
-          "name": "Bevorzugter Lagerort"
-        }
       }
     },
     "orders": {
@@ -3882,16 +3841,24 @@
         "api_keys": "API-Zugangsdaten erstellen und widerrufen",
         "categories": "Kategoriebaum und Taxonomien",
         "collections": "Manuelle und regelbasierte Produktkollektionen",
+        "commissions": "Provisionssätze und was jedem Verkäufer berechnet wird",
         "customers": "Kundenkonten, Adressen, Karten und Gruppen",
         "dashboard": "Umsatz- und Leistungsanalysen",
+        "delivery_methods": "Versandoptionen, Tarife und die Regeln, die sie steuern",
         "fulfillments": "Bestellungen packen, versenden und verfolgen",
         "gift_cards": "Geschenkkarten und Geschenkkarten-Chargen",
         "integrations": "Anbieter-Zugangsdaten und Verbindungen",
+        "media": "Bilder, Videos und Dateien in der Medienbibliothek",
         "orders": "Bestellungen, Positionen, Retouren, Umtausch und Reklamationen",
         "payments": "Zahlungen und Zahlungserfassung",
+        "payouts": "An Verkäufer ausgezahlte Beträge und deren Zeitplan",
+        "product_types": "Definitionen von Produkttypen und ihre Zusatzfelder",
         "products": "Produkte, Varianten, Optionen, Preise und Medien",
         "promotions": "Aktionen, Regeln und Gutscheincodes",
+        "publishing": "Was im Shop sichtbar ist und ab wann",
         "refunds": "Erstattungen ausstellen und einsehen",
+        "seller_profile": "Die eigenen Angaben, Adresse und Richtlinien eines Verkäufers",
+        "sellers": "Verkäuferkonten, Onboarding und Freigabe",
         "settings": "Shop-, Zahlungs-, Liefer-, Steuer- und Kanalkonfiguration",
         "staff": "Teammitglieder, Einladungen, Rollen und ihre Berechtigungen",
         "stock": "Bestände, Lagerorte, Bewegungen und Transfers",
@@ -3922,16 +3889,24 @@
         "api_keys": "API-Schlüssel",
         "categories": "Kategorien",
         "collections": "Kollektionen",
+        "commissions": "Provisionen",
         "customers": "Kunden",
         "dashboard": "Dashboard",
+        "delivery_methods": "Versandarten",
         "fulfillments": "Fulfillments",
         "gift_cards": "Geschenkkarten",
         "integrations": "Integrationen",
+        "media": "Medien",
         "orders": "Bestellungen",
         "payments": "Zahlungen",
+        "payouts": "Auszahlungen",
+        "product_types": "Produkttypen",
         "products": "Produkte",
         "promotions": "Aktionen",
+        "publishing": "Veröffentlichung",
         "refunds": "Rückerstattungen",
+        "seller_profile": "Verkäuferprofil",
+        "sellers": "Verkäufer",
         "settings": "Einstellungen",
         "staff": "Team & Rollen",
         "stock": "Bestand",
@@ -4258,24 +4233,6 @@
       "action_summary": {
         "variant_count": "{{count}} Varianten"
       },
-      "action_types": {
-        "create_adjustment": {
-          "description": "Erstellt eine Aktionsgutschrift als Anpassung für die Bestellung",
-          "name": "Anpassung für gesamte Bestellung erstellen"
-        },
-        "create_item_adjustments": {
-          "description": "Erstellt eine Aktionsgutschrift als Anpassung für eine Bestellposition",
-          "name": "Anpassung je Bestellposition erstellen"
-        },
-        "create_line_items": {
-          "description": "Fügt dem Warenkorb die angegebene Menge der Variante hinzu",
-          "name": "Bestellpositionen erstellen"
-        },
-        "free_shipping": {
-          "description": "Macht alle Sendungen der Bestellung kostenlos",
-          "name": "Kostenloser Versand"
-        }
-      },
       "actions_card": {
         "add_action": "Aktion hinzufügen",
         "description": "Was passiert, wenn die Aktion zutrifft.",
@@ -4355,52 +4312,6 @@
         "category_count": "{{count}} Kategorien",
         "customer_count": "{{count}} Kunden",
         "product_count": "{{count}} Produkte"
-      },
-      "rule_types": {
-        "category": {
-          "description": "Bestellung enthält Produkte aus den angegebenen Kategorien",
-          "name": "Kategorien"
-        },
-        "country": {
-          "description": "Auf Bestellungen mit Lieferadresse in einem bestimmten Land beschränken",
-          "name": "Land"
-        },
-        "currency": {
-          "description": "Auf Bestellungen in einer bestimmten Währung beschränken",
-          "name": "Währung"
-        },
-        "customer": {
-          "description": "Nur für die angegebenen Kunden verfügbar",
-          "name": "Kunden"
-        },
-        "customer_group": {
-          "description": "Nur für Kunden in den angegebenen Kundengruppen verfügbar",
-          "name": "Kundengruppe(n)"
-        },
-        "customer_logged_in": {
-          "description": "Nur für angemeldete Kunden verfügbar",
-          "name": "Nur angemeldete Kunden"
-        },
-        "first_order": {
-          "description": "Muss die erste Bestellung des Kunden sein",
-          "name": "Erste Bestellung"
-        },
-        "item_total": {
-          "description": "Bestellsumme erfüllt diese Kriterien",
-          "name": "Warenwert"
-        },
-        "one_use_per_user": {
-          "description": "Nur einmalige Nutzung pro Benutzer",
-          "name": "Einmalige Nutzung pro Benutzer"
-        },
-        "option_value": {
-          "description": "Bestellung enthält Produkte mit übereinstimmenden Optionswerten",
-          "name": "Optionswert(e)"
-        },
-        "product": {
-          "description": "Bestellung enthält die angegebenen Produkte",
-          "name": "Produkt(e)"
-        }
       },
       "rule_types_all_used": "Jeder verfügbare Regeltyp ist dieser Aktion bereits zugeordnet.",
       "rule_types_empty": "Keine Regeltypen registriert.",
@@ -4623,17 +4534,6 @@
           "help": "Erforderliche Punkte müssen vor der Freigabe erledigt sein. Andere gelten als empfohlen.",
           "label": "Erforderlich"
         }
-      },
-      "kinds": {
-        "accept_terms": "Bedingungen akzeptieren",
-        "attestation": "Bestätigung des Verkäufers",
-        "billing_address": "Rechnungsadresse",
-        "complete_profile": "Profil vervollständigen",
-        "document": "Dokument",
-        "minimum_products": "Mindestanzahl Produkte",
-        "operator_review": "Manuelle Prüfung",
-        "required_custom_fields": "Erforderliche benutzerdefinierte Felder",
-        "returns_address": "Retourenadresse"
       },
       "messages": {
         "created": "Anforderung hinzugefügt",

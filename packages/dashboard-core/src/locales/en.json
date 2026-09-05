@@ -1599,6 +1599,266 @@
           "order_minimum": "The least a whole order must come to, counting items only — delivery and tax do not help reach it. Buyers see how far short they are while they shop, and checkout is refused until they reach it."
         }
       }
+    },
+    "types": {
+      "calculator": {
+        "default_refund_amount": {
+          "name": "Default Refund Amount",
+          "description": "Refunds the amount originally paid for the returned items"
+        },
+        "default_tax": {
+          "name": "Default Tax",
+          "description": "Applies the tax rate to the taxable amount"
+        },
+        "digital_delivery": {
+          "name": "Digital Delivery",
+          "description": "No shipping cost — the order is delivered digitally"
+        },
+        "flat_percent_item_total": {
+          "name": "Flat Percent",
+          "description": "A percentage of the order item total"
+        },
+        "flat_rate": {
+          "name": "Flat Rate",
+          "description": "One fixed amount, whatever the order contains"
+        },
+        "flexi_rate": {
+          "name": "Flexi Rate",
+          "description": "A base amount plus a per-item amount"
+        },
+        "per_item": {
+          "name": "Per Item",
+          "description": "A fixed amount for each item in the order"
+        },
+        "percent_on_line_item": {
+          "name": "Percent Per Line Item",
+          "description": "A percentage of each line item"
+        },
+        "price_sack": {
+          "name": "Price Sack",
+          "description": "One amount below a threshold, another at or above it"
+        },
+        "tiered_flat_rate": {
+          "name": "Tiered Flat Rate",
+          "description": "A fixed amount that changes with the order total"
+        },
+        "tiered_percent": {
+          "name": "Tiered Percent",
+          "description": "A percentage that changes with the order total"
+        }
+      },
+      "collection_rule": {
+        "available_on": {
+          "name": "Recently published",
+          "description": "Products published within the last N days"
+        },
+        "sale": {
+          "name": "On sale",
+          "description": "Products currently discounted below their compare-at price"
+        },
+        "tag": {
+          "name": "Tag",
+          "description": "Products carrying a matching tag"
+        }
+      },
+      "commission_rule": {
+        "category_rule": {
+          "name": "Category",
+          "description": "Charges this rate only for products in the selected categories, and anything filed beneath them"
+        },
+        "item_total_rule": {
+          "name": "Sale value",
+          "description": "Charges this rate only on sales within a value range"
+        },
+        "product_rule": {
+          "name": "Product",
+          "description": "Charges this rate only for the selected products"
+        },
+        "seller_rule": {
+          "name": "Seller",
+          "description": "Charges this rate only when the seller is one of the selected"
+        }
+      },
+      "delivery_method_rule": {
+        "channel_rule": {
+          "name": "Channel",
+          "description": "Offer this delivery method only on the selected sales channels"
+        },
+        "excluded_products_rule": {
+          "name": "Excluded products",
+          "description": "Hide this delivery method when the order contains any of these products"
+        },
+        "item_total_rule": {
+          "name": "Item total",
+          "description": "Offer this delivery method only when the order total is within a range"
+        },
+        "weight_rule": {
+          "name": "Weight",
+          "description": "Offer this delivery method only when the parcel weight is within a range"
+        }
+      },
+      "order_routing_rule": {
+        "default_location": {
+          "name": "Default location",
+          "description": "Prefer the stock location marked as default"
+        },
+        "minimize_splits": {
+          "name": "Minimize splits",
+          "description": "Prefer the location that can fulfill the most items on its own, avoiding split shipments"
+        },
+        "preferred_location": {
+          "name": "Preferred location",
+          "description": "Fulfill from the location pinned on the order, when one is set"
+        }
+      },
+      "price_rule": {
+        "channel_rule": {
+          "name": "Channel",
+          "description": "Apply pricing based on the sales channel"
+        },
+        "customer_group_rule": {
+          "name": "Customer group",
+          "description": "Apply pricing to specific customer groups"
+        },
+        "market_rule": {
+          "name": "Market",
+          "description": "Apply pricing based on the market"
+        },
+        "user_rule": {
+          "name": "Customer",
+          "description": "Apply pricing to specific customers"
+        },
+        "volume_rule": {
+          "name": "Volume pricing",
+          "description": "Apply pricing based on quantity purchased"
+        },
+        "zone_rule": {
+          "name": "Zone",
+          "description": "Apply pricing based on the shipping zone"
+        }
+      },
+      "promotion_action": {
+        "create_adjustment": {
+          "name": "Create whole-order adjustment",
+          "description": "Creates a promotion credit adjustment on the order"
+        },
+        "create_item_adjustments": {
+          "name": "Create per-line-item adjustment",
+          "description": "Creates a promotion credit adjustment on a line item"
+        },
+        "create_line_items": {
+          "name": "Create line items",
+          "description": "Populates the cart with the specified quantity of variant"
+        },
+        "free_shipping": {
+          "name": "Free shipping",
+          "description": "Makes all shipments for the order free"
+        }
+      },
+      "promotion_rule": {
+        "category": {
+          "name": "Categories",
+          "description": "Order includes products in specified categories"
+        },
+        "channel": {
+          "name": "Channel(s)",
+          "description": "Limit to orders placed through specific sales channels"
+        },
+        "country": {
+          "name": "Country",
+          "description": "Limit to orders with shipping address in a specific country"
+        },
+        "currency": {
+          "name": "Currency",
+          "description": "Limit to orders in a specific currency"
+        },
+        "customer": {
+          "name": "Customers",
+          "description": "Available only to the specified customers"
+        },
+        "customer_group": {
+          "name": "Customer Group(s)",
+          "description": "Available only to customers in specified customer group(s)"
+        },
+        "customer_logged_in": {
+          "name": "Only logged in customers",
+          "description": "Available only to logged in customers"
+        },
+        "first_order": {
+          "name": "First order",
+          "description": "Must be the customer's first order"
+        },
+        "item_total": {
+          "name": "Item total",
+          "description": "Order total meets these criteria"
+        },
+        "market": {
+          "name": "Market(s)",
+          "description": "Limit to orders from specific markets"
+        },
+        "one_use_per_user": {
+          "name": "One Use Per User",
+          "description": "Only One Use Per User"
+        },
+        "option_value": {
+          "name": "Option Value(s)",
+          "description": "Order includes products with matching option value(s)"
+        },
+        "product": {
+          "name": "Product(s)",
+          "description": "Order includes specified product(s)"
+        }
+      },
+      "seller_requirement": {
+        "accept_terms": {
+          "name": "Accept terms",
+          "description": "The seller must accept your marketplace terms before selling"
+        },
+        "attestation": {
+          "name": "Seller confirmation",
+          "description": "The seller must confirm a statement you write"
+        },
+        "billing_address": {
+          "name": "Billing address",
+          "description": "The seller must provide a billing address"
+        },
+        "complete_profile": {
+          "name": "Complete profile",
+          "description": "The seller must fill in their public profile"
+        },
+        "delivery_method": {
+          "name": "Delivery method",
+          "description": "The seller must configure at least one delivery method"
+        },
+        "document": {
+          "name": "Document",
+          "description": "The seller must upload a document for review"
+        },
+        "minimum_products": {
+          "name": "Minimum products",
+          "description": "The seller must list a minimum number of products"
+        },
+        "operator_review": {
+          "name": "Manual check",
+          "description": "A member of your team must approve the seller by hand"
+        },
+        "payout_account": {
+          "name": "Payout account",
+          "description": "The seller must connect an account to receive payouts"
+        },
+        "policy": {
+          "name": "Seller policy",
+          "description": "The seller must publish their store policies"
+        },
+        "required_custom_fields": {
+          "name": "Required custom fields",
+          "description": "The seller must fill in the custom fields you mark as required"
+        },
+        "returns_address": {
+          "name": "Returns address",
+          "description": "The seller must provide an address for returns"
+        }
+      }
     }
   }
 }

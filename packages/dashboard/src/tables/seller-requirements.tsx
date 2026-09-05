@@ -1,5 +1,5 @@
 import type { SellerRequirement } from '@spree/admin-sdk'
-import { defineTable } from '@spree/dashboard-core'
+import { defineTable, typeLabel } from '@spree/dashboard-core'
 import { ActiveBadge, Badge, ResourceNameCell } from '@spree/dashboard-ui'
 import { ClipboardCheckIcon } from '@spree/dashboard-ui/icons'
 import i18n from 'i18next'
@@ -30,11 +30,7 @@ defineTable<SellerRequirement>('seller-requirements', {
       label: i18n.t('admin.seller_requirements.columns.kind'),
       default: true,
       render: (requirement) => (
-        <Badge variant="outline">
-          {i18n.t(`admin.seller_requirements.kinds.${requirement.kind}`, {
-            defaultValue: requirement.kind,
-          })}
-        </Badge>
+        <Badge variant="outline">{typeLabel('seller_requirement', requirement.kind)}</Badge>
       ),
     },
     {

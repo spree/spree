@@ -15,6 +15,7 @@ import {
   PreferencesForm,
   ResourceMultiAutocomplete,
   Subject,
+  typeLabel,
   useResourceKey,
   useStockLocations,
   useStore,
@@ -1043,7 +1044,7 @@ function PricingCard({ form }: { form: UseFormReturn<DeliveryMethodFormValues> }
 
   const calculatorOptions = (calculators?.data ?? []).map((calculator) => ({
     value: calculator.type,
-    label: calculator.name,
+    label: typeLabel('calculator', calculator.type, calculator.name),
   }))
   const selectedCalculator = (calculators?.data ?? []).find((c) => c.type === calculatorType)
   const preferenceSchema = (selectedCalculator?.preference_schema ?? []) as PreferenceField[]
@@ -1273,7 +1274,7 @@ function ConditionsCard({ form }: { form: UseFormReturn<DeliveryMethodFormValues
                     })
                   }
                 >
-                  {type.name}
+                  {typeLabel('delivery_method_rule', type.type, type.name)}
                 </DropdownMenuItem>
               ))}
             </DropdownMenuContent>
@@ -1326,7 +1327,9 @@ function ConditionRuleRow({
   const channelBacked = (ruleType?.preference_schema ?? []).some(
     (preference) => preference.key === 'channel_ids',
   )
-  const label = ruleType?.name ?? fallbackLabel
+  const label = ruleType
+    ? typeLabel('delivery_method_rule', ruleType.type, ruleType.name)
+    : fallbackLabel
   const schema = ruleType?.preference_schema ?? []
 
   return (
