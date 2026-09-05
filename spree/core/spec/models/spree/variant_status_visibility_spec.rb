@@ -76,6 +76,18 @@ RSpec.describe 'variant status and shopper-facing visibility' do
       expect(preloaded.visible_variants).not_to include(offer)
     end
 
+    # A sale badge is a claim about what a shopper can buy, so an unapproved
+    # offer's discounted price must not put one on the product.
+    it 'leaves its price out of the product on_sale? rollup' do
+      offer.set_price('USD', 5, 40)
+
+      expect(master.reload).not_to be_on_sale('USD')
+
+      offer.update!(status: 'active')
+
+      expect(master.reload).to be_on_sale('USD')
+    end
+
     # The facet values a shopper is offered come through the same narrowing.
     it 'leaves its option values off the product' do
       size = create(:option_type, name: 'size', label: 'Size')

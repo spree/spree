@@ -211,7 +211,6 @@ module Spree
 
     belongs_to :default_variant, class_name: 'Spree::Variant', optional: true, autosave: true
 
-    has_many :prices, through: :variants
 
     has_many :stock_levels, through: :variants
 
@@ -254,6 +253,12 @@ module Spree
     # in SQL; the rollups a customer sees are routed through it below.
     has_many :listed_variants, -> { listed.order(:position) },
              class_name: 'Spree::Variant', inverse_of: :product, dependent: nil
+
+    # Through the listed rows, like the option values below: a shopper reads
+    # this to learn whether a product is on sale, and an offer nobody has
+    # approved must not be what puts a sale badge on it
+    # (docs/plans/6.0-seller-master-catalog-listings.md, Decision 3).
+    has_many :prices, through: :listed_variants
 
     has_many :option_value_variants, class_name: 'Spree::OptionValueVariant', through: :listed_variants
     has_many :option_values, class_name: 'Spree::OptionValue', through: :listed_variants
