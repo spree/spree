@@ -11,10 +11,28 @@ module Spree
     include Spree::HasExternalReferences
     include Spree::Searchable
     include Spree::StorePreferences
+    include Spree::HasStatus
 
     publishes_lifecycle_events
 
     MEMOIZED_METHODS = %w(in_stock on_sale backorderable tax_category tax_category_id options_text compare_at_price)
+
+    # Where this row sits in the marketplace review lifecycle. The same
+    # vocabulary a product uses, so the two never diverge
+    # (docs/plans/6.0-seller-master-catalog-listings.md, Decision 3).
+    #
+    # `active` is the default because that is what an unreviewed row is: a
+    # first-party variant and a variant on a seller's own product are covered
+    # by their product's review, not by one of their own. Only an offer — a
+    # seller's row on a master product — is created `draft` and goes through
+    # Variants::Propose.
+    has_status :draft, :proposed, :active, :rejected, :archived, default: :active
+
+    # Statuses an operator assigns directly. Reaching `proposed` is a seller
+    # submitting and reaching `rejected` is an operator deciding, so neither
+    # is a value to assign — they are workflows.
+    STATUSES = %w[draft active archived].freeze
+    REVIEW_STATUSES = %w[proposed rejected].freeze
 
     DIMENSION_UNITS = %w[mm cm in ft]
     WEIGHT_UNITS = %w[g kg lb oz]
@@ -33,6 +51,12 @@ module Spree
     belongs_to :seller, class_name: 'Spree::Seller', optional: true
     # Nil defers to the product, exactly as tax_category does.
     belongs_to :delivery_profile, class_name: 'Spree::DeliveryProfile', optional: true
+
+    # The review trail for this row, when it is a seller's offer on a master
+    # product. Append-only, the latest row live — the same shape and the same
+    # table as a product's, since the decision being recorded is the same one
+    # (docs/plans/6.0-seller-master-catalog-listings.md, Decision 3).
+    has_many :submissions, class_name: 'Spree::ProductSubmission', dependent: :destroy, inverse_of: :variant
 
     delegate :name, :name=, :description, :slug, :available_on, :make_active_at, :product_type_id,
              :meta_description, :meta_keywords, :product_type, :store_id, to: :product
@@ -307,9 +331,16 @@ module Spree
     end
 
     # Returns true if the variant is available.
+    #
+    # A row still in review, sent back, or taken down is not: an offer a
+    # seller has not submitted must not be buyable, and one the marketplace
+    # turned down must stop being. Checking it here reaches the cart, the buy
+    # box and every purchasability rollup at once
+    # (docs/plans/6.0-seller-master-catalog-listings.md, Decision 3).
+    #
     # @return [Boolean] true if the variant is available
     def available?
-      !discontinued? && product.available?
+      active? && !discontinued? && product.available?
     end
 
     # Returns true if the variant is sold as a pre-order: the product is active
@@ -321,7 +352,7 @@ module Spree
     # (empty ⇒ unlimited), and it adds the ship-by promise.
     # @return [Boolean] true if the variant is a pre-order
     def preorder?
-      !discontinued? && preorderable? && product.active? && !product.deleted? &&
+      active? && !discontinued? && preorderable? && product.active? && !product.deleted? &&
         (preorder_ships_at.nil? || preorder_ships_at > Time.current)
     end
 
@@ -380,6 +411,34 @@ module Spree
     # @return [Boolean]
     def owned_by_product_seller?
       product&.seller_id.present?
+    end
+
+    # Whether this row is a seller's offer on a master product — the only
+    # shape that goes through review. A first-party row and a row on a
+    # seller's own product are both covered by their product's review
+    # (docs/plans/6.0-seller-master-catalog-listings.md).
+    #
+    # @return [Boolean]
+    def offer?
+      !owned_by_product_seller? && self[:seller_id].present?
+    end
+
+    # The live row in this offer's review trail, or nil.
+    #
+    # @return [Spree::ProductSubmission, nil]
+    def latest_submission
+      submissions.latest_first.first
+    end
+
+    # Why the marketplace turned this offer down, for the seller to read.
+    # Nil once the offer moves on, so a stale note never shows against a row
+    # that is no longer rejected.
+    #
+    # @return [String, nil]
+    def rejection_reason
+      return unless rejected?
+
+      latest_submission&.review_note
     end
 
     # How this variant ships, on the same two-mode rule as the seller, keyed
@@ -883,8 +942,18 @@ module Spree
 
     alias is_backorderable? backorderable?
 
+    # Whether a shopper could buy this right now.
+    #
+    # Availability first, then stock: a row that is not on sale — an offer in
+    # review, one the marketplace sent back, a discontinued variant — is not
+    # purchasable however full its shelf is. Stock alone answered this before
+    # variants had a status, and every caller (the cart, the buy box, the
+    # product rollups, the exchange workflow) already meant the narrower
+    # question (docs/plans/6.0-seller-master-catalog-listings.md, Decision 3).
+    #
+    # @return [Boolean]
     def purchasable?
-      in_stock? || oversellable_now?
+      available? && (in_stock? || oversellable_now?)
     end
 
     # Whether the variant can currently be bought by overselling — via

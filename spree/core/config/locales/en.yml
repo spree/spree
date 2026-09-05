@@ -429,6 +429,11 @@ en:
           attributes:
             base:
               cannot_destroy_if_attached_to_line_items: Cannot delete Variants that are added to placed Orders. In such cases, please discontinue them.
+              cannot_propose: Only a draft offer or one needing changes can be submitted for review.
+              not_awaiting_review: This offer is not awaiting review.
+              offer_needs_review: A seller's offer goes on sale by being approved, not by being activated.
+              requires_price: An offer needs a price before it can be submitted.
+              status_decided_by_review: An offer in review changes status by being approved or sent back, not by editing it.
             order_multiple:
               incompatible_with_carton: must divide into or be a multiple of %{units_per_carton} units per carton
             units_per_carton:

@@ -76,6 +76,13 @@ module Spree
     # same reason as auto_approve_sellers: what the marketplace lists is what
     # it vouches for.
     preference :auto_approve_seller_products, :boolean, default: false
+    # Put a seller's offer on a master product on sale the moment they submit
+    # it. Separate from auto_approve_seller_products because the decisions
+    # differ: admitting a listing into the catalog is editorial, while an
+    # offer on a product already vetted is a price and a condition, which a
+    # marketplace may reasonably trust its approved sellers with
+    # (docs/plans/6.0-seller-master-catalog-listings.md, Decision 3).
+    preference :auto_approve_seller_offers, :boolean, default: false
     # Who pays this store's sellers. Blank means core's record-only provider,
     # so a marketplace that has connected nothing still keeps a correct ledger
     # and settles by hand.
