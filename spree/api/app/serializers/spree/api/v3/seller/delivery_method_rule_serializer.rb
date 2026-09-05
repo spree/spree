@@ -12,8 +12,7 @@ module Spree
         class DeliveryMethodRuleSerializer < BaseSerializer
           typelize type: :string, active: :boolean,
                    preferences: 'Record<string, unknown>',
-                   preference_schema: "Array<{ key: string; type: string; default: unknown; choices?: string[] }>",
-                   name: :string, description: :string
+                   preference_schema: "Array<{ key: string; type: string; default: unknown; choices?: string[] }>"
 
           attributes :active
 
@@ -21,14 +20,6 @@ module Spree
           # discovery endpoint.
           attribute :type do |rule|
             rule.class.api_type
-          end
-
-          attribute :name do |rule|
-            rule.class.human_name
-          end
-
-          attribute :description do |rule|
-            rule.class.human_description
           end
 
           attribute :preferences, &:serialized_preferences

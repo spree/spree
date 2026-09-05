@@ -40,6 +40,49 @@ for (const [locale, bundle] of Object.entries({ en, fr, de })) {
 }
 ```
 
+If you already call `defineDashboardPlugin`, pass the same bundles as `locales`
+instead and it registers them for you, before anything else in your config runs:
+
+```ts
+defineDashboardPlugin({
+  locales: { en, fr, de },
+  nav: [{ key: 'reports', label: i18n.t('admin.reports.title'), path: '/reports' }],
+})
+```
+
+## Name the types your gem registers
+
+A backend gem that registers a promotion rule, price rule, calculator,
+delivery method rule, commission rule or seller requirement kind should ship
+the name merchants read for it, under `admin.types.<family>.<code>`:
+
+```json
+{
+  "admin": {
+    "types": {
+      "promotion_rule": {
+        "wishlist": {
+          "name": "On a wishlist",
+          "description": "Applies when the order contains a wishlisted product"
+        }
+      }
+    }
+  }
+}
+```
+
+`<code>` is the type's wire shorthand — what `Spree::Base.api_type` returns and
+what the API reports as `type`. Families are `promotion_rule`,
+`promotion_action`, `calculator`, `price_rule`, `collection_rule`,
+`order_routing_rule`, `delivery_method_rule`, `commission_rule`,
+`seller_requirement`, `integration` and `permission`.
+
+Without these keys the dashboard falls back to the `label` your Ruby class
+supplies through the API. That fallback is resolved in the **store's** locale
+rather than the admin's interface language, so an admin working in one language
+sees your type's name in another. Shipping the keys is what keeps a page in one
+language.
+
 ## Use them
 
 ```tsx

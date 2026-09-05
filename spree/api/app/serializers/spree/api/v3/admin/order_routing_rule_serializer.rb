@@ -13,9 +13,7 @@ module Spree
                    position: :number,
                    active: :boolean,
                    preferences: 'Record<string, unknown>',
-                   preference_schema: "Array<{ key: string; type: string; default: unknown; choices?: string[] }>",
-                   label: :string,
-                   description: :string
+                   preference_schema: "Array<{ key: string; type: string; default: unknown; choices?: string[] }>"
 
           attributes :position, :active
           attributes created_at: :iso8601, updated_at: :iso8601
@@ -31,8 +29,6 @@ module Spree
           attribute :preferences, &:serialized_preferences
           attribute :preference_schema, &:serialized_preference_schema
 
-          attribute :label, &:human_name
-          attribute :description, &:human_description
         end
       end
     end

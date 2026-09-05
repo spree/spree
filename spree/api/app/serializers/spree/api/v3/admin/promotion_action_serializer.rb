@@ -13,8 +13,7 @@ module Spree
                    promotion_id: :string,
                    preferences: 'Record<string, unknown>',
                    preference_schema: "Array<{ key: string; type: string; default: unknown; choices?: string[] }>",
-                   label: :string,
-                   calculator: "{ type: string; label: string; preferences: Record<string, unknown>; preference_schema: Array<{ key: string; type: string; default: unknown }> } | null",
+                   calculator: "{ type: string; preferences: Record<string, unknown>; preference_schema: Array<{ key: string; type: string; default: unknown }> } | null",
                    line_items: 'Array<{ variant_id: string; quantity: number }> | null'
 
           attributes created_at: :iso8601, updated_at: :iso8601
@@ -30,22 +29,17 @@ module Spree
           attribute :preferences, &:serialized_preferences
           attribute :preference_schema, &:serialized_preference_schema
 
-          attribute :label do |action|
-            action.respond_to?(:human_name) ? action.human_name : action.type.to_s.demodulize
-          end
-
           # Calculator is exposed as a nested object so the SPA can render
           # the calculator picker + its own preference fields. Null for
-          # actions that don't include CalculatedAdjustments. The SPA
-          # formats the row summary itself off `label` + `preferences` —
-          # see the action-summary helper in the admin promotion editor.
+          # actions that don't include CalculatedAdjustments. The SPA names
+          # the calculator from its `type` and formats the row summary off
+          # `preferences` — see the action-summary helper in the promotion editor.
           attribute :calculator do |action|
             next nil unless action.respond_to?(:calculator) && action.calculator
 
             calc = action.calculator
             {
               type: calc.class.api_type,
-              label: calc.class.respond_to?(:description) ? calc.class.description : calc.class.to_s.demodulize.titleize,
               preferences: calc.serialized_preferences,
               preference_schema: calc.serialized_preference_schema
             }
