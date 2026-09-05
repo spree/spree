@@ -202,7 +202,7 @@ module Spree
         # the Store API serializes: a filter must not surface a product
         # through a seller's offer nobody has approved yet
         # (docs/plans/6.0-seller-master-catalog-listings.md, Decision 3).
-        matching_product_ids = Variant.where(deleted_at: nil, status: 'active').
+        matching_product_ids = Variant.where(deleted_at: nil).listed.
                                joins(option_value_variants: :option_value).
                                where(OptionValue.table_name => { id: actual_ids }).
                                group(Variant.arel_table[:id]).

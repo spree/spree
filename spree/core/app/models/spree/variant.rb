@@ -216,10 +216,21 @@ module Spree
       joins(:prices).where("#{Spree::Price.table_name}.currency = ?", currency).where("#{Spree::Price.table_name}.amount IS NOT NULL").distinct
     }
 
+    # NOTE: this deliberately keeps its pre-6.0 meaning — sellable in a
+    # currency — and is NOT the status scope `has_status` generates. The two
+    # would collide on the name, and this one has callers throughout the
+    # storefront, so the status filter is `with_status('active')` instead.
+    # Anything wanting "on sale AND approved" wants both.
     scope :active, lambda { |currency = nil|
       not_discontinued.not_deleted.
         for_currency_and_available_price_amount(currency)
     }
+
+    # Variants a shopper may see: approved, or first-party (which is approved
+    # by construction). The status half of the pair above, named apart from it
+    # so neither meaning is ever ambiguous
+    # (docs/plans/6.0-seller-master-catalog-listings.md, Decision 3).
+    scope :listed, -> { where(status: 'active') }
 
     scope :with_option_value, lambda { |option_name, option_value|
       option_type_ids = OptionType.where(name: option_name).ids

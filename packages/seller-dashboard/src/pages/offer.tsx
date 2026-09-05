@@ -85,7 +85,11 @@ export function OfferPage({ mode }: { mode: 'new' | 'edit' }) {
   const masterProductId = offer?.product_id ?? search.product
   const { data: master } = useQuery({
     queryKey: ['seller', sellerId, 'master-product', masterProductId],
-    queryFn: () => sellerClient().masterProducts.get(masterProductId as string, 'option_types'),
+    // Dotted: a bare `option_types` expand hands the child serializer an
+    // empty expand list, so its own `option_values` association never fires
+    // and every axis renders an empty picker.
+    queryFn: () =>
+      sellerClient().masterProducts.get(masterProductId as string, 'option_types.option_values'),
     enabled: !!masterProductId,
   })
 
