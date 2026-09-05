@@ -11,7 +11,6 @@ import {
   resourceSearchSchema,
   Subject,
   TagCombobox,
-  usePermissions,
   useStore,
 } from '@spree/dashboard-core'
 import {
@@ -31,7 +30,6 @@ import {
   SheetFooter,
   SheetHeader,
   SheetTitle,
-  useConfirm,
 } from '@spree/dashboard-ui'
 import { PlusIcon, TagsIcon, UserMinusIcon, UserPlusIcon } from '@spree/dashboard-ui/icons'
 import { useMutation } from '@tanstack/react-query'
@@ -50,7 +48,6 @@ import {
   useBulkAddCustomerTags,
   useBulkRemoveCustomersFromGroups,
   useBulkRemoveCustomerTags,
-  useDeleteCustomer,
 } from '../../../../hooks/use-customers'
 import {
   NEW_CUSTOMER_DEFAULTS,
@@ -242,27 +239,17 @@ function CustomersPage() {
 }
 
 /**
- * Per-row Edit + Delete kebab. Lives in its own component so `useDeleteCustomer`
- * can be parameterised by customer id (the hook keys its invalidations off the
- * id and needs a stable identity per row).
+ * Per-row Edit kebab.
+ *
+ * No delete. Destroying the row and erasing the person were two destructive
+ * actions that never both applied — deletion is refused once someone has
+ * bought anything, which is exactly when a real erasure request arrives — and
+ * the milder-sounding one was the destructive one, taking store credit and
+ * gift cards with it. Erasing is on the customer's own page, where the record
+ * being erased is in front of you.
  */
 function CustomerRowActions({ customer, storeId }: { customer: Customer; storeId: string }) {
-  const { t } = useTranslation()
   const navigate = useNavigate()
-  const confirm = useConfirm()
-  const deleteMutation = useDeleteCustomer(customer.id)
-  const { permissions } = usePermissions()
-
-  async function handleDelete() {
-    const ok = await confirm({
-      title: t('admin.customers.detail.delete_label'),
-      message: t('admin.customers.row_actions.delete_confirm', { email: customer.email ?? '' }),
-      variant: 'destructive',
-      confirmLabel: t('admin.customers.detail.delete_label'),
-    })
-    if (!ok) return
-    await deleteMutation.mutateAsync().catch(() => undefined)
-  }
 
   return (
     <RowActions
@@ -274,13 +261,6 @@ function CustomerRowActions({ customer, storeId }: { customer: Customer; storeId
               to: '/$storeId/customers/$customerId',
               params: { storeId, customerId: customer.id },
             }),
-        },
-        {
-          key: 'delete',
-          destructive: true,
-          visible: permissions.can('destroy', Subject.Customer),
-          disabled: deleteMutation.isPending,
-          onSelect: handleDelete,
         },
       ]}
     />

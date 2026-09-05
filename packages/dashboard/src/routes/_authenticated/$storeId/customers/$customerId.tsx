@@ -1,7 +1,7 @@
 import type { Customer } from '@spree/admin-sdk'
 import { PageHeader, Slot, Subject } from '@spree/dashboard-core'
 import { Badge, ErrorState, MetadataCard, ResourceLayout } from '@spree/dashboard-ui'
-import { createFileRoute, useNavigate } from '@tanstack/react-router'
+import { createFileRoute } from '@tanstack/react-router'
 import { useTranslation } from 'react-i18next'
 import {
   CustomFieldsInlineCard,
@@ -18,7 +18,7 @@ import { CustomerProfileCard } from '../../../../components/spree/customers/cust
 import { CustomerStoreCreditsCard } from '../../../../components/spree/customers/customer-store-credits-card'
 import { CustomerTaxIdentifiersCard } from '../../../../components/spree/customers/customer-tax-identifiers-card'
 import { ResourceDetailSkeleton } from '../../../../components/spree/route-pending'
-import { useCustomer, useCustomerOrders, useDeleteCustomer } from '../../../../hooks/use-customers'
+import { useCustomer, useCustomerOrders } from '../../../../hooks/use-customers'
 import { customerDisplayName } from '../../../../lib/erased-customer'
 import { spreeJsonLinkResolver } from '../../../../lib/json-link-resolver'
 
@@ -48,7 +48,6 @@ function CustomerDetailPage() {
 function CustomerBody({ customer }: { customer: Customer }) {
   const { t } = useTranslation()
   const { storeId } = Route.useParams()
-  const navigate = useNavigate()
   const { data, isLoading } = useCustomerOrders(customer.id, { limit: 10 })
   const orders = data?.data ?? []
   const totalCount = data?.meta?.count ?? orders.length
@@ -56,16 +55,6 @@ function CustomerBody({ customer }: { customer: Customer }) {
 
   const defaultShipping = customer.addresses?.find((a) => a.is_default_shipping)
   const location = [defaultShipping?.city, defaultShipping?.country_code].filter(Boolean).join(', ')
-
-  // The server hard-deletes only when the customer has no completed orders
-  // (Spree::Core::DestroyWithOrdersError → 422 `customer_has_orders`). We
-  // surface the API error message inline rather than swallowing the failure.
-  const deleteMutation = useDeleteCustomer(customer.id)
-
-  async function handleDelete() {
-    await deleteMutation.mutateAsync()
-    navigate({ to: '/$storeId/customers', params: { storeId } })
-  }
 
   return (
     <ResourceLayout
@@ -89,14 +78,14 @@ function CustomerBody({ customer }: { customer: Customer }) {
                 : []),
               ...(customer.tags?.map((tag) => <Badge key={tag}>{tag}</Badge>) ?? []),
             ]}
+            // No delete here. Destroying the row and erasing the person were
+            // two buttons that never both applied — deletion is refused once
+            // someone has bought anything, which is exactly when a real
+            // erasure request arrives. Worse, the milder-sounding one was the
+            // destructive one: it took the store credit and gift cards with
+            // it. Privacy and data, below, is the one action, and it behaves
+            // the same whatever the customer has done.
             resource={{ id: customer.id }}
-            onDelete={handleDelete}
-            deleteLabel={t('admin.customers.detail.delete_label')}
-            // Says what deleting is, and is not: it removes the account
-            // outright and is refused once the customer has bought something.
-            // Erasing personal data, on the privacy card, is the action that
-            // still works then.
-            deleteConfirmMessage={t('admin.customers.detail.delete_confirm_message')}
             jsonPreview={{
               title: `Customer ${customer.email}`,
               // Reuse what `useCustomer` already loaded — opening the drawer
@@ -106,9 +95,6 @@ function CustomerBody({ customer }: { customer: Customer }) {
               resolveLink: spreeJsonLinkResolver(storeId),
             }}
           />
-          {deleteMutation.error && (
-            <p className="text-sm text-destructive">{(deleteMutation.error as Error).message}</p>
-          )}
           <CustomerLifetimeStatsCard customer={customer} />
         </>
       }

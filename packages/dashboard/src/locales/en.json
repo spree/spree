@@ -742,7 +742,7 @@
         "anonymize_confirm_message": "Their name, email, phone and addresses will be replaced everywhere, and they will be signed out. Orders and payment records are kept, with the personal details removed. This cannot be undone.",
         "anonymize_confirm_title": "Erase this customer's personal data?",
         "consent_updated": "Marketing consent last changed {{date}}",
-        "description": "Answer a data protection request. Erasing keeps the customer's orders and removes their personal details, which is what deleting cannot do once they have bought something.",
+        "description": "Answer a data protection request. The customer's orders and balances are kept; their personal details are removed everywhere the shop holds them.",
         "export": "Export data",
         "export_failed": "Could not export the data",
         "messages": {

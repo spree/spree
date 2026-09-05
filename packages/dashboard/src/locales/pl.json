@@ -750,7 +750,7 @@
         "anonymize_confirm_message": "Imię i nazwisko, adres e-mail, telefon oraz adresy zostaną wszędzie zastąpione, a klient zostanie wylogowany. Zamówienia i zapisy płatności pozostaną, bez danych osobowych. Tej operacji nie można cofnąć.",
         "anonymize_confirm_title": "Usunąć dane osobowe tego klienta?",
         "consent_updated": "Zgoda marketingowa ostatnio zmieniona {{date}}",
-        "description": "Odpowiedz na wniosek dotyczący ochrony danych. Usunięcie danych zachowuje zamówienia i kasuje dane osobowe — czego usunięcie konta nie potrafi już po pierwszym zakupie.",
+        "description": "Odpowiedz na wniosek o ochronę danych. Zamówienia i salda klienta zostają zachowane; jego dane osobowe są usuwane wszędzie tam, gdzie sklep je przechowuje.",
         "export": "Eksportuj dane",
         "export_failed": "Nie udało się wyeksportować danych",
         "messages": {

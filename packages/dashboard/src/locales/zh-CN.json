@@ -740,7 +740,7 @@
         "anonymize_confirm_message": "其姓名、邮箱、电话和地址将在所有位置被替换，并且该客户会被登出。订单和付款记录将保留，但不含个人信息。此操作无法撤销。",
         "anonymize_confirm_title": "确定抹除该客户的个人数据吗？",
         "consent_updated": "营销同意最近更新于 {{date}}",
-        "description": "回应数据保护请求。抹除会保留订单并移除个人信息，这是客户下单后删除账户所无法做到的。",
+        "description": "响应数据保护请求。客户的订单和余额将保留；其个人信息会从商店保存的所有位置移除。",
         "export": "导出数据",
         "export_failed": "无法导出数据",
         "messages": {
