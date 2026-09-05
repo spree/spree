@@ -17,7 +17,7 @@ import {
   toastManager,
 } from '@spree/dashboard-ui'
 import { PencilIcon, PlusIcon } from '@spree/dashboard-ui/icons'
-import type { StockLocation, StockLocationParams } from '@spree/seller-sdk'
+import type { StockLocationParams } from '@spree/seller-sdk'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { useParams } from '@tanstack/react-router'
 import { useState } from 'react'
@@ -40,22 +40,26 @@ export function SellerReturnsLocationCard({ headless = false }: { headless?: boo
   const queryClient = useQueryClient()
   const [editing, setEditing] = useState(false)
 
-  const { data: locations } = useQuery({
+  // Two filtered requests rather than one page filtered in the browser, to
+  // match `Seller#returns_location` exactly: a location that accepts returns
+  // wins outright, and only then does default and name decide. A seller with
+  // more locations than one page holds would otherwise see one address while
+  // the server sent their returns to another, with nothing on screen saying
+  // so — and they would edit the wrong one.
+  const activeParams = { active_true: true, limit: 1 }
+  const { data: takesReturns } = useQuery({
+    queryKey: ['seller', sellerId, 'stock-locations', 'returns'],
+    queryFn: () =>
+      sellerClient().stockLocations.list({ ...activeParams, returns_enabled_true: true }),
+  })
+  const hasReturnsLocation = (takesReturns?.data.length ?? 0) > 0
+  const { data: anyActive } = useQuery({
     queryKey: ['seller', sellerId, 'stock-locations'],
-    queryFn: () => sellerClient().stockLocations.list({ per_page: 100 }),
+    queryFn: () => sellerClient().stockLocations.list(activeParams),
+    enabled: !!takesReturns && !hasReturnsLocation,
   })
 
-  // Must match `Seller#returns_location` exactly: among active locations,
-  // one that accepts returns wins outright, and only then does default and
-  // name decide. Ignoring either tier would present one location as the
-  // returns address while the server sent returns to another, with nothing
-  // on screen saying so — and the seller would edit the wrong address.
-  const byDefaultThenName = (a: StockLocation, b: StockLocation) =>
-    Number(b.default) - Number(a.default) || a.name.localeCompare(b.name)
-  const active = (locations?.data ?? [])
-    .filter((candidate) => candidate.active)
-    .sort(byDefaultThenName)
-  const location = active.find((candidate) => candidate.returns_enabled) ?? active[0]
+  const location = takesReturns?.data[0] ?? anyActive?.data[0]
   const hasAddress = Boolean(location?.address1)
   const title = t('profile.returns_address')
 
