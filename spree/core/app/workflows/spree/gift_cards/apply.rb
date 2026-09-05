@@ -42,6 +42,12 @@ module Spree
         # taking the card first here would invert that order and deadlock
         # against any concurrent remove of the same card.
         ApplicationRecord.transaction do
+          # The target is locked with the holds, before anything takes the
+          # gift-card lock. Releasing a hold acquires that lock and the
+          # transaction keeps it, so locking the target afterwards would be
+          # card-then-record — the reverse of Spree::GiftCards::Remove and of
+          # a concurrent apply whose hold list includes this target.
+          step :lock_order
           step :release_open_holds
           run_hooks :release_holds
 
@@ -95,6 +101,10 @@ module Spree
       # sequence Spree::GiftCards::Remove uses on its own, so a concurrent
       # remove of the same card queues behind this one rather than crossing
       # with it.
+      def lock_order
+        order.lock!
+      end
+
       def release_open_holds
         @released_holds = []
 

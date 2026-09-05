@@ -305,6 +305,24 @@ RSpec.describe Spree::GiftCards::Apply do
       expect(Spree.gift_card_apply_workflow.call(gift_card: gift_card, order: other_cart)).to be_success
     end
 
+    # Releasing a hold takes the gift-card lock and the transaction keeps it,
+    # so the target must be locked before any release rather than after.
+    it 'locks the target before releasing any hold' do
+      target_locked_before_release = nil
+
+      allow(order).to receive(:lock!).and_wrap_original do |original, *args|
+        @target_locked = true
+        original.call(*args)
+      end
+      allow(Spree.gift_card_remove_workflow).to receive(:call).and_wrap_original do |original, **kwargs|
+        target_locked_before_release = @target_locked if target_locked_before_release.nil?
+        original.call(**kwargs)
+      end
+
+      expect(subject).to be_success
+      expect(target_locked_before_release).to be(true)
+    end
+
     # Spree::GiftCards::Remove locks its record and then the card. Holding the
     # card while reaching for another record would invert that and deadlock
     # against a concurrent remove of the same card.
