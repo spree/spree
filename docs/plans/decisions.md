@@ -4899,3 +4899,41 @@ branch; a seller-branch `options` write resolves against the product's own
 option types before reaching the model; a new shopper-facing read of a
 product's variants narrows to `active`; nothing writes `variants.status`
 around the workflows.
+
+## 2026-09-05 — A shopper-facing narrowing is an association, never a convention
+
+Learned while implementing `6.0-seller-master-catalog-listings.md`, and it
+generalizes past that plan.
+
+**The plan wrote the rule down and the rule was not enough.** Giving a variant
+a status meant every customer-facing read of a product's variants had to
+exclude the rows still in review. The plan listed the readers to patch and
+added a Constraint saying a new one must narrow too. The list was incomplete in
+ways nobody spotted until a review swept for them: the **Google shopping feed**
+published a seller's unapproved offer to an external surface, and the
+**facet counts** disagreed with the filter results they linked to — the counts
+service and the matching scope each spelled the condition themselves, and only
+one was patched.
+
+**The fix is to make the narrowing a thing rather than a habit.**
+`Product#listed_variants` is a scoped `has_many`, the option-value and price
+rollups are `through:` it, and `visible_variants` is the in-memory reader for a
+record whose `variants` are already preloaded (the storefront path, where a
+second query per product would undo the preload). A `default_scope` was
+rejected: `Products::NestedAttributes#apply_variants` is full replacement, so a
+scope that hides rows would make an operator's save destroy them.
+
+**The tell to watch for:** a plan whose Constraints section says "a new reader
+must remember to X" is describing a missing abstraction, not a rule. If the
+narrowing cannot be expressed as an association, a scope, or a predicate every
+caller already goes through, the sweep will be incomplete again.
+
+**Two smaller findings from the same work.** `has_status` silently skips
+generating a scope whose name the model already answers
+(`define_status_methods` guards on `respond_to?`), so `Variant.active` kept its
+older "sellable in a currency" meaning while `Variant#active?` meant "approved"
+— the status scope is `listed`, and both definitions carry a comment. And
+`purchasable?` measured only stock: it reaches `preorder?` through
+`oversellable_now?`, neither of which consulted availability, so a preorderable
+row stayed buyable while in review. It now requires `available?`, which every
+caller already meant.
