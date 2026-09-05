@@ -18,9 +18,10 @@ module Spree
                    price: ['Price', nullable: true],
                    deleted_at: [:string, nullable: true],
                    metadata: 'Record<string, unknown>',
+                   open_to_sellers: :boolean,
                    submission: ['ProductSubmission', nullable: true]
 
-          attributes :status,
+          attributes :status, :open_to_sellers,
                      :metadata, deleted_at: :iso8601,
                      created_at: :iso8601, updated_at: :iso8601
 

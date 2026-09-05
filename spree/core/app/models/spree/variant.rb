@@ -335,7 +335,8 @@ module Spree
     # `resolved_seller` does; a client-facing filter needs an endpoint that
     # applies it, not an allowlist entry that quietly answers a different
     # question.
-    self.whitelisted_ransackable_attributes = %w[weight depth width height sku discontinue_on cost_price cost_currency track_inventory
+    self.whitelisted_ransackable_attributes = %w[status
+                                                 weight depth width height sku discontinue_on cost_price cost_currency track_inventory
                                                  deleted_at product_id hs_code country_of_origin
                                                  minimum_order_quantity order_multiple purchase_unit units_per_carton
                                                  carton_package_type_id carton_weight cartons_per_pallet]
