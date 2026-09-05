@@ -994,12 +994,14 @@ en:
     error_user_does_not_have_any_store_credits: User does not have any Store Credits available
     errors:
       messages:
+        already_a_member: already exists
         cannot_delete_channel_with_active_api_keys: Channel cannot be deleted while active API keys are bound to it. Revoke those keys first.
         cannot_delete_default_channel: Default channel cannot be deleted. Promote another channel to default first.
         cart_currency_mismatch: carts in different currencies cannot be merged
         channel_store_mismatch: must belong to the same store
         commission_rate_needs_an_amount: needs a flat fee amount in at least one currency
         coupon_code_frozen_after_completion: coupon codes cannot be changed on a completed order — add a manual discount instead
+        custom_field_definition_mismatch: must match custom field definition
         delivery_zone_not_in_origin_group: must belong to the delivery method's origin group
         delivery_zone_not_in_profile: must belong to the delivery method's delivery profile
         delivery_zone_postal_definition_required: postal code member requires a prefix or a from/to range
@@ -1018,6 +1020,7 @@ en:
         invalid_commission_rule: is not a commission rule kind this store has
         invalid_commission_rule_type: "%{type} is not a commission rule kind this store has"
         invalid_delivery_method_rule: is not a registered delivery method rule
+        invalid_json: 'must be valid JSON: %{detail}'
         invalid_oauth_state: Invalid or expired authentication state. Please start the sign-in again.
         invalid_order_routing_rule: is not a registered order routing rule
         invalid_order_routing_strategy: is not a registered order routing strategy
@@ -1037,11 +1040,15 @@ en:
         promotion_discount_not_editable: promotion discounts are managed by recalculation and cannot be edited
         rate_provider_requires_shipping: "%{provider} quotes shipments, so this method must ship to an address"
         rate_provider_unavailable: is not available for this store — connect its integration first
+        same_as_inviter: cannot be the same as the inviter
         seller_delivery_method_not_shareable: only the marketplace's own delivery methods can be shared with sellers
         seller_delivery_method_provider: a seller's delivery method prices its own rates and is fulfilled by hand — carrier accounts belong to the marketplace
         seller_requirement_store_mismatch: must belong to the same store as the seller
         store_association_can_not_be_changed: The store association can not be changed
         store_is_already_set: Store is already set
+        unknown_custom_field_type: 'is not a known custom field type (expected one of: %{types})'
+        unknown_scopes: 'contains unknown scopes: %{scopes}'
+        variant_product_mismatch: must belong to the same product as the variant
       services:
         get_shipping_rates:
           no_line_items: To generate Shipping Rates you need to add some Line Items to Order

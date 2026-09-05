@@ -28,11 +28,28 @@ export interface PaginatedResponse<T> extends ListResponse<T> {
   meta: PaginationMeta
 }
 
+/**
+ * One validation failure. The Admin API reports the Rails error `code`
+ * alongside the resolved `message` and whatever values the validation
+ * interpolates (`count`, `value`, …), so a client can render its own copy
+ * and fall back to `message` when it has no translation for the code. `code`
+ * is null for a message added as a bare string, which has no code to render.
+ */
+export interface ValidationErrorDetail {
+  code: string | null
+  message: string
+  [interpolation: string]: unknown
+}
+
 export interface ErrorResponse {
   error: {
     code: string
     message: string
-    details?: Record<string, string[]>
+    /**
+     * Per-attribute failures. The Store API reports plain message strings;
+     * the Admin API reports {@link ValidationErrorDetail} objects.
+     */
+    details?: Record<string, string[] | ValidationErrorDetail[]>
   }
 }
 

@@ -173,7 +173,8 @@ module Spree
       return if @field_type_input_recognized.nil? || @field_type_input_recognized
 
       tokens = Spree::CustomField::TYPE_TOKENS.keys.join(', ')
-      errors.add(:field_type, "is not a known custom field type (expected one of: #{tokens})")
+      errors.add(:field_type, :unknown_custom_field_type, types: tokens,
+                 message: Spree.t('errors.messages.unknown_custom_field_type', types: tokens))
     end
 
     # Validates the stored class name, not the token the reader returns.

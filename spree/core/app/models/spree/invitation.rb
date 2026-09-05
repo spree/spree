@@ -131,7 +131,7 @@ module Spree
 
     def invitee_is_not_inviter
       if invitee == inviter
-        errors.add(:invitee, 'cannot be the same as the inviter')
+        errors.add(:invitee, :same_as_inviter, message: Spree.t('errors.messages.same_as_inviter'))
       end
     end
 
@@ -141,7 +141,7 @@ module Spree
       return if role.blank? || resource.blank?
       return if role.resource == resource
 
-      errors.add(:role, Spree.t(:invitation_role_resource_mismatch))
+      errors.add(:role, :invitation_role_resource_mismatch, message: Spree.t(:invitation_role_resource_mismatch))
     end
 
     def invitee_already_exists
@@ -152,7 +152,7 @@ module Spree
       return if user_to_check.blank?
 
       if resource.role_users.exists?(user: user_to_check)
-        errors.add(:email, 'already exists')
+        errors.add(:email, :already_a_member, message: Spree.t('errors.messages.already_a_member'))
       end
     end
 

@@ -15,12 +15,12 @@ module Spree
       # @return [Spree::ServiceModule::Result]
       def call(delivery:)
         if delivery.shipping_label_id.present?
-          delivery.errors.add(:base, Spree.t('deliveries.errors.has_label'))
+          delivery.errors.add(:base, :has_label, message: Spree.t('deliveries.errors.has_label'))
           return failure(delivery)
         end
 
         if delivery.delivered?
-          delivery.errors.add(:base, Spree.t('deliveries.errors.delivered'))
+          delivery.errors.add(:base, :delivered, message: Spree.t('deliveries.errors.delivered'))
           return failure(delivery)
         end
 

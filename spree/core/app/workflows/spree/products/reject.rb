@@ -20,7 +20,7 @@ module Spree
         # not a second decision, and the panel offers exactly that. Anything
         # else has not been submitted, so there is nothing to turn down.
         unless product.proposed? || product.rejected?
-          reject!(I18n.t('activerecord.errors.models.spree/product.attributes.base.not_awaiting_review'))
+          reject!(:not_awaiting_review, message: I18n.t('activerecord.errors.models.spree/product.attributes.base.not_awaiting_review'))
         end
 
         run_hooks :validate

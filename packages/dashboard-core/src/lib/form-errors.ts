@@ -1,5 +1,33 @@
+import type { ValidationErrorDetail } from '@spree/admin-sdk'
 import { SpreeError } from '@spree/admin-sdk'
+import i18n from 'i18next'
 import type { FieldValues, Path, UseFormSetError } from 'react-hook-form'
+
+/**
+ * Text for one validation failure, in the admin's own language.
+ *
+ * The Admin API reports the Rails error `code` and the values the validation
+ * interpolates, so the copy comes from the dashboard's locale files rather
+ * than from a message the server resolved in the store's locale. Keys are
+ * tried per-attribute first (`admin.validation.quantity.greater_than`), then
+ * generally (`admin.validation.greater_than`); the server's `message` is the
+ * fallback, which is what an extension's own error code gets.
+ *
+ * @param field the attribute the failure is attached to
+ * @param entry the API's detail entry, or a plain string from an older payload
+ * @returns the message to render
+ */
+function resolveDetailMessage(field: string, entry: string | ValidationErrorDetail): string {
+  if (typeof entry === 'string') return entry
+
+  const { code, message, ...interpolation } = entry
+  if (code) {
+    for (const key of [`admin.validation.${field}.${code}`, `admin.validation.${code}`]) {
+      if (i18n.exists(key)) return i18n.t(key, interpolation)
+    }
+  }
+  return message
+}
 
 /**
  * Map a thrown error from a Spree Admin API mutation onto a react-hook-form
@@ -43,10 +71,17 @@ import type { FieldValues, Path, UseFormSetError } from 'react-hook-form'
  * ```json
  * { "error": {
  *     "code": "validation_error",
- *     "message": "Code can't be blank, Name can't be blank",
- *     "details": { "code": ["can't be blank"], "name": ["can't be blank"] }
+ *     "message": "Code can't be blank, Quantity must be greater than 0",
+ *     "details": {
+ *       "code": [{ "code": "blank", "message": "can't be blank" }],
+ *       "quantity": [{ "code": "greater_than", "message": "must be greater than 0", "count": 0 }]
+ *     }
  * } }
  * ```
+ *
+ * Each entry's `code` is translated from the dashboard's own locale files so
+ * the admin reads their interface language rather than the store's; `message`
+ * is the fallback for codes with no translation.
  *
  * `details` keys are AR attribute names. `<form-field>.base` is AR's
  * record-level errors collection on a nested association — we treat both
@@ -79,13 +114,13 @@ export function mapSpreeErrorsToForm<TFieldValues extends FieldValues>(
   // nested or associative falls back to the root summary that we already
   // set above. Silently dropping errors onto unrendered field paths is a
   // worse failure mode than redundant root messages.
-  for (const [field, messages] of Object.entries(details)) {
-    if (!messages?.length) continue
+  for (const [field, entries] of Object.entries(details)) {
+    if (!entries?.length) continue
     if (!isRenderableFieldKey(field)) continue
 
     setError(field as Path<TFieldValues>, {
       type: 'server',
-      message: messages.join(', '),
+      message: entries.map((entry) => resolveDetailMessage(field, entry)).join(', '),
     })
   }
 
