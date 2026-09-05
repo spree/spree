@@ -117,6 +117,7 @@ export * from './products/product-form-mapping'
 export * from './products/product-schema'
 export * from './products/product-types'
 export * from './products/use-product-form-data'
+export * from './products/variant-field-sections'
 export * from './products/variants-matrix'
 export * from './products/video-url'
 // ---------------------------------------------------------------------------
