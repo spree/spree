@@ -28,6 +28,11 @@ module Spree
               nullable: true,
               description: 'The delivery profile deciding how this product ships (`fp_...`); null falls back to the store default.'
             body.attribute :promotionable, :boolean
+            # Closed by default, so opening the shared catalog is always the
+            # operator's explicit act
+            # (docs/plans/6.0-seller-master-catalog-listings.md, Decision 2).
+            body.attribute :open_to_sellers, :boolean,
+              description: 'Whether sellers may list their own offers against this product. Only first-party products can be opened.'
             body.attribute :tags, :array, of: :string, example: %w[eco sale]
             body.attribute :category_ids, :array, of: :id
             # Reachable with `write_products` rather than `write_collections`:
@@ -90,6 +95,8 @@ module Spree
             :bulk_remove_from_collections,
             :bulk_add_to_channels,
             :bulk_remove_from_channels,
+            :bulk_open_to_sellers,
+            :bulk_close_to_sellers,
             :bulk_destroy
           ]
 
@@ -121,6 +128,14 @@ module Spree
 
           %i[bulk_add_tags bulk_remove_tags].each do |action|
             request_params('BulkTagsParams', action: action) { |body| body.include_attributes Spree::Api::V3::Admin::BulkTagsRequestSchema }
+          end
+
+          %i[bulk_open_to_sellers bulk_close_to_sellers].each do |action|
+            request_params('ProductBulkOpenToSellersParams', action: action) do |body|
+              body.attribute :ids, :array, of: :id,
+                required: true,
+                description: 'Products a seller owns are skipped and counted in `skipped_seller_owned_count`.'
+            end
           end
 
           request_params 'ProductBulkDestroyParams', action: :bulk_destroy do |body|
@@ -186,6 +201,24 @@ module Spree
             payload[:skipped_in_review_count] = skipped if skipped.positive?
 
             render json: payload
+          end
+
+          # POST /api/v3/admin/products/bulk_open_to_sellers
+          # Body: { ids: [...] }
+          #
+          # Letting sellers compete on a selection of the marketplace's own
+          # products (docs/plans/6.0-seller-master-catalog-listings.md).
+          def bulk_open_to_sellers
+            set_open_to_sellers(true)
+          end
+
+          # POST /api/v3/admin/products/bulk_close_to_sellers
+          # Body: { ids: [...] }
+          #
+          # Closing them again. Offers already on a product stay — withdrawing
+          # one is a review decision, not a side effect of this.
+          def bulk_close_to_sellers
+            set_open_to_sellers(false)
           end
 
           # POST /api/v3/admin/products/bulk_add_to_categories
@@ -376,6 +409,22 @@ module Spree
             else
               render_service_error(@resource.errors.presence || result.error)
             end
+          end
+
+          # Only first-party products can be opened: a product a seller owns
+          # outright is theirs, and inviting rival offers onto it would be the
+          # marketplace reselling someone else's listing.
+          def set_open_to_sellers(open)
+            authorize! :update, model_class
+
+            eligible = bulk_collection.where(seller_id: nil)
+            skipped = bulk_collection.where.not(seller_id: nil).count
+
+            count = eligible.update_all(open_to_sellers: open, updated_at: Time.current)
+
+            payload = { product_count: count, open_to_sellers: open }
+            payload[:skipped_seller_owned_count] = skipped if skipped.positive?
+            render json: payload
           end
 
           def search_provider

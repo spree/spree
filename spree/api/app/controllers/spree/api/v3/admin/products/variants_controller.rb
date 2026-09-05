@@ -11,6 +11,33 @@ module Spree
               body.external_references
               body.require_attributes :options, on: :create
               body.describe_attribute :options, 'One pair per option type the variant takes part in (size, color). Option types and values are created when missing. On update, omit to leave the option values untouched.'
+              # An operator's own rows move status freely; a row in review is
+              # refused by Variants::Update, so a decision always runs through
+              # approve/reject and records who made it.
+              body.attribute :status, :string, choices: Spree::Variant.statuses.map(&:to_s), open: true
+            end
+
+            request_params 'VariantApproveParams', action: :approve do |body|
+              body.attribute :note, :string, description: 'An optional note sent back to the seller.'
+            end
+
+            request_params 'VariantRejectParams', action: :reject do |body|
+              body.attribute :reason, :string, description: 'Why the offer was turned down. Sent back to the seller.'
+            end
+
+            # PATCH /api/v3/admin/products/:product_id/variants/:id/approve
+            #
+            # Accepting a seller's offer on a master product, putting it on
+            # sale (docs/plans/6.0-seller-master-catalog-listings.md).
+            def approve
+              run_review_workflow(Spree.variant_approve_workflow, note: params[:note])
+            end
+
+            # PATCH /api/v3/admin/products/:product_id/variants/:id/reject
+            #
+            # Turning an offer down. The reason goes back to the seller.
+            def reject
+              run_review_workflow(Spree.variant_reject_workflow, reason: params[:reason])
             end
 
             protected
@@ -49,6 +76,19 @@ module Spree
             # location is scoped to the product's store.
             def create_workflow_arguments
               { product: @parent, attributes: permitted_params }
+            end
+
+            def run_review_workflow(workflow, **arguments)
+              @resource = find_resource
+              authorize!(:update, @resource)
+
+              result = workflow.call(variant: @resource, reviewer: try_spree_current_user, **arguments)
+
+              if result.success?
+                render json: serialize_resource(@resource.reload)
+              else
+                render_service_error(@resource.errors.presence || result.error)
+              end
             end
 
             def permitted_params

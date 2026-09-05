@@ -40,6 +40,7 @@ export type {
   DeliveryZoneListParams,
   MeResource,
   MeResponse,
+  OfferParams,
   OnboardingResponse,
   OrderAddressParams,
   PackageTypeCreateParams,

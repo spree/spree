@@ -6,6 +6,11 @@ en:
       cannot_delete: "%{model} cannot be deleted"
       cannot_modify_seller_import: This import belongs to a seller. It can be viewed here, but only the seller can retry or delete it.
       current_password_invalid: Current password is invalid or missing
+      offers:
+        duplicate_offer: You already sell this product in this combination. Edit that offer instead of listing a second one.
+        missing_option_value: Choose a %{option_type} for this offer.
+        unknown_option_type: This product is not sold by %{option_type}.
+        unknown_option_value: "%{value} is not one of the %{option_type} options this product is sold in."
       errors:
         automatic_collection_curation: Products of an automatic collection are managed by its rules and can't be curated manually
         channel_inactive: The channel this API key is bound to is not active.
