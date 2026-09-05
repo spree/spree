@@ -1559,7 +1559,6 @@ export interface ProfileUpdateParams {
    * validation verdict, since that answer was about the old one.
    */
   billing_address?: SellerAddressParams
-  returns_address?: SellerAddressParams
   /**
    * Answers to the custom fields this marketplace's onboarding asks for.
    * Narrowed server-side to those definitions — a field nothing asked for is

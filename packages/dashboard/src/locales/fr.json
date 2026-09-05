@@ -3056,6 +3056,12 @@
             "description": "Affiché sur votre boutique comme point de contact pour les questions et le support client.",
             "title": "Définir l'e-mail du support client"
           },
+          "setup_address": {
+            "cta": "Enregistrer l'adresse",
+            "description": "Votre adresse d'expédition et de retour. Les transporteurs l'utilisent pour calculer les frais de livraison, et c'est là que les retours clients sont envoyés.",
+            "no_location": "Vous n'avez pas encore de lieu de stock — créez-en un dans les paramètres pour ajouter une adresse.",
+            "title": "Ajouter votre adresse d'expédition"
+          },
           "setup_payment_method": {
             "cta": "Configurer les paiements",
             "description": "Pour encaisser des paiements, configurez au moins un prestataire de paiement en ligne.",

@@ -126,11 +126,9 @@ module Spree
           first&.returns_location
       end
 
-      # First-party only: `store.stock_locations` includes every seller's own
-      # warehouses, and an operator's goods must never be routed into one.
       # A seller's return is answered by seller_returns_location above.
       def store_returns_location
-        order.store.stock_locations.active.first_party.returns_enabled.order_default.first
+        order.store.returns_location
       end
     end
   end

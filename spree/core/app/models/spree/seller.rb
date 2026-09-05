@@ -345,14 +345,14 @@ module Spree
 
     # The postal address a shopper is given for returns.
     #
-    # Nil until the location has an address on it: the location builds one from
-    # its own columns on demand, so an empty one would otherwise answer with a
+    # Nil until the location is postable: it builds an address from its own
+    # columns on demand, so an incomplete one would otherwise answer with a
     # blank address that reads as configured.
     #
     # @return [Spree::Address, nil]
     def returns_address
       location = returns_location
-      return if location.nil? || location.address1.blank?
+      return unless location&.postable?
 
       location.address
     end

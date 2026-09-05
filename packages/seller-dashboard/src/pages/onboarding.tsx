@@ -197,12 +197,14 @@ function RequirementAction({ requirement }: { requirement: RequirementStatus }) 
   const [file, setFile] = useState<FileUploadValue>(EMPTY_FILE_UPLOAD_VALUE)
   const [fields, setFields] = useState<Record<string, string>>({})
 
-  // Only the address kinds need it, and it is already loaded by the profile
-  // page and the sidebar switcher — this reads the same cache entry.
+  // Only the billing address needs it, and it is already loaded by the
+  // profile page and the sidebar switcher — this reads the same cache entry.
+  // The returns address does not: it lives on a stock location, which its own
+  // card fetches.
   const { data: profile } = useQuery({
     queryKey: ['seller', sellerId, 'profile'],
     queryFn: () => sellerClient().profile.get(),
-    enabled: isAddressKind(requirement.kind),
+    enabled: requirement.kind === 'billing_address',
   })
 
   const invalidate = () =>
@@ -476,11 +478,6 @@ function RequirementAction({ requirement }: { requirement: RequirementStatus }) 
         )}
     </>
   )
-}
-
-/** Kinds the seller satisfies by filling an address, rendered inline. */
-function isAddressKind(kind: string): boolean {
-  return kind === 'billing_address' || kind === 'returns_address'
 }
 
 /**

@@ -236,6 +236,16 @@ module Spree
       end
     end
 
+    # Enough of an address to post a parcel to and for a carrier to rate
+    # against. `#address` below builds an unsaved record from these columns
+    # whatever their state, so a blank location answers with a blank address
+    # that reads as configured — every caller needs this guard first.
+    #
+    # @return [Boolean]
+    def postable?
+      address1.present? && city.present? && country_code.present?
+    end
+
     def address
       Spree::Address.new(
         address1: address1,

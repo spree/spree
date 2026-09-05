@@ -62,9 +62,10 @@ describe Spree::SetupTasks do
   end
 
   describe 'default registration' do
-    it 'registers the five default tasks in order on the global registry' do
+    it 'registers the six default tasks in order on the global registry' do
       expect(Spree.store_setup_tasks.tasks.map(&:key)).to eq(
-        %i[setup_payment_method add_products set_customer_support_email setup_taxes_collection setup_storefront]
+        %i[setup_address setup_payment_method add_products set_customer_support_email setup_taxes_collection
+           setup_storefront]
       )
     end
   end
