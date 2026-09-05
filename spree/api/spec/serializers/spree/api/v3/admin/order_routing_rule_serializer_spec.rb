@@ -15,8 +15,10 @@ RSpec.describe Spree::Api::V3::Admin::OrderRoutingRuleSerializer do
     expect(payload['channel_id']).to eq(channel.prefixed_id)
     expect(payload['position']).to eq(1)
     expect(payload['active']).to be(true)
-    expect(payload['label']).to eq('Preferred location')
-    expect(payload['description']).to be_present
+    # No `label`/`description`: the editor names a rule from its `type` out of
+    # its own locale files, so the row carries no server-resolved copy.
+    expect(payload).not_to have_key('label')
+    expect(payload).not_to have_key('description')
     expect(payload['preferences']).to eq({})
     expect(payload['preference_schema']).to eq([])
     expect(payload['created_at']).to be_present
