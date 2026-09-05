@@ -161,6 +161,44 @@ RSpec.describe Spree::Customers::Anonymize do
 
       expect(Spree::Address.find_by(id: ship_address_id)).to be_present
     end
+
+    # Changing the ship address after the parcel was arranged leaves the
+    # fulfillment pointing at the old row, which is still the street it went to.
+    it 'redacts the address a fulfillment kept after the order moved on' do
+      shipped = create(:order_ready_to_ship, customer: customer, store: store)
+      fulfillment = shipped.fulfillments.first
+      fulfillment.update!(address_id: shipped.ship_address_id)
+      stranded_id = fulfillment.address_id
+      shipped.update!(ship_address: create(:address, address1: '999 Elsewhere'))
+
+      result
+
+      expect(Spree::Address.find(stranded_id).address1).to eq('Redacted')
+    end
+
+    # A B2B checkout selects the company's site rather than copying it, so the
+    # row belongs to the company and outlives any one employee.
+    it 'leaves an address the order borrowed from its company alone' do
+      company = create(:company, store: store)
+      shared = create(:address, owner: company, address1: '1 Shared Company Way')
+      borrowed = create(:order, customer: customer, store: store)
+      borrowed.ship_address = shared
+      borrowed.save!
+
+      result
+
+      expect(shared.reload.address1).to eq('1 Shared Company Way')
+    end
+
+    it 'purges the carrier label, which prints the name and street' do
+      shipped = create(:order_ready_to_ship, customer: customer, store: store)
+      label = create(:shipping_label, :with_file, owner: shipped.fulfillments.first, store: store)
+      expect(label.reload.file).to be_attached
+
+      perform_enqueued_jobs { result }
+
+      expect(label.reload.file).not_to be_attached
+    end
   end
 
   describe 'saved cards' do

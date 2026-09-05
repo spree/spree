@@ -50,11 +50,12 @@ module Spree
         # an open dispute, a fraud investigation or a legal hold rejects here.
         run_hooks :validate
 
-        # Read-only: it only collects the attachments for the purge that runs
-        # after the commit, so it stays out of the transaction rather than
-        # holding locks on orders and carts while it scans. It must still run
-        # before the step that rewrites the email, since it matches on it.
+        # Read-only: both only collect the attachments for the purge that runs
+        # after the commit, so they stay out of the transaction rather than
+        # holding locks on orders and carts while they scan. They must still
+        # run before the step that rewrites the email, since they match on it.
         step :remove_purchase_order_documents
+        step :remove_carrier_documents
 
         committed = false
 
@@ -130,11 +131,21 @@ module Spree
       # step overwrites rather than accumulating, so whichever finishes last
       # leaves the same row. What the timestamp must not do is move backwards
       # on a re-run — it records when the person was first forgotten.
+      #
+      # The stamp is taken under the customer's row lock, which a queued access
+      # request holds while it builds and attaches its export. That is what
+      # keeps the two apart: either the export is written before this erasure
+      # looks for attachments and gets purged with them, or this claim lands
+      # first and the export is refused. Without the lock an export can attach
+      # after the scan has already run, stranding a full personal-data file
+      # nothing will ever purge.
       def claim_erasure
-        return if customer.anonymized_at.present?
+        customer.with_lock do
+          return if customer.reload.anonymized_at.present?
 
-        customer.class.where(id: customer.id, anonymized_at: nil).
-          update_all(anonymized_at: Time.current, updated_at: Time.current)
+          customer.class.where(id: customer.id, anonymized_at: nil).
+            update_all(anonymized_at: Time.current, updated_at: Time.current)
+        end
       end
 
       # The account itself. `update_columns` throughout this flow: validations
@@ -197,7 +208,16 @@ module Spree
         address_ids = purchase_address_ids
         return if address_ids.empty?
 
-        Spree::Address.where(id: address_ids).find_each do |address|
+        # An order can point straight at a row somebody else owns — a B2B
+        # checkout selects the company's site rather than copying it — and
+        # redacting that would overwrite the shared address for every other
+        # member and every other order. Only rows this person owns, or rows
+        # nobody owns, are this erasure's to rewrite.
+        snapshots = Spree::Address.where(id: address_ids)
+        mine = snapshots.where(owner_type: customer.class.base_class.to_s, owner_id: customer.id)
+        unowned = snapshots.where(owner_type: nil, owner_id: nil)
+
+        mine.or(unowned).find_each do |address|
           redact_address(address, deleted: false)
         end
       end
@@ -211,7 +231,12 @@ module Spree
         @purchase_address_ids ||= [
           owned_purchases(Spree::Order).pluck(:bill_address_id, :ship_address_id),
           owned_purchases(Spree::Cart).pluck(:bill_address_id, :ship_address_id),
-          owned_purchases(Spree::OrderGroup).pluck(:bill_address_id, :ship_address_id)
+          owned_purchases(Spree::OrderGroup).pluck(:bill_address_id, :ship_address_id),
+          # A fulfillment keeps the address it was created with, so changing
+          # the order's ship address afterwards strands the old row: it is
+          # still the street the parcel went to, and nothing else points at it.
+          Spree::Fulfillment.where(order_id: owned_purchases(Spree::Order).select(:id)).
+            pluck(:address_id)
         ].flatten.compact.uniq
       end
 
@@ -273,6 +298,24 @@ module Spree
             where(record_type: model.name, name: 'po_document',
                   record_id: owned_purchases(model).select(:id)).
             find_each { |attachment| purge_after_commit(attachment) }
+        end
+      end
+
+      # A carrier label is a picture of the parcel's address: the buyer's name
+      # and street are printed on the PDF, so rewriting the address row leaves
+      # the document still carrying them.
+      def remove_carrier_documents
+        order_ids = owned_purchases(Spree::Order).select(:id)
+
+        owner_ids = {
+          'Spree::Fulfillment' => Spree::Fulfillment.where(order_id: order_ids).select(:id),
+          'Spree::Return' => Spree::Return.where(order_id: order_ids).select(:id)
+        }
+
+        owner_ids.each do |owner_type, ids|
+          Spree::ShippingLabel.where(owner_type: owner_type, owner_id: ids).find_each do |label|
+            purge_after_commit(label.file)
+          end
         end
       end
 

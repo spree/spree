@@ -65,15 +65,37 @@ module Spree
       end
 
       def build_export
+        customer = data_request.customer
+
         # An erasure can land while this sits in the queue. Answering now would
         # write a file into private storage for someone who asked to be
         # forgotten — redacted, and behind a token the erasure already cleared,
         # so nobody could open it, but a file about them all the same and a
         # request they can never collect. Refusing says what happened.
-        if data_request.customer&.anonymized?
-          return failure(data_request, Spree.t('data_request_errors.already_anonymized'))
+        #
+        # Read and attach under the customer's row lock, which is the same lock
+        # the erasure takes: checking without it leaves a window where the
+        # anonymizer starts after the check and finishes its attachment scan
+        # before this attaches, stranding a full personal-data file it will
+        # never see.
+        return attach_export unless customer
+
+        refused = false
+
+        customer.with_lock do
+          if customer.reload.anonymized?
+            refused = true
+          else
+            attach_export
+          end
         end
 
+        return unless refused
+
+        failure(data_request, Spree.t('data_request_errors.already_anonymized'))
+      end
+
+      def attach_export
         payload = export_payload(data_request)
 
         data_request.export_file.attach(

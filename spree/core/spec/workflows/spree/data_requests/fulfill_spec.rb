@@ -5,6 +5,9 @@ RSpec.describe Spree::DataRequests::Fulfill do
   let(:customer) { create(:customer, email: 'buyer@example.com') }
 
   describe 'an access request' do
+    let(:data_request) { create(:data_request, store: store, customer: customer) }
+
+    subject(:result) { described_class.call(data_request: data_request) }
 
     # An erasure can land while this sits in the queue. Answering it would put
     # a file about someone who asked to be forgotten into private storage —
@@ -16,9 +19,6 @@ RSpec.describe Spree::DataRequests::Fulfill do
       expect(described_class.call(data_request: data_request)).to be_failure
       expect(data_request.reload.export_file).not_to be_attached
     end
-    let(:data_request) { create(:data_request, store: store, customer: customer) }
-
-    subject(:result) { described_class.call(data_request: data_request) }
 
     it 'completes the request' do
       expect(result).to be_success

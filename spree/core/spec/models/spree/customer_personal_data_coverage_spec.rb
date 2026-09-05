@@ -211,4 +211,28 @@ RSpec.describe 'personal data coverage' do
 
     expect(declared - tables).to be_empty
   end
+
+  # The column scan above cannot see a file. A carrier label carries the
+  # buyer's name and street inside a PDF while its own row holds nothing that
+  # looks like PII, which is how shipping labels survived an erasure that
+  # rewrote every address they were printed from. Every attachment a purchase
+  # can reach is either purged or listed here with the reason it stays.
+  PURCHASE_ATTACHMENTS = {
+    'Spree::ShippingLabel#file' => 'purged — remove_carrier_documents',
+    'Spree::Order#po_document' => 'purged — remove_purchase_order_documents',
+    'Spree::Cart#po_document' => 'purged — remove_purchase_order_documents',
+    'Spree::DataRequest#export_file' => 'purged — anonymize_data_requests'
+  }.freeze
+
+  it 'accounts for every attachment reachable from a purchase' do
+    models = [Spree::ShippingLabel, Spree::Order, Spree::Cart, Spree::DataRequest]
+
+    found = models.flat_map do |model|
+      model.reflect_on_all_attachments.map { |a| "#{model.name}##{a.name}" }
+    end
+
+    expect(found - PURCHASE_ATTACHMENTS.keys).to be_empty,
+      "Unaccounted attachment(s): #{(found - PURCHASE_ATTACHMENTS.keys).join(', ')}. " \
+      'Purge it in Spree::Customers::Anonymize or list it here with the reason it survives.'
+  end
 end
