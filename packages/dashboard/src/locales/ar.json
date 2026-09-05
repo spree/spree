@@ -3960,6 +3960,8 @@
       "api_key_description": "يوجد في لوحة تحكم EasyPost. مفتاح الاختبار والمفتاح الحي يعملان بشكل مختلف — المفتاح نفسه يحدد الوضع.",
       "base_amount": "Base Amount",
       "base_percent": "Base Percent",
+      "company_orders_only": "لطلبات الشركات فقط",
+      "company_orders_only_description": "عند التفعيل تُعرض هذه الطريقة على طلبات الشركات فقط، وعند الإيقاف على الطلبات الأخرى فقط. أزل القاعدة لعرضها للاثنين.",
       "currency": "Currency",
       "customs_contents_type": "نوع محتويات البيان الجمركي",
       "customs_contents_type_description": "ما يحتويه الطرد الدولي وفق تصنيف الجمارك.",

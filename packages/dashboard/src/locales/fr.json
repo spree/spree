@@ -3943,6 +3943,8 @@
       "api_key_description": "Disponible dans votre tableau de bord EasyPost. Une clé de test et une clé live se comportent différemment — la clé détermine le mode.",
       "base_amount": "Montant de base",
       "base_percent": "Pourcentage de base",
+      "company_orders_only": "Réservée aux commandes d'entreprise",
+      "company_orders_only_description": "Activée, cette méthode n'est proposée qu'aux commandes passées pour une entreprise ; désactivée, uniquement aux autres. Sans cette règle, elle s'applique aux deux.",
       "currency": "Devise",
       "customs_contents_type": "Type de contenu douanier",
       "customs_contents_type_description": "Ce que contient un colis international, selon la classification douanière.",

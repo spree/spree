@@ -3943,6 +3943,8 @@
       "api_key_description": "In Ihrem EasyPost-Dashboard zu finden. Test- und Live-Schlüssel verhalten sich unterschiedlich — der Schlüssel bestimmt den Modus.",
       "base_amount": "Grundbetrag",
       "base_percent": "Grundprozentsatz",
+      "company_orders_only": "Nur für Firmenbestellungen",
+      "company_orders_only_description": "Aktiviert wird diese Methode nur für Bestellungen auf ein Unternehmen angeboten, deaktiviert nur für die übrigen. Ohne diese Regel gilt sie für beide.",
       "currency": "Währung",
       "customs_contents_type": "Zollinhaltsart",
       "customs_contents_type_description": "Was eine internationale Sendung enthält, wie der Zoll es einstuft.",

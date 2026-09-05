@@ -3935,6 +3935,8 @@
       "api_key_description": "在您的 EasyPost 控制台中获取。测试密钥与正式密钥行为不同——密钥本身决定模式。",
       "base_amount": "基础金额",
       "base_percent": "基础百分比",
+      "company_orders_only": "仅限公司订单",
+      "company_orders_only_description": "开启后，此配送方式仅提供给以公司名义下的订单；关闭后仅提供给其他订单。移除此规则则两者都可使用。",
       "currency": "货币",
       "customs_contents_type": "报关内容类型",
       "customs_contents_type_description": "按海关分类，国际包裹所含物品的类型。",

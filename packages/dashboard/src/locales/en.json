@@ -3943,6 +3943,8 @@
       "api_key_description": "Found in your EasyPost dashboard. A test key and a live key behave differently — the key itself decides the mode.",
       "base_amount": "Base Amount",
       "base_percent": "Base Percent",
+      "company_orders_only": "Only for company orders",
+      "company_orders_only_description": "On, this method is offered only to orders placed for a company. Off, only to orders that are not. Remove the rule to offer it to both.",
       "currency": "Currency",
       "customs_contents_type": "Customs contents type",
       "customs_contents_type_description": "What an international parcel holds, as customs classifies it.",

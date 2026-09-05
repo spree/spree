@@ -304,7 +304,7 @@ paths:
                   avatar_url:
                 sellers:
                 - id: sel_UkLWZg9DAJ
-                  name: Seller 21
+                  name: Seller 31
                   status: approved
               schema:
                 "$ref": "#/components/schemas/AuthResponse"
@@ -420,7 +420,7 @@ paths:
                   avatar_url:
                 sellers:
                 - id: sel_UkLWZg9DAJ
-                  name: Seller 42
+                  name: Seller 52
                   status: approved
               schema:
                 "$ref": "#/components/schemas/AuthResponse"
@@ -489,8 +489,8 @@ paths:
                   avatar_url:
                 sellers:
                 - id: sel_UkLWZg9DAJ
-                  name: Seller 30
-                  slug: seller-30
+                  name: Seller 40
+                  slug: seller-40
                   status: approved
                 permissions:
                 - allow: true
@@ -12293,6 +12293,702 @@ paths:
                 required:
                 - data
                 - meta
+  "/api/v3/seller/delivery_methods":
+    get:
+      summary: List delivery methods
+      tags:
+      - Delivery Methods
+      security:
+      - bearer_auth: []
+      description: |
+        How this seller's goods can ship: the methods they created themselves,
+        plus any the marketplace shares with its sellers.
+
+        A shared marketplace method comes back with `editable: false` — it is
+        listed so the seller can see what already ships their goods, and every
+        write against it is a 404.
+      parameters:
+      - name: X-Spree-Seller-Id
+        in: header
+        required: true
+        schema:
+          type: string
+      - name: page
+        in: query
+        required: false
+        description: Page number
+        schema:
+          type: integer
+      - name: limit
+        in: query
+        required: false
+        description: Records per page (max 100)
+        schema:
+          type: integer
+      responses:
+        '200':
+          description: delivery methods listed
+          content:
+            application/json:
+              example:
+                data:
+                - id: dm_UkLWZg9DAJ
+                  name: My courier
+                  code: UPS_GROUND
+                  estimated_transit_business_days_min:
+                  estimated_transit_business_days_max:
+                  digital: false
+                  pickup: false
+                  pickup_point: false
+                  admin_name:
+                  storefront_visible: true
+                  tracking_url:
+                  created_at: '2026-01-15T12:00:00.000Z'
+                  updated_at: '2026-01-15T12:00:00.000Z'
+                  rules: []
+                  editable: true
+                  delivery_profile_id: fp_UkLWZg9DAJ
+                  delivery_zone_id:
+                  calculator_type: Spree::Calculator::Shipping::FlatRate
+                  calculator_preferences:
+                    amounts: {}
+                    amount: '10.0'
+                    currency: USD
+                - id: dm_gbHJdmfrXB
+                  name: Marketplace post
+                  code: UPS_GROUND
+                  estimated_transit_business_days_min:
+                  estimated_transit_business_days_max:
+                  digital: false
+                  pickup: false
+                  pickup_point: false
+                  admin_name:
+                  storefront_visible: true
+                  tracking_url:
+                  created_at: '2026-01-15T12:00:00.000Z'
+                  updated_at: '2026-01-15T12:00:00.000Z'
+                  rules: []
+                  editable: false
+                  delivery_profile_id: fp_UkLWZg9DAJ
+                  delivery_zone_id:
+                  calculator_type: Spree::Calculator::Shipping::FlatRate
+                  calculator_preferences:
+                    amounts: {}
+                    amount: '10.0'
+                    currency: USD
+                meta:
+                  page: 1
+                  limit: 25
+                  count: 2
+                  pages: 1
+                  from: 1
+                  to: 2
+                  in: 2
+                  previous:
+                  next:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      "$ref": "#/components/schemas/DeliveryMethod"
+                  meta:
+                    "$ref": "#/components/schemas/PaginationMeta"
+                required:
+                - data
+                - meta
+    post:
+      summary: Create a delivery method
+      tags:
+      - Delivery Methods
+      security:
+      - bearer_auth: []
+      description: |
+        Adds a way for this seller to ship. The method is always the seller's
+        own, whatever the payload says.
+
+        Neither the rate provider nor the fulfillment provider is settable: a
+        seller prices their own rates and enters tracking numbers by hand,
+        because carrier accounts belong to the marketplace.
+      parameters:
+      - name: X-Spree-Seller-Id
+        in: header
+        required: true
+        schema:
+          type: string
+      responses:
+        '201':
+          description: delivery method created
+          content:
+            application/json:
+              example:
+                id: dm_EfhxLZ9ck8
+                name: Next day
+                code:
+                estimated_transit_business_days_min:
+                estimated_transit_business_days_max:
+                digital: false
+                pickup: false
+                pickup_point: false
+                admin_name:
+                storefront_visible: true
+                tracking_url:
+                created_at: '2026-01-15T12:00:00.000Z'
+                updated_at: '2026-01-15T12:00:00.000Z'
+                rules: []
+                editable: true
+                delivery_profile_id: fp_gbHJdmfrXB
+                delivery_zone_id:
+                calculator_type: Spree::Calculator::Shipping::FlatRate
+                calculator_preferences:
+                  amounts: {}
+                  amount: '9.99'
+                  currency: USD
+              schema:
+                "$ref": "#/components/schemas/DeliveryMethod"
+        '422':
+          description: invalid request
+          content:
+            application/json:
+              example:
+                error:
+                  code: validation_error
+                  message: Name can't be blank
+                  details:
+                    name:
+                    - can't be blank
+              schema:
+                "$ref": "#/components/schemas/ErrorResponse"
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                admin_name:
+                  type: string
+                  nullable: true
+                code:
+                  type: string
+                  nullable: true
+                delivery_profile_id:
+                  type: string
+                  description: One of the marketplace's delivery profiles
+                delivery_zone_id:
+                  type: string
+                  nullable: true
+                  description: Narrows where the method ships
+                storefront_visible:
+                  type: boolean
+                tracking_url:
+                  type: string
+                  nullable: true
+                estimated_transit_business_days_min:
+                  type: integer
+                  nullable: true
+                estimated_transit_business_days_max:
+                  type: integer
+                  nullable: true
+                calculator_type:
+                  type: string
+                calculator_preferences:
+                  type: object
+                rules:
+                  type: array
+                  description: Conditions on the method, from `/delivery_methods/rule_types`
+                  items:
+                    type: object
+                    properties:
+                      type:
+                        type: string
+                      preferences:
+                        type: object
+              required:
+              - name
+  "/api/v3/seller/delivery_methods/{id}":
+    parameters:
+    - name: id
+      in: path
+      description: Delivery method ID
+      required: true
+      schema:
+        type: string
+    - name: X-Spree-Seller-Id
+      in: header
+      required: true
+      schema:
+        type: string
+    get:
+      summary: Retrieve a delivery method
+      tags:
+      - Delivery Methods
+      security:
+      - bearer_auth: []
+      responses:
+        '200':
+          description: delivery method found
+          content:
+            application/json:
+              example:
+                id: dm_UkLWZg9DAJ
+                name: My courier
+                code: UPS_GROUND
+                estimated_transit_business_days_min:
+                estimated_transit_business_days_max:
+                digital: false
+                pickup: false
+                pickup_point: false
+                admin_name:
+                storefront_visible: true
+                tracking_url:
+                created_at: '2026-01-15T12:00:00.000Z'
+                updated_at: '2026-01-15T12:00:00.000Z'
+                rules: []
+                editable: true
+                delivery_profile_id: fp_UkLWZg9DAJ
+                delivery_zone_id:
+                calculator_type: Spree::Calculator::Shipping::FlatRate
+                calculator_preferences:
+                  amounts: {}
+                  amount: '10.0'
+                  currency: USD
+              schema:
+                "$ref": "#/components/schemas/DeliveryMethod"
+    patch:
+      summary: Update a delivery method
+      tags:
+      - Delivery Methods
+      security:
+      - bearer_auth: []
+      description: Only the seller's own methods can be changed — a marketplace method
+        shared with sellers is read-only.
+      parameters: []
+      responses:
+        '200':
+          description: delivery method updated
+          content:
+            application/json:
+              example:
+                id: dm_UkLWZg9DAJ
+                name: My express courier
+                code: UPS_GROUND
+                estimated_transit_business_days_min:
+                estimated_transit_business_days_max:
+                digital: false
+                pickup: false
+                pickup_point: false
+                admin_name:
+                storefront_visible: true
+                tracking_url:
+                created_at: '2026-01-15T12:00:00.000Z'
+                updated_at: '2026-01-15T12:00:00.000Z'
+                rules: []
+                editable: true
+                delivery_profile_id: fp_UkLWZg9DAJ
+                delivery_zone_id:
+                calculator_type: Spree::Calculator::Shipping::FlatRate
+                calculator_preferences:
+                  amounts: {}
+                  amount: '10.0'
+                  currency: USD
+              schema:
+                "$ref": "#/components/schemas/DeliveryMethod"
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                admin_name:
+                  type: string
+                  nullable: true
+                code:
+                  type: string
+                  nullable: true
+                delivery_profile_id:
+                  type: string
+                  description: One of the marketplace's delivery profiles
+                delivery_zone_id:
+                  type: string
+                  nullable: true
+                  description: Narrows where the method ships
+                storefront_visible:
+                  type: boolean
+                tracking_url:
+                  type: string
+                  nullable: true
+                estimated_transit_business_days_min:
+                  type: integer
+                  nullable: true
+                estimated_transit_business_days_max:
+                  type: integer
+                  nullable: true
+                calculator_type:
+                  type: string
+                calculator_preferences:
+                  type: object
+                rules:
+                  type: array
+                  description: Replaces the whole set — a rule dropped here is deleted,
+                    so re-send surviving rules with their `id`.
+                  items:
+                    type: object
+                    properties:
+                      id:
+                        type: string
+                      type:
+                        type: string
+                      preferences:
+                        type: object
+    delete:
+      summary: Retire a delivery method
+      tags:
+      - Delivery Methods
+      security:
+      - bearer_auth: []
+      responses:
+        '204':
+          description: delivery method retired
+  "/api/v3/seller/delivery_methods/rule_types":
+    get:
+      summary: List the conditions a method can carry
+      tags:
+      - Delivery Methods
+      security:
+      - bearer_auth: []
+      description: The eligibility rules a seller may put on their own method, with
+        the preference schema each form is rendered from.
+      parameters:
+      - name: X-Spree-Seller-Id
+        in: header
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: rule types listed
+          content:
+            application/json:
+              example:
+                data:
+                - type: item_total_rule
+                  name: Item total
+                  description: Limits the delivery method to carts within an item
+                    total range
+                  preference_schema:
+                  - key: minimum_amount
+                    type: decimal
+                    default:
+                  - key: maximum_amount
+                    type: decimal
+                    default:
+                - type: weight_rule
+                  name: Weight
+                  description: Limits the delivery method to packages within a weight
+                    range
+                  preference_schema:
+                  - key: minimum_weight
+                    type: decimal
+                    default:
+                  - key: maximum_weight
+                    type: decimal
+                    default:
+                - type: volume_rule
+                  name: Volume
+                  description: Limits the delivery method to shipments within a volume
+                    range, in cubic meters
+                  preference_schema:
+                  - key: minimum_volume
+                    type: decimal
+                    default:
+                  - key: maximum_volume
+                    type: decimal
+                    default:
+                - type: company_rule
+                  name: Company
+                  description: Offers the delivery method only to orders placed for
+                    a company, or only to orders that are not
+                  preference_schema:
+                  - key: company_orders_only
+                    type: boolean
+                    default: true
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        type:
+                          type: string
+                        name:
+                          type: string
+                        description:
+                          type: string
+                        preference_schema:
+                          type: array
+                          items:
+                            type: object
+                required:
+                - data
+  "/api/v3/seller/delivery_methods/calculators":
+    get:
+      summary: List the ways a method can be priced
+      tags:
+      - Delivery Methods
+      security:
+      - bearer_auth: []
+      parameters:
+      - name: X-Spree-Seller-Id
+        in: header
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: calculators listed
+          content:
+            application/json:
+              example:
+                data:
+                - type: Spree::Calculator::Shipping::FlatPercentItemTotal
+                  name: Flat Percent
+                  preference_schema:
+                  - key: flat_percent
+                    type: decimal
+                    default: 0
+                - type: Spree::Calculator::Shipping::FlatRate
+                  name: Flat rate
+                  preference_schema:
+                  - key: amounts
+                    type: hash
+                    default: {}
+                  - key: amount
+                    type: decimal
+                    default: 0
+                  - key: currency
+                    type: string
+                    default: USD
+                - type: Spree::Calculator::Shipping::FlexiRate
+                  name: Flexible Rate per package item
+                  preference_schema:
+                  - key: first_item
+                    type: decimal
+                    default: 0.0
+                  - key: additional_item
+                    type: decimal
+                    default: 0.0
+                  - key: max_items
+                    type: integer
+                    default: 0
+                  - key: currency
+                    type: string
+                    default: USD
+                - type: Spree::Calculator::Shipping::PerItem
+                  name: Flat rate per package item
+                  preference_schema:
+                  - key: amounts
+                    type: hash
+                    default: {}
+                  - key: amount
+                    type: decimal
+                    default: 0
+                  - key: currency
+                    type: string
+                    default: USD
+                - type: Spree::Calculator::Shipping::PriceSack
+                  name: Price sack
+                  preference_schema:
+                  - key: minimal_amount
+                    type: decimal
+                    default: 0
+                  - key: normal_amount
+                    type: decimal
+                    default: 0
+                  - key: discount_amount
+                    type: decimal
+                    default: 0
+                  - key: currency
+                    type: string
+                    default: USD
+                - type: Spree::Calculator::Shipping::DigitalDelivery
+                  name: Digital Delivery
+                  preference_schema:
+                  - key: amounts
+                    type: hash
+                    default: {}
+                  - key: amount
+                    type: decimal
+                    default: 0
+                  - key: currency
+                    type: string
+                    default: USD
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        type:
+                          type: string
+                        name:
+                          type: string
+                        preference_schema:
+                          type: array
+                          items:
+                            type: object
+                required:
+                - data
+  "/api/v3/seller/delivery_profiles":
+    get:
+      summary: List delivery profiles
+      tags:
+      - Delivery Profiles
+      security:
+      - bearer_auth: []
+      description: |
+        The marketplace's delivery profiles — what kind of goods a product is
+        (parcel, digital, pallet), which decides how it can be shipped.
+
+        Read only. A seller assigns one to a product as `delivery_profile_id`;
+        the profiles themselves, and the zones and methods behind them, are the
+        marketplace's. A product created without one lands on the profile
+        marked `default`.
+      parameters:
+      - name: X-Spree-Seller-Id
+        in: header
+        required: true
+        schema:
+          type: string
+      - name: page
+        in: query
+        required: false
+        description: Page number
+        schema:
+          type: integer
+      - name: limit
+        in: query
+        required: false
+        description: Records per page (max 100)
+        schema:
+          type: integer
+      responses:
+        '200':
+          description: delivery profiles listed
+          content:
+            application/json:
+              example:
+                data:
+                - id: fp_UkLWZg9DAJ
+                  name: General
+                  default: true
+                  digital: false
+                - id: fp_gbHJdmfrXB
+                  name: Oversized
+                  default: false
+                  digital: false
+                meta:
+                  page: 1
+                  limit: 25
+                  count: 2
+                  pages: 1
+                  from: 1
+                  to: 2
+                  in: 2
+                  previous:
+                  next:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      "$ref": "#/components/schemas/DeliveryProfile"
+                  meta:
+                    "$ref": "#/components/schemas/PaginationMeta"
+                required:
+                - data
+                - meta
+  "/api/v3/seller/delivery_zones":
+    get:
+      summary: List delivery zones
+      tags:
+      - Delivery Zones
+      security:
+      - bearer_auth: []
+      description: |
+        The marketplace's delivery zones — where its methods may ship to.
+
+        Read only: a seller narrows their own method to one of these and never
+        draws one. Pass `delivery_profile_id` to list only the zones under the
+        profile a method belongs to, which is what the method form's picker
+        asks for.
+      parameters:
+      - name: X-Spree-Seller-Id
+        in: header
+        required: true
+        schema:
+          type: string
+      - name: delivery_profile_id
+        in: query
+        required: false
+        description: Only zones under this delivery profile
+        schema:
+          type: string
+      - name: page
+        in: query
+        required: false
+        description: Page number
+        schema:
+          type: integer
+      - name: limit
+        in: query
+        required: false
+        description: Records per page (max 100)
+        schema:
+          type: integer
+      responses:
+        '200':
+          description: delivery zones listed
+          content:
+            application/json:
+              example:
+                data:
+                - id: dz_UkLWZg9DAJ
+                  name: Domestic
+                  description: Maxime illum debitis veritatis porro accusantium laudantium
+                    omnis.
+                  delivery_profile_id: fp_gbHJdmfrXB
+                meta:
+                  page: 1
+                  limit: 25
+                  count: 1
+                  pages: 1
+                  from: 1
+                  to: 1
+                  in: 1
+                  previous:
+                  next:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      "$ref": "#/components/schemas/DeliveryZone"
+                  meta:
+                    "$ref": "#/components/schemas/PaginationMeta"
+                required:
+                - data
+                - meta
   "/api/v3/seller/onboarding":
     get:
       summary: Get onboarding checklist
@@ -12724,6 +13420,100 @@ paths:
       responses:
         '204':
           description: policy deleted
+  "/api/v3/seller/product_types":
+    get:
+      summary: List product types
+      tags:
+      - Product Types
+      security:
+      - bearer_auth: []
+      description: |
+        The product types a seller may list a product against.
+
+        Read only. A type is the template that hands a product its option types
+        and its delivery profile, so a seller picks one when listing; defining
+        types is the marketplace's. Send the chosen `id` as `product_type_id`
+        on the product.
+      parameters:
+      - name: X-Spree-Seller-Id
+        in: header
+        required: true
+        schema:
+          type: string
+      - name: page
+        in: query
+        required: false
+        description: Page number
+        schema:
+          type: integer
+      - name: limit
+        in: query
+        required: false
+        description: Records per page (max 100)
+        schema:
+          type: integer
+      responses:
+        '200':
+          description: product types listed
+          content:
+            application/json:
+              example:
+                data:
+                - id: pt_UkLWZg9DAJ
+                  name: Apparel
+                  option_type_labels: []
+                meta:
+                  page: 1
+                  limit: 25
+                  count: 1
+                  pages: 1
+                  from: 1
+                  to: 1
+                  in: 1
+                  previous:
+                  next:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      "$ref": "#/components/schemas/ProductType"
+                  meta:
+                    "$ref": "#/components/schemas/PaginationMeta"
+                required:
+                - data
+                - meta
+  "/api/v3/seller/product_types/{id}":
+    get:
+      summary: Get a product type
+      tags:
+      - Product Types
+      security:
+      - bearer_auth: []
+      parameters:
+      - name: X-Spree-Seller-Id
+        in: header
+        required: true
+        schema:
+          type: string
+      - name: id
+        in: path
+        required: true
+        description: Product type ID
+        schema:
+          type: string
+      responses:
+        '200':
+          description: product type found
+          content:
+            application/json:
+              example:
+                id: pt_UkLWZg9DAJ
+                name: Apparel
+                option_type_labels: []
+              schema:
+                "$ref": "#/components/schemas/ProductType"
   "/api/v3/seller/products":
     get:
       summary: List products
@@ -12769,8 +13559,8 @@ paths:
               example:
                 data:
                 - id: prod_UkLWZg9DAJ
-                  name: Product 1423250
-                  slug: product-1423250
+                  name: Product 1523250
+                  slug: product-1523250
                   meta_title:
                   meta_description:
                   meta_keywords:
@@ -12819,6 +13609,8 @@ paths:
                   metadata: {}
                   created_at: '2026-01-15T12:00:00.000Z'
                   updated_at: '2026-01-15T12:00:00.000Z'
+                  product_type_id:
+                  delivery_profile_id: fp_UkLWZg9DAJ
                 meta:
                   page: 1
                   limit: 25
@@ -12904,6 +13696,8 @@ paths:
                 metadata: {}
                 created_at: '2026-01-15T12:00:00.000Z'
                 updated_at: '2026-01-15T12:00:00.000Z'
+                product_type_id:
+                delivery_profile_id: fp_UkLWZg9DAJ
               schema:
                 "$ref": "#/components/schemas/Product"
         '422':
@@ -13009,8 +13803,8 @@ paths:
             application/json:
               example:
                 id: prod_UkLWZg9DAJ
-                name: Product 1456710
-                slug: product-1456710
+                name: Product 1556710
+                slug: product-1556710
                 meta_title:
                 meta_description:
                 meta_keywords:
@@ -13054,6 +13848,8 @@ paths:
                 metadata: {}
                 created_at: '2026-01-15T12:00:00.000Z'
                 updated_at: '2026-01-15T12:00:00.000Z'
+                product_type_id:
+                delivery_profile_id: fp_UkLWZg9DAJ
               schema:
                 "$ref": "#/components/schemas/Product"
         '404':
@@ -13087,7 +13883,7 @@ paths:
               example:
                 id: prod_UkLWZg9DAJ
                 name: Hand-thrown mug, large
-                slug: product-1488212
+                slug: product-1588212
                 meta_title:
                 meta_description:
                 meta_keywords:
@@ -13127,6 +13923,8 @@ paths:
                 metadata: {}
                 created_at: '2026-01-15T12:00:00.000Z'
                 updated_at: '2026-01-15T12:00:00.000Z'
+                product_type_id:
+                delivery_profile_id: fp_UkLWZg9DAJ
               schema:
                 "$ref": "#/components/schemas/Product"
       requestBody:
@@ -13198,8 +13996,8 @@ paths:
             application/json:
               example:
                 id: sel_UkLWZg9DAJ
-                name: Seller 57
-                slug: seller-57
+                name: Seller 69
+                slug: seller-69
                 about: ''
                 about_html: ''
                 logo_url:
@@ -13271,7 +14069,7 @@ paths:
               example:
                 id: sel_UkLWZg9DAJ
                 name: Acme Supplies
-                slug: seller-59
+                slug: seller-71
                 about: ''
                 about_html: ''
                 logo_url:
@@ -13428,6 +14226,7 @@ paths:
                   active: true
                   default: false
                   kind: warehouse
+                  returns_enabled: true
                   created_at: '2026-01-15T12:00:00.000Z'
                   updated_at: '2026-01-15T12:00:00.000Z'
                 meta:
@@ -13493,6 +14292,7 @@ paths:
                 active: true
                 default: false
                 kind: warehouse
+                returns_enabled: true
                 created_at: '2026-01-15T12:00:00.000Z'
                 updated_at: '2026-01-15T12:00:00.000Z'
               schema:
@@ -13608,6 +14408,7 @@ paths:
                 active: true
                 default: false
                 kind: warehouse
+                returns_enabled: true
                 created_at: '2026-01-15T12:00:00.000Z'
                 updated_at: '2026-01-15T12:00:00.000Z'
               schema:
@@ -13664,6 +14465,7 @@ paths:
                 active: true
                 default: false
                 kind: warehouse
+                returns_enabled: true
                 created_at: '2026-01-15T12:00:00.000Z'
                 updated_at: '2026-01-15T12:00:00.000Z'
               schema:
@@ -14014,10 +14816,10 @@ paths:
             application/json:
               example:
                 direct_upload:
-                  url: http://www.example.com/rails/active_storage/disk/eyJfcmFpbHMiOnsiZGF0YSI6eyJrZXkiOiJuem5oOGdra3VxendvbDc1ODBxNHNwZmpmMjVxIiwiY29udGVudF90eXBlIjoiYXBwbGljYXRpb24vcGRmIiwiY29udGVudF9sZW5ndGgiOjUxMjM0LCJjaGVja3N1bSI6IlZqaHowNGxRdUVHdXY0bkR2aHNhTlE9PSIsInNlcnZpY2VfbmFtZSI6InRlc3QifSwiZXhwIjoiMjAyNi0wMS0xNVQxMjowNTowMC4wMDBaIiwicHVyIjoiYmxvYl90b2tlbiJ9fQ==--c0e3b25f985a821df6c39644de94ceea72ad357d
+                  url: http://www.example.com/rails/active_storage/disk/eyJfcmFpbHMiOnsiZGF0YSI6eyJrZXkiOiJuem5oOGdra3VxendvbDc1ODBxNHNwZmpmMjVxIiwiY29udGVudF90eXBlIjoiYXBwbGljYXRpb24vcGRmIiwiY29udGVudF9sZW5ndGgiOjUxMjM0LCJjaGVja3N1bSI6IlZqaHowNGxRdUVHdXY0bkR2aHNhTlE9PSIsInNlcnZpY2VfbmFtZSI6InRlc3QifSwiZXhwIjoiMjAyNi0wMS0xNVQxMjowNTowMC4wMDBaIiwicHVyIjoiYmxvYl90b2tlbiJ9fQ==--60cec2612f5d32c4a0ff1d00c3edffe6f49039e7
                   headers:
                     Content-Type: application/pdf
-                signed_id: eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--bc30a562c4f9c38fad1949c9c3be2188baad829f
+                signed_id: eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--1163a14a921bc6b9d54fe1499de4d97e9d0527ca
               schema:
                 "$ref": "#/components/schemas/DirectUploadResponse"
       requestBody:
@@ -14269,9 +15071,8 @@ paths:
                   status: unfulfilled
                   tracking: U10000
                   tracking_url:
-                  tracking_carrier:
-                  tracking_status:
                   fulfilled_at:
+                  delivered_at:
                   created_at: '2026-01-15T12:00:00.000Z'
                   updated_at: '2026-01-15T12:00:00.000Z'
                   fulfillment_type: shipping
@@ -14281,9 +15082,23 @@ paths:
                   - id: fi_UkLWZg9DAJ
                     quantity: 1
                     line_item_id: li_UkLWZg9DAJ
-                    name: Product 1359315
-                    sku: SKU-173
+                    name: Product 1459315
+                    sku: SKU-184
                     options_text: ''
+                  deliveries:
+                  - id: dlv_UkLWZg9DAJ
+                    tracking_number: U10000
+                    carrier:
+                    carrier_name:
+                    service:
+                    status: pending
+                    tracking_url:
+                    estimated_delivery_at:
+                    delivered_at:
+                    created_at: '2026-01-15T12:00:00.000Z'
+                    updated_at: '2026-01-15T12:00:00.000Z'
+                    shipping_label_id:
+                  labels: []
               schema:
                 type: object
                 properties:
@@ -14339,9 +15154,8 @@ paths:
                 status: fulfilled
                 tracking: TRACK-1
                 tracking_url:
-                tracking_carrier:
-                tracking_status:
                 fulfilled_at: '2026-01-15T12:00:00.000Z'
+                delivered_at:
                 created_at: '2026-01-15T12:00:00.000Z'
                 updated_at: '2026-01-15T12:00:00.000Z'
                 fulfillment_type: shipping
@@ -14351,9 +15165,23 @@ paths:
                 - id: fi_UkLWZg9DAJ
                   quantity: 1
                   line_item_id: li_UkLWZg9DAJ
-                  name: Product 136961
-                  sku: SKU-174
+                  name: Product 146961
+                  sku: SKU-185
                   options_text: ''
+                deliveries:
+                - id: dlv_UkLWZg9DAJ
+                  tracking_number: TRACK-1
+                  carrier:
+                  carrier_name:
+                  service:
+                  status: pending
+                  tracking_url:
+                  estimated_delivery_at:
+                  delivered_at:
+                  created_at: '2026-01-15T12:00:00.000Z'
+                  updated_at: '2026-01-15T12:00:00.000Z'
+                  shipping_label_id:
+                labels: []
               schema:
                 "$ref": "#/components/schemas/Fulfillment"
       requestBody:
@@ -14452,7 +15280,7 @@ paths:
                   display_total: "$110.00"
                   items:
                   - id: li_UkLWZg9DAJ
-                    name: Product 13795
+                    name: Product 14795
                     options_text: ''
                     quantity: 1
                     currency: USD
@@ -14461,7 +15289,7 @@ paths:
                     total: '10.0'
                     display_total: "$10.00"
                     variant_id: variant_UkLWZg9DAJ
-                    sku: SKU-175
+                    sku: SKU-186
                     thumbnail_url:
                   fulfillments:
                   - id: ful_UkLWZg9DAJ
@@ -14469,9 +15297,8 @@ paths:
                     status: unfulfilled
                     tracking: U10000
                     tracking_url:
-                    tracking_carrier:
-                    tracking_status:
                     fulfilled_at:
+                    delivered_at:
                     created_at: '2026-01-15T12:00:00.000Z'
                     updated_at: '2026-01-15T12:00:00.000Z'
                     fulfillment_type: shipping
@@ -14481,16 +15308,30 @@ paths:
                     - id: fi_UkLWZg9DAJ
                       quantity: 1
                       line_item_id: li_UkLWZg9DAJ
-                      name: Product 13795
-                      sku: SKU-175
+                      name: Product 14795
+                      sku: SKU-186
                       options_text: ''
+                    deliveries:
+                    - id: dlv_UkLWZg9DAJ
+                      tracking_number: U10000
+                      carrier:
+                      carrier_name:
+                      service:
+                      status: pending
+                      tracking_url:
+                      estimated_delivery_at:
+                      delivered_at:
+                      created_at: '2026-01-15T12:00:00.000Z'
+                      updated_at: '2026-01-15T12:00:00.000Z'
+                      shipping_label_id:
+                    labels: []
                   shipping_address:
                     id: addr_gbHJdmfrXB
                     label:
                     first_name: John
                     last_name: Doe
                     full_name: John Doe
-                    address1: 117 Lovely Street
+                    address1: 135 Lovely Street
                     address2: Northwest
                     postal_code: '10118'
                     city: New York
@@ -14512,7 +15353,7 @@ paths:
                     first_name: John
                     last_name: Doe
                     full_name: John Doe
-                    address1: 116 Lovely Street
+                    address1: 134 Lovely Street
                     address2: Northwest
                     postal_code: '10118'
                     city: New York
@@ -14601,7 +15442,7 @@ paths:
                 display_total: "$110.00"
                 items:
                 - id: li_UkLWZg9DAJ
-                  name: Product 1389755
+                  name: Product 1489755
                   options_text: ''
                   quantity: 1
                   currency: USD
@@ -14610,7 +15451,7 @@ paths:
                   total: '10.0'
                   display_total: "$10.00"
                   variant_id: variant_UkLWZg9DAJ
-                  sku: SKU-176
+                  sku: SKU-187
                   thumbnail_url:
                 fulfillments:
                 - id: ful_UkLWZg9DAJ
@@ -14618,9 +15459,8 @@ paths:
                   status: unfulfilled
                   tracking: U10000
                   tracking_url:
-                  tracking_carrier:
-                  tracking_status:
                   fulfilled_at:
+                  delivered_at:
                   created_at: '2026-01-15T12:00:00.000Z'
                   updated_at: '2026-01-15T12:00:00.000Z'
                   fulfillment_type: shipping
@@ -14630,16 +15470,30 @@ paths:
                   - id: fi_UkLWZg9DAJ
                     quantity: 1
                     line_item_id: li_UkLWZg9DAJ
-                    name: Product 1389755
-                    sku: SKU-176
+                    name: Product 1489755
+                    sku: SKU-187
                     options_text: ''
+                  deliveries:
+                  - id: dlv_UkLWZg9DAJ
+                    tracking_number: U10000
+                    carrier:
+                    carrier_name:
+                    service:
+                    status: pending
+                    tracking_url:
+                    estimated_delivery_at:
+                    delivered_at:
+                    created_at: '2026-01-15T12:00:00.000Z'
+                    updated_at: '2026-01-15T12:00:00.000Z'
+                    shipping_label_id:
+                  labels: []
                 shipping_address:
                   id: addr_gbHJdmfrXB
                   label:
                   first_name: John
                   last_name: Doe
                   full_name: John Doe
-                  address1: 119 Lovely Street
+                  address1: 137 Lovely Street
                   address2: Northwest
                   postal_code: '10118'
                   city: New York
@@ -14661,7 +15515,7 @@ paths:
                   first_name: John
                   last_name: Doe
                   full_name: John Doe
-                  address1: 118 Lovely Street
+                  address1: 136 Lovely Street
                   address2: Northwest
                   postal_code: '10118'
                   city: New York
@@ -14739,7 +15593,7 @@ paths:
                 display_total: "$110.00"
                 items:
                 - id: li_UkLWZg9DAJ
-                  name: Product 1416554
+                  name: Product 1516554
                   options_text: ''
                   quantity: 1
                   currency: USD
@@ -14748,7 +15602,7 @@ paths:
                   total: '10.0'
                   display_total: "$10.00"
                   variant_id: variant_UkLWZg9DAJ
-                  sku: SKU-179
+                  sku: SKU-190
                   thumbnail_url:
                 fulfillments:
                 - id: ful_UkLWZg9DAJ
@@ -14756,9 +15610,8 @@ paths:
                   status: canceled
                   tracking: U10000
                   tracking_url:
-                  tracking_carrier:
-                  tracking_status:
                   fulfilled_at:
+                  delivered_at:
                   created_at: '2026-01-15T12:00:00.000Z'
                   updated_at: '2026-01-15T12:00:00.000Z'
                   fulfillment_type: shipping
@@ -14768,16 +15621,30 @@ paths:
                   - id: fi_UkLWZg9DAJ
                     quantity: 1
                     line_item_id: li_UkLWZg9DAJ
-                    name: Product 1416554
-                    sku: SKU-179
+                    name: Product 1516554
+                    sku: SKU-190
                     options_text: ''
+                  deliveries:
+                  - id: dlv_UkLWZg9DAJ
+                    tracking_number: U10000
+                    carrier:
+                    carrier_name:
+                    service:
+                    status: pending
+                    tracking_url:
+                    estimated_delivery_at:
+                    delivered_at:
+                    created_at: '2026-01-15T12:00:00.000Z'
+                    updated_at: '2026-01-15T12:00:00.000Z'
+                    shipping_label_id:
+                  labels: []
                 shipping_address:
                   id: addr_gbHJdmfrXB
                   label:
                   first_name: John
                   last_name: Doe
                   full_name: John Doe
-                  address1: 125 Lovely Street
+                  address1: 143 Lovely Street
                   address2: Northwest
                   postal_code: '10118'
                   city: New York
@@ -14799,7 +15666,7 @@ paths:
                   first_name: John
                   last_name: Doe
                   full_name: John Doe
-                  address1: 124 Lovely Street
+                  address1: 142 Lovely Street
                   address2: Northwest
                   postal_code: '10118'
                   city: New York
@@ -15034,11 +15901,22 @@ tags:
     do
 - name: Countries
   description: Country and state reference data for the panel's address forms
+- name: Delivery Methods
+  description: The seller's own ways to ship, and the marketplace methods shared with
+    them
+- name: Delivery Profiles
+  description: The marketplace's delivery vocabulary — what kind of goods a product
+    is, which decides how it ships
+- name: Delivery Zones
+  description: The marketplace's destinations, for narrowing where a seller's own
+    method ships
 - name: Onboarding
   description: The marketplace checklist a seller completes before admission, and
     what they submit against it
 - name: Policies
   description: The seller's own legal documents, as the marketplace asks them to publish
+- name: Product Types
+  description: The types a seller may list a product against, and what each adds
 - name: Products
   description: The seller's own catalog
 - name: Profile
@@ -15858,6 +16736,188 @@ components:
       - display_compare_at_amount
       - price_list_id
       x-typelizer: true
+    DeliveryMethodRule:
+      type: object
+      properties:
+        id:
+          type: string
+        active:
+          type: boolean
+        type:
+          type: string
+        name:
+          type: string
+        description:
+          type: string
+        preferences:
+          type: object
+        preference_schema:
+          type: object
+      required:
+      - id
+      - active
+      - type
+      - name
+      - description
+      - preferences
+      - preference_schema
+      x-typelizer: true
+    DeliveryMethod:
+      type: object
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+        code:
+          type: string
+          nullable: true
+        estimated_transit_business_days_min:
+          type: number
+          nullable: true
+        estimated_transit_business_days_max:
+          type: number
+          nullable: true
+        digital:
+          type: boolean
+        pickup:
+          type: boolean
+        pickup_point:
+          type: boolean
+        admin_name:
+          type: string
+          nullable: true
+        storefront_visible:
+          type: boolean
+        tracking_url:
+          type: string
+          nullable: true
+        created_at:
+          type: string
+        updated_at:
+          type: string
+        rules:
+          type: array
+          items:
+            "$ref": "#/components/schemas/DeliveryMethodRule"
+        editable:
+          type: boolean
+        delivery_profile_id:
+          type: string
+          nullable: true
+        delivery_zone_id:
+          type: string
+          nullable: true
+        calculator_type:
+          type: string
+          nullable: true
+        calculator_preferences:
+          type: object
+          nullable: true
+      required:
+      - id
+      - name
+      - code
+      - estimated_transit_business_days_min
+      - estimated_transit_business_days_max
+      - digital
+      - pickup
+      - pickup_point
+      - admin_name
+      - storefront_visible
+      - tracking_url
+      - created_at
+      - updated_at
+      - rules
+      - editable
+      - delivery_profile_id
+      - delivery_zone_id
+      - calculator_type
+      - calculator_preferences
+      x-typelizer: true
+    DeliveryProfile:
+      type: object
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+        default:
+          type: boolean
+        digital:
+          type: boolean
+      required:
+      - id
+      - name
+      - default
+      - digital
+      x-typelizer: true
+    Delivery:
+      type: object
+      properties:
+        id:
+          type: string
+        tracking_number:
+          type: string
+        carrier:
+          type: string
+          nullable: true
+        carrier_name:
+          type: string
+          nullable: true
+        service:
+          type: string
+          nullable: true
+        status:
+          type: string
+        tracking_url:
+          type: string
+          nullable: true
+        estimated_delivery_at:
+          type: string
+          nullable: true
+        delivered_at:
+          type: string
+          nullable: true
+        created_at:
+          type: string
+        updated_at:
+          type: string
+        shipping_label_id:
+          type: string
+          nullable: true
+      required:
+      - id
+      - tracking_number
+      - carrier
+      - carrier_name
+      - service
+      - status
+      - tracking_url
+      - estimated_delivery_at
+      - delivered_at
+      - created_at
+      - updated_at
+      - shipping_label_id
+      x-typelizer: true
+    DeliveryZone:
+      type: object
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+        description:
+          type: string
+          nullable: true
+        delivery_profile_id:
+          type: string
+      required:
+      - id
+      - name
+      - description
+      - delivery_profile_id
+      x-typelizer: true
     Export:
       type: object
       properties:
@@ -15944,13 +17004,10 @@ components:
         tracking_url:
           type: string
           nullable: true
-        tracking_carrier:
-          type: string
-          nullable: true
-        tracking_status:
-          type: string
-          nullable: true
         fulfilled_at:
+          type: string
+          nullable: true
+        delivered_at:
           type: string
           nullable: true
         created_at:
@@ -15970,21 +17027,30 @@ components:
           type: array
           items:
             "$ref": "#/components/schemas/FulfillmentItem"
+        deliveries:
+          type: array
+          items:
+            "$ref": "#/components/schemas/Delivery"
+        labels:
+          type: array
+          items:
+            "$ref": "#/components/schemas/ShippingLabel"
       required:
       - id
       - number
       - status
       - tracking
       - tracking_url
-      - tracking_carrier
-      - tracking_status
       - fulfilled_at
+      - delivered_at
       - created_at
       - updated_at
       - fulfillment_type
       - delivery_method_name
       - stock_location_name
       - fulfillment_items
+      - deliveries
+      - labels
       x-typelizer: true
     ImportMapping:
       type: object
@@ -16513,6 +17579,12 @@ components:
           type: string
         updated_at:
           type: string
+        product_type_id:
+          type: string
+          nullable: true
+        delivery_profile_id:
+          type: string
+          nullable: true
         submission:
           allOf:
           - "$ref": "#/components/schemas/ProductSubmission"
@@ -16545,6 +17617,8 @@ components:
       - metadata
       - created_at
       - updated_at
+      - product_type_id
+      - delivery_profile_id
       x-typelizer: true
     ProductSubmission:
       type: object
@@ -16570,6 +17644,22 @@ components:
       - reviewed_at
       - created_at
       - product_id
+      x-typelizer: true
+    ProductType:
+      type: object
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+        option_type_labels:
+          type: array
+          items:
+            type: string
+      required:
+      - id
+      - name
+      - option_type_labels
       x-typelizer: true
     Profile:
       type: object
@@ -16717,6 +17807,9 @@ components:
         action_url:
           type: string
           nullable: true
+        blocker:
+          type: object
+          nullable: true
         blocking:
           type: boolean
         accepts_submissions:
@@ -16745,6 +17838,7 @@ components:
       - position
       - status
       - action_url
+      - blocker
       - blocking
       - accepts_submissions
       - requires_file
@@ -16791,6 +17885,84 @@ components:
       - updated_at
       - file_url
       - file_name
+      x-typelizer: true
+    ShippingLabel:
+      type: object
+      properties:
+        id:
+          type: string
+        source:
+          type: string
+        status:
+          type: string
+        carrier:
+          type: string
+          nullable: true
+        carrier_name:
+          type: string
+          nullable: true
+        service:
+          type: string
+          nullable: true
+        tracking_number:
+          type: string
+          nullable: true
+        currency:
+          type: string
+          nullable: true
+        format:
+          type: string
+          nullable: true
+        external_id:
+          type: string
+          nullable: true
+        metadata:
+          type: object
+        refunded_at:
+          type: string
+          nullable: true
+        created_at:
+          type: string
+        updated_at:
+          type: string
+        owner_id:
+          type: string
+        owner_type:
+          type: string
+        cost:
+          type: string
+        display_cost:
+          type: string
+        integration_id:
+          type: string
+          nullable: true
+        file_pending:
+          type: boolean
+        download_url:
+          type: string
+          nullable: true
+      required:
+      - id
+      - source
+      - status
+      - carrier
+      - carrier_name
+      - service
+      - tracking_number
+      - currency
+      - format
+      - external_id
+      - metadata
+      - refunded_at
+      - created_at
+      - updated_at
+      - owner_id
+      - owner_type
+      - cost
+      - display_cost
+      - integration_id
+      - file_pending
+      - download_url
       x-typelizer: true
     StockLevel:
       type: object
@@ -16880,6 +18052,8 @@ components:
           type: boolean
         kind:
           type: string
+        returns_enabled:
+          type: boolean
         created_at:
           type: string
         updated_at:
@@ -16903,6 +18077,7 @@ components:
       - active
       - default
       - kind
+      - returns_enabled
       - created_at
       - updated_at
       x-typelizer: true
