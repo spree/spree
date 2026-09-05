@@ -8,9 +8,7 @@ import i18n from 'i18next'
 const OFFER_STATUSES = ['active', 'draft', 'proposed', 'rejected', 'archived'] as const
 
 defineTable<Variant>('seller-offers', {
-  // No `title`: the page header above the card already names the page,
-  // and repeating it on the card said the same word twice. The
-  // description is what the card contributes.
+  title: i18n.t('offers.title'),
   description: i18n.t('offers.description'),
   // Searches the SKU rather than the product name: the product is the
   // marketplace's and a seller finds their own row by what they called it.
