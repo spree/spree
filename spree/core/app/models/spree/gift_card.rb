@@ -39,6 +39,7 @@ module Spree
 
     has_many :store_credits, class_name: 'Spree::StoreCredit', as: :originator
     has_many :orders, inverse_of: :gift_card, class_name: 'Spree::Order'
+    has_many :carts, inverse_of: :gift_card, class_name: 'Spree::Cart'
     has_many :users, through: :orders, source: :customer
 
     #
@@ -91,6 +92,34 @@ module Spree
 
     def self.json_api_columns
       %w[code amount expires_at]
+    end
+
+    # Carts and draft orders currently holding part of this card's balance.
+    # Applying a card draws it down before anything is paid for, so a card
+    # left on an abandoned cart keeps money locked up until that record is
+    # completed or the card is taken off it. Spree::GiftCards::Apply releases
+    # these holds so the customer presenting the code can spend it again.
+    #
+    # A hold in the middle of a completion attempt is never returned — see
+    # +holds_being_completed+. The two readers partition the same set, so a
+    # hold this one omits for that reason always appears in the other.
+    #
+    # @param except [Spree::Cart, Spree::Order, nil] the record being applied
+    #   to, which is not a stale hold
+    # @return [Array<Spree::Cart, Spree::Order>]
+    def open_holds(except: nil)
+      all_holds(except: except).reject { |hold| claimed_by_completion?(hold) }
+    end
+
+    # Holds this card cannot be taken from because a completion attempt holds
+    # them — the balance frees up on its own once the claim resolves or goes
+    # stale, so a caller refused for this reason can tell the customer to
+    # retry rather than that the card is spent.
+    #
+    # @param except [Spree::Cart, Spree::Order, nil]
+    # @return [Array<Spree::Cart, Spree::Order>]
+    def holds_being_completed(except: nil)
+      all_holds(except: except).select { |hold| claimed_by_completion?(hold) }
     end
 
     # Checks if the gift card is editable
@@ -173,6 +202,31 @@ module Spree
     end
 
     private
+
+    # Ordered by id so concurrent applies lock holds in the same sequence and
+    # cannot form a deadlock cycle between two carts.
+    def all_holds(except: nil)
+      holds = carts.incomplete.order(:id).to_a +
+              orders.incomplete.where.not(status: 'canceled').includes(:cart).order(:id).to_a
+
+      holds.reject { |hold| same_record?(hold, except) }
+    end
+
+    def same_record?(hold, other)
+      other.present? && hold.class == other.class && hold.id == other.id
+    end
+
+    # A record at the gateway has fixed totals and money in flight; taking its
+    # gift card away mid-charge would place an order that no longer adds up.
+    # Checkout stamps the claim on the cart and then copies the card onto a
+    # draft order, so the draft is protected through its originating cart —
+    # that copy is the window where real money is moving.
+    def claimed_by_completion?(hold)
+      case hold
+      when Spree::Cart then hold.completion_claimed?
+      else hold.cart&.completion_claimed? || false
+      end
+    end
 
     # Mirrors the machine's bang events: an illegal move raised, so a rejected
     # workflow raises here too rather than returning quietly.
