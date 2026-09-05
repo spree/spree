@@ -169,9 +169,17 @@ module Spree
       # their street address sitting in the database, and erasure has to reach
       # it.
       def anonymize_address_book
+        # One row can be both: checkout account creation re-homes the order's
+        # address snapshot onto the new customer, so it sits in the address
+        # book while still being what the order was shipped to. Soft-deleting
+        # it would contradict the order path, which deliberately leaves those
+        # rows undeleted so a tax enquiry can still read the jurisdiction off
+        # the sale.
+        snapshot_ids = purchase_address_ids
+
         Spree::Address.where(owner_type: customer.class.base_class.to_s, owner_id: customer.id).
           find_each do |address|
-            redact_address(address, deleted: true)
+            redact_address(address, deleted: snapshot_ids.exclude?(address.id))
           end
       end
 
@@ -184,16 +192,25 @@ module Spree
       # and a checkout split across sellers keeps one on the group beside the
       # copies on each seller's order.
       def anonymize_order_addresses
-        address_ids = [
-          owned_purchases(Spree::Order).pluck(:bill_address_id, :ship_address_id),
-          owned_purchases(Spree::Cart).pluck(:bill_address_id, :ship_address_id),
-          owned_purchases(Spree::OrderGroup).pluck(:bill_address_id, :ship_address_id)
-        ].flatten.compact.uniq
+        address_ids = purchase_address_ids
         return if address_ids.empty?
 
         Spree::Address.where(id: address_ids).find_each do |address|
           redact_address(address, deleted: false)
         end
+      end
+
+      # Every address a purchase points at. Read once and shared with the
+      # address-book step, which must not soft-delete a row that is also one
+      # of these.
+      #
+      # @return [Array<Integer, String>]
+      def purchase_address_ids
+        @purchase_address_ids ||= [
+          owned_purchases(Spree::Order).pluck(:bill_address_id, :ship_address_id),
+          owned_purchases(Spree::Cart).pluck(:bill_address_id, :ship_address_id),
+          owned_purchases(Spree::OrderGroup).pluck(:bill_address_id, :ship_address_id)
+        ].flatten.compact.uniq
       end
 
       # Orders, carts and order groups. The money stays; the person goes.

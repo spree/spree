@@ -92,29 +92,41 @@ export function CustomerPrivacyCard({ customer }: { customer: Customer }) {
           </p>
         )}
 
-        {anonymized ? (
+        {anonymized && (
           <p className="text-sm text-muted-foreground">
             {t('admin.customers.privacy.already_anonymized', {
               date: formatStoreDateTime(customer.anonymized_at as string, timezone),
             })}
           </p>
-        ) : (
-          <div className="flex flex-wrap gap-2">
+        )}
+
+        <div className="flex flex-wrap gap-2">
+          {/* Exporting an erased account would hand back the tombstone, so it
+              goes once there is nothing left to disclose. */}
+          {!anonymized && (
             <Button variant="outline" size="sm" onClick={handleExport} disabled={exporting}>
               <DownloadIcon className="size-4" />
               {t('admin.customers.privacy.export')}
             </Button>
-            <Button
-              variant="destructive"
-              size="sm"
-              onClick={handleAnonymize}
-              disabled={anonymizeMutation.isPending}
-            >
-              <ShieldIcon className="size-4" />
-              {t('admin.customers.privacy.anonymize')}
-            </Button>
-          </div>
-        )}
+          )}
+          {/* Erasing stays, because personal data can come back onto an erased
+              account — an address added to finish an old order, a note typed
+              here — and running it again is the only thing that takes it off.
+              Hiding the button after the first run would strand it. */}
+          <Button
+            variant="destructive"
+            size="sm"
+            onClick={handleAnonymize}
+            disabled={anonymizeMutation.isPending}
+          >
+            <ShieldIcon className="size-4" />
+            {t(
+              anonymized
+                ? 'admin.customers.privacy.anonymize_again'
+                : 'admin.customers.privacy.anonymize',
+            )}
+          </Button>
+        </div>
       </CardContent>
     </Card>
   )

@@ -748,7 +748,8 @@
         "messages": {
           "anonymized": "Personal data erased"
         },
-        "title": "Privacy and data"
+        "title": "Privacy and data",
+        "anonymize_again": "Erase again"
       },
       "row_actions": {
         "delete_confirm": "Delete {{email}}? Customers with completed orders cannot be removed."

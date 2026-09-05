@@ -748,7 +748,8 @@
         "messages": {
           "anonymized": "Données personnelles effacées"
         },
-        "title": "Confidentialité et données"
+        "title": "Confidentialité et données",
+        "anonymize_again": "Effacer à nouveau"
       },
       "row_actions": {
         "delete_confirm": "Supprimer {{email}} ? Les clients ayant des commandes finalisées ne peuvent pas être supprimés."

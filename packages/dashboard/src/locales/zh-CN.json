@@ -746,7 +746,8 @@
         "messages": {
           "anonymized": "个人数据已抹除"
         },
-        "title": "隐私与数据"
+        "title": "隐私与数据",
+        "anonymize_again": "再次抹除"
       },
       "row_actions": {
         "delete_confirm": "删除 {{email}}？已有已完成订单的客户无法被移除。"

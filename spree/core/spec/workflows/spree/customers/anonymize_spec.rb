@@ -340,6 +340,38 @@ RSpec.describe Spree::Customers::Anonymize do
     end
   end
 
+  # Checkout account creation re-homes the order's address snapshot onto the
+  # new customer, so one row is both an address-book entry and what the order
+  # was shipped to. The order path deliberately leaves those undeleted so a tax
+  # enquiry can still read the jurisdiction off the sale.
+  describe 'an address that is both in the book and on an order' do
+    let!(:shared) { create(:address, owner: customer, address1: '5 Baker Street') }
+    let!(:book_only) { create(:address, owner: customer, address1: '9 Other Road') }
+    let!(:order) do
+      create(:completed_order_with_totals, customer: customer, store: store).tap do |placed|
+        placed.update_columns(bill_address_id: shared.id, ship_address_id: shared.id)
+      end
+    end
+
+    it 'keeps the one the order points at' do
+      result
+
+      expect(shared.reload.deleted_at).to be_nil
+    end
+
+    it 'still removes one that is only in the book' do
+      result
+
+      expect(book_only.reload.deleted_at).to be_present
+    end
+
+    it 'redacts both either way' do
+      result
+
+      expect([shared.reload.address1, book_only.reload.address1]).to eq(%w[Redacted Redacted])
+    end
+  end
+
   describe 'a store credit balance' do
     let!(:store_credit) do
       create(:store_credit, customer: customer, store: store).

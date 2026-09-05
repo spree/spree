@@ -756,7 +756,8 @@
         "messages": {
           "anonymized": "Dane osobowe usunięte"
         },
-        "title": "Prywatność i dane"
+        "title": "Prywatność i dane",
+        "anonymize_again": "Usuń ponownie"
       },
       "row_actions": {
         "delete_confirm": "Usunąć {{email}}? Klientów ze zrealizowanymi zamówieniami nie można usunąć."

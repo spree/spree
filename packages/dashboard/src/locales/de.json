@@ -748,7 +748,8 @@
         "messages": {
           "anonymized": "Personenbezogene Daten gelöscht"
         },
-        "title": "Datenschutz und Daten"
+        "title": "Datenschutz und Daten",
+        "anonymize_again": "Erneut löschen"
       },
       "row_actions": {
         "delete_confirm": "{{email}} löschen? Kunden mit abgeschlossenen Bestellungen können nicht entfernt werden."
