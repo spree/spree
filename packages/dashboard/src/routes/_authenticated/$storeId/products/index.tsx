@@ -32,6 +32,7 @@ import {
   LayersIcon,
   PlusIcon,
   RadioTowerIcon,
+  StoreIcon,
   TagIcon,
   TagsIcon,
   Trash2Icon,
@@ -54,7 +55,9 @@ import {
   useBulkAddProductsToChannels,
   useBulkAddProductsToCollections,
   useBulkAddProductTags,
+  useBulkCloseProductsToSellers,
   useBulkDestroyProducts,
+  useBulkOpenProductsToSellers,
   useBulkProductStatusUpdate,
   useBulkRemoveProductsFromCategories,
   useBulkRemoveProductsFromChannels,
@@ -62,6 +65,7 @@ import {
   useBulkRemoveProductTags,
   useCloneProduct,
 } from '../../../../hooks/use-products'
+import { useSellers } from '../../../../hooks/use-sellers'
 import '../../../../tables/products'
 import { toastManager } from '@spree/dashboard-ui'
 
@@ -107,6 +111,12 @@ function ProductsPage() {
   const bulkAddTags = useBulkAddProductTags()
   const bulkRemoveTags = useBulkRemoveProductTags()
   const bulkDestroy = useBulkDestroyProducts()
+  const bulkOpenToSellers = useBulkOpenProductsToSellers()
+  const bulkCloseToSellers = useBulkCloseProductsToSellers()
+  // Only whether the store has any sellers at all: the marketplace bulk
+  // actions are hidden entirely on a store selling purely its own goods.
+  const { data: sellers } = useSellers({ limit: 1 })
+  const hasSellers = (sellers?.data.length ?? 0) > 0
 
   // Memo: rebuilding the array (and the row-actions render-prop) on every
   // mutation `isPending` toggle would force `<ResourceTable>` to re-render
@@ -296,8 +306,32 @@ function ProductsPage() {
       errorMessage: t('admin.pages.products.bulk.delete_failed'),
     }
 
+    // Opening the shared catalog, and closing it again. Only shown where it
+    // can mean something — a store with no sellers has nothing to open to
+    // (docs/plans/6.0-seller-master-catalog-listings.md, Decision 2).
+    const openToSellers: BulkAction<unknown> = {
+      key: 'open-to-sellers',
+      label: t('admin.products.offers.bulk_open'),
+      icon: <StoreIcon className="size-4" />,
+      subject: Subject.Product,
+      run: ({ ids }) => bulkOpenToSellers.mutateAsync({ ids }),
+      successMessage: t('admin.products.offers.bulk_opened'),
+      errorMessage: t('admin.products.offers.bulk_failed'),
+    }
+
+    const closeToSellers: BulkAction<unknown> = {
+      key: 'close-to-sellers',
+      label: t('admin.products.offers.bulk_close'),
+      icon: <StoreIcon className="size-4" />,
+      subject: Subject.Product,
+      run: ({ ids }) => bulkCloseToSellers.mutateAsync({ ids }),
+      successMessage: t('admin.products.offers.bulk_closed'),
+      errorMessage: t('admin.products.offers.bulk_failed'),
+    }
+
     return [
       statusAction,
+      ...(hasSellers ? [openToSellers, closeToSellers] : []),
       addCategories,
       removeCategories,
       addCollections,
@@ -320,6 +354,9 @@ function ProductsPage() {
     bulkAddTags,
     bulkRemoveTags,
     bulkDestroy,
+    bulkOpenToSellers,
+    bulkCloseToSellers,
+    hasSellers,
   ])
 
   const renderRowActions = useCallback(

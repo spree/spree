@@ -267,6 +267,23 @@ bundle exec rake spree:uploads:assign_stores
 
 Every uploaded file now records the store that owns it (`active_storage_blobs.store_id`). New uploads get it when they are made; this task gives existing files the store of the record they are attached to. A file attached in more than one store is listed and left alone for you to resolve. Safe to re-run at any time.
 
+### Variant statuses
+
+```bash
+bundle exec rake spree:upgrade:backfill_variant_statuses
+```
+
+Variants have their own status in 6.0, so a marketplace seller's offer on a
+shared product can be submitted, reviewed and sent back. Every variant that
+existed before the upgrade was on sale, so this sets them all to `active`.
+
+<Warning>
+Run this before serving traffic on the new code. `active` now gates
+availability, and a variant whose status is still empty reads as unavailable —
+which would take your entire catalog off sale at once: nothing purchasable, no
+buy box, and products dropping out of filters and search.
+</Warning>
+
 ## Enable Active Record encryption
 
 Spree encrypts payment gateway and integration secrets, webhook endpoint signing secrets, payment gateway customer IDs and the OAuth tokens on user identities with [Active Record encryption](https://guides.rubyonrails.org/active_record_encryption.html) — but only when encryption keys are configured. Without keys these values are stored in plain text. New 6.0 projects get keys at setup; upgraded applications need to add them.

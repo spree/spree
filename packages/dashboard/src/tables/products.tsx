@@ -161,6 +161,19 @@ defineTable('products', {
           '—'
         ),
     },
+    // Whether sellers may list their own offers against this product. Off by
+    // default on the column list as well as in the data: a store with no
+    // sellers has no use for it
+    // (docs/plans/6.0-seller-master-catalog-listings.md, Decision 2).
+    {
+      key: 'open_to_sellers',
+      label: i18n.t('admin.fields.product.open_to_sellers.label'),
+      filterable: true,
+      filterType: 'boolean',
+      ransackAttribute: 'open_to_sellers',
+      render: (product) =>
+        product.open_to_sellers ? i18n.t('admin.common.yes') : i18n.t('admin.common.no'),
+    },
     {
       key: 'categories',
       label: i18n.t('admin.fields.product.category_ids.label'),
