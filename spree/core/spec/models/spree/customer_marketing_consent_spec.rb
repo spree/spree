@@ -35,10 +35,13 @@ RSpec.describe 'Spree::Customer marketing consent' do
     expect(customer.email_marketing_consent_source).to eq(Spree::ConsentRecord::CHECKOUT)
   end
 
-  it 'defaults the source to the account page' do
+  # Naming a source nobody supplied would be evidence of a gesture that never
+  # happened: a CSV import and an unsubscribe both land here, and neither is
+  # somebody visiting their profile and clicking.
+  it 'records an unknown source when nothing said where the change came from' do
     customer.update!(accepts_email_marketing: true)
 
-    expect(customer.email_marketing_consent_source).to eq('account')
+    expect(customer.email_marketing_consent_source).to eq(Spree::ConsentRecord::UNKNOWN)
   end
 
   it 'leaves the timestamp alone when the flag did not move' do

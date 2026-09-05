@@ -662,7 +662,6 @@
         },
         "customer_since": "注册时间",
         "delete_confirm_message": "此操作会完全移除账户，客户完成订单后将不再可用。若要回应已购买客户的删除请求，请改用“抹除个人数据”。",
-        "delete_label": "删除客户",
         "edit_profile_description": "更新客户的个人资料信息。",
         "groups": {
           "edit_description": "添加或移除此客户所属的群组。",
@@ -748,9 +747,6 @@
         },
         "title": "隐私与数据",
         "anonymize_again": "再次抹除"
-      },
-      "row_actions": {
-        "delete_confirm": "删除 {{email}}？已有已完成订单的客户无法被移除。"
       },
       "table": {
         "empty": "暂无客户",

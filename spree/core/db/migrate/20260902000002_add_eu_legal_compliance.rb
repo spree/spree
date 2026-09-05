@@ -31,7 +31,14 @@ class AddEuLegalCompliance < ActiveRecord::Migration[8.1]
 
     add_index :spree_consent_records, [:store_id, :purpose, :recorded_at],
               name: 'index_spree_consent_records_on_store_purpose_recorded'
-    add_index :spree_consent_records, :email
+    # Erasure and export match consent records case-insensitively, so the
+    # useful index is on the lowered column rather than the raw one.
+    if ActiveRecord::Base.connection.adapter_name == 'PostgreSQL'
+      add_index :spree_consent_records, 'LOWER(email)',
+                name: 'index_spree_consent_records_on_lower_email'
+    else
+      add_index :spree_consent_records, :email
+    end
 
     # A GDPR data subject request — access (Art. 15) or erasure (Art. 17).
     create_table :spree_data_requests do |t|

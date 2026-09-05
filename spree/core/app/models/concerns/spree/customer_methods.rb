@@ -408,7 +408,7 @@ module Spree
 
     def stamp_email_marketing_consent
       self.email_marketing_consent_updated_at = Time.current
-      self.email_marketing_consent_source = @consent_source.presence || Spree::ConsentRecord::ACCOUNT
+      self.email_marketing_consent_source = @consent_source.presence || Spree::ConsentRecord::UNKNOWN
     end
 
     def sync_newsletter_subscription_with_marketing_consent

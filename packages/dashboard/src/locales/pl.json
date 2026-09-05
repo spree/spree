@@ -670,7 +670,6 @@
         },
         "customer_since": "Klient od",
         "delete_confirm_message": "To usuwa konto w całości i nie jest możliwe po zakończonym zamówieniu. Aby odpowiedzieć na wniosek o usunięcie danych od osoby, która już kupiła, użyj „Usuń dane osobowe”.",
-        "delete_label": "Usuń klienta",
         "edit_profile_description": "Zaktualizuj dane profilu klienta.",
         "groups": {
           "edit_description": "Dodaj lub usuń grupy, do których należy ten klient.",
@@ -758,9 +757,6 @@
         },
         "title": "Prywatność i dane",
         "anonymize_again": "Usuń ponownie"
-      },
-      "row_actions": {
-        "delete_confirm": "Usunąć {{email}}? Klientów ze zrealizowanymi zamówieniami nie można usunąć."
       },
       "table": {
         "empty": "Brak klientów",

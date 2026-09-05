@@ -6,6 +6,7 @@ import i18n from 'i18next'
 import { adminUserAutocompleteProps } from '../hooks/use-admin-users'
 import { customerAutocompleteProps } from '../hooks/use-customers'
 import { giftCardBatchAutocompleteProps } from '../hooks/use-gift-cards'
+import { erasedFieldValue } from '../lib/erased-customer'
 
 // Server `Spree::GiftCard#display_status` exposes "expired" when the card
 // is past its expiration date, even though the underlying column is still
@@ -42,7 +43,9 @@ defineTable<GiftCard>('gift-cards', {
           id={g.id}
           dataAttr="data-gift-card-id"
           name={g.code}
-          secondary={g.customer?.email ?? undefined}
+          secondary={
+            g.customer ? erasedFieldValue(g.customer.email, g.customer.anonymized) : undefined
+          }
         />
       ),
     },
@@ -121,7 +124,7 @@ defineTable<GiftCard>('gift-cards', {
       filterType: 'resource',
       filterResource: customerAutocompleteProps('gift-card-customer-filter'),
       default: false,
-      render: (g) => g.customer?.email ?? '—',
+      render: (g) => (g.customer ? erasedFieldValue(g.customer.email, g.customer.anonymized) : '—'),
     },
     {
       key: 'created_by',

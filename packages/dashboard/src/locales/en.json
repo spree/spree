@@ -664,7 +664,6 @@
         },
         "customer_since": "Customer since",
         "delete_confirm_message": "This removes the account entirely and is refused once the customer has completed an order. To answer an erasure request from someone who has bought something, use Erase personal data instead.",
-        "delete_label": "Delete customer",
         "edit_profile_description": "Update the customer's profile information.",
         "groups": {
           "edit_description": "Add or remove the groups this customer belongs to.",
@@ -750,9 +749,6 @@
         },
         "title": "Privacy and data",
         "anonymize_again": "Erase again"
-      },
-      "row_actions": {
-        "delete_confirm": "Delete {{email}}? Customers with completed orders cannot be removed."
       },
       "table": {
         "empty": "No customers yet",

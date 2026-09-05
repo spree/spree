@@ -34,9 +34,13 @@ module Spree
     # Core's own: erasure withdraws marketing consent on the person's behalf,
     # and that withdrawal is a consent event like any other.
     ANONYMIZATION = 'anonymization'.freeze
+    # The flag changed but nothing said where. Recording it as ACCOUNT would
+    # claim the person visited their profile and clicked, which is the same
+    # fabrication the ADMIN constant exists to avoid.
+    UNKNOWN = 'unknown'.freeze
 
     SOURCES = [CHECKOUT, REGISTRATION, ACCOUNT, ADMIN, NEWSLETTER, ANONYMIZATION,
-               'import', 'storefront'].freeze
+               UNKNOWN, 'import', 'storefront'].freeze
 
     belongs_to :store, class_name: 'Spree::Store'
     belongs_to :owner, polymorphic: true

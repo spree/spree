@@ -664,7 +664,6 @@
         },
         "customer_since": "Kunde seit",
         "delete_confirm_message": "Damit wird das Konto vollständig entfernt; nach einer abgeschlossenen Bestellung ist das nicht mehr möglich. Für eine Löschanfrage einer Person, die bereits gekauft hat, nutzen Sie stattdessen „Personenbezogene Daten löschen“.",
-        "delete_label": "Kundin oder Kunden löschen",
         "edit_profile_description": "Aktualisieren Sie die Profilinformationen des Kunden.",
         "groups": {
           "edit_description": "Gruppen hinzufügen oder entfernen, denen dieser Kunde angehört.",
@@ -750,9 +749,6 @@
         },
         "title": "Datenschutz und Daten",
         "anonymize_again": "Erneut löschen"
-      },
-      "row_actions": {
-        "delete_confirm": "{{email}} löschen? Kunden mit abgeschlossenen Bestellungen können nicht entfernt werden."
       },
       "table": {
         "empty": "Noch keine Kunden",

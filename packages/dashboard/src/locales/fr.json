@@ -664,7 +664,6 @@
         },
         "customer_since": "Client depuis",
         "delete_confirm_message": "Cela supprime entièrement le compte et devient impossible dès qu'une commande est finalisée. Pour répondre à une demande d'effacement d'un client ayant déjà acheté, utilisez « Effacer les données personnelles ».",
-        "delete_label": "Supprimer le client",
         "edit_profile_description": "Mettez à jour les informations du profil du client.",
         "groups": {
           "edit_description": "Ajoutez ou retirez les groupes auxquels ce client appartient.",
@@ -750,9 +749,6 @@
         },
         "title": "Confidentialité et données",
         "anonymize_again": "Effacer à nouveau"
-      },
-      "row_actions": {
-        "delete_confirm": "Supprimer {{email}} ? Les clients ayant des commandes finalisées ne peuvent pas être supprimés."
       },
       "table": {
         "empty": "Aucun client pour le moment",

@@ -25,6 +25,7 @@ import { EllipsisVerticalIcon, PencilIcon } from '@spree/dashboard-ui/icons'
 import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useOrderMutation } from '../../../hooks/use-order'
+import { customerDisplayName, erasedFieldValue } from '../../../lib/erased-customer'
 
 /**
  * Who the order is for and where it is going. The only place a placed order's
@@ -81,11 +82,17 @@ export function CustomerCard({ order }: { order: Order }) {
           {customer ? (
             <div className="flex items-center gap-3 rounded-xl bg-muted p-3">
               <Avatar>
-                <AvatarFallback>{getInitials(customer.full_name, customer.email)}</AvatarFallback>
+                <AvatarFallback>
+                  {customer.anonymized ? '—' : getInitials(customer.full_name, customer.email)}
+                </AvatarFallback>
               </Avatar>
               <div className="min-w-0 flex-1">
-                <div className="truncate text-sm font-medium">{customer.full_name}</div>
-                <div className="truncate text-xs text-muted-foreground">{customer.email}</div>
+                <div className="truncate text-sm font-medium">
+                  {customerDisplayName(customer, t('admin.customers.erased.name'))}
+                </div>
+                <div className="truncate text-xs text-muted-foreground">
+                  {erasedFieldValue(customer.email, customer.anonymized)}
+                </div>
               </div>
             </div>
           ) : order.email ? (

@@ -50,6 +50,12 @@ module Spree
         # an open dispute, a fraud investigation or a legal hold rejects here.
         run_hooks :validate
 
+        # Read-only: it only collects the attachments for the purge that runs
+        # after the commit, so it stays out of the transaction rather than
+        # holding locks on orders and carts while it scans. It must still run
+        # before the step that rewrites the email, since it matches on it.
+        step :remove_purchase_order_documents
+
         committed = false
 
         ApplicationRecord.transaction do
@@ -60,9 +66,8 @@ module Spree
           step :anonymize_account
           step :anonymize_address_book
           step :anonymize_order_addresses
-          # Both read the purchases by email, so they run before the step that
+          # Reads the purchases by email, so it runs before the step that
           # rewrites it.
-          step :remove_purchase_order_documents
           step :anonymize_payment_sources
           step :anonymize_purchases
           step :forget_gateway_profiles
@@ -77,16 +82,13 @@ module Spree
           committed = true
         end
 
-        # Deleting a file is not something a rollback can undo, so the files
-        # are only released once the redaction they belong to has committed.
-        # `ActiveRecord::Rollback` is swallowed by the block above, so the flag
-        # is what distinguishes a commit from a silent unwind.
         # Nothing below this line describes what happened unless the redaction
         # actually stuck. `ActiveRecord::Rollback` is swallowed by the block
         # above rather than re-raised, so without the flag a rolled-back
-        # erasure would purge the person's files, announce `customer.anonymized`
-        # to every subscriber, run the hooks that release gateway data, and
-        # hand back success — for a row that is still fully identified.
+        # erasure would purge the person's files — which no rollback can undo —
+        # announce `customer.anonymized` to every subscriber, run the hooks that
+        # release gateway data, and hand back success, for a row that is still
+        # fully identified.
         unless committed
           return failure(customer, Spree.t('customer_errors.anonymize_failed'))
         end

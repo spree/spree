@@ -185,24 +185,8 @@ module Spree
       # not an abandoned checkout — those are carts, on their own table — and
       # it holds the same personal data a placed order does.
       def draft_orders
-        owned_purchases(Spree::Order).incomplete.
-          includes(:bill_address, :ship_address, line_items: { variant: :product }).map do |order|
-          {
-            number: order.number,
-            email: order.email,
-            currency: order.currency,
-            item_total: order.item_total&.to_s,
-            customer_note: order.customer_note,
-            last_ip_address: order.last_ip_address,
-            metadata: order.metadata.presence,
-            internal_note: order.internal_note,
-            billing_address: address_hash(order.bill_address),
-            shipping_address: address_hash(order.ship_address),
-            created_at: order.created_at&.iso8601,
-            line_items: order.line_items.map do |line_item|
-              { name: line_item.name, sku: line_item.sku, quantity: line_item.quantity }
-            end
-          }
+        unplaced_purchases(owned_purchases(Spree::Order).incomplete) do |order|
+          { number: order.number, internal_note: order.internal_note }
         end
       end
 
@@ -210,23 +194,36 @@ module Spree
       # request has to disclose them. Kept separate from orders: nothing was
       # bought, and listing them together would misrepresent both.
       def carts
-        owned_purchases(Spree::Cart).
-          includes(:bill_address, :ship_address, line_items: { variant: :product }).map do |cart|
-          {
-            email: cart.email,
-            currency: cart.currency,
-            item_total: cart.item_total&.to_s,
-            customer_note: cart.customer_note,
-            last_ip_address: cart.last_ip_address,
-            metadata: cart.metadata.presence,
-            billing_address: address_hash(cart.bill_address),
-            shipping_address: address_hash(cart.ship_address),
-            created_at: cart.created_at&.iso8601,
-            line_items: cart.line_items.map do |line_item|
+        unplaced_purchases(owned_purchases(Spree::Cart))
+      end
+
+      # Drafts and abandoned carts disclose the same fields; the caller adds
+      # whatever its own model carries on top. Batched for the same reason
+      # #orders is.
+      def unplaced_purchases(relation)
+        exported = []
+
+        relation.includes(:bill_address, :ship_address, line_items: { variant: :product }).
+          find_each do |purchase|
+          extra = block_given? ? yield(purchase) : {}
+
+          exported << {
+            email: purchase.email,
+            currency: purchase.currency,
+            item_total: purchase.item_total&.to_s,
+            customer_note: purchase.customer_note,
+            last_ip_address: purchase.last_ip_address,
+            metadata: purchase.metadata.presence,
+            billing_address: address_hash(purchase.bill_address),
+            shipping_address: address_hash(purchase.ship_address),
+            created_at: purchase.created_at&.iso8601,
+            line_items: purchase.line_items.map do |line_item|
               { name: line_item.name, sku: line_item.sku, quantity: line_item.quantity }
             end
-          }
+          }.merge(extra)
         end
+
+        exported
       end
 
       # Card numbers were never stored, so this is the metadata that was: the

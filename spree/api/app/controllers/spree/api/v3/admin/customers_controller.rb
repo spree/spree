@@ -114,10 +114,12 @@ module Spree
             end
 
             # Its own record, never an existing one. `DataRequests::Create`
-            # would hand back whatever the customer already has in flight, and
+            # returns whatever request is in flight for this customer, and
             # completing that here would close their request without ever
             # delivering their file — the queued job would then refuse it as no
-            # longer pending.
+            # longer pending. Its `requested_by_id: nil` filter does not help:
+            # it scopes to rows the customer opened, which is exactly the row
+            # that must be left alone.
             data_request = Spree::DataRequest.create!(
               store: current_store,
               customer: @resource,
@@ -126,11 +128,10 @@ module Spree
               requested_by: try_spree_current_user
             )
 
-            # Rendered inline because a staff member is waiting on it, but the
-            # request row is opened first: an Art. 15 response should leave the
-            # same trace whoever produced it, and building through the workflow
-            # is what runs the `extend_payload` hook a host app relies on to
-            # complete the document.
+            # The request row is opened first: an Art. 15 response should leave
+            # the same trace whoever produced it, and building through the
+            # workflow is what runs the `extend_payload` hook a host app relies
+            # on to complete the document.
             payload = Spree::DataRequests::Fulfill.payload_for(data_request)
             data_request.update(status: 'completed', completed_at: Time.current)
 

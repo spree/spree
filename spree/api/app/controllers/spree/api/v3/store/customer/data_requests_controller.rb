@@ -42,9 +42,20 @@ module Spree
               Spree.api.data_request_serializer
             end
 
-            # A person sees their own requests and no one else's.
+            def set_parent
+              @parent = current_user
+            end
+
+            def parent_association
+              :data_requests
+            end
+
+            # A person sees their own requests and no one else's. The store
+            # narrowing is restated because the parent branch of the base scope
+            # replaces `for_store` with the association, and a customer is
+            # global while their requests are not.
             def scope
-              super.where(customer_id: current_user.id).recent_first
+              super.for_store(current_store).recent_first
             end
 
             private

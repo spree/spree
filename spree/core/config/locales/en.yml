@@ -870,9 +870,7 @@ en:
     custom_fields: Custom Fields
     customer: Customer
     customer_errors:
-      already_anonymized: This customer's personal data has already been erased
       anonymize_failed: The erasure could not be completed and nothing was changed
-      erased_account: cannot be set on an account whose data has been erased
     customer_group: Customer Group
     customer_groups: Customer Groups
     customer_mailer:

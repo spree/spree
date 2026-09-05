@@ -37,7 +37,7 @@ export function CustomerPrivacyCard({ customer }: { customer: Customer }) {
   const anonymizeMutation = useAnonymizeCustomer(customer.id)
   const [exporting, setExporting] = useState(false)
 
-  const anonymized = Boolean(customer.anonymized_at)
+  const anonymized = Boolean(customer.anonymized)
 
   // Streamed through the admin endpoint rather than fetched and re-serialized,
   // so the file the merchant forwards is exactly what the server produced.
