@@ -112,6 +112,15 @@ RSpec.describe Spree::Api::V3::Admin::CustomersController, type: :controller do
       expect(customer.reload.email_marketing_consent_source).to eq(Spree::ConsentRecord::ADMIN)
     end
 
+    # A host app that swaps the anonymizer in must get the same erasure
+    # whoever asked for it — theirs when the customer requests it, and theirs
+    # when a merchant answers the same request from the admin.
+    it 'erases through the swappable workflow, not the class' do
+      expect(Spree.customer_anonymize_workflow).to receive(:call).and_call_original
+
+      post :anonymize, params: { id: customer.prefixed_id }, as: :json
+    end
+
     it '404s for a customer that does not exist' do
       get :export, params: { id: 'cust_nonexistent' }, as: :json
 

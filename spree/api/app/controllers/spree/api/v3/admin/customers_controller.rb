@@ -74,7 +74,12 @@ module Spree
             # reads, and an erasure that left only an event was invisible to it.
             data_request = open_erasure_record
 
-            result = Spree::Customers::Anonymize.call(
+            # Through the dependency, not the class: a host app that swaps the
+            # anonymizer in — for a legal hold, or to reach its own tables —
+            # must get the same erasure whoever asked for it. Naming the class
+            # here would apply their override to a customer's own request and
+            # skip it when staff answer the same request from the admin.
+            result = Spree.customer_anonymize_workflow.call(
               customer: @resource,
               store: current_store,
               requested_by: try_spree_current_user
