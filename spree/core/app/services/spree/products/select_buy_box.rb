@@ -59,7 +59,7 @@ module Spree
         # ranked, and must not be what the page falls back to naming when
         # nothing is buyable either
         # (docs/plans/6.0-seller-master-catalog-listings.md, Decision 3).
-        variants = product.listed_variants
+        variants = product.visible_variants
         return variants if option_value_ids.blank?
 
         # Compared as strings, never cast: ids may be UUIDs, and a prefixed id

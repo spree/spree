@@ -27,6 +27,19 @@ export function useSellers(params?: ListParams & Record<string, unknown>) {
 }
 
 /**
+ * Whether this store has any sellers at all.
+ *
+ * What the marketplace surfaces gate on: an operator selling purely their own
+ * goods should never meet an "open to sellers" switch or a seller column. One
+ * row is enough to answer it, and every caller shares the cache.
+ */
+export function useHasSellers(): boolean {
+  const { data } = useSellers({ limit: 1 })
+
+  return (data?.data.length ?? 0) > 0
+}
+
+/**
  * Shared config for any `<ResourceMultiAutocomplete>` picking sellers (today
  * the products table filter). Pass a unique `queryKey` per instance so
  * independent caches don't collide.

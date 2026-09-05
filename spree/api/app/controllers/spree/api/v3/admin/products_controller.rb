@@ -3,6 +3,7 @@ module Spree
     module V3
       module Admin
         class ProductsController < ResourceController
+          include Spree::Api::V3::StatusActions
           include Spree::Api::V3::BulkOperations
           include Spree::Api::V3::Admin::ProductListing
 
@@ -36,14 +37,17 @@ module Spree
           #
           # Accepting a product a seller submitted, putting it on sale.
           def approve
-            run_review_workflow(Spree.product_approve_workflow)
+            set_status_resource
+            run_status_workflow(Spree.product_approve_workflow, reviewer: try_spree_current_user)
           end
 
           # PATCH /api/v3/admin/products/:id/reject
           #
           # Turning a submission down. The reason goes back to the seller.
           def reject
-            run_review_workflow(Spree.product_reject_workflow, reason: params[:reason])
+            set_status_resource
+            run_status_workflow(Spree.product_reject_workflow,
+                                reviewer: try_spree_current_user, reason: params[:reason])
           end
 
           # POST /api/v3/admin/products/bulk_status_update
@@ -295,32 +299,9 @@ module Spree
             ).tap { |attrs| attrs.delete(:status) if review_status?(attrs[:status]) }
           end
 
-          # A review status is an outcome, not a value to assign: `proposed`
-          # means a seller asked, and `rejected` means somebody decided. Both
-          # are reached through the workflows behind `approve`/`reject`, so a
-          # status naming one here is dropped rather than written — the same
-          # reason `bulk_status_update` validates against `STATUSES` and not
-          # the full list (docs/plans/6.0-seller-product-submission.md).
-          def review_status?(status)
-            status.present? && Spree::Product::REVIEW_STATUSES.include?(status.to_s)
-          end
 
           private
 
-          # Approving and rejecting are edits to the catalog, so they answer to
-          # the same key as any other product write.
-          def run_review_workflow(workflow, **arguments)
-            @resource = find_resource
-            authorize!(:update, @resource)
-
-            result = workflow.call(product: @resource, reviewer: try_spree_current_user, **arguments)
-
-            if result.success?
-              render json: serialize_resource(@resource.reload)
-            else
-              render_service_error(@resource.errors.presence || result.error)
-            end
-          end
 
           # Only first-party products can be opened: a product a seller owns
           # outright is theirs, and inviting rival offers onto it would be the

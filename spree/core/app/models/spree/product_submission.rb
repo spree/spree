@@ -44,8 +44,6 @@ module Spree
     # winner to insertion order.
     scope :latest_first, -> { order(created_at: :desc, id: :desc) }
 
-    # A product's own trail, as opposed to its offers'.
-    scope :for_product_itself, -> { where(variant_id: nil) }
 
     self.whitelisted_ransackable_attributes = %w[status reviewed_at created_at]
 

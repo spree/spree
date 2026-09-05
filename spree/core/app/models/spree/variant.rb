@@ -28,10 +28,9 @@ module Spree
     # Variants::Propose.
     has_status :draft, :proposed, :active, :rejected, :archived, default: :active
 
-    # Statuses an operator assigns directly. Reaching `proposed` is a seller
-    # submitting and reaching `rejected` is an operator deciding, so neither
-    # is a value to assign — they are workflows.
-    STATUSES = %w[draft active archived].freeze
+    # Reaching `proposed` is a seller submitting and reaching `rejected` is an
+    # operator deciding, so neither is ever a value to assign — the controllers
+    # drop them from a payload and the workflows are the only way in.
     REVIEW_STATUSES = %w[proposed rejected].freeze
 
     DIMENSION_UNITS = %w[mm cm in ft]
@@ -439,6 +438,11 @@ module Spree
     #
     # @return [Spree::ProductSubmission, nil]
     def latest_submission
+      # Reads the loaded association when a caller preloaded it — otherwise
+      # `latest_first.first` issues its own query per record, which is one
+      # query per row on any list that expands the review.
+      return submissions.max_by { |submission| [submission.created_at, submission.id] } if submissions.loaded?
+
       submissions.latest_first.first
     end
 

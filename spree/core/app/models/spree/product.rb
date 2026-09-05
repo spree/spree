@@ -42,7 +42,8 @@ module Spree
     MEMOIZED_METHODS = %w[total_on_hand category_and_ancestors
                           default_variant_id tax_category default_variant variant_for_images
                           primary_category buy_box_variants resolved_delivery_profile
-                          purchasable? in_stock? backorderable? digital?]
+                          purchasable? in_stock? backorderable? digital?
+                          visible_variants sellable_variants]
 
     # Statuses an operator sets directly. `bulk_status_update` validates
     # against this, which is why the review statuses are not in it: reaching
@@ -92,6 +93,11 @@ module Spree
     #
     # @return [Spree::ProductSubmission, nil]
     def latest_submission
+      # Reads the loaded association when a caller preloaded it — otherwise
+      # `latest_first.first` issues its own query per record, which is one
+      # query per row on any list that expands the review.
+      return submissions.max_by { |submission| [submission.created_at, submission.id] } if submissions.loaded?
+
       submissions.latest_first.first
     end
 
@@ -239,8 +245,18 @@ module Spree
 
     belongs_to :primary_media, class_name: 'Spree::Media', optional: true, foreign_key: :primary_media_id
 
-    has_many :option_value_variants, class_name: 'Spree::OptionValueVariant', through: :variants
-    has_many :option_values, class_name: 'Spree::OptionValue', through: :variants
+    # The variants a shopper may see: everything but the rows still in review,
+    # sent back or taken down. `variants` stays the operator's view — they
+    # write every row on a master product, including the ones awaiting their
+    # decision (docs/plans/6.0-seller-master-catalog-listings.md, Decision 3).
+    #
+    # An association rather than a method so it can be preloaded and chained
+    # in SQL; the rollups a customer sees are routed through it below.
+    has_many :listed_variants, -> { listed.order(:position) },
+             class_name: 'Spree::Variant', inverse_of: :product, dependent: nil
+
+    has_many :option_value_variants, class_name: 'Spree::OptionValueVariant', through: :listed_variants
+    has_many :option_values, class_name: 'Spree::OptionValue', through: :listed_variants
 
     has_many :digital_assets, through: :variants, class_name: 'Spree::DigitalAsset'
     has_many :digitals, through: :variants, class_name: 'Spree::DigitalAsset', source: :digital_assets, deprecated: true
@@ -517,23 +533,6 @@ module Spree
       sellable_variants.any?(&:backorderable?)
     end
 
-    # The variants a shopper is allowed to see at all: everything but the
-    # rows still in review, sent back or taken down.
-    #
-    # `variants` itself stays the operator's view — they write every row on a
-    # master product, including the ones awaiting their decision — so every
-    # customer-facing read (the Store API's expand, the search document, the
-    # buy box) goes through this instead
-    # (docs/plans/6.0-seller-master-catalog-listings.md, Decision 3).
-    #
-    # Filters the loaded association rather than querying, so a serialized
-    # list answers from variants it already holds.
-    #
-    # @return [Array<Spree::Variant>]
-    def listed_variants
-      variants.select(&:active?)
-    end
-
     # The variants a shopper could actually buy from: every one that is
     # active and whose seller is selling today, first-party included. Reads
     # the loaded association so a serialized list resolves it from variants it
@@ -544,8 +543,21 @@ module Spree
     # (docs/plans/6.0-seller-master-catalog-listings.md, Decision 3).
     #
     # @return [Array<Spree::Variant>]
+    # The listed variants, answered from memory when the caller already
+    # preloaded `variants`.
+    #
+    # The `listed_variants` association is the SQL-side narrowing and the one
+    # to preload on its own; this is what the storefront rollups read, because
+    # a product list preloads `variants` for the buy box and paying for a
+    # second query per product to re-ask the same question would undo that.
+    #
+    # @return [Array<Spree::Variant>]
+    def visible_variants
+      @visible_variants ||= variants.loaded? ? variants.select(&:active?) : listed_variants.to_a
+    end
+
     def sellable_variants
-      listed_variants.select do |variant|
+      @sellable_variants ||= visible_variants.select do |variant|
         seller = variant.resolved_seller
         seller.nil? || seller.sellable?
       end
