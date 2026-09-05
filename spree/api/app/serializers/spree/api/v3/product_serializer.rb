@@ -127,9 +127,14 @@ module Spree
              resource: proc { Spree.api.media_serializer },
              if: proc { expand?('media') }
 
+        # `listed_variants`, not the raw association: a seller's offer still in
+        # review, sent back or taken down is not something a shopper may see
+        # (docs/plans/6.0-seller-master-catalog-listings.md, Decision 3).
         many :variants,
              resource: proc { Spree.api.variant_serializer },
-             if: proc { expand?('variants') }
+             if: proc { expand?('variants') } do |product|
+          product.listed_variants
+        end
 
         one :default_variant,
             resource: proc { Spree.api.variant_serializer },
