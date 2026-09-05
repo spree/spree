@@ -22,6 +22,7 @@ import { CommissionLinesCard } from '../../../../../components/spree/orders/orde
 import { CustomerCard } from '../../../../../components/spree/orders/order-customer-card'
 import { DiscountsCard } from '../../../../../components/spree/orders/order-discounts-sidebar-card'
 import { OrderHeader } from '../../../../../components/spree/orders/order-header'
+import { OrderLogisticsCard } from '../../../../../components/spree/orders/order-logistics-card'
 import { MarketplaceCard } from '../../../../../components/spree/orders/order-marketplace-card'
 import {
   InternalNoteCard,
@@ -100,6 +101,7 @@ function OrderDetailPage() {
           <MarketplaceCard order={order} />
           <TagsCard order={order} />
           <DiscountsCard order={order} />
+          <OrderLogisticsCard order={order} />
           <OrderPurchaseOrderCard order={order} />
           <SpecialInstructionsCard order={order} />
           <InternalNoteCard order={order} />

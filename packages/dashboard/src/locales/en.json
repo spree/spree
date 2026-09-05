@@ -2878,6 +2878,20 @@
           "label": "Search variant",
           "placeholder": "Type product name or SKU (min 3 chars)…",
           "sku_prefix": "SKU"
+        },
+        "logistics": {
+          "title": "Logistics",
+          "units": "Units",
+          "cartons": "Cartons",
+          "pallets": "Pallets",
+          "volume": "Volume",
+          "weight": "Gross weight",
+          "cbm": "{{value}} CBM",
+          "kg": "{{value}} kg",
+          "incomplete": "Some items are not measured, so these figures are a floor rather than a total.",
+          "deposit": "Deposit",
+          "paid": "Paid",
+          "balance": "Balance"
         }
       },
       "edit": {

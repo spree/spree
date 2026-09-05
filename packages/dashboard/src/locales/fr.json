@@ -2878,6 +2878,20 @@
           "label": "Rechercher une variante",
           "placeholder": "Saisissez le nom du produit ou le SKU (3 caractères min.)…",
           "sku_prefix": "SKU"
+        },
+        "logistics": {
+          "title": "Logistique",
+          "units": "Unités",
+          "cartons": "Cartons",
+          "pallets": "Palettes",
+          "volume": "Volume",
+          "weight": "Poids brut",
+          "cbm": "{{value}} m³",
+          "kg": "{{value}} kg",
+          "incomplete": "Certains articles ne sont pas mesurés : ces chiffres sont un minimum, pas un total.",
+          "deposit": "Acompte",
+          "paid": "Payé",
+          "balance": "Solde"
         }
       },
       "edit": {

@@ -540,7 +540,12 @@ function FulfillmentRow({ order, fulfillment }: { order: Order; fulfillment: Ful
         </DropdownMenu>
       }
     >
-      {(fulfillment.delivery_method || Number.parseFloat(fulfillment.cost) > 0) && (
+      {/* A freight fulfillment awaiting a forwarder's quote costs zero until
+          it arrives, and hiding the row would hide the very fact that a quote
+          is still pending. */}
+      {(fulfillment.delivery_method ||
+        fulfillment.unpriced ||
+        Number.parseFloat(fulfillment.cost) > 0) && (
         <CardContent className="flex items-center justify-between border-b border-border-subtle py-3 text-sm">
           <span className="text-muted-foreground">
             {/* The selected rate names the carrier service that actually

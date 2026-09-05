@@ -157,7 +157,7 @@ module Spree
         # percentage. Null unless terms say a deposit, which is every retail
         # order. Price-gated with the rest of the money surface.
         attribute :payment_schedule do |purchase|
-          purchase.payment_schedule.as_json if purchase.payment_terms_snapshot&.deposit? && !params[:hide_prices]
+          payment_schedule_json(purchase) if purchase.payment_terms_snapshot&.deposit? && !params[:hide_prices]
         end
 
         attribute :freight_summary do |purchase|

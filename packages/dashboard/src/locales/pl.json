@@ -2900,6 +2900,20 @@
           "label": "Wyszukaj wariant",
           "placeholder": "Wpisz nazwę produktu lub SKU (min. 3 znaki)…",
           "sku_prefix": "SKU"
+        },
+        "logistics": {
+          "title": "Logistyka",
+          "units": "Sztuki",
+          "cartons": "Kartony",
+          "pallets": "Palety",
+          "volume": "Objętość",
+          "weight": "Waga brutto",
+          "cbm": "{{value}} m³",
+          "kg": "{{value}} kg",
+          "incomplete": "Część towaru nie ma wymiarów, więc te liczby to wartość minimalna, a nie suma.",
+          "deposit": "Zaliczka",
+          "paid": "Zapłacono",
+          "balance": "Pozostało"
         }
       },
       "edit": {

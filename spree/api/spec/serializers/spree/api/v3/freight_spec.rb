@@ -55,6 +55,23 @@ RSpec.describe 'freight serialization' do
       expect(schedule['deposit_paid']).to be(false)
     end
 
+    it 'formats every amount in the buyer\'s own currency' do
+      cart = create(:cart, store: store, currency: 'EUR')
+      create(:line_item, cart: cart, order: nil, price: 100, quantity: 1, currency: 'EUR')
+      fulfillment = create(:shipment, cart: cart, order: nil)
+      create(:delivery_rate, fulfillment: fulfillment, delivery_method: freight_method,
+                             selected: true, unpriced: true)
+      Spree::Carts::RecalculateTotals.call(cart: cart.reload)
+
+      schedule = schedule_for(cart)
+
+      # A client must never have to format a bare decimal itself — that is how
+      # two surfaces end up disagreeing about the same money.
+      expect(schedule['display_amount_due_now']).to include('€')
+      expect(schedule['display_deposit_amount']).to include('€')
+      expect(schedule['display_outstanding_balance']).to include('€')
+    end
+
     it 'says nothing on a retail cart, which owes its whole total' do
       cart = create(:cart, store: store)
       create(:line_item, cart: cart, order: nil, price: 100, quantity: 1)

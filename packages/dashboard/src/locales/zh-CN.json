@@ -2870,6 +2870,20 @@
           "label": "搜索变体",
           "placeholder": "输入商品名称或 SKU（至少 3 个字符）…",
           "sku_prefix": "SKU"
+        },
+        "logistics": {
+          "title": "物流",
+          "units": "件数",
+          "cartons": "箱数",
+          "pallets": "托盘数",
+          "volume": "体积",
+          "weight": "毛重",
+          "cbm": "{{value}} 立方米",
+          "kg": "{{value}} 公斤",
+          "incomplete": "部分商品未量尺寸，因此以上数字是下限而非总量。",
+          "deposit": "定金",
+          "paid": "已付",
+          "balance": "余款"
         }
       },
       "edit": {
