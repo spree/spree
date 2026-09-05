@@ -43,10 +43,16 @@ module Spree
         variant.assign_attributes(attrs)
       end
 
-      # Leaving review is a decision, and a decision belongs to Approve or
-      # Reject — they are what record who made it. A plain status write would
-      # put a seller's offer on sale with nobody's name against it, so it
-      # refuses (docs/plans/6.0-seller-master-catalog-listings.md).
+      # An offer's status is a decision, and a decision belongs to the review
+      # workflows — they are what record who made it and settle the submission
+      # row. A plain status write would put a seller's offer on sale with
+      # nobody's name against it, so it refuses
+      # (docs/plans/6.0-seller-master-catalog-listings.md).
+      #
+      # Guarded on the row being an offer rather than on where it was: a
+      # `draft` or `archived` offer is not in review, but flipping one to
+      # `active` is exactly the write this exists to stop. `Variants::Activate`
+      # refuses an offer for the same reason.
       #
       # Only what this call asked for: a caller that assigns attributes itself
       # and hands over an already-dirty record must not be refused for an edit
@@ -54,7 +60,7 @@ module Spree
       def refuse_review_status_write
         return unless @status_in_payload
         return unless variant.status_changed?
-        return unless variant.status_was.in?(Spree::Variant::REVIEW_STATUSES)
+        return unless variant.offer? || variant.status_was.in?(Spree::Variant::REVIEW_STATUSES)
 
         reject!(I18n.t('activerecord.errors.models.spree/variant.attributes.base.status_decided_by_review'))
       end

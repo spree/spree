@@ -322,15 +322,28 @@ RSpec.describe Spree::Api::V3::Admin::Products::VariantsController, type: :contr
       expect(offer.reload).to be_draft
     end
 
-    # The operator's own statuses stay writable — this narrows the review
-    # pair only.
-    it 'still allows an ordinary status' do
+    # An offer's status is the review's to move, whichever status is named:
+    # `Variants::Activate` refuses an offer for the same reason, so the plain
+    # update path must not be the way around it.
+    it 'refuses any status write on an offer' do
       patch :update, params: {
         product_id: product.prefixed_id, id: offer.prefixed_id, status: 'archived'
       }, as: :json
 
+      expect(response).to have_http_status(:unprocessable_content)
+      expect(offer.reload).to be_draft
+    end
+
+    # The operator's own rows are theirs to move — nobody reviews them.
+    it 'still allows a status on a first-party variant' do
+      first_party = create(:variant, product: product)
+
+      patch :update, params: {
+        product_id: product.prefixed_id, id: first_party.prefixed_id, status: 'archived'
+      }, as: :json
+
       expect(response).to have_http_status(:ok)
-      expect(offer.reload).to be_archived
+      expect(first_party.reload).to be_archived
     end
 
     it 'rejects through the member action, which records the decision' do
