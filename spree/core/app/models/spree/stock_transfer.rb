@@ -58,7 +58,8 @@ module Spree
       end
 
       unless variants_available_in_source_location?(source_location, variants)
-        errors.add(:base, :variants_unavailable, message: Spree.t('stock_transfer.errors.variants_unavailable'))
+        errors.add(:base, :variants_unavailable, stock: source_location.name,
+                   message: Spree.t('stock_transfer.errors.variants_unavailable', stock: source_location.name))
         return false
       end
 
