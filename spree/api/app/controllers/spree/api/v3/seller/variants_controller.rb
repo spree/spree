@@ -18,6 +18,7 @@ module Spree
         # (docs/plans/6.0-multi-vendor-marketplace.md, Decision 11).
         class VariantsController < Seller::ResourceController
           include Spree::Api::V3::Seller::CatalogParams
+          include Spree::Api::V3::StatusActions
 
           scoped_resource :products
 
@@ -68,6 +69,7 @@ module Spree
             return if params[:master_product_id].blank?
 
             @parent = current_store.products.active.for_seller(nil).open_to_sellers.
+                      includes(option_types: :option_values).
                       find_by_prefix_id!(params[:master_product_id])
           end
 
@@ -86,7 +88,12 @@ module Spree
           end
 
           def scope_includes
-            [:prices, :product, { option_values: :option_type }, { stock_levels: :stock_location }]
+            [
+              :prices, :submissions,
+              { product: { option_types: :option_values } },
+              { option_values: :option_type },
+              { stock_levels: :stock_location }
+            ]
           end
 
           def create_workflow
@@ -214,6 +221,7 @@ module Spree
 
             duplicate = current_seller.variants.where(product_id: product.id).
                         where.not(id: @resource&.id).
+                        includes(option_values: :option_type).
                         any? { |variant| option_signature(variant) == wanted }
 
             return unless duplicate
@@ -238,25 +246,6 @@ module Spree
             render_error(**error)
           end
 
-          # Named apart from the base class's own lookup: overriding that one
-          # changes every action, and these three are the only ones that move
-          # a status.
-          def set_status_resource
-            @resource = find_resource
-            # A status move is a change to the offer, so it needs the write
-            # key rather than one of its own.
-            authorize!(:update, @resource)
-          end
-
-          def run_status_workflow(workflow, **arguments)
-            result = workflow.call(variant: @resource, **arguments)
-
-            if result.success?
-              render json: serialize_resource(@resource.reload)
-            else
-              render_service_error(@resource.errors.presence || result.error)
-            end
-          end
         end
       end
     end
