@@ -2307,6 +2307,45 @@
       "order_multiple": {
         "label": "Wielokrotność zamówienia",
         "help": "Każdy kolejny krok powyżej minimum. Pozostaw puste, aby dopuścić dowolną ilość."
+      },
+      "package_type": {
+        "name": {
+          "label": "Nazwa"
+        },
+        "kind": {
+          "label": "Rodzaj",
+          "help": "Tylko karton zbiorczy może być opakowaniem produktu."
+        },
+        "length": {
+          "label": "Długość"
+        },
+        "width": {
+          "label": "Szerokość"
+        },
+        "height": {
+          "label": "Wysokość"
+        },
+        "dimensions_unit": {
+          "label": "Jednostka"
+        },
+        "dimensions": {
+          "help": "Do wagi objętościowej przewoźnika i metrów sześciennych progów frachtowych."
+        },
+        "weight": {
+          "label": "Waga pustego",
+          "help": "Samo opakowanie, doliczane do zawartości."
+        },
+        "max_weight": {
+          "label": "Maks. waga",
+          "help": "Ile może unieść."
+        },
+        "weight_unit": {
+          "label": "Jednostka"
+        },
+        "default": {
+          "label": "Domyślny karton sklepu",
+          "help": "Podstawa każdej wyceny paczki. Tylko jeden na sklep."
+        }
       }
     },
     "gift_cards": {
@@ -3786,6 +3825,9 @@
         "payouts": {
           "title": "Wypłaty",
           "subtitle": "Jak i kiedy ten marketplace płaci swoim sprzedawcom."
+        },
+        "package_types": {
+          "add_sheet_title": "Dodaj rodzaj opakowania"
         }
       },
       "staff": {
@@ -4815,7 +4857,8 @@
         "tax_categories": "Klasy podatkowe przypisane do produktów",
         "tax_rates": "Stawki stosowane według rynku i regionu",
         "webhooks": "Adresy powiadamiane o zdarzeniach",
-        "payouts": "Kto płaci Twoim sprzedawcom, jak często i od jakiej kwoty"
+        "payouts": "Kto płaci Twoim sprzedawcom, jak często i od jakiej kwoty",
+        "package_types": "Kartony, palety i kontenery"
       },
       "groups": {
         "audit": "Audyt",
@@ -4851,7 +4894,8 @@
         "tax_categories": "Kategorie podatkowe",
         "tax_rates": "Stawki podatku",
         "webhooks": "Webhooki",
-        "payouts": "Wypłaty"
+        "payouts": "Wypłaty",
+        "package_types": "Rodzaje opakowań"
       }
     },
     "setup": {
@@ -5157,6 +5201,37 @@
       "saved": "Tłumaczenia zapisane",
       "source": "Źródło",
       "title": "Tłumaczenia"
+    },
+    "package_types": {
+      "table_title": "Rodzaje opakowań",
+      "search_placeholder": "Szukaj opakowania",
+      "empty": "Brak opakowań. Dodaj karton wysyłkowy oraz kartony i palety dla zamówień hurtowych.",
+      "add_cta": "Dodaj rodzaj opakowania",
+      "default_badge": "Domyślne sklepu",
+      "edit_sheet_title": "Rodzaj opakowania",
+      "create_description": "Karton, paleta lub kontener, w który ten sklep pakuje towar.",
+      "edit_description": "Produkty pakowane w ten karton przyjmują jego wymiary — jedna zmiana poprawia wszystkie.",
+      "dimensions_column": "Wymiary",
+      "volume_column": "Objętość",
+      "kinds": {
+        "box": "Karton",
+        "envelope": "Koperta",
+        "carton": "Karton zbiorczy",
+        "pallet": "Paleta",
+        "container": "Kontener"
+      },
+      "messages": {
+        "added": "Dodano rodzaj opakowania",
+        "updated": "Zaktualizowano rodzaj opakowania",
+        "deleted": "Usunięto rodzaj opakowania"
+      },
+      "delete_confirm": {
+        "title": "Usunąć rodzaj opakowania?",
+        "message": "{{name}} zostanie usunięty. Produkty w nim zapakowane trzeba najpierw przepakować."
+      },
+      "validation": {
+        "non_negative": "musi wynosić zero lub więcej"
+      }
     }
   }
 }

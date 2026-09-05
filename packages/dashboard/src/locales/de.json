@@ -2293,6 +2293,45 @@
       "order_multiple": {
         "label": "Bestellvielfaches",
         "help": "Jeder Schritt über der Mindestmenge. Leer lassen für beliebige Mengen."
+      },
+      "package_type": {
+        "name": {
+          "label": "Name"
+        },
+        "kind": {
+          "label": "Art",
+          "help": "Nur ein Umkarton kann die Verpackung eines Produkts sein."
+        },
+        "length": {
+          "label": "Länge"
+        },
+        "width": {
+          "label": "Breite"
+        },
+        "height": {
+          "label": "Höhe"
+        },
+        "dimensions_unit": {
+          "label": "Einheit"
+        },
+        "dimensions": {
+          "help": "Für das Volumengewicht des Carriers und die Kubikmeter der Frachtstufen."
+        },
+        "weight": {
+          "label": "Leergewicht",
+          "help": "Die Verpackung selbst, zusätzlich zum Inhalt."
+        },
+        "max_weight": {
+          "label": "Max. Gewicht",
+          "help": "Was sie tragen kann."
+        },
+        "weight_unit": {
+          "label": "Einheit"
+        },
+        "default": {
+          "label": "Standardkarton des Shops",
+          "help": "Grundlage jeder Paketberechnung. Nur einer pro Shop."
+        }
       }
     },
     "gift_cards": {
@@ -3742,6 +3781,9 @@
         "payouts": {
           "title": "Auszahlungen",
           "subtitle": "Wie und wann dieser Marktplatz seine Verkäufer bezahlt."
+        },
+        "package_types": {
+          "add_sheet_title": "Verpackungsart hinzufügen"
         }
       },
       "staff": {
@@ -4761,7 +4803,8 @@
         "tax_categories": "Steuerklassen für Produkte",
         "tax_rates": "Sätze pro Markt und Region",
         "webhooks": "Endpunkte, die bei Ereignissen benachrichtigt werden",
-        "payouts": "Wer Ihre Verkäufer bezahlt, wie oft und ab welchem Betrag"
+        "payouts": "Wer Ihre Verkäufer bezahlt, wie oft und ab welchem Betrag",
+        "package_types": "Kartons, Paletten und Container"
       },
       "groups": {
         "audit": "Audit",
@@ -4797,7 +4840,8 @@
         "tax_categories": "Steuerkategorien",
         "tax_rates": "Steuersätze",
         "webhooks": "Webhooks",
-        "payouts": "Auszahlungen"
+        "payouts": "Auszahlungen",
+        "package_types": "Verpackungsarten"
       }
     },
     "setup": {
@@ -5103,6 +5147,37 @@
       "saved": "Übersetzungen gespeichert",
       "source": "Quelle",
       "title": "Übersetzungen"
+    },
+    "package_types": {
+      "table_title": "Verpackungsarten",
+      "search_placeholder": "Verpackung suchen",
+      "empty": "Noch keine Verpackung. Legen Sie Ihren Versandkarton an sowie die Kartons und Paletten für Großbestellungen.",
+      "add_cta": "Verpackungsart hinzufügen",
+      "default_badge": "Standard des Shops",
+      "edit_sheet_title": "Verpackungsart",
+      "create_description": "Ein Karton, eine Palette oder ein Container, in den dieser Shop Ware packt.",
+      "edit_description": "Produkte in diesem Karton übernehmen seine Maße — eine Änderung korrigiert alle.",
+      "dimensions_column": "Maße",
+      "volume_column": "Volumen",
+      "kinds": {
+        "box": "Karton",
+        "envelope": "Umschlag",
+        "carton": "Umkarton",
+        "pallet": "Palette",
+        "container": "Container"
+      },
+      "messages": {
+        "added": "Verpackungsart hinzugefügt",
+        "updated": "Verpackungsart aktualisiert",
+        "deleted": "Verpackungsart gelöscht"
+      },
+      "delete_confirm": {
+        "title": "Verpackungsart löschen?",
+        "message": "{{name}} wird entfernt. Darin verpackte Produkte müssen zuerst umgepackt werden."
+      },
+      "validation": {
+        "non_negative": "muss null oder größer sein"
+      }
     }
   }
 }

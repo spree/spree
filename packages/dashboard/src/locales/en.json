@@ -2293,6 +2293,45 @@
       "order_multiple": {
         "label": "Order multiple",
         "help": "Each step up from the minimum. Leave blank for any quantity."
+      },
+      "package_type": {
+        "name": {
+          "label": "Name"
+        },
+        "kind": {
+          "label": "Kind",
+          "help": "Only a carton can be the packaging a product is packed into."
+        },
+        "length": {
+          "label": "Length"
+        },
+        "width": {
+          "label": "Width"
+        },
+        "height": {
+          "label": "Height"
+        },
+        "dimensions_unit": {
+          "label": "Unit"
+        },
+        "dimensions": {
+          "help": "Used for carrier dimensional weight, and for the cubic meters freight tiers compare."
+        },
+        "weight": {
+          "label": "Empty weight",
+          "help": "The packaging itself, added to what it holds."
+        },
+        "max_weight": {
+          "label": "Max weight",
+          "help": "What it can carry."
+        },
+        "weight_unit": {
+          "label": "Unit"
+        },
+        "default": {
+          "label": "Store default box",
+          "help": "The packaging every parcel quote is built on. Only one per store."
+        }
       }
     },
     "gift_cards": {
@@ -3742,6 +3781,9 @@
         "payouts": {
           "title": "Payouts",
           "subtitle": "How and when this marketplace pays its sellers."
+        },
+        "package_types": {
+          "add_sheet_title": "Add package type"
         }
       },
       "staff": {
@@ -4761,7 +4803,8 @@
         "tax_categories": "Tax classes assigned to products",
         "tax_rates": "Rates applied per market and region",
         "webhooks": "Endpoints notified when events happen",
-        "payouts": "Who pays your sellers, how often, and the minimum worth sending"
+        "payouts": "Who pays your sellers, how often, and the minimum worth sending",
+        "package_types": "Boxes, cartons, pallets and containers"
       },
       "groups": {
         "audit": "Audit",
@@ -4797,7 +4840,8 @@
         "tax_categories": "Tax categories",
         "tax_rates": "Tax rates",
         "webhooks": "Webhooks",
-        "payouts": "Payouts"
+        "payouts": "Payouts",
+        "package_types": "Package types"
       }
     },
     "setup": {
@@ -5103,6 +5147,37 @@
       "saved": "Translations saved",
       "source": "Source",
       "title": "Translations"
+    },
+    "package_types": {
+      "table_title": "Package types",
+      "search_placeholder": "Search packaging",
+      "empty": "No packaging yet. Add the box you ship in, and the cartons and pallets wholesale orders leave on.",
+      "add_cta": "Add package type",
+      "default_badge": "Store default",
+      "edit_sheet_title": "Package type",
+      "create_description": "A box, carton, pallet or container this store packs goods into.",
+      "edit_description": "Products packed into this carton follow its measurements, so one edit corrects them all.",
+      "dimensions_column": "Dimensions",
+      "volume_column": "Volume",
+      "kinds": {
+        "box": "Box",
+        "envelope": "Envelope",
+        "carton": "Carton",
+        "pallet": "Pallet",
+        "container": "Container"
+      },
+      "messages": {
+        "added": "Package type added",
+        "updated": "Package type updated",
+        "deleted": "Package type deleted"
+      },
+      "delete_confirm": {
+        "title": "Delete package type?",
+        "message": "{{name}} will be removed. Products packed into it must be repacked first."
+      },
+      "validation": {
+        "non_negative": "must be zero or more"
+      }
     }
   }
 }
