@@ -239,5 +239,32 @@ RSpec.describe Spree::Products::Duplicator do
         expect(variant2_gbp_price.compare_at_amount).to eq(14.99)
       end
     end
+
+    # A clone belongs to the operator, so it must not carry a seller's listing
+    # across: `dup` would copy their id, their cost price and an `active`
+    # status, producing a live offer nobody submitted
+    # (docs/plans/6.0-seller-master-catalog-listings.md).
+    context 'when the product carries a seller offer' do
+      let(:seller) { create(:seller, :approved, store: Spree::Store.default) }
+      let!(:offer) do
+        create(:variant, product: product, seller: seller, status: 'active', cost_price: 4)
+      end
+
+      it 'clones the offer as a first-party draft row' do
+        new_product = described_class.call(product: product.reload).value
+        cloned = new_product.variants.detect { |variant| variant.cost_price == 4 }
+
+        expect(cloned).to be_present
+        expect(cloned.resolved_seller).to be_nil
+        expect(cloned.status).to eq('active')
+      end
+
+      it 'leaves the original offer alone' do
+        described_class.call(product: product.reload)
+
+        expect(offer.reload.resolved_seller).to eq(seller)
+        expect(offer).to be_active
+      end
+    end
   end
 end

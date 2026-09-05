@@ -39,20 +39,27 @@ module Spree
           # own. `Variant#stock_levels=` resolves a location against the
           # product's *store*, which on a marketplace spans every seller — so
           # a payload naming somebody else's warehouse would write into it.
-          # The ids are narrowed to this seller's here; an id from elsewhere
-          # is dropped, matching how the model already skips one it cannot
-          # resolve.
+          #
+          # A warehouse this seller does not hold is a 404, not a silent drop:
+          # answering 200 while quietly writing no stock leaves a merchant
+          # believing they stocked something they did not. Matches how
+          # `own_product_type_id` and `own_delivery_profile_id` treat an id
+          # that cannot exist for this seller.
           #
           # @param stock_levels [Array<Hash>, nil]
+          # @raise [ActiveRecord::RecordNotFound] on a warehouse elsewhere
           # @return [Array<Hash>, nil]
           def own_stock_levels(stock_levels)
             return stock_levels if stock_levels.blank?
 
             own_ids = current_seller.stock_locations.pluck(:id).to_set
 
-            stock_levels.select do |level|
+            stock_levels.each do |level|
               id = Spree::StockLocation.decode_own_prefixed_id(level[:stock_location_id])
-              id.present? && own_ids.include?(id)
+              next if id.present? && own_ids.include?(id)
+
+              raise ActiveRecord::RecordNotFound,
+                    "Stock location #{level[:stock_location_id]} does not belong to this seller"
             end
           end
 

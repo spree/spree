@@ -44,6 +44,14 @@ module Spree
         new_variant = variant.dup
         new_variant.sku = sku_generator(new_variant.sku)
         new_variant.deleted_at = nil
+        # A clone is the operator's own draft, so it never carries somebody
+        # else's listing across: `dup` would copy a seller's offer wholesale —
+        # their id, their cost price and an `active` status — producing a live
+        # row nobody submitted and nobody reviewed
+        # (docs/plans/6.0-seller-master-catalog-listings.md).
+        new_variant.seller_id = nil
+        new_variant.delivery_profile_id = nil
+        new_variant.status = 'active'
         new_variant.option_values = variant.option_values.map { |option_value| option_value }
         new_variant.prices = duplicate_prices(variant.prices)
         new_variant.stock_levels = duplicate_stock_levels(variant.stock_levels)
