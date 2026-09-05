@@ -13,6 +13,8 @@ import {
   ResourceTable,
   resourceSearchSchema,
   Subject,
+  typeDescription,
+  typeLabel,
   usePermissions,
   useStore,
 } from '@spree/dashboard-core'
@@ -739,7 +741,7 @@ function CommissionRulesField({ form }: { form: UseFormReturn<CommissionRateForm
                     rulesArray.append({ type: type.type, preferences: {}, product_ids: [] })
                   }
                 >
-                  {type.name}
+                  {typeLabel('commission_rule', type.type, type.name)}
                 </DropdownMenuItem>
               ))}
             </DropdownMenuContent>
@@ -803,9 +805,13 @@ function CommissionRuleRow({
     <div className="flex flex-col gap-2 rounded-md border p-3">
       <div className="flex items-center justify-between">
         <div className="flex flex-col">
-          <span className="text-sm">{ruleType?.name ?? fallbackLabel}</span>
-          {ruleType?.description && (
-            <span className="text-xs text-muted-foreground">{ruleType.description}</span>
+          <span className="text-sm">
+            {ruleType ? typeLabel('commission_rule', ruleType.type, ruleType.name) : fallbackLabel}
+          </span>
+          {ruleType && typeDescription('commission_rule', ruleType.type, ruleType.description) && (
+            <span className="text-xs text-muted-foreground">
+              {typeDescription('commission_rule', ruleType.type, ruleType.description)}
+            </span>
           )}
         </div>
         <Button

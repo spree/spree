@@ -1,5 +1,5 @@
 import type { CommissionRate } from '@spree/admin-sdk'
-import { defineTable } from '@spree/dashboard-core'
+import { defineTable, typeLabel } from '@spree/dashboard-core'
 import { ActiveBadge, ResourceNameCell } from '@spree/dashboard-ui'
 import { HandCoinsIcon } from '@spree/dashboard-ui/icons'
 import i18n from 'i18next'
@@ -53,7 +53,7 @@ defineTable<CommissionRate>('commission-rates', {
       render: (rate) =>
         rate.rules?.length ? (
           rate.rules
-            .map((rule) => rule.label)
+            .map((rule) => typeLabel('commission_rule', rule.type, rule.label))
             .filter(Boolean)
             .join(', ')
         ) : (

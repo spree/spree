@@ -103,6 +103,7 @@ export * from './lib/settings-nav-registry'
 export * from './lib/slot-registry'
 export * from './lib/table-registry'
 export { ensureTimestampColumns } from './lib/timestamp-columns'
+export * from './lib/type-labels'
 export * from './pages/stock-locations'
 // ---------------------------------------------------------------------------
 // Plugin facade — re-exported for convenience; same API as `/plugin` subpath

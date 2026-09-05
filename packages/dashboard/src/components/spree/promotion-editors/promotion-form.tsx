@@ -23,6 +23,8 @@ import {
   mapSpreeErrorsToForm,
   Slot,
   Subject,
+  typeDescription,
+  typeLabel,
   useExport,
   usePermissions,
   useStore,
@@ -67,7 +69,7 @@ import {
   usePromotionCouponCodes,
   usePromotionRuleTypes,
 } from '../../../hooks/use-promotions'
-import { typeDescription, typeLabel } from '../../../lib/type-labels'
+
 import {
   MATCH_POLICIES,
   type MatchPolicy,
@@ -800,7 +802,7 @@ function RuleRow({
         className="min-w-0 flex-1 px-3 py-2 text-left focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring rounded-l-md"
       >
         <div className="text-sm font-medium">
-          {typeLabel('rule_types', draft.type, draft.label)}
+          {typeLabel('promotion_rule', draft.type, draft.label)}
         </div>
         <RuleSummary draft={draft} />
       </button>
@@ -977,11 +979,11 @@ function RulePickerSheet({
                 className="flex flex-col items-start rounded-md border p-3 text-left transition-colors hover:bg-muted/50"
               >
                 <span className="text-sm font-medium">
-                  {typeLabel('rule_types', tt.type, tt.label)}
+                  {typeLabel('promotion_rule', tt.type, tt.label)}
                 </span>
                 {tt.description && (
                   <span className="text-xs text-muted-foreground">
-                    {typeDescription('rule_types', tt.type, tt.description)}
+                    {typeDescription('promotion_rule', tt.type, tt.description)}
                   </span>
                 )}
               </button>
@@ -1017,7 +1019,7 @@ function RuleEditSheet({
     <Sheet open={open} onOpenChange={onOpenChange}>
       <SheetContent>
         <SheetHeader>
-          <SheetTitle>{typeLabel('rule_types', draft.type, draft.label)}</SheetTitle>
+          <SheetTitle>{typeLabel('promotion_rule', draft.type, draft.label)}</SheetTitle>
           <SheetDescription>{t('admin.promotions.rule_edit.description')}</SheetDescription>
         </SheetHeader>
         <Slot
@@ -1184,7 +1186,7 @@ function ActionRow({
         className="min-w-0 flex-1 px-3 py-2 text-left focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring rounded-l-md"
       >
         <div className="text-sm font-medium">
-          {typeLabel('action_types', draft.type, draft.label)}
+          {typeLabel('promotion_action', draft.type, draft.label)}
         </div>
         <ActionSummary draft={draft} />
       </button>
@@ -1206,7 +1208,16 @@ function ActionRow({
 function ActionSummary({ draft }: { draft: PromotionActionFormDraft }) {
   const { t } = useTranslation()
   const parts: string[] = []
-  const calc = formatCalculatorSummary(draft.calculator)
+  // dashboard-ui is headless, so the localized calculator name is resolved
+  // here and handed to the formatter rather than looked up inside it.
+  const calc = formatCalculatorSummary(
+    draft.calculator?.type
+      ? {
+          ...draft.calculator,
+          label: typeLabel('calculator', draft.calculator.type, draft.calculator.label),
+        }
+      : draft.calculator,
+  )
   if (calc) parts.push(calc)
   if (draft.line_items?.length)
     parts.push(
@@ -1244,11 +1255,11 @@ function ActionPickerSheet({
               className="flex flex-col items-start rounded-md border p-3 text-left transition-colors hover:bg-muted/50"
             >
               <span className="text-sm font-medium">
-                {typeLabel('action_types', type.type, type.label)}
+                {typeLabel('promotion_action', type.type, type.label)}
               </span>
               {type.description && (
                 <span className="text-xs text-muted-foreground">
-                  {typeDescription('action_types', type.type, type.description)}
+                  {typeDescription('promotion_action', type.type, type.description)}
                 </span>
               )}
             </button>
@@ -1283,7 +1294,7 @@ function ActionEditSheet({
     <Sheet open={open} onOpenChange={onOpenChange}>
       <SheetContent>
         <SheetHeader>
-          <SheetTitle>{typeLabel('action_types', draft.type, draft.label)}</SheetTitle>
+          <SheetTitle>{typeLabel('promotion_action', draft.type, draft.label)}</SheetTitle>
           <SheetDescription>{t('admin.promotions.action_edit.description')}</SheetDescription>
         </SheetHeader>
         <Slot

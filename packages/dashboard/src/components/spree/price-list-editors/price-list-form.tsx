@@ -6,6 +6,8 @@ import {
   formatStoreDateTime,
   PageHeader,
   PreferencesForm,
+  typeDescription,
+  typeLabel,
   useResourceKey,
   useStore,
 } from '@spree/dashboard-core'
@@ -664,7 +666,9 @@ function RuleRow({
         className="min-w-0 flex-1 px-3 py-2 text-left focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring rounded-l-md"
       >
         <div className="flex items-center gap-2">
-          <span className="text-sm font-medium">{draft.label}</span>
+          <span className="text-sm font-medium">
+            {typeLabel('price_rule', draft.type, draft.label)}
+          </span>
           <PencilIcon className="size-3 text-muted-foreground" />
         </div>
         <RuleSummary draft={draft} />
@@ -825,9 +829,13 @@ function RulePickerSheet({
                 onClick={() => onPicked(tt)}
                 className="flex flex-col items-start rounded-md border p-3 text-left transition-colors hover:bg-muted/50"
               >
-                <span className="text-sm font-medium">{tt.label}</span>
-                {tt.description && (
-                  <span className="text-xs text-muted-foreground">{tt.description}</span>
+                <span className="text-sm font-medium">
+                  {typeLabel('price_rule', tt.type, tt.label)}
+                </span>
+                {typeDescription('price_rule', tt.type, tt.description) && (
+                  <span className="text-xs text-muted-foreground">
+                    {typeDescription('price_rule', tt.type, tt.description)}
+                  </span>
                 )}
               </button>
             ))
@@ -857,9 +865,10 @@ function RuleEditSheet({
     <Sheet open={open} onOpenChange={onOpenChange}>
       <SheetContent>
         <SheetHeader>
-          <SheetTitle>{draft.label}</SheetTitle>
+          <SheetTitle>{typeLabel('price_rule', draft.type, draft.label)}</SheetTitle>
           <SheetDescription>
-            {draft.description || t('admin.pages.products.price_lists.rule_default_description')}
+            {typeDescription('price_rule', draft.type, draft.description) ||
+              t('admin.pages.products.price_lists.rule_default_description')}
           </SheetDescription>
         </SheetHeader>
         <Slot

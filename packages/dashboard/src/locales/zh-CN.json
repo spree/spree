@@ -74,19 +74,6 @@
       },
       "warning_treat_like_password": "请像对待密码一样对待此密钥。将其存储在密钥管理器中——我们无法再次显示它。"
     },
-    "calculators": {
-      "default_refund_amount": "默认退款金额",
-      "default_tax": "默认税费",
-      "digital_delivery": "数字交付",
-      "flat_percent_item_total": "固定百分比",
-      "flat_rate": "固定费率",
-      "flexi_rate": "弹性费率",
-      "per_item": "按件计费",
-      "percent_on_line_item": "按订单项百分比",
-      "price_sack": "价格袋",
-      "tiered_flat_rate": "阶梯固定费率",
-      "tiered_percent": "阶梯百分比"
-    },
     "catalogs": {
       "actions": {
         "activate": "启用",
@@ -407,20 +394,6 @@
         "does_not_contain": "不包含",
         "is_equal_to": "等于",
         "is_not_equal_to": "不等于"
-      },
-      "rule_types": {
-        "available_on": {
-          "description": "最近 N 天内上架的商品",
-          "name": "近期上架"
-        },
-        "sale": {
-          "description": "当前价格低于对比价的商品",
-          "name": "特价中"
-        },
-        "tag": {
-          "description": "带有匹配标签的商品",
-          "name": "标签"
-        }
       },
       "rules": {
         "add": "添加规则",
@@ -2540,20 +2513,6 @@
       "messages": {
         "created": "已添加路由规则",
         "deleted": "已移除路由规则"
-      },
-      "types": {
-        "default_location": {
-          "description": "优先选择标记为默认的库存地点",
-          "name": "默认库存地点"
-        },
-        "minimize_splits": {
-          "description": "优先选择能独立满足最多商品的地点，避免拆分发货",
-          "name": "减少拆单"
-        },
-        "preferred_location": {
-          "description": "如订单已指定库存地点，则从该地点发货",
-          "name": "首选库存地点"
-        }
       }
     },
     "orders": {
@@ -3847,16 +3806,24 @@
         "api_keys": "创建和吊销 API 凭据",
         "categories": "分类树与分类体系",
         "collections": "手动与规则驱动的商品集合",
+        "commissions": "佣金费率以及向各卖家收取的费用",
         "customers": "客户账户、地址、卡片与分组",
         "dashboard": "销售与业绩分析",
+        "delivery_methods": "配送选项、费率及其适用规则",
         "fulfillments": "打包、发货并跟踪订单履约",
         "gift_cards": "礼品卡及其批次",
         "integrations": "服务商凭据与连接",
+        "media": "媒体库中的图片、视频和文件",
         "orders": "订单、订单项、退货、换货与索赔",
         "payments": "订单付款与扣款",
+        "payouts": "向卖家支付的款项及其结算周期",
+        "product_types": "商品类型定义及其自定义字段",
         "products": "商品、变体、选项、价格与媒体",
         "promotions": "促销、规则与优惠码",
+        "publishing": "店面中可见的内容及其时间",
         "refunds": "发起和查看退款",
+        "seller_profile": "卖家自身的信息、地址和政策",
+        "sellers": "卖家账户、入驻与审核",
         "settings": "店铺、支付、配送、税务与渠道配置",
         "staff": "团队成员、邀请、角色及其权限",
         "stock": "库存水平、仓库、变动与调拨",
@@ -3887,16 +3854,24 @@
         "api_keys": "API keys",
         "categories": "分类",
         "collections": "商品集合",
+        "commissions": "佣金",
         "customers": "客户",
         "dashboard": "仪表盘",
+        "delivery_methods": "配送方式",
         "fulfillments": "履约",
         "gift_cards": "礼品卡",
         "integrations": "集成",
+        "media": "媒体",
         "orders": "订单",
         "payments": "支付",
+        "payouts": "结算",
+        "product_types": "商品类型",
         "products": "商品",
         "promotions": "优惠",
+        "publishing": "发布",
         "refunds": "退款",
+        "seller_profile": "卖家资料",
+        "sellers": "卖家",
         "settings": "设置",
         "staff": "团队与角色",
         "stock": "库存",
@@ -4222,24 +4197,6 @@
       "action_summary": {
         "variant_count": "{{count}} 个变体"
       },
-      "action_types": {
-        "create_adjustment": {
-          "description": "在订单上创建优惠抵扣调整",
-          "name": "创建整单调整"
-        },
-        "create_item_adjustments": {
-          "description": "在某个订单项上创建优惠抵扣调整",
-          "name": "创建按行项目调整"
-        },
-        "create_line_items": {
-          "description": "向购物车填充指定数量的变体",
-          "name": "创建订单项"
-        },
-        "free_shipping": {
-          "description": "使订单的所有发货免运费",
-          "name": "免运费"
-        }
-      },
       "actions_card": {
         "add_action": "添加操作",
         "description": "促销满足条件时执行的操作。",
@@ -4319,52 +4276,6 @@
         "category_count": "{{count}} 个分类",
         "customer_count": "{{count}} 位客户",
         "product_count": "{{count}} 个商品"
-      },
-      "rule_types": {
-        "category": {
-          "description": "订单包含指定分类中的商品",
-          "name": "分类"
-        },
-        "country": {
-          "description": "仅限收货地址在指定国家/地区的订单",
-          "name": "国家/地区"
-        },
-        "currency": {
-          "description": "仅限使用指定货币的订单",
-          "name": "货币"
-        },
-        "customer": {
-          "description": "仅对指定客户可用",
-          "name": "客户"
-        },
-        "customer_group": {
-          "description": "仅对指定客户组中的客户可用",
-          "name": "客户组"
-        },
-        "customer_logged_in": {
-          "description": "仅对已登录客户可用",
-          "name": "仅限已登录客户"
-        },
-        "first_order": {
-          "description": "必须是客户的首次订单",
-          "name": "首次订单"
-        },
-        "item_total": {
-          "description": "订单总额满足这些条件",
-          "name": "商品总额"
-        },
-        "one_use_per_user": {
-          "description": "每位用户仅限使用一次",
-          "name": "每位用户限用一次"
-        },
-        "option_value": {
-          "description": "订单包含具有匹配选项值的商品",
-          "name": "选项值"
-        },
-        "product": {
-          "description": "订单包含指定商品",
-          "name": "商品"
-        }
       },
       "rule_types_all_used": "所有可用的规则类型都已添加到此优惠中。",
       "rule_types_empty": "未注册任何规则类型。",
@@ -4587,17 +4498,6 @@
           "help": "必需项在批准前必须完成，其余项显示为建议。",
           "label": "必需"
         }
-      },
-      "kinds": {
-        "accept_terms": "接受条款",
-        "attestation": "卖家确认",
-        "billing_address": "账单地址",
-        "complete_profile": "完善资料",
-        "document": "文件",
-        "minimum_products": "最少商品数",
-        "operator_review": "人工核查",
-        "required_custom_fields": "必填自定义字段",
-        "returns_address": "退货地址"
       },
       "messages": {
         "created": "已添加要求",

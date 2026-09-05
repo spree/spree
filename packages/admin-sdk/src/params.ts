@@ -2219,7 +2219,11 @@ export interface IntegrationTypeDefinition {
   name: string
   /** Display grouping, e.g. `shipping`, `tax`; null for ungrouped. */
   group: string | null
-  /** One-line description, localized server-side from the gem's translations. */
+  /**
+   * One-line description in the request locale. A fallback: the dashboard
+   * prefers its own translation of `type` and reads this only when it has
+   * none, which is the case for provider gems shipping no dashboard locales.
+   */
   description: string | null
   /** Gallery logo: an absolute URL to hosted brand assets, or a `data:` URI for self-contained gems. Render with a fallback — hosted logos are a courtesy, not a guarantee. */
   logo_url: string | null
