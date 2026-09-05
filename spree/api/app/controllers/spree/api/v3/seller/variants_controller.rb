@@ -219,8 +219,12 @@ module Spree
 
             wanted = @resolved_options.map { |option| [option[:name], option[:value]] }.sort
 
+            # Archived rows do not count: a seller who took an offer down must
+            # be able to list that combination again, and the panel offers no
+            # way back from `archived`.
             duplicate = current_seller.variants.where(product_id: product.id).
                         where.not(id: @resource&.id).
+                        where.not(status: 'archived').
                         includes(option_values: :option_type).
                         any? { |variant| option_signature(variant) == wanted }
 

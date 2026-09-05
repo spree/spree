@@ -77,6 +77,31 @@ const OFFER_FIELDS = [
   'delivery_profile_id',
 ] as const
 
+/**
+ * One form row per warehouse this seller holds, carrying whatever the offer
+ * already stocks there.
+ *
+ * The rows have to line up with the inputs, which render per warehouse — the
+ * API answers only the warehouses with stock, so a row built from its list
+ * would put a quantity under the wrong label.
+ */
+function stockRowsFor(
+  warehouses: Array<{ id: string }>,
+  levels:
+    | Array<{ id?: string; stock_location_id?: string | null; count_on_hand?: number | null }>
+    | undefined,
+): OfferFormValues['stock_levels'] {
+  return warehouses.map((warehouse) => {
+    const level = levels?.find((row) => row.stock_location_id === warehouse.id)
+
+    return {
+      id: level?.id,
+      stock_location_id: warehouse.id,
+      count_on_hand: level?.count_on_hand ?? 0,
+    }
+  })
+}
+
 /** Copies the plain fields across, turning every empty value into `undefined`. */
 function pickOfferFields(source: Record<string, unknown>): Record<string, unknown> {
   return Object.fromEntries(OFFER_FIELDS.map((field) => [field, source[field] ?? undefined]))
@@ -146,6 +171,8 @@ export function OfferPage({ mode }: { mode: 'new' | 'edit' }) {
     queryFn: () => sellerClient().deliveryProfiles.list(),
   })
 
+  const warehouses = locations?.data ?? []
+
   const form = useForm<OfferFormValues>({
     resolver: zodResolver(offerFormSchema) as never,
     defaultValues: newOfferFormDefaults(),
@@ -175,29 +202,24 @@ export function OfferPage({ mode }: { mode: 'new' | 'edit' }) {
           currency,
           amount: offer.prices?.find((price) => price.currency === currency)?.amount ?? '',
         })),
-        stock_levels: (offer.stock_levels ?? []).flatMap((level) =>
-          level.stock_location_id
-            ? [
-                {
-                  id: level.id,
-                  stock_location_id: level.stock_location_id,
-                  count_on_hand: level.count_on_hand ?? 0,
-                },
-              ]
-            : [],
-        ),
+        // One row per warehouse this seller holds, in the order the inputs
+        // render them: the API answers only the warehouses that carry stock,
+        // so indexing by its list would show a quantity under the wrong
+        // warehouse's label and save it against the wrong location.
+        stock_levels: stockRowsFor(warehouses, offer.stock_levels),
       })
       return
     }
 
-    if (axes.length || currencies.length) {
+    if (axes.length || currencies.length || warehouses.length) {
       form.reset({
         ...newOfferFormDefaults(),
         options: axes.map((axis) => ({ name: axis.name, value: '' })),
         prices: currencies.map((currency) => ({ currency, amount: '' })),
+        stock_levels: stockRowsFor(warehouses, undefined),
       })
     }
-  }, [offer, master, profile, form])
+  }, [offer, master, profile, warehouses, form])
 
   const save = useMutation({
     mutationFn: (values: OfferFormValues) => {
@@ -396,7 +418,11 @@ export function OfferPage({ mode }: { mode: 'new' | 'edit' }) {
                   <CardTitle>{t('offers.stock_title')}</CardTitle>
                 </CardHeader>
                 <CardContent className="flex flex-col gap-3">
-                  {(locations?.data ?? []).map((location, index) => (
+                  {/* Indexed against this seller's warehouses, which is the
+                      order `stockRowsFor` builds the form rows in — the
+                      location id rides in form state rather than in a hidden
+                      input, which would never fire a change event. */}
+                  {warehouses.map((location, index) => (
                     <Field key={location.id}>
                       <FieldLabel htmlFor={`offer-stock-${location.id}`}>
                         {location.name}
@@ -406,11 +432,6 @@ export function OfferPage({ mode }: { mode: 'new' | 'edit' }) {
                         type="number"
                         min="0"
                         {...form.register(`stock_levels.${index}.count_on_hand`)}
-                      />
-                      <input
-                        type="hidden"
-                        value={location.id}
-                        {...form.register(`stock_levels.${index}.stock_location_id`)}
                       />
                     </Field>
                   ))}
