@@ -4896,6 +4896,36 @@ keys in every dashboard locale, not a `Spree.t` label; new validation errors in
 core use a symbol and parameters, never a preformatted string; nothing in the
 dashboard prints an API `label`/`name`/`description` directly; shared admin copy
 goes in `dashboard-core` locales, never in `packages/seller-dashboard`.
+## 2026-09-05 — A deposit's amounts ship pre-formatted, and a carton is named rather than referenced in a CSV
+
+Two rulings from building the wholesale plan's dashboard and storefront
+phases.
+
+**Every amount in the payment schedule carries a formatted twin.** The
+schedule began as bare decimal strings, which meant each surface reading it
+would format money itself — and the storefront has no currency formatter at
+all, by deliberate design: it prints the `display_*` strings the API sends
+and never guesses at a locale. Cart and order now build the schedule through
+one `payment_schedule_json` helper on the base serializer, so the two cannot
+drift, and `display_amount_due_now`, `display_deposit_amount` and
+`display_outstanding_balance` sit beside the raw values. The raw values stay
+for the arithmetic a client legitimately does — deciding whether a row is
+worth showing — which is the same split the rest of the money surface uses.
+
+**A CSV names its carton; it does not reference one.** A merchant's
+spreadsheet says "Large carton", not a prefixed id, so the products import
+resolves the carton by name — and resolves it through `store.package_types`,
+so a name that matches another store's carton leaves the variant unpacked
+rather than borrowing somebody else's measurements. The tax-category lookup
+beside it is *not* store-scoped and was left alone: widening it is a
+separate correctness fix with its own blast radius, not something to smuggle
+into a packaging change.
+
+**Constraint now:** a new money field on a derived value object ships with
+its formatted twin from the start, and storefront code never formats
+currency. A new named lookup in an importer resolves through the store's own
+association.
+
 ## 2026-09-05 — Wholesale deposits: staff settle the balance in 6.0, and the deposit rounds up
 
 Closing the two open questions `6.0-b2b-wholesale-shipping.md` left for its
