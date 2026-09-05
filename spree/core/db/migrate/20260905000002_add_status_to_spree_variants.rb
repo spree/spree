@@ -6,8 +6,8 @@ class AddStatusToSpreeVariants < ActiveRecord::Migration[8.1]
     # (docs/plans/6.0-seller-master-catalog-listings.md, Decision 3).
     #
     # Nullable so existing rows survive the migration; the
-    # `spree:upgrade:variants_status` task backfills them to `active`, after
-    # which every row a workflow writes carries one.
+    # `spree:upgrade:backfill_variant_statuses` task fills them in as
+    # `active`, after which every row a workflow writes carries one.
     add_column :spree_variants, :status, :string
 
     add_index :spree_variants, [:product_id, :status]
