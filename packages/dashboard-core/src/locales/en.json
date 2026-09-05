@@ -800,28 +800,6 @@
           "label": "HS code",
           "placeholder": "e.g. 640411"
         },
-        "preorder_ships_at": {
-          "help": "When you expect to ship pre-orders. Shown to customers as the delivery promise; the pre-order ends once this date passes.",
-          "label": "Ships by",
-          "placeholder": "Select a date"
-        },
-        "preorderable": {
-          "help": "Sell this variant before it's in stock. Cap how many you'll take with the backorder limit, enter incoming stock as the count, or leave it blank for unlimited.",
-          "label": "Available for pre-order"
-        },
-        "sku": {
-          "label": "SKU",
-          "placeholder": "PRODUCT-RED-S"
-        },
-        "weight": {
-          "label": "Weight"
-        },
-        "weight_unit": {
-          "label": "Unit"
-        },
-        "width": {
-          "label": "Width"
-        },
         "minimum_order_quantity": {
           "label": "Minimum order quantity",
           "placeholder": "No minimum",
@@ -832,6 +810,15 @@
           "placeholder": "No multiple",
           "help": "Each step up from the minimum. Leave blank for any quantity."
         },
+        "preorder_ships_at": {
+          "help": "When you expect to ship pre-orders. Shown to customers as the delivery promise; the pre-order ends once this date passes.",
+          "label": "Ships by",
+          "placeholder": "Select a date"
+        },
+        "preorderable": {
+          "help": "Sell this variant before it's in stock. Cap how many you'll take with the backorder limit, enter incoming stock as the count, or leave it blank for unlimited.",
+          "label": "Available for pre-order"
+        },
         "purchase_unit": {
           "label": "Purchase unit",
           "options": {
@@ -839,10 +826,26 @@
             "carton": "Cartons"
           }
         },
+        "quantity_rule_invalid": "Enter a whole number greater than zero, or leave blank.",
+        "sku": {
+          "label": "SKU",
+          "placeholder": "PRODUCT-RED-S"
+        },
+        "track_inventory": {
+          "label": "Track inventory"
+        },
         "units_per_carton": {
           "label": "Units per carton"
         },
-        "quantity_rule_invalid": "Enter a whole number greater than zero, or leave blank."
+        "weight": {
+          "label": "Weight"
+        },
+        "weight_unit": {
+          "label": "Unit"
+        },
+        "width": {
+          "label": "Width"
+        }
       },
       "minimum_order_quantity": {
         "label": "Minimum order quantity",

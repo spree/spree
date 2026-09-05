@@ -26,6 +26,7 @@ const PAYMENT_STATUSES = [
 
 defineTable<Order>('seller-orders', {
   title: i18n.t('orders.title'),
+  description: i18n.t('orders.description'),
   searchParam: 'number_cont',
   searchPlaceholder: i18n.t('orders.search_placeholder'),
   defaultSort: { field: 'completed_at', direction: 'desc' },

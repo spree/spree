@@ -6,11 +6,22 @@ module Spree
         #
         # Carries what a seller manages: the SKU and barcode, what it cost
         # them, its weight and dimensions, its customs classification and what
-        # is on the shelf. No `tax_category_id` or `delivery_profile_id` —
-        # those are marketplace configuration and the seller cannot write them,
-        # so showing them would invite an edit that silently does nothing.
+        # is on the shelf. No `tax_category_id` — that is marketplace
+        # configuration and the seller cannot write it, so showing it would
+        # invite an edit that silently does nothing.
+        #
+        # `delivery_profile_id` IS here: on an offer against a master product
+        # it names how that seller's row ships, which is the seller's own
+        # choice from the marketplace's list. On a variant of a product the
+        # seller owns, the model blanks it and the write is a no-op, so the
+        # panel need not know which mode it is in
+        # (docs/plans/6.0-seller-master-catalog-listings.md, Decision 10).
         class VariantSerializer < V3::VariantSerializer
-          typelize position: :number,
+          typelize status: :string,
+                   product_id: :string,
+                   delivery_profile_id: [:string, nullable: true],
+                   submission: ['ProductSubmission', nullable: true],
+                   position: :number,
                    cost_price: [:string, nullable: true],
                    cost_currency: [:string, nullable: true],
                    barcode: [:string, nullable: true],
@@ -28,7 +39,8 @@ module Spree
                    purchase_unit: [:string, nullable: true],
                    metadata: 'Record<string, unknown>'
 
-          attributes :metadata, :position, :cost_price, :cost_currency,
+          attributes :status,
+                     :metadata, :position, :cost_price, :cost_currency,
                      :barcode, :weight_unit, :dimensions_unit, :backorder_limit,
                      :hs_code, :country_of_origin, :customs_description,
                      preorder_ships_at: :iso8601,
@@ -41,6 +53,33 @@ module Spree
           attribute :purchase_unit, &:purchase_unit
 
           attribute :preorderable, &:preorderable?
+
+          # Which product this offer sits on, so the offers list can name it
+          # without a second request.
+          attribute :product_id do |variant|
+            variant.product&.prefixed_id
+          end
+
+          # Read resolved and written to the column, exactly as on the admin
+          # serializer: a read-then-write round trip on an owned variant
+          # therefore changes nothing.
+          attribute :delivery_profile_id do |variant|
+            variant.resolved_delivery_profile&.prefixed_id
+          end
+
+          # Why the marketplace sent this offer back, so the panel can show it
+          # without a second request. The seller's view withholds who decided.
+          one :latest_submission,
+              key: :submission,
+              resource: proc { Spree.api.product_submission_serializer },
+              if: proc { expand?('submission') }
+
+          # The product this offer is against, for the offers list's name and
+          # thumbnail. The public serializer: what one seller may know about
+          # the marketplace's catalog is what a shopper may know.
+          one :product,
+              resource: proc { Spree.api.product_serializer },
+              if: proc { expand?('product') }
 
           attribute :available_stock do |variant|
             variant.available_stock.to_i if variant.should_track_inventory?

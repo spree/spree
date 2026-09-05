@@ -4797,3 +4797,88 @@ until 6.1.
 customer self-cancel makes the actor on the order polymorphic — a column
 change, never a side table; company approval flows stay Enterprise and
 carry their own record.
+
+## 2026-09-05 — Seller offers are opened per product and reviewed per offer
+
+Damian's call, settling the four open questions of
+`6.0-seller-master-catalog-listings.md` — the seller-side surface for the
+shared catalog (2026-08-16), which shipped the data model and no way for a
+seller to write into it.
+
+**A product is closed to sellers until the operator opens it.**
+`spree_products.open_to_sellers`, boolean, default false, rather than a
+store switch or "every first-party product". A curated marketplace opens its
+commodities and keeps its exclusives, and a switch cannot say which is
+which; the store-wide reading would have opened a merchant's whole catalog
+the day it admitted its first seller. Accepted: a migration, a form field,
+a filter and a bulk pair, and every existing product starts closed. Closing
+later stops new offers and leaves existing ones — withdrawing them is a
+review decision each, never a checkbox's side effect.
+
+**An offer is reviewed like a product.** `Spree::Variant` gains a status
+through `has_status` (`draft`, `proposed`, `active`, `rejected`,
+`archived`, default `active`), variant-level twins of the product review
+workflows, and `auto_approve_seller_offers` beside
+`auto_approve_seller_products`. The trail goes on `Spree::ProductSubmission`
+with a nullable `variant_id`, not a second table copying it column for
+column. **Every variant gets the status**, backfilled `active` by a 5.6→6.0
+upgrade step — a nullable "nil means first-party" column would have given
+every `has_status` scope two meanings, and a status on a first-party row is
+the per-variant draft/archive the catalog wanted anyway. Consequence for
+everyone: `Variant#available?` now requires `active?`, and every
+shopper-facing read of a product's variants (Store API expands, buy box
+candidates, `sellable_variants`, both search providers) narrows to
+`active`; `Product#variants` stays the operator's raw view.
+
+**Options are picked, never created.** A seller names a value on every axis
+the master product carries, from values that already exist; unknown or
+missing is a 422 naming the axis. Same line as tags and categories, and it
+closes `set_option_value`'s global option-type creation for this caller.
+
+**Offers get their own rail entry in the seller panel**, not a tab or rows
+mixed into the products table: two resources with different bulk moves
+cannot honestly share one table.
+
+**Constraints now:** never permit `seller_id` or `status` on the seller
+branch; a seller-branch `options` write resolves against the product's own
+option types before reaching the model; a new shopper-facing read of a
+product's variants narrows to `active`; nothing writes `variants.status`
+around the workflows.
+
+## 2026-09-05 — A shopper-facing narrowing is an association, never a convention
+
+Learned while implementing `6.0-seller-master-catalog-listings.md`, and it
+generalizes past that plan.
+
+**The plan wrote the rule down and the rule was not enough.** Giving a variant
+a status meant every customer-facing read of a product's variants had to
+exclude the rows still in review. The plan listed the readers to patch and
+added a Constraint saying a new one must narrow too. The list was incomplete in
+ways nobody spotted until a review swept for them: the **Google shopping feed**
+published a seller's unapproved offer to an external surface, and the
+**facet counts** disagreed with the filter results they linked to — the counts
+service and the matching scope each spelled the condition themselves, and only
+one was patched.
+
+**The fix is to make the narrowing a thing rather than a habit.**
+`Product#listed_variants` is a scoped `has_many`, the option-value and price
+rollups are `through:` it, and `visible_variants` is the in-memory reader for a
+record whose `variants` are already preloaded (the storefront path, where a
+second query per product would undo the preload). A `default_scope` was
+rejected: `Products::NestedAttributes#apply_variants` is full replacement, so a
+scope that hides rows would make an operator's save destroy them.
+
+**The tell to watch for:** a plan whose Constraints section says "a new reader
+must remember to X" is describing a missing abstraction, not a rule. If the
+narrowing cannot be expressed as an association, a scope, or a predicate every
+caller already goes through, the sweep will be incomplete again.
+
+**Two smaller findings from the same work.** `has_status` silently skips
+generating a scope whose name the model already answers
+(`define_status_methods` guards on `respond_to?`), so `Variant.active` kept its
+older "sellable in a currency" meaning while `Variant#active?` meant "approved"
+— the status scope is `listed`, and both definitions carry a comment. And
+`purchasable?` measured only stock: it reaches `preorder?` through
+`oversellable_now?`, neither of which consulted availability, so a preorderable
+row stayed buyable while in review. It now requires `available?`, which every
+caller already meant.

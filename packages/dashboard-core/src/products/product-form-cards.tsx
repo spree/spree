@@ -13,7 +13,7 @@ import {
   useSortable,
 } from '@dnd-kit/sortable'
 import { CSS } from '@dnd-kit/utilities'
-import type { MediaType, ProductFormValues } from '@spree/dashboard-core'
+import type { MediaType, ProductFormValues, VariantsFormShape } from '@spree/dashboard-core'
 import {
   getApiClient,
   MediaPickerSheet,
@@ -170,12 +170,14 @@ export function VariantsCard({ form, seedFromType }: FormCardProps & { seedFromT
 // already holds every currency's prices for every variant.
 // ---------------------------------------------------------------------------
 
-export function PricesCard({
+export function PricesCard<TFieldValues extends VariantsFormShape>({
   form,
   productName,
   currencies: currenciesProp,
   defaultCurrency: defaultCurrencyProp,
-}: FormCardProps & {
+}: {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  form: UseFormReturn<TFieldValues, any, any>
   productName: string
   /**
    * A panel with no store context supplies these itself. The operator's has a
@@ -758,10 +760,14 @@ function SortableMediaThumbnail({
 // Inventory
 // ---------------------------------------------------------------------------
 
-export function InventoryCard({
+export function InventoryCard<TFieldValues extends VariantsFormShape>({
   form,
   stockLocationHref,
-}: FormCardProps & { stockLocationHref?: (id: string) => string }) {
+}: {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  form: UseFormReturn<TFieldValues, any, any>
+  stockLocationHref?: (id: string) => string
+}) {
   const { t } = useTranslation()
   return (
     <Card>

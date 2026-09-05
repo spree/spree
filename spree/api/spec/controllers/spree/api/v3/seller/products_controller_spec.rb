@@ -271,7 +271,10 @@ RSpec.describe Spree::Api::V3::Seller::ProductsController, type: :controller do
             },
             as: :json
 
-      expect(response).to have_http_status(:ok)
+      # Refused rather than quietly dropped: a 200 that wrote no stock would
+      # leave a seller believing their shelf was stocked
+      # (docs/plans/6.0-seller-master-catalog-listings.md).
+      expect(response).to have_http_status(:not_found)
       expect(Spree::StockLevel.find_by(stock_location: rival_location, variant: mine.default_variant)).to be_nil
     end
 

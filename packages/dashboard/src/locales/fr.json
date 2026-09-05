@@ -1670,6 +1670,10 @@
           "label": "Nom",
           "placeholder": "Nom du produit"
         },
+        "open_to_sellers": {
+          "label": "Ouvert aux vendeurs",
+          "help": "Autoriser les vendeurs à proposer leurs propres offres sur ce produit."
+        },
         "product_type_id": {
           "help": "Détermine les options de livraison proposées au paiement.",
           "label": "Type de produit"
@@ -4064,6 +4068,9 @@
         "on_hand_aria": "En stock à {{location}}",
         "unknown_location": "Emplacement inconnu"
       },
+      "marketplace": {
+        "title": "Place de marché"
+      },
       "media": {
         "add_from_library": "Ajouter depuis la médiathèque",
         "add_video": "Ajouter un lien vidéo",
@@ -4086,6 +4093,36 @@
       },
       "no_categories_found": "Aucune catégorie trouvée",
       "no_collections_found": "Aucune collection trouvée",
+      "offers": {
+        "approve": "Approuver",
+        "approve_confirm_message": "Elle est mise en vente dès l'approbation.",
+        "approve_confirm_title": "Approuver cette offre ?",
+        "awaiting_review_filter": "Offres en attente d’examen",
+        "bulk_close": "Fermer aux vendeurs",
+        "bulk_closed": "{{count}} produit fermé aux vendeurs",
+        "bulk_closed_plural": "{{count}} produits fermés aux vendeurs",
+        "bulk_failed": "Impossible de modifier ces produits",
+        "bulk_open": "Ouvrir aux vendeurs",
+        "bulk_opened": "{{count}} produit ouvert aux vendeurs",
+        "bulk_opened_plural": "{{count}} produits ouverts aux vendeurs",
+        "columns": {
+          "options": "Variante",
+          "price": "Prix",
+          "seller": "Vendeur",
+          "status": "Statut"
+        },
+        "decided": "Offre mise à jour",
+        "reason_placeholder": "Que doit changer le vendeur ?",
+        "reject": "Renvoyer",
+        "statuses": {
+          "active": "En vente",
+          "archived": "Archivée",
+          "draft": "Brouillon",
+          "proposed": "En cours d’examen",
+          "rejected": "À corriger"
+        },
+        "title": "Offres des vendeurs"
+      },
       "options": {
         "add_cta": "Ajouter un type d'option",
         "count_one": "{{count}} valeur",

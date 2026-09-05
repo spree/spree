@@ -70,6 +70,59 @@ namespace :spree do
         )
       end
 
+      # An offer on one of the marketplace's own products, so both the
+      # seller's Offers page and the operator's review queue have something to
+      # show (docs/plans/6.0-seller-master-catalog-listings.md). Skipped on a
+      # store with no first-party catalog yet — this task runs before
+      # spree:load_sample_data on a fresh install.
+      master = store.products.active.for_seller(nil).first
+
+      if master.nil?
+        puts 'Offers:   skipped — no first-party product to list against yet (run spree:load_sample_data first).'
+      else
+        master.update!(open_to_sellers: true)
+        location = seller.stock_locations.first
+
+        offer = seller.variants.find_by(product: master, sku: 'SAMPLE-OFFER-1')
+
+        # A value for every axis the product is sold by, taken from what it
+        # already carries — an offer missing one lands in a different buy box
+        # from the rows it is meant to compete with, which is exactly what the
+        # seller endpoint refuses
+        # (docs/plans/6.0-seller-master-catalog-listings.md, Decision 7).
+        options = master.option_types.includes(:option_values).filter_map do |option_type|
+          value = option_type.option_values.first
+          { name: option_type.name, value: value.name } if value
+        end
+
+        if offer.nil?
+          result = Spree.variant_create_workflow.call(
+            product: master,
+            attributes: {
+              sku: 'SAMPLE-OFFER-1',
+              seller_id: seller.id,
+              status: 'draft',
+              options: options,
+              # Under the marketplace's own price, so the buy box has a real
+              # decision to make once the offer is approved.
+              prices: [{ currency: store.default_currency, amount: 9.5 }],
+              stock_levels: location ? [{ stock_location_id: location.id, count_on_hand: 5 }] : []
+            }
+          )
+
+          if result.success?
+            offer = result.value
+            # Left awaiting a decision rather than approved: the operator's
+            # review queue is the thing that needs something in it.
+            Spree.variant_propose_workflow.call(variant: offer, submitted_by: owner)
+          else
+            puts "Offers:   could not create the sample offer: #{result.value.errors.full_messages.to_sentence}"
+          end
+        end
+
+        puts "Offers:   #{offer.sku} on \"#{master.name}\" (#{offer.reload.status})" if offer
+      end
+
       progress = Spree::Sellers::Requirements.new(seller.reload).progress
 
       puts "Seller:   #{seller.name} (#{seller.prefixed_id}, #{seller.status})"

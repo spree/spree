@@ -3,6 +3,7 @@ module Spree
     module V3
       module Admin
         class ProductsController < ResourceController
+          include Spree::Api::V3::StatusActions
           include Spree::Api::V3::BulkOperations
           include Spree::Api::V3::Admin::ProductListing
 
@@ -36,14 +37,17 @@ module Spree
           #
           # Accepting a product a seller submitted, putting it on sale.
           def approve
-            run_review_workflow(Spree.product_approve_workflow)
+            set_status_resource
+            run_status_workflow(Spree.product_approve_workflow, reviewer: try_spree_current_user)
           end
 
           # PATCH /api/v3/admin/products/:id/reject
           #
           # Turning a submission down. The reason goes back to the seller.
           def reject
-            run_review_workflow(Spree.product_reject_workflow, reason: params[:reason])
+            set_status_resource
+            run_status_workflow(Spree.product_reject_workflow,
+                                reviewer: try_spree_current_user, reason: params[:reason])
           end
 
           # POST /api/v3/admin/products/bulk_status_update
@@ -76,6 +80,24 @@ module Spree
             payload[:skipped_in_review_count] = skipped if skipped.positive?
 
             render json: payload
+          end
+
+          # POST /api/v3/admin/products/bulk_open_to_sellers
+          # Body: { ids: [...] }
+          #
+          # Letting sellers compete on a selection of the marketplace's own
+          # products (docs/plans/6.0-seller-master-catalog-listings.md).
+          def bulk_open_to_sellers
+            set_open_to_sellers(true)
+          end
+
+          # POST /api/v3/admin/products/bulk_close_to_sellers
+          # Body: { ids: [...] }
+          #
+          # Closing them again. Offers already on a product stay — withdrawing
+          # one is a review decision, not a side effect of this.
+          def bulk_close_to_sellers
+            set_open_to_sellers(false)
           end
 
           # POST /api/v3/admin/products/bulk_add_to_categories
@@ -216,6 +238,11 @@ module Spree
               :meta_title, :meta_description, :meta_keywords,
               :tax_category_id, :product_type_id, :delivery_profile_id,
               :promotionable,
+              # Whether sellers may list their own offers against this product.
+              # Closed by default, so opening the shared catalog is always the
+              # operator's explicit act
+              # (docs/plans/6.0-seller-master-catalog-listings.md, Decision 2).
+              :open_to_sellers,
               tags: [],
               category_ids: [],
               # Manual collection membership only — the model setter ignores
@@ -272,31 +299,24 @@ module Spree
             ).tap { |attrs| attrs.delete(:status) if review_status?(attrs[:status]) }
           end
 
-          # A review status is an outcome, not a value to assign: `proposed`
-          # means a seller asked, and `rejected` means somebody decided. Both
-          # are reached through the workflows behind `approve`/`reject`, so a
-          # status naming one here is dropped rather than written — the same
-          # reason `bulk_status_update` validates against `STATUSES` and not
-          # the full list (docs/plans/6.0-seller-product-submission.md).
-          def review_status?(status)
-            status.present? && Spree::Product::REVIEW_STATUSES.include?(status.to_s)
-          end
 
           private
 
-          # Approving and rejecting are edits to the catalog, so they answer to
-          # the same key as any other product write.
-          def run_review_workflow(workflow, **arguments)
-            @resource = find_resource
-            authorize!(:update, @resource)
 
-            result = workflow.call(product: @resource, reviewer: try_spree_current_user, **arguments)
+          # Only first-party products can be opened: a product a seller owns
+          # outright is theirs, and inviting rival offers onto it would be the
+          # marketplace reselling someone else's listing.
+          def set_open_to_sellers(open)
+            authorize! :update, model_class
 
-            if result.success?
-              render json: serialize_resource(@resource.reload)
-            else
-              render_service_error(@resource.errors.presence || result.error)
-            end
+            eligible = bulk_collection.where(seller_id: nil)
+            skipped = bulk_collection.where.not(seller_id: nil).count
+
+            count = eligible.update_all(open_to_sellers: open, updated_at: Time.current)
+
+            payload = { product_count: count, open_to_sellers: open }
+            payload[:skipped_seller_owned_count] = skipped if skipped.positive?
+            render json: payload
           end
 
           def search_provider

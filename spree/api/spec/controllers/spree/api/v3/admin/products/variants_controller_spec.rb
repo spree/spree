@@ -295,4 +295,67 @@ RSpec.describe Spree::Api::V3::Admin::Products::VariantsController, type: :contr
       expect(variant.reload.association(:seller).reader).to be_nil
     end
   end
+
+  # A review status is an outcome, not a value to assign. Written straight
+  # onto a row it would leave a seller looking at a rejected offer with no
+  # reason and no trail — the decision is what approve/reject record
+  # (docs/plans/6.0-seller-master-catalog-listings.md).
+  describe 'writing a review status directly' do
+    let(:seller) { create(:seller, :approved, store: store) }
+    let!(:offer) { create(:variant, product: product, seller: seller, status: 'draft') }
+
+    it 'drops a rejected status from the payload' do
+      patch :update, params: {
+        product_id: product.prefixed_id, id: offer.prefixed_id, status: 'rejected'
+      }, as: :json
+
+      expect(response).to have_http_status(:ok)
+      expect(offer.reload).to be_draft
+      expect(offer.latest_submission).to be_nil
+    end
+
+    it 'drops a proposed status from the payload' do
+      patch :update, params: {
+        product_id: product.prefixed_id, id: offer.prefixed_id, status: 'proposed'
+      }, as: :json
+
+      expect(offer.reload).to be_draft
+    end
+
+    # An offer's status is the review's to move, whichever status is named:
+    # `Variants::Activate` refuses an offer for the same reason, so the plain
+    # update path must not be the way around it.
+    it 'refuses any status write on an offer' do
+      patch :update, params: {
+        product_id: product.prefixed_id, id: offer.prefixed_id, status: 'archived'
+      }, as: :json
+
+      expect(response).to have_http_status(:unprocessable_content)
+      expect(offer.reload).to be_draft
+    end
+
+    # The operator's own rows are theirs to move — nobody reviews them.
+    it 'still allows a status on a first-party variant' do
+      first_party = create(:variant, product: product)
+
+      patch :update, params: {
+        product_id: product.prefixed_id, id: first_party.prefixed_id, status: 'archived'
+      }, as: :json
+
+      expect(response).to have_http_status(:ok)
+      expect(first_party.reload).to be_archived
+    end
+
+    it 'rejects through the member action, which records the decision' do
+      Spree.variant_propose_workflow.call(variant: offer)
+
+      patch :reject, params: {
+        product_id: product.prefixed_id, id: offer.prefixed_id, reason: 'Wrong condition'
+      }, as: :json
+
+      expect(response).to have_http_status(:ok)
+      expect(offer.reload).to be_rejected
+      expect(offer.rejection_reason).to eq('Wrong condition')
+    end
+  end
 end

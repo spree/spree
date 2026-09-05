@@ -1670,6 +1670,10 @@
           "label": "Name",
           "placeholder": "Produktname"
         },
+        "open_to_sellers": {
+          "label": "Für Verkäufer geöffnet",
+          "help": "Verkäufer dürfen eigene Angebote zu diesem Produkt einstellen."
+        },
         "product_type_id": {
           "help": "Bestimmt, welche Lieferoptionen im Checkout angeboten werden.",
           "label": "Produkttyp"
@@ -4064,6 +4068,9 @@
         "on_hand_aria": "Verfügbar bei {{location}}",
         "unknown_location": "Unbekannter Standort"
       },
+      "marketplace": {
+        "title": "Marktplatz"
+      },
       "media": {
         "add_from_library": "Aus Bibliothek hinzufügen",
         "add_video": "Videolink hinzufügen",
@@ -4086,6 +4093,36 @@
       },
       "no_categories_found": "Keine Kategorien gefunden",
       "no_collections_found": "Keine Kollektionen gefunden",
+      "offers": {
+        "approve": "Freigeben",
+        "approve_confirm_message": "Es geht sofort nach der Freigabe in den Verkauf.",
+        "approve_confirm_title": "Dieses Angebot freigeben?",
+        "awaiting_review_filter": "Angebote in Prüfung",
+        "bulk_close": "Für Verkäufer schließen",
+        "bulk_closed": "{{count}} Produkt für Verkäufer geschlossen",
+        "bulk_closed_plural": "{{count}} Produkte für Verkäufer geschlossen",
+        "bulk_failed": "Diese Produkte konnten nicht geändert werden",
+        "bulk_open": "Für Verkäufer öffnen",
+        "bulk_opened": "{{count}} Produkt für Verkäufer geöffnet",
+        "bulk_opened_plural": "{{count}} Produkte für Verkäufer geöffnet",
+        "columns": {
+          "options": "Variante",
+          "price": "Preis",
+          "seller": "Verkäufer",
+          "status": "Status"
+        },
+        "decided": "Angebot aktualisiert",
+        "reason_placeholder": "Was soll der Verkäufer ändern?",
+        "reject": "Zurückweisen",
+        "statuses": {
+          "active": "Im Verkauf",
+          "archived": "Archiviert",
+          "draft": "Entwurf",
+          "proposed": "In Prüfung",
+          "rejected": "Änderungen nötig"
+        },
+        "title": "Angebote von Verkäufern"
+      },
       "options": {
         "add_cta": "Optionstyp hinzufügen",
         "count_one": "{{count}} Wert",
