@@ -35,22 +35,31 @@ export function StoreAddressTask({ task }: SetupTaskSlotContext) {
   const [editing, setEditing] = useState(false)
   const update = useUpdateStockLocationById()
 
-  // Filtered server-side rather than by paging the whole list: on a
-  // marketplace this collection also holds every seller's warehouse, and a
-  // seller's row is commonly their own default — so the operator's own
-  // location can sit past the first page and vanish from a client-side filter.
-  const { data: locations, isLoading } = useQuery({
+  // Two filtered requests rather than one page filtered in the browser, to
+  // match `Store#primary_location` exactly: a location that accepts returns
+  // wins outright, and only then default and name decide. The list also holds
+  // every seller's warehouse on a marketplace, so the operator's own
+  // returns-enabled row can sit well past any page we could fetch — and
+  // editing the wrong one means an address their parcels never come back to.
+  //
+  // The list endpoint cannot express the preference in one call: it orders by
+  // default then name, and its `sort` param collapses to a single key.
+  const firstParty = { seller_id_null: true, active_true: true, limit: 1 }
+  const { data: takesReturns, isFetching: fetchingReturns } = useQuery({
+    queryKey: useResourceKey('stock-locations', { firstParty: true, returns: true }),
+    queryFn: () => adminClient.stockLocations.list({ ...firstParty, returns_enabled_true: true }),
+  })
+  const hasReturnsLocation = (takesReturns?.data.length ?? 0) > 0
+  const { data: anyActive, isFetching: fetchingAny } = useQuery({
     queryKey: useResourceKey('stock-locations', { firstParty: true }),
-    queryFn: () =>
-      // The controller already orders default-first then by name.
-      adminClient.stockLocations.list({ seller_id_null: true, active_true: true, limit: 20 }),
+    queryFn: () => adminClient.stockLocations.list(firstParty),
+    enabled: !!takesReturns && !hasReturnsLocation,
   })
 
-  // Must match `Store#primary_location`: one that accepts returns wins, and
-  // only then default and name decide. Pointing the merchant at any other row
-  // would have them fill in an address their parcels never come back to.
-  const firstParty = locations?.data ?? []
-  const location = firstParty.find((candidate) => candidate.returns_enabled) ?? firstParty[0]
+  // `isFetching`, not `isLoading`: a disabled query stays pending forever, so
+  // the fallback request would hold the skeleton open once the first one hit.
+  const isLoading = fetchingReturns || fetchingAny
+  const location = takesReturns?.data[0] ?? anyActive?.data[0]
 
   const hasAddress = Boolean(location?.address1)
 
