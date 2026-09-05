@@ -22,7 +22,6 @@ export const offerFormSchema = z.object({
       z.object({
         currency: z.string(),
         amount: z.union([z.string(), z.number()]).optional(),
-        compare_at_amount: z.union([z.string(), z.number()]).optional(),
       }),
     )
     .default([]),
@@ -33,7 +32,6 @@ export const offerFormSchema = z.object({
         id: z.string().optional(),
         stock_location_id: z.string(),
         count_on_hand: z.coerce.number().int().min(0).optional(),
-        backorderable: z.boolean().optional(),
       }),
     )
     .default([]),

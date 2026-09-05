@@ -43,7 +43,11 @@ module Spree
 
       def build_items(xml)
         products.includes(:primary_media, storefront_custom_fields: :custom_field_definition, variants: [:primary_media, option_values: :option_type]).find_each do |product|
-          product.variants.active(feed_currency).each do |variant|
+          # `listed` as well as priced: a seller's offer nobody has approved
+          # must not be published to a shopping feed, which is the most public
+          # surface a catalog has
+          # (docs/plans/6.0-seller-master-catalog-listings.md, Decision 3).
+          product.variants.listed.active(feed_currency).each do |variant|
             build_item(xml, product, variant)
           end
         end
