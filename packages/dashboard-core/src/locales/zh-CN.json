@@ -1313,20 +1313,27 @@
       }
     },
     "validation": {
-      "country_required": "请选择国家/地区",
-      "currency_required": "请选择货币",
-      "first_name_required": "名字为必填项",
-      "invalid_email": "请输入有效的邮箱地址",
-      "invalid_email_or_password": "邮箱或密码无效",
-      "invalid_hex_color": "无效的十六进制颜色",
-      "invalid_password": "密码无效",
-      "last_name_required": "姓氏为必填项",
-      "min_length": "{{field}} 至少需要 {{count}} 个字符",
-      "password_required": "密码为必填项",
-      "passwords_dont_match": "两次输入的密码不一致",
-      "positive_number": "{{field}} 必须大于 0",
-      "required": "{{field}} 为必填项",
-      "store_name_required": "商店名称为必填项"
+      "accepted": "必须接受",
+      "blank": "不能为空",
+      "confirmation": "不匹配",
+      "empty": "不能为空",
+      "equal_to": "必须等于 {{count}}",
+      "exclusion": "已被保留",
+      "greater_than": "必须大于 {{count}}",
+      "greater_than_or_equal_to": "必须大于或等于 {{count}}",
+      "inclusion": "不在列表中",
+      "invalid": "无效",
+      "less_than": "必须小于 {{count}}",
+      "less_than_or_equal_to": "必须小于或等于 {{count}}",
+      "not_a_number": "不是数字",
+      "not_an_integer": "必须是整数",
+      "other_than": "必须不等于 {{count}}",
+      "present": "必须为空",
+      "required": "必须存在",
+      "taken": "已被占用",
+      "too_long": "太长（最多 {{count}} 个字符）",
+      "too_short": "太短（最少 {{count}} 个字符）",
+      "wrong_length": "长度不正确（应为 {{count}} 个字符）"
     },
     "products": {
       "autocomplete": {
@@ -1594,6 +1601,266 @@
           "minimum": "买家单个商品可订购的最小数量。低于该数量的订单会被拒绝，并提示最接近的有效数量——系统绝不会自动向上取整。",
           "multiple": "递增步长。倍数为 24 时，买家可订购 24、48 或 72——但不能是 30。步长从最小起订量开始计算：最小 50、步长 24 时，允许 50、74 和 98。",
           "order_minimum": "整笔订单必须达到的最低金额，仅计算商品——运费和税费不计入。买家在选购时即可看到还差多少，未达到前无法结账。"
+        }
+      }
+    },
+    "types": {
+      "calculator": {
+        "default_refund_amount": {
+          "name": "默认退款金额",
+          "description": "退还退货商品原先支付的金额"
+        },
+        "default_tax": {
+          "name": "默认税费",
+          "description": "将税率应用于应税金额"
+        },
+        "digital_delivery": {
+          "name": "数字交付",
+          "description": "无运费，订单以数字方式交付"
+        },
+        "flat_percent_item_total": {
+          "name": "固定百分比",
+          "description": "订单商品总额的百分比"
+        },
+        "flat_rate": {
+          "name": "固定费率",
+          "description": "固定金额，与订单内容无关"
+        },
+        "flexi_rate": {
+          "name": "弹性费率",
+          "description": "基础金额加上每件商品的金额"
+        },
+        "per_item": {
+          "name": "按件计费",
+          "description": "订单中每件商品的固定金额"
+        },
+        "percent_on_line_item": {
+          "name": "按订单项百分比",
+          "description": "每个订单行的百分比"
+        },
+        "price_sack": {
+          "name": "价格袋",
+          "description": "低于阈值一个金额，达到或高于阈值另一个金额"
+        },
+        "tiered_flat_rate": {
+          "name": "阶梯固定费率",
+          "description": "随订单总额变化的固定金额"
+        },
+        "tiered_percent": {
+          "name": "阶梯百分比",
+          "description": "随订单总额变化的百分比"
+        }
+      },
+      "collection_rule": {
+        "available_on": {
+          "name": "近期上架",
+          "description": "最近 N 天内上架的商品"
+        },
+        "sale": {
+          "name": "特价中",
+          "description": "当前价格低于对比价的商品"
+        },
+        "tag": {
+          "name": "标签",
+          "description": "带有匹配标签的商品"
+        }
+      },
+      "commission_rule": {
+        "category_rule": {
+          "name": "分类",
+          "description": "仅对所选分类及其下级分类中的商品收取此费率"
+        },
+        "item_total_rule": {
+          "name": "销售金额",
+          "description": "仅对金额区间内的销售收取此费率"
+        },
+        "product_rule": {
+          "name": "商品",
+          "description": "仅对所选商品收取此费率"
+        },
+        "seller_rule": {
+          "name": "卖家",
+          "description": "仅当卖家属于所选范围时收取此费率"
+        }
+      },
+      "delivery_method_rule": {
+        "channel_rule": {
+          "name": "销售渠道",
+          "description": "仅在所选销售渠道提供此配送方式"
+        },
+        "excluded_products_rule": {
+          "name": "排除的商品",
+          "description": "当订单包含其中任一商品时隐藏此配送方式"
+        },
+        "item_total_rule": {
+          "name": "订单金额",
+          "description": "仅当订单金额在区间内时提供此配送方式"
+        },
+        "weight_rule": {
+          "name": "重量",
+          "description": "仅当包裹重量在区间内时提供此配送方式"
+        }
+      },
+      "order_routing_rule": {
+        "default_location": {
+          "name": "默认库存地点",
+          "description": "优先选择标记为默认的库存地点"
+        },
+        "minimize_splits": {
+          "name": "减少拆单",
+          "description": "优先选择能独立满足最多商品的地点，避免拆分发货"
+        },
+        "preferred_location": {
+          "name": "首选库存地点",
+          "description": "如订单已指定库存地点，则从该地点发货"
+        }
+      },
+      "price_rule": {
+        "channel_rule": {
+          "name": "销售渠道",
+          "description": "根据销售渠道应用定价"
+        },
+        "customer_group_rule": {
+          "name": "客户组",
+          "description": "对指定客户组应用定价"
+        },
+        "market_rule": {
+          "name": "市场",
+          "description": "根据市场应用定价"
+        },
+        "user_rule": {
+          "name": "客户",
+          "description": "对指定客户应用定价"
+        },
+        "volume_rule": {
+          "name": "数量定价",
+          "description": "根据购买数量应用定价"
+        },
+        "zone_rule": {
+          "name": "区域",
+          "description": "根据配送区域应用定价"
+        }
+      },
+      "promotion_action": {
+        "create_adjustment": {
+          "name": "创建整单调整",
+          "description": "在订单上创建优惠抵扣调整"
+        },
+        "create_item_adjustments": {
+          "name": "创建按行项目调整",
+          "description": "在某个订单项上创建优惠抵扣调整"
+        },
+        "create_line_items": {
+          "name": "创建订单项",
+          "description": "向购物车填充指定数量的变体"
+        },
+        "free_shipping": {
+          "name": "免运费",
+          "description": "使订单的所有发货免运费"
+        }
+      },
+      "promotion_rule": {
+        "category": {
+          "name": "分类",
+          "description": "订单包含指定分类中的商品"
+        },
+        "channel": {
+          "name": "销售渠道",
+          "description": "仅限通过指定销售渠道下的订单"
+        },
+        "country": {
+          "name": "国家/地区",
+          "description": "仅限收货地址在指定国家/地区的订单"
+        },
+        "currency": {
+          "name": "货币",
+          "description": "仅限使用指定货币的订单"
+        },
+        "customer": {
+          "name": "客户",
+          "description": "仅对指定客户可用"
+        },
+        "customer_group": {
+          "name": "客户组",
+          "description": "仅对指定客户组中的客户可用"
+        },
+        "customer_logged_in": {
+          "name": "仅限已登录客户",
+          "description": "仅对已登录客户可用"
+        },
+        "first_order": {
+          "name": "首次订单",
+          "description": "必须是客户的首次订单"
+        },
+        "item_total": {
+          "name": "商品总额",
+          "description": "订单总额满足这些条件"
+        },
+        "market": {
+          "name": "市场",
+          "description": "仅限来自指定市场的订单"
+        },
+        "one_use_per_user": {
+          "name": "每位用户限用一次",
+          "description": "每位用户仅限使用一次"
+        },
+        "option_value": {
+          "name": "选项值",
+          "description": "订单包含具有匹配选项值的商品"
+        },
+        "product": {
+          "name": "商品",
+          "description": "订单包含指定商品"
+        }
+      },
+      "seller_requirement": {
+        "accept_terms": {
+          "name": "接受条款",
+          "description": "卖家必须先接受您的平台条款才能销售"
+        },
+        "attestation": {
+          "name": "卖家确认",
+          "description": "卖家必须确认您撰写的声明"
+        },
+        "billing_address": {
+          "name": "账单地址",
+          "description": "卖家必须提供账单地址"
+        },
+        "complete_profile": {
+          "name": "完善资料",
+          "description": "卖家必须填写其公开资料"
+        },
+        "delivery_method": {
+          "name": "配送方式",
+          "description": "卖家必须配置至少一种配送方式"
+        },
+        "document": {
+          "name": "文件",
+          "description": "卖家必须上传文件以供审核"
+        },
+        "minimum_products": {
+          "name": "最少商品数",
+          "description": "卖家必须上架最少数量的商品"
+        },
+        "operator_review": {
+          "name": "人工核查",
+          "description": "需由您团队成员人工审核通过卖家"
+        },
+        "payout_account": {
+          "name": "结算账户",
+          "description": "卖家必须关联账户以接收结算款项"
+        },
+        "policy": {
+          "name": "卖家政策",
+          "description": "卖家必须公布其店铺政策"
+        },
+        "required_custom_fields": {
+          "name": "必填自定义字段",
+          "description": "卖家必须填写您标记为必填的自定义字段"
+        },
+        "returns_address": {
+          "name": "退货地址",
+          "description": "卖家必须提供退货地址"
         }
       }
     }

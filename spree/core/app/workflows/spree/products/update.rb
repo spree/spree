@@ -66,7 +66,7 @@ module Spree
         return unless product.status_changed?
         return unless product.status_was.in?(Spree::Product::REVIEW_STATUSES)
 
-        reject!(I18n.t('activerecord.errors.models.spree/product.attributes.base.status_decided_by_review'))
+        reject!(:status_decided_by_review, message: I18n.t('activerecord.errors.models.spree/product.attributes.base.status_decided_by_review'))
       end
 
       def save_product

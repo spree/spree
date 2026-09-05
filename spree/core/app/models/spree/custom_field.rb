@@ -126,7 +126,10 @@ module Spree
     def type_must_match_custom_field_definition
       return if custom_field_definition.blank?
 
-      errors.add(:type, 'must match custom field definition') unless type == custom_field_definition.field_type_class_name
+      unless type == custom_field_definition.field_type_class_name
+        errors.add(:type, :custom_field_definition_mismatch,
+                   message: Spree.t('errors.messages.custom_field_definition_mismatch'))
+      end
     end
 
     # A definition belongs to one resource type; attaching it to a different
@@ -140,7 +143,8 @@ module Spree
       return if resource_type == definition_type
       return if definition_type.safe_constantize&.base_class&.name == resource_type
 
-      errors.add(:resource_type, 'must match custom field definition')
+      errors.add(:resource_type, :custom_field_definition_mismatch,
+                 message: Spree.t('errors.messages.custom_field_definition_mismatch'))
     end
 
     # Definitions are store-owned, so a record may only carry its own store's.

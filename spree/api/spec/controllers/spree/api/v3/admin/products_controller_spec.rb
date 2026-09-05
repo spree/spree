@@ -2297,7 +2297,11 @@ RSpec.describe Spree::Api::V3::Admin::ProductsController, type: :controller do
       end.not_to change(Spree::Product, :count)
 
       expect(response).to have_http_status(:unprocessable_content)
-      expect(json_response['error']['details']['name']).to eq(['may not mention a competitor'])
+      # Admin details carry the symbolic code beside the text so the dashboard
+      # renders its own copy; the message stays for everyone else.
+      expect(json_response['error']['details']['name']).to eq(
+        [{ 'code' => 'reserved_word', 'message' => 'may not mention a competitor' }]
+      )
     end
 
     it 'rejects an update' do

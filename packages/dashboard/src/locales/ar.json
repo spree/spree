@@ -74,19 +74,6 @@
       },
       "warning_treat_like_password": "تعامل مع هذا المفتاح ككلمة مرور. قم بتخزينه في مدير الأسرار لديك — لا يمكننا إظهاره مرة أخرى."
     },
-    "calculators": {
-      "default_refund_amount": "Default Refund Amount",
-      "default_tax": "Default Tax",
-      "digital_delivery": "Digital Delivery",
-      "flat_percent_item_total": "Flat Percent",
-      "flat_rate": "Flat Rate",
-      "flexi_rate": "Flexi Rate",
-      "per_item": "Per Item",
-      "percent_on_line_item": "Percent Per Line Item",
-      "price_sack": "Price Sack",
-      "tiered_flat_rate": "Tiered Flat Rate",
-      "tiered_percent": "Tiered Percent"
-    },
     "catalogs": {
       "actions": {
         "activate": "تفعيل",
@@ -412,20 +399,6 @@
         "does_not_contain": "لا يحتوي على",
         "is_equal_to": "يساوي",
         "is_not_equal_to": "لا يساوي"
-      },
-      "rule_types": {
-        "available_on": {
-          "description": "منتجات نُشرت خلال آخر N يومًا",
-          "name": "نُشرت حديثًا"
-        },
-        "sale": {
-          "description": "منتجات مخفّضة حاليًا دون سعر المقارنة",
-          "name": "في التخفيضات"
-        },
-        "tag": {
-          "description": "منتجات تحمل وسمًا مطابقًا",
-          "name": "وسم"
-        }
       },
       "rules": {
         "add": "إضافة قاعدة",
@@ -2565,20 +2538,6 @@
       "messages": {
         "created": "تمت إضافة قاعدة التوجيه",
         "deleted": "تمت إزالة قاعدة التوجيه"
-      },
-      "types": {
-        "default_location": {
-          "description": "يفضّل موقع المخزون المحدد كافتراضي",
-          "name": "الموقع الافتراضي"
-        },
-        "minimize_splits": {
-          "description": "يفضّل الموقع القادر على تلبية أكبر عدد من العناصر بمفرده لتجنّب تقسيم الشحنات",
-          "name": "تقليل تقسيم الشحنات"
-        },
-        "preferred_location": {
-          "description": "الشحن من الموقع المثبّت على الطلب إن وُجد",
-          "name": "الموقع المفضل"
-        }
       }
     },
     "orders": {
@@ -3872,16 +3831,24 @@
         "api_keys": "إنشاء بيانات اعتماد API وإلغاؤها",
         "categories": "شجرة الفئات والتصنيفات",
         "collections": "مجموعات المنتجات اليدوية والقائمة على القواعد",
+        "commissions": "معدلات العمولة وما يُحتسب على كل بائع",
         "customers": "حسابات العملاء والعناوين والبطاقات والمجموعات",
         "dashboard": "تحليلات المبيعات والأداء",
+        "delivery_methods": "خيارات الشحن والأسعار والقواعد التي تتحكم بها",
         "fulfillments": "تجهيز الطلبات وشحنها وتتبعها",
         "gift_cards": "بطاقات الهدايا ودفعاتها",
         "integrations": "بيانات اعتماد مزوّدي الخدمة واتصالاتهم",
+        "media": "الصور والفيديو والملفات في مكتبة الوسائط",
         "orders": "الطلبات وبنودها والإرجاعات والاستبدالات والمطالبات",
         "payments": "مدفوعات الطلبات وتحصيلها",
+        "payouts": "الأموال المدفوعة للبائعين وجدولها",
+        "product_types": "تعريفات أنواع المنتجات وحقولها المخصصة",
         "products": "المنتجات والمتغيرات والخيارات والأسعار والوسائط",
         "promotions": "العروض الترويجية والقواعد وأكواد الخصم",
+        "publishing": "ما يظهر في المتجر ومتى",
         "refunds": "إصدار المبالغ المستردة وعرضها",
+        "seller_profile": "بيانات البائع وعنوانه وسياساته",
+        "sellers": "حسابات البائعين والانضمام والموافقة",
         "settings": "إعدادات المتجر والدفع والتوصيل والضرائب والقنوات",
         "staff": "أعضاء الفريق والدعوات والأدوار وأذوناتها",
         "stock": "مستويات المخزون والمواقع والحركات والتحويلات",
@@ -3912,16 +3879,24 @@
         "api_keys": "API مفاتيح",
         "categories": "فئات",
         "collections": "المجموعات",
+        "commissions": "العمولات",
         "customers": "العملاء",
         "dashboard": "Dashboard",
+        "delivery_methods": "طرق التوصيل",
         "fulfillments": "Fulfillments",
         "gift_cards": "بطاقات الهدايا",
         "integrations": "عمليات التكامل",
+        "media": "الوسائط",
         "orders": "طلبات",
         "payments": "المدفوعات",
+        "payouts": "المدفوعات",
+        "product_types": "أنواع المنتجات",
         "products": "منتجات",
         "promotions": "الترقيات",
+        "publishing": "النشر",
         "refunds": "المبالغ المستردة",
+        "seller_profile": "ملف البائع",
+        "sellers": "البائعون",
         "settings": "إعدادات",
         "staff": "الفريق والأدوار",
         "stock": "مخزون",
@@ -4253,24 +4228,6 @@
       "action_summary": {
         "variant_count": "{{count}} متغيرات"
       },
-      "action_types": {
-        "create_adjustment": {
-          "description": "يقوم بإنشاء تعديل ائتمان ترويجي على الأمر",
-          "name": "إنشاء تعديل الطلب بالكامل"
-        },
-        "create_item_adjustments": {
-          "description": "إنشاء تسوية رصيد ترويجي على أحد البنود",
-          "name": "إنشاء تعديل لكل بند"
-        },
-        "create_line_items": {
-          "description": "تعبئة سلة التسوق بالكمية المحددة من المتغير",
-          "name": "إنشاء عناصر سطرية"
-        },
-        "free_shipping": {
-          "description": "يجعل جميع الشحنات للطلب مجانية",
-          "name": "ًالشحن مجانا"
-        }
-      },
       "actions_card": {
         "add_action": "أضف الإجراء",
         "description": "ماذا يحدث عندما يصبح العرض الترويجي مؤهلاً؟",
@@ -4350,52 +4307,6 @@
         "category_count": "{{count}} فئات",
         "customer_count": "{{count}} عملاء",
         "product_count": "{{count}} منتجات"
-      },
-      "rule_types": {
-        "category": {
-          "description": "يتضمن الطلب منتجات في فئات محددة",
-          "name": "فئات"
-        },
-        "country": {
-          "description": "يقتصر على الطلبات التي لها عنوان شحن في بلد معين",
-          "name": "دولة"
-        },
-        "currency": {
-          "description": "الحد من الطلبات بعملة معينة",
-          "name": "Currency"
-        },
-        "customer": {
-          "description": "متاح فقط للعملاء المحددين",
-          "name": "العملاء"
-        },
-        "customer_group": {
-          "description": "متاح فقط للعملاء في مجموعة (مجموعات) العملاء المحددة",
-          "name": "العميل Group(s)"
-        },
-        "customer_logged_in": {
-          "description": "متاح فقط للأشخاص الذين قاموا بتسجيل الدخول custom",
-          "name": "الأشخاص الذين قاموا بتسجيل الدخول فقط custom"
-        },
-        "first_order": {
-          "description": "يجب أن يكون الطلب الأول للعميل",
-          "name": "الطلب الأول"
-        },
-        "item_total": {
-          "description": "إجمالي الطلب يلبي هذه المعايير",
-          "name": "إجمالي السلعة"
-        },
-        "one_use_per_user": {
-          "description": "Only One Use Per User",
-          "name": "One Use Per User"
-        },
-        "option_value": {
-          "description": "يتضمن الطلب منتجات ذات قيمة (قيم) خيار متطابقة",
-          "name": "Option Value(s)"
-        },
-        "product": {
-          "description": "يتضمن الطلب منتجًا (منتجات) محددة",
-          "name": "Product(s)"
-        }
       },
       "rule_types_all_used": "كل نوع قاعدة متاح موجود بالفعل في هذا العرض الترويجي.",
       "rule_types_empty": "لم يتم تسجيل أي أنواع قواعد.",
@@ -4618,17 +4529,6 @@
           "help": "يجب إنجاز العناصر المطلوبة قبل الموافقة. أما الباقي فيُعرض كموصى به.",
           "label": "مطلوب"
         }
-      },
-      "kinds": {
-        "accept_terms": "قبول الشروط",
-        "attestation": "إقرار البائع",
-        "billing_address": "عنوان الفوترة",
-        "complete_profile": "استكمال الملف",
-        "document": "مستند",
-        "minimum_products": "الحد الأدنى للمنتجات",
-        "operator_review": "مراجعة يدوية",
-        "required_custom_fields": "الحقول المخصصة المطلوبة",
-        "returns_address": "عنوان المرتجعات"
       },
       "messages": {
         "created": "تمت إضافة المتطلب",

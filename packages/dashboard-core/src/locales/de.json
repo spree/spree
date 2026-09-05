@@ -1313,20 +1313,27 @@
       }
     },
     "validation": {
-      "country_required": "Land ist erforderlich",
-      "currency_required": "Währung ist erforderlich",
-      "first_name_required": "Vorname ist erforderlich",
-      "invalid_email": "Geben Sie eine gültige E-Mail-Adresse ein",
-      "invalid_email_or_password": "Ungültige E-Mail-Adresse oder ungültiges Passwort",
-      "invalid_hex_color": "Ungültiger Hex-Farbwert",
-      "invalid_password": "Ungültiges Passwort",
-      "last_name_required": "Nachname ist erforderlich",
-      "min_length": "{{field}} muss mindestens {{count}} Zeichen lang sein",
-      "password_required": "Passwort ist erforderlich",
-      "passwords_dont_match": "Die Passwörter stimmen nicht überein",
-      "positive_number": "{{field}} muss größer als 0 sein",
-      "required": "{{field}} ist erforderlich",
-      "store_name_required": "Shopname ist erforderlich"
+      "accepted": "muss akzeptiert werden",
+      "blank": "darf nicht leer sein",
+      "confirmation": "stimmt nicht überein",
+      "empty": "darf nicht leer sein",
+      "equal_to": "muss genau {{count}} sein",
+      "exclusion": "ist reserviert",
+      "greater_than": "muss größer als {{count}} sein",
+      "greater_than_or_equal_to": "muss größer oder gleich {{count}} sein",
+      "inclusion": "ist nicht in der Liste enthalten",
+      "invalid": "ist ungültig",
+      "less_than": "muss kleiner als {{count}} sein",
+      "less_than_or_equal_to": "muss kleiner oder gleich {{count}} sein",
+      "not_a_number": "ist keine Zahl",
+      "not_an_integer": "muss eine ganze Zahl sein",
+      "other_than": "darf nicht {{count}} sein",
+      "present": "muss leer sein",
+      "required": "muss vorhanden sein",
+      "taken": "ist bereits vergeben",
+      "too_long": "ist zu lang (maximal {{count}} Zeichen)",
+      "too_short": "ist zu kurz (mindestens {{count}} Zeichen)",
+      "wrong_length": "hat die falsche Länge (sollte {{count}} Zeichen haben)"
     },
     "products": {
       "autocomplete": {
@@ -1595,6 +1602,266 @@
           "minimum": "Die geringste Menge, die ein Käufer von einem Produkt bestellen darf. Eine kleinere Bestellung wird abgelehnt und nennt die nächstgelegenen gültigen Mengen — es wird nie aufgerundet.",
           "multiple": "Die Schrittweite. Bei einem Vielfachen von 24 bestellt ein Käufer 24, 48 oder 72 — nie 30. Die Schritte zählen ab der Mindestmenge: bei Minimum 50 und Schritten von 24 sind 50, 74 und 98 erlaubt.",
           "order_minimum": "Der Mindestwert einer gesamten Bestellung, nur Artikel — Versand und Steuern zählen nicht mit. Käufer sehen beim Einkaufen, wie viel noch fehlt, und der Checkout wird bis dahin abgelehnt."
+        }
+      }
+    },
+    "types": {
+      "calculator": {
+        "default_refund_amount": {
+          "name": "Standard-Erstattungsbetrag",
+          "description": "Erstattet den ursprünglich für die zurückgesendeten Artikel gezahlten Betrag"
+        },
+        "default_tax": {
+          "name": "Standardsteuer",
+          "description": "Wendet den Steuersatz auf den steuerpflichtigen Betrag an"
+        },
+        "digital_delivery": {
+          "name": "Digitale Lieferung",
+          "description": "Keine Versandkosten — die Bestellung wird digital geliefert"
+        },
+        "flat_percent_item_total": {
+          "name": "Pauschaler Prozentsatz",
+          "description": "Ein Prozentsatz des Warenwerts der Bestellung"
+        },
+        "flat_rate": {
+          "name": "Pauschalbetrag",
+          "description": "Ein fester Betrag, unabhängig vom Inhalt der Bestellung"
+        },
+        "flexi_rate": {
+          "name": "Flexibler Tarif",
+          "description": "Ein Grundbetrag plus ein Betrag je Artikel"
+        },
+        "per_item": {
+          "name": "Pro Artikel",
+          "description": "Ein fester Betrag für jeden Artikel der Bestellung"
+        },
+        "percent_on_line_item": {
+          "name": "Prozentsatz pro Position",
+          "description": "Ein Prozentsatz jeder Position"
+        },
+        "price_sack": {
+          "name": "Preisstaffel",
+          "description": "Ein Betrag unterhalb einer Schwelle, ein anderer ab dieser Schwelle"
+        },
+        "tiered_flat_rate": {
+          "name": "Gestaffelter Pauschalbetrag",
+          "description": "Ein fester Betrag, der sich mit dem Bestellwert ändert"
+        },
+        "tiered_percent": {
+          "name": "Gestaffelter Prozentsatz",
+          "description": "Ein Prozentsatz, der sich mit dem Bestellwert ändert"
+        }
+      },
+      "collection_rule": {
+        "available_on": {
+          "name": "Kürzlich veröffentlicht",
+          "description": "Produkte, die in den letzten N Tagen veröffentlicht wurden"
+        },
+        "sale": {
+          "name": "Im Angebot",
+          "description": "Produkte, die derzeit unter ihrem Vergleichspreis liegen"
+        },
+        "tag": {
+          "name": "Schlagwort",
+          "description": "Produkte mit einem passenden Schlagwort"
+        }
+      },
+      "commission_rule": {
+        "category_rule": {
+          "name": "Kategorie",
+          "description": "Berechnet diesen Satz nur für Produkte in den gewählten Kategorien und allem darunter"
+        },
+        "item_total_rule": {
+          "name": "Verkaufswert",
+          "description": "Berechnet diesen Satz nur für Verkäufe in einem Wertebereich"
+        },
+        "product_rule": {
+          "name": "Produkt",
+          "description": "Berechnet diesen Satz nur für die gewählten Produkte"
+        },
+        "seller_rule": {
+          "name": "Verkäufer",
+          "description": "Berechnet diesen Satz nur bei den gewählten Verkäufern"
+        }
+      },
+      "delivery_method_rule": {
+        "channel_rule": {
+          "name": "Vertriebskanal",
+          "description": "Diese Versandart nur in den gewählten Vertriebskanälen anbieten"
+        },
+        "excluded_products_rule": {
+          "name": "Ausgeschlossene Produkte",
+          "description": "Diese Versandart ausblenden, wenn die Bestellung eines dieser Produkte enthält"
+        },
+        "item_total_rule": {
+          "name": "Warenwert",
+          "description": "Diese Versandart nur anbieten, wenn der Bestellwert im Bereich liegt"
+        },
+        "weight_rule": {
+          "name": "Gewicht",
+          "description": "Diese Versandart nur anbieten, wenn das Paketgewicht im Bereich liegt"
+        }
+      },
+      "order_routing_rule": {
+        "default_location": {
+          "name": "Standard-Lagerort",
+          "description": "Bevorzugt den als Standard markierten Lagerort"
+        },
+        "minimize_splits": {
+          "name": "Teillieferungen minimieren",
+          "description": "Bevorzugt den Lagerort, der die meisten Artikel allein liefern kann, und vermeidet Teillieferungen"
+        },
+        "preferred_location": {
+          "name": "Bevorzugter Lagerort",
+          "description": "Versand vom am Auftrag hinterlegten Lagerort, sofern gesetzt"
+        }
+      },
+      "price_rule": {
+        "channel_rule": {
+          "name": "Vertriebskanal",
+          "description": "Preise abhängig vom Vertriebskanal anwenden"
+        },
+        "customer_group_rule": {
+          "name": "Kundengruppe",
+          "description": "Preise für bestimmte Kundengruppen anwenden"
+        },
+        "market_rule": {
+          "name": "Markt",
+          "description": "Preise abhängig vom Markt anwenden"
+        },
+        "user_rule": {
+          "name": "Kunde",
+          "description": "Preise für bestimmte Kunden anwenden"
+        },
+        "volume_rule": {
+          "name": "Mengenpreise",
+          "description": "Preise abhängig von der gekauften Menge anwenden"
+        },
+        "zone_rule": {
+          "name": "Zone",
+          "description": "Preise abhängig von der Versandzone anwenden"
+        }
+      },
+      "promotion_action": {
+        "create_adjustment": {
+          "name": "Anpassung für gesamte Bestellung erstellen",
+          "description": "Erstellt eine Aktionsgutschrift als Anpassung für die Bestellung"
+        },
+        "create_item_adjustments": {
+          "name": "Anpassung je Bestellposition erstellen",
+          "description": "Erstellt eine Aktionsgutschrift als Anpassung für eine Bestellposition"
+        },
+        "create_line_items": {
+          "name": "Bestellpositionen erstellen",
+          "description": "Fügt dem Warenkorb die angegebene Menge der Variante hinzu"
+        },
+        "free_shipping": {
+          "name": "Kostenloser Versand",
+          "description": "Macht alle Sendungen der Bestellung kostenlos"
+        }
+      },
+      "promotion_rule": {
+        "category": {
+          "name": "Kategorien",
+          "description": "Bestellung enthält Produkte aus den angegebenen Kategorien"
+        },
+        "channel": {
+          "name": "Vertriebskanäle",
+          "description": "Nur für Bestellungen über bestimmte Vertriebskanäle"
+        },
+        "country": {
+          "name": "Land",
+          "description": "Auf Bestellungen mit Lieferadresse in einem bestimmten Land beschränken"
+        },
+        "currency": {
+          "name": "Währung",
+          "description": "Auf Bestellungen in einer bestimmten Währung beschränken"
+        },
+        "customer": {
+          "name": "Kunden",
+          "description": "Nur für die angegebenen Kunden verfügbar"
+        },
+        "customer_group": {
+          "name": "Kundengruppe(n)",
+          "description": "Nur für Kunden in den angegebenen Kundengruppen verfügbar"
+        },
+        "customer_logged_in": {
+          "name": "Nur angemeldete Kunden",
+          "description": "Nur für angemeldete Kunden verfügbar"
+        },
+        "first_order": {
+          "name": "Erste Bestellung",
+          "description": "Muss die erste Bestellung des Kunden sein"
+        },
+        "item_total": {
+          "name": "Warenwert",
+          "description": "Bestellsumme erfüllt diese Kriterien"
+        },
+        "market": {
+          "name": "Märkte",
+          "description": "Nur für Bestellungen aus bestimmten Märkten"
+        },
+        "one_use_per_user": {
+          "name": "Einmalige Nutzung pro Benutzer",
+          "description": "Nur einmalige Nutzung pro Benutzer"
+        },
+        "option_value": {
+          "name": "Optionswert(e)",
+          "description": "Bestellung enthält Produkte mit übereinstimmenden Optionswerten"
+        },
+        "product": {
+          "name": "Produkt(e)",
+          "description": "Bestellung enthält die angegebenen Produkte"
+        }
+      },
+      "seller_requirement": {
+        "accept_terms": {
+          "name": "Bedingungen akzeptieren",
+          "description": "Der Verkäufer muss Ihre Marktplatzbedingungen akzeptieren, bevor er verkauft"
+        },
+        "attestation": {
+          "name": "Bestätigung des Verkäufers",
+          "description": "Der Verkäufer muss eine von Ihnen verfasste Erklärung bestätigen"
+        },
+        "billing_address": {
+          "name": "Rechnungsadresse",
+          "description": "Der Verkäufer muss eine Rechnungsadresse angeben"
+        },
+        "complete_profile": {
+          "name": "Profil vervollständigen",
+          "description": "Der Verkäufer muss sein öffentliches Profil ausfüllen"
+        },
+        "delivery_method": {
+          "name": "Versandart",
+          "description": "Der Verkäufer muss mindestens eine Versandart einrichten"
+        },
+        "document": {
+          "name": "Dokument",
+          "description": "Der Verkäufer muss ein Dokument zur Prüfung hochladen"
+        },
+        "minimum_products": {
+          "name": "Mindestanzahl Produkte",
+          "description": "Der Verkäufer muss eine Mindestanzahl an Produkten einstellen"
+        },
+        "operator_review": {
+          "name": "Manuelle Prüfung",
+          "description": "Ein Mitglied Ihres Teams muss den Verkäufer manuell freigeben"
+        },
+        "payout_account": {
+          "name": "Auszahlungskonto",
+          "description": "Der Verkäufer muss ein Konto für Auszahlungen verbinden"
+        },
+        "policy": {
+          "name": "Verkäuferrichtlinie",
+          "description": "Der Verkäufer muss seine Shop-Richtlinien veröffentlichen"
+        },
+        "required_custom_fields": {
+          "name": "Erforderliche benutzerdefinierte Felder",
+          "description": "Der Verkäufer muss die von Ihnen als Pflicht markierten Zusatzfelder ausfüllen"
+        },
+        "returns_address": {
+          "name": "Retourenadresse",
+          "description": "Der Verkäufer muss eine Rücksendeadresse angeben"
         }
       }
     }

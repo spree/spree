@@ -1,4 +1,4 @@
-import type { ErrorResponse, LocaleDefaults } from './types'
+import type { ErrorResponse, LocaleDefaults, ValidationErrorDetail } from './types'
 
 export interface RetryConfig {
   /** Maximum number of retries (default: 2) */
@@ -40,7 +40,7 @@ export interface InternalRequestOptions extends RequestOptions {
 export class SpreeError extends Error {
   public readonly code: string
   public readonly status: number
-  public readonly details?: Record<string, string[]>
+  public readonly details?: Record<string, string[] | ValidationErrorDetail[]>
 
   constructor(response: ErrorResponse, status: number) {
     super(response.error.message)

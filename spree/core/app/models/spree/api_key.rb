@@ -151,23 +151,26 @@ module Spree
 
     def validate_known_scopes
       invalid = scopes - self.class.known_scopes
-      errors.add(:scopes, "contains unknown scopes: #{invalid.join(', ')}") if invalid.any?
+      return if invalid.empty?
+
+      errors.add(:scopes, :unknown_scopes, scopes: invalid.join(', '),
+                 message: Spree.t('errors.messages.unknown_scopes', scopes: invalid.join(', ')))
     end
 
     def scopes_immutable
-      errors.add(:scopes, Spree.t(:api_key_scopes_immutable))
+      errors.add(:scopes, :api_key_scopes_immutable, message: Spree.t(:api_key_scopes_immutable))
     end
 
     def channel_binding_valid
       if secret?
-        errors.add(:channel, Spree.t(:api_key_channel_publishable_only))
+        errors.add(:channel, :api_key_channel_publishable_only, message: Spree.t(:api_key_channel_publishable_only))
       elsif channel && channel.store_id != store_id
-        errors.add(:channel, Spree.t(:api_key_channel_must_belong_to_store))
+        errors.add(:channel, :api_key_channel_must_belong_to_store, message: Spree.t(:api_key_channel_must_belong_to_store))
       end
     end
 
     def channel_immutable
-      errors.add(:channel, Spree.t(:api_key_channel_immutable))
+      errors.add(:channel, :api_key_channel_immutable, message: Spree.t(:api_key_channel_immutable))
     end
 
     # Generates the token on creation. For publishable keys, stores the raw token

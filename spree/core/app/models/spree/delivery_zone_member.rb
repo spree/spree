@@ -78,21 +78,21 @@ module Spree
 
     def postal_definition
       if postal_code_prefix.present?
-        errors.add(:postal_code_prefix, Spree.t('errors.messages.delivery_zone_prefix_and_range_exclusive')) if postal_range?
+        errors.add(:postal_code_prefix, :delivery_zone_prefix_and_range_exclusive, message: Spree.t('errors.messages.delivery_zone_prefix_and_range_exclusive')) if postal_range?
         return
       end
 
       if postal_code_from.blank? || postal_code_to.blank?
-        errors.add(:base, Spree.t('errors.messages.delivery_zone_postal_definition_required'))
+        errors.add(:base, :delivery_zone_postal_definition_required, message: Spree.t('errors.messages.delivery_zone_postal_definition_required'))
         return
       end
 
       unless country_code.present? && range_capable_country_codes.include?(country_code)
-        errors.add(:base, Spree.t('errors.messages.delivery_zone_range_not_supported'))
+        errors.add(:base, :delivery_zone_range_not_supported, message: Spree.t('errors.messages.delivery_zone_range_not_supported'))
         return
       end
 
-      errors.add(:postal_code_to, Spree.t('errors.messages.delivery_zone_range_inverted')) if postal_code_to < postal_code_from
+      errors.add(:postal_code_to, :delivery_zone_range_inverted, message: Spree.t('errors.messages.delivery_zone_range_inverted')) if postal_code_to < postal_code_from
     end
   end
 end

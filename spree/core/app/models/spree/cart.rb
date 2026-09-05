@@ -212,7 +212,7 @@ module Spree
 
     def ensure_available_delivery_rates
       if fulfillments.empty? || fulfillments.any? { |fulfillment| fulfillment.delivery_rates.blank? }
-        errors.add(:base, Spree.t(:items_cannot_be_shipped))
+        errors.add(:base, :items_cannot_be_shipped, message: Spree.t(:items_cannot_be_shipped))
         return false
       end
       true

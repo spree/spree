@@ -74,19 +74,6 @@
       },
       "warning_treat_like_password": "Treat this key like a password. Store it in your secrets manager — we can't show it again."
     },
-    "calculators": {
-      "default_refund_amount": "Default Refund Amount",
-      "default_tax": "Default Tax",
-      "digital_delivery": "Digital Delivery",
-      "flat_percent_item_total": "Flat Percent",
-      "flat_rate": "Flat Rate",
-      "flexi_rate": "Flexi Rate",
-      "per_item": "Per Item",
-      "percent_on_line_item": "Percent Per Line Item",
-      "price_sack": "Price Sack",
-      "tiered_flat_rate": "Tiered Flat Rate",
-      "tiered_percent": "Tiered Percent"
-    },
     "catalogs": {
       "actions": {
         "activate": "Activate",
@@ -408,20 +395,6 @@
         "does_not_contain": "does not contain",
         "is_equal_to": "is equal to",
         "is_not_equal_to": "is not equal to"
-      },
-      "rule_types": {
-        "available_on": {
-          "description": "Products published within the last N days",
-          "name": "Recently published"
-        },
-        "sale": {
-          "description": "Products currently discounted below their compare-at price",
-          "name": "On sale"
-        },
-        "tag": {
-          "description": "Products carrying a matching tag",
-          "name": "Tag"
-        }
       },
       "rules": {
         "add": "Add rule",
@@ -2547,20 +2520,6 @@
       "messages": {
         "created": "Routing rule added",
         "deleted": "Routing rule removed"
-      },
-      "types": {
-        "default_location": {
-          "description": "Prefer the stock location marked as default",
-          "name": "Default location"
-        },
-        "minimize_splits": {
-          "description": "Prefer the location that can fulfill the most items on its own, avoiding split shipments",
-          "name": "Minimize splits"
-        },
-        "preferred_location": {
-          "description": "Fulfill from the location pinned on the order, when one is set",
-          "name": "Preferred location"
-        }
       }
     },
     "orders": {
@@ -3855,16 +3814,24 @@
         "api_keys": "Create and revoke API credentials",
         "categories": "Category tree and taxonomies",
         "collections": "Manual and rule-based product collections",
+        "commissions": "Commission rates and what each seller is charged",
         "customers": "Customer accounts, addresses, cards and groups",
         "dashboard": "Sales and performance analytics",
+        "delivery_methods": "Shipping options, rates and the rules that gate them",
         "fulfillments": "Pack, ship and track order fulfillments",
         "gift_cards": "Gift cards and gift card batches",
         "integrations": "Provider credentials and connections",
+        "media": "Images, video and files in the media library",
         "orders": "Orders, line items, returns, exchanges and claims",
         "payments": "Order payments and payment capture",
+        "payouts": "Money paid out to sellers and its schedule",
+        "product_types": "Product type definitions and their custom fields",
         "products": "Products, variants, options, prices and media",
         "promotions": "Promotions, rules and coupon codes",
+        "publishing": "What is visible in the storefront and when",
         "refunds": "Issue and view refunds",
+        "seller_profile": "A seller's own details, address and policies",
+        "sellers": "Seller accounts, onboarding and approval",
         "settings": "Store, payment, delivery, tax and channel configuration",
         "staff": "Team members, invitations, roles and their permissions",
         "stock": "Stock levels, locations, movements and transfers",
@@ -3895,16 +3862,24 @@
         "api_keys": "API keys",
         "categories": "Categories",
         "collections": "Collections",
+        "commissions": "Commissions",
         "customers": "Customers",
         "dashboard": "Dashboard",
+        "delivery_methods": "Delivery methods",
         "fulfillments": "Fulfillments",
         "gift_cards": "Gift cards",
         "integrations": "Integrations",
+        "media": "Media",
         "orders": "Orders",
         "payments": "Payments",
+        "payouts": "Payouts",
+        "product_types": "Product types",
         "products": "Products",
         "promotions": "Promotions",
+        "publishing": "Publishing",
         "refunds": "Refunds",
+        "seller_profile": "Seller profile",
+        "sellers": "Sellers",
         "settings": "Settings",
         "staff": "Staff & roles",
         "stock": "Stock",
@@ -4231,24 +4206,6 @@
       "action_summary": {
         "variant_count": "{{count}} variants"
       },
-      "action_types": {
-        "create_adjustment": {
-          "description": "Creates a promotion credit adjustment on the order",
-          "name": "Create whole-order adjustment"
-        },
-        "create_item_adjustments": {
-          "description": "Creates a promotion credit adjustment on a line item",
-          "name": "Create per-line-item adjustment"
-        },
-        "create_line_items": {
-          "description": "Populates the cart with the specified quantity of variant",
-          "name": "Create line items"
-        },
-        "free_shipping": {
-          "description": "Makes all shipments for the order free",
-          "name": "Free shipping"
-        }
-      },
       "actions_card": {
         "add_action": "Add action",
         "description": "What happens when the promotion qualifies.",
@@ -4328,52 +4285,6 @@
         "category_count": "{{count}} categories",
         "customer_count": "{{count}} customers",
         "product_count": "{{count}} products"
-      },
-      "rule_types": {
-        "category": {
-          "description": "Order includes products in specified categories",
-          "name": "Categories"
-        },
-        "country": {
-          "description": "Limit to orders with shipping address in a specific country",
-          "name": "Country"
-        },
-        "currency": {
-          "description": "Limit to orders in a specific currency",
-          "name": "Currency"
-        },
-        "customer": {
-          "description": "Available only to the specified customers",
-          "name": "Customers"
-        },
-        "customer_group": {
-          "description": "Available only to customers in specified customer group(s)",
-          "name": "Customer Group(s)"
-        },
-        "customer_logged_in": {
-          "description": "Available only to logged in customers",
-          "name": "Only logged in customers"
-        },
-        "first_order": {
-          "description": "Must be the customer's first order",
-          "name": "First order"
-        },
-        "item_total": {
-          "description": "Order total meets these criteria",
-          "name": "Item total"
-        },
-        "one_use_per_user": {
-          "description": "Only One Use Per User",
-          "name": "One Use Per User"
-        },
-        "option_value": {
-          "description": "Order includes products with matching option value(s)",
-          "name": "Option Value(s)"
-        },
-        "product": {
-          "description": "Order includes specified product(s)",
-          "name": "Product(s)"
-        }
       },
       "rule_types_all_used": "Every available rule type is already on this promotion.",
       "rule_types_empty": "No rule types registered.",
@@ -4596,17 +4507,6 @@
           "help": "Required items must be done before a seller can be approved. Others are shown as recommended.",
           "label": "Required"
         }
-      },
-      "kinds": {
-        "accept_terms": "Accept terms",
-        "attestation": "Seller confirmation",
-        "billing_address": "Billing address",
-        "complete_profile": "Complete profile",
-        "document": "Document",
-        "minimum_products": "Minimum products",
-        "operator_review": "Manual check",
-        "required_custom_fields": "Required custom fields",
-        "returns_address": "Returns address"
       },
       "messages": {
         "created": "Requirement added",

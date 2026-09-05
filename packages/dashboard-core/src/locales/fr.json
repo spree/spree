@@ -1313,20 +1313,27 @@
       }
     },
     "validation": {
-      "country_required": "Le pays est requis",
-      "currency_required": "La devise est requise",
-      "first_name_required": "Le prénom est obligatoire",
-      "invalid_email": "Saisissez une adresse e-mail valide",
-      "invalid_email_or_password": "E-mail ou mot de passe invalide",
-      "invalid_hex_color": "Couleur hexadécimale invalide",
-      "invalid_password": "Mot de passe invalide",
-      "last_name_required": "Le nom est obligatoire",
-      "min_length": "{{field}} doit comporter au moins {{count}} caractères",
-      "password_required": "Le mot de passe est obligatoire",
-      "passwords_dont_match": "Les mots de passe ne correspondent pas",
-      "positive_number": "{{field}} doit être supérieur à 0",
-      "required": "{{field}} est obligatoire",
-      "store_name_required": "Le nom de la boutique est requis"
+      "accepted": "doit être accepté",
+      "blank": "ne peut pas être vide",
+      "confirmation": "ne correspond pas",
+      "empty": "ne peut pas être vide",
+      "equal_to": "doit être égal à {{count}}",
+      "exclusion": "est réservé",
+      "greater_than": "doit être supérieur à {{count}}",
+      "greater_than_or_equal_to": "doit être supérieur ou égal à {{count}}",
+      "inclusion": "ne fait pas partie de la liste",
+      "invalid": "est invalide",
+      "less_than": "doit être inférieur à {{count}}",
+      "less_than_or_equal_to": "doit être inférieur ou égal à {{count}}",
+      "not_a_number": "n'est pas un nombre",
+      "not_an_integer": "doit être un nombre entier",
+      "other_than": "doit être différent de {{count}}",
+      "present": "doit être vide",
+      "required": "doit exister",
+      "taken": "est déjà utilisé",
+      "too_long": "est trop long ({{count}} caractères maximum)",
+      "too_short": "est trop court ({{count}} caractères minimum)",
+      "wrong_length": "n'a pas la bonne longueur ({{count}} caractères attendus)"
     },
     "products": {
       "autocomplete": {
@@ -1595,6 +1602,266 @@
           "minimum": "La plus petite quantité qu'un acheteur peut commander d'un produit. Une commande inférieure est refusée en indiquant les quantités valables les plus proches — rien n'est jamais arrondi.",
           "multiple": "Le pas. Avec un multiple de 24, un acheteur commande 24, 48 ou 72 — jamais 30. Les paliers partent du minimum : un minimum de 50 par pas de 24 autorise 50, 74 et 98.",
           "order_minimum": "Le montant minimal d'une commande entière, articles seuls — la livraison et la taxe n'y contribuent pas. Les acheteurs voient ce qu'il leur manque et la commande est refusée en dessous."
+        }
+      }
+    },
+    "types": {
+      "calculator": {
+        "default_refund_amount": {
+          "name": "Montant de remboursement par défaut",
+          "description": "Rembourse le montant payé à l'origine pour les articles retournés"
+        },
+        "default_tax": {
+          "name": "Taxe par défaut",
+          "description": "Applique le taux de taxe au montant imposable"
+        },
+        "digital_delivery": {
+          "name": "Livraison numérique",
+          "description": "Aucun frais de livraison — la commande est livrée numériquement"
+        },
+        "flat_percent_item_total": {
+          "name": "Pourcentage fixe",
+          "description": "Un pourcentage du total des articles de la commande"
+        },
+        "flat_rate": {
+          "name": "Tarif forfaitaire",
+          "description": "Un montant fixe, quel que soit le contenu de la commande"
+        },
+        "flexi_rate": {
+          "name": "Tarif flexible",
+          "description": "Un montant de base plus un montant par article"
+        },
+        "per_item": {
+          "name": "Par article",
+          "description": "Un montant fixe pour chaque article de la commande"
+        },
+        "percent_on_line_item": {
+          "name": "Pourcentage par ligne d’article",
+          "description": "Un pourcentage de chaque ligne de commande"
+        },
+        "price_sack": {
+          "name": "Palier de prix",
+          "description": "Un montant en dessous d'un seuil, un autre à partir de ce seuil"
+        },
+        "tiered_flat_rate": {
+          "name": "Tarif forfaitaire par paliers",
+          "description": "Un montant fixe qui varie selon le total de la commande"
+        },
+        "tiered_percent": {
+          "name": "Pourcentage par paliers",
+          "description": "Un pourcentage qui varie selon le total de la commande"
+        }
+      },
+      "collection_rule": {
+        "available_on": {
+          "name": "Publié récemment",
+          "description": "Produits publiés au cours des N derniers jours"
+        },
+        "sale": {
+          "name": "En promotion",
+          "description": "Produits actuellement remisés sous leur prix de référence"
+        },
+        "tag": {
+          "name": "Étiquette",
+          "description": "Produits portant une étiquette correspondante"
+        }
+      },
+      "commission_rule": {
+        "category_rule": {
+          "name": "Catégorie",
+          "description": "Applique ce taux uniquement aux produits des catégories choisies et de leurs sous-catégories"
+        },
+        "item_total_rule": {
+          "name": "Valeur de vente",
+          "description": "Applique ce taux uniquement aux ventes dans une plage de valeur"
+        },
+        "product_rule": {
+          "name": "Produit",
+          "description": "Applique ce taux uniquement aux produits sélectionnés"
+        },
+        "seller_rule": {
+          "name": "Vendeur",
+          "description": "Applique ce taux uniquement pour les vendeurs sélectionnés"
+        }
+      },
+      "delivery_method_rule": {
+        "channel_rule": {
+          "name": "Canal de vente",
+          "description": "Proposer ce mode de livraison uniquement sur les canaux choisis"
+        },
+        "excluded_products_rule": {
+          "name": "Produits exclus",
+          "description": "Masquer ce mode de livraison si la commande contient un de ces produits"
+        },
+        "item_total_rule": {
+          "name": "Total des articles",
+          "description": "Proposer ce mode de livraison uniquement si le total est dans une plage"
+        },
+        "weight_rule": {
+          "name": "Poids",
+          "description": "Proposer ce mode de livraison uniquement si le poids est dans une plage"
+        }
+      },
+      "order_routing_rule": {
+        "default_location": {
+          "name": "Lieu de stock par défaut",
+          "description": "Privilégie le lieu de stock marqué comme défaut"
+        },
+        "minimize_splits": {
+          "name": "Minimiser les envois fractionnés",
+          "description": "Privilégie le lieu capable d'expédier le plus d'articles à lui seul, évitant les envois fractionnés"
+        },
+        "preferred_location": {
+          "name": "Lieu de stock préféré",
+          "description": "Expédier depuis le lieu épinglé sur la commande, s'il est défini"
+        }
+      },
+      "price_rule": {
+        "channel_rule": {
+          "name": "Canal de vente",
+          "description": "Appliquer les prix selon le canal de vente"
+        },
+        "customer_group_rule": {
+          "name": "Groupe de clients",
+          "description": "Appliquer les prix à des groupes de clients précis"
+        },
+        "market_rule": {
+          "name": "Marché",
+          "description": "Appliquer les prix selon le marché"
+        },
+        "user_rule": {
+          "name": "Client",
+          "description": "Appliquer les prix à des clients précis"
+        },
+        "volume_rule": {
+          "name": "Prix par volume",
+          "description": "Appliquer les prix selon la quantité achetée"
+        },
+        "zone_rule": {
+          "name": "Zone",
+          "description": "Appliquer les prix selon la zone de livraison"
+        }
+      },
+      "promotion_action": {
+        "create_adjustment": {
+          "name": "Créer un ajustement sur l'ensemble de la commande",
+          "description": "Crée un ajustement de crédit promotionnel sur la commande"
+        },
+        "create_item_adjustments": {
+          "name": "Créer un ajustement par ligne d'article",
+          "description": "Crée un ajustement de crédit promotionnel sur une ligne d'article"
+        },
+        "create_line_items": {
+          "name": "Créer des lignes d'article",
+          "description": "Ajoute au panier la quantité spécifiée de la variante"
+        },
+        "free_shipping": {
+          "name": "Livraison gratuite",
+          "description": "Rend gratuites toutes les expéditions de la commande"
+        }
+      },
+      "promotion_rule": {
+        "category": {
+          "name": "Catégories",
+          "description": "La commande contient des produits des catégories spécifiées"
+        },
+        "channel": {
+          "name": "Canaux de vente",
+          "description": "Limiter aux commandes passées via des canaux de vente précis"
+        },
+        "country": {
+          "name": "Pays",
+          "description": "Limiter aux commandes dont l'adresse de livraison se trouve dans un pays spécifique"
+        },
+        "currency": {
+          "name": "Devise",
+          "description": "Limiter aux commandes dans une devise spécifique"
+        },
+        "customer": {
+          "name": "Clients",
+          "description": "Disponible uniquement pour les clients spécifiés"
+        },
+        "customer_group": {
+          "name": "Groupe(s) de clients",
+          "description": "Disponible uniquement pour les clients des groupes de clients spécifiés"
+        },
+        "customer_logged_in": {
+          "name": "Uniquement les clients connectés",
+          "description": "Disponible uniquement pour les clients connectés"
+        },
+        "first_order": {
+          "name": "Première commande",
+          "description": "Doit être la première commande du client"
+        },
+        "item_total": {
+          "name": "Total des articles",
+          "description": "Le total de la commande répond à ces critères"
+        },
+        "market": {
+          "name": "Marchés",
+          "description": "Limiter aux commandes provenant de marchés précis"
+        },
+        "one_use_per_user": {
+          "name": "Une utilisation par utilisateur",
+          "description": "Une seule utilisation par utilisateur"
+        },
+        "option_value": {
+          "name": "Valeur(s) d'option",
+          "description": "La commande contient des produits avec des valeurs d'option correspondantes"
+        },
+        "product": {
+          "name": "Produit(s)",
+          "description": "La commande contient le(s) produit(s) spécifié(s)"
+        }
+      },
+      "seller_requirement": {
+        "accept_terms": {
+          "name": "Accepter les conditions",
+          "description": "Le vendeur doit accepter vos conditions de la marketplace avant de vendre"
+        },
+        "attestation": {
+          "name": "Confirmation du vendeur",
+          "description": "Le vendeur doit confirmer une déclaration que vous rédigez"
+        },
+        "billing_address": {
+          "name": "Adresse de facturation",
+          "description": "Le vendeur doit fournir une adresse de facturation"
+        },
+        "complete_profile": {
+          "name": "Compléter le profil",
+          "description": "Le vendeur doit compléter son profil public"
+        },
+        "delivery_method": {
+          "name": "Mode de livraison",
+          "description": "Le vendeur doit configurer au moins un mode de livraison"
+        },
+        "document": {
+          "name": "Document",
+          "description": "Le vendeur doit téléverser un document à examiner"
+        },
+        "minimum_products": {
+          "name": "Nombre minimum de produits",
+          "description": "Le vendeur doit publier un nombre minimum de produits"
+        },
+        "operator_review": {
+          "name": "Vérification manuelle",
+          "description": "Un membre de votre équipe doit approuver le vendeur manuellement"
+        },
+        "payout_account": {
+          "name": "Compte de versement",
+          "description": "Le vendeur doit connecter un compte pour recevoir les versements"
+        },
+        "policy": {
+          "name": "Politique du vendeur",
+          "description": "Le vendeur doit publier les politiques de sa boutique"
+        },
+        "required_custom_fields": {
+          "name": "Champs personnalisés obligatoires",
+          "description": "Le vendeur doit remplir les champs personnalisés que vous rendez obligatoires"
+        },
+        "returns_address": {
+          "name": "Adresse de retour",
+          "description": "Le vendeur doit fournir une adresse pour les retours"
         }
       }
     }

@@ -723,7 +723,7 @@ module Spree
     def ensure_line_item_variants_are_not_discontinued
       Spree::Deprecation.warn('Spree::Order#ensure_line_item_variants_are_not_discontinued is deprecated and will be removed in Spree 6.1. Completion validation lives in Spree::Checkout::Requirements.')
       if line_items.any? { |li| !li.variant || li.variant.discontinued? }
-        errors.add(:base, Spree.t(:discontinued_variants_present))
+        errors.add(:base, :discontinued_variants_present, message: Spree.t(:discontinued_variants_present))
         false
       else
         true
@@ -736,7 +736,7 @@ module Spree
     def ensure_line_items_are_in_stock
       Spree::Deprecation.warn('Spree::Order#ensure_line_items_are_in_stock is deprecated and will be removed in Spree 6.1. Completion validation lives in Spree::Checkout::Requirements.')
       if insufficient_stock_lines.present?
-        errors.add(:base, Spree.t(:insufficient_stock_lines_present))
+        errors.add(:base, :insufficient_stock_lines_present, message: Spree.t(:insufficient_stock_lines_present))
         false
       else
         true
@@ -1096,7 +1096,7 @@ module Spree
     def ensure_can_be_deleted
       return true if can_be_deleted?
 
-      errors.add(:base, Spree.t(:order_cannot_be_deleted))
+      errors.add(:base, :order_cannot_be_deleted, message: Spree.t(:order_cannot_be_deleted))
       throw :abort
     end
 
@@ -1125,7 +1125,7 @@ module Spree
 
     def ensure_line_items_present
       unless line_items.present?
-        errors.add(:base, Spree.t(:there_are_no_items_for_this_order)) && (return false)
+        errors.add(:base, :there_are_no_items_for_this_order, message: Spree.t(:there_are_no_items_for_this_order)) && (return false)
       end
     end
 
@@ -1140,7 +1140,9 @@ module Spree
         fulfillments.destroy_all
 
         if undeliverable_line_items.present?
-          errors.add(:base, Spree.t(:products_cannot_be_shipped, product_names: undeliverable_line_items.map(&:name).to_sentence))
+          product_names = undeliverable_line_items.map(&:name).to_sentence
+          errors.add(:base, :products_cannot_be_shipped, product_names: product_names,
+                     message: Spree.t(:products_cannot_be_shipped, product_names: product_names))
           self.warnings |= undeliverable_line_items.map do |line_item|
             {
               code: 'delivery_unavailable',
@@ -1150,7 +1152,7 @@ module Spree
             }
           end
         else
-          errors.add(:base, Spree.t(:items_cannot_be_shipped))
+          errors.add(:base, :items_cannot_be_shipped, message: Spree.t(:items_cannot_be_shipped))
           self.warnings |= [{ code: 'delivery_unavailable', message: Spree.t(:items_cannot_be_shipped) }]
         end
 

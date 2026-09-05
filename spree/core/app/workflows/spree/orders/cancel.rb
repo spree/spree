@@ -82,7 +82,7 @@ module Spree
       def ensure_refund_amount_is_settleable
         return if refund_amount.blank? || order.grouped?
 
-        order.errors.add(:base, Spree.t('errors.messages.refund_amount_requires_shared_payment'))
+        order.errors.add(:base, :refund_amount_requires_shared_payment, message: Spree.t('errors.messages.refund_amount_requires_shared_payment'))
         failure(order)
       end
 

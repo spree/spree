@@ -83,8 +83,7 @@ module Spree
         return if stored_size <= MAX_PO_DOCUMENT_SIZE
 
         errors.add(
-          :po_document,
-          Spree.t(
+          :po_document, :po_document_too_large, message: Spree.t(
             :po_document_too_large,
             size: ActiveSupport::NumberHelper.number_to_human_size(MAX_PO_DOCUMENT_SIZE)
           )
