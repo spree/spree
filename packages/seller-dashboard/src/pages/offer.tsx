@@ -1,7 +1,9 @@
 import { zodResolver } from '@hookform/resolvers/zod'
 import {
+  InventoryCard,
   mapSpreeErrorsToForm,
   PageHeader,
+  PricesCard,
   VariantAvailabilityFields,
   VariantCustomsFields,
   VariantFieldSection,
@@ -18,11 +20,6 @@ import {
   FieldError,
   FieldLabel,
   FormActions,
-  Input,
-  InputGroup,
-  InputGroupAddon,
-  InputGroupInput,
-  InputGroupText,
   ResourceLayout,
   Select,
   SelectContent,
@@ -76,31 +73,6 @@ const OFFER_FIELDS = [
   'backorder_limit',
   'delivery_profile_id',
 ] as const
-
-/**
- * One form row per warehouse this seller holds, carrying whatever the offer
- * already stocks there.
- *
- * The rows have to line up with the inputs, which render per warehouse — the
- * API answers only the warehouses with stock, so a row built from its list
- * would put a quantity under the wrong label.
- */
-function stockRowsFor(
-  warehouses: Array<{ id: string }>,
-  levels:
-    | Array<{ id?: string; stock_location_id?: string | null; count_on_hand?: number | null }>
-    | undefined,
-): OfferFormValues['stock_levels'] {
-  return warehouses.map((warehouse) => {
-    const level = levels?.find((row) => row.stock_location_id === warehouse.id)
-
-    return {
-      id: level?.id,
-      stock_location_id: warehouse.id,
-      count_on_hand: level?.count_on_hand ?? 0,
-    }
-  })
-}
 
 /** Copies the plain fields across, turning every empty value into `undefined`. */
 function pickOfferFields(source: Record<string, unknown>): Record<string, unknown> {
@@ -161,17 +133,10 @@ export function OfferPage({ mode }: { mode: 'new' | 'edit' }) {
     queryFn: () => sellerClient().profile.get(),
   })
 
-  const { data: locations } = useQuery({
-    queryKey: ['seller', sellerId, 'stock-locations'],
-    queryFn: () => sellerClient().stockLocations.list(),
-  })
-
   const { data: profiles } = useQuery({
     queryKey: ['seller', sellerId, 'delivery-profiles'],
     queryFn: () => sellerClient().deliveryProfiles.list(),
   })
-
-  const warehouses = locations?.data ?? []
 
   const form = useForm<OfferFormValues>({
     resolver: zodResolver(offerFormSchema) as never,
@@ -184,65 +149,84 @@ export function OfferPage({ mode }: { mode: 'new' | 'edit' }) {
   useEffect(() => {
     if (form.formState.isDirty) return
 
-    const currencies = profile?.supported_currencies ?? []
     const axes = master?.option_types ?? []
+    const currencies = profile?.supported_currencies ?? []
 
     if (offer) {
       form.reset({
-        ...newOfferFormDefaults(),
-        ...pickOfferFields(offer),
-        track_inventory: offer.track_inventory ?? true,
-        preorderable: offer.preorderable ?? false,
-        options: axes.map((axis) => ({
-          name: axis.name,
-          value:
-            offer.option_values?.find((value) => value.option_type_name === axis.name)?.name ?? '',
-        })),
-        prices: currencies.map((currency) => ({
-          currency,
-          amount: offer.prices?.find((price) => price.currency === currency)?.amount ?? '',
-        })),
-        // One row per warehouse this seller holds, in the order the inputs
-        // render them: the API answers only the warehouses that carry stock,
-        // so indexing by its list would show a quantity under the wrong
-        // warehouse's label and save it against the wrong location.
-        stock_levels: stockRowsFor(warehouses, offer.stock_levels),
-      })
+        variants: [
+          {
+            ...pickOfferFields(offer),
+            track_inventory: offer.track_inventory ?? true,
+            preorderable: offer.preorderable ?? false,
+            options: axes.map((axis) => ({
+              name: axis.name,
+              value:
+                offer.option_values?.find((value) => value.option_type_name === axis.name)?.name ??
+                '',
+            })),
+            // Every currency the store trades in, so the spreadsheet has a
+            // column per currency rather than only the ones already priced.
+            prices: currencies.map((currency) => ({
+              currency,
+              amount: offer.prices?.find((price) => price.currency === currency)?.amount ?? '',
+            })),
+            stock_levels: (offer.stock_levels ?? []).flatMap((level) =>
+              level.stock_location_id
+                ? [
+                    {
+                      id: level.id,
+                      stock_location_id: level.stock_location_id,
+                      count_on_hand: level.count_on_hand ?? 0,
+                    },
+                  ]
+                : [],
+            ),
+          },
+        ],
+      } as OfferFormValues)
       return
     }
 
-    if (axes.length || currencies.length || warehouses.length) {
+    if (axes.length || currencies.length) {
       form.reset({
-        ...newOfferFormDefaults(),
-        options: axes.map((axis) => ({ name: axis.name, value: '' })),
-        prices: currencies.map((currency) => ({ currency, amount: '' })),
-        stock_levels: stockRowsFor(warehouses, undefined),
-      })
+        variants: [
+          {
+            ...newOfferFormDefaults().variants[0],
+            options: axes.map((axis) => ({ name: axis.name, value: '' })),
+            prices: currencies.map((currency) => ({ currency, amount: '' })),
+          },
+        ],
+      } as OfferFormValues)
     }
-  }, [offer, master, profile, warehouses, form])
+  }, [offer, master, profile, form])
 
   const save = useMutation({
     mutationFn: (values: OfferFormValues) => {
+      const row = values.variants[0]
       const payload: OfferParams = {
-        ...pickOfferFields(values),
-        track_inventory: values.track_inventory,
-        preorderable: values.preorderable,
-        options: values.options.filter((option) => option.value),
+        ...pickOfferFields(row),
+        track_inventory: row.track_inventory,
+        preorderable: row.preorderable,
+        options: (row.options ?? []).filter((option) => option.value),
         // Only the currencies actually priced: `prices` is a full
         // replacement, and an empty amount would clear a price rather than
         // leave it alone.
-        prices: values.prices.flatMap((price) =>
+        prices: (row.prices ?? []).flatMap((price) =>
           price.amount === '' || price.amount == null
             ? []
             : [{ currency: price.currency, amount: price.amount }],
         ),
-        stock_levels: values.stock_levels.flatMap((level) =>
+        // The spreadsheet writes a row per warehouse it shows, including
+        // untouched ones, so a blank count means "nothing here" rather than
+        // an instruction to skip the shelf.
+        stock_levels: (row.stock_levels ?? []).flatMap((level) =>
           level.stock_location_id
             ? [
                 {
                   id: level.id,
                   stock_location_id: level.stock_location_id,
-                  count_on_hand: level.count_on_hand,
+                  count_on_hand: level.count_on_hand ?? 0,
                 },
               ]
             : [],
@@ -287,7 +271,6 @@ export function OfferPage({ mode }: { mode: 'new' | 'edit' }) {
   if (mode === 'new' && !masterProductId)
     return <CenteredMessage>{t('offers.pick_a_product_first')}</CenteredMessage>
 
-  const currencies = profile?.supported_currencies ?? []
   const axes = master?.option_types ?? []
 
   return (
@@ -326,7 +309,7 @@ export function OfferPage({ mode }: { mode: 'new' | 'edit' }) {
                       <Field key={axis.id}>
                         <FieldLabel htmlFor={`offer-option-${axis.name}`}>{axis.label}</FieldLabel>
                         <Controller
-                          name={`options.${index}.value`}
+                          name={`variants.0.options.${index}.value`}
                           control={form.control}
                           render={({ field }) => {
                             const items = (axis.option_values ?? []).map((optionValue) => ({
@@ -354,37 +337,23 @@ export function OfferPage({ mode }: { mode: 'new' | 'edit' }) {
                             )
                           }}
                         />
-                        <FieldError errors={[form.formState.errors.options?.[index]?.value]} />
+                        <FieldError
+                          errors={[form.formState.errors.variants?.[0]?.options?.[index]?.value]}
+                        />
                       </Field>
                     ))}
                   </CardContent>
                 </Card>
               )}
 
-              <Card>
-                <CardHeader>
-                  <CardTitle>{t('offers.pricing_title')}</CardTitle>
-                </CardHeader>
-                <CardContent className="flex flex-col gap-3">
-                  {currencies.map((currency, index) => (
-                    <Field key={currency}>
-                      <FieldLabel htmlFor={`offer-price-${currency}`}>{currency}</FieldLabel>
-                      <InputGroup>
-                        <InputGroupAddon>
-                          <InputGroupText>{currency}</InputGroupText>
-                        </InputGroupAddon>
-                        <InputGroupInput
-                          id={`offer-price-${currency}`}
-                          type="number"
-                          step="0.01"
-                          min="0"
-                          {...form.register(`prices.${index}.amount`)}
-                        />
-                      </InputGroup>
-                    </Field>
-                  ))}
-                </CardContent>
-              </Card>
+              {/* The operator's own price spreadsheet, bound to this offer's
+                  single row — one definition for both panels. */}
+              <PricesCard
+                form={form}
+                productName={master?.name ?? ''}
+                currencies={profile?.supported_currencies}
+                defaultCurrency={profile?.default_currency}
+              />
 
               <Card>
                 <CardHeader>
@@ -392,51 +361,51 @@ export function OfferPage({ mode }: { mode: 'new' | 'edit' }) {
                 </CardHeader>
                 <CardContent className="flex flex-col gap-6">
                   <VariantFieldSection title={t('admin.products.variants.sheet.identity')}>
-                    <VariantIdentityFields form={form} errors={form.formState.errors} />
+                    <VariantIdentityFields
+                      form={form}
+                      prefix="variants.0"
+                      errors={form.formState.errors.variants?.[0]}
+                    />
                   </VariantFieldSection>
 
                   <VariantFieldSection title={t('admin.products.variants.sheet.availability')}>
-                    <VariantAvailabilityFields form={form} errors={form.formState.errors} />
+                    <VariantAvailabilityFields
+                      form={form}
+                      prefix="variants.0"
+                      errors={form.formState.errors.variants?.[0]}
+                    />
                   </VariantFieldSection>
 
                   <VariantFieldSection title={t('admin.fields.shipping.label')}>
-                    <VariantShippingFields form={form} errors={form.formState.errors} />
+                    <VariantShippingFields
+                      form={form}
+                      prefix="variants.0"
+                      errors={form.formState.errors.variants?.[0]}
+                    />
                   </VariantFieldSection>
 
                   <VariantFieldSection title={t('admin.products.variants.sheet.customs')}>
-                    <VariantCustomsFields form={form} errors={form.formState.errors} />
+                    <VariantCustomsFields
+                      form={form}
+                      prefix="variants.0"
+                      errors={form.formState.errors.variants?.[0]}
+                    />
                   </VariantFieldSection>
 
                   <VariantFieldSection title={t('admin.products.variants.sheet.ordering')}>
-                    <VariantOrderingFields form={form} errors={form.formState.errors} />
+                    <VariantOrderingFields
+                      form={form}
+                      prefix="variants.0"
+                      errors={form.formState.errors.variants?.[0]}
+                    />
                   </VariantFieldSection>
                 </CardContent>
               </Card>
 
-              <Card>
-                <CardHeader>
-                  <CardTitle>{t('offers.stock_title')}</CardTitle>
-                </CardHeader>
-                <CardContent className="flex flex-col gap-3">
-                  {/* Indexed against this seller's warehouses, which is the
-                      order `stockRowsFor` builds the form rows in — the
-                      location id rides in form state rather than in a hidden
-                      input, which would never fire a change event. */}
-                  {warehouses.map((location, index) => (
-                    <Field key={location.id}>
-                      <FieldLabel htmlFor={`offer-stock-${location.id}`}>
-                        {location.name}
-                      </FieldLabel>
-                      <Input
-                        id={`offer-stock-${location.id}`}
-                        type="number"
-                        min="0"
-                        {...form.register(`stock_levels.${index}.count_on_hand`)}
-                      />
-                    </Field>
-                  ))}
-                </CardContent>
-              </Card>
+              {/* The same inventory grid the operator edits. It lists this
+                  seller's warehouses, because the panel registers the seller
+                  client as its stock-locations resource. */}
+              <InventoryCard form={form} />
             </>
           }
           sidebar={
@@ -479,7 +448,7 @@ export function OfferPage({ mode }: { mode: 'new' | 'edit' }) {
                       {t('offers.fields.delivery_profile')}
                     </FieldLabel>
                     <Controller
-                      name="delivery_profile_id"
+                      name="variants.0.delivery_profile_id"
                       control={form.control}
                       render={({ field }) => {
                         const items = (profiles?.data ?? []).map((deliveryProfile) => ({
@@ -490,7 +459,7 @@ export function OfferPage({ mode }: { mode: 'new' | 'edit' }) {
                         return (
                           <Select
                             items={items}
-                            value={field.value ?? ''}
+                            value={(field.value as string) ?? ''}
                             onValueChange={field.onChange}
                           >
                             <SelectTrigger id="offer-delivery-profile">

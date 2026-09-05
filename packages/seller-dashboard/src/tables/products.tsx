@@ -7,6 +7,7 @@ import i18n from 'i18next'
 
 defineTable<Product>('seller-products', {
   title: i18n.t('products.title'),
+  description: i18n.t('products.description'),
   searchParam: 'search',
   searchPlaceholder: i18n.t('products.search_placeholder'),
   defaultSort: { field: 'created_at', direction: 'desc' },
