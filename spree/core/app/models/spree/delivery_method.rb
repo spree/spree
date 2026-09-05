@@ -506,9 +506,14 @@ module Spree
       return if delivery_profile.nil?
       return if delivery_profile.accepts_provider?(provider_class)
 
+      # The values are passed as options too, not only baked into `message`:
+      # they reach `errors.details`, which is what a client translating the
+      # code interpolates into its own copy.
       errors.add(
-        :fulfillment_provider, :profile_does_not_accept_provider, message: Spree.t('errors.messages.profile_does_not_accept_provider',
-                provider: provider_class.provider_name, profile: delivery_profile.name)
+        :fulfillment_provider, :profile_does_not_accept_provider,
+        provider: provider_class.provider_name, profile: delivery_profile.name,
+        message: Spree.t('errors.messages.profile_does_not_accept_provider',
+                         provider: provider_class.provider_name, profile: delivery_profile.name)
       )
     end
 
@@ -519,8 +524,10 @@ module Spree
       return if provider_class.new.requires_address?
 
       errors.add(
-        :rate_provider, :rate_provider_requires_shipping, message: Spree.t('errors.messages.rate_provider_requires_shipping',
-                provider: rate_provider_class.provider_name)
+        :rate_provider, :rate_provider_requires_shipping,
+        provider: rate_provider_class.provider_name,
+        message: Spree.t('errors.messages.rate_provider_requires_shipping',
+                         provider: rate_provider_class.provider_name)
       )
     end
 

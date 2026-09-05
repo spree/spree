@@ -177,9 +177,11 @@ test.describe('price lists', () => {
     // The context rules stay first-class…
     await expect(picker.getByRole('button', { name: /^volume pricing\b/i })).toBeVisible()
     await expect(picker.getByRole('button', { name: /^market\b/i })).toBeVisible()
-    // …the audience rules are gone.
-    await expect(picker.getByRole('button', { name: /^customer group\b/i })).toHaveCount(0)
-    await expect(picker.getByRole('button', { name: /^customer$/i })).toHaveCount(0)
+    // …the audience rules are gone. Both are named "Customer…", and the
+    // picker button's accessible name continues into the description, so one
+    // prefix match covers the pair — an exact `/^customer$/i` would match
+    // neither and pass however many audience rules the picker offered.
+    await expect(picker.getByRole('button', { name: /^customer\b/i })).toHaveCount(0)
   })
 
   test('adds a Market Rule with the seeded default market', async ({ page }) => {
