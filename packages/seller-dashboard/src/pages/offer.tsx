@@ -44,6 +44,44 @@ import { OfferStatusCard } from '../components/offer-status-card'
 import { RetryableError } from '../components/retryable-error'
 import { newOfferFormDefaults, type OfferFormValues, offerFormSchema } from '../schemas/offer'
 
+/**
+ * The plain fields an offer carries, named once.
+ *
+ * Both directions read this list — loading a saved offer into the form and
+ * building the payload back — so a field added to the shared variant sections
+ * is added here once rather than in three places, which is how the two halves
+ * drifted apart before.
+ *
+ * The shaped fields are deliberately absent: options, prices and stock levels
+ * each need their own reconciliation, and the two booleans need a default.
+ */
+const OFFER_FIELDS = [
+  'sku',
+  'barcode',
+  'cost_price',
+  'weight',
+  'height',
+  'width',
+  'depth',
+  'weight_unit',
+  'dimensions_unit',
+  'hs_code',
+  'country_of_origin',
+  'customs_description',
+  'minimum_order_quantity',
+  'order_multiple',
+  'purchase_unit',
+  'units_per_carton',
+  'preorder_ships_at',
+  'backorder_limit',
+  'delivery_profile_id',
+] as const
+
+/** Copies the plain fields across, turning every empty value into `undefined`. */
+function pickOfferFields(source: Record<string, unknown>): Record<string, unknown> {
+  return Object.fromEntries(OFFER_FIELDS.map((field) => [field, source[field] ?? undefined]))
+}
+
 /** Everything the offer form edits, in one request. */
 const OFFER_EXPAND = 'prices,stock_levels,product,submission,option_values'
 
@@ -125,27 +163,9 @@ export function OfferPage({ mode }: { mode: 'new' | 'edit' }) {
     if (offer) {
       form.reset({
         ...newOfferFormDefaults(),
-        sku: offer.sku ?? undefined,
-        barcode: offer.barcode ?? undefined,
-        cost_price: offer.cost_price ?? undefined,
-        weight: offer.weight ?? undefined,
-        height: offer.height ?? undefined,
-        width: offer.width ?? undefined,
-        depth: offer.depth ?? undefined,
-        weight_unit: offer.weight_unit ?? undefined,
-        dimensions_unit: offer.dimensions_unit ?? undefined,
-        hs_code: offer.hs_code ?? undefined,
-        country_of_origin: offer.country_of_origin ?? undefined,
-        customs_description: offer.customs_description ?? undefined,
-        minimum_order_quantity: offer.minimum_order_quantity ?? undefined,
-        order_multiple: offer.order_multiple ?? undefined,
-        purchase_unit: offer.purchase_unit ?? undefined,
-        units_per_carton: offer.units_per_carton ?? undefined,
+        ...pickOfferFields(offer),
         track_inventory: offer.track_inventory ?? true,
         preorderable: offer.preorderable ?? false,
-        preorder_ships_at: offer.preorder_ships_at ?? undefined,
-        backorder_limit: offer.backorder_limit ?? undefined,
-        delivery_profile_id: offer.delivery_profile_id ?? undefined,
         options: axes.map((axis) => ({
           name: axis.name,
           value:
@@ -182,27 +202,9 @@ export function OfferPage({ mode }: { mode: 'new' | 'edit' }) {
   const save = useMutation({
     mutationFn: (values: OfferFormValues) => {
       const payload: OfferParams = {
-        sku: values.sku || undefined,
-        barcode: values.barcode || undefined,
-        cost_price: values.cost_price ?? undefined,
-        weight: values.weight ?? undefined,
-        height: values.height ?? undefined,
-        width: values.width ?? undefined,
-        depth: values.depth ?? undefined,
-        weight_unit: values.weight_unit ?? undefined,
-        dimensions_unit: values.dimensions_unit ?? undefined,
-        hs_code: values.hs_code ?? undefined,
-        country_of_origin: values.country_of_origin ?? undefined,
-        customs_description: values.customs_description ?? undefined,
-        minimum_order_quantity: values.minimum_order_quantity ?? undefined,
-        order_multiple: values.order_multiple ?? undefined,
-        purchase_unit: values.purchase_unit ?? undefined,
-        units_per_carton: values.units_per_carton ?? undefined,
+        ...pickOfferFields(values),
         track_inventory: values.track_inventory,
         preorderable: values.preorderable,
-        preorder_ships_at: values.preorder_ships_at ?? undefined,
-        backorder_limit: values.backorder_limit ?? undefined,
-        delivery_profile_id: values.delivery_profile_id ?? undefined,
         options: values.options.filter((option) => option.value),
         // Only the currencies actually priced: `prices` is a full
         // replacement, and an empty amount would clear a price rather than

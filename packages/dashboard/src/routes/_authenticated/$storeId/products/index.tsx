@@ -64,7 +64,7 @@ import {
   useBulkRemoveProductTags,
   useCloneProduct,
 } from '../../../../hooks/use-products'
-import { useSellers } from '../../../../hooks/use-sellers'
+import { useHasSellers } from '../../../../hooks/use-sellers'
 import '../../../../tables/products'
 import { toastManager } from '@spree/dashboard-ui'
 
@@ -112,10 +112,9 @@ function ProductsPage() {
   const bulkDestroy = useBulkDestroyProducts()
   const bulkOpenToSellers = useBulkOpenProductsToSellers()
   const bulkCloseToSellers = useBulkCloseProductsToSellers()
-  // Only whether the store has any sellers at all: the marketplace bulk
-  // actions are hidden entirely on a store selling purely its own goods.
-  const { data: sellers } = useSellers({ limit: 1 })
-  const hasSellers = (sellers?.data.length ?? 0) > 0
+  // The marketplace bulk actions are hidden entirely on a store selling
+  // purely its own goods.
+  const hasSellers = useHasSellers()
 
   // Memo: rebuilding the array (and the row-actions render-prop) on every
   // mutation `isPending` toggle would force `<ResourceTable>` to re-render

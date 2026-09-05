@@ -49,7 +49,7 @@ import { StockHistoryDialog } from '../../../../components/spree/stock-history-c
 import { ResourceTranslationsCard } from '../../../../components/spree/translations/resource-translations-card'
 import { useDeleteProduct, useProduct, useUpdateProduct } from '../../../../hooks/use-product'
 import { useProductMedia } from '../../../../hooks/use-product-media'
-import { useSellers } from '../../../../hooks/use-sellers'
+import { useHasSellers } from '../../../../hooks/use-sellers'
 import { spreeJsonLinkResolver } from '../../../../lib/json-link-resolver'
 
 // Purchasable attributes (sku, barcode, prices, weight, dimensions, stock,
@@ -88,10 +88,9 @@ function ProductDetailPage() {
 // ---------------------------------------------------------------------------
 
 function ProductForm({ product }: { product: Product }) {
-  // Only whether the store has any sellers at all: the marketplace card
-  // renders nothing on a store selling purely its own goods, so an operator
-  // who has never admitted a seller never meets it.
-  const { data: sellers } = useSellers({ limit: 1 })
+  // The marketplace card renders nothing on a store selling purely its own
+  // goods, so an operator who has never admitted a seller never meets it.
+  const hasSellers = useHasSellers()
   const { t } = useTranslation()
   const confirm = useConfirm()
   const { productId, storeId } = Route.useParams()
@@ -321,11 +320,7 @@ function ProductForm({ product }: { product: Product }) {
           }
           sidebar={
             <>
-              <ProductMarketplaceCard
-                product={product}
-                form={form}
-                hasSellers={(sellers?.data.length ?? 0) > 0}
-              />
+              <ProductMarketplaceCard product={product} form={form} hasSellers={hasSellers} />
               <StatusCard
                 form={form}
                 reviewActions={
