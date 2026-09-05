@@ -9,31 +9,15 @@ import {
   CardFooter,
   CardHeader,
   CardTitle,
-  Dialog,
-  DialogBody,
-  DialogContent,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
-  Field,
-  FieldLabel,
-  Input,
-  InputGroup,
-  InputGroupAddon,
-  InputGroupInput,
-  InputGroupText,
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
+  type RefundMethod,
+  ReturnReceiveDialog,
+  ReturnRefundDialog,
   StatusBadge,
-  Switch,
   useConfirm,
 } from '@spree/dashboard-ui'
 import {
@@ -53,8 +37,6 @@ import { useOrderReturns, useReturnActions } from '../../hooks/use-returns'
 import { ShippingDocuments } from './orders/shipping-documents'
 import { ShippingLabelRow } from './orders/shipping-label-row'
 import { CreateReturnDialog, fulfilledUnits } from './post-sale-create-dialogs'
-
-type ReceiptRow = { quantity: number; resellable: boolean }
 
 // Statuses that still offer an action; refunded and canceled are done and
 // would render a menu button that opens onto nothing.
@@ -359,6 +341,7 @@ function ReturnLineRow({ line, status }: { line: ReturnLineItem; status: string 
  * Partial and damaged receipt is the normal case, so the dialog opens with
  * every line editable rather than hiding that behind an "advanced" toggle.
  */
+
 function ReceiveDialog({
   returnRecord,
   onClose,
@@ -370,88 +353,16 @@ function ReceiveDialog({
     items: Array<{ return_line_item_id: string; quantity: number; resellable: boolean }>,
   ) => void
 }) {
-  const { t } = useTranslation()
-  const lines = returnRecord.return_line_items ?? []
-  const [rows, setRows] = useState<Record<string, ReceiptRow>>(() =>
-    Object.fromEntries(
-      lines.map((line) => [line.id, { quantity: line.quantity, resellable: true }]),
-    ),
-  )
-
   return (
-    <Dialog open onOpenChange={(open) => !open && onClose()}>
-      <DialogContent>
-        <DialogHeader>
-          <DialogTitle>{t('admin.pages.orders.detail.returns.receive_title')}</DialogTitle>
-        </DialogHeader>
-        <DialogBody className="flex flex-col gap-4">
-          {lines.map((line) => (
-            <div key={line.id} className="flex flex-col gap-3">
-              <span className="text-sm font-medium">{variantLabel(line)}</span>
-              <div className="flex flex-col gap-3">
-                <Field>
-                  <FieldLabel htmlFor={`qty-${line.id}`}>
-                    {t('admin.pages.orders.detail.returns.received_quantity')}
-                  </FieldLabel>
-                  <Input
-                    id={`qty-${line.id}`}
-                    type="number"
-                    min={0}
-                    max={line.quantity}
-                    value={rows[line.id]?.quantity ?? 0}
-                    onChange={(event) =>
-                      setRows((current) => ({
-                        ...current,
-                        [line.id]: {
-                          quantity: Math.min(Number(event.target.value), line.quantity),
-                          resellable: current[line.id]?.resellable ?? true,
-                        },
-                      }))
-                    }
-                  />
-                </Field>
-                <Field orientation="horizontal">
-                  <FieldLabel htmlFor={`resellable-${line.id}`}>
-                    {t('admin.pages.orders.detail.returns.resellable')}
-                  </FieldLabel>
-                  <Switch
-                    id={`resellable-${line.id}`}
-                    checked={rows[line.id]?.resellable ?? true}
-                    onCheckedChange={(checked) =>
-                      setRows((current) => ({
-                        ...current,
-                        [line.id]: {
-                          quantity: current[line.id]?.quantity ?? 0,
-                          resellable: checked,
-                        },
-                      }))
-                    }
-                  />
-                </Field>
-              </div>
-            </div>
-          ))}
-        </DialogBody>
-        <DialogFooter>
-          <Button variant="outline" onClick={onClose}>
-            {t('admin.actions.cancel')}
-          </Button>
-          <Button
-            onClick={() =>
-              onSubmit(
-                lines.map((line) => ({
-                  return_line_item_id: line.id,
-                  quantity: rows[line.id]?.quantity ?? 0,
-                  resellable: rows[line.id]?.resellable ?? true,
-                })),
-              )
-            }
-          >
-            {t('admin.pages.orders.detail.returns.actions.receive')}
-          </Button>
-        </DialogFooter>
-      </DialogContent>
-    </Dialog>
+    <ReturnReceiveDialog
+      lines={(returnRecord.return_line_items ?? []).map((line) => ({
+        id: line.id,
+        label: variantLabel(line),
+        quantity: line.quantity,
+      }))}
+      onClose={onClose}
+      onSubmit={onSubmit}
+    />
   )
 }
 
@@ -462,85 +373,17 @@ function RefundDialog({
 }: {
   returnRecord: Return
   onClose: () => void
-  onSubmit: (params: { refundMethod: 'original_payment' | 'store_credit'; amount?: string }) => void
+  onSubmit: (params: { refundMethod: RefundMethod; amount?: string }) => void
 }) {
-  const { t } = useTranslation()
-  const [refundMethod, setRefundMethod] = useState<'original_payment' | 'store_credit'>(
-    'original_payment',
-  )
-  const [amount, setAmount] = useState(returnRecord.refundable_total)
   const { defaultCurrency } = useStore()
   const { symbol: currencySymbol } = currencyParts(defaultCurrency, i18n.language)
 
-  const methodOptions = [
-    {
-      value: 'original_payment',
-      label: t('admin.pages.orders.detail.returns.refund_methods.original_payment'),
-    },
-    {
-      value: 'store_credit',
-      label: t('admin.pages.orders.detail.returns.refund_methods.store_credit'),
-    },
-  ]
-
   return (
-    <Dialog open onOpenChange={(open) => !open && onClose()}>
-      <DialogContent>
-        <DialogHeader>
-          <DialogTitle>{t('admin.pages.orders.detail.returns.refund_title')}</DialogTitle>
-        </DialogHeader>
-        <DialogBody className="flex flex-col gap-4">
-          <Field>
-            <FieldLabel htmlFor="refund-amount">
-              {t('admin.pages.orders.detail.returns.refund_amount')}
-            </FieldLabel>
-            <InputGroup>
-              <InputGroupAddon>
-                <InputGroupText>{currencySymbol}</InputGroupText>
-              </InputGroupAddon>
-              <InputGroupInput
-                id="refund-amount"
-                type="number"
-                step="0.01"
-                min="0"
-                value={amount}
-                onChange={(event) => setAmount(event.target.value)}
-              />
-            </InputGroup>
-          </Field>
-          <Field>
-            <FieldLabel htmlFor="refund-method">
-              {t('admin.pages.orders.detail.returns.refund_method')}
-            </FieldLabel>
-            <Select
-              items={methodOptions}
-              value={refundMethod}
-              onValueChange={(value) =>
-                setRefundMethod(value as 'original_payment' | 'store_credit')
-              }
-            >
-              <SelectTrigger id="refund-method">
-                <SelectValue />
-              </SelectTrigger>
-              <SelectContent>
-                {methodOptions.map((option) => (
-                  <SelectItem key={option.value} value={option.value}>
-                    {option.label}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-          </Field>
-        </DialogBody>
-        <DialogFooter>
-          <Button variant="outline" onClick={onClose}>
-            {t('admin.actions.cancel')}
-          </Button>
-          <Button onClick={() => onSubmit({ refundMethod, amount })}>
-            {t('admin.pages.orders.detail.returns.actions.refund')}
-          </Button>
-        </DialogFooter>
-      </DialogContent>
-    </Dialog>
+    <ReturnRefundDialog
+      refundableTotal={returnRecord.refundable_total}
+      currencySymbol={currencySymbol}
+      onClose={onClose}
+      onSubmit={onSubmit}
+    />
   )
 }

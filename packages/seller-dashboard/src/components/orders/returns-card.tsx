@@ -1,3 +1,4 @@
+import { currencyParts } from '@spree/dashboard-core'
 import {
   Badge,
   Button,
@@ -6,31 +7,19 @@ import {
   CardContent,
   CardHeader,
   CardTitle,
-  Dialog,
-  DialogBody,
-  DialogContent,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
-  Field,
-  FieldLabel,
-  Input,
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
+  ReturnReceiveDialog,
+  ReturnRefundDialog,
   StatusBadge,
-  Switch,
   useConfirm,
 } from '@spree/dashboard-ui'
 import { EllipsisVerticalIcon, PlusIcon, RotateCcwIcon } from '@spree/dashboard-ui/icons'
 import type { Order, Return, ReturnLineItem } from '@spree/seller-sdk'
+import i18n from 'i18next'
 import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useOrderReturns, useReturnActions } from '../../hooks/use-post-sale'
@@ -161,15 +150,14 @@ export function ReturnsCard({ order }: { order: Order }) {
         <ReceiveDialog
           orderId={order.id}
           returnRecord={receiving}
-          open
           onOpenChange={() => setReceiving(null)}
         />
       )}
       {refunding && (
         <RefundDialog
           orderId={order.id}
+          order={order}
           returnRecord={refunding}
-          open
           onOpenChange={() => setRefunding(null)}
         />
       )}
@@ -203,201 +191,68 @@ function ReturnLineRow({ line }: { line: ReturnLineItem }) {
 }
 
 /** What actually turned up, and whether it can go back on the shelf. */
+
+/** What the seller records as having arrived back. */
 function ReceiveDialog({
   orderId,
   returnRecord,
-  open,
   onOpenChange,
 }: {
   orderId: string
   returnRecord: Return
-  open: boolean
   onOpenChange: (open: boolean) => void
 }) {
-  const { t } = useTranslation()
   const { receive } = useReturnActions(orderId)
 
-  const lines = returnRecord.return_line_items ?? []
-  const [rows, setRows] = useState<Record<string, { quantity: number; resellable: boolean }>>(() =>
-    Object.fromEntries(
-      lines.map((line) => [line.id, { quantity: line.quantity, resellable: true }]),
-    ),
-  )
-
-  async function handleReceive() {
-    await receive
-      .mutateAsync({
-        returnId: returnRecord.id,
-        items: lines.map((line) => ({
-          return_line_item_id: line.id,
-          quantity: rows[line.id]?.quantity ?? 0,
-          resellable: rows[line.id]?.resellable ?? true,
-        })),
-      })
-      .then(() => onOpenChange(false))
-      .catch(() => undefined)
-  }
-
   return (
-    <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent>
-        <DialogHeader>
-          <DialogTitle>{t('orders.post_sale.returns.receive_title')}</DialogTitle>
-        </DialogHeader>
-        <DialogBody>
-          <div className="flex flex-col gap-3">
-            {lines.map((line) => (
-              <div key={line.id} className="flex items-center justify-between gap-3">
-                <span className="min-w-0 truncate text-sm">
-                  {lineLabel(line.name, line.variant, line.variant_id)}
-                </span>
-                <div className="flex shrink-0 items-center gap-3">
-                  <label className="flex items-center gap-2 text-xs" htmlFor={`resell-${line.id}`}>
-                    {t('orders.post_sale.returns.resellable')}
-                    <Switch
-                      id={`resell-${line.id}`}
-                      checked={rows[line.id]?.resellable ?? true}
-                      onCheckedChange={(checked) =>
-                        setRows((current) => ({
-                          ...current,
-                          [line.id]: {
-                            quantity: current[line.id]?.quantity ?? 0,
-                            resellable: !!checked,
-                          },
-                        }))
-                      }
-                    />
-                  </label>
-                  <Input
-                    type="number"
-                    min={0}
-                    max={line.quantity}
-                    className="w-20"
-                    aria-label={t('orders.post_sale.returns.received_quantity')}
-                    value={rows[line.id]?.quantity ?? 0}
-                    onChange={(event) =>
-                      setRows((current) => ({
-                        ...current,
-                        [line.id]: {
-                          quantity: Math.max(
-                            0,
-                            Math.min(line.quantity, Number(event.target.value)),
-                          ),
-                          resellable: current[line.id]?.resellable ?? true,
-                        },
-                      }))
-                    }
-                  />
-                </div>
-              </div>
-            ))}
-          </div>
-        </DialogBody>
-        <DialogFooter>
-          <Button type="button" variant="outline" onClick={() => onOpenChange(false)}>
-            {t('common.cancel')}
-          </Button>
-          <Button type="button" disabled={receive.isPending} onClick={handleReceive}>
-            {t('orders.post_sale.returns.receive')}
-          </Button>
-        </DialogFooter>
-      </DialogContent>
-    </Dialog>
+    <ReturnReceiveDialog
+      lines={(returnRecord.return_line_items ?? []).map((line) => ({
+        id: line.id,
+        label: lineLabel(line.name, line.variant, line.variant_id),
+        quantity: line.quantity,
+      }))}
+      onClose={() => onOpenChange(false)}
+      pending={receive.isPending}
+      onSubmit={(items) => {
+        receive
+          .mutateAsync({ returnId: returnRecord.id, items })
+          .then(() => onOpenChange(false))
+          .catch(() => undefined)
+      }}
+    />
   )
 }
 
 /**
- * Giving the money back.
- *
- * Opens on what the return is still owed, which is also the most that can be
- * given back — the server refuses anything above it, and on a split checkout
- * bounds it again by this order's share of the payment.
+ * The seller took the money for their own child order, so giving it back is
+ * theirs. The currency is the order's — a seller has none of their own.
  */
 function RefundDialog({
   orderId,
+  order,
   returnRecord,
-  open,
   onOpenChange,
 }: {
   orderId: string
+  order: Order
   returnRecord: Return
-  open: boolean
   onOpenChange: (open: boolean) => void
 }) {
-  const { t } = useTranslation()
   const { refund } = useReturnActions(orderId)
-
-  const [amount, setAmount] = useState(returnRecord.refundable_total ?? '')
-  const [method, setMethod] = useState<'original_payment' | 'store_credit'>('original_payment')
-
-  const methodOptions = [
-    { value: 'original_payment', label: t('orders.post_sale.returns.original_payment') },
-    { value: 'store_credit', label: t('orders.post_sale.returns.store_credit') },
-  ]
-
-  async function handleRefund() {
-    await refund
-      .mutateAsync({ returnId: returnRecord.id, amount, refundMethod: method })
-      .then(() => onOpenChange(false))
-      .catch(() => undefined)
-  }
+  const { symbol: currencySymbol } = currencyParts(order.currency, i18n.language)
 
   return (
-    <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent>
-        <DialogHeader>
-          <DialogTitle>{t('orders.post_sale.returns.refund_title')}</DialogTitle>
-        </DialogHeader>
-        <DialogBody>
-          <div className="flex flex-col gap-4">
-            <Field>
-              <FieldLabel htmlFor="refund-amount">
-                {t('orders.post_sale.returns.amount')}
-              </FieldLabel>
-              <Input
-                id="refund-amount"
-                type="number"
-                step="0.01"
-                min={0}
-                value={amount}
-                onChange={(event) => setAmount(event.target.value)}
-              />
-            </Field>
-
-            <Field>
-              <FieldLabel htmlFor="refund-method">
-                {t('orders.post_sale.returns.refund_method')}
-              </FieldLabel>
-              <Select
-                items={methodOptions}
-                value={method}
-                onValueChange={(value) =>
-                  setMethod((value as 'original_payment' | 'store_credit') ?? 'original_payment')
-                }
-              >
-                <SelectTrigger id="refund-method">
-                  <SelectValue />
-                </SelectTrigger>
-                <SelectContent>
-                  {methodOptions.map((option) => (
-                    <SelectItem key={option.value} value={option.value}>
-                      {option.label}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </Field>
-          </div>
-        </DialogBody>
-        <DialogFooter>
-          <Button type="button" variant="outline" onClick={() => onOpenChange(false)}>
-            {t('common.cancel')}
-          </Button>
-          <Button type="button" disabled={refund.isPending} onClick={handleRefund}>
-            {t('orders.post_sale.returns.refund')}
-          </Button>
-        </DialogFooter>
-      </DialogContent>
-    </Dialog>
+    <ReturnRefundDialog
+      refundableTotal={returnRecord.refundable_total}
+      currencySymbol={currencySymbol}
+      onClose={() => onOpenChange(false)}
+      pending={refund.isPending}
+      onSubmit={({ refundMethod, amount }) => {
+        refund
+          .mutateAsync({ returnId: returnRecord.id, refundMethod, amount })
+          .then(() => onOpenChange(false))
+          .catch(() => undefined)
+      }}
+    />
   )
 }

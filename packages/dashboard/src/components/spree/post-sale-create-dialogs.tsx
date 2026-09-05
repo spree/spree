@@ -8,6 +8,8 @@ import {
 } from '@spree/dashboard-core'
 import {
   Button,
+  type ClaimResolution,
+  ClaimResolveDialog,
   Dialog,
   DialogBody,
   DialogContent,
@@ -21,12 +23,15 @@ import {
   InputGroupAddon,
   InputGroupInput,
   InputGroupText,
+  QuantityPicker,
+  type RefundMethod,
   Select,
   SelectContent,
   SelectItem,
+  type PostSaleSelection as Selection,
   SelectTrigger,
   SelectValue,
-  Switch,
+  selectedUnits as selectedItems,
   Textarea,
 } from '@spree/dashboard-ui'
 import i18n from 'i18next'
@@ -59,49 +64,6 @@ export function fulfilledUnits(order: Order): FulfilledUnit[] {
       quantity: item.quantity,
     })),
   )
-}
-
-type Selection = Record<string, number>
-
-/** Shared item picker: a quantity per unit, zero meaning "not included". */
-function QuantityPicker({
-  units,
-  selection,
-  onChange,
-}: {
-  units: Array<{ id: string; label: string; quantity: number }>
-  selection: Selection
-  onChange: (selection: Selection) => void
-}) {
-  return (
-    <div className="flex flex-col gap-2">
-      {units.map((unit) => (
-        <div
-          key={unit.id}
-          className="flex items-center justify-between gap-4 rounded-lg border p-3"
-        >
-          <span className="text-sm truncate">{unit.label}</span>
-          <Input
-            type="number"
-            min={0}
-            max={unit.quantity}
-            className="w-20"
-            value={selection[unit.id] ?? 0}
-            onChange={(event) =>
-              onChange({
-                ...selection,
-                [unit.id]: Math.max(0, Math.min(Number(event.target.value), unit.quantity)),
-              })
-            }
-          />
-        </div>
-      ))}
-    </div>
-  )
-}
-
-function selectedItems(selection: Selection): Array<[string, number]> {
-  return Object.entries(selection).filter(([, quantity]) => quantity > 0)
 }
 
 export function CreateReturnDialog({
@@ -496,183 +458,40 @@ export function ResolveClaimDialog({
   claim: Claim
   onClose: () => void
   onSubmit: (params: {
-    resolution: 'refund' | 'replacement' | 'refund_and_replacement'
-    refundMethod: 'original_payment' | 'store_credit'
+    resolution: ClaimResolution
+    refundMethod: RefundMethod
     amount?: string
     replacementLineItemIds: string[]
   }) => void
 }) {
-  const { t } = useTranslation()
   const lines = claim.claim_line_items ?? []
   const { defaultCurrency } = useStore()
   const { symbol: currencySymbol } = currencyParts(defaultCurrency, i18n.language)
 
-  const [resolution, setResolution] = useState<'refund' | 'replacement' | 'refund_and_replacement'>(
-    'refund',
-  )
-  const [refundMethod, setRefundMethod] = useState<'original_payment' | 'store_credit'>(
-    'store_credit',
-  )
   // A claim opened without per-item amounts has a refund_total of zero, and
   // the workflow refuses to refund nothing — offer what the customer paid for
   // the claimed items instead, which is also the ceiling it enforces.
-  const [amount, setAmount] = useState(() => {
-    const recorded = Number(claim.refund_total)
-    if (Number.isFinite(recorded) && recorded > 0) return claim.refund_total
-
-    const paid = lines.reduce((sum, line) => sum + Number(line.paid_amount ?? 0), 0)
-    return paid > 0 ? paid.toFixed(2) : claim.refund_total
-  })
-  const [replacing, setReplacing] = useState<Record<string, boolean>>(() =>
-    Object.fromEntries(lines.map((line) => [line.id, line.send_replacement])),
-  )
-
-  const refunding = resolution.includes('refund')
-  const sendingReplacement = resolution.includes('replacement')
-  const chosenReplacements = Object.entries(replacing)
-    .filter(([, on]) => on)
-    .map(([id]) => id)
-
-  const resolutionOptions = (['refund', 'replacement', 'refund_and_replacement'] as const).map(
-    (value) => ({
-      value,
-      label: t(`admin.pages.orders.detail.claims.resolutions.${value}`),
-    }),
-  )
-
-  const methodOptions = [
-    {
-      value: 'store_credit',
-      label: t('admin.pages.orders.detail.returns.refund_methods.store_credit'),
-    },
-    {
-      value: 'original_payment',
-      label: t('admin.pages.orders.detail.returns.refund_methods.original_payment'),
-    },
-  ]
-
-  // Refunding nothing, or replacing nothing, is what the server rejects —
-  // say so here instead of letting the request fail.
-  const ready =
-    (!refunding || Number(amount) > 0) && (!sendingReplacement || chosenReplacements.length > 0)
+  const recorded = Number(claim.refund_total)
+  const paid = lines.reduce((sum, line) => sum + Number(line.paid_amount ?? 0), 0)
+  const defaultAmount =
+    Number.isFinite(recorded) && recorded > 0
+      ? claim.refund_total
+      : paid > 0
+        ? paid.toFixed(2)
+        : claim.refund_total
 
   return (
-    <Dialog open onOpenChange={(open) => !open && onClose()}>
-      <DialogContent>
-        <DialogHeader>
-          <DialogTitle>{t('admin.pages.orders.detail.claims.resolve_title')}</DialogTitle>
-        </DialogHeader>
-        <DialogBody className="flex flex-col gap-4">
-          <Field>
-            <FieldLabel htmlFor="claim-resolution">
-              {t('admin.pages.orders.detail.claims.resolution')}
-            </FieldLabel>
-            <Select
-              items={resolutionOptions}
-              value={resolution}
-              onValueChange={(value) => setResolution(value as typeof resolution)}
-            >
-              <SelectTrigger id="claim-resolution">
-                <SelectValue />
-              </SelectTrigger>
-              <SelectContent>
-                {resolutionOptions.map((option) => (
-                  <SelectItem key={option.value} value={option.value}>
-                    {option.label}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-          </Field>
-
-          {refunding && (
-            <>
-              <Field>
-                <FieldLabel htmlFor="claim-resolve-amount">
-                  {t('admin.pages.orders.detail.claims.refund_amount')}
-                </FieldLabel>
-                <InputGroup>
-                  <InputGroupAddon>
-                    <InputGroupText>{currencySymbol}</InputGroupText>
-                  </InputGroupAddon>
-                  <InputGroupInput
-                    id="claim-resolve-amount"
-                    type="number"
-                    step="0.01"
-                    min="0"
-                    value={amount}
-                    onChange={(event) => setAmount(event.target.value)}
-                  />
-                </InputGroup>
-              </Field>
-              <Field>
-                <FieldLabel htmlFor="claim-refund-method">
-                  {t('admin.pages.orders.detail.returns.refund_method')}
-                </FieldLabel>
-                <Select
-                  items={methodOptions}
-                  value={refundMethod}
-                  onValueChange={(value) => setRefundMethod(value as typeof refundMethod)}
-                >
-                  <SelectTrigger id="claim-refund-method">
-                    <SelectValue />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {methodOptions.map((option) => (
-                      <SelectItem key={option.value} value={option.value}>
-                        {option.label}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-              </Field>
-            </>
-          )}
-
-          {sendingReplacement && (
-            <div className="flex flex-col gap-2">
-              <span className="text-sm font-medium">
-                {t('admin.pages.orders.detail.claims.replacement_items')}
-              </span>
-              {lines.map((line) => (
-                <div
-                  key={line.id}
-                  className="flex items-center justify-between gap-4 rounded-lg border p-3"
-                >
-                  <span className="text-sm truncate">
-                    {line.variant?.product_name ?? line.variant_id}
-                    <span className="text-muted-foreground"> ×{line.quantity}</span>
-                  </span>
-                  <Switch
-                    checked={replacing[line.id] ?? false}
-                    onCheckedChange={(checked) =>
-                      setReplacing({ ...replacing, [line.id]: checked })
-                    }
-                  />
-                </div>
-              ))}
-            </div>
-          )}
-        </DialogBody>
-        <DialogFooter>
-          <Button variant="outline" onClick={onClose}>
-            {t('admin.actions.cancel')}
-          </Button>
-          <Button
-            disabled={!ready}
-            onClick={() =>
-              onSubmit({
-                resolution,
-                refundMethod,
-                amount: refunding ? amount : undefined,
-                replacementLineItemIds: chosenReplacements,
-              })
-            }
-          >
-            {t('admin.pages.orders.detail.claims.actions.resolve')}
-          </Button>
-        </DialogFooter>
-      </DialogContent>
-    </Dialog>
+    <ClaimResolveDialog
+      lines={lines.map((line) => ({
+        id: line.id,
+        label: line.variant?.product_name ?? line.variant_id ?? line.id,
+        quantity: line.quantity,
+        sendReplacement: line.send_replacement,
+      }))}
+      defaultAmount={defaultAmount}
+      currencySymbol={currencySymbol}
+      onClose={onClose}
+      onSubmit={onSubmit}
+    />
   )
 }

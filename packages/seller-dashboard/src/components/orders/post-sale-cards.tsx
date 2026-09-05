@@ -1,3 +1,4 @@
+import { currencyParts } from '@spree/dashboard-core'
 import {
   Button,
   Card,
@@ -5,25 +6,12 @@ import {
   CardContent,
   CardHeader,
   CardTitle,
-  Dialog,
-  DialogBody,
-  DialogContent,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
+  ClaimResolveDialog,
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
-  Field,
-  FieldLabel,
-  Input,
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
   StatusBadge,
   useConfirm,
 } from '@spree/dashboard-ui'
@@ -35,6 +23,7 @@ import {
   ShieldAlertIcon,
 } from '@spree/dashboard-ui/icons'
 import type { Claim, Order } from '@spree/seller-sdk'
+import i18n from 'i18next'
 import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import {
@@ -286,8 +275,8 @@ export function ClaimsCard({ order }: { order: Order }) {
       {resolving && (
         <ResolveClaimDialog
           orderId={order.id}
+          order={order}
           claim={resolving}
-          open
           onOpenChange={() => setResolving(null)}
         />
       )}
@@ -296,149 +285,63 @@ export function ClaimsCard({ order }: { order: Order }) {
 }
 
 /** Money back, a replacement, or both. */
+
+/**
+ * How the seller puts a delivery right: money back, a replacement, or both.
+ *
+ * The currency is the order's — a seller has none of their own.
+ */
 function ResolveClaimDialog({
   orderId,
+  order,
   claim,
-  open,
   onOpenChange,
 }: {
   orderId: string
+  order: Order
   claim: Claim
-  open: boolean
   onOpenChange: (open: boolean) => void
 }) {
-  const { t } = useTranslation()
   const { resolve } = useClaimActions(orderId)
+  const lines = claim.claim_line_items ?? []
+  const { symbol: currencySymbol } = currencyParts(order.currency, i18n.language)
 
-  const [resolution, setResolution] = useState<'refund' | 'replacement' | 'refund_and_replacement'>(
-    'refund',
-  )
-  const [amount, setAmount] = useState('')
-  const [method, setMethod] = useState<'original_payment' | 'store_credit'>('store_credit')
-
-  // A replacement resolution only works when a line was opened asking for
-  // one, and nothing on this branch flags a line yet — so offering it would
-  // guarantee a 422 for a choice the seller made in good faith. The options
-  // follow what the claim actually carries.
-  const replaceable = (claim.claim_line_items ?? []).some((line) => line.send_replacement)
-
-  const resolutionOptions = [
-    { value: 'refund', label: t('orders.post_sale.claims.resolutions.refund') },
-    ...(replaceable
-      ? [
-          { value: 'replacement', label: t('orders.post_sale.claims.resolutions.replacement') },
-          {
-            value: 'refund_and_replacement',
-            label: t('orders.post_sale.claims.resolutions.refund_and_replacement'),
-          },
-        ]
-      : []),
-  ]
-  const methodOptions = [
-    { value: 'store_credit', label: t('orders.post_sale.returns.store_credit') },
-    { value: 'original_payment', label: t('orders.post_sale.returns.original_payment') },
-  ]
-
-  const refunding = resolution.includes('refund')
-
-  async function handleResolve() {
-    await resolve
-      .mutateAsync({
-        claimId: claim.id,
-        resolution,
-        refundMethod: refunding ? method : undefined,
-        amount: refunding && amount ? amount : undefined,
-      })
-      .then(() => onOpenChange(false))
-      .catch(() => undefined)
-  }
+  // A claim opened without per-item amounts has a refund_total of zero, and
+  // the workflow refuses to refund nothing — offer what the customer paid for
+  // the claimed items instead, which is also the ceiling it enforces.
+  const recorded = Number(claim.refund_total)
+  const paid = lines.reduce((sum, line) => sum + Number(line.paid_amount ?? 0), 0)
+  const defaultAmount =
+    Number.isFinite(recorded) && recorded > 0
+      ? claim.refund_total
+      : paid > 0
+        ? paid.toFixed(2)
+        : claim.refund_total
 
   return (
-    <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent>
-        <DialogHeader>
-          <DialogTitle>{t('orders.post_sale.claims.resolve_title')}</DialogTitle>
-        </DialogHeader>
-        <DialogBody>
-          <div className="flex flex-col gap-4">
-            <Field>
-              <FieldLabel htmlFor="claim-resolution">
-                {t('orders.post_sale.claims.resolution')}
-              </FieldLabel>
-              <Select
-                items={resolutionOptions}
-                value={resolution}
-                onValueChange={(value) =>
-                  setResolution(
-                    (value as 'refund' | 'replacement' | 'refund_and_replacement') ?? 'refund',
-                  )
-                }
-              >
-                <SelectTrigger id="claim-resolution">
-                  <SelectValue />
-                </SelectTrigger>
-                <SelectContent>
-                  {resolutionOptions.map((option) => (
-                    <SelectItem key={option.value} value={option.value}>
-                      {option.label}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </Field>
-
-            {refunding && (
-              <>
-                <Field>
-                  <FieldLabel htmlFor="claim-amount">
-                    {t('orders.post_sale.returns.amount')}
-                  </FieldLabel>
-                  <Input
-                    id="claim-amount"
-                    type="number"
-                    step="0.01"
-                    min={0}
-                    value={amount}
-                    onChange={(event) => setAmount(event.target.value)}
-                  />
-                </Field>
-
-                <Field>
-                  <FieldLabel htmlFor="claim-refund-method">
-                    {t('orders.post_sale.returns.refund_method')}
-                  </FieldLabel>
-                  <Select
-                    items={methodOptions}
-                    value={method}
-                    onValueChange={(value) =>
-                      setMethod((value as 'original_payment' | 'store_credit') ?? 'store_credit')
-                    }
-                  >
-                    <SelectTrigger id="claim-refund-method">
-                      <SelectValue />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {methodOptions.map((option) => (
-                        <SelectItem key={option.value} value={option.value}>
-                          {option.label}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                </Field>
-              </>
-            )}
-          </div>
-        </DialogBody>
-        <DialogFooter>
-          <Button type="button" variant="outline" onClick={() => onOpenChange(false)}>
-            {t('common.cancel')}
-          </Button>
-          <Button type="button" disabled={resolve.isPending} onClick={handleResolve}>
-            {t('orders.post_sale.claims.resolve')}
-          </Button>
-        </DialogFooter>
-      </DialogContent>
-    </Dialog>
+    <ClaimResolveDialog
+      lines={lines.map((line) => ({
+        id: line.id,
+        label: lineLabel(line.name, line.variant, line.variant_id),
+        quantity: line.quantity,
+        sendReplacement: line.send_replacement,
+      }))}
+      defaultAmount={defaultAmount}
+      currencySymbol={currencySymbol}
+      onClose={() => onOpenChange(false)}
+      pending={resolve.isPending}
+      onSubmit={({ resolution, refundMethod, amount, replacementLineItemIds }) => {
+        resolve
+          .mutateAsync({
+            claimId: claim.id,
+            resolution,
+            refundMethod,
+            amount,
+            replacementLineItemIds,
+          })
+          .then(() => onOpenChange(false))
+          .catch(() => undefined)
+      }}
+    />
   )
 }

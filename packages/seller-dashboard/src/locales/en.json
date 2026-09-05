@@ -114,6 +114,43 @@
         "unverified": "Not valid",
         "verified": "Verified"
       }
+    },
+    "pages": {
+      "orders": {
+        "detail": {
+          "returns": {
+            "receive_title": "Receive returned items",
+            "received_quantity": "Received",
+            "resellable": "Resellable",
+            "actions": {
+              "receive": "Receive items",
+              "refund": "Refund"
+            },
+            "refund_title": "Refund return",
+            "refund_amount": "Amount",
+            "refund_method": "Refund to",
+            "refund_methods": {
+              "original_payment": "Original payment",
+              "store_credit": "Store credit"
+            },
+            "reason": "Reason"
+          },
+          "claims": {
+            "resolve_title": "Resolve claim",
+            "resolution": "How to resolve",
+            "resolutions": {
+              "refund": "Refund",
+              "replacement": "Replacement",
+              "refund_and_replacement": "Refund and replacement"
+            },
+            "refund_amount": "Refund amount",
+            "replacement_items": "Send a replacement for",
+            "actions": {
+              "resolve": "Resolve"
+            }
+          }
+        }
+      }
     }
   },
   "app": {
@@ -387,25 +424,17 @@
         "canceled": "Canceled"
       },
       "returns": {
-        "title": "Returns",
-        "empty": "Nothing has come back from this order.",
+        "cancel_message": "The customer is told it will not go ahead.",
+        "cancel_title": "Cancel this return?",
         "create": "New return",
         "create_title": "Take goods back",
-        "receive": "Receive",
-        "receive_title": "What arrived?",
-        "received_quantity": "Quantity received",
-        "resellable": "Resellable",
-        "partially_received": "{{received}} of {{quantity}} received",
+        "empty": "Nothing has come back from this order.",
         "not_resellable": "Not resellable",
+        "partially_received": "{{received}} of {{quantity}} received",
+        "receive": "Receive",
         "refund": "Refund",
-        "refund_title": "Give the money back",
-        "refund_method": "Refund to",
         "refund_total": "Refund total: {{amount}}",
-        "amount": "Amount",
-        "original_payment": "Original payment",
-        "store_credit": "Store credit",
-        "cancel_title": "Cancel this return?",
-        "cancel_message": "The customer is told it will not go ahead."
+        "title": "Returns"
       },
       "exchanges": {
         "title": "Exchanges",
@@ -416,24 +445,17 @@
         "cancel_message": "The customer is told it will not go ahead."
       },
       "claims": {
-        "title": "Claims",
-        "empty": "Nothing has been reported on this order.",
+        "cancel_message": "The customer is told it will not go ahead.",
+        "cancel_title": "Cancel this claim?",
         "create": "New claim",
         "create_title": "Report a problem",
-        "description": "What went wrong",
-        "resolve": "Resolve",
-        "resolve_title": "Put this right",
-        "resolution": "How to resolve",
-        "resolutions": {
-          "refund": "Refund",
-          "replacement": "Send a replacement",
-          "refund_and_replacement": "Refund and send a replacement"
-        },
         "deny": "Deny",
-        "deny_title": "Deny this claim?",
         "deny_message": "The customer is told the claim was not upheld.",
-        "cancel_title": "Cancel this claim?",
-        "cancel_message": "The customer is told it will not go ahead."
+        "deny_title": "Deny this claim?",
+        "description": "What went wrong",
+        "empty": "Nothing has been reported on this order.",
+        "resolve": "Resolve",
+        "title": "Claims"
       }
     },
     "search_placeholder": "Search by order number…",

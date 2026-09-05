@@ -8,19 +8,17 @@ import {
   DialogTitle,
   Field,
   FieldLabel,
-  Input,
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
+  QuantityPicker,
+  ReasonField,
+  type PostSaleSelection as Selection,
+  selectedUnits as selectedItems,
   Textarea,
 } from '@spree/dashboard-ui'
 import type { Order } from '@spree/seller-sdk'
 import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useClaimActions, useReturnActions } from '../../hooks/use-post-sale'
-import { type ReasonKind, useReasons } from '../../hooks/use-reasons'
+import { useReasons } from '../../hooks/use-reasons'
 import { unitLabel } from './line-label'
 
 /** Units that actually went out, which is all that can come back. */
@@ -32,93 +30,6 @@ export function fulfilledUnits(order: Order) {
       quantity: item.quantity,
     })),
   )
-}
-
-type Selection = Record<string, number>
-
-/** A quantity per unit; zero means "not included". */
-function QuantityPicker({
-  units,
-  selection,
-  onChange,
-}: {
-  units: Array<{ id: string; label: string; quantity: number }>
-  selection: Selection
-  onChange: (selection: Selection) => void
-}) {
-  return (
-    <div className="flex flex-col gap-2">
-      {units.map((unit) => (
-        <div key={unit.id} className="flex items-center justify-between gap-3">
-          <span className="min-w-0 truncate text-sm">{unit.label}</span>
-          <Input
-            type="number"
-            min={0}
-            max={unit.quantity}
-            value={selection[unit.id] ?? 0}
-            className="w-20"
-            aria-label={unit.label}
-            onChange={(event) =>
-              onChange({
-                ...selection,
-                [unit.id]: Math.max(0, Math.min(unit.quantity, Number(event.target.value))),
-              })
-            }
-          />
-        </div>
-      ))}
-    </div>
-  )
-}
-
-/**
- * The reason picker. Optional by design — the API takes a record without one,
- * so a marketplace that has not filled in its vocabulary yet is not blocked.
- */
-function ReasonField({
-  kind,
-  value,
-  onChange,
-}: {
-  kind: ReasonKind
-  value: string
-  onChange: (value: string) => void
-}) {
-  const { t } = useTranslation()
-  const { data } = useReasons(kind)
-
-  const reasons = data?.data ?? []
-  if (reasons.length === 0) return null
-
-  const options = reasons.map((reason) => ({ value: reason.id, label: reason.name }))
-
-  return (
-    <Field>
-      <FieldLabel htmlFor={`reason-${kind}`}>{t('orders.post_sale.reason')}</FieldLabel>
-      <Select
-        items={options}
-        value={value}
-        onValueChange={(next) => onChange((next as string) ?? '')}
-      >
-        <SelectTrigger id={`reason-${kind}`}>
-          <SelectValue />
-        </SelectTrigger>
-        <SelectContent>
-          {options.map((option) => (
-            <SelectItem key={option.value} value={option.value}>
-              {option.label}
-            </SelectItem>
-          ))}
-        </SelectContent>
-      </Select>
-    </Field>
-  )
-}
-
-function selectedItems(selection: Selection) {
-  return Object.entries(selection)
-    .filter(([, quantity]) => quantity > 0)
-    .map(([id, quantity]) => ({ id, quantity }))
 }
 
 export function CreateReturnDialog({
@@ -143,7 +54,7 @@ export function CreateReturnDialog({
   async function handleCreate() {
     await create
       .mutateAsync({
-        items: chosen.map((item) => ({ fulfillment_item_id: item.id, quantity: item.quantity })),
+        items: chosen.map(([id, quantity]) => ({ fulfillment_item_id: id, quantity })),
         reason_id: reasonId || undefined,
         memo: memo.trim() || undefined,
       })
@@ -164,7 +75,7 @@ export function CreateReturnDialog({
         <DialogBody>
           <div className="flex flex-col gap-4">
             <QuantityPicker units={units} selection={selection} onChange={setSelection} />
-            <ReasonField kind="return-reasons" value={reasonId} onChange={setReasonId} />
+            <ReturnReasonField value={reasonId} onChange={setReasonId} />
             <Field>
               <FieldLabel htmlFor="return-memo">{t('orders.post_sale.memo')}</FieldLabel>
               <Textarea
@@ -221,9 +132,9 @@ export function CreateClaimDialog({
   async function handleCreate() {
     await create
       .mutateAsync({
-        items: chosen.map((item) => ({
-          line_item_id: item.id,
-          quantity: item.quantity,
+        items: chosen.map(([id, quantity]) => ({
+          line_item_id: id,
+          quantity,
           description: description.trim() || undefined,
         })),
         reason_id: reasonId || undefined,
@@ -245,7 +156,7 @@ export function CreateClaimDialog({
         <DialogBody>
           <div className="flex flex-col gap-4">
             <QuantityPicker units={units} selection={selection} onChange={setSelection} />
-            <ReasonField kind="claim-reasons" value={reasonId} onChange={setReasonId} />
+            <ClaimReasonField value={reasonId} onChange={setReasonId} />
             <Field>
               <FieldLabel htmlFor="claim-description">
                 {t('orders.post_sale.claims.description')}
@@ -272,5 +183,52 @@ export function CreateClaimDialog({
         </DialogFooter>
       </DialogContent>
     </Dialog>
+  )
+}
+
+/**
+ * The seller picks from the marketplace's vocabulary — the operator decides
+ * what the reasons are, so this reads the store's list rather than one of the
+ * seller's own.
+ */
+function ReturnReasonField({
+  value,
+  onChange,
+}: {
+  value: string
+  onChange: (value: string) => void
+}) {
+  const { t } = useTranslation()
+  const { data } = useReasons('return-reasons')
+
+  return (
+    <ReasonField
+      id="return"
+      reasons={(data?.data ?? []).filter((reason) => reason.active)}
+      value={value}
+      onChange={onChange}
+      label={t('orders.post_sale.reason')}
+    />
+  )
+}
+
+function ClaimReasonField({
+  value,
+  onChange,
+}: {
+  value: string
+  onChange: (value: string) => void
+}) {
+  const { t } = useTranslation()
+  const { data } = useReasons('claim-reasons')
+
+  return (
+    <ReasonField
+      id="claim"
+      reasons={(data?.data ?? []).filter((reason) => reason.active)}
+      value={value}
+      onChange={onChange}
+      label={t('orders.post_sale.reason')}
+    />
   )
 }

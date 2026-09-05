@@ -178,12 +178,20 @@ export function useClaimActions(orderId: string) {
       resolution,
       refundMethod,
       amount,
+      replacementLineItemIds,
     }: {
       claimId: string
       resolution: 'refund' | 'replacement' | 'refund_and_replacement'
       refundMethod?: 'original_payment' | 'store_credit'
       amount?: string
-    }) => claims().resolve(orderId, claimId, { resolution, refund_method: refundMethod, amount }),
+      replacementLineItemIds?: string[]
+    }) =>
+      claims().resolve(orderId, claimId, {
+        resolution,
+        refund_method: refundMethod,
+        amount,
+        replacement_line_item_ids: replacementLineItemIds,
+      }),
   )
 
   const deny = usePostSaleMutation(orderId, key, (id: string) => claims().deny(orderId, id))

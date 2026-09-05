@@ -31,6 +31,7 @@ export * from './spree/bulk-dialog'
 export * from './spree/bulk-price-table'
 export * from './spree/bulk-variants-table'
 export * from './spree/calculator-summary'
+export * from './spree/claim-resolve-dialog'
 export * from './spree/color-picker'
 export * from './spree/confirm-dialog'
 export * from './spree/copy-to-clipboard-button'
@@ -44,6 +45,8 @@ export * from './spree/fulfill-items-form'
 export * from './spree/fulfillment-edit-dialog'
 export * from './spree/fulfillment-item-list'
 export * from './spree/fulfillment-panel'
+export * from './spree/post-sale-fields'
+export * from './spree/return-dialogs'
 
 // JsonPreviewDrawer and JsonValueView are intentionally NOT re-exported from
 // this barrel: they pull in `@uiw/react-json-view` (~30KB gzip), and
