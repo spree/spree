@@ -61,11 +61,12 @@ export function ShippingLabelRow({
         `${label.tracking_number ?? 'label'}.${label.format ?? 'pdf'}`,
         getApiClient().downloadHeaders?.() ?? {},
       )
-    } catch (error) {
-      toastManager.add({
-        type: 'error',
-        title: error instanceof Error ? error.message : t('admin.errors.unexpected'),
-      })
+    } catch {
+      // Deliberately not the thrown message: `downloadFromApi` reports the
+      // transport in English ("Download failed: 404"), which would land
+      // untranslated in a localized panel and tells the merchant nothing they
+      // can act on.
+      toastManager.add({ type: 'error', title: t('admin.errors.label_download_failed') })
     }
   }
 

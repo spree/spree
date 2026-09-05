@@ -499,6 +499,7 @@
       "failed_to_update_staff": "فشل تحديث الموظف",
       "failed_to_update_store": "فشل تحديث إعدادات المتجر",
       "generic": "حدث خطأ ما",
+      "label_download_failed": "تعذّر تنزيل بطاقة الشحن",
       "network": "خطأ في الشبكة — يرجى المحاولة مجددًا",
       "not_found": "غير موجود",
       "required": "هذا الحقل مطلوب",

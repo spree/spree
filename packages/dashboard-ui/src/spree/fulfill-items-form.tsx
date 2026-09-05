@@ -133,6 +133,7 @@ export function FulfillItemsForm({
   carrierOptions,
   onSubmit,
   onCancel,
+  canShipWholeParcel = false,
   pending = false,
 }: {
   form: UseFormReturn<FulfillItemsValues>
@@ -142,6 +143,16 @@ export function FulfillItemsForm({
   carrierOptions: Array<{ value: string; label: string }>
   onSubmit: (values: FulfillItemsValues) => void | Promise<void>
   onCancel: () => void
+  /**
+   * Whether the parcel can ship with nothing picked.
+   *
+   * True when it holds items that no row can address — the workflow reads an
+   * empty selection as "everything", so blocking submit would leave such a
+   * parcel unshippable. Never inferred from `rows` being empty here: that
+   * cannot tell an unaddressable parcel from an empty one, and an empty
+   * fulfillment must stay unsubmittable.
+   */
+  canShipWholeParcel?: boolean
   pending?: boolean
 }) {
   const { t } = useTranslation()
@@ -154,10 +165,6 @@ export function FulfillItemsForm({
   )
   const totalAvailable = rows.reduce((sum, row) => sum + row.quantity, 0)
   const shipsEverything = totalSelected === totalAvailable
-  // A parcel whose items cannot be addressed by line item has nothing to pick
-  // from, but it still ships — the workflow reads an empty selection as
-  // "everything". Blocking submit would leave it unshippable.
-  const shipsWholeParcel = rows.length === 0
 
   return (
     <form onSubmit={form.handleSubmit(onSubmit)} className="flex flex-col">
@@ -262,7 +269,7 @@ export function FulfillItemsForm({
         <Button
           type="submit"
           size="sm"
-          disabled={(totalSelected === 0 && !shipsWholeParcel) || pending}
+          disabled={(totalSelected === 0 && !canShipWholeParcel) || pending}
         >
           {pending ? t('admin.actions.saving') : t('admin.orders.fulfill.submit')}
         </Button>

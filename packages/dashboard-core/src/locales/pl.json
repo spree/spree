@@ -500,6 +500,7 @@
       "failed_to_update_staff": "Nie udało się zaktualizować personelu",
       "failed_to_update_store": "Nie udało się zaktualizować ustawień sklepu",
       "generic": "Coś poszło nie tak",
+      "label_download_failed": "Nie udało się pobrać etykiety",
       "network": "Błąd sieci — spróbuj ponownie",
       "not_found": "Nie znaleziono",
       "required": "To pole jest wymagane",

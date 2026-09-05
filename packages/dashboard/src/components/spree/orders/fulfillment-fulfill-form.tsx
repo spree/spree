@@ -48,6 +48,10 @@ export function FulfillmentFulfillForm({
 
   const idPrefix = `fulfill-${fulfillment.id}`
   const rows = fulfillableRows(fulfillmentItemRows(fulfillment, order.items ?? []))
+  // The parcel holds units, but none of them can be named by line item — the
+  // only case where shipping with nothing picked is right. An empty parcel
+  // has nothing to ship and stays unsubmittable.
+  const canShipWholeParcel = rows.length === 0 && (fulfillment.fulfillment_items?.length ?? 0) > 0
 
   const form = useForm<FulfillItemsFormValues>({
     resolver: zodResolver(fulfillItemsFormSchema),
@@ -90,10 +94,10 @@ export function FulfillmentFulfillForm({
     const items = values.items
       .filter((item) => item.selected && item.quantity > 0)
       .map((item) => ({ item_id: item.item_id, quantity: item.quantity }))
-    // Nothing addressable by line item means the whole parcel goes, which is
-    // what an omitted `items` asks for. Only a partial pick that came out
-    // empty is a no-op worth refusing.
-    if (items.length === 0 && rows.length > 0) return
+    // An omitted `items` ships the whole parcel, which is only right when
+    // nothing was addressable. A partial pick that came out empty, or an
+    // empty parcel, is a no-op worth refusing.
+    if (items.length === 0 && !canShipWholeParcel) return
 
     // Recomputed from the submitted values rather than a watched total, so the
     // branch is decided by exactly what is being sent.
@@ -124,6 +128,7 @@ export function FulfillmentFulfillForm({
       carrierOptions={carrierOptions}
       onSubmit={onSubmit}
       onCancel={onDone}
+      canShipWholeParcel={canShipWholeParcel}
       pending={fulfill.isPending}
     />
   )

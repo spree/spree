@@ -499,6 +499,7 @@
       "failed_to_update_staff": "Mitarbeiter konnte nicht aktualisiert werden",
       "failed_to_update_store": "Store-Einstellungen konnten nicht aktualisiert werden",
       "generic": "Ein Fehler ist aufgetreten",
+      "label_download_failed": "Das Etikett konnte nicht heruntergeladen werden",
       "network": "Netzwerkfehler — bitte erneut versuchen",
       "not_found": "Nicht gefunden",
       "required": "Dieses Feld ist erforderlich",
