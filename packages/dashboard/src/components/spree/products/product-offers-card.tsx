@@ -43,10 +43,14 @@ export function ProductOffersCard({ productId }: { productId: string }) {
   // Paged, never capped: a popular master product carries the marketplace's
   // own rows plus every seller's offer in one collection, and an offer past a
   // cap could never be approved because nobody could see it.
+  // Filtered server-side, not in the browser: paging a mixed collection and
+  // then dropping the marketplace's own rows would page past offers the
+  // operator never sees, and would count them in the pagination totals.
   const queryKey = useResourceKey('product-offers', `${productId}-${page}`)
   const { data } = useQuery({
     queryKey,
-    queryFn: () => adminClient.products.variants.list(productId, { expand: ['seller'], page }),
+    queryFn: () =>
+      adminClient.products.variants.list(productId, { expand: ['seller'], page, offers: true }),
   })
 
   // A reason typed for one offer must not follow the operator to the next.
@@ -80,9 +84,9 @@ export function ProductOffersCard({ productId }: { productId: string }) {
       }),
   })
 
-  // Only a seller's rows: the marketplace's own variants are edited in the
-  // form above and are nobody's to approve.
-  const offers = (data?.data ?? []).filter((variant) => variant.seller_id)
+  const offers = data?.data ?? []
+  // Nothing to review on a product the marketplace sells alone, so the card
+  // stays out of the way entirely.
   if (offers.length === 0) return null
 
   return (

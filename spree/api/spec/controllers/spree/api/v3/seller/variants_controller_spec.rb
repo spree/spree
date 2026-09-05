@@ -117,17 +117,19 @@ RSpec.describe Spree::Api::V3::Seller::VariantsController, type: :controller do
       expect(response).to have_http_status(:not_found)
     end
 
-    # Stock belongs to the warehouse it sits in, and the model would resolve
-    # a location against the whole store.
-    it "drops a stock level in another seller's warehouse" do
+    # Stock belongs to the warehouse it sits in, and the model would resolve a
+    # location against the whole store. Refused rather than dropped: a 200
+    # that quietly wrote no stock would leave a seller believing they stocked
+    # something they did not.
+    it "404s a stock level in another seller's warehouse" do
       theirs = create(:stock_location, store: store, seller: other_seller)
 
       post :create, params: payload.merge(
         stock_levels: [{ stock_location_id: theirs.prefixed_id, count_on_hand: 5 }]
       ), as: :json
 
-      expect(response).to have_http_status(:created)
-      expect(Spree::Variant.find_by(sku: 'NEW-OFFER-1').stock_levels).to be_empty
+      expect(response).to have_http_status(:not_found)
+      expect(Spree::Variant.find_by(sku: 'NEW-OFFER-1')).to be_nil
     end
 
     context 'with option types on the master product' do
