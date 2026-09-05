@@ -141,9 +141,9 @@ test.describe('price lists', () => {
     await startNewPriceList(page, creds.store_id, name)
     await submitCreate(page, name)
 
-    // Rule-picker buttons include label + description; match by label only.
-    await pickRule(page, /^volume rule\b/i)
-    await expect(page.getByRole('heading', { name: /^volume rule$/i })).toBeVisible({
+    // Rule-picker buttons include name + description; match by name only.
+    await pickRule(page, /^volume pricing\b/i)
+    await expect(page.getByRole('heading', { name: /^volume pricing$/i })).toBeVisible({
       timeout: 5_000,
     })
     await page
@@ -156,7 +156,7 @@ test.describe('price lists', () => {
 
     await saveForm(page)
 
-    await expect(page.getByText(/volume rule/i).first()).toBeVisible({ timeout: 15_000 })
+    await expect(page.getByText(/volume pricing/i).first()).toBeVisible({ timeout: 15_000 })
   })
 
   // The audience rules (customer group / customer) are superseded by catalog
@@ -175,11 +175,11 @@ test.describe('price lists', () => {
 
     const picker = page.getByRole('dialog')
     // The context rules stay first-class…
-    await expect(picker.getByRole('button', { name: /^volume rule\b/i })).toBeVisible()
-    await expect(picker.getByRole('button', { name: /^market rule\b/i })).toBeVisible()
+    await expect(picker.getByRole('button', { name: /^volume pricing\b/i })).toBeVisible()
+    await expect(picker.getByRole('button', { name: /^market\b/i })).toBeVisible()
     // …the audience rules are gone.
-    await expect(picker.getByRole('button', { name: /^customer group rule\b/i })).toHaveCount(0)
-    await expect(picker.getByRole('button', { name: /^customer rule\b/i })).toHaveCount(0)
+    await expect(picker.getByRole('button', { name: /^customer group\b/i })).toHaveCount(0)
+    await expect(picker.getByRole('button', { name: /^customer$/i })).toHaveCount(0)
   })
 
   test('adds a Market Rule with the seeded default market', async ({ page }) => {
@@ -190,8 +190,8 @@ test.describe('price lists', () => {
     await startNewPriceList(page, creds.store_id, name)
     await submitCreate(page, name)
 
-    await pickRule(page, /^market rule\b/i)
-    await expect(page.getByRole('heading', { name: /^market rule$/i })).toBeVisible({
+    await pickRule(page, /^market\b/i)
+    await expect(page.getByRole('heading', { name: /^market$/i })).toBeVisible({
       timeout: 5_000,
     })
 
@@ -221,7 +221,7 @@ test.describe('price lists', () => {
     // Stage a Volume Rule so we have a row to remove. Picker opens the
     // editor sheet automatically on the new row; submit it with valid
     // defaults so it gets persisted on save below.
-    await pickRule(page, /^volume rule\b/i)
+    await pickRule(page, /^volume pricing\b/i)
     await page
       .getByRole('dialog')
       .getByLabel(/minimum quantity/i)
@@ -241,7 +241,7 @@ test.describe('price lists', () => {
       .getByRole('dialog')
       .getByRole('button', { name: /^remove$/i })
       .click()
-    await expect(page.getByText(/volume rule/i)).toHaveCount(0, { timeout: 5_000 })
+    await expect(page.getByText(/volume pricing/i)).toHaveCount(0, { timeout: 5_000 })
 
     // Save the form so the omission is persisted (the backend reconciles
     // "row omitted from payload" as a destroy).
@@ -249,7 +249,7 @@ test.describe('price lists', () => {
 
     // Reload and prove the row is actually gone, not just hidden client-side.
     await page.reload()
-    await expect(page.getByText(/volume rule/i)).toHaveCount(0, { timeout: 15_000 })
+    await expect(page.getByText(/volume pricing/i)).toHaveCount(0, { timeout: 15_000 })
   })
 
   test('bulk-edits a price-list override via the dialog', async ({ page }) => {
