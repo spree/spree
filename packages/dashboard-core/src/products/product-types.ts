@@ -73,6 +73,23 @@ export interface PanelVariant {
   delivery_profile_id?: string | null
 }
 
+/**
+ * The only part of a product form the variant spreadsheets touch.
+ *
+ * `PricesCard`, `InventoryCard` and the sections under them read and write
+ * `variants[]` and nothing else, so they are generic over this rather than
+ * pinned to the operator's full `ProductFormValues`. That is what lets the
+ * seller panel render the same grids for a single offer row — react-hook-form's
+ * `UseFormReturn` is invariant, so a concrete type would have excluded any
+ * other form shape (docs/plans/6.0-seller-master-catalog-listings.md).
+ */
+export interface VariantsFormShape {
+  // Optional, because the operator's own product form declares it that way —
+  // a required field here would exclude the very form this exists to serve.
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  variants?: any[]
+}
+
 export interface PanelProduct {
   id: string
   name: string

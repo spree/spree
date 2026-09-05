@@ -425,6 +425,7 @@
       "title": "Customer"
     },
     "customer_note": "Customer note",
+    "description": "What customers have bought from you, and the parcels you owe them.",
     "empty": "No orders yet. They appear here as customers buy from you.",
     "fulfill": "Mark as fulfilled",
     "fulfillment_statuses": {
@@ -626,6 +627,7 @@
       "status": "Status"
     },
     "custom_fields": "Product details",
+    "description": "Products you list yourself. The marketplace reviews each one before it goes on sale.",
     "details": "Details",
     "empty": "No products yet. Add one to start selling.",
     "fields": {
