@@ -40,6 +40,20 @@ function resolveDetailMessage(field: string, entry: string | ValidationErrorDeta
 }
 
 /**
+ * Whether {@link resolveDetailMessage} will translate this entry rather than
+ * fall back to the server's message.
+ *
+ * A per-attribute key is written for this one field and wins even over a
+ * message the model worded itself; the generic key only applies when the
+ * server did not mark the message as its own.
+ */
+function hasTranslation(field: string, entry: ValidationErrorDetail): boolean {
+  if (i18n.exists(`admin.validation.${field}.${entry.code}`)) return true
+  if (entry.specific) return false
+  return i18n.exists(`admin.validation.${entry.code}`)
+}
+
+/**
  * The failure summary in the admin's own language: "Name can't be blank,
  * Quantity must be greater than 0", assembled from the translated entries and
  * the attribute names the dashboard already publishes.
@@ -61,15 +75,12 @@ function translatedSummary(
       // translate; a missing code is a message added as bare text.
       if (typeof entry === 'string' || !entry.code) return null
 
-      const { code, message, ...interpolation } = entry
-      const key = [`admin.validation.${field}.${code}`, `admin.validation.${code}`].find((k) =>
-        i18n.exists(k),
-      )
-      // No translation, or a message the model made more specific than its
-      // code — either way the assembled summary would lose meaning.
-      if (!key || entry.specific) return null
+      // Resolved exactly as the field error is, so the banner and the input
+      // beneath it never disagree, and skipped only when that resolution
+      // would fall through to the server's own sentence.
+      if (!hasTranslation(field, entry)) return null
 
-      sentences.push(`${attributeLabel(field)} ${i18n.t(key, interpolation)}`.trim())
+      sentences.push(`${attributeLabel(field)} ${resolveDetailMessage(field, entry)}`.trim())
     }
   }
 

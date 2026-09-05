@@ -28,7 +28,7 @@ module Spree
 
               result[attribute] = messages.each_with_index.map do |message, index|
                 detail = details[index] || {}
-                code = detail[:error] if detail[:error].is_a?(Symbol)
+                code = detail[:error].is_a?(Symbol) ? detail[:error] : nil
 
                 # Interpolation values first, so the keys below are the ones
                 # this formatter computed: a validation may itself carry a
@@ -68,14 +68,20 @@ module Spree
           # @return [Boolean] true when the model supplied its own wording
           def specific_message?(errors, attribute, code, message, options = {})
             message != errors.generate_message(attribute, code, **options.symbolize_keys, raise: true)
-          rescue NoMethodError
-            # A nested attribute (`option_values.name`) names no method on the
-            # record, and generating its default reads one. Nothing to compare
-            # against, so treat the message as the code's own.
-            false
-          rescue I18n::MissingTranslationData
-            # No default to compare against, so the message *is* the code's own
-            # copy: the client may translate the code and lose nothing.
+          rescue StandardError
+            # Rebuilding the default can fail in several ordinary ways, and none
+            # of them should turn a 422 into a 500:
+            #
+            # - `I18n::MissingTranslationData` — no Rails default at all, which
+            #   is every Spree code.
+            # - `I18n::MissingInterpolationArgument` — the default interpolates
+            #   (`greater_than` wants `count`) but the call site passed only a
+            #   `message:`, so the value was never recorded.
+            # - `NoMethodError` — a nested attribute (`option_values.name`)
+            #   names no method to read.
+            #
+            # In each case there is no default to compare against, so report no
+            # override and let the client translate the code.
             false
           end
         end

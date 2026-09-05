@@ -18,10 +18,15 @@ beforeAll(async () => {
               blank: 'Required',
               invalid: 'Is not valid',
               greater_than: 'Must be more than {{count}}',
-              // A per-attribute override of the same code.
+              // Per-attribute overrides of a shared code.
               quantity: { blank: 'Enter how many' },
+              callback_url: { invalid: 'Enter a full web address' },
             },
-            fields: { name: { label: 'Name' }, quantity: { label: 'Quantity' } },
+            fields: {
+              name: { label: 'Name' },
+              quantity: { label: 'Quantity' },
+              callback_url: { label: 'Callback URL' },
+            },
           },
         },
       },
@@ -194,5 +199,29 @@ describe('the summary banner', () => {
 
     const root = setError.mock.calls.find(([field]) => field === 'root')
     expect(root?.[1].message).toBe("Name can't be blank, Sku is claimed by a supplier")
+  })
+})
+
+describe('the banner and the field agree', () => {
+  it('uses a per-attribute key in both, even for a message the model worded', () => {
+    // The banner used to bail on any `specific` entry while the field below it
+    // rendered the per-attribute translation, so the two disagreed.
+    const setError = vi.fn()
+    mapSpreeErrorsToForm(
+      spreeError(
+        {
+          callback_url: [
+            { code: 'invalid', message: 'must be a valid http or https URL', specific: true },
+          ],
+        },
+        'Callback url must be a valid http or https URL',
+      ),
+      setError,
+    )
+
+    const field = setError.mock.calls.find(([f]) => f === 'callback_url')
+    const root = setError.mock.calls.find(([f]) => f === 'root')
+    expect(field?.[1].message).toBe('Enter a full web address')
+    expect(root?.[1].message).toBe('Callback URL Enter a full web address')
   })
 })

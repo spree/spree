@@ -22,6 +22,9 @@ class Spree::Api::V3::Admin::ValidationProbeController < Spree::Api::V3::Admin::
     # never looks for a default. The message is still that code's own text.
     probe.errors.add(:seller, :seller_delivery_method_provider,
                      message: Spree.t('errors.messages.seller_delivery_method_provider'))
+    # A Rails code whose default interpolates, added with a message but
+    # without the value that default wants.
+    probe.errors.add(:weight, :greater_than, message: 'must be more than zero')
     probe.errors
   end
 end
@@ -29,7 +32,7 @@ end
 class Spree::Api::V3::Admin::ValidationProbe
   include ActiveModel::Model
 
-  attr_accessor :name, :quantity, :sku, :handle, :seller
+  attr_accessor :name, :quantity, :sku, :handle, :seller, :weight
 
   validates :name, presence: true
   validates :quantity, numericality: { greater_than: 0 }
@@ -118,6 +121,17 @@ RSpec.describe Spree::Api::V3::Admin::ValidationDetails, type: :controller do
       # skip the translations it holds.
       expect(details['seller'].first).to include(
         'code' => 'seller_delivery_method_provider', 'specific' => false
+      )
+    end
+
+    it 'answers 422, not 500, when a code default wants a value the error omits' do
+      post :create
+
+      # Rebuilding "must be greater than %{count}" without its count raises.
+      # Escaping the formatter would turn every such validation into a 500.
+      expect(response).to have_http_status(:unprocessable_content)
+      expect(details['weight'].first).to include(
+        'code' => 'greater_than', 'message' => 'must be more than zero', 'specific' => false
       )
     end
 
