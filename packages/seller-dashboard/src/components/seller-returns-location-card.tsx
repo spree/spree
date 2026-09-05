@@ -47,19 +47,22 @@ export function SellerReturnsLocationCard({ headless = false }: { headless?: boo
   // the server sent their returns to another, with nothing on screen saying
   // so — and they would edit the wrong one.
   const activeParams = { active_true: true, limit: 1 }
-  const { data: takesReturns } = useQuery({
+  const { data: takesReturns, isError: returnsFailed } = useQuery({
     queryKey: ['seller', sellerId, 'stock-locations', 'returns'],
     queryFn: () =>
       sellerClient().stockLocations.list({ ...activeParams, returns_enabled_true: true }),
   })
   const hasReturnsLocation = (takesReturns?.data.length ?? 0) > 0
-  const { data: anyActive } = useQuery({
+  const { data: anyActive, isError: anyFailed } = useQuery({
     queryKey: ['seller', sellerId, 'stock-locations'],
     queryFn: () => sellerClient().stockLocations.list(activeParams),
     enabled: !!takesReturns && !hasReturnsLocation,
   })
 
   const location = takesReturns?.data[0] ?? anyActive?.data[0]
+  // A failed lookup must not read as "no address yet" — that invites the
+  // seller to re-enter one they already have.
+  const failed = returnsFailed || anyFailed
   const hasAddress = Boolean(location?.address1)
   const title = t('profile.returns_address')
 
@@ -87,7 +90,9 @@ export function SellerReturnsLocationCard({ headless = false }: { headless?: boo
     hasAddress && location ? (
       <AddressBlock address={stockLocationToAddressBlock(location)} />
     ) : (
-      <p className="text-muted-foreground text-sm">{t('profile.address_not_provided')}</p>
+      <p className={failed ? 'text-destructive text-sm' : 'text-muted-foreground text-sm'}>
+        {t(failed ? 'common.error' : 'profile.address_not_provided')}
+      </p>
     )
 
   const editButton = (
