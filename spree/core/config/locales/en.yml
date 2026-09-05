@@ -1456,8 +1456,8 @@ en:
       customer_group_rule:
         description: Apply pricing to specific customer groups
       volume_rule:
-        name: Volume pricing
         description: Apply pricing based on quantity purchased
+        name: Volume pricing
     price_sack: Price Sack
     prices: Prices
     pricing: Pricing
