@@ -4896,3 +4896,34 @@ keys in every dashboard locale, not a `Spree.t` label; new validation errors in
 core use a symbol and parameters, never a preformatted string; nothing in the
 dashboard prints an API `label`/`name`/`description` directly; shared admin copy
 goes in `dashboard-core` locales, never in `packages/seller-dashboard`.
+## 2026-09-05 — Wholesale deposits: staff settle the balance in 6.0, and the deposit rounds up
+
+Closing the two open questions `6.0-b2b-wholesale-shipping.md` left for its
+deposit phase, as that phase is built.
+
+**A buyer pays the deposit; staff settle the rest.** Checkout collects
+`amount_due_at_checkout` and the order completes `partially_paid` against
+the existing `outstanding_balance`. The storefront *shows* what is
+outstanding but offers no way to pay it. A customer-facing pay-balance
+route is money-taking code that `6.0-6.1-b2b-payment-terms.md` sequences
+for 6.1 beside the bank-transfer method and the payment `reference`
+column; shipping it early would open a second payment entry point with no
+named terms behind it and no reconciliation identifier to settle against.
+Merchants record or capture the balance through the payment surfaces that
+already exist.
+
+**The deposit rounds up and the balance absorbs the remainder.** A
+percentage of a total rarely lands on a whole cent. Rounding the deposit up
+means a buyer is never asked for less than the percentage agreed, and
+deposit + balance sum to the total exactly — so nothing downstream needs a
+reconciling step for a stranded cent. Rounding is to the currency's own
+smallest unit, never a hardcoded two places, because the same code prices
+zero-decimal currencies.
+
+**Constraint for anything collecting money later:** read
+`amount_due_at_checkout` rather than the order total, and respect the
+existing `max_amount` cap. A surface that charges the full total on a
+deposit order takes money the buyer did not agree to yet.
+
+Plans amended: `6.0-b2b-wholesale-shipping.md` (open questions closed),
+`6.0-6.1-b2b-payment-terms.md` (its 6.0 half rides this work).

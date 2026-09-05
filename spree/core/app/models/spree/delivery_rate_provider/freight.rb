@@ -26,6 +26,24 @@ module Spree
         true
       end
 
+      # What a merchant asks for up front on this shipment type, and what
+      # they call the rest. A container is booked months before it sails, so
+      # taking nothing at checkout is how a forwarder ends up out of pocket.
+      # Nil is pay-in-full.
+      #
+      # Read off the method itself, so each tier can ask for a different
+      # deposit — a pallet on account, a container half up front.
+      #
+      # @return [BigDecimal, nil]
+      def deposit_percentage
+        delivery_method.deposit_percentage
+      end
+
+      # @return [String, nil]
+      def balance_due_label
+        delivery_method.balance_due_label
+      end
+
       # @param package [Spree::Stock::Package]
       # @return [Spree::DeliveryRateProvider::Estimate]
       def estimate(package)

@@ -19,6 +19,7 @@ module Spree
     include Spree::Purchase::Channel
     include Spree::Purchase::Company
     include Spree::Purchase::Freight
+    include Spree::Purchase::PaymentTerms
     include Spree::Purchase::QuantityRules
     include Spree::Purchase::PurchaseOrder
     include Spree::Purchase::Market

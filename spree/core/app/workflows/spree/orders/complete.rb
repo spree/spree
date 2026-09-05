@@ -162,7 +162,10 @@ module Spree
 
       def payment_covered?
         order.payments.reset
-        order.payments.valid.where(status: %w[pending processing completed]).sum(:amount) >= order.total
+        # What is due now, not the whole total: a deposit order is placed
+        # owing its balance, and measuring against the total would refuse it
+        # for underpaying money nobody asked for yet.
+        order.payments.valid.where(status: %w[pending processing completed]).sum(:amount) >= order.amount_due_at_checkout
       end
     end
   end

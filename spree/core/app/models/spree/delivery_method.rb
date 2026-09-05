@@ -119,6 +119,11 @@ module Spree
     self.whitelisted_ransackable_associations = %w[seller]
 
     validates :name, presence: true
+    # A deposit is a percentage of the order, so anything outside 0–100 is a
+    # typo that would otherwise ask a buyer for more than they are buying.
+    validates :deposit_percentage, numericality: {
+      greater_than: 0, less_than_or_equal_to: 100, allow_nil: true
+    }
     validates :storefront_visible, inclusion: { in: [true, false] }
     validate :delivery_zone_must_belong_to_profile,
              if: -> { delivery_zone_id_changed? || delivery_profile_id_changed? }
