@@ -185,8 +185,17 @@ module Spree
 
       # The documents as they read at the moment of agreement, so a merchant
       # who later edits their terms can still show which text this person saw.
+      # The document the tick was next to, not every policy the store keeps.
+      # A consent row exists to prove which text somebody accepted, so naming
+      # the returns and shipping policies beside it — which no checkbox showed
+      # — is the same fabricated evidence as recording a terms agreement for
+      # an account that was never asked for one.
+      #
+      # Matched by name because policies are an open set with no fixed
+      # vocabulary: a store may not have one called "Terms of Service", and
+      # then there is nothing to snapshot rather than something to guess at.
       def consent_policies
-        store.policies.to_a
+        store.policies.with_matching_name(Spree.t(:terms_of_service)).to_a
       end
 
       def link_order

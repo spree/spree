@@ -178,6 +178,18 @@ RSpec.describe Spree::Customers::Create do
       )
     end
 
+    # The row proves which text was accepted, so naming the returns and
+    # shipping policies beside it would be evidence of an agreement the
+    # checkbox never asked for.
+    it 'snapshots the terms document alone, not every policy the store keeps' do
+      create(:policy, owner: store, name: 'Returns Policy', body: 'Send it back within 30 days.')
+
+      record = Spree::ConsentRecord.find_by(owner: result.value,
+                                            purpose: Spree::ConsentRecord::TERMS_OF_SERVICE)
+
+      expect(record.documents.map { |doc| doc['name'] }).to eq(['Terms of Service'])
+    end
+
     it 'records where and from what the person agreed' do
       customer = result.value
       record = Spree::ConsentRecord.find_by(owner: customer,
