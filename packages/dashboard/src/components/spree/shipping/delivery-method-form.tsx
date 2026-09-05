@@ -1044,6 +1044,9 @@ function PricingCard({ form }: { form: UseFormReturn<DeliveryMethodFormValues> }
 
   const calculatorOptions = (calculators?.data ?? []).map((calculator) => ({
     value: calculator.type,
+    // Delivery-method calculators are identified by their Ruby class name on
+    // both sides of this API, not the `api_type` the shared keys use, so this
+    // resolves through the fallback until that surface adopts the code.
     label: typeLabel('calculator', calculator.type, calculator.name),
   }))
   const selectedCalculator = (calculators?.data ?? []).find((c) => c.type === calculatorType)

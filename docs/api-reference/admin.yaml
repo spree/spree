@@ -21997,19 +21997,19 @@ paths:
                 data:
                 - type: create_line_items
                   label: Create line items
-                  description:
+                  description: Populates the cart with the specified quantity of variant
                   preference_schema: []
                 - type: create_item_adjustments
                   label: Create per-line-item adjustment
-                  description:
+                  description: Creates a promotion credit adjustment on a line item
                   preference_schema: []
                 - type: create_adjustment
                   label: Create whole-order adjustment
-                  description:
+                  description: Creates a promotion credit adjustment on the order
                   preference_schema: []
                 - type: free_shipping
                   label: Free shipping
-                  description:
+                  description: Makes all shipments for the order free
                   preference_schema: []
   "/api/v3/admin/promotion_rules/types":
     get:
@@ -22058,21 +22058,22 @@ paths:
                 data:
                 - type: category
                   label: Categories
-                  description:
+                  description: Order includes products in specified categories
                   preference_schema:
                   - key: match_policy
                     type: string
                     default: any
                 - type: channel
                   label: Channel(s)
-                  description:
+                  description: Limit to orders placed through specified channel(s)
                   preference_schema:
                   - key: channel_ids
                     type: array
                     default: []
                 - type: country
                   label: Country
-                  description:
+                  description: Limit to orders with shipping address in a specific
+                    country
                   preference_schema:
                   - key: country_codes
                     type: array
@@ -22085,29 +22086,29 @@ paths:
                     default:
                 - type: currency
                   label: Currency
-                  description:
+                  description: Limit to orders in a specific currency
                   preference_schema:
                   - key: currency
                     type: string
                     default:
                 - type: customer_group
                   label: Customer Group(s)
-                  description:
+                  description: Available only to customers in specified customer group(s)
                   preference_schema:
                   - key: customer_group_ids
                     type: array
                     default: []
                 - type: customer
                   label: Customers
-                  description:
+                  description: Available only to the specified customers
                   preference_schema: []
                 - type: first_order
                   label: First order
-                  description:
+                  description: Must be the customer's first order
                   preference_schema: []
                 - type: item_total
                   label: Item total
-                  description:
+                  description: Order total meets these criteria
                   preference_schema:
                   - key: amount_min
                     type: decimal
@@ -22123,22 +22124,22 @@ paths:
                     default: "<"
                 - type: market
                   label: Market(s)
-                  description:
+                  description: Limit to orders placed in specified market(s)
                   preference_schema:
                   - key: market_ids
                     type: array
                     default: []
                 - type: one_use_per_user
                   label: One Use Per User
-                  description:
+                  description: Only One Use Per User
                   preference_schema: []
                 - type: customer_logged_in
                   label: Only logged in customers
-                  description:
+                  description: Available only to logged in customers
                   preference_schema: []
                 - type: option_value
                   label: Option Value(s)
-                  description:
+                  description: Order includes products with matching option value(s)
                   preference_schema:
                   - key: match_policy
                     type: string
@@ -22148,7 +22149,7 @@ paths:
                     default: []
                 - type: product
                   label: Product(s)
-                  description:
+                  description: Order includes specified product(s)
                   preference_schema:
                   - key: match_policy
                     type: string

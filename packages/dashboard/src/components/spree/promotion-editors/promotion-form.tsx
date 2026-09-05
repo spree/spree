@@ -714,6 +714,9 @@ function RulesCard({
               <RuleRow
                 key={field._key}
                 draft={(watchedRules[index] ?? field) as unknown as PromotionRuleFormDraft}
+                definition={(typesData?.data ?? []).find(
+                  (type) => type.type === (watchedRules[index] ?? field)?.type,
+                )}
                 onEdit={() => setEditorState({ mode: 'edit', index })}
                 onRemove={() => rulesArray.remove(index)}
               />
@@ -750,6 +753,7 @@ function RulesCard({
                 : ((watchedRules[editorState.index] ??
                     rulesArray.fields[editorState.index]) as unknown as PromotionRuleFormDraft)
             }
+            types={typesData?.data ?? []}
             open
             onOpenChange={(o) => !o && setEditorState(null)}
             onSave={(next) => {
@@ -769,10 +773,13 @@ function RulesCard({
 
 function RuleRow({
   draft,
+  definition,
   onEdit,
   onRemove,
 }: {
   draft: PromotionRuleFormDraft
+  /** Catalog entry for `draft.type` — the fallback for a rule with no dashboard translation. */
+  definition?: ResourceTypeDefinition
   onEdit: () => void
   onRemove: () => void
 }) {
@@ -801,7 +808,9 @@ function RuleRow({
         onClick={onEdit}
         className="min-w-0 flex-1 px-3 py-2 text-left focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring rounded-l-md"
       >
-        <div className="text-sm font-medium">{typeLabel('promotion_rule', draft.type)}</div>
+        <div className="text-sm font-medium">
+          {typeLabel('promotion_rule', draft.type, definition?.label)}
+        </div>
         <RuleSummary draft={draft} />
       </button>
       <Can I="destroy" a={Subject.PromotionRule}>
@@ -1000,11 +1009,14 @@ function RulePickerSheet({
 
 function RuleEditSheet({
   draft,
+  types,
   open,
   onOpenChange,
   onSave,
 }: {
   draft: PromotionRuleFormDraft
+  /** The rule catalog — its copy is the fallback for a type with no dashboard translation. */
+  types: ResourceTypeDefinition[]
   open: boolean
   onOpenChange: (open: boolean) => void
   onSave: (next: PromotionRuleFormDraft) => void
@@ -1017,7 +1029,13 @@ function RuleEditSheet({
     <Sheet open={open} onOpenChange={onOpenChange}>
       <SheetContent>
         <SheetHeader>
-          <SheetTitle>{typeLabel('promotion_rule', draft.type)}</SheetTitle>
+          <SheetTitle>
+            {typeLabel(
+              'promotion_rule',
+              draft.type,
+              types.find((type) => type.type === draft.type)?.label,
+            )}
+          </SheetTitle>
           <SheetDescription>{t('admin.promotions.rule_edit.description')}</SheetDescription>
         </SheetHeader>
         <Slot
@@ -1101,6 +1119,9 @@ function ActionsCard({
               <ActionRow
                 key={field._key}
                 draft={(watchedActions[index] ?? field) as unknown as PromotionActionFormDraft}
+                definition={(typesData?.data ?? []).find(
+                  (type) => type.type === (watchedActions[index] ?? field)?.type,
+                )}
                 onEdit={() => setEditorState({ mode: 'edit', index })}
                 onRemove={() => actionsArray.remove(index)}
               />
@@ -1135,6 +1156,7 @@ function ActionsCard({
                 : ((watchedActions[editorState.index] ??
                     actionsArray.fields[editorState.index]) as unknown as PromotionActionFormDraft)
             }
+            types={typesData?.data ?? []}
             open
             onOpenChange={(o) => !o && setEditorState(null)}
             onSave={(next) => {
@@ -1154,10 +1176,13 @@ function ActionsCard({
 
 function ActionRow({
   draft,
+  definition,
   onEdit,
   onRemove,
 }: {
   draft: PromotionActionFormDraft
+  /** Catalog entry for `draft.type` — the fallback for an action with no dashboard translation. */
+  definition?: ResourceTypeDefinition
   onEdit: () => void
   onRemove: () => void
 }) {
@@ -1183,7 +1208,9 @@ function ActionRow({
         onClick={onEdit}
         className="min-w-0 flex-1 px-3 py-2 text-left focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring rounded-l-md"
       >
-        <div className="text-sm font-medium">{typeLabel('promotion_action', draft.type)}</div>
+        <div className="text-sm font-medium">
+          {typeLabel('promotion_action', draft.type, definition?.label)}
+        </div>
         <ActionSummary draft={draft} />
       </button>
       <Can I="destroy" a={Subject.PromotionAction}>
@@ -1273,11 +1300,14 @@ function ActionPickerSheet({
 
 function ActionEditSheet({
   draft,
+  types,
   open,
   onOpenChange,
   onSave,
 }: {
   draft: PromotionActionFormDraft
+  /** The action catalog — its copy is the fallback for a type with no dashboard translation. */
+  types: ResourceTypeDefinition[]
   open: boolean
   onOpenChange: (open: boolean) => void
   onSave: (next: PromotionActionFormDraft) => void
@@ -1290,7 +1320,13 @@ function ActionEditSheet({
     <Sheet open={open} onOpenChange={onOpenChange}>
       <SheetContent>
         <SheetHeader>
-          <SheetTitle>{typeLabel('promotion_action', draft.type)}</SheetTitle>
+          <SheetTitle>
+            {typeLabel(
+              'promotion_action',
+              draft.type,
+              types.find((type) => type.type === draft.type)?.label,
+            )}
+          </SheetTitle>
           <SheetDescription>{t('admin.promotions.action_edit.description')}</SheetDescription>
         </SheetHeader>
         <Slot

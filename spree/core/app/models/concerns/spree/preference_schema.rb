@@ -205,7 +205,11 @@ module Spree
           entry = {
             type: klass.api_type,
             label: subclass_label(klass),
-            description: klass.respond_to?(:description) ? klass.description : nil,
+            # Families differ on which method carries the sentence: the rule
+            # base classes define `human_description`, the rest `description`.
+            # Asking for only one left promotion types with a null description
+            # and no fallback for a client without its own translation.
+            description: subclass_description(klass),
             preference_schema: klass.respond_to?(:serialized_preference_schema) ? klass.serialized_preference_schema : []
           }
           # Only present when true, so families without the concept keep
@@ -214,6 +218,15 @@ module Spree
           entry[:superseded] = true if klass.respond_to?(:superseded?) && klass.superseded?
           entry
         end.sort_by { |entry| entry[:label] }
+      end
+
+      # @return [String, nil] the class's own one-line description, from
+      #   whichever accessor its family defines
+      def subclass_description(klass)
+        return klass.human_description if klass.respond_to?(:human_description)
+        return klass.description if klass.respond_to?(:description)
+
+        nil
       end
 
       # STI subclasses share the parent's `model_name`, so calling
