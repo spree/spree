@@ -304,7 +304,7 @@ paths:
                   avatar_url:
                 sellers:
                 - id: sel_UkLWZg9DAJ
-                  name: Seller 31
+                  name: Seller 43
                   status: approved
               schema:
                 "$ref": "#/components/schemas/AuthResponse"
@@ -420,7 +420,7 @@ paths:
                   avatar_url:
                 sellers:
                 - id: sel_UkLWZg9DAJ
-                  name: Seller 52
+                  name: Seller 70
                   status: approved
               schema:
                 "$ref": "#/components/schemas/AuthResponse"
@@ -489,8 +489,8 @@ paths:
                   avatar_url:
                 sellers:
                 - id: sel_UkLWZg9DAJ
-                  name: Seller 40
-                  slug: seller-40
+                  name: Seller 52
+                  slug: seller-52
                   status: approved
                 permissions:
                 - allow: true
@@ -13559,8 +13559,8 @@ paths:
               example:
                 data:
                 - id: prod_UkLWZg9DAJ
-                  name: Product 1523250
-                  slug: product-1523250
+                  name: Product 1733250
+                  slug: product-1733250
                   meta_title:
                   meta_description:
                   meta_keywords:
@@ -13803,8 +13803,8 @@ paths:
             application/json:
               example:
                 id: prod_UkLWZg9DAJ
-                name: Product 1556710
-                slug: product-1556710
+                name: Product 1766710
+                slug: product-1766710
                 meta_title:
                 meta_description:
                 meta_keywords:
@@ -13883,7 +13883,7 @@ paths:
               example:
                 id: prod_UkLWZg9DAJ
                 name: Hand-thrown mug, large
-                slug: product-1588212
+                slug: product-1798212
                 meta_title:
                 meta_description:
                 meta_keywords:
@@ -13996,8 +13996,8 @@ paths:
             application/json:
               example:
                 id: sel_UkLWZg9DAJ
-                name: Seller 69
-                slug: seller-69
+                name: Seller 87
+                slug: seller-87
                 about: ''
                 about_html: ''
                 logo_url:
@@ -14069,7 +14069,7 @@ paths:
               example:
                 id: sel_UkLWZg9DAJ
                 name: Acme Supplies
-                slug: seller-71
+                slug: seller-89
                 about: ''
                 about_html: ''
                 logo_url:
@@ -14816,10 +14816,10 @@ paths:
             application/json:
               example:
                 direct_upload:
-                  url: http://www.example.com/rails/active_storage/disk/eyJfcmFpbHMiOnsiZGF0YSI6eyJrZXkiOiJuem5oOGdra3VxendvbDc1ODBxNHNwZmpmMjVxIiwiY29udGVudF90eXBlIjoiYXBwbGljYXRpb24vcGRmIiwiY29udGVudF9sZW5ndGgiOjUxMjM0LCJjaGVja3N1bSI6IlZqaHowNGxRdUVHdXY0bkR2aHNhTlE9PSIsInNlcnZpY2VfbmFtZSI6InRlc3QifSwiZXhwIjoiMjAyNi0wMS0xNVQxMjowNTowMC4wMDBaIiwicHVyIjoiYmxvYl90b2tlbiJ9fQ==--78446cac90de8aa5586fd8d78466e8e626ee4277
+                  url: http://www.example.com/rails/active_storage/disk/eyJfcmFpbHMiOnsiZGF0YSI6eyJrZXkiOiJuem5oOGdra3VxendvbDc1ODBxNHNwZmpmMjVxIiwiY29udGVudF90eXBlIjoiYXBwbGljYXRpb24vcGRmIiwiY29udGVudF9sZW5ndGgiOjUxMjM0LCJjaGVja3N1bSI6IlZqaHowNGxRdUVHdXY0bkR2aHNhTlE9PSIsInNlcnZpY2VfbmFtZSI6InRlc3QifSwiZXhwIjoiMjAyNi0wMS0xNVQxMjowNTowMC4wMDBaIiwicHVyIjoiYmxvYl90b2tlbiJ9fQ==--fdf97914648d9d1b6f7abe41293e5fbb7a07cffb
                   headers:
                     Content-Type: application/pdf
-                signed_id: eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--4bf69395f12588416a3329a388edc25b0517ad14
+                signed_id: eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--64a7a628149a01f18aa41dc05f03e1755c9f27e6
               schema:
                 "$ref": "#/components/schemas/DirectUploadResponse"
       requestBody:
@@ -14851,6 +14851,546 @@ paths:
                   - content_type
               required:
               - blob
+  "/api/v3/seller/orders/{order_id}/claims":
+    parameters:
+    - name: order_id
+      in: path
+      description: Prefixed order ID
+      required: true
+      schema:
+        type: string
+    get:
+      summary: List claims
+      tags:
+      - Claims
+      security:
+      - bearer_auth: []
+      description: Problems reported on one of this seller's orders.
+      parameters:
+      - name: X-Spree-Seller-Id
+        in: header
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: claims listed
+          content:
+            application/json:
+              example:
+                data:
+                - id: claim_UkLWZg9DAJ
+                  number: CLM1001
+                  status: open
+                  resolution:
+                  order_id: or_UkLWZg9DAJ
+                  reason_id:
+                  refund_total: '0.0'
+                  display_refund_total: "$0.00"
+                  approved_at:
+                  resolved_at:
+                  denied_at:
+                  canceled_at:
+                  memo:
+                meta:
+                  page: 1
+                  limit: 25
+                  count: 1
+                  pages: 1
+                  from: 1
+                  to: 1
+                  in: 1
+                  previous:
+                  next:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      "$ref": "#/components/schemas/Claim"
+                required:
+                - data
+    post:
+      summary: Open a claim
+      tags:
+      - Claims
+      security:
+      - bearer_auth: []
+      description: |
+        Reports that something went wrong with a delivery, to be put right
+        without necessarily asking for the goods back.
+
+        A replacement variant, if one is offered, comes from this seller's own
+        catalogue — a rival's is not theirs to promise.
+      parameters:
+      - name: X-Spree-Seller-Id
+        in: header
+        required: true
+        schema:
+          type: string
+      responses:
+        '201':
+          description: claim opened
+          content:
+            application/json:
+              example:
+                id: claim_UkLWZg9DAJ
+                number: CLM1001
+                status: open
+                resolution:
+                order_id: or_UkLWZg9DAJ
+                reason_id:
+                refund_total: '0.0'
+                display_refund_total: "$0.00"
+                approved_at:
+                resolved_at:
+                denied_at:
+                canceled_at:
+                memo:
+              schema:
+                "$ref": "#/components/schemas/Claim"
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                items:
+                  type: array
+                  items:
+                    type: object
+                    properties:
+                      line_item_id:
+                        type: string
+                      quantity:
+                        type: integer
+                      description:
+                        type: string
+                        nullable: true
+                      send_replacement:
+                        type: boolean
+                      replacement_variant_id:
+                        type: string
+                        nullable: true
+                      refund_amount:
+                        type: string
+                        nullable: true
+                    required:
+                    - line_item_id
+                    - quantity
+                reason_id:
+                  type: string
+                  nullable: true
+                memo:
+                  type: string
+                  nullable: true
+              required:
+              - items
+  "/api/v3/seller/orders/{order_id}/claims/{id}/approve":
+    parameters:
+    - name: order_id
+      in: path
+      required: true
+      schema:
+        type: string
+    - name: id
+      in: path
+      required: true
+      schema:
+        type: string
+    patch:
+      summary: Approve a claim
+      tags:
+      - Claims
+      security:
+      - bearer_auth: []
+      description: Accepts that the claim is good.
+      parameters:
+      - name: X-Spree-Seller-Id
+        in: header
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: claim approved
+          content:
+            application/json:
+              example:
+                id: claim_UkLWZg9DAJ
+                number: CLM1001
+                status: approved
+                resolution:
+                order_id: or_UkLWZg9DAJ
+                reason_id:
+                refund_total: '0.0'
+                display_refund_total: "$0.00"
+                approved_at: '2026-01-15T12:00:00Z'
+                resolved_at:
+                denied_at:
+                canceled_at:
+                memo:
+              schema:
+                "$ref": "#/components/schemas/Claim"
+  "/api/v3/seller/orders/{order_id}/claims/{id}/resolve":
+    parameters:
+    - name: order_id
+      in: path
+      required: true
+      schema:
+        type: string
+    - name: id
+      in: path
+      required: true
+      schema:
+        type: string
+    patch:
+      summary: Resolve a claim
+      tags:
+      - Claims
+      security:
+      - bearer_auth: []
+      description: |
+        Puts the claim right: money back, a replacement shipment, or both.
+
+        A refund is bounded by this order's share of the payment, so one
+        seller can never settle out of a sibling's money.
+      parameters:
+      - name: X-Spree-Seller-Id
+        in: header
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: claim resolved
+          content:
+            application/json:
+              example:
+                id: claim_UkLWZg9DAJ
+                number: CLM1001
+                status: resolved
+                resolution: refund
+                order_id: or_UkLWZg9DAJ
+                reason_id:
+                refund_total: '0.0'
+                display_refund_total: "$0.00"
+                approved_at: '2026-01-15T12:00:00Z'
+                resolved_at: '2026-01-15T12:00:00Z'
+                denied_at:
+                canceled_at:
+                memo:
+              schema:
+                "$ref": "#/components/schemas/Claim"
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                resolution:
+                  type: string
+                  enum:
+                  - refund
+                  - replacement
+                  - refund_and_replacement
+                refund_method:
+                  type: string
+                  enum:
+                  - original_payment
+                  - store_credit
+                amount:
+                  type: string
+                  nullable: true
+                replacement_line_item_ids:
+                  type: array
+                  items:
+                    type: string
+              required:
+              - resolution
+  "/api/v3/seller/orders/{order_id}/claims/{id}/deny":
+    parameters:
+    - name: order_id
+      in: path
+      required: true
+      schema:
+        type: string
+    - name: id
+      in: path
+      required: true
+      schema:
+        type: string
+    patch:
+      summary: Deny a claim
+      tags:
+      - Claims
+      security:
+      - bearer_auth: []
+      description: Turns the claim down.
+      parameters:
+      - name: X-Spree-Seller-Id
+        in: header
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: claim denied
+          content:
+            application/json:
+              example:
+                id: claim_UkLWZg9DAJ
+                number: CLM1001
+                status: denied
+                resolution:
+                order_id: or_UkLWZg9DAJ
+                reason_id:
+                refund_total: '0.0'
+                display_refund_total: "$0.00"
+                approved_at:
+                resolved_at:
+                denied_at: '2026-01-15T12:00:00Z'
+                canceled_at:
+                memo:
+              schema:
+                "$ref": "#/components/schemas/Claim"
+  "/api/v3/seller/claim_reasons":
+    get:
+      summary: List claim reasons
+      tags:
+      - Claims
+      security:
+      - bearer_auth: []
+      description: |
+        What can go wrong with a delivery, as the marketplace defines it.
+
+        Read-only: a seller picks from the operator's vocabulary.
+      parameters:
+      - name: X-Spree-Seller-Id
+        in: header
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: reasons listed
+          content:
+            application/json:
+              example:
+                data:
+                - id: clr_UkLWZg9DAJ
+                  name: Arrived damaged
+                  active: true
+                meta:
+                  page: 1
+                  limit: 25
+                  count: 1
+                  pages: 1
+                  from: 1
+                  to: 1
+                  in: 1
+                  previous:
+                  next:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      "$ref": "#/components/schemas/Reason"
+                required:
+                - data
+  "/api/v3/seller/orders/{order_id}/exchanges":
+    parameters:
+    - name: order_id
+      in: path
+      description: Prefixed order ID
+      required: true
+      schema:
+        type: string
+    get:
+      summary: List exchanges
+      tags:
+      - Exchanges
+      security:
+      - bearer_auth: []
+      description: Goods swapped for different ones on one of this seller's orders.
+      parameters:
+      - name: X-Spree-Seller-Id
+        in: header
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: exchanges listed
+          content:
+            application/json:
+              example:
+                data:
+                - id: exch_UkLWZg9DAJ
+                  number: EX1001
+                  status: requested
+                  order_id: or_UkLWZg9DAJ
+                  reason_id:
+                  price_difference: '9.99'
+                  display_price_difference: "$9.99"
+                  approved_at:
+                  received_at:
+                  fulfilled_at:
+                  canceled_at:
+                  memo:
+                  stock_location_id: sloc_UkLWZg9DAJ
+                meta:
+                  page: 1
+                  limit: 25
+                  count: 1
+                  pages: 1
+                  from: 1
+                  to: 1
+                  in: 1
+                  previous:
+                  next:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      "$ref": "#/components/schemas/Exchange"
+                required:
+                - data
+    post:
+      summary: Open an exchange
+      tags:
+      - Exchanges
+      security:
+      - bearer_auth: []
+      description: |
+        Swaps goods for different ones.
+
+        The replacement comes from this seller's own catalogue: it is stock
+        they will send, so a variant belonging to another seller is not theirs
+        to promise and reads as missing.
+      parameters:
+      - name: X-Spree-Seller-Id
+        in: header
+        required: true
+        schema:
+          type: string
+      responses:
+        '201':
+          description: exchange opened
+          content:
+            application/json:
+              example:
+                id: exch_UkLWZg9DAJ
+                number: EX1001
+                status: requested
+                order_id: or_UkLWZg9DAJ
+                reason_id:
+                price_difference: '9.99'
+                display_price_difference: "$9.99"
+                approved_at:
+                received_at:
+                fulfilled_at:
+                canceled_at:
+                memo:
+                stock_location_id: sloc_UkLWZg9DAJ
+              schema:
+                "$ref": "#/components/schemas/Exchange"
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                items:
+                  type: array
+                  items:
+                    type: object
+                    properties:
+                      fulfillment_item_id:
+                        type: string
+                      new_variant_id:
+                        type: string
+                      quantity:
+                        type: integer
+                    required:
+                    - fulfillment_item_id
+                    - new_variant_id
+                    - quantity
+                reason_id:
+                  type: string
+                  nullable: true
+                stock_location_id:
+                  type: string
+                  nullable: true
+                memo:
+                  type: string
+                  nullable: true
+              required:
+              - items
+  "/api/v3/seller/orders/{order_id}/exchanges/{id}/fulfill":
+    parameters:
+    - name: order_id
+      in: path
+      required: true
+      schema:
+        type: string
+    - name: id
+      in: path
+      required: true
+      schema:
+        type: string
+    patch:
+      summary: Send the replacement
+      tags:
+      - Exchanges
+      security:
+      - bearer_auth: []
+      description: |
+        Sends the replacement goods, settling any price difference at the same
+        time — which is why it takes a refund method.
+      parameters:
+      - name: X-Spree-Seller-Id
+        in: header
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: replacement sent
+          content:
+            application/json:
+              example:
+                id: exch_UkLWZg9DAJ
+                number: EX1001
+                status: fulfilled
+                order_id: or_UkLWZg9DAJ
+                reason_id:
+                price_difference: '9.99'
+                display_price_difference: "$9.99"
+                approved_at: '2026-01-15T12:00:00Z'
+                received_at: '2026-01-15T12:00:00Z'
+                fulfilled_at: '2026-01-15T12:00:00Z'
+                canceled_at:
+                memo:
+                stock_location_id: sloc_UkLWZg9DAJ
+              schema:
+                "$ref": "#/components/schemas/Exchange"
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                refund_method:
+                  type: string
+                  enum:
+                  - original_payment
+                  - store_credit
   "/api/v3/seller/exports":
     post:
       summary: Create an export
@@ -15078,13 +15618,27 @@ paths:
                   fulfillment_type: shipping
                   delivery_method_name: UPS Ground
                   stock_location_name: Vernie Lehner
+                  stock_location_id: sloc_UkLWZg9DAJ
                   fulfillment_items:
                   - id: fi_UkLWZg9DAJ
                     quantity: 1
                     line_item_id: li_UkLWZg9DAJ
-                    name: Product 1459315
-                    sku: SKU-184
+                    variant_id: variant_UkLWZg9DAJ
+                    name: Product 1579315
+                    sku: SKU-199
                     options_text: ''
+                  selected_delivery_rate_id: dr_gbHJdmfrXB
+                  delivery_rates:
+                  - id: dr_gbHJdmfrXB
+                    name: UPS Ground
+                    selected: true
+                    cost: '10.0'
+                    total: '10.0'
+                    carrier:
+                    service_level:
+                    estimated_delivery_date:
+                    display_cost: "$10.00"
+                    display_total: "$10.00"
                   deliveries:
                   - id: dlv_UkLWZg9DAJ
                     tracking_number: U10000
@@ -15099,6 +15653,16 @@ paths:
                     updated_at: '2026-01-15T12:00:00.000Z'
                     shipping_label_id:
                   labels: []
+                meta:
+                  page: 1
+                  limit: 25
+                  count: 1
+                  pages: 1
+                  from: 1
+                  to: 1
+                  in: 1
+                  previous:
+                  next:
               schema:
                 type: object
                 properties:
@@ -15161,13 +15725,27 @@ paths:
                 fulfillment_type: shipping
                 delivery_method_name: UPS Ground
                 stock_location_name: Mirta Herman
+                stock_location_id: sloc_UkLWZg9DAJ
                 fulfillment_items:
                 - id: fi_UkLWZg9DAJ
                   quantity: 1
                   line_item_id: li_UkLWZg9DAJ
-                  name: Product 146961
-                  sku: SKU-185
+                  variant_id: variant_UkLWZg9DAJ
+                  name: Product 158961
+                  sku: SKU-200
                   options_text: ''
+                selected_delivery_rate_id: dr_gbHJdmfrXB
+                delivery_rates:
+                - id: dr_gbHJdmfrXB
+                  name: UPS Ground
+                  selected: true
+                  cost: '10.0'
+                  total: '10.0'
+                  carrier:
+                  service_level:
+                  estimated_delivery_date:
+                  display_cost: "$10.00"
+                  display_total: "$10.00"
                 deliveries:
                 - id: dlv_UkLWZg9DAJ
                   tracking_number: TRACK-1
@@ -15213,6 +15791,257 @@ paths:
                     required:
                     - item_id
                     - quantity
+  "/api/v3/seller/orders/{order_id}/fulfillments/{id}":
+    parameters:
+    - name: order_id
+      in: path
+      required: true
+      schema:
+        type: string
+    - name: id
+      in: path
+      required: true
+      schema:
+        type: string
+    patch:
+      summary: Update tracking
+      tags:
+      - Fulfillments
+      security:
+      - bearer_auth: []
+      description: |
+        Adds or corrects the tracking number and its carrier.
+
+        Deliberately narrow: where a parcel ships from and which service
+        carries it are the marketplace's arrangements, so they are not
+        editable here.
+      parameters:
+      - name: X-Spree-Seller-Id
+        in: header
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: tracking recorded
+          content:
+            application/json:
+              example:
+                id: ful_UkLWZg9DAJ
+                number: R1001-F1
+                status: unfulfilled
+                tracking: TRACK-2
+                tracking_url: https://www.ups.com/track?tracknum=TRACK-2
+                fulfilled_at:
+                delivered_at:
+                created_at: '2026-01-15T12:00:00.000Z'
+                updated_at: '2026-01-15T12:00:00.000Z'
+                fulfillment_type: shipping
+                delivery_method_name: UPS Ground
+                stock_location_name: Eugena Schultz
+                stock_location_id: sloc_UkLWZg9DAJ
+                fulfillment_items:
+                - id: fi_UkLWZg9DAJ
+                  quantity: 1
+                  line_item_id: li_UkLWZg9DAJ
+                  variant_id: variant_UkLWZg9DAJ
+                  name: Product 1593170
+                  sku: SKU-201
+                  options_text: ''
+                selected_delivery_rate_id: dr_gbHJdmfrXB
+                delivery_rates:
+                - id: dr_gbHJdmfrXB
+                  name: UPS Ground
+                  selected: true
+                  cost: '10.0'
+                  total: '10.0'
+                  carrier:
+                  service_level:
+                  estimated_delivery_date:
+                  display_cost: "$10.00"
+                  display_total: "$10.00"
+                deliveries:
+                - id: dlv_UkLWZg9DAJ
+                  tracking_number: TRACK-2
+                  carrier: ups
+                  carrier_name: UPS
+                  service:
+                  status: pending
+                  tracking_url: https://www.ups.com/track?tracknum=TRACK-2
+                  estimated_delivery_at:
+                  delivered_at:
+                  created_at: '2026-01-15T12:00:00.000Z'
+                  updated_at: '2026-01-15T12:00:00.000Z'
+                  shipping_label_id:
+                labels: []
+              schema:
+                "$ref": "#/components/schemas/Fulfillment"
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                tracking:
+                  type: string
+                  nullable: true
+                tracking_carrier:
+                  type: string
+                  nullable: true
+  "/api/v3/seller/orders/{order_id}/fulfillments/{id}/cancel":
+    parameters:
+    - name: order_id
+      in: path
+      required: true
+      schema:
+        type: string
+    - name: id
+      in: path
+      required: true
+      schema:
+        type: string
+    patch:
+      summary: Cancel a parcel
+      tags:
+      - Fulfillments
+      security:
+      - bearer_auth: []
+      description: |
+        A parcel this seller is not going to send after all. The goods go back
+        on the shelf and the carrier is stood down.
+      parameters:
+      - name: X-Spree-Seller-Id
+        in: header
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: parcel canceled
+          content:
+            application/json:
+              example:
+                id: ful_UkLWZg9DAJ
+                number: R1001-F1
+                status: canceled
+                tracking: U10000
+                tracking_url:
+                fulfilled_at:
+                delivered_at:
+                created_at: '2026-01-15T12:00:00.000Z'
+                updated_at: '2026-01-15T12:00:00.000Z'
+                fulfillment_type: shipping
+                delivery_method_name: UPS Ground
+                stock_location_name: Karyn Moore
+                stock_location_id: sloc_UkLWZg9DAJ
+                fulfillment_items:
+                - id: fi_UkLWZg9DAJ
+                  quantity: 1
+                  line_item_id: li_UkLWZg9DAJ
+                  variant_id: variant_UkLWZg9DAJ
+                  name: Product 1607276
+                  sku: SKU-202
+                  options_text: ''
+                selected_delivery_rate_id: dr_gbHJdmfrXB
+                delivery_rates:
+                - id: dr_gbHJdmfrXB
+                  name: UPS Ground
+                  selected: true
+                  cost: '10.0'
+                  total: '10.0'
+                  carrier:
+                  service_level:
+                  estimated_delivery_date:
+                  display_cost: "$10.00"
+                  display_total: "$10.00"
+                deliveries:
+                - id: dlv_UkLWZg9DAJ
+                  tracking_number: U10000
+                  carrier:
+                  carrier_name:
+                  service:
+                  status: pending
+                  tracking_url:
+                  estimated_delivery_at:
+                  delivered_at:
+                  created_at: '2026-01-15T12:00:00.000Z'
+                  updated_at: '2026-01-15T12:00:00.000Z'
+                  shipping_label_id:
+                labels: []
+              schema:
+                "$ref": "#/components/schemas/Fulfillment"
+  "/api/v3/seller/tracking_carriers":
+    get:
+      summary: List tracking carriers
+      tags:
+      - Fulfillments
+      security:
+      - bearer_auth: []
+      description: |
+        The carriers a tracking number can be pinned to, from the registry —
+        so a carrier an extension adds appears without a client change.
+      parameters:
+      - name: X-Spree-Seller-Id
+        in: header
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: carriers listed
+          content:
+            application/json:
+              example:
+                data:
+                - id: australia_post
+                  name: Australia Post
+                - id: canada_post
+                  name: Canada Post
+                - id: chronopost
+                  name: Chronopost
+                - id: colissimo
+                  name: Colissimo
+                - id: dhl
+                  name: DHL Express
+                - id: dpd
+                  name: DPD
+                - id: deutsche_post
+                  name: Deutsche Post DHL
+                - id: evri
+                  name: Evri
+                - id: fedex
+                  name: FedEx
+                - id: gls
+                  name: GLS
+                - id: inpost
+                  name: InPost
+                - id: poczta_polska
+                  name: Poczta Polska
+                - id: postnl
+                  name: PostNL
+                - id: royal_mail
+                  name: Royal Mail
+                - id: ups
+                  name: UPS
+                - id: usps
+                  name: USPS
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        id:
+                          type: string
+                        name:
+                          type: string
+                      required:
+                      - id
+                      - name
+                required:
+                - data
   "/api/v3/seller/orders":
     get:
       summary: List orders
@@ -15272,15 +16101,34 @@ paths:
                   completed_at: '2026-01-15T12:00:00.000Z'
                   created_at: '2026-01-15T12:00:00.000Z'
                   updated_at: '2026-01-15T12:00:00.000Z'
+                  internal_note:
+                  internal_note_html:
                   item_total: '10.0'
                   display_item_total: "$10.00"
+                  delivery_total: '100.0'
+                  display_delivery_total: "$100.00"
+                  discount_total: '0.0'
+                  display_discount_total: "$0.00"
+                  adjustment_total: '0.0'
+                  display_adjustment_total: "$0.00"
+                  included_tax_total: '0.0'
+                  display_included_tax_total: "$0.00"
+                  additional_tax_total: '0.0'
+                  display_additional_tax_total: "$0.00"
                   tax_total: '0.0'
                   display_tax_total: "$0.00"
                   total: '110.0'
                   display_total: "$110.00"
+                  payment_total: '0.0'
+                  display_payment_total: "$0.00"
+                  amount_due: '110.0'
+                  display_amount_due: "$110.00"
+                  canceled_at:
+                  cancel_reason_name:
+                  cancel_note:
                   items:
                   - id: li_UkLWZg9DAJ
-                    name: Product 14795
+                    name: Product 16295
                     options_text: ''
                     quantity: 1
                     currency: USD
@@ -15289,7 +16137,7 @@ paths:
                     total: '10.0'
                     display_total: "$10.00"
                     variant_id: variant_UkLWZg9DAJ
-                    sku: SKU-186
+                    sku: SKU-204
                     thumbnail_url:
                   fulfillments:
                   - id: ful_UkLWZg9DAJ
@@ -15304,13 +16152,27 @@ paths:
                     fulfillment_type: shipping
                     delivery_method_name: UPS Ground
                     stock_location_name: Roseline Roberts
+                    stock_location_id: sloc_UkLWZg9DAJ
                     fulfillment_items:
                     - id: fi_UkLWZg9DAJ
                       quantity: 1
                       line_item_id: li_UkLWZg9DAJ
-                      name: Product 14795
-                      sku: SKU-186
+                      variant_id: variant_UkLWZg9DAJ
+                      name: Product 16295
+                      sku: SKU-204
                       options_text: ''
+                    selected_delivery_rate_id: dr_gbHJdmfrXB
+                    delivery_rates:
+                    - id: dr_gbHJdmfrXB
+                      name: UPS Ground
+                      selected: true
+                      cost: '10.0'
+                      total: '10.0'
+                      carrier:
+                      service_level:
+                      estimated_delivery_date:
+                      display_cost: "$10.00"
+                      display_total: "$10.00"
                     deliveries:
                     - id: dlv_UkLWZg9DAJ
                       tracking_number: U10000
@@ -15331,7 +16193,7 @@ paths:
                     first_name: John
                     last_name: Doe
                     full_name: John Doe
-                    address1: 135 Lovely Street
+                    address1: 159 Lovely Street
                     address2: Northwest
                     postal_code: '10118'
                     city: New York
@@ -15353,7 +16215,7 @@ paths:
                     first_name: John
                     last_name: Doe
                     full_name: John Doe
-                    address1: 134 Lovely Street
+                    address1: 158 Lovely Street
                     address2: Northwest
                     postal_code: '10118'
                     city: New York
@@ -15434,15 +16296,34 @@ paths:
                 completed_at: '2026-01-15T12:00:00.000Z'
                 created_at: '2026-01-15T12:00:00.000Z'
                 updated_at: '2026-01-15T12:00:00.000Z'
+                internal_note:
+                internal_note_html:
                 item_total: '10.0'
                 display_item_total: "$10.00"
+                delivery_total: '100.0'
+                display_delivery_total: "$100.00"
+                discount_total: '0.0'
+                display_discount_total: "$0.00"
+                adjustment_total: '0.0'
+                display_adjustment_total: "$0.00"
+                included_tax_total: '0.0'
+                display_included_tax_total: "$0.00"
+                additional_tax_total: '0.0'
+                display_additional_tax_total: "$0.00"
                 tax_total: '0.0'
                 display_tax_total: "$0.00"
                 total: '110.0'
                 display_total: "$110.00"
+                payment_total: '0.0'
+                display_payment_total: "$0.00"
+                amount_due: '110.0'
+                display_amount_due: "$110.00"
+                canceled_at:
+                cancel_reason_name:
+                cancel_note:
                 items:
                 - id: li_UkLWZg9DAJ
-                  name: Product 1489755
+                  name: Product 1639755
                   options_text: ''
                   quantity: 1
                   currency: USD
@@ -15451,7 +16332,7 @@ paths:
                   total: '10.0'
                   display_total: "$10.00"
                   variant_id: variant_UkLWZg9DAJ
-                  sku: SKU-187
+                  sku: SKU-205
                   thumbnail_url:
                 fulfillments:
                 - id: ful_UkLWZg9DAJ
@@ -15466,13 +16347,27 @@ paths:
                   fulfillment_type: shipping
                   delivery_method_name: UPS Ground
                   stock_location_name: Woodrow Hand
+                  stock_location_id: sloc_UkLWZg9DAJ
                   fulfillment_items:
                   - id: fi_UkLWZg9DAJ
                     quantity: 1
                     line_item_id: li_UkLWZg9DAJ
-                    name: Product 1489755
-                    sku: SKU-187
+                    variant_id: variant_UkLWZg9DAJ
+                    name: Product 1639755
+                    sku: SKU-205
                     options_text: ''
+                  selected_delivery_rate_id: dr_gbHJdmfrXB
+                  delivery_rates:
+                  - id: dr_gbHJdmfrXB
+                    name: UPS Ground
+                    selected: true
+                    cost: '10.0'
+                    total: '10.0'
+                    carrier:
+                    service_level:
+                    estimated_delivery_date:
+                    display_cost: "$10.00"
+                    display_total: "$10.00"
                   deliveries:
                   - id: dlv_UkLWZg9DAJ
                     tracking_number: U10000
@@ -15493,7 +16388,7 @@ paths:
                   first_name: John
                   last_name: Doe
                   full_name: John Doe
-                  address1: 137 Lovely Street
+                  address1: 161 Lovely Street
                   address2: Northwest
                   postal_code: '10118'
                   city: New York
@@ -15515,7 +16410,7 @@ paths:
                   first_name: John
                   last_name: Doe
                   full_name: John Doe
-                  address1: 136 Lovely Street
+                  address1: 160 Lovely Street
                   address2: Northwest
                   postal_code: '10118'
                   city: New York
@@ -15558,10 +16453,17 @@ paths:
       security:
       - bearer_auth: []
       description: |
-        Withdraws from an order this seller cannot fulfil.
+        Withdraws from an order this seller cannot fulfil, naming a reason from
+        the marketplace's own list.
 
-        Restocking and any refund are the cancellation's own concern, so a
-        seller cannot cancel without the money and the stock following.
+        The goods go back on the shelf and the payment authorization is
+        released either way. `refund_payments` also hands back what the buyer
+        paid for these goods — a seller is merchant of record for their own
+        child order, and on a split checkout only that order's share of the
+        group's payment is settled.
+
+        There is no `refund_amount`: withdrawing from the whole order returns
+        what that order was paid, and a partial figure is a return.
       parameters:
       - name: X-Spree-Seller-Id
         in: header
@@ -15585,15 +16487,34 @@ paths:
                 completed_at: '2026-01-15T12:00:00.000Z'
                 created_at: '2026-01-15T12:00:00.000Z'
                 updated_at: '2026-01-15T12:00:00.000Z'
+                internal_note:
+                internal_note_html:
                 item_total: '10.0'
                 display_item_total: "$10.00"
+                delivery_total: '100.0'
+                display_delivery_total: "$100.00"
+                discount_total: '0.0'
+                display_discount_total: "$0.00"
+                adjustment_total: '0.0'
+                display_adjustment_total: "$0.00"
+                included_tax_total: '0.0'
+                display_included_tax_total: "$0.00"
+                additional_tax_total: '0.0'
+                display_additional_tax_total: "$0.00"
                 tax_total: '0.0'
                 display_tax_total: "$0.00"
                 total: '110.0'
                 display_total: "$110.00"
+                payment_total: '0.0'
+                display_payment_total: "$0.00"
+                amount_due: "-0.0"
+                display_amount_due: "$0.00"
+                canceled_at: '2026-01-15T12:00:00Z'
+                cancel_reason_name:
+                cancel_note:
                 items:
                 - id: li_UkLWZg9DAJ
-                  name: Product 1516554
+                  name: Product 1666554
                   options_text: ''
                   quantity: 1
                   currency: USD
@@ -15602,7 +16523,7 @@ paths:
                   total: '10.0'
                   display_total: "$10.00"
                   variant_id: variant_UkLWZg9DAJ
-                  sku: SKU-190
+                  sku: SKU-208
                   thumbnail_url:
                 fulfillments:
                 - id: ful_UkLWZg9DAJ
@@ -15617,13 +16538,27 @@ paths:
                   fulfillment_type: shipping
                   delivery_method_name: UPS Ground
                   stock_location_name: Ricky Kutch
+                  stock_location_id: sloc_UkLWZg9DAJ
                   fulfillment_items:
                   - id: fi_UkLWZg9DAJ
                     quantity: 1
                     line_item_id: li_UkLWZg9DAJ
-                    name: Product 1516554
-                    sku: SKU-190
+                    variant_id: variant_UkLWZg9DAJ
+                    name: Product 1666554
+                    sku: SKU-208
                     options_text: ''
+                  selected_delivery_rate_id: dr_gbHJdmfrXB
+                  delivery_rates:
+                  - id: dr_gbHJdmfrXB
+                    name: UPS Ground
+                    selected: true
+                    cost: '10.0'
+                    total: '10.0'
+                    carrier:
+                    service_level:
+                    estimated_delivery_date:
+                    display_cost: "$10.00"
+                    display_total: "$10.00"
                   deliveries:
                   - id: dlv_UkLWZg9DAJ
                     tracking_number: U10000
@@ -15644,7 +16579,7 @@ paths:
                   first_name: John
                   last_name: Doe
                   full_name: John Doe
-                  address1: 143 Lovely Street
+                  address1: 167 Lovely Street
                   address2: Northwest
                   postal_code: '10118'
                   city: New York
@@ -15666,7 +16601,7 @@ paths:
                   first_name: John
                   last_name: Doe
                   full_name: John Doe
-                  address1: 142 Lovely Street
+                  address1: 166 Lovely Street
                   address2: Northwest
                   postal_code: '10118'
                   city: New York
@@ -15690,9 +16625,1141 @@ paths:
             schema:
               type: object
               properties:
+                cancel_reason_id:
+                  type: string
+                  nullable: true
+                  description: A reason from GET /order_cancellation_reasons
+                cancel_note:
+                  type: string
+                  nullable: true
+                  description: Free text beside the reason
+                refund_payments:
+                  type: boolean
+                  description: Hand back what the buyer paid for this order's goods
                 notify_customer:
                   type: boolean
                   description: Email the customer about the cancellation
+  "/api/v3/seller/orders/{id}/address":
+    parameters:
+    - name: id
+      in: path
+      description: Prefixed order ID
+      required: true
+      schema:
+        type: string
+    patch:
+      summary: Correct an order address
+      tags:
+      - Orders
+      security:
+      - bearer_auth: []
+      description: |
+        Corrects where the goods go or who the invoice names.
+
+        The seller is merchant of record for their own child order, so a
+        delivery address the buyer got wrong is theirs to fix. Send only the
+        lines that change — the rest of the address is carried over.
+
+        This is the only write against the order itself besides cancelling:
+        nothing else about it, its totals included, is the seller's to change.
+      parameters:
+      - name: X-Spree-Seller-Id
+        in: header
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: address corrected
+          content:
+            application/json:
+              example:
+                id: or_UkLWZg9DAJ
+                number: R1001
+                customer_note:
+                currency: USD
+                total_quantity: 1
+                status: placed
+                fulfillment_status:
+                payment_status:
+                completed_at: '2026-01-15T12:00:00.000Z'
+                created_at: '2026-01-15T12:00:00.000Z'
+                updated_at: '2026-01-15T12:00:00.000Z'
+                internal_note:
+                internal_note_html:
+                item_total: '10.0'
+                display_item_total: "$10.00"
+                delivery_total: '100.0'
+                display_delivery_total: "$100.00"
+                discount_total: '0.0'
+                display_discount_total: "$0.00"
+                adjustment_total: '0.0'
+                display_adjustment_total: "$0.00"
+                included_tax_total: '0.0'
+                display_included_tax_total: "$0.00"
+                additional_tax_total: '0.0'
+                display_additional_tax_total: "$0.00"
+                tax_total: '0.0'
+                display_tax_total: "$0.00"
+                total: '110.0'
+                display_total: "$110.00"
+                payment_total: '0.0'
+                display_payment_total: "$0.00"
+                amount_due: '110.0'
+                display_amount_due: "$110.00"
+                canceled_at:
+                cancel_reason_name:
+                cancel_note:
+                items:
+                - id: li_UkLWZg9DAJ
+                  name: Product 1675038
+                  options_text: ''
+                  quantity: 1
+                  currency: USD
+                  price: '10.0'
+                  display_price: "$10.00"
+                  total: '10.0'
+                  display_total: "$10.00"
+                  variant_id: variant_UkLWZg9DAJ
+                  sku: SKU-209
+                  thumbnail_url:
+                fulfillments:
+                - id: ful_UkLWZg9DAJ
+                  number: R1001-F1
+                  status: unfulfilled
+                  tracking: U10000
+                  tracking_url:
+                  fulfilled_at:
+                  delivered_at:
+                  created_at: '2026-01-15T12:00:00.000Z'
+                  updated_at: '2026-01-15T12:00:00.000Z'
+                  fulfillment_type: shipping
+                  delivery_method_name: UPS Ground
+                  stock_location_name: Rudy Mosciski
+                  stock_location_id: sloc_UkLWZg9DAJ
+                  fulfillment_items:
+                  - id: fi_UkLWZg9DAJ
+                    quantity: 1
+                    line_item_id: li_UkLWZg9DAJ
+                    variant_id: variant_UkLWZg9DAJ
+                    name: Product 1675038
+                    sku: SKU-209
+                    options_text: ''
+                  selected_delivery_rate_id: dr_gbHJdmfrXB
+                  delivery_rates:
+                  - id: dr_gbHJdmfrXB
+                    name: UPS Ground
+                    selected: true
+                    cost: '10.0'
+                    total: '10.0'
+                    carrier:
+                    service_level:
+                    estimated_delivery_date:
+                    display_cost: "$10.00"
+                    display_total: "$10.00"
+                  deliveries:
+                  - id: dlv_UkLWZg9DAJ
+                    tracking_number: U10000
+                    carrier:
+                    carrier_name:
+                    service:
+                    status: pending
+                    tracking_url:
+                    estimated_delivery_at:
+                    delivered_at:
+                    created_at: '2026-01-15T12:00:00.000Z'
+                    updated_at: '2026-01-15T12:00:00.000Z'
+                    shipping_label_id:
+                  labels: []
+                shipping_address:
+                  id: addr_EfhxLZ9ck8
+                  label:
+                  first_name: John
+                  last_name: Doe
+                  full_name: John Doe
+                  address1: 9 Corrected Way
+                  address2: Northwest
+                  postal_code: '10118'
+                  city: Fixedton
+                  phone: 555-555-0199
+                  company: Company
+                  country_name: United States
+                  country_code: US
+                  state_text: NY
+                  state_code: NY
+                  quick_checkout: false
+                  is_default_billing: false
+                  is_default_shipping: true
+                  state_abbr: NY
+                  country_iso: US
+                  state_name: New York
+                billing_address:
+                  id: addr_UkLWZg9DAJ
+                  label:
+                  first_name: John
+                  last_name: Doe
+                  full_name: John Doe
+                  address1: 168 Lovely Street
+                  address2: Northwest
+                  postal_code: '10118'
+                  city: New York
+                  phone: 555-555-0199
+                  company: Company
+                  country_name: United States
+                  country_code: US
+                  state_text: NY
+                  state_code: NY
+                  quick_checkout: false
+                  is_default_billing: false
+                  is_default_shipping: false
+                  state_abbr: NY
+                  country_iso: US
+                  state_name: New York
+              schema:
+                "$ref": "#/components/schemas/Order"
+        '422':
+          description: neither address named
+          content:
+            application/json:
+              example:
+                error:
+                  code: validation_error
+                  message: shipping_address or billing_address is required
+                  details:
+                    base:
+                    - shipping_address or billing_address is required
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                shipping_address:
+                  type: object
+                  description: Only the lines that change; the rest is carried over
+                  properties:
+                    first_name:
+                      type: string
+                    last_name:
+                      type: string
+                    company:
+                      type: string
+                      nullable: true
+                    address1:
+                      type: string
+                    address2:
+                      type: string
+                      nullable: true
+                    city:
+                      type: string
+                    postal_code:
+                      type: string
+                    country_code:
+                      type: string
+                    state_code:
+                      type: string
+                      nullable: true
+                    state_name:
+                      type: string
+                      nullable: true
+                    phone:
+                      type: string
+                      nullable: true
+                    label:
+                      type: string
+                      nullable: true
+                billing_address:
+                  type: object
+                  description: Only the lines that change; the rest is carried over
+                  properties:
+                    first_name:
+                      type: string
+                    last_name:
+                      type: string
+                    company:
+                      type: string
+                      nullable: true
+                    address1:
+                      type: string
+                    address2:
+                      type: string
+                      nullable: true
+                    city:
+                      type: string
+                    postal_code:
+                      type: string
+                    country_code:
+                      type: string
+                    state_code:
+                      type: string
+                      nullable: true
+                    state_name:
+                      type: string
+                      nullable: true
+                    phone:
+                      type: string
+                      nullable: true
+                    label:
+                      type: string
+                      nullable: true
+        required: true
+  "/api/v3/seller/orders/{order_id}/notes":
+    parameters:
+    - name: order_id
+      in: path
+      description: Prefixed order ID
+      required: true
+      schema:
+        type: string
+    get:
+      summary: Get order notes
+      tags:
+      - Orders
+      security:
+      - bearer_auth: []
+      description: |
+        The instructions the buyer left, and the seller's own working note.
+
+        A marketplace basket splits into one order per seller, so the internal
+        note here is this seller's alone rather than the operator's note about
+        the whole sale.
+      parameters:
+      - name: X-Spree-Seller-Id
+        in: header
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: notes
+          content:
+            application/json:
+              example:
+                id: or_UkLWZg9DAJ
+                number: R1001
+                customer_note:
+                currency: USD
+                total_quantity: 1
+                status: placed
+                fulfillment_status:
+                payment_status:
+                completed_at: '2026-01-15T12:00:00.000Z'
+                created_at: '2026-01-15T12:00:00.000Z'
+                updated_at: '2026-01-15T12:00:00.000Z'
+                internal_note:
+                internal_note_html:
+                item_total: '10.0'
+                display_item_total: "$10.00"
+                delivery_total: '100.0'
+                display_delivery_total: "$100.00"
+                discount_total: '0.0'
+                display_discount_total: "$0.00"
+                adjustment_total: '0.0'
+                display_adjustment_total: "$0.00"
+                included_tax_total: '0.0'
+                display_included_tax_total: "$0.00"
+                additional_tax_total: '0.0'
+                display_additional_tax_total: "$0.00"
+                tax_total: '0.0'
+                display_tax_total: "$0.00"
+                total: '110.0'
+                display_total: "$110.00"
+                payment_total: '0.0'
+                display_payment_total: "$0.00"
+                amount_due: '110.0'
+                display_amount_due: "$110.00"
+                canceled_at:
+                cancel_reason_name:
+                cancel_note:
+                items:
+                - id: li_UkLWZg9DAJ
+                  name: Product 1693962
+                  options_text: ''
+                  quantity: 1
+                  currency: USD
+                  price: '10.0'
+                  display_price: "$10.00"
+                  total: '10.0'
+                  display_total: "$10.00"
+                  variant_id: variant_UkLWZg9DAJ
+                  sku: SKU-211
+                  thumbnail_url:
+                fulfillments:
+                - id: ful_UkLWZg9DAJ
+                  number: R1001-F1
+                  status: unfulfilled
+                  tracking: U10000
+                  tracking_url:
+                  fulfilled_at:
+                  delivered_at:
+                  created_at: '2026-01-15T12:00:00.000Z'
+                  updated_at: '2026-01-15T12:00:00.000Z'
+                  fulfillment_type: shipping
+                  delivery_method_name: UPS Ground
+                  stock_location_name: Kecia Pollich
+                  stock_location_id: sloc_UkLWZg9DAJ
+                  fulfillment_items:
+                  - id: fi_UkLWZg9DAJ
+                    quantity: 1
+                    line_item_id: li_UkLWZg9DAJ
+                    variant_id: variant_UkLWZg9DAJ
+                    name: Product 1693962
+                    sku: SKU-211
+                    options_text: ''
+                  selected_delivery_rate_id: dr_gbHJdmfrXB
+                  delivery_rates:
+                  - id: dr_gbHJdmfrXB
+                    name: UPS Ground
+                    selected: true
+                    cost: '10.0'
+                    total: '10.0'
+                    carrier:
+                    service_level:
+                    estimated_delivery_date:
+                    display_cost: "$10.00"
+                    display_total: "$10.00"
+                  deliveries:
+                  - id: dlv_UkLWZg9DAJ
+                    tracking_number: U10000
+                    carrier:
+                    carrier_name:
+                    service:
+                    status: pending
+                    tracking_url:
+                    estimated_delivery_at:
+                    delivered_at:
+                    created_at: '2026-01-15T12:00:00.000Z'
+                    updated_at: '2026-01-15T12:00:00.000Z'
+                    shipping_label_id:
+                  labels: []
+                shipping_address:
+                  id: addr_gbHJdmfrXB
+                  label:
+                  first_name: John
+                  last_name: Doe
+                  full_name: John Doe
+                  address1: 173 Lovely Street
+                  address2: Northwest
+                  postal_code: '10118'
+                  city: New York
+                  phone: 555-555-0199
+                  company: Company
+                  country_name: United States
+                  country_code: US
+                  state_text: NY
+                  state_code: NY
+                  quick_checkout: false
+                  is_default_billing: false
+                  is_default_shipping: false
+                  state_abbr: NY
+                  country_iso: US
+                  state_name: New York
+                billing_address:
+                  id: addr_UkLWZg9DAJ
+                  label:
+                  first_name: John
+                  last_name: Doe
+                  full_name: John Doe
+                  address1: 172 Lovely Street
+                  address2: Northwest
+                  postal_code: '10118'
+                  city: New York
+                  phone: 555-555-0199
+                  company: Company
+                  country_name: United States
+                  country_code: US
+                  state_text: NY
+                  state_code: NY
+                  quick_checkout: false
+                  is_default_billing: false
+                  is_default_shipping: false
+                  state_abbr: NY
+                  country_iso: US
+                  state_name: New York
+              schema:
+                "$ref": "#/components/schemas/Order"
+    patch:
+      summary: Update order notes
+      tags:
+      - Orders
+      security:
+      - bearer_auth: []
+      description: |
+        Send only the note that changes: an absent key leaves the other alone,
+        while an empty string clears it.
+
+        `internal_note` accepts HTML and is sanitized on save;
+        `internal_note_html` reads it back.
+      parameters:
+      - name: X-Spree-Seller-Id
+        in: header
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: notes updated
+          content:
+            application/json:
+              example:
+                id: or_UkLWZg9DAJ
+                number: R1001
+                customer_note:
+                currency: USD
+                total_quantity: 1
+                status: placed
+                fulfillment_status:
+                payment_status:
+                completed_at: '2026-01-15T12:00:00.000Z'
+                created_at: '2026-01-15T12:00:00.000Z'
+                updated_at: '2026-01-15T12:00:00.000Z'
+                internal_note: Packed with the fragile insert.
+                internal_note_html: "<p>Packed with the fragile insert.</p>"
+                item_total: '10.0'
+                display_item_total: "$10.00"
+                delivery_total: '100.0'
+                display_delivery_total: "$100.00"
+                discount_total: '0.0'
+                display_discount_total: "$0.00"
+                adjustment_total: '0.0'
+                display_adjustment_total: "$0.00"
+                included_tax_total: '0.0'
+                display_included_tax_total: "$0.00"
+                additional_tax_total: '0.0'
+                display_additional_tax_total: "$0.00"
+                tax_total: '0.0'
+                display_tax_total: "$0.00"
+                total: '110.0'
+                display_total: "$110.00"
+                payment_total: '0.0'
+                display_payment_total: "$0.00"
+                amount_due: '110.0'
+                display_amount_due: "$110.00"
+                canceled_at:
+                cancel_reason_name:
+                cancel_note:
+                items:
+                - id: li_UkLWZg9DAJ
+                  name: Product 1705749
+                  options_text: ''
+                  quantity: 1
+                  currency: USD
+                  price: '10.0'
+                  display_price: "$10.00"
+                  total: '10.0'
+                  display_total: "$10.00"
+                  variant_id: variant_UkLWZg9DAJ
+                  sku: SKU-212
+                  thumbnail_url:
+                fulfillments:
+                - id: ful_UkLWZg9DAJ
+                  number: R1001-F1
+                  status: unfulfilled
+                  tracking: U10000
+                  tracking_url:
+                  fulfilled_at:
+                  delivered_at:
+                  created_at: '2026-01-15T12:00:00.000Z'
+                  updated_at: '2026-01-15T12:00:00.000Z'
+                  fulfillment_type: shipping
+                  delivery_method_name: UPS Ground
+                  stock_location_name: Ophelia Hartmann
+                  stock_location_id: sloc_UkLWZg9DAJ
+                  fulfillment_items:
+                  - id: fi_UkLWZg9DAJ
+                    quantity: 1
+                    line_item_id: li_UkLWZg9DAJ
+                    variant_id: variant_UkLWZg9DAJ
+                    name: Product 1705749
+                    sku: SKU-212
+                    options_text: ''
+                  selected_delivery_rate_id: dr_gbHJdmfrXB
+                  delivery_rates:
+                  - id: dr_gbHJdmfrXB
+                    name: UPS Ground
+                    selected: true
+                    cost: '10.0'
+                    total: '10.0'
+                    carrier:
+                    service_level:
+                    estimated_delivery_date:
+                    display_cost: "$10.00"
+                    display_total: "$10.00"
+                  deliveries:
+                  - id: dlv_UkLWZg9DAJ
+                    tracking_number: U10000
+                    carrier:
+                    carrier_name:
+                    service:
+                    status: pending
+                    tracking_url:
+                    estimated_delivery_at:
+                    delivered_at:
+                    created_at: '2026-01-15T12:00:00.000Z'
+                    updated_at: '2026-01-15T12:00:00.000Z'
+                    shipping_label_id:
+                  labels: []
+                shipping_address:
+                  id: addr_gbHJdmfrXB
+                  label:
+                  first_name: John
+                  last_name: Doe
+                  full_name: John Doe
+                  address1: 175 Lovely Street
+                  address2: Northwest
+                  postal_code: '10118'
+                  city: New York
+                  phone: 555-555-0199
+                  company: Company
+                  country_name: United States
+                  country_code: US
+                  state_text: NY
+                  state_code: NY
+                  quick_checkout: false
+                  is_default_billing: false
+                  is_default_shipping: false
+                  state_abbr: NY
+                  country_iso: US
+                  state_name: New York
+                billing_address:
+                  id: addr_UkLWZg9DAJ
+                  label:
+                  first_name: John
+                  last_name: Doe
+                  full_name: John Doe
+                  address1: 174 Lovely Street
+                  address2: Northwest
+                  postal_code: '10118'
+                  city: New York
+                  phone: 555-555-0199
+                  company: Company
+                  country_name: United States
+                  country_code: US
+                  state_text: NY
+                  state_code: NY
+                  quick_checkout: false
+                  is_default_billing: false
+                  is_default_shipping: false
+                  state_abbr: NY
+                  country_iso: US
+                  state_name: New York
+              schema:
+                "$ref": "#/components/schemas/Order"
+        '422':
+          description: neither note named
+          content:
+            application/json:
+              example:
+                error:
+                  code: validation_error
+                  message: customer_note or internal_note is required
+                  details:
+                    base:
+                    - customer_note or internal_note is required
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                customer_note:
+                  type: string
+                  nullable: true
+                  description: What the buyer asked for
+                internal_note:
+                  type: string
+                  nullable: true
+                  description: The seller's own working note, as HTML
+        required: true
+  "/api/v3/seller/order_cancellation_reasons":
+    get:
+      summary: List order cancellation reasons
+      tags:
+      - Orders
+      security:
+      - bearer_auth: []
+      description: |
+        Why an order was called off, as the marketplace defines it.
+
+        Read-only: a seller picks one when cancelling, and the operator decides
+        what the list holds. Retired reasons are left out.
+      parameters:
+      - name: X-Spree-Seller-Id
+        in: header
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: reasons listed
+          content:
+            application/json:
+              example:
+                data:
+                - id: ocr_UkLWZg9DAJ
+                  name: Out of stock
+                  active: true
+                meta:
+                  page: 1
+                  limit: 25
+                  count: 1
+                  pages: 1
+                  from: 1
+                  to: 1
+                  in: 1
+                  previous:
+                  next:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      "$ref": "#/components/schemas/Reason"
+                required:
+                - data
+  "/api/v3/seller/orders/{order_id}/returns":
+    parameters:
+    - name: order_id
+      in: path
+      description: Prefixed order ID
+      required: true
+      schema:
+        type: string
+    get:
+      summary: List returns
+      tags:
+      - Returns
+      security:
+      - bearer_auth: []
+      description: |
+        Goods coming back on one of this seller's orders.
+
+        Reached through the order, which is itself fetched through the acting
+        seller — so a return on somebody else's order is unreachable whatever
+        ids are sent.
+      parameters:
+      - name: X-Spree-Seller-Id
+        in: header
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: returns listed
+          content:
+            application/json:
+              example:
+                data:
+                - id: ret_UkLWZg9DAJ
+                  number: RET1001
+                  status: requested
+                  order_id: or_UkLWZg9DAJ
+                  reason_id:
+                  refund_total: '10.0'
+                  display_refund_total: "$10.00"
+                  approved_at:
+                  received_at:
+                  refunded_at:
+                  canceled_at:
+                  memo:
+                  stock_location_id: sloc_UkLWZg9DAJ
+                  refunded_total: '0.0'
+                  refundable_total: '10.0'
+                  display_refunded_total: "$0.00"
+                meta:
+                  page: 1
+                  limit: 25
+                  count: 1
+                  pages: 1
+                  from: 1
+                  to: 1
+                  in: 1
+                  previous:
+                  next:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      "$ref": "#/components/schemas/Return"
+                required:
+                - data
+    post:
+      summary: Open a return
+      tags:
+      - Returns
+      security:
+      - bearer_auth: []
+      description: |
+        Takes goods back on one of this seller's orders.
+
+        The units are addressed by fulfillment item and resolved through the
+        order, so only what this seller actually shipped can come back. An
+        optional stock location says which of the seller's own shelves it
+        returns to.
+      parameters:
+      - name: X-Spree-Seller-Id
+        in: header
+        required: true
+        schema:
+          type: string
+      responses:
+        '201':
+          description: return opened
+          content:
+            application/json:
+              example:
+                id: ret_UkLWZg9DAJ
+                number: RET1001
+                status: requested
+                order_id: or_UkLWZg9DAJ
+                reason_id:
+                refund_total: '10.0'
+                display_refund_total: "$10.00"
+                approved_at:
+                received_at:
+                refunded_at:
+                canceled_at:
+                memo:
+                stock_location_id: sloc_UkLWZg9DAJ
+                refunded_total: '0.0'
+                refundable_total: '10.0'
+                display_refunded_total: "$0.00"
+              schema:
+                "$ref": "#/components/schemas/Return"
+        '422':
+          description: more than was shipped
+          content:
+            application/json:
+              example:
+                error:
+                  code: processing_error
+                  message: Only 1 of Product 1837120 can be returned
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                items:
+                  type: array
+                  items:
+                    type: object
+                    properties:
+                      fulfillment_item_id:
+                        type: string
+                      quantity:
+                        type: integer
+                    required:
+                    - fulfillment_item_id
+                    - quantity
+                reason_id:
+                  type: string
+                  nullable: true
+                stock_location_id:
+                  type: string
+                  nullable: true
+                memo:
+                  type: string
+                  nullable: true
+              required:
+              - items
+  "/api/v3/seller/orders/{order_id}/returns/{id}/approve":
+    parameters:
+    - name: order_id
+      in: path
+      required: true
+      schema:
+        type: string
+    - name: id
+      in: path
+      required: true
+      schema:
+        type: string
+    patch:
+      summary: Approve a return
+      tags:
+      - Returns
+      security:
+      - bearer_auth: []
+      description: Agrees the goods may come back.
+      parameters:
+      - name: X-Spree-Seller-Id
+        in: header
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: return approved
+          content:
+            application/json:
+              example:
+                id: ret_UkLWZg9DAJ
+                number: RET1001
+                status: approved
+                order_id: or_UkLWZg9DAJ
+                reason_id:
+                refund_total: '10.0'
+                display_refund_total: "$10.00"
+                approved_at: '2026-01-15T12:00:00Z'
+                received_at:
+                refunded_at:
+                canceled_at:
+                memo:
+                stock_location_id: sloc_UkLWZg9DAJ
+                refunded_total: '0.0'
+                refundable_total: '10.0'
+                display_refunded_total: "$0.00"
+              schema:
+                "$ref": "#/components/schemas/Return"
+  "/api/v3/seller/orders/{order_id}/returns/{id}/receive":
+    parameters:
+    - name: order_id
+      in: path
+      required: true
+      schema:
+        type: string
+    - name: id
+      in: path
+      required: true
+      schema:
+        type: string
+    patch:
+      summary: Receive a return
+      tags:
+      - Returns
+      security:
+      - bearer_auth: []
+      description: |
+        Records what actually arrived, and whether it can be sold again.
+
+        Omitting `items` receives everything as requested and resellable.
+      parameters:
+      - name: X-Spree-Seller-Id
+        in: header
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: return received
+          content:
+            application/json:
+              example:
+                id: ret_UkLWZg9DAJ
+                number: RET1001
+                status: received
+                order_id: or_UkLWZg9DAJ
+                reason_id:
+                refund_total: '10.0'
+                display_refund_total: "$10.00"
+                approved_at: '2026-01-15T12:00:00Z'
+                received_at: '2026-01-15T12:00:00Z'
+                refunded_at:
+                canceled_at:
+                memo:
+                stock_location_id: sloc_UkLWZg9DAJ
+                refunded_total: '0.0'
+                refundable_total: '10.0'
+                display_refunded_total: "$0.00"
+              schema:
+                "$ref": "#/components/schemas/Return"
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                items:
+                  type: array
+                  items:
+                    type: object
+                    properties:
+                      return_line_item_id:
+                        type: string
+                      quantity:
+                        type: integer
+                      resellable:
+                        type: boolean
+                    required:
+                    - return_line_item_id
+                    - quantity
+  "/api/v3/seller/orders/{order_id}/returns/{id}/refund":
+    parameters:
+    - name: order_id
+      in: path
+      required: true
+      schema:
+        type: string
+    - name: id
+      in: path
+      required: true
+      schema:
+        type: string
+    patch:
+      summary: Refund a return
+      tags:
+      - Returns
+      security:
+      - bearer_auth: []
+      description: |
+        Gives the customer their money back.
+
+        The seller is merchant of record for their own child order, so this is
+        theirs to do. The amount is bounded by what the return is owed and, on
+        a basket split between sellers, by this order's share of the payment —
+        never a sibling's.
+      parameters:
+      - name: X-Spree-Seller-Id
+        in: header
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: return refunded
+          content:
+            application/json:
+              example:
+                id: ret_UkLWZg9DAJ
+                number: RET1001
+                status: refunded
+                order_id: or_UkLWZg9DAJ
+                reason_id:
+                refund_total: '10.0'
+                display_refund_total: "$10.00"
+                approved_at: '2026-01-15T12:00:00Z'
+                received_at: '2026-01-15T12:00:00Z'
+                refunded_at: '2026-01-15T12:00:00Z'
+                canceled_at:
+                memo:
+                stock_location_id: sloc_UkLWZg9DAJ
+                refunded_total: '10.0'
+                refundable_total: '0.0'
+                display_refunded_total: "$10.00"
+              schema:
+                "$ref": "#/components/schemas/Return"
+        '422':
+          description: more than the return is owed
+          content:
+            application/json:
+              example:
+                error:
+                  code: processing_error
+                  message: refund_exceeds_balance
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                amount:
+                  type: string
+                  nullable: true
+                refund_method:
+                  type: string
+                  enum:
+                  - original_payment
+                  - store_credit
+  "/api/v3/seller/orders/{order_id}/returns/{id}/cancel":
+    parameters:
+    - name: order_id
+      in: path
+      required: true
+      schema:
+        type: string
+    - name: id
+      in: path
+      required: true
+      schema:
+        type: string
+    patch:
+      summary: Cancel a return
+      tags:
+      - Returns
+      security:
+      - bearer_auth: []
+      description: Calls the return off.
+      parameters:
+      - name: X-Spree-Seller-Id
+        in: header
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: return canceled
+          content:
+            application/json:
+              example:
+                id: ret_UkLWZg9DAJ
+                number: RET1001
+                status: canceled
+                order_id: or_UkLWZg9DAJ
+                reason_id:
+                refund_total: '10.0'
+                display_refund_total: "$10.00"
+                approved_at:
+                received_at:
+                refunded_at:
+                canceled_at: '2026-01-15T12:00:00Z'
+                memo:
+                stock_location_id: sloc_UkLWZg9DAJ
+                refunded_total: '0.0'
+                refundable_total: '10.0'
+                display_refunded_total: "$0.00"
+              schema:
+                "$ref": "#/components/schemas/Return"
+  "/api/v3/seller/return_reasons":
+    get:
+      summary: List return reasons
+      tags:
+      - Returns
+      security:
+      - bearer_auth: []
+      description: |
+        Why goods come back, as the marketplace defines it.
+
+        Read-only: the vocabulary is the operator's, and a seller picks from
+        it. Retired reasons are left out.
+      parameters:
+      - name: X-Spree-Seller-Id
+        in: header
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: reasons listed
+          content:
+            application/json:
+              example:
+                data:
+                - id: rar_UkLWZg9DAJ
+                  name: Damaged in transit
+                  active: true
+                meta:
+                  page: 1
+                  limit: 25
+                  count: 1
+                  pages: 1
+                  from: 1
+                  to: 1
+                  in: 1
+                  previous:
+                  next:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      "$ref": "#/components/schemas/Reason"
+                required:
+                - data
   "/api/v3/seller/tax_identifiers":
     get:
       summary: List tax registrations
@@ -16736,6 +18803,109 @@ components:
       - display_compare_at_amount
       - price_list_id
       x-typelizer: true
+    ClaimLineItem:
+      type: object
+      properties:
+        id:
+          type: string
+        quantity:
+          type: number
+        send_replacement:
+          type: boolean
+        description:
+          type: string
+          nullable: true
+        refund_amount:
+          type: string
+        paid_amount:
+          type: string
+        display_refund_amount:
+          type: string
+        variant_id:
+          type: string
+          nullable: true
+        replacement_variant_id:
+          type: string
+          nullable: true
+        line_item_id:
+          type: string
+          nullable: true
+        variant:
+          "$ref": "#/components/schemas/Variant"
+        name:
+          type: string
+          nullable: true
+      required:
+      - id
+      - quantity
+      - send_replacement
+      - description
+      - refund_amount
+      - paid_amount
+      - display_refund_amount
+      - variant_id
+      - replacement_variant_id
+      - line_item_id
+      - name
+      x-typelizer: true
+    Claim:
+      type: object
+      properties:
+        id:
+          type: string
+        number:
+          type: string
+        status:
+          type: string
+        resolution:
+          type: string
+          nullable: true
+        order_id:
+          type: string
+          nullable: true
+        reason_id:
+          type: string
+          nullable: true
+        refund_total:
+          type: string
+        display_refund_total:
+          type: string
+        approved_at:
+          type: string
+          nullable: true
+        resolved_at:
+          type: string
+          nullable: true
+        denied_at:
+          type: string
+          nullable: true
+        canceled_at:
+          type: string
+          nullable: true
+        reason:
+          "$ref": "#/components/schemas/Reason"
+        claim_line_items:
+          type: array
+          items:
+            "$ref": "#/components/schemas/ClaimLineItem"
+        memo:
+          type: string
+          nullable: true
+      required:
+      - id
+      - number
+      - status
+      - resolution
+      - order_id
+      - reason_id
+      - refund_total
+      - display_refund_total
+      - approved_at
+      - resolved_at
+      - denied_at
+      - canceled_at
+      - memo
+      x-typelizer: true
     DeliveryMethodRule:
       type: object
       properties:
@@ -16852,6 +19022,44 @@ components:
       - default
       - digital
       x-typelizer: true
+    DeliveryRate:
+      type: object
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+        selected:
+          type: boolean
+        cost:
+          type: string
+        total:
+          type: string
+        carrier:
+          type: string
+          nullable: true
+        service_level:
+          type: string
+          nullable: true
+        estimated_delivery_date:
+          type: string
+          nullable: true
+        display_cost:
+          type: string
+        display_total:
+          type: string
+      required:
+      - id
+      - name
+      - selected
+      - cost
+      - total
+      - carrier
+      - service_level
+      - estimated_delivery_date
+      - display_cost
+      - display_total
+      x-typelizer: true
     Delivery:
       type: object
       properties:
@@ -16918,6 +19126,118 @@ components:
       - description
       - delivery_profile_id
       x-typelizer: true
+    ExchangeLineItem:
+      type: object
+      properties:
+        id:
+          type: string
+        quantity:
+          type: number
+        received_quantity:
+          type: number
+        resellable:
+          type: boolean
+        original_price:
+          type: string
+        new_variant_price:
+          type: string
+        price_difference:
+          type: string
+        original_variant_id:
+          type: string
+          nullable: true
+        new_variant_id:
+          type: string
+          nullable: true
+        line_item_id:
+          type: string
+          nullable: true
+        fulfillment_item_id:
+          type: string
+          nullable: true
+        original_variant:
+          "$ref": "#/components/schemas/Variant"
+        new_variant:
+          "$ref": "#/components/schemas/Variant"
+        name:
+          type: string
+          nullable: true
+        new_variant_name:
+          type: string
+          nullable: true
+      required:
+      - id
+      - quantity
+      - received_quantity
+      - resellable
+      - original_price
+      - new_variant_price
+      - price_difference
+      - original_variant_id
+      - new_variant_id
+      - line_item_id
+      - fulfillment_item_id
+      - name
+      - new_variant_name
+      x-typelizer: true
+    Exchange:
+      type: object
+      properties:
+        id:
+          type: string
+        number:
+          type: string
+        status:
+          type: string
+        order_id:
+          type: string
+          nullable: true
+        reason_id:
+          type: string
+          nullable: true
+        price_difference:
+          type: string
+        display_price_difference:
+          type: string
+        approved_at:
+          type: string
+          nullable: true
+        received_at:
+          type: string
+          nullable: true
+        fulfilled_at:
+          type: string
+          nullable: true
+        canceled_at:
+          type: string
+          nullable: true
+        reason:
+          "$ref": "#/components/schemas/Reason"
+        exchange_line_items:
+          type: array
+          items:
+            "$ref": "#/components/schemas/ExchangeLineItem"
+        memo:
+          type: string
+          nullable: true
+        stock_location_id:
+          type: string
+          nullable: true
+      required:
+      - id
+      - number
+      - status
+      - order_id
+      - reason_id
+      - price_difference
+      - display_price_difference
+      - approved_at
+      - received_at
+      - fulfilled_at
+      - canceled_at
+      - memo
+      - stock_location_id
+      x-typelizer: true
     Export:
       type: object
       properties:
@@ -16972,6 +19292,9 @@ components:
         line_item_id:
           type: string
           nullable: true
+        variant_id:
+          type: string
+          nullable: true
         name:
           type: string
           nullable: true
@@ -16985,6 +19308,7 @@ components:
       - id
       - quantity
       - line_item_id
+      - variant_id
       - name
       - sku
       - options_text
@@ -17023,10 +19347,20 @@ components:
         stock_location_name:
           type: string
           nullable: true
+        stock_location_id:
+          type: string
+          nullable: true
         fulfillment_items:
           type: array
           items:
             "$ref": "#/components/schemas/FulfillmentItem"
+        selected_delivery_rate_id:
+          type: string
+          nullable: true
+        delivery_rates:
+          type: array
+          items:
+            "$ref": "#/components/schemas/DeliveryRate"
         deliveries:
           type: array
           items:
@@ -17048,7 +19382,10 @@ components:
       - fulfillment_type
       - delivery_method_name
       - stock_location_name
+      - stock_location_id
       - fulfillment_items
+      - selected_delivery_rate_id
+      - delivery_rates
       - deliveries
       - labels
       x-typelizer: true
@@ -17393,10 +19730,46 @@ components:
           type: string
         updated_at:
           type: string
+        internal_note:
+          type: string
+          nullable: true
+        internal_note_html:
+          type: string
+          nullable: true
         item_total:
           type: string
           nullable: true
         display_item_total:
+          type: string
+          nullable: true
+        delivery_total:
+          type: string
+          nullable: true
+        display_delivery_total:
+          type: string
+          nullable: true
+        discount_total:
+          type: string
+          nullable: true
+        display_discount_total:
+          type: string
+          nullable: true
+        adjustment_total:
+          type: string
+          nullable: true
+        display_adjustment_total:
+          type: string
+          nullable: true
+        included_tax_total:
+          type: string
+          nullable: true
+        display_included_tax_total:
+          type: string
+          nullable: true
+        additional_tax_total:
+          type: string
+          nullable: true
+        display_additional_tax_total:
           type: string
           nullable: true
         tax_total:
@@ -17409,6 +19782,27 @@ components:
           type: string
           nullable: true
         display_total:
+          type: string
+          nullable: true
+        payment_total:
+          type: string
+          nullable: true
+        display_payment_total:
+          type: string
+          nullable: true
+        amount_due:
+          type: string
+          nullable: true
+        display_amount_due:
+          type: string
+          nullable: true
+        canceled_at:
+          type: string
+          nullable: true
+        cancel_reason_name:
+          type: string
+          nullable: true
+        cancel_note:
           type: string
           nullable: true
         items:
@@ -17435,12 +19829,31 @@ components:
       - completed_at
       - created_at
       - updated_at
+      - internal_note
+      - internal_note_html
       - item_total
       - display_item_total
+      - delivery_total
+      - display_delivery_total
+      - discount_total
+      - display_discount_total
+      - adjustment_total
+      - display_adjustment_total
+      - included_tax_total
+      - display_included_tax_total
+      - additional_tax_total
+      - display_additional_tax_total
       - tax_total
       - display_tax_total
       - total
       - display_total
+      - payment_total
+      - display_payment_total
+      - amount_due
+      - display_amount_due
+      - canceled_at
+      - cancel_reason_name
+      - cancel_note
       - items
       - fulfillments
       - shipping_address
@@ -17759,6 +20172,20 @@ components:
       - supported_currencies
       - products_count
       x-typelizer: true
+    Reason:
+      type: object
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+        active:
+          type: boolean
+      required:
+      - id
+      - name
+      - active
+      x-typelizer: true
     RequirementCustomField:
       type: object
       properties:
@@ -17885,6 +20312,114 @@ components:
       - updated_at
       - file_url
       - file_name
+      x-typelizer: true
+    ReturnLineItem:
+      type: object
+      properties:
+        id:
+          type: string
+        quantity:
+          type: number
+        received_quantity:
+          type: number
+        resellable:
+          type: boolean
+        pre_tax_amount:
+          type: string
+        display_pre_tax_amount:
+          type: string
+        variant_id:
+          type: string
+          nullable: true
+        line_item_id:
+          type: string
+          nullable: true
+        fulfillment_item_id:
+          type: string
+          nullable: true
+        variant:
+          "$ref": "#/components/schemas/Variant"
+        name:
+          type: string
+          nullable: true
+      required:
+      - id
+      - quantity
+      - received_quantity
+      - resellable
+      - pre_tax_amount
+      - display_pre_tax_amount
+      - variant_id
+      - line_item_id
+      - fulfillment_item_id
+      - name
+      x-typelizer: true
+    Return:
+      type: object
+      properties:
+        id:
+          type: string
+        number:
+          type: string
+        status:
+          type: string
+        order_id:
+          type: string
+          nullable: true
+        reason_id:
+          type: string
+          nullable: true
+        refund_total:
+          type: string
+        display_refund_total:
+          type: string
+        approved_at:
+          type: string
+          nullable: true
+        received_at:
+          type: string
+          nullable: true
+        refunded_at:
+          type: string
+          nullable: true
+        canceled_at:
+          type: string
+          nullable: true
+        reason:
+          "$ref": "#/components/schemas/Reason"
+        return_line_items:
+          type: array
+          items:
+            "$ref": "#/components/schemas/ReturnLineItem"
+        memo:
+          type: string
+          nullable: true
+        stock_location_id:
+          type: string
+          nullable: true
+        refunded_total:
+          type: string
+        refundable_total:
+          type: string
+        display_refunded_total:
+          type: string
+      required:
+      - id
+      - number
+      - status
+      - order_id
+      - reason_id
+      - refund_total
+      - display_refund_total
+      - approved_at
+      - received_at
+      - refunded_at
+      - canceled_at
+      - memo
+      - stock_location_id
+      - refunded_total
+      - refundable_total
+      - display_refunded_total
       x-typelizer: true
     ShippingLabel:
       type: object

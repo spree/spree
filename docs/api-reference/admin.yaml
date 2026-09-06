@@ -5281,13 +5281,17 @@ paths:
                   last_name: Ebert
                   phone:
                   accepts_email_marketing: false
+                  email_marketing_consent_updated_at: '2026-01-15T12:00:00Z'
                   full_name: Dan Ebert
                   available_store_credit_total: '0'
                   display_available_store_credit_total: "$0.00"
                   failed_attempts: 0
                   metadata: {}
+                  email_marketing_consent_source: unknown
                   created_at: '2026-01-15T12:00:00.000Z'
                   updated_at: '2026-01-15T12:00:00.000Z'
+                  anonymized_at:
+                  anonymized: false
                   tags: []
                   internal_note:
                   internal_note_html:
@@ -5443,6 +5447,179 @@ paths:
       responses:
         '204':
           description: customer group deleted
+  "/api/v3/admin/customers/{id}/export":
+    get:
+      summary: Export a customer's personal data
+      tags:
+      - Customers
+      security:
+      - api_key: []
+        bearer_auth: []
+      description: |-
+        Returns everything the store holds about this customer, for answering a
+        GDPR right-of-access request (Art. 15) that reached the merchant
+        directly.
+
+
+        **Required scope:** `read_customers` (for API-key authentication).
+      parameters:
+      - name: x-spree-api-key
+        in: header
+        required: true
+        schema:
+          type: string
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: customer data
+          content:
+            application/json:
+              example:
+                account:
+                  id: cust_UkLWZg9DAJ
+                  email: jane@example.com
+                  first_name: Jane
+                  last_name: Doe
+                  phone:
+                  selected_locale:
+                  tags: []
+                  metadata:
+                  internal_note:
+                  created_at: '2026-01-15T12:00:00Z'
+                  anonymized_at:
+                marketing_consent:
+                  accepts_email_marketing: false
+                  consent_updated_at: '2026-01-15T12:00:00Z'
+                  consent_source: unknown
+                  newsletter_subscriptions: []
+                consent_records: []
+                addresses: []
+                orders: []
+                draft_orders: []
+                order_groups: []
+                carts: []
+                payment_sources: []
+                connected_logins: []
+                store_credits: []
+                gift_cards: []
+                wishlists: []
+                custom_fields: []
+                companies: []
+                tax_identifiers: []
+                exported_at: '2026-01-15T12:00:00Z'
+              schema:
+                type: object
+                properties:
+                  account:
+                    type: object
+                  marketing_consent:
+                    type: object
+                  consent_records:
+                    type: array
+                    items:
+                      type: object
+                  addresses:
+                    type: array
+                    items:
+                      type: object
+                  orders:
+                    type: array
+                    items:
+                      type: object
+                  exported_at:
+                    type: string
+        '404':
+          description: not found
+          content:
+            application/json:
+              example:
+                error:
+                  code: record_not_found
+                  message: Customer not found
+              schema:
+                "$ref": "#/components/schemas/ErrorResponse"
+  "/api/v3/admin/customers/{id}/anonymize":
+    post:
+      summary: Erase a customer's personal data
+      tags:
+      - Customers
+      security:
+      - api_key: []
+        bearer_auth: []
+      description: |-
+        Carries out a GDPR right-to-erasure request (Art. 17). Personal data is
+        replaced across the account, its addresses, the address snapshots on
+        past orders, saved cards, connected identities and live sessions.
+
+        Orders, payments and tax records are kept — they carry their own
+        retention obligation — with the personal details removed. The country,
+        state and a truncated postal code survive on order addresses so the tax
+        jurisdiction of a past sale stays provable.
+
+        Irreversible.
+
+
+        **Required scope:** `write_customers` (for API-key authentication).
+      parameters:
+      - name: x-spree-api-key
+        in: header
+        required: true
+        schema:
+          type: string
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: customer anonymized
+          content:
+            application/json:
+              example:
+                id: cust_UkLWZg9DAJ
+                email: anonymized-87c6bfa6-4803-420c-a5e2-b1c962f0f40a@invalid
+                first_name: Redacted
+                last_name: Redacted
+                phone:
+                accepts_email_marketing: false
+                email_marketing_consent_updated_at: '2026-01-15T12:00:00Z'
+                full_name: Redacted Redacted
+                available_store_credit_total: '0'
+                display_available_store_credit_total: "$0.00"
+                failed_attempts: 0
+                metadata: {}
+                email_marketing_consent_source: anonymization
+                created_at: '2026-01-15T12:00:00.000Z'
+                updated_at: '2026-01-15T12:00:00.000Z'
+                anonymized_at: '2026-01-15T12:00:00Z'
+                anonymized: true
+                tags: []
+                internal_note:
+                internal_note_html:
+                default_billing_address_id:
+                default_shipping_address_id:
+                orders_count: 0
+                total_spent: '0.0'
+                display_total_spent: "$0.00"
+                last_order_completed_at:
+                customer_group_ids: []
+              schema:
+                type: object
+                properties:
+                  id:
+                    type: string
+                  email:
+                    type: string
+                  anonymized:
+                    type: boolean
+                  anonymized_at:
+                    type: string
+                    nullable: true
   "/api/v3/admin/customers/{customer_id}/addresses":
     get:
       summary: List customer addresses
@@ -6425,13 +6602,17 @@ paths:
                   last_name: Doe
                   phone:
                   accepts_email_marketing: false
+                  email_marketing_consent_updated_at: '2026-01-15T12:00:00Z'
                   full_name: Jane Doe
                   available_store_credit_total: '0'
                   display_available_store_credit_total: "$0.00"
                   failed_attempts: 0
                   metadata: {}
+                  email_marketing_consent_source: unknown
                   created_at: '2026-01-15T12:00:00.000Z'
                   updated_at: '2026-01-15T12:00:00.000Z'
+                  anonymized_at:
+                  anonymized: false
                   tags: []
                   internal_note:
                   internal_note_html:
@@ -6509,13 +6690,17 @@ paths:
                 last_name: Customer
                 phone:
                 accepts_email_marketing: false
+                email_marketing_consent_updated_at: '2026-01-15T12:00:00Z'
                 full_name: New Customer
                 available_store_credit_total: '0'
                 display_available_store_credit_total: "$0.00"
                 failed_attempts: 0
                 metadata: {}
+                email_marketing_consent_source: unknown
                 created_at: '2026-01-15T12:00:00.000Z'
                 updated_at: '2026-01-15T12:00:00.000Z'
+                anonymized_at:
+                anonymized: false
                 tags: []
                 internal_note:
                 internal_note_html:
@@ -6625,13 +6810,17 @@ paths:
                 last_name: Doe
                 phone:
                 accepts_email_marketing: false
+                email_marketing_consent_updated_at: '2026-01-15T12:00:00Z'
                 full_name: Jane Doe
                 available_store_credit_total: '0'
                 display_available_store_credit_total: "$0.00"
                 failed_attempts: 0
                 metadata: {}
+                email_marketing_consent_source: unknown
                 created_at: '2026-01-15T12:00:00.000Z'
                 updated_at: '2026-01-15T12:00:00.000Z'
+                anonymized_at:
+                anonymized: false
                 tags: []
                 internal_note:
                 internal_note_html:
@@ -6699,13 +6888,17 @@ paths:
                 last_name: Doe
                 phone:
                 accepts_email_marketing: false
+                email_marketing_consent_updated_at: '2026-01-15T12:00:00Z'
                 full_name: Updated Doe
                 available_store_credit_total: '0'
                 display_available_store_credit_total: "$0.00"
                 failed_attempts: 0
                 metadata: {}
+                email_marketing_consent_source: unknown
                 created_at: '2026-01-15T12:00:00.000Z'
                 updated_at: '2026-01-15T12:00:00.000Z'
+                anonymized_at:
+                anonymized: false
                 tags: []
                 internal_note:
                 internal_note_html:
@@ -12930,6 +13123,8 @@ paths:
               example:
                 id: or_UkLWZg9DAJ
                 market_id: mkt_UkLWZg9DAJ
+                withdrawal_period_ends_at:
+                within_withdrawal_period: false
                 cart_id:
                 channel_id: ch_UkLWZg9DAJ
                 company_id:
@@ -13184,6 +13379,8 @@ paths:
                 data:
                 - id: or_UkLWZg9DAJ
                   market_id: mkt_UkLWZg9DAJ
+                  withdrawal_period_ends_at:
+                  within_withdrawal_period: false
                   cart_id:
                   channel_id: ch_UkLWZg9DAJ
                   company_id:
@@ -13415,6 +13612,8 @@ paths:
               example:
                 id: or_gbHJdmfrXB
                 market_id: mkt_UkLWZg9DAJ
+                withdrawal_period_ends_at:
+                within_withdrawal_period: false
                 cart_id:
                 channel_id: ch_UkLWZg9DAJ
                 company_id:
@@ -13679,6 +13878,8 @@ paths:
               example:
                 id: or_UkLWZg9DAJ
                 market_id: mkt_UkLWZg9DAJ
+                withdrawal_period_ends_at:
+                within_withdrawal_period: false
                 cart_id:
                 channel_id: ch_UkLWZg9DAJ
                 company_id:
@@ -13831,6 +14032,8 @@ paths:
               example:
                 id: or_UkLWZg9DAJ
                 market_id: mkt_UkLWZg9DAJ
+                withdrawal_period_ends_at:
+                within_withdrawal_period: false
                 cart_id:
                 channel_id: ch_UkLWZg9DAJ
                 company_id:
@@ -14095,6 +14298,8 @@ paths:
               example:
                 id: or_UkLWZg9DAJ
                 market_id: mkt_UkLWZg9DAJ
+                withdrawal_period_ends_at:
+                within_withdrawal_period: true
                 cart_id:
                 channel_id: ch_UkLWZg9DAJ
                 company_id:
@@ -14280,6 +14485,8 @@ paths:
               example:
                 id: or_UkLWZg9DAJ
                 market_id: mkt_UkLWZg9DAJ
+                withdrawal_period_ends_at:
+                within_withdrawal_period: false
                 cart_id:
                 channel_id: ch_UkLWZg9DAJ
                 company_id:
@@ -14445,6 +14652,8 @@ paths:
               example:
                 id: or_UkLWZg9DAJ
                 market_id: mkt_UkLWZg9DAJ
+                withdrawal_period_ends_at:
+                within_withdrawal_period: true
                 cart_id:
                 channel_id: ch_UkLWZg9DAJ
                 company_id:
@@ -14584,6 +14793,8 @@ paths:
               example:
                 id: or_UkLWZg9DAJ
                 market_id: mkt_UkLWZg9DAJ
+                withdrawal_period_ends_at:
+                within_withdrawal_period: true
                 cart_id:
                 channel_id: ch_UkLWZg9DAJ
                 company_id:
@@ -22305,6 +22516,8 @@ paths:
                 url: http://www.example.com:3000
                 api_url: http://www.example.com:3000
                 setup_tasks:
+                - name: setup_address
+                  done: false
                 - name: setup_payment_method
                   done: false
                 - name: add_products
@@ -22630,6 +22843,8 @@ paths:
                 url: http://www.example.com:3000
                 api_url: http://www.example.com:3000
                 setup_tasks:
+                - name: setup_address
+                  done: false
                 - name: setup_payment_method
                   done: false
                 - name: add_products
@@ -32306,13 +32521,13 @@ paths:
                   video_embed_url:
                   video_url:
                   poster_url:
-                  original_url: http://localhost:3000/rails/active_storage/blobs/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--4bf69395f12588416a3329a388edc25b0517ad14/thinking-cat.jpg
-                  mini_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--4bf69395f12588416a3329a388edc25b0517ad14/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOlsxMjgsMTI4XSwic2F2ZXIiOnsic3RyaXAiOnRydWUsInF1YWxpdHkiOjc1LCJsb3NzbGVzcyI6ZmFsc2UsImFscGhhX3EiOjg1LCJyZWR1Y3Rpb25fZWZmb3J0Ijo2LCJzbWFydF9zdWJzYW1wbGUiOnRydWV9fSwicHVyIjoidmFyaWF0aW9uIn19--18a60e5b07ff0fcbf3a883149acf87389dc154c8/thinking-cat.jpg
-                  small_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--4bf69395f12588416a3329a388edc25b0517ad14/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOlsyNTYsMjU2XSwic2F2ZXIiOnsic3RyaXAiOnRydWUsInF1YWxpdHkiOjc1LCJsb3NzbGVzcyI6ZmFsc2UsImFscGhhX3EiOjg1LCJyZWR1Y3Rpb25fZWZmb3J0Ijo2LCJzbWFydF9zdWJzYW1wbGUiOnRydWV9fSwicHVyIjoidmFyaWF0aW9uIn19--fc5d6b1de4cd1066df4e6af6b0ae4d7e17b03a0d/thinking-cat.jpg
-                  medium_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--4bf69395f12588416a3329a388edc25b0517ad14/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOls0MDAsNDAwXSwic2F2ZXIiOnsic3RyaXAiOnRydWUsInF1YWxpdHkiOjc1LCJsb3NzbGVzcyI6ZmFsc2UsImFscGhhX3EiOjg1LCJyZWR1Y3Rpb25fZWZmb3J0Ijo2LCJzbWFydF9zdWJzYW1wbGUiOnRydWV9fSwicHVyIjoidmFyaWF0aW9uIn19--e69b5cafe243fed99ecf2121666b050ff9b49b0d/thinking-cat.jpg
-                  large_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--4bf69395f12588416a3329a388edc25b0517ad14/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOls3MjAsNzIwXSwic2F2ZXIiOnsic3RyaXAiOnRydWUsInF1YWxpdHkiOjc1LCJsb3NzbGVzcyI6ZmFsc2UsImFscGhhX3EiOjg1LCJyZWR1Y3Rpb25fZWZmb3J0Ijo2LCJzbWFydF9zdWJzYW1wbGUiOnRydWV9fSwicHVyIjoidmFyaWF0aW9uIn19--185dd402b1fa8d2624138f2201aeb71b932a910f/thinking-cat.jpg
-                  xlarge_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--4bf69395f12588416a3329a388edc25b0517ad14/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOlsyMDAwLDIwMDBdLCJzYXZlciI6eyJzdHJpcCI6dHJ1ZSwicXVhbGl0eSI6NzUsImxvc3NsZXNzIjpmYWxzZSwiYWxwaGFfcSI6ODUsInJlZHVjdGlvbl9lZmZvcnQiOjYsInNtYXJ0X3N1YnNhbXBsZSI6dHJ1ZX19LCJwdXIiOiJ2YXJpYXRpb24ifX0=--b0367f0c4c870dc59798d26d598b6fdc7974dfab/thinking-cat.jpg
-                  og_image_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--4bf69395f12588416a3329a388edc25b0517ad14/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOlsxMjAwLDYzMF0sInNhdmVyIjp7InN0cmlwIjp0cnVlLCJxdWFsaXR5Ijo3NSwibG9zc2xlc3MiOmZhbHNlLCJhbHBoYV9xIjo4NSwicmVkdWN0aW9uX2VmZm9ydCI6Niwic21hcnRfc3Vic2FtcGxlIjp0cnVlfX0sInB1ciI6InZhcmlhdGlvbiJ9fQ==--b1833162853a426cddc6fdf1fe395479890c7649/thinking-cat.jpg
+                  original_url: http://localhost:3000/rails/active_storage/blobs/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--64a7a628149a01f18aa41dc05f03e1755c9f27e6/thinking-cat.jpg
+                  mini_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--64a7a628149a01f18aa41dc05f03e1755c9f27e6/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOlsxMjgsMTI4XSwic2F2ZXIiOnsic3RyaXAiOnRydWUsInF1YWxpdHkiOjc1LCJsb3NzbGVzcyI6ZmFsc2UsImFscGhhX3EiOjg1LCJyZWR1Y3Rpb25fZWZmb3J0Ijo2LCJzbWFydF9zdWJzYW1wbGUiOnRydWV9fSwicHVyIjoidmFyaWF0aW9uIn19--2b009e396acd0e776164e306573bf33f6cea5543/thinking-cat.jpg
+                  small_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--64a7a628149a01f18aa41dc05f03e1755c9f27e6/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOlsyNTYsMjU2XSwic2F2ZXIiOnsic3RyaXAiOnRydWUsInF1YWxpdHkiOjc1LCJsb3NzbGVzcyI6ZmFsc2UsImFscGhhX3EiOjg1LCJyZWR1Y3Rpb25fZWZmb3J0Ijo2LCJzbWFydF9zdWJzYW1wbGUiOnRydWV9fSwicHVyIjoidmFyaWF0aW9uIn19--c6c62312f1f7d4203b2855cf2b4ad78c3a1a68b9/thinking-cat.jpg
+                  medium_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--64a7a628149a01f18aa41dc05f03e1755c9f27e6/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOls0MDAsNDAwXSwic2F2ZXIiOnsic3RyaXAiOnRydWUsInF1YWxpdHkiOjc1LCJsb3NzbGVzcyI6ZmFsc2UsImFscGhhX3EiOjg1LCJyZWR1Y3Rpb25fZWZmb3J0Ijo2LCJzbWFydF9zdWJzYW1wbGUiOnRydWV9fSwicHVyIjoidmFyaWF0aW9uIn19--8dc32d60cdc49f3b2b4232b2463f6a1706bc6880/thinking-cat.jpg
+                  large_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--64a7a628149a01f18aa41dc05f03e1755c9f27e6/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOls3MjAsNzIwXSwic2F2ZXIiOnsic3RyaXAiOnRydWUsInF1YWxpdHkiOjc1LCJsb3NzbGVzcyI6ZmFsc2UsImFscGhhX3EiOjg1LCJyZWR1Y3Rpb25fZWZmb3J0Ijo2LCJzbWFydF9zdWJzYW1wbGUiOnRydWV9fSwicHVyIjoidmFyaWF0aW9uIn19--0ba2f2259194663198ec9f3804b5dce4d59172f6/thinking-cat.jpg
+                  xlarge_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--64a7a628149a01f18aa41dc05f03e1755c9f27e6/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOlsyMDAwLDIwMDBdLCJzYXZlciI6eyJzdHJpcCI6dHJ1ZSwicXVhbGl0eSI6NzUsImxvc3NsZXNzIjpmYWxzZSwiYWxwaGFfcSI6ODUsInJlZHVjdGlvbl9lZmZvcnQiOjYsInNtYXJ0X3N1YnNhbXBsZSI6dHJ1ZX19LCJwdXIiOiJ2YXJpYXRpb24ifX0=--f84d50d82eae845105c742768d5b02b0bf8c56c0/thinking-cat.jpg
+                  og_image_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--64a7a628149a01f18aa41dc05f03e1755c9f27e6/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOlsxMjAwLDYzMF0sInNhdmVyIjp7InN0cmlwIjp0cnVlLCJxdWFsaXR5Ijo3NSwibG9zc2xlc3MiOmZhbHNlLCJhbHBoYV9xIjo4NSwicmVkdWN0aW9uX2VmZm9ydCI6Niwic21hcnRfc3Vic2FtcGxlIjp0cnVlfX0sInB1ciI6InZhcmlhdGlvbiJ9fQ==--8e3bde4dd2e614930e516efc2b37f6ee64d6bb3d/thinking-cat.jpg
                   external_references: {}
                   created_at: '2026-01-15T12:00:00.000Z'
                   updated_at: '2026-01-15T12:00:00.000Z'
@@ -32320,10 +32535,10 @@ paths:
                   filename: thinking-cat.jpg
                   content_type: image/jpeg
                   byte_size: 18090
-                  embed_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--4bf69395f12588416a3329a388edc25b0517ad14/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2xpbWl0IjpbMTIwMCwxMjAwXSwic2F2ZXIiOnsic3RyaXAiOnRydWUsInF1YWxpdHkiOjc1LCJsb3NzbGVzcyI6ZmFsc2UsImFscGhhX3EiOjg1LCJyZWR1Y3Rpb25fZWZmb3J0Ijo2LCJzbWFydF9zdWJzYW1wbGUiOnRydWV9fSwicHVyIjoidmFyaWF0aW9uIn19--1e946984c2c4f134af76a2cf2d6a2c22ef0acbeb/thinking-cat.jpg
-                  signed_id: eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--4bf69395f12588416a3329a388edc25b0517ad14
+                  embed_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--64a7a628149a01f18aa41dc05f03e1755c9f27e6/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2xpbWl0IjpbMTIwMCwxMjAwXSwic2F2ZXIiOnsic3RyaXAiOnRydWUsInF1YWxpdHkiOjc1LCJsb3NzbGVzcyI6ZmFsc2UsImFscGhhX3EiOjg1LCJyZWR1Y3Rpb25fZWZmb3J0Ijo2LCJzbWFydF9zdWJzYW1wbGUiOnRydWV9fSwicHVyIjoidmFyaWF0aW9uIn19--29dfe4018dda1dfb7e5a98e25feab76f1cf2c016/thinking-cat.jpg
+                  signed_id: eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--64a7a628149a01f18aa41dc05f03e1755c9f27e6
                   viewable_id: prod_UkLWZg9DAJ
-                  download_url: http://localhost:3000/rails/active_storage/blobs/redirect/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--4bf69395f12588416a3329a388edc25b0517ad14/thinking-cat.jpg?disposition=attachment
+                  download_url: http://localhost:3000/rails/active_storage/blobs/redirect/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--64a7a628149a01f18aa41dc05f03e1755c9f27e6/thinking-cat.jpg?disposition=attachment
                   metadata: {}
                   viewable_type: product
                 meta:
@@ -32394,13 +32609,13 @@ paths:
                 video_embed_url:
                 video_url:
                 poster_url:
-                original_url: http://localhost:3000/rails/active_storage/blobs/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MiwicHVyIjoiYmxvYl9pZCJ9fQ==--04419677d820223d65daed0ad383afd05b39f359/library-upload.jpg
-                mini_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MiwicHVyIjoiYmxvYl9pZCJ9fQ==--04419677d820223d65daed0ad383afd05b39f359/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOlsxMjgsMTI4XSwic2F2ZXIiOnsic3RyaXAiOnRydWUsInF1YWxpdHkiOjc1LCJsb3NzbGVzcyI6ZmFsc2UsImFscGhhX3EiOjg1LCJyZWR1Y3Rpb25fZWZmb3J0Ijo2LCJzbWFydF9zdWJzYW1wbGUiOnRydWV9fSwicHVyIjoidmFyaWF0aW9uIn19--18a60e5b07ff0fcbf3a883149acf87389dc154c8/library-upload.jpg
-                small_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MiwicHVyIjoiYmxvYl9pZCJ9fQ==--04419677d820223d65daed0ad383afd05b39f359/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOlsyNTYsMjU2XSwic2F2ZXIiOnsic3RyaXAiOnRydWUsInF1YWxpdHkiOjc1LCJsb3NzbGVzcyI6ZmFsc2UsImFscGhhX3EiOjg1LCJyZWR1Y3Rpb25fZWZmb3J0Ijo2LCJzbWFydF9zdWJzYW1wbGUiOnRydWV9fSwicHVyIjoidmFyaWF0aW9uIn19--fc5d6b1de4cd1066df4e6af6b0ae4d7e17b03a0d/library-upload.jpg
-                medium_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MiwicHVyIjoiYmxvYl9pZCJ9fQ==--04419677d820223d65daed0ad383afd05b39f359/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOls0MDAsNDAwXSwic2F2ZXIiOnsic3RyaXAiOnRydWUsInF1YWxpdHkiOjc1LCJsb3NzbGVzcyI6ZmFsc2UsImFscGhhX3EiOjg1LCJyZWR1Y3Rpb25fZWZmb3J0Ijo2LCJzbWFydF9zdWJzYW1wbGUiOnRydWV9fSwicHVyIjoidmFyaWF0aW9uIn19--e69b5cafe243fed99ecf2121666b050ff9b49b0d/library-upload.jpg
-                large_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MiwicHVyIjoiYmxvYl9pZCJ9fQ==--04419677d820223d65daed0ad383afd05b39f359/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOls3MjAsNzIwXSwic2F2ZXIiOnsic3RyaXAiOnRydWUsInF1YWxpdHkiOjc1LCJsb3NzbGVzcyI6ZmFsc2UsImFscGhhX3EiOjg1LCJyZWR1Y3Rpb25fZWZmb3J0Ijo2LCJzbWFydF9zdWJzYW1wbGUiOnRydWV9fSwicHVyIjoidmFyaWF0aW9uIn19--185dd402b1fa8d2624138f2201aeb71b932a910f/library-upload.jpg
-                xlarge_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MiwicHVyIjoiYmxvYl9pZCJ9fQ==--04419677d820223d65daed0ad383afd05b39f359/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOlsyMDAwLDIwMDBdLCJzYXZlciI6eyJzdHJpcCI6dHJ1ZSwicXVhbGl0eSI6NzUsImxvc3NsZXNzIjpmYWxzZSwiYWxwaGFfcSI6ODUsInJlZHVjdGlvbl9lZmZvcnQiOjYsInNtYXJ0X3N1YnNhbXBsZSI6dHJ1ZX19LCJwdXIiOiJ2YXJpYXRpb24ifX0=--b0367f0c4c870dc59798d26d598b6fdc7974dfab/library-upload.jpg
-                og_image_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MiwicHVyIjoiYmxvYl9pZCJ9fQ==--04419677d820223d65daed0ad383afd05b39f359/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOlsxMjAwLDYzMF0sInNhdmVyIjp7InN0cmlwIjp0cnVlLCJxdWFsaXR5Ijo3NSwibG9zc2xlc3MiOmZhbHNlLCJhbHBoYV9xIjo4NSwicmVkdWN0aW9uX2VmZm9ydCI6Niwic21hcnRfc3Vic2FtcGxlIjp0cnVlfX0sInB1ciI6InZhcmlhdGlvbiJ9fQ==--b1833162853a426cddc6fdf1fe395479890c7649/library-upload.jpg
+                original_url: http://localhost:3000/rails/active_storage/blobs/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MiwicHVyIjoiYmxvYl9pZCJ9fQ==--213db9a7b64fa3e145cff2f9479e341974678d87/library-upload.jpg
+                mini_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MiwicHVyIjoiYmxvYl9pZCJ9fQ==--213db9a7b64fa3e145cff2f9479e341974678d87/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOlsxMjgsMTI4XSwic2F2ZXIiOnsic3RyaXAiOnRydWUsInF1YWxpdHkiOjc1LCJsb3NzbGVzcyI6ZmFsc2UsImFscGhhX3EiOjg1LCJyZWR1Y3Rpb25fZWZmb3J0Ijo2LCJzbWFydF9zdWJzYW1wbGUiOnRydWV9fSwicHVyIjoidmFyaWF0aW9uIn19--2b009e396acd0e776164e306573bf33f6cea5543/library-upload.jpg
+                small_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MiwicHVyIjoiYmxvYl9pZCJ9fQ==--213db9a7b64fa3e145cff2f9479e341974678d87/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOlsyNTYsMjU2XSwic2F2ZXIiOnsic3RyaXAiOnRydWUsInF1YWxpdHkiOjc1LCJsb3NzbGVzcyI6ZmFsc2UsImFscGhhX3EiOjg1LCJyZWR1Y3Rpb25fZWZmb3J0Ijo2LCJzbWFydF9zdWJzYW1wbGUiOnRydWV9fSwicHVyIjoidmFyaWF0aW9uIn19--c6c62312f1f7d4203b2855cf2b4ad78c3a1a68b9/library-upload.jpg
+                medium_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MiwicHVyIjoiYmxvYl9pZCJ9fQ==--213db9a7b64fa3e145cff2f9479e341974678d87/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOls0MDAsNDAwXSwic2F2ZXIiOnsic3RyaXAiOnRydWUsInF1YWxpdHkiOjc1LCJsb3NzbGVzcyI6ZmFsc2UsImFscGhhX3EiOjg1LCJyZWR1Y3Rpb25fZWZmb3J0Ijo2LCJzbWFydF9zdWJzYW1wbGUiOnRydWV9fSwicHVyIjoidmFyaWF0aW9uIn19--8dc32d60cdc49f3b2b4232b2463f6a1706bc6880/library-upload.jpg
+                large_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MiwicHVyIjoiYmxvYl9pZCJ9fQ==--213db9a7b64fa3e145cff2f9479e341974678d87/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOls3MjAsNzIwXSwic2F2ZXIiOnsic3RyaXAiOnRydWUsInF1YWxpdHkiOjc1LCJsb3NzbGVzcyI6ZmFsc2UsImFscGhhX3EiOjg1LCJyZWR1Y3Rpb25fZWZmb3J0Ijo2LCJzbWFydF9zdWJzYW1wbGUiOnRydWV9fSwicHVyIjoidmFyaWF0aW9uIn19--0ba2f2259194663198ec9f3804b5dce4d59172f6/library-upload.jpg
+                xlarge_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MiwicHVyIjoiYmxvYl9pZCJ9fQ==--213db9a7b64fa3e145cff2f9479e341974678d87/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOlsyMDAwLDIwMDBdLCJzYXZlciI6eyJzdHJpcCI6dHJ1ZSwicXVhbGl0eSI6NzUsImxvc3NsZXNzIjpmYWxzZSwiYWxwaGFfcSI6ODUsInJlZHVjdGlvbl9lZmZvcnQiOjYsInNtYXJ0X3N1YnNhbXBsZSI6dHJ1ZX19LCJwdXIiOiJ2YXJpYXRpb24ifX0=--f84d50d82eae845105c742768d5b02b0bf8c56c0/library-upload.jpg
+                og_image_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MiwicHVyIjoiYmxvYl9pZCJ9fQ==--213db9a7b64fa3e145cff2f9479e341974678d87/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOlsxMjAwLDYzMF0sInNhdmVyIjp7InN0cmlwIjp0cnVlLCJxdWFsaXR5Ijo3NSwibG9zc2xlc3MiOmZhbHNlLCJhbHBoYV9xIjo4NSwicmVkdWN0aW9uX2VmZm9ydCI6Niwic21hcnRfc3Vic2FtcGxlIjp0cnVlfX0sInB1ciI6InZhcmlhdGlvbiJ9fQ==--8e3bde4dd2e614930e516efc2b37f6ee64d6bb3d/library-upload.jpg
                 external_references: {}
                 created_at: '2026-01-15T12:00:00.000Z'
                 updated_at: '2026-01-15T12:00:00.000Z'
@@ -32408,10 +32623,10 @@ paths:
                 filename: library-upload.jpg
                 content_type: image/jpeg
                 byte_size: 18090
-                embed_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MiwicHVyIjoiYmxvYl9pZCJ9fQ==--04419677d820223d65daed0ad383afd05b39f359/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2xpbWl0IjpbMTIwMCwxMjAwXSwic2F2ZXIiOnsic3RyaXAiOnRydWUsInF1YWxpdHkiOjc1LCJsb3NzbGVzcyI6ZmFsc2UsImFscGhhX3EiOjg1LCJyZWR1Y3Rpb25fZWZmb3J0Ijo2LCJzbWFydF9zdWJzYW1wbGUiOnRydWV9fSwicHVyIjoidmFyaWF0aW9uIn19--1e946984c2c4f134af76a2cf2d6a2c22ef0acbeb/library-upload.jpg
-                signed_id: eyJfcmFpbHMiOnsiZGF0YSI6MiwicHVyIjoiYmxvYl9pZCJ9fQ==--04419677d820223d65daed0ad383afd05b39f359
+                embed_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MiwicHVyIjoiYmxvYl9pZCJ9fQ==--213db9a7b64fa3e145cff2f9479e341974678d87/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2xpbWl0IjpbMTIwMCwxMjAwXSwic2F2ZXIiOnsic3RyaXAiOnRydWUsInF1YWxpdHkiOjc1LCJsb3NzbGVzcyI6ZmFsc2UsImFscGhhX3EiOjg1LCJyZWR1Y3Rpb25fZWZmb3J0Ijo2LCJzbWFydF9zdWJzYW1wbGUiOnRydWV9fSwicHVyIjoidmFyaWF0aW9uIn19--29dfe4018dda1dfb7e5a98e25feab76f1cf2c016/library-upload.jpg
+                signed_id: eyJfcmFpbHMiOnsiZGF0YSI6MiwicHVyIjoiYmxvYl9pZCJ9fQ==--213db9a7b64fa3e145cff2f9479e341974678d87
                 viewable_id:
-                download_url: http://localhost:3000/rails/active_storage/blobs/redirect/eyJfcmFpbHMiOnsiZGF0YSI6MiwicHVyIjoiYmxvYl9pZCJ9fQ==--04419677d820223d65daed0ad383afd05b39f359/library-upload.jpg?disposition=attachment
+                download_url: http://localhost:3000/rails/active_storage/blobs/redirect/eyJfcmFpbHMiOnsiZGF0YSI6MiwicHVyIjoiYmxvYl9pZCJ9fQ==--213db9a7b64fa3e145cff2f9479e341974678d87/library-upload.jpg?disposition=attachment
                 metadata: {}
                 viewable_type:
               schema:
@@ -32568,13 +32783,13 @@ paths:
                 video_embed_url:
                 video_url:
                 poster_url:
-                original_url: http://localhost:3000/rails/active_storage/blobs/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--4bf69395f12588416a3329a388edc25b0517ad14/thinking-cat.jpg
-                mini_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--4bf69395f12588416a3329a388edc25b0517ad14/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOlsxMjgsMTI4XSwic2F2ZXIiOnsic3RyaXAiOnRydWUsInF1YWxpdHkiOjc1LCJsb3NzbGVzcyI6ZmFsc2UsImFscGhhX3EiOjg1LCJyZWR1Y3Rpb25fZWZmb3J0Ijo2LCJzbWFydF9zdWJzYW1wbGUiOnRydWV9fSwicHVyIjoidmFyaWF0aW9uIn19--18a60e5b07ff0fcbf3a883149acf87389dc154c8/thinking-cat.jpg
-                small_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--4bf69395f12588416a3329a388edc25b0517ad14/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOlsyNTYsMjU2XSwic2F2ZXIiOnsic3RyaXAiOnRydWUsInF1YWxpdHkiOjc1LCJsb3NzbGVzcyI6ZmFsc2UsImFscGhhX3EiOjg1LCJyZWR1Y3Rpb25fZWZmb3J0Ijo2LCJzbWFydF9zdWJzYW1wbGUiOnRydWV9fSwicHVyIjoidmFyaWF0aW9uIn19--fc5d6b1de4cd1066df4e6af6b0ae4d7e17b03a0d/thinking-cat.jpg
-                medium_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--4bf69395f12588416a3329a388edc25b0517ad14/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOls0MDAsNDAwXSwic2F2ZXIiOnsic3RyaXAiOnRydWUsInF1YWxpdHkiOjc1LCJsb3NzbGVzcyI6ZmFsc2UsImFscGhhX3EiOjg1LCJyZWR1Y3Rpb25fZWZmb3J0Ijo2LCJzbWFydF9zdWJzYW1wbGUiOnRydWV9fSwicHVyIjoidmFyaWF0aW9uIn19--e69b5cafe243fed99ecf2121666b050ff9b49b0d/thinking-cat.jpg
-                large_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--4bf69395f12588416a3329a388edc25b0517ad14/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOls3MjAsNzIwXSwic2F2ZXIiOnsic3RyaXAiOnRydWUsInF1YWxpdHkiOjc1LCJsb3NzbGVzcyI6ZmFsc2UsImFscGhhX3EiOjg1LCJyZWR1Y3Rpb25fZWZmb3J0Ijo2LCJzbWFydF9zdWJzYW1wbGUiOnRydWV9fSwicHVyIjoidmFyaWF0aW9uIn19--185dd402b1fa8d2624138f2201aeb71b932a910f/thinking-cat.jpg
-                xlarge_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--4bf69395f12588416a3329a388edc25b0517ad14/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOlsyMDAwLDIwMDBdLCJzYXZlciI6eyJzdHJpcCI6dHJ1ZSwicXVhbGl0eSI6NzUsImxvc3NsZXNzIjpmYWxzZSwiYWxwaGFfcSI6ODUsInJlZHVjdGlvbl9lZmZvcnQiOjYsInNtYXJ0X3N1YnNhbXBsZSI6dHJ1ZX19LCJwdXIiOiJ2YXJpYXRpb24ifX0=--b0367f0c4c870dc59798d26d598b6fdc7974dfab/thinking-cat.jpg
-                og_image_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--4bf69395f12588416a3329a388edc25b0517ad14/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOlsxMjAwLDYzMF0sInNhdmVyIjp7InN0cmlwIjp0cnVlLCJxdWFsaXR5Ijo3NSwibG9zc2xlc3MiOmZhbHNlLCJhbHBoYV9xIjo4NSwicmVkdWN0aW9uX2VmZm9ydCI6Niwic21hcnRfc3Vic2FtcGxlIjp0cnVlfX0sInB1ciI6InZhcmlhdGlvbiJ9fQ==--b1833162853a426cddc6fdf1fe395479890c7649/thinking-cat.jpg
+                original_url: http://localhost:3000/rails/active_storage/blobs/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--64a7a628149a01f18aa41dc05f03e1755c9f27e6/thinking-cat.jpg
+                mini_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--64a7a628149a01f18aa41dc05f03e1755c9f27e6/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOlsxMjgsMTI4XSwic2F2ZXIiOnsic3RyaXAiOnRydWUsInF1YWxpdHkiOjc1LCJsb3NzbGVzcyI6ZmFsc2UsImFscGhhX3EiOjg1LCJyZWR1Y3Rpb25fZWZmb3J0Ijo2LCJzbWFydF9zdWJzYW1wbGUiOnRydWV9fSwicHVyIjoidmFyaWF0aW9uIn19--2b009e396acd0e776164e306573bf33f6cea5543/thinking-cat.jpg
+                small_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--64a7a628149a01f18aa41dc05f03e1755c9f27e6/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOlsyNTYsMjU2XSwic2F2ZXIiOnsic3RyaXAiOnRydWUsInF1YWxpdHkiOjc1LCJsb3NzbGVzcyI6ZmFsc2UsImFscGhhX3EiOjg1LCJyZWR1Y3Rpb25fZWZmb3J0Ijo2LCJzbWFydF9zdWJzYW1wbGUiOnRydWV9fSwicHVyIjoidmFyaWF0aW9uIn19--c6c62312f1f7d4203b2855cf2b4ad78c3a1a68b9/thinking-cat.jpg
+                medium_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--64a7a628149a01f18aa41dc05f03e1755c9f27e6/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOls0MDAsNDAwXSwic2F2ZXIiOnsic3RyaXAiOnRydWUsInF1YWxpdHkiOjc1LCJsb3NzbGVzcyI6ZmFsc2UsImFscGhhX3EiOjg1LCJyZWR1Y3Rpb25fZWZmb3J0Ijo2LCJzbWFydF9zdWJzYW1wbGUiOnRydWV9fSwicHVyIjoidmFyaWF0aW9uIn19--8dc32d60cdc49f3b2b4232b2463f6a1706bc6880/thinking-cat.jpg
+                large_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--64a7a628149a01f18aa41dc05f03e1755c9f27e6/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOls3MjAsNzIwXSwic2F2ZXIiOnsic3RyaXAiOnRydWUsInF1YWxpdHkiOjc1LCJsb3NzbGVzcyI6ZmFsc2UsImFscGhhX3EiOjg1LCJyZWR1Y3Rpb25fZWZmb3J0Ijo2LCJzbWFydF9zdWJzYW1wbGUiOnRydWV9fSwicHVyIjoidmFyaWF0aW9uIn19--0ba2f2259194663198ec9f3804b5dce4d59172f6/thinking-cat.jpg
+                xlarge_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--64a7a628149a01f18aa41dc05f03e1755c9f27e6/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOlsyMDAwLDIwMDBdLCJzYXZlciI6eyJzdHJpcCI6dHJ1ZSwicXVhbGl0eSI6NzUsImxvc3NsZXNzIjpmYWxzZSwiYWxwaGFfcSI6ODUsInJlZHVjdGlvbl9lZmZvcnQiOjYsInNtYXJ0X3N1YnNhbXBsZSI6dHJ1ZX19LCJwdXIiOiJ2YXJpYXRpb24ifX0=--f84d50d82eae845105c742768d5b02b0bf8c56c0/thinking-cat.jpg
+                og_image_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--64a7a628149a01f18aa41dc05f03e1755c9f27e6/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOlsxMjAwLDYzMF0sInNhdmVyIjp7InN0cmlwIjp0cnVlLCJxdWFsaXR5Ijo3NSwibG9zc2xlc3MiOmZhbHNlLCJhbHBoYV9xIjo4NSwicmVkdWN0aW9uX2VmZm9ydCI6Niwic21hcnRfc3Vic2FtcGxlIjp0cnVlfX0sInB1ciI6InZhcmlhdGlvbiJ9fQ==--8e3bde4dd2e614930e516efc2b37f6ee64d6bb3d/thinking-cat.jpg
                 external_references: {}
                 created_at: '2026-01-15T12:00:00.000Z'
                 updated_at: '2026-01-15T12:00:00.000Z'
@@ -32582,10 +32797,10 @@ paths:
                 filename: thinking-cat.jpg
                 content_type: image/jpeg
                 byte_size: 18090
-                embed_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--4bf69395f12588416a3329a388edc25b0517ad14/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2xpbWl0IjpbMTIwMCwxMjAwXSwic2F2ZXIiOnsic3RyaXAiOnRydWUsInF1YWxpdHkiOjc1LCJsb3NzbGVzcyI6ZmFsc2UsImFscGhhX3EiOjg1LCJyZWR1Y3Rpb25fZWZmb3J0Ijo2LCJzbWFydF9zdWJzYW1wbGUiOnRydWV9fSwicHVyIjoidmFyaWF0aW9uIn19--1e946984c2c4f134af76a2cf2d6a2c22ef0acbeb/thinking-cat.jpg
-                signed_id: eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--4bf69395f12588416a3329a388edc25b0517ad14
+                embed_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--64a7a628149a01f18aa41dc05f03e1755c9f27e6/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2xpbWl0IjpbMTIwMCwxMjAwXSwic2F2ZXIiOnsic3RyaXAiOnRydWUsInF1YWxpdHkiOjc1LCJsb3NzbGVzcyI6ZmFsc2UsImFscGhhX3EiOjg1LCJyZWR1Y3Rpb25fZWZmb3J0Ijo2LCJzbWFydF9zdWJzYW1wbGUiOnRydWV9fSwicHVyIjoidmFyaWF0aW9uIn19--29dfe4018dda1dfb7e5a98e25feab76f1cf2c016/thinking-cat.jpg
+                signed_id: eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--64a7a628149a01f18aa41dc05f03e1755c9f27e6
                 viewable_id: prod_gbHJdmfrXB
-                download_url: http://localhost:3000/rails/active_storage/blobs/redirect/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--4bf69395f12588416a3329a388edc25b0517ad14/thinking-cat.jpg?disposition=attachment
+                download_url: http://localhost:3000/rails/active_storage/blobs/redirect/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--64a7a628149a01f18aa41dc05f03e1755c9f27e6/thinking-cat.jpg?disposition=attachment
                 metadata: {}
                 viewable_type: product
               schema:
@@ -38506,6 +38721,41 @@ components:
       - children_count
       - members_count
       x-typelizer: true
+    ConsentRecord:
+      type: object
+      properties:
+        id:
+          type: string
+        purpose:
+          type: string
+        source:
+          type: string
+        accepted:
+          type: boolean
+        email:
+          type: string
+          nullable: true
+        ip_address:
+          type: string
+          nullable: true
+        created_at:
+          type: string
+        recorded_at:
+          type: string
+          nullable: true
+        documents:
+          type: object
+      required:
+      - id
+      - purpose
+      - source
+      - accepted
+      - email
+      - ip_address
+      - created_at
+      - recorded_at
+      - documents
+      x-typelizer: true
     Country:
       type: object
       properties:
@@ -38747,6 +38997,9 @@ components:
           nullable: true
         accepts_email_marketing:
           type: boolean
+        email_marketing_consent_updated_at:
+          type: string
+          nullable: true
         full_name:
           type: string
         available_store_credit_total:
@@ -38777,10 +39030,18 @@ components:
           type: number
         metadata:
           type: object
+        email_marketing_consent_source:
+          type: string
+          nullable: true
         created_at:
           type: string
         updated_at:
           type: string
+        anonymized_at:
+          type: string
+          nullable: true
+        anonymized:
+          type: boolean
         tags:
           type: array
           items:
@@ -38829,13 +39090,17 @@ components:
       - last_name
       - phone
       - accepts_email_marketing
+      - email_marketing_consent_updated_at
       - full_name
       - available_store_credit_total
       - display_available_store_credit_total
       - failed_attempts
       - metadata
+      - email_marketing_consent_source
       - created_at
       - updated_at
+      - anonymized_at
+      - anonymized
       - tags
       - internal_note
       - internal_note_html
@@ -38846,6 +39111,58 @@ components:
       - display_total_spent
       - last_order_completed_at
       - customer_group_ids
+      x-typelizer: true
+    DataRequest:
+      type: object
+      properties:
+        id:
+          type: string
+        number:
+          type: string
+        kind:
+          type: string
+        status:
+          type: string
+        requested_at:
+          type: string
+          nullable: true
+        completed_at:
+          type: string
+          nullable: true
+        expires_at:
+          type: string
+          nullable: true
+        email:
+          type: string
+        error_message:
+          type: string
+          nullable: true
+        created_at:
+          type: string
+        updated_at:
+          type: string
+        customer_id:
+          type: string
+          nullable: true
+        requested_by_id:
+          type: string
+          nullable: true
+        customer:
+          "$ref": "#/components/schemas/Customer"
+      required:
+      - id
+      - number
+      - kind
+      - status
+      - requested_at
+      - completed_at
+      - expires_at
+      - email
+      - error_message
+      - created_at
+      - updated_at
+      - customer_id
+      - requested_by_id
       x-typelizer: true
     DeliveryMethodRule:
       type: object
@@ -40813,6 +41130,11 @@ components:
         market_id:
           type: string
           nullable: true
+        withdrawal_period_ends_at:
+          type: string
+          nullable: true
+        within_withdrawal_period:
+          type: boolean
         cart_id:
           type: string
           nullable: true
@@ -41057,6 +41379,8 @@ components:
       required:
       - id
       - market_id
+      - withdrawal_period_ends_at
+      - within_withdrawal_period
       - cart_id
       - channel_id
       - company_id
