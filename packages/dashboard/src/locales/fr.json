@@ -3064,22 +3064,47 @@
         "columns": {
           "price": "Prix",
           "product": "Produit",
-          "sold": "Vendu"
-        },
-        "metric_short": {
-          "avg_order_value": "Panier moy.",
-          "orders": "Commandes",
-          "sales": "Ventes"
-        },
-        "metrics": {
-          "avg_order_value": "Panier moyen",
-          "orders": "Commandes totales",
-          "sales": "Ventes totales"
+          "sold": "Vendu",
+          "trend": "Tendance"
         },
         "subtitle": "Aperçu des performances de votre boutique",
         "title": "Tableau de bord",
         "top_products": "Meilleurs produits",
-        "top_products_description": "Produits les plus vendus de votre boutique."
+        "top_products_description": "Produits les plus vendus de votre boutique.",
+        "legend": {
+          "current": "Période actuelle",
+          "previous": "Période précédente"
+        },
+        "growth": {
+          "new": "Nouveau",
+          "vs_previous": "vs période précédente"
+        },
+        "operations": {
+          "title": "Opérations",
+          "subtitle": "Ce qui demande votre attention en ce moment.",
+          "orders_to_fulfill": "Commandes à expédier",
+          "payments_to_collect": "Paiements à encaisser",
+          "open_returns": "Retours ouverts",
+          "low_stock_items": "Variantes en stock faible",
+          "out_of_stock_items": "Variantes en rupture de stock"
+        },
+        "rankings": {
+          "title": "Classements",
+          "subtitle": "Meilleures performances sur la période sélectionnée.",
+          "tabs": {
+            "customers": "Clients",
+            "categories": "Catégories"
+          },
+          "orders_count_one": "{{count}} commande",
+          "orders_count_other": "{{count}} commandes",
+          "units_count_one": "{{count}} unité",
+          "units_count_other": "{{count}} unités",
+          "empty": "Pas encore de données pour cette période."
+        },
+        "unavailable": {
+          "title": "Les rapports ne sont pas disponibles pour votre rôle",
+          "description": "Demandez à un administrateur la permission « Rapports » (avec accès aux commandes) pour voir les chiffres de vente ici."
+        }
       },
       "orders": {
         "detail": {
@@ -5114,6 +5139,80 @@
       "saved": "Traductions enregistrées",
       "source": "Source",
       "title": "Traductions"
+    },
+    "reports": {
+      "title": "Rapports",
+      "subtitle": "Rapports enregistrés sur vos ventes, produits et clients.",
+      "new_cta": "Nouveau rapport",
+      "new_title": "Nouveau rapport",
+      "copy_name": "Copie de {{name}}",
+      "table": {
+        "search_placeholder": "Rechercher des rapports…",
+        "empty": "Aucun rapport pour l'instant. Créez-en un pour commencer.",
+        "columns": {
+          "name": "Nom",
+          "kind": "Type",
+          "author": "Créé par"
+        }
+      },
+      "kind": {
+        "built_in": "Intégré",
+        "custom": "Personnalisé"
+      },
+      "builder": {
+        "metrics": "Indicateurs",
+        "no_metrics": "Choisissez au moins un indicateur.",
+        "group_by": "Regrouper par",
+        "none": "Aucun (totaux uniquement)",
+        "grain": "Intervalle",
+        "time_range": "Période",
+        "custom_range": "Période personnalisée",
+        "compare": "Comparer à la période précédente",
+        "filters": "Filtres",
+        "add_filter": "Ajouter un filtre",
+        "remove_filter": "Retirer le filtre",
+        "sort": "Trier par",
+        "direction": "Ordre",
+        "sort_desc": "Plus élevé d'abord",
+        "sort_asc": "Plus bas d'abord",
+        "limit": "Lignes",
+        "ids_placeholder": "Identifiants séparés par des virgules",
+        "title": "Paramètres du rapport"
+      },
+      "grains": {
+        "day": "Quotidien",
+        "week": "Hebdomadaire",
+        "month": "Mensuel"
+      },
+      "view": {
+        "empty": "Aucune donnée pour cette période.",
+        "total": "Total",
+        "change": "Évolution",
+        "error": "Impossible de charger ce rapport"
+      },
+      "actions": {
+        "save": "Enregistrer",
+        "save_copy": "Enregistrer une copie",
+        "export_csv": "Exporter en CSV",
+        "rename": "Renommer"
+      },
+      "save_dialog": {
+        "title_create": "Enregistrer le rapport",
+        "title_copy": "Enregistrer une copie",
+        "title_rename": "Renommer le rapport",
+        "name_label": "Nom",
+        "description_label": "Description"
+      },
+      "seeded_hint": "Les rapports intégrés ne peuvent pas être modifiés. Ajustez les paramètres et enregistrez une copie pour conserver votre version.",
+      "delete_confirm": "Supprimer le rapport « {{name}} » ? Cette action est irréversible.",
+      "messages": {
+        "created": "Rapport enregistré",
+        "create_failed": "Impossible d'enregistrer le rapport",
+        "updated": "Rapport mis à jour",
+        "update_failed": "Impossible de mettre à jour le rapport",
+        "deleted": "Rapport supprimé",
+        "delete_failed": "Impossible de supprimer le rapport"
+      }
     }
   }
 }

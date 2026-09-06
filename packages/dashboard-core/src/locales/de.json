@@ -192,7 +192,8 @@
         "selected": "{{count}} ausgewählt"
       },
       "channel_select": {
-        "placeholder": "Verkaufskanal auswählen"
+        "placeholder": "Verkaufskanal auswählen",
+        "all_channels": "Alle Kanäle"
       },
       "command_palette": {
         "create": {
@@ -1320,6 +1321,7 @@
         "empty": "darf nicht leer sein",
         "equal_to": "muss genau {{count}} sein",
         "exclusion": "ist reserviert",
+        "forbidden_reporting_member": "Dieser Bericht verweist auf Daten, die Sie nicht lesen dürfen.",
         "greater_than": "muss größer als {{count}} sein",
         "greater_than_or_equal_to": "muss größer oder gleich {{count}} sein",
         "inclusion": "ist nicht in der Liste enthalten",
@@ -1333,6 +1335,7 @@
         "present": "muss leer sein",
         "product_not_in_store": "müssen alle zu diesem Shop gehören",
         "required": "muss vorhanden sein",
+        "seeded_report_read_only": "Dies ist ein integrierter Bericht und kann nicht geändert werden. Speichern Sie stattdessen eine Kopie.",
         "taken": "ist bereits vergeben",
         "too_long": "ist zu lang (maximal {{count}} Zeichen)",
         "too_short": "ist zu kurz (mindestens {{count}} Zeichen)",

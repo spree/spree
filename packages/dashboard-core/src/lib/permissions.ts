@@ -13,6 +13,8 @@ export const Subject = {
   Media: 'Spree::Media',
   Variant: 'Spree::Variant',
   Order: 'Spree::Order',
+  SavedReport: 'Spree::SavedReport',
+  ReportExport: 'Spree::Exports::Report',
   Customer: 'Spree::User',
   CustomerGroup: 'Spree::CustomerGroup',
   AdminUser: 'Spree::AdminUser',

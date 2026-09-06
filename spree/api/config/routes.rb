@@ -245,9 +245,16 @@ Spree::Core::Engine.add_routes do
         post 'auth/password_resets', to: 'password_resets#create'
         patch 'auth/password_resets/:id', to: 'password_resets#update'
 
-        # Dashboard
+        # Semantic reporting (docs/plans/6.0-analytics-semantic-layer.md)
+        namespace :reporting do
+          post :query
+          get :schema
+          resources :saved_reports, only: %i[index show create update destroy]
+        end
+
+        # Dashboard (point-in-time operational counts)
         namespace :dashboard do
-          get :analytics
+          get :operations
         end
 
         # Current admin user + permissions (for UI permission checks)

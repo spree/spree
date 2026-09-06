@@ -193,7 +193,8 @@
         "selected": "Wybrano: {{count}}"
       },
       "channel_select": {
-        "placeholder": "Wybierz kanał sprzedaży"
+        "placeholder": "Wybierz kanał sprzedaży",
+        "all_channels": "Wszystkie kanały"
       },
       "command_palette": {
         "create": {
@@ -1337,6 +1338,7 @@
         "empty": "nie może być puste",
         "equal_to": "musi być równe {{count}}",
         "exclusion": "jest zarezerwowane",
+        "forbidden_reporting_member": "Ten raport odwołuje się do danych, których nie możesz odczytać.",
         "greater_than": "musi być większe niż {{count}}",
         "greater_than_or_equal_to": "musi być większe lub równe {{count}}",
         "inclusion": "nie znajduje się na liście",
@@ -1350,6 +1352,7 @@
         "present": "musi być puste",
         "product_not_in_store": "wszystkie muszą należeć do tego sklepu",
         "required": "musi istnieć",
+        "seeded_report_read_only": "To raport wbudowany i nie można go zmienić. Zapisz zamiast tego kopię.",
         "taken": "jest już zajęte",
         "too_long": "jest za długie (maksymalnie {{count}} znaków)",
         "too_short": "jest za krótkie (minimalnie {{count}} znaków)",

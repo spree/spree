@@ -605,6 +605,7 @@ en:
   errors:
     messages:
       already_confirmed: was already confirmed
+      forbidden_reporting_member: references data you are not allowed to read
       invalid_document_number_affix: 'can only contain uppercase letters, digits, dashes and #'
       invalid_system_key: can only contain lowercase letters, digits and underscores
       locked_after_first_number: cannot change once numbering has started
@@ -615,6 +616,7 @@ en:
         one: '1 error prohibited this %{resource} from being saved:'
         other: "%{count} errors prohibited this %{resource} from being saved:"
       refund_amount_requires_shared_payment: can only be set when the payment is shared across a split checkout
+      seeded_report_read_only: is a built-in report and cannot be changed — save a copy instead
   number:
     currency:
       format:
@@ -1590,6 +1592,143 @@ en:
     report_names:
       products_performance: Products performance
       sales_total: Sales total
+    reporting:
+      dimensions:
+        category:
+          description: The category the sold product belongs to.
+          label: Category
+        channel:
+          description: The channel the order came through.
+          label: Sales channel
+        completed_at:
+          description: When the order was placed, bucketed by day, week or month in the store timezone.
+          label: Date
+        country:
+          description: Country of the shipping address (ISO code).
+          label: Shipping country
+        customer:
+          description: The customer who placed the order, by email.
+          label: Customer
+        fulfillment_status:
+          description: Fulfillment state of the order.
+          label: Fulfillment status
+        market:
+          description: The market the order was placed in.
+          label: Market
+        payment_status:
+          description: Payment state of the order.
+          label: Payment status
+        product:
+          description: The product sold.
+          label: Product
+        variant:
+          description: The product variant (SKU) sold.
+          label: Variant
+      export:
+        total: Total
+      metrics:
+        aov:
+          description: Total sales divided by the number of orders.
+          label: Average order value
+        customers_count:
+          description: Distinct customer emails that placed orders.
+          label: Customers
+        delivery_total:
+          description: Sum of delivery charges.
+          label: Delivery
+        discounts_total:
+          description: Sum of order discounts.
+          label: Discounts
+        gross_revenue:
+          description: Sum of order totals (items, delivery and tax, after discounts).
+          label: Total sales
+        net_revenue:
+          description: Line item revenue after discounts and net of included taxes.
+          label: Net revenue
+        orders_count:
+          description: Number of placed orders.
+          label: Orders
+        tax_total:
+          description: Sum of additional and included taxes.
+          label: Tax
+        units_sold:
+          description: Sum of line item quantities.
+          label: Units sold
+      presets:
+        last_12_months:
+          label: Last 12 months
+        last_30_days:
+          label: Last 30 days
+        last_4_weeks:
+          label: Last 4 weeks
+        last_7_days:
+          label: Last 7 days
+        last_90_days:
+          label: Last 90 days
+        last_month:
+          label: Last month
+        last_quarter:
+          label: Last quarter
+        last_week:
+          label: Last week
+        month_to_date:
+          label: Month to date
+        quarter_to_date:
+          label: Quarter to date
+        today:
+          label: Today
+        week_to_date:
+          label: Week to date
+        year_to_date:
+          label: Year to date
+        yesterday:
+          label: Yesterday
+      seeds:
+        orders_by_fulfillment_status:
+          description: Order counts and sales grouped by fulfillment status over the last four weeks.
+          name: Orders by fulfillment status
+        orders_by_payment_status:
+          description: Order counts and sales grouped by payment status over the last four weeks.
+          name: Orders by payment status
+        sales_by_channel:
+          description: Sales and orders per sales channel over the last four weeks.
+          name: Sales by channel
+        sales_by_country:
+          description: Sales and orders by shipping country over the last four weeks.
+          name: Sales by country
+        sales_by_market:
+          description: Sales and orders per market over the last four weeks.
+          name: Sales by market
+        sales_over_time:
+          description: Daily sales, orders and average order value for the last four weeks, compared with the previous period.
+          name: Sales over time
+        top_categories:
+          description: Best-selling categories by net revenue over the last four weeks.
+          name: Top categories
+        top_customers:
+          description: Customers ranked by spend over the last four weeks.
+          name: Top customers
+        top_products:
+          description: Best-selling products by net revenue over the last four weeks.
+          name: Top products
+      unassigned: Unassigned
+      values:
+        fulfillment_status:
+          backorder: Backordered
+          canceled: Canceled
+          delivered: Delivered
+          fulfilled: Fulfilled
+          partial: Partially fulfilled
+          unfulfilled: Unfulfilled
+        payment_status:
+          authorized: Authorized
+          none: Unpaid
+          overcharged: Overcharged
+          paid: Paid
+          partially_paid: Partially paid
+          partially_refunded: Partially refunded
+          refunded: Refunded
+          voided: Voided
     reports: Reports
     required: "*"
     required_fields: required fields

@@ -3056,22 +3056,45 @@
         "columns": {
           "price": "价格",
           "product": "商品",
-          "sold": "已售"
-        },
-        "metric_short": {
-          "avg_order_value": "客单价",
-          "orders": "订单数",
-          "sales": "销售额"
-        },
-        "metrics": {
-          "avg_order_value": "平均订单金额",
-          "orders": "总订单数",
-          "sales": "总销售额"
+          "sold": "已售",
+          "trend": "趋势"
         },
         "subtitle": "您的店铺业绩概览",
         "title": "仪表盘",
         "top_products": "热销商品",
-        "top_products_description": "您店铺中最畅销的商品。"
+        "top_products_description": "您店铺中最畅销的商品。",
+        "legend": {
+          "current": "本期",
+          "previous": "上一期"
+        },
+        "growth": {
+          "new": "新增",
+          "vs_previous": "对比上一期"
+        },
+        "operations": {
+          "title": "运营事项",
+          "subtitle": "当前需要您处理的事项。",
+          "orders_to_fulfill": "待发货订单",
+          "payments_to_collect": "待收款订单",
+          "open_returns": "未处理退货",
+          "low_stock_items": "低库存款式",
+          "out_of_stock_items": "缺货款式"
+        },
+        "rankings": {
+          "title": "排行榜",
+          "subtitle": "所选时间段内表现最佳。",
+          "tabs": {
+            "customers": "客户",
+            "categories": "类目"
+          },
+          "orders_count_other": "{{count}} 笔订单",
+          "units_count_other": "{{count}} 件",
+          "empty": "该时间段暂无数据。"
+        },
+        "unavailable": {
+          "title": "您的角色无法查看报表",
+          "description": "请管理员授予“报表”权限（并可访问订单），以在此查看销售数据。"
+        }
       },
       "orders": {
         "detail": {
@@ -5105,6 +5128,80 @@
       "saved": "翻译已保存",
       "source": "源",
       "title": "翻译"
+    },
+    "reports": {
+      "title": "报表",
+      "subtitle": "关于销售、商品和客户的已保存报表。",
+      "new_cta": "新建报表",
+      "new_title": "新建报表",
+      "copy_name": "{{name}} 的副本",
+      "table": {
+        "search_placeholder": "搜索报表…",
+        "empty": "暂无报表。创建一个开始使用。",
+        "columns": {
+          "name": "名称",
+          "kind": "类型",
+          "author": "创建者"
+        }
+      },
+      "kind": {
+        "built_in": "内置",
+        "custom": "自定义"
+      },
+      "builder": {
+        "metrics": "指标",
+        "no_metrics": "请至少选择一个指标。",
+        "group_by": "分组依据",
+        "none": "无（仅汇总）",
+        "grain": "时间粒度",
+        "time_range": "时间范围",
+        "custom_range": "自定义范围",
+        "compare": "与上一周期比较",
+        "filters": "筛选条件",
+        "add_filter": "添加筛选",
+        "remove_filter": "移除筛选",
+        "sort": "排序依据",
+        "direction": "顺序",
+        "sort_desc": "从高到低",
+        "sort_asc": "从低到高",
+        "limit": "行数",
+        "ids_placeholder": "以逗号分隔的 ID",
+        "title": "报表设置"
+      },
+      "grains": {
+        "day": "按天",
+        "week": "按周",
+        "month": "按月"
+      },
+      "view": {
+        "empty": "该时间段内暂无数据。",
+        "total": "合计",
+        "change": "变化",
+        "error": "无法加载此报表"
+      },
+      "actions": {
+        "save": "保存",
+        "save_copy": "保存副本",
+        "export_csv": "导出 CSV",
+        "rename": "重命名"
+      },
+      "save_dialog": {
+        "title_create": "保存报表",
+        "title_copy": "保存副本",
+        "title_rename": "重命名报表",
+        "name_label": "名称",
+        "description_label": "描述"
+      },
+      "seeded_hint": "内置报表无法修改。调整设置并保存副本以保留您的版本。",
+      "delete_confirm": "删除报表“{{name}}”？此操作无法撤销。",
+      "messages": {
+        "created": "报表已保存",
+        "create_failed": "无法保存报表",
+        "updated": "报表已更新",
+        "update_failed": "无法更新报表",
+        "deleted": "报表已删除",
+        "delete_failed": "无法删除报表"
+      }
     }
   }
 }

@@ -250,6 +250,7 @@ module Spree
         admin_role_serializer: 'Spree::Api::V3::Admin::RoleSerializer',
         admin_permission_serializer: 'Spree::Api::V3::Admin::PermissionSerializer',
         admin_export_serializer: 'Spree::Api::V3::Admin::ExportSerializer',
+        admin_saved_report_serializer: 'Spree::Api::V3::Admin::SavedReportSerializer',
         admin_import_serializer: 'Spree::Api::V3::Admin::ImportSerializer',
         admin_import_row_serializer: 'Spree::Api::V3::Admin::ImportRowSerializer',
         admin_import_mapping_serializer: 'Spree::Api::V3::Admin::ImportMappingSerializer',

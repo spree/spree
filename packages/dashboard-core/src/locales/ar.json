@@ -192,7 +192,8 @@
         "selected": "تم تحديد {{count}}"
       },
       "channel_select": {
-        "placeholder": "اختر قناة مبيعات"
+        "placeholder": "اختر قناة مبيعات",
+        "all_channels": "جميع القنوات"
       },
       "command_palette": {
         "create": {
@@ -1320,6 +1321,7 @@
         "empty": "لا يمكن أن يكون فارغًا",
         "equal_to": "يجب أن يساوي {{count}}",
         "exclusion": "محجوز",
+        "forbidden_reporting_member": "يشير هذا التقرير إلى بيانات غير مسموح لك بقراءتها.",
         "greater_than": "يجب أن يكون أكبر من {{count}}",
         "greater_than_or_equal_to": "يجب أن يكون أكبر من أو يساوي {{count}}",
         "inclusion": "غير مدرج في القائمة",
@@ -1333,6 +1335,7 @@
         "present": "يجب أن يكون فارغًا",
         "product_not_in_store": "يجب أن تنتمي جميعها إلى هذا المتجر",
         "required": "يجب أن يكون موجودًا",
+        "seeded_report_read_only": "هذا تقرير مدمج ولا يمكن تغييره. احفظ نسخة بدلاً من ذلك.",
         "taken": "مستخدم بالفعل",
         "too_long": "طويل جدًا (الحد الأقصى {{count}} حرفًا)",
         "too_short": "قصير جدًا (الحد الأدنى {{count}} حرفًا)",

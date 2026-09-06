@@ -192,7 +192,8 @@
         "selected": "{{count}} selected"
       },
       "channel_select": {
-        "placeholder": "Select a sales channel"
+        "placeholder": "Select a sales channel",
+        "all_channels": "All channels"
       },
       "command_palette": {
         "create": {
@@ -1322,6 +1323,7 @@
         "empty": "can't be empty",
         "equal_to": "must be equal to {{count}}",
         "exclusion": "is reserved",
+        "forbidden_reporting_member": "This report references data you are not allowed to read.",
         "greater_than": "must be greater than {{count}}",
         "greater_than_or_equal_to": "must be greater than or equal to {{count}}",
         "inclusion": "is not included in the list",
@@ -1335,6 +1337,7 @@
         "present": "must be blank",
         "product_not_in_store": "must all belong to this store",
         "required": "must exist",
+        "seeded_report_read_only": "This is a built-in report and cannot be changed. Save a copy instead.",
         "taken": "has already been taken",
         "too_long": "is too long (maximum is {{count}} characters)",
         "too_short": "is too short (minimum is {{count}} characters)",

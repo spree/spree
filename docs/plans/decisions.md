@@ -6,6 +6,24 @@
 
 **Consequences:** No behaviour change; the fix is that the code and the dashboard now say so. The class comment is corrected (it was the only place claiming the two audiences combine), the `for_context` and pricing-resolver comments read "or failing that" rather than "then", and the fallback carries an inline note. The dashboard states the precedence where a merchant can act on it: help text under the audience picker when a customer group is chosen, and a standing note on the audience card and wizard step whenever a group assignment is present, pointing at the company route for tier pricing. The developer docs stop framing the three ways of reaching a buyer as combining and carry the tier recipe as a warning. Three examples in `catalog_spec.rb` lock the ruling — the group dropping out once a company catalog exists, the group still applying when none does, and the subtree union when the tier is a company assignment. What is *not* solved: nothing detects a catalog assigned only to groups whose members are all company buyers, so such a catalog is still silently unreachable; a reachability warning needs the buyer population and is a separate piece of work.
 
+## 2026-09-03: Reporting counts what stayed sold; the Total row is the dimensionless figure
+
+**Context:** Reviewing the shipped saved-reports work (`6.0-analytics-semantic-layer.md` Steps 7–9) surfaced two semantic gaps in the live adapter: canceled orders kept counting toward revenue because only `completed_at` scoped the base, and the ungrouped totals carried the grouping joins, so a product in three categories tripled in the footer while orders without a shipping address vanished from "Sales by country".
+
+**Decision:** Both metric bases exclude `status: 'canceled'`. Grouping joins apply only to the grouped query; totals run on the base rows with the same filters, and a filter on a joined dimension narrows through an id subquery so a line item matching two selected categories is counted once. Built-in (seeded) reports are read-only on the model; report CSV exports validate the query and the requester's members at create time. One predicate each for member authorization (`Query#unreadable_subjects`) and base compatibility (`Registry#compatible?`).
+
+**Consequences:** The rows of a fan-out breakdown do not sum to the Total row, by design — the footer is the store figure for the range, the rows are the share each group had in it. Future adapters (fact tables, ClickHouse) inherit the same rule. Refund semantics are unchanged (already net in `payment_total`).
+
+## 2026-09-03: Saved reports are store-wide and export through the Export pipeline
+
+Steps 7–9 of `6.0-analytics-semantic-layer.md` settled three product questions:
+saved reports are visible store-wide (author recorded, viewer re-authorized at
+execution), CSV export is a `Spree::Exports::Report` type on the existing
+async Export pipeline rather than a synchronous download (one export UX across
+the admin), and the full Step 8 vocabulary (presets, week grain, market /
+country / variant dimensions, discounts / delivery / tax metrics) ships with the
+Reports page. The `:reports` permission catalog resource gains write keys and
+covers `Spree::SavedReport` + `Spree::Exports::Report`.
 ## 2026-09-03: A return label buys the cheapest rate; the fulfillment's tracking becomes a read-through summary
 
 **Context:** Implementing `6.0-shipping-labels-and-deliveries.md` raised two
@@ -2499,6 +2517,28 @@ payment providers, OSS platform B per-channel payment apps, the hosted leader's 
    "already installed" filter relaxed) vs per-channel credential mapping on
    one record (OSS platform B style) — plus the legal-entity attribution question
    (per-entity payouts, compliance, reporting). No plan yet; do not implement.
+
+## 2026-07-22: Analytics semantic layer ships live-OLTP-first; fact tables are a later adapter
+
+`6.0-analytics-semantic-layer.md` deliberately inverts the "fact tables as the
+default substrate" instinct: Phase 1 ships the metric/dimension registry, the
+query contract, and a live-OLTP adapter compiling through store associations —
+zero new infra, correct on SQLite dev installs, proven viable at typical scale
+by the 5.6 Pulse dashboard queries. Because every consumer speaks the contract,
+storage swaps (incremental fact tables in 6.1, ClickHouse for Enterprise)
+without touching consumers. This gets the developer extension point — the
+actual replacement for `Spree::Report` authoring — out a release earlier and
+keeps the hard restatement problems (refunds restating the original day, order
+edits, timezone-of-record) off Phase 1's critical path.
+
+Also decided: forced scopes (store, one-currency-per-money-query, vendor) are
+compiler-enforced below every consumer including the future AI layer; unknown
+query members 422 rather than being silently dropped (the Ransack
+silently-dropped-predicate bug from 2026-07-22 is the cautionary tale); and
+`ankane/rollup` / `ankane/blazer` are design references, not dependencies
+(float-only values + PG-only dimensions, and a raw-SQL trust model with no
+store scoping, respectively). Until Phase 1 lands: no new hand-rolled
+aggregate endpoints anywhere in `spree/api`.
 
 ## 2026-07-21: Order routing rules get admin management in the React dashboard only
 

@@ -3064,22 +3064,47 @@
         "columns": {
           "price": "Price",
           "product": "Product",
-          "sold": "Sold"
-        },
-        "metric_short": {
-          "avg_order_value": "AOV",
-          "orders": "Orders",
-          "sales": "Sales"
-        },
-        "metrics": {
-          "avg_order_value": "Avg Order Value",
-          "orders": "Total Orders",
-          "sales": "Total Sales"
+          "sold": "Sold",
+          "trend": "Trend"
         },
         "subtitle": "Overview of your store performance",
         "title": "Dashboard",
         "top_products": "Top Products",
-        "top_products_description": "Best-selling products in your store."
+        "top_products_description": "Best-selling products in your store.",
+        "legend": {
+          "current": "This period",
+          "previous": "Previous period"
+        },
+        "growth": {
+          "new": "New",
+          "vs_previous": "vs previous period"
+        },
+        "operations": {
+          "title": "Operations",
+          "subtitle": "What needs your attention right now.",
+          "orders_to_fulfill": "Orders to fulfill",
+          "payments_to_collect": "Payments to collect",
+          "open_returns": "Open returns",
+          "low_stock_items": "Low stock variants",
+          "out_of_stock_items": "Out of stock variants"
+        },
+        "rankings": {
+          "title": "Rankings",
+          "subtitle": "Top performers in the selected period.",
+          "tabs": {
+            "customers": "Customers",
+            "categories": "Categories"
+          },
+          "orders_count_one": "{{count}} order",
+          "orders_count_other": "{{count}} orders",
+          "units_count_one": "{{count}} unit",
+          "units_count_other": "{{count}} units",
+          "empty": "No data for this period yet."
+        },
+        "unavailable": {
+          "title": "Reports are unavailable for your role",
+          "description": "Ask an administrator for the “Reports” permission (with access to orders) to see sales figures here."
+        }
       },
       "orders": {
         "detail": {
@@ -5114,6 +5139,80 @@
       "saved": "Translations saved",
       "source": "Source",
       "title": "Translations"
+    },
+    "reports": {
+      "title": "Reports",
+      "subtitle": "Saved reports over your sales, products and customers.",
+      "new_cta": "New report",
+      "new_title": "New report",
+      "copy_name": "Copy of {{name}}",
+      "table": {
+        "search_placeholder": "Search reports…",
+        "empty": "No reports yet. Create one to get started.",
+        "columns": {
+          "name": "Name",
+          "kind": "Type",
+          "author": "Created by"
+        }
+      },
+      "kind": {
+        "built_in": "Built-in",
+        "custom": "Custom"
+      },
+      "builder": {
+        "metrics": "Metrics",
+        "no_metrics": "Pick at least one metric.",
+        "group_by": "Group by",
+        "none": "None (totals only)",
+        "grain": "Interval",
+        "time_range": "Time range",
+        "custom_range": "Custom range",
+        "compare": "Compare with previous period",
+        "filters": "Filters",
+        "add_filter": "Add filter",
+        "remove_filter": "Remove filter",
+        "sort": "Sort by",
+        "direction": "Order",
+        "sort_desc": "Highest first",
+        "sort_asc": "Lowest first",
+        "limit": "Rows",
+        "ids_placeholder": "Comma-separated IDs",
+        "title": "Report settings"
+      },
+      "grains": {
+        "day": "Daily",
+        "week": "Weekly",
+        "month": "Monthly"
+      },
+      "view": {
+        "empty": "No data for this period.",
+        "total": "Total",
+        "change": "Change",
+        "error": "Could not load this report"
+      },
+      "actions": {
+        "save": "Save",
+        "save_copy": "Save a copy",
+        "export_csv": "Export CSV",
+        "rename": "Rename"
+      },
+      "save_dialog": {
+        "title_create": "Save report",
+        "title_copy": "Save a copy",
+        "title_rename": "Rename report",
+        "name_label": "Name",
+        "description_label": "Description"
+      },
+      "seeded_hint": "Built-in reports can't be changed. Adjust the settings and save a copy to keep your version.",
+      "delete_confirm": "Delete report \"{{name}}\"? This can't be undone.",
+      "messages": {
+        "created": "Report saved",
+        "create_failed": "Could not save the report",
+        "updated": "Report updated",
+        "update_failed": "Could not update the report",
+        "deleted": "Report deleted",
+        "delete_failed": "Could not delete the report"
+      }
     }
   }
 }
