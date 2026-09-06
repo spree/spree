@@ -7,6 +7,10 @@ import {
   FieldError,
   FieldLabel,
   Input,
+  InputGroup,
+  InputGroupAddon,
+  InputGroupInput,
+  InputGroupText,
   Select,
   SelectContent,
   SelectItem,
@@ -22,6 +26,7 @@ import {
 import { useEffect, useRef } from 'react'
 import { Controller, type UseFormReturn } from 'react-hook-form'
 import { useTranslation } from 'react-i18next'
+import type { PanelPackageType } from '../api-client'
 import { normalizeCustomsDescription, normalizeHsCode } from './normalize-customs'
 import { PURCHASE_UNITS } from './normalize-quantity'
 import {
@@ -30,6 +35,21 @@ import {
   useFormTaxCategories as useTaxCategories,
 } from './use-product-form-data'
 import { variantDisplayLabel } from './variants-matrix'
+
+// A carton's size, as the merchant recorded it. Nil unless all three
+// measurements are there — half a box is not a size, and the unit travels with
+// the numbers because the same three read as inches rather than centimeters
+// describe a box sixteen times the volume.
+function cartonSize(carton: PanelPackageType): string | null {
+  const { length, width, height, dimensions_unit } = carton
+  if (length == null || width == null || height == null) return null
+
+  // Decimals arrive as strings, so `60.0` would read back as a precision the
+  // merchant never typed.
+  const trim = (value: string) => String(Number(value))
+
+  return `${trim(length)} × ${trim(width)} × ${trim(height)} ${dimensions_unit ?? ''}`.trim()
+}
 
 const WEIGHT_UNITS = ['g', 'kg', 'lb', 'oz'] as const
 const DIMENSION_UNITS = ['mm', 'cm', 'in'] as const
@@ -58,6 +78,9 @@ export function VariantEditSheet({ form, variantIndex, open, onOpenChange }: Pro
   const { data: cartonTypesResponse } = useCartonPackageTypes()
   const cartonTypes = cartonTypesResponse?.data ?? []
   const hasCartonTypes = cartonTypes.length > 0
+  // A packed carton is weighed on the same scale as the goods inside it, so
+  // this follows the variant's own unit rather than offering a second one.
+  const cartonWeightUnit = form.watch(`variants.${variantIndex}.weight_unit`) || ''
 
   // Snapshot the variant when the sheet opens so Cancel can restore it.
   // Re-snapshot if the user switches between variant rows without closing
@@ -309,7 +332,17 @@ export function VariantEditSheet({ form, variantIndex, open, onOpenChange }: Pro
                       <SelectContent>
                         {cartonTypes.map((carton) => (
                           <SelectItem key={carton.id} value={carton.id}>
-                            {carton.name}
+                            <span className="flex w-full items-baseline justify-between gap-4">
+                              <span>{carton.name}</span>
+                              {/* Two cartons named alike are told apart by their
+                                  size, and the merchant is about to state what a
+                                  packed one weighs. */}
+                              {cartonSize(carton) && (
+                                <span className="text-xs text-muted-foreground tabular-nums">
+                                  {cartonSize(carton)}
+                                </span>
+                              )}
+                            </span>
                           </SelectItem>
                         ))}
                       </SelectContent>
@@ -332,19 +365,27 @@ export function VariantEditSheet({ form, variantIndex, open, onOpenChange }: Pro
                     name={`variants.${variantIndex}.carton_weight`}
                     control={form.control}
                     render={({ field }) => (
-                      <Input
-                        id={`variant-${variantIndex}-carton-weight`}
-                        type="number"
-                        step="0.01"
-                        min="0"
-                        value={field.value ?? ''}
-                        onChange={(event) => {
-                          const parsed = Number(event.target.value)
-                          field.onChange(
-                            event.target.value === '' || Number.isNaN(parsed) ? null : parsed,
-                          )
-                        }}
-                      />
+                      <InputGroup>
+                        <InputGroupInput
+                          id={`variant-${variantIndex}-carton-weight`}
+                          type="number"
+                          step="0.01"
+                          min="0"
+                          value={field.value ?? ''}
+                          onChange={(event) => {
+                            const parsed = Number(event.target.value)
+                            field.onChange(
+                              event.target.value === '' || Number.isNaN(parsed) ? null : parsed,
+                            )
+                          }}
+                        />
+                        {/* The same scale the variant's own weight is in —
+                            there is one weight unit per variant, so saying
+                            which beats offering a second selector. */}
+                        <InputGroupAddon align="inline-end">
+                          <InputGroupText>{cartonWeightUnit}</InputGroupText>
+                        </InputGroupAddon>
+                      </InputGroup>
                     )}
                   />
                   <FieldDescription>

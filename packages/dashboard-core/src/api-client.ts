@@ -278,6 +278,14 @@ export interface PanelDeliveryProfile extends PanelNamedRecord {
 
 export interface PanelPackageType extends PanelNamedRecord {
   kind?: string
+  /**
+   * Read alongside the name so a picker can tell two cartons apart. Decimals
+   * arrive as strings, as every measurement on the wire does.
+   */
+  length?: string | null
+  width?: string | null
+  height?: string | null
+  dimensions_unit?: string | null
 }
 
 /**
