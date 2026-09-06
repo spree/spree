@@ -13,6 +13,9 @@ RSpec.describe Spree::SavedReport, type: :model do
   it 'refuses a query the registry cannot compile' do
     report = described_class.new(store: store, name: 'Broken', query: { 'metrics' => %w[revenues] })
     expect(report).not_to be_valid
+    expect(report.errors.details[:query]).to include(hash_including(error: :invalid_reporting_query))
+    # The compiler's own sentence is the useful part — it names the members
+    # that would have worked — so it rides along as the message.
     expect(report.errors[:query].first).to include('net_revenue')
 
     report = described_class.new(store: store, name: 'Broken', query: { 'metrics' => %w[gross_revenue], 'dimensions' => %w[category] })
@@ -31,7 +34,7 @@ RSpec.describe Spree::SavedReport, type: :model do
 
     report.name = 'Renamed'
     expect(report).not_to be_valid
-    expect(report.errors[:base]).to be_present
+    expect(report.errors.details[:base]).to include(hash_including(error: :seeded_report_read_only))
 
     expect { report.reload.destroy! }.to change(described_class, :count).by(-1)
   end

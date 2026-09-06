@@ -27,7 +27,7 @@ RSpec.describe Spree::Exports::Report, type: :model do
   it 'refuses search_params that are not an object' do
     export = described_class.new(store: store, user: admin, search_params: '[]')
     expect(export).not_to be_valid
-    expect(export.errors[:search_params]).to be_present
+    expect(export.errors.details[:search_params]).to include(hash_including(error: :invalid_reporting_query))
   end
 
   it 'refuses at create a query that does not compile' do
@@ -43,7 +43,7 @@ RSpec.describe Spree::Exports::Report, type: :model do
                                  search_params: { query: { 'metrics' => %w[net_revenue], 'dimensions' => %w[product] } })
 
     expect(export).not_to be_valid
-    expect(export.errors[:base]).to be_present
+    expect(export.errors.details[:base]).to include(hash_including(error: :forbidden_reporting_member))
   end
 
   it 'gates on the reports scope and anchors on saved reports' do

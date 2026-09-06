@@ -44,7 +44,7 @@ module Spree
 
       reporting_query
     rescue Spree::Reporting::UnknownMember, Spree::Reporting::InvalidQuery => e
-      errors.add(:query, e.message)
+      errors.add(:query, :invalid_reporting_query, message: e.message)
     end
 
     def seeded_reports_are_read_only
