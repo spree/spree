@@ -203,6 +203,55 @@ module Spree
         end
       end
 
+      # The delivery charge is divided between the two halves, so the tax
+      # charged on it has to be divided the same way. Left whole, the half that
+      # kept the original parcel is taxed on delivery it no longer provides and
+      # the sibling ships with none at all.
+      context 'when the delivery was taxed' do
+        let!(:tax_category) { create(:tax_category, store: store, is_default: true) }
+        let!(:tax_rate) do
+          create(:tax_rate, store: store, country_code: cart.tax_country&.iso, amount: 0.2,
+                            included_in_price: false, tax_category: tax_category)
+        end
+
+        let(:cart) do
+          built = cart_for(nil, seller, seller)
+          built.reload.recalculate_totals!
+          built.payments.each { |payment| payment.update!(amount: built.reload.total) }
+          built.reload
+        end
+
+        # The rate has to exist before the cart is costed, and the cart has to
+        # exist before the rate can read its country — so the rate is written
+        # once the cart is built, and the cart re-costed against it.
+        before do
+          tax_rate
+          cart.reload.recalculate_totals!
+          cart.payments.each { |payment| payment.update!(amount: cart.reload.total) }
+        end
+
+        it 'taxes the delivery in the first place' do
+          expect(cart.tax_lines.where.not(fulfillment_id: nil).sum(:amount)).to be > 0
+        end
+
+        it 'divides the delivery tax rather than charging it on both halves' do
+          charged = cart.tax_lines.where.not(fulfillment_id: nil).sum(:amount)
+          delivery_tax = group.orders.sum do |order|
+            order.tax_lines.where.not(fulfillment_id: nil).sum(:amount)
+          end
+
+          expect(delivery_tax).to eq(charged)
+        end
+
+        it 'leaves each parcel’s tax on the order that ships it' do
+          group.orders.each do |order|
+            order.tax_lines.where.not(fulfillment_id: nil).each do |tax_line|
+              expect(order.fulfillments.ids).to include(tax_line.fulfillment_id)
+            end
+          end
+        end
+      end
+
       it 'survives a later amounts refresh without doubling the delivery charge' do
         before_total = group.orders.sum(&:delivery_total)
         group.orders.each { |order| order.fulfillments.each(&:update_amounts) }
@@ -250,6 +299,161 @@ module Spree
         expect(group.total).to eq(paid)
         expect(group.orders.sum(&:discount_total)).to eq(-6)
         expect(group.orders.map { |order| order.discounts.count }).to all(eq(1))
+      end
+
+      # An order-level fee — a payment surcharge, handling — was charged for
+      # the checkout as a whole and hangs off nothing that can be moved, so it
+      # is the one thing here divided rather than re-pointed.
+      context 'with an order-level fee' do
+        let(:cart) { cart_for(nil, seller, other_seller) }
+
+        before do
+          create(:fee, order: nil, cart: cart, amount: 9, kind: 'payment', label: 'Card surcharge')
+          cart.reload.recalculate_totals!
+          cart.payments.each { |payment| payment.update!(amount: cart.reload.total) }
+        end
+
+        it 'shares it out across the children rather than charging it once' do
+          group = described_class.call(cart: cart).value
+
+          expect(group.orders.sum(&:fee_total)).to eq(9)
+        end
+
+        it 'gives every child a share of it' do
+          group = described_class.call(cart: cart).value
+          order_level = group.orders.map { |order| order.fees.order_level.sum(:amount) }
+
+          expect(order_level.size).to eq(3)
+          expect(order_level).to all(be > 0)
+        end
+
+        it 'keeps the customer’s total exactly what they paid' do
+          paid = cart.total
+          group = described_class.call(cart: cart).value
+
+          expect(group.total).to eq(paid)
+        end
+      end
+
+      # A fee's tax was charged on the share the fee was charged on, so it has
+      # to land on the same order — a tax line left behind on a fee that now
+      # holds a third of the amount overstates one child and leaves its
+      # siblings untaxed.
+      context 'when an order-level fee was taxed' do
+        let!(:tax_category) { create(:tax_category, store: store, is_default: true) }
+        let(:cart) { cart_for(nil, seller, other_seller) }
+
+        before do
+          create(:tax_rate, store: store, country_code: cart.tax_country&.iso, amount: 0.2,
+                            included_in_price: false, tax_category: tax_category)
+          create(:fee, order: nil, cart: cart, amount: 9, kind: 'payment', label: 'Card surcharge')
+          cart.reload.recalculate_totals!
+          cart.payments.each { |payment| payment.update!(amount: cart.reload.total) }
+        end
+
+        it 'taxes the fee in the first place' do
+          fee = cart.fees.order_level.first
+
+          expect(cart.tax_lines.where(fee_id: fee.id).sum(:amount)).to be > 0
+        end
+
+        it 'sends each share of the tax to the order holding the fee it was charged on' do
+          group = described_class.call(cart: cart).value
+
+          group.orders.each do |order|
+            order.tax_lines.where.not(fee_id: nil).each do |tax_line|
+              expect(order.fees.ids).to include(tax_line.fee_id)
+            end
+          end
+        end
+
+        it 'divides the fee’s tax rather than duplicating or dropping it' do
+          charged = cart.tax_lines.where.not(fee_id: nil).sum(:amount)
+          group = described_class.call(cart: cart).value
+          fee_tax = group.orders.sum { |order| order.tax_lines.where.not(fee_id: nil).sum(:amount) }
+
+          expect(charged).to be > 0
+          expect(fee_tax).to eq(charged)
+        end
+      end
+
+      # A fee hanging off a line item travels with that item, and its tax has
+      # to travel too — nothing else moves it, since the tax line names no line
+      # item and no parcel of its own.
+      context 'when a fee on one seller’s item was taxed' do
+        let!(:tax_category) { create(:tax_category, store: store, is_default: true) }
+        let(:cart) { cart_for(nil, seller) }
+
+        before do
+          create(:tax_rate, store: store, country_code: cart.tax_country&.iso, amount: 0.2,
+                            included_in_price: false, tax_category: tax_category)
+          create(:fee, order: nil, cart: cart, line_item: cart.line_items.reload.last,
+                       amount: 10, kind: 'gift_wrap', label: 'Gift wrap')
+          cart.reload.recalculate_totals!
+          cart.payments.each { |payment| payment.update!(amount: cart.reload.total) }
+        end
+
+        it 'moves the fee’s tax onto the order that took the fee' do
+          group = described_class.call(cart: cart).value
+
+          group.orders.each do |order|
+            order.tax_lines.where.not(fee_id: nil).each do |tax_line|
+              expect(order.fees.ids).to include(tax_line.fee_id)
+            end
+          end
+        end
+
+        it 'leaves the tax on the child holding the item it was charged for' do
+          group = described_class.call(cart: cart).value
+          taxed = group.orders.select { |order| order.tax_lines.where.not(fee_id: nil).any? }
+
+          expect(taxed.size).to eq(1)
+          expect(taxed.first.fees.count).to eq(1)
+        end
+      end
+
+      # A fee on a parcel holding two sellers' goods is divided with it, so its
+      # tax divides the same way. Left whole, one child pays all the tax on a
+      # charge it only half carries and its sibling pays none — and because
+      # nothing is lost in aggregate, totals alone never show it.
+      context 'when a fee on a shared parcel was taxed' do
+        let!(:tax_category) { create(:tax_category, store: store, is_default: true) }
+        let(:cart) { cart_for(nil, seller) }
+
+        before do
+          create(:tax_rate, store: store, country_code: cart.tax_country&.iso, amount: 0.2,
+                            included_in_price: false, tax_category: tax_category)
+          create(:fee, order: nil, cart: cart, fulfillment: cart.fulfillments.first,
+                       amount: 10, kind: 'handling', label: 'Handling')
+          cart.reload.recalculate_totals!
+          cart.payments.each { |payment| payment.update!(amount: cart.reload.total) }
+        end
+
+        it 'divides the fee across both halves' do
+          group = described_class.call(cart: cart).value
+          shares = group.orders.map { |order| order.fees.sum(:amount) }
+
+          expect(shares).to all(be > 0)
+          expect(shares.sum).to eq(10)
+        end
+
+        it 'divides the fee’s tax alongside the fee rather than leaving it whole' do
+          group = described_class.call(cart: cart).value
+          taxes = group.orders.map { |order| order.tax_lines.where.not(fee_id: nil).sum(:amount) }
+
+          expect(taxes).to all(be > 0)
+        end
+
+        it 'keeps each child’s fee tax proportional to the fee it holds' do
+          group = described_class.call(cart: cart).value
+
+          group.orders.each do |order|
+            fee = order.fees.sum(:amount)
+            tax = order.tax_lines.where.not(fee_id: nil).sum(:amount)
+
+            expect(tax).to eq((fee * 0.2).round(2))
+          end
+        end
       end
     end
 
