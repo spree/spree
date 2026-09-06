@@ -13,7 +13,7 @@ module Spree
       def perform(variant:, reviewer: nil, note: nil, auto: false)
         super
 
-        reject!(I18n.t('activerecord.errors.models.spree/variant.attributes.base.not_awaiting_review')) unless variant.proposed?
+        reject!(:not_awaiting_review, message: I18n.t('activerecord.errors.models.spree/variant.attributes.base.not_awaiting_review')) unless variant.proposed?
 
         run_hooks :validate
 

@@ -19,7 +19,7 @@ module Spree
         # Already rejected counts: correcting the note you gave a seller is
         # not a second decision. Anything else has not been submitted.
         unless variant.proposed? || variant.rejected?
-          reject!(I18n.t('activerecord.errors.models.spree/variant.attributes.base.not_awaiting_review'))
+          reject!(:not_awaiting_review, message: I18n.t('activerecord.errors.models.spree/variant.attributes.base.not_awaiting_review'))
         end
 
         run_hooks :validate

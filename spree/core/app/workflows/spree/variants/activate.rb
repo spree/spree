@@ -16,7 +16,7 @@ module Spree
         # An offer reaches `active` only through Approve — otherwise an
         # operator could put a seller's row on sale while recording no
         # decision and closing no submission.
-        reject!(I18n.t('activerecord.errors.models.spree/variant.attributes.base.offer_needs_review')) if variant.offer?
+        reject!(:offer_needs_review, message: I18n.t('activerecord.errors.models.spree/variant.attributes.base.offer_needs_review')) if variant.offer?
 
         run_hooks :validate
 
