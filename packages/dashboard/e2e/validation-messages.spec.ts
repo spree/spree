@@ -1,5 +1,5 @@
 import { expect, type Page, test } from '@playwright/test'
-import { gotoIndex, login } from './helpers'
+import { getCredentials, gotoIndex, login } from './helpers'
 
 // Validation copy reaches the merchant by two routes, and this spec pins both:
 //
@@ -100,13 +100,45 @@ test.describe('validation messages', () => {
   })
 
   test.describe('in the admin’s own language', () => {
-    // The choice a merchant makes in the top bar is remembered here; setting
-    // it before the app boots is what a returning German-speaking admin sees.
-    // The store itself stays English, so anything still reading the store's
-    // locale would show through as English below.
+    // A German-speaking admin has German in two places: the browser remembers
+    // the last choice, and the account carries it across devices. The store
+    // itself stays English, so anything still reading the store's locale
+    // would show through as English below.
+    //
+    // Both must agree. When they differ the auth provider reloads to bring
+    // the browser in line with the account, and a reload during the boot
+    // refresh spends the single-use cookie twice — the loser is bounced to
+    // `/` unauthenticated and the test never reaches a store. Other specs in
+    // the suite leave the shared account on whatever language they last
+    // saved, so this cannot assume it is unset.
+    let savedLocale: string | null = null
+
+    const authHeaders = async (page: Page) => {
+      const creds = getCredentials()
+      const res = await page.request.post('/api/v3/admin/auth/login', {
+        data: { email: creds.admin_email, password: creds.admin_password },
+      })
+      const { token } = (await res.json()) as { token: string }
+      return { Authorization: `Bearer ${token}` }
+    }
+
     test.beforeEach(async ({ page }) => {
       await page.addInitScript(() => {
         localStorage.setItem('spree-admin-locale', 'de')
+      })
+      const headers = await authHeaders(page)
+      const me = await page.request.get('/api/v3/admin/me', { headers })
+      savedLocale = ((await me.json()) as { user: { selected_locale: string | null } }).user
+        .selected_locale
+      await page.request.patch('/api/v3/admin/me', { headers, data: { selected_locale: 'de' } })
+    })
+
+    test.afterEach(async ({ page }) => {
+      // Hand the shared account back the way it was found.
+      const headers = await authHeaders(page)
+      await page.request.patch('/api/v3/admin/me', {
+        headers,
+        data: { selected_locale: savedLocale },
       })
     })
 
