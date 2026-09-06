@@ -1721,6 +1721,10 @@
           "name": "Canal de vente",
           "description": "Proposer ce mode de livraison uniquement sur les canaux choisis"
         },
+        "company_rule": {
+          "name": "Entreprise",
+          "description": "Proposer ce mode de livraison uniquement aux commandes passées pour une entreprise, ou uniquement aux autres"
+        },
         "excluded_products_rule": {
           "name": "Produits exclus",
           "description": "Masquer ce mode de livraison si la commande contient un de ces produits"
@@ -1728,6 +1732,10 @@
         "item_total_rule": {
           "name": "Total des articles",
           "description": "Proposer ce mode de livraison uniquement si le total est dans une plage"
+        },
+        "volume_rule": {
+          "name": "Volume",
+          "description": "Proposer ce mode de livraison uniquement si le volume est dans une plage, en mètres cubes"
         },
         "weight_rule": {
           "name": "Poids",

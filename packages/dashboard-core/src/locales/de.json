@@ -1721,6 +1721,10 @@
           "name": "Vertriebskanal",
           "description": "Diese Versandart nur in den gewählten Vertriebskanälen anbieten"
         },
+        "company_rule": {
+          "name": "Firma",
+          "description": "Diese Versandart nur für Bestellungen auf eine Firma anbieten – oder nur für die übrigen"
+        },
         "excluded_products_rule": {
           "name": "Ausgeschlossene Produkte",
           "description": "Diese Versandart ausblenden, wenn die Bestellung eines dieser Produkte enthält"
@@ -1728,6 +1732,10 @@
         "item_total_rule": {
           "name": "Warenwert",
           "description": "Diese Versandart nur anbieten, wenn der Bestellwert im Bereich liegt"
+        },
+        "volume_rule": {
+          "name": "Volumen",
+          "description": "Diese Versandart nur anbieten, wenn das Sendungsvolumen in Kubikmetern im Bereich liegt"
         },
         "weight_rule": {
           "name": "Gewicht",

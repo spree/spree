@@ -1723,6 +1723,10 @@
           "name": "Channel",
           "description": "Offer this delivery method only on the selected sales channels"
         },
+        "company_rule": {
+          "name": "Company",
+          "description": "Offer this delivery method only to orders placed for a company, or only to those that are not"
+        },
         "excluded_products_rule": {
           "name": "Excluded products",
           "description": "Hide this delivery method when the order contains any of these products"
@@ -1730,6 +1734,10 @@
         "item_total_rule": {
           "name": "Item total",
           "description": "Offer this delivery method only when the order total is within a range"
+        },
+        "volume_rule": {
+          "name": "Volume",
+          "description": "Offer this delivery method only when the shipment volume is within a range, in cubic meters"
         },
         "weight_rule": {
           "name": "Weight",

@@ -1720,6 +1720,10 @@
           "name": "销售渠道",
           "description": "仅在所选销售渠道提供此配送方式"
         },
+        "company_rule": {
+          "name": "公司",
+          "description": "仅向以公司名义下的订单提供此配送方式，或仅向非公司订单提供"
+        },
         "excluded_products_rule": {
           "name": "排除的商品",
           "description": "当订单包含其中任一商品时隐藏此配送方式"
@@ -1727,6 +1731,10 @@
         "item_total_rule": {
           "name": "订单金额",
           "description": "仅当订单金额在区间内时提供此配送方式"
+        },
+        "volume_rule": {
+          "name": "体积",
+          "description": "仅当发货体积（立方米）在区间内时提供此配送方式"
         },
         "weight_rule": {
           "name": "重量",
