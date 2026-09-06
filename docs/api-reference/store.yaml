@@ -13676,6 +13676,10 @@ components:
           type: number
         kind:
           type: string
+        option_values:
+          type: array
+          items:
+            "$ref": "#/components/schemas/OptionValue"
       required:
       - id
       - name
