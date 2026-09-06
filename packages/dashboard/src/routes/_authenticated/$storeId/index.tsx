@@ -112,7 +112,14 @@ function DashboardPage() {
     compare: 'previous_period',
     ...scope,
   }
-  const { data: overview, error: overviewError } = useReportingQuery(overviewQuery)
+  // Placeholder data is the previous channel's or period's result; showing it
+  // under the new scope's heading would misattribute the figures.
+  const {
+    data: overviewData,
+    error: overviewError,
+    isPlaceholderData: overviewIsStale,
+  } = useReportingQuery(overviewQuery)
+  const overview = overviewIsStale ? undefined : overviewData
   const { data: schema } = useReportingSchema()
   const chartMetrics = schema
     ? resolveMetrics(CHART_METRICS, schema)
@@ -523,7 +530,7 @@ function TopProducts({ scope }: { scope: Pick<ReportingQuery, 'time_range' | 'fi
   const { t } = useTranslation()
   const { storeId } = Route.useParams()
 
-  const { data } = useReportingQuery({
+  const { data: result, isPlaceholderData } = useReportingQuery({
     metrics: ['net_revenue', 'units_sold'],
     dimensions: ['product'],
     compare: 'previous_period',
@@ -531,6 +538,8 @@ function TopProducts({ scope }: { scope: Pick<ReportingQuery, 'time_range' | 'fi
     limit: 5,
     ...scope,
   })
+  // Rows from the previous scope would sit under the new channel's heading.
+  const data = isPlaceholderData ? undefined : result
 
   if (!data || data.rows.length === 0) {
     return null
