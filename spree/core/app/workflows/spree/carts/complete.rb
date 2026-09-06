@@ -342,10 +342,14 @@ module Spree
 
       # The cart's rows are the record of what the sale was costed at, so the
       # order receives them verbatim rather than being re-estimated.
+      # Fees before tax lines, because a fee is something tax is charged on: a
+      # tax line copied first would reach the order still naming the cart's
+      # fee, and that row is then destroyed with it.
       def copy_typed_lines!(cart, order, line_item_map, fulfillment_map)
         line_item_id_map = line_item_map.transform_keys(&:id).transform_values(&:id)
+        fee_map = {}
 
-        [Spree::TaxLine, Spree::Discount, Spree::Fee].each do |klass|
+        [Spree::Fee, Spree::Discount, Spree::TaxLine].each do |klass|
           klass.where(cart_id: cart.id).find_each do |row|
             attributes = row.attributes.except('id', 'cart_id', 'created_at', 'updated_at')
             attributes['order_id'] = order.id
@@ -358,8 +362,13 @@ module Spree
               attributes['fulfillment_id'] = fulfillment_map[row.fulfillment_id]
               next if attributes['fulfillment_id'].nil?
             end
+            if row.respond_to?(:fee_id) && row.fee_id
+              attributes['fee_id'] = fee_map[row.fee_id]
+              next if attributes['fee_id'].nil?
+            end
 
-            klass.create!(attributes)
+            copy = klass.create!(attributes)
+            fee_map[row.id] = copy.id if klass == Spree::Fee
           end
         end
       end

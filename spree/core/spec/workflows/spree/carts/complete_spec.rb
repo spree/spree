@@ -256,6 +256,36 @@ module Spree
           order = result.value
           expect(order_rows(order).sum(:amount)).to eq(order.additional_tax_total)
         end
+
+        # Tax charged on a fee has to name the order's own copy of that fee.
+        # Copied in the wrong order it names the cart's fee instead, which is
+        # then destroyed with the cart's rows — so the charge survives on the
+        # order while the tax explaining it either dangles or disappears.
+        context 'when an order-level fee was taxed' do
+          # A fee carries no category of its own, so it is taxed under the
+          # store's default — which the surrounding context's category is not.
+          before do
+            default_category = create(:tax_category, store: store, is_default: true)
+            create(:tax_rate, store: store, country_code: ready_cart.tax_country&.iso, amount: 0.2,
+                              included_in_price: false, tax_category: default_category)
+            create(:fee, order: nil, cart: ready_cart, amount: 9, kind: 'payment', label: 'Card surcharge')
+            ready_cart.reload.recalculate_totals!
+            ready_cart.payments.first.update!(amount: ready_cart.reload.total)
+          end
+
+          it 'points the fee’s tax at the order’s own fee' do
+            charged = ready_cart.tax_lines.reload.where.not(fee_id: nil).sum(:amount)
+            expect(charged).to be > 0
+
+            result = described_class.call(cart: ready_cart)
+            expect(result).to be_success
+            order = result.value
+
+            rows = order_rows(order).where.not(fee_id: nil)
+            expect(rows.sum(:amount)).to eq(charged)
+            expect(rows.pluck(:fee_id).uniq).to match_array(order.fees.order_level.ids)
+          end
+        end
       end
     end
 
