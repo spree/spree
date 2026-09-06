@@ -41,7 +41,8 @@ RSpec.describe 'Admin Store API', type: :request, swagger_doc: 'api-reference/ad
           expect(data['url']).to eq(store.storefront_url)
           expect(data['default_country_code']).to eq(store.default_country_code)
           expect(data['setup_tasks'].map { |t| t['name'] }).to eq(
-            %w[setup_payment_method add_products set_customer_support_email setup_taxes_collection setup_storefront]
+            %w[setup_address setup_payment_method add_products set_customer_support_email setup_taxes_collection
+               setup_storefront]
           )
           expect(data['setup_tasks']).to all(match('name' => be_a(String), 'done' => be_in([true, false])))
         end

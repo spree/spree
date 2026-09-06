@@ -3077,6 +3077,12 @@
             "description": "Shown on your storefront as the contact point for customer questions and support.",
             "title": "Set customer support email"
           },
+          "setup_address": {
+            "cta": "Save address",
+            "description": "Your shipping and returns address. Carriers use it to calculate delivery rates, and it is where customer returns are sent.",
+            "no_location": "You have no stock location of your own yet — create one in Settings to add an address.",
+            "title": "Add your shipping address"
+          },
           "setup_payment_method": {
             "cta": "Set up payment methods",
             "description": "To collect payments, set up at least one online payment provider.",

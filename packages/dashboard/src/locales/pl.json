@@ -3105,6 +3105,12 @@
             "description": "Wyświetlany w Twoim sklepie jako punkt kontaktowy dla pytań i wsparcia klientów.",
             "title": "Ustaw e-mail obsługi klienta"
           },
+          "setup_address": {
+            "cta": "Zapisz adres",
+            "description": "Twój adres wysyłki i zwrotów. Przewoźnicy używają go do obliczania kosztów dostawy, a klienci wysyłają tam zwroty.",
+            "no_location": "Nie masz jeszcze własnej lokalizacji magazynowej — utwórz ją w ustawieniach, aby dodać adres.",
+            "title": "Dodaj adres wysyłki"
+          },
           "setup_payment_method": {
             "cta": "Skonfiguruj płatności",
             "description": "Aby przyjmować płatności, skonfiguruj co najmniej jednego dostawcę płatności online.",

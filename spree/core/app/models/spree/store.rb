@@ -541,6 +541,39 @@ module Spree
       country_codes.filter_map { |code| Spree::Country.by_iso(code) }.sort_by(&:name)
     end
 
+    # The operator's own location that accepts returns, or nil when none does.
+    #
+    # First-party only: `stock_locations` includes every seller's warehouse on a
+    # marketplace, and the operator's goods must never be routed into one.
+    #
+    # Nil rather than a fallback, because the caller's fallback is not ours to
+    # guess: {Spree::Returns::Create} answers nil by sending goods back where
+    # they shipped from, which is a better destination than a location the
+    # merchant told us not to send returns to.
+    #
+    # @return [Spree::StockLocation, nil]
+    def returns_location
+      stock_locations.active.first_party.returns_enabled.order_default.first
+    end
+
+    # The location the address checklist asks the merchant to fill in: the one
+    # that takes returns, falling back to any active location of their own,
+    # since the address is also what carriers rate against.
+    #
+    # Ordered rather than two queries with a fallback — both columns are
+    # NOT NULL, so sorting on the flag puts a returns-enabled location first
+    # and answers the fallback in the same round trip.
+    #
+    # Deliberately not `default_stock_location`, which creates the row when it
+    # is missing: this is read on every dashboard render (the Getting Started
+    # checklist), and a read that writes would provision a location for every
+    # store that loaded the page.
+    #
+    # @return [Spree::StockLocation, nil]
+    def primary_location
+      stock_locations.active.first_party.order(returns_enabled: :desc, default: :desc, name: :asc).first
+    end
+
     # The store's own default stock location, created if it does not exist yet.
     #
     # Scoped to this store's first-party locations on both counts: unscoped it

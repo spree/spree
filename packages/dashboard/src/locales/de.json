@@ -3077,6 +3077,12 @@
             "description": "Wird in Ihrem Storefront als Kontaktpunkt für Kundenfragen und Support angezeigt.",
             "title": "Kundensupport-E-Mail festlegen"
           },
+          "setup_address": {
+            "cta": "Adresse speichern",
+            "description": "Ihre Versand- und Rücksendeadresse. Zusteller berechnen damit die Versandkosten, und Kundenrücksendungen gehen an diese Adresse.",
+            "no_location": "Sie haben noch kein eigenes Lager — legen Sie in den Einstellungen eines an, um eine Adresse zu hinterlegen.",
+            "title": "Versandadresse hinzufügen"
+          },
           "setup_payment_method": {
             "cta": "Zahlungsmethoden einrichten",
             "description": "Um Zahlungen zu empfangen, richten Sie mindestens einen Online-Zahlungsanbieter ein.",

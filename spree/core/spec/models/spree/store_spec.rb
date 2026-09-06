@@ -1167,6 +1167,92 @@ describe Spree::Store, type: :model, without_global_store: true do
     end
   end
 
+  describe 'address setup task' do
+    let(:store) { create(:store) }
+
+    describe '#address_setup?' do
+      subject { store.address_setup? }
+
+      context 'with no stock location' do
+        it { is_expected.to be_falsey }
+      end
+
+      context 'with a stock location carrying no address' do
+        before { create(:stock_location, store: store, address1: nil, city: nil) }
+
+        it 'stays pending' do
+          expect(subject).to be_falsey
+          expect(store.setup_task_done?(:setup_address)).to be false
+        end
+      end
+
+      context 'with a postable address on the default location' do
+        before do
+          create(:stock_location, store: store, default: true, state: nil,
+                                  address1: '1 Warehouse Way', city: 'London', country_code: 'GB')
+        end
+
+        it 'marks the setup task as done' do
+          expect(subject).to be true
+          expect(store.setup_task_done?(:setup_address)).to be true
+        end
+      end
+
+      # The checklist must ask about the location returns actually route to,
+      # or a merchant fills in one address and their parcels go to another.
+      context 'when a returns-enabled location has no address' do
+        before do
+          create(:stock_location, store: store, default: true, state: nil, returns_enabled: false,
+                                  address1: '1 Warehouse Way', city: 'London', country_code: 'GB')
+          create(:stock_location, store: store, state: nil, returns_enabled: true,
+                                  address1: nil, city: nil)
+        end
+
+        it 'reads the location that accepts returns' do
+          expect(subject).to be_falsey
+        end
+      end
+
+      # Every flag off still leaves an address to collect: it is what carriers
+      # rate against, not only where returns land.
+      context 'when no location accepts returns' do
+        before do
+          create(:stock_location, store: store, default: true, state: nil, returns_enabled: false,
+                                  address1: '1 Warehouse Way', city: 'London', country_code: 'GB')
+        end
+
+        it { is_expected.to be true }
+      end
+
+      context 'when the addressed location is inactive' do
+        before do
+          create(:stock_location, store: store, default: true, state: nil, active: false,
+                                  address1: '1 Warehouse Way', city: 'London', country_code: 'GB')
+        end
+
+        it { is_expected.to be_falsey }
+      end
+
+      # The operator's checklist asks for the operator's address. A seller's
+      # warehouse is on the same table and would otherwise answer for it.
+      context 'when only a seller owns an addressed location' do
+        before do
+          seller = create(:seller, store: store)
+          create(:stock_location, store: store, seller: seller, default: true, state: nil,
+                                  address1: '1 Seller Way', city: 'London', country_code: 'GB')
+        end
+
+        it { is_expected.to be_falsey }
+      end
+    end
+
+    # `default_stock_location` creates the row when it is missing, and this
+    # checklist is evaluated on every dashboard render.
+    it 'does not provision a stock location just by being asked' do
+      expect { store.address_setup? }.not_to change(Spree::StockLocation, :count)
+    end
+  end
+
   describe '#payment_method_setup?' do
     let(:store) { create(:store) }
 

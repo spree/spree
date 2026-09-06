@@ -1760,11 +1760,14 @@ export interface SellerCreateParams {
    * its own, so an id would reference a row belonging to someone else.
    */
   billing_address?: SellerAddressParams
-  returns_address?: SellerAddressParams
   metadata?: Record<string, unknown>
 }
 
-/** The seller's own billing / returns address. */
+/**
+ * The seller's own billing address. Their returns address is not written here
+ * — it lives on the stock location returns route to, so it is written through
+ * the stock locations endpoint.
+ */
 export interface SellerAddressParams {
   first_name?: string
   last_name?: string
