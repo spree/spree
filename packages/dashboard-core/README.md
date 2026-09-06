@@ -31,6 +31,10 @@ defineDashboardPlugin({
     },
   },
   formFields: { product: [{ name: 'tech_specs', from: (p) => p?.tech_specs ?? '' }] },
+  locales: {
+    en: { admin: { types: { promotion_rule: { wishlist: { name: 'On a wishlist' } } } } },
+    de: { admin: { types: { promotion_rule: { wishlist: { name: 'Auf einer Wunschliste' } } } } },
+  },
 })
 ```
 

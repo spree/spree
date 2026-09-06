@@ -349,7 +349,7 @@ module Spree
     def not_used?
       return true if orders.empty?
 
-      errors.add(:base, Spree.t('promotion_already_used'))
+      errors.add(:base, :promotion_already_used, message: Spree.t('promotion_already_used'))
       throw(:abort)
     end
 

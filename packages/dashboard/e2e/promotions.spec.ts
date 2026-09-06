@@ -85,13 +85,13 @@ test.describe('promotions', () => {
     await startNewPromotion(page, creds.store_id, name)
 
     // No-preference rule + action: confirm in the editor so the row is appended.
-    await pickRule(page, /^first order$/i)
+    await pickRule(page, /^first order\b/i)
     await expect(page.getByRole('heading', { name: /^first order$/i })).toBeVisible({
       timeout: 5_000,
     })
     await saveEditor(page)
 
-    await pickAction(page, /^free shipping$/i)
+    await pickAction(page, /^free shipping\b/i)
     await saveEditor(page)
 
     await submitCreate(page, name)
@@ -113,14 +113,14 @@ test.describe('promotions', () => {
     const name = `E2E Promo Cancel ${Date.now()}`
     await startNewPromotion(page, creds.store_id, name)
 
-    await pickRule(page, /^first order$/i)
+    await pickRule(page, /^first order\b/i)
     await expect(page.getByRole('heading', { name: /^first order$/i })).toBeVisible({
       timeout: 5_000,
     })
     await cancelEditor(page)
     await expect(page.getByText(/^first order$/i)).toHaveCount(0)
 
-    await pickAction(page, /^free shipping$/i)
+    await pickAction(page, /^free shipping\b/i)
     await cancelEditor(page)
     await expect(page.getByText(/^free shipping$/i)).toHaveCount(0)
   })
@@ -133,10 +133,10 @@ test.describe('promotions', () => {
 
     await startNewPromotion(page, creds.store_id, name)
 
-    await pickRule(page, /^first order$/i)
+    await pickRule(page, /^first order\b/i)
     await saveEditor(page)
 
-    await pickAction(page, /^free shipping$/i)
+    await pickAction(page, /^free shipping\b/i)
     await saveEditor(page)
 
     await submitCreate(page, name)
@@ -179,7 +179,7 @@ test.describe('promotions', () => {
     const name = `E2E Country Promo ${Date.now()}`
     await startNewPromotion(page, creds.store_id, name)
 
-    await pickRule(page, /^country$/i)
+    await pickRule(page, /^country\b/i)
     await expect(page.getByRole('heading', { name: /^country$/i })).toBeVisible({
       timeout: 5_000,
     })
@@ -199,7 +199,7 @@ test.describe('promotions', () => {
     await startNewPromotion(page, creds.store_id, name)
 
     // Rule labels come from `Spree.t("promotion_rule_types.*.name")`.
-    await pickRule(page, /^product\(s\)$/i)
+    await pickRule(page, /^product\(s\)/i)
     await expect(page.getByRole('heading', { name: /^product\(s\)$/i })).toBeVisible({
       timeout: 5_000,
     })
@@ -223,7 +223,7 @@ test.describe('promotions', () => {
 
     // Class is `Spree::Promotion::Rules::Taxon`; the translated label is
     // "Categories" per the 6.0 Taxon→Category rename.
-    await pickRule(page, /^categories$/i)
+    await pickRule(page, /^categories\b/i)
     await expect(page.getByRole('heading', { name: /^categories$/i })).toBeVisible({
       timeout: 5_000,
     })
@@ -245,7 +245,7 @@ test.describe('promotions', () => {
 
     // Class is `Rules::User`; translated label is "Customers" because the
     // rule keys off `Spree::Order#user_id`.
-    await pickRule(page, /^customers$/i)
+    await pickRule(page, /^customers\b/i)
     await expect(page.getByRole('heading', { name: /^customers$/i })).toBeVisible({
       timeout: 5_000,
     })
@@ -273,7 +273,7 @@ test.describe('promotions', () => {
     const name = `E2E Group Promo ${Date.now()}`
     await startNewPromotion(page, creds.store_id, name)
 
-    await pickRule(page, /^customer group\(s\)$/i)
+    await pickRule(page, /^customer group\(s\)/i)
     await expect(page.getByRole('heading', { name: /^customer group\(s\)$/i })).toBeVisible({
       timeout: 5_000,
     })
@@ -301,7 +301,7 @@ test.describe('promotions', () => {
     // saving the editor (without touching the dropdown) round-trips a real
     // value — not an empty `preferences: {}` that the server quietly accepts
     // but the merchant never sees in the rule preview.
-    await pickRule(page, /^currency$/i)
+    await pickRule(page, /^currency\b/i)
     await expect(page.getByRole('heading', { name: /^currency$/i })).toBeVisible({
       timeout: 5_000,
     })
@@ -324,7 +324,7 @@ test.describe('promotions', () => {
     const name = `E2E Adjustment Promo ${Date.now()}`
     await startNewPromotion(page, creds.store_id, name)
 
-    await pickAction(page, /^create whole-order adjustment$/i)
+    await pickAction(page, /^create whole-order adjustment\b/i)
     await expect(
       page.getByRole('heading', { name: /^create whole-order adjustment$/i }),
     ).toBeVisible({ timeout: 5_000 })
@@ -346,7 +346,7 @@ test.describe('promotions', () => {
     const name = `E2E Item Adjustments Promo ${Date.now()}`
     await startNewPromotion(page, creds.store_id, name)
 
-    await pickAction(page, /^create per-line-item adjustment$/i)
+    await pickAction(page, /^create per-line-item adjustment\b/i)
     await expect(
       page.getByRole('heading', { name: /^create per-line-item adjustment$/i }),
     ).toBeVisible({ timeout: 5_000 })
@@ -366,7 +366,7 @@ test.describe('promotions', () => {
     const name = `E2E Line Items Promo ${Date.now()}`
     await startNewPromotion(page, creds.store_id, name)
 
-    await pickAction(page, /^create line items$/i)
+    await pickAction(page, /^create line items\b/i)
     await expect(page.getByRole('heading', { name: /^create line items$/i })).toBeVisible({
       timeout: 5_000,
     })

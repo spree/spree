@@ -49,7 +49,7 @@ module Spree
         # ActiveStorage raises a message-less error for that, which would
         # otherwise be an unhandled 500 on the Admin API.
         order ||= @store.orders.new
-        order.errors.add(:po_document, Spree.t(:po_document_upload_incomplete))
+        order.errors.add(:po_document, :po_document_upload_incomplete, message: Spree.t(:po_document_upload_incomplete))
         failure(order, order.errors.full_messages.to_sentence)
       end
 

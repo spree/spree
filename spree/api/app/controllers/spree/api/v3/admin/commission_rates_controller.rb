@@ -138,7 +138,8 @@ module Spree
 
             errors = ActiveModel::Errors.new(Spree::CommissionRate.new)
             unknown.each do |type|
-              errors.add(:rules, :invalid, message: Spree.t('errors.messages.invalid_commission_rule_type', type: type))
+              errors.add(:rules, :invalid_commission_rule_type, type: type,
+                         message: Spree.t('errors.messages.invalid_commission_rule_type', type: type))
             end
             render_validation_error(errors)
 

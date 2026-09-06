@@ -263,11 +263,14 @@ module SpreeStripe
     def validate_secret_key
       Stripe::Refund.list({ limit: 0 }, api_options)
     rescue Stripe::AuthenticationError
-      errors.add(:base, 'Secret key is invalid')
+      errors.add(:base, :secret_key_invalid, message: Spree.t('stripe.errors.secret_key_invalid'))
     rescue Stripe::PermissionError => e
-      errors.add(:base, 'You have provided your publishable key instead of your secret key') if e.error&.code == 'secret_key_required'
+      return unless e.error&.code == 'secret_key_required'
+
+      errors.add(:base, :publishable_key_provided,
+                 message: Spree.t('stripe.errors.publishable_key_provided'))
     rescue Stripe::StripeError
-      errors.add(:base, 'Something went wrong with Stripe. Try again later.')
+      errors.add(:base, :stripe_unavailable, message: Spree.t('stripe.errors.stripe_unavailable'))
     end
 
     def build_customer_payload(order: nil, customer: nil)

@@ -3,6 +3,10 @@ en:
   spree:
     bank_transfer: Bank Transfer
     stripe:
+      errors:
+        publishable_key_provided: You have provided your publishable key instead of your secret key
+        secret_key_invalid: Secret key is invalid
+        stripe_unavailable: Something went wrong with Stripe. Try again later.
       payment_could_not_be_processed: Your payment could not be processed. Please try again.
       payment_session_errors:
         zero_amount: Payment session amount must be greater than zero

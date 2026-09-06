@@ -47,7 +47,7 @@ module Spree
       return if type.blank?
       return if Rails.application.config.spree.collection_rules.any? { |rule| rule.to_s == type }
 
-      errors.add(:type, Spree.t(:invalid_collection_rule, scope: [:errors, :messages],
+      errors.add(:type, :invalid_collection_rule, message: Spree.t(:invalid_collection_rule, scope: [:errors, :messages],
                                                           default: 'is not a registered collection rule'))
     end
 

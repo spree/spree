@@ -4,6 +4,8 @@ import {
   PreferencesForm,
   type ResourceSearch,
   ResourceTable,
+  typeDescription,
+  typeLabel,
   useResourceKey,
   useResourceKeyBuilder,
 } from '@spree/dashboard-core'
@@ -494,15 +496,19 @@ function DeliveryMethodSheet({
                         <SelectTrigger id="delivery-method-calculator">
                           <SelectValue>
                             {(value) =>
-                              calculators?.data.find((calculator) => calculator.type === value)
-                                ?.name ?? (value as string)
+                              typeLabel(
+                                'calculator',
+                                value as string,
+                                calculators?.data.find((calculator) => calculator.type === value)
+                                  ?.name,
+                              )
                             }
                           </SelectValue>
                         </SelectTrigger>
                         <SelectContent>
                           {calculators?.data.map((calculator) => (
                             <SelectItem key={calculator.type} value={calculator.type}>
-                              {calculator.name}
+                              {typeLabel('calculator', calculator.type, calculator.name)}
                             </SelectItem>
                           ))}
                         </SelectContent>
@@ -546,11 +552,19 @@ function DeliveryMethodSheet({
                       <div className="flex items-center justify-between gap-4">
                         <div className="flex flex-col">
                           <span className="font-medium text-sm">
-                            {definition?.name ?? rule.type}
+                            {typeLabel('delivery_method_rule', rule.type, definition?.name)}
                           </span>
-                          {definition?.description && (
+                          {typeDescription(
+                            'delivery_method_rule',
+                            rule.type,
+                            definition?.description,
+                          ) && (
                             <span className="text-muted-foreground text-xs">
-                              {definition.description}
+                              {typeDescription(
+                                'delivery_method_rule',
+                                rule.type,
+                                definition?.description,
+                              )}
                             </span>
                           )}
                         </div>
@@ -592,7 +606,7 @@ function DeliveryMethodSheet({
                     <SelectContent>
                       {unusedRuleTypes.map((ruleType) => (
                         <SelectItem key={ruleType.type} value={ruleType.type}>
-                          {ruleType.name}
+                          {typeLabel('delivery_method_rule', ruleType.type, ruleType.name)}
                         </SelectItem>
                       ))}
                     </SelectContent>

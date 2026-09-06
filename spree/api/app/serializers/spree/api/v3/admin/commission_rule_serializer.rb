@@ -14,8 +14,6 @@ module Spree
                    commission_rate_id: :string,
                    preferences: 'Record<string, unknown>',
                    preference_schema: 'Array<{ key: string; type: string; default: unknown }>',
-                   label: :string,
-                   description: 'string | null',
                    product_ids: [:string, multi: true]
 
           attributes created_at: :iso8601, updated_at: :iso8601
@@ -30,14 +28,6 @@ module Spree
 
           attribute :preferences, &:serialized_preferences
           attribute :preference_schema, &:serialized_preference_schema
-
-          attribute :label do |rule|
-            rule.class.human_name
-          end
-
-          attribute :description do |rule|
-            rule.class.description.presence
-          end
 
           # Catalog-scale references live in their own table rather than the
           # preferences blob, so they are read back separately — omitted

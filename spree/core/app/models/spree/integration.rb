@@ -172,7 +172,7 @@ module Spree
       return if Spree.integrations.empty?
       return if Spree.integrations.map(&:to_s).include?(type)
 
-      errors.add(:type, Spree.t('errors.messages.integration_type_not_registered'))
+      errors.add(:type, :integration_type_not_registered, message: Spree.t('errors.messages.integration_type_not_registered'))
     end
 
     # On :base, not :active — the seller's message ("This api key is no

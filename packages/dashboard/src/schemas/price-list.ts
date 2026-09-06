@@ -30,9 +30,10 @@ export const ADJUSTMENT_DIRECTIONS = ['decrease', 'increase'] as const
 export type AdjustmentDirection = (typeof ADJUSTMENT_DIRECTIONS)[number]
 
 /**
- * Form-state row for a price rule. Carries the editor's display fields
- * (`label`, `description`, `preference_schema`) alongside the payload
- * fields the API consumes (`type`, `preferences`, optional `id`). Closely
+ * Form-state row for a price rule. Carries `preference_schema` for the
+ * editor alongside the payload fields the API consumes (`type`,
+ * `preferences`, optional `id`). The rule's name and description are
+ * resolved from `type` at render time, so no copy is stored here. Closely
  * mirrors `PromotionRuleFormDraft` so the editor patterns are 1:1.
  */
 export interface PriceRuleFormDraft {
@@ -42,8 +43,6 @@ export interface PriceRuleFormDraft {
   id?: string
   /** Wire shorthand — `volume_rule`, `market_rule`, etc. */
   type: string
-  label: string
-  description?: string | null
   preference_schema: PreferenceField[]
   preferences: Record<string, unknown>
   /**
@@ -81,8 +80,6 @@ const priceRuleDraftSchema: z.ZodType<PriceRuleFormDraft> = z.object({
   _localId: z.string(),
   id: z.string().optional(),
   type: z.string().min(1),
-  label: z.string(),
-  description: z.string().nullable().optional(),
   preference_schema: z.array(z.any()).default([]),
   preferences: z.record(z.string(), z.unknown()).default({}),
   customers: z.array(z.any()).optional(),
@@ -205,8 +202,6 @@ export function ruleDraftFromRule(rule: PriceRule): PriceRuleFormDraft {
     _localId: rule.id,
     id: rule.id,
     type: rule.type,
-    label: rule.label,
-    description: rule.description,
     preference_schema: rule.preference_schema,
     preferences: rule.preferences,
     customers: rule.customers ?? undefined,
@@ -219,15 +214,11 @@ export function ruleDraftFromRule(rule: PriceRule): PriceRuleFormDraft {
 /** Materializes a fresh draft from a registry type definition. */
 export function ruleDraftFromType(type: {
   type: string
-  label: string
-  description?: string | null
   preference_schema: PreferenceField[]
 }): PriceRuleFormDraft {
   return {
     _localId: newLocalId(),
     type: type.type,
-    label: type.label,
-    description: type.description ?? null,
     preference_schema: type.preference_schema,
     preferences: defaultPreferences(type.preference_schema),
   }

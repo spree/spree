@@ -21,7 +21,10 @@ RSpec.describe Spree::Api::V3::Admin::CommissionRatesController, type: :controll
       expect(row['id']).to start_with('crate_')
       expect(row['name']).to eq('Standard')
       expect(row['kind']).to eq('percentage')
-      expect(row['rules'].first).to include('type' => 'seller_rule', 'label' => 'Seller')
+      # The rule is identified by `type` alone — the dashboard names it from
+      # its own locale files rather than from a server-resolved label.
+      expect(row['rules'].first).to include('type' => 'seller_rule')
+      expect(row['rules'].first).not_to have_key('label')
     end
 
     it 'returns rates in precedence order' do
@@ -74,6 +77,21 @@ RSpec.describe Spree::Api::V3::Admin::CommissionRatesController, type: :controll
       post :create, params: { name: 'Flat', kind: 'fixed', value: 2 }, as: :json
 
       expect(response).to have_http_status(:unprocessable_entity)
+    end
+
+    it 'names the unknown rule type in the code and its value, not just the sentence' do
+      post :create, params: {
+        name: 'Bad rule', kind: 'percentage', value: 10,
+        rules: [{ type: 'wishlist_rule', preferences: {} }]
+      }, as: :json
+
+      expect(response).to have_http_status(:unprocessable_content)
+      # The dashboard picks its copy from `code`, and needs `type` to name the
+      # kind the operator sent — a generic `invalid` would tell it neither.
+      expect(json_response['error']['details']['rules'].first).to include(
+        'code' => 'invalid_commission_rule_type',
+        'type' => 'wishlist_rule'
+      )
     end
 
     it 'refuses a percentage above one hundred' do
