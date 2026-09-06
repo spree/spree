@@ -63,10 +63,10 @@ module Spree
                       Spree::PrefixedId.prefixed_id?(value.to_s) ? Spree.customer_class.find_by_prefix_id!(value).email : value
                     },
                     hydrate: lambda { |store, emails, _params|
-                      users = store.customers.distinct.where(email: emails).index_by(&:email)
+                      customers = store.customers.distinct.where(email: emails).index_by(&:email)
                       emails.to_h do |email|
-                        user = users[email]
-                        [email, { id: user&.prefixed_id, label: user&.full_name.presence || email, meta: { email: email } }]
+                        customer = customers[email]
+                        [email, { id: customer&.prefixed_id, label: customer&.full_name.presence || email, meta: { email: email } }]
                       end
                     }
 
