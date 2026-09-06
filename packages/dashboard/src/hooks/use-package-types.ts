@@ -1,4 +1,8 @@
-import type { PackageType, PackageTypeParams } from '@spree/admin-sdk'
+import type {
+  PackageType,
+  PackageTypeCreateParams,
+  PackageTypeUpdateParams,
+} from '@spree/admin-sdk'
 import {
   adminClient,
   useResourceKey,
@@ -17,7 +21,7 @@ export function usePackageType(id: string | undefined) {
 }
 
 export function useCreatePackageType() {
-  return useResourceMutation<PackageType, Error, PackageTypeParams>({
+  return useResourceMutation<PackageType, Error, PackageTypeCreateParams>({
     mutationFn: (params) => adminClient.packageTypes.create(params),
     invalidate: [['package-types']],
     successMessage: i18n.t('admin.package_types.messages.added'),
@@ -26,7 +30,7 @@ export function useCreatePackageType() {
 }
 
 export function useUpdatePackageType(id: string) {
-  return useResourceMutation<PackageType, Error, PackageTypeParams>({
+  return useResourceMutation<PackageType, Error, PackageTypeUpdateParams>({
     mutationFn: (params) => adminClient.packageTypes.update(id, params),
     invalidate: [['package-types'], ['package-types', id]],
     successMessage: i18n.t('admin.package_types.messages.updated'),

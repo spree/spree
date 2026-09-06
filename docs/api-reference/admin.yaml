@@ -34166,16 +34166,50 @@ paths:
               properties:
                 name:
                   type: string
+                  example: Euro pallet
+                kind:
+                  type: string
+                  enum:
+                  - box
+                  - envelope
+                  - carton
+                  - pallet
+                  - container
+                  example: pallet
                 length:
                   type: number
+                  example: 120
                 width:
                   type: number
+                  example: 80
                 height:
                   type: number
+                  example: 15
+                dimensions_unit:
+                  type: string
+                  enum:
+                  - mm
+                  - cm
+                  - in
+                  - ft
+                  example: cm
+                weight:
+                  type: number
+                  example: 25
                 max_weight:
                   type: number
+                  example: 1500
+                weight_unit:
+                  type: string
+                  enum:
+                  - g
+                  - kg
+                  - lb
+                  - oz
+                  example: kg
                 default:
                   type: boolean
+                  example: false
     delete:
       summary: Delete a package type
       tags:

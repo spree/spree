@@ -1,5 +1,5 @@
 import { zodResolver } from '@hookform/resolvers/zod'
-import type { PackageType, PackageTypeParams } from '@spree/admin-sdk'
+import type { PackageType, PackageTypeCreateParams } from '@spree/admin-sdk'
 import {
   adminClient,
   Can,
@@ -88,15 +88,22 @@ type PackageTypeFormValues = z.input<typeof packageTypeFormSchema>
 
 // Blank erases a measurement, so it has to reach the API as an explicit null;
 // undefined would leave whatever was recorded before untouched.
-const NUMERIC_FIELDS = ['length', 'width', 'height', 'weight', 'max_weight'] as const
+function toParams(values: PackageTypeFormValues): PackageTypeCreateParams {
+  const measurement = (value: string | number | undefined) =>
+    value === '' || value === undefined ? null : Number(value)
 
-function toParams(values: PackageTypeFormValues): PackageTypeParams {
-  const payload: Record<string, unknown> = { ...values }
-  for (const field of NUMERIC_FIELDS) {
-    const value = values[field]
-    payload[field] = value === '' || value === undefined ? null : Number(value)
+  return {
+    name: values.name,
+    kind: values.kind,
+    length: measurement(values.length),
+    width: measurement(values.width),
+    height: measurement(values.height),
+    weight: measurement(values.weight),
+    max_weight: measurement(values.max_weight),
+    dimensions_unit: values.dimensions_unit,
+    weight_unit: values.weight_unit,
+    default: values.default,
   }
-  return payload as PackageTypeParams
 }
 
 const DEFAULT_VALUES: PackageTypeFormValues = {

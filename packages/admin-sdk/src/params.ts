@@ -2658,10 +2658,11 @@ export interface DeliveryZoneParams {
   members?: DeliveryZoneMemberParams[]
 }
 
-export interface PackageTypeParams {
-  name?: string
+export interface PackageTypeCreateParams {
+  /** Unique within the store. */
+  name: string
   /** What this packaging is: the box parcels ship in, or the carton, pallet or container a wholesale order leaves on. */
-  kind?: 'box' | 'envelope' | 'carton' | 'pallet' | 'container'
+  kind: 'box' | 'envelope' | 'carton' | 'pallet' | 'container'
   length?: number | null
   width?: number | null
   height?: number | null
@@ -2676,6 +2677,9 @@ export interface PackageTypeParams {
   default?: boolean
   metadata?: Record<string, unknown>
 }
+
+/** Every field is optional: correcting one measurement is a valid update. */
+export type PackageTypeUpdateParams = Partial<PackageTypeCreateParams>
 
 export interface CompanyParams {
   name?: string

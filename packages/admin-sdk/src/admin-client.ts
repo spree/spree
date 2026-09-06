@@ -184,7 +184,8 @@ import type {
   OrderRoutingRuleCreateParams,
   OrderRoutingRuleUpdateParams,
   OrderUpdateParams,
-  PackageTypeParams,
+  PackageTypeCreateParams,
+  PackageTypeUpdateParams,
   PasswordResetParams,
   PasswordResetRequestParams,
   PaymentCreateParams,
@@ -2428,13 +2429,13 @@ export class AdminClient {
     get: (id: string, options?: RequestOptions): Promise<PackageType> =>
       this.request<PackageType>('GET', `/package_types/${id}`, options),
 
-    create: (params: PackageTypeParams, options?: RequestOptions): Promise<PackageType> =>
+    create: (params: PackageTypeCreateParams, options?: RequestOptions): Promise<PackageType> =>
       this.request<PackageType>('POST', '/package_types', { ...options, body: params }),
 
     /** Setting `default` demotes whichever row was the store's box before. */
     update: (
       id: string,
-      params: PackageTypeParams,
+      params: PackageTypeUpdateParams,
       options?: RequestOptions,
     ): Promise<PackageType> =>
       this.request<PackageType>('PATCH', `/package_types/${id}`, { ...options, body: params }),

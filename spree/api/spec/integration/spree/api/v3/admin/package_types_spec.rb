@@ -180,12 +180,16 @@ RSpec.describe 'Admin Package Types API', type: :request, swagger_doc: 'api-refe
       parameter name: :body, in: :body, schema: {
         type: :object,
         properties: {
-          name: { type: :string },
-          length: { type: :number },
-          width: { type: :number },
-          height: { type: :number },
-          max_weight: { type: :number },
-          default: { type: :boolean }
+          name: { type: :string, example: 'Euro pallet' },
+          kind: { type: :string, enum: Spree::PackageType::KINDS, example: 'pallet' },
+          length: { type: :number, example: 120 },
+          width: { type: :number, example: 80 },
+          height: { type: :number, example: 15 },
+          dimensions_unit: { type: :string, enum: Spree::Variant::DIMENSION_UNITS, example: 'cm' },
+          weight: { type: :number, example: 25 },
+          max_weight: { type: :number, example: 1500 },
+          weight_unit: { type: :string, enum: Spree::Variant::WEIGHT_UNITS, example: 'kg' },
+          default: { type: :boolean, example: false }
         }
       }
 
