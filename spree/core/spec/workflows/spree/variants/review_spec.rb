@@ -260,4 +260,14 @@ RSpec.describe 'Spree::Variants review workflows' do
       expect(offer).to be_proposed
     end
   end
+
+  # These messages are shown to a seller, so a missing key does not fail
+  # quietly — it renders `translation_missing` markup into the toast.
+  it 'refuses with a real message rather than a missing-translation key' do
+    result = Spree.variant_approve_workflow.call(variant: offer)
+
+    message = result.error.value.full_messages.join
+    expect(message).not_to include('translation missing', 'translation_missing')
+    expect(message).to include('not awaiting review')
+  end
 end

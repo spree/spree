@@ -62,7 +62,7 @@ module Spree
         return unless variant.status_changed?
         return unless variant.offer? || variant.status_was.in?(Spree::Variant::REVIEW_STATUSES)
 
-        reject!(I18n.t('activerecord.errors.models.spree/variant.attributes.base.status_decided_by_review'))
+        reject!(:status_decided_by_review, message: I18n.t('activerecord.errors.models.spree/variant.attributes.base.status_decided_by_review'))
       end
 
       def save_variant
