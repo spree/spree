@@ -45,7 +45,7 @@ RSpec.describe 'v3 Store serializer price gating' do
         create(:company_membership, company: company, customer: customer)
         create(:catalog_assignment, catalog: catalog, assignable: company)
         create(:catalog_order_minimum, catalog: catalog, currency: cart.currency, amount: 500)
-        cart.update!(user: customer, company: company)
+        cart.update!(customer: customer, company: company)
         Spree::Current.store = store
         Spree::Current.reset_catalog_memos
       end

@@ -305,7 +305,7 @@ module Spree
           end
 
           context 'with existing address by nested id' do
-            let(:existing_address) { create(:address, user: user) }
+            let(:existing_address) { create(:address, customer: user) }
             let(:params) { { address_key => { id: existing_address.prefixed_id } } }
 
             it 'uses the existing address' do
@@ -315,7 +315,7 @@ module Spree
           end
 
           context 'with top-level address_id parameter' do
-            let(:existing_address) { create(:address, user: user) }
+            let(:existing_address) { create(:address, customer: user) }
             let(:params) { { address_id_key => existing_address.prefixed_id } }
 
             it 'uses the existing address' do
@@ -341,7 +341,7 @@ module Spree
             end
 
             context 'when the cart is already mid-checkout' do
-              let(:cart) { create(:cart_with_line_items, customer: user, store: store, email: 'buyer@example.com', ship_address: create(:address, user: user)) }
+              let(:cart) { create(:cart_with_line_items, customer: user, store: store, email: 'buyer@example.com', ship_address: create(:address, customer: user)) }
 
               it 'rebuilds delivery proposals for the new address' do
                 expect(subject).to be_success
@@ -358,7 +358,7 @@ module Spree
           end
 
           context 'with top-level shipping_address_id' do
-            let(:existing_address) { create(:address, user: user) }
+            let(:existing_address) { create(:address, customer: user) }
             let(:params) { { shipping_address_id: existing_address.prefixed_id } }
 
             it 'recalculates when shipping address is picked by id' do
@@ -374,8 +374,8 @@ module Spree
           include_examples 'address update', :billing_address
 
           context 'with top-level billing_address_id' do
-            let(:existing_bill) { create(:address, user: user) }
-            let(:other_bill) { create(:address, user: user) }
+            let(:existing_bill) { create(:address, customer: user) }
+            let(:other_bill) { create(:address, customer: user) }
             let(:cart) do
               create(
                 :cart_with_line_items,
@@ -419,8 +419,8 @@ module Spree
       end
 
       describe 'default address filling on checkout entry' do
-        let(:default_bill) { create(:address, user: user) }
-        let(:default_ship) { create(:address, user: user) }
+        let(:default_bill) { create(:address, customer: user) }
+        let(:default_ship) { create(:address, customer: user) }
         let(:cart) { create(:cart_with_line_items, customer: user, store: store) }
 
         before { user.update!(bill_address: default_bill, ship_address: default_ship) }
@@ -440,7 +440,7 @@ module Spree
         end
 
         it 'does not overwrite an explicitly provided address' do
-          explicit = create(:address, user: user)
+          explicit = create(:address, customer: user)
           described_class.call(cart: cart, params: { email: 'buyer@example.com', shipping_address_id: explicit.prefixed_id })
 
           expect(cart.reload.ship_address_id).to eq(explicit.id)
@@ -459,7 +459,7 @@ module Spree
       describe 'billing address does not reset checkout state' do
         let(:country) { Spree::Country.by_iso('US') }
         let!(:state) { Spree::State.resolve(country.iso, 'NY') }
-        let(:cart) { create(:cart_with_line_items, customer: user, store: store, email: 'buyer@example.com', ship_address: create(:address, user: user)) }
+        let(:cart) { create(:cart_with_line_items, customer: user, store: store, email: 'buyer@example.com', ship_address: create(:address, customer: user)) }
 
         let(:params) do
           {
@@ -544,7 +544,7 @@ module Spree
 
       describe 'address ownership' do
         let(:other_user) { create(:user) }
-        let(:other_users_address) { create(:address, user: other_user) }
+        let(:other_users_address) { create(:address, customer: other_user) }
 
         shared_examples 'ignores other users address' do |address_type|
           context "when using another user's address for #{address_type}" do

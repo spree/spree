@@ -109,7 +109,7 @@ class MyGateway < Spree::PaymentMethod
       external_data: {
         client_secret: provider_session.client_secret
       },
-      customer: order.user
+      customer: order.customer
     )
   end
 

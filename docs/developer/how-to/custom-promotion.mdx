@@ -208,9 +208,9 @@ module Spree
 
         def perform(options = {})
           order = options[:order]
-          return false unless order.user.present?
+          return false unless order.customer.present?
 
-          order.user.add_loyalty_points(preferred_points, source: promotion)
+          order.customer.add_loyalty_points(preferred_points, source: promotion)
           true
         end
       end

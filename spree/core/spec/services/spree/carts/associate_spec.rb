@@ -16,7 +16,7 @@ module Spree
       end
 
       it 'copies valid saved default addresses, gated on physical delivery' do
-        user.update!(bill_address: create(:address, user: user), ship_address: create(:address, user: user))
+        user.update!(bill_address: create(:address, customer: user), ship_address: create(:address, customer: user))
         cart_with_items = create(:cart_with_line_items, customer: nil)
 
         described_class.call(guest_cart: cart_with_items, customer: user)
@@ -35,7 +35,7 @@ module Spree
       end
 
       it 'skips the ship address when no physical delivery is required' do
-        user.update!(ship_address: create(:address, user: user))
+        user.update!(ship_address: create(:address, customer: user))
 
         expect(subject).to be_success
         expect(cart.reload.ship_address_id).to be_nil

@@ -34,7 +34,7 @@ RSpec.describe 'Carts API', type: :request, swagger_doc: 'api-reference/store.ya
       response '200', 'carts listed' do
         let!(:cart1) { create(:cart_with_line_items, store: store, customer: user) }
         let!(:cart2) { create(:cart_with_line_items, store: store, customer: user) }
-        let!(:completed_order) { create(:completed_order_with_totals, store: store, user: user) }
+        let!(:completed_order) { create(:completed_order_with_totals, store: store, customer: user) }
         let!(:other_user_cart) { create(:cart_with_line_items, store: store, customer: create(:user)) }
         let(:'x-spree-api-key') { api_key.token }
         let(:'Authorization') { "Bearer #{jwt_token}" }
@@ -294,7 +294,7 @@ RSpec.describe 'Carts API', type: :request, swagger_doc: 'api-reference/store.ya
         run_test! do |response|
           data = JSON.parse(response.body)
           expect(data['id']).to start_with('cart_')
-          expect(guest_cart.reload.user).to eq(user)
+          expect(guest_cart.reload.customer).to eq(user)
         end
       end
 

@@ -43,7 +43,7 @@ RSpec.describe Spree::GiftCards::Apply do
 
   context 'when the order has applied store credit' do
     let!(:store_credit_payment_method) { create(:store_credit_payment_method) }
-    let!(:store_credit) { create(:store_credit, customer: order.user, amount: 10, store: store) }
+    let!(:store_credit) { create(:store_credit, customer: order.customer, amount: 10, store: store) }
 
     before do
       order.add_store_credit_payments

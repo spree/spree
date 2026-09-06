@@ -55,7 +55,7 @@ RSpec.describe Spree::PaymentSession, type: :model do
 
     it 'sets customer from order user' do
       user = create(:user)
-      order.update!(user: user)
+      order.update!(customer: user)
       session = create(:bogus_payment_session, order: order, payment_method: payment_method,
                        external_id: 'test_456')
       expect(session.customer).to eq(user)

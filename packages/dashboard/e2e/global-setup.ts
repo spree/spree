@@ -93,7 +93,7 @@ const BOOTSTRAP_RUBY = [
   // Category used by the bulk-add-to-categories test, found by permalink for the
   // same reason as the promo category above.
   `s.categories.where(permalink: '${FIXTURE_BULK_CATEGORY_PERMALINK}').first_or_create!(name: '${FIXTURE_BULK_CATEGORY}', parent: nil)`,
-  `Spree.user_class.where(email: '${FIXTURE_PROMO_CUSTOMER_EMAIL}').first_or_create! { |u| u.password = 'customer123'; u.password_confirmation = 'customer123'; u.first_name = '${FIXTURE_PROMO_CUSTOMER_FIRST_NAME}'; u.last_name = '${FIXTURE_PROMO_CUSTOMER_LAST_NAME}' }`,
+  `Spree.customer_class.where(email: '${FIXTURE_PROMO_CUSTOMER_EMAIL}').first_or_create! { |u| u.password = 'customer123'; u.password_confirmation = 'customer123'; u.first_name = '${FIXTURE_PROMO_CUSTOMER_FIRST_NAME}'; u.last_name = '${FIXTURE_PROMO_CUSTOMER_LAST_NAME}' }`,
   `s.customer_groups.where(name: '${FIXTURE_PROMO_CUSTOMER_GROUP}').first_or_create!`,
   // Make the store multi-currency so the money-entry forms (store credit,
   // refunds, manual prices) offer EUR alongside the USD default. Markets own

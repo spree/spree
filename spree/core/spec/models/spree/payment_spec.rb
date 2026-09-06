@@ -982,7 +982,7 @@ describe Spree::Payment, type: :model do
       order = create(:order)
       source = order.payments.new(params).source
 
-      expect(source.user_id).to eq order.user_id
+      expect(source.user_id).to eq order.customer_id
       expect(source.payment_method_id).to eq gateway.id
     end
 
@@ -1005,7 +1005,7 @@ describe Spree::Payment, type: :model do
     end
 
     context 'existing card' do
-      let!(:credit_card) { create(:credit_card, number: '4111111111111112', customer: order.user, payment_method: gateway, gateway_customer_profile_id: 'BGS-1234567890') }
+      let!(:credit_card) { create(:credit_card, number: '4111111111111112', customer: order.customer, payment_method: gateway, gateway_customer_profile_id: 'BGS-1234567890') }
 
       let(:params) do
         {

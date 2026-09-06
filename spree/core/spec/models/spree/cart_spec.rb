@@ -230,7 +230,7 @@ describe Spree::Cart, type: :model do
     end
 
     context 'when cart is empty' do
-      let(:order) { create(:order, store: store, user: user) }
+      let(:order) { create(:order, store: store, customer: user) }
 
       it 'does nothing' do
         cart.remove_out_of_stock_items!
@@ -303,12 +303,12 @@ describe Spree::Cart, type: :model do
     end
   end
 
-  describe '#associate_user!' do
+  describe '#associate_customer!' do
     let(:cart) { create(:cart, store: store, customer: nil, email: nil) }
     let(:user) { create(:user, ship_address: create(:address), bill_address: create(:address)) }
 
     it 'binds the user, takes the email and copies valid default addresses' do
-      cart.associate_user!(user)
+      cart.associate_customer!(user)
 
       expect(cart.reload.customer).to eq(user)
       expect(cart.email).to eq(user.email)
@@ -318,7 +318,7 @@ describe Spree::Cart, type: :model do
     it 'keeps an existing email when override is disabled' do
       cart.update!(email: 'original@example.com')
 
-      cart.associate_user!(user, false)
+      cart.associate_customer!(user, false)
 
       expect(cart.reload.email).to eq('original@example.com')
     end

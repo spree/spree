@@ -179,7 +179,7 @@ RSpec.describe Spree::Api::V3::Admin::SellersController, type: :controller do
     # row — and the serializer renders it back in full, customer and all.
     it 'refuses to bind an address by id' do
       victim = create(:user)
-      foreign = create(:address, user: victim, address1: '99 Secret Lane')
+      foreign = create(:address, customer: victim, address1: '99 Secret Lane')
 
       patch :update, params: { id: seller.prefixed_id, billing_address_id: foreign.prefixed_id },
                      as: :json
@@ -189,7 +189,7 @@ RSpec.describe Spree::Api::V3::Admin::SellersController, type: :controller do
     end
 
     it 'ignores a raw integer address id too' do
-      foreign = create(:address, user: create(:user))
+      foreign = create(:address, customer: create(:user))
 
       patch :update, params: { id: seller.prefixed_id, billing_address_id: foreign.id.to_s }, as: :json
 

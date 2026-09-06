@@ -495,7 +495,6 @@ export interface AddressInputParams {
 export interface OrderCreateParams {
   email?: string
   customer_id?: string
-  user_id?: string
   use_customer_default_address?: boolean
   currency?: string
   market_id?: string
@@ -613,20 +612,20 @@ export interface GiftCardApplyParams {
 /**
  * Admin-issued gift card. `code` is optional — the server auto-generates
  * a unique code when omitted. `currency` defaults to the store's currency.
- * `user_id` (customer prefixed ID) attaches the card to a specific customer.
+ * `customer_id` (customer prefixed ID) attaches the card to a specific customer.
  */
 export interface GiftCardCreateParams {
   amount: string | number
   currency?: string
   code?: string
   expires_at?: string | null
-  user_id?: string | null
+  customer_id?: string | null
 }
 
 export interface GiftCardUpdateParams {
   amount?: string | number
   expires_at?: string | null
-  user_id?: string | null
+  customer_id?: string | null
 }
 
 /**

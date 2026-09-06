@@ -8,25 +8,19 @@ module Spree
         has_many :promotion_rule_users, class_name: 'Spree::PromotionRuleUser',
                                         foreign_key: :promotion_rule_id,
                                         dependent: :destroy
-        has_many :users, through: :promotion_rule_users, source: :customer, class_name: "::#{Spree.customer_class}"
+        has_many :customers, through: :promotion_rule_users, source: :customer,
+                             class_name: "::#{Spree.customer_class}"
+        has_many :users, through: :promotion_rule_users, source: :customer,
+                         class_name: "::#{Spree.customer_class}", deprecated: true
 
         # Customers, not admin users — the rule keys off `Spree::Order#customer_id`.
-        # The data layer keeps the `users` association name (deferred model rename);
-        # the API exposes the same set as `customer_ids`.
+        # `customer_ids` / `customer_ids=` come from the `customers` association.
         self.additional_permitted_attributes = [customer_ids: []]
 
-        # Wire-format shorthand is `customer` (the model is still `User`
-        # pre-6.0 rename, see docs/plans/6.0-platform-auth.md).
+        # Wire-format shorthand is `customer`; the rule class keeps the `User`
+        # name until the 6.1 rename (see docs/plans/6.0-platform-auth.md).
         def self.api_type
           'customer'
-        end
-
-        def customer_ids
-          user_ids
-        end
-
-        def customer_ids=(ids)
-          self.user_ids = ids
         end
 
         #

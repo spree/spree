@@ -22,7 +22,7 @@ module Spree
 
             result = Spree.order_create_service.call(
               store: current_store,
-              customer: resolve_user,
+              customer: resolve_customer,
               created_by: try_spree_current_user,
               params: order_create_params
             )
@@ -218,8 +218,8 @@ module Spree
             )
           end
 
-          def resolve_user
-            customer_param = params[:customer_id].presence || params[:user_id].presence
+          def resolve_customer
+            customer_param = params[:customer_id].presence
             return unless customer_param
 
             Spree.customer_class.
@@ -239,7 +239,7 @@ module Spree
           def order_create_params
             permitted = normalize_params(
               params.permit(
-                :email, :customer_id, :user_id, :use_customer_default_address,
+                :email, :customer_id, :use_customer_default_address,
                 :currency, :market_id, :channel_id, :locale,
                 :customer_note, :internal_note,
                 # The buyer's own purchase-order reference, and the signed blob
@@ -262,7 +262,7 @@ module Spree
           def order_update_params
             permitted = normalize_params(
               params.permit(
-                :email, :customer_id, :user_id,
+                :email, :customer_id,
                 :customer_note, :internal_note,
                 :po_number, :po_document,
                 :currency, :locale, :market_id, :channel_id,

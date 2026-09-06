@@ -6,7 +6,7 @@ describe Spree::ReturnMailer, type: :mailer do
   include EmailSpec::Matchers
 
   let(:store) { @default_store }
-  let(:order) { create(:shipped_order, store: store, email: 'test@example.com', user: nil) }
+  let(:order) { create(:shipped_order, store: store, email: 'test@example.com', customer: nil) }
   let(:return_record) { create(:received_return, order: order, store: store) }
 
   subject(:message) { described_class.refunded_email(return_record) }

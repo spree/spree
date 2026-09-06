@@ -38,7 +38,7 @@ FactoryBot.define do
     end
 
     trait :with_customer do
-      customer { order.user || create(:user) }
+      customer { order.customer || create(:user) }
     end
 
     factory :bogus_payment_session, class: 'Spree::PaymentSessions::Bogus' do

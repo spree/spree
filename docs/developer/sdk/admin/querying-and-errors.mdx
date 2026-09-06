@@ -13,7 +13,7 @@ const { data: orders } = await client.orders.list({
   status_eq: 'complete',          // exact match
   total_gteq: 100,                // greater than or equal
   email_cont: '@example.com',     // substring match
-  user_id_eq: 'cus_xxx',          // prefixed IDs work directly
+  customer_id_eq: 'cus_xxx',      // prefixed IDs work directly
   sort: '-completed_at',
   page: 2,
   limit: 50,
@@ -23,7 +23,7 @@ const { data: orders } = await client.orders.list({
 Common predicates: `_eq`, `_not_eq`, `_cont` (contains), `_start`, `_end`, `_gteq` / `_lteq`, `_gt` / `_lt`, `_in` (array), `_null`. The filterable attributes per resource are listed in the [Admin API reference](/api-reference/admin-api/introduction); each model declares an explicit allowlist, so unknown filter keys are ignored rather than executed.
 
 <Note>
-  Foreign-key predicates accept **prefixed IDs** (`user_id_eq: 'cus_xxx'`, `variant_id_in: ['variant_a', 'variant_b']`) — the API translates them; you never handle raw database IDs.
+  Foreign-key predicates accept **prefixed IDs** (`customer_id_eq: 'cus_xxx'`, `variant_id_in: ['variant_a', 'variant_b']`) — the API translates them; you never handle raw database IDs.
 </Note>
 
 ## Sorting

@@ -255,15 +255,9 @@ module Spree
     end
 
     # Binds a signing-in customer to the cart through the swappable associate
-    # service (same seam Order#associate_customer! uses).
+    # service, the same one Order#associate_customer! calls.
     def associate_customer!(customer, override_email = true)
       Spree.cart_associate_service.call(guest_cart: self, customer: customer, override_email: override_email)
-    end
-
-    # @deprecated Use {#associate_customer!}; removed in 6.1.
-    def associate_user!(user, override_email = true)
-      Spree::Deprecation.warn('Spree::Cart#associate_user! is deprecated and will be removed in Spree 6.1. Use #associate_customer! instead.')
-      associate_customer!(user, override_email)
     end
 
     # Merges another cart into this one through the swappable merge workflow

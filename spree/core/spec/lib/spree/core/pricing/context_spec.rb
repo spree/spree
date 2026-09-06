@@ -182,7 +182,7 @@ module Spree
         end
 
         it 'sets user from order' do
-          expect(subject.user).to eq(order.user)
+          expect(subject.user).to eq(order.customer)
         end
 
         it 'sets order reference' do
