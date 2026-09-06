@@ -27,12 +27,12 @@ describe Spree::Address, type: :model do
   end
 
   context 'default values' do
-    context 'with user' do
+    context 'with a customer owner' do
       let(:user) { create(:user, first_name: 'John', last_name: 'Snow') }
-      let(:address) { Spree::Address.new(user: user) }
+      let(:address) { Spree::Address.new(owner: user) }
 
-      it 'sets user_id and first/last name from user' do
-        expect(address.user_id).to eq(user.id)
+      it 'sets owner_id and first/last name from the customer' do
+        expect(address.owner_id).to eq(user.id)
         expect(address.first_name).to eq('John')
         expect(address.last_name).to eq('Snow')
       end
@@ -711,7 +711,7 @@ describe Spree::Address, type: :model do
         end
 
         context 'when deleted address was not assigned to the user' do
-          before { address.update(user: nil) }
+          before { address.update(owner: nil) }
 
           it 'does not touch user' do
             expect{ destroy_address }.not_to change{ user.reload.updated_at }

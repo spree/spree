@@ -35,7 +35,7 @@ module Spree
       end
 
       it 'updates user email marketing attribute' do
-        expect { service }.to change { subscriber.user.accepts_email_marketing }.to(true)
+        expect { service }.to change { subscriber.customer.accepts_email_marketing }.to(true)
       end
     end
 

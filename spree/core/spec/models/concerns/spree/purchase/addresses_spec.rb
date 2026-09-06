@@ -17,7 +17,7 @@ RSpec.shared_examples 'an addresses host' do
       record.ship_address_attributes = address_attributes
 
       expect(record.ship_address).to be_persisted
-      expect(record.ship_address.user).to eq(user)
+      expect(record.ship_address.owner).to eq(user)
     end
 
     it 'reuses an identical existing address instead of creating a duplicate' do
@@ -31,7 +31,7 @@ RSpec.shared_examples 'an addresses host' do
     end
 
     it 'updates an editable saved address in place when an id is given' do
-      saved = create(:address, user: user)
+      saved = create(:address, customer: user)
 
       record.ship_address_attributes = { id: saved.id, first_name: 'Renamed' }
 
@@ -123,8 +123,8 @@ RSpec.shared_examples 'an addresses host' do
   end
 
   describe '#ship_address_id= / #bill_address_id=' do
-    let(:own_address) { create(:address, user: user) }
-    let(:foreign_address) { create(:address, user: create(:user)) }
+    let(:own_address) { create(:address, customer: user) }
+    let(:foreign_address) { create(:address, customer: create(:user)) }
 
     it 'accepts an address owned by the record user' do
       record.ship_address_id = own_address.id
@@ -206,7 +206,7 @@ RSpec.shared_examples 'an addresses host' do
 
   describe '#clone_shipping_address' do
     it 'copies the ship address onto the bill address and the user default' do
-      ship_address = create(:address, user: user)
+      ship_address = create(:address, customer: user)
       record.ship_address = ship_address
 
       record.clone_shipping_address
@@ -217,8 +217,8 @@ RSpec.shared_examples 'an addresses host' do
   end
 
   describe '#assign_default_addresses!' do
-    let(:default_bill) { create(:address, user: user) }
-    let(:default_ship) { create(:address, user: user) }
+    let(:default_bill) { create(:address, customer: user) }
+    let(:default_ship) { create(:address, customer: user) }
 
     before do
       user.update!(bill_address: default_bill, ship_address: default_ship)
@@ -300,18 +300,18 @@ RSpec.shared_examples 'an addresses host' do
 
   describe '#shipping_eq_billing_address?' do
     it 'compares the two addresses' do
-      address = create(:address, user: user)
+      address = create(:address, customer: user)
       record.ship_address = address
       record.bill_address = address
       expect(record.shipping_eq_billing_address?).to be(true)
 
-      record.bill_address = create(:address, user: user)
+      record.bill_address = create(:address, customer: user)
       expect(record.shipping_eq_billing_address?).to be(false)
     end
   end
 
   describe 'mass attribute assignment for bill_address_id, ship_address_id' do
-    let(:address) { create(:address, user: user) }
+    let(:address) { create(:address, customer: user) }
 
     it 'is able to mass assign bill_address_id' do
       record.update(bill_address_id: address.id)
@@ -326,7 +326,7 @@ RSpec.shared_examples 'an addresses host' do
 
   describe 'same bill & ship addresses' do
     it 'has equal ids when both ids are set' do
-      address = create(:address, user: user)
+      address = create(:address, customer: user)
       record.update!(bill_address_id: address.id, ship_address_id: address.id)
 
       expect(record.bill_address_id).to eq record.ship_address_id
@@ -334,8 +334,8 @@ RSpec.shared_examples 'an addresses host' do
   end
 
   describe 'editing an address locked by a completed order' do
-    let(:address) { create(:address, user: user) }
-    let!(:completed_order) { create(:completed_order_with_totals, user: user, ship_address: address) }
+    let(:address) { create(:address, customer: user) }
+    let!(:completed_order) { create(:completed_order_with_totals, customer: user, ship_address: address) }
 
     it 'creates a new address with the updated attributes' do
       expect(
@@ -370,7 +370,7 @@ RSpec.describe Spree::Purchase::Addresses do
     # is the one wired as a callback.
     describe 'use_shipping clone callback' do
       it 'clones the ship address onto the bill address when truthy' do
-        record.ship_address = create(:address, user: user)
+        record.ship_address = create(:address, customer: user)
         record.use_shipping = true
         record.valid?
 
@@ -380,8 +380,8 @@ RSpec.describe Spree::Purchase::Addresses do
   end
 
   context 'included in Spree::Order' do
-    let(:record) { create(:order, store: store, user: user, ship_address: nil, bill_address: nil) }
-    let(:guest_record) { create(:order, store: store, user: nil, email: 'guest@example.com') }
+    let(:record) { create(:order, store: store, customer: user, ship_address: nil, bill_address: nil) }
+    let(:guest_record) { create(:order, store: store, customer: nil, email: 'guest@example.com') }
 
     it_behaves_like 'an addresses host'
 

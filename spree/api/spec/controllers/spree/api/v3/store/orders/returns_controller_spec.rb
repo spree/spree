@@ -5,7 +5,7 @@ RSpec.describe Spree::Api::V3::Store::Orders::ReturnsController, type: :controll
 
   include_context 'API v3 Store'
 
-  let(:order) { create(:shipped_order, user: user, store: store) }
+  let(:order) { create(:shipped_order, customer: user, store: store) }
   let(:fulfillment_item) { order.fulfillment_items.first }
 
   before do
@@ -86,7 +86,7 @@ RSpec.describe Spree::Api::V3::Store::Orders::ReturnsController, type: :controll
 
   describe 'authorization' do
     it 'does not expose another customer order' do
-      other_order = create(:shipped_order, store: store, user: create(:user))
+      other_order = create(:shipped_order, store: store, customer: create(:user))
 
       get :index, params: { order_id: other_order.to_param }, as: :json
 

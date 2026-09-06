@@ -6,7 +6,7 @@ describe Spree::FulfillmentMailer, type: :mailer do
   include EmailSpec::Matchers
 
   let(:store) { @default_store }
-  let(:order) { create(:shipped_order, store: store, email: 'test@example.com', user: nil) }
+  let(:order) { create(:shipped_order, store: store, email: 'test@example.com', customer: nil) }
   let(:fulfillment) { order.fulfillments.first }
   let(:delivery_method) { fulfillment.delivery_method }
 

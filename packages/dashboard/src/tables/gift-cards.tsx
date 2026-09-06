@@ -118,8 +118,8 @@ defineTable<GiftCard>('gift-cards', {
     {
       key: 'customer',
       label: i18n.t('admin.gift_cards.columns.customer'),
-      // Whitelisted `user_id` on the GiftCard model.
-      ransackAttribute: 'user_id',
+      // Whitelisted `customer_id` on the GiftCard model.
+      ransackAttribute: 'customer_id',
       filterable: true,
       filterType: 'resource',
       filterResource: customerAutocompleteProps('gift-card-customer-filter'),
@@ -129,7 +129,7 @@ defineTable<GiftCard>('gift-cards', {
     {
       key: 'created_by',
       label: i18n.t('admin.gift_cards.columns.issued_by'),
-      // GiftCard whitelists `code`, `user_id`, `status`, `gift_card_batch_id`.
+      // GiftCard whitelists `code`, `customer_id`, `status`, `gift_card_batch_id`.
       // `created_by_id` is not whitelisted yet — Ransack will reject the
       // predicate without it; we add it server-side alongside this column.
       ransackAttribute: 'created_by_id',

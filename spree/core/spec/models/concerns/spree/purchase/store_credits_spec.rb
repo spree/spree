@@ -4,7 +4,7 @@ RSpec.shared_examples 'check total store credit from payments' do
   context 'with valid payments' do
     subject { record }
 
-    let(:record) { new_record(user: create(:user), total: 100.00) }
+    let(:record) { new_record(customer: create(:user), total: 100.00) }
     let!(:payment) { create_store_credit_payment(record, amount: 20.0) }
     let!(:second_payment) { create_store_credit_payment(record, amount: 30.0) }
 
@@ -50,7 +50,7 @@ RSpec.shared_examples 'a store credits host' do
 
     context 'there is enough store credit to pay for the entire record' do
       let(:store_credit) { create(:store_credit, amount: record_total) }
-      let(:record) { new_record(user: store_credit.user, total: record_total) }
+      let(:record) { new_record(customer: store_credit.customer, total: record_total) }
 
       before do
         subject
@@ -68,7 +68,7 @@ RSpec.shared_examples 'a store credits host' do
       let(:expected_cc_total) { 100.0 }
       let(:store_credit_total) { record_total - expected_cc_total }
       let(:store_credit) { create(:store_credit, amount: store_credit_total) }
-      let(:record) { new_record(user: store_credit.user, total: record_total) }
+      let(:record) { new_record(customer: store_credit.customer, total: record_total) }
 
       before do
         record.update_column(:total, record_total)
@@ -88,9 +88,9 @@ RSpec.shared_examples 'a store credits host' do
         let(:amount_difference) { 100 }
         let!(:older_store_credit) { create(:store_credit, amount: (record_total - amount_difference), created_at: 2.days.ago) }
         let!(:newer_store_credit) do
-          create(:store_credit, amount: record_total, user: older_store_credit.user, created_at: 1.day.ago)
+          create(:store_credit, amount: record_total, customer: older_store_credit.customer, created_at: 1.day.ago)
         end
-        let(:record) { new_record(user: older_store_credit.user, total: record_total) }
+        let(:record) { new_record(customer: older_store_credit.customer, total: record_total) }
 
         before do
           Timecop.scale(3600)
@@ -118,7 +118,7 @@ RSpec.shared_examples 'a store credits host' do
     subject { record.remove_store_credit_payments }
 
     let(:record_total) { 500.00 }
-    let(:record) { new_record(user: store_credit.user, total: record_total) }
+    let(:record) { new_record(customer: store_credit.customer, total: record_total) }
 
     context 'when the record is not complete' do
       let(:store_credit) { create(:store_credit, amount: record_total - 1) }
@@ -157,13 +157,13 @@ RSpec.shared_examples 'a store credits host' do
     context 'record has an associated user' do
       subject { record.covered_by_store_credit? }
 
-      let(:record) { new_record(user: user, total: record_total) }
+      let(:record) { new_record(customer: user, total: record_total) }
       let(:user) { create(:user) }
       let(:record_total) { 10.0 }
 
       context 'user has enough store credit to pay for the record' do
         let!(:store_credit_payment) { create_store_credit_payment(record, source: store_credit, amount: 10.0) }
-        let(:store_credit) { create(:store_credit, amount: 10.0, store: record.store, user: record.user) }
+        let(:store_credit) { create(:store_credit, amount: 10.0, store: record.store, customer: record.customer) }
 
         it { is_expected.to be(true) }
       end
@@ -195,7 +195,7 @@ RSpec.shared_examples 'a store credits host' do
     end
 
     context 'record has an associated user' do
-      subject { new_record(user: user) }
+      subject { new_record(customer: user) }
 
       let(:user) { create(:user) }
       let(:available_store_credit) { 25.0 }
@@ -211,7 +211,7 @@ RSpec.shared_examples 'a store credits host' do
       context 'when store is provided' do
         let!(:store) { @default_store }
         let!(:second_store) { create(:store) }
-        let!(:store_credit) { create(:store_credit, amount: '100', user: user, store: store) }
+        let!(:store_credit) { create(:store_credit, amount: '100', customer: user, store: store) }
 
         before do
           allow(user).to receive(:total_available_store_credit).and_call_original
@@ -250,12 +250,12 @@ RSpec.shared_examples 'a store credits host' do
     end
 
     context 'record has an associated user' do
-      let(:record) { new_record(user: user, currency: 'USD') }
+      let(:record) { new_record(customer: user, currency: 'USD') }
       let(:user) { create(:user) }
 
-      let!(:store_credit_1) { create(:store_credit, user: user, amount: 10, currency: 'USD') }
-      let!(:store_credit_2) { create(:store_credit, user: user, amount: 15, currency: 'USD') }
-      let!(:store_credit_3) { create(:store_credit, user: user, amount: 20, currency: 'EUR') }
+      let!(:store_credit_1) { create(:store_credit, customer: user, amount: 10, currency: 'USD') }
+      let!(:store_credit_2) { create(:store_credit, customer: user, amount: 15, currency: 'USD') }
+      let!(:store_credit_3) { create(:store_credit, customer: user, amount: 20, currency: 'EUR') }
 
       it 'returns the user available store credits' do
         expect(subject).to eq([store_credit_2, store_credit_1])
@@ -273,7 +273,7 @@ RSpec.shared_examples 'a store credits host' do
     end
 
     context 'record has an associated user' do
-      subject { new_record(user: user) }
+      subject { new_record(customer: user) }
 
       let(:user) { create(:user) }
 
@@ -347,7 +347,7 @@ RSpec.shared_examples 'a store credits host' do
     end
 
     context 'record is completed' do
-      let(:record) { new_record(user: create(:user), total: 100.00) }
+      let(:record) { new_record(customer: create(:user), total: 100.00) }
 
       it 'reports the actually applied payments, not the theoretical maximum' do
         payment = create_store_credit_payment(record, amount: 20.0)
@@ -364,7 +364,7 @@ RSpec.shared_examples 'a store credits host' do
 
         let(:store) { @default_store }
         let(:store_credit) { create(:store_credit, store: store) }
-        let(:record) { new_record(user: store_credit.user) }
+        let(:record) { new_record(customer: store_credit.customer) }
 
         context 'the store credit is more than the record total' do
           let(:record_total) { store_credit.amount - 1 }
@@ -388,7 +388,7 @@ RSpec.shared_examples 'a store credits host' do
       end
 
       context 'the associated user does not have store credits' do
-        subject { new_record(user: create(:user)) }
+        subject { new_record(customer: create(:user)) }
 
         it 'returns 0' do
           expect(subject.total_applicable_store_credit).to be_zero
@@ -408,7 +408,7 @@ RSpec.shared_examples 'a store credits host' do
   describe '#total_applied_store_credit' do
     subject(:total_applied_store_credit) { record.total_applied_store_credit }
 
-    let(:record) { new_record(user: create(:user), total: 100.00) }
+    let(:record) { new_record(customer: create(:user), total: 100.00) }
 
     context 'with valid payments' do
       let(:valid_payment) { 10.0 }
@@ -420,7 +420,7 @@ RSpec.shared_examples 'a store credits host' do
         create_store_credit_payment(record, status: 'completed', amount: valid_payment)
         create_store_credit_payment(record, status: 'completed', amount: valid_payment_2)
         create_store_credit_payment(record, status: 'invalid', amount: invalid_payment)
-        create_store_credit_payment(new_record(user: create(:user), total: 100.00), status: 'completed', amount: other_record_payment)
+        create_store_credit_payment(new_record(customer: create(:user), total: 100.00), status: 'completed', amount: other_record_payment)
       end
 
       it 'returns the sum of the payment amounts' do
@@ -495,8 +495,8 @@ end
 
 RSpec.describe Spree::Purchase::StoreCredits do
   context 'included in Spree::Cart' do
-    def new_record(user: nil, total: nil, currency: nil)
-      create(:cart, { store: @default_store, customer: user, total: total, currency: currency }.compact)
+    def new_record(customer: nil, total: nil, currency: nil)
+      create(:cart, { store: @default_store, customer: customer, total: total, currency: currency }.compact)
     end
 
     def guest_record(total: nil)
@@ -512,7 +512,7 @@ RSpec.describe Spree::Purchase::StoreCredits do
     end
 
     def completed_record_with_store_credit_payment
-      cart = new_record(user: create(:user), total: 50.0)
+      cart = new_record(customer: create(:user), total: 50.0)
       create(:store_credit_payment, cart: cart, order: nil, amount: 50.0)
       mark_completed(cart)
       cart
@@ -522,8 +522,8 @@ RSpec.describe Spree::Purchase::StoreCredits do
   end
 
   context 'included in Spree::Order' do
-    def new_record(user: nil, total: nil, currency: nil)
-      create(:order, { store: @default_store, user: user, total: total, currency: currency }.compact)
+    def new_record(customer: nil, total: nil, currency: nil)
+      create(:order, { store: @default_store, customer: customer, total: total, currency: currency }.compact)
     end
 
     def guest_record(total: nil)

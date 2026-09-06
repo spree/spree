@@ -65,10 +65,9 @@ module Spree
                resource: proc { Spree.api.admin_category_serializer },
                if: proc { |rule| rule.respond_to?(:categories) }
 
-          many :users,
-               key: :customers,
+          many :customers,
                resource: proc { Spree.api.admin_customer_serializer },
-               if: proc { |rule| rule.respond_to?(:users) }
+               if: proc { |rule| rule.respond_to?(:customers) }
 
           many :customer_groups,
                resource: proc { Spree.api.admin_customer_group_serializer },

@@ -250,7 +250,7 @@ test.describe('promotions', () => {
       timeout: 5_000,
     })
 
-    // `Spree.user_class.search` matches first_name/last_name (LIKE) and email
+    // `Spree.customer_class.search` matches first_name/last_name (LIKE) and email
     // (exact). Search by first name; the row summary renders `full_name`.
     await pickAutocompleteOption(
       page,

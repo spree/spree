@@ -40,7 +40,8 @@ module Spree
     has_many :store_credits, class_name: 'Spree::StoreCredit', as: :originator
     has_many :orders, inverse_of: :gift_card, class_name: 'Spree::Order'
     has_many :carts, inverse_of: :gift_card, class_name: 'Spree::Cart'
-    has_many :users, through: :orders, source: :customer
+    has_many :customers, through: :orders, source: :customer
+    has_many :users, through: :orders, source: :customer, deprecated: true
 
     #
     # Scopes
@@ -57,8 +58,9 @@ module Spree
     # Ransack
     #
     ransack_alias :state, :status # @deprecated filter alias — removed in 6.1
-    self.whitelisted_ransackable_attributes = %w[code customer_id user_id status state gift_card_batch_id created_by_id]
-    self.whitelisted_ransackable_associations = %w[users orders batch]
+    self.whitelisted_ransackable_attributes = %w[code customer_id status state gift_card_batch_id created_by_id]
+    # `users` is the pre-6.0 name for `customers` — removed in 6.1.
+    self.whitelisted_ransackable_associations = %w[customers users orders batch]
     self.whitelisted_ransackable_scopes = %w[active expired redeemed partially_redeemed]
 
     normalizes :code, with: ->(value) { value&.to_s&.squish&.presence }

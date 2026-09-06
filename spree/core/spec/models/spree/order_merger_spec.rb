@@ -35,7 +35,7 @@ module Spree
     context 'user is provided' do
       it 'assigns user to new order' do
         subject.merge!(order_2, user)
-        expect(order_1.user).to eq user
+        expect(order_1.customer).to eq user
       end
     end
 

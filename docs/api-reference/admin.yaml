@@ -8958,7 +8958,7 @@ paths:
         bearer_auth: []
       description: |-
         Returns the gift cards issued by the current store. Filter by
-        `q[code_cont]` for code search, `q[user_id_eq]` for cards issued
+        `q[code_cont]` for code search, `q[customer_id_eq]` for cards issued
         to a specific customer, or `q[status_eq]` for status filtering.
 
 
@@ -9117,7 +9117,7 @@ paths:
       description: |-
         Issues a gift card scoped to the current store. The code is
         auto-generated when omitted. `currency` defaults to the store's
-        configured currency. Pass `user_id` (prefixed ID) to attach the
+        configured currency. Pass `customer_id` (prefixed ID) to attach the
         card to a specific customer.
 
 
@@ -9137,11 +9137,11 @@ paths:
             amount: '25.00',
             currency: 'USD',
             expires_at: '2030-12-31',
-            user_id: 'cus_UkLWZg9DAJ',
+            customer_id: 'cus_UkLWZg9DAJ',
           })
       - lang: bash
         label: Spree CLI
-        source: spree api post /gift_cards -d '{"amount":"25.00","currency":"USD","expires_at":"2030-12-31","user_id":"cus_UkLWZg9DAJ"}'
+        source: spree api post /gift_cards -d '{"amount":"25.00","currency":"USD","expires_at":"2030-12-31","customer_id":"cus_UkLWZg9DAJ"}'
       parameters:
       - name: x-spree-api-key
         in: header
@@ -9223,7 +9223,7 @@ paths:
                   example: '2030-12-31'
                   description: ISO 8601 date.
                   nullable: true
-                user_id:
+                customer_id:
                   type: string
                   example: cus_UkLWZg9DAJ
                   description: Optional customer prefixed ID.
@@ -9399,7 +9399,7 @@ paths:
                   type: string
                   example: '2031-12-31'
                   nullable: true
-                user_id:
+                customer_id:
                   type: string
                   example: cus_UkLWZg9DAJ
                   nullable: true
@@ -13633,7 +13633,7 @@ paths:
                   example: customer@example.com
                 customer_id:
                   type: string
-                  description: 'Customer ID. Alias: user_id (legacy).'
+                  description: Customer ID.
                 use_customer_default_address:
                   type: boolean
                   description: When true with customer_id, copies the customer's saved

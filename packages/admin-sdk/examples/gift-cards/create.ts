@@ -10,7 +10,7 @@ const giftCard = await client.giftCards.create({
   amount: '25.00',
   currency: 'USD',
   expires_at: '2030-12-31',
-  user_id: 'cus_UkLWZg9DAJ',
+  customer_id: 'cus_UkLWZg9DAJ',
 })
 
 // endregion:example

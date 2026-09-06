@@ -11,7 +11,7 @@ describe Spree::Order, type: :model do
 
   let(:user) { create(:user) }
   let!(:store) { @default_store }
-  let(:order) { create(:order, user: user, store: store) }
+  let(:order) { create(:order, customer: user, store: store) }
 
   before { allow(Spree.customer_class).to receive_messages(current: build(:user)) }
 
@@ -51,9 +51,9 @@ describe Spree::Order, type: :model do
 
   describe 'Scopes' do
     let!(:user) { create(:user) }
-    let!(:completed_order) { create(:order, user: user, completed_at: Time.current) }
-    let!(:incompleted_order) { create(:order, user: user, completed_at: nil) }
-    let!(:canceled_order) { create(:order, user: user, completed_at: nil, state: 'canceled') }
+    let!(:completed_order) { create(:order, customer: user, completed_at: Time.current) }
+    let!(:incompleted_order) { create(:order, customer: user, completed_at: nil) }
+    let!(:canceled_order) { create(:order, customer: user, completed_at: nil, state: 'canceled') }
 
     describe '.complete' do
       it { expect(Spree::Order.complete).to include completed_order }
@@ -70,11 +70,11 @@ describe Spree::Order, type: :model do
     end
 
     describe '.search' do
-      let!(:order_1) { create(:order, number: 'R100', user: create(:user, email: 'don.roe@example.com'), bill_address: create(:address, first_name: 'Don', last_name: 'Roe')) }
-      let!(:order_2) { create(:order, number: 'R101', user: create(:user, email: 'jane.gone@example.com'), bill_address: create(:address, first_name: 'Jane', last_name: 'Gone')) }
-      let!(:order_3) { create(:order, number: 'R200', user: create(:user, email: 'mary.moe@example.com'), bill_address: create(:address, first_name: 'Mary', last_name: 'Moe')) }
-      let!(:order_4) { create(:order, number: 'R300', user: create(:user, email: 'johndoe@example.com'), bill_address: create(:address, first_name: 'Ayn', last_name: 'Rand')) }
-      let!(:order_5) { create(:order, number: 'R400', user: create(:user, email: 'john_doe@example.com'), bill_address: create(:address, first_name: 'John', last_name: 'Doe')) }
+      let!(:order_1) { create(:order, number: 'R100', customer: create(:user, email: 'don.roe@example.com'), bill_address: create(:address, first_name: 'Don', last_name: 'Roe')) }
+      let!(:order_2) { create(:order, number: 'R101', customer: create(:user, email: 'jane.gone@example.com'), bill_address: create(:address, first_name: 'Jane', last_name: 'Gone')) }
+      let!(:order_3) { create(:order, number: 'R200', customer: create(:user, email: 'mary.moe@example.com'), bill_address: create(:address, first_name: 'Mary', last_name: 'Moe')) }
+      let!(:order_4) { create(:order, number: 'R300', customer: create(:user, email: 'johndoe@example.com'), bill_address: create(:address, first_name: 'Ayn', last_name: 'Rand')) }
+      let!(:order_5) { create(:order, number: 'R400', customer: create(:user, email: 'john_doe@example.com'), bill_address: create(:address, first_name: 'John', last_name: 'Doe')) }
 
       it 'returns orders based on an email' do
         expect(described_class.search('don.roe@example.com')).to eq([order_1])
@@ -120,8 +120,8 @@ describe Spree::Order, type: :model do
   end
 
   describe 'Callbacks' do
-    let(:order) { build(:order, user: user, store: store, ship_address: ship_address) }
-    let(:ship_address) { create(:address, user: user) }
+    let(:order) { build(:order, customer: user, store: store, ship_address: ship_address) }
+    let(:ship_address) { create(:address, customer: user) }
 
     describe '#clone_shipping_address' do
       it 'clones the shipping address when use_shipping is true' do
@@ -140,7 +140,7 @@ describe Spree::Order, type: :model do
   describe '#full_name' do
     subject { order.full_name }
 
-    let(:order) { build(:order, user: user, bill_address: bill_address, email: email) }
+    let(:order) { build(:order, customer: user, bill_address: bill_address, email: email) }
 
     let(:bill_address) { nil }
     let(:email) { 'john.doe@gmail.com' }
@@ -501,7 +501,7 @@ describe Spree::Order, type: :model do
     let(:no_method) { double :payment_method, available_for_order?: false, available_for_store?: true, store: store }
     let(:methods) { [ok_method, no_method] }
     let(:store_2) { create(:store) }
-    let(:order_from_different_store) { create(:order, user: user, store: store_2) }
+    let(:order_from_different_store) { create(:order, customer: user, store: store_2) }
 
     it 'includes frontend payment methods' do
       payment_method = store.payment_methods.create!(name: 'Fake', active: true, storefront_visible: true)
@@ -594,7 +594,7 @@ describe Spree::Order, type: :model do
     end
   end
 
-  describe '#associate_user!' do
+  describe '#associate_customer!' do
     let(:user) { create(:user_with_addreses) }
     let(:email) { user.email }
     let(:bill_address) { user.bill_address }
@@ -608,17 +608,17 @@ describe Spree::Order, type: :model do
     before { allow(order).to receive(:delivery_step_required?).and_return(true) }
 
     it 'does not copy the ship address onto a record without physical delivery' do
-      empty_order = create(:order, user: nil, ship_address: nil)
+      empty_order = create(:order, customer: nil, ship_address: nil)
 
-      empty_order.associate_user!(user)
+      empty_order.associate_customer!(user)
 
-      expect(empty_order.reload.user).to eq(user)
+      expect(empty_order.reload.customer).to eq(user)
       expect(empty_order.ship_address_id).to be_nil
     end
 
     let(:order_attributes) do
       {
-        user: nil,
+        customer: nil,
         email: nil,
         bill_address: nil,
         ship_address: nil
@@ -626,8 +626,8 @@ describe Spree::Order, type: :model do
     end
 
     def assert_expected_order_state
-      expect(order.user).to eql(user)
-      expect(order.user_id).to eql(user.id)
+      expect(order.customer).to eql(user)
+      expect(order.customer_id).to eql(user.id)
 
       expect(order.email).to eql(email)
 
@@ -638,15 +638,15 @@ describe Spree::Order, type: :model do
       expect(order.ship_address_id).to eql(ship_address&.id)
     end
 
-    shared_examples_for '#associate_user!' do |persisted = false|
+    shared_examples_for '#associate_customer!' do |persisted = false|
       it 'associates a user to an order' do
-        order.associate_user!(user, override_email)
+        order.associate_customer!(user, override_email)
         assert_expected_order_state
       end
 
       unless persisted
         it 'does not persist the order' do
-          expect { order.associate_user!(user) }.
+          expect { order.associate_customer!(user) }.
             not_to change(order, :persisted?).
             from(false)
         end
@@ -657,14 +657,14 @@ describe Spree::Order, type: :model do
       let(:order_attributes) { super().merge(email: 'test@example.com') }
 
       context 'when email should be overridden' do
-        it_behaves_like '#associate_user!'
+        it_behaves_like '#associate_customer!'
       end
 
       context 'when email should not be overridden' do
         let(:override_email) { false }
         let(:email) { 'test@example.com' }
 
-        it_behaves_like '#associate_user!'
+        it_behaves_like '#associate_customer!'
       end
     end
 
@@ -672,59 +672,59 @@ describe Spree::Order, type: :model do
       let(:order_attributes) { super().merge(bill_address: bill_address) }
       let(:bill_address) { build(:address) }
 
-      it_behaves_like '#associate_user!'
+      it_behaves_like '#associate_customer!'
     end
 
     context 'when ship_address is set' do
       let(:order_attributes) { super().merge(ship_address: ship_address) }
       let(:ship_address) { build(:address) }
 
-      it_behaves_like '#associate_user!'
+      it_behaves_like '#associate_customer!'
     end
 
     context 'when the user is not persisted' do
       let(:user) { build(:user_with_addreses) }
 
       it 'does not persist the user' do
-        expect { order.associate_user!(user) }.
+        expect { order.associate_customer!(user) }.
           not_to change(user, :persisted?).
           from(false)
       end
 
-      it_behaves_like '#associate_user!'
+      it_behaves_like '#associate_customer!'
     end
 
     context 'when the order is persisted' do
       let(:order) { create(:order, order_attributes) }
 
       it 'associates a user to a persisted order' do
-        order.associate_user!(user)
+        order.associate_customer!(user)
         order.reload
         assert_expected_order_state
       end
 
       it 'does not persist other changes to the order' do
         order.customer_note = 'unpersisted change'
-        order.associate_user!(user)
+        order.associate_customer!(user)
         order.reload
         expect(order.customer_note).to be_blank
       end
 
       it 'does not change any other orders' do
         other = create(:order)
-        order.associate_user!(user)
-        expect(other.reload.user).not_to eql(user)
+        order.associate_customer!(user)
+        expect(other.reload.customer).not_to eql(user)
       end
 
       it 'is not affected by scoping' do
         order.class.where.not(id: order).scoping do
-          order.associate_user!(user)
+          order.associate_customer!(user)
         end
         order.reload
         assert_expected_order_state
       end
 
-      it_behaves_like '#associate_user!', true
+      it_behaves_like '#associate_customer!', true
     end
 
     context 'events', :events do
@@ -732,17 +732,17 @@ describe Spree::Order, type: :model do
 
       it 'publishes order.updated event' do
         expect(order).to receive(:publish_event).with('order.updated')
-        order.associate_user!(user)
+        order.associate_customer!(user)
       end
     end
   end
 
-  describe '#disassociate_user!' do
+  describe '#disassociate_customer!' do
     let(:order) { create(:order_with_line_items) }
     let(:expected_order_attributes) do
       {
-        user: nil,
-        user_id: nil,
+        customer: nil,
+        customer_id: nil,
         email: nil,
         created_by: nil,
         created_by_id: nil,
@@ -754,7 +754,7 @@ describe Spree::Order, type: :model do
     end
 
     it 'disassociates a user from an order' do
-      order.disassociate_user!
+      order.disassociate_customer!
       expect(order).to have_attributes(expected_order_attributes)
     end
   end
@@ -969,7 +969,7 @@ describe Spree::Order, type: :model do
 
   describe '#amount' do
     before do
-      @order = create(:order, user: user)
+      @order = create(:order, customer: user)
       @order.line_items = [create(:line_item, price: 1.0, quantity: 2),
                            create(:line_item, price: 1.0, quantity: 1)]
     end
@@ -1304,7 +1304,7 @@ describe Spree::Order, type: :model do
 
   describe '#promo_code' do
     context 'without promo code' do
-      let(:order) { build_stubbed(:order, user: nil, email: nil) }
+      let(:order) { build_stubbed(:order, customer: nil, email: nil) }
 
       it 'returns nil' do
         expect(order.promo_code).to be_nil
@@ -1616,10 +1616,10 @@ describe Spree::Order, type: :model do
     subject { order.bill_address_id = address.id }
 
     let(:user) { create(:user) }
-    let(:order) { create(:order, user: user, bill_address: bill_address, ship_address: ship_address) }
-    let(:bill_address) { create(:address, user: user) }
-    let(:ship_address) { create(:address, user: user) }
-    let(:address) { create(:address, user: user) }
+    let(:order) { create(:order, customer: user, bill_address: bill_address, ship_address: ship_address) }
+    let(:bill_address) { create(:address, customer: user) }
+    let(:ship_address) { create(:address, customer: user) }
+    let(:address) { create(:address, customer: user) }
 
     context 'when assigned address exist' do
       context 'when assigned address belongs to user' do
@@ -1637,7 +1637,7 @@ describe Spree::Order, type: :model do
     end
 
     context 'when assigned address does not belong to user' do
-      let(:address) { create(:address, user: create(:user)) }
+      let(:address) { create(:address, customer: create(:user)) }
 
       it 'sets order bill address to nil' do
         expect { subject }.to change { order.bill_address_id }.to(nil)
@@ -1646,7 +1646,7 @@ describe Spree::Order, type: :model do
 
     context 'with guest user' do
       let(:user) { nil }
-      let(:address) { create(:address, user: nil) }
+      let(:address) { create(:address, customer: nil) }
 
       context 'when assigning the same existing address' do
         let(:address) { bill_address }
@@ -1667,7 +1667,7 @@ describe Spree::Order, type: :model do
   describe '#bill_address_attributes=' do
     subject { order.bill_address_attributes = address_attributes }
 
-    let(:order) { create(:order, user: user) }
+    let(:order) { create(:order, customer: user) }
     let(:address_attributes) { attributes_for(:address) }
 
     context 'when user has default bill address' do
@@ -1703,7 +1703,7 @@ describe Spree::Order, type: :model do
     end
 
     context 'when user has address but without default bill address' do
-      let(:address) { create(:address, user: user) }
+      let(:address) { create(:address, customer: user) }
       let(:user) { create(:user_with_addresses) }
 
       before { user.bill_address = nil }
@@ -1721,10 +1721,10 @@ describe Spree::Order, type: :model do
     subject { order.ship_address_id = address.id }
 
     let(:user) { create(:user) }
-    let(:order) { create(:order, user: user, bill_address: bill_address, ship_address: ship_address) }
-    let(:bill_address) { create(:address, user: user) }
-    let(:ship_address) { create(:address, user: user) }
-    let(:address) { create(:address, user: user) }
+    let(:order) { create(:order, customer: user, bill_address: bill_address, ship_address: ship_address) }
+    let(:bill_address) { create(:address, customer: user) }
+    let(:ship_address) { create(:address, customer: user) }
+    let(:address) { create(:address, customer: user) }
 
     context 'when assigned address exist' do
       context 'when assigned address belongs to user' do
@@ -1742,7 +1742,7 @@ describe Spree::Order, type: :model do
     end
 
     context 'when assigned address does not belong to user' do
-      let(:address) { create(:address, user: create(:user)) }
+      let(:address) { create(:address, customer: create(:user)) }
 
       it 'sets order ship address to nil' do
         expect { subject }.to change { order.ship_address_id }.to(nil)
@@ -1751,7 +1751,7 @@ describe Spree::Order, type: :model do
 
     context 'with guest user' do
       let(:user) { nil }
-      let(:address) { create(:address, user: nil) }
+      let(:address) { create(:address, customer: nil) }
 
       context 'when assigning the same existing address' do
         let(:address) { ship_address }
@@ -1772,7 +1772,7 @@ describe Spree::Order, type: :model do
   describe '#ship_address_attributes=' do
     subject { order.ship_address_attributes = address_attributes }
 
-    let(:order) { create(:order, user: user) }
+    let(:order) { create(:order, customer: user) }
     let(:address_attributes) { attributes_for(:address) }
 
     context 'when user has default ship address' do
@@ -1806,7 +1806,7 @@ describe Spree::Order, type: :model do
     end
 
     context 'when user has address but without default ship address' do
-      let(:address) { create(:address, user: user) }
+      let(:address) { create(:address, customer: user) }
       let(:user) { create(:user_with_addresses) }
 
       before { user.update(ship_address: nil) }
@@ -1910,7 +1910,7 @@ describe Spree::Order, type: :model do
       let!(:refund) { create(:refund, amount: amount, payment: order.payments.first) }
 
       let!(:credit_card_payment_method) { create(:simple_credit_card_payment_method) }
-      let!(:store_credit) { create(:store_credit, user: order.user, amount: 15) }
+      let!(:store_credit) { create(:store_credit, customer: order.customer, amount: 15) }
 
       before do
         order.update_column(:total, 110)
@@ -1984,7 +1984,7 @@ describe Spree::Order, type: :model do
       let!(:refund) { create(:refund, amount: amount, payment: order.payments.first) }
 
       let!(:credit_card_payment_method) { create(:simple_credit_card_payment_method) }
-      let!(:store_credit) { create(:store_credit, user: order.user, amount: 15) }
+      let!(:store_credit) { create(:store_credit, customer: order.customer, amount: 15) }
 
       before do
         order.update_column(:total, 110)
@@ -2314,7 +2314,7 @@ describe Spree::Order, type: :model do
   end
 
   describe '#remove_out_of_stock_items!' do
-    let(:order) { create(:order_with_totals, store: store, user: user) }
+    let(:order) { create(:order_with_totals, store: store, customer: user) }
 
     context 'when all items are in stock' do
       it 'does not remove any items' do
@@ -2359,7 +2359,7 @@ describe Spree::Order, type: :model do
     end
 
     context 'when cart is empty' do
-      let(:order) { create(:order, store: store, user: user) }
+      let(:order) { create(:order, store: store, customer: user) }
 
       it 'does nothing' do
         order.remove_out_of_stock_items!

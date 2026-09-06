@@ -9,7 +9,7 @@ describe Spree::Order, type: :model do
 
   describe '#assign_default_addresses!' do
     let(:default_address) { create(:address, state: state) }
-    let(:order) { create(:order, store: store, ship_address: nil, bill_address: nil, user: user) }
+    let(:order) { create(:order, store: store, ship_address: nil, bill_address: nil, customer: user) }
 
     shared_examples 'it cloned the default address' do
       it do
@@ -35,7 +35,7 @@ describe Spree::Order, type: :model do
 
     it "doesn't raise an error if the default address is invalid" do
       order = create(:order, store: store, ship_address: nil, bill_address: nil)
-      order.user = build(:user, ship_address: build(:address, city: nil), bill_address: build(:address, city: nil))
+      order.customer = build(:user, ship_address: build(:address, city: nil), bill_address: build(:address, city: nil))
 
       expect { order.assign_default_addresses! }.not_to raise_error
     end
@@ -43,7 +43,7 @@ describe Spree::Order, type: :model do
 
   describe 'completion side effects' do
     let(:order) do
-      create(:order_with_line_items, store: store, user: user, email: email, accept_marketing: accept_marketing)
+      create(:order_with_line_items, store: store, customer: user, email: email, accept_marketing: accept_marketing)
     end
     let(:user) { create(:user) }
     let(:email) { user.email }
@@ -106,10 +106,10 @@ describe Spree::Order, type: :model do
         end
 
         it 'creates a new user', :events do
-          expect { order.finalize! }.to change { Spree.user_class.count }.by(1)
+          expect { order.finalize! }.to change { Spree.customer_class.count }.by(1)
           # The subscriber attaches the user on its own loaded instance.
-          expect(order.reload.user).to be_present
-          expect(order.user.email).to eq(order.email)
+          expect(order.reload.customer).to be_present
+          expect(order.customer.email).to eq(order.email)
         end
       end
 
@@ -119,7 +119,7 @@ describe Spree::Order, type: :model do
         end
 
         it 'does not create a new user' do
-          expect { order.finalize! }.not_to change { Spree.user_class.count }
+          expect { order.finalize! }.not_to change { Spree.customer_class.count }
         end
       end
     end

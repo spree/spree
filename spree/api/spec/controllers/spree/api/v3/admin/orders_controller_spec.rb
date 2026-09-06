@@ -277,16 +277,16 @@ RSpec.describe Spree::Api::V3::Admin::OrdersController, type: :controller do
       end
     end
 
-    context 'with user assignment via user_id' do
+    context 'with customer assignment via customer_id' do
       let(:customer) { create(:user) }
-      let(:create_params) { { user_id: customer.prefixed_id } }
+      let(:create_params) { { customer_id: customer.prefixed_id } }
 
-      it 'creates order assigned to the user' do
+      it 'creates order assigned to the customer' do
         subject
 
         expect(response).to have_http_status(:created)
         created_order = Spree::Order.find_by_prefix_id(json_response['id'])
-        expect(created_order.user).to eq(customer)
+        expect(created_order.customer).to eq(customer)
       end
     end
 
@@ -685,7 +685,7 @@ RSpec.describe Spree::Api::V3::Admin::OrdersController, type: :controller do
         patch :update, params: { id: order.prefixed_id, customer_id: customer.prefixed_id }, as: :json
 
         expect(response).to have_http_status(:ok)
-        expect(order.reload.user).to eq(customer)
+        expect(order.reload.customer).to eq(customer)
         expect(json_response['customer_id']).to eq(customer.prefixed_id)
       end
     end
@@ -699,7 +699,7 @@ RSpec.describe Spree::Api::V3::Admin::OrdersController, type: :controller do
         patch :update, params: { id: order.prefixed_id, customer_id: new_customer.prefixed_id }, as: :json
 
         expect(response).to have_http_status(:ok)
-        expect(order.reload.user).to eq(new_customer)
+        expect(order.reload.customer).to eq(new_customer)
       end
     end
 

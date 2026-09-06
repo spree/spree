@@ -16,7 +16,7 @@ RSpec.describe 'Admin Gift Cards API', type: :request, swagger_doc: 'api-referen
       security [api_key: [], bearer_auth: []]
       description <<~DESC
         Returns the gift cards issued by the current store. Filter by
-        `q[code_cont]` for code search, `q[user_id_eq]` for cards issued
+        `q[code_cont]` for code search, `q[customer_id_eq]` for cards issued
         to a specific customer, or `q[status_eq]` for status filtering.
       DESC
       admin_scope :read, :gift_cards
@@ -68,7 +68,7 @@ RSpec.describe 'Admin Gift Cards API', type: :request, swagger_doc: 'api-referen
       description <<~DESC
         Issues a gift card scoped to the current store. The code is
         auto-generated when omitted. `currency` defaults to the store's
-        configured currency. Pass `user_id` (prefixed ID) to attach the
+        configured currency. Pass `customer_id` (prefixed ID) to attach the
         card to a specific customer.
       DESC
       admin_scope :write, :gift_cards
@@ -85,7 +85,7 @@ RSpec.describe 'Admin Gift Cards API', type: :request, swagger_doc: 'api-referen
           currency: { type: :string, example: 'USD', description: 'ISO 4217 currency code. Defaults to the store currency.' },
           code: { type: :string, example: 'WELCOME50', description: 'Optional caller-supplied code. Auto-generated when omitted.' },
           expires_at: { type: :string, example: '2030-12-31', description: 'ISO 8601 date.', nullable: true },
-          user_id: { type: :string, example: 'cus_UkLWZg9DAJ', description: 'Optional customer prefixed ID.', nullable: true }
+          customer_id: { type: :string, example: 'cus_UkLWZg9DAJ', description: 'Optional customer prefixed ID.', nullable: true }
         }
       }
 
@@ -172,7 +172,7 @@ RSpec.describe 'Admin Gift Cards API', type: :request, swagger_doc: 'api-referen
         properties: {
           amount: { type: :string, example: '75.00' },
           expires_at: { type: :string, example: '2031-12-31', nullable: true },
-          user_id: { type: :string, example: 'cus_UkLWZg9DAJ', nullable: true }
+          customer_id: { type: :string, example: 'cus_UkLWZg9DAJ', nullable: true }
         }
       }
 

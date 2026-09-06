@@ -35,7 +35,7 @@ RSpec.describe Spree::Api::V3::Store::OrdersController, type: :controller do
     context 'with the cart handle after completion' do
       let(:cart) { create(:cart_with_line_items, store: store) }
       let!(:completed_order) do
-        create(:completed_order_with_totals, user: nil, store: store, cart_id: cart.id, token: cart.token)
+        create(:completed_order_with_totals, customer: nil, store: store, cart_id: cart.id, token: cart.token)
       end
 
       before { cart.update_columns(completed_at: Time.current) }

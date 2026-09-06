@@ -25,7 +25,7 @@ The mechanism is identical for both surfaces. A strategy you write works on eith
 | | Store API (customers) | Admin API (staff) |
 |---|---|---|
 | Registry | `Spree.store_authentication_strategies` | `Spree.admin_authentication_strategies` |
-| User class | `Spree.user_class` | `Spree.admin_user_class` |
+| User class | `Spree.customer_class` | `Spree.admin_user_class` |
 | Login endpoint | `POST /api/v3/store/auth/login` | `POST /api/v3/admin/auth/login` |
 | Refresh endpoint | `POST /api/v3/store/auth/refresh` | `POST /api/v3/admin/auth/refresh` |
 | JWT audience | `aud: store_api` | `aud: admin_api` |
@@ -136,7 +136,7 @@ end
 |---|---|
 | `success(user)` | Wrap a user in a successful `ServiceModule::Result` |
 | `failure(message)` | Wrap an error message in a failed result |
-| `find_user_by_email(email)` | Lookup against `Spree.user_class` |
+| `find_user_by_email(email)` | Lookup against `Spree.customer_class` |
 | `find_or_create_user_from_oauth(provider:, uid:, info:, tokens: {})` | Calls `Spree::UserIdentity.find_or_create_from_oauth` with the right `user_class` |
 | `params`, `request_env`, `user_class` | Reader access to the controller-supplied inputs |
 
@@ -181,7 +181,7 @@ Both registries are a `Spree::Authentication::StrategyRegistry` with the same AP
 | `[key]` | Look up a registered class. |
 | `key?(key)`, `keys`, `values`, `each`, `to_h` | Standard introspection. |
 
-The strategy is instantiated with the surface's user class automatically — `Spree.user_class` from the store registry, `Spree.admin_user_class` from the admin registry — and your `authenticate` reads it via the `user_class` helper, so the same class provisions customers on one side and staff on the other.
+The strategy is instantiated with the surface's user class automatically — `Spree.customer_class` from the store registry, `Spree.admin_user_class` from the admin registry — and your `authenticate` reads it via the `user_class` helper, so the same class provisions customers on one side and staff on the other.
 
 <Tip>
 Restrict a surface to SSO by removing the built-in email/password strategy after adding yours: `Spree.admin_authentication_strategies.remove(:email)` locks staff to your provider; the store side stays on email/password.
@@ -370,14 +370,14 @@ RSpec.describe MyApp::Auth::ExternalJwtStrategy do
   end
 
   it 'provisions a Spree user on first login' do
-    expect { result }.to change(Spree.user_class, :count).by(1)
+    expect { result }.to change(Spree.customer_class, :count).by(1)
     expect(result).to be_success
     expect(result.value.email).to eq('alice@example.com')
   end
 
   it 'reuses the user on subsequent logins' do
     described_class.new(params: { token: token }, request_env: {}).authenticate
-    expect { result }.not_to change(Spree.user_class, :count)
+    expect { result }.not_to change(Spree.customer_class, :count)
   end
 
   it 'fails on an expired token' do
@@ -395,4 +395,4 @@ end
 - `Spree::Api::V3::Store::AuthController` — `spree/api/app/controllers/spree/api/v3/store/auth_controller.rb`
 - `Spree::Api::V3::Admin::AuthController` — `spree/api/app/controllers/spree/api/v3/admin/auth_controller.rb`
 - `Spree::Api::V3::JwtAuthentication` — `spree/api/app/controllers/concerns/spree/api/v3/jwt_authentication.rb`
-- See also: [Staff & Roles](/developer/core-concepts/staff-roles) for the admin login flow, [Customers](/developer/core-concepts/customers) for storefront auth, and [Authentication](/developer/providers/sso) for `Spree.user_class` integration.
+- See also: [Staff & Roles](/developer/core-concepts/staff-roles) for the admin login flow, [Customers](/developer/core-concepts/customers) for storefront auth, and [Authentication](/developer/providers/sso) for `Spree.customer_class` integration.

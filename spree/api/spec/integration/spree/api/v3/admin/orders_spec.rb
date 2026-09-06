@@ -87,7 +87,7 @@ RSpec.describe 'Admin Orders API', type: :request, swagger_doc: 'api-reference/a
         type: :object,
         properties: {
           email: { type: :string, example: 'customer@example.com' },
-          customer_id: { type: :string, description: 'Customer ID. Alias: user_id (legacy).' },
+          customer_id: { type: :string, description: 'Customer ID.' },
           use_customer_default_address: { type: :boolean, description: "When true with customer_id, copies the customer's saved billing/shipping addresses onto the order." },
           currency: { type: :string, example: 'USD' },
           market_id: { type: :string, description: 'Market ID' },

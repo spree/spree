@@ -83,7 +83,7 @@ RSpec.describe Spree::Api::V3::Store::Carts::FulfillmentsController, type: :cont
 
       it 'does not complete the cart' do
         create(:store_credit_payment_method)
-        credit = create(:store_credit, user: order.user, store: store, amount: order.total)
+        credit = create(:store_credit, customer: order.customer, store: store, amount: order.total)
         order.payments.create!(
           source: credit,
           payment_method: Spree::PaymentMethod::StoreCredit.first,
