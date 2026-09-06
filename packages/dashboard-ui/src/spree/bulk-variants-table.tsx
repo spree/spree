@@ -322,7 +322,7 @@ export function BulkVariantsTable({
   ])
 
   return (
-    <div className="min-h-0 flex-1 overflow-auto">
+    <div className="min-h-0 min-w-0 flex-1 overflow-auto">
       <DataGrid<BulkVariantsRow>
         rows={rows}
         columns={columns}
