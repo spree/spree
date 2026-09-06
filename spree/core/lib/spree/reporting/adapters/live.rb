@@ -119,19 +119,26 @@ module Spree
         def apply_filters(scope, base, range)
           query.filters.each do |filter|
             dimension = filter[:dimension]
-            predicate = ["#{qualified_column(dimension)} IN (?)", filter[:values]]
+            predicate = in_predicate(qualified_column(dimension), filter[:values])
 
             if dimension.joins.blank?
-              scope = scope.where(*predicate)
+              scope = scope.where(predicate)
             else
               # Bounded like the outer query (store, currency, range) so the
               # planner starts from the same indexed slice.
-              table = scope.klass.table_name
-              ids = join_for(base_relation(base, range), dimension, base).where(*predicate).select("#{table}.id")
-              scope = scope.where("#{table}.id IN (#{ids.to_sql})")
+              table = scope.klass.arel_table
+              ids = join_for(base_relation(base, range), dimension, base).where(predicate).select(table[:id])
+              scope = scope.where(table[:id].in(ids.arel))
             end
           end
           scope
+        end
+
+        # `column IN (values)` as an Arel node. The column is a validated
+        # identifier (see #qualified_column) and the values bind as parameters,
+        # so no request data reaches the statement as text.
+        def in_predicate(column, values)
+          Arel::Nodes::SqlLiteral.new(column).in(values)
         end
 
         # Dimension joins are declared from the dimension's own base. Reaching
@@ -180,8 +187,7 @@ module Spree
         end
 
         def apply_key_filter(scope, keys)
-          dim = query.dimensions.first
-          scope.where("#{dimension_expression(dim)} IN (?)", keys)
+          scope.where(in_predicate(dimension_expression(query.dimensions.first), keys))
         end
 
         # ---- SQL expressions ----
@@ -213,11 +219,28 @@ module Spree
           qualified_column(dimension)
         end
 
+        # A registered dimension's column, as a SQL identifier. Registered
+        # vocabulary is developer-authored, never request data, but this is
+        # the point where it becomes SQL — so the resolved fragment must look
+        # like `table.column` and nothing else. Anything richer is a
+        # registration bug and raises rather than reaching the database.
         def qualified_column(dimension)
-          return resolve_sql(dimension.column) if dimension.column.is_a?(String)
+          resolved = if dimension.column.is_a?(String)
+                       resolve_sql(dimension.column)
+                     else
+                       table = dimension.base == :orders ? Spree::Order.table_name : Spree::LineItem.table_name
+                       "#{table}.#{dimension.column}"
+                     end
 
-          table = dimension.base == :orders ? Spree::Order.table_name : Spree::LineItem.table_name
-          "#{table}.#{dimension.column}"
+          identifier!(resolved, dimension.name)
+        end
+
+        IDENTIFIER = /\A[a-z_][a-z0-9_]*(\.[a-z_][a-z0-9_]*)?\z/i
+
+        def identifier!(fragment, name)
+          return fragment if IDENTIFIER.match?(fragment)
+
+          raise InvalidQuery, "dimension #{name} resolved to an unusable column expression"
         end
 
         # Time buckets come back as Date on PostgreSQL and String elsewhere —
