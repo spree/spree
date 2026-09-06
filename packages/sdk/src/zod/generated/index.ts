@@ -18,11 +18,8 @@ export { CurrencySchema, type Currency } from './Currency';
 export { CustomFieldSchema, type CustomField } from './CustomField';
 export { CustomerSchema, type Customer } from './Customer';
 export { CustomerGroupSchema, type CustomerGroup } from './CustomerGroup';
-<<<<<<< HEAD
 export { DataRequestSchema, type DataRequest } from './DataRequest';
 export { DataRequestEventSchema, type DataRequestEvent } from './DataRequestEvent';
-=======
->>>>>>> 7974eea213 (Let a seller list and manage offers through the API)
 export { DeliverySchema, type Delivery } from './Delivery';
 export { DeliveryMethodSchema, type DeliveryMethod } from './DeliveryMethod';
 export { DeliveryRateSchema, type DeliveryRate } from './DeliveryRate';

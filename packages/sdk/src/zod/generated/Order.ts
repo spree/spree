@@ -12,11 +12,8 @@ import { PaymentSchema } from './Payment';
 export const OrderSchema = z.object({
   id: z.string(),
   market_id: z.string().nullable(),
-<<<<<<< HEAD
   withdrawal_period_ends_at: z.string().nullable(),
   within_withdrawal_period: z.boolean(),
-=======
->>>>>>> 7974eea213 (Let a seller list and manage offers through the API)
   cart_id: z.string().nullable(),
   channel_id: z.string().nullable(),
   company_id: z.string().nullable(),
