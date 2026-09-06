@@ -86,8 +86,28 @@ export interface PanelVariant {
 export interface VariantsFormShape {
   // Optional, because the operator's own product form declares it that way —
   // a required field here would exclude the very form this exists to serve.
+  variants?: VariantsFormRow[]
+}
+
+/**
+ * What the shared grids read off a variant row.
+ *
+ * Named rather than `any[]` so a form whose rows carry none of these cannot
+ * satisfy the contract: `options` in particular is read without a guard when
+ * building a row's label, so a shape without it would fail at render.
+ */
+export interface VariantsFormRow {
+  id?: string
+  sku?: string | null
+  options?: Array<{ name: string; value: string }>
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  variants?: any[]
+  prices?: any[]
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  stock_levels?: any[]
+  // The forms carry many more fields; the grids read only the above, and a
+  // narrower type here would reject the very rows they are given.
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  [key: string]: any
 }
 
 export interface PanelProduct {

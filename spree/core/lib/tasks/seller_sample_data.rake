@@ -90,12 +90,15 @@ namespace :spree do
         # from the rows it is meant to compete with, which is exactly what the
         # seller endpoint refuses
         # (docs/plans/6.0-seller-master-catalog-listings.md, Decision 7).
-        options = master.option_types.includes(:option_values).filter_map do |option_type|
+        axes = master.option_types.includes(:option_values).to_a
+        options = axes.filter_map do |option_type|
           value = option_type.option_values.first
           { name: option_type.name, value: value.name } if value
         end
 
-        if offer.nil?
+        if options.size != axes.size
+          puts 'Offers:   skipped — a product option type carries no values to pick from.'
+        elsif offer.nil?
           result = Spree.variant_create_workflow.call(
             product: master,
             attributes: {
@@ -117,6 +120,17 @@ namespace :spree do
             Spree.variant_propose_workflow.call(variant: offer, submitted_by: owner)
           else
             puts "Offers:   could not create the sample offer: #{result.value.errors.full_messages.to_sentence}"
+          end
+        else
+          # An offer from an earlier run predates the option values above, and
+          # a row missing an axis sits in the wrong buy box. Re-running the
+          # task should leave the sample data correct, so reconcile it rather
+          # than reporting a stale row as good.
+          missing = axes.reject { |axis| offer.option_values.any? { |value| value.option_type_id == axis.id } }
+
+          if missing.any?
+            Spree.variant_update_workflow.call(variant: offer, attributes: { options: options })
+            puts "Offers:   filled in #{missing.map(&:name).to_sentence} on the existing sample offer."
           end
         end
 
