@@ -25,7 +25,7 @@ module Spree
       def channel_belongs_to_store
         return if channel.nil? || channel.store_id == store_id
 
-        errors.add(:channel, :invalid)
+        errors.add(:channel, :must_belong_to_same_store)
       end
     end
   end

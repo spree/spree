@@ -14,7 +14,7 @@ module Spree
       return if market.nil? || channel.nil?
       return if market.store_id == channel.store_id
 
-      errors.add(:market, :invalid)
+      errors.add(:market, :must_belong_to_same_store)
     end
   end
 end
