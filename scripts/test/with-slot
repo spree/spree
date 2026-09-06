@@ -1,0 +1,99 @@
+#!/usr/bin/env ruby
+# frozen_string_literal: true
+
+# Runs a command inside one of a fixed number of machine-wide test slots.
+#
+# Several sessions each starting a full suite oversubscribe the CPU many times
+# over, and the SQLite test databases make concurrent suites fail with bogus
+# errors. Queueing them here keeps total throughput the same while the laptop
+# stays cool and the failures stay real.
+#
+#   scripts/test/with-slot -- bundle exec parallel_rspec spec
+#   scripts/test/with-slot --status
+#
+# SPREE_TEST_SLOTS     how many suites may run at once (default 1)
+# SPREE_TEST_SLOT_DIR  where the lock files live (default ~/.cache/spree-test-slots)
+
+require 'fileutils'
+require 'json'
+require 'time'
+
+SLOTS = Integer(ENV.fetch('SPREE_TEST_SLOTS', '1'))
+SLOT_DIR = ENV.fetch('SPREE_TEST_SLOT_DIR') { File.join(Dir.home, '.cache', 'spree-test-slots') }
+POLL_SECONDS = 2
+
+FileUtils.mkdir_p(SLOT_DIR)
+
+def slot_path(index)
+  File.join(SLOT_DIR, "slot-#{index}.lock")
+end
+
+def holder(index)
+  JSON.parse(File.read(slot_path(index)))
+rescue StandardError
+  nil
+end
+
+def describe_holder(index)
+  info = holder(index)
+  return 'held' unless info
+
+  "pid #{info['pid']} in #{info['cwd']} since #{info['started_at']}: #{info['command']}"
+end
+
+def status
+  (0...SLOTS).each do |index|
+    File.open(slot_path(index), File::RDWR | File::CREAT, 0o644) do |file|
+      if file.flock(File::LOCK_EX | File::LOCK_NB)
+        file.flock(File::LOCK_UN)
+        puts "slot #{index}: free"
+      else
+        puts "slot #{index}: #{describe_holder(index)}"
+      end
+    end
+  end
+end
+
+def acquire(command)
+  files = (0...SLOTS).map { |index| File.open(slot_path(index), File::RDWR | File::CREAT, 0o644) }
+  announced = false
+
+  loop do
+    file = files.find { |candidate| candidate.flock(File::LOCK_EX | File::LOCK_NB) }
+    if file
+      file.truncate(0)
+      file.write(JSON.generate(pid: Process.pid, cwd: Dir.pwd, started_at: Time.now.iso8601, command: command.join(' ')))
+      file.flush
+      warn "with-slot: slot acquired" if announced
+      return file
+    end
+
+    unless announced
+      warn "with-slot: all #{SLOTS} test slot(s) busy, waiting (scripts/test/with-slot --status to see who holds them)"
+      announced = true
+    end
+    sleep POLL_SECONDS
+  end
+end
+
+if ARGV == ['--status']
+  status
+  exit
+end
+
+command = ARGV.dup
+command.shift if command.first == '--'
+abort 'usage: scripts/test/with-slot [--] <command...>' if command.empty?
+
+slot = acquire(command)
+child = Process.spawn(*command)
+%w[INT TERM HUP].each do |signal|
+  trap(signal) do
+    Process.kill(signal, child)
+  rescue Errno::ESRCH
+    nil
+  end
+end
+Process.wait(child)
+slot.flock(File::LOCK_UN)
+exit($?.exitstatus || 1)

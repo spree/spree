@@ -635,7 +635,7 @@ cd packages/sdk && pnpm test                             # 5. SDK tests
 - Zod schemas → `packages/sdk/src/zod/generated/`
 - Store types: `StoreProduct`, `StoreOrder`, etc. Admin types: `AdminProduct`, `AdminOrder`, etc.
 
-A **Lefthook pre-commit hook** (`lefthook.yml`) regenerates types and Zod schemas automatically whenever `spree/api/app/serializers/**/*.rb` files are committed, then re-stages the generated output. You don't need to run steps 1 and 2 manually if you're committing serializer changes — the hook handles it. Steps 3–5 (integration tests, OpenAPI regen, SDK tests) still need to run locally before pushing.
+A **Lefthook pre-commit hook** (`lefthook.yml`) regenerates types and Zod schemas automatically whenever `spree/api/app/serializers/**/*.rb` files are committed, then re-stages the generated output. You don't need to run steps 1 and 2 manually if you're committing serializer changes — the hook handles it. Steps 3–5 (integration tests, OpenAPI regen, SDK tests) still need to run locally before pushing — run step 3 as `pnpm test:rspec api spec/integration/` so it queues with the other sessions.
 
 ### Changesets & Versioning
 
@@ -645,17 +645,28 @@ Published packages use **Changesets** for versioning — one workspace-wide inst
 
 ## Testing
 
-Always run tests before committing changes.
+Run the specs for what you changed before committing, then push and let CI run the full suite. This machine runs many sessions at once, so **never start a bare `parallel_rspec`** — every test run goes through `scripts/test/`:
+
+```bash
+pnpm test:changed                         # specs covering this branch's changed files (vs main + uncommitted), engine by engine
+pnpm test:changed -- --list               # only show what would run, and which changed files have no spec
+pnpm test:rspec core spec/models/spree/state_spec.rb:7   # a targeted run in one engine (low priority, no queue)
+pnpm test:rspec api                       # a full engine suite: queued behind other suites, one worker per performance core, low priority
+pnpm test:slots                           # who holds the machine-wide test slot right now
+```
+
+`scripts/test/rspec <engine>` rebuilds the dummy app when it is missing or older than a migration, refreshes the worker databases, and splits a targeted run of several files across up to four workers, so `test_app` / `parallel_setup` rarely need running by hand. Engines: `core`, `api`, `emails`, `dashboard`, `opentelemetry`, `easypost`, `meilisearch`, `stripe`.
+
+**The full suite is CI's job, not the laptop's.** The repository is public, GitHub-hosted runners are free, and `tests.yml` already shards core twelve ways. Push and watch the checks (`gh pr checks --watch`, or `/autofix-pr`). Run a full suite locally only when CI reports a failure you need to reproduce, or when `test:changed` lists a change with no matching spec that touches everything (a factory, a migration, `Spree::Base`). One suite runs at a time machine-wide (`SPREE_TEST_SLOTS` to allow more); queued runs print who they are waiting for. Runs use the `utility` scheduling class, which yields to interactive work but may use every core; `SPREE_TEST_QOS=background` confines a run to the efficiency cores when the machine must stay cool, and `SPREE_TEST_WORKERS` changes the worker count. **A queue of sessions waiting on the slot means they are running full suites they should have pushed to CI.**
 
 ### Backend (Ruby — RSpec)
 
-Each engine has its own test suite:
+Each engine has its own test suite. Under the wrappers above, the raw commands are:
 
 ```bash
 cd spree && bundle install        # shared deps
 cd core && bundle install         # engine deps
 bundle exec rake test_app         # create dummy Rails app (skip if already exists)
-bundle exec rspec                 # run full suite
 bundle exec rspec spec/models/spree/state_spec.rb      # single file
 bundle exec rspec spec/models/spree/state_spec.rb:7    # single test
 ```
@@ -666,15 +677,7 @@ Default DB is SQLite3. For PostgreSQL:
 DB=postgres DB_USERNAME=postgres DB_PASSWORD=password DB_HOST=localhost bundle exec rake test_app
 ```
 
-**Parallel runs:**
-
-```bash
-bundle exec rake parallel_setup          # create worker DBs
-bundle exec parallel_rspec spec          # run in parallel
-bundle exec parallel_rspec -n 4 spec     # with worker count
-```
-
-Re-run `parallel_setup` after schema changes.
+Re-run `parallel_setup` after schema changes (`scripts/test/rspec <engine>` does this before every full suite).
 
 **Test guidelines:**
 
@@ -682,7 +685,7 @@ Re-run `parallel_setup` after schema changes.
 - Prefer `build` over `create` for speed, use `create_list` for creating multiple records
 - Factories live in `lib/spree/testing_support/factories/`
 - ALWAYS use factories in tests, never call `Model#create` directly
-- ALWAYS run parallel tests if running full test suite, if there are any failures repeat the failed examples seperately and confirm they really fail before investigating
+- A full suite runs through `scripts/test/rspec <engine>` (queued, capped, parallel); if there are any failures repeat the failed examples separately and confirm they really fail before investigating
 - Pragmatic — no tests for standard Rails validations, only custom ones
 - Controller specs: always add `render_views`, use `stub_authorization!` for auth
 - Use controller specs for testing edge cases, API integration tests are only for happy path/simple 422 failures to generate OpenAPI examples; otherwise they get too brittle and high-maintenance

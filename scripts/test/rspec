@@ -1,0 +1,104 @@
+#!/usr/bin/env bash
+# Run an engine's specs without fighting the other sessions on this machine.
+#
+#   scripts/test/rspec core                               # full suite: queued behind other suites,
+#                                                         # capped workers, background priority
+#   scripts/test/rspec api spec/controllers/spree/api/v3/admin/orders_controller_spec.rb:12
+#                                                         # targeted: background priority, no queue
+#
+# Engines: core, api, emails, dashboard, opentelemetry, easypost, meilisearch, stripe.
+# Everything after the engine is passed to rspec; with nothing after it the whole
+# suite runs through parallel_rspec.
+#
+# SPREE_TEST_WORKERS  parallel_rspec workers for a full suite (default: the number of
+#                     performance cores on Apple Silicon, otherwise all cores)
+# SPREE_TEST_TARGET_WORKERS
+#                     workers for a targeted run of several files (default 4)
+# SPREE_TEST_QOS      macOS scheduling clamp: utility (yields to interactive work but may
+#                     use every core), background (efficiency cores only), maintenance,
+#                     or none (default utility)
+# SPREE_TEST_SLOTS    how many full suites may run machine-wide at once (default 1)
+set -euo pipefail
+
+here="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+root="$(git -C "$here" rev-parse --show-toplevel)"
+
+engine="${1:-}"
+[ -n "$engine" ] || { sed -n '2,20p' "${BASH_SOURCE[0]}" | sed 's/^# \{0,1\}//' >&2; exit 64; }
+shift
+
+if [ -d "$root/spree/$engine/spec" ]; then
+  engine_dir="$root/spree/$engine"
+elif [ -d "$root/spree/providers/$engine/spec" ]; then
+  engine_dir="$root/spree/providers/$engine"
+else
+  echo "scripts/test/rspec: unknown engine '$engine' (no spree/$engine/spec or spree/providers/$engine/spec)" >&2
+  exit 64
+fi
+
+default_workers() {
+  sysctl -n hw.perflevel0.logicalcpu 2>/dev/null \
+    || sysctl -n hw.ncpu 2>/dev/null \
+    || nproc 2>/dev/null \
+    || echo 4
+}
+workers="${SPREE_TEST_WORKERS:-$(default_workers)}"
+qos="${SPREE_TEST_QOS:-utility}"
+
+priority=()
+if [ "$qos" != "none" ]; then
+  if command -v taskpolicy >/dev/null; then
+    priority=(taskpolicy -c "$qos")
+  elif command -v nice >/dev/null; then
+    priority=(nice -n 19)
+  fi
+fi
+
+cd "$engine_dir"
+
+# The dummy app is rebuilt when missing, and when any migration (the engine's own
+# or core's, which every engine loads) is newer than the schema it was built
+# from. A migration edited in place has its version recorded already, so
+# db:migrate would not repair that; only a rebuild does.
+newest_migration() {
+  find "$root/spree/core/db/migrate" db/migrate -name '*.rb' -newer spec/dummy/db/schema.rb 2>/dev/null | head -1
+}
+if [ ! -f spec/dummy/config/database.yml ]; then
+  echo "▸ spec/dummy missing in $engine_dir, building it (bundle exec rake test_app)"
+  bundle exec rake test_app >/dev/null
+elif [ ! -f spec/dummy/db/schema.rb ] || [ -n "$(newest_migration)" ]; then
+  echo "▸ spec/dummy in $engine_dir is older than a migration, rebuilding it (bundle exec rake test_app)"
+  bundle exec rake test_app >/dev/null
+fi
+
+# A targeted run. One or two files, a line filter or an rspec option run in a
+# single process; a larger set is split across workers, since a changed-files
+# list for a big branch can hold dozens of the heaviest specs.
+if [ $# -gt 0 ]; then
+  spec_files=0
+  plain_paths=1
+  for argument in "$@"; do
+    case "$argument" in
+      -*|*:[0-9]*) plain_paths=0 ;;
+      *) if [ -d "$argument" ]; then
+           spec_files=$((spec_files + $(find "$argument" -name '*_spec.rb' | wc -l)))
+         else
+           spec_files=$((spec_files + 1))
+         fi ;;
+    esac
+  done
+  target_workers="${SPREE_TEST_TARGET_WORKERS:-4}"
+  [ "$spec_files" -lt "$target_workers" ] && target_workers=$spec_files
+  if [ $plain_paths -eq 1 ] && [ "$target_workers" -ge 2 ]; then
+    bundle exec rake "parallel_setup[$target_workers]" >/dev/null
+    echo "▸ $engine: $spec_files spec files across $target_workers workers, qos=$qos"
+    exec "${priority[@]}" bundle exec parallel_rspec -n "$target_workers" "$@"
+  fi
+  exec "${priority[@]}" bundle exec rspec "$@"
+fi
+
+# A full suite: fresh worker databases (a file copy on SQLite), then queue behind
+# whatever other suite is running on this machine.
+bundle exec rake "parallel_setup[$workers]" >/dev/null
+echo "▸ full $engine suite: $workers workers, qos=$qos, waiting for a free test slot if needed"
+exec "$here/with-slot" -- "${priority[@]}" bundle exec parallel_rspec -n "$workers" spec

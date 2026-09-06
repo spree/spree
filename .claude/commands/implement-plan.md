@@ -1,5 +1,5 @@
 ---
-description: Deliver a docs/plans plan end to end — settle open questions, implement with local CI, two code reviews plus a simplify pass, running QA environment with seeded data, schema review, and an open, monitored pull request on spree/spree.
+description: Deliver a docs/plans plan end to end — settle open questions, implement with the changed specs green locally and the full suite on CI, two code reviews plus a simplify pass, running QA environment with seeded data, schema review, and an open, monitored pull request on spree/spree.
 argument-hint: <plan filename or slug>
 ---
 
@@ -69,21 +69,25 @@ reason.
 ## 3. Implement
 
 - Start with `/goal` so the run has a stated goal to check itself against:
-  the deliverables from stage 1 plus green local CI.
+  the deliverables from stage 1 plus green changed specs and green CI.
 - Follow the plan's phase order and every convention in `CLAUDE.md` (models,
   migrations, API controllers, serializers, dashboard, translations in every
   locale, type generation pipeline when serializers change, OpenAPI regenerated
   from the integration specs — never edited by hand).
-- Test in two passes, always locally, always before moving on:
-  1. **Affected code first.** Run the specs for the files you changed (`bundle
-     exec rspec <paths>` in the engine, `pnpm test` / `pnpm exec tsc -b` in the
-     package). Iterate here until green — this is the fast loop.
-  2. **Then the full suite, the way CI runs it.** For every engine you touched
-     (`spree/core`, `spree/api`, `spree/emails`, `spree/providers/*`,
-     `spree/dashboard`, `spree/opentelemetry`): `bundle exec rake test_app`
-     if the dummy app is stale, `bundle exec rake parallel_setup` after any
-     schema change, then `bundle exec parallel_rspec spec`. Re-run any failing
-     example on its own before investigating — confirm it really fails. For the
+- Test in two passes, always before moving on:
+  1. **Affected code first, locally.** `pnpm test:changed` runs the specs for
+     the files this branch changed, engine by engine, at low priority
+     (`pnpm test:rspec <engine> <paths>` for a hand-picked set; `pnpm test` /
+     `pnpm exec tsc -b` in a package). Iterate here until green — this is the
+     fast loop. Read the "changed without a matching spec" list it prints: a
+     factory, a migration or a base class touches everything and is what the
+     next pass is for.
+  2. **Then the full suite, on CI.** Push the branch and watch the checks
+     (`gh pr checks --watch` once the PR exists, or `gh run watch`). The laptop
+     runs many sessions at once; a full local suite is only for reproducing a
+     CI failure, and then it goes through `pnpm test:rspec <engine>`, which
+     queues behind the other sessions' suites. Re-run any failing example on
+     its own before investigating — confirm it really fails. For the
      TypeScript packages: `pnpm turbo lint typecheck test build --force` from
      the repo root (the `--force` matters — a cached run reads the SDK's stale
      `dist`). If the dashboard changed, run the affected Playwright specs with
@@ -92,8 +96,8 @@ reason.
   how; use `git commit --fixup` for follow-ups to a change and squash them
   before opening the PR. No `Co-Authored-By` or "generated with" trailers.
 
-Done when: every deliverable from stage 1 exists, and both test passes are
-green.
+Done when: every deliverable from stage 1 exists, the changed specs are green
+locally and CI is green on the pushed branch.
 
 ## 4. Code review — first round
 
@@ -104,8 +108,8 @@ your notes for the final report, not silence.
 ## 5. Simplify
 
 Run `/simplify` on the changed code. Apply the cleanups it proposes that keep
-behaviour identical; re-run the affected specs after, then the full suite for
-any engine or package the simplification touched.
+behaviour identical; re-run `pnpm test:changed` after, push, and let CI cover
+the rest of every engine or package the simplification touched.
 
 ## 6. Code review — second round
 
