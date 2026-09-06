@@ -841,7 +841,19 @@
         "units_per_carton": {
           "label": "Sztuk w kartonie"
         },
-        "quantity_rule_invalid": "Podaj liczbę całkowitą większą od zera lub pozostaw pole puste."
+        "quantity_rule_invalid": "Podaj liczbę całkowitą większą od zera lub pozostaw pole puste.",
+        "carton_package_type_id": {
+          "label": "Karton",
+          "help": "Karton, w który pakowany jest ten produkt. Jego wymiary dotyczą wszystkiego pakowanego tak samo."
+        },
+        "carton_weight": {
+          "label": "Waga kartonu",
+          "help": "Waga jednego zapakowanego kartonu."
+        },
+        "cartons_per_pallet": {
+          "label": "Kartonów na palecie"
+        },
+        "carton_weight_invalid": "Podaj wagę kartonu większą od zera albo zostaw pole puste."
       },
       "minimum_order_quantity": {
         "label": "Minimalna wielkość zamówienia",
@@ -1533,7 +1545,10 @@
           "identity": "Tożsamość",
           "tax_category_placeholder": "Dziedzicz z produktu",
           "ordering": "Zamówienia B2B",
-          "ordering_help": "Ile kupujący musi wziąć. Stan magazynowy nadal liczony jest w sztukach."
+          "ordering_help": "Ile kupujący musi wziąć. Stan magazynowy nadal liczony jest w sztukach.",
+          "packing": "Pakowanie",
+          "packing_help": "Jak ten produkt opuszcza magazyn hurtowo. Na tych liczbach opierają się wyceny frachtu.",
+          "carton_placeholder": "Brak kartonu"
         },
         "title": "Warianty",
         "variant_label": "Wariant"
@@ -1736,6 +1751,10 @@
           "name": "Kanał sprzedaży",
           "description": "Oferuj tę metodę dostawy tylko w wybranych kanałach sprzedaży"
         },
+        "company_rule": {
+          "name": "Firma",
+          "description": "Oferuj tę metodę dostawy tylko dla zamówień składanych na firmę albo tylko dla pozostałych"
+        },
         "excluded_products_rule": {
           "name": "Wykluczone produkty",
           "description": "Ukryj tę metodę dostawy, gdy zamówienie zawiera któryś z tych produktów"
@@ -1743,6 +1762,10 @@
         "item_total_rule": {
           "name": "Wartość zamówienia",
           "description": "Oferuj tę metodę dostawy tylko, gdy wartość zamówienia mieści się w przedziale"
+        },
+        "volume_rule": {
+          "name": "Objętość",
+          "description": "Oferuj tę metodę dostawy tylko, gdy objętość przesyłki mieści się w przedziale, w metrach sześciennych"
         },
         "weight_rule": {
           "name": "Waga",

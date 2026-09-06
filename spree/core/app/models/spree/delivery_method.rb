@@ -119,6 +119,12 @@ module Spree
     self.whitelisted_ransackable_associations = %w[seller]
 
     validates :name, presence: true
+    # A deposit is a percentage of the order, so anything outside 0–100 is a
+    # typo that would otherwise ask a buyer for more than they are buying.
+    validates :deposit_percentage, numericality: {
+      greater_than: 0, less_than_or_equal_to: 100, allow_nil: true
+    }
+    validate :deposit_requires_a_provider_that_collects_one, if: -> { deposit_percentage.present? }
     validates :storefront_visible, inclusion: { in: [true, false] }
     validate :delivery_zone_must_belong_to_profile,
              if: -> { delivery_zone_id_changed? || delivery_profile_id_changed? }
@@ -494,6 +500,17 @@ module Spree
     # Only meaningful for registered providers — the inclusion validation
     # already rejects anything else, so an unresolvable name must not raise
     # here as well.
+    # Saving a deposit a provider will never read leaves a merchant believing
+    # they have set terms that quietly do nothing.
+    def deposit_requires_a_provider_that_collects_one
+      # Built fresh rather than read through the memoized instance: switching a
+      # method to freight and setting a deposit in one edit would otherwise be
+      # judged against the provider the record had before.
+      return if rate_provider_class.new(self).respond_to?(:deposit_percentage)
+
+      errors.add(:deposit_percentage, :unsupported_by_rate_provider)
+    end
+
     def delivery_zone_must_belong_to_profile
       return if delivery_zone.nil?
       return if delivery_zone.delivery_profile_id == delivery_profile_id

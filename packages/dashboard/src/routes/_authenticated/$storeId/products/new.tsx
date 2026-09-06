@@ -132,6 +132,9 @@ function NewProductPage() {
         !!v.order_multiple ||
         v.purchase_unit != null ||
         !!v.units_per_carton ||
+        !!v.cartons_per_pallet ||
+        v.carton_weight != null ||
+        v.carton_package_type_id != null ||
         v.track_inventory === false ||
         v.preorderable === true ||
         v.preorder_ships_at != null ||

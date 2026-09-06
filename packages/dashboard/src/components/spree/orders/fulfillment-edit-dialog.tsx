@@ -52,10 +52,13 @@ export function FulfillmentEditDialog({
     })
     .sort((left, right) => Number(right.covered) - Number(left.covered))
 
+  // An unpriced freight rate also costs zero, and calling it "Free" over a
+  // container of goods is the one thing this must never say — so the server's
+  // own wording wins wherever it has already decided the price is pending.
   const rateOptions = (fulfillment.delivery_rates ?? []).map((rate) => ({
     value: rate.id,
     label: `${rate.name} — ${
-      Number.parseFloat(rate.cost) === 0
+      !rate.unpriced && Number.parseFloat(rate.cost) === 0
         ? t('admin.orders.detail.fulfillments.free')
         : rate.display_cost
     }`,

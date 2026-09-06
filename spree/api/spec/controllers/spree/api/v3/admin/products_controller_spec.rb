@@ -935,6 +935,34 @@ RSpec.describe Spree::Api::V3::Admin::ProductsController, type: :controller do
         expect(xl).to be_present
         expect(xl.prices.find_by(currency: 'GBP').amount.to_f).to eq(30.99)
       end
+
+      it 'carries the carton packing chain inline with the variant' do
+        carton = create(:package_type, store: store, kind: 'carton')
+
+        patch :update, params: {
+          id: product_to_update.prefixed_id,
+          variants: [
+            {
+              sku: 'UPD-SHIRT-S',
+              options: [{ name: 'size', value: 'Small' }],
+              carton_package_type_id: carton.prefixed_id,
+              units_per_carton: 12,
+              carton_weight: '9.5',
+              cartons_per_pallet: 40
+            }
+          ]
+        }, as: :json
+
+        expect(response).to have_http_status(:ok)
+
+        # The inline list is the path the dashboard's product Save uses; the
+        # nested variants endpoint proves nothing about it.
+        small = product_to_update.reload.variants.find_by(sku: 'UPD-SHIRT-S')
+        expect(small.carton_package_type).to eq(carton)
+        expect(small.units_per_carton).to eq(12)
+        expect(small.cartons_per_pallet).to eq(40)
+        expect(small.units_per_pallet).to eq(480)
+      end
     end
 
     context 'with collection_ids' do

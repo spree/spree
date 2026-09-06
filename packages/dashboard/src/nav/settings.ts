@@ -8,6 +8,7 @@ import {
   HandCoinsIcon,
   KeyRoundIcon,
   MailIcon,
+  PackageIcon,
   PercentIcon,
   PlugIcon,
   RadioTowerIcon,
@@ -208,6 +209,18 @@ settingsNav.add({
   group: 'shipping',
   position: 200,
   subject: Subject.StockLocation,
+})
+
+settingsNav.add({
+  key: 'settings.package-types',
+  labelKey: 'admin.settings_nav.items.package_types',
+  descriptionKey: 'admin.settings_nav.descriptions.package_types',
+  keywords: ['box', 'carton', 'pallet', 'container', 'packaging', 'parcel', 'freight'],
+  path: '/package-types',
+  icon: PackageIcon,
+  group: 'shipping',
+  position: 250,
+  subject: Subject.PackageType,
 })
 
 settingsNav.add({

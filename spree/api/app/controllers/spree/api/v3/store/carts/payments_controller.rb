@@ -29,7 +29,10 @@ module Spree
                 )
               end
 
-              amount = params[:amount].presence || @cart.total_minus_store_credits
+              # Bounded by what checkout actually collects — a deposit order
+              # charges its deposit, not its total.
+              amount = params[:amount].presence ||
+                       [@cart.amount_due_at_checkout, @cart.total_minus_store_credits].min
 
               @payment = @cart.payments.build(
                 payment_method: payment_method,

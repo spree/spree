@@ -184,6 +184,8 @@ import type {
   OrderRoutingRuleCreateParams,
   OrderRoutingRuleUpdateParams,
   OrderUpdateParams,
+  PackageTypeCreateParams,
+  PackageTypeUpdateParams,
   PasswordResetParams,
   PasswordResetRequestParams,
   PaymentCreateParams,
@@ -315,6 +317,7 @@ import type {
   Order,
   OrderCancellationReason,
   OrderRoutingRule,
+  PackageType,
   Payment,
   PaymentMethod,
   Permission,
@@ -2411,6 +2414,35 @@ export class AdminClient {
 
     delete: (id: string, options?: RequestOptions): Promise<void> =>
       this.request<void>('DELETE', `/delivery_zones/${id}`, options),
+  }
+
+  readonly packageTypes = {
+    list: (
+      params?: ListParams & Record<string, unknown>,
+      options?: RequestOptions,
+    ): Promise<PaginatedResponse<PackageType>> =>
+      this.request<PaginatedResponse<PackageType>>('GET', '/package_types', {
+        ...options,
+        params: params ? transformListParams(params) : undefined,
+      }),
+
+    get: (id: string, options?: RequestOptions): Promise<PackageType> =>
+      this.request<PackageType>('GET', `/package_types/${id}`, options),
+
+    create: (params: PackageTypeCreateParams, options?: RequestOptions): Promise<PackageType> =>
+      this.request<PackageType>('POST', '/package_types', { ...options, body: params }),
+
+    /** Setting `default` demotes whichever row was the store's box before. */
+    update: (
+      id: string,
+      params: PackageTypeUpdateParams,
+      options?: RequestOptions,
+    ): Promise<PackageType> =>
+      this.request<PackageType>('PATCH', `/package_types/${id}`, { ...options, body: params }),
+
+    /** Refused while a variant is packed into it. */
+    delete: (id: string, options?: RequestOptions): Promise<void> =>
+      this.request<void>('DELETE', `/package_types/${id}`, options),
   }
 
   readonly paymentMethods = {

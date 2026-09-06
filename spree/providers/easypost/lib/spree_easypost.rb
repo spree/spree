@@ -6,11 +6,6 @@ module SpreeEasyPost
   # Vendor branding, shared by both providers and the integration.
   PROVIDER_NAME = 'EasyPost'.freeze
 
-  OUNCES_PER_UNIT = {
-    'imperial' => 16.0,   # pounds
-    'metric' => 0.03527396 # grams
-  }.freeze
-
   # EasyPost rejects a parcel weighing zero ("must be greater than 0"), and
   # products without a weight are ordinary in Spree — so a weightless package
   # is quoted at this nominal ounce rather than failing the whole request.
@@ -18,30 +13,30 @@ module SpreeEasyPost
   # the alternative is no delivery options at all.
   MINIMUM_OUNCES = 0.1
 
-  # EasyPost expects parcel weight in ounces; Spree stores weight in the
-  # store's unit system.
-  #
-  # @param weight [Numeric, nil]
-  # @param store [Spree::Store, nil]
-  # @return [Float]
-  CM_PER_INCH = 2.54
-
-  # EasyPost expects parcel dimensions in inches; the store's default
-  # package records them in the unit its unit system implies (in/cm).
+  # EasyPost expects parcel dimensions in inches. A package reports its
+  # dimensions in the unit the store's system implies, so the conversion is
+  # from there — through the one conversion table Spree has, rather than a
+  # second copy of the same constants.
   #
   # @param value [Numeric, nil]
   # @param store [Spree::Store, nil]
   # @return [Float]
   def self.inches(value, store)
-    metric = store&.preferred_unit_system.to_s == 'metric'
-    inches = metric ? value.to_f / CM_PER_INCH : value.to_f
+    from = Spree::Variant.store_dimensions_unit(store)
 
-    inches.round(2)
+    Spree::Measurement.convert_length(value, from: from, to: 'in').to_f.round(2)
   end
 
+  # EasyPost expects parcel weight in ounces. A package reports its weight in
+  # the store's weight unit, which is a separate setting from its unit
+  # system — a metric store may still weigh in pounds.
+  #
+  # @param weight [Numeric, nil]
+  # @param store [Spree::Store, nil]
+  # @return [Float]
   def self.ounces(weight, store)
-    unit_system = store&.preferred_unit_system.presence || 'imperial'
-    converted = (weight.to_f * OUNCES_PER_UNIT.fetch(unit_system.to_s, 16.0)).round(2)
+    from = store&.preferred_weight_unit.presence || Spree::Measurement::DEFAULT_WEIGHT_UNIT
+    converted = Spree::Measurement.convert_weight(weight, from: from, to: 'oz').to_f.round(2)
 
     [converted, MINIMUM_OUNCES].max
   end

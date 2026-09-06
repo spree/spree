@@ -2025,17 +2025,6 @@
           "label": "Langue de l'administration",
           "placeholder": "Utiliser la langue par défaut"
         },
-        "preferred_default_package_dimensions": {
-          "height": "Hauteur",
-          "help": "Le carton habituel d'expédition, utilisé par les transporteurs pour le poids volumétrique — pouces en impérial, centimètres en métrique. Les trois valeurs sont requises.",
-          "label": "Dimensions de colis par défaut",
-          "length": "Longueur",
-          "width": "Largeur"
-        },
-        "preferred_default_package_weight": {
-          "help": "Poids d'emballage (carton et calage) ajouté au contenu de chaque colis lors du calcul des tarifs de livraison. 0 pour désactiver.",
-          "label": "Poids de colis par défaut"
-        },
         "preferred_send_consumer_transactional_emails": {
           "help": "Si désactivé, aucun e-mail de confirmation de commande, d'expédition ou de remboursement n'est envoyé.",
           "label": "Envoyer les e-mails transactionnels aux clients"
@@ -2276,7 +2265,19 @@
         "units_per_carton": {
           "label": "Unités par carton"
         },
-        "quantity_rule_invalid": "Saisissez un nombre entier supérieur à zéro, ou laissez vide."
+        "quantity_rule_invalid": "Saisissez un nombre entier supérieur à zéro, ou laissez vide.",
+        "carton_package_type_id": {
+          "label": "Carton",
+          "help": "Le carton dans lequel ce produit est emballé. Ses dimensions valent pour tout ce qui est emballé de la même façon."
+        },
+        "carton_weight": {
+          "label": "Poids du carton",
+          "help": "Le poids d’un carton rempli."
+        },
+        "cartons_per_pallet": {
+          "label": "Cartons par palette"
+        },
+        "carton_weight_invalid": "Saisissez un poids de carton supérieur à zéro, ou laissez le champ vide."
       },
       "webhook_endpoint": {
         "active": {
@@ -2304,6 +2305,45 @@
       "order_multiple": {
         "label": "Multiple de commande",
         "help": "Chaque palier au-dessus du minimum. Laisser vide pour toute quantité."
+      },
+      "package_type": {
+        "name": {
+          "label": "Nom"
+        },
+        "kind": {
+          "label": "Type",
+          "help": "Seul un carton maître peut être l'emballage d'un produit."
+        },
+        "length": {
+          "label": "Longueur"
+        },
+        "width": {
+          "label": "Largeur"
+        },
+        "height": {
+          "label": "Hauteur"
+        },
+        "dimensions_unit": {
+          "label": "Unité"
+        },
+        "dimensions": {
+          "help": "Utilisées pour le poids volumétrique et pour les mètres cubes des paliers de fret."
+        },
+        "weight": {
+          "label": "Poids à vide",
+          "help": "L'emballage lui-même, ajouté à son contenu."
+        },
+        "max_weight": {
+          "label": "Poids max.",
+          "help": "Ce qu'il peut porter."
+        },
+        "weight_unit": {
+          "label": "Unité"
+        },
+        "default": {
+          "label": "Carton par défaut",
+          "help": "La base de chaque cotation colis. Un seul par boutique."
+        }
       }
     },
     "gift_cards": {
@@ -2839,6 +2879,20 @@
           "label": "Rechercher une variante",
           "placeholder": "Saisissez le nom du produit ou le SKU (3 caractères min.)…",
           "sku_prefix": "SKU"
+        },
+        "logistics": {
+          "title": "Logistique",
+          "units": "Unités",
+          "cartons": "Cartons",
+          "pallets": "Palettes",
+          "volume": "Volume",
+          "weight": "Poids brut",
+          "cbm": "{{value}} m³",
+          "kg": "{{value}} kg",
+          "incomplete": "Certains articles ne sont pas mesurés : ces chiffres sont un minimum, pas un total.",
+          "deposit": "Acompte",
+          "paid": "Payé",
+          "balance": "Solde"
         }
       },
       "edit": {
@@ -3599,11 +3653,9 @@
           "search_placeholder": "Rechercher des emplacements de stock…"
         },
         "store": {
-          "default_package_description": "Le carton habituel d'expédition. Les transporteurs ajoutent son poids à chaque colis et utilisent ses dimensions pour le poids volumétrique.",
           "subtitle": "Configuration générale et valeurs par défaut à l'échelle de la boutique.",
           "tab_addresses": "Adresses",
           "tab_catalog": "Catalogue",
-          "tab_default_package": "Colis par défaut",
           "tab_general": "Général",
           "tab_inventory": "Stock",
           "tab_order_numbers": "Numéros de commande",
@@ -3755,6 +3807,9 @@
         "payouts": {
           "title": "Paiements",
           "subtitle": "Comment et quand cette marketplace paie ses vendeurs."
+        },
+        "package_types": {
+          "add_sheet_title": "Ajouter un type d'emballage"
         }
       },
       "staff": {
@@ -3956,6 +4011,8 @@
       "api_key_description": "Disponible dans votre tableau de bord EasyPost. Une clé de test et une clé live se comportent différemment — la clé détermine le mode.",
       "base_amount": "Montant de base",
       "base_percent": "Pourcentage de base",
+      "company_orders_only": "Réservée aux commandes d'entreprise",
+      "company_orders_only_description": "Activée, cette méthode n'est proposée qu'aux commandes passées pour une entreprise ; désactivée, uniquement aux autres. Sans cette règle, elle s'applique aux deux.",
       "currency": "Devise",
       "customs_contents_type": "Type de contenu douanier",
       "customs_contents_type_description": "Ce que contient un colis international, selon la classification douanière.",
@@ -4215,7 +4272,10 @@
           "identity": "Identité",
           "tax_category_placeholder": "Hériter du produit",
           "ordering": "Commande B2B",
-          "ordering_help": "Combien un acheteur doit prendre. Le stock reste compté en unités."
+          "ordering_help": "Combien un acheteur doit prendre. Le stock reste compté en unités.",
+          "packing": "Emballage",
+          "packing_help": "Comment ce produit quitte l’entrepôt en gros. Les devis de fret reposent sur ces chiffres.",
+          "carton_placeholder": "Aucun carton"
         },
         "title": "Variantes",
         "variant_label": "Variante"
@@ -4772,7 +4832,8 @@
         "tax_categories": "Classes de taxe attribuées aux produits",
         "tax_rates": "Taux appliqués par marché et région",
         "webhooks": "Points de terminaison notifiés lors d'événements",
-        "payouts": "Qui paie vos vendeurs, à quelle fréquence et à partir de quel montant"
+        "payouts": "Qui paie vos vendeurs, à quelle fréquence et à partir de quel montant",
+        "package_types": "Cartons, palettes et conteneurs"
       },
       "groups": {
         "audit": "Audit",
@@ -4808,7 +4869,8 @@
         "tax_categories": "Catégories de taxe",
         "tax_rates": "Taux de taxe",
         "webhooks": "Webhooks",
-        "payouts": "Paiements"
+        "payouts": "Paiements",
+        "package_types": "Types d'emballage"
       }
     },
     "setup": {
@@ -5114,6 +5176,37 @@
       "saved": "Traductions enregistrées",
       "source": "Source",
       "title": "Traductions"
+    },
+    "package_types": {
+      "table_title": "Types d'emballage",
+      "search_placeholder": "Rechercher un emballage",
+      "empty": "Aucun emballage. Ajoutez votre carton d'expédition, ainsi que les cartons et palettes des commandes en gros.",
+      "add_cta": "Ajouter un type d'emballage",
+      "default_badge": "Par défaut",
+      "edit_sheet_title": "Type d'emballage",
+      "create_description": "Un carton, une palette ou un conteneur dans lequel cette boutique emballe ses produits.",
+      "edit_description": "Les produits emballés dans ce carton suivent ses dimensions : une modification les corrige tous.",
+      "dimensions_column": "Dimensions",
+      "volume_column": "Volume",
+      "kinds": {
+        "box": "Carton",
+        "envelope": "Enveloppe",
+        "carton": "Carton maître",
+        "pallet": "Palette",
+        "container": "Conteneur"
+      },
+      "messages": {
+        "added": "Type d'emballage ajouté",
+        "updated": "Type d'emballage mis à jour",
+        "deleted": "Type d'emballage supprimé"
+      },
+      "delete_confirm": {
+        "title": "Supprimer ce type d'emballage ?",
+        "message": "{{name}} sera supprimé. Les produits qui y sont emballés doivent d'abord être reconditionnés."
+      },
+      "validation": {
+        "non_negative": "doit être supérieur ou égal à zéro"
+      }
     }
   }
 }

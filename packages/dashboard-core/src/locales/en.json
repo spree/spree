@@ -842,7 +842,19 @@
         "units_per_carton": {
           "label": "Units per carton"
         },
-        "quantity_rule_invalid": "Enter a whole number greater than zero, or leave blank."
+        "quantity_rule_invalid": "Enter a whole number greater than zero, or leave blank.",
+        "carton_package_type_id": {
+          "label": "Carton",
+          "help": "The carton this product is packed into. Its size is shared by everything packed the same way."
+        },
+        "carton_weight": {
+          "label": "Carton weight",
+          "help": "What one packed carton weighs."
+        },
+        "cartons_per_pallet": {
+          "label": "Cartons per pallet"
+        },
+        "carton_weight_invalid": "Enter a carton weight greater than zero, or leave it blank."
       },
       "minimum_order_quantity": {
         "label": "Minimum order quantity",
@@ -1512,7 +1524,10 @@
           "identity": "Identity",
           "tax_category_placeholder": "Inherit from product",
           "ordering": "B2B ordering",
-          "ordering_help": "How much a buyer must take. Stock is still counted in units."
+          "ordering_help": "How much a buyer must take. Stock is still counted in units.",
+          "packing": "Packing",
+          "packing_help": "How this product leaves the warehouse in bulk. Freight quotes are built from these numbers.",
+          "carton_placeholder": "No carton"
         },
         "title": "Variants",
         "variant_label": "Variant"
@@ -1709,6 +1724,10 @@
           "name": "Channel",
           "description": "Offer this delivery method only on the selected sales channels"
         },
+        "company_rule": {
+          "name": "Company",
+          "description": "Offer this delivery method only to orders placed for a company, or only to those that are not"
+        },
         "excluded_products_rule": {
           "name": "Excluded products",
           "description": "Hide this delivery method when the order contains any of these products"
@@ -1716,6 +1735,10 @@
         "item_total_rule": {
           "name": "Item total",
           "description": "Offer this delivery method only when the order total is within a range"
+        },
+        "volume_rule": {
+          "name": "Volume",
+          "description": "Offer this delivery method only when the shipment volume is within a range, in cubic meters"
         },
         "weight_rule": {
           "name": "Weight",

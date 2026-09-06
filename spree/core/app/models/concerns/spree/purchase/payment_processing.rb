@@ -67,14 +67,20 @@ module Spree
         # attribute here goes stale as soon as anything settles. Only that
         # column is read — reloading the whole record would discard in-memory
         # state the caller set.
-        return if settled_payment_total >= total
+        #
+        # Measured against what is due now rather than the whole total: a
+        # deposit order settles a fraction and still owes the rest, so
+        # comparing with the total would keep processing past the point the
+        # buyer has paid everything they were asked for — and then refuse the
+        # order for having nothing left to charge.
+        return if settled_payment_total >= amount_due_at_checkout
         # Don't run if there are authorized payments
         return if pending_payments.any? && unprocessed_payments.empty?
         # Never complete without a successfully processed payment.
         raise Spree::Core::GatewayError, Spree.t(:no_payment_found) if unprocessed_payments.empty?
 
         unprocessed_payments.each do |payment|
-          break if settled_payment_total >= total
+          break if settled_payment_total >= amount_due_at_checkout
 
           result = Spree.payment_process_workflow.call(payment: payment, action: action)
           raise Spree::Core::GatewayError, result.error.value.to_s if result.failure?

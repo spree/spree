@@ -36,6 +36,9 @@ export function variantToFormValues(variant: PanelVariant, position: number): Va
     order_multiple: variant.order_multiple?.toString() ?? null,
     purchase_unit: variant.purchase_unit ?? null,
     units_per_carton: variant.units_per_carton?.toString() ?? null,
+    cartons_per_pallet: variant.cartons_per_pallet?.toString() ?? null,
+    carton_weight: variant.carton_weight == null ? null : Number(variant.carton_weight),
+    carton_package_type_id: variant.carton_package_type_id ?? null,
     track_inventory: variant.track_inventory,
     preorderable: variant.preorderable ?? false,
     preorder_ships_at: variant.preorder_ships_at ?? null,
@@ -182,6 +185,9 @@ export function variantToWirePayload(v: VariantFormValues, index: number) {
     order_multiple: normalizeQuantityRule(v.order_multiple),
     purchase_unit: v.purchase_unit ?? null,
     units_per_carton: normalizeQuantityRule(v.units_per_carton),
+    cartons_per_pallet: normalizeQuantityRule(v.cartons_per_pallet),
+    carton_weight: v.carton_weight ?? null,
+    carton_package_type_id: v.carton_package_type_id ?? null,
   }
   if (v.id) payload.id = v.id
   if (v.track_inventory != null) payload.track_inventory = v.track_inventory

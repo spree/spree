@@ -7,6 +7,74 @@ RSpec.describe Spree::Stores::ProvisionDefaults do
   let(:country) { Spree::Country.by_iso('DE') }
   let(:locale) { 'de' }
 
+  describe 'the default package type' do
+    # Nothing errors without a box — a quote just goes out with no size and
+    # no tare, and a carrier under-charges anything bulky but light.
+    it 'gives the store a box to ship parcels in' do
+      subject
+
+      box = store.reload.default_package_type
+      expect(box).to be_present
+      expect(box.kind).to eq('box')
+      expect(box.weight).to be_positive
+      expect([box.length, box.width, box.height]).to all(be_positive)
+    end
+
+    it 'states it in the unit the store already implies' do
+      stub_store_preferences(store, unit_system: 'metric', weight_unit: 'kg')
+
+      subject
+
+      box = store.reload.default_package_type
+      expect(box.dimensions_unit).to eq('cm')
+      expect(box.weight_unit).to eq('kg')
+    end
+
+    # The two preferences are independent: a metric store can still weigh in
+    # pounds, and stating the wrong number under that label misreports the tare
+    # on every quote.
+    it 'states the tare in the weight unit the store actually uses' do
+      stub_store_preferences(store, unit_system: 'metric', weight_unit: 'lb')
+
+      subject
+
+      box = store.reload.default_package_type
+      expect(box.weight_unit).to eq('lb')
+      expect(box.weight.to_f).to be_within(0.01).of(0.5)
+    end
+
+    it 'converts that tare for a store weighing in kilograms' do
+      stub_store_preferences(store, unit_system: 'metric', weight_unit: 'kg')
+
+      subject
+
+      box = store.reload.default_package_type
+      expect(box.weight_unit).to eq('kg')
+      expect(box.weight.to_f).to be_within(0.01).of(0.227)
+    end
+
+    it 'measures an imperial store in inches' do
+      stub_store_preferences(store, unit_system: 'imperial', weight_unit: 'lb')
+
+      subject
+
+      box = store.reload.default_package_type
+      expect(box.dimensions_unit).to eq('in')
+      expect(box.weight_unit).to eq('lb')
+    end
+
+    # Re-provisioning must never replace packaging a merchant measured
+    # themselves.
+    it 'leaves a box the merchant already chose alone' do
+      existing = create(:package_type, store: store, kind: 'box', name: 'Our own box', default: true)
+
+      subject
+
+      expect(store.reload.default_package_type).to eq(existing)
+      expect(store.package_types.count).to eq(1)
+    end
+  end
+
   describe 'the default market' do
     it 're-points the bootstrap market at the chosen country' do
       subject

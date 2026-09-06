@@ -840,7 +840,19 @@
         "units_per_carton": {
           "label": "Stück pro Karton"
         },
-        "quantity_rule_invalid": "Geben Sie eine ganze Zahl größer als null ein oder lassen Sie das Feld leer."
+        "quantity_rule_invalid": "Geben Sie eine ganze Zahl größer als null ein oder lassen Sie das Feld leer.",
+        "carton_package_type_id": {
+          "label": "Karton",
+          "help": "Der Karton, in den dieses Produkt verpackt wird. Seine Maße gelten für alles, was gleich verpackt wird."
+        },
+        "carton_weight": {
+          "label": "Kartongewicht",
+          "help": "Das Gewicht eines gepackten Kartons."
+        },
+        "cartons_per_pallet": {
+          "label": "Kartons pro Palette"
+        },
+        "carton_weight_invalid": "Geben Sie ein Kartongewicht größer als null ein oder lassen Sie das Feld leer."
       },
       "minimum_order_quantity": {
         "label": "Mindestbestellmenge",
@@ -1510,7 +1522,10 @@
           "identity": "Identität",
           "tax_category_placeholder": "Vom Produkt übernehmen",
           "ordering": "B2B-Bestellung",
-          "ordering_help": "Wie viel ein Käufer abnehmen muss. Der Bestand wird weiterhin in Stück gezählt."
+          "ordering_help": "Wie viel ein Käufer abnehmen muss. Der Bestand wird weiterhin in Stück gezählt.",
+          "packing": "Verpackung",
+          "packing_help": "Wie dieses Produkt als Großmenge das Lager verlässt. Frachtangebote beruhen auf diesen Zahlen.",
+          "carton_placeholder": "Kein Karton"
         },
         "title": "Varianten",
         "variant_label": "Variante"
@@ -1707,6 +1722,10 @@
           "name": "Vertriebskanal",
           "description": "Diese Versandart nur in den gewählten Vertriebskanälen anbieten"
         },
+        "company_rule": {
+          "name": "Firma",
+          "description": "Diese Versandart nur für Bestellungen auf eine Firma anbieten – oder nur für die übrigen"
+        },
         "excluded_products_rule": {
           "name": "Ausgeschlossene Produkte",
           "description": "Diese Versandart ausblenden, wenn die Bestellung eines dieser Produkte enthält"
@@ -1714,6 +1733,10 @@
         "item_total_rule": {
           "name": "Warenwert",
           "description": "Diese Versandart nur anbieten, wenn der Bestellwert im Bereich liegt"
+        },
+        "volume_rule": {
+          "name": "Volumen",
+          "description": "Diese Versandart nur anbieten, wenn das Sendungsvolumen in Kubikmetern im Bereich liegt"
         },
         "weight_rule": {
           "name": "Gewicht",

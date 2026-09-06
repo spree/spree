@@ -10,7 +10,9 @@ module Spree
                  tax_total: :string, display_tax_total: :string,
                  carrier: [:string, nullable: true],
                  service_level: [:string, nullable: true],
-                 estimated_delivery_date: [:string, nullable: true]
+                 estimated_delivery_date: [:string, nullable: true],
+                 unpriced: :boolean,
+                 freight_summary: ['Record<string, unknown>', nullable: true]
 
         attribute :delivery_method_id do |deliver_rate|
           deliver_rate.delivery_method&.prefixed_id
@@ -23,7 +25,17 @@ module Spree
                    :cost, :total,
                    :additional_tax_total, :included_tax_total,
                    :tax_total,
-                   :carrier, :service_level, :estimated_delivery_date
+                   :carrier, :service_level, :estimated_delivery_date,
+                   :unpriced
+
+        # What the shipment looks like to a freight forwarder — cartons,
+        # pallets, cubic meters, gross weight. Present only on freight rates;
+        # it is what a buyer sees in place of a price they cannot be quoted
+        # yet, and stays readable on the placed order because the provider
+        # froze it here when it quoted.
+        attribute :freight_summary do |delivery_rate|
+          delivery_rate.freight_summary&.as_json(identify_lines: !params[:hide_prices])
+        end
 
         attribute :display_cost do |deliver_rate|
           deliver_rate.display_cost.to_s

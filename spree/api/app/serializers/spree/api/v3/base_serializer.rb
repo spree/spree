@@ -27,6 +27,23 @@ module Spree
           end
         end
 
+        # A purchase's payment schedule with a formatted twin beside every
+        # amount, as the rest of the money surface carries. Shared by cart and
+        # order so the two cannot disagree about the buyer's own currency.
+        #
+        # @param purchase [Spree::Cart, Spree::Order]
+        # @return [Hash] the schedule with a formatted twin per amount
+        def payment_schedule_json(purchase)
+          schedule = purchase.payment_schedule
+          money = ->(amount) { amount && Spree::Money.new(amount, currency: purchase.currency).to_s }
+
+          schedule.as_json.merge(
+            'display_amount_due_now' => money.call(schedule.amount_due_now),
+            'display_deposit_amount' => money.call(schedule.deposit_amount),
+            'display_outstanding_balance' => money.call(schedule.outstanding_balance)
+          )
+        end
+
         # Context accessors
         def current_store
           params[:store]

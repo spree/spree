@@ -44,6 +44,7 @@ import { Route as SettingsProductTypesRouteImport } from './../../dashboard/src/
 import { Route as SettingsPoliciesRouteImport } from './../../dashboard/src/routes/_authenticated/$storeId/settings/policies'
 import { Route as SettingsPayoutsRouteImport } from './../../dashboard/src/routes/_authenticated/$storeId/settings/payouts'
 import { Route as SettingsPaymentMethodsRouteImport } from './../../dashboard/src/routes/_authenticated/$storeId/settings/payment-methods'
+import { Route as SettingsPackageTypesRouteImport } from './../../dashboard/src/routes/_authenticated/$storeId/settings/package-types'
 import { Route as SettingsMarketsRouteImport } from './../../dashboard/src/routes/_authenticated/$storeId/settings/markets'
 import { Route as SettingsIntegrationsRouteImport } from './../../dashboard/src/routes/_authenticated/$storeId/settings/integrations'
 import { Route as SettingsEmailsRouteImport } from './../../dashboard/src/routes/_authenticated/$storeId/settings/emails'
@@ -263,6 +264,11 @@ const SettingsPayoutsRoute = SettingsPayoutsRouteImport.update({
 const SettingsPaymentMethodsRoute = SettingsPaymentMethodsRouteImport.update({
   id: '/payment-methods',
   path: '/payment-methods',
+  getParentRoute: () => SettingsRoute,
+} as any)
+const SettingsPackageTypesRoute = SettingsPackageTypesRouteImport.update({
+  id: '/package-types',
+  path: '/package-types',
   getParentRoute: () => SettingsRoute,
 } as any)
 const SettingsMarketsRoute = SettingsMarketsRouteImport.update({
@@ -536,6 +542,7 @@ export interface FileRoutesByFullPath {
   '/$storeId/settings/emails': typeof SettingsEmailsRoute
   '/$storeId/settings/integrations': typeof SettingsIntegrationsRoute
   '/$storeId/settings/markets': typeof SettingsMarketsRoute
+  '/$storeId/settings/package-types': typeof SettingsPackageTypesRoute
   '/$storeId/settings/payment-methods': typeof SettingsPaymentMethodsRoute
   '/$storeId/settings/payouts': typeof SettingsPayoutsRoute
   '/$storeId/settings/policies': typeof SettingsPoliciesRoute
@@ -614,6 +621,7 @@ export interface FileRoutesByTo {
   '/$storeId/settings/emails': typeof SettingsEmailsRoute
   '/$storeId/settings/integrations': typeof SettingsIntegrationsRoute
   '/$storeId/settings/markets': typeof SettingsMarketsRoute
+  '/$storeId/settings/package-types': typeof SettingsPackageTypesRoute
   '/$storeId/settings/payment-methods': typeof SettingsPaymentMethodsRoute
   '/$storeId/settings/payouts': typeof SettingsPayoutsRoute
   '/$storeId/settings/policies': typeof SettingsPoliciesRoute
@@ -696,6 +704,7 @@ export interface FileRoutesById {
   '/_authenticated/$storeId/settings/emails': typeof SettingsEmailsRoute
   '/_authenticated/$storeId/settings/integrations': typeof SettingsIntegrationsRoute
   '/_authenticated/$storeId/settings/markets': typeof SettingsMarketsRoute
+  '/_authenticated/$storeId/settings/package-types': typeof SettingsPackageTypesRoute
   '/_authenticated/$storeId/settings/payment-methods': typeof SettingsPaymentMethodsRoute
   '/_authenticated/$storeId/settings/payouts': typeof SettingsPayoutsRoute
   '/_authenticated/$storeId/settings/policies': typeof SettingsPoliciesRoute
@@ -778,6 +787,7 @@ export interface FileRouteTypes {
     | '/$storeId/settings/emails'
     | '/$storeId/settings/integrations'
     | '/$storeId/settings/markets'
+    | '/$storeId/settings/package-types'
     | '/$storeId/settings/payment-methods'
     | '/$storeId/settings/payouts'
     | '/$storeId/settings/policies'
@@ -856,6 +866,7 @@ export interface FileRouteTypes {
     | '/$storeId/settings/emails'
     | '/$storeId/settings/integrations'
     | '/$storeId/settings/markets'
+    | '/$storeId/settings/package-types'
     | '/$storeId/settings/payment-methods'
     | '/$storeId/settings/payouts'
     | '/$storeId/settings/policies'
@@ -937,6 +948,7 @@ export interface FileRouteTypes {
     | '/_authenticated/$storeId/settings/emails'
     | '/_authenticated/$storeId/settings/integrations'
     | '/_authenticated/$storeId/settings/markets'
+    | '/_authenticated/$storeId/settings/package-types'
     | '/_authenticated/$storeId/settings/payment-methods'
     | '/_authenticated/$storeId/settings/payouts'
     | '/_authenticated/$storeId/settings/policies'
@@ -1233,6 +1245,13 @@ declare module '@tanstack/react-router' {
       path: '/payment-methods'
       fullPath: '/$storeId/settings/payment-methods'
       preLoaderRoute: typeof SettingsPaymentMethodsRouteImport
+      parentRoute: typeof SettingsRoute
+    }
+    '/_authenticated/$storeId/settings/package-types': {
+      id: '/_authenticated/$storeId/settings/package-types'
+      path: '/package-types'
+      fullPath: '/$storeId/settings/package-types'
+      preLoaderRoute: typeof SettingsPackageTypesRouteImport
       parentRoute: typeof SettingsRoute
     }
     '/_authenticated/$storeId/settings/markets': {
@@ -1555,6 +1574,7 @@ interface SettingsRouteChildren {
   SettingsEmailsRoute: typeof SettingsEmailsRoute
   SettingsIntegrationsRoute: typeof SettingsIntegrationsRoute
   SettingsMarketsRoute: typeof SettingsMarketsRoute
+  SettingsPackageTypesRoute: typeof SettingsPackageTypesRoute
   SettingsPaymentMethodsRoute: typeof SettingsPaymentMethodsRoute
   SettingsPayoutsRoute: typeof SettingsPayoutsRoute
   SettingsPoliciesRoute: typeof SettingsPoliciesRoute
@@ -1586,6 +1606,7 @@ const SettingsRouteChildren: SettingsRouteChildren = {
   SettingsEmailsRoute: SettingsEmailsRoute,
   SettingsIntegrationsRoute: SettingsIntegrationsRoute,
   SettingsMarketsRoute: SettingsMarketsRoute,
+  SettingsPackageTypesRoute: SettingsPackageTypesRoute,
   SettingsPaymentMethodsRoute: SettingsPaymentMethodsRoute,
   SettingsPayoutsRoute: SettingsPayoutsRoute,
   SettingsPoliciesRoute: SettingsPoliciesRoute,

@@ -80,8 +80,19 @@ module Spree
         end
       end
 
+      # Frozen at the same moment the order is placed, exactly as checkout
+      # does it: a draft completed on freight terms owes its deposit, and the
+      # total it was struck against has to be recorded with it — a fee added
+      # afterwards must not restate what the buyer agreed to.
       def place_order
-        order.update!(status: 'placed', completed_at: Time.current)
+        attributes = { status: 'placed', completed_at: Time.current }
+
+        if order.payment_terms.blank? && (terms = order.payment_terms_snapshot)
+          terms.base_total = order.total
+          attributes[:payment_terms] = terms.as_json
+        end
+
+        order.update!(attributes)
       end
 
       def use_coupon_codes
@@ -162,7 +173,10 @@ module Spree
 
       def payment_covered?
         order.payments.reset
-        order.payments.valid.where(status: %w[pending processing completed]).sum(:amount) >= order.total
+        # What is due now, not the whole total: a deposit order is placed
+        # owing its balance, and measuring against the total would refuse it
+        # for underpaying money nobody asked for yet.
+        order.payments.valid.where(status: %w[pending processing completed]).sum(:amount) >= order.amount_due_at_checkout
       end
     end
   end

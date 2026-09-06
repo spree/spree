@@ -71,6 +71,17 @@ module Spree
 
       private
 
+      # The terms as agreed, with the total they were measured against
+      # stamped in. Reading the order's total later would let a freight fee
+      # recorded after placement claim a bigger deposit than the buyer paid.
+      def frozen_payment_terms(cart)
+        terms = cart.payment_terms_snapshot
+        return if terms.nil?
+
+        terms.base_total = cart.total
+        terms.as_json
+      end
+
       # Admin/B2B draft orders bypass the cart — the order-side completion
       # workflow (Spree::Orders::Complete) owns that path end to end.
       def complete_draft_order
@@ -154,7 +165,10 @@ module Spree
       end
 
       def create_draft_order
-        @order = create_draft_order!(cart)
+        # Reloaded because the copier writes the totals with update_columns,
+        # which leaves this instance holding the zeros it was built with —
+        # and the payment decision immediately below is made against them.
+        @order = create_draft_order!(cart).reload
       end
 
       def process_payments
@@ -223,6 +237,11 @@ module Spree
             preferred_stock_location_id: cart.preferred_stock_location_id,
             customer_note: cart.customer_note,
             po_number: cart.po_number,
+            # Frozen here, never resolved again: the buyer agreed to this
+            # deposit, against this total, at this moment. A method whose
+            # terms change next month must not rewrite what they owe, and
+            # neither must the forwarder's charge landing later as a fee.
+            payment_terms: frozen_payment_terms(cart),
             gift_card: cart.gift_card,
             last_ip_address: cart.last_ip_address,
             ship_address: cart.ship_address&.snapshot,
@@ -387,11 +406,16 @@ module Spree
         order.payments.reset
       end
 
-      # Completion gates on "a valid payment exists covering the total",
-      # never on paid? — a net-terms order completes with a pending payment.
+      # Completion gates on "a valid payment exists covering what is due
+      # now", never on paid? — a net-terms order completes with a pending
+      # payment, and a deposit order completes owing the balance.
+      #
+      # What is due now is the whole total unless the buyer's terms say a
+      # deposit, so this reads the same for every retail order it always did
+      # (docs/plans/6.0-b2b-wholesale-shipping.md phase 7).
       def payment_covered?(order)
         order.payments.reset
-        order.payments.valid.where(status: %w[pending processing completed]).sum(:amount) >= order.total
+        order.payments.valid.where(status: %w[pending processing completed]).sum(:amount) >= order.amount_due_at_checkout
       end
 
       # The FINALIZE phase: the order-side completion workflow owns the

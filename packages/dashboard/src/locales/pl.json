@@ -2039,17 +2039,6 @@
           "label": "Język panelu administracyjnego",
           "placeholder": "Użyj języka domyślnego"
         },
-        "preferred_default_package_dimensions": {
-          "height": "Wysokość",
-          "help": "Karton, w którym zwykle wysyłasz, używany przez przewoźników do wyceny wagi wymiarowej — cale dla systemu imperialnego, centymetry dla metrycznego. Działa dopiero po podaniu wszystkich trzech.",
-          "label": "Domyślne wymiary paczki",
-          "length": "Długość",
-          "width": "Szerokość"
-        },
-        "preferred_default_package_weight": {
-          "help": "Waga opakowania (karton i wypełnienie) dodawana do zawartości każdej paczki przy wyliczaniu stawek dostawy. 0 wyłącza.",
-          "label": "Domyślna waga paczki"
-        },
         "preferred_send_consumer_transactional_emails": {
           "help": "Gdy wyłączone, nie są wysyłane żadne wiadomości z potwierdzeniem zamówienia, wysyłki ani zwrotu.",
           "label": "Wysyłaj wiadomości transakcyjne do klientów"
@@ -2290,7 +2279,19 @@
         "units_per_carton": {
           "label": "Sztuk w kartonie"
         },
-        "quantity_rule_invalid": "Podaj liczbę całkowitą większą od zera lub pozostaw pole puste."
+        "quantity_rule_invalid": "Podaj liczbę całkowitą większą od zera lub pozostaw pole puste.",
+        "carton_package_type_id": {
+          "label": "Karton",
+          "help": "Karton, w który pakowany jest ten produkt. Jego wymiary dotyczą wszystkiego pakowanego tak samo."
+        },
+        "carton_weight": {
+          "label": "Waga kartonu",
+          "help": "Waga jednego zapakowanego kartonu."
+        },
+        "cartons_per_pallet": {
+          "label": "Kartonów na palecie"
+        },
+        "carton_weight_invalid": "Podaj wagę kartonu większą od zera albo zostaw pole puste."
       },
       "webhook_endpoint": {
         "active": {
@@ -2318,6 +2319,45 @@
       "order_multiple": {
         "label": "Wielokrotność zamówienia",
         "help": "Każdy kolejny krok powyżej minimum. Pozostaw puste, aby dopuścić dowolną ilość."
+      },
+      "package_type": {
+        "name": {
+          "label": "Nazwa"
+        },
+        "kind": {
+          "label": "Rodzaj",
+          "help": "Tylko karton zbiorczy może być opakowaniem produktu."
+        },
+        "length": {
+          "label": "Długość"
+        },
+        "width": {
+          "label": "Szerokość"
+        },
+        "height": {
+          "label": "Wysokość"
+        },
+        "dimensions_unit": {
+          "label": "Jednostka"
+        },
+        "dimensions": {
+          "help": "Do wagi objętościowej przewoźnika i metrów sześciennych progów frachtowych."
+        },
+        "weight": {
+          "label": "Waga pustego",
+          "help": "Samo opakowanie, doliczane do zawartości."
+        },
+        "max_weight": {
+          "label": "Maks. waga",
+          "help": "Ile może unieść."
+        },
+        "weight_unit": {
+          "label": "Jednostka"
+        },
+        "default": {
+          "label": "Domyślny karton sklepu",
+          "help": "Podstawa każdej wyceny paczki. Tylko jeden na sklep."
+        }
       }
     },
     "gift_cards": {
@@ -2861,6 +2901,20 @@
           "label": "Wyszukaj wariant",
           "placeholder": "Wpisz nazwę produktu lub SKU (min. 3 znaki)…",
           "sku_prefix": "SKU"
+        },
+        "logistics": {
+          "title": "Logistyka",
+          "units": "Sztuki",
+          "cartons": "Kartony",
+          "pallets": "Palety",
+          "volume": "Objętość",
+          "weight": "Waga brutto",
+          "cbm": "{{value}} m³",
+          "kg": "{{value}} kg",
+          "incomplete": "Część towaru nie ma wymiarów, więc te liczby to wartość minimalna, a nie suma.",
+          "deposit": "Zaliczka",
+          "paid": "Zapłacono",
+          "balance": "Pozostało"
         }
       },
       "edit": {
@@ -3637,11 +3691,9 @@
           "search_placeholder": "Szukaj lokalizacji magazynowych…"
         },
         "store": {
-          "default_package_description": "Karton, w którym zwykle wysyłasz. Dostawcy stawek przewoźników dodają jego wagę do każdej paczki i używają wymiarów do wyceny wagi wymiarowej.",
           "subtitle": "Ogólna konfiguracja i domyślne ustawienia dla całego sklepu.",
           "tab_addresses": "Adresy",
           "tab_catalog": "Katalog",
-          "tab_default_package": "Domyślna paczka",
           "tab_general": "Ogólne",
           "tab_inventory": "Stan magazynowy",
           "tab_order_numbers": "Numery zamówień",
@@ -3799,6 +3851,9 @@
         "payouts": {
           "title": "Wypłaty",
           "subtitle": "Jak i kiedy ten marketplace płaci swoim sprzedawcom."
+        },
+        "package_types": {
+          "add_sheet_title": "Dodaj rodzaj opakowania"
         }
       },
       "staff": {
@@ -4000,6 +4055,8 @@
       "api_key_description": "Znajdziesz go w panelu EasyPost. Klucz testowy i produkcyjny działają inaczej — to klucz decyduje o trybie.",
       "base_amount": "Kwota podstawowa",
       "base_percent": "Procent podstawowy",
+      "company_orders_only": "Tylko dla zamówień firmowych",
+      "company_orders_only_description": "Włączone — ta metoda jest oferowana wyłącznie zamówieniom składanym na firmę; wyłączone — tylko pozostałym. Bez tej reguły obowiązuje dla obu.",
       "currency": "Waluta",
       "customs_contents_type": "Rodzaj zawartości celnej",
       "customs_contents_type_description": "Co zawiera przesyłka międzynarodowa według klasyfikacji celnej.",
@@ -4269,7 +4326,10 @@
           "identity": "Tożsamość",
           "tax_category_placeholder": "Dziedzicz z produktu",
           "ordering": "Zamówienia B2B",
-          "ordering_help": "Ile kupujący musi wziąć. Stan magazynowy nadal liczony jest w sztukach."
+          "ordering_help": "Ile kupujący musi wziąć. Stan magazynowy nadal liczony jest w sztukach.",
+          "packing": "Pakowanie",
+          "packing_help": "Jak ten produkt opuszcza magazyn hurtowo. Na tych liczbach opierają się wyceny frachtu.",
+          "carton_placeholder": "Brak kartonu"
         },
         "title": "Warianty",
         "variant_label": "Wariant"
@@ -4826,7 +4886,8 @@
         "tax_categories": "Klasy podatkowe przypisane do produktów",
         "tax_rates": "Stawki stosowane według rynku i regionu",
         "webhooks": "Adresy powiadamiane o zdarzeniach",
-        "payouts": "Kto płaci Twoim sprzedawcom, jak często i od jakiej kwoty"
+        "payouts": "Kto płaci Twoim sprzedawcom, jak często i od jakiej kwoty",
+        "package_types": "Kartony, palety i kontenery"
       },
       "groups": {
         "audit": "Audyt",
@@ -4862,7 +4923,8 @@
         "tax_categories": "Kategorie podatkowe",
         "tax_rates": "Stawki podatku",
         "webhooks": "Webhooki",
-        "payouts": "Wypłaty"
+        "payouts": "Wypłaty",
+        "package_types": "Rodzaje opakowań"
       }
     },
     "setup": {
@@ -5168,6 +5230,37 @@
       "saved": "Tłumaczenia zapisane",
       "source": "Źródło",
       "title": "Tłumaczenia"
+    },
+    "package_types": {
+      "table_title": "Rodzaje opakowań",
+      "search_placeholder": "Szukaj opakowania",
+      "empty": "Brak opakowań. Dodaj karton wysyłkowy oraz kartony i palety dla zamówień hurtowych.",
+      "add_cta": "Dodaj rodzaj opakowania",
+      "default_badge": "Domyślne sklepu",
+      "edit_sheet_title": "Rodzaj opakowania",
+      "create_description": "Karton, paleta lub kontener, w który ten sklep pakuje towar.",
+      "edit_description": "Produkty pakowane w ten karton przyjmują jego wymiary — jedna zmiana poprawia wszystkie.",
+      "dimensions_column": "Wymiary",
+      "volume_column": "Objętość",
+      "kinds": {
+        "box": "Karton",
+        "envelope": "Koperta",
+        "carton": "Karton zbiorczy",
+        "pallet": "Paleta",
+        "container": "Kontener"
+      },
+      "messages": {
+        "added": "Dodano rodzaj opakowania",
+        "updated": "Zaktualizowano rodzaj opakowania",
+        "deleted": "Usunięto rodzaj opakowania"
+      },
+      "delete_confirm": {
+        "title": "Usunąć rodzaj opakowania?",
+        "message": "{{name}} zostanie usunięty. Produkty w nim zapakowane trzeba najpierw przepakować."
+      },
+      "validation": {
+        "non_negative": "musi wynosić zero lub więcej"
+      }
     }
   }
 }

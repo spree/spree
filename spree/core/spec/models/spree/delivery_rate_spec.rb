@@ -303,4 +303,26 @@ describe Spree::DeliveryRate, type: :model do
       end
     end
   end
+
+  describe 'an unpriced rate' do
+    let(:rate) { create(:delivery_rate, cost: 0, unpriced: true) }
+
+    it 'is not free — nobody has priced it yet' do
+      expect(rate).not_to be_free
+    end
+
+    it 'says so on the cost and the total alike' do
+      expect(rate.display_cost).to eq(Spree.t('delivery_rates.quoted_after_review'))
+      expect(rate.display_total).to eq(Spree.t('delivery_rates.quoted_after_review'))
+    end
+  end
+
+  describe 'a priced rate' do
+    let(:rate) { create(:delivery_rate, cost: 12) }
+
+    it 'still renders its total as money, options and all' do
+      expect(rate.display_total).to be_a(Spree::Money)
+      expect(rate.display_total(currency: 'EUR').currency.iso_code).to eq('EUR')
+    end
+  end
 end

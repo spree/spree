@@ -2025,17 +2025,6 @@
           "label": "Admin language",
           "placeholder": "Use the default language"
         },
-        "preferred_default_package_dimensions": {
-          "height": "Height",
-          "help": "The box you usually ship in, used by carrier rate providers for dimensional-weight pricing — inches for imperial, centimeters for metric. All three are needed to take effect.",
-          "label": "Default package dimensions",
-          "length": "Length",
-          "width": "Width"
-        },
-        "preferred_default_package_weight": {
-          "help": "Packaging weight (box and filler) added to every package's contents when calculating delivery rates. Set to 0 to disable.",
-          "label": "Default package weight"
-        },
         "preferred_send_consumer_transactional_emails": {
           "help": "When off, no order confirmation, shipping, or refund emails are sent.",
           "label": "Send transactional emails to customers"
@@ -2276,7 +2265,19 @@
         "units_per_carton": {
           "label": "Units per carton"
         },
-        "quantity_rule_invalid": "Enter a whole number greater than zero, or leave blank."
+        "quantity_rule_invalid": "Enter a whole number greater than zero, or leave blank.",
+        "carton_package_type_id": {
+          "label": "Carton",
+          "help": "The carton this product is packed into. Its size is shared by everything packed the same way."
+        },
+        "carton_weight": {
+          "label": "Carton weight",
+          "help": "What one packed carton weighs."
+        },
+        "cartons_per_pallet": {
+          "label": "Cartons per pallet"
+        },
+        "carton_weight_invalid": "Enter a carton weight greater than zero, or leave it blank."
       },
       "webhook_endpoint": {
         "active": {
@@ -2304,6 +2305,45 @@
       "order_multiple": {
         "label": "Order multiple",
         "help": "Each step up from the minimum. Leave blank for any quantity."
+      },
+      "package_type": {
+        "name": {
+          "label": "Name"
+        },
+        "kind": {
+          "label": "Kind",
+          "help": "Only a carton can be the packaging a product is packed into."
+        },
+        "length": {
+          "label": "Length"
+        },
+        "width": {
+          "label": "Width"
+        },
+        "height": {
+          "label": "Height"
+        },
+        "dimensions_unit": {
+          "label": "Unit"
+        },
+        "dimensions": {
+          "help": "Used for carrier dimensional weight, and for the cubic meters freight tiers compare."
+        },
+        "weight": {
+          "label": "Empty weight",
+          "help": "The packaging itself, added to what it holds."
+        },
+        "max_weight": {
+          "label": "Max weight",
+          "help": "What it can carry."
+        },
+        "weight_unit": {
+          "label": "Unit"
+        },
+        "default": {
+          "label": "Store default box",
+          "help": "The packaging every parcel quote is built on. Only one per store."
+        }
       }
     },
     "gift_cards": {
@@ -2839,6 +2879,20 @@
           "label": "Search variant",
           "placeholder": "Type product name or SKU (min 3 chars)…",
           "sku_prefix": "SKU"
+        },
+        "logistics": {
+          "title": "Logistics",
+          "units": "Units",
+          "cartons": "Cartons",
+          "pallets": "Pallets",
+          "volume": "Volume",
+          "weight": "Gross weight",
+          "cbm": "{{value}} CBM",
+          "kg": "{{value}} kg",
+          "incomplete": "Some items are not measured, so these figures are a floor rather than a total.",
+          "deposit": "Deposit",
+          "paid": "Paid",
+          "balance": "Balance"
         }
       },
       "edit": {
@@ -3599,11 +3653,9 @@
           "search_placeholder": "Search stock locations…"
         },
         "store": {
-          "default_package_description": "The box you usually ship in. Carrier rate providers add its weight to every package and use its dimensions for dimensional-weight pricing.",
           "subtitle": "General configuration and store-wide defaults.",
           "tab_addresses": "Addresses",
           "tab_catalog": "Catalog",
-          "tab_default_package": "Default package",
           "tab_general": "General",
           "tab_inventory": "Inventory",
           "tab_order_numbers": "Order numbers",
@@ -3755,6 +3807,9 @@
         "payouts": {
           "title": "Payouts",
           "subtitle": "How and when this marketplace pays its sellers."
+        },
+        "package_types": {
+          "add_sheet_title": "Add package type"
         }
       },
       "staff": {
@@ -3956,6 +4011,8 @@
       "api_key_description": "Found in your EasyPost dashboard. A test key and a live key behave differently — the key itself decides the mode.",
       "base_amount": "Base Amount",
       "base_percent": "Base Percent",
+      "company_orders_only": "Only for company orders",
+      "company_orders_only_description": "On, this method is offered only to orders placed for a company. Off, only to orders that are not. Remove the rule to offer it to both.",
       "currency": "Currency",
       "customs_contents_type": "Customs contents type",
       "customs_contents_type_description": "What an international parcel holds, as customs classifies it.",
@@ -4215,7 +4272,10 @@
           "identity": "Identity",
           "tax_category_placeholder": "Inherit from product",
           "ordering": "B2B ordering",
-          "ordering_help": "How much a buyer must take. Stock is still counted in units."
+          "ordering_help": "How much a buyer must take. Stock is still counted in units.",
+          "packing": "Packing",
+          "packing_help": "How this product leaves the warehouse in bulk. Freight quotes are built from these numbers.",
+          "carton_placeholder": "No carton"
         },
         "title": "Variants",
         "variant_label": "Variant"
@@ -4772,7 +4832,8 @@
         "tax_categories": "Tax classes assigned to products",
         "tax_rates": "Rates applied per market and region",
         "webhooks": "Endpoints notified when events happen",
-        "payouts": "Who pays your sellers, how often, and the minimum worth sending"
+        "payouts": "Who pays your sellers, how often, and the minimum worth sending",
+        "package_types": "Boxes, cartons, pallets and containers"
       },
       "groups": {
         "audit": "Audit",
@@ -4808,7 +4869,8 @@
         "tax_categories": "Tax categories",
         "tax_rates": "Tax rates",
         "webhooks": "Webhooks",
-        "payouts": "Payouts"
+        "payouts": "Payouts",
+        "package_types": "Package types"
       }
     },
     "setup": {
@@ -5114,6 +5176,37 @@
       "saved": "Translations saved",
       "source": "Source",
       "title": "Translations"
+    },
+    "package_types": {
+      "table_title": "Package types",
+      "search_placeholder": "Search packaging",
+      "empty": "No packaging yet. Add the box you ship in, and the cartons and pallets wholesale orders leave on.",
+      "add_cta": "Add package type",
+      "default_badge": "Store default",
+      "edit_sheet_title": "Package type",
+      "create_description": "A box, carton, pallet or container this store packs goods into.",
+      "edit_description": "Products packed into this carton follow its measurements, so one edit corrects them all.",
+      "dimensions_column": "Dimensions",
+      "volume_column": "Volume",
+      "kinds": {
+        "box": "Box",
+        "envelope": "Envelope",
+        "carton": "Carton",
+        "pallet": "Pallet",
+        "container": "Container"
+      },
+      "messages": {
+        "added": "Package type added",
+        "updated": "Package type updated",
+        "deleted": "Package type deleted"
+      },
+      "delete_confirm": {
+        "title": "Delete package type?",
+        "message": "{{name}} will be removed. Products packed into it must be repacked first."
+      },
+      "validation": {
+        "non_negative": "must be zero or more"
+      }
     }
   }
 }

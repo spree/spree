@@ -4764,6 +4764,49 @@ agreement to understand every part of it at once); skippable steps (a
 "create now" escape hatch competing with Next on every step).
 
 Plans amended: `6.0-catalog-agreement-rework.md` (phase 4 completed).
+## 2026-08-31 — Wholesale shipping backend: the store's box becomes a row with no bridge, and unpriced rates carry the logistics instead of a price
+
+Phases 1–6 of `6.0-b2b-wholesale-shipping.md` — everything below the
+dashboard and the storefront. Three rulings other plans need.
+
+**The four `default_package_*` store preferences are deleted outright, with
+no deprecation bridge.** A recorded exception to the always-bridge
+convention, and the reasoning is narrow enough to be worth stating so it is
+not read as a precedent: those preferences were added inside this same
+unreleased 6.0 cycle, so no released version exposes them and there is no
+caller to keep working. A bridge writing through to the new default
+`PackageType` row would have left two spellings of the store's shipping box
+coexisting for a release, each able to disagree with the other in the
+dashboard, in exchange for compatibility nobody can be relying on. The
+upgrade task (`spree:package_types:backfill`) creates each store's default
+row from the preference values, which is what makes the removal safe. The
+convention still holds for anything that shipped: bridge it.
+
+**An unset variant `dimensions_unit` follows the store's `unit_system`** —
+imperial reads as inches, metric as centimeters — rather than gaining a
+`default_dimensions_unit` store preference to mirror `weight_unit`'s
+fallback. The store already answers "what do dimensions mean here" through
+`unit_system`, which is what the box preferences and the EasyPost provider
+have always read; a second settable value could contradict it, and the
+merchant would have no way to tell which one a number obeyed.
+
+**An unpriced rate is a rate with no price, not a rate priced at zero.**
+`Spree::DeliveryRateProvider::Estimate` and `spree_delivery_rates` carry an
+`unpriced` boolean; the estimator skips markup and tax gross-up for those
+rows, and `DeliveryRate#free?` answers false for them so nothing renders
+"Free" over a shipment whose cost is genuinely unknown. This is the
+mechanism the plan's constraint points at — a zero-cost priced rate is the
+workaround it exists to prevent. `Spree::FreightSummary` (units, cartons,
+pallets, CBM, gross weight, `complete?`) rides in the estimate's metadata
+and is frozen onto the selected rate at completion, never re-derived from
+the live catalog afterwards.
+
+Everything money-shaped stays for phase 7: deposits, the completion
+payment-sufficiency change and the partial-payment order surfaces are not in
+this cut. **Constraint unchanged and now load-bearing:** nothing may assume
+a completed order is paid in full once phase 7 lands.
+
+Plan: `6.0-b2b-wholesale-shipping.md` (phases 1–6 implemented).
 
 ## 2026-09-02 — Order cancellation and approval history tables are dropped; the reason lives on the order
 
@@ -4853,3 +4896,64 @@ keys in every dashboard locale, not a `Spree.t` label; new validation errors in
 core use a symbol and parameters, never a preformatted string; nothing in the
 dashboard prints an API `label`/`name`/`description` directly; shared admin copy
 goes in `dashboard-core` locales, never in `packages/seller-dashboard`.
+## 2026-09-05 — A deposit's amounts ship pre-formatted, and a carton is named rather than referenced in a CSV
+
+Two rulings from building the wholesale plan's dashboard and storefront
+phases.
+
+**Every amount in the payment schedule carries a formatted twin.** The
+schedule began as bare decimal strings, which meant each surface reading it
+would format money itself — and the storefront has no currency formatter at
+all, by deliberate design: it prints the `display_*` strings the API sends
+and never guesses at a locale. Cart and order now build the schedule through
+one `payment_schedule_json` helper on the base serializer, so the two cannot
+drift, and `display_amount_due_now`, `display_deposit_amount` and
+`display_outstanding_balance` sit beside the raw values. The raw values stay
+for the arithmetic a client legitimately does — deciding whether a row is
+worth showing — which is the same split the rest of the money surface uses.
+
+**A CSV names its carton; it does not reference one.** A merchant's
+spreadsheet says "Large carton", not a prefixed id, so the products import
+resolves the carton by name — and resolves it through `store.package_types`,
+so a name that matches another store's carton leaves the variant unpacked
+rather than borrowing somebody else's measurements. The tax-category lookup
+beside it is *not* store-scoped and was left alone: widening it is a
+separate correctness fix with its own blast radius, not something to smuggle
+into a packaging change.
+
+**Constraint now:** a new money field on a derived value object ships with
+its formatted twin from the start, and storefront code never formats
+currency. A new named lookup in an importer resolves through the store's own
+association.
+
+## 2026-09-05 — Wholesale deposits: staff settle the balance in 6.0, and the deposit rounds up
+
+Closing the two open questions `6.0-b2b-wholesale-shipping.md` left for its
+deposit phase, as that phase is built.
+
+**A buyer pays the deposit; staff settle the rest.** Checkout collects
+`amount_due_at_checkout` and the order completes `partially_paid` against
+the existing `outstanding_balance`. The storefront *shows* what is
+outstanding but offers no way to pay it. A customer-facing pay-balance
+route is money-taking code that `6.0-6.1-b2b-payment-terms.md` sequences
+for 6.1 beside the bank-transfer method and the payment `reference`
+column; shipping it early would open a second payment entry point with no
+named terms behind it and no reconciliation identifier to settle against.
+Merchants record or capture the balance through the payment surfaces that
+already exist.
+
+**The deposit rounds up and the balance absorbs the remainder.** A
+percentage of a total rarely lands on a whole cent. Rounding the deposit up
+means a buyer is never asked for less than the percentage agreed, and
+deposit + balance sum to the total exactly — so nothing downstream needs a
+reconciling step for a stranded cent. Rounding is to the currency's own
+smallest unit, never a hardcoded two places, because the same code prices
+zero-decimal currencies.
+
+**Constraint for anything collecting money later:** read
+`amount_due_at_checkout` rather than the order total, and respect the
+existing `max_amount` cap. A surface that charges the full total on a
+deposit order takes money the buyer did not agree to yet.
+
+Plans amended: `6.0-b2b-wholesale-shipping.md` (open questions closed),
+`6.0-6.1-b2b-payment-terms.md` (its 6.0 half rides this work).

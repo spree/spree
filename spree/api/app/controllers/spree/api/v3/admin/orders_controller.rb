@@ -192,10 +192,12 @@ module Spree
           # reads the base catalog price for every row (the negotiated-price
           # comparison); without it each line costs its own price query.
           def collection_includes
-            # `market` and `fulfillments` are the withdrawal deadline's inputs,
-            # which the serializer emits on every row.
+            # `market` is the withdrawal deadline's other input. Fulfillments
+            # are loaded with their selected rate because the freight summary
+            # reads it — otherwise a page of orders costs a query per
+            # fulfillment for a field that is nil on every parcel order.
             [:customer, :channel, :seller, :external_references, :cancel_reason,
-             :market, :fulfillments,
+             :market, { fulfillments: :selected_delivery_rate },
              { line_items: { variant: :prices } }, { po_document_attachment: :blob }]
           end
 

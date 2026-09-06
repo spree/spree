@@ -840,7 +840,19 @@
         "units_per_carton": {
           "label": "每箱件数"
         },
-        "quantity_rule_invalid": "请输入大于零的整数，或留空。"
+        "quantity_rule_invalid": "请输入大于零的整数，或留空。",
+        "carton_package_type_id": {
+          "label": "纸箱",
+          "help": "此商品所装的纸箱。同样装法的商品共用它的尺寸。"
+        },
+        "carton_weight": {
+          "label": "整箱重量",
+          "help": "装满一箱后的重量。"
+        },
+        "cartons_per_pallet": {
+          "label": "每托盘箱数"
+        },
+        "carton_weight_invalid": "请输入大于零的整箱重量，或留空。"
       },
       "minimum_order_quantity": {
         "label": "最小起订量",
@@ -1509,7 +1521,10 @@
           "identity": "标识",
           "tax_category_placeholder": "继承自商品",
           "ordering": "B2B 订购",
-          "ordering_help": "买家必须订购的数量。库存仍以件计算。"
+          "ordering_help": "买家必须订购的数量。库存仍以件计算。",
+          "packing": "装箱",
+          "packing_help": "此商品成批出库的方式。货运报价依据这些数字计算。",
+          "carton_placeholder": "未装箱"
         },
         "title": "变体",
         "variant_label": "变体"
@@ -1706,6 +1721,10 @@
           "name": "销售渠道",
           "description": "仅在所选销售渠道提供此配送方式"
         },
+        "company_rule": {
+          "name": "公司",
+          "description": "仅向以公司名义下的订单提供此配送方式，或仅向非公司订单提供"
+        },
         "excluded_products_rule": {
           "name": "排除的商品",
           "description": "当订单包含其中任一商品时隐藏此配送方式"
@@ -1713,6 +1732,10 @@
         "item_total_rule": {
           "name": "订单金额",
           "description": "仅当订单金额在区间内时提供此配送方式"
+        },
+        "volume_rule": {
+          "name": "体积",
+          "description": "仅当发货体积（立方米）在区间内时提供此配送方式"
         },
         "weight_rule": {
           "name": "重量",

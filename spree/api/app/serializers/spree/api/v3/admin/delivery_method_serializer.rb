@@ -4,6 +4,8 @@ module Spree
       module Admin
         class DeliveryMethodSerializer < V3::DeliveryMethodSerializer
           typelize admin_name: [:string, nullable: true],
+                   deposit_percentage: [:string, nullable: true],
+                   balance_due_label: [:string, nullable: true],
                    fulfillment_provider: :string, pickup_point_provider: [:string, nullable: true],
                    rate_provider: [:string, nullable: true],
                    storefront_visible: :boolean, tracking_url: [:string, nullable: true],
@@ -20,7 +22,7 @@ module Spree
                    seller_id: [:string, nullable: true],
                    seller_name: [:string, nullable: true]
 
-          attributes :admin_name, :fulfillment_provider, :pickup_point_provider,
+          attributes :admin_name, :fulfillment_provider, :pickup_point_provider, :deposit_percentage, :balance_due_label,
                      :rate_provider, :storefront_visible, :tracking_url,
                      :markup_flat, :markup_percent, :available_to_sellers,
                      created_at: :iso8601, updated_at: :iso8601, deleted_at: :iso8601

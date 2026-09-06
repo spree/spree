@@ -27,6 +27,8 @@ module Spree
     include Spree::SanitizableRichText
     include Spree::Purchase::Channel
     include Spree::Purchase::Company
+    include Spree::Purchase::Freight
+    include Spree::Purchase::PaymentTerms
     include Spree::Purchase::QuantityRules
     include Spree::Purchase::PurchaseOrder
     include Spree::Purchase::Market
@@ -1187,6 +1189,23 @@ module Spree
     end
 
     private
+
+    # What the freight rates carried when they were quoted, across every
+    # fulfillment this order ships in — two freight consignments are still one
+    # load to the forwarder. Never derived from the live catalog: the sale has
+    # already happened, and repacking a product afterwards must not change
+    # what this order shipped as.
+    #
+    # @return [Spree::FreightSummary, nil]
+    def build_freight_summary
+      # Only the consignments that are actually shipping. A canceled
+      # fulfillment keeps its frozen summary, so counting it would report a
+      # re-allocated load twice — double the cartons the forwarder is quoted.
+      summaries = fulfillments.valid.filter_map { |fulfillment| fulfillment.selected_delivery_rate&.freight_summary }
+      return if summaries.empty?
+
+      Spree::FreightSummary.merge(summaries)
+    end
 
     def ensure_can_be_deleted
       return true if can_be_deleted?

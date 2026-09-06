@@ -44,12 +44,6 @@ export interface StoreUpdateParams {
   preferred_admin_locale?: string
   preferred_timezone?: string
   preferred_weight_unit?: string
-  /** Packaging tare added to every package's content weight for rate calculation, in the store's weight unit. */
-  preferred_default_package_weight?: number
-  /** Default package (box) dimensions for carrier dimensional-weight pricing — inches when imperial, centimeters when metric. All three required to take effect. */
-  preferred_default_package_length?: number
-  preferred_default_package_width?: number
-  preferred_default_package_height?: number
   preferred_unit_system?: string
   /**
    * Store-wide default storefront posture: `public`, `prices_hidden`, or
@@ -961,6 +955,16 @@ export interface ProductVariantInput {
    *  pre-orders. Null = unlimited. */
   backorder_limit?: number | null
   tax_category_id?: string
+  /** The carton this variant is packed into — a `PackageType` of kind
+   *  `carton`. Its dimensions are shared by every product packed the same
+   *  way, so a corrected carton size fixes all of them at once. */
+  carton_package_type_id?: string | null
+  /** How many units fill one carton. */
+  units_per_carton?: number | null
+  /** What one packed carton weighs, in the variant's weight unit. */
+  carton_weight?: string | number | null
+  /** How many cartons stack on one pallet. */
+  cartons_per_pallet?: number | null
   position?: number
   barcode?: string
   /** Omit for a simple no-options product (upserts onto the default variant). */
@@ -1158,6 +1162,16 @@ export interface VariantCreateParams {
   preorder_ships_at?: string | null
   backorder_limit?: number | null
   tax_category_id?: string
+  /** The carton this variant is packed into — a `PackageType` of kind
+   *  `carton`. Its dimensions are shared by every product packed the same
+   *  way, so a corrected carton size fixes all of them at once. */
+  carton_package_type_id?: string | null
+  /** How many units fill one carton. */
+  units_per_carton?: number | null
+  /** What one packed carton weighs, in the variant's weight unit. */
+  carton_weight?: string | number | null
+  /** How many cartons stack on one pallet. */
+  cartons_per_pallet?: number | null
   position?: number
   barcode?: string
   /**
@@ -1189,6 +1203,16 @@ export interface VariantUpdateParams {
   preorder_ships_at?: string | null
   backorder_limit?: number | null
   tax_category_id?: string
+  /** The carton this variant is packed into — a `PackageType` of kind
+   *  `carton`. Its dimensions are shared by every product packed the same
+   *  way, so a corrected carton size fixes all of them at once. */
+  carton_package_type_id?: string | null
+  /** How many units fill one carton. */
+  units_per_carton?: number | null
+  /** What one packed carton weighs, in the variant's weight unit. */
+  carton_weight?: string | number | null
+  /** How many cartons stack on one pallet. */
+  cartons_per_pallet?: number | null
   position?: number
   barcode?: string
   /** Partial update — omit to leave option values untouched. */
@@ -2633,6 +2657,29 @@ export interface DeliveryZoneParams {
   /** Replaces the zone's full member set atomically. */
   members?: DeliveryZoneMemberParams[]
 }
+
+export interface PackageTypeCreateParams {
+  /** Unique within the store. */
+  name: string
+  /** What this packaging is: the box parcels ship in, or the carton, pallet or container a wholesale order leaves on. */
+  kind: 'box' | 'envelope' | 'carton' | 'pallet' | 'container'
+  length?: number | null
+  width?: number | null
+  height?: number | null
+  /** Unit the three dimensions are in; falls back to the store's unit system. */
+  dimensions_unit?: 'mm' | 'cm' | 'in' | 'ft' | null
+  /** The empty package's own weight, added to content weight on every quote. */
+  weight?: number | null
+  /** What the package can hold — not the same as its own weight. */
+  max_weight?: number | null
+  weight_unit?: 'g' | 'kg' | 'lb' | 'oz' | null
+  /** The box every parcel quote is built on. Setting this demotes whichever row held it. */
+  default?: boolean
+  metadata?: Record<string, unknown>
+}
+
+/** Every field is optional: correcting one measurement is a valid update. */
+export type PackageTypeUpdateParams = Partial<PackageTypeCreateParams>
 
 export interface CompanyParams {
   name?: string

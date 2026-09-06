@@ -132,6 +132,7 @@ module Spree
               :available_to_sellers,
               :estimated_transit_business_days_min, :estimated_transit_business_days_max,
               :tax_category_id, :calculator_type, :markup_flat, :markup_percent,
+              :deposit_percentage, :balance_due_label,
               :delivery_profile_id, :delivery_origin_group_id, :delivery_zone_id,
               stock_location_ids: [], calculator_preferences: {},
               rules: rule_attributes,

@@ -45,6 +45,7 @@ module Spree
       def add(inventory_unit, state = :on_hand)
         # Remove find_item check as already taken care by prioritizer
         contents << ContentItem.new(inventory_unit, state)
+        @freight_summary = nil
       end
 
       def add_multiple(inventory_units, state = :on_hand)
@@ -58,6 +59,7 @@ module Spree
 
       def remove_item(item)
         @contents -= [item]
+        @freight_summary = nil
       end
 
       # Fix regression that removed package.order.
@@ -70,34 +72,34 @@ module Spree
         contents.sum(&:amount)
       end
 
-      # Content weight plus the store's default package weight (packaging
-      # tare). This is the single seam every weight consumer reads —
-      # calculators, rate providers, weight rules and the weight splitter —
-      # so the tare applies everywhere without any of them knowing about it.
+      # Content weight plus the tare of the store's default package (the box
+      # itself, plus filler). This is the single point every weight consumer
+      # reads — calculators, rate providers, weight rules and the weight
+      # splitter — so the tare applies everywhere without any of them knowing
+      # about it.
       def weight
-        contents_weight = contents.sum(&:weight)
-        tare = owner&.store&.preferred_default_package_weight.to_f
-
-        contents_weight + tare
+        contents.sum(&:weight) + tare
       end
 
       # The store's default package dimensions (the box this package ships
       # in), used verbatim by carrier rate providers for dimensional-weight
       # pricing. Item dimensions are deliberately not summed — items don't
-      # stack into a box shape. Nil until the store configures all three,
-      # in the unit implied by the store's unit system (in/cm).
+      # stack into a box shape. Nil until the store records all three.
       #
       # @return [Hash{Symbol => Float}, nil]
       def dimensions
-        store = owner&.store
-        return if store.nil?
+        default_package_type&.dimensions_in(store_dimensions_unit)
+      end
 
-        length = store.preferred_default_package_length.to_f
-        width = store.preferred_default_package_width.to_f
-        height = store.preferred_default_package_height.to_f
-        return if [length, width, height].any?(&:zero?)
-
-        { length: length, width: width, height: height }
+      # How this package's contents roll up into freight logistics — cartons,
+      # pallets, cubic meters, gross weight. Computed live; an order's summary
+      # comes from the frozen copy on its selected delivery rate instead.
+      #
+      # @return [Spree::FreightSummary]
+      # Memoized because quoting reads it repeatedly, and dropped whenever the
+      # contents change — a stale volume would pick the wrong freight tier.
+      def freight_summary
+        @freight_summary ||= Spree::FreightSummary.build(contents)
       end
 
       def on_hand
@@ -183,8 +185,13 @@ module Spree
         to_fulfillment
       end
 
+      # Cubic meters of packed goods — carton volume where the contents
+      # declare cartons, unit volume otherwise. Cartons stack, so unlike
+      # +dimensions+ this genuinely sums.
+      #
+      # @return [BigDecimal]
       def volume
-        contents.sum(&:volume)
+        freight_summary.total_volume
       end
 
       def dimension
@@ -192,6 +199,36 @@ module Spree
       end
 
       private
+
+      # The store's default box.
+      #
+      # @return [Spree::PackageType, nil]
+      def default_package_type
+        return @default_package_type if defined?(@default_package_type)
+
+        @default_package_type = owner&.store&.default_package_type
+      end
+
+      # The box's own weight, converted into the unit the contents are
+      # measured in. A merchant may record a carton in kilograms while the
+      # store quotes in pounds, and adding those numbers together would
+      # understate the tare by more than half.
+      #
+      # @return [BigDecimal]
+      def tare
+        package_type = default_package_type
+        return 0 if package_type.nil?
+
+        package_type.weight_in(owner&.store&.preferred_weight_unit || Spree::Measurement::DEFAULT_WEIGHT_UNIT)
+      end
+
+      # What a dimension means to this store, matching the fallback a
+      # variant's own dimensions take.
+      #
+      # @return [String]
+      def store_dimensions_unit
+        Spree::Variant.store_dimensions_unit(owner&.store)
+      end
 
       def variant_ids
         contents.map { |item| item.inventory_unit.variant_id }.compact.uniq

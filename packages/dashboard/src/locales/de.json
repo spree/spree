@@ -2025,17 +2025,6 @@
           "label": "Admin-Sprache",
           "placeholder": "Standardsprache verwenden"
         },
-        "preferred_default_package_dimensions": {
-          "height": "Höhe",
-          "help": "Der übliche Versandkarton, von Carrier-Tarifanbietern für Volumengewicht-Preise genutzt — Zoll bei imperial, Zentimeter bei metrisch. Wirksam nur mit allen drei Werten.",
-          "label": "Standard-Paketabmessungen",
-          "length": "Länge",
-          "width": "Breite"
-        },
-        "preferred_default_package_weight": {
-          "help": "Verpackungsgewicht (Karton und Füllmaterial), das bei der Berechnung von Versandtarifen zum Inhalt jedes Pakets addiert wird. 0 deaktiviert es.",
-          "label": "Standard-Paketgewicht"
-        },
         "preferred_send_consumer_transactional_emails": {
           "help": "Wenn deaktiviert, werden keine Bestellbestätigungen, Versand- oder Erstattungs-E-Mails gesendet.",
           "label": "Transaktionale E-Mails an Kunden senden"
@@ -2276,7 +2265,19 @@
         "units_per_carton": {
           "label": "Stück pro Karton"
         },
-        "quantity_rule_invalid": "Geben Sie eine ganze Zahl größer als null ein oder lassen Sie das Feld leer."
+        "quantity_rule_invalid": "Geben Sie eine ganze Zahl größer als null ein oder lassen Sie das Feld leer.",
+        "carton_package_type_id": {
+          "label": "Karton",
+          "help": "Der Karton, in den dieses Produkt verpackt wird. Seine Maße gelten für alles, was gleich verpackt wird."
+        },
+        "carton_weight": {
+          "label": "Kartongewicht",
+          "help": "Das Gewicht eines gepackten Kartons."
+        },
+        "cartons_per_pallet": {
+          "label": "Kartons pro Palette"
+        },
+        "carton_weight_invalid": "Geben Sie ein Kartongewicht größer als null ein oder lassen Sie das Feld leer."
       },
       "webhook_endpoint": {
         "active": {
@@ -2304,6 +2305,45 @@
       "order_multiple": {
         "label": "Bestellvielfaches",
         "help": "Jeder Schritt über der Mindestmenge. Leer lassen für beliebige Mengen."
+      },
+      "package_type": {
+        "name": {
+          "label": "Name"
+        },
+        "kind": {
+          "label": "Art",
+          "help": "Nur ein Umkarton kann die Verpackung eines Produkts sein."
+        },
+        "length": {
+          "label": "Länge"
+        },
+        "width": {
+          "label": "Breite"
+        },
+        "height": {
+          "label": "Höhe"
+        },
+        "dimensions_unit": {
+          "label": "Einheit"
+        },
+        "dimensions": {
+          "help": "Für das Volumengewicht des Carriers und die Kubikmeter der Frachtstufen."
+        },
+        "weight": {
+          "label": "Leergewicht",
+          "help": "Die Verpackung selbst, zusätzlich zum Inhalt."
+        },
+        "max_weight": {
+          "label": "Max. Gewicht",
+          "help": "Was sie tragen kann."
+        },
+        "weight_unit": {
+          "label": "Einheit"
+        },
+        "default": {
+          "label": "Standardkarton des Shops",
+          "help": "Grundlage jeder Paketberechnung. Nur einer pro Shop."
+        }
       }
     },
     "gift_cards": {
@@ -2839,6 +2879,20 @@
           "label": "Variante suchen",
           "placeholder": "Produktname oder SKU eingeben (min. 3 Zeichen)…",
           "sku_prefix": "SKU"
+        },
+        "logistics": {
+          "title": "Logistik",
+          "units": "Einheiten",
+          "cartons": "Kartons",
+          "pallets": "Paletten",
+          "volume": "Volumen",
+          "weight": "Bruttogewicht",
+          "cbm": "{{value}} m³",
+          "kg": "{{value}} kg",
+          "incomplete": "Einige Artikel sind nicht vermessen. Diese Werte sind daher ein Mindestwert, keine Gesamtsumme.",
+          "deposit": "Anzahlung",
+          "paid": "Bezahlt",
+          "balance": "Restbetrag"
         }
       },
       "edit": {
@@ -3599,11 +3653,9 @@
           "search_placeholder": "Lagerstandorte suchen…"
         },
         "store": {
-          "default_package_description": "Der Karton, in dem Sie üblicherweise versenden. Carrier-Tarifanbieter addieren sein Gewicht zu jedem Paket und nutzen seine Abmessungen für Volumengewicht-Preise.",
           "subtitle": "Allgemeine Konfiguration und shopweite Standardwerte.",
           "tab_addresses": "Adressen",
           "tab_catalog": "Katalog",
-          "tab_default_package": "Standardpaket",
           "tab_general": "Allgemein",
           "tab_inventory": "Lagerbestand",
           "tab_order_numbers": "Bestellnummern",
@@ -3755,6 +3807,9 @@
         "payouts": {
           "title": "Auszahlungen",
           "subtitle": "Wie und wann dieser Marktplatz seine Verkäufer bezahlt."
+        },
+        "package_types": {
+          "add_sheet_title": "Verpackungsart hinzufügen"
         }
       },
       "staff": {
@@ -3956,6 +4011,8 @@
       "api_key_description": "In Ihrem EasyPost-Dashboard zu finden. Test- und Live-Schlüssel verhalten sich unterschiedlich — der Schlüssel bestimmt den Modus.",
       "base_amount": "Grundbetrag",
       "base_percent": "Grundprozentsatz",
+      "company_orders_only": "Nur für Firmenbestellungen",
+      "company_orders_only_description": "Aktiviert wird diese Methode nur für Bestellungen auf ein Unternehmen angeboten, deaktiviert nur für die übrigen. Ohne diese Regel gilt sie für beide.",
       "currency": "Währung",
       "customs_contents_type": "Zollinhaltsart",
       "customs_contents_type_description": "Was eine internationale Sendung enthält, wie der Zoll es einstuft.",
@@ -4215,7 +4272,10 @@
           "identity": "Identität",
           "tax_category_placeholder": "Vom Produkt übernehmen",
           "ordering": "B2B-Bestellung",
-          "ordering_help": "Wie viel ein Käufer abnehmen muss. Der Bestand wird weiterhin in Stück gezählt."
+          "ordering_help": "Wie viel ein Käufer abnehmen muss. Der Bestand wird weiterhin in Stück gezählt.",
+          "packing": "Verpackung",
+          "packing_help": "Wie dieses Produkt als Großmenge das Lager verlässt. Frachtangebote beruhen auf diesen Zahlen.",
+          "carton_placeholder": "Kein Karton"
         },
         "title": "Varianten",
         "variant_label": "Variante"
@@ -4772,7 +4832,8 @@
         "tax_categories": "Steuerklassen für Produkte",
         "tax_rates": "Sätze pro Markt und Region",
         "webhooks": "Endpunkte, die bei Ereignissen benachrichtigt werden",
-        "payouts": "Wer Ihre Verkäufer bezahlt, wie oft und ab welchem Betrag"
+        "payouts": "Wer Ihre Verkäufer bezahlt, wie oft und ab welchem Betrag",
+        "package_types": "Kartons, Paletten und Container"
       },
       "groups": {
         "audit": "Audit",
@@ -4808,7 +4869,8 @@
         "tax_categories": "Steuerkategorien",
         "tax_rates": "Steuersätze",
         "webhooks": "Webhooks",
-        "payouts": "Auszahlungen"
+        "payouts": "Auszahlungen",
+        "package_types": "Verpackungsarten"
       }
     },
     "setup": {
@@ -5114,6 +5176,37 @@
       "saved": "Übersetzungen gespeichert",
       "source": "Quelle",
       "title": "Übersetzungen"
+    },
+    "package_types": {
+      "table_title": "Verpackungsarten",
+      "search_placeholder": "Verpackung suchen",
+      "empty": "Noch keine Verpackung. Legen Sie Ihren Versandkarton an sowie die Kartons und Paletten für Großbestellungen.",
+      "add_cta": "Verpackungsart hinzufügen",
+      "default_badge": "Standard des Shops",
+      "edit_sheet_title": "Verpackungsart",
+      "create_description": "Ein Karton, eine Palette oder ein Container, in den dieser Shop Ware packt.",
+      "edit_description": "Produkte in diesem Karton übernehmen seine Maße — eine Änderung korrigiert alle.",
+      "dimensions_column": "Maße",
+      "volume_column": "Volumen",
+      "kinds": {
+        "box": "Karton",
+        "envelope": "Umschlag",
+        "carton": "Umkarton",
+        "pallet": "Palette",
+        "container": "Container"
+      },
+      "messages": {
+        "added": "Verpackungsart hinzugefügt",
+        "updated": "Verpackungsart aktualisiert",
+        "deleted": "Verpackungsart gelöscht"
+      },
+      "delete_confirm": {
+        "title": "Verpackungsart löschen?",
+        "message": "{{name}} wird entfernt. Darin verpackte Produkte müssen zuerst umgepackt werden."
+      },
+      "validation": {
+        "non_negative": "muss null oder größer sein"
+      }
     }
   }
 }
