@@ -250,7 +250,7 @@ RSpec.describe Spree::Products::Duplicator do
         create(:variant, product: product, seller: seller, status: 'active', cost_price: 4)
       end
 
-      it 'clones the offer as a first-party draft row' do
+      it 'clones the offer as an ordinary first-party row' do
         new_product = described_class.call(product: product.reload).value
         cloned = new_product.variants.detect { |variant| variant.cost_price == 4 }
 
