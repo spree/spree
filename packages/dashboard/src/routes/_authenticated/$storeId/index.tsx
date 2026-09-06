@@ -121,7 +121,7 @@ function DashboardPage() {
   // No `placeholderData`: it belongs to the channel that was selected before,
   // and showing another channel's counts under this one's name is worse than
   // showing the skeleton for a moment.
-  const { data: operations } = useQuery({
+  const { data: operations, error: operationsError } = useQuery({
     queryKey: useResourceKey('dashboard', 'operations', channelId),
     queryFn: () => adminClient.dashboard.operations({ channel_id: channelParam }),
     staleTime: 5 * 60 * 1000,
@@ -193,6 +193,7 @@ function DashboardPage() {
       <div className="grid gap-6 lg:grid-cols-5">
         <OperationsCard
           data={operations}
+          failed={!!operationsError}
           channelId={channelParam}
           className={rankingTabs.length > 0 ? 'lg:col-span-2' : 'lg:col-span-5'}
         />
@@ -257,11 +258,14 @@ function OperationsCard({
   data,
   className,
   channelId,
+  failed,
 }: {
   data: DashboardOperations | undefined
   className: string
   /** The screen's channel, or undefined for all channels. */
   channelId: string | undefined
+  /** The counts could not be loaded — show a dash rather than a skeleton forever. */
+  failed: boolean
 }) {
   const { t } = useTranslation()
   const { storeId } = Route.useParams()
@@ -292,7 +296,11 @@ function OperationsCard({
                 </span>
                 <span className="flex-1 text-sm">{t(`admin.pages.home.operations.${key}`)}</span>
                 {count === undefined ? (
-                  <Skeleton className="h-4 w-8" />
+                  failed ? (
+                    <span className="text-sm text-muted-foreground">—</span>
+                  ) : (
+                    <Skeleton className="h-4 w-8" />
+                  )
                 ) : (
                   <span
                     className={cn(
@@ -379,7 +387,7 @@ function RankingsCard({
   const [tab, setTab] = useState<RankingTab>(tabs[0])
 
   const { query, revenueMetric, countMetric } = RANKING_QUERIES[tab]
-  const { data, isPlaceholderData } = useReportingQuery({ ...query, ...scope })
+  const { data, error, isPlaceholderData } = useReportingQuery({ ...query, ...scope })
 
   // Placeholder data belongs to the previous tab (other dimension, other
   // metrics) — show the skeleton until this tab's own rows arrive.
@@ -420,7 +428,13 @@ function RankingsCard({
       </CardHeader>
       <CardContent className="p-0">
         {rows === undefined ? (
-          <RankingRowsSkeleton />
+          error ? (
+            <p className="px-4 pb-6 pt-2 text-sm text-muted-foreground">
+              {t('admin.errors.generic')}
+            </p>
+          ) : (
+            <RankingRowsSkeleton />
+          )
         ) : rows.length === 0 ? (
           <p className="px-4 pb-6 pt-2 text-sm text-muted-foreground">
             {t('admin.pages.home.rankings.empty')}
