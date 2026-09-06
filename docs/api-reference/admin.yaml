@@ -2325,7 +2325,9 @@ paths:
                   message: Origin is invalid
                   details:
                     origin:
-                    - is invalid
+                    - code: invalid
+                      message: is invalid
+                      specific: false
               schema:
                 "$ref": "#/components/schemas/ErrorResponse"
       requestBody:
@@ -2476,8 +2478,10 @@ paths:
                     query, or fragment
                   details:
                     origin:
-                    - must be an origin (scheme and host) without path, query, or
-                      fragment
+                    - code: must_be_origin_only
+                      message: must be an origin (scheme and host) without path, query,
+                        or fragment
+                      specific: false
               schema:
                 "$ref": "#/components/schemas/ErrorResponse"
       requestBody:
@@ -2697,9 +2701,13 @@ paths:
                   message: Name can't be blank and Scopes can't be blank
                   details:
                     name:
-                    - can't be blank
+                    - code: blank
+                      message: can't be blank
+                      specific: false
                     scopes:
-                    - can't be blank
+                    - code: blank
+                      message: can't be blank
+                      specific: false
       requestBody:
         content:
           application/json:
@@ -3172,7 +3180,9 @@ paths:
                   message: Name can't be blank
                   details:
                     name:
-                    - can't be blank
+                    - code: blank
+                      message: can't be blank
+                      specific: false
               schema:
                 "$ref": "#/components/schemas/ErrorResponse"
       requestBody:
@@ -4298,9 +4308,6 @@ paths:
                   channel_id: ch_UkLWZg9DAJ
                   preferences: {}
                   preference_schema: []
-                  label: Preferred location
-                  description: Fulfill from the location pinned on the order, when
-                    one is set
                 - id: orule_gbHJdmfrXB
                   position: 2
                   active: true
@@ -4310,9 +4317,6 @@ paths:
                   channel_id: ch_UkLWZg9DAJ
                   preferences: {}
                   preference_schema: []
-                  label: Minimize splits
-                  description: Prefer the location that can fulfill the most items
-                    on its own, avoiding split shipments
                 - id: orule_EfhxLZ9ck8
                   position: 3
                   active: true
@@ -4322,8 +4326,6 @@ paths:
                   channel_id: ch_UkLWZg9DAJ
                   preferences: {}
                   preference_schema: []
-                  label: Default location
-                  description: Prefer the stock location marked as default
                 meta:
                   page: 1
                   limit: 25
@@ -4388,8 +4390,6 @@ paths:
                 channel_id: ch_UkLWZg9DAJ
                 preferences: {}
                 preference_schema: []
-                label: Default location
-                description: Prefer the stock location marked as default
         '422':
           description: unknown rule type
           content:
@@ -4484,9 +4484,6 @@ paths:
                 channel_id: ch_UkLWZg9DAJ
                 preferences: {}
                 preference_schema: []
-                label: Preferred location
-                description: Fulfill from the location pinned on the order, when one
-                  is set
       requestBody:
         content:
           application/json:
@@ -5176,7 +5173,9 @@ paths:
                   message: Name can't be blank
                   details:
                     name:
-                    - can't be blank
+                    - code: blank
+                      message: can't be blank
+                      specific: false
               schema:
                 "$ref": "#/components/schemas/ErrorResponse"
       requestBody:
@@ -5385,7 +5384,9 @@ paths:
                   message: Name can't be blank
                   details:
                     name:
-                    - can't be blank
+                    - code: blank
+                      message: can't be blank
+                      specific: false
               schema:
                 "$ref": "#/components/schemas/ErrorResponse"
       requestBody:
@@ -8848,7 +8849,9 @@ paths:
                   message: Prefix can't be blank
                   details:
                     prefix:
-                    - can't be blank
+                    - code: blank
+                      message: can't be blank
+                      specific: false
               schema:
                 "$ref": "#/components/schemas/ErrorResponse"
       requestBody:
@@ -9195,7 +9198,11 @@ paths:
                   message: Amount must be greater than 0
                   details:
                     amount:
-                    - must be greater than 0
+                    - value: '0.0'
+                      count: 0
+                      code: greater_than
+                      message: must be greater than 0
+                      specific: false
               schema:
                 "$ref": "#/components/schemas/ErrorResponse"
       requestBody:
@@ -10037,7 +10044,9 @@ paths:
                   message: Type can't be blank
                   details:
                     type:
-                    - can't be blank
+                    - code: blank
+                      message: can't be blank
+                      specific: false
       requestBody:
         content:
           application/json:
@@ -11254,13 +11263,21 @@ paths:
                     can't be blank, and Countries can't be blank
                   details:
                     name:
-                    - can't be blank
+                    - code: blank
+                      message: can't be blank
+                      specific: false
                     currency:
-                    - can't be blank
+                    - code: blank
+                      message: can't be blank
+                      specific: false
                     default_locale:
-                    - can't be blank
+                    - code: blank
+                      message: can't be blank
+                      specific: false
                     countries:
-                    - can't be blank
+                    - code: blank
+                      message: can't be blank
+                      specific: false
               schema:
                 "$ref": "#/components/schemas/ErrorResponse"
       requestBody:
@@ -11472,7 +11489,9 @@ paths:
                   message: Name can't be blank
                   details:
                     name:
-                    - can't be blank
+                    - code: blank
+                      message: can't be blank
+                      specific: false
               schema:
                 "$ref": "#/components/schemas/ErrorResponse"
       requestBody:
@@ -11748,9 +11767,13 @@ paths:
                   message: Name can't be blank and Label can't be blank
                   details:
                     name:
-                    - can't be blank
+                    - code: blank
+                      message: can't be blank
+                      specific: false
                     label:
-                    - can't be blank
+                    - code: blank
+                      message: can't be blank
+                      specific: false
               schema:
                 "$ref": "#/components/schemas/ErrorResponse"
       requestBody:
@@ -11947,7 +11970,9 @@ paths:
                   message: Label can't be blank
                   details:
                     label:
-                    - can't be blank
+                    - code: blank
+                      message: can't be blank
+                      specific: false
               schema:
                 "$ref": "#/components/schemas/ErrorResponse"
       requestBody:
@@ -12364,7 +12389,10 @@ paths:
                   message: Kind is not included in the list
                   details:
                     kind:
-                    - is not included in the list
+                    - value: nonsense
+                      code: inclusion
+                      message: is not included in the list
+                      specific: false
       requestBody:
         content:
           application/json:
@@ -14396,7 +14424,9 @@ paths:
                   message: No payment found
                   details:
                     base:
-                    - No payment found
+                    - code:
+                      message: No payment found
+                      specific: false
               schema:
                 "$ref": "#/components/schemas/ErrorResponse"
       requestBody:
@@ -15830,7 +15860,9 @@ paths:
                   message: Name can't be blank
                   details:
                     name:
-                    - can't be blank
+                    - code: blank
+                      message: can't be blank
+                      specific: false
               schema:
                 "$ref": "#/components/schemas/ErrorResponse"
       requestBody:
@@ -17071,7 +17103,10 @@ paths:
                   message: Custom field definition has already been taken
                   details:
                     custom_field_definition_id:
-                    - has already been taken
+                    - value: 1
+                      code: taken
+                      message: has already been taken
+                      specific: false
       requestBody:
         content:
           application/json:
@@ -17659,7 +17694,9 @@ paths:
                   message: Name can't be blank
                   details:
                     name:
-                    - can't be blank
+                    - code: blank
+                      message: can't be blank
+                      specific: false
               schema:
                 "$ref": "#/components/schemas/ErrorResponse"
       requestBody:
@@ -18031,7 +18068,9 @@ paths:
                   message: Name can't be blank
                   details:
                     name:
-                    - can't be blank
+                    - code: blank
+                      message: can't be blank
+                      specific: false
               schema:
                 "$ref": "#/components/schemas/ErrorResponse"
       requestBody:
@@ -18209,7 +18248,9 @@ paths:
                   message: This product is under an active supplier contract.
                   details:
                     base:
-                    - This product is under an active supplier contract.
+                    - code: under_contract
+                      message: This product is under an active supplier contract.
+                      specific: false
               schema:
                 "$ref": "#/components/schemas/ErrorResponse"
   "/api/v3/admin/products/bulk_status_update":
@@ -19210,7 +19251,9 @@ paths:
                   message: Name can't be blank
                   details:
                     name:
-                    - can't be blank
+                    - code: blank
+                      message: can't be blank
+                      specific: false
               schema:
                 "$ref": "#/components/schemas/ErrorResponse"
       requestBody:
@@ -19582,7 +19625,9 @@ paths:
                   message: Name can't be blank
                   details:
                     name:
-                    - can't be blank
+                    - code: blank
+                      message: can't be blank
+                      specific: false
               schema:
                 "$ref": "#/components/schemas/ErrorResponse"
       requestBody:
@@ -19946,7 +19991,9 @@ paths:
                   message: Name can't be blank
                   details:
                     name:
-                    - can't be blank
+                    - code: blank
+                      message: can't be blank
+                      specific: false
               schema:
                 "$ref": "#/components/schemas/ErrorResponse"
       requestBody:
@@ -20310,7 +20357,9 @@ paths:
                   message: Name can't be blank
                   details:
                     name:
-                    - can't be blank
+                    - code: blank
+                      message: can't be blank
+                      specific: false
               schema:
                 "$ref": "#/components/schemas/ErrorResponse"
       requestBody:
@@ -20674,7 +20723,9 @@ paths:
                   message: Name can't be blank
                   details:
                     name:
-                    - can't be blank
+                    - code: blank
+                      message: can't be blank
+                      specific: false
               schema:
                 "$ref": "#/components/schemas/ErrorResponse"
       requestBody:
@@ -20999,7 +21050,6 @@ paths:
                   promotion_id: promo_UkLWZg9DAJ
                   preferences: {}
                   preference_schema: []
-                  label: Free shipping
                   calculator:
                   line_items:
                 meta:
@@ -21064,7 +21114,6 @@ paths:
                 promotion_id: promo_UkLWZg9DAJ
                 preferences: {}
                 preference_schema: []
-                label: Free shipping
                 calculator:
                 line_items:
         '422':
@@ -21197,7 +21246,6 @@ paths:
                   - key: currency
                     type: string
                     default:
-                  label: Currency
                   product_ids:
                   category_ids:
                   customer_ids:
@@ -21269,7 +21317,6 @@ paths:
                 - key: currency
                   type: string
                   default:
-                label: Currency
                 product_ids:
                 category_ids:
                 customer_ids:
@@ -21362,7 +21409,6 @@ paths:
                 - key: currency
                   type: string
                   default:
-                label: Currency
                 product_ids:
                 category_ids:
                 customer_ids:
@@ -21611,9 +21657,13 @@ paths:
                   message: Name can't be blank and Code can't be blank
                   details:
                     name:
-                    - can't be blank
+                    - code: blank
+                      message: can't be blank
+                      specific: false
                     code:
-                    - can't be blank
+                    - code: blank
+                      message: can't be blank
+                      specific: false
       requestBody:
         content:
           application/json:
@@ -22065,19 +22115,19 @@ paths:
                 data:
                 - type: create_line_items
                   label: Create line items
-                  description:
+                  description: Populates the cart with the specified quantity of variant
                   preference_schema: []
                 - type: create_item_adjustments
                   label: Create per-line-item adjustment
-                  description:
+                  description: Creates a promotion credit adjustment on a line item
                   preference_schema: []
                 - type: create_adjustment
                   label: Create whole-order adjustment
-                  description:
+                  description: Creates a promotion credit adjustment on the order
                   preference_schema: []
                 - type: free_shipping
                   label: Free shipping
-                  description:
+                  description: Makes all shipments for the order free
                   preference_schema: []
   "/api/v3/admin/promotion_rules/types":
     get:
@@ -22126,21 +22176,22 @@ paths:
                 data:
                 - type: category
                   label: Categories
-                  description:
+                  description: Order includes products in specified categories
                   preference_schema:
                   - key: match_policy
                     type: string
                     default: any
                 - type: channel
                   label: Channel(s)
-                  description:
+                  description: Limit to orders placed through specified channel(s)
                   preference_schema:
                   - key: channel_ids
                     type: array
                     default: []
                 - type: country
                   label: Country
-                  description:
+                  description: Limit to orders with shipping address in a specific
+                    country
                   preference_schema:
                   - key: country_codes
                     type: array
@@ -22153,29 +22204,29 @@ paths:
                     default:
                 - type: currency
                   label: Currency
-                  description:
+                  description: Limit to orders in a specific currency
                   preference_schema:
                   - key: currency
                     type: string
                     default:
                 - type: customer_group
                   label: Customer Group(s)
-                  description:
+                  description: Available only to customers in specified customer group(s)
                   preference_schema:
                   - key: customer_group_ids
                     type: array
                     default: []
                 - type: customer
                   label: Customers
-                  description:
+                  description: Available only to the specified customers
                   preference_schema: []
                 - type: first_order
                   label: First order
-                  description:
+                  description: Must be the customer's first order
                   preference_schema: []
                 - type: item_total
                   label: Item total
-                  description:
+                  description: Order total meets these criteria
                   preference_schema:
                   - key: amount_min
                     type: decimal
@@ -22191,22 +22242,22 @@ paths:
                     default: "<"
                 - type: market
                   label: Market(s)
-                  description:
+                  description: Limit to orders placed in specified market(s)
                   preference_schema:
                   - key: market_ids
                     type: array
                     default: []
                 - type: one_use_per_user
                   label: One Use Per User
-                  description:
+                  description: Only One Use Per User
                   preference_schema: []
                 - type: customer_logged_in
                   label: Only logged in customers
-                  description:
+                  description: Available only to logged in customers
                   preference_schema: []
                 - type: option_value
                   label: Option Value(s)
-                  description:
+                  description: Order includes products with matching option value(s)
                   preference_schema:
                   - key: match_policy
                     type: string
@@ -22216,7 +22267,7 @@ paths:
                     default: []
                 - type: product
                   label: Product(s)
-                  description:
+                  description: Order includes specified product(s)
                   preference_schema:
                   - key: match_policy
                     type: string
@@ -23074,7 +23125,9 @@ paths:
                   message: Site Name can't be blank
                   details:
                     name:
-                    - can't be blank
+                    - code: blank
+                      message: can't be blank
+                      specific: false
               schema:
                 "$ref": "#/components/schemas/ErrorResponse"
       requestBody:
@@ -23345,9 +23398,13 @@ paths:
                   message: Tax category must exist and Name can't be blank
                   details:
                     tax_category:
-                    - must exist
+                    - code: blank
+                      message: must exist
+                      specific: true
                     name:
-                    - can't be blank
+                    - code: blank
+                      message: can't be blank
+                      specific: false
               schema:
                 "$ref": "#/components/schemas/ErrorResponse"
       requestBody:
@@ -24827,7 +24884,9 @@ paths:
                   message: 'Permissions contains unknown permissions: write_bogus'
                   details:
                     permissions:
-                    - 'contains unknown permissions: write_bogus'
+                    - code: role_permissions_unknown
+                      message: 'contains unknown permissions: write_bogus'
+                      specific: false
       requestBody:
         content:
           application/json:
@@ -25239,7 +25298,9 @@ paths:
                   message: Name can't be blank
                   details:
                     name:
-                    - can't be blank
+                    - code: blank
+                      message: can't be blank
+                      specific: false
               schema:
                 "$ref": "#/components/schemas/ErrorResponse"
       requestBody:
@@ -25515,7 +25576,10 @@ paths:
                   message: Pickup stock policy is not included in the list
                   details:
                     pickup_stock_policy:
-                    - is not included in the list
+                    - value: invalid
+                      code: inclusion
+                      message: is not included in the list
+                      specific: false
               schema:
                 "$ref": "#/components/schemas/ErrorResponse"
       requestBody:
@@ -25995,7 +26059,10 @@ paths:
                   message: SKU has already been taken
                   details:
                     sku:
-                    - has already been taken
+                    - value: SKU-169
+                      code: taken
+                      message: has already been taken
+                      specific: false
               schema:
                 "$ref": "#/components/schemas/ErrorResponse"
       requestBody:
@@ -27046,22 +27113,13 @@ paths:
               example:
                 error:
                   code: validation_error
-                  message: |-
-                    Url Translation missing. Options considered were:
-                    - en.activerecord.errors.models.spree/webhook_endpoint.attributes.url.invalid_url
-                    - en.activerecord.errors.models.spree/webhook_endpoint.invalid_url
-                    - en.activerecord.errors.messages.invalid_url
-                    - en.errors.attributes.url.invalid_url
-                    - en.errors.messages.invalid_url
+                  message: Url must be a valid http or https URL
                   details:
                     url:
-                    - |-
-                      Translation missing. Options considered were:
-                      - en.activerecord.errors.models.spree/webhook_endpoint.attributes.url.invalid_url
-                      - en.activerecord.errors.models.spree/webhook_endpoint.invalid_url
-                      - en.activerecord.errors.messages.invalid_url
-                      - en.errors.attributes.url.invalid_url
-                      - en.errors.messages.invalid_url
+                    - value: not a url
+                      code: invalid
+                      message: must be a valid http or https URL
+                      specific: true
               schema:
                 "$ref": "#/components/schemas/ErrorResponse"
       requestBody:
@@ -27252,22 +27310,13 @@ paths:
               example:
                 error:
                   code: validation_error
-                  message: |-
-                    Url Translation missing. Options considered were:
-                    - en.activerecord.errors.models.spree/webhook_endpoint.attributes.url.invalid_url
-                    - en.activerecord.errors.models.spree/webhook_endpoint.invalid_url
-                    - en.activerecord.errors.messages.invalid_url
-                    - en.errors.attributes.url.invalid_url
-                    - en.errors.messages.invalid_url
+                  message: Url must be a valid http or https URL
                   details:
                     url:
-                    - |-
-                      Translation missing. Options considered were:
-                      - en.activerecord.errors.models.spree/webhook_endpoint.attributes.url.invalid_url
-                      - en.activerecord.errors.models.spree/webhook_endpoint.invalid_url
-                      - en.activerecord.errors.messages.invalid_url
-                      - en.errors.attributes.url.invalid_url
-                      - en.errors.messages.invalid_url
+                    - value: not a url
+                      code: invalid
+                      message: must be a valid http or https URL
+                      specific: true
               schema:
                 "$ref": "#/components/schemas/ErrorResponse"
       requestBody:
@@ -27702,7 +27751,9 @@ paths:
                   message: Name can't be blank
                   details:
                     name:
-                    - can't be blank
+                    - code: blank
+                      message: can't be blank
+                      specific: false
       requestBody:
         content:
           application/json:
@@ -28149,7 +28200,10 @@ paths:
                   message: Set a minimum order quantity, an order multiple, or both
                   details:
                     base:
-                    - Set a minimum order quantity, an order multiple, or both
+                    - code: quantity_rule_states_nothing
+                      message: Set a minimum order quantity, an order multiple, or
+                        both
+                      specific: false
       requestBody:
         content:
           application/json:
@@ -28272,7 +28326,11 @@ paths:
                   message: Amount must be greater than 0
                   details:
                     amount:
-                    - must be greater than 0
+                    - value: 0
+                      count: 0
+                      code: greater_than
+                      message: must be greater than 0
+                      specific: false
       requestBody:
         content:
           application/json:
@@ -28864,7 +28922,9 @@ paths:
                   message: Name can't be blank
                   details:
                     name:
-                    - can't be blank
+                    - code: blank
+                      message: can't be blank
+                      specific: false
               schema:
                 "$ref": "#/components/schemas/ErrorResponse"
       requestBody:
@@ -29828,7 +29888,9 @@ paths:
                   message: needs a flat fee amount in at least one currency
                   details:
                     base:
-                    - needs a flat fee amount in at least one currency
+                    - code: commission_rate_needs_an_amount
+                      message: needs a flat fee amount in at least one currency
+                      specific: false
               schema:
                 "$ref": "#/components/schemas/ErrorResponse"
       requestBody:
@@ -30561,7 +30623,9 @@ paths:
                   message: Certificate number can't be blank
                   details:
                     certificate_number:
-                    - can't be blank
+                    - code: blank
+                      message: can't be blank
+                      specific: false
       requestBody:
         content:
           application/json:
@@ -30949,7 +31013,10 @@ paths:
                   message: Registration type has already been taken
                   details:
                     kind:
-                    - has already been taken
+                    - value: eu_vat
+                      code: taken
+                      message: has already been taken
+                      specific: false
       requestBody:
         content:
           application/json:
@@ -31170,7 +31237,9 @@ paths:
                   message: Name can't be blank
                   details:
                     name:
-                    - can't be blank
+                    - code: blank
+                      message: can't be blank
+                      specific: false
       requestBody:
         content:
           application/json:
@@ -31496,7 +31565,9 @@ paths:
                   message: Name can't be blank
                   details:
                     name:
-                    - can't be blank
+                    - code: blank
+                      message: can't be blank
+                      specific: false
       requestBody:
         content:
           application/json:
@@ -32521,13 +32592,13 @@ paths:
                   video_embed_url:
                   video_url:
                   poster_url:
-                  original_url: http://localhost:3000/rails/active_storage/blobs/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--64a7a628149a01f18aa41dc05f03e1755c9f27e6/thinking-cat.jpg
-                  mini_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--64a7a628149a01f18aa41dc05f03e1755c9f27e6/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOlsxMjgsMTI4XSwic2F2ZXIiOnsic3RyaXAiOnRydWUsInF1YWxpdHkiOjc1LCJsb3NzbGVzcyI6ZmFsc2UsImFscGhhX3EiOjg1LCJyZWR1Y3Rpb25fZWZmb3J0Ijo2LCJzbWFydF9zdWJzYW1wbGUiOnRydWV9fSwicHVyIjoidmFyaWF0aW9uIn19--2b009e396acd0e776164e306573bf33f6cea5543/thinking-cat.jpg
-                  small_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--64a7a628149a01f18aa41dc05f03e1755c9f27e6/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOlsyNTYsMjU2XSwic2F2ZXIiOnsic3RyaXAiOnRydWUsInF1YWxpdHkiOjc1LCJsb3NzbGVzcyI6ZmFsc2UsImFscGhhX3EiOjg1LCJyZWR1Y3Rpb25fZWZmb3J0Ijo2LCJzbWFydF9zdWJzYW1wbGUiOnRydWV9fSwicHVyIjoidmFyaWF0aW9uIn19--c6c62312f1f7d4203b2855cf2b4ad78c3a1a68b9/thinking-cat.jpg
-                  medium_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--64a7a628149a01f18aa41dc05f03e1755c9f27e6/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOls0MDAsNDAwXSwic2F2ZXIiOnsic3RyaXAiOnRydWUsInF1YWxpdHkiOjc1LCJsb3NzbGVzcyI6ZmFsc2UsImFscGhhX3EiOjg1LCJyZWR1Y3Rpb25fZWZmb3J0Ijo2LCJzbWFydF9zdWJzYW1wbGUiOnRydWV9fSwicHVyIjoidmFyaWF0aW9uIn19--8dc32d60cdc49f3b2b4232b2463f6a1706bc6880/thinking-cat.jpg
-                  large_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--64a7a628149a01f18aa41dc05f03e1755c9f27e6/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOls3MjAsNzIwXSwic2F2ZXIiOnsic3RyaXAiOnRydWUsInF1YWxpdHkiOjc1LCJsb3NzbGVzcyI6ZmFsc2UsImFscGhhX3EiOjg1LCJyZWR1Y3Rpb25fZWZmb3J0Ijo2LCJzbWFydF9zdWJzYW1wbGUiOnRydWV9fSwicHVyIjoidmFyaWF0aW9uIn19--0ba2f2259194663198ec9f3804b5dce4d59172f6/thinking-cat.jpg
-                  xlarge_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--64a7a628149a01f18aa41dc05f03e1755c9f27e6/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOlsyMDAwLDIwMDBdLCJzYXZlciI6eyJzdHJpcCI6dHJ1ZSwicXVhbGl0eSI6NzUsImxvc3NsZXNzIjpmYWxzZSwiYWxwaGFfcSI6ODUsInJlZHVjdGlvbl9lZmZvcnQiOjYsInNtYXJ0X3N1YnNhbXBsZSI6dHJ1ZX19LCJwdXIiOiJ2YXJpYXRpb24ifX0=--f84d50d82eae845105c742768d5b02b0bf8c56c0/thinking-cat.jpg
-                  og_image_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--64a7a628149a01f18aa41dc05f03e1755c9f27e6/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOlsxMjAwLDYzMF0sInNhdmVyIjp7InN0cmlwIjp0cnVlLCJxdWFsaXR5Ijo3NSwibG9zc2xlc3MiOmZhbHNlLCJhbHBoYV9xIjo4NSwicmVkdWN0aW9uX2VmZm9ydCI6Niwic21hcnRfc3Vic2FtcGxlIjp0cnVlfX0sInB1ciI6InZhcmlhdGlvbiJ9fQ==--8e3bde4dd2e614930e516efc2b37f6ee64d6bb3d/thinking-cat.jpg
+                  original_url: http://localhost:3000/rails/active_storage/blobs/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--c57858adddb5d3bb456ad20360641e4692d748db/thinking-cat.jpg
+                  mini_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--c57858adddb5d3bb456ad20360641e4692d748db/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOlsxMjgsMTI4XSwic2F2ZXIiOnsic3RyaXAiOnRydWUsInF1YWxpdHkiOjc1LCJsb3NzbGVzcyI6ZmFsc2UsImFscGhhX3EiOjg1LCJyZWR1Y3Rpb25fZWZmb3J0Ijo2LCJzbWFydF9zdWJzYW1wbGUiOnRydWV9fSwicHVyIjoidmFyaWF0aW9uIn19--9d4188c20e20cf31a314c845933708b09572f103/thinking-cat.jpg
+                  small_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--c57858adddb5d3bb456ad20360641e4692d748db/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOlsyNTYsMjU2XSwic2F2ZXIiOnsic3RyaXAiOnRydWUsInF1YWxpdHkiOjc1LCJsb3NzbGVzcyI6ZmFsc2UsImFscGhhX3EiOjg1LCJyZWR1Y3Rpb25fZWZmb3J0Ijo2LCJzbWFydF9zdWJzYW1wbGUiOnRydWV9fSwicHVyIjoidmFyaWF0aW9uIn19--86f723c2c721a9ff0c61238b18ca539195adb035/thinking-cat.jpg
+                  medium_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--c57858adddb5d3bb456ad20360641e4692d748db/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOls0MDAsNDAwXSwic2F2ZXIiOnsic3RyaXAiOnRydWUsInF1YWxpdHkiOjc1LCJsb3NzbGVzcyI6ZmFsc2UsImFscGhhX3EiOjg1LCJyZWR1Y3Rpb25fZWZmb3J0Ijo2LCJzbWFydF9zdWJzYW1wbGUiOnRydWV9fSwicHVyIjoidmFyaWF0aW9uIn19--742ef4eeac89330817a7bd6c6e96997e27d898fd/thinking-cat.jpg
+                  large_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--c57858adddb5d3bb456ad20360641e4692d748db/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOls3MjAsNzIwXSwic2F2ZXIiOnsic3RyaXAiOnRydWUsInF1YWxpdHkiOjc1LCJsb3NzbGVzcyI6ZmFsc2UsImFscGhhX3EiOjg1LCJyZWR1Y3Rpb25fZWZmb3J0Ijo2LCJzbWFydF9zdWJzYW1wbGUiOnRydWV9fSwicHVyIjoidmFyaWF0aW9uIn19--a19d56c028e6b0843d5af2f547ed4886b7fda772/thinking-cat.jpg
+                  xlarge_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--c57858adddb5d3bb456ad20360641e4692d748db/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOlsyMDAwLDIwMDBdLCJzYXZlciI6eyJzdHJpcCI6dHJ1ZSwicXVhbGl0eSI6NzUsImxvc3NsZXNzIjpmYWxzZSwiYWxwaGFfcSI6ODUsInJlZHVjdGlvbl9lZmZvcnQiOjYsInNtYXJ0X3N1YnNhbXBsZSI6dHJ1ZX19LCJwdXIiOiJ2YXJpYXRpb24ifX0=--5b2ad37d2532c8d50065c33a6364075cdf59a6ea/thinking-cat.jpg
+                  og_image_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--c57858adddb5d3bb456ad20360641e4692d748db/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOlsxMjAwLDYzMF0sInNhdmVyIjp7InN0cmlwIjp0cnVlLCJxdWFsaXR5Ijo3NSwibG9zc2xlc3MiOmZhbHNlLCJhbHBoYV9xIjo4NSwicmVkdWN0aW9uX2VmZm9ydCI6Niwic21hcnRfc3Vic2FtcGxlIjp0cnVlfX0sInB1ciI6InZhcmlhdGlvbiJ9fQ==--060e68f4360af2c0ebdaaa3d3a785933e49b3fd0/thinking-cat.jpg
                   external_references: {}
                   created_at: '2026-01-15T12:00:00.000Z'
                   updated_at: '2026-01-15T12:00:00.000Z'
@@ -32535,10 +32606,10 @@ paths:
                   filename: thinking-cat.jpg
                   content_type: image/jpeg
                   byte_size: 18090
-                  embed_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--64a7a628149a01f18aa41dc05f03e1755c9f27e6/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2xpbWl0IjpbMTIwMCwxMjAwXSwic2F2ZXIiOnsic3RyaXAiOnRydWUsInF1YWxpdHkiOjc1LCJsb3NzbGVzcyI6ZmFsc2UsImFscGhhX3EiOjg1LCJyZWR1Y3Rpb25fZWZmb3J0Ijo2LCJzbWFydF9zdWJzYW1wbGUiOnRydWV9fSwicHVyIjoidmFyaWF0aW9uIn19--29dfe4018dda1dfb7e5a98e25feab76f1cf2c016/thinking-cat.jpg
-                  signed_id: eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--64a7a628149a01f18aa41dc05f03e1755c9f27e6
+                  embed_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--c57858adddb5d3bb456ad20360641e4692d748db/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2xpbWl0IjpbMTIwMCwxMjAwXSwic2F2ZXIiOnsic3RyaXAiOnRydWUsInF1YWxpdHkiOjc1LCJsb3NzbGVzcyI6ZmFsc2UsImFscGhhX3EiOjg1LCJyZWR1Y3Rpb25fZWZmb3J0Ijo2LCJzbWFydF9zdWJzYW1wbGUiOnRydWV9fSwicHVyIjoidmFyaWF0aW9uIn19--22b463201f8e61ebd7a9f8539f8cf5aac37c0cd4/thinking-cat.jpg
+                  signed_id: eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--c57858adddb5d3bb456ad20360641e4692d748db
                   viewable_id: prod_UkLWZg9DAJ
-                  download_url: http://localhost:3000/rails/active_storage/blobs/redirect/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--64a7a628149a01f18aa41dc05f03e1755c9f27e6/thinking-cat.jpg?disposition=attachment
+                  download_url: http://localhost:3000/rails/active_storage/blobs/redirect/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--c57858adddb5d3bb456ad20360641e4692d748db/thinking-cat.jpg?disposition=attachment
                   metadata: {}
                   viewable_type: product
                 meta:
@@ -32609,13 +32680,13 @@ paths:
                 video_embed_url:
                 video_url:
                 poster_url:
-                original_url: http://localhost:3000/rails/active_storage/blobs/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MiwicHVyIjoiYmxvYl9pZCJ9fQ==--213db9a7b64fa3e145cff2f9479e341974678d87/library-upload.jpg
-                mini_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MiwicHVyIjoiYmxvYl9pZCJ9fQ==--213db9a7b64fa3e145cff2f9479e341974678d87/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOlsxMjgsMTI4XSwic2F2ZXIiOnsic3RyaXAiOnRydWUsInF1YWxpdHkiOjc1LCJsb3NzbGVzcyI6ZmFsc2UsImFscGhhX3EiOjg1LCJyZWR1Y3Rpb25fZWZmb3J0Ijo2LCJzbWFydF9zdWJzYW1wbGUiOnRydWV9fSwicHVyIjoidmFyaWF0aW9uIn19--2b009e396acd0e776164e306573bf33f6cea5543/library-upload.jpg
-                small_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MiwicHVyIjoiYmxvYl9pZCJ9fQ==--213db9a7b64fa3e145cff2f9479e341974678d87/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOlsyNTYsMjU2XSwic2F2ZXIiOnsic3RyaXAiOnRydWUsInF1YWxpdHkiOjc1LCJsb3NzbGVzcyI6ZmFsc2UsImFscGhhX3EiOjg1LCJyZWR1Y3Rpb25fZWZmb3J0Ijo2LCJzbWFydF9zdWJzYW1wbGUiOnRydWV9fSwicHVyIjoidmFyaWF0aW9uIn19--c6c62312f1f7d4203b2855cf2b4ad78c3a1a68b9/library-upload.jpg
-                medium_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MiwicHVyIjoiYmxvYl9pZCJ9fQ==--213db9a7b64fa3e145cff2f9479e341974678d87/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOls0MDAsNDAwXSwic2F2ZXIiOnsic3RyaXAiOnRydWUsInF1YWxpdHkiOjc1LCJsb3NzbGVzcyI6ZmFsc2UsImFscGhhX3EiOjg1LCJyZWR1Y3Rpb25fZWZmb3J0Ijo2LCJzbWFydF9zdWJzYW1wbGUiOnRydWV9fSwicHVyIjoidmFyaWF0aW9uIn19--8dc32d60cdc49f3b2b4232b2463f6a1706bc6880/library-upload.jpg
-                large_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MiwicHVyIjoiYmxvYl9pZCJ9fQ==--213db9a7b64fa3e145cff2f9479e341974678d87/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOls3MjAsNzIwXSwic2F2ZXIiOnsic3RyaXAiOnRydWUsInF1YWxpdHkiOjc1LCJsb3NzbGVzcyI6ZmFsc2UsImFscGhhX3EiOjg1LCJyZWR1Y3Rpb25fZWZmb3J0Ijo2LCJzbWFydF9zdWJzYW1wbGUiOnRydWV9fSwicHVyIjoidmFyaWF0aW9uIn19--0ba2f2259194663198ec9f3804b5dce4d59172f6/library-upload.jpg
-                xlarge_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MiwicHVyIjoiYmxvYl9pZCJ9fQ==--213db9a7b64fa3e145cff2f9479e341974678d87/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOlsyMDAwLDIwMDBdLCJzYXZlciI6eyJzdHJpcCI6dHJ1ZSwicXVhbGl0eSI6NzUsImxvc3NsZXNzIjpmYWxzZSwiYWxwaGFfcSI6ODUsInJlZHVjdGlvbl9lZmZvcnQiOjYsInNtYXJ0X3N1YnNhbXBsZSI6dHJ1ZX19LCJwdXIiOiJ2YXJpYXRpb24ifX0=--f84d50d82eae845105c742768d5b02b0bf8c56c0/library-upload.jpg
-                og_image_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MiwicHVyIjoiYmxvYl9pZCJ9fQ==--213db9a7b64fa3e145cff2f9479e341974678d87/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOlsxMjAwLDYzMF0sInNhdmVyIjp7InN0cmlwIjp0cnVlLCJxdWFsaXR5Ijo3NSwibG9zc2xlc3MiOmZhbHNlLCJhbHBoYV9xIjo4NSwicmVkdWN0aW9uX2VmZm9ydCI6Niwic21hcnRfc3Vic2FtcGxlIjp0cnVlfX0sInB1ciI6InZhcmlhdGlvbiJ9fQ==--8e3bde4dd2e614930e516efc2b37f6ee64d6bb3d/library-upload.jpg
+                original_url: http://localhost:3000/rails/active_storage/blobs/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MiwicHVyIjoiYmxvYl9pZCJ9fQ==--466377a5cf5063a522154b8942cb2f6872b00885/library-upload.jpg
+                mini_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MiwicHVyIjoiYmxvYl9pZCJ9fQ==--466377a5cf5063a522154b8942cb2f6872b00885/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOlsxMjgsMTI4XSwic2F2ZXIiOnsic3RyaXAiOnRydWUsInF1YWxpdHkiOjc1LCJsb3NzbGVzcyI6ZmFsc2UsImFscGhhX3EiOjg1LCJyZWR1Y3Rpb25fZWZmb3J0Ijo2LCJzbWFydF9zdWJzYW1wbGUiOnRydWV9fSwicHVyIjoidmFyaWF0aW9uIn19--9d4188c20e20cf31a314c845933708b09572f103/library-upload.jpg
+                small_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MiwicHVyIjoiYmxvYl9pZCJ9fQ==--466377a5cf5063a522154b8942cb2f6872b00885/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOlsyNTYsMjU2XSwic2F2ZXIiOnsic3RyaXAiOnRydWUsInF1YWxpdHkiOjc1LCJsb3NzbGVzcyI6ZmFsc2UsImFscGhhX3EiOjg1LCJyZWR1Y3Rpb25fZWZmb3J0Ijo2LCJzbWFydF9zdWJzYW1wbGUiOnRydWV9fSwicHVyIjoidmFyaWF0aW9uIn19--86f723c2c721a9ff0c61238b18ca539195adb035/library-upload.jpg
+                medium_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MiwicHVyIjoiYmxvYl9pZCJ9fQ==--466377a5cf5063a522154b8942cb2f6872b00885/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOls0MDAsNDAwXSwic2F2ZXIiOnsic3RyaXAiOnRydWUsInF1YWxpdHkiOjc1LCJsb3NzbGVzcyI6ZmFsc2UsImFscGhhX3EiOjg1LCJyZWR1Y3Rpb25fZWZmb3J0Ijo2LCJzbWFydF9zdWJzYW1wbGUiOnRydWV9fSwicHVyIjoidmFyaWF0aW9uIn19--742ef4eeac89330817a7bd6c6e96997e27d898fd/library-upload.jpg
+                large_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MiwicHVyIjoiYmxvYl9pZCJ9fQ==--466377a5cf5063a522154b8942cb2f6872b00885/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOls3MjAsNzIwXSwic2F2ZXIiOnsic3RyaXAiOnRydWUsInF1YWxpdHkiOjc1LCJsb3NzbGVzcyI6ZmFsc2UsImFscGhhX3EiOjg1LCJyZWR1Y3Rpb25fZWZmb3J0Ijo2LCJzbWFydF9zdWJzYW1wbGUiOnRydWV9fSwicHVyIjoidmFyaWF0aW9uIn19--a19d56c028e6b0843d5af2f547ed4886b7fda772/library-upload.jpg
+                xlarge_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MiwicHVyIjoiYmxvYl9pZCJ9fQ==--466377a5cf5063a522154b8942cb2f6872b00885/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOlsyMDAwLDIwMDBdLCJzYXZlciI6eyJzdHJpcCI6dHJ1ZSwicXVhbGl0eSI6NzUsImxvc3NsZXNzIjpmYWxzZSwiYWxwaGFfcSI6ODUsInJlZHVjdGlvbl9lZmZvcnQiOjYsInNtYXJ0X3N1YnNhbXBsZSI6dHJ1ZX19LCJwdXIiOiJ2YXJpYXRpb24ifX0=--5b2ad37d2532c8d50065c33a6364075cdf59a6ea/library-upload.jpg
+                og_image_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MiwicHVyIjoiYmxvYl9pZCJ9fQ==--466377a5cf5063a522154b8942cb2f6872b00885/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOlsxMjAwLDYzMF0sInNhdmVyIjp7InN0cmlwIjp0cnVlLCJxdWFsaXR5Ijo3NSwibG9zc2xlc3MiOmZhbHNlLCJhbHBoYV9xIjo4NSwicmVkdWN0aW9uX2VmZm9ydCI6Niwic21hcnRfc3Vic2FtcGxlIjp0cnVlfX0sInB1ciI6InZhcmlhdGlvbiJ9fQ==--060e68f4360af2c0ebdaaa3d3a785933e49b3fd0/library-upload.jpg
                 external_references: {}
                 created_at: '2026-01-15T12:00:00.000Z'
                 updated_at: '2026-01-15T12:00:00.000Z'
@@ -32623,10 +32694,10 @@ paths:
                 filename: library-upload.jpg
                 content_type: image/jpeg
                 byte_size: 18090
-                embed_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MiwicHVyIjoiYmxvYl9pZCJ9fQ==--213db9a7b64fa3e145cff2f9479e341974678d87/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2xpbWl0IjpbMTIwMCwxMjAwXSwic2F2ZXIiOnsic3RyaXAiOnRydWUsInF1YWxpdHkiOjc1LCJsb3NzbGVzcyI6ZmFsc2UsImFscGhhX3EiOjg1LCJyZWR1Y3Rpb25fZWZmb3J0Ijo2LCJzbWFydF9zdWJzYW1wbGUiOnRydWV9fSwicHVyIjoidmFyaWF0aW9uIn19--29dfe4018dda1dfb7e5a98e25feab76f1cf2c016/library-upload.jpg
-                signed_id: eyJfcmFpbHMiOnsiZGF0YSI6MiwicHVyIjoiYmxvYl9pZCJ9fQ==--213db9a7b64fa3e145cff2f9479e341974678d87
+                embed_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MiwicHVyIjoiYmxvYl9pZCJ9fQ==--466377a5cf5063a522154b8942cb2f6872b00885/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2xpbWl0IjpbMTIwMCwxMjAwXSwic2F2ZXIiOnsic3RyaXAiOnRydWUsInF1YWxpdHkiOjc1LCJsb3NzbGVzcyI6ZmFsc2UsImFscGhhX3EiOjg1LCJyZWR1Y3Rpb25fZWZmb3J0Ijo2LCJzbWFydF9zdWJzYW1wbGUiOnRydWV9fSwicHVyIjoidmFyaWF0aW9uIn19--22b463201f8e61ebd7a9f8539f8cf5aac37c0cd4/library-upload.jpg
+                signed_id: eyJfcmFpbHMiOnsiZGF0YSI6MiwicHVyIjoiYmxvYl9pZCJ9fQ==--466377a5cf5063a522154b8942cb2f6872b00885
                 viewable_id:
-                download_url: http://localhost:3000/rails/active_storage/blobs/redirect/eyJfcmFpbHMiOnsiZGF0YSI6MiwicHVyIjoiYmxvYl9pZCJ9fQ==--213db9a7b64fa3e145cff2f9479e341974678d87/library-upload.jpg?disposition=attachment
+                download_url: http://localhost:3000/rails/active_storage/blobs/redirect/eyJfcmFpbHMiOnsiZGF0YSI6MiwicHVyIjoiYmxvYl9pZCJ9fQ==--466377a5cf5063a522154b8942cb2f6872b00885/library-upload.jpg?disposition=attachment
                 metadata: {}
                 viewable_type:
               schema:
@@ -32783,13 +32854,13 @@ paths:
                 video_embed_url:
                 video_url:
                 poster_url:
-                original_url: http://localhost:3000/rails/active_storage/blobs/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--64a7a628149a01f18aa41dc05f03e1755c9f27e6/thinking-cat.jpg
-                mini_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--64a7a628149a01f18aa41dc05f03e1755c9f27e6/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOlsxMjgsMTI4XSwic2F2ZXIiOnsic3RyaXAiOnRydWUsInF1YWxpdHkiOjc1LCJsb3NzbGVzcyI6ZmFsc2UsImFscGhhX3EiOjg1LCJyZWR1Y3Rpb25fZWZmb3J0Ijo2LCJzbWFydF9zdWJzYW1wbGUiOnRydWV9fSwicHVyIjoidmFyaWF0aW9uIn19--2b009e396acd0e776164e306573bf33f6cea5543/thinking-cat.jpg
-                small_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--64a7a628149a01f18aa41dc05f03e1755c9f27e6/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOlsyNTYsMjU2XSwic2F2ZXIiOnsic3RyaXAiOnRydWUsInF1YWxpdHkiOjc1LCJsb3NzbGVzcyI6ZmFsc2UsImFscGhhX3EiOjg1LCJyZWR1Y3Rpb25fZWZmb3J0Ijo2LCJzbWFydF9zdWJzYW1wbGUiOnRydWV9fSwicHVyIjoidmFyaWF0aW9uIn19--c6c62312f1f7d4203b2855cf2b4ad78c3a1a68b9/thinking-cat.jpg
-                medium_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--64a7a628149a01f18aa41dc05f03e1755c9f27e6/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOls0MDAsNDAwXSwic2F2ZXIiOnsic3RyaXAiOnRydWUsInF1YWxpdHkiOjc1LCJsb3NzbGVzcyI6ZmFsc2UsImFscGhhX3EiOjg1LCJyZWR1Y3Rpb25fZWZmb3J0Ijo2LCJzbWFydF9zdWJzYW1wbGUiOnRydWV9fSwicHVyIjoidmFyaWF0aW9uIn19--8dc32d60cdc49f3b2b4232b2463f6a1706bc6880/thinking-cat.jpg
-                large_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--64a7a628149a01f18aa41dc05f03e1755c9f27e6/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOls3MjAsNzIwXSwic2F2ZXIiOnsic3RyaXAiOnRydWUsInF1YWxpdHkiOjc1LCJsb3NzbGVzcyI6ZmFsc2UsImFscGhhX3EiOjg1LCJyZWR1Y3Rpb25fZWZmb3J0Ijo2LCJzbWFydF9zdWJzYW1wbGUiOnRydWV9fSwicHVyIjoidmFyaWF0aW9uIn19--0ba2f2259194663198ec9f3804b5dce4d59172f6/thinking-cat.jpg
-                xlarge_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--64a7a628149a01f18aa41dc05f03e1755c9f27e6/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOlsyMDAwLDIwMDBdLCJzYXZlciI6eyJzdHJpcCI6dHJ1ZSwicXVhbGl0eSI6NzUsImxvc3NsZXNzIjpmYWxzZSwiYWxwaGFfcSI6ODUsInJlZHVjdGlvbl9lZmZvcnQiOjYsInNtYXJ0X3N1YnNhbXBsZSI6dHJ1ZX19LCJwdXIiOiJ2YXJpYXRpb24ifX0=--f84d50d82eae845105c742768d5b02b0bf8c56c0/thinking-cat.jpg
-                og_image_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--64a7a628149a01f18aa41dc05f03e1755c9f27e6/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOlsxMjAwLDYzMF0sInNhdmVyIjp7InN0cmlwIjp0cnVlLCJxdWFsaXR5Ijo3NSwibG9zc2xlc3MiOmZhbHNlLCJhbHBoYV9xIjo4NSwicmVkdWN0aW9uX2VmZm9ydCI6Niwic21hcnRfc3Vic2FtcGxlIjp0cnVlfX0sInB1ciI6InZhcmlhdGlvbiJ9fQ==--8e3bde4dd2e614930e516efc2b37f6ee64d6bb3d/thinking-cat.jpg
+                original_url: http://localhost:3000/rails/active_storage/blobs/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--c57858adddb5d3bb456ad20360641e4692d748db/thinking-cat.jpg
+                mini_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--c57858adddb5d3bb456ad20360641e4692d748db/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOlsxMjgsMTI4XSwic2F2ZXIiOnsic3RyaXAiOnRydWUsInF1YWxpdHkiOjc1LCJsb3NzbGVzcyI6ZmFsc2UsImFscGhhX3EiOjg1LCJyZWR1Y3Rpb25fZWZmb3J0Ijo2LCJzbWFydF9zdWJzYW1wbGUiOnRydWV9fSwicHVyIjoidmFyaWF0aW9uIn19--9d4188c20e20cf31a314c845933708b09572f103/thinking-cat.jpg
+                small_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--c57858adddb5d3bb456ad20360641e4692d748db/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOlsyNTYsMjU2XSwic2F2ZXIiOnsic3RyaXAiOnRydWUsInF1YWxpdHkiOjc1LCJsb3NzbGVzcyI6ZmFsc2UsImFscGhhX3EiOjg1LCJyZWR1Y3Rpb25fZWZmb3J0Ijo2LCJzbWFydF9zdWJzYW1wbGUiOnRydWV9fSwicHVyIjoidmFyaWF0aW9uIn19--86f723c2c721a9ff0c61238b18ca539195adb035/thinking-cat.jpg
+                medium_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--c57858adddb5d3bb456ad20360641e4692d748db/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOls0MDAsNDAwXSwic2F2ZXIiOnsic3RyaXAiOnRydWUsInF1YWxpdHkiOjc1LCJsb3NzbGVzcyI6ZmFsc2UsImFscGhhX3EiOjg1LCJyZWR1Y3Rpb25fZWZmb3J0Ijo2LCJzbWFydF9zdWJzYW1wbGUiOnRydWV9fSwicHVyIjoidmFyaWF0aW9uIn19--742ef4eeac89330817a7bd6c6e96997e27d898fd/thinking-cat.jpg
+                large_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--c57858adddb5d3bb456ad20360641e4692d748db/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOls3MjAsNzIwXSwic2F2ZXIiOnsic3RyaXAiOnRydWUsInF1YWxpdHkiOjc1LCJsb3NzbGVzcyI6ZmFsc2UsImFscGhhX3EiOjg1LCJyZWR1Y3Rpb25fZWZmb3J0Ijo2LCJzbWFydF9zdWJzYW1wbGUiOnRydWV9fSwicHVyIjoidmFyaWF0aW9uIn19--a19d56c028e6b0843d5af2f547ed4886b7fda772/thinking-cat.jpg
+                xlarge_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--c57858adddb5d3bb456ad20360641e4692d748db/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOlsyMDAwLDIwMDBdLCJzYXZlciI6eyJzdHJpcCI6dHJ1ZSwicXVhbGl0eSI6NzUsImxvc3NsZXNzIjpmYWxzZSwiYWxwaGFfcSI6ODUsInJlZHVjdGlvbl9lZmZvcnQiOjYsInNtYXJ0X3N1YnNhbXBsZSI6dHJ1ZX19LCJwdXIiOiJ2YXJpYXRpb24ifX0=--5b2ad37d2532c8d50065c33a6364075cdf59a6ea/thinking-cat.jpg
+                og_image_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--c57858adddb5d3bb456ad20360641e4692d748db/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOlsxMjAwLDYzMF0sInNhdmVyIjp7InN0cmlwIjp0cnVlLCJxdWFsaXR5Ijo3NSwibG9zc2xlc3MiOmZhbHNlLCJhbHBoYV9xIjo4NSwicmVkdWN0aW9uX2VmZm9ydCI6Niwic21hcnRfc3Vic2FtcGxlIjp0cnVlfX0sInB1ciI6InZhcmlhdGlvbiJ9fQ==--060e68f4360af2c0ebdaaa3d3a785933e49b3fd0/thinking-cat.jpg
                 external_references: {}
                 created_at: '2026-01-15T12:00:00.000Z'
                 updated_at: '2026-01-15T12:00:00.000Z'
@@ -32797,10 +32868,10 @@ paths:
                 filename: thinking-cat.jpg
                 content_type: image/jpeg
                 byte_size: 18090
-                embed_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--64a7a628149a01f18aa41dc05f03e1755c9f27e6/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2xpbWl0IjpbMTIwMCwxMjAwXSwic2F2ZXIiOnsic3RyaXAiOnRydWUsInF1YWxpdHkiOjc1LCJsb3NzbGVzcyI6ZmFsc2UsImFscGhhX3EiOjg1LCJyZWR1Y3Rpb25fZWZmb3J0Ijo2LCJzbWFydF9zdWJzYW1wbGUiOnRydWV9fSwicHVyIjoidmFyaWF0aW9uIn19--29dfe4018dda1dfb7e5a98e25feab76f1cf2c016/thinking-cat.jpg
-                signed_id: eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--64a7a628149a01f18aa41dc05f03e1755c9f27e6
+                embed_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--c57858adddb5d3bb456ad20360641e4692d748db/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2xpbWl0IjpbMTIwMCwxMjAwXSwic2F2ZXIiOnsic3RyaXAiOnRydWUsInF1YWxpdHkiOjc1LCJsb3NzbGVzcyI6ZmFsc2UsImFscGhhX3EiOjg1LCJyZWR1Y3Rpb25fZWZmb3J0Ijo2LCJzbWFydF9zdWJzYW1wbGUiOnRydWV9fSwicHVyIjoidmFyaWF0aW9uIn19--22b463201f8e61ebd7a9f8539f8cf5aac37c0cd4/thinking-cat.jpg
+                signed_id: eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--c57858adddb5d3bb456ad20360641e4692d748db
                 viewable_id: prod_gbHJdmfrXB
-                download_url: http://localhost:3000/rails/active_storage/blobs/redirect/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--64a7a628149a01f18aa41dc05f03e1755c9f27e6/thinking-cat.jpg?disposition=attachment
+                download_url: http://localhost:3000/rails/active_storage/blobs/redirect/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--c57858adddb5d3bb456ad20360641e4692d748db/thinking-cat.jpg?disposition=attachment
                 metadata: {}
                 viewable_type: product
               schema:
@@ -32994,7 +33065,10 @@ paths:
                   message: Tracking number has already been taken
                   details:
                     tracking_number:
-                    - has already been taken
+                    - value: U10000
+                      code: taken
+                      message: has already been taken
+                      specific: false
       requestBody:
         content:
           application/json:
@@ -33881,7 +33955,10 @@ paths:
                   message: Kind is not included in the list
                   details:
                     kind:
-                    - is not included in the list
+                    - value: crate
+                      code: inclusion
+                      message: is not included in the list
+                      specific: false
               schema:
                 "$ref": "#/components/schemas/ErrorResponse"
       requestBody:
@@ -34440,7 +34517,9 @@ paths:
                   message: Name can't be blank
                   details:
                     name:
-                    - can't be blank
+                    - code: blank
+                      message: can't be blank
+                      specific: false
               schema:
                 "$ref": "#/components/schemas/ErrorResponse"
       requestBody:
@@ -35566,9 +35645,13 @@ paths:
                   message: Name can't be blank and Slug can't be blank
                   details:
                     name:
-                    - can't be blank
+                    - code: blank
+                      message: can't be blank
+                      specific: false
                     slug:
-                    - can't be blank
+                    - code: blank
+                      message: can't be blank
+                      specific: false
               schema:
                 "$ref": "#/components/schemas/ErrorResponse"
       requestBody:
@@ -35834,7 +35917,9 @@ paths:
                   message: Name can't be blank
                   details:
                     name:
-                    - can't be blank
+                    - code: blank
+                      message: can't be blank
+                      specific: false
               schema:
                 "$ref": "#/components/schemas/ErrorResponse"
       requestBody:
@@ -38587,11 +38672,6 @@ components:
           type: object
         preference_schema:
           type: object
-        label:
-          type: string
-        description:
-          type: string
-          nullable: true
         product_ids:
           type: array
           items:
@@ -38604,8 +38684,6 @@ components:
       - commission_rate_id
       - preferences
       - preference_schema
-      - label
-      - description
       x-typelizer: true
     CompanyInvitation:
       type: object
@@ -39177,10 +39255,6 @@ components:
           type: string
         type:
           type: string
-        name:
-          type: string
-        description:
-          type: string
         preferences:
           type: object
         preference_schema:
@@ -39195,8 +39269,6 @@ components:
       - created_at
       - updated_at
       - type
-      - name
-      - description
       - preferences
       - preference_schema
       - product_ids
@@ -41105,10 +41177,6 @@ components:
           type: object
         preference_schema:
           type: object
-        label:
-          type: string
-        description:
-          type: string
       required:
       - id
       - position
@@ -41119,8 +41187,6 @@ components:
       - channel_id
       - preferences
       - preference_schema
-      - label
-      - description
       x-typelizer: true
     Order:
       type: object
@@ -41856,11 +41922,6 @@ components:
           type: array
           items:
             "$ref": "#/components/schemas/PreferenceField"
-        label:
-          type: string
-        description:
-          type: string
-          nullable: true
         markets:
           type: array
           items:
@@ -41885,8 +41946,6 @@ components:
       - price_list_id
       - preferences
       - preference_schema
-      - label
-      - description
       x-typelizer: true
     Price:
       type: object
@@ -42291,8 +42350,6 @@ components:
           type: array
           items:
             "$ref": "#/components/schemas/PreferenceField"
-        label:
-          type: string
         calculator:
           allOf:
           - "$ref": "#/components/schemas/PromotionActionCalculator"
@@ -42310,7 +42367,6 @@ components:
       - promotion_id
       - preferences
       - preference_schema
-      - label
       - calculator
       - line_items
       x-typelizer: true
@@ -42333,8 +42389,6 @@ components:
           type: array
           items:
             "$ref": "#/components/schemas/PreferenceField"
-        label:
-          type: string
         product_ids:
           type: array
           items:
@@ -42395,7 +42449,6 @@ components:
       - promotion_id
       - preferences
       - preference_schema
-      - label
       - product_ids
       - category_ids
       - customer_ids
