@@ -322,12 +322,12 @@ export function BulkVariantsTable({
   ])
 
   return (
-    <div className="overflow-x-auto">
+    <div className="min-h-0 min-w-0 flex-1 overflow-auto">
       <DataGrid<BulkVariantsRow>
         rows={rows}
         columns={columns}
         getRowId={(row) => row.id}
-        className={countryOptions ? 'min-w-[1500px]' : 'min-w-[1100px]'}
+        className={countryOptions ? 'min-w-[2000px]' : 'min-w-[1400px]'}
         aria-label={labels.gridAriaLabel}
       />
     </div>

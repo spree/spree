@@ -189,7 +189,7 @@ export function BulkVariantsDialog({ form, open, onOpenChange }: Props) {
       <DialogContent
         // Edge-to-edge minus a 3-unit gutter, same overrides as the bulk
         // price dialog (see BulkPriceEditorDialog for why each is needed).
-        className="!inset-3 !w-auto !max-w-none !translate-x-0 !translate-y-0 flex flex-col p-0"
+        className="!inset-3 !w-auto !max-w-none !translate-x-0 !translate-y-0 flex min-w-0 flex-col overflow-hidden p-0"
         style={{ maxHeight: 'none' }}
         showCloseButton={false}
       >
@@ -206,7 +206,7 @@ export function BulkVariantsDialog({ form, open, onOpenChange }: Props) {
             </Button>
           </div>
         </DialogHeader>
-        <DialogBody className="min-h-0 flex-1 overflow-auto p-3">
+        <DialogBody className="flex min-h-0 min-w-0 flex-1 flex-col overflow-hidden p-3">
           <BulkVariantsTable
             rows={rows}
             onChange={handleChange}

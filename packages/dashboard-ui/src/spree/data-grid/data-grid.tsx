@@ -130,7 +130,8 @@ function DataGridShell<T>({
   return (
     <DataGridContext.Provider value={ctx}>
       <DataGridKeyboardMount gridRef={gridRef} />
-      <div className="relative overflow-hidden rounded-md">
+      {/* Grow to the table's min-width so a scroll parent can reach every column. */}
+      <div className="relative w-max min-w-full overflow-hidden rounded-md">
         <table
           ref={gridRef}
           className={cn(
@@ -152,7 +153,7 @@ function DataGridShell<T>({
             {table.getHeaderGroups().map((group) => (
               <tr key={group.id}>
                 {group.headers.map((header) => (
-                  <th key={header.id} className="h-8 px-3 text-left font-medium">
+                  <th key={header.id} className="h-8 whitespace-nowrap px-3 text-left font-medium">
                     {header.isPlaceholder
                       ? null
                       : flexRender(header.column.columnDef.header, header.getContext())}
