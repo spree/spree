@@ -163,6 +163,87 @@ RSpec.describe Spree::Checkout::Requirements do
     end
   end
 
+  describe 'company activation requirement' do
+    let(:customer) { create(:user) }
+    let(:channel) { create(:channel, store: store, preferred_storefront_access: 'approval_required') }
+    let(:cart) { create(:cart, store: store, customer: customer, channel: channel) }
+
+    subject { described_class.new(cart).call(completion: true) }
+
+    it 'refuses completion without a company on an approval_required channel' do
+      expect(subject).to include(
+        a_hash_including(step: 'address', field: 'company', code: 'company_activation_required')
+      )
+    end
+
+    it 'passes with standing over an active company' do
+      company = create(:company, store: store)
+      create(:company_membership, company: company, customer: customer)
+      cart.reload
+
+      expect(subject).not_to include(a_hash_including(code: 'company_activation_required'))
+    end
+
+    it 'refuses when the resolved company is not policy-active' do
+      company = create(:company, store: store)
+      create(:company_membership, company: company, customer: customer)
+      cart.reload
+
+      with_company_activation_policy(inactive: [company]) do
+        expect(subject).to include(a_hash_including(code: 'company_activation_required'))
+      end
+    end
+
+    # Completion-only: the buyer browses and builds the basket freely — the
+    # storefront reads the pricing_access code to explain the state.
+    it 'stays out of the advisory cart-phase feed' do
+      expect(described_class.new(cart).call).
+        not_to include(a_hash_including(code: 'company_activation_required'))
+    end
+
+    it 'does not gate other postures' do
+      ordinary_cart = create(:cart, store: store, customer: customer)
+
+      expect(described_class.new(ordinary_cart).call(completion: true)).
+        not_to include(a_hash_including(code: 'company_activation_required'))
+    end
+
+    # A guest's actionable gate is authentication, not company registration.
+    it 'sends a guest to the sign-in gate, not the register-a-business one' do
+      guest_cart = create(:cart, store: store, customer: nil, channel: channel)
+
+      codes = described_class.new(guest_cart).call(completion: true).map { |requirement| requirement[:code] }
+
+      expect(codes).to include('guest_checkout_not_allowed')
+      expect(codes).not_to include('company_activation_required')
+    end
+
+    # An admin keying an order in is exempt — their authority is the
+    # credential, not a membership.
+    it 'does not gate an order keyed in by staff' do
+      staff_order = create(:order, store: store, customer: customer, channel: channel)
+      staff_order.update_columns(created_by_id: create(:admin_user).id)
+      staff_order.reload
+
+      expect(described_class.new(staff_order).call(completion: true)).
+        not_to include(a_hash_including(code: 'company_activation_required'))
+    end
+
+    # Two distinct remediations: a buyer whose standing already covers an
+    # active company just has to pick which node the order is for — sending
+    # them to a "register your business" page would be wrong.
+    it 'asks a multi-company buyer to choose, not to register' do
+      create(:company_membership, company: create(:company, store: store), customer: customer)
+      create(:company_membership, company: create(:company, store: store), customer: customer)
+      cart.reload
+
+      codes = subject.map { |requirement| requirement[:code] }
+
+      expect(codes).to include('company_selection_required')
+      expect(codes).not_to include('company_activation_required')
+    end
+  end
+
   describe 'fully ready order' do
     let(:order) { create(:order_with_line_items, store: store, state: 'payment') }
 

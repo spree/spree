@@ -62,6 +62,7 @@ require 'spree/testing_support/metadata'
 require 'spree/testing_support/purchase_order'
 require 'spree/testing_support/lifecycle_events'
 require 'spree/testing_support/preferences'
+require 'spree/testing_support/company_activation_policy'
 require 'spree/testing_support/tax_identifier_validators'
 require 'spree/testing_support/url_helpers'
 require 'spree/testing_support/kernel'
@@ -104,6 +105,7 @@ RSpec.configure do |config|
 
   config.include FactoryBot::Syntax::Methods
   config.include Spree::TestingSupport::Preferences
+  config.include Spree::TestingSupport::CompanyActivationPolicy
   config.include Spree::TestingSupport::Kernel
   config.include Spree::TestingSupport::Imports
 

@@ -6,6 +6,9 @@ module Spree
           class GiftCardsController < ResourceController
             prepend_before_action :require_authentication!
 
+            # The customer's own balances are a receipt surface.
+            renders_receipts!
+
             protected
 
             def set_parent

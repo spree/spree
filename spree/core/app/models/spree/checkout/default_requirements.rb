@@ -42,7 +42,24 @@ module Spree
       def completion_requirements
         errors = stock_errors + quantity_rule_errors
         errors << req('address', 'email', Spree.t(:guest_checkout_not_allowed), code: 'guest_checkout_not_allowed') if @cart.guest_checkout_disallowed?
+        # Signed-in buyers only: a guest's actionable gate is authentication
+        # (guest_checkout_disallowed? above), not company registration.
+        errors << company_requirement if @cart.customer && @cart.company_activation_missing? && !keyed_in_by_staff?
         errors
+      end
+
+      # Two distinct remediations behind one gate: a buyer whose standing
+      # covers an active company merely has to say which node the order is
+      # for (the same test that shows them prices — a nil pricing_access
+      # code), while everyone else has to register or await activation.
+      # One code for both would send the multi-company buyer to a
+      # "register your business" page.
+      def company_requirement
+        access_code = Spree.company_activation_policy.
+                      pricing_access_code(user: @cart.customer, store: @cart.store)
+        code = access_code.nil? ? 'company_selection_required' : 'company_activation_required'
+
+        req('address', 'company', Spree.t("checkout_requirements.#{code}"), code: code)
       end
 
       # Re-checked at completion because an agreement can change between the

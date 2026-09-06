@@ -106,4 +106,40 @@ RSpec.describe Spree::Catalog, '.for_buyer' do
   it 'is empty without a store' do
     expect(described_class.for_buyer(store: nil, customer: customer)).to eq([])
   end
+
+  # An inactive company has no agreements — its catalogs neither price nor
+  # narrow, whichever way the buyer reaches them
+  # (docs/plans/6.0-b2b-company-self-registration.md).
+  describe 'the activation policy' do
+    it 'resolves no catalogs for an explicitly named inactive company' do
+      with_company_activation_policy(inactive: [company]) do
+        Spree::Current.reset_catalog_memos
+
+        expect(described_class.for_buyer(store: store, customer: customer, company: company)).to be_empty
+      end
+    end
+
+    it 'does not resolve a sole standing over an inactive company' do
+      with_company_activation_policy(inactive: [company]) do
+        Spree::Current.reset_catalog_memos
+
+        expect(Spree::Company.sole_standing_for(store: store, customer: customer)).to be_nil
+        expect(described_class.for_buyer(store: store, customer: customer)).to be_empty
+      end
+    end
+
+    # A buyer whose second membership is on a not-yet-activated business is
+    # still unambiguous.
+    it 'resolves the one active membership past an inactive second one' do
+      pending_company = create(:company, store: store)
+      create(:company_membership, company: pending_company, customer: customer)
+
+      with_company_activation_policy(inactive: [pending_company]) do
+        Spree::Current.reset_catalog_memos
+
+        expect(Spree::Company.sole_standing_for(store: store, customer: customer)).to eq(company)
+        expect(described_class.for_buyer(store: store, customer: customer)).to eq([catalog])
+      end
+    end
+  end
 end

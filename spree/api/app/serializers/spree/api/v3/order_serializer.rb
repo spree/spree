@@ -80,6 +80,8 @@ module Spree
           order.po_document.blob&.byte_size if order.po_document.attached?
         end
 
+        pricing_access_attribute
+
         attributes :number, :email, :customer_note, :po_number,
                    :currency, :locale, :total_quantity, :coupon_code,
                    :fulfillment_status, :payment_status,

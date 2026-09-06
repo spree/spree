@@ -44,6 +44,70 @@ RSpec.describe 'Company Self-Service API', type: :request, swagger_doc: 'api-ref
     end
   end
 
+  path '/api/v3/store/companies' do
+    post 'Register a company' do
+      tags 'Companies'
+      consumes 'application/json'
+      produces 'application/json'
+      security [api_key: [], bearer_auth: []]
+      description <<~DESC
+        Founds a company: the authenticated customer — an existing retail customer
+        included — creates a root node and becomes its first member in one call.
+        Free-form answers from the merchant's registration form ride `registration`
+        and are stored on the company. Whether the new company may already see
+        B2B catalogs, prices and checkout is the store's activation policy's answer;
+        out of the box every company is active immediately. Rate-limited like
+        customer registration. At most one self-registered company per customer
+        per store.
+      DESC
+
+      sdk_example 'companies/create'
+
+      parameter name: 'x-spree-api-key', in: :header, type: :string, required: true
+      parameter name: 'Authorization', in: :header, type: :string, required: true
+      parameter name: :body, in: :body, schema: {
+        type: :object,
+        required: ['name'],
+        properties: {
+          name: { type: :string, example: 'Nowak Tools sp. z o.o.' },
+          registration: {
+            type: :object,
+            description: 'Free-form registration answers, stored on the company',
+            additionalProperties: true,
+            example: { vat_number: 'PL1234567890', employees: '50' }
+          }
+        }
+      }
+
+      response '201', 'company registered' do
+        let(:body) { { name: 'Nowak Tools sp. z o.o.', registration: { vat_number: 'PL1234567890' } } }
+        let(:'x-spree-api-key') { api_key.token }
+        let(:'Authorization') { "Bearer #{jwt_token}" }
+
+        run_test! do |response|
+          expect(JSON.parse(response.body)['name']).to eq('Nowak Tools sp. z o.o.')
+        end
+      end
+
+      response '422', 'already registered' do
+        let!(:membership) { create(:company_membership, company: company, customer: user) }
+        let(:body) { { name: 'Second Business' } }
+        let(:'x-spree-api-key') { api_key.token }
+        let(:'Authorization') { "Bearer #{jwt_token}" }
+
+        run_test!
+      end
+
+      response '401', 'not authenticated' do
+        let(:body) { { name: 'Nowak Tools sp. z o.o.' } }
+        let(:'x-spree-api-key') { api_key.token }
+        let(:'Authorization') { nil }
+
+        run_test!
+      end
+    end
+  end
+
   path '/api/v3/store/companies/{id}' do
     parameter name: :id, in: :path, type: :string, required: true, description: 'Company node ID (comp_...)'
 

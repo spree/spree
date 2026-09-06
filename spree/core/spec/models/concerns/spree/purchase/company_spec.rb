@@ -56,6 +56,56 @@ RSpec.shared_examples 'a company host' do
     end
   end
 
+  describe 'an explicitly named company the policy deactivates' do
+    before do
+      create(:company_membership, company: company, customer: record.customer)
+      record.update!(company: company)
+    end
+
+    # Attribution, the address book and buyer process are not commercial
+    # privileges: the named node stands. What an inactive company loses is
+    # its agreements (Catalog.for_company) and its exemptions
+    # (Tax::ResolveExemptions), gated where those are read.
+    it 'keeps the named node while inactive' do
+      with_company_activation_policy(inactive: [company]) do
+        expect(record.resolved_company).to eq(company)
+        expect(record.company_legal_entity).to eq(company)
+        expect(record.b2b?).to be(true)
+      end
+    end
+  end
+
+  describe '#company_activation_missing?' do
+    let(:approval_channel) { create(:channel, store: store, preferred_storefront_access: 'approval_required') }
+
+    it 'is false away from the approval posture' do
+      expect(record.company_activation_missing?).to be(false)
+    end
+
+    context 'on an approval_required channel' do
+      before { record.update!(channel: approval_channel) }
+
+      it 'is true when the sale resolves to no company' do
+        expect(record.company_activation_missing?).to be(true)
+      end
+
+      it 'is false once the buyer resolves to an active company' do
+        create(:company_membership, company: company, customer: record.customer)
+
+        expect(record.reload.company_activation_missing?).to be(false)
+      end
+
+      it 'is true when the resolved company is not policy-active' do
+        create(:company_membership, company: company, customer: record.customer)
+        record.update!(company: company)
+
+        with_company_activation_policy(inactive: [company]) do
+          expect(record.company_activation_missing?).to be(true)
+        end
+      end
+    end
+  end
+
   describe '#company_legal_entity' do
     it 'reads through the resolved node to its legal entity' do
       division = create(:company, store: store, kind: 'division', parent: company)
@@ -127,6 +177,17 @@ RSpec.describe Spree::Purchase::Company do
 
       expect(Spree::Order.find(order.id).resolved_company).to eq(company)
     end
+
+    # A placed order is history: deactivating the company later must not
+    # rewrite which business the sale was for.
+    it 'keeps the stamped node even when the policy deactivates it' do
+      company = create(:company, store: store)
+      order.update_columns(company_id: company.id)
+
+      with_company_activation_policy(inactive: [company]) do
+        expect(Spree::Order.find(order.id).resolved_company).to eq(company)
+      end
+    end
   end
 
   # Standing is checked where the storefront writes — the cart. An order's
@@ -193,6 +254,20 @@ RSpec.describe Spree::Purchase::Company do
       order.company = company
 
       expect(order).to be_valid
+    end
+
+    # Distinct from :invalid so a storefront can tell "not yours" from "not
+    # yet activated" — the awaiting-approval state the registration flow
+    # renders.
+    it 'refuses an inactive company with a distinct error' do
+      create(:company_membership, company: company, customer: customer)
+
+      with_company_activation_policy(inactive: [company]) do
+        cart.company = company
+
+        expect(cart).not_to be_valid
+        expect(cart.errors.details[:company]).to include(error: :not_active)
+      end
     end
   end
 

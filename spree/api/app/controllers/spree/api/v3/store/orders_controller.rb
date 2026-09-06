@@ -7,6 +7,9 @@ module Spree
           # Single order lookup — accessible via order token (guests) or JWT (authenticated users)
           before_action :find_order!
 
+          # Completed orders are receipts.
+          renders_receipts!
+
           def show
             render json: serializer_class.new(@order, params: serializer_params).to_h
           end
