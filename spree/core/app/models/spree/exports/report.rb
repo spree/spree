@@ -79,7 +79,7 @@ module Spree
       def query_must_compile_and_be_readable
         errors.add(:base, :forbidden_reporting_member) if reporting_query.unreadable_subjects(current_ability).any?
       rescue Spree::Reporting::UnknownMember, Spree::Reporting::InvalidQuery => e
-        errors.add(:search_params, e.message)
+        errors.add(:search_params, :invalid_reporting_query, message: e.message)
       rescue JSON::ParserError
         errors.add(:search_params, :invalid)
       end
