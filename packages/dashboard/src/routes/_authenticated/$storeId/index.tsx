@@ -118,11 +118,13 @@ function DashboardPage() {
     ? resolveMetrics(CHART_METRICS, schema)
     : CHART_METRICS.map((name) => ({ name, label: name, format: 'decimal', derived: false }))
 
+  // No `placeholderData`: it belongs to the channel that was selected before,
+  // and showing another channel's counts under this one's name is worse than
+  // showing the skeleton for a moment.
   const { data: operations } = useQuery({
     queryKey: useResourceKey('dashboard', 'operations', channelId),
     queryFn: () => adminClient.dashboard.operations({ channel_id: channelParam }),
     staleTime: 5 * 60 * 1000,
-    placeholderData: (previousData) => previousData,
   })
 
   // A role without `read_reports` (or order data) gets a 403 here — say so
@@ -191,6 +193,7 @@ function DashboardPage() {
       <div className="grid gap-6 lg:grid-cols-5">
         <OperationsCard
           data={operations}
+          channelId={channelParam}
           className={rankingTabs.length > 0 ? 'lg:col-span-2' : 'lg:col-span-5'}
         />
         {rankingTabs.length > 0 && <RankingsCard scope={scope} tabs={rankingTabs} />}
@@ -253,9 +256,12 @@ const OPERATIONS_ROWS: Array<{
 function OperationsCard({
   data,
   className,
+  channelId,
 }: {
   data: DashboardOperations | undefined
   className: string
+  /** The screen's channel, or undefined for all channels. */
+  channelId: string | undefined
 }) {
   const { t } = useTranslation()
   const { storeId } = Route.useParams()
@@ -270,6 +276,15 @@ function OperationsCard({
         <div className="flex flex-col">
           {OPERATIONS_ROWS.map(({ key, icon: Icon, link }) => {
             const count = data?.[key]
+            // Order counts are channel-scoped, so their lists must be too;
+            // stock counts are store-wide and take no channel filter.
+            const filters =
+              link && channelId && link.to === '/$storeId/orders'
+                ? [
+                    ...link.filters,
+                    { id: 'home-channel', field: 'channel_id', operator: 'eq', value: channelId },
+                  ]
+                : link?.filters
             const content = (
               <>
                 <span className="flex size-8 shrink-0 items-center justify-center rounded-md border bg-muted/50">
@@ -298,7 +313,7 @@ function OperationsCard({
                   key={key}
                   to={link.to}
                   params={{ storeId }}
-                  search={{ filters: link.filters }}
+                  search={{ filters }}
                   className={cn(OPERATIONS_ROW_CLASS, 'hover:bg-muted/25')}
                 >
                   {content}

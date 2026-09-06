@@ -66,6 +66,8 @@ module Spree
 
       def query_params
         raw = search_params.is_a?(String) ? JSON.parse(search_params) : (search_params || {})
+        raise Spree::Reporting::InvalidQuery, 'search_params must be an object' unless raw.is_a?(Hash)
+
         raw['query'] || raw[:query] || {}
       end
 

@@ -8,7 +8,7 @@ import { useTranslation } from 'react-i18next'
  * baseline (`growth === null`).
  */
 export function GrowthBadge({ growth }: { growth: number | null | undefined }) {
-  const { t } = useTranslation()
+  const { t, i18n } = useTranslation()
 
   if (growth === null || growth === undefined) {
     return (
@@ -18,7 +18,7 @@ export function GrowthBadge({ growth }: { growth: number | null | undefined }) {
     )
   }
 
-  const formatted = `${growth > 0 ? '+' : ''}${growth.toLocaleString()}%`
+  const formatted = `${growth > 0 ? '+' : ''}${growth.toLocaleString(i18n.language)}%`
 
   if (growth === 0) {
     return (

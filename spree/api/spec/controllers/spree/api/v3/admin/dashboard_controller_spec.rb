@@ -89,4 +89,10 @@ RSpec.describe Spree::Api::V3::Admin::DashboardController, type: :controller do
       end
     end
   end
+
+  it 'ignores a non-scalar low_stock_threshold instead of raising' do
+    get :operations, params: { low_stock_threshold: ['1'] }, as: :json
+
+    expect(response).to have_http_status(:ok)
+  end
 end
