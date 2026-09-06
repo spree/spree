@@ -250,6 +250,19 @@ RSpec.describe 'Spree::Variants review workflows' do
       expect(offer.reload).to be_proposed
     end
 
+    # The offer never entered review, so `status_was` names no review status.
+    # What refuses the write is the row being a seller's offer at all — an
+    # operator flipping a draft offer straight to `active` would put it on
+    # sale with no reviewer recorded and no submission row.
+    it 'refuses a status write on a draft offer that never entered review' do
+      expect(offer).to be_draft
+
+      result = Spree.variant_update_workflow.call(variant: offer, attributes: { status: 'active' })
+
+      expect(result).not_to be_success
+      expect(offer.reload).to be_draft
+    end
+
     it 'allows an ordinary edit while in review' do
       Spree.variant_propose_workflow.call(variant: offer)
 
