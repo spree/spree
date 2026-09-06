@@ -178,6 +178,10 @@ export function OfferPage({ mode }: { mode: 'new' | 'edit' }) {
                       id: level.id,
                       stock_location_id: level.stock_location_id,
                       count_on_hand: level.count_on_hand ?? 0,
+                      // The grid renders a backorder toggle per warehouse, so
+                      // dropping this would blank a seller's setting on load
+                      // and again on save.
+                      backorderable: level.backorderable ?? false,
                     },
                   ]
                 : [],
@@ -227,6 +231,7 @@ export function OfferPage({ mode }: { mode: 'new' | 'edit' }) {
                   id: level.id,
                   stock_location_id: level.stock_location_id,
                   count_on_hand: level.count_on_hand ?? 0,
+                  backorderable: level.backorderable ?? false,
                 },
               ]
             : [],

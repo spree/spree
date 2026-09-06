@@ -151,7 +151,9 @@ module Spree
 
       # Ties broken by id, because several products routinely share a minimum
       # position and ordering by position alone leaves their relative order to
-      # whatever the database returns — stable on SQLite, not on PostgreSQL.
+      # whatever the database returns — stable on SQLite, not on PostgreSQL,
+      # which is why the tie only ever surfaced as an intermittent CI failure
+      # rather than a local one.
       scope :ascend_by_taxons_min_position, ->(taxon_ids) {
         min_position_sql = "MIN(#{Spree::ProductCategory.table_name}.position)"
 
