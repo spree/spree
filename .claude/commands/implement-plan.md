@@ -1,10 +1,10 @@
 ---
-description: Deliver a docs/plans plan end to end — settle open questions, implement with the changed specs green locally and the full suite on CI, two code reviews plus a simplify pass, running QA environment with seeded data, schema review, and an open, monitored pull request on spree/spree.
+description: Deliver a docs/plans plan end to end — settle open questions, implement with the changed specs green locally and the full suite on CI, two code reviews plus a simplify pass, a migrated and seeded QA environment ready to start, schema review, and an open, monitored pull request on spree/spree.
 argument-hint: <plan filename or slug>
 ---
 
 Implement a plan from `docs/plans/` end to end — from reading it to an open,
-monitored pull request on `spree/spree` with a running environment for manual QA.
+monitored pull request on `spree/spree` with an environment prepared for manual QA.
 
 Plan: $ARGUMENTS (a plan filename or slug; if empty, list the plans in
 `docs/plans/` whose status shows unbuilt work and ask which one)
@@ -12,9 +12,11 @@ Plan: $ARGUMENTS (a plan filename or slug; if empty, list the plans in
 ## How this run works
 
 The goal is to **deliver the plan autonomously and hand the user a finished
-result**: a working development server with seeded data, a reviewed and tested
-branch, an open pull request, and QA instructions — all in one run, without the
-user steering it.
+result**: a migrated and seeded worktree the user can start with one command,
+a reviewed and tested branch, an open pull request, and QA instructions — all
+in one run, without the user steering it. Do not leave servers running: the
+user starts them when they sit down to test, and an idle Rails, Vite and Next
+stack per worktree is what exhausts the machine when several runs are active.
 
 - Stage 2 (open questions) is the **only** point where you stop to ask. After
   the answers are recorded, run every remaining stage without checking in.
@@ -117,9 +119,10 @@ Run `/code-review` again on the result. Fix what it finds. Done when a review
 round comes back clean or with findings you have explicitly decided not to act
 on (and can justify).
 
-## 7. Set up the application for manual QA
+## 7. Prepare the application for manual QA
 
-Bring up this worktree's environment so the user can try the feature by hand:
+Get this worktree's environment ready so the user can start it and try the
+feature by hand. Prepare it; do not leave it running:
 
 - If the change added migrations: `cd server && bin/rails
   spree:install:migrations db:migrate`, then `pnpm wt:template` so future
@@ -130,11 +133,13 @@ Bring up this worktree's environment so the user can try the feature by hand:
   a price list, a delivery method) — create it through the Admin API or a
   `bin/rails runner` script so the QA path starts from real records, and note
   what you created.
-- Start Rails (`pnpm wt:dev`) and the dashboard (`pnpm wt:dashboard`) as
-  background commands. Start the storefront (`pnpm wt:storefront`) or the
-  seller panel (`pnpm wt:seller`) too when the plan touches them.
-- Verify each server answers before reporting it: `curl -sk <rails url>/up`
-  and a `200` from the dashboard URL. A URL you did not check is not ready.
+- Prove the environment boots without leaving a server behind: `cd server &&
+  bin/rails db:abort_if_pending_migrations` and a `bin/rails runner` that reads
+  one of the records you seeded. A worktree you did not check is not ready.
+- Do not start `pnpm wt:dev`, `wt:dashboard`, `wt:storefront` or `wt:seller`
+  for the handover. If you started one earlier to check something in a
+  browser, stop it before moving on; the user starts the servers when they
+  come to test.
 
 ## 8. Schema review
 
@@ -147,9 +152,10 @@ useful thing for a reviewer to have verified.
 
 Print, in one block the user can act on directly:
 
-- **URLs** — Rails API, dashboard, and storefront / seller panel if started
-  (`scripts/worktree/lib.sh` has `rails_url`, `dashboard_url`,
-  `storefront_url`, `seller_url`; the dev scripts print them at boot). Also
+- **How to start it** — the exact commands for this worktree (`pnpm wt:dev`,
+  `pnpm wt:dashboard`, plus `pnpm wt:storefront` / `pnpm wt:seller` when the
+  plan touches them) and the URLs they will serve (`scripts/worktree/lib.sh`
+  has `rails_url`, `dashboard_url`, `storefront_url`, `seller_url`). Also
   Mailpit (<http://localhost:8025>) when the feature sends email.
 - **Credentials** — admin `spree@example.com` / `spree123` unless the seed was
   run with other values; any seller, customer or company account you created
