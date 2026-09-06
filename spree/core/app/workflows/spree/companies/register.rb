@@ -80,7 +80,7 @@ module Spree
       end
 
       def refuse_second_founding!
-        reject!(Spree.t('company_registration.already_registered'))
+        reject!(:already_registered, message: Spree.t('company_registration.already_registered'))
       end
 
       def build_company
