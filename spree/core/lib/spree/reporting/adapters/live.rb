@@ -138,7 +138,14 @@ module Spree
         # identifier (see #qualified_column) and the values bind as parameters,
         # so no request data reaches the statement as text.
         def in_predicate(column, values)
-          Arel::Nodes::SqlLiteral.new(column).in(values)
+          node = Arel::Nodes::SqlLiteral.new(column)
+          present, null = Array(values).partition { |value| !value.nil? }
+          # `IN (NULL)` never matches, so a NULL group would silently drop out
+          # of the comparison period and report a zero previous value.
+          return node.in(present) if null.empty?
+          return node.eq(nil) if present.empty?
+
+          node.in(present).or(node.eq(nil))
         end
 
         # Dimension joins are declared from the dimension's own base. Reaching
@@ -375,14 +382,17 @@ module Spree
         end
 
         # Both periods span the same number of days, so their bucket counts
-        # differ by at most one partial edge; pairing from the end keeps the
-        # most recent buckets — the ones a merchant reads first — aligned.
+        # differ by at most one partial edge. Pairing runs from the start —
+        # the nth bucket of this period with the nth of the previous — because
+        # the ranges share a start offset: a range beginning mid-month pairs
+        # its partial first bucket with the previous period's partial first
+        # bucket. A bucket past the end of the previous list has no
+        # counterpart and pairs with nothing rather than wrapping around.
         def bucket_pairs(grain)
           current = expected_buckets(query.time_range, grain)
           previous = expected_buckets(query.previous_time_range, grain)
-          offset = previous.size - current.size
 
-          current.each_with_index.to_h { |bucket, position| [bucket, previous[position + offset]] }
+          current.each_with_index.to_h { |bucket, position| [bucket, previous[position]] }
         end
 
         # SQL already ordered/limited the pushdown case; this re-sort is a

@@ -24,6 +24,12 @@ RSpec.describe Spree::Exports::Report, type: :model do
     expect(rows.last.last.to_i).to eq(1)
   end
 
+  it 'refuses search_params that are not an object' do
+    export = described_class.new(store: store, user: admin, search_params: '[]')
+    expect(export).not_to be_valid
+    expect(export.errors[:search_params]).to be_present
+  end
+
   it 'refuses at create a query that does not compile' do
     export = described_class.new(store: store, user: admin, search_params: { query: { 'metrics' => %w[nope] } })
     expect(export).not_to be_valid

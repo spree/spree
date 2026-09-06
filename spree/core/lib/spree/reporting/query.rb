@@ -251,9 +251,13 @@ module Spree
       end
 
       def normalize_limit(value)
-        return value.to_i.clamp(1, MAX_LIMIT) if value.present?
+        return DEFAULT_VALUE_LIMIT if value.blank? && time_dimension.nil? && dimensions.any?
+        return if value.blank?
 
-        DEFAULT_VALUE_LIMIT if time_dimension.nil? && dimensions.any?
+        limit = Integer(value, exception: false)
+        raise InvalidQuery, "limit must be an integer between 1 and #{MAX_LIMIT}" if limit.nil? || limit < 1
+
+        limit.clamp(1, MAX_LIMIT)
       end
 
       # :orders-based metrics cannot be grouped or filtered by :line_items

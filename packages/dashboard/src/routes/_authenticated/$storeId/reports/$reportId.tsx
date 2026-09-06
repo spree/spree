@@ -80,8 +80,12 @@ function ReportDetail({
       confirmLabel: t('admin.actions.delete'),
     })
     if (!ok) return
-    await remove.mutateAsync(report.id)
-    navigate({ to: '/$storeId/reports', params: { storeId } })
+    // The mutation hook surfaces the error; stay on the report if it failed.
+    const deleted = await remove.mutateAsync(report.id).then(
+      () => true,
+      () => false,
+    )
+    if (deleted) navigate({ to: '/$storeId/reports', params: { storeId } })
   }
 
   return (

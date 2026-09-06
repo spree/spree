@@ -55,6 +55,13 @@ RSpec.describe Spree::Reporting::Query do
       expect { run(metrics: %w[orders_count], time_range: 'last_month') }.to raise_error(Spree::Reporting::InvalidQuery)
     end
 
+    it 'refuses a limit that is not a positive integer' do
+      expect { run(metrics: %w[orders_count], dimensions: %w[channel], limit: 'abc') }
+        .to raise_error(Spree::Reporting::InvalidQuery, /limit/)
+      expect { run(metrics: %w[orders_count], dimensions: %w[channel], limit: 0) }
+        .to raise_error(Spree::Reporting::InvalidQuery, /limit/)
+    end
+
     it 'refuses partial times instead of filling in today' do
       expect { run(metrics: %w[orders_count], time_range: { since: '09:00' }) }
         .to raise_error(Spree::Reporting::InvalidQuery, /ISO 8601/)
@@ -385,6 +392,27 @@ RSpec.describe Spree::Reporting::Query do
         expect(september[:metrics][:orders_count][:value]).to eq(1)
         expect(september[:metrics][:orders_count][:previous]).to eq(august_orders)
         expect(august_orders).to be_positive
+      end
+    end
+
+    context 'when the two periods yield different bucket counts' do
+      # Aug 2 – Aug 31 spans six week buckets (the first starts Jul 27, before
+      # the range); the previous period, Jul 3 – Aug 1, spans five. Pairing
+      # runs from the start, and the trailing bucket with no counterpart must
+      # not wrap around to the newest previous one.
+      let!(:recent_order) { create(:completed_order_with_totals, store: store, completed_at: '2026-08-04 12:00'.in_time_zone) }
+      let!(:previous_order) { create(:completed_order_with_totals, store: store, completed_at: '2026-07-07 12:00'.in_time_zone) }
+
+      it 'pairs from the start and leaves the trailing bucket unpaired' do
+        result = run(metrics: %w[orders_count], dimensions: [{ name: 'completed_at', grain: 'week' }],
+                     compare: 'previous_period', time_range: { since: '2026-08-02', until: '2026-08-31' })
+
+        paired = result.rows.find { |row| row[:dimensions][:completed_at] == '2026-08-03' }
+        expect(paired[:metrics][:orders_count][:value]).to eq(1)
+        expect(paired[:metrics][:orders_count][:previous]).to eq(1)
+
+        trailing = result.rows.find { |row| row[:dimensions][:completed_at] == '2026-08-31' }
+        expect(trailing[:metrics][:orders_count][:previous]).to eq(0)
       end
     end
 
