@@ -331,6 +331,8 @@ Spree::Core::Engine.add_routes do
           end
           collection do
             post :bulk_status_update
+            post :bulk_open_to_sellers
+            post :bulk_close_to_sellers
             post :bulk_add_to_categories
             post :bulk_remove_from_categories
             post :bulk_add_to_collections
@@ -342,6 +344,12 @@ Spree::Core::Engine.add_routes do
             delete :bulk_destroy
           end
           resources :variants, controller: 'products/variants' do
+            member do
+              # Closing a review a seller opened on one offer
+              # (docs/plans/6.0-seller-master-catalog-listings.md).
+              patch :approve
+              patch :reject
+            end
             resources :media, controller: 'media', only: [:index, :create, :update, :destroy]
           end
           resources :media, controller: 'media', only: [:index, :create, :update, :destroy]
@@ -874,6 +882,27 @@ Spree::Core::Engine.add_routes do
           end
         end
 
+
+        # The marketplace's own catalog, for a seller looking for something to
+        # sell. Read only, and only the products the operator has opened
+        # (docs/plans/6.0-seller-master-catalog-listings.md).
+        resources :master_products, only: [:index, :show] do
+          # Creating an offer names the product it is against; everything
+          # afterwards addresses the offer itself, which is why the rest of
+          # the routes are shallow.
+          resources :variants, only: [:index, :create], controller: 'variants'
+        end
+
+        # This seller's offers, across every master product. Status moves are
+        # actions rather than an attribute for the same reason a product's
+        # are: putting an offer on sale is the marketplace's call.
+        resources :variants, only: [:index, :show, :update, :destroy] do
+          member do
+            patch :submit
+            patch :draft
+            patch :archive
+          end
+        end
 
         # What this seller has sold. Cancelling is a member action because it
         # is a workflow with its own arguments, and fulfilling is nested: a

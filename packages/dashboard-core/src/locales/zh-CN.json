@@ -798,28 +798,6 @@
           "label": "HS 编码",
           "placeholder": "例如 640411"
         },
-        "preorder_ships_at": {
-          "help": "你预计发出预购订单的时间。作为交付承诺向顾客展示；该日期过后预购结束。",
-          "label": "发货时间",
-          "placeholder": "选择日期"
-        },
-        "preorderable": {
-          "help": "在有货之前销售此变体。用缺货下单上限来限制数量，将到货数量填入库存，或留空表示无限量。",
-          "label": "可预购"
-        },
-        "sku": {
-          "label": "SKU",
-          "placeholder": "PRODUCT-RED-S"
-        },
-        "weight": {
-          "label": "重量"
-        },
-        "weight_unit": {
-          "label": "单位"
-        },
-        "width": {
-          "label": "宽度"
-        },
         "minimum_order_quantity": {
           "label": "最小起订量",
           "placeholder": "无最小值",
@@ -830,6 +808,15 @@
           "placeholder": "无倍数",
           "help": "在最小起订量之上的每一档增量。留空表示不限数量。"
         },
+        "preorder_ships_at": {
+          "help": "你预计发出预购订单的时间。作为交付承诺向顾客展示；该日期过后预购结束。",
+          "label": "发货时间",
+          "placeholder": "选择日期"
+        },
+        "preorderable": {
+          "help": "在有货之前销售此变体。用缺货下单上限来限制数量，将到货数量填入库存，或留空表示无限量。",
+          "label": "可预购"
+        },
         "purchase_unit": {
           "label": "销售单位",
           "options": {
@@ -837,10 +824,26 @@
             "carton": "箱"
           }
         },
+        "quantity_rule_invalid": "请输入大于零的整数，或留空。",
+        "sku": {
+          "label": "SKU",
+          "placeholder": "PRODUCT-RED-S"
+        },
+        "track_inventory": {
+          "label": "跟踪库存"
+        },
         "units_per_carton": {
           "label": "每箱件数"
         },
-        "quantity_rule_invalid": "请输入大于零的整数，或留空。"
+        "weight": {
+          "label": "重量"
+        },
+        "weight_unit": {
+          "label": "单位"
+        },
+        "width": {
+          "label": "宽度"
+        }
       },
       "minimum_order_quantity": {
         "label": "最小起订量",

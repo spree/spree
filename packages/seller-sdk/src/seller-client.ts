@@ -27,6 +27,7 @@ import type {
   StockLocation,
   TaxIdentifier,
   TeamMember,
+  Variant,
 } from './types'
 
 /**
@@ -291,8 +292,8 @@ export class SellerClient {
   /**
    * The seller's own catalog — products they own outright. Every call is
    * rooted in the seller server-side, so an id belonging to another seller
-   * is a 404. Variants listed against shared master-catalog products are a
-   * separate surface.
+   * is a 404. Offers listed against the marketplace's shared master-catalog
+   * products are `masterProducts` and `variants` below.
    */
   readonly products = {
     list: (
@@ -368,6 +369,106 @@ export class SellerClient {
       options?: RequestOptions,
     ): Promise<BulkProductResult> =>
       this.request('DELETE', '/products/bulk_destroy', { ...options, body: params }),
+  }
+
+  /**
+   * The marketplace's shared catalog — the products a seller can list their
+   * own offer against.
+   *
+   * Read only, and only what the operator has opened: a product is closed to
+   * sellers until they say otherwise. Serialized exactly as the storefront
+   * sees it, so a seller compares rival offers on price, seller and stock and
+   * never sees a rival's costs or warehouses.
+   */
+  readonly masterProducts = {
+    list: (
+      params?: ListParams & Record<string, unknown>,
+      options?: RequestOptions,
+    ): Promise<PaginatedResponse<Product>> =>
+      this.request<PaginatedResponse<Product>>('GET', '/master_products', {
+        ...options,
+        params: params ? transformListParams(params) : undefined,
+      }),
+
+    /**
+     * @param expand associations to include — the offer form asks for
+     *   `option_types,variants`, which is the axes it must fill in and the
+     *   offers already on the product.
+     */
+    get: (id: string, expand?: string, options?: RequestOptions): Promise<Product> =>
+      this.request<Product>('GET', `/master_products/${id}`, {
+        ...options,
+        params: expand ? { expand } : undefined,
+      }),
+  }
+
+  /**
+   * This seller's offers — the rows they list against the marketplace's own
+   * products.
+   *
+   * Rooted in the seller server-side, so a rival's offer on the same product
+   * is a 404. Creating one names the product; everything after that addresses
+   * the offer itself.
+   */
+  readonly variants = {
+    /** Every offer this seller holds. `expand=product` names what each is on. */
+    list: (
+      params?: ListParams & Record<string, unknown>,
+      options?: RequestOptions,
+    ): Promise<PaginatedResponse<Variant>> =>
+      this.request<PaginatedResponse<Variant>>('GET', '/variants', {
+        ...options,
+        params: params ? transformListParams(params) : undefined,
+      }),
+
+    /** This seller's offers on one master product. */
+    listFor: (
+      masterProductId: string,
+      params?: ListParams & Record<string, unknown>,
+      options?: RequestOptions,
+    ): Promise<PaginatedResponse<Variant>> =>
+      this.request<PaginatedResponse<Variant>>(
+        'GET',
+        `/master_products/${masterProductId}/variants`,
+        { ...options, params: params ? transformListParams(params) : undefined },
+      ),
+
+    get: (id: string, expand?: string, options?: RequestOptions): Promise<Variant> =>
+      this.request<Variant>('GET', `/variants/${id}`, {
+        ...options,
+        params: expand ? { expand } : undefined,
+      }),
+
+    /**
+     * List an offer against a master product. It opens as a draft — going on
+     * sale is the marketplace's decision, asked for with `submit`.
+     */
+    create: (
+      masterProductId: string,
+      params: OfferParams,
+      options?: RequestOptions,
+    ): Promise<Variant> =>
+      this.request<Variant>('POST', `/master_products/${masterProductId}/variants`, {
+        ...options,
+        body: params,
+      }),
+
+    update: (id: string, params: OfferParams, options?: RequestOptions): Promise<Variant> =>
+      this.request<Variant>('PATCH', `/variants/${id}`, { ...options, body: params }),
+
+    delete: (id: string, options?: RequestOptions): Promise<void> =>
+      this.request<void>('DELETE', `/variants/${id}`, options),
+
+    /** Ask the marketplace to put this offer on sale. */
+    submit: (id: string, options?: RequestOptions): Promise<Variant> =>
+      this.request<Variant>('PATCH', `/variants/${id}/submit`, options),
+
+    /** Take an offer back down while it is worked on. */
+    draft: (id: string, options?: RequestOptions): Promise<Variant> =>
+      this.request<Variant>('PATCH', `/variants/${id}/draft`, options),
+
+    archive: (id: string, options?: RequestOptions): Promise<Variant> =>
+      this.request<Variant>('PATCH', `/variants/${id}/archive`, options),
   }
 
   /**
@@ -1375,6 +1476,63 @@ export interface SellerExportCreateParams {
   results_url?: string
 }
 
+/**
+ * What a seller sends when listing or editing an offer against one of the
+ * marketplace's master-catalog products.
+ *
+ * Narrower than a product's own variants: there is no `seller_id` (the offer
+ * is yours by virtue of who is asking), no `status` (going on sale is the
+ * marketplace's decision, asked for with `submit`), no `tax_category_id`
+ * (marketplace configuration) and no `position` (the order of a shared
+ * product's rows is the operator's).
+ */
+export interface OfferParams {
+  sku?: string
+  barcode?: string | null
+  cost_price?: string | number | null
+  cost_currency?: string | null
+  weight?: string | number | null
+  height?: string | number | null
+  width?: string | number | null
+  depth?: string | number | null
+  weight_unit?: string | null
+  dimensions_unit?: string | null
+  hs_code?: string | null
+  country_of_origin?: string | null
+  customs_description?: string | null
+  minimum_order_quantity?: number | null
+  order_multiple?: number | null
+  purchase_unit?: string | null
+  units_per_carton?: number | null
+  track_inventory?: boolean
+  preorderable?: boolean
+  preorder_ships_at?: string | null
+  backorder_limit?: number | null
+  /** Blank ships the offer the way the master product does. */
+  delivery_profile_id?: string | null
+  metadata?: Record<string, unknown>
+  /**
+   * One entry per option type the master product is sold by, each naming a
+   * value the product already carries. A missing axis or an unknown value is
+   * refused — a seller picks from the marketplace's vocabulary rather than
+   * extending it.
+   */
+  options?: Array<{ name: string; value: string }>
+  /** Omit `currency` and the price is recorded in the store's. */
+  prices?: Array<{
+    amount: string | number
+    compare_at_amount?: string | number
+    currency?: string
+  }>
+  /** Only this seller's own warehouses; others are ignored. */
+  stock_levels?: Array<{
+    id?: string
+    stock_location_id?: string
+    count_on_hand?: number
+    backorderable?: boolean
+  }>
+}
+
 /** What a seller sends when recording a registration. */
 export interface SellerTaxIdentifierParams {
   kind: string
@@ -1474,6 +1632,12 @@ export interface ProductParams {
     id?: string
     sku?: string
     barcode?: string | null
+    /**
+     * How this row ships. Meaningful only on an offer against a
+     * master-catalog product; on a product the seller owns, every variant
+     * ships as the product does and the write is ignored.
+     */
+    delivery_profile_id?: string | null
     cost_price?: string | number | null
     cost_currency?: string | null
     weight?: string | number | null

@@ -4,7 +4,28 @@ module Spree
       module Admin
         module Products
           class VariantsController < ResourceController
+            include Spree::Api::V3::StatusActions
+
             scoped_resource :products
+
+            # PATCH /api/v3/admin/products/:product_id/variants/:id/approve
+            #
+            # Accepting a seller's offer on a master product, putting it on
+            # sale (docs/plans/6.0-seller-master-catalog-listings.md).
+            def approve
+              set_status_resource
+              run_status_workflow(Spree.variant_approve_workflow,
+                                  reviewer: try_spree_current_user, note: params[:note])
+            end
+
+            # PATCH /api/v3/admin/products/:product_id/variants/:id/reject
+            #
+            # Turning an offer down. The reason goes back to the seller.
+            def reject
+              set_status_resource
+              run_status_workflow(Spree.variant_reject_workflow,
+                                  reviewer: try_spree_current_user, reason: params[:reason])
+            end
 
             protected
 
@@ -25,8 +46,11 @@ module Spree
               :variants
             end
 
+            # `submissions` rides along because the serializer's review expand
+            # reads the latest row per variant — without it a review queue
+            # costs one query per offer.
             def scope_includes
-              [:prices, stock_levels: :stock_location]
+              [:prices, :submissions, { stock_levels: :stock_location }]
             end
 
             def create_workflow
@@ -45,9 +69,14 @@ module Spree
               { product: @parent, attributes: permitted_params }
             end
 
+
             def permitted_params
               params.permit(
                 *model_additional_permitted_attributes,
+                # An operator's own rows move status freely; a row in review
+                # is refused by Variants::Update, so a decision always runs
+                # through approve/reject and records who made it.
+                :status,
                 :sku, :barcode,
                 :cost_price, :cost_currency,
                 :weight, :height, :width, :depth, :weight_unit, :dimensions_unit,
@@ -58,8 +87,9 @@ module Spree
                 options: [:name, :value],
                 prices: [:amount, :compare_at_amount, :currency],
                 stock_levels: [:stock_location_id, :count_on_hand, :backorderable]
-              )
+              ).tap { |attrs| attrs.delete(:status) if review_status?(attrs[:status]) }
             end
+
           end
         end
       end

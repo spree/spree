@@ -42,7 +42,8 @@ module Spree
     MEMOIZED_METHODS = %w[total_on_hand category_and_ancestors
                           default_variant_id tax_category default_variant variant_for_images
                           primary_category buy_box_variants resolved_delivery_profile
-                          purchasable? in_stock? backorderable? digital?]
+                          purchasable? in_stock? backorderable? digital?
+                          visible_variants sellable_variants]
 
     # Statuses an operator sets directly. `bulk_status_update` validates
     # against this, which is why the review statuses are not in it: reaching
@@ -92,6 +93,11 @@ module Spree
     #
     # @return [Spree::ProductSubmission, nil]
     def latest_submission
+      # Reads the loaded association when a caller preloaded it — otherwise
+      # `latest_first.first` issues its own query per record, which is one
+      # query per row on any list that expands the review.
+      return submissions.max_by { |submission| [submission.created_at, submission.id] } if submissions.loaded?
+
       submissions.latest_first.first
     end
 
@@ -205,7 +211,6 @@ module Spree
 
     belongs_to :default_variant, class_name: 'Spree::Variant', optional: true, autosave: true
 
-    has_many :prices, through: :variants
 
     has_many :stock_levels, through: :variants
 
@@ -217,14 +222,46 @@ module Spree
 
     # The review trail for a seller's listing. Append-only: the latest row is
     # the live one (docs/plans/6.0-seller-product-submission.md).
-    has_many :submissions, class_name: 'Spree::ProductSubmission', dependent: :destroy, inverse_of: :product
+    #
+    # The product's OWN trail: rows naming a variant are the review of one
+    # seller's offer on this product, which is a different subject with a
+    # different decision, and mixing them would make `latest_submission`
+    # answer about whichever happened last
+    # (docs/plans/6.0-seller-master-catalog-listings.md, Decision 3).
+    # Deletion is `all_submissions`' job, so this one does not cascade: two
+    # destroying associations over overlapping rows would delete the same row
+    # twice.
+    has_many :submissions, -> { where(variant_id: nil) },
+             class_name: 'Spree::ProductSubmission', dependent: nil, inverse_of: :product
+
+    # Every review row this product carries, its own and its offers'. What
+    # `dependent: :destroy` has to reach — the narrowed association above
+    # would leave an offer's trail behind as orphan rows.
+    has_many :all_submissions, class_name: 'Spree::ProductSubmission',
+                               dependent: :destroy, inverse_of: :product
 
     has_many :variant_images, -> { order(:position) }, source: :images, through: :variants
 
     belongs_to :primary_media, class_name: 'Spree::Media', optional: true, foreign_key: :primary_media_id
 
-    has_many :option_value_variants, class_name: 'Spree::OptionValueVariant', through: :variants
-    has_many :option_values, class_name: 'Spree::OptionValue', through: :variants
+    # The variants a shopper may see: everything but the rows still in review,
+    # sent back or taken down. `variants` stays the operator's view — they
+    # write every row on a master product, including the ones awaiting their
+    # decision (docs/plans/6.0-seller-master-catalog-listings.md, Decision 3).
+    #
+    # An association rather than a method so it can be preloaded and chained
+    # in SQL; the rollups a customer sees are routed through it below.
+    has_many :listed_variants, -> { listed.order(:position) },
+             class_name: 'Spree::Variant', inverse_of: :product, dependent: nil
+
+    # Through the listed rows, like the option values below: a shopper reads
+    # this to learn whether a product is on sale, and an offer nobody has
+    # approved must not be what puts a sale badge on it
+    # (docs/plans/6.0-seller-master-catalog-listings.md, Decision 3).
+    has_many :prices, through: :listed_variants
+
+    has_many :option_value_variants, class_name: 'Spree::OptionValueVariant', through: :listed_variants
+    has_many :option_values, class_name: 'Spree::OptionValue', through: :listed_variants
 
     has_many :digital_assets, through: :variants, class_name: 'Spree::DigitalAsset'
     has_many :digitals, through: :variants, class_name: 'Spree::DigitalAsset', source: :digital_assets, deprecated: true
@@ -266,6 +303,17 @@ module Spree
     # operator's own catalog, which on a store with no sellers is everything.
     # The same answer `Seller#products` gives, as a scope a bulk read can chain.
     scope :for_seller, ->(seller) { where(seller_id: seller.respond_to?(:id) ? seller.id : seller) }
+    # Products a seller may list an offer against. Closed by default, so this
+    # is the operator's explicit choice rather than everything they sell
+    # (docs/plans/6.0-seller-master-catalog-listings.md, Decision 2).
+    scope :open_to_sellers, -> { where(open_to_sellers: true) }
+    # Products carrying at least one offer awaiting a decision — the review
+    # queue, as a filter on the catalog rather than a page of its own.
+    scope :with_proposed_offers, lambda {
+      where(Spree::Variant.where(Spree::Variant.arel_table[:product_id].eq(arel_table[:id])).
+              where(status: 'proposed', deleted_at: nil).
+              where.not(seller_id: nil).arel.exists)
+    }
     scope :not_archived, -> { where.not(status: 'archived') }
     scope :on_sale, lambda { |currency = nil|
                       currency ||= Spree::Store.default.default_currency
@@ -366,10 +414,12 @@ module Spree
       super(manual_ids | collections.automatic.ids)
     end
 
-    self.whitelisted_ransackable_attributes = %w[description name slug discontinue_on status available_on created_at updated_at seller_id]
+    self.whitelisted_ransackable_attributes = %w[description name slug discontinue_on status available_on created_at updated_at seller_id
+                                                 open_to_sellers]
     self.whitelisted_ransackable_associations = %w[categories collections store channels variants default_variant tags labels
                                                    product_type product_categories option_types seller]
     self.whitelisted_ransackable_scopes = %w[not_discontinued search_by_name in_taxon in_category in_categories in_collection price_between
+                                             open_to_sellers with_proposed_offers
                                              price_lte price_gte
                                              search multi_search in_stock out_of_stock with_option_value_ids
 
@@ -488,13 +538,31 @@ module Spree
       sellable_variants.any?(&:backorderable?)
     end
 
-    # The variants a shopper could actually buy from: every one whose seller
-    # is selling today, first-party included. Reads the loaded association so
-    # a serialized list resolves it from variants it already holds.
+    # The variants a shopper could actually buy from: every one that is
+    # active and whose seller is selling today, first-party included. Reads
+    # the loaded association so a serialized list resolves it from variants it
+    # already holds.
+    #
+    # Status first: an offer still in review, sent back or taken down is not
+    # something a shopper may buy from, whatever its seller's standing
+    # (docs/plans/6.0-seller-master-catalog-listings.md, Decision 3).
     #
     # @return [Array<Spree::Variant>]
+    # The listed variants, answered from memory when the caller already
+    # preloaded `variants`.
+    #
+    # The `listed_variants` association is the SQL-side narrowing and the one
+    # to preload on its own; this is what the storefront rollups read, because
+    # a product list preloads `variants` for the buy box and paying for a
+    # second query per product to re-ask the same question would undo that.
+    #
+    # @return [Array<Spree::Variant>]
+    def visible_variants
+      @visible_variants ||= variants.loaded? ? variants.select(&:active?) : listed_variants.to_a
+    end
+
     def sellable_variants
-      variants.select do |variant|
+      @sellable_variants ||= visible_variants.select do |variant|
         seller = variant.resolved_seller
         seller.nil? || seller.sellable?
       end

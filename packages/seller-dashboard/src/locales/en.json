@@ -302,7 +302,76 @@
     "settings": "Settings",
     "sign_out": "Sign out",
     "team": "Team",
-    "delivery_methods": "Delivery methods"
+    "delivery_methods": "Delivery methods",
+    "offers": "Offers"
+  },
+  "offers": {
+    "add": "List an offer",
+    "archive": "Archive",
+    "archive_confirm_description": "This offer will be taken off sale for good. Your other offers are unaffected.",
+    "archive_confirm_title": "Archive this offer?",
+    "bulk": {
+      "submit_confirm_description": "The marketplace will review each of these offers before it goes on sale.",
+      "submit_confirm_title": "Submit these offers for review?",
+      "submit_failed": "Could not submit these offers",
+      "submitted": "{{count}} offer submitted for review",
+      "submitted_plural": "{{count}} offers submitted for review"
+    },
+    "columns": {
+      "options": "Variation",
+      "price": "Your price",
+      "product": "Product",
+      "sku": "SKU",
+      "status": "Status",
+      "stock": "In stock"
+    },
+    "delivery_help": "Leave this blank to ship the way the marketplace ships this product.",
+    "delivery_title": "Delivery",
+    "description": "Sell the same product the marketplace already lists. You set your own price, stock and condition, and the marketplace reviews each offer before it goes on sale.",
+    "details_title": "Offer details",
+    "empty": "You have no offers yet. Find a product the marketplace sells and list yours against it.",
+    "fields": {
+      "delivery_profile": "Delivery profile",
+      "status": "Status"
+    },
+    "marketplace_price": "Marketplace price: {{price}}",
+    "new": "List an offer",
+    "new_title": "New offer",
+    "not_found": "This offer no longer exists.",
+    "options_title": "Which version you sell",
+    "pick_a_product_first": "Choose a product to list your offer against first.",
+    "picker": {
+      "confirm": "List an offer",
+      "description": "Search the products this marketplace has opened to sellers.",
+      "search_placeholder": "Search by product name",
+      "title": "Which product do you sell?"
+    },
+    "pricing_title": "Your price",
+    "product_title": "Marketplace listing",
+    "rejection_reason": "The marketplace sent this back: {{reason}}",
+    "saved": "Offer saved",
+    "search_placeholder": "Search by SKU",
+    "status_help": {
+      "active": "This offer is on sale.",
+      "archived": "This offer has been taken off sale for good.",
+      "draft": "Only you can see this. Submit it when you are ready for the marketplace to review it.",
+      "proposed": "The marketplace is reviewing this offer.",
+      "rejected": "The marketplace sent this back. Make the changes it asked for and submit it again."
+    },
+    "status_updated": "Offer updated",
+    "statuses": {
+      "active": "On sale",
+      "archived": "Archived",
+      "draft": "Draft",
+      "proposed": "In review",
+      "rejected": "Needs changes"
+    },
+    "stock_title": "What you have in stock",
+    "submit_for_review": "Submit for review",
+    "take_down": "Take down",
+    "take_down_confirm_description": "This offer will stop being on sale until you submit it again.",
+    "take_down_confirm_title": "Take this offer down?",
+    "title": "Offers"
   },
   "onboarding": {
     "accept_terms": "Accept the terms",
@@ -356,6 +425,7 @@
       "title": "Customer"
     },
     "customer_note": "Customer note",
+    "description": "What customers have bought from you, and the parcels you owe them.",
     "empty": "No orders yet. They appear here as customers buy from you.",
     "fulfill": "Mark as fulfilled",
     "fulfillment_statuses": {
@@ -557,6 +627,7 @@
       "status": "Status"
     },
     "custom_fields": "Product details",
+    "description": "Products you list yourself. The marketplace reviews each one before it goes on sale.",
     "details": "Details",
     "empty": "No products yet. Add one to start selling.",
     "fields": {

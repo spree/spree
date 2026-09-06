@@ -127,8 +127,16 @@ module Spree
              resource: proc { Spree.api.media_serializer },
              if: proc { expand?('media') }
 
+        # `visible_variants`, not the raw association: a seller's offer still in
+        # review, sent back or taken down is not something a shopper may see
+        # (docs/plans/6.0-seller-master-catalog-listings.md, Decision 3).
         many :variants,
              resource: proc { Spree.api.variant_serializer },
+             # `source:`, not a block — a block on an association defines the
+             # resource class, so it would leave the records unchanged and the
+             # rows in review visible. The proc is instance_exec'd on the
+             # product, so `self` is the record rather than an argument.
+             source: proc { visible_variants },
              if: proc { expand?('variants') }
 
         one :default_variant,

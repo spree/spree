@@ -1659,6 +1659,10 @@
           "label": "名称",
           "placeholder": "产品名称"
         },
+        "open_to_sellers": {
+          "label": "向卖家开放",
+          "help": "允许卖家针对该商品发布自己的报价。"
+        },
         "product_type_id": {
           "help": "决定结账时提供哪些配送选项。",
           "label": "商品类型"
@@ -4058,6 +4062,9 @@
         "on_hand_aria": "{{location}} 的现有库存",
         "unknown_location": "未知位置"
       },
+      "marketplace": {
+        "title": "市场"
+      },
       "media": {
         "add_from_library": "从媒体库添加",
         "add_video": "添加视频链接",
@@ -4079,6 +4086,36 @@
       },
       "no_categories_found": "未找到分类",
       "no_collections_found": "未找到系列",
+      "offers": {
+        "approve": "批准",
+        "approve_confirm_message": "批准后立即上架销售。",
+        "approve_confirm_title": "批准该报价？",
+        "awaiting_review_filter": "待审核的报价",
+        "bulk_close": "对卖家关闭",
+        "bulk_closed": "已对卖家关闭 {{count}} 个商品",
+        "bulk_closed_plural": "已对卖家关闭 {{count}} 个商品",
+        "bulk_failed": "无法修改这些商品",
+        "bulk_open": "向卖家开放",
+        "bulk_opened": "已向卖家开放 {{count}} 个商品",
+        "bulk_opened_plural": "已向卖家开放 {{count}} 个商品",
+        "columns": {
+          "options": "规格",
+          "price": "价格",
+          "seller": "卖家",
+          "status": "状态"
+        },
+        "decided": "报价已更新",
+        "reason_placeholder": "卖家需要修改什么？",
+        "reject": "退回",
+        "statuses": {
+          "active": "销售中",
+          "archived": "已归档",
+          "draft": "草稿",
+          "proposed": "审核中",
+          "rejected": "需要修改"
+        },
+        "title": "卖家报价"
+      },
       "options": {
         "add_cta": "添加选项类型",
         "count_one": "{{count}} 个值",

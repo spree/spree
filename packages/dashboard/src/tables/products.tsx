@@ -161,6 +161,32 @@ defineTable('products', {
           '—'
         ),
     },
+    // Whether sellers may list their own offers against this product. Off by
+    // default on the column list as well as in the data: a store with no
+    // sellers has no use for it
+    // (docs/plans/6.0-seller-master-catalog-listings.md, Decision 2).
+    {
+      key: 'open_to_sellers',
+      label: i18n.t('admin.fields.product.open_to_sellers.label'),
+      filterable: true,
+      filterType: 'boolean',
+      ransackAttribute: 'open_to_sellers',
+      render: (product) =>
+        product.open_to_sellers ? i18n.t('admin.common.yes') : i18n.t('admin.common.no'),
+    },
+    // How an operator finds the offers waiting on them. There is no offers
+    // page of its own — an offer is a row on a product — so the queue is a
+    // filter over the catalog
+    // (docs/plans/6.0-seller-master-catalog-listings.md, Decision 12).
+    {
+      key: 'awaiting_offers',
+      label: i18n.t('admin.products.offers.awaiting_review_filter'),
+      filterable: true,
+      filterType: 'boolean',
+      ransackAttribute: 'with_proposed_offers',
+      ransackScope: true,
+      render: () => null,
+    },
     {
       key: 'categories',
       label: i18n.t('admin.fields.product.category_ids.label'),

@@ -12,8 +12,11 @@ module Spree
         # cannot tell whether it exists.
         #
         # Owned products only. Variants a seller lists against a shared
-        # master-catalog product are a separate surface (the shared catalog
-        # phase) and do not belong to this seller through `products`.
+        # master-catalog product are their own surface —
+        # `Seller::VariantsController`, rooted in `current_seller.variants` —
+        # because a master product is nobody's through `products`, and a
+        # whole-product `variants:` payload here would let one seller destroy
+        # another's rows (docs/plans/6.0-seller-master-catalog-listings.md).
         #
         # What a seller may change is narrower than the operator's set. Tax
         # category and `promotionable` are marketplace configuration, and so
@@ -31,6 +34,9 @@ module Spree
         # labelling their product
         # (docs/plans/6.0-multi-vendor-marketplace.md).
         class ProductsController < Seller::ResourceController
+          include Spree::Api::V3::Seller::CatalogParams
+          include Spree::Api::V3::StatusActions
+
           # The statuses a seller may move a selection to, each paired with the
           # workflow that gets it there. A map rather than a status list
           # because these moves are not attribute writes: taking a listing down
@@ -176,11 +182,14 @@ module Spree
               # server fetch a URL the caller chose.
               media: [*Spree::Media::WRITABLE_ATTRIBUTES, :id, :signed_id, { variant_ids: [] }],
               # A seller's variants. Narrower than the operator's set:
-              # `seller_id` would let a payload hand a variant to somebody else,
-              # and `tax_category_id`/`delivery_profile_id` are marketplace
-              # configuration.
+              # `seller_id` would let a payload hand a variant to somebody
+              # else, and `tax_category_id` is marketplace configuration.
+              # `delivery_profile_id` rides along for read/write symmetry with
+              # the serializer — the model blanks it on an owned product, so
+              # the write is a no-op here and means something only on an offer
+              # (docs/plans/6.0-seller-master-catalog-listings.md).
               variants: [
-                :id, :sku, :barcode,
+                :id, :sku, :barcode, :delivery_profile_id,
                 :cost_price, :cost_currency,
                 :weight, :height, :width, :depth, :weight_unit, :dimensions_unit,
                 :hs_code, :country_of_origin, :customs_description,
@@ -206,57 +215,6 @@ module Spree
             end
 
             attrs
-          end
-
-          # A price the client did not name a currency for is priced in the
-          # store's. `Variant#prices=` matches base prices on the currency it is
-          # handed and drops the ones missing from the payload, so a guessed
-          # currency does not merely add a stray price — it removes the right
-          # one. Blank counts as unnamed: an empty form field would otherwise
-          # key a price on "".
-          def default_price_currencies(prices)
-            return prices if prices.blank?
-
-            prices.map do |price|
-              price[:currency].present? ? price : price.merge(currency: Spree::Current.currency)
-            end
-          end
-
-          # A type or a profile is picked from the marketplace's own list, so
-          # the id is resolved against this seller's store here rather than
-          # handed to the model: a type from another store would seed its
-          # option types onto the product, and a picker value that cannot
-          # exist for this seller is a 404, not a validation error. Blank
-          # detaches the type; a product always carries a profile, so blank
-          # there is left for the model to refuse.
-          def own_product_type_id(value)
-            return nil if value.blank?
-
-            current_store.product_types.find_by_prefix_id!(value).id
-          end
-
-          def own_delivery_profile_id(value)
-            return nil if value.blank?
-
-            current_store.delivery_profiles.find_by_prefix_id!(value).id
-          end
-
-          # Stock belongs to the warehouse it sits in, and a seller has their
-          # own. `Variant#stock_levels=` resolves a location against the
-          # product's *store*, which on a marketplace spans every seller — so a
-          # payload naming somebody else's warehouse would write into it. The
-          # ids are narrowed to this seller's here, where `current_seller` is
-          # known; an id from elsewhere is dropped, matching how the model
-          # already skips one it cannot resolve.
-          def own_stock_levels(stock_levels)
-            return stock_levels if stock_levels.blank?
-
-            own_ids = current_seller.stock_locations.pluck(:id).to_set
-
-            stock_levels.select do |level|
-              id = Spree::StockLocation.decode_own_prefixed_id(level[:stock_location_id])
-              id.present? && own_ids.include?(id)
-            end
           end
 
           def collection_includes
@@ -366,26 +324,6 @@ module Spree
             end
           end
 
-          # Named apart from the base class's own resource lookup: overriding
-          # that one changes every action, and these three are the only ones
-          # that move a status.
-          def set_status_resource
-            @resource = find_resource
-            # A status move is a change to the product, so it needs the write
-            # key rather than one of its own — a read-only seller role cannot
-            # submit, take down or archive.
-            authorize!(:update, @resource)
-          end
-
-          def run_status_workflow(workflow, **arguments)
-            result = workflow.call(product: @resource, **arguments)
-
-            if result.success?
-              render json: serialize_resource(@resource.reload)
-            else
-              render_service_error(@resource.errors.presence || result.error)
-            end
-          end
         end
       end
     end

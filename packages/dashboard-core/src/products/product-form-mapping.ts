@@ -115,6 +115,7 @@ export function productToFormValues(
     // HTML back under the plain `description` param.
     description: product.description_html ?? '',
     status: (product.status as ProductFormValues['status']) ?? 'draft',
+    open_to_sellers: product.open_to_sellers ?? false,
     category_ids: product.categories?.map((category) => category.id) ?? product.category_ids ?? [],
     // Manual membership only — this field is what the picker edits, and the
     // API preserves automatic membership regardless of what it sends. Hydrating

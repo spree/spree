@@ -6,6 +6,7 @@ import {
   SettingsIcon,
   StoreIcon,
   TagIcon,
+  TagsIcon,
 } from '@spree/dashboard-ui/icons'
 import { OnboardingNavBadge } from '../components/onboarding-nav-badge'
 
@@ -49,6 +50,19 @@ nav.add({
   icon: TagIcon,
   position: 110,
   subject: 'Spree::Product',
+})
+
+// Offers are the seller's rows on the marketplace's own products, which is a
+// different resource from the products they own outright — different moves,
+// different table — so it gets its own entry rather than a tab on Products
+// (docs/plans/6.0-seller-master-catalog-listings.md).
+nav.add({
+  key: 'offers',
+  label: i18n.t('nav.offers'),
+  path: '/offers',
+  icon: TagsIcon,
+  position: 115,
+  subject: 'Spree::Variant',
 })
 
 nav.add({

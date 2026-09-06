@@ -1,11 +1,8 @@
 import type { ProductFormValues, VariantFormValues } from '@spree/dashboard-core'
-import { CountryCombobox, StoreDatePicker } from '@spree/dashboard-core'
 import {
   Button,
   Field,
-  FieldError,
   FieldLabel,
-  Input,
   Select,
   SelectContent,
   SelectItem,
@@ -16,21 +13,22 @@ import {
   SheetFooter,
   SheetHeader,
   SheetTitle,
-  Switch,
 } from '@spree/dashboard-ui'
 import { useEffect, useRef } from 'react'
 import { Controller, type UseFormReturn } from 'react-hook-form'
 import { useTranslation } from 'react-i18next'
-import { normalizeCustomsDescription, normalizeHsCode } from './normalize-customs'
-import { PURCHASE_UNITS } from './normalize-quantity'
 import {
   useFormOptionTypes as useOptionTypes,
   useFormTaxCategories as useTaxCategories,
 } from './use-product-form-data'
+import {
+  VariantAvailabilityFields,
+  VariantCustomsFields,
+  VariantIdentityFields,
+  VariantOrderingFields,
+  VariantShippingFields,
+} from './variant-field-sections'
 import { variantDisplayLabel } from './variants-matrix'
-
-const WEIGHT_UNITS = ['g', 'kg', 'lb', 'oz'] as const
-const DIMENSION_UNITS = ['mm', 'cm', 'in'] as const
 
 interface Props {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -115,6 +113,13 @@ export function VariantEditSheet({ form, variantIndex, open, onOpenChange }: Pro
     onOpenChange(false)
   }
 
+  // One definition for both dashboards: the shared sections address their
+  // fields through this prefix, so the seller panel's offer page renders the
+  // same inputs at the root of its own form
+  // (docs/plans/6.0-seller-master-catalog-listings.md).
+  const prefix = `variants.${variantIndex}`
+  const variantErrors = form.formState.errors.variants?.[variantIndex]
+
   return (
     <Sheet open={open} onOpenChange={(o) => (o ? onOpenChange(o) : handleCancel())}>
       <SheetContent side="right" showCloseButton={false} className="flex flex-col">
@@ -124,383 +129,26 @@ export function VariantEditSheet({ form, variantIndex, open, onOpenChange }: Pro
 
         <div className="flex-1 overflow-y-auto p-4 flex flex-col gap-6">
           <Section title={t('admin.products.variants.sheet.identity')}>
-            <Field>
-              <FieldLabel htmlFor={`variant-${variantIndex}-sku`}>
-                {t('admin.fields.variant.sku.label')}
-              </FieldLabel>
-              {/*
-                Use Controller instead of register here: the matrix row in
-                VariantsSection also registers `variants.${i}.sku`, and two
-                `register` calls on the same field path share a single ref
-                slot — the second mount wins, so typing in one input never
-                updates the other's display. A Controller subscribes to the
-                field via useController and renders a controlled input, so
-                both surfaces stay in sync whichever one the merchant edits.
-              */}
-              <Controller
-                name={`variants.${variantIndex}.sku`}
-                control={form.control}
-                render={({ field }) => (
-                  <Input
-                    id={`variant-${variantIndex}-sku`}
-                    placeholder={t('admin.fields.variant.sku.placeholder')}
-                    value={field.value ?? ''}
-                    onChange={(e) => field.onChange(e.target.value)}
-                    onBlur={field.onBlur}
-                  />
-                )}
-              />
-              <FieldError errors={[form.formState.errors.variants?.[variantIndex]?.sku]} />
-            </Field>
-            <Field>
-              <FieldLabel htmlFor={`variant-${variantIndex}-barcode`}>
-                {t('admin.fields.variant.barcode.label')}
-              </FieldLabel>
-              <Input
-                id={`variant-${variantIndex}-barcode`}
-                {...form.register(`variants.${variantIndex}.barcode`)}
-              />
-              <FieldError errors={[form.formState.errors.variants?.[variantIndex]?.barcode]} />
-            </Field>
+            <VariantIdentityFields form={form} prefix={prefix} errors={variantErrors} />
           </Section>
 
           <Section title={t('admin.fields.shipping.label')}>
-            <div className="grid grid-cols-[1fr_120px] gap-3">
-              <Field>
-                <FieldLabel htmlFor={`variant-${variantIndex}-weight`}>
-                  {t('admin.fields.variant.weight.label')}
-                </FieldLabel>
-                <Input
-                  id={`variant-${variantIndex}-weight`}
-                  type="number"
-                  step="0.01"
-                  min="0"
-                  {...form.register(`variants.${variantIndex}.weight`)}
-                />
-              </Field>
-              <Field>
-                <FieldLabel htmlFor={`variant-${variantIndex}-weight-unit`}>
-                  {t('admin.fields.variant.weight_unit.label')}
-                </FieldLabel>
-                <Controller
-                  name={`variants.${variantIndex}.weight_unit`}
-                  control={form.control}
-                  render={({ field }) => (
-                    <Select
-                      value={field.value ?? ''}
-                      onValueChange={(v) => field.onChange(v || null)}
-                    >
-                      <SelectTrigger id={`variant-${variantIndex}-weight-unit`} className="w-full">
-                        <SelectValue>{(v) => (v as string) || '—'}</SelectValue>
-                      </SelectTrigger>
-                      <SelectContent>
-                        {WEIGHT_UNITS.map((u) => (
-                          <SelectItem key={u} value={u}>
-                            {u}
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
-                  )}
-                />
-              </Field>
-            </div>
-
-            <div className="grid grid-cols-[1fr_1fr_1fr_120px] gap-3">
-              <Field>
-                <FieldLabel htmlFor={`variant-${variantIndex}-height`}>
-                  {t('admin.fields.variant.height.label')}
-                </FieldLabel>
-                <Input
-                  id={`variant-${variantIndex}-height`}
-                  type="number"
-                  step="0.01"
-                  min="0"
-                  {...form.register(`variants.${variantIndex}.height`)}
-                />
-              </Field>
-              <Field>
-                <FieldLabel htmlFor={`variant-${variantIndex}-width`}>
-                  {t('admin.fields.variant.width.label')}
-                </FieldLabel>
-                <Input
-                  id={`variant-${variantIndex}-width`}
-                  type="number"
-                  step="0.01"
-                  min="0"
-                  {...form.register(`variants.${variantIndex}.width`)}
-                />
-              </Field>
-              <Field>
-                <FieldLabel htmlFor={`variant-${variantIndex}-depth`}>
-                  {t('admin.fields.variant.depth.label')}
-                </FieldLabel>
-                <Input
-                  id={`variant-${variantIndex}-depth`}
-                  type="number"
-                  step="0.01"
-                  min="0"
-                  {...form.register(`variants.${variantIndex}.depth`)}
-                />
-              </Field>
-              <Field>
-                <FieldLabel htmlFor={`variant-${variantIndex}-dim-unit`}>
-                  {t('admin.fields.variant.dimensions_unit.label')}
-                </FieldLabel>
-                <Controller
-                  name={`variants.${variantIndex}.dimensions_unit`}
-                  control={form.control}
-                  render={({ field }) => (
-                    <Select
-                      value={field.value ?? ''}
-                      onValueChange={(v) => field.onChange(v || null)}
-                    >
-                      <SelectTrigger id={`variant-${variantIndex}-dim-unit`} className="w-full">
-                        <SelectValue>{(v) => (v as string) || '—'}</SelectValue>
-                      </SelectTrigger>
-                      <SelectContent>
-                        {DIMENSION_UNITS.map((u) => (
-                          <SelectItem key={u} value={u}>
-                            {u}
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
-                  )}
-                />
-              </Field>
-            </div>
+            <VariantShippingFields form={form} prefix={prefix} errors={variantErrors} />
           </Section>
 
           <Section title={t('admin.products.variants.sheet.customs')}>
-            <p className="text-sm text-muted-foreground">
-              {t('admin.products.variants.sheet.customs_help')}
-            </p>
-            <div className="grid grid-cols-2 gap-3">
-              <Field>
-                <FieldLabel htmlFor={`variant-${variantIndex}-hs-code`}>
-                  {t('admin.fields.variant.hs_code.label')}
-                </FieldLabel>
-                <Input
-                  id={`variant-${variantIndex}-hs-code`}
-                  inputMode="numeric"
-                  placeholder={t('admin.fields.variant.hs_code.placeholder')}
-                  {...form.register(`variants.${variantIndex}.hs_code`, {
-                    setValueAs: normalizeHsCode,
-                  })}
-                />
-                <FieldError errors={[form.formState.errors.variants?.[variantIndex]?.hs_code]} />
-              </Field>
-              <Field>
-                <FieldLabel htmlFor={`variant-${variantIndex}-country-of-origin`}>
-                  {t('admin.fields.variant.country_of_origin.label')}
-                </FieldLabel>
-                <Controller
-                  name={`variants.${variantIndex}.country_of_origin`}
-                  control={form.control}
-                  render={({ field }) => (
-                    <CountryCombobox
-                      id={`variant-${variantIndex}-country-of-origin`}
-                      value={field.value ?? null}
-                      onValueChange={(iso) => field.onChange(iso || null)}
-                    />
-                  )}
-                />
-                <FieldError
-                  errors={[form.formState.errors.variants?.[variantIndex]?.country_of_origin]}
-                />
-              </Field>
-            </div>
-            <Field>
-              <FieldLabel htmlFor={`variant-${variantIndex}-customs-description`}>
-                {t('admin.fields.variant.customs_description.label')}
-              </FieldLabel>
-              <Input
-                id={`variant-${variantIndex}-customs-description`}
-                placeholder={t('admin.fields.variant.customs_description.placeholder')}
-                {...form.register(`variants.${variantIndex}.customs_description`, {
-                  setValueAs: normalizeCustomsDescription,
-                })}
-              />
-              <FieldError
-                errors={[form.formState.errors.variants?.[variantIndex]?.customs_description]}
-              />
-            </Field>
+            <VariantCustomsFields form={form} prefix={prefix} errors={variantErrors} />
           </Section>
 
           <Section title={t('admin.products.variants.sheet.ordering')}>
-            <p className="text-sm text-muted-foreground">
+            <p className="text-muted-foreground text-sm">
               {t('admin.products.variants.sheet.ordering_help')}
             </p>
-            <div className="grid grid-cols-2 gap-3">
-              <Field>
-                <FieldLabel htmlFor={`variant-${variantIndex}-moq`}>
-                  {t('admin.fields.variant.minimum_order_quantity.label')}
-                </FieldLabel>
-                <Input
-                  id={`variant-${variantIndex}-moq`}
-                  type="number"
-                  min="1"
-                  step="1"
-                  placeholder={t('admin.fields.variant.minimum_order_quantity.placeholder')}
-                  {...form.register(`variants.${variantIndex}.minimum_order_quantity`)}
-                />
-                <FieldError
-                  errors={[form.formState.errors.variants?.[variantIndex]?.minimum_order_quantity]}
-                />
-              </Field>
-              <Field>
-                <FieldLabel htmlFor={`variant-${variantIndex}-order-multiple`}>
-                  {t('admin.fields.variant.order_multiple.label')}
-                </FieldLabel>
-                <Input
-                  id={`variant-${variantIndex}-order-multiple`}
-                  type="number"
-                  min="1"
-                  step="1"
-                  placeholder={t('admin.fields.variant.order_multiple.placeholder')}
-                  {...form.register(`variants.${variantIndex}.order_multiple`)}
-                />
-                <FieldError
-                  errors={[form.formState.errors.variants?.[variantIndex]?.order_multiple]}
-                />
-              </Field>
-              <Field>
-                <FieldLabel htmlFor={`variant-${variantIndex}-purchase-unit`}>
-                  {t('admin.fields.variant.purchase_unit.label')}
-                </FieldLabel>
-                <Controller
-                  name={`variants.${variantIndex}.purchase_unit`}
-                  control={form.control}
-                  render={({ field }) => (
-                    <Select
-                      value={field.value ?? ''}
-                      onValueChange={(v) => field.onChange(v || null)}
-                    >
-                      <SelectTrigger
-                        id={`variant-${variantIndex}-purchase-unit`}
-                        className="w-full"
-                      >
-                        <SelectValue>
-                          {(v) =>
-                            v
-                              ? t(`admin.fields.variant.purchase_unit.options.${v as string}`)
-                              : t('admin.fields.variant.purchase_unit.options.unit')
-                          }
-                        </SelectValue>
-                      </SelectTrigger>
-                      <SelectContent>
-                        {PURCHASE_UNITS.map((unit) => (
-                          <SelectItem key={unit} value={unit}>
-                            {t(`admin.fields.variant.purchase_unit.options.${unit}`)}
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
-                  )}
-                />
-              </Field>
-              <Field>
-                <FieldLabel htmlFor={`variant-${variantIndex}-units-per-carton`}>
-                  {t('admin.fields.variant.units_per_carton.label')}
-                </FieldLabel>
-                <Input
-                  id={`variant-${variantIndex}-units-per-carton`}
-                  type="number"
-                  min="1"
-                  step="1"
-                  {...form.register(`variants.${variantIndex}.units_per_carton`)}
-                />
-                <FieldError
-                  errors={[form.formState.errors.variants?.[variantIndex]?.units_per_carton]}
-                />
-              </Field>
-            </div>
+            <VariantOrderingFields form={form} prefix={prefix} errors={variantErrors} />
           </Section>
 
           <Section title={t('admin.products.variants.sheet.availability')}>
-            <Field>
-              <div className="flex items-start justify-between gap-4">
-                <div className="flex flex-col">
-                  <FieldLabel
-                    htmlFor={`variant-${variantIndex}-preorderable`}
-                    className="cursor-pointer"
-                  >
-                    {t('admin.fields.variant.preorderable.label')}
-                  </FieldLabel>
-                  <span className="text-xs text-muted-foreground">
-                    {t('admin.fields.variant.preorderable.help')}
-                  </span>
-                </div>
-                <Controller
-                  name={`variants.${variantIndex}.preorderable`}
-                  control={form.control}
-                  render={({ field }) => (
-                    <Switch
-                      id={`variant-${variantIndex}-preorderable`}
-                      checked={!!field.value}
-                      onCheckedChange={field.onChange}
-                    />
-                  )}
-                />
-              </div>
-            </Field>
-
-            {variant.preorderable && (
-              <Field>
-                <FieldLabel>{t('admin.fields.variant.preorder_ships_at.label')}</FieldLabel>
-                <Controller
-                  control={form.control}
-                  name={`variants.${variantIndex}.preorder_ships_at`}
-                  render={({ field }) => (
-                    <StoreDatePicker
-                      value={field.value ?? null}
-                      onChange={(next) => field.onChange(next ?? null)}
-                      placeholder={t('admin.fields.variant.preorder_ships_at.placeholder')}
-                      includeTime
-                      inline
-                    />
-                  )}
-                />
-                <span className="text-xs text-muted-foreground">
-                  {t('admin.fields.variant.preorder_ships_at.help')}
-                </span>
-              </Field>
-            )}
-
-            <Field>
-              <FieldLabel htmlFor={`variant-${variantIndex}-backorder-limit`}>
-                {t('admin.fields.variant.backorder_limit.label')}
-              </FieldLabel>
-              <Controller
-                control={form.control}
-                name={`variants.${variantIndex}.backorder_limit`}
-                render={({ field }) => (
-                  <Input
-                    id={`variant-${variantIndex}-backorder-limit`}
-                    type="number"
-                    min="0"
-                    step="1"
-                    placeholder={t('admin.fields.variant.backorder_limit.placeholder')}
-                    value={field.value ?? ''}
-                    onChange={(event) => {
-                      const parsed = Number(event.target.value)
-                      field.onChange(
-                        event.target.value === '' || Number.isNaN(parsed)
-                          ? null
-                          : Math.max(0, Math.trunc(parsed)),
-                      )
-                    }}
-                  />
-                )}
-              />
-              <span className="text-xs text-muted-foreground">
-                {t('admin.fields.variant.backorder_limit.help')}
-              </span>
-              <FieldError
-                errors={[form.formState.errors.variants?.[variantIndex]?.backorder_limit]}
-              />
-            </Field>
+            <VariantAvailabilityFields form={form} prefix={prefix} errors={variantErrors} />
           </Section>
 
           {hasTaxCategories && (

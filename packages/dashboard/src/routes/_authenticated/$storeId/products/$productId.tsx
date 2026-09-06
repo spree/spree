@@ -41,12 +41,14 @@ import { CustomFieldsInlineCard } from '../../../../components/spree/custom-fiel
 import { MediaRichTextEditor } from '../../../../components/spree/media-rich-text-editor'
 import { DigitalAssetsCard } from '../../../../components/spree/products/digital-assets-card'
 import { ProductCustomFieldsProvider } from '../../../../components/spree/products/product-custom-fields-provider'
+import { ProductMarketplaceCard } from '../../../../components/spree/products/product-marketplace-card'
+import { ProductOffersCard } from '../../../../components/spree/products/product-offers-card'
 import { ProductReviewActions } from '../../../../components/spree/products/product-review-actions'
-import { ProductSellerCard } from '../../../../components/spree/products/product-seller-card'
 import { PublishingCard } from '../../../../components/spree/products/publishing-card'
 import { ResourceTranslationsCard } from '../../../../components/spree/translations/resource-translations-card'
 import { useDeleteProduct, useProduct, useUpdateProduct } from '../../../../hooks/use-product'
 import { useProductMedia } from '../../../../hooks/use-product-media'
+import { useHasSellers } from '../../../../hooks/use-sellers'
 import { spreeJsonLinkResolver } from '../../../../lib/json-link-resolver'
 
 // Purchasable attributes (sku, barcode, prices, weight, dimensions, stock,
@@ -85,6 +87,9 @@ function ProductDetailPage() {
 // ---------------------------------------------------------------------------
 
 function ProductForm({ product }: { product: Product }) {
+  // The marketplace card renders nothing on a store selling purely its own
+  // goods, so an operator who has never admitted a seller never meets it.
+  const hasSellers = useHasSellers()
   const { t } = useTranslation()
   const confirm = useConfirm()
   const { productId, storeId } = Route.useParams()
@@ -301,11 +306,12 @@ function ProductForm({ product }: { product: Product }) {
                 emptyTitle={t('admin.components.metadata_card.empty_title')}
                 emptyDescription={t('admin.components.metadata_card.empty_description')}
               />
+              <ProductOffersCard productId={productId} />
             </>
           }
           sidebar={
             <>
-              <ProductSellerCard product={product} />
+              <ProductMarketplaceCard product={product} form={form} hasSellers={hasSellers} />
               <StatusCard
                 form={form}
                 reviewActions={

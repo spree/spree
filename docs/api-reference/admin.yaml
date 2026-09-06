@@ -5286,7 +5286,7 @@ paths:
                   display_available_store_credit_total: "$0.00"
                   failed_attempts: 0
                   metadata: {}
-                  email_marketing_consent_source: account
+                  email_marketing_consent_source: unknown
                   created_at: '2026-01-15T12:00:00.000Z'
                   updated_at: '2026-01-15T12:00:00.000Z'
                   anonymized_at:
@@ -5495,7 +5495,7 @@ paths:
                 marketing_consent:
                   accepts_email_marketing: false
                   consent_updated_at: '2026-01-15T12:00:00Z'
-                  consent_source: account
+                  consent_source: unknown
                   newsletter_subscriptions: []
                 consent_records: []
                 addresses: []
@@ -6609,7 +6609,7 @@ paths:
                   display_available_store_credit_total: "$0.00"
                   failed_attempts: 0
                   metadata: {}
-                  email_marketing_consent_source: account
+                  email_marketing_consent_source: unknown
                   created_at: '2026-01-15T12:00:00.000Z'
                   updated_at: '2026-01-15T12:00:00.000Z'
                   anonymized_at:
@@ -6697,7 +6697,7 @@ paths:
                 display_available_store_credit_total: "$0.00"
                 failed_attempts: 0
                 metadata: {}
-                email_marketing_consent_source: account
+                email_marketing_consent_source: unknown
                 created_at: '2026-01-15T12:00:00.000Z'
                 updated_at: '2026-01-15T12:00:00.000Z'
                 anonymized_at:
@@ -6817,7 +6817,7 @@ paths:
                 display_available_store_credit_total: "$0.00"
                 failed_attempts: 0
                 metadata: {}
-                email_marketing_consent_source: account
+                email_marketing_consent_source: unknown
                 created_at: '2026-01-15T12:00:00.000Z'
                 updated_at: '2026-01-15T12:00:00.000Z'
                 anonymized_at:
@@ -6895,7 +6895,7 @@ paths:
                 display_available_store_credit_total: "$0.00"
                 failed_attempts: 0
                 metadata: {}
-                email_marketing_consent_source: account
+                email_marketing_consent_source: unknown
                 created_at: '2026-01-15T12:00:00.000Z'
                 updated_at: '2026-01-15T12:00:00.000Z'
                 anonymized_at:
@@ -17413,6 +17413,7 @@ paths:
                   seller_id:
                   external_references: {}
                   status: active
+                  open_to_sellers: false
                   metadata: {}
                   deleted_at:
                   created_at: '2026-01-15T12:00:00.000Z'
@@ -17556,6 +17557,7 @@ paths:
                 seller_id:
                 external_references: {}
                 status: draft
+                open_to_sellers: false
                 metadata: {}
                 deleted_at:
                 created_at: '2026-01-15T12:00:00.000Z'
@@ -17807,6 +17809,7 @@ paths:
                 seller_id:
                 external_references: {}
                 status: active
+                open_to_sellers: false
                 metadata: {}
                 deleted_at:
                 created_at: '2026-01-15T12:00:00.000Z'
@@ -17930,6 +17933,7 @@ paths:
                 seller_id:
                 external_references: {}
                 status: active
+                open_to_sellers: false
                 metadata: {}
                 deleted_at:
                 created_at: '2026-01-15T12:00:00.000Z'
@@ -22453,6 +22457,8 @@ paths:
                 url: http://www.example.com:3000
                 api_url: http://www.example.com:3000
                 setup_tasks:
+                - name: setup_address
+                  done: false
                 - name: setup_payment_method
                   done: false
                 - name: add_products
@@ -22782,6 +22788,8 @@ paths:
                 url: http://www.example.com:3000
                 api_url: http://www.example.com:3000
                 setup_tasks:
+                - name: setup_address
+                  done: false
                 - name: setup_payment_method
                   done: false
                 - name: add_products
@@ -25693,6 +25701,7 @@ paths:
                   seller_id:
                   option_values: []
                   external_references: {}
+                  status: active
                   metadata: {}
                   position: 1
                   cost_price: '17.0'
@@ -25760,6 +25769,7 @@ paths:
                     created_at: '2026-01-15T12:00:00.000Z'
                     updated_at: '2026-01-15T12:00:00.000Z'
                   external_references: {}
+                  status: active
                   metadata: {}
                   position: 2
                   cost_price: '17.0'
@@ -25902,6 +25912,7 @@ paths:
                   created_at: '2026-01-15T12:00:00.000Z'
                   updated_at: '2026-01-15T12:00:00.000Z'
                 external_references: {}
+                status: active
                 metadata: {}
                 position: 3
                 cost_price:
@@ -26147,6 +26158,7 @@ paths:
                   created_at: '2026-01-15T12:00:00.000Z'
                   updated_at: '2026-01-15T12:00:00.000Z'
                 external_references: {}
+                status: active
                 metadata: {}
                 position: 2
                 cost_price: '17.0'
@@ -26283,6 +26295,7 @@ paths:
                   created_at: '2026-01-15T12:00:00.000Z'
                   updated_at: '2026-01-15T12:00:00.000Z'
                 external_references: {}
+                status: active
                 metadata: {}
                 position: 2
                 cost_price: '17.0'
@@ -27829,6 +27842,7 @@ paths:
                   seller_id:
                   external_references: {}
                   status: active
+                  open_to_sellers: false
                   metadata: {}
                   deleted_at:
                   created_at: '2026-01-15T12:00:00.000Z'
@@ -32454,13 +32468,13 @@ paths:
                   video_embed_url:
                   video_url:
                   poster_url:
-                  original_url: http://localhost:3000/rails/active_storage/blobs/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--0566183e020a36008b9fa853684c959de4430ca1/thinking-cat.jpg
-                  mini_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--0566183e020a36008b9fa853684c959de4430ca1/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOlsxMjgsMTI4XSwic2F2ZXIiOnsic3RyaXAiOnRydWUsInF1YWxpdHkiOjc1LCJsb3NzbGVzcyI6ZmFsc2UsImFscGhhX3EiOjg1LCJyZWR1Y3Rpb25fZWZmb3J0Ijo2LCJzbWFydF9zdWJzYW1wbGUiOnRydWV9fSwicHVyIjoidmFyaWF0aW9uIn19--1b518df6dad68f0966022e5c2a3457ceb254e697/thinking-cat.jpg
-                  small_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--0566183e020a36008b9fa853684c959de4430ca1/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOlsyNTYsMjU2XSwic2F2ZXIiOnsic3RyaXAiOnRydWUsInF1YWxpdHkiOjc1LCJsb3NzbGVzcyI6ZmFsc2UsImFscGhhX3EiOjg1LCJyZWR1Y3Rpb25fZWZmb3J0Ijo2LCJzbWFydF9zdWJzYW1wbGUiOnRydWV9fSwicHVyIjoidmFyaWF0aW9uIn19--f8b6e1c3df1e794718d53be6b426ee9bb3f09f46/thinking-cat.jpg
-                  medium_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--0566183e020a36008b9fa853684c959de4430ca1/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOls0MDAsNDAwXSwic2F2ZXIiOnsic3RyaXAiOnRydWUsInF1YWxpdHkiOjc1LCJsb3NzbGVzcyI6ZmFsc2UsImFscGhhX3EiOjg1LCJyZWR1Y3Rpb25fZWZmb3J0Ijo2LCJzbWFydF9zdWJzYW1wbGUiOnRydWV9fSwicHVyIjoidmFyaWF0aW9uIn19--fe96558862b5ecbbcceafb0ed12fa970848ac596/thinking-cat.jpg
-                  large_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--0566183e020a36008b9fa853684c959de4430ca1/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOls3MjAsNzIwXSwic2F2ZXIiOnsic3RyaXAiOnRydWUsInF1YWxpdHkiOjc1LCJsb3NzbGVzcyI6ZmFsc2UsImFscGhhX3EiOjg1LCJyZWR1Y3Rpb25fZWZmb3J0Ijo2LCJzbWFydF9zdWJzYW1wbGUiOnRydWV9fSwicHVyIjoidmFyaWF0aW9uIn19--39815e6d471f59aa60e1134aed581239c565f07c/thinking-cat.jpg
-                  xlarge_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--0566183e020a36008b9fa853684c959de4430ca1/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOlsyMDAwLDIwMDBdLCJzYXZlciI6eyJzdHJpcCI6dHJ1ZSwicXVhbGl0eSI6NzUsImxvc3NsZXNzIjpmYWxzZSwiYWxwaGFfcSI6ODUsInJlZHVjdGlvbl9lZmZvcnQiOjYsInNtYXJ0X3N1YnNhbXBsZSI6dHJ1ZX19LCJwdXIiOiJ2YXJpYXRpb24ifX0=--47ff5efd60b7692c2df633837f5cf5c9446ac922/thinking-cat.jpg
-                  og_image_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--0566183e020a36008b9fa853684c959de4430ca1/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOlsxMjAwLDYzMF0sInNhdmVyIjp7InN0cmlwIjp0cnVlLCJxdWFsaXR5Ijo3NSwibG9zc2xlc3MiOmZhbHNlLCJhbHBoYV9xIjo4NSwicmVkdWN0aW9uX2VmZm9ydCI6Niwic21hcnRfc3Vic2FtcGxlIjp0cnVlfX0sInB1ciI6InZhcmlhdGlvbiJ9fQ==--93a14b86135ea26eac9c5d48528b2494807736ef/thinking-cat.jpg
+                  original_url: http://localhost:3000/rails/active_storage/blobs/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--3f1aecde77d58ea599b51fb901bd801c2913913a/thinking-cat.jpg
+                  mini_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--3f1aecde77d58ea599b51fb901bd801c2913913a/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOlsxMjgsMTI4XSwic2F2ZXIiOnsic3RyaXAiOnRydWUsInF1YWxpdHkiOjc1LCJsb3NzbGVzcyI6ZmFsc2UsImFscGhhX3EiOjg1LCJyZWR1Y3Rpb25fZWZmb3J0Ijo2LCJzbWFydF9zdWJzYW1wbGUiOnRydWV9fSwicHVyIjoidmFyaWF0aW9uIn19--f86c22947e50479f77e1c743c4c65d29b1ba152a/thinking-cat.jpg
+                  small_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--3f1aecde77d58ea599b51fb901bd801c2913913a/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOlsyNTYsMjU2XSwic2F2ZXIiOnsic3RyaXAiOnRydWUsInF1YWxpdHkiOjc1LCJsb3NzbGVzcyI6ZmFsc2UsImFscGhhX3EiOjg1LCJyZWR1Y3Rpb25fZWZmb3J0Ijo2LCJzbWFydF9zdWJzYW1wbGUiOnRydWV9fSwicHVyIjoidmFyaWF0aW9uIn19--bec459a3ff424977714d7883b84fa0b9bab9749a/thinking-cat.jpg
+                  medium_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--3f1aecde77d58ea599b51fb901bd801c2913913a/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOls0MDAsNDAwXSwic2F2ZXIiOnsic3RyaXAiOnRydWUsInF1YWxpdHkiOjc1LCJsb3NzbGVzcyI6ZmFsc2UsImFscGhhX3EiOjg1LCJyZWR1Y3Rpb25fZWZmb3J0Ijo2LCJzbWFydF9zdWJzYW1wbGUiOnRydWV9fSwicHVyIjoidmFyaWF0aW9uIn19--1579cadc581f501c87a4790e8c3c49ec412caee0/thinking-cat.jpg
+                  large_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--3f1aecde77d58ea599b51fb901bd801c2913913a/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOls3MjAsNzIwXSwic2F2ZXIiOnsic3RyaXAiOnRydWUsInF1YWxpdHkiOjc1LCJsb3NzbGVzcyI6ZmFsc2UsImFscGhhX3EiOjg1LCJyZWR1Y3Rpb25fZWZmb3J0Ijo2LCJzbWFydF9zdWJzYW1wbGUiOnRydWV9fSwicHVyIjoidmFyaWF0aW9uIn19--1e55d7132393c143049c0567d4dea407506792bd/thinking-cat.jpg
+                  xlarge_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--3f1aecde77d58ea599b51fb901bd801c2913913a/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOlsyMDAwLDIwMDBdLCJzYXZlciI6eyJzdHJpcCI6dHJ1ZSwicXVhbGl0eSI6NzUsImxvc3NsZXNzIjpmYWxzZSwiYWxwaGFfcSI6ODUsInJlZHVjdGlvbl9lZmZvcnQiOjYsInNtYXJ0X3N1YnNhbXBsZSI6dHJ1ZX19LCJwdXIiOiJ2YXJpYXRpb24ifX0=--dc551795ef82c6d4f28bbe469d21c0ee7c3b61c3/thinking-cat.jpg
+                  og_image_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--3f1aecde77d58ea599b51fb901bd801c2913913a/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOlsxMjAwLDYzMF0sInNhdmVyIjp7InN0cmlwIjp0cnVlLCJxdWFsaXR5Ijo3NSwibG9zc2xlc3MiOmZhbHNlLCJhbHBoYV9xIjo4NSwicmVkdWN0aW9uX2VmZm9ydCI6Niwic21hcnRfc3Vic2FtcGxlIjp0cnVlfX0sInB1ciI6InZhcmlhdGlvbiJ9fQ==--3305d418f7aa93ca89e0841f5bd5aee8aca194fa/thinking-cat.jpg
                   external_references: {}
                   created_at: '2026-01-15T12:00:00.000Z'
                   updated_at: '2026-01-15T12:00:00.000Z'
@@ -32468,10 +32482,10 @@ paths:
                   filename: thinking-cat.jpg
                   content_type: image/jpeg
                   byte_size: 18090
-                  embed_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--0566183e020a36008b9fa853684c959de4430ca1/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2xpbWl0IjpbMTIwMCwxMjAwXSwic2F2ZXIiOnsic3RyaXAiOnRydWUsInF1YWxpdHkiOjc1LCJsb3NzbGVzcyI6ZmFsc2UsImFscGhhX3EiOjg1LCJyZWR1Y3Rpb25fZWZmb3J0Ijo2LCJzbWFydF9zdWJzYW1wbGUiOnRydWV9fSwicHVyIjoidmFyaWF0aW9uIn19--2023b0b571f2e1f04aa9977dedb1ec202afe71ae/thinking-cat.jpg
-                  signed_id: eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--0566183e020a36008b9fa853684c959de4430ca1
+                  embed_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--3f1aecde77d58ea599b51fb901bd801c2913913a/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2xpbWl0IjpbMTIwMCwxMjAwXSwic2F2ZXIiOnsic3RyaXAiOnRydWUsInF1YWxpdHkiOjc1LCJsb3NzbGVzcyI6ZmFsc2UsImFscGhhX3EiOjg1LCJyZWR1Y3Rpb25fZWZmb3J0Ijo2LCJzbWFydF9zdWJzYW1wbGUiOnRydWV9fSwicHVyIjoidmFyaWF0aW9uIn19--363914ca282d63e0a9d53d776b52efab87abc81a/thinking-cat.jpg
+                  signed_id: eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--3f1aecde77d58ea599b51fb901bd801c2913913a
                   viewable_id: prod_UkLWZg9DAJ
-                  download_url: http://localhost:3000/rails/active_storage/blobs/redirect/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--0566183e020a36008b9fa853684c959de4430ca1/thinking-cat.jpg?disposition=attachment
+                  download_url: http://localhost:3000/rails/active_storage/blobs/redirect/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--3f1aecde77d58ea599b51fb901bd801c2913913a/thinking-cat.jpg?disposition=attachment
                   metadata: {}
                   viewable_type: product
                 meta:
@@ -32542,13 +32556,13 @@ paths:
                 video_embed_url:
                 video_url:
                 poster_url:
-                original_url: http://localhost:3000/rails/active_storage/blobs/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MiwicHVyIjoiYmxvYl9pZCJ9fQ==--04a2f598298363c8e2fbf48743a08dce54cf2e65/library-upload.jpg
-                mini_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MiwicHVyIjoiYmxvYl9pZCJ9fQ==--04a2f598298363c8e2fbf48743a08dce54cf2e65/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOlsxMjgsMTI4XSwic2F2ZXIiOnsic3RyaXAiOnRydWUsInF1YWxpdHkiOjc1LCJsb3NzbGVzcyI6ZmFsc2UsImFscGhhX3EiOjg1LCJyZWR1Y3Rpb25fZWZmb3J0Ijo2LCJzbWFydF9zdWJzYW1wbGUiOnRydWV9fSwicHVyIjoidmFyaWF0aW9uIn19--1b518df6dad68f0966022e5c2a3457ceb254e697/library-upload.jpg
-                small_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MiwicHVyIjoiYmxvYl9pZCJ9fQ==--04a2f598298363c8e2fbf48743a08dce54cf2e65/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOlsyNTYsMjU2XSwic2F2ZXIiOnsic3RyaXAiOnRydWUsInF1YWxpdHkiOjc1LCJsb3NzbGVzcyI6ZmFsc2UsImFscGhhX3EiOjg1LCJyZWR1Y3Rpb25fZWZmb3J0Ijo2LCJzbWFydF9zdWJzYW1wbGUiOnRydWV9fSwicHVyIjoidmFyaWF0aW9uIn19--f8b6e1c3df1e794718d53be6b426ee9bb3f09f46/library-upload.jpg
-                medium_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MiwicHVyIjoiYmxvYl9pZCJ9fQ==--04a2f598298363c8e2fbf48743a08dce54cf2e65/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOls0MDAsNDAwXSwic2F2ZXIiOnsic3RyaXAiOnRydWUsInF1YWxpdHkiOjc1LCJsb3NzbGVzcyI6ZmFsc2UsImFscGhhX3EiOjg1LCJyZWR1Y3Rpb25fZWZmb3J0Ijo2LCJzbWFydF9zdWJzYW1wbGUiOnRydWV9fSwicHVyIjoidmFyaWF0aW9uIn19--fe96558862b5ecbbcceafb0ed12fa970848ac596/library-upload.jpg
-                large_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MiwicHVyIjoiYmxvYl9pZCJ9fQ==--04a2f598298363c8e2fbf48743a08dce54cf2e65/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOls3MjAsNzIwXSwic2F2ZXIiOnsic3RyaXAiOnRydWUsInF1YWxpdHkiOjc1LCJsb3NzbGVzcyI6ZmFsc2UsImFscGhhX3EiOjg1LCJyZWR1Y3Rpb25fZWZmb3J0Ijo2LCJzbWFydF9zdWJzYW1wbGUiOnRydWV9fSwicHVyIjoidmFyaWF0aW9uIn19--39815e6d471f59aa60e1134aed581239c565f07c/library-upload.jpg
-                xlarge_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MiwicHVyIjoiYmxvYl9pZCJ9fQ==--04a2f598298363c8e2fbf48743a08dce54cf2e65/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOlsyMDAwLDIwMDBdLCJzYXZlciI6eyJzdHJpcCI6dHJ1ZSwicXVhbGl0eSI6NzUsImxvc3NsZXNzIjpmYWxzZSwiYWxwaGFfcSI6ODUsInJlZHVjdGlvbl9lZmZvcnQiOjYsInNtYXJ0X3N1YnNhbXBsZSI6dHJ1ZX19LCJwdXIiOiJ2YXJpYXRpb24ifX0=--47ff5efd60b7692c2df633837f5cf5c9446ac922/library-upload.jpg
-                og_image_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MiwicHVyIjoiYmxvYl9pZCJ9fQ==--04a2f598298363c8e2fbf48743a08dce54cf2e65/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOlsxMjAwLDYzMF0sInNhdmVyIjp7InN0cmlwIjp0cnVlLCJxdWFsaXR5Ijo3NSwibG9zc2xlc3MiOmZhbHNlLCJhbHBoYV9xIjo4NSwicmVkdWN0aW9uX2VmZm9ydCI6Niwic21hcnRfc3Vic2FtcGxlIjp0cnVlfX0sInB1ciI6InZhcmlhdGlvbiJ9fQ==--93a14b86135ea26eac9c5d48528b2494807736ef/library-upload.jpg
+                original_url: http://localhost:3000/rails/active_storage/blobs/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MiwicHVyIjoiYmxvYl9pZCJ9fQ==--57b0e3c9b45f046581419fa0ccb51c753b2db35c/library-upload.jpg
+                mini_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MiwicHVyIjoiYmxvYl9pZCJ9fQ==--57b0e3c9b45f046581419fa0ccb51c753b2db35c/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOlsxMjgsMTI4XSwic2F2ZXIiOnsic3RyaXAiOnRydWUsInF1YWxpdHkiOjc1LCJsb3NzbGVzcyI6ZmFsc2UsImFscGhhX3EiOjg1LCJyZWR1Y3Rpb25fZWZmb3J0Ijo2LCJzbWFydF9zdWJzYW1wbGUiOnRydWV9fSwicHVyIjoidmFyaWF0aW9uIn19--f86c22947e50479f77e1c743c4c65d29b1ba152a/library-upload.jpg
+                small_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MiwicHVyIjoiYmxvYl9pZCJ9fQ==--57b0e3c9b45f046581419fa0ccb51c753b2db35c/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOlsyNTYsMjU2XSwic2F2ZXIiOnsic3RyaXAiOnRydWUsInF1YWxpdHkiOjc1LCJsb3NzbGVzcyI6ZmFsc2UsImFscGhhX3EiOjg1LCJyZWR1Y3Rpb25fZWZmb3J0Ijo2LCJzbWFydF9zdWJzYW1wbGUiOnRydWV9fSwicHVyIjoidmFyaWF0aW9uIn19--bec459a3ff424977714d7883b84fa0b9bab9749a/library-upload.jpg
+                medium_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MiwicHVyIjoiYmxvYl9pZCJ9fQ==--57b0e3c9b45f046581419fa0ccb51c753b2db35c/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOls0MDAsNDAwXSwic2F2ZXIiOnsic3RyaXAiOnRydWUsInF1YWxpdHkiOjc1LCJsb3NzbGVzcyI6ZmFsc2UsImFscGhhX3EiOjg1LCJyZWR1Y3Rpb25fZWZmb3J0Ijo2LCJzbWFydF9zdWJzYW1wbGUiOnRydWV9fSwicHVyIjoidmFyaWF0aW9uIn19--1579cadc581f501c87a4790e8c3c49ec412caee0/library-upload.jpg
+                large_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MiwicHVyIjoiYmxvYl9pZCJ9fQ==--57b0e3c9b45f046581419fa0ccb51c753b2db35c/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOls3MjAsNzIwXSwic2F2ZXIiOnsic3RyaXAiOnRydWUsInF1YWxpdHkiOjc1LCJsb3NzbGVzcyI6ZmFsc2UsImFscGhhX3EiOjg1LCJyZWR1Y3Rpb25fZWZmb3J0Ijo2LCJzbWFydF9zdWJzYW1wbGUiOnRydWV9fSwicHVyIjoidmFyaWF0aW9uIn19--1e55d7132393c143049c0567d4dea407506792bd/library-upload.jpg
+                xlarge_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MiwicHVyIjoiYmxvYl9pZCJ9fQ==--57b0e3c9b45f046581419fa0ccb51c753b2db35c/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOlsyMDAwLDIwMDBdLCJzYXZlciI6eyJzdHJpcCI6dHJ1ZSwicXVhbGl0eSI6NzUsImxvc3NsZXNzIjpmYWxzZSwiYWxwaGFfcSI6ODUsInJlZHVjdGlvbl9lZmZvcnQiOjYsInNtYXJ0X3N1YnNhbXBsZSI6dHJ1ZX19LCJwdXIiOiJ2YXJpYXRpb24ifX0=--dc551795ef82c6d4f28bbe469d21c0ee7c3b61c3/library-upload.jpg
+                og_image_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MiwicHVyIjoiYmxvYl9pZCJ9fQ==--57b0e3c9b45f046581419fa0ccb51c753b2db35c/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOlsxMjAwLDYzMF0sInNhdmVyIjp7InN0cmlwIjp0cnVlLCJxdWFsaXR5Ijo3NSwibG9zc2xlc3MiOmZhbHNlLCJhbHBoYV9xIjo4NSwicmVkdWN0aW9uX2VmZm9ydCI6Niwic21hcnRfc3Vic2FtcGxlIjp0cnVlfX0sInB1ciI6InZhcmlhdGlvbiJ9fQ==--3305d418f7aa93ca89e0841f5bd5aee8aca194fa/library-upload.jpg
                 external_references: {}
                 created_at: '2026-01-15T12:00:00.000Z'
                 updated_at: '2026-01-15T12:00:00.000Z'
@@ -32556,10 +32570,10 @@ paths:
                 filename: library-upload.jpg
                 content_type: image/jpeg
                 byte_size: 18090
-                embed_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MiwicHVyIjoiYmxvYl9pZCJ9fQ==--04a2f598298363c8e2fbf48743a08dce54cf2e65/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2xpbWl0IjpbMTIwMCwxMjAwXSwic2F2ZXIiOnsic3RyaXAiOnRydWUsInF1YWxpdHkiOjc1LCJsb3NzbGVzcyI6ZmFsc2UsImFscGhhX3EiOjg1LCJyZWR1Y3Rpb25fZWZmb3J0Ijo2LCJzbWFydF9zdWJzYW1wbGUiOnRydWV9fSwicHVyIjoidmFyaWF0aW9uIn19--2023b0b571f2e1f04aa9977dedb1ec202afe71ae/library-upload.jpg
-                signed_id: eyJfcmFpbHMiOnsiZGF0YSI6MiwicHVyIjoiYmxvYl9pZCJ9fQ==--04a2f598298363c8e2fbf48743a08dce54cf2e65
+                embed_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MiwicHVyIjoiYmxvYl9pZCJ9fQ==--57b0e3c9b45f046581419fa0ccb51c753b2db35c/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2xpbWl0IjpbMTIwMCwxMjAwXSwic2F2ZXIiOnsic3RyaXAiOnRydWUsInF1YWxpdHkiOjc1LCJsb3NzbGVzcyI6ZmFsc2UsImFscGhhX3EiOjg1LCJyZWR1Y3Rpb25fZWZmb3J0Ijo2LCJzbWFydF9zdWJzYW1wbGUiOnRydWV9fSwicHVyIjoidmFyaWF0aW9uIn19--363914ca282d63e0a9d53d776b52efab87abc81a/library-upload.jpg
+                signed_id: eyJfcmFpbHMiOnsiZGF0YSI6MiwicHVyIjoiYmxvYl9pZCJ9fQ==--57b0e3c9b45f046581419fa0ccb51c753b2db35c
                 viewable_id:
-                download_url: http://localhost:3000/rails/active_storage/blobs/redirect/eyJfcmFpbHMiOnsiZGF0YSI6MiwicHVyIjoiYmxvYl9pZCJ9fQ==--04a2f598298363c8e2fbf48743a08dce54cf2e65/library-upload.jpg?disposition=attachment
+                download_url: http://localhost:3000/rails/active_storage/blobs/redirect/eyJfcmFpbHMiOnsiZGF0YSI6MiwicHVyIjoiYmxvYl9pZCJ9fQ==--57b0e3c9b45f046581419fa0ccb51c753b2db35c/library-upload.jpg?disposition=attachment
                 metadata: {}
                 viewable_type:
               schema:
@@ -32716,13 +32730,13 @@ paths:
                 video_embed_url:
                 video_url:
                 poster_url:
-                original_url: http://localhost:3000/rails/active_storage/blobs/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--0566183e020a36008b9fa853684c959de4430ca1/thinking-cat.jpg
-                mini_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--0566183e020a36008b9fa853684c959de4430ca1/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOlsxMjgsMTI4XSwic2F2ZXIiOnsic3RyaXAiOnRydWUsInF1YWxpdHkiOjc1LCJsb3NzbGVzcyI6ZmFsc2UsImFscGhhX3EiOjg1LCJyZWR1Y3Rpb25fZWZmb3J0Ijo2LCJzbWFydF9zdWJzYW1wbGUiOnRydWV9fSwicHVyIjoidmFyaWF0aW9uIn19--1b518df6dad68f0966022e5c2a3457ceb254e697/thinking-cat.jpg
-                small_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--0566183e020a36008b9fa853684c959de4430ca1/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOlsyNTYsMjU2XSwic2F2ZXIiOnsic3RyaXAiOnRydWUsInF1YWxpdHkiOjc1LCJsb3NzbGVzcyI6ZmFsc2UsImFscGhhX3EiOjg1LCJyZWR1Y3Rpb25fZWZmb3J0Ijo2LCJzbWFydF9zdWJzYW1wbGUiOnRydWV9fSwicHVyIjoidmFyaWF0aW9uIn19--f8b6e1c3df1e794718d53be6b426ee9bb3f09f46/thinking-cat.jpg
-                medium_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--0566183e020a36008b9fa853684c959de4430ca1/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOls0MDAsNDAwXSwic2F2ZXIiOnsic3RyaXAiOnRydWUsInF1YWxpdHkiOjc1LCJsb3NzbGVzcyI6ZmFsc2UsImFscGhhX3EiOjg1LCJyZWR1Y3Rpb25fZWZmb3J0Ijo2LCJzbWFydF9zdWJzYW1wbGUiOnRydWV9fSwicHVyIjoidmFyaWF0aW9uIn19--fe96558862b5ecbbcceafb0ed12fa970848ac596/thinking-cat.jpg
-                large_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--0566183e020a36008b9fa853684c959de4430ca1/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOls3MjAsNzIwXSwic2F2ZXIiOnsic3RyaXAiOnRydWUsInF1YWxpdHkiOjc1LCJsb3NzbGVzcyI6ZmFsc2UsImFscGhhX3EiOjg1LCJyZWR1Y3Rpb25fZWZmb3J0Ijo2LCJzbWFydF9zdWJzYW1wbGUiOnRydWV9fSwicHVyIjoidmFyaWF0aW9uIn19--39815e6d471f59aa60e1134aed581239c565f07c/thinking-cat.jpg
-                xlarge_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--0566183e020a36008b9fa853684c959de4430ca1/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOlsyMDAwLDIwMDBdLCJzYXZlciI6eyJzdHJpcCI6dHJ1ZSwicXVhbGl0eSI6NzUsImxvc3NsZXNzIjpmYWxzZSwiYWxwaGFfcSI6ODUsInJlZHVjdGlvbl9lZmZvcnQiOjYsInNtYXJ0X3N1YnNhbXBsZSI6dHJ1ZX19LCJwdXIiOiJ2YXJpYXRpb24ifX0=--47ff5efd60b7692c2df633837f5cf5c9446ac922/thinking-cat.jpg
-                og_image_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--0566183e020a36008b9fa853684c959de4430ca1/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOlsxMjAwLDYzMF0sInNhdmVyIjp7InN0cmlwIjp0cnVlLCJxdWFsaXR5Ijo3NSwibG9zc2xlc3MiOmZhbHNlLCJhbHBoYV9xIjo4NSwicmVkdWN0aW9uX2VmZm9ydCI6Niwic21hcnRfc3Vic2FtcGxlIjp0cnVlfX0sInB1ciI6InZhcmlhdGlvbiJ9fQ==--93a14b86135ea26eac9c5d48528b2494807736ef/thinking-cat.jpg
+                original_url: http://localhost:3000/rails/active_storage/blobs/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--3f1aecde77d58ea599b51fb901bd801c2913913a/thinking-cat.jpg
+                mini_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--3f1aecde77d58ea599b51fb901bd801c2913913a/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOlsxMjgsMTI4XSwic2F2ZXIiOnsic3RyaXAiOnRydWUsInF1YWxpdHkiOjc1LCJsb3NzbGVzcyI6ZmFsc2UsImFscGhhX3EiOjg1LCJyZWR1Y3Rpb25fZWZmb3J0Ijo2LCJzbWFydF9zdWJzYW1wbGUiOnRydWV9fSwicHVyIjoidmFyaWF0aW9uIn19--f86c22947e50479f77e1c743c4c65d29b1ba152a/thinking-cat.jpg
+                small_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--3f1aecde77d58ea599b51fb901bd801c2913913a/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOlsyNTYsMjU2XSwic2F2ZXIiOnsic3RyaXAiOnRydWUsInF1YWxpdHkiOjc1LCJsb3NzbGVzcyI6ZmFsc2UsImFscGhhX3EiOjg1LCJyZWR1Y3Rpb25fZWZmb3J0Ijo2LCJzbWFydF9zdWJzYW1wbGUiOnRydWV9fSwicHVyIjoidmFyaWF0aW9uIn19--bec459a3ff424977714d7883b84fa0b9bab9749a/thinking-cat.jpg
+                medium_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--3f1aecde77d58ea599b51fb901bd801c2913913a/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOls0MDAsNDAwXSwic2F2ZXIiOnsic3RyaXAiOnRydWUsInF1YWxpdHkiOjc1LCJsb3NzbGVzcyI6ZmFsc2UsImFscGhhX3EiOjg1LCJyZWR1Y3Rpb25fZWZmb3J0Ijo2LCJzbWFydF9zdWJzYW1wbGUiOnRydWV9fSwicHVyIjoidmFyaWF0aW9uIn19--1579cadc581f501c87a4790e8c3c49ec412caee0/thinking-cat.jpg
+                large_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--3f1aecde77d58ea599b51fb901bd801c2913913a/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOls3MjAsNzIwXSwic2F2ZXIiOnsic3RyaXAiOnRydWUsInF1YWxpdHkiOjc1LCJsb3NzbGVzcyI6ZmFsc2UsImFscGhhX3EiOjg1LCJyZWR1Y3Rpb25fZWZmb3J0Ijo2LCJzbWFydF9zdWJzYW1wbGUiOnRydWV9fSwicHVyIjoidmFyaWF0aW9uIn19--1e55d7132393c143049c0567d4dea407506792bd/thinking-cat.jpg
+                xlarge_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--3f1aecde77d58ea599b51fb901bd801c2913913a/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOlsyMDAwLDIwMDBdLCJzYXZlciI6eyJzdHJpcCI6dHJ1ZSwicXVhbGl0eSI6NzUsImxvc3NsZXNzIjpmYWxzZSwiYWxwaGFfcSI6ODUsInJlZHVjdGlvbl9lZmZvcnQiOjYsInNtYXJ0X3N1YnNhbXBsZSI6dHJ1ZX19LCJwdXIiOiJ2YXJpYXRpb24ifX0=--dc551795ef82c6d4f28bbe469d21c0ee7c3b61c3/thinking-cat.jpg
+                og_image_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--3f1aecde77d58ea599b51fb901bd801c2913913a/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOlsxMjAwLDYzMF0sInNhdmVyIjp7InN0cmlwIjp0cnVlLCJxdWFsaXR5Ijo3NSwibG9zc2xlc3MiOmZhbHNlLCJhbHBoYV9xIjo4NSwicmVkdWN0aW9uX2VmZm9ydCI6Niwic21hcnRfc3Vic2FtcGxlIjp0cnVlfX0sInB1ciI6InZhcmlhdGlvbiJ9fQ==--3305d418f7aa93ca89e0841f5bd5aee8aca194fa/thinking-cat.jpg
                 external_references: {}
                 created_at: '2026-01-15T12:00:00.000Z'
                 updated_at: '2026-01-15T12:00:00.000Z'
@@ -32730,10 +32744,10 @@ paths:
                 filename: thinking-cat.jpg
                 content_type: image/jpeg
                 byte_size: 18090
-                embed_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--0566183e020a36008b9fa853684c959de4430ca1/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2xpbWl0IjpbMTIwMCwxMjAwXSwic2F2ZXIiOnsic3RyaXAiOnRydWUsInF1YWxpdHkiOjc1LCJsb3NzbGVzcyI6ZmFsc2UsImFscGhhX3EiOjg1LCJyZWR1Y3Rpb25fZWZmb3J0Ijo2LCJzbWFydF9zdWJzYW1wbGUiOnRydWV9fSwicHVyIjoidmFyaWF0aW9uIn19--2023b0b571f2e1f04aa9977dedb1ec202afe71ae/thinking-cat.jpg
-                signed_id: eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--0566183e020a36008b9fa853684c959de4430ca1
+                embed_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--3f1aecde77d58ea599b51fb901bd801c2913913a/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2xpbWl0IjpbMTIwMCwxMjAwXSwic2F2ZXIiOnsic3RyaXAiOnRydWUsInF1YWxpdHkiOjc1LCJsb3NzbGVzcyI6ZmFsc2UsImFscGhhX3EiOjg1LCJyZWR1Y3Rpb25fZWZmb3J0Ijo2LCJzbWFydF9zdWJzYW1wbGUiOnRydWV9fSwicHVyIjoidmFyaWF0aW9uIn19--363914ca282d63e0a9d53d776b52efab87abc81a/thinking-cat.jpg
+                signed_id: eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--3f1aecde77d58ea599b51fb901bd801c2913913a
                 viewable_id: prod_gbHJdmfrXB
-                download_url: http://localhost:3000/rails/active_storage/blobs/redirect/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--0566183e020a36008b9fa853684c959de4430ca1/thinking-cat.jpg?disposition=attachment
+                download_url: http://localhost:3000/rails/active_storage/blobs/redirect/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--3f1aecde77d58ea599b51fb901bd801c2913913a/thinking-cat.jpg?disposition=attachment
                 metadata: {}
                 viewable_type: product
               schema:
@@ -37289,6 +37303,8 @@ components:
           type: object
         status:
           type: string
+        open_to_sellers:
+          type: boolean
         metadata:
           type: object
         deleted_at:
@@ -37362,6 +37378,7 @@ components:
       - seller_id
       - external_references
       - status
+      - open_to_sellers
       - metadata
       - deleted_at
       - created_at
@@ -40336,6 +40353,10 @@ components:
           type: number
         kind:
           type: string
+        option_values:
+          type: array
+          items:
+            "$ref": "#/components/schemas/OptionValue"
         translations:
           type: object
         metadata:
@@ -40346,10 +40367,6 @@ components:
           type: string
         updated_at:
           type: string
-        option_values:
-          type: array
-          items:
-            "$ref": "#/components/schemas/OptionValue"
       required:
       - id
       - name
@@ -41426,6 +41443,8 @@ components:
           type: object
         status:
           type: string
+        open_to_sellers:
+          type: boolean
         metadata:
           type: object
         deleted_at:
@@ -41495,6 +41514,7 @@ components:
       - seller_id
       - external_references
       - status
+      - open_to_sellers
       - metadata
       - deleted_at
       - created_at
@@ -41521,6 +41541,9 @@ components:
           type: string
         product_id:
           type: string
+        variant_id:
+          type: string
+          nullable: true
         metadata:
           type: object
           nullable: true
@@ -41544,6 +41567,7 @@ components:
       - reviewed_at
       - created_at
       - product_id
+      - variant_id
       - metadata
       - updated_at
       - submitted_by_id
@@ -43493,6 +43517,8 @@ components:
           nullable: true
         external_references:
           type: object
+        status:
+          type: string
         metadata:
           type: object
         position:
@@ -43549,6 +43575,10 @@ components:
         delivery_profile_id:
           type: string
           nullable: true
+        submission:
+          allOf:
+          - "$ref": "#/components/schemas/ProductSubmission"
+          nullable: true
         prices:
           type: array
           items:
@@ -43583,6 +43613,7 @@ components:
       - seller_id
       - option_values
       - external_references
+      - status
       - metadata
       - position
       - cost_price

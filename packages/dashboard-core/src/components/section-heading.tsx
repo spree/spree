@@ -1,4 +1,4 @@
-import { CardTitle, cn } from '@spree/dashboard-ui'
+import { cn } from '@spree/dashboard-ui'
 import { ExternalLinkIcon } from '@spree/dashboard-ui/icons'
 import { useTranslation } from 'react-i18next'
 import { docsUrl } from '../lib/docs'
@@ -28,7 +28,16 @@ export function SectionHeading({
 
   return (
     <div className={cn('flex min-w-0 flex-col gap-1', className)}>
-      <CardTitle className="min-w-0 truncate text-lg">{title}</CardTitle>
+      {/* A real heading element, not a styled div. This is the screen's
+          title on every list page, so a screen reader needs it as a landmark
+          and an assertion by role has something to find. `CardTitle` stays a
+          div for the many cards that are genuinely not the page's heading. */}
+      <h1
+        data-slot="card-title"
+        className="flex min-w-0 items-center gap-2 truncate font-medium text-lg"
+      >
+        {title}
+      </h1>
       {description && (
         <p className="text-muted-foreground text-sm">
           {description}
