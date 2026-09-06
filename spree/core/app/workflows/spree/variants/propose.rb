@@ -19,13 +19,13 @@ module Spree
         # Only a row being worked on can be submitted. An offer already in
         # review, on sale or taken down has nothing to ask for.
         unless variant.draft? || variant.rejected?
-          reject!(I18n.t('activerecord.errors.models.spree/variant.attributes.base.cannot_propose'))
+          reject!(:cannot_propose, message: I18n.t('activerecord.errors.models.spree/variant.attributes.base.cannot_propose'))
         end
 
         # An offer with no price is not an offer: the buy box ranks on price
         # and would drop it, so the marketplace would be reviewing something
         # nobody could buy.
-        reject!(I18n.t('activerecord.errors.models.spree/variant.attributes.base.requires_price')) if variant.prices.empty?
+        reject!(:requires_price, message: I18n.t('activerecord.errors.models.spree/variant.attributes.base.requires_price')) if variant.prices.empty?
 
         run_hooks :validate
 

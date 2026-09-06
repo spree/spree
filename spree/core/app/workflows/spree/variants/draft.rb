@@ -14,7 +14,7 @@ module Spree
         # business, and taking one off sale through an offer workflow would
         # write a status nothing in the operator's catalog put there
         # (docs/plans/6.0-seller-master-catalog-listings.md).
-        reject!(I18n.t('activerecord.errors.models.spree/variant.attributes.base.not_an_offer')) unless variant.offer?
+        reject!(:not_an_offer, message: I18n.t('activerecord.errors.models.spree/variant.attributes.base.not_an_offer')) unless variant.offer?
 
         run_hooks :validate
 
