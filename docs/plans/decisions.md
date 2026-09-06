@@ -4898,7 +4898,10 @@ cannot honestly share one table.
 branch; a seller-branch `options` write resolves against the product's own
 option types before reaching the model; a new shopper-facing read of a
 product's variants narrows to `active`; nothing writes `variants.status`
-around the workflows.
+around the workflows; a variant review workflow rejects with a symbol and
+its text alongside (`reject!(:not_an_offer, message: I18n.t(...))`), so the
+seller panel translates the reason in its own language rather than the
+store's.
 
 ## 2026-09-05 — A shopper-facing narrowing is an association, never a convention
 
