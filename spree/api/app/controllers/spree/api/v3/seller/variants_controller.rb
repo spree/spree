@@ -212,6 +212,15 @@ module Spree
           # carry duplicate combinations today
           # (docs/plans/6.0-seller-master-catalog-listings.md, Decision 8).
           #
+          # Checked before the write, not enforced by the database: the
+          # combination lives in `spree_option_value_variants`, so no unique
+          # index on `spree_variants` can express it. Two simultaneous creates
+          # of the same combination can therefore both pass. The window is
+          # small and the outcome is cosmetic — a seller sees their own offer
+          # twice and deletes one — so it is left as a check rather than
+          # given a lock table; a marketplace that needs the guarantee wants
+          # a uniqueness row keyed on the resolved combination.
+          #
           # @return [Hash, nil]
           def refuse_duplicate_combination
             product = @parent || @resource&.product

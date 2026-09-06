@@ -149,6 +149,33 @@ RSpec.describe 'Spree::Variants review workflows' do
       expect(offer.reload.rejection_reason).to eq('Second')
     end
 
+    # ...so it settles the row already there rather than opening another. A
+    # second row would claim the seller submitted twice, and the blank note on
+    # it would hide the reason they still have to act on.
+    it 'corrects in place rather than recording a second cycle' do
+      Spree.variant_reject_workflow.call(variant: offer, reason: 'First', reviewer: reviewer)
+      Spree.variant_reject_workflow.call(variant: offer, reason: 'Second', reviewer: reviewer)
+
+      expect(offer.reload.submissions.count).to eq(1)
+    end
+
+    it 'keeps the reason when a correction names none' do
+      Spree.variant_reject_workflow.call(variant: offer, reason: 'Wrong condition', reviewer: reviewer)
+      Spree.variant_reject_workflow.call(variant: offer, reviewer: reviewer)
+
+      expect(offer.reload.rejection_reason).to eq('Wrong condition')
+      expect(offer.submissions.count).to eq(1)
+    end
+
+    # A real resubmission is a new cycle and does get its own row.
+    it 'opens a fresh row when the seller submits again' do
+      Spree.variant_reject_workflow.call(variant: offer, reason: 'No', reviewer: reviewer)
+      Spree.variant_propose_workflow.call(variant: offer)
+
+      expect(offer.reload.submissions.count).to eq(2)
+      expect(offer.latest_submission).to be_pending
+    end
+
     it 'stops answering with the reason once the offer moves on' do
       Spree.variant_reject_workflow.call(variant: offer, reason: 'Condition is wrong', reviewer: reviewer)
       Spree.variant_propose_workflow.call(variant: offer)

@@ -527,6 +527,29 @@ steps:
       Assigns store-less product types to the default store, removes orphaned
       option-type joins, and resets product counters. Idempotent.
 
+  - id: backfill_variant_statuses
+    name: "Set every existing variant's status to active"
+    task: "spree:upgrade:backfill_variant_statuses"
+    notes: |
+      Spree 6.0 gives a variant its own status so a seller's offer on a shared
+      master-catalog product can be submitted, reviewed and sent back
+      (docs/plans/6.0-seller-master-catalog-listings.md). Every variant that
+      existed before that was on sale, so this sets them all to `active`.
+
+      Run this BEFORE serving traffic on the new code. `active` now gates
+      availability, and a variant whose status is still null answers `active?`
+      false — which would take the entire existing catalog off sale: nothing
+      purchasable, no buy box winner, and products dropping out of option
+      filters and search results.
+
+      Ordered before `search_reindex` deliberately: the index is built from
+      the variants a shopper may see, which excludes a row whose status is
+      still null. Reindexing first would write a document per product with no
+      variants in it, and this step does not re-enqueue them.
+
+      Idempotent — rows that already carry a status are skipped, so an
+      interrupted run resumes for free.
+
   - id: search_reindex
     name: "Rebuild the search index"
     task: "spree:search:reindex"
@@ -616,21 +639,3 @@ steps:
       filter_key another row in the same store already owns — only one of them
       can be addressed as a sort or filter param. Rename one and re-run.
       Idempotent.
-
-  - id: backfill_variant_statuses
-    name: "Set every existing variant's status to active"
-    task: "spree:upgrade:backfill_variant_statuses"
-    notes: |
-      Spree 6.0 gives a variant its own status so a seller's offer on a shared
-      master-catalog product can be submitted, reviewed and sent back
-      (docs/plans/6.0-seller-master-catalog-listings.md). Every variant that
-      existed before that was on sale, so this sets them all to `active`.
-
-      Run this BEFORE serving traffic on the new code. `active` now gates
-      availability, and a variant whose status is still null answers `active?`
-      false — which would take the entire existing catalog off sale: nothing
-      purchasable, no buy box winner, and products dropping out of option
-      filters and search results.
-
-      Idempotent — rows that already carry a status are skipped, so an
-      interrupted run resumes for free.
