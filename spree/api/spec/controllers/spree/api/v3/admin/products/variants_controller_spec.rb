@@ -20,6 +20,24 @@ RSpec.describe Spree::Api::V3::Admin::Products::VariantsController, type: :contr
       expect(ids).to include(variant.prefixed_id)
     end
 
+    # The offers card pages this endpoint, so the narrowing has to happen in
+    # SQL: filtering in the browser would page a mixed collection and count
+    # the marketplace's own rows in the totals, hiding offers behind a page
+    # the operator never reaches.
+    context 'with the offers filter' do
+      let!(:seller) { create(:seller, store: product.store) }
+      let!(:offer) { create(:variant, product: product, seller: seller, status: 'proposed') }
+
+      it 'returns only the sellers offers' do
+        get :index, params: { product_id: product.prefixed_id, q: { offers: true } }, as: :json
+
+        expect(response).to have_http_status(:ok)
+        ids = json_response['data'].map { |variant_json| variant_json['id'] }
+        expect(ids).to include(offer.prefixed_id)
+        expect(ids).not_to include(variant.prefixed_id)
+      end
+    end
+
     context 'with product from another store' do
       let(:other_store) { create(:store) }
       let(:other_product) { create(:product, store: other_store) }
