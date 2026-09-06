@@ -1058,6 +1058,11 @@
           "label": "默认目录",
           "placeholder": "所有已发布商品"
         },
+        "default_market": {
+          "derived": "自动（根据渠道市场设置）",
+          "help": "当买家所在国家不属于此渠道任何市场时，他们将进入的市场。",
+          "label": "默认市场"
+        },
         "fulfillment_locations": {
           "all": "所有地点",
           "help": "哪些仓库和自提点负责履行此销售渠道的订单。",
@@ -1073,6 +1078,14 @@
             "false": "不允许",
             "true": "允许"
           }
+        },
+        "markets": {
+          "all": "所有市场",
+          "help": "此渠道销售的市场。其他地区的买家将看到其默认市场。",
+          "label": "市场",
+          "none": "此商店尚无市场。",
+          "none_selected_hint": "请至少选择一个市场，或选择“所有市场”。",
+          "selected": "所选市场"
         },
         "name": {
           "placeholder": "例如 POS、Wholesale、Meta Shop"

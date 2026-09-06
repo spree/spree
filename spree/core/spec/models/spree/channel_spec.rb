@@ -290,4 +290,102 @@ RSpec.describe Spree::Channel, type: :model do
     end
   end
 
+  describe 'market allowlist' do
+    let(:channel) { create(:channel, store: store) }
+    let!(:eu) { create(:market, store: store, name: 'EU', currency: 'EUR') }
+    let!(:us) { create(:market, store: store, name: 'US', currency: 'USD') }
+
+    describe '#serves_market?' do
+      it 'serves every market of the store when no rows exist' do
+        expect(channel.serves_market?(eu)).to be true
+        expect(channel.serves_market?(us)).to be true
+      end
+
+      it 'serves only the listed markets once narrowed' do
+        channel.markets << eu
+
+        expect(channel.serves_market?(eu)).to be true
+        expect(channel.serves_market?(us)).to be false
+      end
+
+      it 'is false for nil' do
+        expect(channel.serves_market?(nil)).to be false
+      end
+
+      # Purchase validation trusts this predicate, so it carries the tenancy
+      # check itself rather than assuming the caller made it — an unrestricted
+      # channel must not wave through another store's market.
+      it 'is false for a market from another store, even unrestricted' do
+        foreign = create(:market, store: create(:store))
+
+        expect(channel.serves_market?(foreign)).to be false
+      end
+    end
+
+    describe '#allowed_markets' do
+      it 'returns every store market when unrestricted' do
+        expect(channel.allowed_markets).to include(eu, us)
+      end
+
+      it 'returns only the allowlist once narrowed' do
+        channel.markets << eu
+
+        expect(channel.allowed_markets).to contain_exactly(eu)
+      end
+    end
+
+    it 'refuses a market from another store' do
+      foreign = create(:market, store: create(:store))
+
+      row = Spree::ChannelMarket.new(channel: channel, market: foreign)
+
+      expect(row).not_to be_valid
+      expect(row.errors[:market]).to be_present
+    end
+
+    it 'drops its allowlist rows when the market goes' do
+      channel.markets << eu
+
+      expect { eu.destroy }.to change { channel.reload.channel_markets.count }.by(-1)
+    end
+  end
+
+  describe '#resolved_default_market' do
+    let(:channel) { create(:channel, store: store) }
+    let!(:eu) { create(:market, store: store, name: 'EU', currency: 'EUR') }
+
+    it 'prefers the store default when the channel serves it' do
+      expect(channel.resolved_default_market).to eq(store.default_market)
+    end
+
+    it 'honours an explicit default' do
+      channel.update!(default_market: eu)
+
+      expect(channel.resolved_default_market).to eq(eu)
+    end
+
+    # The column can outlive the allowlist that made it reachable; the
+    # resolver is what keeps a narrowed channel from stranding traffic.
+    it 'ignores an explicit default the channel no longer serves' do
+      channel.update!(default_market: eu)
+      channel.markets << store.default_market
+      channel.reload
+
+      expect(channel.resolved_default_market).to eq(store.default_market)
+    end
+
+    it 'falls back to the first allowed market when the store default is not served' do
+      channel.markets << eu
+
+      expect(channel.reload.resolved_default_market).to eq(eu)
+    end
+
+    it 'clears the pin when the pinned market is deleted' do
+      channel.update!(default_market: eu)
+
+      eu.destroy
+
+      expect(channel.reload.default_market).to be_nil
+    end
+  end
 end

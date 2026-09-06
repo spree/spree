@@ -251,6 +251,7 @@ en:
         must_apply_to_products: must be a custom field definition for products
         must_belong_to_same_store: must belong to the same store
         not_registered: is not a registered provider
+        not_served_by_channel: is not served by this sales channel
         spree_content_type_not_allowed: is not a file type we accept
       models:
         spree/allowed_origin:

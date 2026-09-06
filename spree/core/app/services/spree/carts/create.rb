@@ -9,11 +9,17 @@ module Spree
         store = @params.delete(:store)
         return failure(:store_is_required) if store.nil?
 
+        # Market and currency are both left to the purchase concerns when the
+        # caller names neither: the ambient market follows the shopper's
+        # country and may be one this channel does not sell into, and the
+        # currency has to follow whichever market wins — defaulting it to the
+        # store's would price a EUR channel's cart in USD
+        # (docs/plans/6.0-channel-markets.md).
         cart = store.carts.create!(
           user: @params.delete(:user),
-          market: @params.delete(:market) || Spree::Current.market,
-          channel: @params.delete(:channel) || Spree::Current.channel,
-          currency: @params.delete(:currency) || store.default_currency,
+          market: @params.delete(:market),
+          channel: @params.delete(:channel) || channel_for(store),
+          currency: @params.delete(:currency),
           locale: @params.delete(:locale) || Spree::Current.locale
         )
 
@@ -34,6 +40,22 @@ module Spree
         raise
       rescue StandardError => e
         failure(nil, e.message)
+      end
+
+      private
+
+      # The ambient channel belongs to whichever store the request resolved,
+      # which is not necessarily the one this cart is being created in — a
+      # cart must never carry another store's channel, and its market
+      # validation would reject the pairing anyway.
+      #
+      # @param store [Spree::Store]
+      # @return [Spree::Channel, nil]
+      def channel_for(store)
+        ambient = Spree::Current.channel
+        return ambient if ambient && ambient.store_id == store.id
+
+        store.default_channel
       end
     end
   end

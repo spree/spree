@@ -67,15 +67,15 @@ module Spree
           def permitted_params
             params.permit(*model_additional_permitted_attributes, :name, :code, :active, :default, :preferred_order_routing_strategy,
                           :preferred_storefront_access, :preferred_guest_checkout,
-                          :default_catalog_id,
-                          stock_location_ids: [])
+                          :default_catalog_id, :default_market_id,
+                          stock_location_ids: [], market_ids: [])
           end
 
           # `stock_location_ids` replaces the channel's fulfillment-origin
           # allowlist; empty clears it (= every location). Store-scoped
           # resolution: a foreign location 404s.
           def assignable_params
-            attributes = permitted_params.except(:stock_location_ids)
+            attributes = permitted_params.except(:stock_location_ids, :market_ids)
 
             # An incidental lookup like any other: a foreign catalog 404s.
             if attributes.key?(:default_catalog_id)
@@ -87,9 +87,27 @@ module Spree
                 end
             end
 
+            # An incidental lookup like any other: a foreign market 404s.
+            if attributes.key?(:default_market_id)
+              attributes[:default_market_id] =
+                if attributes[:default_market_id].present?
+                  current_store.markets.find_by_prefix_id!(attributes[:default_market_id]).id
+                else
+                  nil
+                end
+            end
+
             if params.key?(:stock_location_ids)
               attributes[:stock_locations] = Array(params[:stock_location_ids]).map do |id|
                 current_store.stock_locations.accessible_by(current_ability, :show).find_by_prefix_id!(id)
+              end
+            end
+
+            # `market_ids` replaces the channel's market allowlist; empty
+            # clears it (= every market of the store).
+            if params.key?(:market_ids)
+              attributes[:markets] = Array(params[:market_ids]).map do |id|
+                current_store.markets.find_by_prefix_id!(id)
               end
             end
 
