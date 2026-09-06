@@ -153,6 +153,9 @@ module Spree
         joins(:product_collections).where(Spree::ProductCollection.table_name => { collection_id: collection.id }).distinct
       end
 
+      # Ties broken by id, because several products routinely share a minimum
+      # position and ordering by position alone leaves their relative order to
+      # whatever the database returns — stable on SQLite, not on PostgreSQL.
       scope :ascend_by_taxons_min_position, ->(taxon_ids) {
         min_position_sql = "MIN(#{Spree::ProductCategory.table_name}.position)"
 

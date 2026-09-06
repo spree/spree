@@ -35,7 +35,7 @@ module Spree
         # are separate histories about separate decisions.
         trail = variant ? variant.submissions : product.submissions
         latest = trail.latest_first.first
-        submission = latest&.pending? ? latest : trail.new(status: 'pending', product: product)
+        submission = reusable?(latest, status) ? latest : trail.new(status: 'pending', product: product)
 
         attributes = { status: status, reviewed_at: Time.current, reviewed_by: reviewed_by }
         # A decision with no note must not wipe the note the row already
@@ -47,6 +47,27 @@ module Spree
         submission.save!
 
         success(submission)
+      end
+
+      private
+
+      # Whether this decision settles the row already at the head of the trail
+      # rather than opening a new one.
+      #
+      # An open row always is: that is the submission being answered. So is a
+      # row that already carries the SAME decision — `Reject` deliberately
+      # accepts an already-rejected subject so an operator can correct the
+      # note they gave, and that correction is one decision, not a second
+      # review cycle. Recording it as a new row would claim the seller
+      # submitted twice, and a correction sent without a note would leave the
+      # newest row blank, hiding the reason the seller still needs to read
+      # (docs/plans/6.0-seller-master-catalog-listings.md).
+      #
+      # @return [Boolean]
+      def reusable?(latest, status)
+        return false if latest.nil?
+
+        latest.pending? || latest.status == status.to_s
       end
     end
   end
