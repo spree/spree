@@ -13540,6 +13540,7 @@ paths:
               example:
                 data:
                 - id: prod_UkLWZg9DAJ
+                  pricing_access:
                   name: Product 1733250
                   slug: product-1733250
                   meta_title:
@@ -13642,6 +13643,7 @@ paths:
             application/json:
               example:
                 id: prod_gbHJdmfrXB
+                pricing_access:
                 name: Hand-thrown mug
                 slug: hand-thrown-mug
                 meta_title:
@@ -13784,6 +13786,7 @@ paths:
             application/json:
               example:
                 id: prod_UkLWZg9DAJ
+                pricing_access:
                 name: Product 1766710
                 slug: product-1766710
                 meta_title:
@@ -13863,6 +13866,7 @@ paths:
             application/json:
               example:
                 id: prod_UkLWZg9DAJ
+                pricing_access:
                 name: Hand-thrown mug, large
                 slug: product-1798212
                 meta_title:
@@ -14797,10 +14801,10 @@ paths:
             application/json:
               example:
                 direct_upload:
-                  url: http://www.example.com/rails/active_storage/disk/eyJfcmFpbHMiOnsiZGF0YSI6eyJrZXkiOiJuem5oOGdra3VxendvbDc1ODBxNHNwZmpmMjVxIiwiY29udGVudF90eXBlIjoiYXBwbGljYXRpb24vcGRmIiwiY29udGVudF9sZW5ndGgiOjUxMjM0LCJjaGVja3N1bSI6IlZqaHowNGxRdUVHdXY0bkR2aHNhTlE9PSIsInNlcnZpY2VfbmFtZSI6InRlc3QifSwiZXhwIjoiMjAyNi0wMS0xNVQxMjowNTowMC4wMDBaIiwicHVyIjoiYmxvYl90b2tlbiJ9fQ==--c3d1b432a81cee52587d4fb8fc024ac71d58e690
+                  url: http://www.example.com/rails/active_storage/disk/eyJfcmFpbHMiOnsiZGF0YSI6eyJrZXkiOiJuem5oOGdra3VxendvbDc1ODBxNHNwZmpmMjVxIiwiY29udGVudF90eXBlIjoiYXBwbGljYXRpb24vcGRmIiwiY29udGVudF9sZW5ndGgiOjUxMjM0LCJjaGVja3N1bSI6IlZqaHowNGxRdUVHdXY0bkR2aHNhTlE9PSIsInNlcnZpY2VfbmFtZSI6InRlc3QifSwiZXhwIjoiMjAyNi0wMS0xNVQxMjowNTowMC4wMDBaIiwicHVyIjoiYmxvYl90b2tlbiJ9fQ==--5e6e74fe51ac0c0faec42e3f54d2c9488892e75d
                   headers:
                     Content-Type: application/pdf
-                signed_id: eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--0566183e020a36008b9fa853684c959de4430ca1
+                signed_id: eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--ad5ee76fc5488835d47006f3854620bc8c8614c0
               schema:
                 "$ref": "#/components/schemas/DirectUploadResponse"
       requestBody:
@@ -19867,6 +19871,9 @@ components:
       properties:
         id:
           type: string
+        pricing_access:
+          type: string
+          nullable: true
         name:
           type: string
         slug:
@@ -19979,6 +19986,7 @@ components:
           nullable: true
       required:
       - id
+      - pricing_access
       - name
       - slug
       - meta_title
@@ -20650,6 +20658,9 @@ components:
           type: string
         product_id:
           type: string
+        pricing_access:
+          type: string
+          nullable: true
         sku:
           type: string
           nullable: true
@@ -20780,6 +20791,7 @@ components:
       required:
       - id
       - product_id
+      - pricing_access
       - sku
       - options_text
       - track_inventory
