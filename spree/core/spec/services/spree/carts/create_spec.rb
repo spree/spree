@@ -162,6 +162,20 @@ module Spree
       expect(result.value.channel&.store_id).to eq(store.id)
     end
 
+    # Currency follows whichever market wins, so a channel selling only in
+    # the EU cannot price its carts in the store's USD.
+    it 'takes its currency from the market the channel resolves to' do
+      channel = create(:channel, store: store)
+      eu = create(:market, store: store, name: 'EU', currency: 'EUR', default_locale: 'en')
+      channel.markets << eu
+
+      result = subject.call(params: { store: store, channel: channel })
+
+      expect(result).to be_success
+      expect(result.value.market).to eq(eu)
+      expect(result.value.currency).to eq('EUR')
+    end
+
     it 'refuses an explicitly supplied channel from another store' do
       foreign_channel = create(:channel, store: create(:store))
 

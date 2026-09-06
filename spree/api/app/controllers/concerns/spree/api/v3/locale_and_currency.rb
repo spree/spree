@@ -209,12 +209,8 @@ module Spree
         # which influences the default locale and currency fallbacks.
         def set_market_from_country
           country_code = request.headers['x-spree-country'].presence || params[:country].presence
-          return unless country_code
-
-          country = Spree::Country.by_iso(country_code)
-          return unless country
-
-          market = current_store&.market_for_country(country)
+          country = Spree::Country.by_iso(country_code) if country_code
+          market = current_store&.market_for_country(country) if country
 
           # +current_channel+ is called rather than read from
           # +Spree::Current+: this callback is registered by V3::BaseController

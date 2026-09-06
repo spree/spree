@@ -185,6 +185,24 @@ RSpec.describe Spree::Api::V3::Store::MarketsController, type: :controller do
         expect(seen.last).to eq('EUR')
       end
 
+      # Most storefront requests carry no country header at all. The channel
+      # default has to apply to those too — currency freezes at set_currency,
+      # several callbacks before the channel resolves, so a callback that
+      # returned early on a missing header left the shopper on the store's
+      # currency while the market said otherwise.
+      it 'applies the channel default market when no country header is sent' do
+        seen = nil
+        allow(Spree.api.market_serializer).to receive(:new).and_wrap_original do |original, *args, **kwargs|
+          seen ||= [Spree::Current.market, Spree::Current.currency]
+          original.call(*args, **kwargs)
+        end
+
+        get :index
+
+        expect(seen.first).to eq(eu_market)
+        expect(seen.last).to eq('EUR')
+      end
+
       # The channel's markets are the sellable set, so a currency header for a
       # market it does not serve is not on offer and must be refused rather
       # than accepted as the request currency.

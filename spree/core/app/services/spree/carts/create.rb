@@ -9,15 +9,17 @@ module Spree
         store = @params.delete(:store)
         return failure(:store_is_required) if store.nil?
 
-        # Market is left to +Purchase::Market#ensure_market_presence+ when the
-        # caller names none: the ambient value follows the shopper's country
-        # and may be one this channel does not sell into, which the purchase's
-        # own validation would then reject (docs/plans/6.0-channel-markets.md).
+        # Market and currency are both left to the purchase concerns when the
+        # caller names neither: the ambient market follows the shopper's
+        # country and may be one this channel does not sell into, and the
+        # currency has to follow whichever market wins — defaulting it to the
+        # store's would price a EUR channel's cart in USD
+        # (docs/plans/6.0-channel-markets.md).
         cart = store.carts.create!(
           user: @params.delete(:user),
           market: @params.delete(:market),
           channel: @params.delete(:channel) || channel_for(store),
-          currency: @params.delete(:currency) || store.default_currency,
+          currency: @params.delete(:currency),
           locale: @params.delete(:locale) || Spree::Current.locale
         )
 
