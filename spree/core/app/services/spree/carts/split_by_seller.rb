@@ -176,6 +176,8 @@ module Spree
           Spree::FulfillmentItem.where(id: moving.map(&:id)).
             update_all(fulfillment_id: replacement.id, order_id: sibling.id)
 
+          restate_freight_summaries(fulfillment, replacement)
+
           weights = [items - moving, moving].map { |half| to_minor_units(items_value(half)) }
           divide_delivery_cost(fulfillment, replacement, weights)
           divided[fulfillment.id] = [replacement.id, weights]
@@ -236,26 +238,31 @@ module Spree
         if (selected = fulfillment.selected_delivery_rate)
           rate_attributes = selected.attributes.except('id', 'created_at', 'updated_at')
           replacement.delivery_rates.create!(
-            rate_attributes.merge(
-              'fulfillment_id' => replacement.id,
-              'metadata' => rate_metadata_for(selected, replacement)
-            )
+            rate_attributes.merge('fulfillment_id' => replacement.id)
           )
         end
 
         replacement
       end
 
-      # A freight summary describes one consignment's load, so a sibling that
-      # carries only part of the goods must not inherit the whole shipment's
-      # cartons and cubic meters — two forwarders would each be asked to book
-      # the entire load. Rebuilt from what this sibling actually ships.
-      def rate_metadata_for(selected, replacement)
-        metadata = selected.metadata
-        return metadata if metadata.blank? || metadata['freight_summary'].blank?
+      # A freight summary describes one consignment's load, so neither half of a
+      # divided parcel may keep the whole shipment's cartons and cubic meters —
+      # two forwarders would each be asked to book the entire load.
+      #
+      # Restated only once the items have moved: read any earlier, both halves
+      # describe what they held before the split, and the new one holds nothing
+      # at all.
+      def restate_freight_summaries(*fulfillments)
+        fulfillments.each do |fulfillment|
+          rate = fulfillment.reload.selected_delivery_rate
+          next if rate.nil?
 
-        summary = Spree::FreightSummary.build(replacement.to_package.contents)
-        metadata.merge('freight_summary' => summary.as_json)
+          metadata = rate.metadata
+          next if metadata.blank? || metadata['freight_summary'].blank?
+
+          summary = Spree::FreightSummary.build(fulfillment.to_package.contents)
+          rate.update_columns(metadata: metadata.merge('freight_summary' => summary.as_json))
+        end
       end
 
       # Tax lines, discounts and fees follow whatever they hang off. Rows

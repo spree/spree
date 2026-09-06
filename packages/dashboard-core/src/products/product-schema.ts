@@ -71,7 +71,13 @@ export const variantFormSchema = z.object({
   purchase_unit: z.string().nullable().optional(),
   units_per_carton: quantityRuleField,
   cartons_per_pallet: quantityRuleField,
-  carton_weight: z.coerce.number().nullable().optional(),
+  // The server refuses a carton that weighs nothing, and a 422 on a nested
+  // variant lands on a banner naming no variant — so it is caught on the field.
+  carton_weight: z.coerce
+    .number()
+    .positive({ error: () => i18n.t('admin.fields.variant.carton_weight_invalid') })
+    .nullable()
+    .optional(),
   carton_package_type_id: z.string().nullable().optional(),
   track_inventory: z.boolean().optional(),
   preorderable: z.boolean().optional(),

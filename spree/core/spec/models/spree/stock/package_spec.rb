@@ -73,6 +73,29 @@ module Spree
         expect(subject.weight).to eq(102.5)
       end
 
+      # The summary is memoized because quoting reads it repeatedly, so a
+      # package added to after its first read would otherwise report the
+      # volume it had before — and pick the freight tier to match.
+      it 'reports the volume it holds now, not the volume it was first asked about' do
+        subject.add build_inventory_unit
+        first = subject.freight_summary.total_units
+
+        subject.add build_inventory_unit
+
+        expect(subject.freight_summary.total_units).to eq(first + 1)
+      end
+
+      it 'forgets a removed item too' do
+        item = build_inventory_unit
+        subject.add item
+        subject.add build_inventory_unit
+        subject.freight_summary
+
+        subject.remove(item)
+
+        expect(subject.freight_summary.total_units).to eq(1)
+      end
+
       it 'applies the tare once per package, not per item' do
         create(:package_type, store: order.store, default: true, weight: 2.5, weight_unit: 'lb')
 

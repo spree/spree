@@ -203,6 +203,7 @@ module Spree
         return if store.default_package_type.present?
 
         metric = store.metric_unit_system?
+        weight_unit = store.preferred_weight_unit
 
         store.package_types.create!(
           name: Spree.t('package_types.default_name'),
@@ -212,8 +213,12 @@ module Spree
           width: metric ? 23 : 9,
           height: metric ? 10 : 4,
           dimensions_unit: metric ? 'cm' : 'in',
-          weight: metric ? 0.25 : 0.5,
-          weight_unit: store.preferred_weight_unit
+          # The unit system and the weight unit are separate preferences, so a
+          # metric store can still weigh in pounds. Stating half a pound as
+          # `0.5` under a `kg` label — or the reverse — would misreport the
+          # tare on every quote, so the figure is converted rather than assumed.
+          weight: Spree::Measurement.convert_weight(0.5, from: 'lb', to: weight_unit).round(3),
+          weight_unit: weight_unit
         )
       end
 

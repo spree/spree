@@ -118,7 +118,14 @@ module Spree
         super
       end
     end
-    delegate :amount_in_cents, to: :display_cost
+
+    # Read off the raw cost rather than the formatted one: an unpriced freight
+    # fulfillment formats as "quoted after review", and a String has no cents.
+    #
+    # @return [Integer]
+    def amount_in_cents
+      Spree::Money.new(cost, currency: currency).amount_in_cents
+    end
 
     # Statuses describe what the merchant did with the package — nothing else.
     # Payment and stock readiness used to be encoded here as pending/ready and

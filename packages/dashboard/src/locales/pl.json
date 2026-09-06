@@ -2290,7 +2290,8 @@
         },
         "cartons_per_pallet": {
           "label": "Kartonów na palecie"
-        }
+        },
+        "carton_weight_invalid": "Podaj wagę kartonu większą od zera albo zostaw pole puste."
       },
       "webhook_endpoint": {
         "active": {

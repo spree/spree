@@ -2294,7 +2294,8 @@
         },
         "cartons_per_pallet": {
           "label": "الكراتين لكل منصة"
-        }
+        },
+        "carton_weight_invalid": "أدخل وزن كرتونة أكبر من صفر، أو اترك الحقل فارغًا."
       },
       "webhook_endpoint": {
         "active": {

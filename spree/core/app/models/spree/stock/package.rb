@@ -45,6 +45,7 @@ module Spree
       def add(inventory_unit, state = :on_hand)
         # Remove find_item check as already taken care by prioritizer
         contents << ContentItem.new(inventory_unit, state)
+        @freight_summary = nil
       end
 
       def add_multiple(inventory_units, state = :on_hand)
@@ -58,6 +59,7 @@ module Spree
 
       def remove_item(item)
         @contents -= [item]
+        @freight_summary = nil
       end
 
       # Fix regression that removed package.order.
@@ -94,6 +96,8 @@ module Spree
       # comes from the frozen copy on its selected delivery rate instead.
       #
       # @return [Spree::FreightSummary]
+      # Memoized because quoting reads it repeatedly, and dropped whenever the
+      # contents change — a stale volume would pick the wrong freight tier.
       def freight_summary
         @freight_summary ||= Spree::FreightSummary.build(contents)
       end

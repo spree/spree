@@ -30,6 +30,29 @@ RSpec.describe Spree::Stores::ProvisionDefaults do
       expect(box.weight_unit).to eq('kg')
     end
 
+    # The two preferences are independent: a metric store can still weigh in
+    # pounds, and stating the wrong number under that label misreports the tare
+    # on every quote.
+    it 'states the tare in the weight unit the store actually uses' do
+      stub_store_preferences(store, unit_system: 'metric', weight_unit: 'lb')
+
+      subject
+
+      box = store.reload.default_package_type
+      expect(box.weight_unit).to eq('lb')
+      expect(box.weight.to_f).to be_within(0.01).of(0.5)
+    end
+
+    it 'converts that tare for a store weighing in kilograms' do
+      stub_store_preferences(store, unit_system: 'metric', weight_unit: 'kg')
+
+      subject
+
+      box = store.reload.default_package_type
+      expect(box.weight_unit).to eq('kg')
+      expect(box.weight.to_f).to be_within(0.01).of(0.227)
+    end
+
     it 'measures an imperial store in inches' do
       stub_store_preferences(store, unit_system: 'imperial', weight_unit: 'lb')
 

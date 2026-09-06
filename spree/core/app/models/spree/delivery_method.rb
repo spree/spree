@@ -503,7 +503,10 @@ module Spree
     # Saving a deposit a provider will never read leaves a merchant believing
     # they have set terms that quietly do nothing.
     def deposit_requires_a_provider_that_collects_one
-      return if rate_provider_instance.respond_to?(:deposit_percentage)
+      # Built fresh rather than read through the memoized instance: switching a
+      # method to freight and setting a deposit in one edit would otherwise be
+      # judged against the provider the record had before.
+      return if rate_provider_class.new(self).respond_to?(:deposit_percentage)
 
       errors.add(:deposit_percentage, :unsupported_by_rate_provider)
     end

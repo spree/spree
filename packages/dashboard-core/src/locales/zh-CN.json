@@ -851,7 +851,8 @@
         },
         "cartons_per_pallet": {
           "label": "每托盘箱数"
-        }
+        },
+        "carton_weight_invalid": "请输入大于零的整箱重量，或留空。"
       },
       "minimum_order_quantity": {
         "label": "最小起订量",

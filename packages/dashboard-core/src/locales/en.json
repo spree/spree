@@ -853,7 +853,8 @@
         },
         "cartons_per_pallet": {
           "label": "Cartons per pallet"
-        }
+        },
+        "carton_weight_invalid": "Enter a carton weight greater than zero, or leave it blank."
       },
       "minimum_order_quantity": {
         "label": "Minimum order quantity",

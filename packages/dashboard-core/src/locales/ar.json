@@ -851,7 +851,8 @@
         },
         "cartons_per_pallet": {
           "label": "الكراتين لكل منصة"
-        }
+        },
+        "carton_weight_invalid": "أدخل وزن كرتونة أكبر من صفر، أو اترك الحقل فارغًا."
       },
       "minimum_order_quantity": {
         "label": "الحد الأدنى لكمية الطلب",
