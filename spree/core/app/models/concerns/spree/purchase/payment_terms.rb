@@ -55,10 +55,12 @@ module Spree
 
       private
 
-      # A cart follows whatever it is shipping under; an order has its
-      # snapshot and never asks again.
+      # A cart follows whatever it is shipping under, and so does a draft order
+      # that has not been placed — an admin or B2B draft chooses its freight
+      # the same way. Once placed, the snapshot is the answer and is never
+      # asked again, so a rate edited afterwards cannot rewrite what was owed.
       def resolved_payment_terms
-        return if is_a?(Spree::Order)
+        return if is_a?(Spree::Order) && completed?
 
         # Any shipment asking for a deposit sets the terms for the purchase.
         # Taking whichever rate happened to be created first would lose the

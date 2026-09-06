@@ -32,7 +32,7 @@ module Spree
       CARRIED_TO_SIBLING = %w[
         email currency locale market_id channel_id company_id
         customer_id token accept_marketing preferred_stock_location_id
-        customer_note last_ip_address po_number
+        customer_note last_ip_address po_number payment_terms
       ].freeze
 
       # @param cart [Spree::Cart]
@@ -57,7 +57,10 @@ module Spree
           end
 
           distribute_order_level_fees(order, orders, partitions)
-          orders.each { |child| resum_totals(child) }
+          orders.each do |child|
+            resum_totals(child)
+            restate_deposit_base(child)
+          end
         end
 
         # Handed over with the children loaded: everything downstream reads
@@ -404,6 +407,17 @@ module Spree
       # and the tax provider would delete the moved tax lines and re-derive them
       # from today's rates. The checkout already answered both questions against
       # the whole basket, and the customer has already paid that answer.
+      # The deposit percentage was agreed for the whole basket, but each child
+      # is billed on its own. Left alone, every sibling would measure its
+      # deposit against the basket's total — the adopted first child included,
+      # since it keeps the base it was completed with.
+      def restate_deposit_base(order)
+        terms = order.payment_terms
+        return if terms.blank? || terms['base_total'].blank?
+
+        order.update_columns(payment_terms: terms.merge('base_total' => order.reload.total.to_s))
+      end
+
       def resum_totals(order)
         Spree.order_recalculate_totals_workflow.call(order: order.reload, resum_only: true)
       end

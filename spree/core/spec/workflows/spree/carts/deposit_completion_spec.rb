@@ -97,6 +97,27 @@ RSpec.describe 'completing a cart that owes a deposit' do
     expect(payment.amount).to be < cart.total
   end
 
+  # Admin and B2B drafts complete through Orders::Complete, not checkout. A
+  # draft placed on freight terms owes its deposit like any other.
+  it 'freezes the terms of a draft order completed by staff' do
+    address = create(:address)
+    order = create(:order, store: store, email: 'buyer@example.com',
+                           ship_address: address, bill_address: address)
+    create(:line_item, order: order, cart: nil, price: 100, quantity: 1)
+    fulfillment = create(:shipment, order: order, cart: nil)
+    create(:delivery_rate, fulfillment: fulfillment, delivery_method: freight_method,
+                           selected: true, unpriced: true)
+    Spree::Orders::RecalculateTotals.call(order: order.reload)
+
+    Spree::Orders::Complete.call(order: order.reload, payment_pending: true)
+
+    order.reload
+    expect(order.payment_terms['kind']).to eq('deposit')
+    expect(order.payment_terms['deposit_percentage'].to_d).to eq(40)
+    expect(order.payment_terms['base_total'].to_d).to eq(order.total)
+    expect(order.amount_due_at_checkout).to be < order.total
+  end
+
   # A retail order still has to cover everything — the deposit path must not
   # let an underpaid parcel order through.
   it 'still refuses a cart that owes its whole total and underpays' do

@@ -80,8 +80,19 @@ module Spree
         end
       end
 
+      # Frozen at the same moment the order is placed, exactly as checkout
+      # does it: a draft completed on freight terms owes its deposit, and the
+      # total it was struck against has to be recorded with it — a fee added
+      # afterwards must not restate what the buyer agreed to.
       def place_order
-        order.update!(status: 'placed', completed_at: Time.current)
+        attributes = { status: 'placed', completed_at: Time.current }
+
+        if order.payment_terms.blank? && (terms = order.payment_terms_snapshot)
+          terms.base_total = order.total
+          attributes[:payment_terms] = terms.as_json
+        end
+
+        order.update!(attributes)
       end
 
       def use_coupon_codes
