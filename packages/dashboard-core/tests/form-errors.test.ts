@@ -15,12 +15,17 @@ beforeAll(async () => {
         translation: {
           admin: {
             validation: {
-              blank: 'Required',
-              invalid: 'Is not valid',
-              greater_than: 'Must be more than {{count}}',
-              // Per-attribute overrides of a shared code.
-              quantity: { blank: 'Enter how many' },
-              callback_url: { invalid: 'Enter a full web address' },
+              // Client-side keys the forms' own schemas read stay beside the
+              // server codes — proof the two namespaces do not collide.
+              required: '{{field}} is required',
+              codes: {
+                blank: 'Required',
+                invalid: 'Is not valid',
+                greater_than: 'Must be more than {{count}}',
+                // Per-attribute overrides of a shared code.
+                quantity: { blank: 'Enter how many' },
+                callback_url: { invalid: 'Enter a full web address' },
+              },
             },
             fields: {
               name: { label: 'Name' },

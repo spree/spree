@@ -6,11 +6,16 @@ import type { FieldValues, Path, UseFormSetError } from 'react-hook-form'
 /**
  * Text for one validation failure, in the admin's own language.
  *
+ * Server codes live under `admin.validation.codes`, apart from the client-side
+ * keys the forms' own schemas read (`admin.validation.required`, …). The two
+ * vocabularies overlap — Rails' `required` is a missing association, the
+ * client's is an empty input — so they cannot share a namespace.
+ *
  * The Admin API reports the Rails error `code` and the values the validation
  * interpolates, so the copy comes from the dashboard's locale files rather
  * than from a message the server resolved in the store's locale. Keys are
- * tried per-attribute first (`admin.validation.quantity.greater_than`), then
- * generally (`admin.validation.greater_than`); the server's `message` is the
+ * tried per-attribute first (`admin.validation.codes.quantity.greater_than`), then
+ * generally (`admin.validation.codes.greater_than`); the server's `message` is the
  * fallback, which is what an extension's own error code gets.
  *
  * @param field the attribute the failure is attached to
@@ -23,9 +28,9 @@ function resolveDetailMessage(field: string, entry: string | ValidationErrorDeta
   const { code, message, specific, ...interpolation } = entry
   if (!code) return message
 
-  // Per-attribute first: `admin.validation.url.invalid` is written for this
+  // Per-attribute first: `admin.validation.codes.url.invalid` is written for this
   // one field and beats both the generic key and the server.
-  const attributeKey = `admin.validation.${field}.${code}`
+  const attributeKey = `admin.validation.codes.${field}.${code}`
   if (i18n.exists(attributeKey)) return i18n.t(attributeKey, interpolation)
 
   // `specific` means the model overrode the code's own wording with something
@@ -35,7 +40,7 @@ function resolveDetailMessage(field: string, entry: string | ValidationErrorDeta
   // the code's default in the locale the message was resolved in.
   if (specific) return message
 
-  const genericKey = `admin.validation.${code}`
+  const genericKey = `admin.validation.codes.${code}`
   return i18n.exists(genericKey) ? i18n.t(genericKey, interpolation) : message
 }
 
@@ -48,9 +53,9 @@ function resolveDetailMessage(field: string, entry: string | ValidationErrorDeta
  * server did not mark the message as its own.
  */
 function hasTranslation(field: string, entry: ValidationErrorDetail): boolean {
-  if (i18n.exists(`admin.validation.${field}.${entry.code}`)) return true
+  if (i18n.exists(`admin.validation.codes.${field}.${entry.code}`)) return true
   if (entry.specific) return false
-  return i18n.exists(`admin.validation.${entry.code}`)
+  return i18n.exists(`admin.validation.codes.${entry.code}`)
 }
 
 /**
