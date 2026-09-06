@@ -145,6 +145,22 @@ RSpec.describe Spree::Api::V3::Seller::VariantsController, type: :controller do
         expect(Spree::Variant.find_by(sku: 'NEW-OFFER-1').option_values).to include(used)
       end
 
+      # The axis is the vocabulary, not the values other variants happen to
+      # have taken. Resolving against the product's own `option_values` (the
+      # values its existing variants use) would refuse exactly the ones a
+      # seller needs, since one offer per combination means a new offer
+      # usually names a combination nobody has listed yet.
+      it 'accepts a value on the axis that no existing variant uses' do
+        unused = create(:option_value, option_type: condition, name: 'refurbished', label: 'Refurbished')
+
+        expect(master.option_values.reload).not_to include(unused)
+
+        post :create, params: payload.merge(options: [{ name: 'condition', value: 'refurbished' }]), as: :json
+
+        expect(response).to have_http_status(:created)
+        expect(Spree::Variant.find_by(sku: 'NEW-OFFER-1').option_values).to include(unused)
+      end
+
       # set_option_value creates option values on demand, so an unfiltered
       # payload would add a seller's spelling to the marketplace's vocabulary.
       it 'refuses a value the marketplace does not offer' do
