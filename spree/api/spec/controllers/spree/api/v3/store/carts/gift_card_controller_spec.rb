@@ -90,6 +90,35 @@ RSpec.describe Spree::Api::V3::Store::Carts::GiftCardsController, type: :control
       end
     end
 
+    context 'on a cart that is otherwise ready to be placed' do
+      let!(:order) { create(:cart_ready_for_delivery, store: store, customer: user) }
+
+      context 'when the card covers the whole basket' do
+        let!(:gift_card) { create(:gift_card, store: store, amount: order.total, code: 'giftcard123') }
+
+        it 'leaves the customer on the payment step with nothing outstanding' do
+          post :create, params: { cart_id: order.prefixed_id, code: 'giftcard123' }
+
+          expect(response).to have_http_status(:created)
+          expect(json_response['amount_due']).to eq('0.0')
+          expect(json_response['current_step']).to eq('payment')
+          expect(json_response['requirements']).to be_empty
+        end
+      end
+
+      context 'when a balance remains' do
+        let!(:gift_card) { create(:gift_card, store: store, amount: order.total - 1, code: 'giftcard123') }
+
+        it 'keeps asking for the rest of the money' do
+          post :create, params: { cart_id: order.prefixed_id, code: 'giftcard123' }
+
+          expect(response).to have_http_status(:created)
+          expect(json_response['current_step']).to eq('payment')
+          expect(json_response['requirements']).to include(a_hash_including('field' => 'payment'))
+        end
+      end
+    end
+
     context 'with guest spree token' do
       let(:guest_order) { create(:cart_with_line_items, store: store, customer: nil) }
 

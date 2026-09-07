@@ -99,7 +99,7 @@ module Spree
       end
 
       def payment_satisfied?
-        @cart.payments.valid.any?
+        @cart.payments.valid.sum(:amount) >= @cart.total
       end
 
       # Advisory rather than completion-only: the buyer has to be told the

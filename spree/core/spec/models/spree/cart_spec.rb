@@ -77,6 +77,52 @@ describe Spree::Cart, type: :model do
     end
   end
 
+  describe '#current_checkout_step' do
+    let(:cart) { build(:cart, store: store) }
+    let(:unmet) { [] }
+
+    before do
+      allow(cart).to receive_messages(delivery_step_required?: true, payment_required?: true,
+                                      confirmation_required?: false)
+      allow(Spree::Checkout::Requirements).to receive(:new).with(cart).
+        and_return(instance_double(Spree::Checkout::Requirements, call: unmet))
+    end
+
+    context 'when something is still outstanding' do
+      let(:unmet) { [{ step: 'delivery', field: 'delivery_method' }] }
+
+      it 'reports the step that thing belongs to' do
+        expect(cart.current_checkout_step).to eq('delivery')
+      end
+    end
+
+    context 'when the missing thing is the basket itself' do
+      let(:unmet) { [{ step: 'cart', field: 'line_items' }] }
+
+      it 'reports address, since the customer never sees a cart step' do
+        expect(cart.current_checkout_step).to eq('address')
+      end
+    end
+
+    context 'when nothing is outstanding' do
+      it 'waits on the last step rather than reporting completion' do
+        expect(cart.current_checkout_step).to eq('payment')
+      end
+
+      it 'waits on confirm where the checkout advertises a review pass' do
+        allow(cart).to receive_messages(confirmation_required?: true)
+
+        expect(cart.current_checkout_step).to eq('confirm')
+      end
+
+      it 'reports complete once the cart has actually completed' do
+        allow(cart).to receive_messages(completed?: true)
+
+        expect(cart.current_checkout_step).to eq('complete')
+      end
+    end
+  end
+
   describe '#checkout_step_index' do
     let(:cart) { build(:cart, store: store) }
 

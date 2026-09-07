@@ -33,13 +33,23 @@ module Spree
       # missing line items — is not customer-facing and reports as
       # 'address').
       #
+      # Only a completed cart reports 'complete'. An open cart with nothing
+      # outstanding is not finished, it is ready to be placed, so it waits
+      # on {#final_checkout_step}
       # @return [String]
       def current_checkout_step
         return 'complete' if completed?
 
         first_unmet = Spree::Checkout::Requirements.new(self).call.first
-        step = first_unmet ? first_unmet[:step].to_s : 'complete'
+        return final_checkout_step if first_unmet.nil?
+
+        step = first_unmet[:step].to_s
         step == 'cart' ? 'address' : step
+      end
+
+      # @return [String]
+      def final_checkout_step
+        checkout_steps.reject { |step| step == 'complete' }.last || 'address'
       end
 
       # Checkout steps before {#current_checkout_step}; never includes
