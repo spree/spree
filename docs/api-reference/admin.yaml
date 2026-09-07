@@ -13120,6 +13120,12 @@ paths:
                 display_payment_total: "$0.00"
                 metadata: {}
                 cancel_note:
+                commission_amount_total: '0.0'
+                display_commission_amount_total: "$0.00"
+                commission_tax_total: '0.0'
+                display_commission_tax_total: "$0.00"
+                commission_total: '0.0'
+                display_commission_total: "$0.00"
                 canceled_at:
                 approved_at:
                 created_at: '2026-01-15T12:00:00.000Z'
@@ -13374,6 +13380,12 @@ paths:
                   display_payment_total: "$0.00"
                   metadata: {}
                   cancel_note:
+                  commission_amount_total: '0.0'
+                  display_commission_amount_total: "$0.00"
+                  commission_tax_total: '0.0'
+                  display_commission_tax_total: "$0.00"
+                  commission_total: '0.0'
+                  display_commission_total: "$0.00"
                   canceled_at:
                   approved_at:
                   created_at: '2026-01-15T12:00:00.000Z'
@@ -13605,6 +13617,12 @@ paths:
                 display_payment_total: "$0.00"
                 metadata: {}
                 cancel_note:
+                commission_amount_total: '0.0'
+                display_commission_amount_total: "$0.00"
+                commission_tax_total: '0.0'
+                display_commission_tax_total: "$0.00"
+                commission_total: '0.0'
+                display_commission_total: "$0.00"
                 canceled_at:
                 approved_at:
                 created_at: '2026-01-15T12:00:00.000Z'
@@ -13869,6 +13887,12 @@ paths:
                 display_payment_total: "$0.00"
                 metadata: {}
                 cancel_note:
+                commission_amount_total: '0.0'
+                display_commission_amount_total: "$0.00"
+                commission_tax_total: '0.0'
+                display_commission_tax_total: "$0.00"
+                commission_total: '0.0'
+                display_commission_total: "$0.00"
                 canceled_at:
                 approved_at:
                 created_at: '2026-01-15T12:00:00.000Z'
@@ -14021,6 +14045,12 @@ paths:
                 display_payment_total: "$0.00"
                 metadata: {}
                 cancel_note:
+                commission_amount_total: '0.0'
+                display_commission_amount_total: "$0.00"
+                commission_tax_total: '0.0'
+                display_commission_tax_total: "$0.00"
+                commission_total: '0.0'
+                display_commission_total: "$0.00"
                 canceled_at:
                 approved_at:
                 created_at: '2026-01-15T12:00:00.000Z'
@@ -14285,6 +14315,12 @@ paths:
                 display_payment_total: "$110.00"
                 metadata: {}
                 cancel_note:
+                commission_amount_total: '0.0'
+                display_commission_amount_total: "$0.00"
+                commission_tax_total: '0.0'
+                display_commission_tax_total: "$0.00"
+                commission_total: '0.0'
+                display_commission_total: "$0.00"
                 canceled_at:
                 approved_at:
                 created_at: '2026-01-15T12:00:00.000Z'
@@ -14472,6 +14508,12 @@ paths:
                 display_payment_total: "$0.00"
                 metadata: {}
                 cancel_note:
+                commission_amount_total: '0.0'
+                display_commission_amount_total: "$0.00"
+                commission_tax_total: '0.0'
+                display_commission_tax_total: "$0.00"
+                commission_total: '0.0'
+                display_commission_total: "$0.00"
                 canceled_at: '2026-01-15T12:00:00.000Z'
                 approved_at:
                 created_at: '2026-01-15T12:00:00.000Z'
@@ -14637,6 +14679,12 @@ paths:
                 display_payment_total: "$0.00"
                 metadata: {}
                 cancel_note:
+                commission_amount_total: '0.0'
+                display_commission_amount_total: "$0.00"
+                commission_tax_total: '0.0'
+                display_commission_tax_total: "$0.00"
+                commission_total: '0.0'
+                display_commission_total: "$0.00"
                 canceled_at:
                 approved_at: '2026-01-15T12:00:00.000Z'
                 created_at: '2026-01-15T12:00:00.000Z'
@@ -14776,6 +14824,12 @@ paths:
                 display_payment_total: "$0.00"
                 metadata: {}
                 cancel_note:
+                commission_amount_total: '0.0'
+                display_commission_amount_total: "$0.00"
+                commission_tax_total: '0.0'
+                display_commission_tax_total: "$0.00"
+                commission_total: '0.0'
+                display_commission_total: "$0.00"
                 canceled_at:
                 approved_at:
                 created_at: '2026-01-15T12:00:00.000Z'
@@ -40707,6 +40761,18 @@ components:
         cancel_note:
           type: string
           nullable: true
+        commission_amount_total:
+          type: string
+        display_commission_amount_total:
+          type: string
+        commission_tax_total:
+          type: string
+        display_commission_tax_total:
+          type: string
+        commission_total:
+          type: string
+        display_commission_total:
+          type: string
         canceled_at:
           type: string
           nullable: true
@@ -40854,6 +40920,12 @@ components:
       - display_payment_total
       - metadata
       - cancel_note
+      - commission_amount_total
+      - display_commission_amount_total
+      - commission_tax_total
+      - display_commission_tax_total
+      - commission_total
+      - display_commission_total
       - canceled_at
       - approved_at
       - created_at

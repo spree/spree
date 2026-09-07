@@ -6,8 +6,9 @@ module Spree
         #
         # Built from the base rather than the store serializer: that one is
         # written for the shopper who placed the order, and carries payments —
-        # how the customer paid the marketplace is not the seller's business,
-        # and what they are owed is the commission ledger, not this.
+        # how the customer paid the marketplace is not the seller's business.
+        # What they are owed overall is still the commission ledger; this
+        # carries only what this one sale was charged.
         #
         # The addresses are here because the seller is merchant of record for
         # their child order (docs/plans/6.0-multi-vendor-marketplace.md): the
@@ -37,6 +38,12 @@ module Spree
                    total: [:string, nullable: true], display_total: [:string, nullable: true],
                    payment_total: [:string, nullable: true], display_payment_total: [:string, nullable: true],
                    amount_due: [:string, nullable: true], display_amount_due: [:string, nullable: true],
+                   commission_amount_total: [:string, nullable: true],
+                   display_commission_amount_total: [:string, nullable: true],
+                   commission_tax_total: [:string, nullable: true],
+                   display_commission_tax_total: [:string, nullable: true],
+                   commission_total: [:string, nullable: true],
+                   display_commission_total: [:string, nullable: true],
                    canceled_at: [:string, nullable: true],
                    cancel_reason_name: [:string, nullable: true],
                    cancel_note: [:string, nullable: true],
@@ -71,6 +78,16 @@ module Spree
                            :total, :display_total,
                            :payment_total, :display_payment_total,
                            :amount_due, :display_amount_due
+
+          # What the marketplace charged the seller on this sale, and the tax
+          # on that charge. The ledger remains where a seller sees what they
+          # are owed overall, but the tax belongs on the order itself: the
+          # commission is a B2B supply from the platform, so this is the
+          # seller's input tax to reclaim, and it has to be attributable to
+          # the sale that produced it.
+          money_attributes :commission_amount_total, :display_commission_amount_total,
+                           :commission_tax_total, :display_commission_tax_total,
+                           :commission_total, :display_commission_total
 
           # Why the sale was called off, when it was. The reason is the
           # marketplace's vocabulary, so it is rendered as a name rather than

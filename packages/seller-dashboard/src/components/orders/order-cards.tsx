@@ -157,6 +157,46 @@ export function OrderSummaryCard({ order }: { order: Order }) {
 
         <SummaryRow label={t('orders.summary.total')} value={order.display_total} bold />
 
+        {/* What the marketplace charged the seller on this sale. Below the
+            order total because it is not part of what the buyer paid — it is
+            billed to the seller separately.
+
+            Always qualified as a marketplace fee, never a bare "fee":
+            Spree::Fee is a buyer-facing charge (handling, gift wrap, COD)
+            that does roll into the order total, and a bare "total fee" beside
+            an order would reasonably be taken for that.
+
+            The tax is its own row because the seller reclaims it as input
+            tax, and that has to be attributable to the sale that produced
+            it.
+
+            Shown on every placed order, including one whose fee came to
+            zero: a zero-rated or exempt rate is an answer the seller needs,
+            and every order here is a seller's by definition. */}
+        {placed && (
+          <>
+            <Separator />
+
+            <SummaryRow
+              label={t('orders.summary.commission_fee')}
+              value={order.display_commission_amount_total}
+            />
+
+            {amount(order.commission_tax_total) > 0 && (
+              <SummaryRow
+                label={t('orders.summary.commission_tax')}
+                value={order.display_commission_tax_total}
+              />
+            )}
+
+            <SummaryRow
+              label={t('orders.summary.commission_total')}
+              value={order.display_commission_total}
+              bold
+            />
+          </>
+        )}
+
         <Separator />
 
         <SummaryRow

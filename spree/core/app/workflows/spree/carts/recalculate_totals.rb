@@ -84,11 +84,38 @@ module Spree
         cart.included_tax_total = tax_sums.fetch(true, 0)
         cart.additional_tax_total = tax_sums.fetch(false, 0)
         cart.adjustment_total = discounts_sum + cart.fee_total + cart.additional_tax_total
+        refresh_commission_totals
 
         # The record's own adjustable columns cover order-level rows only:
         # discounts distribute to line items, so fees are the only residents.
         cart.taxable_adjustment_total = 0
         cart.non_taxable_adjustment_total = fees.select(&:order_level?).sum(&:amount)
+      end
+
+      # What the marketplace earned on this sale, re-summed from the order's
+      # commission lines.
+      #
+      # Deliberately outside adjustment_total and the grand total: a
+      # commission is charged to the seller, not to the shopper, so it is
+      # reported beside what the customer owes and never added to it. Carts
+      # never carry commission — it is written once the order is placed.
+      #
+      # Kept in three parts because the tax is separately reportable: the
+      # platform files it as output tax and the seller reclaims it as input
+      # tax, and neither figure can be recovered from the gross alone.
+      #
+      # The gross is added up from the two parts rather than summed from the
+      # rows' own `total`, so the three columns always agree. They need not
+      # otherwise: a line rounds to its currency's precision (three places for
+      # KWD and its neighbours) while every column is scale 2, and the parts
+      # and the gross each round independently on the way in.
+      def refresh_commission_totals
+        return unless cart.is_a?(Spree::Order)
+
+        lines = cart.commission_lines.reload.to_a
+        cart.commission_amount_total = lines.sum(&:amount)
+        cart.commission_tax_total = lines.sum(&:tax_amount)
+        cart.commission_total = cart.commission_amount_total + cart.commission_tax_total
       end
 
       # Runs before the adjusters: promotion-rule eligibility (item-total
@@ -141,6 +168,9 @@ module Spree
         if cart.is_a?(Spree::Order)
           columns[:payment_status] = cart.payment_status
           columns[:fulfillment_status] = cart.fulfillment_status
+          columns[:commission_amount_total] = cart.commission_amount_total
+          columns[:commission_tax_total] = cart.commission_tax_total
+          columns[:commission_total] = cart.commission_total
         end
         cart.update_columns(columns)
       end

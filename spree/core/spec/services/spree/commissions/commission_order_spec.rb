@@ -87,6 +87,103 @@ RSpec.describe Spree::Commissions::CommissionOrder do
     expect(order.fees).to be_empty
   end
 
+  describe 'the order commission totals' do
+    it 'records what the marketplace earned on the sale' do
+      line_for(seller)
+
+      commission
+
+      expect(order.reload).to have_attributes(commission_amount_total: 10,
+                                              commission_tax_total: 0,
+                                              commission_total: 10)
+    end
+
+    # The tax stands on its own because it is separately reportable: the
+    # platform files it as output tax on a B2B supply to the seller, and the
+    # seller reclaims the same figure as input tax. Neither is recoverable
+    # from the gross alone.
+    it 'keeps the fee and the tax charged on it apart' do
+      rate.update!(commission_tax_rate: 0.2)
+      line_for(seller)
+
+      commission
+
+      expect(order.reload).to have_attributes(commission_amount_total: 10,
+                                              commission_tax_total: 2,
+                                              commission_total: 12)
+    end
+
+    it 'sums every seller on a mixed order' do
+      rate.update!(commission_tax_rate: 0.2)
+      line_for(seller, price: 100)
+      line_for(other_seller, price: 50)
+
+      commission
+
+      expect(order.reload).to have_attributes(commission_amount_total: 15,
+                                              commission_tax_total: 3,
+                                              commission_total: 18)
+    end
+
+    # A line rounds to its currency's precision — three places for KWD and its
+    # neighbours — while every column is scale 2, so the parts and the gross
+    # each round independently on the way in. Adding the stored parts is what
+    # keeps the three columns agreeing; summing the rows' own totals does not.
+    it 'reports a gross that is exactly its two parts, whatever the currency rounds to' do
+      order.update_columns(currency: 'KWD')
+      line = line_for(seller)
+      Spree::CommissionLine.create!(order: order, seller: seller, line_item: line,
+                                    kind: 'percentage', rate: 10, currency: 'KWD',
+                                    amount: BigDecimal('1.004'),
+                                    tax_amount: BigDecimal('0.201'),
+                                    total: BigDecimal('1.205'))
+
+      described_class.call(order: order)
+
+      order.reload
+      expect(order.commission_total).
+        to eq(order.commission_amount_total + order.commission_tax_total)
+    end
+
+    # A replayed placement must not bump the order's cache key for work that
+    # was already done.
+    it 'leaves the record alone when nothing moved' do
+      line_for(seller)
+      commission
+
+      expect { described_class.call(order: order) }.
+        not_to change { order.reload.updated_at }
+    end
+
+    it 'stays zero when nothing was commissioned' do
+      create(:line_item, order: order, price: 100, quantity: 1)
+
+      commission
+
+      expect(order.reload).to have_attributes(commission_amount_total: 0,
+                                              commission_tax_total: 0,
+                                              commission_total: 0)
+    end
+
+    # The loser of the race writes no rows of its own, but the order still has
+    # to report the winner's — a replayed placement can arrive between the
+    # winner writing its rows and stamping the columns, and leaving early
+    # without re-summing would report no commission on a charged sale.
+    it 'records the winner lines when another delivery got there first' do
+      line = line_for(seller)
+      create(:commission_line, order: order, seller: seller, line_item: line,
+                               amount: 10, tax_amount: 2, total: 12)
+      order.update_columns(commission_amount_total: 0, commission_tax_total: 0,
+                           commission_total: 0)
+
+      described_class.call(order: order)
+
+      expect(order.reload).to have_attributes(commission_amount_total: 10,
+                                              commission_tax_total: 2,
+                                              commission_total: 12)
+    end
+  end
+
   describe 'delivery' do
     let!(:rate) { create(:commission_rate, :with_shipping, store: store, kind: 'percentage', value: 10) }
 

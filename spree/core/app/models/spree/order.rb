@@ -63,7 +63,8 @@ module Spree
                   :included_tax_total,  :additional_tax_total, :tax_total,
                   :delivery_total,      :discount_total,       :total,
                   :cart_promo_total,    :pre_tax_item_amount,  :pre_tax_total,
-                  :payment_total,       :amount_due,           :fee_total
+                  :payment_total,       :amount_due,           :fee_total,
+                  :commission_amount_total, :commission_tax_total, :commission_total
 
     alias display_ship_total display_delivery_total
     alias_attribute :ship_total, :delivery_total

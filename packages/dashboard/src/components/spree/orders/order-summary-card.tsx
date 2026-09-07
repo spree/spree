@@ -5,8 +5,6 @@ import { Link } from '@tanstack/react-router'
 import i18n from 'i18next'
 import type { ReactNode } from 'react'
 import { useTranslation } from 'react-i18next'
-import { useOrderCommissionLines } from '../../../hooks/use-order'
-import { commissionLineTotals } from '../../../lib/commission-line-totals'
 
 function formatDate(iso: string | null) {
   if (!iso) return '—'
@@ -48,16 +46,15 @@ export function OrderSummaryCard({ order }: { order: Order }) {
   const { t } = useTranslation()
   const { storeId } = useStore()
   const outstandingBalance = Number.parseFloat(order.amount_due)
-  const {
-    data: commissionLinesData,
-    isSuccess: commissionLinesLoaded,
-    isError: commissionLinesError,
-  } = useOrderCommissionLines(order.id, { enabled: !!order.completed_at })
-  const commissionLines = commissionLinesData?.data ?? []
-  const commissionTotals =
-    commissionLinesLoaded && commissionLines.length > 0
-      ? commissionLineTotals(commissionLines, order.currency)
-      : null
+  // Read off the order rather than summed from its commission lines: the
+  // figures are persisted columns, so the fee VAT the platform files and the
+  // seller reclaims is the same number everywhere it is shown.
+  const commissionTax = Number.parseFloat(order.commission_tax_total)
+  // Keyed on the seller, not on the amount: a zero-rated or exempt rate still
+  // writes commission lines, and the card below lists them, so hiding the
+  // summary at zero would have the two panels disagree about the same order.
+  // A first-party order has no seller and is never commissioned.
+  const showCommission = !!order.completed_at && !!order.seller_id
 
   return (
     <Card>
@@ -209,34 +206,26 @@ export function OrderSummaryCard({ order }: { order: Order }) {
 
         <SummaryRow label={t('admin.fields.total.label')} value={order.display_total} bold />
 
-        {commissionLinesError && (
-          <>
-            <Separator />
-            <SummaryRow
-              label={t('admin.orders.detail.summary.commission_total')}
-              value={
-                <span className="text-muted-foreground">{t('admin.errors.failed_to_load')}</span>
-              }
-            />
-          </>
-        )}
-
-        {commissionTotals && (
+        {/* Labelled "marketplace fee" rather than a bare "fee": Spree::Fee is
+            a buyer-facing charge (handling, gift wrap, COD) that rolls into
+            the order total, while this is billed to the seller and does not.
+            The two must never read alike in one summary. */}
+        {showCommission && (
           <>
             <Separator />
             <SummaryRow
               label={t('admin.orders.detail.summary.commission_fee')}
-              value={commissionTotals.displayAmount}
+              value={order.display_commission_amount_total}
             />
-            {commissionTotals.tax > 0 && (
+            {commissionTax > 0 && (
               <SummaryRow
                 label={t('admin.orders.detail.summary.commission_tax')}
-                value={commissionTotals.displayTax}
+                value={order.display_commission_tax_total}
               />
             )}
             <SummaryRow
               label={t('admin.orders.detail.summary.commission_total')}
-              value={commissionTotals.displayTotal}
+              value={order.display_commission_total}
               bold
             />
           </>
