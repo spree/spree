@@ -390,7 +390,11 @@
     },
     {
       "source": "/developer/core-concepts/reports",
-      "destination": "/v5/developer/core-concepts/reports"
+      "destination": "/developer/core-concepts/reporting"
+    },
+    {
+      "source": "/developer/how-to/custom-report",
+      "destination": "/developer/how-to/extend-reporting"
     },
     {
       "source": "/developer/multi-vendor/quickstart",
@@ -538,7 +542,8 @@
                           "developer/core-concepts/translations",
                           "developer/core-concepts/slugs",
                           "developer/core-concepts/metafields",
-                          "developer/core-concepts/imports-exports"
+                          "developer/core-concepts/imports-exports",
+                          "developer/core-concepts/reporting"
                         ]
                       }
                     ],
@@ -742,7 +747,7 @@
                         ]
                       },
                       "developer/how-to/custom-promotion",
-                      "developer/how-to/custom-report",
+                      "developer/how-to/extend-reporting",
                       "developer/how-to/custom-document-numbers",
                       "developer/how-to/custom-order-routing",
                       "developer/how-to/custom-stock-splitter"
@@ -1919,7 +1924,8 @@
                   "developer/core-concepts/translations",
                   "developer/core-concepts/slugs",
                   "developer/core-concepts/metafields",
-                  "developer/core-concepts/imports-exports"
+                  "developer/core-concepts/imports-exports",
+                  "developer/core-concepts/reporting"
                 ]
               }
             ]
@@ -2065,7 +2071,7 @@
                 "group": "Reports",
                 "icon": "chart-bar",
                 "pages": [
-                  "developer/how-to/custom-report"
+                  "developer/how-to/extend-reporting"
                 ]
               },
               {
