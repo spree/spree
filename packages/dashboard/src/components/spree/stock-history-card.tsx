@@ -121,14 +121,10 @@ export function StockHistoryCard({
  * merchant's correction had.
  */
 function QuantityChange({ movement }: { movement: StockMovement }) {
-  const leaves = movement.kind === 'shipped'
-  const magnitude = Math.abs(movement.quantity)
-  const signed =
-    movement.kind === 'adjusted' && movement.quantity < 0
-      ? -magnitude
-      : leaves
-        ? -magnitude
-        : magnitude
+  // Only `shipped` needs flipping: it is stored positive and means a
+  // departure. `adjusted` already carries the sign the merchant entered, and
+  // every other kind is an addition.
+  const signed = movement.kind === 'shipped' ? -Math.abs(movement.quantity) : movement.quantity
 
   return (
     <span className={signed < 0 ? 'text-danger' : 'text-success'}>

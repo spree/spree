@@ -15,15 +15,7 @@ module Spree
         # evidence of whose record it is.
         module ReceivableActions
           extend ActiveSupport::Concern
-
-          # A payload whose `items` is not a list. Raised out of the params
-          # helper so it cannot be mistaken for a workflow rejection, and
-          # answered as the client mistake it is rather than a 500.
-          class InvalidItems < StandardError; end
-
-          included do
-            rescue_from InvalidItems, with: :render_invalid_items
-          end
+          include Spree::Api::V3::ItemsPayload
 
           protected
 
@@ -102,29 +94,13 @@ module Spree
             current_store.variants.accessible_by(current_ability, :show)
           end
 
-          def render_invalid_items
-            errors = ActiveModel::Errors.new(@resource || model_class.new)
-            errors.add(:items, :invalid)
-            render_validation_error(errors)
-          end
-
           private
 
           # Raw `params`, not `permitted_params`: the latter decodes anything
           # shaped like a prefixed id into a primary key, and these lines are
           # looked up by prefixed id precisely so their scope is checked.
-          #
-          # The list-ness is checked before `permit`, which silently drops a
-          # scalar `items` — leaving a client typo indistinguishable from "no
-          # lines named", and answering 201 to a payload nobody meant.
           def sent_items(keys)
-            return nil unless params.key?(:items)
-
-            raw = params[:items]
-            return [] if raw.nil?
-            raise InvalidItems unless raw.is_a?(Array)
-
-            params.permit(items: keys)[:items] || []
+            items_payload(keys)
           end
         end
       end

@@ -140,10 +140,17 @@ RSpec.describe Spree::Api::V3::Admin::StockTransfersController, type: :controlle
       expect(response).to have_http_status(:not_found)
     end
 
-    it 'refuses a payload whose items is not a list' do
-      post :create, params: base_params.merge(items: 'five'), as: :json
+    [['a bare string', 'five'], ['an object', { variant_id: 'x', quantity_shipped: 1 }]].each do |shape, items|
+      it "refuses a payload whose items is #{shape}" do
+        expect do
+          post :create, params: base_params.merge(items: items), as: :json
+        end.not_to change(Spree::StockTransfer, :count)
 
-      expect(response).to have_http_status(:unprocessable_content)
+        expect(response).to have_http_status(:unprocessable_content)
+        expect(json_response['error']['details']['base']).to include(
+          hash_including('code' => 'invalid_items')
+        )
+      end
     end
   end
 
@@ -232,6 +239,22 @@ RSpec.describe Spree::Api::V3::Admin::StockTransfersController, type: :controlle
 
       expect(json_response['status']).to eq('received')
       expect(destination_location.stock_level(variant.id).reload.count_on_hand).to eq(10)
+    end
+
+    # An `items` the caller got wrong must not fall through to receive-all.
+    it 'refuses a receive whose items is an object rather than a list' do
+      patch :mark_in_transit, params: { id: transfer.prefixed_id }, as: :json
+
+      patch :receive, params: {
+        id: transfer.prefixed_id, items: { id: 'x', quantity_received: 1 }
+      }, as: :json
+
+      expect(response).to have_http_status(:unprocessable_content)
+      expect(json_response['error']['details']['base']).to include(
+        hash_including('code' => 'invalid_items')
+      )
+      expect(transfer.reload.status).to eq('in_transit')
+      expect(transfer.quantity_received_total).to eq(0)
     end
 
     it "returns 404 for a line belonging to another transfer" do
