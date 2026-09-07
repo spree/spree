@@ -154,6 +154,13 @@ nav.add({
       subject: Subject.StockTransfer,
       position: 500,
     },
+    {
+      key: 'products.purchase-orders',
+      labelKey: 'admin.nav.purchase_orders',
+      path: '/products/purchase-orders',
+      subject: Subject.PurchaseOrder,
+      position: 550,
+    },
   ],
 })
 

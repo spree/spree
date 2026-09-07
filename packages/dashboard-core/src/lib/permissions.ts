@@ -58,6 +58,10 @@ export const Subject = {
   /** @deprecated Use Subject.StockLevel — removed in Spree 6.1. */
   StockItem: 'Spree::StockItem',
   StockTransfer: 'Spree::StockTransfer',
+  StockTransferItem: 'Spree::StockTransferItem',
+  Supplier: 'Spree::Supplier',
+  PurchaseOrder: 'Spree::PurchaseOrder',
+  PurchaseOrderItem: 'Spree::PurchaseOrderItem',
   PriceList: 'Spree::PriceList',
   PriceRule: 'Spree::PriceRule',
   Promotion: 'Spree::Promotion',

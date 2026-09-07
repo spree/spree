@@ -1,0 +1,475 @@
+import type { StockTransfer, StockTransferItem } from '@spree/admin-sdk'
+import { Can, Subject, useStockLocations } from '@spree/dashboard-core'
+import {
+  Button,
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
+  Field,
+  FieldLabel,
+  Input,
+  RelativeTime,
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+  useConfirm,
+} from '@spree/dashboard-ui'
+import { ArrowLeftIcon } from '@spree/dashboard-ui/icons'
+import { createFileRoute, useNavigate } from '@tanstack/react-router'
+import { useMemo, useState } from 'react'
+import { useTranslation } from 'react-i18next'
+import { InventoryStatusBadge } from '../../../../../components/spree/inventory-status-badge'
+import { StockHistoryCard } from '../../../../../components/spree/stock-history-card'
+import {
+  useCancelStockTransfer,
+  useMarkStockTransferInTransit,
+  useMarkStockTransferReady,
+  useReceiveStockTransfer,
+  useStockTransfer,
+} from '../../../../../hooks/use-stock-transfers'
+import {
+  DISCREPANCY_REASONS,
+  IN_TRANSIT_RESOLUTIONS,
+  type InTransitResolution,
+  isInFlight,
+} from '../../../../../schemas/inventory-operations'
+
+export const Route = createFileRoute('/_authenticated/$storeId/products/transfers/$transferId')({
+  component: StockTransferDetailPage,
+})
+
+function StockTransferDetailPage() {
+  const { t } = useTranslation()
+  const { storeId, transferId } = Route.useParams()
+  const navigate = useNavigate()
+  const { data: transfer, isLoading } = useStockTransfer(transferId)
+
+  if (isLoading || !transfer) {
+    return <div className="p-4 text-sm text-muted-foreground">{t('admin.common.loading')}</div>
+  }
+
+  return (
+    <div className="mx-auto flex w-full max-w-4xl flex-col gap-4 p-4">
+      <div className="flex items-center gap-3">
+        <Button
+          type="button"
+          size="icon-sm"
+          variant="ghost"
+          onClick={() => navigate({ to: '/$storeId/products/transfers', params: { storeId } })}
+        >
+          <ArrowLeftIcon className="size-4" />
+          <span className="sr-only">{t('admin.actions.back')}</span>
+        </Button>
+        <h1 className="text-xl font-semibold tabular-nums">{transfer.number}</h1>
+        <InventoryStatusBadge status={transfer.status} resource="stock_transfers" />
+      </div>
+
+      <SummaryCard transfer={transfer} />
+
+      {transfer.status === 'draft' || transfer.status === 'ready_to_ship' ? (
+        <PlannedItemsCard transfer={transfer} />
+      ) : (
+        <ReceiveCard transfer={transfer} />
+      )}
+
+      <Actions transfer={transfer} />
+
+      {/* Where the units on this trip came from and went — read on the
+          destination warehouse, which is the shelf the merchant is
+          reconciling. */}
+      <StockHistoryCard
+        stockLocationId={transfer.destination_location_id}
+        title={t('admin.stock_transfers.history_title')}
+      />
+    </div>
+  )
+}
+
+function SummaryCard({ transfer }: { transfer: StockTransfer }) {
+  const { t } = useTranslation()
+  const { data: stockLocations } = useStockLocations({ limit: 100 })
+
+  const locationName = useMemo(() => {
+    const byId = new Map((stockLocations?.data ?? []).map((l) => [l.id, l.name]))
+    return (id: string | null) => (id ? (byId.get(id) ?? id) : '—')
+  }, [stockLocations])
+
+  return (
+    <Card>
+      <CardHeader>
+        <CardTitle>{t('admin.stock_transfers.details_title')}</CardTitle>
+      </CardHeader>
+      <CardContent>
+        <dl className="grid grid-cols-3 gap-y-2 text-sm">
+          <dt className="text-muted-foreground">{t('admin.stock_transfers.fields.source')}</dt>
+          <dd className="col-span-2">
+            {transfer.source_location?.name ?? locationName(transfer.source_location_id)}
+          </dd>
+
+          <dt className="text-muted-foreground">{t('admin.stock_transfers.fields.destination')}</dt>
+          <dd className="col-span-2">
+            {transfer.destination_location?.name ?? locationName(transfer.destination_location_id)}
+          </dd>
+
+          <dt className="text-muted-foreground">{t('admin.stock_transfers.fields.units')}</dt>
+          <dd className="col-span-2 tabular-nums">
+            {t('admin.stock_transfers.units_summary', {
+              received: transfer.quantity_received_total,
+              shipped: transfer.quantity_shipped_total,
+            })}
+          </dd>
+
+          {transfer.reference && (
+            <>
+              <dt className="text-muted-foreground">
+                {t('admin.stock_transfers.fields.reference')}
+              </dt>
+              <dd className="col-span-2">{transfer.reference}</dd>
+            </>
+          )}
+
+          {transfer.notes && (
+            <>
+              <dt className="text-muted-foreground">{t('admin.stock_transfers.fields.notes')}</dt>
+              <dd className="col-span-2 whitespace-pre-line">{transfer.notes}</dd>
+            </>
+          )}
+
+          <dt className="text-muted-foreground">{t('admin.stock_transfers.fields.shipped_at')}</dt>
+          <dd className="col-span-2">
+            {transfer.shipped_at ? <RelativeTime iso={transfer.shipped_at} /> : '—'}
+          </dd>
+
+          <dt className="text-muted-foreground">{t('admin.stock_transfers.fields.received_at')}</dt>
+          <dd className="col-span-2">
+            {transfer.received_at ? <RelativeTime iso={transfer.received_at} /> : '—'}
+          </dd>
+        </dl>
+      </CardContent>
+    </Card>
+  )
+}
+
+/** Draft and ready-to-ship: what is going, and nothing about arrival yet. */
+function PlannedItemsCard({ transfer }: { transfer: StockTransfer }) {
+  const { t } = useTranslation()
+  const items = transfer.items ?? []
+
+  return (
+    <Card>
+      <CardHeader>
+        <CardTitle>{t('admin.stock_transfers.items_title')}</CardTitle>
+      </CardHeader>
+      <CardContent>
+        {items.length === 0 ? (
+          <p className="text-sm text-muted-foreground">{t('admin.stock_transfers.items_empty')}</p>
+        ) : (
+          <div className="overflow-x-auto">
+            <Table>
+              <TableHeader>
+                <TableRow>
+                  <TableHead>{t('admin.inventory_lines.columns.variant')}</TableHead>
+                  <TableHead>{t('admin.inventory_lines.columns.sku')}</TableHead>
+                  <TableHead className="text-right">
+                    {t('admin.stock_transfers.columns.quantity_shipped')}
+                  </TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                {items.map((item) => (
+                  <TableRow key={item.id}>
+                    <TableCell className="font-medium">{item.variant_name ?? '—'}</TableCell>
+                    <TableCell className="text-muted-foreground">
+                      {item.variant_sku ?? '—'}
+                    </TableCell>
+                    <TableCell className="text-right tabular-nums">
+                      {item.quantity_shipped}
+                    </TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
+          </div>
+        )}
+      </CardContent>
+    </Card>
+  )
+}
+
+/**
+ * In transit and beyond: the receive screen.
+ *
+ * `quantity_received` is the running total for the line, so a second delivery
+ * tops it up rather than starting over — which is why the inputs are seeded
+ * with what has already been counted rather than with zero.
+ */
+function ReceiveCard({ transfer }: { transfer: StockTransfer }) {
+  const { t } = useTranslation()
+  const items = transfer.items ?? []
+  const receiveMutation = useReceiveStockTransfer(transfer.id)
+  const editable = isInFlight(transfer.status)
+
+  const [counts, setCounts] = useState<Record<string, number>>(() =>
+    Object.fromEntries(items.map((item) => [item.id, item.quantity_shipped])),
+  )
+  const [reasons, setReasons] = useState<Record<string, string>>(() =>
+    Object.fromEntries(items.map((item) => [item.id, item.discrepancy_reason ?? ''])),
+  )
+
+  const totalCounted = items.reduce((sum, item) => sum + (counts[item.id] ?? 0), 0)
+
+  async function handleReceive() {
+    await receiveMutation
+      .mutateAsync({
+        items: items.map((item) => ({
+          id: item.id,
+          quantity_received: counts[item.id] ?? item.quantity_received,
+          discrepancy_reason: reasons[item.id] || undefined,
+        })),
+      })
+      .catch(() => undefined)
+  }
+
+  return (
+    <Card>
+      <CardHeader>
+        <CardTitle>{t('admin.stock_transfers.receive_title')}</CardTitle>
+      </CardHeader>
+      <CardContent className="flex flex-col gap-4">
+        <div className="overflow-x-auto">
+          <Table>
+            <TableHeader>
+              <TableRow>
+                <TableHead>{t('admin.inventory_lines.columns.variant')}</TableHead>
+                <TableHead className="text-right">
+                  {t('admin.stock_transfers.columns.quantity_shipped')}
+                </TableHead>
+                <TableHead className="text-right">
+                  {t('admin.stock_transfers.columns.quantity_received')}
+                </TableHead>
+                <TableHead>{t('admin.stock_transfers.columns.discrepancy')}</TableHead>
+              </TableRow>
+            </TableHeader>
+            <TableBody>
+              {items.map((item) => (
+                <ReceiveRow
+                  key={item.id}
+                  item={item}
+                  editable={editable}
+                  count={counts[item.id] ?? item.quantity_received}
+                  reason={reasons[item.id] ?? ''}
+                  onCount={(value) => setCounts((prev) => ({ ...prev, [item.id]: value }))}
+                  onReason={(value) => setReasons((prev) => ({ ...prev, [item.id]: value }))}
+                />
+              ))}
+            </TableBody>
+          </Table>
+        </div>
+
+        {editable && (
+          <div className="flex items-center justify-between">
+            <p className="text-sm text-muted-foreground tabular-nums">
+              {t('admin.stock_transfers.receive_running_total', {
+                counted: totalCounted,
+                shipped: transfer.quantity_shipped_total,
+              })}
+            </p>
+            <Can I="update" a={Subject.StockTransfer}>
+              <Button type="button" onClick={handleReceive} disabled={receiveMutation.isPending}>
+                {receiveMutation.isPending
+                  ? t('admin.actions.saving')
+                  : t('admin.stock_transfers.actions.receive')}
+              </Button>
+            </Can>
+          </div>
+        )}
+      </CardContent>
+    </Card>
+  )
+}
+
+function ReceiveRow({
+  item,
+  editable,
+  count,
+  reason,
+  onCount,
+  onReason,
+}: {
+  item: StockTransferItem
+  editable: boolean
+  count: number
+  reason: string
+  onCount: (value: number) => void
+  onReason: (value: string) => void
+}) {
+  const { t } = useTranslation()
+  const short = count < item.quantity_shipped
+
+  return (
+    <TableRow>
+      <TableCell className="font-medium">
+        {item.variant_name ?? '—'}
+        <span className="block text-xs text-muted-foreground">{item.variant_sku ?? ''}</span>
+      </TableCell>
+      <TableCell className="text-right tabular-nums">{item.quantity_shipped}</TableCell>
+      <TableCell className="text-right">
+        {editable ? (
+          <Input
+            type="number"
+            // Never below what is already on the shelf: taking units back off
+            // is a correction, not a receive.
+            min={item.quantity_received}
+            max={item.quantity_shipped}
+            value={count}
+            onChange={(event) => onCount(Number(event.target.value))}
+            className="ml-auto w-20 text-right tabular-nums"
+            aria-label={t('admin.stock_transfers.columns.quantity_received')}
+          />
+        ) : (
+          <span className="tabular-nums">{item.quantity_received}</span>
+        )}
+      </TableCell>
+      <TableCell>
+        {editable && short ? (
+          <Select value={reason} onValueChange={onReason}>
+            <SelectTrigger aria-label={t('admin.stock_transfers.columns.discrepancy')}>
+              <SelectValue placeholder={t('admin.stock_transfers.discrepancy_placeholder')}>
+                {(value) => (value ? t(`admin.stock_transfers.discrepancy_reasons.${value}`) : '')}
+              </SelectValue>
+            </SelectTrigger>
+            <SelectContent>
+              {DISCREPANCY_REASONS.map((value) => (
+                <SelectItem key={value} value={value}>
+                  {t(`admin.stock_transfers.discrepancy_reasons.${value}`)}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+        ) : item.discrepancy_reason ? (
+          <span className="text-sm">
+            {t(`admin.stock_transfers.discrepancy_reasons.${item.discrepancy_reason}`, {
+              defaultValue: item.discrepancy_reason,
+            })}
+          </span>
+        ) : (
+          '—'
+        )}
+      </TableCell>
+    </TableRow>
+  )
+}
+
+function Actions({ transfer }: { transfer: StockTransfer }) {
+  const { t } = useTranslation()
+  const confirm = useConfirm()
+  const markReady = useMarkStockTransferReady(transfer.id)
+  const markInTransit = useMarkStockTransferInTransit(transfer.id)
+  const cancelTransfer = useCancelStockTransfer(transfer.id)
+  const [resolution, setResolution] = useState<InTransitResolution>('restock')
+
+  const inFlight = isInFlight(transfer.status)
+  const closed = transfer.status === 'received' || transfer.status === 'canceled'
+
+  if (closed) return null
+
+  async function handleShip() {
+    const ok = await confirm({
+      title: t('admin.stock_transfers.ship_confirm.title'),
+      message: t('admin.stock_transfers.ship_confirm.message', {
+        count: transfer.quantity_shipped_total,
+      }),
+      confirmLabel: t('admin.stock_transfers.actions.mark_in_transit'),
+    })
+    if (!ok) return
+    await markInTransit.mutateAsync({}).catch(() => undefined)
+  }
+
+  async function handleCancel() {
+    const ok = await confirm({
+      title: t('admin.stock_transfers.cancel_confirm.title'),
+      message: inFlight
+        ? t(`admin.stock_transfers.cancel_confirm.in_flight_${resolution}`)
+        : t('admin.stock_transfers.cancel_confirm.message'),
+      variant: 'destructive',
+      confirmLabel: t('admin.stock_transfers.actions.cancel_transfer'),
+    })
+    if (!ok) return
+    await cancelTransfer
+      .mutateAsync(inFlight ? { on_in_transit: resolution } : {})
+      .catch(() => undefined)
+  }
+
+  return (
+    <Card>
+      <CardHeader>
+        <CardTitle>{t('admin.stock_transfers.actions_title')}</CardTitle>
+      </CardHeader>
+      <CardContent className="flex flex-col gap-4">
+        {/* The merchant has to say what happened to units already gone from
+            the source: guessing would either invent stock or destroy it. */}
+        {inFlight && (
+          <Field>
+            <FieldLabel htmlFor="in-transit-resolution">
+              {t('admin.stock_transfers.fields.in_transit_resolution')}
+            </FieldLabel>
+            <Select
+              value={resolution}
+              onValueChange={(value) => setResolution(value as InTransitResolution)}
+            >
+              <SelectTrigger id="in-transit-resolution">
+                <SelectValue>
+                  {(value) => t(`admin.stock_transfers.in_transit_resolutions.${value}`)}
+                </SelectValue>
+              </SelectTrigger>
+              <SelectContent>
+                {IN_TRANSIT_RESOLUTIONS.map((value) => (
+                  <SelectItem key={value} value={value}>
+                    {t(`admin.stock_transfers.in_transit_resolutions.${value}`)}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </Field>
+        )}
+
+        <div className="flex flex-wrap gap-2">
+          <Can I="update" a={Subject.StockTransfer}>
+            {transfer.status === 'draft' && (
+              <Button
+                type="button"
+                variant="outline"
+                onClick={() => markReady.mutateAsync().catch(() => undefined)}
+                disabled={markReady.isPending || (transfer.items_count ?? 0) === 0}
+              >
+                {t('admin.stock_transfers.actions.mark_ready')}
+              </Button>
+            )}
+            {(transfer.status === 'draft' || transfer.status === 'ready_to_ship') && (
+              <Button type="button" onClick={handleShip} disabled={markInTransit.isPending}>
+                {t('admin.stock_transfers.actions.mark_in_transit')}
+              </Button>
+            )}
+            <Button
+              type="button"
+              variant="destructive"
+              onClick={handleCancel}
+              disabled={cancelTransfer.isPending}
+            >
+              {t('admin.stock_transfers.actions.cancel_transfer')}
+            </Button>
+          </Can>
+        </div>
+      </CardContent>
+    </Card>
+  )
+}

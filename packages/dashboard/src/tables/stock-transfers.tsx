@@ -1,8 +1,13 @@
 import type { StockTransfer } from '@spree/admin-sdk'
 import { defineTable } from '@spree/dashboard-core'
-import { Badge, RelativeTime, ResourceNameCell } from '@spree/dashboard-ui'
+import { RelativeTime, ResourceNameCell, StatusBadge } from '@spree/dashboard-ui'
 import { ArrowLeftRightIcon } from '@spree/dashboard-ui/icons'
 import i18n from 'i18next'
+import { STOCK_TRANSFER_STATUSES } from '../schemas/inventory-operations'
+
+function statusLabel(value: string): string {
+  return i18n.t(`admin.stock_transfers.statuses.${value}`)
+}
 
 defineTable<StockTransfer>('stock-transfers', {
   title: i18n.t('admin.stock_transfers.title'),
@@ -29,17 +34,23 @@ defineTable<StockTransfer>('stock-transfers', {
       ),
     },
     {
-      key: 'source_destination',
-      label: i18n.t('admin.stock_transfers.columns.direction'),
+      key: 'status',
+      label: i18n.t('admin.fields.status.label'),
+      sortable: true,
+      filterable: true,
+      filterType: 'enum',
+      filterOptions: STOCK_TRANSFER_STATUSES.map((value) => ({ value, label: statusLabel(value) })),
+      quickFilter: true,
       default: true,
-      render: (st) =>
-        st.source_location_id ? (
-          <span className="text-sm">{i18n.t('admin.stock_transfers.direction.internal')}</span>
-        ) : (
-          <Badge variant="outline">
-            {i18n.t('admin.stock_transfers.direction.external_receive')}
-          </Badge>
-        ),
+      // `received` overrides the shared tone map, which reads that code as a
+      // return still owing a refund. A finished transfer is not amber.
+      render: (st) => (
+        <StatusBadge
+          status={st.status}
+          label={statusLabel(st.status)}
+          tone={st.status === 'received' ? 'success' : undefined}
+        />
+      ),
     },
     {
       key: 'reference',
@@ -48,11 +59,27 @@ defineTable<StockTransfer>('stock-transfers', {
       render: (st) => st.reference ?? '—',
     },
     {
+      key: 'quantity',
+      label: i18n.t('admin.stock_transfers.columns.units'),
+      default: true,
+      className: 'tabular-nums',
+      // Received against shipped: the one number that says whether the trip is
+      // still owed anything.
+      render: (st) => `${st.quantity_received_total} / ${st.quantity_shipped_total}`,
+    },
+    {
+      key: 'shipped_at',
+      label: i18n.t('admin.stock_transfers.columns.shipped'),
+      sortable: true,
+      default: true,
+      className: 'text-sm text-muted-foreground whitespace-nowrap',
+      render: (st) => (st.shipped_at ? <RelativeTime iso={st.shipped_at} /> : '—'),
+    },
+    {
       key: 'created_at',
       label: i18n.t('admin.fields.created_at.label'),
       sortable: true,
       filterable: true,
-      default: true,
       filterType: 'date',
       className: 'text-sm text-muted-foreground whitespace-nowrap',
       render: (st) => <RelativeTime iso={st.created_at} />,

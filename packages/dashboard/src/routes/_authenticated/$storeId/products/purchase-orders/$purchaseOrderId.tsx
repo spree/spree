@@ -1,0 +1,340 @@
+import type { PurchaseOrder, PurchaseOrderItem } from '@spree/admin-sdk'
+import { Can, Subject } from '@spree/dashboard-core'
+import {
+  Button,
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
+  Input,
+  RelativeTime,
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+  useConfirm,
+} from '@spree/dashboard-ui'
+import { ArrowLeftIcon } from '@spree/dashboard-ui/icons'
+import { createFileRoute, useNavigate } from '@tanstack/react-router'
+import { useState } from 'react'
+import { useTranslation } from 'react-i18next'
+import { InventoryStatusBadge } from '../../../../../components/spree/inventory-status-badge'
+import { StockHistoryCard } from '../../../../../components/spree/stock-history-card'
+import {
+  useCancelPurchaseOrder,
+  useMarkPurchaseOrderOrdered,
+  usePurchaseOrder,
+  useReceivePurchaseOrder,
+} from '../../../../../hooks/use-purchase-orders'
+
+export const Route = createFileRoute(
+  '/_authenticated/$storeId/products/purchase-orders/$purchaseOrderId',
+)({
+  component: PurchaseOrderDetailPage,
+})
+
+function PurchaseOrderDetailPage() {
+  const { t } = useTranslation()
+  const { storeId, purchaseOrderId } = Route.useParams()
+  const navigate = useNavigate()
+  const { data: purchaseOrder, isLoading } = usePurchaseOrder(purchaseOrderId)
+
+  if (isLoading || !purchaseOrder) {
+    return <div className="p-4 text-sm text-muted-foreground">{t('admin.common.loading')}</div>
+  }
+
+  return (
+    <div className="mx-auto flex w-full max-w-4xl flex-col gap-4 p-4">
+      <div className="flex items-center gap-3">
+        <Button
+          type="button"
+          size="icon-sm"
+          variant="ghost"
+          onClick={() =>
+            navigate({ to: '/$storeId/products/purchase-orders', params: { storeId } })
+          }
+        >
+          <ArrowLeftIcon className="size-4" />
+          <span className="sr-only">{t('admin.actions.back')}</span>
+        </Button>
+        <h1 className="text-xl font-semibold tabular-nums">{purchaseOrder.number}</h1>
+        <InventoryStatusBadge status={purchaseOrder.status} resource="purchase_orders" />
+      </div>
+
+      <SummaryCard purchaseOrder={purchaseOrder} />
+      <ItemsCard purchaseOrder={purchaseOrder} />
+      <Actions purchaseOrder={purchaseOrder} />
+
+      <StockHistoryCard
+        stockLocationId={purchaseOrder.destination_location_id}
+        title={t('admin.purchase_orders.history_title')}
+      />
+    </div>
+  )
+}
+
+function SummaryCard({ purchaseOrder }: { purchaseOrder: PurchaseOrder }) {
+  const { t } = useTranslation()
+
+  return (
+    <Card>
+      <CardHeader>
+        <CardTitle>{t('admin.purchase_orders.details_title')}</CardTitle>
+      </CardHeader>
+      <CardContent>
+        <dl className="grid grid-cols-3 gap-y-2 text-sm">
+          <dt className="text-muted-foreground">{t('admin.purchase_orders.fields.supplier')}</dt>
+          <dd className="col-span-2">{purchaseOrder.supplier?.name ?? '—'}</dd>
+
+          <dt className="text-muted-foreground">{t('admin.purchase_orders.fields.destination')}</dt>
+          <dd className="col-span-2">{purchaseOrder.destination_location?.name ?? '—'}</dd>
+
+          <dt className="text-muted-foreground">{t('admin.purchase_orders.fields.units')}</dt>
+          <dd className="col-span-2 tabular-nums">
+            {t('admin.purchase_orders.units_summary', {
+              received: purchaseOrder.quantity_received_total,
+              ordered: purchaseOrder.quantity_ordered_total,
+            })}
+          </dd>
+
+          <dt className="text-muted-foreground">{t('admin.purchase_orders.fields.subtotal')}</dt>
+          <dd className="col-span-2 tabular-nums">{purchaseOrder.display_subtotal}</dd>
+
+          <dt className="text-muted-foreground">{t('admin.purchase_orders.fields.expected_at')}</dt>
+          <dd className="col-span-2">{purchaseOrder.expected_at ?? '—'}</dd>
+
+          {purchaseOrder.reference && (
+            <>
+              <dt className="text-muted-foreground">
+                {t('admin.purchase_orders.fields.reference')}
+              </dt>
+              <dd className="col-span-2">{purchaseOrder.reference}</dd>
+            </>
+          )}
+
+          {purchaseOrder.notes && (
+            <>
+              <dt className="text-muted-foreground">{t('admin.purchase_orders.fields.notes')}</dt>
+              <dd className="col-span-2 whitespace-pre-line">{purchaseOrder.notes}</dd>
+            </>
+          )}
+
+          <dt className="text-muted-foreground">{t('admin.purchase_orders.fields.ordered_at')}</dt>
+          <dd className="col-span-2">
+            {purchaseOrder.ordered_at ? <RelativeTime iso={purchaseOrder.ordered_at} /> : '—'}
+          </dd>
+
+          <dt className="text-muted-foreground">{t('admin.purchase_orders.fields.received_at')}</dt>
+          <dd className="col-span-2">
+            {purchaseOrder.received_at ? <RelativeTime iso={purchaseOrder.received_at} /> : '—'}
+          </dd>
+        </dl>
+      </CardContent>
+    </Card>
+  )
+}
+
+/**
+ * The lines, and — once the order has been placed — the receive screen.
+ *
+ * `quantity_received` is the running total for the line, so a second delivery
+ * tops it up rather than starting over.
+ */
+function ItemsCard({ purchaseOrder }: { purchaseOrder: PurchaseOrder }) {
+  const { t } = useTranslation()
+  const items = purchaseOrder.items ?? []
+  const receiveMutation = useReceivePurchaseOrder(purchaseOrder.id)
+  const receivable =
+    purchaseOrder.status === 'ordered' || purchaseOrder.status === 'partially_received'
+
+  const [counts, setCounts] = useState<Record<string, number>>(() =>
+    Object.fromEntries(items.map((item) => [item.id, item.quantity_ordered])),
+  )
+
+  const totalCounted = items.reduce((sum, item) => sum + (counts[item.id] ?? 0), 0)
+
+  async function handleReceive() {
+    await receiveMutation
+      .mutateAsync({
+        items: items.map((item) => ({
+          id: item.id,
+          quantity_received: counts[item.id] ?? item.quantity_received,
+        })),
+      })
+      .catch(() => undefined)
+  }
+
+  return (
+    <Card>
+      <CardHeader>
+        <CardTitle>
+          {receivable
+            ? t('admin.purchase_orders.receive_title')
+            : t('admin.purchase_orders.items_title')}
+        </CardTitle>
+      </CardHeader>
+      <CardContent className="flex flex-col gap-4">
+        {items.length === 0 ? (
+          <p className="text-sm text-muted-foreground">{t('admin.purchase_orders.items_empty')}</p>
+        ) : (
+          <div className="overflow-x-auto">
+            <Table>
+              <TableHeader>
+                <TableRow>
+                  <TableHead>{t('admin.inventory_lines.columns.variant')}</TableHead>
+                  <TableHead className="text-right">
+                    {t('admin.purchase_orders.columns.quantity_ordered')}
+                  </TableHead>
+                  <TableHead className="text-right">
+                    {t('admin.purchase_orders.columns.quantity_received')}
+                  </TableHead>
+                  <TableHead className="text-right">
+                    {t('admin.inventory_lines.columns.unit_cost')}
+                  </TableHead>
+                  <TableHead className="text-right">
+                    {t('admin.purchase_orders.columns.line_total')}
+                  </TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                {items.map((item) => (
+                  <ItemRow
+                    key={item.id}
+                    item={item}
+                    receivable={receivable}
+                    count={counts[item.id] ?? item.quantity_received}
+                    onCount={(value) => setCounts((prev) => ({ ...prev, [item.id]: value }))}
+                  />
+                ))}
+              </TableBody>
+            </Table>
+          </div>
+        )}
+
+        {receivable && items.length > 0 && (
+          <div className="flex items-center justify-between">
+            <p className="text-sm text-muted-foreground tabular-nums">
+              {t('admin.purchase_orders.receive_running_total', {
+                counted: totalCounted,
+                ordered: purchaseOrder.quantity_ordered_total,
+              })}
+            </p>
+            <Can I="update" a={Subject.PurchaseOrder}>
+              <Button type="button" onClick={handleReceive} disabled={receiveMutation.isPending}>
+                {receiveMutation.isPending
+                  ? t('admin.actions.saving')
+                  : t('admin.purchase_orders.actions.receive')}
+              </Button>
+            </Can>
+          </div>
+        )}
+      </CardContent>
+    </Card>
+  )
+}
+
+function ItemRow({
+  item,
+  receivable,
+  count,
+  onCount,
+}: {
+  item: PurchaseOrderItem
+  receivable: boolean
+  count: number
+  onCount: (value: number) => void
+}) {
+  const { t } = useTranslation()
+
+  return (
+    <TableRow>
+      <TableCell className="font-medium">
+        {item.variant_name ?? '—'}
+        <span className="block text-xs text-muted-foreground">{item.variant_sku ?? ''}</span>
+      </TableCell>
+      <TableCell className="text-right tabular-nums">{item.quantity_ordered}</TableCell>
+      <TableCell className="text-right">
+        {receivable ? (
+          <Input
+            type="number"
+            // Never below what is already on the shelf: taking units back off
+            // is a correction, not a receive.
+            min={item.quantity_received}
+            max={item.quantity_ordered}
+            value={count}
+            onChange={(event) => onCount(Number(event.target.value))}
+            className="ml-auto w-20 text-right tabular-nums"
+            aria-label={t('admin.purchase_orders.columns.quantity_received')}
+          />
+        ) : (
+          <span className="tabular-nums">{item.quantity_received}</span>
+        )}
+      </TableCell>
+      <TableCell className="text-right tabular-nums">{item.display_unit_cost}</TableCell>
+      <TableCell className="text-right tabular-nums">{item.display_total_cost}</TableCell>
+    </TableRow>
+  )
+}
+
+function Actions({ purchaseOrder }: { purchaseOrder: PurchaseOrder }) {
+  const { t } = useTranslation()
+  const confirm = useConfirm()
+  const markOrdered = useMarkPurchaseOrderOrdered(purchaseOrder.id)
+  const cancelOrder = useCancelPurchaseOrder(purchaseOrder.id)
+
+  if (purchaseOrder.status === 'received' || purchaseOrder.status === 'canceled') return null
+
+  async function handleOrder() {
+    const ok = await confirm({
+      title: t('admin.purchase_orders.order_confirm.title'),
+      message: t('admin.purchase_orders.order_confirm.message', {
+        supplier: purchaseOrder.supplier?.name ?? '',
+      }),
+      confirmLabel: t('admin.purchase_orders.actions.mark_ordered'),
+    })
+    if (!ok) return
+    await markOrdered.mutateAsync().catch(() => undefined)
+  }
+
+  async function handleCancel() {
+    const ok = await confirm({
+      title: t('admin.purchase_orders.cancel_confirm.title'),
+      message: t('admin.purchase_orders.cancel_confirm.message'),
+      variant: 'destructive',
+      confirmLabel: t('admin.purchase_orders.actions.cancel_order'),
+    })
+    if (!ok) return
+    await cancelOrder.mutateAsync({}).catch(() => undefined)
+  }
+
+  return (
+    <Card>
+      <CardHeader>
+        <CardTitle>{t('admin.purchase_orders.actions_title')}</CardTitle>
+      </CardHeader>
+      <CardContent className="flex flex-wrap gap-2">
+        <Can I="update" a={Subject.PurchaseOrder}>
+          {purchaseOrder.status === 'draft' && (
+            <Button
+              type="button"
+              onClick={handleOrder}
+              disabled={markOrdered.isPending || (purchaseOrder.items_count ?? 0) === 0}
+            >
+              {t('admin.purchase_orders.actions.mark_ordered')}
+            </Button>
+          )}
+          <Button
+            type="button"
+            variant="destructive"
+            onClick={handleCancel}
+            disabled={cancelOrder.isPending}
+          >
+            {t('admin.purchase_orders.actions.cancel_order')}
+          </Button>
+        </Can>
+      </CardContent>
+    </Card>
+  )
+}
