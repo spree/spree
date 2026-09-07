@@ -298,6 +298,19 @@ RSpec.describe Spree::Api::V3::Admin::StockTransfersController, type: :controlle
       expect(response).to have_http_status(:no_content)
     end
 
+    # Really gone, not stamped. The soft-delete column exists for the upgrade
+    # task's converted receives, whose numbers have to stay findable; a draft
+    # nobody sent has nothing to preserve, and `destroy` hard-deletes its lines
+    # regardless, which would leave a row that could never be restored intact.
+    it 'leaves no soft-deleted row or orphaned lines behind' do
+      item_id = transfer.items.sole.id
+
+      delete :destroy, params: { id: transfer.prefixed_id }, as: :json
+
+      expect(Spree::StockTransfer.only_deleted.where(id: transfer.id)).to be_empty
+      expect(Spree::StockTransferItem.where(id: item_id)).to be_empty
+    end
+
     # Past draft the transfer describes a box that physically exists.
     it 'refuses to delete a transfer that has shipped' do
       Spree::StockTransfers::MarkInTransit.call(stock_transfer: transfer)

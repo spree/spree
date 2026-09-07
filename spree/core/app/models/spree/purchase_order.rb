@@ -16,9 +16,10 @@ module Spree
   class PurchaseOrder < Spree.base_class
     has_prefix_id :po
 
+    # Before `has_spree_number` — see the note on Spree::StockTransfer.
+    include Spree::SingleStoreResource
     has_spree_number prefix: 'PO'
     include Spree::NumberIdentifier
-    include Spree::SingleStoreResource
     include Spree::HasStatus
     include Spree::Receivable
     include Spree::HasCustomFields
@@ -29,7 +30,8 @@ module Spree
     has_status :draft, :ordered, :partially_received, :received, :canceled,
                default: :draft
 
-    belongs_to :supplier, class_name: 'Spree::Supplier', inverse_of: :purchase_orders
+    belongs_to :supplier, class_name: 'Spree::Supplier', inverse_of: :purchase_orders,
+                          counter_cache: true
     belongs_to :destination_location, class_name: 'Spree::StockLocation'
     belongs_to :created_by, class_name: Spree.admin_user_class.to_s, optional: true
 

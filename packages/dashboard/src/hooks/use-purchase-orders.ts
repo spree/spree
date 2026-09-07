@@ -30,6 +30,8 @@ export function useCreatePurchaseOrder() {
     invalidate: [['purchase-orders']],
     successMessage: i18n.t('admin.purchase_orders.messages.created'),
     errorMessage: i18n.t('admin.purchase_orders.errors.failed_to_create'),
+    // These screens have no inline error surface.
+    showValidationErrors: true,
   })
 }
 
@@ -39,6 +41,8 @@ export function useUpdatePurchaseOrder(id: string) {
     invalidate: [['purchase-orders'], ['purchase-orders', id]],
     successMessage: i18n.t('admin.purchase_orders.messages.saved'),
     errorMessage: i18n.t('admin.purchase_orders.errors.failed_to_save'),
+    // These screens have no inline error surface.
+    showValidationErrors: true,
   })
 }
 
@@ -51,6 +55,8 @@ export function useDeletePurchaseOrder() {
     invalidate: [['purchase-orders']],
     successMessage: i18n.t('admin.purchase_orders.messages.deleted'),
     errorMessage: i18n.t('admin.purchase_orders.errors.failed_to_delete'),
+    // These screens have no inline error surface.
+    showValidationErrors: true,
     onSuccess: (_data, id) => {
       queryClient.removeQueries({ queryKey: buildKey('purchase-orders', id) })
     },
@@ -63,6 +69,8 @@ export function useMarkPurchaseOrderOrdered(id: string) {
     invalidate: [['purchase-orders'], ['purchase-orders', id]],
     successMessage: i18n.t('admin.purchase_orders.messages.ordered'),
     errorMessage: i18n.t('admin.purchase_orders.errors.failed_to_order'),
+    // These screens have no inline error surface.
+    showValidationErrors: true,
   })
 }
 
@@ -78,6 +86,8 @@ export function useReceivePurchaseOrder(id: string) {
     ],
     successMessage: i18n.t('admin.purchase_orders.messages.received'),
     errorMessage: i18n.t('admin.purchase_orders.errors.failed_to_receive'),
+    // These screens have no inline error surface.
+    showValidationErrors: true,
   })
 }
 
@@ -87,5 +97,7 @@ export function useCancelPurchaseOrder(id: string) {
     invalidate: [['purchase-orders'], ['purchase-orders', id]],
     successMessage: i18n.t('admin.purchase_orders.messages.canceled'),
     errorMessage: i18n.t('admin.purchase_orders.errors.failed_to_cancel'),
+    // These screens have no inline error surface.
+    showValidationErrors: true,
   })
 }

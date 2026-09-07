@@ -40,6 +40,10 @@ class AddInventoryOperations < ActiveRecord::Migration[8.1]
       t.string :phone
       t.text :notes
       t.references :store, null: false
+      # Kept by Active Record's counter cache, so the suppliers list can show
+      # "3 purchase orders" without a query per row — and without loading a
+      # supplier's whole purchasing history to count it.
+      t.integer :purchase_orders_count, null: false, default: 0
       # Inline address columns, mirroring spree_stock_locations: a supplier is
       # a place goods come from, edited as one flat form.
       t.string :address1

@@ -120,6 +120,20 @@ describe 'spree:upgrade inventory operations' do
       expect(Spree::StockTransfer.only_deleted.where(id: transfer.id)).to be_empty
     end
 
+    # Otherwise the movement keeps an `st_…` reference the serializer hands to
+    # clients, pointing at a row that no longer exists.
+    it 'stops the migrated movements naming the transfer it destroys' do
+      transfer = legacy_external_receive
+      Rake::Task['spree:upgrade:migrate_external_receives_to_purchase_orders'].tap(&:reenable).invoke
+      movement = Spree::StockMovement.find_by(stock_transfer_id: transfer.id)
+      expect(movement).to be_present
+
+      Rake::Task['spree:upgrade:purge_migrated_external_receives'].tap(&:reenable).invoke
+
+      expect(movement.reload.stock_transfer_id).to be_nil
+      expect(movement.purchase_order).to be_present
+    end
+
     # A transfer still owning its ledger has not been migrated.
     it 'leaves a soft-deleted transfer whose movements are still its own' do
       transfer = legacy_external_receive

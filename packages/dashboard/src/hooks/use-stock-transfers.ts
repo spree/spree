@@ -31,6 +31,8 @@ export function useCreateStockTransfer() {
     invalidate: [['stock-transfers']],
     successMessage: i18n.t('admin.stock_transfers.messages.created'),
     errorMessage: i18n.t('admin.stock_transfers.errors.failed_to_create'),
+    // These screens have no inline error surface.
+    showValidationErrors: true,
   })
 }
 
@@ -40,6 +42,8 @@ export function useUpdateStockTransfer(id: string) {
     invalidate: [['stock-transfers'], ['stock-transfers', id]],
     successMessage: i18n.t('admin.stock_transfers.messages.saved'),
     errorMessage: i18n.t('admin.stock_transfers.errors.failed_to_save'),
+    // These screens have no inline error surface.
+    showValidationErrors: true,
   })
 }
 
@@ -52,6 +56,8 @@ export function useDeleteStockTransfer() {
     invalidate: [['stock-transfers']],
     successMessage: i18n.t('admin.stock_transfers.messages.deleted'),
     errorMessage: i18n.t('admin.stock_transfers.errors.failed_to_delete'),
+    // These screens have no inline error surface.
+    showValidationErrors: true,
     onSuccess: (_data, id) => {
       queryClient.removeQueries({ queryKey: buildKey('stock-transfers', id) })
     },
@@ -64,6 +70,8 @@ export function useMarkStockTransferReady(id: string) {
     invalidate: [['stock-transfers'], ['stock-transfers', id]],
     successMessage: i18n.t('admin.stock_transfers.messages.marked_ready'),
     errorMessage: i18n.t('admin.stock_transfers.errors.failed_to_mark_ready'),
+    // These screens have no inline error surface.
+    showValidationErrors: true,
   })
 }
 
@@ -82,6 +90,8 @@ export function useMarkStockTransferInTransit(id: string) {
     ],
     successMessage: i18n.t('admin.stock_transfers.messages.marked_in_transit'),
     errorMessage: i18n.t('admin.stock_transfers.errors.failed_to_mark_in_transit'),
+    // These screens have no inline error surface.
+    showValidationErrors: true,
   })
 }
 
@@ -96,6 +106,8 @@ export function useReceiveStockTransfer(id: string) {
     ],
     successMessage: i18n.t('admin.stock_transfers.messages.received'),
     errorMessage: i18n.t('admin.stock_transfers.errors.failed_to_receive'),
+    // These screens have no inline error surface.
+    showValidationErrors: true,
   })
 }
 
@@ -110,5 +122,7 @@ export function useCancelStockTransfer(id: string) {
     ],
     successMessage: i18n.t('admin.stock_transfers.messages.canceled'),
     errorMessage: i18n.t('admin.stock_transfers.errors.failed_to_cancel'),
+    // These screens have no inline error surface.
+    showValidationErrors: true,
   })
 }

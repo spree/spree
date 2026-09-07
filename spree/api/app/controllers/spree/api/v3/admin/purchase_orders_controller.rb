@@ -38,21 +38,34 @@ module Spree
 
           # PATCH /api/v3/admin/purchase_orders/:id/mark_ordered
           def mark_ordered
-            run_transition(Spree.purchase_order_mark_ordered_workflow)
+            result = Spree.purchase_order_mark_ordered_workflow.call(purchase_order: @resource)
+            return render_result_error(result) unless result.success?
+
+            render json: serialize_resource(result.value)
           end
 
           # PATCH /api/v3/admin/purchase_orders/:id/receive
           def receive
-            run_transition(Spree.purchase_order_receive_workflow,
-                           items: items_for_receive([:id, :quantity_received]),
-                           received_by: try_spree_current_user)
+            result = Spree.purchase_order_receive_workflow.call(
+              purchase_order: @resource,
+              items: items_for_receive([:id, :quantity_received]),
+              received_by: try_spree_current_user
+            )
+            return render_result_error(result) unless result.success?
+
+            render json: serialize_resource(result.value)
           end
 
           # PATCH /api/v3/admin/purchase_orders/:id/cancel
           def cancel
-            run_transition(Spree.purchase_order_cancel_workflow,
-                           reason: params[:reason],
-                           canceler: try_spree_current_user)
+            result = Spree.purchase_order_cancel_workflow.call(
+              purchase_order: @resource,
+              reason: params[:reason],
+              canceler: try_spree_current_user
+            )
+            return render_result_error(result) unless result.success?
+
+            render json: serialize_resource(result.value)
           end
 
           protected
@@ -75,10 +88,6 @@ module Spree
 
           def update_workflow
             Spree.purchase_order_update_workflow
-          end
-
-          def workflow_record_key
-            :purchase_order
           end
 
           def create_workflow_arguments

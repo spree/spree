@@ -3,14 +3,16 @@ module Spree
     module V3
       module Admin
         # What a stock transfer and a purchase order have in common as
-        # endpoints: line items resolved out of a flat payload, and statuses
-        # moved one named action at a time
-        # (docs/plans/6.0-inventory-operations.md).
+        # endpoints: resolving the lines, warehouses and variants a flat
+        # payload names (docs/plans/6.0-inventory-operations.md). The status
+        # workflows themselves are run by the actions, which is where the
+        # keyword each one takes the document under stays visible.
         #
         # Every id a payload names is resolved through the store — or through
         # the document itself, for its own lines — so an id belonging to
         # another tenant answers 404 rather than being acted on. That is also
-        # why nothing here assigns a `*_id` from the payload: `permitted_params`
+        # why nothing here assigns a `*_id` from the payload, and why the lines
+        # come from the raw payload rather than `permitted_params`: the latter
         # decodes prefixed ids into primary keys, and a decoded key carries no
         # evidence of whose record it is.
         module ReceivableActions
@@ -18,22 +20,6 @@ module Spree
           include Spree::Api::V3::ItemsPayload
 
           protected
-
-          # Runs one of the document's status workflows and renders the result.
-          def run_transition(workflow, **arguments)
-            result = workflow.call(workflow_record_key => @resource, **arguments)
-
-            if result.success?
-              render json: serialize_resource(result.value)
-            else
-              render_result_error(result)
-            end
-          end
-
-          # @return [Symbol] the keyword this document's workflows take it under
-          def workflow_record_key
-            raise NotImplementedError, "#{self.class} must implement #workflow_record_key"
-          end
 
           # The lines a create or update named, or nil when the payload said
           # nothing about them — which on an update means "leave them alone".
@@ -43,7 +29,7 @@ module Spree
           #   `:quantity_ordered`, `:unit_cost`)
           # @return [Array<Hash>, nil]
           def items_from_params(*attribute_keys)
-            sent = sent_items([:variant_id, *attribute_keys])
+            sent = items_payload([:variant_id, *attribute_keys])
             return nil if sent.nil?
 
             sent.map do |item|
@@ -63,7 +49,7 @@ module Spree
           # @param keys [Array<Symbol>] the per-line keys to permit
           # @return [Array<Hash>, nil]
           def items_for_receive(keys)
-            sent = sent_items(keys)
+            sent = items_payload(keys)
             return nil if sent.nil?
 
             sent.map do |item|
@@ -92,15 +78,6 @@ module Spree
 
           def variants_scope
             current_store.variants.accessible_by(current_ability, :show)
-          end
-
-          private
-
-          # Raw `params`, not `permitted_params`: the latter decodes anything
-          # shaped like a prefixed id into a primary key, and these lines are
-          # looked up by prefixed id precisely so their scope is checked.
-          def sent_items(keys)
-            items_payload(keys)
           end
         end
       end

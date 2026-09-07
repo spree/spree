@@ -221,11 +221,19 @@ function ReceiveCard({ transfer }: { transfer: StockTransfer }) {
   async function handleReceive() {
     await receiveMutation
       .mutateAsync({
-        items: items.map((item) => ({
-          id: item.id,
-          quantity_received: counts[item.id] ?? item.quantity_received,
-          discrepancy_reason: reasons[item.id] || undefined,
-        })),
+        items: items.map((item) => {
+          const received = counts[item.id] ?? item.quantity_received
+          const reason = reasons[item.id]
+
+          return {
+            id: item.id,
+            quantity_received: received,
+            // Only while the line is actually short. The select hides once the
+            // count is raised, but its state survives — and a fully received
+            // line carrying "damaged in transit" is simply wrong.
+            discrepancy_reason: received < item.quantity_shipped ? reason || undefined : undefined,
+          }
+        }),
       })
       .catch(() => undefined)
   }

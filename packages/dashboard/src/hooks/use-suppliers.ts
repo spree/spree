@@ -29,6 +29,8 @@ export function useCreateSupplier() {
     invalidate: [['suppliers']],
     successMessage: i18n.t('admin.suppliers.messages.created'),
     errorMessage: i18n.t('admin.suppliers.errors.failed_to_create'),
+    // These screens have no inline error surface.
+    showValidationErrors: true,
   })
 }
 
@@ -38,6 +40,8 @@ export function useUpdateSupplier(id: string) {
     invalidate: [['suppliers'], ['suppliers', id]],
     successMessage: i18n.t('admin.suppliers.messages.saved'),
     errorMessage: i18n.t('admin.suppliers.errors.failed_to_save'),
+    // These screens have no inline error surface.
+    showValidationErrors: true,
   })
 }
 
@@ -50,6 +54,8 @@ export function useDeleteSupplier() {
     invalidate: [['suppliers']],
     successMessage: i18n.t('admin.suppliers.messages.deleted'),
     errorMessage: i18n.t('admin.suppliers.errors.failed_to_delete'),
+    // These screens have no inline error surface.
+    showValidationErrors: true,
     onSuccess: (_data, id) => {
       queryClient.removeQueries({ queryKey: buildKey('suppliers', id) })
     },

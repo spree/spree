@@ -19,9 +19,13 @@ module Spree
   class StockTransfer < Spree.base_class
     has_prefix_id :st
 
+    # Before `has_spree_number`, deliberately: both register a
+    # `before_validation`, and numbering reads the store to pick up its
+    # sequence. Registered the other way round, a transfer built without an
+    # explicit store would draw its number from the default store's counter.
+    include Spree::SingleStoreResource
     has_spree_number prefix: 'T'
     include Spree::NumberIdentifier
-    include Spree::SingleStoreResource
     include Spree::HasStatus
     include Spree::Receivable
     include Spree::HasCustomFields

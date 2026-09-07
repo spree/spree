@@ -32,7 +32,7 @@ module Spree
         end
 
         run_hooks :after_create
-        purchase_order.publish_event('purchase_order.created')
+        # The model's lifecycle events already emit `purchase_order.created`.
         success(purchase_order.reload)
       end
 

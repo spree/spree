@@ -31,6 +31,21 @@ describe 'purchase order lifecycle', type: :model do
       expect(on_hand).to eq(0)
     end
 
+    # See the twin note in the stock transfer lifecycle spec: the model's
+    # after_commit hook owns this announcement.
+    it 'leaves announcing a new order to the model' do
+      published = []
+      allow_any_instance_of(Spree::PurchaseOrder).
+        to receive(:publish_event) { |_instance, name, *| published << name }
+
+      Spree::PurchaseOrders::Create.call(
+        store: store, supplier: supplier, destination_location: destination,
+        items: [{ variant: variant, quantity_ordered: 1, unit_cost: 1 }]
+      )
+
+      expect(published).not_to include('purchase_order.created')
+    end
+
     it 'refuses a line with no quantity' do
       result = Spree::PurchaseOrders::Create.call(
         store: store, supplier: supplier, destination_location: destination,
@@ -146,6 +161,16 @@ describe 'purchase order lifecycle', type: :model do
 
       expect(result).to be_failure
       expect(result.error.to_s).to eq(Spree.t('purchase_order.errors.not_ordered'))
+    end
+  end
+
+  describe 'the supplier order count' do
+    it 'tracks purchase orders without counting them per row' do
+      expect { purchase_order }.to change { supplier.reload.purchase_orders_count }.from(0).to(1)
+
+      purchase_order.destroy
+
+      expect(supplier.reload.purchase_orders_count).to eq(0)
     end
   end
 

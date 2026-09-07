@@ -28,39 +28,68 @@ module Spree
           # A draft is the only transfer a merchant may throw away: past that
           # it describes a box that physically exists, which is cancelled
           # rather than deleted.
+          #
+          # Really deleted, not stamped. Soft deletion exists for the upgrade
+          # task's converted receives, whose numbers have to stay findable; a
+          # draft nobody sent has nothing to preserve, and `destroy` would
+          # hard-delete its lines regardless (they are not paranoid), leaving a
+          # soft-deleted row that could never be restored intact.
           def destroy
-            return super if @resource.draft?
+            unless @resource.draft?
+              return render_error(
+                code: 'invalid_status',
+                message: Spree.t('stock_transfer.errors.only_draft_can_be_deleted'),
+                status: :unprocessable_content
+              )
+            end
 
-            render_error(
-              code: 'invalid_status',
-              message: Spree.t('stock_transfer.errors.only_draft_can_be_deleted'),
-              status: :unprocessable_content
-            )
+            authorize_resource!(@resource, :destroy)
+            @resource.really_destroy!
+            head :no_content
           end
 
           # PATCH /api/v3/admin/stock_transfers/:id/mark_ready
           def mark_ready
-            run_transition(Spree.stock_transfer_mark_ready_workflow)
+            result = Spree.stock_transfer_mark_ready_workflow.call(stock_transfer: @resource)
+            return render_result_error(result) unless result.success?
+
+            render json: serialize_resource(result.value)
           end
 
           # PATCH /api/v3/admin/stock_transfers/:id/mark_in_transit
           def mark_in_transit
-            run_transition(Spree.stock_transfer_mark_in_transit_workflow, force: params[:force].to_b)
+            result = Spree.stock_transfer_mark_in_transit_workflow.call(
+              stock_transfer: @resource,
+              force: params[:force].to_b
+            )
+            return render_result_error(result) unless result.success?
+
+            render json: serialize_resource(result.value)
           end
 
           # PATCH /api/v3/admin/stock_transfers/:id/receive
           def receive
-            run_transition(Spree.stock_transfer_receive_workflow,
-                           items: items_for_receive([:id, :quantity_received, :discrepancy_reason]),
-                           received_by: try_spree_current_user)
+            result = Spree.stock_transfer_receive_workflow.call(
+              stock_transfer: @resource,
+              items: items_for_receive([:id, :quantity_received, :discrepancy_reason]),
+              received_by: try_spree_current_user
+            )
+            return render_result_error(result) unless result.success?
+
+            render json: serialize_resource(result.value)
           end
 
           # PATCH /api/v3/admin/stock_transfers/:id/cancel
           def cancel
-            run_transition(Spree.stock_transfer_cancel_workflow,
-                           on_in_transit: params[:on_in_transit],
-                           reason: params[:reason],
-                           canceler: try_spree_current_user)
+            result = Spree.stock_transfer_cancel_workflow.call(
+              stock_transfer: @resource,
+              on_in_transit: params[:on_in_transit],
+              reason: params[:reason],
+              canceler: try_spree_current_user
+            )
+            return render_result_error(result) unless result.success?
+
+            render json: serialize_resource(result.value)
           end
 
           protected
@@ -83,10 +112,6 @@ module Spree
 
           def update_workflow
             Spree.stock_transfer_update_workflow
-          end
-
-          def workflow_record_key
-            :stock_transfer
           end
 
           def create_workflow_arguments

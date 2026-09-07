@@ -38,6 +38,23 @@ describe 'stock transfer lifecycle', type: :model do
       expect(transfer.stock_movements).to be_empty
     end
 
+    # `publishes_lifecycle_events` already announces a new record, from an
+    # after_commit hook that does not run inside a transactional example — so
+    # anything seen here came from the workflow, which used to publish the
+    # same name a second time and fire every subscriber twice.
+    it 'leaves announcing a new transfer to the model' do
+      published = []
+      allow_any_instance_of(Spree::StockTransfer).
+        to receive(:publish_event) { |_instance, name, *| published << name }
+
+      Spree::StockTransfers::Create.call(
+        store: store, source_location: source, destination_location: destination,
+        items: [{ variant: variant, quantity_shipped: 1 }]
+      )
+
+      expect(published).not_to include('stock_transfer.created')
+    end
+
     it 'refuses a line with no quantity' do
       result = Spree::StockTransfers::Create.call(
         store: store, source_location: source, destination_location: destination,

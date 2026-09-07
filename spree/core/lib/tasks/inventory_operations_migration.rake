@@ -178,8 +178,15 @@ namespace :spree do
                  where(source_location_id: nil).
                  where.not(id: still_owning_movements)
 
-      count = migrated.count
-      migrated.find_each(&:really_destroy!)
+      count = 0
+      migrated.find_each do |transfer|
+        # The movements kept naming the transfer for lineage while it was only
+        # soft-deleted. It is about to stop existing, so that reference has to
+        # go with it rather than becoming an id that resolves to nothing.
+        Spree::StockMovement.where(stock_transfer_id: transfer.id).update_all(stock_transfer_id: nil)
+        transfer.really_destroy!
+        count += 1
+      end
 
       puts "  Purged #{count} migrated external receive(s)."
     end

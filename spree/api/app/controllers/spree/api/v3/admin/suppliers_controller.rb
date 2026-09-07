@@ -23,13 +23,6 @@ module Spree
              :address1, :address2, :city, :state_name, :state_code,
              :country_code, :postal_code, { metadata: {} }]
           end
-
-          # The list shows how many orders each supplier has. `size` on an
-          # unloaded association is a COUNT per row, and ar_lazy_preload does
-          # not reach it — so the association is loaded up front instead.
-          def collection_includes
-            [:purchase_orders]
-          end
         end
       end
     end

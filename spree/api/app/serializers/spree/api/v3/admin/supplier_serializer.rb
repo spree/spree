@@ -23,12 +23,8 @@ module Spree
 
           attributes :name, :contact_name, :email, :phone, :notes,
                      :address1, :address2, :city, :state_name, :state_code,
-                     :country_code, :postal_code, :metadata,
+                     :country_code, :postal_code, :purchase_orders_count, :metadata,
                      created_at: :iso8601, updated_at: :iso8601, deleted_at: :iso8601
-
-          attribute :purchase_orders_count do |supplier|
-            supplier.purchase_orders.size
-          end
         end
       end
     end

@@ -29,7 +29,9 @@ module Spree
         end
 
         run_hooks :after_create
-        stock_transfer.publish_event('stock_transfer.created')
+        # No `publish_event` here: `publishes_lifecycle_events` on the model
+        # already emits `stock_transfer.created` after commit, and publishing
+        # it again fires every subscriber and webhook twice.
         success(stock_transfer.reload)
       end
 

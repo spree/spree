@@ -1,6 +1,9 @@
+import type { Supplier } from '@spree/admin-sdk'
 import {
+  adminClient,
   CurrencySelect,
   PageHeader,
+  ResourceCombobox,
   StoreDatePicker,
   useStockLocations,
 } from '@spree/dashboard-core'
@@ -29,7 +32,6 @@ import {
   VariantLineEditor,
 } from '../../../../../components/spree/variant-line-editor'
 import { useCreatePurchaseOrder } from '../../../../../hooks/use-purchase-orders'
-import { useSuppliers } from '../../../../../hooks/use-suppliers'
 
 export const Route = createFileRoute('/_authenticated/$storeId/products/purchase-orders/new')({
   component: NewPurchaseOrderPage,
@@ -40,10 +42,7 @@ function NewPurchaseOrderPage() {
   const { storeId } = Route.useParams()
   const navigate = useNavigate()
   const createMutation = useCreatePurchaseOrder()
-  const { data: suppliers } = useSuppliers({ limit: 100 })
   const { data: stockLocations } = useStockLocations({ limit: 100 })
-
-  const supplierOptions = suppliers?.data ?? []
   const locations = stockLocations?.data ?? []
 
   const [supplierId, setSupplierId] = useState('')
@@ -54,7 +53,12 @@ function NewPurchaseOrderPage() {
   const [notes, setNotes] = useState('')
   const [lines, setLines] = useState<VariantLine[]>([])
 
-  const canSubmit = !!supplierId && !!destinationId && lines.every((line) => line.quantity > 0)
+  const canSubmit =
+    !!supplierId &&
+    !!destinationId &&
+    // A cleared cost input is not zero — it is nothing, which the server
+    // rejects field-by-field. Catch it here, where the field is.
+    lines.every((line) => line.quantity > 0 && Number.isFinite(Number(line.unitCost)))
 
   async function handleSubmit() {
     if (!canSubmit) return
@@ -97,22 +101,21 @@ function NewPurchaseOrderPage() {
               <FieldLabel htmlFor="supplier">
                 {t('admin.purchase_orders.fields.supplier')}
               </FieldLabel>
-              <Select value={supplierId} onValueChange={setSupplierId}>
-                <SelectTrigger id="supplier">
-                  <SelectValue placeholder={t('admin.purchase_orders.fields.supplier_placeholder')}>
-                    {(value) =>
-                      supplierOptions.find((s) => s.id === value)?.name ?? (value as string)
-                    }
-                  </SelectValue>
-                </SelectTrigger>
-                <SelectContent>
-                  {supplierOptions.map((supplier) => (
-                    <SelectItem key={supplier.id} value={supplier.id}>
-                      {supplier.name}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
+              {/* Searchable rather than a capped list: a wholesaler can hold
+                  more suppliers than one page of a Select would show, and a
+                  Select says nothing about the ones it left out. */}
+              <ResourceCombobox<Supplier>
+                id="supplier"
+                queryKey="purchase-order-supplier-picker"
+                value={supplierId}
+                onChange={(id) => setSupplierId(id ?? '')}
+                search={(query) => adminClient.suppliers.list({ search: query, limit: 20 })}
+                hydrate={(ids) =>
+                  adminClient.suppliers.list({ q: { id_in: ids }, limit: ids.length || 1 })
+                }
+                getOptionLabel={(supplier) => supplier.name}
+                placeholder={t('admin.purchase_orders.fields.supplier_placeholder')}
+              />
             </Field>
 
             <Field>
