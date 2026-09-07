@@ -207,13 +207,18 @@ function SupplierSheet({
   async function handleSubmit() {
     if (!form.name.trim()) return
 
-    // Blank strings would overwrite a stored value with an empty one; the
-    // API reads a missing key as "leave it alone".
+    // Emptied fields are sent as null, not dropped: the API reads a missing
+    // key as "leave it alone", so dropping them would make a cleared phone
+    // number come back on the next fetch.
     const payload = Object.fromEntries(
-      Object.entries(form).map(([key, value]) => [key, value.trim() || undefined]),
-    ) as Record<string, string | undefined>
+      Object.entries(form).map(([key, value]) => [key, value.trim() || null]),
+    ) as Record<string, string | null>
 
-    await mutation.mutateAsync({ ...payload, name: form.name.trim() })
+    const saved = await mutation
+      .mutateAsync({ ...payload, name: form.name.trim() })
+      .catch(() => undefined)
+    if (!saved) return
+
     onOpenChange(false)
   }
 

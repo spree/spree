@@ -5134,7 +5134,8 @@
       },
       "ship_confirm": {
         "title": "Diese Umlagerung versenden?",
-        "message": "{{count}} Einheiten verlassen jetzt das Quelllager und sind dort erst nach Ankunft wieder verfügbar."
+        "message_one": "{{count}} Einheit verlässt jetzt das Quelllager und ist dort erst nach Ankunft wieder verfügbar.",
+        "message_other": "{{count}} Einheiten verlassen jetzt das Quelllager und sind dort erst nach Ankunft wieder verfügbar."
       },
       "cancel_confirm": {
         "title": "Diese Umlagerung abbrechen?",
@@ -5569,7 +5570,7 @@
       },
       "delete_confirm": {
         "title": "Diesen Lieferanten löschen?",
-        "message": "{{name}} steht für neue Bestellungen nicht mehr zur Verfügung. Bestehende Bestellungen nennen ihn weiterhin."
+        "message": "{{name}} steht für neue Bestellungen nicht mehr zur Verfügung. Ein Lieferant, den noch eine Bestellung nennt, kann nicht gelöscht werden."
       }
     }
   }

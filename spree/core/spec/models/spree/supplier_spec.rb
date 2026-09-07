@@ -15,12 +15,16 @@ module Spree
         expect(build(:supplier, store: create(:store), name: 'Acme Wholesale')).to be_valid
       end
 
-      # A supplier deleted a year ago must not block the name a merchant wants
-      # to use today.
-      it 'frees the name again once the supplier is deleted' do
+      # A soft-deleted supplier keeps its name. The unique index cannot be
+      # narrowed to live rows on every database Spree supports, so the
+      # validation matches the index — and a merchant gets a message rather
+      # than the constraint violation a narrowed validation would let through.
+      it 'keeps the name reserved after the supplier is deleted' do
         create(:supplier, store: store, name: 'Acme Wholesale').destroy
 
-        expect(build(:supplier, store: store, name: 'Acme Wholesale')).to be_valid
+        reused = build(:supplier, store: store, name: 'Acme Wholesale')
+        expect(reused).to be_invalid
+        expect(reused.errors[:name]).to be_present
       end
 
       it 'refuses an email that is not one' do

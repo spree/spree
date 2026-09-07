@@ -55,7 +55,13 @@ module Spree
           raise ActiveRecord::Rollback
         end
 
-        purchase_order.save!
+        # A legacy receive whose movements cancel out to zero for a variant
+        # cannot become a line, and must not take the rest of the run with it.
+        unless purchase_order.save
+          skip(transfer, purchase_order.errors.full_messages.join(', '))
+          raise ActiveRecord::Rollback
+        end
+
         Spree::StockMovement.where(id: movements.map(&:id)).update_all(purchase_order_id: purchase_order.id)
         transfer.update_columns(status: 'received', deleted_at: Time.current)
 

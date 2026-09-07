@@ -199,8 +199,9 @@ function PlannedItemsCard({ transfer }: { transfer: StockTransfer }) {
  * In transit and beyond: the receive screen.
  *
  * `quantity_received` is the running total for the line, so a second delivery
- * tops it up rather than starting over — which is why the inputs are seeded
- * with what has already been counted rather than with zero.
+ * tops it up rather than starting over. The inputs are therefore seeded with
+ * what has already arrived, not with what was sent: reopening a part-received
+ * transfer has to show the shelf as it is.
  */
 function ReceiveCard({ transfer }: { transfer: StockTransfer }) {
   const { t } = useTranslation()
@@ -209,7 +210,7 @@ function ReceiveCard({ transfer }: { transfer: StockTransfer }) {
   const editable = isInFlight(transfer.status)
 
   const [counts, setCounts] = useState<Record<string, number>>(() =>
-    Object.fromEntries(items.map((item) => [item.id, item.quantity_shipped])),
+    Object.fromEntries(items.map((item) => [item.id, item.quantity_received])),
   )
   const [reasons, setReasons] = useState<Record<string, string>>(() =>
     Object.fromEntries(items.map((item) => [item.id, item.discrepancy_reason ?? ''])),

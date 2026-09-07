@@ -19,9 +19,13 @@ module Spree
     has_many :purchase_orders, class_name: 'Spree::PurchaseOrder', inverse_of: :supplier,
                                dependent: :restrict_with_error
 
+    # Deliberately not narrowed to live rows: the unique index cannot be, on
+    # every database Spree supports, so a validation that ignored soft-deleted
+    # suppliers would pass and then hit the index. A deleted supplier keeps its
+    # name; restore or rename it to use the name again.
     validates :name, presence: true,
                      uniqueness: { scope: [:store_id, *spree_base_uniqueness_scope],
-                                   conditions: -> { where(deleted_at: nil) } }
+                                   conditions: -> { unscope(where: :deleted_at) } }
     validates :email, email: { allow_blank: true }, length: { maximum: 254, allow_blank: true }
 
     normalizes :email, with: ->(email) { email.strip.downcase }

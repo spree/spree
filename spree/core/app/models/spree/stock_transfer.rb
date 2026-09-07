@@ -49,7 +49,11 @@ module Spree
     accepts_nested_attributes_for :items, allow_destroy: true
 
     validates :source_location, :destination_location, presence: true
-    validates :items, presence: true, unless: :draft?
+    # A document that has left draft describes a box that physically exists —
+    # except a cancelled one, which describes a trip that never happened. The
+    # guard covers both because `update` assigns the status before validating,
+    # so cancelling an empty draft would otherwise be refused.
+    validates :items, presence: true, unless: -> { draft? || canceled? }
     validate :source_location_is_not_destination_location
     validate :locations_belong_to_the_same_store
 

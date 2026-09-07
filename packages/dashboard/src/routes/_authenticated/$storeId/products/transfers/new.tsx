@@ -51,16 +51,21 @@ function NewStockTransferPage() {
   async function handleSubmit() {
     if (!canSubmit) return
 
-    const transfer = await createMutation.mutateAsync({
-      source_location_id: sourceId,
-      destination_location_id: destinationId,
-      reference: reference.trim() || undefined,
-      notes: notes.trim() || undefined,
-      items: lines.map((line) => ({
-        variant_id: line.variant.id,
-        quantity_shipped: line.quantity,
-      })),
-    })
+    // The hook toasts the refusal; there is nowhere inline to put it on a
+    // page that has no form errors, and navigating would hide it.
+    const transfer = await createMutation
+      .mutateAsync({
+        source_location_id: sourceId,
+        destination_location_id: destinationId,
+        reference: reference.trim() || undefined,
+        notes: notes.trim() || undefined,
+        items: lines.map((line) => ({
+          variant_id: line.variant.id,
+          quantity_shipped: line.quantity,
+        })),
+      })
+      .catch(() => undefined)
+    if (!transfer) return
 
     navigate({
       to: '/$storeId/products/transfers/$transferId',

@@ -166,6 +166,15 @@ describe 'purchase order lifecycle', type: :model do
       expect(on_hand).to eq(60)
     end
 
+    it 'cancels a draft that never got any lines' do
+      empty = create(:purchase_order, store: store, quantity: 0)
+
+      result = Spree::PurchaseOrders::Cancel.call(purchase_order: empty)
+
+      expect(result).to be_success
+      expect(result.value).to be_canceled
+    end
+
     it 'refuses an order that is already over' do
       Spree::PurchaseOrders::MarkOrdered.call(purchase_order: purchase_order)
       Spree::PurchaseOrders::Receive.call(purchase_order: purchase_order.reload)

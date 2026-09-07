@@ -5134,7 +5134,8 @@
       },
       "ship_confirm": {
         "title": "Expédier ce transfert ?",
-        "message": "{{count}} unités quittent maintenant l'entrepôt d'origine et n'y seront plus disponibles avant leur arrivée."
+        "message_one": "{{count}} unité quitte maintenant l'entrepôt d'origine et n'y sera plus disponible avant son arrivée.",
+        "message_other": "{{count}} unités quittent maintenant l'entrepôt d'origine et n'y seront plus disponibles avant leur arrivée."
       },
       "cancel_confirm": {
         "title": "Annuler ce transfert ?",
@@ -5569,7 +5570,7 @@
       },
       "delete_confirm": {
         "title": "Supprimer ce fournisseur ?",
-        "message": "{{name}} ne sera plus disponible pour de nouveaux bons de commande. Les commandes existantes continuent de le nommer."
+        "message": "{{name}} ne sera plus disponible pour de nouveaux bons de commande. Un fournisseur encore nommé par un bon de commande ne peut pas être supprimé."
       }
     }
   }

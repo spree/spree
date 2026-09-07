@@ -75,11 +75,15 @@ module Spree
             return nil if sent.nil?
 
             sent.map do |item|
-              {
+              received = {
                 item: @resource.items.find_by_prefix_id!(item[:id]),
-                quantity_received: item[:quantity_received],
-                discrepancy_reason: item[:discrepancy_reason]
+                quantity_received: item[:quantity_received]
               }
+              # Only when the payload actually carried one: a second receive
+              # that tops a line up without repeating the reason must not erase
+              # the audit text the first one recorded.
+              received[:discrepancy_reason] = item[:discrepancy_reason] if item.key?('discrepancy_reason')
+              received
             end
           end
 

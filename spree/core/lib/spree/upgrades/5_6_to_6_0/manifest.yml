@@ -634,3 +634,32 @@ steps:
 
       Idempotent — a store that already has a default package type is left
       alone, so a box edited since the upgrade is never overwritten.
+
+  - id: migrate_external_receives_to_purchase_orders
+    name: "Turn 5.x supplier receives into purchase orders, and give every transfer a store"
+    task: "spree:upgrade:migrate_external_receives_to_purchase_orders"
+    notes: |
+      A 5.x supplier receive was recorded as a stock transfer with no source
+      location. Spree 6.0 has a purchase order for that — with a supplier, a
+      unit cost and an expected date — and a transfer now moves stock between
+      two of the merchant's own warehouses only.
+
+      Each source-less transfer becomes a received purchase order against a
+      "Migrated receives" supplier, its existing stock movements are re-pointed
+      at that order, and the transfer is soft-deleted so its T-… number stays
+      findable for historical reporting without the same receive appearing
+      twice in the admin. Historical unit costs are unknowable and recorded as
+      zero.
+
+      Until this runs, every pre-existing transfer has no store and no status.
+      A transfer without a store is invisible to the admin list, which reads
+      through the current store, and one without a status cannot be saved
+      through the app at all — so this is the step that makes existing
+      transfers usable again, not only the one that converts receives.
+
+      Stock is never touched: those movements already moved it, at the time.
+
+      Idempotent. A transfer whose movements no longer resolve to a variant is
+      reported and skipped rather than guessed at, and one bad row does not
+      stop the run. Purge the soft-deleted rows later with
+      spree:upgrade:purge_migrated_external_receives.

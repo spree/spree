@@ -44,7 +44,7 @@ module Spree
     before_validation :ensure_currency
 
     validates :currency, presence: true
-    validates :items, presence: true, unless: :draft?
+    validates :items, presence: true, unless: -> { draft? || canceled? }
 
     self.whitelisted_ransackable_attributes = %w[number status currency reference expected_at
                                                  ordered_at received_at supplier_id

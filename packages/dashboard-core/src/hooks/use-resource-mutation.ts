@@ -103,16 +103,35 @@ export function useResourceMutation<TData = unknown, TError = Error, TVariables 
     },
     onError: (error, variables, onMutateResult, ctx) => {
       if (errorMessage !== false && !isValidationError(error)) {
-        toastManager.add({ type: 'error', title: errorMessage })
+        // A refusal with no field to hang off — a workflow saying the source
+        // shelf cannot cover this transfer — says something the caller's
+        // generic message does not, so it speaks for itself.
+        toastManager.add({ type: 'error', title: refusalMessage(error) ?? errorMessage })
       }
       return onError?.(error, variables, onMutateResult, ctx)
     },
   })
 }
 
-// 422 with `details` means the model rejected the payload (e.g., "Code can't
-// be blank"). The form renders these next to the offending input via
-// `mapSpreeErrorsToForm`, so toasting the same thing would just be noise.
+// 422 *with* `details` means the model rejected the payload field by field
+// (e.g. "Code can't be blank"). The form renders those next to the offending
+// input via `mapSpreeErrorsToForm`, so toasting them again would be noise.
+//
+// A 422 without `details` is a different animal: a workflow declining the
+// whole operation ("Only a transfer in transit can be received"). Nothing
+// renders it inline, so suppressing it leaves the merchant staring at a page
+// that silently did nothing.
 function isValidationError(error: unknown): boolean {
-  return error instanceof SpreeError && error.status === 422
+  return error instanceof SpreeError && error.status === 422 && hasFieldDetails(error)
+}
+
+function hasFieldDetails(error: SpreeError): boolean {
+  return !!error.details && Object.keys(error.details).length > 0
+}
+
+/** The server's own wording for a refusal that names no field. */
+function refusalMessage(error: unknown): string | undefined {
+  if (!(error instanceof SpreeError) || hasFieldDetails(error)) return undefined
+
+  return error.message || undefined
 }

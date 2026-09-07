@@ -164,6 +164,21 @@ describe 'stock transfer lifecycle', type: :model do
       expect(transfer.reload.stock_movements.received.sum(:quantity)).to eq(10)
     end
 
+    # A second receive that says nothing about the discrepancy must not erase
+    # the audit text the first one recorded.
+    it 'keeps the recorded discrepancy reason when a later receive omits it' do
+      item = transfer.reload.items.sole
+      Spree::StockTransfers::Receive.call(
+        stock_transfer: transfer,
+        items: [{ item: item, quantity_received: 8, discrepancy_reason: 'damaged_in_transit' }]
+      )
+
+      Spree::StockTransfers::Receive.call(stock_transfer: transfer.reload,
+                                          items: [{ item: item.reload, quantity_received: 9 }])
+
+      expect(item.reload.discrepancy_reason).to eq('damaged_in_transit')
+    end
+
     it 'refuses to receive more than was shipped' do
       result = Spree::StockTransfers::Receive.call(
         stock_transfer: transfer.reload, items: [{ item: transfer.items.sole, quantity_received: 11 }]
@@ -213,6 +228,18 @@ describe 'stock transfer lifecycle', type: :model do
       expect(result.value).to be_canceled
       expect(source_on_hand).to eq(10)
       expect(transfer.reload.stock_movements).to be_empty
+    end
+
+    # `update` assigns the status before validating, so a draft-only guard on
+    # the items validation refused to cancel a transfer with no lines — which
+    # the new-transfer screen lets a merchant create.
+    it 'cancels a draft that never got any lines' do
+      empty = create(:stock_transfer, store: store, quantity: 0)
+
+      result = Spree::StockTransfers::Cancel.call(stock_transfer: empty)
+
+      expect(result).to be_success
+      expect(result.value).to be_canceled
     end
 
     # The units are physically gone from the source, so guessing would either

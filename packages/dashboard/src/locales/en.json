@@ -5134,7 +5134,8 @@
       },
       "ship_confirm": {
         "title": "Send this transfer?",
-        "message": "{{count}} units leave the source warehouse now and will not be available there until they arrive."
+        "message_one": "{{count}} unit leaves the source warehouse now and will not be available there until it arrives.",
+        "message_other": "{{count}} units leave the source warehouse now and will not be available there until they arrive."
       },
       "cancel_confirm": {
         "title": "Cancel this transfer?",
@@ -5569,7 +5570,7 @@
       },
       "delete_confirm": {
         "title": "Delete this supplier?",
-        "message": "{{name}} will no longer be available for new purchase orders. Existing orders keep naming them."
+        "message": "{{name}} will no longer be available for new purchase orders. A supplier that any purchase order still names cannot be deleted."
       }
     }
   }

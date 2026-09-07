@@ -128,7 +128,8 @@ function SummaryCard({ purchaseOrder }: { purchaseOrder: PurchaseOrder }) {
  * The lines, and — once the order has been placed — the receive screen.
  *
  * `quantity_received` is the running total for the line, so a second delivery
- * tops it up rather than starting over.
+ * tops it up rather than starting over — and the inputs show what has actually
+ * arrived, not what was ordered.
  */
 function ItemsCard({ purchaseOrder }: { purchaseOrder: PurchaseOrder }) {
   const { t } = useTranslation()
@@ -138,7 +139,7 @@ function ItemsCard({ purchaseOrder }: { purchaseOrder: PurchaseOrder }) {
     purchaseOrder.status === 'ordered' || purchaseOrder.status === 'partially_received'
 
   const [counts, setCounts] = useState<Record<string, number>>(() =>
-    Object.fromEntries(items.map((item) => [item.id, item.quantity_ordered])),
+    Object.fromEntries(items.map((item) => [item.id, item.quantity_received])),
   )
 
   const totalCounted = items.reduce((sum, item) => sum + (counts[item.id] ?? 0), 0)

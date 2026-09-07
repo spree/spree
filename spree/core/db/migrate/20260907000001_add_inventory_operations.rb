@@ -57,6 +57,11 @@ class AddInventoryOperations < ActiveRecord::Migration[8.1]
       t.datetime :deleted_at
       t.timestamps
     end
+    # No `where: 'deleted_at IS NULL'`: MySQL has no partial indexes and drops
+    # the condition silently, so a soft-deleted supplier's name would be
+    # reusable on PostgreSQL and a 500 on MySQL. The model's uniqueness
+    # validation matches this index exactly instead — a deleted supplier keeps
+    # its name, and re-using it is refused with a message rather than an error.
     add_index :spree_suppliers, [:store_id, :name], unique: true
     add_index :spree_suppliers, :deleted_at
 

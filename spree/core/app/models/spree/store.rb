@@ -248,8 +248,13 @@ module Spree
     # carry their own store rather than borrowing the destination warehouse's,
     # so the admin endpoint has a scope to fetch through.
     has_many :stock_transfers, class_name: 'Spree::StockTransfer', dependent: :destroy_async, inverse_of: :store
+    # Purchase orders are declared before suppliers, and both cascade in the
+    # same transaction: a supplier refuses to be destroyed while a purchase
+    # order names it (`restrict_with_error`), so tearing a store down has to
+    # reach the orders first. `destroy_async` on either side would break that
+    # ordering and leave the suppliers behind.
+    has_many :purchase_orders, class_name: 'Spree::PurchaseOrder', dependent: :destroy, inverse_of: :store
     has_many :suppliers, class_name: 'Spree::Supplier', dependent: :destroy, inverse_of: :store
-    has_many :purchase_orders, class_name: 'Spree::PurchaseOrder', dependent: :destroy_async, inverse_of: :store
     has_many :promotions, class_name: 'Spree::Promotion', dependent: :nullify
 
     has_many :tax_categories, class_name: 'Spree::TaxCategory', dependent: :destroy, inverse_of: :store

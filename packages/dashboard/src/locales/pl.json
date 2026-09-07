@@ -5192,7 +5192,10 @@
       },
       "ship_confirm": {
         "title": "Wysłać to przesunięcie?",
-        "message": "{{count}} jednostek opuszcza teraz magazyn źródłowy i nie będzie tam dostępnych do czasu dotarcia."
+        "message_one": "{{count}} jednostka opuszcza teraz magazyn źródłowy i nie będzie tam dostępna do czasu dotarcia.",
+        "message_few": "{{count}} jednostki opuszczają teraz magazyn źródłowy i nie będą tam dostępne do czasu dotarcia.",
+        "message_many": "{{count}} jednostek opuszcza teraz magazyn źródłowy i nie będzie tam dostępnych do czasu dotarcia.",
+        "message_other": "{{count}} jednostki opuszczają teraz magazyn źródłowy i nie będą tam dostępne do czasu dotarcia."
       },
       "cancel_confirm": {
         "title": "Anulować to przesunięcie?",
@@ -5629,7 +5632,7 @@
       },
       "delete_confirm": {
         "title": "Usunąć tego dostawcę?",
-        "message": "{{name}} nie będzie już dostępny w nowych zamówieniach zakupu. Istniejące zamówienia nadal będą go wskazywać."
+        "message": "{{name}} nie będzie już dostępny w nowych zamówieniach zakupu. Dostawcy, którego wskazuje jakiekolwiek zamówienie zakupu, nie można usunąć."
       }
     }
   }

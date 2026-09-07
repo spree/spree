@@ -59,19 +59,23 @@ function NewPurchaseOrderPage() {
   async function handleSubmit() {
     if (!canSubmit) return
 
-    const purchaseOrder = await createMutation.mutateAsync({
-      supplier_id: supplierId,
-      destination_location_id: destinationId,
-      currency,
-      expected_at: expectedAt,
-      reference: reference.trim() || undefined,
-      notes: notes.trim() || undefined,
-      items: lines.map((line) => ({
-        variant_id: line.variant.id,
-        quantity_ordered: line.quantity,
-        unit_cost: line.unitCost,
-      })),
-    })
+    // The hook toasts the refusal; navigating would hide it.
+    const purchaseOrder = await createMutation
+      .mutateAsync({
+        supplier_id: supplierId,
+        destination_location_id: destinationId,
+        currency,
+        expected_at: expectedAt,
+        reference: reference.trim() || undefined,
+        notes: notes.trim() || undefined,
+        items: lines.map((line) => ({
+          variant_id: line.variant.id,
+          quantity_ordered: line.quantity,
+          unit_cost: line.unitCost,
+        })),
+      })
+      .catch(() => undefined)
+    if (!purchaseOrder) return
 
     navigate({
       to: '/$storeId/products/purchase-orders/$purchaseOrderId',

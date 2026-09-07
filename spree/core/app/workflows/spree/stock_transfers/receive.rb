@@ -70,12 +70,16 @@ module Spree
                                           variant: line.variant_name, shipped: line.quantity_shipped))
         end
 
-        {
+        normalized = {
           item: line,
           quantity_received: quantity,
-          discrepancy_reason: item[:discrepancy_reason],
           delta: quantity - line.quantity_received.to_i
         }
+        # Carried through only when the caller named one, so a top-up receive
+        # that says nothing about the discrepancy leaves the recorded reason
+        # alone rather than erasing it.
+        normalized[:discrepancy_reason] = item[:discrepancy_reason] if item.key?(:discrepancy_reason)
+        normalized
       end
 
       def record_receipt
