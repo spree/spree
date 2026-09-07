@@ -2844,7 +2844,7 @@
           "canceler": "Anulujący",
           "commission_fee": "Opłata marketplace",
           "commission_tax": "Podatek od opłaty marketplace",
-          "commission_total": "Opłata marketplace razem",
+          "commission_total": "Łączna opłata marketplace",
           "outstanding_balance": "Pozostałe saldo",
           "payment_total": "Suma płatności",
           "promotions": "Promocje",
