@@ -357,11 +357,6 @@ module Spree
       update_hooks.add(hook)
     end
 
-    # For compatibility with Calculator::PriceSack
-    def amount
-      line_items.inject(0.0) { |sum, li| sum + li.amount }
-    end
-
     # Sum of the eligible promotion adjustments applied to the order itself
     # (whole-order discounts created by Promotion::Actions::CreateAdjustment,
     # distributed proportionally across line items), as opposed to promotions

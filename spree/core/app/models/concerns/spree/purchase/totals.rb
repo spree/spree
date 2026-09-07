@@ -10,6 +10,11 @@ module Spree
         line_items.sum(:quantity)
       end
 
+      # @return [BigDecimal]
+      def amount
+        line_items.sum(&:amount)
+      end
+
       # Re-sums what the customer has actually paid, and nothing else. A
       # payment settling moves only the payment side of the ledger — item
       # and delivery money is the totals workflow's business, and

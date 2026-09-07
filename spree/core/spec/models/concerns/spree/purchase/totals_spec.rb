@@ -10,6 +10,14 @@ RSpec.shared_examples 'a purchase totals host' do
     end
   end
 
+  describe '#amount' do
+    it 'sums line item amounts' do
+      record = new_record_with_line_items(line_items_count: 2, line_items_price: 2.5)
+
+      expect(record.amount).to eq(5)
+    end
+  end
+
   describe '#outstanding_balance?' do
     it 'reflects a non-zero balance' do
       expect(new_record(total: 10.10, payment_total: 9.50).outstanding_balance?).to be(true)
@@ -57,8 +65,8 @@ RSpec.describe Spree::Purchase::Totals do
       build(:cart, store: @default_store, **attributes)
     end
 
-    def new_record_with_line_items
-      create(:cart_with_line_items, store: @default_store)
+    def new_record_with_line_items(**attributes)
+      create(:cart_with_line_items, store: @default_store, **attributes)
     end
 
     def create_fulfillment(record)
@@ -77,8 +85,8 @@ RSpec.describe Spree::Purchase::Totals do
       build(:order, store: @default_store, **attributes)
     end
 
-    def new_record_with_line_items
-      create(:order_with_line_items, store: @default_store)
+    def new_record_with_line_items(**attributes)
+      create(:order_with_line_items, store: @default_store, **attributes)
     end
 
     def create_fulfillment(record)

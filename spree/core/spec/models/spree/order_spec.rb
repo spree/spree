@@ -967,18 +967,6 @@ describe Spree::Order, type: :model do
     end
   end
 
-  describe '#amount' do
-    before do
-      @order = create(:order, customer: user)
-      @order.line_items = [create(:line_item, price: 1.0, quantity: 2),
-                           create(:line_item, price: 1.0, quantity: 1)]
-    end
-
-    it 'returns the correct sum of items' do
-      expect(@order.amount).to eq(3.0)
-    end
-  end
-
   describe '#can_cancel?' do
     it 'is false for a canceled order' do
       order.status = 'canceled'
