@@ -1489,12 +1489,92 @@ export interface StockLevelBulkUpsertRow {
   backorderable?: boolean
 }
 
+export interface StockTransferItemParams {
+  variant_id: string
+  quantity_shipped: number
+}
+
 export interface StockTransferCreateParams {
-  /** Omit for a seller receive (external stock arriving at the destination). */
-  source_location_id?: string
+  source_location_id: string
   destination_location_id: string
+  /** The merchant's own label for the trip. */
   reference?: string
-  variants: Array<{ variant_id: string; quantity: number }>
+  notes?: string
+  /**
+   * A draft may open empty and gain lines as the merchant packs. Sending the
+   * list replaces whatever the draft currently holds.
+   */
+  items?: StockTransferItemParams[]
+  metadata?: Record<string, unknown>
+}
+
+export type StockTransferUpdateParams = Partial<StockTransferCreateParams>
+
+export interface StockTransferReceiveParams {
+  /**
+   * Omit to receive every line in full. `quantity_received` is the running
+   * total for the line, so a second delivery tops it up.
+   */
+  items?: Array<{
+    id: string
+    quantity_received: number
+    discrepancy_reason?: string
+  }>
+}
+
+export interface StockTransferCancelParams {
+  /**
+   * Required once the units have left the source: either they come back
+   * (`restock`) or they are written off as lost.
+   */
+  on_in_transit?: 'restock' | 'write_off'
+  reason?: string
+}
+
+export interface SupplierCreateParams {
+  name: string
+  contact_name?: string
+  email?: string
+  phone?: string
+  notes?: string
+  address1?: string
+  address2?: string
+  city?: string
+  state_name?: string
+  state_code?: string
+  country_code?: string
+  postal_code?: string
+  metadata?: Record<string, unknown>
+}
+
+export type SupplierUpdateParams = Partial<SupplierCreateParams>
+
+export interface PurchaseOrderItemParams {
+  variant_id: string
+  quantity_ordered: number
+  /** What the merchant agreed to pay per unit, as a decimal string. */
+  unit_cost?: string
+}
+
+export interface PurchaseOrderCreateParams {
+  supplier_id: string
+  destination_location_id: string
+  /** Defaults to the store's currency; set it for a foreign-currency order. */
+  currency?: string
+  /** The day the supplier promised, as `yyyy-mm-dd`. */
+  expected_at?: string
+  /** The supplier's own order number. */
+  reference?: string
+  notes?: string
+  items?: PurchaseOrderItemParams[]
+  metadata?: Record<string, unknown>
+}
+
+export type PurchaseOrderUpdateParams = Partial<PurchaseOrderCreateParams>
+
+export interface PurchaseOrderReceiveParams {
+  /** Omit to receive every line in full. */
+  items?: Array<{ id: string; quantity_received: number }>
 }
 
 export interface RoleCreateParams {

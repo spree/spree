@@ -19,6 +19,8 @@ module Spree
                    subtotal: :string,
                    display_subtotal: :string,
                    editable: :boolean,
+                   ordered_at: 'string | null',
+                   received_at: 'string | null',
                    metadata: 'Record<string, unknown>'
 
           attributes :number, :status, :currency, :reference, :notes, :metadata,

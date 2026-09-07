@@ -18,6 +18,7 @@ module Spree
                    country_code: 'string | null',
                    postal_code: 'string | null',
                    purchase_orders_count: :number,
+                   deleted_at: 'string | null',
                    metadata: 'Record<string, unknown>'
 
           attributes :name, :contact_name, :email, :phone, :notes,

@@ -12,6 +12,9 @@ module Spree
                    quantity_shipped_total: :number,
                    quantity_received_total: :number,
                    editable: :boolean,
+                   shipped_at: 'string | null',
+                   received_at: 'string | null',
+                   deleted_at: 'string | null',
                    metadata: 'Record<string, unknown>'
 
           attributes :status, :notes, :metadata,
