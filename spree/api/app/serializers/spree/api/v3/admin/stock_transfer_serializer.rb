@@ -2,26 +2,32 @@ module Spree
   module Api
     module V3
       module Admin
-        # Inventory movement between two stock locations (or external →
-        # location for receives). The originating location is `nil` for
-        # receives (seller stock arriving) and present for transfers.
-        class StockTransferSerializer < V3::BaseSerializer
-          typelize number: :string,
-                   reference: [:string, nullable: true],
-                   source_location_id: [:string, nullable: true],
-                   destination_location_id: [:string, nullable: true],
+        # Stock moving between two of the merchant's own warehouses. The trip
+        # has a middle: `shipped_at` is when the units left the source,
+        # `received_at` when the destination finished counting them in.
+        class StockTransferSerializer < V3::StockTransferSerializer
+          typelize status: :string,
+                   notes: 'string | null',
+                   items_count: :number,
+                   quantity_shipped_total: :number,
+                   quantity_received_total: :number,
+                   editable: :boolean,
                    metadata: 'Record<string, unknown>'
 
-          attributes :number, :reference, :metadata,
-                     created_at: :iso8601, updated_at: :iso8601
+          attributes :status, :notes, :metadata,
+                     :items_count, :quantity_received_total,
+                     shipped_at: :iso8601, received_at: :iso8601, deleted_at: :iso8601
 
-          attribute :source_location_id do |stock_transfer|
-            stock_transfer.source_location&.prefixed_id
-          end
+          # Named for the merchant's own vocabulary — a transfer ships, a
+          # purchase order orders — over the concern's neutral
+          # `quantity_expected`.
+          attribute :quantity_shipped_total, &:quantity_expected_total
 
-          attribute :destination_location_id do |stock_transfer|
-            stock_transfer.destination_location&.prefixed_id
-          end
+          attribute :editable, &:editable?
+
+          many :items,
+               resource: proc { Spree.api.admin_stock_transfer_item_serializer },
+               if: proc { expand?('items') }
 
           one :source_location,
               resource: proc { Spree.api.admin_stock_location_serializer },

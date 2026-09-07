@@ -2,38 +2,65 @@ module Spree
   module Api
     module V3
       module Admin
-        # Inventory movement between stock locations, or seller → location
-        # for receives. Pass `source_location_id` for transfers; omit it to
-        # record an external receive.
+        # Stock moving between two of the merchant's own warehouses.
+        #
+        # `create` persists a draft; nothing moves until the transfer is marked
+        # in transit. Receiving from a supplier is a
+        # {Spree::Api::V3::Admin::PurchaseOrdersController} order, not a
+        # transfer with a missing source.
+        #
+        # Every status change is its own member action rather than a PATCH that
+        # mass-assigns `status`, because each one is a workflow with its own
+        # arguments — receiving carries the quantities the warehouse counted,
+        # cancelling carries what happens to units already in flight.
         class StockTransfersController < ResourceController
+          include Spree::Api::V3::Admin::ReceivableActions
+
           scoped_resource :stock
 
-          def create
-            authorize!(:create, model_class)
+          # The base registers this for show/update/destroy; a second
+          # `before_action :set_resource` replaces that registration rather than
+          # adding to it, so those three are listed again here.
+          before_action :set_resource, only: [:show, :update, :destroy, :mark_ready, :mark_in_transit, :receive, :cancel]
 
-            stock_locations = Spree::StockLocation.accessible_by(current_ability, :show)
-            destination = stock_locations.find_by_prefix_id!(params[:destination_location_id])
-            source = params[:source_location_id].present? ?
-              stock_locations.find_by_prefix_id!(params[:source_location_id]) : nil
+          # DELETE /api/v3/admin/stock_transfers/:id
+          #
+          # A draft is the only transfer a merchant may throw away: past that
+          # it describes a box that physically exists, which is cancelled
+          # rather than deleted.
+          def destroy
+            return super if @resource.draft?
 
-            variants_map = build_variants_map
-            if variants_map.empty?
-              return render_error(
-                code: 'invalid_variants',
-                message: Spree.t('stock_transfer.errors.must_have_variant'),
-                status: :unprocessable_content
-              )
-            end
+            render_error(
+              code: 'invalid_status',
+              message: Spree.t('stock_transfer.errors.only_draft_can_be_deleted'),
+              status: :unprocessable_content
+            )
+          end
 
-            @resource = source ?
-              Spree::StockTransfer.new(reference: params[:reference]).tap { |t| t.transfer(source, destination, variants_map) } :
-              Spree::StockTransfer.new(reference: params[:reference]).tap { |t| t.receive(destination, variants_map) }
+          # PATCH /api/v3/admin/stock_transfers/:id/mark_ready
+          def mark_ready
+            run_transition(Spree.stock_transfer_mark_ready_workflow)
+          end
 
-            if @resource.persisted?
-              render json: serialize_resource(@resource), status: :created
-            else
-              render_validation_error(@resource.errors)
-            end
+          # PATCH /api/v3/admin/stock_transfers/:id/mark_in_transit
+          def mark_in_transit
+            run_transition(Spree.stock_transfer_mark_in_transit_workflow, force: params[:force].to_b)
+          end
+
+          # PATCH /api/v3/admin/stock_transfers/:id/receive
+          def receive
+            run_transition(Spree.stock_transfer_receive_workflow,
+                           items: items_for_receive([:id, :quantity_received, :discrepancy_reason]),
+                           received_by: try_spree_current_user)
+          end
+
+          # PATCH /api/v3/admin/stock_transfers/:id/cancel
+          def cancel
+            run_transition(Spree.stock_transfer_cancel_workflow,
+                           on_in_transit: params[:on_in_transit],
+                           reason: params[:reason],
+                           canceler: try_spree_current_user)
           end
 
           protected
@@ -47,27 +74,64 @@ module Spree
           end
 
           def collection_includes
-            [:source_location, :destination_location]
+            [:source_location, :destination_location, { items: :variant }]
           end
 
-          private
+          def create_workflow
+            Spree.stock_transfer_create_workflow
+          end
 
-          # Variants the merchant doesn't have access to are dropped silently;
-          # if the resulting map is empty the action surfaces a 422
-          # `invalid_variants` so callers can distinguish "nothing supplied"
-          # from "all variants were rejected." A single SELECT covers any
-          # number of variants instead of N round-trips.
-          def build_variants_map
-            entries = params.permit(variants: [:variant_id, :quantity]).fetch(:variants, [])
-            quantities_by_id = entries.each_with_object({}) do |entry, hash|
-              decoded = Spree::PrefixedId.decode_prefixed_id(entry[:variant_id])
-              hash[decoded.to_i] = entry[:quantity].to_i if decoded
-            end
+          def update_workflow
+            Spree.stock_transfer_update_workflow
+          end
 
-            current_store.variants.accessible_by(current_ability, :update).where(id: quantities_by_id.keys).each_with_object({}) do |variant, acc|
-              quantity = quantities_by_id[variant.id]
-              acc[variant] = quantity if quantity&.positive?
+          def workflow_record_key
+            :stock_transfer
+          end
+
+          def create_workflow_arguments
+            {
+              store: current_store,
+              source_location: stock_location_from(:source_location_id),
+              destination_location: stock_location_from(:destination_location_id),
+              items: items_from_params(:quantity_shipped) || [],
+              reference: params[:reference],
+              notes: params[:notes],
+              created_by: try_spree_current_user
+            }
+          end
+
+          def update_workflow_arguments
+            {
+              stock_transfer: @resource,
+              attributes: editable_attributes,
+              items: items_from_params(:quantity_shipped)
+            }
+          end
+
+          # Only what mass assignment may safely carry. The two warehouses are
+          # resolved through the store instead, since an id the payload names
+          # has to be proved to belong here.
+          def resource_permitted_attributes
+            [:reference, :notes, { metadata: {} }]
+          end
+
+          # A transfer's status transitions are its own actions, so `update`
+          # only ever edits the document — and its two ends are objects the
+          # store handed us, never ids the payload asserted.
+          def editable_attributes
+            attributes = permitted_params.to_h.symbolize_keys
+            attributes[:source_location] = stock_location_from(:source_location_id) if params.key?(:source_location_id)
+            if params.key?(:destination_location_id)
+              attributes[:destination_location] = stock_location_from(:destination_location_id)
             end
+            attributes
+          end
+
+          # The listing and the detail page both read a transfer's totals off
+          # its lines.
+          def scope_includes
+            [{ items: :variant }]
           end
         end
       end
