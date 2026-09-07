@@ -127,7 +127,9 @@ const { data: movements } = await adminClient.stockMovements.list({
 })
 ```
 
-Each movement points at what caused it — the order, the fulfillment, the transfer — so an audit trail reads as a sequence of business events rather than a list of numbers that changed.
+Each movement points at what caused it — the order, the fulfillment, the transfer, the purchase order — so an audit trail reads as a sequence of business events rather than a list of numbers that changed.
+
+A movement that arrived through a purchase order also carries what the units cost, so "what did this stock cost us" is answerable from the ledger rather than reconstructed from the orders that bought it.
 
 ## What a shopper sees
 
@@ -175,8 +177,48 @@ When new stock arrives, backorders are filled first, and only the remainder beco
 
 A stock transfer moves inventory from one location to another, and reflects that this takes time: stock is booked out of the source, is in transit, and is received at the destination — where a partial receipt is a normal outcome, because sometimes not everything arrives.
 
+That is four steps, not one. A transfer is planned as a draft, packed, sent, and finally counted in:
+
 ```typescript Admin SDK
-const { data: transfers } = await adminClient.stockTransfers.list()
+const transfer = await adminClient.stockTransfers.create({
+  source_location_id: 'sloc_xxx',
+  destination_location_id: 'sloc_yyy',
+  items: [{ variant_id: 'var_xxx', quantity_shipped: 10 }],
+})
+
+// The units leave the source here — and are on no shelf until they arrive.
+await adminClient.stockTransfers.markInTransit(transfer.id)
+
+// Eight of the ten made it. The transfer stays open for the rest.
+await adminClient.stockTransfers.receive(transfer.id, {
+  items: [{ id: 'sti_xxx', quantity_received: 8, discrepancy_reason: 'damaged_in_transit' }],
+})
+```
+
+Two things follow from the middle step. Availability at the destination does not rise until somebody counts the goods in, which is what makes the number trustworthy. And cancelling a transfer whose units have already left is a decision rather than an undo: either they come back to the source, or they are written off as lost.
+
+## Buying stock in
+
+Stock that comes from a supplier is a purchase order, not a transfer — it has a supplier, a cost per unit and a date it was promised for, none of which apply to moving goods you already own.
+
+```typescript Admin SDK
+const order = await adminClient.purchaseOrders.create({
+  supplier_id: 'sup_xxx',
+  destination_location_id: 'sloc_xxx',
+  expected_at: '2026-10-01',
+  items: [{ variant_id: 'var_xxx', quantity_ordered: 100, unit_cost: '12.50' }],
+})
+
+await adminClient.purchaseOrders.markOrdered(order.id)
+await adminClient.purchaseOrders.receive(order.id)
+```
+
+Ordered stock is never available stock. Nothing reaches `count_on_hand` until a delivery is received, because a merchant who has ordered goods does not have them — and suppliers under-ship often enough that receiving in parts is the ordinary case.
+
+Suppliers themselves are an address book, kept per store:
+
+```typescript Admin SDK
+const { data: suppliers } = await adminClient.suppliers.list()
 ```
 
 ## Turning tracking off
