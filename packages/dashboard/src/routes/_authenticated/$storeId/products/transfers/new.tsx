@@ -1,4 +1,4 @@
-import { useStockLocations } from '@spree/dashboard-core'
+import { PageHeader, useStockLocations } from '@spree/dashboard-core'
 import {
   Button,
   Card,
@@ -70,9 +70,11 @@ function NewStockTransferPage() {
 
   return (
     <div className="mx-auto flex w-full max-w-3xl flex-col gap-4 p-4">
+      <PageHeader title={t('admin.stock_transfers.new_title')} backTo="products/transfers" />
+
       <Card>
         <CardHeader>
-          <CardTitle>{t('admin.stock_transfers.new_title')}</CardTitle>
+          <CardTitle>{t('admin.stock_transfers.details_title')}</CardTitle>
         </CardHeader>
         <CardContent>
           <FieldGroup>

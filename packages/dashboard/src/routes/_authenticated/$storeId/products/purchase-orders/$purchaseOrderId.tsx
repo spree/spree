@@ -1,5 +1,5 @@
 import type { PurchaseOrder, PurchaseOrderItem } from '@spree/admin-sdk'
-import { Can, Subject } from '@spree/dashboard-core'
+import { Can, PageHeader, Subject } from '@spree/dashboard-core'
 import {
   Button,
   Card,
@@ -16,8 +16,7 @@ import {
   TableRow,
   useConfirm,
 } from '@spree/dashboard-ui'
-import { ArrowLeftIcon } from '@spree/dashboard-ui/icons'
-import { createFileRoute, useNavigate } from '@tanstack/react-router'
+import { createFileRoute } from '@tanstack/react-router'
 import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { InventoryStatusBadge } from '../../../../../components/spree/inventory-status-badge'
@@ -37,8 +36,7 @@ export const Route = createFileRoute(
 
 function PurchaseOrderDetailPage() {
   const { t } = useTranslation()
-  const { storeId, purchaseOrderId } = Route.useParams()
-  const navigate = useNavigate()
+  const { purchaseOrderId } = Route.useParams()
   const { data: purchaseOrder, isLoading } = usePurchaseOrder(purchaseOrderId)
 
   if (isLoading || !purchaseOrder) {
@@ -47,21 +45,11 @@ function PurchaseOrderDetailPage() {
 
   return (
     <div className="mx-auto flex w-full max-w-4xl flex-col gap-4 p-4">
-      <div className="flex items-center gap-3">
-        <Button
-          type="button"
-          size="icon-sm"
-          variant="ghost"
-          onClick={() =>
-            navigate({ to: '/$storeId/products/purchase-orders', params: { storeId } })
-          }
-        >
-          <ArrowLeftIcon className="size-4" />
-          <span className="sr-only">{t('admin.actions.back')}</span>
-        </Button>
-        <h1 className="text-xl font-semibold tabular-nums">{purchaseOrder.number}</h1>
-        <InventoryStatusBadge status={purchaseOrder.status} resource="purchase_orders" />
-      </div>
+      <PageHeader
+        title={purchaseOrder.number}
+        backTo="products/purchase-orders"
+        badges={<InventoryStatusBadge status={purchaseOrder.status} resource="purchase_orders" />}
+      />
 
       <SummaryCard purchaseOrder={purchaseOrder} />
       <ItemsCard purchaseOrder={purchaseOrder} />

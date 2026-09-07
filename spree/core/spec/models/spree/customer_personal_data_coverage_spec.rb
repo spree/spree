@@ -49,6 +49,7 @@ RSpec.describe 'personal data coverage' do
     'spree_invitations' => 'staff invitations — an admin lifecycle, not a customer one',
     'spree_company_invitations' => 'B2B invitations, erased with the company rather than the buyer',
     'spree_stock_locations' => 'a warehouse contact number, not a customer',
+    'spree_suppliers' => 'a business the merchant buys from, not a shopper',
     'spree_webhook_deliveries' => 'operational log with its own retention; payloads expire on their own schedule',
     'spree_seller_requirement_submissions' => 'seller onboarding evidence, not customer data',
     'spree_sellers' => 'marketplace seller contact details, not a shopper',

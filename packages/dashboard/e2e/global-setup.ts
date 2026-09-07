@@ -31,6 +31,11 @@ import {
   FIXTURE_PROMO_SKU,
   FIXTURE_PROMO_TAXON,
   FIXTURE_PROMO_TAXON_PERMALINK,
+  FIXTURE_SUPPLIER,
+  FIXTURE_TRANSFER_DESTINATION,
+  FIXTURE_TRANSFER_PRODUCT,
+  FIXTURE_TRANSFER_SKU,
+  FIXTURE_TRANSFER_SOURCE,
 } from './helpers'
 import { ASYNC_JOBS_INITIALIZER, CREDENTIALS_FILE, E2E_DIR, RAILS_PID_FILE } from './paths'
 
@@ -122,6 +127,17 @@ const BOOTSTRAP_RUBY = [
   `ledger_seller.seller_payouts.where(amount: ${FIXTURE_LEDGER_OWED_AMOUNT}).first_or_create!(store: s, currency: s.default_currency, provider: Spree::PayoutProvider::System.provider_key, status: 'pending')`,
   `ledger_order = s.orders.where(seller: ledger_seller).first || Spree::Order.create!(store: s, seller: ledger_seller, currency: s.default_currency, email: 'e2e-ledger@example.com', status: 'placed', completed_at: Time.current)`,
   `ledger_seller.seller_transfers.first_or_create!(store: s, order: ledger_order, payout: ledger_payout, amount: ${FIXTURE_LEDGER_PAYOUT_AMOUNT}, currency: s.default_currency, kind: 'earning', provider: Spree::PayoutProvider::System.provider_key, status: 'completed')`,
+  // Inventory operations: a second warehouse to transfer into, a stocked
+  // product to send, and a supplier to order from. A transfer cannot be
+  // created from its own screens without two warehouses.
+  `transfer_source = s.stock_locations.where(name: '${FIXTURE_TRANSFER_SOURCE}').first_or_create!(active: true)`,
+  `transfer_destination = s.stock_locations.where(name: '${FIXTURE_TRANSFER_DESTINATION}').first_or_create!(active: true)`,
+  `transfer_product = Spree::Product.where(name: '${FIXTURE_TRANSFER_PRODUCT}').first_or_create!(store: s, status: 'active')`,
+  `transfer_product.default_variant.update!(sku: '${FIXTURE_TRANSFER_SKU}')`,
+  `transfer_product.default_variant.set_price(s.default_currency, 24.99)`,
+  // Deep enough that the serial suite can ship from it repeatedly.
+  'transfer_source.stock_levels.where(variant: transfer_product.default_variant).first_or_create!.update!(count_on_hand: 5000)',
+  `s.suppliers.where(name: '${FIXTURE_SUPPLIER}').first_or_create!(email: 'e2e@supplier.test')`,
   'port = ENV.fetch("PORT", 3010)',
   'puts JSON.generate(api_url: "http://localhost:#{port}", admin_email: admin.email, admin_password: "spree123", store_id: s.prefixed_id, store_name: s.name)',
 ].join('; ')

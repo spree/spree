@@ -1,5 +1,5 @@
 import type { StockTransfer, StockTransferItem } from '@spree/admin-sdk'
-import { Can, Subject, useStockLocations } from '@spree/dashboard-core'
+import { Can, PageHeader, Subject, useStockLocations } from '@spree/dashboard-core'
 import {
   Button,
   Card,
@@ -23,8 +23,7 @@ import {
   TableRow,
   useConfirm,
 } from '@spree/dashboard-ui'
-import { ArrowLeftIcon } from '@spree/dashboard-ui/icons'
-import { createFileRoute, useNavigate } from '@tanstack/react-router'
+import { createFileRoute } from '@tanstack/react-router'
 import { useMemo, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { InventoryStatusBadge } from '../../../../../components/spree/inventory-status-badge'
@@ -49,8 +48,7 @@ export const Route = createFileRoute('/_authenticated/$storeId/products/transfer
 
 function StockTransferDetailPage() {
   const { t } = useTranslation()
-  const { storeId, transferId } = Route.useParams()
-  const navigate = useNavigate()
+  const { transferId } = Route.useParams()
   const { data: transfer, isLoading } = useStockTransfer(transferId)
 
   if (isLoading || !transfer) {
@@ -59,19 +57,11 @@ function StockTransferDetailPage() {
 
   return (
     <div className="mx-auto flex w-full max-w-4xl flex-col gap-4 p-4">
-      <div className="flex items-center gap-3">
-        <Button
-          type="button"
-          size="icon-sm"
-          variant="ghost"
-          onClick={() => navigate({ to: '/$storeId/products/transfers', params: { storeId } })}
-        >
-          <ArrowLeftIcon className="size-4" />
-          <span className="sr-only">{t('admin.actions.back')}</span>
-        </Button>
-        <h1 className="text-xl font-semibold tabular-nums">{transfer.number}</h1>
-        <InventoryStatusBadge status={transfer.status} resource="stock_transfers" />
-      </div>
+      <PageHeader
+        title={transfer.number}
+        backTo="products/transfers"
+        badges={<InventoryStatusBadge status={transfer.status} resource="stock_transfers" />}
+      />
 
       <SummaryCard transfer={transfer} />
 

@@ -1,4 +1,9 @@
-import { CurrencySelect, StoreDatePicker, useStockLocations } from '@spree/dashboard-core'
+import {
+  CurrencySelect,
+  PageHeader,
+  StoreDatePicker,
+  useStockLocations,
+} from '@spree/dashboard-core'
 import {
   Button,
   Card,
@@ -76,9 +81,11 @@ function NewPurchaseOrderPage() {
 
   return (
     <div className="mx-auto flex w-full max-w-3xl flex-col gap-4 p-4">
+      <PageHeader title={t('admin.purchase_orders.new_title')} backTo="products/purchase-orders" />
+
       <Card>
         <CardHeader>
-          <CardTitle>{t('admin.purchase_orders.new_title')}</CardTitle>
+          <CardTitle>{t('admin.purchase_orders.details_title')}</CardTitle>
         </CardHeader>
         <CardContent>
           <FieldGroup>
