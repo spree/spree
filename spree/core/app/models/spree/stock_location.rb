@@ -158,8 +158,11 @@ module Spree
     # @param quantity [Integer]
     # @param cause [ApplicationRecord, nil] the record this is happening for
     # @return [Spree::StockMovement]
-    def restock(variant, quantity, cause = nil, persist: true)
-      move(variant, quantity, kind: 'received', cause: cause, persist: persist)
+    # @param unit_cost [BigDecimal, nil] what each unit landed at, when the
+    #   goods were bought. Recorded on the movement so a rolling average cost
+    #   has a ledger to read; null for stock the merchant already owned.
+    def restock(variant, quantity, cause = nil, unit_cost: nil)
+      move(variant, quantity, kind: 'received', cause: cause, unit_cost: unit_cost)
     end
 
     # Goods left.
@@ -168,8 +171,8 @@ module Spree
     #   below zero. A merchant forcing a dispatch has decided the parcel left
     #   whatever the ledger claims.
     # @return [Spree::StockMovement]
-    def unstock(variant, quantity, cause = nil, persist: true, force: false)
-      move(variant, quantity, kind: 'shipped', cause: cause, persist: persist, force: force)
+    def unstock(variant, quantity, cause = nil, force: false)
+      move(variant, quantity, kind: 'shipped', cause: cause, force: force)
     end
 
     # Promises stock to a placed order. The cause is the fulfillment, never
@@ -200,20 +203,12 @@ module Spree
       move(variant, quantity, kind: 'adjusted', reason: reason)
     end
 
-    def move(variant, quantity, kind:, cause: nil, reason: nil, persist: true, force: false)
+    def move(variant, quantity, kind:, cause: nil, reason: nil, force: false, unit_cost: nil)
       stock_level = stock_level_or_create(variant)
-      attributes = { quantity: quantity, kind: kind, reason: reason, **cause_attributes(cause) }
+      attributes = { quantity: quantity, kind: kind, reason: reason, unit_cost: unit_cost,
+                     **cause_attributes(cause) }
 
-      if persist
-        stock_level.stock_movements.create!(attributes) { |movement| movement.force = force }
-      else
-        # StockTransfer builds its movements before it is saved, so they ride
-        # along on its own association rather than being created here.
-        built = stock_level.stock_movements.build(attributes)
-        built.force = force
-        cause.stock_movements << built
-        built
-      end
+      stock_level.stock_movements.create!(attributes) { |movement| movement.force = force }
     end
 
     def fill_status(variant, quantity)
@@ -294,6 +289,7 @@ module Spree
       when Spree::Return        then { return: cause, order: cause.order }
       when Spree::Exchange      then { exchange: cause, order: cause.order }
       when Spree::StockTransfer then { stock_transfer: cause }
+      when Spree::PurchaseOrder then { purchase_order: cause }
       when Spree::Order         then { order: cause }
       else {}
       end

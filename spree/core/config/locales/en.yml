@@ -558,6 +558,12 @@ en:
       spree/property:
         one: Property
         other: Properties
+      spree/purchase_order:
+        one: Purchase Order
+        other: Purchase Orders
+      spree/purchase_order_item:
+        one: Purchase Order Item
+        other: Purchase Order Items
       spree/refund_reason:
         one: Refund Reason
         other: Refund Reasons
@@ -591,9 +597,15 @@ en:
       spree/stock_transfer:
         one: Stock Transfer
         other: Stock Transfers
+      spree/stock_transfer_item:
+        one: Stock Transfer Item
+        other: Stock Transfer Items
       spree/store:
         one: Store
         other: Stores
+      spree/supplier:
+        one: Supplier
+        other: Suppliers
       spree/store_credit:
         one: Store Credit
         other: Store Credits
@@ -1042,6 +1054,7 @@ en:
         delivery_zone_postal_definition_required: postal code member requires a prefix or a from/to range
         delivery_zone_prefix_and_range_exclusive: cannot be combined with a from/to range
         delivery_zone_range_inverted: must be greater than or equal to postal_code_from
+        duplicate_variant: cannot list the same variant twice
         delivery_zone_range_not_supported: postal code ranges are not supported for this country — use prefixes
         discount_has_no_effect: discount would have no effect on this order
         discount_value_must_be_positive: discount value must be a positive number
@@ -1074,6 +1087,7 @@ en:
         profile_does_not_accept_provider: "%{provider} deliveries cannot join the %{profile} profile"
         promotion_discount_not_editable: promotion discounts are managed by recalculation and cannot be edited
         rate_provider_requires_shipping: "%{provider} quotes shipments, so this method must ship to an address"
+        received_exceeds_expected: cannot be more than the %{expected} expected
         rate_provider_unavailable: is not available for this store — connect its integration first
         same_as_inviter: cannot be the same as the inviter
         seller_delivery_method_not_shareable: only the marketplace's own delivery methods can be shared with sellers
@@ -1602,6 +1616,17 @@ en:
     property: Property
     provider: Provider
     published_at: Published at
+    purchase_order:
+      errors:
+        already_closed: This purchase order has already been received or cancelled
+        invalid_received_quantity: 'Received quantity for %{variant} must be between what was already
+          received and the %{ordered} ordered'
+        item_not_on_order: One of the lines does not belong to this purchase order
+        must_have_variant: You must add at least one variant
+        no_items_received: No units were received
+        not_draft: Only a draft purchase order can be marked as ordered
+        not_editable: Only a draft purchase order can be edited
+        not_ordered: Only a purchase order that has been placed can be received
     qty: Qty
     quantity: Quantity
     query: Query
@@ -1859,8 +1884,20 @@ en:
     stock_movements: Stock Movements
     stock_transfer:
       errors:
+        already_closed: This transfer has already been completed or cancelled
+        in_transit_resolution_required: Choose whether the units come back to the source warehouse
+          or are written off
         invalid_quantity: Every variant must move a quantity above zero
+        invalid_received_quantity: 'Received quantity for %{variant} must be between what was already
+          received and the %{shipped} shipped'
+        item_not_on_transfer: One of the lines does not belong to this transfer
+        locations_in_different_stores: must belong to the same store as the source location
         must_have_variant: You must add at least one variant
+        no_items_received: No units were received
+        not_draft: Only a draft transfer can be marked as ready to ship
+        not_editable: Only a draft transfer can be edited
+        not_in_transit: Only a transfer in transit can be received
+        not_shippable: Only a draft or ready-to-ship transfer can be marked in transit
         same_location: cannot be the same as the destination location
         variants_unavailable: Some variants are not available on %{stock}
     stop: Stop

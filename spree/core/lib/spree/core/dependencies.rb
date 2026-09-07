@@ -96,6 +96,19 @@ module Spree
         delivery_destroy_service: 'Spree::Deliveries::Destroy',
         return_purchase_label_workflow: 'Spree::Returns::PurchaseLabel',
 
+        # inventory operations
+        stock_transfer_create_workflow: 'Spree::StockTransfers::Create',
+        stock_transfer_update_workflow: 'Spree::StockTransfers::Update',
+        stock_transfer_mark_ready_workflow: 'Spree::StockTransfers::MarkReady',
+        stock_transfer_mark_in_transit_workflow: 'Spree::StockTransfers::MarkInTransit',
+        stock_transfer_receive_workflow: 'Spree::StockTransfers::Receive',
+        stock_transfer_cancel_workflow: 'Spree::StockTransfers::Cancel',
+        purchase_order_create_workflow: 'Spree::PurchaseOrders::Create',
+        purchase_order_update_workflow: 'Spree::PurchaseOrders::Update',
+        purchase_order_mark_ordered_workflow: 'Spree::PurchaseOrders::MarkOrdered',
+        purchase_order_receive_workflow: 'Spree::PurchaseOrders::Receive',
+        purchase_order_cancel_workflow: 'Spree::PurchaseOrders::Cancel',
+
         # returns
         return_create_workflow: 'Spree::Returns::Create',
         return_approve_workflow: 'Spree::Returns::Approve',
