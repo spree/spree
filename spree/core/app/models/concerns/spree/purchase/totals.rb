@@ -12,7 +12,7 @@ module Spree
 
       # @return [BigDecimal]
       def amount
-        line_items.sum(&:amount)
+        line_items.sum(BigDecimal('0'), &:amount)
       end
 
       # Re-sums what the customer has actually paid, and nothing else. A

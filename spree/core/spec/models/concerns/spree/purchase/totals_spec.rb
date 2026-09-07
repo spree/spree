@@ -16,6 +16,13 @@ RSpec.shared_examples 'a purchase totals host' do
 
       expect(record.amount).to eq(5)
     end
+
+    it 'stays a zero BigDecimal with no line items' do
+      amount = new_record.amount
+
+      expect(amount).to eq(0)
+      expect(amount).to be_a(BigDecimal)
+    end
   end
 
   describe '#outstanding_balance?' do
