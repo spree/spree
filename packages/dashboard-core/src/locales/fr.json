@@ -1528,7 +1528,7 @@
           "ordering_help": "Combien un acheteur doit prendre. Vérifié lors de l'ajout au panier puis de nouveau au paiement. Le catalogue d'un groupe de clients ou d'une entreprise peut remplacer ces valeurs pour ses acheteurs. Le stock reste compté en unités.",
           "packing": "Emballage",
           "packing_help": "Comment ce produit quitte l’entrepôt en gros. Les devis de fret reposent sur ces chiffres.",
-          "no_carton_types": "Ajoutez un carton dans <settingsLink>Paramètres → Types d'emballage</settingsLink> pour enregistrer la façon dont ce produit est emballé.",
+          "no_carton_types": "Ajoutez un type de carton dans <settingsLink>Paramètres → Types d'emballage</settingsLink> pour enregistrer la façon dont ce produit est emballé.",
           "carton_placeholder": "Aucun carton",
           "pending_save": "Les modifications sont enregistrées avec le produit."
         },

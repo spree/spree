@@ -70,9 +70,17 @@ export function VariantEditSheet({ form, variantIndex, open, onOpenChange }: Pro
   // packing to ask about, so the section stays hidden there. An operator with
   // none created yet still sees it, disabled, saying where to make one —
   // hiding it outright left no trace of a feature they had not set up.
-  const { data: cartonTypesResponse, supported: cartonTypesSupported } = useCartonPackageTypes()
+  const {
+    data: cartonTypesResponse,
+    isPending: cartonTypesPending,
+    supported: cartonTypesSupported,
+  } = useCartonPackageTypes()
   const cartonTypes = cartonTypesResponse?.data ?? []
   const hasCartonTypes = cartonTypes.length > 0
+  // Only once the list has actually answered. While it is in flight the empty
+  // array below is not yet evidence of an empty store, and telling a merchant
+  // who has cartons to go and make one is worse than saying nothing.
+  const knownEmpty = cartonTypesSupported && !cartonTypesPending && !hasCartonTypes
   // A packed carton is weighed on the same scale as the goods inside it, so
   // this follows the variant's own unit rather than offering a second one.
   const cartonWeightUnit = form.watch(`variants.${variantIndex}.weight_unit`) || ''
@@ -305,7 +313,7 @@ export function VariantEditSheet({ form, variantIndex, open, onOpenChange }: Pro
               <p className="text-sm text-muted-foreground">
                 {t('admin.products.variants.sheet.packing_help')}
               </p>
-              {!hasCartonTypes && (
+              {knownEmpty && (
                 <Alert variant="info">
                   <InfoIcon />
                   <AlertDescription>

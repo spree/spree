@@ -166,8 +166,10 @@ export function useFormCartonPackageTypes() {
 export function useFormDeleteProductMedia(productId: string) {
   const client = getApiClient()
   const queryClient = useQueryClient()
-  // Resolved here rather than in the callback: it is a hook.
-  const mediaKey = useResourceKey('products', 'panel-form', productId, 'media')
+  // Resolved here rather than in the callback: it is a hook. No `panel-form`
+  // segment on this one — it must match the key the gallery reads, which is
+  // the operator dashboard's own `useProductMedia`.
+  const mediaKey = useResourceKey('products', productId, 'media')
 
   return useMutation({
     mutationFn: async (mediaId: string) => {

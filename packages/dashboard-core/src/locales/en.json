@@ -1530,7 +1530,7 @@
           "ordering_help": "How much a buyer must take. Enforced when items are added to a cart and again at checkout. A customer group or company catalog can override these for its buyers. Stock is still counted in units.",
           "packing": "Packing",
           "packing_help": "How this product leaves the warehouse in bulk. Freight quotes are built from these numbers.",
-          "no_carton_types": "Add a carton under <settingsLink>Settings → Package types</settingsLink> to record how this product is packed.",
+          "no_carton_types": "Add a carton type under <settingsLink>Settings → Package types</settingsLink> to record how this product is packed.",
           "carton_placeholder": "No carton",
           "pending_save": "Changes here are saved with the product."
         },

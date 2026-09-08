@@ -1551,7 +1551,7 @@
           "ordering_help": "Ile kupujący musi wziąć. Sprawdzane przy dodawaniu do koszyka i ponownie przy składaniu zamówienia. Katalog grupy klientów lub firmy może nadpisać te wartości dla swoich kupujących. Stan magazynowy nadal liczony jest w sztukach.",
           "packing": "Pakowanie",
           "packing_help": "Jak ten produkt opuszcza magazyn hurtowo. Na tych liczbach opierają się wyceny frachtu.",
-          "no_carton_types": "Dodaj karton w sekcji <settingsLink>Ustawienia → Typy opakowań</settingsLink>, aby zapisać sposób pakowania tego produktu.",
+          "no_carton_types": "Dodaj typ kartonu w sekcji <settingsLink>Ustawienia → Typy opakowań</settingsLink>, aby zapisać sposób pakowania tego produktu.",
           "carton_placeholder": "Brak kartonu",
           "pending_save": "Zmiany zapisują się razem z produktem."
         },
