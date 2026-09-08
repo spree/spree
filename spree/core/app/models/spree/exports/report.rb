@@ -64,11 +64,19 @@ module Spree
         @reporting_query ||= Spree::Reporting::Query.new(store: store, params: query_params)
       end
 
+      # The base class parses the column; this only has to insist the payload
+      # is an object, since a bare array or `null` is valid JSON that would
+      # otherwise crash rather than fail validation.
       def query_params
-        raw = search_params.is_a?(String) ? JSON.parse(search_params) : (search_params || {})
-        raise Spree::Reporting::InvalidQuery, 'search_params must be an object' unless raw.is_a?(Hash)
+        raise Spree::Reporting::InvalidQuery, 'search_params must be an object' unless parsed_payload_is_object?
 
-        raw['query'] || raw[:query] || {}
+        parsed_search_params[:query] || {}
+      end
+
+      def parsed_payload_is_object?
+        search_params.blank? || !search_params.is_a?(String) || JSON.parse(search_params).is_a?(Hash)
+      rescue JSON::ParserError
+        false
       end
 
       def authorize_members!(query)

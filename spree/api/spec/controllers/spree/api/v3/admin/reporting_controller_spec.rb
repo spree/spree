@@ -113,6 +113,16 @@ RSpec.describe Spree::Api::V3::Admin::ReportingController, type: :controller do
         expect(json_response['error']['code']).to eq('invalid_reporting_query')
         expect(json_response['error']['message']).to include('net_revenue')
       end
+      it 'names the valid members in the error details so a client can correct itself' do
+        post :query, params: { metrics: %w[revenue] }, as: :json
+
+        expect(response).to have_http_status(:unprocessable_content)
+        details = json_response['error']['details']
+        expect(details['kind']).to eq('metric')
+        expect(details['name']).to eq('revenue')
+        expect(details['valid']).to include('gross_revenue', 'net_revenue')
+      end
+
     end
 
     context 'without authentication' do

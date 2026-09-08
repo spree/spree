@@ -82,8 +82,17 @@ module Spree
             end
           end
 
+          # An unknown member carries what it was and what was valid instead.
+          # Passing those through as `details` lets a client correct the query
+          # without parsing the sentence — the same list the schema endpoint
+          # would have given it.
           def render_invalid_query(error)
-            render_error(code: 'invalid_reporting_query', message: error.message, status: :unprocessable_content)
+            details = if error.is_a?(Spree::Reporting::UnknownMember)
+                        { kind: error.kind, name: error.name.to_s, valid: error.valid.map(&:to_s) }
+                      end
+
+            render_error(code: 'invalid_reporting_query', message: error.message,
+                         status: :unprocessable_content, details: details)
           end
         end
       end
