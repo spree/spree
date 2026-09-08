@@ -100,10 +100,11 @@ export function PackageTypesPage({ search }: { search: PackageTypesSearch }) {
   // no add button, no row actions, and no sheet whose save could not work.
   const writable = canWritePackageTypes()
 
-  // Neither sheet opens on a read-only panel, and creating wins over editing
-  // when a stale link carries both.
+  // Neither sheet opens on a read-only panel. No mutual exclusion needed:
+  // openCreate strips `edit` and openEdit strips `new`, so a link can only
+  // carry one.
   const isCreating = writable && !!search.new
-  const editId = writable && !isCreating ? search.edit : undefined
+  const editId = writable ? search.edit : undefined
 
   function closeSheet() {
     navigate({

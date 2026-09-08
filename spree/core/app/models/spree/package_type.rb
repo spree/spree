@@ -59,6 +59,10 @@ module Spree
     # The marketplace's own packaging, and one seller's.
     scope :first_party, -> { where(seller_id: nil) }
     scope :for_seller, ->(seller) { where(seller_id: seller.respond_to?(:id) ? seller.id : seller) }
+    # One owner's rows within one store — the unit the default flag belongs
+    # to. Named as `Spree::StockLocation` names it, since it does the same job
+    # there for the same reason.
+    scope :owned_by, ->(store_id:, seller_id:) { where(store_id: store_id, seller_id: seller_id) }
 
     # Everything a seller may pack into: their own rows plus the
     # marketplace's, which they read but never write. A nil seller is the
@@ -68,6 +72,17 @@ module Spree
     scope :available_to_seller, ->(seller) {
       seller.nil? ? first_party : for_seller(seller).or(first_party)
     }
+
+    # Whether the given owner may pack into this row: their own, or the
+    # marketplace's shared vocabulary. The Ruby twin of `available_to_seller`,
+    # so the validation and the scope cannot drift apart on what "mine or the
+    # marketplace's" means.
+    #
+    # @param owner_seller_id [Integer, nil] nil is the operator
+    # @return [Boolean]
+    def available_to_seller?(owner_seller_id)
+      seller_id.nil? || seller_id == owner_seller_id
+    end
 
     # The one kind anything branches on: a variant may only be packed into a
     # carton. The rest of the vocabulary is the merchant's to name and read.
@@ -169,7 +184,8 @@ module Spree
     # in the same store. The operator and each seller hold one default box
     # apiece, so promoting a seller's box must not demote the marketplace's.
     def other_defaults
-      self.class.where(store_id: store_id, seller_id: seller_id, default: true).where.not(id: id)
+      self.class.owned_by(store_id: store_id, seller_id: seller_id).
+        where(default: true).where.not(id: id)
     end
   end
 end

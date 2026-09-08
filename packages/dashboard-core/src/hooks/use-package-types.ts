@@ -6,6 +6,7 @@ import {
   type PanelPackageType,
   type PanelPackageTypeCreateParams,
   type PanelPackageTypeParams,
+  type PanelPackageTypeWrites,
 } from '../api-client'
 import { useResourceKey, useResourceKeyBuilder } from '../lib/query-keys'
 import { useResourceMutation } from './use-resource-mutation'
@@ -29,25 +30,35 @@ function resource() {
   return packageTypes
 }
 
+/**
+ * The same resource narrowed to the writing shape.
+ *
+ * The narrowing is checked once here rather than at each call site: the page
+ * only renders its sheets when `canWritePackageTypes()` is true, and the
+ * panel's registration is what makes that so.
+ */
+function writableResource(): PanelPackageTypeWrites {
+  const packageTypes = resource()
+  if (!('create' in packageTypes)) {
+    throw new Error(
+      '@spree/dashboard-core: this panel registered `packageTypes` reads only, so packaging ' +
+        'cannot be written. Register get/create/update, or drop the settings route.',
+    )
+  }
+  return packageTypes
+}
+
 export function usePackageType(id: string | undefined) {
   return useQuery({
     queryKey: useResourceKey('package-types', id ?? 'noop'),
-    queryFn: () => {
-      const get = resource().get
-      if (!get) throw new Error('This panel cannot read a single package type.')
-      return get(id as string)
-    },
+    queryFn: () => writableResource().get(id as string),
     enabled: !!id,
   })
 }
 
 export function useCreatePackageType() {
   return useResourceMutation<PanelPackageType, Error, PanelPackageTypeCreateParams>({
-    mutationFn: (params) => {
-      const create = resource().create
-      if (!create) throw new Error('This panel cannot create package types.')
-      return create(params)
-    },
+    mutationFn: (params) => writableResource().create(params),
     invalidate: [['package-types'], ['panel-form-carton-package-types']],
     successMessage: i18n.t('admin.package_types.messages.added'),
     errorMessage: i18n.t('admin.errors.failed_to_create'),
@@ -56,11 +67,7 @@ export function useCreatePackageType() {
 
 export function useUpdatePackageType(id: string) {
   return useResourceMutation<PanelPackageType, Error, PanelPackageTypeParams>({
-    mutationFn: (params) => {
-      const update = resource().update
-      if (!update) throw new Error('This panel cannot update package types.')
-      return update(id, params)
-    },
+    mutationFn: (params) => writableResource().update(id, params),
     invalidate: [['package-types'], ['package-types', id], ['panel-form-carton-package-types']],
     successMessage: i18n.t('admin.package_types.messages.updated'),
     errorMessage: i18n.t('admin.errors.failed_to_update'),
@@ -73,7 +80,7 @@ export function useDeletePackageType() {
 
   return useResourceMutation<void, Error, string>({
     mutationFn: (id) => {
-      const remove = resource().delete
+      const remove = writableResource().delete
       if (!remove) throw new Error('This panel cannot delete package types.')
       return remove(id)
     },
@@ -93,12 +100,13 @@ export function useDeletePackageType() {
  */
 export function canWritePackageTypes(): boolean {
   const packageTypes = getApiClient().packageTypes
-  return typeof packageTypes?.create === 'function' && typeof packageTypes?.get === 'function'
+  return packageTypes !== undefined && 'create' in packageTypes
 }
 
 /** Whether this panel's API offers deletion, which not every one does. */
 export function canDeletePackageTypes(): boolean {
-  return typeof getApiClient().packageTypes?.delete === 'function'
+  const packageTypes = getApiClient().packageTypes
+  return packageTypes !== undefined && 'delete' in packageTypes
 }
 
 /**

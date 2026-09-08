@@ -1212,8 +1212,7 @@ module Spree
       return if store.nil?
 
       carton = association(:carton_package_type).reader
-      return if carton&.store_id == store.id &&
-                (carton.seller_id.nil? || carton.seller_id == resolved_seller_id)
+      return if carton&.store_id == store.id && carton.available_to_seller?(resolved_seller_id)
 
       errors.add(:carton_package_type, :invalid)
     end

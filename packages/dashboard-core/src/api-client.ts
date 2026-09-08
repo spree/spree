@@ -159,13 +159,7 @@ export interface PanelApiClient {
    * why the write methods are optional — a panel that only needs the picker
    * registers `list` and the packaging settings page is simply not routed.
    */
-  packageTypes?: {
-    list(params?: Record<string, unknown>): Promise<{ data: PanelPackageType[]; meta?: unknown }>
-    get?(id: string): Promise<PanelPackageType>
-    create?(params: PanelPackageTypeCreateParams): Promise<PanelPackageType>
-    update?(id: string, params: PanelPackageTypeParams): Promise<PanelPackageType>
-    delete?(id: string): Promise<void>
-  }
+  packageTypes?: PanelPackageTypeReads | PanelPackageTypeWrites
   /**
    * Headers a file download must carry beyond the bearer token.
    *
@@ -341,6 +335,26 @@ export interface PanelPackageTypeParams {
    * object without it rather than sending null.
    */
   metadata?: Record<string, unknown>
+}
+
+/**
+ * Enough for the variant editor's carton picker: a panel that only needs the
+ * picker registers this and never routes to the packaging settings page.
+ */
+export interface PanelPackageTypeReads {
+  list(params?: Record<string, unknown>): Promise<{ data: PanelPackageType[]; meta?: unknown }>
+}
+
+/**
+ * What the packaging settings page needs. Required rather than optional, so a
+ * panel that routes to the page while registering reads only fails to
+ * compile instead of rendering a page whose every write throws.
+ */
+export interface PanelPackageTypeWrites extends PanelPackageTypeReads {
+  get(id: string): Promise<PanelPackageType>
+  create(params: PanelPackageTypeCreateParams): Promise<PanelPackageType>
+  update(id: string, params: PanelPackageTypeParams): Promise<PanelPackageType>
+  delete?(id: string): Promise<void>
 }
 
 export type PanelPackageTypeKind = 'box' | 'envelope' | 'carton' | 'pallet' | 'container'

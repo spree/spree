@@ -19,13 +19,10 @@ export type PackageWeightUnit = (typeof PACKAGE_WEIGHT_UNITS)[number]
 const optionalNumber = z
   .union([z.string(), z.number()])
   .optional()
-  .refine(
-    (value) =>
-      value === '' || value === undefined || (!Number.isNaN(Number(value)) && Number(value) >= 0),
-    {
-      error: () => i18n.t('admin.package_types.validation.non_negative'),
-    },
-  )
+  // `NaN >= 0` is already false, so the comparison alone rejects garbage.
+  .refine((value) => value === '' || value === undefined || Number(value) >= 0, {
+    error: () => i18n.t('admin.package_types.validation.non_negative'),
+  })
 
 export const packageTypeFormSchema = z.object({
   name: z

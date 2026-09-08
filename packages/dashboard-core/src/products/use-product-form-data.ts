@@ -163,9 +163,7 @@ export function useFormCartonPackageTypes() {
     // direction on `seller_id`, and NULLs sort first ascending.
     select: (result) => ({
       data: [...result.data].sort(
-        (a, b) =>
-          Number(Boolean(b.seller_id)) - Number(Boolean(a.seller_id)) ||
-          a.name.localeCompare(b.name),
+        (a, b) => Number(!a.seller_id) - Number(!b.seller_id) || a.name.localeCompare(b.name),
       ),
     }),
   })

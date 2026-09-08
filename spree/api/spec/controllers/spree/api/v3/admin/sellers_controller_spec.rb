@@ -347,4 +347,29 @@ RSpec.describe Spree::Api::V3::Admin::SellersController, type: :controller do
       expect(product.reload.seller_id).to be_nil
     end
   end
+  # The onboarding checklist renders for every row, and the shipping-box kind
+  # reads a has_one. Reading it through the association keeps that one batched
+  # load for the whole page; a per-seller query would scale with page size
+  # (docs/plans/6.0-seller-package-types.md).
+  describe 'the onboarding checklist on a page of sellers' do
+    it 'reads every seller’s box in one query' do
+      store.seller_requirements.destroy_all
+      Spree::SellerRequirement.provision_defaults(store)
+      4.times do |index|
+        seller = create(:seller, :approved, store: store, name: "Box Seller #{index}")
+        create(:package_type, :measured_default_box, store: store, seller: seller)
+      end
+
+      queries = []
+      subscription = ActiveSupport::Notifications.subscribe('sql.active_record') do |*, payload|
+        queries << payload[:sql] unless payload[:name].to_s.match?(/SCHEMA|TRANSACTION/)
+      end
+      get :index, as: :json
+      ActiveSupport::Notifications.unsubscribe(subscription)
+
+      expect(response).to have_http_status(:ok)
+      expect(queries.grep(/spree_package_types/).size).to eq(1)
+    end
+  end
+
 end
