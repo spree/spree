@@ -69,7 +69,10 @@ class AddSellerToSpreePackageTypes < ActiveRecord::Migration[8.1]
     add_index :spree_package_types, [:store_id, :name], unique: true, name: STORE_NAME_INDEX
   end
 
+  # `Spree.mysql?` rather than a fresh adapter check: it matches Trilogy too,
+  # which Rails reports as "Trilogy", and a hand-rolled /mysql/i test would
+  # take the partial-index branch there and fail on a database that has none.
   def supports_partial_index?
-    !ActiveRecord::Base.connection.adapter_name.match?(/mysql/i)
+    !Spree.mysql?
   end
 end
