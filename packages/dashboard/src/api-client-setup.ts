@@ -66,7 +66,15 @@ setApiClient({
   },
   taxCategories: { list: (params) => adminClient.taxCategories.list(params) },
   deliveryProfiles: { list: (params) => adminClient.deliveryProfiles.list(params) },
-  packageTypes: { list: (params) => adminClient.packageTypes.list(params) },
+  // Writes as well as reads: the packaging settings page is shared with the
+  // seller panel, and its create/edit/delete go through this registration.
+  packageTypes: {
+    list: (params) => adminClient.packageTypes.list(params),
+    get: (id) => adminClient.packageTypes.get(id),
+    create: (params) => adminClient.packageTypes.create(params),
+    update: (id, params) => adminClient.packageTypes.update(id, params),
+    delete: (id) => adminClient.packageTypes.delete(id),
+  },
   deleteProductMedia: (productId, mediaId) => adminClient.products.media.delete(productId, mediaId),
   mediaLibrary: { list: (params) => adminClient.media.list(params) },
   markets: { list: (params) => adminClient.markets.list(params) },

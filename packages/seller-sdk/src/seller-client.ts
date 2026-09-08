@@ -1383,7 +1383,7 @@ export interface PackageTypeParams {
   max_weight?: string | number | null
   weight_unit?: string | null
   default?: boolean
-  metadata?: Record<string, unknown> | null
+  metadata?: Record<string, unknown>
 }
 
 export interface StockLocationParams {

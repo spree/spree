@@ -162,7 +162,7 @@ export interface PanelApiClient {
   packageTypes?: {
     list(params?: Record<string, unknown>): Promise<{ data: PanelPackageType[]; meta?: unknown }>
     get?(id: string): Promise<PanelPackageType>
-    create?(params: PanelPackageTypeParams): Promise<PanelPackageType>
+    create?(params: PanelPackageTypeCreateParams): Promise<PanelPackageType>
     update?(id: string, params: PanelPackageTypeParams): Promise<PanelPackageType>
     delete?(id: string): Promise<void>
   }
@@ -323,16 +323,37 @@ export interface PanelPackageType extends PanelNamedRecord {
  */
 export interface PanelPackageTypeParams {
   name?: string
-  kind?: string
+  /**
+   * Narrow rather than `string`, because both SDKs validate the vocabulary at
+   * the type level and a widened contract would not assign to either.
+   */
+  kind?: PanelPackageTypeKind
   length?: number | null
   width?: number | null
   height?: number | null
-  dimensions_unit?: string | null
+  dimensions_unit?: PanelPackageDimensionUnit | null
   weight?: number | null
   max_weight?: number | null
-  weight_unit?: string | null
+  weight_unit?: PanelPackageWeightUnit | null
   default?: boolean
-  metadata?: Record<string, unknown> | null
+  /**
+   * Not nullable: both SDKs take a merge, so clearing a key is sending the
+   * object without it rather than sending null.
+   */
+  metadata?: Record<string, unknown>
+}
+
+export type PanelPackageTypeKind = 'box' | 'envelope' | 'carton' | 'pallet' | 'container'
+export type PanelPackageDimensionUnit = 'mm' | 'cm' | 'in' | 'ft'
+export type PanelPackageWeightUnit = 'g' | 'kg' | 'lb' | 'oz'
+
+/**
+ * A new row must say what it is and what to call it — packaging without
+ * either cannot exist, and neither SDK makes them optional.
+ */
+export type PanelPackageTypeCreateParams = PanelPackageTypeParams & {
+  name: string
+  kind: PanelPackageTypeKind
 }
 
 /**

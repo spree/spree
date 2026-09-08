@@ -1,7 +1,12 @@
 import type { PaginationMeta } from '@spree/dashboard-ui'
 import { useQuery, useQueryClient } from '@tanstack/react-query'
 import i18n from 'i18next'
-import { getApiClient, type PanelPackageType, type PanelPackageTypeParams } from '../api-client'
+import {
+  getApiClient,
+  type PanelPackageType,
+  type PanelPackageTypeCreateParams,
+  type PanelPackageTypeParams,
+} from '../api-client'
 import { useResourceKey, useResourceKeyBuilder } from '../lib/query-keys'
 import { useResourceMutation } from './use-resource-mutation'
 
@@ -37,7 +42,7 @@ export function usePackageType(id: string | undefined) {
 }
 
 export function useCreatePackageType() {
-  return useResourceMutation<PanelPackageType, Error, PanelPackageTypeParams>({
+  return useResourceMutation<PanelPackageType, Error, PanelPackageTypeCreateParams>({
     mutationFn: (params) => {
       const create = resource().create
       if (!create) throw new Error('This panel cannot create package types.')
@@ -83,10 +88,17 @@ export function useDeletePackageType() {
 
 /**
  * Whether this panel's API can write packaging at all. A panel registering
- * only `list` gets the variant editor's carton picker and no settings page.
+ * only `list` gets the variant editor's carton picker and no settings page,
+ * so the page hides everything that would write.
  */
 export function canWritePackageTypes(): boolean {
-  return typeof resource().create === 'function'
+  const packageTypes = getApiClient().packageTypes
+  return typeof packageTypes?.create === 'function' && typeof packageTypes?.get === 'function'
+}
+
+/** Whether this panel's API offers deletion, which not every one does. */
+export function canDeletePackageTypes(): boolean {
+  return typeof getApiClient().packageTypes?.delete === 'function'
 }
 
 /**

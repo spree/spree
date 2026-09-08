@@ -32,6 +32,8 @@ import type { PanelPackageType } from '../api-client'
 import { Can } from '../components/can'
 import { ResourceTable, resourceSearchSchema } from '../components/resource-table'
 import {
+  canDeletePackageTypes,
+  canWritePackageTypes,
   listPackageTypes,
   useCreatePackageType,
   useDeletePackageType,
@@ -91,8 +93,15 @@ export function PackageTypesPage({ search }: { search: PackageTypesSearch }) {
   const deleteMutation = useDeletePackageType()
   const { permissions } = usePermissions()
 
-  const isCreating = !!search.new
-  const editId = isCreating ? undefined : search.edit
+  // A panel may register `packageTypes.list` alone for the variant editor's
+  // carton picker. Reading it here keeps this page honest on such a panel:
+  // no add button, no row actions, and no sheet whose save could not work.
+  const writable = canWritePackageTypes()
+
+  // Neither sheet opens on a read-only panel, and creating wins over editing
+  // when a stale link carries both.
+  const isCreating = writable && !!search.new
+  const editId = writable && !isCreating ? search.edit : undefined
 
   function closeSheet() {
     navigate({
@@ -143,8 +152,9 @@ export function PackageTypesPage({ search }: { search: PackageTypesSearch }) {
         searchParams={search}
         rowActions={(packageType) => {
           // A marketplace row in a seller's list is read-only, so it gets no
-          // actions at all rather than actions that 404 on click.
-          if (packageType.editable === false) return null
+          // actions at all rather than actions that 404 on click. Same for
+          // every row when this panel's client registered reads only.
+          if (packageType.editable === false || !writable) return null
 
           return (
             <RowActions
@@ -153,7 +163,8 @@ export function PackageTypesPage({ search }: { search: PackageTypesSearch }) {
                 {
                   key: 'delete',
                   destructive: true,
-                  visible: permissions.can('destroy', Subject.PackageType),
+                  visible:
+                    canDeletePackageTypes() && permissions.can('destroy', Subject.PackageType),
                   disabled: deleteMutation.isPending,
                   onSelect: () => handleDelete(packageType),
                 },
@@ -162,12 +173,14 @@ export function PackageTypesPage({ search }: { search: PackageTypesSearch }) {
           )
         }}
         actions={
-          <Can I="create" a={Subject.PackageType}>
-            <Button size="sm" className="h-[2.125rem]" onClick={openCreate}>
-              <PlusIcon className="size-4" />
-              {t('admin.package_types.add_cta')}
-            </Button>
-          </Can>
+          writable ? (
+            <Can I="create" a={Subject.PackageType}>
+              <Button size="sm" className="h-[2.125rem]" onClick={openCreate}>
+                <PlusIcon className="size-4" />
+                {t('admin.package_types.add_cta')}
+              </Button>
+            </Can>
+          ) : null
         }
       />
 

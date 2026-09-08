@@ -4,8 +4,15 @@ import { cn } from '../lib/utils'
 interface ResourceNameCellProps {
   /** Resource identifier, mirrored into the bridge data attribute. */
   id: string
-  /** Data attribute the `useRowClickBridge` listener targets (e.g. `data-payment-method-id`). */
-  dataAttr: `data-${string}`
+  /**
+   * Data attribute the `useRowClickBridge` listener targets (e.g.
+   * `data-payment-method-id`).
+   *
+   * Omit it for a row that must not be opened — a record this panel may read
+   * but not write. The cell then renders as plain text rather than a button
+   * that looks clickable and does nothing.
+   */
+  dataAttr?: `data-${string}`
   /** Primary text — the resource's display name. */
   name: ReactNode
   /** Optional secondary line. Falsy values render nothing. */
@@ -31,14 +38,24 @@ export function ResourceNameCell({
   secondary,
   nameClassName,
 }: ResourceNameCellProps) {
+  const content = (
+    <>
+      <span className={cn('font-medium', nameClassName)}>{name}</span>
+      {secondary && <span className="text-xs text-muted-foreground">{secondary}</span>}
+    </>
+  )
+
+  if (!dataAttr) {
+    return <div className="flex h-full w-full flex-col items-start text-left">{content}</div>
+  }
+
   return (
     <button
       type="button"
       {...{ [dataAttr]: id }}
       className="flex h-full w-full cursor-pointer flex-col items-start rounded text-left focus-visible:outline-none"
     >
-      <span className={cn('font-medium', nameClassName)}>{name}</span>
-      {secondary && <span className="text-xs text-muted-foreground">{secondary}</span>}
+      {content}
     </button>
   )
 }

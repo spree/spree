@@ -1,7 +1,7 @@
 import { requiredMessage } from '@spree/dashboard-ui'
 import i18n from 'i18next'
 import { z } from 'zod/v4'
-import type { PanelPackageType, PanelPackageTypeParams } from '../api-client'
+import type { PanelPackageType, PanelPackageTypeCreateParams } from '../api-client'
 
 // The vocabulary the server validates against; typing anything else could
 // only fail on save.
@@ -64,7 +64,7 @@ export const PACKAGE_TYPE_DEFAULTS: PackageTypeFormValues = {
  */
 export function packageTypeFormValuesToParams(
   values: PackageTypeFormValues,
-): PanelPackageTypeParams {
+): PanelPackageTypeCreateParams {
   const measurement = (value: string | number | undefined) =>
     value === '' || value === undefined ? null : Number(value)
 

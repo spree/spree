@@ -24,6 +24,12 @@ tables['package-types'].addColumn<PackageType>({
   filterType: 'resource',
   // `seller_id` — whitelisted on PackageType alongside the `seller`
   // association, so the filter narrows to one or more sellers.
+  //
+  // It cannot yet ask for "the marketplace's own" (a null owner): the
+  // resource filter emits ids only, and asking for NULL needs a scope and a
+  // filter type neither this table nor the stock-locations column beside it
+  // has. The column still labels those rows, so they are readable if not
+  // filterable.
   ransackAttribute: 'seller_id',
   filterResource: sellerAutocompleteProps('package-type-seller-picker'),
   render: (packageType) =>

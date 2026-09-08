@@ -20,7 +20,11 @@ defineTable<PanelPackageType>('package-types', {
       render: (packageType) => (
         <ResourceNameCell
           id={packageType.id}
-          dataAttr="data-package-type-id"
+          // Omitted on a row this panel may read but not write, so the row
+          // click bridge never opens an edit sheet whose save could only
+          // 404. A seller sees the marketplace's packaging to know what they
+          // may pack into; it is not theirs to change.
+          dataAttr={packageType.editable === false ? undefined : 'data-package-type-id'}
           name={packageType.name}
           // This owner's own box, called out because every parcel quote from
           // their warehouse is built on it.
