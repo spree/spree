@@ -5533,6 +5533,10 @@
         "empty": "暂无供应商",
         "search_placeholder": "按名称、联系人或邮箱搜索…"
       },
+      "autocomplete": {
+        "placeholder": "按名称、联系人或邮箱搜索…",
+        "empty": "没有匹配的供应商"
+      },
       "columns": {
         "contact": "联系人",
         "orders": "采购订单"

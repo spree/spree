@@ -1,6 +1,5 @@
 import type { Supplier } from '@spree/admin-sdk'
 import {
-  adminClient,
   CurrencySelect,
   PageHeader,
   ResourceCombobox,
@@ -32,6 +31,7 @@ import {
   VariantLineEditor,
 } from '../../../../../components/spree/variant-line-editor'
 import { useCreatePurchaseOrder } from '../../../../../hooks/use-purchase-orders'
+import { supplierAutocompleteProps } from '../../../../../hooks/use-suppliers'
 
 export const Route = createFileRoute('/_authenticated/$storeId/products/purchase-orders/new')({
   component: NewPurchaseOrderPage,
@@ -105,15 +105,10 @@ function NewPurchaseOrderPage() {
                   more suppliers than one page of a Select would show, and a
                   Select says nothing about the ones it left out. */}
               <ResourceCombobox<Supplier>
+                {...supplierAutocompleteProps('purchase-order-supplier-picker')}
                 id="supplier"
-                queryKey="purchase-order-supplier-picker"
                 value={supplierId}
                 onChange={(id) => setSupplierId(id ?? '')}
-                search={(query) => adminClient.suppliers.list({ search: query, limit: 20 })}
-                hydrate={(ids) =>
-                  adminClient.suppliers.list({ q: { id_in: ids }, limit: ids.length || 1 })
-                }
-                getOptionLabel={(supplier) => supplier.name}
                 placeholder={t('admin.purchase_orders.fields.supplier_placeholder')}
               />
             </Field>

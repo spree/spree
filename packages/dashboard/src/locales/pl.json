@@ -5606,6 +5606,10 @@
         "empty": "Brak dostawców",
         "search_placeholder": "Szukaj po nazwie, kontakcie lub e-mailu…"
       },
+      "autocomplete": {
+        "placeholder": "Szukaj po nazwie, kontakcie lub e-mailu…",
+        "empty": "Brak pasujących dostawców"
+      },
       "columns": {
         "contact": "Kontakt",
         "orders": "Zamówienia zakupu"

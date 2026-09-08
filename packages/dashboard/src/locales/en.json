@@ -5544,6 +5544,10 @@
         "empty": "No suppliers yet",
         "search_placeholder": "Search by name, contact or email…"
       },
+      "autocomplete": {
+        "placeholder": "Search by name, contact or email…",
+        "empty": "No suppliers match"
+      },
       "columns": {
         "contact": "Contact",
         "orders": "Purchase orders"

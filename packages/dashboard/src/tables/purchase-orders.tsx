@@ -3,6 +3,7 @@ import { defineTable } from '@spree/dashboard-core'
 import { RelativeTime, ResourceNameCell, StatusBadge } from '@spree/dashboard-ui'
 import { TruckIcon } from '@spree/dashboard-ui/icons'
 import i18n from 'i18next'
+import { supplierAutocompleteProps } from '../hooks/use-suppliers'
 import { PURCHASE_ORDER_STATUSES } from '../schemas/inventory-operations'
 
 function statusLabel(value: string): string {
@@ -54,6 +55,14 @@ defineTable<PurchaseOrder>('purchase-orders', {
     {
       key: 'supplier',
       label: i18n.t('admin.purchase_orders.columns.supplier'),
+      filterable: true,
+      // Picked from a list rather than typed, the way an order filters by its
+      // customer: a merchant asking what is on order from Acme knows who they
+      // mean. Matched through the association's id, so a supplier renamed
+      // since the order was placed still answers.
+      filterType: 'resource',
+      filterResource: supplierAutocompleteProps('purchase-orders-table-supplier-filter'),
+      ransackAttribute: 'supplier_id',
       default: true,
       render: (po) => po.supplier?.name ?? '—',
     },

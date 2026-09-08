@@ -15,6 +15,31 @@ export function useSuppliers(params?: { limit?: number; search?: string }) {
   })
 }
 
+/**
+ * A supplier picker, for the create form and the purchase orders filter.
+ *
+ * Searches on the same predicate the suppliers table searches on, so "how you
+ * look for a supplier" is defined once. `search:` — which the customer and
+ * order pickers use — is a Ransack *scope* those models declare and this one
+ * does not, so sent here it is quietly ignored and every supplier comes back.
+ */
+export function supplierAutocompleteProps(queryKey: string) {
+  return {
+    queryKey,
+    search: (query: string) =>
+      adminClient.suppliers.list({
+        name_or_contact_name_or_email_cont: query,
+        limit: 100,
+        sort: 'name',
+        fields: ['name'],
+      }),
+    hydrate: (ids: string[]) => adminClient.suppliers.list({ id_in: ids, limit: ids.length }),
+    getOptionLabel: (supplier: Supplier) => supplier.name ?? supplier.id,
+    placeholder: i18n.t('admin.suppliers.autocomplete.placeholder'),
+    emptyText: i18n.t('admin.suppliers.autocomplete.empty'),
+  }
+}
+
 export function useSupplier(id: string | undefined) {
   return useQuery({
     queryKey: useResourceKey('suppliers', id ?? 'noop'),

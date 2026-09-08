@@ -5544,6 +5544,10 @@
         "empty": "Aucun fournisseur",
         "search_placeholder": "Rechercher par nom, contact ou e-mail…"
       },
+      "autocomplete": {
+        "placeholder": "Rechercher par nom, contact ou e-mail…",
+        "empty": "Aucun fournisseur correspondant"
+      },
       "columns": {
         "contact": "Contact",
         "orders": "Bons de commande"

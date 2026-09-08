@@ -5544,6 +5544,10 @@
         "empty": "Noch keine Lieferanten",
         "search_placeholder": "Nach Name, Kontakt oder E-Mail suchen…"
       },
+      "autocomplete": {
+        "placeholder": "Nach Name, Kontakt oder E-Mail suchen…",
+        "empty": "Keine passenden Lieferanten"
+      },
       "columns": {
         "contact": "Kontakt",
         "orders": "Bestellungen"
