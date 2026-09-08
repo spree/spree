@@ -1,3 +1,5 @@
+const TRAILING_EMPTY_PARAGRAPHS = /(?:<p>(?:<br\s*\/?>|\s|&nbsp;)*<\/p>)+$/gi
+
 /**
  * Whether two rich-text strings are the same content after TipTap-style
  * normalization. The editor wraps bare text in `<p>` and emits empty
@@ -9,21 +11,16 @@ export function sameRichText(left: string, right: string): boolean {
 }
 
 function canonicalizeRichText(html: string): string {
-  const parsed = new DOMParser().parseFromString(html ?? '', 'text/html')
-  const text = (parsed.body.textContent ?? '').replace(/\u00a0/g, ' ').trim()
-  if (!text) return ''
+  const withoutTrailingEmpty = (html ?? '').trim().replace(TRAILING_EMPTY_PARAGRAPHS, '').trim()
+  if (!visibleText(withoutTrailingEmpty)) return ''
+  if (!/<\/?[a-z][\s\S]*>/i.test(withoutTrailingEmpty)) return `<p>${withoutTrailingEmpty}</p>`
+  return withoutTrailingEmpty
+}
 
-  while (
-    parsed.body.lastElementChild &&
-    parsed.body.children.length > 1 &&
-    !(parsed.body.lastElementChild.textContent ?? '').replace(/\u00a0/g, ' ').trim()
-  ) {
-    parsed.body.lastElementChild.remove()
-  }
-
-  if (parsed.body.children.length === 0) {
-    return `<p>${parsed.body.innerHTML}</p>`
-  }
-
-  return parsed.body.innerHTML.trim()
+function visibleText(html: string): string {
+  return html
+    .replace(/<[^>]+>/g, ' ')
+    .replace(/&nbsp;/gi, ' ')
+    .replace(/\s+/g, ' ')
+    .trim()
 }
