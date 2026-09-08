@@ -27,9 +27,11 @@ module Spree
           variant.sku = attributes['sku'] if attributes['sku'].present?
           variant.cost_price = attributes['cost_price'] if attributes['cost_price'].present?
           variant.weight = attributes['weight'] if attributes['weight'].present?
+          variant.weight_unit = attributes['weight_unit'] if attributes['weight_unit'].present?
           variant.height = attributes['height'] if attributes['height'].present?
           variant.width = attributes['width'] if attributes['width'].present?
           variant.depth = attributes['depth'] if attributes['depth'].present?
+          variant.dimensions_unit = attributes['dimensions_unit'] if attributes['dimensions_unit'].present?
           variant.track_inventory = attributes['track_inventory'] if attributes['track_inventory'].present?
           variant.hs_code = attributes['hs_code'] if attributes['hs_code'].present?
           variant.country_of_origin = attributes['country_of_origin'] if attributes['country_of_origin'].present?

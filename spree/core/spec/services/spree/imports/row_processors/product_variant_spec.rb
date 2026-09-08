@@ -21,6 +21,64 @@ RSpec.describe Spree::Imports::RowProcessors::ProductVariant, type: :service do
     csv_row_headers.index_with { |header| attrs[header] }
   end
 
+  context 'when importing measurements' do
+    let(:product) { subject.process! }
+
+    let(:row_data) do
+      csv_row_hash(
+        'slug' => 'measured-kettle',
+        'name' => 'Measured Kettle',
+        'price' => '10.00',
+        'weight' => '19.8',
+        'weight_unit' => 'lb',
+        'width' => '13.8',
+        'height' => '15.7',
+        'depth' => '11.8',
+        'dimensions_unit' => 'in'
+      )
+    end
+
+    before do
+      %w[weight weight_unit width height depth dimensions_unit].each do |field|
+        import.mappings.find_by(schema_field: field)&.update(file_column: field)
+      end
+    end
+
+    # The units are stored, not just the numbers: read back through the model's
+    # fallback they would answer the store's own unit either way, so an import
+    # that dropped them looked correct everywhere except the editor, which
+    # shows the raw column so a save cannot stamp one store's unit on a row.
+    it 'stores the units the file declared alongside the measurements' do
+      default_variant = product.default_variant
+
+      expect(default_variant.weight.to_f).to eq 19.8
+      expect(default_variant[:weight_unit]).to eq 'lb'
+      expect(default_variant.width.to_f).to eq 13.8
+      expect(default_variant.height.to_f).to eq 15.7
+      expect(default_variant.depth.to_f).to eq 11.8
+      expect(default_variant[:dimensions_unit]).to eq 'in'
+    end
+
+    context 'when the file declares no units' do
+      let(:row_data) do
+        csv_row_hash(
+          'slug' => 'unitless-kettle',
+          'name' => 'Unitless Kettle',
+          'price' => '10.00',
+          'weight' => '19.8',
+          'width' => '13.8'
+        )
+      end
+
+      it 'leaves the columns blank rather than guessing' do
+        default_variant = product.default_variant
+
+        expect(default_variant[:weight_unit]).to be_nil
+        expect(default_variant[:dimensions_unit]).to be_nil
+      end
+    end
+  end
+
   context 'when importing carton packing details' do
     let!(:carton) { create(:package_type, store: store, kind: 'carton', name: 'Large carton') }
     let(:product) { subject.process! }
