@@ -3,6 +3,7 @@ import { adminClient, formatPrice, ResourceCombobox } from '@spree/dashboard-cor
 import {
   Button,
   Field,
+  FieldDescription,
   FieldLabel,
   Input,
   InputGroup,
@@ -19,6 +20,7 @@ import {
 import { TrashIcon } from '@spree/dashboard-ui/icons'
 import { useRef } from 'react'
 import { useTranslation } from 'react-i18next'
+import { VariantLink } from './variant-link'
 
 /** One SKU the merchant is putting on a transfer or a purchase order. */
 export interface VariantLine {
@@ -40,6 +42,8 @@ export function VariantLineEditor({
   currency,
   quantityLabel,
   withCost = false,
+  stockLocationId,
+  requireStockLocation = false,
 }: {
   lines: VariantLine[]
   onChange: (lines: VariantLine[]) => void
@@ -47,8 +51,20 @@ export function VariantLineEditor({
   currency?: string
   quantityLabel: string
   withCost?: boolean
+  /**
+   * Offer only SKUs this warehouse could actually send. Transfers pass their
+   * source; a purchase order passes nothing, because buying stock in is how a
+   * merchant gets what they do not have.
+   */
+  stockLocationId?: string | null
+  /** Refuse to open the picker until a warehouse is chosen. */
+  requireStockLocation?: boolean
 }) {
   const { t } = useTranslation()
+  // Nothing sensible to search until the source is known, and offering the
+  // whole catalogue invites a line the warehouse cannot send — which is only
+  // refused later, per line, when the transfer is marked in transit.
+  const locked = !!requireStockLocation && !stockLocationId
   // `onChange` hands back only the option id, so keep the records the search
   // returned to resolve it. A ref, not state: it is a lookup table.
   const variantById = useRef(new Map<string, Variant>())
@@ -83,14 +99,21 @@ export function VariantLineEditor({
             come from the primitive. Selecting adds the row and clears the
             field, so no value is held. */}
         <ResourceCombobox<Variant>
-          queryKey="inventory-line-variant-picker"
+          // Keyed by warehouse: the same query means different things at two
+          // sources, and a cached result would offer the wrong shelf's SKUs.
+          queryKey={`inventory-line-variant-picker:${stockLocationId ?? 'any'}`}
           value=""
+          disabled={locked}
           onChange={(id) => {
             const variant = id ? variantById.current.get(id) : undefined
             if (variant) addVariant(variant)
           }}
           search={async (query) => {
-            const res = await adminClient.variants.list({ search: query, limit: 8 })
+            const res = await adminClient.variants.list({
+              search: query,
+              limit: 8,
+              ...(stockLocationId ? { available_at_stock_location: stockLocationId } : {}),
+            })
             for (const variant of res.data) variantById.current.set(variant.id, variant)
             return res
           }}
@@ -109,6 +132,9 @@ export function VariantLineEditor({
           )}
           placeholder={t('admin.inventory_lines.search_placeholder')}
         />
+        {locked && (
+          <FieldDescription>{t('admin.inventory_lines.pick_source_first')}</FieldDescription>
+        )}
       </Field>
 
       {lines.length > 0 && (
@@ -117,7 +143,6 @@ export function VariantLineEditor({
             <TableHeader>
               <TableRow>
                 <TableHead>{t('admin.inventory_lines.columns.variant')}</TableHead>
-                <TableHead>{t('admin.inventory_lines.columns.sku')}</TableHead>
                 <TableHead className="text-right">{quantityLabel}</TableHead>
                 {withCost && (
                   <TableHead className="text-right">
@@ -130,10 +155,16 @@ export function VariantLineEditor({
             <TableBody>
               {lines.map(({ variant, quantity, unitCost }) => (
                 <TableRow key={variant.id}>
-                  <TableCell className="font-medium">
-                    {variant.product_name ?? variant.sku ?? variant.id}
+                  <TableCell>
+                    {/* No product link: this form has unsaved work in it, and
+                        the row reads the same as the ones on the saved
+                        document. */}
+                    <VariantLink
+                      name={variant.product_name ?? variant.sku ?? variant.id}
+                      sku={variant.sku}
+                      thumbnailUrl={variant.thumbnail_url}
+                    />
                   </TableCell>
-                  <TableCell className="text-muted-foreground">{variant.sku}</TableCell>
                   <TableCell className="text-right">
                     <Input
                       type="number"

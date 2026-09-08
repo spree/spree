@@ -5419,6 +5419,7 @@
     "inventory_lines": {
       "add_label": "Produkt hinzufügen",
       "search_placeholder": "Produkte nach Name oder SKU suchen…",
+      "pick_source_first": "Wählen Sie zuerst das Lager, aus dem versandt wird — die Liste zeigt nur, was dieses Lager senden kann.",
       "columns": {
         "variant": "Produkt",
         "sku": "SKU",

@@ -249,6 +249,41 @@ describe Spree::Variant, type: :model do
   end
 
   describe 'scope' do
+    describe '.available_at_stock_location' do
+      let(:store) { Spree::Store.default }
+      let(:source) { create(:stock_location, store: store, propagate_all_variants: false) }
+      let(:elsewhere) { create(:stock_location, store: store, propagate_all_variants: false) }
+      let(:stocked) { create(:variant) }
+      let(:empty) { create(:variant) }
+      let(:stocked_elsewhere) { create(:variant) }
+
+      before do
+        source.restock(stocked, 4)
+        source.stock_level_or_create(empty)
+        elsewhere.restock(stocked_elsewhere, 9)
+      end
+
+      it 'is the variants that warehouse could send, and no others' do
+        available = Spree::Variant.available_at_stock_location(source.prefixed_id)
+
+        expect(available).to include(stocked)
+        expect(available).not_to include(empty, stocked_elsewhere)
+      end
+
+      # Ransack hands a scope whatever the client sent, and the controller only
+      # decodes keys carrying a predicate suffix — so this one decodes its own.
+      it 'takes a raw id as readily as a prefixed one' do
+        expect(Spree::Variant.available_at_stock_location(source.id)).to include(stocked)
+      end
+
+      it 'drops a variant once its stock is promised to an order' do
+        level = source.stock_level(stocked.id)
+        level.update!(allocated_count: level.count_on_hand)
+
+        expect(Spree::Variant.available_at_stock_location(source.prefixed_id)).not_to include(stocked)
+      end
+    end
+
     describe '.eligible' do
       it 'returns every variant' do
         product_1 = create(:product)

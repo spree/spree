@@ -5481,6 +5481,7 @@
     "inventory_lines": {
       "add_label": "Dodaj produkt",
       "search_placeholder": "Szukaj produktów po nazwie lub SKU…",
+      "pick_source_first": "Najpierw wybierz magazyn źródłowy — lista pokazuje tylko to, co ten magazyn może wysłać.",
       "columns": {
         "variant": "Produkt",
         "sku": "SKU",

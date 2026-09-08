@@ -5408,6 +5408,7 @@
     "inventory_lines": {
       "add_label": "添加商品",
       "search_placeholder": "按名称或 SKU 搜索商品…",
+      "pick_source_first": "请先选择发出仓库 — 列表只显示该仓库可以发出的商品。",
       "columns": {
         "variant": "商品",
         "sku": "SKU",

@@ -5419,6 +5419,7 @@
     "inventory_lines": {
       "add_label": "Ajouter un produit",
       "search_placeholder": "Rechercher un produit par nom ou UGS…",
+      "pick_source_first": "Choisissez d'abord l'entrepôt de départ — la liste ne propose que ce qu'il peut envoyer.",
       "columns": {
         "variant": "Produit",
         "sku": "UGS",

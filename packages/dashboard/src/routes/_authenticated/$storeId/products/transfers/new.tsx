@@ -159,10 +159,15 @@ function NewStockTransferPage() {
         <CardContent>
           {/* A draft may open empty and gain lines as the merchant packs, so
               there is nothing to enforce here. */}
+          {/* The picker offers only what the source can send, and stays shut
+              until one is chosen: a line the source has none of is refused
+              later, per line, when the transfer is marked in transit. */}
           <VariantLineEditor
             lines={lines}
             onChange={setLines}
             quantityLabel={t('admin.stock_transfers.columns.quantity_shipped')}
+            stockLocationId={sourceId || null}
+            requireStockLocation
           />
         </CardContent>
       </Card>

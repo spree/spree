@@ -5419,6 +5419,7 @@
     "inventory_lines": {
       "add_label": "Add a product",
       "search_placeholder": "Search products by name or SKU…",
+      "pick_source_first": "Choose the warehouse it leaves from first — the list only offers what that warehouse can send.",
       "columns": {
         "variant": "Product",
         "sku": "SKU",

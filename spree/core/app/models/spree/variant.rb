@@ -167,6 +167,27 @@ module Spree
     scope :backorderable, -> { left_joins(:stock_levels).where(Spree::StockLevel.table_name => { backorderable: true }) }
     scope :in_stock_or_backorderable, -> { in_stock.or(backorderable) }
 
+    # Variants one warehouse could actually send: it holds a level for them
+    # with something available on it. Written for the transfer form's picker,
+    # which would otherwise offer SKUs the source has none of — and
+    # `MarkInTransit` refuses those per line, once the van is supposedly
+    # loaded and the merchant has moved on.
+    #
+    # Untracked variants are excluded on purpose, unlike `in_stock`: a
+    # transfer moves counted units, and the ship guard would refuse them too.
+    #
+    # Takes a prefixed or a raw id — a ransackable scope decodes its own
+    # argument, since the controller only decodes keys carrying a predicate
+    # suffix.
+    scope :available_at_stock_location, ->(stock_location) {
+      levels = Spree::StockLevel.table_name
+      location_id = Spree::PrefixedId.decode_prefixed_id(stock_location) || stock_location
+
+      joins(:stock_levels).
+        where(levels => { stock_location_id: location_id }).
+        where("#{levels}.count_on_hand - #{levels}.allocated_count > ?", 0)
+    }
+
     scope :eligible, -> { all }
 
     # Variants whose *resolved* seller is the given one: their own column when
@@ -287,7 +308,8 @@ module Spree
                                                  deleted_at product_id hs_code country_of_origin
                                                  minimum_order_quantity order_multiple purchase_unit units_per_carton
                                                  carton_package_type_id carton_weight cartons_per_pallet]
-    self.whitelisted_ransackable_scopes = %i(product_name_or_sku_cont search_by_product_name_or_sku search)
+    self.whitelisted_ransackable_scopes = %i(product_name_or_sku_cont search_by_product_name_or_sku search
+                                             available_at_stock_location)
 
     def self.product_name_or_sku_cont(query)
       sanitized_query = ActiveRecord::Base.sanitize_sql_like(query.to_s.downcase.strip)

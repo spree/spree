@@ -36,6 +36,11 @@ test.describe('stock transfers', () => {
     await expect(page.locator('#destination')).toBeVisible()
     // Empty until a SKU is added — a draft may open with nothing on it.
     await expect(page.getByRole('button', { name: /create draft/i })).toBeVisible()
+
+    // Nothing can be added until the source is known: the list can only offer
+    // what that warehouse is able to send.
+    await expect(page.getByPlaceholder(/search products/i)).toBeDisabled()
+    await expect(page.getByText(/choose the warehouse it leaves from first/i)).toBeVisible()
   })
 
   test('sends a draft, then receives less than was sent', async ({ page }) => {

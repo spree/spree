@@ -5448,6 +5448,7 @@
     "inventory_lines": {
       "add_label": "إضافة منتج",
       "search_placeholder": "ابحث عن المنتجات بالاسم أو رمز SKU…",
+      "pick_source_first": "اختر المستودع المُرسِل أولاً — تعرض القائمة ما يمكن لهذا المستودع إرساله فقط.",
       "columns": {
         "variant": "المنتج",
         "sku": "رمز SKU",
