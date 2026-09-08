@@ -18,8 +18,10 @@ module Spree
             Spree.api.admin_stock_movement_serializer
           end
 
+          # Every row names its shelf and its SKU, so both come along rather
+          # than costing a query each.
           def collection_includes
-            [:stock_level]
+            [{ stock_level: [:stock_location, { variant: :product }] }]
           end
 
           # Newest first: a stock history is read from the most recent change

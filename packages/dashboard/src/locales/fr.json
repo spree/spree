@@ -5430,7 +5430,9 @@
       "empty": "Ce stock n'a pas encore changé",
       "columns": {
         "when": "Quand",
+        "product": "Produit",
         "change": "Variation",
+        "where": "Où",
         "kind": "Ce qui s'est passé",
         "cause": "Pourquoi"
       },

@@ -5492,7 +5492,9 @@
       "empty": "Ten stan jeszcze się nie zmieniał",
       "columns": {
         "when": "Kiedy",
+        "product": "Produkt",
         "change": "Zmiana",
+        "where": "Gdzie",
         "kind": "Co się stało",
         "cause": "Dlaczego"
       },

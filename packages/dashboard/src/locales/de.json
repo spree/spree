@@ -5430,7 +5430,9 @@
       "empty": "Dieser Bestand hat sich noch nicht verändert",
       "columns": {
         "when": "Wann",
+        "product": "Produkt",
         "change": "Änderung",
+        "where": "Wo",
         "kind": "Was passiert ist",
         "cause": "Warum"
       },

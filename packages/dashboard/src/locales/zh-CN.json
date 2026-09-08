@@ -5419,7 +5419,9 @@
       "empty": "此库存尚无变动",
       "columns": {
         "when": "时间",
+        "product": "商品",
         "change": "变动",
+        "where": "位置",
         "kind": "发生了什么",
         "cause": "原因"
       },

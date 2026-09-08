@@ -8,7 +8,37 @@ module Spree
                    stock_transfer_id: [:string, nullable: true],
                    purchase_order_id: [:string, nullable: true],
                    unit_cost: [:string, nullable: true],
-                   display_unit_cost: [:string, nullable: true]
+                   display_unit_cost: [:string, nullable: true],
+                   stock_location_id: [:string, nullable: true],
+                   stock_location_name: [:string, nullable: true],
+                   variant_id: [:string, nullable: true],
+                   variant_name: [:string, nullable: true],
+                   variant_sku: [:string, nullable: true]
+
+          # Which shelf, and which SKU. A movement names neither directly —
+          # both hang off its stock level, the (variant, warehouse) pair — but
+          # a history panel cannot be read without them: scoped to a variant
+          # the warehouse is what varies, scoped to a warehouse the SKU is,
+          # and scoped to one transfer both do.
+          attribute :stock_location_id do |movement|
+            movement.stock_level&.stock_location&.prefixed_id
+          end
+
+          attribute :stock_location_name do |movement|
+            movement.stock_level&.stock_location&.name
+          end
+
+          attribute :variant_id do |movement|
+            movement.stock_level&.variant&.prefixed_id
+          end
+
+          attribute :variant_name do |movement|
+            movement.stock_level&.variant&.product&.name
+          end
+
+          attribute :variant_sku do |movement|
+            movement.stock_level&.variant&.sku
+          end
 
           # The cause. Exactly which keys are set follows from the kind — a
           # dispatch carries its fulfillment and its order, a transfer carries

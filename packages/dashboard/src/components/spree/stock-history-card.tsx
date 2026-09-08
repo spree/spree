@@ -95,6 +95,8 @@ export function StockHistoryCard({
               <TableHeader>
                 <TableRow>
                   <TableHead>{t('admin.stock_history.columns.when')}</TableHead>
+                  <TableHead>{t('admin.stock_history.columns.product')}</TableHead>
+                  <TableHead>{t('admin.stock_history.columns.where')}</TableHead>
                   <TableHead>{t('admin.stock_history.columns.change')}</TableHead>
                   <TableHead>{t('admin.stock_history.columns.kind')}</TableHead>
                   <TableHead>{t('admin.stock_history.columns.cause')}</TableHead>
@@ -105,6 +107,19 @@ export function StockHistoryCard({
                   <TableRow key={movement.id}>
                     <TableCell className="whitespace-nowrap text-muted-foreground text-sm">
                       <RelativeTime iso={movement.created_at} />
+                    </TableCell>
+                    <TableCell>
+                      <div className="min-w-0">
+                        <div className="truncate font-medium">{movement.variant_name ?? '—'}</div>
+                        {movement.variant_sku && (
+                          <div className="text-muted-foreground text-xs">
+                            {movement.variant_sku}
+                          </div>
+                        )}
+                      </div>
+                    </TableCell>
+                    <TableCell className="whitespace-nowrap text-sm">
+                      {movement.stock_location_name ?? '—'}
                     </TableCell>
                     <TableCell className="font-medium tabular-nums">
                       <QuantityChange movement={movement} />
