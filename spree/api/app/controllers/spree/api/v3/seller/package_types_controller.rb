@@ -47,6 +47,15 @@ module Spree
             action_name == 'show' ? super : resource_scope.find_by_prefix_id!(params[:id])
           end
 
+          # No DISTINCT, so the owner ordering below is legal on PostgreSQL:
+          # it rejects an ORDER BY expression that is not in the select list
+          # of a SELECT DISTINCT, and `available_to_seller` makes the query
+          # distinct through `.or()`. Nothing here needs it — one table, no
+          # joins, so no row can appear twice.
+          def collection_distinct?
+            false
+          end
+
           # The seller's own rows before the marketplace's, then by name.
           #
           # This list holds two owners' packaging, so it has roughly twice as
