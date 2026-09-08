@@ -198,7 +198,7 @@ function ItemsCard({ purchaseOrder }: { purchaseOrder: PurchaseOrder }) {
         ) : (
           /* Nothing sits below the table on a draft, so its last row carries
              the card's own curve; on a receivable order the footer does. */
-          <Table roundedBottom={!receivable}>
+          <Table scrollX roundedBottom={!receivable}>
             <TableHeader>
               <TableRow>
                 <TableHead>{t('admin.inventory_lines.columns.variant')}</TableHead>

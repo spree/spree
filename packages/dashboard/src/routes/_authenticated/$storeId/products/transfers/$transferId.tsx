@@ -200,7 +200,7 @@ function PlannedItemsCard({ transfer }: { transfer: StockTransfer }) {
             {t('admin.stock_transfers.items_empty')}
           </p>
         ) : (
-          <Table roundedBottom>
+          <Table scrollX roundedBottom>
             <TableHeader>
               <TableRow>
                 <TableHead>{t('admin.inventory_lines.columns.variant')}</TableHead>
@@ -283,7 +283,7 @@ function ReceiveCard({ transfer }: { transfer: StockTransfer }) {
         <CardTitle>{t('admin.stock_transfers.receive_title')}</CardTitle>
       </CardHeader>
       <CardContent className="flex flex-col p-0">
-        <Table>
+        <Table scrollX>
           <TableHeader>
             <TableRow>
               <TableHead>{t('admin.inventory_lines.columns.variant')}</TableHead>

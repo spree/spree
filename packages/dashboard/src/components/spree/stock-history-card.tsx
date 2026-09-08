@@ -91,7 +91,7 @@ export function StockHistoryCard({
             {/* The pagination bar brings its own top rule and padding, so it
                 takes the card's bottom curve when it is there — and the last
                 row takes it when the history fits on one page. */}
-            <Table roundedBottom={!paginated}>
+            <Table scrollX roundedBottom={!paginated}>
               <TableHeader>
                 <TableRow>
                   <TableHead>{t('admin.stock_history.columns.when')}</TableHead>
