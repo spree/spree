@@ -222,7 +222,7 @@ export function BulkVariantsDialog({ form, open, onOpenChange }: Props) {
         style={{ maxHeight: 'none' }}
         showCloseButton={false}
       >
-        <DialogHeader className="flex flex-row items-center justify-between gap-3 space-y-0 border-b p-3">
+        <DialogHeader className="flex flex-row items-center justify-between gap-3 space-y-0 border-b-0 p-3">
           <DialogTitle className="truncate">
             {t('admin.products.variants.bulk_edit.title')}
           </DialogTitle>
@@ -235,7 +235,14 @@ export function BulkVariantsDialog({ form, open, onOpenChange }: Props) {
             </Button>
           </div>
         </DialogHeader>
-        <DialogBody className="min-h-0 flex-1 overflow-auto p-3">
+        {/* No gutter: the body holds nothing but the grid, so padding only
+            narrows the space the columns have to fit in and leaves the
+            table's own border floating inside the dialog's.
+
+            Vertical scrolling is this element's (the sticky header sticks to
+            it); sideways scrolling belongs to the grid, so hiding x here keeps
+            the two from stacking a second scrollbar under the first. */}
+        <DialogBody className="min-h-0 flex-1 overflow-y-auto overflow-x-hidden p-0">
           <BulkVariantsTable
             rows={rows}
             onChange={handleChange}

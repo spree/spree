@@ -177,7 +177,19 @@ function DataGridShell<T>({
   return (
     <DataGridContext.Provider value={ctx}>
       <DataGridKeyboardMount gridRef={gridRef} />
-      <div className="relative overflow-hidden rounded-md">
+      {/* Scrolls sideways rather than clipping: a grid wide enough to need it
+          (the bulk variant editor sets a min-width well past any viewport) had
+          its right-hand columns cut off with no way to reach them, because the
+          `overflow-hidden` that used to clip this wrapper also beat the
+          caller's own scroll container. Nothing rounds the corners now — the
+          table's own cell borders draw its edges.
+
+          `overflow-y: visible` is deliberate and must stay. A scroll container
+          on this axis would make the sticky header below stick to the grid's
+          own top edge instead of the dialog body that actually scrolls, and
+          the header would slide out of view on a long grid. Vertical scrolling
+          belongs to the caller. */}
+      <div className="relative overflow-x-auto overflow-y-visible">
         <table
           ref={gridRef}
           // Focusable so the grid itself can hold the keyboard when a cell's

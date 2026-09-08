@@ -411,17 +411,22 @@ export function BulkVariantsTable({
     cartonOptions,
   ])
 
+  // Roughly 130px a column, which is what the widest headers here ("Available
+  // for pre-order", "Customs description") need before they wrap to two lines.
+  // The grid scrolls sideways past that rather than squeezing them.
+  const minWidth = cartonOptions
+    ? 'min-w-[2470px]'
+    : countryOptions
+      ? 'min-w-[1950px]'
+      : 'min-w-[1560px]'
+
   return (
-    <div className="overflow-x-auto">
-      <DataGrid<BulkVariantsRow>
-        rows={rows}
-        columns={columns}
-        getRowId={(row) => row.id}
-        className={
-          cartonOptions ? 'min-w-[1900px]' : countryOptions ? 'min-w-[1500px]' : 'min-w-[1100px]'
-        }
-        aria-label={labels.gridAriaLabel}
-      />
-    </div>
+    <DataGrid<BulkVariantsRow>
+      rows={rows}
+      columns={columns}
+      getRowId={(row) => row.id}
+      className={minWidth}
+      aria-label={labels.gridAriaLabel}
+    />
   )
 }
