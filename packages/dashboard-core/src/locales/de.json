@@ -1525,9 +1525,10 @@
           "identity": "Identität",
           "tax_category_placeholder": "Vom Produkt übernehmen",
           "ordering": "B2B-Bestellung",
-          "ordering_help": "Wie viel ein Käufer abnehmen muss. Der Bestand wird weiterhin in Stück gezählt.",
+          "ordering_help": "Wie viel ein Käufer abnehmen muss. Wird beim Hinzufügen zum Warenkorb und erneut beim Checkout geprüft. Ein Katalog einer Kundengruppe oder eines Unternehmens kann diese Werte für seine Käufer überschreiben. Der Bestand wird weiterhin in Stück gezählt.",
           "packing": "Verpackung",
           "packing_help": "Wie dieses Produkt als Großmenge das Lager verlässt. Frachtangebote beruhen auf diesen Zahlen.",
+          "no_carton_types": "Legen Sie unter <settingsLink>Einstellungen → Verpackungsarten</settingsLink> einen Karton an, um zu erfassen, wie dieses Produkt verpackt ist.",
           "carton_placeholder": "Kein Karton",
           "pending_save": "Änderungen hier werden mit dem Produkt gespeichert."
         },

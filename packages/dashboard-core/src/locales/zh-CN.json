@@ -1524,9 +1524,10 @@
           "identity": "标识",
           "tax_category_placeholder": "继承自商品",
           "ordering": "B2B 订购",
-          "ordering_help": "买家必须订购的数量。库存仍以件计算。",
+          "ordering_help": "买家必须订购的数量。在加入购物车时以及结账时都会强制执行。客户组或公司目录可以为其买家覆盖这些设置。库存仍以件计算。",
           "packing": "装箱",
           "packing_help": "此商品成批出库的方式。货运报价依据这些数字计算。",
+          "no_carton_types": "在<settingsLink>设置 → 包装类型</settingsLink>中添加纸箱，以记录此产品的包装方式。",
           "carton_placeholder": "未装箱",
           "pending_save": "此处的更改随商品一并保存。"
         },
