@@ -626,6 +626,45 @@
       "name": {
         "label": "Name"
       },
+      "package_type": {
+        "name": {
+          "label": "Name"
+        },
+        "kind": {
+          "label": "Kind",
+          "help": "Only a carton can be the packaging a product is packed into."
+        },
+        "length": {
+          "label": "Length"
+        },
+        "width": {
+          "label": "Width"
+        },
+        "height": {
+          "label": "Height"
+        },
+        "dimensions_unit": {
+          "label": "Unit"
+        },
+        "dimensions": {
+          "help": "Used for carrier dimensional weight, and for the cubic meters freight tiers compare."
+        },
+        "weight": {
+          "label": "Empty weight",
+          "help": "The packaging itself, added to what it holds."
+        },
+        "max_weight": {
+          "label": "Max weight",
+          "help": "What it can carry."
+        },
+        "weight_unit": {
+          "label": "Unit"
+        },
+        "default": {
+          "label": "Store default box",
+          "help": "The packaging every parcel quote is built on. Only one per store."
+        }
+      },
       "number": {
         "label": "Number"
       },
@@ -991,12 +1030,46 @@
       "tax_category_saved": "Tax category saved",
       "updated": "Updated"
     },
+    "package_types": {
+      "table_title": "Package types",
+      "search_placeholder": "Search packaging",
+      "empty": "No packaging yet. Add the box you ship in, and the cartons and pallets wholesale orders leave on.",
+      "add_cta": "Add package type",
+      "default_badge": "Store default",
+      "edit_sheet_title": "Package type",
+      "create_description": "A box, carton, pallet or container this store packs goods into.",
+      "edit_description": "Products packed into this carton follow its measurements, so one edit corrects them all.",
+      "dimensions_column": "Dimensions",
+      "volume_column": "Volume",
+      "kinds": {
+        "box": "Box",
+        "envelope": "Envelope",
+        "carton": "Carton",
+        "pallet": "Pallet",
+        "container": "Container"
+      },
+      "messages": {
+        "added": "Package type added",
+        "updated": "Package type updated",
+        "deleted": "Package type deleted"
+      },
+      "delete_confirm": {
+        "title": "Delete package type?",
+        "message": "{{name}} will be removed. Products packed into it must be repacked first."
+      },
+      "validation": {
+        "non_negative": "must be zero or more"
+      }
+    },
     "pages": {
       "settings": {
         "stock_locations": {
           "add_sheet_title": "Add stock location",
           "edit_sheet_title": "Edit stock location",
           "search_placeholder": "Search stock locations…"
+        },
+        "package_types": {
+          "add_sheet_title": "Add package type"
         }
       },
       "products": {

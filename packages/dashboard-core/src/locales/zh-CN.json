@@ -624,6 +624,45 @@
       "name": {
         "label": "名称"
       },
+      "package_type": {
+        "name": {
+          "label": "名称"
+        },
+        "kind": {
+          "label": "类型",
+          "help": "只有外箱可以作为商品的包装。"
+        },
+        "length": {
+          "label": "长"
+        },
+        "width": {
+          "label": "宽"
+        },
+        "height": {
+          "label": "高"
+        },
+        "dimensions_unit": {
+          "label": "单位"
+        },
+        "dimensions": {
+          "help": "用于承运商的体积重量，以及运费档位比较的立方米。"
+        },
+        "weight": {
+          "label": "空重",
+          "help": "包装本身的重量，计入所装货物之外。"
+        },
+        "max_weight": {
+          "label": "最大承重",
+          "help": "可承载的重量。"
+        },
+        "weight_unit": {
+          "label": "单位"
+        },
+        "default": {
+          "label": "店铺默认纸箱",
+          "help": "所有包裹报价的基础。每个店铺仅一个。"
+        }
+      },
       "number": {
         "label": "编号"
       },
@@ -989,12 +1028,46 @@
       "tax_category_saved": "税收类别已保存",
       "updated": "已更新"
     },
+    "package_types": {
+      "table_title": "包装类型",
+      "search_placeholder": "搜索包装",
+      "empty": "尚无包装。请添加发货纸箱，以及批发订单使用的外箱和托盘。",
+      "add_cta": "添加包装类型",
+      "default_badge": "店铺默认",
+      "edit_sheet_title": "包装类型",
+      "create_description": "本店用于装载商品的纸箱、外箱、托盘或集装箱。",
+      "edit_description": "装入此外箱的商品沿用其尺寸，修改一次即可全部更正。",
+      "dimensions_column": "尺寸",
+      "volume_column": "体积",
+      "kinds": {
+        "box": "纸箱",
+        "envelope": "信封袋",
+        "carton": "外箱",
+        "pallet": "托盘",
+        "container": "集装箱"
+      },
+      "messages": {
+        "added": "已添加包装类型",
+        "updated": "已更新包装类型",
+        "deleted": "已删除包装类型"
+      },
+      "delete_confirm": {
+        "title": "删除包装类型？",
+        "message": "将删除 {{name}}。装入其中的商品需先重新包装。"
+      },
+      "validation": {
+        "non_negative": "必须大于或等于零"
+      }
+    },
     "pages": {
       "settings": {
         "stock_locations": {
           "add_sheet_title": "添加库存位置",
           "edit_sheet_title": "编辑库存位置",
           "search_placeholder": "搜索库存位置…"
+        },
+        "package_types": {
+          "add_sheet_title": "添加包装类型"
         }
       },
       "products": {

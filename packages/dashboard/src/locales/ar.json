@@ -5264,6 +5264,12 @@
       },
       "validation": {
         "non_negative": "يجب أن يكون صفرًا أو أكثر"
+      },
+      "columns": {
+        "seller": "المالك"
+      },
+      "owner": {
+        "marketplace": "السوق"
       }
     }
   }

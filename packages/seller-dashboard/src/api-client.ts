@@ -126,6 +126,17 @@ export function createSellerApiClient({
       get: (id) => sellerClient().productTypes.get(id),
     },
     deliveryProfiles: { list: (params) => sellerClient().deliveryProfiles.list(params) },
+    // What this seller packs into: their own boxes and cartons, plus the
+    // marketplace's shared packaging, which the API lists read-only. Backs
+    // both the packaging settings page and the variant editor's carton
+    // picker (docs/plans/6.0-seller-package-types.md).
+    packageTypes: {
+      list: (params) => sellerClient().packageTypes.list(params),
+      get: (id) => sellerClient().packageTypes.get(id),
+      create: (params) => sellerClient().packageTypes.create(params),
+      update: (id, params) => sellerClient().packageTypes.update(id, params),
+      delete: (id) => sellerClient().packageTypes.delete(id),
+    },
   })
 
   return client

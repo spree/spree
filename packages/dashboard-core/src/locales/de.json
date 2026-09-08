@@ -624,6 +624,45 @@
       "name": {
         "label": "Name"
       },
+      "package_type": {
+        "name": {
+          "label": "Name"
+        },
+        "kind": {
+          "label": "Art",
+          "help": "Nur ein Umkarton kann die Verpackung eines Produkts sein."
+        },
+        "length": {
+          "label": "Länge"
+        },
+        "width": {
+          "label": "Breite"
+        },
+        "height": {
+          "label": "Höhe"
+        },
+        "dimensions_unit": {
+          "label": "Einheit"
+        },
+        "dimensions": {
+          "help": "Für das Volumengewicht des Carriers und die Kubikmeter der Frachtstufen."
+        },
+        "weight": {
+          "label": "Leergewicht",
+          "help": "Die Verpackung selbst, zusätzlich zum Inhalt."
+        },
+        "max_weight": {
+          "label": "Max. Gewicht",
+          "help": "Was sie tragen kann."
+        },
+        "weight_unit": {
+          "label": "Einheit"
+        },
+        "default": {
+          "label": "Standardkarton des Shops",
+          "help": "Grundlage jeder Paketberechnung. Nur einer pro Shop."
+        }
+      },
       "number": {
         "label": "Nummer"
       },
@@ -989,12 +1028,46 @@
       "tax_category_saved": "Steuerkategorie gespeichert",
       "updated": "Aktualisiert"
     },
+    "package_types": {
+      "table_title": "Verpackungsarten",
+      "search_placeholder": "Verpackung suchen",
+      "empty": "Noch keine Verpackung. Legen Sie Ihren Versandkarton an sowie die Kartons und Paletten für Großbestellungen.",
+      "add_cta": "Verpackungsart hinzufügen",
+      "default_badge": "Standard des Shops",
+      "edit_sheet_title": "Verpackungsart",
+      "create_description": "Ein Karton, eine Palette oder ein Container, in den dieser Shop Ware packt.",
+      "edit_description": "Produkte in diesem Karton übernehmen seine Maße — eine Änderung korrigiert alle.",
+      "dimensions_column": "Maße",
+      "volume_column": "Volumen",
+      "kinds": {
+        "box": "Karton",
+        "envelope": "Umschlag",
+        "carton": "Umkarton",
+        "pallet": "Palette",
+        "container": "Container"
+      },
+      "messages": {
+        "added": "Verpackungsart hinzugefügt",
+        "updated": "Verpackungsart aktualisiert",
+        "deleted": "Verpackungsart gelöscht"
+      },
+      "delete_confirm": {
+        "title": "Verpackungsart löschen?",
+        "message": "{{name}} wird entfernt. Darin verpackte Produkte müssen zuerst umgepackt werden."
+      },
+      "validation": {
+        "non_negative": "muss null oder größer sein"
+      }
+    },
     "pages": {
       "settings": {
         "stock_locations": {
           "add_sheet_title": "Lagerstandort hinzufügen",
           "edit_sheet_title": "Lagerstandort bearbeiten",
           "search_placeholder": "Lagerstandorte suchen…"
+        },
+        "package_types": {
+          "add_sheet_title": "Verpackungsart hinzufügen"
         }
       },
       "products": {

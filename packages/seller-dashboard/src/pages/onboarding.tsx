@@ -494,6 +494,10 @@ function panelRoute(kind: string): string | undefined {
       return '/$sellerId/profile'
     case 'policy':
       return '/$sellerId/settings/policies'
+    case 'delivery_method':
+      return '/$sellerId/settings/delivery-methods'
+    case 'package_type':
+      return '/$sellerId/settings/package-types'
     // `required_custom_fields` is not here: it renders its own fields inline,
     // so a link away would offer a second, worse route to the same thing.
     //

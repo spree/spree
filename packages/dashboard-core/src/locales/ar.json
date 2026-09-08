@@ -624,6 +624,45 @@
       "name": {
         "label": "الاسم"
       },
+      "package_type": {
+        "name": {
+          "label": "الاسم"
+        },
+        "kind": {
+          "label": "النوع",
+          "help": "الكرتونة وحدها يمكن أن تكون تغليف المنتج."
+        },
+        "length": {
+          "label": "الطول"
+        },
+        "width": {
+          "label": "العرض"
+        },
+        "height": {
+          "label": "الارتفاع"
+        },
+        "dimensions_unit": {
+          "label": "الوحدة"
+        },
+        "dimensions": {
+          "help": "تُستخدم للوزن الحجمي للناقل وللأمتار المكعبة في فئات الشحن."
+        },
+        "weight": {
+          "label": "الوزن فارغًا",
+          "help": "التغليف نفسه، يُضاف إلى محتواه."
+        },
+        "max_weight": {
+          "label": "أقصى وزن",
+          "help": "ما يمكنه حمله."
+        },
+        "weight_unit": {
+          "label": "الوحدة"
+        },
+        "default": {
+          "label": "صندوق المتجر الافتراضي",
+          "help": "أساس كل تسعيرة طرد. واحد فقط لكل متجر."
+        }
+      },
       "number": {
         "label": "الرقم"
       },
@@ -989,12 +1028,46 @@
       "tax_category_saved": "تم حفظ فئة الضريبة",
       "updated": "تم التحديث"
     },
+    "package_types": {
+      "table_title": "أنواع التغليف",
+      "search_placeholder": "ابحث عن تغليف",
+      "empty": "لا يوجد تغليف بعد. أضف صندوق الشحن، والكراتين والمنصات التي تغادر بها طلبات الجملة.",
+      "add_cta": "إضافة نوع تغليف",
+      "default_badge": "افتراضي المتجر",
+      "edit_sheet_title": "نوع التغليف",
+      "create_description": "صندوق أو كرتونة أو منصة أو حاوية يعبّئ فيها هذا المتجر بضاعته.",
+      "edit_description": "المنتجات المعبأة في هذه الكرتونة تتبع مقاساتها، فتعديل واحد يصحّحها جميعًا.",
+      "dimensions_column": "الأبعاد",
+      "volume_column": "الحجم",
+      "kinds": {
+        "box": "صندوق",
+        "envelope": "ظرف",
+        "carton": "كرتونة",
+        "pallet": "منصة",
+        "container": "حاوية"
+      },
+      "messages": {
+        "added": "تمت إضافة نوع التغليف",
+        "updated": "تم تحديث نوع التغليف",
+        "deleted": "تم حذف نوع التغليف"
+      },
+      "delete_confirm": {
+        "title": "حذف نوع التغليف؟",
+        "message": "سيتم حذف {{name}}. يجب أولًا إعادة تعبئة المنتجات المعبأة فيه."
+      },
+      "validation": {
+        "non_negative": "يجب أن يكون صفرًا أو أكثر"
+      }
+    },
     "pages": {
       "settings": {
         "stock_locations": {
           "add_sheet_title": "إضافة موقع المخزون",
           "edit_sheet_title": "تحرير موقع المخزون",
           "search_placeholder": "البحث عن مواقع المخزون…"
+        },
+        "package_types": {
+          "add_sheet_title": "إضافة نوع تغليف"
         }
       },
       "products": {

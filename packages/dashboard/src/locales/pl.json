@@ -5300,6 +5300,12 @@
       },
       "validation": {
         "non_negative": "musi wynosić zero lub więcej"
+      },
+      "columns": {
+        "seller": "Właściciel"
+      },
+      "owner": {
+        "marketplace": "Marketplace"
       }
     }
   }

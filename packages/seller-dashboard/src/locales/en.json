@@ -302,7 +302,8 @@
     "settings": "Settings",
     "sign_out": "Sign out",
     "team": "Team",
-    "delivery_methods": "Delivery methods"
+    "delivery_methods": "Delivery methods",
+    "package_types": "Package types"
   },
   "onboarding": {
     "accept_terms": "Accept the terms",

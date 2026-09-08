@@ -152,12 +152,19 @@ export interface PanelApiClient {
     list(params?: Record<string, unknown>): Promise<{ data: PanelDeliveryProfile[] }>
   }
   /**
-   * The store's packaging vocabulary. Read by the variant editor to offer
-   * the carton a product is packed into; the panel passes `kind` through so
-   * only cartons are listed.
+   * The packaging this panel can see: the boxes parcels ship in, the cartons
+   * products are packed into, the pallets a wholesale order leaves on.
+   *
+   * `list` alone is enough for the variant editor's carton picker, which is
+   * why the write methods are optional — a panel that only needs the picker
+   * registers `list` and the packaging settings page is simply not routed.
    */
   packageTypes?: {
-    list(params?: Record<string, unknown>): Promise<{ data: PanelPackageType[] }>
+    list(params?: Record<string, unknown>): Promise<{ data: PanelPackageType[]; meta?: unknown }>
+    get?(id: string): Promise<PanelPackageType>
+    create?(params: PanelPackageTypeParams): Promise<PanelPackageType>
+    update?(id: string, params: PanelPackageTypeParams): Promise<PanelPackageType>
+    delete?(id: string): Promise<void>
   }
   /**
    * Headers a file download must carry beyond the bearer token.
@@ -286,6 +293,46 @@ export interface PanelPackageType extends PanelNamedRecord {
   width?: string | null
   height?: string | null
   dimensions_unit?: string | null
+  /** The empty package's own weight, added to every quote. */
+  weight?: string | null
+  max_weight?: string | null
+  weight_unit?: string | null
+  /** Cubic meters, derived; null until every side is measured. */
+  volume?: string | null
+  /** The box this owner's parcels are quoted with — one per owner. */
+  default?: boolean
+  /**
+   * False on a row this panel may read but not change: the seller panel lists
+   * the marketplace's packaging so a seller knows what they can pack into,
+   * and every write against it is refused. Absent on the operator's own
+   * serializer, where every row is theirs, so the page treats undefined as
+   * editable.
+   */
+  editable?: boolean
+  /** Whose packaging this is; null is the marketplace's own. */
+  seller_id?: string | null
+  seller_name?: string | null
+  created_at?: string
+  updated_at?: string
+}
+
+/**
+ * Measurements written back for a package type. Every field optional: the
+ * form sends the whole shape on create, and a partial one when a single
+ * measurement changes.
+ */
+export interface PanelPackageTypeParams {
+  name?: string
+  kind?: string
+  length?: number | null
+  width?: number | null
+  height?: number | null
+  dimensions_unit?: string | null
+  weight?: number | null
+  max_weight?: number | null
+  weight_unit?: string | null
+  default?: boolean
+  metadata?: Record<string, unknown> | null
 }
 
 /**

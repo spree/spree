@@ -5233,6 +5233,12 @@
       },
       "validation": {
         "non_negative": "必须大于或等于零"
+      },
+      "columns": {
+        "seller": "所有者"
+      },
+      "owner": {
+        "marketplace": "市场平台"
       }
     }
   }

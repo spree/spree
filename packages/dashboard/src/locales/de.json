@@ -5242,6 +5242,12 @@
       },
       "validation": {
         "non_negative": "muss null oder größer sein"
+      },
+      "columns": {
+        "seller": "Inhaber"
+      },
+      "owner": {
+        "marketplace": "Marktplatz"
       }
     }
   }
