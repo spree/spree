@@ -5016,3 +5016,30 @@ leave it.
 the Wholesale list — the import sheet's example download is then a real
 ladder, and a fresh QA environment shows breaks without a script.
 
+## 2026-09-08 — Price list rows are the membership model, and a job keeps them in step with the store's currencies
+
+A store that added a market with a new currency found its existing price
+lists empty in that currency: the spreadsheet shows a currency's products
+through the list's quantity-1 placeholder rows, and those were materialized
+only for the currencies known when the products were added.
+
+**Kept: placeholder rows define membership.** `add_products` writes a
+row per variant × store currency; the products endpoint, the "N prices
+configured" count and the spreadsheet all read those rows. A
+`Spree::PriceLists::SyncCurrenciesJob` now runs for the store after a market
+is created or changes currency; it re-runs `add_products` for what each list
+already holds,
+which inserts only the missing currency's rows. A removed currency keeps its
+rows — dropping merchant-typed prices is not a side effect a market edit may
+have. Markets are the only trigger: a store's currency set is
+configured through them, and the legacy `supported_currencies` column is no
+longer editable. The CSV import materializes the same placeholders for the products it
+prices, so an imported product is on the list the way an added one is.
+
+**Not taken: derive the grid from membership.** The spreadsheet could build
+its rows from the list's products and variants and show empty cells for any
+currency with nothing to sync. It would move the row model out of the
+database into the editor: the products endpoint would have to hand the
+editor variant rows, and the count and empty-state logic would follow. One
+model in one place, kept true by an idempotent job, was the smaller change.
+

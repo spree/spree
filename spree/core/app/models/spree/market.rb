@@ -86,6 +86,7 @@ module Spree
 
     before_save :ensure_single_default
     before_destroy :ensure_can_be_deleted
+    after_commit :sync_price_list_currencies, on: %i[create update], if: :saved_change_to_currency?
 
     #
     # Scopes
@@ -211,6 +212,13 @@ module Spree
         store.association(:default_market).reset
         store.association(:markets).reset if store.association_cached?(:markets)
       end
+    end
+
+    # A new currency has to reach every price list of the store, or the
+    # price spreadsheet shows the lists as empty in it
+    # (Spree::PriceLists::SyncCurrenciesJob).
+    def sync_price_list_currencies
+      Spree::PriceLists::SyncCurrenciesJob.perform_later(store_id)
     end
 
     def ensure_can_be_deleted

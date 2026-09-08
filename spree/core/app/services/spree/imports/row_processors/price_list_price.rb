@@ -46,6 +46,10 @@ module Spree
           result = Spree::Prices::BulkUpsert.call(rows: [row])
           raise ArgumentError, failure_message(result) unless result.success?
 
+          # After the write, and only for a row that priced something: a
+          # refused row must not put its product on the list, and neither
+          # must a blank one, whose whole job is to take a rung away.
+          ensure_membership(price_list, variant) if row[:amount].present?
           remember_compare_at(variant, currency, (quantity || 1).to_i, row)
           variant
         end
@@ -98,6 +102,18 @@ module Spree
           raise ArgumentError, Spree.t(:price_list_import_invalid_amount, column: column, value: text) unless text.match?(AMOUNT_FORMAT)
 
           BigDecimal(text)
+        end
+
+        # A product added through the dashboard gets a placeholder row per
+        # store currency, which is what puts it in every currency's grid. A
+        # variant the file prices gets the same, once per product per job, so
+        # an imported product is on the list the way an added one is rather
+        # than only in the currencies the file mentioned.
+        def ensure_membership(price_list, variant)
+          cached_lookup(:price_list_import_membership, variant.product_id) do
+            price_list.add_products([variant.product_id])
+            true
+          end
         end
 
         def mapped?(field)

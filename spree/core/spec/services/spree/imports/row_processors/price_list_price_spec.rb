@@ -33,6 +33,16 @@ RSpec.describe Spree::Imports::RowProcessors::PriceListPrice, type: :service do
       expect(rung(1).amount).to eq(18)
       expect(rung(1).compare_at_amount).to eq(20)
     end
+
+    # An added product gets a placeholder per store currency; an imported one
+    # must too, or it is only on the list in the currencies the file named.
+    it 'puts the variant on the list in every store currency' do
+      subject.process!
+
+      other = price_list.prices.where(variant: variant).where.not(currency: 'USD')
+      expect(other.pluck(:currency)).to match_array(store.supported_currencies_list.map(&:iso_code) - ['USD'])
+      expect(other.pluck(:amount).uniq).to eq([nil])
+    end
   end
 
   context 'with a quantity break' do
@@ -42,7 +52,8 @@ RSpec.describe Spree::Imports::RowProcessors::PriceListPrice, type: :service do
       subject.process!
 
       expect(rung(24).amount).to eq(16.5)
-      expect(rung(1)).to be_nil
+      # Membership only: the bottom rung is a placeholder, not a price.
+      expect(rung(1).amount).to be_nil
     end
   end
 
@@ -78,6 +89,26 @@ RSpec.describe Spree::Imports::RowProcessors::PriceListPrice, type: :service do
 
     it 'fails the row rather than guessing the locale' do
       expect { subject.process! }.to raise_error(ArgumentError, /price must be/)
+    end
+  end
+
+  context 'when the row is refused' do
+    let(:row_data) { csv_row_hash('sku' => 'DENIM-M', 'min_quantity' => '2.5', 'price' => '10') }
+
+    it 'leaves the product off the list' do
+      expect { subject.process! }.to raise_error(ArgumentError)
+
+      expect(price_list.prices.where(variant: variant)).to be_empty
+    end
+  end
+
+  context 'when the row only removes a rung' do
+    let(:row_data) { csv_row_hash('sku' => 'DENIM-M', 'currency' => 'USD', 'price' => '') }
+
+    it 'does not put a product the list never held onto it' do
+      subject.process!
+
+      expect(price_list.prices.where(variant: variant)).to be_empty
     end
   end
 
