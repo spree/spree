@@ -87,7 +87,7 @@ Requirements come in three flavours, which is what lets one mechanism cover very
 | **Attested** | The seller confirms something — accepting terms |
 | **Verified** | The seller submits something and the marketplace rules on it — a document, an operator review |
 
-Shipped out of the box: accepting terms, completing the profile, a billing address, a returns address, and a minimum number of products. Also available are generic document upload, attestation, operator review, and required custom fields.
+Shipped out of the box: accepting terms, completing the profile, a billing address, a returns address, a way to ship, the box they ship in, and a minimum number of products. Also available are generic document upload, attestation, operator review, and required custom fields.
 
 A seller sees their checklist and its progress:
 
@@ -205,7 +205,7 @@ await sellerClient.orders.fulfillments.fulfill(orderId, fulfillmentId, {
 })
 ```
 
-Sellers can manage their profile, invite their own team, list and submit products, see and fulfil their orders, manage their stock locations, and work through onboarding. They cannot see other sellers, the marketplace's own catalog, or anything belonging to the store at large.
+Sellers can manage their profile, invite their own team, list and submit products, see and fulfil their orders, manage their stock locations, delivery methods and packaging, and work through onboarding. They cannot see other sellers, the marketplace's own catalog, or anything belonging to the store at large.
 
 What a seller's staff may do is governed by [roles](/developer/core-concepts/staff-roles) owned by the seller — the same permission system as the back office, with a narrower set of keys, so a seller role can never reach store settings.
 
@@ -214,5 +214,6 @@ What a seller's staff may do is governed by [roles](/developer/core-concepts/sta
 - [Commissions](/developer/core-concepts/commissions) — rates, rules, and what the marketplace charges
 - [Products](/developer/core-concepts/products#seller-submissions) — the listing review flow
 - [Orders](/developer/core-concepts/orders) — orders and their statuses
+- [Delivery setup](/developer/core-concepts/delivery-setup#on-a-marketplace) — how a seller's goods ship, and what they ship in
 - [Staff & Roles](/developer/core-concepts/staff-roles) — how seller teams are governed
 - [Seller API](/api-reference/seller-api/introduction) — the full endpoint reference

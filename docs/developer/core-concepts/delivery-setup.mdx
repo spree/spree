@@ -122,6 +122,68 @@ A method is priced one of two ways, and the choice is per method:
 A carrier-priced method returns one option per service, so a single "Carrier
 rates" method can offer Ground, 2-Day and Overnight as separate choices.
 
+## Packaging
+
+Every quote needs to know what the goods travel in. A carrier charges by
+dimensional weight as well as actual weight, so the size of the box matters to
+the price, and the empty box's own weight has to be added to what it holds —
+otherwise every parcel is quoted light.
+
+Package types are that vocabulary: the box parcels ship in, and for wholesale,
+the cartons products are packed into and the pallets or containers an order
+leaves on.
+
+```typescript Admin SDK
+await adminClient.packageTypes.create({
+  name: 'Standard mailer',
+  kind: 'box',
+  length: 30, width: 20, height: 15, dimensions_unit: 'cm',
+  weight: 0.4, weight_unit: 'kg',
+  default: true,
+})
+```
+
+One row is marked `default`, and that is the box quotes are built on. Marking
+another one default demotes the first, so there is never more than one.
+
+Measurements are optional individually, which is how a merchant records what
+they know. A box with no dimensions still contributes its weight; a box with
+nothing measured contributes nothing, and dimensional pricing has nothing to
+work from.
+
+<Note>
+Deleting the default box is refused, and so is switching its flag off when
+nothing else would take it. Both would leave quotes with no size and no tare,
+which under-prices bulky parcels silently rather than failing.
+</Note>
+
+### On a marketplace
+
+A seller packs their own goods, in their own boxes, from their own warehouse.
+So packaging has an owner: rows created by the operator are the marketplace's,
+and each seller has their own.
+
+A parcel is quoted with the box belonging to whoever's warehouse it left,
+falling back to the marketplace's when a seller has not recorded one. Sellers
+manage theirs through the Seller API, and can also pack products into the
+marketplace's cartons — those they read but cannot change.
+
+```typescript Seller SDK
+const { data: packaging } = await sellerClient.packageTypes.list()
+
+packaging.forEach((row) => {
+  row.name
+  row.editable   // false on the marketplace's own rows
+  row.default    // this seller's default box
+})
+```
+
+Because the fallback keeps checkout working, a seller who never opens the page
+would quietly ship with someone else's measurements. The **shipping box**
+onboarding requirement is what asks them for it: it is satisfied by a default
+box of their own with all three dimensions and a weight recorded. See
+[sellers](/developer/core-concepts/sellers#onboarding-requirements).
+
 ## Related
 
 - [Fulfillments](/developer/core-concepts/fulfillments) — what happens to the parcel afterwards
