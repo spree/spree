@@ -97,6 +97,8 @@ try {
 }
 ```
 
+If a proxy or server returns an empty body, non-JSON content, or JSON without a valid Spree error, the error has code `http_error` and retains the HTTP status. The raw response body is omitted. For requests outside `/auth/`, a `401` still reaches the registered `onUnauthorized` handler. Retry decisions still follow the configured HTTP status policy.
+
 ### Validation errors
 
 On `422` responses, `details` maps attribute names to arrays of messages — ready to project onto form fields:

@@ -47,6 +47,8 @@ The channel scopes product visibility (only products published on that channel a
 
 ## Error Handling
 
+Unsuccessful HTTP responses throw a `SpreeError`. If a proxy or server returns an empty body, non-JSON content, or JSON without a valid Spree error, the error has code `http_error`, retains the HTTP status, and omits the raw response body. Retry decisions still follow the configured HTTP status policy.
+
 ```typescript
 import { SpreeError } from '@spree/sdk';
 
