@@ -7,6 +7,7 @@ import {
   useResourceMutation,
 } from '@spree/dashboard-core'
 import { useQuery, useQueryClient } from '@tanstack/react-query'
+import { TRANSLATIONS_QUERY_RESOURCE } from './use-translations'
 
 export function useProduct(id: string) {
   return useQuery({
@@ -46,7 +47,8 @@ export function useCreateProduct() {
   return useResourceMutation<Product, Error, ProductCreateParams>({
     mutationFn: (params) => adminClient.products.create(params),
     // STORE_QUERY_RESOURCE refreshes the setup-task state (Getting Started + nav badge).
-    invalidate: [['products'], [STORE_QUERY_RESOURCE]],
+    // Translations coverage lists every product, so a create leaves it stale.
+    invalidate: [['products'], [TRANSLATIONS_QUERY_RESOURCE], [STORE_QUERY_RESOURCE]],
     successMessage: false,
     errorMessage: false,
   })
@@ -58,7 +60,7 @@ export function useUpdateProduct() {
 
   return useResourceMutation<Product, Error, { id: string } & ProductUpdateParams>({
     mutationFn: ({ id, ...params }) => adminClient.products.update(id, params),
-    invalidate: [['products']],
+    invalidate: [['products'], [TRANSLATIONS_QUERY_RESOURCE]],
     successMessage: false,
     errorMessage: false,
     onSuccess: (_data, variables) => {
@@ -107,7 +109,7 @@ export function useDeleteProduct() {
 
   return useResourceMutation<void, Error, string>({
     mutationFn: (id) => adminClient.products.delete(id),
-    invalidate: [['products'], [STORE_QUERY_RESOURCE]],
+    invalidate: [['products'], [TRANSLATIONS_QUERY_RESOURCE], [STORE_QUERY_RESOURCE]],
     successMessage: false,
     errorMessage: false,
     onSuccess: (_data, id) => {

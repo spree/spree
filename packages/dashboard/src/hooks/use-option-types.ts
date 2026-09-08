@@ -12,6 +12,7 @@ import {
 } from '@spree/dashboard-core'
 import { useQuery, useQueryClient } from '@tanstack/react-query'
 import i18n from 'i18next'
+import { TRANSLATIONS_QUERY_RESOURCE } from './use-translations'
 
 /** Human-readable label for an option value, including its option type. */
 export function optionValueLabel(optionValue: OptionValue): string {
@@ -104,7 +105,7 @@ export function useOptionType(id: string | undefined) {
 export function useCreateOptionType() {
   return useResourceMutation<OptionType, Error, OptionTypeCreateParams>({
     mutationFn: (params) => adminClient.optionTypes.create(params),
-    invalidate: [['option-types']],
+    invalidate: [['option-types'], [TRANSLATIONS_QUERY_RESOURCE]],
     successMessage: i18n.t('admin.option_types.messages.created'),
     errorMessage: i18n.t('admin.errors.failed_to_create'),
   })
@@ -113,7 +114,7 @@ export function useCreateOptionType() {
 export function useUpdateOptionType(id: string) {
   return useResourceMutation<OptionType, Error, OptionTypeUpdateParams>({
     mutationFn: (params) => adminClient.optionTypes.update(id, params),
-    invalidate: [['option-types'], ['option-types', id]],
+    invalidate: [['option-types'], ['option-types', id], [TRANSLATIONS_QUERY_RESOURCE]],
     successMessage: i18n.t('admin.option_types.messages.updated'),
     errorMessage: i18n.t('admin.errors.failed_to_update'),
   })
@@ -125,7 +126,7 @@ export function useDeleteOptionType() {
 
   return useResourceMutation<void, Error, string>({
     mutationFn: (id) => adminClient.optionTypes.delete(id),
-    invalidate: [['option-types']],
+    invalidate: [['option-types'], [TRANSLATIONS_QUERY_RESOURCE]],
     successMessage: i18n.t('admin.option_types.messages.deleted'),
     errorMessage: i18n.t('admin.errors.failed_to_delete'),
     onSuccess: (_data, id) => {

@@ -60,6 +60,15 @@ export function isTranslatableResourceType(
 }
 
 /**
+ * Logical query-key prefix for every translations query — coverage grids and
+ * per-record matrices. Product (and other catalog) writes must invalidate
+ * this prefix: the matrix used to live under `['product', id, 'translations']`,
+ * which `['products']` never matches, so editing a record left the
+ * translations page serving a stale cache.
+ */
+export const TRANSLATIONS_QUERY_RESOURCE = 'translations'
+
+/**
  * Full translation matrix for any translatable resource: source values +
  * content type per field, plus the translated value for every supported locale
  * (with nested translatable children, e.g. an option type's values). Writes go
@@ -70,7 +79,7 @@ export function useResourceTranslations(
   resourceId: string,
 ) {
   return useQuery<ResourceTranslations>({
-    queryKey: useResourceKey(resourceType, resourceId, 'translations'),
+    queryKey: useResourceKey(TRANSLATIONS_QUERY_RESOURCE, resourceType, resourceId),
     queryFn: () => TRANSLATIONS_ACCESSORS[resourceType].get(resourceId),
     enabled: !!resourceId,
   })
@@ -97,7 +106,7 @@ export function useTranslationCoverage(
   params: { page?: number; limit?: number } & Record<string, unknown>,
 ) {
   return useQuery({
-    queryKey: useResourceKey('translations', 'coverage', resourceType, params),
+    queryKey: useResourceKey(TRANSLATIONS_QUERY_RESOURCE, 'coverage', resourceType, params),
     queryFn: () => adminClient.translations.coverage(resourceType, params),
     enabled: !!resourceType,
     // Hold the previous result while a new term or page loads. Without it

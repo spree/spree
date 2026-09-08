@@ -19,13 +19,21 @@ const IMPORT_POLL_INTERVAL_MS = 2000
 const ROWS_POLL_INTERVAL_MS = 5000
 
 // Caches any import may have written to, plus `imports` itself (history table
-// status column). Deliberately not per-type — imports are rare, so a few
+// status column) and `translations` (product-translation CSV updates the
+// coverage grid). Deliberately not per-type — imports are rare, so a few
 // extra refetches beat maintaining a type → resource map (product rows alone
 // fan out to option types/values and categories created on the fly).
 //
 // These are the operator dashboard's key names; a panel that names its lists
 // differently adds its own through the client's `invalidateKeys`.
-const IMPORT_TOUCHED_RESOURCES = ['products', 'option-types', 'categories', 'customers', 'imports']
+const IMPORT_TOUCHED_RESOURCES = [
+  'products',
+  'option-types',
+  'categories',
+  'customers',
+  'imports',
+  'translations',
+]
 
 /** Whether the import's pipeline is still running (the poll's continue predicate). */
 export function isImportActive(status: string | undefined): boolean {
