@@ -25,7 +25,7 @@ RSpec.describe 'Admin Package Types API', type: :request, swagger_doc: 'api-refe
         volume rules compare against. It is null until all three sides are
         measured.
       DESC
-      admin_scope :read, :settings
+      admin_scope :read, :package_types
 
       admin_sdk_example 'package-types/list'
 
@@ -76,7 +76,7 @@ RSpec.describe 'Admin Package Types API', type: :request, swagger_doc: 'api-refe
         A variant references a `carton`-kind row to say what it is packed
         into; other kinds are the merchant's own vocabulary.
       DESC
-      admin_scope :write, :settings
+      admin_scope :write, :package_types
 
       admin_sdk_example 'package-types/create'
 
@@ -134,7 +134,7 @@ RSpec.describe 'Admin Package Types API', type: :request, swagger_doc: 'api-refe
       produces 'application/json'
       security [api_key: [], bearer_auth: []]
       description 'Returns a single package type by prefixed ID.'
-      admin_scope :read, :settings
+      admin_scope :read, :package_types
 
       admin_sdk_example 'package-types/get'
 
@@ -170,7 +170,7 @@ RSpec.describe 'Admin Package Types API', type: :request, swagger_doc: 'api-refe
       produces 'application/json'
       security [api_key: [], bearer_auth: []]
       description 'Updates a package type. Every product packed in it follows the new geometry.'
-      admin_scope :write, :settings
+      admin_scope :write, :package_types
 
       admin_sdk_example 'package-types/update'
 
@@ -213,7 +213,7 @@ RSpec.describe 'Admin Package Types API', type: :request, swagger_doc: 'api-refe
         Removes a kind of packaging. Refused while any variant is packed into
         it — repack those products first.
       DESC
-      admin_scope :write, :settings
+      admin_scope :write, :package_types
 
       admin_sdk_example 'package-types/delete'
 

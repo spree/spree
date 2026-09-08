@@ -1737,12 +1737,12 @@ en:
       minimum_products:
         description: List at least this many products
         name: Minimum products
-      package_type:
-        description: Tell us the size and weight of the box you ship orders in
-        name: Shipping box
       operator_review:
         description: The marketplace checks this by hand before approving you
         name: Manual check
+      package_type:
+        description: Tell us the size and weight of the box you ship orders in
+        name: Shipping box
       policy:
         description: Publish a policy with this name
         name: Seller policy

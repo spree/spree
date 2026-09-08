@@ -420,7 +420,7 @@ paths:
                   avatar_url:
                 sellers:
                 - id: sel_UkLWZg9DAJ
-                  name: Seller 70
+                  name: Seller 77
                   status: approved
               schema:
                 "$ref": "#/components/schemas/AuthResponse"
@@ -13996,8 +13996,8 @@ paths:
             application/json:
               example:
                 id: sel_UkLWZg9DAJ
-                name: Seller 87
-                slug: seller-87
+                name: Seller 94
+                slug: seller-94
                 about: ''
                 about_html: ''
                 logo_url:
@@ -14069,7 +14069,7 @@ paths:
               example:
                 id: sel_UkLWZg9DAJ
                 name: Acme Supplies
-                slug: seller-89
+                slug: seller-96
                 about: ''
                 about_html: ''
                 logo_url:
@@ -14816,10 +14816,10 @@ paths:
             application/json:
               example:
                 direct_upload:
-                  url: http://www.example.com/rails/active_storage/disk/eyJfcmFpbHMiOnsiZGF0YSI6eyJrZXkiOiJuem5oOGdra3VxendvbDc1ODBxNHNwZmpmMjVxIiwiY29udGVudF90eXBlIjoiYXBwbGljYXRpb24vcGRmIiwiY29udGVudF9sZW5ndGgiOjUxMjM0LCJjaGVja3N1bSI6IlZqaHowNGxRdUVHdXY0bkR2aHNhTlE9PSIsInNlcnZpY2VfbmFtZSI6InRlc3QifSwiZXhwIjoiMjAyNi0wMS0xNVQxMjowNTowMC4wMDBaIiwicHVyIjoiYmxvYl90b2tlbiJ9fQ==--d405b93fe982c6dc17f531d9513d5724b68c2440
+                  url: http://www.example.com/rails/active_storage/disk/eyJfcmFpbHMiOnsiZGF0YSI6eyJrZXkiOiJuem5oOGdra3VxendvbDc1ODBxNHNwZmpmMjVxIiwiY29udGVudF90eXBlIjoiYXBwbGljYXRpb24vcGRmIiwiY29udGVudF9sZW5ndGgiOjUxMjM0LCJjaGVja3N1bSI6IlZqaHowNGxRdUVHdXY0bkR2aHNhTlE9PSIsInNlcnZpY2VfbmFtZSI6InRlc3QifSwiZXhwIjoiMjAyNi0wMS0xNVQxMjowNTowMC4wMDBaIiwicHVyIjoiYmxvYl90b2tlbiJ9fQ==--90ea643bd59542dcfdac7b6237df290a67faadbe
                   headers:
                     Content-Type: application/pdf
-                signed_id: eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--22b0b06fdcb2e00b205d0a6800cb54c308345930
+                signed_id: eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--8397c7f5947f42bb70d44a0210e65d936a4aa78f
               schema:
                 "$ref": "#/components/schemas/DirectUploadResponse"
       requestBody:
@@ -17354,6 +17354,351 @@ paths:
                       "$ref": "#/components/schemas/Reason"
                 required:
                 - data
+  "/api/v3/seller/package_types":
+    get:
+      summary: List package types
+      tags:
+      - Package Types
+      security:
+      - bearer_auth: []
+      description: |
+        What this seller packs their goods into: the boxes their parcels ship
+        in, the cartons their products are packed into, the pallets a
+        wholesale order leaves on.
+
+        The list carries the marketplace's own packaging alongside the
+        seller's, so a seller can pack into the operator's standard cartons
+        rather than measuring them again. Those rows report `editable: false`
+        and are refused by every write.
+
+        The row marked `default` is the box this seller's parcels are quoted
+        with — its size and weight are added to every rate.
+      parameters:
+      - name: X-Spree-Seller-Id
+        in: header
+        required: true
+        schema:
+          type: string
+      - name: page
+        in: query
+        required: false
+        description: Page number
+        schema:
+          type: integer
+      - name: limit
+        in: query
+        required: false
+        description: Records per page (max 100)
+        schema:
+          type: integer
+      responses:
+        '200':
+          description: package types listed
+          content:
+            application/json:
+              example:
+                data:
+                - id: pkgtype_UkLWZg9DAJ
+                  name: Standard mailer
+                  kind: box
+                  length: '30.0'
+                  width: '20.0'
+                  height: '15.0'
+                  weight: '0.4'
+                  max_weight:
+                  default: true
+                  metadata: {}
+                  created_at: '2026-01-15T12:00:00.000Z'
+                  updated_at: '2026-01-15T12:00:00.000Z'
+                  dimensions_unit: cm
+                  weight_unit: kg
+                  volume: '0.009'
+                  editable: true
+                - id: pkgtype_gbHJdmfrXB
+                  name: Marketplace carton
+                  kind: carton
+                  length: '40.0'
+                  width: '30.0'
+                  height: '25.0'
+                  weight:
+                  max_weight: '20.0'
+                  default: false
+                  metadata: {}
+                  created_at: '2026-01-15T12:00:00.000Z'
+                  updated_at: '2026-01-15T12:00:00.000Z'
+                  dimensions_unit: cm
+                  weight_unit: kg
+                  volume: '0.03'
+                  editable: false
+                meta:
+                  page: 1
+                  limit: 25
+                  count: 2
+                  pages: 1
+                  from: 1
+                  to: 2
+                  in: 2
+                  previous:
+                  next:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      "$ref": "#/components/schemas/PackageType"
+                  meta:
+                    "$ref": "#/components/schemas/PaginationMeta"
+                required:
+                - data
+                - meta
+    post:
+      summary: Create a package type
+      tags:
+      - Package Types
+      security:
+      - bearer_auth: []
+      description: |
+        Records a piece of the seller's own packaging. Marking it `default`
+        makes it the box their parcels are quoted with, and demotes whichever
+        of their rows held the flag before — the marketplace's default is a
+        different owner's row and is left alone.
+      parameters:
+      - name: X-Spree-Seller-Id
+        in: header
+        required: true
+        schema:
+          type: string
+      responses:
+        '201':
+          description: package type created
+          content:
+            application/json:
+              example:
+                id: pkgtype_EfhxLZ9ck8
+                name: Large mailer
+                kind: box
+                length: '40.0'
+                width: '30.0'
+                height: '20.0'
+                weight: '0.6'
+                max_weight:
+                default: false
+                metadata: {}
+                created_at: '2026-01-15T12:00:00.000Z'
+                updated_at: '2026-01-15T12:00:00.000Z'
+                dimensions_unit: cm
+                weight_unit: kg
+                volume: '0.024'
+                editable: true
+              schema:
+                "$ref": "#/components/schemas/PackageType"
+        '422':
+          description: validation error
+          content:
+            application/json:
+              example:
+                error:
+                  code: validation_error
+                  message: Kind is not included in the list
+                  details:
+                    kind:
+                    - is not included in the list
+              schema:
+                "$ref": "#/components/schemas/ErrorResponse"
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                kind:
+                  type: string
+                  enum:
+                  - box
+                  - envelope
+                  - carton
+                  - pallet
+                  - container
+                length:
+                  type: number
+                  nullable: true
+                width:
+                  type: number
+                  nullable: true
+                height:
+                  type: number
+                  nullable: true
+                dimensions_unit:
+                  type: string
+                  nullable: true
+                weight:
+                  type: number
+                  nullable: true
+                  description: The empty package's own weight, added to every quote
+                max_weight:
+                  type: number
+                  nullable: true
+                weight_unit:
+                  type: string
+                  nullable: true
+                default:
+                  type: boolean
+              required:
+              - name
+              - kind
+        required: true
+  "/api/v3/seller/package_types/{id}":
+    parameters:
+    - name: id
+      in: path
+      required: true
+      description: Package type ID
+      schema:
+        type: string
+    get:
+      summary: Get a package type
+      tags:
+      - Package Types
+      security:
+      - bearer_auth: []
+      description: |
+        Returns one package type by prefixed ID — the seller's own, or a
+        marketplace row they may pack into.
+      parameters:
+      - name: X-Spree-Seller-Id
+        in: header
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: package type found
+          content:
+            application/json:
+              example:
+                id: pkgtype_UkLWZg9DAJ
+                name: Standard mailer
+                kind: box
+                length: '30.0'
+                width: '20.0'
+                height: '15.0'
+                weight: '0.4'
+                max_weight:
+                default: true
+                metadata: {}
+                created_at: '2026-01-15T12:00:00.000Z'
+                updated_at: '2026-01-15T12:00:00.000Z'
+                dimensions_unit: cm
+                weight_unit: kg
+                volume: '0.009'
+                editable: true
+              schema:
+                "$ref": "#/components/schemas/PackageType"
+        '404':
+          description: package type not found
+          content:
+            application/json:
+              example:
+                error:
+                  code: record_not_found
+                  message: Package type not found
+              schema:
+                "$ref": "#/components/schemas/ErrorResponse"
+    patch:
+      summary: Update a package type
+      tags:
+      - Package Types
+      security:
+      - bearer_auth: []
+      description: |
+        Changes the seller's own packaging. A marketplace row is not theirs to
+        edit and answers 404.
+      parameters:
+      - name: X-Spree-Seller-Id
+        in: header
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: package type updated
+          content:
+            application/json:
+              example:
+                id: pkgtype_UkLWZg9DAJ
+                name: Standard mailer
+                kind: box
+                length: '30.0'
+                width: '20.0'
+                height: '15.0'
+                weight: '0.4'
+                max_weight: '25.0'
+                default: true
+                metadata: {}
+                created_at: '2026-01-15T12:00:00.000Z'
+                updated_at: '2026-01-15T12:00:00.000Z'
+                dimensions_unit: cm
+                weight_unit: kg
+                volume: '0.009'
+                editable: true
+              schema:
+                "$ref": "#/components/schemas/PackageType"
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                kind:
+                  type: string
+                  enum:
+                  - box
+                  - envelope
+                  - carton
+                  - pallet
+                  - container
+                length:
+                  type: number
+                  nullable: true
+                width:
+                  type: number
+                  nullable: true
+                height:
+                  type: number
+                  nullable: true
+                weight:
+                  type: number
+                  nullable: true
+                max_weight:
+                  type: number
+                  nullable: true
+                default:
+                  type: boolean
+        required: true
+    delete:
+      summary: Delete a package type
+      tags:
+      - Package Types
+      security:
+      - bearer_auth: []
+      description: |
+        Retires one of the seller's own package types. The default box is
+        refused — name another default first, or every parcel silently falls
+        back to the marketplace's box.
+      parameters:
+      - name: X-Spree-Seller-Id
+        in: header
+        required: true
+        schema:
+          type: string
+      responses:
+        '204':
+          description: package type deleted
   "/api/v3/seller/orders/{order_id}/returns":
     parameters:
     - name: order_id
@@ -19912,6 +20257,66 @@ components:
       - fulfillments
       - shipping_address
       - billing_address
+      x-typelizer: true
+    PackageType:
+      type: object
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+        kind:
+          type: string
+        length:
+          type: string
+          nullable: true
+        width:
+          type: string
+          nullable: true
+        height:
+          type: string
+          nullable: true
+        weight:
+          type: string
+          nullable: true
+        max_weight:
+          type: string
+          nullable: true
+        default:
+          type: boolean
+        metadata:
+          type: object
+          nullable: true
+        created_at:
+          type: string
+        updated_at:
+          type: string
+        dimensions_unit:
+          type: string
+        weight_unit:
+          type: string
+        volume:
+          type: string
+          nullable: true
+        editable:
+          type: boolean
+      required:
+      - id
+      - name
+      - kind
+      - length
+      - width
+      - height
+      - weight
+      - max_weight
+      - default
+      - metadata
+      - created_at
+      - updated_at
+      - dimensions_unit
+      - weight_unit
+      - volume
+      - editable
       x-typelizer: true
     Policy:
       type: object
