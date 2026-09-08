@@ -5047,6 +5047,7 @@
         "units": "Received / shipped",
         "shipped": "Shipped",
         "quantity_shipped": "Shipped",
+        "quantity_to_ship": "To ship",
         "quantity_received": "Received",
         "discrepancy": "Discrepancy"
       },

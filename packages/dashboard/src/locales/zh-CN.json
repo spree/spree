@@ -5038,6 +5038,7 @@
         "units": "已收 / 已发",
         "shipped": "发出时间",
         "quantity_shipped": "已发出",
+        "quantity_to_ship": "待发出",
         "quantity_received": "已收到",
         "discrepancy": "差异"
       },

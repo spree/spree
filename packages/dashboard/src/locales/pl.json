@@ -5105,6 +5105,7 @@
         "units": "Przyjęte / wysłane",
         "shipped": "Wysłano",
         "quantity_shipped": "Wysłano",
+        "quantity_to_ship": "Do wysłania",
         "quantity_received": "Przyjęto",
         "discrepancy": "Rozbieżność"
       },

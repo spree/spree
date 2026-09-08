@@ -5047,6 +5047,7 @@
         "units": "Reçues / expédiées",
         "shipped": "Expédié",
         "quantity_shipped": "Expédiées",
+        "quantity_to_ship": "À expédier",
         "quantity_received": "Reçues",
         "discrepancy": "Écart"
       },

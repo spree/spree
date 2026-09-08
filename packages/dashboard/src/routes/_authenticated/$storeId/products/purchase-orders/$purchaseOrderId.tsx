@@ -7,7 +7,6 @@ import {
   CardHeader,
   CardTitle,
   DropdownMenuItem,
-  Input,
   RelativeTime,
   Table,
   TableBody,
@@ -22,6 +21,7 @@ import { createFileRoute, Link } from '@tanstack/react-router'
 import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { InventoryStatusBadge } from '../../../../../components/spree/inventory-status-badge'
+import { QuantityCell, QuantityHead } from '../../../../../components/spree/quantity-cell'
 import { StockHistoryCard } from '../../../../../components/spree/stock-history-card'
 import { VariantLink } from '../../../../../components/spree/variant-link'
 import {
@@ -190,47 +190,47 @@ function ItemsCard({ purchaseOrder }: { purchaseOrder: PurchaseOrder }) {
             : t('admin.purchase_orders.items_title')}
         </CardTitle>
       </CardHeader>
-      <CardContent className="flex flex-col gap-4">
+      <CardContent className="flex flex-col p-0">
         {items.length === 0 ? (
-          <p className="text-sm text-muted-foreground">{t('admin.purchase_orders.items_empty')}</p>
+          <p className="p-3 text-muted-foreground text-sm">
+            {t('admin.purchase_orders.items_empty')}
+          </p>
         ) : (
-          <div className="overflow-x-auto">
-            <Table>
-              <TableHeader>
-                <TableRow>
-                  <TableHead>{t('admin.inventory_lines.columns.variant')}</TableHead>
-                  <TableHead className="text-right">
-                    {t('admin.purchase_orders.columns.quantity_ordered')}
-                  </TableHead>
-                  <TableHead className="text-right">
-                    {t('admin.purchase_orders.columns.quantity_received')}
-                  </TableHead>
-                  <TableHead className="text-right">
-                    {t('admin.inventory_lines.columns.unit_cost')}
-                  </TableHead>
-                  <TableHead className="text-right">
-                    {t('admin.purchase_orders.columns.line_total')}
-                  </TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {items.map((item) => (
-                  <ItemRow
-                    key={item.id}
-                    item={item}
-                    receivable={receivable}
-                    count={counts[item.id] ?? item.quantity_received}
-                    onCount={(value) => setCounts((prev) => ({ ...prev, [item.id]: value }))}
-                  />
-                ))}
-              </TableBody>
-            </Table>
-          </div>
+          /* Nothing sits below the table on a draft, so its last row carries
+             the card's own curve; on a receivable order the footer does. */
+          <Table roundedBottom={!receivable}>
+            <TableHeader>
+              <TableRow>
+                <TableHead>{t('admin.inventory_lines.columns.variant')}</TableHead>
+                <TableHead className="text-right">
+                  {t('admin.purchase_orders.columns.quantity_ordered')}
+                </TableHead>
+                <QuantityHead>{t('admin.purchase_orders.columns.quantity_received')}</QuantityHead>
+                <TableHead className="text-right">
+                  {t('admin.inventory_lines.columns.unit_cost')}
+                </TableHead>
+                <TableHead className="text-right">
+                  {t('admin.purchase_orders.columns.line_total')}
+                </TableHead>
+              </TableRow>
+            </TableHeader>
+            <TableBody>
+              {items.map((item) => (
+                <ItemRow
+                  key={item.id}
+                  item={item}
+                  receivable={receivable}
+                  count={counts[item.id] ?? item.quantity_received}
+                  onCount={(value) => setCounts((prev) => ({ ...prev, [item.id]: value }))}
+                />
+              ))}
+            </TableBody>
+          </Table>
         )}
 
         {receivable && items.length > 0 && (
-          <div className="flex items-center justify-between">
-            <p className="text-sm text-muted-foreground tabular-nums">
+          <div className="flex items-center justify-between p-3">
+            <p className="text-muted-foreground text-sm tabular-nums">
               {t('admin.purchase_orders.receive_running_total', {
                 counted: totalCounted,
                 ordered: purchaseOrder.quantity_ordered_total,
@@ -274,23 +274,16 @@ function ItemRow({
         />
       </TableCell>
       <TableCell className="text-right tabular-nums">{item.quantity_ordered}</TableCell>
-      <TableCell className="text-right">
-        {receivable ? (
-          <Input
-            type="number"
-            // Never below what is already on the shelf: taking units back off
-            // is a correction, not a receive.
-            min={item.quantity_received}
-            max={item.quantity_ordered}
-            value={count}
-            onChange={(event) => onCount(Number(event.target.value))}
-            className="ml-auto w-20 text-right tabular-nums"
-            aria-label={t('admin.purchase_orders.columns.quantity_received')}
-          />
-        ) : (
-          <span className="tabular-nums">{item.quantity_received}</span>
-        )}
-      </TableCell>
+      {/* Never below what is already on the shelf: taking units back off is a
+          correction, not a receive. */}
+      <QuantityCell
+        editable={receivable}
+        value={receivable ? count : item.quantity_received}
+        min={item.quantity_received}
+        max={item.quantity_ordered}
+        label={t('admin.purchase_orders.columns.quantity_received')}
+        onChange={onCount}
+      />
       <TableCell className="text-right tabular-nums">{item.display_unit_cost}</TableCell>
       <TableCell className="text-right tabular-nums">{item.display_total_cost}</TableCell>
     </TableRow>

@@ -7,7 +7,6 @@ import {
   CardHeader,
   CardTitle,
   DropdownMenuItem,
-  Input,
   RelativeTime,
   Select,
   SelectContent,
@@ -27,6 +26,7 @@ import { createFileRoute, Link } from '@tanstack/react-router'
 import { useMemo, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { InventoryStatusBadge } from '../../../../../components/spree/inventory-status-badge'
+import { QuantityCell, QuantityHead } from '../../../../../components/spree/quantity-cell'
 import { StockHistoryCard } from '../../../../../components/spree/stock-history-card'
 import { TransferCancelDialog } from '../../../../../components/spree/transfer-cancel-dialog'
 import { VariantLink } from '../../../../../components/spree/variant-link'
@@ -194,42 +194,40 @@ function PlannedItemsCard({ transfer }: { transfer: StockTransfer }) {
       <CardHeader>
         <CardTitle>{t('admin.stock_transfers.items_title')}</CardTitle>
       </CardHeader>
-      <CardContent>
+      <CardContent className="p-0">
         {items.length === 0 ? (
-          <p className="text-sm text-muted-foreground">{t('admin.stock_transfers.items_empty')}</p>
+          <p className="p-3 text-muted-foreground text-sm">
+            {t('admin.stock_transfers.items_empty')}
+          </p>
         ) : (
-          <div className="overflow-x-auto">
-            <Table>
-              <TableHeader>
-                <TableRow>
-                  <TableHead>{t('admin.inventory_lines.columns.variant')}</TableHead>
-                  <TableHead>{t('admin.inventory_lines.columns.sku')}</TableHead>
-                  <TableHead className="text-right">
-                    {t('admin.stock_transfers.columns.quantity_shipped')}
-                  </TableHead>
+          <Table roundedBottom>
+            <TableHeader>
+              <TableRow>
+                <TableHead>{t('admin.inventory_lines.columns.variant')}</TableHead>
+                {/* Nothing has shipped yet on a draft — this is what will. The
+                    receive screen keeps `quantity_shipped`, where it is past
+                    tense and sits opposite Received. */}
+                <TableHead className="text-right">
+                  {t('admin.stock_transfers.columns.quantity_to_ship')}
+                </TableHead>
+              </TableRow>
+            </TableHeader>
+            <TableBody>
+              {items.map((item) => (
+                <TableRow key={item.id}>
+                  <TableCell>
+                    <VariantLink
+                      productId={item.product_id}
+                      name={item.variant_name}
+                      sku={item.variant_sku}
+                      thumbnailUrl={item.thumbnail_url}
+                    />
+                  </TableCell>
+                  <TableCell className="text-right tabular-nums">{item.quantity_shipped}</TableCell>
                 </TableRow>
-              </TableHeader>
-              <TableBody>
-                {items.map((item) => (
-                  <TableRow key={item.id}>
-                    <TableCell>
-                      <VariantLink
-                        productId={item.product_id}
-                        name={item.variant_name}
-                        thumbnailUrl={item.thumbnail_url}
-                      />
-                    </TableCell>
-                    <TableCell className="text-muted-foreground">
-                      {item.variant_sku ?? '—'}
-                    </TableCell>
-                    <TableCell className="text-right tabular-nums">
-                      {item.quantity_shipped}
-                    </TableCell>
-                  </TableRow>
-                ))}
-              </TableBody>
-            </Table>
-          </div>
+              ))}
+            </TableBody>
+          </Table>
         )}
       </CardContent>
     </Card>
@@ -284,40 +282,36 @@ function ReceiveCard({ transfer }: { transfer: StockTransfer }) {
       <CardHeader>
         <CardTitle>{t('admin.stock_transfers.receive_title')}</CardTitle>
       </CardHeader>
-      <CardContent className="flex flex-col gap-4">
-        <div className="overflow-x-auto">
-          <Table>
-            <TableHeader>
-              <TableRow>
-                <TableHead>{t('admin.inventory_lines.columns.variant')}</TableHead>
-                <TableHead className="text-right">
-                  {t('admin.stock_transfers.columns.quantity_shipped')}
-                </TableHead>
-                <TableHead className="text-right">
-                  {t('admin.stock_transfers.columns.quantity_received')}
-                </TableHead>
-                <TableHead>{t('admin.stock_transfers.columns.discrepancy')}</TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              {items.map((item) => (
-                <ReceiveRow
-                  key={item.id}
-                  item={item}
-                  editable={editable}
-                  count={counts[item.id] ?? item.quantity_received}
-                  reason={reasons[item.id] ?? ''}
-                  onCount={(value) => setCounts((prev) => ({ ...prev, [item.id]: value }))}
-                  onReason={(value) => setReasons((prev) => ({ ...prev, [item.id]: value }))}
-                />
-              ))}
-            </TableBody>
-          </Table>
-        </div>
+      <CardContent className="flex flex-col p-0">
+        <Table>
+          <TableHeader>
+            <TableRow>
+              <TableHead>{t('admin.inventory_lines.columns.variant')}</TableHead>
+              <TableHead className="text-right">
+                {t('admin.stock_transfers.columns.quantity_shipped')}
+              </TableHead>
+              <QuantityHead>{t('admin.stock_transfers.columns.quantity_received')}</QuantityHead>
+              <TableHead>{t('admin.stock_transfers.columns.discrepancy')}</TableHead>
+            </TableRow>
+          </TableHeader>
+          <TableBody>
+            {items.map((item) => (
+              <ReceiveRow
+                key={item.id}
+                item={item}
+                editable={editable}
+                count={counts[item.id] ?? item.quantity_received}
+                reason={reasons[item.id] ?? ''}
+                onCount={(value) => setCounts((prev) => ({ ...prev, [item.id]: value }))}
+                onReason={(value) => setReasons((prev) => ({ ...prev, [item.id]: value }))}
+              />
+            ))}
+          </TableBody>
+        </Table>
 
         {editable && (
-          <div className="flex items-center justify-between">
-            <p className="text-sm text-muted-foreground tabular-nums">
+          <div className="flex items-center justify-between p-3">
+            <p className="text-muted-foreground text-sm tabular-nums">
               {t('admin.stock_transfers.receive_running_total', {
                 counted: totalCounted,
                 shipped: transfer.quantity_shipped_total,
@@ -366,23 +360,16 @@ function ReceiveRow({
         />
       </TableCell>
       <TableCell className="text-right tabular-nums">{item.quantity_shipped}</TableCell>
-      <TableCell className="text-right">
-        {editable ? (
-          <Input
-            type="number"
-            // Never below what is already on the shelf: taking units back off
-            // is a correction, not a receive.
-            min={item.quantity_received}
-            max={item.quantity_shipped}
-            value={count}
-            onChange={(event) => onCount(Number(event.target.value))}
-            className="ml-auto w-20 text-right tabular-nums"
-            aria-label={t('admin.stock_transfers.columns.quantity_received')}
-          />
-        ) : (
-          <span className="tabular-nums">{item.quantity_received}</span>
-        )}
-      </TableCell>
+      {/* Never below what is already on the shelf: taking units back off is a
+          correction, not a receive. */}
+      <QuantityCell
+        editable={editable}
+        value={editable ? count : item.quantity_received}
+        min={item.quantity_received}
+        max={item.quantity_shipped}
+        label={t('admin.stock_transfers.columns.quantity_received')}
+        onChange={onCount}
+      />
       <TableCell>
         {editable && underReceived ? (
           <Select value={reason} onValueChange={onReason}>

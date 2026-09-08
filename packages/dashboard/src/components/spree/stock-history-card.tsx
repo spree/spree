@@ -57,57 +57,59 @@ export function StockHistoryCard({
   })
 
   const movements = data?.data ?? []
+  const paginated = (data?.meta?.pages ?? 1) > 1
 
   return (
     <Card>
       <CardHeader>
         <CardTitle>{title ?? t('admin.stock_history.title')}</CardTitle>
       </CardHeader>
-      <CardContent>
+      <CardContent className="p-0">
         {isLoading ? (
-          <p className="text-sm text-muted-foreground">{t('admin.common.loading')}</p>
+          <p className="p-3 text-muted-foreground text-sm">{t('admin.common.loading')}</p>
         ) : movements.length === 0 ? (
-          <p className="text-sm text-muted-foreground">{t('admin.stock_history.empty')}</p>
+          <p className="p-3 text-muted-foreground text-sm">{t('admin.stock_history.empty')}</p>
         ) : (
           <>
-            <div className="overflow-x-auto">
-              <Table>
-                <TableHeader>
-                  <TableRow>
-                    <TableHead>{t('admin.stock_history.columns.when')}</TableHead>
-                    <TableHead>{t('admin.stock_history.columns.change')}</TableHead>
-                    <TableHead>{t('admin.stock_history.columns.kind')}</TableHead>
-                    <TableHead>{t('admin.stock_history.columns.cause')}</TableHead>
+            {/* The pagination bar brings its own top rule and padding, so it
+                takes the card's bottom curve when it is there — and the last
+                row takes it when the history fits on one page. */}
+            <Table roundedBottom={!paginated}>
+              <TableHeader>
+                <TableRow>
+                  <TableHead>{t('admin.stock_history.columns.when')}</TableHead>
+                  <TableHead>{t('admin.stock_history.columns.change')}</TableHead>
+                  <TableHead>{t('admin.stock_history.columns.kind')}</TableHead>
+                  <TableHead>{t('admin.stock_history.columns.cause')}</TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                {movements.map((movement) => (
+                  <TableRow key={movement.id}>
+                    <TableCell className="whitespace-nowrap text-muted-foreground text-sm">
+                      <RelativeTime iso={movement.created_at} />
+                    </TableCell>
+                    <TableCell className="font-medium tabular-nums">
+                      <QuantityChange movement={movement} />
+                    </TableCell>
+                    <TableCell>
+                      {movement.kind ? (
+                        <StatusBadge
+                          status={movement.kind}
+                          label={t(`admin.stock_history.kinds.${movement.kind}`)}
+                        />
+                      ) : (
+                        '—'
+                      )}
+                    </TableCell>
+                    <TableCell className="text-sm">
+                      <MovementCause movement={movement} />
+                    </TableCell>
                   </TableRow>
-                </TableHeader>
-                <TableBody>
-                  {movements.map((movement) => (
-                    <TableRow key={movement.id}>
-                      <TableCell className="whitespace-nowrap text-sm text-muted-foreground">
-                        <RelativeTime iso={movement.created_at} />
-                      </TableCell>
-                      <TableCell className="tabular-nums font-medium">
-                        <QuantityChange movement={movement} />
-                      </TableCell>
-                      <TableCell>
-                        {movement.kind ? (
-                          <StatusBadge
-                            status={movement.kind}
-                            label={t(`admin.stock_history.kinds.${movement.kind}`)}
-                          />
-                        ) : (
-                          '—'
-                        )}
-                      </TableCell>
-                      <TableCell className="text-sm">
-                        <MovementCause movement={movement} />
-                      </TableCell>
-                    </TableRow>
-                  ))}
-                </TableBody>
-              </Table>
-            </div>
-            {data?.meta && <Pagination meta={data.meta} onPageChange={setPage} />}
+                ))}
+              </TableBody>
+            </Table>
+            {paginated && data?.meta && <Pagination meta={data.meta} onPageChange={setPage} />}
           </>
         )}
       </CardContent>

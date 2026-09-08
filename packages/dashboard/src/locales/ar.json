@@ -5069,6 +5069,7 @@
         "units": "المستلَم / المُرسَل",
         "shipped": "تاريخ الإرسال",
         "quantity_shipped": "المُرسَل",
+        "quantity_to_ship": "للإرسال",
         "quantity_received": "المستلَم",
         "discrepancy": "الفرق"
       },
