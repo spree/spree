@@ -224,7 +224,13 @@ module Spree
         def prepare_carton
           carton_name = attributes['carton'].strip
           cached_lookup(:carton_package_type, carton_name) do
-            store.package_types.find_by(name: carton_name, kind: 'carton')
+            # A seller's import reaches their own cartons and the
+            # marketplace's, ordered so their own row wins when both owners
+            # named a carton the same way — a seller's spreadsheet means their
+            # own measurements. An operator's import sees the marketplace's.
+            store.package_types.cartons.available_to_seller(seller).
+              order(Arel.sql('CASE WHEN seller_id IS NULL THEN 1 ELSE 0 END')).
+              find_by(name: carton_name)
           end
         end
 

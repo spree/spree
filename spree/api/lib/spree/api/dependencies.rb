@@ -205,6 +205,7 @@ module Spree
         seller_claim_serializer: 'Spree::Api::V3::Seller::ClaimSerializer',
         seller_claim_line_item_serializer: 'Spree::Api::V3::Seller::ClaimLineItemSerializer',
         seller_reason_serializer: 'Spree::Api::V3::Seller::ReasonSerializer',
+        seller_package_type_serializer: 'Spree::Api::V3::Seller::PackageTypeSerializer',
         seller_stock_location_serializer: 'Spree::Api::V3::Seller::StockLocationSerializer',
         seller_requirement_custom_field_serializer: 'Spree::Api::V3::Seller::RequirementCustomFieldSerializer',
         seller_tax_identifier_serializer: 'Spree::Api::V3::Seller::TaxIdentifierSerializer',

@@ -29,6 +29,10 @@ FactoryBot.define do
       type { 'Spree::SellerRequirements::DeliveryMethod' }
     end
 
+    factory :package_type_requirement, class: Spree::SellerRequirements::PackageType do
+      type { 'Spree::SellerRequirements::PackageType' }
+    end
+
     factory :required_custom_fields_requirement, class: Spree::SellerRequirements::RequiredCustomFields do
       type { 'Spree::SellerRequirements::RequiredCustomFields' }
     end

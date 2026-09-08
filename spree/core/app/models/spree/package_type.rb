@@ -20,19 +20,31 @@ module Spree
 
     belongs_to :store, class_name: 'Spree::Store'
 
+    # Whose packaging this is. Nil is the marketplace's own row — the shared
+    # vocabulary every seller may pack into — and a seller's rows are theirs
+    # alone (docs/plans/6.0-seller-package-types.md).
+    #
+    # `with_deleted` for the reason a delivery method's owner is: a seller is
+    # paranoid and this association deliberately survives one, because a nil
+    # `seller_id` IS the marketplace's row. Releasing a departed seller's rows
+    # would hand the operator a second default box.
+    belongs_to :seller, -> { with_deleted }, class_name: 'Spree::Seller', optional: true,
+               inverse_of: :package_types
+
     has_many :variants, class_name: 'Spree::Variant', foreign_key: :carton_package_type_id,
              inverse_of: :carton_package_type, dependent: :restrict_with_error
 
-    validates :name, presence: true, uniqueness: { scope: spree_base_uniqueness_scope + [:store_id] }
+    validates :name, presence: true,
+              uniqueness: { scope: spree_base_uniqueness_scope + [:store_id, :seller_id] }
     validates :kind, inclusion: { in: KINDS }
     validates :dimensions_unit, inclusion: { in: Spree::Variant::DIMENSION_UNITS }, allow_blank: true
     validates :weight_unit, inclusion: { in: Spree::Variant::WEIGHT_UNITS }, allow_blank: true
     validates :length, :width, :height, :weight, :max_weight,
               numericality: { greater_than_or_equal_to: 0, allow_nil: true }
 
-    # Demote any prior default in the same transaction so the partial unique
-    # index ("one default per store") never sees two TRUE rows, and MySQL —
-    # which cannot enforce that index — arrives at the same place.
+    # Demote the owner's prior default in the same transaction so the partial
+    # unique index ("one default per owner") never sees two TRUE rows, and
+    # MySQL — which cannot enforce that index — arrives at the same place.
     validate :kind_cannot_leave_the_products_packed_in_it, on: :update
     before_save :demote_other_defaults, if: -> { default? && will_save_change_to_default? }
     validate :default_cannot_be_given_up, on: :update
@@ -44,6 +56,19 @@ module Spree
 
     scope :cartons, -> { where(kind: 'carton') }
 
+    # The marketplace's own packaging, and one seller's.
+    scope :first_party, -> { where(seller_id: nil) }
+    scope :for_seller, ->(seller) { where(seller_id: seller.respond_to?(:id) ? seller.id : seller) }
+
+    # Everything a seller may pack into: their own rows plus the
+    # marketplace's, which they read but never write. A nil seller is the
+    # operator, who packs into their own rows only.
+    #
+    # @param seller [Spree::Seller, nil]
+    scope :available_to_seller, ->(seller) {
+      seller.nil? ? first_party : for_seller(seller).or(first_party)
+    }
+
     # The one kind anything branches on: a variant may only be packed into a
     # carton. The rest of the vocabulary is the merchant's to name and read.
     #
@@ -52,7 +77,10 @@ module Spree
       kind == 'carton'
     end
 
-    self.whitelisted_ransackable_attributes = %w[name kind default]
+    # `seller_id` is what the operator's list filters by to see one seller's
+    # packaging, or (blank) the marketplace's own.
+    self.whitelisted_ransackable_attributes = %w[name kind default seller_id]
+    self.whitelisted_ransackable_associations = %w[seller]
 
     # The unit the geometry is expressed in, falling back to what the store's
     # unit system implies — the same fallback a variant's dimensions take.
@@ -128,13 +156,20 @@ module Spree
     # instead; that demotes this one in the same save.
     def default_cannot_be_given_up
       return unless default_changed? && default_was && !default?
-      return if self.class.where(store_id: store_id, default: true).where.not(id: id).exists?
+      return if other_defaults.exists?
 
       errors.add(:default, :cannot_be_given_up)
     end
 
     def demote_other_defaults
-      self.class.where(store_id: store_id, default: true).where.not(id: id).update_all(default: false)
+      other_defaults.update_all(default: false)
+    end
+
+    # The other rows competing for this row's default flag: the same owner's,
+    # in the same store. The operator and each seller hold one default box
+    # apiece, so promoting a seller's box must not demote the marketplace's.
+    def other_defaults
+      self.class.where(store_id: store_id, seller_id: seller_id, default: true).where.not(id: id)
     end
   end
 end

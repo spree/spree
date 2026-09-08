@@ -238,8 +238,12 @@ module Spree
     # through an association so it is loaded once per store rather than once
     # per package quoted.
     has_many :package_types, class_name: 'Spree::PackageType', dependent: :destroy, inverse_of: :store
-    has_one :default_package_type, -> { where(default: true) }, class_name: 'Spree::PackageType',
-            inverse_of: :store
+    # The marketplace's own default box. A seller's default is read through
+    # the seller (docs/plans/6.0-seller-package-types.md) — without the
+    # `seller_id` filter this would answer with whichever owner's row loaded
+    # first.
+    has_one :default_package_type, -> { where(default: true, seller_id: nil) },
+            class_name: 'Spree::PackageType', inverse_of: :store
     has_many :promotions, class_name: 'Spree::Promotion', dependent: :nullify
 
     has_many :tax_categories, class_name: 'Spree::TaxCategory', dependent: :destroy, inverse_of: :store

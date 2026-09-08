@@ -200,13 +200,22 @@ module Spree
 
       private
 
-      # The store's default box.
+      # The box this package is quoted with: the seller's own, falling back to
+      # the marketplace's.
+      #
+      # A package's seller is its stock location's — the derivation used
+      # everywhere else — so a parcel leaving a seller's warehouse takes that
+      # seller's tare and dimensions. The fallback keeps checkout whole for a
+      # seller who has not recorded a box yet; the `PackageType` onboarding
+      # requirement is what asks them to
+      # (docs/plans/6.0-seller-package-types.md).
       #
       # @return [Spree::PackageType, nil]
       def default_package_type
         return @default_package_type if defined?(@default_package_type)
 
-        @default_package_type = owner&.store&.default_package_type
+        @default_package_type = stock_location&.seller&.default_package_type ||
+                                owner&.store&.default_package_type
       end
 
       # The box's own weight, converted into the unit the contents are

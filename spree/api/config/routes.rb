@@ -1012,6 +1012,11 @@ Spree::Core::Engine.add_routes do
           end
         end
 
+        # What this seller packs into. The listing carries the marketplace's
+        # own packaging alongside the seller's; only the seller's own can be
+        # written (docs/plans/6.0-seller-package-types.md).
+        resources :package_types
+
         # No destroy: a location holds stock levels and is named on historical
         # fulfillments, so a seller retires one by deactivating it.
         resources :stock_locations, only: [:index, :show, :create, :update]

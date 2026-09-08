@@ -230,6 +230,56 @@ RSpec.describe 'seller requirement kinds', type: :model do
     end
   end
 
+  # Measurements, not merely a row: a default box with blank sides quotes the
+  # goods alone (docs/plans/6.0-seller-package-types.md).
+  describe Spree::SellerRequirements::PackageType do
+    let(:requirement) { create(:package_type_requirement, store: store) }
+
+    it 'is unmet while the seller has recorded no box' do
+      expect(requirement.satisfied?(seller)).to be false
+    end
+
+    it 'is met by a fully measured default box of the seller’s own' do
+      create(:package_type, :measured_default_box, store: store, seller: seller)
+
+      expect(requirement.satisfied?(seller.reload)).to be true
+    end
+
+    it 'is not met by a box the seller has not marked default' do
+      create(:package_type, :measured_default_box, store: store, seller: seller, default: false)
+
+      expect(requirement.satisfied?(seller.reload)).to be false
+    end
+
+    # A seller quoting through the marketplace's shared rates still packs and
+    # posts their own parcel, so the operator's box does not answer for them.
+    it 'is not met by the marketplace’s own box' do
+      create(:package_type, :measured_default_box, store: store)
+
+      expect(requirement.satisfied?(seller.reload)).to be false
+    end
+
+    it 'is not met by another seller’s box' do
+      create(:package_type, :measured_default_box, store: store, seller: create(:seller, store: store))
+
+      expect(requirement.satisfied?(seller.reload)).to be false
+    end
+
+    %i[length width height weight].each do |measurement|
+      it "is not met while #{measurement} is blank" do
+        create(:package_type, :measured_default_box, store: store, seller: seller, measurement => nil)
+
+        expect(requirement.satisfied?(seller.reload)).to be false
+      end
+
+      it "is not met while #{measurement} is zero" do
+        create(:package_type, :measured_default_box, store: store, seller: seller, measurement => 0)
+
+        expect(requirement.satisfied?(seller.reload)).to be false
+      end
+    end
+  end
+
   describe Spree::SellerRequirements::RequiredCustomFields do
     let(:requirement) { create(:required_custom_fields_requirement, store: store) }
 

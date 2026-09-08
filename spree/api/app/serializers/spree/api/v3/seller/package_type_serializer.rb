@@ -1,10 +1,18 @@
 module Spree
   module Api
     module V3
-      module Admin
-        # A store's packaging: the box it ships parcels in, and the cartons,
-        # pallets and containers a wholesale order leaves on. Back-office
-        # only — a shopper never picks their packaging.
+      module Seller
+        # What a seller packs their goods into: their own boxes, cartons and
+        # pallets, and the marketplace's shared packaging they may also use.
+        #
+        # Declared on `BaseSerializer` rather than on a store twin because
+        # there is none — a shopper never picks their packaging, so package
+        # types exist on the back-office surfaces only.
+        #
+        # `editable` is what the panel renders a marketplace row read-only by,
+        # mirroring the seller's delivery method serializer: a seller sees the
+        # operator's cartons so they know what they can pack into, and the API
+        # refuses to write them (docs/plans/6.0-seller-package-types.md).
         class PackageTypeSerializer < V3::BaseSerializer
           typelize name: :string,
                    kind: :string,
@@ -17,8 +25,7 @@ module Spree
                    weight_unit: :string,
                    volume: [:string, nullable: true],
                    default: :boolean,
-                   seller_id: [:string, nullable: true],
-                   seller_name: [:string, nullable: true],
+                   editable: :boolean,
                    metadata: ['Record<string, unknown> | null']
 
           attributes :name, :kind, :length, :width, :height, :weight, :max_weight,
@@ -27,24 +34,16 @@ module Spree
           attributes created_at: :iso8601, updated_at: :iso8601
 
           # Both units read through their fallbacks, so a row that never set
-          # one still tells the merchant what its numbers mean.
+          # one still tells the seller what its numbers mean.
           attribute :dimensions_unit, &:dimensions_unit
           attribute :weight_unit, &:weight_unit
 
-          # Cubic meters, so a merchant configuring volume tiers can read the
-          # figure their rules are compared against. Null until every side is
-          # measured.
           attribute :volume, &:volume
 
-          # Whose packaging this is: a seller's own, or (null) the
-          # marketplace's shared vocabulary
-          # (docs/plans/6.0-seller-package-types.md).
-          attribute :seller_id do |package_type|
-            package_type.seller&.prefixed_id
-          end
-
-          attribute :seller_name do |package_type|
-            package_type.seller&.name
+          # False for a marketplace row: listed so the seller knows what they
+          # can pack into, and not theirs to change.
+          attribute :editable do |package_type|
+            package_type.seller_id.present?
           end
         end
       end

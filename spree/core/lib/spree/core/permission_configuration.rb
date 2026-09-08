@@ -386,7 +386,7 @@ module Spree
       register_resource(:settings, group: :settings, subjects: -> {
         [Spree::Store, Spree::PaymentMethod, Spree::Gateway,
          Spree::DeliveryZone, Spree::DeliveryZoneMember,
-         Spree::StockLocation, Spree::DeliveryProfile, Spree::PackageType,
+         Spree::StockLocation, Spree::DeliveryProfile,
          Spree::Market, Spree::TaxCategory, Spree::TaxRate, Spree::AllowedOrigin,
          Spree::RefundReason, Spree::ReturnReason, Spree::ClaimReason,
          Spree::OrderCancellationReason, Spree::Channel,
@@ -402,6 +402,14 @@ module Spree
       # marketplace defines that vocabulary and a seller only reads it.
       register_resource(:delivery_methods, group: :settings, audiences: %i[seller], subjects: -> {
         [Spree::DeliveryMethod, Spree::DeliveryMethodRule, Spree::DeliveryMethodService]
+      })
+      # What goods are packed into: the marketplace's boxes and cartons, and
+      # each seller's own. Its own resource rather than part of `settings` for
+      # the same reason `delivery_methods` is — a seller owns their packaging
+      # and `settings` is never seller-grantable
+      # (docs/plans/6.0-seller-package-types.md).
+      register_resource(:package_types, group: :settings, audiences: %i[seller], subjects: -> {
+        [Spree::PackageType]
       })
       register_resource(:webhooks, group: :settings, subjects: -> {
         [Spree::WebhookEndpoint, Spree::WebhookDelivery]

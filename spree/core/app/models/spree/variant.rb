@@ -1200,14 +1200,20 @@ module Spree
       errors.add(:delivery_profile, :invalid)
     end
 
-    # Same guard as the delivery profile above: a carton belonging to another
-    # store must never be reachable by id.
+    # Same guard as the delivery profile above, widened to ownership: a carton
+    # must belong to this store, and be either the marketplace's shared
+    # vocabulary or this variant's own seller's. Another seller's carton must
+    # never be reachable by id — its measurements would feed this variant's
+    # freight rollups (docs/plans/6.0-seller-package-types.md).
     def carton_package_type_must_belong_to_store
       return if self[:carton_package_type_id].nil?
 
       store = product&.store
       return if store.nil?
-      return if association(:carton_package_type).reader&.store_id == store.id
+
+      carton = association(:carton_package_type).reader
+      return if carton&.store_id == store.id &&
+                (carton.seller_id.nil? || carton.seller_id == resolved_seller_id)
 
       errors.add(:carton_package_type, :invalid)
     end

@@ -129,6 +129,47 @@ module Spree
         end
       end
 
+      # A parcel leaving a seller's warehouse is theirs to measure: the
+      # marketplace's box is the wrong size and the wrong tare for it
+      # (docs/plans/6.0-seller-package-types.md).
+      describe 'a package from a seller’s warehouse' do
+        let(:seller) { create(:seller, store: order.store) }
+        let(:stock_location) { build(:stock_location, store: order.store, seller: seller) }
+
+        before { subject.add build_inventory_unit }
+
+        it 'is quoted with the seller’s own box' do
+          create(:package_type, store: order.store, default: true, weight: 2.5, weight_unit: 'lb',
+                                length: 12, width: 9, height: 4, dimensions_unit: 'in')
+          create(:package_type, store: order.store, seller: seller, default: true,
+                                weight: 1, weight_unit: 'lb',
+                                length: 20, width: 16, height: 8, dimensions_unit: 'in')
+
+          expect(subject.weight).to eq(26)
+          expect(subject.dimensions).to eq(length: 20.0, width: 16.0, height: 8.0)
+        end
+
+        # A seller who has not recorded a box yet must not lose the tare
+        # altogether; the onboarding requirement is what asks them for one.
+        it 'falls back to the marketplace’s box when the seller has none' do
+          create(:package_type, store: order.store, default: true, weight: 2.5, weight_unit: 'lb',
+                                length: 12, width: 9, height: 4, dimensions_unit: 'in')
+
+          expect(subject.weight).to eq(27.5)
+          expect(subject.dimensions).to eq(length: 12.0, width: 9.0, height: 4.0)
+        end
+
+        it 'never reads another seller’s box' do
+          other_seller = create(:seller, store: order.store)
+          create(:package_type, store: order.store, seller: other_seller, default: true,
+                                weight: 9, weight_unit: 'lb', length: 40, width: 40, height: 40,
+                                dimensions_unit: 'in')
+
+          expect(subject.weight).to eq(25)
+          expect(subject.dimensions).to be_nil
+        end
+      end
+
       describe '#dimensions' do
         it 'is nil until the store has a fully measured default package' do
           subject.add build_inventory_unit

@@ -64,6 +64,7 @@ module Spree
       Spree::SellerRequirements::BillingAddress
       Spree::SellerRequirements::ReturnsAddress
       Spree::SellerRequirements::DeliveryMethod
+      Spree::SellerRequirements::PackageType
       Spree::SellerRequirements::MinimumProducts
     ].freeze
 

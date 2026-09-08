@@ -15,6 +15,16 @@ FactoryBot.define do
       max_weight { 20 }
     end
 
+    # A default box with every measurement the parcel quote needs — what the
+    # `PackageType` onboarding requirement asks a seller for.
+    trait :measured_default_box do
+      default { true }
+      length { 30 }
+      width { 20 }
+      height { 15 }
+      weight { 0.4 }
+    end
+
     factory :pallet_package_type do
       kind { 'pallet' }
       sequence(:name) { |n| "Pallet #{n}" }

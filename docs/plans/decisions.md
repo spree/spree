@@ -5102,3 +5102,34 @@ into a packaging change.
 **Constraint now:** a new named lookup in an importer resolves through the
 store's own association.
 
+## 2026-09-08 — Package types are the seller's to own; the marketplace's are shared vocabulary
+
+Settled in `6.0-seller-package-types.md`.
+
+**A package type follows the seller side of the marketplace plan's Decision
+13.** "What kind of goods is this" (profiles, zones) is the marketplace's
+question; "who ships it, how, and in what" is the seller's. Cartons and boxes
+are the third clause, so `spree_package_types.seller_id` is nullable and a nil
+owner is the marketplace's row, exactly as for delivery methods and stock
+locations. The operator's rows are readable by every seller with no opt-in
+flag — a carton is geometry and a tare, nothing to protect — while a seller's
+rows are theirs alone. A package is quoted with its stock location's seller's
+default box, falling back to the marketplace's.
+
+**One default per owner needs two partial indexes, not one.** A nullable
+column inside a unique index constrains nothing for the rows where it is
+null, so "one default per (store, seller)" is enforced as one index for
+marketplace rows and one for seller rows; the name index is split the same
+way. MySQL, which has no partial indexes, relies on the model validations for
+marketplace rows — do not weaken them on the grounds that an index covers it.
+
+**A seller is asked for their box, never blocked without one.** A computed
+`Spree::SellerRequirements::PackageType` kind, provisioned by default, is met
+by a default box with all three dimensions and a weight recorded. It does not
+count the marketplace's box: a seller on shared rates still posts their own
+parcel.
+
+**Constraint now:** code that needs "the box for this package" reads
+`Stock::Package#default_package_type`, never `store.default_package_type`;
+seller-facing reads go through `available_to_seller(seller)`, seller writes
+through `seller.package_types`.

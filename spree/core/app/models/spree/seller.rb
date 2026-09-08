@@ -118,6 +118,22 @@ module Spree
     has_many :delivery_methods, class_name: 'Spree::DeliveryMethod', dependent: nil,
                                 inverse_of: :seller
 
+    # What this seller packs their goods into: their own boxes, cartons and
+    # pallets, beside the marketplace's shared vocabulary they may also use
+    # (docs/plans/6.0-seller-package-types.md).
+    #
+    # `dependent: nil` for the same reason as delivery methods above: a nil
+    # `seller_id` IS the marketplace's row, so nullifying a departed seller's
+    # rows would give the operator a second default box and start quoting this
+    # seller's tare on first-party parcels.
+    has_many :package_types, class_name: 'Spree::PackageType', dependent: nil,
+                             inverse_of: :seller
+
+    # The box this seller's parcels are quoted with. Nil until they record
+    # one, and `Stock::Package` then falls back to the marketplace's.
+    has_one :default_package_type, -> { where(default: true) }, class_name: 'Spree::PackageType',
+            dependent: nil, inverse_of: :seller
+
     # The seller's tax registrations — the VAT number the commission invoice
     # needs, with the validation verdict and evidence the model carries.
     #

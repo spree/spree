@@ -118,6 +118,30 @@ RSpec.describe Spree::Imports::RowProcessors::ProductVariant, type: :service do
         expect(product.default_variant.carton_package_type).to be_nil
       end
     end
+
+    # A seller's spreadsheet names their own cartons and the marketplace's
+    # shared ones, never another seller's
+    # (docs/plans/6.0-seller-package-types.md).
+    context 'when a seller imports' do
+      let(:seller) { create(:seller, store: store) }
+      let(:import) { create(:product_import, store: store, seller: seller) }
+
+      it 'packs into the marketplace’s carton when the seller has none of that name' do
+        expect(product.default_variant.carton_package_type).to eq(carton)
+      end
+
+      it 'prefers the seller’s own carton over a marketplace carton of the same name' do
+        sellers_own = create(:package_type, store: store, seller: seller, kind: 'carton', name: 'Large carton')
+
+        expect(product.default_variant.carton_package_type).to eq(sellers_own)
+      end
+
+      it 'leaves the variant unpacked rather than reaching for another seller’s carton' do
+        carton.update!(seller: create(:seller, store: store))
+
+        expect(product.default_variant.carton_package_type).to be_nil
+      end
+    end
   end
 
   context 'when importing a product row' do
