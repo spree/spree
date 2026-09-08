@@ -9721,6 +9721,8 @@ paths:
                   height:
                   width:
                   depth:
+                  weight_unit: lb
+                  dimensions_unit: in
                   minimum_order_quantity: 1
                   order_multiple: 1
                   purchase_unit: unit
@@ -15133,6 +15135,10 @@ components:
         depth:
           type: number
           nullable: true
+        weight_unit:
+          type: string
+        dimensions_unit:
+          type: string
         minimum_order_quantity:
           type: number
         order_multiple:
@@ -15188,6 +15194,8 @@ components:
       - height
       - width
       - depth
+      - weight_unit
+      - dimensions_unit
       - minimum_order_quantity
       - order_multiple
       - purchase_unit

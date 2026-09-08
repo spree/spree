@@ -12,7 +12,6 @@ module Spree
                    position: :number, tax_category_id: [:string, nullable: true],
                    cost_price: [:string, nullable: true], cost_currency: [:string, nullable: true],
                    barcode: [:string, nullable: true],
-                   weight_unit: [:string, nullable: true], dimensions_unit: [:string, nullable: true],
                    available_stock: [:number, nullable: true],
                    reserved_quantity: :number, total_on_hand: [:number, nullable: true],
                    preorderable: :boolean, preorder_ships_at: [:string, nullable: true],
@@ -47,17 +46,6 @@ module Spree
 
           attribute :tax_category_id do |variant|
             variant.tax_category&.prefixed_id
-          end
-
-          # The stored columns, so an editor shows a blank where the merchant
-          # left one and saving does not write this store's units onto the
-          # row. Both readers resolve a fallback for display elsewhere.
-          attribute :weight_unit do |variant|
-            variant[:weight_unit]
-          end
-
-          attribute :dimensions_unit do |variant|
-            variant[:dimensions_unit]
           end
 
           # Encoded from the foreign key: loading the carton row just to

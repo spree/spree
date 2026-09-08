@@ -10,6 +10,7 @@ module Spree
                  purchasable: :boolean, in_stock: :boolean, backorderable: :boolean, preorder: :boolean,
                  preorder_ships_at: [:string, nullable: true],
                  weight: [:number, nullable: true], height: [:number, nullable: true], width: [:number, nullable: true], depth: [:number, nullable: true],
+                 weight_unit: :string, dimensions_unit: :string,
                  price: 'Price',
                  original_price: ['Price', nullable: true],
                  minimum_order_quantity: :number, order_multiple: :number,
@@ -64,6 +65,15 @@ module Spree
         attribute :depth do |variant|
           variant.depth&.to_f
         end
+
+        # Resolved, not the raw columns: a variant that states no unit of its
+        # own is measured in the store's, so the numbers above are meaningless
+        # without this. Always present for the same reason the quantity rules
+        # below are — a caller should not have to fetch the store to read a
+        # weight.
+        attribute :weight_unit, &:weight_unit
+
+        attribute :dimensions_unit, &:dimensions_unit
 
         # The buyer's RESOLVED rules — their catalog terms over the variant's
         # base — so a storefront draws the right stepper without knowing
