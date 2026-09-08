@@ -41,6 +41,10 @@ async function submitBlankProduct(page: Page, storeId: string, createButton: Reg
   // blank one.
   await name.fill('x')
   await name.fill('')
+  // Create stays disabled while the form matches defaults. The description
+  // editor used to dirty it on mount by emitting `<p></p>`; that wrap is no
+  // longer treated as an edit, so leave an optional field changed instead.
+  await page.locator('#product-slug').fill('e2e-blank-submit')
   const create = page.getByRole('button', { name: createButton }).first()
   await expect(create).toBeEnabled()
   await create.click()

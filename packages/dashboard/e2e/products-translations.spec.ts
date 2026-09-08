@@ -4,6 +4,11 @@ import { createProduct } from './products-helpers'
 
 const TRANSLATIONS_PATH = (storeId: string) => `/${storeId}/products/translations`
 
+/** The records search — not the header "Search settings" command box. */
+function coverageSearch(page: import('@playwright/test').Page) {
+  return page.getByRole('searchbox', { name: 'Search…' })
+}
+
 async function seedProductWithPlainDescriptionTranslation(
   page: import('@playwright/test').Page,
   storeId: string,
@@ -119,7 +124,7 @@ test.describe('product translations', () => {
     )
 
     await gotoIndex(page, TRANSLATIONS_PATH(creds.store_id), /import/i)
-    await page.getByPlaceholder(/search/i).fill(name)
+    await coverageSearch(page).fill(name)
     await page.getByRole('button', { name }).click()
 
     const dialog = page.getByRole('dialog')
@@ -137,7 +142,7 @@ test.describe('product translations', () => {
     const productUrl = page.url()
 
     await gotoIndex(page, TRANSLATIONS_PATH(creds.store_id), /import/i)
-    await page.getByPlaceholder(/search/i).fill(name)
+    await coverageSearch(page).fill(name)
     await expect(page.getByRole('row', { name: new RegExp(name) })).toBeVisible({ timeout: 15_000 })
 
     await page.goto(productUrl)
@@ -147,7 +152,7 @@ test.describe('product translations', () => {
     await expect(page.getByText(/product saved/i)).toBeVisible({ timeout: 15_000 })
 
     await gotoIndex(page, TRANSLATIONS_PATH(creds.store_id), /import/i)
-    await page.getByPlaceholder(/search/i).fill(renamed)
+    await coverageSearch(page).fill(renamed)
     await expect(page.getByRole('row', { name: new RegExp(renamed) })).toBeVisible({
       timeout: 15_000,
     })
@@ -160,7 +165,7 @@ test.describe('product translations', () => {
     await createProduct(page, creds.store_id, name)
 
     await gotoIndex(page, TRANSLATIONS_PATH(creds.store_id), /import/i)
-    await page.getByPlaceholder(/search/i).fill(name)
+    await coverageSearch(page).fill(name)
     const row = page.getByRole('row', { name: new RegExp(name) })
     await expect(row).toBeVisible({ timeout: 15_000 })
     await expect(row.getByText('—')).toBeVisible()
