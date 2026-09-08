@@ -240,6 +240,8 @@ const division = await adminClient.companies.create({
 
 Moving a branch is an update with a new `parent_id`. Deleting a node removes its whole subtree, and is refused outright once any order exists beneath it — history doesn't get deleted to tidy up an org chart.
 
+Each row carries `children_count` and `members_count`. `children_count` is the node's direct sub-units, while `members_count` covers the whole subtree — everyone who can act for the node, counted once, whether their membership sits on it or on a unit below it. Because standing runs downward, that is the number of people the business actually has.
+
 ## Related
 
 - [Catalogs](/developer/core-concepts/catalogs) — giving a company its own range and prices

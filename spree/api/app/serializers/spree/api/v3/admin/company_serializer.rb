@@ -16,9 +16,8 @@ module Spree
             company.children.size
           end
 
-          attribute :members_count do |company|
-            company.memberships.size
-          end
+          # The member count covers the node's whole subtree
+          attributes :members_count
 
           many :children,
                resource: proc { Spree.api.admin_company_serializer },

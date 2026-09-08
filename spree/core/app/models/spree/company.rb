@@ -176,6 +176,12 @@ module Spree
       self_and_descendants.where.not(id: id)
     end
 
+    # @return [Integer]
+    def members_count
+      Spree::CompanyMembership.where(company_id: self_and_descendants.select(:id)).
+        distinct.count(:customer_id)
+    end
+
     # The single tax anchor: the nearest self-or-ancestor +company+ node. Tax
     # identifiers and exemption certificates are always read through it, and
     # the walk stops at the first legal entity whether or not it holds

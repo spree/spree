@@ -139,6 +139,32 @@ describe Spree::Company, type: :model do
     end
   end
 
+  describe '#members_count' do
+    let(:root) { create(:company, store: store) }
+
+    it 'counts the members of the node and of every unit below it' do
+      child = create(:company, store: store, parent: root, kind: 'division')
+      grandchild = create(:company, store: store, parent: child, kind: 'division')
+      create(:company_membership, company: root)
+      create(:company_membership, company: child)
+      create(:company_membership, company: grandchild)
+      create(:company_membership, company: create(:company, store: store)) # unrelated tree
+
+      expect(root.members_count).to eq(3)
+      expect(child.members_count).to eq(2)
+      expect(grandchild.members_count).to eq(1)
+    end
+
+    it 'counts a member of two units in the same subtree once' do
+      child = create(:company, store: store, parent: root, kind: 'division')
+      customer = create(:customer)
+      create(:company_membership, company: root, customer: customer)
+      create(:company_membership, company: child, customer: customer)
+
+      expect(root.members_count).to eq(1)
+    end
+  end
+
   describe '#legal_entity' do
     let(:root) { create(:company, store: store) }
 
