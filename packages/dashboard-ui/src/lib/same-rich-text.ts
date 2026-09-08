@@ -13,7 +13,7 @@ export function sameRichText(left: string, right: string): boolean {
 
 function canonicalizeRichText(html: string): string {
   const withoutTrailingEmpty = stripTrailingEmptyParagraphs((html ?? '').trim())
-  if (!visibleText(withoutTrailingEmpty)) return ''
+  if (!visibleText(withoutTrailingEmpty) && !hasImage(withoutTrailingEmpty)) return ''
   if (!looksLikeHtml(withoutTrailingEmpty)) return `<p>${withoutTrailingEmpty}</p>`
   return withoutTrailingEmpty
 }
@@ -56,6 +56,30 @@ function looksLikeHtml(value: string): boolean {
   const start = value.search(/<\/?[a-z]/i)
   if (start === -1) return false
   return value.indexOf('>', start) !== -1
+}
+
+/** TipTap's image button can produce a paragraph that has no text. */
+function hasImage(html: string): boolean {
+  const lower = html.toLowerCase()
+  let index = 0
+  while (index < lower.length) {
+    const open = lower.indexOf('<img', index)
+    if (open === -1) return false
+    const after = lower.charCodeAt(open + 4)
+    if (
+      Number.isNaN(after) ||
+      after === 32 ||
+      after === 9 ||
+      after === 10 ||
+      after === 13 ||
+      after === 47 ||
+      after === 62
+    ) {
+      return true
+    }
+    index = open + 4
+  }
+  return false
 }
 
 function visibleText(html: string): string {

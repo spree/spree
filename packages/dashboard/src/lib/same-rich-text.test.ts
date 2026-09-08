@@ -27,6 +27,13 @@ describe('sameRichText', () => {
     )
   })
 
+  it('does not treat an image-only value as empty', () => {
+    const imageOnly = '<p><img src="https://cdn.example/fan.jpg" alt="Fan"></p>'
+    expect(sameRichText(imageOnly, '')).toBe(false)
+    expect(sameRichText(imageOnly, '<p></p>')).toBe(false)
+    expect(sameRichText(imageOnly, imageOnly)).toBe(true)
+  })
+
   it('strips a long run of trailing empty paragraphs without hanging', () => {
     const empty = '<p></p>'.repeat(200)
     expect(sameRichText(`<p>Standventilator</p>${empty}`, '<p>Standventilator</p>')).toBe(true)

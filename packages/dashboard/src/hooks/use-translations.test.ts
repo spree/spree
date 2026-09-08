@@ -13,24 +13,28 @@ const STORE_ID = 'store_abc123'
 function staleAfterTranslationsInvalidation() {
   const queryClient = new QueryClient()
 
-  const seeded: Record<string, unknown[]> = {
-    coverage: [TRANSLATIONS_QUERY_RESOURCE, STORE_ID, 'coverage', 'product', { page: 1 }],
-    matrix: [TRANSLATIONS_QUERY_RESOURCE, STORE_ID, 'product', 'prod_1'],
-    legacyMatrix: ['product', STORE_ID, 'prod_1', 'translations'],
-    products: ['products', STORE_ID],
+  try {
+    const seeded: Record<string, unknown[]> = {
+      coverage: [TRANSLATIONS_QUERY_RESOURCE, STORE_ID, 'coverage', 'product', { page: 1 }],
+      matrix: [TRANSLATIONS_QUERY_RESOURCE, STORE_ID, 'product', 'prod_1'],
+      legacyMatrix: ['product', STORE_ID, 'prod_1', 'translations'],
+      products: ['products', STORE_ID],
+    }
+
+    for (const key of Object.values(seeded)) {
+      queryClient.setQueryData(key, {})
+    }
+
+    queryClient.invalidateQueries({
+      queryKey: withStoreScope([TRANSLATIONS_QUERY_RESOURCE], STORE_ID),
+    })
+
+    return Object.entries(seeded)
+      .filter(([, key]) => queryClient.getQueryState(key)?.isInvalidated)
+      .map(([name]) => name)
+  } finally {
+    queryClient.clear()
   }
-
-  for (const key of Object.values(seeded)) {
-    queryClient.setQueryData(key, {})
-  }
-
-  queryClient.invalidateQueries({
-    queryKey: withStoreScope([TRANSLATIONS_QUERY_RESOURCE], STORE_ID),
-  })
-
-  return Object.entries(seeded)
-    .filter(([, key]) => queryClient.getQueryState(key)?.isInvalidated)
-    .map(([name]) => name)
 }
 
 describe('translations query invalidation', () => {
