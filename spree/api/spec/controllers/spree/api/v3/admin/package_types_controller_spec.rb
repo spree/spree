@@ -58,6 +58,49 @@ RSpec.describe Spree::Api::V3::Admin::PackageTypesController, type: :controller 
       to change(Spree::PackageType, :count).by(-1)
   end
 
+  # The operator sees every owner's packaging in their store, so the list has
+  # to say whose each row is and narrow to one owner on request
+  # (docs/plans/6.0-seller-package-types.md).
+  describe 'a marketplace with sellers' do
+    let(:seller) { create(:seller, :approved, store: store) }
+    let!(:sellers_box) { create(:package_type, store: store, seller: seller, name: 'Seller mailer') }
+
+    it 'lists every owner’s packaging' do
+      get :index, as: :json
+
+      expect(json_response['data'].pluck('name')).to include('Master carton', 'Seller mailer')
+    end
+
+    it 'names the owner of each row' do
+      get :show, params: { id: sellers_box.prefixed_id }, as: :json
+
+      expect(json_response['seller_id']).to eq(seller.prefixed_id)
+      expect(json_response['seller_name']).to eq(seller.name)
+    end
+
+    it 'reads the marketplace’s own rows as unowned' do
+      get :show, params: { id: carton.prefixed_id }, as: :json
+
+      expect(json_response['seller_id']).to be_nil
+      expect(json_response['seller_name']).to be_nil
+    end
+
+    it 'narrows the list to one seller' do
+      get :index, params: { q: { seller_id_eq: seller.id } }, as: :json
+
+      expect(json_response['data'].pluck('name')).to contain_exactly('Seller mailer')
+    end
+
+    # A row the operator writes is the marketplace's: ownership is not
+    # something the payload gets to claim.
+    it 'ignores a seller_id in the payload' do
+      post :create, params: { name: 'Operator box', kind: 'box', seller_id: seller.prefixed_id }, as: :json
+
+      expect(response).to have_http_status(:created)
+      expect(Spree::PackageType.find_by(name: 'Operator box').seller_id).to be_nil
+    end
+  end
+
   it 'cannot reach another store package type' do
     foreign = create(:carton_package_type, store: create(:store))
 

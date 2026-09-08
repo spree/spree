@@ -14,6 +14,7 @@ import type {
   ImportRow,
   Invitation,
   Order,
+  PackageType,
   Policy,
   Product,
   ProductType,
@@ -1109,6 +1110,46 @@ export class SellerClient {
   }
 
   /**
+   * What this seller packs their goods into: the boxes their parcels ship in,
+   * the cartons their products are packed into, the pallets a wholesale order
+   * leaves on.
+   *
+   * The listing carries the marketplace's own packaging alongside the
+   * seller's, so a seller can pack into the operator's standard cartons
+   * rather than re-measuring them. Those rows report `editable: false` and
+   * are refused by every write.
+   */
+  readonly packageTypes = {
+    list: (
+      params?: ListParams & Record<string, unknown>,
+      options?: RequestOptions,
+    ): Promise<PaginatedResponse<PackageType>> =>
+      this.request<PaginatedResponse<PackageType>>('GET', '/package_types', {
+        ...options,
+        params: params ? transformListParams(params) : undefined,
+      }),
+
+    get: (id: string, options?: RequestOptions): Promise<PackageType> =>
+      this.request<PackageType>('GET', `/package_types/${id}`, options),
+
+    create: (params: PackageTypeParams, options?: RequestOptions): Promise<PackageType> =>
+      this.request<PackageType>('POST', '/package_types', { ...options, body: params }),
+
+    update: (
+      id: string,
+      params: PackageTypeParams,
+      options?: RequestOptions,
+    ): Promise<PackageType> =>
+      this.request<PackageType>('PATCH', `/package_types/${id}`, {
+        ...options,
+        body: params,
+      }),
+
+    delete: (id: string, options?: RequestOptions): Promise<void> =>
+      this.request<void>('DELETE', `/package_types/${id}`, options),
+  }
+
+  /**
    * This seller's own policy documents — their returns policy, shipping
    * policy, whatever the marketplace asks them to publish.
    *
@@ -1324,6 +1365,25 @@ export interface DeliveryMethodRuleType {
   name: string
   description: string
   preference_schema: DeliveryPreferenceField[]
+}
+
+/**
+ * Measurements a seller records for their own packaging. `default` marks the
+ * box their parcels are quoted with — one per seller, so it never displaces
+ * the marketplace's.
+ */
+export interface PackageTypeParams {
+  name?: string
+  kind?: string
+  length?: string | number | null
+  width?: string | number | null
+  height?: string | number | null
+  dimensions_unit?: string | null
+  weight?: string | number | null
+  max_weight?: string | number | null
+  weight_unit?: string | null
+  default?: boolean
+  metadata?: Record<string, unknown> | null
 }
 
 export interface StockLocationParams {

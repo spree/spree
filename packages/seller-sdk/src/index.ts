@@ -17,6 +17,7 @@ export type {
   MeResponse,
   OnboardingResponse,
   OrderAddressParams,
+  PackageTypeParams,
   PermissionRule,
   ProductParams,
   ProfileUpdateParams,

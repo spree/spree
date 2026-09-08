@@ -69,8 +69,17 @@ RSpec.describe Spree::PermissionConfiguration do
     it 'opens the seller-facing core resources to sellers' do
       expect(configuration.grantable_keys(:seller)).to include(
         'read_products', 'write_products', 'read_orders', 'write_orders',
-        'read_fulfillments', 'write_fulfillments', 'read_stock', 'write_stock', 'read_dashboard'
+        'read_fulfillments', 'write_fulfillments', 'read_stock', 'write_stock', 'read_dashboard',
+        'read_package_types', 'write_package_types'
       )
+    end
+
+    # Packaging left `settings` precisely so a seller could hold it: a seller
+    # owns their own boxes, and `settings` is never seller-grantable
+    # (docs/plans/6.0-seller-package-types.md).
+    it 'keeps package types out of the settings resource' do
+      expect(configuration.resource(:settings).subjects).not_to include(Spree::PackageType)
+      expect(configuration.resource(:package_types).subjects).to include(Spree::PackageType)
     end
 
     it 'never opens the operator-only resources to sellers' do
