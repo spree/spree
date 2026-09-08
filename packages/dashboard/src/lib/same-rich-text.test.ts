@@ -13,6 +13,7 @@ describe('sameRichText', () => {
     const plain = 'Höhenverstellbarer Standventilator mit 40cm Rotordurchmesser'
     expect(sameRichText(plain, `<p>${plain}</p>`)).toBe(true)
     expect(sameRichText(`<p>${plain}</p>`, `<p>${plain}</p><p></p>`)).toBe(true)
+    expect(sameRichText(`<p>${plain}</p>`, `<p>${plain}</p><p><br></p><p></p>`)).toBe(true)
   })
 
   it('does not treat a real wording change as equal', () => {
@@ -24,5 +25,10 @@ describe('sameRichText', () => {
     expect(sameRichText('<p>Standventilator</p>', '<p><strong>Standventilator</strong></p>')).toBe(
       false,
     )
+  })
+
+  it('strips a long run of trailing empty paragraphs without hanging', () => {
+    const empty = '<p></p>'.repeat(200)
+    expect(sameRichText(`<p>Standventilator</p>${empty}`, '<p>Standventilator</p>')).toBe(true)
   })
 })

@@ -5,7 +5,7 @@ import {
   type TranslatableField,
   type TranslationBatchEntry,
 } from '@spree/admin-sdk'
-import { adminClient, useResourceKeyBuilder } from '@spree/dashboard-core'
+import { adminClient } from '@spree/dashboard-core'
 import {
   Button,
   cn,
@@ -27,12 +27,11 @@ import {
   useConfirm,
 } from '@spree/dashboard-ui'
 import { XIcon } from '@spree/dashboard-ui/icons'
-import { useQueryClient } from '@tanstack/react-query'
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import {
-  TRANSLATIONS_QUERY_RESOURCE,
   type TranslatableResourceType,
+  useInvalidateTranslations,
   useLocaleName,
   useResourceTranslations,
 } from '../../../hooks/use-translations'
@@ -100,8 +99,7 @@ export function ResourceTranslationsDialog({
   const { t } = useTranslation()
   const confirm = useConfirm()
   const { data, isLoading, isError, refetch } = useResourceTranslations(resourceType, resourceId)
-  const queryClient = useQueryClient()
-  const buildKey = useResourceKeyBuilder()
+  const invalidateTranslations = useInvalidateTranslations()
 
   const rows = useMemo(() => (data ? flattenTree(data) : []), [data])
   const targetLocales = useMemo(
@@ -168,10 +166,7 @@ export function ResourceTranslationsDialog({
       toastManager.add({ type: 'success', title: t('admin.translations.saved') })
       setEdits(new Map())
       await refetch()
-      // Coverage grid + every per-record matrix share this prefix. Invalidating
-      // only `coverage` used to leave the card behind the dialog (and any other
-      // open editor) on the pre-save payload.
-      await queryClient.invalidateQueries({ queryKey: buildKey(TRANSLATIONS_QUERY_RESOURCE) })
+      await invalidateTranslations()
     } catch (err) {
       // The grid has no form to render inline errors onto, so surface the
       // server's validation message (if any) in the toast rather than the

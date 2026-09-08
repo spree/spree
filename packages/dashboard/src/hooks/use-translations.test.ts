@@ -51,4 +51,13 @@ describe('translations query invalidation', () => {
   it('leaves unrelated catalog lists cached', () => {
     expect(staleAfterTranslationsInvalidation()).not.toContain('products')
   })
+
+  it('matches the key product updates pass to invalidateQueries', () => {
+    // useUpdateProduct invalidates `buildKey('translations')` which is
+    // `withStoreScope(['translations'], storeId)` — the same prefix this
+    // helper uses. A key of `['products', id, 'translations']` would miss.
+    expect(staleAfterTranslationsInvalidation()).toEqual(
+      expect.arrayContaining(['coverage', 'matrix']),
+    )
+  })
 })

@@ -12,7 +12,7 @@ import {
 } from '@spree/dashboard-core'
 import { useQuery, useQueryClient } from '@tanstack/react-query'
 import i18n from 'i18next'
-import { TRANSLATIONS_QUERY_RESOURCE } from './use-translations'
+import { TRANSLATIONS_QUERY_RESOURCE, useInvalidateTranslations } from './use-translations'
 
 export function useCategories() {
   return useQuery({
@@ -52,6 +52,8 @@ export function useCreateCategory() {
 }
 
 export function useUpdateCategory(id: string) {
+  const invalidateTranslations = useInvalidateTranslations()
+
   return useResourceMutation<Category, Error, CategoryUpdateParams>({
     mutationFn: (params) => adminClient.categories.update(id, params),
     // The nested products list is held back: it prefix-matches
@@ -62,6 +64,7 @@ export function useUpdateCategory(id: string) {
     doNotInvalidate: ['products'],
     successMessage: i18n.t('admin.categories.messages.updated'),
     errorMessage: i18n.t('admin.errors.failed_to_update'),
+    onSuccess: () => invalidateTranslations(),
   })
 }
 

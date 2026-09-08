@@ -7,7 +7,7 @@ import {
   useResourceMutation,
 } from '@spree/dashboard-core'
 import { useQuery, useQueryClient } from '@tanstack/react-query'
-import { TRANSLATIONS_QUERY_RESOURCE } from './use-translations'
+import { TRANSLATIONS_QUERY_RESOURCE, useInvalidateTranslations } from './use-translations'
 
 export function useProduct(id: string) {
   return useQuery({
@@ -57,14 +57,16 @@ export function useCreateProduct() {
 export function useUpdateProduct() {
   const queryClient = useQueryClient()
   const buildKey = useResourceKeyBuilder()
+  const invalidateTranslations = useInvalidateTranslations()
 
   return useResourceMutation<Product, Error, { id: string } & ProductUpdateParams>({
     mutationFn: ({ id, ...params }) => adminClient.products.update(id, params),
     invalidate: [['products'], [TRANSLATIONS_QUERY_RESOURCE]],
     successMessage: false,
     errorMessage: false,
-    onSuccess: (_data, variables) => {
+    onSuccess: async (_data, variables) => {
       queryClient.invalidateQueries({ queryKey: buildKey('products', variables.id) })
+      await invalidateTranslations()
     },
   })
 }

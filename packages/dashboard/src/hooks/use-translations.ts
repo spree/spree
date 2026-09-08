@@ -4,8 +4,8 @@ import type {
   TranslatableResource,
   TranslationCoverage,
 } from '@spree/admin-sdk'
-import { adminClient, useResourceKey } from '@spree/dashboard-core'
-import { useQuery } from '@tanstack/react-query'
+import { adminClient, useResourceKey, useResourceKeyBuilder } from '@spree/dashboard-core'
+import { useQuery, useQueryClient } from '@tanstack/react-query'
 import { useCallback } from 'react'
 
 /** The locales a merchant can translate content into (for nice display names). */
@@ -69,6 +69,26 @@ export function isTranslatableResourceType(
 export const TRANSLATIONS_QUERY_RESOURCE = 'translations'
 
 /**
+ * Marks every translations query stale and refetches observers — including
+ * ones that are not mounted. Prefix invalidation with the default
+ * `refetchType: 'active'` only refreshes the open page; a coverage grid
+ * visited earlier stayed on the pre-save payload until staleTime elapsed.
+ */
+export function useInvalidateTranslations() {
+  const queryClient = useQueryClient()
+  const buildKey = useResourceKeyBuilder()
+
+  return useCallback(
+    () =>
+      queryClient.invalidateQueries({
+        queryKey: buildKey(TRANSLATIONS_QUERY_RESOURCE),
+        refetchType: 'all',
+      }),
+    [queryClient, buildKey],
+  )
+}
+
+/**
  * Full translation matrix for any translatable resource: source values +
  * content type per field, plus the translated value for every supported locale
  * (with nested translatable children, e.g. an option type's values). Writes go
@@ -82,6 +102,10 @@ export function useResourceTranslations(
     queryKey: useResourceKey(TRANSLATIONS_QUERY_RESOURCE, resourceType, resourceId),
     queryFn: () => TRANSLATIONS_ACCESSORS[resourceType].get(resourceId),
     enabled: !!resourceId,
+    // Source values change when the catalog record is saved. The default
+    // 60s staleTime would otherwise keep the editor on the pre-save name
+    // after the merchant edits the product and reopens this dialog.
+    refetchOnMount: 'always',
   })
 }
 
@@ -113,6 +137,10 @@ export function useTranslationCoverage(
     // every keystroke is a fresh query key with no data, so the page swaps to
     // its loading state and unmounts the search box the merchant is typing in.
     placeholderData: (previous) => previous,
+    // Always refetch when the merchant opens this page. Catalog edits and
+    // translation saves invalidate the shared prefix, but a missed key still
+    // left the 60s cache serving the previous name and coverage badges.
+    refetchOnMount: 'always',
   })
 }
 

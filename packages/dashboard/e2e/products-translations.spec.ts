@@ -128,6 +128,31 @@ test.describe('product translations', () => {
     await expect(dialog.getByText(/unsaved change/i)).toHaveCount(0)
   })
 
+  test('renaming a product refreshes the translations coverage list', async ({ page }) => {
+    const creds = await login(page)
+    const suffix = Date.now()
+    const name = `E2E Rename ${suffix}`
+    const renamed = `E2E Renamed ${suffix}`
+    await createProduct(page, creds.store_id, name)
+    const productUrl = page.url()
+
+    await gotoIndex(page, TRANSLATIONS_PATH(creds.store_id), /import/i)
+    await page.getByPlaceholder(/search/i).fill(name)
+    await expect(page.getByRole('row', { name: new RegExp(name) })).toBeVisible({ timeout: 15_000 })
+
+    await page.goto(productUrl)
+    await expect(page.getByLabel(/^name$/i)).toHaveValue(name, { timeout: 15_000 })
+    await page.getByLabel(/^name$/i).fill(renamed)
+    await page.getByRole('button', { name: /^save product$/i }).click()
+    await expect(page.getByText(/product saved/i)).toBeVisible({ timeout: 15_000 })
+
+    await gotoIndex(page, TRANSLATIONS_PATH(creds.store_id), /import/i)
+    await page.getByPlaceholder(/search/i).fill(renamed)
+    await expect(page.getByRole('row', { name: new RegExp(renamed) })).toBeVisible({
+      timeout: 15_000,
+    })
+  })
+
   test('saving a translation refreshes the coverage grid behind the editor', async ({ page }) => {
     const creds = await login(page)
     const suffix = Date.now()
