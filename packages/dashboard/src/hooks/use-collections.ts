@@ -38,11 +38,14 @@ export function useCollection(id: string | undefined) {
 }
 
 export function useCreateCollection() {
+  const invalidateTranslations = useInvalidateTranslations()
+
   return useResourceMutation<Collection, Error, CollectionCreateParams>({
     mutationFn: (params) => adminClient.collections.create(params),
     invalidate: [['collections'], [TRANSLATIONS_QUERY_RESOURCE]],
     successMessage: i18n.t('admin.collections.messages.created'),
     errorMessage: i18n.t('admin.errors.failed_to_create'),
+    onSuccess: () => invalidateTranslations(),
   })
 }
 
@@ -79,6 +82,7 @@ export function useRepositionCollection() {
 export function useDeleteCollection() {
   const queryClient = useQueryClient()
   const buildKey = useResourceKeyBuilder()
+  const invalidateTranslations = useInvalidateTranslations()
 
   return useResourceMutation<void, Error, string>({
     mutationFn: (id) => adminClient.collections.delete(id),
@@ -87,6 +91,7 @@ export function useDeleteCollection() {
     errorMessage: i18n.t('admin.errors.failed_to_delete'),
     onSuccess: (_data, id) => {
       queryClient.removeQueries({ queryKey: buildKey('collections', id) })
+      invalidateTranslations()
     },
   })
 }

@@ -44,6 +44,8 @@ export function useProduct(id: string) {
 }
 
 export function useCreateProduct() {
+  const invalidateTranslations = useInvalidateTranslations()
+
   return useResourceMutation<Product, Error, ProductCreateParams>({
     mutationFn: (params) => adminClient.products.create(params),
     // STORE_QUERY_RESOURCE refreshes the setup-task state (Getting Started + nav badge).
@@ -51,6 +53,7 @@ export function useCreateProduct() {
     invalidate: [['products'], [TRANSLATIONS_QUERY_RESOURCE], [STORE_QUERY_RESOURCE]],
     successMessage: false,
     errorMessage: false,
+    onSuccess: () => invalidateTranslations(),
   })
 }
 
@@ -108,14 +111,16 @@ export function useRejectProduct() {
 export function useDeleteProduct() {
   const queryClient = useQueryClient()
   const buildKey = useResourceKeyBuilder()
+  const invalidateTranslations = useInvalidateTranslations()
 
   return useResourceMutation<void, Error, string>({
     mutationFn: (id) => adminClient.products.delete(id),
     invalidate: [['products'], [TRANSLATIONS_QUERY_RESOURCE], [STORE_QUERY_RESOURCE]],
     successMessage: false,
     errorMessage: false,
-    onSuccess: (_data, id) => {
+    onSuccess: async (_data, id) => {
       queryClient.removeQueries({ queryKey: buildKey('products', id) })
+      await invalidateTranslations()
     },
   })
 }

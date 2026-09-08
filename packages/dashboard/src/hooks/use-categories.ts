@@ -43,11 +43,14 @@ export function useCategory(id: string | undefined) {
 }
 
 export function useCreateCategory() {
+  const invalidateTranslations = useInvalidateTranslations()
+
   return useResourceMutation<Category, Error, CategoryCreateParams>({
     mutationFn: (params) => adminClient.categories.create(params),
     invalidate: [['categories'], [TRANSLATIONS_QUERY_RESOURCE]],
     successMessage: i18n.t('admin.categories.messages.created'),
     errorMessage: i18n.t('admin.errors.failed_to_create'),
+    onSuccess: () => invalidateTranslations(),
   })
 }
 
@@ -79,6 +82,7 @@ export function useRepositionCategory() {
 export function useDeleteCategory() {
   const queryClient = useQueryClient()
   const buildKey = useResourceKeyBuilder()
+  const invalidateTranslations = useInvalidateTranslations()
 
   return useResourceMutation<void, Error, string>({
     mutationFn: (id) => adminClient.categories.delete(id),
@@ -87,6 +91,7 @@ export function useDeleteCategory() {
     errorMessage: i18n.t('admin.errors.failed_to_delete'),
     onSuccess: (_data, id) => {
       queryClient.removeQueries({ queryKey: buildKey('categories', id) })
+      invalidateTranslations()
     },
   })
 }

@@ -103,11 +103,14 @@ export function useOptionType(id: string | undefined) {
 }
 
 export function useCreateOptionType() {
+  const invalidateTranslations = useInvalidateTranslations()
+
   return useResourceMutation<OptionType, Error, OptionTypeCreateParams>({
     mutationFn: (params) => adminClient.optionTypes.create(params),
     invalidate: [['option-types'], [TRANSLATIONS_QUERY_RESOURCE]],
     successMessage: i18n.t('admin.option_types.messages.created'),
     errorMessage: i18n.t('admin.errors.failed_to_create'),
+    onSuccess: () => invalidateTranslations(),
   })
 }
 
@@ -126,6 +129,7 @@ export function useUpdateOptionType(id: string) {
 export function useDeleteOptionType() {
   const queryClient = useQueryClient()
   const buildKey = useResourceKeyBuilder()
+  const invalidateTranslations = useInvalidateTranslations()
 
   return useResourceMutation<void, Error, string>({
     mutationFn: (id) => adminClient.optionTypes.delete(id),
@@ -134,6 +138,7 @@ export function useDeleteOptionType() {
     errorMessage: i18n.t('admin.errors.failed_to_delete'),
     onSuccess: (_data, id) => {
       queryClient.removeQueries({ queryKey: buildKey('option-types', id) })
+      invalidateTranslations()
     },
   })
 }

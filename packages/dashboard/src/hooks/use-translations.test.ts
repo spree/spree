@@ -27,6 +27,7 @@ function staleAfterTranslationsInvalidation() {
 
     queryClient.invalidateQueries({
       queryKey: withStoreScope([TRANSLATIONS_QUERY_RESOURCE], STORE_ID),
+      refetchType: 'all',
     })
 
     return Object.entries(seeded)
@@ -63,5 +64,40 @@ describe('translations query invalidation', () => {
     expect(staleAfterTranslationsInvalidation()).toEqual(
       expect.arrayContaining(['coverage', 'matrix']),
     )
+  })
+
+  it('refetches inactive coverage after refetchType all', async () => {
+    // Default invalidateQueries only refetches active observers. Coverage
+    // visited earlier has no observer, so `refetchType: 'all'` is what
+    // useInvalidateTranslations uses — this would stay at 1 without it.
+    const queryClient = new QueryClient({
+      defaultOptions: { queries: { retry: false } },
+    })
+    const coverageKey = [TRANSLATIONS_QUERY_RESOURCE, STORE_ID, 'coverage', 'product', { page: 1 }]
+    let fetches = 0
+
+    try {
+      await queryClient.prefetchQuery({
+        queryKey: coverageKey,
+        queryFn: async () => {
+          fetches += 1
+          return {}
+        },
+      })
+      expect(fetches).toBe(1)
+
+      await queryClient.invalidateQueries({
+        queryKey: withStoreScope([TRANSLATIONS_QUERY_RESOURCE], STORE_ID),
+      })
+      expect(fetches).toBe(1)
+
+      await queryClient.invalidateQueries({
+        queryKey: withStoreScope([TRANSLATIONS_QUERY_RESOURCE], STORE_ID),
+        refetchType: 'all',
+      })
+      expect(fetches).toBe(2)
+    } finally {
+      queryClient.clear()
+    }
   })
 })
