@@ -100,7 +100,12 @@ export function useDeletePackageType() {
  */
 export function canWritePackageTypes(): boolean {
   const packageTypes = getApiClient().packageTypes
-  return packageTypes !== undefined && 'create' in packageTypes
+  if (packageTypes === undefined) return false
+
+  // All three, not just `create`: the page renders Edit off this answer, and
+  // a plain JavaScript host can register a partial object the write shape's
+  // type would have refused.
+  return ['get', 'create', 'update'].every((method) => method in packageTypes)
 }
 
 /** Whether this panel's API offers deletion, which not every one does. */

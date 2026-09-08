@@ -17546,6 +17546,9 @@ paths:
                   nullable: true
                 default:
                   type: boolean
+                metadata:
+                  type: object
+                  nullable: true
               required:
               - name
               - kind
@@ -17671,14 +17674,23 @@ paths:
                 height:
                   type: number
                   nullable: true
+                dimensions_unit:
+                  type: string
+                  nullable: true
                 weight:
                   type: number
                   nullable: true
                 max_weight:
                   type: number
                   nullable: true
+                weight_unit:
+                  type: string
+                  nullable: true
                 default:
                   type: boolean
+                metadata:
+                  type: object
+                  nullable: true
         required: true
     delete:
       summary: Delete a package type

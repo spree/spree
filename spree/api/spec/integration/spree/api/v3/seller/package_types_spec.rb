@@ -81,7 +81,8 @@ RSpec.describe 'Seller Package Types API', type: :request, swagger_doc: 'api-ref
           weight: { type: :number, nullable: true, description: "The empty package's own weight, added to every quote" },
           max_weight: { type: :number, nullable: true },
           weight_unit: { type: :string, nullable: true },
-          default: { type: :boolean }
+          default: { type: :boolean },
+          metadata: { type: :object, nullable: true }
         },
         required: %w[name kind]
       }
@@ -171,9 +172,12 @@ RSpec.describe 'Seller Package Types API', type: :request, swagger_doc: 'api-ref
           length: { type: :number, nullable: true },
           width: { type: :number, nullable: true },
           height: { type: :number, nullable: true },
+          dimensions_unit: { type: :string, nullable: true },
           weight: { type: :number, nullable: true },
           max_weight: { type: :number, nullable: true },
-          default: { type: :boolean }
+          weight_unit: { type: :string, nullable: true },
+          default: { type: :boolean },
+          metadata: { type: :object, nullable: true }
         }
       }
 

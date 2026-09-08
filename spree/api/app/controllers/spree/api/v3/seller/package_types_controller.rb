@@ -47,6 +47,26 @@ module Spree
             action_name == 'show' ? super : resource_scope.find_by_prefix_id!(params[:id])
           end
 
+          # The seller's own rows before the marketplace's, then by name.
+          #
+          # This list holds two owners' packaging, so it has roughly twice as
+          # much to fit under the 100-row page limit as the operator's does.
+          # Ordering here rather than in the client is what makes the limit
+          # cut the shared rows instead of the seller's own measurements —
+          # the page is taken before anything client-side can reorder it.
+          # Ransack cannot express it: it drops the direction on `seller_id`,
+          # and NULLs sort first ascending.
+          #
+          # Skipped when the caller asked for its own order.
+          def apply_collection_sort(collection)
+            return collection if params[:sort].present?
+
+            collection.order(
+              Arel.sql('CASE WHEN seller_id IS NULL THEN 1 ELSE 0 END'),
+              Spree::PackageType.arel_table[:name].asc
+            )
+          end
+
           # The same set the operator's controller permits — a seller measures
           # their own packaging, so every field on the shared form is theirs
           # to set. `seller_id` is deliberately absent: ownership comes from

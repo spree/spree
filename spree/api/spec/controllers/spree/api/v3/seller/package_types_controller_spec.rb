@@ -45,6 +45,30 @@ RSpec.describe Spree::Api::V3::Seller::PackageTypesController, type: :controller
       expect(names).not_to include('Their Mailer')
     end
 
+    # The seller's own rows come first, so the page limit cuts the shared
+    # vocabulary rather than the seller's own measurements — which is what
+    # the variant editor's carton picker depends on.
+    it 'lists the seller’s own packaging before the marketplace’s' do
+      # Names chosen so alphabetical order would put them the other way round.
+      create(:carton_package_type, store: store, name: 'AAA marketplace carton')
+      create(:carton_package_type, store: store, seller: seller, name: 'ZZZ my carton')
+
+      get :index, params: { kind_eq: 'carton' }, as: :json
+
+      owners = json_response['data'].map { |row| row['editable'] }
+      expect(owners).to eq(owners.sort_by { |editable| editable ? 0 : 1 })
+      expect(json_response['data'].pluck('name')).to include('ZZZ my carton', 'AAA marketplace carton')
+    end
+
+    it 'honours an explicit sort instead' do
+      create(:carton_package_type, store: store, name: 'AAA marketplace carton')
+      create(:carton_package_type, store: store, seller: seller, name: 'ZZZ my carton')
+
+      get :index, params: { kind_eq: 'carton', sort: 'name' }, as: :json
+
+      expect(json_response['data'].pluck('name').first).to eq('AAA marketplace carton')
+    end
+
     # What the panel renders a marketplace row read-only by.
     it 'marks only the seller’s own rows editable' do
       get :index, as: :json

@@ -25,6 +25,7 @@ import {
 } from '@spree/dashboard-ui'
 import { PlusIcon } from '@spree/dashboard-ui/icons'
 import { useNavigate } from '@tanstack/react-router'
+import { useEffect } from 'react'
 import { Controller, type UseFormReturn, useForm } from 'react-hook-form'
 import { useTranslation } from 'react-i18next'
 import { z } from 'zod/v4'
@@ -164,7 +165,11 @@ export function PackageTypesPage({ search }: { search: PackageTypesSearch }) {
           return (
             <RowActions
               actions={[
-                { key: 'edit', onSelect: () => openEdit(packageType.id) },
+                {
+                  key: 'edit',
+                  visible: permissions.can('update', Subject.PackageType),
+                  onSelect: () => openEdit(packageType.id),
+                },
                 {
                   key: 'delete',
                   destructive: true,
@@ -259,6 +264,10 @@ function EditPackageTypeSheet({
   const { t } = useTranslation()
   const { data: packageType } = usePackageType(id)
   const updateMutation = useUpdatePackageType(id)
+  // A pasted link can name a row this panel may read but not write — the
+  // marketplace's packaging in a seller's panel. Closing rather than
+  // rendering a form whose save could only 404.
+  const readOnly = packageType?.editable === false
   const form = useForm<PackageTypeFormValues>({
     resolver: zodResolver(packageTypeFormSchema),
     defaultValues: PACKAGE_TYPE_DEFAULTS,
@@ -273,6 +282,12 @@ function EditPackageTypeSheet({
       if (!mapSpreeErrorsToForm(err, form.setError)) throw err
     }
   }
+
+  useEffect(() => {
+    if (readOnly) onOpenChange(false)
+  }, [readOnly, onOpenChange])
+
+  if (readOnly) return null
 
   return (
     <Sheet open={open} onOpenChange={onOpenChange}>
@@ -352,8 +367,10 @@ function PackageTypeFormFields({ form }: { form: UseFormReturn<PackageTypeFormVa
               type="number"
               min="0"
               step="0.01"
+              aria-invalid={!!errors[side]}
               {...form.register(side)}
             />
+            <FieldError errors={[errors[side]]} />
           </Field>
         ))}
         <UnitField
@@ -375,8 +392,10 @@ function PackageTypeFormFields({ form }: { form: UseFormReturn<PackageTypeFormVa
             type="number"
             min="0"
             step="0.01"
+            aria-invalid={!!errors.weight}
             {...form.register('weight')}
           />
+          <FieldError errors={[errors.weight]} />
           <FieldDescription>{t('admin.fields.package_type.weight.help')}</FieldDescription>
         </Field>
         <Field>
@@ -388,8 +407,10 @@ function PackageTypeFormFields({ form }: { form: UseFormReturn<PackageTypeFormVa
             type="number"
             min="0"
             step="0.01"
+            aria-invalid={!!errors.max_weight}
             {...form.register('max_weight')}
           />
+          <FieldError errors={[errors.max_weight]} />
           <FieldDescription>{t('admin.fields.package_type.max_weight.help')}</FieldDescription>
         </Field>
         <UnitField

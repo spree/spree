@@ -153,19 +153,10 @@ export function useFormCartonPackageTypes() {
       (await client.packageTypes?.list({ limit: 100, kind_eq: 'carton' })) ?? { data: [] },
     enabled: supported,
     staleTime: FIVE_MINUTES,
-    // A seller's list carries the marketplace's shared cartons as well as
-    // their own, so this picker has roughly twice as much to hold under the
-    // API's 100-row ceiling as the operator's does. Their own rows are shown
-    // first, which is presentation only: the server truncates before this
-    // runs and offers no owner-aware ordering, so a seller past the ceiling
-    // can still lose their own cartons. Fixing that needs the endpoint to
-    // order by owner, which Ransack cannot express here — it ignores the
-    // direction on `seller_id`, and NULLs sort first ascending.
-    select: (result) => ({
-      data: [...result.data].sort(
-        (a, b) => Number(!a.seller_id) - Number(!b.seller_id) || a.name.localeCompare(b.name),
-      ),
-    }),
+    // The seller endpoint returns their own cartons before the
+    // marketplace's, so the 100-row ceiling cuts the shared vocabulary rather
+    // than the seller's own measurements. Ordered there rather than here
+    // because the page is taken before anything client-side could reorder it.
   })
 
   return { ...query, supported }
