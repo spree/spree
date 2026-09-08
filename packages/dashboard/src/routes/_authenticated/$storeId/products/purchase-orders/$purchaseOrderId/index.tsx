@@ -16,24 +16,24 @@ import {
   TableRow,
   useConfirm,
 } from '@spree/dashboard-ui'
-import { XCircleIcon } from '@spree/dashboard-ui/icons'
+import { PencilIcon, XCircleIcon } from '@spree/dashboard-ui/icons'
 import { createFileRoute, Link } from '@tanstack/react-router'
 import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
-import { InventoryStatusBadge } from '../../../../../components/spree/inventory-status-badge'
-import { QuantityCell, QuantityHead } from '../../../../../components/spree/quantity-cell'
-import { StockHistoryCard } from '../../../../../components/spree/stock-history-card'
-import { VariantLink } from '../../../../../components/spree/variant-link'
+import { InventoryStatusBadge } from '../../../../../../components/spree/inventory-status-badge'
+import { QuantityCell, QuantityHead } from '../../../../../../components/spree/quantity-cell'
+import { StockHistoryCard } from '../../../../../../components/spree/stock-history-card'
+import { VariantLink } from '../../../../../../components/spree/variant-link'
 import {
   useCancelPurchaseOrder,
   useMarkPurchaseOrderOrdered,
   usePurchaseOrder,
   useReceivePurchaseOrder,
-} from '../../../../../hooks/use-purchase-orders'
-import { isClosed } from '../../../../../schemas/inventory-operations'
+} from '../../../../../../hooks/use-purchase-orders'
+import { isClosed } from '../../../../../../schemas/inventory-operations'
 
 export const Route = createFileRoute(
-  '/_authenticated/$storeId/products/purchase-orders/$purchaseOrderId',
+  '/_authenticated/$storeId/products/purchase-orders/$purchaseOrderId/',
 )({
   component: PurchaseOrderDetailPage,
 })
@@ -296,6 +296,7 @@ function ItemRow({
  */
 function PurchaseOrderHeader({ purchaseOrder }: { purchaseOrder: PurchaseOrder }) {
   const { t } = useTranslation()
+  const { storeId } = useStore()
   const confirm = useConfirm()
   const markOrdered = useMarkPurchaseOrderOrdered(purchaseOrder.id)
   const cancelOrder = useCancelPurchaseOrder(purchaseOrder.id)
@@ -331,16 +332,30 @@ function PurchaseOrderHeader({ purchaseOrder }: { purchaseOrder: PurchaseOrder }
       backTo="products/purchase-orders"
       badges={<InventoryStatusBadge status={purchaseOrder.status} resource="purchase_orders" />}
       actions={
-        open &&
-        purchaseOrder.status === 'draft' && (
+        open && (
           <Can I="update" a={Subject.PurchaseOrder}>
-            <Button
-              type="button"
-              onClick={handleOrder}
-              disabled={markOrdered.isPending || (purchaseOrder.items_count ?? 0) === 0}
-            >
-              {t('admin.purchase_orders.actions.mark_ordered')}
-            </Button>
+            {/* A draft is the only order whose lines are still a plan rather
+                than a commitment to a supplier, which `editable` reports. */}
+            {purchaseOrder.editable && (
+              <Button variant="outline" asChild>
+                <Link
+                  to="/$storeId/products/purchase-orders/$purchaseOrderId/edit"
+                  params={{ storeId, purchaseOrderId: purchaseOrder.id }}
+                >
+                  <PencilIcon className="size-4" />
+                  {t('admin.actions.edit')}
+                </Link>
+              </Button>
+            )}
+            {purchaseOrder.status === 'draft' && (
+              <Button
+                type="button"
+                onClick={handleOrder}
+                disabled={markOrdered.isPending || (purchaseOrder.items_count ?? 0) === 0}
+              >
+                {t('admin.purchase_orders.actions.mark_ordered')}
+              </Button>
+            )}
           </Can>
         )
       }

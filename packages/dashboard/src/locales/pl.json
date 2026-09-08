@@ -5122,7 +5122,8 @@
         "failed_to_mark_ready": "Nie udało się oznaczyć przesunięcia jako gotowego",
         "failed_to_mark_in_transit": "Nie udało się oznaczyć przesunięcia jako w drodze",
         "failed_to_receive": "Nie udało się przyjąć przesunięcia",
-        "failed_to_cancel": "Nie udało się anulować przesunięcia"
+        "failed_to_cancel": "Nie udało się anulować przesunięcia",
+        "not_editable": "Ten transfer jest zapakowany, więc jego zawartość jest już zapisem. Anuluj go, jeśli nie ma jechać."
       },
       "messages": {
         "deleted": "Przesunięcie usunięte",
@@ -5177,7 +5178,8 @@
         "units": "Jednostki",
         "shipped_at": "Wysłano",
         "received_at": "Przyjęto",
-        "in_transit_resolution": "Jednostki już wyjechały. Co się z nimi stało?"
+        "in_transit_resolution": "Jednostki już wyjechały. Co się z nimi stało?",
+        "source_locked": "Zablokowany, dopóki są pozycje: wybrano je dla tego magazynu. Usuń je, aby zmienić."
       },
       "actions": {
         "create_draft": "Utwórz szkic",
@@ -5202,7 +5204,8 @@
         "message": "Stan jeszcze się nie zmienił, więc nic nie zostanie wycofane.",
         "in_flight_restock": "Jednostki wrócą na półkę magazynu źródłowego, tak jakby przesunięcie nigdy nie wyjechało.",
         "in_flight_write_off": "Jednostki pozostaną odpisane jako strata. Nic nie zostanie nigdzie dodane."
-      }
+      },
+      "edit_title": "Edytuj transfer {{number}}"
     },
     "store": {
       "load_failed_title": "Nie udało się załadować ustawień sklepu",
@@ -5562,7 +5565,8 @@
         "units": "Jednostki",
         "subtotal": "Razem",
         "ordered_at": "Zamówiono",
-        "received_at": "Przyjęto"
+        "received_at": "Przyjęto",
+        "currency_locked": "Zablokowana po utworzeniu: każda pozycja jest w niej wyceniona."
       },
       "actions": {
         "create_draft": "Utwórz szkic",
@@ -5584,7 +5588,8 @@
         "failed_to_delete": "Nie udało się usunąć zamówienia zakupu",
         "failed_to_order": "Nie udało się złożyć zamówienia",
         "failed_to_receive": "Nie udało się zaksięgować dostawy",
-        "failed_to_cancel": "Nie udało się anulować zamówienia zakupu"
+        "failed_to_cancel": "Nie udało się anulować zamówienia zakupu",
+        "not_editable": "To zamówienie trafiło do dostawcy, więc jego pozycje wiążą obie strony. Anuluj je, jeśli nie ma obowiązywać."
       },
       "delete_confirm": {
         "title": "Usunąć to zamówienie zakupu?",
@@ -5597,7 +5602,8 @@
       "cancel_confirm": {
         "title": "Anulować to zamówienie zakupu?",
         "message": "To, co pozostało niedostarczone, zostanie odwołane. Przyjęte jednostki zostają w magazynie."
-      }
+      },
+      "edit_title": "Edytuj zamówienie {{number}}"
     },
     "suppliers": {
       "title": "Dostawcy",

@@ -1497,9 +1497,9 @@ export interface StockTransferItemParams {
 export interface StockTransferCreateParams {
   source_location_id: string
   destination_location_id: string
-  /** The merchant's own label for the trip. */
-  reference?: string
-  notes?: string
+  /** The merchant's own label for the trip. `null` clears it. */
+  reference?: string | null
+  notes?: string | null
   /**
    * A draft may open empty and gain lines as the merchant packs. Sending the
    * list replaces whatever the draft currently holds.
@@ -1561,11 +1561,11 @@ export interface PurchaseOrderCreateParams {
   destination_location_id: string
   /** Defaults to the store's currency; set it for a foreign-currency order. */
   currency?: string
-  /** The day the supplier promised, as `yyyy-mm-dd`. */
-  expected_at?: string
-  /** The supplier's own order number. */
-  reference?: string
-  notes?: string
+  /** The day the supplier promised, as `yyyy-mm-dd`. `null` clears it. */
+  expected_at?: string | null
+  /** The supplier's own order number. `null` clears it. */
+  reference?: string | null
+  notes?: string | null
   items?: PurchaseOrderItemParams[]
   metadata?: Record<string, unknown>
 }

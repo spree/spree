@@ -5055,7 +5055,8 @@
         "failed_to_mark_ready": "标记调拨为待发出失败",
         "failed_to_mark_in_transit": "标记调拨为在途失败",
         "failed_to_receive": "调拨收货失败",
-        "failed_to_cancel": "取消调拨失败"
+        "failed_to_cancel": "取消调拨失败",
+        "not_editable": "该调拨已打包，内容已成为记录。如果不该发出，请取消它。"
       },
       "messages": {
         "deleted": "调拨已删除",
@@ -5110,7 +5111,8 @@
         "units": "数量",
         "shipped_at": "发出时间",
         "received_at": "收货时间",
-        "in_transit_resolution": "货物已经离库。它们怎么了？"
+        "in_transit_resolution": "货物已经离库。它们怎么了？",
+        "source_locked": "有商品行时不可更改：这些商品是为该仓库挑选的。移除后才能更改。"
       },
       "actions": {
         "create_draft": "创建草稿",
@@ -5132,7 +5134,8 @@
         "message": "库存尚未变动，因此无需回退。",
         "in_flight_restock": "数量将回到来源仓库的货架，如同从未发出。",
         "in_flight_write_off": "数量保持核销为丢失，任何仓库都不会补回。"
-      }
+      },
+      "edit_title": "编辑调拨 {{number}}"
     },
     "store": {
       "load_failed_title": "加载店铺设置失败",
@@ -5489,7 +5492,8 @@
         "units": "数量",
         "subtotal": "合计",
         "ordered_at": "下单时间",
-        "received_at": "收货时间"
+        "received_at": "收货时间",
+        "currency_locked": "创建后固定：每一行的成本都以该货币计价。"
       },
       "actions": {
         "create_draft": "创建草稿",
@@ -5511,7 +5515,8 @@
         "failed_to_delete": "删除采购订单失败",
         "failed_to_order": "下单失败",
         "failed_to_receive": "到货入库失败",
-        "failed_to_cancel": "取消采购订单失败"
+        "failed_to_cancel": "取消采购订单失败",
+        "not_editable": "该订单已发给供应商，其商品行是两家企业之间的约定。如果不该继续，请取消它。"
       },
       "delete_confirm": {
         "title": "删除此采购订单？",
@@ -5524,7 +5529,8 @@
       "cancel_confirm": {
         "title": "取消此采购订单？",
         "message": "尚未到货的部分将被取消。已收到的数量仍留在库存中。"
-      }
+      },
+      "edit_title": "编辑采购订单 {{number}}"
     },
     "suppliers": {
       "title": "供应商",

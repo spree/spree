@@ -5064,7 +5064,8 @@
         "failed_to_mark_ready": "Umlagerung konnte nicht als versandbereit markiert werden",
         "failed_to_mark_in_transit": "Umlagerung konnte nicht als unterwegs markiert werden",
         "failed_to_receive": "Wareneingang konnte nicht gebucht werden",
-        "failed_to_cancel": "Umlagerung konnte nicht abgebrochen werden"
+        "failed_to_cancel": "Umlagerung konnte nicht abgebrochen werden",
+        "not_editable": "Diese Umbuchung ist gepackt, ihr Inhalt ist damit dokumentiert. Storniere sie, wenn sie nicht gehen soll."
       },
       "messages": {
         "deleted": "Umlagerung gelöscht",
@@ -5119,7 +5120,8 @@
         "units": "Einheiten",
         "shipped_at": "Versandt",
         "received_at": "Eingegangen",
-        "in_transit_resolution": "Die Einheiten haben das Lager verlassen. Was ist mit ihnen passiert?"
+        "in_transit_resolution": "Die Einheiten haben das Lager verlassen. Was ist mit ihnen passiert?",
+        "source_locked": "Fest, solange Positionen vorhanden sind: sie wurden für dieses Lager gewählt. Zum Ändern zuerst entfernen."
       },
       "actions": {
         "create_draft": "Entwurf erstellen",
@@ -5142,7 +5144,8 @@
         "message": "Es wurde noch kein Bestand bewegt, es wird also nichts zurückgebucht.",
         "in_flight_restock": "Die Einheiten werden zurück ins Quelllager gebucht, als wäre die Umlagerung nie versandt worden.",
         "in_flight_write_off": "Die Einheiten bleiben als Verlust ausgebucht. Es wird nirgends etwas zurückgebucht."
-      }
+      },
+      "edit_title": "Umbuchung {{number}} bearbeiten"
     },
     "store": {
       "load_failed_title": "Laden der Store-Einstellungen fehlgeschlagen",
@@ -5500,7 +5503,8 @@
         "units": "Einheiten",
         "subtotal": "Gesamt",
         "ordered_at": "Bestellt",
-        "received_at": "Eingegangen"
+        "received_at": "Eingegangen",
+        "currency_locked": "Fest nach dem Anlegen: jede Position ist in dieser Währung bepreist."
       },
       "actions": {
         "create_draft": "Entwurf erstellen",
@@ -5522,7 +5526,8 @@
         "failed_to_delete": "Bestellung konnte nicht gelöscht werden",
         "failed_to_order": "Bestellung konnte nicht aufgegeben werden",
         "failed_to_receive": "Lieferung konnte nicht eingebucht werden",
-        "failed_to_cancel": "Bestellung konnte nicht abgebrochen werden"
+        "failed_to_cancel": "Bestellung konnte nicht abgebrochen werden",
+        "not_editable": "Diese Bestellung liegt beim Lieferanten, ihre Positionen sind damit verbindlich. Storniere sie, wenn sie nicht gelten soll."
       },
       "delete_confirm": {
         "title": "Diese Bestellung löschen?",
@@ -5535,7 +5540,8 @@
       "cancel_confirm": {
         "title": "Diese Bestellung abbrechen?",
         "message": "Alles Offene wird abgesagt. Bereits eingegangene Einheiten bleiben im Bestand."
-      }
+      },
+      "edit_title": "Bestellung {{number}} bearbeiten"
     },
     "suppliers": {
       "title": "Lieferanten",

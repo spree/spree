@@ -21,28 +21,28 @@ import {
   TableRow,
   useConfirm,
 } from '@spree/dashboard-ui'
-import { XCircleIcon } from '@spree/dashboard-ui/icons'
+import { PencilIcon, XCircleIcon } from '@spree/dashboard-ui/icons'
 import { createFileRoute, Link } from '@tanstack/react-router'
 import { useMemo, useState } from 'react'
 import { useTranslation } from 'react-i18next'
-import { InventoryStatusBadge } from '../../../../../components/spree/inventory-status-badge'
-import { QuantityCell, QuantityHead } from '../../../../../components/spree/quantity-cell'
-import { StockHistoryCard } from '../../../../../components/spree/stock-history-card'
-import { TransferCancelDialog } from '../../../../../components/spree/transfer-cancel-dialog'
-import { VariantLink } from '../../../../../components/spree/variant-link'
+import { InventoryStatusBadge } from '../../../../../../components/spree/inventory-status-badge'
+import { QuantityCell, QuantityHead } from '../../../../../../components/spree/quantity-cell'
+import { StockHistoryCard } from '../../../../../../components/spree/stock-history-card'
+import { TransferCancelDialog } from '../../../../../../components/spree/transfer-cancel-dialog'
+import { VariantLink } from '../../../../../../components/spree/variant-link'
 import {
   useMarkStockTransferInTransit,
   useMarkStockTransferReady,
   useReceiveStockTransfer,
   useStockTransfer,
-} from '../../../../../hooks/use-stock-transfers'
+} from '../../../../../../hooks/use-stock-transfers'
 import {
   DISCREPANCY_REASONS,
   isClosed,
   isInFlight,
-} from '../../../../../schemas/inventory-operations'
+} from '../../../../../../schemas/inventory-operations'
 
-export const Route = createFileRoute('/_authenticated/$storeId/products/transfers/$transferId')({
+export const Route = createFileRoute('/_authenticated/$storeId/products/transfers/$transferId/')({
   component: StockTransferDetailPage,
 })
 
@@ -407,6 +407,7 @@ function ReceiveRow({
  */
 function TransferHeader({ transfer }: { transfer: StockTransfer }) {
   const { t } = useTranslation()
+  const { storeId } = useStore()
   const confirm = useConfirm()
   const markReady = useMarkStockTransferReady(transfer.id)
   const markInTransit = useMarkStockTransferInTransit(transfer.id)
@@ -439,6 +440,19 @@ function TransferHeader({ transfer }: { transfer: StockTransfer }) {
         actions={
           open && (
             <Can I="update" a={Subject.StockTransfer}>
+              {/* A draft is the only transfer whose contents are still a plan
+                  rather than a record, which is what `editable` reports. */}
+              {transfer.editable && (
+                <Button variant="outline" asChild>
+                  <Link
+                    to="/$storeId/products/transfers/$transferId/edit"
+                    params={{ storeId, transferId: transfer.id }}
+                  >
+                    <PencilIcon className="size-4" />
+                    {t('admin.actions.edit')}
+                  </Link>
+                </Button>
+              )}
               {/* Packing a draft is optional — a merchant already loading the
                   van can go straight to in transit — so it is the quieter of
                   the two. */}

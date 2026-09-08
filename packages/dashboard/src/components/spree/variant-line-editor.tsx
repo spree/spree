@@ -22,9 +22,23 @@ import { useRef } from 'react'
 import { useTranslation } from 'react-i18next'
 import { VariantLink } from './variant-link'
 
+/**
+ * What a line needs to render: enough of a variant to name and picture it.
+ *
+ * Structural rather than the SDK's `Variant`, so a line can be seeded from a
+ * saved document's items — those carry the same four facts under their own
+ * names and are not variants. A search result satisfies it as it stands.
+ */
+export interface VariantLineVariant {
+  id: string
+  sku?: string | null
+  product_name?: string | null
+  thumbnail_url?: string | null
+}
+
 /** One SKU the merchant is putting on a transfer or a purchase order. */
 export interface VariantLine {
-  variant: Variant
+  variant: VariantLineVariant
   quantity: number
   /** Only purchase orders have a cost; transfers move stock already owned. */
   unitCost?: string

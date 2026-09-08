@@ -68,6 +68,36 @@ test.describe('stock transfers', () => {
     await expect(page.getByText('8 received of 10 shipped')).toBeVisible()
   })
 
+  test('a draft can be corrected, a shipped one cannot', async ({ page }) => {
+    const creds = await login(page)
+    const draft = await createDraftTransfer(page, creds.accessToken, 3)
+
+    await page.goto(`${TRANSFERS_PATH(creds.store_id)}/${draft.id}`)
+    await expect(page.getByRole('heading', { name: draft.number })).toBeVisible({
+      timeout: 15_000,
+    })
+
+    await page.getByRole('link', { name: /^edit$/i }).click()
+    await expect(
+      page.getByRole('heading', { name: new RegExp(`edit transfer ${draft.number}`, 'i') }),
+    ).toBeVisible()
+
+    const reference = `Corrected ${Date.now()}`
+    await page.getByLabel(/^reference$/i).fill(reference)
+    await page.getByRole('button', { name: /^save$/i }).click()
+
+    await expect(page.getByText(reference)).toBeVisible({ timeout: 15_000 })
+
+    // Once it has shipped there is nothing to correct: what is in the box is a
+    // matter of record.
+    const shipped = await createInTransitTransfer(page, creds.accessToken, 2)
+    await page.goto(`${TRANSFERS_PATH(creds.store_id)}/${shipped.id}`)
+    await expect(page.getByRole('heading', { name: shipped.number })).toBeVisible({
+      timeout: 15_000,
+    })
+    await expect(page.getByRole('link', { name: /^edit$/i })).toHaveCount(0)
+  })
+
   test('makes the merchant say what happened to units already gone', async ({ page }) => {
     const creds = await login(page)
     const transfer = await createInTransitTransfer(page, creds.accessToken, 4)
@@ -150,4 +180,38 @@ async function createInTransitTransfer(
   expect(shipped.status(), await shipped.text()).toBe(200)
 
   return transfer
+}
+
+/** The same fixture transfer, left as a draft. */
+async function createDraftTransfer(
+  page: import('@playwright/test').Page,
+  accessToken: string,
+  quantity: number,
+) {
+  const headers = { Authorization: `Bearer ${accessToken}` }
+
+  const locations = await page.request
+    .get('/api/v3/admin/stock_locations', { headers, params: { limit: 100 } })
+    .then((res) => res.json())
+  const source = locations.data.find((l: { name: string }) => l.name === FIXTURE_TRANSFER_SOURCE)
+  const destination = locations.data.find(
+    (l: { name: string }) => l.name === FIXTURE_TRANSFER_DESTINATION,
+  )
+
+  const variants = await page.request
+    .get('/api/v3/admin/variants', { headers, params: { 'q[sku_eq]': FIXTURE_TRANSFER_SKU } })
+    .then((res) => res.json())
+
+  const created = await page.request.post('/api/v3/admin/stock_transfers', {
+    headers,
+    data: {
+      source_location_id: source.id,
+      destination_location_id: destination.id,
+      reference: `E2E draft ${Date.now()}`,
+      items: [{ variant_id: variants.data[0].id, quantity_shipped: quantity }],
+    },
+  })
+  expect(created.status(), await created.text()).toBe(201)
+
+  return created.json()
 }

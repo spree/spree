@@ -5064,7 +5064,8 @@
         "failed_to_mark_ready": "Failed to mark the transfer ready",
         "failed_to_mark_in_transit": "Failed to mark the transfer in transit",
         "failed_to_receive": "Failed to receive the transfer",
-        "failed_to_cancel": "Failed to cancel the transfer"
+        "failed_to_cancel": "Failed to cancel the transfer",
+        "not_editable": "This transfer has been packed, so what is in it is now a matter of record. Cancel it if it should not go."
       },
       "messages": {
         "deleted": "Transfer deleted",
@@ -5119,7 +5120,8 @@
         "units": "Units",
         "shipped_at": "Shipped",
         "received_at": "Received",
-        "in_transit_resolution": "The units have already left. What happened to them?"
+        "in_transit_resolution": "The units have already left. What happened to them?",
+        "source_locked": "Fixed while the transfer has lines: they were picked for this warehouse. Remove them to change it."
       },
       "actions": {
         "create_draft": "Create draft",
@@ -5142,7 +5144,8 @@
         "message": "No stock has moved yet, so nothing will be reversed.",
         "in_flight_restock": "The units will go back onto the source warehouse's shelf, as if the transfer had never shipped.",
         "in_flight_write_off": "The units stay off the books as lost. Nothing is added back anywhere."
-      }
+      },
+      "edit_title": "Edit transfer {{number}}"
     },
     "store": {
       "load_failed_title": "Failed to load store settings",
@@ -5500,7 +5503,8 @@
         "units": "Units",
         "subtotal": "Total",
         "ordered_at": "Ordered",
-        "received_at": "Received"
+        "received_at": "Received",
+        "currency_locked": "Fixed after the order is opened: every line cost is priced in it."
       },
       "actions": {
         "create_draft": "Create draft",
@@ -5522,7 +5526,8 @@
         "failed_to_delete": "Failed to delete the purchase order",
         "failed_to_order": "Failed to place the purchase order",
         "failed_to_receive": "Failed to book in the delivery",
-        "failed_to_cancel": "Failed to cancel the purchase order"
+        "failed_to_cancel": "Failed to cancel the purchase order",
+        "not_editable": "This order has gone to the supplier, so its lines are a matter of record between two businesses. Cancel it if it should not stand."
       },
       "delete_confirm": {
         "title": "Delete this purchase order?",
@@ -5535,7 +5540,8 @@
       "cancel_confirm": {
         "title": "Cancel this purchase order?",
         "message": "What is still outstanding is called off. Units already received stay on the shelf."
-      }
+      },
+      "edit_title": "Edit order {{number}}"
     },
     "suppliers": {
       "title": "Suppliers",
