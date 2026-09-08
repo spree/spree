@@ -72,13 +72,24 @@ test.describe('stock transfers', () => {
       timeout: 15_000,
     })
 
-    // The units are physically gone from the source, so the screen offers
-    // restock or write-off rather than guessing.
-    await expect(page.getByText(/the units have already left/i)).toBeVisible()
-    await expect(page.locator('#in-transit-resolution')).toBeVisible()
-    await expect(page.getByRole('button', { name: /cancel transfer/i })).toBeVisible()
-    // Nothing to mark ready or send any more.
+    // Nothing left to send, so the header offers no forward action.
     await expect(page.getByRole('button', { name: /mark in transit/i })).toHaveCount(0)
+
+    await page.getByRole('button', { name: /more actions/i }).click()
+    await page.getByRole('menuitem', { name: /cancel transfer/i }).click()
+
+    // The units are physically gone from the source, so the dialog asks what
+    // happened to them and refuses to proceed until it is told.
+    const dialog = page.getByRole('dialog')
+    await expect(dialog.getByText(/the units have already left/i)).toBeVisible()
+    const confirmCancel = dialog.getByRole('button', { name: /^cancel transfer$/i })
+    await expect(confirmCancel).toBeDisabled()
+
+    await dialog.getByText(/put the units back at the source/i).click()
+    await expect(confirmCancel).toBeEnabled()
+    await confirmCancel.click()
+
+    await expect(page.getByText(/^cancelled$/i).first()).toBeVisible({ timeout: 15_000 })
   })
 })
 

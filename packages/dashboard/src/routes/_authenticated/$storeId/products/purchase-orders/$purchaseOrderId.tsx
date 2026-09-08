@@ -6,6 +6,7 @@ import {
   CardContent,
   CardHeader,
   CardTitle,
+  DropdownMenuItem,
   Input,
   RelativeTime,
   Table,
@@ -16,6 +17,7 @@ import {
   TableRow,
   useConfirm,
 } from '@spree/dashboard-ui'
+import { XCircleIcon } from '@spree/dashboard-ui/icons'
 import { createFileRoute, Link } from '@tanstack/react-router'
 import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
@@ -28,6 +30,7 @@ import {
   usePurchaseOrder,
   useReceivePurchaseOrder,
 } from '../../../../../hooks/use-purchase-orders'
+import { isClosed } from '../../../../../schemas/inventory-operations'
 
 export const Route = createFileRoute(
   '/_authenticated/$storeId/products/purchase-orders/$purchaseOrderId',
@@ -46,15 +49,10 @@ function PurchaseOrderDetailPage() {
 
   return (
     <div className="mx-auto flex w-full max-w-4xl flex-col gap-4 p-4">
-      <PageHeader
-        title={purchaseOrder.number}
-        backTo="products/purchase-orders"
-        badges={<InventoryStatusBadge status={purchaseOrder.status} resource="purchase_orders" />}
-      />
+      <PurchaseOrderHeader purchaseOrder={purchaseOrder} />
 
       <SummaryCard purchaseOrder={purchaseOrder} />
       <ItemsCard purchaseOrder={purchaseOrder} />
-      <Actions purchaseOrder={purchaseOrder} />
 
       <StockHistoryCard
         stockLocationId={purchaseOrder.destination_location_id}
@@ -299,13 +297,17 @@ function ItemRow({
   )
 }
 
-function Actions({ purchaseOrder }: { purchaseOrder: PurchaseOrder }) {
+/**
+ * Title, status, and the transitions — the same layout an order's header uses:
+ * placing the order is the button, calling it off is in the menu.
+ */
+function PurchaseOrderHeader({ purchaseOrder }: { purchaseOrder: PurchaseOrder }) {
   const { t } = useTranslation()
   const confirm = useConfirm()
   const markOrdered = useMarkPurchaseOrderOrdered(purchaseOrder.id)
   const cancelOrder = useCancelPurchaseOrder(purchaseOrder.id)
 
-  if (purchaseOrder.status === 'received' || purchaseOrder.status === 'canceled') return null
+  const open = !isClosed(purchaseOrder.status)
 
   async function handleOrder() {
     const ok = await confirm({
@@ -331,13 +333,14 @@ function Actions({ purchaseOrder }: { purchaseOrder: PurchaseOrder }) {
   }
 
   return (
-    <Card>
-      <CardHeader>
-        <CardTitle>{t('admin.purchase_orders.actions_title')}</CardTitle>
-      </CardHeader>
-      <CardContent className="flex flex-wrap gap-2">
-        <Can I="update" a={Subject.PurchaseOrder}>
-          {purchaseOrder.status === 'draft' && (
+    <PageHeader
+      title={purchaseOrder.number}
+      backTo="products/purchase-orders"
+      badges={<InventoryStatusBadge status={purchaseOrder.status} resource="purchase_orders" />}
+      actions={
+        open &&
+        purchaseOrder.status === 'draft' && (
+          <Can I="update" a={Subject.PurchaseOrder}>
             <Button
               type="button"
               onClick={handleOrder}
@@ -345,17 +348,24 @@ function Actions({ purchaseOrder }: { purchaseOrder: PurchaseOrder }) {
             >
               {t('admin.purchase_orders.actions.mark_ordered')}
             </Button>
-          )}
-          <Button
-            type="button"
-            variant="destructive"
-            onClick={handleCancel}
-            disabled={cancelOrder.isPending}
-          >
-            {t('admin.purchase_orders.actions.cancel_order')}
-          </Button>
-        </Can>
-      </CardContent>
-    </Card>
+          </Can>
+        )
+      }
+      destructiveItems={
+        open && (
+          <Can I="update" a={Subject.PurchaseOrder}>
+            <DropdownMenuItem
+              variant="destructive"
+              onClick={handleCancel}
+              disabled={cancelOrder.isPending}
+            >
+              <XCircleIcon className="size-4" />
+              {t('admin.purchase_orders.actions.cancel_order')}
+            </DropdownMenuItem>
+          </Can>
+        )
+      }
+      resource={{ id: purchaseOrder.id, number: purchaseOrder.number }}
+    />
   )
 }

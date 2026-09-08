@@ -6,8 +6,7 @@ import {
   CardContent,
   CardHeader,
   CardTitle,
-  Field,
-  FieldLabel,
+  DropdownMenuItem,
   Input,
   RelativeTime,
   Select,
@@ -23,14 +22,15 @@ import {
   TableRow,
   useConfirm,
 } from '@spree/dashboard-ui'
+import { XCircleIcon } from '@spree/dashboard-ui/icons'
 import { createFileRoute, Link } from '@tanstack/react-router'
 import { useMemo, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { InventoryStatusBadge } from '../../../../../components/spree/inventory-status-badge'
 import { StockHistoryCard } from '../../../../../components/spree/stock-history-card'
+import { TransferCancelDialog } from '../../../../../components/spree/transfer-cancel-dialog'
 import { VariantLink } from '../../../../../components/spree/variant-link'
 import {
-  useCancelStockTransfer,
   useMarkStockTransferInTransit,
   useMarkStockTransferReady,
   useReceiveStockTransfer,
@@ -38,8 +38,7 @@ import {
 } from '../../../../../hooks/use-stock-transfers'
 import {
   DISCREPANCY_REASONS,
-  IN_TRANSIT_RESOLUTIONS,
-  type InTransitResolution,
+  isClosed,
   isInFlight,
 } from '../../../../../schemas/inventory-operations'
 
@@ -58,11 +57,7 @@ function StockTransferDetailPage() {
 
   return (
     <div className="mx-auto flex w-full max-w-4xl flex-col gap-4 p-4">
-      <PageHeader
-        title={transfer.number}
-        backTo="products/transfers"
-        badges={<InventoryStatusBadge status={transfer.status} resource="stock_transfers" />}
-      />
+      <TransferHeader transfer={transfer} />
 
       <SummaryCard transfer={transfer} />
 
@@ -71,8 +66,6 @@ function StockTransferDetailPage() {
       ) : (
         <ReceiveCard transfer={transfer} />
       )}
-
-      <Actions transfer={transfer} />
 
       {/* Where the units on this trip came from and went — read on the
           destination warehouse, which is the shelf the merchant is
@@ -420,18 +413,20 @@ function ReceiveRow({
   )
 }
 
-function Actions({ transfer }: { transfer: StockTransfer }) {
+/**
+ * Title, status, and the transitions — laid out the way an order's header is:
+ * the move that carries the transfer forward as a button on the right, the
+ * cancellation in the menu beside it.
+ */
+function TransferHeader({ transfer }: { transfer: StockTransfer }) {
   const { t } = useTranslation()
   const confirm = useConfirm()
   const markReady = useMarkStockTransferReady(transfer.id)
   const markInTransit = useMarkStockTransferInTransit(transfer.id)
-  const cancelTransfer = useCancelStockTransfer(transfer.id)
-  const [resolution, setResolution] = useState<InTransitResolution>('restock')
+  const [cancelOpen, setCancelOpen] = useState(false)
 
-  const inFlight = isInFlight(transfer.status)
-  const closed = transfer.status === 'received' || transfer.status === 'canceled'
-
-  if (closed) return null
+  const open = !isClosed(transfer.status)
+  const shippable = transfer.status === 'draft' || transfer.status === 'ready_to_ship'
 
   async function handleShip() {
     const ok = await confirm({
@@ -445,82 +440,51 @@ function Actions({ transfer }: { transfer: StockTransfer }) {
     await markInTransit.mutateAsync({}).catch(() => undefined)
   }
 
-  async function handleCancel() {
-    const ok = await confirm({
-      title: t('admin.stock_transfers.cancel_confirm.title'),
-      message: inFlight
-        ? t(`admin.stock_transfers.cancel_confirm.in_flight_${resolution}`)
-        : t('admin.stock_transfers.cancel_confirm.message'),
-      variant: 'destructive',
-      confirmLabel: t('admin.stock_transfers.actions.cancel_transfer'),
-    })
-    if (!ok) return
-    await cancelTransfer
-      .mutateAsync(inFlight ? { on_in_transit: resolution } : {})
-      .catch(() => undefined)
-  }
-
   return (
-    <Card>
-      <CardHeader>
-        <CardTitle>{t('admin.stock_transfers.actions_title')}</CardTitle>
-      </CardHeader>
-      <CardContent className="flex flex-col gap-4">
-        {/* The merchant has to say what happened to units already gone from
-            the source: guessing would either invent stock or destroy it. */}
-        {inFlight && (
-          <Field>
-            <FieldLabel htmlFor="in-transit-resolution">
-              {t('admin.stock_transfers.fields.in_transit_resolution')}
-            </FieldLabel>
-            <Select
-              value={resolution}
-              onValueChange={(value) => setResolution(value as InTransitResolution)}
-            >
-              <SelectTrigger id="in-transit-resolution">
-                <SelectValue>
-                  {(value) => t(`admin.stock_transfers.in_transit_resolutions.${value}`)}
-                </SelectValue>
-              </SelectTrigger>
-              <SelectContent>
-                {IN_TRANSIT_RESOLUTIONS.map((value) => (
-                  <SelectItem key={value} value={value}>
-                    {t(`admin.stock_transfers.in_transit_resolutions.${value}`)}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-          </Field>
-        )}
-
-        <div className="flex flex-wrap gap-2">
-          <Can I="update" a={Subject.StockTransfer}>
-            {transfer.status === 'draft' && (
-              <Button
-                type="button"
-                variant="outline"
-                onClick={() => markReady.mutateAsync().catch(() => undefined)}
-                disabled={markReady.isPending || (transfer.items_count ?? 0) === 0}
-              >
-                {t('admin.stock_transfers.actions.mark_ready')}
-              </Button>
-            )}
-            {(transfer.status === 'draft' || transfer.status === 'ready_to_ship') && (
-              <Button type="button" onClick={handleShip} disabled={markInTransit.isPending}>
-                {t('admin.stock_transfers.actions.mark_in_transit')}
-              </Button>
-            )}
-            <Button
-              type="button"
-              variant="destructive"
-              onClick={handleCancel}
-              disabled={cancelTransfer.isPending}
-            >
-              {t('admin.stock_transfers.actions.cancel_transfer')}
-            </Button>
-          </Can>
-        </div>
-      </CardContent>
-    </Card>
+    <>
+      {cancelOpen && (
+        <TransferCancelDialog transfer={transfer} onClose={() => setCancelOpen(false)} />
+      )}
+      <PageHeader
+        title={transfer.number}
+        backTo="products/transfers"
+        badges={<InventoryStatusBadge status={transfer.status} resource="stock_transfers" />}
+        actions={
+          open && (
+            <Can I="update" a={Subject.StockTransfer}>
+              {/* Packing a draft is optional — a merchant already loading the
+                  van can go straight to in transit — so it is the quieter of
+                  the two. */}
+              {transfer.status === 'draft' && (
+                <Button
+                  type="button"
+                  variant="outline"
+                  onClick={() => markReady.mutateAsync().catch(() => undefined)}
+                  disabled={markReady.isPending || (transfer.items_count ?? 0) === 0}
+                >
+                  {t('admin.stock_transfers.actions.mark_ready')}
+                </Button>
+              )}
+              {shippable && (
+                <Button type="button" onClick={handleShip} disabled={markInTransit.isPending}>
+                  {t('admin.stock_transfers.actions.mark_in_transit')}
+                </Button>
+              )}
+            </Can>
+          )
+        }
+        destructiveItems={
+          open && (
+            <Can I="update" a={Subject.StockTransfer}>
+              <DropdownMenuItem variant="destructive" onClick={() => setCancelOpen(true)}>
+                <XCircleIcon className="size-4" />
+                {t('admin.stock_transfers.actions.cancel_transfer')}
+              </DropdownMenuItem>
+            </Can>
+          )
+        }
+        resource={{ id: transfer.id, number: transfer.number }}
+      />
+    </>
   )
 }
