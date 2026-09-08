@@ -1121,13 +1121,22 @@ export class SellerClient {
    */
   readonly packageTypes = {
     list: (
-      params?: ListParams & Record<string, unknown>,
+      params?: ListParams & { owner?: 'mine' } & Record<string, unknown>,
       options?: RequestOptions,
-    ): Promise<PaginatedResponse<PackageType>> =>
-      this.request<PaginatedResponse<PackageType>>('GET', '/package_types', {
+    ): Promise<PaginatedResponse<PackageType>> => {
+      // `owner` is a plain query param the controller reads directly, so it
+      // is lifted out before the Ransack transform, which would otherwise
+      // send it as `q[owner]` and the filter would silently do nothing.
+      const { owner, ...listParams } = params ?? {}
+
+      return this.request<PaginatedResponse<PackageType>>('GET', '/package_types', {
         ...options,
-        params: params ? transformListParams(params) : undefined,
-      }),
+        params: {
+          ...(params ? transformListParams(listParams) : {}),
+          ...(owner ? { owner } : {}),
+        },
+      })
+    },
 
     get: (id: string, options?: RequestOptions): Promise<PackageType> =>
       this.request<PackageType>('GET', `/package_types/${id}`, options),

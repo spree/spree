@@ -169,14 +169,25 @@ manage theirs through the Seller API, and can also pack products into the
 marketplace's cartons — those they read but cannot change.
 
 ```typescript Seller SDK
-const { data: packaging } = await sellerClient.packageTypes.list()
+// Their own packaging — what the seller panel's settings page lists.
+const { data: mine } = await sellerClient.packageTypes.list({ owner: 'mine' })
 
-packaging.forEach((row) => {
+// Their own plus the marketplace's, which is what a carton picker wants.
+const { data: available } = await sellerClient.packageTypes.list()
+
+available.forEach((row) => {
   row.name
   row.editable   // false on the marketplace's own rows
   row.default    // this seller's default box
 })
 ```
+
+A seller's settings page asks for `owner: 'mine'`. A list mixing both owners
+reads as "packaging is configured" while the seller has recorded nothing of
+their own, which makes the shipping-box requirement look broken rather than
+outstanding. Where a seller genuinely benefits from the marketplace's rows —
+choosing the carton a product is packed into — the unfiltered list is what
+the picker reads.
 
 Because the fallback keeps checkout working, a seller who never opens the page
 would quietly ship with someone else's measurements. The **shipping box**

@@ -119,7 +119,13 @@ export function canDeletePackageTypes(): boolean {
  * table calls it with the search params it has already parsed.
  */
 export function listPackageTypes(params: Record<string, unknown>) {
-  return resource().list(params) as Promise<{
+  // `owner: 'mine'` — the settings page shows what this panel's principal
+  // owns, never another owner's rows. On the operator's panel every row is
+  // theirs and the param is ignored; on a seller's it hides the
+  // marketplace's shared packaging, which the seller reads through the
+  // variant editor's carton picker instead. A mixed list read as "packaging
+  // is configured" while the seller had recorded none.
+  return resource().list({ ...params, owner: 'mine' }) as Promise<{
     data: PanelPackageType[]
     meta: PaginationMeta
   }>

@@ -17379,6 +17379,15 @@ paths:
         required: true
         schema:
           type: string
+      - name: owner
+        in: query
+        required: false
+        enum:
+        - mine
+        description: "Narrows the list to the seller's own packaging, leaving out
+          the marketplace's shared rows:\n * `mine` \n "
+        schema:
+          type: string
       - name: page
         in: query
         required: false
@@ -21181,6 +21190,10 @@ components:
         depth:
           type: number
           nullable: true
+        weight_unit:
+          type: string
+        dimensions_unit:
+          type: string
         minimum_order_quantity:
           type: number
           nullable: true
@@ -21235,12 +21248,6 @@ components:
         barcode:
           type: string
           nullable: true
-        weight_unit:
-          type: string
-          nullable: true
-        dimensions_unit:
-          type: string
-          nullable: true
         backorder_limit:
           type: number
           nullable: true
@@ -21290,6 +21297,8 @@ components:
       - height
       - width
       - depth
+      - weight_unit
+      - dimensions_unit
       - minimum_order_quantity
       - order_multiple
       - purchase_unit
@@ -21303,8 +21312,6 @@ components:
       - cost_price
       - cost_currency
       - barcode
-      - weight_unit
-      - dimensions_unit
       - backorder_limit
       - hs_code
       - country_of_origin

@@ -69,6 +69,15 @@ RSpec.describe Spree::Api::V3::Seller::PackageTypesController, type: :controller
       expect(json_response['data'].pluck('name').first).to eq('AAA marketplace carton')
     end
 
+    # The settings page asks for this: a list mixing both owners reads as
+    # "packaging is configured" while the seller has recorded nothing, which
+    # makes the shipping-box requirement look broken rather than outstanding.
+    it 'narrows to the seller’s own packaging on request' do
+      get :index, params: { owner: 'mine' }, as: :json
+
+      expect(json_response['data'].pluck('name')).to contain_exactly('My Mailer')
+    end
+
     # What the panel renders a marketplace row read-only by.
     it 'marks only the seller’s own rows editable' do
       get :index, as: :json

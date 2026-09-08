@@ -29,12 +29,21 @@ module Spree
           end
 
           # Reading shows the seller's own packaging plus the marketplace's —
-          # the same set their variants may reference, so the page answers
-          # "what can I pack into" rather than only "what have I measured".
+          # the same set their variants may reference, so a carton picker can
+          # ask "what can I pack into" rather than only "what have I
+          # measured".
+          #
+          # `owner=mine` narrows it to the seller's own rows. The packaging
+          # settings page asks for that, because a list mixing both owners
+          # reads as "packaging is configured" while the seller has recorded
+          # nothing — the shipping-box requirement then looks broken rather
+          # than outstanding. Not a Ransack predicate: `available_to_seller`
+          # composes with `.or()`, so a filter on `seller_id` widens back out
+          # to the whole condition instead of narrowing it.
           def scope
-            current_store.package_types.
-              available_to_seller(current_seller).
-              preload_associations_lazily
+            rows = current_store.package_types
+            rows = params[:owner] == 'mine' ? rows.for_seller(current_seller) : rows.available_to_seller(current_seller)
+            rows.preload_associations_lazily
           end
 
           # Writes root in the seller's own rows, so the marketplace's
