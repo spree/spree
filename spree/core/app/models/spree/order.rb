@@ -37,6 +37,7 @@ module Spree
     include Spree::Purchase::StoreCredits
     include Spree::Purchase::GiftCards
     include Spree::Purchase::LineItemCurrencies
+    include Spree::Purchase::LineItemLookup
     include Spree::Purchase::PaymentProcessing
     include Spree::Purchase::Addresses
     include Spree::Purchase::Validations
@@ -636,18 +637,6 @@ module Spree
     def disassociate_user!
       Spree::Deprecation.warn('Spree::Order#disassociate_user! is deprecated and will be removed in Spree 6.1. Use #disassociate_customer! instead.')
       disassociate_customer!
-    end
-
-    def quantity_of(variant, options = {})
-      line_item = find_line_item_by_variant(variant, options)
-      line_item ? line_item.quantity : 0
-    end
-
-    def find_line_item_by_variant(variant, options = {})
-      line_items.detect do |line_item|
-        line_item.variant_id == variant.id &&
-          Spree.cart_compare_line_items_service.new.call(order: self, line_item: line_item, options: options).value
-      end
     end
 
     # Re-estimates tax through the configured provider (writes TaxLine rows

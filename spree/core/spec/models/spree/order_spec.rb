@@ -550,8 +550,6 @@ describe Spree::Order, type: :model do
   describe '#products' do
     let(:variant1) { create(:variant) }
     let(:variant2) { create(:variant) }
-    let!(:variant3) { create(:variant) }
-    let(:other_variant) { create(:variant) }
     let!(:line_items) do
       [
         create(:line_item, product: variant1.product, variant: variant1, quantity: 1),
@@ -560,17 +558,6 @@ describe Spree::Order, type: :model do
     end
 
     before { allow(order).to receive_messages(line_items: line_items) }
-
-    it 'gets the quantity of a given variant' do
-      expect(order.quantity_of(variant1)).to eq(1)
-
-      expect(order.quantity_of(variant3)).to eq(0)
-    end
-
-    it 'can find a line item matching a given variant' do
-      expect(order.find_line_item_by_variant(variant1)).not_to be_nil
-      expect(order.find_line_item_by_variant(other_variant)).to be_nil
-    end
 
     context 'match line item with options' do
       before do

@@ -29,6 +29,7 @@ module Spree
     include Spree::Purchase::StoreCredits
     include Spree::Purchase::GiftCards
     include Spree::Purchase::LineItemCurrencies
+    include Spree::Purchase::LineItemLookup
     include Spree::Purchase::PaymentProcessing
     include Spree::Purchase::Addresses
     include Spree::Purchase::Validations

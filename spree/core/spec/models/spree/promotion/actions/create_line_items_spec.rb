@@ -64,6 +64,28 @@ describe Spree::Promotion::Actions::CreateLineItems, type: :model do
     end
   end
 
+  context 'when the promotable is a cart' do
+    let(:cart) { create(:cart) }
+
+    before do
+      allow(action).to receive_messages promotion: promotion
+      action.promotion_action_line_items.create!(variant: mug, quantity: 2)
+    end
+
+    it 'adds the gift to the cart' do
+      expect(action.perform(order: cart)).to be(true)
+      expect(cart.line_items.reload.find_by(variant_id: mug.id).quantity).to eq(2)
+    end
+
+    it 'takes the gift back when the promotion stops applying' do
+      action.perform(order: cart)
+      allow(promotion).to receive(:eligible?).and_return(false)
+
+      expect(action.revert(order: cart)).to be(true)
+      expect(cart.line_items.reload.find_by(variant_id: mug.id)).to be_nil
+    end
+  end
+
   describe '#item_available?' do
     let(:item_out_of_stock) do
       action.promotion_action_line_items.create!(variant: mug, quantity: 1)
