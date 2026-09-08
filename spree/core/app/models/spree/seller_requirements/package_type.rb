@@ -19,11 +19,16 @@ module Spree
     class PackageType < Spree::SellerRequirement
       MEASUREMENTS = %i[length width height weight].freeze
 
+      # Queried rather than read through `seller.default_package_type`, for
+      # the reason the delivery-method kind beside it queries too: a workflow
+      # may hand this a seller whose `has_one` was loaded before the box was
+      # recorded, and the cached nil would fail the gate closed on a seller
+      # who has done what was asked.
       def met_by_seller?(seller)
-        box = seller.default_package_type
-        return false if box.nil?
+        table = Spree::PackageType.arel_table
+        measured = MEASUREMENTS.map { |measurement| table[measurement].gt(0) }.reduce(:and)
 
-        MEASUREMENTS.all? { |measurement| box.public_send(measurement).to_d.positive? }
+        seller.package_types.default.where(measured).exists?
       end
     end
   end

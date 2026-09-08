@@ -136,11 +136,6 @@ export function useFormDeliveryProfiles() {
   })
 }
 
-/** A seller's own packaging sorts ahead of the marketplace's shared rows. */
-function ownerRank(packageType: PanelPackageType): number {
-  return packageType.seller_id ? 0 : 1
-}
-
 /**
  * Carton package types, plus whether this panel manages them at all.
  *
@@ -159,13 +154,18 @@ export function useFormCartonPackageTypes() {
     enabled: supported,
     staleTime: FIVE_MINUTES,
     // A seller's list carries the marketplace's shared cartons as well as
-    // their own, so the API's 100-row ceiling has roughly twice as much to
-    // hold as the operator's does. Their own cartons come first, so a
-    // marketplace with a large shared vocabulary loses the shared rows off
-    // the end rather than the seller's own measurements.
+    // their own, so this picker has roughly twice as much to hold under the
+    // API's 100-row ceiling as the operator's does. Their own rows are shown
+    // first, which is presentation only: the server truncates before this
+    // runs and offers no owner-aware ordering, so a seller past the ceiling
+    // can still lose their own cartons. Fixing that needs the endpoint to
+    // order by owner, which Ransack cannot express here — it ignores the
+    // direction on `seller_id`, and NULLs sort first ascending.
     select: (result) => ({
       data: [...result.data].sort(
-        (a, b) => ownerRank(a) - ownerRank(b) || a.name.localeCompare(b.name),
+        (a, b) =>
+          Number(Boolean(b.seller_id)) - Number(Boolean(a.seller_id)) ||
+          a.name.localeCompare(b.name),
       ),
     }),
   })

@@ -42,7 +42,11 @@ end
   { name: 'Master carton', kind: 'carton', length: 40, width: 30, height: 25, weight: 0.4, max_weight: 20 },
   { name: 'Euro pallet', kind: 'pallet', length: 120, width: 80, height: 15, weight: 25, max_weight: 1_500 }
 ].each do |attributes|
-  store.package_types.where(name: attributes[:name]).first_or_create! do |package_type|
+  # `first_party`, because on a marketplace the store's packaging includes
+  # every seller's: a seller who named a carton the same way would make this
+  # seeder skip the marketplace's own, leaving the demo freight setup reading
+  # that seller's measurements.
+  store.package_types.first_party.where(name: attributes[:name]).first_or_create! do |package_type|
     package_type.assign_attributes(attributes.merge(dimensions_unit: 'cm', weight_unit: 'kg'))
   end
 end

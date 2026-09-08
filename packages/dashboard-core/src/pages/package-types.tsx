@@ -86,6 +86,8 @@ export type PackageTypesSearch = z.infer<typeof packageTypesSearchSchema>
  * `editable: false`. The operator's serializer carries no such field because
  * every row there is theirs, so an absent flag reads as editable.
  */
+function noop() {}
+
 export function PackageTypesPage({ search }: { search: PackageTypesSearch }) {
   const { t } = useTranslation()
   const navigate = useNavigate()
@@ -130,7 +132,9 @@ export function PackageTypesPage({ search }: { search: PackageTypesSearch }) {
     })
   }
 
-  useRowClickBridge('data-package-type-id', openEdit)
+  // Guarded on `writable` as well: on a read-only panel no sheet can open, so
+  // a click would only push an `edit` param nothing consumes or clears.
+  useRowClickBridge('data-package-type-id', writable ? openEdit : noop)
 
   async function handleDelete(packageType: PanelPackageType) {
     const ok = await confirm({

@@ -265,6 +265,16 @@ RSpec.describe 'seller requirement kinds', type: :model do
       expect(requirement.satisfied?(seller.reload)).to be false
     end
 
+    # A workflow may hand this a seller whose association was loaded before
+    # the box was recorded; answering from that cache fails the gate closed
+    # on a seller who has done what was asked.
+    it 'answers from the database rather than a warm association cache' do
+      seller.default_package_type
+      create(:package_type, :measured_default_box, store: store, seller: seller)
+
+      expect(requirement.satisfied?(seller)).to be true
+    end
+
     %i[length width height weight].each do |measurement|
       it "is not met while #{measurement} is blank" do
         create(:package_type, :measured_default_box, store: store, seller: seller, measurement => nil)
