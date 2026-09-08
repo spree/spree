@@ -5087,7 +5087,7 @@
       "items_title": "Positionen",
       "items_empty": "Noch keine Positionen – fügen Sie ein Produkt hinzu.",
       "receive_title": "Wareneingang",
-      "history_title": "Bewegungen im Ziellager",
+      "history_title": "Bestandsbewegungen dieser Umbuchung",
       "units_summary": "{{received}} von {{shipped}} versandten Einheiten eingegangen",
       "receive_running_total": "{{counted}} von {{shipped}} versandten Einheiten gezählt",
       "discrepancy_placeholder": "Warum weniger eingetroffen ist",
@@ -5459,7 +5459,7 @@
       "items_title": "Positionen",
       "items_empty": "Noch keine Positionen – fügen Sie ein Produkt hinzu.",
       "receive_title": "Wareneingang",
-      "history_title": "Bewegungen im Ziellager",
+      "history_title": "Bestandsbewegungen dieser Bestellung",
       "units_summary": "{{received}} von {{ordered}} bestellten Einheiten eingegangen",
       "receive_running_total": "{{counted}} von {{ordered}} bestellten Einheiten gezählt",
       "table": {

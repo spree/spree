@@ -5078,7 +5078,7 @@
       "items_title": "明细",
       "items_empty": "暂无明细 — 请添加要发出的商品。",
       "receive_title": "收货",
-      "history_title": "目标仓库的变动",
+      "history_title": "此调拨的库存变动",
       "units_summary": "已发出 {{shipped}} 件，已收到 {{received}} 件",
       "receive_running_total": "已发出 {{shipped}} 件，已清点 {{counted}} 件",
       "discrepancy_placeholder": "为何到货变少",
@@ -5448,7 +5448,7 @@
       "items_title": "明细",
       "items_empty": "暂无明细 — 请添加要订购的商品。",
       "receive_title": "收货",
-      "history_title": "目标仓库的变动",
+      "history_title": "此采购订单的库存变动",
       "units_summary": "已订购 {{ordered}} 件，已收到 {{received}} 件",
       "receive_running_total": "已订购 {{ordered}} 件，已清点 {{counted}} 件",
       "table": {

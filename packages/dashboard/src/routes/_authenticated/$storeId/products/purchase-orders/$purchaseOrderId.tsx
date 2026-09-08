@@ -55,7 +55,7 @@ function PurchaseOrderDetailPage() {
       <ItemsCard purchaseOrder={purchaseOrder} />
 
       <StockHistoryCard
-        stockLocationId={purchaseOrder.destination_location_id}
+        purchaseOrderId={purchaseOrder.id}
         title={t('admin.purchase_orders.history_title')}
       />
     </div>

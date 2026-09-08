@@ -71,7 +71,7 @@ function StockTransferDetailPage() {
           destination warehouse, which is the shelf the merchant is
           reconciling. */}
       <StockHistoryCard
-        stockLocationId={transfer.destination_location_id}
+        stockTransferId={transfer.id}
         title={t('admin.stock_transfers.history_title')}
       />
     </div>

@@ -22,38 +22,55 @@ import { useTranslation } from 'react-i18next'
 /**
  * Why the on-hand number is what it is.
  *
- * Movement history is only ever read in the context of a variant or a
- * warehouse — "why is this SKU 47?" and "what changed in Brooklyn this week?"
- * are the questions merchants actually ask, and the legacy admin's
- * undifferentiated firehose answered neither
- * (docs/plans/6.0-inventory-operations.md). So this is a panel, never a page.
+ * Movement history is only ever read about something — a SKU ("why is this 47?"),
+ * a warehouse ("what changed in Brooklyn this week?"), or one document ("what
+ * did this trip actually move?"). The legacy admin's undifferentiated firehose
+ * answered none of them (docs/plans/6.0-inventory-operations.md), so this is a
+ * panel, never a page, and it takes exactly one subject.
  */
 export function StockHistoryCard({
   variantIds,
   stockLocationId,
+  stockTransferId,
+  purchaseOrderId,
   title,
 }: {
   /** One SKU's history, or a product's across all of its variants. */
   variantIds?: string[]
   stockLocationId?: string | null
+  /** One trip's own rows — its departure and its arrivals, across both ends. */
+  stockTransferId?: string | null
+  /** One order's own rows: every delivery counted in against it. */
+  purchaseOrderId?: string | null
   title?: string
 }) {
   const { t } = useTranslation()
   const [page, setPage] = useState(1)
 
-  // Movements carry no variant or location of their own — they hang off a
-  // stock level, which is the (variant, warehouse) pair — so both filters
-  // reach through it.
-  const filter = variantIds
-    ? { stock_level_variant_id_in: variantIds }
-    : { stock_level_stock_location_id_eq: stockLocationId }
-
-  const scopeKey = variantIds ? variantIds.join(',') : (stockLocationId ?? '')
+  // A movement carries no variant or warehouse of its own — it hangs off a
+  // stock level, which is the (variant, warehouse) pair — so those two filters
+  // reach through it. A document's id sits on the movement directly, which is
+  // what lets a transfer show both ends of its own trip: the departure is
+  // recorded against the source's shelf and the arrivals against the
+  // destination's, so a warehouse scope could only ever show half of it.
+  const scope = [
+    variantIds?.length
+      ? { key: variantIds.join(','), stock_level_variant_id_in: variantIds }
+      : null,
+    stockTransferId ? { key: stockTransferId, stock_transfer_id_eq: stockTransferId } : null,
+    purchaseOrderId ? { key: purchaseOrderId, purchase_order_id_eq: purchaseOrderId } : null,
+    stockLocationId
+      ? { key: stockLocationId, stock_level_stock_location_id_eq: stockLocationId }
+      : null,
+  ].find((candidate) => candidate !== null)
 
   const { data, isLoading } = useQuery({
-    queryKey: useResourceKey('stock-movements', `${scopeKey}-${page}`),
-    queryFn: () => adminClient.stockMovements.list({ page, limit: 10, ...filter }),
-    enabled: variantIds ? variantIds.length > 0 : !!stockLocationId,
+    queryKey: useResourceKey('stock-movements', `${scope?.key ?? ''}-${page}`),
+    queryFn: () => {
+      const { key: _key, ...filter } = scope ?? {}
+      return adminClient.stockMovements.list({ page, limit: 10, ...filter })
+    },
+    enabled: !!scope,
   })
 
   const movements = data?.data ?? []

@@ -5087,7 +5087,7 @@
       "items_title": "Items",
       "items_empty": "No items yet — add a product to send.",
       "receive_title": "Receive",
-      "history_title": "Activity at the destination",
+      "history_title": "Stock movements for this transfer",
       "units_summary": "{{received}} received of {{shipped}} shipped",
       "receive_running_total": "{{counted}} counted of {{shipped}} shipped",
       "discrepancy_placeholder": "Why fewer arrived",
@@ -5459,7 +5459,7 @@
       "items_title": "Items",
       "items_empty": "No items yet — add a product to order.",
       "receive_title": "Receive",
-      "history_title": "Activity at the destination",
+      "history_title": "Stock movements for this order",
       "units_summary": "{{received}} received of {{ordered}} ordered",
       "receive_running_total": "{{counted}} counted of {{ordered}} ordered",
       "table": {

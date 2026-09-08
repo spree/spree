@@ -5109,7 +5109,7 @@
       "items_title": "البنود",
       "items_empty": "لا توجد بنود بعد — أضف منتجًا لإرساله.",
       "receive_title": "الاستلام",
-      "history_title": "الحركة في المستودع المستقبِل",
+      "history_title": "حركات المخزون لهذا النقل",
       "units_summary": "تم استلام {{received}} من {{shipped}} وحدة مُرسَلة",
       "receive_running_total": "تم عدّ {{counted}} من {{shipped}} وحدة مُرسَلة",
       "discrepancy_placeholder": "سبب نقص الكمية الواصلة",
@@ -5488,7 +5488,7 @@
       "items_title": "البنود",
       "items_empty": "لا توجد بنود بعد — أضف منتجًا لطلبه.",
       "receive_title": "الاستلام",
-      "history_title": "الحركة في المستودع المستقبِل",
+      "history_title": "حركات المخزون لأمر الشراء هذا",
       "units_summary": "تم استلام {{received}} من {{ordered}} وحدة مطلوبة",
       "receive_running_total": "تم عدّ {{counted}} من {{ordered}} وحدة مطلوبة",
       "table": {
