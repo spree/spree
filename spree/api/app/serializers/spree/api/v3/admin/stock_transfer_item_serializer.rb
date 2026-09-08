@@ -10,6 +10,8 @@ module Spree
                    outstanding: :number,
                    discrepancy_reason: 'string | null',
                    stock_transfer_id: 'string | null',
+                   thumbnail_url: 'string | null',
+                   product_id: 'string | null',
                    variant_id: 'string | null',
                    variant_name: 'string | null',
                    variant_sku: 'string | null',
@@ -26,6 +28,12 @@ module Spree
             item.variant&.prefixed_id
           end
 
+          # The product the line's variant belongs to, so a line can link
+          # straight to the screen where that SKU's stock lives.
+          attribute :product_id do |item|
+            item.variant&.product&.prefixed_id
+          end
+
           attribute :variant_name do |item|
             item.variant&.product&.name
           end
@@ -36,6 +44,10 @@ module Spree
 
           attribute :options_text do |item|
             item.variant&.options_text
+          end
+
+          attribute :thumbnail_url do |item|
+            image_url_for(item.thumbnail)
           end
         end
       end

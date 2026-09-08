@@ -103,7 +103,7 @@ module Spree
           end
 
           def collection_includes
-            [:source_location, :destination_location, { items: :variant }]
+            [:source_location, :destination_location, line_includes]
           end
 
           def create_workflow
@@ -156,7 +156,7 @@ module Spree
           # The listing and the detail page both read a transfer's totals off
           # its lines.
           def scope_includes
-            [{ items: :variant }]
+            [line_includes]
           end
         end
       end

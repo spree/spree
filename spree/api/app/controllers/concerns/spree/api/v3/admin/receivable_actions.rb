@@ -21,6 +21,14 @@ module Spree
 
           protected
 
+          # What rendering a line actually reads: the variant, the product it
+          # belongs to — for the name and the link — and whichever image the
+          # thumbnail falls back to, with the blobs the URL helper needs.
+          def line_includes
+            media = { primary_media: [attachment_attachment: :blob, poster_attachment: :blob] }
+            { items: { variant: [media, { product: media }] } }
+          end
+
           # The lines a create or update named, or nil when the payload said
           # nothing about them — which on an update means "leave them alone".
           #

@@ -1,5 +1,5 @@
 import type { PurchaseOrder, PurchaseOrderItem } from '@spree/admin-sdk'
-import { Can, PageHeader, Subject } from '@spree/dashboard-core'
+import { Can, PageHeader, Subject, useStore } from '@spree/dashboard-core'
 import {
   Button,
   Card,
@@ -16,11 +16,12 @@ import {
   TableRow,
   useConfirm,
 } from '@spree/dashboard-ui'
-import { createFileRoute } from '@tanstack/react-router'
+import { createFileRoute, Link } from '@tanstack/react-router'
 import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { InventoryStatusBadge } from '../../../../../components/spree/inventory-status-badge'
 import { StockHistoryCard } from '../../../../../components/spree/stock-history-card'
+import { VariantLink } from '../../../../../components/spree/variant-link'
 import {
   useCancelPurchaseOrder,
   useMarkPurchaseOrderOrdered,
@@ -65,6 +66,7 @@ function PurchaseOrderDetailPage() {
 
 function SummaryCard({ purchaseOrder }: { purchaseOrder: PurchaseOrder }) {
   const { t } = useTranslation()
+  const { storeId } = useStore()
 
   return (
     <Card>
@@ -74,10 +76,36 @@ function SummaryCard({ purchaseOrder }: { purchaseOrder: PurchaseOrder }) {
       <CardContent>
         <dl className="grid grid-cols-3 gap-y-2 text-sm">
           <dt className="text-muted-foreground">{t('admin.purchase_orders.fields.supplier')}</dt>
-          <dd className="col-span-2">{purchaseOrder.supplier?.name ?? '—'}</dd>
+          <dd className="col-span-2">
+            {purchaseOrder.supplier_id ? (
+              <Link
+                to="/$storeId/settings/suppliers"
+                params={{ storeId }}
+                search={{ edit: purchaseOrder.supplier_id }}
+                className="text-foreground hover:underline"
+              >
+                {purchaseOrder.supplier?.name ?? purchaseOrder.supplier_id}
+              </Link>
+            ) : (
+              '—'
+            )}
+          </dd>
 
           <dt className="text-muted-foreground">{t('admin.purchase_orders.fields.destination')}</dt>
-          <dd className="col-span-2">{purchaseOrder.destination_location?.name ?? '—'}</dd>
+          <dd className="col-span-2">
+            {purchaseOrder.destination_location_id ? (
+              <Link
+                to="/$storeId/settings/stock-locations"
+                params={{ storeId }}
+                search={{ edit: purchaseOrder.destination_location_id }}
+                className="text-foreground hover:underline"
+              >
+                {purchaseOrder.destination_location?.name ?? purchaseOrder.destination_location_id}
+              </Link>
+            ) : (
+              '—'
+            )}
+          </dd>
 
           <dt className="text-muted-foreground">{t('admin.purchase_orders.fields.units')}</dt>
           <dd className="col-span-2 tabular-nums">
@@ -239,9 +267,13 @@ function ItemRow({
 
   return (
     <TableRow>
-      <TableCell className="font-medium">
-        {item.variant_name ?? '—'}
-        <span className="block text-xs text-muted-foreground">{item.variant_sku ?? ''}</span>
+      <TableCell>
+        <VariantLink
+          productId={item.product_id}
+          name={item.variant_name}
+          sku={item.variant_sku}
+          thumbnailUrl={item.thumbnail_url}
+        />
       </TableCell>
       <TableCell className="text-right tabular-nums">{item.quantity_ordered}</TableCell>
       <TableCell className="text-right">

@@ -67,6 +67,18 @@ module Spree
         expect(item).to be_under_received
       end
 
+      # A line shows the variant's own image, and the product's when the
+      # variant has none — the fallback an order's line item already uses.
+      it 'shows the variant image, or the product image when there is none' do
+        product_image = create(:image, viewable: item.variant.product)
+
+        expect(item.reload.thumbnail).to eq(product_image)
+
+        variant_image = create(:image, viewable: item.variant)
+
+        expect(item.reload.thumbnail).to eq(variant_image)
+      end
+
       it 'costs the whole line at the agreed unit price' do
         expect(item.total_cost).to eq(125)
         expect(item.display_unit_cost.to_s).to eq('$12.50')

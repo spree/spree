@@ -1,5 +1,5 @@
 import type { StockTransfer, StockTransferItem } from '@spree/admin-sdk'
-import { Can, PageHeader, Subject, useStockLocations } from '@spree/dashboard-core'
+import { Can, PageHeader, Subject, useStockLocations, useStore } from '@spree/dashboard-core'
 import {
   Button,
   Card,
@@ -23,11 +23,12 @@ import {
   TableRow,
   useConfirm,
 } from '@spree/dashboard-ui'
-import { createFileRoute } from '@tanstack/react-router'
+import { createFileRoute, Link } from '@tanstack/react-router'
 import { useMemo, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { InventoryStatusBadge } from '../../../../../components/spree/inventory-status-badge'
 import { StockHistoryCard } from '../../../../../components/spree/stock-history-card'
+import { VariantLink } from '../../../../../components/spree/variant-link'
 import {
   useCancelStockTransfer,
   useMarkStockTransferInTransit,
@@ -84,8 +85,38 @@ function StockTransferDetailPage() {
   )
 }
 
+/**
+ * A warehouse, linked to the row that configures it. Stock locations have no
+ * screen of their own — they are edited from the settings list — so the link
+ * opens that list with this one's sheet showing, the way an order links its
+ * channel and its market.
+ */
+function WarehouseLink({
+  storeId,
+  id,
+  name,
+}: {
+  storeId: string
+  id: string | null
+  name: string
+}) {
+  if (!id) return <>{name}</>
+
+  return (
+    <Link
+      to="/$storeId/settings/stock-locations"
+      params={{ storeId }}
+      search={{ edit: id }}
+      className="text-foreground hover:underline"
+    >
+      {name}
+    </Link>
+  )
+}
+
 function SummaryCard({ transfer }: { transfer: StockTransfer }) {
   const { t } = useTranslation()
+  const { storeId } = useStore()
   const { data: stockLocations } = useStockLocations({ limit: 100 })
 
   const locationName = useMemo(() => {
@@ -102,12 +133,23 @@ function SummaryCard({ transfer }: { transfer: StockTransfer }) {
         <dl className="grid grid-cols-3 gap-y-2 text-sm">
           <dt className="text-muted-foreground">{t('admin.stock_transfers.fields.source')}</dt>
           <dd className="col-span-2">
-            {transfer.source_location?.name ?? locationName(transfer.source_location_id)}
+            <WarehouseLink
+              storeId={storeId}
+              id={transfer.source_location_id}
+              name={transfer.source_location?.name ?? locationName(transfer.source_location_id)}
+            />
           </dd>
 
           <dt className="text-muted-foreground">{t('admin.stock_transfers.fields.destination')}</dt>
           <dd className="col-span-2">
-            {transfer.destination_location?.name ?? locationName(transfer.destination_location_id)}
+            <WarehouseLink
+              storeId={storeId}
+              id={transfer.destination_location_id}
+              name={
+                transfer.destination_location?.name ??
+                locationName(transfer.destination_location_id)
+              }
+            />
           </dd>
 
           <dt className="text-muted-foreground">{t('admin.stock_transfers.fields.units')}</dt>
@@ -177,7 +219,13 @@ function PlannedItemsCard({ transfer }: { transfer: StockTransfer }) {
               <TableBody>
                 {items.map((item) => (
                   <TableRow key={item.id}>
-                    <TableCell className="font-medium">{item.variant_name ?? '—'}</TableCell>
+                    <TableCell>
+                      <VariantLink
+                        productId={item.product_id}
+                        name={item.variant_name}
+                        thumbnailUrl={item.thumbnail_url}
+                      />
+                    </TableCell>
                     <TableCell className="text-muted-foreground">
                       {item.variant_sku ?? '—'}
                     </TableCell>
@@ -228,7 +276,7 @@ function ReceiveCard({ transfer }: { transfer: StockTransfer }) {
           return {
             id: item.id,
             quantity_received: received,
-            // Only while the line is actually short. The select hides once the
+            // Only while the line is under-received. The select hides once the
             // count is raised, but its state survives — and a fully received
             // line carrying "damaged in transit" is simply wrong.
             discrepancy_reason: received < item.quantity_shipped ? reason || undefined : undefined,
@@ -312,13 +360,17 @@ function ReceiveRow({
   onReason: (value: string) => void
 }) {
   const { t } = useTranslation()
-  const short = count < item.quantity_shipped
+  const underReceived = count < item.quantity_shipped
 
   return (
     <TableRow>
-      <TableCell className="font-medium">
-        {item.variant_name ?? '—'}
-        <span className="block text-xs text-muted-foreground">{item.variant_sku ?? ''}</span>
+      <TableCell>
+        <VariantLink
+          productId={item.product_id}
+          name={item.variant_name}
+          sku={item.variant_sku}
+          thumbnailUrl={item.thumbnail_url}
+        />
       </TableCell>
       <TableCell className="text-right tabular-nums">{item.quantity_shipped}</TableCell>
       <TableCell className="text-right">
@@ -339,7 +391,7 @@ function ReceiveRow({
         )}
       </TableCell>
       <TableCell>
-        {editable && short ? (
+        {editable && underReceived ? (
           <Select value={reason} onValueChange={onReason}>
             <SelectTrigger aria-label={t('admin.stock_transfers.columns.discrepancy')}>
               <SelectValue placeholder={t('admin.stock_transfers.discrepancy_placeholder')}>

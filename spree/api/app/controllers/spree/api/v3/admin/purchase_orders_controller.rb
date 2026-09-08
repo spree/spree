@@ -79,7 +79,7 @@ module Spree
           end
 
           def collection_includes
-            [:supplier, :destination_location, { items: :variant }]
+            [:supplier, :destination_location, line_includes]
           end
 
           def create_workflow
@@ -129,7 +129,7 @@ module Spree
           end
 
           def scope_includes
-            [{ items: :variant }]
+            [line_includes]
           end
 
           private
