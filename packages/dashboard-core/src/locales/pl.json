@@ -660,8 +660,8 @@
           "label": "Jednostka"
         },
         "default": {
-          "label": "Domyślny karton sklepu",
-          "help": "Podstawa każdej wyceny paczki. Tylko jeden na sklep."
+          "label": "Domyślne opakowanie",
+          "help": "Opakowanie, na którym opierają się wyceny Twoich przesyłek. Tylko jedno domyślne naraz."
         }
       },
       "number": {
@@ -1034,9 +1034,9 @@
       "search_placeholder": "Szukaj opakowania",
       "empty": "Brak opakowań. Dodaj karton wysyłkowy oraz kartony i palety dla zamówień hurtowych.",
       "add_cta": "Dodaj rodzaj opakowania",
-      "default_badge": "Domyślne sklepu",
+      "default_badge": "Domyślne",
       "edit_sheet_title": "Rodzaj opakowania",
-      "create_description": "Karton, paleta lub kontener, w który ten sklep pakuje towar.",
+      "create_description": "Pudełko, karton, paleta lub kontener, w które pakowane są towary.",
       "edit_description": "Produkty pakowane w ten karton przyjmują jego wymiary — jedna zmiana poprawia wszystkie.",
       "dimensions_column": "Wymiary",
       "volume_column": "Objętość",

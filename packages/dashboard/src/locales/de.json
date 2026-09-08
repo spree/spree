@@ -2357,8 +2357,8 @@
           "label": "Einheit"
         },
         "default": {
-          "label": "Standardkarton des Shops",
-          "help": "Grundlage jeder Paketberechnung. Nur einer pro Shop."
+          "label": "Standardverpackung",
+          "help": "Die Verpackung, auf der Ihre Paketangebote basieren. Nur eine Standardverpackung gleichzeitig."
         }
       }
     },
@@ -5218,9 +5218,9 @@
       "search_placeholder": "Verpackung suchen",
       "empty": "Noch keine Verpackung. Legen Sie Ihren Versandkarton an sowie die Kartons und Paletten für Großbestellungen.",
       "add_cta": "Verpackungsart hinzufügen",
-      "default_badge": "Standard des Shops",
+      "default_badge": "Standard",
       "edit_sheet_title": "Verpackungsart",
-      "create_description": "Ein Karton, eine Palette oder ein Container, in den dieser Shop Ware packt.",
+      "create_description": "Ein Karton, eine Kiste, eine Palette oder ein Container, in den Waren gepackt werden.",
       "edit_description": "Produkte in diesem Karton übernehmen seine Maße — eine Änderung korrigiert alle.",
       "dimensions_column": "Maße",
       "volume_column": "Volumen",

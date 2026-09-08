@@ -2357,8 +2357,8 @@
           "label": "Unit"
         },
         "default": {
-          "label": "Store default box",
-          "help": "The packaging every parcel quote is built on. Only one per store."
+          "label": "Default box",
+          "help": "The packaging your parcel quotes are built on. One default at a time."
         }
       }
     },
@@ -5218,9 +5218,9 @@
       "search_placeholder": "Search packaging",
       "empty": "No packaging yet. Add the box you ship in, and the cartons and pallets wholesale orders leave on.",
       "add_cta": "Add package type",
-      "default_badge": "Store default",
+      "default_badge": "Default",
       "edit_sheet_title": "Package type",
-      "create_description": "A box, carton, pallet or container this store packs goods into.",
+      "create_description": "A box, carton, pallet or container goods are packed into.",
       "edit_description": "Products packed into this carton follow its measurements, so one edit corrects them all.",
       "dimensions_column": "Dimensions",
       "volume_column": "Volume",

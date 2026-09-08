@@ -659,8 +659,8 @@
           "label": "单位"
         },
         "default": {
-          "label": "店铺默认纸箱",
-          "help": "所有包裹报价的基础。每个店铺仅一个。"
+          "label": "默认包装",
+          "help": "您的包裹报价所依据的包装。同一时间只能有一个默认包装。"
         }
       },
       "number": {
@@ -1033,9 +1033,9 @@
       "search_placeholder": "搜索包装",
       "empty": "尚无包装。请添加发货纸箱，以及批发订单使用的外箱和托盘。",
       "add_cta": "添加包装类型",
-      "default_badge": "店铺默认",
+      "default_badge": "默认",
       "edit_sheet_title": "包装类型",
-      "create_description": "本店用于装载商品的纸箱、外箱、托盘或集装箱。",
+      "create_description": "用于装载商品的箱、纸箱、托盘或集装箱。",
       "edit_description": "装入此外箱的商品沿用其尺寸，修改一次即可全部更正。",
       "dimensions_column": "尺寸",
       "volume_column": "体积",

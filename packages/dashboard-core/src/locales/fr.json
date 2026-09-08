@@ -659,8 +659,8 @@
           "label": "Unité"
         },
         "default": {
-          "label": "Carton par défaut",
-          "help": "La base de chaque cotation colis. Un seul par boutique."
+          "label": "Emballage par défaut",
+          "help": "L'emballage sur lequel vos tarifs de colis sont calculés. Un seul par défaut à la fois."
         }
       },
       "number": {
@@ -1035,7 +1035,7 @@
       "add_cta": "Ajouter un type d'emballage",
       "default_badge": "Par défaut",
       "edit_sheet_title": "Type d'emballage",
-      "create_description": "Un carton, une palette ou un conteneur dans lequel cette boutique emballe ses produits.",
+      "create_description": "Une boîte, un carton, une palette ou un conteneur dans lequel les marchandises sont emballées.",
       "edit_description": "Les produits emballés dans ce carton suivent ses dimensions : une modification les corrige tous.",
       "dimensions_column": "Dimensions",
       "volume_column": "Volume",
