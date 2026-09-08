@@ -36,6 +36,49 @@ interface ExportButtonProps extends ResourceActionsContext {
 
 type Selection = 'filtered' | 'all'
 
+interface ExportRecordButtonProps {
+  /** Which dataset to export; see `ExportButton`. */
+  type: string
+  /** Ransack filter naming the records, as `search_params` on the export. */
+  searchParams: Record<string, unknown>
+  /** Label shown on the button. Defaults to the translated "Export" action. */
+  label?: string
+  /** Optional size for the button. Defaults to "sm". */
+  size?: 'sm' | 'default' | 'lg'
+}
+
+/**
+ * Export from a record's own page — one price list's prices, one promotion's
+ * coupon codes. The page has already decided what the file holds, so one
+ * click queues it; the filtered-or-all dialog is the table's concern.
+ */
+export function ExportRecordButton({ type, searchParams, label, size }: ExportRecordButtonProps) {
+  const { t } = useTranslation()
+  const exportMutation = useExport()
+
+  return (
+    <Button
+      type="button"
+      size={size ?? 'sm'}
+      variant="outline"
+      onClick={() =>
+        exportMutation.mutate({
+          type,
+          record_selection: 'filtered',
+          search_params: searchParams,
+          results_url: window.location.href,
+        })
+      }
+      disabled={exportMutation.isPending}
+    >
+      <DownloadIcon className="size-4" />
+      {exportMutation.isPending
+        ? t('admin.actions.exporting')
+        : (label ?? t('admin.actions.export'))}
+    </Button>
+  )
+}
+
 export function ExportButton({
   type,
   label,
@@ -79,6 +122,7 @@ export function ExportButton({
           the file is desk work, and the button is one of the things that
           pushed the toolbar onto a third row on a phone. */}
       <Button
+        type="button"
         size="sm"
         variant="outline"
         className="hidden h-[2.125rem] lg:inline-flex"

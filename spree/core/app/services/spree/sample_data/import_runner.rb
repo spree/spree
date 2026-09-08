@@ -19,10 +19,10 @@ module Spree
       #
       # @return [Spree::ServiceModule::Result] wrapping the import — completed
       #   when inline, queued otherwise
-      def call(csv_path:, import_class:, store: nil, user: nil, inline: false, skip_events: false)
+      def call(csv_path:, import_class:, store: nil, user: nil, inline: false, skip_events: false, attributes: {})
         import = Spree::SampleData::ImportBuilder.call(
           csv_path: csv_path, import_class: import_class, store: store, user: user,
-          inline: inline, skip_events: skip_events
+          inline: inline, skip_events: skip_events, attributes: attributes
         )
 
         mapping = Spree.import_start_mapping_workflow.call(import: import)

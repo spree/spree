@@ -103,6 +103,29 @@ RSpec.describe Spree::Api::V3::Admin::ExportsController, type: :controller do
       expect(JSON.parse(created.search_params.to_s)).to eq('name_cont' => 'shirt')
     end
 
+    context 'for a price list' do
+      let(:price_list) { create(:price_list, store: store) }
+
+      it 'creates the export filtered to the list' do
+        post :create, params: { type: 'price_list_prices', search_params: { price_list_id_eq: price_list.prefixed_id } }, as: :json
+
+        expect(response).to have_http_status(:created)
+        created = Spree::Export.find_by_prefix_id(json_response['id'])
+        expect(created).to be_a(Spree::Exports::PriceListPrices)
+        expect(created.price_list).to eq(price_list)
+      end
+
+      it 'is refused without a list of this store' do
+        foreign = create(:price_list, store: create(:store))
+
+        post :create, params: { type: 'price_list_prices', search_params: { price_list_id_eq: foreign.prefixed_id } }, as: :json
+        expect(response).to have_http_status(:unprocessable_content)
+
+        post :create, params: { type: 'price_list_prices', record_selection: 'all' }, as: :json
+        expect(response).to have_http_status(:unprocessable_content)
+      end
+    end
+
     it 'creates an Orders export' do
       post :create, params: { type: 'Spree::Exports::Orders' }, as: :json
 
@@ -246,6 +269,14 @@ RSpec.describe Spree::Api::V3::Admin::ExportsController, type: :controller do
 
         expect(response).to have_http_status(:forbidden)
         expect(json_response['error']['details']['required_scope']).to eq('read_customers')
+      end
+
+      it 'gates price-list exports by the products scope' do
+        price_list = create(:price_list, store: store)
+
+        post :create, params: { type: 'price_list_prices', search_params: { price_list_id_eq: price_list.prefixed_id } }, as: :json
+
+        expect(response).to have_http_status(:created)
       end
 
       it 'filters the index to export types the key can read' do

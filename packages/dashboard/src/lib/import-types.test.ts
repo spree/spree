@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { importTypeIndexPath, importTypeKey, isImportActive } from './import-types'
+import { importTypeDestination, importTypeKey, isImportActive } from './import-types'
 
 describe('importTypeKey', () => {
   it('passes the API shorthand through unchanged', () => {
@@ -21,16 +21,30 @@ describe('importTypeKey', () => {
   })
 })
 
-describe('importTypeIndexPath', () => {
+describe('importTypeDestination', () => {
   it('routes customers imports to the customers index', () => {
-    expect(importTypeIndexPath('customers')).toBe('/$storeId/customers')
-    expect(importTypeIndexPath('Spree::Imports::Customers')).toBe('/$storeId/customers')
+    expect(importTypeDestination('customers')).toEqual({ to: '/$storeId/customers' })
+    expect(importTypeDestination('Spree::Imports::Customers')).toEqual({
+      to: '/$storeId/customers',
+    })
   })
 
   it('routes product-ish imports to the products index', () => {
-    expect(importTypeIndexPath('products')).toBe('/$storeId/products')
-    expect(importTypeIndexPath('product_translations')).toBe('/$storeId/products')
-    expect(importTypeIndexPath('Spree::Imports::Products')).toBe('/$storeId/products')
+    expect(importTypeDestination('products')).toEqual({ to: '/$storeId/products' })
+    expect(importTypeDestination('product_translations')).toEqual({ to: '/$storeId/products' })
+    expect(importTypeDestination('Spree::Imports::Products')).toEqual({ to: '/$storeId/products' })
+  })
+
+  // The rows a price-list import wrote live on one list, so that list's page
+  // is where "View records" goes; without the id, the lists index.
+  it('routes a price-list import to the list it wrote into', () => {
+    expect(importTypeDestination('price_list_prices', { price_list_id: 'pl_1' } as never)).toEqual({
+      to: '/$storeId/products/price-lists/$priceListId',
+      params: { priceListId: 'pl_1' },
+    })
+    expect(importTypeDestination('price_list_prices')).toEqual({
+      to: '/$storeId/products/price-lists',
+    })
   })
 })
 

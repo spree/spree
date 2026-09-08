@@ -320,6 +320,10 @@ en:
           attributes:
             type:
               seller_scope_unavailable: cannot be narrowed to a single seller
+        spree/exports/price_list_prices:
+          attributes:
+            base:
+              price_list_required: Choose a price list to export.
         spree/gift_card:
           attributes:
             base:
@@ -375,6 +379,8 @@ en:
         spree/price_list:
           attributes:
             base:
+              invalid_quantity: each quantity break must start at a whole number of units
+              negative_price: a price cannot be below zero
               nothing_to_apply_to: has no rules, no catalog and no products, so it would apply to nothing. Add one before activating.
             ends_at:
               must_be_after_starts_at: must be after starts at
@@ -1481,6 +1487,15 @@ en:
     preview: Preview
     previous: Previous
     price: Price
+    price_list_import_ambiguous_sku: More than one product in this store has the SKU %{sku}. Give each a SKU of its own before importing prices for it.
+    price_list_import_failed: The price could not be written.
+    price_list_import_invalid_amount: "%{column} must be a number like 16.50, got %{value}."
+    price_list_import_invalid_quantity: min_quantity must be a whole number of units, got %{value}.
+    price_list_import_no_price_list: This import is not attached to a price list.
+    price_list_import_sku_required: SKU is required.
+    price_list_import_too_many_breaks: A variant can carry at most %{count} quantity breaks on one price list.
+    price_list_import_unknown_sku: No product in this store has the SKU %{sku}.
+    price_list_import_unsupported_currency: This store does not sell in %{currency}.
     price_lists: Price Lists
     price_range: Price Range
     price_rules:

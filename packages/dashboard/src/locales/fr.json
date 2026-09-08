@@ -162,6 +162,7 @@
         },
         "tier_count_one": "+{{count}} palier",
         "tier_count_other": "+{{count}} paliers",
+        "tier_fixed_note": "L'ajustement en pourcentage du catalogue ne s'applique pas ici. Ces paliers fixent le prix.",
         "tier_from_one": "Dès {{count}}",
         "tier_from_other": "Dès {{count}}",
         "tier_preview": "Ce que facture cet accord",

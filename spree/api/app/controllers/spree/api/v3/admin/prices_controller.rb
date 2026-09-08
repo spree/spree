@@ -67,6 +67,15 @@ module Spree
               )
             end
 
+            if (negative = result.error&.value.try(:[], :invalid_amounts))
+              return render_error(
+                code: 'invalid_amount',
+                message: Spree.t('activerecord.errors.models.spree/price_list.attributes.base.negative_price').upcase_first,
+                status: :unprocessable_content,
+                details: { rows: negative }
+              )
+            end
+
             if (over_cap = result.error&.value.try(:[], :over_cap))
               return render_error(
                 code: 'too_many_breaks',

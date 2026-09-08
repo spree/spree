@@ -162,6 +162,7 @@
         },
         "tier_count_one": "+{{count}} tier",
         "tier_count_other": "+{{count}} tiers",
+        "tier_fixed_note": "The catalog's percentage adjustment does not apply here. These tiers fix the price.",
         "tier_from_one": "From {{count}}",
         "tier_from_other": "From {{count}}",
         "tier_preview": "What this agreement charges",

@@ -145,6 +145,13 @@ function TierBadge({ price }: { price: CatalogPrice }) {
             ))}
           </tbody>
         </table>
+        {/* A ladder fixes the price: the catalog's percentage adjustment is
+            never applied on top of an explicit row, and this is where a
+            merchant who set both would otherwise expect to see it
+            (docs/plans/6.0-volume-pricing.md). */}
+        <p className="mt-1.5 max-w-56 text-muted-foreground text-xs">
+          {i18n.t('admin.catalogs.prices.tier_fixed_note')}
+        </p>
       </TooltipContent>
     </Tooltip>
   )

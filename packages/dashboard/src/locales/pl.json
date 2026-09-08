@@ -166,6 +166,7 @@
         "tier_count_many": "+{{count}} progów",
         "tier_count_one": "+{{count}} próg",
         "tier_count_other": "+{{count}} progów",
+        "tier_fixed_note": "Procentowa korekta katalogu nie ma tu zastosowania. Te progi ustalają cenę.",
         "tier_from_few": "Od {{count}}",
         "tier_from_many": "Od {{count}}",
         "tier_from_one": "Od {{count}}",

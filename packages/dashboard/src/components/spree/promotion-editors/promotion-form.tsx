@@ -10,7 +10,7 @@ import type {
 } from '@spree/admin-sdk'
 import { Can, PageHeader, PreferencesForm, StoreDatePicker } from '@spree/dashboard-core'
 import { DropdownMenuItem, formatCalculatorSummary, useConfirm } from '@spree/dashboard-ui'
-import { DownloadIcon, PlusIcon, SparklesIcon, TrashIcon } from '@spree/dashboard-ui/icons'
+import { PlusIcon, SparklesIcon, TrashIcon } from '@spree/dashboard-ui/icons'
 import i18n from 'i18next'
 import { useEffect, useState } from 'react'
 import { Controller, type UseFormReturn, useFieldArray, useForm } from 'react-hook-form'
@@ -20,12 +20,12 @@ import { EditorShell } from './editor-shell'
 import './register'
 import {
   adminClient,
+  ExportRecordButton,
   mapSpreeErrorsToForm,
   Slot,
   Subject,
   typeDescription,
   typeLabel,
-  useExport,
   usePermissions,
   useStore,
 } from '@spree/dashboard-core'
@@ -1390,15 +1390,6 @@ function CouponCodesSheet({
   const totalCount = codesData?.meta?.count ?? codes.length
   const totalPages = codesData?.meta?.pages ?? 1
 
-  const exportMutation = useExport()
-  function handleExport() {
-    exportMutation.mutate({
-      type: 'coupon_codes',
-      record_selection: 'filtered',
-      search_params: { promotion_id_eq: promotionId },
-    })
-  }
-
   return (
     <Sheet open={open} onOpenChange={onOpenChange}>
       <SheetContent className="sm:max-w-xl">
@@ -1483,17 +1474,12 @@ function CouponCodesSheet({
 
         <SheetFooter>
           {totalCount > 0 && (
-            <Button
-              type="button"
-              variant="outline"
-              onClick={handleExport}
-              disabled={exportMutation.isPending}
-            >
-              <DownloadIcon className="size-4" />
-              {exportMutation.isPending
-                ? t('admin.actions.exporting')
-                : t('admin.promotions.coupon_codes.export_csv')}
-            </Button>
+            <ExportRecordButton
+              type="coupon_codes"
+              searchParams={{ promotion_id_eq: promotionId }}
+              label={t('admin.promotions.coupon_codes.export_csv')}
+              size="default"
+            />
           )}
           <Button type="button" variant="outline" onClick={() => onOpenChange(false)}>
             {t('admin.actions.close')}

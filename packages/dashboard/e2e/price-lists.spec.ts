@@ -1,5 +1,15 @@
+import { readFileSync } from 'node:fs'
 import { expect, type Page, test } from '@playwright/test'
-import { FIXTURE_PROMO_PRODUCT, gotoIndex, login, openRowMenu, rowButton } from './helpers'
+import {
+  addQuantityBreak,
+  csvFile,
+  FIXTURE_PROMO_PRODUCT,
+  FIXTURE_PROMO_SKU,
+  gotoIndex,
+  login,
+  openRowMenu,
+  rowButton,
+} from './helpers'
 
 const PRICE_LISTS_PATH = (storeId: string) => `/${storeId}/products/price-lists`
 const PRODUCTS_PATH = (storeId: string) => `/${storeId}/products`
@@ -310,6 +320,109 @@ test.describe('price lists', () => {
         .getByLabel(/^price for/i)
         .first(),
     ).toHaveValue('33.33')
+  })
+
+  // A ladder is edited in the same grid: a variant's row grows a rung per
+  // quantity break, and the rung is what the server holds once saved
+  // (docs/plans/6.0-volume-pricing.md).
+  test('adds a quantity break in the price spreadsheet', async ({ page }) => {
+    const creds = await login(page)
+    await gotoIndex(page, PRICE_LISTS_PATH(creds.store_id), CTA)
+
+    const name = `E2E PL Breaks ${Date.now()}`
+    await startNewPriceList(page, creds.store_id, name)
+    await submitCreate(page, name)
+    await pickProductOnPage(page, FIXTURE_PROMO_PRODUCT)
+    await saveForm(page)
+    await expect(page.getByText(/\d+ price(s)? (is|are) configured/i)).toBeVisible({
+      timeout: 15_000,
+    })
+
+    await openBulkPriceEditor(page)
+    const grid = page.getByRole('dialog')
+    const priceInput = grid.getByLabel(/^price for/i).first()
+    await expect(priceInput).toBeVisible({ timeout: 15_000 })
+    await priceInput.dblclick()
+    await priceInput.fill('30.00')
+    await priceInput.press('Enter')
+
+    // A figure with cents: the grid drops trailing zeros when it reloads.
+    await addQuantityBreak(grid, '24', '25.25')
+
+    await grid.getByRole('button', { name: /^save prices$/i }).click()
+    await expect(grid.getByText(/unsaved change/i)).toBeHidden({ timeout: 15_000 })
+
+    // Reopened, the grid shows what was written rather than what was typed.
+    await grid.getByRole('button', { name: /^close$/i }).click()
+    await expect(grid).toBeHidden({ timeout: 15_000 })
+    await openBulkPriceEditor(page)
+    await expect(page.getByRole('dialog').getByLabel(/^price for from qty 24$/i)).toHaveValue(
+      '25.25',
+      { timeout: 15_000 },
+    )
+  })
+
+  // The list's prices travel as a CSV keyed by SKU, one rung per row: the
+  // import merges the file into the list and reports the rows it could not
+  // place, and the export hands the ladder back in the same shape.
+  test('imports a CSV of prices and exports the list', async ({ page }) => {
+    // Upload + background row processing legitimately take a while.
+    test.setTimeout(180_000)
+
+    const creds = await login(page)
+    await gotoIndex(page, PRICE_LISTS_PATH(creds.store_id), CTA)
+
+    const suffix = Date.now()
+    const name = `E2E PL CSV ${suffix}`
+    await startNewPriceList(page, creds.store_id, name)
+    await submitCreate(page, name)
+
+    await page.getByRole('button', { name: /^import$/i }).click()
+    await expect(page.getByRole('heading', { name: /import from csv/i })).toBeVisible()
+    await page
+      .getByRole('dialog')
+      .locator('input[type="file"]')
+      .setInputFiles(
+        csvFile([
+          'sku,currency,min_quantity,price,compare_at_price',
+          `${FIXTURE_PROMO_SKU},USD,1,17.25,`,
+          `${FIXTURE_PROMO_SKU},USD,24,15.75,`,
+          // A SKU the store does not have is a row-level failure, not the
+          // import's.
+          `E2E-NOPE-${suffix},USD,1,1.00,`,
+        ]),
+      )
+    await page.getByRole('button', { name: /^continue$/i }).click()
+
+    // The export writes the schema's own header names, so a file in that
+    // shape maps itself.
+    await expect(page.getByText('Map columns')).toBeVisible({ timeout: 15_000 })
+    await page.getByRole('button', { name: /start import/i }).click()
+    await expect(page.getByText(/import completed/i)).toBeVisible({ timeout: 120_000 })
+    await expect(page.getByText(/1 failed/i).first()).toBeVisible()
+    await page
+      .getByRole('dialog')
+      .getByRole('button', { name: /^close$/i })
+      .click()
+
+    // The rows landed on the list: the spreadsheet opens on them.
+    await openBulkPriceEditor(page)
+    const grid = page.getByRole('dialog')
+    await expect(grid.getByLabel(/^price for/i).first()).toHaveValue('17.25', { timeout: 15_000 })
+    await expect(grid.getByLabel(/^price for from qty 24$/i)).toHaveValue('15.75')
+    await grid.getByRole('button', { name: /^close$/i }).click()
+    await expect(grid).toBeHidden({ timeout: 15_000 })
+
+    // One click exports this list — no filtered-or-all dialog, the page
+    // already says which list — and the file carries the ladder.
+    const download = page.waitForEvent('download', { timeout: 60_000 })
+    await page.getByRole('button', { name: /^export$/i }).click()
+    const file = await download
+    expect(file.suggestedFilename()).toMatch(/price_list_prices/)
+    const body = readFileSync((await file.path()) as string, 'utf8')
+    expect(body).toContain(`${FIXTURE_PROMO_SKU},`)
+    expect(body).toContain(',USD,24,15.75,')
+    expect(body).not.toContain(`E2E-NOPE-${suffix}`)
   })
 
   // Multi-currency: the bulk editor scopes its grid to one currency at a time

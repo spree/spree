@@ -1,5 +1,6 @@
 import { zodResolver } from '@hookform/resolvers/zod'
 import type { Catalog } from '@spree/admin-sdk'
+import type { PanelImport } from '@spree/dashboard-core'
 import {
   adminClient,
   mapSpreeErrorsToForm,
@@ -45,6 +46,11 @@ import {
   termsToFormValues,
 } from '../../../../../components/spree/catalog-terms-card'
 import { DeferredProductMembershipCard } from '../../../../../components/spree/deferred-product-membership-card'
+import { ImportWizardDialog } from '../../../../../components/spree/imports/import-wizard-dialog'
+import {
+  importWizardSearchSchema,
+  useImportWizardSearch,
+} from '../../../../../components/spree/imports/import-wizard-search'
 import {
   ProductMembershipStagingProvider,
   useProductMembershipStaging,
@@ -72,6 +78,7 @@ import {
 
 /** One catalog: its assortment, pricing and the audiences that see it. */
 export const Route = createFileRoute('/_authenticated/$storeId/products/catalogs/$catalogId')({
+  validateSearch: importWizardSearchSchema,
   component: CatalogDetailPage,
 })
 
@@ -106,6 +113,7 @@ function CatalogBody({ catalog }: { catalog: Catalog }) {
   const navigate = useNavigate()
   const { permissions } = usePermissions()
   const deleteMutation = useDeleteCatalog()
+  const wizard = useImportWizardSearch(Route.useSearch())
   const saveMutation = useSaveCatalog(catalog.id)
   const { data: productTermsData } = useCatalogProductTerms(catalog.id)
   const productTerms = useMemo(() => productTermsData?.data ?? [], [productTermsData])
@@ -362,6 +370,7 @@ function CatalogBody({ catalog }: { catalog: Catalog }) {
                 canEdit={canEdit}
                 priceEditorOpen={priceEditorOpen}
                 onPriceEditorOpenChange={setPriceEditorOpen}
+                onImportCreated={(imp) => wizard.open(imp.id)}
               />
               <CatalogTermsCard form={form} canEdit={canEdit} />
               <CatalogAudienceCard form={form} canEdit={canEdit} />
@@ -369,6 +378,7 @@ function CatalogBody({ catalog }: { catalog: Catalog }) {
           }
         />
       </form>
+      <ImportWizardDialog importId={wizard.importId} onClose={wizard.close} />
     </ProductMembershipStagingProvider>
   )
 }
@@ -384,12 +394,14 @@ function CatalogPricingCard({
   canEdit,
   priceEditorOpen,
   onPriceEditorOpenChange,
+  onImportCreated,
 }: {
   catalog: Catalog
   form: UseFormReturn<CatalogFormValues>
   canEdit: boolean
   priceEditorOpen: boolean
   onPriceEditorOpenChange: (open: boolean) => void
+  onImportCreated: (imp: PanelImport) => void
 }) {
   const { t } = useTranslation()
   // A product staged for removal still has its prices on the list until
@@ -412,6 +424,7 @@ function CatalogPricingCard({
             hasStagedProducts={stagedProducts}
             priceEditorOpen={priceEditorOpen}
             onPriceEditorOpenChange={onPriceEditorOpenChange}
+            onImportCreated={onImportCreated}
           />
         </FieldGroup>
       </CardContent>

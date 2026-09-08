@@ -42,12 +42,17 @@ module Spree
       #   it (docs/plans/6.0-volume-pricing.md).
       def call(rows:)
         rows = Array(rows).map { |r| r.with_indifferent_access }
+        # Amounts are parsed once, here; everything below reads numbers.
         keyed = rows.select { |r| r[:variant_id].present? && r[:currency].present? }
+                    .map { |r| r.merge(amount: parse_amount(r[:amount]), compare_at_amount: parse_amount(r[:compare_at_amount])) }
         # Checked before anything is deduped: `row_key` coerces the quantity,
         # so two malformed rows would collapse into one and the batch would be
         # judged on a shape the caller never sent.
         malformed = rows_with_unusable_quantity(keyed)
         return failure(nil, invalid_quantities: malformed) if malformed.any?
+
+        negative = rows_with_negative_amount(keyed)
+        return failure(nil, invalid_amounts: negative) if negative.any?
 
         # PG rejects an upsert with two rows hitting the same unique key in one
         # statement ("ON CONFLICT DO UPDATE command cannot affect row a second
@@ -112,8 +117,8 @@ module Spree
             currency: row[:currency],
             price_list_id: row[:price_list_id],
             min_quantity: quantity_of(row),
-            amount: parse_amount(row[:amount]),
-            compare_at_amount: parse_amount(row[:compare_at_amount]),
+            amount: row[:amount],
+            compare_at_amount: row[:compare_at_amount],
             created_at: now,
             updated_at: now
           }
@@ -133,7 +138,24 @@ module Spree
       def quantity_of(row)
         return 1 if row[:min_quantity].blank?
 
-        row[:min_quantity].to_i
+        parse_quantity(row[:min_quantity])
+      end
+
+      # Base ten, strictly: `to_i` would read "0x10" as 0 and `Integer()`
+      # would read "010" as octal, and the two disagreeing is how a rung lands
+      # at a quantity nobody typed. Nil for anything that is not a whole number.
+      def parse_quantity(raw)
+        return raw if raw.is_a?(Integer)
+
+        Integer(raw.to_s.strip, 10, exception: false)
+      end
+
+      # Rows pricing below zero. This path runs no model validations, so the
+      # sign is checked here for every caller rather than in each of them.
+      def rows_with_negative_amount(rows)
+        rows.each_with_index.filter_map do |row, index|
+          { index: index } if row[:amount]&.negative? || row[:compare_at_amount]&.negative?
+        end
       end
 
       # Rows whose `min_quantity` is present but not a positive whole number.
@@ -151,7 +173,7 @@ module Spree
           raw = row[:min_quantity]
           next if raw.blank?
 
-          quantity = Integer(raw, exception: false)
+          quantity = parse_quantity(raw)
           { index: index } if quantity.nil? || quantity < 1
         end
       end

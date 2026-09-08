@@ -1,15 +1,7 @@
 import { expect, type Page, test } from '@playwright/test'
-import { login } from './helpers'
+import { csvFile, login } from './helpers'
 
 const PRODUCTS_PATH = (storeId: string) => `/${storeId}/products`
-
-function csvFile(rows: string[]) {
-  return {
-    name: `e2e-import-${Date.now()}.csv`,
-    mimeType: 'text/csv',
-    buffer: Buffer.from(`${rows.join('\n')}\n`),
-  }
-}
 
 async function openImportSheet(page: Page, storeId: string) {
   await page.goto(PRODUCTS_PATH(storeId))

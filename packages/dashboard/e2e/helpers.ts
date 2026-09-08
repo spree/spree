@@ -1,6 +1,36 @@
 import { readFileSync } from 'node:fs'
-import { expect, type Page } from '@playwright/test'
+import { expect, type Locator, type Page } from '@playwright/test'
 import { CREDENTIALS_FILE } from './paths'
+
+/** A CSV to hand to a file input, one row per entry. */
+export function csvFile(rows: string[]) {
+  return {
+    name: `e2e-import-${Date.now()}.csv`,
+    mimeType: 'text/csv',
+    buffer: Buffer.from(`${rows.join('\n')}\n`),
+  }
+}
+
+/**
+ * Adds a quantity break to the first variant in an open price spreadsheet.
+ * The blank rung under the variant appends a break; its quantity and price
+ * are spreadsheet cells, read-only until double-clicked.
+ */
+export async function addQuantityBreak(grid: Locator, quantity: string, price: string) {
+  await grid
+    .getByRole('button', { name: /^add quantity break$/i })
+    .first()
+    .click()
+  const quantityCell = grid.getByLabel(/^from quantity$/i).first()
+  await quantityCell.dblclick()
+  await quantityCell.fill(quantity)
+  await quantityCell.press('Enter')
+  const rungPrice = grid.getByLabel(new RegExp(`^price for from qty ${quantity}$`, 'i'))
+  await expect(rungPrice).toBeVisible()
+  await rungPrice.dblclick()
+  await rungPrice.fill(price)
+  await rungPrice.press('Enter')
+}
 
 /**
  * Fixture records seeded once in `global-setup.ts`. Specs that exercise
@@ -12,6 +42,8 @@ export const FIXTURE_PROMO_TAXON = 'E2E Promo Category'
 // permalink so it can never match an unrelated category.
 export const FIXTURE_PROMO_TAXON_PERMALINK = 'e2e-promo-category'
 export const FIXTURE_PROMO_PRODUCT = 'E2E Promo Product'
+/** The promo product's SKU — what a price-list CSV row names a variant by. */
+export const FIXTURE_PROMO_SKU = 'E2E-PROMO'
 /** Name prefix for catalog picker pagination E2E products; each run appends a timestamp. */
 export const FIXTURE_CATALOG_PICKER_PRODUCT_PREFIX = 'E2E Catalog Picker Product'
 

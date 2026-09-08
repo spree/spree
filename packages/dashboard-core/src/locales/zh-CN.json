@@ -922,6 +922,7 @@
       "try_again": "重试",
       "types": {
         "customers": "客户",
+        "price_list_prices": "价目表价格",
         "product_translations": "产品翻译",
         "products": "产品"
       },

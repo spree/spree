@@ -5,6 +5,7 @@ import {
   Can,
   formatStoreDateTime,
   PageHeader,
+  type PanelImport,
   PreferencesForm,
   typeDescription,
   typeLabel,
@@ -28,6 +29,7 @@ import { useTranslation } from 'react-i18next'
 import { spreeJsonLinkResolver } from '../../../lib/json-link-resolver'
 import { BulkPriceEditorDialog } from '../bulk-price-editor/bulk-price-editor-dialog'
 import { DeferredProductMembershipCard } from '../deferred-product-membership-card'
+import { PriceListCsvButtons } from '../price-list-csv-buttons'
 import {
   flushProductMembership,
   ProductMembershipStagingProvider,
@@ -106,6 +108,12 @@ interface PriceListFormProps {
   onSubmit: (payload: ReturnType<typeof priceListValuesToParams>) => Promise<void>
   /** Edit-mode only: when supplied, the header gains a Delete button. */
   onDelete?: () => void
+  /**
+   * Edit-mode only: when supplied, the header gains CSV export and import of
+   * the list's prices, and a created import is handed here so the page can
+   * open the wizard for it.
+   */
+  onImportCreated?: (imp: PanelImport) => void
   deletePending?: boolean
 }
 
@@ -119,6 +127,7 @@ export function PriceListForm({
   initialRules,
   onSubmit,
   onDelete,
+  onImportCreated,
   deletePending = false,
 }: PriceListFormProps) {
   const { t } = useTranslation()
@@ -233,6 +242,15 @@ export function PriceListForm({
                 <div className="flex gap-2">
                   {mode === 'edit' && priceList && canEdit && (
                     <EditPricesButton priceList={priceList} />
+                  )}
+                  {/* Export needs only read access; the import button gates
+                      itself on create. */}
+                  {mode === 'edit' && priceList && onImportCreated && (
+                    <PriceListCsvButtons
+                      priceList={priceList}
+                      onImportCreated={onImportCreated}
+                      size="default"
+                    />
                   )}
                   {mode === 'edit' && priceList && <ActivationButtons priceList={priceList} />}
                   <Button

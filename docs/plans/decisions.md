@@ -4985,3 +4985,34 @@ everywhere — validating the existing quantity-rules split. Constraints:
 contracted tiers are never discounts, marketing discounts are never
 prices; price-reading callers must pass line quantity through
 `Pricing::Context`; exports must carry tier rows.
+
+## 2026-09-07 — Price-list CSV: SKU-keyed rows, a merge import, both homes, a sample ladder
+
+Settled before building the follow-up to `6.0-volume-pricing.md`, which
+had deferred the price-list CSV because no such surface existed.
+
+**Rows are keyed by SKU**, as the product CSV's are, and the file carries
+only the columns the import reads (2026-09-08: read-only `product` and
+`variant` columns were dropped — a column that changes nothing on the way
+back reads as if it would). A SKU-less variant or a SKU shared across
+sellers fails its row with a message. A
+prefixed `variant_id` fallback was rejected as a second rule for a case the
+product CSV does not cover either.
+
+**The import merges.** Rows in the file are upserted, a blank price removes
+that rung, and rungs absent from the file are untouched — the bulk price
+editor's semantics, reached through the same `Prices::BulkUpsert`. A
+replace mode was rejected: destructive, and a half-failed import leaves a
+half-replaced list. Consequence for the export: **placeholder rows are not
+written** — a blank price on re-import would remove the product from the
+list, so an unchanged export must re-import as a no-op.
+
+**Both homes.** Export and import sit next to "Edit prices" on the
+price-list page and on the catalog's pricing card, for the reason the tier
+editors ship in both: a merchant editing an agreement should not have to
+leave it.
+
+**A sample file ships** in `db/sample_data` and sample data loads it onto
+the Wholesale list — the import sheet's example download is then a real
+ladder, and a fresh QA environment shows breaks without a script.
+

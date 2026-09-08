@@ -69,8 +69,15 @@ RSpec.describe 'Admin Imports API', type: :request, swagger_doc: 'api-reference/
               products
               customers
               product_translations
+              price_list_prices
             ],
             example: 'products'
+          },
+          price_list_id: {
+            type: :string,
+            description: 'For `price_list_prices` imports: the price list the rows are merged into. ' \
+                         'Must belong to the current store.',
+            example: 'pl_86Rf07xd4z'
           },
           attachment: {
             type: :string,

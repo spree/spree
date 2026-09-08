@@ -59,7 +59,15 @@ module Spree
         # (docs/plans/6.0-volume-pricing.md).
         result = Spree::Prices::BulkUpsert.call(rows: rows)
         unless result.success?
-          price_list.errors.add(:base, :too_many_breaks, count: Spree::Price::MAXIMUM_BREAKS_PER_VARIANT)
+          refusal = result.error&.value
+          refusal = {} unless refusal.is_a?(Hash)
+          if refusal[:invalid_amounts].present?
+            price_list.errors.add(:base, :negative_price)
+          elsif refusal[:invalid_quantities].present?
+            price_list.errors.add(:base, :invalid_quantity)
+          else
+            price_list.errors.add(:base, :too_many_breaks, count: Spree::Price::MAXIMUM_BREAKS_PER_VARIANT)
+          end
           return failure(price_list)
         end
 

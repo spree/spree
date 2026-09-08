@@ -1,9 +1,49 @@
 import { HttpResponse, http } from 'msw'
-import { beforeEach, describe, expect, it } from 'vitest'
-import { API_PREFIX, createUnauthenticatedClient } from './helpers'
+import { beforeEach, describe, expect, it, vi } from 'vitest'
+import { createAdminClient, SpreeError } from '../src'
+import { API_PREFIX, BASE_URL, createUnauthenticatedClient } from './helpers'
 import { server } from './mocks/server'
 
 describe('auth', () => {
+  describe('non-JSON unauthorized responses', () => {
+    it('refreshes the token before retrying the original request', async () => {
+      const tokens: string[] = []
+      server.use(
+        http.get(`${API_PREFIX}/products`, ({ request }) => {
+          tokens.push(request.headers.get('Authorization') ?? '')
+          if (tokens.length === 1) {
+            return HttpResponse.html('<html>Unauthorized</html>', { status: 401 })
+          }
+          return HttpResponse.json({ data: [] })
+        }),
+      )
+      const client = createAdminClient({ baseUrl: BASE_URL, jwtToken: 'expired-token' })
+      const onUnauthorized = vi.fn(async () => {
+        client.setToken('refreshed-token')
+        return true
+      })
+      client.onUnauthorized(onUnauthorized)
+
+      await expect(client.products.list()).resolves.toEqual({ data: [] })
+      expect(onUnauthorized).toHaveBeenCalledTimes(1)
+      expect(tokens).toEqual(['Bearer expired-token', 'Bearer refreshed-token'])
+    })
+
+    it('does not invoke session recovery for a failed login', async () => {
+      const handleLogin = vi.fn(() => new HttpResponse(null, { status: 401 }))
+      server.use(http.post(`${API_PREFIX}/auth/login`, handleLogin))
+      const client = createUnauthenticatedClient()
+      const onUnauthorized = vi.fn(async () => true)
+      client.onUnauthorized(onUnauthorized)
+
+      await expect(client.auth.login({ email: 'a@b.c', password: 'p' })).rejects.toBeInstanceOf(
+        SpreeError,
+      )
+      expect(handleLogin).toHaveBeenCalledTimes(1)
+      expect(onUnauthorized).not.toHaveBeenCalled()
+    })
+  })
+
   describe('login', () => {
     beforeEach(() => {
       server.use(

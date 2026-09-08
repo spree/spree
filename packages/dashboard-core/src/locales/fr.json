@@ -922,6 +922,7 @@
       "try_again": "Réessayer",
       "types": {
         "customers": "Clients",
+        "price_list_prices": "Prix des listes de prix",
         "product_translations": "Traductions de produits",
         "products": "Produits"
       },

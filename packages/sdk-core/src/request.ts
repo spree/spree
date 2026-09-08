@@ -227,8 +227,24 @@ export function createRequestFn(
             continue
           }
 
-          const errorBody = (await response.json()) as ErrorResponse
-          throw new SpreeError(errorBody, response.status)
+          const errorBody: ErrorResponse | null = await response.json().catch(() => null)
+          if (
+            typeof errorBody?.error?.code === 'string' &&
+            typeof errorBody.error.message === 'string'
+          ) {
+            throw new SpreeError(errorBody, response.status)
+          }
+
+          // Proxy error pages and empty bodies must not turn HTTP failures into network retries.
+          throw new SpreeError(
+            {
+              error: {
+                code: 'http_error',
+                message: `Request failed with status ${response.status}`,
+              },
+            },
+            response.status,
+          )
         }
 
         // Handle 204 No Content (empty body)

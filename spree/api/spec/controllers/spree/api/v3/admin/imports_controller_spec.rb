@@ -128,6 +128,44 @@ RSpec.describe Spree::Api::V3::Admin::ImportsController, type: :controller do
       expect(json_response['csv_headers']).to eq(%w[slug sku name price])
     end
 
+    context 'for a price list' do
+      let(:price_list) { create(:price_list, store: store) }
+      let(:csv) { csv_signed_id("sku,currency,min_quantity,price,compare_at_price\nW-1,USD,24,16.50,\n") }
+
+      it 'binds the import to the store\'s list and reports it back' do
+        post :create, params: { type: 'price_list_prices', price_list_id: price_list.prefixed_id, attachment: csv }, as: :json
+
+        expect(response).to have_http_status(:created)
+        expect(json_response['type']).to eq('price_list_prices')
+        expect(json_response['price_list_id']).to eq(price_list.prefixed_id)
+        expect(Spree::Import.find_by_prefix_id(json_response['id']).price_list).to eq(price_list)
+      end
+
+      it 'is refused without a list' do
+        post :create, params: { type: 'price_list_prices', attachment: csv }, as: :json
+
+        expect(response).to have_http_status(:unprocessable_content)
+      end
+
+      it 'returns 404 for another store\'s list' do
+        foreign = create(:price_list, store: create(:store))
+
+        post :create, params: { type: 'price_list_prices', price_list_id: foreign.prefixed_id, attachment: csv }, as: :json
+
+        expect(response).to have_http_status(:not_found)
+      end
+
+      it 'ignores the list on a type that has none' do
+        post :create,
+             params: { type: 'products', price_list_id: price_list.prefixed_id,
+                       attachment: csv_signed_id("slug,sku,name,price\nwidget,W-1,Widget,10.00\n") },
+             as: :json
+
+        expect(response).to have_http_status(:created)
+        expect(json_response['price_list_id']).to be_nil
+      end
+    end
+
     context 'with a results_url' do
       # Same allowed-origins gate as ExportsController and the password-reset
       # redirect_url — see validated_results_url.
@@ -456,6 +494,18 @@ RSpec.describe Spree::Api::V3::Admin::ImportsController, type: :controller do
 
         expect(response).to have_http_status(:forbidden)
         expect(json_response['error']['details']['required_scope']).to eq('write_customers')
+      end
+
+      # Price lists have no scope of their own — their endpoints sit under
+      # products, so a key that can write products can import prices.
+      it 'gates price-list imports by the products scope' do
+        price_list = create(:price_list, store: store)
+
+        post :create,
+             params: { type: 'price_list_prices', price_list_id: price_list.prefixed_id, attachment: csv_signed_id("sku,price\nW-1,1\n") },
+             as: :json
+
+        expect(response).to have_http_status(:created)
       end
 
       it 'filters the index to import types the key can write' do

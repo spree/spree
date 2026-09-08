@@ -69,6 +69,7 @@ RSpec.describe 'Admin Exports API', type: :request, swagger_doc: 'api-reference/
               gift_cards
               coupon_codes
               newsletter_subscribers
+              price_list_prices
             ],
             example: 'products'
           },
@@ -80,7 +81,9 @@ RSpec.describe 'Admin Exports API', type: :request, swagger_doc: 'api-reference/
           },
           search_params: {
             type: :object,
-            description: 'Ransack query hash. Same predicates accepted by the list endpoint.',
+            description: 'Ransack query hash. Same predicates accepted by the list endpoint. ' \
+                         'A `price_list_prices` export requires `price_list_id_eq` naming a price list of the ' \
+                         'current store, and refuses `record_selection: "all"`.',
             example: { name_cont: 'shirt' },
             additionalProperties: true
           },

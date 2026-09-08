@@ -290,6 +290,8 @@ export interface PanelImport {
   original_filename?: string | null
   original_byte_size?: number | null
   original_file_url?: string | null
+  /** The list a `price_list_prices` import merges into; null elsewhere. */
+  price_list_id?: string | null
   created_at?: string
   updated_at?: string
 }
@@ -322,6 +324,8 @@ export interface PanelImportCreateParams {
   attachment: string
   /** CSV column separator — the four both APIs accept. */
   preferred_delimiter?: PanelImportDelimiter
+  /** The price list a `price_list_prices` import merges into. */
+  price_list_id?: string
   results_url?: string
 }
 

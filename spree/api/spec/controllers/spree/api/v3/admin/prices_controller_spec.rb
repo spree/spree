@@ -142,6 +142,15 @@ RSpec.describe Spree::Api::V3::Admin::PricesController, type: :controller do
   end
 
   describe 'POST #bulk_upsert' do
+    it 'refuses a price below zero' do
+      variant = create(:variant, product: create(:product, store: store))
+
+      post :bulk_upsert, params: { prices: [{ variant_id: variant.prefixed_id, currency: 'USD', amount: '-5' }] }, as: :json
+
+      expect(response).to have_http_status(:unprocessable_content)
+      expect(json_response['error']['code']).to eq('invalid_amount')
+    end
+
     context 'when the prices key is omitted entirely' do
       it 'returns 422 with a missing_prices error' do
         post :bulk_upsert, as: :json

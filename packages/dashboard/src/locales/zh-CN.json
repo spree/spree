@@ -162,6 +162,7 @@
         },
         "tier_count_one": "+{{count}} 档",
         "tier_count_other": "+{{count}} 档",
+        "tier_fixed_note": "目录的百分比调整不适用于此处。这些阶梯固定了价格。",
         "tier_from_one": "满 {{count}}",
         "tier_from_other": "满 {{count}}",
         "tier_preview": "此协议的计价",

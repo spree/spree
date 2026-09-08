@@ -25,6 +25,7 @@ import {
   FIXTURE_PROMO_CUSTOMER_FULL_NAME,
   FIXTURE_PROMO_CUSTOMER_GROUP,
   FIXTURE_PROMO_PRODUCT,
+  FIXTURE_PROMO_SKU,
   FIXTURE_PROMO_TAXON,
   FIXTURE_PROMO_TAXON_PERMALINK,
 } from './helpers'
@@ -59,6 +60,7 @@ const BOOTSTRAP_RUBY = [
   `category = s.categories.where(permalink: '${FIXTURE_PROMO_TAXON_PERMALINK}').first_or_create!(name: '${FIXTURE_PROMO_TAXON}', parent: nil)`,
   `product = Spree::Product.where(name: '${FIXTURE_PROMO_PRODUCT}').first_or_create!(store: s, status: 'active')`,
   `product.default_variant.set_price(s.default_currency, 19.99)`,
+  `product.default_variant.update!(sku: '${FIXTURE_PROMO_SKU}') if product.default_variant.sku != '${FIXTURE_PROMO_SKU}'`,
   `product.taxons << category unless product.taxons.include?(category)`,
   // Stock the promo product on the store's default stock location so
   // order-creation tests can add it to a draft order without the

@@ -922,6 +922,7 @@
       "try_again": "حاول مرة أخرى",
       "types": {
         "customers": "العملاء",
+        "price_list_prices": "أسعار قائمة الأسعار",
         "product_translations": "ترجمات المنتجات",
         "products": "المنتجات"
       },

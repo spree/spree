@@ -40,6 +40,10 @@ import { useTranslation } from 'react-i18next'
 import { z } from 'zod/v4'
 import { ImportWizardDialog } from '../../../../components/spree/imports/import-wizard-dialog'
 import {
+  importWizardSearchSchema,
+  useImportWizardSearch,
+} from '../../../../components/spree/imports/import-wizard-search'
+import {
   customerGroupAutocompleteProps,
   useCustomerGroups,
 } from '../../../../hooks/use-customer-groups'
@@ -61,7 +65,7 @@ import '../../../../tables/customers'
 // carries the prefixed id of the import wizard dialog open over the table.
 const customersSearchSchema = resourceSearchSchema.extend({
   new: z.coerce.boolean().optional(),
-  import: z.string().optional(),
+  ...importWizardSearchSchema.shape,
 })
 
 export const Route = createFileRoute('/_authenticated/$storeId/customers/')({
@@ -189,18 +193,7 @@ function CustomersPage() {
     })
   }
 
-  function openImportWizard(id: string) {
-    navigate({ search: (prev: Record<string, unknown>) => ({ ...prev, import: id }) as never })
-  }
-
-  function closeImportWizard() {
-    navigate({
-      search: (prev: Record<string, unknown>) => {
-        const { import: _i, ...rest } = prev
-        return rest as never
-      },
-    })
-  }
+  const wizard = useImportWizardSearch(search)
 
   return (
     <>
@@ -222,7 +215,7 @@ function CustomersPage() {
             <ImportButton
               type="customers"
               subject={Subject.Customer}
-              onCreated={(imp) => openImportWizard(imp.id)}
+              onCreated={(imp) => wizard.open(imp.id)}
             />
             <ExportButton type="customers" {...ctx} />
             <Button size="sm" className="h-[2.125rem]" onClick={openCreate}>
@@ -233,7 +226,7 @@ function CustomersPage() {
         )}
       />
       {isCreating && <NewCustomerSheet open onOpenChange={(o) => !o && closeSheet()} />}
-      <ImportWizardDialog importId={search.import ?? null} onClose={closeImportWizard} />
+      <ImportWizardDialog importId={wizard.importId} onClose={wizard.close} />
     </>
   )
 }

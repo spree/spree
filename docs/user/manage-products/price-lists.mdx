@@ -78,6 +78,28 @@ Select which currency you'd like to update prices for, and update the values in 
 
 Once you’ve finished entering the custom prices, click **Save** to apply your changes. 
 
+### Quantity Breaks
+
+A price list can charge less per unit from a given quantity up. In the price edit form, click **Add quantity break** under a variant, enter the quantity the break starts at and the unit price from that quantity, then **Save**. A variant can carry up to ten breaks per currency on one price list, and each break must start at a different quantity.
+
+When a customer's order line reaches a break, the line is priced at that break's unit price. A variant with breaks is priced by its breaks alone: a catalog's percentage adjustment does not apply on top of them.
+
+### Importing and Exporting Prices
+
+Next to **Edit Prices** you'll find **Export** and **Import**, which move a price list's prices as a CSV file, one row per variant, currency and quantity break.
+
+**Export** downloads every priced row of the list. **Import** merges a file into the list: each row in the file is written or updated, a row with a blank price removes that row from the list (the regular price or a break alike; a variant with no rows left is no longer on the list), and prices the file does not mention are left as they are. Rows the import cannot place are listed in the import report and do not stop the rest: an unknown SKU, a SKU shared by more than one variant, a currency the store does not sell in, a price that is not a plain number like `16.50`, a quantity that is not a whole number, or an eleventh break on one variant. Rows are applied one at a time, so to replace a variant's full set of ten breaks with new quantities, import the blank-price rows that clear the old breaks first, then the new ones.
+
+| Field                | Description |
+| -------------------- | ----------------------------------------------------------------------------------------- |
+| **sku**              | The variant's SKU, matched regardless of letter case. Exactly one variant in the store may carry it |
+| currency             | The price's currency. Defaults to the store's default currency                            |
+| min_quantity         | The quantity the price applies from. Blank or `1` is the variant's regular list price     |
+| **price**            | The unit price from that quantity, as a plain number like `16.50`. Leave blank to remove the row |
+| compare_at_price     | The optional non-marked-down price shown next to the unit price                           |
+
+An exported file has exactly these columns, so it can be edited and imported back as it is. Download a working example from the import form.
+
 ## Activating the Price List
 
 Once everything is configured, go back to the price list editor, and click **Activate** in the top right corner.

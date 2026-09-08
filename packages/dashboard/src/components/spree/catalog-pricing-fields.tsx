@@ -1,4 +1,5 @@
 import type { PriceList } from '@spree/admin-sdk'
+import type { PanelImport } from '@spree/dashboard-core'
 import {
   Alert,
   AlertDescription,
@@ -32,6 +33,7 @@ import {
 } from '../../schemas/catalog'
 import { ADJUSTMENT_DIRECTIONS, MAXIMUM_QUANTITY_TIERS } from '../../schemas/price-list'
 import { BulkPriceEditorDialog } from './bulk-price-editor/bulk-price-editor-dialog'
+import { PriceListCsvButtons } from './price-list-csv-buttons'
 
 /**
  * How the agreement prices, edited on the catalog itself: the catalog and the
@@ -51,6 +53,7 @@ export function CatalogPricingFields({
   hasStagedProducts,
   priceEditorOpen: controlledOpen,
   onPriceEditorOpenChange,
+  onImportCreated,
 }: {
   form: UseFormReturn<CatalogFormValues>
   canEdit: boolean
@@ -60,6 +63,12 @@ export function CatalogPricingFields({
    * does not exist until Save.
    */
   priceList?: PriceList | null
+  /**
+   * When supplied, the list's prices can be exported and imported as CSV
+   * from here; a created import is handed back so the page can open the
+   * wizard for it.
+   */
+  onImportCreated?: (imp: PanelImport) => void
   /** The mode as last saved, so a switch can be warned about before Save. */
   savedMode?: CatalogPricingMode
   /**
@@ -269,15 +278,26 @@ export function CatalogPricingFields({
       {mode === 'fixed' &&
         (priceList ? (
           <div>
-            <Button
-              type="button"
-              size="sm"
-              disabled={!canEdit}
-              onClick={() => setPriceEditorOpen(true)}
-            >
-              <TableIcon className="size-4" />
-              {t('admin.catalogs.edit_prices_cta')}
-            </Button>
+            <div className="flex flex-wrap gap-2">
+              <Button
+                type="button"
+                size="sm"
+                disabled={!canEdit}
+                onClick={() => setPriceEditorOpen(true)}
+              >
+                <TableIcon className="size-4" />
+                {t('admin.catalogs.edit_prices_cta')}
+              </Button>
+              {/* Export needs only read access; the import button gates
+                  itself on create. */}
+              {onImportCreated && (
+                <PriceListCsvButtons
+                  priceList={priceList}
+                  onImportCreated={onImportCreated}
+                  size="sm"
+                />
+              )}
+            </div>
             <FieldDescription className="mt-4">
               {t(
                 hasStagedProducts

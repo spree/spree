@@ -1,10 +1,17 @@
 import { toastManager } from '@spree/dashboard-ui'
-import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
-import { useEffect } from 'react'
+import {
+  type QueryClient,
+  type QueryKey,
+  useMutation,
+  useQuery,
+  useQueryClient,
+} from '@tanstack/react-query'
+import { useEffect, useRef } from 'react'
 import {
   getApiClient,
   type PanelImport,
   type PanelImportCompleteMappingParams,
+  type PanelImportCreateParams,
   type PanelImportDelimiter,
 } from '../api-client'
 import { downloadFromApi } from '../lib/download'
@@ -26,6 +33,9 @@ const ROWS_POLL_INTERVAL_MS = 5000
 //
 // These are the operator dashboard's key names; a panel that names its lists
 // differently adds its own through the client's `invalidateKeys`.
+// Everything an import type can write. `price-lists` itself stays out: a
+// list's own record does not change when its prices do, and refetching it
+// would reset the form under a merchant's unsaved edits.
 const IMPORT_TOUCHED_RESOURCES = [
   'products',
   'option-types',
@@ -33,11 +43,29 @@ const IMPORT_TOUCHED_RESOURCES = [
   'customers',
   'imports',
   'translations',
+  'prices',
+  'catalogs',
 ]
 
 /** Whether the import's pipeline is still running (the poll's continue predicate). */
 export function isImportActive(status: string | undefined): boolean {
   return !!status && ACTIVE_STATUSES.has(status)
+}
+
+/**
+ * Marks every cache an import can have written as stale. The pipeline writes
+ * records server-side, outside any tracked mutation, so nothing else ever
+ * does; called when an import finishes, and when its wizard is closed while
+ * it is still running (after which nothing is left to see it finish).
+ */
+export function invalidateImportTouchedResources(
+  queryClient: QueryClient,
+  buildKey: (resource: string) => QueryKey,
+) {
+  const extraKeys = getApiClient().imports?.invalidateKeys
+  for (const resource of new Set([...IMPORT_TOUCHED_RESOURCES, ...(extraKeys ?? [])])) {
+    queryClient.invalidateQueries({ queryKey: buildKey(resource) })
+  }
 }
 
 /**
@@ -59,11 +87,22 @@ function imports() {
   return resource
 }
 
+/** Create-time parameters beyond the ones every import shares. */
+export type ImportCreateExtras = Omit<
+  PanelImportCreateParams,
+  'type' | 'attachment' | 'preferred_delimiter' | 'results_url'
+>
+
 export interface CreateImportInput {
   type: string
   /** Signed blob id of the already direct-uploaded CSV (see `FileUploadField`). */
   signedId: string
   preferredDelimiter?: PanelImportDelimiter
+  /**
+   * Whatever else the import type needs at create — the price list a
+   * `price_list_prices` import merges into, say. Passed through untouched.
+   */
+  params?: ImportCreateExtras
   /**
    * Where the import-done email should link back to. Defaults to this panel's
    * own imports view under the current tenant.
@@ -83,9 +122,11 @@ export function useCreateImport() {
       type,
       signedId,
       preferredDelimiter,
+      params,
       resultsPath,
     }: CreateImportInput): Promise<PanelImport> =>
       imports().create({
+        ...params,
         type,
         attachment: signedId,
         preferred_delimiter: preferredDelimiter,
@@ -125,13 +166,22 @@ export function useImport(id: string) {
   // already-finished import refires it; harmless, invalidation is idempotent.
   const status = query.data?.status
   const finished = status === 'completed' || status === 'failed'
-  const extraKeys = getApiClient().imports?.invalidateKeys
   useEffect(() => {
-    if (!finished) return
-    for (const resource of new Set([...IMPORT_TOUCHED_RESOURCES, ...(extraKeys ?? [])])) {
-      queryClient.invalidateQueries({ queryKey: buildKey(resource) })
-    }
-  }, [finished, queryClient, buildKey, extraKeys])
+    if (finished) invalidateImportTouchedResources(queryClient, buildKey)
+  }, [finished, queryClient, buildKey])
+
+  // Unmounted while the import is still running — the wizard closed, or the
+  // merchant navigated away — nothing is left to see it finish, so the caches
+  // it will have written are marked stale now. An import the poll has not
+  // answered for yet counts as running: nothing says it is finished.
+  const unfinished = useRef(true)
+  unfinished.current = !finished
+  useEffect(
+    () => () => {
+      if (unfinished.current) invalidateImportTouchedResources(queryClient, buildKey)
+    },
+    [queryClient, buildKey],
+  )
 
   return query
 }

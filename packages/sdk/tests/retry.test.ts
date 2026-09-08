@@ -241,6 +241,86 @@ describe('Retry logic', () => {
     })
   })
 
+  describe('HTTP errors without a Spree error body', () => {
+    it.each([
+      { status: 400, body: '<html>Bad request</html>' },
+      { status: 401, body: '' },
+      { status: 403, body: 'Access denied' },
+      { status: 404, body: '{' },
+      { status: 422, body: 'null' },
+      { status: 422, body: '{}' },
+      { status: 422, body: '{"error":null}' },
+      { status: 422, body: '{"error":"Invalid address"}' },
+      { status: 422, body: '{"error":{"code":422,"message":"Invalid address"}}' },
+      { status: 422, body: '{"error":{"code":"invalid","message":[]}}' },
+    ])('preserves status $status without retrying $body', async ({ status, body }) => {
+      const mockFetch = vi.fn().mockImplementation(() => new Response(body, { status }))
+      const client = createClient({ ...baseConfig, fetch: mockFetch, retry: { baseDelay: 1 } })
+
+      await expect(client.products.list()).rejects.toMatchObject({
+        name: 'SpreeError',
+        code: 'http_error',
+        status,
+        message: `Request failed with status ${status}`,
+        details: undefined,
+      })
+      expect(mockFetch).toHaveBeenCalledTimes(1)
+    })
+
+    it('does not retry a rejected cart write as a network failure', async () => {
+      const mockFetch = vi.fn().mockImplementation(() => new Response('Forbidden', { status: 403 }))
+      const client = createClient({ ...baseConfig, fetch: mockFetch, retry: { baseDelay: 1 } })
+
+      await expect(client.carts.create()).rejects.toMatchObject({
+        name: 'SpreeError',
+        status: 403,
+      })
+      expect(mockFetch).toHaveBeenCalledTimes(1)
+    })
+
+    it('respects the configured status retry policy for non-JSON errors', async () => {
+      const mockFetch = vi
+        .fn()
+        .mockImplementation(() => new Response('Service unavailable', { status: 503 }))
+      const client = createClient({
+        ...baseConfig,
+        fetch: mockFetch,
+        retry: { retryOnStatus: [429], baseDelay: 1 },
+      })
+
+      await expect(client.products.list()).rejects.toMatchObject({
+        name: 'SpreeError',
+        status: 503,
+      })
+      expect(mockFetch).toHaveBeenCalledTimes(1)
+    })
+
+    it('preserves the final HTTP status after retryable errors are exhausted', async () => {
+      const mockFetch = vi
+        .fn()
+        .mockImplementation(() => new Response('Service unavailable', { status: 503 }))
+      const client = createClient({ ...baseConfig, fetch: mockFetch, retry: { baseDelay: 1 } })
+
+      await expect(client.products.list()).rejects.toMatchObject({
+        name: 'SpreeError',
+        code: 'http_error',
+        status: 503,
+      })
+      expect(mockFetch).toHaveBeenCalledTimes(3)
+    })
+
+    it('preserves the HTTP status when retries are disabled', async () => {
+      const mockFetch = vi.fn().mockResolvedValue(new Response(null, { status: 502 }))
+      const client = createClient({ ...baseConfig, fetch: mockFetch, retry: false })
+
+      await expect(client.products.list()).rejects.toMatchObject({
+        name: 'SpreeError',
+        status: 502,
+      })
+      expect(mockFetch).toHaveBeenCalledTimes(1)
+    })
+  })
+
   describe('custom retry config', () => {
     it('respects custom maxRetries', async () => {
       const mockFetch = vi

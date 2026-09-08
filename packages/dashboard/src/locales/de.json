@@ -162,6 +162,7 @@
         },
         "tier_count_one": "+{{count}} Stufe",
         "tier_count_other": "+{{count}} Stufen",
+        "tier_fixed_note": "Die prozentuale Anpassung des Katalogs gilt hier nicht. Diese Staffeln legen den Preis fest.",
         "tier_from_one": "Ab {{count}}",
         "tier_from_other": "Ab {{count}}",
         "tier_preview": "Was diese Vereinbarung berechnet",

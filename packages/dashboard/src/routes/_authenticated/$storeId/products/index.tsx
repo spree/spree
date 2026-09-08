@@ -38,8 +38,12 @@ import {
 import { createFileRoute, useNavigate } from '@tanstack/react-router'
 import { useCallback, useMemo, useState } from 'react'
 import { useTranslation } from 'react-i18next'
-import { z } from 'zod/v4'
+import type { z } from 'zod/v4'
 import { ImportWizardDialog } from '../../../../components/spree/imports/import-wizard-dialog'
+import {
+  importWizardSearchSchema,
+  useImportWizardSearch,
+} from '../../../../components/spree/imports/import-wizard-search'
 import { categoryAutocompleteProps, useCategories } from '../../../../hooks/use-categories'
 import { channelAutocompleteProps, useChannels } from '../../../../hooks/use-channels'
 import { collectionAutocompleteProps, useCollections } from '../../../../hooks/use-collections'
@@ -62,9 +66,7 @@ import { toastManager } from '@spree/dashboard-ui'
 
 // `import` carries the prefixed id of the import whose wizard dialog is open
 // over the table — deep-linkable and refresh-safe.
-const productsSearchSchema = resourceSearchSchema.extend({
-  import: z.string().optional(),
-})
+const productsSearchSchema = resourceSearchSchema.extend(importWizardSearchSchema.shape)
 
 // Custom field type → filter operator set. Anything unmapped filters as text.
 // Narrowed to the variants that need no companion field (`enum` needs
@@ -92,16 +94,7 @@ function ProductsPage() {
   const searchParams = Route.useSearch() as z.infer<typeof productsSearchSchema>
   const navigate = useNavigate()
 
-  const openImportWizard = (id: string) =>
-    navigate({ search: (prev: Record<string, unknown>) => ({ ...prev, import: id }) as never })
-
-  const closeImportWizard = () =>
-    navigate({
-      search: (prev: Record<string, unknown>) => {
-        const { import: _i, ...rest } = prev
-        return rest as never
-      },
-    })
+  const wizard = useImportWizardSearch(searchParams)
 
   const bulkStatus = useBulkProductStatusUpdate()
   const bulkAddCategories = useBulkAddProductsToCategories()
@@ -376,7 +369,7 @@ function ProductsPage() {
             <ImportButton
               type="products"
               subject={Subject.Product}
-              onCreated={(imp) => openImportWizard(imp.id)}
+              onCreated={(imp) => wizard.open(imp.id)}
             />
             <ExportButton type="products" {...ctx} />
             <Button
@@ -390,7 +383,7 @@ function ProductsPage() {
           </>
         )}
       />
-      <ImportWizardDialog importId={searchParams.import ?? null} onClose={closeImportWizard} />
+      <ImportWizardDialog importId={wizard.importId} onClose={wizard.close} />
     </>
   )
 }

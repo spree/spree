@@ -2300,6 +2300,7 @@ export type ExportType =
   | 'gift_cards'
   | 'coupon_codes'
   | 'newsletter_subscribers'
+  | 'price_list_prices'
   | (string & {})
 
 export interface ExportCreateParams {
@@ -2330,7 +2331,12 @@ export interface ExportCreateParams {
  * class name. Creating an import still accepts the fully-qualified class name
  * for backwards compatibility, but responses always use the shorthand.
  */
-export type ImportType = 'products' | 'customers' | 'product_translations' | (string & {})
+export type ImportType =
+  | 'products'
+  | 'customers'
+  | 'product_translations'
+  | 'price_list_prices'
+  | (string & {})
 
 export interface ImportCreateParams {
   /** Which dataset to import. Server validates against `Spree::Import.available_types`. */
@@ -2342,6 +2348,12 @@ export interface ImportCreateParams {
   attachment: string
   /** CSV column separator. Defaults to a comma on the server. */
   preferred_delimiter?: ',' | ';' | '|' | '\t'
+  /**
+   * For `price_list_prices` imports: the price list the rows are merged
+   * into. Must belong to the current store (404 otherwise); ignored by
+   * every other type.
+   */
+  price_list_id?: string
   /**
    * Absolute URL of the dashboard's imports view; the import-done email
    * links back to it with `?import=<id>` appended. Only honored when it
