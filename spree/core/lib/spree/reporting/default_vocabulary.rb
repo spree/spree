@@ -17,11 +17,23 @@ module Spree
       SQL
 
       # A refund is issued against the order, not a line, so it is apportioned
-      # by the line's share of the order's pre-tax value.
+      # by the line's share of the order's pre-tax value. The denominator is
+      # summed over the order's own lines rather than read from item_total:
+      # item_total is priced before discounts, so on a discounted order the
+      # shares would not add up to one and part of the refund would vanish.
+      # The `* 1.0` forces real division: SQLite divides two integer-valued
+      # decimals as integers, which silently rounds every share to zero.
       LINE_ITEM_REFUNDS_SUBQUERY = <<~SQL.squish.freeze
         SUM(
           COALESCE((SELECT SUM(r.amount) FROM %{refunds} r WHERE r.order_id = %{orders}.id), 0)
-          * CASE WHEN %{orders}.item_total > 0 THEN %{line_items}.pre_tax_amount / %{orders}.item_total ELSE 0 END
+          * CASE
+              WHEN COALESCE((SELECT SUM(sibling.pre_tax_amount) FROM %{line_items} sibling
+                             WHERE sibling.order_id = %{orders}.id), 0) > 0
+              THEN (%{line_items}.pre_tax_amount * 1.0)
+                   / (SELECT SUM(sibling.pre_tax_amount) FROM %{line_items} sibling
+                      WHERE sibling.order_id = %{orders}.id)
+              ELSE 0
+            END
         )
       SQL
 

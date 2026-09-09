@@ -163,6 +163,17 @@ RSpec.describe Spree::Reporting::Query do
       expect(after_refund.totals[:net_sales][:value]).to be < before_refund.totals[:net_sales][:value]
     end
 
+    it 'apportions a refund across every line so net sales drops by the whole amount' do
+      create(:line_item, order: order, price: 30, quantity: 1)
+      order.line_items.each { |line| line.update_columns(pre_tax_amount: line.price * line.quantity) }
+      before_refund = run(metrics: %w[net_sales])
+
+      create(:refund, amount: 12, payment: create(:payment, order: order, amount: order.total), order: order)
+
+      after_refund = run(metrics: %w[net_sales])
+      expect(after_refund.totals[:net_sales][:value]).to eq((before_refund.totals[:net_sales][:value] - 12).round(2))
+    end
+
     it 'counts an order once however many refunds it carries' do
       payment = create(:payment, order: order, amount: order.total)
       2.times { create(:refund, amount: 4, payment: payment, order: order) }
