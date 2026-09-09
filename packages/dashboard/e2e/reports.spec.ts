@@ -8,14 +8,17 @@ test.describe('reports', () => {
     const creds = await login(page)
     await page.goto(REPORTS_PATH(creds.store_id))
 
-    await expect(page.getByRole('link', { name: /sales over time/i })).toBeVisible({
+    // A row link's accessible name is the report name followed by its
+    // description, so anchor the start only — and anchor it, or this also
+    // matches "Net sales over time".
+    await expect(page.getByRole('link', { name: /^sales over time\b/i })).toBeVisible({
       timeout: 15_000,
     })
     await expect(page.getByText(/^built-in$/i).first()).toBeVisible()
 
-    await page.getByRole('link', { name: /sales over time/i }).click()
+    await page.getByRole('link', { name: /^sales over time\b/i }).click()
 
-    await expect(page.getByRole('heading', { name: /sales over time/i })).toBeVisible({
+    await expect(page.getByRole('heading', { name: /^sales over time$/i })).toBeVisible({
       timeout: 15_000,
     })
     // A time-series report renders the metric tiles and the comparison legend.
@@ -77,7 +80,7 @@ test.describe('reports', () => {
       .getByRole('dialog')
       .getByRole('button', { name: /^delete$/i })
       .click()
-    await expect(page.getByRole('link', { name: /sales over time/i })).toBeVisible({
+    await expect(page.getByRole('link', { name: /^sales over time\b/i })).toBeVisible({
       timeout: 15_000,
     })
     await expect(page.getByRole('link', { name: `${name} renamed` })).toHaveCount(0)
