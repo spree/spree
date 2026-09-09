@@ -234,8 +234,10 @@ function DataGridShell<T>({
             // a container that draws that edge already.
             '[&_tr>*:first-child]:border-l-0 [&_tr>*:last-child]:border-r-0 [&_thead_tr:first-child>*]:border-t-0 [&_tbody_tr:last-child>*]:border-b-0',
             // The header draws its bottom rule as an inset shadow (see the
-            // `<th>` below), so its border would stack into a second line.
-            '[&_thead_th]:border-b-0',
+            // `<th>` below). Both the header's own bottom border and the
+            // first body row's top border would stack beside that shadow, so
+            // the one rule between the header and the body is the shadow.
+            '[&_thead_th]:border-b-0 [&_tbody_tr:first-child>*]:border-t-0',
             className,
           )}
           aria-label={ariaLabel}
