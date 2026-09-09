@@ -100,12 +100,12 @@ NEVER kill/shut off dev serves already running unless they are broken (eg. migra
 ## Git Policy
 
 - Commit message body: max 3-4 sentences, DON'T include implementation detail, focus on the "what" and "why", not the "how"
-- Commits fixing bugs should start with "Fix" prefix, branch name should start with "fix/"
+- Commits fixing bugs should start with "Fix: " prefix, branch name should start with "fix/"
 - Use plain phrases like "Added/Removed/Fixed/Changed" in commit messages/titles 
-- If n-commits are needed for a single logical change, use `git commit --fixup` for the follow-ups and `git rebase -i --autosquash` to combine into a single commit before merging
 - NEVER commit anything to main branch, always use feat/fix/chore branches for development
 - Pull Request descriptions are public, never disclose any credentials, PII, sensitive data or local dev environment URLs
 - Pull Request descriptions should follow same guidelines as git commits - short, cohesive and short, use bullets to list changes / new features if it's a big PR
+- NEVER add yourself as a co-author of the commit
 
 ## Backend (Ruby)
 
@@ -146,7 +146,7 @@ Per-request context available in models, controllers, jobs, and services:
 - We're on Rails 8.1 so use all the new and available methods from this release
 - New models carrying store-specific data (configuration, catalog, commerce records) ALWAYS `belongs_to :store` via `Spree::SingleStoreResource` — only genuinely global reference data (countries, states, roles) goes unscoped. Cross-store sharing is gone (`spree_multi_store` is legacy and unsupported)
 - ALWAYS pass `class_name` and `dependent` on associations; use `dependent: :destroy_async` for high-fanout associations to offload deletion to a background job
-- Include `Spree::CustomFields` for custom fields support
+- Include `Spree::HasCustomFields` for custom fields support
 - Include `Spree::Metadata` for JSON metadata support
 - ALWAYS Use string columns instead of enums
 - NEVER use `Struct` for domain value objects — use a plain Ruby class with `ActiveModel::Model` + `ActiveModel::Attributes` (typed attributes, validations) so it behaves like an ActiveRecord object (e.g. `Spree::PickupPointOption`)
@@ -162,13 +162,18 @@ Per-request context available in models, controllers, jobs, and services:
 - ALWAYS put callbacks in private group
 - ALWAYS use existing vocabulary and naming patterns, avoid slang terms
 - DO NOT override Rails core API methods, eg. `update```
+- All new models should have `store_id` and belong to `Store` unless they are sub-children of another Parent (eg. `Variant` under `Product`)
+- All new tier-1 models (eg. Product) should publish events via `publishes_lifecycle_events`
 
 ```ruby
 class Spree::Product < Spree.base_class
-  include Spree::Metafields
+  include Spree::SingleStoreResource
+  include Spree::HasCustomFields
   include Spree::Metadata
 
   acts_as_paranoid
+
+  publishes_lifecycle_events
 
   has_many :variants, class_name: 'Spree::Variant', dependent: :destroy
   scope :available, -> { where(available_on: ..Time.current) }
