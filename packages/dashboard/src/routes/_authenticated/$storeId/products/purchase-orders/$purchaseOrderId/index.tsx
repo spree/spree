@@ -17,8 +17,8 @@ import {
   TableRow,
   useConfirm,
 } from '@spree/dashboard-ui'
-import { PencilIcon, XCircleIcon } from '@spree/dashboard-ui/icons'
-import { createFileRoute, Link } from '@tanstack/react-router'
+import { PencilIcon, Trash2Icon, XCircleIcon } from '@spree/dashboard-ui/icons'
+import { createFileRoute, Link, useNavigate } from '@tanstack/react-router'
 import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { InventoryStatusBadge } from '../../../../../../components/spree/inventory-status-badge'
@@ -27,6 +27,7 @@ import { StockHistoryCard } from '../../../../../../components/spree/stock-histo
 import { VariantLink } from '../../../../../../components/spree/variant-link'
 import {
   useCancelPurchaseOrder,
+  useDeletePurchaseOrder,
   useMarkPurchaseOrderOrdered,
   usePurchaseOrder,
   useReceivePurchaseOrder,
@@ -311,8 +312,10 @@ function PurchaseOrderHeader({ purchaseOrder }: { purchaseOrder: PurchaseOrder }
   const { t } = useTranslation()
   const { storeId } = useStore()
   const confirm = useConfirm()
+  const navigate = useNavigate()
   const markOrdered = useMarkPurchaseOrderOrdered(purchaseOrder.id)
   const cancelOrder = useCancelPurchaseOrder(purchaseOrder.id)
+  const deleteOrder = useDeletePurchaseOrder()
 
   const open = !isClosed(purchaseOrder.status)
 
@@ -337,6 +340,28 @@ function PurchaseOrderHeader({ purchaseOrder }: { purchaseOrder: PurchaseOrder }
     })
     if (!ok) return
     await cancelOrder.mutateAsync({}).catch(() => undefined)
+  }
+
+  // Back to the list on success: the record this page describes is gone, and
+  // re-fetching it would 404.
+  async function handleDelete() {
+    const ok = await confirm({
+      title: t('admin.purchase_orders.delete_confirm.title'),
+      message: t('admin.purchase_orders.delete_confirm.message', {
+        number: purchaseOrder.number,
+      }),
+      variant: 'destructive',
+      confirmLabel: t('admin.actions.delete'),
+    })
+    if (!ok) return
+
+    const deleted = await deleteOrder
+      .mutateAsync(purchaseOrder.id)
+      .then(() => true)
+      .catch(() => false)
+    if (!deleted) return
+
+    navigate({ to: '/$storeId/products/purchase-orders', params: { storeId } })
   }
 
   return (
@@ -374,16 +399,34 @@ function PurchaseOrderHeader({ purchaseOrder }: { purchaseOrder: PurchaseOrder }
       }
       destructiveItems={
         open && (
-          <Can I="update" a={Subject.PurchaseOrder}>
-            <DropdownMenuItem
-              variant="destructive"
-              onClick={handleCancel}
-              disabled={cancelOrder.isPending}
-            >
-              <XCircleIcon className="size-4" />
-              {t('admin.purchase_orders.actions.cancel_order')}
-            </DropdownMenuItem>
-          </Can>
+          <>
+            {/* A draft is not yet a commitment to anyone, so it can simply be
+                thrown away — the same action the list offers. Once placed, the
+                order is a matter of record with the supplier and calling it
+                off is the only way out. */}
+            {purchaseOrder.status === 'draft' && (
+              <Can I="destroy" a={Subject.PurchaseOrder}>
+                <DropdownMenuItem
+                  variant="destructive"
+                  onClick={handleDelete}
+                  disabled={deleteOrder.isPending}
+                >
+                  <Trash2Icon className="size-4" />
+                  {t('admin.actions.delete')}
+                </DropdownMenuItem>
+              </Can>
+            )}
+            <Can I="update" a={Subject.PurchaseOrder}>
+              <DropdownMenuItem
+                variant="destructive"
+                onClick={handleCancel}
+                disabled={cancelOrder.isPending}
+              >
+                <XCircleIcon className="size-4" />
+                {t('admin.purchase_orders.actions.cancel_order')}
+              </DropdownMenuItem>
+            </Can>
+          </>
         )
       }
       resource={{ id: purchaseOrder.id, number: purchaseOrder.number }}

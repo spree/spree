@@ -22,8 +22,8 @@ import {
   TableRow,
   useConfirm,
 } from '@spree/dashboard-ui'
-import { PencilIcon, XCircleIcon } from '@spree/dashboard-ui/icons'
-import { createFileRoute, Link } from '@tanstack/react-router'
+import { PencilIcon, Trash2Icon, XCircleIcon } from '@spree/dashboard-ui/icons'
+import { createFileRoute, Link, useNavigate } from '@tanstack/react-router'
 import { useMemo, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { InventoryStatusBadge } from '../../../../../../components/spree/inventory-status-badge'
@@ -32,6 +32,7 @@ import { StockHistoryCard } from '../../../../../../components/spree/stock-histo
 import { TransferCancelDialog } from '../../../../../../components/spree/transfer-cancel-dialog'
 import { VariantLink } from '../../../../../../components/spree/variant-link'
 import {
+  useDeleteStockTransfer,
   useMarkStockTransferInTransit,
   useMarkStockTransferReady,
   useReceiveStockTransfer,
@@ -422,8 +423,10 @@ function TransferHeader({ transfer }: { transfer: StockTransfer }) {
   const { t } = useTranslation()
   const { storeId } = useStore()
   const confirm = useConfirm()
+  const navigate = useNavigate()
   const markReady = useMarkStockTransferReady(transfer.id)
   const markInTransit = useMarkStockTransferInTransit(transfer.id)
+  const deleteTransfer = useDeleteStockTransfer()
   const [cancelOpen, setCancelOpen] = useState(false)
 
   const open = !isClosed(transfer.status)
@@ -439,6 +442,26 @@ function TransferHeader({ transfer }: { transfer: StockTransfer }) {
     })
     if (!ok) return
     await markInTransit.mutateAsync({}).catch(() => undefined)
+  }
+
+  // Back to the list on success: the record this page describes is gone, and
+  // re-fetching it would 404.
+  async function handleDelete() {
+    const ok = await confirm({
+      title: t('admin.stock_transfers.delete_confirm.title'),
+      message: t('admin.stock_transfers.delete_confirm.message', { number: transfer.number }),
+      variant: 'destructive',
+      confirmLabel: t('admin.actions.delete'),
+    })
+    if (!ok) return
+
+    const deleted = await deleteTransfer
+      .mutateAsync(transfer.id)
+      .then(() => true)
+      .catch(() => false)
+    if (!deleted) return
+
+    navigate({ to: '/$storeId/products/transfers', params: { storeId } })
   }
 
   return (
@@ -489,12 +512,31 @@ function TransferHeader({ transfer }: { transfer: StockTransfer }) {
         }
         destructiveItems={
           open && (
-            <Can I="update" a={Subject.StockTransfer}>
-              <DropdownMenuItem variant="destructive" onClick={() => setCancelOpen(true)}>
-                <XCircleIcon className="size-4" />
-                {t('admin.stock_transfers.actions.cancel_transfer')}
-              </DropdownMenuItem>
-            </Can>
+            <>
+              {/* A draft moved nothing, so it can simply be thrown away — the
+                  same action the list offers. Past draft the transfer
+                  describes a box that physically exists, which is what
+                  cancelling is for, so both are offered on a draft and only
+                  cancelling after it. */}
+              {transfer.status === 'draft' && (
+                <Can I="destroy" a={Subject.StockTransfer}>
+                  <DropdownMenuItem
+                    variant="destructive"
+                    onClick={handleDelete}
+                    disabled={deleteTransfer.isPending}
+                  >
+                    <Trash2Icon className="size-4" />
+                    {t('admin.actions.delete')}
+                  </DropdownMenuItem>
+                </Can>
+              )}
+              <Can I="update" a={Subject.StockTransfer}>
+                <DropdownMenuItem variant="destructive" onClick={() => setCancelOpen(true)}>
+                  <XCircleIcon className="size-4" />
+                  {t('admin.stock_transfers.actions.cancel_transfer')}
+                </DropdownMenuItem>
+              </Can>
+            </>
           )
         }
         resource={{ id: transfer.id, number: transfer.number }}
