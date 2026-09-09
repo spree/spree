@@ -205,6 +205,24 @@ RSpec.describe Spree::Api::V3::Seller::VariantsController, type: :controller do
         expect(json_response['error']['code']).to eq('duplicate_offer')
       end
 
+      # A row written before spree:upgrade:backfill_variant_statuses carries no
+      # status, and SQL calls NULL unknown rather than unequal — so asking for
+      # "not archived" the obvious way would let the seller list the same
+      # combination a second time.
+      it 'still refuses a duplicate when the existing offer has no status' do
+        post :create, params: payload.merge(options: [{ name: 'condition', value: 'used' }]), as: :json
+        expect(response).to have_http_status(:created)
+
+        Spree::Variant.where(sku: 'NEW-OFFER-1').update_all(status: nil)
+
+        post :create, params: payload.merge(
+          sku: 'NEW-OFFER-2', options: [{ name: 'condition', value: 'used' }]
+        ), as: :json
+
+        expect(response).to have_http_status(:unprocessable_content)
+        expect(json_response['error']['code']).to eq('duplicate_offer')
+      end
+
       # Two sellers listing the same condition is the whole point of a shared
       # catalog.
       it "allows the same combination as another seller's offer" do

@@ -1660,7 +1660,7 @@ export interface OfferParams {
     compare_at_amount?: string | number
     currency?: string
   }>
-  /** Only this seller's own warehouses; others are ignored. */
+  /** This seller's own warehouses. Naming another seller's is a 404. */
   stock_levels?: Array<{
     id?: string
     stock_location_id?: string

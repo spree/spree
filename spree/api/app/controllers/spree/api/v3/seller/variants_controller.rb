@@ -231,9 +231,15 @@ module Spree
             # Archived rows do not count: a seller who took an offer down must
             # be able to list that combination again, and the panel offers no
             # way back from `archived`.
+            #
+            # A NULL status counts as live. SQL calls NULL unknown rather
+            # than unequal, so both `where.not(status: 'archived')` and a
+            # positive list silently drop rows written before
+            # `spree:upgrade:backfill_variant_statuses` ran — and dropping
+            # them lets a seller list the same combination twice.
             duplicate = current_seller.variants.where(product_id: product.id).
                         where.not(id: @resource&.id).
-                        where.not(status: 'archived').
+                        where(status: Spree::Variant::UNARCHIVED_STATUSES).
                         includes(option_values: :option_type).
                         any? { |variant| option_signature(variant) == wanted }
 

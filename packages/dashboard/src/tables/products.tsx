@@ -178,11 +178,19 @@ defineTable('products', {
     // page of its own — an offer is a row on a product — so the queue is a
     // filter over the catalog
     // (docs/plans/6.0-seller-master-catalog-listings.md, Decision 12).
+    //
+    // One option, not a Yes/No pair: Ransack skips a scope whose value is
+    // falsey, so a "No" would run no scope at all and hand back the whole
+    // catalog — which an operator reads as "every product has an offer
+    // pending". The queue only ever asks the affirmative question.
     {
       key: 'awaiting_offers',
       label: i18n.t('admin.products.offers.awaiting_review_filter'),
       filterable: true,
-      filterType: 'boolean',
+      filterType: 'enum',
+      filterOptions: [
+        { value: 'true', label: i18n.t('admin.products.offers.awaiting_review_filter') },
+      ],
       ransackAttribute: 'with_proposed_offers',
       ransackScope: true,
       render: () => null,
