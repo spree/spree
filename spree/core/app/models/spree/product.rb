@@ -309,10 +309,16 @@ module Spree
     scope :open_to_sellers, -> { where(open_to_sellers: true) }
     # Products carrying at least one offer awaiting a decision — the review
     # queue, as a filter on the catalog rather than a page of its own.
-    scope :with_proposed_offers, lambda {
-      where(Spree::Variant.where(Spree::Variant.arel_table[:product_id].eq(arel_table[:id])).
-              where(status: 'proposed', deleted_at: nil).
-              where.not(seller_id: nil).arel.exists)
+    # Takes the value so the operator's filter can ask for either side.
+    # Ransack skips an arity-zero scope whenever the value is falsey, which
+    # would answer "every product" to "show me the ones with nothing to
+    # review" — the opposite of what was asked.
+    scope :with_proposed_offers, lambda { |value = true|
+      exists = Spree::Variant.where(Spree::Variant.arel_table[:product_id].eq(arel_table[:id])).
+               where(status: 'proposed', deleted_at: nil).
+               where.not(seller_id: nil).arel.exists
+
+      ActiveModel::Type::Boolean.new.cast(value) ? where(exists) : where.not(exists)
     }
     scope :not_archived, -> { where.not(status: 'archived') }
     scope :on_sale, lambda { |currency = nil|

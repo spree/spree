@@ -33,6 +33,12 @@ module Spree
     # drop them from a payload and the workflows are the only way in.
     REVIEW_STATUSES = %w[proposed rejected].freeze
 
+    # Every status a row can hold and still be the seller's live listing,
+    # plus the NULL a row written before the status backfill carries. Asked
+    # for positively because SQL calls NULL unknown rather than unequal, so
+    # `where.not(status: 'archived')` silently drops those rows.
+    UNARCHIVED_STATUSES = (%w[draft proposed active rejected] + [nil]).freeze
+
     DIMENSION_UNITS = %w[mm cm in ft]
     WEIGHT_UNITS = %w[g kg lb oz]
 
