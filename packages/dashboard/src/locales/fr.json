@@ -2584,7 +2584,9 @@
       "settings": "Paramètres",
       "transfers": "Transferts",
       "translations": "Traductions",
-      "purchase_orders": "Bons de commande"
+      "purchase_orders": "Bons de commande",
+      "inventory": "Inventaire",
+      "suppliers": "Fournisseurs"
     },
     "option_types": {
       "columns": {
@@ -5430,7 +5432,8 @@
         "variant": "Produit",
         "sku": "UGS",
         "unit_cost": "Coût unitaire"
-      }
+      },
+      "picker_title": "Ajouter des produits"
     },
     "stock_history": {
       "title": "Historique du stock",

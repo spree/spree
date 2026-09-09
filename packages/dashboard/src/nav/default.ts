@@ -12,6 +12,7 @@ import {
   StoreIcon,
   TagIcon,
   UsersIcon,
+  WarehouseIcon,
 } from '@spree/dashboard-ui/icons'
 import { GettingStartedNavBadge } from '../components/spree/getting-started-nav-badge'
 import {
@@ -147,19 +148,40 @@ nav.add({
       subject: Subject.Product,
       position: 475,
     },
+  ],
+})
+
+// Moving stock in and around is its own job, done by different people than the
+// ones who write the catalog — so it gets its own section rather than crowding
+// the end of Products.
+nav.add({
+  key: 'inventory',
+  labelKey: 'admin.nav.inventory',
+  path: '/products/transfers',
+  icon: WarehouseIcon,
+  subject: Subject.StockTransfer,
+  position: 350,
+  children: [
     {
-      key: 'products.transfers',
+      key: 'inventory.transfers',
       labelKey: 'admin.nav.transfers',
       path: '/products/transfers',
       subject: Subject.StockTransfer,
-      position: 500,
+      position: 100,
     },
     {
-      key: 'products.purchase-orders',
+      key: 'inventory.purchase-orders',
       labelKey: 'admin.nav.purchase_orders',
       path: '/products/purchase-orders',
       subject: Subject.PurchaseOrder,
-      position: 550,
+      position: 200,
+    },
+    {
+      key: 'inventory.suppliers',
+      labelKey: 'admin.nav.suppliers',
+      path: '/products/suppliers',
+      subject: Subject.Supplier,
+      position: 300,
     },
   ],
 })

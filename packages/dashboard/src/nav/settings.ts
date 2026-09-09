@@ -1,7 +1,6 @@
 import { Subject, settingsNav } from '@spree/dashboard-core'
 import {
   BanknoteIcon,
-  Building2Icon,
   ClipboardCheckIcon,
   CreditCardIcon,
   GlobeIcon,
@@ -222,18 +221,6 @@ settingsNav.add({
   group: 'shipping',
   position: 250,
   subject: Subject.PackageType,
-})
-
-settingsNav.add({
-  key: 'settings.suppliers',
-  labelKey: 'admin.settings_nav.items.suppliers',
-  descriptionKey: 'admin.settings_nav.descriptions.suppliers',
-  keywords: ['vendor', 'purchasing', 'procurement', 'purchase orders'],
-  path: '/suppliers',
-  icon: Building2Icon,
-  group: 'shipping',
-  position: 250,
-  subject: Subject.Supplier,
 })
 
 settingsNav.add({

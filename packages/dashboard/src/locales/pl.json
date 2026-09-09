@@ -2606,7 +2606,9 @@
       "settings": "Ustawienia",
       "transfers": "Transfery",
       "translations": "Tłumaczenia",
-      "purchase_orders": "Zamówienia zakupu"
+      "purchase_orders": "Zamówienia zakupu",
+      "inventory": "Magazyn",
+      "suppliers": "Dostawcy"
     },
     "option_types": {
       "columns": {
@@ -5492,7 +5494,8 @@
         "variant": "Produkt",
         "sku": "SKU",
         "unit_cost": "Koszt jednostkowy"
-      }
+      },
+      "picker_title": "Dodaj produkty"
     },
     "stock_history": {
       "title": "Historia stanu",

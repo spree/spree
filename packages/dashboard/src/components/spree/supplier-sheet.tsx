@@ -1,15 +1,5 @@
 import type { Supplier } from '@spree/admin-sdk'
-import {
-  adminClient,
-  Can,
-  CountryCombobox,
-  ResourceTable,
-  resourceSearchSchema,
-  StateCombobox,
-  Subject,
-  useCountryStates,
-  usePermissions,
-} from '@spree/dashboard-core'
+import { CountryCombobox, StateCombobox, useCountryStates } from '@spree/dashboard-core'
 import {
   Button,
   Field,
@@ -17,7 +7,6 @@ import {
   FieldGroup,
   FieldLabel,
   Input,
-  RowActions,
   Sheet,
   SheetContent,
   SheetDescription,
@@ -25,115 +14,10 @@ import {
   SheetHeader,
   SheetTitle,
   Textarea,
-  useConfirm,
-  useRowClickBridge,
 } from '@spree/dashboard-ui'
-import { PencilIcon, PlusIcon } from '@spree/dashboard-ui/icons'
-import { createFileRoute, useNavigate } from '@tanstack/react-router'
 import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
-import { z } from 'zod/v4'
-import {
-  useCreateSupplier,
-  useDeleteSupplier,
-  useSupplier,
-  useUpdateSupplier,
-} from '../../../../hooks/use-suppliers'
-import '../../../../tables/suppliers'
-
-const suppliersSearchSchema = resourceSearchSchema.extend({
-  edit: z.string().optional(),
-  new: z.coerce.boolean().optional(),
-})
-
-export const Route = createFileRoute('/_authenticated/$storeId/settings/suppliers')({
-  validateSearch: suppliersSearchSchema,
-  component: SuppliersPage,
-})
-
-function SuppliersPage() {
-  const { t } = useTranslation()
-  const search = Route.useSearch() as z.infer<typeof suppliersSearchSchema>
-  const navigate = useNavigate()
-  const confirm = useConfirm()
-  const deleteMutation = useDeleteSupplier()
-  const { permissions } = usePermissions()
-
-  const editId = search.edit
-  const isCreating = !!search.new
-
-  const closeSheet = () =>
-    navigate({
-      search: (prev: Record<string, unknown>) => {
-        const { edit: _e, new: _n, ...rest } = prev
-        return rest as never
-      },
-    })
-
-  const openCreate = () =>
-    navigate({ search: (prev: Record<string, unknown>) => ({ ...prev, new: true }) as never })
-
-  const openEdit = (id: string) =>
-    navigate({ search: (prev: Record<string, unknown>) => ({ ...prev, edit: id }) as never })
-
-  useRowClickBridge('data-supplier-id', openEdit)
-
-  async function handleDelete(supplier: Supplier) {
-    const ok = await confirm({
-      title: t('admin.suppliers.delete_confirm.title'),
-      message: t('admin.suppliers.delete_confirm.message', { name: supplier.name }),
-      variant: 'destructive',
-      confirmLabel: t('admin.actions.delete'),
-    })
-    if (!ok) return
-    await deleteMutation.mutateAsync(supplier.id).catch(() => undefined)
-  }
-
-  return (
-    <>
-      <ResourceTable<Supplier>
-        tableKey="suppliers"
-        queryKey="suppliers"
-        queryFn={(params) => adminClient.suppliers.list(params)}
-        searchParams={search}
-        rowActions={(supplier) => (
-          <RowActions
-            actions={[
-              {
-                key: 'edit',
-                label: t('admin.actions.edit'),
-                icon: <PencilIcon className="size-4" />,
-                onSelect: () => openEdit(supplier.id),
-              },
-              {
-                key: 'delete',
-                destructive: true,
-                // A supplier with a purchasing history is kept: the orders
-                // naming it have to keep meaning something, which is what the
-                // model's `restrict_with_error` enforces. The Orders column
-                // shows why the option is absent.
-                visible: permissions.can('destroy', Subject.Supplier) && supplier.can_be_deleted,
-                disabled: deleteMutation.isPending,
-                onSelect: () => handleDelete(supplier),
-              },
-            ]}
-          />
-        )}
-        actions={
-          <Can I="create" a={Subject.Supplier}>
-            <Button size="sm" className="h-[2.125rem]" onClick={openCreate}>
-              <PlusIcon className="size-4" />
-              {t('admin.suppliers.new_cta')}
-            </Button>
-          </Can>
-        }
-      />
-
-      {isCreating && <SupplierSheet open onOpenChange={(open) => !open && closeSheet()} />}
-      {editId && <SupplierSheet id={editId} open onOpenChange={(open) => !open && closeSheet()} />}
-    </>
-  )
-}
+import { useCreateSupplier, useSupplier, useUpdateSupplier } from '../../hooks/use-suppliers'
 
 interface SupplierFormState {
   name: string
@@ -165,14 +49,23 @@ const EMPTY_FORM: SupplierFormState = {
   postal_code: '',
 }
 
-function SupplierSheet({
+/**
+ * Create or correct a supplier, wherever the merchant needs one.
+ *
+ * The purchase order screen opens it too: buying from someone new is part of
+ * raising the order, not a detour through another screen.
+ */
+export function SupplierSheet({
   id,
   open,
   onOpenChange,
+  onCreated,
 }: {
   id?: string
   open: boolean
   onOpenChange: (open: boolean) => void
+  /** Handed the new record, so a caller can select what it just created. */
+  onCreated?: (supplier: Supplier) => void
 }) {
   const { t } = useTranslation()
   const { data: supplier } = useSupplier(id)
@@ -182,6 +75,9 @@ function SupplierSheet({
 
   const [form, setForm] = useState<SupplierFormState>(EMPTY_FORM)
   const [hydratedFor, setHydratedFor] = useState<string | undefined>(undefined)
+  // A blank name is only wrong once the merchant has tried to save; showing it
+  // on a sheet they just opened reads as an error they caused.
+  const [submitAttempted, setSubmitAttempted] = useState(false)
   const { states } = useCountryStates(form.country_code)
 
   // The record arrives after the sheet opens, so seed the fields the first
@@ -209,6 +105,7 @@ function SupplierSheet({
   }
 
   async function handleSubmit() {
+    setSubmitAttempted(true)
     if (!form.name.trim()) return
 
     // Emptied fields are sent as null, not dropped: the API reads a missing
@@ -223,6 +120,7 @@ function SupplierSheet({
       .catch(() => undefined)
     if (!saved) return
 
+    if (!id) onCreated?.(saved)
     onOpenChange(false)
   }
 
@@ -244,9 +142,9 @@ function SupplierSheet({
                 id="supplier-name"
                 value={form.name}
                 onChange={(event) => set('name', event.target.value)}
-                aria-invalid={!form.name.trim() || undefined}
+                aria-invalid={(submitAttempted && !form.name.trim()) || undefined}
               />
-              {!form.name.trim() && (
+              {submitAttempted && !form.name.trim() && (
                 <FieldError>{t('admin.suppliers.errors.name_blank')}</FieldError>
               )}
             </Field>
@@ -370,11 +268,10 @@ function SupplierSheet({
           >
             {t('admin.actions.cancel')}
           </Button>
-          <Button
-            type="button"
-            onClick={handleSubmit}
-            disabled={!form.name.trim() || mutation.isPending}
-          >
+          {/* Clickable with the name still blank: pressing Save is how the
+              merchant asks what is missing, and a button that only greys out
+              never says. */}
+          <Button type="button" onClick={handleSubmit} disabled={mutation.isPending}>
             {mutation.isPending ? t('admin.actions.saving') : t('admin.actions.save')}
           </Button>
         </SheetFooter>

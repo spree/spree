@@ -2584,7 +2584,9 @@
       "settings": "Settings",
       "transfers": "Transfers",
       "translations": "Translations",
-      "purchase_orders": "Purchase orders"
+      "purchase_orders": "Purchase orders",
+      "inventory": "Inventory",
+      "suppliers": "Suppliers"
     },
     "option_types": {
       "columns": {
@@ -5430,7 +5432,8 @@
         "variant": "Product",
         "sku": "SKU",
         "unit_cost": "Unit cost"
-      }
+      },
+      "picker_title": "Add products"
     },
     "stock_history": {
       "title": "Stock history",

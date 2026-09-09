@@ -2602,7 +2602,9 @@
       "settings": "الإعدادات",
       "transfers": "التحويلات",
       "translations": "الترجمات",
-      "purchase_orders": "أوامر الشراء"
+      "purchase_orders": "أوامر الشراء",
+      "inventory": "المخزون",
+      "suppliers": "الموردون"
     },
     "option_types": {
       "columns": {
@@ -5459,7 +5461,8 @@
         "variant": "المنتج",
         "sku": "رمز SKU",
         "unit_cost": "تكلفة الوحدة"
-      }
+      },
+      "picker_title": "إضافة منتجات"
     },
     "stock_history": {
       "title": "سجل المخزون",

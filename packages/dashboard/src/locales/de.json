@@ -2584,7 +2584,9 @@
       "settings": "Einstellungen",
       "transfers": "Umlagerungen",
       "translations": "Übersetzungen",
-      "purchase_orders": "Bestellungen"
+      "purchase_orders": "Bestellungen",
+      "inventory": "Lagerbestand",
+      "suppliers": "Lieferanten"
     },
     "option_types": {
       "columns": {
@@ -5430,7 +5432,8 @@
         "variant": "Produkt",
         "sku": "SKU",
         "unit_cost": "Stückkosten"
-      }
+      },
+      "picker_title": "Produkte hinzufügen"
     },
     "stock_history": {
       "title": "Bestandsverlauf",

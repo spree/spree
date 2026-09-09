@@ -2577,7 +2577,9 @@
       "settings": "设置",
       "transfers": "调拨",
       "translations": "翻译",
-      "purchase_orders": "采购订单"
+      "purchase_orders": "采购订单",
+      "inventory": "库存",
+      "suppliers": "供应商"
     },
     "option_types": {
       "columns": {
@@ -5419,7 +5421,8 @@
         "variant": "商品",
         "sku": "SKU",
         "unit_cost": "单位成本"
-      }
+      },
+      "picker_title": "添加商品"
     },
     "stock_history": {
       "title": "库存记录",

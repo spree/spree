@@ -34,7 +34,6 @@ import { Route as CompaniesIndexRouteImport } from './../../dashboard/src/routes
 import { Route as BrandsDotindexRouteImport } from './../../dashboard-plugin-example/src/routes/brands.index'
 import { Route as SettingsTaxRatesRouteImport } from './../../dashboard/src/routes/_authenticated/$storeId/settings/tax-rates'
 import { Route as SettingsTaxCategoriesRouteImport } from './../../dashboard/src/routes/_authenticated/$storeId/settings/tax-categories'
-import { Route as SettingsSuppliersRouteImport } from './../../dashboard/src/routes/_authenticated/$storeId/settings/suppliers'
 import { Route as SettingsStoreRouteImport } from './../../dashboard/src/routes/_authenticated/$storeId/settings/store'
 import { Route as SettingsStockLocationsRouteImport } from './../../dashboard/src/routes/_authenticated/$storeId/settings/stock-locations'
 import { Route as SettingsStaffRouteImport } from './../../dashboard/src/routes/_authenticated/$storeId/settings/staff'
@@ -60,6 +59,7 @@ import { Route as PromotionsNewRouteImport } from './../../dashboard/src/routes/
 import { Route as PromotionsGiftCardsRouteImport } from './../../dashboard/src/routes/_authenticated/$storeId/promotions/gift-cards'
 import { Route as PromotionsPromotionIdRouteImport } from './../../dashboard/src/routes/_authenticated/$storeId/promotions/$promotionId'
 import { Route as ProductsTranslationsRouteImport } from './../../dashboard/src/routes/_authenticated/$storeId/products/translations'
+import { Route as ProductsSuppliersRouteImport } from './../../dashboard/src/routes/_authenticated/$storeId/products/suppliers'
 import { Route as ProductsOptionsRouteImport } from './../../dashboard/src/routes/_authenticated/$storeId/products/options'
 import { Route as ProductsNewRouteImport } from './../../dashboard/src/routes/_authenticated/$storeId/products/new'
 import { Route as ProductsMediaRouteImport } from './../../dashboard/src/routes/_authenticated/$storeId/products/media'
@@ -226,11 +226,6 @@ const SettingsTaxCategoriesRoute = SettingsTaxCategoriesRouteImport.update({
   path: '/tax-categories',
   getParentRoute: () => SettingsRoute,
 } as any)
-const SettingsSuppliersRoute = SettingsSuppliersRouteImport.update({
-  id: '/suppliers',
-  path: '/suppliers',
-  getParentRoute: () => SettingsRoute,
-} as any)
 const SettingsStoreRoute = SettingsStoreRouteImport.update({
   id: '/store',
   path: '/store',
@@ -356,6 +351,11 @@ const PromotionsPromotionIdRoute = PromotionsPromotionIdRouteImport.update({
 const ProductsTranslationsRoute = ProductsTranslationsRouteImport.update({
   id: '/products/translations',
   path: '/products/translations',
+  getParentRoute: () => authenticatedStoreIdRoute,
+} as any)
+const ProductsSuppliersRoute = ProductsSuppliersRouteImport.update({
+  id: '/products/suppliers',
+  path: '/products/suppliers',
   getParentRoute: () => authenticatedStoreIdRoute,
 } as any)
 const ProductsOptionsRoute = ProductsOptionsRouteImport.update({
@@ -600,6 +600,7 @@ export interface FileRoutesByFullPath {
   '/$storeId/products/media': typeof ProductsMediaRoute
   '/$storeId/products/new': typeof ProductsNewRoute
   '/$storeId/products/options': typeof ProductsOptionsRoute
+  '/$storeId/products/suppliers': typeof ProductsSuppliersRoute
   '/$storeId/products/translations': typeof ProductsTranslationsRoute
   '/$storeId/promotions/$promotionId': typeof PromotionsPromotionIdRoute
   '/$storeId/promotions/gift-cards': typeof PromotionsGiftCardsRoute
@@ -625,7 +626,6 @@ export interface FileRoutesByFullPath {
   '/$storeId/settings/staff': typeof SettingsStaffRoute
   '/$storeId/settings/stock-locations': typeof SettingsStockLocationsRoute
   '/$storeId/settings/store': typeof SettingsStoreRoute
-  '/$storeId/settings/suppliers': typeof SettingsSuppliersRoute
   '/$storeId/settings/tax-categories': typeof SettingsTaxCategoriesRoute
   '/$storeId/settings/tax-rates': typeof SettingsTaxRatesRoute
   '/$storeId/brands/': typeof BrandsDotindexRoute
@@ -690,6 +690,7 @@ export interface FileRoutesByTo {
   '/$storeId/products/media': typeof ProductsMediaRoute
   '/$storeId/products/new': typeof ProductsNewRoute
   '/$storeId/products/options': typeof ProductsOptionsRoute
+  '/$storeId/products/suppliers': typeof ProductsSuppliersRoute
   '/$storeId/products/translations': typeof ProductsTranslationsRoute
   '/$storeId/promotions/$promotionId': typeof PromotionsPromotionIdRoute
   '/$storeId/promotions/gift-cards': typeof PromotionsGiftCardsRoute
@@ -715,7 +716,6 @@ export interface FileRoutesByTo {
   '/$storeId/settings/staff': typeof SettingsStaffRoute
   '/$storeId/settings/stock-locations': typeof SettingsStockLocationsRoute
   '/$storeId/settings/store': typeof SettingsStoreRoute
-  '/$storeId/settings/suppliers': typeof SettingsSuppliersRoute
   '/$storeId/settings/tax-categories': typeof SettingsTaxCategoriesRoute
   '/$storeId/settings/tax-rates': typeof SettingsTaxRatesRoute
   '/$storeId/brands': typeof BrandsDotindexRoute
@@ -784,6 +784,7 @@ export interface FileRoutesById {
   '/_authenticated/$storeId/products/media': typeof ProductsMediaRoute
   '/_authenticated/$storeId/products/new': typeof ProductsNewRoute
   '/_authenticated/$storeId/products/options': typeof ProductsOptionsRoute
+  '/_authenticated/$storeId/products/suppliers': typeof ProductsSuppliersRoute
   '/_authenticated/$storeId/products/translations': typeof ProductsTranslationsRoute
   '/_authenticated/$storeId/promotions/$promotionId': typeof PromotionsPromotionIdRoute
   '/_authenticated/$storeId/promotions/gift-cards': typeof PromotionsGiftCardsRoute
@@ -809,7 +810,6 @@ export interface FileRoutesById {
   '/_authenticated/$storeId/settings/staff': typeof SettingsStaffRoute
   '/_authenticated/$storeId/settings/stock-locations': typeof SettingsStockLocationsRoute
   '/_authenticated/$storeId/settings/store': typeof SettingsStoreRoute
-  '/_authenticated/$storeId/settings/suppliers': typeof SettingsSuppliersRoute
   '/_authenticated/$storeId/settings/tax-categories': typeof SettingsTaxCategoriesRoute
   '/_authenticated/$storeId/settings/tax-rates': typeof SettingsTaxRatesRoute
   '/_authenticated/$storeId/brands/': typeof BrandsDotindexRoute
@@ -878,6 +878,7 @@ export interface FileRouteTypes {
     | '/$storeId/products/media'
     | '/$storeId/products/new'
     | '/$storeId/products/options'
+    | '/$storeId/products/suppliers'
     | '/$storeId/products/translations'
     | '/$storeId/promotions/$promotionId'
     | '/$storeId/promotions/gift-cards'
@@ -903,7 +904,6 @@ export interface FileRouteTypes {
     | '/$storeId/settings/staff'
     | '/$storeId/settings/stock-locations'
     | '/$storeId/settings/store'
-    | '/$storeId/settings/suppliers'
     | '/$storeId/settings/tax-categories'
     | '/$storeId/settings/tax-rates'
     | '/$storeId/brands/'
@@ -968,6 +968,7 @@ export interface FileRouteTypes {
     | '/$storeId/products/media'
     | '/$storeId/products/new'
     | '/$storeId/products/options'
+    | '/$storeId/products/suppliers'
     | '/$storeId/products/translations'
     | '/$storeId/promotions/$promotionId'
     | '/$storeId/promotions/gift-cards'
@@ -993,7 +994,6 @@ export interface FileRouteTypes {
     | '/$storeId/settings/staff'
     | '/$storeId/settings/stock-locations'
     | '/$storeId/settings/store'
-    | '/$storeId/settings/suppliers'
     | '/$storeId/settings/tax-categories'
     | '/$storeId/settings/tax-rates'
     | '/$storeId/brands'
@@ -1061,6 +1061,7 @@ export interface FileRouteTypes {
     | '/_authenticated/$storeId/products/media'
     | '/_authenticated/$storeId/products/new'
     | '/_authenticated/$storeId/products/options'
+    | '/_authenticated/$storeId/products/suppliers'
     | '/_authenticated/$storeId/products/translations'
     | '/_authenticated/$storeId/promotions/$promotionId'
     | '/_authenticated/$storeId/promotions/gift-cards'
@@ -1086,7 +1087,6 @@ export interface FileRouteTypes {
     | '/_authenticated/$storeId/settings/staff'
     | '/_authenticated/$storeId/settings/stock-locations'
     | '/_authenticated/$storeId/settings/store'
-    | '/_authenticated/$storeId/settings/suppliers'
     | '/_authenticated/$storeId/settings/tax-categories'
     | '/_authenticated/$storeId/settings/tax-rates'
     | '/_authenticated/$storeId/brands/'
@@ -1315,13 +1315,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof SettingsTaxCategoriesRouteImport
       parentRoute: typeof SettingsRoute
     }
-    '/_authenticated/$storeId/settings/suppliers': {
-      id: '/_authenticated/$storeId/settings/suppliers'
-      path: '/suppliers'
-      fullPath: '/$storeId/settings/suppliers'
-      preLoaderRoute: typeof SettingsSuppliersRouteImport
-      parentRoute: typeof SettingsRoute
-    }
     '/_authenticated/$storeId/settings/store': {
       id: '/_authenticated/$storeId/settings/store'
       path: '/store'
@@ -1495,6 +1488,13 @@ declare module '@tanstack/react-router' {
       path: '/products/translations'
       fullPath: '/$storeId/products/translations'
       preLoaderRoute: typeof ProductsTranslationsRouteImport
+      parentRoute: typeof authenticatedStoreIdRoute
+    }
+    '/_authenticated/$storeId/products/suppliers': {
+      id: '/_authenticated/$storeId/products/suppliers'
+      path: '/products/suppliers'
+      fullPath: '/$storeId/products/suppliers'
+      preLoaderRoute: typeof ProductsSuppliersRouteImport
       parentRoute: typeof authenticatedStoreIdRoute
     }
     '/_authenticated/$storeId/products/options': {
@@ -1800,7 +1800,6 @@ interface SettingsRouteChildren {
   SettingsStaffRoute: typeof SettingsStaffRoute
   SettingsStockLocationsRoute: typeof SettingsStockLocationsRoute
   SettingsStoreRoute: typeof SettingsStoreRoute
-  SettingsSuppliersRoute: typeof SettingsSuppliersRoute
   SettingsTaxCategoriesRoute: typeof SettingsTaxCategoriesRoute
   SettingsTaxRatesRoute: typeof SettingsTaxRatesRoute
   SettingsIndexRoute: typeof SettingsIndexRoute
@@ -1833,7 +1832,6 @@ const SettingsRouteChildren: SettingsRouteChildren = {
   SettingsStaffRoute: SettingsStaffRoute,
   SettingsStockLocationsRoute: SettingsStockLocationsRoute,
   SettingsStoreRoute: SettingsStoreRoute,
-  SettingsSuppliersRoute: SettingsSuppliersRoute,
   SettingsTaxCategoriesRoute: SettingsTaxCategoriesRoute,
   SettingsTaxRatesRoute: SettingsTaxRatesRoute,
   SettingsIndexRoute: SettingsIndexRoute,
@@ -1872,6 +1870,7 @@ interface authenticatedStoreIdRouteChildren {
   ProductsMediaRoute: typeof ProductsMediaRoute
   ProductsNewRoute: typeof ProductsNewRoute
   ProductsOptionsRoute: typeof ProductsOptionsRoute
+  ProductsSuppliersRoute: typeof ProductsSuppliersRoute
   ProductsTranslationsRoute: typeof ProductsTranslationsRoute
   PromotionsPromotionIdRoute: typeof PromotionsPromotionIdRoute
   PromotionsGiftCardsRoute: typeof PromotionsGiftCardsRoute
@@ -1928,6 +1927,7 @@ const authenticatedStoreIdRouteChildren: authenticatedStoreIdRouteChildren = {
   ProductsMediaRoute: ProductsMediaRoute,
   ProductsNewRoute: ProductsNewRoute,
   ProductsOptionsRoute: ProductsOptionsRoute,
+  ProductsSuppliersRoute: ProductsSuppliersRoute,
   ProductsTranslationsRoute: ProductsTranslationsRoute,
   PromotionsPromotionIdRoute: PromotionsPromotionIdRoute,
   PromotionsGiftCardsRoute: PromotionsGiftCardsRoute,
