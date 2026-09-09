@@ -1046,20 +1046,34 @@ en:
           description: Check for leftover split metadata columns
         country_state_codes:
           description: Fill ISO country and state codes from the legacy records
+        custom_field_definition_stores:
+          description: Scope custom field definitions to a store
+        deliveries:
+          description: Create a delivery for every tracked fulfillment
         delivery_and_stock_store_ids:
           description: Assign delivery methods and stock locations to the default store
         delivery_profiles:
           description: Convert shipping categories into delivery profiles
         fulfillment_statuses:
           description: Collapse fulfillment statuses onto the 6.0 set
+        import_export_tenancy:
+          description: Give imports and exports their store and author
         incomplete_orders_to_carts:
           description: Move incomplete orders onto the Cart model
+        library_media_placements:
+          description: Record where each media file is used
         master_images_to_product_media:
           description: Move variant-pinned images onto product media
         media_class_names:
           description: Rename stored Asset class names to Media
+        media_store_ids:
+          description: Assign a store to media rows
+        package_types:
+          description: Add the default package types to every store
         product_types:
           description: Bind product types to the default store and reset counters
+        promotion_option_value_rules:
+          description: Rewrite Option Value promotion rules
         reason_store_ids:
           description: Assign return and refund reasons to the default store
         remove_master_variant:

@@ -88,7 +88,7 @@ steps:
 
   - id: backfill_media_store_ids
     name: "Assign a store to media rows that predate the store binding"
-    task: "spree:upgrade:backfill_media_store_ids"
+    task_class: "Spree::MaintenanceTasks::Upgrade::MediaStoreIds"
     notes: |
       Spree 6.0 gives every media row its own store_id so the media library can
       list files that are not yet attached to anything. Media used to reach its
@@ -142,7 +142,7 @@ steps:
 
   - id: backfill_library_media_placements
     name: "Place existing category and collection images in the media library"
-    task: "spree:upgrade:backfill_library_media_placements"
+    task_class: "Spree::MaintenanceTasks::Upgrade::LibraryMediaPlacements"
     notes: |
       Category and collection images used to exist only as attachments —
       in storage but invisible to the media library. New uploads create their
@@ -268,7 +268,7 @@ steps:
 
   - id: migrate_deliveries
     name: "Move tracking numbers onto deliveries"
-    task: "spree:migrate_deliveries"
+    task_class: "Spree::MaintenanceTasks::Upgrade::Deliveries"
     notes: |
       Every fulfillment carrying a 5.6 tracking number gets one delivery row
       with that number: the carrier axis (tracking number, carrier, carrier
@@ -329,7 +329,7 @@ steps:
 
   - id: migrate_promotion_option_value_rules
     name: "Rewrite Option Value promotion rules to stable option value ids"
-    task: "spree:upgrade:migrate_promotion_option_value_rules"
+    task_class: "Spree::MaintenanceTasks::Upgrade::PromotionOptionValueRules"
     notes: |
       Spree 6.0 stores Option Value promotion rules against Spree::OptionValue
       ids. Upgrades from 5.6 may still carry join-row ids from
@@ -650,7 +650,7 @@ steps:
 
   - id: backfill_import_export_tenancy
     name: "Place every import in a store, and a seller where one ran it"
-    task: "spree:upgrade:backfill_import_export_tenancy"
+    task_class: "Spree::MaintenanceTasks::Upgrade::ImportExportTenancy"
     notes: |
       An import used to carry a polymorphic owner that was either a Store or a
       Seller, never both, so a seller-owned import had no store on it at all.
@@ -671,7 +671,7 @@ steps:
 
   - id: backfill_custom_field_definition_stores
     name: "Bind custom field definitions to the default store"
-    task: "spree:upgrade:backfill_custom_field_definition_stores"
+    task_class: "Spree::MaintenanceTasks::Upgrade::CustomFieldDefinitionStores"
     notes: |
       Custom field definitions are store-owned in Spree 6.0, and their
       sort/filter identifier is now a real column rather than a value computed
@@ -696,7 +696,7 @@ steps:
 
   - id: package_types
     name: "Turn the store's default package into a package type row"
-    task: "spree:upgrade:package_types"
+    task_class: "Spree::MaintenanceTasks::Upgrade::PackageTypes"
     notes: |
       The box a store ships parcels in used to be four loose preferences on
       the store. It is now a row in the store's packaging vocabulary, beside

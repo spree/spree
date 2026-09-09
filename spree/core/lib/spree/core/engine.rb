@@ -568,8 +568,15 @@ module Spree
           'Spree::MaintenanceTasks::Upgrade::SearchReindex',
           'Spree::MaintenanceTasks::Upgrade::MediaClassNames',
           'Spree::MaintenanceTasks::Upgrade::MasterImagesToProductMedia',
+          'Spree::MaintenanceTasks::Upgrade::MediaStoreIds',
+          'Spree::MaintenanceTasks::Upgrade::LibraryMediaPlacements',
           'Spree::MaintenanceTasks::Upgrade::StoreCreditCategories',
-          'Spree::MaintenanceTasks::Upgrade::StockMovementsToTypedRows'
+          'Spree::MaintenanceTasks::Upgrade::StockMovementsToTypedRows',
+          'Spree::MaintenanceTasks::Upgrade::Deliveries',
+          'Spree::MaintenanceTasks::Upgrade::PromotionOptionValueRules',
+          'Spree::MaintenanceTasks::Upgrade::ImportExportTenancy',
+          'Spree::MaintenanceTasks::Upgrade::CustomFieldDefinitionStores',
+          'Spree::MaintenanceTasks::Upgrade::PackageTypes'
         ]
 
         Rails.application.config.spree.validators.addresses = [
