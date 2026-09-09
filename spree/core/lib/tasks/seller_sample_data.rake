@@ -1,6 +1,6 @@
 namespace :spree do
   namespace :sellers do
-    desc 'Create a sample seller with a signed-in owner and a pending invitation, for trying the seller panel (development/test only)'
+    desc 'Create a sample seller with an owner, a pending invitation and a fund ledger, for trying the seller panel (development/test only)'
     task sample_data: :environment do
       # Refused outside development and test on purpose. This task writes a
       # known password, and `find_or_initialize_by(email:)` can land on a real
@@ -70,12 +70,73 @@ namespace :spree do
         )
       end
 
+      # A fund ledger to read: a settled payout with the sales it covered, one
+      # still owed, and a sale not yet swept into either. Written directly
+      # rather than through fulfilment and the payout sweep — reaching those
+      # would mean placing and shipping real orders, which is a different
+      # task's job, and the screens under test read these rows either way.
+      provider = Spree::PayoutProvider::System.provider_key
+      currency = store.default_currency
+
+      if seller.seller_transfers.none?
+        # Each earning hangs off an order, because that is what a seller
+        # clicks through to from their ledger.
+        sample_orders = 5.times.map do |index|
+          Spree::Order.create!(
+            store: store, seller: seller, currency: currency,
+            email: "sample-buyer-#{index + 1}@example.com",
+            status: 'placed', completed_at: (index + 1).weeks.ago,
+            total: 100 + (index * 25), item_total: 100 + (index * 25)
+          )
+        end
+
+        settled = seller.seller_payouts.create!(
+          store: store, amount: 0, currency: currency, provider: provider, status: 'completed',
+          reference: 'BACS-SAMPLE-001',
+          period_start: 6.weeks.ago, period_end: 4.weeks.ago
+        )
+        owed = seller.seller_payouts.create!(
+          store: store, amount: 0, currency: currency, provider: provider, status: 'pending',
+          period_start: 3.weeks.ago, period_end: 1.week.ago
+        )
+
+        # Two settled, two owed, one still unswept — so the balance is a real
+        # subtraction rather than a single number, and the payouts queue has
+        # both a completed row and one to mark paid.
+        [[settled, 0], [settled, 1], [owed, 2], [owed, 3], [nil, 4]].each do |payout, index|
+          order = sample_orders[index]
+          seller.seller_transfers.create!(
+            store: store, order: order, payout: payout,
+            amount: order.total * 0.85, currency: currency,
+            kind: 'earning', provider: provider, status: 'completed',
+            created_at: order.completed_at
+          )
+        end
+
+        # A refund on the newest settled sale, so the reversal row and the
+        # negative amount both appear on the earnings screens.
+        original = seller.seller_transfers.earnings.order(:created_at).last
+        seller.seller_transfers.create!(
+          store: store, order: original.order, reversed_from: original,
+          amount: -(original.amount * 0.5), currency: currency,
+          kind: 'refund_reversal', provider: provider, status: 'completed'
+        )
+
+        # Each settlement is worth exactly what it claimed.
+        [settled, owed].each { |payout| payout.update!(amount: payout.transfers.sum(:amount)) }
+      end
+
       progress = Spree::Sellers::Requirements.new(seller.reload).progress
+      balances = seller.balances
 
       puts "Seller:   #{seller.name} (#{seller.prefixed_id}, #{seller.status})"
       puts "Checklist: #{progress[:done]}/#{progress[:total]} done"
       puts "Sign in:  #{email}"
       puts "Pending:  #{seller.invitations.pending.pluck(:email).join(', ')}"
+      puts "Ledger:   #{seller.seller_transfers.count} earning(s), #{seller.seller_payouts.count} payout(s)"
+      balances.each do |balance|
+        puts "Balance:  #{balance.display_balance} owed (#{balance.display_earned} earned, #{balance.display_paid} paid)"
+      end
     end
   end
 end

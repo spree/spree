@@ -277,6 +277,21 @@ module Spree
       earned - settled
     end
 
+    # The seller's position in every currency they have earned or been paid
+    # in, for the ledger screens. Empty before their first fulfilled sale.
+    #
+    # Only rows that contribute a figure decide the list: a currency whose
+    # every transfer failed would otherwise show a row of zeros on a money
+    # screen, which reads as a balance rather than as nothing having happened.
+    #
+    # @return [Array<Spree::SellerBalance>]
+    def balances
+      currencies = seller_transfers.where.not(status: 'failed').distinct.pluck(:currency) |
+                   seller_payouts.completed.distinct.pluck(:currency)
+
+      currencies.sort.map { |currency| Spree::SellerBalance.for(self, currency) }
+    end
+
     # The seller's account with whichever provider pays them — a Stripe Connect
     # `acct_…`, or whatever a SEPA or PayPal provider issues.
     #
