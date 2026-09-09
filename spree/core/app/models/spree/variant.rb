@@ -273,6 +273,8 @@ module Spree
     # (docs/plans/6.0-seller-master-catalog-listings.md, Decision 3).
     scope :listed, -> { where(status: 'active') }
 
+    scope :offers, -> { where.not(seller_id: nil) }
+
     scope :with_option_value, lambda { |option_name, option_value|
       option_type_ids = OptionType.where(name: option_name).ids
       return none if option_type_ids.empty?
@@ -351,7 +353,7 @@ module Spree
                                                  minimum_order_quantity order_multiple purchase_unit units_per_carton
                                                  carton_package_type_id carton_weight cartons_per_pallet]
     self.whitelisted_ransackable_scopes = %i(product_name_or_sku_cont search_by_product_name_or_sku search
-                                             available_at_stock_location)
+                                             available_at_stock_location offers)
 
     def self.product_name_or_sku_cont(query)
       sanitized_query = ActiveRecord::Base.sanitize_sql_like(query.to_s.downcase.strip)
