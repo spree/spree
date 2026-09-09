@@ -427,6 +427,8 @@ export function BulkVariantsTable({
       getRowId={(row) => row.id}
       className={minWidth}
       aria-label={labels.gridAriaLabel}
+      // Sets a min-width well past any viewport, so it has to scroll itself.
+      scrollable
     />
   )
 }

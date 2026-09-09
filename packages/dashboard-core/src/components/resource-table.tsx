@@ -527,7 +527,7 @@ export function ResourceTable<T extends Record<string, any>>({
               items={rows.map((r) => (r as any).id)}
               strategy={verticalListSortingStrategy}
             >
-              <Table stickyHeader roundedBottom>
+              <Table stickyHeader>
                 <TableHeader>
                   <TableHeaderRow>
                     <TableHead className="w-8" />
@@ -647,7 +647,7 @@ export function ResourceTable<T extends Record<string, any>>({
                 </section>,
                 document.body,
               )}
-            <Table stickyHeader roundedBottom>
+            <Table stickyHeader>
               <TableHeader>
                 {/* Column headers stay mounted with rows selected, and the bulk
                     bar is laid over them. Swapping them for one `colSpan` cell

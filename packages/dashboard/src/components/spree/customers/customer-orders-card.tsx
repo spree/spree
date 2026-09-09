@@ -72,7 +72,7 @@ export function CustomerOrdersCard({
         </CardContent>
       ) : (
         <CardContent className="p-0">
-          <Table roundedBottom>
+          <Table>
             <TableHeader>
               <TableRow>
                 <TableHead>{t('admin.customers.detail.orders_table.order')}</TableHead>

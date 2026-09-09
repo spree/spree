@@ -299,7 +299,7 @@ function NewOrderPage() {
 
                 {items.length > 0 && (
                   <div className="mt-4 overflow-x-auto">
-                    <Table roundedBottom>
+                    <Table>
                       <TableHeader>
                         <TableRow>
                           <TableHead>{t('admin.orders.new.items_table.variant')}</TableHead>
