@@ -5304,7 +5304,7 @@
         "covers_error": "Impossible de charger les gains couverts par ce versement."
       },
       "order_card": {
-        "title": "Gains du vendeur",
+        "title": "Transferts vendeurs",
         "view_payout": "Voir le versement",
         "not_settled": "Pas encore versé"
       },

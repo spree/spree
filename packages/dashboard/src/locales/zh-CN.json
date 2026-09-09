@@ -2561,7 +2561,7 @@
       "reports": "报表",
       "returns": "退货",
       "seller_payouts": "打款",
-      "seller_transfers": "收入",
+      "seller_transfers": "卖家收入转账",
       "sellers": "卖家",
       "settings": "设置",
       "transfers": "调拨",
@@ -5294,7 +5294,7 @@
         "covers_error": "无法加载此打款涵盖的收入。"
       },
       "order_card": {
-        "title": "卖家收入",
+        "title": "卖家收入转账",
         "view_payout": "查看打款",
         "not_settled": "尚未打款"
       },

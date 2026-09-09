@@ -5304,7 +5304,7 @@
         "covers_error": "Could not load the earnings this payout covers."
       },
       "order_card": {
-        "title": "Seller earnings",
+        "title": "Seller transfers",
         "view_payout": "View payout",
         "not_settled": "Not paid out yet"
       },

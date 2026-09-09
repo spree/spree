@@ -5364,7 +5364,7 @@
         "covers_error": "Nie udało się wczytać zarobków objętych tą wypłatą."
       },
       "order_card": {
-        "title": "Zarobki sprzedawcy",
+        "title": "Transfery sprzedawców",
         "view_payout": "Zobacz wypłatę",
         "not_settled": "Jeszcze nie wypłacone"
       },

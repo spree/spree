@@ -2568,7 +2568,7 @@
       "reports": "Berichte",
       "returns": "Retouren",
       "seller_payouts": "Auszahlungen",
-      "seller_transfers": "Überweisungen",
+      "seller_transfers": "Verkäufer-Überweisungen",
       "sellers": "Verkäufer",
       "settings": "Einstellungen",
       "transfers": "Umlagerungen",
@@ -5304,7 +5304,7 @@
         "covers_error": "Die Einnahmen dieser Auszahlung konnten nicht geladen werden."
       },
       "order_card": {
-        "title": "Verkäufereinnahmen",
+        "title": "Verkäufer-Überweisungen",
         "view_payout": "Auszahlung ansehen",
         "not_settled": "Noch nicht ausgezahlt"
       },

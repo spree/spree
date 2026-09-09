@@ -14,6 +14,7 @@ import {
 import { BanknoteIcon } from '@spree/dashboard-ui/icons'
 import type { Order } from '@spree/seller-sdk'
 import { Link, useParams } from '@tanstack/react-router'
+import i18n from 'i18next'
 import { useTranslation } from 'react-i18next'
 import { useTransfers } from '../../hooks/use-ledger'
 
@@ -47,6 +48,7 @@ export function OrderEarningsCard({ order }: { order: Order }) {
         <Table>
           <TableHeader>
             <TableRow>
+              <TableHead>{t('earnings.columns.date')}</TableHead>
               <TableHead>{t('earnings.columns.kind')}</TableHead>
               <TableHead>{t('earnings.columns.status')}</TableHead>
               <TableHead>{t('orders.earnings.payout')}</TableHead>
@@ -56,6 +58,9 @@ export function OrderEarningsCard({ order }: { order: Order }) {
           <TableBody>
             {transfers.map((transfer) => (
               <TableRow key={transfer.id}>
+                <TableCell className="whitespace-nowrap">
+                  {new Date(transfer.created_at).toLocaleDateString(i18n.language)}
+                </TableCell>
                 <TableCell>
                   {t(`earnings.kinds.${transfer.kind}`, { defaultValue: transfer.kind })}
                 </TableCell>
