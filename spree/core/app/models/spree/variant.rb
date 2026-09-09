@@ -181,7 +181,14 @@ module Spree
     # suffix.
     scope :available_at_stock_location, ->(stock_location) {
       levels = Spree::StockLevel.table_name
-      location_id = Spree::PrefixedId.decode_prefixed_id(stock_location) || stock_location
+      # Decoded against the stock location's own prefix, so another model's ID
+      # cannot resolve to a warehouse whose numeric payload happens to match.
+      # Anything that is neither that nor a raw id selects nothing rather than
+      # reaching the database, where a non-numeric value raises on PostgreSQL.
+      location_id = Spree::StockLocation.decode_own_prefixed_id(stock_location)
+      location_id ||= stock_location if stock_location.to_s.match?(/\A\d+\z/)
+
+      next none if location_id.blank?
 
       joins(:stock_levels).
         where(levels => { stock_location_id: location_id }).

@@ -282,6 +282,15 @@ describe Spree::Variant, type: :model do
 
         expect(Spree::Variant.available_at_stock_location(source.prefixed_id)).not_to include(stocked)
       end
+
+      # The scope is ransackable, so the argument is whatever a client sent.
+      it 'selects nothing for an ID belonging to another model' do
+        expect(Spree::Variant.available_at_stock_location(stocked.product.prefixed_id)).to be_empty
+      end
+
+      it 'selects nothing for a value that is no ID at all' do
+        expect(Spree::Variant.available_at_stock_location('not-an-id')).to be_empty
+      end
     end
 
     describe '.eligible' do
