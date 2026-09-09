@@ -117,6 +117,27 @@
      enabled state has to stay on the card colour. */
   --border-control: oklch(0.65 0.006 56);
   --border-field: oklch(0.86 0.004 56);
+  /* A card that *holds* other records — an order's fulfillments, its returns,
+     its claims — rather than holding content directly.
+
+     It takes the page's own colour, so the card contributes a border and a
+     title strip and nothing else: the white records inside are the only thing
+     with a surface, and they carry all the weight. Points at --background
+     rather than repeating its value, so the two cannot drift apart.
+
+     Giving the container a fill of its own was tried and reads worse — it
+     tints a large area to say something the border already says, and the
+     records lose contrast against it. Sitting at the page colour is safe
+     because the card still draws its 1px border at 1.21:1; the fill was never
+     carrying that boundary.
+
+     Records inside stay on `--card`, so what a merchant reads is the raised,
+     white thing. Pushing them into a grey well instead reads as content that
+     has been demoted, which is backwards — the fulfillment is the point of
+     the card, not its chrome. */
+  --card-container: var(--background);
+  /* Light mode's raised record is simply the card surface. */
+  --nested-raised: oklch(1 0 0);
   --input: color-mix(in srgb, var(--border-base) 80%, transparent);
   --ring: var(--brand-blue);
   --chart-1: oklch(0.7663 0.1067 254.4);
@@ -211,6 +232,12 @@
      3.22:1 on the card, 3.34:1 on the page ground. */
   --border-control: oklch(0.52 0.006 56);
   --border-field: oklch(0.32 0.004 56);
+  /* Same arrangement as light — container at the page colour, records raised
+     above it. 1.118:1 between them here. Records take `--nested-raised` rather
+     than `--card`: the card token is a step above the page, which is where the
+     container would sit if it had a fill of its own. */
+  --card-container: var(--background);
+  --nested-raised: oklch(0.235 0 0);
   --input: color-mix(in srgb, var(--border-base) 80%, transparent);
   --ring: oklch(0.552 0.016 285); /* same blue ring as light, for focus parity */
   --link: oklch(0.7 0.16 258);
@@ -330,6 +357,8 @@
   --color-border-subtle: var(--border-subtle);
   --color-border-control: var(--border-control);
   --color-border-field: var(--border-field);
+  --color-card-container: var(--card-container);
+  --color-nested-raised: var(--nested-raised);
   --color-destructive: var(--destructive);
   --color-destructive-foreground: var(--destructive-foreground);
   --color-accent-foreground: var(--accent-foreground);

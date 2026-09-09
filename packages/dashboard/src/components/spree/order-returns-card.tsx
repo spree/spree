@@ -74,7 +74,7 @@ export function OrderReturnsCard({ order }: { order: Order }) {
 
   return (
     <>
-      <Card>
+      <Card variant="container">
         <CardHeader>
           <CardTitle>
             <RotateCcwIcon className="size-4" />

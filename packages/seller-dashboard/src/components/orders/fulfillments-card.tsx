@@ -53,7 +53,7 @@ export function FulfillmentsCard({ order }: { order: Order }) {
   const fulfillments = order.fulfillments ?? []
 
   return (
-    <Card>
+    <Card variant="container">
       <CardHeader>
         <CardTitle>
           <TruckIcon className="size-4" />

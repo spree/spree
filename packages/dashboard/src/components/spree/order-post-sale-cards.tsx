@@ -62,7 +62,7 @@ export function OrderExchangesCard({ order }: { order: Order }) {
 
   return (
     <>
-      <Card>
+      <Card variant="container">
         <CardHeader>
           <CardTitle>
             <RepeatIcon className="size-4" />
@@ -214,7 +214,7 @@ export function OrderClaimsCard({ order }: { order: Order }) {
 
   return (
     <>
-      <Card>
+      <Card variant="container">
         <CardHeader>
           <CardTitle>
             <ShieldAlertIcon className="size-4" />
