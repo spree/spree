@@ -135,10 +135,14 @@ export function PermissionProvider({ children }: { children: ReactNode }) {
         permissions,
         rules,
         permissionKeys,
-        // `isPending` stays true for a disabled query, which would leave the
-        // shell in a loading state forever on the sign-in screen. This is
-        // "a request is genuinely in flight".
-        isLoading: query.isFetching,
+        // The first load only, which is what the nav's skeleton is for. Not
+        // `isFetching` alone: that is also true while a stale query refetches
+        // in the background, so an already-rendered nav would drop back to
+        // placeholders on every refresh — the flicker the skeleton exists to
+        // remove. Not `isPending` alone either: it stays true for a disabled
+        // query, leaving the sign-in screen loading forever. Both together
+        // mean "signed in, nothing cached yet, a request in flight".
+        isLoading: isAuthenticated && query.isPending && query.isFetching,
         refresh,
       }}
     >

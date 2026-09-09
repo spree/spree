@@ -279,7 +279,11 @@ export function TableToolbar({
           // pages with no heading at all — no document outline, and nothing
           // for the heading-navigation a screen reader user relies on.
           <SectionHeading
-            as={titleAs}
+            // Only a real title becomes a heading. `title` and `description`
+            // are independent, and a description-only caller would otherwise
+            // emit an empty `<h1>` — which a screen reader still lists in
+            // heading navigation, as a blank entry.
+            as={title ? titleAs : undefined}
             title={title}
             description={description}
             docsPath={docsPath}
