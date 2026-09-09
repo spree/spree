@@ -1,5 +1,11 @@
 import { expect, type Page, test } from '@playwright/test'
-import { FIXTURE_PROMO_CUSTOMER_GROUP, fillAddressForm, gotoIndex, login } from './helpers'
+import {
+  FIXTURE_PROMO_CUSTOMER_GROUP,
+  FIXTURE_PROMO_PRODUCT,
+  fillAddressForm,
+  gotoIndex,
+  login,
+} from './helpers'
 
 const CUSTOMERS_PATH = (storeId: string) => `/${storeId}/customers`
 const CTA = /new customer/i
@@ -28,6 +34,34 @@ test.describe('customers', () => {
     // Back to the index, the row appears.
     await gotoIndex(page, CUSTOMERS_PATH(creds.store_id), CTA)
     await expect(page.getByRole('link', { name: email })).toBeVisible({ timeout: 15_000 })
+  })
+
+  test('shows no orders on the profile of a customer who has not ordered', async ({ page }) => {
+    const creds = await login(page)
+
+    // Somebody else's order, so an unfiltered list would have something to show
+    await page.goto(`/${creds.store_id}/orders/new`)
+    await expect(page.getByRole('heading', { name: /new order/i })).toBeVisible({ timeout: 15_000 })
+    await page.locator('#order-email').fill(`e2e-other-buyer-${Date.now()}@example.com`)
+    await page.getByPlaceholder(/search variant/i).fill(FIXTURE_PROMO_PRODUCT)
+    await page
+      .getByRole('option', { name: new RegExp(FIXTURE_PROMO_PRODUCT, 'i') })
+      .first()
+      .click()
+    await page.locator('button[type="submit"]').click()
+    await expect(page).toHaveURL(new RegExp(`/${creds.store_id}/orders/or_[^/]+$`), {
+      timeout: 15_000,
+    })
+
+    await gotoIndex(page, CUSTOMERS_PATH(creds.store_id), CTA)
+    await createCustomer(page, `e2e-no-orders-${Date.now()}@example.com`)
+
+    const ordersCard = page.locator('[data-slot="card"]').filter({
+      has: page.locator('[data-slot="card-title"]', { hasText: /Orders/ }),
+    })
+    await expect(ordersCard.getByText(/no orders yet/i)).toBeVisible({ timeout: 15_000 })
+    await expect(ordersCard.getByRole('row')).toHaveCount(0)
+    await expect(ordersCard.locator('[data-slot="card-title"]')).toHaveText('Orders')
   })
 
   test('edits a customer profile', async ({ page }) => {
