@@ -13405,6 +13405,7 @@ components:
           - partially_redeemed
           - redeemed
           - canceled
+          - expired
         currency:
           type: string
         amount:
