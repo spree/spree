@@ -286,6 +286,8 @@ module Spree
     # (docs/plans/6.0-seller-master-catalog-listings.md, Decision 3).
     scope :listed, -> { where(status: 'active') }
 
+    scope :offers, -> { where.not(seller_id: nil) }
+
     scope :with_option_value, lambda { |option_name, option_value|
       # Option types are per store, so two stores may each define `size`;
       # narrow to the store in context so a filter never matches another
@@ -361,8 +363,8 @@ module Spree
                                                  minimum_order_quantity order_multiple purchase_unit units_per_carton
                                                  carton_package_type_id carton_weight cartons_per_pallet]
     self.whitelisted_ransackable_scopes = %i(product_name_or_sku_cont search_by_product_name_or_sku search
-                                             available_at_stock_location)
-    self.ransackable_scope_types = { 'available_at_stock_location' => 'id' }
+                                             available_at_stock_location offers)
+    self.ransackable_scope_types = { 'available_at_stock_location' => 'id', 'offers' => 'boolean' }
     self.private_ransackable_attributes = { store: %w[cost_price cost_currency deleted_at] }
 
     def self.product_name_or_sku_cont(query)
