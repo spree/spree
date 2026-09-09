@@ -12,16 +12,16 @@ import { PencilIcon, PlusIcon } from '@spree/dashboard-ui/icons'
 import { createFileRoute, useNavigate } from '@tanstack/react-router'
 import { useTranslation } from 'react-i18next'
 import { z } from 'zod/v4'
-import { SupplierSheet } from '../../../../components/spree/supplier-sheet'
-import { useDeleteSupplier } from '../../../../hooks/use-suppliers'
-import '../../../../tables/suppliers'
+import { SupplierSheet } from '../../../components/spree/supplier-sheet'
+import { useDeleteSupplier } from '../../../hooks/use-suppliers'
+import '../../../tables/suppliers'
 
 const suppliersSearchSchema = resourceSearchSchema.extend({
   edit: z.string().optional(),
   new: z.coerce.boolean().optional(),
 })
 
-export const Route = createFileRoute('/_authenticated/$storeId/products/suppliers')({
+export const Route = createFileRoute('/_authenticated/$storeId/suppliers')({
   validateSearch: suppliersSearchSchema,
   component: SuppliersPage,
 })

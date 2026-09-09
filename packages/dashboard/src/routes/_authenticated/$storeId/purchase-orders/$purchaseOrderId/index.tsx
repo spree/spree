@@ -22,24 +22,22 @@ import { PencilIcon, Trash2Icon, XCircleIcon } from '@spree/dashboard-ui/icons'
 import { createFileRoute, Link, useNavigate } from '@tanstack/react-router'
 import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
-import { InventoryStatusBadge } from '../../../../../../components/spree/inventory-status-badge'
-import { QuantityCell, QuantityHead } from '../../../../../../components/spree/quantity-cell'
-import { ResourceDetailSkeleton } from '../../../../../../components/spree/route-pending'
-import { StockHistoryCard } from '../../../../../../components/spree/stock-history-card'
-import { VariantLink } from '../../../../../../components/spree/variant-link'
+import { InventoryStatusBadge } from '../../../../../components/spree/inventory-status-badge'
+import { QuantityCell, QuantityHead } from '../../../../../components/spree/quantity-cell'
+import { ResourceDetailSkeleton } from '../../../../../components/spree/route-pending'
+import { StockHistoryCard } from '../../../../../components/spree/stock-history-card'
+import { VariantLink } from '../../../../../components/spree/variant-link'
 import {
   useCancelPurchaseOrder,
   useDeletePurchaseOrder,
   useMarkPurchaseOrderOrdered,
   usePurchaseOrder,
   useReceivePurchaseOrder,
-} from '../../../../../../hooks/use-purchase-orders'
-import { spreeJsonLinkResolver } from '../../../../../../lib/json-link-resolver'
-import { isClosed } from '../../../../../../schemas/inventory-operations'
+} from '../../../../../hooks/use-purchase-orders'
+import { spreeJsonLinkResolver } from '../../../../../lib/json-link-resolver'
+import { isClosed } from '../../../../../schemas/inventory-operations'
 
-export const Route = createFileRoute(
-  '/_authenticated/$storeId/products/purchase-orders/$purchaseOrderId/',
-)({
+export const Route = createFileRoute('/_authenticated/$storeId/purchase-orders/$purchaseOrderId/')({
   component: PurchaseOrderDetailPage,
 })
 
@@ -98,7 +96,7 @@ function SummaryCard({ purchaseOrder }: { purchaseOrder: PurchaseOrder }) {
           <dd>
             {purchaseOrder.supplier_id ? (
               <Link
-                to="/$storeId/products/suppliers"
+                to="/$storeId/suppliers"
                 params={{ storeId }}
                 search={{ edit: purchaseOrder.supplier_id }}
                 className="text-foreground hover:underline"
@@ -368,13 +366,13 @@ function PurchaseOrderHeader({ purchaseOrder }: { purchaseOrder: PurchaseOrder }
       .catch(() => false)
     if (!deleted) return
 
-    navigate({ to: '/$storeId/products/purchase-orders', params: { storeId } })
+    navigate({ to: '/$storeId/purchase-orders', params: { storeId } })
   }
 
   return (
     <PageHeader
       title={purchaseOrder.number}
-      backTo="products/purchase-orders"
+      backTo="purchase-orders"
       badges={<InventoryStatusBadge status={purchaseOrder.status} resource="purchase_orders" />}
       actions={
         open && (
@@ -384,7 +382,7 @@ function PurchaseOrderHeader({ purchaseOrder }: { purchaseOrder: PurchaseOrder }
             {purchaseOrder.editable && (
               <Button variant="outline" asChild>
                 <Link
-                  to="/$storeId/products/purchase-orders/$purchaseOrderId/edit"
+                  to="/$storeId/purchase-orders/$purchaseOrderId/edit"
                   params={{ storeId, purchaseOrderId: purchaseOrder.id }}
                 >
                   <PencilIcon className="size-4" />

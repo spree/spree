@@ -4,10 +4,10 @@ import {
   EMPTY_STOCK_TRANSFER,
   StockTransferForm,
   type StockTransferFormValues,
-} from '../../../../../components/spree/stock-transfer-form'
-import { useCreateStockTransfer } from '../../../../../hooks/use-stock-transfers'
+} from '../../../../components/spree/stock-transfer-form'
+import { useCreateStockTransfer } from '../../../../hooks/use-stock-transfers'
 
-export const Route = createFileRoute('/_authenticated/$storeId/products/transfers/new')({
+export const Route = createFileRoute('/_authenticated/$storeId/transfers/new')({
   component: NewStockTransferPage,
 })
 
@@ -35,7 +35,7 @@ function NewStockTransferPage() {
     if (!transfer) return
 
     navigate({
-      to: '/$storeId/products/transfers/$transferId',
+      to: '/$storeId/transfers/$transferId',
       params: { storeId, transferId: transfer.id },
     })
   }
@@ -44,12 +44,12 @@ function NewStockTransferPage() {
     <StockTransferForm
       initial={EMPTY_STOCK_TRANSFER}
       title={t('admin.stock_transfers.new_title')}
-      backTo="products/transfers"
+      backTo="transfers"
       submitLabel={t('admin.stock_transfers.actions.create_draft')}
       pendingLabel={t('admin.actions.creating')}
       pending={createMutation.isPending}
       onSubmit={handleSubmit}
-      onCancel={() => navigate({ to: '/$storeId/products/transfers', params: { storeId } })}
+      onCancel={() => navigate({ to: '/$storeId/transfers', params: { storeId } })}
     />
   )
 }

@@ -5,14 +5,11 @@ import { useTranslation } from 'react-i18next'
 import {
   PurchaseOrderForm,
   type PurchaseOrderFormValues,
-} from '../../../../../../components/spree/purchase-order-form'
-import {
-  usePurchaseOrder,
-  useUpdatePurchaseOrder,
-} from '../../../../../../hooks/use-purchase-orders'
+} from '../../../../../components/spree/purchase-order-form'
+import { usePurchaseOrder, useUpdatePurchaseOrder } from '../../../../../hooks/use-purchase-orders'
 
 export const Route = createFileRoute(
-  '/_authenticated/$storeId/products/purchase-orders/$purchaseOrderId/edit',
+  '/_authenticated/$storeId/purchase-orders/$purchaseOrderId/edit',
 )({
   component: EditPurchaseOrderPage,
 })
@@ -26,7 +23,7 @@ function EditPurchaseOrderPage() {
 
   const backToOrder = () =>
     navigate({
-      to: '/$storeId/products/purchase-orders/$purchaseOrderId',
+      to: '/$storeId/purchase-orders/$purchaseOrderId',
       params: { storeId, purchaseOrderId },
     })
 
@@ -42,7 +39,7 @@ function EditPurchaseOrderPage() {
       <div className="flex flex-col gap-6">
         <PageHeader
           title={t('admin.purchase_orders.edit_title', { number: purchaseOrder.number })}
-          backTo={`products/purchase-orders/${purchaseOrderId}`}
+          backTo={`purchase-orders/${purchaseOrderId}`}
         />
         <Alert>
           <AlertDescription>{t('admin.purchase_orders.errors.not_editable')}</AlertDescription>
@@ -76,7 +73,7 @@ function EditPurchaseOrderPage() {
   return (
     <PurchaseOrderForm
       title={t('admin.purchase_orders.edit_title', { number: purchaseOrder.number })}
-      backTo={`products/purchase-orders/${purchaseOrderId}`}
+      backTo={`purchase-orders/${purchaseOrderId}`}
       initial={{
         supplierId: purchaseOrder.supplier_id ?? '',
         destinationId: purchaseOrder.destination_location_id ?? '',

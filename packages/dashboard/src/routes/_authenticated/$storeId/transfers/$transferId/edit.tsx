@@ -5,15 +5,12 @@ import { useTranslation } from 'react-i18next'
 import {
   StockTransferForm,
   type StockTransferFormValues,
-} from '../../../../../../components/spree/stock-transfer-form'
-import {
-  useStockTransfer,
-  useUpdateStockTransfer,
-} from '../../../../../../hooks/use-stock-transfers'
+} from '../../../../../components/spree/stock-transfer-form'
+import { useStockTransfer, useUpdateStockTransfer } from '../../../../../hooks/use-stock-transfers'
 
-export const Route = createFileRoute(
-  '/_authenticated/$storeId/products/transfers/$transferId/edit',
-)({ component: EditStockTransferPage })
+export const Route = createFileRoute('/_authenticated/$storeId/transfers/$transferId/edit')({
+  component: EditStockTransferPage,
+})
 
 function EditStockTransferPage() {
   const { t } = useTranslation()
@@ -23,7 +20,7 @@ function EditStockTransferPage() {
   const updateMutation = useUpdateStockTransfer(transferId)
 
   const backToTransfer = () =>
-    navigate({ to: '/$storeId/products/transfers/$transferId', params: { storeId, transferId } })
+    navigate({ to: '/$storeId/transfers/$transferId', params: { storeId, transferId } })
 
   if (isLoading || !transfer) {
     return <div className="p-4 text-muted-foreground text-sm">{t('admin.common.loading')}</div>
@@ -37,7 +34,7 @@ function EditStockTransferPage() {
       <div className="flex flex-col gap-6">
         <PageHeader
           title={t('admin.stock_transfers.edit_title', { number: transfer.number })}
-          backTo={`products/transfers/${transferId}`}
+          backTo={`transfers/${transferId}`}
         />
         <Alert>
           <AlertDescription>{t('admin.stock_transfers.errors.not_editable')}</AlertDescription>
@@ -69,7 +66,7 @@ function EditStockTransferPage() {
   return (
     <StockTransferForm
       title={t('admin.stock_transfers.edit_title', { number: transfer.number })}
-      backTo={`products/transfers/${transferId}`}
+      backTo={`transfers/${transferId}`}
       initial={{
         sourceId: transfer.source_location_id ?? '',
         destinationId: transfer.destination_location_id ?? '',

@@ -7,7 +7,7 @@ import {
   login,
 } from './helpers'
 
-const TRANSFERS_PATH = (storeId: string) => `/${storeId}/products/transfers`
+const TRANSFERS_PATH = (storeId: string) => `/${storeId}/transfers`
 const CTA = /new transfer/i
 
 /**

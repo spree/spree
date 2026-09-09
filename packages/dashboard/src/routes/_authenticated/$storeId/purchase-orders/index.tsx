@@ -11,10 +11,10 @@ import { Button, RowActions, useConfirm, useRowClickBridge } from '@spree/dashbo
 import { EyeIcon, PlusIcon } from '@spree/dashboard-ui/icons'
 import { createFileRoute, useNavigate } from '@tanstack/react-router'
 import { useTranslation } from 'react-i18next'
-import { useDeletePurchaseOrder } from '../../../../../hooks/use-purchase-orders'
-import '../../../../../tables/purchase-orders'
+import { useDeletePurchaseOrder } from '../../../../hooks/use-purchase-orders'
+import '../../../../tables/purchase-orders'
 
-export const Route = createFileRoute('/_authenticated/$storeId/products/purchase-orders/')({
+export const Route = createFileRoute('/_authenticated/$storeId/purchase-orders/')({
   validateSearch: resourceSearchSchema,
   component: PurchaseOrdersPage,
 })
@@ -30,13 +30,13 @@ function PurchaseOrdersPage() {
 
   function openDetail(id: string) {
     navigate({
-      to: '/$storeId/products/purchase-orders/$purchaseOrderId',
+      to: '/$storeId/purchase-orders/$purchaseOrderId',
       params: { storeId, purchaseOrderId: id },
     })
   }
 
   function openCreate() {
-    navigate({ to: '/$storeId/products/purchase-orders/new', params: { storeId } })
+    navigate({ to: '/$storeId/purchase-orders/new', params: { storeId } })
   }
 
   useRowClickBridge('data-purchase-order-id', openDetail)

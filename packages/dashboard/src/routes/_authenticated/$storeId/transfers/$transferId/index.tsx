@@ -34,27 +34,27 @@ import { PencilIcon, Trash2Icon, XCircleIcon } from '@spree/dashboard-ui/icons'
 import { createFileRoute, Link, useNavigate } from '@tanstack/react-router'
 import { useMemo, useState } from 'react'
 import { useTranslation } from 'react-i18next'
-import { InventoryStatusBadge } from '../../../../../../components/spree/inventory-status-badge'
-import { QuantityCell, QuantityHead } from '../../../../../../components/spree/quantity-cell'
-import { ResourceDetailSkeleton } from '../../../../../../components/spree/route-pending'
-import { StockHistoryCard } from '../../../../../../components/spree/stock-history-card'
-import { TransferCancelDialog } from '../../../../../../components/spree/transfer-cancel-dialog'
-import { VariantLink } from '../../../../../../components/spree/variant-link'
+import { InventoryStatusBadge } from '../../../../../components/spree/inventory-status-badge'
+import { QuantityCell, QuantityHead } from '../../../../../components/spree/quantity-cell'
+import { ResourceDetailSkeleton } from '../../../../../components/spree/route-pending'
+import { StockHistoryCard } from '../../../../../components/spree/stock-history-card'
+import { TransferCancelDialog } from '../../../../../components/spree/transfer-cancel-dialog'
+import { VariantLink } from '../../../../../components/spree/variant-link'
 import {
   useDeleteStockTransfer,
   useMarkStockTransferInTransit,
   useMarkStockTransferReady,
   useReceiveStockTransfer,
   useStockTransfer,
-} from '../../../../../../hooks/use-stock-transfers'
-import { spreeJsonLinkResolver } from '../../../../../../lib/json-link-resolver'
+} from '../../../../../hooks/use-stock-transfers'
+import { spreeJsonLinkResolver } from '../../../../../lib/json-link-resolver'
 import {
   DISCREPANCY_REASONS,
   isClosed,
   isInFlight,
-} from '../../../../../../schemas/inventory-operations'
+} from '../../../../../schemas/inventory-operations'
 
-export const Route = createFileRoute('/_authenticated/$storeId/products/transfers/$transferId/')({
+export const Route = createFileRoute('/_authenticated/$storeId/transfers/$transferId/')({
   component: StockTransferDetailPage,
 })
 
@@ -471,7 +471,7 @@ function TransferHeader({ transfer }: { transfer: StockTransfer }) {
       .catch(() => false)
     if (!deleted) return
 
-    navigate({ to: '/$storeId/products/transfers', params: { storeId } })
+    navigate({ to: '/$storeId/transfers', params: { storeId } })
   }
 
   return (
@@ -481,7 +481,7 @@ function TransferHeader({ transfer }: { transfer: StockTransfer }) {
       )}
       <PageHeader
         title={transfer.number}
-        backTo="products/transfers"
+        backTo="transfers"
         badges={<InventoryStatusBadge status={transfer.status} resource="stock_transfers" />}
         actions={
           open && (
@@ -491,7 +491,7 @@ function TransferHeader({ transfer }: { transfer: StockTransfer }) {
               {transfer.editable && (
                 <Button variant="outline" asChild>
                   <Link
-                    to="/$storeId/products/transfers/$transferId/edit"
+                    to="/$storeId/transfers/$transferId/edit"
                     params={{ storeId, transferId: transfer.id }}
                   >
                     <PencilIcon className="size-4" />

@@ -4,10 +4,10 @@ import {
   EMPTY_PURCHASE_ORDER,
   PurchaseOrderForm,
   type PurchaseOrderFormValues,
-} from '../../../../../components/spree/purchase-order-form'
-import { useCreatePurchaseOrder } from '../../../../../hooks/use-purchase-orders'
+} from '../../../../components/spree/purchase-order-form'
+import { useCreatePurchaseOrder } from '../../../../hooks/use-purchase-orders'
 
-export const Route = createFileRoute('/_authenticated/$storeId/products/purchase-orders/new')({
+export const Route = createFileRoute('/_authenticated/$storeId/purchase-orders/new')({
   component: NewPurchaseOrderPage,
 })
 
@@ -37,7 +37,7 @@ function NewPurchaseOrderPage() {
     if (!purchaseOrder) return
 
     navigate({
-      to: '/$storeId/products/purchase-orders/$purchaseOrderId',
+      to: '/$storeId/purchase-orders/$purchaseOrderId',
       params: { storeId, purchaseOrderId: purchaseOrder.id },
     })
   }
@@ -46,12 +46,12 @@ function NewPurchaseOrderPage() {
     <PurchaseOrderForm
       initial={EMPTY_PURCHASE_ORDER}
       title={t('admin.purchase_orders.new_title')}
-      backTo="products/purchase-orders"
+      backTo="purchase-orders"
       submitLabel={t('admin.purchase_orders.actions.create_draft')}
       pendingLabel={t('admin.actions.creating')}
       pending={createMutation.isPending}
       onSubmit={handleSubmit}
-      onCancel={() => navigate({ to: '/$storeId/products/purchase-orders', params: { storeId } })}
+      onCancel={() => navigate({ to: '/$storeId/purchase-orders', params: { storeId } })}
     />
   )
 }

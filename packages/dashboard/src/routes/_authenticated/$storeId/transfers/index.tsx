@@ -11,10 +11,10 @@ import { Button, RowActions, useConfirm, useRowClickBridge } from '@spree/dashbo
 import { EyeIcon, PlusIcon } from '@spree/dashboard-ui/icons'
 import { createFileRoute, useNavigate } from '@tanstack/react-router'
 import { useTranslation } from 'react-i18next'
-import { useDeleteStockTransfer } from '../../../../../hooks/use-stock-transfers'
-import '../../../../../tables/stock-transfers'
+import { useDeleteStockTransfer } from '../../../../hooks/use-stock-transfers'
+import '../../../../tables/stock-transfers'
 
-export const Route = createFileRoute('/_authenticated/$storeId/products/transfers/')({
+export const Route = createFileRoute('/_authenticated/$storeId/transfers/')({
   validateSearch: resourceSearchSchema,
   component: StockTransfersPage,
 })
@@ -30,13 +30,13 @@ function StockTransfersPage() {
 
   function openDetail(id: string) {
     navigate({
-      to: '/$storeId/products/transfers/$transferId',
+      to: '/$storeId/transfers/$transferId',
       params: { storeId, transferId: id },
     })
   }
 
   function openCreate() {
-    navigate({ to: '/$storeId/products/transfers/new', params: { storeId } })
+    navigate({ to: '/$storeId/transfers/new', params: { storeId } })
   }
 
   useRowClickBridge('data-stock-transfer-id', openDetail)

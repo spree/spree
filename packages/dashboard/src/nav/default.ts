@@ -157,7 +157,7 @@ nav.add({
 nav.add({
   key: 'inventory',
   labelKey: 'admin.nav.inventory',
-  path: '/products/transfers',
+  path: '/transfers',
   icon: WarehouseIcon,
   subject: Subject.StockTransfer,
   position: 350,
@@ -165,21 +165,21 @@ nav.add({
     {
       key: 'inventory.transfers',
       labelKey: 'admin.nav.transfers',
-      path: '/products/transfers',
+      path: '/transfers',
       subject: Subject.StockTransfer,
       position: 100,
     },
     {
       key: 'inventory.purchase-orders',
       labelKey: 'admin.nav.purchase_orders',
-      path: '/products/purchase-orders',
+      path: '/purchase-orders',
       subject: Subject.PurchaseOrder,
       position: 200,
     },
     {
       key: 'inventory.suppliers',
       labelKey: 'admin.nav.suppliers',
-      path: '/products/suppliers',
+      path: '/suppliers',
       subject: Subject.Supplier,
       position: 300,
     },
