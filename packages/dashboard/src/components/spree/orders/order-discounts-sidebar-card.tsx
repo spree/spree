@@ -40,15 +40,7 @@ export function DiscountsCard({ order }: { order: Order }) {
   const removeCouponMutation = useOrderMutation(orderId, () =>
     adminClient.orders.discountCodes.delete(orderId, order.coupon_code ?? ''),
   )
-  const applyStoreCreditMutation = useOrderMutation(orderId, () =>
-    adminClient.orders.storeCredits.apply(orderId),
-  )
-  const removeStoreCreditMutation = useOrderMutation(orderId, () =>
-    adminClient.orders.storeCredits.remove(orderId),
-  )
 
-  const hasStoreCredit = Number.parseFloat(order.store_credit_total) > 0
-  const hasCustomer = Boolean(order.customer_id)
   const isEditable = !order.completed_at
   const couponPending = Boolean(order.coupon_code) && Number.parseFloat(order.discount_total) === 0
 
@@ -141,58 +133,6 @@ export function DiscountsCard({ order }: { order: Order }) {
               </Button>
             ) : (
               <Button size="sm" variant="outline" onClick={() => setGiftCardOpen(true)}>
-                <PlusIcon className="size-4" />
-                {t('admin.actions.apply')}
-              </Button>
-            )}
-          </div>
-
-          <Separator />
-
-          {/* Store credit */}
-          <div className="flex items-center justify-between gap-2">
-            <div className="flex flex-col">
-              <span className="text-sm font-medium">
-                {t('admin.orders.detail.gift_card_section.store_credit_label')}
-              </span>
-              {hasStoreCredit ? (
-                <span className="text-xs text-muted-foreground">
-                  {order.display_store_credit_total}{' '}
-                  {t('admin.orders.detail.gift_card_section.applied_suffix')}
-                </span>
-              ) : (
-                <span className="text-xs text-muted-foreground">
-                  {hasCustomer
-                    ? t('admin.orders.detail.gift_card_section.apply_balance')
-                    : t('admin.orders.detail.gift_card_section.requires_customer')}
-                </span>
-              )}
-            </div>
-            {hasStoreCredit ? (
-              <Button
-                size="sm"
-                variant="outline"
-                onClick={async () => {
-                  if (
-                    await confirm({
-                      message: t('admin.orders.detail.confirm.remove_store_credit_message'),
-                      confirmLabel: t('admin.actions.remove'),
-                    })
-                  ) {
-                    removeStoreCreditMutation.mutate(undefined)
-                  }
-                }}
-                disabled={removeStoreCreditMutation.isPending}
-              >
-                {t('admin.actions.remove')}
-              </Button>
-            ) : (
-              <Button
-                size="sm"
-                variant="outline"
-                disabled={!hasCustomer || applyStoreCreditMutation.isPending}
-                onClick={() => applyStoreCreditMutation.mutate(undefined)}
-              >
                 <PlusIcon className="size-4" />
                 {t('admin.actions.apply')}
               </Button>

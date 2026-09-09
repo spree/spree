@@ -2709,7 +2709,6 @@
           "complete_message": "Finaliser cette commande brouillon maintenant ?",
           "remove_gift_card_message": "Retirer cette carte cadeau de la commande ?",
           "remove_item_message": "Retirer cet article de la commande ?",
-          "remove_store_credit_message": "Retirer l'avoir de la commande ?",
           "ship_message": "Expédier cet envoi ?",
           "void_message": "Annuler ce paiement ?"
         },
@@ -2818,16 +2817,12 @@
           "upload_label_title": "Téléverser une étiquette"
         },
         "gift_card_section": {
-          "applied_suffix": "appliqué",
-          "apply_balance": "Appliquer le solde disponible du client",
           "apply_dialog_description": "Saisissez un code de carte cadeau à appliquer à cette commande.",
           "apply_dialog_title": "Appliquer une carte cadeau",
           "code_placeholder": "GIFT-XXXX-YYYY",
           "gift_card_label": "Carte cadeau",
           "none_applied": "Aucun appliqué",
-          "requires_customer": "Nécessite un client",
-          "store_credit_label": "Avoir",
-          "title": "Remises et avoirs"
+          "title": "Remises et carte cadeau"
         },
         "load_failed_message": "Impossible de charger la commande {{orderId}}.",
         "messages": {

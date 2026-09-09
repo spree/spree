@@ -2709,7 +2709,6 @@
           "complete_message": "Diesen Auftragsentwurf jetzt abschließen?",
           "remove_gift_card_message": "Diese Geschenkkarte aus dem Auftrag entfernen?",
           "remove_item_message": "Diesen Artikel aus dem Auftrag entfernen?",
-          "remove_store_credit_message": "Guthaben aus dem Auftrag entfernen?",
           "ship_message": "Diese Lieferung versenden?",
           "void_message": "Diese Zahlung stornieren?"
         },
@@ -2818,16 +2817,12 @@
           "upload_label_title": "Etikett hochladen"
         },
         "gift_card_section": {
-          "applied_suffix": "angewendet",
-          "apply_balance": "Verfügbares Guthaben des Kunden anwenden",
           "apply_dialog_description": "Geben Sie einen Geschenkkartencode ein, der auf diesen Auftrag angewendet werden soll.",
           "apply_dialog_title": "Geschenkkarte anwenden",
           "code_placeholder": "GIFT-XXXX-YYYY",
           "gift_card_label": "Geschenkkarte",
           "none_applied": "Keine angewendet",
-          "requires_customer": "Erfordert einen Kunden",
-          "store_credit_label": "Guthaben",
-          "title": "Rabatte & Guthaben"
+          "title": "Rabatte & Geschenkkarte"
         },
         "load_failed_message": "Auftrag {{orderId}} konnte nicht geladen werden.",
         "messages": {

@@ -2733,7 +2733,6 @@
           "complete_message": "Sfinalizować teraz to zamówienie robocze?",
           "remove_gift_card_message": "Usunąć tę kartę podarunkową z zamówienia?",
           "remove_item_message": "Usunąć tę pozycję z zamówienia?",
-          "remove_store_credit_message": "Usunąć kredyt sklepowy z zamówienia?",
           "ship_message": "Wysłać tę realizację?",
           "void_message": "Unieważnić tę płatność?"
         },
@@ -2844,16 +2843,12 @@
           "upload_label_title": "Wgraj etykietę"
         },
         "gift_card_section": {
-          "applied_suffix": "zastosowano",
-          "apply_balance": "Zastosuj dostępne saldo klienta",
           "apply_dialog_description": "Wprowadź kod karty podarunkowej, aby zastosować ją do tego zamówienia.",
           "apply_dialog_title": "Zastosuj kartę podarunkową",
           "code_placeholder": "GIFT-XXXX-YYYY",
           "gift_card_label": "Karta podarunkowa",
           "none_applied": "Brak zastosowanych",
-          "requires_customer": "Wymaga klienta",
-          "store_credit_label": "Kredyt sklepowy",
-          "title": "Rabaty i środki"
+          "title": "Rabaty i karta podarunkowa"
         },
         "load_failed_message": "Nie udało się załadować zamówienia {{orderId}}.",
         "messages": {

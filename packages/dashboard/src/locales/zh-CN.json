@@ -2702,7 +2702,6 @@
           "complete_message": "现在完成此草稿订单吗？",
           "remove_gift_card_message": "从订单中移除此礼品卡吗？",
           "remove_item_message": "从订单中移除此商品吗？",
-          "remove_store_credit_message": "从订单中移除商店积分吗？",
           "ship_message": "发货此履约单吗？",
           "void_message": "作废此付款吗？"
         },
@@ -2810,16 +2809,12 @@
           "upload_label_title": "上传面单"
         },
         "gift_card_section": {
-          "applied_suffix": "已应用",
-          "apply_balance": "应用客户的可用余额",
           "apply_dialog_description": "输入要应用到此订单的礼品卡代码。",
           "apply_dialog_title": "应用礼品卡",
           "code_placeholder": "GIFT-XXXX-YYYY",
           "gift_card_label": "礼品卡",
           "none_applied": "未应用",
-          "requires_customer": "需要客户",
-          "store_credit_label": "店铺积分",
-          "title": "折扣与余额"
+          "title": "折扣与礼品卡"
         },
         "load_failed_message": "无法加载订单 {{orderId}}。",
         "messages": {

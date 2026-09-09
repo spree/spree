@@ -2727,7 +2727,6 @@
           "complete_message": "هل تريد إكمال مسودة الطلب هذه الآن؟",
           "remove_gift_card_message": "هل تريد إزالة بطاقة الهدايا هذه من الطلب؟",
           "remove_item_message": "هل تريد إزالة هذا العنصر من الطلب؟",
-          "remove_store_credit_message": "هل تريد إزالة رصيد المتجر من الطلب؟",
           "ship_message": "شحن هذا الوفاء؟",
           "void_message": "Void هذه الدفعة؟"
         },
@@ -2835,16 +2834,12 @@
           "upload_label_title": "رفع ملصق"
         },
         "gift_card_section": {
-          "applied_suffix": "مُطبَّق",
-          "apply_balance": "قم بتطبيق الرصيد المتاح لـ العميل",
           "apply_dialog_description": "أدخل رمز بطاقة الهدايا لتطبيقه على هذا الطلب.",
           "apply_dialog_title": "Apply Gift Card",
           "code_placeholder": "GIFT-XXXX-YYYY",
           "gift_card_label": "بطاقة هدية",
           "none_applied": "لم يتم تطبيق أي شيء",
-          "requires_customer": "يتطلب العميل",
-          "store_credit_label": "Store credit",
-          "title": "الخصومات والرصيد"
+          "title": "الخصومات وبطاقة الهدايا"
         },
         "load_failed_message": "لم نتمكن من تحميل الطلب {{orderId}}.",
         "messages": {
