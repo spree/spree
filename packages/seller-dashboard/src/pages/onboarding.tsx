@@ -152,7 +152,7 @@ function RequirementCard({
       <button
         type="button"
         onClick={() => setOpen((previous) => !previous)}
-        className="flex w-full cursor-pointer items-center gap-3 p-4 text-left hover:bg-muted/50"
+        className="flex w-full cursor-pointer items-center gap-3 p-4 text-left hover:bg-accent/50"
       >
         <StatusIcon status={requirement.status} />
         <div className="flex min-w-0 flex-col">

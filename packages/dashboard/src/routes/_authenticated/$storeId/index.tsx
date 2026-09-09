@@ -100,7 +100,7 @@ function AnalyticsChart({ data }: { data: DashboardAnalytics }) {
             key={metric}
             type="button"
             onClick={() => setActiveMetric(metric)}
-            className="relative flex min-w-0 flex-1 flex-col justify-center gap-1 border-l px-3 py-3 text-left transition-colors first:border-l-0 hover:bg-muted/40 sm:px-6 sm:py-4"
+            className="relative flex min-w-0 flex-1 flex-col justify-center gap-1 border-l px-3 py-3 text-left transition-colors first:border-l-0 hover:bg-accent/40 sm:px-6 sm:py-4"
           >
             <span className="truncate text-xs text-muted-foreground">
               {t(`admin.pages.home.metrics.${metric}`)}
