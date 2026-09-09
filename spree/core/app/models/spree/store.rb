@@ -18,6 +18,7 @@ module Spree
     include Spree::UserManagement
     include Spree::OrderRouting::HasStrategyPreference
     include Spree::CaptureMethod
+    include Spree::LocaleSettings
 
     #
     # Magic methods

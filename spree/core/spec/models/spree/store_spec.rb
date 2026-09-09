@@ -648,6 +648,34 @@ describe Spree::Store, type: :model, without_global_store: true do
     end
   end
 
+  describe 'locale settings validations' do
+    it 'rejects a default_locale that is not a known locale code' do
+      store = build(:store, default_locale: 'rubbish')
+      expect(store).not_to be_valid
+      expect(store.errors[:default_locale]).to be_present
+    end
+
+    it 'accepts regional locale codes, including ones absent from Locales::ALL' do
+      expect(build(:store, default_locale: 'pt-BR')).to be_valid
+      expect(build(:store, default_locale: 'en-US')).to be_valid
+      expect(build(:store, default_locale: 'de-DE')).to be_valid
+    end
+
+    it 'accepts a blank default_locale' do
+      expect(build(:store, default_locale: nil)).to be_valid
+    end
+
+    it 'rejects unknown codes among supported_locales' do
+      store = build(:store, supported_locales: 'en,rubbish')
+      expect(store).not_to be_valid
+      expect(store.errors[:supported_locales].join).to include('rubbish')
+    end
+
+    it 'accepts known codes among supported_locales' do
+      expect(build(:store, supported_locales: 'en,pt-BR')).to be_valid
+    end
+  end
+
   describe '#default_locale' do
     context 'with markets' do
       let!(:store) { create(:store, default_locale: 'en') }
