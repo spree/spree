@@ -6,7 +6,7 @@ module Spree
         # Same shape as PromotionRuleSerializer so the SPA can drive both
         # editors from one generic preference-form component.
         class PriceRuleSerializer < V3::BaseSerializer
-          typelize type: :string,
+          typelize type: [:string, comment: 'Rule type. Built-in: channel_rule, customer_group_rule, market_rule, user_rule, volume_rule, zone_rule. Extensions may register more.'],
                    price_list_id: :string,
                    preferences: 'Record<string, unknown>',
                    preference_schema: 'Array<{ key: string; type: string; default: unknown }>'

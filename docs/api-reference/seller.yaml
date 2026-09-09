@@ -19101,6 +19101,10 @@ components:
           type: number
         kind:
           type: string
+          enum:
+          - dropdown
+          - color_swatch
+          - buttons
       required:
       - id
       - name
@@ -19258,7 +19262,17 @@ components:
         number:
           type: string
         status:
-          type: string
+          anyOf:
+          - type: string
+            enum:
+            - open
+            - approved
+            - resolved
+            - denied
+            - canceled
+          - type: string
+          description: The values listed are the built-in ones; extensions may add
+            more.
         resolution:
           type: string
           nullable: true
@@ -19317,6 +19331,8 @@ components:
           type: boolean
         type:
           type: string
+          description: 'Rule type. Built-in: item_total_rule, weight_rule, excluded_products_rule,
+            channel_rule, volume_rule, company_rule. Extensions may register more.'
         preferences:
           type: object
         preference_schema:
@@ -19474,6 +19490,16 @@ components:
           nullable: true
         status:
           type: string
+          enum:
+          - pending
+          - pre_transit
+          - in_transit
+          - out_for_delivery
+          - available_for_pickup
+          - delivered
+          - return_to_sender
+          - failure
+          - unknown
         tracking_url:
           type: string
           nullable: true
@@ -19584,7 +19610,17 @@ components:
         number:
           type: string
         status:
-          type: string
+          anyOf:
+          - type: string
+            enum:
+            - requested
+            - approved
+            - received
+            - fulfilled
+            - canceled
+          - type: string
+          description: The values listed are the built-in ones; extensions may add
+            more.
         order_id:
           type: string
           nullable: true
@@ -19717,7 +19753,16 @@ components:
         number:
           type: string
         status:
-          type: string
+          anyOf:
+          - type: string
+            enum:
+            - unfulfilled
+            - fulfilled
+            - delivered
+            - canceled
+          - type: string
+          description: The values listed are the built-in ones; extensions may add
+            more.
         tracking:
           type: string
           nullable: true
@@ -19811,7 +19856,16 @@ components:
         row_number:
           type: number
         status:
-          type: string
+          anyOf:
+          - type: string
+            enum:
+            - pending
+            - processing
+            - completed
+            - failed
+          - type: string
+          description: The values listed are the built-in ones; extensions may add
+            more.
         validation_errors:
           type: string
           nullable: true
@@ -19858,8 +19912,21 @@ components:
         type:
           type: string
           nullable: true
+          description: 'Import type. Built-in: products, product_translations, customers,
+            price_list_prices. Extensions may register more.'
         status:
-          type: string
+          anyOf:
+          - type: string
+            enum:
+            - pending
+            - mapping
+            - completed_mapping
+            - processing
+            - completed
+            - failed
+          - type: string
+          description: The values listed are the built-in ones; extensions may add
+            more.
         store_id:
           type: string
           nullable: true
@@ -19948,7 +20015,14 @@ components:
           type: string
           nullable: true
         status:
-          type: string
+          anyOf:
+          - type: string
+            enum:
+            - pending
+            - accepted
+          - type: string
+          description: The values listed are the built-in ones; extensions may add
+            more.
         acceptance_url:
           type: string
       required:
@@ -19979,6 +20053,10 @@ components:
           nullable: true
         media_type:
           type: string
+          enum:
+          - image
+          - video
+          - external_video
         focal_point_x:
           type: number
           nullable: true
@@ -20114,12 +20192,35 @@ components:
           type: number
         status:
           type: string
+          enum:
+          - draft
+          - placed
+          - canceled
         fulfillment_status:
           type: string
           nullable: true
+          enum:
+          - backorder
+          - canceled
+          - partial
+          - unfulfilled
+          - fulfilled
+          - delivered
+          - pending
+          - ready
+          - shipped
         payment_status:
           type: string
           nullable: true
+          enum:
+          - none
+          - authorized
+          - partially_paid
+          - paid
+          - partially_refunded
+          - refunded
+          - overcharged
+          - voided
         completed_at:
           type: string
         created_at:
@@ -20288,6 +20389,12 @@ components:
           type: string
         kind:
           type: string
+          enum:
+          - box
+          - envelope
+          - carton
+          - pallet
+          - container
         length:
           type: string
           nullable: true
@@ -20314,8 +20421,18 @@ components:
           type: string
         dimensions_unit:
           type: string
+          enum:
+          - mm
+          - cm
+          - in
+          - ft
         weight_unit:
           type: string
+          enum:
+          - g
+          - kg
+          - lb
+          - oz
         volume:
           type: string
           nullable: true
@@ -20465,7 +20582,17 @@ components:
           - "$ref": "#/components/schemas/PriceHistory"
           nullable: true
         status:
-          type: string
+          anyOf:
+          - type: string
+            enum:
+            - draft
+            - active
+            - archived
+            - proposed
+            - rejected
+          - type: string
+          description: The values listed are the built-in ones; extensions may add
+            more.
         metadata:
           type: object
         created_at:
@@ -20519,7 +20646,16 @@ components:
         id:
           type: string
         status:
-          type: string
+          anyOf:
+          - type: string
+            enum:
+            - pending
+            - approved
+            - rejected
+            - withdrawn
+          - type: string
+          description: The values listed are the built-in ones; extensions may add
+            more.
         review_note:
           type: string
           nullable: true
@@ -20577,7 +20713,20 @@ components:
           type: string
           nullable: true
         status:
-          type: string
+          anyOf:
+          - type: string
+            enum:
+            - pending
+            - invited
+            - canceled
+            - onboarding
+            - ready_for_review
+            - approved
+            - rejected
+            - suspended
+          - type: string
+          description: The values listed are the built-in ones; extensions may add
+            more.
         legal_name:
           type: string
           nullable: true
@@ -20700,6 +20849,10 @@ components:
           type: string
         kind:
           type: string
+          description: 'Requirement kind. Built-in: accept_terms, complete_profile,
+            billing_address, returns_address, delivery_method, package_type, minimum_products,
+            payout_account, required_custom_fields, policy, attestation, operator_review,
+            document. Extensions may register more.'
         name:
           type: string
         description:
@@ -20711,6 +20864,11 @@ components:
           type: number
         status:
           type: string
+          enum:
+          - complete
+          - incomplete
+          - pending
+          - rejected
         action_url:
           type: string
           nullable: true
@@ -20758,7 +20916,16 @@ components:
         id:
           type: string
         status:
-          type: string
+          anyOf:
+          - type: string
+            enum:
+            - pending
+            - accepted
+            - rejected
+            - waived
+          - type: string
+          description: The values listed are the built-in ones; extensions may add
+            more.
         note:
           type: string
           nullable: true
@@ -20842,7 +21009,17 @@ components:
         number:
           type: string
         status:
-          type: string
+          anyOf:
+          - type: string
+            enum:
+            - requested
+            - approved
+            - received
+            - refunded
+            - canceled
+          - type: string
+          description: The values listed are the built-in ones; extensions may add
+            more.
         order_id:
           type: string
           nullable: true
@@ -20908,8 +21085,19 @@ components:
           type: string
         source:
           type: string
+          enum:
+          - purchased
+          - uploaded
         status:
-          type: string
+          anyOf:
+          - type: string
+            enum:
+            - purchased
+            - refund_requested
+            - refunded
+          - type: string
+          description: The values listed are the built-in ones; extensions may add
+            more.
         carrier:
           type: string
           nullable: true
@@ -20944,6 +21132,9 @@ components:
           type: string
         owner_type:
           type: string
+          enum:
+          - Spree::Fulfillment
+          - Spree::Return
         cost:
           type: string
         display_cost:
@@ -21066,7 +21257,15 @@ components:
         default:
           type: boolean
         kind:
-          type: string
+          anyOf:
+          - type: string
+            enum:
+            - warehouse
+            - store
+            - fulfillment_center
+          - type: string
+          description: The values listed are the built-in ones; extensions may add
+            more.
         returns_enabled:
           type: boolean
         created_at:
@@ -21103,11 +21302,19 @@ components:
           type: string
         kind:
           type: string
+          description: 'Tax identifier kind, keyed to a registered validator. Built-in:
+            eu_vat. Extensions may register more.'
         value:
           type: string
         validation_status:
           type: string
           nullable: true
+          enum:
+          - pending
+          - verified
+          - unverified
+          - unavailable
+          - unsupported
         validated_at:
           type: string
           nullable: true
@@ -21192,8 +21399,18 @@ components:
           nullable: true
         weight_unit:
           type: string
+          enum:
+          - g
+          - kg
+          - lb
+          - oz
         dimensions_unit:
           type: string
+          enum:
+          - mm
+          - cm
+          - in
+          - ft
         minimum_order_quantity:
           type: number
           nullable: true
@@ -21203,6 +21420,9 @@ components:
         purchase_unit:
           type: string
           nullable: true
+          enum:
+          - unit
+          - carton
         units_per_carton:
           type: number
           nullable: true

@@ -2,7 +2,8 @@ module Spree
   module Api
     module V3
       class FulfillmentSerializer < BaseSerializer
-        typelize number: :string, status: :string, fulfillment_type: :string,
+        typelize number: :string, status: [:string, enum: Spree::Fulfillment.statuses, enum_type_name: 'FulfillmentStatus'],
+                 fulfillment_type: [:string, enum: %w[shipping digital pickup pickup_point]],
                  tracking: [:string, nullable: true],
                  tracking_url: [:string, nullable: true], fulfilled_at: [:string, nullable: true],
                  delivered_at: [:string, nullable: true],

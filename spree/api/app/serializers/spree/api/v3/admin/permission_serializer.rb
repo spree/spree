@@ -10,7 +10,7 @@ module Spree
           include Alba::Resource
           include Typelizer::DSL
 
-          typelize key: :string, resource: :string, kind: :string, group: :string,
+          typelize key: :string, resource: :string, kind: [:string, enum: %w[read write]], group: :string,
                    group_label: :string, label: :string, description: :string
 
           attributes :key

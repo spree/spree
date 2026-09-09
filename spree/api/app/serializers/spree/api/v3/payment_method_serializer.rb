@@ -2,7 +2,7 @@ module Spree
   module Api
     module V3
       class PaymentMethodSerializer < BaseSerializer
-        typelize name: :string, description: [:string, nullable: true], type: :string,
+        typelize name: :string, description: [:string, nullable: true], type: [:string, comment: 'Payment method type. Built-in: check, store_credit, custom_payment_source_method, bogus (test only); payment provider gems register their own, for example stripe.'],
                  session_required: :boolean, source_required: :boolean
 
         attributes :name, :description

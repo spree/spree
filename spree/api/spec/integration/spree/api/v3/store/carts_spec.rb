@@ -138,6 +138,12 @@ RSpec.describe 'Carts API', type: :request, swagger_doc: 'api-reference/store.ya
         let(:'x-spree-token') { cart.token }
         let(:id) { cart.prefixed_id }
 
+        before do
+          create(:fee, cart: cart, order: nil, amount: 5, label: 'Gift wrapping', kind: 'gift_wrap')
+          create(:fee, cart: cart, order: nil, amount: 12, label: 'Import duty', kind: 'duty')
+          cart.reload.recalculate_totals!
+        end
+
         schema '$ref' => '#/components/schemas/Cart'
 
         run_test! do |response|
@@ -145,6 +151,8 @@ RSpec.describe 'Carts API', type: :request, swagger_doc: 'api-reference/store.ya
           expect(data['id']).to start_with('cart_')
           expect(data['number']).to eq(cart.number)
           expect(data['warnings']).to eq([])
+          expect(data['fees'].map { |fee| fee['kind'] }).to contain_exactly('gift_wrap', 'duty')
+          expect(data['fee_total']).to eq('17.0')
         end
       end
 
@@ -155,6 +163,9 @@ RSpec.describe 'Carts API', type: :request, swagger_doc: 'api-reference/store.ya
         let(:id) { cart.prefixed_id }
 
         before do
+          create(:fee, cart: cart, order: nil, amount: 5, label: 'Gift wrapping', kind: 'gift_wrap')
+          create(:fee, cart: cart, order: nil, amount: 12, label: 'Import duty', kind: 'duty')
+          cart.reload.recalculate_totals!
           cart.products.first.stock_levels.update_all(count_on_hand: 0, backorderable: false)
         end
 

@@ -4,7 +4,8 @@ module Spree
       module Admin
         class DeliveryProfileSerializer < BaseSerializer
           typelize name: :string, default: :boolean, position: [:number, nullable: true],
-                   kind: :string, digital: :boolean,
+                   kind: [:string, comment: 'Profile kind. Built-in: shipping, digital. Extensions may register more.'],
+                   digital: :boolean,
                    offers_pickup: :boolean, offers_shipping: :boolean,
                    stock_location_ids: [:string, multi: true],
                    origin_groups: ['Array<{ id: string; name: string | null; position: number | null; stock_location_ids: Array<string> }>'],

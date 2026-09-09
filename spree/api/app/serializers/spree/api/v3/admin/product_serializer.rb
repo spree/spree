@@ -10,7 +10,7 @@ module Spree
 
           include Spree::Api::V3::Admin::Translatable
 
-          typelize status: :string,
+          typelize status: [:string, enum: Spree::Product.statuses, enum_type_name: 'ProductStatus'],
                    tax_category_id: [:string, nullable: true],
                    product_type_id: [:string, nullable: true],
                    delivery_profile_id: [:string, nullable: true],

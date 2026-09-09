@@ -5,7 +5,7 @@ module Spree
         # Admin API Consent Record Serializer
         # The evidence trail behind a customer's consent state.
         class ConsentRecordSerializer < BaseSerializer
-          typelize purpose: :string, source: :string, accepted: :boolean,
+          typelize purpose: :string, source: [:string, enum: Spree::ConsentRecord::SOURCES], accepted: :boolean,
                    email: [:string, nullable: true],
                    ip_address: [:string, nullable: true],
                    recorded_at: [:string, nullable: true],

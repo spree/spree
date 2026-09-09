@@ -58,6 +58,8 @@ export type { default as DeliveryZoneMember } from './generated/DeliveryZoneMemb
 export type { default as DigitalAsset } from './generated/DigitalAsset'
 export type { default as DigitalLink } from './generated/DigitalLink'
 export type { default as Discount } from './generated/Discount'
+// Named enums — open string unions for lists an extension may extend (statuses, fee kinds)
+export type * from './generated/Enums'
 export type { default as Exchange } from './generated/Exchange'
 export type { default as ExchangeLineItem } from './generated/ExchangeLineItem'
 export type { default as Export } from './generated/Export'
@@ -129,7 +131,6 @@ export type { default as TaxRate } from './generated/TaxRate'
 export type { default as Variant } from './generated/Variant'
 export type { default as WebhookDelivery } from './generated/WebhookDelivery'
 export type { default as WebhookEndpoint } from './generated/WebhookEndpoint'
-
 // Hand-written translation-management types (controller-shaped, not generated)
 export type {
   Locale,

@@ -364,6 +364,7 @@ end
 ```
 
 - `typelize attr: :type` for computed/delegated attribute types
+- Closed value lists use `typelize kind: [:string, enum: Model::KINDS]` (a closed TS union); lists an extension may extend — `has_status` values, `Spree::Fee::KINDS` — add `enum_type_name: 'ModelStatus'`, which emits a named, exported, open union (`'a' | 'b' | (string & {})`). Registry-driven `type` fields stay `:string` with a `comment:` naming the built-ins. OpenAPI lists the values in all three cases; for the open ones it emits `anyOf` (the known values, or any string) so generated clients accept extension values too
 - Never use `typelize_from` — it connects to the database
 - Customize via inheritance + `Spree.api.product_serializer = 'MyApp::ProductSerializer'`
 - NEVER create custom hash/arrays to represent associations or records inside the serializer - each record or a variant of a record (eg. lightweight variant of an existing serializer) should be it's own serializer

@@ -13,7 +13,7 @@ module Spree
         # both from the marketplace's list
         # (docs/plans/6.0-multi-vendor-marketplace.md, Decision 13).
         class ProductSerializer < V3::ProductSerializer
-          typelize status: :string, metadata: 'Record<string, unknown>',
+          typelize status: [:string, enum: Spree::Product.statuses, enum_type_name: 'ProductStatus'], metadata: 'Record<string, unknown>',
                    product_type_id: [:string, nullable: true],
                    delivery_profile_id: [:string, nullable: true],
                    submission: ['ProductSubmission', nullable: true]

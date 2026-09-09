@@ -2010,8 +2010,8 @@ paths:
                 coupon_code:
                 item_total: '0.0'
                 display_item_total: "$0.00"
-                adjustment_total: '0.0'
-                display_adjustment_total: "$0.00"
+                adjustment_total: '17.0'
+                display_adjustment_total: "$17.00"
                 discount_total: '0.0'
                 display_discount_total: "$0.00"
                 tax_total: '0.0'
@@ -2020,16 +2020,16 @@ paths:
                 display_included_tax_total: "$0.00"
                 additional_tax_total: '0.0'
                 display_additional_tax_total: "$0.00"
-                total: '0.0'
-                display_total: "$0.00"
+                total: '17.0'
+                display_total: "$17.00"
                 gift_card_total: '0.0'
                 display_gift_card_total: "$0.00"
-                amount_due: '0.0'
-                display_amount_due: "$0.00"
+                amount_due: '17.0'
+                display_amount_due: "$17.00"
                 delivery_total: '0.0'
                 display_delivery_total: "$0.00"
-                fee_total: '0.0'
-                display_fee_total: "$0.00"
+                fee_total: '17.0'
+                display_fee_total: "$17.00"
                 store_credit_total: '0.0'
                 display_store_credit_total: "$0.00"
                 covered_by_store_credit: false
@@ -2044,13 +2044,31 @@ paths:
                   step: address
                   field: email
                   message: Email address is required
+                - code: payment_required
+                  step: payment
+                  field: payment
+                  message: Add a payment method
                 order_minimum:
                 order_minimum_shortfall:
                 below_order_minimum: false
                 freight_summary:
                 shipping_eq_billing_address: true
                 discounts: []
-                fees: []
+                fees:
+                - id: fee_UkLWZg9DAJ
+                  label: Gift wrapping
+                  kind: gift_wrap
+                  line_item_id:
+                  fulfillment_id:
+                  amount: '5.0'
+                  display_amount: "$5.00"
+                - id: fee_gbHJdmfrXB
+                  label: Import duty
+                  kind: duty
+                  line_item_id:
+                  fulfillment_id:
+                  amount: '12.0'
+                  display_amount: "$12.00"
                 items: []
                 fulfillments: []
                 payments: []
@@ -5665,8 +5683,8 @@ paths:
                 completed_at: '2026-01-15T12:00:00.000Z'
                 item_total: '10.0'
                 display_item_total: "$10.00"
-                adjustment_total: '0.0'
-                display_adjustment_total: "$0.00"
+                adjustment_total: '12.0'
+                display_adjustment_total: "$12.00"
                 discount_total: '0.0'
                 display_discount_total: "$0.00"
                 tax_total: '0.0'
@@ -5675,21 +5693,28 @@ paths:
                 display_included_tax_total: "$0.00"
                 additional_tax_total: '0.0'
                 display_additional_tax_total: "$0.00"
-                total: '110.0'
-                display_total: "$110.00"
+                total: '122.0'
+                display_total: "$122.00"
                 gift_card_total: '0.0'
                 display_gift_card_total: "$0.00"
-                amount_due: '110.0'
-                display_amount_due: "$110.00"
+                amount_due: '122.0'
+                display_amount_due: "$122.00"
                 delivery_total: '100.0'
                 display_delivery_total: "$100.00"
-                fee_total: '0.0'
-                display_fee_total: "$0.00"
+                fee_total: '12.0'
+                display_fee_total: "$12.00"
                 store_credit_total: '0.0'
                 display_store_credit_total: "$0.00"
                 covered_by_store_credit: false
                 discounts: []
-                fees: []
+                fees:
+                - id: fee_UkLWZg9DAJ
+                  label: Import duty
+                  kind: duty
+                  line_item_id:
+                  fulfillment_id:
+                  amount: '12.0'
+                  display_amount: "$12.00"
                 items:
                 - id: li_UkLWZg9DAJ
                   variant_id: variant_UkLWZg9DAJ
@@ -12395,7 +12420,17 @@ components:
         number:
           type: string
         status:
-          type: string
+          anyOf:
+          - type: string
+            enum:
+            - open
+            - approved
+            - resolved
+            - denied
+            - canceled
+          - type: string
+          description: The values listed are the built-in ones; extensions may add
+            more.
         resolution:
           type: string
           nullable: true
@@ -12508,6 +12543,11 @@ components:
           type: string
         status:
           type: string
+          enum:
+          - pending
+          - accepted
+          - revoked
+          - expired
       required:
       - id
       - email
@@ -12542,6 +12582,9 @@ components:
           type: string
         kind:
           type: string
+          enum:
+          - company
+          - division
         po_number_required:
           type: boolean
         parent_id:
@@ -12745,8 +12788,20 @@ components:
           type: string
         kind:
           type: string
+          enum:
+          - access
+          - erasure
         status:
-          type: string
+          anyOf:
+          - type: string
+            enum:
+            - pending
+            - processing
+            - completed
+            - failed
+          - type: string
+          description: The values listed are the built-in ones; extensions may add
+            more.
         requested_at:
           type: string
           nullable: true
@@ -12770,8 +12825,20 @@ components:
           type: string
         kind:
           type: string
+          enum:
+          - access
+          - erasure
         status:
-          type: string
+          anyOf:
+          - type: string
+            enum:
+            - pending
+            - processing
+            - completed
+            - failed
+          - type: string
+          description: The values listed are the built-in ones; extensions may add
+            more.
         requested_at:
           type: string
           nullable: true
@@ -12914,6 +12981,16 @@ components:
           nullable: true
         status:
           type: string
+          enum:
+          - pending
+          - pre_transit
+          - in_transit
+          - out_for_delivery
+          - available_for_pickup
+          - delivered
+          - return_to_sender
+          - failure
+          - unknown
         tracking_url:
           type: string
           nullable: true
@@ -12941,6 +13018,10 @@ components:
           type: string
         member_type:
           type: string
+          enum:
+          - country
+          - state
+          - postal_code
         country_code:
           type: string
           nullable: true
@@ -13054,6 +13135,9 @@ components:
           type: string
         kind:
           type: string
+          enum:
+          - promotion
+          - manual
         code:
           type: string
           nullable: true
@@ -13099,7 +13183,19 @@ components:
         label:
           type: string
         kind:
-          type: string
+          anyOf:
+          - type: string
+            enum:
+            - surcharge
+            - handling
+            - gift_wrap
+            - cod
+            - payment
+            - duty
+          - type: string
+          description: What sort of charge this is. `duty` is a customs duty on a
+            cross-border order and is not taxed; the other kinds are. Extensions may
+            register further kinds.
         line_item_id:
           type: string
           nullable: true
@@ -13203,9 +13299,23 @@ components:
           type: string
           nullable: true
         status:
-          type: string
+          anyOf:
+          - type: string
+            enum:
+            - unfulfilled
+            - fulfilled
+            - delivered
+            - canceled
+          - type: string
+          description: The values listed are the built-in ones; extensions may add
+            more.
         fulfillment_type:
           type: string
+          enum:
+          - shipping
+          - digital
+          - pickup
+          - pickup_point
         fulfilled_at:
           type: string
           nullable: true
@@ -13307,7 +13417,17 @@ components:
         code:
           type: string
         status:
-          type: string
+          anyOf:
+          - type: string
+            enum:
+            - active
+            - partially_redeemed
+            - redeemed
+            - canceled
+            - expired
+          - type: string
+          description: The values listed are the built-in ones; extensions may add
+            more.
         currency:
           type: string
         amount:
@@ -13370,7 +13490,14 @@ components:
         updated_at:
           type: string
         status:
-          type: string
+          anyOf:
+          - type: string
+            enum:
+            - pending
+            - accepted
+          - type: string
+          description: The values listed are the built-in ones; extensions may add
+            more.
         resource_type:
           type: string
           nullable: true
@@ -13608,6 +13735,10 @@ components:
           type: string
         media_type:
           type: string
+          enum:
+          - image
+          - video
+          - external_video
         position:
           type: number
           nullable: true
@@ -13647,6 +13778,10 @@ components:
           nullable: true
         media_type:
           type: string
+          enum:
+          - image
+          - video
+          - external_video
         focal_point_x:
           type: number
           nullable: true
@@ -13752,6 +13887,10 @@ components:
           type: number
         kind:
           type: string
+          enum:
+          - dropdown
+          - color_swatch
+          - buttons
       required:
       - id
       - name
@@ -13820,9 +13959,28 @@ components:
         fulfillment_status:
           type: string
           nullable: true
+          enum:
+          - backorder
+          - canceled
+          - partial
+          - unfulfilled
+          - fulfilled
+          - delivered
+          - pending
+          - ready
+          - shipped
         payment_status:
           type: string
           nullable: true
+          enum:
+          - none
+          - authorized
+          - partially_paid
+          - paid
+          - partially_refunded
+          - refunded
+          - overcharged
+          - voided
         completed_at:
           type: string
           nullable: true
@@ -13908,9 +14066,28 @@ components:
         fulfillment_status:
           type: string
           nullable: true
+          enum:
+          - backorder
+          - canceled
+          - partial
+          - unfulfilled
+          - fulfilled
+          - delivered
+          - pending
+          - ready
+          - shipped
         payment_status:
           type: string
           nullable: true
+          enum:
+          - none
+          - authorized
+          - partially_paid
+          - paid
+          - partially_refunded
+          - refunded
+          - overcharged
+          - voided
         completed_at:
           type: string
           nullable: true
@@ -14093,6 +14270,9 @@ components:
           nullable: true
         type:
           type: string
+          description: 'Payment method type. Built-in: check, store_credit, custom_payment_source_method,
+            bogus (test only); payment provider gems register their own, for example
+            stripe.'
         session_required:
           type: boolean
         source_required:
@@ -14118,7 +14298,19 @@ components:
         number:
           type: string
         status:
-          type: string
+          anyOf:
+          - type: string
+            enum:
+            - checkout
+            - processing
+            - pending
+            - completed
+            - failed
+            - void
+            - invalid
+          - type: string
+          description: The values listed are the built-in ones; extensions may add
+            more.
         amount:
           type: string
           nullable: true
@@ -14162,7 +14354,18 @@ components:
         id:
           type: string
         status:
-          type: string
+          anyOf:
+          - type: string
+            enum:
+            - pending
+            - processing
+            - completed
+            - failed
+            - canceled
+            - expired
+          - type: string
+          description: The values listed are the built-in ones; extensions may add
+            more.
         currency:
           type: string
         external_id:
@@ -14209,7 +14412,18 @@ components:
         id:
           type: string
         status:
-          type: string
+          anyOf:
+          - type: string
+            enum:
+            - pending
+            - processing
+            - completed
+            - failed
+            - canceled
+            - expired
+          - type: string
+          description: The values listed are the built-in ones; extensions may add
+            more.
         external_id:
           type: string
           nullable: true
@@ -14426,6 +14640,10 @@ components:
           type: string
         kind:
           type: string
+          enum:
+          - dropdown
+          - color_swatch
+          - buttons
         options:
           type: array
           items:
@@ -14787,7 +15005,17 @@ components:
         number:
           type: string
         status:
-          type: string
+          anyOf:
+          - type: string
+            enum:
+            - requested
+            - approved
+            - received
+            - refunded
+            - canceled
+          - type: string
+          description: The values listed are the built-in ones; extensions may add
+            more.
         order_id:
           type: string
           nullable: true
@@ -14872,8 +15100,19 @@ components:
           type: string
         source:
           type: string
+          enum:
+          - purchased
+          - uploaded
         status:
-          type: string
+          anyOf:
+          - type: string
+            enum:
+            - purchased
+            - refund_requested
+            - refunded
+          - type: string
+          description: The values listed are the built-in ones; extensions may add
+            more.
         carrier:
           type: string
           nullable: true
@@ -14908,6 +15147,9 @@ components:
           type: string
         owner_type:
           type: string
+          enum:
+          - Spree::Fulfillment
+          - Spree::Return
         cost:
           type: string
         display_cost:
@@ -15045,6 +15287,8 @@ components:
           type: string
         kind:
           type: string
+          description: 'Tax identifier kind, keyed to a registered validator. Built-in:
+            eu_vat. Extensions may register more.'
         value:
           type: string
       required:
@@ -15137,14 +15381,27 @@ components:
           nullable: true
         weight_unit:
           type: string
+          enum:
+          - g
+          - kg
+          - lb
+          - oz
         dimensions_unit:
           type: string
+          enum:
+          - mm
+          - cm
+          - in
+          - ft
         minimum_order_quantity:
           type: number
         order_multiple:
           type: number
         purchase_unit:
           type: string
+          enum:
+          - unit
+          - carton
         units_per_carton:
           type: number
           nullable: true

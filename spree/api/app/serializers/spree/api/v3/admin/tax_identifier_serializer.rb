@@ -3,10 +3,10 @@ module Spree
     module V3
       module Admin
         class TaxIdentifierSerializer < V3::TaxIdentifierSerializer
-          typelize validation_status: [:string, nullable: true],
+          typelize validation_status: [:string, nullable: true, enum: Spree::TaxIdentifier::VALIDATION_STATUSES],
                    validated_at: [:string, nullable: true],
                    validation_evidence: ['Record<string, unknown>', nullable: true],
-                   source: [:string, nullable: true],
+                   source: [:string, nullable: true, enum: Spree::TaxIdentifier::SOURCES],
                    validatable: :boolean,
                    customer_id: [:string, nullable: true],
                    cart_id: [:string, nullable: true],

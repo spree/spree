@@ -18,7 +18,7 @@ module Spree
                    preferred_send_consumer_transactional_emails: :boolean,
                    preferred_admin_locale: [:string, nullable: true],
                    preferred_timezone: :string,
-                   preferred_weight_unit: :string,
+                   preferred_weight_unit: [:string, enum: Spree::Variant::WEIGHT_UNITS],
                    preferred_unit_system: :string,
                    preferred_storefront_access: :string,
                    preferred_guest_checkout: :boolean,
