@@ -1,5 +1,6 @@
 {
   "admin": {
+    "app_name": "Spree Admin",
     "a11y": {
       "breadcrumb": "Ścieżka nawigacji",
       "breadcrumb_more": "Więcej",

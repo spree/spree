@@ -1,5 +1,6 @@
 {
   "admin": {
+    "app_name": "Spree Admin",
     "a11y": {
       "breadcrumb": "Breadcrumb",
       "breadcrumb_more": "Mehr",
