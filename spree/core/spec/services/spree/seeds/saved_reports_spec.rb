@@ -11,6 +11,17 @@ RSpec.describe Spree::Seeds::SavedReports do
     expect(store.saved_reports.find_by(name: 'Top products').reporting_query.dimensions.first[:dimension].name).to eq(:product)
   end
 
+  # Validation proves a seeded query names real members; only running it proves
+  # the compiler can express that combination against a database.
+  it 'seeds only queries that actually execute' do
+    create(:completed_order_with_totals, store: store, completed_at: 3.days.ago)
+
+    described_class::REPORTS.each do |report|
+      query = Spree::Reporting::Query.new(store: store, params: report[:query].deep_symbolize_keys)
+      expect { query.execute }.not_to raise_error, "#{report[:key]} failed"
+    end
+  end
+
   it 'treats a merchant report differing only in case as already present' do
     create(:saved_report, store: store, name: 'top products')
 
