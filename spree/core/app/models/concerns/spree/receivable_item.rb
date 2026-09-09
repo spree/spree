@@ -67,7 +67,7 @@ module Spree
     # caller sent: a receive of twelve against ten shipped is a miscount at
     # the receiving dock, not a retrospective error in what left.
     def received_does_not_exceed_expected
-      return if quantity_received.blank? || quantity_expected.zero?
+      return if quantity_received.blank?
       return if quantity_received.to_i <= quantity_expected
 
       errors.add(:quantity_received, :cannot_exceed_expected,

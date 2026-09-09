@@ -25,10 +25,15 @@ module Spree
       def perform(stock_transfer:, on_in_transit: nil, reason: nil, canceler: nil)
         super
 
-        step :ensure_cancelable
-        run_hooks :validate
+        # One cancellation at a time per document, and no receive alongside it.
+        # Each line's outstanding quantity is what is still in flight, so a
+        # receive committing between reading it and restocking the source
+        # credits the same units twice — once onto the destination shelf, once
+        # back onto the source. Locked document-then-level, as `Receive` does.
+        stock_transfer.with_lock do
+          step :ensure_cancelable
+          run_hooks :validate
 
-        ApplicationRecord.transaction do
           step :resolve_in_flight_units
           step :mark_canceled
         end
@@ -53,7 +58,10 @@ module Spree
       def resolve_in_flight_units
         return unless stock_transfer.in_flight?
 
-        stock_transfer.items.each do |item|
+        # Read the running totals under the lock: an association loaded before
+        # it holds the quantities as they were before any receive that has
+        # since committed, and those are what `outstanding` subtracts from.
+        stock_transfer.items.reload.each do |item|
           next unless item.outstanding.positive?
 
           on_in_transit == 'restock' ? restock(item) : write_off(item)

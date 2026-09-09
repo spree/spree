@@ -18,11 +18,17 @@ module Spree
       def perform(stock_transfer:, force: false)
         super
 
-        step :ensure_shippable
-        step :ensure_source_has_stock unless force
-        run_hooks :validate
+        # One departure at a time per document. The status check is what stops
+        # a transfer shipping twice, so reading it outside the lock lets two
+        # callers — a double-clicked button, a retried request — both see
+        # `draft` and both write a full set of `shipped` movements, taking the
+        # source shelf down twice for one trip. Locked document-then-level, the
+        # same order `Receive` uses, so the two cannot deadlock.
+        stock_transfer.with_lock do
+          step :ensure_shippable
+          step :ensure_source_has_stock unless force
+          run_hooks :validate
 
-        ApplicationRecord.transaction do
           run_hooks :before_unstock
           step :write_shipped_movements
           step :mark_in_transit
