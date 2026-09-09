@@ -169,6 +169,9 @@ module Spree
           many :line_items, key: :items, resource: proc { Spree.api.admin_line_item_serializer }, if: proc { expand?('items') }
           many :fulfillments, resource: proc { Spree.api.admin_fulfillment_serializer }, if: proc { expand?('fulfillments') }
           many :payments, resource: proc { Spree.api.admin_payment_serializer }, if: proc { expand?('payments') }
+          # An order from a split checkout has no payments of its own; what it
+          # has is a share of each payment made against its group.
+          many :payment_splits, resource: proc { Spree.api.admin_payment_split_serializer }, if: proc { expand?('payment_splits') }
 
           one :billing_address, resource: proc { Spree.api.admin_address_serializer }, if: proc { expand?('billing_address') }
           one :shipping_address, resource: proc { Spree.api.admin_address_serializer }, if: proc { expand?('shipping_address') }

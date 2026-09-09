@@ -31,6 +31,7 @@ import {
 } from '../../../../../components/spree/orders/order-notes-cards'
 import { PaymentsCard } from '../../../../../components/spree/orders/order-payments-card'
 import { OrderPurchaseOrderCard } from '../../../../../components/spree/orders/order-purchase-order-card'
+import { SellerTransfersCard } from '../../../../../components/spree/orders/order-seller-transfers-card'
 import { OrderSkeleton } from '../../../../../components/spree/orders/order-skeleton'
 import { OrderSummaryCard } from '../../../../../components/spree/orders/order-summary-card'
 import { useOrder } from '../../../../../hooks/use-order'
@@ -78,6 +79,7 @@ function OrderDetailPage() {
           <OrderDiscountsCard order={order} />
           <FeesCard order={order} />
           <CommissionLinesCard order={order} />
+          <SellerTransfersCard order={order} />
           <OrderSummaryCard order={order} />
           <EditableApiCustomFieldsProvider
             ownerType="Spree::Order"

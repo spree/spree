@@ -2589,6 +2589,8 @@
       "promotions": "Promocje",
       "reports": "Raporty",
       "returns": "Zwroty",
+      "seller_payouts": "Wypłaty",
+      "seller_transfers": "Transfery sprzedawców",
       "sellers": "Sprzedawcy",
       "settings": "Ustawienia",
       "transfers": "Transfery",
@@ -2733,6 +2735,7 @@
           "complete_message": "Sfinalizować teraz to zamówienie robocze?",
           "remove_gift_card_message": "Usunąć tę kartę podarunkową z zamówienia?",
           "remove_item_message": "Usunąć tę pozycję z zamówienia?",
+          "remove_store_credit_message": "Usunąć kredyt sklepowy z zamówienia?",
           "ship_message": "Wysłać tę realizację?",
           "void_message": "Unieważnić tę płatność?"
         },
@@ -2843,12 +2846,16 @@
           "upload_label_title": "Wgraj etykietę"
         },
         "gift_card_section": {
+          "applied_suffix": "zastosowano",
+          "apply_balance": "Zastosuj dostępne saldo klienta",
           "apply_dialog_description": "Wprowadź kod karty podarunkowej, aby zastosować ją do tego zamówienia.",
           "apply_dialog_title": "Zastosuj kartę podarunkową",
           "code_placeholder": "GIFT-XXXX-YYYY",
           "gift_card_label": "Karta podarunkowa",
           "none_applied": "Brak zastosowanych",
-          "title": "Rabaty i karta podarunkowa"
+          "requires_customer": "Wymaga klienta",
+          "store_credit_label": "Kredyt sklepowy",
+          "title": "Rabaty i środki"
         },
         "load_failed_message": "Nie udało się załadować zamówienia {{orderId}}.",
         "messages": {
@@ -2878,7 +2885,10 @@
         "payments_table": {
           "method": "Metoda",
           "number": "Numer",
-          "state": "Stan"
+          "state": "Stan",
+          "this_order": "To zamówienie",
+          "shared_help": "Zapłacone raz za koszyk obejmujący kilku sprzedawców. To zamówienie ma w nim udział.",
+          "load_error": "Nie udało się wczytać płatności tego zamówienia."
         },
         "purchase_order": {
           "document": "Dokument zamówienia zakupu",
@@ -5302,6 +5312,63 @@
       "owner": {
         "marketplace": "Marketplace"
       }
+    },
+    "payouts": {
+      "transfers_description": "Ile każde zrealizowane zamówienie zarobiło sprzedawcy, po odjęciu Twojej prowizji.",
+      "transfers_empty": "Brak zarobków sprzedawców.",
+      "payouts_description": "Wypłaty dla sprzedawców — co jest należne i co zostało wysłane.",
+      "payouts_empty": "Brak wypłat.",
+      "load_error": "Nie udało się wczytać tej wypłaty",
+      "marked_paid": "Wypłata oznaczona jako zapłacona",
+      "columns": {
+        "date": "Data",
+        "order": "Zamówienie",
+        "kind": "Typ",
+        "reference": "Numer referencyjny",
+        "provider": "Dostawca",
+        "earnings": "Zarobki"
+      },
+      "kinds": {
+        "earning": "Sprzedaż",
+        "refund_reversal": "Zwrot"
+      },
+      "statuses": {
+        "pending": "Oczekuje",
+        "processing": "W trakcie",
+        "completed": "Zakończona",
+        "failed": "Nieudana",
+        "unresolved": "Do sprawdzenia"
+      },
+      "balance": {
+        "title": "Saldo",
+        "owed": "Do zapłaty ({{currency}})",
+        "earned": "Zarobione",
+        "paid": "Wypłacone",
+        "pending": "W drodze"
+      },
+      "complete": {
+        "title": "Oznacz wypłatę jako zapłaconą",
+        "description": "Zapisuje, że {{amount}} dotarło do {{seller}}. Nie przenosi to żadnych pieniędzy.",
+        "reference_placeholder": "np. BACS-9912",
+        "reference_help": "Numer referencyjny przelewu, aby można go było później odnaleźć.",
+        "action": "Oznacz jako zapłacone"
+      },
+      "detail": {
+        "covers_one": "Obejmuje {{count}} zarobek",
+        "covers_few": "Obejmuje {{count}} zarobki",
+        "covers_many": "Obejmuje {{count}} zarobków",
+        "covers_other": "Obejmuje {{count}} zarobków",
+        "covers_empty": "Ta wypłata nie obejmuje żadnych zarobków.",
+        "settlement": "Wypłata",
+        "period": "Okres",
+        "covers_error": "Nie udało się wczytać zarobków objętych tą wypłatą."
+      },
+      "order_card": {
+        "title": "Transfery sprzedawców",
+        "view_payout": "Zobacz wypłatę",
+        "not_settled": "Jeszcze nie wypłacone"
+      },
+      "search_placeholder": "Szukaj po numerze referencyjnym"
     }
   }
 }

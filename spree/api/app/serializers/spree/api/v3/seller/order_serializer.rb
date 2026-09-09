@@ -103,6 +103,12 @@ module Spree
           attributes :cancel_note
 
           many :line_items, key: :items, resource: proc { Spree.api.seller_order_line_item_serializer }
+          # This order's share of the basket's payment, on request: the order
+          # page reads it, the list never does. Empty on an order that did not
+          # split — a single-seller basket keeps the payment on the order
+          # itself, and that payment stays the marketplace's.
+          many :payment_splits, resource: proc { Spree.api.seller_payment_split_serializer },
+                                if: proc { expand?('payment_splits') }
           many :fulfillments, resource: proc { Spree.api.seller_fulfillment_serializer }
           one :shipping_address, resource: proc { Spree.api.address_serializer }
           one :billing_address, resource: proc { Spree.api.address_serializer }

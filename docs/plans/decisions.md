@@ -5133,3 +5133,45 @@ parcel.
 `Stock::Package#default_package_type`, never `store.default_package_type`;
 seller-facing reads go through `available_to_seller(seller)`, seller writes
 through `seller.package_types`.
+
+## 2026-09-09 — A seller's own books get their own permission key, and a grouped order's payments are read where they were taken
+
+Making the marketplace fund ledger visible (`docs/plans/6.0-seller-ledger-ui.md`)
+forced two questions that outlive the screens themselves.
+
+**The seller ledger is `seller_earnings`, not `seller_profile`.** The obvious
+move was to reuse the profile key, the way `PoliciesController` does for a
+class the operator's `settings` owns. It was rejected: settlement
+*configuration* is the seller's profile, but what they have earned is their
+books, and a seller's owner must be able to hand a packing teammate the orders
+without also handing them the money. So a new read-only, seller-audience
+catalog resource with a symbol subject — the ledger classes stay subjects of
+the operator's `payouts` key, and claiming them twice would make
+`resource_for_subject` answer by registration order. The cost is real and was
+accepted knowingly: **a role holds the keys it was created with and is never
+re-read**, so a key added to the catalog reaches new roles only. That is
+harmless here because sellers are new in 6.0 and no older role exists — but a
+seller-audience key added after 6.0 ships needs a backfill task, and the
+question to ask before adding one is always "which existing roles does this
+silently not reach?"
+
+**A grouped child order's payments are the group's, read-only, with the
+child's share beside them.** `order.payments` is empty on an order from a
+split checkout, so the operator's payments card rendered "no payments" on an
+order that was paid in full — wrong, not merely incomplete. The fix reads the
+group's payments and the order's `payment_splits` and shows both, and it
+deliberately **does not** re-point `Admin::OrderSerializer#payments` at
+`settlement_payments`: that would change what `order.payments` means for every
+consumer, and capture/void through `orders/:id/payments` would then act on
+every sibling's money without saying so. Capture, void and add are hidden on a
+grouped child for the same reason — they belong on a surface that names every
+order they touch.
+
+**Constraints now:** a seller-facing money serializer carries amounts, never
+provenance (no payment id, method, gateway status or source — `Seller::
+PaymentSplitSerializer` and `Seller::TransferSerializer` are the reference);
+seller ledger endpoints authorize `:seller_earnings` and root in
+`current_seller`, never by opening `payouts` or `payments` to the seller
+audience; and a new `q[<column>_eq]` filter on either ledger model needs that
+column in `whitelisted_ransackable_attributes` — a whitelisted association
+name does not make its foreign key filterable.

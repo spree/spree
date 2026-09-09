@@ -26,12 +26,12 @@ import { PackageIcon, PencilIcon, StoreIcon, UsersIcon } from '@spree/dashboard-
 import type { Profile } from '@spree/seller-sdk'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { useParams } from '@tanstack/react-router'
-import type { ReactNode } from 'react'
 import { useEffect, useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { useTranslation } from 'react-i18next'
 import { sellerClient } from '../api-client'
 import { CenteredMessage } from '../components/centered-message'
+import { ReadRow } from '../components/read-row'
 import { SellerAddressCard } from '../components/seller-address-card'
 import { SellerBusinessCard } from '../components/seller-business-card'
 import { SellerReturnsLocationCard } from '../components/seller-returns-location-card'
@@ -385,18 +385,5 @@ function EditProfileSheet({
         </form>
       </SheetContent>
     </Sheet>
-  )
-}
-
-function ReadRow({ label, children }: { label: string; children: ReactNode }) {
-  const { t } = useTranslation()
-
-  return (
-    <div className="flex items-start justify-between gap-3 text-sm">
-      <span className="text-muted-foreground">{label}</span>
-      <span className="text-right">
-        {children ?? <span className="text-muted-foreground">{t('profile.not_provided')}</span>}
-      </span>
-    </div>
   )
 }

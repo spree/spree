@@ -16,9 +16,11 @@ module Spree
                    on_holiday: :boolean, sellable: :boolean,
                    products_count: :number,
                    default_currency: :string,
-                   supported_currencies: [:string, multi: true]
+                   supported_currencies: [:string, multi: true],
+                   preferred_timezone: [:string, nullable: true]
 
-          attributes :status, :legal_name, :registration_number,
+          attributes :preferred_timezone,
+                     :status, :legal_name, :registration_number,
                      :contact_email, :billing_email,
                      :tax_remittance, :payouts_schedule_interval,
                      holiday_mode_until: :iso8601,

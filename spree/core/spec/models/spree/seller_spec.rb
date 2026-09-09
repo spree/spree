@@ -398,6 +398,39 @@ describe Spree::Seller do
     it 'is nothing for a seller who has earned nothing' do
       expect(seller.balance('USD')).to eq(0)
     end
+
+    describe '#balances' do
+      it 'is one position per currency the seller was ever paid or earned in, in order' do
+        earn(40)
+        earn(30, currency: 'EUR')
+        create(:seller_payout, :completed, seller: seller, amount: 5, currency: 'GBP')
+
+        expect(seller.balances.map(&:currency)).to eq(%w[EUR GBP USD])
+        expect(seller.balances.map(&:balance)).to eq([30, -5, 40])
+      end
+
+      it 'is empty before the first sale' do
+        expect(seller.balances).to be_empty
+      end
+
+      # A row of zeros on a money screen reads as a balance rather than as
+      # nothing having happened.
+      it 'leaves out a currency whose every transfer failed' do
+        earn(40)
+        earn(30, currency: 'EUR', status: 'failed')
+
+        expect(seller.balances.map(&:currency)).to eq(%w[USD])
+      end
+
+      # A settlement that never went out is not evidence the seller trades in
+      # that currency either.
+      it 'leaves out a currency holding only an unsettled payout' do
+        earn(40)
+        create(:seller_payout, seller: seller, amount: 5, currency: 'GBP')
+
+        expect(seller.balances.map(&:currency)).to eq(%w[USD])
+      end
+    end
   end
 
   describe 'settlement configuration' do

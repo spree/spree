@@ -2560,6 +2560,8 @@
       "promotions": "促销",
       "reports": "报表",
       "returns": "退货",
+      "seller_payouts": "打款",
+      "seller_transfers": "卖家收入转账",
       "sellers": "卖家",
       "settings": "设置",
       "transfers": "调拨",
@@ -2702,6 +2704,7 @@
           "complete_message": "现在完成此草稿订单吗？",
           "remove_gift_card_message": "从订单中移除此礼品卡吗？",
           "remove_item_message": "从订单中移除此商品吗？",
+          "remove_store_credit_message": "从订单中移除商店积分吗？",
           "ship_message": "发货此履约单吗？",
           "void_message": "作废此付款吗？"
         },
@@ -2809,12 +2812,16 @@
           "upload_label_title": "上传面单"
         },
         "gift_card_section": {
+          "applied_suffix": "已应用",
+          "apply_balance": "应用客户的可用余额",
           "apply_dialog_description": "输入要应用到此订单的礼品卡代码。",
           "apply_dialog_title": "应用礼品卡",
           "code_placeholder": "GIFT-XXXX-YYYY",
           "gift_card_label": "礼品卡",
           "none_applied": "未应用",
-          "title": "折扣与礼品卡"
+          "requires_customer": "需要客户",
+          "store_credit_label": "店铺积分",
+          "title": "折扣与余额"
         },
         "load_failed_message": "无法加载订单 {{orderId}}。",
         "messages": {
@@ -2844,7 +2851,10 @@
         "payments_table": {
           "method": "方式",
           "number": "编号",
-          "state": "州/省"
+          "state": "状态",
+          "this_order": "本订单",
+          "shared_help": "该购物车横跨多个卖家，只支付了一次。本订单占其中一部分。",
+          "load_error": "无法加载此订单的付款信息。"
         },
         "purchase_order": {
           "document": "采购订单文件",
@@ -5235,6 +5245,60 @@
       "owner": {
         "marketplace": "市场平台"
       }
+    },
+    "payouts": {
+      "transfers_description": "每笔已发货订单为卖家带来的收入，已扣除您的佣金。",
+      "transfers_empty": "暂无卖家收入。",
+      "payouts_description": "向卖家的打款——待付金额与已发出金额。",
+      "payouts_empty": "暂无打款记录。",
+      "load_error": "无法加载此打款记录",
+      "marked_paid": "打款已标记为已支付",
+      "columns": {
+        "date": "日期",
+        "order": "订单",
+        "kind": "类型",
+        "reference": "参考号",
+        "provider": "服务商",
+        "earnings": "收入"
+      },
+      "kinds": {
+        "earning": "销售",
+        "refund_reversal": "退款"
+      },
+      "statuses": {
+        "pending": "待处理",
+        "processing": "处理中",
+        "completed": "已完成",
+        "failed": "失败",
+        "unresolved": "需核查"
+      },
+      "balance": {
+        "title": "余额",
+        "owed": "应付（{{currency}}）",
+        "earned": "已赚取",
+        "paid": "已打款",
+        "pending": "在途"
+      },
+      "complete": {
+        "title": "将此打款标记为已支付",
+        "description": "记录 {{amount}} 已到账 {{seller}}。此操作不会转移任何资金。",
+        "reference_placeholder": "例如 BACS-9912",
+        "reference_help": "这笔转账的银行参考号，便于日后追溯。",
+        "action": "标记为已支付"
+      },
+      "detail": {
+        "covers_other": "包含 {{count}} 笔收入",
+        "covers_empty": "此打款不包含任何收入。",
+        "settlement": "打款",
+        "period": "周期",
+        "covers_error": "无法加载此打款涵盖的收入。"
+      },
+      "order_card": {
+        "title": "卖家收入转账",
+        "view_payout": "查看打款",
+        "not_settled": "尚未打款"
+      },
+      "search_placeholder": "按参考号搜索"
     }
   }
 }

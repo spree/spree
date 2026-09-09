@@ -547,6 +547,9 @@ Spree::Core::Engine.add_routes do
             patch :reopen_onboarding
           end
 
+          # Where the seller stands on the ledger, one row per currency.
+          resources :balances, only: [:index], controller: 'sellers/balances'
+
           # Who runs this seller, and the offers nobody has accepted yet.
           # The operator is the only one who can repair a seller whose team
           # has locked itself out, which the seller's own panel cannot do.
@@ -1025,6 +1028,13 @@ Spree::Core::Engine.add_routes do
 
         # The seller's own policy documents.
         resources :policies
+
+        # The seller's own books, read-only: where they stand, what each
+        # order earned them, and what has been sent. Written by fulfilment
+        # and the sweep, never by the seller.
+        resources :balances, only: [:index]
+        resources :transfers, only: [:index, :show]
+        resources :payouts, only: [:index, :show]
 
         # Singular: the checklist is always `current_seller`'s.
         resource :onboarding, only: [:show], controller: 'onboarding' do
