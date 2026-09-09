@@ -305,7 +305,7 @@ export function BulkPriceTable({
     // Padding lives on the toolbar and the pager, not on this wrapper: the
     // grid between them should run to the container's edges, the way a
     // table in a card does.
-    <div className="flex h-full flex-col gap-3 pt-3">
+    <div className="flex h-full flex-col gap-3">
       {showToolbar && (
         // Always-mounted toolbar. Conditionally rendering the search input
         // would unmount it whenever a deferred query refetches into the
