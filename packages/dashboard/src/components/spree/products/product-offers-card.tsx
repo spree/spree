@@ -1,4 +1,4 @@
-import { adminClient, useResourceKey } from '@spree/dashboard-core'
+import { adminClient, useResourceKey, useResourceKeyBuilder } from '@spree/dashboard-core'
 import {
   Button,
   Card,
@@ -47,6 +47,7 @@ export function ProductOffersCard({ productId }: { productId: string }) {
   // then dropping the marketplace's own rows would page past offers the
   // operator never sees, and would count them in the pagination totals.
   const queryKey = useResourceKey('product-offers', `${productId}-${page}`)
+  const buildKey = useResourceKeyBuilder()
   const { data } = useQuery({
     queryKey,
     queryFn: () =>
@@ -74,6 +75,9 @@ export function ProductOffersCard({ productId }: { productId: string }) {
         : adminClient.products.variants.reject(productId, variantId, { reason: note }),
     onSuccess: () => {
       void queryClient.invalidateQueries({ queryKey })
+      // A decision changes what the product sells, so the variants matrix and
+      // the buy box above this card are stale until the product is refetched.
+      void queryClient.invalidateQueries({ queryKey: buildKey('products', productId) })
       toastManager.add({ type: 'success', title: t('admin.products.offers.decided') })
       openRejectFor(null)
     },

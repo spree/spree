@@ -43,6 +43,10 @@ export function OfferStatusCard({ offer, onDone }: { offer: Variant; onDone: () 
   const status = offer.status
   const canSubmit = status === 'draft' || status === 'rejected'
   const canTakeDown = status === 'active' || status === 'proposed'
+  // Archiving is not the end of the road: the API moves an archived offer
+  // back to draft like any other, and without this the card would show a
+  // seller who archived by mistake no way out of it.
+  const canRestore = status === 'archived'
 
   return (
     <Card>
@@ -84,6 +88,12 @@ export function OfferStatusCard({ offer, onDone }: { offer: Variant; onDone: () 
               }}
             >
               {t('offers.take_down')}
+            </Button>
+          )}
+
+          {canRestore && (
+            <Button disabled={move.isPending} onClick={() => move.mutate('draft')}>
+              {t('offers.restore')}
             </Button>
           )}
 
