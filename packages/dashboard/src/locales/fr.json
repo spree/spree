@@ -5584,7 +5584,7 @@
       },
       "delete_confirm": {
         "title": "Supprimer ce fournisseur ?",
-        "message": "{{name}} ne sera plus disponible pour de nouveaux bons de commande. Un fournisseur encore nommé par un bon de commande ne peut pas être supprimé."
+        "message": "{{name}} sera retiré de votre liste de fournisseurs."
       }
     }
   }

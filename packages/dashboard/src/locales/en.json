@@ -5584,7 +5584,7 @@
       },
       "delete_confirm": {
         "title": "Delete this supplier?",
-        "message": "{{name}} will no longer be available for new purchase orders. A supplier that any purchase order still names cannot be deleted."
+        "message": "{{name}} will be removed from your supplier list."
       }
     }
   }

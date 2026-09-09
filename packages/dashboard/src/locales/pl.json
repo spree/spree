@@ -5646,7 +5646,7 @@
       },
       "delete_confirm": {
         "title": "Usunąć tego dostawcę?",
-        "message": "{{name}} nie będzie już dostępny w nowych zamówieniach zakupu. Dostawcy, którego wskazuje jakiekolwiek zamówienie zakupu, nie można usunąć."
+        "message": "{{name}} zostanie usunięty z listy dostawców."
       }
     }
   }

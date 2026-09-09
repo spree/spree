@@ -59,6 +59,16 @@ module Spree
       address1.present? && city.present? && country_code.present?
     end
 
+    # Mirrors what `dependent: :restrict_with_error` enforces, so the dashboard
+    # can hide the delete control rather than offer one the model will refuse.
+    # A supplier with a purchasing history is kept, not removed — the orders
+    # naming it have to keep meaning something.
+    #
+    # @return [Boolean]
+    def can_be_deleted?
+      !purchase_orders.exists?
+    end
+
     def event_serializer_class
       'Spree::Api::V3::SupplierEventSerializer'.safe_constantize
     end

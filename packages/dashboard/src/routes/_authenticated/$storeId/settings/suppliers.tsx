@@ -108,7 +108,11 @@ function SuppliersPage() {
               {
                 key: 'delete',
                 destructive: true,
-                visible: permissions.can('destroy', Subject.Supplier),
+                // A supplier with a purchasing history is kept: the orders
+                // naming it have to keep meaning something, which is what the
+                // model's `restrict_with_error` enforces. The Orders column
+                // shows why the option is absent.
+                visible: permissions.can('destroy', Subject.Supplier) && supplier.can_be_deleted,
                 disabled: deleteMutation.isPending,
                 onSelect: () => handleDelete(supplier),
               },

@@ -18,6 +18,7 @@ module Spree
                    country_code: 'string | null',
                    postal_code: 'string | null',
                    purchase_orders_count: :number,
+                   can_be_deleted: :boolean,
                    deleted_at: 'string | null',
                    metadata: 'Record<string, unknown>'
 
@@ -25,6 +26,12 @@ module Spree
                      :address1, :address2, :city, :state_name, :state_code,
                      :country_code, :postal_code, :purchase_orders_count, :metadata,
                      created_at: :iso8601, updated_at: :iso8601, deleted_at: :iso8601
+
+          # Lets the dashboard hide the delete control rather than offer one
+          # the model will refuse.
+          attribute :can_be_deleted do |supplier|
+            supplier.can_be_deleted?
+          end
         end
       end
     end

@@ -5584,7 +5584,7 @@
       },
       "delete_confirm": {
         "title": "Diesen Lieferanten löschen?",
-        "message": "{{name}} steht für neue Bestellungen nicht mehr zur Verfügung. Ein Lieferant, den noch eine Bestellung nennt, kann nicht gelöscht werden."
+        "message": "{{name}} wird aus Ihrer Lieferantenliste entfernt."
       }
     }
   }

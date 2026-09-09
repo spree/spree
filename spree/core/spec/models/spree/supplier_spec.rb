@@ -67,6 +67,16 @@ module Spree
         expect(supplier.destroy).to be false
         expect(supplier.errors[:base]).to be_present
       end
+
+      # What the dashboard reads to word its confirmation, so it has to agree
+      # with what `destroy` actually does above.
+      it 'reports whether it can be deleted' do
+        supplier = create(:supplier, store: store)
+        expect(supplier).to be_can_be_deleted
+
+        create(:purchase_order, store: store, supplier: supplier)
+        expect(supplier).not_to be_can_be_deleted
+      end
     end
   end
 end
