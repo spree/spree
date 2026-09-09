@@ -64,6 +64,7 @@ import {
   getTable,
   type SortOption,
 } from '../lib/table-registry'
+import { useStickyHeader } from '../providers/sticky-header-provider'
 import { useTenantId } from '../providers/tenant-provider'
 import { type BulkAction, BulkActionBar } from './bulk-action-bar'
 import { TableToolbar } from './table-toolbar'
@@ -146,9 +147,12 @@ interface ResourceTableProps<T> {
   /** Title displayed in the toolbar header. Overrides the table definition's title. */
   title?: string
   /**
-   * Heading level for the title. Defaults to `h1`, which is right for a list
-   * page — the table is the whole page. Drop to `h2`/`h3` when the table is a
-   * panel inside a page that already has its own `h1`.
+   * Heading level for the title.
+   *
+   * Resolved automatically: `h1` when the table is the page (the admin's list
+   * routes render nothing else), `h2` when a `PageHeader` is mounted and has
+   * already claimed the `h1` — which is how the seller panel's list pages are
+   * built. Set it explicitly only to override that.
    */
   titleAs?: 'h1' | 'h2' | 'h3'
   /** One line under the title. Overrides the table definition's description. */
@@ -302,6 +306,9 @@ export function ResourceTable<T extends Record<string, any>>({
   const sortString = dir === 'desc' ? `-${sort}` : sort
 
   const tenantId = useTenantId()
+  // A `PageHeader` on the same page already renders the `h1`, so the table's
+  // title becomes an `h2` rather than a second one.
+  const { hasPageHeader } = useStickyHeader()
   // Auto-inject the tenant id so every list query — and the matching mutation
   // invalidation — is tenant-scoped without each page re-implementing it.
   // Goes through +withStoreScope+ so the slot ordering matches +useResourceKey+
@@ -510,7 +517,7 @@ export function ResourceTable<T extends Record<string, any>>({
         onFiltersChange={handleFiltersChange}
         allColumns={allColumns}
         title={title ?? table.title}
-        titleAs={titleAs}
+        titleAs={titleAs ?? (hasPageHeader ? 'h2' : 'h1')}
         description={description ?? table.description}
         docsPath={docsPath ?? table.docsPath}
         actions={resolvedActions}

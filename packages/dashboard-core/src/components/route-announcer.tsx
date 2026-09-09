@@ -38,11 +38,16 @@ export function RouteAnnouncer({ suffix }: { suffix?: string }) {
       const next = `${pageTitle} · ${appName}`
       if (next === lastTitle.current) return
 
+      // The first heading of the session is the page the user just opened
+      // directly; the document title announces that on load, so repeating it
+      // here would be the same page said twice. Only a *change* of page is
+      // news, which is the case a single-page app otherwise says nothing about.
+      const isFirstResolve = lastTitle.current === null
       lastTitle.current = next
       document.title = next
       // The heading text alone, not the full title: the app name is repeated
       // on every page and adds nothing when spoken aloud.
-      setAnnouncement(pageTitle)
+      if (!isFirstResolve) setAnnouncement(pageTitle)
     }
 
     sync()
