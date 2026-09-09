@@ -5368,7 +5368,13 @@
         "view_payout": "Zobacz wypłatę",
         "not_settled": "Jeszcze nie wypłacone"
       },
-      "search_placeholder": "Szukaj po numerze referencyjnym"
+      "search_placeholder": "Szukaj po numerze referencyjnym",
+      "settle": "Rozlicz teraz",
+      "settled": "Utworzono wypłatę",
+      "settle_confirm": {
+        "title": "Rozliczyć tego sprzedawcę teraz?",
+        "message": "Zbiera wszystko, co należy się {{name}}, w jedną wypłatę na walutę. Nie wysyła pieniędzy — oznacz wypłatę jako zapłaconą po wykonaniu przelewu."
+      }
     }
   }
 }

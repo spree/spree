@@ -61,6 +61,22 @@ export function useCompletePayout(payoutId: string) {
 }
 
 /**
+ * Settles a seller now, sweeping what they are owed into a payout per
+ * currency.
+ *
+ * What the `manual` interval means — the scheduled sweep skips those sellers
+ * — and the way to pay anyone early. The API answers 422 when there is
+ * nothing to settle, which surfaces as a toast rather than a silent no-op.
+ */
+export function useSettleSeller(sellerId: string) {
+  return useResourceMutation({
+    mutationFn: () => adminClient.sellers.settle(sellerId),
+    invalidate: [['seller-payouts'], ['seller-transfers'], ['sellers', sellerId, 'balances']],
+    successMessage: i18n.t('admin.payouts.settled'),
+  })
+}
+
+/**
  * The payments a split checkout was paid with.
  *
  * Narrowed with `fields`, not just `expand`: the group serializer renders the

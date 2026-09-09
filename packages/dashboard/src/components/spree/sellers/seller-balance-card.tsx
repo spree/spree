@@ -1,8 +1,18 @@
 import type { Seller } from '@spree/admin-sdk'
-import { Card, CardContent, CardHeader, CardTitle, Separator } from '@spree/dashboard-ui'
+import { Subject, usePermissions } from '@spree/dashboard-core'
+import {
+  Button,
+  Card,
+  CardAction,
+  CardContent,
+  CardHeader,
+  CardTitle,
+  Separator,
+  useConfirm,
+} from '@spree/dashboard-ui'
 import { Link } from '@tanstack/react-router'
 import { useTranslation } from 'react-i18next'
-import { useSellerBalances } from '../../../hooks/use-seller-ledger'
+import { useSellerBalances, useSettleSeller } from '../../../hooks/use-seller-ledger'
 import { ReadRow } from './seller-read-row'
 
 /**
@@ -14,15 +24,39 @@ import { ReadRow } from './seller-read-row'
  */
 export function SellerBalanceCard({ seller }: { seller: Seller }) {
   const { t } = useTranslation()
+  const confirm = useConfirm()
+  const { permissions } = usePermissions()
   const { data } = useSellerBalances(seller.id)
+  const settle = useSettleSeller(seller.id)
 
   const balances = data?.data ?? []
   if (balances.length === 0) return null
+
+  const owed = balances.some((balance) => Number.parseFloat(balance.balance) > 0)
+  const canSettle = permissions.can('update', Subject.SellerPayout) && owed
+
+  // Settling moves money, so it is asked for rather than fired from a click.
+  async function handleSettle() {
+    const ok = await confirm({
+      title: t('admin.payouts.settle_confirm.title'),
+      message: t('admin.payouts.settle_confirm.message', { name: seller.name }),
+      confirmLabel: t('admin.payouts.settle'),
+    })
+    if (!ok) return
+    await settle.mutateAsync(undefined).catch(() => undefined)
+  }
 
   return (
     <Card>
       <CardHeader>
         <CardTitle>{t('admin.payouts.balance.title')}</CardTitle>
+        {canSettle && (
+          <CardAction>
+            <Button size="sm" variant="outline" disabled={settle.isPending} onClick={handleSettle}>
+              {t('admin.payouts.settle')}
+            </Button>
+          </CardAction>
+        )}
       </CardHeader>
       <CardContent className="flex flex-col gap-4">
         {balances.map((balance, index) => (

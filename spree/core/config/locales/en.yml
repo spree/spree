@@ -1715,6 +1715,7 @@ en:
         message: Selling on %{store_name} has been paused for your account. Your products and order history are unaffected.
         subject: Your %{store_name} account has been suspended
     seller_membership_required: This account does not belong to any seller.
+    seller_payout_nothing_to_settle: This seller has nothing to settle right now.
     seller_requirement_types:
       accept_terms:
         description: Read and accept the marketplace terms

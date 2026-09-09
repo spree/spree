@@ -3047,6 +3047,17 @@ export class AdminClient {
      */
     balances: (id: string, options?: RequestOptions): Promise<{ data: SellerBalance[] }> =>
       this.request<{ data: SellerBalance[] }>('GET', `/sellers/${id}/balances`, options),
+
+    /**
+     * Settles this seller now, sweeping everything they are owed into a
+     * payout per currency.
+     *
+     * What the `manual` payout interval means — the scheduled sweep skips
+     * those sellers, leaving the operator to decide when. Also the way to pay
+     * any seller early. Answers 422 when there is nothing to settle.
+     */
+    settle: (id: string, options?: RequestOptions): Promise<{ data: SellerPayout[] }> =>
+      this.request<{ data: SellerPayout[] }>('POST', `/sellers/${id}/payouts`, options),
   }
 
   // ============================================
