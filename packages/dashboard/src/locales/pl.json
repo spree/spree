@@ -5374,7 +5374,8 @@
       "settle_confirm": {
         "title": "Rozliczyć tego sprzedawcę teraz?",
         "message": "Zbiera wszystko, co należy się {{name}}, w jedną wypłatę na walutę. Nie wysyła pieniędzy — oznacz wypłatę jako zapłaconą po wykonaniu przelewu."
-      }
+      },
+      "settle_failed": "Nie udało się rozliczyć tego sprzedawcy."
     }
   }
 }

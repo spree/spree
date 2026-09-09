@@ -5314,7 +5314,8 @@
       "settle_confirm": {
         "title": "Diesen Verkäufer jetzt abrechnen?",
         "message": "Fasst alles zusammen, was {{name}} zusteht, als eine Auszahlung je Währung. Es wird kein Geld gesendet — markieren Sie die Auszahlung als bezahlt, sobald die Überweisung raus ist."
-      }
+      },
+      "settle_failed": "Dieser Verkäufer konnte nicht abgerechnet werden."
     }
   }
 }

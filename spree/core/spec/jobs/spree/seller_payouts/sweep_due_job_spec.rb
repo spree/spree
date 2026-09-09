@@ -65,12 +65,28 @@ RSpec.describe Spree::SellerPayouts::SweepDueJob do
 
     it 'skips the stores it already fanned out' do
       seller
+      # The cursor is `succ` of the last store handed off, so resuming at the
+      # second store's id means the first is done. Stated rather than assumed:
+      # the factory promises no id ordering, and without this the example
+      # could pass by reaching both stores for the wrong reason.
+      expect(store.id).to be < other_store.id
 
-      # Resume as though every store up to and including the first had been
-      # handed off: the cursor holds the id the run would continue from.
       run_with_continuation(other_store.id)
 
       expect(enqueued_seller_ids).to contain_exactly(other_seller.id)
+    end
+
+    # `advance!` stores `succ`, so a run interrupted *during* a store leaves a
+    # cursor pointing at that same store and it is fanned out again. Cheap,
+    # and the alternative — a second cursor over sellers — would cost the
+    # (store_id, status) index the per-store lookup depends on.
+    it 'replays a store it was interrupted inside' do
+      seller
+      expect(store.id).to be < other_store.id
+
+      run_with_continuation(store.id)
+
+      expect(enqueued_seller_ids).to contain_exactly(seller.id, other_seller.id)
     end
 
     it 'reaches every store when starting fresh' do

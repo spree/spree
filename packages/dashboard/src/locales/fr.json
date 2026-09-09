@@ -5314,7 +5314,8 @@
       "settle_confirm": {
         "title": "Régler ce vendeur maintenant ?",
         "message": "Regroupe tout ce qui est dû à {{name}} en un versement par devise. Aucun argent n'est envoyé — marquez le versement comme payé une fois le virement effectué."
-      }
+      },
+      "settle_failed": "Impossible de régler ce vendeur."
     }
   }
 }

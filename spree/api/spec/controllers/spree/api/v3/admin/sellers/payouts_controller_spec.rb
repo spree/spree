@@ -60,6 +60,26 @@ RSpec.describe Spree::Api::V3::Admin::Sellers::PayoutsController, type: :control
       expect(seller.seller_transfers.unsettled.count).to eq(1)
     end
 
+    # A provider refusing is not the same as having nothing to send: the
+    # payout row exists and is failed or unresolved, and an operator told
+    # "nothing to settle" would never go looking for it.
+    context 'when the payout provider refuses' do
+      before do
+        earn(40)
+        refusal = Spree::ServiceModule::Result.new(
+          false, nil, Spree::ServiceModule::ResultError.new('Gateway declined')
+        )
+        allow(Spree.seller_payout_sweep_workflow).to receive(:call).and_return(refusal)
+      end
+
+      it 'reports the refusal rather than reporting nothing to settle' do
+        post :create, params: { seller_id: seller.prefixed_id }, as: :json
+
+        expect(response).to have_http_status(:unprocessable_content)
+        expect(json_response['error']['message']).to include('Gateway declined')
+      end
+    end
+
     it "404s on another marketplace's seller" do
       other = create(:seller, :approved, store: create(:store))
 

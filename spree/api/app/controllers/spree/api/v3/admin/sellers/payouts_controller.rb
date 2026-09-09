@@ -23,9 +23,24 @@ module Spree
 
             # POST /api/v3/admin/sellers/:seller_id/payouts
             def create
-              payouts = sweep_each_currency
+              settled, failures = sweep_each_currency
 
-              if payouts.empty?
+              if settled.any?
+                # A provider that refused one currency must not be silent just
+                # because another went through: the payout row exists and is
+                # failed or unresolved, and an operator reading "settled" would
+                # not know to go looking for it.
+                render json: {
+                  data: settled.map { |payout| serialize_payout(payout) },
+                  meta: failures.any? ? { failures: failures } : {}
+                }, status: :created
+              elsif failures.any?
+                render_error(
+                  code: ErrorHandler::ERROR_CODES[:validation_error],
+                  message: failures.map { |failure| failure[:message] }.join(' '),
+                  status: :unprocessable_content
+                )
+              else
                 # Every guard the sweep applies — no payout account, nothing
                 # unsettled, below the seller's minimum — ends the same way
                 # from here: there was nothing to send. Saying so is more use
@@ -35,8 +50,6 @@ module Spree
                   message: Spree.t(:seller_payout_nothing_to_settle),
                   status: :unprocessable_content
                 )
-              else
-                render json: { data: payouts.map { |payout| serialize_payout(payout) } }, status: :created
               end
             end
 
@@ -53,15 +66,30 @@ module Spree
               authorize! :update, Spree::SellerPayout
             end
 
-            # A halted sweep answers with the seller rather than a payout —
-            # that is how the workflow reports "nothing to settle" — so only
-            # the runs that produced one are collected.
+            # Three outcomes per currency, and they are not interchangeable.
+            #
+            # A halted sweep answers *successfully* with the seller rather than
+            # a payout — that is how the workflow says "nothing to settle" — so
+            # a type check is what separates it from a real settlement. A
+            # failed one means the provider refused after a payout row was
+            # written, which is the outcome an operator most needs told.
+            #
+            # @return [Array(Array<Spree::SellerPayout>, Array<Hash>)]
             def sweep_each_currency
-              currencies_owed.filter_map do |currency|
+              settled = []
+              failures = []
+
+              currencies_owed.each do |currency|
                 result = Spree.seller_payout_sweep_workflow.call(seller: @seller, currency: currency)
-                value = result.value if result.success?
-                value if value.is_a?(Spree::SellerPayout)
+
+                if !result.success?
+                  failures << { currency: currency, message: result.error.to_s }
+                elsif result.value.is_a?(Spree::SellerPayout)
+                  settled << result.value
+                end
               end
+
+              [settled, failures]
             end
 
             def currencies_owed
