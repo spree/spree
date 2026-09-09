@@ -19262,13 +19262,17 @@ components:
         number:
           type: string
         status:
-          type: string
-          enum:
-          - open
-          - approved
-          - resolved
-          - denied
-          - canceled
+          anyOf:
+          - type: string
+            enum:
+            - open
+            - approved
+            - resolved
+            - denied
+            - canceled
+          - type: string
+          description: The values listed are the built-in ones; extensions may add
+            more.
         resolution:
           type: string
           nullable: true
@@ -19606,13 +19610,17 @@ components:
         number:
           type: string
         status:
-          type: string
-          enum:
-          - requested
-          - approved
-          - received
-          - fulfilled
-          - canceled
+          anyOf:
+          - type: string
+            enum:
+            - requested
+            - approved
+            - received
+            - fulfilled
+            - canceled
+          - type: string
+          description: The values listed are the built-in ones; extensions may add
+            more.
         order_id:
           type: string
           nullable: true
@@ -19745,12 +19753,16 @@ components:
         number:
           type: string
         status:
-          type: string
-          enum:
-          - unfulfilled
-          - fulfilled
-          - delivered
-          - canceled
+          anyOf:
+          - type: string
+            enum:
+            - unfulfilled
+            - fulfilled
+            - delivered
+            - canceled
+          - type: string
+          description: The values listed are the built-in ones; extensions may add
+            more.
         tracking:
           type: string
           nullable: true
@@ -19844,12 +19856,16 @@ components:
         row_number:
           type: number
         status:
-          type: string
-          enum:
-          - pending
-          - processing
-          - completed
-          - failed
+          anyOf:
+          - type: string
+            enum:
+            - pending
+            - processing
+            - completed
+            - failed
+          - type: string
+          description: The values listed are the built-in ones; extensions may add
+            more.
         validation_errors:
           type: string
           nullable: true
@@ -19899,14 +19915,18 @@ components:
           description: 'Import type. Built-in: products, product_translations, customers,
             price_list_prices. Extensions may register more.'
         status:
-          type: string
-          enum:
-          - pending
-          - mapping
-          - completed_mapping
-          - processing
-          - completed
-          - failed
+          anyOf:
+          - type: string
+            enum:
+            - pending
+            - mapping
+            - completed_mapping
+            - processing
+            - completed
+            - failed
+          - type: string
+          description: The values listed are the built-in ones; extensions may add
+            more.
         store_id:
           type: string
           nullable: true
@@ -19995,10 +20015,14 @@ components:
           type: string
           nullable: true
         status:
-          type: string
-          enum:
-          - pending
-          - accepted
+          anyOf:
+          - type: string
+            enum:
+            - pending
+            - accepted
+          - type: string
+          description: The values listed are the built-in ones; extensions may add
+            more.
         acceptance_url:
           type: string
       required:
@@ -20558,13 +20582,17 @@ components:
           - "$ref": "#/components/schemas/PriceHistory"
           nullable: true
         status:
-          type: string
-          enum:
-          - draft
-          - active
-          - archived
-          - proposed
-          - rejected
+          anyOf:
+          - type: string
+            enum:
+            - draft
+            - active
+            - archived
+            - proposed
+            - rejected
+          - type: string
+          description: The values listed are the built-in ones; extensions may add
+            more.
         metadata:
           type: object
         created_at:
@@ -20618,12 +20646,16 @@ components:
         id:
           type: string
         status:
-          type: string
-          enum:
-          - pending
-          - approved
-          - rejected
-          - withdrawn
+          anyOf:
+          - type: string
+            enum:
+            - pending
+            - approved
+            - rejected
+            - withdrawn
+          - type: string
+          description: The values listed are the built-in ones; extensions may add
+            more.
         review_note:
           type: string
           nullable: true
@@ -20681,16 +20713,20 @@ components:
           type: string
           nullable: true
         status:
-          type: string
-          enum:
-          - pending
-          - invited
-          - canceled
-          - onboarding
-          - ready_for_review
-          - approved
-          - rejected
-          - suspended
+          anyOf:
+          - type: string
+            enum:
+            - pending
+            - invited
+            - canceled
+            - onboarding
+            - ready_for_review
+            - approved
+            - rejected
+            - suspended
+          - type: string
+          description: The values listed are the built-in ones; extensions may add
+            more.
         legal_name:
           type: string
           nullable: true
@@ -20880,12 +20916,16 @@ components:
         id:
           type: string
         status:
-          type: string
-          enum:
-          - pending
-          - accepted
-          - rejected
-          - waived
+          anyOf:
+          - type: string
+            enum:
+            - pending
+            - accepted
+            - rejected
+            - waived
+          - type: string
+          description: The values listed are the built-in ones; extensions may add
+            more.
         note:
           type: string
           nullable: true
@@ -20969,13 +21009,17 @@ components:
         number:
           type: string
         status:
-          type: string
-          enum:
-          - requested
-          - approved
-          - received
-          - refunded
-          - canceled
+          anyOf:
+          - type: string
+            enum:
+            - requested
+            - approved
+            - received
+            - refunded
+            - canceled
+          - type: string
+          description: The values listed are the built-in ones; extensions may add
+            more.
         order_id:
           type: string
           nullable: true
@@ -21045,11 +21089,15 @@ components:
           - purchased
           - uploaded
         status:
-          type: string
-          enum:
-          - purchased
-          - refund_requested
-          - refunded
+          anyOf:
+          - type: string
+            enum:
+            - purchased
+            - refund_requested
+            - refunded
+          - type: string
+          description: The values listed are the built-in ones; extensions may add
+            more.
         carrier:
           type: string
           nullable: true
@@ -21209,11 +21257,15 @@ components:
         default:
           type: boolean
         kind:
-          type: string
-          enum:
-          - warehouse
-          - store
-          - fulfillment_center
+          anyOf:
+          - type: string
+            enum:
+            - warehouse
+            - store
+            - fulfillment_center
+          - type: string
+          description: The values listed are the built-in ones; extensions may add
+            more.
         returns_enabled:
           type: boolean
         created_at:
