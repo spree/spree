@@ -183,6 +183,16 @@ RSpec.describe Spree::Reporting::Query do
       expect(result.totals[:orders][:value]).to eq(1)
     end
 
+    it 'reports a duty as a duty and does not count it again as a fee' do
+      create(:fee, order: order, kind: 'duty', amount: 7)
+      create(:fee, order: order, kind: 'handling', amount: 3)
+      order.update_columns(fee_total: 10)
+
+      result = run(metrics: %w[duties fees])
+      expect(result.totals[:duties][:value]).to eq(7.0)
+      expect(result.totals[:fees][:value]).to eq(3.0)
+    end
+
     it 'treats an uncosted variant as zero cost and reports margin as a percentage' do
       order.line_items.first.update_columns(cost_price: nil)
       result = run(metrics: %w[cost_of_goods gross_profit gross_margin net_sales])
