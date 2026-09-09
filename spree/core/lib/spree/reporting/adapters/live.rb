@@ -55,7 +55,7 @@ module Spree
               dimension_selects = query.dimensions.map do |d|
                 "#{dimension_expression(d)} AS #{dimension_alias(d)}"
               end
-              scope = scope.group(query.dimensions.map { |d| Arel.sql(dimension_expression(d)) })
+              scope = scope.group(query.dimensions.map { |d| Arel.sql(group_by_term(d)) })
               scope = apply_key_filter(scope, key_filter) if key_filter
               scope = apply_sql_sort(scope, metrics) if push_sort
               selects = dimension_selects + selects
@@ -220,6 +220,15 @@ module Spree
 
         def dimension_alias(dim)
           "d_#{dim[:dimension].name}"
+        end
+
+        # What GROUP BY names for a dimension. A plain column repeats its
+        # expression, but an expression dimension groups by the SELECT alias:
+        # MySQL's only_full_group_by refuses to match a repeated expression
+        # containing a correlated subquery, seeing only the bare column inside
+        # it. All three databases accept grouping by the alias.
+        def group_by_term(dim)
+          dim[:dimension].expression? ? dimension_alias(dim) : dimension_expression(dim)
         end
 
         def dimension_expression(dim)
