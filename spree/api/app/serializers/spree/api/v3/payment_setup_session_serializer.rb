@@ -2,7 +2,7 @@ module Spree
   module Api
     module V3
       class PaymentSetupSessionSerializer < BaseSerializer
-        typelize status: [:string, enum: Spree::PaymentSetupSession.statuses], external_id: [:string, nullable: true], external_client_secret: [:string, nullable: true],
+        typelize status: [:string, enum: Spree::PaymentSetupSession.statuses, enum_type_name: 'PaymentSetupSessionStatus'], external_id: [:string, nullable: true], external_client_secret: [:string, nullable: true],
                  external_data: 'Record<string, unknown>',
                  payment_method_id: [:string, nullable: true], payment_source_id: [:string, nullable: true],
                  payment_source_type: [:string, nullable: true], customer_id: [:string, nullable: true]

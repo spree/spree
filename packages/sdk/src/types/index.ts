@@ -362,3 +362,6 @@ export type CompanyAddressParams = AddressParams & {
   default_billing?: boolean
   default_shipping?: boolean
 }
+
+// Named enums — open string unions for lists an extension may extend (statuses, fee kinds)
+export type * from './generated/Enums'

@@ -4,7 +4,7 @@ module Spree
   module Api
     module V3
       class InvitationSerializer < BaseSerializer
-        typelize email: :string, status: [:string, enum: Spree::Invitation.statuses],
+        typelize email: :string, status: [:string, enum: Spree::Invitation.statuses, enum_type_name: 'InvitationStatus'],
                  resource_type: [:string, nullable: true], resource_id: [:string, nullable: true],
                  inviter_type: [:string, nullable: true], inviter_id: [:string, nullable: true],
                  invitee_type: [:string, nullable: true], invitee_id: [:string, nullable: true],

@@ -34,4 +34,6 @@ export interface AuthTokens {
 }
 
 export type { default as Delivery } from './generated/Delivery'
+// Named enums — open string unions for lists an extension may extend (statuses, fee kinds)
+export type * from './generated/Enums'
 export type { default as ShippingLabel } from './generated/ShippingLabel'

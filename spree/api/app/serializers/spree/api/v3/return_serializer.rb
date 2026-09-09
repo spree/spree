@@ -7,7 +7,7 @@ module Spree
       # no staff attribution — see the serializer rules in CLAUDE.md.
       class ReturnSerializer < BaseSerializer
         typelize number: :string,
-                 status: [:string, enum: Spree::Return.statuses],
+                 status: [:string, enum: Spree::Return.statuses, enum_type_name: 'ReturnStatus'],
                  order_id: [:string, nullable: true],
                  reason_id: [:string, nullable: true],
                  refund_total: :string,

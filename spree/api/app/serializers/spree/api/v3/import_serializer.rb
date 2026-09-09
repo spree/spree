@@ -5,7 +5,7 @@ module Spree
     module V3
       class ImportSerializer < BaseSerializer
         typelize number: :string,
-                 type: [:string, nullable: true, comment: 'Import type. Built-in: products, product_translations, customers, price_list_prices. Extensions may register more.'], status: [:string, enum: Spree::Import.statuses],
+                 type: [:string, nullable: true, comment: 'Import type. Built-in: products, product_translations, customers, price_list_prices. Extensions may register more.'], status: [:string, enum: Spree::Import.statuses, enum_type_name: 'ImportStatus'],
                  owner_type: [:string, nullable: true], owner_id: [:string, nullable: true],
                  store_id: [:string, nullable: true], seller_id: [:string, nullable: true],
                  user_id: [:string, nullable: true], rows_count: :number

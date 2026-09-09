@@ -11,7 +11,7 @@ module Spree
                    admin_name: [:string, nullable: true],
                    address2: [:string, nullable: true], state_name: [:string, nullable: true],
                    phone: [:string, nullable: true], company: [:string, nullable: true],
-                   kind: [:string, enum: Spree::StockLocation::KINDS],
+                   kind: [:string, enum: Spree::StockLocation::KINDS, enum_type_name: 'StockLocationKind'],
                    pickup_stock_policy: [:string, enum: Spree::StockLocation::PICKUP_STOCK_POLICIES],
                    pickup_ready_in_minutes: [:number, nullable: true],
                    pickup_instructions: [:string, nullable: true]

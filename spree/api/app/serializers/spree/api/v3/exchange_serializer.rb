@@ -6,7 +6,7 @@ module Spree
       # Customer-facing view of an exchange.
       class ExchangeSerializer < BaseSerializer
         typelize number: :string,
-                 status: [:string, enum: Spree::Exchange.statuses],
+                 status: [:string, enum: Spree::Exchange.statuses, enum_type_name: 'ExchangeStatus'],
                  order_id: [:string, nullable: true],
                  reason_id: [:string, nullable: true],
                  price_difference: :string,

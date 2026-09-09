@@ -15,7 +15,7 @@ module Spree
                    seller_name: 'string | null',
                    order_number: 'string | null',
                    kind: [:string, enum: Spree::SellerTransfer::KINDS],
-                   status: [:string, enum: Spree::SellerTransfer.statuses],
+                   status: [:string, enum: Spree::SellerTransfer.statuses, enum_type_name: 'SellerTransferStatus'],
                    provider: [:string, comment: 'Payout provider class name. Built-in: Spree::PayoutProvider::System. Provider gems register more.'],
                    amount: :string,
                    currency: :string,

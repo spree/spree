@@ -11,7 +11,7 @@ module Spree
       # log. Subscribers get the fact that a request finished; fetching the
       # file stays an authenticated act by the person it belongs to.
       class DataRequestEventSerializer < BaseSerializer
-        typelize number: :string, kind: [:string, enum: Spree::DataRequest::KINDS], status: [:string, enum: Spree::DataRequest.statuses],
+        typelize number: :string, kind: [:string, enum: Spree::DataRequest::KINDS], status: [:string, enum: Spree::DataRequest.statuses, enum_type_name: 'DataRequestStatus'],
                  requested_at: [:string, nullable: true],
                  completed_at: [:string, nullable: true]
 

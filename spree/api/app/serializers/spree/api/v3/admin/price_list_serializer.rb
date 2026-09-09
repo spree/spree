@@ -9,7 +9,7 @@ module Spree
         class PriceListSerializer < V3::BaseSerializer
           typelize name: :string,
                    description: 'string | null',
-                   status: [:string, enum: Spree::PriceList.statuses],
+                   status: [:string, enum: Spree::PriceList.statuses, enum_type_name: 'PriceListStatus'],
                    position: :number,
                    starts_at: 'string | null',
                    ends_at: 'string | null',

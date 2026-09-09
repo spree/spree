@@ -9,7 +9,7 @@ module Spree
           typelize owner_id: :string,
                    owner_type: [:string, enum: Spree::ShippingLabel::OWNER_TYPES],
                    source: [:string, enum: Spree::ShippingLabel::SOURCES],
-                   status: [:string, enum: Spree::ShippingLabel.statuses],
+                   status: [:string, enum: Spree::ShippingLabel.statuses, enum_type_name: 'ShippingLabelStatus'],
                    carrier: [:string, nullable: true],
                    carrier_name: [:string, nullable: true],
                    service: [:string, nullable: true],

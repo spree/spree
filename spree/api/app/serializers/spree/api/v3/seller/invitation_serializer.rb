@@ -3,7 +3,7 @@ module Spree
     module V3
       module Seller
         class InvitationSerializer < V3::BaseSerializer
-          typelize email: :string, status: [:string, enum: Spree::Invitation.statuses],
+          typelize email: :string, status: [:string, enum: Spree::Invitation.statuses, enum_type_name: 'InvitationStatus'],
                    expires_at: [:string, nullable: true],
                    accepted_at: [:string, nullable: true],
                    acceptance_url: :string

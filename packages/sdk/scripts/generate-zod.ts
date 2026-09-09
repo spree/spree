@@ -37,8 +37,7 @@ function parseTypeFile(content: string): ParsedType | null {
   const body = content.slice(typeStart + 1, i - 1)
   const fields: FieldDef[] = []
   const fieldRegex = /^\s+(\w+)(\?)?\s*:\s*(.+?)\s*;?\s*$/gm
-  let match: RegExpExecArray | null
-  while ((match = fieldRegex.exec(body)) !== null) {
+  for (const match of body.matchAll(fieldRegex)) {
     fields.push({
       name: match[1],
       type: match[3].replace(/;$/, '').trim(),
@@ -49,8 +48,11 @@ function parseTypeFile(content: string): ParsedType | null {
   return { typeName, fields }
 }
 
+// Named enums (`Enums.ts`) are open string unions, so they validate as plain strings.
+const enumTypeNames = new Set<string>()
+
 function isTypeReference(typeStr: string): boolean {
-  return /^[A-Z]\w+$/.test(typeStr)
+  return /^[A-Z]\w+$/.test(typeStr) && !enumTypeNames.has(typeStr)
 }
 
 function isPrimitive(t: string): boolean {
@@ -63,6 +65,7 @@ function primitiveOrRef(
   cyclicTypes: Set<string>,
 ): string {
   if (isPrimitive(inner)) return `z.${inner}()`
+  if (enumTypeNames.has(inner)) return 'z.string()'
   if (isTypeReference(inner)) {
     referencedTypes.add(inner)
     if (cyclicTypes.has(inner)) {
@@ -140,6 +143,7 @@ function typeToZod(
   if (nullableMatch) {
     const base = nullableMatch[1].trim()
     if (isPrimitive(base)) return `z.${base}().nullable()`
+    if (enumTypeNames.has(base)) return 'z.string().nullable()'
     if (isTypeReference(base)) {
       referencedTypes.add(base)
       if (cyclicTypes.has(base)) {
@@ -151,6 +155,7 @@ function typeToZod(
 
   // Simple primitive
   if (isPrimitive(t)) return `z.${t}()`
+  if (enumTypeNames.has(t)) return 'z.string()'
 
   // Type reference
   if (isTypeReference(t)) {
@@ -271,8 +276,15 @@ function main(): void {
 
   const files = fs
     .readdirSync(TYPES_DIR)
-    .filter((f) => f.endsWith('.ts') && f !== 'index.ts')
+    .filter((f) => f.endsWith('.ts') && f !== 'index.ts' && f !== 'Enums.ts')
     .sort()
+
+  const enumsFile = path.join(TYPES_DIR, 'Enums.ts')
+  if (fs.existsSync(enumsFile)) {
+    for (const m of fs.readFileSync(enumsFile, 'utf-8').matchAll(/^export type (\w+) =/gm)) {
+      enumTypeNames.add(m[1])
+    }
+  }
 
   // First pass: parse all type files
   const parsedTypes = new Map<string, ParsedType>()
