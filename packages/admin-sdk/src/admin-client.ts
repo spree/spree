@@ -313,6 +313,7 @@ import type {
   OptionType,
   Order,
   OrderCancellationReason,
+  OrderGroup,
   OrderRoutingRule,
   PackageType,
   Payment,
@@ -335,6 +336,7 @@ import type {
   ReturnReason,
   Role,
   Seller,
+  SellerBalance,
   SellerPayout,
   SellerRequirement,
   SellerRequirementSubmission,
@@ -3038,6 +3040,13 @@ export class AdminClient {
 
     reject: (id: string, params?: SellerRejectParams, options?: RequestOptions): Promise<Seller> =>
       this.request<Seller>('PATCH', `/sellers/${id}/reject`, { ...options, body: params }),
+
+    /**
+     * Where this seller stands, one row per currency: earned, paid, still
+     * owed, and earnings the payout provider has not yet confirmed.
+     */
+    balances: (id: string, options?: RequestOptions): Promise<{ data: SellerBalance[] }> =>
+      this.request<{ data: SellerBalance[] }>('GET', `/sellers/${id}/balances`, options),
   }
 
   // ============================================
@@ -3165,6 +3174,32 @@ export class AdminClient {
       options?: RequestOptions,
     ): Promise<CommissionLine> =>
       this.request<CommissionLine>('GET', `/commission_lines/${id}`, {
+        ...options,
+        params: getParams(params),
+      }),
+  }
+
+  /**
+   * `Spree::OrderGroup` — the checkout a split basket produced, and the
+   * payments made against it. An order placed in one has no payments of its
+   * own: its share of each of these is in its `payment_splits`.
+   */
+  readonly orderGroups = {
+    list: (
+      params?: ListParams & Record<string, unknown>,
+      options?: RequestOptions,
+    ): Promise<PaginatedResponse<OrderGroup>> =>
+      this.request<PaginatedResponse<OrderGroup>>('GET', '/order_groups', {
+        ...options,
+        params: params ? transformListParams(params) : undefined,
+      }),
+
+    get: (
+      id: string,
+      params?: { expand?: string[]; fields?: string[] },
+      options?: RequestOptions,
+    ): Promise<OrderGroup> =>
+      this.request<OrderGroup>('GET', `/order_groups/${id}`, {
         ...options,
         params: getParams(params),
       }),
