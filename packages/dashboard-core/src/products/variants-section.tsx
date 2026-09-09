@@ -386,7 +386,7 @@ export function VariantsSection({ form, seedFromType = false }: Props) {
         )}
 
         {fields.length > 0 && !awaitingOptionValues && (
-          <div className="overflow-hidden rounded-md border border-border">
+          <div className="overflow-hidden rounded-lg border border-border-subtle">
             <DndContext
               sensors={sensors}
               collisionDetection={closestCenter}

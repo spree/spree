@@ -6,6 +6,10 @@ import {
   progressPercentage,
 } from '@spree/dashboard-core'
 import {
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
   Badge,
   Button,
   Card,
@@ -81,6 +85,8 @@ export function OnboardingPage() {
   const { progress, requirements, status } = data
   const blocking = requirements.filter((requirement) => requirement.blocking)
   const submitted = status === 'ready_for_review'
+  const outstanding = firstOutstanding(requirements)
+  const openByDefault = outstanding ? [outstanding.id] : []
 
   return (
     <div className="flex flex-col gap-6">
@@ -117,17 +123,45 @@ export function OnboardingPage() {
       </Card>
 
       {requirements.length > 0 && (
-        <div className="flex flex-col gap-3">
-          {requirements.map((requirement) => (
-            <RequirementCard
-              key={requirement.id}
-              requirement={requirement}
-              // Open the first outstanding line and collapse the rest: it
-              // answers "what do I do next" without the seller hunting for it.
-              defaultOpen={requirement.id === firstOutstanding(requirements)?.id}
-            />
-          ))}
-        </div>
+        // One card holding every requirement, matching the operator's getting
+        // started checklist: this is a single list read top to bottom, and a
+        // frame around each line made them read as unrelated things.
+        //
+        // `multiple` because these are independent — a seller does them in any
+        // order — so opening one must not close the one they were reading.
+        // Opens on the first outstanding line, which answers "what next".
+        <Card className="overflow-hidden py-0">
+          <Accordion multiple defaultValue={openByDefault}>
+            {requirements.map((requirement) => (
+              <AccordionItem key={requirement.id} value={requirement.id}>
+                <AccordionTrigger>
+                  <StatusIcon status={requirement.status} />
+                  <div className="flex min-w-0 flex-col">
+                    <span
+                      className={
+                        requirement.status === 'complete' ? 'text-muted-foreground' : undefined
+                      }
+                    >
+                      {requirement.name}
+                    </span>
+                    {!requirement.required && (
+                      <span className="font-normal text-muted-foreground text-xs">
+                        {t('onboarding.optional')}
+                      </span>
+                    )}
+                  </div>
+                  <StatusBadge status={requirement.status} />
+                </AccordionTrigger>
+                <AccordionContent className="flex flex-col gap-3 ps-12">
+                  {requirement.description && (
+                    <p className="text-muted-foreground text-sm">{requirement.description}</p>
+                  )}
+                  <RequirementAction requirement={requirement} />
+                </AccordionContent>
+              </AccordionItem>
+            ))}
+          </Accordion>
+        </Card>
       )}
     </div>
   )
@@ -135,50 +169,6 @@ export function OnboardingPage() {
 
 function firstOutstanding(requirements: RequirementStatus[]): RequirementStatus | undefined {
   return requirements.find((requirement) => requirement.status !== 'complete')
-}
-
-function RequirementCard({
-  requirement,
-  defaultOpen,
-}: {
-  requirement: RequirementStatus
-  defaultOpen: boolean
-}) {
-  const { t } = useTranslation()
-  const [open, setOpen] = useState(defaultOpen)
-
-  return (
-    <Card className="overflow-hidden">
-      <button
-        type="button"
-        onClick={() => setOpen((previous) => !previous)}
-        className="flex w-full cursor-pointer items-center gap-3 p-4 text-left hover:bg-accent/50"
-      >
-        <StatusIcon status={requirement.status} />
-        <div className="flex min-w-0 flex-col">
-          <span className="font-medium text-sm">{requirement.name}</span>
-          {!requirement.required && (
-            <span className="text-muted-foreground text-xs">{t('onboarding.optional')}</span>
-          )}
-        </div>
-        <StatusBadge status={requirement.status} />
-        <ChevronRightIcon
-          className={`ml-auto size-4 shrink-0 text-muted-foreground transition-transform ${
-            open ? 'rotate-90' : ''
-          }`}
-        />
-      </button>
-
-      {open && (
-        <CardContent className="flex flex-col gap-3 border-t pt-4">
-          {requirement.description && (
-            <p className="text-muted-foreground text-sm">{requirement.description}</p>
-          )}
-          <RequirementAction requirement={requirement} />
-        </CardContent>
-      )}
-    </Card>
-  )
 }
 
 /**
@@ -511,15 +501,15 @@ function panelRoute(kind: string): string | undefined {
 
 function StatusIcon({ status }: { status: string }) {
   if (status === 'complete') {
-    return <CheckCircle2Icon className="size-4 shrink-0 text-green-600" />
+    return <CheckCircle2Icon className="size-5 shrink-0 text-success" />
   }
   if (status === 'pending') {
-    return <ClockIcon className="size-4 shrink-0 text-amber-600" />
+    return <ClockIcon className="size-5 shrink-0 text-warning" />
   }
   if (status === 'rejected') {
-    return <XCircleIcon className="size-4 shrink-0 text-destructive" />
+    return <XCircleIcon className="size-5 shrink-0 text-destructive" />
   }
-  return <CircleIcon className="size-4 shrink-0 text-muted-foreground" />
+  return <CircleIcon className="size-5 shrink-0 text-muted-foreground" />
 }
 
 function StatusBadge({ status }: { status: string }) {

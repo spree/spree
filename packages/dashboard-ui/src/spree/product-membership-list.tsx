@@ -351,8 +351,8 @@ function MembershipRow({
         // Mirror <TableRow> styling — a plain <tr> is required so dnd-kit's
         // setNodeRef attaches (TableRow doesn't forward refs).
         className={cn(
-          'group/row last:*:border-b-0 hover:bg-accent/60',
-          selected && 'bg-accent/60 hover:bg-accent',
+          'group/row last:*:border-b-0 hover:bg-accent-strong/50',
+          selected && 'bg-accent-strong/75 hover:bg-accent-strong-hover',
           isDragging && 'relative z-10 opacity-70',
           removed && 'opacity-60',
         )}
