@@ -63,6 +63,7 @@ module Spree
               { item: line, quantity_received: line.quantity_ordered, delta: line.outstanding }
             end
           else
+            reject_repeated_lines
             Array(items).map { |item| normalize_item(item) }
           end
 
@@ -85,6 +86,21 @@ module Spree
         end
 
         { item: line, quantity_received: quantity, delta: quantity - line.quantity_received.to_i }
+      end
+
+      # Every delta is measured against the line's running total before any of
+      # them is written, so a line named twice contributes its delta once per
+      # entry: entries of four and six against a fresh line put ten on the
+      # shelf while the line records six. Refused rather than merged, because
+      # those two entries are genuinely ambiguous — ten in total, or six
+      # correcting four? A scanner that appends an entry per carton has to send
+      # the total instead.
+      def reject_repeated_lines
+        lines = Array(items).map { |item| item[:item] }.compact
+        repeated = lines.group_by(&:id).values.find { |group| group.length > 1 }
+        return if repeated.nil?
+
+        failure(purchase_order, Spree.t('purchase_order.errors.repeated_item', variant: repeated.first.variant_name))
       end
 
       def record_receipt

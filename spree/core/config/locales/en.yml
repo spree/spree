@@ -1628,6 +1628,7 @@ en:
         not_editable: Only a draft purchase order can be edited
         not_ordered: Only a purchase order that has been placed can be received
         only_draft_can_be_deleted: Only a draft purchase order can be deleted — cancel it instead
+        repeated_item: "%{variant} was listed more than once. Send one entry per line, with the total received so far"
     qty: Qty
     quantity: Quantity
     query: Query
@@ -1898,6 +1899,7 @@ en:
         not_in_transit: Only a transfer in transit can be received
         not_shippable: Only a draft or ready-to-ship transfer can be marked in transit
         only_draft_can_be_deleted: Only a draft transfer can be deleted — cancel it instead
+        repeated_item: "%{variant} was listed more than once. Send one entry per line, with the total received so far"
         same_location: cannot be the same as the destination location
         variants_unavailable: Some variants are not available on %{stock}
     stop: Stop

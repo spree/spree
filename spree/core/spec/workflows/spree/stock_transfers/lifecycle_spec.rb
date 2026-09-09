@@ -237,6 +237,25 @@ describe 'stock transfer lifecycle', type: :model do
       expect(destination_on_hand).to eq(6)
     end
 
+    # Every delta is measured before any of them is written, so a line named
+    # twice would contribute its delta once per entry — the shape a scanner
+    # app produces when it appends an entry per carton.
+    it 'refuses a payload that names the same line twice' do
+      item = transfer.reload.items.sole
+
+      result = Spree::StockTransfers::Receive.call(
+        stock_transfer: transfer,
+        items: [{ item: item, quantity_received: 4 }, { item: item, quantity_received: 6 }]
+      )
+
+      expect(result).to be_failure
+      expect(result.error.to_s).to eq(
+        Spree.t('stock_transfer.errors.repeated_item', variant: item.variant_name)
+      )
+      expect(destination_on_hand).to eq(0)
+      expect(item.reload.quantity_received).to eq(0)
+    end
+
     it 'refuses a line belonging to another transfer' do
       other_item = create(:stock_transfer, store: store).items.first
 

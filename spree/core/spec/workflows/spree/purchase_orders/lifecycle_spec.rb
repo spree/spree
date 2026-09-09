@@ -108,6 +108,25 @@ describe 'purchase order lifecycle', type: :model do
     # both compute a delta from the total they read, and both credit the whole
     # delivery. The workflow re-reads the line under its lock, so the second
     # caller measures against what actually committed.
+    # Every delta is measured before any of them is written, so a line named
+    # twice would contribute its delta once per entry — the shape a scanner
+    # app produces when it appends an entry per pallet.
+    it 'refuses a payload that names the same line twice' do
+      item = purchase_order.reload.items.sole
+
+      result = Spree::PurchaseOrders::Receive.call(
+        purchase_order: purchase_order,
+        items: [{ item: item, quantity_received: 40 }, { item: item, quantity_received: 60 }]
+      )
+
+      expect(result).to be_failure
+      expect(result.error.to_s).to eq(
+        Spree.t('purchase_order.errors.repeated_item', variant: item.variant_name)
+      )
+      expect(on_hand).to eq(0)
+      expect(item.reload.quantity_received).to eq(0)
+    end
+
     it 'ignores a running total that was read before another receive committed' do
       stale_line = purchase_order.reload.items.sole
       Spree::PurchaseOrders::Receive.call(purchase_order: purchase_order,
