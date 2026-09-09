@@ -277,7 +277,15 @@ function DataGridShell<T>({
             {table.getHeaderGroups().map((group) => (
               <tr key={group.id}>
                 {group.headers.map((header) => (
-                  <th key={header.id} className="h-8 bg-muted px-3 text-left font-medium">
+                  <th
+                    key={header.id}
+                    // The bottom rule is an inset shadow, not the cell's own
+                    // border: under `border-collapse` the collapsed borders
+                    // belong to the table, so they scroll away with it and a
+                    // pinned header ends up with rows sliding flush against its
+                    // labels. A shadow belongs to the cell and pins with it.
+                    className="h-8 bg-muted px-3 text-left font-medium shadow-[inset_0_-1px_0_0_var(--border)]"
+                  >
                     {header.isPlaceholder
                       ? null
                       : flexRender(header.column.columnDef.header, header.getContext())}
