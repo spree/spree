@@ -1,4 +1,4 @@
-import type { PreferenceField as PreferenceFieldDef, PreferenceOption } from '@spree/admin-sdk'
+import type { PreferenceField as PreferenceFieldDef } from '@spree/admin-sdk'
 import {
   Button,
   Field,
@@ -65,10 +65,6 @@ interface PreferencesFormProps {
    */
   currencyOptions?: string[]
 }
-
-// The preference types the option picker can represent: it reads and writes
-// strings, so anything else keeps its own editor.
-const OPTION_FIELD_TYPES = ['string', 'text']
 
 /**
  * Renders a generic configuration form from a `preference_schema` payload.
@@ -159,23 +155,6 @@ export function PreferenceField({
           options={currencyOptions}
         />
       </Field>
-    )
-  }
-
-  // A preference whose declaring class named its values gets a picker rather
-  // than a text box. Only where the value is text: the picker reads and writes
-  // strings, so a numeric or structured preference that named its values would
-  // arrive with a value this field cannot show and leave with one of the wrong
-  // type.
-  if (field.options?.length && OPTION_FIELD_TYPES.includes(field.type)) {
-    return (
-      <OptionField
-        id={id}
-        label={displayLabel}
-        options={field.options}
-        value={typeof value === 'string' ? value : ''}
-        onChange={onChange}
-      />
     )
   }
 
@@ -281,12 +260,23 @@ export function PreferenceField({
       // the set is what the server validates against, so typing anything
       // else can only fail on save.
       if (field.choices?.length) {
-        const options = field.choices.map((choice) => ({
-          value: choice,
-          label: i18n.exists(`${preferenceKey}_options.${choice}`)
-            ? t(`${preferenceKey}_options.${choice}`)
-            : humanizeKey(choice),
+        // A translation wins where one exists, so the locale files stay in
+        // charge of the values that read as words; then the label the
+        // declaration supplied, for the ones that do not — a URL cannot serve
+        // as its own i18n key, let alone as a label.
+        const declared = field.choices.map((choice) => ({
+          value: choice.value,
+          label: i18n.exists(`${preferenceKey}_options.${choice.value}`)
+            ? t(`${preferenceKey}_options.${choice.value}`)
+            : (choice.label ?? humanizeKey(choice.value)),
         }))
+        // A stored value outside the set is offered as its own option rather
+        // than dropped, so one written past the picker by an API client is not
+        // silently rewritten to the first choice.
+        const options =
+          typeof value === 'string' && value !== '' && !declared.some((o) => o.value === value)
+            ? [...declared, { value, label: value }]
+            : declared
 
         return (
           <Field>
@@ -325,50 +315,6 @@ export function PreferenceField({
       )
   }
 }
-
-/**
- * A select over the values a preference declares. A stored value that is not
- * among them is offered as its own option rather than dropped — a row written
- * before the list existed, or by an API client, must not be silently rewritten
- * to the first choice the moment someone opens the form.
- */
-function OptionField({
-  id,
-  label,
-  options,
-  value,
-  onChange,
-}: {
-  id: string
-  label: string
-  options: PreferenceOption[]
-  value: string
-  onChange: (value: unknown) => void
-}) {
-  const items =
-    value !== '' && !options.some((option) => option.value === value)
-      ? [...options, { value, label: value }]
-      : options
-
-  return (
-    <Field>
-      <FieldLabel htmlFor={id}>{label}</FieldLabel>
-      <Select items={items} value={value} onValueChange={(next) => onChange(next ?? '')}>
-        <SelectTrigger id={id}>
-          <SelectValue />
-        </SelectTrigger>
-        <SelectContent>
-          {items.map((item) => (
-            <SelectItem key={item.value} value={item.value}>
-              {item.label}
-            </SelectItem>
-          ))}
-        </SelectContent>
-      </Select>
-    </Field>
-  )
-}
-
 function humanizeKey(key: string): string {
   return key
     .split('_')

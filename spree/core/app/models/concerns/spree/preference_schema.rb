@@ -76,7 +76,6 @@ module Spree
         @serialized_preference_schema ||= fields.map do |field|
           wire = { key: field[:key], type: field[:type], default: field[:default] }
           wire[:choices] = field[:choices] if field[:choices].present?
-          wire[:options] = field[:options] if field[:options].present?
           wire[:default] = nil if field[:type] == :password
           wire.freeze
         end.freeze
@@ -130,29 +129,26 @@ module Spree
           # signature verification depends on.
           next if instance.preference_internal(pref)
 
-          field = {
+          {
             key: pref,
             key_string: pref.to_s.freeze,
             type: instance.preference_type(pref),
             default: safe_preference_default(instance, pref),
-            choices: instance.preference_choices(pref),
-            # Two ways of saying nearly the same thing, which arrived from
-            # different directions: `choices` constrains what may be stored,
-            # `options` labels it. Worth converging on one.
-            options: normalized_preference_options(instance.preference_options(pref)).presence
+            choices: normalized_preference_choices(instance.preference_choices(pref)).presence
           }.compact.freeze
         end
       end
 
-      # `{ value => label }` or a plain list, both to `[{ value:, label: }]` —
-      # one shape for a client to render, whichever the declaring class found
-      # more natural to write.
-      def normalized_preference_options(declared)
+      # One shape for a client to render, whichever the declaring class found
+      # more natural to write. A label rides along only where one was declared:
+      # without it a client is free to name the value itself, which is how the
+      # locale files label the values that read as words.
+      def normalized_preference_choices(declared)
         case declared
         when Hash
           declared.map { |value, label| { value: value.to_s, label: label.to_s }.freeze }.freeze
         when Array
-          declared.map { |value| { value: value.to_s, label: value.to_s }.freeze }.freeze
+          declared.map { |value| { value: value.to_s }.freeze }.freeze
         end
       end
 

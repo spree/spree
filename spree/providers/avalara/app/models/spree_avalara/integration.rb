@@ -14,8 +14,8 @@ module SpreeAvalara
     # pair under the same labels, so a merchant sees the choice they already
     # know rather than a URL to type.
     preference :endpoint, :string, default: SANDBOX_ENDPOINT,
-                                   options: { SANDBOX_ENDPOINT => 'Sandbox',
-                                              PRODUCTION_ENDPOINT => 'Production' }
+                                   in: { SANDBOX_ENDPOINT => 'Sandbox',
+                                         PRODUCTION_ENDPOINT => 'Production' }
     preference :company_code, :string
 
     preference :address_validation_enabled, :boolean, default: false
@@ -27,8 +27,8 @@ module SpreeAvalara
     # than a missing field.
     validates :preferred_account_number, :preferred_license_key, :preferred_company_code, presence: true
 
-    # The picker in the dashboard only offers these two, but the admin API takes
-    # a free-form preferences hash, so the allowlist has to be enforced here as
+    # `in:` above builds the picker; it does not refuse anything. The admin API
+    # takes a free-form preferences hash, so the allowlist is enforced here as
     # well: the value is handed to the HTTP client along with the credentials,
     # and an arbitrary host turns this into a way to make the server issue
     # requests wherever an admin points it — internal services and cloud

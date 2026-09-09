@@ -14,7 +14,7 @@ module Spree::Preferences
     def preference(name, type, *args)
       declared_preference_order << name.to_sym unless declared_preference_order.include?(name.to_sym)
       options = args.extract_options!
-      options.assert_valid_keys(:default, :deprecated, :in, :internal, :nullable, :options, :parse_on_set)
+      options.assert_valid_keys(:default, :deprecated, :in, :internal, :nullable, :parse_on_set)
       default = options[:default]
       default = -> { options[:default] } unless default.is_a?(Proc)
       deprecated = options[:deprecated]
@@ -22,15 +22,13 @@ module Spree::Preferences
       # The fixed set a value must come from. Turns a text box into a picker
       # in every admin form, and is what the inclusion validation would have
       # told the operator only after a failed save.
+      #
+      # A list where each value reads for itself, or `{ value => label }` where
+      # it does not — an endpoint URL has no business being shown to whoever
+      # picks between "Sandbox" and "Production".
       choices = options[:in]
       nullable = options[:nullable]
       parse_on_set = options[:parse_on_set]
-      # As `{ value => label }`, for a picker that shows a person something
-      # other than the stored value. Overlaps `:in` above — see the note in
-      # PreferenceSchema — and is kept apart from it for now rather than
-      # shadowing it.
-      labelled_options = options[:options]
-
       # cache_key will be nil for new objects, then if we check if there
       # is a pending preference before going to default
       define_method preference_getter_method(name) do
@@ -65,10 +63,6 @@ module Spree::Preferences
 
       define_method preference_type_getter_method(name) do
         type
-      end
-
-      define_method preference_options_getter_method(name) do
-        labelled_options
       end
 
       define_method preference_deprecated_getter_method(name) do
@@ -145,10 +139,6 @@ module Spree::Preferences
 
     def preference_type_getter_method(name)
       "preferred_#{name}_type".to_sym
-    end
-
-    def preference_options_getter_method(name)
-      "preferred_#{name}_options".to_sym
     end
 
     def prefers_query_method(name)

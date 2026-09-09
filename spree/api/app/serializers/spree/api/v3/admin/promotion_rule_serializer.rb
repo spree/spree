@@ -11,7 +11,7 @@ module Spree
           typelize type: :string,
                    promotion_id: :string,
                    preferences: 'Record<string, unknown>',
-                   preference_schema: "Array<{ key: string; type: string; default: unknown; choices?: string[] }>",
+                   preference_schema: "Array<{ key: string; type: string; default: unknown; choices?: { value: string; label?: string }[] }>",
                    product_ids: 'Array<string> | null',
                    category_ids: 'Array<string> | null',
                    customer_ids: 'Array<string> | null',

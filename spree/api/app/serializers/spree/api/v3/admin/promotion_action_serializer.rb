@@ -12,7 +12,7 @@ module Spree
           typelize type: :string,
                    promotion_id: :string,
                    preferences: 'Record<string, unknown>',
-                   preference_schema: "Array<{ key: string; type: string; default: unknown; choices?: string[] }>",
+                   preference_schema: "Array<{ key: string; type: string; default: unknown; choices?: { value: string; label?: string }[] }>",
                    calculator: "{ type: string; preferences: Record<string, unknown>; preference_schema: Array<{ key: string; type: string; default: unknown }> } | null",
                    line_items: 'Array<{ variant_id: string; quantity: number }> | null'
 

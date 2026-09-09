@@ -87,7 +87,7 @@ RSpec.describe SpreeAvalara::Integration do
   it 'offers the two Avalara hosts by name' do
     field = described_class.serialized_preference_schema.find { |entry| entry[:key] == :endpoint }
 
-    expect(field[:options]).to eq([{ value: described_class::SANDBOX_ENDPOINT, label: 'Sandbox' },
+    expect(field[:choices]).to eq([{ value: described_class::SANDBOX_ENDPOINT, label: 'Sandbox' },
                                    { value: described_class::PRODUCTION_ENDPOINT, label: 'Production' }])
   end
 

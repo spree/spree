@@ -12,7 +12,7 @@ module Spree
         class DeliveryMethodRuleSerializer < BaseSerializer
           typelize type: :string, active: :boolean,
                    preferences: 'Record<string, unknown>',
-                   preference_schema: "Array<{ key: string; type: string; default: unknown; choices?: string[] }>"
+                   preference_schema: "Array<{ key: string; type: string; default: unknown; choices?: { value: string; label?: string }[] }>"
 
           attributes :active
 

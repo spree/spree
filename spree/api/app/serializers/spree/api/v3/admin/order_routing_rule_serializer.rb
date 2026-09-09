@@ -13,7 +13,7 @@ module Spree
                    position: :number,
                    active: :boolean,
                    preferences: 'Record<string, unknown>',
-                   preference_schema: "Array<{ key: string; type: string; default: unknown; choices?: string[] }>"
+                   preference_schema: "Array<{ key: string; type: string; default: unknown; choices?: { value: string; label?: string }[] }>"
 
           attributes :position, :active
           attributes created_at: :iso8601, updated_at: :iso8601

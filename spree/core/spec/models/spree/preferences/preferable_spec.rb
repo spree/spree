@@ -24,12 +24,13 @@ describe Spree::Preferences::Preferable, type: :model do
 
     class C < A
       # The wire shape lives in the schema concern, so the class that exercises
-      # options carries both halves.
+      # labelled choices carries both halves.
       include Spree::PreferenceSchema
 
       preference :endpoint, :string, default: 'https://one.example',
-                                     options: { 'https://one.example' => 'One',
-                                                'https://two.example' => 'Two' }
+                                     in: { 'https://one.example' => 'One',
+                                           'https://two.example' => 'Two' }
+      preference :mode, :string, default: 'live', in: %w[test live]
       preference :note, :string
     end
   end
@@ -46,20 +47,30 @@ describe Spree::Preferences::Preferable, type: :model do
     store.persistence = true
   end
 
-  describe 'options' do
+  describe 'choices' do
     let(:record) { C.new }
 
-    it 'reports what a UI should offer, labelled' do
-      expect(record.preference_options(:endpoint)).to eq('https://one.example' => 'One',
+    it 'reports what a UI should offer' do
+      expect(record.preference_choices(:endpoint)).to eq('https://one.example' => 'One',
                                                           'https://two.example' => 'Two')
-      expect(record.preference_options(:color)).to be_nil
+      expect(record.preference_choices(:mode)).to eq(%w[test live])
+      expect(record.preference_choices(:color)).to be_nil
     end
 
     it 'reaches the schema as one shape whichever way it was declared' do
       expect(C.serialized_preference_schema).to include(
         hash_including(key: :endpoint,
-                       options: [{ value: 'https://one.example', label: 'One' },
+                       choices: [{ value: 'https://one.example', label: 'One' },
                                  { value: 'https://two.example', label: 'Two' }])
+      )
+    end
+
+    # A value that reads as a word is left for the client to name, so the
+    # locale files keep labelling those rather than competing with a label
+    # invented here.
+    it 'carries no label for a plain list' do
+      expect(C.serialized_preference_schema).to include(
+        hash_including(key: :mode, choices: [{ value: 'test' }, { value: 'live' }])
       )
     end
 
@@ -67,7 +78,7 @@ describe Spree::Preferences::Preferable, type: :model do
       field = C.serialized_preference_schema.find { |entry| entry[:key] == :note }
 
       expect(field).to be_present
-      expect(field).not_to have_key(:options)
+      expect(field).not_to have_key(:choices)
     end
   end
 
