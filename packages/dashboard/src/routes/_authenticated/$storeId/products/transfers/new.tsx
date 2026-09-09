@@ -1,4 +1,3 @@
-import { PageHeader } from '@spree/dashboard-core'
 import { createFileRoute, useNavigate } from '@tanstack/react-router'
 import { useTranslation } from 'react-i18next'
 import {
@@ -42,17 +41,15 @@ function NewStockTransferPage() {
   }
 
   return (
-    <div className="mx-auto flex w-full max-w-3xl flex-col gap-4 p-4">
-      <PageHeader title={t('admin.stock_transfers.new_title')} backTo="products/transfers" />
-
-      <StockTransferForm
-        initial={EMPTY_STOCK_TRANSFER}
-        submitLabel={t('admin.stock_transfers.actions.create_draft')}
-        pendingLabel={t('admin.actions.creating')}
-        pending={createMutation.isPending}
-        onSubmit={handleSubmit}
-        onCancel={() => navigate({ to: '/$storeId/products/transfers', params: { storeId } })}
-      />
-    </div>
+    <StockTransferForm
+      initial={EMPTY_STOCK_TRANSFER}
+      title={t('admin.stock_transfers.new_title')}
+      backTo="products/transfers"
+      submitLabel={t('admin.stock_transfers.actions.create_draft')}
+      pendingLabel={t('admin.actions.creating')}
+      pending={createMutation.isPending}
+      onSubmit={handleSubmit}
+      onCancel={() => navigate({ to: '/$storeId/products/transfers', params: { storeId } })}
+    />
   )
 }

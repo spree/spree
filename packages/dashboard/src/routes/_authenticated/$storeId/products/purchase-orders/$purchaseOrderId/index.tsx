@@ -1,5 +1,5 @@
 import type { PurchaseOrder, PurchaseOrderItem } from '@spree/admin-sdk'
-import { Can, PageHeader, Subject, useStore } from '@spree/dashboard-core'
+import { adminClient, Can, PageHeader, Subject, useStore } from '@spree/dashboard-core'
 import {
   Button,
   Card,
@@ -9,6 +9,7 @@ import {
   DropdownMenuItem,
   ErrorState,
   RelativeTime,
+  ResourceLayout,
   Table,
   TableBody,
   TableCell,
@@ -23,6 +24,7 @@ import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { InventoryStatusBadge } from '../../../../../../components/spree/inventory-status-badge'
 import { QuantityCell, QuantityHead } from '../../../../../../components/spree/quantity-cell'
+import { ResourceDetailSkeleton } from '../../../../../../components/spree/route-pending'
 import { StockHistoryCard } from '../../../../../../components/spree/stock-history-card'
 import { VariantLink } from '../../../../../../components/spree/variant-link'
 import {
@@ -32,6 +34,7 @@ import {
   usePurchaseOrder,
   useReceivePurchaseOrder,
 } from '../../../../../../hooks/use-purchase-orders'
+import { spreeJsonLinkResolver } from '../../../../../../lib/json-link-resolver'
 import { isClosed } from '../../../../../../schemas/inventory-operations'
 
 export const Route = createFileRoute(
@@ -46,7 +49,7 @@ function PurchaseOrderDetailPage() {
   const { data: purchaseOrder, isLoading, error, refetch } = usePurchaseOrder(purchaseOrderId)
 
   if (isLoading) {
-    return <div className="p-4 text-sm text-muted-foreground">{t('admin.common.loading')}</div>
+    return <ResourceDetailSkeleton sidebar />
   }
 
   // A failed request is not a slow one: without this the screen shows
@@ -62,17 +65,19 @@ function PurchaseOrderDetailPage() {
   }
 
   return (
-    <div className="mx-auto flex w-full max-w-4xl flex-col gap-4 p-4">
-      <PurchaseOrderHeader purchaseOrder={purchaseOrder} />
-
-      <SummaryCard purchaseOrder={purchaseOrder} />
-      <ItemsCard purchaseOrder={purchaseOrder} />
-
-      <StockHistoryCard
-        purchaseOrderId={purchaseOrder.id}
-        title={t('admin.purchase_orders.history_title')}
-      />
-    </div>
+    <ResourceLayout
+      header={<PurchaseOrderHeader purchaseOrder={purchaseOrder} />}
+      main={
+        <>
+          <ItemsCard purchaseOrder={purchaseOrder} />
+          <StockHistoryCard
+            purchaseOrderId={purchaseOrder.id}
+            title={t('admin.purchase_orders.history_title')}
+          />
+        </>
+      }
+      sidebar={<SummaryCard purchaseOrder={purchaseOrder} />}
+    />
   )
 }
 
@@ -86,12 +91,14 @@ function SummaryCard({ purchaseOrder }: { purchaseOrder: PurchaseOrder }) {
         <CardTitle>{t('admin.purchase_orders.details_title')}</CardTitle>
       </CardHeader>
       <CardContent>
-        <dl className="grid grid-cols-3 gap-y-2 text-sm">
+        {/* One label-over-value pair per row: the card sits in the narrow
+            sidebar column, where a side-by-side grid wraps every value. */}
+        <dl className="flex flex-col gap-3 text-sm">
           <dt className="text-muted-foreground">{t('admin.purchase_orders.fields.supplier')}</dt>
-          <dd className="col-span-2">
+          <dd>
             {purchaseOrder.supplier_id ? (
               <Link
-                to="/$storeId/settings/suppliers"
+                to="/$storeId/products/suppliers"
                 params={{ storeId }}
                 search={{ edit: purchaseOrder.supplier_id }}
                 className="text-foreground hover:underline"
@@ -104,7 +111,7 @@ function SummaryCard({ purchaseOrder }: { purchaseOrder: PurchaseOrder }) {
           </dd>
 
           <dt className="text-muted-foreground">{t('admin.purchase_orders.fields.destination')}</dt>
-          <dd className="col-span-2">
+          <dd>
             {purchaseOrder.destination_location_id ? (
               <Link
                 to="/$storeId/settings/stock-locations"
@@ -120,7 +127,7 @@ function SummaryCard({ purchaseOrder }: { purchaseOrder: PurchaseOrder }) {
           </dd>
 
           <dt className="text-muted-foreground">{t('admin.purchase_orders.fields.units')}</dt>
-          <dd className="col-span-2 tabular-nums">
+          <dd className="tabular-nums">
             {t('admin.purchase_orders.units_summary', {
               received: purchaseOrder.quantity_received_total,
               ordered: purchaseOrder.quantity_ordered_total,
@@ -128,34 +135,34 @@ function SummaryCard({ purchaseOrder }: { purchaseOrder: PurchaseOrder }) {
           </dd>
 
           <dt className="text-muted-foreground">{t('admin.purchase_orders.fields.subtotal')}</dt>
-          <dd className="col-span-2 tabular-nums">{purchaseOrder.display_subtotal}</dd>
+          <dd className="tabular-nums">{purchaseOrder.display_subtotal}</dd>
 
           <dt className="text-muted-foreground">{t('admin.purchase_orders.fields.expected_at')}</dt>
-          <dd className="col-span-2">{purchaseOrder.expected_at ?? '—'}</dd>
+          <dd>{purchaseOrder.expected_at ?? '—'}</dd>
 
           {purchaseOrder.reference && (
             <>
               <dt className="text-muted-foreground">
                 {t('admin.purchase_orders.fields.reference')}
               </dt>
-              <dd className="col-span-2">{purchaseOrder.reference}</dd>
+              <dd>{purchaseOrder.reference}</dd>
             </>
           )}
 
           {purchaseOrder.notes && (
             <>
               <dt className="text-muted-foreground">{t('admin.purchase_orders.fields.notes')}</dt>
-              <dd className="col-span-2 whitespace-pre-line">{purchaseOrder.notes}</dd>
+              <dd className="whitespace-pre-line">{purchaseOrder.notes}</dd>
             </>
           )}
 
           <dt className="text-muted-foreground">{t('admin.purchase_orders.fields.ordered_at')}</dt>
-          <dd className="col-span-2">
+          <dd>
             {purchaseOrder.ordered_at ? <RelativeTime iso={purchaseOrder.ordered_at} /> : '—'}
           </dd>
 
           <dt className="text-muted-foreground">{t('admin.purchase_orders.fields.received_at')}</dt>
-          <dd className="col-span-2">
+          <dd>
             {purchaseOrder.received_at ? <RelativeTime iso={purchaseOrder.received_at} /> : '—'}
           </dd>
         </dl>
@@ -430,6 +437,12 @@ function PurchaseOrderHeader({ purchaseOrder }: { purchaseOrder: PurchaseOrder }
         )
       }
       resource={{ id: purchaseOrder.id, number: purchaseOrder.number }}
+      jsonPreview={{
+        title: purchaseOrder.number,
+        fetch: () => adminClient.purchaseOrders.get(purchaseOrder.id, { expand: ['items'] }),
+        endpoint: `/api/v3/admin/purchase_orders/${purchaseOrder.id}`,
+        resolveLink: spreeJsonLinkResolver(storeId),
+      }}
     />
   )
 }

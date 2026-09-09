@@ -39,7 +39,7 @@ function EditPurchaseOrderPage() {
   // Reachable by URL even though the header hides the button by then.
   if (!purchaseOrder.editable) {
     return (
-      <div className="mx-auto flex w-full max-w-3xl flex-col gap-4 p-4">
+      <div className="flex flex-col gap-6">
         <PageHeader
           title={t('admin.purchase_orders.edit_title', { number: purchaseOrder.number })}
           backTo={`products/purchase-orders/${purchaseOrderId}`}
@@ -74,42 +74,37 @@ function EditPurchaseOrderPage() {
   }
 
   return (
-    <div className="mx-auto flex w-full max-w-3xl flex-col gap-4 p-4">
-      <PageHeader
-        title={t('admin.purchase_orders.edit_title', { number: purchaseOrder.number })}
-        backTo={`products/purchase-orders/${purchaseOrderId}`}
-      />
-
-      <PurchaseOrderForm
-        initial={{
-          supplierId: purchaseOrder.supplier_id ?? '',
-          destinationId: purchaseOrder.destination_location_id ?? '',
-          currency: purchaseOrder.currency,
-          expectedAt: purchaseOrder.expected_at ?? undefined,
-          reference: purchaseOrder.reference ?? '',
-          notes: purchaseOrder.notes ?? '',
-          // The saved lines carry the same facts a search result does, under
-          // their own names, plus the cost the merchant agreed.
-          lines: (purchaseOrder.items ?? []).map((item) => ({
-            variant: {
-              id: item.variant_id ?? '',
-              sku: item.variant_sku,
-              product_name: item.variant_name,
-              thumbnail_url: item.thumbnail_url,
-            },
-            quantity: item.quantity_ordered,
-            unitCost: item.unit_cost ?? '0.00',
-          })),
-        }}
-        // Every line cost is denominated in it, so changing it now would
-        // silently reprice the order.
-        currencyLocked
-        submitLabel={t('admin.actions.save')}
-        pendingLabel={t('admin.actions.saving')}
-        pending={updateMutation.isPending}
-        onSubmit={handleSubmit}
-        onCancel={backToOrder}
-      />
-    </div>
+    <PurchaseOrderForm
+      title={t('admin.purchase_orders.edit_title', { number: purchaseOrder.number })}
+      backTo={`products/purchase-orders/${purchaseOrderId}`}
+      initial={{
+        supplierId: purchaseOrder.supplier_id ?? '',
+        destinationId: purchaseOrder.destination_location_id ?? '',
+        currency: purchaseOrder.currency,
+        expectedAt: purchaseOrder.expected_at ?? undefined,
+        reference: purchaseOrder.reference ?? '',
+        notes: purchaseOrder.notes ?? '',
+        // The saved lines carry the same facts a search result does, under
+        // their own names, plus the cost the merchant agreed.
+        lines: (purchaseOrder.items ?? []).map((item) => ({
+          variant: {
+            id: item.variant_id ?? '',
+            sku: item.variant_sku,
+            product_name: item.variant_name,
+            thumbnail_url: item.thumbnail_url,
+          },
+          quantity: item.quantity_ordered,
+          unitCost: item.unit_cost ?? '0.00',
+        })),
+      }}
+      // Every line cost is denominated in it, so changing it now would
+      // silently reprice the order.
+      currencyLocked
+      submitLabel={t('admin.actions.save')}
+      pendingLabel={t('admin.actions.saving')}
+      pending={updateMutation.isPending}
+      onSubmit={handleSubmit}
+      onCancel={backToOrder}
+    />
   )
 }

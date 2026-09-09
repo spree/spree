@@ -1,10 +1,7 @@
 import type { Variant } from '@spree/admin-sdk'
-import { adminClient, formatPrice, ResourceCombobox } from '@spree/dashboard-core'
+import { adminClient, formatPrice, ResourcePickerSheet } from '@spree/dashboard-core'
 import {
   Button,
-  Field,
-  FieldDescription,
-  FieldLabel,
   Input,
   InputGroup,
   InputGroupAddon,
@@ -17,8 +14,8 @@ import {
   TableHeader,
   TableRow,
 } from '@spree/dashboard-ui'
-import { TrashIcon } from '@spree/dashboard-ui/icons'
-import { useRef } from 'react'
+import { PlusIcon, TrashIcon } from '@spree/dashboard-ui/icons'
+import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { VariantLink } from './variant-link'
 
@@ -79,9 +76,7 @@ export function VariantLineEditor({
   // whole catalogue invites a line the warehouse cannot send — which is only
   // refused later, per line, when the transfer is marked in transit.
   const locked = !!requireStockLocation && !stockLocationId
-  // `onChange` hands back only the option id, so keep the records the search
-  // returned to resolve it. A ref, not state: it is a lookup table.
-  const variantById = useRef(new Map<string, Variant>())
+  const [pickerOpen, setPickerOpen] = useState(false)
 
   function addVariant(variant: Variant) {
     const existing = lines.find((line) => line.variant.id === variant.id)
@@ -106,50 +101,52 @@ export function VariantLineEditor({
 
   return (
     <div className="flex flex-col gap-4">
-      <Field>
-        <FieldLabel>{t('admin.inventory_lines.add_label')}</FieldLabel>
-        {/* Combobox rather than a bare input over a list of buttons:
-            arrow-key navigation, `aria-activedescendant` and Enter-to-pick
-            come from the primitive. Selecting adds the row and clears the
-            field, so no value is held. */}
-        <ResourceCombobox<Variant>
-          // Keyed by warehouse: the same query means different things at two
-          // sources, and a cached result would offer the wrong shelf's SKUs.
-          queryKey={`inventory-line-variant-picker:${stockLocationId ?? 'any'}`}
-          value=""
+      <div className="flex items-center justify-between gap-4">
+        {/* Only says anything when there is something to say: the button
+            already names the action. */}
+        <p className="text-muted-foreground text-sm">
+          {locked ? t('admin.inventory_lines.pick_source_first') : null}
+        </p>
+        <Button
+          type="button"
+          variant="outline"
           disabled={locked}
-          onChange={(id) => {
-            const variant = id ? variantById.current.get(id) : undefined
-            if (variant) addVariant(variant)
-          }}
-          search={async (query) => {
-            const res = await adminClient.variants.list({
-              search: query,
-              limit: 8,
-              ...(stockLocationId ? { available_at_stock_location: stockLocationId } : {}),
-            })
-            for (const variant of res.data) variantById.current.set(variant.id, variant)
-            return res
-          }}
-          hydrate={async () => ({ data: [] })}
-          getOptionLabel={(variant) => variant.product_name ?? variant.sku ?? variant.id}
-          renderOption={(variant) => (
-            <div className="flex flex-col">
-              <span className="font-medium">
-                {variant.product_name ?? variant.sku ?? variant.id}
-              </span>
-              <span className="text-xs text-muted-foreground">
-                {t('admin.inventory_lines.columns.sku')} {variant.sku} ·{' '}
-                {formatPrice(variant.price)}
-              </span>
-            </div>
-          )}
-          placeholder={t('admin.inventory_lines.search_placeholder')}
-        />
-        {locked && (
-          <FieldDescription>{t('admin.inventory_lines.pick_source_first')}</FieldDescription>
-        )}
-      </Field>
+          onClick={() => setPickerOpen(true)}
+        >
+          <PlusIcon className="size-4" />
+          {t('admin.inventory_lines.add_label')}
+        </Button>
+      </div>
+
+      {/* A sheet rather than a one-at-a-time combobox: a delivery is picked in
+          one pass, and the same picker the catalogue screens use already does
+          searching, paging and select-all. */}
+      <ResourcePickerSheet<Variant>
+        open={pickerOpen}
+        onOpenChange={setPickerOpen}
+        // Keyed by warehouse: the same query means different things at two
+        // sources, and a cached result would offer the wrong shelf's SKUs.
+        queryKey={`inventory-line-variant-picker:${stockLocationId ?? 'any'}`}
+        selectedIds={lines.map((line) => line.variant.id)}
+        onConfirm={(_ids, variants) => {
+          for (const variant of variants) addVariant(variant)
+        }}
+        search={async (query, page) =>
+          adminClient.variants.list({
+            ...(query ? { search: query } : {}),
+            limit: 25,
+            page,
+            ...(stockLocationId ? { available_at_stock_location: stockLocationId } : {}),
+          })
+        }
+        getOptionLabel={(variant) => variant.product_name ?? variant.sku ?? variant.id}
+        getOptionImageUrl={(variant) => variant.thumbnail_url}
+        getOptionSubtitle={(variant) =>
+          `${t('admin.inventory_lines.columns.sku')} ${variant.sku ?? '—'} · ${formatPrice(variant.price)}`
+        }
+        title={t('admin.inventory_lines.picker_title')}
+        searchPlaceholder={t('admin.inventory_lines.search_placeholder')}
+      />
 
       {lines.length > 0 && (
         <div className="overflow-x-auto rounded-md border">

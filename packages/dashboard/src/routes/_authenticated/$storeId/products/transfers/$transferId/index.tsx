@@ -1,5 +1,12 @@
 import type { StockTransfer, StockTransferItem } from '@spree/admin-sdk'
-import { Can, PageHeader, Subject, useStockLocations, useStore } from '@spree/dashboard-core'
+import {
+  adminClient,
+  Can,
+  PageHeader,
+  Subject,
+  useStockLocations,
+  useStore,
+} from '@spree/dashboard-core'
 import {
   Button,
   Card,
@@ -9,6 +16,7 @@ import {
   DropdownMenuItem,
   ErrorState,
   RelativeTime,
+  ResourceLayout,
   Select,
   SelectContent,
   SelectItem,
@@ -28,6 +36,7 @@ import { useMemo, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { InventoryStatusBadge } from '../../../../../../components/spree/inventory-status-badge'
 import { QuantityCell, QuantityHead } from '../../../../../../components/spree/quantity-cell'
+import { ResourceDetailSkeleton } from '../../../../../../components/spree/route-pending'
 import { StockHistoryCard } from '../../../../../../components/spree/stock-history-card'
 import { TransferCancelDialog } from '../../../../../../components/spree/transfer-cancel-dialog'
 import { VariantLink } from '../../../../../../components/spree/variant-link'
@@ -38,6 +47,7 @@ import {
   useReceiveStockTransfer,
   useStockTransfer,
 } from '../../../../../../hooks/use-stock-transfers'
+import { spreeJsonLinkResolver } from '../../../../../../lib/json-link-resolver'
 import {
   DISCREPANCY_REASONS,
   isClosed,
@@ -54,7 +64,7 @@ function StockTransferDetailPage() {
   const { data: transfer, isLoading, error, refetch } = useStockTransfer(transferId)
 
   if (isLoading) {
-    return <div className="p-4 text-sm text-muted-foreground">{t('admin.common.loading')}</div>
+    return <ResourceDetailSkeleton sidebar />
   }
 
   // A failed request is not a slow one: without this the screen shows
@@ -70,25 +80,27 @@ function StockTransferDetailPage() {
   }
 
   return (
-    <div className="mx-auto flex w-full max-w-4xl flex-col gap-4 p-4">
-      <TransferHeader transfer={transfer} />
+    <ResourceLayout
+      header={<TransferHeader transfer={transfer} />}
+      main={
+        <>
+          {transfer.status === 'draft' || transfer.status === 'ready_to_ship' ? (
+            <PlannedItemsCard transfer={transfer} />
+          ) : (
+            <ReceiveCard transfer={transfer} />
+          )}
 
-      <SummaryCard transfer={transfer} />
-
-      {transfer.status === 'draft' || transfer.status === 'ready_to_ship' ? (
-        <PlannedItemsCard transfer={transfer} />
-      ) : (
-        <ReceiveCard transfer={transfer} />
-      )}
-
-      {/* Where the units on this trip came from and went — read on the
-          destination warehouse, which is the shelf the merchant is
-          reconciling. */}
-      <StockHistoryCard
-        stockTransferId={transfer.id}
-        title={t('admin.stock_transfers.history_title')}
-      />
-    </div>
+          {/* Where the units on this trip came from and went — read on the
+              destination warehouse, which is the shelf the merchant is
+              reconciling. */}
+          <StockHistoryCard
+            stockTransferId={transfer.id}
+            title={t('admin.stock_transfers.history_title')}
+          />
+        </>
+      }
+      sidebar={<SummaryCard transfer={transfer} />}
+    />
   )
 }
 
@@ -137,9 +149,11 @@ function SummaryCard({ transfer }: { transfer: StockTransfer }) {
         <CardTitle>{t('admin.stock_transfers.details_title')}</CardTitle>
       </CardHeader>
       <CardContent>
-        <dl className="grid grid-cols-3 gap-y-2 text-sm">
+        {/* One label-over-value pair per row: the card sits in the narrow
+            sidebar column, where a side-by-side grid wraps every value. */}
+        <dl className="flex flex-col gap-3 text-sm">
           <dt className="text-muted-foreground">{t('admin.stock_transfers.fields.source')}</dt>
-          <dd className="col-span-2">
+          <dd>
             <WarehouseLink
               storeId={storeId}
               id={transfer.source_location_id}
@@ -148,7 +162,7 @@ function SummaryCard({ transfer }: { transfer: StockTransfer }) {
           </dd>
 
           <dt className="text-muted-foreground">{t('admin.stock_transfers.fields.destination')}</dt>
-          <dd className="col-span-2">
+          <dd>
             <WarehouseLink
               storeId={storeId}
               id={transfer.destination_location_id}
@@ -160,7 +174,7 @@ function SummaryCard({ transfer }: { transfer: StockTransfer }) {
           </dd>
 
           <dt className="text-muted-foreground">{t('admin.stock_transfers.fields.units')}</dt>
-          <dd className="col-span-2 tabular-nums">
+          <dd className="tabular-nums">
             {t('admin.stock_transfers.units_summary', {
               received: transfer.quantity_received_total,
               shipped: transfer.quantity_shipped_total,
@@ -172,26 +186,22 @@ function SummaryCard({ transfer }: { transfer: StockTransfer }) {
               <dt className="text-muted-foreground">
                 {t('admin.stock_transfers.fields.reference')}
               </dt>
-              <dd className="col-span-2">{transfer.reference}</dd>
+              <dd>{transfer.reference}</dd>
             </>
           )}
 
           {transfer.notes && (
             <>
               <dt className="text-muted-foreground">{t('admin.stock_transfers.fields.notes')}</dt>
-              <dd className="col-span-2 whitespace-pre-line">{transfer.notes}</dd>
+              <dd className="whitespace-pre-line">{transfer.notes}</dd>
             </>
           )}
 
           <dt className="text-muted-foreground">{t('admin.stock_transfers.fields.shipped_at')}</dt>
-          <dd className="col-span-2">
-            {transfer.shipped_at ? <RelativeTime iso={transfer.shipped_at} /> : '—'}
-          </dd>
+          <dd>{transfer.shipped_at ? <RelativeTime iso={transfer.shipped_at} /> : '—'}</dd>
 
           <dt className="text-muted-foreground">{t('admin.stock_transfers.fields.received_at')}</dt>
-          <dd className="col-span-2">
-            {transfer.received_at ? <RelativeTime iso={transfer.received_at} /> : '—'}
-          </dd>
+          <dd>{transfer.received_at ? <RelativeTime iso={transfer.received_at} /> : '—'}</dd>
         </dl>
       </CardContent>
     </Card>
@@ -540,6 +550,12 @@ function TransferHeader({ transfer }: { transfer: StockTransfer }) {
           )
         }
         resource={{ id: transfer.id, number: transfer.number }}
+        jsonPreview={{
+          title: transfer.number,
+          fetch: () => adminClient.stockTransfers.get(transfer.id, { expand: ['items'] }),
+          endpoint: `/api/v3/admin/stock_transfers/${transfer.id}`,
+          resolveLink: spreeJsonLinkResolver(storeId),
+        }}
       />
     </>
   )

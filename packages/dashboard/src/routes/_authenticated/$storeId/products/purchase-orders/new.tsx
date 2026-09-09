@@ -1,4 +1,3 @@
-import { PageHeader } from '@spree/dashboard-core'
 import { createFileRoute, useNavigate } from '@tanstack/react-router'
 import { useTranslation } from 'react-i18next'
 import {
@@ -44,17 +43,15 @@ function NewPurchaseOrderPage() {
   }
 
   return (
-    <div className="mx-auto flex w-full max-w-3xl flex-col gap-4 p-4">
-      <PageHeader title={t('admin.purchase_orders.new_title')} backTo="products/purchase-orders" />
-
-      <PurchaseOrderForm
-        initial={EMPTY_PURCHASE_ORDER}
-        submitLabel={t('admin.purchase_orders.actions.create_draft')}
-        pendingLabel={t('admin.actions.creating')}
-        pending={createMutation.isPending}
-        onSubmit={handleSubmit}
-        onCancel={() => navigate({ to: '/$storeId/products/purchase-orders', params: { storeId } })}
-      />
-    </div>
+    <PurchaseOrderForm
+      initial={EMPTY_PURCHASE_ORDER}
+      title={t('admin.purchase_orders.new_title')}
+      backTo="products/purchase-orders"
+      submitLabel={t('admin.purchase_orders.actions.create_draft')}
+      pendingLabel={t('admin.actions.creating')}
+      pending={createMutation.isPending}
+      onSubmit={handleSubmit}
+      onCancel={() => navigate({ to: '/$storeId/products/purchase-orders', params: { storeId } })}
+    />
   )
 }
