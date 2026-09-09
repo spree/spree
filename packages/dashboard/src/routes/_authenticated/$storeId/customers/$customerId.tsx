@@ -51,7 +51,8 @@ function CustomerBody({ customer }: { customer: Customer }) {
   const { data, isLoading } = useCustomerOrders(customer.id, { limit: 10 })
   const orders = data?.data ?? []
   const totalCount = data?.meta?.count ?? orders.length
-  const lastPlacedOrder = orders.find((o) => o.status === 'placed')
+  const { data: placedOrders } = useCustomerOrders(customer.id, { limit: 1, status: 'placed' })
+  const lastPlacedOrder = placedOrders?.data?.[0]
 
   const defaultShipping = customer.addresses?.find((a) => a.is_default_shipping)
   const location = [defaultShipping?.city, defaultShipping?.country_code].filter(Boolean).join(', ')
