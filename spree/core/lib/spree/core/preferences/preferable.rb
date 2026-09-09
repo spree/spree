@@ -62,6 +62,7 @@ module Spree::Preferences::Preferable
     send self.class.preference_default_getter_method(name)
   end
 
+
   def preference_deprecated(name)
     has_preference! name
     send(self.class.preference_deprecated_getter_method(name))

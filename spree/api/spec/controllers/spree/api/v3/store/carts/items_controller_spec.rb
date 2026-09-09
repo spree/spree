@@ -14,6 +14,35 @@ RSpec.describe Spree::Api::V3::Store::Carts::ItemsController, type: :controller 
     request.headers['Authorization'] = "Bearer #{jwt_token}"
   end
 
+  # Adding to a cart prices tax, so a tax engine that fails has to answer as a
+  # refusal a storefront can read. Escaping as a 500 with an HTML body is
+  # indistinguishable from a platform bug, which is the failure this maps away.
+  describe 'when the tax engine fails' do
+    it 'refuses the change and says a retry is worth trying' do
+      allow_any_instance_of(Spree::Cart).to receive(:tax_provider).
+        and_raise(Spree::Tax::ProviderUnavailable.new('Failed to open TCP connection'))
+
+      post :create, params: { cart_id: order.prefixed_id, variant_id: variant.prefixed_id, quantity: 1 }
+
+      expect(response).to have_http_status(:unprocessable_content)
+      expect(json_response['error']['code']).to eq('tax_provider_unavailable')
+      # Our endpoint is named in the underlying message, so it stays in the
+      # error tracker rather than going to the customer.
+      expect(json_response['error']['message']).not_to include('TCP')
+    end
+
+    it 'passes on what the engine said when it refused the request itself' do
+      allow_any_instance_of(Spree::Cart).to receive(:tax_provider).
+        and_raise(Spree::Tax::CalculationRefused.new('Zip is not valid for the state'))
+
+      post :create, params: { cart_id: order.prefixed_id, variant_id: variant.prefixed_id, quantity: 1 }
+
+      expect(response).to have_http_status(:unprocessable_content)
+      expect(json_response['error']['code']).to eq('tax_calculation_refused')
+      expect(json_response['error']['message']).to eq('Zip is not valid for the state')
+    end
+  end
+
   describe 'POST #create' do
     it 'adds a line item and returns updated cart' do
       expect do

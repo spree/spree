@@ -1,0 +1,152 @@
+require 'spec_helper'
+
+RSpec.describe SpreeAvalara::ItemPresenter do
+  let(:address) { create(:address, city: 'Absarokee', state_code: 'MT', country_code: 'US', zipcode: '59001') }
+  let(:cart) { create(:cart, store: @default_store, ship_address: address, bill_address: address) }
+  let(:line_item) { create(:line_item, cart: cart, order: nil, price: 25, quantity: 2) }
+
+  def present(item, tax_included: false)
+    described_class.new(item: item, owner: cart, tax_included: tax_included).call
+  end
+
+  describe 'a line item' do
+    it 'is identified by its prefixed id and priced at its taxable basis' do
+      payload = present(line_item)
+
+      expect(payload[:number]).to eq(line_item.prefixed_id)
+      expect(payload[:quantity]).to eq(2)
+      expect(payload[:amount]).to eq(line_item.taxable_basis)
+    end
+
+    # Without these a merchant opening the transaction in Avalara sees a column
+    # of prefixed ids and cannot tell what was taxed.
+    it 'names the item and carries its SKU' do
+      line_item.variant.update!(sku: 'PROBE-SKU-1')
+
+      payload = present(line_item.reload)
+
+      expect(payload[:description]).to eq(line_item.name)
+      expect(payload[:itemCode]).to eq('PROBE-SKU-1')
+    end
+
+    # Avalara reads an item code against the company's own catalogue, so an
+    # invented one would occupy a namespace the merchant never assigned.
+    it 'sends no item code when the variant has no SKU' do
+      line_item.variant.update!(sku: '')
+
+      expect(present(line_item.reload)).not_to have_key(:itemCode)
+    end
+
+    it 'cuts a description Avalara would refuse' do
+      # Set in memory, not saved: a name this long is wider than the column on
+      # MySQL, and the truncation is what is under test rather than the write.
+      line_item.product.name = 'W' * 400
+
+      expect(present(line_item)[:description].length).to eq(described_class::DESCRIPTION_LIMIT)
+    end
+
+    # The basis already has order-level promotions distributed into it, so
+    # telling Avalara to discount the line again would take it twice.
+    it 'never asks Avalara to discount the line' do
+      payload = present(line_item)
+
+      expect(payload[:discount]).to eq(0)
+      expect(payload[:discounted]).to be(false)
+    end
+
+    it 'passes the resolved inclusiveness through' do
+      expect(present(line_item, tax_included: true)[:taxIncluded]).to be(true)
+      expect(present(line_item)[:taxIncluded]).to be(false)
+    end
+
+    # Classification lives on the variant; the line copies it on every save.
+    it 'sends the item tax category code when the merchant classified the product' do
+      category = create(:tax_category, store: @default_store, tax_code: 'PC040100')
+      line_item.variant.update!(tax_category: category)
+      line_item.save!
+
+      expect(present(line_item.reload)[:taxCode]).to eq('PC040100')
+    end
+
+    it "falls back to the store default category's code" do
+      create(:tax_category, store: @default_store, tax_code: 'PC030000', is_default: true)
+
+      expect(present(line_item)[:taxCode]).to eq('PC030000')
+    end
+
+    # A category with no Avalara code classifies nothing as far as AvaTax is
+    # concerned, which is the common case for a store that never set one.
+    it 'falls back to generic tangible goods when no category carries a code' do
+      expect(line_item.tax_category&.tax_code).to be_blank
+
+      # The literal, not the constant the presenter reads: comparing the code to
+      # itself passes whatever the value becomes, and this one is Avalara's —
+      # 'NT' would file every uncategorised line as non-taxable.
+      expect(present(line_item)[:taxCode]).to eq('P0000000')
+    end
+  end
+
+  describe 'a fulfillment' do
+    let(:fulfillment) { create(:fulfillment, cart: cart, order: nil) }
+
+    # A fulfillment carries no tax category of its own; the delivery method it
+    # was rated with does.
+    it 'is taxed as freight when the delivery method names no category' do
+      expect(present(fulfillment)[:taxCode]).to eq('FR')
+    end
+
+    # A delivery line that says only "shipping" is no more readable than the id
+    # it replaced, so the method the buyer actually chose is named.
+    it 'names the delivery the buyer chose, and claims no item code' do
+      payload = present(fulfillment)
+
+      expect(payload[:description]).to start_with('Delivery')
+      expect(payload).not_to have_key(:itemCode)
+    end
+
+    it 'ships from its own stock location' do
+      expect(present(fulfillment)[:addresses][:shipFrom]).to include(
+        country: fulfillment.stock_location.country_code
+      )
+    end
+
+    # A line block naming only an origin makes AvaTax source the line to that
+    # origin — a California warehouse shipping to Montana was taxed at
+    # California's rate instead of Montana's nothing. Both ends, or neither.
+    it 'names the destination alongside the origin' do
+      addresses = present(fulfillment)[:addresses]
+
+      expect(addresses[:shipTo]).to include(region: cart.tax_address.state_code)
+      expect(addresses.keys).to contain_exactly(:shipFrom, :shipTo)
+    end
+  end
+
+  describe 'a fee' do
+    let(:fee) { create(:fee, cart: cart, order: nil, amount: 7.5) }
+
+    it 'is priced at its amount' do
+      expect(present(fee)[:amount]).to eq(7.5)
+      expect(present(fee)[:quantity]).to eq(1)
+    end
+
+    it 'is named by its label, and claims no item code' do
+      fee.update!(label: 'Import duty')
+      payload = present(fee.reload)
+
+      expect(payload[:description]).to eq('Import duty')
+      expect(payload).not_to have_key(:itemCode)
+    end
+
+    # Parity with the Internal engine, which taxes a category-less fee with the
+    # store default; with no default there is nothing to claim, so the key goes.
+    it 'omits the tax code when the store has no default category' do
+      expect(present(fee)).not_to have_key(:taxCode)
+    end
+
+    it "uses the store default category's code when there is one" do
+      create(:tax_category, store: @default_store, tax_code: 'OF040000', is_default: true)
+
+      expect(present(fee)[:taxCode]).to eq('OF040000')
+    end
+  end
+end

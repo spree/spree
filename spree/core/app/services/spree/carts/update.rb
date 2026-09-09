@@ -25,10 +25,11 @@ module Spree
         success(cart)
       rescue ActiveRecord::RecordNotFound
         raise
-      rescue Spree::Pricing::PriceResolution::ProviderUnavailable => e
-        # A strict store could not confirm a price. The transaction has rolled
-        # back, so the address change is not committed either — better than
-        # saving a destination whose prices nobody stood behind.
+      rescue Spree::Pricing::PriceResolution::ProviderUnavailable, Spree::Tax::ProviderError => e
+        # A strict store could not confirm a price, or the tax engine did not
+        # produce tax. The transaction has rolled back, so the address change is
+        # not committed either — better than saving a destination whose prices
+        # or tax nobody stood behind.
         #
         # The in-memory cart still holds the rolled-back attributes, though, so
         # a caller that renders the object it passed in would show the customer
@@ -45,7 +46,7 @@ module Spree
         end
         cart.warnings |= warnings if warnings.present?
 
-        failure(cart, Spree.t('cart_line_item.pricing_unavailable'))
+        failure(cart, unavailable_message_for(e))
       rescue ActiveRecord::RecordInvalid => e
         failure(cart, e.record.errors.full_messages.to_sentence)
       rescue StandardError => e
@@ -215,6 +216,18 @@ module Spree
         end
       end
 
+      # Three ways an external service can leave a sale unpriced, and a
+      # customer can only act on what they are told. A refused calculation
+      # carries the engine's own words, because "the postcode is not valid for
+      # that state" is something they can fix and "please try again" is not.
+      def unavailable_message_for(error)
+        case error
+        when Spree::Tax::CalculationRefused then error.message.to_s
+        when Spree::Tax::ProviderError then Spree.t('cart_line_item.tax_unavailable')
+        else Spree.t('cart_line_item.pricing_unavailable')
+        end
+      end
+
       # Three-way dispatch on the cart→checkout transition:
       # entering checkout → Reserve, mid-checkout mutation → Extend, reverting to cart → Release.
       # A failed Reserve raises so the enclosing transaction rolls back and the
@@ -242,10 +255,13 @@ module Spree
         else
           cart.recalculate_totals!
         end
-      rescue Spree::Pricing::PriceResolution::ProviderUnavailable
+      rescue Spree::Pricing::PriceResolution::ProviderUnavailable, Spree::Tax::ProviderError
         # Deliberately not swallowed like the rest: a strict store refusing to
         # price must roll the whole update back, so `call` sees it and the
-        # address change does not commit around unconfirmed prices.
+        # address change does not commit around unconfirmed prices. A tax engine
+        # that cannot answer is the same problem one column over — swallowing it
+        # showed the customer a total with tax missing and saved the address
+        # anyway, so the mistake only surfaced when they tried to pay.
         raise
       rescue StandardError => e
         Rails.error.report(e, context: { order_id: cart.id }, source: 'spree.checkout')

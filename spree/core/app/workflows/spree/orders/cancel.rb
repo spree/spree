@@ -249,8 +249,16 @@ module Spree
 
       # Reverses the filed tax document. The canceled sale must stop appearing
       # in the merchant's tax liability.
+      #
+      # Reported rather than raised, as `Carts::Complete` treats its filing. The
+      # cancellation and its payments are already settled by now, and the steps
+      # after this one update statuses and announce `order.canceled` — so
+      # raising abandoned a cancelled order half-recorded. Void is idempotent, so
+      # a standing document can follow.
       def void_tax
         order.tax_provider.void(order)
+      rescue Spree::Tax::ProviderError => error
+        Rails.error.report(error, context: { order_id: order.id }, source: 'spree.orders.cancel')
       end
     end
   end

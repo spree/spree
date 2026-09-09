@@ -5,7 +5,7 @@ module Spree
         class DeliveryMethodRuleSerializer < BaseSerializer
           typelize type: :string, active: :boolean,
                    preferences: 'Record<string, unknown>',
-                   preference_schema: "Array<{ key: string; type: string; default: unknown; choices?: string[] }>",
+                   preference_schema: "Array<{ key: string; type: string; default: unknown; choices?: { value: string; label?: string }[] }>",
                    product_ids: [:string, multi: true]
 
           attributes :active, created_at: :iso8601, updated_at: :iso8601

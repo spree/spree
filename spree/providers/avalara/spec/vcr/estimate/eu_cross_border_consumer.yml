@@ -1,0 +1,94 @@
+---
+http_interactions:
+- request:
+    method: post
+    uri: https://sandbox-rest.avatax.com/api/v2/transactions/create
+    body:
+      encoding: UTF-8
+      string: '{"type":"SalesOrder","companyCode":"AVALARA_COMPANY","date":"2026-09-03","commit":false,"currencyCode":"PLN","customerCode":"cart_UkLWZg9DAJ","addresses":{"shipFrom":{"line1":"Prosta
+        51","city":"Warszawa","country":"PL","postalCode":"00-838"},"shipTo":{"line1":"Unter
+        den Linden 1","line2":"Northwest","city":"Berlin","country":"DE","postalCode":"10117"}},"lines":[{"number":"li_UkLWZg9DAJ","quantity":1,"amount":"100.0","taxIncluded":true,"discounted":false,"discount":0,"description":"Product
+        16626","itemCode":"SKU-1","taxCode":"P0000000","addresses":{"shipFrom":{"line1":"Prosta
+        51","city":"Warszawa","country":"PL","postalCode":"00-838"},"shipTo":{"line1":"Unter
+        den Linden 1","line2":"Northwest","city":"Berlin","country":"DE","postalCode":"10117"}}}]}'
+    headers:
+      Accept:
+      - application/json; charset=utf-8
+      User-Agent:
+      - AvaTax Ruby Gem 26.7.3
+      X-Avalara-Client:
+      - a0o0b000005HsXPAA0;Spree by AVALARA_COMPANY;RubySdk;26.7.3;
+      Content-Type:
+      - application/json
+      Authorization:
+      - "<AVATAX_AUTHORIZATION>"
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+  response:
+    status:
+      code: 201
+      message: Created
+    headers:
+      Date:
+      - Thu, 03 Sep 2026 11:32:46 GMT
+      Content-Type:
+      - application/json; charset=utf-8
+      Transfer-Encoding:
+      - chunked
+      Connection:
+      - keep-alive
+      Cache-Control:
+      - private, no-cache, no-store
+      Location:
+      - "/api/v2/companies/848106/transactions/0"
+      Vary:
+      - Accept-Encoding
+      Strict-Transport-Security:
+      - max-age=31536000; includeSubDomains
+      X-Content-Type-Options:
+      - nosniff
+      X-Frame-Options:
+      - sameorigin
+      X-Xss-Protection:
+      - 1; mode=block
+      Referrer-Policy:
+      - same-origin
+      X-Permitted-Cross-Domain-Policies:
+      - none
+      X-Correlation-Id:
+      - d46a63e8-a165-4fb4-9814-50263e7fab24
+      X-Avalara-Uid:
+      - d46a63e8-a165-4fb4-9814-50263e7fab24
+      X-Avalara-Gateway-Pod:
+      - avagateway-6766775548-qjkdj
+      Serverduration:
+      - '00:00:00.0032063'
+      Api-Supported-Versions:
+      - '2.0'
+      X-Envoy-Upstream-Service-Time:
+      - '4'
+      Content-Security-Policy:
+      - frame-ancestors 'self';
+      X-Download-Options:
+      - noopen
+      X-Dns-Prefetch-Control:
+      - 'off'
+      Permissions-Policy:
+      - camera 'none';microphone 'none';geolocation 'none';encrypted-media 'none';payment
+        'none';speaker 'none';usb 'none';
+      X-Cip-Engine:
+      - containers
+      X-Cip-Site:
+      - gcp_us-west3
+      X-Cip-Environment:
+      - sbx
+    body:
+      encoding: UTF-8
+      string: '{"id":0,"code":"ba824915-6cc3-4c9d-a674-1ce5a4936f56","companyId":848106,"date":"2026-09-03","paymentDate":"2026-09-03","status":"Temporary","type":"SalesOrder","batchCode":"","currencyCode":"PLN","exchangeRateCurrencyCode":"PLN","customerUsageType":"","entityUseCode":"","customerVendorCode":"cart_UkLWZg9DAJ","customerCode":"cart_UkLWZg9DAJ","exemptNo":"","reconciled":false,"locationCode":"","reportingLocationCode":"","purchaseOrderNo":"","referenceCode":"","salespersonCode":"","totalAmount":81.3,"totalExempt":0.0,"totalDiscount":0.0,"totalTax":18.7,"totalTaxable":81.3,"totalTaxCalculated":18.7,"adjustmentReason":"NotAdjusted","locked":false,"version":1,"originAddressId":2,"destinationAddressId":1,"exchangeRateEffectiveDate":"2026-09-03","exchangeRate":1.0,"modifiedDate":"2026-09-03T11:32:46.2594099Z","modifiedUserId":429316,"taxDate":"2026-09-03","lines":[{"id":0,"transactionId":0,"lineNumber":"li_UkLWZg9DAJ","customerUsageType":"","entityUseCode":"","description":"Product
+        16626","destinationAddressId":1,"originAddressId":2,"discountAmount":0.0,"exemptAmount":0.0,"exemptCertId":0,"exemptNo":"","isItemTaxable":true,"itemCode":"SKU-1","lineAmount":81.3,"quantity":1.0,"ref1":"","ref2":"","reportingDate":"2026-09-03","revAccount":"","sourcing":"Origin","tax":18.7,"taxableAmount":81.3,"taxCalculated":18.7,"taxCode":"P0000000","taxCodeId":8087,"taxDate":"2026-09-03","taxIncluded":true,"details":[{"id":0,"transactionLineId":0,"transactionId":0,"country":"PL","region":"PL","stateFIPS":"PL","exemptAmount":0.0,"jurisCode":"PL","jurisName":"POLAND","jurisdictionId":200102,"stateAssignedNo":"","jurisType":"CNT","jurisdictionType":"Country","nonTaxableAmount":0.0,"rate":0.23,"sourcing":"Origin","tax":18.7,"taxableAmount":81.3,"taxType":"Output","taxSubTypeId":"O","taxTypeGroupId":"InputAndOutput","taxName":"Standard
+        Rate","taxAuthorityTypeId":45,"taxCalculated":18.7,"rateType":"Standard","rateTypeCode":"S","taxableUnits":81.3,"nonTaxableUnits":0.0,"exemptUnits":0.0,"unitOfBasis":"PerCurrencyUnit","isNonPassThru":false,"isFee":false,"reportingTaxableUnits":81.3,"reportingNonTaxableUnits":0.0,"reportingExemptUnits":0.0,"reportingTax":18.7,"reportingTaxCalculated":18.7,"liabilityType":"Seller","chargedTo":"Buyer","vatCode":"PL_S_-_230_C"}],"nonPassthroughDetails":[],"lineLocationTypes":[{"documentLineLocationTypeId":0,"documentLineId":0,"documentAddressId":2,"locationTypeCode":"ShipFrom"},{"documentLineLocationTypeId":0,"documentLineId":0,"documentAddressId":1,"locationTypeCode":"ShipTo"}],"hsCode":"","costInsuranceFreight":0.0,"vatCode":"PLS-230C","vatNumberTypeId":0}],"addresses":[{"id":1,"transactionId":0,"boundaryLevel":"Zip5","line1":"Unter
+        den Linden 1","line2":"Northwest","line3":"","city":"Berlin","region":"","postalCode":"10117","country":"DE","taxRegionId":205079,"taxRegionIdAv":0,"latitude":"","longitude":""},{"id":2,"transactionId":0,"boundaryLevel":"Zip5","line1":"Prosta
+        51","line2":"","line3":"","city":"Warszawa","region":"","postalCode":"00-838","country":"PL","taxRegionId":205102,"taxRegionIdAv":0,"latitude":"","longitude":""}],"locationTypes":[{"documentLocationTypeId":0,"documentId":0,"documentAddressId":2,"locationTypeCode":"ShipFrom"},{"documentLocationTypeId":0,"documentId":0,"documentAddressId":1,"locationTypeCode":"ShipTo"}],"summary":[{"country":"PL","region":"PL","jurisType":"Country","jurisCode":"PL","jurisName":"POLAND","taxAuthorityType":45,"stateAssignedNo":"","taxType":"Output","taxSubType":"O","taxName":"Standard
+        Rate","rateType":"Standard","taxable":81.3,"rate":0.23,"tax":18.7,"taxCalculated":18.7,"nonTaxable":0.0,"exemption":0.0}]}'
+  recorded_at: Thu, 03 Sep 2026 11:32:46 GMT
+recorded_with: VCR 6.4.0

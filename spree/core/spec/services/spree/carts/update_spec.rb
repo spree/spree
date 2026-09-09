@@ -11,6 +11,26 @@ module Spree
     describe '#call' do
       subject { described_class.call(cart: cart, params: params) }
 
+      # Swallowing this used to save the address and show a total with no tax,
+      # so the customer only met the problem when they tried to pay — and met it
+      # as an exception. A destination whose tax nobody could compute is not a
+      # destination worth keeping.
+      it 'refuses an address change when the tax engine cannot be reached' do
+        address = create(:address, state_code: 'NY', country_code: 'US', zipcode: '10001')
+        cart_under_test = cart
+        provider = instance_double(Spree::TaxProvider::Internal)
+        allow(provider).to receive(:estimate).
+          and_raise(Spree::Tax::ProviderUnavailable.new('could not be reached'))
+        allow_any_instance_of(Spree::Cart).to receive(:tax_provider).and_return(provider)
+
+        result = described_class.call(cart: cart_under_test,
+                                      params: { shipping_address_id: address.prefixed_id })
+
+        expect(result).to be_failure
+        expect(result.error.to_s).to include('Tax could not be calculated')
+        expect(cart_under_test.reload.ship_address_id).not_to eq(address.id)
+      end
+
       describe 'updating email' do
         let(:params) { { email: 'new@example.com' } }
 

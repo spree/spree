@@ -21,10 +21,13 @@ import {
   CardHeader,
   CardTitle,
   Combobox,
+  ComboboxCollection,
   ComboboxContent,
   ComboboxEmpty,
+  ComboboxGroup,
   ComboboxInput,
   ComboboxItem,
+  ComboboxLabel,
   ComboboxList,
   DropdownMenu,
   DropdownMenuContent,
@@ -56,7 +59,7 @@ import {
 } from '@spree/dashboard-ui/icons'
 import { parseISO } from 'date-fns'
 import { formatInTimeZone } from 'date-fns-tz'
-import { useEffect, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { Controller, useForm } from 'react-hook-form'
 import { useTranslation } from 'react-i18next'
 import {
@@ -64,6 +67,7 @@ import {
   useDeleteTaxExemptionCertificate,
   useRevokeTaxExemptionCertificate,
   useTaxExemptionCertificates,
+  useTaxExemptionReasonCodes,
   useVerifyTaxExemptionCertificate,
 } from '../../hooks/use-companies'
 import {
@@ -82,6 +86,13 @@ import { JurisdictionLabel } from './jurisdiction-label'
 function StoreDate({ iso }: { iso: string }) {
   const { timezone } = useStore()
   return <>{formatInTimeZone(parseISO(iso), timezone, 'PP')}</>
+}
+
+/** Reasons offered by one tax provider. */
+interface ReasonGroup {
+  /** Provider display name, or '' for the neutral default list. */
+  value: string
+  items: ReasonOption[]
 }
 
 /** One selectable exemption reason. */
@@ -109,9 +120,29 @@ export function TaxExemptionCertificatesCard({
   const verifyMutation = useVerifyTaxExemptionCertificate(companyId)
   const revokeMutation = useRevokeTaxExemptionCertificate(companyId)
   const deleteMutation = useDeleteTaxExemptionCertificate(companyId)
+  const { data: reasonCodeGroups } = useTaxExemptionReasonCodes(companyId)
   const [addOpen, setAddOpen] = useState(false)
 
   const certificates = data?.data ?? []
+
+  // The same vocabulary the form offers, so a certificate reads back as the
+  // reason that was picked rather than as the code it stores.
+  const reasonLabels = useMemo(() => {
+    const labels = new Map<string, string>()
+    for (const group of reasonCodeGroups?.data ?? []) {
+      for (const code of group.reason_codes) labels.set(code.value, code.label)
+    }
+    return labels
+  }, [reasonCodeGroups])
+
+  // A row recorded before the vocabulary moved to the server holds one of the
+  // six values the dashboard used to offer, which are translated locally.
+  function reasonLabel(code: string) {
+    return (
+      reasonLabels.get(code) ??
+      t(`admin.tax_exemption_certificates.reason_codes.${code}`, { defaultValue: code })
+    )
+  }
 
   async function handleRevoke(certificate: TaxExemptionCertificate) {
     const ok = await confirm({
@@ -201,9 +232,7 @@ export function TaxExemptionCertificatesCard({
                   )}
                 </div>
                 <span className="text-muted-foreground text-xs">
-                  {t(`admin.tax_exemption_certificates.reason_codes.${certificate.reason_code}`, {
-                    defaultValue: certificate.reason_code,
-                  })}
+                  {reasonLabel(certificate.reason_code)}
                   {' · '}
                   <JurisdictionLabel
                     countryCode={certificate.country_code}
@@ -338,6 +367,7 @@ function CertificateSheet({
 }) {
   const { t } = useTranslation()
   const createMutation = useCreateTaxExemptionCertificate(companyId)
+  const { data: reasonCodeGroups } = useTaxExemptionReasonCodes(companyId)
   const form = useForm<TaxExemptionCertificateFormValues>({
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     resolver: zodResolver(taxExemptionCertificateFormSchema) as any,
@@ -405,16 +435,42 @@ function CertificateSheet({
                   name="reason_code"
                   control={form.control}
                   render={({ field }) => {
-                    const reasonOptions = TAX_EXEMPTION_REASON_CODES.map((code) => ({
-                      value: code,
-                      label: t(`admin.tax_exemption_certificates.reason_codes.${code}`, {
-                        defaultValue: code,
-                      }),
+                    // Grouped by provider, since a store with two engines
+                    // installed must not record a code the engine calculating
+                    // its tax has never heard of. A provider's own labels are
+                    // used as sent; only the neutral default list is localized,
+                    // because those six values are Spree's own vocabulary.
+                    // Until the fetch resolves — or if it fails — fall back to
+                    // Spree's own six, so the field is never empty.
+                    const fetched = reasonCodeGroups?.data
+                    const served = fetched?.length
+                      ? fetched
+                      : [
+                          {
+                            provider: null,
+                            reason_codes: TAX_EXEMPTION_REASON_CODES.map((code) => ({
+                              value: code,
+                              label: code,
+                            })),
+                          },
+                        ]
+                    const groups: ReasonGroup[] = served.map((group) => ({
+                      value: group.provider ?? '',
+                      items: group.reason_codes.map((code) => ({
+                        value: code.value,
+                        label: group.provider
+                          ? code.label
+                          : t(`admin.tax_exemption_certificates.reason_codes.${code.value}`, {
+                              defaultValue: code.label,
+                            }),
+                      })),
                     }))
-                    const selected = reasonOptions.find((o) => o.value === field.value) ?? null
+                    const selected =
+                      groups.flatMap((group) => group.items).find((o) => o.value === field.value) ??
+                      null
                     return (
                       <Combobox
-                        items={reasonOptions}
+                        items={groups}
                         value={selected}
                         onValueChange={(option: ReasonOption | null) =>
                           field.onChange(option?.value ?? '')
@@ -429,10 +485,17 @@ function CertificateSheet({
                         <ComboboxContent>
                           <ComboboxEmpty>{t('admin.common.no_results')}</ComboboxEmpty>
                           <ComboboxList>
-                            {(option: ReasonOption) => (
-                              <ComboboxItem key={option.value} value={option}>
-                                {option.label}
-                              </ComboboxItem>
+                            {(group: ReasonGroup) => (
+                              <ComboboxGroup key={group.value || 'default'} items={group.items}>
+                                {group.value ? <ComboboxLabel>{group.value}</ComboboxLabel> : null}
+                                <ComboboxCollection>
+                                  {(option: ReasonOption) => (
+                                    <ComboboxItem key={option.value} value={option}>
+                                      {option.label}
+                                    </ComboboxItem>
+                                  )}
+                                </ComboboxCollection>
+                              </ComboboxGroup>
                             )}
                           </ComboboxList>
                         </ComboboxContent>

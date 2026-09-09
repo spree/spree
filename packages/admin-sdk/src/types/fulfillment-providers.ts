@@ -70,3 +70,29 @@ export interface DeliveryRateProviderCatalogEntry {
   /** Human-readable label for display, e.g. `UPS Ground`. */
   label: string
 }
+
+/**
+ * Exemption reasons a merchant may pick when recording a tax exemption
+ * certificate, as returned by
+ * `GET /companies/:company_id/tax_exemption_certificates/reason_codes`.
+ *
+ * Grouped by the tax provider whose engine understands the vocabulary, so a
+ * store with two engines installed can tell them apart rather than recording a
+ * code the engine calculating its tax has never heard of. `provider` is null
+ * for the neutral default list, which is what a store with no provider
+ * installed is offered.
+ */
+export interface TaxExemptionReasonCodeGroup {
+  /** Provider display name, e.g. `Avalara AvaTax`; null for the default list. */
+  provider: string | null
+  /** The reasons this provider understands. */
+  reason_codes: TaxExemptionReasonCode[]
+}
+
+/** One exemption reason: what gets stored, and what a merchant reads. */
+export interface TaxExemptionReasonCode {
+  /** Stored on the certificate as `reason_code`, e.g. `G` or `resale`. */
+  value: string
+  /** Human-readable label as the provider names it, e.g. `RESALE`. */
+  label: string
+}

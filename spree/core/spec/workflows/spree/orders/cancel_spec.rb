@@ -103,6 +103,24 @@ module Spree
 
         expect(provider).to have_received(:void).with(order)
       end
+
+      # The cancellation and its payments are settled before the void runs, and
+      # the steps after it update statuses and announce it — so raising left a
+      # cancelled order half-recorded and reported a failure.
+      it 'cancels the order even when the tax engine cannot be reached' do
+        provider = instance_double(Spree::TaxProvider::Internal, estimate: nil)
+        allow(provider).to receive(:void).
+          and_raise(Spree::Tax::ProviderUnavailable.new('Failed to open TCP connection'))
+        allow(order).to receive(:tax_provider).and_return(provider)
+        allow(Rails.error).to receive(:report)
+
+        expect(result).to be_success
+        expect(order.reload).to be_canceled
+        # Void is idempotent, so a standing document can follow — but the gap
+        # is reported rather than dropped.
+        expect(Rails.error).to have_received(:report).
+          with(instance_of(Spree::Tax::ProviderUnavailable), hash_including(source: 'spree.orders.cancel'))
+      end
     end
 
     # A split checkout is the one flow where the refund amount is read: the

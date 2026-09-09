@@ -31,6 +31,38 @@ module Spree
       expect(line_item.price_source).to eq('manual')
     end
 
+    # The path company certificates take: unpinned, it resolves live at credit.
+    describe 'tax exemptions' do
+      let(:draft) { create(:order_ready_to_ship, store: store).tap { |o| o.update_columns(status: 'draft', completed_at: nil) } }
+
+      def resolving(claims)
+        allow(Spree.tax_resolve_exemptions_service).to receive(:new).
+          and_return(instance_double(Spree::Tax::ResolveExemptions,
+                                     call: Spree::ServiceModule::Result.new(true, claims, nil)))
+      end
+
+      it 'pins the claims the draft was priced with' do
+        resolving([Spree::TaxExemption.new(reason_code: 'resale', certificate_number: 'C-1',
+                                           country_code: 'US', state_code: 'CA')])
+
+        described_class.call(order: draft, payment_pending: true)
+
+        expect(draft.reload.applied_tax_exemptions.sole).to include(
+          'reason_code' => 'resale', 'certificate_number' => 'C-1',
+          'country_code' => 'US', 'state_code' => 'CA'
+        )
+      end
+
+      # An empty list, not nil: nil means "placed before this existed".
+      it 'pins an empty list when it claimed nothing' do
+        resolving([])
+
+        described_class.call(order: draft, payment_pending: true)
+
+        expect(draft.reload.applied_tax_exemptions).to eq([])
+      end
+    end
+
     describe 'stock' do
       let(:draft) { create(:order_ready_to_ship, store: store, line_items_count: 1) }
       let(:fulfillment) { draft.fulfillments.first }

@@ -260,12 +260,23 @@ export function PreferenceField({
       // the set is what the server validates against, so typing anything
       // else can only fail on save.
       if (field.choices?.length) {
-        const options = field.choices.map((choice) => ({
-          value: choice,
-          label: i18n.exists(`${preferenceKey}_options.${choice}`)
-            ? t(`${preferenceKey}_options.${choice}`)
-            : humanizeKey(choice),
+        // A translation wins where one exists, so the locale files stay in
+        // charge of the values that read as words; then the label the
+        // declaration supplied, for the ones that do not — a URL cannot serve
+        // as its own i18n key, let alone as a label.
+        const declared = field.choices.map((choice) => ({
+          value: choice.value,
+          label: i18n.exists(`${preferenceKey}_options.${choice.value}`)
+            ? t(`${preferenceKey}_options.${choice.value}`)
+            : (choice.label ?? humanizeKey(choice.value)),
         }))
+        // A stored value outside the set is offered as its own option rather
+        // than dropped, so one written past the picker by an API client is not
+        // silently rewritten to the first choice.
+        const options =
+          typeof value === 'string' && value !== '' && !declared.some((o) => o.value === value)
+            ? [...declared, { value, label: value }]
+            : declared
 
         return (
           <Field>
@@ -304,7 +315,6 @@ export function PreferenceField({
       )
   }
 }
-
 function humanizeKey(key: string): string {
   return key
     .split('_')

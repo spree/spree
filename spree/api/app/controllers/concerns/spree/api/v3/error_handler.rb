@@ -83,6 +83,11 @@ module Spree
           # Request errors
           request_too_large: 'request_too_large',
 
+          # Tax engine errors — the same two codes the completion workflow
+          # reports, so a client sees one vocabulary wherever tax failed.
+          tax_provider_unavailable: 'tax_provider_unavailable',
+          tax_calculation_refused: 'tax_calculation_refused',
+
           # General errors
           processing_error: 'processing_error',
           invalid_request: 'invalid_request'
@@ -94,6 +99,12 @@ module Spree
           rescue_from CanCan::AccessDenied, with: :handle_access_denied
           rescue_from Spree::Storefront::AccessDenied, with: :handle_access_denied
           rescue_from Spree::Core::GatewayError, with: :handle_gateway_error
+          # The backstop for every path that prices tax. Cart updates and
+          # completion answer for themselves, with a message shaped to what the
+          # customer was doing; anything else — adding an item, changing a
+          # quantity, a recalculation — reaches here rather than escaping as a
+          # 500 with an HTML body that a storefront cannot tell from a bug.
+          rescue_from Spree::Tax::ProviderError, with: :handle_tax_provider_error
           rescue_from ActionController::ParameterMissing, with: :handle_parameter_missing
           rescue_from ActiveRecord::RecordInvalid, with: :handle_record_invalid
           rescue_from ArgumentError, with: :handle_argument_error
@@ -221,6 +232,23 @@ module Spree
           render_error(
             code: ERROR_CODES[:gateway_error],
             message: exception.message,
+            status: :unprocessable_content
+          )
+        end
+
+        # Refused and unavailable are different instructions to the customer, so
+        # they keep different codes: one names something to fix, the other is
+        # worth retrying. Avalara's own wording is passed through for a refusal
+        # because it names the problem better than we can; an outage says only
+        # that, since its detail is about our endpoint and belongs in the error
+        # tracker.
+        def handle_tax_provider_error(exception)
+          Rails.error.report(exception, context: error_context, source: 'spree.api.v3')
+
+          refused = exception.is_a?(Spree::Tax::CalculationRefused)
+          render_error(
+            code: refused ? ERROR_CODES[:tax_calculation_refused] : ERROR_CODES[:tax_provider_unavailable],
+            message: refused ? exception.message.to_s : Spree.t('cart_line_item.tax_unavailable'),
             status: :unprocessable_content
           )
         end

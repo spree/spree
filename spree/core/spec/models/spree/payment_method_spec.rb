@@ -350,11 +350,13 @@ describe Spree::PaymentMethod, type: :model do
     end
 
     # The set is what the server validates against, so a form that does not
-    # know it can only offer a text box the operator gets wrong.
+    # know it can only offer a text box the operator gets wrong. Each value
+    # arrives as its own entry, carrying a label only where the declaration
+    # supplied one — these read as words, so naming them stays the client's job.
     it 'carries the set into the schema' do
       field = gateway_class.serialized_preference_schema.find { |entry| entry[:key] == :mode }
 
-      expect(field[:choices]).to eq(%w[test live])
+      expect(field[:choices]).to eq([{ value: 'test' }, { value: 'live' }])
     end
 
     it 'leaves an unconstrained preference without one' do

@@ -22,10 +22,13 @@ module Spree::Preferences
       # The fixed set a value must come from. Turns a text box into a picker
       # in every admin form, and is what the inclusion validation would have
       # told the operator only after a failed save.
+      #
+      # A list where each value reads for itself, or `{ value => label }` where
+      # it does not — an endpoint URL has no business being shown to whoever
+      # picks between "Sandbox" and "Production".
       choices = options[:in]
       nullable = options[:nullable]
       parse_on_set = options[:parse_on_set]
-
       # cache_key will be nil for new objects, then if we check if there
       # is a pending preference before going to default
       define_method preference_getter_method(name) do

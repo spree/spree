@@ -2008,7 +2008,17 @@ export interface PreferenceField {
    * one. Present only for constrained preferences; an admin form renders a
    * picker for these rather than a free-text box.
    */
-  choices?: string[]
+  choices?: PreferenceChoice[]
+}
+
+/**
+ * One selectable value for a preference. The label is present only where the
+ * declaration supplied one — a value that reads as a word is left for the
+ * client to name, which is how the locale files label them.
+ */
+export interface PreferenceChoice {
+  value: string
+  label?: string
 }
 
 /**

@@ -134,8 +134,21 @@ module Spree
             key_string: pref.to_s.freeze,
             type: instance.preference_type(pref),
             default: safe_preference_default(instance, pref),
-            choices: instance.preference_choices(pref)
+            choices: normalized_preference_choices(instance.preference_choices(pref)).presence
           }.compact.freeze
+        end
+      end
+
+      # One shape for a client to render, whichever the declaring class found
+      # more natural to write. A label rides along only where one was declared:
+      # without it a client is free to name the value itself, which is how the
+      # locale files label the values that read as words.
+      def normalized_preference_choices(declared)
+        case declared
+        when Hash
+          declared.map { |value, label| { value: value.to_s, label: label.to_s }.freeze }.freeze
+        when Array
+          declared.map { |value| { value: value.to_s }.freeze }.freeze
         end
       end
 
