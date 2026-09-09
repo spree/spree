@@ -191,6 +191,25 @@ nav.add({
   icon: StoreIcon,
   subject: Subject.Seller,
   position: 450,
+  children: [
+    // The fund ledger. Under Sellers because that is what it is about, the
+    // way returns sit under Orders — and gated on the ledger subjects, so a
+    // staff member who manages sellers without seeing the money gets neither.
+    {
+      key: 'sellers.transfers',
+      labelKey: 'admin.nav.seller_transfers',
+      path: '/sellers/transfers',
+      subject: Subject.SellerTransfer,
+      position: 100,
+    },
+    {
+      key: 'sellers.payouts',
+      labelKey: 'admin.nav.seller_payouts',
+      path: '/sellers/payouts',
+      subject: Subject.SellerPayout,
+      position: 200,
+    },
+  ],
 })
 
 nav.add({

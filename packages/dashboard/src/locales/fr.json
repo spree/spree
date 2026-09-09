@@ -2567,6 +2567,8 @@
       "promotions": "Promotions",
       "reports": "Rapports",
       "returns": "Retours",
+      "seller_payouts": "Versements",
+      "seller_transfers": "Transferts",
       "sellers": "Vendeurs",
       "settings": "Paramètres",
       "transfers": "Transferts",
@@ -2709,6 +2711,7 @@
           "complete_message": "Finaliser cette commande brouillon maintenant ?",
           "remove_gift_card_message": "Retirer cette carte cadeau de la commande ?",
           "remove_item_message": "Retirer cet article de la commande ?",
+          "remove_store_credit_message": "Retirer l'avoir de la commande ?",
           "ship_message": "Expédier cet envoi ?",
           "void_message": "Annuler ce paiement ?"
         },
@@ -2817,12 +2820,16 @@
           "upload_label_title": "Téléverser une étiquette"
         },
         "gift_card_section": {
+          "applied_suffix": "appliqué",
+          "apply_balance": "Appliquer le solde disponible du client",
           "apply_dialog_description": "Saisissez un code de carte cadeau à appliquer à cette commande.",
           "apply_dialog_title": "Appliquer une carte cadeau",
           "code_placeholder": "GIFT-XXXX-YYYY",
           "gift_card_label": "Carte cadeau",
           "none_applied": "Aucun appliqué",
-          "title": "Remises et carte cadeau"
+          "requires_customer": "Nécessite un client",
+          "store_credit_label": "Avoir",
+          "title": "Remises et avoirs"
         },
         "load_failed_message": "Impossible de charger la commande {{orderId}}.",
         "messages": {
@@ -2852,7 +2859,9 @@
         "payments_table": {
           "method": "Méthode",
           "number": "Numéro",
-          "state": "État"
+          "state": "État",
+          "this_order": "Cette commande",
+          "shared_help": "Payé en une fois pour un panier réparti entre plusieurs vendeurs. Cette commande en détient une part."
         },
         "purchase_order": {
           "document": "Document de bon de commande",
@@ -5244,6 +5253,60 @@
       "owner": {
         "marketplace": "Place de marché"
       }
+    },
+    "payouts": {
+      "transfers_description": "Ce que chaque commande expédiée a rapporté au vendeur, déduction faite de votre commission.",
+      "transfers_empty": "Aucun gain de vendeur pour le moment.",
+      "payouts_description": "Versements à vos vendeurs — ce qui est dû et ce qui a été envoyé.",
+      "payouts_empty": "Aucun versement pour le moment.",
+      "load_error": "Impossible de charger ce versement",
+      "marked_paid": "Versement marqué comme payé",
+      "columns": {
+        "date": "Date",
+        "order": "Commande",
+        "kind": "Type",
+        "reference": "Référence",
+        "provider": "Fournisseur",
+        "earnings": "Gains"
+      },
+      "kinds": {
+        "earning": "Vente",
+        "refund_reversal": "Remboursement"
+      },
+      "statuses": {
+        "pending": "En attente",
+        "processing": "En cours",
+        "completed": "Terminé",
+        "failed": "Échoué",
+        "unresolved": "À vérifier"
+      },
+      "balance": {
+        "title": "Solde",
+        "owed": "Dû ({{currency}})",
+        "earned": "Gagné",
+        "paid": "Versé",
+        "pending": "En route"
+      },
+      "complete": {
+        "title": "Marquer ce versement comme payé",
+        "description": "Enregistre que {{amount}} est parvenu à {{seller}}. Aucun mouvement d'argent n'est effectué.",
+        "reference_placeholder": "ex. BACS-9912",
+        "reference_help": "La référence bancaire du virement, pour pouvoir le retrouver plus tard.",
+        "action": "Marquer comme payé"
+      },
+      "detail": {
+        "covers_one": "Couvre {{count}} gain",
+        "covers_other": "Couvre {{count}} gains",
+        "covers_empty": "Ce versement ne couvre aucun gain.",
+        "settlement": "Versement",
+        "period": "Période"
+      },
+      "order_card": {
+        "title": "Gains du vendeur",
+        "view_payout": "Voir le versement",
+        "not_settled": "Pas encore versé"
+      },
+      "search_placeholder": "Rechercher par référence"
     }
   }
 }

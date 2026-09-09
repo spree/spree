@@ -2567,6 +2567,8 @@
       "promotions": "Promotions",
       "reports": "Reports",
       "returns": "Returns",
+      "seller_payouts": "Payouts",
+      "seller_transfers": "Transfers",
       "sellers": "Sellers",
       "settings": "Settings",
       "transfers": "Transfers",
@@ -2709,6 +2711,7 @@
           "complete_message": "Complete this draft order now?",
           "remove_gift_card_message": "Remove this gift card from the order?",
           "remove_item_message": "Remove this item from the order?",
+          "remove_store_credit_message": "Remove store credit from the order?",
           "ship_message": "Ship this fulfillment?",
           "void_message": "Void this payment?"
         },
@@ -2817,12 +2820,16 @@
           "upload_label_title": "Upload label"
         },
         "gift_card_section": {
+          "applied_suffix": "applied",
+          "apply_balance": "Apply customer's available balance",
           "apply_dialog_description": "Enter a gift card code to apply to this order.",
           "apply_dialog_title": "Apply Gift Card",
           "code_placeholder": "GIFT-XXXX-YYYY",
           "gift_card_label": "Gift card",
           "none_applied": "None applied",
-          "title": "Discounts & Gift card"
+          "requires_customer": "Requires a customer",
+          "store_credit_label": "Store credit",
+          "title": "Discounts & Credit"
         },
         "load_failed_message": "We couldn't load order {{orderId}}.",
         "messages": {
@@ -2852,7 +2859,9 @@
         "payments_table": {
           "method": "Method",
           "number": "Number",
-          "state": "State"
+          "state": "State",
+          "this_order": "This order",
+          "shared_help": "Paid once for a basket spanning several sellers. This order has a share of it."
         },
         "purchase_order": {
           "document": "Purchase order document",
@@ -5244,6 +5253,60 @@
       "owner": {
         "marketplace": "Marketplace"
       }
+    },
+    "payouts": {
+      "transfers_description": "What each fulfilled order earned its seller, less your commission.",
+      "transfers_empty": "No seller earnings yet.",
+      "payouts_description": "Settlements to your sellers — what is owed, and what has been sent.",
+      "payouts_empty": "No payouts yet.",
+      "load_error": "Could not load this payout",
+      "marked_paid": "Payout marked as paid",
+      "columns": {
+        "date": "Date",
+        "order": "Order",
+        "kind": "Type",
+        "reference": "Reference",
+        "provider": "Provider",
+        "earnings": "Earnings"
+      },
+      "kinds": {
+        "earning": "Sale",
+        "refund_reversal": "Refund"
+      },
+      "statuses": {
+        "pending": "Pending",
+        "processing": "Processing",
+        "completed": "Completed",
+        "failed": "Failed",
+        "unresolved": "Needs checking"
+      },
+      "balance": {
+        "title": "Balance",
+        "owed": "Owed ({{currency}})",
+        "earned": "Earned",
+        "paid": "Paid out",
+        "pending": "On its way"
+      },
+      "complete": {
+        "title": "Mark this payout as paid",
+        "description": "Records that {{amount}} reached {{seller}}. This does not move any money.",
+        "reference_placeholder": "e.g. BACS-9912",
+        "reference_help": "The bank reference this went out under, so it can be traced later.",
+        "action": "Mark as paid"
+      },
+      "detail": {
+        "covers_one": "Covers {{count}} earning",
+        "covers_other": "Covers {{count}} earnings",
+        "covers_empty": "This payout covers no earnings.",
+        "settlement": "Payout",
+        "period": "Period"
+      },
+      "order_card": {
+        "title": "Seller earnings",
+        "view_payout": "View payout",
+        "not_settled": "Not paid out yet"
+      },
+      "search_placeholder": "Search by reference"
     }
   }
 }

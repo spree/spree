@@ -2585,6 +2585,8 @@
       "promotions": "العروض الترويجية",
       "reports": "التقارير",
       "returns": "المرتجعات",
+      "seller_payouts": "المدفوعات",
+      "seller_transfers": "التحويلات",
       "sellers": "البائعون",
       "settings": "الإعدادات",
       "transfers": "التحويلات",
@@ -2727,6 +2729,7 @@
           "complete_message": "هل تريد إكمال مسودة الطلب هذه الآن؟",
           "remove_gift_card_message": "هل تريد إزالة بطاقة الهدايا هذه من الطلب؟",
           "remove_item_message": "هل تريد إزالة هذا العنصر من الطلب؟",
+          "remove_store_credit_message": "هل تريد إزالة رصيد المتجر من الطلب؟",
           "ship_message": "شحن هذا الوفاء؟",
           "void_message": "Void هذه الدفعة؟"
         },
@@ -2834,12 +2837,16 @@
           "upload_label_title": "رفع ملصق"
         },
         "gift_card_section": {
+          "applied_suffix": "مُطبَّق",
+          "apply_balance": "قم بتطبيق الرصيد المتاح لـ العميل",
           "apply_dialog_description": "أدخل رمز بطاقة الهدايا لتطبيقه على هذا الطلب.",
           "apply_dialog_title": "Apply Gift Card",
           "code_placeholder": "GIFT-XXXX-YYYY",
           "gift_card_label": "بطاقة هدية",
           "none_applied": "لم يتم تطبيق أي شيء",
-          "title": "الخصومات وبطاقة الهدايا"
+          "requires_customer": "يتطلب العميل",
+          "store_credit_label": "Store credit",
+          "title": "الخصومات والرصيد"
         },
         "load_failed_message": "لم نتمكن من تحميل الطلب {{orderId}}.",
         "messages": {
@@ -2869,7 +2876,9 @@
         "payments_table": {
           "method": "طريقة",
           "number": "رقم",
-          "state": "ولاية"
+          "state": "ولاية",
+          "this_order": "هذا الطلب",
+          "shared_help": "دُفعت مرة واحدة لسلة تضم عدة بائعين. هذا الطلب له حصة منها."
         },
         "purchase_order": {
           "document": "مستند أمر الشراء",
@@ -5266,6 +5275,63 @@
       "owner": {
         "marketplace": "السوق"
       }
+    },
+    "payouts": {
+      "transfers_description": "ما حققته كل طلبية تم تسليمها للبائع، بعد خصم عمولتك.",
+      "transfers_empty": "لا توجد أرباح للبائعين بعد.",
+      "payouts_description": "المدفوعات إلى بائعيك — ما هو مستحق وما تم إرساله.",
+      "payouts_empty": "لا توجد مدفوعات بعد.",
+      "load_error": "تعذر تحميل هذه الدفعة",
+      "marked_paid": "تم وضع علامة مدفوعة على الدفعة",
+      "columns": {
+        "date": "التاريخ",
+        "order": "الطلب",
+        "kind": "النوع",
+        "reference": "المرجع",
+        "provider": "المزود",
+        "earnings": "الأرباح"
+      },
+      "kinds": {
+        "earning": "بيع",
+        "refund_reversal": "استرداد"
+      },
+      "statuses": {
+        "pending": "قيد الانتظار",
+        "processing": "قيد المعالجة",
+        "completed": "مكتملة",
+        "failed": "فشلت",
+        "unresolved": "بحاجة إلى مراجعة"
+      },
+      "balance": {
+        "title": "الرصيد",
+        "owed": "المستحق ({{currency}})",
+        "earned": "المكتسب",
+        "paid": "المدفوع",
+        "pending": "في الطريق"
+      },
+      "complete": {
+        "title": "وضع علامة مدفوعة على هذه الدفعة",
+        "description": "يسجّل أن {{amount}} وصل إلى {{seller}}. هذا لا ينقل أي أموال.",
+        "reference_placeholder": "مثال: BACS-9912",
+        "reference_help": "المرجع البنكي لهذا التحويل، ليمكن تتبعه لاحقًا.",
+        "action": "وضع علامة مدفوعة"
+      },
+      "detail": {
+        "covers_one": "يغطي ربحًا واحدًا",
+        "covers_two": "يغطي ربحين",
+        "covers_few": "يغطي {{count}} أرباح",
+        "covers_many": "يغطي {{count}} ربحًا",
+        "covers_other": "يغطي {{count}} ربح",
+        "covers_empty": "هذه الدفعة لا تغطي أي أرباح.",
+        "settlement": "الدفعة",
+        "period": "الفترة"
+      },
+      "order_card": {
+        "title": "أرباح البائع",
+        "view_payout": "عرض الدفعة",
+        "not_settled": "لم يتم الدفع بعد"
+      },
+      "search_placeholder": "البحث بالمرجع"
     }
   }
 }
