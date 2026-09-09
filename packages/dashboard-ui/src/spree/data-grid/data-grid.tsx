@@ -233,6 +233,9 @@ function DataGridShell<T>({
             // card's border a pixel away from it. These grids are always inside
             // a container that draws that edge already.
             '[&_tr>*:first-child]:border-l-0 [&_tr>*:last-child]:border-r-0 [&_thead_tr:first-child>*]:border-t-0 [&_tbody_tr:last-child>*]:border-b-0',
+            // The header draws its bottom rule as an inset shadow (see the
+            // `<th>` below), so its border would stack into a second line.
+            '[&_thead_th]:border-b-0',
             className,
           )}
           aria-label={ariaLabel}
@@ -284,6 +287,10 @@ function DataGridShell<T>({
                     // belong to the table, so they scroll away with it and a
                     // pinned header ends up with rows sliding flush against its
                     // labels. A shadow belongs to the cell and pins with it.
+                    //
+                    // The table-level classes zero this cell's own top and
+                    // bottom borders: a border sits outside the padding box and
+                    // the shadow inside, so leaving both draws two rules at rest.
                     className="h-8 bg-muted px-3 text-left font-medium shadow-[inset_0_-1px_0_0_var(--border)]"
                   >
                     {header.isPlaceholder
