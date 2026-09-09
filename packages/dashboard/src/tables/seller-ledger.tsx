@@ -1,10 +1,23 @@
 import type { SellerPayout, SellerTransfer } from '@spree/admin-sdk'
-import { defineTable } from '@spree/dashboard-core'
+import { defineTable, formatStoreDateTime, useStore } from '@spree/dashboard-core'
 import { ResourceNameCell, StatusBadge } from '@spree/dashboard-ui'
 import { BanknoteIcon, HandCoinsIcon } from '@spree/dashboard-ui/icons'
 import { Link } from '@tanstack/react-router'
 import i18n from 'i18next'
 import { sellerAutocompleteProps } from '../hooks/use-sellers'
+
+/**
+ * A ledger row's date in the store's timezone.
+ *
+ * Its own component because a table definition is module-level and has no
+ * store context, while `render` is called inside the table's JSX — so a cell
+ * may use hooks like any other component.
+ */
+function LedgerDate({ iso }: { iso: string }) {
+  const { timezone } = useStore()
+
+  return <>{formatStoreDateTime(iso, timezone)}</>
+}
 
 const LEDGER_STATUSES = ['pending', 'processing', 'completed', 'failed', 'unresolved'] as const
 const TRANSFER_KINDS = ['earning', 'refund_reversal'] as const
@@ -37,7 +50,7 @@ defineTable<SellerTransfer>('seller-transfers', {
       filterType: 'date',
       quickFilter: true,
       default: true,
-      render: (transfer) => new Date(transfer.created_at).toLocaleDateString(i18n.language),
+      render: (transfer) => <LedgerDate iso={transfer.created_at} />,
     },
     {
       key: 'seller_name',
@@ -149,7 +162,7 @@ defineTable<SellerPayout>('seller-payouts', {
         <ResourceNameCell
           id={payout.id}
           dataAttr="data-payout-id"
-          name={new Date(payout.created_at).toLocaleDateString(i18n.language)}
+          name={<LedgerDate iso={payout.created_at} />}
         />
       ),
     },

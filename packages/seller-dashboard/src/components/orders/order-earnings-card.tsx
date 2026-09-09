@@ -1,3 +1,4 @@
+import { formatStoreDateTime } from '@spree/dashboard-core'
 import {
   Card,
   CardContent,
@@ -14,9 +15,9 @@ import {
 import { BanknoteIcon } from '@spree/dashboard-ui/icons'
 import type { Order } from '@spree/seller-sdk'
 import { Link, useParams } from '@tanstack/react-router'
-import i18n from 'i18next'
 import { useTranslation } from 'react-i18next'
 import { useTransfers } from '../../hooks/use-ledger'
+import { useStoreTimezone } from '../../hooks/use-store-timezone'
 
 /**
  * What this order earned the seller: the sale less the marketplace's
@@ -30,6 +31,7 @@ import { useTransfers } from '../../hooks/use-ledger'
 export function OrderEarningsCard({ order }: { order: Order }) {
   const { t } = useTranslation()
   const { sellerId } = useParams({ from: '/_authenticated/$sellerId' })
+  const timezone = useStoreTimezone()
   const { data } = useTransfers({ order_id_eq: order.id })
 
   const transfers = data?.data ?? []
@@ -59,7 +61,7 @@ export function OrderEarningsCard({ order }: { order: Order }) {
             {transfers.map((transfer) => (
               <TableRow key={transfer.id}>
                 <TableCell className="whitespace-nowrap">
-                  {new Date(transfer.created_at).toLocaleDateString(i18n.language)}
+                  {formatStoreDateTime(transfer.created_at, timezone)}
                 </TableCell>
                 <TableCell>
                   {t(`earnings.kinds.${transfer.kind}`, { defaultValue: transfer.kind })}

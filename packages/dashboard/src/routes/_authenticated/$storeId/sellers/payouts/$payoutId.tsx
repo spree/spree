@@ -1,4 +1,11 @@
-import { adminClient, PageHeader, Subject, usePermissions } from '@spree/dashboard-core'
+import {
+  adminClient,
+  formatStoreDateTime,
+  PageHeader,
+  Subject,
+  usePermissions,
+  useStore,
+} from '@spree/dashboard-core'
 import {
   Button,
   Card,
@@ -18,7 +25,6 @@ import {
 } from '@spree/dashboard-ui'
 import { HandCoinsIcon } from '@spree/dashboard-ui/icons'
 import { createFileRoute, Link } from '@tanstack/react-router'
-import i18n from 'i18next'
 import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { ResourceDetailSkeleton } from '../../../../../components/spree/route-pending'
@@ -43,6 +49,7 @@ function PayoutDetailPage() {
   const { t } = useTranslation()
   const { payoutId } = Route.useParams()
   const { permissions } = usePermissions()
+  const { timezone } = useStore()
   const [completing, setCompleting] = useState(false)
   const [page, setPage] = useState(1)
 
@@ -137,7 +144,7 @@ function PayoutDetailPage() {
                 <TableBody>
                   {rows.map((transfer) => (
                     <TableRow key={transfer.id}>
-                      <TableCell>{formatDate(transfer.created_at)}</TableCell>
+                      <TableCell>{formatStoreDateTime(transfer.created_at, timezone)}</TableCell>
                       <TableCell>
                         {transfer.order_id ? (
                           <Link
@@ -180,7 +187,7 @@ function PayoutDetailPage() {
               <ReadRow label={t('admin.payouts.columns.provider')}>{payout.provider}</ReadRow>
               <ReadRow label={t('admin.payouts.detail.period')}>
                 {payout.period_start && payout.period_end
-                  ? `${formatDate(payout.period_start)} – ${formatDate(payout.period_end)}`
+                  ? `${formatStoreDateTime(payout.period_start, timezone)} – ${formatStoreDateTime(payout.period_end, timezone)}`
                   : null}
               </ReadRow>
             </div>
@@ -191,13 +198,4 @@ function PayoutDetailPage() {
       {completing && <PayoutCompleteDialog payout={payout} open onOpenChange={setCompleting} />}
     </>
   )
-}
-
-function formatDate(iso: string | null | undefined) {
-  if (!iso) return '—'
-  return new Date(iso).toLocaleDateString(i18n.language, {
-    month: 'short',
-    day: 'numeric',
-    year: 'numeric',
-  })
 }

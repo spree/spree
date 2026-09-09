@@ -1,4 +1,5 @@
 import type { Order } from '@spree/admin-sdk'
+import { formatStoreDateTime, useStore } from '@spree/dashboard-core'
 import {
   Card,
   CardHeader,
@@ -13,7 +14,6 @@ import {
 } from '@spree/dashboard-ui'
 import { BanknoteIcon } from '@spree/dashboard-ui/icons'
 import { Link } from '@tanstack/react-router'
-import i18n from 'i18next'
 import { useTranslation } from 'react-i18next'
 import { useSellerTransfers } from '../../../hooks/use-seller-ledger'
 
@@ -25,6 +25,9 @@ import { useSellerTransfers } from '../../../hooks/use-seller-ledger'
  */
 export function SellerTransfersCard({ order }: { order: Order }) {
   const { t } = useTranslation()
+  // Every admin reads the same instant the same way, whatever their browser
+  // is set to — the store's timezone is what an order's dates mean.
+  const { timezone } = useStore()
   const { data } = useSellerTransfers({ order_id_eq: order.id })
 
   const transfers = data?.data ?? []
@@ -53,7 +56,7 @@ export function SellerTransfersCard({ order }: { order: Order }) {
           {transfers.map((transfer) => (
             <TableRow key={transfer.id}>
               <TableCell className="whitespace-nowrap">
-                {new Date(transfer.created_at).toLocaleDateString(i18n.language)}
+                {formatStoreDateTime(transfer.created_at, timezone)}
               </TableCell>
               <TableCell>
                 {t(`admin.payouts.kinds.${transfer.kind}`, { defaultValue: transfer.kind })}

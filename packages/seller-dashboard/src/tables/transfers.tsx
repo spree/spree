@@ -1,9 +1,10 @@
-import { defineTable, useTenantId } from '@spree/dashboard-core'
+import { defineTable, formatStoreDateTime, useTenantId } from '@spree/dashboard-core'
 import { StatusBadge } from '@spree/dashboard-ui'
 import { BanknoteIcon } from '@spree/dashboard-ui/icons'
 import type { Transfer } from '@spree/seller-sdk'
 import { Link } from '@tanstack/react-router'
 import i18n from 'i18next'
+import { useStoreTimezone } from '../hooks/use-store-timezone'
 
 /**
  * The sale behind an earning — what a seller checking a figure wants next.
@@ -29,6 +30,19 @@ function OrderCell({ transfer }: { transfer: Transfer }) {
   )
 }
 
+/**
+ * A ledger row's date in the marketplace's timezone.
+ *
+ * Its own component because a table definition is module-level and has no
+ * access to hooks, while `render` is called inside the table's JSX — so a
+ * cell may use them like any other component.
+ */
+function LedgerDate({ iso }: { iso: string }) {
+  const timezone = useStoreTimezone()
+
+  return <>{formatStoreDateTime(iso, timezone)}</>
+}
+
 const STATUSES = ['pending', 'processing', 'completed', 'failed', 'unresolved'] as const
 const KINDS = ['earning', 'refund_reversal'] as const
 
@@ -51,7 +65,7 @@ defineTable<Transfer>('seller-transfers', {
       filterType: 'date',
       quickFilter: true,
       default: true,
-      render: (transfer) => new Date(transfer.created_at).toLocaleDateString(i18n.language),
+      render: (transfer) => <LedgerDate iso={transfer.created_at} />,
     },
     {
       key: 'order_number',

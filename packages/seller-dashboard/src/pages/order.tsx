@@ -1,8 +1,7 @@
-import { PageHeader } from '@spree/dashboard-core'
+import { formatStoreDateTime, PageHeader } from '@spree/dashboard-core'
 import { DropdownMenuItem, ResourceLayout, StatusBadge } from '@spree/dashboard-ui'
 import { XCircleIcon } from '@spree/dashboard-ui/icons'
 import { useParams } from '@tanstack/react-router'
-import i18n from 'i18next'
 import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { CenteredMessage } from '../components/centered-message'
@@ -16,6 +15,7 @@ import { ClaimsCard, ExchangesCard } from '../components/orders/post-sale-cards'
 import { ReturnsCard } from '../components/orders/returns-card'
 import { RetryableError } from '../components/retryable-error'
 import { useOrder } from '../hooks/use-order'
+import { useStoreTimezone } from '../hooks/use-store-timezone'
 
 /**
  * One order, as the seller needs it to pack, post, and put right.
@@ -28,6 +28,7 @@ import { useOrder } from '../hooks/use-order'
 export function OrderPage() {
   const { t } = useTranslation()
   const { orderId } = useParams({ from: '/_authenticated/$sellerId/orders/$orderId' })
+  const timezone = useStoreTimezone()
   const [canceling, setCanceling] = useState(false)
 
   const { data: order, isLoading, isError, refetch } = useOrder(orderId)
@@ -53,15 +54,7 @@ export function OrderPage() {
             title={order.number}
             backTo="orders"
             subtitle={
-              order.completed_at
-                ? new Date(order.completed_at).toLocaleDateString(i18n.language, {
-                    month: 'short',
-                    day: 'numeric',
-                    year: 'numeric',
-                    hour: 'numeric',
-                    minute: '2-digit',
-                  })
-                : undefined
+              order.completed_at ? formatStoreDateTime(order.completed_at, timezone) : undefined
             }
             badges={
               <>

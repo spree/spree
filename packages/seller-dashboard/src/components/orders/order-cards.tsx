@@ -1,4 +1,4 @@
-import { AddressFormDialog } from '@spree/dashboard-core'
+import { AddressFormDialog, formatStoreDateTime } from '@spree/dashboard-core'
 import {
   AddressBlock,
   Button,
@@ -15,11 +15,11 @@ import {
 } from '@spree/dashboard-ui'
 import { EllipsisVerticalIcon, PencilIcon } from '@spree/dashboard-ui/icons'
 import type { Order, OrderAddressParams } from '@spree/seller-sdk'
-import i18n from 'i18next'
 import { type ReactNode, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { sellerClient } from '../../api-client'
 import { useOrderMutation } from '../../hooks/use-order'
+import { useStoreTimezone } from '../../hooks/use-store-timezone'
 
 function SummaryRow({
   label,
@@ -48,17 +48,12 @@ function SummaryRow({
   )
 }
 
-function formatDate(iso: string | null | undefined) {
+// The marketplace's zone, not the browser's: a seller trading away from the
+// marketplace would otherwise see an order fall on the wrong day.
+function formatDate(iso: string | null | undefined, timezone: string) {
   if (!iso) return '—'
-  // The panel's own locale, not the browser's — otherwise a seller reading
-  // German sees day and month in the other order.
-  return new Date(iso).toLocaleDateString(i18n.language, {
-    month: 'short',
-    day: 'numeric',
-    year: 'numeric',
-    hour: 'numeric',
-    minute: '2-digit',
-  })
+
+  return formatStoreDateTime(iso, timezone)
 }
 
 /**
@@ -74,6 +69,7 @@ function formatDate(iso: string | null | undefined) {
  */
 export function OrderSummaryCard({ order }: { order: Order }) {
   const { t } = useTranslation()
+  const timezone = useStoreTimezone()
 
   const amount = (value: string | null | undefined) => Number.parseFloat(value ?? '0')
   const outstanding = amount(order.amount_due)
@@ -86,11 +82,14 @@ export function OrderSummaryCard({ order }: { order: Order }) {
       </CardHeader>
 
       <div className="py-1">
-        <SummaryRow label={t('orders.summary.created_at')} value={formatDate(order.created_at)} />
+        <SummaryRow
+          label={t('orders.summary.created_at')}
+          value={formatDate(order.created_at, timezone)}
+        />
         {order.completed_at && (
           <SummaryRow
             label={t('orders.summary.completed_at')}
-            value={formatDate(order.completed_at)}
+            value={formatDate(order.completed_at, timezone)}
           />
         )}
 
@@ -99,7 +98,7 @@ export function OrderSummaryCard({ order }: { order: Order }) {
             <Separator />
             <SummaryRow
               label={t('orders.summary.canceled_at')}
-              value={formatDate(order.canceled_at)}
+              value={formatDate(order.canceled_at, timezone)}
             />
             {order.cancel_reason_name && (
               <SummaryRow

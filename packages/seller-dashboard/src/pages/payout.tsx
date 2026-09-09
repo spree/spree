@@ -1,4 +1,4 @@
-import { PageHeader } from '@spree/dashboard-core'
+import { formatStoreDateTime, PageHeader } from '@spree/dashboard-core'
 import {
   Card,
   CardHeader,
@@ -16,13 +16,13 @@ import {
 } from '@spree/dashboard-ui'
 import { HandCoinsIcon } from '@spree/dashboard-ui/icons'
 import { Link, useParams } from '@tanstack/react-router'
-import i18n from 'i18next'
 import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { CenteredMessage } from '../components/centered-message'
 import { ReadRow } from '../components/read-row'
 import { RetryableError } from '../components/retryable-error'
 import { usePayout, useTransfers } from '../hooks/use-ledger'
+import { useStoreTimezone } from '../hooks/use-store-timezone'
 
 /**
  * One settlement, and the earnings it covers.
@@ -34,6 +34,7 @@ export function PayoutPage() {
   const { t } = useTranslation()
   const { sellerId, payoutId } = useParams({ from: '/_authenticated/$sellerId/payouts/$payoutId' })
 
+  const timezone = useStoreTimezone()
   const [page, setPage] = useState(1)
 
   const { data: payout, isLoading, isError, refetch } = usePayout(payoutId)
@@ -54,7 +55,7 @@ export function PayoutPage() {
       header={
         <PageHeader
           title={payout.display_amount}
-          subtitle={formatDate(payout.created_at)}
+          subtitle={formatStoreDateTime(payout.created_at, timezone)}
           backTo="payouts"
           badges={
             <StatusBadge
@@ -102,7 +103,7 @@ export function PayoutPage() {
               <TableBody>
                 {rows.map((transfer) => (
                   <TableRow key={transfer.id}>
-                    <TableCell>{formatDate(transfer.created_at)}</TableCell>
+                    <TableCell>{formatStoreDateTime(transfer.created_at, timezone)}</TableCell>
                     <TableCell>
                       {transfer.order_id ? (
                         <Link
@@ -142,7 +143,7 @@ export function PayoutPage() {
             <ReadRow label={t('payouts.columns.reference')}>{payout.reference}</ReadRow>
             <ReadRow label={t('payouts.detail.period')}>
               {payout.period_start && payout.period_end
-                ? `${formatDate(payout.period_start)} – ${formatDate(payout.period_end)}`
+                ? `${formatStoreDateTime(payout.period_start, timezone)} – ${formatStoreDateTime(payout.period_end, timezone)}`
                 : null}
             </ReadRow>
           </div>
@@ -150,13 +151,4 @@ export function PayoutPage() {
       }
     />
   )
-}
-
-function formatDate(iso: string | null | undefined) {
-  if (!iso) return '—'
-  return new Date(iso).toLocaleDateString(i18n.language, {
-    month: 'short',
-    day: 'numeric',
-    year: 'numeric',
-  })
 }

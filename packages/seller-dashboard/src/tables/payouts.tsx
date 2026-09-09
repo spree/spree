@@ -1,8 +1,22 @@
-import { defineTable } from '@spree/dashboard-core'
+import { defineTable, formatStoreDateTime } from '@spree/dashboard-core'
 import { ResourceNameCell, StatusBadge } from '@spree/dashboard-ui'
 import { HandCoinsIcon } from '@spree/dashboard-ui/icons'
 import type { Payout } from '@spree/seller-sdk'
 import i18n from 'i18next'
+import { useStoreTimezone } from '../hooks/use-store-timezone'
+
+/**
+ * A ledger row's date in the marketplace's timezone.
+ *
+ * Its own component because a table definition is module-level and has no
+ * access to hooks, while `render` is called inside the table's JSX — so a
+ * cell may use them like any other component.
+ */
+function LedgerDate({ iso }: { iso: string }) {
+  const timezone = useStoreTimezone()
+
+  return <>{formatStoreDateTime(iso, timezone)}</>
+}
 
 const STATUSES = ['pending', 'processing', 'completed', 'failed', 'unresolved'] as const
 
@@ -26,7 +40,7 @@ defineTable<Payout>('seller-payouts', {
         <ResourceNameCell
           id={payout.id}
           dataAttr="data-payout-id"
-          name={new Date(payout.created_at).toLocaleDateString(i18n.language)}
+          name={<LedgerDate iso={payout.created_at} />}
         />
       ),
     },
