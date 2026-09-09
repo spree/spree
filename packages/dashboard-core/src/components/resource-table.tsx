@@ -64,6 +64,7 @@ import {
   getTable,
   type SortOption,
 } from '../lib/table-registry'
+import { useStickyHeader } from '../providers/sticky-header-provider'
 import { useTenantId } from '../providers/tenant-provider'
 import { type BulkAction, BulkActionBar } from './bulk-action-bar'
 import { TableToolbar } from './table-toolbar'
@@ -145,6 +146,15 @@ interface ResourceTableProps<T> {
   searchParams: ResourceSearch
   /** Title displayed in the toolbar header. Overrides the table definition's title. */
   title?: string
+  /**
+   * Heading level for the title.
+   *
+   * Resolved automatically: `h1` when the table is the page (the admin's list
+   * routes render nothing else), `h2` when a `PageHeader` is mounted and has
+   * already claimed the `h1` — which is how the seller panel's list pages are
+   * built. Set it explicitly only to override that.
+   */
+  titleAs?: 'h1' | 'h2' | 'h3'
   /** One line under the title. Overrides the table definition's description. */
   description?: string
   /** Docs for the feature, linked after the description. Overrides the table definition's. */
@@ -209,6 +219,7 @@ export function ResourceTable<T extends Record<string, any>>({
   queryFn,
   searchParams,
   title,
+  titleAs,
   description,
   docsPath,
   defaultParams,
@@ -295,6 +306,9 @@ export function ResourceTable<T extends Record<string, any>>({
   const sortString = dir === 'desc' ? `-${sort}` : sort
 
   const tenantId = useTenantId()
+  // A `PageHeader` on the same page already renders the `h1`, so the table's
+  // title becomes an `h2` rather than a second one.
+  const { hasPageHeader } = useStickyHeader()
   // Auto-inject the tenant id so every list query — and the matching mutation
   // invalidation — is tenant-scoped without each page re-implementing it.
   // Goes through +withStoreScope+ so the slot ordering matches +useResourceKey+
@@ -503,6 +517,7 @@ export function ResourceTable<T extends Record<string, any>>({
         onFiltersChange={handleFiltersChange}
         allColumns={allColumns}
         title={title ?? table.title}
+        titleAs={titleAs ?? (hasPageHeader ? 'h2' : 'h1')}
         description={description ?? table.description}
         docsPath={docsPath ?? table.docsPath}
         actions={resolvedActions}
@@ -519,7 +534,7 @@ export function ResourceTable<T extends Record<string, any>>({
               items={rows.map((r) => (r as any).id)}
               strategy={verticalListSortingStrategy}
             >
-              <Table stickyHeader roundedBottom>
+              <Table stickyHeader>
                 <TableHeader>
                   <TableHeaderRow>
                     <TableHead className="w-8" />
@@ -639,7 +654,7 @@ export function ResourceTable<T extends Record<string, any>>({
                 </section>,
                 document.body,
               )}
-            <Table stickyHeader roundedBottom>
+            <Table stickyHeader>
               <TableHeader>
                 {/* Column headers stay mounted with rows selected, and the bulk
                     bar is laid over them. Swapping them for one `colSpan` cell

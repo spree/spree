@@ -147,7 +147,7 @@ function StaffCard({ staff, loading }: { staff: AdminUser[]; loading: boolean })
             </EmptyHeader>
           </Empty>
         ) : (
-          <Table roundedBottom>
+          <Table>
             <TableHeader>
               <TableRow>
                 <TableHead>{t('admin.pages.staff.table.member')}</TableHead>
@@ -274,7 +274,7 @@ function PendingInvitationsCard({
             <Skeleton className="h-10 w-full" />
           </div>
         ) : (
-          <Table roundedBottom>
+          <Table>
             <TableHeader>
               <TableRow>
                 <TableHead>{t('admin.fields.email.label')}</TableHead>

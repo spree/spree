@@ -795,7 +795,7 @@ export function FulfillmentsCard({ order }: { order: Order }) {
 
   return (
     <>
-      <Card>
+      <Card variant="container">
         <CardHeader>
           <CardTitle>
             <TruckIcon className="size-4" />

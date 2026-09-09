@@ -66,7 +66,7 @@ export function ExchangesCard({ order }: { order: Order }) {
   }
 
   return (
-    <Card>
+    <Card variant="container">
       <CardHeader>
         <CardTitle>
           <ArrowLeftRightIcon className="size-4" />
@@ -186,7 +186,7 @@ export function ClaimsCard({ order }: { order: Order }) {
   }
 
   return (
-    <Card>
+    <Card variant="container">
       <CardHeader>
         <CardTitle>
           <ShieldAlertIcon className="size-4" />

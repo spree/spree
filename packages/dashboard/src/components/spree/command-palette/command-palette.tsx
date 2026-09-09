@@ -86,10 +86,63 @@ function CommandPaletteContent({ setOpen }: { setOpen: (open: boolean) => void }
 
   const q = input.trim().toLowerCase()
   const matches = (label: string) => !q || label.toLowerCase().includes(q)
-  const gotoItems = gotoCommands.filter((c) =>
-    matches(t('admin.components.command_palette.goto_label', { label: c.label })),
-  )
+
+  // Rank a label against the query: whole word beats prefix beats anywhere.
+  // Without this a plain `includes` treats every hit as equal, so typing "ord"
+  // ordered two *C-ord-less* vacuums above "Orders" — the destination the
+  // query most obviously names. Ordering is stable within a tier, so the
+  // registry's own sequence still decides ties.
+  const matchRank = (label: string) => {
+    const value = label.toLowerCase()
+    if (value === q) return 0
+    if (value.startsWith(q)) return 1
+    if (new RegExp(`\\b${q.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}`).test(value)) return 2
+    return 3
+  }
+
+  const gotoLabel = (command: (typeof gotoCommands)[number]) =>
+    t('admin.components.command_palette.goto_label', { label: command.label })
+
+  // Filter on the full "Go to Orders" string so typing the verb still finds
+  // things, but *rank* on the destination name alone — the wrapper begins with
+  // "Go to" in English and something different in every other locale, so
+  // ranking the decorated label would score every entry identically.
+  const gotoItems = gotoCommands
+    .filter((c) => matches(gotoLabel(c)) || matches(c.label))
+    .map((command, index) => ({ command, index }))
+    .sort((a, b) => {
+      const byRank = matchRank(a.command.label) - matchRank(b.command.label)
+      return byRank !== 0 ? byRank : a.index - b.index
+    })
+    .map(({ command }) => command)
+
+  // When the query names a destination outright ("orders", "products"), that
+  // page is what was asked for — so the nav group leads instead of sitting
+  // under every record whose text happens to contain the word. Anything less
+  // exact keeps the standard order, where records come first.
+  const gotoLeads = q.length > 0 && gotoItems.some((c) => matchRank(c.label) === 0)
   const showLogout = matches(t('admin.auth.logout'))
+
+  // Rendered in one of two slots depending on `gotoLeads`, so it is built once
+  // here rather than duplicated in both branches of the list below.
+  const gotoGroup =
+    gotoItems.length > 0 ? (
+      <CommandGroup heading={t('admin.components.command_palette.goto')}>
+        {gotoItems.map(({ key, label, icon: Icon, url }) => (
+          <CommandItem
+            key={key}
+            value={`goto-${key}`}
+            onSelect={() => {
+              close()
+              navigate({ to: url })
+            }}
+          >
+            <Icon />
+            {label}
+          </CommandItem>
+        ))}
+      </CommandGroup>
+    ) : null
 
   return (
     <Dialog
@@ -164,6 +217,9 @@ function CommandPaletteContent({ setOpen }: { setOpen: (open: boolean) => void }
               <CommandSeparator />
             )}
 
+            {gotoLeads && gotoGroup}
+            {gotoLeads && gotoItems.length > 0 && hasResults && <CommandSeparator />}
+
             {groups.map((group) => (
               <ResourceGroup
                 key={group.entry.key}
@@ -176,25 +232,11 @@ function CommandPaletteContent({ setOpen }: { setOpen: (open: boolean) => void }
               />
             ))}
 
-            {hasResults && (gotoItems.length > 0 || showLogout) && <CommandSeparator />}
-
-            {gotoItems.length > 0 && (
-              <CommandGroup heading={t('admin.components.command_palette.goto')}>
-                {gotoItems.map(({ key, label, icon: Icon, url }) => (
-                  <CommandItem
-                    key={key}
-                    value={`goto-${key}`}
-                    onSelect={() => {
-                      close()
-                      navigate({ to: url })
-                    }}
-                  >
-                    <Icon />
-                    {label}
-                  </CommandItem>
-                ))}
-              </CommandGroup>
+            {!gotoLeads && hasResults && (gotoItems.length > 0 || showLogout) && (
+              <CommandSeparator />
             )}
+
+            {!gotoLeads && gotoGroup}
 
             {gotoItems.length > 0 && showLogout && <CommandSeparator />}
 

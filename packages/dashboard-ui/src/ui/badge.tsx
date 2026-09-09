@@ -30,9 +30,9 @@ const badgeVariants = cva(
         info: 'border-info-border bg-info-bg text-info [a]:hover:bg-info-border',
         warning: 'border-warning-border bg-warning-bg text-warning [a]:hover:bg-warning-border',
         outline:
-          'border-border bg-card/50 text-foreground/75 [a]:hover:bg-muted [a]:hover:text-muted-foreground',
+          'border-border bg-card/50 text-foreground/75 [a]:hover:bg-accent [a]:hover:text-muted-foreground',
         ghost:
-          'border-transparent hover:bg-muted hover:text-muted-foreground dark:hover:bg-muted/50',
+          'border-transparent hover:bg-accent hover:text-muted-foreground dark:hover:bg-accent/50',
         link: 'border-transparent text-primary underline-offset-4 hover:underline',
       },
     },

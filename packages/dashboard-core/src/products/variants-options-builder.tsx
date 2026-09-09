@@ -384,7 +384,7 @@ function OptionPicker({ optionType, initialValues, onSave, onCancel }: OptionPic
               className={`inline-flex items-center gap-1.5 rounded-full border px-3 py-1 text-xs transition-colors ${
                 isPicked
                   ? 'border-primary bg-primary text-primary-foreground'
-                  : 'border-border bg-background hover:bg-muted'
+                  : 'border-border bg-background hover:bg-accent'
               }`}
             >
               {isPicked && <CheckIcon className="size-3" />}
@@ -396,7 +396,7 @@ function OptionPicker({ optionType, initialValues, onSave, onCancel }: OptionPic
           <button
             type="button"
             onClick={() => setCreatingValue(true)}
-            className="inline-flex items-center gap-1.5 rounded-full border border-dashed border-border bg-background px-3 py-1 text-xs hover:bg-muted"
+            className="inline-flex items-center gap-1.5 rounded-full border border-dashed border-border bg-background px-3 py-1 text-xs hover:bg-accent"
           >
             <PlusIcon className="size-3" />
             {t('admin.products.variants.create_value')}

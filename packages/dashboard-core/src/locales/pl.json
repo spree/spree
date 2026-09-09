@@ -1,5 +1,6 @@
 {
   "admin": {
+    "app_name": "Spree Admin",
     "a11y": {
       "breadcrumb": "Ścieżka nawigacji",
       "breadcrumb_more": "Więcej",
@@ -156,6 +157,7 @@
       "empty_value": "—",
       "inactive": "Nieaktywny",
       "learn_more": "Dowiedz się więcej",
+      "skip_to_content": "Przejdź do treści",
       "loading": "Ładowanie…",
       "next": "Następna",
       "no": "Nie",

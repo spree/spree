@@ -26,6 +26,17 @@ interface DataGridProps<T> {
   className?: string
   /** Optional caption-row aria-label etc. */
   'aria-label'?: string
+  /**
+   * Whether the grid scrolls inside its own box.
+   *
+   * `true` for a grid too wide or tall for where it sits — the bulk variant
+   * editor in its dialog, which has columns well past any viewport. `false`
+   * when the container already handles it, or when the grid is sized to fit:
+   * the fill handle straddles the selection's bottom-right corner and hangs a
+   * few pixels past the table, which a scroll container counts as content, so
+   * selecting an edge cell raises scrollbars on a grid that fits.
+   */
+  scrollable?: boolean
 }
 
 export function DataGrid<T>({
@@ -35,6 +46,7 @@ export function DataGrid<T>({
   renderSectionHeader,
   className,
   'aria-label': ariaLabel,
+  scrollable = false,
 }: DataGridProps<T>) {
   const table = useReactTable<T>({
     data: rows,
@@ -49,6 +61,7 @@ export function DataGrid<T>({
       renderSectionHeader={renderSectionHeader}
       className={className}
       ariaLabel={ariaLabel}
+      scrollable={scrollable}
     />
   )
 }
@@ -58,11 +71,13 @@ function DataGridShell<T>({
   renderSectionHeader,
   className,
   ariaLabel,
+  scrollable,
 }: {
   table: Table<T>
   renderSectionHeader?: RenderSectionHeader<T>
   className?: string
   ariaLabel?: string
+  scrollable?: boolean
 }) {
   const gridRef = useRef<HTMLTableElement | null>(null)
   const cellsRef = useRef<Map<CellKey, CellRegistration>>(new Map())
@@ -191,8 +206,17 @@ function DataGridShell<T>({
           leaves `position: sticky` with nothing to stick within. Bounding it
           to the caller's height gives the header a viewport again, and a
           caller that imposes no height (a grid that scrolls with the page)
-          still resolves to no constraint. */}
-      <div className="relative max-h-full overflow-auto">
+          still resolves to no constraint.
+
+          All of it is behind `scrollable`, because a scroll container is not
+          free: `position: absolute` takes the fill handle out of layout flow
+          but NOT out of a scroller's scrollable overflow, and the handle
+          straddles the selection's bottom-right corner. On a cell at the
+          grid's edge it therefore hangs a few pixels past the table and the
+          container grows to contain it — so selecting an edge cell raised
+          scrollbars on a grid that fits its card. A grid that does not need
+          to scroll should not be a scroll container. */}
+      <div className={cn('relative', scrollable && 'themed-scrollbar max-h-full overflow-auto')}>
         <table
           ref={gridRef}
           // Focusable so the grid itself can hold the keyboard when a cell's
@@ -203,6 +227,17 @@ function DataGridShell<T>({
           tabIndex={-1}
           className={cn(
             'w-full border-collapse text-sm outline-none [&_td]:border [&_th]:border [&_td]:border-border [&_th]:border-border',
+            // Internal rules only. `border` on every cell also draws the grid's
+            // outer edge — `border-collapse` merges neighbours, so the outermost
+            // cells' outer sides become the table's own frame, doubling the
+            // card's border a pixel away from it. These grids are always inside
+            // a container that draws that edge already.
+            '[&_tr>*:first-child]:border-l-0 [&_tr>*:last-child]:border-r-0 [&_thead_tr:first-child>*]:border-t-0 [&_tbody_tr:last-child>*]:border-b-0',
+            // The header draws its bottom rule as an inset shadow (see the
+            // `<th>` below). Both the header's own bottom border and the
+            // first body row's top border would stack beside that shadow, so
+            // the one rule between the header and the body is the shadow.
+            '[&_thead_th]:border-b-0 [&_tbody_tr:first-child>*]:border-t-0',
             className,
           )}
           aria-label={ariaLabel}
@@ -238,11 +273,28 @@ function DataGridShell<T>({
             setEditing(null)
           }}
         >
-          <thead className="sticky top-0 z-10 bg-muted/60 text-xs text-muted-foreground">
+          {/* The fill is on the cells, not the row: under `border-collapse` a
+              background on `<thead>` or `<tr>` paints unreliably, and it has to
+              be opaque — this row pins over the grid's own scrolling content,
+              so a translucent one (it was `bg-muted/60`) lets the rows behind
+              it read straight through the column labels. */}
+          <thead className="sticky top-0 z-10 text-xs text-muted-foreground">
             {table.getHeaderGroups().map((group) => (
               <tr key={group.id}>
                 {group.headers.map((header) => (
-                  <th key={header.id} className="h-8 px-3 text-left font-medium">
+                  <th
+                    key={header.id}
+                    // The bottom rule is an inset shadow, not the cell's own
+                    // border: under `border-collapse` the collapsed borders
+                    // belong to the table, so they scroll away with it and a
+                    // pinned header ends up with rows sliding flush against its
+                    // labels. A shadow belongs to the cell and pins with it.
+                    //
+                    // The table-level classes zero this cell's own top and
+                    // bottom borders: a border sits outside the padding box and
+                    // the shadow inside, so leaving both draws two rules at rest.
+                    className="h-8 bg-muted px-3 text-left font-medium shadow-[inset_0_-1px_0_0_var(--border)]"
+                  >
                     {header.isPlaceholder
                       ? null
                       : flexRender(header.column.columnDef.header, header.getContext())}

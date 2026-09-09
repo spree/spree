@@ -19,10 +19,18 @@ interface TableProps extends React.ComponentProps<'table'> {
    */
   stickyHeader?: boolean
   /**
-   * Rounds the last row's outer corners. Opt-in, because it only reads
-   * correctly when the table is the last thing inside a rounded container —
-   * anything below it (a pagination footer, a card action row) leaves the
-   * curve floating mid-surface.
+   * Rounds the last row's outer corners.
+   *
+   * Left unset this resolves itself: the corners round only when the table's
+   * wrapper is the last element in its container, which is exactly when the
+   * row's edge is the card's edge. Pass `false` to suppress it, or `true` to
+   * force it where the container's own markup hides that (a table wrapped in
+   * an extra element that is not itself last).
+   *
+   * The rule matters in both directions, and callers had it wrong both ways: a
+   * table with a pagination footer under it drew a curve floating mid-surface,
+   * and one that ended the card left a square hover overflowing the card's
+   * own radius.
    */
   roundedBottom?: boolean
 }
@@ -48,13 +56,7 @@ interface TableProps extends React.ComponentProps<'table'> {
  * rounding), and a scroll listener mirrors the body's `scrollLeft` onto the
  * pinned table so the header tracks horizontal scrolling.
  */
-function Table({
-  className,
-  children,
-  stickyHeader = false,
-  roundedBottom = false,
-  ...props
-}: TableProps) {
+function Table({ className, children, stickyHeader = false, roundedBottom, ...props }: TableProps) {
   const scrollRef = useRef<HTMLDivElement | null>(null)
   const bodyTableRef = useRef<HTMLTableElement | null>(null)
   const pinnedTableRef = useRef<HTMLTableElement | null>(null)
@@ -64,9 +66,27 @@ function Table({
   // `td:only-child` covers the empty and skeleton rows, whose single spanning
   // cell is both first and last child — matching on those alone rounds one
   // corner and leaves the other square against the card's curve.
-  const roundedClasses = roundedBottom
-    ? '[&_tbody_tr:last-child_td:first-child]:rounded-bl-xl [&_tbody_tr:last-child_td:last-child]:rounded-br-xl [&_tbody_tr:last-child_td:only-child]:rounded-b-xl'
-    : undefined
+  //
+  // `in-[&:last-child]` gates the whole set on the table's wrapper being the
+  // last element in its container: with a pagination footer under it the
+  // wrapper is not last, so the corners stay square on their own. Explicitly
+  // passing the prop opts out of that test in either direction.
+  // Both variants are written out in full rather than composed at runtime:
+  // Tailwind scans this file as text, so a class it never sees spelled out is
+  // a class it never generates.
+  const alwaysRounded =
+    '[&_tbody_tr:last-child_td:first-child]:rounded-bl-xl [&_tbody_tr:last-child_td:last-child]:rounded-br-xl [&_tbody_tr:last-child_td:only-child]:rounded-b-xl'
+  // Applied to the outermost wrapper, not the table: `in-[:last-child]` is
+  // satisfied by *any* last-child ancestor, and the sticky variant nests two
+  // more divs that are both last inside it. Gating on the wrapper the
+  // pagination is actually a sibling of is the only test that means "nothing
+  // follows this table".
+  const roundedWhenLast =
+    'last:[&_tbody_tr:last-child_td:first-child]:rounded-bl-xl last:[&_tbody_tr:last-child_td:last-child]:rounded-br-xl last:[&_tbody_tr:last-child_td:only-child]:rounded-b-xl'
+  // `true`/`false` decide on the table itself; unset defers to the wrapper's
+  // own position among its siblings.
+  const tableRoundedClasses = roundedBottom === true ? alwaysRounded : undefined
+  const wrapperRoundedClasses = roundedBottom === undefined ? roundedWhenLast : undefined
 
   const kids = Children.toArray(children)
   const headerElement = kids.find(
@@ -119,9 +139,14 @@ function Table({
       // visible`, so sticky resolves against the page instead. Narrow viewports
       // keep `auto`, where scrolling a wide table sideways matters more than a
       // sticky header.
-      <div className="@container/table-scroll overflow-x-auto md:overflow-x-clip">
+      <div
+        className={cn(
+          '@container/table-scroll overflow-x-auto md:overflow-x-clip',
+          wrapperRoundedClasses,
+        )}
+      >
         <table
-          className={cn('w-full align-top text-foreground', roundedClasses, className)}
+          className={cn('w-full align-top text-foreground', tableRoundedClasses, className)}
           {...props}
         >
           {children}
@@ -132,10 +157,14 @@ function Table({
 
   // `w-max` + `min-w-full`: size to the content, but never narrower than the
   // card, so a table with few columns still fills the width.
-  const tableClasses = cn('w-max min-w-full align-top text-foreground', roundedClasses, className)
+  const tableClasses = cn(
+    'w-max min-w-full align-top text-foreground',
+    tableRoundedClasses,
+    className,
+  )
 
   return (
-    <div className="relative min-w-0">
+    <div className={cn('relative min-w-0', wrapperRoundedClasses)}>
       {/* Zero-height sticky wrapper: the pinned header overlays the sizer row
           below instead of occupying its own band. The inner div clips the
           horizontal overhang the translateX mirror produces. */}
@@ -216,7 +245,7 @@ function TableBody({ className, ...props }: React.ComponentProps<'tbody'>) {
 
 function TableRow({ className, ...props }: React.ComponentProps<'tr'>) {
   return (
-    <tr className={cn('group/row hover:bg-accent/25 last:*:border-b-0', className)} {...props} />
+    <tr className={cn('group/row hover:bg-accent/70 last:*:border-b-0', className)} {...props} />
   )
 }
 

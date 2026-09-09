@@ -73,6 +73,12 @@ interface TableToolbarProps {
   allColumns?: ColumnDef[]
   /** Title displayed in the toolbar header */
   title?: string
+  /**
+   * Heading level for the title. Defaults to `h1` because a list page is this
+   * table and nothing else. Pass a lower level when the table is a panel
+   * inside a page that already owns the `h1`.
+   */
+  titleAs?: 'h1' | 'h2' | 'h3'
   /** One line under the title saying what the list is for. */
   description?: string
   /** Documentation for the feature, linked at the end of the description. */
@@ -181,6 +187,7 @@ export function TableToolbar({
   onFiltersChange,
   allColumns,
   title,
+  titleAs = 'h1',
   description,
   docsPath,
   actions,
@@ -267,7 +274,20 @@ export function TableToolbar({
         )}
       >
         {(title || description) && (
-          <SectionHeading title={title} description={description} docsPath={docsPath} />
+          // `h1`: a list page is a `ResourceTable` and nothing else, so this
+          // title is the page's only heading. Rendered as a div it left those
+          // pages with no heading at all — no document outline, and nothing
+          // for the heading-navigation a screen reader user relies on.
+          <SectionHeading
+            // Only a real title becomes a heading. `title` and `description`
+            // are independent, and a description-only caller would otherwise
+            // emit an empty `<h1>` — which a screen reader still lists in
+            // heading navigation, as a blank entry.
+            as={title ? titleAs : undefined}
+            title={title}
+            description={description}
+            docsPath={docsPath}
+          />
         )}
         <div className="ml-auto flex shrink-0 items-center gap-2">{actions}</div>
       </div>

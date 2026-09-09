@@ -79,7 +79,15 @@ export function TopBar({
   return (
     <header
       className={cn(
-        'sticky top-0 z-40 flex h-header-height shrink-0 items-center gap-3 bg-background/90 px-4 border-b border-sidebar-border backdrop-blur supports-[backdrop-filter]:bg-background/75',
+        // Opaque, not frosted. A translucent bar works over a page background,
+        // but this one sits above a scrolling table: at 75% every row that
+        // passes under it shows through, and the blur smears the thumbnail and
+        // title rather than hiding them — which reads as a rendering fault, not
+        // as material. Measured, dark row text stays legible through the bar
+        // until about 98% opacity, by which point there is no translucency left
+        // to see. So the effect cannot survive this surface, and the bar takes
+        // the page colour outright.
+        'sticky top-0 z-40 flex h-header-height shrink-0 items-center gap-3 bg-background px-4 border-b border-sidebar-border',
         'transition-transform duration-200 ease-out motion-reduce:transition-none',
         hidden && '-translate-y-full',
       )}

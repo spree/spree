@@ -96,6 +96,48 @@
      values such as the sticky table header's inset shadow, where `/50` has no
      effect. */
   --border-subtle: color-mix(in srgb, var(--border-base) 50%, transparent);
+  /* Controls carry two different problems, so they take two different tokens.
+     WCAG 1.4.11 asks 3:1 only of what is needed to *identify* a control — so
+     what matters is whether the border is the only thing doing that job.
+
+     --border-control: for a control with nothing else to identify it. A
+     checkbox and a radio are a transparent 16px box; erase the outline and
+     there is nothing on the page. 3.25:1 on the white card, 3.11:1 on the page
+     ground — the lightest step that clears the minimum on both.
+
+     --border-field: for a text field, select or combobox. These sit on a card
+     of the same colour, so the border is what draws them — but a form of ten
+     fields outlined at the control value reads as a wall of boxes. This lands
+     between the two: firmer than the old rule, quiet enough to disappear into
+     a dense form.
+
+     A tinted fill was tried here and reverted. Disabled fields are `--muted`,
+     so any resting tint either collides with that meaning or (as happened)
+     lands darker than it and inverts the signal outright. On this palette the
+     enabled state has to stay on the card colour. */
+  --border-control: oklch(0.65 0.006 56);
+  --border-field: oklch(0.86 0.004 56);
+  /* A card that *holds* other records — an order's fulfillments, its returns,
+     its claims — rather than holding content directly.
+
+     It takes the page's own colour, so the card contributes a border and a
+     title strip and nothing else: the white records inside are the only thing
+     with a surface, and they carry all the weight. Points at --background
+     rather than repeating its value, so the two cannot drift apart.
+
+     Giving the container a fill of its own was tried and reads worse — it
+     tints a large area to say something the border already says, and the
+     records lose contrast against it. Sitting at the page colour is safe
+     because the card still draws its 1px border at 1.21:1; the fill was never
+     carrying that boundary.
+
+     Records inside stay on `--card`, so what a merchant reads is the raised,
+     white thing. Pushing them into a grey well instead reads as content that
+     has been demoted, which is backwards — the fulfillment is the point of
+     the card, not its chrome. */
+  --card-container: var(--background);
+  /* Light mode's raised record is simply the card surface. */
+  --nested-raised: oklch(1 0 0);
   --input: color-mix(in srgb, var(--border-base) 80%, transparent);
   --ring: var(--brand-blue);
   --chart-1: oklch(0.7663 0.1067 254.4);
@@ -185,6 +227,17 @@
   --border-base: oklch(1 0 0 / 12%);
   --border: color-mix(in srgb, var(--border-base) 80%, transparent);
   --border-subtle: color-mix(in srgb, var(--border-base) 50%, transparent);
+  /* Light mode darkens the control edge away from the card; dark mode lightens
+     it. Not the light value inverted — measured on this theme's own surfaces:
+     3.22:1 on the card, 3.34:1 on the page ground. */
+  --border-control: oklch(0.52 0.006 56);
+  --border-field: oklch(0.32 0.004 56);
+  /* Same arrangement as light — container at the page colour, records raised
+     above it. 1.118:1 between them here. Records take `--nested-raised` rather
+     than `--card`: the card token is a step above the page, which is where the
+     container would sit if it had a fill of its own. */
+  --card-container: var(--background);
+  --nested-raised: oklch(0.235 0 0);
   --input: color-mix(in srgb, var(--border-base) 80%, transparent);
   --ring: oklch(0.552 0.016 285); /* same blue ring as light, for focus parity */
   --link: oklch(0.7 0.16 258);
@@ -302,6 +355,10 @@
   --color-input: var(--input);
   --color-border: var(--border);
   --color-border-subtle: var(--border-subtle);
+  --color-border-control: var(--border-control);
+  --color-border-field: var(--border-field);
+  --color-card-container: var(--card-container);
+  --color-nested-raised: var(--nested-raised);
   --color-destructive: var(--destructive);
   --color-destructive-foreground: var(--destructive-foreground);
   --color-accent-foreground: var(--accent-foreground);
@@ -539,6 +596,24 @@
        deliberately to opt into the same touch sizing. */
     [data-slot='filter-panel-item'] {
       min-height: 2.75rem !important;
+    }
+
+    /* The rules above size what is *inside* an open menu; these size the
+     * control that opens it. A row's "⋮" is 24px, the sidebar toggle 28px and
+     * a table's sort/columns buttons 34px — each clears the 24px web minimum
+     * but sits well under what a finger wants, and the row action is both the
+     * smallest and the most repeated target on a list.
+     *
+     * Restricted to `button` because these slots wrap arbitrary children:
+     * `tooltip-trigger` in particular renders whatever it is given, including
+     * plain text, which must not be inflated to 44px. Width as well as height,
+     * since these are square icon buttons rather than full-width rows. */
+    button[data-slot='dropdown-menu-trigger'],
+    button[data-slot='sidebar-trigger'],
+    button[data-slot='popover-trigger'],
+    button[data-slot='tooltip-trigger'] {
+      min-height: 2.75rem !important;
+      min-width: 2.75rem !important;
     }
 
     /* The controls inside the filter panel's value step — the operator select,

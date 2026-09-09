@@ -62,11 +62,15 @@ test.describe('seller catalog and orders', () => {
 
     try {
       // Products: the list is reachable from the nav and starts empty.
+      //
+      // `level: 1` because a seller list page carries two headings by design —
+      // the page's own title and the table's caption below it. The assertion
+      // here is about landing on the page, which is the `h1`.
       await sellerPage
         .getByRole('link', { name: /products/i })
         .first()
         .click()
-      await expect(sellerPage.getByRole('heading', { name: /products/i })).toBeVisible({
+      await expect(sellerPage.getByRole('heading', { name: /products/i, level: 1 })).toBeVisible({
         timeout: 20_000,
       })
 
@@ -100,7 +104,7 @@ test.describe('seller catalog and orders', () => {
         .getByRole('link', { name: /orders/i })
         .first()
         .click()
-      await expect(sellerPage.getByRole('heading', { name: /orders/i })).toBeVisible({
+      await expect(sellerPage.getByRole('heading', { name: /orders/i, level: 1 })).toBeVisible({
         timeout: 20_000,
       })
       // The empty state itself, not merely the absence of an error: a blank
