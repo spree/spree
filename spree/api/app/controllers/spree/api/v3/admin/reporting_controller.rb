@@ -34,7 +34,7 @@ module Spree
           def schema
             render json: Spree::Reporting::Schema.new(
               store: current_store,
-              allowed: ->(dimension) { dimension_allowed?(dimension) }
+              allowed: ->(member) { member_allowed?(member) }
             ).to_h
           end
 
@@ -74,11 +74,13 @@ module Spree
             end
           end
 
-          def dimension_allowed?(dimension)
+          # Metrics and dimensions declare authorization the same way, so one
+          # predicate answers for both.
+          def member_allowed?(member)
             if current_api_key.present?
-              dimension.key_scope.blank? || current_api_key.has_scope?(dimension.key_scope)
+              member.key_scope.blank? || current_api_key.has_scope?(member.key_scope)
             else
-              dimension.subject.nil? || can?(:read, dimension.subject.call)
+              member.subject.nil? || can?(:read, member.subject.call)
             end
           end
 

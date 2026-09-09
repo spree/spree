@@ -1701,6 +1701,9 @@ en:
         customer:
           description: The customer who placed the order, by email.
           label: Customer
+        customer_type:
+          description: Whether the buyer had placed an earlier order at the time of this one.
+          label: Customer type
         fulfillment_status:
           description: Fulfillment state of the order.
           label: Fulfillment status
@@ -1713,36 +1716,66 @@ en:
         product:
           description: The product sold.
           label: Product
+        seller:
+          description: The seller who sold the item.
+          label: Seller
         variant:
           description: The product variant (SKU) sold.
           label: Variant
       export:
         total: Total
       metrics:
-        aov:
+        average_order_value:
           description: Total sales divided by the number of orders.
           label: Average order value
-        customers_count:
+        commission:
+          description: What the marketplace earned on these sales, including its tax.
+          label: Commission
+        cost_of_goods:
+          description: What the goods sold cost you. Variants with no cost price count as zero.
+          label: Cost of goods
+        customers:
           description: Distinct customer emails that placed orders.
           label: Customers
-        delivery_total:
-          description: Sum of delivery charges.
-          label: Delivery
-        discounts_total:
-          description: Sum of order discounts.
+        discounts:
+          description: Discounts applied to the items sold.
           label: Discounts
-        gross_revenue:
-          description: Sum of order totals (items, delivery and tax, after discounts).
-          label: Total sales
-        net_revenue:
-          description: Line item revenue after discounts and net of included taxes.
-          label: Net revenue
-        orders_count:
+        duties:
+          description: Customs duties charged on the order.
+          label: Duties
+        fees:
+          description: Shopper-visible fees other than duties.
+          label: Fees
+        gross_margin:
+          description: Gross profit as a share of net sales.
+          label: Gross margin
+        gross_profit:
+          description: Net sales less the cost of the goods sold.
+          label: Gross profit
+        gross_sales:
+          description: Item prices multiplied by quantity, before discounts, returns and tax.
+          label: Gross sales
+        net_sales:
+          description: Gross sales less discounts and returns. What you actually sold.
+          label: Net sales
+        orders:
           description: Number of placed orders.
           label: Orders
-        tax_total:
+        returns:
+          description: Money refunded, counted in the period the refund was issued.
+          label: Returns
+        seller_payout:
+          description: What the sellers are owed on these sales, after commission.
+          label: Seller payout
+        shipping:
+          description: Delivery charged to the customer.
+          label: Shipping
+        taxes:
           description: Sum of additional and included taxes.
-          label: Tax
+          label: Taxes
+        total_sales:
+          description: Net sales plus shipping, duties, fees and taxes. The money taken.
+          label: Total sales
         units_sold:
           description: Sum of line item quantities.
           label: Units sold
@@ -1776,12 +1809,24 @@ en:
         yesterday:
           label: Yesterday
       seeds:
+        first_time_vs_returning:
+          description: Sales split between first-time and returning buyers over the last four weeks.
+          name: First-time vs returning
+        net_sales_over_time:
+          description: Weekly gross sales, discounts, returns and net sales over the last twelve months.
+          name: Net sales over time
         orders_by_fulfillment_status:
           description: Order counts and sales grouped by fulfillment status over the last four weeks.
           name: Orders by fulfillment status
         orders_by_payment_status:
           description: Order counts and sales grouped by payment status over the last four weeks.
           name: Orders by payment status
+        product_margin:
+          description: Products ranked by gross profit over the last four weeks, with cost and margin.
+          name: Product margin
+        returns_over_time:
+          description: Monthly refunds over the last twelve months, compared with the previous period.
+          name: Returns over time
         sales_by_channel:
           description: Sales and orders per sales channel over the last four weeks.
           name: Sales by channel
@@ -1794,14 +1839,17 @@ en:
         sales_over_time:
           description: Daily sales, orders and average order value for the last four weeks, compared with the previous period.
           name: Sales over time
+        seller_payouts:
+          description: What each seller earned last month, after the marketplace commission.
+          name: Seller payouts
         top_categories:
-          description: Best-selling categories by net revenue over the last four weeks.
+          description: Best-selling categories by net sales over the last four weeks.
           name: Top categories
         top_customers:
           description: Customers ranked by spend over the last four weeks.
           name: Top customers
         top_products:
-          description: Best-selling products by net revenue over the last four weeks.
+          description: Best-selling products by net sales over the last four weeks.
           name: Top products
       unassigned: Unassigned
       values:

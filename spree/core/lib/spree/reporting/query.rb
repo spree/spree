@@ -73,7 +73,7 @@ module Spree
       # consumer — API controller, saved reports, agent tools — must ensure
       # `:read` on each before executing.
       def required_subjects
-        ([Spree::Order] + referenced_dimensions.filter_map(&:subject).map(&:call)).uniq
+        ([Spree::Order] + authorized_members.filter_map(&:subject).map(&:call)).uniq
       end
 
       # The subjects a given ability may not read — empty when the query is
@@ -90,7 +90,16 @@ module Spree
       # endpoint and covers the order-data floor): the `key_scope` of every
       # referenced member with an authorization subject.
       def required_key_scopes
-        referenced_dimensions.filter_map(&:key_scope).uniq
+        authorized_members.filter_map(&:key_scope).uniq
+      end
+
+      # Every member whose definition names an authorization subject: the
+      # dimensions the query groups or filters by, and the metrics that expose
+      # money living outside the order itself.
+      # Aggregated rather than requested metrics, so a ratio built on a gated
+      # component is gated too.
+      def authorized_members
+        referenced_dimensions + aggregated_metrics
       end
 
       def referenced_dimensions

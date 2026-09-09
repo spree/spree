@@ -212,7 +212,10 @@ module Spree
                  variants: Spree::Variant.table_name,
                  products: Spree::Product.table_name,
                  addresses: Spree::Address.table_name,
-                 product_categories: Spree::ProductCategory.table_name)
+                 product_categories: Spree::ProductCategory.table_name,
+                 refunds: Spree::Refund.table_name,
+                 fees: Spree::Fee.table_name,
+                 commission_lines: Spree::CommissionLine.table_name)
         end
 
         def dimension_alias(dim)
@@ -232,6 +235,8 @@ module Spree
         # like `table.column` and nothing else. Anything richer is a
         # registration bug and raises rather than reaching the database.
         def qualified_column(dimension)
+          return resolve_sql(dimension.expression) if dimension.expression?
+
           resolved = if dimension.column.is_a?(String)
                        resolve_sql(dimension.column)
                      else

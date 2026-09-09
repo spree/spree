@@ -22,7 +22,7 @@ module Spree
 
         def cast_value(metric, raw)
           case metric.format
-          when :money, :decimal then raw.to_f.round(2)
+          when :money, :decimal, :percent then raw.to_f.round(2)
           else raw.to_i
           end
         end
@@ -35,7 +35,11 @@ module Spree
         def apply_derived(metrics)
           query.metrics.select(&:derived?).each do |metric|
             numerator, denominator = metric.ratio.map { |name| metrics[name] || 0 }
-            metrics[metric.name] = denominator.to_f.zero? ? 0.0 : (numerator / denominator.to_f).round(2)
+            ratio = denominator.to_f.zero? ? 0.0 : numerator / denominator.to_f
+            # A percent metric carries the number a merchant reads (42.5), not
+            # the fraction, so clients never have to know to multiply.
+            ratio *= 100 if metric.format == :percent
+            metrics[metric.name] = ratio.round(2)
           end
         end
 

@@ -5,9 +5,9 @@ RSpec.describe Spree::SavedReport, type: :model do
 
   it 'saves a compilable query' do
     report = described_class.new(store: store, name: 'Sales by channel',
-                                 query: { 'metrics' => %w[gross_revenue], 'dimensions' => %w[channel] })
+                                 query: { 'metrics' => %w[total_sales], 'dimensions' => %w[channel] })
     expect(report).to be_valid
-    expect(report.reporting_query.metrics.map(&:name)).to eq([:gross_revenue])
+    expect(report.reporting_query.metrics.map(&:name)).to eq([:total_sales])
   end
 
   it 'refuses a query the registry cannot compile' do
@@ -16,9 +16,9 @@ RSpec.describe Spree::SavedReport, type: :model do
     expect(report.errors.details[:query]).to include(hash_including(error: :invalid_reporting_query))
     # The compiler's own sentence is the useful part — it names the members
     # that would have worked — so it rides along as the message.
-    expect(report.errors[:query].first).to include('net_revenue')
+    expect(report.errors[:query].first).to include('net_sales')
 
-    report = described_class.new(store: store, name: 'Broken', query: { 'metrics' => %w[gross_revenue], 'dimensions' => %w[category] })
+    report = described_class.new(store: store, name: 'Broken', query: { 'metrics' => %w[total_sales], 'dimensions' => %w[category] })
     expect(report).not_to be_valid
     expect(report.errors[:query].first).to include('cannot be grouped')
   end

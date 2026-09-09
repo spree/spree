@@ -172,9 +172,11 @@ export function formatMetric(
 ): string {
   if (!value) return '—'
   if (value.display) return value.display
-  return value.value.toLocaleString(locale, {
+  const formatted = value.value.toLocaleString(locale, {
     maximumFractionDigits: metric.format === 'integer' ? 0 : 2,
   })
+  // The server sends the number a merchant reads (42.5), so only the sign is missing.
+  return metric.format === 'percent' ? `${formatted}%` : formatted
 }
 
 /** Label, formatted total and (when comparing) the period-over-period delta. */

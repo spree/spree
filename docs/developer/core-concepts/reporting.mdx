@@ -30,12 +30,12 @@ A query names what to measure and how to slice it. This is the whole surface:
 
 ```json
 {
-  "metrics": ["gross_revenue", "orders_count"],
+  "metrics": ["total_sales", "orders"],
   "dimensions": [{ "name": "completed_at", "grain": "week" }],
   "filters": [{ "dimension": "channel", "op": "eq", "value": "ch_86Rf07xd4z" }],
   "time_range": { "preset": "last_4_weeks" },
   "compare": "previous_period",
-  "sort": "-gross_revenue",
+  "sort": "-total_sales",
   "limit": 50
 }
 ```
@@ -66,18 +66,45 @@ A metric is an aggregate over one **base** relation, either `:orders` or
 `:line_items`:
 
 ```ruby
-Spree.reporting.metric :gross_revenue,
+Spree.reporting.metric :total_sales,
   sql: 'SUM(%{orders}.total)', base: :orders, format: :money
 ```
 
 - `sql` is a portable aggregate fragment. `%{orders}`, `%{line_items}`,
-  `%{variants}`, `%{products}`, `%{addresses}` and `%{product_categories}`
-  interpolate to real table names.
-- `format` is `:money`, `:integer` or `:decimal`. A `:money` metric forces a
-  single-currency scope and arrives with a formatted `display` string.
+  `%{variants}`, `%{products}`, `%{addresses}`, `%{product_categories}`,
+  `%{refunds}`, `%{fees}` and `%{commission_lines}` interpolate to real table
+  names.
+- `format` is `:money`, `:integer`, `:decimal` or `:percent`. A `:money` metric
+  forces a single-currency scope and arrives with a formatted `display` string;
+  a `:percent` metric arrives as the number a merchant reads (`42.5`), not the
+  fraction.
 - `ratio: [:numerator, :denominator]` defines a **derived** metric, computed
   after aggregation so it is correct for both rows and totals. Average order
-  value is `ratio: %i[gross_revenue orders_count]`, never `AVG()`.
+  value is `ratio: %i[total_sales orders]`, never `AVG()`.
+
+Money that belongs to an order but lives on another table — refunds,
+commissions — is summed through a **correlated subquery** rather than a join.
+An order with three refunds must stay one row; joining would multiply the base
+row and inflate every other metric in the same query.
+
+### The sales chain
+
+Core's sales metrics follow the sequence merchants and accountants already use,
+so a Spree figure means what the same word means everywhere else:
+
+```
+gross_sales − discounts − returns = net_sales
+net_sales + shipping + duties + fees + taxes = total_sales
+```
+
+`returns` counts money refunded **in the period the refund was issued**, not
+the period of the original order. A report over a past range can therefore
+change after the fact, which is the conventional treatment and the only one an
+open accounting period can produce.
+
+`cost_of_goods`, `gross_profit` and `gross_margin` read the line item's
+`cost_price`. That column is nullable, so a variant with no cost contributes
+zero and margin over an incompletely-costed catalogue reads high.
 
 ## Dimensions
 
@@ -98,6 +125,7 @@ Spree.reporting.dimension :channel, base: :orders, column: :channel_id,
 |--------|---------|
 | `base` | `:orders` or `:line_items`. Order-level dimensions are reachable from line items through the order join; not the reverse. |
 | `column` | A column on the base table, or a `%{table}.column` string. Must resolve to a plain identifier. |
+| `expression` | SQL computing the key instead of reading a column — how `customer_type` decides first-time from returning. Use it only where a column genuinely cannot answer; it carries the same trust as a metric's `sql`. |
 | `joins` | Association joins the grouping needs, applied only to the grouped query. |
 | `type` | `:value` (default) or `:time`. Time dimensions take `grains` and zero-fill buckets. |
 | `lookup` | Tags what the keys identify (`:product`, `:customer`), so clients know display payloads are coming. |

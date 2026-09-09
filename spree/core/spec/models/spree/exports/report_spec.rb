@@ -3,7 +3,7 @@ require 'spec_helper'
 RSpec.describe Spree::Exports::Report, type: :model do
   let(:store) { @default_store }
   let(:admin) { create(:admin_user) }
-  let(:query) { { 'metrics' => %w[gross_revenue orders_count], 'dimensions' => %w[channel] } }
+  let(:query) { { 'metrics' => %w[total_sales orders], 'dimensions' => %w[channel] } }
 
   before { create(:completed_order_with_totals, store: store, completed_at: 3.days.ago) }
 
@@ -15,7 +15,7 @@ RSpec.describe Spree::Exports::Report, type: :model do
 
   it 'writes a dimensionless report as a single totals row' do
     export = described_class.create!(store: store, user: admin,
-                                     search_params: { query: { 'metrics' => %w[gross_revenue orders_count] } })
+                                     search_params: { query: { 'metrics' => %w[total_sales orders] } })
     export.generate_csv
 
     rows = CSV.read(export.send(:export_tmp_file_path))
@@ -40,7 +40,7 @@ RSpec.describe Spree::Exports::Report, type: :model do
     viewer = create(:admin_user, :without_admin_role)
     create(:role_user, user: viewer, role: create(:role, permissions: %w[read_reports read_orders]))
     export = described_class.new(store: store, user: viewer,
-                                 search_params: { query: { 'metrics' => %w[net_revenue], 'dimensions' => %w[product] } })
+                                 search_params: { query: { 'metrics' => %w[net_sales], 'dimensions' => %w[product] } })
 
     expect(export).not_to be_valid
     expect(export.errors.details[:base]).to include(hash_including(error: :forbidden_reporting_member))

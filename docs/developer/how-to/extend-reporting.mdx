@@ -55,7 +55,7 @@ totals — which a plain `AVG()` would not:
 
 ```ruby
 Spree.reporting.metric :average_units_per_order,
-  ratio: %i[units_sold orders_count], format: :decimal
+  ratio: %i[units_sold orders], format: :decimal
 ```
 
 ## Add a dimension
@@ -155,7 +155,7 @@ end
 Registration refuses a duplicate name unless you say so explicitly:
 
 ```ruby
-Spree.reporting.metric :gross_revenue, replace: true,
+Spree.reporting.metric :total_sales, replace: true,
   sql: 'SUM(%{orders}.total - %{orders}.delivery_total)',
   base: :orders, format: :money
 ```

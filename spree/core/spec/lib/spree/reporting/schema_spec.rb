@@ -6,7 +6,7 @@ RSpec.describe Spree::Reporting::Schema do
   subject(:schema) { described_class.new(store: store).to_h }
 
   it 'describes metrics with localized labels, formats and currency' do
-    metric = schema[:metrics].find { |m| m[:name] == :gross_revenue }
+    metric = schema[:metrics].find { |m| m[:name] == :total_sales }
     expect(metric[:label]).to eq('Total sales')
     expect(metric[:description]).to be_present
     expect(metric[:format]).to eq(:money)
@@ -15,11 +15,11 @@ RSpec.describe Spree::Reporting::Schema do
 
   it 'publishes compatible metrics, filter ops and enumerated values per dimension' do
     category = schema[:dimensions].find { |d| d[:name] == :category }
-    expect(category[:compatible_metrics]).to include(:net_revenue, :units_sold)
-    expect(category[:compatible_metrics]).not_to include(:gross_revenue, :aov)
+    expect(category[:compatible_metrics]).to include(:net_sales, :units_sold)
+    expect(category[:compatible_metrics]).not_to include(:total_sales, :average_order_value)
 
     channel = schema[:dimensions].find { |d| d[:name] == :channel }
-    expect(channel[:compatible_metrics]).to include(:gross_revenue, :aov, :units_sold)
+    expect(channel[:compatible_metrics]).to include(:total_sales, :average_order_value, :units_sold)
     expect(channel[:filter_ops]).to eq(%w[eq in])
 
     status = schema[:dimensions].find { |d| d[:name] == :payment_status }

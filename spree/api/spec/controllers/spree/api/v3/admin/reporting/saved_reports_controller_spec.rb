@@ -7,7 +7,7 @@ RSpec.describe Spree::Api::V3::Admin::Reporting::SavedReportsController, type: :
 
   before { request.headers.merge!(headers) }
 
-  let(:query) { { 'metrics' => %w[gross_revenue orders_count], 'dimensions' => %w[channel], 'sort' => '-gross_revenue' } }
+  let(:query) { { 'metrics' => %w[total_sales orders], 'dimensions' => %w[channel], 'sort' => '-total_sales' } }
   let!(:report) { create(:saved_report, store: store, name: 'Sales by channel', query: query) }
 
   describe 'GET #index' do
@@ -24,16 +24,16 @@ RSpec.describe Spree::Api::V3::Admin::Reporting::SavedReportsController, type: :
 
   describe 'POST #create' do
     it 'saves a compilable query and records the author' do
-      post :create, params: { name: 'Top products', query: { metrics: %w[net_revenue], dimensions: %w[product], limit: 10 } }, as: :json
+      post :create, params: { name: 'Top products', query: { metrics: %w[net_sales], dimensions: %w[product], limit: 10 } }, as: :json
 
       expect(response).to have_http_status(:created)
-      expect(json_response['query']['metrics']).to eq(%w[net_revenue])
+      expect(json_response['query']['metrics']).to eq(%w[net_sales])
       expect(json_response['seeded']).to be false
       expect(json_response['author_name']).to be_present
     end
 
     it 'rejects a query the registry cannot compile' do
-      post :create, params: { name: 'Broken', query: { metrics: %w[gross_revenue], dimensions: %w[category] } }, as: :json
+      post :create, params: { name: 'Broken', query: { metrics: %w[total_sales], dimensions: %w[category] } }, as: :json
 
       expect(response).to have_http_status(:unprocessable_content)
       expect(response.body).to include('cannot be grouped')

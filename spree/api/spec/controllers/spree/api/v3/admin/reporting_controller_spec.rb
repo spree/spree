@@ -11,7 +11,7 @@ RSpec.describe Spree::Api::V3::Admin::ReportingController, type: :controller do
     it 'hydrates enumerated dimensions with labels' do
       create(:completed_order_with_totals, store: store, completed_at: 2.days.ago).update_columns(payment_status: 'partially_paid')
 
-      post :query, params: { metrics: %w[orders_count], dimensions: %w[payment_status] }, as: :json
+      post :query, params: { metrics: %w[orders], dimensions: %w[payment_status] }, as: :json
 
       expect(response).to have_http_status(:ok)
       expect(json_response['rows'].first['dimensions']['payment_status']).to eq('id' => 'partially_paid', 'label' => 'Partially paid', 'meta' => {})
@@ -21,7 +21,7 @@ RSpec.describe Spree::Api::V3::Admin::ReportingController, type: :controller do
 
     let(:query_params) do
       {
-        metrics: %w[gross_revenue orders_count aov],
+        metrics: %w[total_sales orders average_order_value],
         dimensions: [{ name: 'completed_at', grain: 'day' }],
         compare: 'previous_period'
       }
@@ -31,7 +31,7 @@ RSpec.describe Spree::Api::V3::Admin::ReportingController, type: :controller do
       subject
       expect(response).to have_http_status(:ok)
       expect(json_response['meta']).to include('currency', 'time_range', 'previous_time_range', 'metrics', 'dimensions')
-      expect(json_response['totals'].keys).to match_array(%w[gross_revenue orders_count aov])
+      expect(json_response['totals'].keys).to match_array(%w[total_sales orders average_order_value])
       expect(json_response['rows'].length).to eq(31) # default 30 days + today
     end
 
@@ -44,18 +44,18 @@ RSpec.describe Spree::Api::V3::Admin::ReportingController, type: :controller do
         totals = json_response['totals']
         expected_gross = (order1.total + order2.total).to_f.round(2)
 
-        expect(totals['gross_revenue']['value']).to eq(expected_gross)
-        expect(totals['gross_revenue']['display']).to include('$')
-        expect(totals['gross_revenue']['growth']).to be_nil
-        expect(totals['orders_count']['value']).to eq(2)
-        expect(totals['aov']['value']).to eq((expected_gross / 2).round(2))
+        expect(totals['total_sales']['value']).to eq(expected_gross)
+        expect(totals['total_sales']['display']).to include('$')
+        expect(totals['total_sales']['growth']).to be_nil
+        expect(totals['orders']['value']).to eq(2)
+        expect(totals['average_order_value']['value']).to eq((expected_gross / 2).round(2))
       end
 
       it 'hydrates product rows with prefixed ids, labels and meta' do
         post :query, params: {
-          metrics: %w[net_revenue units_sold],
+          metrics: %w[net_sales units_sold],
           dimensions: %w[product],
-          sort: '-net_revenue',
+          sort: '-net_sales',
           limit: 5
         }, as: :json
 
@@ -63,14 +63,14 @@ RSpec.describe Spree::Api::V3::Admin::ReportingController, type: :controller do
         expect(row['dimensions']['product']['id']).to start_with('prod_')
         expect(row['dimensions']['product']['label']).to be_present
         expect(row['dimensions']['product']['meta']).to include('slug', 'thumbnail_url')
-        expect(row['metrics']['net_revenue']['value']).to be > 0
+        expect(row['metrics']['net_sales']['value']).to be > 0
       end
 
       it 'hydrates customer rows and ranks by revenue' do
         post :query, params: {
-          metrics: %w[gross_revenue orders_count],
+          metrics: %w[total_sales orders],
           dimensions: %w[customer],
-          sort: '-gross_revenue',
+          sort: '-total_sales',
           limit: 5
         }, as: :json
 
@@ -78,7 +78,7 @@ RSpec.describe Spree::Api::V3::Admin::ReportingController, type: :controller do
         top = json_response['rows'].first
         expect(top['dimensions']['customer']['id']).to start_with('cust_')
         expect(top['dimensions']['customer']['meta']['email']).to be_present
-        expect(top['metrics']['orders_count']['value']).to eq(1)
+        expect(top['metrics']['orders']['value']).to eq(1)
       end
 
       it 'filters by channel' do
@@ -86,18 +86,18 @@ RSpec.describe Spree::Api::V3::Admin::ReportingController, type: :controller do
         create(:completed_order_with_totals, store: store, channel: channel, completed_at: 3.days.ago)
 
         post :query, params: {
-          metrics: %w[orders_count],
+          metrics: %w[orders],
           filters: [{ dimension: 'channel', op: 'eq', value: channel.prefixed_id }]
         }, as: :json
 
-        expect(json_response['totals']['orders_count']['value']).to eq(1)
+        expect(json_response['totals']['orders']['value']).to eq(1)
       end
 
       it 'returns 404 for a channel filter from another store' do
         foreign_channel = create(:channel, store: create(:store))
 
         post :query, params: {
-          metrics: %w[orders_count],
+          metrics: %w[orders],
           filters: [{ dimension: 'channel', op: 'eq', value: foreign_channel.prefixed_id }]
         }, as: :json
 
@@ -111,7 +111,7 @@ RSpec.describe Spree::Api::V3::Admin::ReportingController, type: :controller do
 
         expect(response).to have_http_status(:unprocessable_content)
         expect(json_response['error']['code']).to eq('invalid_reporting_query')
-        expect(json_response['error']['message']).to include('net_revenue')
+        expect(json_response['error']['message']).to include('net_sales')
       end
       it 'names the valid members in the error details so a client can correct itself' do
         post :query, params: { metrics: %w[revenue] }, as: :json
@@ -120,7 +120,7 @@ RSpec.describe Spree::Api::V3::Admin::ReportingController, type: :controller do
         details = json_response['error']['details']
         expect(details['kind']).to eq('metric')
         expect(details['name']).to eq('revenue')
-        expect(details['valid']).to include('gross_revenue', 'net_revenue')
+        expect(details['valid']).to include('total_sales', 'net_sales')
       end
 
     end
@@ -140,12 +140,12 @@ RSpec.describe Spree::Api::V3::Admin::ReportingController, type: :controller do
     let(:reports_key) { create(:api_key, :secret, store: store, scopes: %w[read_reports]) }
 
     it 'allows order-data queries with read_reports alone' do
-      post :query, params: { metrics: %w[gross_revenue orders_count] }, as: :json
+      post :query, params: { metrics: %w[total_sales orders] }, as: :json
       expect(response).to have_http_status(:ok)
     end
 
     it 'forbids members whose key_scope the key lacks' do
-      post :query, params: { metrics: %w[net_revenue], dimensions: %w[product] }, as: :json
+      post :query, params: { metrics: %w[net_sales], dimensions: %w[product] }, as: :json
 
       expect(response).to have_http_status(:forbidden)
       expect(json_response['error']['details']['required_scopes']).to eq(%w[read_products])
@@ -155,7 +155,7 @@ RSpec.describe Spree::Api::V3::Admin::ReportingController, type: :controller do
       key = create(:api_key, :secret, store: store, scopes: %w[read_reports read_products])
       request.headers['x-spree-api-key'] = key.plaintext_token
 
-      post :query, params: { metrics: %w[net_revenue], dimensions: %w[product] }, as: :json
+      post :query, params: { metrics: %w[net_sales], dimensions: %w[product] }, as: :json
       expect(response).to have_http_status(:ok)
     end
   end
@@ -167,21 +167,21 @@ RSpec.describe Spree::Api::V3::Admin::ReportingController, type: :controller do
     let(:custom_permissions) { %w[read_reports read_orders] }
 
     it 'allows order-data queries' do
-      post :query, params: { metrics: %w[gross_revenue orders_count] }, as: :json
+      post :query, params: { metrics: %w[total_sales orders] }, as: :json
       expect(response).to have_http_status(:ok)
     end
 
     it 'forbids dimensions whose subject the role cannot read' do
-      post :query, params: { metrics: %w[net_revenue], dimensions: %w[product] }, as: :json
+      post :query, params: { metrics: %w[net_sales], dimensions: %w[product] }, as: :json
       expect(response).to have_http_status(:forbidden)
 
-      post :query, params: { metrics: %w[gross_revenue], dimensions: %w[customer] }, as: :json
+      post :query, params: { metrics: %w[total_sales], dimensions: %w[customer] }, as: :json
       expect(response).to have_http_status(:forbidden)
     end
 
     it 'forbids filters whose subject the role cannot read' do
       post :query, params: {
-        metrics: %w[net_revenue],
+        metrics: %w[net_sales],
         filters: [{ dimension: 'product', op: 'eq', value: 'prod_x' }]
       }, as: :json
 
@@ -194,7 +194,7 @@ RSpec.describe Spree::Api::V3::Admin::ReportingController, type: :controller do
       get :schema, as: :json
 
       expect(response).to have_http_status(:ok)
-      metric = json_response['metrics'].find { |m| m['name'] == 'gross_revenue' }
+      metric = json_response['metrics'].find { |m| m['name'] == 'total_sales' }
       expect(metric).to include('label', 'description', 'format', 'currency')
       dimension = json_response['dimensions'].find { |d| d['name'] == 'completed_at' }
       expect(dimension['grains']).to include('day', 'week', 'month')

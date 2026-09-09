@@ -43,8 +43,8 @@ RSpec.describe Spree::Reporting::Registry do
 
   describe 'core starter vocabulary' do
     it 'is registered on Spree.reporting' do
-      expect(Spree.reporting.metric!(:net_revenue).base).to eq(:line_items)
-      expect(Spree.reporting.metric!(:aov).derived?).to be true
+      expect(Spree.reporting.metric!(:net_sales).base).to eq(:line_items)
+      expect(Spree.reporting.metric!(:average_order_value).derived?).to be true
       expect(Spree.reporting.dimension!(:completed_at).grains).to include(:day)
       expect(Spree.reporting.dimension!(:product).lookup).to eq(:product)
     end

@@ -38,7 +38,7 @@ type ReportViz = 'chart' | 'ranking' | 'stats'
 
 /** What a brand-new report starts from: revenue and orders per day, compared. */
 export const EMPTY_QUERY: ReportingQuery = {
-  metrics: ['gross_revenue', 'orders_count'],
+  metrics: ['total_sales', 'orders'],
   dimensions: [{ name: 'completed_at', grain: 'day' }],
   time_range: { preset: DEFAULT_PRESET },
   compare: 'previous_period',

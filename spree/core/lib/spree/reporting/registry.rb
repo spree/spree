@@ -7,11 +7,19 @@ module Spree
     # @!attribute base
     #   Root relation the aggregate runs against (:orders or :line_items).
     # @!attribute format
-    #   :money | :integer | :decimal — :money metrics force a single-currency scope.
+    #   :money | :integer | :decimal | :percent — :money metrics force a
+    #   single-currency scope; :percent metrics arrive as the number a merchant
+    #   reads (42.5), not the fraction.
     # @!attribute ratio
     #   Derived metrics: [numerator_metric, denominator_metric], computed
     #   post-aggregation per row and for totals.
-    Metric = Struct.new(:name, :sql, :base, :format, :ratio, keyword_init: true) do
+    # @!attribute subject
+    #   Callable returning the model class a caller must be able to read for
+    #   this number — for a metric that exposes money outside the order itself,
+    #   like the marketplace's commission. Declared with key_scope.
+    # @!attribute key_scope
+    #   API-key scope the same number requires.
+    Metric = Struct.new(:name, :sql, :base, :format, :ratio, :subject, :key_scope, keyword_init: true) do
       def derived? = ratio.present?
       def money? = format == :money
     end
@@ -51,9 +59,15 @@ module Spree
     #   Enumerable raw values for status-like dimensions (an Array, or a lambda
     #   returning one so model constants load lazily). Published in the schema
     #   as the filter value list.
-    Dimension = Struct.new(:name, :base, :column, :joins, :type, :grains, :lookup,
+    Dimension = Struct.new(:name, :base, :column, :expression, :joins, :type, :grains, :lookup,
                            :resolve, :hydrate, :subject, :key_scope, :values, keyword_init: true) do
       def time? = type == :time
+
+      # A dimension whose key is computed rather than read from a column. The
+      # compiler validates `column` down to `table.column` so registration
+      # cannot smuggle SQL by accident; `expression` is how a developer says
+      # the SQL is deliberate, and it carries the same trust as a metric's.
+      def expression? = expression.present?
 
       def enumerated_values
         values.respond_to?(:call) ? values.call : values
@@ -74,6 +88,9 @@ module Spree
       def metric(name, replace: false, **opts)
         name = name.to_sym
         raise ArgumentError, "metric #{name} already registered (pass replace: true to override)" if @metrics.key?(name) && !replace
+        if opts[:subject] && opts[:key_scope].blank?
+          raise ArgumentError, "metric #{name} declares a subject and must also declare its key_scope"
+        end
 
         opts[:format] ||= :integer
         @metrics[name] = Metric.new(name: name, **opts)
@@ -84,6 +101,10 @@ module Spree
         raise ArgumentError, "dimension #{name} already registered (pass replace: true to override)" if @dimensions.key?(name) && !replace
         if opts[:subject] && opts[:key_scope].blank?
           raise ArgumentError, "dimension #{name} declares a subject and must also declare its key_scope"
+        end
+
+        if opts[:column].blank? && opts[:expression].blank?
+          raise ArgumentError, "dimension #{name} needs a column or an expression"
         end
 
         opts[:type] ||= :value

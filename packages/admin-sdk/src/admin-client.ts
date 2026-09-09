@@ -75,7 +75,7 @@ export interface ReportingSchemaMetric {
   name: string
   label: string
   description?: string
-  format: 'money' | 'integer' | 'decimal' | string
+  format: 'money' | 'integer' | 'decimal' | 'percent' | string
   currency?: string
   derived: boolean
 }

@@ -9,14 +9,16 @@ module Spree
     class Schema
       # @param store [Spree::Store]
       # @param registry [Registry]
-      # @param allowed [Proc] ->(Dimension) { true/false } — permission gate
-      def initialize(store:, registry: Spree.reporting, allowed: ->(_dimension) { true })
+      # @param allowed [Proc] ->(member) { true/false } — permission gate,
+      #   asked about metrics and dimensions alike
+      def initialize(store:, registry: Spree.reporting, allowed: ->(_member) { true })
         @store = store
         @registry = registry
         @allowed = allowed
       end
 
       def to_h
+        metrics = @registry.metrics.values.select { |m| @allowed.call(m) }
         dimensions = @registry.dimensions.values.select { |d| @allowed.call(d) }
         {
           meta: {
@@ -24,8 +26,8 @@ module Spree
             timezone: (Time.find_zone(@store.preferred_timezone) || Time.zone).name,
             supported_currencies: @store.supported_currencies_list.map(&:iso_code)
           },
-          metrics: @registry.metrics.values.map { |m| metric_entry(m) },
-          dimensions: dimensions.map { |d| dimension_entry(d) },
+          metrics: metrics.map { |m| metric_entry(m) },
+          dimensions: dimensions.map { |d| dimension_entry(d, metrics) },
           time_range: {
             presets: (Query::PRESETS + Query::RELATIVE_PRESETS).map { |p| { name: p, label: translate('presets', p, :label) } },
             relative: %w[last_<n>_days last_<n>_weeks last_<n>_months],
@@ -56,7 +58,7 @@ module Spree
         }.compact
       end
 
-      def dimension_entry(dimension)
+      def dimension_entry(dimension, metrics)
         {
           name: dimension.name,
           label: translate('dimensions', dimension.name, :label),
@@ -68,7 +70,7 @@ module Spree
           values: dimension.enumerated_values&.map { |value| { name: value, label: self.class.value_label(dimension, value) } },
           # Order-level metrics cannot be broken down by line-item dimensions
           # (they would double count) — the compiler enforces the same rule.
-          compatible_metrics: @registry.metrics.values.select { |m| @registry.compatible?(m, dimension) }.map(&:name)
+          compatible_metrics: metrics.select { |m| @registry.compatible?(m, dimension) }.map(&:name)
         }.compact
       end
 

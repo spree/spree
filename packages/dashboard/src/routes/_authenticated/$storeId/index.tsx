@@ -72,7 +72,7 @@ export const Route = createFileRoute('/_authenticated/$storeId/')({
 })
 
 // The five headline metrics, in tile order; labels come from the reporting schema.
-const CHART_METRICS = ['gross_revenue', 'orders_count', 'aov', 'units_sold', 'customers_count']
+const CHART_METRICS = ['total_sales', 'orders', 'average_order_value', 'units_sold', 'customers']
 
 function DashboardPage() {
   const { t } = useTranslation()
@@ -361,22 +361,22 @@ const RANKING_QUERIES: Record<
 > = {
   customers: {
     query: {
-      metrics: ['gross_revenue', 'orders_count'],
+      metrics: ['total_sales', 'orders'],
       dimensions: ['customer'],
-      sort: '-gross_revenue',
+      sort: '-total_sales',
       limit: 5,
     },
-    revenueMetric: 'gross_revenue',
-    countMetric: 'orders_count',
+    revenueMetric: 'total_sales',
+    countMetric: 'orders',
   },
   categories: {
     query: {
-      metrics: ['net_revenue', 'units_sold'],
+      metrics: ['net_sales', 'units_sold'],
       dimensions: ['category'],
-      sort: '-net_revenue',
+      sort: '-net_sales',
       limit: 5,
     },
-    revenueMetric: 'net_revenue',
+    revenueMetric: 'net_sales',
     countMetric: 'units_sold',
   },
 }
@@ -531,10 +531,10 @@ function TopProducts({ scope }: { scope: Pick<ReportingQuery, 'time_range' | 'fi
   const { storeId } = Route.useParams()
 
   const { data: result, isPlaceholderData } = useReportingQuery({
-    metrics: ['net_revenue', 'units_sold'],
+    metrics: ['net_sales', 'units_sold'],
     dimensions: ['product'],
     compare: 'previous_period',
-    sort: '-net_revenue',
+    sort: '-net_sales',
     limit: 5,
     ...scope,
   })
@@ -566,7 +566,7 @@ function TopProducts({ scope }: { scope: Pick<ReportingQuery, 'time_range' | 'fi
             {data.rows.map((row) => {
               const product = entityDimension(row, 'product')
               const productId = product.id
-              const revenue = row.metrics.net_revenue
+              const revenue = row.metrics.net_sales
               const thumbnail = metaString(product, 'thumbnail_url') ?? null
               const price = metaString(product, 'price')
 
