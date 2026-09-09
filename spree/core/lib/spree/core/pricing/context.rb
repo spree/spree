@@ -59,7 +59,7 @@ module Spree
           country: order.tax_country,
           market: order.market,
           channel: order.channel,
-          user: order.user,
+          user: order.customer,
           quantity: quantity || order.line_items.find_by(variant: variant)&.quantity,
           order: order,
           company: order.resolved_company

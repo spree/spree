@@ -18,17 +18,31 @@ import { type ReactNode, useEffect, useMemo, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useProductMembershipStaging } from './product-membership-staging'
 
+/**
+ * What the card reads off a member row. Narrower than `Product` on purpose:
+ * an endpoint feeding this card only has to send what the row renders, which
+ * is what lets the price list's own products endpoint answer with three
+ * fields instead of a whole product (docs/plans/6.0-volume-pricing.md).
+ * The picker is a different matter — it searches the catalogue and shows a
+ * slug, so it still takes full products.
+ */
+export interface ProductMembershipMember {
+  id: string
+  name?: string | null
+  thumbnail_url?: string | null
+}
+
 /** The paginated members query — `useCatalogProducts`-shaped. */
-export type ProductMembershipQuery = (
+export type ProductMembershipQuery<T extends ProductMembershipMember = Product> = (
   parentId: string | undefined,
   page?: number,
-) => { data?: { data: Product[]; meta: PaginationMeta }; isLoading: boolean }
+) => { data?: { data: T[]; meta: PaginationMeta }; isLoading: boolean }
 
 /** Raw paginated membership fetch for picker exclusion across every list page. */
-export type ProductMembershipListPage = (
+export type ProductMembershipListPage<T extends ProductMembershipMember = Product> = (
   parentId: string,
   page: number,
-) => Promise<{ data: Product[]; meta: PaginationMeta }>
+) => Promise<{ data: T[]; meta: PaginationMeta }>
 
 /** Persists a drag-to-reorder. Resolve to commit, reject to roll back. */
 export type ProductMembershipReorder = (productId: string, position: number) => Promise<unknown>
@@ -55,7 +69,7 @@ export type ProductMembershipReorder = (productId: string, position: number) => 
  * automatic collection materializes its members from rules): the list still
  * renders, but every control disappears.
  */
-export function DeferredProductMembershipCard({
+export function DeferredProductMembershipCard<TMember extends ProductMembershipMember = Product>({
   parentId,
   storeId,
   canEdit = true,
@@ -66,6 +80,7 @@ export function DeferredProductMembershipCard({
   translationNamespace,
   description,
   extraColumns,
+  renderSubRows,
   headerActions,
 }: {
   parentId: string
@@ -74,9 +89,9 @@ export function DeferredProductMembershipCard({
   canEdit?: boolean
   /** True when membership is rule-derived and cannot be curated at all. */
   readOnly?: boolean
-  useProducts: ProductMembershipQuery
+  useProducts: ProductMembershipQuery<TMember>
   /** When set, every persisted member id is excluded from the picker, not just the current list page. */
-  listMembersPage?: ProductMembershipListPage
+  listMembersPage?: ProductMembershipListPage<TMember>
   onReorder?: ProductMembershipReorder
   /** Locale namespace holding the `products.*` copy, e.g. `admin.catalogs`. */
   translationNamespace: string
@@ -93,7 +108,13 @@ export function DeferredProductMembershipCard({
    */
   extraColumns?:
     | ProductMembershipListProps['extraColumns']
-    | ((products: Product[]) => ProductMembershipListProps['extraColumns'])
+    | ((products: TMember[]) => ProductMembershipListProps['extraColumns'])
+  /**
+   * Rows rendered beneath each product's own. Built from the server rows, so
+   * a caller can render per-variant detail the membership row itself has no
+   * room for (docs/plans/6.0-volume-pricing.md).
+   */
+  renderSubRows?: (products: TMember[]) => ProductMembershipListProps['renderSubRows']
   /**
    * Extra controls beside Add products, for an action that belongs on these
    * rows rather than in a card of its own — pricing a catalog's assortment.
@@ -260,6 +281,7 @@ export function DeferredProductMembershipCard({
           extraColumns={
             typeof extraColumns === 'function' ? extraColumns(serverProducts) : extraColumns
           }
+          renderSubRows={renderSubRows?.(serverProducts)}
           renderTitle={(row) => (
             <Link
               to="/$storeId/products/$productId"

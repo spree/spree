@@ -59,10 +59,9 @@ module Spree
         # rank order so the Prioritizer's first-package-wins-on-hand logic
         # honors the routing decision.
         def build_packages(locations)
-          packages = locations.flat_map do |location|
-            Spree::Stock::Packer.new(location, inventory_units, Spree.stock_splitters).packages
+          locations.flat_map do |location|
+            Spree::Stock::Packer.new(location, inventory_units, Spree.stock_splitters, owner: order).packages
           end
-          packages.each { |package| package.owner = order }
         end
 
         # Prioritizer's Adjuster distributes each inventory_unit across

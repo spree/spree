@@ -3,6 +3,7 @@ module Spree
     has_prefix_id :mkt
 
     include Spree::SingleStoreResource
+    include Spree::HasListPosition
 
     acts_as_paranoid
     acts_as_list scope: :store_id
@@ -45,11 +46,24 @@ module Spree
     # it collapses nil to 0, which would reject every return.
     preference :return_window_days, :integer, default: 30, nullable: true
 
+    # The statutory cooling-off period. Deliberately separate from
+    # `return_window_days`: that one is merchant policy running from purchase,
+    # this is a legal right running from the moment the buyer takes delivery,
+    # and merchants routinely set the former to 30 days as goodwill. Reusing
+    # one for the other would publish a goodwill figure as a statutory notice
+    # and count it from the wrong event.
+    #
+    # 14 days is the EU floor (Consumer Rights Directive 2011/83/EU Art. 9).
+    # Nil disables the notice for markets with no such right.
+    preference :withdrawal_period_days, :integer, default: 14, nullable: true
+
     #
     # Validations
     #
     validates :store, presence: true
     validates :preferred_return_window_days,
+              numericality: { only_integer: true, greater_than: 0, allow_nil: true }
+    validates :preferred_withdrawal_period_days,
               numericality: { only_integer: true, greater_than: 0, allow_nil: true }
     validates :name, presence: true, uniqueness: { scope: spree_base_uniqueness_scope + [:store_id] }
     # An unregistered class name would only fail at checkout, when a customer is
@@ -72,6 +86,7 @@ module Spree
 
     before_save :ensure_single_default
     before_destroy :ensure_can_be_deleted
+    after_commit :sync_price_list_currencies, on: %i[create update], if: :saved_change_to_currency?
 
     #
     # Scopes
@@ -197,6 +212,13 @@ module Spree
         store.association(:default_market).reset
         store.association(:markets).reset if store.association_cached?(:markets)
       end
+    end
+
+    # A new currency has to reach every price list of the store, or the
+    # price spreadsheet shows the lists as empty in it
+    # (Spree::PriceLists::SyncCurrenciesJob).
+    def sync_price_list_currencies
+      Spree::PriceLists::SyncCurrenciesJob.perform_later(store_id)
     end
 
     def ensure_can_be_deleted

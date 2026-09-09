@@ -11,8 +11,7 @@ module Spree
           typelize type: :string,
                    promotion_id: :string,
                    preferences: 'Record<string, unknown>',
-                   preference_schema: "Array<{ key: string; type: string; default: unknown }>",
-                   label: :string,
+                   preference_schema: "Array<{ key: string; type: string; default: unknown; choices?: string[] }>",
                    product_ids: 'Array<string> | null',
                    category_ids: 'Array<string> | null',
                    customer_ids: 'Array<string> | null',
@@ -30,10 +29,6 @@ module Spree
 
           attribute :preferences, &:serialized_preferences
           attribute :preference_schema, &:serialized_preference_schema
-
-          attribute :label do |rule|
-            rule.respond_to?(:human_name) ? rule.human_name : rule.class.to_s.demodulize
-          end
 
           # Association IDs for rules that wire products/taxons/users through
           # join tables. Returned as prefixed IDs to match the rest of the
@@ -70,10 +65,9 @@ module Spree
                resource: proc { Spree.api.admin_category_serializer },
                if: proc { |rule| rule.respond_to?(:categories) }
 
-          many :users,
-               key: :customers,
+          many :customers,
                resource: proc { Spree.api.admin_customer_serializer },
-               if: proc { |rule| rule.respond_to?(:users) }
+               if: proc { |rule| rule.respond_to?(:customers) }
 
           many :customer_groups,
                resource: proc { Spree.api.admin_customer_group_serializer },

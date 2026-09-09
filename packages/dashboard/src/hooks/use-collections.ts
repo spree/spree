@@ -7,6 +7,7 @@ import {
 } from '@spree/dashboard-core'
 import { useQuery, useQueryClient } from '@tanstack/react-query'
 import i18n from 'i18next'
+import { TRANSLATIONS_QUERY_RESOURCE, useInvalidateTranslations } from './use-translations'
 
 export function useCollections() {
   return useQuery({
@@ -37,25 +38,31 @@ export function useCollection(id: string | undefined) {
 }
 
 export function useCreateCollection() {
+  const invalidateTranslations = useInvalidateTranslations()
+
   return useResourceMutation<Collection, Error, CollectionCreateParams>({
     mutationFn: (params) => adminClient.collections.create(params),
-    invalidate: [['collections']],
+    invalidate: [['collections'], [TRANSLATIONS_QUERY_RESOURCE]],
     successMessage: i18n.t('admin.collections.messages.created'),
     errorMessage: i18n.t('admin.errors.failed_to_create'),
+    onSuccess: () => invalidateTranslations(),
   })
 }
 
 export function useUpdateCollection(id: string) {
+  const invalidateTranslations = useInvalidateTranslations()
+
   return useResourceMutation<Collection, Error, CollectionUpdateParams>({
     mutationFn: (params) => adminClient.collections.update(id, params),
     // The nested products list is held back: it prefix-matches
     // `['collections', id]`, and this update runs before the membership flush
     // inside the page's Save — refreshing it there paints the pre-save rows
     // for a frame. The flush refreshes it once, at the end.
-    invalidate: [['collections'], ['collections', id]],
+    invalidate: [['collections'], ['collections', id], [TRANSLATIONS_QUERY_RESOURCE]],
     doNotInvalidate: ['products'],
     successMessage: i18n.t('admin.collections.messages.updated'),
     errorMessage: i18n.t('admin.errors.failed_to_update'),
+    onSuccess: () => invalidateTranslations(),
   })
 }
 
@@ -75,14 +82,16 @@ export function useRepositionCollection() {
 export function useDeleteCollection() {
   const queryClient = useQueryClient()
   const buildKey = useResourceKeyBuilder()
+  const invalidateTranslations = useInvalidateTranslations()
 
   return useResourceMutation<void, Error, string>({
     mutationFn: (id) => adminClient.collections.delete(id),
-    invalidate: [['collections']],
+    invalidate: [['collections'], [TRANSLATIONS_QUERY_RESOURCE]],
     successMessage: i18n.t('admin.collections.messages.deleted'),
     errorMessage: i18n.t('admin.errors.failed_to_delete'),
     onSuccess: (_data, id) => {
       queryClient.removeQueries({ queryKey: buildKey('collections', id) })
+      invalidateTranslations()
     },
   })
 }

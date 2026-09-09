@@ -27,6 +27,7 @@ module Spree
     include Spree::SanitizableRichText
     include Spree::Purchase::Channel
     include Spree::Purchase::Company
+    include Spree::Purchase::Freight
     include Spree::Purchase::QuantityRules
     include Spree::Purchase::PurchaseOrder
     include Spree::Purchase::Market
@@ -37,6 +38,7 @@ module Spree
     include Spree::Purchase::StoreCredits
     include Spree::Purchase::GiftCards
     include Spree::Purchase::LineItemCurrencies
+    include Spree::Purchase::LineItemLookup
     include Spree::Purchase::PaymentProcessing
     include Spree::Purchase::Addresses
     include Spree::Purchase::Validations
@@ -63,7 +65,8 @@ module Spree
                   :included_tax_total,  :additional_tax_total, :tax_total,
                   :delivery_total,      :discount_total,       :total,
                   :cart_promo_total,    :pre_tax_item_amount,  :pre_tax_total,
-                  :payment_total,       :amount_due,           :fee_total
+                  :payment_total,       :amount_due,           :fee_total,
+                  :commission_amount_total, :commission_tax_total, :commission_total
 
     alias display_ship_total display_delivery_total
     alias_attribute :ship_total, :delivery_total
@@ -168,6 +171,7 @@ module Spree
     belongs_to :created_by, class_name: "::#{Spree.admin_user_class}", optional: true
     belongs_to :approver, class_name: "::#{Spree.admin_user_class}", optional: true
     belongs_to :canceler, class_name: "::#{Spree.admin_user_class}", optional: true
+    belongs_to :cancel_reason, class_name: 'Spree::OrderCancellationReason', optional: true, inverse_of: :orders
 
     belongs_to :preferred_stock_location, class_name: 'Spree::StockLocation', optional: true
 
@@ -178,8 +182,6 @@ module Spree
       has_many :returns, -> { order(:created_at) }, inverse_of: :order, class_name: 'Spree::Return'
       has_many :exchanges, -> { order(:created_at) }, inverse_of: :order, class_name: 'Spree::Exchange'
       has_many :claims, -> { order(:created_at) }, inverse_of: :order, class_name: 'Spree::Claim'
-      has_many :cancellations, -> { order(:created_at) }, inverse_of: :order, class_name: 'Spree::OrderCancellation'
-      has_many :approvals, -> { order(:created_at) }, inverse_of: :order, class_name: 'Spree::OrderApproval'
     end
     has_many :fulfillment_items, inverse_of: :order, class_name: 'Spree::FulfillmentItem'
     has_many :inventory_units, class_name: 'Spree::FulfillmentItem', inverse_of: :order, deprecated: true
@@ -358,11 +360,6 @@ module Spree
       update_hooks.add(hook)
     end
 
-    # For compatibility with Calculator::PriceSack
-    def amount
-      line_items.inject(0.0) { |sum, li| sum + li.amount }
-    end
-
     # Sum of the eligible promotion adjustments applied to the order itself
     # (whole-order discounts created by Promotion::Actions::CreateAdjustment,
     # distributed proportionally across line items), as opposed to promotions
@@ -440,6 +437,101 @@ module Spree
       return false if payment_state.in?(%w[void failed]) || refunds.empty?
 
       refunds_total < total_minus_store_credits - additional_tax_total.abs
+    end
+
+    # When the buyer's statutory right of withdrawal expires — the EU
+    # cooling-off period (Consumer Rights Directive 2011/83/EU Art. 9).
+    #
+    # Derived rather than stored, because the clock starts when the buyer takes
+    # physical possession: a value written at placement would be wrong the
+    # moment a parcel arrived.
+    #
+    # Nil until the last live parcel is delivered. Counting from completion
+    # instead would expire the deadline before the statutory period had even
+    # begun — the buyer would be told their right had run out while they were
+    # still waiting for the goods. A right whose start has not happened yet has
+    # no end date to report.
+    #
+    # @return [ActiveSupport::TimeWithZone, nil] nil when the market grants no
+    #   withdrawal right, the order is not complete, or delivery is outstanding
+    def withdrawal_period_ends_at
+      return nil unless withdrawal_right_applies?
+
+      started_at = withdrawal_period_starts_at
+      return nil if started_at.nil?
+
+      started_at + withdrawal_period_days.days
+    end
+
+    # Whether the buyer may still withdraw.
+    #
+    # True while delivery is outstanding: the right cannot have lapsed before
+    # it started, so an order still in transit is always within its period even
+    # though no deadline can be named yet.
+    #
+    # A canceled order is not: withdrawal is how a buyer ends a contract that
+    # is still standing, and cancellation has already ended this one. Without
+    # the guard, cancellation empties the live fulfillments, no start date can
+    # be found, and the open-ended reading above would keep the order reporting
+    # itself as withdrawable forever.
+    #
+    # @return [Boolean]
+    def within_withdrawal_period?
+      return false unless withdrawal_right_applies?
+
+      deadline = withdrawal_period_ends_at
+      # No deadline yet means nothing has been delivered, so the clock that
+      # would end the right has not started.
+      deadline.nil? || deadline.future?
+    end
+
+    # Whether a statutory right to withdraw exists on this order at all. A
+    # cancelled order has already ended the contract the right would end, and
+    # a market that sets no period grants none. Stated once because both
+    # readers above need the same answer.
+    def withdrawal_right_applies?
+      completed? && !canceled? && withdrawal_period_days.present?
+    end
+
+    # The moment the cooling-off period starts: receipt of the goods. The
+    # Consumer Rights Directive treats an order delivered in instalments as
+    # received when the LAST one arrives, so a partly-delivered order has not
+    # started its clock at all — reading the max over the delivered subset
+    # would start it at the first parcel and could expire the right while the
+    # buyer is still waiting for the rest.
+    #
+    # @return [ActiveSupport::TimeWithZone, nil] nil until every parcel that is
+    #   still live has been delivered
+    def withdrawal_period_starts_at
+      live = fulfillments.reject(&:canceled?)
+      return nil if live.empty?
+
+      received = live.map { |fulfillment| withdrawal_receipt_of(fulfillment) }
+      return nil if received.any?(&:blank?)
+
+      received.max
+    end
+
+    # When one fulfillment counts as received.
+    #
+    # Digital content has no delivery event and no carrier to report one, so
+    # waiting for `delivered_at` would leave a mixed order's clock stopped
+    # forever — the physical parcel arrives and the deadline never appears.
+    # The Directive treats digital content differently from goods anyway
+    # (Art. 16(m)); handing it over is the moment it reaches the buyer.
+    #
+    # @param fulfillment [Spree::Fulfillment]
+    # @return [ActiveSupport::TimeWithZone, nil]
+    def withdrawal_receipt_of(fulfillment)
+      return fulfillment.delivered_at || fulfillment.fulfilled_at if fulfillment.digital?
+
+      fulfillment.delivered_at
+    end
+
+    # @return [Integer, nil] nil where no market says otherwise — a statutory
+    #   notice is not something to assume on an order with no region attached
+    def withdrawal_period_days
+      market&.preferred_withdrawal_period_days
     end
 
     # Indicates whether or not the user is allowed to proceed to checkout.
@@ -546,18 +638,6 @@ module Spree
     def disassociate_user!
       Spree::Deprecation.warn('Spree::Order#disassociate_user! is deprecated and will be removed in Spree 6.1. Use #disassociate_customer! instead.')
       disassociate_customer!
-    end
-
-    def quantity_of(variant, options = {})
-      line_item = find_line_item_by_variant(variant, options)
-      line_item ? line_item.quantity : 0
-    end
-
-    def find_line_item_by_variant(variant, options = {})
-      line_items.detect do |line_item|
-        line_item.variant_id == variant.id &&
-          Spree.cart_compare_line_items_service.new.call(order: self, line_item: line_item, options: options).value
-      end
     end
 
     # Re-estimates tax through the configured provider (writes TaxLine rows
@@ -724,7 +804,7 @@ module Spree
     def ensure_line_item_variants_are_not_discontinued
       Spree::Deprecation.warn('Spree::Order#ensure_line_item_variants_are_not_discontinued is deprecated and will be removed in Spree 6.1. Completion validation lives in Spree::Checkout::Requirements.')
       if line_items.any? { |li| !li.variant || li.variant.discontinued? }
-        errors.add(:base, Spree.t(:discontinued_variants_present))
+        errors.add(:base, :discontinued_variants_present, message: Spree.t(:discontinued_variants_present))
         false
       else
         true
@@ -737,7 +817,7 @@ module Spree
     def ensure_line_items_are_in_stock
       Spree::Deprecation.warn('Spree::Order#ensure_line_items_are_in_stock is deprecated and will be removed in Spree 6.1. Completion validation lives in Spree::Checkout::Requirements.')
       if insufficient_stock_lines.present?
-        errors.add(:base, Spree.t(:insufficient_stock_lines_present))
+        errors.add(:base, :insufficient_stock_lines_present, message: Spree.t(:insufficient_stock_lines_present))
         false
       else
         true
@@ -959,8 +1039,8 @@ module Spree
     # Delegates to {Spree::Orders::Cancel} workflow.
     #
     # @deprecated Call {Spree.order_cancel_workflow} directly — it exposes the
-    #   full cancellation vocabulary (reason, note, restock_items,
-    #   refund_payments, notify_customer) this wrapper cannot pass through.
+    #   full cancellation vocabulary (reason, note, refund_payments,
+    #   notify_customer) this wrapper cannot pass through.
     # @param user [Spree.customer_class, nil] the user who canceled the order
     # @param canceled_at [Time, nil] the time of cancellation (defaults to current time)
     # @return [Spree::ServiceModule::Result]
@@ -970,23 +1050,14 @@ module Spree
     end
 
     # Machine-free lifecycle: cancellation runs through the
-    # {Spree::Orders::Cancel} workflow (which also records a
-    # Spree::OrderCancellation row); resume flips +status+ back and runs
-    # the same side effects the machine transition ran.
+    # {Spree::Orders::Cancel} workflow. There is no way back — a canceled
+    # order stays canceled, as it does on every comparable platform.
     def cancel
       Spree.order_cancel_workflow.call(order: self).success?
     end
 
     def cancel!
       cancel || raise(ActiveRecord::RecordInvalid.new(self))
-    end
-
-    def resume
-      Spree.order_resume_workflow.call(order: self).success?
-    end
-
-    def resume!
-      resume || raise(ActiveRecord::RecordInvalid.new(self))
     end
 
     # Approves the order and records the approver.
@@ -1106,7 +1177,7 @@ module Spree
     def ensure_can_be_deleted
       return true if can_be_deleted?
 
-      errors.add(:base, Spree.t(:order_cannot_be_deleted))
+      errors.add(:base, :order_cannot_be_deleted, message: Spree.t(:order_cannot_be_deleted))
       throw :abort
     end
 
@@ -1135,7 +1206,7 @@ module Spree
 
     def ensure_line_items_present
       unless line_items.present?
-        errors.add(:base, Spree.t(:there_are_no_items_for_this_order)) && (return false)
+        errors.add(:base, :there_are_no_items_for_this_order, message: Spree.t(:there_are_no_items_for_this_order)) && (return false)
       end
     end
 
@@ -1150,7 +1221,9 @@ module Spree
         fulfillments.destroy_all
 
         if undeliverable_line_items.present?
-          errors.add(:base, Spree.t(:products_cannot_be_shipped, product_names: undeliverable_line_items.map(&:name).to_sentence))
+          product_names = undeliverable_line_items.map(&:name).to_sentence
+          errors.add(:base, :products_cannot_be_shipped, product_names: product_names,
+                     message: Spree.t(:products_cannot_be_shipped, product_names: product_names))
           self.warnings |= undeliverable_line_items.map do |line_item|
             {
               code: 'delivery_unavailable',
@@ -1160,7 +1233,7 @@ module Spree
             }
           end
         else
-          errors.add(:base, Spree.t(:items_cannot_be_shipped))
+          errors.add(:base, :items_cannot_be_shipped, message: Spree.t(:items_cannot_be_shipped))
           self.warnings |= [{ code: 'delivery_unavailable', message: Spree.t(:items_cannot_be_shipped) }]
         end
 

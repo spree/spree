@@ -18,6 +18,7 @@ RSpec.describe Spree::Api::V3::DeliveryRateSerializer do
         included_tax_total display_included_tax_total
         tax_total display_tax_total
         carrier service_level estimated_delivery_date
+        unpriced freight_summary
         delivery_method
       ])
     end

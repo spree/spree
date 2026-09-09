@@ -127,6 +127,59 @@ module Spree
       end
     end
 
+    describe 'gift card' do
+      let(:customer) { create(:user) }
+      let(:cart) { create(:cart_ready_for_delivery, store: store, line_items_count: 1, customer: customer) }
+
+      before do
+        create(:store_credit_payment_method, store: store) unless Spree::PaymentMethod::StoreCredit.exists?
+        cart.recalculate_totals!
+      end
+
+      context 'when the gift card fully covers the order' do
+        let(:gift_card) { create(:gift_card, store: store, amount: cart.total, customer: customer) }
+        let(:ready_cart) do
+          cart.apply_gift_card(gift_card)
+          cart.reload
+        end
+
+        it 'carries the gift card onto the completed order' do
+          order = described_class.call(cart: ready_cart).value
+
+          expect(order.gift_card_id).to eq(gift_card.id)
+          expect(order.gift_card).to eq(gift_card)
+          expect(order.gift_card_total).to eq(ready_cart.total)
+        end
+
+        it 'redeems the gift card when the order is placed' do
+          expect { described_class.call(cart: ready_cart) }
+            .to change { gift_card.reload.status }.from('active').to('redeemed')
+
+          expect(gift_card.amount_used).to eq(ready_cart.total)
+          expect(gift_card.redeemed_at).to be_present
+        end
+      end
+
+      context 'when the gift card covers only part of the total' do
+        let(:gift_card) { create(:gift_card, store: store, amount: cart.total + 1, customer: customer) }
+        let(:ready_cart) do
+          cart.apply_gift_card(gift_card)
+          cart.reload
+        end
+
+        it 'marks the gift card partially redeemed' do
+          expect { described_class.call(cart: ready_cart) }
+            .to change { gift_card.reload.status }.from('active').to('partially_redeemed')
+
+          order = Spree::Order.find_by(cart_id: ready_cart.id)
+          expect(order.gift_card_id).to eq(gift_card.id)
+          expect(order.gift_card_total).to eq(ready_cart.total)
+          expect(gift_card.amount_used).to eq(ready_cart.total)
+          expect(gift_card.redeemed_at).to be_nil
+        end
+      end
+    end
+
     describe 'tax lifecycle' do
       it 'tells the tax engine the sale is final' do
         provider = instance_double(Spree::TaxProvider::Internal, estimate: nil, commit: nil)
@@ -257,6 +310,36 @@ module Spree
 
           order = result.value
           expect(order_rows(order).sum(:amount)).to eq(order.additional_tax_total)
+        end
+
+        # Tax charged on a fee has to name the order's own copy of that fee.
+        # Copied in the wrong order it names the cart's fee instead, which is
+        # then destroyed with the cart's rows — so the charge survives on the
+        # order while the tax explaining it either dangles or disappears.
+        context 'when an order-level fee was taxed' do
+          # A fee carries no category of its own, so it is taxed under the
+          # store's default — which the surrounding context's category is not.
+          before do
+            default_category = create(:tax_category, store: store, is_default: true)
+            create(:tax_rate, store: store, country_code: ready_cart.tax_country&.iso, amount: 0.2,
+                              included_in_price: false, tax_category: default_category)
+            create(:fee, order: nil, cart: ready_cart, amount: 9, kind: 'payment', label: 'Card surcharge')
+            ready_cart.reload.recalculate_totals!
+            ready_cart.payments.first.update!(amount: ready_cart.reload.total)
+          end
+
+          it 'points the fee’s tax at the order’s own fee' do
+            charged = ready_cart.tax_lines.reload.where.not(fee_id: nil).sum(:amount)
+            expect(charged).to be > 0
+
+            result = described_class.call(cart: ready_cart)
+            expect(result).to be_success
+            order = result.value
+
+            rows = order_rows(order).where.not(fee_id: nil)
+            expect(rows.sum(:amount)).to eq(charged)
+            expect(rows.pluck(:fee_id).uniq).to match_array(order.fees.order_level.ids)
+          end
         end
       end
     end

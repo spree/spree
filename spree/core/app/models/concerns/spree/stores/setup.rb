@@ -66,6 +66,16 @@ module Spree
       def storefront_setup?
         preferred_storefront_url.present?
       end
+
+      # Whether the store has a postable address to ship from and receive
+      # returns at. Read off the location returns route to rather than the
+      # store: the store's own `address` is a free-text blob for the email
+      # footer, while carriers need the structured columns a location carries.
+      #
+      # @return [Boolean]
+      def address_setup?
+        primary_location&.postable?
+      end
     end
   end
 end

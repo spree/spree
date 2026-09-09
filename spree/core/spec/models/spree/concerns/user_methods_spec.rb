@@ -100,10 +100,23 @@ describe Spree::UserMethods do
   end
 
   describe '#scramble_email_and_names' do
-    it 'scramble email and names' do
-      expect { test_user.send(:scramble_email_and_names) }.to change(test_user, :email).and change(test_user, :first_name).and change(test_user, :last_name)
-      expect(test_user.first_name).to eq('Deleted')
-      expect(test_user.last_name).to eq('User')
+    before { allow(Spree::Deprecation).to receive(:warn) }
+
+    # Superseded by Spree::Customers::Anonymize, which this now delegates to.
+    # The tombstone names changed with it — the anonymizer's coverage is in
+    # spec/workflows/spree/customers/anonymize_spec.rb.
+    it 'erases the email and names' do
+      expect { test_user.scramble_email_and_names }.
+        to change(test_user, :email).and change(test_user, :first_name).and change(test_user, :last_name)
+
+      expect(test_user.first_name).to eq(Spree::Customers::Anonymize::REDACTED_NAME)
+      expect(test_user.last_name).to eq(Spree::Customers::Anonymize::REDACTED_NAME)
+    end
+
+    it 'warns that it is deprecated' do
+      expect(Spree::Deprecation).to receive(:warn).at_least(:once)
+
+      test_user.scramble_email_and_names
     end
   end
 

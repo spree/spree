@@ -1,3 +1,4 @@
+import { typeLabel } from '@spree/dashboard-core'
 import {
   Button,
   Card,
@@ -20,7 +21,7 @@ import { PlusIcon, Trash2Icon } from '@spree/dashboard-ui/icons'
 import { Controller, type UseFormReturn, useFieldArray } from 'react-hook-form'
 import { useTranslation } from 'react-i18next'
 import { useCollectionRuleTypes } from '../../../hooks/use-collections'
-import { typeLabel } from '../../../lib/type-labels'
+
 import {
   blankCollectionRule,
   COLLECTION_RULE_MATCH_POLICIES,
@@ -47,7 +48,7 @@ export function CollectionRulesCard({ form }: { form: UseFormReturn<CollectionFo
   const { data: ruleTypes } = useCollectionRuleTypes()
   const typeOptions = (ruleTypes?.data ?? []).map((ruleType) => ({
     value: ruleType.type,
-    label: typeLabel('collection_rule_types', ruleType.type, ruleType.label),
+    label: typeLabel('collection_rule', ruleType.type, ruleType.label),
   }))
 
   // Seed a new row from the registry so the Select always shows a real option,

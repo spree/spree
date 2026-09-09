@@ -28,6 +28,10 @@ module Spree
             [:rules]
           end
 
+          def scope
+            super.ordered
+          end
+
           # Flat params. +rules+ is applied by the model's sync setter
           # (Spree::Collection#rules=): the full desired rule set, prefixed
           # +crule_+ ids update, missing ids build, omitted rules are removed —

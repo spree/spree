@@ -26,6 +26,9 @@ module Spree
           def create
             @resource = build_resource
             authorize_resource!(@resource, :create)
+            # After authorization: a 404 for an unknown list must not tell a
+            # caller without import rights whether the id exists.
+            assign_price_list(@resource)
 
             if @resource.save
               begin
@@ -246,7 +249,7 @@ module Spree
 
           def build_resource
             klass = resolve_import_type(permitted_params[:type]) || Spree::Import
-            attrs = permitted_params.except(:type).merge(
+            attrs = permitted_params.except(:type, :price_list_id).merge(
               store: current_store,
               user: acting_admin_user
             )
@@ -256,7 +259,21 @@ module Spree
           end
 
           def permitted_params
-            params.permit(*model_additional_permitted_attributes, :type, :attachment, :preferred_delimiter, :results_url)
+            params.permit(*model_additional_permitted_attributes, :type, :attachment, :preferred_delimiter, :results_url, :price_list_id)
+          end
+
+          # A price-list import writes into one list, named by its prefixed id.
+          # Resolved through the current store, so another store's list is a
+          # 404 rather than a write into it; a type without a list ignores the
+          # parameter. `permitted_params` does not normalize, so the raw
+          # prefixed id is what arrives here.
+          def assign_price_list(import)
+            return unless import.respond_to?(:price_list=)
+
+            prefixed_id = permitted_params[:price_list_id]
+            return if prefixed_id.blank?
+
+            import.price_list = current_store.price_lists.find_by_prefix_id!(prefixed_id)
           end
 
           # Returns the registered Import subclass matching `name`, or nil.

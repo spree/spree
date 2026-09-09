@@ -67,7 +67,7 @@ export function giftCardEditValuesToParams(v: GiftCardEditFormValues): GiftCardU
   return {
     amount: v.amount,
     expires_at: v.expires_at || null,
-    user_id: blankToNull(v.customer_id),
+    customer_id: blankToNull(v.customer_id),
   }
 }
 
@@ -77,7 +77,7 @@ export function giftCardSingleValuesToParams(v: GiftCardCreateFormValues): GiftC
     amount: v.amount,
     currency: v.currency,
     expires_at: v.expires_at || null,
-    user_id: blankToNull(v.customer_id),
+    customer_id: blankToNull(v.customer_id),
   }
 }
 

@@ -42,6 +42,7 @@ module Spree
         price * quantity
       end
 
+      # Cubic meters, following the variant.
       def volume
         variant_volume * quantity
       end

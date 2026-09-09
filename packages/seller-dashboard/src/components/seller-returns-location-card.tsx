@@ -1,4 +1,9 @@
-import { AddressFormDialog, type EditableAddress } from '@spree/dashboard-core'
+import {
+  AddressFormDialog,
+  editableAddressToStockLocationParams,
+  stockLocationToAddressBlock,
+  stockLocationToEditableAddress,
+} from '@spree/dashboard-core'
 import {
   AddressBlock,
   Badge,
@@ -12,7 +17,7 @@ import {
   toastManager,
 } from '@spree/dashboard-ui'
 import { PencilIcon, PlusIcon } from '@spree/dashboard-ui/icons'
-import type { StockLocation, StockLocationParams } from '@spree/seller-sdk'
+import type { StockLocationParams } from '@spree/seller-sdk'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { useParams } from '@tanstack/react-router'
 import { useState } from 'react'
@@ -35,18 +40,29 @@ export function SellerReturnsLocationCard({ headless = false }: { headless?: boo
   const queryClient = useQueryClient()
   const [editing, setEditing] = useState(false)
 
-  const { data: locations } = useQuery({
+  // Two filtered requests rather than one page filtered in the browser, to
+  // match `Seller#returns_location` exactly: a location that accepts returns
+  // wins outright, and only then does default and name decide. A seller with
+  // more locations than one page holds would otherwise see one address while
+  // the server sent their returns to another, with nothing on screen saying
+  // so — and they would edit the wrong one.
+  const activeParams = { active_true: true, limit: 1 }
+  const { data: takesReturns, isError: returnsFailed } = useQuery({
+    queryKey: ['seller', sellerId, 'stock-locations', 'returns'],
+    queryFn: () =>
+      sellerClient().stockLocations.list({ ...activeParams, returns_enabled_true: true }),
+  })
+  const hasReturnsLocation = (takesReturns?.data.length ?? 0) > 0
+  const { data: anyActive, isError: anyFailed } = useQuery({
     queryKey: ['seller', sellerId, 'stock-locations'],
-    queryFn: () => sellerClient().stockLocations.list({ per_page: 100 }),
+    queryFn: () => sellerClient().stockLocations.list(activeParams),
+    enabled: !!takesReturns && !hasReturnsLocation,
   })
 
-  // Must match `Seller#returns_location` exactly — active only, default
-  // first, then by name. Ignoring `active` here would present a deactivated
-  // location as the returns address while the server had already moved
-  // returns somewhere else, with nothing on screen saying so.
-  const location = (locations?.data ?? [])
-    .filter((candidate) => candidate.active)
-    .sort((a, b) => Number(b.default) - Number(a.default) || a.name.localeCompare(b.name))[0]
+  const location = takesReturns?.data[0] ?? anyActive?.data[0]
+  // A failed lookup must not read as "no address yet" — that invites the
+  // seller to re-enter one they already have.
+  const failed = returnsFailed || anyFailed
   const hasAddress = Boolean(location?.address1)
   const title = t('profile.returns_address')
 
@@ -72,9 +88,11 @@ export function SellerReturnsLocationCard({ headless = false }: { headless?: boo
 
   const body =
     hasAddress && location ? (
-      <AddressBlock address={toAddressBlock(location)} />
+      <AddressBlock address={stockLocationToAddressBlock(location)} />
     ) : (
-      <p className="text-muted-foreground text-sm">{t('profile.address_not_provided')}</p>
+      <p className={failed ? 'text-destructive text-sm' : 'text-muted-foreground text-sm'}>
+        {t(failed ? 'common.error' : 'profile.address_not_provided')}
+      </p>
     )
 
   const editButton = (
@@ -92,11 +110,11 @@ export function SellerReturnsLocationCard({ headless = false }: { headless?: boo
   const dialog = editing && location && (
     <AddressFormDialog
       title={title}
-      address={toEditableAddress(location)}
+      address={stockLocationToEditableAddress(location)}
       open
       business
       onOpenChange={setEditing}
-      onSave={(values) => save.mutate(toStockLocationParams(values))}
+      onSave={(values) => save.mutate(editableAddressToStockLocationParams(values))}
       isPending={save.isPending}
     />
   )
@@ -130,51 +148,4 @@ export function SellerReturnsLocationCard({ headless = false }: { headless?: boo
       {dialog}
     </>
   )
-}
-
-/**
- * The three shapes this card sits between. A stock location stores `zipcode`
- * where an address says `postal_code`, and carries no personal name — mapping
- * the fields explicitly is what keeps that difference in one place instead of
- * leaking a cast into every call.
- */
-function toAddressBlock(location: StockLocation) {
-  return {
-    company: location.company,
-    address1: location.address1,
-    address2: location.address2,
-    city: location.city,
-    state_text: location.state_text,
-    postal_code: location.zipcode,
-    country_code: location.country_code,
-    country_name: location.country_name,
-    phone: location.phone,
-  }
-}
-
-function toEditableAddress(location: StockLocation) {
-  return {
-    id: location.id,
-    company: location.company,
-    address1: location.address1,
-    address2: location.address2,
-    city: location.city,
-    postal_code: location.zipcode,
-    country_code: location.country_code,
-    state_code: location.state_code,
-    phone: location.phone,
-  }
-}
-
-function toStockLocationParams(values: EditableAddress): StockLocationParams {
-  return {
-    company: values.company,
-    address1: values.address1,
-    address2: values.address2,
-    city: values.city,
-    zipcode: values.postal_code,
-    country_code: values.country_code,
-    state_code: values.state_code,
-    phone: values.phone,
-  }
 }

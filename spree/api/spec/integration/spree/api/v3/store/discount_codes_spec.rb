@@ -65,6 +65,28 @@ RSpec.describe 'Cart Discount Codes API', type: :request, swagger_doc: 'api-refe
           expect(data['error']).to be_present
         end
       end
+
+      response '201', 'real code kept pending with eligibility warning' do
+        let!(:promotion) do
+          create(:promotion_with_item_total_rule, :with_line_item_adjustment,
+                 code: 'BIG50', kind: :coupon_code, store: store,
+                 item_total_threshold_amount: 1_000_000, adjustment_rate: 50)
+        end
+        let(:'x-spree-api-key') { api_key.token }
+        let(:'Authorization') { "Bearer #{jwt_token}" }
+        let(:body) { { code: 'BIG50' } }
+
+        schema '$ref' => '#/components/schemas/Cart'
+
+        run_test! do |response|
+          data = JSON.parse(response.body)
+          expect(data['coupon_code']).to eq('big50')
+          expect(data['discount_total']).to eq('0.0')
+          warning = data['warnings'].sole
+          expect(warning['code']).to eq('coupon_code_not_eligible')
+          expect(warning['message']).to be_present
+        end
+      end
     end
   end
 

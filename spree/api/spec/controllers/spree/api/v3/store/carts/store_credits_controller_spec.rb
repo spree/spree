@@ -7,7 +7,7 @@ RSpec.describe Spree::Api::V3::Store::Carts::StoreCreditsController, type: :cont
 
   let!(:order) { create(:cart_with_line_items, customer: user, store: store) }
   let!(:store_credit_payment_method) { create(:store_credit_payment_method) }
-  let!(:store_credit) { create(:store_credit, user: user, store: store, amount: 100) }
+  let!(:store_credit) { create(:store_credit, customer: user, store: store, amount: 100) }
 
   before do
     request.headers['X-Spree-Api-Key'] = api_key.token

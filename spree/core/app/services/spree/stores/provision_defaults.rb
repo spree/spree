@@ -34,6 +34,7 @@ module Spree
           update_default_market
           provision_stock_location
           provision_delivery_zones
+          provision_package_type
           provision_pickup
           restate_seeded_calculators
         end
@@ -187,6 +188,38 @@ module Spree
         delivery_method.calculator ||= Spree::Calculator::Shipping::FlatRate.new
         delivery_method.calculator.preferences = { amount: amount, currency: currency }
         delivery_method.save!
+      end
+
+      # The box the store ships parcels in. Its tare rides on every quote and
+      # its dimensions feed dimensional-weight pricing, so without one a
+      # carrier is asked to price a parcel with no size — which under-charges
+      # anything bulky but light, silently.
+      #
+      # Sized in the unit the store already implies rather than converted, so
+      # the numbers read as a merchant would write them. Skipped when the
+      # store already has a default, so a merchant's own box is never
+      # replaced and re-running is harmless.
+      def provision_package_type
+        return if store.default_package_type.present?
+
+        metric = store.metric_unit_system?
+        weight_unit = store.preferred_weight_unit
+
+        store.package_types.create!(
+          name: Spree.t('package_types.default_name'),
+          kind: 'box',
+          default: true,
+          length: metric ? 30 : 12,
+          width: metric ? 23 : 9,
+          height: metric ? 10 : 4,
+          dimensions_unit: metric ? 'cm' : 'in',
+          # The unit system and the weight unit are separate preferences, so a
+          # metric store can still weigh in pounds. Stating half a pound as
+          # `0.5` under a `kg` label — or the reverse — would misreport the
+          # tare on every quote, so the figure is converted rather than assumed.
+          weight: Spree::Measurement.convert_weight(0.5, from: 'lb', to: weight_unit).round(3),
+          weight_unit: weight_unit
+        )
       end
 
       # Collection at a merchant counter. Rides the store's default profile

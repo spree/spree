@@ -48,7 +48,7 @@ module Spree
 
         return if store.products.where(id: chosen_ids).count == chosen_ids.uniq.size
 
-        errors.add(:products, :invalid, message: Spree.t('errors.messages.product_not_in_store'))
+        errors.add(:products, :product_not_in_store, message: Spree.t('errors.messages.product_not_in_store'))
       end
     end
   end

@@ -27,14 +27,24 @@ module Spree
           variant.sku = attributes['sku'] if attributes['sku'].present?
           variant.cost_price = attributes['cost_price'] if attributes['cost_price'].present?
           variant.weight = attributes['weight'] if attributes['weight'].present?
+          variant.weight_unit = attributes['weight_unit'] if attributes['weight_unit'].present?
           variant.height = attributes['height'] if attributes['height'].present?
           variant.width = attributes['width'] if attributes['width'].present?
           variant.depth = attributes['depth'] if attributes['depth'].present?
+          variant.dimensions_unit = attributes['dimensions_unit'] if attributes['dimensions_unit'].present?
           variant.track_inventory = attributes['track_inventory'] if attributes['track_inventory'].present?
           variant.hs_code = attributes['hs_code'] if attributes['hs_code'].present?
           variant.country_of_origin = attributes['country_of_origin'] if attributes['country_of_origin'].present?
           variant.customs_description = attributes['customs_description'] if attributes['customs_description'].present?
+          variant.units_per_carton = attributes['units_per_carton'] if attributes['units_per_carton'].present?
+          variant.carton_weight = attributes['carton_weight'] if attributes['carton_weight'].present?
+          variant.cartons_per_pallet = attributes['cartons_per_pallet'] if attributes['cartons_per_pallet'].present?
           variant.option_value_variants = prepare_option_value_variants if options.any?
+
+          if attributes['carton'].present?
+            carton = prepare_carton
+            variant.carton_package_type = carton if carton.present?
+          end
 
           if attributes['tax_category'].present?
             tax_category = prepare_tax_category
@@ -206,6 +216,21 @@ module Spree
             next existing if seller.present?
 
             existing || Spree::ProductType.create!(name: product_type_name, store_id: store.id)
+          end
+        end
+
+        # Named rather than referenced by id, like the tax category beside it —
+        # a merchant's spreadsheet says "Large carton", not a prefixed id.
+        def prepare_carton
+          carton_name = attributes['carton'].strip
+          cached_lookup(:carton_package_type, carton_name) do
+            # A seller's import reaches their own cartons and the
+            # marketplace's, ordered so their own row wins when both owners
+            # named a carton the same way — a seller's spreadsheet means their
+            # own measurements. An operator's import sees the marketplace's.
+            store.package_types.cartons.available_to_seller(seller).
+              order(Arel.sql('CASE WHEN seller_id IS NULL THEN 1 ELSE 0 END')).
+              find_by(name: carton_name)
           end
         end
 

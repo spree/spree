@@ -18,6 +18,7 @@ module Spree
     include Spree::SingleStoreResource
     include Spree::Purchase::Channel
     include Spree::Purchase::Company
+    include Spree::Purchase::Freight
     include Spree::Purchase::QuantityRules
     include Spree::Purchase::PurchaseOrder
     include Spree::Purchase::Market
@@ -29,6 +30,7 @@ module Spree
     include Spree::Purchase::StoreCredits
     include Spree::Purchase::GiftCards
     include Spree::Purchase::LineItemCurrencies
+    include Spree::Purchase::LineItemLookup
     include Spree::Purchase::PaymentProcessing
     include Spree::Purchase::Addresses
     include Spree::Purchase::Validations
@@ -212,7 +214,7 @@ module Spree
 
     def ensure_available_delivery_rates
       if fulfillments.empty? || fulfillments.any? { |fulfillment| fulfillment.delivery_rates.blank? }
-        errors.add(:base, Spree.t(:items_cannot_be_shipped))
+        errors.add(:base, :items_cannot_be_shipped, message: Spree.t(:items_cannot_be_shipped))
         return false
       end
       true
@@ -255,15 +257,9 @@ module Spree
     end
 
     # Binds a signing-in customer to the cart through the swappable associate
-    # service (same seam Order#associate_customer! uses).
+    # service, the same one Order#associate_customer! calls.
     def associate_customer!(customer, override_email = true)
       Spree.cart_associate_service.call(guest_cart: self, customer: customer, override_email: override_email)
-    end
-
-    # @deprecated Use {#associate_customer!}; removed in 6.1.
-    def associate_user!(user, override_email = true)
-      Spree::Deprecation.warn('Spree::Cart#associate_user! is deprecated and will be removed in Spree 6.1. Use #associate_customer! instead.')
-      associate_customer!(user, override_email)
     end
 
     # Merges another cart into this one through the swappable merge workflow

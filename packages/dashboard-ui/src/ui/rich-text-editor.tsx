@@ -6,6 +6,7 @@ import { EditorContent, useEditor, useEditorState } from '@tiptap/react'
 import StarterKit from '@tiptap/starter-kit'
 import { useCallback, useEffect, useRef } from 'react'
 import { useTranslation } from 'react-i18next'
+import { sameRichText } from '../lib/same-rich-text'
 import { cn } from '../lib/utils'
 import {
   BoldIcon,
@@ -74,9 +75,11 @@ export function RichTextEditor({
   // attempts another create instead of an update.
   const onChangeRef = useRef(onChange)
   const onBlurRef = useRef(onBlur)
+  const valueRef = useRef(value)
   useEffect(() => {
     onChangeRef.current = onChange
     onBlurRef.current = onBlur
+    valueRef.current = value
   })
 
   const editor = useEditor({
@@ -97,7 +100,11 @@ export function RichTextEditor({
       },
     },
     onUpdate: ({ editor }) => {
-      onChangeRef.current?.(editor.getHTML())
+      const html = editor.getHTML()
+      // Mount and setContent re-parse the incoming value (bare text becomes
+      // `<p>…</p>`, empty becomes `<p></p>`). That is not a user edit.
+      if (sameRichText(html, valueRef.current)) return
+      onChangeRef.current?.(html)
     },
     onBlur: ({ event }) => {
       // Tiptap fires `onBlur` whenever the contenteditable loses focus —

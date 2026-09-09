@@ -34,6 +34,8 @@ module Spree
     end
 
     def display_price
+      return quoted_after_review if unpriced?
+
       price = display_base_price.to_s
 
       return price if tax_rate.nil? || tax_amount.zero? || !tax_rate.show_rate_in_label
@@ -49,11 +51,25 @@ module Spree
     alias display_cost display_price
     alias_attribute :base_price, :cost
 
-    # Returns true if the shipping rate is free
+    # Returns true if the shipping rate is free.
+    #
+    # An unpriced rate is never free — its cost is zero because nobody has
+    # quoted it yet, and saying "free shipping" over a container of goods
+    # would be a promise the merchant cannot keep.
     #
     # @return [Boolean]
     def free?
-      final_price.zero?
+      !unpriced? && final_price.zero?
+    end
+
+    # The logistics the freight provider computed when it quoted this rate —
+    # cartons, pallets, cubic meters, gross weight. Frozen at estimate time
+    # and never re-derived, so an order keeps reporting what it actually
+    # shipped as.
+    #
+    # @return [Spree::FreightSummary, nil]
+    def freight_summary
+      @freight_summary ||= Spree::FreightSummary.from_metadata(metadata&.dig('freight_summary'))
     end
 
     # Returns the tax amount for the shipping rate, computed directly from
@@ -98,6 +114,22 @@ module Spree
       end
     end
     alias total final_price
+
+    # Every money display on an unpriced rate says the same thing. A
+    # storefront that renders the total rather than the cost would otherwise
+    # put "$0.00" — free freight — in front of a buyer whose shipment has not
+    # been quoted yet.
+    #
+    # Keeps the generated method's shape: the same keyword options, and a
+    # Spree::Money on every priced path, so callers doing money arithmetic on
+    # the total are unaffected.
+    #
+    # @return [String, Spree::Money]
+    def display_final_price(**options)
+      return quoted_after_review if unpriced?
+
+      Spree::Money.new(final_price, { currency: currency }.merge(options))
+    end
     alias display_total display_final_price
 
     # Returns the delivery range for the shipping method
@@ -119,6 +151,11 @@ module Spree
     end
 
     private
+
+    # What every money display on this rate reads instead of an amount.
+    def quoted_after_review
+      Spree.t('delivery_rates.quoted_after_review')
+    end
 
     def discount_amount
       fulfillment.discounts.promotion.sum(:amount)

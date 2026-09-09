@@ -11,7 +11,7 @@ RSpec.describe Spree::CSV::GiftCardPresenter, type: :model do
            currency: 'USD',
            status: 'active',
            expires_at: Date.new(Time.current.year, 12, 31),
-           user: user,
+           customer: user,
            store: store)
   end
   let(:presenter) { described_class.new(gift_card, store) }

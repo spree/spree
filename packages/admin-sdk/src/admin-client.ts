@@ -105,7 +105,6 @@ import type {
   CatalogOrderMinimumParams,
   CatalogParams,
   CatalogProductTermsParams,
-  CatalogQuantityRuleParams,
   CategoryCreateParams,
   CategoryRepositionParams,
   CategoryUpdateParams,
@@ -135,9 +134,12 @@ import type {
   CustomFieldOwnerType,
   CustomFieldResourceType,
   CustomFieldUpdateParams,
+  DeliveryCreateParams,
+  DeliveryMarkDeliveredParams,
   DeliveryMethodParams,
   DeliveryOriginGroupParams,
   DeliveryProfileParams,
+  DeliveryUpdateParams,
   DeliveryZoneParams,
   DigitalAssetCreateParams,
   DigitalAssetProvider,
@@ -175,13 +177,14 @@ import type {
   MeUpdateParams,
   OptionTypeCreateParams,
   OptionTypeUpdateParams,
-  OrderApproveParams,
   OrderCancelParams,
   OrderCompleteParams,
   OrderCreateParams,
   OrderRoutingRuleCreateParams,
   OrderRoutingRuleUpdateParams,
   OrderUpdateParams,
+  PackageTypeCreateParams,
+  PackageTypeUpdateParams,
   PasswordResetParams,
   PasswordResetRequestParams,
   PaymentCreateParams,
@@ -234,6 +237,7 @@ import type {
   SetupCountries,
   SetupParams,
   SetupStatus,
+  ShippingLabelCreateParams,
   StockLevelBulkUpsertRow,
   StockLevelUpdateParams,
   StockLocationCreateParams,
@@ -264,8 +268,6 @@ import type {
   CatalogAssignment,
   CatalogOrderMinimum,
   CatalogProduct,
-  CatalogProductTerm,
-  CatalogQuantityRule,
   Category,
   Channel,
   Claim,
@@ -283,6 +285,7 @@ import type {
   CustomerGroup,
   CustomField,
   CustomFieldDefinition,
+  Delivery,
   DeliveryMethod,
   DeliveryMethodRule,
   DeliveryOriginGroup,
@@ -309,13 +312,16 @@ import type {
   Media,
   OptionType,
   Order,
+  OrderCancellationReason,
   OrderRoutingRule,
+  PackageType,
   Payment,
   PaymentMethod,
   Permission,
   Policy,
   Price,
   PriceList,
+  PriceListProduct,
   Product,
   ProductType,
   Promotion,
@@ -334,6 +340,7 @@ import type {
   SellerRequirementSubmission,
   SellerTeamMember,
   SellerTransfer,
+  ShippingLabel,
   StockLevel,
   StockLocation,
   StockMovement,
@@ -1249,11 +1256,8 @@ export class AdminClient {
     cancel: (id: string, params?: OrderCancelParams, options?: RequestOptions): Promise<Order> =>
       this.request<Order>('PATCH', `/orders/${id}/cancel`, { ...options, body: params }),
 
-    approve: (id: string, params?: OrderApproveParams, options?: RequestOptions): Promise<Order> =>
-      this.request<Order>('PATCH', `/orders/${id}/approve`, { ...options, body: params }),
-
-    resume: (id: string, options?: RequestOptions): Promise<Order> =>
-      this.request<Order>('PATCH', `/orders/${id}/resume`, options),
+    approve: (id: string, options?: RequestOptions): Promise<Order> =>
+      this.request<Order>('PATCH', `/orders/${id}/approve`, options),
 
     resendConfirmation: (id: string, options?: RequestOptions): Promise<void> =>
       this.request<void>('POST', `/orders/${id}/resend_confirmation`, options),
@@ -1390,21 +1394,6 @@ export class AdminClient {
           body: params,
         }),
 
-      // Buys the shipping label for a parcel that has not shipped yet, so the
-      // merchant prints it and packs before anything tells the customer it
-      // shipped. Only providers that produce labels accept this; failures are
-      // loud (422), unlike fulfill's degrade-to-no-label path.
-      purchaseLabel: (
-        orderId: string,
-        id: string,
-        options?: RequestOptions,
-      ): Promise<Fulfillment> =>
-        this.request<Fulfillment>(
-          'PATCH',
-          `/orders/${orderId}/fulfillments/${id}/purchase_label`,
-          options,
-        ),
-
       // Confirms the customer received the goods. Staff can record this by
       // hand — a merchant with no carrier integration still needs a delivered
       // state — and carriers reach the same endpoint through their webhooks.
@@ -1422,8 +1411,167 @@ export class AdminClient {
       cancel: (orderId: string, id: string, options?: RequestOptions): Promise<Fulfillment> =>
         this.request<Fulfillment>('PATCH', `/orders/${orderId}/fulfillments/${id}/cancel`, options),
 
-      resume: (orderId: string, id: string, options?: RequestOptions): Promise<Fulfillment> =>
-        this.request<Fulfillment>('PATCH', `/orders/${orderId}/fulfillments/${id}/resume`, options),
+      /**
+       * The carrier documents bought or uploaded for a parcel. Creating one
+       * with no body buys it through the parcel's carrier account; creating it
+       * with a `file` (a signed blob id from `directUploads.create()`) records
+       * postage the merchant bought elsewhere. To print one, fetch
+       * `download_url` with the `Authorization` header and drive the browser
+       * download from a Blob — the bytes are streamed through the API rather
+       * than served from storage.
+       */
+      labels: {
+        list: (
+          orderId: string,
+          fulfillmentId: string,
+          options?: RequestOptions,
+        ): Promise<{ data: ShippingLabel[] }> =>
+          this.request<{ data: ShippingLabel[] }>(
+            'GET',
+            `/orders/${orderId}/fulfillments/${fulfillmentId}/labels`,
+            options,
+          ),
+
+        get: (
+          orderId: string,
+          fulfillmentId: string,
+          id: string,
+          options?: RequestOptions,
+        ): Promise<ShippingLabel> =>
+          this.request<ShippingLabel>(
+            'GET',
+            `/orders/${orderId}/fulfillments/${fulfillmentId}/labels/${id}`,
+            options,
+          ),
+
+        create: (
+          orderId: string,
+          fulfillmentId: string,
+          params?: ShippingLabelCreateParams,
+          options?: RequestOptions,
+        ): Promise<ShippingLabel> =>
+          this.request<ShippingLabel>(
+            'POST',
+            `/orders/${orderId}/fulfillments/${fulfillmentId}/labels`,
+            { ...options, body: params },
+          ),
+
+        /**
+         * Asks the carrier to refund a purchased label. The answer is
+         * `refunded` when the carrier settled at once, `refund_requested` when
+         * it will decide later. Uploaded labels cannot be refunded.
+         */
+        refund: (
+          orderId: string,
+          fulfillmentId: string,
+          id: string,
+          options?: RequestOptions,
+        ): Promise<ShippingLabel> =>
+          this.request<ShippingLabel>(
+            'PATCH',
+            `/orders/${orderId}/fulfillments/${fulfillmentId}/labels/${id}/refund`,
+            options,
+          ),
+
+        /** Uploaded labels only — a purchased label is refunded instead. */
+        delete: (
+          orderId: string,
+          fulfillmentId: string,
+          id: string,
+          options?: RequestOptions,
+        ): Promise<void> =>
+          this.request<void>(
+            'DELETE',
+            `/orders/${orderId}/fulfillments/${fulfillmentId}/labels/${id}`,
+            options,
+          ),
+      },
+
+      /**
+       * The tracked consignments of a parcel — one per tracking number, each
+       * carrying the carrier status last reported. A fulfillment's own
+       * `tracking` field summarizes the first of them.
+       */
+      deliveries: {
+        list: (
+          orderId: string,
+          fulfillmentId: string,
+          options?: RequestOptions,
+        ): Promise<{ data: Delivery[] }> =>
+          this.request<{ data: Delivery[] }>(
+            'GET',
+            `/orders/${orderId}/fulfillments/${fulfillmentId}/deliveries`,
+            options,
+          ),
+
+        get: (
+          orderId: string,
+          fulfillmentId: string,
+          id: string,
+          options?: RequestOptions,
+        ): Promise<Delivery> =>
+          this.request<Delivery>(
+            'GET',
+            `/orders/${orderId}/fulfillments/${fulfillmentId}/deliveries/${id}`,
+            options,
+          ),
+
+        create: (
+          orderId: string,
+          fulfillmentId: string,
+          params: DeliveryCreateParams,
+          options?: RequestOptions,
+        ): Promise<Delivery> =>
+          this.request<Delivery>(
+            'POST',
+            `/orders/${orderId}/fulfillments/${fulfillmentId}/deliveries`,
+            { ...options, body: params },
+          ),
+
+        /** A corrected tracking number starts the carrier journey over. */
+        update: (
+          orderId: string,
+          fulfillmentId: string,
+          id: string,
+          params: DeliveryUpdateParams,
+          options?: RequestOptions,
+        ): Promise<Delivery> =>
+          this.request<Delivery>(
+            'PATCH',
+            `/orders/${orderId}/fulfillments/${fulfillmentId}/deliveries/${id}`,
+            { ...options, body: params },
+          ),
+
+        /** Refused for a consignment a label minted — refund the label. */
+        delete: (
+          orderId: string,
+          fulfillmentId: string,
+          id: string,
+          options?: RequestOptions,
+        ): Promise<void> =>
+          this.request<void>(
+            'DELETE',
+            `/orders/${orderId}/fulfillments/${fulfillmentId}/deliveries/${id}`,
+            options,
+          ),
+
+        /**
+         * Staff confirming one consignment arrived. The parcel becomes
+         * delivered once every one of its consignments has.
+         */
+        markDelivered: (
+          orderId: string,
+          fulfillmentId: string,
+          id: string,
+          params?: DeliveryMarkDeliveredParams,
+          options?: RequestOptions,
+        ): Promise<Delivery> =>
+          this.request<Delivery>(
+            'PATCH',
+            `/orders/${orderId}/fulfillments/${fulfillmentId}/deliveries/${id}/mark_delivered`,
+            { ...options, body: params },
+          ),
+      },
 
       // Returns every fulfillment on the order, since a split re-shapes the
       // source as well as creating the new one (and destroys the source when
@@ -1522,6 +1670,76 @@ export class AdminClient {
           ...options,
           body: params,
         }),
+
+      /**
+       * The prepaid label for the parcel coming back. Bought through the
+       * carrier that shipped the goods out, or recorded from a file when the
+       * merchant bought postage elsewhere — the same shape as a fulfillment's
+       * labels, owned by the return instead.
+       *
+       * The customer downloads it from the storefront; this is the merchant's
+       * side of the same record.
+       */
+      labels: {
+        list: (
+          orderId: string,
+          returnId: string,
+          options?: RequestOptions,
+        ): Promise<{ data: ShippingLabel[] }> =>
+          this.request<{ data: ShippingLabel[] }>(
+            'GET',
+            `/orders/${orderId}/returns/${returnId}/labels`,
+            options,
+          ),
+
+        get: (
+          orderId: string,
+          returnId: string,
+          id: string,
+          options?: RequestOptions,
+        ): Promise<ShippingLabel> =>
+          this.request<ShippingLabel>(
+            'GET',
+            `/orders/${orderId}/returns/${returnId}/labels/${id}`,
+            options,
+          ),
+
+        create: (
+          orderId: string,
+          returnId: string,
+          params?: ShippingLabelCreateParams,
+          options?: RequestOptions,
+        ): Promise<ShippingLabel> =>
+          this.request<ShippingLabel>('POST', `/orders/${orderId}/returns/${returnId}/labels`, {
+            ...options,
+            body: params,
+          }),
+
+        refund: (
+          orderId: string,
+          returnId: string,
+          id: string,
+          options?: RequestOptions,
+        ): Promise<ShippingLabel> =>
+          this.request<ShippingLabel>(
+            'PATCH',
+            `/orders/${orderId}/returns/${returnId}/labels/${id}/refund`,
+            options,
+          ),
+
+        /** Uploaded labels only — a purchased label is refunded instead. */
+        delete: (
+          orderId: string,
+          returnId: string,
+          id: string,
+          options?: RequestOptions,
+        ): Promise<void> =>
+          this.request<void>(
+            'DELETE',
+            `/orders/${orderId}/returns/${returnId}/labels/${id}`,
+            options,
+          ),
+      },
     },
 
     exchanges: {
@@ -2197,6 +2415,35 @@ export class AdminClient {
       this.request<void>('DELETE', `/delivery_zones/${id}`, options),
   }
 
+  readonly packageTypes = {
+    list: (
+      params?: ListParams & Record<string, unknown>,
+      options?: RequestOptions,
+    ): Promise<PaginatedResponse<PackageType>> =>
+      this.request<PaginatedResponse<PackageType>>('GET', '/package_types', {
+        ...options,
+        params: params ? transformListParams(params) : undefined,
+      }),
+
+    get: (id: string, options?: RequestOptions): Promise<PackageType> =>
+      this.request<PackageType>('GET', `/package_types/${id}`, options),
+
+    create: (params: PackageTypeCreateParams, options?: RequestOptions): Promise<PackageType> =>
+      this.request<PackageType>('POST', '/package_types', { ...options, body: params }),
+
+    /** Setting `default` demotes whichever row was the store's box before. */
+    update: (
+      id: string,
+      params: PackageTypeUpdateParams,
+      options?: RequestOptions,
+    ): Promise<PackageType> =>
+      this.request<PackageType>('PATCH', `/package_types/${id}`, { ...options, body: params }),
+
+    /** Refused while a variant is packed into it. */
+    delete: (id: string, options?: RequestOptions): Promise<void> =>
+      this.request<void>('DELETE', `/package_types/${id}`, options),
+  }
+
   readonly paymentMethods = {
     list: (
       params?: ListParams & Record<string, unknown>,
@@ -2331,7 +2578,7 @@ export class AdminClient {
     /** Which products the list prices — the same nested surface categories,
      * collections and catalogs expose. Adding materializes placeholder
      * prices per variant × currency; removing hard-deletes the rows. */
-    products: this.productMembership('/price_lists'),
+    products: this.productMembership<PriceListProduct>('/price_lists'),
 
     activate: (id: string, options?: RequestOptions): Promise<PriceList> =>
       this.request<PriceList>('PATCH', `/price_lists/${id}/activate`, options),
@@ -3579,61 +3826,15 @@ export class AdminClient {
       }),
 
     /**
-     * Per-variant quantity terms. The catalog-wide default is a pair of
+     * A catalog's quantity terms. The catalog-wide default is a pair of
      * fields on the catalog itself, so this is strictly the overrides.
+     *
+     * Written as a whole set at the grain a merchant states them at (per
+     * product, over rows the database keeps per variant). Read them back on
+     * the assortment rows instead: `catalogs.products.list(id, { expand:
+     * ['quantity_rule'] })`.
      */
     quantityRules: {
-      list: (
-        catalogId: string,
-        params?: ListParams & Record<string, unknown>,
-        options?: RequestOptions,
-      ): Promise<PaginatedResponse<CatalogQuantityRule>> =>
-        this.request<PaginatedResponse<CatalogQuantityRule>>(
-          'GET',
-          `/catalogs/${catalogId}/quantity_rules`,
-          { ...options, params: params ? transformListParams(params) : undefined },
-        ),
-
-      create: (
-        catalogId: string,
-        params: CatalogQuantityRuleParams,
-        options?: RequestOptions,
-      ): Promise<CatalogQuantityRule> =>
-        this.request<CatalogQuantityRule>('POST', `/catalogs/${catalogId}/quantity_rules`, {
-          ...options,
-          body: params,
-        }),
-
-      update: (
-        catalogId: string,
-        id: string,
-        params: CatalogQuantityRuleParams,
-        options?: RequestOptions,
-      ): Promise<CatalogQuantityRule> =>
-        this.request<CatalogQuantityRule>('PATCH', `/catalogs/${catalogId}/quantity_rules/${id}`, {
-          ...options,
-          body: params,
-        }),
-
-      delete: (catalogId: string, id: string, options?: RequestOptions): Promise<void> =>
-        this.request<void>('DELETE', `/catalogs/${catalogId}/quantity_rules/${id}`, options),
-    },
-
-    /**
-     * Per-product quantity terms — the grain the agreement editor states
-     * them at, over rows the database keeps per variant.
-     */
-    productTerms: {
-      list: (
-        catalogId: string,
-        options?: RequestOptions,
-      ): Promise<{ data: CatalogProductTerm[] }> =>
-        this.request<{ data: CatalogProductTerm[] }>(
-          'GET',
-          `/catalogs/${catalogId}/product_terms`,
-          options,
-        ),
-
       /**
        * Writes the whole set in one request. A product whose pair is both
        * null has its terms cleared; a product not yet in the assortment is
@@ -3644,12 +3845,11 @@ export class AdminClient {
         catalogId: string,
         params: CatalogProductTermsParams,
         options?: RequestOptions,
-      ): Promise<{ data: CatalogProductTerm[] }> =>
-        this.request<{ data: CatalogProductTerm[] }>(
-          'PUT',
-          `/catalogs/${catalogId}/product_terms`,
-          { ...options, body: params },
-        ),
+      ): Promise<void> =>
+        this.request<void>('PUT', `/catalogs/${catalogId}/quantity_rules`, {
+          ...options,
+          body: params,
+        }),
     },
 
     /** The order minimum in each currency this agreement states one for. */
@@ -3855,6 +4055,20 @@ export class AdminClient {
 
     delete: (id: string, options?: RequestOptions): Promise<void> =>
       this.request<void>('DELETE', `/customers/${id}`, options),
+
+    /**
+     * Everything the store holds about this customer, for answering a GDPR
+     * subject access request that arrived by email.
+     */
+    export: (id: string, options?: RequestOptions): Promise<Record<string, unknown>> =>
+      this.request<Record<string, unknown>>('GET', `/customers/${id}/export`, options),
+
+    /**
+     * Erases the customer's personal data, keeping the financial record.
+     * Irreversible.
+     */
+    anonymize: (id: string, options?: RequestOptions): Promise<Customer> =>
+      this.request<Customer>('POST', `/customers/${id}/anonymize`, options),
 
     /**
      * Bulk-attach a set of customers to a set of groups. Both arrays carry
@@ -4417,6 +4631,47 @@ export class AdminClient {
 
     delete: (id: string, options?: RequestOptions): Promise<void> =>
       this.request<void>('DELETE', `/claim_reasons/${id}`, options),
+  }
+
+  /** Why an order was called off before it shipped. */
+  readonly orderCancellationReasons = {
+    list: (
+      params?: ListParams & Record<string, unknown>,
+      options?: RequestOptions,
+    ): Promise<PaginatedResponse<OrderCancellationReason>> =>
+      this.request<PaginatedResponse<OrderCancellationReason>>(
+        'GET',
+        '/order_cancellation_reasons',
+        {
+          ...options,
+          params: params ? transformListParams(params) : undefined,
+        },
+      ),
+
+    get: (id: string, options?: RequestOptions): Promise<OrderCancellationReason> =>
+      this.request<OrderCancellationReason>('GET', `/order_cancellation_reasons/${id}`, options),
+
+    create: (
+      params: ReasonCreateParams,
+      options?: RequestOptions,
+    ): Promise<OrderCancellationReason> =>
+      this.request<OrderCancellationReason>('POST', '/order_cancellation_reasons', {
+        ...options,
+        body: params,
+      }),
+
+    update: (
+      id: string,
+      params: ReasonUpdateParams,
+      options?: RequestOptions,
+    ): Promise<OrderCancellationReason> =>
+      this.request<OrderCancellationReason>('PATCH', `/order_cancellation_reasons/${id}`, {
+        ...options,
+        body: params,
+      }),
+
+    delete: (id: string, options?: RequestOptions): Promise<void> =>
+      this.request<void>('DELETE', `/order_cancellation_reasons/${id}`, options),
   }
 
   /**

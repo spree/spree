@@ -36,6 +36,79 @@ RSpec.describe Spree::Api::V3::Admin::PriceListsController, type: :controller do
     end
   end
 
+  # Bands on the percentage: "5% off, 10% from ten, 20% from fifty" written
+  # as one agreement (docs/plans/6.0-volume-pricing.md).
+  describe 'quantity bands on the percentage' do
+    let(:catalog) { create(:catalog, store: store) }
+    let(:owned) { create(:price_list, store: store, catalog: catalog, price_adjustment_percentage: -5) }
+
+    it 'writes a ladder of bands and reads it back' do
+      patch :update,
+            params: {
+              id: owned.prefixed_id,
+              price_adjustment_tiers: [
+                { min_quantity: 10, percentage: '-10.0' },
+                { min_quantity: 50, percentage: '-20.0' }
+              ]
+            },
+            as: :json
+
+      expect(response).to have_http_status(:ok)
+      expect(owned.reload.price_adjustment_tiers.map { |t| [t.min_quantity, t.percentage.to_s] }).
+        to eq([[10, '-10.0'], [50, '-20.0']])
+      expect(json_response['price_adjustment_tiers'].map { |t| t['min_quantity'] }).to eq([10, 50])
+    end
+
+    # The payload is the whole ladder, so a band left out is one the merchant
+    # removed.
+    it 'removes a band the payload leaves out' do
+      create(:price_adjustment_tier, price_list: owned, min_quantity: 10, percentage: -10)
+      create(:price_adjustment_tier, price_list: owned, min_quantity: 50, percentage: -20)
+
+      patch :update,
+            params: { id: owned.prefixed_id, price_adjustment_tiers: [{ min_quantity: 10, percentage: '-12.0' }] },
+            as: :json
+
+      expect(response).to have_http_status(:ok)
+      expect(owned.reload.price_adjustment_tiers.map(&:min_quantity)).to eq([10])
+    end
+
+    it 'clears the ladder on an empty array' do
+      create(:price_adjustment_tier, price_list: owned, min_quantity: 10, percentage: -10)
+
+      patch :update, params: { id: owned.prefixed_id, price_adjustment_tiers: [] }, as: :json
+
+      expect(response).to have_http_status(:ok)
+      expect(owned.reload.price_adjustment_tiers).to be_empty
+    end
+
+    # Bands are the same percentage asked at a quantity, so a standalone list
+    # is refused them for the same reason it is refused the column.
+    it 'refuses bands on a standalone list' do
+      patch :update,
+            params: { id: price_list.prefixed_id, price_adjustment_tiers: [{ min_quantity: 10, percentage: '-10.0' }] },
+            as: :json
+
+      expect(response).to have_http_status(:unprocessable_content)
+      expect(price_list.reload.price_adjustment_tiers).to be_empty
+    end
+  end
+
+  describe 'GET #index' do
+    it 'returns price lists in list order' do
+      create(:price_list, store: store, name: 'Second list')
+      third = create(:price_list, store: store, name: 'Third list')
+      third.insert_at(1)
+      price_list.insert_at(2)
+
+      get :index, as: :json
+
+      expect(response).to have_http_status(:ok)
+      expect(json_response['data'].pluck('name')).to eq(['Third list', 'Wholesale', 'Second list'])
+      expect(json_response['data'].pluck('position')).to eq([1, 2, 3])
+    end
+  end
+
   describe 'POST #create — one-shot creation' do
     let(:customer_group) { create(:customer_group, store: store) }
 

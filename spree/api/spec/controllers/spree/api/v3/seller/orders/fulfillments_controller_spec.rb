@@ -95,4 +95,156 @@ RSpec.describe Spree::Api::V3::Seller::Orders::FulfillmentsController, type: :co
       expect(theirs.reload).not_to be_fulfilled
     end
   end
+
+  describe 'PATCH #update' do
+    it 'records a tracking number and its carrier' do
+      patch :update, params: {
+        order_id: order.prefixed_id, id: fulfillment.prefixed_id,
+        tracking: 'TRACK123', tracking_carrier: 'ups'
+      }, as: :json
+
+      expect(response).to have_http_status(:ok)
+      # Tracking lives on the parcel's consignment since 6.0; `tracking` and
+      # `tracking_url` on the fulfillment summarize the primary one.
+      expect(fulfillment.reload.tracking).to eq('TRACK123')
+      expect(fulfillment.deliveries.first.carrier).to eq('ups')
+      expect(fulfillment.tracking_url).to include('TRACK123')
+    end
+
+    # A seller picking from a different shelf than the split assumed needs to
+    # say so, and the rate requotes from there.
+    it 'moves the parcel to another of the seller’s shelves' do
+      elsewhere = create(:stock_location, store: store, seller: seller)
+
+      patch :update, params: {
+        order_id: order.prefixed_id, id: fulfillment.prefixed_id,
+        stock_location_id: elsewhere.prefixed_id
+      }, as: :json
+
+      expect(response).to have_http_status(:ok)
+      expect(fulfillment.reload.stock_location_id).to eq(elsewhere.id)
+    end
+
+    # The marketplace's own warehouses are not the seller's to ship from,
+    # whatever id arrives.
+    it 'refuses a shelf belonging to the marketplace' do
+      theirs = create(:stock_location, store: store)
+      original = fulfillment.stock_location_id
+
+      patch :update, params: {
+        order_id: order.prefixed_id, id: fulfillment.prefixed_id,
+        stock_location_id: theirs.prefixed_id
+      }, as: :json
+
+      expect(response).to have_http_status(:not_found)
+      expect(fulfillment.reload.stock_location_id).to eq(original)
+    end
+
+    # A seller chooses between the services quoted for their own parcel.
+    it 'selects one of the rates quoted for the parcel' do
+      rate = create(:delivery_rate, fulfillment: fulfillment)
+
+      patch :update, params: {
+        order_id: order.prefixed_id, id: fulfillment.prefixed_id,
+        selected_delivery_rate_id: rate.prefixed_id
+      }, as: :json
+
+      expect(response).to have_http_status(:ok)
+      expect(fulfillment.reload.selected_delivery_rate).to eq(rate)
+    end
+
+    # Rates are quoted per parcel, so one belonging to another package is not
+    # a choice this fulfillment has — the id reads as missing rather than
+    # being assigned to a rate the parcel never offered.
+    it 'refuses a rate quoted for another parcel' do
+      other_fulfillment = create(:fulfillment, order: create(:order, store: store))
+      other_rate = create(:delivery_rate, fulfillment: other_fulfillment)
+
+      patch :update, params: {
+        order_id: order.prefixed_id, id: fulfillment.prefixed_id,
+        selected_delivery_rate_id: other_rate.prefixed_id
+      }, as: :json
+
+      expect(response).to have_http_status(:not_found)
+      expect(fulfillment.reload.selected_delivery_rate).not_to eq(other_rate)
+    end
+  end
+
+  describe 'PATCH #cancel' do
+    it 'cancels a parcel the seller will not send' do
+      patch :cancel, params: { order_id: order.prefixed_id, id: fulfillment.prefixed_id }, as: :json
+
+      expect(response).to have_http_status(:ok)
+      expect(fulfillment.reload).to be_canceled
+    end
+
+    # Resuming a canceled parcel was removed from the platform: the goods went
+    # back on the shelf and the carrier was stood down, so the honest move is
+    # a new parcel rather than reviving that one.
+    it 'has no route for resuming one' do
+      expect {
+        patch :resume, params: { order_id: order.prefixed_id, id: fulfillment.prefixed_id }, as: :json
+      }.to raise_error(ActionController::UrlGenerationError)
+    end
+
+    it "404s cancelling through another seller's order" do
+      other = create(:order_ready_to_ship, store: store, seller: create(:seller, :approved, store: store))
+
+      patch :cancel, params: { order_id: other.prefixed_id, id: other.fulfillments.first.prefixed_id }, as: :json
+
+      expect(response).to have_http_status(:not_found)
+      expect(other.fulfillments.first.reload).not_to be_canceled
+    end
+  end
+
+  # Confirming receipt is deliberately not on this branch: a parcel having
+  # arrived is the buyer's word, not the sender's.
+  describe 'marking delivered' do
+    it 'has no route' do
+      expect {
+        patch :mark_delivered, params: { order_id: order.prefixed_id, id: fulfillment.prefixed_id }, as: :json
+      }.to raise_error(ActionController::UrlGenerationError)
+    end
+  end
+
+  describe 'PATCH #split' do
+    let!(:order) { create(:order_ready_to_ship, store: store, seller: seller, line_items_count: 2) }
+
+    it 'moves part of the parcel onto one of its own' do
+      variant = fulfillment.fulfillment_items.first.variant
+
+      expect {
+        patch :split, params: {
+          order_id: order.prefixed_id, id: fulfillment.prefixed_id,
+          variant_id: variant.prefixed_id, quantity: 1
+        }, as: :json
+      }.to change { order.fulfillments.count }.by(1)
+
+      expect(response).to have_http_status(:ok)
+    end
+
+    # What may be split is what this parcel is carrying, so a variant from
+    # elsewhere in the catalogue is not addressable here.
+    it '404s on a variant the order does not carry' do
+      patch :split, params: {
+        order_id: order.prefixed_id, id: fulfillment.prefixed_id,
+        variant_id: create(:variant, seller: seller).prefixed_id, quantity: 1
+      }, as: :json
+
+      expect(response).to have_http_status(:not_found)
+    end
+
+    it 'refuses a destination belonging to another seller' do
+      variant = fulfillment.fulfillment_items.first.variant
+      theirs = create(:stock_location, store: store, seller: create(:seller, :approved, store: store))
+
+      patch :split, params: {
+        order_id: order.prefixed_id, id: fulfillment.prefixed_id,
+        variant_id: variant.prefixed_id, quantity: 1,
+        stock_location_id: theirs.prefixed_id
+      }, as: :json
+
+      expect(response).to have_http_status(:not_found)
+    end
+  end
 end

@@ -9,7 +9,7 @@ module Spree
         # `store` and `created_by` are auto-stamped by `build_resource` in
         # `Spree::Api::V3::ResourceController`, so create requests only need
         # to include user-facing attributes (amount, currency, expires_at,
-        # optional code, optional user_id).
+        # optional code, optional customer_id).
         class GiftCardsController < ResourceController
           scoped_resource :gift_cards
 
@@ -24,7 +24,8 @@ module Spree
           end
 
           def permitted_params
-            params.permit(*model_additional_permitted_attributes, :code, :amount, :expires_at, :user_id, :currency)
+            params.permit(*model_additional_permitted_attributes, :code, :amount, :expires_at,
+                          :customer_id, :currency)
           end
         end
       end

@@ -11,6 +11,10 @@ module Spree
           attributes created_at: :iso8601, updated_at: :iso8601
 
           one :delivery_method, resource: proc { Spree.api.admin_delivery_method_serializer }, if: proc { expand?('delivery_method') }
+
+          # An admin twin, so this package carries its own type rather
+          # than importing the store one.
+          one :freight_summary, resource: proc { Spree.api.admin_freight_summary_serializer }
         end
       end
     end

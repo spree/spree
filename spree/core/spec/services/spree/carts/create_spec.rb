@@ -30,7 +30,7 @@ module Spree
         expect { execute }.to change(Spree::Cart, :count)
         expect(execute).to be_success
         expect(value).to eq expected
-        expect(expected.user).to eq user
+        expect(expected.customer).to eq user
         expect(expected.store).to eq store
         expect(expected.currency).to eq 'EUR'
         expect(expected.token).to be_present

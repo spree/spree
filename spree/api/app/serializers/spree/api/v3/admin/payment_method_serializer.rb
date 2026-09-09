@@ -11,7 +11,7 @@ module Spree
                    position: :number,
                    metadata: 'Record<string, unknown>',
                    preferences: 'Record<string, unknown>',
-                   preference_schema: "Array<{ key: string; type: string; default: unknown }>"
+                   preference_schema: "Array<{ key: string; type: string; default: unknown; choices?: string[] }>"
 
           # Null capture_method means the method inherits from its store;
           # resolved_capture_method is what actually applies, so the dashboard

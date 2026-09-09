@@ -53,7 +53,7 @@ module Spree
           context 'assigns user' do
             before { execute }
 
-            it { expect(payment_source.user).to eq(user) }
+            it { expect(payment_source.customer).to eq(user) }
           end
         end
       end

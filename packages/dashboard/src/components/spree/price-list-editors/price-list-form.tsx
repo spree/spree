@@ -1,11 +1,19 @@
 import { zodResolver } from '@hookform/resolvers/zod'
-import type { PriceList, PriceRule, ResourceTypeDefinition } from '@spree/admin-sdk'
+import type {
+  PriceList,
+  PriceListProduct,
+  PriceRule,
+  ResourceTypeDefinition,
+} from '@spree/admin-sdk'
 import {
   adminClient,
   Can,
   formatStoreDateTime,
   PageHeader,
+  type PanelImport,
   PreferencesForm,
+  typeDescription,
+  typeLabel,
   useResourceKey,
   useStore,
 } from '@spree/dashboard-core'
@@ -25,7 +33,9 @@ import { Controller, type UseFormReturn, useFieldArray, useForm } from 'react-ho
 import { useTranslation } from 'react-i18next'
 import { spreeJsonLinkResolver } from '../../../lib/json-link-resolver'
 import { BulkPriceEditorDialog } from '../bulk-price-editor/bulk-price-editor-dialog'
+import { catalogPriceColumns, catalogVariantRows } from '../catalog-price-columns'
 import { DeferredProductMembershipCard } from '../deferred-product-membership-card'
+import { PriceListCsvButtons } from '../price-list-csv-buttons'
 import {
   flushProductMembership,
   ProductMembershipStagingProvider,
@@ -94,6 +104,9 @@ import { type PriceRuleEditorContext, ruleFormSlot } from './types'
 // Public API
 // =============================================================================
 
+/** The price columns' copy for this page: "this list" where the catalog says "this catalog". */
+const PRICE_LIST_PRICES_NAMESPACE = 'admin.pages.products.price_lists.prices'
+
 interface PriceListFormProps {
   mode: 'create' | 'edit'
   /** Existing record (edit mode only). */
@@ -104,6 +117,12 @@ interface PriceListFormProps {
   onSubmit: (payload: ReturnType<typeof priceListValuesToParams>) => Promise<void>
   /** Edit-mode only: when supplied, the header gains a Delete button. */
   onDelete?: () => void
+  /**
+   * Edit-mode only: when supplied, the header gains CSV export and import of
+   * the list's prices, and a created import is handed here so the page can
+   * open the wizard for it.
+   */
+  onImportCreated?: (imp: PanelImport) => void
   deletePending?: boolean
 }
 
@@ -117,6 +136,7 @@ export function PriceListForm({
   initialRules,
   onSubmit,
   onDelete,
+  onImportCreated,
   deletePending = false,
 }: PriceListFormProps) {
   const { t } = useTranslation()
@@ -232,6 +252,15 @@ export function PriceListForm({
                   {mode === 'edit' && priceList && canEdit && (
                     <EditPricesButton priceList={priceList} />
                   )}
+                  {/* Export needs only read access; the import button gates
+                      itself on create. */}
+                  {mode === 'edit' && priceList && onImportCreated && (
+                    <PriceListCsvButtons
+                      priceList={priceList}
+                      onImportCreated={onImportCreated}
+                      size="default"
+                    />
+                  )}
                   {mode === 'edit' && priceList && <ActivationButtons priceList={priceList} />}
                   <Button
                     type="submit"
@@ -276,6 +305,25 @@ export function PriceListForm({
                           count: priceList.prices_count ?? 0,
                         })
                       : t('admin.pages.products.price_lists.products_help')
+                  }
+                  // Each variant priced on its own row with its ladder — the
+                  // catalog's reading, on the page where the ladder is edited
+                  // (docs/plans/6.0-volume-pricing.md).
+                  renderSubRows={(products) =>
+                    catalogVariantRows<PriceListProduct>({
+                      products,
+                      variantsOf: (product) => product.price_list_variants,
+                      namespace: PRICE_LIST_PRICES_NAMESPACE,
+                    })
+                  }
+                  extraColumns={() =>
+                    catalogPriceColumns({
+                      headers: {
+                        price: t(`${PRICE_LIST_PRICES_NAMESPACE}.column_price`),
+                        source: t(`${PRICE_LIST_PRICES_NAMESPACE}.column_source`),
+                      },
+                      namespace: PRICE_LIST_PRICES_NAMESPACE,
+                    })
                   }
                 />
               )}
@@ -584,6 +632,9 @@ function RulesCard({
               <RuleRow
                 key={field._key}
                 draft={(watchedRules[index] ?? field) as unknown as PriceRuleFormDraft}
+                definition={registeredTypes.find(
+                  (type) => type.type === (watchedRules[index] ?? field)?.type,
+                )}
                 onEdit={() => setEditingIndex(index)}
                 onRemove={() => rulesArray.remove(index)}
               />
@@ -622,6 +673,10 @@ function RulesCard({
               (watchedRules[editingIndex] ??
                 rulesArray.fields[editingIndex]) as unknown as PriceRuleFormDraft
             }
+            definition={registeredTypes.find(
+              (type) =>
+                type.type === (watchedRules[editingIndex] ?? rulesArray.fields[editingIndex])?.type,
+            )}
             open
             onOpenChange={(o) => !o && setEditingIndex(null)}
             onSave={(next) => rulesArray.update(editingIndex, next)}
@@ -634,10 +689,13 @@ function RulesCard({
 
 function RuleRow({
   draft,
+  definition,
   onEdit,
   onRemove,
 }: {
   draft: PriceRuleFormDraft
+  /** Catalog entry for `draft.type` — the fallback for a rule with no dashboard translation. */
+  definition?: ResourceTypeDefinition
   onEdit: () => void
   onRemove: () => void
 }) {
@@ -664,10 +722,12 @@ function RuleRow({
         className="min-w-0 flex-1 px-3 py-2 text-left focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring rounded-l-md"
       >
         <div className="flex items-center gap-2">
-          <span className="text-sm font-medium">{draft.label}</span>
+          <span className="text-sm font-medium">
+            {typeLabel('price_rule', draft.type, definition?.label)}
+          </span>
           <PencilIcon className="size-3 text-muted-foreground" />
         </div>
-        <RuleSummary draft={draft} />
+        <RuleSummary draft={draft} definition={definition} />
       </button>
       <Can I="destroy" a={Subject.PriceRule}>
         <div className="flex items-center pr-1.5">
@@ -724,7 +784,13 @@ const RULE_EMBEDS: readonly RuleEmbed[] = [
 
 const PREFS_SHOWN_VIA_EMBED: ReadonlySet<string> = new Set(RULE_EMBEDS.map((e) => e.prefKey))
 
-function RuleSummary({ draft }: { draft: PriceRuleFormDraft }) {
+function RuleSummary({
+  draft,
+  definition,
+}: {
+  draft: PriceRuleFormDraft
+  definition?: ResourceTypeDefinition
+}) {
   const { t } = useTranslation()
   const parts: string[] = []
 
@@ -746,7 +812,8 @@ function RuleSummary({ draft }: { draft: PriceRuleFormDraft }) {
   if (parts.length === 0) {
     return (
       <div className="truncate text-xs text-muted-foreground">
-        {draft.description || t('admin.pages.products.price_lists.rule_click_to_configure')}
+        {typeDescription('price_rule', draft.type, definition?.description) ||
+          t('admin.pages.products.price_lists.rule_click_to_configure')}
       </div>
     )
   }
@@ -825,9 +892,13 @@ function RulePickerSheet({
                 onClick={() => onPicked(tt)}
                 className="flex flex-col items-start rounded-md border p-3 text-left transition-colors hover:bg-muted/50"
               >
-                <span className="text-sm font-medium">{tt.label}</span>
-                {tt.description && (
-                  <span className="text-xs text-muted-foreground">{tt.description}</span>
+                <span className="text-sm font-medium">
+                  {typeLabel('price_rule', tt.type, tt.label)}
+                </span>
+                {typeDescription('price_rule', tt.type, tt.description) && (
+                  <span className="text-xs text-muted-foreground">
+                    {typeDescription('price_rule', tt.type, tt.description)}
+                  </span>
                 )}
               </button>
             ))
@@ -840,11 +911,14 @@ function RulePickerSheet({
 
 function RuleEditSheet({
   draft,
+  definition,
   open,
   onOpenChange,
   onSave,
 }: {
   draft: PriceRuleFormDraft
+  /** Catalog entry for `draft.type` — the fallback for a rule with no dashboard translation. */
+  definition?: ResourceTypeDefinition
   open: boolean
   onOpenChange: (open: boolean) => void
   onSave: (next: PriceRuleFormDraft) => void
@@ -857,9 +931,10 @@ function RuleEditSheet({
     <Sheet open={open} onOpenChange={onOpenChange}>
       <SheetContent>
         <SheetHeader>
-          <SheetTitle>{draft.label}</SheetTitle>
+          <SheetTitle>{typeLabel('price_rule', draft.type, definition?.label)}</SheetTitle>
           <SheetDescription>
-            {draft.description || t('admin.pages.products.price_lists.rule_default_description')}
+            {typeDescription('price_rule', draft.type, definition?.description) ||
+              t('admin.pages.products.price_lists.rule_default_description')}
           </SheetDescription>
         </SheetHeader>
         <Slot

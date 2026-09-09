@@ -10,6 +10,56 @@ RSpec.describe Spree::Catalogs::ResolvePrices do
     described_class.new(catalog: catalog, currency: currency).call(variant)
   end
 
+  def resolve_list(list, currency: 'USD')
+    described_class.new(price_list: list, currency: currency).call(variant)
+  end
+
+  describe 'built from a price list' do
+    it 'needs a catalog or a list' do
+      expect { described_class.new(currency: 'USD') }.to raise_error(ArgumentError)
+    end
+
+    it 'reads the list as it stands, draft included' do
+      list = create(:price_list, :draft, store: store)
+      create(:price, variant: variant, price_list: list, amount: 60, currency: 'USD')
+
+      price = resolve_list(list)
+
+      expect(price.amount).to eq(60)
+      expect(price.source).to eq('explicit')
+    end
+
+    it 'carries the ladder as tiers' do
+      list = create(:price_list, store: store)
+      create(:price, variant: variant, price_list: list, amount: 60, currency: 'USD')
+      create(:price, variant: variant, price_list: list, amount: 50, currency: 'USD', min_quantity: 24)
+      create(:price, variant: variant, price_list: list, amount: 45, currency: 'USD', min_quantity: 96)
+
+      price = resolve_list(list)
+
+      expect(price.break_count).to eq(2)
+      expect(price.tiers.map { |tier| [tier.min_quantity, tier.amount] }).to eq([[24, 50], [96, 45]])
+    end
+
+    it 'falls through to base for a variant the list does not price' do
+      list = create(:price_list, store: store)
+
+      price = resolve_list(list)
+
+      expect(price.amount).to eq(100)
+      expect(price.source).to eq('base')
+    end
+
+    it 'derives from the percentage of a catalog-owned list opened as a list' do
+      list = create(:price_list, :draft, store: store, catalog: catalog, price_adjustment_percentage: -15)
+
+      price = resolve_list(list)
+
+      expect(price.amount).to eq(85)
+      expect(price.source).to eq('automatic')
+    end
+  end
+
   describe '#call' do
     it 'reads the base price when the catalog prices at base' do
       price = resolve(catalog)
@@ -150,6 +200,134 @@ RSpec.describe Spree::Catalogs::ResolvePrices do
       create(:price_list, :active, store: store, catalog: catalog)
 
       expect(resolve(catalog.reload).amount).to eq(charged_to_buyer)
+    end
+
+    # Quantity ladders (docs/plans/6.0-volume-pricing.md). This reading makes
+    # no purchase, so it must answer for one unit — and agree with what a
+    # buyer of one is actually charged.
+    context 'with a quantity ladder' do
+      let(:list) { create(:price_list, :active, store: store, catalog: catalog) }
+
+      it 'reads the bottom rung and counts the ones above it' do
+        create(:price, variant: variant, price_list: list, amount: 60, currency: 'USD', min_quantity: 1)
+        create(:price, variant: variant, price_list: list, amount: 50, currency: 'USD', min_quantity: 24)
+
+        price = resolve(catalog.reload)
+
+        expect(price.amount).to eq(60)
+        expect(price.amount).to eq(charged_to_buyer)
+        expect(price.source).to eq('explicit')
+        expect(price.break_count).to eq(1)
+        expect(price).to be_tiered
+      end
+
+      # A ladder starting above one unit prices nothing for a buyer of one, so
+      # reading its first rung as the agreement's price would name an amount
+      # nobody is charged.
+      it 'reads base when the ladder starts above one unit' do
+        create(:price, variant: variant, price_list: list, amount: 50, currency: 'USD', min_quantity: 24)
+
+        price = resolve(catalog.reload)
+
+        expect(price.amount).to eq(charged_to_buyer)
+        expect(price.source).to eq('base')
+        expect(price.break_count).to eq(1)
+      end
+
+      # A laddered variant is priced by its ladder alone, so the list's
+      # percentage must not be reported for it either.
+      it 'does not report the percentage for a laddered variant' do
+        list.update!(price_adjustment_percentage: -15)
+        create(:price, variant: variant, price_list: list, amount: 50, currency: 'USD', min_quantity: 24)
+
+        price = resolve(catalog.reload)
+
+        expect(price.amount).to eq(charged_to_buyer)
+        expect(price.source).to eq('base')
+      end
+    end
+
+    context 'with quantity bands on the percentage' do
+      it 'reads the quantity-1 percentage and counts the bands above it' do
+        list = create(:price_list, :active, store: store, catalog: catalog,
+                                            price_adjustment_percentage: -10)
+        create(:price_adjustment_tier, price_list: list, min_quantity: 50, percentage: -20)
+
+        price = resolve(catalog.reload)
+
+        expect(price.amount).to eq(90)
+        expect(price.amount).to eq(charged_to_buyer)
+        expect(price.source).to eq('automatic')
+        expect(price.break_count).to eq(1)
+      end
+
+      # An explicit row is the deepest rung at every quantity, so the bands
+      # never apply to that variant — and the page says so rather than
+      # promising tiers the buyer will not get.
+      it 'counts no tiers for a variant an explicit row shadows' do
+        list = create(:price_list, :active, store: store, catalog: catalog,
+                                            price_adjustment_percentage: -10)
+        create(:price_adjustment_tier, price_list: list, min_quantity: 50, percentage: -20)
+        create(:price, variant: variant, price_list: list, amount: 12, currency: 'USD')
+
+        price = resolve(catalog.reload)
+
+        expect(price.amount).to eq(12)
+        expect(price.source).to eq('explicit')
+        expect(price.break_count).to eq(0)
+        expect(price).not_to be_tiered
+
+        deep = Spree::Pricing::Context.new(
+          variant: variant, currency: 'USD', store: store, company: company, quantity: 50
+        )
+        expect(Spree::PricingProvider::Internal.new.price_for(deep).amount).to eq(12)
+      end
+
+      # The count alone would send a merchant to the price sheet to read three
+      # figures, so the ladder itself comes back with the price
+      # (docs/plans/6.0-volume-pricing.md).
+      it 'carries the fixed ladder as amounts, deepest last' do
+        list = create(:price_list, :active, store: store, catalog: catalog)
+        create(:price, variant: variant, price_list: list, amount: 60, currency: 'USD')
+        create(:price, variant: variant, price_list: list, amount: 50, currency: 'USD', min_quantity: 96)
+        create(:price, variant: variant, price_list: list, amount: 55, currency: 'USD', min_quantity: 24)
+
+        price = resolve(catalog.reload)
+
+        expect(price.tiers.map { |tier| [tier.min_quantity, tier.amount] }).to eq([[24, 55], [96, 50]])
+        expect(price.break_count).to eq(2)
+      end
+
+      # A band is a percentage, but a merchant reading an agreement wants the
+      # amount it comes to — so the reading resolves it against the base price.
+      it 'carries percentage bands as the amounts they resolve to' do
+        list = create(:price_list, :active, store: store, catalog: catalog,
+                                            price_adjustment_percentage: -10)
+        create(:price_adjustment_tier, price_list: list, min_quantity: 50, percentage: -20)
+
+        price = resolve(catalog.reload)
+
+        expect(price.amount).to eq(90)
+        expect(price.tiers.map { |tier| [tier.min_quantity, tier.amount] }).to eq([[50, 80]])
+      end
+
+      it 'carries no ladder for a variant priced at one figure' do
+        create(:price_list, :active, store: store, catalog: catalog)
+
+        expect(resolve(catalog.reload).tiers).to be_empty
+      end
+
+      # A list that only discounts from a quantity up charges base for one.
+      it 'reads base for a bands-only list, with the bands counted' do
+        list = create(:price_list, :active, store: store, catalog: catalog)
+        create(:price_adjustment_tier, price_list: list, min_quantity: 50, percentage: -20)
+
+        price = resolve(catalog.reload)
+
+        expect(price.amount).to eq(charged_to_buyer)
+        expect(price.source).to eq('base')
+        expect(price.break_count).to eq(1)
+      end
     end
   end
 

@@ -149,7 +149,7 @@ module MyApp
 
     def handle(event)
       user_id = event.payload['id']
-      user = Spree.user_class.find_by(id: user_id)
+      user = Spree.customer_class.find_by(id: user_id)
       return unless user
 
       Spree::CustomMailer.welcome_email(user).deliver_later

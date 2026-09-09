@@ -1,6 +1,6 @@
 import type { Fulfillment, Order } from '@spree/admin-sdk'
+import { type FulfillmentItemRow, fulfillmentItemRows } from '@spree/dashboard-core'
 import type { TFunction } from 'i18next'
-import { type FulfillmentItemRow, fulfillmentItemRows } from './fulfillment-items'
 
 function escapeHtml(value: string): string {
   return value

@@ -84,4 +84,31 @@ RSpec.describe Spree::Fulfillments::Update do
       expect(fulfillment.reload.tracking).to eq('ABC123')
     end
   end
+
+  describe 'tracking' do
+    it 'creates the primary delivery from the tracking shortcut' do
+      fulfillment.deliveries.destroy_all
+
+      result = described_class.call(
+        fulfillment: fulfillment,
+        fulfillment_attributes: { tracking: '421432', tracking_carrier: 'inpost' }
+      )
+
+      expect(result).to be_success
+      expect(fulfillment.reload.tracking).to eq('421432')
+      expect(fulfillment.primary_delivery.carrier).to eq('inpost')
+    end
+
+    # A corrected number is a different parcel as far as the carrier is
+    # concerned, so its journey starts over.
+    it 'corrects the primary delivery and resets its carrier status' do
+      fulfillment.primary_delivery.update_columns(status: 'in_transit')
+
+      described_class.call(fulfillment: fulfillment, fulfillment_attributes: { tracking: 'NEW-1' })
+
+      expect(fulfillment.reload.deliveries.count).to eq(1)
+      expect(fulfillment.primary_delivery.tracking_number).to eq('NEW-1')
+      expect(fulfillment.primary_delivery.status).to eq('pending')
+    end
+  end
 end

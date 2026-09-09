@@ -66,11 +66,14 @@ module Spree
           end
 
           def scope
-            super.for_store(current_store)
+            super.ordered
           end
 
           def collection_includes
-            [:catalog_products, :price_list, :order_minimums]
+            # The serializer reads each catalog's pricing strategy, which asks
+            # its list whether it carries bands — preloaded so an index does
+            # not pay a query per row.
+            [:catalog_products, :order_minimums, { price_list: :price_adjustment_tiers }]
           end
 
           def create_workflow
@@ -124,8 +127,12 @@ module Spree
                                         # An empty array clears the hand-entered
                                         # amounts — what switching to a
                                         # percentage sends.
-                                        { prices: [:id, :variant_id, :currency, :amount,
-                                                   :compare_at_amount] }
+                                        { prices: [:id, :variant_id, :currency, :min_quantity,
+                                                   :amount, :compare_at_amount] },
+                                        # Quantity bands on the percentage. The
+                                        # payload is the whole ladder, so an
+                                        # empty array clears it.
+                                        { price_adjustment_tiers: [:min_quantity, :percentage] }
                                       ])
             # `permit` drops an explicit null, but detaching has to be
             # distinguishable from saying nothing.

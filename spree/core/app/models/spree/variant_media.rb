@@ -34,7 +34,8 @@ module Spree
       return if asset.blank? || variant.blank?
       return if asset.product&.id == variant.product_id
 
-      errors.add(:asset, 'must belong to the same product as the variant')
+      errors.add(:asset, :variant_product_mismatch,
+                 message: Spree.t('errors.messages.variant_product_mismatch'))
     end
 
     def refresh_variant_thumbnail

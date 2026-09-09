@@ -1,19 +1,35 @@
 module Spree::Preferences
   module PreferableClassMethods
+    # Declaration order, so an admin form can present preferences the way
+    # their author grouped them — credentials before the optional settings
+    # that depend on them. `defined_preferences` reads Ruby's own `methods`,
+    # whose order is an implementation detail, so it cannot answer this.
+    def declared_preference_order
+      @declared_preference_order ||= begin
+        inherited = superclass.respond_to?(:declared_preference_order) ? superclass.declared_preference_order : []
+        inherited.dup
+      end
+    end
+
     def preference(name, type, *args)
+      declared_preference_order << name.to_sym unless declared_preference_order.include?(name.to_sym)
       options = args.extract_options!
-      options.assert_valid_keys(:default, :deprecated, :internal, :nullable, :options, :parse_on_set)
+      options.assert_valid_keys(:default, :deprecated, :in, :internal, :nullable, :options, :parse_on_set)
       default = options[:default]
       default = -> { options[:default] } unless default.is_a?(Proc)
       deprecated = options[:deprecated]
       internal = options[:internal]
+      # The fixed set a value must come from. Turns a text box into a picker
+      # in every admin form, and is what the inclusion validation would have
+      # told the operator only after a failed save.
+      choices = options[:in]
       nullable = options[:nullable]
       parse_on_set = options[:parse_on_set]
-      # The values this preference may hold, as `{ value => label }` — the
-      # shape used wherever this codebase maps a stored value to what a person
-      # reads. An admin UI renders a picker instead of a text box. A plain list
-      # is accepted too, and labels each value with itself.
-      choices = options[:options]
+      # As `{ value => label }`, for a picker that shows a person something
+      # other than the stored value. Overlaps `:in` above — see the note in
+      # PreferenceSchema — and is kept apart from it for now rather than
+      # shadowing it.
+      labelled_options = options[:options]
 
       # cache_key will be nil for new objects, then if we check if there
       # is a pending preference before going to default
@@ -52,7 +68,7 @@ module Spree::Preferences
       end
 
       define_method preference_options_getter_method(name) do
-        choices
+        labelled_options
       end
 
       define_method preference_deprecated_getter_method(name) do
@@ -64,6 +80,10 @@ module Spree::Preferences
       # anybody could know in advance.
       define_method preference_internal_getter_method(name) do
         internal
+      end
+
+      define_method preference_choices_getter_method(name) do
+        choices.respond_to?(:call) ? choices.call : choices
       end
 
       define_method prefers_query_method(name) do
@@ -117,6 +137,10 @@ module Spree::Preferences
 
     def preference_internal_getter_method(name)
       "preferred_#{name}_internal".to_sym
+    end
+
+    def preference_choices_getter_method(name)
+      "preferred_#{name}_choices".to_sym
     end
 
     def preference_type_getter_method(name)

@@ -1,5 +1,6 @@
 import type {
   ClaimReason,
+  OrderCancellationReason,
   ReasonCreateParams,
   ReasonUpdateParams,
   RefundReason,
@@ -9,16 +10,21 @@ import { adminClient, useResourceKey, useResourceMutation } from '@spree/dashboa
 import { useQuery } from '@tanstack/react-query'
 import i18n from 'i18next'
 
-/** Any of the three reason lists — they share one shape. */
-export type Reason = ReturnReason | ClaimReason | RefundReason
+/** Any of the reason lists — they share one shape. */
+export type Reason = ReturnReason | ClaimReason | RefundReason | OrderCancellationReason
 
 /** Which list a screen is working with. Doubles as the query key. */
-export type ReasonKind = 'return-reasons' | 'claim-reasons' | 'refund-reasons'
+export type ReasonKind =
+  | 'return-reasons'
+  | 'claim-reasons'
+  | 'refund-reasons'
+  | 'order-cancellation-reasons'
 
 const CLIENTS = {
   'return-reasons': () => adminClient.returnReasons,
   'claim-reasons': () => adminClient.claimReasons,
   'refund-reasons': () => adminClient.refundReasons,
+  'order-cancellation-reasons': () => adminClient.orderCancellationReasons,
 } as const
 
 /**

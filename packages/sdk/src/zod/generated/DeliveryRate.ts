@@ -1,6 +1,7 @@
 // This file is auto-generated. Do not edit directly.
 import { z } from 'zod';
 import { DeliveryMethodSchema } from './DeliveryMethod';
+import { FreightSummarySchema } from './FreightSummary';
 
 export const DeliveryRateSchema = z.object({
   id: z.string(),
@@ -15,6 +16,8 @@ export const DeliveryRateSchema = z.object({
   carrier: z.string().nullable(),
   service_level: z.string().nullable(),
   estimated_delivery_date: z.string().nullable(),
+  unpriced: z.boolean(),
+  freight_summary: FreightSummarySchema.nullable(),
   display_cost: z.string(),
   display_total: z.string(),
   display_additional_tax_total: z.string(),

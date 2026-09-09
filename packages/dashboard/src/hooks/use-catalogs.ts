@@ -99,7 +99,7 @@ export function useCatalogProducts(catalogId: string | undefined, page = 1) {
       adminClient.catalogs.products.list(catalogId as string, {
         page,
         limit: 25,
-        expand: ['catalog_price'],
+        expand: ['catalog_price', 'quantity_rule'],
       }),
     enabled: !!catalogId,
     placeholderData: (previous) => previous,
@@ -124,7 +124,7 @@ export interface CatalogSavePayload {
    * the assortment are added by the save — a term with nothing to apply to
    * is not a state worth being able to reach.
    */
-  productTerms?: Record<
+  quantityRules?: Record<
     string,
     { minimum_order_quantity: number | null; order_multiple: number | null }
   >
@@ -141,7 +141,7 @@ export function useSaveCatalog(catalogId: string) {
       attributes,
       addProductIds = [],
       removeProductIds = [],
-      productTerms = {},
+      quantityRules = {},
     }) => {
       if (attributes) await adminClient.catalogs.update(catalogId, attributes)
 
@@ -154,17 +154,12 @@ export function useSaveCatalog(catalogId: string) {
         await adminClient.catalogs.products.create(catalogId, addProductIds)
       }
 
-      const termProductIds = Object.keys(productTerms)
+      const termProductIds = Object.keys(quantityRules)
       if (termProductIds.length > 0) {
-        await adminClient.catalogs.productTerms.upsert(catalogId, { terms: productTerms })
+        await adminClient.catalogs.quantityRules.upsert(catalogId, { terms: quantityRules })
       }
     },
-    invalidate: [
-      ['catalogs'],
-      ['catalogs', catalogId],
-      ['catalogs', catalogId, 'products'],
-      ['catalogs', catalogId, 'product_terms'],
-    ],
+    invalidate: [['catalogs'], ['catalogs', catalogId], ['catalogs', catalogId, 'products']],
     successMessage: i18n.t('admin.catalogs.messages.updated'),
     errorMessage: i18n.t('admin.errors.failed_to_update'),
   })
@@ -211,12 +206,3 @@ export function useUnassignCatalog(catalogId: string) {
 // ---------------------------------------------------------------------------
 // Commercial terms — what the buyer may order, and what the order must reach
 // ---------------------------------------------------------------------------
-
-/** A catalog's per-product quantity terms, at the grain the editor states them. */
-export function useCatalogProductTerms(catalogId: string | undefined) {
-  return useQuery({
-    queryKey: useResourceKey('catalogs', catalogId ?? 'noop', 'product_terms'),
-    queryFn: () => adminClient.catalogs.productTerms.list(catalogId as string),
-    enabled: !!catalogId,
-  })
-}

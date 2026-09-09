@@ -1,12 +1,19 @@
 module Spree
   module Stock
     class Packer
-      attr_reader :stock_location, :inventory_units, :splitters
+      attr_reader :stock_location, :inventory_units, :splitters, :owner
 
-      def initialize(stock_location, inventory_units, splitters = [Splitter::Base])
+      # @param owner [Spree::Cart, Spree::Order, nil] the purchase being
+      #   packed. Every package it builds carries this, including the ones
+      #   splitters derive, because a proposed package's inventory units
+      #   belong to no order yet — so anything reading the buyer through the
+      #   package (the packaging tare, the channel and company eligibility
+      #   rules) would otherwise see nothing.
+      def initialize(stock_location, inventory_units, splitters = [Splitter::Base], owner: nil)
         @stock_location = stock_location
         @inventory_units = inventory_units
         @splitters = splitters
+        @owner = owner
       end
 
       def packages
@@ -18,7 +25,7 @@ module Spree
       end
 
       def default_package
-        package = Package.new(stock_location)
+        package = build_package
 
         # Group by variant_id as grouping by variant fires cached query.
         inventory_units.index_by(&:variant_id).each do |variant_id, inventory_unit|
@@ -35,6 +42,16 @@ module Spree
           end
         end
 
+        package
+      end
+
+      # The single point every package this packer emits is born at, so the
+      # owner cannot be lost by a splitter that builds its own.
+      #
+      # @return [Spree::Stock::Package]
+      def build_package(contents = [])
+        package = Package.new(stock_location, contents)
+        package.owner = owner
         package
       end
 

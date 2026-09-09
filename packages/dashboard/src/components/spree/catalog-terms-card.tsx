@@ -1,3 +1,4 @@
+import type { CatalogProductTerm } from '@spree/admin-sdk'
 import { CurrencySelect, normalizeQuantityRule, useStore } from '@spree/dashboard-core'
 import {
   Button,
@@ -23,6 +24,7 @@ import { useTranslation } from 'react-i18next'
 import type {
   CatalogFormValues,
   OrderMinimumEntry,
+  ProductTermEntry,
   StagedProductTerms,
 } from '../../schemas/catalog'
 
@@ -256,10 +258,17 @@ function OrderMinimums({
 export function catalogTermColumns({
   form,
   canEdit,
+  savedTermFor,
   headers,
 }: {
   form: UseFormReturn<CatalogFormValues>
   canEdit: boolean
+  /**
+   * The term the agreement already holds for a product, read off the
+   * assortment row. Absent while a page is still loading, in which case the
+   * cell shows only what the merchant has staged.
+   */
+  savedTermFor?: (productId: string) => ProductTermEntry | undefined
   headers: {
     /** Short column heading. */
     minimum: string
@@ -277,6 +286,11 @@ export function catalogTermColumns({
   }
 }) {
   const terms = form.watch('staged_terms') ?? {}
+  // An unedited cell shows what the agreement holds, which now arrives on the
+  // assortment row itself rather than from a fetch of every rule in the
+  // catalog (docs/plans/6.0-volume-pricing.md). A staged edit wins over it.
+  const entryFor = (productId: string): ProductTermEntry | undefined =>
+    terms[productId] ?? savedTermFor?.(productId)
   const catalogMinimum = form.watch('minimum_order_quantity')?.trim()
   const catalogMultiple = form.watch('order_multiple')?.trim()
 
@@ -296,6 +310,7 @@ export function catalogTermColumns({
   }
 
   return {
+    columnCount: 2,
     // The shared table's own cells rather than hand-rolled ones: TableHead
     // carries the header's rule and background, TableCell the row border, so
     // raw elements read as a separate block that ignores the row hover.
@@ -316,7 +331,7 @@ export function catalogTermColumns({
       </>
     ),
     renderCells: (row: { id: string; pending?: 'added' | 'removed' }) => {
-      const entry = terms[row.id]
+      const entry = entryFor(row.id)
       // A row on its way out takes its terms with it, so editing them is
       // meaningless — and the struck-through row already says so.
       const disabled = !canEdit || row.pending === 'removed'
@@ -339,7 +354,10 @@ export function catalogTermColumns({
               placeholder={entry?.mixed ? headers.mixed : catalogMinimum || headers.defaultHint}
               value={entry?.minimum_order_quantity ?? ''}
               onChange={(event) => set(row.id, 'minimum_order_quantity', event.target.value)}
-              className="h-8"
+              // No spinner: it reserves room these narrow columns do not have,
+              // clipping the "Default" placeholder that says the product
+              // inherits the catalog's own term.
+              className="h-8 [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none"
             />
             {minimumInvalid && <p className="mt-1 text-destructive text-xs">{headers.invalid}</p>}
           </TableCell>
@@ -354,7 +372,7 @@ export function catalogTermColumns({
               placeholder={entry?.mixed ? headers.mixed : catalogMultiple || headers.defaultHint}
               value={entry?.order_multiple ?? ''}
               onChange={(event) => set(row.id, 'order_multiple', event.target.value)}
-              className="h-8"
+              className="h-8 [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none"
             />
             {multipleInvalid && <p className="mt-1 text-destructive text-xs">{headers.invalid}</p>}
           </TableCell>
@@ -362,6 +380,30 @@ export function catalogTermColumns({
       )
     },
   }
+}
+
+/**
+ * The saved terms on a page of assortment rows, as the cells read them.
+ * Built per page rather than for the whole catalog: the rules ride along on
+ * the rows themselves (docs/plans/6.0-volume-pricing.md).
+ */
+export function savedTermLookup(
+  products: Array<{ id: string; quantity_rule?: CatalogProductTerm | null }>,
+): (productId: string) => ProductTermEntry | undefined {
+  const byProduct = new Map(
+    products
+      .filter((product) => product.quantity_rule)
+      .map((product) => [
+        product.id,
+        {
+          minimum_order_quantity: product.quantity_rule?.minimum_order_quantity?.toString() ?? '',
+          order_multiple: product.quantity_rule?.order_multiple?.toString() ?? '',
+          mixed: product.quantity_rule?.mixed,
+        } satisfies ProductTermEntry,
+      ]),
+  )
+
+  return (productId) => byProduct.get(productId)
 }
 
 /** The API's product terms as the form holds them. */

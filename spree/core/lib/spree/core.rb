@@ -137,6 +137,7 @@ module Spree
       search: :default,
       stock_reservations: :default,
       tax_identifiers: :default,
+      data_requests: :default,
       payouts: :default
     ).tap do |queues|
       # @deprecated The taxons queue was renamed to categories in 6.0; removed in 6.1.
@@ -519,6 +520,28 @@ module Spree
     Rails.application.config.spree.delivery_rate_providers = value
   end
 
+  # Re-resolves every provider registry entry by name, in place.
+  #
+  # The registries hold class objects, and in development Zeitwerk reloads
+  # the classes underneath them on each code change. The old objects stay in
+  # the array, and a method on one — `service_catalog`, say — looks its
+  # sibling constants up in a namespace that no longer exists, which is a
+  # NameError on the admin provider catalog until the server restarts.
+  # Swapping each entry for the class currently answering to its name fixes
+  # that; in place, so a gem that appended its provider keeps its entry.
+  # Anonymous classes have no name to resolve and are left alone.
+  #
+  # Run from the engine's to_prepare hook: every reload in development, once
+  # at boot in production.
+  #
+  # @return [void]
+  def self.refresh_provider_registries!
+    [Rails.application.config.spree.delivery_rate_providers,
+     Rails.application.config.spree.fulfillment_providers].compact.each do |registry|
+      registry.map! { |entry| entry.is_a?(Module) && entry.name ? entry.name.constantize : entry }
+    end
+  end
+
   # Strategies selectable as a digital asset's source. Core registers the
   # uploaded-file default; host apps append providers that resolve a
   # deliverable elsewhere (a licensing system, a code pool).
@@ -828,6 +851,32 @@ module Spree
   module Core
     class GatewayError < RuntimeError; end
 
+    # A gift card that could not be taken back off a cart or draft order
+    # holding its balance. No gateway is involved — reported separately so a
+    # money discrepancy is not triaged alongside payment outages.
+    class GiftCardHoldReleaseFailed < RuntimeError; end
+
+    # A label purchase that failed inside the one-click fulfill path, where
+    # the parcel ships regardless — reported so the merchant's error tracker
+    # sees why there is no label.
+    class LabelPurchaseFailed < RuntimeError; end
+
+    # A carrier refusing to sell a label, in its own words. Raised by a
+    # provider when it knows why — a warehouse with no address, an
+    # unserviceable destination — so the merchant reads the actual reason
+    # instead of being sent to check a connection that is fine.
+    class LabelPurchaseRefused < RuntimeError; end
+
+    # A carrier refusing to void a label, in its own words — a parcel it has
+    # already collected, a label past its void window. Raised by a provider
+    # when it knows why, so the merchant reads the reason.
+    class LabelRefundRefused < RuntimeError; end
+
+    # A label the carrier refused to refund while a parcel was being
+    # cancelled. The cancellation proceeds; the postage is the merchant's to
+    # chase, so it is reported rather than dropped.
+    class LabelRefundFailed < RuntimeError; end
+
     # The call may or may not have taken effect — a timeout, a dropped
     # connection, anything that leaves the answer at the provider rather than
     # in the response. Distinct from its parent because the safe reaction is
@@ -851,6 +900,7 @@ require 'spree/core/engine'
 require 'spree/i18n'
 require 'spree/iso_data'
 require 'spree/localized_number'
+require 'spree/measurement'
 require 'spree/translations'
 require 'spree/money'
 require 'spree/service_module'

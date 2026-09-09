@@ -15,8 +15,13 @@ module Spree
         end
       end
 
+      # The variant's own price in the new currency. Scoped to base prices: a
+      # price list's rows belong to one audience and a ladder holds several
+      # rows for one variant, so an unscoped `first` would re-price the line at
+      # whichever row the database happened to return
+      # (docs/plans/6.0-volume-pricing.md).
       def price_from_line_item(line_item)
-        line_item.variant.prices.where(currency: currency).first
+        line_item.variant.prices.base_prices.where(currency: currency).first
       end
 
       def update_line_item_price!(line_item)

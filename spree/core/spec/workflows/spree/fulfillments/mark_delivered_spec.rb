@@ -77,5 +77,24 @@ module Spree
         expect(observed).to eq('delivered')
       end
     end
+
+    # A human saying "it arrived" outranks a carrier that never sent its
+    # last scan: every open consignment closes with the fulfillment.
+    it 'closes every open delivery at the same time' do
+      second = Spree::Deliveries::Create.new.call(owner: fulfillment, tracking_number: 'BOX-2').value
+      arrived = 30.minutes.ago
+
+      subject.call(fulfillment: fulfillment, delivered_at: arrived)
+
+      expect(fulfillment.deliveries.reload.map(&:status).uniq).to eq(['delivered'])
+      expect(second.reload.delivered_at).to be_within(1.second).of(arrived)
+    end
+
+    it 'works for a fulfillment with no delivery at all' do
+      fulfillment.deliveries.destroy_all
+
+      expect(subject.call(fulfillment: fulfillment)).to be_success
+      expect(fulfillment.reload).to be_delivered
+    end
   end
 end

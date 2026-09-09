@@ -54,9 +54,11 @@ module Spree
         end
 
         # Price lists reached through the buyer's effective catalogs, in
-        # catalog resolution order — company subtree first, then customer
-        # groups, then the channel's default catalog (the same fallback
-        # chain visibility uses).
+        # catalog resolution order — the company subtree, or failing that the
+        # customer's groups, or failing that the channel's default catalog.
+        # The same chain visibility uses, and its steps are alternatives: a
+        # company buyer is priced by their company's agreement and never
+        # also by their customer group's ({Spree::Catalog.for_context}).
         #
         # A catalog-attached list applies because the catalog applies: its
         # audience rules are not consulted, since the assignment already
@@ -111,40 +113,81 @@ module Spree
         # Returns the price for a given price list. An explicit row wins; a
         # list carrying a percentage adjustment otherwise derives one from the
         # base price.
+        #
+        # A variant carrying a break ladder on this list is priced by the
+        # ladder alone — its rungs are the negotiated terms, and a percentage
+        # meant for everything else must not undercut or overprice a figure
+        # someone signed. So a line below the ladder's first rung falls to the
+        # next list rather than to this one's percentage
+        # (docs/plans/6.0-volume-pricing.md).
+        #
         # @param price_list [Spree::PriceList]
         # @return [Spree::Price, nil]
         def find_price_for_list(price_list)
-          explicit_price_for_list(price_list) ||
-            (price_list.automatic_pricing? ? derived_price_for_list(price_list) : nil)
+          rows = rows_for_list(price_list)
+
+          explicit = rows.select { |row| row.min_quantity <= line_quantity }.max_by(&:min_quantity)
+          return explicit if explicit
+          return nil unless price_list.automatic_pricing?
+          return nil if rows.any?(&:quantity_break?)
+
+          derived_price_for_list(price_list)
         end
 
-        # An amount someone typed for this variant on this list.
+        # This variant's chargeable rows on one list in this currency — the
+        # rungs of its ladder, which is a single row for a variant with no
+        # breaks (docs/plans/6.0-volume-pricing.md).
+        #
+        # Read once per list and memoized, so the two questions asked of it —
+        # which rung this line reaches, and whether a ladder exists at all —
+        # cost one lookup rather than two and cannot answer inconsistently.
+        #
+        # Zero is a valid override (free for this list); only nil placeholder
+        # rows (materialized by PriceList#add_products) are skipped, so a
+        # placeholder on an adjustment list falls through to the derived amount
+        # rather than blocking it. The skip is per row, so a placeholder at one
+        # rung does not hide a real amount at a lower one.
+        #
         # @param price_list [Spree::PriceList]
-        # @return [Spree::Price, nil]
-        def explicit_price_for_list(price_list)
-          currency = context.currency&.upcase
-
-          # Zero is a valid override (free for this list); only nil placeholder
-          # rows (materialized by PriceList#add_products) are skipped, so a
-          # placeholder on an adjustment list falls through to the derived
-          # amount rather than blocking it.
-          if prices.loaded?
-            prices.detect do |p|
-              p.currency == currency &&
-                p.price_list_id == price_list.id &&
-                !p.amount.nil?
+        # @return [Array<Spree::Price>]
+        def rows_for_list(price_list)
+          @rows_for_list ||= {}
+          @rows_for_list[price_list.id] ||=
+            if prices.loaded?
+              prices.select do |row|
+                row.currency == currency && row.price_list_id == price_list.id && !row.amount.nil?
+              end
+            else
+              context.variant.prices.
+                with_currency(currency).
+                where(price_list_id: price_list.id).
+                where.not(amount: nil).to_a
             end
-          else
-            context.variant.prices
-                   .with_currency(currency)
-                   .where(price_list_id: price_list.id)
-                   .where.not(amount: nil)
-                   .first
-          end
         end
 
-        # The base price times the list's factor, rounded to the currency's
-        # minor unit. Built unsaved and never written: deriving on read is
+        # The context's currency, upcased like every lookup that compares
+        # against it.
+        #
+        # @return [String, nil]
+        def currency
+          return @currency if defined?(@currency)
+
+          @currency = context.currency&.upcase
+        end
+
+        # The size of the line being priced. A context that carries no
+        # quantity is asking what one unit costs — a catalogue listing, an
+        # export, a report — so it reads the ladder's bottom rung and behaves
+        # exactly as it did before breaks existed.
+        #
+        # @return [Integer]
+        def line_quantity
+          quantity = context.quantity.to_i
+          quantity.positive? ? quantity : 1
+        end
+
+        # The base price times the list's factor for this line's size, rounded
+        # to the currency's minor unit. Built unsaved and never written: deriving on read is
         # what keeps an adjustment list from drifting when base prices move
         # (docs/plans/6.0-price-list-automatic-pricing.md).
         #
@@ -155,7 +198,7 @@ module Spree
         # @param price_list [Spree::PriceList]
         # @return [Spree::Price, nil]
         def derived_price_for_list(price_list)
-          price_list.derived_price_from(base_price)
+          price_list.derived_price_from(base_price, line_quantity)
         end
 
         # Returns the base price for the variant in the current currency
@@ -170,8 +213,6 @@ module Spree
         # @return [Spree::Price, nil]
         def base_price
           return @base_price if defined?(@base_price)
-
-          currency = context.currency&.upcase
 
           @base_price = if prices.loaded?
                           prices.detect do |p|

@@ -1,0 +1,74 @@
+---
+http_interactions:
+- request:
+    method: post
+    uri: https://api.easypost.com/v2/end_shippers
+    body:
+      encoding: UTF-8
+      string: '{"address":{"name":"Kris Labadie","street1":"1600 Pennsylvania Ave
+        NW","city":"Washington","state":"AL","zip":"20500","country":"US","email":"no-reply@example.com"}}'
+    headers:
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+      Accept:
+      - "*/*"
+      User-Agent:
+      - EasyPost/v2 RubyClient/7.7.0 Ruby/4.0.1-p0 OS/Darwin OSVersion/23 OSArch/arm64
+      Host:
+      - api.easypost.com
+      Content-Type:
+      - application/json
+      Authorization:
+      - "<FILTERED>"
+  response:
+    status:
+      code: 422
+      message: Unprocessable Entity
+    headers:
+      X-Frame-Options:
+      - SAMEORIGIN
+      X-Xss-Protection:
+      - 1; mode=block
+      X-Content-Type-Options:
+      - nosniff
+      X-Download-Options:
+      - noopen
+      X-Permitted-Cross-Domain-Policies:
+      - none
+      Referrer-Policy:
+      - strict-origin-when-cross-origin
+      Easypost-Api-Version:
+      - '2015-01-01'
+      Vary:
+      - EasyPost-Api-Version
+      X-Ep-Request-Uuid:
+      - 06cfc6286a9ac787ff1b8e8c010e5c1b
+      Cache-Control:
+      - private, no-cache, no-store
+      Pragma:
+      - no-cache
+      Expires:
+      - '0'
+      Content-Type:
+      - application/json; charset=utf-8
+      X-Runtime:
+      - '0.024800'
+      Transfer-Encoding:
+      - chunked
+      X-Node:
+      - web105azw
+      X-Version-Label:
+      - easypost-202609032312-c09450d2bb-main
+      X-Backend:
+      - easypost
+      X-Proxied:
+      - extlb2azw dcaa0f86f7
+      - intlb4azw f881cede8e
+      Strict-Transport-Security:
+      - max-age=31536000; includeSubDomains; preload
+    body:
+      encoding: ASCII-8BIT
+      string: '{"error":{"code":"PARAMETER.REQUIRED","message":"Missing required parameter.","errors":[{"field":"end_shipper.address.phone","message":"is
+        required but missing"}]}}'
+  recorded_at: Fri, 04 Sep 2026 13:28:39 GMT
+recorded_with: VCR 6.4.0

@@ -265,6 +265,24 @@ RSpec.describe Spree::Market, type: :model do
     end
   end
 
+  describe 'price list currency sync' do
+    # Created up front: a new store bootstraps a default market of its own,
+    # which would otherwise count as an enqueue inside the block.
+    before { store }
+
+    it 'enqueues a sync for the store when a market brings a currency' do
+      expect { create(:market, store: store, currency: 'EUR') }.
+        to have_enqueued_job(Spree::PriceLists::SyncCurrenciesJob).with(store.id)
+    end
+
+    it 'enqueues again only when the currency changes' do
+      market = create(:market, store: store, currency: 'EUR')
+
+      expect { market.update!(name: 'Europe') }.not_to have_enqueued_job(Spree::PriceLists::SyncCurrenciesJob)
+      expect { market.update!(currency: 'GBP') }.to have_enqueued_job(Spree::PriceLists::SyncCurrenciesJob).with(store.id)
+    end
+  end
+
   describe 'has_prefix_id' do
     it 'generates prefixed id with mkt prefix' do
       market = create(:market, store: store)

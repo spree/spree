@@ -71,7 +71,11 @@ Spree::Core::Engine.add_routes do
         resources :orders, only: [:show] do
           # Customer self-service returns — opening and viewing only; the
           # merchant approves, receives and refunds through the Admin API.
-          resources :returns, only: [:index, :show, :create], controller: 'orders/returns'
+          resources :returns, only: [:index, :show, :create], controller: 'orders/returns' do
+            member do
+              get :label
+            end
+          end
           resources :claims, only: [:index, :show, :create], controller: 'orders/claims'
           # Read-only — the registration frozen onto the order at completion.
           resource :tax_identifier, only: [:show], controller: 'orders/tax_identifiers'
@@ -113,6 +117,9 @@ Spree::Core::Engine.add_routes do
           resources :tax_identifiers, only: [:index], controller: 'tax_identifiers'
           resource :tax_identifier, only: [:show, :update, :destroy], controller: 'tax_identifiers'
           resources :digital_links, only: [:index, :show]
+          # GDPR subject rights the customer exercises for themselves — a copy
+          # of their data, or its erasure.
+          resources :data_requests, only: [:index, :show, :create]
           resources :payment_setup_sessions, only: [:create, :show] do
             member do
               patch :complete
@@ -151,6 +158,9 @@ Spree::Core::Engine.add_routes do
         # Digital Downloads
         # Access via token in URL
         get 'digital_links/:token', to: 'digital_links#show', as: :digital_link_download
+        # Token-addressed so the emailed link works from a device that was
+        # never signed in.
+        get 'data_requests/:token/download', to: 'data_request_downloads#show', as: :data_request_download
         # Legacy path — emailed and bookmarked URLs outlive the rename. Removed in 6.1.
         get 'digitals/:token', to: 'digital_links#show', as: :digital_download
 
@@ -401,10 +411,11 @@ Spree::Core::Engine.add_routes do
         # preference, so there is nothing here to create.
         resources :payout_providers, only: [:index]
 
-        # Return / claim / refund reasons (dropdowns + settings management)
+        # Return / claim / refund / cancellation reasons (dropdowns + settings management)
         resources :return_reasons
         resources :claim_reasons
         resources :refund_reasons
+        resources :order_cancellation_reasons
 
         # Markets
         resources :markets
@@ -436,6 +447,7 @@ Spree::Core::Engine.add_routes do
           end
         end
         resources :delivery_zones
+        resources :package_types
 
         resources :delivery_profiles do
           collection do
@@ -495,6 +507,14 @@ Spree::Core::Engine.add_routes do
             end
           end
 
+          member do
+            # GDPR: answer a subject access request, or carry out an erasure.
+            # Both are how these requests actually arrive — by email to the
+            # merchant, from people who often can no longer sign in.
+            get :export
+            post :anonymize
+          end
+
           collection do
             post :bulk_add_to_groups
             post :bulk_remove_from_groups
@@ -502,6 +522,12 @@ Spree::Core::Engine.add_routes do
             post :bulk_remove_tags
           end
         end
+
+        # GDPR compliance log. Requests are records of what happened, so they
+        # are created and read but never edited or deleted — an editable audit
+        # trail is not one.
+        resources :data_requests, only: [:index, :show, :create]
+        resources :consent_records, only: [:index, :show]
 
         # Customer groups (segmentation; used by promotion rules + bulk customer ops)
         resources :customer_groups
@@ -638,12 +664,13 @@ Spree::Core::Engine.add_routes do
           # Commercial terms. Typed per grain rather than one rules endpoint:
           # quantity rules are per variant, minimums are per currency.
           #
-          # Both also answer as a whole set, because the agreement editor
-          # stages every term behind the catalog's Save: a half-applied
-          # agreement is not a state to leave a merchant in.
-          resources :quantity_rules, controller: 'catalogs/quantity_rules',
-                                     only: [:index, :show, :create, :update, :destroy]
-          resources :product_terms, controller: 'catalogs/product_terms', only: [:index] do
+          # Quantity rules are written as a whole set, because the agreement
+          # editor stages every term behind the catalog's Save: a half-applied
+          # agreement is not a state to leave a merchant in. They are read
+          # back on the assortment rows themselves (`expand=quantity_rule` on
+          # this catalog's products), where the variants they roll up are
+          # already loaded (docs/plans/6.0-volume-pricing.md).
+          resources :quantity_rules, controller: 'catalogs/quantity_rules', only: [] do
             collection { put :upsert, path: '' }
           end
           resources :order_minimums, controller: 'catalogs/order_minimums',
@@ -710,7 +737,6 @@ Spree::Core::Engine.add_routes do
             patch :complete
             patch :cancel
             patch :approve
-            patch :resume
             post :resend_confirmation
             post :resend_digital_links
             # The buyer's purchase order, streamed through the API so it is
@@ -722,11 +748,21 @@ Spree::Core::Engine.add_routes do
           resources :fulfillments, controller: 'orders/fulfillments', only: [:index, :show, :create, :update] do
             member do
               patch :fulfill
-              patch :purchase_label
               patch :mark_delivered
               patch :cancel
-              patch :resume
               patch :split
+            end
+
+            resources :labels, controller: 'orders/labels', only: [:index, :show, :create, :destroy] do
+              member do
+                get :download
+                patch :refund
+              end
+            end
+            resources :deliveries, controller: 'orders/deliveries', only: [:index, :show, :create, :update, :destroy] do
+              member do
+                patch :mark_delivered
+              end
             end
           end
           resources :returns, controller: 'orders/returns', only: [:index, :show, :create, :update] do
@@ -735,6 +771,13 @@ Spree::Core::Engine.add_routes do
               patch :receive
               patch :refund
               patch :cancel
+            end
+
+            resources :labels, controller: 'orders/labels', only: [:index, :show, :create, :destroy] do
+              member do
+                get :download
+                patch :refund
+              end
             end
           end
           resources :exchanges, controller: 'orders/exchanges', only: [:index, :show, :create, :update] do
@@ -841,17 +884,84 @@ Spree::Core::Engine.add_routes do
         # What this seller has sold. Cancelling is a member action because it
         # is a workflow with its own arguments, and fulfilling is nested: a
         # parcel means nothing outside the order it belongs to.
+        #
+        # No `update`: an order is created by a shopper checking out and its
+        # terms are the marketplace's, so the branch routes no general write.
+        # Correcting a delivery address is the one exception a merchant of
+        # record needs, and it is its own named action rather than a PATCH
+        # that would accept whatever the order serializer happens to permit.
         resources :orders, only: [:index, :show] do
           member do
             patch :cancel
+            patch :address
           end
 
-          resources :fulfillments, only: [:index, :show], controller: 'orders/fulfillments' do
+          # Singular: an order has one set of notes, so they are a resource to
+          # read and update rather than a verb on the order.
+          resource :notes, only: [:show, :update], controller: 'orders/notes'
+
+          # No `mark_delivered`: that a parcel arrived is the buyer's word,
+          # not the sender's, so confirming receipt stays with the operator
+          # and the carrier feed.
+          resources :fulfillments, only: [:index, :show, :update], controller: 'orders/fulfillments' do
             member do
               patch :fulfill
+              patch :cancel
+              patch :split
+            end
+
+            # A parcel's consignments and its postage. Both hang off the
+            # fulfillment because that is what actually travels.
+            resources :deliveries, controller: 'orders/deliveries', only: [:index, :show, :create, :update, :destroy]
+            resources :labels, controller: 'orders/labels', only: [:index, :show, :create, :destroy] do
+              member do
+                get :download
+              end
+            end
+          end
+
+          # Putting a sale right. The seller is merchant of record for their
+          # own child order, so taking the goods back and giving the money
+          # back are theirs (docs/plans/6.0-seller-order-management.md).
+          # Every status move is its own action, because each carries
+          # arguments of its own — receiving records what actually arrived,
+          # refunding names a method and an amount.
+          resources :returns, only: [:index, :show, :create], controller: 'orders/returns' do
+            member do
+              patch :approve
+              patch :receive
+              patch :refund
+              patch :cancel
+            end
+          end
+
+          resources :exchanges, only: [:index, :show, :create], controller: 'orders/exchanges' do
+            member do
+              patch :approve
+              patch :receive
+              patch :fulfill
+              patch :cancel
+            end
+          end
+
+          resources :claims, only: [:index, :show, :create], controller: 'orders/claims' do
+            member do
+              patch :approve
+              patch :resolve
+              patch :deny
+              patch :cancel
             end
           end
         end
+
+        # The marketplace's own vocabularies. Read-only: a seller picks a
+        # reason, the operator decides what the reasons are.
+        resources :return_reasons, only: [:index]
+        resources :claim_reasons, only: [:index]
+        resources :order_cancellation_reasons, only: [:index]
+
+        # Registry data — which carriers a tracking number can be pinned to.
+        resources :tracking_carriers, only: [:index]
 
         resources :direct_uploads, only: [:create]
 
@@ -905,6 +1015,11 @@ Spree::Core::Engine.add_routes do
             get :rule_types
           end
         end
+
+        # What this seller packs into. The listing carries the marketplace's
+        # own packaging alongside the seller's; only the seller's own can be
+        # written (docs/plans/6.0-seller-package-types.md).
+        resources :package_types
 
         # No destroy: a location holds stock levels and is named on historical
         # fulfillments, so a seller retires one by deactivating it.

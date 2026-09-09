@@ -56,6 +56,8 @@ export const deliveryMethodFormSchema = z.object({
   rules: z.array(deliveryMethodRuleSchema),
   markup_flat: z.string().optional(),
   markup_percent: z.string().optional(),
+  // Held as strings like the other decimals: what the merchant typed reaches
+  // the server intact, which is what parses it.
   services: z.array(deliveryMethodServiceSchema),
 })
 

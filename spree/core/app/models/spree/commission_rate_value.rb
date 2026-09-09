@@ -41,7 +41,7 @@ module Spree
       return if max_amount.nil? || min_amount.nil?
       return if max_amount >= min_amount
 
-      errors.add(:max_amount, Spree.t('errors.messages.must_be_greater_than_min_amount'))
+      errors.add(:max_amount, :must_be_greater_than_min_amount, message: Spree.t('errors.messages.must_be_greater_than_min_amount'))
     end
   end
 end

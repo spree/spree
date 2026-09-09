@@ -64,11 +64,11 @@ export const Route = createFileRoute('/_authenticated/$storeId/settings/reasons'
 })
 
 /**
- * The three reason lists live on one page rather than three: each is a handful
- * of short rows, and a merchant setting up returns wants to see the whole
+ * The reason lists live on one page rather than four: each is a handful of
+ * short rows, and a merchant setting up returns wants to see the whole
  * vocabulary at once. They stay separate lists because they answer different
  * questions — why a customer sent something back, what the merchant got wrong,
- * and why money moved.
+ * why money moved, and why an order never shipped at all.
  */
 const SECTIONS: Array<{ kind: ReasonKind; subject: string; titleKey: string; helpKey: string }> = [
   {
@@ -88,6 +88,12 @@ const SECTIONS: Array<{ kind: ReasonKind; subject: string; titleKey: string; hel
     subject: Subject.RefundReason,
     titleKey: 'admin.reasons.refund.title',
     helpKey: 'admin.reasons.refund.help',
+  },
+  {
+    kind: 'order-cancellation-reasons',
+    subject: Subject.OrderCancellationReason,
+    titleKey: 'admin.reasons.order_cancellation.title',
+    helpKey: 'admin.reasons.order_cancellation.help',
   },
 ]
 

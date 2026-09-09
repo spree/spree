@@ -118,6 +118,22 @@ module Spree
     has_many :delivery_methods, class_name: 'Spree::DeliveryMethod', dependent: nil,
                                 inverse_of: :seller
 
+    # What this seller packs their goods into: their own boxes, cartons and
+    # pallets, beside the marketplace's shared vocabulary they may also use
+    # (docs/plans/6.0-seller-package-types.md).
+    #
+    # `dependent: nil` for the same reason as delivery methods above: a nil
+    # `seller_id` IS the marketplace's row, so nullifying a departed seller's
+    # rows would give the operator a second default box and start quoting this
+    # seller's tare on first-party parcels.
+    has_many :package_types, class_name: 'Spree::PackageType', dependent: nil,
+                             inverse_of: :seller
+
+    # The box this seller's parcels are quoted with. Nil until they record
+    # one, and `Stock::Package` then falls back to the marketplace's.
+    has_one :default_package_type, -> { where(default: true) }, class_name: 'Spree::PackageType',
+            dependent: nil, inverse_of: :seller
+
     # The seller's tax registrations — the VAT number the commission invoice
     # needs, with the validation verdict and evidence the model carries.
     #
@@ -335,20 +351,24 @@ module Spree
     # location, so an address alone would leave the goods arriving nowhere.
     #
     # @return [Spree::StockLocation, nil]
+    # Where this seller's goods come back to. Prefers a location that accepts
+    # returns; falls back to any active one, since a seller with none marked
+    # still has to receive what customers send back.
     def returns_location
-      @returns_location ||= stock_locations.active.order_default.first
+      @returns_location ||= stock_locations.active.returns_enabled.order_default.first ||
+                            stock_locations.active.order_default.first
     end
 
     # The postal address a shopper is given for returns.
     #
-    # Nil until the location has an address on it: the location builds one from
-    # its own columns on demand, so an empty one would otherwise answer with a
+    # Nil until the location is postable: it builds an address from its own
+    # columns on demand, so an incomplete one would otherwise answer with a
     # blank address that reads as configured.
     #
     # @return [Spree::Address, nil]
     def returns_address
       location = returns_location
-      return if location.nil? || location.address1.blank?
+      return unless location&.postable?
 
       location.address
     end

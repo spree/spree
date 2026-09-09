@@ -5,6 +5,7 @@ import type {
   PanelMarket,
   PanelNamedRecord,
   PanelOptionType,
+  PanelPackageType,
   PanelProductType,
 } from '../api-client'
 import { getApiClient } from '../api-client'
@@ -23,6 +24,13 @@ import { useResourceKey } from '../lib/query-keys'
  * operator's panel, the seller on a seller's. Flat keys would serve one
  * tenant's categories to the next within the stale window, and a save from that
  * form would write ids belonging to somebody else.
+ *
+ * They are also keyed UNDER the resource they mirror — `['package-types',
+ * tenant, 'panel-form', ...]`, not `['panel-form-package-types', tenant]` — so
+ * that the `invalidate: [['package-types']]` a management page already declares
+ * sweeps them by prefix. Keyed to one side, a carton created in settings stayed
+ * invisible to this form for the whole stale window below, and the section that
+ * only renders once a carton exists went on claiming there were none.
  */
 
 const FIVE_MINUTES = 1000 * 60 * 5
@@ -31,7 +39,7 @@ export function useFormOptionTypes(enabled = true) {
   const client = getApiClient()
 
   return useQuery({
-    queryKey: useResourceKey('panel-form-option-types'),
+    queryKey: useResourceKey('option-types', 'panel-form'),
     queryFn: async (): Promise<{ data: PanelOptionType[] }> =>
       (await client.optionTypes?.list({ limit: 100 })) ?? { data: [] },
     enabled: enabled && Boolean(client.optionTypes),
@@ -43,7 +51,7 @@ export function useFormCategories(enabled = true) {
   const client = getApiClient()
 
   return useQuery({
-    queryKey: useResourceKey('panel-form-categories'),
+    queryKey: useResourceKey('categories', 'panel-form'),
     queryFn: async (): Promise<{ data: PanelNamedRecord[] }> =>
       (await client.categories?.list({ limit: 100 })) ?? { data: [] },
     enabled: enabled && Boolean(client.categories),
@@ -55,7 +63,7 @@ export function useFormCollections(enabled = true) {
   const client = getApiClient()
 
   return useQuery({
-    queryKey: useResourceKey('panel-form-collections'),
+    queryKey: useResourceKey('collections', 'panel-form'),
     queryFn: async (): Promise<{ data: PanelCollection[] }> =>
       (await client.collections?.list({ limit: 100 })) ?? { data: [] },
     enabled: enabled && Boolean(client.collections),
@@ -67,7 +75,7 @@ export function useFormProductTypes(enabled = true) {
   const client = getApiClient()
 
   return useQuery({
-    queryKey: useResourceKey('panel-form-product-types'),
+    queryKey: useResourceKey('product-types', 'panel-form'),
     queryFn: async (): Promise<{ data: PanelProductType[] }> =>
       (await client.productTypes?.list({ limit: 100 })) ?? { data: [] },
     enabled: enabled && Boolean(client.productTypes),
@@ -80,7 +88,7 @@ export function useFormProductType(id?: string) {
   const client = getApiClient()
 
   return useQuery({
-    queryKey: useResourceKey('panel-form-product-type', id),
+    queryKey: useResourceKey('product-types', 'panel-form', id),
     queryFn: () => client.productTypes?.get(id as string) as Promise<PanelProductType>,
     enabled: Boolean(id) && Boolean(client.productTypes),
     staleTime: FIVE_MINUTES,
@@ -108,7 +116,7 @@ export function useFormTaxCategories() {
   const client = getApiClient()
 
   return useQuery({
-    queryKey: useResourceKey('panel-form-tax-categories'),
+    queryKey: useResourceKey('tax-categories', 'panel-form'),
     queryFn: async (): Promise<{ data: PanelNamedRecord[] }> =>
       (await client.taxCategories?.list({ limit: 100 })) ?? { data: [] },
     enabled: Boolean(client.taxCategories),
@@ -120,12 +128,38 @@ export function useFormDeliveryProfiles() {
   const client = getApiClient()
 
   return useQuery({
-    queryKey: useResourceKey('panel-form-delivery-profiles'),
+    queryKey: useResourceKey('delivery-profiles', 'panel-form'),
     queryFn: async (): Promise<{ data: PanelDeliveryProfile[] }> =>
       (await client.deliveryProfiles?.list({ limit: 100 })) ?? { data: [] },
     enabled: Boolean(client.deliveryProfiles),
     staleTime: FIVE_MINUTES,
   })
+}
+
+/**
+ * Carton package types, plus whether this panel manages them at all.
+ *
+ * `supported` is what separates "this panel has no such page" (a seller's,
+ * where the packing card should not appear) from "the store has not created a
+ * carton yet" (an operator's, where it appears disabled and says where to go).
+ */
+export function useFormCartonPackageTypes() {
+  const client = getApiClient()
+  const supported = Boolean(client.packageTypes)
+
+  const query = useQuery({
+    queryKey: useResourceKey('package-types', 'panel-form', 'cartons'),
+    queryFn: async (): Promise<{ data: PanelPackageType[] }> =>
+      (await client.packageTypes?.list({ limit: 100, kind_eq: 'carton' })) ?? { data: [] },
+    enabled: supported,
+    staleTime: FIVE_MINUTES,
+    // The seller endpoint returns their own cartons before the
+    // marketplace's, so the 100-row ceiling cuts the shared vocabulary rather
+    // than the seller's own measurements. Ordered there rather than here
+    // because the page is taken before anything client-side could reorder it.
+  })
+
+  return { ...query, supported }
 }
 
 /**
@@ -136,8 +170,10 @@ export function useFormDeliveryProfiles() {
 export function useFormDeleteProductMedia(productId: string) {
   const client = getApiClient()
   const queryClient = useQueryClient()
-  // Resolved here rather than in the callback: it is a hook.
-  const mediaKey = useResourceKey('panel-form-media', productId)
+  // Resolved here rather than in the callback: it is a hook. No `panel-form`
+  // segment on this one — it must match the key the gallery reads, which is
+  // the operator dashboard's own `useProductMedia`.
+  const mediaKey = useResourceKey('products', productId, 'media')
 
   return useMutation({
     mutationFn: async (mediaId: string) => {
@@ -152,7 +188,7 @@ export function useFormDeleteProductMedia(productId: string) {
 export function useCreateOptionType() {
   const client = getApiClient()
   const queryClient = useQueryClient()
-  const optionTypesKey = useResourceKey('panel-form-option-types')
+  const optionTypesKey = useResourceKey('option-types', 'panel-form')
 
   return useMutation({
     mutationFn: (params: { name: string; label: string } & Record<string, unknown>) =>
@@ -166,7 +202,7 @@ export function useCreateOptionType() {
 export function useUpdateOptionType(id: string) {
   const client = getApiClient()
   const queryClient = useQueryClient()
-  const optionTypesKey = useResourceKey('panel-form-option-types')
+  const optionTypesKey = useResourceKey('option-types', 'panel-form')
 
   return useMutation({
     mutationFn: (
@@ -220,7 +256,7 @@ export function useFormCurrencyLocale(): (currency: string | undefined) => strin
   const client = getApiClient()
 
   const { data } = useQuery({
-    queryKey: useResourceKey('panel-form-markets'),
+    queryKey: useResourceKey('markets', 'panel-form'),
     queryFn: async (): Promise<{ data: PanelMarket[] }> =>
       (await client.markets?.list({ limit: 100 })) ?? { data: [] },
     enabled: Boolean(client.markets),

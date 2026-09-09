@@ -39,6 +39,12 @@ module Spree
       before_validation :clone_billing_address, if: :use_billing?
       before_destroy :check_completed_orders
 
+      # GDPR Art. 7(1) puts the burden of demonstrating consent on the
+      # controller. The boolean says what is true now; the timestamp and
+      # source say when it became true and where the person agreed, which is
+      # what a supervisory authority asks for.
+      before_save :stamp_email_marketing_consent, if: :will_save_change_to_accepts_email_marketing?
+
       after_save_commit :sync_newsletter_subscription_with_marketing_consent,
                         if: :saved_change_to_accepts_email_marketing?
 
@@ -72,6 +78,14 @@ module Spree
       has_many :customer_group_users, class_name: 'Spree::CustomerGroupUser', as: :customer, dependent: :destroy
       has_many :customer_groups, through: :customer_group_users, class_name: 'Spree::CustomerGroup'
       has_many :identities, class_name: 'Spree::UserIdentity', as: :user, dependent: :destroy
+      # Destroying the account takes the privacy records with it. They exist to
+      # say what this person agreed to and what was done about their requests,
+      # which is nothing once the person is gone — and left behind they would
+      # keep an email, an address and a browser string that nothing reaches.
+      has_many :consent_records, class_name: 'Spree::ConsentRecord', as: :owner,
+                                 dependent: :destroy, inverse_of: :owner
+      has_many :data_requests, class_name: 'Spree::DataRequest', foreign_key: :customer_id,
+                               dependent: :destroy, inverse_of: :customer
       # One per registration kind — a business can hold both an EU and a UK VAT number.
       has_many :tax_identifiers, class_name: 'Spree::TaxIdentifier', as: :owner,
                                  dependent: :destroy, inverse_of: :owner
@@ -103,6 +117,13 @@ module Spree
       # Attributes
       #
       attr_accessor :confirm_email, :terms_of_service
+
+      # Where a consent change came from, set alongside
+      # `accepts_email_marketing` by whatever is making the change. A caller
+      # that says nothing is recorded as an account-level edit, which is what
+      # a plain profile update is.
+      attr_writer :consent_source
+
 
       # The company nodes this customer may act for within a store — their
       # memberships on that store's trees, expanded by subtree. Customers are
@@ -162,7 +183,33 @@ module Spree
       self.whitelisted_ransackable_associations = %w[bill_address ship_address addresses tags spree_roles orders customer_groups]
       self.whitelisted_ransackable_attributes = %w[id email first_name last_name phone accepts_email_marketing
                                                     created_at updated_at last_sign_in_at]
-      self.whitelisted_ransackable_scopes = %w[search multi_search with_min_total_spent with_standing_for_company]
+      self.whitelisted_ransackable_scopes = %w[search multi_search with_min_total_spent with_standing_for_company
+                                               anonymized]
+
+      # Ransack casts a scope's argument before calling it, and then declines
+      # to apply the scope at all when that cast produces `false` — which is
+      # exactly the half of this filter that hides erased accounts. Opting out
+      # of the cast keeps the value a string, so the scope decides for itself.
+      def self.ransackable_scopes_skip_sanitize_args
+        %i[anonymized]
+      end
+
+      # Whether an erasure has been carried out. A scope rather than a
+      # ransackable `anonymized_at`, because the question a merchant asks is
+      # "has this been erased", not "is this timestamp null" — and a filter
+      # control that offers two named states needs a predicate that takes one
+      # of them as its value.
+      # Defaulted because Ransack invokes a scope with no argument when the
+      # value it was given is simply `true`, and passes the value through only
+      # when it is something else — so both `anonymized: true` and
+      # `anonymized: 'false'` have to land here.
+      scope :anonymized, ->(value = true) {
+        if ActiveModel::Type::Boolean.new.cast(value)
+          where.not(anonymized_at: nil)
+        else
+          where(anonymized_at: nil)
+        end
+      }
 
       scope :with_min_total_spent, ->(amount) {
         joins(:orders).where.not(spree_orders: { completed_at: nil }).
@@ -323,6 +370,23 @@ module Spree
       Spree::NewsletterSubscriber.for_store(store).find_by(customer_id: id)
     end
 
+    # @deprecated Superseded by {Spree::Customers::Anonymize}, which erases
+    #   every column carrying personal data rather than three on this row —
+    #   the address book, the address snapshots on past orders, gateway
+    #   profiles, OAuth identities and live sessions all outlived this method.
+    #   Removed in Spree 6.1.
+    def scramble_email_and_names
+      Spree::Deprecation.warn('Spree::CustomerMethods#scramble_email_and_names is deprecated and will be removed in Spree 6.1. Use Spree::Customers::Anonymize instead.')
+
+      Spree.customer_anonymize_workflow.call(customer: self, store: Spree::Current.store).success?
+    end
+
+    # Whether this customer's personal data has been erased.
+    # @return [Boolean]
+    def anonymized?
+      anonymized_at.present?
+    end
+
     private
 
     def check_completed_orders
@@ -342,13 +406,9 @@ module Spree
       use_billing.in?([true, 'true', '1'])
     end
 
-    # Scrambles the email and names of the user
-    def scramble_email_and_names
-      self.email = "#{SecureRandom.uuid}@example.net"
-      self.first_name = 'Deleted'
-      self.last_name = 'User'
-      self.login = email if has_attribute?(:login)
-      save
+    def stamp_email_marketing_consent
+      self.email_marketing_consent_updated_at = Time.current
+      self.email_marketing_consent_source = @consent_source.presence || Spree::ConsentRecord::UNKNOWN
     end
 
     def sync_newsletter_subscription_with_marketing_consent

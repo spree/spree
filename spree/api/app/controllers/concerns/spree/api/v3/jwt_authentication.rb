@@ -113,8 +113,19 @@ module Spree
           when USER_TYPE_ADMIN
             Spree.admin_user_class.find(user_id)
           else
-            Spree.customer_class.find(user_id)
+            customer_from(user_id)
           end
+        end
+
+        # An erased account stops answering to its old tokens. Clearing the
+        # password blocks a fresh sign-in, but a JWT issued before the erasure
+        # would otherwise keep working until it expired — long enough to write
+        # a name and phone back onto the record, after which a second erasure
+        # is refused as already done.
+        def customer_from(user_id)
+          customer = Spree.customer_class.find(user_id)
+
+          customer.respond_to?(:anonymized?) && customer.anonymized? ? nil : customer
         end
 
         def determine_user_type(user)

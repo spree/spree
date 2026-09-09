@@ -23,6 +23,10 @@ module Spree
           one :billing_address, resource: proc { Spree.api.admin_address_serializer }
           one :shipping_address, resource: proc { Spree.api.admin_address_serializer }
           one :market, resource: proc { Spree.api.admin_market_serializer }
+
+          # An admin twin, so this package carries its own type rather
+          # than importing the store one.
+          one :freight_summary, resource: proc { Spree.api.admin_freight_summary_serializer }
         end
       end
     end

@@ -7,8 +7,7 @@ Follow this process:
 2. Create a new plan file in `docs/plans/` with a kebab-case filename
 3. Fill in all sections based on our discussion and any existing context
 4. **Resolve every open question interactively before finishing** — see below
-5. Update the "Architecture Plans" section in the root `CLAUDE.md` to include the new plan
-6. If the plan affects specific areas of the codebase, add cross-references in relevant directory-level CLAUDE.md files
+5. If the plan affects specific areas of the codebase, add cross-references in relevant directory-level CLAUDE.md files
 
 The filename should follow the pattern: `{release}-{feature-slug}.md` 
 (e.g., `6.0-cart-order-split.md`, `future-mcp-server.md`)

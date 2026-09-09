@@ -27,6 +27,17 @@ module Spree
           end
         end
 
+        # Plain decimal notation. BigDecimal renders 0.06 as "0.6e-1", which
+        # is what a client would otherwise print beside a unit.
+        #
+        # @param value [BigDecimal, Numeric, nil]
+        # @return [String, nil]
+        def decimal_string(value)
+          return if value.nil?
+
+          BigDecimal(value.to_s).to_s('F')
+        end
+
         # Context accessors
         def current_store
           params[:store]

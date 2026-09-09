@@ -626,8 +626,13 @@ module Spree
       end
     end
 
+    # Whether the shop price differs between this product's variants. Reads
+    # base prices only: a price list's rows are what one audience pays under an
+    # agreement, and a ladder holds several rows for one variant, so counting
+    # them would report a product as varying when it does not
+    # (docs/plans/6.0-volume-pricing.md).
     def price_varies?(currency)
-      prices.find_all { |p| p.currency == currency && p.non_zero? }.map(&:amount).uniq.count > 1
+      shop_prices(currency).map(&:amount).uniq.count > 1
     end
 
     def any_variant_available?(currency)
@@ -637,7 +642,22 @@ module Spree
     # returns the lowest price for the product in the given currency
     # prices are usually already loaded, so this should not trigger an extra query
     def lowest_price(currency)
-      prices.find_all { |p| p.currency == currency && p.non_zero? }.min_by(&:amount)
+      shop_prices(currency).min_by(&:amount)
+    end
+
+    # The prices this product is offered at publicly — one per variant. A price
+    # list's rows are excluded: they are what one audience pays under an
+    # agreement, so surfacing the cheapest of them as the product's "from"
+    # price would quote every shopper a contract they are not party to.
+    #
+    # Filtered in memory rather than through a scope because callers have
+    # already loaded the association, and a scope would re-query per product
+    # in a listing.
+    #
+    # @param currency [String]
+    # @return [Array<Spree::Price>]
+    def shop_prices(currency)
+      prices.find_all { |p| p.currency == currency && p.price_list_id.nil? && p.non_zero? }
     end
 
     # for adding products which are closely related to existing ones

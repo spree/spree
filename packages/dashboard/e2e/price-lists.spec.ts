@@ -1,5 +1,17 @@
+import { readFileSync } from 'node:fs'
 import { expect, type Page, test } from '@playwright/test'
-import { FIXTURE_PROMO_PRODUCT, gotoIndex, login, openRowMenu, rowButton } from './helpers'
+import {
+  addQuantityBreak,
+  csvFile,
+  deleteCatalogPickerProducts,
+  FIXTURE_PROMO_PRODUCT,
+  FIXTURE_PROMO_SKU,
+  gotoIndex,
+  login,
+  openRowMenu,
+  rowButton,
+  seedCatalogPickerProducts,
+} from './helpers'
 
 const PRICE_LISTS_PATH = (storeId: string) => `/${storeId}/products/price-lists`
 const PRODUCTS_PATH = (storeId: string) => `/${storeId}/products`
@@ -141,9 +153,9 @@ test.describe('price lists', () => {
     await startNewPriceList(page, creds.store_id, name)
     await submitCreate(page, name)
 
-    // Rule-picker buttons include label + description; match by label only.
-    await pickRule(page, /^volume rule\b/i)
-    await expect(page.getByRole('heading', { name: /^volume rule$/i })).toBeVisible({
+    // Rule-picker buttons include name + description; match by name only.
+    await pickRule(page, /^volume pricing\b/i)
+    await expect(page.getByRole('heading', { name: /^volume pricing$/i })).toBeVisible({
       timeout: 5_000,
     })
     await page
@@ -156,7 +168,7 @@ test.describe('price lists', () => {
 
     await saveForm(page)
 
-    await expect(page.getByText(/volume rule/i).first()).toBeVisible({ timeout: 15_000 })
+    await expect(page.getByText(/volume pricing/i).first()).toBeVisible({ timeout: 15_000 })
   })
 
   // The audience rules (customer group / customer) are superseded by catalog
@@ -175,11 +187,13 @@ test.describe('price lists', () => {
 
     const picker = page.getByRole('dialog')
     // The context rules stay first-class…
-    await expect(picker.getByRole('button', { name: /^volume rule\b/i })).toBeVisible()
-    await expect(picker.getByRole('button', { name: /^market rule\b/i })).toBeVisible()
-    // …the audience rules are gone.
-    await expect(picker.getByRole('button', { name: /^customer group rule\b/i })).toHaveCount(0)
-    await expect(picker.getByRole('button', { name: /^customer rule\b/i })).toHaveCount(0)
+    await expect(picker.getByRole('button', { name: /^volume pricing\b/i })).toBeVisible()
+    await expect(picker.getByRole('button', { name: /^market\b/i })).toBeVisible()
+    // …the audience rules are gone. Both are named "Customer…", and the
+    // picker button's accessible name continues into the description, so one
+    // prefix match covers the pair — an exact `/^customer$/i` would match
+    // neither and pass however many audience rules the picker offered.
+    await expect(picker.getByRole('button', { name: /^customer\b/i })).toHaveCount(0)
   })
 
   test('adds a Market Rule with the seeded default market', async ({ page }) => {
@@ -190,8 +204,8 @@ test.describe('price lists', () => {
     await startNewPriceList(page, creds.store_id, name)
     await submitCreate(page, name)
 
-    await pickRule(page, /^market rule\b/i)
-    await expect(page.getByRole('heading', { name: /^market rule$/i })).toBeVisible({
+    await pickRule(page, /^market\b/i)
+    await expect(page.getByRole('heading', { name: /^market$/i })).toBeVisible({
       timeout: 5_000,
     })
 
@@ -221,7 +235,7 @@ test.describe('price lists', () => {
     // Stage a Volume Rule so we have a row to remove. Picker opens the
     // editor sheet automatically on the new row; submit it with valid
     // defaults so it gets persisted on save below.
-    await pickRule(page, /^volume rule\b/i)
+    await pickRule(page, /^volume pricing\b/i)
     await page
       .getByRole('dialog')
       .getByLabel(/minimum quantity/i)
@@ -234,14 +248,14 @@ test.describe('price lists', () => {
     // and verify the row disappears. The rule list and the picker share
     // a single `<RuleRow>` div with `items-stretch`; scope to it so we
     // don't pick up unrelated buttons.
-    const ruleRow = page.locator('div.items-stretch').filter({ hasText: 'Volume Rule' }).first()
+    const ruleRow = page.locator('div.items-stretch').filter({ hasText: 'Volume pricing' }).first()
     await ruleRow.getByRole('button').last().click()
     await expect(page.getByRole('heading', { name: /remove rule\?/i })).toBeVisible()
     await page
       .getByRole('dialog')
       .getByRole('button', { name: /^remove$/i })
       .click()
-    await expect(page.getByText(/volume rule/i)).toHaveCount(0, { timeout: 5_000 })
+    await expect(page.getByText(/volume pricing/i)).toHaveCount(0, { timeout: 5_000 })
 
     // Save the form so the omission is persisted (the backend reconciles
     // "row omitted from payload" as a destroy).
@@ -249,7 +263,7 @@ test.describe('price lists', () => {
 
     // Reload and prove the row is actually gone, not just hidden client-side.
     await page.reload()
-    await expect(page.getByText(/volume rule/i)).toHaveCount(0, { timeout: 15_000 })
+    await expect(page.getByText(/volume pricing/i)).toHaveCount(0, { timeout: 15_000 })
   })
 
   test('bulk-edits a price-list override via the dialog', async ({ page }) => {
@@ -308,6 +322,187 @@ test.describe('price lists', () => {
         .getByLabel(/^price for/i)
         .first(),
     ).toHaveValue('33.33')
+  })
+
+  // Paging the products card must not write anything. The pagination control
+  // lives inside the price list's own form, so a button without an explicit
+  // type submits it — the page-2 click used to PATCH the whole list
+  // (docs/plans/6.0-volume-pricing.md).
+  test('paging the products card does not save the price list', async ({ page }) => {
+    const creds = await login(page)
+    const prefix = `E2E PL Paging Product ${Date.now()}`
+    // The card holds 25 rows a page, so a second page needs more than that.
+    const seeded = await seedCatalogPickerProducts(
+      page,
+      creds.store_id,
+      prefix,
+      creds.accessToken,
+      30,
+    )
+
+    try {
+      await gotoIndex(page, PRICE_LISTS_PATH(creds.store_id), CTA)
+      const name = `E2E PL Paging ${Date.now()}`
+      await startNewPriceList(page, creds.store_id, name)
+      await submitCreate(page, name)
+
+      // Attach them through the API: the picker would take 30 clicks, and the
+      // subject here is paging, not membership.
+      const priceListId = page.url().split('/price-lists/')[1]?.split(/[/?]/)[0] ?? ''
+      expect(priceListId).toMatch(/^pl_/)
+      await page.request.post(`/api/v3/admin/price_lists/${priceListId}/products`, {
+        headers: {
+          'X-Spree-Store-Id': creds.store_id,
+          Authorization: `Bearer ${creds.accessToken}`,
+        },
+        data: { product_ids: seeded },
+      })
+      await page.reload()
+
+      const writes: string[] = []
+      page.on('request', (request) => {
+        if (request.method() === 'PATCH' && /\/price_lists\//.test(request.url())) {
+          writes.push(request.url())
+        }
+      })
+
+      // Unconditional: if there is no second page the seeding is wrong and the
+      // test must say so rather than skip the click it exists to make.
+      const next = page.getByRole('button', { name: /next page/i })
+      await expect(next).toBeVisible({ timeout: 15_000 })
+      await next.click()
+
+      // The page changed, and nothing was written on the way.
+      await expect(page.getByText(/page 2 of/i)).toBeVisible({ timeout: 15_000 })
+      expect(writes).toEqual([])
+      await expect(
+        page
+          .getByRole('main')
+          .getByRole('button', { name: /^save$/i })
+          .first(),
+      ).toBeDisabled()
+    } finally {
+      await deleteCatalogPickerProducts(page, creds.store_id, creds.accessToken, seeded).catch(
+        () => undefined,
+      )
+    }
+  })
+
+  // A ladder is edited in the same grid: a variant's row grows a rung per
+  // quantity break, and the rung is what the server holds once saved
+  // (docs/plans/6.0-volume-pricing.md).
+  test('adds a quantity break in the price spreadsheet', async ({ page }) => {
+    const creds = await login(page)
+    await gotoIndex(page, PRICE_LISTS_PATH(creds.store_id), CTA)
+
+    const name = `E2E PL Breaks ${Date.now()}`
+    await startNewPriceList(page, creds.store_id, name)
+    await submitCreate(page, name)
+    await pickProductOnPage(page, FIXTURE_PROMO_PRODUCT)
+    await saveForm(page)
+    await expect(page.getByText(/\d+ price(s)? (is|are) configured/i)).toBeVisible({
+      timeout: 15_000,
+    })
+
+    await openBulkPriceEditor(page)
+    const grid = page.getByRole('dialog')
+    const priceInput = grid.getByLabel(/^price for/i).first()
+    await expect(priceInput).toBeVisible({ timeout: 15_000 })
+    await priceInput.dblclick()
+    await priceInput.fill('30.00')
+    await priceInput.press('Enter')
+
+    // A figure with cents: the grid drops trailing zeros when it reloads.
+    await addQuantityBreak(grid, '24', '25.25')
+
+    await grid.getByRole('button', { name: /^save prices$/i }).click()
+    await expect(grid.getByText(/unsaved change/i)).toBeHidden({ timeout: 15_000 })
+
+    // Reopened, the grid shows what was written rather than what was typed.
+    await grid.getByRole('button', { name: /^close$/i }).click()
+    await expect(grid).toBeHidden({ timeout: 15_000 })
+    await openBulkPriceEditor(page)
+    await expect(page.getByRole('dialog').getByLabel(/^price for from qty 24$/i)).toHaveValue(
+      '25.25',
+      { timeout: 15_000 },
+    )
+    await page
+      .getByRole('dialog')
+      .getByRole('button', { name: /^close$/i })
+      .click()
+
+    // The products card reads the same ladder: the variant row shows the
+    // list's amount, its tier count, and the ladder with the fixed-tiers
+    // note on hover — the catalog's reading, on the list's own page.
+    await expect(page.getByText('$30.00')).toBeVisible({ timeout: 15_000 })
+    const badge = page.getByRole('button', { name: /\+1 tier$/i })
+    await expect(badge).toBeVisible()
+    await badge.hover()
+    await expect(page.getByText('$25.25')).toBeVisible({ timeout: 15_000 })
+    await expect(page.getByText(/percentage adjustment does not apply here/i)).toBeVisible()
+  })
+
+  // The list's prices travel as a CSV keyed by SKU, one rung per row: the
+  // import merges the file into the list and reports the rows it could not
+  // place, and the export hands the ladder back in the same shape.
+  test('imports a CSV of prices and exports the list', async ({ page }) => {
+    // Upload + background row processing legitimately take a while.
+    test.setTimeout(180_000)
+
+    const creds = await login(page)
+    await gotoIndex(page, PRICE_LISTS_PATH(creds.store_id), CTA)
+
+    const suffix = Date.now()
+    const name = `E2E PL CSV ${suffix}`
+    await startNewPriceList(page, creds.store_id, name)
+    await submitCreate(page, name)
+
+    await page.getByRole('button', { name: /^import$/i }).click()
+    await expect(page.getByRole('heading', { name: /import from csv/i })).toBeVisible()
+    await page
+      .getByRole('dialog')
+      .locator('input[type="file"]')
+      .setInputFiles(
+        csvFile([
+          'sku,currency,min_quantity,price,compare_at_price',
+          `${FIXTURE_PROMO_SKU},USD,1,17.25,`,
+          `${FIXTURE_PROMO_SKU},USD,24,15.75,`,
+          // A SKU the store does not have is a row-level failure, not the
+          // import's.
+          `E2E-NOPE-${suffix},USD,1,1.00,`,
+        ]),
+      )
+    await page.getByRole('button', { name: /^continue$/i }).click()
+
+    // The export writes the schema's own header names, so a file in that
+    // shape maps itself.
+    await expect(page.getByText('Map columns')).toBeVisible({ timeout: 15_000 })
+    await page.getByRole('button', { name: /start import/i }).click()
+    await expect(page.getByText(/import completed/i)).toBeVisible({ timeout: 120_000 })
+    await expect(page.getByText(/1 failed/i).first()).toBeVisible()
+    await page
+      .getByRole('dialog')
+      .getByRole('button', { name: /^close$/i })
+      .click()
+
+    // The rows landed on the list: the spreadsheet opens on them.
+    await openBulkPriceEditor(page)
+    const grid = page.getByRole('dialog')
+    await expect(grid.getByLabel(/^price for/i).first()).toHaveValue('17.25', { timeout: 15_000 })
+    await expect(grid.getByLabel(/^price for from qty 24$/i)).toHaveValue('15.75')
+    await grid.getByRole('button', { name: /^close$/i }).click()
+    await expect(grid).toBeHidden({ timeout: 15_000 })
+
+    // One click exports this list — no filtered-or-all dialog, the page
+    // already says which list — and the file carries the ladder.
+    const download = page.waitForEvent('download', { timeout: 60_000 })
+    await page.getByRole('button', { name: /^export$/i }).click()
+    const file = await download
+    expect(file.suggestedFilename()).toMatch(/price_list_prices/)
+    const body = readFileSync((await file.path()) as string, 'utf8')
+    expect(body).toContain(`${FIXTURE_PROMO_SKU},`)
+    expect(body).toContain(',USD,24,15.75,')
+    expect(body).not.toContain(`E2E-NOPE-${suffix}`)
   })
 
   // Multi-currency: the bulk editor scopes its grid to one currency at a time

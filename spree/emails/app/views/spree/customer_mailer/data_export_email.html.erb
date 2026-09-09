@@ -1,0 +1,12 @@
+<%= render layout: 'spree/shared/mailer_hero' do %>
+  <h1><%= Spree.t('customer_mailer.data_export_email.action') %></h1>
+  <p class="greeting"><%= Spree.t('customer_mailer.data_export_email.greeting') %></p>
+  <p><%= Spree.t('customer_mailer.data_export_email.instructions') %></p>
+  <% if @download_url %>
+    <%= render 'spree/shared/mailer_button', url: @download_url, label: Spree.t('customer_mailer.data_export_email.action') %>
+  <% end %>
+  <% if @expires_at %>
+    <p class="sub"><%= Spree.t('customer_mailer.data_export_email.expiry_notice', date: I18n.l(@expires_at.to_date, format: :long)) %></p>
+  <% end %>
+  <p class="sub"><%= Spree.t('customer_mailer.data_export_email.ignore_notice') %></p>
+<% end %>

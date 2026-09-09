@@ -1,5 +1,5 @@
 import type { PromotionActionCalculator } from '@spree/admin-sdk'
-import { adminClient, PreferencesForm } from '@spree/dashboard-core'
+import { adminClient, PreferencesForm, typeLabel } from '@spree/dashboard-core'
 import {
   Field,
   FieldGroup,
@@ -13,7 +13,7 @@ import {
 import { useQuery } from '@tanstack/react-query'
 import { useEffect, useMemo, useState } from 'react'
 import { useTranslation } from 'react-i18next'
-import { typeLabel } from '../../../lib/type-labels'
+
 import { EditorShell } from './editor-shell'
 import type { PromotionActionEditorContext } from './types'
 
@@ -71,10 +71,10 @@ export function AdjustmentActionEditor({ draft, onSave, onClose }: PromotionActi
         preferences,
         // Display-only — lets `<ActionSummary>` render the row preview
         // without fetching `/calculators` again. Stripped at payload time.
-        // Localized so the row summary matches the (localized) picker.
-        label: selectedCalculator
-          ? typeLabel('calculators', selectedCalculator.type, selectedCalculator.label)
-          : undefined,
+        // The summary resolves the name from `type`; the catalog's English
+        // name rides along as the fallback for a calculator shipped by an
+        // extension that carries no dashboard translation.
+        label: selectedCalculator?.label,
         preference_schema: selectedCalculator?.preference_schema,
       },
     })
@@ -108,14 +108,14 @@ export function AdjustmentActionEditor({ draft, onSave, onClose }: PromotionActi
               >
                 {(value) => {
                   const calc = calculators.find((c) => c.type === value)
-                  return calc ? typeLabel('calculators', calc.type, calc.label) : (value as string)
+                  return calc ? typeLabel('calculator', calc.type, calc.label) : (value as string)
                 }}
               </SelectValue>
             </SelectTrigger>
             <SelectContent>
               {calculators.map((calculator) => (
                 <SelectItem key={calculator.type} value={calculator.type}>
-                  {typeLabel('calculators', calculator.type, calculator.label)}
+                  {typeLabel('calculator', calculator.type, calculator.label)}
                 </SelectItem>
               ))}
             </SelectContent>

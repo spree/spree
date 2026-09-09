@@ -32,15 +32,19 @@ RSpec.describe Spree::Api::V3::Admin::CompaniesController, type: :controller do
       expect(json_response['data'].map { |row| row['id'] }).not_to include(other.prefixed_id)
     end
 
-    it 'counts children and members without a request per row' do
-      create(:company, store: store, parent: company, kind: 'division')
+    it 'counts children, and members across the whole subtree' do
+      division = create(:company, store: store, parent: company, kind: 'division')
       create(:company_membership, company: company)
+      create(:company_membership, company: division)
 
       get :index, as: :json
 
       row = json_response['data'].find { |r| r['id'] == company.prefixed_id }
       expect(row['children_count']).to eq(1)
-      expect(row['members_count']).to eq(1)
+      expect(row['members_count']).to eq(2)
+
+      division_row = json_response['data'].find { |r| r['id'] == division.prefixed_id }
+      expect(division_row['members_count']).to eq(1)
     end
 
     it 'filters roots and children through Ransack' do

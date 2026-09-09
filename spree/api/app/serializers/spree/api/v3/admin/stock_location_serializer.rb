@@ -7,7 +7,7 @@ module Spree
 
           typelize seller_id: [:string, nullable: true], seller_name: [:string, nullable: true],
                    active: :boolean, default: :boolean, backorderable_default: :boolean,
-                   propagate_all_variants: :boolean, pickup_enabled: :boolean,
+                   propagate_all_variants: :boolean, pickup_enabled: :boolean, returns_enabled: :boolean,
                    admin_name: [:string, nullable: true],
                    address2: [:string, nullable: true], state_name: [:string, nullable: true],
                    phone: [:string, nullable: true], company: [:string, nullable: true],
@@ -17,7 +17,7 @@ module Spree
 
           attributes :admin_name, :address2, :state_name, :phone, :company,
                      :active, :default, :backorderable_default, :propagate_all_variants,
-                     :kind, :pickup_enabled, :pickup_stock_policy,
+                     :kind, :pickup_enabled, :pickup_stock_policy, :returns_enabled,
                      :pickup_ready_in_minutes, :pickup_instructions,
                      created_at: :iso8601, updated_at: :iso8601
 

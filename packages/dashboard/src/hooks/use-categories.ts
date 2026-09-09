@@ -12,6 +12,7 @@ import {
 } from '@spree/dashboard-core'
 import { useQuery, useQueryClient } from '@tanstack/react-query'
 import i18n from 'i18next'
+import { TRANSLATIONS_QUERY_RESOURCE, useInvalidateTranslations } from './use-translations'
 
 export function useCategories() {
   return useQuery({
@@ -42,25 +43,31 @@ export function useCategory(id: string | undefined) {
 }
 
 export function useCreateCategory() {
+  const invalidateTranslations = useInvalidateTranslations()
+
   return useResourceMutation<Category, Error, CategoryCreateParams>({
     mutationFn: (params) => adminClient.categories.create(params),
-    invalidate: [['categories']],
+    invalidate: [['categories'], [TRANSLATIONS_QUERY_RESOURCE]],
     successMessage: i18n.t('admin.categories.messages.created'),
     errorMessage: i18n.t('admin.errors.failed_to_create'),
+    onSuccess: () => invalidateTranslations(),
   })
 }
 
 export function useUpdateCategory(id: string) {
+  const invalidateTranslations = useInvalidateTranslations()
+
   return useResourceMutation<Category, Error, CategoryUpdateParams>({
     mutationFn: (params) => adminClient.categories.update(id, params),
     // The nested products list is held back: it prefix-matches
     // `['categories', id]`, and this update runs before the membership flush
     // inside the page's Save — refreshing it there paints the pre-save rows
     // for a frame. The flush refreshes it once, at the end.
-    invalidate: [['categories'], ['categories', id]],
+    invalidate: [['categories'], ['categories', id], [TRANSLATIONS_QUERY_RESOURCE]],
     doNotInvalidate: ['products'],
     successMessage: i18n.t('admin.categories.messages.updated'),
     errorMessage: i18n.t('admin.errors.failed_to_update'),
+    onSuccess: () => invalidateTranslations(),
   })
 }
 
@@ -75,14 +82,16 @@ export function useRepositionCategory() {
 export function useDeleteCategory() {
   const queryClient = useQueryClient()
   const buildKey = useResourceKeyBuilder()
+  const invalidateTranslations = useInvalidateTranslations()
 
   return useResourceMutation<void, Error, string>({
     mutationFn: (id) => adminClient.categories.delete(id),
-    invalidate: [['categories']],
+    invalidate: [['categories'], [TRANSLATIONS_QUERY_RESOURCE]],
     successMessage: i18n.t('admin.categories.messages.deleted'),
     errorMessage: i18n.t('admin.errors.failed_to_delete'),
     onSuccess: (_data, id) => {
       queryClient.removeQueries({ queryKey: buildKey('categories', id) })
+      invalidateTranslations()
     },
   })
 }

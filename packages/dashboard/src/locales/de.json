@@ -74,19 +74,6 @@
       },
       "warning_treat_like_password": "Behandeln Sie diesen Schlüssel wie ein Passwort. Speichern Sie ihn in Ihrem Secrets-Manager – wir können ihn nicht erneut anzeigen."
     },
-    "calculators": {
-      "default_refund_amount": "Standard-Erstattungsbetrag",
-      "default_tax": "Standardsteuer",
-      "digital_delivery": "Digitale Lieferung",
-      "flat_percent_item_total": "Pauschaler Prozentsatz",
-      "flat_rate": "Pauschalbetrag",
-      "flexi_rate": "Flexibler Tarif",
-      "per_item": "Pro Artikel",
-      "percent_on_line_item": "Prozentsatz pro Position",
-      "price_sack": "Preisstaffel",
-      "tiered_flat_rate": "Gestaffelter Pauschalbetrag",
-      "tiered_percent": "Gestaffelter Prozentsatz"
-    },
     "catalogs": {
       "actions": {
         "activate": "Aktivieren",
@@ -110,6 +97,8 @@
         "audience_label": "Zielgruppe",
         "audience_placeholder": "Suchen…",
         "company_subtree_help": "Die Zuweisung an ein Unternehmen gilt für dessen gesamten Teilbaum.",
+        "customer_group_help": "Kundengruppen-Kataloge erreichen nur Käufer, deren Unternehmen keinen eigenen Katalog hat.",
+        "customer_group_precedence": "Unternehmens-Zuweisungen haben Vorrang. Hat das Unternehmen eines Käufers — oder ein übergeordnetes — irgendeinen Katalog, gelten diese Kataloge, und seine Kundengruppe wird nicht berücksichtigt. Um Unternehmens-Käufern Staffelpreise zu geben, weisen Sie diesen Katalog stattdessen ihren Unternehmen oder Abteilungen zu.",
         "dialog_description": "Wer diesen Katalog sieht. Eine Unternehmens-Zuweisung gilt für den Knoten und alles darunter.",
         "empty": "Noch keiner Zielgruppe zugewiesen — niemand sieht diesen Katalog.",
         "empty_description": "Weisen Sie ein Unternehmen oder eine Kundengruppe zu, um festzulegen, für wen dieser Katalog gilt.",
@@ -158,10 +147,9 @@
         "updated": "Katalog aktualisiert"
       },
       "prices": {
+        "after_save": "Nach dem Speichern",
         "column_price": "Preis",
         "column_source": "Von",
-        "unpriced": "Kein Preis",
-        "after_save": "Nach dem Speichern",
         "source": {
           "explicit": "Eingegeben",
           "automatic": "Angepasst",
@@ -171,7 +159,15 @@
           "explicit": "Ein Betrag, der in der eigenen Preisliste dieses Katalogs eingegeben wurde.",
           "automatic": "Der Ladenpreis mit dem Prozentsatz dieses Katalogs.",
           "base": "Der normale Ladenpreis — dieser Katalog setzt für dieses Produkt keinen Preis."
-        }
+        },
+        "tier_count_one": "+{{count}} Stufe",
+        "tier_count_other": "+{{count}} Stufen",
+        "tier_fixed_note": "Die prozentuale Anpassung des Katalogs gilt hier nicht. Diese Staffeln legen den Preis fest.",
+        "tier_from_one": "Ab {{count}}",
+        "tier_from_other": "Ab {{count}}",
+        "tier_preview": "Was diese Vereinbarung berechnet",
+        "unpriced": "Kein Preis",
+        "variant_default": "Standard"
       },
       "products": {
         "add_cta": "Produkte hinzufügen",
@@ -407,20 +403,6 @@
         "is_equal_to": "ist gleich",
         "is_not_equal_to": "ist ungleich"
       },
-      "rule_types": {
-        "available_on": {
-          "description": "Produkte, die in den letzten N Tagen veröffentlicht wurden",
-          "name": "Kürzlich veröffentlicht"
-        },
-        "sale": {
-          "description": "Produkte, die derzeit unter ihrem Vergleichspreis liegen",
-          "name": "Im Angebot"
-        },
-        "tag": {
-          "description": "Produkte mit einem passenden Schlagwort",
-          "name": "Schlagwort"
-        }
-      },
       "rules": {
         "add": "Regel hinzufügen",
         "description": "Produkte manuell auswählen oder die Kollektion per Regeln aktuell halten.",
@@ -467,13 +449,17 @@
       },
       "edit_description": "Gebühr, Grenzen und betroffene Verkäufe aktualisieren.",
       "empty": "Noch keine Provisionssätze",
+      "flat_fee_exceeds_sale_warning": "Diese Gebühr wird pro verkaufter Einheit voll berechnet. Bei günstigen Artikeln kann sie höher sein als der Erlös des Verkäufers. Setzen Sie unten ein Maximum, um die Gebühr pro Verkaufszeile zu begrenzen.",
       "messages": {
         "created": "Provisionssatz erstellt",
         "deleted": "Provisionssatz gelöscht",
         "updated": "Provisionssatz aktualisiert"
       },
       "order_hint": "Neue Sätze stehen oben in der Liste, und der erste passende gilt — zum Umsortieren ziehen.",
-      "search_placeholder": "Nach Namen suchen…"
+      "search_placeholder": "Nach Namen suchen…",
+      "validation": {
+        "percentage_exceeds_one_hundred": "Der Provisionsprozentsatz darf 100 % nicht überschreiten."
+      }
     },
     "companies": {
       "add_cta": "Unternehmen hinzufügen",
@@ -645,6 +631,7 @@
       },
       "columns": {
         "companies": "Firmen",
+        "erased": "Gelöscht",
         "groups": "Gruppen",
         "last_order": "Letzte Bestellung",
         "newsletter": "Newsletter",
@@ -656,7 +643,7 @@
           "delete_confirm_message": "Diese Adresse löschen?"
         },
         "customer_since": "Kunde seit",
-        "delete_label": "Kunde löschen",
+        "delete_confirm_message": "Damit wird das Konto vollständig entfernt; nach einer abgeschlossenen Bestellung ist das nicht mehr möglich. Für eine Löschanfrage einer Person, die bereits gekauft hat, nutzen Sie stattdessen „Personenbezogene Daten löschen“.",
         "edit_profile_description": "Aktualisieren Sie die Profilinformationen des Kunden.",
         "groups": {
           "edit_description": "Gruppen hinzufügen oder entfernen, denen dieser Kunde angehört.",
@@ -685,6 +672,14 @@
           "title": "Guthaben"
         },
         "subscribed_to_marketing": "Marketing abonniert"
+      },
+      "erased": {
+        "badge": "Gelöscht",
+        "name": "(gelöscht)"
+      },
+      "filters": {
+        "erased": "Gelöscht",
+        "not_erased": "Nicht gelöscht"
       },
       "groups": {
         "bulk_add_action": "Zu Gruppe hinzufügen…",
@@ -720,8 +715,20 @@
         "view_members": "Mitglieder anzeigen"
       },
       "new_sheet_description": "Hier angelegte Kunden haben kein Passwort festgelegt. Sie erhalten beim ersten Anmelden einen Magic Link.",
-      "row_actions": {
-        "delete_confirm": "{{email}} löschen? Kunden mit abgeschlossenen Bestellungen können nicht entfernt werden."
+      "privacy": {
+        "already_anonymized": "Personenbezogene Daten wurden am {{date}} gelöscht",
+        "anonymize": "Personenbezogene Daten löschen",
+        "anonymize_confirm_message": "Name, E-Mail-Adresse, Telefonnummer und Anschriften werden überall ersetzt und die Person wird abgemeldet. Bestellungen und Zahlungsbelege bleiben erhalten, ohne die persönlichen Angaben. Dies kann nicht rückgängig gemacht werden.",
+        "anonymize_confirm_title": "Personenbezogene Daten dieser Person löschen?",
+        "consent_updated": "Marketing-Einwilligung zuletzt geändert am {{date}}",
+        "description": "Beantworten Sie eine Datenschutzanfrage. Bestellungen und Guthaben des Kunden bleiben erhalten; seine personenbezogenen Daten werden überall dort entfernt, wo der Shop sie speichert.",
+        "export": "Daten exportieren",
+        "export_failed": "Die Daten konnten nicht exportiert werden",
+        "messages": {
+          "anonymized": "Personenbezogene Daten gelöscht"
+        },
+        "title": "Datenschutz und Daten",
+        "anonymize_again": "Erneut löschen"
       },
       "table": {
         "empty": "Noch keine Kunden",
@@ -1123,6 +1130,10 @@
         },
         "enabled": {
           "help": "Deaktivierte Sätze werden bei der Berechnung übersprungen."
+        },
+        "flat_fee_cap": {
+          "help": "Optionale Obergrenze pro Verkaufszeile. Leer lassen, um die volle Pauschale zu berechnen.",
+          "label": "Maximum pro Verkaufszeile (optional)"
         },
         "include_shipping": {
           "help": "Provision auch auf die Versanderlöse des Verkäufers berechnen.",
@@ -1564,6 +1575,15 @@
         },
         "adjustment_magnitude": {
           "label": "Prozentsatz"
+        },
+        "adjustment_tiers": {
+          "add": "Mengenstufe hinzufügen",
+          "empty": "Keine Stufen — der Prozentsatz oben gilt für jede Menge.",
+          "help": "Ab der jeweiligen Menge gilt dieser Prozentsatz. Jede Stufe wird vom Grundpreis abgezogen, nie von der Stufe darunter.",
+          "label": "Mengenstufen",
+          "percentage": "Prozentsatz",
+          "quantity": "Ab Menge",
+          "remove": "Stufe ab {quantity} entfernen"
         },
         "description": {
           "label": "Beschreibung",
@@ -2021,17 +2041,6 @@
           "label": "Admin-Sprache",
           "placeholder": "Standardsprache verwenden"
         },
-        "preferred_default_package_dimensions": {
-          "height": "Höhe",
-          "help": "Der übliche Versandkarton, von Carrier-Tarifanbietern für Volumengewicht-Preise genutzt — Zoll bei imperial, Zentimeter bei metrisch. Wirksam nur mit allen drei Werten.",
-          "label": "Standard-Paketabmessungen",
-          "length": "Länge",
-          "width": "Breite"
-        },
-        "preferred_default_package_weight": {
-          "help": "Verpackungsgewicht (Karton und Füllmaterial), das bei der Berechnung von Versandtarifen zum Inhalt jedes Pakets addiert wird. 0 deaktiviert es.",
-          "label": "Standard-Paketgewicht"
-        },
         "preferred_send_consumer_transactional_emails": {
           "help": "Wenn deaktiviert, werden keine Bestellbestätigungen, Versand- oder Erstattungs-E-Mails gesendet.",
           "label": "Transaktionale E-Mails an Kunden senden"
@@ -2272,7 +2281,19 @@
         "units_per_carton": {
           "label": "Stück pro Karton"
         },
-        "quantity_rule_invalid": "Geben Sie eine ganze Zahl größer als null ein oder lassen Sie das Feld leer."
+        "quantity_rule_invalid": "Geben Sie eine ganze Zahl größer als null ein oder lassen Sie das Feld leer.",
+        "carton_package_type_id": {
+          "label": "Karton",
+          "help": "Der Karton, in den dieses Produkt verpackt wird. Seine Maße gelten für alles, was gleich verpackt wird."
+        },
+        "carton_weight": {
+          "label": "Kartongewicht",
+          "help": "Das Gewicht eines gepackten Kartons."
+        },
+        "cartons_per_pallet": {
+          "label": "Kartons pro Palette"
+        },
+        "carton_weight_invalid": "Geben Sie ein Kartongewicht größer als null ein oder lassen Sie das Feld leer."
       },
       "webhook_endpoint": {
         "active": {
@@ -2300,6 +2321,45 @@
       "order_multiple": {
         "label": "Bestellvielfaches",
         "help": "Jeder Schritt über der Mindestmenge. Leer lassen für beliebige Mengen."
+      },
+      "package_type": {
+        "name": {
+          "label": "Name"
+        },
+        "kind": {
+          "label": "Art",
+          "help": "Nur ein Umkarton kann die Verpackung eines Produkts sein."
+        },
+        "length": {
+          "label": "Länge"
+        },
+        "width": {
+          "label": "Breite"
+        },
+        "height": {
+          "label": "Höhe"
+        },
+        "dimensions_unit": {
+          "label": "Einheit"
+        },
+        "dimensions": {
+          "help": "Für das Volumengewicht des Carriers und die Kubikmeter der Frachtstufen."
+        },
+        "weight": {
+          "label": "Leergewicht",
+          "help": "Die Verpackung selbst, zusätzlich zum Inhalt."
+        },
+        "max_weight": {
+          "label": "Max. Gewicht",
+          "help": "Was sie tragen kann."
+        },
+        "weight_unit": {
+          "label": "Einheit"
+        },
+        "default": {
+          "label": "Standardverpackung",
+          "help": "Die Verpackung, auf der Ihre Paketangebote basieren. Nur eine Standardverpackung gleichzeitig."
+        }
       }
     },
     "gift_cards": {
@@ -2537,20 +2597,6 @@
       "messages": {
         "created": "Routing-Regel hinzugefügt",
         "deleted": "Routing-Regel entfernt"
-      },
-      "types": {
-        "default_location": {
-          "description": "Bevorzugt den als Standard markierten Lagerort",
-          "name": "Standard-Lagerort"
-        },
-        "minimize_splits": {
-          "description": "Bevorzugt den Lagerort, der die meisten Artikel allein liefern kann, und vermeidet Teillieferungen",
-          "name": "Teillieferungen minimieren"
-        },
-        "preferred_location": {
-          "description": "Versand vom am Auftrag hinterlegten Lagerort, sofern gesetzt",
-          "name": "Bevorzugter Lagerort"
-        }
       }
     },
     "orders": {
@@ -2627,6 +2673,33 @@
           "value_type_flat": "Betrag",
           "value_type_percent": "Prozent"
         },
+        "cancel": {
+          "description": "Grund und Notiz werden bei der Bestellung gespeichert, und offene Zahlungen werden abgewickelt.",
+          "keep_order": "Bestellung behalten",
+          "no_reason": "Kein Grund angegeben",
+          "note_label": "Notiz",
+          "note_placeholder": "Diese Notiz sehen nur Mitarbeiter",
+          "notify_customer": "Kundin oder Kunden per E-Mail benachrichtigen",
+          "reason_label": "Grund",
+          "refund_payments": "Kundin oder Kunden erstatten",
+          "refund_payments_help": "Bereits eingezogenes Geld wird zurückgezahlt. Eine nicht eingelöste Autorisierung wird ohnehin freigegeben."
+        },
+        "commission_lines": {
+          "column_fee": "Provision",
+          "column_rate": "Satz",
+          "column_subject": "Artikel",
+          "column_tax": "Steuer",
+          "column_total": "Summe",
+          "delivery": "Lieferung",
+          "empty": "Für diese Bestellung wurde keine Provision berechnet.",
+          "line_item_fallback": "Position",
+          "rate_named_fixed": "{{name}} · {{amount}}",
+          "rate_named_percentage": "{{name}} · {{rate}} %",
+          "rate_unknown": "Gelöschter Satz",
+          "subject_fallback": "Verkauf",
+          "title": "Provision",
+          "total": "Summe"
+        },
         "completed_prefix": "Abgeschlossen",
         "confirm": {
           "approve_message": "Diesen Auftrag genehmigen?",
@@ -2637,7 +2710,6 @@
           "remove_gift_card_message": "Diese Geschenkkarte aus dem Auftrag entfernen?",
           "remove_item_message": "Diesen Artikel aus dem Auftrag entfernen?",
           "remove_store_credit_message": "Guthaben aus dem Auftrag entfernen?",
-          "resume_message": "Diesen stornierten Auftrag wieder aufnehmen?",
           "ship_message": "Diese Lieferung versenden?",
           "void_message": "Diese Zahlung stornieren?"
         },
@@ -2662,28 +2734,63 @@
           "approve_failed": "Auftrag konnte nicht genehmigt werden",
           "cancel_failed": "Auftrag konnte nicht storniert werden",
           "complete_failed": "Auftrag konnte nicht abgeschlossen werden",
-          "confirmation_send_failed": "Bestätigung konnte nicht gesendet werden",
-          "resume_failed": "Auftrag konnte nicht wieder aufgenommen werden"
+          "confirmation_send_failed": "Bestätigung konnte nicht gesendet werden"
         },
         "fulfillments": {
+          "add_delivery": "Sendungsnummer hinzufügen",
           "add_tracking": "Sendungsverfolgung hinzufügen",
           "add_tracking_title": "Sendungsverfolgung hinzufügen",
+          "awaiting_fulfillment_one": "{{count}} Artikel noch zu erfüllen",
+          "awaiting_fulfillment_other": "{{count}} Artikel noch zu erfüllen",
+          "awaiting_hint": "Fügen Sie eine Erfüllung hinzu, um sie zu versenden.",
+          "awaiting_hint_draft": "Sie können erfüllt werden, sobald die Bestellung aufgegeben ist.",
           "buy_label": "Label kaufen",
           "buy_label_confirm": "Versandlabel für diese Sendung kaufen? Ihr Versanddienstleister-Konto wird belastet, sobald das Label ausgestellt ist.",
           "buy_label_confirm_rate": "Label {{rate}} für {{cost}} kaufen? Ihr Versanddienstleister-Konto wird belastet, sobald das Label ausgestellt ist.",
+          "buy_label_pending_file": "Die Kopie des Transportunternehmens wird noch geladen; beim Drucken öffnet sich dessen eigener Link.",
           "carrier_auto": "Automatisch erkennen",
           "carrier_label": "Versanddienstleister",
+          "carrier_search": "Transportunternehmen suchen",
+          "carrier_status_available_for_pickup": "Zur Abholung bereit",
+          "carrier_status_delivered": "Zugestellt",
+          "carrier_status_failure": "Zustellung fehlgeschlagen",
+          "carrier_status_in_transit": "Unterwegs",
+          "carrier_status_out_for_delivery": "In Zustellung",
+          "carrier_status_pending": "Wartet auf Transportunternehmen",
+          "carrier_status_pre_transit": "Etikett erstellt",
+          "carrier_status_return_to_sender": "Rücksendung an Absender",
+          "carrier_status_unknown": "Status unbekannt",
+          "confirm_delete_delivery": "Diese Sendungsnummer entfernen? Die Änderung wird sofort wirksam.",
+          "confirm_delete_label": "Dieses Etikett löschen? Die Datei wird von der Bestellung entfernt. Die Änderung wird sofort wirksam.",
+          "confirm_refund_label": "Erstattung dieses Etiketts beim Transportunternehmen beantragen? Das Porto wird Ihrem Konto gutgeschrieben.",
           "confirm_split": "Diese Einheiten in eine neue Sendung verschieben? Die Änderung wird sofort wirksam.",
           "create_description": "Erstellt eine Sendung und verschiebt die gewählten Mengen hinein.",
           "create_items": "Artikel",
           "create_title": "Sendung hinzufügen",
+          "delete_label": "Etikett löschen",
+          "deliveries_title": "Sendungsverfolgung",
           "delivery_method": "Versandart",
+          "document_kinds": {
+            "certificate_of_origin": "Ursprungszeugnis",
+            "cn22": "Zollformular CN22",
+            "cn23": "Zollformular CN23",
+            "commercial_invoice": "Handelsrechnung",
+            "customs_form": "Zollformular",
+            "form": "Dokument"
+          },
+          "documents_title": "Versanddokumente",
           "edit_description": "Ändern Sie, von wo diese Sendung versandt wird und welche Versandart sie befördert.",
           "edit_title": "Sendung bearbeiten",
           "edit_tracking_title": "Sendungsverfolgung bearbeiten",
           "empty": "Noch keine Sendungen für diese Bestellung.",
           "free": "Kostenlos",
+          "label_cost": "Porto",
+          "label_refund_requested": "Erstattung beantragt",
+          "label_refunded": "Erstattet",
+          "label_title": "Versandetikett",
+          "label_uploaded": "Hochgeladen",
           "mark_delivered": "Als zugestellt markieren",
+          "mark_delivery_delivered": "Als angekommen markieren",
           "move_and_requote": "Verschieben und neu berechnen",
           "no_rates": "Für diese Sendung liegen keine Versandarten vor.",
           "out_of_stock": "Nicht auf Lager",
@@ -2691,6 +2798,8 @@
           "print_label": "Label drucken",
           "print_packing_slip": "Lieferschein drucken",
           "rates_pending_origin": "Speichern Sie den neuen Ursprung, um die dort verfügbaren Versandarten zu sehen.",
+          "refund_label": "Etikett erstatten",
+          "retry_refund_label": "Erstattung erneut anfordern",
           "ship_to": "Lieferadresse",
           "ships_from": "Versand ab",
           "split": "Aufteilen",
@@ -2701,7 +2810,12 @@
           "split_would_empty": "Lassen Sie mindestens eine Einheit zurück oder ändern Sie stattdessen den Ursprung der gesamten Sendung.",
           "tracking_description": "Die Sendungsnummer des Zustellers oder ein vollständiger Tracking-Link.",
           "unfulfilled_one": "Nicht versandt ({{count}})",
-          "unfulfilled_other": "Nicht versandt ({{count}})"
+          "unfulfilled_other": "Nicht versandt ({{count}})",
+          "upload_label": "Etikett hochladen",
+          "upload_label_cost": "Portokosten",
+          "upload_label_description": "Erfassen Sie ein anderswo gekauftes Etikett, damit die Sendung ihre Datei, ihre Sendungsnummer und ihre Kosten hat.",
+          "upload_label_file": "Etikettendatei",
+          "upload_label_title": "Etikett hochladen"
         },
         "gift_card_section": {
           "applied_suffix": "angewendet",
@@ -2722,8 +2836,6 @@
           "captured": "Zahlung eingezogen",
           "completed": "Auftrag abgeschlossen",
           "confirmation_sent": "Bestätigung gesendet",
-          "resumed": "Auftrag wieder aufgenommen",
-          "shipped": "Lieferung versendet",
           "voided": "Zahlung storniert"
         },
         "no_customer": "Keine Kundeninformationen",
@@ -2760,8 +2872,13 @@
         "summary": {
           "adjustments": "Anpassungen",
           "approved_by": "Genehmigt von",
+          "cancel_note": "Stornierungsnotiz",
+          "cancel_reason": "Stornierungsgrund",
           "canceled_at": "Storniert am",
           "canceler": "Storniert von",
+          "commission_fee": "Marktplatzgebühr",
+          "commission_tax": "Steuer auf Marktplatzgebühr",
+          "commission_total": "Marktplatzgebühr gesamt",
           "outstanding_balance": "Offener Saldo",
           "payment_total": "Zahlungssumme",
           "promotions": "Aktionen",
@@ -2769,8 +2886,8 @@
           "tax_included": "Steuer (inklusive)"
         },
         "tracking": {
-          "prefix": "Tracking",
-          "shipped_prefix": "Versendet"
+          "fulfilled_prefix": "Erfüllt",
+          "prefix": "Tracking"
         },
         "variant_search": {
           "description": "Suchen Sie nach einer Produktvariante, die diesem Auftrag hinzugefügt werden soll.",
@@ -2778,6 +2895,17 @@
           "label": "Variante suchen",
           "placeholder": "Produktname oder SKU eingeben (min. 3 Zeichen)…",
           "sku_prefix": "SKU"
+        },
+        "logistics": {
+          "title": "Logistik",
+          "units": "Einheiten",
+          "cartons": "Kartons",
+          "pallets": "Paletten",
+          "volume": "Volumen",
+          "weight": "Bruttogewicht",
+          "cbm": "{{value}} m³",
+          "kg": "{{value}} kg",
+          "incomplete": "Einige Artikel sind nicht vermessen. Diese Werte sind daher ein Mindestwert, keine Gesamtsumme."
         }
       },
       "edit": {
@@ -2825,7 +2953,7 @@
       },
       "fulfill": {
         "action": "Als versendet markieren",
-        "empty": "Diese Sendung enthält keine versandfähigen Artikel.",
+        "empty": "Diese Erfüllung enthält keine Artikel, die erfüllt werden können.",
         "include_item": "{{name}} versenden",
         "notify_customer": "Versandbenachrichtigung an Kundin oder Kunden senden",
         "of_units": "von {{count}}",
@@ -2975,6 +3103,12 @@
             "description": "Wird in Ihrem Storefront als Kontaktpunkt für Kundenfragen und Support angezeigt.",
             "title": "Kundensupport-E-Mail festlegen"
           },
+          "setup_address": {
+            "cta": "Adresse speichern",
+            "description": "Ihre Versand- und Rücksendeadresse. Zusteller berechnen damit die Versandkosten, und Kundenrücksendungen gehen an diese Adresse.",
+            "no_location": "Sie haben noch kein eigenes Lager — legen Sie in den Einstellungen eines an, um eine Adresse zu hinterlegen.",
+            "title": "Versandadresse hinzufügen"
+          },
           "setup_payment_method": {
             "cta": "Zahlungsmethoden einrichten",
             "description": "Um Zahlungen zu empfangen, richten Sie mindestens einen Online-Zahlungsanbieter ein.",
@@ -3022,8 +3156,6 @@
             "capture": "Einziehen",
             "mark_paid": "Als bezahlt markieren",
             "refund": "Erstatten",
-            "resume": "Fortsetzen",
-            "ship": "Als versendet markieren",
             "void": "Stornieren"
           },
           "claims": {
@@ -3075,13 +3207,19 @@
               "receive": "Artikel annehmen",
               "refund": "Erstatten"
             },
+            "buy_label": "Rücksendeetikett kaufen",
+            "buy_label_confirm": "Ein vorfrankiertes Rücksendeetikett kaufen? Ihr Konto wird belastet, sobald das Etikett ausgestellt ist.",
             "confirm": {
               "cancel": "Diese Retoure stornieren? Es wird nichts eingelagert und kein Geld bewegt."
             },
             "create_title": "Neue Retoure",
             "empty": "Keine Retouren für diese Bestellung.",
             "empty_no_units": "Für diese Bestellung gibt es keine Fulfillment-Einträge, auf die sich eine Retoure beziehen könnte.",
+            "location": "Rücksendung an",
+            "location_default": "Standard-Rücksendeort",
+            "location_no_returns": "{{name}} (nimmt keine Rücksendungen an)",
             "memo": "Notiz",
+            "no_label": "Noch kein Rücksendeetikett.",
             "not_resellable": "Nicht wiederverkäuflich",
             "reason": "Grund",
             "receive_title": "Retournierte Artikel annehmen",
@@ -3095,7 +3233,8 @@
             },
             "refund_title": "Retoure erstatten",
             "refund_total": "Erstattungssumme",
-            "resellable": "Wiederverkäuflich"
+            "resellable": "Wiederverkäuflich",
+            "returning_to": "Rücksendung an {{name}}"
           },
           "section_billing_address": "Rechnungsadresse",
           "section_claims": "Reklamationen",
@@ -3275,6 +3414,7 @@
             "save_success_one": "{{count}} Preis gespeichert",
             "save_success_other": "{{count}} Preise gespeichert",
             "search_placeholder": "Nach Produkt, SKU oder Option suchen…",
+            "tier_needs_price": "Geben Sie einen Preis für die Mengenstaffel ab {{quantity}} ein, oder löschen Sie die Menge, um sie zu entfernen.",
             "title": "Preise bearbeiten — {{name}}",
             "variant_default": "Standard"
           },
@@ -3297,6 +3437,17 @@
             "select_all": "Alle auswählen",
             "select_row": "Produkt auswählen",
             "title": "Produkte"
+          },
+          "prices": {
+            "column_price": "Preis",
+            "column_source": "Quelle",
+            "source_help": {
+              "explicit": "Ein auf dieser Preisliste eingetragener Betrag.",
+              "automatic": "Der Shop-Preis mit dem Prozentsatz dieser Preisliste.",
+              "base": "Der normale Shop-Preis. Diese Liste bepreist dieses Produkt nicht."
+            },
+            "tier_fixed_note": "Eine prozentuale Anpassung gilt hier nicht. Diese Staffeln legen den Preis fest.",
+            "tier_preview": "Was diese Liste berechnet"
           },
           "products_help": "Wählen Sie die Produkte, für die diese Liste gilt. Platzhalterpreise werden beim Speichern angelegt — über „Preise bearbeiten\" ausfüllen.",
           "products_help_with_prices_one": "Wählen Sie die Produkte, für die diese Liste gilt. {{count}} Preis ist hinterlegt — über „Preise bearbeiten\" anpassen.",
@@ -3324,6 +3475,12 @@
           "sheet_title_create": "Preisliste erstellen",
           "sheet_title_edit": "Preisliste bearbeiten",
           "subtitle": "Gezielte Preisgestaltung für Kundengruppen, Regionen oder Mengenstaffeln.",
+          "tiers": {
+            "add": "Mengenstaffel hinzufügen",
+            "from": "Ab Menge",
+            "quantity": "Ab Menge",
+            "remove_short": "Diese Mengenstaffel entfernen"
+          },
           "title": "Preislisten",
           "unschedule": "Planung aufheben",
           "unschedule_confirm": {
@@ -3527,11 +3684,9 @@
           "search_placeholder": "Lagerstandorte suchen…"
         },
         "store": {
-          "default_package_description": "Der Karton, in dem Sie üblicherweise versenden. Carrier-Tarifanbieter addieren sein Gewicht zu jedem Paket und nutzen seine Abmessungen für Volumengewicht-Preise.",
           "subtitle": "Allgemeine Konfiguration und shopweite Standardwerte.",
           "tab_addresses": "Adressen",
           "tab_catalog": "Katalog",
-          "tab_default_package": "Standardpaket",
           "tab_general": "Allgemein",
           "tab_inventory": "Lagerbestand",
           "tab_order_numbers": "Bestellnummern",
@@ -3683,6 +3838,9 @@
         "payouts": {
           "title": "Auszahlungen",
           "subtitle": "Wie und wann dieser Marktplatz seine Verkäufer bezahlt."
+        },
+        "package_types": {
+          "add_sheet_title": "Verpackungsart hinzufügen"
         }
       },
       "staff": {
@@ -3769,16 +3927,24 @@
         "api_keys": "API-Zugangsdaten erstellen und widerrufen",
         "categories": "Kategoriebaum und Taxonomien",
         "collections": "Manuelle und regelbasierte Produktkollektionen",
+        "commissions": "Provisionssätze und was jedem Verkäufer berechnet wird",
         "customers": "Kundenkonten, Adressen, Karten und Gruppen",
         "dashboard": "Umsatz- und Leistungsanalysen",
+        "delivery_methods": "Versandoptionen, Tarife und die Regeln, die sie steuern",
         "fulfillments": "Bestellungen packen, versenden und verfolgen",
         "gift_cards": "Geschenkkarten und Geschenkkarten-Chargen",
         "integrations": "Anbieter-Zugangsdaten und Verbindungen",
+        "media": "Bilder, Videos und Dateien in der Medienbibliothek",
         "orders": "Bestellungen, Positionen, Retouren, Umtausch und Reklamationen",
         "payments": "Zahlungen und Zahlungserfassung",
+        "payouts": "An Verkäufer ausgezahlte Beträge und deren Zeitplan",
+        "product_types": "Definitionen von Produkttypen und ihre Zusatzfelder",
         "products": "Produkte, Varianten, Optionen, Preise und Medien",
         "promotions": "Aktionen, Regeln und Gutscheincodes",
+        "publishing": "Was im Shop sichtbar ist und ab wann",
         "refunds": "Erstattungen ausstellen und einsehen",
+        "seller_profile": "Die eigenen Angaben, Adresse und Richtlinien eines Verkäufers",
+        "sellers": "Verkäuferkonten, Onboarding und Freigabe",
         "settings": "Shop-, Zahlungs-, Liefer-, Steuer- und Kanalkonfiguration",
         "staff": "Teammitglieder, Einladungen, Rollen und ihre Berechtigungen",
         "stock": "Bestände, Lagerorte, Bewegungen und Transfers",
@@ -3809,16 +3975,24 @@
         "api_keys": "API-Schlüssel",
         "categories": "Kategorien",
         "collections": "Kollektionen",
+        "commissions": "Provisionen",
         "customers": "Kunden",
         "dashboard": "Dashboard",
+        "delivery_methods": "Versandarten",
         "fulfillments": "Fulfillments",
         "gift_cards": "Geschenkkarten",
         "integrations": "Integrationen",
+        "media": "Medien",
         "orders": "Bestellungen",
         "payments": "Zahlungen",
+        "payouts": "Auszahlungen",
+        "product_types": "Produkttypen",
         "products": "Produkte",
         "promotions": "Aktionen",
+        "publishing": "Veröffentlichung",
         "refunds": "Rückerstattungen",
+        "seller_profile": "Verkäuferprofil",
+        "sellers": "Verkäufer",
         "settings": "Einstellungen",
         "staff": "Team & Rollen",
         "stock": "Bestand",
@@ -3864,12 +4038,44 @@
     "preferences": {
       "additional_item": "Kosten für jeden weiteren Artikel",
       "amount": "Betrag",
+      "api_key": "API-Schlüssel",
+      "api_key_description": "In Ihrem EasyPost-Dashboard zu finden. Test- und Live-Schlüssel verhalten sich unterschiedlich — der Schlüssel bestimmt den Modus.",
       "base_amount": "Grundbetrag",
       "base_percent": "Grundprozentsatz",
+      "company_orders_only": "Nur für Firmenbestellungen",
+      "company_orders_only_description": "Aktiviert wird diese Methode nur für Bestellungen auf ein Unternehmen angeboten, deaktiviert nur für die übrigen. Ohne diese Regel gilt sie für beide.",
       "currency": "Währung",
+      "customs_contents_type": "Zollinhaltsart",
+      "customs_contents_type_description": "Was eine internationale Sendung enthält, wie der Zoll es einstuft.",
+      "customs_contents_type_options": {
+        "dangerous_goods": "Gefahrgut",
+        "documents": "Dokumente",
+        "gift": "Geschenk",
+        "humanitarian_donation": "Humanitäre Spende",
+        "merchandise": "Handelsware",
+        "returned_goods": "Rücksendung",
+        "sample": "Muster"
+      },
+      "customs_signer": "Zollunterzeichner",
+      "customs_signer_description": "Die Person in Ihrem Unternehmen, die rechtlich für die Zollangaben einer internationalen Sendung verantwortlich ist.",
       "discount_amount": "Rabattbetrag",
       "first_item": "Kosten für den ersten Artikel",
       "flat_percent": "Fester Prozentsatz",
+      "incoterm": "Zölle und Steuern (Incoterm)",
+      "incoterm_description": "Wer die Zölle bei Ankunft zahlt. DAP belastet den Empfänger, DDP Sie selbst — wählen Sie DDP nur, wenn Sie Zölle im Checkout erheben.",
+      "incoterm_options": {
+        "CFR": "CFR",
+        "CIF": "CIF",
+        "CIP": "CIP",
+        "CPT": "CPT",
+        "DAT": "DAT",
+        "DAP": "DAP",
+        "DDP": "DDP",
+        "EXW": "EXW",
+        "FAS": "FAS",
+        "FCA": "FCA",
+        "FOB": "FOB"
+      },
       "max_items": "Maximale Artikelanzahl",
       "max_quantity": "Höchstmenge",
       "maximum_item_total": "Maximale Artikelsumme",
@@ -3881,7 +4087,9 @@
       "normal_amount": "Normalbetrag",
       "percent": "Prozent",
       "preferred_amount": "Betrag",
-      "preferred_percent": "Prozent"
+      "preferred_percent": "Prozent",
+      "webhook_secret": "Webhook-Signaturschlüssel",
+      "webhook_secret_description": "Das Geheimnis, das Sie im EasyPost-Webhook festgelegt haben. Ohne es werden Carrier-Updates abgelehnt."
     },
     "product_types": {
       "add_cta": "Produkttyp hinzufügen",
@@ -4005,7 +4213,9 @@
           "adjustment_required": "Bitte einen Prozentsatz eingeben.",
           "adjustment_too_deep": "Muss kleiner als 100 % sein.",
           "ends_after_starts": "Muss nach dem Startdatum liegen.",
-          "minimum_quantity_invalid": "Geben Sie eine ganze Zahl ein."
+          "minimum_quantity_invalid": "Geben Sie eine ganze Zahl ein.",
+          "tier_percentage_invalid": "Jede Stufe braucht einen Prozentsatz unter 100.",
+          "tier_quantity_invalid": "Jede Stufe braucht eine eigene Menge über 1."
         }
       },
       "product_type_adds_options_one": "Dieser Typ fügt neuen Produkten {{options}} hinzu.",
@@ -4095,7 +4305,11 @@
           "identity": "Identität",
           "tax_category_placeholder": "Vom Produkt übernehmen",
           "ordering": "B2B-Bestellung",
-          "ordering_help": "Wie viel ein Käufer abnehmen muss. Der Bestand wird weiterhin in Stück gezählt."
+          "ordering_help": "Wie viel ein Käufer abnehmen muss. Der Bestand wird weiterhin in Stück gezählt.",
+          "packing": "Verpackung",
+          "packing_help": "Wie dieses Produkt als Großmenge das Lager verlässt. Frachtangebote beruhen auf diesen Zahlen.",
+          "carton_placeholder": "Kein Karton",
+          "pending_save": "Änderungen hier werden mit dem Produkt gespeichert."
         },
         "title": "Varianten",
         "variant_label": "Variante"
@@ -4112,24 +4326,6 @@
       },
       "action_summary": {
         "variant_count": "{{count}} Varianten"
-      },
-      "action_types": {
-        "create_adjustment": {
-          "description": "Erstellt eine Aktionsgutschrift als Anpassung für die Bestellung",
-          "name": "Anpassung für gesamte Bestellung erstellen"
-        },
-        "create_item_adjustments": {
-          "description": "Erstellt eine Aktionsgutschrift als Anpassung für eine Bestellposition",
-          "name": "Anpassung je Bestellposition erstellen"
-        },
-        "create_line_items": {
-          "description": "Fügt dem Warenkorb die angegebene Menge der Variante hinzu",
-          "name": "Bestellpositionen erstellen"
-        },
-        "free_shipping": {
-          "description": "Macht alle Sendungen der Bestellung kostenlos",
-          "name": "Kostenloser Versand"
-        }
       },
       "actions_card": {
         "add_action": "Aktion hinzufügen",
@@ -4210,52 +4406,6 @@
         "category_count": "{{count}} Kategorien",
         "customer_count": "{{count}} Kunden",
         "product_count": "{{count}} Produkte"
-      },
-      "rule_types": {
-        "category": {
-          "description": "Bestellung enthält Produkte aus den angegebenen Kategorien",
-          "name": "Kategorien"
-        },
-        "country": {
-          "description": "Auf Bestellungen mit Lieferadresse in einem bestimmten Land beschränken",
-          "name": "Land"
-        },
-        "currency": {
-          "description": "Auf Bestellungen in einer bestimmten Währung beschränken",
-          "name": "Währung"
-        },
-        "customer": {
-          "description": "Nur für die angegebenen Kunden verfügbar",
-          "name": "Kunden"
-        },
-        "customer_group": {
-          "description": "Nur für Kunden in den angegebenen Kundengruppen verfügbar",
-          "name": "Kundengruppe(n)"
-        },
-        "customer_logged_in": {
-          "description": "Nur für angemeldete Kunden verfügbar",
-          "name": "Nur angemeldete Kunden"
-        },
-        "first_order": {
-          "description": "Muss die erste Bestellung des Kunden sein",
-          "name": "Erste Bestellung"
-        },
-        "item_total": {
-          "description": "Bestellsumme erfüllt diese Kriterien",
-          "name": "Warenwert"
-        },
-        "one_use_per_user": {
-          "description": "Nur einmalige Nutzung pro Benutzer",
-          "name": "Einmalige Nutzung pro Benutzer"
-        },
-        "option_value": {
-          "description": "Bestellung enthält Produkte mit übereinstimmenden Optionswerten",
-          "name": "Optionswert(e)"
-        },
-        "product": {
-          "description": "Bestellung enthält die angegebenen Produkte",
-          "name": "Produkt(e)"
-        }
       },
       "rule_types_all_used": "Jeder verfügbare Regeltyp ist dieser Aktion bereits zugeordnet.",
       "rule_types_empty": "Keine Regeltypen registriert.",
@@ -4365,7 +4515,7 @@
         "message": "{{name}} wird nicht mehr angeboten. Bestehende Vorgänge behalten ihn.",
         "title": "Grund löschen?"
       },
-      "description": "Die Auswahllisten, aus denen Ihr Team bei Rücksendungen, Reklamationen und Rückerstattungen wählt.",
+      "description": "Die Auswahllisten, aus denen Ihr Team bei Rücksendungen, Reklamationen, Erstattungen und Stornierungen wählt.",
       "edit_sheet_title": "Grund bearbeiten",
       "empty": "Noch keine Gründe",
       "in_use": "In Verwendung",
@@ -4377,6 +4527,10 @@
         "updated": "Grund aktualisiert"
       },
       "name_placeholder": "z. B. Falsche Größe",
+      "order_cancellation": {
+        "help": "Warum eine Bestellung vor dem Versand abgebrochen wurde. Mitarbeitende wählen beim Stornieren einen Grund.",
+        "title": "Stornierungsgründe"
+      },
       "refund": {
         "help": "Warum Geld zurückging. Für Auswertungen über alle Rückerstattungen.",
         "title": "Rückerstattungsgründe"
@@ -4474,17 +4628,6 @@
           "help": "Erforderliche Punkte müssen vor der Freigabe erledigt sein. Andere gelten als empfohlen.",
           "label": "Erforderlich"
         }
-      },
-      "kinds": {
-        "accept_terms": "Bedingungen akzeptieren",
-        "attestation": "Bestätigung des Verkäufers",
-        "billing_address": "Rechnungsadresse",
-        "complete_profile": "Profil vervollständigen",
-        "document": "Dokument",
-        "minimum_products": "Mindestanzahl Produkte",
-        "operator_review": "Manuelle Prüfung",
-        "required_custom_fields": "Erforderliche benutzerdefinierte Felder",
-        "returns_address": "Retourenadresse"
       },
       "messages": {
         "created": "Anforderung hinzugefügt",
@@ -4723,7 +4866,8 @@
         "tax_categories": "Steuerklassen für Produkte",
         "tax_rates": "Sätze pro Markt und Region",
         "webhooks": "Endpunkte, die bei Ereignissen benachrichtigt werden",
-        "payouts": "Wer Ihre Verkäufer bezahlt, wie oft und ab welchem Betrag"
+        "payouts": "Wer Ihre Verkäufer bezahlt, wie oft und ab welchem Betrag",
+        "package_types": "Kartons, Paletten und Container"
       },
       "groups": {
         "audit": "Audit",
@@ -4759,7 +4903,8 @@
         "tax_categories": "Steuerkategorien",
         "tax_rates": "Steuersätze",
         "webhooks": "Webhooks",
-        "payouts": "Auszahlungen"
+        "payouts": "Auszahlungen",
+        "package_types": "Verpackungsarten"
       }
     },
     "setup": {
@@ -4832,6 +4977,7 @@
         "default": "Standard",
         "location": "Standort",
         "pickup": "Abholung",
+        "returns": "Rücksendungen",
         "type": "Typ"
       },
       "create_description": "Fügen Sie ein Lager, ein Geschäft oder einen Abholpunkt hinzu, von dem aus Bestellungen abgewickelt werden.",
@@ -4852,6 +4998,8 @@
         "local": "Nur Artikel an diesem Standort"
       },
       "search_placeholder": "Nach Name suchen…",
+      "section_behavior": "Verhalten",
+      "section_details": "Details",
       "section_pickup": "Abholung",
       "stock_levels": {
         "empty": "An diesem Standort sind noch keine Lagerbestände vorhanden.",
@@ -5064,6 +5212,43 @@
       "saved": "Übersetzungen gespeichert",
       "source": "Quelle",
       "title": "Übersetzungen"
+    },
+    "package_types": {
+      "table_title": "Verpackungsarten",
+      "search_placeholder": "Verpackung suchen",
+      "empty": "Noch keine Verpackung. Legen Sie Ihren Versandkarton an sowie die Kartons und Paletten für Großbestellungen.",
+      "add_cta": "Verpackungsart hinzufügen",
+      "default_badge": "Standard",
+      "edit_sheet_title": "Verpackungsart",
+      "create_description": "Ein Karton, eine Kiste, eine Palette oder ein Container, in den Waren gepackt werden.",
+      "edit_description": "Produkte in diesem Karton übernehmen seine Maße — eine Änderung korrigiert alle.",
+      "dimensions_column": "Maße",
+      "volume_column": "Volumen",
+      "kinds": {
+        "box": "Karton",
+        "envelope": "Umschlag",
+        "carton": "Umkarton",
+        "pallet": "Palette",
+        "container": "Container"
+      },
+      "messages": {
+        "added": "Verpackungsart hinzugefügt",
+        "updated": "Verpackungsart aktualisiert",
+        "deleted": "Verpackungsart gelöscht"
+      },
+      "delete_confirm": {
+        "title": "Verpackungsart löschen?",
+        "message": "{{name}} wird entfernt. Darin verpackte Produkte müssen zuerst umgepackt werden."
+      },
+      "validation": {
+        "non_negative": "muss null oder größer sein"
+      },
+      "columns": {
+        "seller": "Inhaber"
+      },
+      "owner": {
+        "marketplace": "Marktplatz"
+      }
     }
   }
 }

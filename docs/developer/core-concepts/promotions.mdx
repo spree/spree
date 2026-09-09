@@ -119,7 +119,7 @@ A discount on the whole order. The amount is distributed proportionally across t
 
 **Default calculator:** `FlatPercentItemTotal` (percentage off the order). Also available: `FlatRate`, `FlexiRate`, `TieredFlatRate`, `TieredPercent`.
 
-**Use case:** "10% off your order", "$20 off orders over $100".
+**Use case:** "10% off your order", "\$20 off orders over \$100".
 
 ### Item discount (`CreateItemAdjustments`)
 
@@ -240,7 +240,7 @@ curl -X POST 'https://api.mystore.com/api/v3/store/carts/cart_abc123/discount_co
 
 </CodeGroup>
 
-The returned cart already carries the updated discounts and totals. If the cart doesn't qualify yet — say the code needs a $100 minimum and the cart holds $80 — the code stays on the cart and the discount activates on its own the moment the cart qualifies.
+The returned cart already carries the updated discounts and totals. If the cart doesn't qualify yet — say the code needs a \$100 minimum and the cart holds \$80 — the code stays on the cart and the discount activates on its own the moment the cart qualifies.
 
 Automatic promotions need no customer action at all — they are evaluated on every cart change.
 

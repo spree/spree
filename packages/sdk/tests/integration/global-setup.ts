@@ -35,7 +35,7 @@ const CREDENTIALS_RUBY = [
   'k = s.api_keys.active.publishable.first',
   'pm = Spree::Gateway::Bogus.where(name: "Credit Card (Test)").first_or_create!(store: s, active: true, display_on: "both")',
   'check = Spree::PaymentMethod::Check.where(name: "Check (Test)").first_or_create!(store: s, active: true, display_on: "both")',
-  'u = Spree.user_class.where.not(email: nil).where("email NOT LIKE ?", "%@spree.com").first',
+  'u = Spree.customer_class.where.not(email: nil).where("email NOT LIKE ?", "%@spree.com").first',
   'u.update!(password: "spree123", password_confirmation: "spree123")',
   'sec = Spree::Api::Config[:jwt_secret_key].presence || Rails.application.credentials.jwt_secret_key || ENV["JWT_SECRET_KEY"] || Rails.application.secret_key_base',
   'jwt = JWT.encode({ user_id: u.id, user_type: "customer", jti: SecureRandom.uuid, iss: "spree", aud: "store_api", exp: 1.hour.from_now.to_i }, sec, "HS256")',

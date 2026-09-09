@@ -30,7 +30,8 @@ module Spree
 
         JSON.parse(value)
       rescue JSON::ParserError => e
-        errors.add(:value, "must be valid JSON: #{e.message}")
+        errors.add(:value, :invalid_json, detail: e.message,
+                   message: Spree.t('errors.messages.invalid_json', detail: e.message))
       end
     end
   end

@@ -314,13 +314,39 @@ New seams with no legacy counterpart:
 |---|---|---|
 | `cart_recalculate_totals_workflow` | `Spree::Carts::RecalculateTotals` | the single totals seam |
 | `order_recalculate_totals_workflow` | `Spree::Orders::RecalculateTotals` | order twin (post-placement re-sum) |
-| `order_resume_workflow` | `Spree::Orders::Resume` | resume canceled orders |
 | `order_discount_create_service` | `Spree::Orders::Discounts::Create` | renamed from `order_add_manual_discount_service` (never released) |
 | `order_update_statuses_service` | `Spree::Orders::UpdateStatuses` | the sole status writer |
 
 Removed keys (their classes no longer exist): `carts_validate_service` (completion validation is `Spree::Checkout::Requirements` directly), plus the dead legacy `Spree::Cart::*` service namespace registrations.
 
 If you override a workflow seam, subclass the shipped workflow (or implement the same `perform` keyword contract) — workflow arguments are plain Ruby keywords, so a mismatch raises `ArgumentError` at call time, not silently.
+
+## Cancelling an order is final
+
+`Order#resume`, `Order#resume!`, `Spree::Orders::Resume`, the
+`order_resume_workflow` dependency key, the `orders.resume` hooks, the
+`order.resumed` event and `PATCH /api/v3/admin/orders/:id/resume` are all
+removed. A canceled order stays canceled.
+
+Resuming only ever flipped the status back while leaving the cancellation
+behind — the timestamp, who did it and why — so a resumed order went on
+reporting a cancellation it was no longer in. No comparable platform offers
+the operation at all: Shopify calls cancellation irreversible, and Vendure
+and Saleor make the state terminal by construction. Where an order needs to
+live again, place a new one; the canceled record stays as the history of what
+happened.
+
+The same applies one level down. `Spree::Fulfillments::Resume`, the
+`fulfillment_resume_workflow` key, the `fulfillment.resumed` event and
+`PATCH /api/v3/admin/orders/:id/fulfillments/:id/resume` are removed, and a
+canceled fulfillment can no longer be fulfilled either — `Fulfillment#can_fulfill?`
+is false once canceled. Cancelling a parcel ends that *attempt* to ship, not
+the obligation: its units are offered to the next fulfillment you create for
+the order, which promises the stock afresh. This is how Shopify and Medusa
+recover from a mistaken cancellation too — a new fulfillment, never a revived
+one. An order whose every parcel was recalled now reads
+`fulfillment_status: unfulfilled` rather than `canceled`; only a canceled
+order reads `canceled`.
 
 ## Removed in 6.0
 

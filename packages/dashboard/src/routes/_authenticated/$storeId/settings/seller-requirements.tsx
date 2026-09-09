@@ -9,6 +9,8 @@ import {
   ResourceTable,
   resourceSearchSchema,
   Subject,
+  typeDescription,
+  typeLabel,
   usePermissions,
 } from '@spree/dashboard-core'
 import {
@@ -180,7 +182,11 @@ function CreateRequirementSheet({
   // Base UI renders the trigger label from `items`, not from the selected
   // <SelectItem>'s children — without these pairs the trigger shows the slug.
   const selectItems = useMemo(
-    () => available.map((entry) => ({ label: entry.name, value: entry.type })),
+    () =>
+      available.map((entry) => ({
+        label: typeLabel('seller_requirement', entry.type, entry.name),
+        value: entry.type,
+      })),
     [available],
   )
 
@@ -242,14 +248,17 @@ function CreateRequirementSheet({
                 <SelectContent>
                   {available.map((entry) => (
                     <SelectItem key={entry.type} value={entry.type}>
-                      {entry.name}
+                      {typeLabel('seller_requirement', entry.type, entry.name)}
                     </SelectItem>
                   ))}
                 </SelectContent>
               </Select>
-              {selected?.description && (
-                <p className="text-muted-foreground text-xs">{selected.description}</p>
-              )}
+              {selected &&
+                typeDescription('seller_requirement', selected.type, selected.description) && (
+                  <p className="text-muted-foreground text-xs">
+                    {typeDescription('seller_requirement', selected.type, selected.description)}
+                  </p>
+                )}
             </Field>
 
             {selected && (
@@ -496,7 +505,7 @@ function RequirementFields({
         <Input
           value={values.name}
           onChange={(event) => onChange.setName(event.target.value)}
-          placeholder={kindEntry.name}
+          placeholder={typeLabel('seller_requirement', kindEntry.type, kindEntry.name)}
         />
         <p className="text-muted-foreground text-xs">
           {t('admin.seller_requirements.fields.name.help')}

@@ -127,6 +127,53 @@ RSpec.describe Spree::GiftCard, type: :model do
     end
   end
 
+  describe '#open_holds' do
+    let(:store) { Spree::Store.default }
+    let(:gift_card) { create(:gift_card, store: store) }
+
+    let!(:open_cart) { create(:cart, store: store, gift_card: gift_card) }
+    let!(:open_order) { create(:order, store: store, gift_card: gift_card) }
+    let!(:completed_order) { create(:order, store: store, gift_card: gift_card, completed_at: Time.current) }
+    let!(:canceled_order) { create(:order, store: store, gift_card: gift_card, status: 'canceled') }
+    let!(:unrelated_cart) { create(:cart, store: store) }
+
+    it 'returns only the carts and orders still holding the balance' do
+      expect(gift_card.open_holds).to contain_exactly(open_cart, open_order)
+    end
+
+    it 'excludes the record being applied to' do
+      expect(gift_card.open_holds(except: open_cart)).to contain_exactly(open_order)
+    end
+
+    it 'excludes on type as well as id' do
+      # An Order stand-in carrying the cart's id must not exclude the cart,
+      # and must still exclude the order it really names.
+      stand_in = Spree::Order.new(id: open_cart.id)
+
+      expect(gift_card.open_holds(except: stand_in)).to include(open_cart)
+      expect(gift_card.open_holds(except: Spree::Order.new(id: open_order.id))).not_to include(open_order)
+    end
+
+    context 'when a cart is mid-completion' do
+      before { open_cart.update_column(:completing_at, Time.current) }
+
+      it 'is not releasable' do
+        expect(gift_card.open_holds).to contain_exactly(open_order)
+      end
+
+      it 'is reported as being completed' do
+        expect(gift_card.holds_being_completed).to contain_exactly(open_cart)
+      end
+
+      it 'is not reported once the claim goes stale' do
+        open_cart.update_column(:completing_at, 1.day.ago)
+
+        expect(gift_card.holds_being_completed).to be_empty
+        expect(gift_card.open_holds).to include(open_cart)
+      end
+    end
+  end
+
   describe '#display_status' do
     context 'when expired' do
       let(:gift_card) { build(:gift_card, expires_at: 1.day.ago, status: :active) }

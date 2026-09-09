@@ -11,7 +11,8 @@ module Spree
     #
     belongs_to :store, class_name: 'Spree::Store', inverse_of: :customer_groups
     has_many :customer_group_users, class_name: 'Spree::CustomerGroupUser', dependent: :destroy
-    has_many :users, through: :customer_group_users, source: :customer, source_type: Spree.customer_class.to_s
+    has_many :users, through: :customer_group_users, source: :customer,
+                     source_type: Spree.customer_class.to_s, deprecated: true
     has_many :catalog_assignments, as: :assignable, class_name: 'Spree::CatalogAssignment',
                                    dependent: :destroy
     has_many :catalogs, through: :catalog_assignments, class_name: 'Spree::Catalog'

@@ -20,7 +20,11 @@ async function createCategory(page: Page, name: string) {
   await page.locator('#category-name').fill(name)
   await page.getByRole('button', { name: /^save$/i }).click()
 
-  // Create replaces the new-form route in history; back lands on the tree.
+  // The name input already holds this value on the new form, so it cannot
+  // prove save finished. Wait for create to replace `/new` with the edit
+  // route; only then does Back land on the tree instead of racing the
+  // replace onto the detail URL.
+  await expect(page).toHaveURL(/\/products\/categories\/(?!new(?:\?|$))/, { timeout: 15_000 })
   await expect(page.locator('#category-name')).toHaveValue(name, { timeout: 15_000 })
   await page.getByRole('button', { name: /^back$/i }).click()
   await expect(page).toHaveURL(/\/products\/categories(?:\?|$)/, { timeout: 15_000 })

@@ -157,4 +157,105 @@ RSpec.describe Spree::Prices::BulkUpsert do
       expect(surviving.first.amount).to eq(BigDecimal('12.34'))
     end
   end
+
+  # The cap lives here because every write path reaches this service and none
+  # of them run model validations (docs/plans/6.0-volume-pricing.md).
+  describe 'the quantity-break cap' do
+    let(:price_list) { create(:price_list, store: @default_store) }
+    let(:variant) { create(:variant) }
+
+    def rung(quantity, amount = '9.00')
+      { variant_id: variant.id, currency: 'USD', price_list_id: price_list.id,
+        min_quantity: quantity, amount: amount }
+    end
+
+    it 'refuses a batch that would take a variant past the cap' do
+      result = described_class.call(rows: (2..(Spree::Price::MAXIMUM_BREAKS_PER_VARIANT + 2)).map { |q| rung(q) })
+
+      expect(result).to be_failure
+      expect(result.error.value[:over_cap].first).to include(variant_id: variant.id.to_s)
+      expect(Spree::Price.where(price_list: price_list).breaks).to be_empty
+    end
+
+    it 'accepts a ladder exactly at the cap, bottom rung included' do
+      rows = [rung(1, '10.00')] + (2..(Spree::Price::MAXIMUM_BREAKS_PER_VARIANT + 1)).map { |q| rung(q) }
+
+      expect(described_class.call(rows: rows)).to be_success
+      expect(Spree::Price.where(price_list: price_list, variant: variant).count).
+        to eq(Spree::Price::MAXIMUM_BREAKS_PER_VARIANT + 1)
+    end
+
+    it 'lets a full ladder be rewritten in place' do
+      rows = (2..(Spree::Price::MAXIMUM_BREAKS_PER_VARIANT + 1)).map { |q| rung(q) }
+      described_class.call(rows: rows)
+
+      expect(described_class.call(rows: rows.map { |row| row.merge(amount: '8.00') })).to be_success
+    end
+
+    # A merchant who drops two rungs and adds two others ends with the ladder
+    # the size it began, so the batch carrying both must not be refused for
+    # the rungs it is about to remove.
+    it 'lets a full ladder swap rungs in one batch' do
+      full = (2..(Spree::Price::MAXIMUM_BREAKS_PER_VARIANT + 1)).map { |q| rung(q) }
+      described_class.call(rows: full)
+
+      swap = [rung(2, nil), rung(3, nil), rung(500), rung(600)]
+
+      expect(described_class.call(rows: swap)).to be_success
+      expect(Spree::Price.where(price_list: price_list, variant: variant).breaks.count).
+        to eq(Spree::Price::MAXIMUM_BREAKS_PER_VARIANT)
+    end
+
+    # Placeholders charge nothing, so they do not fill a ladder — the model's
+    # own guard counts the same way.
+    it 'does not count placeholder rungs against the cap' do
+      (2..(Spree::Price::MAXIMUM_BREAKS_PER_VARIANT + 1)).each do |quantity|
+        create(:price, variant: variant, currency: 'USD', price_list: price_list,
+                       min_quantity: quantity, amount: nil)
+      end
+
+      expect(described_class.call(rows: [rung(500)])).to be_success
+    end
+
+    # Coercing a typo with `to_i` would make it quantity 1 and overwrite the
+    # contracted price the variant is actually sold at.
+    it 'refuses a batch whose quantity is not a whole number' do
+      described_class.call(rows: [rung(1, '10.00')])
+
+      result = described_class.call(rows: [rung('not-a-number', '1.11')])
+
+      expect(result).to be_failure
+      expect(result.error.value[:invalid_quantities]).to eq([{ index: 0 }])
+      expect(Spree::Price.find_by(variant: variant, currency: 'USD', price_list: price_list, min_quantity: 1).amount).
+        to eq(10)
+    end
+
+    it 'refuses a quantity below one' do
+      expect(described_class.call(rows: [rung(0)])).to be_failure
+      expect(described_class.call(rows: [rung(-5)])).to be_failure
+    end
+
+    # Two malformed rows must both be reported, not collapsed into one by the
+    # dedup that keys on the coerced quantity.
+    it 'names every offending row' do
+      result = described_class.call(rows: [rung('x'), rung('y')])
+
+      expect(result.error.value[:invalid_quantities]).to eq([{ index: 0 }, { index: 1 }])
+    end
+
+    # An absent quantity is the ladder's bottom rung, which is every row
+    # written before breaks existed.
+    it 'still accepts a row that names no quantity' do
+      expect(described_class.call(rows: [{ variant_id: variant.id, currency: 'USD',
+                                           price_list_id: price_list.id, amount: '10.00' }])).to be_success
+    end
+
+    # An ordinary spreadsheet save carries no breaks at all, and must not pay
+    # for the check.
+    it 'runs no cap query for a batch of bottom rungs' do
+      expect(Spree::Price).not_to receive(:breaks)
+
+      expect(described_class.call(rows: [rung(1, '10.00')])).to be_success
+    end
+  end
 end

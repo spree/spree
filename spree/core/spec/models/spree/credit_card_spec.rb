@@ -172,10 +172,10 @@ describe Spree::CreditCard, type: :model do
     end
 
     it 'allows the same fingerprint for guest payment sources' do
-      create(:credit_card, user: nil, payment_method: payment_method,
+      create(:credit_card, customer: nil, payment_method: payment_method,
                            fingerprint: 'FZqjhq46SWprIY8i', month: 11, year: 2030)
 
-      expect(build_duplicate(user: nil)).to be_valid
+      expect(build_duplicate(customer: nil)).to be_valid
     end
 
     it 'does not enforce uniqueness when the fingerprint is missing' do
@@ -460,7 +460,7 @@ describe Spree::CreditCard, type: :model do
   end
 
   describe '#display_brand' do
-    let(:credit_card) { build(:credit_card, cc_type: cc_type, user_id: order.user_id) }
+    let(:credit_card) { build(:credit_card, cc_type: cc_type, customer_id: order.customer_id) }
 
     context 'when the cc_type does not exist' do
       let(:cc_type) { nil }
@@ -492,7 +492,7 @@ describe Spree::CreditCard, type: :model do
 
   describe '#destroy (PaymentSourceConcern callback)' do
     let!(:incomplete_order) { create(:order_with_line_items) }
-    let!(:card) { create(:credit_card, user_id: incomplete_order.user_id) }
+    let!(:card) { create(:credit_card, customer_id: incomplete_order.customer_id) }
 
     context 'with checkout-state payments on incomplete orders' do
       let!(:checkout_payment) { create(:payment, source: card, order: incomplete_order) }
@@ -517,7 +517,7 @@ describe Spree::CreditCard, type: :model do
     end
 
     context 'with payments on completed orders' do
-      let!(:completed_order) { create(:completed_order_with_pending_payment, user_id: incomplete_order.user_id) }
+      let!(:completed_order) { create(:completed_order_with_pending_payment, customer_id: incomplete_order.customer_id) }
       let!(:completed_order_payment) { create(:payment, source: card, order: completed_order, status: 'completed', amount: completed_order.total) }
 
       it 'does not modify payments on completed orders' do

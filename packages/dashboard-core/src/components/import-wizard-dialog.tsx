@@ -64,7 +64,7 @@ interface ImportWizardDialogProps {
    * in the one it was written for. Omit it and the button is not rendered —
    * the import is still complete, there is simply nowhere named to go.
    */
-  onViewRecords?: (type: string | null) => void
+  onViewRecords?: (type: string | null, imp: PanelImport) => void
 }
 
 /**
@@ -80,7 +80,6 @@ export function ImportWizardDialog({ importId, onClose, onViewRecords }: ImportW
   // Only the mapping step holds anything unsaved. Once the import is running
   // the work is server-side, so closing then is safe and asking would nag.
   const [mappingUnsaved, setMappingUnsaved] = useState(false)
-
   async function requestClose() {
     if (mappingUnsaved) {
       const discard = await confirm({
@@ -136,7 +135,7 @@ function ImportWizard({
 }: {
   importId: string
   onClose: () => void
-  onViewRecords?: (type: string | null) => void
+  onViewRecords?: (type: string | null, imp: PanelImport) => void
   /** Reports whether the mapping has edits the dialog should protect. */
   onMappingDirtyChange?: (dirty: boolean) => void
 }) {
@@ -320,7 +319,7 @@ function ImportWizard({
                 <Button
                   onClick={() => {
                     onClose()
-                    onViewRecords(imp.type)
+                    onViewRecords(imp.type, imp)
                   }}
                 >
                   {t('admin.imports.results.view_records', { type: importTypeLabel(imp.type) })}

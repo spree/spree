@@ -110,6 +110,33 @@ RSpec.describe Spree::Checkout::Requirements do
         a_hash_including(step: 'payment', field: 'payment')
       )
     end
+
+    it 'keeps asking for payment while one only covers part of the total' do
+      create(:payment, amount: order.total - 1, order: order)
+      order.reload
+
+      expect(subject).to include(
+        a_hash_including(step: 'payment', field: 'payment')
+      )
+    end
+
+    it 'stops asking once payments cover the total' do
+      create(:payment, amount: order.total, order: order)
+      order.reload
+
+      expect(subject).not_to include(
+        a_hash_including(step: 'payment', field: 'payment')
+      )
+    end
+
+    it 'ignores a failed payment when measuring coverage' do
+      create(:payment, amount: order.total, order: order, status: 'failed')
+      order.reload
+
+      expect(subject).to include(
+        a_hash_including(step: 'payment', field: 'payment')
+      )
+    end
   end
 
   describe 'po_number requirement' do

@@ -74,19 +74,23 @@ module Spree
         split = order && payment.payment_splits.find_by(order_id: order.id)
         return 0 if split.nil?
 
-        # Refunds already written are counted from the rows rather than from
-        # the split's own figure, which a subscriber updates after the fact —
-        # two refunds in quick succession must not each see an unrefunded share.
-        already_refunded = Spree::Refund.where(payment_id: payment.id, order_id: order.id).sum(:amount)
-        split.captured_amount - already_refunded
+        split.refundable_amount
       end
 
       # The row is what reserves the balance — credit_allowed sums refund rows —
       # so creation serializes on the payment's row lock. Without it the
       # balance validation is check-then-act, and two concurrent refunds would
       # both validate against the pre-refund balance and both credit.
+      #
+      # The per-order share is re-read inside the lock for the same reason.
+      # `Spree::Refund` validates against `credit_allowed`, which is the whole
+      # payment's balance and says nothing about whose money it is — so on a
+      # shared payment the model cannot catch two refunds that each fit the
+      # payment but together overdraw one child's share.
       def create_refund
         payment.with_lock do
+          ensure_share_still_available
+
           @refund = payment.refunds.create!(
             amount: @amount_to_refund,
             order: order || payment.order,
@@ -95,6 +99,16 @@ module Spree
             originator: originator
           )
         end
+      end
+
+      # Re-reads the named order's remaining share now that the payment's row
+      # is locked, so a sibling refund that landed since the pre-flight check
+      # is counted.
+      def ensure_share_still_available
+        return unless payment.grouped?
+
+        payment.payment_splits.reload
+        failure(payment, :refund_amount_exceeds_balance) if @amount_to_refund.to_d > refundable_share
       end
 
       # The store the default reason belongs to. A payment shared by a split

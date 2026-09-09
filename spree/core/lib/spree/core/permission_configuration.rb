@@ -297,7 +297,9 @@ module Spree
          Spree::CustomField, Spree::DigitalLink]
       })
       register_resource(:payments, group: :orders, subjects: -> { [Spree::Payment, Spree::PaymentSplit] })
-      register_resource(:fulfillments, group: :orders, audiences: %i[seller], subjects: -> { [Spree::Fulfillment] })
+      register_resource(:fulfillments, group: :orders, audiences: %i[seller], subjects: -> {
+        [Spree::Fulfillment, Spree::ShippingLabel, Spree::Delivery]
+      })
       register_resource(:refunds, group: :orders, subjects: -> { [Spree::Refund] })
       register_resource(:gift_cards, group: :orders, subjects: -> {
         [Spree::GiftCard, Spree::GiftCardBatch]
@@ -375,6 +377,9 @@ module Spree
          Spree::Company, Spree::CompanyMembership,
          Spree::CompanyInvitation,
          Spree::TaxIdentifier, Spree::TaxExemptionCertificate,
+         # GDPR records are about a customer and read alongside one, so they
+         # ride the same key rather than becoming a resource of their own.
+         Spree::DataRequest, Spree::ConsentRecord,
          Spree::CustomField]
       })
 
@@ -383,7 +388,8 @@ module Spree
          Spree::DeliveryZone, Spree::DeliveryZoneMember,
          Spree::StockLocation, Spree::DeliveryProfile,
          Spree::Market, Spree::TaxCategory, Spree::TaxRate, Spree::AllowedOrigin,
-         Spree::RefundReason, Spree::ReturnReason, Spree::ClaimReason, Spree::Channel,
+         Spree::RefundReason, Spree::ReturnReason, Spree::ClaimReason,
+         Spree::OrderCancellationReason, Spree::Channel,
          Spree::OrderRoutingRule, Spree::CustomFieldDefinition, Spree::Policy]
       })
       # How goods actually get shipped and what that costs. Its own resource
@@ -396,6 +402,14 @@ module Spree
       # marketplace defines that vocabulary and a seller only reads it.
       register_resource(:delivery_methods, group: :settings, audiences: %i[seller], subjects: -> {
         [Spree::DeliveryMethod, Spree::DeliveryMethodRule, Spree::DeliveryMethodService]
+      })
+      # What goods are packed into: the marketplace's boxes and cartons, and
+      # each seller's own. Its own resource rather than part of `settings` for
+      # the same reason `delivery_methods` is — a seller owns their packaging
+      # and `settings` is never seller-grantable
+      # (docs/plans/6.0-seller-package-types.md).
+      register_resource(:package_types, group: :settings, audiences: %i[seller], subjects: -> {
+        [Spree::PackageType]
       })
       register_resource(:webhooks, group: :settings, subjects: -> {
         [Spree::WebhookEndpoint, Spree::WebhookDelivery]

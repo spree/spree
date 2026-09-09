@@ -830,7 +830,7 @@ describe Spree::Promotion, type: :model do
     let(:excluded_order) { create :order_with_line_items, customer: user }
 
     before do
-      order.user_id = user.id
+      order.customer_id = user.id
       order.save!
     end
 

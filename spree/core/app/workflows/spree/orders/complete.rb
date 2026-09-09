@@ -170,7 +170,7 @@ module Spree
 
       def payment_covered?
         order.payments.reset
-        order.payments.valid.where(status: %w[pending processing completed]).sum(:amount) >= order.total
+        order.payments.valid.where(status: %w[pending processing completed]).sum(:amount) >= order.amount_due_at_checkout
       end
     end
   end

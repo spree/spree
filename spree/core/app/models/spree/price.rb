@@ -18,6 +18,12 @@ module Spree
 
     MAXIMUM_AMOUNT = BigDecimal('99_999_999.99')
 
+    # How many breaks one variant may carry on one list in one currency. A UI
+    # sanity bound rather than a technical one — but enforced here so no
+    # writer can get past it, since the resolver scans a variant's rows for
+    # every priced line (docs/plans/6.0-volume-pricing.md).
+    MAXIMUM_BREAKS_PER_VARIANT = 10
+
     belongs_to :variant, -> { with_deleted }, class_name: 'Spree::Variant', inverse_of: :prices, touch: true
     belongs_to :price_list, class_name: 'Spree::PriceList', optional: true
 
@@ -46,10 +52,17 @@ module Spree
 
     validates :currency, presence: true
 
+    validates :min_quantity, presence: true,
+              numericality: { only_integer: true, greater_than: 0 }
+    validate :break_requires_price_list
+    validate :breaks_within_cap
+
     scope :with_currency, ->(currency) { where(currency: currency) }
     scope :non_zero, -> { where.not(amount: [nil, 0]) }
     scope :discounted, -> { where('compare_at_amount > amount') }
     scope :base_prices, -> { where(price_list_id: nil) }
+    # A variant's rungs above its ordinary price on a list.
+    scope :breaks, -> { where.not(min_quantity: 1) }
     scope :for_price_list, ->(price_list) { where(price_list_id: price_list) }
     scope :for_products, lambda { |products, currency = nil|
       currency ||= Spree::Store.default.default_currency
@@ -63,7 +76,7 @@ module Spree
     money_methods :amount, :price, :compare_at_amount
     alias display_compare_at_price display_compare_at_amount
 
-    self.whitelisted_ransackable_attributes = %w[amount compare_at_amount currency price_list_id variant_id]
+    self.whitelisted_ransackable_attributes = %w[amount compare_at_amount currency min_quantity price_list_id variant_id]
     self.whitelisted_ransackable_associations = %w[variant price_list]
     self.whitelisted_ransackable_scopes = %i[search]
 
@@ -216,7 +229,44 @@ module Spree
       variant&.product&.store
     end
 
+    # Whether this row is a quantity break rather than the list's ordinary
+    # price for the variant.
+    # @return [Boolean]
+    def quantity_break?
+      min_quantity.to_i > 1
+    end
+
     private
+
+    # Base prices are what a shopper is quoted on a product page, and a
+    # quantity-dependent shop price would make every PDP quantity-dependent —
+    # a storefront surface v1 deliberately does not open
+    # (docs/plans/6.0-volume-pricing.md). Lifting this later is deleting this
+    # method; the column is already the right one.
+    def break_requires_price_list
+      return unless quantity_break?
+      return if price_list_id.present?
+
+      errors.add(:min_quantity, :requires_price_list)
+    end
+
+    # Counted the way the constant is named: breaks *above* the bottom rung,
+    # so a variant priced at one figure plus ten breaks is exactly at the
+    # limit. Placeholder rows carry no amount and charge nothing, so they do
+    # not fill the ladder — the bulk path counts the same rows, and a cap two
+    # writers disagree about is one that refuses what it just allowed.
+    def breaks_within_cap
+      return unless quantity_break?
+      return if price_list_id.blank? || variant_id.blank? || currency.blank?
+      return unless will_save_change_to_attribute?(:min_quantity) || new_record?
+
+      siblings = self.class.where(variant_id: variant_id, currency: currency, price_list_id: price_list_id).
+                 breaks.where.not(amount: nil)
+      siblings = siblings.where.not(id: id) if persisted?
+      return if siblings.count < MAXIMUM_BREAKS_PER_VARIANT
+
+      errors.add(:min_quantity, :too_many_breaks, count: MAXIMUM_BREAKS_PER_VARIANT)
+    end
 
     def should_record_price_history?
       price_list_id.nil? &&

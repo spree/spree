@@ -600,10 +600,19 @@ module Spree
       return if country.blank? || country_code.blank? || !require_postal_code? || postal_code.blank?
       return unless ::ValidatesZipcode::CldrRegexpCollection::ZIPCODES_REGEX.keys.include?(country_code.upcase.to_sym)
 
-      formatted_zip = ::ValidatesZipcode::Formatter.new(
-        zipcode: postal_code.to_s.strip,
-        country_alpha2: country_code.upcase
-      ).format
+      # The formatter indexes backwards into the string to insert a separator,
+      # so anything shorter than the country's format raises rather than
+      # returning something invalid. A stored value can be short — erasure
+      # truncates a postcode to the part that establishes the tax jurisdiction
+      # — and a save of that row must fail validation, not crash.
+      formatted_zip = begin
+        ::ValidatesZipcode::Formatter.new(
+          zipcode: postal_code.to_s.strip,
+          country_alpha2: country_code.upcase
+        ).format
+      rescue IndexError
+        postal_code.to_s.strip
+      end
 
       errors.add(:postal_code, :invalid) unless ::ValidatesZipcode.valid?(formatted_zip, country_code.upcase)
     end

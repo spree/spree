@@ -12,6 +12,7 @@ namespace :spree do
       show_products_without_price: { default: false },
       stock_reservations_enabled: { default: true },
       tax_using_ship_address: { default: true },
+      price_history_retention_days: { default: 30 },
       track_inventory_levels: { default: true },
       track_price_history: { default: true }
     }.freeze

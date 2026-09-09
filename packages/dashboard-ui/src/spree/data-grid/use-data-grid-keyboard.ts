@@ -9,8 +9,10 @@ export function useDataGridKeyboard(gridRef: RefObject<HTMLElement | null>) {
   const target = gridRef
 
   function focusCoords(coords: CellCoords) {
-    const cell = ctx.cells.get(`${coords.row}.${coords.col}`)
-    cell?.focus()
+    // Through the grid rather than the registry: a cell added by the same
+    // commit has not registered yet, and a missed lookup silently drops
+    // keyboard navigation.
+    ctx.focusCell(coords)
   }
 
   function navigate(dx: number, dy: number) {

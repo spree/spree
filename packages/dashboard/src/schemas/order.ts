@@ -1,7 +1,6 @@
 import type { LineItem, OrderUpdateParams } from '@spree/admin-sdk'
-import { i18n } from '@spree/dashboard-core'
+import { fulfilledQuantities, type GroupableFulfillment, i18n } from '@spree/dashboard-core'
 import { z } from 'zod/v4'
-import { fulfilledQuantities, type GroupableFulfillment } from '../lib/fulfillment-items'
 
 /**
  * New-order form schema. The "customer OR email" rule is enforced at the
@@ -31,6 +30,10 @@ export const newOrderFormSchema = z.object({
 
 export type NewOrderFormValues = z.infer<typeof newOrderFormSchema>
 
+/**
+ * Cancelling an order. The reason is an id from the store's own cancellation
+ * vocabulary, and an empty string means the merchant gave none.
+ */
 export const NEW_ORDER_DEFAULTS: NewOrderFormValues = {
   email: '',
   customer_note: '',

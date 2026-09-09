@@ -65,4 +65,22 @@ RSpec.describe Spree::Return do
       expect(line.received_quantity).to eq(0)
     end
   end
+  describe '#to_package' do
+    let(:order) { create(:shipped_order, store: store) }
+    let(:return_record) { create(:return, order: order, store: store) }
+    let(:fulfillment_item) { return_record.return_line_items.first.fulfillment_item }
+
+    # The factory returns one unit; the shipment carried three.
+    before { fulfillment_item.update_columns(quantity: 3) }
+
+    # A partial return ships back what the customer is returning. Rating the
+    # whole shipment buys the wrong postage and declares the wrong goods.
+    it 'weighs only the units coming back' do
+      expect(return_record.reload.to_package.contents.sum(&:quantity)).to eq(1)
+    end
+
+    it 'never rewrites what the shipment recorded as sent' do
+      expect { return_record.reload.to_package }.not_to change { fulfillment_item.reload.quantity }
+    end
+  end
 end

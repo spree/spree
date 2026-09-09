@@ -221,9 +221,13 @@ module Spree
         for_channel(channel).where(Spree::ProductPublication.table_name => { unpublished_at: [nil, Time.current.beginning_of_minute..] })
       end
 
+      # Products the shop sells in this currency. Base prices only: a price
+      # list's rows are what one audience pays under an agreement, so a product
+      # priced only by a contract is not on sale here to everyone
+      # (docs/plans/6.0-volume-pricing.md).
       def self.with_currency(currency)
         joins(variants: :prices).
-          where(Price.table_name => { currency: currency.upcase }).
+          where(Price.table_name => { currency: currency.upcase, price_list_id: nil }).
           where.not(Price.table_name => { amount: nil }).
           distinct
       end

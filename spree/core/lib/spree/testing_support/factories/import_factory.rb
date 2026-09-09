@@ -36,6 +36,19 @@ FactoryBot.define do
       end
     end
 
+    # Pass `price_list:` — the import is invalid without a list of its own store.
+    factory :price_list_prices_import, class: 'Spree::Imports::PriceListPrices', parent: :import do
+      type { 'Spree::Imports::PriceListPrices' }
+
+      after(:create) do |import|
+        import.attachment.attach(
+          io: File.open(Spree::Core::Engine.root.join('spec', 'fixtures', 'files', 'price_list_prices_import.csv')),
+          filename: 'price_list_prices_import.csv',
+          content_type: 'text/csv'
+        )
+      end
+    end
+
     factory :customer_import, class: 'Spree::Imports::Customers', parent: :import do
       type { 'Spree::Imports::Customers' }
 

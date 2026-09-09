@@ -361,6 +361,214 @@ describe Spree::PricingProvider::Internal::Resolution do
       end
     end
 
+    # Fixed contracted ladders: a variant's rows on one list, each carrying
+    # the quantity from which it applies (docs/plans/6.0-volume-pricing.md).
+    context 'with a quantity break ladder on a price list' do
+      let!(:price_list) { create(:price_list, :active, store: store) }
+
+      before do
+        variant.prices.base_prices.with_currency(currency).update_all(amount: 20.00)
+        create(:price, variant: variant, currency: currency, amount: 10.00, price_list: price_list, min_quantity: 1)
+        create(:price, variant: variant, currency: currency, amount: 9.00, price_list: price_list, min_quantity: 24)
+        create(:price, variant: variant, currency: currency, amount: 8.00, price_list: price_list, min_quantity: 96)
+      end
+
+      def price_at(quantity)
+        described_class.new(
+          Spree::Pricing::Context.new(variant: variant, currency: currency, store: store, quantity: quantity)
+        ).resolve
+      end
+
+      it 'charges the deepest break the line reaches' do
+        expect(price_at(1).amount).to eq(10.00)
+        expect(price_at(23).amount).to eq(10.00)
+        expect(price_at(24).amount).to eq(9.00)
+        expect(price_at(95).amount).to eq(9.00)
+        expect(price_at(96).amount).to eq(8.00)
+        expect(price_at(1_000).amount).to eq(8.00)
+      end
+
+      # A listing, an export or a report asks what one unit costs and must
+      # read the bottom rung rather than the deepest.
+      it 'reads the bottom rung when the context carries no quantity' do
+        expect(price_at(nil).amount).to eq(10.00)
+      end
+
+      it 'stamps the list on the rung it charged' do
+        price = price_at(96)
+
+        expect(price.price_list_id).to eq(price_list.id)
+        expect(price.min_quantity).to eq(96)
+      end
+
+      # The walk runs off the association when a caller preloaded it, so both
+      # branches have to pick the same rung.
+      it 'picks the same rung from a preloaded association' do
+        variant.prices.load
+
+        expect(described_class.new(
+          Spree::Pricing::Context.new(variant: variant, currency: currency, store: store, quantity: 96)
+        ).resolve.amount).to eq(8.00)
+      end
+
+      # A ladder that starts above one unit prices nothing below its first
+      # rung; the walk moves on exactly as it would for a variant the list
+      # never priced.
+      context 'when the ladder starts above one unit' do
+        before { variant.prices.where(price_list: price_list, min_quantity: 1).delete_all }
+
+        it 'falls through to the base price below the first rung' do
+          price = price_at(5)
+
+          expect(price.amount).to eq(20.00)
+          expect(price.price_list_id).to be_nil
+        end
+
+        it 'still charges the ladder from its first rung up' do
+          expect(price_at(24).amount).to eq(9.00)
+        end
+      end
+
+      # A placeholder is skipped per row, so it cannot hide a real amount
+      # standing at a lower rung.
+      context 'with a placeholder at the deepest rung' do
+        before { variant.prices.where(price_list: price_list, min_quantity: 96).update_all(amount: nil) }
+
+        it 'falls back to the rung below rather than to the base price' do
+          expect(price_at(120).amount).to eq(9.00)
+        end
+      end
+    end
+
+    # A negotiated ladder is the agreement for that variant; the list's
+    # percentage, written for everything else, must not undercut it
+    # (docs/plans/6.0-volume-pricing.md).
+    context 'with a break ladder on an automatic price list' do
+      let(:company) { create(:company, store: store) }
+      let(:catalog) do
+        create(:catalog, store: store).tap do |owner|
+          create(:catalog_assignment, catalog: owner, assignable: company)
+        end
+      end
+      let!(:price_list) do
+        create(:price_list, :active, store: store, catalog: catalog, price_adjustment_percentage: -10)
+      end
+
+      before do
+        variant.prices.base_prices.with_currency(currency).update_all(amount: 20.00)
+        create(:price, variant: variant, currency: currency, amount: 9.00, price_list: price_list, min_quantity: 24)
+      end
+
+      def price_at(quantity)
+        described_class.new(
+          Spree::Pricing::Context.new(
+            variant: variant, currency: currency, store: store, company: company, quantity: quantity
+          )
+        ).resolve
+      end
+
+      it 'charges the ladder rather than the percentage once a rung is reached' do
+        expect(price_at(24).amount).to eq(9.00)
+      end
+
+      it 'refuses the percentage below the ladder and falls through to base' do
+        price = price_at(5)
+
+        expect(price.amount).to eq(20.00)
+        expect(price.price_list_id).to be_nil
+      end
+
+      # Only the laddered variant is exempt: everything else on the list is
+      # still priced by the percentage.
+      it 'still applies the percentage to a variant with no ladder' do
+        other = create(:variant)
+        other.prices.base_prices.with_currency(currency).update_all(amount: 50.00)
+
+        price = described_class.new(
+          Spree::Pricing::Context.new(
+            variant: other, currency: currency, store: store, company: company, quantity: 1
+          )
+        ).resolve
+
+        expect(price.amount).to eq(45.00)
+      end
+    end
+
+    # Percentage ladders: bands on the list's own adjustment
+    # (docs/plans/6.0-volume-pricing.md).
+    context 'with quantity bands on an automatic price list' do
+      let(:company) { create(:company, store: store) }
+      let(:catalog) do
+        create(:catalog, store: store).tap do |owner|
+          create(:catalog_assignment, catalog: owner, assignable: company)
+        end
+      end
+      let!(:price_list) do
+        create(:price_list, :active, store: store, catalog: catalog, price_adjustment_percentage: -5)
+      end
+
+      before do
+        variant.prices.base_prices.with_currency(currency).update_all(amount: 100.00)
+        create(:price_adjustment_tier, price_list: price_list, min_quantity: 10, percentage: -10)
+        create(:price_adjustment_tier, price_list: price_list, min_quantity: 50, percentage: -20)
+      end
+
+      def price_at(quantity)
+        described_class.new(
+          Spree::Pricing::Context.new(
+            variant: variant, currency: currency, store: store, company: company, quantity: quantity
+          )
+        ).resolve
+      end
+
+      it 'applies the deepest band the line reaches' do
+        expect(price_at(1).amount).to eq(95.00)
+        expect(price_at(9).amount).to eq(95.00)
+        expect(price_at(10).amount).to eq(90.00)
+        expect(price_at(49).amount).to eq(90.00)
+        expect(price_at(50).amount).to eq(80.00)
+      end
+
+      # Every band is a percentage off the base price, never off the band
+      # below it — otherwise "20% from fifty" would quietly mean 24%.
+      it 'takes each band off the base price rather than compounding' do
+        expect(price_at(50).amount).to eq(80.00)
+      end
+
+      it 'falls back to the column when the line reaches no band' do
+        expect(price_at(1).amount).to eq(95.00)
+      end
+
+      it 'reads the column when the context carries no quantity' do
+        expect(price_at(nil).amount).to eq(95.00)
+      end
+
+      # A signed row is what someone agreed to; a band is what the list does
+      # to everything else.
+      it 'still prefers an explicit row over every band' do
+        create(:price, variant: variant, currency: currency, amount: 42.00, price_list: price_list)
+
+        expect(price_at(50).amount).to eq(42.00)
+      end
+
+      # A list whose discount only starts at a quantity has no quantity-1
+      # percentage at all.
+      context 'when the list carries bands but no percentage of its own' do
+        before { price_list.update!(price_adjustment_percentage: nil) }
+
+        it 'charges the base price below the first band' do
+          price = price_at(5)
+
+          expect(price.amount).to eq(100.00)
+          expect(price.price_list_id).to be_nil
+        end
+
+        it 'applies the band once the line reaches it' do
+          expect(price_at(10).amount).to eq(90.00)
+        end
+      end
+    end
+
     context 'with price list from different store' do
       let(:other_store) { create(:store) }
       let!(:other_store_list) { create(:price_list, :active, store: other_store) }

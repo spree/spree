@@ -1,8 +1,9 @@
 import type { CommissionRate } from '@spree/admin-sdk'
-import { defineTable } from '@spree/dashboard-core'
+import { defineTable, typeLabel } from '@spree/dashboard-core'
 import { ActiveBadge, ResourceNameCell } from '@spree/dashboard-ui'
 import { HandCoinsIcon } from '@spree/dashboard-ui/icons'
 import i18n from 'i18next'
+import { useCommissionRuleTypes } from '../hooks/use-commission-rates'
 
 defineTable<CommissionRate>('commission-rates', {
   title: i18n.t('admin.settings_nav.items.commission_rates'),
@@ -52,10 +53,7 @@ defineTable<CommissionRate>('commission-rates', {
       // products. The editor shows what each one holds.
       render: (rate) =>
         rate.rules?.length ? (
-          rate.rules
-            .map((rule) => rule.label)
-            .filter(Boolean)
-            .join(', ')
+          <CommissionRuleNames rate={rate} />
         ) : (
           // A rate naming nothing matches every sale, so everything below it
           // never resolves. Worth saying plainly in the row.
@@ -78,3 +76,28 @@ defineTable<CommissionRate>('commission-rates', {
     },
   ],
 })
+
+/**
+ * The rate's conditions by name. Loads the rule-type catalog so a rule kind
+ * this dashboard has no translation for still reads as words — the catalog's
+ * English name — rather than its wire code.
+ */
+function CommissionRuleNames({ rate }: { rate: CommissionRate }) {
+  const { data } = useCommissionRuleTypes()
+  const types = data?.data ?? []
+
+  return (
+    <>
+      {(rate.rules ?? [])
+        .map((rule) =>
+          typeLabel(
+            'commission_rule',
+            rule.type,
+            types.find((type) => type.type === rule.type)?.name,
+          ),
+        )
+        .filter(Boolean)
+        .join(', ')}
+    </>
+  )
+}

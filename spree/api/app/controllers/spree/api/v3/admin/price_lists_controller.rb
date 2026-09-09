@@ -84,6 +84,7 @@ module Spree
                               .joins(variant: :product)
                               .order(Arel.sql("#{Spree::Product.table_name}.name ASC"))
                               .order(Arel.sql("#{Spree::Variant.table_name}.position ASC"))
+                              .order(min_quantity: :asc)
 
             render json: {
               data: prices.map { |p| serialize_price(p) },
@@ -110,7 +111,14 @@ module Spree
           end
 
           def scope
-            super.for_store(current_store)
+            super.ordered
+          end
+
+          # The serializer always renders a list's bands — the pricing card
+          # cannot show a percentage without them — so the index preloads them
+          # rather than paying a query per row.
+          def collection_includes
+            [:price_adjustment_tiers]
           end
 
           def permitted_params
@@ -120,7 +128,8 @@ module Spree
                 :starts_at, :ends_at, :match_policy,
                 :price_adjustment_percentage, :adjust_compare_at,
                 rules: [:id, :type, { preferences: {} }],
-                prices: [:id, :variant_id, :currency, :amount, :compare_at_amount]
+                price_adjustment_tiers: [:min_quantity, :percentage],
+                prices: [:id, :variant_id, :currency, :min_quantity, :amount, :compare_at_amount]
               )
             )
             reject_foreign_variants(attrs)
@@ -171,6 +180,7 @@ module Spree
               variant_label: variant.options_text.presence,
               sku: variant.sku,
               currency: price.currency,
+              min_quantity: price.min_quantity,
               amount: price.amount&.to_s,
               compare_at_amount: price.compare_at_amount&.to_s
             }

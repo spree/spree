@@ -5,7 +5,7 @@ description: The small pieces of arithmetic behind delivery charges and promotio
 
 ## Overview
 
-A calculator works out an amount. "Charge $5 per item." "Take 15% off." "Free over $50, otherwise $7."
+A calculator works out an amount. "Charge \$5 per item." "Take 15% off." "Free over \$50, otherwise \$7."
 
 They exist because the rule and the number are different questions. A promotion decides *whether* a discount applies; a calculator decides *how much*. Keeping them apart means a merchant can change "10% off" to "$10 off" without touching the conditions that decide who qualifies.
 
@@ -47,23 +47,23 @@ Each calculator takes a few settings — the amount, the percentage, the thresho
 ## Worked examples
 
 <AccordionGroup>
-  <Accordion title="Free delivery over $50, otherwise $7">
+  <Accordion title="Free delivery over \$50, otherwise \$7">
     **Price sack**, with `minimal_amount: 50`, `discount_amount: 0`, `normal_amount: 7`.
 
-    A $60 basket pays nothing. A $20 basket pays $7.
+    A \$60 basket pays nothing. A \$20 basket pays \$7.
   </Accordion>
-  <Accordion title="$3 to ship the first item, $1 for each extra">
+  <Accordion title="\$3 to ship the first item, \$1 for each extra">
     **Flexi rate**, with `first_item: 3`, `additional_item: 1`.
 
-    Four items cost `$3 + (3 × $1)` = **$6**. Set `max_items` to stop charging beyond a point.
+    Four items cost `$3 + (3 × $1)` = **\$6**. Set `max_items` to stop charging beyond a point.
   </Accordion>
   <Accordion title="10% off the order">
     **Percent of item total**, with `flat_percent: 10`.
 
-    A $31 order gets **$3.10** off.
+    A \$31 order gets **\$3.10** off.
   </Accordion>
   <Accordion title="Spend more, save more">
-    **Tiered percent** — 5% over $100, 10% over $250, 15% over $500.
+    **Tiered percent** — 5% over \$100, 10% over \$250, 15% over \$500.
 
     The order total picks the tier. One promotion covers the whole ladder instead of three competing ones.
   </Accordion>

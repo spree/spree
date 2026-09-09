@@ -1,4 +1,5 @@
 require 'spec_helper'
+require 'spree/testing_support/label_provider'
 
 module Spree
   describe Fulfillments::PurchaseLabel do
@@ -8,22 +9,12 @@ module Spree
     let(:order) { create(:order_ready_to_ship, store: store) }
     let(:fulfillment) { order.fulfillments.first }
 
-    let(:label_provider_class) do
-      Class.new(Spree::FulfillmentProvider::Base) do
-        def self.generates_labels?
-          true
-        end
-
-        def create_fulfillment(_fulfillment)
-          { tracking_number: '1Z879E930346834440', tracking_url: 'https://carrier.example/t/1' }
-        end
-      end
-    end
-
     before do
-      allow(fulfillment).to receive(:provider).and_return(label_provider_class.new)
+      Spree::TestingSupport::LabelProvider.reset!
+      allow(fulfillment).to receive(:provider).and_return(Spree::TestingSupport::LabelProvider.new)
+      allow(SsrfFilter).to receive(:get).and_raise(SocketError.new('offline'))
       # The factory seeds a tracking number; a parcel awaiting its label has none.
-      fulfillment.update_column(:tracking, nil)
+      fulfillment.deliveries.destroy_all
     end
 
     it 'buys the label and attaches tracking without fulfilling' do
@@ -31,19 +22,20 @@ module Spree
 
       expect(result).to be_success
       expect(fulfillment.reload.tracking).to eq('1Z879E930346834440')
+      expect(fulfillment.active_shipping_label).to be_present
       expect(fulfillment).to be_unfulfilled
     end
 
-    it 'pins the carrier detected from the purchased number' do
+    it 'pins the carrier the provider sold the label for' do
       subject.call(fulfillment: fulfillment)
 
-      expect(fulfillment.reload.tracking_carrier).to eq('ups')
+      expect(fulfillment.reload.primary_delivery.carrier).to eq('ups')
     end
 
     # The one-click fulfill degrades a label failure; here nothing has left
     # the building, so failing loudly is the point.
     it 'fails when the provider cannot produce a label' do
-      allow(fulfillment.provider).to receive(:create_fulfillment).and_return({})
+      allow(fulfillment.provider).to receive(:purchase_label).and_return(nil)
 
       result = subject.call(fulfillment: fulfillment)
 
@@ -58,7 +50,16 @@ module Spree
       result = subject.call(fulfillment: fulfillment)
 
       expect(result).to be_failure
-      expect(result.error.to_s).to eq(Spree.t('fulfillments.errors.provider_has_no_labels'))
+      expect(result.error.to_s).to eq(Spree.t('shipping_labels.errors.provider_has_no_labels'))
+    end
+
+    it 'refuses a second label while one is active' do
+      subject.call(fulfillment: fulfillment)
+
+      result = subject.call(fulfillment: fulfillment)
+
+      expect(result).to be_failure
+      expect(result.error.to_s).to eq(Spree.t('shipping_labels.errors.already_purchased'))
     end
 
     it 'refuses a fulfillment that already shipped' do
@@ -67,21 +68,27 @@ module Spree
       expect(subject.call(fulfillment: fulfillment)).to be_failure
     end
 
-    it 'refuses a draft order' do
-      order.update_columns(status: 'draft', completed_at: nil)
-
-      result = subject.call(fulfillment: fulfillment)
-
-      expect(result).to be_failure
-      expect(result.error.to_s).to eq(Spree.t('fulfillments.errors.order_draft'))
-    end
-
-    it 'keeps a merchant-entered tracking number' do
-      fulfillment.update!(tracking: 'MERCHANT-123')
+    it 'binds the label to a merchant-entered tracking number' do
+      Spree::Deliveries::Create.new.call(owner: fulfillment, tracking_number: '1Z879E930346834440')
 
       subject.call(fulfillment: fulfillment)
 
-      expect(fulfillment.reload.tracking).to eq('MERCHANT-123')
+      expect(fulfillment.reload.deliveries.count).to eq(1)
+      expect(fulfillment.primary_delivery.shipping_label).to be_present
+    end
+
+    describe 'hooks' do
+      before { Spree.hooks.clear! }
+      after { Spree.hooks.clear! }
+
+      it 'runs its own hooks around the purchase' do
+        seen = []
+        Spree.hooks.register('fulfillments.purchase_label.after_purchase_label') { |flow| seen << flow.fulfillment }
+
+        subject.call(fulfillment: fulfillment)
+
+        expect(seen).to eq([fulfillment])
+      end
     end
   end
 end

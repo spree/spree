@@ -22,14 +22,14 @@ describe Spree::PromotionHandler::Coupon, type: :model do
         end
       end
 
-      context 'when the gift card is applied to another order' do
+      context 'when the gift card is held by another open order' do
         let(:old_order) { create(:order, store: store) }
 
         before do
           old_order.update_column(:total, 30)
         end
 
-        it "doesn't apply the gift card to a new order" do
+        it 'moves the gift card to the order that presents the code' do
           old_order.coupon_code = gift_card.code
           described_class.new(old_order).apply
 
@@ -39,8 +39,11 @@ describe Spree::PromotionHandler::Coupon, type: :model do
           order.coupon_code = gift_card.code
           described_class.new(order).apply
 
-          expect(order.reload.gift_card).to eq(nil)
-          expect(order.total_applied_store_credit).to eq(0)
+          expect(order.reload.gift_card).to eq(gift_card)
+          expect(order.total_applied_store_credit).to eq(10)
+
+          expect(old_order.reload.gift_card).to be_nil
+          expect(old_order.total_applied_store_credit).to eq(0)
         end
       end
 

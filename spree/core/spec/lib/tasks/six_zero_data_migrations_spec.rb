@@ -12,6 +12,7 @@ describe '6.0 data migration tasks' do
     load Spree::Core::Engine.root.join('lib', 'tasks', 'order_market_backfill.rake')
     load Spree::Core::Engine.root.join('lib', 'tasks', 'store_binding_migration.rake')
     load Spree::Core::Engine.root.join('lib', 'tasks', 'fulfillment_statuses_migration.rake')
+    load Spree::Core::Engine.root.join('lib', 'tasks', 'deliveries_migration.rake')
     load Spree::Core::Engine.root.join('lib', 'tasks', 'tax_zones_migration.rake')
     load Spree::Core::Engine.root.join('lib', 'tasks', 'capture_methods_migration.rake')
     load Spree::Core::Engine.root.join('lib', 'tasks', 'typed_stock_movements_migration.rake')
@@ -628,6 +629,51 @@ describe '6.0 data migration tasks' do
       run_task('spree:migrate_fulfillment_statuses')
 
       expect(order.fulfillments.map { |fulfillment| fulfillment.reload.status }).to eq(first_pass)
+    end
+  end
+
+  describe 'spree:migrate_deliveries' do
+    let(:order) { create(:order_ready_to_ship, store: store) }
+    let(:fulfillment) { order.fulfillments.first }
+
+    before do
+      # A 5.6 row: the number on the fulfillment column, no delivery yet.
+      fulfillment.deliveries.destroy_all
+      fulfillment.update_column(:tracking, ' 1Z879E930346834440 ')
+    end
+
+    it 'gives every tracked fulfillment its primary delivery' do
+      run_task('spree:migrate_deliveries')
+
+      delivery = fulfillment.reload.primary_delivery
+      expect(delivery.tracking_number).to eq('1Z879E930346834440')
+      expect(delivery.carrier).to eq('ups')
+      expect(delivery.status).to eq('pending')
+      expect(delivery.store).to eq(store)
+      expect(fulfillment.tracking).to eq('1Z879E930346834440')
+    end
+
+    it 'lands a pasted link in tracking_url' do
+      fulfillment.update_column(:tracking, 'https://carrier.example/t/1')
+
+      run_task('spree:migrate_deliveries')
+
+      expect(fulfillment.reload.primary_delivery.read_attribute(:tracking_url)).to eq('https://carrier.example/t/1')
+    end
+
+    it 'is idempotent' do
+      run_task('spree:migrate_deliveries')
+      run_task('spree:migrate_deliveries')
+
+      expect(fulfillment.reload.deliveries.count).to eq(1)
+    end
+
+    it 'skips fulfillments without a legacy number' do
+      untracked = create(:fulfillment, order: order, tracking: nil)
+
+      run_task('spree:migrate_deliveries')
+
+      expect(untracked.reload.deliveries).to be_empty
     end
   end
 

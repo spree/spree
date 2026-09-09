@@ -15,11 +15,20 @@ import { adminClient, useResourceMutation } from '@spree/dashboard-core'
  * Amounts arrive already normalized to canonical `"1234.56"` form — the editor
  * converts the merchant's localized input client-side (see
  * docs/plans/5.5-client-side-money-normalization.md), so no request locale.
+ *
+ * @param priceListId the list being edited, when there is one: its products
+ *   card reads the rows this save writes, so that nested key is refreshed
+ *   — and only that one, since refetching the list record itself would
+ *   reset the page's form under a merchant's unsaved edits.
  */
-export function useBulkUpsertPrices() {
+export function useBulkUpsertPrices(priceListId?: string | null) {
   return useResourceMutation<{ price_count: number }, Error, { prices: PriceBulkUpsertRow[] }>({
     mutationFn: (params) => adminClient.prices.bulkUpsert(params),
-    invalidate: [['prices'], ['catalogs']],
+    invalidate: [
+      ['prices'],
+      ['catalogs'],
+      ...(priceListId ? [['price-lists', priceListId, 'products']] : []),
+    ],
     successMessage: false,
     errorMessage: false,
   })

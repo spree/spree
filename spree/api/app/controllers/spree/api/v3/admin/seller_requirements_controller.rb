@@ -66,6 +66,10 @@ module Spree
             Spree.api.admin_seller_requirement_serializer
           end
 
+          def scope
+            super.ordered
+          end
+
           # `type` is stripped before assignment by the subclassed-resource
           # flow, so a saved row's kind can never change — which matters
           # because its submissions answered the old one.

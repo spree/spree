@@ -7,6 +7,7 @@ import {
   useResourceMutation,
 } from '@spree/dashboard-core'
 import { useQuery, useQueryClient } from '@tanstack/react-query'
+import { TRANSLATIONS_QUERY_RESOURCE, useInvalidateTranslations } from './use-translations'
 
 export function useProduct(id: string) {
   return useQuery({
@@ -43,26 +44,32 @@ export function useProduct(id: string) {
 }
 
 export function useCreateProduct() {
+  const invalidateTranslations = useInvalidateTranslations()
+
   return useResourceMutation<Product, Error, ProductCreateParams>({
     mutationFn: (params) => adminClient.products.create(params),
     // STORE_QUERY_RESOURCE refreshes the setup-task state (Getting Started + nav badge).
-    invalidate: [['products'], [STORE_QUERY_RESOURCE]],
+    // Translations coverage lists every product, so a create leaves it stale.
+    invalidate: [['products'], [TRANSLATIONS_QUERY_RESOURCE], [STORE_QUERY_RESOURCE]],
     successMessage: false,
     errorMessage: false,
+    onSuccess: () => invalidateTranslations(),
   })
 }
 
 export function useUpdateProduct() {
   const queryClient = useQueryClient()
   const buildKey = useResourceKeyBuilder()
+  const invalidateTranslations = useInvalidateTranslations()
 
   return useResourceMutation<Product, Error, { id: string } & ProductUpdateParams>({
     mutationFn: ({ id, ...params }) => adminClient.products.update(id, params),
-    invalidate: [['products']],
+    invalidate: [['products'], [TRANSLATIONS_QUERY_RESOURCE]],
     successMessage: false,
     errorMessage: false,
-    onSuccess: (_data, variables) => {
+    onSuccess: async (_data, variables) => {
       queryClient.invalidateQueries({ queryKey: buildKey('products', variables.id) })
+      await invalidateTranslations()
     },
   })
 }
@@ -104,14 +111,16 @@ export function useRejectProduct() {
 export function useDeleteProduct() {
   const queryClient = useQueryClient()
   const buildKey = useResourceKeyBuilder()
+  const invalidateTranslations = useInvalidateTranslations()
 
   return useResourceMutation<void, Error, string>({
     mutationFn: (id) => adminClient.products.delete(id),
-    invalidate: [['products'], [STORE_QUERY_RESOURCE]],
+    invalidate: [['products'], [TRANSLATIONS_QUERY_RESOURCE], [STORE_QUERY_RESOURCE]],
     successMessage: false,
     errorMessage: false,
-    onSuccess: (_data, id) => {
+    onSuccess: async (_data, id) => {
       queryClient.removeQueries({ queryKey: buildKey('products', id) })
+      await invalidateTranslations()
     },
   })
 }

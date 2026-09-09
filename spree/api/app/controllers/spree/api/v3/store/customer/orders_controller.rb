@@ -27,6 +27,12 @@ module Spree
             def scope
               super.for_store(current_store).complete
             end
+
+            # The withdrawal deadline reads both on every row, so without
+            # these an order history pays two queries per order.
+            def collection_includes
+              super + [:market, :fulfillments]
+            end
           end
         end
       end

@@ -36,11 +36,11 @@ module Spree
             event = integration.parse_webhook_event(request.raw_post, request.headers)
             return head :ok if event.nil?
 
-            fulfillment = find_fulfillment(event[:tracking_code])
-            return head :ok if fulfillment.nil?
+            delivery = find_delivery(event[:tracking_code])
+            return head :ok if delivery.nil?
 
-            Spree.fulfillment_update_tracking_workflow.call(
-              fulfillment: fulfillment,
+            Spree.delivery_update_tracking_workflow.call(
+              delivery: delivery,
               **event.except(:tracking_code)
             )
 
@@ -58,16 +58,28 @@ module Spree
 
           # Scoped to the store the verified integration belongs to — a
           # tracking code can never address another tenant's parcel — and to
-          # parcels that shipped, so a recycled code cannot reopen an old one.
-          def find_fulfillment(tracking_code)
+          # consignments whose parcel was not canceled, so a recycled code
+          # cannot reopen an old one. The newest wins when a code was reused.
+          # Carriers reuse tracking numbers across years, so a code can match
+          # more than one consignment. The store-scoped index makes that
+          # candidate set tiny — almost always one row — and the stood-down
+          # ones are dropped from it rather than from every parcel in the
+          # database. The newest survivor wins.
+          CANDIDATE_LIMIT = 20
+
+          def find_delivery(tracking_code)
             return if tracking_code.blank?
 
-            Spree::Fulfillment.
-              joins(:order).merge(current_store.orders).
-              where(tracking: tracking_code).
-              not_canceled.
-              reverse_chronological.
-              first
+            # Paged rather than capped: a tracking number reused across
+            # canceled owners would otherwise fill the window and hide the
+            # live delivery behind them, and the webhook would be
+            # acknowledged without applying the carrier's update.
+            current_store.deliveries.
+              where(tracking_number: tracking_code).
+              order(created_at: :desc, id: :desc).
+              includes(:owner).
+              find_each(batch_size: CANDIDATE_LIMIT, order: :desc).
+              find { |delivery| delivery.owner.present? && !delivery.owner.canceled? }
           end
         end
       end

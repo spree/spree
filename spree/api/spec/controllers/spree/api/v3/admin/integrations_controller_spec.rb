@@ -92,7 +92,9 @@ RSpec.describe Spree::Api::V3::Admin::IntegrationsController, type: :controller 
       post :create, params: { type: 'carrier', active: true, preferences: { api_key: 'wrong' } }, as: :json
 
       expect(response).to have_http_status(:unprocessable_content)
-      expect(json_response['error']['details']['base']).to include('invalid api key')
+      expect(json_response['error']['details']['base']).to include(
+        hash_including('message' => 'invalid api key')
+      )
       expect(json_response['error']['message']).to eq('invalid api key')
     end
   end

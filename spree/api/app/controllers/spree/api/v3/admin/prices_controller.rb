@@ -13,8 +13,9 @@ module Spree
           before_action :require_ids!, only: [:bulk_destroy]
           before_action :require_prices!, only: [:bulk_upsert]
 
-          # Bulk-upserts prices on the unique-key triple
-          # `(variant_id, currency, price_list_id)`.
+          # Bulk-upserts prices on the unique key
+          # `(variant_id, currency, price_list_id, min_quantity)` — one row per
+          # rung of a variant's ladder (docs/plans/6.0-volume-pricing.md).
           #
           # @return [void]
           def bulk_upsert
@@ -52,6 +53,41 @@ module Spree
             end
 
             result = Spree::Prices::BulkUpsert.call(rows: rows)
+            # The quantity check and the cap both live in the service, since
+            # every write path reaches it and none of them run model
+            # validations (docs/plans/6.0-volume-pricing.md). Each branch is
+            # guarded on the key its own failure carries, so a failure mode the
+            # service grows later is not reported under one of these names.
+            if (invalid = result.error&.value.try(:[], :invalid_quantities))
+              return render_error(
+                code: 'invalid_min_quantity',
+                message: 'Each quantity break must start at a whole number of units.',
+                status: :unprocessable_content,
+                details: { rows: invalid }
+              )
+            end
+
+            if (negative = result.error&.value.try(:[], :invalid_amounts))
+              return render_error(
+                code: 'invalid_amount',
+                message: Spree.t('activerecord.errors.models.spree/price_list.attributes.base.negative_price').upcase_first,
+                status: :unprocessable_content,
+                details: { rows: negative }
+              )
+            end
+
+            if (over_cap = result.error&.value.try(:[], :over_cap))
+              return render_error(
+                code: 'too_many_breaks',
+                message: Spree.t(
+                  'activerecord.errors.models.spree/price.attributes.min_quantity.too_many_breaks',
+                  count: Spree::Price::MAXIMUM_BREAKS_PER_VARIANT
+                ).upcase_first,
+                status: :unprocessable_content,
+                details: { ladders: over_cap }
+              )
+            end
+
             render json: result.value
           end
 
@@ -101,7 +137,7 @@ module Spree
           # scopes so a foreign or unknown id 404s instead of binding the
           # price to another store's record.
           def permitted_params
-            permitted = params.permit(*model_additional_permitted_attributes, :variant_id, :currency, :amount, :compare_at_amount, :price_list_id)
+            permitted = params.permit(*model_additional_permitted_attributes, :variant_id, :currency, :min_quantity, :amount, :compare_at_amount, :price_list_id)
             permitted[:variant_id] = store_variants.find_by_prefix_id!(permitted[:variant_id]).id if permitted[:variant_id].present?
             permitted[:price_list_id] = store_price_lists.find_by_prefix_id!(permitted[:price_list_id]).id if permitted[:price_list_id].present?
             permitted
@@ -140,6 +176,7 @@ module Spree
               variant_id: decode_id(row[:variant_id]),
               price_list_id: row.key?(:price_list_id) ? decode_id(row[:price_list_id]) : nil,
               currency: row[:currency],
+              min_quantity: row[:min_quantity],
               amount: row[:amount],
               compare_at_amount: row[:compare_at_amount]
             }.compact

@@ -99,11 +99,19 @@ export function DeliveryMethodSheet({
     defaultValues: { ...DELIVERY_METHOD_DEFAULTS, delivery_zone_id: zoneId ?? '' },
   })
 
+  // A new method is seeded once, from values that owe nothing to any query.
+  // Running this again when the rule types land would wipe whatever had been
+  // set in between — including the provider "Offer pickup" preselects, which
+  // is why that button appeared to do nothing whenever the catalog resolved
+  // in the other order.
   useEffect(() => {
     if (!editing) {
       form.reset({ ...DELIVERY_METHOD_DEFAULTS, delivery_zone_id: zoneId ?? '' })
-      return
     }
+  }, [editing, zoneId, form])
+
+  useEffect(() => {
+    if (!editing) return
     // Wait for rule types too — seeding the form before they arrive would
     // reset again once they land, discarding anything already edited.
     if (!method || !ruleTypes) return
@@ -145,7 +153,7 @@ export function DeliveryMethodSheet({
         takes_products: takesProducts(ruleTypes?.data, rule.type),
       })),
     })
-  }, [editing, method, ruleTypes, zoneId, form])
+  }, [editing, method, ruleTypes, form])
 
   // The merchant arrived by asking for a specific kind of fulfillment
   // ("Offer pickup"), so select the provider that does it as soon as the

@@ -27,29 +27,6 @@
       "mcp__claude_ai_Spree_Commerce_Docs_MCP__query_docs_filesystem_spree_commerce_documentation",
       "Bash(bundle exec *)",
       "Skill(stripe:stripe-docs)"
-    ],
-    "deny": [
-      "Bash(sudo *)",
-      "Bash(rm -rf /*)",
-      "Bash(rm -rf ~/*)",
-      "Bash(chmod 777 *)",
-      "Read(~/.ssh/*)",
-      "Read(~/.gnupg/*)",
-      "Read(~/.aws/*)",
-      "Read(~/.config/gcloud/*)",
-      "Read(**/.env)",
-      "Read(**/.env.*)",
-      "Read(**/secrets/*)",
-      "Read(**/credentials.yml.enc)",
-      "Read(**/config/credentials/**)",
-      "Read(**/.pgpass)",
-      "Read(**/.htpasswd)",
-      "Edit(~/.ssh/*)",
-      "Edit(~/.gnupg/*)",
-      "Edit(~/.aws/*)",
-      "Write(~/.ssh/*)",
-      "Write(~/.gnupg/*)",
-      "Write(~/.aws/*)"
     ]
   }
 }

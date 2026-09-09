@@ -30,9 +30,13 @@ module Spree
             klass = resolve_subclass(params[:type])
             return render_unknown_type unless klass && klass.respond_to?(:calculators)
 
+            # `api_type`, not the Ruby class name: it is what the action
+            # serializer reports for the calculator a record already has, and
+            # what a client matches against to find it in this list. The write
+            # path accepts either form.
             data = klass.calculators.map do |calc|
               {
-                type: calc.to_s,
+                type: calc.api_type,
                 label: calc.respond_to?(:description) ? calc.description : calc.to_s.demodulize.titleize,
                 preference_schema: calc.respond_to?(:serialized_preference_schema) ? calc.serialized_preference_schema : []
               }

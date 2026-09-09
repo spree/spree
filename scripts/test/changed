@@ -1,0 +1,123 @@
+#!/usr/bin/env ruby
+# frozen_string_literal: true
+
+# Runs the specs that cover the files changed on this branch, engine by engine,
+# through scripts/test/rspec. This is the local pass before a push; the full
+# suite runs on CI, which is free for this public repository and already
+# sharded twelve ways.
+#
+#   scripts/test/changed              # changes since the merge base with main, plus uncommitted work
+#   scripts/test/changed --list       # only print what would run
+#   SPREE_TEST_BASE=origin/main scripts/test/changed
+#
+# Files the mapping cannot place (factories, migrations, support files) are
+# listed so you can decide whether they need the full suite.
+
+require 'set'
+
+ROOT = `git rev-parse --show-toplevel`.strip
+BASE = ENV.fetch('SPREE_TEST_BASE', 'main')
+LIST_ONLY = ARGV.include?('--list')
+
+def changed_files
+  merge_base = `git merge-base #{BASE} HEAD`.strip
+  committed = `git diff --name-only #{merge_base}...HEAD`.lines
+  working = `git diff --name-only HEAD`.lines
+  untracked = `git ls-files --others --exclude-standard`.lines
+  (committed + working + untracked).map(&:strip).reject(&:empty?).uniq
+end
+
+# Splits a monorepo path into the engine directory and the path inside it.
+def split_engine(path)
+  match = path.match(%r{\A(spree/(?:providers/)?[^/]+)/(.+)\z})
+  return nil unless match && File.directory?(File.join(ROOT, match[1], 'spec'))
+
+  [match[1], match[2]]
+end
+
+def engine_glob(engine, pattern)
+  Dir.glob(File.join(ROOT, engine, pattern)).map { |file| file.delete_prefix("#{ROOT}/#{engine}/") }
+end
+
+def specs_for(engine, relative)
+  candidates =
+    case relative
+    when %r{\Aspec/.+_spec\.rb\z} then [relative]
+    when %r{\Aspec/} then []
+    when %r{\Aapp/(.+)\.rb\z} then ["spec/#{Regexp.last_match(1)}_spec.rb"]
+    when %r{\Alib/(.+)\.rb\z} then ["spec/lib/#{Regexp.last_match(1)}_spec.rb"]
+    when %r{\Aconfig/locales/} then ['spec/i18n_spec.rb']
+    else []
+    end
+
+  # An API controller is also exercised by the integration spec of the same
+  # name (and the nested ones under it); a serializer by the integration specs
+  # of its namespace that mention its resource.
+  if (controller = relative[%r{\Aapp/controllers/(spree/api/v3/.+)_controller\.rb\z}, 1])
+    candidates << "spec/integration/#{controller}_spec.rb"
+    candidates += engine_glob(engine, "spec/integration/#{controller}/**/*_spec.rb")
+  elsif (match = relative.match(%r{\Aapp/serializers/spree/api/v3/(?:(admin|seller)/)?(?:.+/)?([a-z_]+)_serializer\.rb\z}))
+    namespace = match[1] || 'store'
+    candidates += engine_glob(engine, "spec/integration/spree/api/v3/#{namespace}/**/*#{match[2]}*_spec.rb")
+  end
+
+  candidates.uniq.select { |spec| File.exist?(File.join(ROOT, engine, spec)) }
+end
+
+specs = Hash.new { |hash, key| hash[key] = Set.new }
+unmapped = []
+other = []
+
+changed_files.each do |path|
+  next if path.end_with?('.md') || path.end_with?('.mdx')
+
+  engine, relative = split_engine(path)
+  if engine.nil?
+    other << path
+    next
+  end
+
+  found = specs_for(engine, relative)
+  if found.empty?
+    unmapped << path unless relative.start_with?('spec/dummy/', 'spec/support/')
+  else
+    specs[engine].merge(found)
+  end
+end
+
+if specs.empty?
+  puts 'No changed Ruby files map to specs.'
+else
+  specs.each do |engine, files|
+    puts "▸ #{engine}: #{files.size} spec file(s)"
+    files.sort.each { |file| puts "    #{file}" }
+  end
+end
+
+unless unmapped.empty?
+  puts "▸ changed without a matching spec (CI runs the full suite for these):"
+  unmapped.sort.each { |file| puts "    #{file}" }
+end
+
+if other.any? { |path| path.start_with?('packages/') }
+  puts '▸ packages/ changed: run `pnpm turbo lint typecheck test build --force` from the repo root'
+end
+if specs.key?('spree/core') && !specs.key?('spree/api')
+  puts '▸ core changed: the api suite is affected too and runs on CI'
+end
+
+exit if LIST_ONLY || specs.empty?
+
+failed = []
+specs.each do |engine, files|
+  name = File.basename(engine)
+  puts "\n▸ running #{name}"
+  system(File.join(ROOT, 'scripts', 'test', 'rspec'), name, *files.sort) || failed << name
+end
+
+if failed.empty?
+  puts "\n✓ changed specs green"
+else
+  puts "\n✗ failures in: #{failed.join(', ')}"
+  exit 1
+end

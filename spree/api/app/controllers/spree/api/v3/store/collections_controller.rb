@@ -15,6 +15,10 @@ module Spree
             Spree.api.collection_serializer
           end
 
+          def scope
+            super.ordered
+          end
+
           # Find by permalink or prefixed ID (SEO-friendly URLs), i18n-scoped with a
           # fallback to the default locale — mirrors the Categories controller.
           def find_resource

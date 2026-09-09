@@ -95,9 +95,12 @@ module Spree
           variant.width,
           variant.height,
           variant.depth,
-          variant.dimensions_unit,
+          # The stored columns, not the resolved readers: importing this file
+          # into a store on another unit system must not silently write this
+          # store's units onto every variant.
+          variant[:dimensions_unit],
           variant.weight,
-          variant.weight_unit,
+          variant[:weight_unit],
           publication_available_on&.strftime('%Y-%m-%d %H:%M:%S'),
           (variant.discontinue_on || publication_discontinue_on)&.strftime('%Y-%m-%d %H:%M:%S'),
           variant.track_inventory?,

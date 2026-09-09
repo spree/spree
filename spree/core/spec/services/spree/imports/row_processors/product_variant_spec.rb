@@ -21,6 +21,129 @@ RSpec.describe Spree::Imports::RowProcessors::ProductVariant, type: :service do
     csv_row_headers.index_with { |header| attrs[header] }
   end
 
+  context 'when importing measurements' do
+    let(:product) { subject.process! }
+
+    let(:row_data) do
+      csv_row_hash(
+        'slug' => 'measured-kettle',
+        'name' => 'Measured Kettle',
+        'price' => '10.00',
+        'weight' => '19.8',
+        'weight_unit' => 'lb',
+        'width' => '13.8',
+        'height' => '15.7',
+        'depth' => '11.8',
+        'dimensions_unit' => 'in'
+      )
+    end
+
+    before do
+      %w[weight weight_unit width height depth dimensions_unit].each do |field|
+        import.mappings.find_by(schema_field: field)&.update(file_column: field)
+      end
+    end
+
+    # The units are stored, not just the numbers: read back through the model's
+    # fallback they would answer the store's own unit either way, so an import
+    # that dropped them looked correct everywhere except the editor, which
+    # shows the raw column so a save cannot stamp one store's unit on a row.
+    it 'stores the units the file declared alongside the measurements' do
+      default_variant = product.default_variant
+
+      expect(default_variant.weight.to_f).to eq 19.8
+      expect(default_variant[:weight_unit]).to eq 'lb'
+      expect(default_variant.width.to_f).to eq 13.8
+      expect(default_variant.height.to_f).to eq 15.7
+      expect(default_variant.depth.to_f).to eq 11.8
+      expect(default_variant[:dimensions_unit]).to eq 'in'
+    end
+
+    context 'when the file declares no units' do
+      let(:row_data) do
+        csv_row_hash(
+          'slug' => 'unitless-kettle',
+          'name' => 'Unitless Kettle',
+          'price' => '10.00',
+          'weight' => '19.8',
+          'width' => '13.8'
+        )
+      end
+
+      it 'leaves the columns blank rather than guessing' do
+        default_variant = product.default_variant
+
+        expect(default_variant[:weight_unit]).to be_nil
+        expect(default_variant[:dimensions_unit]).to be_nil
+      end
+    end
+  end
+
+  context 'when importing carton packing details' do
+    let!(:carton) { create(:package_type, store: store, kind: 'carton', name: 'Large carton') }
+    let(:product) { subject.process! }
+
+    let(:row_data) do
+      csv_row_hash(
+        'slug' => 'packed-shirt',
+        'name' => 'Packed Shirt',
+        'price' => '10.00',
+        'carton' => 'Large carton',
+        'units_per_carton' => '12',
+        'carton_weight' => '9.5',
+        'cartons_per_pallet' => '40'
+      )
+    end
+
+    before do
+      %w[carton units_per_carton carton_weight cartons_per_pallet].each do |field|
+        import.mappings.find_by(schema_field: field)&.update(file_column: field)
+      end
+    end
+
+    it 'resolves the carton by name and records the packing chain' do
+      default_variant = product.default_variant
+
+      expect(default_variant.carton_package_type).to eq(carton)
+      expect(default_variant.units_per_carton).to eq 12
+      expect(default_variant.carton_weight.to_f).to eq 9.5
+      expect(default_variant.cartons_per_pallet).to eq 40
+      expect(default_variant.units_per_pallet).to eq 480
+    end
+
+    context 'when the named carton belongs to another store' do
+      let!(:carton) { create(:package_type, store: create(:store), kind: 'carton', name: 'Large carton') }
+
+      it 'leaves the variant unpacked rather than reaching across stores' do
+        expect(product.default_variant.carton_package_type).to be_nil
+      end
+    end
+
+    # A seller's spreadsheet names their own cartons and the marketplace's
+    # shared ones, never another seller's
+    # (docs/plans/6.0-seller-package-types.md).
+    context 'when a seller imports' do
+      let(:seller) { create(:seller, store: store) }
+      let(:import) { create(:product_import, store: store, seller: seller) }
+
+      it 'packs into the marketplace’s carton when the seller has none of that name' do
+        expect(product.default_variant.carton_package_type).to eq(carton)
+      end
+
+      it 'prefers the seller’s own carton over a marketplace carton of the same name' do
+        sellers_own = create(:package_type, store: store, seller: seller, kind: 'carton', name: 'Large carton')
+
+        expect(product.default_variant.carton_package_type).to eq(sellers_own)
+      end
+
+      it 'leaves the variant unpacked rather than reaching for another seller’s carton' do
+        carton.update!(seller: create(:seller, store: store))
+
+        expect(product.default_variant.carton_package_type).to be_nil
+      end
+    end
+  end
+
   context 'when importing a product row' do
     let(:product) { subject.process! }
 

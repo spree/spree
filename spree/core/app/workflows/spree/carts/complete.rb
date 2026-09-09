@@ -181,7 +181,10 @@ module Spree
       end
 
       def create_draft_order
-        @order = create_draft_order!(cart)
+        # Reloaded because the copier writes the totals with update_columns,
+        # which leaves this instance holding the zeros it was built with —
+        # and the payment decision immediately below is made against them.
+        @order = create_draft_order!(cart).reload
       end
 
       def process_payments
@@ -250,6 +253,7 @@ module Spree
             preferred_stock_location_id: cart.preferred_stock_location_id,
             customer_note: cart.customer_note,
             po_number: cart.po_number,
+            gift_card: cart.gift_card,
             last_ip_address: cart.last_ip_address,
             ship_address: cart.ship_address&.snapshot,
             bill_address: cart.bill_address&.snapshot
@@ -434,6 +438,9 @@ module Spree
 
       # The cart's rows are the record of what the sale was costed at, so the
       # order receives them verbatim rather than being re-estimated.
+      # Fees before tax lines, because a fee is something tax is charged on: a
+      # tax line copied first would reach the order still naming the cart's
+      # fee, and that row is then destroyed with it.
       #
       # @return [Hash{Integer => Integer}] cart fee id → order fee id, which an
       #   exemption override may name
@@ -441,9 +448,7 @@ module Spree
         line_item_id_map = line_item_map.transform_keys(&:id).transform_values(&:id)
         fee_map = {}
 
-        # Fees first: a tax line can be levied on one, and copied the other way
-        # round its `fee_id` would still name the cart's row.
-        [Spree::Fee, Spree::TaxLine, Spree::Discount].each do |klass|
+        [Spree::Fee, Spree::Discount, Spree::TaxLine].each do |klass|
           klass.where(cart_id: cart.id).find_each do |row|
             attributes = row.attributes.except('id', 'cart_id', 'created_at', 'updated_at')
             attributes['order_id'] = order.id
@@ -461,8 +466,8 @@ module Spree
               next if attributes['fee_id'].nil?
             end
 
-            created = klass.create!(attributes)
-            fee_map[row.id] = created.id if klass == Spree::Fee
+            copy = klass.create!(attributes)
+            fee_map[row.id] = copy.id if klass == Spree::Fee
           end
         end
 
@@ -483,11 +488,12 @@ module Spree
         order.payments.reset
       end
 
-      # Completion gates on "a valid payment exists covering the total",
-      # never on paid? — a net-terms order completes with a pending payment.
+      # Completion gates on "a valid payment exists covering what is owed at
+      # checkout", never on paid? — a net-terms order completes with a
+      # pending payment.
       def payment_covered?(order)
         order.payments.reset
-        order.payments.valid.where(status: %w[pending processing completed]).sum(:amount) >= order.total
+        order.payments.valid.where(status: %w[pending processing completed]).sum(:amount) >= order.amount_due_at_checkout
       end
 
       # The FINALIZE phase: the order-side completion workflow owns the

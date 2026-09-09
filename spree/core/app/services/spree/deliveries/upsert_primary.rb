@@ -1,0 +1,43 @@
+module Spree
+  module Deliveries
+    # The one-parcel shortcut behind `tracking:` on the fulfillment workflows
+    # and the tracking field in the dashboard: records the number as the
+    # fulfillment's primary consignment, or corrects the one it already has.
+    #
+    # A corrected number is a different parcel as far as the carrier is
+    # concerned, so its journey starts over.
+    class UpsertPrimary
+      prepend Spree::ServiceModule::Base
+
+      # @param fulfillment [Spree::Fulfillment]
+      # @param tracking [String, nil] a carrier number or a full tracking link;
+      #   blank is a no-op, so callers can pass an omitted parameter straight through
+      # @param carrier [String, nil] free text; detected from the number when omitted
+      # @return [Spree::ServiceModule::Result] the delivery, or nil when nothing was asked
+      def call(fulfillment:, tracking:, carrier: nil)
+        return success(nil) if tracking.blank?
+
+        primary = fulfillment.primary_delivery
+        return Spree.delivery_create_service.call(owner: fulfillment, tracking_number: tracking, carrier: carrier) if primary.nil?
+
+        number = tracking.to_s.squish
+        attributes = { tracking_number: number }
+        attributes[:carrier] = carrier if carrier.present?
+
+        # A corrected number is a different parcel: its journey starts over,
+        # and the carrier and link belonging to the old number go with it —
+        # otherwise a UPS badge and a UPS page survive onto a FedEx number.
+        corrected = number != primary.tracking_number
+        attributes = primary.correction_attributes(attributes)
+
+        return failure(primary) unless primary.update(attributes)
+
+        # A consignment that started over may have been the one holding the
+        # fulfillment at delivered.
+        Spree.fulfillment_recalculate_delivery_service.call(fulfillment: fulfillment) if corrected
+
+        success(primary)
+      end
+    end
+  end
+end

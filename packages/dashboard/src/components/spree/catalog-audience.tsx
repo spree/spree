@@ -160,6 +160,21 @@ function AudienceList({
   )
 }
 
+function AudiencePrecedenceNote({ assignments }: { assignments: AssignmentEntry[] }) {
+  const { t } = useTranslation()
+  const hasGroup = assignments.some(
+    (entry) => !entry.removed && entry.assignable_type === 'customer_group',
+  )
+
+  if (!hasGroup) return null
+
+  return (
+    <p className="text-muted-foreground text-sm">
+      {t('admin.catalogs.assignments.customer_group_precedence')}
+    </p>
+  )
+}
+
 function AudienceEmpty({ canEdit, onAssign }: { canEdit: boolean; onAssign: () => void }) {
   const { t } = useTranslation()
 
@@ -202,7 +217,10 @@ export function CatalogAudienceStep({
       {assignments.length === 0 ? (
         <AudienceEmpty canEdit onAssign={() => setAssigning(true)} />
       ) : (
-        <AudienceList assignments={assignments} canEdit onRemove={remove} onRestore={restore} />
+        <>
+          <AudienceList assignments={assignments} canEdit onRemove={remove} onRestore={restore} />
+          <AudiencePrecedenceNote assignments={assignments} />
+        </>
       )}
 
       {assigning && (
@@ -256,12 +274,15 @@ export function CatalogAudienceCard({
         {assignments.length === 0 ? (
           <AudienceEmpty canEdit={canEdit} onAssign={() => setAssigning(true)} />
         ) : (
-          <AudienceList
-            assignments={assignments}
-            canEdit={canEdit}
-            onRemove={remove}
-            onRestore={restore}
-          />
+          <div className="flex flex-col gap-3">
+            <AudienceList
+              assignments={assignments}
+              canEdit={canEdit}
+              onRemove={remove}
+              onRestore={restore}
+            />
+            <AudiencePrecedenceNote assignments={assignments} />
+          </div>
         )}
       </CardContent>
 
@@ -380,11 +401,11 @@ function AssignCatalogForm({
             />
           )}
           {duplicate && <FieldError>{t('admin.catalogs.assignments.already_assigned')}</FieldError>}
-          {assignableType === 'company' && (
-            <FieldDescription>
-              {t('admin.catalogs.assignments.company_subtree_help')}
-            </FieldDescription>
-          )}
+          <FieldDescription>
+            {assignableType === 'company'
+              ? t('admin.catalogs.assignments.company_subtree_help')
+              : t('admin.catalogs.assignments.customer_group_help')}
+          </FieldDescription>
         </Field>
       </FieldGroup>
 

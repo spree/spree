@@ -1,14 +1,20 @@
 import type { ColumnDef } from '@tanstack/react-table'
+import { PlusIcon, XIcon } from 'lucide-react'
 import { useMemo } from 'react'
 import { Button } from '../ui/button'
-import { DataGrid, editableRowIndex, MoneyCell, ReadOnlyCell } from './data-grid'
+import { DataGrid, DecimalCell, editableRowIndex, MoneyCell, ReadOnlyCell } from './data-grid'
 import { SearchInput } from './search-input'
 
 export interface BulkPriceRow {
   // Unique row id. For header rows use a synthetic key (e.g. `header:<groupId>`);
   // the table renders headers via `renderSectionHeader` without an editable cell.
   id: string
-  kind: 'header' | 'item'
+  // `tier` rows are a variant's quantity breaks. They are editable rows like
+  // any other, so Tab and the arrow keys flow through them rather than
+  // stopping at the variant. The last one is always blank and waiting — a
+  // ladder is grown by typing in it, not by asking for a row first
+  // (docs/plans/6.0-volume-pricing.md).
+  kind: 'header' | 'item' | 'tier'
   // Header rows: the section title (typically the product name).
   groupLabel?: string
   // Item rows.
@@ -18,6 +24,11 @@ export interface BulkPriceRow {
   // user input or the API's canonical decimal. The table passes them through.
   amount?: string | null
   compareAt?: string | null
+  // On a `tier` row: the quantity it applies from, as typed.
+  minQuantity?: string
+  // The trailing blank row a variant always carries. It commits to a real
+  // break the moment it holds a quantity and a price.
+  blank?: boolean
 }
 
 export interface BulkPriceTableLabels {
@@ -55,6 +66,14 @@ export interface BulkPriceTableLabels {
   priceAriaTemplate?: string
   /** Aria-label template for the compare-at input. `{label}` is replaced with the variant label. */
   compareAtAriaTemplate?: string
+  /** Column header over the quantity column. Omit to hide the column. */
+  tierFrom?: string
+  /** The "add a break" row's label. */
+  tierAdd?: string
+  /** Accessible name for a tier row's remove button. */
+  tierRemove?: string
+  /** Accessible name for a tier row's quantity input. */
+  tierQuantity?: string
 }
 
 export interface BulkPriceTableProps {
@@ -67,6 +86,12 @@ export interface BulkPriceTableProps {
   labels: BulkPriceTableLabels
   /** Called when the user commits a value to a cell. The id is the row id. */
   onChange: (rowId: string, field: 'amount' | 'compareAt', value: string | null) => void
+  /** Edits a tier row's quantity. */
+  onTierQuantityChange?: (rowId: string, value: string) => void
+  /** Appends a break to the variant the `tier-add` row belongs to. */
+  onTierAdd?: (rowId: string) => void
+  /** Removes a tier row. */
+  onTierRemove?: (rowId: string) => void
 
   // Optional state for the toolbar + pagination footer. Omitting all of these
   // hides the toolbar/pagination entirely (use for in-memory single-page lists).
@@ -91,6 +116,9 @@ export function BulkPriceTable({
   decimal,
   labels,
   onChange,
+  onTierQuantityChange,
+  onTierAdd,
+  onTierRemove,
   search,
   onSearchChange,
   page,
@@ -105,6 +133,11 @@ export function BulkPriceTable({
         header: labels.variant,
         cell: ({ row }) => {
           const r = row.original
+
+          // A break belongs to the variant above it, so it says nothing here
+          // — the indent and the quantity column carry the relationship.
+          if (r.kind === 'tier') return null
+
           if (r.kind !== 'item') return null
           return (
             <ReadOnlyCell className="text-muted-foreground">
@@ -126,14 +159,61 @@ export function BulkPriceTable({
           )
         },
       },
+      // The quantity a row's price applies from. A variant's own price is the
+      // ladder's first rung and always reads 1 — which is why this is a
+      // column rather than a panel: every price in the sheet has a quantity,
+      // and only the breaks have one worth typing
+      // (docs/plans/6.0-volume-pricing.md).
+      ...(labels.tierFrom
+        ? [
+            {
+              id: 'min_quantity',
+              header: () => <span className="block text-right">{labels.tierFrom}</span>,
+              cell: ({ row, table }) => {
+                const r = row.original
+                if (r.kind === 'item') {
+                  // justify-end, not text-right: ReadOnlyCell is a flex row,
+                  // so the quantity would otherwise sit left of every editable
+                  // quantity below it.
+                  return (
+                    <ReadOnlyCell className="justify-end text-muted-foreground tabular-nums">
+                      1
+                    </ReadOnlyCell>
+                  )
+                }
+
+                if (r.kind !== 'tier') return null
+
+                const coords = { row: editableRowIndex(table.getRowModel().rows, r.id), col: 2 }
+                return (
+                  // Decimal rather than number: a rung being typed has no
+                  // quantity yet, and a numeric cell would show that as 0 —
+                  // a value nobody chose and the server refuses.
+                  <DecimalCell
+                    coords={coords}
+                    value={r.minQuantity || null}
+                    onChange={(next) => onTierQuantityChange?.(r.id, next ?? '')}
+                    decimal={decimal}
+                    ariaLabel={labels.tierQuantity ?? labels.tierFrom ?? ''}
+                  />
+                )
+              },
+            } satisfies ColumnDef<BulkPriceRow>,
+          ]
+        : []),
       {
         id: 'amount',
         header: () => <span className="block text-right">{labels.price}</span>,
         cell: ({ row, table }) => {
           const r = row.original
-          if (r.kind !== 'item') return null
-          const coords = { row: editableRowIndex(table.getRowModel().rows, row.id), col: 2 }
-          const label = r.variantLabel ?? labels.variantDefault
+          // A break's unit price sits in the price column, under the price it
+          // replaces from that quantity up.
+          if (r.kind !== 'item' && r.kind !== 'tier') return null
+          const coords = { row: editableRowIndex(table.getRowModel().rows, row.id), col: 3 }
+          const label =
+            r.kind === 'tier'
+              ? `${labels.tierFrom ?? ''} ${r.minQuantity ?? ''}`.trim()
+              : (r.variantLabel ?? labels.variantDefault)
           return (
             <MoneyCell
               coords={coords}
@@ -151,8 +231,10 @@ export function BulkPriceTable({
         header: () => <span className="block text-right">{labels.compareAt}</span>,
         cell: ({ row, table }) => {
           const r = row.original
+          // Variants only: a break is a contracted unit price, never a claim
+          // about a former one.
           if (r.kind !== 'item') return null
-          const coords = { row: editableRowIndex(table.getRowModel().rows, row.id), col: 3 }
+          const coords = { row: editableRowIndex(table.getRowModel().rows, row.id), col: 4 }
           const label = r.variantLabel ?? labels.variantDefault
           return (
             <MoneyCell
@@ -166,8 +248,49 @@ export function BulkPriceTable({
           )
         },
       },
+      // A break removes itself where it sits; the trailing blank row offers
+      // the plus that starts another. Both fill the cell, so the whole square
+      // is the target rather than a small glyph inside it.
+      ...(onTierRemove
+        ? [
+            {
+              id: 'tier_actions',
+              header: () => <span className="sr-only">{labels.tierRemove}</span>,
+              cell: ({ row }) => {
+                const r = row.original
+                if (r.kind !== 'tier') return null
+
+                if (r.blank) {
+                  return (
+                    <Button
+                      type="button"
+                      variant="ghost"
+                      aria-label={labels.tierAdd}
+                      className="size-full min-h-9 rounded-none text-muted-foreground"
+                      onClick={() => onTierAdd?.(r.id)}
+                    >
+                      <PlusIcon className="size-4" />
+                    </Button>
+                  )
+                }
+
+                return (
+                  <Button
+                    type="button"
+                    variant="ghost"
+                    aria-label={labels.tierRemove}
+                    className="size-full min-h-9 rounded-none text-muted-foreground"
+                    onClick={() => onTierRemove(r.id)}
+                  >
+                    <XIcon className="size-4" />
+                  </Button>
+                )
+              },
+            } satisfies ColumnDef<BulkPriceRow>,
+          ]
+        : []),
     ],
-    [symbol, decimal, onChange, labels],
+    [symbol, decimal, onChange, onTierQuantityChange, onTierAdd, onTierRemove, labels],
   )
 
   const showToolbar =

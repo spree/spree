@@ -1,5 +1,6 @@
 import { zodResolver } from '@hookform/resolvers/zod'
-import type { Catalog } from '@spree/admin-sdk'
+import type { Catalog, CatalogProduct } from '@spree/admin-sdk'
+import type { PanelImport } from '@spree/dashboard-core'
 import {
   adminClient,
   mapSpreeErrorsToForm,
@@ -28,20 +29,28 @@ import {
 } from '@spree/dashboard-ui'
 import { PauseIcon, PlayIcon, TableIcon } from '@spree/dashboard-ui/icons'
 import { createFileRoute, useNavigate } from '@tanstack/react-router'
-import { useEffect, useMemo, useState } from 'react'
+import { useEffect, useState } from 'react'
 import { type UseFormReturn, useForm } from 'react-hook-form'
 import { useTranslation } from 'react-i18next'
 import { CatalogAudienceCard } from '../../../../../components/spree/catalog-audience'
-import { catalogPriceColumns } from '../../../../../components/spree/catalog-price-columns'
+import {
+  catalogPriceColumns,
+  catalogVariantRows,
+} from '../../../../../components/spree/catalog-price-columns'
 import { CatalogPricingFields } from '../../../../../components/spree/catalog-pricing-fields'
 import {
   CatalogTermsCard,
   catalogTermColumns,
+  savedTermLookup,
   stagedTermsHaveErrors,
   stagedTermsToParams,
-  termsToFormValues,
 } from '../../../../../components/spree/catalog-terms-card'
 import { DeferredProductMembershipCard } from '../../../../../components/spree/deferred-product-membership-card'
+import { ImportWizardDialog } from '../../../../../components/spree/imports/import-wizard-dialog'
+import {
+  importWizardSearchSchema,
+  useImportWizardSearch,
+} from '../../../../../components/spree/imports/import-wizard-search'
 import {
   ProductMembershipStagingProvider,
   useProductMembershipStaging,
@@ -52,7 +61,6 @@ import {
   useActivateCatalog,
   useCatalog,
   useCatalogProducts,
-  useCatalogProductTerms,
   useDeactivateCatalog,
   useDeleteCatalog,
   useSaveCatalog,
@@ -69,6 +77,7 @@ import {
 
 /** One catalog: its assortment, pricing and the audiences that see it. */
 export const Route = createFileRoute('/_authenticated/$storeId/products/catalogs/$catalogId')({
+  validateSearch: importWizardSearchSchema,
   component: CatalogDetailPage,
 })
 
@@ -103,9 +112,8 @@ function CatalogBody({ catalog }: { catalog: Catalog }) {
   const navigate = useNavigate()
   const { permissions } = usePermissions()
   const deleteMutation = useDeleteCatalog()
+  const wizard = useImportWizardSearch(Route.useSearch())
   const saveMutation = useSaveCatalog(catalog.id)
-  const { data: productTermsData } = useCatalogProductTerms(catalog.id)
-  const productTerms = useMemo(() => productTermsData?.data ?? [], [productTermsData])
 
   const canEdit = permissions.can('update', Subject.Catalog)
 
@@ -152,9 +160,13 @@ function CatalogBody({ catalog }: { catalog: Catalog }) {
       })),
       ...catalogPricingValues(catalog.price_list),
       staged_products: { adds: [], removes: [] },
-      staged_terms: termsToFormValues(productTerms),
+      // Not seeded from the server: terms arrive on the assortment rows, a
+      // page at a time, so the form holds only what the merchant edits. A
+      // form seeded per page would send one page's terms as the whole set
+      // and clear every other page's (docs/plans/6.0-volume-pricing.md).
+      staged_terms: {},
     })
-  }, [catalog, productTerms, form])
+  }, [catalog, form])
 
   // Both directions confirm: activating starts showing an audience prices they
   // were not seeing, and deactivating takes them away. Whole keys rather than
@@ -208,7 +220,7 @@ function CatalogBody({ catalog }: { catalog: Catalog }) {
         attributes: catalogValuesToParams(values, savedPricingMode),
         addProductIds: values.staged_products.adds.map((product) => product.id),
         removeProductIds: values.staged_products.removes,
-        productTerms: stagedTermsToParams(terms),
+        quantityRules: stagedTermsToParams(terms),
       })
       form.reset({ ...values, staged_products: { adds: [], removes: [] } })
     } catch (err) {
@@ -315,10 +327,18 @@ function CatalogBody({ catalog }: { catalog: Catalog }) {
                     </Button>
                   ) : undefined
                 }
+                // Each variant priced on its own row: a product's variants can
+                // be priced differently and carry different ladders
+                // (docs/plans/6.0-volume-pricing.md).
+                renderSubRows={(products) =>
+                  catalogVariantRows<CatalogProduct>({
+                    products,
+                    variantsOf: (product) => product.catalog_variants,
+                  })
+                }
                 extraColumns={(products) =>
                   mergeExtraColumns(
                     catalogPriceColumns({
-                      products,
                       headers: {
                         price: t('admin.catalogs.prices.column_price'),
                         source: t('admin.catalogs.prices.column_source'),
@@ -327,6 +347,7 @@ function CatalogBody({ catalog }: { catalog: Catalog }) {
                     catalogTermColumns({
                       form,
                       canEdit,
+                      savedTermFor: savedTermLookup(products),
                       headers: {
                         // Short column headers — the card's own title already
                         // says these are quantity terms. The full names stay as
@@ -356,6 +377,7 @@ function CatalogBody({ catalog }: { catalog: Catalog }) {
                 canEdit={canEdit}
                 priceEditorOpen={priceEditorOpen}
                 onPriceEditorOpenChange={setPriceEditorOpen}
+                onImportCreated={(imp) => wizard.open(imp.id)}
               />
               <CatalogTermsCard form={form} canEdit={canEdit} />
               <CatalogAudienceCard form={form} canEdit={canEdit} />
@@ -363,6 +385,7 @@ function CatalogBody({ catalog }: { catalog: Catalog }) {
           }
         />
       </form>
+      <ImportWizardDialog importId={wizard.importId} onClose={wizard.close} />
     </ProductMembershipStagingProvider>
   )
 }
@@ -378,12 +401,14 @@ function CatalogPricingCard({
   canEdit,
   priceEditorOpen,
   onPriceEditorOpenChange,
+  onImportCreated,
 }: {
   catalog: Catalog
   form: UseFormReturn<CatalogFormValues>
   canEdit: boolean
   priceEditorOpen: boolean
   onPriceEditorOpenChange: (open: boolean) => void
+  onImportCreated: (imp: PanelImport) => void
 }) {
   const { t } = useTranslation()
   // A product staged for removal still has its prices on the list until
@@ -406,6 +431,7 @@ function CatalogPricingCard({
             hasStagedProducts={stagedProducts}
             priceEditorOpen={priceEditorOpen}
             onPriceEditorOpenChange={onPriceEditorOpenChange}
+            onImportCreated={onImportCreated}
           />
         </FieldGroup>
       </CardContent>

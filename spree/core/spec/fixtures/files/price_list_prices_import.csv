@@ -1,0 +1,4 @@
+sku,currency,min_quantity,price,compare_at_price
+SKU-1,USD,1,18.00,
+SKU-1,USD,24,16.50,
+SKU-1,USD,96,15.00,

@@ -1,4 +1,5 @@
 import type { PriceList } from '@spree/admin-sdk'
+import type { PanelImport } from '@spree/dashboard-core'
 import {
   Alert,
   AlertDescription,
@@ -12,6 +13,8 @@ import {
   InputGroupAddon,
   InputGroupInput,
   InputGroupText,
+  QuantityTierEditor,
+  type QuantityTierRow,
   Select,
   SelectContent,
   SelectItem,
@@ -21,15 +24,16 @@ import {
 } from '@spree/dashboard-ui'
 import { InfoIcon, TableIcon } from '@spree/dashboard-ui/icons'
 import { useState } from 'react'
-import { Controller, type UseFormReturn } from 'react-hook-form'
+import { Controller, type UseFormReturn, useFieldArray } from 'react-hook-form'
 import { useTranslation } from 'react-i18next'
 import {
   CATALOG_PRICING_MODES,
   type CatalogFormValues,
   type CatalogPricingMode,
 } from '../../schemas/catalog'
-import { ADJUSTMENT_DIRECTIONS } from '../../schemas/price-list'
+import { ADJUSTMENT_DIRECTIONS, MAXIMUM_QUANTITY_TIERS } from '../../schemas/price-list'
 import { BulkPriceEditorDialog } from './bulk-price-editor/bulk-price-editor-dialog'
+import { PriceListCsvButtons } from './price-list-csv-buttons'
 
 /**
  * How the agreement prices, edited on the catalog itself: the catalog and the
@@ -49,6 +53,7 @@ export function CatalogPricingFields({
   hasStagedProducts,
   priceEditorOpen: controlledOpen,
   onPriceEditorOpenChange,
+  onImportCreated,
 }: {
   form: UseFormReturn<CatalogFormValues>
   canEdit: boolean
@@ -58,6 +63,12 @@ export function CatalogPricingFields({
    * does not exist until Save.
    */
   priceList?: PriceList | null
+  /**
+   * When supplied, the list's prices can be exported and imported as CSV
+   * from here; a created import is handed back so the page can open the
+   * wizard for it.
+   */
+  onImportCreated?: (imp: PanelImport) => void
   /** The mode as last saved, so a switch can be warned about before Save. */
   savedMode?: CatalogPricingMode
   /**
@@ -237,6 +248,11 @@ export function CatalogPricingFields({
             </FieldDescription>
             <FieldError errors={[errors.minimum_quantity]} />
           </div>
+
+          {/* Bands on the percentage above: the figure entered above is what
+              the agreement gives at one unit, and each band is what it gives
+              from its quantity up (docs/plans/6.0-volume-pricing.md). */}
+          <AdjustmentTierFields form={form} canEdit={canEdit} />
         </>
       )}
 
@@ -262,15 +278,26 @@ export function CatalogPricingFields({
       {mode === 'fixed' &&
         (priceList ? (
           <div>
-            <Button
-              type="button"
-              size="sm"
-              disabled={!canEdit}
-              onClick={() => setPriceEditorOpen(true)}
-            >
-              <TableIcon className="size-4" />
-              {t('admin.catalogs.edit_prices_cta')}
-            </Button>
+            <div className="flex flex-wrap gap-2">
+              <Button
+                type="button"
+                size="sm"
+                disabled={!canEdit}
+                onClick={() => setPriceEditorOpen(true)}
+              >
+                <TableIcon className="size-4" />
+                {t('admin.catalogs.edit_prices_cta')}
+              </Button>
+              {/* Export needs only read access; the import button gates
+                  itself on create. */}
+              {onImportCreated && (
+                <PriceListCsvButtons
+                  priceList={priceList}
+                  onImportCreated={onImportCreated}
+                  size="sm"
+                />
+              )}
+            </div>
             <FieldDescription className="mt-4">
               {t(
                 hasStagedProducts
@@ -295,5 +322,69 @@ export function CatalogPricingFields({
           </Alert>
         ))}
     </>
+  )
+}
+
+/**
+ * The list's quantity bands. Kept beside the percentage it bands rather than
+ * in a card of its own — "10% off, 20% from fifty" is one sentence, and
+ * splitting it across two panels invites half of it to be edited alone.
+ */
+function AdjustmentTierFields({
+  form,
+  canEdit,
+}: {
+  form: UseFormReturn<CatalogFormValues>
+  canEdit: boolean
+}) {
+  const { t } = useTranslation()
+  const { fields, append, remove } = useFieldArray({
+    control: form.control,
+    name: 'adjustment_tiers',
+  })
+  const tiers = form.watch('adjustment_tiers')
+  const error = form.formState.errors.adjustment_tiers
+
+  const rows: QuantityTierRow[] = fields.map((field, index) => ({
+    id: field.id,
+    minQuantity: tiers?.[index]?.min_quantity ?? '',
+    value: tiers?.[index]?.percentage ?? '',
+  }))
+
+  return (
+    <div className="flex flex-col gap-2">
+      <FieldLabel>{t('admin.fields.price_list.adjustment_tiers.label')}</FieldLabel>
+      <QuantityTierEditor
+        rows={rows}
+        labels={{
+          quantity: t('admin.fields.price_list.adjustment_tiers.quantity'),
+          value: t('admin.fields.price_list.adjustment_tiers.percentage'),
+          add: t('admin.fields.price_list.adjustment_tiers.add'),
+          remove: t('admin.fields.price_list.adjustment_tiers.remove'),
+          empty: t('admin.fields.price_list.adjustment_tiers.empty'),
+          hint: t('admin.fields.price_list.adjustment_tiers.help'),
+        }}
+        valueAddon="%"
+        valueAddonAlign="inline-end"
+        canAdd={canEdit && fields.length < MAXIMUM_QUANTITY_TIERS}
+        disabled={!canEdit}
+        error={typeof error?.message === 'string' ? error.message : undefined}
+        onChange={(id, field, next) => {
+          const index = fields.findIndex((row) => row.id === id)
+          if (index < 0) return
+
+          form.setValue(
+            `adjustment_tiers.${index}.${field === 'minQuantity' ? 'min_quantity' : 'percentage'}`,
+            next,
+            { shouldDirty: true, shouldValidate: true },
+          )
+        }}
+        onAdd={() => append({ min_quantity: '', percentage: '' }, { shouldFocus: true })}
+        onRemove={(id) => {
+          const index = fields.findIndex((row) => row.id === id)
+          if (index >= 0) remove(index)
+        }}
+      />
+    </div>
   )
 }

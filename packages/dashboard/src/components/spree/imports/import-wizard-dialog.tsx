@@ -1,6 +1,6 @@
 import { ImportWizardDialog as SharedImportWizardDialog } from '@spree/dashboard-core'
 import { useNavigate } from '@tanstack/react-router'
-import { importTypeIndexPath } from '../../../lib/import-types'
+import { importTypeDestination } from '../../../lib/import-types'
 
 interface ImportWizardDialogProps {
   /** Prefixed id of the import to drive; `null` keeps the dialog closed. */
@@ -23,7 +23,13 @@ export function ImportWizardDialog({ importId, onClose }: ImportWizardDialogProp
     <SharedImportWizardDialog
       importId={importId}
       onClose={onClose}
-      onViewRecords={(type) => navigate({ to: importTypeIndexPath(type) })}
+      onViewRecords={(type, imp) => {
+        const { to, params } = importTypeDestination(type, imp)
+        navigate({
+          to,
+          params: (prev: Record<string, string>) => ({ ...prev, ...params }),
+        } as never)
+      }}
     />
   )
 }

@@ -11,6 +11,24 @@ module Spree
           # Whether a customer may open a return at all is store policy, and
           # belongs in a `returns.create.validate` hook rather than here.
           class ReturnsController < Store::ResourceController
+            include Spree::Api::V3::StreamsShippingLabel
+
+            # Re-declaring the filter replaces the inherited options, so the
+            # standard actions are listed alongside the label download.
+            before_action :set_resource, only: [:show, :update, :destroy, :label]
+
+            # GET /api/v3/store/orders/:order_id/returns/:id/label
+            #
+            # The customer's return label, streamed to whoever owns the order.
+            # The label row itself is never serialized to the storefront —
+            # its cost and provider ids are merchant data — only the file.
+            def label
+              shipping_label = @resource.active_shipping_label
+              return head :not_found if shipping_label.nil?
+
+              stream_shipping_label(shipping_label) { head :not_found }
+            end
+
             def create
               result = Spree.return_create_workflow.call(
                 order: @parent,
@@ -49,6 +67,10 @@ module Spree
             # that order's own returns.
             def set_resource
               @resource = find_resource
+            end
+
+            def read_actions
+              %w[index show label]
             end
 
             # The order is the customer's own — by JWT or by guest token,

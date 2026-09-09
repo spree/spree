@@ -12,7 +12,8 @@ RSpec.describe Spree::Api::V3::Admin::DeliveryMethodRulesController, type: :cont
       get :types, params: {}, as: :json
 
       expect(response).to have_http_status(:ok)
-      expect(json_response['data'].map { |row| row['type'] }).to contain_exactly('item_total_rule', 'weight_rule', 'excluded_products_rule', 'channel_rule')
+      expect(json_response['data'].map { |row| row['type'] }).to contain_exactly('item_total_rule', 'weight_rule', 'excluded_products_rule', 'channel_rule',
+                       'volume_rule', 'company_rule')
       item_total = json_response['data'].find { |row| row['type'] == 'item_total_rule' }
       expect(item_total['preference_schema'].map { |field| field['key'] }).to contain_exactly('minimum_amount', 'maximum_amount')
 

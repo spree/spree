@@ -78,10 +78,20 @@ export function useDeactivatePriceList(id: string) {
 // flushed on Save (deferred card).
 // ---------------------------------------------------------------------------
 
+/**
+ * The list's products, each row carrying what the list charges per variant
+ * — the same reading the catalog's assortment gets, so a ladder is visible
+ * where it is edited (docs/plans/6.0-volume-pricing.md).
+ */
 export function usePriceListProducts(priceListId: string | undefined, page = 1) {
   return useQuery({
     queryKey: useResourceKey('price-lists', priceListId ?? 'noop', 'products', `${page}`),
-    queryFn: () => listPriceListProductsPage(priceListId as string, page),
+    queryFn: () =>
+      adminClient.priceLists.products.list(priceListId as string, {
+        page,
+        limit: 25,
+        expand: ['price_list_price'],
+      }),
     enabled: !!priceListId,
     placeholderData: (previous) => previous,
   })

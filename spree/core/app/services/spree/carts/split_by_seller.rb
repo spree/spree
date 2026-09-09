@@ -61,7 +61,9 @@ module Spree
           end
 
           distribute_order_level_fees(order, orders, partitions)
-          orders.each { |child| resum_totals(child) }
+          orders.each do |child|
+            resum_totals(child)
+          end
         end
 
         # Handed over with the children loaded: everything downstream reads
@@ -180,6 +182,8 @@ module Spree
           Spree::FulfillmentItem.where(id: moving.map(&:id)).
             update_all(fulfillment_id: replacement.id, order_id: sibling.id)
 
+          restate_freight_summaries(fulfillment, replacement)
+
           weights = [items - moving, moving].map { |half| to_minor_units(items_value(half)) }
           divide_delivery_cost(fulfillment, replacement, weights)
           divided[fulfillment.id] = [replacement.id, weights]
@@ -239,10 +243,32 @@ module Spree
 
         if (selected = fulfillment.selected_delivery_rate)
           rate_attributes = selected.attributes.except('id', 'created_at', 'updated_at')
-          replacement.delivery_rates.create!(rate_attributes.merge('fulfillment_id' => replacement.id))
+          replacement.delivery_rates.create!(
+            rate_attributes.merge('fulfillment_id' => replacement.id)
+          )
         end
 
         replacement
+      end
+
+      # A freight summary describes one consignment's load, so neither half of a
+      # divided parcel may keep the whole shipment's cartons and cubic meters —
+      # two forwarders would each be asked to book the entire load.
+      #
+      # Restated only once the items have moved: read any earlier, both halves
+      # describe what they held before the split, and the new one holds nothing
+      # at all.
+      def restate_freight_summaries(*fulfillments)
+        fulfillments.each do |fulfillment|
+          rate = fulfillment.reload.selected_delivery_rate
+          next if rate.nil?
+
+          metadata = rate.metadata
+          next if metadata.blank? || metadata['freight_summary'].blank?
+
+          summary = Spree::FreightSummary.build(fulfillment.to_package.contents)
+          rate.update_columns(metadata: metadata.merge('freight_summary' => summary.as_json))
+        end
       end
 
       # Tax lines, discounts and fees follow whatever they hang off. Rows
@@ -259,14 +285,59 @@ module Spree
       def move_typed_lines(sibling, line_item_ids, divided = {})
         moved_fulfillment_ids = sibling.fulfillments.reload.pluck(:id) - divided.values.map(&:first)
 
-        [Spree::TaxLine, Spree::Discount, Spree::Fee].each do |klass|
-          klass.where(line_item_id: line_item_ids).update_all(order_id: sibling.id, updated_at: Time.current)
+        # Fees first, and their tax straight after: a fee is something tax is
+        # charged on, so where a tax line belongs is only knowable once its fee
+        # has landed.
+        divided_fees = move_class_rows(Spree::Fee, sibling, line_item_ids, moved_fulfillment_ids, divided)
+        # A fee that moved whole takes its tax with it; one that was divided
+        # has its tax divided instead, so the two sets never overlap.
+        moved_whole = sibling.fees.reload.ids - divided_fees.values.map(&:first)
+        move_fee_tax_lines(sibling, moved_whole, divided_fees)
 
-          next unless klass.column_names.include?('fulfillment_id')
+        [Spree::Discount, Spree::TaxLine].each do |klass|
+          move_class_rows(klass, sibling, line_item_ids, moved_fulfillment_ids, divided)
+        end
+      end
 
-          klass.where(fulfillment_id: moved_fulfillment_ids).update_all(order_id: sibling.id, updated_at: Time.current)
-          divided.each do |original_id, (replacement_id, weights)|
-            divide_fulfillment_rows(klass, original_id, replacement_id, weights, sibling)
+      # Re-points one class of typed row onto the sibling: the rows hanging off
+      # a moved line item, then those off a whole-moved parcel, then the halves
+      # of any parcel that had to be divided.
+      #
+      # @return [Hash{Integer => Array(Integer, Array<Integer>)}] what
+      #   {#divide_fulfillment_rows} reported for the rows it divided
+      def move_class_rows(klass, sibling, line_item_ids, moved_fulfillment_ids, divided)
+        klass.where(line_item_id: line_item_ids).update_all(order_id: sibling.id, updated_at: Time.current)
+        return {} unless klass.column_names.include?('fulfillment_id')
+
+        klass.where(fulfillment_id: moved_fulfillment_ids).update_all(order_id: sibling.id, updated_at: Time.current)
+
+        divided.each_with_object({}) do |(original_id, (replacement_id, weights)), placed|
+          placed.merge!(divide_fulfillment_rows(klass, original_id, replacement_id, weights, sibling))
+        end
+      end
+
+      # A fee's tax follows the fee itself, which nothing else here does for
+      # it: a tax line hangs off no line item and no parcel of its own, so
+      # neither move above ever picks it up. Left behind it taxes a fee its
+      # order no longer holds, and the child that took the fee is untaxed.
+      #
+      # @param divided_fees [Hash{Integer => Array(Integer, Array<Integer>)}]
+      #   fee id → the id of the half that moved and the weights it divided by
+      def move_fee_tax_lines(sibling, moved_fee_ids, divided_fees)
+        if moved_fee_ids.any?
+          Spree::TaxLine.where(fee_id: moved_fee_ids).
+            update_all(order_id: sibling.id, updated_at: Time.current)
+        end
+
+        # A fee that was divided leaves its tax whole on the half that stayed,
+        # so it divides by the weights the fee itself did — otherwise one child
+        # pays all the tax on a charge it only half carries.
+        divided_fees.each do |fee_id, (replacement_id, weights)|
+          next if weights.sum <= 0
+
+          Spree::TaxLine.where(fee_id: fee_id).find_each do |tax_line|
+            apportion_row(tax_line, weights,
+                          [{}, { 'order_id' => sibling.id, 'fee_id' => replacement_id }])
           end
         end
       end
@@ -274,11 +345,16 @@ module Spree
       # Splits one parcel's money rows between the two halves it became, by
       # what each half now carries — the same basis its delivery cost was
       # divided on, so the tax still describes the charge.
+      #
+      # @return [Hash{Integer => Array(Integer, Array<Integer>)}] for each row
+      #   that was divided, the id of the half that moved and the weights used
       def divide_fulfillment_rows(klass, original_id, replacement_id, weights, sibling)
-        return if weights.sum <= 0
+        return {} if weights.sum <= 0
 
-        klass.where(fulfillment_id: original_id).find_each do |row|
-          apportion_row(row, weights, [{}, { 'order_id' => sibling.id, 'fulfillment_id' => replacement_id }])
+        klass.where(fulfillment_id: original_id).find_each.with_object({}) do |row, placed|
+          shares = apportion_row(row, weights, [{}, { 'order_id' => sibling.id, 'fulfillment_id' => replacement_id }])
+          moved = shares[1]
+          placed[row.id] = [moved.id, weights] if moved
         end
       end
 
@@ -384,6 +460,7 @@ module Spree
       # and the tax provider would delete the moved tax lines and re-derive them
       # from today's rates. The checkout already answered both questions against
       # the whole basket, and the customer has already paid that answer.
+
       def resum_totals(order)
         Spree.order_recalculate_totals_workflow.call(order: order.reload, resum_only: true)
       end

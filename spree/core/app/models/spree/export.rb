@@ -207,8 +207,7 @@ module Spree
     def records_to_export
       return scope.ransack.result if search_params.blank?
 
-      params = search_params.is_a?(String) ? JSON.parse(search_params.to_s).to_h : search_params
-      params = decode_prefixed_id_filters(params)
+      params = decoded_search_params
 
       # `cf_*` custom-field predicates aren't Ransack attributes — resolve them
       # first so an export of a filtered list matches what the admin sees.
@@ -221,6 +220,24 @@ module Spree
                               end
 
       filtered_scope.ransack(params).result
+    end
+
+    # `search_params` as a Hash — whether it is still the Hash a caller
+    # assigned or the JSON string the column stores.
+    #
+    # @return [ActiveSupport::HashWithIndifferentAccess]
+    def parsed_search_params
+      return {}.with_indifferent_access if search_params.blank?
+
+      params = search_params.is_a?(String) ? JSON.parse(search_params.to_s).to_h : search_params
+      params.to_h.with_indifferent_access
+    end
+
+    # `parsed_search_params` with prefixed ids decoded to primary keys.
+    #
+    # @return [ActiveSupport::HashWithIndifferentAccess]
+    def decoded_search_params
+      decode_prefixed_id_filters(parsed_search_params)
     end
 
     # Replace any prefixed IDs in `search_params` with their raw DB IDs so

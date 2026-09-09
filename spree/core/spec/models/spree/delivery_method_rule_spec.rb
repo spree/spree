@@ -106,6 +106,102 @@ describe Spree::DeliveryMethodRule, type: :model do
     end
   end
 
+  describe Spree::DeliveryMethodRules::VolumeRule do
+    let(:carton) { create(:carton_package_type, store: store, length: 100, width: 100, height: 100) }
+    # Two cartons at one cubic meter each.
+    let(:freight_package) do
+      variant = create(:variant, units_per_carton: 6, carton_package_type: carton)
+      order = create(:order, store: store)
+      create(:line_item, order: order, variant: variant, quantity: 12)
+      Spree::Stock::Coordinator.new(order.reload).packages.first
+    end
+
+    # The tiers a merchant configures are ranges over this one number, so the
+    # comparison has to be converted volume, never the raw dimension columns:
+    # two one-meter cartons are 2 CBM, not 2,000,000.
+    # A catalog nobody measured rolls up to zero cubic meters, which is not
+    # the same as a small shipment — failing a minimum on it would hide the
+    # method with nothing for the merchant to diagnose.
+    it 'offers the method when the goods were never measured' do
+      unmeasured = create(:variant, width: nil, height: nil, depth: nil, weight: 0)
+      order = create(:order, store: store)
+      create(:line_item, order: order, variant: unmeasured, quantity: 1)
+      package = Spree::Stock::Coordinator.new(order.reload).packages.first
+
+      rule = described_class.new(delivery_method: delivery_method, preferred_minimum_volume: 1)
+
+      expect(rule.eligible?(package)).to be(true)
+    end
+
+    # One measured SKU among unmeasured ones reports a fraction of the real
+    # load; failing a minimum on that hides the method from the wholesale
+    # order it exists for.
+    it 'offers the method when the measurement is only partial' do
+      measured = create(:variant, units_per_carton: 6, carton_package_type: carton)
+      unmeasured = create(:variant, width: nil, height: nil, depth: nil, weight: 0)
+      order = create(:order, store: store)
+      create(:line_item, order: order, variant: measured, quantity: 6)
+      create(:line_item, order: order, variant: unmeasured, quantity: 40)
+      package = Spree::Stock::Coordinator.new(order.reload).packages.first
+
+      rule = described_class.new(delivery_method: delivery_method, preferred_minimum_volume: 5)
+
+      expect(package.freight_summary).not_to be_complete
+      expect(rule.eligible?(package)).to be(true)
+    end
+
+    it 'bounds by the packed volume in cubic meters' do
+      rule = described_class.new(delivery_method: delivery_method)
+      expect(rule.eligible?(freight_package)).to be(true)
+
+      rule.preferred_minimum_volume = 2
+      expect(rule.eligible?(freight_package)).to be(true)
+
+      rule.preferred_minimum_volume = 3
+      expect(rule.eligible?(freight_package)).to be(false)
+
+      rule.preferred_minimum_volume = nil
+      rule.preferred_maximum_volume = 1
+      expect(rule.eligible?(freight_package)).to be(false)
+    end
+  end
+
+  describe Spree::DeliveryMethodRules::CompanyRule do
+    let(:customer) { create(:user) }
+    let(:company) { create(:company, store: store) }
+
+    let(:company_package) do
+      create(:company_membership, company: company, customer: customer)
+      cart = create(:cart, store: store, user: customer, company: company)
+      create(:line_item, cart: cart, order: nil)
+      fulfillment = create(:shipment, cart: cart, order: nil, stock_location: create(:stock_location))
+      fulfillment.to_package
+    end
+
+    # Adding the rule at all is what states a split, so it defaults to the
+    # side that needs stating: freight is for company orders.
+    it 'is for company orders by default' do
+      rule = described_class.new(delivery_method: delivery_method)
+
+      expect(rule.eligible?(company_package)).to be(true)
+      expect(rule.eligible?(package)).to be(false)
+    end
+
+    it 'hides a freight method from a retail cart' do
+      rule = described_class.new(delivery_method: delivery_method, preferred_company_orders_only: true)
+
+      expect(rule.eligible?(company_package)).to be(true)
+      expect(rule.eligible?(package)).to be(false)
+    end
+
+    it 'hides a parcel method from a company cart when turned off' do
+      rule = described_class.new(delivery_method: delivery_method, preferred_company_orders_only: false)
+
+      expect(rule.eligible?(company_package)).to be(false)
+      expect(rule.eligible?(package)).to be(true)
+    end
+  end
+
   describe Spree::DeliveryMethodRules::ExcludedProductsRule do
     it 'blocks packages containing an excluded product and fails open without products' do
       rule = described_class.create!(delivery_method: delivery_method)

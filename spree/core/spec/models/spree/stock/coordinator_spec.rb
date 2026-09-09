@@ -17,6 +17,25 @@ module Spree
         end
       end
 
+      # A proposed package's inventory units belong to no order yet, so the
+      # walk-to-an-order fallback answers nil and everything reading the buyer
+      # through the package — the packaging tare, the channel and company
+      # eligibility rules — silently sees nothing.
+      describe 'the package owner' do
+        it 'carries the purchase being quoted onto every package' do
+          expect(subject.build_packages.map(&:owner)).to all(eq(order))
+        end
+
+        it 'carries a cart the same way, before any order exists' do
+          cart = create(:cart, store: store)
+          create(:line_item, cart: cart, order: nil)
+
+          owners = Coordinator.new(cart.reload).build_packages.map(&:owner)
+
+          expect(owners).to all(eq(cart))
+        end
+      end
+
       # Allocation asks each profile (and the order's channel) about every
       # candidate location, so membership must be read from loaded rows —
       # re-querying per question multiplied with items × locations.

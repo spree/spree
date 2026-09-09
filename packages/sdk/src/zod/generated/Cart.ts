@@ -3,6 +3,7 @@ import { z } from 'zod';
 import { AddressSchema } from './Address';
 import { AppliedPromotionSchema } from './AppliedPromotion';
 import { FeeSchema } from './Fee';
+import { FreightSummarySchema } from './FreightSummary';
 import { FulfillmentSchema } from './Fulfillment';
 import { GiftCardSchema } from './GiftCard';
 import { LineItemSchema } from './LineItem';
@@ -61,6 +62,7 @@ export const CartSchema = z.object({
   order_minimum: z.number().nullable(),
   order_minimum_shortfall: z.number().nullable(),
   below_order_minimum: z.boolean().nullable(),
+  freight_summary: FreightSummarySchema.nullable(),
   shipping_eq_billing_address: z.boolean(),
   discounts: z.array(AppliedPromotionSchema),
   fees: z.array(FeeSchema),

@@ -65,4 +65,40 @@ RSpec.describe Spree::OrderPlacedSubscriber do
       end
     end
   end
+  describe 'consent recorded at checkout' do
+    it 'records the marketing opt-in against the order' do
+      order.update!(accept_marketing: true, customer: nil)
+      allow(Spree::NewsletterSubscriber).to receive(:subscribe)
+
+      subscriber.handle(mock_event(order))
+
+      record = Spree::ConsentRecord.find_by(owner: order, purpose: Spree::ConsentRecord::EMAIL_MARKETING)
+
+      expect(record).to be_present
+      expect(record.source).to eq(Spree::ConsentRecord::CHECKOUT)
+    end
+
+    # An unticked box is the absence of consent, not a decision to refuse.
+    it 'records nothing when the buyer did not opt in' do
+      order.update!(accept_marketing: false)
+
+      subscriber.handle(mock_event(order))
+
+      expect(Spree::ConsentRecord.where(owner: order)).to be_empty
+    end
+
+    it 'writes one row when the buyer also created an account' do
+      order.update!(accept_marketing: true, customer: nil, signup_for_an_account: true)
+      allow(Spree::NewsletterSubscriber).to receive(:subscribe)
+
+      subscriber.handle(mock_event(order))
+
+      marketing = Spree::ConsentRecord.where(purpose: Spree::ConsentRecord::EMAIL_MARKETING)
+
+      # One tick of one box is one agreement, however many records the
+      # completion happens to create.
+      expect(marketing.count).to eq(1)
+    end
+  end
+
 end

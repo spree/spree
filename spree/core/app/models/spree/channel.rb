@@ -163,7 +163,7 @@ module Spree
       return unless default?
       return if destroyed_by_association.present?
 
-      errors.add(:base, Spree.t('errors.messages.cannot_delete_default_channel'))
+      errors.add(:base, :cannot_delete_default_channel, message: Spree.t('errors.messages.cannot_delete_default_channel'))
       throw :abort
     end
 
@@ -176,7 +176,7 @@ module Spree
       return unless api_keys.active.exists?
       return if destroyed_by_association.present?
 
-      errors.add(:base, Spree.t('errors.messages.cannot_delete_channel_with_active_api_keys'))
+      errors.add(:base, :cannot_delete_channel_with_active_api_keys, message: Spree.t('errors.messages.cannot_delete_channel_with_active_api_keys'))
       throw :abort
     end
 

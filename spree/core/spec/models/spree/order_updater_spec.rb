@@ -156,8 +156,19 @@ module Spree
         expect(order.fulfillment_status).to eq('unfulfilled')
       end
 
-      it 'is canceled when every fulfillment is' do
+      # Every parcel recalled on a placed order: the goods are still owed and
+      # a new fulfillment is how they go out, so it reads as work remaining.
+      it 'reads unfulfilled when every fulfillment is canceled but the order is not' do
         create(:fulfillment, order: order, status: 'canceled')
+
+        updater.update_shipment_state
+
+        expect(order.fulfillment_status).to eq('unfulfilled')
+      end
+
+      it 'is canceled when every fulfillment is and so is the order' do
+        create(:fulfillment, order: order, status: 'canceled')
+        order.update_columns(status: 'canceled')
 
         updater.update_shipment_state
 

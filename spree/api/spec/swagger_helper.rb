@@ -178,6 +178,7 @@ RSpec.configure do |config|
         { name: 'Pricing', description: 'Prices and price lists for currency-, market-, and customer-group-specific pricing' },
         { name: 'Products', description: 'Products, taxons/categories, product custom field values, and bulk product operations' },
         { name: 'Policies', description: "The store's legal documents — terms of service, privacy, returns, shipping" },
+        { name: 'Reasons', description: 'Merchant-owned vocabularies for why a return, claim, refund or cancellation happened' },
         { name: 'Promotions', description: 'Promotions, promotion rules, promotion actions, and coupon codes' },
         { name: 'Refunds', description: 'Order refunds' },
         { name: 'Settings', description: 'Store-level settings — store profile, tags, store credit categories' },

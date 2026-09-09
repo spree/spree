@@ -94,11 +94,15 @@ module SpreeStripe
     end
 
     # A completed payment can no longer be voided, so cancellation refunds it
-    # instead. Refunds for a fulfillment are skipped — the delivery cost is
-    # refunded as a whole elsewhere.
-    def cancel(payment_intent_id, payment = nil)
+    # instead — unless the operator asked to keep the money, in which case the
+    # charge is left standing for them to refund deliberately. Refunds for a
+    # fulfillment are skipped — the delivery cost is refunded as a whole
+    # elsewhere.
+    def cancel(payment_intent_id, payment = nil, refund: true)
       protect_from_error do
         if payment&.completed?
+          return success(payment_intent_id, {}) unless refund
+
           amount = payment.credit_allowed
           return success(payment_intent_id, {}) if amount.zero?
           return success(payment_intent_id, {}) if payment.respond_to?(:for_shipment?) && payment.for_shipment?
@@ -259,11 +263,14 @@ module SpreeStripe
     def validate_secret_key
       Stripe::Refund.list({ limit: 0 }, api_options)
     rescue Stripe::AuthenticationError
-      errors.add(:base, 'Secret key is invalid')
+      errors.add(:base, :secret_key_invalid, message: Spree.t('stripe.errors.secret_key_invalid'))
     rescue Stripe::PermissionError => e
-      errors.add(:base, 'You have provided your publishable key instead of your secret key') if e.error&.code == 'secret_key_required'
+      return unless e.error&.code == 'secret_key_required'
+
+      errors.add(:base, :publishable_key_provided,
+                 message: Spree.t('stripe.errors.publishable_key_provided'))
     rescue Stripe::StripeError
-      errors.add(:base, 'Something went wrong with Stripe. Try again later.')
+      errors.add(:base, :stripe_unavailable, message: Spree.t('stripe.errors.stripe_unavailable'))
     end
 
     def build_customer_payload(order: nil, customer: nil)

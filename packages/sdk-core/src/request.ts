@@ -1,4 +1,4 @@
-import type { ErrorResponse, LocaleDefaults } from './types'
+import type { ErrorResponse, LocaleDefaults, ValidationErrorDetail } from './types'
 
 export interface RetryConfig {
   /** Maximum number of retries (default: 2) */
@@ -40,7 +40,7 @@ export interface InternalRequestOptions extends RequestOptions {
 export class SpreeError extends Error {
   public readonly code: string
   public readonly status: number
-  public readonly details?: Record<string, string[]>
+  public readonly details?: Record<string, string[] | ValidationErrorDetail[]>
 
   constructor(response: ErrorResponse, status: number) {
     super(response.error.message)
@@ -227,8 +227,24 @@ export function createRequestFn(
             continue
           }
 
-          const errorBody = (await response.json()) as ErrorResponse
-          throw new SpreeError(errorBody, response.status)
+          const errorBody: ErrorResponse | null = await response.json().catch(() => null)
+          if (
+            typeof errorBody?.error?.code === 'string' &&
+            typeof errorBody.error.message === 'string'
+          ) {
+            throw new SpreeError(errorBody, response.status)
+          }
+
+          // Proxy error pages and empty bodies must not turn HTTP failures into network retries.
+          throw new SpreeError(
+            {
+              error: {
+                code: 'http_error',
+                message: `Request failed with status ${response.status}`,
+              },
+            },
+            response.status,
+          )
         }
 
         // Handle 204 No Content (empty body)

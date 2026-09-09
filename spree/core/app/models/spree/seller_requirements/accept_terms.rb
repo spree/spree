@@ -67,8 +67,11 @@ module Spree
         return if preferred_terms_effective_from.blank?
         return if effective_from.present?
 
-        errors.add(:base, Spree.t('seller_requirements.invalid_terms_effective_from',
-                                  default: 'Terms effective from is not a date'))
+        # On the preference rather than :base, so the operator's form marks the
+        # field they got wrong instead of only showing a summary line.
+        errors.add(:preferred_terms_effective_from, :invalid_terms_effective_from,
+                   message: Spree.t('seller_requirements.invalid_terms_effective_from',
+                                    default: 'Terms effective from is not a date'))
       end
     end
   end

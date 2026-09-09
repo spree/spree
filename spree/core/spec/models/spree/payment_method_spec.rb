@@ -339,6 +339,58 @@ describe Spree::PaymentMethod, type: :model do
   end
   # A preference the system writes rather than the operator supplies — a
   # secret a provider issues, an id it gives back.
+  describe 'constrained preferences' do
+    let(:gateway_class) do
+      Class.new(Spree::Gateway) do
+        def self.name = 'TestConstrainedGateway'
+
+        preference :mode, :string, default: 'live', in: %w[test live]
+        preference :label, :string
+      end
+    end
+
+    # The set is what the server validates against, so a form that does not
+    # know it can only offer a text box the operator gets wrong.
+    it 'carries the set into the schema' do
+      field = gateway_class.serialized_preference_schema.find { |entry| entry[:key] == :mode }
+
+      expect(field[:choices]).to eq(%w[test live])
+    end
+
+    it 'leaves an unconstrained preference without one' do
+      field = gateway_class.serialized_preference_schema.find { |entry| entry[:key] == :label }
+
+      expect(field).not_to have_key(:choices)
+    end
+
+    it 'reports the set for a single preference' do
+      gateway = gateway_class.new
+
+      expect(gateway.preference_choices(:mode)).to eq(%w[test live])
+      expect(gateway.preference_choices(:label)).to be_nil
+    end
+  end
+
+  describe 'preference order' do
+    let(:gateway_class) do
+      Class.new(Spree::Gateway) do
+        def self.name = 'TestOrderedGateway'
+
+        preference :api_key, :password
+        preference :webhook_secret, :password
+        preference :contents_type, :string
+      end
+    end
+
+    # Ruby's `methods` has no meaningful order, so without this the form
+    # presents credentials and optional settings in an arbitrary sequence.
+    it 'follows the order the preferences were declared in' do
+      keys = gateway_class.serialized_preference_schema.map { |field| field[:key] }
+
+      expect(keys.first(3)).to eq(%i[api_key webhook_secret contents_type])
+    end
+  end
+
   describe 'internal preferences' do
     let(:gateway_class) do
       Class.new(Spree::Gateway) do

@@ -1,4 +1,5 @@
 require 'spec_helper'
+require 'spree/testing_support/label_provider'
 
 module Spree
   describe Fulfillments::Fulfill do
@@ -102,16 +103,14 @@ module Spree
         expect(fulfillment.reload).not_to be_fulfilled
       end
 
-      # Shipping a canceled fulfillment is deliberate — the goods went out
-      # anyway — so the workflow must not second-guess it.
-      it 'fulfills a canceled fulfillment' do
+      it 'does not allow to fulfill a canceled fulfillment' do
         stock_the_shelf(fulfillment)
         fulfillment.update!(status: 'canceled')
 
         result = subject.call(fulfillment: fulfillment)
 
-        expect(result.success?).to eq(true)
-        expect(fulfillment.reload).to be_fulfilled
+        expect(result.success?).to eq(false)
+        expect(fulfillment.reload).not_to be_fulfilled
       end
 
       # force exists for unpaid invoices; a draft has not been agreed at all,
@@ -153,55 +152,6 @@ module Spree
         }.to change { order.reload.fulfillments.count }.by(1)
 
         expect(order.fulfillments.reload.map(&:status)).to all(eq('unfulfilled'))
-      end
-    end
-
-    # A canceled fulfillment gave its promise back, so shipping it directly
-    # has to re-promise the units before they can leave. This used to ride on
-    # the resume transition callback.
-    describe 'fulfilling a canceled fulfillment' do
-      before { fulfillment.update!(status: 'canceled') }
-
-      # A variant that keeps no stock is skipped by every write, so the
-      # shelf-cover check has to skip it too — otherwise a canceled dispatch of
-      # untracked goods is refused over a level nobody maintains.
-      it 'dispatches when the goods are untracked and no shelf is kept for them' do
-        fulfillment.manifest.each do |item|
-          item.variant.update!(track_inventory: false)
-          fulfillment.stock_location.stock_level(item.variant)&.update_columns(count_on_hand: 0)
-        end
-
-        result = subject.call(fulfillment: fulfillment)
-
-        expect(result).to be_success
-        expect(fulfillment.reload).to be_fulfilled
-      end
-
-      it 're-promises the units and then ships them' do
-        stock_the_shelf(fulfillment)
-        variant = fulfillment.fulfillment_items.first.variant
-        stock_level = fulfillment.stock_location.stock_level(variant)
-
-        expect { subject.call(fulfillment: fulfillment) }.
-          to change { stock_level.reload.count_on_hand }.by(
-            -fulfillment.fulfillment_items.where(variant_id: variant.id).sum(:quantity)
-          )
-        expect(fulfillment.reload).to be_fulfilled
-      end
-
-      # Resuming already re-promised the units, so fulfilling afterwards
-      # takes them off the shelf exactly once rather than twice.
-      it 'ships the re-promised units only once when the fulfillment was resumed' do
-        stock_the_shelf(fulfillment)
-        Spree.fulfillment_resume_workflow.call(fulfillment: fulfillment)
-        variant = fulfillment.fulfillment_items.first.variant
-        quantity = fulfillment.fulfillment_items.where(variant_id: variant.id).sum(:quantity)
-        stock_level = fulfillment.stock_location.stock_level(variant)
-
-        expect { subject.call(fulfillment: fulfillment) }.
-          to change { stock_level.reload.count_on_hand }.by(-quantity)
-
-        expect(stock_level.reload.allocated_count).to eq(0)
       end
     end
 
@@ -270,10 +220,21 @@ module Spree
     end
 
     describe 'tracking' do
-      it 'stores the tracking number on the fulfillment that ships' do
+      it 'records the tracking number as the primary delivery of the fulfillment that ships' do
+        fulfillment.deliveries.destroy_all
+
         subject.call(fulfillment: fulfillment, tracking: '1Z999')
 
         expect(fulfillment.reload.tracking).to eq('1Z999')
+        expect(fulfillment.deliveries.count).to eq(1)
+        expect(fulfillment.primary_delivery.status).to eq('pending')
+      end
+
+      it 'corrects the primary delivery rather than adding a second one' do
+        subject.call(fulfillment: fulfillment, tracking: '1Z999')
+
+        expect(fulfillment.reload.deliveries.count).to eq(1)
+        expect(fulfillment.tracking).to eq('1Z999')
       end
 
       it 'puts tracking on the split fulfillment, not the remainder' do
@@ -340,7 +301,7 @@ module Spree
       # The shipped email renders from the fulfilled event — it used to race
       # the label purchase for the tracking number and sometimes lose.
       it 'publishes the fulfilled event only after provider tracking is persisted' do
-        fulfillment.update_column(:tracking, nil)
+        fulfillment.deliveries.destroy_all
         allow_any_instance_of(Spree::Fulfillment).to receive(:provider).and_return(label_provider)
 
         tracking_at_publish = :never_published
@@ -372,14 +333,56 @@ module Spree
       it 'stores an explicit carrier beside the number' do
         subject.call(fulfillment: fulfillment, tracking: '421432', tracking_carrier: 'inpost')
 
-        expect(fulfillment.reload.tracking_carrier).to eq('inpost')
+        expect(fulfillment.reload.primary_delivery.carrier).to eq('inpost')
         expect(fulfillment.tracking_url).to include('inpost.pl')
       end
 
       it 'detects the carrier from a recognisable number' do
+        fulfillment.deliveries.destroy_all
+
         subject.call(fulfillment: fulfillment, tracking: '1Z879E930346834440')
 
-        expect(fulfillment.reload.tracking_carrier).to eq('ups')
+        expect(fulfillment.reload.primary_delivery.carrier).to eq('ups')
+      end
+    end
+
+    describe 'buying the label on the way out' do
+      before do
+        Spree::TestingSupport::LabelProvider.reset!
+        allow_any_instance_of(Spree::Fulfillment).to receive(:provider).and_return(Spree::TestingSupport::LabelProvider.new)
+        allow(SsrfFilter).to receive(:get).and_raise(SocketError.new('offline'))
+        fulfillment.deliveries.destroy_all
+      end
+
+      it 'buys the label before marking fulfilled and ships with its tracking' do
+        result = subject.call(fulfillment: fulfillment)
+
+        expect(result).to be_success
+        expect(fulfillment.reload).to be_fulfilled
+        expect(fulfillment.active_shipping_label).to be_present
+        expect(fulfillment.tracking).to eq('1Z879E930346834440')
+      end
+
+      it 'does not buy twice when a label was bought beforehand' do
+        Spree.fulfillment_purchase_label_workflow.call(fulfillment: fulfillment)
+
+        subject.call(fulfillment: fulfillment)
+
+        expect(fulfillment.reload.shipping_labels.count).to eq(1)
+      end
+
+      # A carrier outage must never stop a merchant recording a parcel that
+      # physically left.
+      it 'still fulfills when the purchase fails, and reports it' do
+        allow_any_instance_of(Spree::TestingSupport::LabelProvider).to receive(:purchase_label).and_return(nil)
+        allow(Rails.error).to receive(:report)
+
+        result = subject.call(fulfillment: fulfillment)
+
+        expect(result).to be_success
+        expect(fulfillment.reload).to be_fulfilled
+        expect(fulfillment.shipping_labels).to be_empty
+        expect(Rails.error).to have_received(:report)
       end
     end
 

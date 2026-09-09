@@ -1598,6 +1598,22 @@ describe Spree::Product, type: :model do
 
       it { is_expected.to be(true) }
     end
+
+    # A price list's rows are what one audience pays under an agreement, and a
+    # ladder holds several rows for one variant — neither makes the shop price
+    # vary (docs/plans/6.0-volume-pricing.md).
+    context 'when a price list prices the variants differently' do
+      let(:price_list) { create(:price_list, :active) }
+
+      before do
+        create(:price, variant: variant_1, currency: 'USD', amount: 10)
+        create(:price, variant: variant_2, currency: 'USD', amount: 10)
+        create(:price, variant: variant_1, currency: 'USD', amount: 7, price_list: price_list)
+        create(:price, variant: variant_1, currency: 'USD', amount: 5, price_list: price_list, min_quantity: 24)
+      end
+
+      it { is_expected.to be(false) }
+    end
   end
 
   describe '#any_variant_available?' do
@@ -1671,6 +1687,16 @@ describe Spree::Product, type: :model do
     end
 
     it 'returns the lowest price' do
+      expect(subject).to eq(price_3)
+    end
+
+    # Quoting a contract price as the product's "from" price would show every
+    # shopper an agreement they are not party to.
+    it 'ignores a price list\'s rows, including its quantity breaks' do
+      list = create(:price_list, :active)
+      create(:price, variant: variant_2, currency: 'USD', amount: 9, price_list: list)
+      create(:price, variant: variant_2, currency: 'USD', amount: 3, price_list: list, min_quantity: 24)
+
       expect(subject).to eq(price_3)
     end
   end

@@ -14,8 +14,6 @@ module Spree
                    cost_price: [:string, nullable: true],
                    cost_currency: [:string, nullable: true],
                    barcode: [:string, nullable: true],
-                   weight_unit: [:string, nullable: true],
-                   dimensions_unit: [:string, nullable: true],
                    available_stock: [:number, nullable: true],
                    total_on_hand: [:number, nullable: true],
                    preorderable: :boolean,
@@ -29,7 +27,7 @@ module Spree
                    metadata: 'Record<string, unknown>'
 
           attributes :metadata, :position, :cost_price, :cost_currency,
-                     :barcode, :weight_unit, :dimensions_unit, :backorder_limit,
+                     :barcode, :backorder_limit,
                      :hs_code, :country_of_origin, :customs_description,
                      preorder_ships_at: :iso8601,
                      created_at: :iso8601, updated_at: :iso8601

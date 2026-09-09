@@ -28,11 +28,37 @@ export interface PaginatedResponse<T> extends ListResponse<T> {
   meta: PaginationMeta
 }
 
+/**
+ * One validation failure. The Admin API reports the Rails error `code`
+ * alongside the resolved `message` and whatever values the validation
+ * interpolates (`count`, `value`, …), so a client can render its own copy
+ * and fall back to `message` when it has no translation for the code. `code`
+ * is null for a message added as a bare string, which has no code to render.
+ */
+export interface ValidationErrorDetail {
+  code: string | null
+  message: string
+  /**
+   * True when the model gave this code its own wording rather than using the
+   * code's default — a webhook URL reports `invalid` but answers "must be a
+   * valid http or https URL". A client holding its own translation of `code`
+   * should render `message` instead when this is set, or it loses what the
+   * override was for. The server decides it, since the comparison is against
+   * the code's default in the locale the message was resolved in.
+   */
+  specific?: boolean
+  [interpolation: string]: unknown
+}
+
 export interface ErrorResponse {
   error: {
     code: string
     message: string
-    details?: Record<string, string[]>
+    /**
+     * Per-attribute failures. The Store API reports plain message strings;
+     * the Admin API reports {@link ValidationErrorDetail} objects.
+     */
+    details?: Record<string, string[] | ValidationErrorDetail[]>
   }
 }
 

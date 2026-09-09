@@ -20,6 +20,7 @@ import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import type { PanelImport } from '../api-client'
 import {
+  type ImportCreateExtras,
   useCreateImport,
   useDownloadImportExample,
   useDownloadImportTemplate,
@@ -60,6 +61,11 @@ interface ImportButtonProps {
   /** Optional size for the button. Defaults to "sm". */
   size?: 'sm' | 'default' | 'lg'
   /**
+   * Whatever else the type needs at create — a parent record's id, say. The
+   * button then belongs on that record's page, and the sheet asks nothing.
+   */
+  params?: ImportCreateExtras
+  /**
    * Path the import-done email links back to, relative to this panel's origin.
    * Defaults to the operator dashboard's imports view under the current
    * tenant; a panel filing that page elsewhere passes its own.
@@ -80,6 +86,7 @@ export function ImportButton({
   label,
   variant,
   size,
+  params,
   resultsPath,
 }: ImportButtonProps) {
   const { t } = useTranslation()
@@ -105,7 +112,7 @@ export function ImportButton({
     if (!file.signedId || createImport.isPending) return
 
     createImport.mutate(
-      { type, signedId: file.signedId, preferredDelimiter: delimiter, resultsPath },
+      { type, signedId: file.signedId, preferredDelimiter: delimiter, params, resultsPath },
       {
         onSuccess: (imp) => {
           handleOpenChange(false)
@@ -154,6 +161,7 @@ export function ImportButton({
       {/* Desktop only: the wizard needs a file from disk and column
           mapping across a wide grid, neither of which works on a phone. */}
       <Button
+        type="button"
         size={size ?? 'sm'}
         variant={variant ?? 'outline'}
         className="hidden h-[2.125rem] lg:inline-flex"

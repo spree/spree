@@ -74,19 +74,6 @@
       },
       "warning_treat_like_password": "تعامل مع هذا المفتاح ككلمة مرور. قم بتخزينه في مدير الأسرار لديك — لا يمكننا إظهاره مرة أخرى."
     },
-    "calculators": {
-      "default_refund_amount": "Default Refund Amount",
-      "default_tax": "Default Tax",
-      "digital_delivery": "Digital Delivery",
-      "flat_percent_item_total": "Flat Percent",
-      "flat_rate": "Flat Rate",
-      "flexi_rate": "Flexi Rate",
-      "per_item": "Per Item",
-      "percent_on_line_item": "Percent Per Line Item",
-      "price_sack": "Price Sack",
-      "tiered_flat_rate": "Tiered Flat Rate",
-      "tiered_percent": "Tiered Percent"
-    },
     "catalogs": {
       "actions": {
         "activate": "تفعيل",
@@ -110,6 +97,8 @@
         "audience_label": "الجمهور",
         "audience_placeholder": "بحث…",
         "company_subtree_help": "تعيين شركة يشمل كامل شجرتها الفرعية.",
+        "customer_group_help": "كتالوجات مجموعات العملاء تصل فقط إلى المشترين الذين لا تملك شركتهم كتالوجًا خاصًا بها.",
+        "customer_group_precedence": "تعيينات الشركات لها الأسبقية. إذا كانت شركة المشتري — أو شركة أعلى منها — تملك أي كتالوج، فهذه الكتالوجات هي التي تُطبَّق، ولا تُؤخذ مجموعة العملاء في الحسبان. لمنح مشتري الشركات أسعارًا متدرجة، عيِّن هذا الكتالوج إلى شركاتهم أو أقسامها بدلاً من ذلك.",
         "dialog_description": "من يرى هذا الكتالوج. تعيين شركة يشمل العقدة وكل ما تحتها.",
         "empty": "غير معين لأي جمهور — لا أحد يرى هذا الكتالوج.",
         "empty_description": "عيّن شركة أو مجموعة عملاء لتحديد الجمهور المقصود بهذا الكتالوج.",
@@ -158,10 +147,9 @@
         "updated": "تم تحديث الكتالوج"
       },
       "prices": {
+        "after_save": "بعد الحفظ",
         "column_price": "السعر",
         "column_source": "المصدر",
-        "unpriced": "لا يوجد سعر",
-        "after_save": "بعد الحفظ",
         "source": {
           "explicit": "مُدخَل",
           "automatic": "مُعدَّل",
@@ -171,7 +159,15 @@
           "explicit": "مبلغ مُدخَل في قائمة أسعار هذا الكتالوج.",
           "automatic": "سعر المتجر مع تطبيق نسبة هذا الكتالوج.",
           "base": "سعر المتجر العادي — هذا الكتالوج لا يحدد سعرًا لهذا المنتج."
-        }
+        },
+        "tier_count_one": "+{{count}} مستوى",
+        "tier_count_other": "+{{count}} مستويات",
+        "tier_fixed_note": "لا تنطبق نسبة تعديل الكتالوج هنا. هذه المستويات تحدد السعر.",
+        "tier_from_one": "من {{count}}",
+        "tier_from_other": "من {{count}}",
+        "tier_preview": "ما تحتسبه هذه الاتفاقية",
+        "unpriced": "لا يوجد سعر",
+        "variant_default": "افتراضي"
       },
       "products": {
         "add_cta": "إضافة منتجات",
@@ -411,20 +407,6 @@
         "is_equal_to": "يساوي",
         "is_not_equal_to": "لا يساوي"
       },
-      "rule_types": {
-        "available_on": {
-          "description": "منتجات نُشرت خلال آخر N يومًا",
-          "name": "نُشرت حديثًا"
-        },
-        "sale": {
-          "description": "منتجات مخفّضة حاليًا دون سعر المقارنة",
-          "name": "في التخفيضات"
-        },
-        "tag": {
-          "description": "منتجات تحمل وسمًا مطابقًا",
-          "name": "وسم"
-        }
-      },
       "rules": {
         "add": "إضافة قاعدة",
         "description": "اختر المنتجات يدويًا، أو دع القواعد تُبقي المجموعة محدَّثة.",
@@ -471,13 +453,17 @@
       },
       "edit_description": "حدّث الرسوم وحدودها والمبيعات التي تنطبق عليها.",
       "empty": "لا توجد نسب عمولة بعد",
+      "flat_fee_exceeds_sale_warning": "تُحتسب هذه الرسوم بالكامل عن كل وحدة تُباع. على منتج رخيص قد تتجاوز ما حققه البائع من البيع. حدّد حدًا أقصى أدناه للحد من المبلغ الذي يمكن احتسابه على سطر بيع واحد.",
       "messages": {
         "created": "تم إنشاء نسبة العمولة",
         "deleted": "تم حذف نسبة العمولة",
         "updated": "تم تحديث نسبة العمولة"
       },
       "order_hint": "تُضاف النسب الجديدة إلى أعلى القائمة، وتفوز أول نسبة مطابقة — اسحب لإعادة الترتيب.",
-      "search_placeholder": "البحث بالاسم…"
+      "search_placeholder": "البحث بالاسم…",
+      "validation": {
+        "percentage_exceeds_one_hundred": "لا يمكن أن تتجاوز نسبة العمولة 100%."
+      }
     },
     "companies": {
       "add_cta": "إضافة شركة",
@@ -652,6 +638,7 @@
       },
       "columns": {
         "companies": "الشركات",
+        "erased": "محذوف",
         "groups": "المجموعات",
         "last_order": "الطلب الأخير",
         "newsletter": "النشرة الإخبارية",
@@ -663,7 +650,7 @@
           "delete_confirm_message": "هل تريد حذف هذا العنوان؟"
         },
         "customer_since": "العميل منذ ذلك الحين",
-        "delete_label": "حذف العميل",
+        "delete_confirm_message": "يؤدي هذا إلى إزالة الحساب بالكامل، ويُرفض بعد إتمام العميل لأي طلب. للاستجابة لطلب محو من شخص سبق أن اشترى، استخدم «محو البيانات الشخصية» بدلاً من ذلك.",
         "edit_profile_description": "قم بتحديث معلومات الملف الشخصي لـ العميل.",
         "groups": {
           "edit_description": "أضف أو أزل المجموعات التي ينتمي إليها هذا العميل.",
@@ -692,6 +679,14 @@
           "title": "Store credit"
         },
         "subscribed_to_marketing": "اشتركت في التسويق"
+      },
+      "erased": {
+        "badge": "محذوف",
+        "name": "(محذوف)"
+      },
+      "filters": {
+        "erased": "محذوف",
+        "not_erased": "غير محذوف"
       },
       "groups": {
         "bulk_add_action": "إضافة إلى المجموعة…",
@@ -727,8 +722,20 @@
         "view_members": "مشاهدة الأعضاء"
       },
       "new_sheet_description": "العملاء الذين تم إنشاؤهم هنا لم يتم تعيين كلمة مرور لهم. سيحصلون على رابط سحري عند تسجيل الدخول لأول مرة.",
-      "row_actions": {
-        "delete_confirm": "حذف {{email}}؟ العملاء الذين لديهم طلبات مكتملة لا يمكن إزالتهم."
+      "privacy": {
+        "already_anonymized": "تم محو البيانات الشخصية في {{date}}",
+        "anonymize": "محو البيانات الشخصية",
+        "anonymize_confirm_message": "سيتم استبدال الاسم والبريد الإلكتروني والهاتف والعناوين في كل مكان، وسيتم تسجيل خروج العميل. تبقى الطلبات وسجلات الدفع محفوظة بدون البيانات الشخصية. لا يمكن التراجع عن هذا الإجراء.",
+        "anonymize_confirm_title": "هل تريد محو البيانات الشخصية لهذا العميل؟",
+        "consent_updated": "آخر تغيير لموافقة التسويق في {{date}}",
+        "description": "استجب لطلب حماية البيانات. تُحفَظ طلبات العميل وأرصدته، وتُزال بياناته الشخصية من كل مكان يحتفظ به المتجر.",
+        "export": "تصدير البيانات",
+        "export_failed": "تعذّر تصدير البيانات",
+        "messages": {
+          "anonymized": "تم محو البيانات الشخصية"
+        },
+        "title": "الخصوصية والبيانات",
+        "anonymize_again": "محو مرة أخرى"
       },
       "table": {
         "empty": "لا يوجد عملاء بعد",
@@ -1141,6 +1148,10 @@
         },
         "enabled": {
           "help": "تُتجاهل النسب المعطّلة عند الاحتساب."
+        },
+        "flat_fee_cap": {
+          "help": "حد أقصى اختياري لكل سطر بيع. اتركه فارغًا لاحتساب الرسوم الثابتة كاملة.",
+          "label": "الحد الأقصى لكل سطر بيع (اختياري)"
         },
         "include_shipping": {
           "help": "احتساب العمولة أيضًا على إيرادات التوصيل لدى البائع.",
@@ -1582,6 +1593,15 @@
         },
         "adjustment_magnitude": {
           "label": "النسبة المئوية"
+        },
+        "adjustment_tiers": {
+          "add": "إضافة مستوى كمية",
+          "empty": "لا توجد مستويات — تنطبق النسبة أعلاه على كل الكميات.",
+          "help": "من كل كمية فصاعدًا تمنح الاتفاقية هذه النسبة. تُحتسب كل نسبة من السعر الأساسي، لا من المستوى الذي قبلها.",
+          "label": "مستويات الكمية",
+          "percentage": "النسبة المئوية",
+          "quantity": "من الكمية",
+          "remove": "إزالة المستوى من {quantity}"
         },
         "description": {
           "label": "الوصف",
@@ -2039,17 +2059,6 @@
           "label": "لغة لوحة الإدارة",
           "placeholder": "استخدام اللغة الافتراضية"
         },
-        "preferred_default_package_dimensions": {
-          "height": "الارتفاع",
-          "help": "الصندوق المعتاد للشحن، تستخدمه شركات النقل لتسعير الوزن الحجمي — بوصات للنظام الإمبراطوري وسنتيمترات للمتري. تلزم القيم الثلاث ليصبح ساريًا.",
-          "label": "أبعاد الطرد الافتراضية",
-          "length": "الطول",
-          "width": "العرض"
-        },
-        "preferred_default_package_weight": {
-          "help": "وزن التغليف (الصندوق والحشو) الذي يُضاف إلى محتويات كل طرد عند حساب أسعار التوصيل. اضبطه على 0 للتعطيل.",
-          "label": "الوزن الافتراضي للطرد"
-        },
         "preferred_send_consumer_transactional_emails": {
           "help": "عند الإيقاف، لا تُرسل رسائل تأكيد الطلب أو الشحن أو الاسترداد.",
           "label": "إرسال رسائل المعاملات للعملاء"
@@ -2290,7 +2299,19 @@
         "units_per_carton": {
           "label": "الوحدات في الكرتونة"
         },
-        "quantity_rule_invalid": "أدخل عددًا صحيحًا أكبر من صفر، أو اترك الحقل فارغًا."
+        "quantity_rule_invalid": "أدخل عددًا صحيحًا أكبر من صفر، أو اترك الحقل فارغًا.",
+        "carton_package_type_id": {
+          "label": "الكرتونة",
+          "help": "الكرتونة التي يُعبأ فيها هذا المنتج. مقاساتها تسري على كل ما يُعبأ بالطريقة نفسها."
+        },
+        "carton_weight": {
+          "label": "وزن الكرتونة",
+          "help": "وزن الكرتونة الواحدة بعد تعبئتها."
+        },
+        "cartons_per_pallet": {
+          "label": "الكراتين لكل منصة"
+        },
+        "carton_weight_invalid": "أدخل وزن كرتونة أكبر من صفر، أو اترك الحقل فارغًا."
       },
       "webhook_endpoint": {
         "active": {
@@ -2318,6 +2339,45 @@
       "order_multiple": {
         "label": "مضاعف الطلب",
         "help": "كل زيادة فوق الحد الأدنى. اتركه فارغًا للسماح بأي كمية."
+      },
+      "package_type": {
+        "name": {
+          "label": "الاسم"
+        },
+        "kind": {
+          "label": "النوع",
+          "help": "الكرتونة وحدها يمكن أن تكون تغليف المنتج."
+        },
+        "length": {
+          "label": "الطول"
+        },
+        "width": {
+          "label": "العرض"
+        },
+        "height": {
+          "label": "الارتفاع"
+        },
+        "dimensions_unit": {
+          "label": "الوحدة"
+        },
+        "dimensions": {
+          "help": "تُستخدم للوزن الحجمي للناقل وللأمتار المكعبة في فئات الشحن."
+        },
+        "weight": {
+          "label": "الوزن فارغًا",
+          "help": "التغليف نفسه، يُضاف إلى محتواه."
+        },
+        "max_weight": {
+          "label": "أقصى وزن",
+          "help": "ما يمكنه حمله."
+        },
+        "weight_unit": {
+          "label": "الوحدة"
+        },
+        "default": {
+          "label": "العلبة الافتراضية",
+          "help": "العلبة التي تُحسب على أساسها أسعار شحن طرودك. علبة افتراضية واحدة في كل مرة."
+        }
       }
     },
     "gift_cards": {
@@ -2555,20 +2615,6 @@
       "messages": {
         "created": "تمت إضافة قاعدة التوجيه",
         "deleted": "تمت إزالة قاعدة التوجيه"
-      },
-      "types": {
-        "default_location": {
-          "description": "يفضّل موقع المخزون المحدد كافتراضي",
-          "name": "الموقع الافتراضي"
-        },
-        "minimize_splits": {
-          "description": "يفضّل الموقع القادر على تلبية أكبر عدد من العناصر بمفرده لتجنّب تقسيم الشحنات",
-          "name": "تقليل تقسيم الشحنات"
-        },
-        "preferred_location": {
-          "description": "الشحن من الموقع المثبّت على الطلب إن وُجد",
-          "name": "الموقع المفضل"
-        }
       }
     },
     "orders": {
@@ -2645,6 +2691,33 @@
           "value_type_flat": "مبلغ",
           "value_type_percent": "نسبة مئوية"
         },
+        "cancel": {
+          "description": "يُسجَّل السبب والملاحظة على الطلب، وتُسوَّى أي مدفوعات.",
+          "keep_order": "الاحتفاظ بالطلب",
+          "no_reason": "لم يُذكر سبب",
+          "note_label": "ملاحظة",
+          "note_placeholder": "يرى هذه الملاحظة الموظفون فقط",
+          "notify_customer": "إرسال بريد إلكتروني إلى العميل",
+          "reason_label": "السبب",
+          "refund_payments": "رد المبلغ إلى العميل",
+          "refund_payments_help": "تُعاد الأموال التي جرى تحصيلها. أما التفويض غير المُحصَّل فيُحرَّر في كل الأحوال."
+        },
+        "commission_lines": {
+          "column_fee": "العمولة",
+          "column_rate": "المعدل",
+          "column_subject": "الصنف",
+          "column_tax": "الضريبة",
+          "column_total": "الإجمالي",
+          "delivery": "التوصيل",
+          "empty": "لم تُفرض أي عمولة على هذا الطلب.",
+          "line_item_fallback": "بند",
+          "rate_named_fixed": "{{name}} · {{amount}}",
+          "rate_named_percentage": "{{name}} · {{rate}}%",
+          "rate_unknown": "معدل محذوف",
+          "subject_fallback": "البيع",
+          "title": "العمولة",
+          "total": "الإجمالي"
+        },
         "completed_prefix": "مكتمل",
         "confirm": {
           "approve_message": "هل توافق على هذا الطلب؟",
@@ -2655,7 +2728,6 @@
           "remove_gift_card_message": "هل تريد إزالة بطاقة الهدايا هذه من الطلب؟",
           "remove_item_message": "هل تريد إزالة هذا العنصر من الطلب؟",
           "remove_store_credit_message": "هل تريد إزالة رصيد المتجر من الطلب؟",
-          "resume_message": "هل تريد استئناف هذا الطلب الملغى؟",
           "ship_message": "شحن هذا الوفاء؟",
           "void_message": "Void هذه الدفعة؟"
         },
@@ -2680,28 +2752,63 @@
           "approve_failed": "فشلت الموافقة على الطلب",
           "cancel_failed": "فشل في إلغاء الطلب",
           "complete_failed": "فشل في إكمال الطلب",
-          "confirmation_send_failed": "فشل في إرسال التأكيد",
-          "resume_failed": "فشل في استئناف الطلب"
+          "confirmation_send_failed": "فشل في إرسال التأكيد"
         },
         "fulfillments": {
+          "add_delivery": "إضافة رقم تتبع",
           "add_tracking": "إضافة تتبع",
           "add_tracking_title": "إضافة تتبع",
+          "awaiting_fulfillment_one": "ما زال هناك {{count}} عنصر للتنفيذ",
+          "awaiting_fulfillment_other": "ما زال هناك {{count}} عناصر للتنفيذ",
+          "awaiting_hint": "أضف تنفيذًا لشحنها.",
+          "awaiting_hint_draft": "يمكن تنفيذها بمجرد تقديم الطلب.",
           "buy_label": "شراء الملصق",
           "buy_label_confirm": "شراء ملصق شحن لهذه الشحنة؟ سيتم الخصم من حساب شركة الشحن الخاص بك فور إصدار الملصق.",
           "buy_label_confirm_rate": "شراء ملصق {{rate}} مقابل {{cost}}؟ سيتم الخصم من حساب شركة الشحن الخاص بك فور إصدار الملصق.",
+          "buy_label_pending_file": "لا تزال نسخة شركة الشحن قيد التنزيل؛ ستفتح الطباعة رابط شركة الشحن نفسه.",
           "carrier_auto": "اكتشاف تلقائي",
           "carrier_label": "شركة الشحن",
+          "carrier_search": "البحث عن شركة شحن",
+          "carrier_status_available_for_pickup": "جاهز للاستلام",
+          "carrier_status_delivered": "تم التسليم",
+          "carrier_status_failure": "فشل التسليم",
+          "carrier_status_in_transit": "في الطريق",
+          "carrier_status_out_for_delivery": "قيد التسليم",
+          "carrier_status_pending": "بانتظار شركة الشحن",
+          "carrier_status_pre_transit": "تم إنشاء الملصق",
+          "carrier_status_return_to_sender": "إعادة إلى المرسل",
+          "carrier_status_unknown": "الحالة غير معروفة",
+          "confirm_delete_delivery": "إزالة رقم التتبع هذا؟ يسري المفعول فورًا.",
+          "confirm_delete_label": "حذف هذا الملصق؟ سيُزال الملف من الطلب. يسري المفعول فورًا.",
+          "confirm_refund_label": "طلب استرداد قيمة هذا الملصق من شركة الشحن؟ ستُعاد أجرة الشحن إلى حسابك.",
           "confirm_split": "نقل هذه الوحدات إلى شحنة جديدة؟ يسري هذا فوراً.",
           "create_description": "تنشئ شحنة وتنقل إليها الكميات المختارة.",
           "create_items": "العناصر",
           "create_title": "إضافة شحنة",
+          "delete_label": "حذف الملصق",
+          "deliveries_title": "التتبع",
           "delivery_method": "طريقة التوصيل",
+          "document_kinds": {
+            "certificate_of_origin": "شهادة المنشأ",
+            "cn22": "نموذج جمركي CN22",
+            "cn23": "نموذج جمركي CN23",
+            "commercial_invoice": "فاتورة تجارية",
+            "customs_form": "نموذج جمركي",
+            "form": "مستند"
+          },
+          "documents_title": "مستندات الشحن",
           "edit_description": "غيّر مكان شحن هذه الشحنة وطريقة التوصيل التي تنقلها.",
           "edit_title": "تعديل الشحنة",
           "edit_tracking_title": "تعديل التتبع",
           "empty": "لا توجد شحنات لهذا الطلب بعد.",
           "free": "مجاني",
+          "label_cost": "أجرة الشحن",
+          "label_refund_requested": "تم طلب الاسترداد",
+          "label_refunded": "تم الاسترداد",
+          "label_title": "ملصق الشحن",
+          "label_uploaded": "مرفوع",
           "mark_delivered": "وضع علامة كمُسلَّم",
+          "mark_delivery_delivered": "وضع علامة وصل",
           "move_and_requote": "نقل وإعادة التسعير",
           "no_rates": "لا توجد طرق توصيل متاحة لهذه الشحنة.",
           "out_of_stock": "غير متوفر في المخزون",
@@ -2709,6 +2816,8 @@
           "print_label": "طباعة الملصق",
           "print_packing_slip": "طباعة قائمة التعبئة",
           "rates_pending_origin": "احفظ مصدر الشحن الجديد لعرض طرق التوصيل المتاحة منه.",
+          "refund_label": "استرداد الملصق",
+          "retry_refund_label": "إعادة محاولة الاسترداد",
           "ship_to": "الشحن إلى",
           "ships_from": "الشحن من",
           "split": "تقسيم",
@@ -2718,7 +2827,12 @@
           "split_title": "تقسيم الشحنة",
           "split_would_empty": "اترك وحدة واحدة على الأقل، أو غيّر مصدر الشحنة بالكامل بدلاً من ذلك.",
           "tracking_description": "رقم تتبع شركة الشحن، أو رابط تتبع كامل.",
-          "unfulfilled_other": "غير مُنفَّذ ({{count}})"
+          "unfulfilled_other": "غير مُنفَّذ ({{count}})",
+          "upload_label": "رفع ملصق",
+          "upload_label_cost": "تكلفة أجرة الشحن",
+          "upload_label_description": "سجّل ملصقًا اشتريته من مكان آخر، ليكون للطرد ملفه ورقم تتبعه وتكلفته.",
+          "upload_label_file": "ملف الملصق",
+          "upload_label_title": "رفع ملصق"
         },
         "gift_card_section": {
           "applied_suffix": "مُطبَّق",
@@ -2739,8 +2853,6 @@
           "captured": "القبض على الدفع",
           "completed": "اكتمل الطلب",
           "confirmation_sent": "تم إرسال التأكيد",
-          "resumed": "تم استئناف الطلب",
-          "shipped": "Fulfillment تم الشحن",
           "voided": "تم إلغاء الدفع"
         },
         "no_customer": "لا توجد معلومات العميل",
@@ -2777,8 +2889,13 @@
         "summary": {
           "adjustments": "التعديلات",
           "approved_by": "تمت الموافقة عليه من قبل",
+          "cancel_note": "ملاحظة الإلغاء",
+          "cancel_reason": "سبب الإلغاء",
           "canceled_at": "تم الإلغاء عند",
           "canceler": "إلغاء",
+          "commission_fee": "رسوم المنصة",
+          "commission_tax": "ضريبة رسوم المنصة",
+          "commission_total": "إجمالي رسوم المنصة",
           "outstanding_balance": "رصيد متميز",
           "payment_total": "إجمالي الدفع",
           "promotions": "الترقيات",
@@ -2786,8 +2903,8 @@
           "tax_included": "الضريبة (متضمنة)"
         },
         "tracking": {
-          "prefix": "Tracking",
-          "shipped_prefix": "تم الشحن"
+          "fulfilled_prefix": "تم التنفيذ",
+          "prefix": "Tracking"
         },
         "variant_search": {
           "description": "ابحث عن متغير منتج لإضافته إلى هذا الطلب.",
@@ -2795,6 +2912,17 @@
           "label": "متغير البحث",
           "placeholder": "اكتب اسم المنتج أو SKU (3 أحرف على الأقل)…",
           "sku_prefix": "SKU"
+        },
+        "logistics": {
+          "title": "الخدمات اللوجستية",
+          "units": "الوحدات",
+          "cartons": "الكراتين",
+          "pallets": "المنصات",
+          "volume": "الحجم",
+          "weight": "الوزن الإجمالي",
+          "cbm": "{{value}} م³",
+          "kg": "{{value}} كجم",
+          "incomplete": "بعض الأصناف غير مقاسة، لذا هذه الأرقام حد أدنى وليست إجماليًا."
         }
       },
       "edit": {
@@ -2842,7 +2970,7 @@
       },
       "fulfill": {
         "action": "وضع علامة كمشحون",
-        "empty": "لا تحتوي هذه الشحنة على عناصر قابلة للشحن.",
+        "empty": "لا يحتوي هذا التنفيذ على عناصر يمكن تنفيذها.",
         "include_item": "شحن {{name}}",
         "notify_customer": "إرسال إشعار الشحن إلى العميل",
         "of_units": "من {{count}}",
@@ -2992,6 +3120,12 @@
             "description": "يظهر في متجرك كنقطة اتصال لأسئلة العملاء والدعم.",
             "title": "تعيين البريد الإلكتروني لدعم العملاء"
           },
+          "setup_address": {
+            "cta": "حفظ العنوان",
+            "description": "عنوان الشحن والإرجاع الخاص بك. تستخدمه شركات الشحن لحساب أسعار التوصيل، وإليه تُرسل مرتجعات العملاء.",
+            "no_location": "ليس لديك موقع مخزون خاص بك بعد — أنشئ واحدًا في الإعدادات لإضافة عنوان.",
+            "title": "أضف عنوان الشحن"
+          },
           "setup_payment_method": {
             "cta": "إعداد المدفوعات",
             "description": "لاستلام المدفوعات، قم بإعداد مزود دفع إلكتروني واحد على الأقل.",
@@ -3039,8 +3173,6 @@
             "capture": "يأسر",
             "mark_paid": "وضع علامة على أنه مدفوع",
             "refund": "استرداد",
-            "resume": "سيرة ذاتية",
-            "ship": "وضع علامة على أنه تم الشحن",
             "void": "Void"
           },
           "claims": {
@@ -3092,13 +3224,19 @@
               "receive": "استلام العناصر",
               "refund": "استرداد"
             },
+            "buy_label": "شراء ملصق إرجاع",
+            "buy_label_confirm": "شراء ملصق إرجاع مدفوع مسبقًا؟ سيُخصم من حساب شركة الشحن فور إصداره.",
             "confirm": {
               "cancel": "إلغاء هذا المرتجع؟ لن تتم إعادة أي مخزون ولن يتم تحويل أي مبلغ."
             },
             "create_title": "مرتجع جديد",
             "empty": "لا توجد مرتجعات لهذا الطلب.",
             "empty_no_units": "لا توجد سجلات تنفيذ في هذا الطلب يمكن الرجوع إليها.",
+            "location": "إرجاع إلى",
+            "location_default": "موقع الإرجاع الافتراضي",
+            "location_no_returns": "{{name}} (لا يقبل المرتجعات)",
             "memo": "ملاحظة",
+            "no_label": "لا يوجد ملصق إرجاع بعد.",
             "not_resellable": "غير قابل لإعادة البيع",
             "reason": "السبب",
             "receive_title": "استلام العناصر المرتجعة",
@@ -3112,7 +3250,8 @@
             },
             "refund_title": "استرداد المرتجع",
             "refund_total": "إجمالي الاسترداد",
-            "resellable": "قابل لإعادة البيع"
+            "resellable": "قابل لإعادة البيع",
+            "returning_to": "الإرجاع إلى {{name}}"
           },
           "section_billing_address": "عنوان إرسال الفواتير",
           "section_claims": "المطالبات",
@@ -3292,6 +3431,7 @@
             "save_success_one": "تم الحفظ {{count}} السعر",
             "save_success_other": "تم الحفظ {{count}} الأسعار",
             "search_placeholder": "البحث حسب المنتج، SKU، أو الخيار…",
+            "tier_needs_price": "أدخل سعرًا لشريحة الكمية التي تبدأ من {{quantity}}، أو امسح الكمية لإزالتها.",
             "title": "تعديل الأسعار — {{name}}",
             "variant_default": "تقصير"
           },
@@ -3314,6 +3454,17 @@
             "select_all": "تحديد الكل",
             "select_row": "تحديد المنتج",
             "title": "المنتجات"
+          },
+          "prices": {
+            "column_price": "السعر",
+            "column_source": "المصدر",
+            "source_help": {
+              "explicit": "مبلغ مُدخل في قائمة الأسعار هذه.",
+              "automatic": "سعر المتجر مع تطبيق نسبة قائمة الأسعار هذه.",
+              "base": "سعر المتجر العادي. هذه القائمة لا تسعّر هذا المنتج."
+            },
+            "tier_fixed_note": "لا تنطبق نسبة تعديل هنا. هذه المستويات تحدد السعر.",
+            "tier_preview": "ما تفرضه هذه القائمة"
           },
           "products_help": "اختر المنتجات التي تنطبق عليها هذه القائمة. تُنشأ أسعار مؤقتة عند الحفظ — املأها عبر «تعديل الأسعار».",
           "products_help_with_prices_one": "اختر المنتجات التي تنطبق عليها هذه القائمة. تم ضبط سعر واحد ({{count}}) — استخدم «تعديل الأسعار» لتحديثه.",
@@ -3341,6 +3492,12 @@
           "sheet_title_create": "إنشاء قائمة الأسعار",
           "sheet_title_edit": "تعديل قائمة الأسعار",
           "subtitle": "تسعير مستهدف لمجموعات العملاء أو المناطق أو شرائح الحجم.",
+          "tiers": {
+            "add": "إضافة مستوى كمية",
+            "from": "من الكمية",
+            "quantity": "من الكمية",
+            "remove_short": "إزالة مستوى الكمية هذا"
+          },
           "title": "Price Lists",
           "unschedule": "إلغاء الجدول الزمني",
           "unschedule_confirm": {
@@ -3544,11 +3701,9 @@
           "search_placeholder": "البحث عن مواقع المخزون…"
         },
         "store": {
-          "default_package_description": "الصندوق المعتاد للشحن. يضيف مزوّدو أسعار النقل وزنه إلى كل طرد ويستخدمون أبعاده لتسعير الوزن الحجمي.",
           "subtitle": "التكوين العام والإعدادات الافتراضية على مستوى المتجر.",
           "tab_addresses": "العناوين",
           "tab_catalog": "الكتالوج",
-          "tab_default_package": "الطرد الافتراضي",
           "tab_general": "عام",
           "tab_inventory": "المخزون",
           "tab_order_numbers": "أرقام الطلبات",
@@ -3700,6 +3855,9 @@
         "payouts": {
           "title": "المدفوعات",
           "subtitle": "كيف ومتى يدفع هذا السوق لبائعيه."
+        },
+        "package_types": {
+          "add_sheet_title": "إضافة نوع تغليف"
         }
       },
       "staff": {
@@ -3786,16 +3944,24 @@
         "api_keys": "إنشاء بيانات اعتماد API وإلغاؤها",
         "categories": "شجرة الفئات والتصنيفات",
         "collections": "مجموعات المنتجات اليدوية والقائمة على القواعد",
+        "commissions": "معدلات العمولة وما يُحتسب على كل بائع",
         "customers": "حسابات العملاء والعناوين والبطاقات والمجموعات",
         "dashboard": "تحليلات المبيعات والأداء",
+        "delivery_methods": "خيارات الشحن والأسعار والقواعد التي تتحكم بها",
         "fulfillments": "تجهيز الطلبات وشحنها وتتبعها",
         "gift_cards": "بطاقات الهدايا ودفعاتها",
         "integrations": "بيانات اعتماد مزوّدي الخدمة واتصالاتهم",
+        "media": "الصور والفيديو والملفات في مكتبة الوسائط",
         "orders": "الطلبات وبنودها والإرجاعات والاستبدالات والمطالبات",
         "payments": "مدفوعات الطلبات وتحصيلها",
+        "payouts": "الأموال المدفوعة للبائعين وجدولها",
+        "product_types": "تعريفات أنواع المنتجات وحقولها المخصصة",
         "products": "المنتجات والمتغيرات والخيارات والأسعار والوسائط",
         "promotions": "العروض الترويجية والقواعد وأكواد الخصم",
+        "publishing": "ما يظهر في المتجر ومتى",
         "refunds": "إصدار المبالغ المستردة وعرضها",
+        "seller_profile": "بيانات البائع وعنوانه وسياساته",
+        "sellers": "حسابات البائعين والانضمام والموافقة",
         "settings": "إعدادات المتجر والدفع والتوصيل والضرائب والقنوات",
         "staff": "أعضاء الفريق والدعوات والأدوار وأذوناتها",
         "stock": "مستويات المخزون والمواقع والحركات والتحويلات",
@@ -3826,16 +3992,24 @@
         "api_keys": "API مفاتيح",
         "categories": "فئات",
         "collections": "المجموعات",
+        "commissions": "العمولات",
         "customers": "العملاء",
         "dashboard": "Dashboard",
+        "delivery_methods": "طرق التوصيل",
         "fulfillments": "Fulfillments",
         "gift_cards": "بطاقات الهدايا",
         "integrations": "عمليات التكامل",
+        "media": "الوسائط",
         "orders": "طلبات",
         "payments": "المدفوعات",
+        "payouts": "المدفوعات",
+        "product_types": "أنواع المنتجات",
         "products": "منتجات",
         "promotions": "الترقيات",
+        "publishing": "النشر",
         "refunds": "المبالغ المستردة",
+        "seller_profile": "ملف البائع",
+        "sellers": "البائعون",
         "settings": "إعدادات",
         "staff": "الفريق والأدوار",
         "stock": "مخزون",
@@ -3881,12 +4055,44 @@
     "preferences": {
       "additional_item": "Additional Item Cost",
       "amount": "كمية",
+      "api_key": "مفتاح API",
+      "api_key_description": "يوجد في لوحة تحكم EasyPost. مفتاح الاختبار والمفتاح الحي يعملان بشكل مختلف — المفتاح نفسه يحدد الوضع.",
       "base_amount": "Base Amount",
       "base_percent": "Base Percent",
+      "company_orders_only": "لطلبات الشركات فقط",
+      "company_orders_only_description": "عند التفعيل تُعرض هذه الطريقة على طلبات الشركات فقط، وعند الإيقاف على الطلبات الأخرى فقط. أزل القاعدة لعرضها للاثنين.",
       "currency": "Currency",
+      "customs_contents_type": "نوع محتويات البيان الجمركي",
+      "customs_contents_type_description": "ما يحتويه الطرد الدولي وفق تصنيف الجمارك.",
+      "customs_contents_type_options": {
+        "dangerous_goods": "بضائع خطرة",
+        "documents": "مستندات",
+        "gift": "هدية",
+        "humanitarian_donation": "تبرع إنساني",
+        "merchandise": "بضائع",
+        "returned_goods": "بضائع مرتجعة",
+        "sample": "عينة"
+      },
+      "customs_signer": "موقّع البيان الجمركي",
+      "customs_signer_description": "الشخص في شركتك الذي يتحمل المسؤولية القانونية عما يصرّح به الطرد الدولي.",
       "discount_amount": "Discount Amount",
       "first_item": "First Item Cost",
       "flat_percent": "Flat Percent",
+      "incoterm": "الرسوم والضرائب (إنكوترمز)",
+      "incoterm_description": "من يدفع الرسوم عند الوصول. DAP تُحمّل المستلم، وDDP تُحمّلك أنت — لا تختر DDP إلا إذا كنت تحصّل الرسوم عند الدفع.",
+      "incoterm_options": {
+        "CFR": "CFR",
+        "CIF": "CIF",
+        "CIP": "CIP",
+        "CPT": "CPT",
+        "DAT": "DAT",
+        "DAP": "DAP",
+        "DDP": "DDP",
+        "EXW": "EXW",
+        "FAS": "FAS",
+        "FCA": "FCA",
+        "FOB": "FOB"
+      },
       "max_items": "Max Items",
       "max_quantity": "الحد الأقصى للكمية",
       "maximum_item_total": "الحد الأقصى لإجمالي المنتجات",
@@ -3898,7 +4104,9 @@
       "normal_amount": "Normal Amount",
       "percent": "نسبة مئوية",
       "preferred_amount": "كمية",
-      "preferred_percent": "نسبة مئوية"
+      "preferred_percent": "نسبة مئوية",
+      "webhook_secret": "مفتاح توقيع الويب هوك",
+      "webhook_secret_description": "السر الذي ضبطته على ويب هوك EasyPost. بدونه تُرفض تحديثات شركة الشحن."
     },
     "product_types": {
       "add_cta": "إضافة نوع منتج",
@@ -4027,7 +4235,9 @@
           "adjustment_required": "أدخل نسبة مئوية.",
           "adjustment_too_deep": "يجب أن تكون أقل من 100%.",
           "ends_after_starts": "يجب أن يكون بعد تاريخ البدء.",
-          "minimum_quantity_invalid": "أدخل عددًا صحيحًا."
+          "minimum_quantity_invalid": "أدخل عددًا صحيحًا.",
+          "tier_percentage_invalid": "كل مستوى يحتاج نسبة أقل من 100.",
+          "tier_quantity_invalid": "كل مستوى يحتاج كمية خاصة به أكبر من 1."
         }
       },
       "product_type_adds_options_one": "يضيف هذا النوع {{options}} إلى المنتجات الجديدة.",
@@ -4117,7 +4327,11 @@
           "identity": "هوية",
           "tax_category_placeholder": "ترث من المنتج",
           "ordering": "الطلب للشركات",
-          "ordering_help": "الكمية التي يجب على المشتري أخذها. لا يزال المخزون يُحسب بالوحدات."
+          "ordering_help": "الكمية التي يجب على المشتري أخذها. لا يزال المخزون يُحسب بالوحدات.",
+          "packing": "التعبئة",
+          "packing_help": "كيف يغادر هذا المنتج المستودع بالجملة. تُبنى عروض أسعار الشحن على هذه الأرقام.",
+          "carton_placeholder": "بدون كرتونة",
+          "pending_save": "تُحفظ التغييرات هنا مع المنتج."
         },
         "title": "المتغيرات",
         "variant_label": "البديل"
@@ -4134,24 +4348,6 @@
       },
       "action_summary": {
         "variant_count": "{{count}} متغيرات"
-      },
-      "action_types": {
-        "create_adjustment": {
-          "description": "يقوم بإنشاء تعديل ائتمان ترويجي على الأمر",
-          "name": "إنشاء تعديل الطلب بالكامل"
-        },
-        "create_item_adjustments": {
-          "description": "إنشاء تسوية رصيد ترويجي على أحد البنود",
-          "name": "إنشاء تعديل لكل بند"
-        },
-        "create_line_items": {
-          "description": "تعبئة سلة التسوق بالكمية المحددة من المتغير",
-          "name": "إنشاء عناصر سطرية"
-        },
-        "free_shipping": {
-          "description": "يجعل جميع الشحنات للطلب مجانية",
-          "name": "ًالشحن مجانا"
-        }
       },
       "actions_card": {
         "add_action": "أضف الإجراء",
@@ -4232,52 +4428,6 @@
         "category_count": "{{count}} فئات",
         "customer_count": "{{count}} عملاء",
         "product_count": "{{count}} منتجات"
-      },
-      "rule_types": {
-        "category": {
-          "description": "يتضمن الطلب منتجات في فئات محددة",
-          "name": "فئات"
-        },
-        "country": {
-          "description": "يقتصر على الطلبات التي لها عنوان شحن في بلد معين",
-          "name": "دولة"
-        },
-        "currency": {
-          "description": "الحد من الطلبات بعملة معينة",
-          "name": "Currency"
-        },
-        "customer": {
-          "description": "متاح فقط للعملاء المحددين",
-          "name": "العملاء"
-        },
-        "customer_group": {
-          "description": "متاح فقط للعملاء في مجموعة (مجموعات) العملاء المحددة",
-          "name": "العميل Group(s)"
-        },
-        "customer_logged_in": {
-          "description": "متاح فقط للأشخاص الذين قاموا بتسجيل الدخول custom",
-          "name": "الأشخاص الذين قاموا بتسجيل الدخول فقط custom"
-        },
-        "first_order": {
-          "description": "يجب أن يكون الطلب الأول للعميل",
-          "name": "الطلب الأول"
-        },
-        "item_total": {
-          "description": "إجمالي الطلب يلبي هذه المعايير",
-          "name": "إجمالي السلعة"
-        },
-        "one_use_per_user": {
-          "description": "Only One Use Per User",
-          "name": "One Use Per User"
-        },
-        "option_value": {
-          "description": "يتضمن الطلب منتجات ذات قيمة (قيم) خيار متطابقة",
-          "name": "Option Value(s)"
-        },
-        "product": {
-          "description": "يتضمن الطلب منتجًا (منتجات) محددة",
-          "name": "Product(s)"
-        }
       },
       "rule_types_all_used": "كل نوع قاعدة متاح موجود بالفعل في هذا العرض الترويجي.",
       "rule_types_empty": "لم يتم تسجيل أي أنواع قواعد.",
@@ -4387,7 +4537,7 @@
         "message": "لن يعود {{name}} متاحًا. تحتفظ به السجلات التي تستخدمه بالفعل.",
         "title": "حذف السبب؟"
       },
-      "description": "القوائم التي يختار منها فريقك عند معالجة المرتجعات والمطالبات والمبالغ المستردة.",
+      "description": "قوائم الأسباب التي يختار منها فريقك عند التعامل مع المرتجعات والمطالبات والمبالغ المستردة والإلغاءات.",
       "edit_sheet_title": "تعديل السبب",
       "empty": "لا توجد أسباب بعد",
       "in_use": "قيد الاستخدام",
@@ -4399,6 +4549,10 @@
         "updated": "تم تحديث السبب"
       },
       "name_placeholder": "مثال: مقاس غير مناسب",
+      "order_cancellation": {
+        "help": "سبب إلغاء الطلب قبل شحنه. يختار الموظفون سببًا عند الإلغاء.",
+        "title": "أسباب إلغاء الطلبات"
+      },
       "refund": {
         "help": "سبب إعادة الأموال. يُستخدم في تقارير جميع المبالغ المستردة.",
         "title": "أسباب رد المبلغ"
@@ -4496,17 +4650,6 @@
           "help": "يجب إنجاز العناصر المطلوبة قبل الموافقة. أما الباقي فيُعرض كموصى به.",
           "label": "مطلوب"
         }
-      },
-      "kinds": {
-        "accept_terms": "قبول الشروط",
-        "attestation": "إقرار البائع",
-        "billing_address": "عنوان الفوترة",
-        "complete_profile": "استكمال الملف",
-        "document": "مستند",
-        "minimum_products": "الحد الأدنى للمنتجات",
-        "operator_review": "مراجعة يدوية",
-        "required_custom_fields": "الحقول المخصصة المطلوبة",
-        "returns_address": "عنوان المرتجعات"
       },
       "messages": {
         "created": "تمت إضافة المتطلب",
@@ -4745,7 +4888,8 @@
         "tax_categories": "فئات الضريبة المخصصة للمنتجات",
         "tax_rates": "النسب المطبقة حسب السوق والمنطقة",
         "webhooks": "نقاط النهاية التي تُخطر عند وقوع الأحداث",
-        "payouts": "من يدفع لبائعيك، وكم مرة، والحد الأدنى الذي يستحق الإرسال"
+        "payouts": "من يدفع لبائعيك، وكم مرة، والحد الأدنى الذي يستحق الإرسال",
+        "package_types": "صناديق وكراتين ومنصات وحاويات"
       },
       "groups": {
         "audit": "التدقيق",
@@ -4781,7 +4925,8 @@
         "tax_categories": "فئات الضريبة",
         "tax_rates": "نسب الضريبة",
         "webhooks": "Webhooks",
-        "payouts": "المدفوعات"
+        "payouts": "المدفوعات",
+        "package_types": "أنواع التغليف"
       }
     },
     "setup": {
@@ -4854,6 +4999,7 @@
         "default": "تقصير",
         "location": "موقع",
         "pickup": "يلتقط",
+        "returns": "المرتجعات",
         "type": "يكتب"
       },
       "create_description": "أضف مستودعًا أو متجرًا أو نقطة استلام لتلبية الطلبات منها.",
@@ -4874,6 +5020,8 @@
         "local": "العناصر فقط في هذا الموقع"
       },
       "search_placeholder": "البحث بالاسم…",
+      "section_behavior": "السلوك",
+      "section_details": "التفاصيل",
       "section_pickup": "يلتقط",
       "stock_levels": {
         "empty": "لا توجد مستويات مخزون في هذا الموقع حتى الآن.",
@@ -5086,6 +5234,43 @@
       "saved": "تم حفظ الترجمات",
       "source": "المصدر",
       "title": "الترجمات"
+    },
+    "package_types": {
+      "table_title": "أنواع التغليف",
+      "search_placeholder": "ابحث عن تغليف",
+      "empty": "لا يوجد تغليف بعد. أضف صندوق الشحن، والكراتين والمنصات التي تغادر بها طلبات الجملة.",
+      "add_cta": "إضافة نوع تغليف",
+      "default_badge": "افتراضي",
+      "edit_sheet_title": "نوع التغليف",
+      "create_description": "علبة أو كرتونة أو منصة نقالة أو حاوية تُعبأ فيها السلع.",
+      "edit_description": "المنتجات المعبأة في هذه الكرتونة تتبع مقاساتها، فتعديل واحد يصحّحها جميعًا.",
+      "dimensions_column": "الأبعاد",
+      "volume_column": "الحجم",
+      "kinds": {
+        "box": "صندوق",
+        "envelope": "ظرف",
+        "carton": "كرتونة",
+        "pallet": "منصة",
+        "container": "حاوية"
+      },
+      "messages": {
+        "added": "تمت إضافة نوع التغليف",
+        "updated": "تم تحديث نوع التغليف",
+        "deleted": "تم حذف نوع التغليف"
+      },
+      "delete_confirm": {
+        "title": "حذف نوع التغليف؟",
+        "message": "سيتم حذف {{name}}. يجب أولًا إعادة تعبئة المنتجات المعبأة فيه."
+      },
+      "validation": {
+        "non_negative": "يجب أن يكون صفرًا أو أكثر"
+      },
+      "columns": {
+        "seller": "المالك"
+      },
+      "owner": {
+        "marketplace": "السوق"
+      }
     }
   }
 }

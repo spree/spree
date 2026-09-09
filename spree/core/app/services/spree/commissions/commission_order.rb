@@ -29,7 +29,14 @@ module Spree
       # @return [Array<Spree::CommissionLine>] the lines written, empty when
       #   there was nothing to commission
       def call(order:)
-        return success([]) if order.commission_lines.exists?
+        if order.commission_lines.exists?
+          # Refreshed rather than assumed: a replayed placement can arrive
+          # between the winner writing its rows and stamping the columns, and
+          # returning here without re-summing would leave the order reporting
+          # no commission on a sale that was charged for.
+          refresh_commission_totals(order)
+          return success([])
+        end
 
         commissioned = order.line_items.
                        includes(seller: :billing_address, variant: { product: :categories }).
@@ -54,16 +61,51 @@ module Spree
           end
         end
 
+        refresh_commission_totals(order)
+
         success(lines)
       rescue ActiveRecord::RecordNotUnique
         # Another delivery of the same event got there first. The unique index
         # on line item and fulfillment is what makes that safe: the winner's
         # rows are the record, and the loser reports them rather than failing a
         # checkout over work already done.
+        refresh_commission_totals(order)
+
         success(order.commission_lines.reload.to_a)
       end
 
       private
+
+      # Denormalizes what the marketplace just earned onto the order.
+      #
+      # Written here rather than left to the totals workflow because commission
+      # is charged after the last recalculation has already run — placement
+      # publishes the event this service answers. The columns are sums only;
+      # they stay out of the order's grand total, which the shopper pays.
+      #
+      # Fee and its tax are kept apart because the tax is separately
+      # reportable: the platform files it as output tax on a B2B supply and
+      # the seller reclaims it as input tax.
+      #
+      # The gross is added up from the two parts rather than summed from the
+      # rows' own `total`, so the three columns always agree. They need not
+      # otherwise: a line rounds to its currency's precision (three places for
+      # KWD and its neighbours) while every column is scale 2, and the parts
+      # and the gross each round independently on the way in.
+      #
+      # Skips the write when nothing moved, so a replayed placement does not
+      # bump `updated_at` and invalidate every cache keyed on this order.
+      def refresh_commission_totals(order)
+        lines = order.commission_lines.reload.to_a
+        amount = lines.sum(&:amount)
+        tax = lines.sum(&:tax_amount)
+
+        totals = { commission_amount_total: amount, commission_tax_total: tax,
+                   commission_total: amount + tax }
+        return if totals.all? { |column, value| order.public_send(column) == value }
+
+        order.update_columns(totals.merge(updated_at: Time.current))
+      end
 
       def commission_seller(order:, seller:, line_items:, rates:, categories:, deliveries:)
         matched = line_items.filter_map do |line_item|

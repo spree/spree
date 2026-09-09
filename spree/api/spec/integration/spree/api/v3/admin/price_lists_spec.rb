@@ -453,20 +453,47 @@ RSpec.describe 'Admin Price Lists API', type: :request, swagger_doc: 'api-refere
       tags 'Price Lists'
       produces 'application/json'
       security [api_key: [], bearer_auth: []]
-      description 'The products the list prices, listed by name — membership is derived from the price rows.'
+      description <<~DESC
+        The products the list prices, listed by name — membership is derived from the price rows.
+        `expand=price_list_price` adds what the list charges for each variant, with its quantity
+        breaks as tiers, the same reading a catalog's products carry.
+      DESC
       admin_scope :read, :products
 
       parameter name: 'x-spree-api-key', in: :header, type: :string, required: true
       parameter name: :Authorization, in: :header, type: :string, required: true
       parameter name: :price_list_id, in: :path, type: :string, required: true
+      parameter name: :expand, in: :query, type: :string, required: false,
+                description: 'Comma-separated. `price_list_price` adds the resolved price to every row.',
+                example: 'price_list_price'
 
       response '200', 'products found' do
         let(:'x-spree-api-key') { secret_api_key.plaintext_token }
         let(:price_list_id) { price_list.prefixed_id }
+        let(:expand) { nil }
 
-        schema SwaggerSchemaHelpers.paginated('Product')
+        schema SwaggerSchemaHelpers.paginated('PriceListProduct')
 
         run_test!
+      end
+
+      response '200', 'products found, with what the list charges' do
+        let(:'x-spree-api-key') { secret_api_key.plaintext_token }
+        let(:price_list_id) { price_list.prefixed_id }
+        let(:expand) { 'price_list_price' }
+        let(:product) { create(:product, store: store, price: 100) }
+
+        before do
+          price_list.add_products([product.id])
+          create(:price, variant: product.default_variant, price_list: price_list, currency: 'USD', min_quantity: 24, amount: 80)
+        end
+
+        schema SwaggerSchemaHelpers.paginated('PriceListProduct')
+
+        run_test! do |response|
+          row = JSON.parse(response.body)['data'].first
+          expect(row['price_list_variants'].first['tiers'].first['min_quantity']).to eq(24)
+        end
       end
     end
 

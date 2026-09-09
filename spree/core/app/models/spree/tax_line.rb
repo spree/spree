@@ -73,7 +73,7 @@ module Spree
     private
 
     def exactly_one_adjustable
-      errors.add(:base, Spree.t('errors.messages.exactly_one_adjustable')) unless [line_item, fulfillment, fee].compact.one?
+      errors.add(:base, :exactly_one_adjustable, message: Spree.t('errors.messages.exactly_one_adjustable')) unless [line_item, fulfillment, fee].compact.one?
     end
   end
 end

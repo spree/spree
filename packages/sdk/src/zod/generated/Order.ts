@@ -12,6 +12,8 @@ import { PaymentSchema } from './Payment';
 export const OrderSchema = z.object({
   id: z.string(),
   market_id: z.string().nullable(),
+  withdrawal_period_ends_at: z.string().nullable(),
+  within_withdrawal_period: z.boolean(),
   cart_id: z.string().nullable(),
   channel_id: z.string().nullable(),
   company_id: z.string().nullable(),

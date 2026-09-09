@@ -164,7 +164,7 @@ RSpec.describe Spree::Addresses::Update do
             expect(value.id).not_to eq(address.id)
             expect(value.country).to eq(country)
             expect(value.state).to eq(state)
-            expect(value.user).to eq(user)
+            expect(value.owner).to eq(user)
             expect(address.deleted_at).not_to be_nil
           end
 

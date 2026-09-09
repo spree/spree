@@ -197,12 +197,14 @@ function RequirementAction({ requirement }: { requirement: RequirementStatus }) 
   const [file, setFile] = useState<FileUploadValue>(EMPTY_FILE_UPLOAD_VALUE)
   const [fields, setFields] = useState<Record<string, string>>({})
 
-  // Only the address kinds need it, and it is already loaded by the profile
-  // page and the sidebar switcher — this reads the same cache entry.
+  // Only the billing address needs it, and it is already loaded by the
+  // profile page and the sidebar switcher — this reads the same cache entry.
+  // The returns address does not: it lives on a stock location, which its own
+  // card fetches.
   const { data: profile } = useQuery({
     queryKey: ['seller', sellerId, 'profile'],
     queryFn: () => sellerClient().profile.get(),
-    enabled: isAddressKind(requirement.kind),
+    enabled: requirement.kind === 'billing_address',
   })
 
   const invalidate = () =>
@@ -478,11 +480,6 @@ function RequirementAction({ requirement }: { requirement: RequirementStatus }) 
   )
 }
 
-/** Kinds the seller satisfies by filling an address, rendered inline. */
-function isAddressKind(kind: string): boolean {
-  return kind === 'billing_address' || kind === 'returns_address'
-}
-
 /**
  * Where in this panel a seller goes to satisfy a kind.
  *
@@ -497,6 +494,10 @@ function panelRoute(kind: string): string | undefined {
       return '/$sellerId/profile'
     case 'policy':
       return '/$sellerId/settings/policies'
+    case 'delivery_method':
+      return '/$sellerId/settings/delivery-methods'
+    case 'package_type':
+      return '/$sellerId/settings/package-types'
     // `required_custom_fields` is not here: it renders its own fields inline,
     // so a link away would offer a second, worse route to the same thing.
     //

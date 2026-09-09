@@ -98,7 +98,7 @@ describe Spree.customer_class, type: :model do # rubocop:disable RSpec/MultipleD
     context 'payment source' do
       let(:payment_method) { create(:credit_card_payment_method) }
       let!(:cc) do
-        create(:credit_card, user_id: user.id, payment_method: payment_method, gateway_customer_profile_id: '2342343')
+        create(:credit_card, customer_id: user.id, payment_method: payment_method, gateway_customer_profile_id: '2342343')
       end
 
       it 'has payment sources' do
@@ -301,7 +301,7 @@ describe Spree.customer_class, type: :model do
     end
 
     context 'user has several associated store credits' do
-      subject { store_credit.user }
+      subject { store_credit.customer }
 
       let(:user) { create(:user) }
       let(:usd_amount) { 120.25 }
@@ -335,9 +335,9 @@ describe Spree.customer_class, type: :model do
     let(:address2) { create(:address) }
 
     before do
-      address.user = subject
+      address.owner = subject
       address.save
-      address2.user = subject
+      address2.owner = subject
       address2.save
     end
 

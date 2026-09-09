@@ -31,4 +31,23 @@ describe Spree::CustomerMailer, type: :mailer do
       expect(message).to have_body_text("https://storefront.example.com/account/reset-password?token=#{reset_token}")
     end
   end
+
+  describe '#data_export_email' do
+    let(:data_request) { create(:data_request, store: store, customer: user) }
+
+    before { Spree::DataRequests::Fulfill.call(data_request: data_request) }
+
+    it 'sends to the person who asked for their data' do
+      message = described_class.data_export_email(data_request.reload)
+
+      expect(message.to).to eq(['customer@example.com'])
+      expect(message.subject).to eq("#{store.name} #{Spree.t('customer_mailer.data_export_email.subject')}")
+    end
+
+    it 'carries a link to the file' do
+      message = described_class.data_export_email(data_request.reload)
+
+      expect(message).to have_body_text(Spree.t('customer_mailer.data_export_email.action'))
+    end
+  end
 end

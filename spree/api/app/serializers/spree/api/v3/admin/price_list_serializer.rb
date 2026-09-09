@@ -47,6 +47,12 @@ module Spree
             pl.prices.count
           end
 
+          # Always expanded: a list's bands are the rest of the sentence its
+          # percentage starts, and the pricing card cannot render one without
+          # the other.
+          many :price_adjustment_tiers,
+               resource: proc { Spree.api.admin_price_adjustment_tier_serializer }
+
           many :price_rules,
                resource: proc { Spree.api.admin_price_rule_serializer },
                if: proc { expand?('price_rules') }

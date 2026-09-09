@@ -74,19 +74,6 @@
       },
       "warning_treat_like_password": "请像对待密码一样对待此密钥。将其存储在密钥管理器中——我们无法再次显示它。"
     },
-    "calculators": {
-      "default_refund_amount": "默认退款金额",
-      "default_tax": "默认税费",
-      "digital_delivery": "数字交付",
-      "flat_percent_item_total": "固定百分比",
-      "flat_rate": "固定费率",
-      "flexi_rate": "弹性费率",
-      "per_item": "按件计费",
-      "percent_on_line_item": "按订单项百分比",
-      "price_sack": "价格袋",
-      "tiered_flat_rate": "阶梯固定费率",
-      "tiered_percent": "阶梯百分比"
-    },
     "catalogs": {
       "actions": {
         "activate": "启用",
@@ -110,6 +97,8 @@
         "audience_label": "受众",
         "audience_placeholder": "搜索…",
         "company_subtree_help": "分配给公司将覆盖其整个子树。",
+        "customer_group_help": "分配给客户组的目录只对所属公司没有自己目录的买家生效。",
+        "customer_group_precedence": "公司分配优先。如果买家所属公司（或其上级公司）有任何目录，则以这些目录为准，其客户组不会被考虑。若要为公司买家设置分级价格，请将该目录改为分配给他们的公司或下属单位。",
         "dialog_description": "谁能看到该目录。分配给公司将覆盖该节点及其下所有单位。",
         "empty": "尚未分配给任何受众——没有人能看到该目录。",
         "empty_description": "指定公司或客户组，以决定本目录面向谁。",
@@ -158,10 +147,9 @@
         "updated": "目录已更新"
       },
       "prices": {
+        "after_save": "保存后",
         "column_price": "价格",
         "column_source": "来源",
-        "unpriced": "无价格",
-        "after_save": "保存后",
         "source": {
           "explicit": "已录入",
           "automatic": "已调整",
@@ -171,7 +159,15 @@
           "explicit": "在本目录自有价格表中录入的金额。",
           "automatic": "店铺价应用本目录百分比后的结果。",
           "base": "普通店铺价 — 本目录未为该商品定价。"
-        }
+        },
+        "tier_count_one": "+{{count}} 档",
+        "tier_count_other": "+{{count}} 档",
+        "tier_fixed_note": "目录的百分比调整不适用于此处。这些阶梯固定了价格。",
+        "tier_from_one": "满 {{count}}",
+        "tier_from_other": "满 {{count}}",
+        "tier_preview": "此协议的计价",
+        "unpriced": "无价格",
+        "variant_default": "默认"
       },
       "products": {
         "add_cta": "添加产品",
@@ -406,20 +402,6 @@
         "is_equal_to": "等于",
         "is_not_equal_to": "不等于"
       },
-      "rule_types": {
-        "available_on": {
-          "description": "最近 N 天内上架的商品",
-          "name": "近期上架"
-        },
-        "sale": {
-          "description": "当前价格低于对比价的商品",
-          "name": "特价中"
-        },
-        "tag": {
-          "description": "带有匹配标签的商品",
-          "name": "标签"
-        }
-      },
       "rules": {
         "add": "添加规则",
         "description": "手动选择商品，或由规则自动维护系列。",
@@ -466,13 +448,17 @@
       },
       "edit_description": "更新费用、上下限以及适用的销售范围。",
       "empty": "暂无佣金费率",
+      "flat_fee_exceeds_sale_warning": "此费用按每件售出商品全额收取。对于低价商品，佣金可能超过卖家从该笔销售中获得的收入。请在下方设置最高限额，以限制单笔销售行的收费上限。",
       "messages": {
         "created": "佣金费率已创建",
         "deleted": "佣金费率已删除",
         "updated": "佣金费率已更新"
       },
       "order_hint": "新费率会添加到列表顶部，首个匹配的费率生效——拖动可调整顺序。",
-      "search_placeholder": "按名称搜索…"
+      "search_placeholder": "按名称搜索…",
+      "validation": {
+        "percentage_exceeds_one_hundred": "佣金百分比不能超过 100%。"
+      }
     },
     "companies": {
       "add_cta": "添加公司",
@@ -643,6 +629,7 @@
       },
       "columns": {
         "companies": "公司",
+        "erased": "已抹除",
         "groups": "分组",
         "last_order": "最近订单",
         "newsletter": "订阅资讯",
@@ -654,7 +641,7 @@
           "delete_confirm_message": "删除此地址？"
         },
         "customer_since": "注册时间",
-        "delete_label": "删除客户",
+        "delete_confirm_message": "此操作会完全移除账户，客户完成订单后将不再可用。若要回应已购买客户的删除请求，请改用“抹除个人数据”。",
         "edit_profile_description": "更新客户的个人资料信息。",
         "groups": {
           "edit_description": "添加或移除此客户所属的群组。",
@@ -683,6 +670,14 @@
           "title": "商店积分"
         },
         "subscribed_to_marketing": "已订阅营销资讯"
+      },
+      "erased": {
+        "badge": "已抹除",
+        "name": "(已抹除)"
+      },
+      "filters": {
+        "erased": "已抹除",
+        "not_erased": "未抹除"
       },
       "groups": {
         "bulk_add_action": "添加到分组…",
@@ -718,8 +713,20 @@
         "view_members": "查看成员"
       },
       "new_sheet_description": "在此创建的客户未设置密码。他们首次登录时将收到一个魔法链接。",
-      "row_actions": {
-        "delete_confirm": "删除 {{email}}？已有已完成订单的客户无法被移除。"
+      "privacy": {
+        "already_anonymized": "个人数据已于 {{date}} 抹除",
+        "anonymize": "抹除个人数据",
+        "anonymize_confirm_message": "其姓名、邮箱、电话和地址将在所有位置被替换，并且该客户会被登出。订单和付款记录将保留，但不含个人信息。此操作无法撤销。",
+        "anonymize_confirm_title": "确定抹除该客户的个人数据吗？",
+        "consent_updated": "营销同意最近更新于 {{date}}",
+        "description": "响应数据保护请求。客户的订单和余额将保留；其个人信息会从商店保存的所有位置移除。",
+        "export": "导出数据",
+        "export_failed": "无法导出数据",
+        "messages": {
+          "anonymized": "个人数据已抹除"
+        },
+        "title": "隐私与数据",
+        "anonymize_again": "再次抹除"
       },
       "table": {
         "empty": "暂无客户",
@@ -1118,6 +1125,10 @@
         },
         "enabled": {
           "help": "停用的费率在计费时会被跳过。"
+        },
+        "flat_fee_cap": {
+          "help": "可选的单笔销售行收费上限。留空则收取完整的固定费用。",
+          "label": "每笔销售行最高限额（可选）"
         },
         "include_shipping": {
           "help": "同时对卖家的配送收入收取佣金。",
@@ -1559,6 +1570,15 @@
         },
         "adjustment_magnitude": {
           "label": "百分比"
+        },
+        "adjustment_tiers": {
+          "add": "添加数量阶梯",
+          "empty": "暂无阶梯——上面的百分比适用于所有数量。",
+          "help": "达到各档数量后，协议改用该百分比。每档都按基础价格计算，而不是在上一档的基础上叠加。",
+          "label": "数量阶梯",
+          "percentage": "百分比",
+          "quantity": "起订量",
+          "remove": "删除 {quantity} 起的阶梯"
         },
         "description": {
           "label": "描述",
@@ -2016,17 +2036,6 @@
           "label": "后台语言",
           "placeholder": "使用默认语言"
         },
-        "preferred_default_package_dimensions": {
-          "height": "高",
-          "help": "常用的发货纸箱尺寸,承运商费率提供方据此计算体积重量——英制为英寸,公制为厘米。三项都填写后才生效。",
-          "label": "默认包裹尺寸",
-          "length": "长",
-          "width": "宽"
-        },
-        "preferred_default_package_weight": {
-          "help": "计算配送费率时加到每个包裹内容上的包装重量(纸箱与填充物)。设为 0 可停用。",
-          "label": "默认包裹重量"
-        },
         "preferred_send_consumer_transactional_emails": {
           "help": "关闭后，将不会发送订单确认、发货或退款邮件。",
           "label": "向客户发送交易类邮件"
@@ -2267,7 +2276,19 @@
         "units_per_carton": {
           "label": "每箱件数"
         },
-        "quantity_rule_invalid": "请输入大于零的整数，或留空。"
+        "quantity_rule_invalid": "请输入大于零的整数，或留空。",
+        "carton_package_type_id": {
+          "label": "纸箱",
+          "help": "此商品所装的纸箱。同样装法的商品共用它的尺寸。"
+        },
+        "carton_weight": {
+          "label": "整箱重量",
+          "help": "装满一箱后的重量。"
+        },
+        "cartons_per_pallet": {
+          "label": "每托盘箱数"
+        },
+        "carton_weight_invalid": "请输入大于零的整箱重量，或留空。"
       },
       "webhook_endpoint": {
         "active": {
@@ -2295,6 +2316,45 @@
       "order_multiple": {
         "label": "订购倍数",
         "help": "在最小起订量之上的每一档增量。留空表示不限数量。"
+      },
+      "package_type": {
+        "name": {
+          "label": "名称"
+        },
+        "kind": {
+          "label": "类型",
+          "help": "只有外箱可以作为商品的包装。"
+        },
+        "length": {
+          "label": "长"
+        },
+        "width": {
+          "label": "宽"
+        },
+        "height": {
+          "label": "高"
+        },
+        "dimensions_unit": {
+          "label": "单位"
+        },
+        "dimensions": {
+          "help": "用于承运商的体积重量，以及运费档位比较的立方米。"
+        },
+        "weight": {
+          "label": "空重",
+          "help": "包装本身的重量，计入所装货物之外。"
+        },
+        "max_weight": {
+          "label": "最大承重",
+          "help": "可承载的重量。"
+        },
+        "weight_unit": {
+          "label": "单位"
+        },
+        "default": {
+          "label": "默认包装",
+          "help": "您的包裹报价所依据的包装。同一时间只能有一个默认包装。"
+        }
       }
     },
     "gift_cards": {
@@ -2530,20 +2590,6 @@
       "messages": {
         "created": "已添加路由规则",
         "deleted": "已移除路由规则"
-      },
-      "types": {
-        "default_location": {
-          "description": "优先选择标记为默认的库存地点",
-          "name": "默认库存地点"
-        },
-        "minimize_splits": {
-          "description": "优先选择能独立满足最多商品的地点，避免拆分发货",
-          "name": "减少拆单"
-        },
-        "preferred_location": {
-          "description": "如订单已指定库存地点，则从该地点发货",
-          "name": "首选库存地点"
-        }
       }
     },
     "orders": {
@@ -2620,6 +2666,33 @@
           "value_type_flat": "金额",
           "value_type_percent": "百分比"
         },
+        "cancel": {
+          "description": "取消原因和备注将记录在订单上，相关付款也会一并结清。",
+          "keep_order": "保留订单",
+          "no_reason": "未填写原因",
+          "note_label": "备注",
+          "note_placeholder": "此备注仅员工可见",
+          "notify_customer": "通过电子邮件通知客户",
+          "reason_label": "原因",
+          "refund_payments": "向客户退款",
+          "refund_payments_help": "已扣取的款项将退回。未使用的授权无论如何都会释放。"
+        },
+        "commission_lines": {
+          "column_fee": "佣金",
+          "column_rate": "费率",
+          "column_subject": "商品",
+          "column_tax": "税费",
+          "column_total": "合计",
+          "delivery": "配送",
+          "empty": "此订单未收取佣金。",
+          "line_item_fallback": "订单行",
+          "rate_named_fixed": "{{name}} · {{amount}}",
+          "rate_named_percentage": "{{name}} · {{rate}}%",
+          "rate_unknown": "已删除的费率",
+          "subject_fallback": "销售",
+          "title": "佣金",
+          "total": "合计"
+        },
         "completed_prefix": "已完成",
         "confirm": {
           "approve_message": "批准此订单吗？",
@@ -2630,7 +2703,6 @@
           "remove_gift_card_message": "从订单中移除此礼品卡吗？",
           "remove_item_message": "从订单中移除此商品吗？",
           "remove_store_credit_message": "从订单中移除商店积分吗？",
-          "resume_message": "恢复此已取消的订单吗？",
           "ship_message": "发货此履约单吗？",
           "void_message": "作废此付款吗？"
         },
@@ -2655,28 +2727,63 @@
           "approve_failed": "批准订单失败",
           "cancel_failed": "取消订单失败",
           "complete_failed": "完成订单失败",
-          "confirmation_send_failed": "发送确认失败",
-          "resume_failed": "恢复订单失败"
+          "confirmation_send_failed": "发送确认失败"
         },
         "fulfillments": {
+          "add_delivery": "添加运单号",
           "add_tracking": "添加物流跟踪",
           "add_tracking_title": "添加物流跟踪",
+          "awaiting_fulfillment_one": "还有 {{count}} 件商品待履行",
+          "awaiting_fulfillment_other": "还有 {{count}} 件商品待履行",
+          "awaiting_hint": "添加履行项以发货。",
+          "awaiting_hint_draft": "订单下单后即可履行。",
           "buy_label": "购买面单",
           "buy_label_confirm": "为此包裹购买运输面单?面单签发后将立即从您的承运商账户扣费。",
           "buy_label_confirm_rate": "以 {{cost}} 购买 {{rate}} 面单?面单签发后将立即从您的承运商账户扣费。",
+          "buy_label_pending_file": "承运商的副本仍在下载中；打印将打开承运商自己的链接。",
           "carrier_auto": "自动识别",
           "carrier_label": "承运商",
+          "carrier_search": "搜索承运商",
+          "carrier_status_available_for_pickup": "可自提",
+          "carrier_status_delivered": "已送达",
+          "carrier_status_failure": "投递失败",
+          "carrier_status_in_transit": "运输中",
+          "carrier_status_out_for_delivery": "派送中",
+          "carrier_status_pending": "等待承运商",
+          "carrier_status_pre_transit": "已创建面单",
+          "carrier_status_return_to_sender": "退回发件人",
+          "carrier_status_unknown": "状态未知",
+          "confirm_delete_delivery": "删除此运单号？此操作立即生效。",
+          "confirm_delete_label": "删除此面单？文件将从订单中移除。此操作立即生效。",
+          "confirm_refund_label": "请求承运商退还此面单？邮资将退回您的承运商账户。",
           "confirm_split": "将这些数量移入新的发货单？此操作立即生效。",
           "create_description": "创建发货单并将所选数量移入其中。",
           "create_items": "商品项",
           "create_title": "添加发货单",
+          "delete_label": "删除面单",
+          "deliveries_title": "物流跟踪",
           "delivery_method": "配送方式",
+          "document_kinds": {
+            "certificate_of_origin": "原产地证书",
+            "cn22": "报关单 CN22",
+            "cn23": "报关单 CN23",
+            "commercial_invoice": "商业发票",
+            "customs_form": "报关单",
+            "form": "文件"
+          },
+          "documents_title": "运输文件",
           "edit_description": "修改此发货单的发货地以及承运的配送方式。",
           "edit_title": "编辑发货单",
           "edit_tracking_title": "编辑物流跟踪",
           "empty": "此订单暂无发货单。",
           "free": "免费",
+          "label_cost": "邮资",
+          "label_refund_requested": "已申请退款",
+          "label_refunded": "已退款",
+          "label_title": "运输面单",
+          "label_uploaded": "已上传",
           "mark_delivered": "标记为已送达",
+          "mark_delivery_delivered": "标记为已送达",
           "move_and_requote": "移动并重新报价",
           "no_rates": "此发货单暂无可用的配送方式。",
           "out_of_stock": "无库存",
@@ -2684,6 +2791,8 @@
           "print_label": "打印面单",
           "print_packing_slip": "打印装箱单",
           "rates_pending_origin": "保存新的发货地后即可查看该地可用的配送方式。",
+          "refund_label": "退还面单",
+          "retry_refund_label": "重试退款",
           "ship_to": "收货地址",
           "ships_from": "发货地",
           "split": "拆分",
@@ -2693,7 +2802,12 @@
           "split_title": "拆分发货单",
           "split_would_empty": "请至少保留一件，或改为修改整个发货单的发货地。",
           "tracking_description": "承运商的物流单号，或完整的跟踪链接。",
-          "unfulfilled_other": "未发货（{{count}}）"
+          "unfulfilled_other": "未发货（{{count}}）",
+          "upload_label": "上传面单",
+          "upload_label_cost": "邮资费用",
+          "upload_label_description": "记录在别处购买的面单，让包裹拥有自己的文件、运单号和费用。",
+          "upload_label_file": "面单文件",
+          "upload_label_title": "上传面单"
         },
         "gift_card_section": {
           "applied_suffix": "已应用",
@@ -2714,8 +2828,6 @@
           "captured": "付款已收取",
           "completed": "订单已完成",
           "confirmation_sent": "确认信息已发送",
-          "resumed": "订单已恢复",
-          "shipped": "发货已发出",
           "voided": "付款已作废"
         },
         "no_customer": "无客户信息",
@@ -2752,8 +2864,13 @@
         "summary": {
           "adjustments": "调整",
           "approved_by": "审批人",
+          "cancel_note": "取消备注",
+          "cancel_reason": "取消原因",
           "canceled_at": "取消时间",
           "canceler": "取消人",
+          "commission_fee": "平台费用",
+          "commission_tax": "平台费用税",
+          "commission_total": "平台费用合计",
           "outstanding_balance": "未结余额",
           "payment_total": "支付总额",
           "promotions": "优惠",
@@ -2761,8 +2878,8 @@
           "tax_included": "税（含）"
         },
         "tracking": {
-          "prefix": "物流",
-          "shipped_prefix": "已发货"
+          "fulfilled_prefix": "已履行",
+          "prefix": "物流"
         },
         "variant_search": {
           "description": "搜索要添加到此订单的商品变体。",
@@ -2770,6 +2887,17 @@
           "label": "搜索变体",
           "placeholder": "输入商品名称或 SKU（至少 3 个字符）…",
           "sku_prefix": "SKU"
+        },
+        "logistics": {
+          "title": "物流",
+          "units": "件数",
+          "cartons": "箱数",
+          "pallets": "托盘数",
+          "volume": "体积",
+          "weight": "毛重",
+          "cbm": "{{value}} 立方米",
+          "kg": "{{value}} 公斤",
+          "incomplete": "部分商品未量尺寸，因此以上数字是下限而非总量。"
         }
       },
       "edit": {
@@ -2817,7 +2945,7 @@
       },
       "fulfill": {
         "action": "标记为已发货",
-        "empty": "此发货单中没有可发货的商品。",
+        "empty": "此履行项中没有可履行的商品。",
         "include_item": "发货 {{name}}",
         "notify_customer": "向客户发送发货通知",
         "of_units": "共 {{count}}",
@@ -2967,6 +3095,12 @@
             "description": "显示在店铺前台，作为客户咨询和支持的联系方式。",
             "title": "设置客服邮箱"
           },
+          "setup_address": {
+            "cta": "保存地址",
+            "description": "您的发货和退货地址。承运商使用它计算配送费率，客户退货也将寄送至此。",
+            "no_location": "您还没有自己的库存地点 — 请在设置中创建一个以添加地址。",
+            "title": "添加您的发货地址"
+          },
           "setup_payment_method": {
             "cta": "设置支付方式",
             "description": "要收款，请至少设置一个在线支付服务商。",
@@ -3014,8 +3148,6 @@
             "capture": "扣款",
             "mark_paid": "标记为已付款",
             "refund": "退款",
-            "resume": "恢复",
-            "ship": "标记为已发货",
             "void": "作废"
           },
           "claims": {
@@ -3067,13 +3199,19 @@
               "receive": "接收商品",
               "refund": "退款"
             },
+            "buy_label": "购买退货面单",
+            "buy_label_confirm": "购买预付退货面单？面单一经出具即从您的承运商账户扣款。",
             "confirm": {
               "cancel": "取消此退货？不会恢复库存，也不会退款。"
             },
             "create_title": "新建退货",
             "empty": "此订单暂无退货。",
             "empty_no_units": "此订单没有可用于退货的履约记录。",
+            "location": "退货至",
+            "location_default": "默认退货地点",
+            "location_no_returns": "{{name}}（不接受退货）",
             "memo": "备注",
+            "no_label": "尚无退货面单。",
             "not_resellable": "不可再销售",
             "reason": "原因",
             "receive_title": "接收退回的商品",
@@ -3087,7 +3225,8 @@
             },
             "refund_title": "退货退款",
             "refund_total": "退款总额",
-            "resellable": "可再销售"
+            "resellable": "可再销售",
+            "returning_to": "退回至 {{name}}"
           },
           "section_billing_address": "账单地址",
           "section_claims": "索赔",
@@ -3267,6 +3406,7 @@
             "save_success_one": "已保存 {{count}} 个价格",
             "save_success_other": "已保存 {{count}} 个价格",
             "search_placeholder": "按商品、SKU 或选项搜索…",
+            "tier_needs_price": "请为从 {{quantity}} 起的数量阶梯输入价格，或清除数量以将其移除。",
             "title": "编辑价格 — {{name}}",
             "variant_default": "默认"
           },
@@ -3289,6 +3429,17 @@
             "select_all": "全选",
             "select_row": "选择产品",
             "title": "产品"
+          },
+          "prices": {
+            "column_price": "价格",
+            "column_source": "来源",
+            "source_help": {
+              "explicit": "在此价目表上输入的金额。",
+              "automatic": "应用此价目表百分比后的商店价格。",
+              "base": "正常的商店价格。此价目表未为该产品定价。"
+            },
+            "tier_fixed_note": "百分比调整不适用于此处。这些阶梯固定了价格。",
+            "tier_preview": "此价目表的收费"
           },
           "products_help": "选择此价格表适用的产品。保存时会创建占位价格 — 使用“编辑价格”填写。",
           "products_help_with_prices_one": "选择此价格表适用的产品。已配置 {{count}} 个价格 — 使用“编辑价格”进行更新。",
@@ -3316,6 +3467,12 @@
           "sheet_title_create": "创建价格表",
           "sheet_title_edit": "编辑价格表",
           "subtitle": "针对客户群体、地区或批量层级的定向定价。",
+          "tiers": {
+            "add": "添加数量阶梯",
+            "from": "起订量",
+            "quantity": "起订量",
+            "remove_short": "删除此数量阶梯"
+          },
           "title": "价格表",
           "unschedule": "取消安排",
           "unschedule_confirm": {
@@ -3519,11 +3676,9 @@
           "search_placeholder": "搜索库存位置…"
         },
         "store": {
-          "default_package_description": "常用的发货纸箱。承运商费率提供方会将其重量加到每个包裹上,并使用其尺寸计算体积重量。",
           "subtitle": "通用配置与店铺级默认设置。",
           "tab_addresses": "地址",
           "tab_catalog": "商品目录",
-          "tab_default_package": "默认包裹",
           "tab_general": "通用",
           "tab_inventory": "库存",
           "tab_order_numbers": "订单编号",
@@ -3675,6 +3830,9 @@
         "payouts": {
           "title": "付款",
           "subtitle": "本平台如何以及何时向卖家付款。"
+        },
+        "package_types": {
+          "add_sheet_title": "添加包装类型"
         }
       },
       "staff": {
@@ -3761,16 +3919,24 @@
         "api_keys": "创建和吊销 API 凭据",
         "categories": "分类树与分类体系",
         "collections": "手动与规则驱动的商品集合",
+        "commissions": "佣金费率以及向各卖家收取的费用",
         "customers": "客户账户、地址、卡片与分组",
         "dashboard": "销售与业绩分析",
+        "delivery_methods": "配送选项、费率及其适用规则",
         "fulfillments": "打包、发货并跟踪订单履约",
         "gift_cards": "礼品卡及其批次",
         "integrations": "服务商凭据与连接",
+        "media": "媒体库中的图片、视频和文件",
         "orders": "订单、订单项、退货、换货与索赔",
         "payments": "订单付款与扣款",
+        "payouts": "向卖家支付的款项及其结算周期",
+        "product_types": "商品类型定义及其自定义字段",
         "products": "商品、变体、选项、价格与媒体",
         "promotions": "促销、规则与优惠码",
+        "publishing": "店面中可见的内容及其时间",
         "refunds": "发起和查看退款",
+        "seller_profile": "卖家自身的信息、地址和政策",
+        "sellers": "卖家账户、入驻与审核",
         "settings": "店铺、支付、配送、税务与渠道配置",
         "staff": "团队成员、邀请、角色及其权限",
         "stock": "库存水平、仓库、变动与调拨",
@@ -3801,16 +3967,24 @@
         "api_keys": "API keys",
         "categories": "分类",
         "collections": "商品集合",
+        "commissions": "佣金",
         "customers": "客户",
         "dashboard": "仪表盘",
+        "delivery_methods": "配送方式",
         "fulfillments": "履约",
         "gift_cards": "礼品卡",
         "integrations": "集成",
+        "media": "媒体",
         "orders": "订单",
         "payments": "支付",
+        "payouts": "结算",
+        "product_types": "商品类型",
         "products": "商品",
         "promotions": "优惠",
+        "publishing": "发布",
         "refunds": "退款",
+        "seller_profile": "卖家资料",
+        "sellers": "卖家",
         "settings": "设置",
         "staff": "团队与角色",
         "stock": "库存",
@@ -3856,12 +4030,44 @@
     "preferences": {
       "additional_item": "附加件费用",
       "amount": "金额",
+      "api_key": "API 密钥",
+      "api_key_description": "在您的 EasyPost 控制台中获取。测试密钥与正式密钥行为不同——密钥本身决定模式。",
       "base_amount": "基础金额",
       "base_percent": "基础百分比",
+      "company_orders_only": "仅限公司订单",
+      "company_orders_only_description": "开启后，此配送方式仅提供给以公司名义下的订单；关闭后仅提供给其他订单。移除此规则则两者都可使用。",
       "currency": "货币",
+      "customs_contents_type": "报关内容类型",
+      "customs_contents_type_description": "按海关分类，国际包裹所含物品的类型。",
+      "customs_contents_type_options": {
+        "dangerous_goods": "危险品",
+        "documents": "文件",
+        "gift": "礼品",
+        "humanitarian_donation": "人道主义捐赠",
+        "merchandise": "商品",
+        "returned_goods": "退回商品",
+        "sample": "样品"
+      },
+      "customs_signer": "报关签署人",
+      "customs_signer_description": "贵公司中对国际包裹申报内容承担法律责任的人员。",
       "discount_amount": "折扣金额",
       "first_item": "首件费用",
       "flat_percent": "固定百分比",
+      "incoterm": "关税与税费（贸易术语）",
+      "incoterm_description": "谁支付到货关税。DAP 向收件人收取，DDP 向您收取——仅在结账时代收关税才选择 DDP。",
+      "incoterm_options": {
+        "CFR": "CFR",
+        "CIF": "CIF",
+        "CIP": "CIP",
+        "CPT": "CPT",
+        "DAT": "DAT",
+        "DAP": "DAP",
+        "DDP": "DDP",
+        "EXW": "EXW",
+        "FAS": "FAS",
+        "FCA": "FCA",
+        "FOB": "FOB"
+      },
       "max_items": "最大件数",
       "max_quantity": "最大数量",
       "maximum_item_total": "最高商品总额",
@@ -3873,7 +4079,9 @@
       "normal_amount": "标准金额",
       "percent": "百分比",
       "preferred_amount": "金额",
-      "preferred_percent": "百分比"
+      "preferred_percent": "百分比",
+      "webhook_secret": "Webhook 签名密钥",
+      "webhook_secret_description": "您在 EasyPost webhook 上设置的密钥。缺少它，承运商更新将被拒绝。"
     },
     "product_types": {
       "add_cta": "添加商品类型",
@@ -3996,7 +4204,9 @@
           "adjustment_required": "请输入百分比。",
           "adjustment_too_deep": "必须小于 100%。",
           "ends_after_starts": "必须晚于开始日期。",
-          "minimum_quantity_invalid": "请输入整数。"
+          "minimum_quantity_invalid": "请输入整数。",
+          "tier_percentage_invalid": "每一档的百分比都需要小于 100。",
+          "tier_quantity_invalid": "每一档都需要各自大于 1 的数量。"
         }
       },
       "product_type_adds_options_one": "此类型会为新商品添加{{options}}。",
@@ -4086,7 +4296,11 @@
           "identity": "标识",
           "tax_category_placeholder": "继承自商品",
           "ordering": "B2B 订购",
-          "ordering_help": "买家必须订购的数量。库存仍以件计算。"
+          "ordering_help": "买家必须订购的数量。库存仍以件计算。",
+          "packing": "装箱",
+          "packing_help": "此商品成批出库的方式。货运报价依据这些数字计算。",
+          "carton_placeholder": "未装箱",
+          "pending_save": "此处的更改随商品一并保存。"
         },
         "title": "变体",
         "variant_label": "变体"
@@ -4103,24 +4317,6 @@
       },
       "action_summary": {
         "variant_count": "{{count}} 个变体"
-      },
-      "action_types": {
-        "create_adjustment": {
-          "description": "在订单上创建优惠抵扣调整",
-          "name": "创建整单调整"
-        },
-        "create_item_adjustments": {
-          "description": "在某个订单项上创建优惠抵扣调整",
-          "name": "创建按行项目调整"
-        },
-        "create_line_items": {
-          "description": "向购物车填充指定数量的变体",
-          "name": "创建订单项"
-        },
-        "free_shipping": {
-          "description": "使订单的所有发货免运费",
-          "name": "免运费"
-        }
       },
       "actions_card": {
         "add_action": "添加操作",
@@ -4201,52 +4397,6 @@
         "category_count": "{{count}} 个分类",
         "customer_count": "{{count}} 位客户",
         "product_count": "{{count}} 个商品"
-      },
-      "rule_types": {
-        "category": {
-          "description": "订单包含指定分类中的商品",
-          "name": "分类"
-        },
-        "country": {
-          "description": "仅限收货地址在指定国家/地区的订单",
-          "name": "国家/地区"
-        },
-        "currency": {
-          "description": "仅限使用指定货币的订单",
-          "name": "货币"
-        },
-        "customer": {
-          "description": "仅对指定客户可用",
-          "name": "客户"
-        },
-        "customer_group": {
-          "description": "仅对指定客户组中的客户可用",
-          "name": "客户组"
-        },
-        "customer_logged_in": {
-          "description": "仅对已登录客户可用",
-          "name": "仅限已登录客户"
-        },
-        "first_order": {
-          "description": "必须是客户的首次订单",
-          "name": "首次订单"
-        },
-        "item_total": {
-          "description": "订单总额满足这些条件",
-          "name": "商品总额"
-        },
-        "one_use_per_user": {
-          "description": "每位用户仅限使用一次",
-          "name": "每位用户限用一次"
-        },
-        "option_value": {
-          "description": "订单包含具有匹配选项值的商品",
-          "name": "选项值"
-        },
-        "product": {
-          "description": "订单包含指定商品",
-          "name": "商品"
-        }
       },
       "rule_types_all_used": "所有可用的规则类型都已添加到此优惠中。",
       "rule_types_empty": "未注册任何规则类型。",
@@ -4356,7 +4506,7 @@
         "message": "将不再提供 {{name}}。已使用它的记录保持不变。",
         "title": "删除原因？"
       },
-      "description": "团队处理退货、理赔和退款时可选择的原因列表。",
+      "description": "团队在处理退货、理赔、退款和取消时可选用的原因列表。",
       "edit_sheet_title": "编辑原因",
       "empty": "暂无原因",
       "in_use": "使用中",
@@ -4368,6 +4518,10 @@
         "updated": "原因已更新"
       },
       "name_placeholder": "例如：尺码不合适",
+      "order_cancellation": {
+        "help": "订单在发货前被取消的原因。员工取消订单时从中选择。",
+        "title": "订单取消原因"
+      },
       "refund": {
         "help": "退款的原因。用于所有退款的统计分析。",
         "title": "退款原因"
@@ -4465,17 +4619,6 @@
           "help": "必需项在批准前必须完成，其余项显示为建议。",
           "label": "必需"
         }
-      },
-      "kinds": {
-        "accept_terms": "接受条款",
-        "attestation": "卖家确认",
-        "billing_address": "账单地址",
-        "complete_profile": "完善资料",
-        "document": "文件",
-        "minimum_products": "最少商品数",
-        "operator_review": "人工核查",
-        "required_custom_fields": "必填自定义字段",
-        "returns_address": "退货地址"
       },
       "messages": {
         "created": "已添加要求",
@@ -4714,7 +4857,8 @@
         "tax_categories": "分配给商品的税务类别",
         "tax_rates": "按市场和地区适用的税率",
         "webhooks": "事件发生时接收通知的端点",
-        "payouts": "由谁向卖家付款、多久一次，以及值得发放的最低金额"
+        "payouts": "由谁向卖家付款、多久一次，以及值得发放的最低金额",
+        "package_types": "纸箱、外箱、托盘与集装箱"
       },
       "groups": {
         "audit": "审计",
@@ -4750,7 +4894,8 @@
         "tax_categories": "税收类别",
         "tax_rates": "税率",
         "webhooks": "Webhooks",
-        "payouts": "付款"
+        "payouts": "付款",
+        "package_types": "包装类型"
       }
     },
     "setup": {
@@ -4823,6 +4968,7 @@
         "default": "默认",
         "location": "地点",
         "pickup": "自提",
+        "returns": "退货",
         "type": "类型"
       },
       "create_description": "添加仓库、门店或自提点，用于履行订单。",
@@ -4843,6 +4989,8 @@
         "local": "仅限此地点的商品"
       },
       "search_placeholder": "按名称搜索…",
+      "section_behavior": "行为",
+      "section_details": "详细信息",
       "section_pickup": "自提",
       "stock_levels": {
         "empty": "此地点暂无库存水平。",
@@ -5055,6 +5203,43 @@
       "saved": "翻译已保存",
       "source": "源",
       "title": "翻译"
+    },
+    "package_types": {
+      "table_title": "包装类型",
+      "search_placeholder": "搜索包装",
+      "empty": "尚无包装。请添加发货纸箱，以及批发订单使用的外箱和托盘。",
+      "add_cta": "添加包装类型",
+      "default_badge": "默认",
+      "edit_sheet_title": "包装类型",
+      "create_description": "用于装载商品的箱、纸箱、托盘或集装箱。",
+      "edit_description": "装入此外箱的商品沿用其尺寸，修改一次即可全部更正。",
+      "dimensions_column": "尺寸",
+      "volume_column": "体积",
+      "kinds": {
+        "box": "纸箱",
+        "envelope": "信封袋",
+        "carton": "外箱",
+        "pallet": "托盘",
+        "container": "集装箱"
+      },
+      "messages": {
+        "added": "已添加包装类型",
+        "updated": "已更新包装类型",
+        "deleted": "已删除包装类型"
+      },
+      "delete_confirm": {
+        "title": "删除包装类型？",
+        "message": "将删除 {{name}}。装入其中的商品需先重新包装。"
+      },
+      "validation": {
+        "non_negative": "必须大于或等于零"
+      },
+      "columns": {
+        "seller": "所有者"
+      },
+      "owner": {
+        "marketplace": "市场平台"
+      }
     }
   }
 }

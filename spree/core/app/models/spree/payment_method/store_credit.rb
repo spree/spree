@@ -82,7 +82,9 @@ module Spree
       handle_action(action, :credit, auth_code)
     end
 
-    def cancel(auth_code, _payment = nil)
+    # Credit goes back to the customer's balance rather than a card, so this
+    # is a release rather than a refund and `refund:` does not apply.
+    def cancel(auth_code, _payment = nil, refund: true)
       store_credit_event = StoreCreditEvent.find_by(authorization_code: auth_code,
                                                     action: Spree::StoreCredit::CAPTURE_ACTION)
       store_credit = store_credit_event.try(:store_credit)

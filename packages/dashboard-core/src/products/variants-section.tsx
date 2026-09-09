@@ -236,6 +236,9 @@ export function VariantsSection({ form, seedFromType = false }: Props) {
         order_multiple: carry?.order_multiple ?? null,
         purchase_unit: carry?.purchase_unit ?? null,
         units_per_carton: carry?.units_per_carton ?? null,
+        cartons_per_pallet: carry?.cartons_per_pallet ?? null,
+        carton_weight: carry?.carton_weight ?? null,
+        carton_package_type_id: carry?.carton_package_type_id ?? null,
         prices: carry?.prices ?? [],
         stock_levels: carry?.stock_levels ?? [],
       }

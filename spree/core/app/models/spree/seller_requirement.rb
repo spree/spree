@@ -13,6 +13,7 @@ module Spree
   # {Spree::SellerRequirementSubmission}.
   class SellerRequirement < Spree.base_class
     include Spree::SingleStoreResource
+    include Spree::HasListPosition
     include Spree::PreferenceSchema
     include Spree::Metadata
 
@@ -63,6 +64,7 @@ module Spree
       Spree::SellerRequirements::BillingAddress
       Spree::SellerRequirements::ReturnsAddress
       Spree::SellerRequirements::DeliveryMethod
+      Spree::SellerRequirements::PackageType
       Spree::SellerRequirements::MinimumProducts
     ].freeze
 
@@ -264,8 +266,7 @@ module Spree
       return if Spree.seller_requirements.any? { |kind| kind.to_s == type }
 
       errors.add(
-        :type,
-        Spree.t(:invalid_seller_requirement, scope: [:errors, :messages],
+        :type, :invalid_seller_requirement, message: Spree.t(:invalid_seller_requirement, scope: [:errors, :messages],
                                              default: 'is not a registered seller requirement')
       )
     end

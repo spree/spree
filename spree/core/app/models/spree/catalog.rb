@@ -3,14 +3,24 @@ module Spree
   # specific audience — a B2B tier, a VIP group, a regional selection.
   #
   # Who sees it is a {Spree::CatalogAssignment} (CustomerGroup or Company —
-  # where it covers the node's subtree). Visibility
-  # across several applicable catalogs is their union; pricing takes the
-  # attached price list of the nearest assignment first
-  # (docs/plans/6.0-b2b-companies-and-catalogs.md).
+  # where it covers the node's subtree).
+  #
+  # **The two audiences do not combine.** A buyer is matched by one of them,
+  # in the order {.for_context} walks: the company subtree if any of its
+  # nodes carry a catalog, otherwise the customer's groups, otherwise the
+  # channel's default catalog. So a company buyer never picks up their
+  # customer group's catalogs — the nearer agreement answers on its own, and
+  # trade tiers for company buyers are expressed by assigning the tier
+  # catalog to those companies or divisions rather than to a group.
+  #
+  # Within whichever audience answered, visibility is the union of its
+  # catalogs' assortments and pricing takes the price list of the nearest
+  # assignment first (docs/plans/6.0-b2b-companies-and-catalogs.md).
   class Catalog < Spree.base_class
     has_prefix_id :cat
 
     include Spree::SingleStoreResource
+    include Spree::HasListPosition
     include Spree::HasCustomFields
     include Spree::Metadata
 
@@ -72,7 +82,7 @@ module Spree
     after_commit -> { Spree::Current.reset_catalog_memos }
 
     scope :active, -> { where(active: true) }
-    scope :by_position, -> { order(position: :asc) }
+    scope :by_position, -> { ordered }
 
     self.whitelisted_ransackable_attributes = %w[name active]
 
@@ -124,11 +134,16 @@ module Spree
         map(&:catalog).select(&:active?).sort_by { |catalog| catalog.position.to_i }.uniq
     end
 
-    # Catalogs that apply to a buyer: the company subtree first, then the
-    # customer's groups, then the channel's default catalog — the one
-    # resolution chain both visibility ({Spree::Products::ForContext}) and
-    # pricing use. Pricing asks it once per request buyer via
-    # {Spree::Current#catalogs_for}.
+    # Catalogs that apply to a buyer: the company subtree, or failing that
+    # the customer's groups, or failing that the channel's default catalog —
+    # the one resolution chain both visibility
+    # ({Spree::Products::ForContext}) and pricing use. Pricing asks it once
+    # per request buyer via {Spree::Current#catalogs_for}.
+    #
+    # The steps are alternatives, not layers: the first one that finds a
+    # catalog answers, and the rest are not consulted. A buyer whose company
+    # has an agreement is on that agreement, so their customer group's
+    # catalogs are deliberately out of the picture (see the class comment).
     #
     # @param store [Spree::Store, nil]
     # @param company [Spree::Company, nil]
@@ -139,6 +154,10 @@ module Spree
       return [] if store.nil?
 
       catalogs = store.catalogs.for_company(company)
+      # Only when the company axis found nothing: a buyer purchasing for a
+      # company is on that company's agreement, and adding their personal
+      # segment's catalogs on top would price one buyer under two agreements
+      # at once.
       if catalogs.empty? && user
         groups = user.try(:customer_groups)&.where(store_id: store.id) || []
         catalogs = store.catalogs.for_customer_groups(groups)
@@ -149,7 +168,7 @@ module Spree
       # this the walk is one query per catalog again, plus one per list.
       if catalogs.any?
         ActiveRecord::Associations::Preloader.new(
-          records: catalogs, associations: { price_list: :price_rules }
+          records: catalogs, associations: { price_list: [:price_rules, :price_adjustment_tiers] }
         ).call
       end
       catalogs

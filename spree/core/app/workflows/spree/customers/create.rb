@@ -41,12 +41,16 @@ module Spree
       #   otherwise and claimed via password reset). Defaults to true except
       #   with `order:` — guest checkout collects no password, while
       #   self-registration must, because the caller issues a JWT on success
+      # @param terms_of_service [Boolean, nil] whether the person ticked the
+      #   storefront's terms box. Only a true value records a terms consent
+      #   row — absent means "not asked", which is not agreement
       # @param created_by [Object, nil] the staff actor; nil for storefront
       #   self-registration
       def perform(store:, email: nil, password: nil, password_confirmation: nil,
                   first_name: nil, last_name: nil, phone: nil,
                   accepts_email_marketing: nil, metadata: nil,
-                  order: nil, password_required: nil, created_by: nil)
+                  order: nil, password_required: nil, created_by: nil,
+                  terms_of_service: nil, ip_address: nil, user_agent: nil)
         super
 
         step :adopt_existing_customer
@@ -60,6 +64,7 @@ module Spree
         ApplicationRecord.transaction do
           step :create_customer
           step :link_order
+          step :record_consent
         end
 
         step :link_newsletter_subscriber
@@ -119,7 +124,78 @@ module Spree
       end
 
       def create_customer
+        # Keeps the stamped column agreeing with the consent row written below
+        # — otherwise a registration records 'registration' in one place and
+        # 'account' in the other, for the same instant.
+        customer.consent_source = consent_source
         failure(customer) unless customer.save
+      end
+
+      # Records what the person actually agreed to.
+      #
+      # Terms are recorded only when the caller says the box was ticked. A row
+      # written for every registration would be fabricated evidence: the
+      # checkout account box presents no terms checkbox at all, and a consent
+      # record is worth having precisely because it is not assumed.
+      #
+      # Inside the transaction: a customer that exists without the record of
+      # what they agreed to is exactly the gap these rows are meant to close.
+      def record_consent
+        if accepted_terms?
+          Spree::ConsentRecord.record!(
+            store: store,
+            owner: customer,
+            purpose: Spree::ConsentRecord::TERMS_OF_SERVICE,
+            source: consent_source,
+            email: customer.email,
+            ip_address: ip_address,
+            user_agent: user_agent,
+            policies: consent_policies
+          )
+        end
+
+        # Checkout already recorded the marketing opt-in against the order
+        # before this workflow ran (OrderPlacedSubscriber), so writing one here
+        # too would make a single tick look like two separate agreements.
+        return if order
+        return unless customer.accepts_email_marketing?
+
+        Spree::ConsentRecord.record!(
+          store: store,
+          owner: customer,
+          purpose: Spree::ConsentRecord::EMAIL_MARKETING,
+          source: consent_source,
+          email: customer.email,
+          ip_address: ip_address,
+          user_agent: user_agent
+        )
+      end
+
+      # The storefront passes `terms_of_service` when its consent box is
+      # ticked. Absent means "not asked", which is not the same as agreed.
+      def accepted_terms?
+        ActiveModel::Type::Boolean.new.cast(terms_of_service).present?
+      end
+
+      # An account created from a placed order was agreed to at checkout; one
+      # created directly was agreed to at registration.
+      def consent_source
+        order ? Spree::ConsentRecord::CHECKOUT : Spree::ConsentRecord::REGISTRATION
+      end
+
+      # The documents as they read at the moment of agreement, so a merchant
+      # who later edits their terms can still show which text this person saw.
+      # The document the tick was next to, not every policy the store keeps.
+      # A consent row exists to prove which text somebody accepted, so naming
+      # the returns and shipping policies beside it — which no checkbox showed
+      # — is the same fabricated evidence as recording a terms agreement for
+      # an account that was never asked for one.
+      #
+      # Matched by name because policies are an open set with no fixed
+      # vocabulary: a store may not have one called "Terms of Service", and
+      # then there is nothing to snapshot rather than something to guess at.
+      def consent_policies
+        store.policies.with_matching_name(Spree.t(:terms_of_service)).to_a
       end
 
       def link_order

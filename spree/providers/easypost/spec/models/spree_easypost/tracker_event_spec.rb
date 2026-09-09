@@ -20,7 +20,7 @@ RSpec.describe SpreeEasyPost::TrackerEvent do
 
       expect(event.tracking_code).to eq('EZ1000000001')
       expect(event.status).to eq('out_for_delivery')
-      expect(Spree::Fulfillment::TRACKING_STATUSES).to include(event.status)
+      expect(Spree::Delivery::STATUSES).to include(event.status)
     end
 
     # EasyPost spells a few of its own states differently from ours; the point

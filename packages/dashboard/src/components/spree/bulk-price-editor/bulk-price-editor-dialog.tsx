@@ -87,7 +87,13 @@ export function BulkPriceEditorDialog({
   const isSaving = editorState.saving
 
   const handleOpenChange = useCallback(
-    async (next: boolean) => {
+    async (next: boolean, reason?: string) => {
+      // Escape belongs to the cell being edited, where it reverts what was
+      // typed. A merchant leaving a cell that way does not expect the sheet
+      // itself to close and take every other unsaved price with it — closing
+      // is the ✕ and the buttons beside it
+      // (docs/plans/6.0-volume-pricing.md).
+      if (!next && reason === 'escape-key') return
       if (next) {
         onOpenChange(true)
         return
@@ -138,7 +144,11 @@ export function BulkPriceEditorDialog({
   })
 
   return (
-    <Dialog open={open} onOpenChange={(next) => handleOpenChange(next)} modal>
+    <Dialog
+      open={open}
+      onOpenChange={(next, eventDetails) => handleOpenChange(next, eventDetails?.reason)}
+      modal
+    >
       <DialogContent
         // Edge-to-edge minus a 3-unit (0.75rem) gutter on all sides.
         // The primitive ships `top-1/2 left-1/2 -translate-1/2` (centered

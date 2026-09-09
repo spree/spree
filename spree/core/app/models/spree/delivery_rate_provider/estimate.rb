@@ -11,6 +11,11 @@ module Spree
       include ActiveModel::Attributes
 
       attribute :cost, :decimal
+      # True when the price is not known yet and will be quoted separately —
+      # freight a forwarder rates after the merchant reviews the order. The
+      # estimator skips markup and tax for these, and display surfaces say so
+      # rather than showing the zero cost as free shipping.
+      attribute :unpriced, :boolean, default: false
       # ISO code of the currency the provider quoted in. Nil means the
       # store's own currency (Internal); carrier quotes come back in the
       # carrier account's currency and are dropped when it differs from the

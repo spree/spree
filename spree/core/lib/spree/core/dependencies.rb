@@ -61,7 +61,6 @@ module Spree
         # order
         order_approve_service: 'Spree::Orders::Approve',
         order_cancel_workflow: 'Spree::Orders::Cancel',
-        order_resume_workflow: 'Spree::Orders::Resume',
         order_complete_workflow: 'Spree::Orders::Complete',
         order_discount_create_service: 'Spree::Orders::Discounts::Create',
         order_discount_update_service: 'Spree::Orders::Discounts::Update',
@@ -80,10 +79,22 @@ module Spree
         fulfillment_update_workflow: 'Spree::Fulfillments::Update',
         fulfillment_fulfill_workflow: 'Spree::Fulfillments::Fulfill',
         fulfillment_cancel_workflow: 'Spree::Fulfillments::Cancel',
-        fulfillment_resume_workflow: 'Spree::Fulfillments::Resume',
         fulfillment_mark_delivered_workflow: 'Spree::Fulfillments::MarkDelivered',
         fulfillment_purchase_label_workflow: 'Spree::Fulfillments::PurchaseLabel',
-        fulfillment_update_tracking_workflow: 'Spree::Fulfillments::UpdateTracking',
+
+        # shipping labels + deliveries
+        shipping_label_purchase_workflow: 'Spree::ShippingLabels::Purchase',
+        shipping_label_refund_workflow: 'Spree::ShippingLabels::Refund',
+        shipping_label_record_workflow: 'Spree::ShippingLabels::Record',
+        shipping_label_confirm_refund_service: 'Spree::ShippingLabels::ConfirmRefund',
+        shipping_label_store_file_service: 'Spree::ShippingLabels::StoreFile',
+        delivery_update_tracking_workflow: 'Spree::Deliveries::UpdateTracking',
+        delivery_create_service: 'Spree::Deliveries::Create',
+        delivery_upsert_primary_service: 'Spree::Deliveries::UpsertPrimary',
+        fulfillment_stand_down_service: 'Spree::Fulfillments::StandDownProvider',
+        fulfillment_recalculate_delivery_service: 'Spree::Fulfillments::RecalculateDelivery',
+        delivery_destroy_service: 'Spree::Deliveries::Destroy',
+        return_purchase_label_workflow: 'Spree::Returns::PurchaseLabel',
 
         # returns
         return_create_workflow: 'Spree::Returns::Create',
@@ -132,6 +143,8 @@ module Spree
 
         # customers
         customer_create_workflow: 'Spree::Customers::Create',
+        customer_anonymize_workflow: 'Spree::Customers::Anonymize',
+        customer_data_export_service: 'Spree::Customers::DataExport',
 
         # products — every server-side write path runs through these, so a
         # :validate handler sees dashboard edits, CSV imports and seeds alike
@@ -200,6 +213,11 @@ module Spree
         # addresses
         address_create_service: 'Spree::Addresses::Create',
         address_update_service: 'Spree::Addresses::Update',
+
+        # What checkout must collect before a purchase is placed, and before
+        # it may be dispatched. The whole total here; replaced where part
+        # payment is arranged (deposits, net terms).
+        purchase_amount_due_at_checkout_service: 'Spree::Purchases::AmountDueAtCheckout',
 
         payment_create_service: 'Spree::Payments::Create',
         payment_process_workflow: 'Spree::Payments::Process',

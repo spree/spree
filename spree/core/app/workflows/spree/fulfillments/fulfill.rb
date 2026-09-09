@@ -29,10 +29,12 @@ module Spree
       # @param fulfillment [Spree::Fulfillment] the fulfillment to ship from
       # @param items [Array<Hash>, nil] `[{ line_item: Spree::LineItem, quantity: Integer }]`
       #   to ship; nil or empty fulfills every unit the fulfillment holds
-      # @param tracking [String, nil] carrier tracking number or full tracking URL,
-      #   stored on the fulfillment that ships
+      # @param tracking [String, nil] carrier tracking number or full tracking URL —
+      #   the one-parcel shortcut: recorded as the primary Spree::Delivery of
+      #   the fulfillment that ships
       # @param tracking_carrier [String, nil] which carrier the number belongs
-      #   to (a Spree.tracking_carriers slug); detected from the number when omitted
+      #   to (free text; a Spree.tracking_carriers key gets a badge and URL);
+      #   detected from the number when omitted
       # @param notify_customer [Boolean] whether the shipment email goes out;
       #   false suppresses it for this dispatch only
       # @param force [Boolean] dispatch even when the order is unpaid or holds
@@ -70,10 +72,10 @@ module Spree
         # failure here still degrades to "no label yet" — a carrier outage
         # must never stop a merchant recording a parcel that physically left.
         # Network I/O, so never in a transaction.
+        external_step :purchase_label
         external_step :tell_provider_it_shipped
 
         ApplicationRecord.transaction do
-          step :reallocate_if_resuming_from_canceled
           step :ship_allocated_units
           step :mark_fulfilled
           step :capture_payment_if_configured
@@ -133,7 +135,12 @@ module Spree
           failure(@source, Spree.t('fulfillments.errors.backordered_units'))
         end
 
-        return if order.paid?
+        # An order that owes nothing is ready to hand over, which the old
+        # paid-in-full guard denied it: `paid?` requires a positive total, so
+        # a fully discounted or store-credit-paid order was refused dispatch.
+        # Measured against what was owed at checkout, so an arrangement that
+        # collects part of the total up front can still ship.
+        return if order.payment_total >= order.amount_due_at_checkout
 
         # Charging later is a deliberate choice, so an authorized-but-uncaptured
         # order is ready to hand over: on dispatch the money is taken below,
@@ -187,13 +194,7 @@ module Spree
       def dispatch_quantity_by_variant
         held = @source.fulfillment_items.group(:variant_id).sum(:quantity)
 
-        # A canceled fulfillment gets its promise back on the way out (see
-        # #reallocate_if_resuming_from_canceled), so what it is about to take
-        # is its whole manifest rather than the nothing it holds right now —
-        # minus the variants that keep no stock, which the writes skip and the
-        # check must skip too, or it would refuse a dispatch over a shelf that
-        # was never kept for them.
-        allocated = @source.canceled? ? tracked_only(held) : @source.allocated_quantities
+        allocated = @source.allocated_quantities
         return {} if allocated.empty?
 
         wanted =
@@ -209,18 +210,6 @@ module Spree
           quantity = [promised, wanted[variant_id].to_i].min
           totals[variant_id] = quantity if quantity.positive?
         end
-      end
-
-      # @param quantities [Hash{Integer => Integer}]
-      # @return [Hash{Integer => Integer}]
-      def tracked_only(quantities)
-        return quantities if quantities.empty?
-
-        tracked = Spree::Variant.with_deleted.where(id: quantities.keys).select do |variant|
-          variant.should_track_inventory?
-        end.map(&:id)
-
-        quantities.slice(*tracked)
       end
 
       # Each requested quantity has to exist in *this* fulfillment. Without
@@ -273,22 +262,6 @@ module Spree
         held.all? { |line_item_id, quantity| requested[line_item_id].to_i >= quantity }
       end
 
-      # A canceled fulfillment gave its promise back, so shipping it directly
-      # has to make that promise again before the units can leave — canceled ->
-      # fulfilled is allowed precisely so goods that went out anyway can be
-      # recorded. Ordering matters: the ledger should read as a re-promise
-      # followed by a departure, which is what happened.
-      def reallocate_if_resuming_from_canceled
-        return unless @source.canceled?
-
-        @fulfillment.manifest.each do |item|
-          next unless item.variant.track_inventory?
-          next unless item.quantity.positive?
-
-          @fulfillment.stock_location.allocate(item.variant, item.quantity, @fulfillment)
-        end
-      end
-
       # The shelf empties when the parcel leaves, for the units this
       # fulfillment actually holds a promise for. A fulfillment created before
       # typed movements holds none — its stock left at placement under the old
@@ -305,19 +278,14 @@ module Spree
         end
       end
 
-      # Written before the transition so the provider's own tracking lookup
-      # (run_provider_create_fulfillment) sees an admin-entered number and
-      # leaves it alone, and so the shipment email carries it.
-      #
-      # update! rather than update_columns so the carrier-detection callback
-      # runs — a number typed without a carrier still gets its badge and URL.
+      # Recorded before the provider is asked, so a label purchase sees the
+      # admin-entered number and binds to it rather than minting a second
+      # consignment, and so the shipment email carries it.
       def apply_tracking
-        attributes = {}
-        attributes[:tracking] = tracking.to_s.squish if tracking.present?
-        attributes[:tracking_carrier] = tracking_carrier if tracking_carrier.present?
-        return if attributes.empty?
-
-        @fulfillment.update!(attributes)
+        result = Spree.delivery_upsert_primary_service.call(
+          fulfillment: @fulfillment, tracking: tracking, carrier: tracking_carrier
+        )
+        failure(@source, result.error.to_s) if result.failure?
       end
 
       # The suppression flag rides on the record because the event publisher
@@ -341,8 +309,28 @@ module Spree
         @fulfillment.process_order_payments
       end
 
-      # Tracking the provider discovers is kept unless an admin already typed
-      # one in — a human who entered a number meant it.
+      # A label-generating provider is asked for the label unless one is
+      # already active; the outcome is the label's own affair — a failure
+      # here is reported and the parcel still ships.
+      def purchase_label
+        return unless @fulfillment.provider.class.generates_labels?
+        return if @fulfillment.shipping_labels.active.exists?
+
+        result = Spree.shipping_label_purchase_workflow.call(owner: @fulfillment)
+        return if result.success?
+
+        Rails.error.report(
+          Spree::Core::LabelPurchaseFailed.new(result.error.to_s),
+          context: { fulfillment_id: @fulfillment.id }, source: 'spree.fulfillments.fulfill'
+        )
+      end
+
+      # Provider-side dispatch — a 3PL pick, digital links. A label-generating
+      # provider is told too: buying the label and notifying a warehouse are
+      # different acts, and a provider that does both would otherwise stop
+      # hearing that the parcel went out. Tracking it discovers becomes the
+      # primary delivery unless an admin already typed one in — a human who
+      # entered a number meant it.
       def tell_provider_it_shipped
         result = @fulfillment.provider.create_fulfillment(@fulfillment)
         return unless result.is_a?(Hash)
@@ -350,7 +338,9 @@ module Spree
         new_tracking = result[:tracking_number].presence
         return if new_tracking.blank? || @fulfillment.tracking.present?
 
-        @fulfillment.update_column(:tracking, new_tracking)
+        Spree.delivery_create_service.call(
+          owner: @fulfillment, tracking_number: new_tracking, tracking_url: result[:tracking_url]
+        )
       end
 
       def roll_up_order_status

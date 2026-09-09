@@ -8,7 +8,12 @@
  * the installed Spree version. A type missing from this list simply hides the link;
  * the endpoint is the authority and 404s for anything it has no example for.
  */
-const TYPES_WITH_SAMPLE_CSV = new Set(['products', 'customers', 'product_translations'])
+const TYPES_WITH_SAMPLE_CSV = new Set([
+  'products',
+  'customers',
+  'product_translations',
+  'price_list_prices',
+])
 
 /** Whether an import type has an example CSV to offer. */
 export function hasSampleCsv(type: string): boolean {

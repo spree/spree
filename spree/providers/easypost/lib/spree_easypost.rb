@@ -6,11 +6,6 @@ module SpreeEasyPost
   # Vendor branding, shared by both providers and the integration.
   PROVIDER_NAME = 'EasyPost'.freeze
 
-  OUNCES_PER_UNIT = {
-    'imperial' => 16.0,   # pounds
-    'metric' => 0.03527396 # grams
-  }.freeze
-
   # EasyPost rejects a parcel weighing zero ("must be greater than 0"), and
   # products without a weight are ordinary in Spree — so a weightless package
   # is quoted at this nominal ounce rather than failing the whole request.
@@ -18,30 +13,30 @@ module SpreeEasyPost
   # the alternative is no delivery options at all.
   MINIMUM_OUNCES = 0.1
 
-  # EasyPost expects parcel weight in ounces; Spree stores weight in the
-  # store's unit system.
-  #
-  # @param weight [Numeric, nil]
-  # @param store [Spree::Store, nil]
-  # @return [Float]
-  CM_PER_INCH = 2.54
-
-  # EasyPost expects parcel dimensions in inches; the store's default
-  # package records them in the unit its unit system implies (in/cm).
+  # EasyPost expects parcel dimensions in inches. A package reports its
+  # dimensions in the unit the store's system implies, so the conversion is
+  # from there — through the one conversion table Spree has, rather than a
+  # second copy of the same constants.
   #
   # @param value [Numeric, nil]
   # @param store [Spree::Store, nil]
   # @return [Float]
   def self.inches(value, store)
-    metric = store&.preferred_unit_system.to_s == 'metric'
-    inches = metric ? value.to_f / CM_PER_INCH : value.to_f
+    from = Spree::Variant.store_dimensions_unit(store)
 
-    inches.round(2)
+    Spree::Measurement.convert_length(value, from: from, to: 'in').to_f.round(2)
   end
 
+  # EasyPost expects parcel weight in ounces. A package reports its weight in
+  # the store's weight unit, which is a separate setting from its unit
+  # system — a metric store may still weigh in pounds.
+  #
+  # @param weight [Numeric, nil]
+  # @param store [Spree::Store, nil]
+  # @return [Float]
   def self.ounces(weight, store)
-    unit_system = store&.preferred_unit_system.presence || 'imperial'
-    converted = (weight.to_f * OUNCES_PER_UNIT.fetch(unit_system.to_s, 16.0)).round(2)
+    from = store&.preferred_weight_unit.presence || Spree::Measurement::DEFAULT_WEIGHT_UNIT
+    converted = Spree::Measurement.convert_weight(weight, from: from, to: 'oz').to_f.round(2)
 
     [converted, MINIMUM_OUNCES].max
   end
@@ -222,24 +217,21 @@ module SpreeEasyPost
 
   # EndShipper payload — the party legally responsible for the shipment,
   # required when buying labels on EasyPost's own carrier accounts (USPS
-  # refuses the purchase without one). Unlike a plain address, EasyPost
-  # makes every field mandatory here including phone and email, so the
-  # store's contact details fill in what the stock location does not carry.
+  # refuses the purchase without one). Whatever the warehouse and store can
+  # supply is sent as-is: which fields EasyPost demands is its rule, and it
+  # answers a payload it cannot accept by naming the field, which is more
+  # use to a merchant than a list maintained here that would drift out of
+  # step the first time that rule changed.
   #
   # @param stock_location [Spree::StockLocation, nil]
   # @param store [Spree::Store, nil]
-  # @return [Hash, nil] nil when the mandatory fields cannot be assembled
+  # @return [Hash, nil] nil only when there is no location to describe
   def self.end_shipper_params(stock_location, store)
     return if stock_location.nil?
 
-    params = address_params(stock_location)
-    params[:phone] = stock_location.phone.presence || store&.contact_phone.presence
-    params[:email] = store&.mail_from_address.presence || store&.customer_support_email.presence
-
-    mandatory = params.values_at(:street1, :city, :state, :zip, :country, :phone, :email)
-    mandatory << (params[:name].presence || params[:company].presence)
-    return if mandatory.any?(&:blank?)
-
-    params.compact_blank
+    address_params(stock_location).merge(
+      phone: stock_location.phone.presence || store&.contact_phone.presence,
+      email: store&.mail_from_address.presence || store&.customer_support_email.presence
+    ).compact_blank
   end
 end

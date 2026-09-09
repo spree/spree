@@ -17,6 +17,28 @@ set -u
 # Parse the command out of the Claude hook input JSON.
 cmd=$(jq -r '.tool_input.command // empty')
 
+# Full test suites are queued machine-wide and are otherwise CI's job (see
+# CLAUDE.md "Testing"). Block the bare forms so a session that has not read the
+# rule is redirected to the wrappers; targeted `rspec <paths>` runs pass.
+while IFS= read -r segment; do
+  seg="${segment#"${segment%%[![:space:]]*}"}"
+  case " $seg " in *" pnpm test:rspec "*|*"scripts/test/rspec "*|*" pnpm wt:e2e"*|*"scripts/worktree/e2e.sh"*) continue ;; esac
+  prefix='^([A-Za-z_][A-Za-z0-9_]*=[^[:space:]]*[[:space:]]+)*(env[[:space:]]+)?'
+  if [[ "$seg" =~ ${prefix}(bundle[[:space:]]+exec[[:space:]]+|bin/)?parallel_rspec([[:space:]]|$) ]] \
+     || [[ "$seg" =~ ${prefix}(bundle[[:space:]]+exec[[:space:]]+|bin/)?rspec([[:space:]]+spec/?)?[[:space:]]*$ ]] \
+     || [[ "$seg" =~ ${prefix}pnpm[[:space:]]+(-[^[:space:]]+[[:space:]]+)*test:e2e([[:space:]]|$) ]]; then
+    {
+      echo "Blocked: $seg"
+      echo "Full suites run one at a time on this machine and are CI's job. Use instead:"
+      echo "  pnpm test:changed                    specs covering this branch's changed files"
+      echo "  pnpm test:rspec <engine> [paths]     one engine; a full suite is queued, capped and low priority"
+      echo "  pnpm wt:e2e [spec]                   Playwright, queued the same way"
+      echo "Then push and watch CI for the full suite. If these commands are missing, run 'git merge main' first. See CLAUDE.md, Testing."
+    } >&2
+    exit 2
+  fi
+done < <(echo "$cmd" | tr ';&|' '\n')
+
 # Split on shell separators (; && || | &) and check each segment for a real
 # git commit/push invocation. Handles env-var prefixes (FOO=bar, env FOO=bar)
 # and git's top-level option flags (-C path, -c k=v, --no-pager, etc.) so

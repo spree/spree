@@ -12,6 +12,7 @@ module Spree
           before_action :authenticate_admin!
 
           include Spree::Api::V3::ScopedAuthorization
+          include Spree::Api::V3::Admin::ValidationDetails
         end
       end
     end

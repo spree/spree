@@ -44,16 +44,6 @@ module Spree
     preference :admin_locale, :string
     preference :timezone, :string, default: Time.zone.name
     preference :weight_unit, :string, default: 'lb'
-    # Default package (Shopify-style): the box a store usually ships in.
-    # Weight is the packaging tare (box + filler) added to every package's
-    # content weight for rate calculation, in the store's weight unit; the
-    # dimensions are the box itself, used verbatim by carrier rate providers
-    # for dimensional-weight pricing — inches when the unit system is
-    # imperial, centimeters when metric. Zeros keep historical behavior.
-    preference :default_package_weight, :decimal, default: 0
-    preference :default_package_length, :decimal, default: 0
-    preference :default_package_width, :decimal, default: 0
-    preference :default_package_height, :decimal, default: 0
     preference :unit_system, :string, default: 'imperial'
     # email preferences
     preference :send_consumer_transactional_emails, :boolean, default: true
@@ -131,6 +121,10 @@ module Spree
     # Records price changes so the storefront can show the lowest price of the
     # last 30 days, as the EU Omnibus Directive requires.
     preference :track_price_history, :boolean, default: true
+    # How long recorded prices are kept. 30 days is what the Omnibus Directive
+    # asks a shop to be able to show; a longer window is a merchant's own
+    # evidentiary choice.
+    preference :price_history_retention_days, :integer, default: 30
     # Address preferences
     preference :company_field_enabled, :boolean, default: false
     # Showing the company field and requiring it are separate decisions: a
@@ -168,11 +162,14 @@ module Spree
     has_many :shipments, through: :orders, class_name: 'Spree::Fulfillment', source: :fulfillments, deprecated: true
     has_many :payments, through: :orders, class_name: 'Spree::Payment'
     has_many :returns, class_name: 'Spree::Return', inverse_of: :store
+    has_many :shipping_labels, class_name: 'Spree::ShippingLabel', inverse_of: :store
+    has_many :deliveries, class_name: 'Spree::Delivery', inverse_of: :store
     has_many :exchanges, class_name: 'Spree::Exchange', inverse_of: :store
     has_many :claims, class_name: 'Spree::Claim', inverse_of: :store
     has_many :return_reasons, class_name: 'Spree::ReturnReason', inverse_of: :store, dependent: :destroy
     has_many :claim_reasons, class_name: 'Spree::ClaimReason', inverse_of: :store, dependent: :destroy
     has_many :refund_reasons, class_name: 'Spree::RefundReason', inverse_of: :store, dependent: :destroy
+    has_many :order_cancellation_reasons, class_name: 'Spree::OrderCancellationReason', inverse_of: :store, dependent: :destroy
 
     # :nullify (not :destroy) — clearing the collection must not cascade into
     # Promotion#not_used? / payment records; orphaned rows are detached, not deleted.
@@ -235,6 +232,18 @@ module Spree
       Spree::DeliveryProfile.default_for(self)
     end
     has_many :stock_locations, class_name: 'Spree::StockLocation', dependent: :nullify
+
+    # The store's packaging vocabulary. The default row is the box it usually
+    # ships in — the tare and dimensions every parcel quote is built on, read
+    # through an association so it is loaded once per store rather than once
+    # per package quoted.
+    has_many :package_types, class_name: 'Spree::PackageType', dependent: :destroy, inverse_of: :store
+    # The marketplace's own default box. A seller's default is read through
+    # the seller (docs/plans/6.0-seller-package-types.md) — without the
+    # `seller_id` filter this would answer with whichever owner's row loaded
+    # first.
+    has_one :default_package_type, -> { where(default: true, seller_id: nil) },
+            class_name: 'Spree::PackageType', inverse_of: :store
     has_many :promotions, class_name: 'Spree::Promotion', dependent: :nullify
 
     has_many :tax_categories, class_name: 'Spree::TaxCategory', dependent: :destroy, inverse_of: :store
@@ -532,6 +541,39 @@ module Spree
                       where.not(country_code: nil).distinct.pluck(:country_code)
 
       country_codes.filter_map { |code| Spree::Country.by_iso(code) }.sort_by(&:name)
+    end
+
+    # The operator's own location that accepts returns, or nil when none does.
+    #
+    # First-party only: `stock_locations` includes every seller's warehouse on a
+    # marketplace, and the operator's goods must never be routed into one.
+    #
+    # Nil rather than a fallback, because the caller's fallback is not ours to
+    # guess: {Spree::Returns::Create} answers nil by sending goods back where
+    # they shipped from, which is a better destination than a location the
+    # merchant told us not to send returns to.
+    #
+    # @return [Spree::StockLocation, nil]
+    def returns_location
+      stock_locations.active.first_party.returns_enabled.order_default.first
+    end
+
+    # The location the address checklist asks the merchant to fill in: the one
+    # that takes returns, falling back to any active location of their own,
+    # since the address is also what carriers rate against.
+    #
+    # Ordered rather than two queries with a fallback — both columns are
+    # NOT NULL, so sorting on the flag puts a returns-enabled location first
+    # and answers the fallback in the same round trip.
+    #
+    # Deliberately not `default_stock_location`, which creates the row when it
+    # is missing: this is read on every dashboard render (the Getting Started
+    # checklist), and a read that writes would provision a location for every
+    # store that loaded the page.
+    #
+    # @return [Spree::StockLocation, nil]
+    def primary_location
+      stock_locations.active.first_party.order(returns_enabled: :desc, default: :desc, name: :asc).first
     end
 
     # The store's own default stock location, created if it does not exist yet.

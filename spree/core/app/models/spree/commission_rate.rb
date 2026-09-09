@@ -34,6 +34,7 @@ module Spree
     acts_as_list scope: :store_id, add_new_at: :top
 
     include Spree::SingleStoreResource
+    include Spree::HasListPosition
     include Spree::Metadata
     include Spree::TypedAssociations
 
@@ -67,6 +68,10 @@ module Spree
     validates :name, presence: true
     validates :kind, presence: true, inclusion: { in: KINDS }
     validates :value, numericality: { greater_than_or_equal_to: 0 }
+    # Commission is a share of the seller's revenue, not a surcharge on top of
+    # it — a figure above 100 reads as a typo (150 for 15) and bills the seller
+    # more than the sale was worth.
+    validates :value, numericality: { less_than_or_equal_to: 100 }, if: :percentage?
     # Stored lowercase so the database enforces the same uniqueness the
     # validation promises. A functional index over LOWER(code) would be the
     # alternative, but that is a MySQL-only construct MariaDB rejects — and
@@ -96,9 +101,6 @@ module Spree
     # Scopes
     #
     scope :enabled, -> { where(enabled: true) }
-    # The resolution order, top-down. Ties break on id so two rates sharing a
-    # position resolve the same way on every read.
-    scope :ordered, -> { order(position: :asc, id: :asc) }
 
     self.whitelisted_ransackable_attributes = %w[name code kind enabled position value
                                                  tax_inclusive include_shipping]
@@ -192,7 +194,6 @@ module Spree
     # @return [void]
     def amounts=(values)
       @pending_amounts = (values || {}).to_h.transform_keys { |key| key.to_s.upcase }
-      apply_pending_amounts if persisted?
     end
 
     # Replaces the floors and caps wholesale, on the same rows the flat fee
@@ -203,7 +204,6 @@ module Spree
     # @return [void]
     def bounds=(values)
       @pending_bounds = (values || {}).to_h.transform_keys { |key| key.to_s.upcase }
-      apply_pending_bounds if persisted?
     end
 
     # Whether this rate charges every sale, having named nothing to narrow it.
@@ -294,11 +294,12 @@ module Spree
       wanted = @pending_amounts.compact_blank
       @pending_amounts = nil
 
-      # A row carrying bounds outlives the amount it was written with: the two
-      # are written by different fields, and dropping a currency from the flat
-      # fee must not silently uncap a percentage.
+      # A percentage's bounds outlive clearing +amounts+ — the two are different
+      # fields and dropping a currency from amounts must not silently uncap it.
+      # A flat fee's cap lives on the same row as its amount; clearing the amount
+      # retires the whole currency.
       commission_rate_values.
-        reject { |value| wanted.key?(value.currency) || value.bounded? }.
+        reject { |value| wanted.key?(value.currency) || (!fixed? && value.bounded?) }.
         each(&:destroy)
 
       wanted.each do |currency, amount|
@@ -324,6 +325,15 @@ module Spree
 
       wanted.each do |currency, bound|
         bound = (bound || {}).symbolize_keys
+
+        # A flat fee applies only where it states an amount. Writing bounds alone
+        # would create a zero-amount row that still matches and blocks fallthrough.
+        # +amounts=+ may run after +bounds=+ on update, so pending amounts count.
+        if fixed? && effective_amount_for(currency) <= 0
+          commission_rate_values.find { |value| value.currency == currency }&.destroy
+          next
+        end
+
         row_for_currency(currency).update!(
           min_amount: bound[:min_amount].presence, max_amount: bound[:max_amount].presence
         )
@@ -336,17 +346,25 @@ module Spree
         commission_rate_values.build(currency: currency)
     end
 
+    def effective_amount_for(currency)
+      if @pending_amounts&.key?(currency)
+        @pending_amounts[currency].to_d
+      else
+        amount_for(currency).to_d
+      end
+    end
+
     def flat_fee_does_not_charge_delivery
       return unless fixed? && include_shipping?
 
-      errors.add(:include_shipping, Spree.t('errors.messages.flat_fee_cannot_charge_delivery'))
+      errors.add(:include_shipping, :flat_fee_cannot_charge_delivery, message: Spree.t('errors.messages.flat_fee_cannot_charge_delivery'))
     end
 
     def fixed_rate_states_an_amount
       return unless fixed?
       return if @pending_amounts.present? || commission_rate_values.any?
 
-      errors.add(:base, Spree.t('errors.messages.commission_rate_needs_an_amount'))
+      errors.add(:base, :commission_rate_needs_an_amount, message: Spree.t('errors.messages.commission_rate_needs_an_amount'))
     end
   end
 end

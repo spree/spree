@@ -180,6 +180,18 @@ RSpec.describe Spree::Api::V3::Admin::CatalogsController, type: :controller do
 
       expect(json_response['data'].map { |row| row['id'] }).not_to include(other.prefixed_id)
     end
+
+    it 'returns catalogs in list order' do
+      create(:catalog, store: store, name: 'Second catalog')
+      third = create(:catalog, store: store, name: 'Third catalog')
+      third.insert_at(1)
+      catalog.insert_at(2)
+
+      get :index, as: :json
+
+      expect(json_response['data'].pluck('name')).to eq(['Third catalog', 'Wholesale', 'Second catalog'])
+      expect(json_response['data'].pluck('position')).to eq([1, 2, 3])
+    end
   end
 
   describe 'POST #create' do

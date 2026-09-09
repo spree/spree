@@ -51,11 +51,18 @@ module Spree
         return if delivery_rates.empty?
 
         shipped = delivery_rates.select { |rate| rate.delivery_method&.requires_address? }
-        (shipped.presence || delivery_rates).min_by(&:cost).selected = true
+        candidates = shipped.presence || delivery_rates
+        # An unpriced rate costs zero, so preselecting on price alone would
+        # hand every mixed offering to freight. Prefer something actually
+        # priced; fall back to freight when that is all there is.
+        priced = candidates.reject(&:unpriced?)
+        (priced.presence || candidates).min_by(&:cost).selected = true
       end
 
+      # Cheapest first, with unpriced rates after the priced ones — their zero
+      # cost is an absence of information, not a bargain.
       def sort_delivery_rates(delivery_rates)
-        delivery_rates.sort_by!(&:cost)
+        delivery_rates.sort_by! { |rate| [rate.unpriced? ? 1 : 0, rate.cost] }
       end
 
       # Quoting runs through the method's rate provider — Internal prices
@@ -78,11 +85,11 @@ module Spree
             end
 
             service_row = delivery_method.service_for(estimate)
-            cost = apply_markup(estimate.cost, delivery_method, service_row, provider)
 
             delivery_method.delivery_rates.new(
-              cost: gross_amount(cost, taxation_options_for(delivery_method)),
-              tax_rate: first_tax_rate_for(delivery_method.tax_category),
+              cost: rate_cost(estimate, delivery_method, service_row, provider),
+              tax_rate: (first_tax_rate_for(delivery_method.tax_category) unless estimate.unpriced),
+              unpriced: estimate.unpriced,
               name: rate_name(estimate, service_row),
               carrier: estimate.carrier,
               service_level: estimate.service_level,
@@ -93,6 +100,17 @@ module Spree
             )
           end
         end
+      end
+
+      # An unpriced quote has no amount to mark up or tax — a percentage of an
+      # unknown price is still unknown, and rounding zero through the VAT
+      # gross-up would only invent a number. Its cost stays zero and every
+      # display surface reads +unpriced+ instead.
+      def rate_cost(estimate, delivery_method, service_row, provider)
+        return 0 if estimate.unpriced
+
+        cost = apply_markup(estimate.cost, delivery_method, service_row, provider)
+        gross_amount(cost, taxation_options_for(delivery_method))
       end
 
       # Handling fee on top of provider quotes: the service row's values when
@@ -168,15 +186,12 @@ module Spree
         package_seller_id = package.stock_location&.seller_id
 
         methods.select do |delivery_method|
-          calculator = delivery_method.calculator
-
           offered_to_seller?(delivery_method, package_seller_id) &&
             delivery_method.available_to?(audience) &&
             delivery_method.include?(order.ship_address) &&
             delivery_method.serves_location?(package.stock_location) &&
             delivery_method.eligible_for_package?(package) &&
-            calculator.available?(package) &&
-            calculator.supports_currency?(currency)
+            calculator_offers?(delivery_method, package)
         end
       end
 
@@ -188,6 +203,27 @@ module Spree
         return true if delivery_method.seller_id == package_seller_id
 
         delivery_method.seller_id.nil? && delivery_method.available_to_sellers?
+      end
+
+      # The calculator's say in eligibility.
+      #
+      # `available?` is a documented extension point — a host app overrides it
+      # to refuse a method for a package — so it applies to every method,
+      # however the method is priced.
+      #
+      # The currency check does not. A provider-priced method carries a
+      # calculator the admin hides and nothing reads an amount from, so its
+      # leftover currency would silence exactly the methods built for foreign
+      # trade: a freight method's default calculator speaks only the default
+      # store's currency, and international wholesale is what the freight
+      # provider exists for. Provider quotes get their currency check where it
+      # belongs, against the estimate itself.
+      def calculator_offers?(delivery_method, package)
+        calculator = delivery_method.calculator
+        return false unless calculator.available?(package)
+        return true unless delivery_method.rate_provider_instance.class.uses_calculator?
+
+        calculator.supports_currency?(currency)
       end
 
       # True when a subclass or decorator redefined the legacy seam, so its

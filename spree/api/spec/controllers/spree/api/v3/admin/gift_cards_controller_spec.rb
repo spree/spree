@@ -38,7 +38,7 @@ RSpec.describe Spree::Api::V3::Admin::GiftCardsController, type: :controller do
     end
 
     it 'does not embed customer or created_by by default' do
-      gift_card.update!(user: create(:user, email: 'vip@example.com'))
+      gift_card.update!(customer: create(:user, email: 'vip@example.com'))
 
       subject
       entry = json_response['data'].find { |g| g['id'] == gift_card.prefixed_id }
@@ -50,7 +50,7 @@ RSpec.describe Spree::Api::V3::Admin::GiftCardsController, type: :controller do
     it 'exposes flat prefixed-ID references even without expand' do
       customer = create(:user)
       admin = create(:admin_user)
-      gift_card.update!(user: customer, created_by: admin)
+      gift_card.update!(customer: customer, created_by: admin)
 
       subject
       entry = json_response['data'].find { |g| g['id'] == gift_card.prefixed_id }
@@ -61,7 +61,7 @@ RSpec.describe Spree::Api::V3::Admin::GiftCardsController, type: :controller do
     it 'embeds customer + created_by when expand=customer,created_by is passed' do
       customer = create(:user, email: 'vip@example.com')
       admin = create(:admin_user, email: 'staff@example.com')
-      gift_card.update!(user: customer, created_by: admin)
+      gift_card.update!(customer: customer, created_by: admin)
 
       get :index, params: { expand: 'customer,created_by' }, as: :json
       entry = json_response['data'].find { |g| g['id'] == gift_card.prefixed_id }
@@ -113,15 +113,16 @@ RSpec.describe Spree::Api::V3::Admin::GiftCardsController, type: :controller do
       expect(created.created_by_id).to eq(admin_user.id)
     end
 
-    it 'attaches a customer when user_id is passed as a prefixed ID' do
+    it 'attaches a customer when customer_id is passed as a prefixed ID' do
       customer = create(:user, email: 'buyer@example.com')
 
-      post :create, params: create_params.merge(user_id: customer.prefixed_id, expand: 'customer'), as: :json
+      post :create, params: create_params.merge(customer_id: customer.prefixed_id, expand: 'customer'), as: :json
 
       expect(response).to have_http_status(:created)
       expect(json_response['customer']['id']).to eq(customer.prefixed_id)
       expect(json_response['customer']['email']).to eq('buyer@example.com')
     end
+
 
     it 'returns 422 when amount is missing' do
       post :create, params: { currency: 'USD' }, as: :json

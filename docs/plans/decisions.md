@@ -1,3 +1,47 @@
+## 2026-09-07: Deposits are not a shipping concern — how a buyer pays gets its own plan
+
+**Context:** `6.0-b2b-wholesale-shipping.md` originally specified deposits as part of wholesale freight: a delivery method would carry a `deposit_percentage`, checkout would collect it, and the order would complete part-paid. Building it raised two questions that had to be answered before it could ship. Is a shipping method the right thing to hang a payment arrangement on? And does merchant-configurable deposit collection belong in open source at all? Researching the second answered the first.
+
+**Decision:** This plan covers how goods **ship**; how the buyer **pays** is a separate subject with its own plan. Three findings drove it. **Deposits and net terms are two halves of one arrangement** — merchants combine them ("40% deposit, balance Net 30"), and the only native implementation in the market models the deposit as an attribute *on* a payment term. Shipping half the subject inside a shipping plan leaves a vocabulary with no way to set it and no home for the other half. **The arrangement belongs to the buyer, not the shipment** — a deposit is negotiated with a company; no comparable platform configures one per shipping method, and every one that offers deposits scopes them per product, per customer, or per order. **Two OSS plans already defer net terms** to a payment-terms plan that does not exist (`6.0-payment-method-rules.md`, `6.0-6.1-b2b-payment-terms.md`), so the destination was already named — it just had not been written.
+
+**Consequences:** No delivery method carries a `deposit_percentage`, and freight must not become a second place payment arrangements are configured. One piece is deliberately kept so the payment-terms plan starts from a hook rather than from patching: `Purchase#amount_due_at_checkout`, answering the full total through `Spree::Purchases::AmountDueAtCheckout` (registered in `Spree::Dependencies`), read by the four decisions that gate on money arriving — checkout requirements, both completion guards, and dispatch. Without it, an arrangement collecting part of the total up front has to patch those four independently. It ships with a spec proving the open-source answer is the total, and a spec registering a half-up-front replacement and proving checkout, completion and dispatch all follow it. What a new payment or gateway session *defaults* to, and the capture loop, still read `total`: those are amounts rather than decisions. Partial payments are untouched — they predate this work. A related fix rides along because it holds independently: dispatch now guards on `payment_total >= amount_due_at_checkout` rather than `paid?`, which required a positive total and so refused to ship a fully discounted or store-credit-paid order.
+
+## 2026-09-03: A return label buys the cheapest rate; the fulfillment's tracking becomes a read-through summary
+
+**Context:** Implementing `6.0-shipping-labels-and-deliveries.md` raised two
+questions the design left open — which rate a return label buys, and what
+happens to code that assigns `fulfillment.tracking`.
+
+**Decision:** A return label buys the **cheapest rate the connected account
+offers** across every carrier. Unlike an outbound parcel there is no rate the
+customer selected: return postage is the merchant's own money and nobody chose
+a service for it. Reusing the outbound carrier was rejected because a parcel
+whose tracking was hand-entered has no carrier to reuse, and mirroring the
+outbound service inbound is usually the most expensive answer to a question the
+merchant never asked; a merchant wanting a fixed return service configures it on
+the integration later, which is additive. Separately, `Spree::Fulfillment#tracking`
+becomes a **read-through summary of the primary delivery** and `#tracking=` a
+deprecated shell that writes that delivery on save — the 5.6 field keeps
+working for host code and the storefront one more release, and both go in 6.1
+with the column. One naming consequence: the label's file format is written as
+**`file_format`** on the API, because `format` is Rails' own request-format
+parameter and a controller permitting it receives `"json"`.
+
+**Consequences:** Return labels need no configuration to work, which is what
+makes the customer-facing return-label download usable the day the plan ships.
+The deprecated `tracking=` writer is the reason the upgrade is quiet: an
+extension or host app that sets a tracking number the old way still lands it
+where every reader looks, with a warning naming the replacement. Plan:
+`6.0-shipping-labels-and-deliveries.md`.
+
+## 2026-09-03: Labels and parcels are records; the carrier axis moves onto `Spree::Delivery` in 6.0 (supersedes 2026-08-11 "multiple trackings deferred to 6.1")
+
+**Context:** A shipping label was three EasyPost-private keys in `fulfillment.metadata`, surfaced by a per-read `provider.documents` call and bought through `PATCH .../purchase_label`. Spree never knew the postage cost, could not reprint once the carrier's hosted URL expired, could not buy a second label after a refund (idempotency keyed off the metadata), and had nowhere to put a return label — the returns plan had already sent that to "the URL in `metadata`". Tracking lived in seven columns on `spree_fulfillments`, one number per parcel, with a `spree_fulfillment_trackings` model deferred to 6.1 and required to absorb the whole axis when it came. Both were candidates for "promote to a model with RESTful routes"; only one of them is a thing.
+
+**Decision:** Two new tables, both with a **polymorphic `owner`** (`Fulfillment` | `Return`) on the 2026-08-22 tax-identifier reasoning — one concept held by different parties, not a type string hiding several meanings. `Spree::ShippingLabel` is the purchased or uploaded carrier document: cost and currency (merchant accounting, admin-only), the file in private storage fetched from the provider at purchase, `purchased → refund_requested → refunded`, an `external_id`, and a frozen `tracking_number`. `Spree::Delivery` is one parcel's carrier journey — tracking number, carrier, carrier status (`pending` instead of nil), estimate, arrival, scan details — optionally minted by a label. `delivered` on the fulfillment stays a transition, not a model: marking delivered is the fulfillment's own status changing, and the fulfillment rolls it up from its deliveries (or from staff, for parcels that have none). Idempotency of the label buy moves into core — the workflow refuses on an active label, so providers stop keeping `metadata` keys. The provider contract grows a typed `purchase_label(owner) → Spree::LabelPurchase` and `refund_label(label)`; `create_fulfillment` stays for non-label dispatch. The 6.0 edge's fulfillment-level `tracking_carrier`/`tracking_status`/`tracking_details`/`estimated_delivery_at` are removed in place rather than bridged (never released); `tracking` and `tracking_url` (5.6 API) stay forever as the primary delivery's summary.
+
+**Consequences:** The 2026-08-11 deferral's constraint held — the delivery takes the entire axis, nothing stays split between fulfillment and row — but the model lands in 6.0 and under a different name, because a `Return` owns parcels too and `FulfillmentTracking` cannot say so. The name was tested twice: `Delivery` was questioned for leaning toward the arrival event, `Parcel` was chosen and then withdrawn the same day when checked against `6.0-b2b-wholesale-shipping.md`, which uses "parcel" as the antonym of freight — a PRO number covering three pallets is not a parcel. `Tracking` collides with the 5.6 `Fulfillment#tracking` string that stays forever. `Delivery` is the modality-neutral word carriers use for a parcel and a pallet alike; the two-meanings cost beside `DeliveryMethod`/`DeliveryRate` is accepted. The same check settled that freight paperwork (bill of lading, placards, packing lists) is never a `ShippingLabel` — it belongs to `OrderDocument` in `6.1-b2b-order-documents.md` — and that `Delivery#carrier` is free text, never validated against the carrier registry, or a forwarder's number becomes unenterable. Return labels ship now on the same table (EasyPost `is_return`), with a `Return` delivery that never auto-receives: arrival is not inspection. Uploaded labels are in scope, so merchants on the Manual provider get a place for postage they bought elsewhere; `POST .../labels` purchases without a body and records with a `file`. Sellers may upload and track but never purchase or refund — those need the operator's carrier account. The routing rule this settles for the whole Admin API: a durable record with its own identity (label, delivery, refund) is a nested resource created by `POST`; a lifecycle transition (`fulfill`, `cancel`, `mark_delivered`, `capture`, `approve`) stays a `PATCH` member action. Plan: `6.0-shipping-labels-and-deliveries.md`.
+
 ## 2026-09-02: A 6.0 column rename is earned by public leakage, not by completeness
 
 **Context:** `5.4-store-api-naming-standardization.md` listed six database renames as its remaining 6.0 work — roughly 1,900 references. But the 5.4 model aliases already make every API response speak the new names, so the honest question was not "which renames are left" but "which ones still change anything a caller can see".
@@ -5,6 +49,21 @@
 **Decision:** Rename only where the old name still reaches a public surface. Three things bypass an attribute alias: **Ransack filter keys** (the whitelist publishes the column, not the alias), **validation error keys** (a client sending `postal_code` got its error back under `zipcode`, so it could not map the error to the field it sent), and **delegated method names** (`bill_address_firstname`, which the dashboard's own order table sorts by). Renamed on that test: the address name and postal-code columns, and the option type/value `presentation` column with its two Mobility translation tables. Two more rode along for consistency rather than leakage — `Spree::WishedItem` (its class and table were the only ones that never matched the serializer the API already ships) and the last two `promo_total` columns (Order aliased one way, LineItem and Fulfillment the other, a reading trap). Deferred to 6.1: `spree_credit_cards.cc_type`/`last_digits` and the order/cart address foreign keys — absent from the v3 contract, never validated, aliases complete, and the FK pair alone is ~1,000 references.
 
 **Consequences:** Two bridge shapes now coexist and the difference is load-bearing. `alias_attribute` resolves inside `where` and `find_by`, so the address and total bridges are complete. The option bridge cannot be an `alias_attribute` — Mobility owns `label` — so it is a plain method and `where(presentation:)` raises; that asymmetry is documented in the concern and the upgrade guide rather than papered over. The wishlist item's `wi_` prefix stays put (amended 2026-09-03): a prefixed ID is a Store API identifier a client holds, and `decode_own_prefixed_id` rejects a foreign prefix, so moving it 404s every ID already issued. The `si_` → `sl_` precedent does not transfer — `StockLevel` is admin-side. An existing model keeps the prefix it issued; only a new model picks one. The leakage test is the reusable part: before renaming a column that an alias already hides, check whether Ransack, an error key, or a delegation still publishes the old name — if none do, the rename is churn.
+## 2026-09-02: EU compliance ships whole in open source — subject requests are asynchronous, erasure is anonymization, withdrawal is its own window
+
+**Context:** `5.4-6.0-eu-legal-compliance.md` had shipped only its Omnibus half — `Spree::PriceHistory`, the recording callback and `?expand=prior_price`. Everything GDPR and everything Consumer-Rights was still a sketch: no consent timestamp, no export, no anonymizer beyond `scramble_email_and_names` (which touches three columns on one row), no erasure endpoint a merchant could actually reach, and no withdrawal deadline. The gap mattered more than it looked: `Spree::Customer#check_completed_orders` refuses to destroy any customer who has bought something, so an EU merchant receiving an erasure request for a real buyer had no path at all short of the Rails console.
+
+**Decision:** Build the rest of the plan in core, with four rulings settled before implementation.
+
+1. **A subject access request is asynchronous and leaves a record.** `POST /store/customers/me/data_export` enqueues a job and answers `202`; the file is built off the request cycle, stored privately, and the customer is emailed a signed link. A second request while one is pending returns the pending one rather than starting a second build. The alternative — a synchronous `GET` returning JSON inline, which the plan originally sketched — puts an unbounded multi-table query on a web worker and, worse, leaves nothing behind: Art. 30 record-keeping wants evidence the request happened and was answered, and a response body that was streamed and forgotten is not that. This is a new `Spree::DataRequest` model rather than a `Spree::Export` subclass: that pipeline is admin-owned (`belongs_to` an admin user), CSV-only and store-scoped, and a customer-owned JSON subject export is none of those things. The 24-hour cooldown the open question offered is subsumed — a pending request *is* the cooldown.
+
+2. **Both subject-request endpoints ship in open source, on the storefront and in the admin.** The plan had reserved `POST /admin/customers/:id/anonymize` and `GET /admin/customers/:id/export` for Enterprise. That split fails the common case: erasure and access requests arrive as email to the merchant's support address, from people who often no longer have a working login, and from guests who never had an account. A self-service-only implementation serves the rare request and leaves the ordinary one to the console. Core ships the mechanism at both ends, gated on `write_customers`. Enterprise keeps what is genuinely a product rather than a mechanism: the request queue, the one-month Art. 12(3) deadline clock, the audit trail, automated retention runs and per-market legal text.
+
+3. **Erasure means anonymization, and the ledger survives it.** Order totals, tax lines, line items, payments and refunds are never touched. Names, emails, phones, street lines, IP addresses, customer notes and metadata are replaced across the customer, their address book, the address snapshots on their orders, gateway customer profiles, OAuth identities and refresh tokens. City, state, country and a truncated postcode survive deliberately: a VAT audit has to be able to establish the jurisdiction a sale was taxed in, and erasing that would trade one legal obligation for another. Deleting the order address rows outright was rejected for the same reason.
+
+4. **The withdrawal period is its own market preference, anchored on delivery.** `Spree::Market` already carries `return_window_days`, and reusing it was tempting. It is the wrong quantity. The statutory right of withdrawal runs 14 days from the moment the buyer *receives* the goods; a return window is merchant policy running from purchase, and merchants routinely set it to 30 days as goodwill. Collapsing the two would publish a goodwill figure as a statutory notice, and would count it from the wrong event. So `withdrawal_period_days` (default 14) sits beside `return_window_days`, and the deadline computes from the order's latest `delivered_at`, falling back to `completed_at` while nothing has been delivered — which honours the 2026-08-11 ruling that `delivered_at` is what the EU withdrawal period counts from.
+
+**Consequences:** Anonymization is the only sanctioned erasure path — `scramble_email_and_names` becomes a deprecated shell delegating to it, and no new code may delete customer PII by hand. Any new table carrying customer-identifiable data must be handled by `Spree::Customers::Anonymize` in the same change that introduces it, and there is a spec that fails when a PII-shaped column appears in the schema without the anonymizer covering it. Consent acquires a timestamp and a source: `accepts_email_marketing` alone is no longer sufficient proof, and every path that flips it records when and where. Checkout and registration consent is persisted (`Spree::ConsentRecord`), closing the item `6.0-store-policies.md` parked. The price-history prune task reads the store preference rather than the global config, per the store-scoped configuration rule.
 
 ## 2026-09-02: Translation staleness tracking is cut, not deferred with a design
 
@@ -3990,7 +4049,7 @@ group); group-style targeting of companies arrives, if ever, as explicit
 rule kinds on the promotion/price-rule STI families.
 
 **OSS trusts every member; governance is Enterprise, and its plans live in
-`spree-enterprise-v2/docs/plans/`.** The Store API ships full directory
+`ee/docs/plans/`.** The Store API ships full directory
 self-service — node detail, addresses, members, subtree order history,
 writable cart `company_id` (sole standing as the default; explicit node for
 multi-node buyers, finally settling the "provisional — revisit" resolution
@@ -4255,7 +4314,7 @@ Deliberately 6.1: every piece is additive, nothing needs the 6.0 breaking
 window, and 6.0 work must not build interim approval primitives in the
 meantime.
 
-**Enterprise** (`spree-enterprise-v2/docs/plans/b2b-company-onboarding.md`)
+**Enterprise** (`ee/docs/plans/b2b-company-onboarding.md`)
 registers the policy and owns the flow: an application record (FK → the
 OSS company; `spree_companies` stays status-free — this supersedes the
 same-day draft that put five statuses on Company), the seller-onboarding
@@ -4307,7 +4366,7 @@ wholesale-deposit rollup work, decided once). In 6.1:
 leaving the cart untouched (deliberately not the completion copier, which
 re-points money records and is one-shot).
 
-**Enterprise (`spree-enterprise-v2/docs/plans/b2b-quotes.md`)** owns the
+**Enterprise (`ee/docs/plans/b2b-quotes.md`)** owns the
 quote product: a thin `Quote` row over the draft order (own model → clean
 `Q` numbers from the per-resource sequence; one quote per draft), statuses
 `draft → sent → accepted → converted` (+ `changes_requested`, `expired`
@@ -4754,3 +4813,372 @@ agreement to understand every part of it at once); skippable steps (a
 "create now" escape hatch competing with Next on every step).
 
 Plans amended: `6.0-catalog-agreement-rework.md` (phase 4 completed).
+## 2026-08-31 — Wholesale shipping backend: the store's box becomes a row with no bridge, and unpriced rates carry the logistics instead of a price
+
+Phases 1–6 of `6.0-b2b-wholesale-shipping.md` — everything below the
+dashboard and the storefront. Three rulings other plans need.
+
+**The four `default_package_*` store preferences are deleted outright, with
+no deprecation bridge.** A recorded exception to the always-bridge
+convention, and the reasoning is narrow enough to be worth stating so it is
+not read as a precedent: those preferences were added inside this same
+unreleased 6.0 cycle, so no released version exposes them and there is no
+caller to keep working. A bridge writing through to the new default
+`PackageType` row would have left two spellings of the store's shipping box
+coexisting for a release, each able to disagree with the other in the
+dashboard, in exchange for compatibility nobody can be relying on. The
+upgrade task (`spree:package_types:backfill`) creates each store's default
+row from the preference values, which is what makes the removal safe. The
+convention still holds for anything that shipped: bridge it.
+
+**An unset variant `dimensions_unit` follows the store's `unit_system`** —
+imperial reads as inches, metric as centimeters — rather than gaining a
+`default_dimensions_unit` store preference to mirror `weight_unit`'s
+fallback. The store already answers "what do dimensions mean here" through
+`unit_system`, which is what the box preferences and the EasyPost provider
+have always read; a second settable value could contradict it, and the
+merchant would have no way to tell which one a number obeyed.
+
+**An unpriced rate is a rate with no price, not a rate priced at zero.**
+`Spree::DeliveryRateProvider::Estimate` and `spree_delivery_rates` carry an
+`unpriced` boolean; the estimator skips markup and tax gross-up for those
+rows, and `DeliveryRate#free?` answers false for them so nothing renders
+"Free" over a shipment whose cost is genuinely unknown. This is the
+mechanism the plan's constraint points at — a zero-cost priced rate is the
+workaround it exists to prevent. `Spree::FreightSummary` (units, cartons,
+pallets, CBM, gross weight, `complete?`) rides in the estimate's metadata
+and is frozen onto the selected rate at completion, never re-derived from
+the live catalog afterwards.
+
+Everything money-shaped stays for phase 7: deposits, the completion
+payment-sufficiency change and the partial-payment order surfaces are not in
+this cut. **Constraint unchanged and now load-bearing:** nothing may assume
+a completed order is paid in full once phase 7 lands.
+
+Plan: `6.0-b2b-wholesale-shipping.md` (phases 1–6 implemented).
+
+## 2026-09-02 — Order cancellation and approval history tables are dropped; the reason lives on the order
+
+Reassessing `5.5-6.0-order-cancellation-and-approval.md` before its 6.0
+half (drop the `canceled_at`/`approved_at` columns, multi-level approvals).
+The two tables it added in 5.5 turned out to be write-only: the cancel and
+approve services inserted a row and nothing ever read one — no endpoint,
+serializer, view, mail, export or task — and the cancel endpoint never
+accepted a reason, so every row said `other`. Worse, the record's
+`restock_items` and `refund_payments` flags described decisions the
+workflow did not take (items are always restocked through fulfillment
+cancellation; an ordinary order's captured payments are always canceled),
+so as an audit trail it misstated what happened.
+
+**Decision:** drop both tables in 6.0 (`if_exists`, the 5.5 migrations
+deleted so fresh installs never create them) and keep the cancellation on
+the order itself — the shape every major platform uses and the one the
+codebase already needs, since Ransack, sorting, the CSV export and staff
+anonymization read `canceled_at` as a column. Nothing is carried over: no
+row ever held more than the default.
+
+**The reason is merchant data, in its own table.** `cancel_reason_id`
+points at a new **`Spree::OrderCancellationReason`** — the fourth
+`NamedType` vocabulary beside return, claim and refund reasons:
+store-scoped, seeded per store, `restrict_with_error` while orders
+reference it, managed on the Settings → Reasons page that already renders
+its siblings, and optional like `Return#reason`. A fixed string list was
+written first and rejected on the 2026-08-07 `Claim#claim_type` grounds —
+nothing branches on the value, so a closed vocabulary asks the merchant a
+question it will not act on, while the neighbouring reasons are theirs to
+write. Merging the four into one table behind a `kind` was also rejected:
+they carry different associations and delete guards, `RefundReason` has
+named lookups core itself attaches to refunds, `NamedType` already factors
+out everything shared, and one wider index replaces four DB-enforced ones
+— typed tables per grain, as the quantity-rules plan puts it. The workflow
+refuses a reason from another store, so console and extension callers get
+the scoping the controllers apply to every incidental id. `Orders::Approve`
+stays what it was, the risk-review clearance (`considered_risky` +
+`approved_at`); a merchant-side multi-level approval of a placed order has
+no industry precedent (the nearest thing elsewhere is a fulfillment hold),
+and buyer-side company approvals are Enterprise (2026-08-30). `level:` /
+`note:` on Approve and `restock_items:` on Cancel warn and are ignored
+until 6.1.
+
+**Constraints now:** no cancellation or approval history tables; a future
+customer self-cancel makes the actor on the order polymorphic — a column
+change, never a side table; company approval flows stay Enterprise and
+carry their own record.
+
+## 2026-09-05 — The dashboard owns every string it shows; the Admin API sends codes
+
+Type names and descriptions for pluggable kinds (price, promotion, collection,
+routing, delivery-method and commission rules, promotion actions, calculators,
+seller requirement kinds, integrations, the permission catalog) and the text
+inside Admin 422 responses were produced in Ruby through `Spree.t`, in the
+request locale, which the dashboard never sets. Interface language and rule
+labels therefore disagreed whenever the two locales differed, and each type was
+being fixed one `en.yml` key at a time (PR #14575). The Admin API was a preview
+and can change: type catalogs and records are identified by their stable `type`
+code, validation details carry the Rails error `code` with its parameters, and
+the dashboard translates both from its own locale files. `label`, `description`
+and `message` remain on the wire as fallback text for integrations and for
+extension types without a dashboard translation, never as UI copy. The Store
+API is untouched: the richer 422 shape lives in the Admin base controller, not
+in the shared error handler. The dashboard keeps its UI language out of
+`x-spree-locale`, which selects the content locale a merchant edits. Plan:
+`6.0-admin-ui-owns-its-copy.md`.
+
+Four follow-on questions were settled the same day when the plan came up for
+implementation. The type catalogs **keep** `label`/`description` as a
+documented fallback: dropping them would force every extension gem shipping a
+Ruby type to also ship a dashboard plugin with locales, or merchants read a raw
+code, and the fallback gives the migration itself a safety net. Built-in types
+still lose the Ruby copy methods that exist only to feed the wire. `reject!`
+takes the code as its **first argument** (`reject!(:not_awaiting_review)`,
+`reject!(:below_minimum, count: 5)`), reusing `errors.add(:base, symbol,
+**params)` unchanged rather than growing a second keyword signature; strings
+keep working so conversion is incremental. **Every** core error call site
+converts in one run, so no `message`-only fallback path remains in core and
+specs assert on `errors.details` codes instead of English sentences. Shared
+type-label and validation keys live in `@spree/dashboard-core`, which already
+ships all six locale files, so the Seller Panel inherits every language by
+importing the helper instead of duplicating locales.
+
+**Constraints now:** new pluggable types ship their `admin.types.<family>.<code>`
+keys in every dashboard locale, not a `Spree.t` label; new validation errors in
+core use a symbol and parameters, never a preformatted string; nothing in the
+dashboard prints an API `label`/`name`/`description` directly; shared admin copy
+goes in `dashboard-core` locales, never in `packages/seller-dashboard`.
+
+## 2026-09-07 — A column that changes row identity is not finished at the writers
+
+Building volume pricing (`6.0-volume-pricing.md`) added `min_quantity` to
+`spree_prices`, giving a variant several rows per price list where it had
+one. The writers and the resolver were updated; the readers that never
+ask the resolver were not, and that is where it showed.
+
+`Spree::Product#price_varies?` and `#lowest_price` iterate the product's
+`prices` — a `has_many through: variants` covering every row, price-list
+rows included. On sample data a toaster with a B2B agreement attached
+advertised "from $23.99" — a private contract rung — against a $39.99
+shop price, and reported its price as varying when it does not. The same
+shape sat in `Products.with_currency`,
+`Variant.for_currency_and_available_price_amount` and the line-item
+currency swap, which picked `prices.where(currency:).first` with no list
+filter and could now land on an arbitrary rung.
+
+**The leak predates the column.** Any price-list row already caused it,
+since none of those readers filtered `price_list_id`. What
+`min_quantity` changed is the odds: one stray row became a ladder of
+them, and the cheapest is the one a "lowest price" reader finds. Fixed by
+giving `Product` a `shop_prices` reader and scoping the three others to
+base prices.
+
+**The reusable part:** when a migration adds a dimension to a table,
+grep every reader that counts, joins to, or picks from that table without
+going through the thing that owns its semantics — here the pricing
+resolver. Updating the writers and the one canonical reader is the half
+of the job that is easy to see. Pricing paths were fine throughout:
+`Pricing::Context` carries quantity everywhere it matters and the cache
+key includes it.
+
+## 2026-09-07 — Volume pricing implementation: CSV deferred, the cap is a validation, and a ladder needs no quantity-1 rung
+
+Settled before building `6.0-volume-pricing.md`. Three of the four are
+narrow, one removes scope.
+
+**Price-list CSV is deferred rather than shipped.** The plan called for
+"CSV import/export of a list gains a `min_quantity` column", but no
+price-list CSV surface has ever existed — the only price columns in any
+export are the product CSV's base `price` / `compare_at_price`. Adding a
+column to a pipeline that is not there is a whole export model, presenter,
+import parser, endpoints and dashboard affordance: a feature of its own,
+not a phase of this one. Recorded so the next person building a
+price-list CSV carries `min_quantity` in its first version. The product
+CSV stays untouched — breaks require a price list in v1, so every base row
+is quantity 1 by construction and the column could never vary.
+
+**The ≤10 break cap is a model validation scoped to
+`(variant, currency, price_list)`**, and the bulk-upsert path refuses a
+batch that would cross it. A dashboard-only cap leaves the API unbounded,
+and the resolver scans a variant's rows per priced line, so an unbounded
+ladder is a cost paid on every cart recalculation.
+
+**A ladder needs no quantity-1 rung.** A list may price a variant only
+from 24 up; quantities below fall through to the next list or the base
+price exactly as they do for a variant the list never priced. That is the
+"wholesale from a case" agreement, and requiring a base rung would make
+bulk writes order-dependent (a batch inserting `24` before `1` would have
+to be sorted to pass). The tier editor locks its first row to 1 when one
+exists, which is a convenience and not a rule.
+
+**Both tier editors ship together** — the price-list bulk editor and the
+catalog's products-with-prices view — because they are one component with
+two homes, and shipping one leaves the other showing a "+3 tiers" badge
+nothing can open.
+
+## 2026-09-07 — Three merchant asks resolved: market availability, the lot tier split, and the volume-pricing doctrine
+
+The next feedback batch (market exclusions, lot detail + tier question,
+volume pricing) resolved after three research passes (per-market
+availability, lot landscape, volume-pricing implementations).
+
+**Product market availability is a product-level territory axis**
+(`6.1-product-market-availability.md`): nullable
+`spree_products.market_availability` (NULL = all markets — zero backfill,
+exceptions-only join rows, new markets correct by construction) composed
+with publications as an intersection evaluated per request — **published
+on the channel ∧ available in the market** — with full hiding (the
+market-competent platform's choice; a "not available here" PDP advertises
+the product the distributor holds rights to) and a completion validation
+for the mid-cart market change no platform handles. One Availability card
+shows both axes (their de-confusion recipe). Deliberately NOT a market
+catalog — the 2026-08-28 closure stands; catalogs answer buyers, this
+answers territory. Channels were considered and rejected as the wrong
+axis (a channel per territory to hide two products is the duplication the
+merchant rejects). Constraints: availability is never denormalized; every
+market-context read surface applies the scope.
+
+**Lots split on the depth line** (maintainer's call, 2026-09-07 —
+supersedes the 2026-08-30 all-OSS decision and its 6.1 scope-trim note):
+OSS 6.1 keeps **simple lot capture** — `Spree::FulfillmentLot` rows
+(fulfillment item × lot number × optional quantity for split batches),
+advisory `lot_tracked` prompt, ransackable recall search both directions;
+the **lot library** (received-lot `StockLot` inventory, quantities,
+expiry/manufactured dates, supplier references, manual/FIFO/FEFO
+auto-allocation, the transactional `count_on_hand` decomposition) moves to
+**Enterprise** (`ee/docs/plans/inventory-lots.md`), whose
+allocation **writes the same OSS capture rows** so recall reads one
+surface on either tier. Landscape recorded with the trade-off: no platform
+ships lots natively at any tier, the app market monetizes exactly this
+depth ladder ($10 record-and-alert vs $24–199 library+FEFO), the one full
+open implementation (the ERP benchmark) is free in its community edition,
+and the traceability-lot-code compliance wave (July 2028) is why level-1
+capture stays OSS. Constraint: lot capture lives only on `FulfillmentLot`
+rows — no lot strings anywhere else, and OSS never grows quantities,
+expiry, or allocation.
+
+**Volume pricing: promotions = DTC consumers, price lists = B2B** — the
+one-sentence tier doctrine (`6.0-volume-pricing.md`). Fixed contracted
+ladders become a **price-row dimension**: `spree_prices.min_quantity`
+(integer default 1 — every existing row is a quantity-1 price, zero
+backfill; row identity gains the column; resolver picks the highest break
+≤ line quantity; ≤10 breaks; breaks require a price list in v1; a break
+ladder beats the list's ±% per variant — the market leader's stated
+precedence). Percentage ladders become **quantity bands on the list's ±%
+adjustment** (`spree_price_adjustment_tiers`: list × min_quantity ×
+percentage, falling back to the column) — this superseded, same day, a
+briefly-drafted promotions-based percent design: the implemented
+adjustment already treats percentage as *pricing* (computed on read, unit
+prices, never touching explicit rows), so bands answer "percent off what"
+with the implemented semantics, while marketing-visible volume discounts
+(strikethrough, D2C) remain promotion territory as a recorded deferred
+design (line-quantity rule + quantity-tiered percent calculator).
+Research verdict behind it: every platform with real volume pricing
+attaches tiers to the price record; nobody models them as list-matching
+rules; quantity RULES (MOQ/multiples) stay a sibling non-pricing axis
+everywhere — validating the existing quantity-rules split. Constraints:
+contracted tiers are never discounts, marketing discounts are never
+prices; price-reading callers must pass line quantity through
+`Pricing::Context`; exports must carry tier rows.
+
+## 2026-09-07 — Price-list CSV: SKU-keyed rows, a merge import, both homes, a sample ladder
+
+Settled before building the follow-up to `6.0-volume-pricing.md`, which
+had deferred the price-list CSV because no such surface existed.
+
+**Rows are keyed by SKU**, as the product CSV's are, and the file carries
+only the columns the import reads (2026-09-08: read-only `product` and
+`variant` columns were dropped — a column that changes nothing on the way
+back reads as if it would). A SKU-less variant or a SKU shared across
+sellers fails its row with a message. A
+prefixed `variant_id` fallback was rejected as a second rule for a case the
+product CSV does not cover either.
+
+**The import merges.** Rows in the file are upserted, a blank price removes
+that rung, and rungs absent from the file are untouched — the bulk price
+editor's semantics, reached through the same `Prices::BulkUpsert`. A
+replace mode was rejected: destructive, and a half-failed import leaves a
+half-replaced list. Consequence for the export: **placeholder rows are not
+written** — a blank price on re-import would remove the product from the
+list, so an unchanged export must re-import as a no-op.
+
+**Both homes.** Export and import sit next to "Edit prices" on the
+price-list page and on the catalog's pricing card, for the reason the tier
+editors ship in both: a merchant editing an agreement should not have to
+leave it.
+
+**A sample file ships** in `db/sample_data` and sample data loads it onto
+the Wholesale list — the import sheet's example download is then a real
+ladder, and a fresh QA environment shows breaks without a script.
+
+## 2026-09-08 — Price list rows are the membership model, and a job keeps them in step with the store's currencies
+
+A store that added a market with a new currency found its existing price
+lists empty in that currency: the spreadsheet shows a currency's products
+through the list's quantity-1 placeholder rows, and those were materialized
+only for the currencies known when the products were added.
+
+**Kept: placeholder rows define membership.** `add_products` writes a
+row per variant × store currency; the products endpoint, the "N prices
+configured" count and the spreadsheet all read those rows. A
+`Spree::PriceLists::SyncCurrenciesJob` now runs for the store after a market
+is created or changes currency; it re-runs `add_products` for what each list
+already holds,
+which inserts only the missing currency's rows. A removed currency keeps its
+rows — dropping merchant-typed prices is not a side effect a market edit may
+have. Markets are the only trigger: a store's currency set is
+configured through them, and the legacy `supported_currencies` column is no
+longer editable. The CSV import materializes the same placeholders for the products it
+prices, so an imported product is on the list the way an added one is.
+
+**Not taken: derive the grid from membership.** The spreadsheet could build
+its rows from the list's products and variants and show empty cells for any
+currency with nothing to sync. It would move the row model out of the
+database into the editor: the products endpoint would have to hand the
+editor variant rows, and the count and empty-state logic would follow. One
+model in one place, kept true by an idempotent job, was the smaller change.
+
+## 2026-09-05 — A CSV names its carton rather than referencing one
+
+Settled while building the wholesale plan's variant import.
+
+**A CSV names its carton; it does not reference one.** A merchant's
+spreadsheet says "Large carton", not a prefixed id, so the products import
+resolves the carton by name — and resolves it through `store.package_types`,
+so a name that matches another store's carton leaves the variant unpacked
+rather than borrowing somebody else's measurements. The tax-category lookup
+beside it is *not* store-scoped and was left alone: widening it is a
+separate correctness fix with its own blast radius, not something to smuggle
+into a packaging change.
+
+**Constraint now:** a new named lookup in an importer resolves through the
+store's own association.
+
+## 2026-09-08 — Package types are the seller's to own; the marketplace's are shared vocabulary
+
+Settled in `6.0-seller-package-types.md`.
+
+**A package type follows the seller side of the marketplace plan's Decision
+13.** "What kind of goods is this" (profiles, zones) is the marketplace's
+question; "who ships it, how, and in what" is the seller's. Cartons and boxes
+are the third clause, so `spree_package_types.seller_id` is nullable and a nil
+owner is the marketplace's row, exactly as for delivery methods and stock
+locations. The operator's rows are readable by every seller with no opt-in
+flag — a carton is geometry and a tare, nothing to protect — while a seller's
+rows are theirs alone. A package is quoted with its stock location's seller's
+default box, falling back to the marketplace's.
+
+**One default per owner needs two partial indexes, not one.** A nullable
+column inside a unique index constrains nothing for the rows where it is
+null, so "one default per (store, seller)" is enforced as one index for
+marketplace rows and one for seller rows; the name index is split the same
+way. MySQL, which has no partial indexes, relies on the model validations for
+marketplace rows — do not weaken them on the grounds that an index covers it.
+
+**A seller is asked for their box, never blocked without one.** A computed
+`Spree::SellerRequirements::PackageType` kind, provisioned by default, is met
+by a default box with all three dimensions and a weight recorded. It does not
+count the marketplace's box: a seller on shared rates still posts their own
+parcel.
+
+**Constraint now:** code that needs "the box for this package" reads
+`Stock::Package#default_package_type`, never `store.default_package_type`;
+seller-facing reads go through `available_to_seller(seller)`, seller writes
+through `seller.package_types`.

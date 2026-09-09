@@ -500,6 +500,7 @@
       "failed_to_update_staff": "Nie udało się zaktualizować personelu",
       "failed_to_update_store": "Nie udało się zaktualizować ustawień sklepu",
       "generic": "Coś poszło nie tak",
+      "label_download_failed": "Nie udało się pobrać etykiety",
       "network": "Błąd sieci — spróbuj ponownie",
       "not_found": "Nie znaleziono",
       "required": "To pole jest wymagane",
@@ -624,6 +625,45 @@
       "name": {
         "label": "Nazwa"
       },
+      "package_type": {
+        "name": {
+          "label": "Nazwa"
+        },
+        "kind": {
+          "label": "Rodzaj",
+          "help": "Tylko karton zbiorczy może być opakowaniem produktu."
+        },
+        "length": {
+          "label": "Długość"
+        },
+        "width": {
+          "label": "Szerokość"
+        },
+        "height": {
+          "label": "Wysokość"
+        },
+        "dimensions_unit": {
+          "label": "Jednostka"
+        },
+        "dimensions": {
+          "help": "Do wagi objętościowej przewoźnika i metrów sześciennych progów frachtowych."
+        },
+        "weight": {
+          "label": "Waga pustego",
+          "help": "Samo opakowanie, doliczane do zawartości."
+        },
+        "max_weight": {
+          "label": "Maks. waga",
+          "help": "Ile może unieść."
+        },
+        "weight_unit": {
+          "label": "Jednostka"
+        },
+        "default": {
+          "label": "Domyślne opakowanie",
+          "help": "Opakowanie, na którym opierają się wyceny Twoich przesyłek. Tylko jedno domyślne naraz."
+        }
+      },
       "number": {
         "label": "Numer"
       },
@@ -701,6 +741,10 @@
         "propagate_all_variants": {
           "help": "Twórz pozycje magazynowe w tej lokalizacji dla każdego wariantu produktu.",
           "label": "Automatycznie twórz pozycje magazynowe dla wszystkich wariantów"
+        },
+        "returns_enabled": {
+          "help": "Zwracany towar wraca do tej lokalizacji. Wyłącz, jeśli zwroty są sprawdzane gdzie indziej.",
+          "label": "Przyjmuj tu zwroty"
         }
       },
       "storefront_visible": {
@@ -836,7 +880,19 @@
         "units_per_carton": {
           "label": "Sztuk w kartonie"
         },
-        "quantity_rule_invalid": "Podaj liczbę całkowitą większą od zera lub pozostaw pole puste."
+        "quantity_rule_invalid": "Podaj liczbę całkowitą większą od zera lub pozostaw pole puste.",
+        "carton_package_type_id": {
+          "label": "Karton",
+          "help": "Karton, w który pakowany jest ten produkt. Jego wymiary dotyczą wszystkiego pakowanego tak samo."
+        },
+        "carton_weight": {
+          "label": "Waga kartonu",
+          "help": "Waga jednego zapakowanego kartonu."
+        },
+        "cartons_per_pallet": {
+          "label": "Kartonów na palecie"
+        },
+        "carton_weight_invalid": "Podaj wagę kartonu większą od zera albo zostaw pole puste."
       },
       "minimum_order_quantity": {
         "label": "Minimalna wielkość zamówienia",
@@ -918,6 +974,7 @@
       "try_again": "Spróbuj ponownie",
       "types": {
         "customers": "Klienci",
+        "price_list_prices": "Ceny cennika",
         "product_translations": "Tłumaczenia produktów",
         "products": "Produkty"
       },
@@ -972,12 +1029,46 @@
       "tax_category_saved": "Zapisano kategorię podatkową",
       "updated": "Zaktualizowano"
     },
+    "package_types": {
+      "table_title": "Rodzaje opakowań",
+      "search_placeholder": "Szukaj opakowania",
+      "empty": "Brak opakowań. Dodaj karton wysyłkowy oraz kartony i palety dla zamówień hurtowych.",
+      "add_cta": "Dodaj rodzaj opakowania",
+      "default_badge": "Domyślne",
+      "edit_sheet_title": "Rodzaj opakowania",
+      "create_description": "Pudełko, karton, paleta lub kontener, w które pakowane są towary.",
+      "edit_description": "Produkty pakowane w ten karton przyjmują jego wymiary — jedna zmiana poprawia wszystkie.",
+      "dimensions_column": "Wymiary",
+      "volume_column": "Objętość",
+      "kinds": {
+        "box": "Karton",
+        "envelope": "Koperta",
+        "carton": "Karton zbiorczy",
+        "pallet": "Paleta",
+        "container": "Kontener"
+      },
+      "messages": {
+        "added": "Dodano rodzaj opakowania",
+        "updated": "Zaktualizowano rodzaj opakowania",
+        "deleted": "Usunięto rodzaj opakowania"
+      },
+      "delete_confirm": {
+        "title": "Usunąć rodzaj opakowania?",
+        "message": "{{name}} zostanie usunięty. Produkty w nim zapakowane trzeba najpierw przepakować."
+      },
+      "validation": {
+        "non_negative": "musi wynosić zero lub więcej"
+      }
+    },
     "pages": {
       "settings": {
         "stock_locations": {
           "add_sheet_title": "Dodaj lokalizację magazynową",
           "edit_sheet_title": "Edytuj lokalizację magazynową",
           "search_placeholder": "Szukaj lokalizacji magazynowych…"
+        },
+        "package_types": {
+          "add_sheet_title": "Dodaj rodzaj opakowania"
         }
       },
       "products": {
@@ -1283,6 +1374,7 @@
         "default": "Domyślna",
         "location": "Lokalizacja",
         "pickup": "Odbiór",
+        "returns": "Zwroty",
         "seller": "Sprzedawca",
         "type": "Typ"
       },
@@ -1304,7 +1396,10 @@
         "local": "Tylko produkty w tej lokalizacji"
       },
       "search_placeholder": "Szukaj według nazwy…",
+      "section_behavior": "Zachowanie",
+      "section_details": "Szczegóły",
       "section_pickup": "Odbiór",
+      "section_returns": "Zwroty",
       "stock_levels": {
         "empty": "Brak stanów magazynowych w tej lokalizacji.",
         "empty_search": "Żadne stany magazynowe nie pasują do wyszukiwania.",
@@ -1323,6 +1418,31 @@
       }
     },
     "validation": {
+      "codes": {
+        "accepted": "musi zostać zaakceptowane",
+        "blank": "nie może być puste",
+        "confirmation": "nie zgadza się",
+        "empty": "nie może być puste",
+        "equal_to": "musi być równe {{count}}",
+        "exclusion": "jest zarezerwowane",
+        "greater_than": "musi być większe niż {{count}}",
+        "greater_than_or_equal_to": "musi być większe lub równe {{count}}",
+        "inclusion": "nie znajduje się na liście",
+        "invalid": "jest nieprawidłowe",
+        "invalid_commission_rule_type": "{{type}} nie jest regułą prowizji dostępną w tym sklepie",
+        "less_than": "musi być mniejsze niż {{count}}",
+        "less_than_or_equal_to": "musi być mniejsze lub równe {{count}}",
+        "not_a_number": "nie jest liczbą",
+        "not_an_integer": "musi być liczbą całkowitą",
+        "other_than": "musi być inne niż {{count}}",
+        "present": "musi być puste",
+        "product_not_in_store": "wszystkie muszą należeć do tego sklepu",
+        "required": "musi istnieć",
+        "taken": "jest już zajęte",
+        "too_long": "jest za długie (maksymalnie {{count}} znaków)",
+        "too_short": "jest za krótkie (minimalnie {{count}} znaków)",
+        "wrong_length": "ma nieprawidłową długość (powinno mieć {{count}} znaków)"
+      },
       "country_required": "Kraj jest wymagany",
       "currency_required": "Waluta jest wymagana",
       "first_name_required": "Imię jest wymagane",
@@ -1501,7 +1621,12 @@
           "identity": "Tożsamość",
           "tax_category_placeholder": "Dziedzicz z produktu",
           "ordering": "Zamówienia B2B",
-          "ordering_help": "Ile kupujący musi wziąć. Stan magazynowy nadal liczony jest w sztukach."
+          "ordering_help": "Ile kupujący musi wziąć. Sprawdzane przy dodawaniu do koszyka i ponownie przy składaniu zamówienia. Katalog grupy klientów lub firmy może nadpisać te wartości dla swoich kupujących. Stan magazynowy nadal liczony jest w sztukach.",
+          "packing": "Pakowanie",
+          "packing_help": "Jak ten produkt opuszcza magazyn hurtowo. Na tych liczbach opierają się wyceny frachtu.",
+          "no_carton_types": "Dodaj typ kartonu w sekcji <settingsLink>Ustawienia → Typy opakowań</settingsLink>, aby zapisać sposób pakowania tego produktu.",
+          "carton_placeholder": "Brak kartonu",
+          "pending_save": "Zmiany zapisują się razem z produktem."
         },
         "title": "Warianty",
         "variant_label": "Wariant"
@@ -1617,6 +1742,274 @@
           "minimum": "Najmniejsza ilość jednego produktu, jaką kupujący może zamówić. Mniejsze zamówienie jest odrzucane ze wskazaniem najbliższych prawidłowych ilości — nic nie jest zaokrąglane.",
           "multiple": "Wielkość kroku. Przy wielokrotności 24 kupujący zamawia 24, 48 lub 72 — nigdy 30. Kroki liczone są od minimum: przy minimum 50 i kroku 24 dozwolone są 50, 74 i 98.",
           "order_minimum": "Najniższa wartość całego zamówienia, liczone tylko produkty — dostawa i podatek się nie liczą. Kupujący widzą, ile brakuje, a złożenie zamówienia jest blokowane do osiągnięcia progu."
+        }
+      }
+    },
+    "types": {
+      "calculator": {
+        "default_refund_amount": {
+          "name": "Domyślna kwota zwrotu",
+          "description": "Zwraca kwotę pierwotnie zapłaconą za zwrócone produkty"
+        },
+        "default_tax": {
+          "name": "Domyślny podatek",
+          "description": "Stosuje stawkę podatku do kwoty podlegającej opodatkowaniu"
+        },
+        "digital_delivery": {
+          "name": "Dostawa cyfrowa",
+          "description": "Bez kosztów wysyłki — zamówienie jest dostarczane cyfrowo"
+        },
+        "flat_percent_item_total": {
+          "name": "Stały procent",
+          "description": "Procent wartości produktów w zamówieniu"
+        },
+        "flat_rate": {
+          "name": "Stawka ryczałtowa",
+          "description": "Jedna stała kwota, niezależnie od zawartości zamówienia"
+        },
+        "flexi_rate": {
+          "name": "Stawka elastyczna",
+          "description": "Kwota bazowa plus kwota za każdy produkt"
+        },
+        "per_item": {
+          "name": "Za sztukę",
+          "description": "Stała kwota za każdy produkt w zamówieniu"
+        },
+        "percent_on_line_item": {
+          "name": "Procent za pozycję",
+          "description": "Procent każdej pozycji zamówienia"
+        },
+        "price_sack": {
+          "name": "Próg cenowy",
+          "description": "Jedna kwota poniżej progu, inna od progu w górę"
+        },
+        "tiered_flat_rate": {
+          "name": "Progowa stawka ryczałtowa",
+          "description": "Stała kwota zmieniająca się wraz z wartością zamówienia"
+        },
+        "tiered_percent": {
+          "name": "Procent progowy",
+          "description": "Procent zmieniający się wraz z wartością zamówienia"
+        }
+      },
+      "collection_rule": {
+        "available_on": {
+          "name": "Niedawno opublikowane",
+          "description": "Produkty opublikowane w ciągu ostatnich N dni"
+        },
+        "sale": {
+          "name": "W promocji",
+          "description": "Produkty przecenione poniżej ceny porównawczej"
+        },
+        "tag": {
+          "name": "Tag",
+          "description": "Produkty z pasującym tagiem"
+        }
+      },
+      "commission_rule": {
+        "category_rule": {
+          "name": "Kategoria",
+          "description": "Nalicza tę stawkę tylko dla produktów w wybranych kategoriach i wszystkich podrzędnych"
+        },
+        "item_total_rule": {
+          "name": "Wartość sprzedaży",
+          "description": "Nalicza tę stawkę tylko przy sprzedaży w danym przedziale wartości"
+        },
+        "product_rule": {
+          "name": "Produkt",
+          "description": "Nalicza tę stawkę tylko dla wybranych produktów"
+        },
+        "seller_rule": {
+          "name": "Sprzedawca",
+          "description": "Nalicza tę stawkę tylko dla wybranych sprzedawców"
+        }
+      },
+      "delivery_method_rule": {
+        "channel_rule": {
+          "name": "Kanał sprzedaży",
+          "description": "Oferuj tę metodę dostawy tylko w wybranych kanałach sprzedaży"
+        },
+        "company_rule": {
+          "name": "Firma",
+          "description": "Oferuj tę metodę dostawy tylko dla zamówień składanych na firmę albo tylko dla pozostałych"
+        },
+        "excluded_products_rule": {
+          "name": "Wykluczone produkty",
+          "description": "Ukryj tę metodę dostawy, gdy zamówienie zawiera któryś z tych produktów"
+        },
+        "item_total_rule": {
+          "name": "Wartość zamówienia",
+          "description": "Oferuj tę metodę dostawy tylko, gdy wartość zamówienia mieści się w przedziale"
+        },
+        "volume_rule": {
+          "name": "Objętość",
+          "description": "Oferuj tę metodę dostawy tylko, gdy objętość przesyłki mieści się w przedziale, w metrach sześciennych"
+        },
+        "weight_rule": {
+          "name": "Waga",
+          "description": "Oferuj tę metodę dostawy tylko, gdy waga paczki mieści się w przedziale"
+        }
+      },
+      "order_routing_rule": {
+        "default_location": {
+          "name": "Domyślna lokalizacja",
+          "description": "Preferuje lokalizację magazynową oznaczoną jako domyślna"
+        },
+        "minimize_splits": {
+          "name": "Minimalizuj podziały",
+          "description": "Preferuje lokalizację, która samodzielnie zrealizuje najwięcej pozycji, unikając dzielenia przesyłek"
+        },
+        "preferred_location": {
+          "name": "Preferowana lokalizacja",
+          "description": "Realizuj z lokalizacji przypiętej do zamówienia, jeśli została ustawiona"
+        }
+      },
+      "price_rule": {
+        "channel_rule": {
+          "name": "Kanał sprzedaży",
+          "description": "Stosuj ceny w zależności od kanału sprzedaży"
+        },
+        "customer_group_rule": {
+          "name": "Grupa klientów",
+          "description": "Stosuj ceny dla wybranych grup klientów"
+        },
+        "market_rule": {
+          "name": "Rynek",
+          "description": "Stosuj ceny w zależności od rynku"
+        },
+        "user_rule": {
+          "name": "Klient",
+          "description": "Stosuj ceny dla wybranych klientów"
+        },
+        "volume_rule": {
+          "name": "Ceny ilościowe",
+          "description": "Stosuj ceny w zależności od kupionej ilości"
+        },
+        "zone_rule": {
+          "name": "Strefa",
+          "description": "Stosuj ceny w zależności od strefy wysyłki"
+        }
+      },
+      "promotion_action": {
+        "create_adjustment": {
+          "name": "Utwórz korektę dla całego zamówienia",
+          "description": "Tworzy korektę kredytową promocji dla zamówienia"
+        },
+        "create_item_adjustments": {
+          "name": "Utwórz korektę dla poszczególnych pozycji",
+          "description": "Tworzy korektę kredytową promocji dla pozycji zamówienia"
+        },
+        "create_line_items": {
+          "name": "Utwórz pozycje zamówienia",
+          "description": "Dodaje do koszyka określoną ilość wariantu"
+        },
+        "free_shipping": {
+          "name": "Darmowa wysyłka",
+          "description": "Sprawia, że wszystkie przesyłki w zamówieniu są bezpłatne"
+        }
+      },
+      "promotion_rule": {
+        "category": {
+          "name": "Kategorie",
+          "description": "Zamówienie zawiera produkty z określonych kategorii"
+        },
+        "channel": {
+          "name": "Kanały sprzedaży",
+          "description": "Tylko zamówienia złożone przez wybrane kanały sprzedaży"
+        },
+        "country": {
+          "name": "Kraj",
+          "description": "Ogranicz do zamówień z adresem dostawy w określonym kraju"
+        },
+        "currency": {
+          "name": "Waluta",
+          "description": "Ogranicz do zamówień w określonej walucie"
+        },
+        "customer": {
+          "name": "Klienci",
+          "description": "Dostępne tylko dla określonych klientów"
+        },
+        "customer_group": {
+          "name": "Grupa(-y) klientów",
+          "description": "Dostępne tylko dla klientów z określonych grup klientów"
+        },
+        "customer_logged_in": {
+          "name": "Tylko zalogowani klienci",
+          "description": "Dostępne tylko dla zalogowanych klientów"
+        },
+        "first_order": {
+          "name": "Pierwsze zamówienie",
+          "description": "Musi być pierwszym zamówieniem klienta"
+        },
+        "item_total": {
+          "name": "Wartość produktów",
+          "description": "Suma zamówienia spełnia te kryteria"
+        },
+        "market": {
+          "name": "Rynki",
+          "description": "Tylko zamówienia z wybranych rynków"
+        },
+        "one_use_per_user": {
+          "name": "Jedno użycie na użytkownika",
+          "description": "Tylko jedno użycie na użytkownika"
+        },
+        "option_value": {
+          "name": "Wartość (wartości) opcji",
+          "description": "Zamówienie zawiera produkty z pasującymi wartościami opcji"
+        },
+        "product": {
+          "name": "Produkt(y)",
+          "description": "Zamówienie zawiera określone produkty"
+        }
+      },
+      "seller_requirement": {
+        "accept_terms": {
+          "name": "Akceptacja regulaminu",
+          "description": "Sprzedawca musi zaakceptować regulamin marketplace przed rozpoczęciem sprzedaży"
+        },
+        "attestation": {
+          "name": "Potwierdzenie sprzedawcy",
+          "description": "Sprzedawca musi potwierdzić oświadczenie, które napiszesz"
+        },
+        "billing_address": {
+          "name": "Adres rozliczeniowy",
+          "description": "Sprzedawca musi podać adres rozliczeniowy"
+        },
+        "complete_profile": {
+          "name": "Uzupełnienie profilu",
+          "description": "Sprzedawca musi uzupełnić swój profil publiczny"
+        },
+        "delivery_method": {
+          "name": "Metoda dostawy",
+          "description": "Sprzedawca musi skonfigurować co najmniej jedną metodę dostawy"
+        },
+        "document": {
+          "name": "Dokument",
+          "description": "Sprzedawca musi przesłać dokument do weryfikacji"
+        },
+        "minimum_products": {
+          "name": "Minimalna liczba produktów",
+          "description": "Sprzedawca musi wystawić minimalną liczbę produktów"
+        },
+        "operator_review": {
+          "name": "Weryfikacja ręczna",
+          "description": "Członek Twojego zespołu musi ręcznie zatwierdzić sprzedawcę"
+        },
+        "payout_account": {
+          "name": "Konto wypłat",
+          "description": "Sprzedawca musi połączyć konto do otrzymywania wypłat"
+        },
+        "policy": {
+          "name": "Zasady sprzedawcy",
+          "description": "Sprzedawca musi opublikować zasady swojego sklepu"
+        },
+        "required_custom_fields": {
+          "name": "Wymagane pola niestandardowe",
+          "description": "Sprzedawca musi wypełnić pola własne oznaczone jako wymagane"
+        },
+        "returns_address": {
+          "name": "Adres zwrotów",
+          "description": "Sprzedawca musi podać adres do zwrotów"
         }
       }
     }

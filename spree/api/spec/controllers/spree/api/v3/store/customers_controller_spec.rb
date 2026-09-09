@@ -78,7 +78,7 @@ RSpec.describe Spree::Api::V3::Store::CustomersController, type: :controller do
           :newsletter_subscriber,
           :unverified,
           email: valid_params[:email],
-          user: nil,
+          customer: nil,
           store: store
         )
 
@@ -86,7 +86,7 @@ RSpec.describe Spree::Api::V3::Store::CustomersController, type: :controller do
 
         expect(response).to have_http_status(:created)
         new_user = Spree.customer_class.find_by(email: valid_params[:email])
-        expect(subscriber.reload.user).to eq(new_user)
+        expect(subscriber.reload.customer).to eq(new_user)
         expect(new_user.accepts_email_marketing).to eq(false)
       end
 
@@ -95,7 +95,7 @@ RSpec.describe Spree::Api::V3::Store::CustomersController, type: :controller do
           :newsletter_subscriber,
           :verified,
           email: valid_params[:email],
-          user: nil,
+          customer: nil,
           store: store
         )
 
@@ -105,7 +105,7 @@ RSpec.describe Spree::Api::V3::Store::CustomersController, type: :controller do
 
         expect(response).to have_http_status(:created)
         new_user = Spree.customer_class.find_by(email: valid_params[:email])
-        expect(subscriber.reload.user).to eq(new_user)
+        expect(subscriber.reload.customer).to eq(new_user)
         expect(new_user.accepts_email_marketing).to eq(true)
         expect(json_response['user']['accepts_email_marketing']).to eq(true)
       end
@@ -418,4 +418,28 @@ RSpec.describe Spree::Api::V3::Store::CustomersController, type: :controller do
       end
     end
   end
+  # Clearing the password blocks a fresh sign-in, but a token issued before the
+  # erasure would otherwise keep working until it expired — long enough to
+  # write a name and phone back, after which a second erasure is refused as
+  # already done.
+  describe 'a token issued before the account was erased' do
+    before do
+      request.headers['Authorization'] = "Bearer #{jwt_token}"
+      Spree::Customers::Anonymize.call(customer: user, store: store)
+    end
+
+    it 'stops being accepted' do
+      get :show
+
+      expect(response).to have_http_status(:unauthorized)
+    end
+
+    it 'cannot write the redacted details back' do
+      patch :update, params: { first_name: 'Restored' }
+
+      expect(response).to have_http_status(:unauthorized)
+      expect(user.reload.first_name).to eq('Redacted')
+    end
+  end
+
 end

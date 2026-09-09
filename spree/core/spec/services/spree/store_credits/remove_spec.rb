@@ -6,7 +6,7 @@ describe Spree::StoreCredits::Remove, type: :service do
 
     let(:store) { @default_store }
     let(:order_total) { 500.00 }
-    let(:order) { create(:order, customer: store_credit.user, total: order_total, store: store) }
+    let(:order) { create(:order, customer: store_credit.customer, total: order_total, store: store) }
 
     context 'when order is not complete' do
       let(:store_credit) { create(:store_credit, amount: order_total - 1, store: store) }

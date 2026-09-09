@@ -6,11 +6,17 @@ RSpec.describe 'spree:upgrade:backfill_import_export_tenancy' do
   let(:seller) { create(:seller, store: store) }
   let(:user) { create(:admin_user) }
 
+  # Deliberately no `Rake::Task.clear`: the registry is global, and sibling
+  # task specs load their rake file once at file scope, so clearing it here
+  # un-defines tasks they have already registered and fails them by load
+  # order alone.
+  # Loaded once, not per example: redefining a task APPENDS its action, so an
+  # unguarded load here would run the task body one more time on each example.
   before do
-    Rake::Task.clear
-    Rake.application = Rake::Application.new
-    load Spree::Core::Engine.root.join('lib/tasks/backfill_import_export_tenancy.rake')
-    Rake::Task.define_task(:environment)
+    unless Rake::Task.task_defined?('spree:upgrade:backfill_import_export_tenancy')
+      load Spree::Core::Engine.root.join('lib/tasks/backfill_import_export_tenancy.rake')
+    end
+    Rake::Task.define_task(:environment) unless Rake::Task.task_defined?(:environment)
   end
 
   def run! = Rake::Task['spree:upgrade:backfill_import_export_tenancy'].tap(&:reenable).invoke

@@ -75,6 +75,7 @@ export function Pagination({
             </span>
             <div className="flex items-center gap-1">
               <Button
+                type="button"
                 size="icon-sm"
                 variant="outline"
                 className="hidden lg:flex"
@@ -85,6 +86,7 @@ export function Pagination({
                 <ChevronsLeftIcon />
               </Button>
               <Button
+                type="button"
                 size="icon-sm"
                 variant="outline"
                 className="size-9 sm:size-8"
@@ -95,6 +97,7 @@ export function Pagination({
                 <ChevronLeftIcon />
               </Button>
               <Button
+                type="button"
                 size="icon-sm"
                 variant="outline"
                 className="size-9 sm:size-8"
@@ -105,6 +108,7 @@ export function Pagination({
                 <ChevronRightIcon />
               </Button>
               <Button
+                type="button"
                 size="icon-sm"
                 className="hidden lg:flex"
                 variant="outline"

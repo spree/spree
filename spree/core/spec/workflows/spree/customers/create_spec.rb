@@ -162,4 +162,49 @@ RSpec.describe Spree::Customers::Create do
       end
     end
   end
+
+  # A consent record without a time, a place and a device says only that
+  # someone somewhere ticked a box.
+  describe 'the evidence kept with an agreement' do
+    let(:result) do
+      described_class.call(
+        store: store,
+        email: "signup-#{SecureRandom.hex(4)}@example.com",
+        password: 'spree12345',
+        accepts_email_marketing: true,
+        terms_of_service: '1',
+        ip_address: '203.0.113.9',
+        user_agent: 'Mozilla/5.0'
+      )
+    end
+
+    # The row proves which text was accepted, so naming the returns and
+    # shipping policies beside it would be evidence of an agreement the
+    # checkbox never asked for.
+    it 'snapshots the terms document alone, not every policy the store keeps' do
+      create(:policy, owner: store, name: 'Returns Policy', body: 'Send it back within 30 days.')
+
+      record = Spree::ConsentRecord.find_by(owner: result.value,
+                                            purpose: Spree::ConsentRecord::TERMS_OF_SERVICE)
+
+      expect(record.documents.map { |doc| doc['name'] }).to eq(['Terms of Service'])
+    end
+
+    it 'records where and from what the person agreed' do
+      customer = result.value
+      record = Spree::ConsentRecord.find_by(owner: customer,
+                                            purpose: Spree::ConsentRecord::TERMS_OF_SERVICE)
+
+      expect(record.ip_address).to eq('203.0.113.9')
+      expect(record.user_agent).to eq('Mozilla/5.0')
+    end
+
+    it 'keeps the same evidence on the marketing opt-in' do
+      customer = result.value
+      record = Spree::ConsentRecord.find_by(owner: customer,
+                                            purpose: Spree::ConsentRecord::EMAIL_MARKETING)
+
+      expect(record.ip_address).to eq('203.0.113.9')
+    end
+  end
 end

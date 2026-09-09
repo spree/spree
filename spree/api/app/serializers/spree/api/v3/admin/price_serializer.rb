@@ -6,8 +6,11 @@ module Spree
         # Extends Store Price Serializer with admin-only fields
         class PriceSerializer < V3::PriceSerializer
           typelize variant_id: [:string, nullable: true],
+                   min_quantity: :number,
                    created_at: :string,
                    updated_at: :string
+
+          attributes :min_quantity
 
           attribute :variant_id do |price|
             price&.variant&.prefixed_id

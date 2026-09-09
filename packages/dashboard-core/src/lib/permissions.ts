@@ -19,6 +19,9 @@ export const Subject = {
   ApiKey: 'Spree::ApiKey',
   AllowedOrigin: 'Spree::AllowedOrigin',
   Store: 'Spree::Store',
+  // The store's packaging vocabulary: the box it ships parcels in, and the
+  // cartons, pallets and containers a wholesale order leaves on.
+  PackageType: 'Spree::PackageType',
   Channel: 'Spree::Channel',
   OrderRoutingRule: 'Spree::OrderRoutingRule',
   // Categories are Spree::Category < Spree::Taxon; abilities are published under
@@ -41,6 +44,7 @@ export const Subject = {
   ReturnReason: 'Spree::ReturnReason',
   ClaimReason: 'Spree::ClaimReason',
   RefundReason: 'Spree::RefundReason',
+  OrderCancellationReason: 'Spree::OrderCancellationReason',
   CustomFieldDefinition: 'Spree::CustomFieldDefinition',
   Integration: 'Spree::Integration',
   PaymentMethod: 'Spree::PaymentMethod',

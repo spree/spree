@@ -424,24 +424,49 @@ test.describe('customers', () => {
     await expect(page.getByText(/not in any groups/i)).toBeVisible({ timeout: 15_000 })
   })
 
-  test('deletes a customer', async ({ page }) => {
+  // Erasing is the only destructive action the dashboard offers on a customer.
+  // Deleting the row and erasing the person were two buttons that never both
+  // applied — deletion is refused once someone has bought anything, which is
+  // exactly when a real erasure request arrives.
+  test('erases a customer and says so afterwards', async ({ page }) => {
     const creds = await login(page)
     await gotoIndex(page, CUSTOMERS_PATH(creds.store_id), CTA)
 
-    const email = `e2e-delete-${Date.now()}@example.com`
+    const email = `e2e-erase-${Date.now()}@example.com`
     await createCustomer(page, email)
 
-    // PageHeader's more-actions dropdown holds the destructive Delete entry.
-    await page.getByRole('button', { name: /more actions/i }).click()
-    await page.getByRole('menuitem', { name: /delete customer/i }).click()
+    await page.getByRole('button', { name: /erase personal data/i }).click()
     await page
       .getByRole('dialog')
-      .getByRole('button', { name: /delete customer/i })
+      .getByRole('button', { name: /erase personal data/i })
       .click()
 
-    await expect(page).toHaveURL(new RegExp(`/${creds.store_id}/customers(?:\\?|$)`), {
-      timeout: 15_000,
-    })
+    // The page stays — the record survives an erasure, its identity does not.
+    await expect(page.getByText(/^erased$/i).first()).toBeVisible({ timeout: 15_000 })
+    await expect(page.getByRole('heading', { name: email })).toHaveCount(0)
+  })
+
+  test('keeps erased customers out of the list until asked for', async ({ page }) => {
+    const creds = await login(page)
+    await gotoIndex(page, CUSTOMERS_PATH(creds.store_id), CTA)
+
+    const email = `e2e-hidden-${Date.now()}@example.com`
+    await createCustomer(page, email)
+
+    await page.getByRole('button', { name: /erase personal data/i }).click()
+    await page
+      .getByRole('dialog')
+      .getByRole('button', { name: /erase personal data/i })
+      .click()
+    await expect(page.getByText(/^erased$/i).first()).toBeVisible({ timeout: 15_000 })
+
+    await gotoIndex(page, CUSTOMERS_PATH(creds.store_id), CTA)
     await expect(page.getByRole('link', { name: email })).toHaveCount(0, { timeout: 15_000 })
+
+    await page.getByRole('button', { name: /add filter/i }).click()
+    await page.getByRole('button', { name: /^erased$/i }).click()
+    await page.getByRole('button', { name: /^erased$/i }).click()
+
+    await expect(page.getByText('(erased)').first()).toBeVisible({ timeout: 15_000 })
   })
 })

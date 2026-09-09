@@ -15,9 +15,15 @@ module Spree
                    sample_row: 'Record<string, string | null>',
                    original_filename: [:string, nullable: true],
                    original_byte_size: [:number, nullable: true],
-                   original_file_url: [:string, nullable: true]
+                   original_file_url: [:string, nullable: true],
+                   price_list_id: [:string, nullable: true]
 
           attributes :processing_errors, :preferred_delimiter
+
+          # The list a price-list import writes into; nil for every other type.
+          attribute :price_list_id do |import|
+            import.try(:price_list_prefixed_id)
+          end
 
           # Who ran it, for the operator's list — `seller_id` is on the base,
           # and the name rides along so the column needs no second request.

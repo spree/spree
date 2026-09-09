@@ -6,10 +6,10 @@ RSpec.describe Spree::Api::V3::Admin::CatalogProductSerializer do
   # A product can have nothing to price — its only variant soft-deleted, say.
   # That row still has to render; one degenerate product must not take the
   # whole assortment listing down with it.
-  it 'renders no catalog price for a product with no variant' do
+  it 'renders an empty ladder for a product with no variant to price' do
     catalog = create(:catalog, store: store)
     product = create(:product, store: store, price: 50)
-    allow(product).to receive(:featured_variant).and_return(nil)
+    allow(product).to receive(:variants).and_return(Spree::Variant.none)
     resolver = Spree::Catalogs::ResolvePrices.new(catalog: catalog, currency: 'USD')
 
     hash = described_class.new(
@@ -18,9 +18,21 @@ RSpec.describe Spree::Api::V3::Admin::CatalogProductSerializer do
                 catalog_price_resolver: resolver }
     ).to_h
 
-    # Present and null, not absent: the expansion was asked for, so a client
+    # Present and empty, not absent: the expansion was asked for, so a client
     # reading the key must find it answered rather than missing.
-    expect(hash).to have_key('catalog_price')
-    expect(hash['catalog_price']).to be_nil
+    expect(hash).to have_key('catalog_variants')
+    expect(hash['catalog_variants']).to eq([])
+  end
+
+  # The row carries what the card renders and nothing more — a full product
+  # payload per row is what made the assortment page slow
+  # (docs/plans/6.0-volume-pricing.md).
+  it 'sends only the membership fields when the price is not expanded' do
+    catalog = create(:catalog, store: store)
+    product = create(:product, store: store, price: 50)
+
+    hash = described_class.new(product, params: { store: store, currency: 'USD' }).to_h
+
+    expect(hash.keys).to match_array(%w[id name thumbnail_url])
   end
 end

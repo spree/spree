@@ -18,6 +18,11 @@ RSpec.describe Spree::CommissionRate, type: :model do
       expect(build(:commission_rate, commission_tax_rate: 0.21)).to be_valid
     end
 
+    it 'refuses a percentage above one hundred' do
+      expect(build(:commission_rate, kind: 'percentage', value: 150)).not_to be_valid
+      expect(build(:commission_rate, kind: 'percentage', value: 100)).to be_valid
+    end
+
     it 'rejects a cap below the floor' do
       rate = create(:commission_rate, store: store)
       value = rate.commission_rate_values.build(currency: 'USD', min_amount: 10, max_amount: 5)
@@ -131,6 +136,38 @@ RSpec.describe Spree::CommissionRate, type: :model do
       rate.update!(bounds: { 'USD' => { max_amount: 20 } })
 
       expect(rate.reload.bounds.keys).to eq(['USD'])
+    end
+
+    it 'ignores a flat-fee cap for a currency with no stated amount' do
+      rate = create(:commission_rate, :fixed, store: store, amounts: { 'USD' => 5 })
+
+      rate.update!(bounds: { 'EUR' => { max_amount: 20 } })
+
+      expect(rate.bounds.keys).to eq([])
+      expect(rate.applies_to_currency?('EUR')).to be false
+    end
+
+    it 'retires a flat fee and its cap when the amount is cleared' do
+      rate = create(:commission_rate, :fixed, store: store,
+                    amounts: { 'USD' => 5, 'GBP' => 4 },
+                    bounds: { 'USD' => { max_amount: 20 } })
+
+      rate.update!(amounts: { 'GBP' => 4 })
+
+      expect(rate.amount_for('USD')).to be_nil
+      expect(rate.max_amount_for('USD')).to be_nil
+      expect(rate.amount_for('GBP')).to eq(4)
+    end
+
+    it 'applies a flat-fee cap when bounds are assigned before amounts' do
+      rate = create(:commission_rate, :fixed, store: store, amounts: { 'USD' => 5 })
+
+      rate.bounds = { 'EUR' => { max_amount: 20 } }
+      rate.amounts = { 'EUR' => 10, 'USD' => 5 }
+      rate.save!
+
+      expect(rate.amount_for('EUR')).to eq(10)
+      expect(rate.max_amount_for('EUR')).to eq(20)
     end
   end
 

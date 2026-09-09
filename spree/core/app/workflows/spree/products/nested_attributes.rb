@@ -228,7 +228,7 @@ module Spree
             # it rather than attaching it wrongly.
             blob = ActiveStorage::Blob.find_signed(signed_id)
             unless blob && blob.service_name.to_s == Spree.private_storage_service_name.to_s
-              asset.errors.add(:attachment, Spree.t(:digital_assets_attachment_must_be_private))
+              asset.errors.add(:attachment, :digital_assets_attachment_must_be_private, message: Spree.t(:digital_assets_attachment_must_be_private))
               raise ActiveRecord::RecordInvalid.new(asset)
             end
 

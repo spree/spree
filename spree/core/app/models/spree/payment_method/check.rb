@@ -26,7 +26,8 @@ module Spree
       simulated_successful_billing_response
     end
 
-    def cancel(*)
+    # Voids outright, so there is no captured charge for `refund:` to govern.
+    def cancel(*, **)
       simulated_successful_billing_response
     end
 

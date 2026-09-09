@@ -8,7 +8,7 @@ module Spree
 
           # GET /api/v3/store/markets
           def index
-            markets = current_store.markets.includes(:market_countries).order(:position)
+            markets = current_store.markets.includes(:market_countries).ordered
 
             return unless cache_collection(markets)
 

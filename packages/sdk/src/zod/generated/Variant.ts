@@ -24,6 +24,8 @@ export const VariantSchema = z.object({
   height: z.number().nullable(),
   width: z.number().nullable(),
   depth: z.number().nullable(),
+  weight_unit: z.string(),
+  dimensions_unit: z.string(),
   minimum_order_quantity: z.number(),
   order_multiple: z.number(),
   purchase_unit: z.string(),

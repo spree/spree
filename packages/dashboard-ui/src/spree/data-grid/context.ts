@@ -23,6 +23,12 @@ export interface DataGridContextValue {
 
   /** Dispatchers — components react via subscribed selectors below. */
   setAnchor: (coords: CellCoords | null) => void
+  /**
+   * Moves focus to a cell, waiting for it to register when the commit that
+   * asked for it also added the row. Prefer this over reading `cells`
+   * directly — a lookup that misses silently drops keyboard navigation.
+   */
+  focusCell: (coords: CellCoords) => void
   setExtent: (coords: CellCoords | null) => void
   setEditing: (coords: CellCoords | null) => void
 

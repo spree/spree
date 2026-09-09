@@ -44,12 +44,6 @@ export interface StoreUpdateParams {
   preferred_admin_locale?: string
   preferred_timezone?: string
   preferred_weight_unit?: string
-  /** Packaging tare added to every package's content weight for rate calculation, in the store's weight unit. */
-  preferred_default_package_weight?: number
-  /** Default package (box) dimensions for carrier dimensional-weight pricing — inches when imperial, centimeters when metric. All three required to take effect. */
-  preferred_default_package_length?: number
-  preferred_default_package_width?: number
-  preferred_default_package_height?: number
   preferred_unit_system?: string
   /**
    * Store-wide default storefront posture: `public`, `prices_hidden`, or
@@ -280,6 +274,67 @@ export interface FulfillmentFulfillParams {
   force?: boolean
 }
 
+/** What a label records, whether it was bought or uploaded. */
+interface ShippingLabelDetails {
+  /** Free text — a forwarder's name is as valid as a carrier slug. Detected from the number when omitted. */
+  carrier?: string
+  /** Carrier service the label was bought at. */
+  service?: string
+  /** What the merchant paid the carrier. Admin-only accounting data; it never touches the order's shipping charge. */
+  cost?: string | number
+  /** Currency of the cost. */
+  currency?: string
+  /** `pdf`, `png` or `zpl`; taken from the file when omitted. */
+  file_format?: string
+  /** Tracking page for the consignment the label mints. */
+  tracking_url?: string
+}
+
+/**
+ * Recording a label bought elsewhere. The number printed on it is required:
+ * a label with no tracking number mints no consignment, and the server
+ * refuses it.
+ */
+export interface ShippingLabelUploadParams extends ShippingLabelDetails {
+  /** Signed blob id from `directUploads.create()`. Its presence records an uploaded label instead of buying one. */
+  file: string
+  /** The number printed on an uploaded label. */
+  tracking_number: string
+}
+
+/** Buying through the carrier. The carrier supplies the file and the number. */
+export interface ShippingLabelPurchaseParams extends ShippingLabelDetails {
+  file?: never
+  tracking_number?: never
+}
+
+/** Buying a label takes no body; recording an uploaded one takes at least a file and a number. */
+export type ShippingLabelCreateParams = ShippingLabelUploadParams | ShippingLabelPurchaseParams
+
+export interface DeliveryCreateParams {
+  /** A carrier tracking number, a freight PRO or container number, or a full tracking link. */
+  tracking_number: string
+  /** Free text; detected from the number's format when omitted. */
+  carrier?: string
+  service?: string
+  tracking_url?: string
+}
+
+/** A corrected tracking number resets the consignment's carrier status to `pending`. */
+export interface DeliveryUpdateParams {
+  tracking_number?: string
+  carrier?: string
+  service?: string
+  tracking_url?: string
+}
+
+export interface DeliveryMarkDeliveredParams {
+  /** When it arrived. Defaults to now. */
+  delivered_at?: string
+  /** Whether the customer gets a delivery notification once the parcel completes. Defaults to true. */
+  notify_customer?: boolean
+}
+
 /**
  * Records that the customer received the goods — the end of the fulfillment
  * lifecycle. Reached by a carrier reporting delivery, by staff who know the
@@ -434,7 +489,6 @@ export interface AddressInputParams {
 export interface OrderCreateParams {
   email?: string
   customer_id?: string
-  user_id?: string
   use_customer_default_address?: boolean
   currency?: string
   market_id?: string
@@ -527,18 +581,22 @@ export interface OrderCompleteParams {
 }
 
 export interface OrderCancelParams {
-  reason?: 'customer' | 'declined' | 'fraud' | 'inventory' | 'staff' | 'other' | 'expired'
-  note?: string
-  restock_items?: boolean
+  /** Why the order was canceled — an id from the store's cancellation reasons. */
+  cancel_reason_id?: string
+  /** Staff-facing note shown on the order. */
+  cancel_note?: string
+  /**
+   * Whether this order's share of a payment shared across a split checkout is
+   * handed back. An ordinary order settles at the gateway either way.
+   */
   refund_payments?: boolean
-  /** Decimal amount; see `PaymentCreateParams.amount` for the string rationale. */
+  /**
+   * How much of that share to return, defaulting to all of it. Refused on an
+   * ordinary order, where the gateway returns the payment in full.
+   * Decimal amount; see `PaymentCreateParams.amount` for the string rationale.
+   */
   refund_amount?: string | number
   notify_customer?: boolean
-}
-
-export interface OrderApproveParams {
-  level?: string
-  note?: string
 }
 
 export interface GiftCardApplyParams {
@@ -548,20 +606,20 @@ export interface GiftCardApplyParams {
 /**
  * Admin-issued gift card. `code` is optional — the server auto-generates
  * a unique code when omitted. `currency` defaults to the store's currency.
- * `user_id` (customer prefixed ID) attaches the card to a specific customer.
+ * `customer_id` (customer prefixed ID) attaches the card to a specific customer.
  */
 export interface GiftCardCreateParams {
   amount: string | number
   currency?: string
   code?: string
   expires_at?: string | null
-  user_id?: string | null
+  customer_id?: string | null
 }
 
 export interface GiftCardUpdateParams {
   amount?: string | number
   expires_at?: string | null
-  user_id?: string | null
+  customer_id?: string | null
 }
 
 /**
@@ -897,6 +955,16 @@ export interface ProductVariantInput {
    *  pre-orders. Null = unlimited. */
   backorder_limit?: number | null
   tax_category_id?: string
+  /** The carton this variant is packed into — a `PackageType` of kind
+   *  `carton`. Its dimensions are shared by every product packed the same
+   *  way, so a corrected carton size fixes all of them at once. */
+  carton_package_type_id?: string | null
+  /** How many units fill one carton. */
+  units_per_carton?: number | null
+  /** What one packed carton weighs, in the variant's weight unit. */
+  carton_weight?: string | number | null
+  /** How many cartons stack on one pallet. */
+  cartons_per_pallet?: number | null
   position?: number
   barcode?: string
   /** Omit for a simple no-options product (upserts onto the default variant). */
@@ -1094,6 +1162,16 @@ export interface VariantCreateParams {
   preorder_ships_at?: string | null
   backorder_limit?: number | null
   tax_category_id?: string
+  /** The carton this variant is packed into — a `PackageType` of kind
+   *  `carton`. Its dimensions are shared by every product packed the same
+   *  way, so a corrected carton size fixes all of them at once. */
+  carton_package_type_id?: string | null
+  /** How many units fill one carton. */
+  units_per_carton?: number | null
+  /** What one packed carton weighs, in the variant's weight unit. */
+  carton_weight?: string | number | null
+  /** How many cartons stack on one pallet. */
+  cartons_per_pallet?: number | null
   position?: number
   barcode?: string
   /**
@@ -1125,6 +1203,16 @@ export interface VariantUpdateParams {
   preorder_ships_at?: string | null
   backorder_limit?: number | null
   tax_category_id?: string
+  /** The carton this variant is packed into — a `PackageType` of kind
+   *  `carton`. Its dimensions are shared by every product packed the same
+   *  way, so a corrected carton size fixes all of them at once. */
+  carton_package_type_id?: string | null
+  /** How many units fill one carton. */
+  units_per_carton?: number | null
+  /** What one packed carton weighs, in the variant's weight unit. */
+  carton_weight?: string | number | null
+  /** How many cartons stack on one pallet. */
+  cartons_per_pallet?: number | null
   position?: number
   barcode?: string
   /** Partial update — omit to leave option values untouched. */
@@ -1695,11 +1783,14 @@ export interface SellerCreateParams {
    * its own, so an id would reference a row belonging to someone else.
    */
   billing_address?: SellerAddressParams
-  returns_address?: SellerAddressParams
   metadata?: Record<string, unknown>
 }
 
-/** The seller's own billing / returns address. */
+/**
+ * The seller's own billing address. Their returns address is not written here
+ * — it lives on the stock location returns route to, so it is written through
+ * the stock locations endpoint.
+ */
 export interface SellerAddressParams {
   first_name?: string
   last_name?: string
@@ -1913,8 +2004,14 @@ export interface PreferenceField {
   type: string
   default: unknown
   /**
-   * The values this preference may hold, present only when the declaring
-   * class named them. A UI renders a picker rather than a text box.
+   * The fixed set this value must come from, when the preference declares
+   * one. Present only for constrained preferences; an admin form renders a
+   * picker for these rather than a free-text box.
+   */
+  choices?: string[]
+  /**
+   * The same values carrying the label a person reads, where the declaring
+   * class supplied one. Overlaps `choices` — see PreferenceSchema.
    */
   options?: PreferenceOption[]
 }
@@ -1996,6 +2093,19 @@ export interface PriceListRuleDraft {
   preferences?: Record<string, unknown>
 }
 
+/**
+ * One band of a price list's percentage adjustment: from this quantity up,
+ * the list adjusts base prices by this percentage instead of its own
+ * `price_adjustment_percentage`. The payload is the whole ladder — a band
+ * you leave out is a band you removed.
+ */
+export interface PriceAdjustmentTierParams {
+  /** Above 1; quantity 1 is the list's own `price_adjustment_percentage`. */
+  min_quantity: number
+  /** Signed: negative discounts, positive marks up. */
+  percentage: string | number
+}
+
 export interface PriceListCreateParams {
   name: string
   description?: string | null
@@ -2013,11 +2123,13 @@ export interface PriceListCreateParams {
   rules?: PriceListRuleDraft[]
   /**
    * Server-to-server shape. Each row upserts on
-   * `(variant_id, currency, price_list_id)`, so variants in this array
-   * implicitly become part of the list with the supplied amount.
+   * `(variant_id, currency, price_list_id, min_quantity)`, so variants in
+   * this array implicitly become part of the list with the supplied amount.
    * Curating whole products goes through `client.priceLists.products`.
    */
   prices?: PriceListPriceOverrideParams[]
+  /** Quantity bands on this list's percentage adjustment. */
+  price_adjustment_tiers?: PriceAdjustmentTierParams[]
 }
 
 export interface PriceListUpdateParams {
@@ -2035,20 +2147,24 @@ export interface PriceListUpdateParams {
    * managed through `client.priceLists.products` instead.
    */
   prices?: PriceListPriceOverrideParams[]
+  /** Quantity bands on this list's percentage adjustment. */
+  price_adjustment_tiers?: PriceAdjustmentTierParams[]
 }
 
 /**
  * One row in the inline `prices: [...]` array carried by
  * `PriceListCreateParams` / `PriceListUpdateParams`. The server upserts
- * on the unique key `(variant_id, currency, price_list_id)`, so the
- * row matches by triple — `id` is only useful when echoing back rows
- * read from a previous response. For first-time creates ship
+ * on the unique key `(variant_id, currency, price_list_id, min_quantity)`,
+ * so the row matches by that key — `id` is only useful when echoing back
+ * rows read from a previous response. For first-time creates ship
  * `variant_id` + `currency` + `amount` directly.
  */
 export interface PriceListPriceOverrideParams {
   id?: string
   variant_id: string
   currency: string
+  /** The rung of the variant's ladder. Omit for the bottom rung. */
+  min_quantity?: number
   amount?: string | number | null
   compare_at_amount?: string | number | null
 }
@@ -2065,6 +2181,11 @@ export interface PriceListPriceOverrideParams {
 export interface PriceCreateParams {
   variant_id: string
   currency: string
+  /**
+   * The quantity a line must reach for this price to apply. Omit for the
+   * ladder's bottom rung. Anything above 1 requires a `price_list_id`.
+   */
+  min_quantity?: number
   amount: string | number | null
   compare_at_amount?: string | number | null
   /** Omit / null for a base price; prefixed `pl_…` for a list override. */
@@ -2073,8 +2194,9 @@ export interface PriceCreateParams {
 
 export interface PriceUpdateParams {
   /** Mutating these would re-key the row against the unique
-   *  `(variant_id, currency, price_list_id)` index — not supported. */
-  // variant_id, currency, price_list_id intentionally omitted.
+   *  `(variant_id, currency, price_list_id, min_quantity)` index — not
+   *  supported. Move a rung by deleting it and creating the new one. */
+  // variant_id, currency, price_list_id, min_quantity intentionally omitted.
   amount?: string | number | null
   compare_at_amount?: string | number | null
 }
@@ -2086,8 +2208,9 @@ export interface PriceUpdateParams {
  *
  *   - `id` present → updates that row (404s if it doesn't exist or
  *     is out of the caller's store scope).
- *   - `id` absent  → upserts by `(variant_id, currency, price_list_id)`.
- *     The unique index on `spree_prices` decides update-vs-create.
+ *   - `id` absent  → upserts by
+ *     `(variant_id, currency, price_list_id, min_quantity)`. The unique
+ *     index on `spree_prices` decides update-vs-create.
  *
  * Useful for the spreadsheet (mostly updates) and for ad-hoc seeding
  * a fresh currency across many variants (mostly creates).
@@ -2101,6 +2224,12 @@ export interface PriceBulkUpsertRow {
   currency?: string
   /** Null / omitted = base price; prefixed `pl_…` = list override. */
   price_list_id?: string | null
+  /**
+   * The rung of the variant's ladder this row is. Omit for the bottom rung;
+   * anything above 1 requires a `price_list_id`. A variant carries at most
+   * ten rungs on one list per currency.
+   */
+  min_quantity?: number
   amount?: string | number | null
   compare_at_amount?: string | number | null
 }
@@ -2159,7 +2288,11 @@ export interface IntegrationTypeDefinition {
   name: string
   /** Display grouping, e.g. `shipping`, `tax`; null for ungrouped. */
   group: string | null
-  /** One-line description, localized server-side from the gem's translations. */
+  /**
+   * One-line description in the request locale. A fallback: the dashboard
+   * prefers its own translation of `type` and reads this only when it has
+   * none, which is the case for provider gems shipping no dashboard locales.
+   */
   description: string | null
   /** Gallery logo: an absolute URL to hosted brand assets, or a `data:` URI for self-contained gems. Render with a fallback — hosted logos are a courtesy, not a guarantee. */
   logo_url: string | null
@@ -2202,6 +2335,7 @@ export type ExportType =
   | 'gift_cards'
   | 'coupon_codes'
   | 'newsletter_subscribers'
+  | 'price_list_prices'
   | (string & {})
 
 export interface ExportCreateParams {
@@ -2232,7 +2366,12 @@ export interface ExportCreateParams {
  * class name. Creating an import still accepts the fully-qualified class name
  * for backwards compatibility, but responses always use the shorthand.
  */
-export type ImportType = 'products' | 'customers' | 'product_translations' | (string & {})
+export type ImportType =
+  | 'products'
+  | 'customers'
+  | 'product_translations'
+  | 'price_list_prices'
+  | (string & {})
 
 export interface ImportCreateParams {
   /** Which dataset to import. Server validates against `Spree::Import.available_types`. */
@@ -2244,6 +2383,12 @@ export interface ImportCreateParams {
   attachment: string
   /** CSV column separator. Defaults to a comma on the server. */
   preferred_delimiter?: ',' | ';' | '|' | '\t'
+  /**
+   * For `price_list_prices` imports: the price list the rows are merged
+   * into. Must belong to the current store (404 otherwise); ignored by
+   * every other type.
+   */
+  price_list_id?: string
   /**
    * Absolute URL of the dashboard's imports view; the import-done email
    * links back to it with `?import=<id>` appended. Only honored when it
@@ -2568,6 +2713,29 @@ export interface DeliveryZoneParams {
   members?: DeliveryZoneMemberParams[]
 }
 
+export interface PackageTypeCreateParams {
+  /** Unique within the store. */
+  name: string
+  /** What this packaging is: the box parcels ship in, or the carton, pallet or container a wholesale order leaves on. */
+  kind: 'box' | 'envelope' | 'carton' | 'pallet' | 'container'
+  length?: number | null
+  width?: number | null
+  height?: number | null
+  /** Unit the three dimensions are in; falls back to the store's unit system. */
+  dimensions_unit?: 'mm' | 'cm' | 'in' | 'ft' | null
+  /** The empty package's own weight, added to content weight on every quote. */
+  weight?: number | null
+  /** What the package can hold — not the same as its own weight. */
+  max_weight?: number | null
+  weight_unit?: 'g' | 'kg' | 'lb' | 'oz' | null
+  /** The box every parcel quote is built on. Setting this demotes whichever row held it. */
+  default?: boolean
+  metadata?: Record<string, unknown>
+}
+
+/** Every field is optional: correcting one measurement is a valid update. */
+export type PackageTypeUpdateParams = Partial<PackageTypeCreateParams>
+
 export interface CompanyParams {
   name?: string
   /**
@@ -2691,6 +2859,12 @@ export interface CatalogPriceListParams {
    * switching from hand-entered prices to a percentage sends.
    */
   prices?: Array<PriceListPriceOverrideParams>
+  /**
+   * Quantity bands on the percentage — "5% off, 10% from ten, 20% from
+   * fifty" as one agreement. The payload is the whole ladder, so an empty
+   * array clears it.
+   */
+  price_adjustment_tiers?: Array<PriceAdjustmentTierParams>
 }
 
 /**

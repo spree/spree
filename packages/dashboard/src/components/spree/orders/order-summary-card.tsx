@@ -46,6 +46,15 @@ export function OrderSummaryCard({ order }: { order: Order }) {
   const { t } = useTranslation()
   const { storeId } = useStore()
   const outstandingBalance = Number.parseFloat(order.amount_due)
+  // Read off the order rather than summed from its commission lines: the
+  // figures are persisted columns, so the fee VAT the platform files and the
+  // seller reclaims is the same number everywhere it is shown.
+  const commissionTax = Number.parseFloat(order.commission_tax_total)
+  // Keyed on the seller, not on the amount: a zero-rated or exempt rate still
+  // writes commission lines, and the card below lists them, so hiding the
+  // summary at zero would have the two panels disagree about the same order.
+  // A first-party order has no seller and is never commissioned.
+  const showCommission = !!order.completed_at && !!order.seller_id
 
   return (
     <Card>
@@ -71,8 +80,17 @@ export function OrderSummaryCard({ order }: { order: Order }) {
           />
         )}
 
-        {order.canceled_at && (
+        {/* Keyed on the status rather than the timestamp: resuming an order
+            puts it back to placed but leaves the cancellation stamps as
+            history, and that history should stop being reported as the order's
+            current state.
+
+            Set apart from the timestamps above: a cancellation is its own
+            story — when, who, why — and four rows of it run together with the
+            order's own dates otherwise. */}
+        {order.status === 'canceled' && order.canceled_at && (
           <>
+            <Separator />
             <SummaryRow
               label={t('admin.orders.detail.summary.canceled_at')}
               value={formatDate(order.canceled_at)}
@@ -81,6 +99,18 @@ export function OrderSummaryCard({ order }: { order: Order }) {
               <SummaryRow
                 label={t('admin.orders.detail.summary.canceler')}
                 value={order.canceler.full_name || order.canceler.email}
+              />
+            )}
+            {order.cancel_reason_name && (
+              <SummaryRow
+                label={t('admin.orders.detail.summary.cancel_reason')}
+                value={order.cancel_reason_name}
+              />
+            )}
+            {order.cancel_note && (
+              <SummaryRow
+                label={t('admin.orders.detail.summary.cancel_note')}
+                value={order.cancel_note}
               />
             )}
           </>
@@ -175,6 +205,31 @@ export function OrderSummaryCard({ order }: { order: Order }) {
         <Separator />
 
         <SummaryRow label={t('admin.fields.total.label')} value={order.display_total} bold />
+
+        {/* Labelled "marketplace fee" rather than a bare "fee": Spree::Fee is
+            a buyer-facing charge (handling, gift wrap, COD) that rolls into
+            the order total, while this is billed to the seller and does not.
+            The two must never read alike in one summary. */}
+        {showCommission && (
+          <>
+            <Separator />
+            <SummaryRow
+              label={t('admin.orders.detail.summary.commission_fee')}
+              value={order.display_commission_amount_total}
+            />
+            {commissionTax > 0 && (
+              <SummaryRow
+                label={t('admin.orders.detail.summary.commission_tax')}
+                value={order.display_commission_tax_total}
+              />
+            )}
+            <SummaryRow
+              label={t('admin.orders.detail.summary.commission_total')}
+              value={order.display_commission_total}
+              bold
+            />
+          </>
+        )}
 
         <Separator />
 

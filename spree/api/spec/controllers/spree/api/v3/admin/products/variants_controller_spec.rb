@@ -218,6 +218,40 @@ RSpec.describe Spree::Api::V3::Admin::Products::VariantsController, type: :contr
     end
   end
 
+  describe 'carton packing' do
+    let(:carton) { create(:package_type, store: store, kind: 'carton') }
+
+    it 'writes the packing chain and reads back the derived pallet count' do
+      patch :update, params: {
+        product_id: product.prefixed_id,
+        id: variant.prefixed_id,
+        carton_package_type_id: carton.prefixed_id,
+        units_per_carton: 12,
+        carton_weight: '9.5',
+        cartons_per_pallet: 40
+      }, as: :json
+
+      expect(response).to have_http_status(:ok)
+      expect(json_response['carton_package_type_id']).to eq(carton.prefixed_id)
+      expect(json_response['units_per_carton']).to eq(12)
+      expect(json_response['cartons_per_pallet']).to eq(40)
+      expect(json_response['units_per_pallet']).to eq(480)
+    end
+
+    it 'refuses a carton belonging to another store' do
+      other_carton = create(:package_type, store: create(:store), kind: 'carton')
+
+      patch :update, params: {
+        product_id: product.prefixed_id,
+        id: variant.prefixed_id,
+        carton_package_type_id: other_carton.prefixed_id
+      }, as: :json
+
+      expect(response).to have_http_status(:unprocessable_content)
+      expect(variant.reload.carton_package_type_id).to be_nil
+    end
+  end
+
   describe 'seller and delivery profile' do
     let(:seller) { create(:seller, :approved, store: store) }
     let(:profile) { create(:delivery_profile, store: store) }

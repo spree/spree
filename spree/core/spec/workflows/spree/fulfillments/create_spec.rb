@@ -14,6 +14,38 @@ module Spree
     let(:params) { { order: order, stock_location: stock_location } }
     let(:fulfillment) { execute.value }
 
+    # Cancelling a parcel ends that attempt to ship, not the obligation. With
+    # no way to revive the canceled record, a new fulfillment is the only path
+    # left for its goods — so its units must be on offer, and the stock it
+    # released on cancellation must be promised again.
+    describe 'after a fulfillment is canceled' do
+      let(:order) { create(:order_ready_to_ship, store: store, line_items_count: 1) }
+      let(:variant) { line_items.first.variant }
+
+      before { Spree.fulfillment_cancel_workflow.call(fulfillment: source_shipment) }
+
+      it 'offers the canceled units to a new fulfillment and promises the stock afresh' do
+        expect(source_shipment.reload).to be_canceled
+
+        expect(execute.success?).to eq(true)
+        expect(fulfillment.fulfillment_items.sum(:quantity)).to eq(line_items.sum(&:quantity))
+        expect(fulfillment.allocated_quantities[variant.id].to_i).to eq(line_items.sum(&:quantity))
+        expect(fulfillment).to be_unfulfilled
+      end
+
+      it 'lets the order be shipped again' do
+        execute
+        # The factory never puts the goods on the shelf, and a dispatch the
+        # shelf cannot cover is refused — so stock it, as a real placement did.
+        fulfillment.stock_location.stock_level_or_create(variant).update_column(:count_on_hand, 10)
+
+        result = Spree.fulfillment_fulfill_workflow.call(fulfillment: fulfillment)
+
+        expect(result.success?).to eq(true), result.error.to_s
+        expect(fulfillment.reload).to be_fulfilled
+      end
+    end
+
     describe 'moving all unfulfilled items (items omitted)' do
       it 'creates a fulfillment holding every unshipped unit and destroys the drained source' do
         expect(execute.success?).to eq(true)

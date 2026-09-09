@@ -25,6 +25,7 @@ import {
   FIXTURE_PROMO_CUSTOMER_FULL_NAME,
   FIXTURE_PROMO_CUSTOMER_GROUP,
   FIXTURE_PROMO_PRODUCT,
+  FIXTURE_PROMO_SKU,
   FIXTURE_PROMO_TAXON,
   FIXTURE_PROMO_TAXON_PERMALINK,
 } from './helpers'
@@ -59,6 +60,7 @@ const BOOTSTRAP_RUBY = [
   `category = s.categories.where(permalink: '${FIXTURE_PROMO_TAXON_PERMALINK}').first_or_create!(name: '${FIXTURE_PROMO_TAXON}', parent: nil)`,
   `product = Spree::Product.where(name: '${FIXTURE_PROMO_PRODUCT}').first_or_create!(store: s, status: 'active')`,
   `product.default_variant.set_price(s.default_currency, 19.99)`,
+  `product.default_variant.update!(sku: '${FIXTURE_PROMO_SKU}') if product.default_variant.sku != '${FIXTURE_PROMO_SKU}'`,
   `product.taxons << category unless product.taxons.include?(category)`,
   // Stock the promo product on the store's default stock location so
   // order-creation tests can add it to a draft order without the
@@ -93,7 +95,7 @@ const BOOTSTRAP_RUBY = [
   // Category used by the bulk-add-to-categories test, found by permalink for the
   // same reason as the promo category above.
   `s.categories.where(permalink: '${FIXTURE_BULK_CATEGORY_PERMALINK}').first_or_create!(name: '${FIXTURE_BULK_CATEGORY}', parent: nil)`,
-  `Spree.user_class.where(email: '${FIXTURE_PROMO_CUSTOMER_EMAIL}').first_or_create! { |u| u.password = 'customer123'; u.password_confirmation = 'customer123'; u.first_name = '${FIXTURE_PROMO_CUSTOMER_FIRST_NAME}'; u.last_name = '${FIXTURE_PROMO_CUSTOMER_LAST_NAME}' }`,
+  `Spree.customer_class.where(email: '${FIXTURE_PROMO_CUSTOMER_EMAIL}').first_or_create! { |u| u.password = 'customer123'; u.password_confirmation = 'customer123'; u.first_name = '${FIXTURE_PROMO_CUSTOMER_FIRST_NAME}'; u.last_name = '${FIXTURE_PROMO_CUSTOMER_LAST_NAME}' }`,
   `s.customer_groups.where(name: '${FIXTURE_PROMO_CUSTOMER_GROUP}').first_or_create!`,
   // Make the store multi-currency so the money-entry forms (store credit,
   // refunds, manual prices) offer EUR alongside the USD default. Markets own

@@ -84,7 +84,7 @@ module Spree
       return if seller.nil? || requirement.nil?
       return if seller.store_id == requirement.store_id
 
-      errors.add(:requirement, Spree.t('errors.messages.seller_requirement_store_mismatch',
+      errors.add(:requirement, :seller_requirement_store_mismatch, message: Spree.t('errors.messages.seller_requirement_store_mismatch',
                                        default: 'must belong to the same store as the seller'))
     end
   end

@@ -74,19 +74,6 @@
       },
       "warning_treat_like_password": "Treat this key like a password. Store it in your secrets manager — we can't show it again."
     },
-    "calculators": {
-      "default_refund_amount": "Default Refund Amount",
-      "default_tax": "Default Tax",
-      "digital_delivery": "Digital Delivery",
-      "flat_percent_item_total": "Flat Percent",
-      "flat_rate": "Flat Rate",
-      "flexi_rate": "Flexi Rate",
-      "per_item": "Per Item",
-      "percent_on_line_item": "Percent Per Line Item",
-      "price_sack": "Price Sack",
-      "tiered_flat_rate": "Tiered Flat Rate",
-      "tiered_percent": "Tiered Percent"
-    },
     "catalogs": {
       "actions": {
         "activate": "Activate",
@@ -110,6 +97,8 @@
         "audience_label": "Audience",
         "audience_placeholder": "Search…",
         "company_subtree_help": "Assigning to a company covers its whole subtree.",
+        "customer_group_help": "Customer group catalogs reach only buyers whose company has no catalog of its own.",
+        "customer_group_precedence": "Company assignments win. A buyer whose company — or one above it — has any catalog gets those catalogs, and their customer group is not consulted. To give company buyers tier pricing, assign this catalog to their companies or divisions instead.",
         "dialog_description": "Who sees this catalog. A company assignment covers the node and everything below it.",
         "empty": "Not assigned to any audience yet — nobody sees this catalog.",
         "empty_description": "Assign a company or customer group to decide who this catalog is for.",
@@ -158,10 +147,9 @@
         "updated": "Catalog updated"
       },
       "prices": {
+        "after_save": "After save",
         "column_price": "Price",
         "column_source": "From",
-        "unpriced": "No price",
-        "after_save": "After save",
         "source": {
           "explicit": "Entered",
           "automatic": "Adjusted",
@@ -171,7 +159,15 @@
           "explicit": "An amount entered on this catalog’s own price list.",
           "automatic": "The shop price with this catalog’s percentage applied.",
           "base": "The normal shop price — this catalog does not price this product."
-        }
+        },
+        "tier_count_one": "+{{count}} tier",
+        "tier_count_other": "+{{count}} tiers",
+        "tier_fixed_note": "The catalog's percentage adjustment does not apply here. These tiers fix the price.",
+        "tier_from_one": "From {{count}}",
+        "tier_from_other": "From {{count}}",
+        "tier_preview": "What this agreement charges",
+        "unpriced": "No price",
+        "variant_default": "Default"
       },
       "products": {
         "add_cta": "Add products",
@@ -407,20 +403,6 @@
         "is_equal_to": "is equal to",
         "is_not_equal_to": "is not equal to"
       },
-      "rule_types": {
-        "available_on": {
-          "description": "Products published within the last N days",
-          "name": "Recently published"
-        },
-        "sale": {
-          "description": "Products currently discounted below their compare-at price",
-          "name": "On sale"
-        },
-        "tag": {
-          "description": "Products carrying a matching tag",
-          "name": "Tag"
-        }
-      },
       "rules": {
         "add": "Add rule",
         "description": "Choose products by hand, or let rules keep the collection up to date.",
@@ -467,13 +449,17 @@
       },
       "edit_description": "Update the charge, its limits, and which sales it applies to.",
       "empty": "No commission rates yet",
+      "flat_fee_exceeds_sale_warning": "This fee is charged in full for every unit sold. On a cheap item it can cost the seller more than they earned from the sale. Set a maximum below to cap what one sale line can be charged.",
       "messages": {
         "created": "Commission rate created",
         "deleted": "Commission rate deleted",
         "updated": "Commission rate updated"
       },
       "order_hint": "New rates go to the top of the list, and the first one that matches a sale wins — drag to reorder.",
-      "search_placeholder": "Search by name…"
+      "search_placeholder": "Search by name…",
+      "validation": {
+        "percentage_exceeds_one_hundred": "Commission percentage cannot exceed 100%."
+      }
     },
     "companies": {
       "add_cta": "Add company",
@@ -645,6 +631,7 @@
       },
       "columns": {
         "companies": "Companies",
+        "erased": "Erased",
         "groups": "Groups",
         "last_order": "Last order",
         "newsletter": "Newsletter",
@@ -656,7 +643,7 @@
           "delete_confirm_message": "Delete this address?"
         },
         "customer_since": "Customer since",
-        "delete_label": "Delete customer",
+        "delete_confirm_message": "This removes the account entirely and is refused once the customer has completed an order. To answer an erasure request from someone who has bought something, use Erase personal data instead.",
         "edit_profile_description": "Update the customer's profile information.",
         "groups": {
           "edit_description": "Add or remove the groups this customer belongs to.",
@@ -685,6 +672,14 @@
           "title": "Store credit"
         },
         "subscribed_to_marketing": "Subscribed to marketing"
+      },
+      "erased": {
+        "badge": "Erased",
+        "name": "(erased)"
+      },
+      "filters": {
+        "erased": "Erased",
+        "not_erased": "Not erased"
       },
       "groups": {
         "bulk_add_action": "Add to group…",
@@ -720,8 +715,20 @@
         "view_members": "View members"
       },
       "new_sheet_description": "Customers created here have no password set. They'll get a magic link the first time they sign in.",
-      "row_actions": {
-        "delete_confirm": "Delete {{email}}? Customers with completed orders cannot be removed."
+      "privacy": {
+        "already_anonymized": "Personal data was erased {{date}}",
+        "anonymize": "Erase personal data",
+        "anonymize_confirm_message": "Their name, email, phone and addresses will be replaced everywhere, and they will be signed out. Orders and payment records are kept, with the personal details removed. This cannot be undone.",
+        "anonymize_confirm_title": "Erase this customer's personal data?",
+        "consent_updated": "Marketing consent last changed {{date}}",
+        "description": "Answer a data protection request. The customer's orders and balances are kept; their personal details are removed everywhere the shop holds them.",
+        "export": "Export data",
+        "export_failed": "Could not export the data",
+        "messages": {
+          "anonymized": "Personal data erased"
+        },
+        "title": "Privacy and data",
+        "anonymize_again": "Erase again"
       },
       "table": {
         "empty": "No customers yet",
@@ -1123,6 +1130,10 @@
         },
         "enabled": {
           "help": "Disabled rates are skipped when charging a sale."
+        },
+        "flat_fee_cap": {
+          "help": "Optional ceiling on what one sale line can be charged. Leave empty to charge the full flat fee.",
+          "label": "Maximum per sale line (optional)"
         },
         "include_shipping": {
           "help": "Also charge commission on the seller's delivery revenue.",
@@ -1564,6 +1575,15 @@
         },
         "adjustment_magnitude": {
           "label": "Percentage"
+        },
+        "adjustment_tiers": {
+          "add": "Add quantity tier",
+          "empty": "No tiers — the percentage above applies at every quantity.",
+          "help": "From each quantity up, the agreement gives this percentage instead. Each tier is taken off the base price, never off the tier below it.",
+          "label": "Quantity tiers",
+          "percentage": "Percentage",
+          "quantity": "From quantity",
+          "remove": "Remove the tier from {quantity}"
         },
         "description": {
           "label": "Description",
@@ -2021,17 +2041,6 @@
           "label": "Admin language",
           "placeholder": "Use the default language"
         },
-        "preferred_default_package_dimensions": {
-          "height": "Height",
-          "help": "The box you usually ship in, used by carrier rate providers for dimensional-weight pricing — inches for imperial, centimeters for metric. All three are needed to take effect.",
-          "label": "Default package dimensions",
-          "length": "Length",
-          "width": "Width"
-        },
-        "preferred_default_package_weight": {
-          "help": "Packaging weight (box and filler) added to every package's contents when calculating delivery rates. Set to 0 to disable.",
-          "label": "Default package weight"
-        },
         "preferred_send_consumer_transactional_emails": {
           "help": "When off, no order confirmation, shipping, or refund emails are sent.",
           "label": "Send transactional emails to customers"
@@ -2272,7 +2281,19 @@
         "units_per_carton": {
           "label": "Units per carton"
         },
-        "quantity_rule_invalid": "Enter a whole number greater than zero, or leave blank."
+        "quantity_rule_invalid": "Enter a whole number greater than zero, or leave blank.",
+        "carton_package_type_id": {
+          "label": "Carton",
+          "help": "The carton this product is packed into. Its size is shared by everything packed the same way."
+        },
+        "carton_weight": {
+          "label": "Carton weight",
+          "help": "What one packed carton weighs."
+        },
+        "cartons_per_pallet": {
+          "label": "Cartons per pallet"
+        },
+        "carton_weight_invalid": "Enter a carton weight greater than zero, or leave it blank."
       },
       "webhook_endpoint": {
         "active": {
@@ -2300,6 +2321,45 @@
       "order_multiple": {
         "label": "Order multiple",
         "help": "Each step up from the minimum. Leave blank for any quantity."
+      },
+      "package_type": {
+        "name": {
+          "label": "Name"
+        },
+        "kind": {
+          "label": "Kind",
+          "help": "Only a carton can be the packaging a product is packed into."
+        },
+        "length": {
+          "label": "Length"
+        },
+        "width": {
+          "label": "Width"
+        },
+        "height": {
+          "label": "Height"
+        },
+        "dimensions_unit": {
+          "label": "Unit"
+        },
+        "dimensions": {
+          "help": "Used for carrier dimensional weight, and for the cubic meters freight tiers compare."
+        },
+        "weight": {
+          "label": "Empty weight",
+          "help": "The packaging itself, added to what it holds."
+        },
+        "max_weight": {
+          "label": "Max weight",
+          "help": "What it can carry."
+        },
+        "weight_unit": {
+          "label": "Unit"
+        },
+        "default": {
+          "label": "Default box",
+          "help": "The packaging your parcel quotes are built on. One default at a time."
+        }
       }
     },
     "gift_cards": {
@@ -2537,20 +2597,6 @@
       "messages": {
         "created": "Routing rule added",
         "deleted": "Routing rule removed"
-      },
-      "types": {
-        "default_location": {
-          "description": "Prefer the stock location marked as default",
-          "name": "Default location"
-        },
-        "minimize_splits": {
-          "description": "Prefer the location that can fulfill the most items on its own, avoiding split shipments",
-          "name": "Minimize splits"
-        },
-        "preferred_location": {
-          "description": "Fulfill from the location pinned on the order, when one is set",
-          "name": "Preferred location"
-        }
       }
     },
     "orders": {
@@ -2627,6 +2673,33 @@
           "value_type_flat": "Amount",
           "value_type_percent": "Percent"
         },
+        "cancel": {
+          "description": "The reason and note are recorded on the order, and any payments are settled.",
+          "keep_order": "Keep order",
+          "no_reason": "No reason given",
+          "note_label": "Note",
+          "note_placeholder": "Only staff see this note",
+          "notify_customer": "Email the customer",
+          "reason_label": "Reason",
+          "refund_payments": "Refund the customer",
+          "refund_payments_help": "Money already taken is returned. An unclaimed authorization is released either way."
+        },
+        "commission_lines": {
+          "column_fee": "Fee",
+          "column_rate": "Rate",
+          "column_subject": "Item",
+          "column_tax": "Tax",
+          "column_total": "Total",
+          "delivery": "Delivery",
+          "empty": "No commission was charged on this order.",
+          "line_item_fallback": "Line item",
+          "rate_named_fixed": "{{name}} · {{amount}}",
+          "rate_named_percentage": "{{name}} · {{rate}}%",
+          "rate_unknown": "Deleted rate",
+          "subject_fallback": "Sale",
+          "title": "Commission",
+          "total": "Total"
+        },
         "completed_prefix": "Completed",
         "confirm": {
           "approve_message": "Approve this order?",
@@ -2637,7 +2710,6 @@
           "remove_gift_card_message": "Remove this gift card from the order?",
           "remove_item_message": "Remove this item from the order?",
           "remove_store_credit_message": "Remove store credit from the order?",
-          "resume_message": "Resume this canceled order?",
           "ship_message": "Ship this fulfillment?",
           "void_message": "Void this payment?"
         },
@@ -2662,28 +2734,63 @@
           "approve_failed": "Failed to approve order",
           "cancel_failed": "Failed to cancel order",
           "complete_failed": "Failed to complete order",
-          "confirmation_send_failed": "Failed to send confirmation",
-          "resume_failed": "Failed to resume order"
+          "confirmation_send_failed": "Failed to send confirmation"
         },
         "fulfillments": {
+          "add_delivery": "Add tracking",
           "add_tracking": "Add tracking",
           "add_tracking_title": "Add tracking",
+          "awaiting_fulfillment_one": "{{count}} item still to fulfill",
+          "awaiting_fulfillment_other": "{{count}} items still to fulfill",
+          "awaiting_hint": "Add a fulfillment to ship them.",
+          "awaiting_hint_draft": "They can be fulfilled once the order is placed.",
           "buy_label": "Buy label",
           "buy_label_confirm": "Buy a shipping label for this fulfillment? Your carrier account is charged as soon as the label is issued.",
           "buy_label_confirm_rate": "Buy a {{rate}} label for {{cost}}? Your carrier account is charged as soon as the label is issued.",
+          "buy_label_pending_file": "The carrier's copy is still downloading; printing opens the carrier's own link.",
           "carrier_auto": "Detect automatically",
           "carrier_label": "Shipping carrier",
+          "carrier_search": "Search carriers",
+          "carrier_status_available_for_pickup": "Available for pickup",
+          "carrier_status_delivered": "Delivered",
+          "carrier_status_failure": "Delivery failed",
+          "carrier_status_in_transit": "In transit",
+          "carrier_status_out_for_delivery": "Out for delivery",
+          "carrier_status_pending": "Awaiting carrier",
+          "carrier_status_pre_transit": "Label created",
+          "carrier_status_return_to_sender": "Returning to sender",
+          "carrier_status_unknown": "Status unknown",
+          "confirm_delete_delivery": "Remove this tracking number? This takes effect immediately.",
+          "confirm_delete_label": "Delete this label? The file is removed from the order. This takes effect immediately.",
+          "confirm_refund_label": "Ask the carrier to refund this label? Postage is credited back to your carrier account.",
           "confirm_split": "Move these units into a new fulfillment? This takes effect immediately.",
           "create_description": "Creates a fulfillment and moves the chosen quantities into it.",
           "create_items": "Items",
           "create_title": "Add fulfillment",
+          "delete_label": "Delete label",
+          "deliveries_title": "Tracking",
           "delivery_method": "Delivery method",
+          "document_kinds": {
+            "certificate_of_origin": "Certificate of origin",
+            "cn22": "Customs form CN22",
+            "cn23": "Customs form CN23",
+            "commercial_invoice": "Commercial invoice",
+            "customs_form": "Customs form",
+            "form": "Document"
+          },
+          "documents_title": "Shipping documents",
           "edit_description": "Change where this fulfillment ships from and which delivery method carries it.",
           "edit_title": "Edit fulfillment",
           "edit_tracking_title": "Edit tracking",
           "empty": "No fulfillments on this order yet.",
           "free": "Free",
+          "label_cost": "Postage",
+          "label_refund_requested": "Refund requested",
+          "label_refunded": "Refunded",
+          "label_title": "Shipping label",
+          "label_uploaded": "Uploaded",
           "mark_delivered": "Mark as delivered",
+          "mark_delivery_delivered": "Mark arrived",
           "move_and_requote": "Move and re-quote",
           "no_rates": "No delivery methods are quoted for this fulfillment.",
           "out_of_stock": "Out of stock",
@@ -2691,6 +2798,8 @@
           "print_label": "Print label",
           "print_packing_slip": "Print packing slip",
           "rates_pending_origin": "Save the new origin to see the delivery methods it offers.",
+          "refund_label": "Refund label",
+          "retry_refund_label": "Retry refund",
           "ship_to": "Ship to",
           "ships_from": "Ships from",
           "split": "Split",
@@ -2701,7 +2810,12 @@
           "split_would_empty": "Leave at least one unit behind, or change the origin of the whole fulfillment instead.",
           "tracking_description": "The carrier tracking number, or a full tracking link.",
           "unfulfilled_one": "Unfulfilled ({{count}})",
-          "unfulfilled_other": "Unfulfilled ({{count}})"
+          "unfulfilled_other": "Unfulfilled ({{count}})",
+          "upload_label": "Upload label",
+          "upload_label_cost": "Postage cost",
+          "upload_label_description": "Record a label you bought elsewhere, so the parcel has its file, its tracking number and what it cost.",
+          "upload_label_file": "Label file",
+          "upload_label_title": "Upload label"
         },
         "gift_card_section": {
           "applied_suffix": "applied",
@@ -2722,8 +2836,6 @@
           "captured": "Payment captured",
           "completed": "Order completed",
           "confirmation_sent": "Confirmation sent",
-          "resumed": "Order resumed",
-          "shipped": "Fulfillment shipped",
           "voided": "Payment voided"
         },
         "no_customer": "No customer information",
@@ -2760,8 +2872,13 @@
         "summary": {
           "adjustments": "Adjustments",
           "approved_by": "Approved by",
+          "cancel_note": "Cancellation note",
+          "cancel_reason": "Cancellation reason",
           "canceled_at": "Canceled at",
           "canceler": "Canceler",
+          "commission_fee": "Marketplace fee",
+          "commission_tax": "Marketplace fee tax",
+          "commission_total": "Total marketplace fee",
           "outstanding_balance": "Outstanding balance",
           "payment_total": "Payment total",
           "promotions": "Promotions",
@@ -2769,8 +2886,8 @@
           "tax_included": "Tax (included)"
         },
         "tracking": {
-          "prefix": "Tracking",
-          "shipped_prefix": "Shipped"
+          "fulfilled_prefix": "Fulfilled",
+          "prefix": "Tracking"
         },
         "variant_search": {
           "description": "Search for a product variant to add to this order.",
@@ -2778,6 +2895,17 @@
           "label": "Search variant",
           "placeholder": "Type product name or SKU (min 3 chars)…",
           "sku_prefix": "SKU"
+        },
+        "logistics": {
+          "title": "Logistics",
+          "units": "Units",
+          "cartons": "Cartons",
+          "pallets": "Pallets",
+          "volume": "Volume",
+          "weight": "Gross weight",
+          "cbm": "{{value}} CBM",
+          "kg": "{{value}} kg",
+          "incomplete": "Some items are not measured, so these figures are a floor rather than a total."
         }
       },
       "edit": {
@@ -2825,7 +2953,7 @@
       },
       "fulfill": {
         "action": "Mark as fulfilled",
-        "empty": "This fulfillment holds no items that can be shipped.",
+        "empty": "This fulfillment holds no items that can be fulfilled.",
         "include_item": "Ship {{name}}",
         "notify_customer": "Send shipment notification to customer",
         "of_units": "of {{count}}",
@@ -2975,6 +3103,12 @@
             "description": "Shown on your storefront as the contact point for customer questions and support.",
             "title": "Set customer support email"
           },
+          "setup_address": {
+            "cta": "Save address",
+            "description": "Your shipping and returns address. Carriers use it to calculate delivery rates, and it is where customer returns are sent.",
+            "no_location": "You have no stock location of your own yet — create one in Settings to add an address.",
+            "title": "Add your shipping address"
+          },
           "setup_payment_method": {
             "cta": "Set up payment methods",
             "description": "To collect payments, set up at least one online payment provider.",
@@ -3022,8 +3156,6 @@
             "capture": "Capture",
             "mark_paid": "Mark as paid",
             "refund": "Refund",
-            "resume": "Resume",
-            "ship": "Mark as shipped",
             "void": "Void"
           },
           "claims": {
@@ -3075,13 +3207,19 @@
               "receive": "Receive items",
               "refund": "Refund"
             },
+            "buy_label": "Buy return label",
+            "buy_label_confirm": "Buy a prepaid return label? Your carrier account is charged as soon as the label is issued.",
             "confirm": {
               "cancel": "Cancel this return? Nothing will be restocked and no money will move."
             },
             "create_title": "New return",
             "empty": "No returns for this order.",
             "empty_no_units": "This order has no fulfillment records to return against.",
+            "location": "Return to",
+            "location_default": "Default returns location",
+            "location_no_returns": "{{name}} (does not accept returns)",
             "memo": "Note",
+            "no_label": "No return label yet.",
             "not_resellable": "Not resellable",
             "reason": "Reason",
             "receive_title": "Receive returned items",
@@ -3095,7 +3233,8 @@
             },
             "refund_title": "Refund return",
             "refund_total": "Refund total",
-            "resellable": "Resellable"
+            "resellable": "Resellable",
+            "returning_to": "Returning to {{name}}"
           },
           "section_billing_address": "Billing address",
           "section_claims": "Claims",
@@ -3275,6 +3414,7 @@
             "save_success_one": "Saved {{count}} price",
             "save_success_other": "Saved {{count}} prices",
             "search_placeholder": "Search by product, SKU, or option…",
+            "tier_needs_price": "Enter a price for the quantity break starting at {{quantity}}, or clear the quantity to remove it.",
             "title": "Edit prices — {{name}}",
             "variant_default": "Default"
           },
@@ -3297,6 +3437,17 @@
             "select_all": "Select all",
             "select_row": "Select product",
             "title": "Products"
+          },
+          "prices": {
+            "column_price": "Price",
+            "column_source": "From",
+            "source_help": {
+              "explicit": "An amount entered on this price list.",
+              "automatic": "The shop price with this list's percentage applied.",
+              "base": "The normal shop price. This list does not price this product."
+            },
+            "tier_fixed_note": "A percentage adjustment does not apply here. These tiers fix the price.",
+            "tier_preview": "What this list charges"
           },
           "products_help": "Pick the products this list applies to. Placeholder prices are created on save — fill them in with Edit prices.",
           "products_help_with_prices_one": "Pick the products this list applies to. {{count}} price is configured — use Edit prices to update it.",
@@ -3324,6 +3475,12 @@
           "sheet_title_create": "Create price list",
           "sheet_title_edit": "Edit price list",
           "subtitle": "Targeted pricing for customer groups, regions, or volume tiers.",
+          "tiers": {
+            "add": "Add quantity break",
+            "from": "From qty",
+            "quantity": "From quantity",
+            "remove_short": "Remove this quantity break"
+          },
           "title": "Price Lists",
           "unschedule": "Unschedule",
           "unschedule_confirm": {
@@ -3527,11 +3684,9 @@
           "search_placeholder": "Search stock locations…"
         },
         "store": {
-          "default_package_description": "The box you usually ship in. Carrier rate providers add its weight to every package and use its dimensions for dimensional-weight pricing.",
           "subtitle": "General configuration and store-wide defaults.",
           "tab_addresses": "Addresses",
           "tab_catalog": "Catalog",
-          "tab_default_package": "Default package",
           "tab_general": "General",
           "tab_inventory": "Inventory",
           "tab_order_numbers": "Order numbers",
@@ -3683,6 +3838,9 @@
         "payouts": {
           "title": "Payouts",
           "subtitle": "How and when this marketplace pays its sellers."
+        },
+        "package_types": {
+          "add_sheet_title": "Add package type"
         }
       },
       "staff": {
@@ -3769,16 +3927,24 @@
         "api_keys": "Create and revoke API credentials",
         "categories": "Category tree and taxonomies",
         "collections": "Manual and rule-based product collections",
+        "commissions": "Commission rates and what each seller is charged",
         "customers": "Customer accounts, addresses, cards and groups",
         "dashboard": "Sales and performance analytics",
+        "delivery_methods": "Shipping options, rates and the rules that gate them",
         "fulfillments": "Pack, ship and track order fulfillments",
         "gift_cards": "Gift cards and gift card batches",
         "integrations": "Provider credentials and connections",
+        "media": "Images, video and files in the media library",
         "orders": "Orders, line items, returns, exchanges and claims",
         "payments": "Order payments and payment capture",
+        "payouts": "Money paid out to sellers and its schedule",
+        "product_types": "Product type definitions and their custom fields",
         "products": "Products, variants, options, prices and media",
         "promotions": "Promotions, rules and coupon codes",
+        "publishing": "What is visible in the storefront and when",
         "refunds": "Issue and view refunds",
+        "seller_profile": "A seller's own details, address and policies",
+        "sellers": "Seller accounts, onboarding and approval",
         "settings": "Store, payment, delivery, tax and channel configuration",
         "staff": "Team members, invitations, roles and their permissions",
         "stock": "Stock levels, locations, movements and transfers",
@@ -3809,16 +3975,24 @@
         "api_keys": "API keys",
         "categories": "Categories",
         "collections": "Collections",
+        "commissions": "Commissions",
         "customers": "Customers",
         "dashboard": "Dashboard",
+        "delivery_methods": "Delivery methods",
         "fulfillments": "Fulfillments",
         "gift_cards": "Gift cards",
         "integrations": "Integrations",
+        "media": "Media",
         "orders": "Orders",
         "payments": "Payments",
+        "payouts": "Payouts",
+        "product_types": "Product types",
         "products": "Products",
         "promotions": "Promotions",
+        "publishing": "Publishing",
         "refunds": "Refunds",
+        "seller_profile": "Seller profile",
+        "sellers": "Sellers",
         "settings": "Settings",
         "staff": "Staff & roles",
         "stock": "Stock",
@@ -3864,12 +4038,44 @@
     "preferences": {
       "additional_item": "Additional Item Cost",
       "amount": "Amount",
+      "api_key": "API key",
+      "api_key_description": "Found in your EasyPost dashboard. A test key and a live key behave differently — the key itself decides the mode.",
       "base_amount": "Base Amount",
       "base_percent": "Base Percent",
+      "company_orders_only": "Only for company orders",
+      "company_orders_only_description": "On, this method is offered only to orders placed for a company. Off, only to orders that are not. Remove the rule to offer it to both.",
       "currency": "Currency",
+      "customs_contents_type": "Customs contents type",
+      "customs_contents_type_description": "What an international parcel holds, as customs classifies it.",
+      "customs_contents_type_options": {
+        "dangerous_goods": "Dangerous goods",
+        "documents": "Documents",
+        "gift": "Gift",
+        "humanitarian_donation": "Humanitarian donation",
+        "merchandise": "Merchandise",
+        "returned_goods": "Returned goods",
+        "sample": "Sample"
+      },
+      "customs_signer": "Customs signer",
+      "customs_signer_description": "The person at your company who takes legal responsibility for what an international parcel declares.",
       "discount_amount": "Discount Amount",
       "first_item": "First Item Cost",
       "flat_percent": "Flat Percent",
+      "incoterm": "Duties and taxes (Incoterm)",
+      "incoterm_description": "Who pays duties on arrival. DAP bills the recipient; DDP bills you, so only pick it if you collect duties at checkout.",
+      "incoterm_options": {
+        "CFR": "CFR",
+        "CIF": "CIF",
+        "CIP": "CIP",
+        "CPT": "CPT",
+        "DAT": "DAT",
+        "DAP": "DAP",
+        "DDP": "DDP",
+        "EXW": "EXW",
+        "FAS": "FAS",
+        "FCA": "FCA",
+        "FOB": "FOB"
+      },
       "max_items": "Max Items",
       "max_quantity": "Maximum quantity",
       "maximum_item_total": "Maximum item total",
@@ -3881,7 +4087,9 @@
       "normal_amount": "Normal Amount",
       "percent": "Percent",
       "preferred_amount": "Amount",
-      "preferred_percent": "Percent"
+      "preferred_percent": "Percent",
+      "webhook_secret": "Webhook signing secret",
+      "webhook_secret_description": "The secret you set on the EasyPost webhook. Carrier updates are refused without it."
     },
     "product_types": {
       "add_cta": "Add product type",
@@ -4005,7 +4213,9 @@
           "adjustment_required": "Enter a percentage.",
           "adjustment_too_deep": "Must be less than 100%.",
           "ends_after_starts": "Must be after start date.",
-          "minimum_quantity_invalid": "Enter a whole number."
+          "minimum_quantity_invalid": "Enter a whole number.",
+          "tier_percentage_invalid": "Each tier needs a percentage below 100.",
+          "tier_quantity_invalid": "Each tier needs its own quantity above 1."
         }
       },
       "product_type_adds_options_one": "This type adds {{options}} to new products.",
@@ -4095,7 +4305,11 @@
           "identity": "Identity",
           "tax_category_placeholder": "Inherit from product",
           "ordering": "B2B ordering",
-          "ordering_help": "How much a buyer must take. Stock is still counted in units."
+          "ordering_help": "How much a buyer must take. Stock is still counted in units.",
+          "packing": "Packing",
+          "packing_help": "How this product leaves the warehouse in bulk. Freight quotes are built from these numbers.",
+          "carton_placeholder": "No carton",
+          "pending_save": "Changes here are saved with the product."
         },
         "title": "Variants",
         "variant_label": "Variant"
@@ -4112,24 +4326,6 @@
       },
       "action_summary": {
         "variant_count": "{{count}} variants"
-      },
-      "action_types": {
-        "create_adjustment": {
-          "description": "Creates a promotion credit adjustment on the order",
-          "name": "Create whole-order adjustment"
-        },
-        "create_item_adjustments": {
-          "description": "Creates a promotion credit adjustment on a line item",
-          "name": "Create per-line-item adjustment"
-        },
-        "create_line_items": {
-          "description": "Populates the cart with the specified quantity of variant",
-          "name": "Create line items"
-        },
-        "free_shipping": {
-          "description": "Makes all shipments for the order free",
-          "name": "Free shipping"
-        }
       },
       "actions_card": {
         "add_action": "Add action",
@@ -4210,52 +4406,6 @@
         "category_count": "{{count}} categories",
         "customer_count": "{{count}} customers",
         "product_count": "{{count}} products"
-      },
-      "rule_types": {
-        "category": {
-          "description": "Order includes products in specified categories",
-          "name": "Categories"
-        },
-        "country": {
-          "description": "Limit to orders with shipping address in a specific country",
-          "name": "Country"
-        },
-        "currency": {
-          "description": "Limit to orders in a specific currency",
-          "name": "Currency"
-        },
-        "customer": {
-          "description": "Available only to the specified customers",
-          "name": "Customers"
-        },
-        "customer_group": {
-          "description": "Available only to customers in specified customer group(s)",
-          "name": "Customer Group(s)"
-        },
-        "customer_logged_in": {
-          "description": "Available only to logged in customers",
-          "name": "Only logged in customers"
-        },
-        "first_order": {
-          "description": "Must be the customer's first order",
-          "name": "First order"
-        },
-        "item_total": {
-          "description": "Order total meets these criteria",
-          "name": "Item total"
-        },
-        "one_use_per_user": {
-          "description": "Only One Use Per User",
-          "name": "One Use Per User"
-        },
-        "option_value": {
-          "description": "Order includes products with matching option value(s)",
-          "name": "Option Value(s)"
-        },
-        "product": {
-          "description": "Order includes specified product(s)",
-          "name": "Product(s)"
-        }
       },
       "rule_types_all_used": "Every available rule type is already on this promotion.",
       "rule_types_empty": "No rule types registered.",
@@ -4365,7 +4515,7 @@
         "message": "{{name}} will no longer be offered. Records already using it keep it.",
         "title": "Delete reason?"
       },
-      "description": "The vocabularies your team picks from when handling returns, claims and refunds.",
+      "description": "The vocabularies your team picks from when handling returns, claims, refunds and cancellations.",
       "edit_sheet_title": "Edit reason",
       "empty": "No reasons yet",
       "in_use": "In use",
@@ -4377,6 +4527,10 @@
         "updated": "Reason updated"
       },
       "name_placeholder": "e.g. Wrong size",
+      "order_cancellation": {
+        "help": "Why an order was called off before it shipped. Staff pick one when canceling.",
+        "title": "Order cancellation reasons"
+      },
       "refund": {
         "help": "Why money went back. Used for reporting across every refund.",
         "title": "Refund reasons"
@@ -4474,17 +4628,6 @@
           "help": "Required items must be done before a seller can be approved. Others are shown as recommended.",
           "label": "Required"
         }
-      },
-      "kinds": {
-        "accept_terms": "Accept terms",
-        "attestation": "Seller confirmation",
-        "billing_address": "Billing address",
-        "complete_profile": "Complete profile",
-        "document": "Document",
-        "minimum_products": "Minimum products",
-        "operator_review": "Manual check",
-        "required_custom_fields": "Required custom fields",
-        "returns_address": "Returns address"
       },
       "messages": {
         "created": "Requirement added",
@@ -4723,7 +4866,8 @@
         "tax_categories": "Tax classes assigned to products",
         "tax_rates": "Rates applied per market and region",
         "webhooks": "Endpoints notified when events happen",
-        "payouts": "Who pays your sellers, how often, and the minimum worth sending"
+        "payouts": "Who pays your sellers, how often, and the minimum worth sending",
+        "package_types": "Boxes, cartons, pallets and containers"
       },
       "groups": {
         "audit": "Audit",
@@ -4759,7 +4903,8 @@
         "tax_categories": "Tax categories",
         "tax_rates": "Tax rates",
         "webhooks": "Webhooks",
-        "payouts": "Payouts"
+        "payouts": "Payouts",
+        "package_types": "Package types"
       }
     },
     "setup": {
@@ -4832,6 +4977,7 @@
         "default": "Default",
         "location": "Location",
         "pickup": "Pickup",
+        "returns": "Returns",
         "type": "Type"
       },
       "create_description": "Add a warehouse, store, or pickup point to fulfill orders from.",
@@ -4852,6 +4998,8 @@
         "local": "Only items at this location"
       },
       "search_placeholder": "Search by name…",
+      "section_behavior": "Behavior",
+      "section_details": "Details",
       "section_pickup": "Pickup",
       "stock_levels": {
         "empty": "No stock levels at this location yet.",
@@ -5064,6 +5212,43 @@
       "saved": "Translations saved",
       "source": "Source",
       "title": "Translations"
+    },
+    "package_types": {
+      "table_title": "Package types",
+      "search_placeholder": "Search packaging",
+      "empty": "No packaging yet. Add the box you ship in, and the cartons and pallets wholesale orders leave on.",
+      "add_cta": "Add package type",
+      "default_badge": "Default",
+      "edit_sheet_title": "Package type",
+      "create_description": "A box, carton, pallet or container goods are packed into.",
+      "edit_description": "Products packed into this carton follow its measurements, so one edit corrects them all.",
+      "dimensions_column": "Dimensions",
+      "volume_column": "Volume",
+      "kinds": {
+        "box": "Box",
+        "envelope": "Envelope",
+        "carton": "Carton",
+        "pallet": "Pallet",
+        "container": "Container"
+      },
+      "messages": {
+        "added": "Package type added",
+        "updated": "Package type updated",
+        "deleted": "Package type deleted"
+      },
+      "delete_confirm": {
+        "title": "Delete package type?",
+        "message": "{{name}} will be removed. Products packed into it must be repacked first."
+      },
+      "validation": {
+        "non_negative": "must be zero or more"
+      },
+      "columns": {
+        "seller": "Owner"
+      },
+      "owner": {
+        "marketplace": "Marketplace"
+      }
     }
   }
 }

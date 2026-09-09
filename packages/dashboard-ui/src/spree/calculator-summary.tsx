@@ -13,7 +13,11 @@
  * draft edits update the row immediately, before any save.
  */
 export interface CalculatorPayload {
-  /** Human-readable name (e.g. "Flat Rate"). Optional; if missing the type is demodulized. */
+  /**
+   * Display name for the calculator, already localized by the caller — this
+   * package is headless and does not resolve translations itself. Optional;
+   * if missing the type is demodulized.
+   */
   label?: string | null
   /** STI class name (e.g. "Spree::Calculator::FlatRate"). Used as a label fallback. */
   type?: string | null

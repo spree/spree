@@ -65,6 +65,119 @@ describe Spree::PriceList, type: :model do
     end
   end
 
+  # Percentage ladders: the column is the quantity-1 value, the tiers are the
+  # bands above it (docs/plans/6.0-volume-pricing.md).
+  describe 'quantity bands' do
+    let(:catalog) { create(:catalog, store: @default_store) }
+    let(:price_list) do
+      create(:price_list, store: @default_store, catalog: catalog, price_adjustment_percentage: -5)
+    end
+
+    before do
+      create(:price_adjustment_tier, price_list: price_list, min_quantity: 10, percentage: -10)
+      create(:price_adjustment_tier, price_list: price_list, min_quantity: 50, percentage: -20)
+      price_list.reload
+    end
+
+    it 'answers the deepest band a quantity reaches' do
+      expect(price_list.adjustment_percentage_for(1)).to eq(-5)
+      expect(price_list.adjustment_percentage_for(9)).to eq(-5)
+      expect(price_list.adjustment_percentage_for(10)).to eq(-10)
+      expect(price_list.adjustment_percentage_for(49)).to eq(-10)
+      expect(price_list.adjustment_percentage_for(50)).to eq(-20)
+    end
+
+    it 'reads the column when asked without a quantity' do
+      expect(price_list.adjustment_percentage_for).to eq(-5)
+      expect(price_list.adjustment_factor).to eq(0.95)
+    end
+
+    it 'turns the band into the factor a base price is multiplied by' do
+      expect(price_list.adjustment_factor(50)).to eq(0.80)
+    end
+
+    # A list may discount only from a quantity up, with no quantity-1
+    # percentage at all.
+    context 'with bands but no percentage of its own' do
+      before { price_list.update!(price_adjustment_percentage: nil) }
+
+      it 'still prices automatically' do
+        expect(price_list).to be_automatic_pricing
+      end
+
+      it 'adjusts nothing below the first band' do
+        base = build(:price, amount: 100, currency: 'USD')
+
+        expect(price_list.derived_price_from(base, 5)).to be_nil
+        expect(price_list.derived_price_from(base, 10).amount).to eq(90)
+      end
+    end
+
+    # The payload is the whole ladder, so what a merchant sends is what the
+    # list ends up holding (docs/plans/6.0-volume-pricing.md).
+    describe 'writing the ladder from a flat payload' do
+      it 'creates the bands it names' do
+        fresh = create(:price_list, store: @default_store, catalog: create(:catalog, store: @default_store),
+                                    price_adjustment_percentage: -5)
+        fresh.update!(price_adjustment_tiers: [
+                        { min_quantity: 10, percentage: '-10' },
+                        { min_quantity: 50, percentage: '-20' }
+                      ])
+
+        expect(fresh.reload.price_adjustment_tiers.map { |tier| [tier.min_quantity, tier.percentage.to_i] }).
+          to eq([[10, -10], [50, -20]])
+      end
+
+      it 'updates a band the payload names again rather than duplicating it' do
+        price_list.update!(price_adjustment_tiers: [{ min_quantity: 10, percentage: '-12' }])
+
+        expect(price_list.reload.price_adjustment_tiers.map { |tier| [tier.min_quantity, tier.percentage.to_i] }).
+          to eq([[10, -12]])
+      end
+
+      it 'removes a band the payload leaves out' do
+        price_list.update!(price_adjustment_tiers: [{ min_quantity: 50, percentage: '-20' }])
+
+        expect(price_list.reload.price_adjustment_tiers.map(&:min_quantity)).to eq([50])
+      end
+
+      it 'clears the ladder on an empty payload' do
+        price_list.update!(price_adjustment_tiers: [])
+
+        expect(price_list.reload.price_adjustment_tiers).to be_empty
+      end
+
+      # Coercing with `to_i` would turn a typo into 0 and read it as a band to
+      # drop, so one bad row would silently delete the whole ladder.
+      it 'refuses a malformed quantity rather than clearing the ladder' do
+        expect(price_list.reload.price_adjustment_tiers.map(&:min_quantity)).to eq([10, 50])
+
+        expect(price_list.update(price_adjustment_tiers: [{ min_quantity: 'invalid', percentage: '-10' }])).to be(false)
+        expect(price_list.errors.full_messages.join).to match(/quantity/i)
+        expect(price_list.reload.price_adjustment_tiers.map(&:min_quantity)).to eq([10, 50])
+      end
+
+      # Rails assigns model instances on an association swap; the writer has to
+      # fall through to the ordinary setter rather than treat them as rows.
+      it 'falls through to the standard writer for model instances' do
+        replacement = Spree::PriceAdjustmentTier.new(min_quantity: 30, percentage: -15)
+        price_list.update!(price_adjustment_tiers: [replacement])
+
+        expect(price_list.reload.price_adjustment_tiers.map(&:min_quantity)).to eq([30])
+      end
+    end
+
+    # Bands are the same percentage asked at a quantity, so a standalone list
+    # is refused them for the same reason it is refused the column.
+    it 'is only valid on a list a catalog owns' do
+      standalone = create(:price_list, store: @default_store)
+      standalone.price_adjustment_tiers.build(min_quantity: 10, percentage: -10)
+
+      expect(standalone).not_to be_valid
+      expect(standalone.errors.messages[:price_adjustment_tiers]).to be_present
+    end
+  end
+
   # An owned list is selected by its catalog, which already answered the
   # audience question — so only rules about the purchase itself still have
   # anything to say (docs/plans/6.0-price-list-automatic-pricing.md).

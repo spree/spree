@@ -32,3 +32,6 @@ export interface AuthTokens {
   user: TeamMember
   sellers: SellerSummary[]
 }
+
+export type { default as Delivery } from './generated/Delivery'
+export type { default as ShippingLabel } from './generated/ShippingLabel'

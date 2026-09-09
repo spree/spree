@@ -42,6 +42,12 @@ Gem::Specification.new do |s|
   s.add_dependency 'friendly_id', '~> 5.2', '>= 5.2.1'
   s.add_dependency 'geocoder'
   s.add_dependency 'highline', '>= 2', '< 4' # Necessary for the install generator
+  # json 3 removed the positional options hash, which ActiveSupport::JSON.decode
+  # still passes (`::JSON.parse(json, options)`). Rolling a transaction back
+  # restores JSON attributes through that path, so on json 3 any rollback
+  # touching a JSON column raises ArgumentError. Rails' bug, not ours — unpin
+  # once activesupport passes those options as keywords.
+  s.add_dependency 'json', '< 3'
   s.add_dependency 'jwt', '~> 3.1'
   s.add_dependency 'money', '~> 6.13'
   s.add_dependency 'monetize', '~> 1.9'

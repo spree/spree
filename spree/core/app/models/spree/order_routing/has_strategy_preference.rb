@@ -19,8 +19,7 @@ module Spree
         return if Spree.order_routing.strategies.any? { |strategy| strategy.to_s == value.to_s }
 
         errors.add(
-          :preferred_order_routing_strategy,
-          Spree.t(:invalid_order_routing_strategy, scope: [:errors, :messages], default: 'is not a registered order routing strategy')
+          :preferred_order_routing_strategy, :invalid_order_routing_strategy, message: Spree.t(:invalid_order_routing_strategy, scope: [:errors, :messages], default: 'is not a registered order routing strategy')
         )
       end
     end

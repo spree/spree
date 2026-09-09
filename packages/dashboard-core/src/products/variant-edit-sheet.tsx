@@ -1,11 +1,19 @@
 import type { ProductFormValues, VariantFormValues } from '@spree/dashboard-core'
 import { CountryCombobox, StoreDatePicker } from '@spree/dashboard-core'
 import {
+  Alert,
+  AlertDescription,
   Button,
   Field,
+  FieldDescription,
   FieldError,
   FieldLabel,
+  FormSection,
   Input,
+  InputGroup,
+  InputGroupAddon,
+  InputGroupInput,
+  InputGroupText,
   Select,
   SelectContent,
   SelectItem,
@@ -13,17 +21,23 @@ import {
   SelectValue,
   Sheet,
   SheetContent,
+  SheetDescription,
   SheetFooter,
   SheetHeader,
   SheetTitle,
   Switch,
 } from '@spree/dashboard-ui'
+import { Link } from '@tanstack/react-router'
+import { InfoIcon } from 'lucide-react'
 import { useEffect, useRef } from 'react'
 import { Controller, type UseFormReturn } from 'react-hook-form'
-import { useTranslation } from 'react-i18next'
+import { Trans, useTranslation } from 'react-i18next'
+import { useTenantId } from '../providers/tenant-provider'
+import { cartonSize } from './carton-size'
 import { normalizeCustomsDescription, normalizeHsCode } from './normalize-customs'
 import { PURCHASE_UNITS } from './normalize-quantity'
 import {
+  useFormCartonPackageTypes as useCartonPackageTypes,
   useFormOptionTypes as useOptionTypes,
   useFormTaxCategories as useTaxCategories,
 } from './use-product-form-data'
@@ -51,6 +65,25 @@ export function VariantEditSheet({ form, variantIndex, open, onOpenChange }: Pro
   const hasTaxCategories = taxCategories.length > 0
   const { data: optionTypesData } = useOptionTypes()
   const optionTypes = optionTypesData?.data ?? []
+  const tenantId = useTenantId()
+  // A panel that does not manage package types at all (a seller's) has no
+  // packing to ask about, so the section stays hidden there. An operator with
+  // none created yet still sees it, disabled, saying where to make one —
+  // hiding it outright left no trace of a feature they had not set up.
+  const {
+    data: cartonTypesResponse,
+    isPending: cartonTypesPending,
+    supported: cartonTypesSupported,
+  } = useCartonPackageTypes()
+  const cartonTypes = cartonTypesResponse?.data ?? []
+  const hasCartonTypes = cartonTypes.length > 0
+  // Only once the list has actually answered. While it is in flight the empty
+  // array below is not yet evidence of an empty store, and telling a merchant
+  // who has cartons to go and make one is worse than saying nothing.
+  const knownEmpty = cartonTypesSupported && !cartonTypesPending && !hasCartonTypes
+  // A packed carton is weighed on the same scale as the goods inside it, so
+  // this follows the variant's own unit rather than offering a second one.
+  const cartonWeightUnit = form.watch(`variants.${variantIndex}.weight_unit`) || ''
 
   // Snapshot the variant when the sheet opens so Cancel can restore it.
   // Re-snapshot if the user switches between variant rows without closing
@@ -117,13 +150,16 @@ export function VariantEditSheet({ form, variantIndex, open, onOpenChange }: Pro
 
   return (
     <Sheet open={open} onOpenChange={(o) => (o ? onOpenChange(o) : handleCancel())}>
-      <SheetContent side="right" showCloseButton={false} className="flex flex-col">
+      <SheetContent side="right" className="flex flex-col">
         <SheetHeader>
           <SheetTitle>{t('admin.products.variants.edit_variant', { name: label })}</SheetTitle>
+          {/* Nothing here is written until the product itself is saved, and a
+              sheet that closes with a tick invites the opposite reading. */}
+          <SheetDescription>{t('admin.products.variants.sheet.pending_save')}</SheetDescription>
         </SheetHeader>
 
         <div className="flex-1 overflow-y-auto p-4 flex flex-col gap-6">
-          <Section title={t('admin.products.variants.sheet.identity')}>
+          <FormSection title={t('admin.products.variants.sheet.identity')}>
             <Field>
               <FieldLabel htmlFor={`variant-${variantIndex}-sku`}>
                 {t('admin.fields.variant.sku.label')}
@@ -162,9 +198,9 @@ export function VariantEditSheet({ form, variantIndex, open, onOpenChange }: Pro
               />
               <FieldError errors={[form.formState.errors.variants?.[variantIndex]?.barcode]} />
             </Field>
-          </Section>
+          </FormSection>
 
-          <Section title={t('admin.fields.shipping.label')}>
+          <FormSection title={t('admin.fields.shipping.label')}>
             <div className="grid grid-cols-[1fr_120px] gap-3">
               <Field>
                 <FieldLabel htmlFor={`variant-${variantIndex}-weight`}>
@@ -270,9 +306,142 @@ export function VariantEditSheet({ form, variantIndex, open, onOpenChange }: Pro
                 />
               </Field>
             </div>
-          </Section>
+          </FormSection>
 
-          <Section title={t('admin.products.variants.sheet.customs')}>
+          {cartonTypesSupported && (
+            <FormSection title={t('admin.products.variants.sheet.packing')}>
+              <p className="text-sm text-muted-foreground">
+                {t('admin.products.variants.sheet.packing_help')}
+              </p>
+              {knownEmpty && (
+                <Alert variant="info">
+                  <InfoIcon />
+                  <AlertDescription>
+                    <Trans
+                      i18nKey="admin.products.variants.sheet.no_carton_types"
+                      components={{
+                        settingsLink: (
+                          <Link
+                            to={`/${tenantId}/settings/package-types` as never}
+                            className="underline underline-offset-3"
+                          />
+                        ),
+                      }}
+                    />
+                  </AlertDescription>
+                </Alert>
+              )}
+              <Field>
+                <FieldLabel htmlFor={`variant-${variantIndex}-carton`}>
+                  {t('admin.fields.variant.carton_package_type_id.label')}
+                </FieldLabel>
+                <Controller
+                  name={`variants.${variantIndex}.carton_package_type_id`}
+                  control={form.control}
+                  render={({ field }) => (
+                    <Select
+                      value={field.value ?? ''}
+                      onValueChange={(value) => field.onChange(value || null)}
+                    >
+                      <SelectTrigger
+                        id={`variant-${variantIndex}-carton`}
+                        className="w-full"
+                        disabled={!hasCartonTypes}
+                      >
+                        <SelectValue
+                          placeholder={t('admin.products.variants.sheet.carton_placeholder')}
+                        >
+                          {(value) =>
+                            cartonTypes.find((carton) => carton.id === value)?.name ??
+                            t('admin.products.variants.sheet.carton_placeholder')
+                          }
+                        </SelectValue>
+                      </SelectTrigger>
+                      <SelectContent>
+                        {cartonTypes.map((carton) => (
+                          <SelectItem key={carton.id} value={carton.id}>
+                            <span className="flex w-full items-baseline justify-between gap-4">
+                              <span>{carton.name}</span>
+                              {/* Two cartons named alike are told apart by their
+                                  size, and the merchant is about to state what a
+                                  packed one weighs. */}
+                              {cartonSize(carton) && (
+                                <span className="text-xs text-muted-foreground tabular-nums">
+                                  {cartonSize(carton)}
+                                </span>
+                              )}
+                            </span>
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  )}
+                />
+                <FieldDescription>
+                  {t('admin.fields.variant.carton_package_type_id.help')}
+                </FieldDescription>
+              </Field>
+              <div className="grid grid-cols-2 gap-3">
+                <Field>
+                  <FieldLabel htmlFor={`variant-${variantIndex}-carton-weight`}>
+                    {t('admin.fields.variant.carton_weight.label')}
+                  </FieldLabel>
+                  {/* Cleared means unmeasured, not zero — and a zero carton
+                      weight is refused, so coercing a blank to 0 would leave
+                      the merchant unable to undo their own entry. */}
+                  <Controller
+                    name={`variants.${variantIndex}.carton_weight`}
+                    control={form.control}
+                    render={({ field }) => (
+                      <InputGroup>
+                        <InputGroupInput
+                          id={`variant-${variantIndex}-carton-weight`}
+                          type="number"
+                          step="0.01"
+                          min="0"
+                          disabled={!hasCartonTypes}
+                          value={field.value ?? ''}
+                          onChange={(event) => {
+                            const parsed = Number(event.target.value)
+                            field.onChange(
+                              event.target.value === '' || Number.isNaN(parsed) ? null : parsed,
+                            )
+                          }}
+                        />
+                        {/* The same scale the variant's own weight is in —
+                            there is one weight unit per variant, so saying
+                            which beats offering a second selector. */}
+                        <InputGroupAddon align="inline-end">
+                          <InputGroupText>{cartonWeightUnit}</InputGroupText>
+                        </InputGroupAddon>
+                      </InputGroup>
+                    )}
+                  />
+                  <FieldDescription>
+                    {t('admin.fields.variant.carton_weight.help')}
+                  </FieldDescription>
+                </Field>
+                <Field>
+                  <FieldLabel htmlFor={`variant-${variantIndex}-cartons-per-pallet`}>
+                    {t('admin.fields.variant.cartons_per_pallet.label')}
+                  </FieldLabel>
+                  <Input
+                    id={`variant-${variantIndex}-cartons-per-pallet`}
+                    type="number"
+                    min="1"
+                    step="1"
+                    disabled={!hasCartonTypes}
+                    {...form.register(`variants.${variantIndex}.cartons_per_pallet`)}
+                  />
+                  <FieldError
+                    errors={[form.formState.errors.variants?.[variantIndex]?.cartons_per_pallet]}
+                  />
+                </Field>
+              </div>
+            </FormSection>
+          )}
+
+          <FormSection title={t('admin.products.variants.sheet.customs')}>
             <p className="text-sm text-muted-foreground">
               {t('admin.products.variants.sheet.customs_help')}
             </p>
@@ -326,9 +495,9 @@ export function VariantEditSheet({ form, variantIndex, open, onOpenChange }: Pro
                 errors={[form.formState.errors.variants?.[variantIndex]?.customs_description]}
               />
             </Field>
-          </Section>
+          </FormSection>
 
-          <Section title={t('admin.products.variants.sheet.ordering')}>
+          <FormSection title={t('admin.products.variants.sheet.ordering')}>
             <p className="text-sm text-muted-foreground">
               {t('admin.products.variants.sheet.ordering_help')}
             </p>
@@ -416,9 +585,9 @@ export function VariantEditSheet({ form, variantIndex, open, onOpenChange }: Pro
                 />
               </Field>
             </div>
-          </Section>
+          </FormSection>
 
-          <Section title={t('admin.products.variants.sheet.availability')}>
+          <FormSection title={t('admin.products.variants.sheet.availability')}>
             <Field>
               <div className="flex items-start justify-between gap-4">
                 <div className="flex flex-col">
@@ -501,10 +670,10 @@ export function VariantEditSheet({ form, variantIndex, open, onOpenChange }: Pro
                 errors={[form.formState.errors.variants?.[variantIndex]?.backorder_limit]}
               />
             </Field>
-          </Section>
+          </FormSection>
 
           {hasTaxCategories && (
-            <Section title={t('admin.fields.tax.label')}>
+            <FormSection title={t('admin.fields.tax.label')}>
               <Field>
                 <FieldLabel htmlFor={`variant-${variantIndex}-tax-cat`}>
                   {t('admin.fields.tax_category_id.label')}
@@ -538,7 +707,7 @@ export function VariantEditSheet({ form, variantIndex, open, onOpenChange }: Pro
                   )}
                 />
               </Field>
-            </Section>
+            </FormSection>
           )}
         </div>
 
@@ -552,14 +721,5 @@ export function VariantEditSheet({ form, variantIndex, open, onOpenChange }: Pro
         </SheetFooter>
       </SheetContent>
     </Sheet>
-  )
-}
-
-function Section({ title, children }: { title: string; children: React.ReactNode }) {
-  return (
-    <section className="flex flex-col gap-3">
-      <h3 className="text-sm font-medium">{title}</h3>
-      {children}
-    </section>
   )
 }

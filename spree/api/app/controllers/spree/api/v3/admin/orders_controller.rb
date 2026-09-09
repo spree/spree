@@ -14,7 +14,7 @@ module Spree
           rescue_from ActiveSupport::MessageVerifier::InvalidSignature, with: :render_invalid_po_document
 
           skip_before_action :set_resource, only: [:index, :create]
-          before_action :set_resource, only: [:show, :update, :destroy, :complete, :cancel, :approve, :resume, :resend_confirmation, :resend_digital_links, :po_document]
+          before_action :set_resource, only: [:show, :update, :destroy, :complete, :cancel, :approve, :resend_confirmation, :resend_digital_links, :po_document]
 
           # POST /api/v3/admin/orders
           def create
@@ -22,7 +22,7 @@ module Spree
 
             result = Spree.order_create_service.call(
               store: current_store,
-              customer: resolve_user,
+              customer: resolve_customer,
               created_by: try_spree_current_user,
               params: order_create_params
             )
@@ -74,6 +74,10 @@ module Spree
               result = Spree.order_cancel_workflow.call(
                 order: @resource,
                 canceler: try_spree_current_user,
+                reason: cancel_reason,
+                note: params[:cancel_note].presence,
+                refund_payments: params[:refund_payments].to_b,
+                refund_amount: params[:refund_amount].presence,
                 notify_customer: params[:notify_customer].to_b
               )
 
@@ -89,14 +93,6 @@ module Spree
           def approve
             with_order_lock do
               @resource.approved_by(try_spree_current_user)
-              render json: serialize_resource(@resource.reload)
-            end
-          end
-
-          # PATCH /api/v3/admin/orders/:id/resume
-          def resume
-            with_order_lock do
-              @resource.resume!
               render json: serialize_resource(@resource.reload)
             end
           end
@@ -179,7 +175,7 @@ module Spree
           # Map state transition actions to :update permission
           def authorize_resource!(resource = @resource, action = action_name.to_sym)
             mapped_action = case action
-                            when :complete, :cancel, :approve, :resume, :resend_confirmation, :resend_digital_links
+                            when :complete, :cancel, :approve, :resend_confirmation, :resend_digital_links
                               :update
                             when :po_document
                               :show
@@ -196,8 +192,22 @@ module Spree
           # reads the base catalog price for every row (the negotiated-price
           # comparison); without it each line costs its own price query.
           def collection_includes
-            [:customer, :channel, :seller, :external_references,
+            # `market` is the withdrawal deadline's other input. Fulfillments
+            # are loaded with their selected rate because the freight summary
+            # reads it — otherwise a page of orders costs a query per
+            # fulfillment for a field that is nil on every parcel order.
+            [:customer, :channel, :seller, :external_references, :cancel_reason,
+             :market, { fulfillments: :selected_delivery_rate },
              { line_items: { variant: :prices } }, { po_document_attachment: :blob }]
+          end
+
+          # Read through the store's own vocabulary, so a reason belonging to
+          # another store is a 404 rather than a silent mislabel.
+          def cancel_reason
+            id = params[:cancel_reason_id].presence
+            return if id.nil?
+
+            current_store.order_cancellation_reasons.find_by_prefix_id!(id)
           end
 
           private
@@ -210,8 +220,8 @@ module Spree
             )
           end
 
-          def resolve_user
-            customer_param = params[:customer_id].presence || params[:user_id].presence
+          def resolve_customer
+            customer_param = params[:customer_id].presence
             return unless customer_param
 
             Spree.customer_class.
@@ -231,7 +241,7 @@ module Spree
           def order_create_params
             permitted = normalize_params(
               params.permit(
-                :email, :customer_id, :user_id, :use_customer_default_address,
+                :email, :customer_id, :use_customer_default_address,
                 :currency, :market_id, :channel_id, :locale,
                 :customer_note, :internal_note,
                 # The buyer's own purchase-order reference, and the signed blob
@@ -254,7 +264,7 @@ module Spree
           def order_update_params
             permitted = normalize_params(
               params.permit(
-                :email, :customer_id, :user_id,
+                :email, :customer_id,
                 :customer_note, :internal_note,
                 :po_number, :po_document,
                 :currency, :locale, :market_id, :channel_id,

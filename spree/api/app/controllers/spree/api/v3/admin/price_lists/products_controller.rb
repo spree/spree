@@ -19,6 +19,49 @@ module Spree
 
             protected
 
+            def serializer_class
+              Spree.api.admin_price_list_product_serializer
+            end
+
+            # The resolver rides along in the serializer params, preloaded
+            # with this page's variants — one query for the page rather than
+            # one per row (see Catalogs::ProductsController, the same shape).
+            def serializer_params
+              return super unless expanded_keys.include?('price_list_price')
+
+              super.merge(price_list_price_resolver: price_list_price_resolver)
+            end
+
+            # The list read as it stands, draft or not: this is its editor.
+            def price_list_price_resolver
+              @price_list_price_resolver ||=
+                Spree::Catalogs::ResolvePrices.new(price_list: @price_list, currency: current_currency).
+                tap { |resolver| resolver.preload(priced_variants) }
+            end
+
+            def priced_variants
+              Array(@collection).flat_map { |product| product.variants.to_a }
+            end
+
+            # Every row lists its variants and prices each of them, so what
+            # the rows read comes down with the page: the prices the resolver
+            # picks from, the option values that name the variant, the stock
+            # levels behind the flags. `default_variant` separately, since it
+            # is its own belongs_to with a cache of its own.
+            # Only what this page reads: the card's thumbnail, and every
+            # variant with the rows and option values the resolver and the
+            # variant rows need. `default_variant` is deliberately absent —
+            # it is a separate `belongs_to` with a cache of its own, so
+            # reading it here would re-query option values per row. Publications, stock levels and the default
+            # variant's own prices are deliberately absent — the serializer
+            # here is not the admin product serializer and never asks for them.
+            def collection_includes
+              [
+                :primary_media,
+                { variants: [:prices, { option_values: :option_type }] }
+              ]
+            end
+
             # DISTINCT (the base default): a product joins once per
             # variant × currency price row.
             def scope

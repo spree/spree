@@ -18,9 +18,11 @@ import {
   OrderDiscountsCard,
   TaxLinesCard,
 } from '../../../../../components/spree/orders/order-adjustments-cards'
+import { CommissionLinesCard } from '../../../../../components/spree/orders/order-commission-lines-card'
 import { CustomerCard } from '../../../../../components/spree/orders/order-customer-card'
 import { DiscountsCard } from '../../../../../components/spree/orders/order-discounts-sidebar-card'
 import { OrderHeader } from '../../../../../components/spree/orders/order-header'
+import { OrderLogisticsCard } from '../../../../../components/spree/orders/order-logistics-card'
 import { MarketplaceCard } from '../../../../../components/spree/orders/order-marketplace-card'
 import {
   InternalNoteCard,
@@ -75,6 +77,7 @@ function OrderDetailPage() {
           <TaxLinesCard order={order} />
           <OrderDiscountsCard order={order} />
           <FeesCard order={order} />
+          <CommissionLinesCard order={order} />
           <OrderSummaryCard order={order} />
           <EditableApiCustomFieldsProvider
             ownerType="Spree::Order"
@@ -98,6 +101,7 @@ function OrderDetailPage() {
           <MarketplaceCard order={order} />
           <TagsCard order={order} />
           <DiscountsCard order={order} />
+          <OrderLogisticsCard order={order} />
           <OrderPurchaseOrderCard order={order} />
           <SpecialInstructionsCard order={order} />
           <InternalNoteCard order={order} />

@@ -29,6 +29,20 @@ module Spree
                    total: [:string, nullable: false], display_total: [:string, nullable: false],
                    amount_due: [:string, nullable: false], display_amount_due: [:string, nullable: false]
 
+          # Back-office only: what the marketplace earned on this sale — the fee,
+          # the tax charged on it, and the two together. Never on the store
+          # serializer: a commission settles between the platform and the
+          # seller, and the shopper does not pay it.
+          #
+          # The tax stands on its own because it is separately reportable —
+          # the platform files it as output tax on a B2B supply to the seller.
+          typelize commission_amount_total: [:string, nullable: false],
+                   display_commission_amount_total: [:string, nullable: false],
+                   commission_tax_total: [:string, nullable: false],
+                   display_commission_tax_total: [:string, nullable: false],
+                   commission_total: [:string, nullable: false],
+                   display_commission_total: [:string, nullable: false]
+
           typelize status: :string,
                    last_ip_address: [:string, nullable: true],
                    considered_risky: :boolean, confirmation_delivered: :boolean,
@@ -39,6 +53,9 @@ module Spree
                    customer_id: [:string, nullable: true],
                    preferred_stock_location_id: [:string, nullable: true],
                    canceled_at: [:string, nullable: true], approved_at: [:string, nullable: true],
+                   cancel_reason_id: [:string, nullable: true],
+                   cancel_reason_name: [:string, nullable: true],
+                   cancel_note: [:string, nullable: true],
                    payment_total: :string, display_payment_total: :string,
                    tags: [:string, multi: true],
                    metadata: 'Record<string, unknown>'
@@ -47,6 +64,10 @@ module Spree
           attributes :status, :last_ip_address, :considered_risky,
                      :confirmation_delivered, :store_owner_notification_delivered,
                      :payment_total, :display_payment_total, :metadata,
+                     :cancel_note,
+                     :commission_amount_total, :display_commission_amount_total,
+                     :commission_tax_total, :display_commission_tax_total,
+                     :commission_total, :display_commission_total,
                      canceled_at: :iso8601, approved_at: :iso8601,
                      created_at: :iso8601, updated_at: :iso8601
 
@@ -115,6 +136,17 @@ module Spree
             order.canceler&.prefixed_id
           end
 
+          attribute :cancel_reason_id do |order|
+            order.cancel_reason&.prefixed_id
+          end
+
+          # The reason's name alongside its id, so an order list can show why
+          # each canceled order was called off without expanding a record per
+          # row.
+          attribute :cancel_reason_name do |order|
+            order.cancel_reason&.name
+          end
+
           attribute :created_by_id do |order|
             order.created_by&.prefixed_id
           end
@@ -163,6 +195,10 @@ module Spree
               resource: proc { Spree.api.admin_admin_user_serializer },
               if: proc { expand?('canceler') }
 
+          one :cancel_reason,
+              resource: proc { Spree.api.admin_order_cancellation_reason_serializer },
+              if: proc { expand?('cancel_reason') }
+
           one :created_by,
               resource: proc { Spree.api.admin_admin_user_serializer },
               if: proc { expand?('created_by') }
@@ -179,6 +215,13 @@ module Spree
           many :claims,
                resource: proc { Spree.api.admin_claim_serializer },
                if: proc { expand?('claims') }
+
+          # What the forwarder quoted against, frozen onto the rates this
+          # order shipped under. Back-office only: a buyer is told what their
+          # shipment costs, not how the warehouse packed it.
+          typelize freight_summary: [:FreightSummary, nullable: true]
+
+          one :freight_summary, resource: proc { Spree.api.admin_freight_summary_serializer }
         end
       end
     end

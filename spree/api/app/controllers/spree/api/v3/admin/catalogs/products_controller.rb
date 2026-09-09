@@ -27,14 +27,30 @@ module Spree
             # own `expand?` does, so the attribute never renders without the
             # resolver that fills it.
             def serializer_params
-              return super unless expanded_keys.include?('catalog_price')
-
-              super.merge(catalog_price_resolver: catalog_price_resolver)
+              params = super
+              params = params.merge(catalog_price_resolver: catalog_price_resolver) if expanded_keys.include?('catalog_price')
+              params = params.merge(catalog_quantity_rules: quantity_rules_by_product) if expanded_keys.include?('quantity_rule')
+              params
             end
 
-            # Preloaded off the same variant the serializer prices — the buy-box
-            # winner in this currency — so every row is answered from the batch
-            # rather than falling through to a query of its own.
+            # The page's quantity rules in one query, keyed by product. The
+            # rows are stored per variant and read per product, which is the
+            # roll-up the serializer does — on variants this page has already
+            # loaded (docs/plans/6.0-volume-pricing.md).
+            def quantity_rules_by_product
+              @quantity_rules_by_product ||= begin
+                variant_ids = priced_variants.map(&:id)
+                rules = variant_ids.any? ? @catalog.quantity_rules.where(variant_id: variant_ids).to_a : []
+                product_by_variant = priced_variants.to_h { |variant| [variant.id, variant.product_id] }
+
+                rules.group_by { |rule| product_by_variant[rule.variant_id] }
+              end
+            end
+
+            # Preloaded with every variant the page renders — each row now
+            # prices its variants individually, so preloading only the buy-box
+            # winner would leave the rest falling through to a query apiece
+            # (docs/plans/6.0-volume-pricing.md).
             def catalog_price_resolver
               @catalog_price_resolver ||=
                 Spree::Catalogs::ResolvePrices.new(catalog: @catalog, currency: current_currency).
@@ -42,7 +58,22 @@ module Spree
             end
 
             def priced_variants
-              Array(@collection).filter_map { |product| product.featured_variant(currency: current_currency) }
+              Array(@collection).flat_map { |product| product.variants.to_a }
+            end
+
+            # Only what this page reads: the card's thumbnail, and every
+            # variant with the rows and option values the resolver and the
+            # variant rows need. `default_variant` is deliberately absent —
+            # it is a separate `belongs_to` with a cache of its own, so
+            # reading it here would re-query option values per row. Publications, stock levels and the default
+            # variant's own prices are deliberately absent — this endpoint
+            # serializes the membership shape, not a full admin product
+            # (docs/plans/6.0-volume-pricing.md).
+            def collection_includes
+              [
+                :primary_media,
+                { variants: [:prices, { option_values: :option_type }] }
+              ]
             end
 
             def scope

@@ -112,6 +112,10 @@ module Spree
         # as well as paying it to the tax authority.
         base -= order.tax_total.to_d if order.seller.tax_remittance == 'platform'
 
+        # Summed from the rows rather than read off order.commission_total:
+        # the column is a reporting figure refreshed when commission is
+        # charged, and money leaving the platform is settled against the
+        # settlement records themselves.
         [base - order.commission_lines.sum(:total).to_d, 0].max
       end
 

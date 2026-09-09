@@ -69,11 +69,11 @@ RSpec.describe Spree::Imports::RowProcessors::Customer, type: :service do
       expect(user.ship_address).to eq user.bill_address
     end
 
-    it 'links the address back to the user via user_id' do
+    it 'links the address back to the customer via owner_id' do
       user = subject.process!
 
       address = user.bill_address
-      expect(address.user_id).to eq user.id
+      expect(address.owner_id).to eq user.id
       expect(user.addresses.reload).to include(address)
     end
 

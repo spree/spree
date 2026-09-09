@@ -1,5 +1,6 @@
 import { expect, type Page, test } from '@playwright/test'
 import {
+  addQuantityBreak,
   deleteCatalogPickerProducts,
   FIXTURE_CATALOG_PICKER_PRODUCT_COUNT,
   FIXTURE_CATALOG_PICKER_PRODUCT_PREFIX,
@@ -293,6 +294,85 @@ test.describe('catalogs', () => {
       timeout: 15_000,
     })
     await expect(page.locator('#catalog-minimum-quantity')).toHaveValue('10')
+  })
+
+  // A percentage can step by quantity: each band is a row under the
+  // percentage, and the bands are what a reload shows
+  // (docs/plans/6.0-volume-pricing.md).
+  test('keeps the percentage quantity tiers across saves', async ({ page }) => {
+    const creds = await login(page)
+    await gotoIndex(page, CATALOGS_PATH(creds.store_id), CTA)
+
+    const name = `E2E Catalog Bands ${Date.now()}`
+    await createCatalog(page, name)
+
+    await page.locator('#catalog-pricing-mode').click()
+    await page.getByRole('option', { name: /percentage off/i }).click()
+    await page.locator('#catalog-adjustment-magnitude').fill('10')
+    await page.getByRole('button', { name: /^add quantity tier$/i }).click()
+    await page.getByLabel(/^from quantity$/i).fill('50')
+    // `.last()`: the magnitude field above the tiers is a percentage too.
+    await page
+      .getByLabel(/^percentage$/i)
+      .last()
+      .fill('20')
+    await saveCatalog(page)
+
+    await page.reload()
+    await expect(page.getByLabel(/^from quantity$/i)).toHaveValue('50', { timeout: 15_000 })
+    await expect(page.getByLabel(/^percentage$/i).last()).toHaveValue('20')
+  })
+
+  // A variant with quantity breaks says so in the priced assortment: the
+  // count is a badge, the ladder is on hover, and so is the reminder that
+  // fixed tiers set the price whatever the catalog's percentage says.
+  test("shows a variant's ladder on the assortment with the fixed-tiers note", async ({ page }) => {
+    const creds = await login(page)
+    await gotoIndex(page, CATALOGS_PATH(creds.store_id), CTA)
+
+    const name = `E2E Catalog Ladder ${Date.now()}`
+    await createCatalog(page, name)
+
+    await page.getByRole('button', { name: /add products/i }).click()
+    const picker = page.getByRole('dialog')
+    await expect(picker.getByRole('heading', { name: /add products to catalog/i })).toBeVisible()
+    await picker.getByRole('searchbox').fill(FIXTURE_PROMO_PRODUCT)
+    const option = picker
+      .getByRole('button', { name: new RegExp(FIXTURE_PROMO_PRODUCT, 'i') })
+      .first()
+    await expect(option).toBeVisible({ timeout: 15_000 })
+    await option.click()
+    await picker.getByRole('button', { name: /^add 1$/i }).click()
+    await expect(picker).toBeHidden({ timeout: 15_000 })
+
+    await page.locator('#catalog-pricing-mode').click()
+    await page.getByRole('option', { name: /prices i enter for this catalog/i }).click()
+    await saveCatalog(page)
+
+    const openPrices = page.getByRole('button', { name: /^enter prices$/i }).first()
+    await expect(openPrices).toBeVisible({ timeout: 15_000 })
+    await openPrices.click()
+    const grid = page.getByRole('dialog')
+    const cell = grid.getByLabel(/^price for/i).first()
+    await expect(cell).toBeVisible({ timeout: 15_000 })
+    await cell.dblclick()
+    await cell.fill('12.34')
+    await cell.press('Enter')
+
+    await addQuantityBreak(grid, '24', '10.00')
+
+    const savePrices = grid.getByRole('button', { name: /^save prices$/i })
+    await expect(savePrices).toBeEnabled({ timeout: 15_000 })
+    await savePrices.click()
+    await expect(savePrices).toBeDisabled({ timeout: 15_000 })
+    await grid.getByRole('button', { name: /^close$/i }).click()
+    await expect(grid).toBeHidden({ timeout: 15_000 })
+
+    const badge = page.getByRole('button', { name: /\+1 tier$/i })
+    await expect(badge).toBeVisible({ timeout: 15_000 })
+    await badge.hover()
+    await expect(page.getByText('$10.00')).toBeVisible({ timeout: 15_000 })
+    await expect(page.getByText(/percentage adjustment does not apply here/i)).toBeVisible()
   })
 
   // The threshold survives a switch away from automatic pricing, where its

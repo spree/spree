@@ -157,15 +157,24 @@ RSpec.describe Spree::SampleData::Loader, type: :service, without_global_store: 
       eligible_variant_ids = Spree::Variant.eligible.where(product_id: store.product_ids).pluck(:id)
 
       supported.each do |currency|
-        expect(price_list.prices.where(currency: currency).pluck(:variant_id)).to match_array(eligible_variant_ids)
+        expect(price_list.prices.where(currency: currency, min_quantity: 1).pluck(:variant_id)).to match_array(eligible_variant_ids)
       end
 
-      wholesale_price = price_list.prices.where.not(amount: nil).first
+      wholesale_price = price_list.prices.where(min_quantity: 1).where.not(amount: nil).first
       expect(wholesale_price).to be_present
 
       base_price = Spree::Price.find_by(price_list_id: nil, variant_id: wholesale_price.variant_id,
                                         currency: wholesale_price.currency)
       expect(wholesale_price.amount).to eq((base_price.amount * 0.6).round(2))
+    end
+
+    it 'loads the example price-list CSV as quantity breaks on the wholesale list' do
+      price_list = store.price_lists.find_by(name: 'Wholesale')
+      toaster = Spree::Variant.find_by(sku: '2-SLICE-TOASTER-WHITE')
+
+      ladder = price_list.prices.where(variant: toaster, currency: 'USD').order(:min_quantity).pluck(:min_quantity, :amount)
+      expect(ladder).to eq([[1, 23.99], [24, 21.99], [96, 19.99]])
+      expect(Spree::Imports::PriceListPrices.sample_csv_url).to end_with('/price_list_prices.csv')
     end
 
     it 'mints a wholesale-bound publishable key' do

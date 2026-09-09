@@ -27,6 +27,10 @@ module Spree
             [:market_countries]
           end
 
+          def scope
+            super.ordered
+          end
+
           def permitted_params
             normalize_params(
               params.permit(

@@ -338,7 +338,8 @@ module Spree
         # Quoting strategies selectable on a delivery method. Internal prices
         # through the method's calculator; carrier gems append theirs.
         Rails.application.config.spree.delivery_rate_providers.concat [
-          Spree::DeliveryRateProvider::Internal
+          Spree::DeliveryRateProvider::Internal,
+          Spree::DeliveryRateProvider::Freight
         ]
 
         # Digital asset sources. Core ships the uploaded-file default; host
@@ -386,6 +387,7 @@ module Spree
           Spree::SellerRequirements::BillingAddress,
           Spree::SellerRequirements::ReturnsAddress,
           Spree::SellerRequirements::DeliveryMethod,
+          Spree::SellerRequirements::PackageType,
           Spree::SellerRequirements::MinimumProducts,
           Spree::SellerRequirements::PayoutAccount,
           Spree::SellerRequirements::RequiredCustomFields,
@@ -400,7 +402,9 @@ module Spree
           Spree::DeliveryMethodRules::ItemTotalRule,
           Spree::DeliveryMethodRules::WeightRule,
           Spree::DeliveryMethodRules::ExcludedProductsRule,
-          Spree::DeliveryMethodRules::ChannelRule
+          Spree::DeliveryMethodRules::ChannelRule,
+          Spree::DeliveryMethodRules::VolumeRule,
+          Spree::DeliveryMethodRules::CompanyRule
         ]
 
         Rails.application.config.spree.calculators.promotion_actions_create_adjustments = [
@@ -463,13 +467,15 @@ module Spree
           Spree::Exports::Customers,
           Spree::Exports::GiftCards,
           Spree::Exports::NewsletterSubscribers,
-          Spree::Exports::CouponCodes
+          Spree::Exports::CouponCodes,
+          Spree::Exports::PriceListPrices
         ]
 
         Rails.application.config.spree.import_types = [
           Spree::Imports::Products,
           Spree::Imports::ProductTranslations,
           Spree::Imports::Customers,
+          Spree::Imports::PriceListPrices
         ]
 
         Rails.application.config.spree.taxon_rules = [
@@ -699,6 +705,10 @@ module Spree
         # Note: resolve_subscriber in register_subscribers! handles stale class references
         Spree::Events.reset!
         Spree::Events.activate!
+
+        # Same stale-class problem as the subscribers above, for the provider
+        # registries the admin catalogs iterate.
+        Spree.refresh_provider_registries!
 
         # Re-attach event log subscriber if enabled
         if Spree::Config.events_log_enabled

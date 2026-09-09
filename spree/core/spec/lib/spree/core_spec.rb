@@ -144,4 +144,38 @@ describe Spree do
     end
   end
 
+  describe '.refresh_provider_registries!' do
+    let(:real) { Spree::DeliveryRateProvider::Internal }
+
+    # After a code reload the registry still holds the unloaded class object:
+    # a different object answering to the real class's name.
+    let(:stale) do
+      Class.new(Spree::DeliveryRateProvider::Base).tap do |klass|
+        klass.define_singleton_method(:name) { 'Spree::DeliveryRateProvider::Internal' }
+      end
+    end
+    let(:anonymous) { Class.new(Spree::DeliveryRateProvider::Base) }
+
+    around do |example|
+      original = Spree.delivery_rate_providers.dup
+      example.run
+    ensure
+      Spree.delivery_rate_providers.replace(original)
+    end
+
+    # In place, because gems append with `Spree.delivery_rate_providers <<`
+    # and must keep their entry across the refresh.
+    it 'swaps a stale entry for the class currently answering to its name, in place' do
+      registry = Spree.delivery_rate_providers
+      registry.map! { |entry| entry == real ? stale : entry }
+      registry << anonymous
+
+      Spree.refresh_provider_registries!
+
+      expect(Spree.delivery_rate_providers).to equal(registry)
+      expect(registry).to include(real)
+      expect(registry).not_to include(stale)
+      expect(registry).to include(anonymous)
+    end
+  end
 end

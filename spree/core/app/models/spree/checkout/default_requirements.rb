@@ -98,8 +98,10 @@ module Spree
         @cart.payment_required?
       end
 
+      # What checkout has to collect, which is the whole total unless an
+      # arrangement collects only part of it up front.
       def payment_satisfied?
-        @cart.payments.valid.any?
+        @cart.payments.valid.sum(:amount) >= @cart.amount_due_at_checkout
       end
 
       # Advisory rather than completion-only: the buyer has to be told the

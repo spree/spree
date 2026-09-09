@@ -10,10 +10,9 @@ module Spree
     # its own would leave the goods arriving nowhere (Decision 12).
     class ReturnsAddress < Spree::SellerRequirement
       def met_by_seller?(seller)
-        location = seller.returns_location
-        return false if location.nil?
-
-        location.address1.present? && location.city.present? && location.country_code.present?
+        # Boolean rather than the bare `&.`: `satisfied?` is public API and
+        # sibling kinds all answer true or false.
+        seller.returns_location&.postable? == true
       end
     end
   end

@@ -5,7 +5,7 @@ RSpec.describe Spree::Purchase::QuantityRules do
   let(:company) { create(:company, store: store) }
   let(:customer) { create(:user) }
   let(:catalog) { create(:catalog, store: store) }
-  let(:cart) { create(:cart, store: store, user: customer, company: company) }
+  let(:cart) { create(:cart, store: store, customer: customer, company: company) }
 
   before do
     create(:company_membership, company: company, customer: customer)

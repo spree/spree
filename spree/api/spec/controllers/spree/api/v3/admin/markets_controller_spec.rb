@@ -19,6 +19,21 @@ RSpec.describe Spree::Api::V3::Admin::MarketsController, type: :controller do
       expect(ids).to include(market.prefixed_id)
       expect(ids).not_to include(other_store_market.prefixed_id)
     end
+
+    it 'returns markets in list order' do
+      market.update!(name: 'Anchor market')
+      second = create(:market, store: store, name: 'Second market')
+      third = create(:market, store: store, name: 'Third market')
+      third.insert_at(1)
+      market.insert_at(2)
+
+      get :index, as: :json
+
+      rows = json_response['data'].select do |row|
+        [third, market, second].map(&:prefixed_id).include?(row['id'])
+      end
+      expect(rows.pluck('name')).to eq(['Third market', 'Anchor market', 'Second market'])
+    end
   end
 
   describe 'GET #show' do

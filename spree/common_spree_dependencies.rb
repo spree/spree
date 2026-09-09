@@ -6,6 +6,12 @@ source 'https://rubygems.org'
 gem 'tzinfo-data', platforms: [:mingw, :mswin, :x64_mingw]
 gem 'rails', ENV.fetch('RAILS_VERSION', '~> 8.1.0'), require: false
 
+# Held below 3.0: json 3.0 made JSON.parse's options keyword-only, and Active
+# Support 8.1 still passes them positionally, so reading any JSON column raises
+# ArgumentError — which is every metadata column we have. Drop the pin once
+# Rails ships a release that calls the new signature.
+gem 'json', '< 3'
+
 platforms :jruby do
   gem 'jruby-openssl'
 end

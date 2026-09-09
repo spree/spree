@@ -1,7 +1,9 @@
 #!/usr/bin/env bash
 # Run the dashboard Playwright suite on this worktree's deterministic port
-# block, so multiple worktrees can run e2e concurrently. The suite already
-# isolates its database (per-worktree SQLite in spree/api/spec/dummy).
+# block. The suite isolates its database (per-worktree SQLite in
+# spree/api/spec/dummy) but boots Rails, Vite and browsers, so it takes the same
+# machine-wide slot as a full rspec suite (scripts/test/with-slot) instead of
+# competing with one.
 # Extra args pass through to playwright: scripts/worktree/e2e.sh e2e/auth.spec.ts
 set -euo pipefail
 source "$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/lib.sh"
@@ -18,4 +20,4 @@ export E2E_RAILS_PORT E2E_VITE_PORT
 
 echo "▸ e2e on rails :$E2E_RAILS_PORT / vite :$E2E_VITE_PORT"
 cd "$(worktree_root)/packages/dashboard"
-exec pnpm test:e2e "$@"
+exec "$(worktree_root)/scripts/test/with-slot" -- pnpm test:e2e "$@"

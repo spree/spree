@@ -104,7 +104,7 @@ RSpec.describe Spree::Api::V3::Store::CartsController, type: :controller do
       end
 
       it 'does not return completed orders' do
-        create(:completed_order_with_totals, user: user, store: store)
+        create(:completed_order_with_totals, customer: user, store: store)
 
         get :index
 
@@ -519,7 +519,7 @@ RSpec.describe Spree::Api::V3::Store::CartsController, type: :controller do
       end
 
       it 'generates shipments when address is present but shipments are empty' do
-        address = create(:address, user: user, country: country, state: us_state)
+        address = create(:address, customer: user, country: country, state: us_state)
         cart.update!(email: 'customer@example.com', ship_address: address)
         cart.fulfillments.delete_all
         cart.reload
@@ -533,7 +533,7 @@ RSpec.describe Spree::Api::V3::Store::CartsController, type: :controller do
       end
 
       it 'surfaces a delivery_unavailable warning when the cart cannot be delivered' do
-        address = create(:address, user: user, country: country, state: us_state)
+        address = create(:address, customer: user, country: country, state: us_state)
         cart.update!(email: 'customer@example.com', ship_address: address)
         cart.fulfillments.delete_all
         # Give the products a fulfillment type no delivery method serves.
@@ -606,7 +606,7 @@ RSpec.describe Spree::Api::V3::Store::CartsController, type: :controller do
 
     it 'accepts shipping_address_id to use an existing address' do
       order.update!(email: 'customer@example.com')
-      existing_address = user.addresses.first || create(:address, user: user, country: country, state: us_state)
+      existing_address = user.addresses.first || create(:address, customer: user, country: country, state: us_state)
 
       patch :update, params: { id: order.prefixed_id, shipping_address_id: existing_address.prefixed_id }
 
@@ -740,7 +740,7 @@ RSpec.describe Spree::Api::V3::Store::CartsController, type: :controller do
     end
 
     context 'when a line item cannot be delivered to the address' do
-      let(:address) { user.addresses.first || create(:address, user: user, country: country, state: us_state) }
+      let(:address) { user.addresses.first || create(:address, customer: user, country: country, state: us_state) }
       let(:unserved_profile) { create(:delivery_profile, store: store, name: "Unserved #{SecureRandom.hex(4)}") }
 
       before do
@@ -898,7 +898,7 @@ RSpec.describe Spree::Api::V3::Store::CartsController, type: :controller do
           patch :associate, params: { id: guest_cart.prefixed_id }
 
           expect(response).to have_http_status(:ok)
-          expect(guest_cart.reload.user).to eq(user)
+          expect(guest_cart.reload.customer).to eq(user)
           expect(json_response['number']).to eq(guest_cart.number)
         end
 
@@ -924,13 +924,13 @@ RSpec.describe Spree::Api::V3::Store::CartsController, type: :controller do
       end
 
       it 'allows re-associating a cart already owned by current user with its token' do
-        guest_cart.update!(user: user)
+        guest_cart.update!(customer: user)
         request.headers['x-spree-token'] = guest_cart.token
 
         patch :associate, params: { id: guest_cart.prefixed_id }
 
         expect(response).to have_http_status(:ok)
-        expect(guest_cart.reload.user).to eq(user)
+        expect(guest_cart.reload.customer).to eq(user)
       end
 
       it 'forbids associating a cart without the cart token' do
@@ -938,11 +938,11 @@ RSpec.describe Spree::Api::V3::Store::CartsController, type: :controller do
 
         expect(response).to have_http_status(:forbidden)
         expect(json_response['error']['code']).to eq('access_denied')
-        expect(guest_cart.reload.user).to be_nil
+        expect(guest_cart.reload.customer).to be_nil
       end
 
       it 'forbids associating an own cart without the cart token' do
-        guest_cart.update!(user: user)
+        guest_cart.update!(customer: user)
 
         patch :associate, params: { id: guest_cart.prefixed_id }
 
@@ -955,7 +955,7 @@ RSpec.describe Spree::Api::V3::Store::CartsController, type: :controller do
         patch :associate, params: { id: guest_cart.prefixed_id }
 
         expect(response).to have_http_status(:forbidden)
-        expect(guest_cart.reload.user).to be_nil
+        expect(guest_cart.reload.customer).to be_nil
       end
 
       it 'returns not found for invalid id' do
@@ -965,7 +965,7 @@ RSpec.describe Spree::Api::V3::Store::CartsController, type: :controller do
       end
 
       it 'returns not found for completed order' do
-        completed_order = create(:completed_order_with_totals, store: store, user: nil)
+        completed_order = create(:completed_order_with_totals, store: store, customer: nil)
 
         patch :associate, params: { id: completed_order.prefixed_id }
 
@@ -979,7 +979,7 @@ RSpec.describe Spree::Api::V3::Store::CartsController, type: :controller do
         patch :associate, params: { id: other_user_cart.prefixed_id }
 
         expect(response).to have_http_status(:not_found)
-        expect(other_user_cart.reload.user).to eq(other_user) # unchanged
+        expect(other_user_cart.reload.customer).to eq(other_user) # unchanged
       end
 
       it 'returns not found for cart from other store' do
@@ -1115,7 +1115,7 @@ RSpec.describe Spree::Api::V3::Store::CartsController, type: :controller do
     end
 
     context 'when order was already completed by the gateway' do
-      let(:completed_order) { create(:completed_order_with_totals, user: user, store: store) }
+      let(:completed_order) { create(:completed_order_with_totals, customer: user, store: store) }
 
       it 'returns the completed order via JWT' do
         post :complete, params: { id: completed_order.prefixed_id }

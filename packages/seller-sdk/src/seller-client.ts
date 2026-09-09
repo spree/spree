@@ -2,22 +2,29 @@ import type { ListParams, PaginatedResponse, RequestFn, RequestOptions } from '@
 import { transformListParams } from '@spree/sdk-core'
 import type {
   AuthTokens,
+  Claim,
+  Delivery,
   DeliveryMethod,
   DeliveryProfile,
   DeliveryZone,
+  Exchange,
   Export,
   Fulfillment,
   Import,
   ImportRow,
   Invitation,
   Order,
+  PackageType,
   Policy,
   Product,
   ProductType,
   Profile,
+  Reason,
   RequirementStatus,
   RequirementSubmission,
+  Return,
   SellerSummary,
+  ShippingLabel,
   StockLocation,
   TaxIdentifier,
   TeamMember,
@@ -382,13 +389,66 @@ export class SellerClient {
     get: (id: string, options?: RequestOptions): Promise<Order> =>
       this.request<Order>('GET', `/orders/${id}`, options),
 
-    /** Withdraws from an order this seller cannot fulfil. */
+    /**
+     * Withdraws from an order this seller cannot fulfil.
+     *
+     * `refund_payments` hands back what the buyer paid for these goods — a
+     * seller is merchant of record for their own child order, and on a split
+     * checkout only that order's share is settled. There is no
+     * `refund_amount`: withdrawing from the whole order returns what that
+     * order was paid, and a partial figure is a return.
+     */
     cancel: (
       id: string,
-      params?: { notify_customer?: boolean },
+      params?: {
+        cancel_reason_id?: string
+        cancel_note?: string
+        refund_payments?: boolean
+        notify_customer?: boolean
+      },
       options?: RequestOptions,
     ): Promise<Order> =>
       this.request<Order>('PATCH', `/orders/${id}/cancel`, { ...options, body: params }),
+
+    /**
+     * Corrects where the goods go or who the invoice names.
+     *
+     * Send only the lines that change: the rest of the address is carried
+     * over. Nothing else about the order is writable here.
+     */
+    address: (
+      id: string,
+      params: {
+        shipping_address?: OrderAddressParams
+        billing_address?: OrderAddressParams
+      },
+      options?: RequestOptions,
+    ): Promise<Order> =>
+      this.request<Order>('PATCH', `/orders/${id}/address`, { ...options, body: params }),
+
+    /**
+     * The notes on an order: the instructions the buyer left, and the
+     * seller's own working note.
+     *
+     * A marketplace basket splits into one order per seller, so the internal
+     * note here is the seller's alone.
+     */
+    notes: {
+      get: (orderId: string, options?: RequestOptions): Promise<Order> =>
+        this.request<Order>('GET', `/orders/${orderId}/notes`, options),
+
+      /**
+       * Send only the note that changes: an absent key leaves the other
+       * alone, while an empty string clears it. `internal_note` takes HTML
+       * and is sanitized on save — `internal_note_html` reads it back.
+       */
+      update: (
+        orderId: string,
+        params: { customer_note?: string; internal_note?: string },
+        options?: RequestOptions,
+      ): Promise<Order> =>
+        this.request<Order>('PATCH', `/orders/${orderId}/notes`, { ...options, body: params }),
+    },
 
     /** The parcels owed on one order. */
     fulfillments: {
@@ -417,7 +477,449 @@ export class SellerClient {
           ...options,
           body: params,
         }),
+
+      /**
+       * The tracking pair, where the parcel ships from, and which quoted
+       * service carries it.
+       */
+      update: (
+        orderId: string,
+        id: string,
+        params: {
+          tracking?: string
+          tracking_carrier?: string
+          /** One of this seller's own shelves; the rates requote from there. */
+          stock_location_id?: string
+          /** One of the rates quoted for this parcel from its current origin. */
+          selected_delivery_rate_id?: string
+        },
+        options?: RequestOptions,
+      ): Promise<Fulfillment> =>
+        this.request<Fulfillment>('PATCH', `/orders/${orderId}/fulfillments/${id}`, {
+          ...options,
+          body: params,
+        }),
+
+      /** A parcel this seller is not going to send after all. */
+      cancel: (orderId: string, id: string, options?: RequestOptions): Promise<Fulfillment> =>
+        this.request<Fulfillment>('PATCH', `/orders/${orderId}/fulfillments/${id}/cancel`, options),
+
+      /**
+       * Moves part of what this parcel holds onto one of its own, for goods
+       * leaving separately. Answers with every fulfillment on the order, since
+       * splitting rewrites more than one.
+       */
+      split: (
+        orderId: string,
+        id: string,
+        params: { variant_id: string; quantity: number; stock_location_id?: string },
+        options?: RequestOptions,
+      ): Promise<{ data: Fulfillment[] }> =>
+        this.request<{ data: Fulfillment[] }>(
+          'PATCH',
+          `/orders/${orderId}/fulfillments/${id}/split`,
+          { ...options, body: params },
+        ),
+
+      /**
+       * The tracked consignments of one of the seller's parcels. A seller
+       * ships on manual methods, so tracking numbers are entered here by hand.
+       */
+      deliveries: {
+        list: (
+          orderId: string,
+          fulfillmentId: string,
+          options?: RequestOptions,
+        ): Promise<{ data: Delivery[] }> =>
+          this.request<{ data: Delivery[] }>(
+            'GET',
+            `/orders/${orderId}/fulfillments/${fulfillmentId}/deliveries`,
+            options,
+          ),
+
+        get: (
+          orderId: string,
+          fulfillmentId: string,
+          id: string,
+          options?: RequestOptions,
+        ): Promise<Delivery> =>
+          this.request<Delivery>(
+            'GET',
+            `/orders/${orderId}/fulfillments/${fulfillmentId}/deliveries/${id}`,
+            options,
+          ),
+
+        create: (
+          orderId: string,
+          fulfillmentId: string,
+          params: {
+            tracking_number: string
+            carrier?: string
+            service?: string
+            tracking_url?: string
+          },
+          options?: RequestOptions,
+        ): Promise<Delivery> =>
+          this.request<Delivery>(
+            'POST',
+            `/orders/${orderId}/fulfillments/${fulfillmentId}/deliveries`,
+            { ...options, body: params },
+          ),
+
+        update: (
+          orderId: string,
+          fulfillmentId: string,
+          id: string,
+          params: {
+            tracking_number?: string
+            carrier?: string
+            service?: string
+            tracking_url?: string
+          },
+          options?: RequestOptions,
+        ): Promise<Delivery> =>
+          this.request<Delivery>(
+            'PATCH',
+            `/orders/${orderId}/fulfillments/${fulfillmentId}/deliveries/${id}`,
+            { ...options, body: params },
+          ),
+
+        delete: (
+          orderId: string,
+          fulfillmentId: string,
+          id: string,
+          options?: RequestOptions,
+        ): Promise<void> =>
+          this.request<void>(
+            'DELETE',
+            `/orders/${orderId}/fulfillments/${fulfillmentId}/deliveries/${id}`,
+            options,
+          ),
+      },
+
+      /**
+       * Labels on the seller's own parcels. Sellers upload postage they bought
+       * elsewhere and print it back; buying and refunding need the operator's
+       * carrier account, so neither is offered here.
+       *
+       * Upload the file with `directUploads.create()` and pass the returned
+       * `signed_id` as `file`.
+       */
+      labels: {
+        list: (
+          orderId: string,
+          fulfillmentId: string,
+          options?: RequestOptions,
+        ): Promise<{ data: ShippingLabel[] }> =>
+          this.request<{ data: ShippingLabel[] }>(
+            'GET',
+            `/orders/${orderId}/fulfillments/${fulfillmentId}/labels`,
+            options,
+          ),
+
+        get: (
+          orderId: string,
+          fulfillmentId: string,
+          id: string,
+          options?: RequestOptions,
+        ): Promise<ShippingLabel> =>
+          this.request<ShippingLabel>(
+            'GET',
+            `/orders/${orderId}/fulfillments/${fulfillmentId}/labels/${id}`,
+            options,
+          ),
+
+        create: (
+          orderId: string,
+          fulfillmentId: string,
+          params: {
+            file: string
+            tracking_number: string
+            carrier?: string
+            service?: string
+            cost?: string | number
+            currency?: string
+            file_format?: string
+            tracking_url?: string
+          },
+          options?: RequestOptions,
+        ): Promise<ShippingLabel> =>
+          this.request<ShippingLabel>(
+            'POST',
+            `/orders/${orderId}/fulfillments/${fulfillmentId}/labels`,
+            { ...options, body: params },
+          ),
+
+        delete: (
+          orderId: string,
+          fulfillmentId: string,
+          id: string,
+          options?: RequestOptions,
+        ): Promise<void> =>
+          this.request<void>(
+            'DELETE',
+            `/orders/${orderId}/fulfillments/${fulfillmentId}/labels/${id}`,
+            options,
+          ),
+      },
     },
+
+    /**
+     * Goods coming back. The seller is merchant of record for their own
+     * child order, so approving, receiving and refunding are all theirs.
+     */
+    returns: {
+      list: (orderId: string, options?: RequestOptions): Promise<{ data: Return[] }> =>
+        this.request<{ data: Return[] }>('GET', `/orders/${orderId}/returns`, {
+          ...options,
+          // The nested collections are expand-gated server-side, so a bare
+          // list answers with the record and none of its contents.
+          params: { expand: 'return_line_items,return_line_items.variant,reason' },
+        }),
+
+      get: (orderId: string, id: string, options?: RequestOptions): Promise<Return> =>
+        this.request<Return>('GET', `/orders/${orderId}/returns/${id}`, {
+          ...options,
+          params: { expand: 'return_line_items,return_line_items.variant,reason' },
+        }),
+
+      create: (
+        orderId: string,
+        params: {
+          items: Array<{ fulfillment_item_id: string; quantity: number }>
+          memo?: string
+          reason_id?: string
+          stock_location_id?: string
+        },
+        options?: RequestOptions,
+      ): Promise<Return> =>
+        this.request<Return>('POST', `/orders/${orderId}/returns`, { ...options, body: params }),
+
+      approve: (orderId: string, id: string, options?: RequestOptions): Promise<Return> =>
+        this.request<Return>('PATCH', `/orders/${orderId}/returns/${id}/approve`, options),
+
+      /** `items` carries what actually arrived; omit it to receive it all. */
+      receive: (
+        orderId: string,
+        id: string,
+        params?: {
+          items?: Array<{ return_line_item_id: string; quantity: number; resellable?: boolean }>
+        },
+        options?: RequestOptions,
+      ): Promise<Return> =>
+        this.request<Return>('PATCH', `/orders/${orderId}/returns/${id}/receive`, {
+          ...options,
+          body: params,
+        }),
+
+      /** Bounded by the return, and by this order's share of a split payment. */
+      refund: (
+        orderId: string,
+        id: string,
+        params?: { amount?: string; refund_method?: 'original_payment' | 'store_credit' },
+        options?: RequestOptions,
+      ): Promise<Return> =>
+        this.request<Return>('PATCH', `/orders/${orderId}/returns/${id}/refund`, {
+          ...options,
+          body: params,
+        }),
+
+      cancel: (
+        orderId: string,
+        id: string,
+        params?: { reason?: string },
+        options?: RequestOptions,
+      ): Promise<Return> =>
+        this.request<Return>('PATCH', `/orders/${orderId}/returns/${id}/cancel`, {
+          ...options,
+          body: params,
+        }),
+    },
+
+    /** Goods swapped for different ones. */
+    exchanges: {
+      list: (orderId: string, options?: RequestOptions): Promise<{ data: Exchange[] }> =>
+        this.request<{ data: Exchange[] }>('GET', `/orders/${orderId}/exchanges`, {
+          ...options,
+          // The nested collections are expand-gated server-side, so a bare
+          // list answers with the record and none of its contents.
+          params: {
+            expand:
+              'exchange_line_items,exchange_line_items.original_variant,exchange_line_items.new_variant,reason',
+          },
+        }),
+
+      get: (orderId: string, id: string, options?: RequestOptions): Promise<Exchange> =>
+        this.request<Exchange>('GET', `/orders/${orderId}/exchanges/${id}`, {
+          ...options,
+          params: {
+            expand:
+              'exchange_line_items,exchange_line_items.original_variant,exchange_line_items.new_variant,reason',
+          },
+        }),
+
+      create: (
+        orderId: string,
+        params: {
+          items: Array<{ fulfillment_item_id: string; new_variant_id: string; quantity: number }>
+          memo?: string
+          reason_id?: string
+          stock_location_id?: string
+        },
+        options?: RequestOptions,
+      ): Promise<Exchange> =>
+        this.request<Exchange>('POST', `/orders/${orderId}/exchanges`, {
+          ...options,
+          body: params,
+        }),
+
+      approve: (orderId: string, id: string, options?: RequestOptions): Promise<Exchange> =>
+        this.request<Exchange>('PATCH', `/orders/${orderId}/exchanges/${id}/approve`, options),
+
+      receive: (
+        orderId: string,
+        id: string,
+        params?: {
+          items?: Array<{ exchange_line_item_id: string; quantity: number; resellable?: boolean }>
+        },
+        options?: RequestOptions,
+      ): Promise<Exchange> =>
+        this.request<Exchange>('PATCH', `/orders/${orderId}/exchanges/${id}/receive`, {
+          ...options,
+          body: params,
+        }),
+
+      /** Sends the replacement, settling any price difference. */
+      fulfill: (
+        orderId: string,
+        id: string,
+        params?: { refund_method?: 'original_payment' | 'store_credit' },
+        options?: RequestOptions,
+      ): Promise<Exchange> =>
+        this.request<Exchange>('PATCH', `/orders/${orderId}/exchanges/${id}/fulfill`, {
+          ...options,
+          body: params,
+        }),
+
+      cancel: (
+        orderId: string,
+        id: string,
+        params?: { reason?: string },
+        options?: RequestOptions,
+      ): Promise<Exchange> =>
+        this.request<Exchange>('PATCH', `/orders/${orderId}/exchanges/${id}/cancel`, {
+          ...options,
+          body: params,
+        }),
+    },
+
+    /**
+     * Something went wrong with a delivery, put right without necessarily
+     * asking for the goods back.
+     */
+    claims: {
+      list: (orderId: string, options?: RequestOptions): Promise<{ data: Claim[] }> =>
+        this.request<{ data: Claim[] }>('GET', `/orders/${orderId}/claims`, {
+          ...options,
+          // The nested collections are expand-gated server-side, so a bare
+          // list answers with the record and none of its contents.
+          params: { expand: 'claim_line_items,claim_line_items.variant,reason' },
+        }),
+
+      get: (orderId: string, id: string, options?: RequestOptions): Promise<Claim> =>
+        this.request<Claim>('GET', `/orders/${orderId}/claims/${id}`, {
+          ...options,
+          params: { expand: 'claim_line_items,claim_line_items.variant,reason' },
+        }),
+
+      create: (
+        orderId: string,
+        params: {
+          items: Array<{
+            line_item_id: string
+            quantity: number
+            description?: string
+            send_replacement?: boolean
+            replacement_variant_id?: string
+            refund_amount?: string
+          }>
+          memo?: string
+          reason_id?: string
+        },
+        options?: RequestOptions,
+      ): Promise<Claim> =>
+        this.request<Claim>('POST', `/orders/${orderId}/claims`, { ...options, body: params }),
+
+      approve: (orderId: string, id: string, options?: RequestOptions): Promise<Claim> =>
+        this.request<Claim>('PATCH', `/orders/${orderId}/claims/${id}/approve`, options),
+
+      /** Money back, a replacement shipment, or both. */
+      resolve: (
+        orderId: string,
+        id: string,
+        params: {
+          resolution: 'refund' | 'replacement' | 'refund_and_replacement'
+          refund_method?: 'original_payment' | 'store_credit'
+          amount?: string
+          replacement_line_item_ids?: string[]
+        },
+        options?: RequestOptions,
+      ): Promise<Claim> =>
+        this.request<Claim>('PATCH', `/orders/${orderId}/claims/${id}/resolve`, {
+          ...options,
+          body: params,
+        }),
+
+      deny: (
+        orderId: string,
+        id: string,
+        params?: { reason?: string },
+        options?: RequestOptions,
+      ): Promise<Claim> =>
+        this.request<Claim>('PATCH', `/orders/${orderId}/claims/${id}/deny`, {
+          ...options,
+          body: params,
+        }),
+
+      cancel: (
+        orderId: string,
+        id: string,
+        params?: { reason?: string },
+        options?: RequestOptions,
+      ): Promise<Claim> =>
+        this.request<Claim>('PATCH', `/orders/${orderId}/claims/${id}/cancel`, {
+          ...options,
+          body: params,
+        }),
+    },
+  }
+
+  /**
+   * The marketplace's own vocabularies, and the carrier registry. Read-only:
+   * a seller picks from these, the operator decides what is in them.
+   */
+  readonly returnReasons = {
+    list: (options?: RequestOptions): Promise<{ data: Reason[] }> =>
+      this.request<{ data: Reason[] }>('GET', '/return_reasons', options),
+  }
+
+  readonly claimReasons = {
+    list: (options?: RequestOptions): Promise<{ data: Reason[] }> =>
+      this.request<{ data: Reason[] }>('GET', '/claim_reasons', options),
+  }
+
+  readonly orderCancellationReasons = {
+    list: (options?: RequestOptions): Promise<{ data: Reason[] }> =>
+      this.request<{ data: Reason[] }>('GET', '/order_cancellation_reasons', options),
+  }
+
+  readonly trackingCarriers = {
+    list: (options?: RequestOptions): Promise<{ data: Array<{ id: string; name: string }> }> =>
+      this.request<{ data: Array<{ id: string; name: string }> }>(
+        'GET',
+        '/tracking_carriers',
+        options,
+      ),
   }
 
   /**
@@ -605,6 +1107,55 @@ export class SellerClient {
         ...options,
         body: params,
       }),
+  }
+
+  /**
+   * What this seller packs their goods into: the boxes their parcels ship in,
+   * the cartons their products are packed into, the pallets a wholesale order
+   * leaves on.
+   *
+   * The listing carries the marketplace's own packaging alongside the
+   * seller's, so a seller can pack into the operator's standard cartons
+   * rather than re-measuring them. Those rows report `editable: false` and
+   * are refused by every write.
+   */
+  readonly packageTypes = {
+    list: (
+      params?: ListParams & { owner?: 'mine' } & Record<string, unknown>,
+      options?: RequestOptions,
+    ): Promise<PaginatedResponse<PackageType>> => {
+      // `owner` is a plain query param the controller reads directly, so it
+      // is lifted out before the Ransack transform, which would otherwise
+      // send it as `q[owner]` and the filter would silently do nothing.
+      const { owner, ...listParams } = params ?? {}
+
+      return this.request<PaginatedResponse<PackageType>>('GET', '/package_types', {
+        ...options,
+        params: {
+          ...(params ? transformListParams(listParams) : {}),
+          ...(owner ? { owner } : {}),
+        },
+      })
+    },
+
+    get: (id: string, options?: RequestOptions): Promise<PackageType> =>
+      this.request<PackageType>('GET', `/package_types/${id}`, options),
+
+    create: (params: PackageTypeParams, options?: RequestOptions): Promise<PackageType> =>
+      this.request<PackageType>('POST', '/package_types', { ...options, body: params }),
+
+    update: (
+      id: string,
+      params: PackageTypeParams,
+      options?: RequestOptions,
+    ): Promise<PackageType> =>
+      this.request<PackageType>('PATCH', `/package_types/${id}`, {
+        ...options,
+        body: params,
+      }),
+
+    delete: (id: string, options?: RequestOptions): Promise<void> =>
+      this.request<void>('DELETE', `/package_types/${id}`, options),
   }
 
   /**
@@ -823,6 +1374,25 @@ export interface DeliveryMethodRuleType {
   name: string
   description: string
   preference_schema: DeliveryPreferenceField[]
+}
+
+/**
+ * Measurements a seller records for their own packaging. `default` marks the
+ * box their parcels are quoted with — one per seller, so it never displaces
+ * the marketplace's.
+ */
+export interface PackageTypeParams {
+  name?: string
+  kind?: string
+  length?: string | number | null
+  width?: string | number | null
+  height?: string | number | null
+  dimensions_unit?: string | null
+  weight?: string | number | null
+  max_weight?: string | number | null
+  weight_unit?: string | null
+  default?: boolean
+  metadata?: Record<string, unknown>
 }
 
 export interface StockLocationParams {
@@ -1058,7 +1628,6 @@ export interface ProfileUpdateParams {
    * validation verdict, since that answer was about the old one.
    */
   billing_address?: SellerAddressParams
-  returns_address?: SellerAddressParams
   /**
    * Answers to the custom fields this marketplace's onboarding asks for.
    * Narrowed server-side to those definitions — a field nothing asked for is
@@ -1070,6 +1639,27 @@ export interface ProfileUpdateParams {
    * records that it happened, so sending `false` does not unmake it.
    */
   accept_terms?: boolean
+}
+
+/**
+ * A correction to one of an order's addresses. Every field is optional: send
+ * the lines that change and the rest of the address is carried over.
+ */
+export interface OrderAddressParams {
+  first_name?: string
+  last_name?: string
+  company?: string
+  address1?: string
+  address2?: string
+  city?: string
+  postal_code?: string
+  zipcode?: string
+  phone?: string
+  alternative_phone?: string
+  country_code?: string
+  state_code?: string
+  state_name?: string
+  label?: string
 }
 
 export interface SellerAddressParams {

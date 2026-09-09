@@ -488,6 +488,7 @@
                           "developer/core-concepts/channels",
                           "developer/core-concepts/markets",
                           "developer/core-concepts/customers",
+                          "developer/core-concepts/data-privacy",
                           "developer/core-concepts/companies",
                           "developer/core-concepts/sellers",
                           "developer/core-concepts/staff-roles"
@@ -523,6 +524,7 @@
                         "group": "Fulfillment",
                         "pages": [
                           "developer/core-concepts/fulfillments",
+                          "developer/core-concepts/delivery-setup",
                           "developer/core-concepts/returns-exchanges-claims",
                           "developer/core-concepts/addresses",
                           "developer/core-concepts/calculators"
@@ -559,6 +561,7 @@
                         "group": "Shipping & WMS",
                         "pages": [
                           "developer/providers/fulfillment",
+                          "integrations/shipping/easypost",
                           "developer/how-to/custom-delivery-rate-provider"
                         ]
                       },
@@ -1862,6 +1865,7 @@
                   "developer/core-concepts/channels",
                   "developer/core-concepts/markets",
                   "developer/core-concepts/customers",
+                  "developer/core-concepts/data-privacy",
                   "developer/core-concepts/companies",
                   "developer/core-concepts/sellers",
                   "developer/core-concepts/staff-roles"
@@ -1900,6 +1904,7 @@
                 "icon": "truck",
                 "pages": [
                   "developer/core-concepts/fulfillments",
+                  "developer/core-concepts/delivery-setup",
                   "developer/core-concepts/returns-exchanges-claims",
                   "developer/core-concepts/addresses",
                   "developer/core-concepts/calculators"

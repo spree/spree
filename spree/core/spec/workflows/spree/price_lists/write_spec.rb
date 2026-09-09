@@ -64,6 +64,37 @@ RSpec.describe 'Spree::PriceLists write workflows' do
       expect(price_list.prices.where.not(amount: nil)).to be_empty
     end
 
+    # The bulk writer refuses a batch that would take a ladder past the break
+    # cap, and a workflow that ignored that would answer success while
+    # writing nothing (docs/plans/6.0-volume-pricing.md).
+    it 'fails rather than reporting success when the ladder is over the cap' do
+      price_list.add_products([product.id])
+      rungs = (2..(Spree::Price::MAXIMUM_BREAKS_PER_VARIANT + 2)).map do |quantity|
+        { variant_id: variant.id, currency: 'USD', min_quantity: quantity, amount: 5 }
+      end
+
+      result = described_class.call(price_list: price_list, attributes: { prices: rungs })
+
+      expect(result).to be_failure
+      expect(price_list.prices.breaks).to be_empty
+    end
+
+    it 'writes a ladder the payload names' do
+      price_list.add_products([product.id])
+
+      result = described_class.call(
+        price_list: price_list,
+        attributes: { prices: [
+          { variant_id: variant.id, currency: 'USD', amount: 10 },
+          { variant_id: variant.id, currency: 'USD', min_quantity: 24, amount: 8 }
+        ] }
+      )
+
+      expect(result).to be_success
+      expect(price_list.prices.where(variant_id: variant.id, currency: 'USD').order(:min_quantity).
+             pluck(:min_quantity, :amount)).to eq([[1, 10], [24, 8]])
+    end
+
     it 'leaves prices alone when the payload carries none' do
       price_list.add_products([product.id])
       described_class.call(

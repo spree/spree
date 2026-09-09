@@ -10,7 +10,7 @@ When an order ships, something outside Spree does the physical work — a wareho
 A provider is attached to a delivery method and owns the outbound side of shipping:
 
 - **Label purchase** — providers that generate labels declare it and buy the label *before* the fulfillment is marked as shipped, so the customer email always carries tracking. Labels can also be purchased explicitly ahead of dispatch.
-- **Carrier notification** — creating a fulfillment with the provider is idempotent; cancelling or resuming a fulfillment stands the carrier down or re-engages it.
+- **Carrier notification** — creating a fulfillment with the provider is idempotent; cancelling a fulfillment stands the carrier down.
 
 ## Tracking is its own axis
 

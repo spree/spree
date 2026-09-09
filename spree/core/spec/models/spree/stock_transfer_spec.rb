@@ -76,7 +76,9 @@ module Spree
 
         it 'does not transfer the variants' do
           expect(subject).to be false
-          expect(stock_transfer.errors[:base]).to include(Spree.t('stock_transfer.errors.variants_unavailable'))
+          expect(stock_transfer.errors[:base]).to include(
+            Spree.t('stock_transfer.errors.variants_unavailable', stock: source_location.name)
+          )
         end
 
         it 'leaves the source shelf alone' do
@@ -92,7 +94,9 @@ module Spree
 
         it 'does not transfer the variants' do
           expect(subject).to be false
-          expect(stock_transfer.errors[:base]).to include(Spree.t('stock_transfer.errors.variants_unavailable'))
+          expect(stock_transfer.errors[:base]).to include(
+            Spree.t('stock_transfer.errors.variants_unavailable', stock: source_location.name)
+          )
         end
       end
 

@@ -128,6 +128,64 @@ describe Spree::Variant, type: :model do
     end
   end
 
+  # Cartons are the same two-owner vocabulary as the packaging they describe:
+  # the marketplace's are shared, a seller's are theirs alone. Another
+  # seller's carton must never be reachable by id — its measurements would
+  # feed this variant's freight rollups
+  # (docs/plans/6.0-seller-package-types.md).
+  describe 'which carton a variant may be packed into' do
+    let(:owned) { create(:product, store: store, seller: seller) }
+    let(:master) { create(:product, store: store) }
+
+    it 'accepts the marketplace’s carton on a seller’s variant' do
+      carton = create(:carton_package_type, store: store)
+      variant = build(:variant, product: owned, carton_package_type: carton)
+
+      expect(variant).to be_valid
+    end
+
+    it 'accepts the seller’s own carton' do
+      carton = create(:carton_package_type, store: store, seller: seller)
+      variant = build(:variant, product: owned, carton_package_type: carton)
+
+      expect(variant).to be_valid
+    end
+
+    it 'refuses another seller’s carton' do
+      carton = create(:carton_package_type, store: store, seller: other_seller)
+      variant = build(:variant, product: owned, carton_package_type: carton)
+
+      expect(variant).not_to be_valid
+      expect(variant.errors[:carton_package_type]).to be_present
+    end
+
+    # A row on a master product carries its own seller, so the check reads
+    # the resolved owner rather than the product's.
+    it 'refuses another seller’s carton on a master product row' do
+      carton = create(:carton_package_type, store: store, seller: other_seller)
+      variant = build(:variant, product: master, seller: seller, carton_package_type: carton)
+
+      expect(variant).not_to be_valid
+      expect(variant.errors[:carton_package_type]).to be_present
+    end
+
+    it 'refuses a seller’s carton on the operator’s own variant' do
+      carton = create(:carton_package_type, store: store, seller: seller)
+      variant = build(:variant, product: master, carton_package_type: carton)
+
+      expect(variant).not_to be_valid
+      expect(variant.errors[:carton_package_type]).to be_present
+    end
+
+    it 'refuses a carton from another store' do
+      carton = create(:carton_package_type, store: create(:store))
+      variant = build(:variant, product: owned, carton_package_type: carton)
+
+      expect(variant).not_to be_valid
+      expect(variant.errors[:carton_package_type]).to be_present
+    end
+  end
+
   describe 'SKU uniqueness' do
     let(:product) { create(:product, store: store) }
     let(:other_product) { create(:product, store: store) }

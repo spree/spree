@@ -11,7 +11,6 @@ import {
   resourceSearchSchema,
   Subject,
   TagCombobox,
-  usePermissions,
   useStore,
 } from '@spree/dashboard-core'
 import {
@@ -31,7 +30,6 @@ import {
   SheetFooter,
   SheetHeader,
   SheetTitle,
-  useConfirm,
 } from '@spree/dashboard-ui'
 import { PlusIcon, TagsIcon, UserMinusIcon, UserPlusIcon } from '@spree/dashboard-ui/icons'
 import { useMutation } from '@tanstack/react-query'
@@ -42,6 +40,10 @@ import { useTranslation } from 'react-i18next'
 import { z } from 'zod/v4'
 import { ImportWizardDialog } from '../../../../components/spree/imports/import-wizard-dialog'
 import {
+  importWizardSearchSchema,
+  useImportWizardSearch,
+} from '../../../../components/spree/imports/import-wizard-search'
+import {
   customerGroupAutocompleteProps,
   useCustomerGroups,
 } from '../../../../hooks/use-customer-groups'
@@ -50,7 +52,6 @@ import {
   useBulkAddCustomerTags,
   useBulkRemoveCustomersFromGroups,
   useBulkRemoveCustomerTags,
-  useDeleteCustomer,
 } from '../../../../hooks/use-customers'
 import {
   NEW_CUSTOMER_DEFAULTS,
@@ -64,7 +65,7 @@ import '../../../../tables/customers'
 // carries the prefixed id of the import wizard dialog open over the table.
 const customersSearchSchema = resourceSearchSchema.extend({
   new: z.coerce.boolean().optional(),
-  import: z.string().optional(),
+  ...importWizardSearchSchema.shape,
 })
 
 export const Route = createFileRoute('/_authenticated/$storeId/customers/')({
@@ -192,18 +193,7 @@ function CustomersPage() {
     })
   }
 
-  function openImportWizard(id: string) {
-    navigate({ search: (prev: Record<string, unknown>) => ({ ...prev, import: id }) as never })
-  }
-
-  function closeImportWizard() {
-    navigate({
-      search: (prev: Record<string, unknown>) => {
-        const { import: _i, ...rest } = prev
-        return rest as never
-      },
-    })
-  }
+  const wizard = useImportWizardSearch(search)
 
   return (
     <>
@@ -212,7 +202,12 @@ function CustomersPage() {
         queryKey="customers"
         queryFn={(params) => adminClient.customers.list(params)}
         searchParams={search}
-        defaultParams={{ expand: ['customer_groups'] }}
+        // Erased accounts stay out of the list unless asked for. They keep
+        // their orders, so the row still means something, but nobody can be
+        // reached through it and leaving them in makes every search noisier.
+        // The Erased filter overrides this: filters are applied over
+        // the defaults.
+        defaultParams={{ expand: ['customer_groups'], anonymized: 'false' }}
         bulkActions={bulkActions}
         rowActions={(customer) => <CustomerRowActions customer={customer} storeId={storeId} />}
         actions={(ctx) => (
@@ -220,7 +215,7 @@ function CustomersPage() {
             <ImportButton
               type="customers"
               subject={Subject.Customer}
-              onCreated={(imp) => openImportWizard(imp.id)}
+              onCreated={(imp) => wizard.open(imp.id)}
             />
             <ExportButton type="customers" {...ctx} />
             <Button size="sm" className="h-[2.125rem]" onClick={openCreate}>
@@ -231,33 +226,23 @@ function CustomersPage() {
         )}
       />
       {isCreating && <NewCustomerSheet open onOpenChange={(o) => !o && closeSheet()} />}
-      <ImportWizardDialog importId={search.import ?? null} onClose={closeImportWizard} />
+      <ImportWizardDialog importId={wizard.importId} onClose={wizard.close} />
     </>
   )
 }
 
 /**
- * Per-row Edit + Delete kebab. Lives in its own component so `useDeleteCustomer`
- * can be parameterised by customer id (the hook keys its invalidations off the
- * id and needs a stable identity per row).
+ * Per-row Edit kebab.
+ *
+ * No delete. Destroying the row and erasing the person were two destructive
+ * actions that never both applied — deletion is refused once someone has
+ * bought anything, which is exactly when a real erasure request arrives — and
+ * the milder-sounding one was the destructive one, taking store credit and
+ * gift cards with it. Erasing is on the customer's own page, where the record
+ * being erased is in front of you.
  */
 function CustomerRowActions({ customer, storeId }: { customer: Customer; storeId: string }) {
-  const { t } = useTranslation()
   const navigate = useNavigate()
-  const confirm = useConfirm()
-  const deleteMutation = useDeleteCustomer(customer.id)
-  const { permissions } = usePermissions()
-
-  async function handleDelete() {
-    const ok = await confirm({
-      title: t('admin.customers.detail.delete_label'),
-      message: t('admin.customers.row_actions.delete_confirm', { email: customer.email ?? '' }),
-      variant: 'destructive',
-      confirmLabel: t('admin.customers.detail.delete_label'),
-    })
-    if (!ok) return
-    await deleteMutation.mutateAsync().catch(() => undefined)
-  }
 
   return (
     <RowActions
@@ -269,13 +254,6 @@ function CustomerRowActions({ customer, storeId }: { customer: Customer; storeId
               to: '/$storeId/customers/$customerId',
               params: { storeId, customerId: customer.id },
             }),
-        },
-        {
-          key: 'delete',
-          destructive: true,
-          visible: permissions.can('destroy', Subject.Customer),
-          disabled: deleteMutation.isPending,
-          onSelect: handleDelete,
         },
       ]}
     />

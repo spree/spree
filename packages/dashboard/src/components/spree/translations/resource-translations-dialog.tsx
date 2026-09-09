@@ -5,7 +5,7 @@ import {
   type TranslatableField,
   type TranslationBatchEntry,
 } from '@spree/admin-sdk'
-import { adminClient, useResourceKey } from '@spree/dashboard-core'
+import { adminClient } from '@spree/dashboard-core'
 import {
   Button,
   cn,
@@ -21,16 +21,17 @@ import {
   SelectTrigger,
   SelectValue,
   Skeleton,
+  sameRichText,
   Textarea,
   toastManager,
   useConfirm,
 } from '@spree/dashboard-ui'
 import { XIcon } from '@spree/dashboard-ui/icons'
-import { useQueryClient } from '@tanstack/react-query'
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import {
   type TranslatableResourceType,
+  useInvalidateTranslations,
   useLocaleName,
   useResourceTranslations,
 } from '../../../hooks/use-translations'
@@ -98,8 +99,7 @@ export function ResourceTranslationsDialog({
   const { t } = useTranslation()
   const confirm = useConfirm()
   const { data, isLoading, isError, refetch } = useResourceTranslations(resourceType, resourceId)
-  const queryClient = useQueryClient()
-  const coverageKey = useResourceKey('translations', 'coverage')
+  const invalidateTranslations = useInvalidateTranslations()
 
   const rows = useMemo(() => (data ? flattenTree(data) : []), [data])
   const targetLocales = useMemo(
@@ -165,11 +165,8 @@ export function ResourceTranslationsDialog({
       await adminClient.translations.batch(Array.from(byResource.values()))
       toastManager.add({ type: 'success', title: t('admin.translations.saved') })
       setEdits(new Map())
-      refetch()
-      // A save changes how much of the catalog is translated, so the coverage
-      // grid behind this dialog is now stale — it is what the merchant returns
-      // to when they close.
-      queryClient.invalidateQueries({ queryKey: coverageKey })
+      await refetch()
+      await invalidateTranslations()
     } catch (err) {
       // The grid has no form to render inline errors onto, so surface the
       // server's validation message (if any) in the toast rather than the
@@ -312,9 +309,14 @@ function TranslationGrid({
         const stored = row.translations[locale]?.[field.key]
         const baseline = typeof stored === 'string' ? stored : ''
         const unchanged = field.type === 'html' ? sameRichText(next, baseline) : next === baseline
+        if (unchanged) {
+          if (!prev.has(key)) return prev
+          const out = new Map(prev)
+          out.delete(key)
+          return out
+        }
         const out = new Map(prev)
-        if (unchanged) out.delete(key)
-        else out.set(key, next)
+        out.set(key, next)
         return out
       })
     },
@@ -420,11 +422,4 @@ function flattenTree(data: ResourceTranslations): TranslationRow[] {
 // `<scr<script>ipt>` (CodeQL js/incomplete-multi-character-sanitization).
 function stripHtml(html: string): string {
   return (new DOMParser().parseFromString(html, 'text/html').body.textContent ?? '').trim()
-}
-
-// Equal markup, or both empty-equivalent (`""`, `<p></p>`, `<p><br></p>`) — the
-// latter prevents the rich-text editor's mount-time `<p></p>` emission from
-// registering as a change against an empty baseline.
-function sameRichText(a: string, b: string): boolean {
-  return a === b || (!stripHtml(a) && !stripHtml(b))
 }

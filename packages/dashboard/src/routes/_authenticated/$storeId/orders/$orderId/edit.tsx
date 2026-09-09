@@ -1,6 +1,12 @@
 import { zodResolver } from '@hookform/resolvers/zod'
 import { type Order, SpreeError, type Variant } from '@spree/admin-sdk'
-import { adminClient, formatPrice, mapSpreeErrorsToForm, PageHeader } from '@spree/dashboard-core'
+import {
+  adminClient,
+  formatPrice,
+  GONE_STATUSES,
+  mapSpreeErrorsToForm,
+  PageHeader,
+} from '@spree/dashboard-core'
 import {
   Alert,
   AlertDescription,
@@ -25,7 +31,6 @@ import { useTranslation } from 'react-i18next'
 import { AddLineItemDialog } from '../../../../../components/spree/orders/line-item-dialogs'
 import { OrderEditItemsTable } from '../../../../../components/spree/orders/order-edit-items-table'
 import { useOrder, useOrderMutation } from '../../../../../hooks/use-order'
-import { GONE_STATUSES } from '../../../../../lib/fulfillment-items'
 import {
   buildOrderItemsPayload,
   formatAmount,

@@ -9,9 +9,7 @@ module Spree
           typelize type: :string,
                    price_list_id: :string,
                    preferences: 'Record<string, unknown>',
-                   preference_schema: 'Array<{ key: string; type: string; default: unknown }>',
-                   label: :string,
-                   description: 'string | null'
+                   preference_schema: 'Array<{ key: string; type: string; default: unknown }>'
 
           attributes created_at: :iso8601, updated_at: :iso8601
 
@@ -25,14 +23,6 @@ module Spree
 
           attribute :preferences, &:serialized_preferences
           attribute :preference_schema, &:serialized_preference_schema
-
-          attribute :label do |rule|
-            rule.class.respond_to?(:human_name) ? rule.class.human_name : rule.class.to_s.demodulize
-          end
-
-          attribute :description do |rule|
-            rule.class.respond_to?(:description) ? rule.class.description : nil
-          end
 
           # Embeds skip rules that don't carry the association (e.g.
           # VolumeRule has no markets/customers — the keys are omitted).

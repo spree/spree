@@ -4,11 +4,13 @@ module Spree
       module Seller
         # One line inside a parcel: what to pick and how many.
         #
-        # `line_item_id` is what a partial dispatch names — the fulfill
-        # endpoint takes line items, so this is the id a panel sends back.
+        # Two ids, because the two things a seller does with a parcel address
+        # its contents differently: a partial dispatch names line items, and
+        # splitting names the variant being moved.
         class FulfillmentItemSerializer < V3::BaseSerializer
           typelize quantity: :number,
                    line_item_id: [:string, nullable: true],
+                   variant_id: [:string, nullable: true],
                    name: [:string, nullable: true],
                    sku: [:string, nullable: true],
                    options_text: [:string, nullable: true]
@@ -17,6 +19,10 @@ module Spree
 
           attribute :line_item_id do |item|
             item.line_item&.prefixed_id
+          end
+
+          attribute :variant_id do |item|
+            item.variant&.prefixed_id
           end
 
           attribute :name do |item|

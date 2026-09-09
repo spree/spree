@@ -13,7 +13,16 @@ const FULFILLMENT_STATUSES = [
   'delivered',
   'canceled',
 ] as const
-const PAYMENT_STATUSES = ['balance_due', 'paid', 'credit_owed', 'failed', 'void'] as const
+const PAYMENT_STATUSES = [
+  'none',
+  'authorized',
+  'partially_paid',
+  'paid',
+  'partially_refunded',
+  'refunded',
+  'overcharged',
+  'voided',
+] as const
 
 defineTable<Order>('seller-orders', {
   title: i18n.t('orders.title'),

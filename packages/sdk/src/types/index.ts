@@ -25,6 +25,7 @@ export type {
   DigitalAsset,
   DigitalLink,
   Discount,
+  FreightSummary,
   Fulfillment,
   GiftCard,
   GiftCardBatch,

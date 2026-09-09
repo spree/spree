@@ -44,7 +44,7 @@ module Spree
 
     def transfer(source_location, destination_location, variants)
       if variants.nil? || variants.empty?
-        errors.add(:base, Spree.t('stock_transfer.errors.must_have_variant'))
+        errors.add(:base, :must_have_variant, message: Spree.t('stock_transfer.errors.must_have_variant'))
         return false
       end
 
@@ -53,12 +53,13 @@ module Spree
       # then write a negative in both directions and take stock off the source
       # *and* the destination.
       unless positive_quantities?(variants)
-        errors.add(:base, Spree.t('stock_transfer.errors.invalid_quantity'))
+        errors.add(:base, :invalid_quantity, message: Spree.t('stock_transfer.errors.invalid_quantity'))
         return false
       end
 
       unless variants_available_in_source_location?(source_location, variants)
-        errors.add(:base, Spree.t('stock_transfer.errors.variants_unavailable'))
+        errors.add(:base, :variants_unavailable, stock: source_location.name,
+                   message: Spree.t('stock_transfer.errors.variants_unavailable', stock: source_location.name))
         return false
       end
 
@@ -93,11 +94,11 @@ module Spree
       return unless destination_location_id.present?
       return if source_location_id != destination_location_id
 
-      errors.add(:source_location, Spree.t('stock_transfer.errors.same_location'))
+      errors.add(:source_location, :same_location, message: Spree.t('stock_transfer.errors.same_location'))
     end
 
     def stock_movements_not_empty
-      errors.add(:base, Spree.t('stock_transfer.errors.must_have_variant')) if stock_movements.empty?
+      errors.add(:base, :must_have_variant, message: Spree.t('stock_transfer.errors.must_have_variant')) if stock_movements.empty?
     end
 
     # Each variant needs enough available stock for the quantity being moved,

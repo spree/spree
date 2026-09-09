@@ -75,6 +75,7 @@ module Spree
 
         @serialized_preference_schema ||= fields.map do |field|
           wire = { key: field[:key], type: field[:type], default: field[:default] }
+          wire[:choices] = field[:choices] if field[:choices].present?
           wire[:options] = field[:options] if field[:options].present?
           wire[:default] = nil if field[:type] == :password
           wire.freeze
@@ -91,6 +92,17 @@ module Spree
         @password_preference_keys ||= fields
                                       .each_with_object(Set.new) { |field, set| set << field[:key] if field[:type] == :password }
                                       .freeze
+      end
+
+      # Declared order first, so a form reads the way its author grouped the
+      # fields; anything the macro did not record (an association writer that
+      # looks like a preference) keeps its existing place at the end.
+      def ordered_preferences(instance)
+        defined = instance.defined_preferences
+        return defined unless respond_to?(:declared_preference_order)
+
+        declared = declared_preference_order & defined
+        declared + (defined - declared)
       end
 
       def compute_preference_schema
@@ -110,7 +122,7 @@ module Spree
           return nil
         end
 
-        instance.defined_preferences.filter_map do |pref|
+        ordered_preferences(instance).filter_map do |pref|
           next if instance.preference_deprecated(pref)
           # Written by Spree, not supplied by the operator — a value a
           # provider hands back after we register something with it. Offering
@@ -122,11 +134,13 @@ module Spree
             key: pref,
             key_string: pref.to_s.freeze,
             type: instance.preference_type(pref),
-            default: safe_preference_default(instance, pref)
-          }
-          choices = normalized_preference_options(instance.preference_options(pref))
-          field[:options] = choices if choices.present?
-          field.freeze
+            default: safe_preference_default(instance, pref),
+            choices: instance.preference_choices(pref),
+            # Two ways of saying nearly the same thing, which arrived from
+            # different directions: `choices` constrains what may be stored,
+            # `options` labels it. Worth converging on one.
+            options: normalized_preference_options(instance.preference_options(pref)).presence
+          }.compact.freeze
         end
       end
 
@@ -197,12 +211,22 @@ module Spree
       # for stable output. Uses `serialized_preference_schema` so
       # `:password` defaults are redacted — `/types` is an unauthenticated
       # discovery surface and must never leak gateway-shipped defaults.
+      #
+      # `label` and `description` are a fallback, not the admin UI's copy:
+      # they resolve in the request's locale, which is the store's rather
+      # than the admin's interface language. The dashboard renders `type`
+      # from its own locale files and reads these only for a type it has no
+      # translation for — an extension gem shipping no dashboard locales.
       def subclasses_with_preference_schema
         registered_subclasses.map do |klass|
           entry = {
             type: klass.api_type,
             label: subclass_label(klass),
-            description: klass.respond_to?(:description) ? klass.description : nil,
+            # Families differ on which method carries the sentence: the rule
+            # base classes define `human_description`, the rest `description`.
+            # Asking for only one left promotion types with a null description
+            # and no fallback for a client without its own translation.
+            description: subclass_description(klass),
             preference_schema: klass.respond_to?(:serialized_preference_schema) ? klass.serialized_preference_schema : []
           }
           # Only present when true, so families without the concept keep
@@ -211,6 +235,15 @@ module Spree
           entry[:superseded] = true if klass.respond_to?(:superseded?) && klass.superseded?
           entry
         end.sort_by { |entry| entry[:label] }
+      end
+
+      # @return [String, nil] the class's own one-line description, from
+      #   whichever accessor its family defines
+      def subclass_description(klass)
+        return klass.human_description if klass.respond_to?(:human_description)
+        return klass.description if klass.respond_to?(:description)
+
+        nil
       end
 
       # STI subclasses share the parent's `model_name`, so calling

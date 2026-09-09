@@ -1,5 +1,5 @@
 import { cva, type VariantProps } from 'class-variance-authority'
-import * as React from 'react'
+import type * as React from 'react'
 import { useTranslation } from 'react-i18next'
 import { cn } from '../lib/utils'
 import { Slot } from './slot'
@@ -102,6 +102,15 @@ const statusToneMap: Record<string, StatusTone> = {
   confirm: 'neutral',
   resumed: 'neutral',
   partial: 'info',
+  // What a carrier reports about a consignment in flight. `pending` and
+  // `delivered` are already above — they mean the same thing here.
+  pre_transit: 'info',
+  in_transit: 'info',
+  out_for_delivery: 'info',
+  available_for_pickup: 'warning',
+  return_to_sender: 'destructive',
+  failure: 'destructive',
+  unknown: 'neutral',
   archived: 'neutral',
   returned: 'success',
   backorder: 'warning',

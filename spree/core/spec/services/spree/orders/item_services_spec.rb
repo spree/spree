@@ -34,6 +34,51 @@ RSpec.describe 'draft order item services' do
     expect(order.line_items.sole.quantity).to eq(2)
   end
 
+  # A line's unit price can depend on how many of it are being bought, so a
+  # quantity edit on a draft is a pricing question and not only an arithmetic
+  # one (docs/plans/6.0-volume-pricing.md).
+  describe 'quantity breaks' do
+    let(:price_list) { create(:price_list, :active, store: @default_store) }
+
+    before do
+      variant.prices.base_prices.with_currency(order.currency).update_all(amount: 20.00)
+      create(:price, variant: variant, currency: order.currency, amount: 10.00, price_list: price_list, min_quantity: 1)
+      create(:price, variant: variant, currency: order.currency, amount: 8.00, price_list: price_list, min_quantity: 24)
+    end
+
+    it 'charges the deeper rung once the line reaches it' do
+      Spree::Orders::AddItem.call(order: order, variant: variant, quantity: 1)
+      line_item = order.line_items.sole
+      expect(line_item.price).to eq(10.00)
+
+      Spree::Orders::UpdateItem.call(order: order, line_item: line_item, quantity: 24)
+
+      expect(line_item.reload.price).to eq(8.00)
+      expect(order.reload.item_total).to eq(192.00)
+    end
+
+    it 'returns to the shallower rung when the line shrinks back below it' do
+      Spree::Orders::AddItem.call(order: order, variant: variant, quantity: 24)
+      line_item = order.line_items.sole
+      expect(line_item.price).to eq(8.00)
+
+      Spree::Orders::UpdateItem.call(order: order, line_item: line_item, quantity: 2)
+
+      expect(line_item.reload.price).to eq(10.00)
+    end
+
+    # Someone agreed that figure for this order; no quantity may overwrite it.
+    it 'leaves a negotiated line at its agreed price' do
+      Spree::Orders::AddItem.call(order: order, variant: variant, quantity: 1, price: '7.20')
+      line_item = order.line_items.sole
+
+      Spree::Orders::UpdateItem.call(order: order, line_item: line_item, quantity: 24)
+
+      expect(line_item.reload.price).to eq(7.20)
+      expect(line_item.price_source).to eq('manual')
+    end
+  end
+
   describe 'negotiated (manual) prices' do
     it 'adds an item at a negotiated price, stamped manual' do
       result = Spree::Orders::AddItem.call(order: order, variant: variant, quantity: 10, price: '7.20')

@@ -1,5 +1,11 @@
 import { i18n, settingsNav } from '@spree/dashboard-core'
-import { ScrollTextIcon, TruckIcon, UsersRoundIcon, WarehouseIcon } from '@spree/dashboard-ui/icons'
+import {
+  PackageIcon,
+  ScrollTextIcon,
+  TruckIcon,
+  UsersRoundIcon,
+  WarehouseIcon,
+} from '@spree/dashboard-ui/icons'
 
 // The panel's settings rail, registered into the same registry the operator's
 // dashboard writes to — so a marketplace adds, removes or reorders entries
@@ -51,6 +57,21 @@ settingsNav.add({
   // The seller-branch subject the API's `/me` serializes. A member without
   // delivery permission never sees the entry.
   subject: 'Spree::DeliveryMethod',
+})
+
+// What this seller packs their goods into. Beside the other two because the
+// three answer one question together: where the goods are, how they leave,
+// and what they leave in (docs/plans/6.0-seller-package-types.md).
+settingsNav.add({
+  key: 'settings.package-types',
+  label: i18n.t('nav.package_types'),
+  path: '/package-types',
+  icon: PackageIcon,
+  group: 'fulfillment',
+  position: 300,
+  // The seller-branch subject the API's `/me` serializes. A member without
+  // packaging permission never sees the entry.
+  subject: 'Spree::PackageType',
 })
 
 // Who runs this seller. Under settings rather than in the main rail, matching
