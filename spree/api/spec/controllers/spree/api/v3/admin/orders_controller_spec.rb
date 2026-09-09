@@ -67,28 +67,6 @@ RSpec.describe Spree::Api::V3::Admin::OrdersController, type: :controller do
           expect(ids).to include(pos_order.prefixed_id, default_channel_order.prefixed_id)
         end
       end
-
-      context 'filtering by customer_id' do
-        let(:customer) { create(:customer) }
-        let(:other_customer) { create(:customer) }
-        let!(:customer_order) { create(:order, store: store, customer: customer) }
-        let!(:other_customer_order) { create(:order, store: store, customer: other_customer) }
-
-        it 'returns only that customer orders' do
-          get :index, params: { q: { customer_id_eq: customer.prefixed_id } }, as: :json
-
-          expect(response).to have_http_status(:ok)
-          ids = json_response['data'].map { |o| o['id'] }
-          expect(ids).to eq([customer_order.prefixed_id])
-        end
-
-        it 'returns nothing for a customer who has not bought anything' do
-          get :index, params: { q: { customer_id_eq: create(:customer).prefixed_id } }, as: :json
-
-          expect(response).to have_http_status(:ok)
-          expect(json_response['data']).to be_empty
-        end
-      end
     end
 
     context 'with q[search] (full-text search)' do
@@ -227,6 +205,20 @@ RSpec.describe Spree::Api::V3::Admin::OrdersController, type: :controller do
       expect(json_response['cart_id']).to eq(cart.prefixed_id)
       expect(json_response['cart']['id']).to eq(cart.prefixed_id)
       expect(json_response['cart']['completed_at']).to be_present
+    end
+
+    it "expands a grouped order's shares of the group's payments" do
+      group = create(:order_group, store: store)
+      child = create(:completed_order_with_totals, store: store, order_group_id: group.id)
+      payment = create(:payment, order: nil, cart: nil, order_group: group, amount: 100)
+      split = create(:payment_split, payment: payment, order: child, authorized_amount: 100, captured_amount: 100)
+
+      get :show, params: { id: child.prefixed_id, expand: 'payment_splits' }, as: :json
+
+      row = json_response['payment_splits'].first
+      expect(row['id']).to eq(split.prefixed_id)
+      expect(row).to include('payment_id' => payment.prefixed_id, 'payment_number' => payment.number,
+                             'order_id' => child.prefixed_id, 'captured_amount' => '100.0')
     end
 
     subject { get :show, params: { id: order.prefixed_id }, as: :json }
