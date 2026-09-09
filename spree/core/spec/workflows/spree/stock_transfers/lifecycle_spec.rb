@@ -219,6 +219,24 @@ describe 'stock transfer lifecycle', type: :model do
       expect(destination_on_hand).to eq(8)
     end
 
+    # Two operators receiving the same box at once, which the destination's
+    # tablet makes as easy as a double-tap: both resolve the line, both compute
+    # a delta from the total they read, and both credit the whole delivery. The
+    # workflow re-reads the line under its lock, so the second caller measures
+    # against what actually committed and finds nothing left to receive.
+    it 'ignores a running total that was read before another receive committed' do
+      stale_line = transfer.reload.items.sole
+      Spree::StockTransfers::Receive.call(stock_transfer: transfer,
+                                          items: [{ item: transfer.items.sole, quantity_received: 6 }])
+
+      result = Spree::StockTransfers::Receive.call(stock_transfer: transfer.reload,
+                                                   items: [{ item: stale_line, quantity_received: 6 }])
+
+      expect(result).to be_failure
+      expect(result.error.to_s).to eq(Spree.t('stock_transfer.errors.no_items_received'))
+      expect(destination_on_hand).to eq(6)
+    end
+
     it 'refuses a line belonging to another transfer' do
       other_item = create(:stock_transfer, store: store).items.first
 

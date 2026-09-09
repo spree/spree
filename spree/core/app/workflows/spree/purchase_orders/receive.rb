@@ -21,11 +21,22 @@ module Spree
       def perform(purchase_order:, items: nil, received_by: nil)
         super
 
-        step :ensure_receivable
-        step :normalize_items
-        run_hooks :validate
+        # One receive at a time per document. Each line's delta is measured
+        # against its running total, so two callers reading the same total both
+        # credit the whole delivery — three concurrent receives of ten units put
+        # thirty on the shelf and leave the line saying ten. The lock also opens
+        # the transaction the writes below need, and it is always taken
+        # document-then-level, never the other way, so it cannot cross with the
+        # lock `StockLevel#adjust_count_on_hand` takes underneath.
+        purchase_order.with_lock do
+          # The caller resolved these before the lock, so their running totals
+          # may predate a receive that has since committed.
+          items&.each { |item| item[:item]&.reload }
 
-        ApplicationRecord.transaction do
+          step :ensure_receivable
+          step :normalize_items
+          run_hooks :validate
+
           step :record_receipt
           run_hooks :before_restock
           step :restock_deltas

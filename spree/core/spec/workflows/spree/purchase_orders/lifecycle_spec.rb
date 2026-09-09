@@ -104,6 +104,23 @@ describe 'purchase order lifecycle', type: :model do
       expect(movement.display_unit_cost.to_s).to eq('$12.50')
     end
 
+    # Two receivers booking the same pallet in at once: both resolve the line,
+    # both compute a delta from the total they read, and both credit the whole
+    # delivery. The workflow re-reads the line under its lock, so the second
+    # caller measures against what actually committed.
+    it 'ignores a running total that was read before another receive committed' do
+      stale_line = purchase_order.reload.items.sole
+      Spree::PurchaseOrders::Receive.call(purchase_order: purchase_order,
+                                          items: [{ item: purchase_order.items.sole, quantity_received: 60 }])
+
+      result = Spree::PurchaseOrders::Receive.call(purchase_order: purchase_order.reload,
+                                                   items: [{ item: stale_line, quantity_received: 60 }])
+
+      expect(result).to be_failure
+      expect(result.error.to_s).to eq(Spree.t('purchase_order.errors.no_items_received'))
+      expect(on_hand).to eq(60)
+    end
+
     it 'stays open when the supplier under-ships' do
       item = purchase_order.reload.items.sole
 
