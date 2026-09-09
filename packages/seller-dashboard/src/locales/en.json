@@ -256,6 +256,41 @@
       "everywhere": "Everywhere this kind of goods reaches"
     }
   },
+  "earnings": {
+    "balance": {
+      "title": "Balance",
+      "empty": "Once an order of yours is fulfilled, what it earned shows up here.",
+      "owed": "Owed to you ({{currency}})",
+      "earned": "Earned",
+      "paid": "Paid out",
+      "pending": "On its way"
+    },
+    "columns": {
+      "date": "Date",
+      "order": "Order",
+      "kind": "Type",
+      "status": "Status",
+      "amount": "Amount"
+    },
+    "kinds": {
+      "earning": "Sale",
+      "refund_reversal": "Refund"
+    },
+    "search_placeholder": "Search by reference",
+    "statuses": {
+      "pending": "Pending",
+      "processing": "Processing",
+      "completed": "Completed",
+      "failed": "Failed",
+      "unresolved": "Needs checking"
+    },
+    "subtitle": "What your sales have earned, and where you stand with the marketplace.",
+    "title": "Earnings",
+    "transfers": {
+      "title": "Earnings",
+      "empty": "No earnings yet."
+    }
+  },
   "forgot_password": {
     "back_to_login": "Back to sign in",
     "email": "Email",
@@ -303,7 +338,9 @@
     "sign_out": "Sign out",
     "team": "Team",
     "delivery_methods": "Delivery methods",
-    "package_types": "Package types"
+    "package_types": "Package types",
+    "earnings": "Earnings",
+    "payouts": "Payouts"
   },
   "onboarding": {
     "accept_terms": "Accept the terms",
@@ -357,6 +394,12 @@
       "title": "Customer"
     },
     "customer_note": "Customer note",
+    "earnings": {
+      "title": "What you earned",
+      "payout": "Payout",
+      "view_payout": "View payout",
+      "not_settled": "Not paid out yet"
+    },
     "empty": "No orders yet. They appear here as customers buy from you.",
     "fulfill": "Mark as fulfilled",
     "fulfillment_statuses": {
@@ -408,6 +451,14 @@
     },
     "items": "Items",
     "not_found": "That order could not be found.",
+    "payment": {
+      "title": "Payment",
+      "share_help": "Your share of what the customer paid for this basket.",
+      "authorized": "Authorized",
+      "captured": "Captured",
+      "refunded": "Refunded",
+      "refundable": "Refundable"
+    },
     "payment_statuses": {
       "none": "Unpaid",
       "authorized": "Authorized",
@@ -493,6 +544,27 @@
     },
     "title": "Orders",
     "tracking_label": "Tracking number"
+  },
+  "payouts": {
+    "columns": {
+      "date": "Date",
+      "status": "Status",
+      "earnings": "Earnings",
+      "reference": "Reference",
+      "amount": "Amount"
+    },
+    "detail": {
+      "covers_one": "Covers {{count}} earning",
+      "covers_other": "Covers {{count}} earnings",
+      "covers_empty": "This payout covers no earnings.",
+      "settlement": "Payout",
+      "period": "Period"
+    },
+    "empty": "No payouts yet.",
+    "not_found": "This payout could not be found.",
+    "search_placeholder": "Search by reference",
+    "subtitle": "What the marketplace has sent you, and what is on its way.",
+    "title": "Payouts"
   },
   "policies": {
     "add": "Add policy",

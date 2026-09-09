@@ -9,7 +9,9 @@ import { CenteredMessage } from '../components/centered-message'
 import { FulfillmentsCard } from '../components/orders/fulfillments-card'
 import { OrderCancelDialog } from '../components/orders/order-cancel-dialog'
 import { OrderCustomerCard, OrderSummaryCard } from '../components/orders/order-cards'
+import { OrderEarningsCard } from '../components/orders/order-earnings-card'
 import { InternalNoteCard, SpecialInstructionsCard } from '../components/orders/order-notes-cards'
+import { OrderPaymentCard } from '../components/orders/order-payment-card'
 import { ClaimsCard, ExchangesCard } from '../components/orders/post-sale-cards'
 import { ReturnsCard } from '../components/orders/returns-card'
 import { RetryableError } from '../components/retryable-error'
@@ -103,6 +105,12 @@ export function OrderPage() {
               </>
             )}
             <OrderSummaryCard order={order} />
+            {placed && (
+              <>
+                <OrderPaymentCard order={order} />
+                <OrderEarningsCard order={order} />
+              </>
+            )}
           </>
         }
         sidebar={
