@@ -239,6 +239,80 @@ RSpec.describe Spree::Reporting::Query do
     end
   end
 
+  describe 'the payments family' do
+    let!(:order) { create(:completed_order_with_totals, store: store, completed_at: 3.days.ago) }
+    let!(:payment) { create(:payment, order: order, amount: 30, status: 'completed') }
+
+    it 'counts what was taken, net of what went back through the same instrument' do
+      result = run(metrics: %w[payments_received payments_refunded net_payments payments_count])
+      expect(result.totals[:payments_received][:value]).to eq(30.0)
+      expect(result.totals[:net_payments][:value]).to eq(30.0)
+      expect(result.totals[:payments_count][:value]).to eq(1)
+
+      create(:refund, amount: 12, payment: payment, order: order)
+
+      after = run(metrics: %w[payments_received payments_refunded net_payments])
+      expect(after.totals[:payments_refunded][:value]).to eq(12.0)
+      expect(after.totals[:net_payments][:value]).to eq(18.0)
+    end
+
+    it 'breaks payments down by the instrument that took them' do
+      result = run(metrics: %w[net_payments], dimensions: %w[payment_method])
+      expect(result.rows.first[:dimensions][:payment_method]).to eq(payment.payment_method_id)
+    end
+
+    it 'leaves a failed charge out of the money but counts it as a failure' do
+      create(:payment, order: order, amount: 99, status: 'failed')
+
+      result = run(metrics: %w[payments_received payments_failed])
+      expect(result.totals[:payments_received][:value]).to eq(30.0)
+      expect(result.totals[:payments_failed][:value]).to eq(1)
+    end
+
+    it 'refuses to answer a payments question and a sales question at once' do
+      expect { run(metrics: %w[net_payments total_sales]) }
+        .to raise_error(Spree::Reporting::InvalidQuery, /different families/)
+    end
+
+    it 'refuses a payments metric grouped by a sales axis' do
+      expect { run(metrics: %w[net_payments], dimensions: %w[product]) }
+        .to raise_error(Spree::Reporting::InvalidQuery, /cannot be grouped by/)
+    end
+  end
+
+  describe 'the inventory family' do
+    let(:variant) { create(:variant) }
+    let(:stock_level) { variant.stock_levels.first }
+
+    before do
+      stock_level.stock_movements.create!(quantity: 40, kind: 'received')
+      stock_level.stock_movements.create!(quantity: 10, kind: 'shipped')
+    end
+
+    def inventory(params)
+      run({ time_range: { since: 2.days.ago.to_date.to_s, until: Date.current.to_s } }.merge(params))
+    end
+
+    it 'sums each movement kind on its own, since the kind carries direction' do
+      result = inventory(metrics: %w[units_received units_shipped sell_through])
+      expect(result.totals[:units_received][:value]).to eq(40)
+      expect(result.totals[:units_shipped][:value]).to eq(10)
+      expect(result.totals[:sell_through][:value]).to eq(25.0)
+    end
+
+    it 'breaks movement down by the variant that moved' do
+      result = inventory(metrics: %w[units_received], dimensions: %w[moved_variant])
+      expect(result.rows.first[:dimensions][:moved_variant]).to eq(variant.id)
+    end
+
+    it 'leaves another store\'s movements out' do
+      other = create(:variant, product: create(:product, store: create(:store)))
+      other.stock_levels.first.stock_movements.create!(quantity: 500, kind: 'received')
+
+      expect(inventory(metrics: %w[units_received]).totals[:units_received][:value]).to eq(40)
+    end
+  end
+
   describe 'joins that are not one-to-one' do
     let!(:order) { create(:completed_order_with_totals, store: store, completed_at: 3.days.ago) }
     let(:product) { order.line_items.first.variant.product }

@@ -82,22 +82,13 @@ module Spree
           apply_filters(scope, base, range)
         end
 
-        # The completed_at range predicate implies completeness, so neither
-        # base needs the `complete` scope on top (merging it would replace the
-        # range condition — Rails merge overwrites same-column wheres). A
-        # canceled order keeps its completed_at, so it is excluded explicitly:
-        # sales figures count what stayed sold.
+        # The base's own registered relation, already store-scoped and
+        # range-filtered. Sales bases need no `complete` scope on top of the
+        # range predicate (merging it would replace the range condition — Rails
+        # merge overwrites same-column wheres), and exclude canceled orders
+        # explicitly: sales figures count what stayed sold.
         def base_relation(base, range)
-          order_conditions = { currency: query.currency, completed_at: range }
-          scope = case base
-                  when :orders
-                    query.store.orders.not_canceled.where(order_conditions)
-                  when :line_items
-                    query.store.line_items.merge(Spree::Order.not_canceled)
-                      .where(Spree::Order.table_name => order_conditions)
-                  else
-                    raise InvalidQuery, "unknown metric base #{base}"
-                  end
+          scope = query.registry.base!(base).relation.call(query.store, range, query.currency)
 
           # Association default orderings break grouped selects on PostgreSQL.
           scope.reorder(nil)
@@ -203,6 +194,13 @@ module Spree
           "m_#{metric.name}"
         end
 
+        # A bare `column:` symbol is read from its own base's table, which the
+        # base declares. Guessing it from a two-way ternary silently read every
+        # base but :orders as line items.
+        def base_table(base)
+          resolve_sql(query.registry.base!(base).table)
+        end
+
         # Registered fragments defer table names as %{placeholders} because
         # model classes cannot load while initializers register the vocabulary.
         def resolve_sql(fragment)
@@ -215,7 +213,11 @@ module Spree
                  product_categories: Spree::ProductCategory.table_name,
                  refunds: Spree::Refund.table_name,
                  fees: Spree::Fee.table_name,
-                 commission_lines: Spree::CommissionLine.table_name)
+                 commission_lines: Spree::CommissionLine.table_name,
+                 payments: Spree::Payment.table_name,
+                 payment_methods: Spree::PaymentMethod.table_name,
+                 stock_movements: Spree::StockMovement.table_name,
+                 stock_levels: Spree::StockLevel.table_name)
         end
 
         def dimension_alias(dim)
@@ -249,8 +251,7 @@ module Spree
           resolved = if dimension.column.is_a?(String)
                        resolve_sql(dimension.column)
                      else
-                       table = dimension.base == :orders ? Spree::Order.table_name : Spree::LineItem.table_name
-                       "#{table}.#{dimension.column}"
+                       "#{base_table(dimension.base)}.#{dimension.column}"
                      end
 
           identifier!(resolved, dimension.name)

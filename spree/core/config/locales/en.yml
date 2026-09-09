@@ -1710,6 +1710,24 @@ en:
         market:
           description: The market the order was placed in.
           label: Market
+        moved_at:
+          description: When stock moved, bucketed by day, week or month in the store timezone.
+          label: Movement date
+        moved_variant:
+          description: The variant whose stock moved.
+          label: Variant moved
+        movement_kind:
+          description: What happened to the stock.
+          label: Movement type
+        paid_at:
+          description: When the payment was taken, bucketed by day, week or month in the store timezone.
+          label: Payment date
+        payment_method:
+          description: The instrument the payment was taken through.
+          label: Payment method
+        payment_result:
+          description: Whether an individual charge succeeded.
+          label: Payment result
         payment_status:
           description: Payment state of the order.
           label: Payment status
@@ -1719,11 +1737,21 @@ en:
         seller:
           description: The seller who sold the item.
           label: Seller
+        stock_location:
+          description: The location the stock moved in or out of.
+          label: Stock location
         variant:
           description: The product variant (SKU) sold.
           label: Variant
       export:
         total: Total
+      families:
+        inventory:
+          label: Inventory
+        payments:
+          label: Payments
+        sales:
+          label: Sales
       metrics:
         average_order_value:
           description: Total sales divided by the number of orders.
@@ -1755,15 +1783,33 @@ en:
         gross_sales:
           description: Item prices multiplied by quantity, before discounts, returns and tax.
           label: Gross sales
+        net_payments:
+          description: Money taken less money refunded, by the instrument that moved it.
+          label: Net payments
         net_sales:
           description: Gross sales less discounts and returns. What you actually sold.
           label: Net sales
         orders:
           description: Number of placed orders.
           label: Orders
+        payments_count:
+          description: Number of successful charges.
+          label: Payments
+        payments_failed:
+          description: Number of charges that failed.
+          label: Failed payments
+        payments_received:
+          description: Money successfully taken, counted when the payment was made.
+          label: Payments received
+        payments_refunded:
+          description: Money refunded through these payments.
+          label: Payments refunded
         returns:
           description: Money refunded, counted in the period the refund was issued.
           label: Returns
+        sell_through:
+          description: Units shipped as a share of units received.
+          label: Sell-through
         seller_payout:
           description: What the sellers are owed on these sales, after commission.
           label: Seller payout
@@ -1776,6 +1822,15 @@ en:
         total_sales:
           description: Net sales plus shipping, duties, fees and taxes. The money taken.
           label: Total sales
+        units_adjusted:
+          description: Units added or removed by stock corrections.
+          label: Units adjusted
+        units_received:
+          description: Units booked into stock.
+          label: Units received
+        units_shipped:
+          description: Units dispatched from stock.
+          label: Units shipped
         units_sold:
           description: Sum of line item quantities.
           label: Units sold
@@ -1809,6 +1864,9 @@ en:
         yesterday:
           label: Yesterday
       seeds:
+        failed_payments:
+          description: Charges that failed over the last four weeks, by payment method.
+          name: Failed payments
         first_time_vs_returning:
           description: Sales split between first-time and returning buyers over the last four weeks.
           name: First-time vs returning
@@ -1821,6 +1879,12 @@ en:
         orders_by_payment_status:
           description: Order counts and sales grouped by payment status over the last four weeks.
           name: Orders by payment status
+        payments_by_method:
+          description: What each payment method took, net of refunds, over the last four weeks.
+          name: Payments by method
+        payments_over_time:
+          description: Daily payments taken and refunded over the last four weeks, compared with the previous period.
+          name: Payments over time
         product_margin:
           description: Products ranked by gross profit over the last four weeks, with cost and margin.
           name: Product margin
@@ -1839,9 +1903,15 @@ en:
         sales_over_time:
           description: Daily sales, orders and average order value for the last four weeks, compared with the previous period.
           name: Sales over time
+        sell_through_by_variant:
+          description: Units shipped against units received per variant over the last four weeks.
+          name: Sell-through by variant
         seller_payouts:
           description: What each seller earned last month, after the marketplace commission.
           name: Seller payouts
+        stock_movement_over_time:
+          description: Weekly units received and shipped over the last twelve months.
+          name: Stock movement over time
         top_categories:
           description: Best-selling categories by net sales over the last four weeks.
           name: Top categories

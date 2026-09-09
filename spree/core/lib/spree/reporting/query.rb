@@ -272,12 +272,26 @@ module Spree
       # :orders-based metrics cannot be grouped or filtered by :line_items
       # dimensions (order totals per product/category would double count).
       def validate_bases!
+        validate_one_family!
+
         incompatible = referenced_dimensions.reject { |d| metrics.all? { |m| registry.compatible?(m, d) } }
         return if incompatible.empty?
 
         offenders = metrics.reject { |m| incompatible.all? { |d| registry.compatible?(m, d) } }
         raise InvalidQuery,
               "metrics #{offenders.map(&:name).join(', ')} cannot be grouped by #{incompatible.map(&:name).join(', ')}"
+      end
+
+      # Sales, payments and inventory answer different questions on different
+      # clocks — a payment total beside a units-received count is two reports
+      # wearing one table. The refusal names the families so a caller can split
+      # the query rather than guess why it was rejected.
+      def validate_one_family!
+        families = aggregated_metrics.map { |metric| registry.family_of(metric) }.uniq
+        return if families.size <= 1
+
+        raise InvalidQuery,
+              "metrics from different families cannot be combined in one query: #{families.sort.join(', ')}"
       end
     end
   end

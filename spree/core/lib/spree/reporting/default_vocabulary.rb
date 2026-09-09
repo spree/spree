@@ -60,8 +60,60 @@ module Spree
                       WHERE c.line_item_id = %{line_items}.id), 0))
       SQL
 
+      # A payment's own refunds, so "what we gave back" is attributed to the
+      # instrument that took the money rather than to the order.
+      PAYMENTS_COMPLETED_SUM = "SUM(CASE WHEN %{payments}.status = 'completed' THEN %{payments}.amount ELSE 0 END)".freeze
+      PAYMENTS_REFUNDED_SUM = <<~SQL.squish.freeze
+        SUM(COALESCE((SELECT SUM(pr.amount) FROM %{refunds} pr
+                      WHERE pr.payment_id = %{payments}.id), 0))
+      SQL
+
+      # One movement kind's quantity. The kind carries the direction, so
+      # summing across kinds would net a receipt against a dispatch.
+      def self.movement_sum(kind)
+        "SUM(CASE WHEN %{stock_movements}.kind = '#{kind}' THEN %{stock_movements}.quantity ELSE 0 END)"
+      end
+
       def self.install(registry)
         registry.instance_eval do
+          # ---- bases ----
+          #
+          # Two families, because they answer different questions. Sales money
+          # is anchored on when an order completed; a payment is anchored on
+          # when it was taken, and inventory on when stock moved. Mixing them
+          # in one row would put three different clocks in one table.
+
+          base :orders, family: :sales, table: '%{orders}',
+               time_column: '%{orders}.completed_at',
+               relation: lambda { |store, range, currency|
+                 store.orders.not_canceled.where(currency: currency, completed_at: range)
+               }
+
+          base :line_items, family: :sales, table: '%{line_items}', reaches: %i[line_items orders],
+               time_column: '%{orders}.completed_at',
+               relation: lambda { |store, range, currency|
+                 store.line_items.merge(Spree::Order.not_canceled).
+                   where(Spree::Order.table_name => { currency: currency, completed_at: range })
+               }
+
+          # A payment carries no completion timestamp, so it is anchored on
+          # when the row was created — near enough to when the money moved, and
+          # the only honest answer the schema can publish.
+          base :payments, family: :payments, table: '%{payments}',
+               time_column: '%{payments}.created_at',
+               relation: lambda { |store, range, _currency|
+                 store.payments.where(created_at: range)
+               }
+
+          # The movement table carries no store of its own; tenancy is the walk
+          # through stock level → variant → product, which `for_store` owns.
+          base :stock_movements, family: :inventory, table: '%{stock_movements}', reaches: %i[stock_movements],
+               time_column: '%{stock_movements}.created_at',
+               relation: lambda { |store, range, _currency|
+                 Spree::StockMovement.for_store(store).
+                   where(Spree::StockMovement.table_name => { created_at: range })
+               }
+
           # ---- the sales chain ----
           #
           # gross_sales - discounts - returns = net_sales
@@ -125,6 +177,35 @@ module Spree
                  sql: "SUM(%{line_items}.pre_tax_amount) - #{LINE_ITEM_REFUNDS_SUBQUERY} - #{SELLER_COMMISSION_SUBQUERY}",
                  base: :line_items, format: :money,
                  subject: -> { Spree::SellerTransfer }, key_scope: 'read_payouts'
+
+          # ---- payments ----
+          #
+          # What was actually taken and given back, by the instrument that
+          # moved it. Anchored on when the payment row was created, not on the
+          # order's completion — a balance paid weeks later belongs to the week
+          # it was paid.
+
+          metric :payments_received, sql: PAYMENTS_COMPLETED_SUM, base: :payments, format: :money
+          metric :payments_refunded, sql: PAYMENTS_REFUNDED_SUM, base: :payments, format: :money
+          metric :net_payments, sql: "#{PAYMENTS_COMPLETED_SUM} - #{PAYMENTS_REFUNDED_SUM}",
+                                base: :payments, format: :money
+          metric :payments_count, sql: "COUNT(CASE WHEN %{payments}.status = 'completed' THEN 1 END)",
+                                  base: :payments, format: :integer
+          metric :payments_failed, sql: "COUNT(CASE WHEN %{payments}.status = 'failed' THEN 1 END)",
+                                   base: :payments, format: :integer
+
+          # ---- inventory ----
+          #
+          # Movement of stock, from the typed ledger. The kind carries the
+          # direction, so each metric sums one kind rather than raw quantity —
+          # `received` and `shipped` are both positive rows.
+
+          metric :units_received, sql: DefaultVocabulary.movement_sum('received'), base: :stock_movements, format: :integer
+          metric :units_shipped, sql: DefaultVocabulary.movement_sum('shipped'), base: :stock_movements, format: :integer
+          metric :units_adjusted, sql: DefaultVocabulary.movement_sum('adjusted'), base: :stock_movements, format: :integer
+          # What share of what arrived has left again. Both terms are counts of
+          # the same unit, so this reads as a percentage.
+          metric :sell_through, ratio: %i[units_shipped units_received], format: :percent
 
           dimension :completed_at, base: :orders, column: :completed_at, type: :time, grains: %i[day week month]
           dimension :payment_status, base: :orders, column: :payment_status,
@@ -241,6 +322,59 @@ module Spree
                             price: (Spree::Money.new(amount, currency: currency).to_s if amount)
                           }
                         }]
+                      end
+                    }
+
+          # ---- payment axes ----
+
+          dimension :payment_method, base: :payments, column: :payment_method_id, lookup: :payment_method,
+                    subject: -> { Spree::PaymentMethod }, key_scope: 'read_settings',
+                    resolve: ->(store, value) { store.payment_methods.find_by_prefix_id!(value).id },
+                    hydrate: lambda { |store, ids, _params|
+                      store.payment_methods.where(id: ids).to_h do |method|
+                        [method.id, { id: method.prefixed_id, label: method.name, meta: { type: method.type } }]
+                      end
+                    }
+
+          # Distinct from the order-level `payment_status`, which says how much
+          # of an order is paid; this says whether one charge went through.
+          dimension :payment_result, base: :payments, column: :status,
+                    values: -> { Spree::Payment.statuses }
+
+          dimension :paid_at, base: :payments, column: :created_at, type: :time,
+                    grains: %i[day week month]
+
+          # ---- inventory axes ----
+
+          dimension :moved_at, base: :stock_movements, column: :created_at, type: :time,
+                    grains: %i[day week month]
+
+          dimension :movement_kind, base: :stock_movements, column: :kind,
+                    values: -> { Spree::StockMovement::KINDS }
+
+          # Reached through the movement's stock level, which is also how the
+          # base scopes itself to the store.
+          dimension :moved_variant, base: :stock_movements, column: '%{stock_levels}.variant_id',
+                    joins: [:stock_level], lookup: :variant,
+                    subject: -> { Spree::Product }, key_scope: 'read_products',
+                    resolve: ->(store, value) { store.variants.find_by_prefix_id!(value).id },
+                    hydrate: lambda { |store, ids, _params|
+                      store.variants.where(id: ids).includes(:product, option_values: :option_type).to_h do |variant|
+                        [variant.id, {
+                          id: variant.prefixed_id,
+                          label: variant.descriptive_name,
+                          meta: { sku: variant.sku, product_id: variant.product&.prefixed_id }
+                        }]
+                      end
+                    }
+
+          dimension :stock_location, base: :stock_movements, column: '%{stock_levels}.stock_location_id',
+                    joins: [:stock_level], lookup: :stock_location,
+                    subject: -> { Spree::StockLocation }, key_scope: 'read_stock',
+                    resolve: ->(store, value) { store.stock_locations.find_by_prefix_id!(value).id },
+                    hydrate: lambda { |store, ids, _params|
+                      store.stock_locations.where(id: ids).to_h do |location|
+                        [location.id, { id: location.prefixed_id, label: location.name, meta: {} }]
                       end
                     }
         end

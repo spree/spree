@@ -19,6 +19,7 @@ export type {
   ReportingRow,
   ReportingSchema,
   ReportingSchemaDimension,
+  ReportingSchemaFamily,
   ReportingSchemaMetric,
 } from './admin-client'
 // Admin client class (for advanced use / subclassing)

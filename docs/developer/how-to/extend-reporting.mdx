@@ -22,7 +22,8 @@ questions, register vocabulary instead.
 
 ## Add a metric
 
-A metric is an aggregate over `:orders` or `:line_items`:
+A metric is an aggregate over one registered base — `:orders`, `:line_items`,
+`:payments` or `:stock_movements`:
 
 ```ruby config/initializers/spree.rb
 Rails.application.config.after_initialize do
@@ -167,19 +168,27 @@ including the seeded ones. Prefer a new name unless you intend exactly that.
 
 These are limits of the compiler, not of registration:
 
-- **Only `:orders` and `:line_items` are valid bases.** A metric over
-  payments or stock movements is refused at query time.
-- **Only six tables interpolate.** `%{orders}`, `%{line_items}`,
-  `%{variants}`, `%{products}`, `%{addresses}`, `%{product_categories}`.
-  Naming your own table raises inside the adapter.
+- **The `%{table}` map is fixed.** Registering a base over your own table
+  needs an entry added to the adapter's interpolation map — the one place a
+  new table still has to be named in core.
 - **A dimension's column must be a plain identifier.** Computed groupings
   such as `SUBSTR(email, ...)` are refused; add a real column, or a database
   view, if you need one.
 - **Custom `lookup` values fall back to an ID input** in the builder, since
   the dashboard maps known lookups to pickers.
 
-If your data does not hang off orders or line items, reporting cannot reach it
-today without a core change.
+Registering a base is otherwise ordinary: declare its family, its table, a
+store-scoped relation, its time column and which bases its dimensions reach.
+
+```ruby
+Spree.reporting.base :subscriptions, family: :subscriptions,
+  table: '%{subscriptions}',
+  time_column: '%{subscriptions}.created_at',
+  relation: ->(store, range, _currency) { store.subscriptions.where(created_at: range) }
+```
+
+Give it its own family unless its rows genuinely answer the same question, on
+the same clock, as an existing one.
 
 ## Related
 

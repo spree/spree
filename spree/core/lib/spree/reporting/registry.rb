@@ -74,15 +74,65 @@ module Spree
       end
     end
 
+    # A relation metrics aggregate over, and the family it belongs to.
+    #
+    # Bases exist because the things a store measures sit at different grains:
+    # an order has no payment method, a payment has no line items, a stock
+    # movement has neither a customer nor a currency. A base names one grain,
+    # says how to reach it store-scoped, and declares which family it can be
+    # queried alongside.
+    #
+    # @!attribute family
+    #   Bases sharing a family combine in one query (:orders and :line_items
+    #   both answer questions about sales). Bases in different families never
+    #   do — the query refuses the mix rather than inventing a join between
+    #   grains that have no honest relationship.
+    # @!attribute relation
+    #   ->(store, range, currency) returning the store-scoped, range-filtered
+    #   relation. Money bases filter the currency; countable ones ignore it.
+    # @!attribute table
+    #   The base's own table, as a %{placeholder}. Where a bare `column:`
+    #   symbol on one of its dimensions is read from. Deliberately separate
+    #   from time_column: a line item's clock lives on its order.
+    # @!attribute time_column
+    #   Table-qualified column the range filters on, named in the schema so a
+    #   caller knows what "last 30 days" means for this base.
+    # @!attribute reaches
+    #   Bases whose dimensions this one can group by, itself included. An
+    #   :orders dimension is reachable from :line_items through the order join;
+    #   not the reverse.
+    Base = Struct.new(:name, :family, :table, :relation, :time_column, :reaches, keyword_init: true) do
+      def reaches?(dimension_base) = Array(reaches).include?(dimension_base)
+    end
+
     # Allowlist of queryable metrics + dimensions. One global instance lives at
     # `Spree.reporting`; core seeds the starter vocabulary in the engine
     # initializer and applications/extensions append theirs in initializer files.
     class Registry
-      attr_reader :metrics, :dimensions
+      attr_reader :metrics, :dimensions, :bases
 
       def initialize
         @metrics = {}
         @dimensions = {}
+        @bases = {}
+      end
+
+      # @param name [Symbol]
+      # @param family [Symbol] bases sharing a family combine in one query
+      # @param table [String] the base's own table as a %{placeholder}
+      # @param relation [Proc] ->(store, range, currency) → store-scoped relation
+      # @param time_column [String] table-qualified column the range filters on
+      # @param reaches [Array<Symbol>] bases whose dimensions this one can group by
+      def base(name, replace: false, family:, table:, relation:, time_column:, reaches: nil)
+        name = name.to_sym
+        raise ArgumentError, "base #{name} already registered (pass replace: true to override)" if @bases.key?(name) && !replace
+
+        @bases[name] = Base.new(name: name, family: family, table: table, relation: relation,
+                                time_column: time_column, reaches: reaches || [name])
+      end
+
+      def base!(name)
+        @bases[name.to_sym] || raise(UnknownMember.new(:base, name, @bases.keys))
       end
 
       def metric(name, replace: false, **opts)
@@ -119,19 +169,35 @@ module Spree
         @dimensions[name.to_sym] || raise(UnknownMember.new(:dimension, name, @dimensions.keys))
       end
 
-      # Whether a metric can be grouped or filtered by a dimension: order-based
-      # dimensions suit every metric, line-item dimensions only metrics whose
-      # aggregated components all live on line items (order totals per product
-      # would double count). The single rule the schema and the compiler share.
+      # Whether a metric can be grouped or filtered by a dimension: every
+      # aggregated component of the metric must sit on a base that reaches the
+      # dimension's base. Order totals per product would double count, so
+      # :orders does not reach :line_items; the reverse holds through the order
+      # join. The single rule the schema and the compiler share.
       #
       # @param metric [Metric]
       # @param dimension [Dimension]
       # @return [Boolean]
       def compatible?(metric, dimension)
-        return true if dimension.base == :orders
+        components(metric).all? { |component| base!(component.base).reaches?(dimension.base) }
+      end
 
-        components = metric.derived? ? metric.ratio.map { |name| metric!(name) } : [metric]
-        components.all? { |component| component.base == :line_items }
+      # Whether two bases can appear in one query. Sales metrics combine with
+      # each other; a payment total beside a units-received count is two
+      # different questions wearing one answer, so the query refuses it.
+      def same_family?(one, other)
+        base!(one).family == base!(other).family
+      end
+
+      # A derived metric aggregates nothing itself — its components do.
+      def components(metric)
+        metric.derived? ? metric.ratio.map { |name| metric!(name) } : [metric]
+      end
+
+      # The family a metric belongs to, read through its components so a
+      # derived metric answers with its ingredients' family rather than nil.
+      def family_of(metric)
+        base!(components(metric).first.base).family
       end
 
     end

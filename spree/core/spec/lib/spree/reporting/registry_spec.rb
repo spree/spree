@@ -49,4 +49,35 @@ RSpec.describe Spree::Reporting::Registry do
       expect(Spree.reporting.dimension!(:product).lookup).to eq(:product)
     end
   end
+
+  describe 'bases' do
+    it 'registers a base with the shape the how-to guide documents' do
+      registry = described_class.new
+      registry.base :subscriptions, family: :subscriptions, table: '%{subscriptions}',
+                    time_column: '%{subscriptions}.created_at',
+                    relation: ->(store, range, _currency) { store.orders.where(created_at: range) }
+
+      base = registry.base!(:subscriptions)
+      expect(base.family).to eq(:subscriptions)
+      # A base reaches only itself unless it says otherwise.
+      expect(base.reaches?(:subscriptions)).to be true
+      expect(base.reaches?(:orders)).to be false
+    end
+
+    it 'groups core bases into the three families that never mix' do
+      families = Spree.reporting.bases.values.group_by(&:family).transform_values { |b| b.map(&:name).sort }
+
+      expect(families[:sales]).to eq(%i[line_items orders])
+      expect(families[:payments]).to eq(%i[payments])
+      expect(families[:inventory]).to eq(%i[stock_movements])
+    end
+
+    it 'reads a line item axis from line items, never from the order its clock lives on' do
+      # The two were conflated while bases were hardcoded, which silently read
+      # every line-item dimension off spree_orders.
+      line_items = Spree.reporting.base!(:line_items)
+      expect(line_items.table).to include('line_items')
+      expect(line_items.time_column).to include('orders')
+    end
+  end
 end

@@ -62,8 +62,19 @@ without a dashboard change.
 
 ## Metrics
 
-A metric is an aggregate over one **base** relation, either `:orders` or
-`:line_items`:
+A metric is an aggregate over one **base** relation. Core registers four, in
+three families:
+
+| Family | Bases | Anchored on |
+|--------|-------|-------------|
+| `sales` | `:orders`, `:line_items` | when the order completed |
+| `payments` | `:payments` | when the payment was taken |
+| `inventory` | `:stock_movements` | when the stock moved |
+
+A query draws from **one family only**. The three answer different questions on
+different clocks, so a payment total beside a units-received count is two
+reports wearing one table — the query refuses the mix rather than inventing a
+join between grains that have no honest relationship.
 
 ```ruby
 Spree.reporting.metric :total_sales,
@@ -123,7 +134,7 @@ Spree.reporting.dimension :channel, base: :orders, column: :channel_id,
 
 | Option | Purpose |
 |--------|---------|
-| `base` | `:orders` or `:line_items`. Order-level dimensions are reachable from line items through the order join; not the reverse. |
+| `base` | Which relation this axis belongs to. A base declares which other bases it reaches: `:line_items` reaches `:orders` through the order join, not the reverse. |
 | `column` | A column on the base table, or a `%{table}.column` string. Must resolve to a plain identifier. |
 | `expression` | SQL computing the key instead of reading a column — how `customer_type` decides first-time from returning. Use it only where a column genuinely cannot answer; it carries the same trust as a metric's `sql`. |
 | `joins` | Association joins the grouping needs, applied only to the grouped query. |
@@ -200,18 +211,18 @@ metrics and dimensions instead. See
 
 Worth knowing before you design an extension:
 
-- **Two bases only.** Metrics aggregate over `:orders` or `:line_items`. A
-  metric declaring another base is refused at query time.
-- **Six interpolatable tables.** The `%{table}` map is fixed; naming a table
-  outside it raises inside the adapter.
+- **A new base is a registration, but a new table is not.** `registry.base`
+  adds a relation to query; the `%{table}` interpolation map is still fixed, so
+  a base over your own table needs an entry added to the adapter.
 - **Columns are identifiers, not expressions.** A dimension's `column` must
   resolve to `table.column`; computed groupings such as `SUBSTR(...)` are
   refused.
 - **The dashboard maps `lookup` to a picker from a fixed list.** A new lookup
   value still filters correctly, but through a plain ID input.
 
-Reporting on data outside orders and line items therefore needs a core change
-today, not just a registration.
+So a new axis or number over data core already knows is a registration; a base
+over a table core has never seen still needs one line in the adapter's table
+map.
 
 ## Related
 

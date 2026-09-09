@@ -26,6 +26,9 @@ module Spree
             timezone: (Time.find_zone(@store.preferred_timezone) || Time.zone).name,
             supported_currencies: @store.supported_currencies_list.map(&:iso_code)
           },
+          # Published so a builder can group the pickers and never offer a
+          # cross-family pair the query would refuse.
+          families: families(metrics),
           metrics: metrics.map { |m| metric_entry(m) },
           dimensions: dimensions.map { |d| dimension_entry(d, metrics) },
           time_range: {
@@ -47,9 +50,24 @@ module Spree
 
       private
 
+      # Each family with the members that belong to it, so a client can present
+      # sales, payments and inventory as the separate reports they are.
+      def families(metrics)
+        metrics.group_by { |metric| @registry.family_of(metric) }.map do |family, family_metrics|
+          {
+            name: family,
+            label: translate('families', family, :label),
+            metrics: family_metrics.map(&:name),
+            dimensions: @registry.dimensions.values.
+              select { |d| @allowed.call(d) && @registry.base!(d.base).family == family }.map(&:name)
+          }
+        end
+      end
+
       def metric_entry(metric)
         {
           name: metric.name,
+          family: @registry.family_of(metric),
           label: translate('metrics', metric.name, :label),
           description: translate('metrics', metric.name, :description),
           format: metric.format,

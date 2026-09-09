@@ -40,4 +40,24 @@ RSpec.describe Spree::Reporting::Schema do
     expect(names).to include(:channel, :completed_at)
     expect(names).not_to include(:product, :customer, :category, :variant)
   end
+
+  it 'groups members into the families that can be queried together' do
+    families = schema[:families].index_by { |f| f[:name] }
+
+    expect(families.keys).to contain_exactly(:sales, :payments, :inventory)
+    expect(families[:sales][:metrics]).to include(:net_sales, :total_sales, :average_order_value)
+    expect(families[:payments][:metrics]).to include(:net_payments)
+    expect(families[:payments][:dimensions]).to include(:payment_method, :paid_at)
+    expect(families[:inventory][:metrics]).to include(:units_received, :sell_through)
+    # A sales axis never appears under another family's dimensions.
+    expect(families[:inventory][:dimensions]).not_to include(:product)
+  end
+
+  it 'stamps each metric with its family, resolving derived ones through their components' do
+    by_name = schema[:metrics].index_by { |m| m[:name] }
+
+    expect(by_name[:net_sales][:family]).to eq(:sales)
+    expect(by_name[:average_order_value][:family]).to eq(:sales)
+    expect(by_name[:sell_through][:family]).to eq(:inventory)
+  end
 end

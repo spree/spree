@@ -73,6 +73,8 @@ export interface ReportingResult {
 
 export interface ReportingSchemaMetric {
   name: string
+  /** Metrics from different families cannot be combined in one query. */
+  family?: string
   label: string
   description?: string
   format: 'money' | 'integer' | 'decimal' | 'percent' | string
@@ -95,9 +97,18 @@ export interface ReportingSchemaDimension {
   compatible_metrics: string[]
 }
 
+/** Members that can be queried together: sales, payments, inventory. */
+export interface ReportingSchemaFamily {
+  name: string
+  label: string
+  metrics: string[]
+  dimensions: string[]
+}
+
 /** The self-describing contract, filtered to what the caller may reference. */
 export interface ReportingSchema {
   meta: { currency: string; timezone: string; supported_currencies: string[] }
+  families: ReportingSchemaFamily[]
   metrics: ReportingSchemaMetric[]
   dimensions: ReportingSchemaDimension[]
   time_range: {
