@@ -2010,8 +2010,8 @@ paths:
                 coupon_code:
                 item_total: '0.0'
                 display_item_total: "$0.00"
-                adjustment_total: '0.0'
-                display_adjustment_total: "$0.00"
+                adjustment_total: '17.0'
+                display_adjustment_total: "$17.00"
                 discount_total: '0.0'
                 display_discount_total: "$0.00"
                 tax_total: '0.0'
@@ -2020,16 +2020,16 @@ paths:
                 display_included_tax_total: "$0.00"
                 additional_tax_total: '0.0'
                 display_additional_tax_total: "$0.00"
-                total: '0.0'
-                display_total: "$0.00"
+                total: '17.0'
+                display_total: "$17.00"
                 gift_card_total: '0.0'
                 display_gift_card_total: "$0.00"
-                amount_due: '0.0'
-                display_amount_due: "$0.00"
+                amount_due: '17.0'
+                display_amount_due: "$17.00"
                 delivery_total: '0.0'
                 display_delivery_total: "$0.00"
-                fee_total: '0.0'
-                display_fee_total: "$0.00"
+                fee_total: '17.0'
+                display_fee_total: "$17.00"
                 store_credit_total: '0.0'
                 display_store_credit_total: "$0.00"
                 covered_by_store_credit: false
@@ -2044,13 +2044,31 @@ paths:
                   step: address
                   field: email
                   message: Email address is required
+                - code: payment_required
+                  step: payment
+                  field: payment
+                  message: Add a payment method
                 order_minimum:
                 order_minimum_shortfall:
                 below_order_minimum: false
                 freight_summary:
                 shipping_eq_billing_address: true
                 discounts: []
-                fees: []
+                fees:
+                - id: fee_UkLWZg9DAJ
+                  label: Gift wrapping
+                  kind: gift_wrap
+                  line_item_id:
+                  fulfillment_id:
+                  amount: '5.0'
+                  display_amount: "$5.00"
+                - id: fee_gbHJdmfrXB
+                  label: Import duty
+                  kind: duty
+                  line_item_id:
+                  fulfillment_id:
+                  amount: '12.0'
+                  display_amount: "$12.00"
                 items: []
                 fulfillments: []
                 payments: []
@@ -5665,8 +5683,8 @@ paths:
                 completed_at: '2026-01-15T12:00:00.000Z'
                 item_total: '10.0'
                 display_item_total: "$10.00"
-                adjustment_total: '0.0'
-                display_adjustment_total: "$0.00"
+                adjustment_total: '12.0'
+                display_adjustment_total: "$12.00"
                 discount_total: '0.0'
                 display_discount_total: "$0.00"
                 tax_total: '0.0'
@@ -5675,21 +5693,28 @@ paths:
                 display_included_tax_total: "$0.00"
                 additional_tax_total: '0.0'
                 display_additional_tax_total: "$0.00"
-                total: '110.0'
-                display_total: "$110.00"
+                total: '122.0'
+                display_total: "$122.00"
                 gift_card_total: '0.0'
                 display_gift_card_total: "$0.00"
-                amount_due: '110.0'
-                display_amount_due: "$110.00"
+                amount_due: '122.0'
+                display_amount_due: "$122.00"
                 delivery_total: '100.0'
                 display_delivery_total: "$100.00"
-                fee_total: '0.0'
-                display_fee_total: "$0.00"
+                fee_total: '12.0'
+                display_fee_total: "$12.00"
                 store_credit_total: '0.0'
                 display_store_credit_total: "$0.00"
                 covered_by_store_credit: false
                 discounts: []
-                fees: []
+                fees:
+                - id: fee_UkLWZg9DAJ
+                  label: Import duty
+                  kind: duty
+                  line_item_id:
+                  fulfillment_id:
+                  amount: '12.0'
+                  display_amount: "$12.00"
                 items:
                 - id: li_UkLWZg9DAJ
                   variant_id: variant_UkLWZg9DAJ
@@ -13100,6 +13125,16 @@ components:
           type: string
         kind:
           type: string
+          description: What sort of charge this is. `duty` is a customs duty on a
+            cross-border order and is not taxed; the other kinds are. Extensions may
+            register further kinds.
+          enum:
+          - surcharge
+          - handling
+          - gift_wrap
+          - cod
+          - payment
+          - duty
         line_item_id:
           type: string
           nullable: true

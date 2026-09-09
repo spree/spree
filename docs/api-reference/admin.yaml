@@ -39780,6 +39780,16 @@ components:
           type: string
         kind:
           type: string
+          description: What sort of charge this is. `duty` is a customs duty on a
+            cross-border order and is not taxed; the other kinds are. Extensions may
+            register further kinds.
+          enum:
+          - surcharge
+          - handling
+          - gift_wrap
+          - cod
+          - payment
+          - duty
         line_item_id:
           type: string
           nullable: true
