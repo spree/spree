@@ -539,7 +539,7 @@ RSpec.describe 'Admin Sellers API', type: :request, swagger_doc: 'api-reference/
 
         It records the settlement rather than sending money: the built-in
         provider waits to be told the bank transfer went out, which is
-        `PATCH /seller_payouts/{id}/complete`.
+        `PATCH /api/v3/admin/seller_payouts/{id}/complete`.
 
         Answers `422` when there is nothing to settle — no payout account,
         nothing unsettled, or a balance below the seller's minimum.

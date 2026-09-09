@@ -30,10 +30,10 @@ module Spree
                 # because another went through: the payout row exists and is
                 # failed or unresolved, and an operator reading "settled" would
                 # not know to go looking for it.
-                render json: {
-                  data: settled.map { |payout| serialize_payout(payout) },
-                  meta: failures.any? ? { failures: failures } : {}
-                }, status: :created
+                body = { data: settled.map { |payout| serialize_payout(payout) } }
+                body[:meta] = { failures: failures } if failures.any?
+
+                render json: body, status: :created
               elsif failures.any?
                 render_error(
                   code: ErrorHandler::ERROR_CODES[:validation_error],

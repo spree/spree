@@ -17781,7 +17781,7 @@ paths:
         accumulated since the last, on the seller's payout schedule. `pending`
         and `processing` rows are owed; `completed` ones reached the seller's
         bank. `transfers_count` says how many earnings a settlement covers —
-        list them with `GET /transfers?q[payout_id_eq]=…`.
+        list them with `GET /api/v3/seller/transfers?q[payout_id_eq]=…`.
 
         Read-only: a payout is created by the marketplace's sweep and
         confirmed by the payout provider or the operator.
