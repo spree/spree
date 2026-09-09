@@ -22,6 +22,16 @@ RSpec.describe Spree::Api::V3::Seller::ProfileController, type: :controller do
   end
 
   describe 'GET #show' do
+  # A seller keeps no clock of their own, so the panel reads timestamps in the
+  # marketplace's zone rather than in whichever one the browser sits in.
+  it "carries the store's timezone" do
+    store.update!(preferred_timezone: 'Europe/Warsaw')
+
+    get :show, as: :json
+
+    expect(json_response['preferred_timezone']).to eq('Europe/Warsaw')
+  end
+
     it 'returns the seller their own record' do
       get :show, as: :json
 

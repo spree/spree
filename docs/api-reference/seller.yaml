@@ -14003,6 +14003,7 @@ paths:
                 logo_url:
                 square_logo_url:
                 cover_photo_url:
+                preferred_timezone: UTC
                 status: approved
                 legal_name:
                 registration_number:
@@ -14075,6 +14076,7 @@ paths:
                 logo_url:
                 square_logo_url:
                 cover_photo_url:
+                preferred_timezone: UTC
                 status: approved
                 legal_name:
                 registration_number:
@@ -21192,6 +21194,9 @@ components:
         cover_photo_url:
           type: string
           nullable: true
+        preferred_timezone:
+          type: string
+          nullable: true
         status:
           anyOf:
           - type: string
@@ -21264,6 +21269,7 @@ components:
       - logo_url
       - square_logo_url
       - cover_photo_url
+      - preferred_timezone
       - status
       - legal_name
       - registration_number

@@ -320,6 +320,11 @@ module Spree
       set_external_id(provider.reference_system, account_reference)
     end
 
+    # A seller keeps no clock of their own: a date means whatever the
+    # marketplace says it means, so their panel reads timestamps in the
+    # store's zone rather than in whichever one their browser sits in.
+    delegate :preferred_timezone, to: :store, allow_nil: true
+
     # Sellers holding an account with one provider, for the reverse lookup a
     # provider webhook does — it knows the account, not the seller.
     #
