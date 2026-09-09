@@ -74,8 +74,9 @@ export function StockTransferForm({
   const sameLocation = !!sourceId && sourceId === destinationId
   // Lines were picked for the shelf they are leaving, so the source is fixed
   // once there are any: changing it would silently keep SKUs the new source
-  // may hold none of. Emptying the list frees it again.
-  const sourceLocked = lines.length > 0 && !!initial.sourceId
+  // may hold none of. Emptying the list frees it again. Applies while creating
+  // too — the picker filters by source there as well.
+  const sourceLocked = lines.length > 0
   const canSubmit =
     !!sourceId && !!destinationId && !sameLocation && lines.every((line) => line.quantity > 0)
 

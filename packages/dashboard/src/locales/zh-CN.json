@@ -5056,7 +5056,8 @@
         "failed_to_mark_in_transit": "标记调拨为在途失败",
         "failed_to_receive": "调拨收货失败",
         "failed_to_cancel": "取消调拨失败",
-        "not_editable": "该调拨已打包，内容已成为记录。如果不该发出，请取消它。"
+        "not_editable": "该调拨已打包，内容已成为记录。如果不该发出，请取消它。",
+        "failed_to_load": "无法加载该调拨。"
       },
       "messages": {
         "deleted": "调拨已删除",
@@ -5516,7 +5517,8 @@
         "failed_to_order": "下单失败",
         "failed_to_receive": "到货入库失败",
         "failed_to_cancel": "取消采购订单失败",
-        "not_editable": "该订单已发给供应商，其商品行是两家企业之间的约定。如果不该继续，请取消它。"
+        "not_editable": "该订单已发给供应商，其商品行是两家企业之间的约定。如果不该继续，请取消它。",
+        "failed_to_load": "无法加载该采购订单。"
       },
       "delete_confirm": {
         "title": "删除此采购订单？",

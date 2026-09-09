@@ -101,6 +101,19 @@ describe 'spree:upgrade inventory operations' do
         not_to change(Spree::PurchaseOrder, :count)
     end
 
+    # Signed rather than absolute: two rows that cancel each other out moved
+    # nothing, and a line of zero would fail validation and take the whole
+    # transfer down with it.
+    it 'drops a variant whose movements cancel out, rather than adding them up' do
+      transfer = legacy_external_receive(quantity: 5)
+      level = destination.stock_level(variant.id)
+      level.stock_movements.create!(quantity: -5, kind: 'adjusted', stock_transfer: transfer,
+                                   reason: 'Counted back out at the time')
+
+      expect { run_task }.not_to change(Spree::PurchaseOrder, :count)
+      expect(Spree::StockTransfer.find(transfer.id)).to be_present
+    end
+
     it 'skips a receive whose movements no longer name a variant' do
       transfer = create(:stock_transfer, store: store, destination_location: destination, quantity: 0)
       transfer.update_columns(source_location_id: nil, status: nil)

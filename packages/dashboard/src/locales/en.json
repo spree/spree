@@ -5065,7 +5065,8 @@
         "failed_to_mark_in_transit": "Failed to mark the transfer in transit",
         "failed_to_receive": "Failed to receive the transfer",
         "failed_to_cancel": "Failed to cancel the transfer",
-        "not_editable": "This transfer has been packed, so what is in it is now a matter of record. Cancel it if it should not go."
+        "not_editable": "This transfer has been packed, so what is in it is now a matter of record. Cancel it if it should not go.",
+        "failed_to_load": "This transfer could not be loaded."
       },
       "messages": {
         "deleted": "Transfer deleted",
@@ -5527,7 +5528,8 @@
         "failed_to_order": "Failed to place the purchase order",
         "failed_to_receive": "Failed to book in the delivery",
         "failed_to_cancel": "Failed to cancel the purchase order",
-        "not_editable": "This order has gone to the supplier, so its lines are a matter of record between two businesses. Cancel it if it should not stand."
+        "not_editable": "This order has gone to the supplier, so its lines are a matter of record between two businesses. Cancel it if it should not stand.",
+        "failed_to_load": "This purchase order could not be loaded."
       },
       "delete_confirm": {
         "title": "Delete this purchase order?",

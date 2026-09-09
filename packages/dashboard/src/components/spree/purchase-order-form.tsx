@@ -89,12 +89,18 @@ export function PurchaseOrderForm({
   const [notes, setNotes] = useState(initial.notes)
   const [lines, setLines] = useState<VariantLine[]>(initial.lines)
 
+  // A cleared cost input is not zero — it is nothing, which the server rejects
+  // field-by-field. `Number('')` is 0 and finite, so the emptiness has to be
+  // checked before the number is.
+  const hasCost = (value?: string) => {
+    const trimmed = value?.trim()
+    return !!trimmed && Number.isFinite(Number(trimmed)) && Number(trimmed) >= 0
+  }
+
   const canSubmit =
     !!supplierId &&
     !!destinationId &&
-    // A cleared cost input is not zero — it is nothing, which the server
-    // rejects field-by-field. Catch it here, where the field is.
-    lines.every((line) => line.quantity > 0 && Number.isFinite(Number(line.unitCost)))
+    lines.every((line) => line.quantity > 0 && hasCost(line.unitCost))
 
   return (
     <>

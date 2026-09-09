@@ -7,6 +7,7 @@ import {
   CardHeader,
   CardTitle,
   DropdownMenuItem,
+  ErrorState,
   RelativeTime,
   Table,
   TableBody,
@@ -41,10 +42,22 @@ export const Route = createFileRoute(
 function PurchaseOrderDetailPage() {
   const { t } = useTranslation()
   const { purchaseOrderId } = Route.useParams()
-  const { data: purchaseOrder, isLoading } = usePurchaseOrder(purchaseOrderId)
+  const { data: purchaseOrder, isLoading, error, refetch } = usePurchaseOrder(purchaseOrderId)
 
-  if (isLoading || !purchaseOrder) {
+  if (isLoading) {
     return <div className="p-4 text-sm text-muted-foreground">{t('admin.common.loading')}</div>
+  }
+
+  // A failed request is not a slow one: without this the screen shows
+  // "Loading…" for as long as the merchant is willing to look at it.
+  if (error || !purchaseOrder) {
+    return (
+      <ErrorState
+        title={t('admin.purchase_orders.errors.failed_to_load')}
+        error={error as Error | undefined}
+        onRetry={() => refetch()}
+      />
+    )
   }
 
   return (

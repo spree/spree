@@ -5065,7 +5065,8 @@
         "failed_to_mark_in_transit": "Umlagerung konnte nicht als unterwegs markiert werden",
         "failed_to_receive": "Wareneingang konnte nicht gebucht werden",
         "failed_to_cancel": "Umlagerung konnte nicht abgebrochen werden",
-        "not_editable": "Diese Umbuchung ist gepackt, ihr Inhalt ist damit dokumentiert. Storniere sie, wenn sie nicht gehen soll."
+        "not_editable": "Diese Umbuchung ist gepackt, ihr Inhalt ist damit dokumentiert. Storniere sie, wenn sie nicht gehen soll.",
+        "failed_to_load": "Diese Umbuchung konnte nicht geladen werden."
       },
       "messages": {
         "deleted": "Umlagerung gelöscht",
@@ -5527,7 +5528,8 @@
         "failed_to_order": "Bestellung konnte nicht aufgegeben werden",
         "failed_to_receive": "Lieferung konnte nicht eingebucht werden",
         "failed_to_cancel": "Bestellung konnte nicht abgebrochen werden",
-        "not_editable": "Diese Bestellung liegt beim Lieferanten, ihre Positionen sind damit verbindlich. Storniere sie, wenn sie nicht gelten soll."
+        "not_editable": "Diese Bestellung liegt beim Lieferanten, ihre Positionen sind damit verbindlich. Storniere sie, wenn sie nicht gelten soll.",
+        "failed_to_load": "Diese Bestellung konnte nicht geladen werden."
       },
       "delete_confirm": {
         "title": "Diese Bestellung löschen?",

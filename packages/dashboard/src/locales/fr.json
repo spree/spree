@@ -5065,7 +5065,8 @@
         "failed_to_mark_in_transit": "Impossible de marquer le transfert en transit",
         "failed_to_receive": "Échec de la réception du transfert",
         "failed_to_cancel": "Échec de l'annulation du transfert",
-        "not_editable": "Ce transfert est emballé : son contenu fait désormais foi. Annulez-le s'il ne doit pas partir."
+        "not_editable": "Ce transfert est emballé : son contenu fait désormais foi. Annulez-le s'il ne doit pas partir.",
+        "failed_to_load": "Ce transfert n'a pas pu être chargé."
       },
       "messages": {
         "deleted": "Transfert supprimé",
@@ -5527,7 +5528,8 @@
         "failed_to_order": "Échec du passage de la commande",
         "failed_to_receive": "Échec de l'enregistrement de la livraison",
         "failed_to_cancel": "Échec de l'annulation du bon de commande",
-        "not_editable": "Ce bon est parti chez le fournisseur : ses lignes engagent les deux parties. Annulez-le s'il ne doit pas tenir."
+        "not_editable": "Ce bon est parti chez le fournisseur : ses lignes engagent les deux parties. Annulez-le s'il ne doit pas être maintenu.",
+        "failed_to_load": "Ce bon de commande n'a pas pu être chargé."
       },
       "delete_confirm": {
         "title": "Supprimer ce bon de commande ?",

@@ -97,13 +97,22 @@ module Spree
 
     # One line per variant, summing the movements that named it: a 5.x receive
     # of five SKUs is five movement rows whose only link is the transfer.
+    #
+    # Signed, so rows that offset each other total what they actually moved.
+    # A variant summing to zero is dropped — it received nothing, and a line
+    # of zero would fail validation and take the whole transfer with it. A
+    # negative total is left alone deliberately: the line then refuses to
+    # validate and the transfer is skipped for someone to look at, which is
+    # the right answer for a receive that reads as a dispatch.
     def lines_from(movements)
-      movements.each_with_object({}) do |movement, lines|
+      totals = movements.each_with_object({}) do |movement, lines|
         variant_id = movement.stock_level&.variant_id
         next if variant_id.nil?
 
-        lines[variant_id] = lines.fetch(variant_id, 0) + movement.quantity.abs
+        lines[variant_id] = lines.fetch(variant_id, 0) + movement.quantity
       end
+
+      totals.reject { |_variant_id, quantity| quantity.zero? }
     end
 
     def supplier_for(store)

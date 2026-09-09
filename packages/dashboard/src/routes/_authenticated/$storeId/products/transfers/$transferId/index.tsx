@@ -7,6 +7,7 @@ import {
   CardHeader,
   CardTitle,
   DropdownMenuItem,
+  ErrorState,
   RelativeTime,
   Select,
   SelectContent,
@@ -49,10 +50,22 @@ export const Route = createFileRoute('/_authenticated/$storeId/products/transfer
 function StockTransferDetailPage() {
   const { t } = useTranslation()
   const { transferId } = Route.useParams()
-  const { data: transfer, isLoading } = useStockTransfer(transferId)
+  const { data: transfer, isLoading, error, refetch } = useStockTransfer(transferId)
 
-  if (isLoading || !transfer) {
+  if (isLoading) {
     return <div className="p-4 text-sm text-muted-foreground">{t('admin.common.loading')}</div>
+  }
+
+  // A failed request is not a slow one: without this the screen shows
+  // "Loading…" for as long as the merchant is willing to look at it.
+  if (error || !transfer) {
+    return (
+      <ErrorState
+        title={t('admin.stock_transfers.errors.failed_to_load')}
+        error={error as Error | undefined}
+        onRetry={() => refetch()}
+      />
+    )
   }
 
   return (

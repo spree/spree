@@ -5123,7 +5123,8 @@
         "failed_to_mark_in_transit": "Nie udało się oznaczyć przesunięcia jako w drodze",
         "failed_to_receive": "Nie udało się przyjąć przesunięcia",
         "failed_to_cancel": "Nie udało się anulować przesunięcia",
-        "not_editable": "Ten transfer jest zapakowany, więc jego zawartość jest już zapisem. Anuluj go, jeśli nie ma jechać."
+        "not_editable": "Ten transfer jest zapakowany, więc jego zawartość jest już zapisem. Anuluj go, jeśli nie ma jechać.",
+        "failed_to_load": "Nie udało się wczytać tego transferu."
       },
       "messages": {
         "deleted": "Przesunięcie usunięte",
@@ -5589,7 +5590,8 @@
         "failed_to_order": "Nie udało się złożyć zamówienia",
         "failed_to_receive": "Nie udało się zaksięgować dostawy",
         "failed_to_cancel": "Nie udało się anulować zamówienia zakupu",
-        "not_editable": "To zamówienie trafiło do dostawcy, więc jego pozycje wiążą obie strony. Anuluj je, jeśli nie ma obowiązywać."
+        "not_editable": "To zamówienie trafiło do dostawcy, więc jego pozycje wiążą obie strony. Anuluj je, jeśli nie ma obowiązywać.",
+        "failed_to_load": "Nie udało się wczytać tego zamówienia."
       },
       "delete_confirm": {
         "title": "Usunąć to zamówienie zakupu?",
