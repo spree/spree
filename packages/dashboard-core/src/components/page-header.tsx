@@ -171,7 +171,10 @@ export function PageHeader({
         // so it yields space to the actions instead of pushing them onto a
         // second row — a page with only a Save button was spending two rows
         // of a short viewport on chrome.
-        'sticky top-header-height z-20 -mx-4 -mt-4 flex flex-row items-start gap-2 bg-background/90 backdrop-blur supports-[backdrop-filter]:bg-background/75 px-4 pt-4 pb-3 sm:gap-3 lg:-mx-6 lg:-mt-6 lg:px-6 lg:pt-6',
+        // Opaque for the same reason as the top bar: this band pins over the
+        // page's own scrolling content, so a translucent fill lets that content
+        // ghost through it.
+        'sticky top-header-height z-20 -mx-4 -mt-4 flex flex-row items-start gap-2 bg-background px-4 pt-4 pb-3 sm:gap-3 lg:-mx-6 lg:-mt-6 lg:px-6 lg:pt-6',
         // `translate` is listed explicitly: Tailwind v4 compiles
         // `-translate-y-*` to the standalone `translate` property, so a
         // `transform`-only transition never animates it and the header would

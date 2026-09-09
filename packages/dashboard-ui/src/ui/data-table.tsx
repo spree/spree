@@ -216,7 +216,7 @@ function TableBody({ className, ...props }: React.ComponentProps<'tbody'>) {
 
 function TableRow({ className, ...props }: React.ComponentProps<'tr'>) {
   return (
-    <tr className={cn('group/row hover:bg-accent/25 last:*:border-b-0', className)} {...props} />
+    <tr className={cn('group/row hover:bg-accent/70 last:*:border-b-0', className)} {...props} />
   )
 }
 

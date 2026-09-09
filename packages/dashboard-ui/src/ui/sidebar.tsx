@@ -337,9 +337,17 @@ function SidebarRail({ className, ...props }: React.ComponentProps<'button'>) {
   )
 }
 
-function SidebarInset({ className, ...props }: React.ComponentProps<'main'>) {
+function SidebarInset({ className, id = 'main-content', ...props }: React.ComponentProps<'main'>) {
   return (
     <main
+      // The skip link's target. Defaulted here rather than set by each host so
+      // the link cannot point at nothing.
+      id={id}
+      // `-1`: a container is not normally focusable, but the skip link has to
+      // be able to move focus here — without it the browser scrolls to the
+      // anchor and leaves focus behind in the nav, so the next Tab continues
+      // through the sidebar the user just asked to skip.
+      tabIndex={-1}
       data-slot="sidebar-inset"
       className={cn(
         // `min-w-0`: `w-full` sets the flex basis to the wrapper's full width,

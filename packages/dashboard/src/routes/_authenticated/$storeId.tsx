@@ -5,6 +5,7 @@ import {
   MobileBreadcrumbBar,
   SettingsNavSheet,
   SettingsSidebar,
+  SkipLink,
   StickyHeaderProvider,
   StoreProvider,
   TopBar,
@@ -83,6 +84,9 @@ function StoreShell({ inSettings }: { inSettings: boolean }) {
 
   return (
     <>
+      {/* First in the tab order by construction — it has to precede the
+          sidebar's thirty-odd links to be able to skip them. */}
+      <SkipLink />
       <AppSidebar />
       {/* `flex-row` so the secondary sidebar can sit flush against the
           primary and span full height. The TopBar moves into the content

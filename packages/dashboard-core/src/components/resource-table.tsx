@@ -145,6 +145,12 @@ interface ResourceTableProps<T> {
   searchParams: ResourceSearch
   /** Title displayed in the toolbar header. Overrides the table definition's title. */
   title?: string
+  /**
+   * Heading level for the title. Defaults to `h1`, which is right for a list
+   * page — the table is the whole page. Drop to `h2`/`h3` when the table is a
+   * panel inside a page that already has its own `h1`.
+   */
+  titleAs?: 'h1' | 'h2' | 'h3'
   /** One line under the title. Overrides the table definition's description. */
   description?: string
   /** Docs for the feature, linked after the description. Overrides the table definition's. */
@@ -209,6 +215,7 @@ export function ResourceTable<T extends Record<string, any>>({
   queryFn,
   searchParams,
   title,
+  titleAs,
   description,
   docsPath,
   defaultParams,
@@ -503,6 +510,7 @@ export function ResourceTable<T extends Record<string, any>>({
         onFiltersChange={handleFiltersChange}
         allColumns={allColumns}
         title={title ?? table.title}
+        titleAs={titleAs}
         description={description ?? table.description}
         docsPath={docsPath ?? table.docsPath}
         actions={resolvedActions}
