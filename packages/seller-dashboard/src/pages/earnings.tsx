@@ -1,5 +1,5 @@
 import { PageHeader, type ResourceSearch, ResourceTable } from '@spree/dashboard-core'
-import { Skeleton } from '@spree/dashboard-ui'
+import { ErrorState, Skeleton } from '@spree/dashboard-ui'
 import type { Transfer } from '@spree/seller-sdk'
 import { useTranslation } from 'react-i18next'
 import { sellerClient } from '../api-client'
@@ -16,14 +16,18 @@ import '../tables/transfers'
  */
 export function EarningsPage({ search }: { search: ResourceSearch }) {
   const { t } = useTranslation()
-  const { data, isLoading } = useBalances()
+  const { data, isLoading, isError, refetch } = useBalances()
 
   return (
     <div className="flex flex-col gap-4">
       <PageHeader title={t('earnings.title')} subtitle={t('earnings.subtitle')} />
 
+      {/* A failed balance request must not fall through to the empty state:
+          "you have earned nothing yet" is the opposite of "we could not ask". */}
       {isLoading ? (
         <Skeleton className="h-36 w-full" />
+      ) : isError ? (
+        <ErrorState title={t('earnings.balance.load_error')} onRetry={() => void refetch()} />
       ) : (
         <BalanceSummary balances={data?.data ?? []} />
       )}

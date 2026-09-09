@@ -64,7 +64,11 @@ export function PaymentsCard({ order }: { order: Order }) {
   // An order from a split checkout has no payments of its own: the customer
   // paid once, against the group. Reading `order.payments` there would render
   // "no payments" on an order that was paid in full.
-  const { data: group, isPending: groupPending } = useOrderGroup(order.order_group_id)
+  const {
+    data: group,
+    isPending: groupPending,
+    isError: groupFailed,
+  } = useOrderGroup(order.order_group_id)
   const grouped = !!order.order_group_id
   const payments = (grouped ? group?.payments : order.payments) ?? []
   // On a grouped order the payments arrive with the group, so until they do
@@ -105,6 +109,15 @@ export function PaymentsCard({ order }: { order: Order }) {
       {awaitingGroup ? (
         <CardContent>
           <Skeleton className="h-24 w-full" />
+        </CardContent>
+      ) : grouped && groupFailed ? (
+        // Distinct from the empty state below: a request that failed says
+        // nothing about whether this order was paid, and reading "no payments"
+        // off a network error is the misreading this branch exists to prevent.
+        <CardContent>
+          <p className="text-center text-destructive py-8">
+            {t('admin.orders.detail.payments_table.load_error')}
+          </p>
         </CardContent>
       ) : payments.length === 0 ? (
         <CardContent>

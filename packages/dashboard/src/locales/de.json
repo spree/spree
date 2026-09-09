@@ -2861,7 +2861,8 @@
           "number": "Nummer",
           "state": "Status",
           "this_order": "Diese Bestellung",
-          "shared_help": "Einmal bezahlt für einen Warenkorb mehrerer Verkäufer. Diese Bestellung hat einen Anteil daran."
+          "shared_help": "Einmal bezahlt für einen Warenkorb mehrerer Verkäufer. Diese Bestellung hat einen Anteil daran.",
+          "load_error": "Die Zahlungen für diese Bestellung konnten nicht geladen werden."
         },
         "purchase_order": {
           "document": "Bestelldokument",
@@ -5299,7 +5300,8 @@
         "covers_other": "Umfasst {{count}} Einnahmen",
         "covers_empty": "Diese Auszahlung umfasst keine Einnahmen.",
         "settlement": "Auszahlung",
-        "period": "Zeitraum"
+        "period": "Zeitraum",
+        "covers_error": "Die Einnahmen dieser Auszahlung konnten nicht geladen werden."
       },
       "order_card": {
         "title": "Verkäufereinnahmen",

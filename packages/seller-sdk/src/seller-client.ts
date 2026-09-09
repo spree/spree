@@ -390,6 +390,12 @@ export class SellerClient {
       }),
 
     /**
+     * One of this seller's orders.
+     *
+     * Takes `(id, params, options)` like every other expandable `get` in the
+     * Spree SDKs, so the second argument is the query rather than request
+     * options — pass `undefined` for it when only options are wanted.
+     *
      * @param params `expand: ['payment_splits']` adds this order's share of
      *   the payment the buyer made for the whole basket. A basket placed with
      *   one seller only does not split and has no shares.

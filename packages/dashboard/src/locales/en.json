@@ -2568,7 +2568,7 @@
       "reports": "Reports",
       "returns": "Returns",
       "seller_payouts": "Payouts",
-      "seller_transfers": "Transfers",
+      "seller_transfers": "Seller transfers",
       "sellers": "Sellers",
       "settings": "Settings",
       "transfers": "Transfers",
@@ -2861,7 +2861,8 @@
           "number": "Number",
           "state": "State",
           "this_order": "This order",
-          "shared_help": "Paid once for a basket spanning several sellers. This order has a share of it."
+          "shared_help": "Paid once for a basket spanning several sellers. This order has a share of it.",
+          "load_error": "Could not load the payments for this order."
         },
         "purchase_order": {
           "document": "Purchase order document",
@@ -5299,7 +5300,8 @@
         "covers_other": "Covers {{count}} earnings",
         "covers_empty": "This payout covers no earnings.",
         "settlement": "Payout",
-        "period": "Period"
+        "period": "Period",
+        "covers_error": "Could not load the earnings this payout covers."
       },
       "order_card": {
         "title": "Seller earnings",

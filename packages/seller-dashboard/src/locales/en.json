@@ -258,12 +258,13 @@
   },
   "earnings": {
     "balance": {
-      "title": "Balance",
-      "empty": "Once an order of yours is fulfilled, what it earned shows up here.",
-      "owed": "Owed to you ({{currency}})",
       "earned": "Earned",
+      "empty": "Once an order of yours is fulfilled, what it earned shows up here.",
+      "load_error": "Could not load your balance.",
+      "owed": "Owed to you ({{currency}})",
       "paid": "Paid out",
-      "pending": "On its way"
+      "pending": "On its way",
+      "title": "Balance"
     },
     "columns": {
       "date": "Date",
@@ -554,11 +555,12 @@
       "amount": "Amount"
     },
     "detail": {
+      "covers_empty": "This payout covers no earnings.",
+      "covers_error": "Could not load the earnings this payout covers.",
       "covers_one": "Covers {{count}} earning",
       "covers_other": "Covers {{count}} earnings",
-      "covers_empty": "This payout covers no earnings.",
-      "settlement": "Payout",
-      "period": "Period"
+      "period": "Period",
+      "settlement": "Payout"
     },
     "empty": "No payouts yet.",
     "not_found": "This payout could not be found.",

@@ -7,6 +7,7 @@ import {
   ErrorState,
   Pagination,
   ResourceLayout,
+  Skeleton,
   StatusBadge,
   Table,
   TableBody,
@@ -46,7 +47,11 @@ function PayoutDetailPage() {
   const [page, setPage] = useState(1)
 
   const { data: payout, isLoading, error, refetch } = usePayout(payoutId)
-  const { data: transfers } = useSellerTransfers({ payout_id_eq: payoutId }, page)
+  const {
+    data: transfers,
+    isPending: transfersPending,
+    isError: transfersFailed,
+  } = useSellerTransfers({ payout_id_eq: payoutId }, page)
 
   if (isLoading) return <ResourceDetailSkeleton />
   if (error || !payout) {
@@ -105,7 +110,17 @@ function PayoutDetailPage() {
               </CardTitle>
             </CardHeader>
 
-            {rows.length === 0 ? (
+            {/* Only true once the earnings loaded: a pending or failed query
+                says nothing about what this settlement covers. */}
+            {transfersPending ? (
+              <div className="px-6 pb-6">
+                <Skeleton className="h-16 w-full" />
+              </div>
+            ) : transfersFailed ? (
+              <p className="px-6 pb-6 text-sm text-destructive">
+                {t('admin.payouts.detail.covers_error')}
+              </p>
+            ) : rows.length === 0 ? (
               <p className="px-6 pb-6 text-sm text-muted-foreground">
                 {t('admin.payouts.detail.covers_empty')}
               </p>

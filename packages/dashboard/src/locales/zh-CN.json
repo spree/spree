@@ -2851,9 +2851,10 @@
         "payments_table": {
           "method": "方式",
           "number": "编号",
-          "state": "州/省",
+          "state": "状态",
           "this_order": "本订单",
-          "shared_help": "该购物车横跨多个卖家，只支付了一次。本订单占其中一部分。"
+          "shared_help": "该购物车横跨多个卖家，只支付了一次。本订单占其中一部分。",
+          "load_error": "无法加载此订单的付款信息。"
         },
         "purchase_order": {
           "document": "采购订单文件",
@@ -5289,7 +5290,8 @@
         "covers_other": "包含 {{count}} 笔收入",
         "covers_empty": "此打款不包含任何收入。",
         "settlement": "打款",
-        "period": "周期"
+        "period": "周期",
+        "covers_error": "无法加载此打款涵盖的收入。"
       },
       "order_card": {
         "title": "卖家收入",

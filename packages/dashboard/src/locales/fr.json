@@ -2568,7 +2568,7 @@
       "reports": "Rapports",
       "returns": "Retours",
       "seller_payouts": "Versements",
-      "seller_transfers": "Transferts",
+      "seller_transfers": "Transferts vendeurs",
       "sellers": "Vendeurs",
       "settings": "Paramètres",
       "transfers": "Transferts",
@@ -2861,7 +2861,8 @@
           "number": "Numéro",
           "state": "État",
           "this_order": "Cette commande",
-          "shared_help": "Payé en une fois pour un panier réparti entre plusieurs vendeurs. Cette commande en détient une part."
+          "shared_help": "Payé en une fois pour un panier réparti entre plusieurs vendeurs. Cette commande en détient une part.",
+          "load_error": "Impossible de charger les paiements de cette commande."
         },
         "purchase_order": {
           "document": "Document de bon de commande",
@@ -5299,7 +5300,8 @@
         "covers_other": "Couvre {{count}} gains",
         "covers_empty": "Ce versement ne couvre aucun gain.",
         "settlement": "Versement",
-        "period": "Période"
+        "period": "Période",
+        "covers_error": "Impossible de charger les gains couverts par ce versement."
       },
       "order_card": {
         "title": "Gains du vendeur",
