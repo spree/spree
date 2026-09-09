@@ -1487,6 +1487,9 @@ en:
         promotions:
           description: Promotions, rules and coupon codes
           label: Promotions
+        purchasing:
+          description: Suppliers and purchase orders
+          label: Purchasing
         refunds:
           description: Issue and view refunds
           label: Refunds
