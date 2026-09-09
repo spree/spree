@@ -6,7 +6,7 @@ module Spree
         # it. The file is exposed as a URL rather than a blob id — it is what
         # the reviewer opens.
         class SellerRequirementSubmissionSerializer < BaseSerializer
-          typelize status: :string, note: [:string, nullable: true],
+          typelize status: [:string, enum: Spree::SellerRequirementSubmission.statuses], note: [:string, nullable: true],
                    review_note: [:string, nullable: true],
                    reference: [:string, nullable: true],
                    reviewed_at: [:string, nullable: true],

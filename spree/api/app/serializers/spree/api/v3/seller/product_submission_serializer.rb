@@ -8,7 +8,7 @@ module Spree
         # know what to change, not which member of the marketplace's staff
         # decided (docs/plans/6.0-seller-product-submission.md).
         class ProductSubmissionSerializer < BaseSerializer
-          typelize status: :string,
+          typelize status: [:string, enum: Spree::ProductSubmission.statuses],
                    product_id: :string,
                    review_note: [:string, nullable: true],
                    reviewed_at: [:string, nullable: true]

@@ -3,7 +3,7 @@ module Spree
     module V3
       class GiftCardSerializer < BaseSerializer
         typelize code: :string,
-                 status: :string,
+                 status: [:string, enum: Spree::GiftCard.statuses],
                  amount: [:string, nullable: true],
                  amount_used: [:string, nullable: true],
                  amount_authorized: [:string, nullable: true],

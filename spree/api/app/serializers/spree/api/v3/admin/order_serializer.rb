@@ -43,7 +43,7 @@ module Spree
                    commission_total: [:string, nullable: false],
                    display_commission_total: [:string, nullable: false]
 
-          typelize status: :string,
+          typelize status: [:string, enum: Spree::Order::STATUSES],
                    last_ip_address: [:string, nullable: true],
                    considered_risky: :boolean, confirmation_delivered: :boolean,
                    store_owner_notification_delivered: :boolean,

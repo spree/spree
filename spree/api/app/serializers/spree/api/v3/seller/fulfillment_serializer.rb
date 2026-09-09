@@ -14,7 +14,7 @@ module Spree
         # about the operator's arrangements comes with it.
         class FulfillmentSerializer < V3::BaseSerializer
           typelize number: :string,
-                   status: :string,
+                   status: [:string, enum: Spree::Fulfillment.statuses],
                    tracking: [:string, nullable: true],
                    tracking_url: [:string, nullable: true],
                    fulfillment_type: [:string, nullable: true],

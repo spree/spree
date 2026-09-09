@@ -2,7 +2,7 @@ module Spree
   module Api
     module V3
       class PaymentSerializer < BaseSerializer
-        typelize status: :string, payment_method_id: :string, response_code: [:string, nullable: true],
+        typelize status: [:string, enum: Spree::Payment.statuses], payment_method_id: :string, response_code: [:string, nullable: true],
                  number: :string, amount: [:string, nullable: true], display_amount: [:string, nullable: true],
                  source_type: [:string, nullable: true, enum: %w[credit_card store_credit payment_source]],
                  source_id: [:string, nullable: true],

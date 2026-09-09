@@ -3,7 +3,7 @@ module Spree
     module V3
       module Seller
         class ProfileSerializer < V3::SellerSerializer
-          typelize status: :string,
+          typelize status: [:string, enum: Spree::Seller.statuses],
                    legal_name: [:string, nullable: true],
                    registration_number: [:string, nullable: true],
                    contact_email: [:string, nullable: true],

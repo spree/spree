@@ -3,7 +3,7 @@ module Spree
     module V3
       module Seller
         class RequirementSubmissionSerializer < V3::BaseSerializer
-          typelize status: :string, note: [:string, nullable: true],
+          typelize status: [:string, enum: Spree::SellerRequirementSubmission.statuses], note: [:string, nullable: true],
                    review_note: [:string, nullable: true],
                    reference: [:string, nullable: true],
                    reviewed_at: [:string, nullable: true],

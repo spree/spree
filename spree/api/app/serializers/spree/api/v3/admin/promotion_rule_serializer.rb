@@ -8,7 +8,7 @@ module Spree
         # admin promotion editor. Same shape as PromotionAction so the
         # frontend renders both with the same generic component.
         class PromotionRuleSerializer < BaseSerializer
-          typelize type: :string,
+          typelize type: [:string, comment: 'Rule type. Built-in: currency, country, channel, market, item_total, product, customer, customer_group, first_order, customer_logged_in, one_use_per_user, category, option_value. Extensions may register more.'],
                    promotion_id: :string,
                    preferences: 'Record<string, unknown>',
                    preference_schema: "Array<{ key: string; type: string; default: unknown; choices?: string[] }>",

@@ -4,7 +4,7 @@ module Spree
       # A pending (or spent) invitation into a company node. The token is
       # deliberately absent — it travels only in the invite email.
       class CompanyInvitationSerializer < BaseSerializer
-        typelize email: :string, company_id: :string, status: :string,
+        typelize email: :string, company_id: :string, status: [:string, enum: %w[pending accepted revoked expired]],
                  expires_at: [:string, nullable: true]
 
         attributes :email, expires_at: :iso8601

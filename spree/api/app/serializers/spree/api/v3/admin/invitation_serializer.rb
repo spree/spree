@@ -8,7 +8,7 @@ module Spree
         # email-only — the full polymorphic identities aren't useful to the UI.
         class InvitationSerializer < V3::BaseSerializer
           typelize email: :string,
-                   status: :string,
+                   status: [:string, enum: Spree::Invitation.statuses],
                    role_id: :string,
                    role_name: :string,
                    inviter_email: :string,

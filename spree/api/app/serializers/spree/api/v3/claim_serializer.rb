@@ -6,7 +6,7 @@ module Spree
       # Customer-facing view of a claim.
       class ClaimSerializer < BaseSerializer
         typelize number: :string,
-                 status: :string,
+                 status: [:string, enum: Spree::Claim.statuses],
                  resolution: [:string, nullable: true],
                  order_id: [:string, nullable: true],
                  reason_id: [:string, nullable: true],

@@ -9,7 +9,7 @@ module Spree
         # single component can render any subclass — `preferences` is the
         # current value hash, `preference_schema` describes its fields.
         class PromotionActionSerializer < BaseSerializer
-          typelize type: :string,
+          typelize type: [:string, comment: 'Action type. Built-in: create_adjustment, create_item_adjustments, create_line_items, free_shipping. Extensions may register more.'],
                    promotion_id: :string,
                    preferences: 'Record<string, unknown>',
                    preference_schema: "Array<{ key: string; type: string; default: unknown; choices?: string[] }>",

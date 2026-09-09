@@ -19,7 +19,7 @@ module Spree
                    line_item_id: 'string | null',
                    fulfillment_id: 'string | null',
                    commission_rate_id: 'string | null',
-                   kind: :string,
+                   kind: [:string, enum: Spree::CommissionRate::KINDS],
                    rate: :string,
                    tax_rate: :string,
                    taxability_reason: 'string | null',

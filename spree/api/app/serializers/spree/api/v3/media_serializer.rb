@@ -5,7 +5,7 @@ module Spree
         typelize position: :number, alt: [:string, nullable: true],
                  product_id: [:string, nullable: true],
                  variant_ids: [:string, multi: true],
-                 media_type: :string,
+                 media_type: [:string, enum: Spree::Media::MEDIA_TYPES],
                  focal_point_x: [:number, nullable: true],
                  focal_point_y: [:number, nullable: true],
                  external_video_url: [:string, nullable: true],

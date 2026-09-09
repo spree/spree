@@ -5,7 +5,7 @@ module Spree
       # line item or fulfillment. The embedded `discounts` key on Cart/Order
       # stays the applied-promotion summary — see AppliedPromotionSerializer.
       class DiscountSerializer < BaseSerializer
-        typelize label: :string, kind: :string, code: [:string, nullable: true],
+        typelize label: :string, kind: [:string, enum: Spree::Discount::KINDS], code: [:string, nullable: true],
                  value: [:string, nullable: true], value_type: [:string, nullable: true],
                  amount: [:string, nullable: true], display_amount: [:string, nullable: true],
                  promotion_id: [:string, nullable: true], line_item_id: [:string, nullable: true],

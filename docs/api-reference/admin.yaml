@@ -37265,6 +37265,9 @@ components:
           type: string
         key_type:
           type: string
+          enum:
+          - publishable
+          - secret
         token_prefix:
           type: string
           nullable: true
@@ -37645,6 +37648,10 @@ components:
           type: string
         source:
           type: string
+          enum:
+          - explicit
+          - automatic
+          - base
         break_count:
           type: number
         amount:
@@ -38059,6 +38066,12 @@ components:
           type: string
         status:
           type: string
+          enum:
+          - open
+          - approved
+          - resolved
+          - denied
+          - canceled
         resolution:
           type: string
           nullable: true
@@ -38134,11 +38147,18 @@ components:
           type: string
         type:
           type: string
+          description: 'Rule class name. Built-in: Spree::CollectionRules::Tag, Spree::CollectionRules::AvailableOn,
+            Spree::CollectionRules::Sale. Extensions may register more.'
         value:
           type: string
           nullable: true
         match_policy:
           type: string
+          enum:
+          - is_equal_to
+          - is_not_equal_to
+          - contains
+          - does_not_contain
       required:
       - id
       - type
@@ -38189,6 +38209,9 @@ components:
           type: boolean
         rules_match_policy:
           type: string
+          enum:
+          - all
+          - any
         metadata:
           type: object
         created_at:
@@ -38226,6 +38249,9 @@ components:
           type: string
         kind:
           type: string
+          enum:
+          - percentage
+          - fixed
         currency:
           type: string
         taxability_reason:
@@ -38315,6 +38341,9 @@ components:
           type: number
         kind:
           type: string
+          enum:
+          - percentage
+          - fixed
         tax_inclusive:
           type: boolean
         include_shipping:
@@ -38375,6 +38404,8 @@ components:
           type: string
         type:
           type: string
+          description: 'Rule type. Built-in: seller_rule, category_rule, product_rule,
+            item_total_rule. Extensions may register more.'
         commission_rate_id:
           type: string
         preferences:
@@ -38408,6 +38439,11 @@ components:
           type: string
         status:
           type: string
+          enum:
+          - pending
+          - accepted
+          - revoked
+          - expired
         accepted_at:
           type: string
           nullable: true
@@ -38462,6 +38498,9 @@ components:
           type: string
         kind:
           type: string
+          enum:
+          - company
+          - division
         po_number_required:
           type: boolean
         parent_id:
@@ -38517,6 +38556,16 @@ components:
           type: string
         source:
           type: string
+          enum:
+          - checkout
+          - registration
+          - account
+          - admin
+          - newsletter
+          - anonymization
+          - unknown
+          - import
+          - storefront
         accepted:
           type: boolean
         email:
@@ -38669,6 +38718,9 @@ components:
           - json
         resource_type:
           type: string
+          description: Class name of the resource the field attaches to, for example
+            Spree::Product, Spree::Order or Spree::Customer. Extensions may register
+            more.
         storefront_visible:
           type: boolean
         searchable:
@@ -38908,8 +38960,16 @@ components:
           type: string
         kind:
           type: string
+          enum:
+          - access
+          - erasure
         status:
           type: string
+          enum:
+          - pending
+          - processing
+          - completed
+          - failed
         requested_at:
           type: string
           nullable: true
@@ -38964,6 +39024,8 @@ components:
           type: string
         type:
           type: string
+          description: 'Rule type. Built-in: item_total_rule, weight_rule, excluded_products_rule,
+            channel_rule, volume_rule, company_rule. Extensions may register more.'
         preferences:
           type: object
         preference_schema:
@@ -39185,6 +39247,8 @@ components:
           type: string
         kind:
           type: string
+          description: 'Profile kind. Built-in: shipping, digital. Extensions may
+            register more.'
         digital:
           type: boolean
         offers_pickup:
@@ -39317,6 +39381,16 @@ components:
           nullable: true
         status:
           type: string
+          enum:
+          - pending
+          - pre_transit
+          - in_transit
+          - out_for_delivery
+          - available_for_pickup
+          - delivered
+          - return_to_sender
+          - failure
+          - unknown
         tracking_url:
           type: string
           nullable: true
@@ -39358,6 +39432,10 @@ components:
           type: string
         member_type:
           type: string
+          enum:
+          - country
+          - state
+          - postal_code
         country_code:
           type: string
           nullable: true
@@ -39467,6 +39545,8 @@ components:
           type: string
         provider_name:
           type: string
+          description: 'Digital asset provider name. Built-in: File. Extensions may
+            register more.'
         download_url:
           type: string
           nullable: true
@@ -39539,6 +39619,9 @@ components:
           type: string
         kind:
           type: string
+          enum:
+          - promotion
+          - manual
         code:
           type: string
           nullable: true
@@ -39645,6 +39728,12 @@ components:
           type: string
         status:
           type: string
+          enum:
+          - requested
+          - approved
+          - received
+          - fulfilled
+          - canceled
         order_id:
           type: string
           nullable: true
@@ -39906,6 +39995,11 @@ components:
           type: number
         status:
           type: string
+          enum:
+          - on_hand
+          - backordered
+          - shipped
+          - returned
         variant_id:
           type: string
           nullable: true
@@ -39974,8 +40068,18 @@ components:
           type: string
         status:
           type: string
+          enum:
+          - unfulfilled
+          - fulfilled
+          - delivered
+          - canceled
         fulfillment_type:
           type: string
+          enum:
+          - shipping
+          - digital
+          - pickup
+          - pickup_point
         fulfilled_at:
           type: string
           nullable: true
@@ -40115,6 +40219,11 @@ components:
           type: string
         status:
           type: string
+          enum:
+          - active
+          - partially_redeemed
+          - redeemed
+          - canceled
         currency:
           type: string
         amount:
@@ -40209,6 +40318,11 @@ components:
           type: number
         status:
           type: string
+          enum:
+          - pending
+          - processing
+          - completed
+          - failed
         validation_errors:
           type: string
           nullable: true
@@ -40255,8 +40369,17 @@ components:
         type:
           type: string
           nullable: true
+          description: 'Import type. Built-in: products, product_translations, customers,
+            price_list_prices. Extensions may register more.'
         status:
           type: string
+          enum:
+          - pending
+          - mapping
+          - completed_mapping
+          - processing
+          - completed
+          - failed
         store_id:
           type: string
           nullable: true
@@ -40352,6 +40475,8 @@ components:
           type: string
         type:
           type: string
+          description: Integration type, registered by the provider gem that owns
+            it (for example the EasyPost provider). Core ships none.
         group:
           type: string
           nullable: true
@@ -40379,6 +40504,9 @@ components:
           type: string
         status:
           type: string
+          enum:
+          - pending
+          - accepted
         created_at:
           type: string
         updated_at:
@@ -40619,6 +40747,10 @@ components:
           nullable: true
         media_type:
           type: string
+          enum:
+          - image
+          - video
+          - external_video
         focal_point_x:
           type: number
           nullable: true
@@ -40786,6 +40918,10 @@ components:
           type: number
         kind:
           type: string
+          enum:
+          - dropdown
+          - color_swatch
+          - buttons
         translations:
           type: object
         metadata:
@@ -40906,9 +41042,28 @@ components:
         fulfillment_status:
           type: string
           nullable: true
+          enum:
+          - backorder
+          - canceled
+          - partial
+          - unfulfilled
+          - fulfilled
+          - delivered
+          - pending
+          - ready
+          - shipped
         payment_status:
           type: string
           nullable: true
+          enum:
+          - none
+          - authorized
+          - partially_paid
+          - paid
+          - partially_refunded
+          - refunded
+          - overcharged
+          - voided
         completed_at:
           type: string
           nullable: true
@@ -40980,6 +41135,8 @@ components:
           type: string
         type:
           type: string
+          description: 'Rule type. Built-in: preferred_location, default_location,
+            minimize_splits. Extensions may register more.'
         channel_id:
           type: string
         preferences:
@@ -41051,9 +41208,28 @@ components:
         fulfillment_status:
           type: string
           nullable: true
+          enum:
+          - backorder
+          - canceled
+          - partial
+          - unfulfilled
+          - fulfilled
+          - delivered
+          - pending
+          - ready
+          - shipped
         payment_status:
           type: string
           nullable: true
+          enum:
+          - none
+          - authorized
+          - partially_paid
+          - paid
+          - partially_refunded
+          - refunded
+          - overcharged
+          - voided
         completed_at:
           type: string
           nullable: true
@@ -41139,6 +41315,10 @@ components:
           type: object
         status:
           type: string
+          enum:
+          - draft
+          - placed
+          - canceled
         last_ip_address:
           type: string
           nullable: true
@@ -41354,6 +41534,12 @@ components:
           type: string
         kind:
           type: string
+          enum:
+          - box
+          - envelope
+          - carton
+          - pallet
+          - container
         length:
           type: string
           nullable: true
@@ -41380,8 +41566,18 @@ components:
           type: string
         dimensions_unit:
           type: string
+          enum:
+          - mm
+          - cm
+          - in
+          - ft
         weight_unit:
           type: string
+          enum:
+          - g
+          - kg
+          - lb
+          - oz
         volume:
           type: string
           nullable: true
@@ -41422,6 +41618,9 @@ components:
           nullable: true
         type:
           type: string
+          description: 'Payment method type. Built-in: check, store_credit, custom_payment_source_method,
+            bogus (test only); payment provider gems register their own, for example
+            stripe.'
         session_required:
           type: boolean
         source_required:
@@ -41491,6 +41690,14 @@ components:
           type: string
         status:
           type: string
+          enum:
+          - checkout
+          - processing
+          - pending
+          - completed
+          - failed
+          - void
+          - invalid
         amount:
           type: string
         display_amount:
@@ -41589,6 +41796,9 @@ components:
           type: string
         kind:
           type: string
+          enum:
+          - read
+          - write
         group:
           type: string
         group_label:
@@ -41715,10 +41925,18 @@ components:
           nullable: true
         status:
           type: string
+          enum:
+          - draft
+          - active
+          - inactive
+          - scheduled
         position:
           type: number
         match_policy:
           type: string
+          enum:
+          - all
+          - any
         adjust_compare_at:
           type: boolean
         starts_at:
@@ -41784,6 +42002,8 @@ components:
           type: string
         type:
           type: string
+          description: 'Rule type. Built-in: channel_rule, customer_group_rule, market_rule,
+            user_rule, volume_rule, zone_rule. Extensions may register more.'
         price_list_id:
           type: string
         preferences:
@@ -42005,6 +42225,12 @@ components:
           type: object
         status:
           type: string
+          enum:
+          - draft
+          - active
+          - archived
+          - proposed
+          - rejected
         metadata:
           type: object
         deleted_at:
@@ -42090,6 +42316,11 @@ components:
           type: string
         status:
           type: string
+          enum:
+          - pending
+          - approved
+          - rejected
+          - withdrawn
         review_note:
           type: string
           nullable: true
@@ -42215,6 +42446,8 @@ components:
           type: string
         type:
           type: string
+          description: 'Action type. Built-in: create_adjustment, create_item_adjustments,
+            create_line_items, free_shipping. Extensions may register more.'
         promotion_id:
           type: string
         preferences:
@@ -42254,6 +42487,9 @@ components:
           type: string
         type:
           type: string
+          description: 'Rule type. Built-in: currency, country, channel, market, item_total,
+            product, customer, customer_group, first_order, customer_logged_in, one_use_per_user,
+            category, option_value. Extensions may register more.'
         promotion_id:
           type: string
         preferences:
@@ -42551,6 +42787,12 @@ components:
           type: string
         status:
           type: string
+          enum:
+          - requested
+          - approved
+          - received
+          - refunded
+          - canceled
         order_id:
           type: string
           nullable: true
@@ -42679,10 +42921,18 @@ components:
           type: string
         status:
           type: string
+          enum:
+          - pending
+          - processing
+          - completed
+          - failed
+          - unresolved
         currency:
           type: string
         provider:
           type: string
+          description: 'Payout provider class name. Built-in: Spree::PayoutProvider::System.
+            Provider gems register more.'
         reference:
           type: string
           nullable: true
@@ -42746,6 +42996,10 @@ components:
           type: string
         kind:
           type: string
+          description: 'Requirement kind. Built-in: accept_terms, complete_profile,
+            billing_address, returns_address, delivery_method, package_type, minimum_products,
+            payout_account, required_custom_fields, policy, attestation, operator_review,
+            document. Extensions may register more.'
         name:
           type: string
         description:
@@ -42787,6 +43041,10 @@ components:
           type: string
         kind:
           type: string
+          description: 'Requirement kind. Built-in: accept_terms, complete_profile,
+            billing_address, returns_address, delivery_method, package_type, minimum_products,
+            payout_account, required_custom_fields, policy, attestation, operator_review,
+            document. Extensions may register more.'
         name:
           type: string
         description:
@@ -42798,6 +43056,11 @@ components:
           type: number
         status:
           type: string
+          enum:
+          - complete
+          - incomplete
+          - pending
+          - rejected
         action_url:
           type: string
           nullable: true
@@ -42833,6 +43096,11 @@ components:
           type: string
         status:
           type: string
+          enum:
+          - pending
+          - accepted
+          - rejected
+          - waived
         note:
           type: string
           nullable: true
@@ -42904,6 +43172,15 @@ components:
           nullable: true
         status:
           type: string
+          enum:
+          - pending
+          - invited
+          - canceled
+          - onboarding
+          - ready_for_review
+          - approved
+          - rejected
+          - suspended
         contact_email:
           type: string
           nullable: true
@@ -43026,12 +43303,23 @@ components:
           type: string
         kind:
           type: string
+          enum:
+          - earning
+          - refund_reversal
         status:
           type: string
+          enum:
+          - pending
+          - processing
+          - completed
+          - failed
+          - unresolved
         currency:
           type: string
         provider:
           type: string
+          description: 'Payout provider class name. Built-in: Spree::PayoutProvider::System.
+            Provider gems register more.'
         reference:
           type: string
           nullable: true
@@ -43103,8 +43391,15 @@ components:
           type: string
         source:
           type: string
+          enum:
+          - purchased
+          - uploaded
         status:
           type: string
+          enum:
+          - purchased
+          - refund_requested
+          - refunded
         carrier:
           type: string
           nullable: true
@@ -43139,6 +43434,9 @@ components:
           type: string
         owner_type:
           type: string
+          enum:
+          - Spree::Fulfillment
+          - Spree::Return
         cost:
           type: string
         display_cost:
@@ -43290,10 +43588,17 @@ components:
           type: boolean
         kind:
           type: string
+          enum:
+          - warehouse
+          - store
+          - fulfillment_center
         pickup_enabled:
           type: boolean
         pickup_stock_policy:
           type: string
+          enum:
+          - local
+          - any
         returns_enabled:
           type: boolean
         created_at:
@@ -43349,6 +43654,12 @@ components:
         kind:
           type: string
           nullable: true
+          enum:
+          - received
+          - allocated
+          - shipped
+          - released
+          - adjusted
         reason:
           type: string
           nullable: true
@@ -43553,6 +43864,11 @@ components:
           type: string
         preferred_weight_unit:
           type: string
+          enum:
+          - g
+          - kg
+          - lb
+          - oz
         preferred_unit_system:
           type: string
         preferred_storefront_access:
@@ -43740,6 +44056,11 @@ components:
           type: string
         status:
           type: string
+          enum:
+          - pending
+          - verified
+          - expired
+          - revoked
         issuing_authority:
           type: string
           nullable: true
@@ -43808,17 +44129,29 @@ components:
           type: string
         kind:
           type: string
+          description: 'Tax identifier kind, keyed to a registered validator. Built-in:
+            eu_vat. Extensions may register more.'
         value:
           type: string
         validation_status:
           type: string
           nullable: true
+          enum:
+          - pending
+          - verified
+          - unverified
+          - unavailable
+          - unsupported
         validation_evidence:
           type: object
           nullable: true
         source:
           type: string
           nullable: true
+          enum:
+          - override
+          - company
+          - customer
         validated_at:
           type: string
           nullable: true
@@ -44017,6 +44350,20 @@ components:
         depth:
           type: number
           nullable: true
+        weight_unit:
+          type: string
+          enum:
+          - g
+          - kg
+          - lb
+          - oz
+        dimensions_unit:
+          type: string
+          enum:
+          - mm
+          - cm
+          - in
+          - ft
         minimum_order_quantity:
           type: number
           nullable: true
@@ -44026,6 +44373,9 @@ components:
         purchase_unit:
           type: string
           nullable: true
+          enum:
+          - unit
+          - carton
         units_per_carton:
           type: number
           nullable: true
@@ -44103,12 +44453,6 @@ components:
         tax_category_id:
           type: string
           nullable: true
-        weight_unit:
-          type: string
-          nullable: true
-        dimensions_unit:
-          type: string
-          nullable: true
         carton_package_type_id:
           type: string
           nullable: true
@@ -44153,6 +44497,8 @@ components:
       - height
       - width
       - depth
+      - weight_unit
+      - dimensions_unit
       - minimum_order_quantity
       - order_multiple
       - purchase_unit
@@ -44178,8 +44524,6 @@ components:
       - updated_at
       - preorderable
       - tax_category_id
-      - weight_unit
-      - dimensions_unit
       - carton_package_type_id
       - units_per_pallet
       - available_stock

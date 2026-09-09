@@ -10,11 +10,11 @@ module Spree
                  purchasable: :boolean, in_stock: :boolean, backorderable: :boolean, preorder: :boolean,
                  preorder_ships_at: [:string, nullable: true],
                  weight: [:number, nullable: true], height: [:number, nullable: true], width: [:number, nullable: true], depth: [:number, nullable: true],
-                 weight_unit: :string, dimensions_unit: :string,
+                 weight_unit: [:string, enum: Spree::Variant::WEIGHT_UNITS], dimensions_unit: [:string, enum: Spree::Variant::DIMENSION_UNITS],
                  price: 'Price',
                  original_price: ['Price', nullable: true],
                  minimum_order_quantity: :number, order_multiple: :number,
-                 purchase_unit: :string, units_per_carton: ['number | null'],
+                 purchase_unit: [:string, enum: Spree::Variant::PURCHASE_UNITS], units_per_carton: ['number | null'],
                  seller_id: [:string, nullable: true]
 
         attribute :product_id do |variant|

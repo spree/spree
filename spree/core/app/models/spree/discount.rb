@@ -11,6 +11,10 @@ module Spree
 
     has_prefix_id :disc
 
+    # `promotion` rows are written by promotion actions, `manual` ones by an
+    # admin on a placed order.
+    KINDS = %w[promotion manual].freeze
+
     # Source — nullified on promotion deletion
     belongs_to :promotion_action, class_name: 'Spree::PromotionAction', optional: true
     belongs_to :promotion, class_name: 'Spree::Promotion', optional: true
@@ -20,7 +24,7 @@ module Spree
     belongs_to :fulfillment, class_name: 'Spree::Fulfillment', optional: true
 
     validates :amount, numericality: { less_than_or_equal_to: 0 }
-    validates :kind, presence: true
+    validates :kind, presence: true, inclusion: { in: KINDS }
     validate :exactly_one_adjustable
 
     scope :for_line_items, -> { where.not(line_item_id: nil) }

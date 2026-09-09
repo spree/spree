@@ -10,7 +10,7 @@ module Spree
         # Shaped like the price-rule serializer so one generic editor can drive
         # both: the wire `type`, the values, and the schema describing them.
         class CommissionRuleSerializer < V3::BaseSerializer
-          typelize type: :string,
+          typelize type: [:string, comment: 'Rule type. Built-in: seller_rule, category_rule, product_rule, item_total_rule. Extensions may register more.'],
                    commission_rate_id: :string,
                    preferences: 'Record<string, unknown>',
                    preference_schema: 'Array<{ key: string; type: string; default: unknown }>',
