@@ -80,7 +80,10 @@ export function OnHandCell({ level }: { level: StockLevel }) {
   async function submit() {
     const parsed = Number.parseInt(amount, 10)
     if (Number.isNaN(parsed)) return
-    const reasonLabel = t(`admin.stock_levels.reasons.${reason}`)
+    // Stored on the movement as free text and shown raw in every admin's
+    // stock history, so it is written in English whatever this admin's
+    // locale — the same language the API's own default reason uses.
+    const reasonLabel = t(`admin.stock_levels.reasons.${reason}`, { lng: 'en' })
     const params =
       mode === 'set'
         ? { count_on_hand: parsed, reason: reasonLabel }
@@ -93,7 +96,7 @@ export function OnHandCell({ level }: { level: StockLevel }) {
     }
   }
 
-  const name = [level.variant_name, level.variant_options_text].filter(Boolean).join(' · ')
+  const name = [level.variant_name, level.options_text].filter(Boolean).join(' · ')
 
   return (
     <Popover open={open} onOpenChange={openWith}>

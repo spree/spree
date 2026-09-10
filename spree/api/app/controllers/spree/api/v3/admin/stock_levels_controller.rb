@@ -116,7 +116,7 @@ module Spree
 
             render_error(
               code: ERROR_CODES[:validation_error],
-              message: "Adjustment #{message}",
+              message: message,
               status: :unprocessable_content,
               details: { adjustment: [{ code: code, message: message, specific: false }] }
             )

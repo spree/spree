@@ -26,12 +26,25 @@ describe 'spree:stock' do
     it 'puts a drifted level back to what its sources say' do
       order_from_supplier(20)
       create(:stock_reservation, stock_level: level, quantity: 3, expires_at: 5.minutes.from_now)
-      create(:stock_reservation, stock_level: level, quantity: 9, expires_at: 1.minute.ago)
       level.update_columns(reserved_count: 12, incoming_count: 0)
 
       expect { run_task }.to output(/reserved 12 → 3, incoming 0 → 20/).to_stdout
 
       expect(level.reload).to have_attributes(reserved_count: 3, incoming_count: 20)
+    end
+
+    # The counter is the sum of the rows that exist, so an expired hold is
+    # removed — not merely left out of the sum — before the level is measured.
+    # Otherwise the sweep that follows would take its units off a second time.
+    it 'sweeps expired holds before measuring' do
+      create(:stock_reservation, stock_level: level, quantity: 3, expires_at: 5.minutes.from_now)
+      create(:stock_reservation, stock_level: level, quantity: 9, expires_at: 1.minute.ago)
+      expect(level.reload.reserved_count).to eq(12)
+
+      expect { run_task }.to output(/Corrected 0 stock level/).to_stdout
+
+      expect(level.reload.reserved_count).to eq(3)
+      expect(level.stock_reservations.count).to eq(1)
     end
 
     it 'clears a figure whose source is gone' do

@@ -28,7 +28,7 @@ module Spree
       only_integer: true
     }, if: :verify_count_on_hand?
 
-    delegate :weight, :should_track_inventory?, to: :variant
+    delegate :weight, :should_track_inventory?, :thumbnail, to: :variant
     delegate :name, to: :variant, prefix: true
     delegate :product, to: :variant
 
@@ -145,11 +145,12 @@ module Spree
       count_on_hand - allocated_count
     end
 
-    # Units held by checkouts in progress. Written by exactly three paths —
-    # {Spree::StockReservations::Reserve}, {Spree::StockReservations::Release}
-    # and {Spree::StockReservations::ExpireJob} — and nowhere else; the
-    # `spree:stock:recount_levels` task repairs drift, but a fourth writer is
-    # the bug.
+    # Units held by checkouts in progress. The counter follows the
+    # reservation rows: each row adds itself on create, moves the figure on
+    # a quantity change and gives it back on destroy, and
+    # {Spree::StockReservation.withdraw} does the same for a batch delete.
+    # Nothing else writes it; the `spree:stock:recount_levels` task repairs
+    # drift, but another writer is the bug.
     #
     # @param value [Integer] signed change
     # @return [void]
@@ -173,23 +174,28 @@ module Spree
 
     private
 
-    # Locked, and clamped at zero on the way down, for the reason
-    # {#release_allocated_count} gives: the cap is read from the counter the
-    # write then moves. A withdrawal can also legitimately exceed the counter
-    # — a recount that ran between a reservation expiring and the sweep that
-    # deletes it has already taken those units off — and must not then eat
-    # into what something else is holding.
+    # One atomic UPDATE, clamped at zero in the statement itself so a
+    # withdrawal larger than the counter — a level whose figure was already
+    # repaired underneath a writer — stops at zero instead of eating into
+    # what something else holds. No row lock is needed: the database
+    # applies the arithmetic to the value it holds at that moment.
+    #
+    # Touched afterwards for the reason {#adjust_allocated_count} gives: a
+    # bare UPDATE runs no callbacks, and both figures change what the
+    # variant's caches and its `stock_level.updated` subscribers care about.
     def adjust_clamped_counter(column, value)
       return if value.zero?
 
-      with_lock do
+      counter = self.class.arel_table[column]
+      next_value =
         if value.positive?
-          increment!(column, value)
+          counter + value
         else
-          withdrawn = [value.abs, public_send(column)].min
-          decrement!(column, withdrawn) if withdrawn.positive?
+          Arel::Nodes::Case.new.when(counter.gt(value.abs)).then(counter - value.abs).else(0)
         end
-      end
+      self.class.where(id: id).update_all(column => next_value)
+      self[column] = self.class.where(id: id).pick(column)
+      touch
     end
 
     # A shelf can only be driven below zero by a write that asked to, and then

@@ -85,6 +85,14 @@ module Spree
 
     belongs_to :primary_media, class_name: 'Spree::Media', optional: true, foreign_key: :primary_media_id
 
+    # The variant's own image, or its product's when it has none — the
+    # picture a list row shows for it.
+    #
+    # @return [Spree::Media, nil]
+    def thumbnail
+      primary_media || product&.primary_media
+    end
+
     has_many :prices,
              class_name: 'Spree::Price',
              dependent: :destroy,

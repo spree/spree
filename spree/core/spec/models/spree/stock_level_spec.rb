@@ -551,6 +551,12 @@ describe Spree::StockLevel, type: :model do
 
         expect(subject.reload).to have_attributes(reserved_count: 0, incoming_count: 0)
       end
+
+      it 'touch the variant so its caches and search index follow' do
+        subject.variant.update_column(:updated_at, 1.day.ago)
+
+        expect { subject.adjust_incoming_count(1) }.to change { subject.variant.reload.updated_at }
+      end
     end
 
     describe '#available_count' do

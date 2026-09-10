@@ -11,7 +11,7 @@ module Spree
                    stock_location_name: [:string, nullable: true],
                    product_id: [:string, nullable: true],
                    variant_name: [:string, nullable: true], variant_sku: [:string, nullable: true],
-                   variant_options_text: [:string, nullable: true],
+                   options_text: [:string, nullable: true],
                    thumbnail_url: [:string, nullable: true]
 
           # Reserved: units held by checkouts in progress. Incoming: units on
@@ -38,14 +38,12 @@ module Spree
             stock_level.variant&.sku
           end
 
-          attribute :variant_options_text do |stock_level|
+          attribute :options_text do |stock_level|
             stock_level.variant&.options_text.presence
           end
 
-          # The variant's own image, or its product's when it has none.
           attribute :thumbnail_url do |stock_level|
-            variant = stock_level.variant
-            image_url_for(variant&.primary_media || variant&.product&.primary_media)
+            image_url_for(stock_level.thumbnail)
           end
 
           # Units promised to placed orders but not yet dispatched. Raised by an

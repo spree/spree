@@ -37491,7 +37491,7 @@ paths:
                   product_id: prod_UkLWZg9DAJ
                   variant_name: Product 1365410
                   variant_sku: SKU-168
-                  variant_options_text:
+                  options_text:
                   thumbnail_url:
                   allocated_count: 0
                   available_count: 0
@@ -37510,7 +37510,7 @@ paths:
                   product_id: prod_UkLWZg9DAJ
                   variant_name: Product 1365410
                   variant_sku: SKU-169
-                  variant_options_text: 'Size: S'
+                  options_text: 'Size: S'
                   thumbnail_url:
                   allocated_count: 0
                   available_count: 0
@@ -37529,7 +37529,7 @@ paths:
                   product_id: prod_UkLWZg9DAJ
                   variant_name: Product 1365410
                   variant_sku: SKU-169
-                  variant_options_text: 'Size: S'
+                  options_text: 'Size: S'
                   thumbnail_url:
                   allocated_count: 3
                   available_count: 37
@@ -46630,7 +46630,7 @@ components:
         variant_sku:
           type: string
           nullable: true
-        variant_options_text:
+        options_text:
           type: string
           nullable: true
         thumbnail_url:
@@ -46658,7 +46658,7 @@ components:
       - product_id
       - variant_name
       - variant_sku
-      - variant_options_text
+      - options_text
       - thumbnail_url
       x-typelizer: true
     StockLocation:

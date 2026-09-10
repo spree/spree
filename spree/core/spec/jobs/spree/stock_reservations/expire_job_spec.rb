@@ -14,8 +14,6 @@ describe Spree::StockReservations::ExpireJob do
   it 'gives an expired reservation\'s units back to its level and leaves an active hold counted' do
     expired = create(:stock_reservation, :expired, quantity: 2)
     active = create(:stock_reservation, quantity: 3, expires_at: 5.minutes.from_now)
-    expired.stock_level.adjust_reserved_count(2)
-    active.stock_level.adjust_reserved_count(3)
 
     described_class.perform_now
 

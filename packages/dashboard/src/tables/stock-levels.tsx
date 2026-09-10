@@ -30,9 +30,9 @@ defineTable<StockLevel>('stock-levels', {
             dataAttr={level.product_id ? 'data-stock-level-product-id' : undefined}
             name={level.variant_name ?? '—'}
             secondary={
-              level.variant_options_text ? (
+              level.options_text ? (
                 <Badge variant="secondary" className="font-normal">
-                  {level.variant_options_text}
+                  {level.options_text}
                 </Badge>
               ) : null
             }

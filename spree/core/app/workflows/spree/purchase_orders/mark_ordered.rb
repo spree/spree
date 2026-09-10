@@ -12,10 +12,14 @@ module Spree
       def perform(purchase_order:)
         super
 
-        step :ensure_draft
-        run_hooks :validate
+        # One placement at a time per document: the draft check is what stops
+        # an order being placed twice, and two callers reading it outside the
+        # lock would both count the order's units as incoming — a surplus no
+        # receipt could ever withdraw.
+        purchase_order.with_lock do
+          step :ensure_draft
+          run_hooks :validate
 
-        ApplicationRecord.transaction do
           step :mark_ordered
           step :count_ordered_units
         end

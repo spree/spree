@@ -11,6 +11,10 @@ module Spree
 
     alias_attribute :stock_item_id, :stock_level_id
 
+    after_create :hold_units
+    after_update :move_held_units, if: -> { saved_change_to_quantity? || saved_change_to_stock_level_id? }
+    after_destroy :release_units
+
     validates :quantity, :expires_at, presence: true
     validate :exactly_one_owner
     validates :quantity, numericality: { greater_than: 0, only_integer: true }, presence: true
@@ -29,20 +33,25 @@ module Spree
                                                  quantity expires_at]
     self.whitelisted_ransackable_associations = %w[stock_level line_item order]
 
-    # Deletes these reservations and hands their units back to each level's
-    # reserved counter in the same transaction, so a level never reads as
-    # held by a reservation that is gone. The reservations are locked while
-    # their quantities are read: a checkout re-reserving one of them at the
-    # same moment would otherwise have its new quantity deleted but the old
-    # one withdrawn. Called by {Spree::StockReservations::Release} and
-    # {Spree::StockReservations::ExpireJob} only — the counter's two
-    # withdrawing writers.
+    # Deletes these reservations in one statement and hands their units back
+    # to each level's reserved counter in the same transaction — the batch
+    # twin of the per-row callbacks, for a sweep or a release that would
+    # otherwise destroy rows one by one.
+    #
+    # The levels are locked first, then the rows read and deleted: the order
+    # {Spree::StockReservations::Reserve} takes, so a checkout re-reserving
+    # one of these rows waits at the level rather than the two of them
+    # locking each other out, and its new quantity cannot land between the
+    # read and the delete.
     #
     # @param reservations [ActiveRecord::Relation<Spree::StockReservation>]
     # @return [Integer] how many reservations were deleted
     def self.withdraw(reservations)
       transaction do
-        held = reservations.lock.pluck(:stock_level_id, :quantity)
+        level_ids = reservations.distinct.pluck(:stock_level_id)
+        Spree::StockLevel.where(id: level_ids).order(:id).lock.load
+
+        held = reservations.pluck(:stock_level_id, :quantity)
                            .each_with_object(Hash.new(0)) { |(level_id, quantity), totals| totals[level_id] += quantity }
         deleted = reservations.delete_all
 
@@ -94,6 +103,29 @@ module Spree
     end
 
     private
+
+    # The counter follows the row wherever the row goes: a checkout that
+    # reserves, a cart that is emptied, a line item that is removed, a level
+    # that is destroyed — every path that creates, resizes or destroys a
+    # reservation moves the level's figure by exactly that row.
+    def hold_units
+      stock_level.adjust_reserved_count(quantity)
+    end
+
+    def move_held_units
+      if saved_change_to_stock_level_id?
+        previous_level_id = saved_change_to_stock_level_id.first
+        Spree::StockLevel.find_by(id: previous_level_id)&.adjust_reserved_count(-quantity_before_last_save.to_i)
+        stock_level.adjust_reserved_count(quantity)
+      else
+        before, after = saved_change_to_quantity
+        stock_level.adjust_reserved_count(after - before.to_i)
+      end
+    end
+
+    def release_units
+      stock_level&.adjust_reserved_count(-quantity)
+    end
 
     def exactly_one_owner
       errors.add(:base, :exactly_one_of_cart_or_order, message: Spree.t('errors.messages.exactly_one_of_cart_or_order')) unless [order, cart].compact.one?

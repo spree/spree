@@ -45,6 +45,18 @@ describe Spree::StockReservations::Reserve do
       expect { described_class.call(order: order) }.to change { stock_level.reload.reserved_count }.from(3).to(5)
     end
 
+    # A hold that lapsed and was revived by a later edit is a hold again, and
+    # the counter — kept per row, not per call — still says so.
+    it 'keeps an expired reservation it revives counted' do
+      result
+      Spree::StockReservation.last.update_column(:expires_at, 1.minute.ago)
+
+      described_class.call(order: order)
+
+      expect(Spree::StockReservation.last).to be_active
+      expect(stock_level.reload.reserved_count).to eq(3)
+    end
+
     it 'fails when stock is insufficient and rolls back' do
       stock_level.set_count_on_hand(1)
       expect { result }.not_to change(Spree::StockReservation, :count)
