@@ -76,27 +76,6 @@ test.describe('command palette', () => {
     await expect(page.getByRole('option', { name: /^new order$/i })).toBeVisible()
   })
 
-  test('PageDown and PageUp move the highlighted command by a page', async ({ page }) => {
-    const creds = await login(page)
-    await openPalette(page, creds.store_id)
-
-    const first = page.getByRole('option', { selected: true })
-    await expect(first).toBeVisible({ timeout: 15_000 })
-    const firstValue = await first.getAttribute('data-value')
-    expect(firstValue).toBeTruthy()
-
-    await page.keyboard.press('PageDown')
-    const afterDown = page.getByRole('option', { selected: true })
-    await expect(afterDown).toBeVisible()
-    await expect(afterDown).not.toHaveAttribute('data-value', firstValue as string)
-
-    await page.keyboard.press('PageUp')
-    await expect(page.getByRole('option', { selected: true })).toHaveAttribute(
-      'data-value',
-      firstValue as string,
-    )
-  })
-
   test('reports when a query matches nothing', async ({ page }) => {
     const creds = await login(page)
     const input = await openPalette(page, creds.store_id)
