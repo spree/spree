@@ -300,7 +300,7 @@ function OperationsCard({
                 : link?.filters
             const content = (
               <>
-                <span className="flex size-8 shrink-0 items-center justify-center rounded-md border bg-muted/50">
+                <span className="flex size-8 shrink-0 items-center justify-center rounded-md border hover:bg-accent/50">
                   <Icon className="size-4 text-muted-foreground" />
                 </span>
                 <span className="flex-1 text-sm">{t(`admin.pages.home.operations.${key}`)}</span>
@@ -331,7 +331,7 @@ function OperationsCard({
                   to={link.to}
                   params={{ storeId }}
                   search={{ filters }}
-                  className={cn(OPERATIONS_ROW_CLASS, 'hover:bg-muted/25')}
+                  className={cn(OPERATIONS_ROW_CLASS, 'hover:bg-accent/50')}
                 >
                   {content}
                 </Link>

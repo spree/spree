@@ -20,13 +20,24 @@ function Tabs({
   )
 }
 
+/**
+ * The track a set of tabs sits in, recessed so the selected tab can be raised
+ * against it.
+ *
+ * The two themes need different tokens because the palette is asymmetric:
+ * light-mode `--muted` resolves to the page background, so a muted track is
+ * invisible on a page and leaves only a 1.5% step under the selected tab,
+ * while dark-mode `--accent` (stone-800) is lighter than every raised surface
+ * and would put the selection *below* its own track. `--accent` in light and
+ * `--muted` in dark both sit one step under the raised tab.
+ */
 function TabsList({ className, ...props }: React.ComponentProps<typeof TabsPrimitive.List>) {
   return (
     <TabsPrimitive.List
       data-slot="tabs-list"
       className={cn(
-        'inline-flex h-9 w-fit items-center justify-center rounded-lg bg-muted p-[3px] text-muted-foreground',
-        'group-data-[orientation=vertical]/tabs:h-auto group-data-[orientation=vertical]/tabs:flex-col',
+        'inline-flex w-fit items-center justify-center gap-1 rounded-lg bg-accent p-1 text-muted-foreground dark:bg-muted',
+        'group-data-[orientation=vertical]/tabs:h-auto group-data-[orientation=vertical]/tabs:w-full group-data-[orientation=vertical]/tabs:flex-col',
         className,
       )}
       {...props}
@@ -39,10 +50,23 @@ function TabsTrigger({ className, ...props }: React.ComponentProps<typeof TabsPr
     <TabsPrimitive.Tab
       data-slot="tabs-trigger"
       className={cn(
-        'inline-flex h-[calc(100%-1px)] flex-1 items-center justify-center gap-1.5 whitespace-nowrap rounded-md border border-transparent px-2 py-1 text-sm font-medium text-muted-foreground transition-[color,box-shadow]',
-        'hover:text-foreground focus-visible:border-ring focus-visible:outline-1 focus-visible:outline-ring focus-visible:ring-[3px] focus-visible:ring-ring/50',
-        'disabled:pointer-events-none disabled:opacity-50',
-        'data-[active]:bg-background data-[active]:text-foreground data-[active]:shadow-sm dark:data-[active]:border-input dark:data-[active]:bg-input/30',
+        // min-h-7 + py-1 keeps the hit area past the 24px WCAG target size at
+        // every text size; the old h-[calc(100%-1px)] left it to the parent.
+        'inline-flex min-h-7 flex-1 cursor-pointer items-center justify-center gap-1.5 rounded-md px-2.5 py-1 text-sm font-medium whitespace-nowrap',
+        'transition-[color,background-color,box-shadow] duration-100 ease-out outline-none',
+        'group-data-[orientation=vertical]/tabs:w-full group-data-[orientation=vertical]/tabs:justify-start',
+        // Unselected tabs recede so the selected one reads as chosen; hover
+        // promotes to full foreground rather than only shifting the surface,
+        // which is the part a colour-blind or low-vision reader can see.
+        'text-muted-foreground hover:text-foreground',
+        // A raised surface on the recessed track: +3% lightness in light,
+        // +5% in dark. `--nested-raised` rather than `--card` because the
+        // system raises by lightening in dark mode, where the two differ.
+        'data-[active]:bg-nested-raised data-[active]:text-foreground data-[active]:shadow-xs',
+        // Same focus treatment as Button, so a keyboard user sees one
+        // consistent indicator across the dashboard.
+        'focus-visible:shadow-[0_0_0_3px_color-mix(in_srgb,var(--ring)_35%,transparent)]',
+        'disabled:pointer-events-none disabled:opacity-70 disabled:cursor-not-allowed',
         "[&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4",
         className,
       )}
