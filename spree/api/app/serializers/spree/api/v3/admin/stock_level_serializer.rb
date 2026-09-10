@@ -6,10 +6,47 @@ module Spree
           include Concerns::ExternalReferencesAttribute
 
           typelize metadata: 'Record<string, unknown>',
-                   allocated_count: :number, available_count: :number
+                   allocated_count: :number, available_count: :number,
+                   reserved_count: :number, incoming_count: :number,
+                   stock_location_name: [:string, nullable: true],
+                   product_id: [:string, nullable: true],
+                   variant_name: [:string, nullable: true], variant_sku: [:string, nullable: true],
+                   variant_options_text: [:string, nullable: true],
+                   thumbnail_url: [:string, nullable: true]
 
-          attributes :metadata,
+          # Reserved: units held by checkouts in progress. Incoming: units on
+          # their way on an open purchase order or a transfer in transit.
+          attributes :metadata, :reserved_count, :incoming_count,
                      created_at: :iso8601, updated_at: :iso8601
+
+          # Which shelf and which SKU, flat, the way a stock movement names
+          # them: enough for a list row without expanding the variant, whose
+          # own serializer computes availability per row.
+          attribute :stock_location_name do |stock_level|
+            stock_level.stock_location&.name
+          end
+
+          attribute :product_id do |stock_level|
+            stock_level.variant&.product&.prefixed_id
+          end
+
+          attribute :variant_name do |stock_level|
+            stock_level.variant&.product&.name
+          end
+
+          attribute :variant_sku do |stock_level|
+            stock_level.variant&.sku
+          end
+
+          attribute :variant_options_text do |stock_level|
+            stock_level.variant&.options_text.presence
+          end
+
+          # The variant's own image, or its product's when it has none.
+          attribute :thumbnail_url do |stock_level|
+            variant = stock_level.variant
+            image_url_for(variant&.primary_media || variant&.product&.primary_media)
+          end
 
           # Units promised to placed orders but not yet dispatched. Raised by an
           # `allocated` movement and retired by `released` or `shipped`, so an

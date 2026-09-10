@@ -37398,6 +37398,163 @@ paths:
                   message: Seller not found
               schema:
                 "$ref": "#/components/schemas/ErrorResponse"
+  "/api/v3/admin/stock_levels":
+    get:
+      summary: List stock levels
+      tags:
+      - Stock
+      security:
+      - api_key: []
+        bearer_auth: []
+      description: |-
+        One row per variant per stock location, carrying every figure the
+        Inventory page shows: `count_on_hand` (on hand), `allocated_count`
+        (committed to placed orders), `reserved_count` (held by checkouts in
+        progress), `available_count` (on hand minus committed) and
+        `incoming_count` (on its way on an open purchase order or a transfer
+        in transit). The variant and location are named flat on the row
+        (`variant_name`, `variant_sku`, `stock_location_name`, `thumbnail_url`)
+        so a list needs no expansion.
+
+        Filter with `q[stock_location_id_eq]`, `q[variant_id_eq]` or
+        `q[variant_sku_or_variant_product_name_cont]`.
+
+
+        **Required scope:** `read_stock` (for API-key authentication).
+      x-codeSamples:
+      - lang: javascript
+        label: Spree Admin SDK
+        source: |-
+          import { createAdminClient } from '@spree/admin-sdk'
+
+          const client = createAdminClient({
+            baseUrl: 'https://your-store.com',
+            secretKey: 'sk_xxx',
+          })
+
+          // One row per variant per location: on hand, committed, reserved, available
+          // and incoming, with the variant and location named flat on the row.
+          const { data: stockLevels } = await client.stockLevels.list({
+            q: { stock_location_id_eq: 'sloc_xxx' },
+          })
+      - lang: bash
+        label: Spree CLI
+        source: spree api get /stock_levels -d '{"q":{"stock_location_id_eq":"sloc_xxx"}}'
+      parameters:
+      - name: x-spree-api-key
+        in: header
+        required: true
+        schema:
+          type: string
+      - name: Authorization
+        in: header
+        required: true
+        schema:
+          type: string
+      - name: page
+        in: query
+        required: false
+        description: Page number
+        schema:
+          type: integer
+      - name: limit
+        in: query
+        required: false
+        description: Number of records per page
+        schema:
+          type: integer
+      - name: q[stock_location_id_eq]
+        in: query
+        required: false
+        description: Only levels at this stock location
+        schema:
+          type: string
+      responses:
+        '200':
+          description: stock levels found
+          content:
+            application/json:
+              example:
+                data:
+                - id: sl_UkLWZg9DAJ
+                  count_on_hand: 0
+                  backorderable: true
+                  stock_location_id: sloc_UkLWZg9DAJ
+                  variant_id: variant_UkLWZg9DAJ
+                  external_references: {}
+                  metadata: {}
+                  reserved_count: 0
+                  incoming_count: 0
+                  created_at: '2026-01-15T12:00:00.000Z'
+                  updated_at: '2026-01-15T12:00:00.000Z'
+                  stock_location_name: Jong Schamberger
+                  product_id: prod_UkLWZg9DAJ
+                  variant_name: Product 1365410
+                  variant_sku: SKU-168
+                  variant_options_text:
+                  thumbnail_url:
+                  allocated_count: 0
+                  available_count: 0
+                - id: sl_gbHJdmfrXB
+                  count_on_hand: 0
+                  backorderable: true
+                  stock_location_id: sloc_UkLWZg9DAJ
+                  variant_id: variant_gbHJdmfrXB
+                  external_references: {}
+                  metadata: {}
+                  reserved_count: 0
+                  incoming_count: 0
+                  created_at: '2026-01-15T12:00:00.000Z'
+                  updated_at: '2026-01-15T12:00:00.000Z'
+                  stock_location_name: Jong Schamberger
+                  product_id: prod_UkLWZg9DAJ
+                  variant_name: Product 1365410
+                  variant_sku: SKU-169
+                  variant_options_text: 'Size: S'
+                  thumbnail_url:
+                  allocated_count: 0
+                  available_count: 0
+                - id: sl_EfhxLZ9ck8
+                  count_on_hand: 40
+                  backorderable: true
+                  stock_location_id: sloc_gbHJdmfrXB
+                  variant_id: variant_gbHJdmfrXB
+                  external_references: {}
+                  metadata: {}
+                  reserved_count: 2
+                  incoming_count: 20
+                  created_at: '2026-01-15T12:00:00.000Z'
+                  updated_at: '2026-01-15T12:00:00.000Z'
+                  stock_location_name: Pilar Stokes
+                  product_id: prod_UkLWZg9DAJ
+                  variant_name: Product 1365410
+                  variant_sku: SKU-169
+                  variant_options_text: 'Size: S'
+                  thumbnail_url:
+                  allocated_count: 3
+                  available_count: 37
+                meta:
+                  page: 1
+                  limit: 25
+                  count: 3
+                  pages: 1
+                  from: 1
+                  to: 3
+                  in: 3
+                  previous:
+                  next:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      "$ref": "#/components/schemas/StockLevel"
+                  meta:
+                    "$ref": "#/components/schemas/PaginationMeta"
+                required:
+                - data
+                - meta
   "/api/v3/admin/stock_levels/bulk_upsert":
     post:
       summary: Bulk-upsert stock levels
@@ -46457,6 +46614,28 @@ components:
           type: number
         available_count:
           type: number
+        reserved_count:
+          type: number
+        incoming_count:
+          type: number
+        stock_location_name:
+          type: string
+          nullable: true
+        product_id:
+          type: string
+          nullable: true
+        variant_name:
+          type: string
+          nullable: true
+        variant_sku:
+          type: string
+          nullable: true
+        variant_options_text:
+          type: string
+          nullable: true
+        thumbnail_url:
+          type: string
+          nullable: true
         stock_location:
           "$ref": "#/components/schemas/StockLocation"
         variant:
@@ -46473,6 +46652,14 @@ components:
       - updated_at
       - allocated_count
       - available_count
+      - reserved_count
+      - incoming_count
+      - stock_location_name
+      - product_id
+      - variant_name
+      - variant_sku
+      - variant_options_text
+      - thumbnail_url
       x-typelizer: true
     StockLocation:
       type: object

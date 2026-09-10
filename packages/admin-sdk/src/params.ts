@@ -1462,6 +1462,13 @@ export interface StockLevelUpdateParams {
    * of zero or more.
    */
   count_on_hand?: number
+  /**
+   * A signed change to the shelf instead of a target count — "three more",
+   * "two fewer" — applied by the API to the count it holds at that moment.
+   * Recorded as an `adjusted` movement the same way. Cannot be sent together
+   * with `count_on_hand`.
+   */
+  adjustment?: number
   /** Whether this location sells the variant beyond what it holds. */
   backorderable?: boolean
   /** Labels the correction in the stock history. Defaults to "Manual adjustment". */

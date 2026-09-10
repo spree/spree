@@ -10,6 +10,53 @@ RSpec.describe 'Admin Stock Levels API', type: :request, swagger_doc: 'api-refer
   let!(:variant) { create(:variant, product: product) }
   let!(:stock_location) { create(:stock_location, store: store) }
 
+  path '/api/v3/admin/stock_levels' do
+    get 'List stock levels' do
+      tags 'Stock'
+      produces 'application/json'
+      security [api_key: [], bearer_auth: []]
+      description <<~DESC
+        One row per variant per stock location, carrying every figure the
+        Inventory page shows: `count_on_hand` (on hand), `allocated_count`
+        (committed to placed orders), `reserved_count` (held by checkouts in
+        progress), `available_count` (on hand minus committed) and
+        `incoming_count` (on its way on an open purchase order or a transfer
+        in transit). The variant and location are named flat on the row
+        (`variant_name`, `variant_sku`, `stock_location_name`, `thumbnail_url`)
+        so a list needs no expansion.
+
+        Filter with `q[stock_location_id_eq]`, `q[variant_id_eq]` or
+        `q[variant_sku_or_variant_product_name_cont]`.
+      DESC
+      admin_scope :read, :stock
+
+      admin_sdk_example 'stock-levels/list'
+
+      parameter name: 'x-spree-api-key', in: :header, type: :string, required: true
+      parameter name: :Authorization, in: :header, type: :string, required: true
+      parameter name: :page, in: :query, type: :integer, required: false, description: 'Page number'
+      parameter name: :limit, in: :query, type: :integer, required: false, description: 'Number of records per page'
+      parameter name: :'q[stock_location_id_eq]', in: :query, type: :string, required: false,
+                description: 'Only levels at this stock location'
+
+      response '200', 'stock levels found' do
+        let(:'x-spree-api-key') { secret_api_key.plaintext_token }
+        let!(:stock_level) do
+          create(:stock_level, variant: variant, stock_location: stock_location, adjust_count_on_hand: false).tap do |level|
+            level.update_columns(count_on_hand: 40, allocated_count: 3, reserved_count: 2, incoming_count: 20)
+          end
+        end
+
+        schema SwaggerSchemaHelpers.paginated('StockLevel')
+
+        run_test! do |response|
+          row = JSON.parse(response.body)['data'].find { |level| level['id'] == stock_level.prefixed_id }
+          expect(row).to include('available_count' => 37, 'reserved_count' => 2, 'incoming_count' => 20)
+        end
+      end
+    end
+  end
+
   path '/api/v3/admin/stock_levels/bulk_upsert' do
     post 'Bulk-upsert stock levels' do
       tags 'Stock'

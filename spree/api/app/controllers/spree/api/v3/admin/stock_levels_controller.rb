@@ -45,14 +45,24 @@ module Spree
           # movement rather than straight onto the column — that is what puts
           # it in the stock history beside every other change. The rest of the
           # payload updates normally.
+          #
+          # `count_on_hand` sets the shelf to a figure; `adjustment` moves it
+          # by one, for a client that knows "three more" without having read
+          # a count that may since have changed. One or the other.
           def update
             attributes = permitted_params.to_h
             new_count = attributes.delete('count_on_hand')
+            adjustment = attributes.delete('adjustment')
             reason = attributes.delete('reason').presence || Spree::StockMovement.default_adjustment_reason
 
             unless new_count.nil?
               new_count = parse_count(new_count)
               return render_validation_error(count_on_hand_errors) if new_count.nil?
+            end
+            unless adjustment.nil?
+              adjustment = parse_count(adjustment)
+              return render_adjustment_error(:not_an_integer) if adjustment.nil?
+              return render_adjustment_error(:exclusive_with_count_on_hand) unless new_count.nil?
             end
 
             # Locked around the read: the delta is worked out from the count
@@ -61,6 +71,7 @@ module Spree
             # the other had already moved, and both edits would land.
             @resource.with_lock do
               @resource.update!(attributes) if attributes.any?
+              new_count = @resource.count_on_hand + adjustment unless adjustment.nil?
               adjust_count_on_hand(new_count, reason) unless new_count.nil?
             end
 
@@ -97,6 +108,20 @@ module Spree
             end
           end
 
+          # `adjustment` is a request field, not a column, so its error is
+          # shaped by hand in the form `format_validation_details` gives a
+          # model error — the dashboard reads the code either way.
+          def render_adjustment_error(code)
+            message = Spree.t("stock_level.errors.adjustment_#{code}")
+
+            render_error(
+              code: ERROR_CODES[:validation_error],
+              message: "Adjustment #{message}",
+              status: :unprocessable_content,
+              details: { adjustment: [{ code: code, message: message, specific: false }] }
+            )
+          end
+
           def model_class
             Spree::StockLevel
           end
@@ -105,8 +130,10 @@ module Spree
             Spree.api.admin_stock_level_serializer
           end
 
+          # What the flat row attributes read, so a page of levels is a fixed
+          # number of queries however long it is.
           def collection_includes
-            [:stock_location, :variant]
+            [:stock_location, { variant: [:primary_media, { option_values: :option_type }, { product: :primary_media }] }]
           end
 
           # `StockLevel.for_store` already applies its own `distinct`, and
@@ -124,7 +151,8 @@ module Spree
           # optional so an audit requirement never turns an existing endpoint
           # into a 422; omitting it falls back to a translated default.
           def permitted_params
-            params.permit(*model_additional_permitted_attributes, :count_on_hand, :backorderable, :reason, metadata: {})
+            params.permit(*model_additional_permitted_attributes, :count_on_hand, :adjustment, :backorderable, :reason,
+                          metadata: {})
           end
 
           private

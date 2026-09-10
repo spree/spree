@@ -19,6 +19,53 @@ RSpec.describe Spree::Api::V3::Admin::StockLevelsController, type: :controller d
       expect(json_response['data'].map { |s| s['id'] }).to include(stock_level.prefixed_id)
     end
 
+    it 'reads every figure on the Inventory page from the row' do
+      stock_level.update_columns(count_on_hand: 40, allocated_count: 3, reserved_count: 2, incoming_count: 20)
+
+      get :index, as: :json
+
+      row = json_response['data'].find { |level| level['id'] == stock_level.prefixed_id }
+      expect(row).to include(
+        'count_on_hand' => 40, 'allocated_count' => 3, 'reserved_count' => 2,
+        'available_count' => 37, 'incoming_count' => 20,
+        'stock_location_name' => stock_location.name,
+        'product_id' => variant.product.prefixed_id,
+        'variant_name' => variant.product.name,
+        'variant_sku' => variant.sku
+      )
+    end
+
+    # No N+1 guard runs in this repo yet, so the page proves it here: the
+    # flat row attributes read the location, the variant, its product and
+    # both images, and a longer page must not cost more queries than a
+    # shorter one.
+    it 'costs the same number of queries however long the page is' do
+      create_list(:stock_level, 2, stock_location: stock_location)
+      # The first request of an example pays for lookups later ones have
+      # cached, and those are not what is being measured.
+      get :index, params: { limit: 3 }, as: :json
+
+      queries_for_three = count_selects { get :index, params: { limit: 3 }, as: :json }
+
+      create_list(:stock_level, 5, stock_location: stock_location)
+
+      queries_for_eight = count_selects { get :index, params: { limit: 8 }, as: :json }
+
+      expect(json_response['data'].size).to eq(8)
+      expect(queries_for_eight).to eq(queries_for_three)
+    end
+
+    def count_selects
+      selects = 0
+      subscriber = ActiveSupport::Notifications.subscribe('sql.active_record') do |*, payload|
+        selects += 1 if payload[:sql].match?(/\ASELECT/i) && payload[:name] != 'SCHEMA'
+      end
+      yield
+      selects
+    ensure
+      ActiveSupport::Notifications.unsubscribe(subscriber)
+    end
+
     it 'filters by stock_location_id' do
       other_location = create(:stock_location)
       _other_item = create(:stock_level, stock_location: other_location)
@@ -61,6 +108,35 @@ RSpec.describe Spree::Api::V3::Admin::StockLevelsController, type: :controller d
       }.not_to change { stock_level.reload.count_on_hand }.from(count_before)
 
       expect(response).to have_http_status(:unprocessable_content)
+      expect(stock_level.stock_movements.adjusted).to be_empty
+    end
+
+    # "Three more" from a client that has not re-read the shelf: the delta is
+    # applied to the count under the lock, not to whatever the client saw.
+    it 'moves the shelf by an adjustment and records it as the movement' do
+      stock_level.set_count_on_hand(10)
+
+      patch :update, params: { id: stock_level.prefixed_id, adjustment: -3, reason: 'Damaged' }, as: :json
+
+      expect(response).to have_http_status(:ok)
+      expect(json_response['count_on_hand']).to eq(7)
+      movement = stock_level.stock_movements.adjusted.last
+      expect(movement.quantity).to eq(-3)
+      expect(movement.reason).to eq('Damaged')
+    end
+
+    it 'refuses an adjustment that is not a whole number' do
+      patch :update, params: { id: stock_level.prefixed_id, adjustment: 'two' }, as: :json
+
+      expect(response).to have_http_status(:unprocessable_content)
+      expect(stock_level.stock_movements.adjusted).to be_empty
+    end
+
+    it 'refuses a count and an adjustment in the same request' do
+      patch :update, params: { id: stock_level.prefixed_id, count_on_hand: 5, adjustment: 1 }, as: :json
+
+      expect(response).to have_http_status(:unprocessable_content)
+      expect(json_response['error']['details']['adjustment'].first['code']).to eq('exclusive_with_count_on_hand')
       expect(stock_level.stock_movements.adjusted).to be_empty
     end
 
