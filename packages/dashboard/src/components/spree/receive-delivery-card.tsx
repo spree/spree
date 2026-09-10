@@ -4,6 +4,7 @@ import {
   Button,
   Card,
   CardContent,
+  CardFooter,
   CardHeader,
   CardTitle,
   Field,
@@ -157,7 +158,7 @@ export function ReceiveDeliveryCard({
         </div>
 
         <Table scrollX>
-          <TableHeader>
+          <TableHeader className="border-t border-border-subtle">
             <TableRow>
               <TableHead>{t('admin.inventory_lines.columns.variant')}</TableHead>
               <TableHead className="text-right">{expectedLabel}</TableHead>
@@ -174,7 +175,7 @@ export function ReceiveDeliveryCard({
               const count = countFor(line.id)
               return (
                 <TableRow key={line.id}>
-                  <TableCell>
+                  <TableCell className="rounded-none!">
                     <VariantLink
                       productId={line.product_id}
                       name={line.variant_name}
@@ -211,7 +212,7 @@ export function ReceiveDeliveryCard({
                     label={t('admin.stock_receipts.columns.rejected')}
                     onChange={(value) => setCount(line.id, { rejected: value })}
                   />
-                  <TableCell>
+                  <TableCell className="rounded-none!">
                     {count.rejected > 0 ? (
                       <Select
                         items={REJECTION_REASONS.map((value) => ({
@@ -243,22 +244,21 @@ export function ReceiveDeliveryCard({
             })}
           </TableBody>
         </Table>
-
-        <div className="flex items-center justify-between px-4 pb-4">
-          <p className="text-muted-foreground text-sm tabular-nums">
-            {t('admin.stock_receipts.delivery_total', { accepted, rejected })}
-          </p>
-          <Can I="update" a={subject}>
-            <Button
-              type="button"
-              onClick={handleReceive}
-              disabled={pending || (accepted === 0 && rejected === 0) || missingReason}
-            >
-              {pending ? t('admin.actions.saving') : t('admin.stock_receipts.actions.receive')}
-            </Button>
-          </Can>
-        </div>
       </CardContent>
+      <CardFooter className="flex items-center justify-between">
+        <p className="text-muted-foreground text-sm tabular-nums">
+          {t('admin.stock_receipts.delivery_total', { accepted, rejected })}
+        </p>
+        <Can I="update" a={subject}>
+          <Button
+            type="button"
+            onClick={handleReceive}
+            disabled={pending || (accepted === 0 && rejected === 0) || missingReason}
+          >
+            {pending ? t('admin.actions.saving') : t('admin.stock_receipts.actions.receive')}
+          </Button>
+        </Can>
+      </CardFooter>
     </Card>
   )
 }
