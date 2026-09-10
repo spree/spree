@@ -189,13 +189,22 @@ const transfer = await adminClient.stockTransfers.create({
 // The units leave the source here — and are on no shelf until they arrive.
 await adminClient.stockTransfers.markInTransit(transfer.id)
 
-// Eight of the ten made it. The transfer stays open for the rest.
-await adminClient.stockTransfers.receive(transfer.id, {
-  items: [{ id: 'sti_xxx', quantity_received: 8, discrepancy_reason: 'damaged_in_transit' }],
+// Eight of the ten made it intact and two were crushed. Each delivery is a
+// stock receipt: this delivery's counts, not a running total.
+await adminClient.stockTransfers.stockReceipts.create(transfer.id, {
+  items: [{ id: 'sti_xxx', quantity_accepted: 8, quantity_rejected: 2, rejection_reason: 'damaged' }],
 })
 ```
 
 Two things follow from the middle step. Availability at the destination does not rise until somebody counts the goods in, which is what makes the number trustworthy. And cancelling a transfer whose units have already left is a decision rather than an undo: either they come back to the source, or they are written off as lost.
+
+Every delivery is a **stock receipt** — numbered, dated, carrying the packing-slip reference — with what it accepted and what it refused per line. Refused units are recorded but never stocked. A transfer is `received` once everything that left has arrived, in whatever state; `over_received` if more arrived than was sent; and it can be **closed short** when the missing units are not going to turn up:
+
+```typescript Admin SDK
+await adminClient.stockTransfers.close(transfer.id, { reason: 'Two fell off the van' })
+```
+
+A transfer that is packed but not yet sent can go back to draft (`markDraft`) if the plan changes.
 
 ## Buying stock in
 
@@ -210,10 +219,17 @@ const order = await adminClient.purchaseOrders.create({
 })
 
 await adminClient.purchaseOrders.markOrdered(order.id)
-await adminClient.purchaseOrders.receive(order.id)
+
+// A delivery arrives: 58 accepted, 2 refused. The order stays open for the rest.
+await adminClient.purchaseOrders.stockReceipts.create(order.id, {
+  reference: 'DN-4471',
+  items: [{ id: 'poi_xxx', quantity_accepted: 58, quantity_rejected: 2, rejection_reason: 'damaged' }],
+})
 ```
 
-Ordered stock is never available stock. Nothing reaches `count_on_hand` until a delivery is received, because a merchant who has ordered goods does not have them — and suppliers under-ship often enough that receiving in parts is the ordinary case.
+Ordered stock is never available stock. Nothing reaches `count_on_hand` until a delivery is received, because a merchant who has ordered goods does not have them — and suppliers under-ship often enough that receiving in parts is the ordinary case. Unlike a transfer, a supplier's refused units are still owed: the order stays `partially_received` until they are replaced, or the merchant closes it short (`close`, with a reason) because the balance is not coming. A supplier that sends more than was ordered leaves the order `over_received`. An order that was placed but has had no delivery can go back to draft (`markDraft`).
+
+Orders carry an optional `cancel_by` date — the day after which the goods are no longer wanted — and the dashboard lists filter on *Overdue* (expected date passed) and *Past cancel-by*. Nothing cancels automatically. Purchase orders can be exported to CSV, one row per line, and imported from one: rows sharing a `reference` become one draft order, naming the supplier, warehouse and SKU by name.
 
 Suppliers themselves are an address book, kept per store:
 

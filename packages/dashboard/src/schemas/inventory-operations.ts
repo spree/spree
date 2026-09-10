@@ -10,6 +10,7 @@ export const STOCK_TRANSFER_STATUSES = [
   'in_transit',
   'partially_received',
   'received',
+  'over_received',
   'canceled',
 ] as const
 
@@ -20,19 +21,20 @@ export const PURCHASE_ORDER_STATUSES = [
   'ordered',
   'partially_received',
   'received',
+  'over_received',
   'canceled',
 ] as const
 
 export type PurchaseOrderStatus = (typeof PURCHASE_ORDER_STATUSES)[number]
 
 /**
- * Why fewer units arrived than were shipped. Free text is allowed by the API,
- * but offering the three answers a warehouse actually gives keeps the data
- * worth reporting on.
+ * Why a delivery refused units, matching `Spree::StockReceiptItem::REJECTION_REASONS`.
+ * A closed list: the server accepts nothing else, and a fixed vocabulary is
+ * what makes the figures worth reporting on.
  */
-export const DISCREPANCY_REASONS = ['damaged_in_transit', 'lost_in_transit', 'undercount'] as const
+export const REJECTION_REASONS = ['damaged', 'wrong_item', 'expired', 'other'] as const
 
-export type DiscrepancyReason = (typeof DISCREPANCY_REASONS)[number]
+export type RejectionReason = (typeof REJECTION_REASONS)[number]
 
 /** What happens to units still in flight when a shipped transfer is called off. */
 export const IN_TRANSIT_RESOLUTIONS = ['restock', 'write_off'] as const
@@ -46,5 +48,5 @@ export function isInFlight(status: string): boolean {
 
 /** Nothing more will arrive on a document in one of these. */
 export function isClosed(status: string): boolean {
-  return status === 'received' || status === 'canceled'
+  return status === 'received' || status === 'over_received' || status === 'canceled'
 }

@@ -1,10 +1,16 @@
 import type { PurchaseOrder } from '@spree/admin-sdk'
 import { defineTable } from '@spree/dashboard-core'
-import { RelativeTime, ResourceNameCell, StatusBadge } from '@spree/dashboard-ui'
+import { Badge, RelativeTime, ResourceNameCell, StatusBadge } from '@spree/dashboard-ui'
 import { TruckIcon } from '@spree/dashboard-ui/icons'
 import i18n from 'i18next'
 import { supplierAutocompleteProps } from '../hooks/use-suppliers'
-import { PURCHASE_ORDER_STATUSES } from '../schemas/inventory-operations'
+import { isClosed, PURCHASE_ORDER_STATUSES } from '../schemas/inventory-operations'
+
+// A calendar day, compared as text: both sides are `yyyy-mm-dd`. Display
+// only — the list filters below are answered by the server's own scopes.
+function dayHasPassed(date: string | null | undefined): boolean {
+  return !!date && date < new Date().toISOString().slice(0, 10)
+}
 
 function statusLabel(value: string): string {
   return i18n.t(`admin.purchase_orders.statuses.${value}`)
@@ -48,7 +54,13 @@ defineTable<PurchaseOrder>('purchase-orders', {
         <StatusBadge
           status={po.status}
           label={statusLabel(po.status)}
-          tone={po.status === 'received' ? 'success' : undefined}
+          tone={
+            po.status === 'received'
+              ? 'success'
+              : po.status === 'over_received'
+                ? 'warning'
+                : undefined
+          }
         />
       ),
     },
@@ -89,6 +101,58 @@ defineTable<PurchaseOrder>('purchase-orders', {
       default: true,
       className: 'text-sm text-muted-foreground whitespace-nowrap',
       render: (po) => po.expected_at ?? '—',
+    },
+    {
+      key: 'cancel_by',
+      label: i18n.t('admin.purchase_orders.columns.cancel_by'),
+      sortable: true,
+      filterable: true,
+      filterType: 'date',
+      className: 'text-sm text-muted-foreground whitespace-nowrap',
+      render: (po) => po.cancel_by ?? '—',
+    },
+    {
+      // A scope, not a predicate on `expected_at`: "is it late?" is one
+      // question with two answers, which is what a boolean control needs.
+      key: 'overdue',
+      label: i18n.t('admin.purchase_orders.columns.overdue'),
+      ransackAttribute: 'overdue',
+      ransackScope: true,
+      sortable: false,
+      filterable: true,
+      filterType: 'boolean',
+      booleanLabels: {
+        true: i18n.t('admin.purchase_orders.filters.overdue'),
+        false: i18n.t('admin.purchase_orders.filters.not_overdue'),
+      },
+      quickFilter: true,
+      render: (po) =>
+        !isClosed(po.status) && dayHasPassed(po.expected_at) ? (
+          <Badge variant="destructive">{i18n.t('admin.purchase_orders.filters.overdue')}</Badge>
+        ) : (
+          '—'
+        ),
+    },
+    {
+      key: 'past_cancel_by',
+      label: i18n.t('admin.purchase_orders.columns.past_cancel_by'),
+      ransackAttribute: 'past_cancel_by',
+      ransackScope: true,
+      sortable: false,
+      filterable: true,
+      filterType: 'boolean',
+      booleanLabels: {
+        true: i18n.t('admin.purchase_orders.filters.past_cancel_by'),
+        false: i18n.t('admin.purchase_orders.filters.not_past_cancel_by'),
+      },
+      render: (po) =>
+        !isClosed(po.status) && dayHasPassed(po.cancel_by) ? (
+          <Badge variant="destructive">
+            {i18n.t('admin.purchase_orders.filters.past_cancel_by')}
+          </Badge>
+        ) : (
+          '—'
+        ),
     },
     {
       key: 'created_at',

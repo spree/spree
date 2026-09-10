@@ -5053,7 +5053,8 @@
         "quantity_shipped": "Expédiées",
         "quantity_to_ship": "À expédier",
         "quantity_received": "Reçues",
-        "discrepancy": "Écart"
+        "quantity_rejected": "Refusé",
+        "quantity_over": "En excès"
       },
       "direction": {
         "external_receive": "Réception externe",
@@ -5070,7 +5071,9 @@
         "failed_to_receive": "Échec de la réception du transfert",
         "failed_to_cancel": "Échec de l'annulation du transfert",
         "not_editable": "Ce transfert est emballé : son contenu fait désormais foi. Annulez-le s'il ne doit pas partir.",
-        "failed_to_load": "Ce transfert n'a pas pu être chargé."
+        "failed_to_load": "Ce transfert n'a pas pu être chargé.",
+        "failed_to_mark_draft": "Impossible de repasser en brouillon",
+        "failed_to_close": "Impossible de clôturer en l'état"
       },
       "messages": {
         "deleted": "Transfert supprimé",
@@ -5080,7 +5083,9 @@
         "marked_ready": "Le transfert est prêt à expédier",
         "marked_in_transit": "Transfert en transit — les unités ont quitté l'entrepôt d'origine",
         "received": "Transfert réceptionné",
-        "canceled": "Transfert annulé"
+        "canceled": "Transfert annulé",
+        "marked_draft": "De retour en brouillon",
+        "closed": "Clôturé en l'état — ce qui est arrivé reste, le reste est passé en perte"
       },
       "table": {
         "empty": "Aucun transfert de stock pour le moment",
@@ -5095,20 +5100,14 @@
       "receive_title": "Réception",
       "history_title": "Mouvements de stock de ce transfert",
       "units_summary": "{{received}} reçues sur {{shipped}} expédiées",
-      "receive_running_total": "{{counted}} comptées sur {{shipped}} expédiées",
-      "discrepancy_placeholder": "Pourquoi il en manque",
       "statuses": {
         "draft": "Brouillon",
         "ready_to_ship": "Prêt à expédier",
         "in_transit": "En transit",
         "partially_received": "Partiellement reçu",
         "received": "Reçu",
-        "canceled": "Annulé"
-      },
-      "discrepancy_reasons": {
-        "damaged_in_transit": "Endommagé en transit",
-        "lost_in_transit": "Perdu en transit",
-        "undercount": "Mal compté au départ"
+        "canceled": "Annulé",
+        "over_received": "Reçu en excès"
       },
       "in_transit_resolutions": {
         "restock": "Remettre les unités à l'entrepôt d'origine",
@@ -5126,14 +5125,18 @@
         "shipped_at": "Expédié",
         "received_at": "Reçu",
         "in_transit_resolution": "Les unités sont déjà parties. Que leur est-il arrivé ?",
-        "source_locked": "Figé tant qu'il y a des lignes : elles ont été choisies pour cet entrepôt. Retirez-les pour le changer."
+        "source_locked": "Figé tant qu'il y a des lignes : elles ont été choisies pour cet entrepôt. Retirez-les pour le changer.",
+        "closed_short": "Clôturé en l'état",
+        "close_reason": "Motif"
       },
       "actions": {
         "create_draft": "Créer le brouillon",
         "mark_ready": "Marquer prêt à expédier",
         "mark_in_transit": "Marquer en transit",
         "receive": "Réceptionner",
-        "cancel_transfer": "Annuler le transfert"
+        "cancel_transfer": "Annuler le transfert",
+        "mark_draft": "Repasser en brouillon",
+        "close_short": "Clôturer en l'état"
       },
       "delete_confirm": {
         "title": "Supprimer ce transfert ?",
@@ -5150,7 +5153,11 @@
         "in_flight_restock": "Les unités retourneront dans l'entrepôt d'origine, comme si le transfert n'avait jamais été expédié.",
         "in_flight_write_off": "Les unités restent sorties du stock, en perte. Rien n'est réintégré."
       },
-      "edit_title": "Modifier le transfert {{number}}"
+      "edit_title": "Modifier le transfert {{number}}",
+      "close_confirm": {
+        "title": "Clôturer ce transfert en l'état ?",
+        "message": "Ce que la destination a compté reste. Les {{outstanding}} unités encore en route sont passées en perte et le transfert est marqué reçu."
+      }
     },
     "store": {
       "load_failed_title": "Échec du chargement des paramètres de la boutique",
@@ -5475,7 +5482,6 @@
       "receive_title": "Réception",
       "history_title": "Mouvements de stock de ce bon de commande",
       "units_summary": "{{received}} reçues sur {{ordered}} commandées",
-      "receive_running_total": "{{counted}} comptées sur {{ordered}} commandées",
       "table": {
         "empty": "Aucun bon de commande",
         "search_placeholder": "Rechercher par numéro ou référence…"
@@ -5488,14 +5494,20 @@
         "expected": "Attendu",
         "quantity_ordered": "Commandées",
         "quantity_received": "Reçues",
-        "line_total": "Total ligne"
+        "line_total": "Total ligne",
+        "quantity_rejected": "Refusé",
+        "quantity_over": "En excès",
+        "cancel_by": "Annuler après le",
+        "overdue": "En retard",
+        "past_cancel_by": "Date d'annulation dépassée"
       },
       "statuses": {
         "draft": "Brouillon",
         "ordered": "Commandé",
         "partially_received": "Partiellement reçu",
         "received": "Reçu",
-        "canceled": "Annulé"
+        "canceled": "Annulé",
+        "over_received": "Reçu en excès"
       },
       "fields": {
         "supplier": "Fournisseur",
@@ -5512,13 +5524,19 @@
         "subtotal": "Total",
         "ordered_at": "Commandé",
         "received_at": "Reçu",
-        "currency_locked": "Figée après l'ouverture : chaque ligne est chiffrée dans cette devise."
+        "currency_locked": "Figée après l'ouverture : chaque ligne est chiffrée dans cette devise.",
+        "closed_short": "Clôturé en l'état",
+        "close_reason": "Motif",
+        "cancel_by": "Annuler après le",
+        "cancel_by_placeholder": "Le jour à partir duquel la marchandise n'est plus souhaitée"
       },
       "actions": {
         "create_draft": "Créer le brouillon",
         "mark_ordered": "Marquer comme commandé",
         "receive": "Réceptionner",
-        "cancel_order": "Annuler la commande"
+        "cancel_order": "Annuler la commande",
+        "mark_draft": "Repasser en brouillon",
+        "close_short": "Clôturer en l'état"
       },
       "messages": {
         "created": "Bon de commande créé",
@@ -5526,7 +5544,9 @@
         "deleted": "Bon de commande supprimé",
         "ordered": "Commande passée",
         "received": "Livraison enregistrée",
-        "canceled": "Bon de commande annulé"
+        "canceled": "Bon de commande annulé",
+        "marked_draft": "De retour en brouillon",
+        "closed": "Clôturé en l'état — ce qui est arrivé reste, le reste est passé en perte"
       },
       "errors": {
         "failed_to_create": "Échec de la création du bon de commande",
@@ -5536,7 +5556,9 @@
         "failed_to_receive": "Échec de l'enregistrement de la livraison",
         "failed_to_cancel": "Échec de l'annulation du bon de commande",
         "not_editable": "Ce bon est parti chez le fournisseur : ses lignes engagent les deux parties. Annulez-le s'il ne doit pas être maintenu.",
-        "failed_to_load": "Ce bon de commande n'a pas pu être chargé."
+        "failed_to_load": "Ce bon de commande n'a pas pu être chargé.",
+        "failed_to_mark_draft": "Impossible de repasser en brouillon",
+        "failed_to_close": "Impossible de clôturer en l'état"
       },
       "delete_confirm": {
         "title": "Supprimer ce bon de commande ?",
@@ -5550,7 +5572,17 @@
         "title": "Annuler ce bon de commande ?",
         "message": "Ce qui reste dû est annulé. Les unités déjà reçues restent en stock."
       },
-      "edit_title": "Modifier le bon de commande {{number}}"
+      "edit_title": "Modifier le bon de commande {{number}}",
+      "close_confirm": {
+        "title": "Clôturer ce bon de commande en l'état ?",
+        "message": "Ce qui est arrivé reste en stock. Les {{outstanding}} unités encore dues sont passées en perte et la commande est marquée reçue."
+      },
+      "filters": {
+        "overdue": "En retard",
+        "not_overdue": "Dans les temps",
+        "past_cancel_by": "Date d'annulation dépassée",
+        "not_past_cancel_by": "Avant la date d'annulation"
+      }
     },
     "suppliers": {
       "title": "Fournisseurs",
@@ -5593,6 +5625,43 @@
         "title": "Supprimer ce fournisseur ?",
         "message": "{{name}} sera retiré de votre liste de fournisseurs."
       }
+    },
+    "stock_receipts": {
+      "title": "Livraisons",
+      "receive_title": "Réceptionner une livraison",
+      "empty": "Aucune livraison pour le moment",
+      "columns": {
+        "accepted": "Accepté",
+        "rejected": "Refusé",
+        "reason": "Motif",
+        "received_so_far": "Reçu à ce jour"
+      },
+      "fields": {
+        "reference": "Bon de livraison",
+        "reference_placeholder": "Numéro de bon de livraison ou de colisage",
+        "received_at": "Reçu le",
+        "received_at_placeholder": "Maintenant",
+        "notes": "Notes"
+      },
+      "delivery_total": "{{accepted}} accepté(s), {{rejected}} refusé(s) dans cette livraison",
+      "rejected_so_far": "({{count}} refusé(s))",
+      "summary": "{{accepted}} accepté(s) · {{rejected}} refusé(s)",
+      "reason_placeholder": "Motif du refus",
+      "rejection_reasons": {
+        "damaged": "Endommagé",
+        "wrong_item": "Mauvais article",
+        "expired": "Périmé",
+        "other": "Autre"
+      },
+      "actions": {
+        "receive": "Réceptionner"
+      },
+      "close_short": {
+        "reason_label": "Motif",
+        "reason_placeholder": "Ce qu'il est advenu du reste",
+        "confirm": "Clôturer en l'état"
+      },
+      "load_failed": "Les livraisons n'ont pas pu être chargées."
     }
   }
 }

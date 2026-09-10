@@ -5111,7 +5111,8 @@
         "quantity_shipped": "Wysłano",
         "quantity_to_ship": "Do wysłania",
         "quantity_received": "Przyjęto",
-        "discrepancy": "Rozbieżność"
+        "quantity_rejected": "Odrzucone",
+        "quantity_over": "Nadwyżka"
       },
       "direction": {
         "external_receive": "Przyjęcie zewnętrzne",
@@ -5128,7 +5129,9 @@
         "failed_to_receive": "Nie udało się przyjąć przesunięcia",
         "failed_to_cancel": "Nie udało się anulować przesunięcia",
         "not_editable": "Ten transfer jest zapakowany, więc jego zawartość jest już zapisem. Anuluj go, jeśli nie ma jechać.",
-        "failed_to_load": "Nie udało się wczytać tego transferu."
+        "failed_to_load": "Nie udało się wczytać tego transferu.",
+        "failed_to_mark_draft": "Nie udało się cofnąć do wersji roboczej",
+        "failed_to_close": "Nie udało się zamknąć z brakami"
       },
       "messages": {
         "deleted": "Przesunięcie usunięte",
@@ -5138,7 +5141,9 @@
         "marked_ready": "Przesunięcie gotowe do wysyłki",
         "marked_in_transit": "Przesunięcie w drodze — jednostki opuściły magazyn źródłowy",
         "received": "Przesunięcie przyjęte",
-        "canceled": "Przesunięcie anulowane"
+        "canceled": "Przesunięcie anulowane",
+        "marked_draft": "Znów w wersji roboczej",
+        "closed": "Zamknięto z brakami — to, co dotarło, zostaje, reszta jest spisana"
       },
       "table": {
         "empty": "Brak transferów magazynowych",
@@ -5153,20 +5158,14 @@
       "receive_title": "Przyjęcie",
       "history_title": "Ruchy magazynowe tego transferu",
       "units_summary": "przyjęto {{received}} z {{shipped}} wysłanych",
-      "receive_running_total": "policzono {{counted}} z {{shipped}} wysłanych",
-      "discrepancy_placeholder": "Dlaczego dotarło mniej",
       "statuses": {
         "draft": "Szkic",
         "ready_to_ship": "Gotowe do wysyłki",
         "in_transit": "W drodze",
         "partially_received": "Częściowo przyjęte",
         "received": "Przyjęte",
-        "canceled": "Anulowane"
-      },
-      "discrepancy_reasons": {
-        "damaged_in_transit": "Uszkodzone w transporcie",
-        "lost_in_transit": "Zagubione w transporcie",
-        "undercount": "Błędnie policzone przy wysyłce"
+        "canceled": "Anulowane",
+        "over_received": "Otrzymano więcej"
       },
       "in_transit_resolutions": {
         "restock": "Zwróć jednostki do magazynu źródłowego",
@@ -5184,14 +5183,18 @@
         "shipped_at": "Wysłano",
         "received_at": "Przyjęto",
         "in_transit_resolution": "Jednostki już wyjechały. Co się z nimi stało?",
-        "source_locked": "Zablokowany, dopóki są pozycje: wybrano je dla tego magazynu. Usuń je, aby zmienić."
+        "source_locked": "Zablokowany, dopóki są pozycje: wybrano je dla tego magazynu. Usuń je, aby zmienić.",
+        "closed_short": "Zamknięto z brakami",
+        "close_reason": "Powód"
       },
       "actions": {
         "create_draft": "Utwórz szkic",
         "mark_ready": "Oznacz jako gotowe do wysyłki",
         "mark_in_transit": "Oznacz jako w drodze",
         "receive": "Przyjmij",
-        "cancel_transfer": "Anuluj przesunięcie"
+        "cancel_transfer": "Anuluj przesunięcie",
+        "mark_draft": "Wróć do wersji roboczej",
+        "close_short": "Zamknij z brakami"
       },
       "delete_confirm": {
         "title": "Usunąć to przesunięcie?",
@@ -5210,7 +5213,11 @@
         "in_flight_restock": "Jednostki wrócą na półkę magazynu źródłowego, tak jakby przesunięcie nigdy nie wyjechało.",
         "in_flight_write_off": "Jednostki pozostaną odpisane jako strata. Nic nie zostanie nigdzie dodane."
       },
-      "edit_title": "Edytuj transfer {{number}}"
+      "edit_title": "Edytuj transfer {{number}}",
+      "close_confirm": {
+        "title": "Zamknąć ten transfer z brakami?",
+        "message": "To, co policzył magazyn docelowy, zostaje. Brakujące {{outstanding}} szt. w drodze zostaną spisane jako utracone, a transfer oznaczony jako otrzymany."
+      }
     },
     "store": {
       "load_failed_title": "Nie udało się załadować ustawień sklepu",
@@ -5537,7 +5544,6 @@
       "receive_title": "Przyjęcie",
       "history_title": "Ruchy magazynowe tego zamówienia",
       "units_summary": "przyjęto {{received}} z {{ordered}} zamówionych",
-      "receive_running_total": "policzono {{counted}} z {{ordered}} zamówionych",
       "table": {
         "empty": "Brak zamówień zakupu",
         "search_placeholder": "Szukaj po numerze lub referencji…"
@@ -5550,14 +5556,20 @@
         "expected": "Oczekiwane",
         "quantity_ordered": "Zamówiono",
         "quantity_received": "Przyjęto",
-        "line_total": "Suma pozycji"
+        "line_total": "Suma pozycji",
+        "quantity_rejected": "Odrzucone",
+        "quantity_over": "Nadwyżka",
+        "cancel_by": "Anuluj po",
+        "overdue": "Opóźnione",
+        "past_cancel_by": "Po terminie anulowania"
       },
       "statuses": {
         "draft": "Szkic",
         "ordered": "Zamówione",
         "partially_received": "Częściowo przyjęte",
         "received": "Przyjęte",
-        "canceled": "Anulowane"
+        "canceled": "Anulowane",
+        "over_received": "Otrzymano więcej"
       },
       "fields": {
         "supplier": "Dostawca",
@@ -5574,13 +5586,19 @@
         "subtotal": "Razem",
         "ordered_at": "Zamówiono",
         "received_at": "Przyjęto",
-        "currency_locked": "Zablokowana po utworzeniu: każda pozycja jest w niej wyceniona."
+        "currency_locked": "Zablokowana po utworzeniu: każda pozycja jest w niej wyceniona.",
+        "closed_short": "Zamknięto z brakami",
+        "close_reason": "Powód",
+        "cancel_by": "Anuluj po",
+        "cancel_by_placeholder": "Dzień, po którym towar nie jest już potrzebny"
       },
       "actions": {
         "create_draft": "Utwórz szkic",
         "mark_ordered": "Oznacz jako zamówione",
         "receive": "Przyjmij",
-        "cancel_order": "Anuluj zamówienie"
+        "cancel_order": "Anuluj zamówienie",
+        "mark_draft": "Wróć do wersji roboczej",
+        "close_short": "Zamknij z brakami"
       },
       "messages": {
         "created": "Zamówienie zakupu utworzone",
@@ -5588,7 +5606,9 @@
         "deleted": "Zamówienie zakupu usunięte",
         "ordered": "Zamówienie złożone",
         "received": "Dostawa zaksięgowana",
-        "canceled": "Zamówienie zakupu anulowane"
+        "canceled": "Zamówienie zakupu anulowane",
+        "marked_draft": "Znów w wersji roboczej",
+        "closed": "Zamknięto z brakami — to, co dotarło, zostaje, reszta jest spisana"
       },
       "errors": {
         "failed_to_create": "Nie udało się utworzyć zamówienia zakupu",
@@ -5598,7 +5618,9 @@
         "failed_to_receive": "Nie udało się zaksięgować dostawy",
         "failed_to_cancel": "Nie udało się anulować zamówienia zakupu",
         "not_editable": "To zamówienie trafiło do dostawcy, więc jego pozycje wiążą obie strony. Anuluj je, jeśli nie ma obowiązywać.",
-        "failed_to_load": "Nie udało się wczytać tego zamówienia."
+        "failed_to_load": "Nie udało się wczytać tego zamówienia.",
+        "failed_to_mark_draft": "Nie udało się cofnąć do wersji roboczej",
+        "failed_to_close": "Nie udało się zamknąć z brakami"
       },
       "delete_confirm": {
         "title": "Usunąć to zamówienie zakupu?",
@@ -5612,7 +5634,17 @@
         "title": "Anulować to zamówienie zakupu?",
         "message": "To, co pozostało niedostarczone, zostanie odwołane. Przyjęte jednostki zostają w magazynie."
       },
-      "edit_title": "Edytuj zamówienie {{number}}"
+      "edit_title": "Edytuj zamówienie {{number}}",
+      "close_confirm": {
+        "title": "Zamknąć to zamówienie z brakami?",
+        "message": "To, co dotarło, zostaje na półce. Brakujące {{outstanding}} szt. zostaną spisane, a zamówienie oznaczone jako otrzymane."
+      },
+      "filters": {
+        "overdue": "Opóźnione",
+        "not_overdue": "Na czas",
+        "past_cancel_by": "Po terminie anulowania",
+        "not_past_cancel_by": "Przed terminem anulowania"
+      }
     },
     "suppliers": {
       "title": "Dostawcy",
@@ -5655,6 +5687,43 @@
         "title": "Usunąć tego dostawcę?",
         "message": "{{name}} zostanie usunięty z listy dostawców."
       }
+    },
+    "stock_receipts": {
+      "title": "Dostawy",
+      "receive_title": "Przyjmij dostawę",
+      "empty": "Brak dostaw",
+      "columns": {
+        "accepted": "Przyjęte",
+        "rejected": "Odrzucone",
+        "reason": "Powód",
+        "received_so_far": "Dotychczas otrzymane"
+      },
+      "fields": {
+        "reference": "Dokument dostawy",
+        "reference_placeholder": "Numer listu przewozowego lub WZ",
+        "received_at": "Otrzymano",
+        "received_at_placeholder": "Teraz",
+        "notes": "Uwagi"
+      },
+      "delivery_total": "{{accepted}} przyjęto, {{rejected}} odrzucono w tej dostawie",
+      "rejected_so_far": "({{count}} odrzucono)",
+      "summary": "{{accepted}} przyjęto · {{rejected}} odrzucono",
+      "reason_placeholder": "Powód odrzucenia",
+      "rejection_reasons": {
+        "damaged": "Uszkodzone",
+        "wrong_item": "Zły towar",
+        "expired": "Przeterminowane",
+        "other": "Inne"
+      },
+      "actions": {
+        "receive": "Przyjmij"
+      },
+      "close_short": {
+        "reason_label": "Powód",
+        "reason_placeholder": "Co się stało z resztą",
+        "confirm": "Zamknij z brakami"
+      },
+      "load_failed": "Nie udało się wczytać dostaw."
     }
   }
 }

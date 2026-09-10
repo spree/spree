@@ -5053,7 +5053,8 @@
         "quantity_shipped": "Versandt",
         "quantity_to_ship": "Zu versenden",
         "quantity_received": "Eingegangen",
-        "discrepancy": "Abweichung"
+        "quantity_rejected": "Abgelehnt",
+        "quantity_over": "Zu viel"
       },
       "direction": {
         "external_receive": "Externer Wareneingang",
@@ -5070,7 +5071,9 @@
         "failed_to_receive": "Wareneingang konnte nicht gebucht werden",
         "failed_to_cancel": "Umlagerung konnte nicht abgebrochen werden",
         "not_editable": "Diese Umbuchung ist gepackt, ihr Inhalt ist damit dokumentiert. Storniere sie, wenn sie nicht gehen soll.",
-        "failed_to_load": "Diese Umbuchung konnte nicht geladen werden."
+        "failed_to_load": "Diese Umbuchung konnte nicht geladen werden.",
+        "failed_to_mark_draft": "Konnte nicht in den Entwurf zurückgesetzt werden",
+        "failed_to_close": "Konnte nicht vorzeitig abgeschlossen werden"
       },
       "messages": {
         "deleted": "Umlagerung gelöscht",
@@ -5080,7 +5083,9 @@
         "marked_ready": "Umlagerung ist versandbereit",
         "marked_in_transit": "Umlagerung ist unterwegs – die Einheiten haben das Quelllager verlassen",
         "received": "Wareneingang gebucht",
-        "canceled": "Umlagerung abgebrochen"
+        "canceled": "Umlagerung abgebrochen",
+        "marked_draft": "Wieder im Entwurf",
+        "closed": "Vorzeitig abgeschlossen — das Gelieferte bleibt, der Rest wird abgeschrieben"
       },
       "table": {
         "empty": "Noch keine Lagerumbuchungen",
@@ -5095,20 +5100,14 @@
       "receive_title": "Wareneingang",
       "history_title": "Bestandsbewegungen dieser Umbuchung",
       "units_summary": "{{received}} von {{shipped}} versandten Einheiten eingegangen",
-      "receive_running_total": "{{counted}} von {{shipped}} versandten Einheiten gezählt",
-      "discrepancy_placeholder": "Warum weniger eingetroffen ist",
       "statuses": {
         "draft": "Entwurf",
         "ready_to_ship": "Versandbereit",
         "in_transit": "Unterwegs",
         "partially_received": "Teilweise eingegangen",
         "received": "Eingegangen",
-        "canceled": "Abgebrochen"
-      },
-      "discrepancy_reasons": {
-        "damaged_in_transit": "Auf dem Transport beschädigt",
-        "lost_in_transit": "Auf dem Transport verloren",
-        "undercount": "Beim Versand falsch gezählt"
+        "canceled": "Abgebrochen",
+        "over_received": "Mehr erhalten als bestellt"
       },
       "in_transit_resolutions": {
         "restock": "Einheiten zurück ins Quelllager buchen",
@@ -5126,14 +5125,18 @@
         "shipped_at": "Versandt",
         "received_at": "Eingegangen",
         "in_transit_resolution": "Die Einheiten haben das Lager verlassen. Was ist mit ihnen passiert?",
-        "source_locked": "Fest, solange Positionen vorhanden sind: sie wurden für dieses Lager gewählt. Zum Ändern zuerst entfernen."
+        "source_locked": "Fest, solange Positionen vorhanden sind: sie wurden für dieses Lager gewählt. Zum Ändern zuerst entfernen.",
+        "closed_short": "Vorzeitig abgeschlossen",
+        "close_reason": "Grund"
       },
       "actions": {
         "create_draft": "Entwurf erstellen",
         "mark_ready": "Als versandbereit markieren",
         "mark_in_transit": "Als unterwegs markieren",
         "receive": "Wareneingang buchen",
-        "cancel_transfer": "Umlagerung abbrechen"
+        "cancel_transfer": "Umlagerung abbrechen",
+        "mark_draft": "Zurück zum Entwurf",
+        "close_short": "Vorzeitig abschließen"
       },
       "delete_confirm": {
         "title": "Diese Umlagerung löschen?",
@@ -5150,7 +5153,11 @@
         "in_flight_restock": "Die Einheiten werden zurück ins Quelllager gebucht, als wäre die Umlagerung nie versandt worden.",
         "in_flight_write_off": "Die Einheiten bleiben als Verlust ausgebucht. Es wird nirgends etwas zurückgebucht."
       },
-      "edit_title": "Umbuchung {{number}} bearbeiten"
+      "edit_title": "Umbuchung {{number}} bearbeiten",
+      "close_confirm": {
+        "title": "Diese Umlagerung vorzeitig abschließen?",
+        "message": "Was das Ziel gezählt hat, bleibt. Die {{outstanding}} noch unterwegs befindlichen Einheiten werden als verloren abgeschrieben und die Umlagerung als erhalten markiert."
+      }
     },
     "store": {
       "load_failed_title": "Laden der Store-Einstellungen fehlgeschlagen",
@@ -5475,7 +5482,6 @@
       "receive_title": "Wareneingang",
       "history_title": "Bestandsbewegungen dieser Bestellung",
       "units_summary": "{{received}} von {{ordered}} bestellten Einheiten eingegangen",
-      "receive_running_total": "{{counted}} von {{ordered}} bestellten Einheiten gezählt",
       "table": {
         "empty": "Noch keine Bestellungen",
         "search_placeholder": "Nach Nummer oder Referenz suchen…"
@@ -5488,14 +5494,20 @@
         "expected": "Erwartet",
         "quantity_ordered": "Bestellt",
         "quantity_received": "Eingegangen",
-        "line_total": "Positionssumme"
+        "line_total": "Positionssumme",
+        "quantity_rejected": "Abgelehnt",
+        "quantity_over": "Zu viel",
+        "cancel_by": "Stornieren bis",
+        "overdue": "Überfällig",
+        "past_cancel_by": "Stornofrist überschritten"
       },
       "statuses": {
         "draft": "Entwurf",
         "ordered": "Bestellt",
         "partially_received": "Teilweise eingegangen",
         "received": "Eingegangen",
-        "canceled": "Abgebrochen"
+        "canceled": "Abgebrochen",
+        "over_received": "Mehr erhalten als bestellt"
       },
       "fields": {
         "supplier": "Lieferant",
@@ -5512,13 +5524,19 @@
         "subtotal": "Gesamt",
         "ordered_at": "Bestellt",
         "received_at": "Eingegangen",
-        "currency_locked": "Fest nach dem Anlegen: jede Position ist in dieser Währung bepreist."
+        "currency_locked": "Fest nach dem Anlegen: jede Position ist in dieser Währung bepreist.",
+        "closed_short": "Vorzeitig abgeschlossen",
+        "close_reason": "Grund",
+        "cancel_by": "Stornieren bis",
+        "cancel_by_placeholder": "Der Tag, ab dem die Ware nicht mehr gewünscht ist"
       },
       "actions": {
         "create_draft": "Entwurf erstellen",
         "mark_ordered": "Als bestellt markieren",
         "receive": "Wareneingang buchen",
-        "cancel_order": "Bestellung abbrechen"
+        "cancel_order": "Bestellung abbrechen",
+        "mark_draft": "Zurück zum Entwurf",
+        "close_short": "Vorzeitig abschließen"
       },
       "messages": {
         "created": "Bestellung erstellt",
@@ -5526,7 +5544,9 @@
         "deleted": "Bestellung gelöscht",
         "ordered": "Bestellung aufgegeben",
         "received": "Lieferung eingebucht",
-        "canceled": "Bestellung abgebrochen"
+        "canceled": "Bestellung abgebrochen",
+        "marked_draft": "Wieder im Entwurf",
+        "closed": "Vorzeitig abgeschlossen — das Gelieferte bleibt, der Rest wird abgeschrieben"
       },
       "errors": {
         "failed_to_create": "Bestellung konnte nicht erstellt werden",
@@ -5536,7 +5556,9 @@
         "failed_to_receive": "Lieferung konnte nicht eingebucht werden",
         "failed_to_cancel": "Bestellung konnte nicht abgebrochen werden",
         "not_editable": "Diese Bestellung liegt beim Lieferanten, ihre Positionen sind damit verbindlich. Storniere sie, wenn sie nicht gelten soll.",
-        "failed_to_load": "Diese Bestellung konnte nicht geladen werden."
+        "failed_to_load": "Diese Bestellung konnte nicht geladen werden.",
+        "failed_to_mark_draft": "Konnte nicht in den Entwurf zurückgesetzt werden",
+        "failed_to_close": "Konnte nicht vorzeitig abgeschlossen werden"
       },
       "delete_confirm": {
         "title": "Diese Bestellung löschen?",
@@ -5550,7 +5572,17 @@
         "title": "Diese Bestellung abbrechen?",
         "message": "Alles Offene wird abgesagt. Bereits eingegangene Einheiten bleiben im Bestand."
       },
-      "edit_title": "Bestellung {{number}} bearbeiten"
+      "edit_title": "Bestellung {{number}} bearbeiten",
+      "close_confirm": {
+        "title": "Diese Bestellung vorzeitig abschließen?",
+        "message": "Das Gelieferte bleibt im Lager. Die noch ausstehenden {{outstanding}} Einheiten werden abgeschrieben und die Bestellung als erhalten markiert."
+      },
+      "filters": {
+        "overdue": "Überfällig",
+        "not_overdue": "Pünktlich",
+        "past_cancel_by": "Stornofrist überschritten",
+        "not_past_cancel_by": "Innerhalb der Stornofrist"
+      }
     },
     "suppliers": {
       "title": "Lieferanten",
@@ -5593,6 +5625,43 @@
         "title": "Diesen Lieferanten löschen?",
         "message": "{{name}} wird aus Ihrer Lieferantenliste entfernt."
       }
+    },
+    "stock_receipts": {
+      "title": "Lieferungen",
+      "receive_title": "Lieferung annehmen",
+      "empty": "Noch keine Lieferungen",
+      "columns": {
+        "accepted": "Angenommen",
+        "rejected": "Abgelehnt",
+        "reason": "Grund",
+        "received_so_far": "Bisher erhalten"
+      },
+      "fields": {
+        "reference": "Lieferschein",
+        "reference_placeholder": "Lieferschein- oder Packzettelnummer",
+        "received_at": "Erhalten am",
+        "received_at_placeholder": "Jetzt",
+        "notes": "Notizen"
+      },
+      "delivery_total": "{{accepted}} angenommen, {{rejected}} abgelehnt in dieser Lieferung",
+      "rejected_so_far": "({{count}} abgelehnt)",
+      "summary": "{{accepted}} angenommen · {{rejected}} abgelehnt",
+      "reason_placeholder": "Grund der Ablehnung",
+      "rejection_reasons": {
+        "damaged": "Beschädigt",
+        "wrong_item": "Falscher Artikel",
+        "expired": "Abgelaufen",
+        "other": "Sonstiges"
+      },
+      "actions": {
+        "receive": "Annehmen"
+      },
+      "close_short": {
+        "reason_label": "Grund",
+        "reason_placeholder": "Was mit dem Rest passiert ist",
+        "confirm": "Vorzeitig abschließen"
+      },
+      "load_failed": "Die Lieferungen konnten nicht geladen werden."
     }
   }
 }

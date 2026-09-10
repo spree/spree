@@ -56,6 +56,7 @@ function EditPurchaseOrderPage() {
         // Cleared rather than omitted: an emptied field has to survive the
         // round trip, and omitting it would leave the old value in place.
         expected_at: values.expectedAt ?? null,
+        cancel_by: values.cancelBy ?? null,
         reference: values.reference.trim() || null,
         notes: values.notes.trim() || null,
         items: values.lines.map((line) => ({
@@ -79,6 +80,7 @@ function EditPurchaseOrderPage() {
         destinationId: purchaseOrder.destination_location_id ?? '',
         currency: purchaseOrder.currency,
         expectedAt: purchaseOrder.expected_at ?? undefined,
+        cancelBy: purchaseOrder.cancel_by ?? undefined,
         reference: purchaseOrder.reference ?? '',
         notes: purchaseOrder.notes ?? '',
         // The saved lines carry the same facts a search result does, under

@@ -48,7 +48,13 @@ defineTable<StockTransfer>('stock-transfers', {
         <StatusBadge
           status={st.status}
           label={statusLabel(st.status)}
-          tone={st.status === 'received' ? 'success' : undefined}
+          tone={
+            st.status === 'received'
+              ? 'success'
+              : st.status === 'over_received'
+                ? 'warning'
+                : undefined
+          }
         />
       ),
     },

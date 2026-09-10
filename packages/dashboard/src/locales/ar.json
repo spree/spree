@@ -5075,7 +5075,8 @@
         "quantity_shipped": "المُرسَل",
         "quantity_to_ship": "للإرسال",
         "quantity_received": "المستلَم",
-        "discrepancy": "الفرق"
+        "quantity_rejected": "مرفوض",
+        "quantity_over": "زيادة"
       },
       "direction": {
         "external_receive": "استلام خارجي",
@@ -5092,7 +5093,9 @@
         "failed_to_receive": "تعذّر استلام التحويل",
         "failed_to_cancel": "تعذّر إلغاء التحويل",
         "not_editable": "تم تجهيز هذا النقل، ومحتواه الآن سجل ثابت. ألغِه إذا لم يكن ينبغي إرساله.",
-        "failed_to_load": "تعذّر تحميل هذا النقل."
+        "failed_to_load": "تعذّر تحميل هذا النقل.",
+        "failed_to_mark_draft": "تعذّرت الإعادة إلى المسودة",
+        "failed_to_close": "تعذّر الإغلاق بالنقص"
       },
       "messages": {
         "deleted": "تم حذف التحويل",
@@ -5102,7 +5105,9 @@
         "marked_ready": "التحويل جاهز للإرسال",
         "marked_in_transit": "التحويل في الطريق — غادرت الوحدات المستودع المصدر",
         "received": "تم استلام التحويل",
-        "canceled": "تم إلغاء التحويل"
+        "canceled": "تم إلغاء التحويل",
+        "marked_draft": "عاد إلى المسودة",
+        "closed": "أُغلق بالنقص — ما وصل يبقى، والباقي يُشطب"
       },
       "table": {
         "empty": "لا يوجد تحويلات الأسهم حتى الآن",
@@ -5117,20 +5122,14 @@
       "receive_title": "الاستلام",
       "history_title": "حركات المخزون لهذا النقل",
       "units_summary": "تم استلام {{received}} من {{shipped}} وحدة مُرسَلة",
-      "receive_running_total": "تم عدّ {{counted}} من {{shipped}} وحدة مُرسَلة",
-      "discrepancy_placeholder": "سبب نقص الكمية الواصلة",
       "statuses": {
         "draft": "مسودة",
         "ready_to_ship": "جاهز للإرسال",
         "in_transit": "في الطريق",
         "partially_received": "مستلَم جزئيًا",
         "received": "مستلَم",
-        "canceled": "ملغى"
-      },
-      "discrepancy_reasons": {
-        "damaged_in_transit": "تضرر أثناء النقل",
-        "lost_in_transit": "فُقد أثناء النقل",
-        "undercount": "خطأ في العدّ عند الإرسال"
+        "canceled": "ملغى",
+        "over_received": "تم الاستلام بزيادة"
       },
       "in_transit_resolutions": {
         "restock": "إرجاع الوحدات إلى المستودع المصدر",
@@ -5148,14 +5147,18 @@
         "shipped_at": "تاريخ الإرسال",
         "received_at": "تاريخ الاستلام",
         "in_transit_resolution": "الوحدات غادرت المستودع بالفعل. ماذا حدث لها؟",
-        "source_locked": "ثابت ما دامت هناك بنود: اختيرت لهذا المستودع. أزلها لتغييره."
+        "source_locked": "ثابت ما دامت هناك بنود: اختيرت لهذا المستودع. أزلها لتغييره.",
+        "closed_short": "أُغلق بالنقص",
+        "close_reason": "السبب"
       },
       "actions": {
         "create_draft": "إنشاء مسودة",
         "mark_ready": "تعيين كجاهز للإرسال",
         "mark_in_transit": "تعيين كفي الطريق",
         "receive": "استلام",
-        "cancel_transfer": "إلغاء التحويل"
+        "cancel_transfer": "إلغاء التحويل",
+        "mark_draft": "العودة إلى المسودة",
+        "close_short": "إغلاق بالنقص"
       },
       "delete_confirm": {
         "title": "حذف هذا التحويل؟",
@@ -5176,7 +5179,11 @@
         "in_flight_restock": "ستعود الوحدات إلى رفّ المستودع المصدر، كأن التحويل لم يُرسَل أبدًا.",
         "in_flight_write_off": "تبقى الوحدات مشطوبة كخسارة. لن يُضاف أي شيء في أي مكان."
       },
-      "edit_title": "تعديل النقل {{number}}"
+      "edit_title": "تعديل النقل {{number}}",
+      "close_confirm": {
+        "title": "إغلاق هذا التحويل بالنقص؟",
+        "message": "ما عدّه المستودع الوجهة يبقى. تُشطب الوحدات التي ما زالت في الطريق وعددها {{outstanding}} كمفقودة ويُعلَّم التحويل كمستلَم."
+      }
     },
     "store": {
       "load_failed_title": "فشل تحميل إعدادات المتجر",
@@ -5504,7 +5511,6 @@
       "receive_title": "الاستلام",
       "history_title": "حركات المخزون لأمر الشراء هذا",
       "units_summary": "تم استلام {{received}} من {{ordered}} وحدة مطلوبة",
-      "receive_running_total": "تم عدّ {{counted}} من {{ordered}} وحدة مطلوبة",
       "table": {
         "empty": "لا توجد أوامر شراء بعد",
         "search_placeholder": "ابحث بالرقم أو المرجع…"
@@ -5517,14 +5523,20 @@
         "expected": "متوقع",
         "quantity_ordered": "المطلوب",
         "quantity_received": "المستلَم",
-        "line_total": "إجمالي البند"
+        "line_total": "إجمالي البند",
+        "quantity_rejected": "مرفوض",
+        "quantity_over": "زيادة",
+        "cancel_by": "الإلغاء بعد",
+        "overdue": "متأخر",
+        "past_cancel_by": "تجاوز تاريخ الإلغاء"
       },
       "statuses": {
         "draft": "مسودة",
         "ordered": "مطلوب",
         "partially_received": "مستلَم جزئيًا",
         "received": "مستلَم",
-        "canceled": "ملغى"
+        "canceled": "ملغى",
+        "over_received": "تم الاستلام بزيادة"
       },
       "fields": {
         "supplier": "المورد",
@@ -5541,13 +5553,19 @@
         "subtotal": "الإجمالي",
         "ordered_at": "تاريخ الطلب",
         "received_at": "تاريخ الاستلام",
-        "currency_locked": "ثابتة بعد إنشاء الأمر: كل بند مُسعَّر بها."
+        "currency_locked": "ثابتة بعد إنشاء الأمر: كل بند مُسعَّر بها.",
+        "closed_short": "أُغلق بالنقص",
+        "close_reason": "السبب",
+        "cancel_by": "الإلغاء بعد",
+        "cancel_by_placeholder": "اليوم الذي لا تعود البضاعة مطلوبة بعده"
       },
       "actions": {
         "create_draft": "إنشاء مسودة",
         "mark_ordered": "تعيين كمطلوب",
         "receive": "استلام",
-        "cancel_order": "إلغاء الأمر"
+        "cancel_order": "إلغاء الأمر",
+        "mark_draft": "العودة إلى المسودة",
+        "close_short": "إغلاق بالنقص"
       },
       "messages": {
         "created": "تم إنشاء أمر الشراء",
@@ -5555,7 +5573,9 @@
         "deleted": "تم حذف أمر الشراء",
         "ordered": "تم إرسال أمر الشراء",
         "received": "تم تسجيل التوريد",
-        "canceled": "تم إلغاء أمر الشراء"
+        "canceled": "تم إلغاء أمر الشراء",
+        "marked_draft": "عاد إلى المسودة",
+        "closed": "أُغلق بالنقص — ما وصل يبقى، والباقي يُشطب"
       },
       "errors": {
         "failed_to_create": "تعذّر إنشاء أمر الشراء",
@@ -5565,7 +5585,9 @@
         "failed_to_receive": "تعذّر تسجيل التوريد",
         "failed_to_cancel": "تعذّر إلغاء أمر الشراء",
         "not_editable": "أُرسل هذا الأمر إلى المورّد، وبنوده الآن التزام بين شركتين. ألغِه إذا لم يكن ينبغي أن يستمر.",
-        "failed_to_load": "تعذّر تحميل أمر الشراء هذا."
+        "failed_to_load": "تعذّر تحميل أمر الشراء هذا.",
+        "failed_to_mark_draft": "تعذّرت الإعادة إلى المسودة",
+        "failed_to_close": "تعذّر الإغلاق بالنقص"
       },
       "delete_confirm": {
         "title": "حذف أمر الشراء هذا؟",
@@ -5579,7 +5601,17 @@
         "title": "إلغاء أمر الشراء هذا؟",
         "message": "يُلغى ما تبقّى غير مستلَم. الوحدات المستلَمة بالفعل تبقى في المخزون."
       },
-      "edit_title": "تعديل أمر الشراء {{number}}"
+      "edit_title": "تعديل أمر الشراء {{number}}",
+      "close_confirm": {
+        "title": "إغلاق هذا الطلب بالنقص؟",
+        "message": "ما وصل يبقى على الرف. تُشطب الوحدات المتبقية وعددها {{outstanding}} ويُعلَّم الطلب كمستلَم."
+      },
+      "filters": {
+        "overdue": "متأخر",
+        "not_overdue": "في الموعد",
+        "past_cancel_by": "تجاوز تاريخ الإلغاء",
+        "not_past_cancel_by": "ضمن تاريخ الإلغاء"
+      }
     },
     "suppliers": {
       "title": "الموردون",
@@ -5622,6 +5654,43 @@
         "title": "حذف هذا المورد؟",
         "message": "سيتم إزالة {{name}} من قائمة الموردين."
       }
+    },
+    "stock_receipts": {
+      "title": "التسليمات",
+      "receive_title": "استلام تسليم",
+      "empty": "لا توجد تسليمات بعد",
+      "columns": {
+        "accepted": "مقبول",
+        "rejected": "مرفوض",
+        "reason": "السبب",
+        "received_so_far": "المستلَم حتى الآن"
+      },
+      "fields": {
+        "reference": "إشعار التسليم",
+        "reference_placeholder": "رقم إشعار التسليم أو قائمة التعبئة",
+        "received_at": "تاريخ الاستلام",
+        "received_at_placeholder": "الآن",
+        "notes": "ملاحظات"
+      },
+      "delivery_total": "{{accepted}} مقبول، {{rejected}} مرفوض في هذا التسليم",
+      "rejected_so_far": "({{count}} مرفوض)",
+      "summary": "{{accepted}} مقبول · {{rejected}} مرفوض",
+      "reason_placeholder": "سبب الرفض",
+      "rejection_reasons": {
+        "damaged": "تالف",
+        "wrong_item": "صنف خاطئ",
+        "expired": "منتهي الصلاحية",
+        "other": "أخرى"
+      },
+      "actions": {
+        "receive": "استلام"
+      },
+      "close_short": {
+        "reason_label": "السبب",
+        "reason_placeholder": "ما الذي حدث للباقي",
+        "confirm": "إغلاق بالنقص"
+      },
+      "load_failed": "تعذّر تحميل التسليمات."
     }
   }
 }

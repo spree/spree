@@ -1,9 +1,10 @@
-import type { StockTransfer, StockTransferItem } from '@spree/admin-sdk'
+import type { StockTransfer } from '@spree/admin-sdk'
 import {
   adminClient,
   Can,
   PageHeader,
   Subject,
+  useResourceKey,
   useStockLocations,
   useStore,
 } from '@spree/dashboard-core'
@@ -17,11 +18,6 @@ import {
   ErrorState,
   RelativeTime,
   ResourceLayout,
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
   Table,
   TableBody,
   TableCell,
@@ -30,29 +26,35 @@ import {
   TableRow,
   useConfirm,
 } from '@spree/dashboard-ui'
-import { PencilIcon, Trash2Icon, XCircleIcon } from '@spree/dashboard-ui/icons'
+import {
+  PackageCheckIcon,
+  PencilIcon,
+  Trash2Icon,
+  Undo2Icon,
+  XCircleIcon,
+} from '@spree/dashboard-ui/icons'
 import { createFileRoute, Link, useNavigate } from '@tanstack/react-router'
 import { useMemo, useState } from 'react'
 import { useTranslation } from 'react-i18next'
+import { CloseShortDialog } from '../../../../../components/spree/close-short-dialog'
 import { InventoryStatusBadge } from '../../../../../components/spree/inventory-status-badge'
-import { QuantityCell, QuantityHead } from '../../../../../components/spree/quantity-cell'
+import { ReceiveDeliveryCard } from '../../../../../components/spree/receive-delivery-card'
 import { ResourceDetailSkeleton } from '../../../../../components/spree/route-pending'
 import { StockHistoryCard } from '../../../../../components/spree/stock-history-card'
+import { StockReceiptsCard } from '../../../../../components/spree/stock-receipts-card'
 import { TransferCancelDialog } from '../../../../../components/spree/transfer-cancel-dialog'
 import { VariantLink } from '../../../../../components/spree/variant-link'
 import {
+  useCloseStockTransfer,
+  useCreateStockTransferReceipt,
   useDeleteStockTransfer,
+  useMarkStockTransferDraft,
   useMarkStockTransferInTransit,
   useMarkStockTransferReady,
-  useReceiveStockTransfer,
   useStockTransfer,
 } from '../../../../../hooks/use-stock-transfers'
 import { spreeJsonLinkResolver } from '../../../../../lib/json-link-resolver'
-import {
-  DISCREPANCY_REASONS,
-  isClosed,
-  isInFlight,
-} from '../../../../../schemas/inventory-operations'
+import { isClosed, isInFlight } from '../../../../../schemas/inventory-operations'
 
 export const Route = createFileRoute('/_authenticated/$storeId/transfers/$transferId/')({
   component: StockTransferDetailPage,
@@ -87,7 +89,11 @@ function StockTransferDetailPage() {
           {transfer.status === 'draft' || transfer.status === 'ready_to_ship' ? (
             <PlannedItemsCard transfer={transfer} />
           ) : (
-            <ReceiveCard transfer={transfer} />
+            <>
+              {isInFlight(transfer.status) && <ReceiveCard transfer={transfer} />}
+              <LinesCard transfer={transfer} />
+              <ReceiptsCard transfer={transfer} />
+            </>
           )}
 
           {/* Where the units on this trip came from and went — read on the
@@ -202,6 +208,25 @@ function SummaryCard({ transfer }: { transfer: StockTransfer }) {
 
           <dt className="text-muted-foreground">{t('admin.stock_transfers.fields.received_at')}</dt>
           <dd>{transfer.received_at ? <RelativeTime iso={transfer.received_at} /> : '—'}</dd>
+
+          {transfer.closed_short && (
+            <>
+              <dt className="text-muted-foreground">
+                {t('admin.stock_transfers.fields.closed_short')}
+              </dt>
+              <dd>
+                <RelativeTime iso={transfer.closed_short_at as string} />
+              </dd>
+              {transfer.close_reason && (
+                <>
+                  <dt className="text-muted-foreground">
+                    {t('admin.stock_transfers.fields.close_reason')}
+                  </dt>
+                  <dd className="whitespace-pre-line">{transfer.close_reason}</dd>
+                </>
+              )}
+            </>
+          )}
         </dl>
       </CardContent>
     </Card>
@@ -258,169 +283,106 @@ function PlannedItemsCard({ transfer }: { transfer: StockTransfer }) {
   )
 }
 
-/**
- * In transit and beyond: the receive screen.
- *
- * `quantity_received` is the running total for the line, so a second delivery
- * tops it up rather than starting over. The inputs are therefore seeded with
- * what has already arrived, not with what was sent: reopening a part-received
- * transfer has to show the shelf as it is.
- */
+/** What a delivery is counted against, in the receive card's vocabulary. */
+function receivableLines(transfer: StockTransfer) {
+  return (transfer.items ?? []).map((item) => ({
+    id: item.id,
+    product_id: item.product_id,
+    variant_name: item.variant_name,
+    variant_sku: item.variant_sku,
+    thumbnail_url: item.thumbnail_url,
+    quantity_expected: item.quantity_shipped,
+    quantity_received: item.quantity_received,
+    quantity_rejected: item.quantity_rejected,
+    outstanding: item.outstanding,
+  }))
+}
+
 function ReceiveCard({ transfer }: { transfer: StockTransfer }) {
   const { t } = useTranslation()
+  const receive = useCreateStockTransferReceipt(transfer.id)
+
+  return (
+    <ReceiveDeliveryCard
+      lines={receivableLines(transfer)}
+      expectedLabel={t('admin.stock_transfers.columns.quantity_shipped')}
+      subject={Subject.StockTransfer}
+      pending={receive.isPending}
+      onReceive={(params) => receive.mutateAsync(params)}
+    />
+  )
+}
+
+function ReceiptsCard({ transfer }: { transfer: StockTransfer }) {
+  const queryKey = useResourceKey('stock-transfers', transfer.id, 'stock-receipts')
+  return (
+    <StockReceiptsCard
+      queryKey={queryKey}
+      fetch={() =>
+        adminClient.stockTransfers.stockReceipts.list(transfer.id, { expand: ['items'] })
+      }
+    />
+  )
+}
+
+/**
+ * The lines once the van has left: what was sent, what each delivery has
+ * counted in and refused so far.
+ */
+function LinesCard({ transfer }: { transfer: StockTransfer }) {
+  const { t } = useTranslation()
   const items = transfer.items ?? []
-  const receiveMutation = useReceiveStockTransfer(transfer.id)
-  const editable = isInFlight(transfer.status)
-
-  const [counts, setCounts] = useState<Record<string, number>>(() =>
-    Object.fromEntries(items.map((item) => [item.id, item.quantity_received])),
-  )
-  const [reasons, setReasons] = useState<Record<string, string>>(() =>
-    Object.fromEntries(items.map((item) => [item.id, item.discrepancy_reason ?? ''])),
-  )
-
-  const totalCounted = items.reduce((sum, item) => sum + (counts[item.id] ?? 0), 0)
-
-  async function handleReceive() {
-    await receiveMutation
-      .mutateAsync({
-        items: items.map((item) => {
-          const received = counts[item.id] ?? item.quantity_received
-          const reason = reasons[item.id]
-
-          return {
-            id: item.id,
-            quantity_received: received,
-            // Only while the line is under-received. The select hides once the
-            // count is raised, but its state survives — and a fully received
-            // line carrying "damaged in transit" is simply wrong.
-            discrepancy_reason: received < item.quantity_shipped ? reason || undefined : undefined,
-          }
-        }),
-      })
-      .catch(() => undefined)
-  }
+  const anyOver = items.some((item) => item.quantity_over > 0)
 
   return (
     <Card>
       <CardHeader>
-        <CardTitle>{t('admin.stock_transfers.receive_title')}</CardTitle>
+        <CardTitle>{t('admin.stock_transfers.items_title')}</CardTitle>
       </CardHeader>
-      <CardContent className="flex flex-col p-0">
-        <Table scrollX>
+      <CardContent className="p-0">
+        <Table scrollX roundedBottom>
           <TableHeader>
             <TableRow>
               <TableHead>{t('admin.inventory_lines.columns.variant')}</TableHead>
               <TableHead className="text-right">
                 {t('admin.stock_transfers.columns.quantity_shipped')}
               </TableHead>
-              <QuantityHead>{t('admin.stock_transfers.columns.quantity_received')}</QuantityHead>
-              <TableHead>{t('admin.stock_transfers.columns.discrepancy')}</TableHead>
+              <TableHead className="text-right">
+                {t('admin.stock_transfers.columns.quantity_received')}
+              </TableHead>
+              <TableHead className="text-right">
+                {t('admin.stock_transfers.columns.quantity_rejected')}
+              </TableHead>
+              {anyOver && (
+                <TableHead className="text-right">
+                  {t('admin.stock_transfers.columns.quantity_over')}
+                </TableHead>
+              )}
             </TableRow>
           </TableHeader>
           <TableBody>
             {items.map((item) => (
-              <ReceiveRow
-                key={item.id}
-                item={item}
-                editable={editable}
-                count={counts[item.id] ?? item.quantity_received}
-                reason={reasons[item.id] ?? ''}
-                onCount={(value) => setCounts((prev) => ({ ...prev, [item.id]: value }))}
-                onReason={(value) => setReasons((prev) => ({ ...prev, [item.id]: value }))}
-              />
+              <TableRow key={item.id}>
+                <TableCell>
+                  <VariantLink
+                    productId={item.product_id}
+                    name={item.variant_name}
+                    sku={item.variant_sku}
+                    thumbnailUrl={item.thumbnail_url}
+                  />
+                </TableCell>
+                <TableCell className="text-right tabular-nums">{item.quantity_shipped}</TableCell>
+                <TableCell className="text-right tabular-nums">{item.quantity_received}</TableCell>
+                <TableCell className="text-right tabular-nums">{item.quantity_rejected}</TableCell>
+                {anyOver && (
+                  <TableCell className="text-right tabular-nums">{item.quantity_over}</TableCell>
+                )}
+              </TableRow>
             ))}
           </TableBody>
         </Table>
-
-        {editable && (
-          <div className="flex items-center justify-between p-3">
-            <p className="text-muted-foreground text-sm tabular-nums">
-              {t('admin.stock_transfers.receive_running_total', {
-                counted: totalCounted,
-                shipped: transfer.quantity_shipped_total,
-              })}
-            </p>
-            <Can I="update" a={Subject.StockTransfer}>
-              <Button type="button" onClick={handleReceive} disabled={receiveMutation.isPending}>
-                {receiveMutation.isPending
-                  ? t('admin.actions.saving')
-                  : t('admin.stock_transfers.actions.receive')}
-              </Button>
-            </Can>
-          </div>
-        )}
       </CardContent>
     </Card>
-  )
-}
-
-function ReceiveRow({
-  item,
-  editable,
-  count,
-  reason,
-  onCount,
-  onReason,
-}: {
-  item: StockTransferItem
-  editable: boolean
-  count: number
-  reason: string
-  onCount: (value: number) => void
-  onReason: (value: string) => void
-}) {
-  const { t } = useTranslation()
-  const underReceived = count < item.quantity_shipped
-
-  return (
-    <TableRow>
-      <TableCell>
-        <VariantLink
-          productId={item.product_id}
-          name={item.variant_name}
-          sku={item.variant_sku}
-          thumbnailUrl={item.thumbnail_url}
-        />
-      </TableCell>
-      <TableCell className="text-right tabular-nums">{item.quantity_shipped}</TableCell>
-      {/* Never below what is already on the shelf: taking units back off is a
-          correction, not a receive. */}
-      <QuantityCell
-        editable={editable}
-        value={editable ? count : item.quantity_received}
-        min={item.quantity_received}
-        max={item.quantity_shipped}
-        label={t('admin.stock_transfers.columns.quantity_received')}
-        onChange={onCount}
-      />
-      <TableCell>
-        {editable && underReceived ? (
-          <Select value={reason} onValueChange={onReason}>
-            <SelectTrigger aria-label={t('admin.stock_transfers.columns.discrepancy')}>
-              <SelectValue placeholder={t('admin.stock_transfers.discrepancy_placeholder')}>
-                {(value) => (value ? t(`admin.stock_transfers.discrepancy_reasons.${value}`) : '')}
-              </SelectValue>
-            </SelectTrigger>
-            <SelectContent>
-              {DISCREPANCY_REASONS.map((value) => (
-                <SelectItem key={value} value={value}>
-                  {t(`admin.stock_transfers.discrepancy_reasons.${value}`)}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
-        ) : item.discrepancy_reason ? (
-          <span className="text-sm">
-            {t(`admin.stock_transfers.discrepancy_reasons.${item.discrepancy_reason}`, {
-              defaultValue: item.discrepancy_reason,
-            })}
-          </span>
-        ) : (
-          '—'
-        )}
-      </TableCell>
-    </TableRow>
   )
 }
 
@@ -437,7 +399,10 @@ function TransferHeader({ transfer }: { transfer: StockTransfer }) {
   const markReady = useMarkStockTransferReady(transfer.id)
   const markInTransit = useMarkStockTransferInTransit(transfer.id)
   const deleteTransfer = useDeleteStockTransfer()
+  const markDraft = useMarkStockTransferDraft(transfer.id)
+  const closeTransfer = useCloseStockTransfer(transfer.id)
   const [cancelOpen, setCancelOpen] = useState(false)
+  const [closeOpen, setCloseOpen] = useState(false)
 
   const open = !isClosed(transfer.status)
   const shippable = transfer.status === 'draft' || transfer.status === 'ready_to_ship'
@@ -479,6 +444,17 @@ function TransferHeader({ transfer }: { transfer: StockTransfer }) {
       {cancelOpen && (
         <TransferCancelDialog transfer={transfer} onClose={() => setCancelOpen(false)} />
       )}
+      {closeOpen && (
+        <CloseShortDialog
+          title={t('admin.stock_transfers.close_confirm.title')}
+          description={t('admin.stock_transfers.close_confirm.message', {
+            outstanding: transfer.quantity_shipped_total - transfer.quantity_received_total,
+          })}
+          pending={closeTransfer.isPending}
+          onConfirm={(reason) => closeTransfer.mutateAsync({ reason })}
+          onClose={() => setCloseOpen(false)}
+        />
+      )}
       <PageHeader
         title={transfer.number}
         backTo="transfers"
@@ -512,11 +488,36 @@ function TransferHeader({ transfer }: { transfer: StockTransfer }) {
                   {t('admin.stock_transfers.actions.mark_ready')}
                 </Button>
               )}
+              {/* Nothing has left the source yet, so unpacking costs nothing. */}
+              {transfer.status === 'ready_to_ship' && (
+                <Button
+                  type="button"
+                  variant="outline"
+                  onClick={() => markDraft.mutateAsync().catch(() => undefined)}
+                  disabled={markDraft.isPending}
+                >
+                  <Undo2Icon className="size-4" />
+                  {t('admin.stock_transfers.actions.mark_draft')}
+                </Button>
+              )}
               {shippable && (
                 <Button type="button" onClick={handleShip} disabled={markInTransit.isPending}>
                   {t('admin.stock_transfers.actions.mark_in_transit')}
                 </Button>
               )}
+            </Can>
+          )
+        }
+        dropdownItems={
+          transfer.status === 'partially_received' && (
+            <Can I="update" a={Subject.StockTransfer}>
+              <DropdownMenuItem
+                onClick={() => setCloseOpen(true)}
+                disabled={closeTransfer.isPending}
+              >
+                <PackageCheckIcon className="size-4" />
+                {t('admin.stock_transfers.actions.close_short')}
+              </DropdownMenuItem>
             </Can>
           )
         }

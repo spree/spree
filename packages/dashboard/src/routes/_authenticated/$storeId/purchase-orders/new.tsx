@@ -25,6 +25,7 @@ function NewPurchaseOrderPage() {
         destination_location_id: values.destinationId,
         currency: values.currency,
         expected_at: values.expectedAt,
+        cancel_by: values.cancelBy,
         reference: values.reference.trim() || undefined,
         notes: values.notes.trim() || undefined,
         items: values.lines.map((line) => ({

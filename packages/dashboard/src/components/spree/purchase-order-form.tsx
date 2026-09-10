@@ -37,6 +37,7 @@ export interface PurchaseOrderFormValues {
   destinationId: string
   currency?: string
   expectedAt?: string
+  cancelBy?: string
   reference: string
   notes: string
   lines: VariantLine[]
@@ -47,6 +48,7 @@ export const EMPTY_PURCHASE_ORDER: PurchaseOrderFormValues = {
   destinationId: '',
   currency: undefined,
   expectedAt: undefined,
+  cancelBy: undefined,
   reference: '',
   notes: '',
   lines: [],
@@ -96,6 +98,7 @@ export function PurchaseOrderForm({
   const [destinationId, setDestinationId] = useState(initial.destinationId)
   const [currency, setCurrency] = useState<string | undefined>(initial.currency)
   const [expectedAt, setExpectedAt] = useState<string | undefined>(initial.expectedAt)
+  const [cancelBy, setCancelBy] = useState<string | undefined>(initial.cancelBy)
   const [reference, setReference] = useState(initial.reference)
   const [notes, setNotes] = useState(initial.notes)
   const [lines, setLines] = useState<VariantLine[]>(initial.lines)
@@ -195,6 +198,17 @@ export function PurchaseOrderForm({
           </Field>
 
           <Field>
+            <FieldLabel>{t('admin.purchase_orders.fields.cancel_by')}</FieldLabel>
+            {/* The day after which the goods are no longer wanted — a date for
+                the same reason the expected day is. Nothing cancels itself. */}
+            <StoreDatePicker
+              value={cancelBy}
+              onChange={(value) => setCancelBy(value ?? undefined)}
+              placeholder={t('admin.purchase_orders.fields.cancel_by_placeholder')}
+            />
+          </Field>
+
+          <Field>
             <FieldLabel htmlFor="reference">
               {t('admin.purchase_orders.fields.reference')}
             </FieldLabel>
@@ -262,6 +276,7 @@ export function PurchaseOrderForm({
                       destinationId,
                       currency,
                       expectedAt,
+                      cancelBy,
                       reference,
                       notes,
                       lines,

@@ -43,7 +43,7 @@ test.describe('stock transfers', () => {
     await expect(page.getByText(/choose the warehouse it leaves from first/i)).toBeVisible()
   })
 
-  test('sends a draft, then receives less than was sent', async ({ page }) => {
+  test('sends a draft, then counts in a delivery with damage', async ({ page }) => {
     const creds = await login(page)
     const transfer = await createInTransitTransfer(page, creds.accessToken, 10)
 
@@ -56,16 +56,18 @@ test.describe('stock transfers', () => {
     // Gone from the source, not yet at the destination.
     await expect(page.getByText('0 received of 10 shipped')).toBeVisible()
 
-    // Count in eight of the ten, and say why two are missing.
-    await page.getByLabel(/^received$/i).fill('8')
-    const discrepancy = page.getByLabel(/discrepancy/i)
-    await discrepancy.click()
-    await page.getByRole('option', { name: /damaged in transit/i }).click()
+    // Count in eight of the ten intact; the other two arrived crushed.
+    await page.getByLabel(/^accepted$/i).fill('8')
+    await page.getByLabel(/^rejected$/i).fill('2')
+    await page.getByLabel(/^reason$/i).click()
+    await page.getByRole('option', { name: /^damaged$/i }).click()
     await page.getByRole('button', { name: /^receive$/i }).click()
 
-    // Short, so the trip stays open rather than closing.
-    await expect(page.getByText(/^partially received$/i).first()).toBeVisible({ timeout: 15_000 })
+    // Everything that left has arrived, so the trip is over — with the two
+    // refused units on the delivery's record, not the shelf.
+    await expect(page.getByText(/^received$/i).first()).toBeVisible({ timeout: 15_000 })
     await expect(page.getByText('8 received of 10 shipped')).toBeVisible()
+    await expect(page.getByText(/8 accepted · 2 rejected/i)).toBeVisible()
   })
 
   test('a draft can be corrected, a shipped one cannot', async ({ page }) => {

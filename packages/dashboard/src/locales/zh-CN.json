@@ -5044,7 +5044,8 @@
         "quantity_shipped": "已发出",
         "quantity_to_ship": "待发出",
         "quantity_received": "已收到",
-        "discrepancy": "差异"
+        "quantity_rejected": "拒收",
+        "quantity_over": "超量"
       },
       "direction": {
         "external_receive": "外部收货",
@@ -5061,7 +5062,9 @@
         "failed_to_receive": "调拨收货失败",
         "failed_to_cancel": "取消调拨失败",
         "not_editable": "该调拨已打包，内容已成为记录。如果不该发出，请取消它。",
-        "failed_to_load": "无法加载该调拨。"
+        "failed_to_load": "无法加载该调拨。",
+        "failed_to_mark_draft": "无法退回草稿",
+        "failed_to_close": "无法短缺结单"
       },
       "messages": {
         "deleted": "调拨已删除",
@@ -5071,7 +5074,9 @@
         "marked_ready": "调拨已待发出",
         "marked_in_transit": "调拨已在途 — 货物已离开来源仓库",
         "received": "调拨已收货",
-        "canceled": "调拨已取消"
+        "canceled": "调拨已取消",
+        "marked_draft": "已退回草稿",
+        "closed": "已短缺结单——已到货部分保留，其余核销"
       },
       "table": {
         "empty": "暂无库存调拨",
@@ -5086,20 +5091,14 @@
       "receive_title": "收货",
       "history_title": "此调拨的库存变动",
       "units_summary": "已发出 {{shipped}} 件，已收到 {{received}} 件",
-      "receive_running_total": "已发出 {{shipped}} 件，已清点 {{counted}} 件",
-      "discrepancy_placeholder": "为何到货变少",
       "statuses": {
         "draft": "草稿",
         "ready_to_ship": "待发出",
         "in_transit": "在途",
         "partially_received": "部分收货",
         "received": "已收货",
-        "canceled": "已取消"
-      },
-      "discrepancy_reasons": {
-        "damaged_in_transit": "运输中损坏",
-        "lost_in_transit": "运输中丢失",
-        "undercount": "发货时清点有误"
+        "canceled": "已取消",
+        "over_received": "超量收货"
       },
       "in_transit_resolutions": {
         "restock": "将数量退回来源仓库",
@@ -5117,14 +5116,18 @@
         "shipped_at": "发出时间",
         "received_at": "收货时间",
         "in_transit_resolution": "货物已经离库。它们怎么了？",
-        "source_locked": "有商品行时不可更改：这些商品是为该仓库挑选的。移除后才能更改。"
+        "source_locked": "有商品行时不可更改：这些商品是为该仓库挑选的。移除后才能更改。",
+        "closed_short": "短缺结单",
+        "close_reason": "原因"
       },
       "actions": {
         "create_draft": "创建草稿",
         "mark_ready": "标记为待发出",
         "mark_in_transit": "标记为在途",
         "receive": "收货",
-        "cancel_transfer": "取消调拨"
+        "cancel_transfer": "取消调拨",
+        "mark_draft": "退回草稿",
+        "close_short": "短缺结单"
       },
       "delete_confirm": {
         "title": "删除此调拨？",
@@ -5140,7 +5143,11 @@
         "in_flight_restock": "数量将回到来源仓库的货架，如同从未发出。",
         "in_flight_write_off": "数量保持核销为丢失，任何仓库都不会补回。"
       },
-      "edit_title": "编辑调拨 {{number}}"
+      "edit_title": "编辑调拨 {{number}}",
+      "close_confirm": {
+        "title": "将此调拨短缺结单？",
+        "message": "目的地已清点的部分保留。仍在途的 {{outstanding}} 件将按丢失核销，调拨标记为已收货。"
+      }
     },
     "store": {
       "load_failed_title": "加载店铺设置失败",
@@ -5464,7 +5471,6 @@
       "receive_title": "收货",
       "history_title": "此采购订单的库存变动",
       "units_summary": "已订购 {{ordered}} 件，已收到 {{received}} 件",
-      "receive_running_total": "已订购 {{ordered}} 件，已清点 {{counted}} 件",
       "table": {
         "empty": "暂无采购订单",
         "search_placeholder": "按编号或参考号搜索…"
@@ -5477,14 +5483,20 @@
         "expected": "预计到货",
         "quantity_ordered": "已订购",
         "quantity_received": "已收到",
-        "line_total": "行合计"
+        "line_total": "行合计",
+        "quantity_rejected": "拒收",
+        "quantity_over": "超量",
+        "cancel_by": "取消截止日",
+        "overdue": "逾期",
+        "past_cancel_by": "已过取消截止日"
       },
       "statuses": {
         "draft": "草稿",
         "ordered": "已下单",
         "partially_received": "部分收货",
         "received": "已收货",
-        "canceled": "已取消"
+        "canceled": "已取消",
+        "over_received": "超量收货"
       },
       "fields": {
         "supplier": "供应商",
@@ -5501,13 +5513,19 @@
         "subtotal": "合计",
         "ordered_at": "下单时间",
         "received_at": "收货时间",
-        "currency_locked": "创建后固定：每一行的成本都以该货币计价。"
+        "currency_locked": "创建后固定：每一行的成本都以该货币计价。",
+        "closed_short": "短缺结单",
+        "close_reason": "原因",
+        "cancel_by": "取消截止日",
+        "cancel_by_placeholder": "此日之后不再需要该货物"
       },
       "actions": {
         "create_draft": "创建草稿",
         "mark_ordered": "标记为已下单",
         "receive": "收货",
-        "cancel_order": "取消订单"
+        "cancel_order": "取消订单",
+        "mark_draft": "退回草稿",
+        "close_short": "短缺结单"
       },
       "messages": {
         "created": "采购订单已创建",
@@ -5515,7 +5533,9 @@
         "deleted": "采购订单已删除",
         "ordered": "采购订单已下单",
         "received": "到货已入库",
-        "canceled": "采购订单已取消"
+        "canceled": "采购订单已取消",
+        "marked_draft": "已退回草稿",
+        "closed": "已短缺结单——已到货部分保留，其余核销"
       },
       "errors": {
         "failed_to_create": "创建采购订单失败",
@@ -5525,7 +5545,9 @@
         "failed_to_receive": "到货入库失败",
         "failed_to_cancel": "取消采购订单失败",
         "not_editable": "该订单已发给供应商，其商品行是两家企业之间的约定。如果不该继续，请取消它。",
-        "failed_to_load": "无法加载该采购订单。"
+        "failed_to_load": "无法加载该采购订单。",
+        "failed_to_mark_draft": "无法退回草稿",
+        "failed_to_close": "无法短缺结单"
       },
       "delete_confirm": {
         "title": "删除此采购订单？",
@@ -5539,7 +5561,17 @@
         "title": "取消此采购订单？",
         "message": "尚未到货的部分将被取消。已收到的数量仍留在库存中。"
       },
-      "edit_title": "编辑采购订单 {{number}}"
+      "edit_title": "编辑采购订单 {{number}}",
+      "close_confirm": {
+        "title": "将此采购订单短缺结单？",
+        "message": "已到货部分保留在库。仍欠的 {{outstanding}} 件将被核销，订单标记为已收货。"
+      },
+      "filters": {
+        "overdue": "逾期",
+        "not_overdue": "准时",
+        "past_cancel_by": "已过取消截止日",
+        "not_past_cancel_by": "未过取消截止日"
+      }
     },
     "suppliers": {
       "title": "供应商",
@@ -5582,6 +5614,43 @@
         "title": "删除此供应商？",
         "message": "{{name}} 将从您的供应商列表中移除。"
       }
+    },
+    "stock_receipts": {
+      "title": "到货记录",
+      "receive_title": "收货",
+      "empty": "暂无到货记录",
+      "columns": {
+        "accepted": "接收",
+        "rejected": "拒收",
+        "reason": "原因",
+        "received_so_far": "累计已收"
+      },
+      "fields": {
+        "reference": "送货单",
+        "reference_placeholder": "送货单或装箱单号",
+        "received_at": "收货时间",
+        "received_at_placeholder": "现在",
+        "notes": "备注"
+      },
+      "delivery_total": "本次到货：接收 {{accepted}}，拒收 {{rejected}}",
+      "rejected_so_far": "（拒收 {{count}}）",
+      "summary": "接收 {{accepted}} · 拒收 {{rejected}}",
+      "reason_placeholder": "拒收原因",
+      "rejection_reasons": {
+        "damaged": "损坏",
+        "wrong_item": "货品错误",
+        "expired": "已过期",
+        "other": "其他"
+      },
+      "actions": {
+        "receive": "收货"
+      },
+      "close_short": {
+        "reason_label": "原因",
+        "reason_placeholder": "其余货物的情况",
+        "confirm": "短缺结单"
+      },
+      "load_failed": "无法加载到货记录。"
     }
   }
 }

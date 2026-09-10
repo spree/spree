@@ -1,8 +1,10 @@
 import type {
   PurchaseOrder,
   PurchaseOrderCreateParams,
-  PurchaseOrderReceiveParams,
   PurchaseOrderUpdateParams,
+  ReceivableCloseParams,
+  StockReceipt,
+  StockReceiptCreateParams,
 } from '@spree/admin-sdk'
 import {
   adminClient,
@@ -74,19 +76,51 @@ export function useMarkPurchaseOrderOrdered(id: string) {
   })
 }
 
+/** The deliveries booked against an order, with their lines. */
+export function usePurchaseOrderReceipts(id: string) {
+  return useQuery({
+    queryKey: useResourceKey('purchase-orders', id, 'stock-receipts'),
+    queryFn: () => adminClient.purchaseOrders.stockReceipts.list(id, { expand: ['items'] }),
+  })
+}
+
 /** The first moment purchased goods count toward availability. */
-export function useReceivePurchaseOrder(id: string) {
-  return useResourceMutation<PurchaseOrder, Error, PurchaseOrderReceiveParams | undefined>({
-    mutationFn: (params) => adminClient.purchaseOrders.receive(id, params ?? undefined),
+export function useCreatePurchaseOrderReceipt(id: string) {
+  return useResourceMutation<StockReceipt, Error, StockReceiptCreateParams | undefined>({
+    mutationFn: (params) =>
+      adminClient.purchaseOrders.stockReceipts.create(id, params ?? undefined),
     invalidate: [
       ['purchase-orders'],
       ['purchase-orders', id],
+      ['purchase-orders', id, 'stock-receipts'],
       ['stock-levels'],
       ['stock-movements'],
     ],
     successMessage: i18n.t('admin.purchase_orders.messages.received'),
     errorMessage: i18n.t('admin.purchase_orders.errors.failed_to_receive'),
     // These screens have no inline error surface.
+    showValidationErrors: true,
+  })
+}
+
+/** Ends an order whose balance the supplier will not deliver. */
+export function useClosePurchaseOrder(id: string) {
+  return useResourceMutation<PurchaseOrder, Error, ReceivableCloseParams | undefined>({
+    mutationFn: (params) => adminClient.purchaseOrders.close(id, params ?? undefined),
+    invalidate: [['purchase-orders'], ['purchase-orders', id]],
+    successMessage: i18n.t('admin.purchase_orders.messages.closed'),
+    errorMessage: i18n.t('admin.purchase_orders.errors.failed_to_close'),
+    showValidationErrors: true,
+  })
+}
+
+/** Reopens a placed order for editing, while no delivery has been booked. */
+export function useMarkPurchaseOrderDraft(id: string) {
+  return useResourceMutation<PurchaseOrder, Error, void>({
+    mutationFn: () => adminClient.purchaseOrders.markDraft(id),
+    invalidate: [['purchase-orders'], ['purchase-orders', id]],
+    successMessage: i18n.t('admin.purchase_orders.messages.marked_draft'),
+    errorMessage: i18n.t('admin.purchase_orders.errors.failed_to_mark_draft'),
     showValidationErrors: true,
   })
 }

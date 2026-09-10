@@ -1,5 +1,12 @@
 import type { PurchaseOrder, PurchaseOrderItem } from '@spree/admin-sdk'
-import { adminClient, Can, PageHeader, Subject, useStore } from '@spree/dashboard-core'
+import {
+  adminClient,
+  Can,
+  PageHeader,
+  Subject,
+  useResourceKey,
+  useStore,
+} from '@spree/dashboard-core'
 import {
   Button,
   Card,
@@ -18,21 +25,31 @@ import {
   TableRow,
   useConfirm,
 } from '@spree/dashboard-ui'
-import { PencilIcon, Trash2Icon, XCircleIcon } from '@spree/dashboard-ui/icons'
+import {
+  PackageCheckIcon,
+  PencilIcon,
+  Trash2Icon,
+  Undo2Icon,
+  XCircleIcon,
+} from '@spree/dashboard-ui/icons'
 import { createFileRoute, Link, useNavigate } from '@tanstack/react-router'
 import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
+import { CloseShortDialog } from '../../../../../components/spree/close-short-dialog'
 import { InventoryStatusBadge } from '../../../../../components/spree/inventory-status-badge'
-import { QuantityCell, QuantityHead } from '../../../../../components/spree/quantity-cell'
+import { ReceiveDeliveryCard } from '../../../../../components/spree/receive-delivery-card'
 import { ResourceDetailSkeleton } from '../../../../../components/spree/route-pending'
 import { StockHistoryCard } from '../../../../../components/spree/stock-history-card'
+import { StockReceiptsCard } from '../../../../../components/spree/stock-receipts-card'
 import { VariantLink } from '../../../../../components/spree/variant-link'
 import {
   useCancelPurchaseOrder,
+  useClosePurchaseOrder,
+  useCreatePurchaseOrderReceipt,
   useDeletePurchaseOrder,
+  useMarkPurchaseOrderDraft,
   useMarkPurchaseOrderOrdered,
   usePurchaseOrder,
-  useReceivePurchaseOrder,
 } from '../../../../../hooks/use-purchase-orders'
 import { spreeJsonLinkResolver } from '../../../../../lib/json-link-resolver'
 import { isClosed } from '../../../../../schemas/inventory-operations'
@@ -67,7 +84,12 @@ function PurchaseOrderDetailPage() {
       header={<PurchaseOrderHeader purchaseOrder={purchaseOrder} />}
       main={
         <>
+          {(purchaseOrder.status === 'ordered' ||
+            purchaseOrder.status === 'partially_received') && (
+            <ReceiveCard purchaseOrder={purchaseOrder} />
+          )}
           <ItemsCard purchaseOrder={purchaseOrder} />
+          <ReceiptsCard purchaseOrder={purchaseOrder} />
           <StockHistoryCard
             purchaseOrderId={purchaseOrder.id}
             title={t('admin.purchase_orders.history_title')}
@@ -138,6 +160,15 @@ function SummaryCard({ purchaseOrder }: { purchaseOrder: PurchaseOrder }) {
           <dt className="text-muted-foreground">{t('admin.purchase_orders.fields.expected_at')}</dt>
           <dd>{purchaseOrder.expected_at ?? '—'}</dd>
 
+          {purchaseOrder.cancel_by && (
+            <>
+              <dt className="text-muted-foreground">
+                {t('admin.purchase_orders.fields.cancel_by')}
+              </dt>
+              <dd>{purchaseOrder.cancel_by}</dd>
+            </>
+          )}
+
           {purchaseOrder.reference && (
             <>
               <dt className="text-muted-foreground">
@@ -163,51 +194,86 @@ function SummaryCard({ purchaseOrder }: { purchaseOrder: PurchaseOrder }) {
           <dd>
             {purchaseOrder.received_at ? <RelativeTime iso={purchaseOrder.received_at} /> : '—'}
           </dd>
+
+          {purchaseOrder.closed_short && (
+            <>
+              <dt className="text-muted-foreground">
+                {t('admin.purchase_orders.fields.closed_short')}
+              </dt>
+              <dd>
+                <RelativeTime iso={purchaseOrder.closed_short_at as string} />
+              </dd>
+              {purchaseOrder.close_reason && (
+                <>
+                  <dt className="text-muted-foreground">
+                    {t('admin.purchase_orders.fields.close_reason')}
+                  </dt>
+                  <dd className="whitespace-pre-line">{purchaseOrder.close_reason}</dd>
+                </>
+              )}
+            </>
+          )}
         </dl>
       </CardContent>
     </Card>
   )
 }
 
+/** What a delivery is counted against, in the receive card's vocabulary. */
+function receivableLines(purchaseOrder: PurchaseOrder) {
+  return (purchaseOrder.items ?? []).map((item) => ({
+    id: item.id,
+    product_id: item.product_id,
+    variant_name: item.variant_name,
+    variant_sku: item.variant_sku,
+    thumbnail_url: item.thumbnail_url,
+    quantity_expected: item.quantity_ordered,
+    quantity_received: item.quantity_received,
+    quantity_rejected: item.quantity_rejected,
+    outstanding: item.outstanding,
+  }))
+}
+
+function ReceiveCard({ purchaseOrder }: { purchaseOrder: PurchaseOrder }) {
+  const { t } = useTranslation()
+  const receive = useCreatePurchaseOrderReceipt(purchaseOrder.id)
+
+  return (
+    <ReceiveDeliveryCard
+      lines={receivableLines(purchaseOrder)}
+      expectedLabel={t('admin.purchase_orders.columns.quantity_ordered')}
+      subject={Subject.PurchaseOrder}
+      pending={receive.isPending}
+      onReceive={(params) => receive.mutateAsync(params)}
+    />
+  )
+}
+
+function ReceiptsCard({ purchaseOrder }: { purchaseOrder: PurchaseOrder }) {
+  const queryKey = useResourceKey('purchase-orders', purchaseOrder.id, 'stock-receipts')
+  return (
+    <StockReceiptsCard
+      queryKey={queryKey}
+      fetch={() =>
+        adminClient.purchaseOrders.stockReceipts.list(purchaseOrder.id, { expand: ['items'] })
+      }
+    />
+  )
+}
+
 /**
- * The lines, and — once the order has been placed — the receive screen.
- *
- * `quantity_received` is the running total for the line, so a second delivery
- * tops it up rather than starting over — and the inputs show what has actually
- * arrived, not what was ordered.
+ * The lines as they stand: what was ordered, what each delivery has brought
+ * and refused so far, and what the merchant agreed to pay.
  */
 function ItemsCard({ purchaseOrder }: { purchaseOrder: PurchaseOrder }) {
   const { t } = useTranslation()
   const items = purchaseOrder.items ?? []
-  const receiveMutation = useReceivePurchaseOrder(purchaseOrder.id)
-  const receivable =
-    purchaseOrder.status === 'ordered' || purchaseOrder.status === 'partially_received'
-
-  const [counts, setCounts] = useState<Record<string, number>>(() =>
-    Object.fromEntries(items.map((item) => [item.id, item.quantity_received])),
-  )
-
-  const totalCounted = items.reduce((sum, item) => sum + (counts[item.id] ?? 0), 0)
-
-  async function handleReceive() {
-    await receiveMutation
-      .mutateAsync({
-        items: items.map((item) => ({
-          id: item.id,
-          quantity_received: counts[item.id] ?? item.quantity_received,
-        })),
-      })
-      .catch(() => undefined)
-  }
+  const anyOver = items.some((item) => item.quantity_over > 0)
 
   return (
     <Card>
       <CardHeader>
-        <CardTitle>
-          {receivable
-            ? t('admin.purchase_orders.receive_title')
-            : t('admin.purchase_orders.items_title')}
-        </CardTitle>
+        <CardTitle>{t('admin.purchase_orders.items_title')}</CardTitle>
       </CardHeader>
       <CardContent className="flex flex-col p-0">
         {items.length === 0 ? (
@@ -215,16 +281,24 @@ function ItemsCard({ purchaseOrder }: { purchaseOrder: PurchaseOrder }) {
             {t('admin.purchase_orders.items_empty')}
           </p>
         ) : (
-          /* Nothing sits below the table on a draft, so its last row carries
-             the card's own curve; on a receivable order the footer does. */
-          <Table scrollX roundedBottom={!receivable}>
+          <Table scrollX roundedBottom>
             <TableHeader>
               <TableRow>
                 <TableHead>{t('admin.inventory_lines.columns.variant')}</TableHead>
                 <TableHead className="text-right">
                   {t('admin.purchase_orders.columns.quantity_ordered')}
                 </TableHead>
-                <QuantityHead>{t('admin.purchase_orders.columns.quantity_received')}</QuantityHead>
+                <TableHead className="text-right">
+                  {t('admin.purchase_orders.columns.quantity_received')}
+                </TableHead>
+                <TableHead className="text-right">
+                  {t('admin.purchase_orders.columns.quantity_rejected')}
+                </TableHead>
+                {anyOver && (
+                  <TableHead className="text-right">
+                    {t('admin.purchase_orders.columns.quantity_over')}
+                  </TableHead>
+                )}
                 <TableHead className="text-right">
                   {t('admin.inventory_lines.columns.unit_cost')}
                 </TableHead>
@@ -235,53 +309,17 @@ function ItemsCard({ purchaseOrder }: { purchaseOrder: PurchaseOrder }) {
             </TableHeader>
             <TableBody>
               {items.map((item) => (
-                <ItemRow
-                  key={item.id}
-                  item={item}
-                  receivable={receivable}
-                  count={counts[item.id] ?? item.quantity_received}
-                  onCount={(value) => setCounts((prev) => ({ ...prev, [item.id]: value }))}
-                />
+                <ItemRow key={item.id} item={item} showOver={anyOver} />
               ))}
             </TableBody>
           </Table>
-        )}
-
-        {receivable && items.length > 0 && (
-          <div className="flex items-center justify-between p-3">
-            <p className="text-muted-foreground text-sm tabular-nums">
-              {t('admin.purchase_orders.receive_running_total', {
-                counted: totalCounted,
-                ordered: purchaseOrder.quantity_ordered_total,
-              })}
-            </p>
-            <Can I="update" a={Subject.PurchaseOrder}>
-              <Button type="button" onClick={handleReceive} disabled={receiveMutation.isPending}>
-                {receiveMutation.isPending
-                  ? t('admin.actions.saving')
-                  : t('admin.purchase_orders.actions.receive')}
-              </Button>
-            </Can>
-          </div>
         )}
       </CardContent>
     </Card>
   )
 }
 
-function ItemRow({
-  item,
-  receivable,
-  count,
-  onCount,
-}: {
-  item: PurchaseOrderItem
-  receivable: boolean
-  count: number
-  onCount: (value: number) => void
-}) {
-  const { t } = useTranslation()
-
+function ItemRow({ item, showOver }: { item: PurchaseOrderItem; showOver: boolean }) {
   return (
     <TableRow>
       <TableCell>
@@ -293,16 +331,9 @@ function ItemRow({
         />
       </TableCell>
       <TableCell className="text-right tabular-nums">{item.quantity_ordered}</TableCell>
-      {/* Never below what is already on the shelf: taking units back off is a
-          correction, not a receive. */}
-      <QuantityCell
-        editable={receivable}
-        value={receivable ? count : item.quantity_received}
-        min={item.quantity_received}
-        max={item.quantity_ordered}
-        label={t('admin.purchase_orders.columns.quantity_received')}
-        onChange={onCount}
-      />
+      <TableCell className="text-right tabular-nums">{item.quantity_received}</TableCell>
+      <TableCell className="text-right tabular-nums">{item.quantity_rejected}</TableCell>
+      {showOver && <TableCell className="text-right tabular-nums">{item.quantity_over}</TableCell>}
       <TableCell className="text-right tabular-nums">{item.display_unit_cost}</TableCell>
       <TableCell className="text-right tabular-nums">{item.display_total_cost}</TableCell>
     </TableRow>
@@ -321,6 +352,9 @@ function PurchaseOrderHeader({ purchaseOrder }: { purchaseOrder: PurchaseOrder }
   const markOrdered = useMarkPurchaseOrderOrdered(purchaseOrder.id)
   const cancelOrder = useCancelPurchaseOrder(purchaseOrder.id)
   const deleteOrder = useDeletePurchaseOrder()
+  const markDraft = useMarkPurchaseOrderDraft(purchaseOrder.id)
+  const closeOrder = useClosePurchaseOrder(purchaseOrder.id)
+  const [closeOpen, setCloseOpen] = useState(false)
 
   const open = !isClosed(purchaseOrder.status)
 
@@ -370,77 +404,114 @@ function PurchaseOrderHeader({ purchaseOrder }: { purchaseOrder: PurchaseOrder }
   }
 
   return (
-    <PageHeader
-      title={purchaseOrder.number}
-      backTo="purchase-orders"
-      badges={<InventoryStatusBadge status={purchaseOrder.status} resource="purchase_orders" />}
-      actions={
-        open && (
-          <Can I="update" a={Subject.PurchaseOrder}>
-            {/* A draft is the only order whose lines are still a plan rather
+    <>
+      {closeOpen && (
+        <CloseShortDialog
+          title={t('admin.purchase_orders.close_confirm.title')}
+          description={t('admin.purchase_orders.close_confirm.message', {
+            outstanding:
+              purchaseOrder.quantity_ordered_total - purchaseOrder.quantity_received_total,
+          })}
+          pending={closeOrder.isPending}
+          onConfirm={(reason) => closeOrder.mutateAsync({ reason })}
+          onClose={() => setCloseOpen(false)}
+        />
+      )}
+      <PageHeader
+        title={purchaseOrder.number}
+        backTo="purchase-orders"
+        badges={<InventoryStatusBadge status={purchaseOrder.status} resource="purchase_orders" />}
+        actions={
+          open && (
+            <Can I="update" a={Subject.PurchaseOrder}>
+              {/* A draft is the only order whose lines are still a plan rather
                 than a commitment to a supplier, which `editable` reports. */}
-            {purchaseOrder.editable && (
-              <Button variant="outline" asChild>
-                <Link
-                  to="/$storeId/purchase-orders/$purchaseOrderId/edit"
-                  params={{ storeId, purchaseOrderId: purchaseOrder.id }}
+              {purchaseOrder.editable && (
+                <Button variant="outline" asChild>
+                  <Link
+                    to="/$storeId/purchase-orders/$purchaseOrderId/edit"
+                    params={{ storeId, purchaseOrderId: purchaseOrder.id }}
+                  >
+                    <PencilIcon className="size-4" />
+                    {t('admin.actions.edit')}
+                  </Link>
+                </Button>
+              )}
+              {purchaseOrder.status === 'draft' && (
+                <Button
+                  type="button"
+                  onClick={handleOrder}
+                  disabled={markOrdered.isPending || (purchaseOrder.items_count ?? 0) === 0}
                 >
-                  <PencilIcon className="size-4" />
-                  {t('admin.actions.edit')}
-                </Link>
-              </Button>
-            )}
-            {purchaseOrder.status === 'draft' && (
-              <Button
-                type="button"
-                onClick={handleOrder}
-                disabled={markOrdered.isPending || (purchaseOrder.items_count ?? 0) === 0}
-              >
-                {t('admin.purchase_orders.actions.mark_ordered')}
-              </Button>
-            )}
-          </Can>
-        )
-      }
-      destructiveItems={
-        open && (
-          <>
-            {/* A draft is not yet a commitment to anyone, so it can simply be
+                  {t('admin.purchase_orders.actions.mark_ordered')}
+                </Button>
+              )}
+              {/* Only until something arrives: the server refuses it after the
+                first delivery, and so does the screen. */}
+              {purchaseOrder.status === 'ordered' && (
+                <Button
+                  type="button"
+                  variant="outline"
+                  onClick={() => markDraft.mutateAsync().catch(() => undefined)}
+                  disabled={markDraft.isPending}
+                >
+                  <Undo2Icon className="size-4" />
+                  {t('admin.purchase_orders.actions.mark_draft')}
+                </Button>
+              )}
+            </Can>
+          )
+        }
+        dropdownItems={
+          purchaseOrder.status === 'partially_received' && (
+            <Can I="update" a={Subject.PurchaseOrder}>
+              <DropdownMenuItem onClick={() => setCloseOpen(true)} disabled={closeOrder.isPending}>
+                <PackageCheckIcon className="size-4" />
+                {t('admin.purchase_orders.actions.close_short')}
+              </DropdownMenuItem>
+            </Can>
+          )
+        }
+        destructiveItems={
+          open && (
+            <>
+              {/* A draft is not yet a commitment to anyone, so it can simply be
                 thrown away — the same action the list offers. Once placed, the
                 order is a matter of record with the supplier and calling it
                 off is the only way out. */}
-            {purchaseOrder.status === 'draft' && (
-              <Can I="destroy" a={Subject.PurchaseOrder}>
+              {purchaseOrder.status === 'draft' && (
+                <Can I="destroy" a={Subject.PurchaseOrder}>
+                  <DropdownMenuItem
+                    variant="destructive"
+                    onClick={handleDelete}
+                    disabled={deleteOrder.isPending}
+                  >
+                    <Trash2Icon className="size-4" />
+                    {t('admin.actions.delete')}
+                  </DropdownMenuItem>
+                </Can>
+              )}
+              <Can I="update" a={Subject.PurchaseOrder}>
                 <DropdownMenuItem
                   variant="destructive"
-                  onClick={handleDelete}
-                  disabled={deleteOrder.isPending}
+                  onClick={handleCancel}
+                  disabled={cancelOrder.isPending}
                 >
-                  <Trash2Icon className="size-4" />
-                  {t('admin.actions.delete')}
+                  <XCircleIcon className="size-4" />
+                  {t('admin.purchase_orders.actions.cancel_order')}
                 </DropdownMenuItem>
               </Can>
-            )}
-            <Can I="update" a={Subject.PurchaseOrder}>
-              <DropdownMenuItem
-                variant="destructive"
-                onClick={handleCancel}
-                disabled={cancelOrder.isPending}
-              >
-                <XCircleIcon className="size-4" />
-                {t('admin.purchase_orders.actions.cancel_order')}
-              </DropdownMenuItem>
-            </Can>
-          </>
-        )
-      }
-      resource={{ id: purchaseOrder.id, number: purchaseOrder.number }}
-      jsonPreview={{
-        title: purchaseOrder.number,
-        fetch: () => adminClient.purchaseOrders.get(purchaseOrder.id, { expand: ['items'] }),
-        endpoint: `/api/v3/admin/purchase_orders/${purchaseOrder.id}`,
-        resolveLink: spreeJsonLinkResolver(storeId),
-      }}
-    />
+            </>
+          )
+        }
+        resource={{ id: purchaseOrder.id, number: purchaseOrder.number }}
+        jsonPreview={{
+          title: purchaseOrder.number,
+          fetch: () => adminClient.purchaseOrders.get(purchaseOrder.id, { expand: ['items'] }),
+          endpoint: `/api/v3/admin/purchase_orders/${purchaseOrder.id}`,
+          resolveLink: spreeJsonLinkResolver(storeId),
+        }}
+      />
+    </>
   )
 }

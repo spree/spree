@@ -1,8 +1,10 @@
 import type {
+  ReceivableCloseParams,
+  StockReceipt,
+  StockReceiptCreateParams,
   StockTransfer,
   StockTransferCancelParams,
   StockTransferCreateParams,
-  StockTransferReceiveParams,
   StockTransferUpdateParams,
 } from '@spree/admin-sdk'
 import {
@@ -95,18 +97,51 @@ export function useMarkStockTransferInTransit(id: string) {
   })
 }
 
-export function useReceiveStockTransfer(id: string) {
-  return useResourceMutation<StockTransfer, Error, StockTransferReceiveParams | undefined>({
-    mutationFn: (params) => adminClient.stockTransfers.receive(id, params ?? undefined),
+/** The deliveries the destination counted in, with their lines. */
+export function useStockTransferReceipts(id: string) {
+  return useQuery({
+    queryKey: useResourceKey('stock-transfers', id, 'stock-receipts'),
+    queryFn: () => adminClient.stockTransfers.stockReceipts.list(id, { expand: ['items'] }),
+  })
+}
+
+/** Lands what the destination counted in; partial receipt is normal. */
+export function useCreateStockTransferReceipt(id: string) {
+  return useResourceMutation<StockReceipt, Error, StockReceiptCreateParams | undefined>({
+    mutationFn: (params) =>
+      adminClient.stockTransfers.stockReceipts.create(id, params ?? undefined),
     invalidate: [
       ['stock-transfers'],
       ['stock-transfers', id],
+      ['stock-transfers', id, 'stock-receipts'],
       ['stock-levels'],
       ['stock-movements'],
     ],
     successMessage: i18n.t('admin.stock_transfers.messages.received'),
     errorMessage: i18n.t('admin.stock_transfers.errors.failed_to_receive'),
     // These screens have no inline error surface.
+    showValidationErrors: true,
+  })
+}
+
+/** Ends a transfer whose missing units are not going to turn up. */
+export function useCloseStockTransfer(id: string) {
+  return useResourceMutation<StockTransfer, Error, ReceivableCloseParams | undefined>({
+    mutationFn: (params) => adminClient.stockTransfers.close(id, params ?? undefined),
+    invalidate: [['stock-transfers'], ['stock-transfers', id]],
+    successMessage: i18n.t('admin.stock_transfers.messages.closed'),
+    errorMessage: i18n.t('admin.stock_transfers.errors.failed_to_close'),
+    showValidationErrors: true,
+  })
+}
+
+/** Unfreezes a packed transfer; nothing has left the source yet. */
+export function useMarkStockTransferDraft(id: string) {
+  return useResourceMutation<StockTransfer, Error, void>({
+    mutationFn: () => adminClient.stockTransfers.markDraft(id),
+    invalidate: [['stock-transfers'], ['stock-transfers', id]],
+    successMessage: i18n.t('admin.stock_transfers.messages.marked_draft'),
+    errorMessage: i18n.t('admin.stock_transfers.errors.failed_to_mark_draft'),
     showValidationErrors: true,
   })
 }
