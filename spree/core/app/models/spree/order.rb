@@ -695,6 +695,29 @@ module Spree
       order_group_id.present? ? order_group.payments : payments
     end
 
+    # What has been captured against this order, net of refunds.
+    #
+    # An order placed in a split checkout owns no payments, so its own
+    # +payment_total+ stays at zero however much the customer paid — the
+    # figure comes from its share of the group's payments instead, the same
+    # way {Spree::Orders::UpdateStatuses} derives +payment_status+. The
+    # group's own total will not do: once one seller has been captured and
+    # another has not, no proportion of it describes either.
+    #
+    # @return [BigDecimal]
+    def net_captured_total
+      return payment_total unless grouped?
+
+      payment_splits.sum(&:net_captured_amount)
+    end
+
+    # Payments still to be collected for this order, wherever they live.
+    #
+    # @return [ActiveRecord::Relation<Spree::Payment>, Array<Spree::Payment>]
+    def settlement_pending_payments
+      grouped? ? settlement_payments.pending : pending_payments
+    end
+
     # @return [Boolean] whether this order was placed alongside others in one
     #   checkout, and therefore shares their payment
     def grouped?

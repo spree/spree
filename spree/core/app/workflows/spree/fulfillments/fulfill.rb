@@ -140,7 +140,7 @@ module Spree
         # a fully discounted or store-credit-paid order was refused dispatch.
         # Measured against what was owed at checkout, so an arrangement that
         # collects part of the total up front can still ship.
-        return if order.payment_total >= order.amount_due_at_checkout
+        return if order.net_captured_total >= order.amount_due_at_checkout
 
         # Charging later is a deliberate choice, so an authorized-but-uncaptured
         # order is ready to hand over: on dispatch the money is taken below,
@@ -149,7 +149,7 @@ module Spree
         # Every pending payment has to defer, not just one — on a mixed-tender
         # order a single deferred payment must not wave through a sibling that
         # should have been collected at checkout.
-        pending = order.pending_payments
+        pending = order.settlement_pending_payments
         return if pending.any? && pending.all? { |payment| payment.payment_method&.capture_at_checkout? == false }
 
         failure(@source, Spree.t('fulfillments.errors.order_not_paid'))
