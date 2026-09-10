@@ -28,6 +28,8 @@ erDiagram
     StockLevel {
         integer count_on_hand
         integer allocated_count
+        integer reserved_count
+        integer incoming_count
         boolean backorderable
     }
     StockLocation {
@@ -37,15 +39,21 @@ erDiagram
     }
 ```
 
-## The three numbers
+## The five numbers
 
-A stock level carries two counts, and a third is derived from them. Keeping them apart is what stops a warehouse from disagreeing with a website.
+A stock level carries four counts, and a fifth is derived from them. Keeping them apart is what stops a warehouse from disagreeing with a website.
 
 | | What it means |
 |---|---|
 | `count_on_hand` | What is physically on the shelf, right now |
 | `allocated_count` | How much of that is already spoken for by orders not yet shipped |
-| **`available_count`** | `count_on_hand − allocated_count` — what's actually sellable |
+| `reserved_count` | How much is held by checkouts still in progress |
+| `incoming_count` | How much is on its way here — on a purchase order placed with a supplier, or a transfer already in transit |
+| **`available_count`** | `count_on_hand − allocated_count` — what's actually sellable, before checkout holds |
+
+Reserved and incoming are kept as counters rather than worked out on every read, because the Inventory page in the dashboard reads them for every row, many times a day, and only a handful of things change them: entering or leaving checkout moves reserved; placing, cancelling, closing or receiving a purchase order or transfer moves incoming. Nothing else writes them. If a figure ever looks wrong, `rake spree:stock:recount_levels` recomputes both from their sources and reports every row it corrected — the same task the 6.0 upgrade runs to fill them in for existing stock.
+
+A transfer counts as incoming from the moment it is marked in transit, not when it is drafted: until the van leaves, nothing is moving. Units a delivery rejects at the dock leave incoming too — they are recorded on the receipt, but they are not coming.
 
 <Note>
 **Selling an item does not reduce `count_on_hand`.** Placing an order raises `allocated_count`; the physical count only drops when the parcel actually ships.
@@ -168,7 +176,7 @@ A reservation is a short, time-limited hold placed when a customer enters checko
 | They complete the order | The hold becomes a real allocation |
 | They abandon it | The hold expires and stock returns |
 
-Reservations never touch `count_on_hand` — they're a separate layer consulted when availability is read. A backorderable item is skipped entirely, since unlimited supply needs no holding.
+Reservations never touch `count_on_hand` — they're a separate layer consulted when availability is read, and their total per stock level is what `reserved_count` shows. A backorderable item is skipped entirely, since unlimited supply needs no holding.
 
 How long the hold lasts is a **store setting**, because it's a decision about the checkout experience rather than a property of a warehouse. Reservations can also be switched off entirely.
 
@@ -281,6 +289,12 @@ When the balance is not coming — the supplier is out of stock, the missing uni
 await adminClient.purchaseOrders.close(order.id, { reason: 'Supplier out of stock' })
 await adminClient.stockTransfers.close(transfer.id, { reason: 'Two fell off the van' })
 ```
+
+## The Inventory page
+
+The dashboard's Inventory section opens on a list with one row per variant per location: on hand, committed (`allocated_count`), reserved, available and incoming, with the location as a filter and SKU or product name as the search. Every figure on it is a column read off the stock level.
+
+The on-hand figure is corrected in place — set it to a count, or adjust it by a delta, and say why — and the change lands in the stock history like any other adjustment. The incoming figure links to the two ways of making it grow: a transfer from another warehouse, or a purchase order from a supplier.
 
 ## Turning tracking off
 
