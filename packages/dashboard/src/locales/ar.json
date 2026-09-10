@@ -3212,7 +3212,9 @@
           "subtitle": "الأفضل أداءً في الفترة المحددة.",
           "tabs": {
             "customers": "العملاء",
-            "categories": "الفئات"
+            "categories": "الفئات",
+            "companies": "الشركات",
+            "sellers": "البائعون"
           },
           "orders_count_zero": "لا طلبات",
           "orders_count_one": "طلب واحد",

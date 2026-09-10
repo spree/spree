@@ -218,6 +218,27 @@ RSpec.describe Spree::Reporting::Query do
     end
   end
 
+  describe 'company breakdown' do
+    let!(:company) { create(:company, store: store) }
+    let!(:order) { create(:completed_order_with_totals, store: store, completed_at: 3.days.ago) }
+
+    before { order.update_columns(company_id: company.id) }
+
+    it 'ranks the organisations that bought' do
+      result = run(metrics: %w[total_sales orders], dimensions: %w[company])
+
+      expect(result.rows.first[:dimensions][:company]).to eq(company.id)
+      expect(result.rows.first[:metrics][:orders][:value]).to eq(1)
+    end
+
+    it 'requires permission to read the buying organisation' do
+      query = described_class.new(store: store, params: { metrics: %w[orders], dimensions: %w[company] })
+
+      expect(query.required_subjects).to include(Spree::Company)
+      expect(query.required_key_scopes).to contain_exactly('read_customers')
+    end
+  end
+
   describe 'seller payout' do
     let!(:seller) { create(:seller, :approved, store: store) }
     let!(:order) { create(:completed_order_with_totals, store: store, completed_at: 3.days.ago) }

@@ -63,6 +63,27 @@ export function ReportBuilder({ draft, onChange, schema }: ReportBuilderProps) {
 
   const update = (patch: Partial<ReportDraft>) => onChange({ ...draft, ...patch })
 
+  // Metrics from different families cannot be combined in one query, so the
+  // picker groups them and disables the families the current selection has
+  // ruled out — the alternative is a flat run of 27 checkboxes where the
+  // refusal only arrives after you have picked an impossible pair.
+  const metricGroups =
+    schema.families?.length > 0
+      ? schema.families
+          .map((family) => ({
+            name: family.name,
+            label: family.label,
+            metrics: schema.metrics.filter((metric) => family.metrics.includes(metric.name)),
+          }))
+          .filter((group) => group.metrics.length > 0)
+      : [{ name: 'all', label: '', metrics: schema.metrics }]
+
+  // Whichever family the current selection belongs to; null while nothing is
+  // picked, so every family stays open.
+  const activeFamily =
+    metricGroups.find((group) => group.metrics.some((m) => draft.metrics.includes(m.name)))?.name ??
+    null
+
   const groupableDimensions = schema.dimensions.filter((d) =>
     draft.metrics.every((metric) => d.compatible_metrics.includes(metric)),
   )
@@ -161,33 +182,46 @@ export function ReportBuilder({ draft, onChange, schema }: ReportBuilderProps) {
         <CardTitle>{t('admin.reports.builder.title')}</CardTitle>
       </CardHeader>
       <CardContent className="flex flex-col gap-6">
-        <FieldSet className="flex flex-col gap-2">
-          <FieldLegend variant="label">{t('admin.reports.builder.metrics')}</FieldLegend>
-          {schema.metrics.map((metric) => {
-            const id = `metric-${metric.name}`
-            // Greyed out when the chosen breakdown or any active filter cannot
-            // be combined with this metric.
-            const incompatible = [
-              dimension,
-              ...draft.filters.map((f) => findDimension(schema, f.dimension)),
-            ].some((d) => d && !d.compatible_metrics.includes(metric.name))
-            return (
-              <Field key={metric.name} orientation="horizontal">
-                <Checkbox
-                  id={id}
-                  checked={draft.metrics.includes(metric.name)}
-                  disabled={incompatible}
-                  onCheckedChange={(checked) => toggleMetric(metric.name, checked)}
-                />
-                <FieldLabel
-                  htmlFor={id}
-                  className={cn('font-normal', incompatible && 'text-muted-foreground')}
-                >
-                  {metric.label}
-                </FieldLabel>
-              </Field>
-            )
-          })}
+        <FieldSet className="flex flex-col gap-4">
+          <FieldLegend variant="label" className="mb-0">
+            {t('admin.reports.builder.metrics')}
+          </FieldLegend>
+          {metricGroups.map((group) => (
+            <div key={group.name} className="flex flex-col gap-2">
+              {metricGroups.length > 1 && (
+                <span className="text-xs font-medium uppercase tracking-wide text-muted-foreground">
+                  {group.label}
+                </span>
+              )}
+              {group.metrics.map((metric) => {
+                const id = `metric-${metric.name}`
+                // Greyed out when the chosen breakdown, an active filter, or a
+                // metric from another family cannot be combined with this one.
+                const incompatible =
+                  [dimension, ...draft.filters.map((f) => findDimension(schema, f.dimension))].some(
+                    (d) => d && !d.compatible_metrics.includes(metric.name),
+                  ) ||
+                  (activeFamily !== null && group.name !== activeFamily)
+                return (
+                  <Field key={metric.name} orientation="horizontal">
+                    <Checkbox
+                      id={id}
+                      checked={draft.metrics.includes(metric.name)}
+                      disabled={incompatible}
+                      onCheckedChange={(checked) => toggleMetric(metric.name, checked)}
+                    />
+                    <FieldLabel
+                      htmlFor={id}
+                      title={metric.description ?? undefined}
+                      className={cn('font-normal', incompatible && 'text-muted-foreground')}
+                    >
+                      {metric.label}
+                    </FieldLabel>
+                  </Field>
+                )
+              })}
+            </div>
+          ))}
           {draft.metrics.length === 0 && (
             <p className="text-xs text-destructive">{t('admin.reports.builder.no_metrics')}</p>
           )}
@@ -249,7 +283,11 @@ export function ReportBuilder({ draft, onChange, schema }: ReportBuilderProps) {
           {draft.filters.map((filter, index) => {
             const definition = findDimension(schema, filter.dimension)
             return (
-              <div key={filter.dimension} className="flex flex-col gap-1.5 rounded-md border p-3">
+              <Card
+                key={filter.dimension}
+                variant="nested"
+                className="flex flex-col gap-1.5 py-2.5"
+              >
                 <div className="flex items-center justify-between gap-2">
                   <span className="text-sm font-medium">
                     {definition?.label ?? filter.dimension}
@@ -271,7 +309,7 @@ export function ReportBuilder({ draft, onChange, schema }: ReportBuilderProps) {
                   values={filter.values}
                   onChange={(values) => setFilter(index, { ...filter, values })}
                 />
-              </div>
+              </Card>
             )
           })}
           {filterableDimensions.length > 0 && (

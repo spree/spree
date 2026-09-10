@@ -3195,7 +3195,9 @@
           "subtitle": "Top-Performer im ausgewählten Zeitraum.",
           "tabs": {
             "customers": "Kunden",
-            "categories": "Kategorien"
+            "categories": "Kategorien",
+            "companies": "Firmen",
+            "sellers": "Verkäufer"
           },
           "orders_count_one": "{{count}} Bestellung",
           "orders_count_other": "{{count}} Bestellungen",

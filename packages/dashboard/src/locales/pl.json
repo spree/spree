@@ -3227,7 +3227,9 @@
           "subtitle": "Najlepsze wyniki w wybranym okresie.",
           "tabs": {
             "customers": "Klienci",
-            "categories": "Kategorie"
+            "categories": "Kategorie",
+            "companies": "Firmy",
+            "sellers": "Sprzedawcy"
           },
           "orders_count_one": "{{count}} zamówienie",
           "orders_count_few": "{{count}} zamówienia",

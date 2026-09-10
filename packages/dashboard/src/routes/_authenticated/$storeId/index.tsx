@@ -92,6 +92,8 @@ function DashboardPage() {
   const rankingTabs: RankingTab[] = [
     ...(permissions.can('read', Subject.Customer) ? (['customers'] as const) : []),
     ...(permissions.can('read', Subject.Category) ? (['categories'] as const) : []),
+    ...(permissions.can('read', Subject.Company) ? (['companies'] as const) : []),
+    ...(permissions.can('read', Subject.Seller) ? (['sellers'] as const) : []),
   ]
 
   const channelParam = channelId === ALL_CHANNELS ? undefined : channelId
@@ -348,7 +350,7 @@ function OperationsCard({
   )
 }
 
-type RankingTab = 'customers' | 'categories'
+type RankingTab = 'customers' | 'categories' | 'companies' | 'sellers'
 
 // Each tab is one contract query; the revenue metric doubles as the share bar.
 const RANKING_QUERIES: Record<
@@ -373,6 +375,27 @@ const RANKING_QUERIES: Record<
     query: {
       metrics: ['net_sales', 'units_sold'],
       dimensions: ['category'],
+      sort: '-net_sales',
+      limit: 5,
+    },
+    revenueMetric: 'net_sales',
+    countMetric: 'units_sold',
+  },
+  companies: {
+    query: {
+      metrics: ['total_sales', 'orders'],
+      dimensions: ['company'],
+      sort: '-total_sales',
+      limit: 5,
+    },
+    revenueMetric: 'total_sales',
+    countMetric: 'orders',
+  },
+  // What each seller sold, on the line items that were theirs.
+  sellers: {
+    query: {
+      metrics: ['net_sales', 'units_sold'],
+      dimensions: ['seller'],
       sort: '-net_sales',
       limit: 5,
     },
@@ -492,6 +515,30 @@ function RankingName({
       <Link
         to="/$storeId/customers/$customerId"
         params={{ storeId, customerId: dimension.id }}
+        className="min-w-0 hover:underline"
+      >
+        {label}
+      </Link>
+    )
+  }
+
+  if (tab === 'companies') {
+    return (
+      <Link
+        to="/$storeId/companies/$companyId"
+        params={{ storeId, companyId: dimension.id }}
+        className="min-w-0 hover:underline"
+      >
+        {label}
+      </Link>
+    )
+  }
+
+  if (tab === 'sellers') {
+    return (
+      <Link
+        to="/$storeId/sellers/$sellerId"
+        params={{ storeId, sellerId: dimension.id }}
         className="min-w-0 hover:underline"
       >
         {label}

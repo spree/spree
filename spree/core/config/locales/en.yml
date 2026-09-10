@@ -1692,6 +1692,9 @@ en:
         channel:
           description: The channel the order came through.
           label: Sales channel
+        company:
+          description: The organisation the purchase was made for.
+          label: Company
         completed_at:
           description: When the order was placed, bucketed by day, week or month in the store timezone.
           label: Date

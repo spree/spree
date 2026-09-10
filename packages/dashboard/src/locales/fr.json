@@ -3195,7 +3195,9 @@
           "subtitle": "Meilleures performances sur la période sélectionnée.",
           "tabs": {
             "customers": "Clients",
-            "categories": "Catégories"
+            "categories": "Catégories",
+            "companies": "Entreprises",
+            "sellers": "Vendeurs"
           },
           "orders_count_one": "{{count}} commande",
           "orders_count_other": "{{count}} commandes",

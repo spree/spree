@@ -36,7 +36,10 @@ export function GrowthBadge({ growth }: { growth: number | null | undefined }) {
     <span
       className={cn(
         'inline-flex items-center gap-0.5 text-xs font-medium',
-        growth > 0 ? 'text-green-700 dark:text-green-400' : 'text-destructive',
+        // The status trio, not a raw Tailwind ramp: a hand-picked green needs
+        // re-tinting for dark mode at every call site, which is what the
+        // token family exists to stop.
+        growth > 0 ? 'text-success' : 'text-danger',
       )}
       title={t('admin.pages.home.growth.vs_previous')}
     >

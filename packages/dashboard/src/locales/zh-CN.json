@@ -3187,7 +3187,9 @@
           "subtitle": "所选时间段内表现最佳。",
           "tabs": {
             "customers": "客户",
-            "categories": "类目"
+            "categories": "类目",
+            "companies": "公司",
+            "sellers": "卖家"
           },
           "orders_count_other": "{{count}} 笔订单",
           "units_count_other": "{{count}} 件",

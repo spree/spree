@@ -274,6 +274,18 @@ module Spree
                       end
                     }
 
+          # The buying organisation. Keyed by whichever node the purchase named
+          # — a division's spend stays that division's, rather than rolling
+          # silently into its parent.
+          dimension :company, base: :orders, column: :company_id, lookup: :company,
+                    subject: -> { Spree::Company }, key_scope: 'read_customers',
+                    resolve: ->(store, value) { store.companies.find_by_prefix_id!(value).id },
+                    hydrate: lambda { |store, ids, _params|
+                      store.companies.where(id: ids).to_h do |company|
+                        [company.id, { id: company.prefixed_id, label: company.name, meta: { kind: company.kind } }]
+                      end
+                    }
+
           dimension :category, base: :line_items, column: '%{product_categories}.category_id',
                     joins: [{ variant: { product: :product_categories } }], lookup: :category,
                     subject: -> { Spree::Category }, key_scope: 'read_categories',
