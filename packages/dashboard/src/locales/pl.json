@@ -5510,7 +5510,7 @@
       "title": "Historia stanu",
       "empty": "Ten stan jeszcze się nie zmieniał",
       "columns": {
-        "when": "Kiedy",
+        "date": "Data",
         "product": "Produkt",
         "change": "Zmiana",
         "where": "Gdzie",
@@ -5532,7 +5532,8 @@
         "fulfillment": "Realizacja",
         "order": "Zamówienie",
         "manual": "Korekta ręczna"
-      }
+      },
+      "description": "Każda zmiana tego stanu magazynowego, od najnowszej, wraz z jej przyczyną."
     },
     "purchase_orders": {
       "title": "Zamówienia zakupu",

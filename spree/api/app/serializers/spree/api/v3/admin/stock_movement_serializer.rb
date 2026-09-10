@@ -8,6 +8,10 @@ module Spree
                    stock_transfer_id: [:string, nullable: true],
                    purchase_order_id: [:string, nullable: true],
                    stock_receipt_id: [:string, nullable: true],
+                   order_number: [:string, nullable: true], return_number: [:string, nullable: true],
+                   exchange_number: [:string, nullable: true],
+                   stock_transfer_number: [:string, nullable: true],
+                   purchase_order_number: [:string, nullable: true],
                    unit_cost: [:string, nullable: true],
                    display_unit_cost: [:string, nullable: true],
                    stock_location_id: [:string, nullable: true],
@@ -70,6 +74,29 @@ module Spree
 
           attribute :purchase_order_id do |movement|
             Spree::PurchaseOrder.prefixed_id_for(movement.purchase_order_id)
+          end
+
+          # The cause by the name a merchant knows it by — "T1001", "PO1003",
+          # "R123456789" — so a history row can point at its document without
+          # a second request to look the number up.
+          attribute :order_number do |movement|
+            movement.order&.number
+          end
+
+          attribute :return_number do |movement|
+            movement.return&.number
+          end
+
+          attribute :exchange_number do |movement|
+            movement.exchange&.number
+          end
+
+          attribute :stock_transfer_number do |movement|
+            movement.stock_transfer&.number
+          end
+
+          attribute :purchase_order_number do |movement|
+            movement.purchase_order&.number
           end
 
           # What the units cost, on the rows where that means something: a

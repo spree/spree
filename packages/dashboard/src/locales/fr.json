@@ -5448,7 +5448,7 @@
       "title": "Historique du stock",
       "empty": "Ce stock n'a pas encore changé",
       "columns": {
-        "when": "Quand",
+        "date": "Date",
         "product": "Produit",
         "change": "Variation",
         "where": "Où",
@@ -5470,7 +5470,8 @@
         "fulfillment": "Préparation",
         "order": "Commande",
         "manual": "Ajustement manuel"
-      }
+      },
+      "description": "Chaque variation de ce stock, de la plus récente à la plus ancienne, et sa cause."
     },
     "purchase_orders": {
       "title": "Bons de commande",

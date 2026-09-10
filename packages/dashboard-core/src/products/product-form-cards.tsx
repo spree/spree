@@ -26,6 +26,7 @@ import {
 import {
   Button,
   Card,
+  CardAction,
   CardContent,
   CardHeader,
   CardTitle,
@@ -764,12 +765,14 @@ function SortableMediaThumbnail({
 export function InventoryCard({
   form,
   stockLocationHref,
-}: FormCardProps & { stockLocationHref?: (id: string) => string }) {
+  actions,
+}: FormCardProps & { stockLocationHref?: (id: string) => string; actions?: React.ReactNode }) {
   const { t } = useTranslation()
   return (
     <Card>
       <CardHeader>
         <CardTitle>{t('admin.pages.products.section_inventory')}</CardTitle>
+        {actions && <CardAction>{actions}</CardAction>}
       </CardHeader>
       <CardContent className="p-0">
         <InventorySection form={form} stockLocationHref={stockLocationHref} />

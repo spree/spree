@@ -5448,7 +5448,7 @@
       "title": "Stock history",
       "empty": "Nothing has changed this stock yet",
       "columns": {
-        "when": "When",
+        "date": "Date",
         "product": "Product",
         "change": "Change",
         "where": "Where",
@@ -5470,7 +5470,8 @@
         "fulfillment": "Fulfillment",
         "order": "Order",
         "manual": "Manual adjustment"
-      }
+      },
+      "description": "Every change to this stock, newest first, and what caused it."
     },
     "purchase_orders": {
       "title": "Purchase Orders",

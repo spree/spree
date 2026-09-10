@@ -42,6 +42,7 @@ RSpec.describe Spree::Api::V3::Admin::StockMovementsController, type: :controlle
       row = json_response['data'].find { |m| m['id'] == allocation.prefixed_id }
       expect(row['fulfillment_id']).to eq(fulfillment.prefixed_id)
       expect(row['order_id']).to eq(order.prefixed_id)
+      expect(row['order_number']).to eq(order.number)
     end
 
     it 'filters by kind' do
@@ -82,6 +83,7 @@ RSpec.describe Spree::Api::V3::Admin::StockMovementsController, type: :controlle
       get :index, params: { q: { kind_eq: 'received' } }, as: :json
 
       row = json_response['data'].find { |m| m['purchase_order_id'] == purchase_order.prefixed_id }
+      expect(row['purchase_order_number']).to eq(purchase_order.number)
       expect(row['unit_cost']).to eq('9.5')
       expect(row['display_unit_cost']).to eq('$9.50')
     end

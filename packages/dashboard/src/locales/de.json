@@ -5448,7 +5448,7 @@
       "title": "Bestandsverlauf",
       "empty": "Dieser Bestand hat sich noch nicht verändert",
       "columns": {
-        "when": "Wann",
+        "date": "Datum",
         "product": "Produkt",
         "change": "Änderung",
         "where": "Wo",
@@ -5470,7 +5470,8 @@
         "fulfillment": "Auftragsabwicklung",
         "order": "Auftrag",
         "manual": "Manuelle Korrektur"
-      }
+      },
+      "description": "Jede Änderung an diesem Bestand, neueste zuerst, und was sie ausgelöst hat."
     },
     "purchase_orders": {
       "title": "Bestellungen",

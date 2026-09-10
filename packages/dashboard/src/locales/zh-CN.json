@@ -5437,7 +5437,7 @@
       "title": "库存记录",
       "empty": "此库存尚无变动",
       "columns": {
-        "when": "时间",
+        "date": "日期",
         "product": "商品",
         "change": "变动",
         "where": "位置",
@@ -5459,7 +5459,8 @@
         "fulfillment": "履约",
         "order": "订单",
         "manual": "手动调整"
-      }
+      },
+      "description": "此库存的每一次变动（最新优先）及其原因。"
     },
     "purchase_orders": {
       "title": "采购订单",

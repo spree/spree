@@ -1,10 +1,17 @@
 import type { StockMovement } from '@spree/admin-sdk'
-import { adminClient, useResourceKey } from '@spree/dashboard-core'
+import { adminClient, useResourceKey, useStore } from '@spree/dashboard-core'
 import {
+  Button,
   Card,
   CardContent,
   CardHeader,
   CardTitle,
+  Dialog,
+  DialogBody,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
   Pagination,
   RelativeTime,
   StatusBadge,
@@ -16,25 +23,20 @@ import {
   TableRow,
 } from '@spree/dashboard-ui'
 import { useQuery } from '@tanstack/react-query'
+import { Link } from '@tanstack/react-router'
+import { HistoryIcon } from 'lucide-react'
 import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 
 /**
- * Why the on-hand number is what it is.
- *
- * Movement history is only ever read about something — a SKU ("why is this 47?"),
- * a warehouse ("what changed in Brooklyn this week?"), or one document ("what
- * did this trip actually move?"). The legacy admin's undifferentiated firehose
- * answered none of them (docs/plans/6.0-inventory-operations.md), so this is a
- * panel, never a page, and it takes exactly one subject.
+ * What the history is about. Movement history is only ever read about
+ * something — a SKU ("why is this 47?"), a warehouse ("what changed in
+ * Brooklyn this week?"), or one document ("what did this trip actually
+ * move?"). The legacy admin's undifferentiated firehose answered none of them
+ * (docs/plans/6.0-inventory-operations.md), so every surface takes exactly
+ * one subject.
  */
-export function StockHistoryCard({
-  variantIds,
-  stockLocationId,
-  stockTransferId,
-  purchaseOrderId,
-  title,
-}: {
+type StockHistoryScope = {
   /** One SKU's history, or a product's across all of its variants. */
   variantIds?: string[]
   stockLocationId?: string | null
@@ -42,8 +44,58 @@ export function StockHistoryCard({
   stockTransferId?: string | null
   /** One order's own rows: every delivery counted in against it. */
   purchaseOrderId?: string | null
-  title?: string
-}) {
+}
+
+/** Why the on-hand number is what it is, as a card on a document's page. */
+export function StockHistoryCard({ title, ...scope }: StockHistoryScope & { title?: string }) {
+  const { t } = useTranslation()
+
+  return (
+    <Card>
+      <CardHeader>
+        <CardTitle>{title ?? t('admin.stock_history.title')}</CardTitle>
+      </CardHeader>
+      <CardContent className="p-0">
+        <StockHistoryTable {...scope} />
+      </CardContent>
+    </Card>
+  )
+}
+
+/**
+ * The same history behind a button, for a page that is a form: a product's
+ * ledger is read, never edited, so it sits beside the inventory card rather
+ * than between two things the merchant is about to save.
+ */
+export function StockHistoryDialog(scope: StockHistoryScope) {
+  const { t } = useTranslation()
+  const [open, setOpen] = useState(false)
+
+  return (
+    <>
+      <Button type="button" variant="outline" size="sm" onClick={() => setOpen(true)}>
+        <HistoryIcon />
+        {t('admin.stock_history.title')}
+      </Button>
+      <Dialog open={open} onOpenChange={setOpen}>
+        <DialogContent className="sm:max-w-[min(1100px,calc(100%-2rem))]">
+          <DialogHeader>
+            <DialogTitle>{t('admin.stock_history.title')}</DialogTitle>
+            <DialogDescription>{t('admin.stock_history.description')}</DialogDescription>
+          </DialogHeader>
+          <DialogBody className="p-0">{open && <StockHistoryTable {...scope} />}</DialogBody>
+        </DialogContent>
+      </Dialog>
+    </>
+  )
+}
+
+function StockHistoryTable({
+  variantIds,
+  stockLocationId,
+  stockTransferId,
+  purchaseOrderId,
+}: StockHistoryScope) {
   const { t } = useTranslation()
   const [page, setPage] = useState(1)
 
@@ -76,76 +128,68 @@ export function StockHistoryCard({
   const movements = data?.data ?? []
   const paginated = (data?.meta?.pages ?? 1) > 1
 
+  if (isLoading) {
+    return <p className="p-3 text-muted-foreground text-sm">{t('admin.common.loading')}</p>
+  }
+  if (movements.length === 0) {
+    return <p className="p-3 text-muted-foreground text-sm">{t('admin.stock_history.empty')}</p>
+  }
+
   return (
-    <Card>
-      <CardHeader>
-        <CardTitle>{title ?? t('admin.stock_history.title')}</CardTitle>
-      </CardHeader>
-      <CardContent className="p-0">
-        {isLoading ? (
-          <p className="p-3 text-muted-foreground text-sm">{t('admin.common.loading')}</p>
-        ) : movements.length === 0 ? (
-          <p className="p-3 text-muted-foreground text-sm">{t('admin.stock_history.empty')}</p>
-        ) : (
-          <>
-            {/* The pagination bar brings its own top rule and padding, so it
-                takes the card's bottom curve when it is there — and the last
-                row takes it when the history fits on one page. */}
-            <Table scrollX roundedBottom={!paginated}>
-              <TableHeader>
-                <TableRow>
-                  <TableHead>{t('admin.stock_history.columns.when')}</TableHead>
-                  <TableHead>{t('admin.stock_history.columns.product')}</TableHead>
-                  <TableHead>{t('admin.stock_history.columns.where')}</TableHead>
-                  <TableHead>{t('admin.stock_history.columns.change')}</TableHead>
-                  <TableHead>{t('admin.stock_history.columns.kind')}</TableHead>
-                  <TableHead>{t('admin.stock_history.columns.cause')}</TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {movements.map((movement) => (
-                  <TableRow key={movement.id}>
-                    <TableCell className="whitespace-nowrap text-muted-foreground text-sm">
-                      <RelativeTime iso={movement.created_at} />
-                    </TableCell>
-                    <TableCell>
-                      <div className="min-w-0">
-                        <div className="truncate font-medium">{movement.variant_name ?? '—'}</div>
-                        {movement.variant_sku && (
-                          <div className="text-muted-foreground text-xs">
-                            {movement.variant_sku}
-                          </div>
-                        )}
-                      </div>
-                    </TableCell>
-                    <TableCell className="whitespace-nowrap text-sm">
-                      {movement.stock_location_name ?? '—'}
-                    </TableCell>
-                    <TableCell className="font-medium tabular-nums">
-                      <QuantityChange movement={movement} />
-                    </TableCell>
-                    <TableCell>
-                      {movement.kind ? (
-                        <StatusBadge
-                          status={movement.kind}
-                          label={t(`admin.stock_history.kinds.${movement.kind}`)}
-                        />
-                      ) : (
-                        '—'
-                      )}
-                    </TableCell>
-                    <TableCell className="text-sm">
-                      <MovementCause movement={movement} />
-                    </TableCell>
-                  </TableRow>
-                ))}
-              </TableBody>
-            </Table>
-            {paginated && data?.meta && <Pagination meta={data.meta} onPageChange={setPage} />}
-          </>
-        )}
-      </CardContent>
-    </Card>
+    <>
+      {/* The pagination bar brings its own top rule and padding, so it takes
+          the bottom curve when it is there — and the last row takes it when
+          the history fits on one page. */}
+      <Table scrollX roundedBottom={!paginated}>
+        <TableHeader>
+          <TableRow>
+            <TableHead>{t('admin.stock_history.columns.date')}</TableHead>
+            <TableHead>{t('admin.stock_history.columns.product')}</TableHead>
+            <TableHead>{t('admin.stock_history.columns.where')}</TableHead>
+            <TableHead>{t('admin.stock_history.columns.change')}</TableHead>
+            <TableHead>{t('admin.stock_history.columns.kind')}</TableHead>
+            <TableHead>{t('admin.stock_history.columns.cause')}</TableHead>
+          </TableRow>
+        </TableHeader>
+        <TableBody>
+          {movements.map((movement) => (
+            <TableRow key={movement.id}>
+              <TableCell className="whitespace-nowrap text-muted-foreground text-sm">
+                <RelativeTime iso={movement.created_at} />
+              </TableCell>
+              <TableCell>
+                <div className="min-w-0">
+                  <div className="truncate font-medium">{movement.variant_name ?? '—'}</div>
+                  {movement.variant_sku && (
+                    <div className="text-muted-foreground text-xs">{movement.variant_sku}</div>
+                  )}
+                </div>
+              </TableCell>
+              <TableCell className="whitespace-nowrap text-sm">
+                {movement.stock_location_name ?? '—'}
+              </TableCell>
+              <TableCell className="font-medium tabular-nums">
+                <QuantityChange movement={movement} />
+              </TableCell>
+              <TableCell>
+                {movement.kind ? (
+                  <StatusBadge
+                    status={movement.kind}
+                    label={t(`admin.stock_history.kinds.${movement.kind}`)}
+                  />
+                ) : (
+                  '—'
+                )}
+              </TableCell>
+              <TableCell className="whitespace-nowrap text-sm">
+                <MovementCause movement={movement} />
+              </TableCell>
+            </TableRow>
+          ))}
+        </TableBody>
+      </Table>
+      {paginated && data?.meta && <Pagination meta={data.meta} onPageChange={setPage} />}
+    </>
   )
 }
 
@@ -167,24 +211,68 @@ function QuantityChange({ movement }: { movement: StockMovement }) {
   )
 }
 
-/** What caused the change, in the merchant's own vocabulary. */
+/**
+ * What caused the change, named the way the merchant knows it — "Stock
+ * transfer T1001" — and pointing at the document where one has a page. A
+ * return or an exchange lives on its order's page, so its row goes there.
+ */
 function MovementCause({ movement }: { movement: StockMovement }) {
   const { t } = useTranslation()
+  const { storeId } = useStore()
 
-  if (movement.purchase_order_id) {
-    return <span>{t('admin.stock_history.causes.purchase_order')}</span>
+  const orderHref = movement.order_id ? `/${storeId}/orders/${movement.order_id}` : null
+  const cause = movement.purchase_order_id
+    ? {
+        label: t('admin.stock_history.causes.purchase_order'),
+        number: movement.purchase_order_number,
+        href: `/${storeId}/purchase-orders/${movement.purchase_order_id}`,
+      }
+    : movement.stock_transfer_id
+      ? {
+          label: t('admin.stock_history.causes.stock_transfer'),
+          number: movement.stock_transfer_number,
+          href: `/${storeId}/transfers/${movement.stock_transfer_id}`,
+        }
+      : movement.return_id
+        ? {
+            label: t('admin.stock_history.causes.return'),
+            number: movement.return_number,
+            href: orderHref,
+          }
+        : movement.exchange_id
+          ? {
+              label: t('admin.stock_history.causes.exchange'),
+              number: movement.exchange_number,
+              href: orderHref,
+            }
+          : movement.fulfillment_id
+            ? {
+                label: t('admin.stock_history.causes.fulfillment'),
+                number: movement.order_number,
+                href: orderHref,
+              }
+            : movement.order_id
+              ? {
+                  label: t('admin.stock_history.causes.order'),
+                  number: movement.order_number,
+                  href: orderHref,
+                }
+              : null
+
+  if (!cause) {
+    return (
+      <span className="text-muted-foreground">
+        {movement.reason ?? t('admin.stock_history.causes.manual')}
+      </span>
+    )
   }
-  if (movement.stock_transfer_id) {
-    return <span>{t('admin.stock_history.causes.stock_transfer')}</span>
-  }
-  if (movement.return_id) return <span>{t('admin.stock_history.causes.return')}</span>
-  if (movement.exchange_id) return <span>{t('admin.stock_history.causes.exchange')}</span>
-  if (movement.fulfillment_id) return <span>{t('admin.stock_history.causes.fulfillment')}</span>
-  if (movement.order_id) return <span>{t('admin.stock_history.causes.order')}</span>
+
+  const text = cause.number ? `${cause.label} ${cause.number}` : cause.label
+  if (!cause.href) return <span>{text}</span>
 
   return (
-    <span className="text-muted-foreground">
-      {movement.reason ?? t('admin.stock_history.causes.manual')}
-    </span>
+    <Link to={cause.href} className="font-medium hover:underline">
+      {text}
+    </Link>
   )
 }
