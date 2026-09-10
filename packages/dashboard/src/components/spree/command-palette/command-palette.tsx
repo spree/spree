@@ -31,7 +31,8 @@ import {
 import { LogOutIcon, PackageIcon, PlusIcon, SettingsIcon } from '@spree/dashboard-ui/icons'
 import { useNavigate, useParams } from '@tanstack/react-router'
 import type { LucideIcon } from 'lucide-react'
-import { type ReactNode, useMemo, useState } from 'react'
+import { type KeyboardEvent, type ReactNode, useMemo, useState } from 'react'
+import { pagedCommandItem } from './page-command-selection'
 
 export function CommandPalette() {
   const { open, setOpen } = useCommandPalette()
@@ -53,7 +54,23 @@ function CommandPaletteContent({ setOpen }: { setOpen: (open: boolean) => void }
   const settingsNav = useSettingsNav()
 
   const [input, setInput] = useState('')
+  // cmdk has no PageUp/PageDown binding. We take over selection for those
+  // keys and hand the value back so arrow-key navigation stays in sync.
+  const [selectedValue, setSelectedValue] = useState<string>()
   const { groups, hasResults, isLoading, isEnabled } = useGlobalSearch(input)
+
+  const handleListPageKey = (event: KeyboardEvent<HTMLDivElement>) => {
+    if (event.key !== 'PageDown' && event.key !== 'PageUp') return
+    if (event.metaKey || event.ctrlKey || event.altKey) return
+
+    event.preventDefault()
+    const item = pagedCommandItem(event.currentTarget, event.key)
+    const value = item?.getAttribute('data-value')
+    if (!item || !value) return
+
+    setSelectedValue(value)
+    item.scrollIntoView({ block: 'nearest' })
+  }
 
   const close = () => {
     setOpen(false)
@@ -172,7 +189,12 @@ function CommandPaletteContent({ setOpen }: { setOpen: (open: boolean) => void }
       >
         {/* The server filters resource results via Ransack; static commands
             are pre-filtered in JS. Either way, cmdk shouldn't filter again. */}
-        <Command shouldFilter={false}>
+        <Command
+          shouldFilter={false}
+          value={selectedValue}
+          onValueChange={setSelectedValue}
+          onKeyDown={handleListPageKey}
+        >
           <CommandInput
             value={input}
             onValueChange={setInput}
