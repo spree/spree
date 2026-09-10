@@ -30,6 +30,7 @@ module Spree
 
           step :build_receipt
           step :update_lines
+          step :uncount_landed_units
           run_hooks :before_restock
           step :restock_accepted
           step :settle_status
@@ -105,10 +106,25 @@ module Spree
       def update_lines
         @normalized_items.each do |entry|
           line = entry[:line]
+          entry[:incoming_before] = line.incoming
           line.update!(
             quantity_received: line.quantity_received.to_i + entry[:quantity_accepted],
             quantity_rejected: line.quantity_rejected.to_i + entry[:quantity_rejected]
           )
+        end
+      end
+
+      # What this delivery settled — accepted or refused — is no longer on its
+      # way. Inside the document lock with the restock below, so no read in
+      # between shows the units both incoming and on hand, or neither.
+      def uncount_landed_units
+        destination = receivable.destination_location
+
+        @normalized_items.each do |entry|
+          landed = entry[:incoming_before] - entry[:line].incoming
+          next if landed.zero?
+
+          destination.stock_level_or_create(entry[:line].variant).adjust_incoming_count(-landed)
         end
       end
 

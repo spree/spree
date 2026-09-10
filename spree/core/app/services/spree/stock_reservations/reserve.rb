@@ -49,6 +49,9 @@ module Spree
 
             reservation = existing[[stock_level.id, line_item.id]] ||
                           Spree::StockReservation.new(stock_level: stock_level, line_item: line_item)
+            # The counter follows the row: a re-reservation moves it by the
+            # difference, a fresh one by the whole quantity.
+            stock_level.adjust_reserved_count(line_item.quantity - reservation.quantity.to_i)
             if cart.is_a?(Spree::Cart)
               reservation.cart = cart
               reservation.order = nil

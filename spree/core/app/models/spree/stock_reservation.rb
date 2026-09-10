@@ -29,6 +29,31 @@ module Spree
                                                  quantity expires_at]
     self.whitelisted_ransackable_associations = %w[stock_level line_item order]
 
+    # Deletes these reservations and hands their units back to each level's
+    # reserved counter in the same transaction, so a level never reads as
+    # held by a reservation that is gone. The reservations are locked while
+    # their quantities are read: a checkout re-reserving one of them at the
+    # same moment would otherwise have its new quantity deleted but the old
+    # one withdrawn. Called by {Spree::StockReservations::Release} and
+    # {Spree::StockReservations::ExpireJob} only — the counter's two
+    # withdrawing writers.
+    #
+    # @param reservations [ActiveRecord::Relation<Spree::StockReservation>]
+    # @return [Integer] how many reservations were deleted
+    def self.withdraw(reservations)
+      transaction do
+        held = reservations.lock.pluck(:stock_level_id, :quantity)
+                           .each_with_object(Hash.new(0)) { |(level_id, quantity), totals| totals[level_id] += quantity }
+        deleted = reservations.delete_all
+
+        Spree::StockLevel.where(id: held.keys).find_each do |stock_level|
+          stock_level.adjust_reserved_count(-held[stock_level.id])
+        end
+
+        deleted
+      end
+    end
+
     # @return [Spree::Cart, Spree::Order, nil]
     def owner
       order || cart

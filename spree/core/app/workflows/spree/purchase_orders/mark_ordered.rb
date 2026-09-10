@@ -4,6 +4,8 @@ module Spree
     # clock on the expected date; the goods are now "on order", which the
     # merchant can see but availability never counts.
     class MarkOrdered < Spree::Workflow
+      include Spree::Receivables::IncomingCounter
+
       hooks :validate, :after_mark_ordered
 
       # @param purchase_order [Spree::PurchaseOrder]
@@ -15,6 +17,7 @@ module Spree
 
         ApplicationRecord.transaction do
           step :mark_ordered
+          step :count_ordered_units
         end
 
         run_hooks :after_mark_ordered
@@ -31,6 +34,12 @@ module Spree
 
       def mark_ordered
         failure(purchase_order) unless purchase_order.update(status: 'ordered', ordered_at: Time.current)
+      end
+
+      # From this moment the goods are on their way as far as the Inventory
+      # page is concerned — still never as far as availability is.
+      def count_ordered_units
+        count_incoming(purchase_order)
       end
     end
   end

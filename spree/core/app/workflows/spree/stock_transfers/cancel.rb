@@ -9,6 +9,8 @@ module Spree
     # off (`write_off`, shrinkage). There is no silent reversal, and no
     # default: guessing would either invent stock or destroy it.
     class Cancel < Spree::Workflow
+      include Spree::Receivables::IncomingCounter
+
       hooks :validate, :after_cancel
 
       # How in-flight units are accounted for.
@@ -34,6 +36,7 @@ module Spree
           step :ensure_cancelable
           run_hooks :validate
 
+          step :uncount_in_flight_units
           step :resolve_in_flight_units
           step :mark_canceled
         end
@@ -53,6 +56,16 @@ module Spree
         failure(stock_transfer, Spree.t('stock_transfer.errors.in_transit_resolution_required'))
       end
 
+      # Whether the units come back or are written off, the destination is no
+      # longer expecting them. Read under the lock, for the reason given on
+      # the next step.
+      def uncount_in_flight_units
+        return unless stock_transfer.in_flight?
+
+        stock_transfer.items.reload
+        uncount_incoming(stock_transfer)
+      end
+
       # Only the units still in flight are resolved: anything the destination
       # already counted in is on its shelf and stays there.
       def resolve_in_flight_units
@@ -63,7 +76,7 @@ module Spree
         # since committed, and those are what `outstanding` subtracts from.
         return write_off if on_in_transit == 'write_off'
 
-        stock_transfer.items.reload.each do |item|
+        stock_transfer.items.each do |item|
           next unless item.outstanding.positive?
 
           restock(item)

@@ -22,6 +22,10 @@ describe 'purchase order lifecycle', type: :model do
     destination.stock_level(variant.id)&.count_on_hand.to_i
   end
 
+  def incoming
+    destination.stock_level(variant.id)&.incoming_count.to_i
+  end
+
   describe 'creating' do
     it 'drafts the order without buying anything' do
       expect(purchase_order).to be_draft
@@ -73,6 +77,13 @@ describe 'purchase order lifecycle', type: :model do
       expect(on_hand).to eq(0)
     end
 
+    # The warehouse has never held the SKU, so the level is created to carry
+    # the figure: the Inventory page shows the units on their way.
+    it 'shows every ordered unit as incoming at the destination' do
+      expect { Spree::PurchaseOrders::MarkOrdered.call(purchase_order: purchase_order) }
+        .to change { incoming }.from(0).to(100)
+    end
+
     it 'refuses an order that has already gone out' do
       Spree::PurchaseOrders::MarkOrdered.call(purchase_order: purchase_order)
 
@@ -115,6 +126,35 @@ describe 'purchase order lifecycle', type: :model do
       expect(movement.purchase_order).to eq(purchase_order)
       expect(movement.stock_receipt).to eq(receipt)
       expect(movement.display_unit_cost.to_s).to eq('$12.50')
+    end
+
+    it 'moves landed units from incoming to on hand, and stops expecting refused ones' do
+      receive([{ item: line, quantity_accepted: 60 }])
+      expect(on_hand).to eq(60)
+      expect(incoming).to eq(40)
+
+      receive([{ item: line, quantity_accepted: 38, quantity_rejected: 2, rejection_reason: 'damaged' }])
+      expect(on_hand).to eq(98)
+      expect(incoming).to eq(0)
+    end
+
+    # The incoming decrement and the on-hand increment are one transaction: a
+    # delivery vetoed after the units have left incoming leaves them where
+    # they were. The veto lands between the two writes, through the
+    # extension point that sits there.
+    context 'when an extension vetoes the delivery before it lands' do
+      before { Spree.hooks.register('purchase_orders.receive.before_restock') { |workflow| workflow.reject!('dock closed') } }
+      after { Spree.hooks.clear! }
+
+      it 'keeps the units incoming' do
+        result = receive
+
+        expect(result).to be_failure
+        expect(result.error.to_s).to eq('dock closed')
+        expect(on_hand).to eq(0)
+        expect(incoming).to eq(100)
+        expect(purchase_order.reload.items.sole.quantity_received).to eq(0)
+      end
     end
 
     it 'adds each delivery to the line and keeps the order open until it is whole' do
@@ -239,6 +279,8 @@ describe 'purchase order lifecycle', type: :model do
       expect(result.value.close_reason).to eq('Supplier out of stock')
       expect(result.value.items.sole.outstanding).to eq(40)
       expect(on_hand).to eq(60)
+      # The balance is not coming, so it is no longer on its way.
+      expect(incoming).to eq(0)
     end
 
     it 'refuses an order nothing has arrived on' do
@@ -259,6 +301,7 @@ describe 'purchase order lifecycle', type: :model do
       expect(result.value).to be_draft
       expect(result.value.ordered_at).to be_nil
       expect(result.value).to be_editable
+      expect(incoming).to eq(0)
     end
 
     it 'refuses once a delivery has been booked' do
@@ -297,6 +340,17 @@ describe 'purchase order lifecycle', type: :model do
       expect(result.value).to be_canceled
       expect(result.value.notes).to include('Supplier went under')
       expect(on_hand).to eq(60)
+      expect(incoming).to eq(0)
+    end
+
+    # A draft never counted toward incoming, so cancelling one must not take
+    # units off a figure some other document put there.
+    it 'leaves the destination\'s incoming figure alone when cancelling a draft' do
+      destination.stock_level_or_create(variant).adjust_incoming_count(7)
+
+      Spree::PurchaseOrders::Cancel.call(purchase_order: purchase_order)
+
+      expect(incoming).to eq(7)
     end
 
     it 'cancels a draft that never got any lines' do

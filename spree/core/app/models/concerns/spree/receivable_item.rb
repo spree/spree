@@ -65,6 +65,15 @@ module Spree
       [quantity_settled - quantity_expected, 0].max
     end
 
+    # Units still on their way. Not `outstanding`: on a purchase order settled
+    # means received, so outstanding keeps counting units the dock refused,
+    # and those never arrive.
+    #
+    # @return [Integer]
+    def incoming
+      [quantity_expected - quantity_received.to_i - quantity_rejected.to_i, 0].max
+    end
+
     def under_received?
       outstanding.positive?
     end

@@ -8,6 +8,8 @@ module Spree
     # lets the outstanding count stand on each line as the record of the gap.
     # No stock moves — the units were never here.
     class Close < Spree::Workflow
+      include Spree::Receivables::IncomingCounter
+
       hooks :validate, :after_close
 
       attr_reader :purchase_order, :reason
@@ -20,6 +22,7 @@ module Spree
         purchase_order.with_lock do
           step :ensure_closable
           run_hooks :validate
+          step :uncount_awaited_units
           step :close_short
         end
 
@@ -34,6 +37,13 @@ module Spree
         return if purchase_order.partially_received?
 
         failure(purchase_order, Spree.t('purchase_order.errors.not_partially_received'))
+      end
+
+      # The merchant has just said the balance is not coming, so it leaves
+      # the destination's incoming figure; the outstanding count on each line
+      # keeps the record of what never arrived.
+      def uncount_awaited_units
+        uncount_incoming(purchase_order)
       end
 
       def close_short

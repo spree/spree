@@ -531,6 +531,28 @@ describe Spree::StockLevel, type: :model do
       end
     end
 
+    describe '#adjust_reserved_count and #adjust_incoming_count' do
+      it 'move in both directions' do
+        subject.adjust_reserved_count(4)
+        subject.adjust_incoming_count(20)
+        subject.adjust_reserved_count(-3)
+        subject.adjust_incoming_count(-5)
+
+        expect(subject.reload).to have_attributes(reserved_count: 1, incoming_count: 15)
+      end
+
+      # A recount may already have taken these units off; withdrawing them a
+      # second time must not eat into what something else is holding.
+      it 'never withdraw below zero' do
+        subject.adjust_reserved_count(2)
+
+        subject.adjust_reserved_count(-5)
+        subject.adjust_incoming_count(-1)
+
+        expect(subject.reload).to have_attributes(reserved_count: 0, incoming_count: 0)
+      end
+    end
+
     describe '#available_count' do
       it 'is the shelf minus the promise' do
         subject.update_columns(count_on_hand: 10, allocated_count: 4)

@@ -663,3 +663,21 @@ steps:
       reported and skipped rather than guessed at, and one bad row does not
       stop the run. Purge the soft-deleted rows later with
       spree:upgrade:purge_migrated_external_receives.
+
+  - id: recount_stock_levels
+    name: "Fill in the reserved and incoming counters on every stock level"
+    task: "spree:stock:recount_levels"
+    notes: |
+      Spree 6.0 keeps two more figures on each stock level beside on hand and
+      committed: reserved (units held by checkouts in progress) and incoming
+      (units on their way on an open purchase order or a transfer in transit).
+      Both are counters kept by the workflows that change them, and both start
+      at zero on an existing install.
+
+      This recomputes them from their sources — active reservations, open
+      purchase order lines and in-flight transfer lines — and rewrites any
+      level whose stored figure differs, printing each correction. Until it
+      runs, the Inventory page shows zero reserved and incoming for stock that
+      predates the upgrade.
+
+      Idempotent, and safe to re-run at any time to repair drift.

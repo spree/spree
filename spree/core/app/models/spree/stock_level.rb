@@ -36,7 +36,8 @@ module Spree
     after_touch { variant.touch }
     after_destroy { variant.touch }
 
-    self.whitelisted_ransackable_attributes = %w[count_on_hand allocated_count stock_location_id variant_id]
+    self.whitelisted_ransackable_attributes = %w[count_on_hand allocated_count reserved_count incoming_count
+                                                 stock_location_id variant_id]
     self.whitelisted_ransackable_associations = %w[variant stock_location]
 
     scope :with_active_stock_location, -> { joins(:stock_location).merge(Spree::StockLocation.active) }
@@ -144,11 +145,52 @@ module Spree
       count_on_hand - allocated_count
     end
 
+    # Units held by checkouts in progress. Written by exactly three paths —
+    # {Spree::StockReservations::Reserve}, {Spree::StockReservations::Release}
+    # and {Spree::StockReservations::ExpireJob} — and nowhere else; the
+    # `spree:stock:recount_levels` task repairs drift, but a fourth writer is
+    # the bug.
+    #
+    # @param value [Integer] signed change
+    # @return [void]
+    def adjust_reserved_count(value)
+      adjust_clamped_counter(:reserved_count, value)
+    end
+
+    # Units on their way here on an open purchase order or an in-flight
+    # transfer. Written only by the workflows that move those documents in
+    # and out of that state and by the receipt recorder that lands the units.
+    #
+    # @param value [Integer] signed change
+    # @return [void]
+    def adjust_incoming_count(value)
+      adjust_clamped_counter(:incoming_count, value)
+    end
+
     def reduce_count_on_hand_to_zero
       set_count_on_hand(0) if count_on_hand > 0
     end
 
     private
+
+    # Locked, and clamped at zero on the way down, for the reason
+    # {#release_allocated_count} gives: the cap is read from the counter the
+    # write then moves. A withdrawal can also legitimately exceed the counter
+    # — a recount that ran between a reservation expiring and the sweep that
+    # deletes it has already taken those units off — and must not then eat
+    # into what something else is holding.
+    def adjust_clamped_counter(column, value)
+      return if value.zero?
+
+      with_lock do
+        if value.positive?
+          increment!(column, value)
+        else
+          withdrawn = [value.abs, public_send(column)].min
+          decrement!(column, withdrawn) if withdrawn.positive?
+        end
+      end
+    end
 
     # A shelf can only be driven below zero by a write that asked to, and then
     # it means Spree never saw those goods arrive — a receiving gap that heals
