@@ -12,6 +12,8 @@ When proposing significant architectural changes:
 
 Use `/project:create-plan` and `/project:update-plan` for plan management, and `/project:implement-plan <plan>` to deliver a plan end to end (open questions → implementation → reviews → running QA environment → pull request).
 
+Every plan is tracked as one Linear issue (Spree project, milestone = the plan's target version) and one GitHub issue (milestone `vX.Y`, on the org Roadmap project), both named in the plan's `**Tracking:**` header. The skills open and update them; a pull request that implements a plan carries the Linear id in its title, `Title (V-1234)`.
+
 ## Monorepo Structure
 
 | Directory | Description |
