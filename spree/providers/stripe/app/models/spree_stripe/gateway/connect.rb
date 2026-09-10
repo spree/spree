@@ -303,7 +303,8 @@ module SpreeStripe
       end
 
       def create_connect_webhook_endpoint_async
-        return if preferred_connect_webhook_signing_secret.present?
+        return if only_webhook_registration_changed?
+        return if preferred_connect_webhook_signing_secret.present? && !stripe_secret_key_changed?
 
         SpreeStripe::CreateWebhookEndpointJob.perform_later(id, connect: true)
       end
