@@ -2141,6 +2141,17 @@
         },
         "digital_asset_authorized_days": {
           "label": "Dostępne dni"
+        },
+        "preferred_default_package_dimensions": {
+          "height": "Wysokość",
+          "help": "Karton, w którym zwykle wysyłasz, używany przez przewoźników do wyceny wagi wymiarowej — cale dla systemu imperialnego, centymetry dla metrycznego. Działa dopiero po podaniu wszystkich trzech.",
+          "label": "Domyślne wymiary paczki",
+          "length": "Długość",
+          "width": "Szerokość"
+        },
+        "preferred_default_package_weight": {
+          "help": "Waga opakowania (karton i wypełnienie) dodawana do zawartości każdej paczki przy wyliczaniu stawek dostawy. 0 wyłącza.",
+          "label": "Domyślna waga paczki"
         }
       },
       "store_credit": {
@@ -2594,7 +2605,10 @@
       "sellers": "Sprzedawcy",
       "settings": "Ustawienia",
       "transfers": "Transfery",
-      "translations": "Tłumaczenia"
+      "translations": "Tłumaczenia",
+      "purchase_orders": "Zamówienia zakupu",
+      "inventory": "Magazyn",
+      "suppliers": "Dostawcy"
     },
     "option_types": {
       "columns": {
@@ -3742,7 +3756,9 @@
           "tab_storefront_access": "Dostęp do sklepu",
           "title": "Ustawienia sklepu",
           "tab_downloads": "Pobrania cyfrowe",
-          "downloads_help": "Jak długo działa link do pobrania i ile razy można go użyć. Poszczególne pliki mogą nadpisać te wartości."
+          "downloads_help": "Jak długo działa link do pobrania i ile razy można go użyć. Poszczególne pliki mogą nadpisać te wartości.",
+          "default_package_description": "Karton, w którym zwykle wysyłasz. Dostawcy stawek przewoźników dodają jego wagę do każdej paczki i używają wymiarów do wyceny wagi wymiarowej.",
+          "tab_default_package": "Domyślna paczka"
         },
         "tax_categories": {
           "add_sheet_title": "Dodaj kategorię podatkową",
@@ -3995,6 +4011,7 @@
         "products": "Produkty, warianty, opcje, ceny i media",
         "promotions": "Promocje, reguły i kody rabatowe",
         "publishing": "Co jest widoczne w sklepie i od kiedy",
+        "purchasing": "Dostawcy i zamówienia zakupu",
         "refunds": "Wystawianie i podgląd zwrotów środków",
         "seller_profile": "Dane, adres i zasady samego sprzedawcy",
         "sellers": "Konta sprzedawców, wdrożenie i zatwierdzanie",
@@ -4043,6 +4060,7 @@
         "products": "Produkty",
         "promotions": "Promocje",
         "publishing": "Publikacja",
+        "purchasing": "Zakupy",
         "refunds": "Zwroty pieniędzy",
         "seller_profile": "Profil sprzedawcy",
         "sellers": "Sprzedawcy",
@@ -4930,7 +4948,8 @@
         "tax_rates": "Stawki stosowane według rynku i regionu",
         "webhooks": "Adresy powiadamiane o zdarzeniach",
         "payouts": "Kto płaci Twoim sprzedawcom, jak często i od jakiej kwoty",
-        "package_types": "Kartony, palety i kontenery"
+        "package_types": "Kartony, palety i kontenery",
+        "suppliers": "Od kogo kupujesz towar i jak się z nimi skontaktować"
       },
       "groups": {
         "audit": "Audyt",
@@ -4967,7 +4986,8 @@
         "tax_rates": "Stawki podatku",
         "webhooks": "Webhooki",
         "payouts": "Wypłaty",
-        "package_types": "Rodzaje opakowań"
+        "package_types": "Rodzaje opakowań",
+        "suppliers": "Dostawcy"
       }
     },
     "setup": {
@@ -5085,25 +5105,119 @@
       "columns": {
         "direction": "Kierunek",
         "number": "Numer",
-        "reference": "Referencja"
+        "reference": "Referencja",
+        "units": "Przyjęte / wysłane",
+        "shipped": "Wysłano",
+        "quantity_shipped": "Wysłano",
+        "quantity_to_ship": "Do wysłania",
+        "quantity_received": "Przyjęto",
+        "quantity_rejected": "Odrzucone",
+        "quantity_over": "Nadwyżka"
       },
       "direction": {
         "external_receive": "Przyjęcie zewnętrzne",
         "internal": "Transfer między lokalizacjami"
       },
       "errors": {
-        "failed_to_delete": "Nie udało się usunąć przesunięcia magazynowego",
-        "failed_to_record": "Nie udało się zarejestrować przesunięcia magazynowego"
+        "failed_to_delete": "Nie udało się usunąć przesunięcia",
+        "failed_to_record": "Nie udało się zarejestrować przesunięcia magazynowego",
+        "same_location": "Oba magazyny muszą być różne.",
+        "failed_to_create": "Nie udało się utworzyć przesunięcia",
+        "failed_to_save": "Nie udało się zapisać przesunięcia",
+        "failed_to_mark_ready": "Nie udało się oznaczyć przesunięcia jako gotowego",
+        "failed_to_mark_in_transit": "Nie udało się oznaczyć przesunięcia jako w drodze",
+        "failed_to_receive": "Nie udało się przyjąć przesunięcia",
+        "failed_to_cancel": "Nie udało się anulować przesunięcia",
+        "not_editable": "Ten transfer jest zapakowany, więc jego zawartość jest już zapisem. Anuluj go, jeśli nie ma jechać.",
+        "failed_to_load": "Nie udało się wczytać tego transferu.",
+        "failed_to_mark_draft": "Nie udało się cofnąć do wersji roboczej",
+        "failed_to_close": "Nie udało się zamknąć z brakami"
       },
       "messages": {
-        "deleted": "Usunięto przesunięcie magazynowe",
-        "recorded": "Zarejestrowano przesunięcie magazynowe"
+        "deleted": "Przesunięcie usunięte",
+        "recorded": "Zarejestrowano przesunięcie magazynowe",
+        "created": "Przesunięcie utworzone",
+        "saved": "Przesunięcie zapisane",
+        "marked_ready": "Przesunięcie gotowe do wysyłki",
+        "marked_in_transit": "Przesunięcie w drodze — jednostki opuściły magazyn źródłowy",
+        "received": "Przesunięcie przyjęte",
+        "canceled": "Przesunięcie anulowane",
+        "marked_draft": "Znów w wersji roboczej",
+        "closed": "Zamknięto z brakami — to, co dotarło, zostaje, reszta jest spisana"
       },
       "table": {
         "empty": "Brak transferów magazynowych",
         "search_placeholder": "Szukaj według numeru lub referencji…"
       },
-      "title": "Transfery magazynowe"
+      "title": "Transfery magazynowe",
+      "new_cta": "Nowe przesunięcie",
+      "new_title": "Nowe przesunięcie magazynowe",
+      "details_title": "Szczegóły",
+      "items_title": "Pozycje",
+      "items_empty": "Brak pozycji — dodaj produkt do wysłania.",
+      "receive_title": "Przyjęcie",
+      "history_title": "Ruchy magazynowe tego transferu",
+      "units_summary": "przyjęto {{received}} z {{shipped}} wysłanych",
+      "statuses": {
+        "draft": "Szkic",
+        "ready_to_ship": "Gotowe do wysyłki",
+        "in_transit": "W drodze",
+        "partially_received": "Częściowo przyjęte",
+        "received": "Przyjęte",
+        "canceled": "Anulowane",
+        "over_received": "Otrzymano więcej"
+      },
+      "in_transit_resolutions": {
+        "restock": "Zwróć jednostki do magazynu źródłowego",
+        "write_off": "Odpisz jednostki jako stratę"
+      },
+      "fields": {
+        "source": "Z",
+        "source_placeholder": "Wybierz magazyn źródłowy",
+        "destination": "Do",
+        "destination_placeholder": "Wybierz magazyn docelowy",
+        "reference": "Referencja",
+        "reference_placeholder": "Twoje własne oznaczenie tego transportu",
+        "notes": "Notatki",
+        "units": "Jednostki",
+        "shipped_at": "Wysłano",
+        "received_at": "Przyjęto",
+        "in_transit_resolution": "Jednostki już wyjechały. Co się z nimi stało?",
+        "source_locked": "Zablokowany, dopóki są pozycje: wybrano je dla tego magazynu. Usuń je, aby zmienić.",
+        "closed_short": "Zamknięto z brakami",
+        "close_reason": "Powód"
+      },
+      "actions": {
+        "create_draft": "Utwórz szkic",
+        "mark_ready": "Oznacz jako gotowe do wysyłki",
+        "mark_in_transit": "Oznacz jako w drodze",
+        "receive": "Przyjmij",
+        "cancel_transfer": "Anuluj przesunięcie",
+        "mark_draft": "Wróć do wersji roboczej",
+        "close_short": "Zamknij z brakami"
+      },
+      "delete_confirm": {
+        "title": "Usunąć to przesunięcie?",
+        "message": "Przesunięcie {{number}} jest jeszcze szkicem, więc stan się nie zmienił. Tego nie można cofnąć."
+      },
+      "ship_confirm": {
+        "title": "Wysłać to przesunięcie?",
+        "message_one": "{{count}} jednostka opuszcza teraz magazyn źródłowy i nie będzie tam dostępna do czasu dotarcia.",
+        "message_few": "{{count}} jednostki opuszczają teraz magazyn źródłowy i nie będą tam dostępne do czasu dotarcia.",
+        "message_many": "{{count}} jednostek opuszcza teraz magazyn źródłowy i nie będzie tam dostępnych do czasu dotarcia.",
+        "message_other": "{{count}} jednostki opuszczają teraz magazyn źródłowy i nie będą tam dostępne do czasu dotarcia."
+      },
+      "cancel_confirm": {
+        "title": "Anulować to przesunięcie?",
+        "message": "Stan jeszcze się nie zmienił, więc nic nie zostanie wycofane.",
+        "in_flight_restock": "Jednostki wrócą na półkę magazynu źródłowego, tak jakby przesunięcie nigdy nie wyjechało.",
+        "in_flight_write_off": "Jednostki pozostaną odpisane jako strata. Nic nie zostanie nigdzie dodane."
+      },
+      "edit_title": "Edytuj transfer {{number}}",
+      "close_confirm": {
+        "title": "Zamknąć ten transfer z brakami?",
+        "message": "To, co policzył magazyn docelowy, zostaje. Brakujące {{outstanding}} szt. w drodze zostaną spisane jako utracone, a transfer oznaczony jako otrzymany."
+      }
     },
     "store": {
       "load_failed_title": "Nie udało się załadować ustawień sklepu",
@@ -5128,7 +5242,9 @@
       "options": "Cechy takie jak rozmiar czy kolor, które tworzą warianty produktu.",
       "price_lists": "Alternatywne ceny, które obowiązują, gdy pasują ich reguły.",
       "product_types": "Szablony nadające nowym produktom pola i opcje.",
-      "stock_transfers": "Zapasy przemieszczane między lokalizacjami i to, co już dotarło."
+      "stock_transfers": "Zapasy przemieszczane między lokalizacjami i to, co już dotarło.",
+      "purchase_orders": "Towar zamówiony u dostawców i to, co już dotarło",
+      "suppliers": "Twoja książka adresowa dostawców"
     },
     "tax_categories": {
       "add_cta": "Dodaj kategorię podatkową",
@@ -5376,6 +5492,239 @@
         "message": "Zbiera wszystko, co należy się {{name}}, w jedną wypłatę na walutę. Nie wysyła pieniędzy — oznacz wypłatę jako zapłaconą po wykonaniu przelewu."
       },
       "settle_failed": "Nie udało się rozliczyć tego sprzedawcy."
+    },
+    "inventory_lines": {
+      "add_label": "Dodaj produkt",
+      "search_placeholder": "Szukaj produktów po nazwie lub SKU…",
+      "pick_source_first": "Najpierw wybierz magazyn źródłowy — lista pokazuje tylko to, co ten magazyn może wysłać.",
+      "columns": {
+        "variant": "Produkt",
+        "sku": "SKU",
+        "unit_cost": "Koszt jednostkowy"
+      },
+      "picker_title": "Dodaj produkty",
+      "empty_title": "Brak produktów",
+      "empty_description": "Dodaj produkty, których dotyczy ten dokument."
+    },
+    "stock_history": {
+      "title": "Historia stanu",
+      "empty": "Ten stan jeszcze się nie zmieniał",
+      "columns": {
+        "date": "Data",
+        "product": "Produkt",
+        "change": "Zmiana",
+        "where": "Gdzie",
+        "kind": "Co się stało",
+        "cause": "Dlaczego"
+      },
+      "kinds": {
+        "received": "Przyjęto",
+        "allocated": "Zarezerwowano",
+        "shipped": "Wydano",
+        "released": "Zwolniono",
+        "adjusted": "Skorygowano"
+      },
+      "causes": {
+        "purchase_order": "Zamówienie zakupu",
+        "stock_transfer": "Przesunięcie magazynowe",
+        "return": "Zwrot",
+        "exchange": "Wymiana",
+        "fulfillment": "Realizacja",
+        "order": "Zamówienie",
+        "manual": "Korekta ręczna"
+      },
+      "description": "Każda zmiana tego stanu magazynowego, od najnowszej, wraz z jej przyczyną."
+    },
+    "purchase_orders": {
+      "title": "Zamówienia zakupu",
+      "new_cta": "Nowe zamówienie zakupu",
+      "new_title": "Nowe zamówienie zakupu",
+      "details_title": "Szczegóły",
+      "items_title": "Pozycje",
+      "items_empty": "Brak pozycji — dodaj produkt do zamówienia.",
+      "receive_title": "Przyjęcie",
+      "history_title": "Ruchy magazynowe tego zamówienia",
+      "units_summary": "przyjęto {{received}} z {{ordered}} zamówionych",
+      "table": {
+        "empty": "Brak zamówień zakupu",
+        "search_placeholder": "Szukaj po numerze lub referencji…"
+      },
+      "columns": {
+        "number": "Numer",
+        "supplier": "Dostawca",
+        "units": "Przyjęte / zamówione",
+        "subtotal": "Razem",
+        "expected": "Oczekiwane",
+        "quantity_ordered": "Zamówiono",
+        "quantity_received": "Przyjęto",
+        "line_total": "Suma pozycji",
+        "quantity_rejected": "Odrzucone",
+        "quantity_over": "Nadwyżka",
+        "cancel_by": "Anuluj po",
+        "overdue": "Opóźnione",
+        "past_cancel_by": "Po terminie anulowania"
+      },
+      "statuses": {
+        "draft": "Szkic",
+        "ordered": "Zamówione",
+        "partially_received": "Częściowo przyjęte",
+        "received": "Przyjęte",
+        "canceled": "Anulowane",
+        "over_received": "Otrzymano więcej"
+      },
+      "fields": {
+        "supplier": "Dostawca",
+        "supplier_placeholder": "Wybierz dostawcę",
+        "destination": "Dostawa do",
+        "destination_placeholder": "Wybierz magazyn docelowy",
+        "currency": "Waluta",
+        "expected_at": "Oczekiwane",
+        "expected_at_placeholder": "Dzień obiecany przez dostawcę",
+        "reference": "Referencja dostawcy",
+        "reference_placeholder": "Numer zamówienia u dostawcy",
+        "notes": "Notatki",
+        "units": "Jednostki",
+        "subtotal": "Razem",
+        "ordered_at": "Zamówiono",
+        "received_at": "Przyjęto",
+        "currency_locked": "Zablokowana po utworzeniu: każda pozycja jest w niej wyceniona.",
+        "closed_short": "Zamknięto z brakami",
+        "close_reason": "Powód",
+        "cancel_by": "Anuluj po",
+        "cancel_by_placeholder": "Dzień, po którym towar nie jest już potrzebny"
+      },
+      "actions": {
+        "create_draft": "Utwórz szkic",
+        "mark_ordered": "Oznacz jako zamówione",
+        "receive": "Przyjmij",
+        "cancel_order": "Anuluj zamówienie",
+        "mark_draft": "Wróć do wersji roboczej",
+        "close_short": "Zamknij z brakami"
+      },
+      "messages": {
+        "created": "Zamówienie zakupu utworzone",
+        "saved": "Zamówienie zakupu zapisane",
+        "deleted": "Zamówienie zakupu usunięte",
+        "ordered": "Zamówienie złożone",
+        "received": "Dostawa zaksięgowana",
+        "canceled": "Zamówienie zakupu anulowane",
+        "marked_draft": "Znów w wersji roboczej",
+        "closed": "Zamknięto z brakami — to, co dotarło, zostaje, reszta jest spisana"
+      },
+      "errors": {
+        "failed_to_create": "Nie udało się utworzyć zamówienia zakupu",
+        "failed_to_save": "Nie udało się zapisać zamówienia zakupu",
+        "failed_to_delete": "Nie udało się usunąć zamówienia zakupu",
+        "failed_to_order": "Nie udało się złożyć zamówienia",
+        "failed_to_receive": "Nie udało się zaksięgować dostawy",
+        "failed_to_cancel": "Nie udało się anulować zamówienia zakupu",
+        "not_editable": "To zamówienie trafiło do dostawcy, więc jego pozycje wiążą obie strony. Anuluj je, jeśli nie ma obowiązywać.",
+        "failed_to_load": "Nie udało się wczytać tego zamówienia.",
+        "failed_to_mark_draft": "Nie udało się cofnąć do wersji roboczej",
+        "failed_to_close": "Nie udało się zamknąć z brakami"
+      },
+      "delete_confirm": {
+        "title": "Usunąć to zamówienie zakupu?",
+        "message": "Zamówienie {{number}} jest jeszcze szkicem, więc nic nie zostało zamówione. Tego nie można cofnąć."
+      },
+      "order_confirm": {
+        "title": "Złożyć to zamówienie?",
+        "message": "Pozycje zostaną zablokowane, gdy zamówienie trafi do {{supplier}}. Zamówiony towar liczy się jako dostępny dopiero po dotarciu."
+      },
+      "cancel_confirm": {
+        "title": "Anulować to zamówienie zakupu?",
+        "message": "To, co pozostało niedostarczone, zostanie odwołane. Przyjęte jednostki zostają w magazynie."
+      },
+      "edit_title": "Edytuj zamówienie {{number}}",
+      "close_confirm": {
+        "title": "Zamknąć to zamówienie z brakami?",
+        "message": "To, co dotarło, zostaje na półce. Brakujące {{outstanding}} szt. zostaną spisane, a zamówienie oznaczone jako otrzymane."
+      },
+      "filters": {
+        "overdue": "Opóźnione",
+        "not_overdue": "Na czas",
+        "past_cancel_by": "Po terminie anulowania",
+        "not_past_cancel_by": "Przed terminem anulowania"
+      }
+    },
+    "suppliers": {
+      "title": "Dostawcy",
+      "new_cta": "Nowy dostawca",
+      "new_title": "Nowy dostawca",
+      "edit_title": "Edytuj dostawcę",
+      "sheet_description": "Od kogo kupujesz towar i jak się z nimi skontaktować.",
+      "table": {
+        "empty": "Brak dostawców",
+        "search_placeholder": "Szukaj po nazwie, kontakcie lub e-mailu…"
+      },
+      "autocomplete": {
+        "placeholder": "Szukaj po nazwie, kontakcie lub e-mailu…",
+        "empty": "Brak pasujących dostawców"
+      },
+      "columns": {
+        "contact": "Kontakt",
+        "orders": "Zamówienia zakupu"
+      },
+      "fields": {
+        "contact_name": "Osoba kontaktowa",
+        "address1": "Adres",
+        "address2": "Adres, linia 2",
+        "city": "Miasto",
+        "postal_code": "Kod pocztowy",
+        "notes": "Notatki"
+      },
+      "messages": {
+        "created": "Dostawca utworzony",
+        "saved": "Dostawca zapisany",
+        "deleted": "Dostawca usunięty"
+      },
+      "errors": {
+        "name_blank": "Dostawca musi mieć nazwę.",
+        "failed_to_create": "Nie udało się utworzyć dostawcy",
+        "failed_to_save": "Nie udało się zapisać dostawcy",
+        "failed_to_delete": "Nie udało się usunąć dostawcy"
+      },
+      "delete_confirm": {
+        "title": "Usunąć tego dostawcę?",
+        "message": "{{name}} zostanie usunięty z listy dostawców."
+      }
+    },
+    "stock_receipts": {
+      "title": "Dostawy",
+      "receive_title": "Przyjmij dostawę",
+      "empty": "Brak dostaw",
+      "columns": {
+        "accepted": "Przyjęte",
+        "rejected": "Odrzucone",
+        "reason": "Powód",
+        "received_so_far": "Dotychczas otrzymane"
+      },
+      "fields": {
+        "reference": "Dokument dostawy",
+        "reference_placeholder": "Numer listu przewozowego lub WZ",
+        "received_at": "Otrzymano",
+        "received_at_placeholder": "Teraz",
+        "notes": "Uwagi"
+      },
+      "delivery_total": "{{accepted}} przyjęto, {{rejected}} odrzucono w tej dostawie",
+      "rejected_so_far": "({{count}} odrzucono)",
+      "summary": "{{accepted}} przyjęto · {{rejected}} odrzucono",
+      "reason_placeholder": "Powód odrzucenia",
+      "rejection_reasons": {
+        "damaged": "Uszkodzone",
+        "wrong_item": "Zły towar",
+        "expired": "Przeterminowane",
+        "other": "Inne"
+      },
+      "actions": {
+        "receive": "Przyjmij"
+      },
+      "close_short": {
+        "reason_label": "Powód",
+        "reason_placeholder": "Co się stało z resztą",
+        "confirm": "Zamknij z brakami"
+      },
+      "load_failed": "Nie udało się wczytać dostaw."
     }
   }
 }

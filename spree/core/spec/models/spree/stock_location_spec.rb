@@ -172,21 +172,29 @@ module Spree
 
     it 'restocks a variant with a received movement' do
       cause = double
-      expect(subject).to receive(:move).with(variant, 5, kind: 'received', cause: cause, persist: true)
+      expect(subject).to receive(:move).with(variant, 5, kind: 'received', cause: cause, unit_cost: nil)
       subject.restock(variant, 5, cause)
+    end
+
+    # What the units landed at, for the rolling average cost a purchase order
+    # makes possible. Null for stock the merchant already owned.
+    it 'records the unit cost of a purchase when one is given' do
+      cause = double
+      expect(subject).to receive(:move).with(variant, 5, kind: 'received', cause: cause, unit_cost: 12.5)
+      subject.restock(variant, 5, cause, unit_cost: 12.5)
     end
 
     # The sign no longer carries the direction — the kind does — so a
     # departure is written positive like every other order-driven kind.
     it 'unstocks a variant with a shipped movement' do
       cause = double
-      expect(subject).to receive(:move).with(variant, 5, kind: 'shipped', cause: cause, persist: true, force: false)
+      expect(subject).to receive(:move).with(variant, 5, kind: 'shipped', cause: cause, force: false)
       subject.unstock(variant, 5, cause)
     end
 
     it 'passes force through so a merchant can record a departure the shelf cannot cover' do
       cause = double
-      expect(subject).to receive(:move).with(variant, 5, kind: 'shipped', cause: cause, persist: true, force: true)
+      expect(subject).to receive(:move).with(variant, 5, kind: 'shipped', cause: cause, force: true)
       subject.unstock(variant, 5, cause, force: true)
     end
 

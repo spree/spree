@@ -977,7 +977,8 @@
         "customers": "Kunden",
         "price_list_prices": "Preislistenpreise",
         "product_translations": "Produktübersetzungen",
-        "products": "Produkte"
+        "products": "Produkte",
+        "purchase_orders": "Bestellungen"
       },
       "wizard_title": "Import"
     },

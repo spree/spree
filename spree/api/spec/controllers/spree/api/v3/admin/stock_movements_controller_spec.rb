@@ -42,6 +42,7 @@ RSpec.describe Spree::Api::V3::Admin::StockMovementsController, type: :controlle
       row = json_response['data'].find { |m| m['id'] == allocation.prefixed_id }
       expect(row['fulfillment_id']).to eq(fulfillment.prefixed_id)
       expect(row['order_id']).to eq(order.prefixed_id)
+      expect(row['order_number']).to eq(order.number)
     end
 
     it 'filters by kind' do
@@ -49,6 +50,42 @@ RSpec.describe Spree::Api::V3::Admin::StockMovementsController, type: :controlle
 
       expect(response).to have_http_status(:ok)
       expect(json_response['data']).to be_empty
+    end
+
+    # The two filters the dashboard's history panels read through: a movement
+    # carries no variant or location of its own, so both reach through the
+    # stock level (docs/plans/6.0-inventory-operations.md).
+    it 'filters by variant, for the history panel on a product' do
+      other_movement = stock_location.adjust(create(:variant), 2, reason: 'Cycle count')
+
+      get :index, params: { q: { stock_level_variant_id_in: [variant.prefixed_id] } }, as: :json
+
+      ids = json_response['data'].map { |m| m['id'] }
+      expect(ids).to include(movement.prefixed_id)
+      expect(ids).not_to include(other_movement.prefixed_id)
+    end
+
+    it 'filters by warehouse, for the activity panel on a stock location' do
+      other_location = create(:stock_location, store: store)
+      other_movement = other_location.adjust(variant, 2, reason: 'Cycle count')
+
+      get :index, params: { q: { stock_level_stock_location_id_eq: stock_location.prefixed_id } }, as: :json
+
+      ids = json_response['data'].map { |m| m['id'] }
+      expect(ids).to include(movement.prefixed_id)
+      expect(ids).not_to include(other_movement.prefixed_id)
+    end
+
+    it 'carries the purchase order and the unit cost on a received row' do
+      purchase_order = create(:purchase_order, :ordered, store: store, quantity: 4, unit_cost: 9.5)
+      Spree::PurchaseOrders::Receive.call(purchase_order: purchase_order)
+
+      get :index, params: { q: { kind_eq: 'received' } }, as: :json
+
+      row = json_response['data'].find { |m| m['purchase_order_id'] == purchase_order.prefixed_id }
+      expect(row['purchase_order_number']).to eq(purchase_order.number)
+      expect(row['unit_cost']).to eq('9.5')
+      expect(row['display_unit_cost']).to eq('$9.50')
     end
 
     # spree_stock_movements carries no store of its own, so tenancy is the walk

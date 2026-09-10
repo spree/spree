@@ -33,6 +33,15 @@ interface TableProps extends React.ComponentProps<'table'> {
    * own radius.
    */
   roundedBottom?: boolean
+  /**
+   * Scrolls sideways at every width, not just on narrow viewports. For a table
+   * in a bounded container — a card, a sheet, a dialog — where the default
+   * `clip` puts the last columns out of reach with no way to get at them: the
+   * container is narrow while the viewport is not, so the breakpoint never
+   * fires. Not for a page's main table, where `overflow-x: auto` computing
+   * `overflow-y` to `auto` would trap a sticky header.
+   */
+  scrollX?: boolean
 }
 
 /**
@@ -56,7 +65,14 @@ interface TableProps extends React.ComponentProps<'table'> {
  * rounding), and a scroll listener mirrors the body's `scrollLeft` onto the
  * pinned table so the header tracks horizontal scrolling.
  */
-function Table({ className, children, stickyHeader = false, roundedBottom, ...props }: TableProps) {
+function Table({
+  className,
+  children,
+  stickyHeader = false,
+  roundedBottom,
+  scrollX = false,
+  ...props
+}: TableProps) {
   const scrollRef = useRef<HTMLDivElement | null>(null)
   const bodyTableRef = useRef<HTMLTableElement | null>(null)
   const pinnedTableRef = useRef<HTMLTableElement | null>(null)
@@ -141,7 +157,10 @@ function Table({ className, children, stickyHeader = false, roundedBottom, ...pr
       // sticky header.
       <div
         className={cn(
-          '@container/table-scroll overflow-x-auto md:overflow-x-clip',
+          '@container/table-scroll overflow-x-auto',
+          // The sticky variant's scroller is themed; a scrollbar this one
+          // actually shows should match it.
+          scrollX ? 'themed-scrollbar' : 'md:overflow-x-clip',
           wrapperRoundedClasses,
         )}
       >

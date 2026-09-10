@@ -2123,6 +2123,17 @@
         },
         "digital_asset_authorized_days": {
           "label": "Jours de disponibilité"
+        },
+        "preferred_default_package_dimensions": {
+          "height": "Hauteur",
+          "help": "Le carton habituel d'expédition, utilisé par les transporteurs pour le poids volumétrique — pouces en impérial, centimètres en métrique. Les trois valeurs sont requises.",
+          "label": "Dimensions de colis par défaut",
+          "length": "Longueur",
+          "width": "Largeur"
+        },
+        "preferred_default_package_weight": {
+          "help": "Poids d'emballage (carton et calage) ajouté au contenu de chaque colis lors du calcul des tarifs de livraison. 0 pour désactiver.",
+          "label": "Poids de colis par défaut"
         }
       },
       "store_credit": {
@@ -2572,7 +2583,10 @@
       "sellers": "Vendeurs",
       "settings": "Paramètres",
       "transfers": "Transferts",
-      "translations": "Traductions"
+      "translations": "Traductions",
+      "purchase_orders": "Bons de commande",
+      "inventory": "Inventaire",
+      "suppliers": "Fournisseurs"
     },
     "option_types": {
       "columns": {
@@ -3700,7 +3714,9 @@
           "tab_storefront_access": "Accès à la vitrine",
           "title": "Paramètres de la boutique",
           "tab_downloads": "Téléchargements numériques",
-          "downloads_help": "Durée de validité d'un lien de téléchargement et nombre d'utilisations possibles. Chaque fichier peut remplacer ces valeurs."
+          "downloads_help": "Durée de validité d'un lien de téléchargement et nombre d'utilisations possibles. Chaque fichier peut remplacer ces valeurs.",
+          "default_package_description": "Le carton habituel d'expédition. Les transporteurs ajoutent son poids à chaque colis et utilisent ses dimensions pour le poids volumétrique.",
+          "tab_default_package": "Colis par défaut"
         },
         "tax_categories": {
           "add_sheet_title": "Ajouter une catégorie de taxe",
@@ -3947,6 +3963,7 @@
         "products": "Produits, variantes, options, prix et médias",
         "promotions": "Promotions, règles et codes promo",
         "publishing": "Ce qui est visible dans la boutique et à quel moment",
+        "purchasing": "Fournisseurs et bons de commande",
         "refunds": "Émettre et consulter les remboursements",
         "seller_profile": "Les coordonnées, l'adresse et les politiques d'un vendeur",
         "sellers": "Comptes vendeurs, intégration et approbation",
@@ -3995,6 +4012,7 @@
         "products": "Produits",
         "promotions": "Promotions",
         "publishing": "Publication",
+        "purchasing": "Achats",
         "refunds": "Remboursements",
         "seller_profile": "Profil du vendeur",
         "sellers": "Vendeurs",
@@ -4872,7 +4890,8 @@
         "tax_rates": "Taux appliqués par marché et région",
         "webhooks": "Points de terminaison notifiés lors d'événements",
         "payouts": "Qui paie vos vendeurs, à quelle fréquence et à partir de quel montant",
-        "package_types": "Cartons, palettes et conteneurs"
+        "package_types": "Cartons, palettes et conteneurs",
+        "suppliers": "À qui vous achetez votre stock, et comment les joindre"
       },
       "groups": {
         "audit": "Audit",
@@ -4909,7 +4928,8 @@
         "tax_rates": "Taux de taxe",
         "webhooks": "Webhooks",
         "payouts": "Paiements",
-        "package_types": "Types d'emballage"
+        "package_types": "Types d'emballage",
+        "suppliers": "Fournisseurs"
       }
     },
     "setup": {
@@ -5027,25 +5047,117 @@
       "columns": {
         "direction": "Direction",
         "number": "Numéro",
-        "reference": "Référence"
+        "reference": "Référence",
+        "units": "Reçues / expédiées",
+        "shipped": "Expédié",
+        "quantity_shipped": "Expédiées",
+        "quantity_to_ship": "À expédier",
+        "quantity_received": "Reçues",
+        "quantity_rejected": "Refusé",
+        "quantity_over": "En excès"
       },
       "direction": {
         "external_receive": "Réception externe",
         "internal": "Transfert entre emplacements"
       },
       "errors": {
-        "failed_to_delete": "Échec de la suppression du transfert de stock",
-        "failed_to_record": "Échec de l'enregistrement du transfert de stock"
+        "failed_to_delete": "Échec de la suppression du transfert",
+        "failed_to_record": "Échec de l'enregistrement du transfert de stock",
+        "same_location": "Les deux entrepôts doivent être différents.",
+        "failed_to_create": "Échec de la création du transfert",
+        "failed_to_save": "Échec de l'enregistrement du transfert",
+        "failed_to_mark_ready": "Impossible de marquer le transfert prêt à expédier",
+        "failed_to_mark_in_transit": "Impossible de marquer le transfert en transit",
+        "failed_to_receive": "Échec de la réception du transfert",
+        "failed_to_cancel": "Échec de l'annulation du transfert",
+        "not_editable": "Ce transfert est emballé : son contenu fait désormais foi. Annulez-le s'il ne doit pas partir.",
+        "failed_to_load": "Ce transfert n'a pas pu être chargé.",
+        "failed_to_mark_draft": "Impossible de repasser en brouillon",
+        "failed_to_close": "Impossible de clôturer en l'état"
       },
       "messages": {
-        "deleted": "Transfert de stock supprimé",
-        "recorded": "Transfert de stock enregistré"
+        "deleted": "Transfert supprimé",
+        "recorded": "Transfert de stock enregistré",
+        "created": "Transfert créé",
+        "saved": "Transfert enregistré",
+        "marked_ready": "Le transfert est prêt à expédier",
+        "marked_in_transit": "Transfert en transit — les unités ont quitté l'entrepôt d'origine",
+        "received": "Transfert réceptionné",
+        "canceled": "Transfert annulé",
+        "marked_draft": "De retour en brouillon",
+        "closed": "Clôturé en l'état — ce qui est arrivé reste, le reste est passé en perte"
       },
       "table": {
         "empty": "Aucun transfert de stock pour le moment",
         "search_placeholder": "Rechercher par numéro ou référence…"
       },
-      "title": "Transferts de stock"
+      "title": "Transferts de stock",
+      "new_cta": "Nouveau transfert",
+      "new_title": "Nouveau transfert de stock",
+      "details_title": "Détails",
+      "items_title": "Articles",
+      "items_empty": "Aucun article — ajoutez un produit à envoyer.",
+      "receive_title": "Réception",
+      "history_title": "Mouvements de stock de ce transfert",
+      "units_summary": "{{received}} reçues sur {{shipped}} expédiées",
+      "statuses": {
+        "draft": "Brouillon",
+        "ready_to_ship": "Prêt à expédier",
+        "in_transit": "En transit",
+        "partially_received": "Partiellement reçu",
+        "received": "Reçu",
+        "canceled": "Annulé",
+        "over_received": "Reçu en excès"
+      },
+      "in_transit_resolutions": {
+        "restock": "Remettre les unités à l'entrepôt d'origine",
+        "write_off": "Passer les unités en perte"
+      },
+      "fields": {
+        "source": "De",
+        "source_placeholder": "Choisir l'entrepôt de départ",
+        "destination": "Vers",
+        "destination_placeholder": "Choisir l'entrepôt de destination",
+        "reference": "Référence",
+        "reference_placeholder": "Votre propre libellé pour ce trajet",
+        "notes": "Notes",
+        "units": "Unités",
+        "shipped_at": "Expédié",
+        "received_at": "Reçu",
+        "in_transit_resolution": "Les unités sont déjà parties. Que leur est-il arrivé ?",
+        "source_locked": "Figé tant qu'il y a des lignes : elles ont été choisies pour cet entrepôt. Retirez-les pour le changer.",
+        "closed_short": "Clôturé en l'état",
+        "close_reason": "Motif"
+      },
+      "actions": {
+        "create_draft": "Créer le brouillon",
+        "mark_ready": "Marquer prêt à expédier",
+        "mark_in_transit": "Marquer en transit",
+        "receive": "Réceptionner",
+        "cancel_transfer": "Annuler le transfert",
+        "mark_draft": "Repasser en brouillon",
+        "close_short": "Clôturer en l'état"
+      },
+      "delete_confirm": {
+        "title": "Supprimer ce transfert ?",
+        "message": "Le transfert {{number}} est encore un brouillon, aucun stock n'a bougé. Cette action est irréversible."
+      },
+      "ship_confirm": {
+        "title": "Expédier ce transfert ?",
+        "message_one": "{{count}} unité quitte maintenant l'entrepôt d'origine et n'y sera plus disponible avant son arrivée.",
+        "message_other": "{{count}} unités quittent maintenant l'entrepôt d'origine et n'y seront plus disponibles avant leur arrivée."
+      },
+      "cancel_confirm": {
+        "title": "Annuler ce transfert ?",
+        "message": "Aucun stock n'a encore bougé, rien ne sera donc annulé.",
+        "in_flight_restock": "Les unités retourneront dans l'entrepôt d'origine, comme si le transfert n'avait jamais été expédié.",
+        "in_flight_write_off": "Les unités restent sorties du stock, en perte. Rien n'est réintégré."
+      },
+      "edit_title": "Modifier le transfert {{number}}",
+      "close_confirm": {
+        "title": "Clôturer ce transfert en l'état ?",
+        "message": "Ce que la destination a compté reste. Les {{outstanding}} unités encore en route sont passées en perte et le transfert est marqué reçu."
+      }
     },
     "store": {
       "load_failed_title": "Échec du chargement des paramètres de la boutique",
@@ -5070,7 +5182,9 @@
       "options": "Des choix comme la taille ou la couleur qui déclinent un produit en variantes.",
       "price_lists": "Des prix alternatifs qui s’appliquent quand leurs règles correspondent.",
       "product_types": "Des modèles qui donnent aux nouveaux produits leurs champs et leurs options.",
-      "stock_transfers": "Le stock qui circule entre vos entrepôts, et ce qui est arrivé."
+      "stock_transfers": "Le stock qui circule entre vos entrepôts, et ce qui est arrivé.",
+      "purchase_orders": "Le stock commandé à vos fournisseurs, et ce qui est arrivé",
+      "suppliers": "Votre carnet d'adresses fournisseurs"
     },
     "tax_categories": {
       "add_cta": "Ajouter une catégorie de taxe",
@@ -5316,6 +5430,239 @@
         "message": "Regroupe tout ce qui est dû à {{name}} en un versement par devise. Aucun argent n'est envoyé — marquez le versement comme payé une fois le virement effectué."
       },
       "settle_failed": "Impossible de régler ce vendeur."
+    },
+    "inventory_lines": {
+      "add_label": "Ajouter un produit",
+      "search_placeholder": "Rechercher un produit par nom ou UGS…",
+      "pick_source_first": "Choisissez d'abord l'entrepôt de départ — la liste ne propose que ce qu'il peut envoyer.",
+      "columns": {
+        "variant": "Produit",
+        "sku": "UGS",
+        "unit_cost": "Coût unitaire"
+      },
+      "picker_title": "Ajouter des produits",
+      "empty_title": "Aucun produit",
+      "empty_description": "Ajoutez les produits concernés par ce document."
+    },
+    "stock_history": {
+      "title": "Historique du stock",
+      "empty": "Ce stock n'a pas encore changé",
+      "columns": {
+        "date": "Date",
+        "product": "Produit",
+        "change": "Variation",
+        "where": "Où",
+        "kind": "Ce qui s'est passé",
+        "cause": "Pourquoi"
+      },
+      "kinds": {
+        "received": "Reçu",
+        "allocated": "Réservé",
+        "shipped": "Expédié",
+        "released": "Libéré",
+        "adjusted": "Ajusté"
+      },
+      "causes": {
+        "purchase_order": "Bon de commande",
+        "stock_transfer": "Transfert de stock",
+        "return": "Retour",
+        "exchange": "Échange",
+        "fulfillment": "Préparation",
+        "order": "Commande",
+        "manual": "Ajustement manuel"
+      },
+      "description": "Chaque variation de ce stock, de la plus récente à la plus ancienne, et sa cause."
+    },
+    "purchase_orders": {
+      "title": "Bons de commande",
+      "new_cta": "Nouveau bon de commande",
+      "new_title": "Nouveau bon de commande",
+      "details_title": "Détails",
+      "items_title": "Articles",
+      "items_empty": "Aucun article — ajoutez un produit à commander.",
+      "receive_title": "Réception",
+      "history_title": "Mouvements de stock de ce bon de commande",
+      "units_summary": "{{received}} reçues sur {{ordered}} commandées",
+      "table": {
+        "empty": "Aucun bon de commande",
+        "search_placeholder": "Rechercher par numéro ou référence…"
+      },
+      "columns": {
+        "number": "Numéro",
+        "supplier": "Fournisseur",
+        "units": "Reçues / commandées",
+        "subtotal": "Total",
+        "expected": "Attendu",
+        "quantity_ordered": "Commandées",
+        "quantity_received": "Reçues",
+        "line_total": "Total ligne",
+        "quantity_rejected": "Refusé",
+        "quantity_over": "En excès",
+        "cancel_by": "Annuler après le",
+        "overdue": "En retard",
+        "past_cancel_by": "Date d'annulation dépassée"
+      },
+      "statuses": {
+        "draft": "Brouillon",
+        "ordered": "Commandé",
+        "partially_received": "Partiellement reçu",
+        "received": "Reçu",
+        "canceled": "Annulé",
+        "over_received": "Reçu en excès"
+      },
+      "fields": {
+        "supplier": "Fournisseur",
+        "supplier_placeholder": "Choisir un fournisseur",
+        "destination": "Livrer à",
+        "destination_placeholder": "Choisir l'entrepôt de réception",
+        "currency": "Devise",
+        "expected_at": "Attendu",
+        "expected_at_placeholder": "Le jour promis par le fournisseur",
+        "reference": "Référence fournisseur",
+        "reference_placeholder": "Le numéro de commande du fournisseur",
+        "notes": "Notes",
+        "units": "Unités",
+        "subtotal": "Total",
+        "ordered_at": "Commandé",
+        "received_at": "Reçu",
+        "currency_locked": "Figée après l'ouverture : chaque ligne est chiffrée dans cette devise.",
+        "closed_short": "Clôturé en l'état",
+        "close_reason": "Motif",
+        "cancel_by": "Annuler après le",
+        "cancel_by_placeholder": "Le jour à partir duquel la marchandise n'est plus souhaitée"
+      },
+      "actions": {
+        "create_draft": "Créer le brouillon",
+        "mark_ordered": "Marquer comme commandé",
+        "receive": "Réceptionner",
+        "cancel_order": "Annuler la commande",
+        "mark_draft": "Repasser en brouillon",
+        "close_short": "Clôturer en l'état"
+      },
+      "messages": {
+        "created": "Bon de commande créé",
+        "saved": "Bon de commande enregistré",
+        "deleted": "Bon de commande supprimé",
+        "ordered": "Commande passée",
+        "received": "Livraison enregistrée",
+        "canceled": "Bon de commande annulé",
+        "marked_draft": "De retour en brouillon",
+        "closed": "Clôturé en l'état — ce qui est arrivé reste, le reste est passé en perte"
+      },
+      "errors": {
+        "failed_to_create": "Échec de la création du bon de commande",
+        "failed_to_save": "Échec de l'enregistrement du bon de commande",
+        "failed_to_delete": "Échec de la suppression du bon de commande",
+        "failed_to_order": "Échec du passage de la commande",
+        "failed_to_receive": "Échec de l'enregistrement de la livraison",
+        "failed_to_cancel": "Échec de l'annulation du bon de commande",
+        "not_editable": "Ce bon est parti chez le fournisseur : ses lignes engagent les deux parties. Annulez-le s'il ne doit pas être maintenu.",
+        "failed_to_load": "Ce bon de commande n'a pas pu être chargé.",
+        "failed_to_mark_draft": "Impossible de repasser en brouillon",
+        "failed_to_close": "Impossible de clôturer en l'état"
+      },
+      "delete_confirm": {
+        "title": "Supprimer ce bon de commande ?",
+        "message": "La commande {{number}} est encore un brouillon, rien n'a été commandé. Cette action est irréversible."
+      },
+      "order_confirm": {
+        "title": "Passer cette commande ?",
+        "message": "Les lignes sont figées dès que la commande part chez {{supplier}}. Le stock commandé ne compte comme disponible qu'à son arrivée."
+      },
+      "cancel_confirm": {
+        "title": "Annuler ce bon de commande ?",
+        "message": "Ce qui reste dû est annulé. Les unités déjà reçues restent en stock."
+      },
+      "edit_title": "Modifier le bon de commande {{number}}",
+      "close_confirm": {
+        "title": "Clôturer ce bon de commande en l'état ?",
+        "message": "Ce qui est arrivé reste en stock. Les {{outstanding}} unités encore dues sont passées en perte et la commande est marquée reçue."
+      },
+      "filters": {
+        "overdue": "En retard",
+        "not_overdue": "Dans les temps",
+        "past_cancel_by": "Date d'annulation dépassée",
+        "not_past_cancel_by": "Avant la date d'annulation"
+      }
+    },
+    "suppliers": {
+      "title": "Fournisseurs",
+      "new_cta": "Nouveau fournisseur",
+      "new_title": "Nouveau fournisseur",
+      "edit_title": "Modifier le fournisseur",
+      "sheet_description": "À qui vous achetez votre stock, et comment les joindre.",
+      "table": {
+        "empty": "Aucun fournisseur",
+        "search_placeholder": "Rechercher par nom, contact ou e-mail…"
+      },
+      "autocomplete": {
+        "placeholder": "Rechercher par nom, contact ou e-mail…",
+        "empty": "Aucun fournisseur correspondant"
+      },
+      "columns": {
+        "contact": "Contact",
+        "orders": "Bons de commande"
+      },
+      "fields": {
+        "contact_name": "Nom du contact",
+        "address1": "Adresse",
+        "address2": "Complément d'adresse",
+        "city": "Ville",
+        "postal_code": "Code postal",
+        "notes": "Notes"
+      },
+      "messages": {
+        "created": "Fournisseur créé",
+        "saved": "Fournisseur enregistré",
+        "deleted": "Fournisseur supprimé"
+      },
+      "errors": {
+        "name_blank": "Un fournisseur doit avoir un nom.",
+        "failed_to_create": "Échec de la création du fournisseur",
+        "failed_to_save": "Échec de l'enregistrement du fournisseur",
+        "failed_to_delete": "Échec de la suppression du fournisseur"
+      },
+      "delete_confirm": {
+        "title": "Supprimer ce fournisseur ?",
+        "message": "{{name}} sera retiré de votre liste de fournisseurs."
+      }
+    },
+    "stock_receipts": {
+      "title": "Livraisons",
+      "receive_title": "Réceptionner une livraison",
+      "empty": "Aucune livraison pour le moment",
+      "columns": {
+        "accepted": "Accepté",
+        "rejected": "Refusé",
+        "reason": "Motif",
+        "received_so_far": "Reçu à ce jour"
+      },
+      "fields": {
+        "reference": "Bon de livraison",
+        "reference_placeholder": "Numéro de bon de livraison ou de colisage",
+        "received_at": "Reçu le",
+        "received_at_placeholder": "Maintenant",
+        "notes": "Notes"
+      },
+      "delivery_total": "{{accepted}} accepté(s), {{rejected}} refusé(s) dans cette livraison",
+      "rejected_so_far": "({{count}} refusé(s))",
+      "summary": "{{accepted}} accepté(s) · {{rejected}} refusé(s)",
+      "reason_placeholder": "Motif du refus",
+      "rejection_reasons": {
+        "damaged": "Endommagé",
+        "wrong_item": "Mauvais article",
+        "expired": "Périmé",
+        "other": "Autre"
+      },
+      "actions": {
+        "receive": "Réceptionner"
+      },
+      "close_short": {
+        "reason_label": "Motif",
+        "reason_placeholder": "Ce qu'il est advenu du reste",
+        "confirm": "Clôturer en l'état"
+      },
+      "load_failed": "Les livraisons n'ont pas pu être chargées."
     }
   }
 }

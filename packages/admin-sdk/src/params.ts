@@ -1489,13 +1489,112 @@ export interface StockLevelBulkUpsertRow {
   backorderable?: boolean
 }
 
-export interface StockTransferCreateParams {
-  /** Omit for a seller receive (external stock arriving at the destination). */
-  source_location_id?: string
-  destination_location_id: string
-  reference?: string
-  variants: Array<{ variant_id: string; quantity: number }>
+export interface StockTransferItemParams {
+  variant_id: string
+  quantity_shipped: number
 }
+
+export interface StockTransferCreateParams {
+  source_location_id: string
+  destination_location_id: string
+  /** The merchant's own label for the trip. `null` clears it. */
+  reference?: string | null
+  notes?: string | null
+  /**
+   * A draft may open empty and gain lines as the merchant packs. Sending the
+   * list replaces whatever the draft currently holds.
+   */
+  items?: StockTransferItemParams[]
+  metadata?: Record<string, unknown>
+}
+
+export type StockTransferUpdateParams = Partial<StockTransferCreateParams>
+
+/**
+ * One delivery against a transfer or a purchase order. Quantities are what
+ * this delivery brought — a second delivery adds to the first, it does not
+ * restate it.
+ */
+export interface StockReceiptCreateParams {
+  /** The supplier's delivery note, or the carrier's reference. */
+  reference?: string | null
+  /** When the goods were counted in. Defaults to now. */
+  received_at?: string | null
+  notes?: string | null
+  /**
+   * Omit to book in everything still outstanding, intact. Naming lines — even
+   * none — records exactly what the dock counted. `quantity_accepted` reaches
+   * the shelf; `quantity_rejected` is refused, recorded with a
+   * `rejection_reason` and never stocked.
+   */
+  items?: StockReceiptItemParams[]
+}
+
+export interface StockReceiptItemParams {
+  /** The purchase order or transfer line. */
+  id: string
+  quantity_accepted?: number
+  quantity_rejected?: number
+  rejection_reason?: 'damaged' | 'wrong_item' | 'expired' | 'other' | null
+  notes?: string | null
+}
+
+/** Closing a transfer or an order short: why the balance is not coming. */
+export interface ReceivableCloseParams {
+  reason?: string | null
+}
+
+export interface StockTransferCancelParams {
+  /**
+   * Required once the units have left the source: either they come back
+   * (`restock`) or they are written off as lost.
+   */
+  on_in_transit?: 'restock' | 'write_off'
+  reason?: string
+}
+
+export interface SupplierCreateParams {
+  name: string
+  contact_name?: string
+  email?: string
+  phone?: string
+  notes?: string
+  address1?: string
+  address2?: string
+  city?: string
+  state_name?: string
+  state_code?: string
+  country_code?: string
+  postal_code?: string
+  metadata?: Record<string, unknown>
+}
+
+export type SupplierUpdateParams = Partial<SupplierCreateParams>
+
+export interface PurchaseOrderItemParams {
+  variant_id: string
+  quantity_ordered: number
+  /** What the merchant agreed to pay per unit, as a decimal string. */
+  unit_cost?: string
+}
+
+export interface PurchaseOrderCreateParams {
+  supplier_id: string
+  destination_location_id: string
+  /** Defaults to the store's currency; set it for a foreign-currency order. */
+  currency?: string
+  /** The day the supplier promised, as `yyyy-mm-dd`. `null` clears it. */
+  expected_at?: string | null
+  /** The day after which the goods are no longer wanted, as `yyyy-mm-dd`. `null` clears it. */
+  cancel_by?: string | null
+  /** The supplier's own order number. `null` clears it. */
+  reference?: string | null
+  notes?: string | null
+  items?: PurchaseOrderItemParams[]
+  metadata?: Record<string, unknown>
+}
+
+export type PurchaseOrderUpdateParams = Partial<PurchaseOrderCreateParams>
 
 export interface RoleCreateParams {
   /** Unique role name (machine identifier shown capitalized in the UI). */

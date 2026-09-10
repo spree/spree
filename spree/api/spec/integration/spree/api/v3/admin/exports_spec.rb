@@ -70,6 +70,7 @@ RSpec.describe 'Admin Exports API', type: :request, swagger_doc: 'api-reference/
               coupon_codes
               newsletter_subscribers
               price_list_prices
+              purchase_orders
             ],
             example: 'products'
           },

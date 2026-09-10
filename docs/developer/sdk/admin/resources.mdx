@@ -71,7 +71,9 @@ await client.customers.addresses.create('cus_xxx', {
 |---|---|
 | `client.stockLocations` | CRUD on stock locations. |
 | `client.stockItems` | List, get, update, delete stock items. |
-| `client.stockTransfers` | List, get, create, delete stock transfers. |
+| `client.stockTransfers` | CRUD plus the lifecycle: `markReady`, `markInTransit`, `receive`, `cancel`. |
+| `client.suppliers` | CRUD on the suppliers you buy from. |
+| `client.purchaseOrders` | CRUD plus `markOrdered`, `receive`, `cancel`. |
 
 ## Sales channels
 

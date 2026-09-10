@@ -2123,6 +2123,17 @@
         },
         "digital_asset_authorized_days": {
           "label": "Verfügbare Tage"
+        },
+        "preferred_default_package_dimensions": {
+          "height": "Höhe",
+          "help": "Der übliche Versandkarton, von Carrier-Tarifanbietern für Volumengewicht-Preise genutzt — Zoll bei imperial, Zentimeter bei metrisch. Wirksam nur mit allen drei Werten.",
+          "label": "Standard-Paketabmessungen",
+          "length": "Länge",
+          "width": "Breite"
+        },
+        "preferred_default_package_weight": {
+          "help": "Verpackungsgewicht (Karton und Füllmaterial), das bei der Berechnung von Versandtarifen zum Inhalt jedes Pakets addiert wird. 0 deaktiviert es.",
+          "label": "Standard-Paketgewicht"
         }
       },
       "store_credit": {
@@ -2572,7 +2583,10 @@
       "sellers": "Verkäufer",
       "settings": "Einstellungen",
       "transfers": "Umlagerungen",
-      "translations": "Übersetzungen"
+      "translations": "Übersetzungen",
+      "purchase_orders": "Bestellungen",
+      "inventory": "Lagerbestand",
+      "suppliers": "Lieferanten"
     },
     "option_types": {
       "columns": {
@@ -3700,7 +3714,9 @@
           "tab_storefront_access": "Storefront-Zugriff",
           "title": "Shop-Einstellungen",
           "tab_downloads": "Digitale Downloads",
-          "downloads_help": "Wie lange ein Download-Link gültig ist und wie oft er verwendet werden kann. Einzelne Dateien können diese Werte überschreiben."
+          "downloads_help": "Wie lange ein Download-Link gültig ist und wie oft er verwendet werden kann. Einzelne Dateien können diese Werte überschreiben.",
+          "default_package_description": "Der Karton, in dem Sie üblicherweise versenden. Carrier-Tarifanbieter addieren sein Gewicht zu jedem Paket und nutzen seine Abmessungen für Volumengewicht-Preise.",
+          "tab_default_package": "Standardpaket"
         },
         "tax_categories": {
           "add_sheet_title": "Steuerkategorie hinzufügen",
@@ -3947,6 +3963,7 @@
         "products": "Produkte, Varianten, Optionen, Preise und Medien",
         "promotions": "Aktionen, Regeln und Gutscheincodes",
         "publishing": "Was im Shop sichtbar ist und ab wann",
+        "purchasing": "Lieferanten und Bestellungen",
         "refunds": "Erstattungen ausstellen und einsehen",
         "seller_profile": "Die eigenen Angaben, Adresse und Richtlinien eines Verkäufers",
         "sellers": "Verkäuferkonten, Onboarding und Freigabe",
@@ -3995,6 +4012,7 @@
         "products": "Produkte",
         "promotions": "Aktionen",
         "publishing": "Veröffentlichung",
+        "purchasing": "Einkauf",
         "refunds": "Rückerstattungen",
         "seller_profile": "Verkäuferprofil",
         "sellers": "Verkäufer",
@@ -4872,7 +4890,8 @@
         "tax_rates": "Sätze pro Markt und Region",
         "webhooks": "Endpunkte, die bei Ereignissen benachrichtigt werden",
         "payouts": "Wer Ihre Verkäufer bezahlt, wie oft und ab welchem Betrag",
-        "package_types": "Kartons, Paletten und Container"
+        "package_types": "Kartons, Paletten und Container",
+        "suppliers": "Von wem Sie Ware einkaufen und wie Sie sie erreichen"
       },
       "groups": {
         "audit": "Audit",
@@ -4909,7 +4928,8 @@
         "tax_rates": "Steuersätze",
         "webhooks": "Webhooks",
         "payouts": "Auszahlungen",
-        "package_types": "Verpackungsarten"
+        "package_types": "Verpackungsarten",
+        "suppliers": "Lieferanten"
       }
     },
     "setup": {
@@ -5027,25 +5047,117 @@
       "columns": {
         "direction": "Richtung",
         "number": "Nummer",
-        "reference": "Referenz"
+        "reference": "Referenz",
+        "units": "Eingegangen / versandt",
+        "shipped": "Versandt",
+        "quantity_shipped": "Versandt",
+        "quantity_to_ship": "Zu versenden",
+        "quantity_received": "Eingegangen",
+        "quantity_rejected": "Abgelehnt",
+        "quantity_over": "Zu viel"
       },
       "direction": {
         "external_receive": "Externer Wareneingang",
         "internal": "Umbuchung zwischen Standorten"
       },
       "errors": {
-        "failed_to_delete": "Lagerübertrag konnte nicht gelöscht werden",
-        "failed_to_record": "Lagerübertrag konnte nicht erfasst werden"
+        "failed_to_delete": "Umlagerung konnte nicht gelöscht werden",
+        "failed_to_record": "Lagerübertrag konnte nicht erfasst werden",
+        "same_location": "Die beiden Lager müssen unterschiedlich sein.",
+        "failed_to_create": "Umlagerung konnte nicht erstellt werden",
+        "failed_to_save": "Umlagerung konnte nicht gespeichert werden",
+        "failed_to_mark_ready": "Umlagerung konnte nicht als versandbereit markiert werden",
+        "failed_to_mark_in_transit": "Umlagerung konnte nicht als unterwegs markiert werden",
+        "failed_to_receive": "Wareneingang konnte nicht gebucht werden",
+        "failed_to_cancel": "Umlagerung konnte nicht abgebrochen werden",
+        "not_editable": "Diese Umbuchung ist gepackt, ihr Inhalt ist damit dokumentiert. Storniere sie, wenn sie nicht gehen soll.",
+        "failed_to_load": "Diese Umbuchung konnte nicht geladen werden.",
+        "failed_to_mark_draft": "Konnte nicht in den Entwurf zurückgesetzt werden",
+        "failed_to_close": "Konnte nicht vorzeitig abgeschlossen werden"
       },
       "messages": {
-        "deleted": "Lagerübertrag gelöscht",
-        "recorded": "Lagerübertrag erfasst"
+        "deleted": "Umlagerung gelöscht",
+        "recorded": "Lagerübertrag erfasst",
+        "created": "Umlagerung erstellt",
+        "saved": "Umlagerung gespeichert",
+        "marked_ready": "Umlagerung ist versandbereit",
+        "marked_in_transit": "Umlagerung ist unterwegs – die Einheiten haben das Quelllager verlassen",
+        "received": "Wareneingang gebucht",
+        "canceled": "Umlagerung abgebrochen",
+        "marked_draft": "Wieder im Entwurf",
+        "closed": "Vorzeitig abgeschlossen — das Gelieferte bleibt, der Rest wird abgeschrieben"
       },
       "table": {
         "empty": "Noch keine Lagerumbuchungen",
         "search_placeholder": "Nach Nummer oder Referenz suchen…"
       },
-      "title": "Lagerumbuchungen"
+      "title": "Lagerumbuchungen",
+      "new_cta": "Neue Umlagerung",
+      "new_title": "Neue Umlagerung",
+      "details_title": "Details",
+      "items_title": "Positionen",
+      "items_empty": "Noch keine Positionen – fügen Sie ein Produkt hinzu.",
+      "receive_title": "Wareneingang",
+      "history_title": "Bestandsbewegungen dieser Umbuchung",
+      "units_summary": "{{received}} von {{shipped}} versandten Einheiten eingegangen",
+      "statuses": {
+        "draft": "Entwurf",
+        "ready_to_ship": "Versandbereit",
+        "in_transit": "Unterwegs",
+        "partially_received": "Teilweise eingegangen",
+        "received": "Eingegangen",
+        "canceled": "Abgebrochen",
+        "over_received": "Mehr erhalten als bestellt"
+      },
+      "in_transit_resolutions": {
+        "restock": "Einheiten zurück ins Quelllager buchen",
+        "write_off": "Einheiten als Verlust abschreiben"
+      },
+      "fields": {
+        "source": "Von",
+        "source_placeholder": "Quelllager auswählen",
+        "destination": "Nach",
+        "destination_placeholder": "Ziellager auswählen",
+        "reference": "Referenz",
+        "reference_placeholder": "Ihre eigene Bezeichnung für diesen Transport",
+        "notes": "Notizen",
+        "units": "Einheiten",
+        "shipped_at": "Versandt",
+        "received_at": "Eingegangen",
+        "in_transit_resolution": "Die Einheiten haben das Lager verlassen. Was ist mit ihnen passiert?",
+        "source_locked": "Fest, solange Positionen vorhanden sind: sie wurden für dieses Lager gewählt. Zum Ändern zuerst entfernen.",
+        "closed_short": "Vorzeitig abgeschlossen",
+        "close_reason": "Grund"
+      },
+      "actions": {
+        "create_draft": "Entwurf erstellen",
+        "mark_ready": "Als versandbereit markieren",
+        "mark_in_transit": "Als unterwegs markieren",
+        "receive": "Wareneingang buchen",
+        "cancel_transfer": "Umlagerung abbrechen",
+        "mark_draft": "Zurück zum Entwurf",
+        "close_short": "Vorzeitig abschließen"
+      },
+      "delete_confirm": {
+        "title": "Diese Umlagerung löschen?",
+        "message": "Umlagerung {{number}} ist noch ein Entwurf, es wurde kein Bestand bewegt. Dies kann nicht rückgängig gemacht werden."
+      },
+      "ship_confirm": {
+        "title": "Diese Umlagerung versenden?",
+        "message_one": "{{count}} Einheit verlässt jetzt das Quelllager und ist dort erst nach Ankunft wieder verfügbar.",
+        "message_other": "{{count}} Einheiten verlassen jetzt das Quelllager und sind dort erst nach Ankunft wieder verfügbar."
+      },
+      "cancel_confirm": {
+        "title": "Diese Umlagerung abbrechen?",
+        "message": "Es wurde noch kein Bestand bewegt, es wird also nichts zurückgebucht.",
+        "in_flight_restock": "Die Einheiten werden zurück ins Quelllager gebucht, als wäre die Umlagerung nie versandt worden.",
+        "in_flight_write_off": "Die Einheiten bleiben als Verlust ausgebucht. Es wird nirgends etwas zurückgebucht."
+      },
+      "edit_title": "Umbuchung {{number}} bearbeiten",
+      "close_confirm": {
+        "title": "Diese Umlagerung vorzeitig abschließen?",
+        "message": "Was das Ziel gezählt hat, bleibt. Die {{outstanding}} noch unterwegs befindlichen Einheiten werden als verloren abgeschrieben und die Umlagerung als erhalten markiert."
+      }
     },
     "store": {
       "load_failed_title": "Laden der Store-Einstellungen fehlgeschlagen",
@@ -5070,7 +5182,9 @@
       "options": "Auswahlmöglichkeiten wie Größe oder Farbe, aus denen Varianten entstehen.",
       "price_lists": "Alternative Preise, die gelten, wenn ihre Regeln zutreffen.",
       "product_types": "Vorlagen, die neuen Produkten ihre Felder und Optionen geben.",
-      "stock_transfers": "Bestand, der zwischen Ihren Lagern bewegt wird, und was angekommen ist."
+      "stock_transfers": "Bestand, der zwischen Ihren Lagern bewegt wird, und was angekommen ist.",
+      "purchase_orders": "Ware, die Sie bei Lieferanten bestellt haben, und was eingetroffen ist",
+      "suppliers": "Ihr Lieferanten-Adressbuch"
     },
     "tax_categories": {
       "add_cta": "Steuerkategorie hinzufügen",
@@ -5316,6 +5430,239 @@
         "message": "Fasst alles zusammen, was {{name}} zusteht, als eine Auszahlung je Währung. Es wird kein Geld gesendet — markieren Sie die Auszahlung als bezahlt, sobald die Überweisung raus ist."
       },
       "settle_failed": "Dieser Verkäufer konnte nicht abgerechnet werden."
+    },
+    "inventory_lines": {
+      "add_label": "Produkt hinzufügen",
+      "search_placeholder": "Produkte nach Name oder SKU suchen…",
+      "pick_source_first": "Wählen Sie zuerst das Lager, aus dem versandt wird — die Liste zeigt nur, was dieses Lager senden kann.",
+      "columns": {
+        "variant": "Produkt",
+        "sku": "SKU",
+        "unit_cost": "Stückkosten"
+      },
+      "picker_title": "Produkte hinzufügen",
+      "empty_title": "Noch keine Produkte",
+      "empty_description": "Fügen Sie die Produkte hinzu, für die dieser Beleg gilt."
+    },
+    "stock_history": {
+      "title": "Bestandsverlauf",
+      "empty": "Dieser Bestand hat sich noch nicht verändert",
+      "columns": {
+        "date": "Datum",
+        "product": "Produkt",
+        "change": "Änderung",
+        "where": "Wo",
+        "kind": "Was passiert ist",
+        "cause": "Warum"
+      },
+      "kinds": {
+        "received": "Eingegangen",
+        "allocated": "Reserviert",
+        "shipped": "Versandt",
+        "released": "Freigegeben",
+        "adjusted": "Korrigiert"
+      },
+      "causes": {
+        "purchase_order": "Bestellung",
+        "stock_transfer": "Umlagerung",
+        "return": "Rücksendung",
+        "exchange": "Umtausch",
+        "fulfillment": "Auftragsabwicklung",
+        "order": "Auftrag",
+        "manual": "Manuelle Korrektur"
+      },
+      "description": "Jede Änderung an diesem Bestand, neueste zuerst, und was sie ausgelöst hat."
+    },
+    "purchase_orders": {
+      "title": "Bestellungen",
+      "new_cta": "Neue Bestellung",
+      "new_title": "Neue Bestellung",
+      "details_title": "Details",
+      "items_title": "Positionen",
+      "items_empty": "Noch keine Positionen – fügen Sie ein Produkt hinzu.",
+      "receive_title": "Wareneingang",
+      "history_title": "Bestandsbewegungen dieser Bestellung",
+      "units_summary": "{{received}} von {{ordered}} bestellten Einheiten eingegangen",
+      "table": {
+        "empty": "Noch keine Bestellungen",
+        "search_placeholder": "Nach Nummer oder Referenz suchen…"
+      },
+      "columns": {
+        "number": "Nummer",
+        "supplier": "Lieferant",
+        "units": "Eingegangen / bestellt",
+        "subtotal": "Gesamt",
+        "expected": "Erwartet",
+        "quantity_ordered": "Bestellt",
+        "quantity_received": "Eingegangen",
+        "line_total": "Positionssumme",
+        "quantity_rejected": "Abgelehnt",
+        "quantity_over": "Zu viel",
+        "cancel_by": "Stornieren bis",
+        "overdue": "Überfällig",
+        "past_cancel_by": "Stornofrist überschritten"
+      },
+      "statuses": {
+        "draft": "Entwurf",
+        "ordered": "Bestellt",
+        "partially_received": "Teilweise eingegangen",
+        "received": "Eingegangen",
+        "canceled": "Abgebrochen",
+        "over_received": "Mehr erhalten als bestellt"
+      },
+      "fields": {
+        "supplier": "Lieferant",
+        "supplier_placeholder": "Lieferant auswählen",
+        "destination": "Lieferung an",
+        "destination_placeholder": "Ziellager auswählen",
+        "currency": "Währung",
+        "expected_at": "Erwartet",
+        "expected_at_placeholder": "Der vom Lieferanten zugesagte Tag",
+        "reference": "Lieferantenreferenz",
+        "reference_placeholder": "Die Bestellnummer des Lieferanten",
+        "notes": "Notizen",
+        "units": "Einheiten",
+        "subtotal": "Gesamt",
+        "ordered_at": "Bestellt",
+        "received_at": "Eingegangen",
+        "currency_locked": "Fest nach dem Anlegen: jede Position ist in dieser Währung bepreist.",
+        "closed_short": "Vorzeitig abgeschlossen",
+        "close_reason": "Grund",
+        "cancel_by": "Stornieren bis",
+        "cancel_by_placeholder": "Der Tag, ab dem die Ware nicht mehr gewünscht ist"
+      },
+      "actions": {
+        "create_draft": "Entwurf erstellen",
+        "mark_ordered": "Als bestellt markieren",
+        "receive": "Wareneingang buchen",
+        "cancel_order": "Bestellung abbrechen",
+        "mark_draft": "Zurück zum Entwurf",
+        "close_short": "Vorzeitig abschließen"
+      },
+      "messages": {
+        "created": "Bestellung erstellt",
+        "saved": "Bestellung gespeichert",
+        "deleted": "Bestellung gelöscht",
+        "ordered": "Bestellung aufgegeben",
+        "received": "Lieferung eingebucht",
+        "canceled": "Bestellung abgebrochen",
+        "marked_draft": "Wieder im Entwurf",
+        "closed": "Vorzeitig abgeschlossen — das Gelieferte bleibt, der Rest wird abgeschrieben"
+      },
+      "errors": {
+        "failed_to_create": "Bestellung konnte nicht erstellt werden",
+        "failed_to_save": "Bestellung konnte nicht gespeichert werden",
+        "failed_to_delete": "Bestellung konnte nicht gelöscht werden",
+        "failed_to_order": "Bestellung konnte nicht aufgegeben werden",
+        "failed_to_receive": "Lieferung konnte nicht eingebucht werden",
+        "failed_to_cancel": "Bestellung konnte nicht abgebrochen werden",
+        "not_editable": "Diese Bestellung liegt beim Lieferanten, ihre Positionen sind damit verbindlich. Storniere sie, wenn sie nicht gelten soll.",
+        "failed_to_load": "Diese Bestellung konnte nicht geladen werden.",
+        "failed_to_mark_draft": "Konnte nicht in den Entwurf zurückgesetzt werden",
+        "failed_to_close": "Konnte nicht vorzeitig abgeschlossen werden"
+      },
+      "delete_confirm": {
+        "title": "Diese Bestellung löschen?",
+        "message": "Bestellung {{number}} ist noch ein Entwurf, es wurde nichts bestellt. Dies kann nicht rückgängig gemacht werden."
+      },
+      "order_confirm": {
+        "title": "Diese Bestellung aufgeben?",
+        "message": "Die Positionen sind festgeschrieben, sobald die Bestellung an {{supplier}} geht. Bestellte Ware gilt erst nach Ankunft als verfügbar."
+      },
+      "cancel_confirm": {
+        "title": "Diese Bestellung abbrechen?",
+        "message": "Alles Offene wird abgesagt. Bereits eingegangene Einheiten bleiben im Bestand."
+      },
+      "edit_title": "Bestellung {{number}} bearbeiten",
+      "close_confirm": {
+        "title": "Diese Bestellung vorzeitig abschließen?",
+        "message": "Das Gelieferte bleibt im Lager. Die noch ausstehenden {{outstanding}} Einheiten werden abgeschrieben und die Bestellung als erhalten markiert."
+      },
+      "filters": {
+        "overdue": "Überfällig",
+        "not_overdue": "Pünktlich",
+        "past_cancel_by": "Stornofrist überschritten",
+        "not_past_cancel_by": "Innerhalb der Stornofrist"
+      }
+    },
+    "suppliers": {
+      "title": "Lieferanten",
+      "new_cta": "Neuer Lieferant",
+      "new_title": "Neuer Lieferant",
+      "edit_title": "Lieferant bearbeiten",
+      "sheet_description": "Von wem Sie Ware einkaufen und wie Sie sie erreichen.",
+      "table": {
+        "empty": "Noch keine Lieferanten",
+        "search_placeholder": "Nach Name, Kontakt oder E-Mail suchen…"
+      },
+      "autocomplete": {
+        "placeholder": "Nach Name, Kontakt oder E-Mail suchen…",
+        "empty": "Keine passenden Lieferanten"
+      },
+      "columns": {
+        "contact": "Kontakt",
+        "orders": "Bestellungen"
+      },
+      "fields": {
+        "contact_name": "Ansprechpartner",
+        "address1": "Adresse",
+        "address2": "Adresszeile 2",
+        "city": "Stadt",
+        "postal_code": "Postleitzahl",
+        "notes": "Notizen"
+      },
+      "messages": {
+        "created": "Lieferant erstellt",
+        "saved": "Lieferant gespeichert",
+        "deleted": "Lieferant gelöscht"
+      },
+      "errors": {
+        "name_blank": "Ein Lieferant braucht einen Namen.",
+        "failed_to_create": "Lieferant konnte nicht erstellt werden",
+        "failed_to_save": "Lieferant konnte nicht gespeichert werden",
+        "failed_to_delete": "Lieferant konnte nicht gelöscht werden"
+      },
+      "delete_confirm": {
+        "title": "Diesen Lieferanten löschen?",
+        "message": "{{name}} wird aus Ihrer Lieferantenliste entfernt."
+      }
+    },
+    "stock_receipts": {
+      "title": "Lieferungen",
+      "receive_title": "Lieferung annehmen",
+      "empty": "Noch keine Lieferungen",
+      "columns": {
+        "accepted": "Angenommen",
+        "rejected": "Abgelehnt",
+        "reason": "Grund",
+        "received_so_far": "Bisher erhalten"
+      },
+      "fields": {
+        "reference": "Lieferschein",
+        "reference_placeholder": "Lieferschein- oder Packzettelnummer",
+        "received_at": "Erhalten am",
+        "received_at_placeholder": "Jetzt",
+        "notes": "Notizen"
+      },
+      "delivery_total": "{{accepted}} angenommen, {{rejected}} abgelehnt in dieser Lieferung",
+      "rejected_so_far": "({{count}} abgelehnt)",
+      "summary": "{{accepted}} angenommen · {{rejected}} abgelehnt",
+      "reason_placeholder": "Grund der Ablehnung",
+      "rejection_reasons": {
+        "damaged": "Beschädigt",
+        "wrong_item": "Falscher Artikel",
+        "expired": "Abgelaufen",
+        "other": "Sonstiges"
+      },
+      "actions": {
+        "receive": "Annehmen"
+      },
+      "close_short": {
+        "reason_label": "Grund",
+        "reason_placeholder": "Was mit dem Rest passiert ist",
+        "confirm": "Vorzeitig abschließen"
+      },
+      "load_failed": "Die Lieferungen konnten nicht geladen werden."
     }
   }
 }

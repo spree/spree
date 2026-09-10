@@ -135,6 +135,13 @@ const statusToneMap: Record<string, StatusTone> = {
   refunded: 'success',
   resolved: 'success',
   denied: 'destructive',
+  // Inventory operations. `received` is deliberately absent: on a return it
+  // means the merchant still owes a refund, on a transfer or purchase order it
+  // means the job is done — one code, two tones, so those two callers pass
+  // `tone` explicitly.
+  ready_to_ship: 'warning',
+  ordered: 'info',
+  partially_received: 'info',
   // Gift cards.
   partially_redeemed: 'info',
   redeemed: 'neutral',
@@ -166,8 +173,16 @@ const dotToneClasses: Record<StatusTone, string> = {
  * a status with its label in a menu or list; use `StatusBadge` when you want
  * the dot and its label together.
  */
-function StatusDot({ status, className }: { status: string; className?: string }) {
-  const tone = statusToneMap[status] ?? 'neutral'
+function StatusDot({
+  status,
+  tone: toneOverride,
+  className,
+}: {
+  status: string
+  tone?: StatusTone
+  className?: string
+}) {
+  const tone = toneOverride ?? statusToneMap[status] ?? 'neutral'
   return (
     <span
       aria-hidden
@@ -188,14 +203,21 @@ function StatusDot({ status, className }: { status: string; className?: string }
  * Stays headless: pass a translated `label` from the app layer; without one it
  * humanizes the code itself (`balance_due` → `balance due`) as a best-effort
  * fallback.
+ *
+ * `tone` overrides the shared map, for the rare code that means different
+ * things in two domains — a `received` return still owes a refund, a
+ * `received` stock transfer is finished. Reach for it only then: everything
+ * else belongs in `statusToneMap`, or two surfaces will disagree.
  */
 function StatusBadge({
   status,
   label,
+  tone,
   className,
 }: {
   status: string
   label?: string
+  tone?: StatusTone
   className?: string
 }) {
   return (
@@ -207,7 +229,7 @@ function StatusBadge({
         className,
       )}
     >
-      <StatusDot status={status} />
+      <StatusDot status={status} tone={tone} />
       {label ?? status.replace(/_/g, ' ')}
     </span>
   )

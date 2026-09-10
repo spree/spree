@@ -31,6 +31,8 @@ module Spree
     belongs_to :return, class_name: 'Spree::Return', optional: true
     belongs_to :exchange, class_name: 'Spree::Exchange', optional: true
     belongs_to :stock_transfer, class_name: 'Spree::StockTransfer', optional: true
+    belongs_to :purchase_order, class_name: 'Spree::PurchaseOrder', optional: true
+    belongs_to :stock_receipt, class_name: 'Spree::StockReceipt', optional: true, inverse_of: :stock_movements
 
     alias_attribute :stock_item_id, :stock_level_id
 
@@ -78,7 +80,8 @@ module Spree
     # hand a client still sending it the whole collection rather than an error.
     self.whitelisted_ransackable_attributes = %w[quantity kind reason created_at stock_level_id
                                                  stock_item_id order_id fulfillment_id return_id
-                                                 exchange_id stock_transfer_id]
+                                                 exchange_id stock_transfer_id purchase_order_id
+                                                 stock_receipt_id unit_cost]
     self.whitelisted_ransackable_associations = %w[stock_level]
 
     # Stored audit text for a correction nobody labelled. Deliberately
@@ -98,6 +101,17 @@ module Spree
     # row is being created, not updated, so it must still be allowed to finish.
     def readonly?
       persisted? && !being_created?
+    end
+
+    # What the units on this row cost, when the movement was a purchase. Null
+    # on everything else: moving stock a merchant already owns is not a
+    # purchase, so a transfer or a return has no cost to record.
+    #
+    # @return [Spree::Money, nil]
+    def display_unit_cost
+      return nil if unit_cost.nil?
+
+      Spree::Money.new(unit_cost, currency: purchase_order&.currency)
     end
 
     # @deprecated Use {#stock_level}; removed in 6.1.

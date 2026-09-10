@@ -2,183 +2,138 @@ require 'spec_helper'
 
 module Spree
   describe StockTransfer, type: :model do
-    let(:stock_transfer) do
-      create(
-        :stock_transfer,
-        reference: 'PO123',
-        source_location: source_location,
-        destination_location: destination_location
-      )
-    end
+    let(:store) { Spree::Store.default }
+    let(:source_location) { create(:stock_location, store: store) }
+    let(:destination_location) { create(:stock_location, store: store) }
 
-    let(:destination_location) { create(:stock_location_with_items) }
-    let(:source_location) { create(:stock_location_with_items) }
-    let(:stock_level) { source_location.stock_levels.order(:id).first }
-    let(:variant) { stock_level.variant }
+    let(:stock_transfer) do
+      create(:stock_transfer,
+             store: store,
+             reference: 'PO123',
+             source_location: source_location,
+             destination_location: destination_location)
+    end
 
     it_behaves_like 'metadata'
     it_behaves_like 'lifecycle events'
 
-    describe '#reference' do
-      subject { stock_transfer.reference }
+    describe 'defaults' do
+      it 'opens as a draft with a number' do
+        expect(stock_transfer).to be_draft
+        expect(stock_transfer.number).to start_with('T')
+        expect(stock_transfer.reference).to eq('PO123')
+      end
 
-      it { is_expected.to eq 'PO123' }
+      # The table carried no store until 6.0, which left the admin endpoint
+      # unscoped: Spree::Base.for_store falls through to `self` when the store
+      # has no matching association.
+      it 'takes its store from the destination warehouse when none is given' do
+        transfer = described_class.create!(
+          source_location: source_location,
+          destination_location: destination_location,
+          items: [build(:stock_transfer_item, stock_transfer: nil)]
+        )
+
+        expect(transfer.store).to eq(destination_location.store)
+        expect(described_class.for_store(store)).to include(transfer)
+      end
     end
 
-    describe '#transfer' do
-      subject { stock_transfer.transfer(source_location, destination_location, variants) }
+    describe 'validations' do
+      it 'refuses a transfer to the location it leaves from' do
+        transfer = build(:stock_transfer, source_location: source_location,
+                                          destination_location: source_location)
 
-      let(:stock_transfer) do
-        build(
-          :stock_transfer,
-          reference: 'PO123',
-          source_location: nil,
-          destination_location: nil,
-          stock_movements: []
+        expect(transfer).to be_invalid
+        expect(transfer.errors[:source_location]).to include(Spree.t('stock_transfer.errors.same_location'))
+      end
+
+      # Two locations from different stores would take units out of one
+      # tenant's inventory and put them into another's.
+      it 'refuses two warehouses belonging to different stores' do
+        other_store_location = create(:stock_location, store: create(:store))
+        transfer = build(:stock_transfer, source_location: source_location,
+                                          destination_location: other_store_location)
+
+        expect(transfer).to be_invalid
+        expect(transfer.errors[:destination_location]).to include(
+          Spree.t('stock_transfer.errors.locations_in_different_stores')
         )
       end
 
-      let(:variants) { { variant => 5 } }
+      it 'refuses two lines for the same variant' do
+        variant = create(:variant)
+        transfer = build(:stock_transfer, source_location: source_location,
+                                          destination_location: destination_location)
+        transfer.items = [
+          build(:stock_transfer_item, stock_transfer: nil, variant: variant),
+          build(:stock_transfer_item, stock_transfer: nil, variant: variant)
+        ]
 
-      # A transfer moves goods, not promises: units another order is waiting
-      # for stay promised at the source.
-      it 'leaves the source location\'s promises intact' do
-        level = source_location.stock_level_or_create(variant)
-        level.update_column(:allocated_count, 3)
-
-        subject
-
-        expect(level.reload.allocated_count).to eq(3)
+        expect(transfer).to be_invalid
+        expect(transfer.errors[:items]).to include(Spree.t('errors.messages.duplicate_variant'))
       end
 
-      it 'transfers variants between 2 locations' do
-        subject
+      # A draft is a packing list the merchant is still filling in; anything
+      # past draft describes a box that physically exists.
+      it 'allows an empty draft but not an empty shipped transfer' do
+        transfer = build(:stock_transfer, source_location: source_location,
+                                          destination_location: destination_location, quantity: 0)
 
-        expect(source_location.count_on_hand(variant)).to eq 5
-        expect(destination_location.count_on_hand(variant)).to eq 5
+        expect(transfer).to be_valid
 
-        expect(stock_transfer.source_location).to eq source_location
-        expect(stock_transfer.destination_location).to eq destination_location
-
-        # Quantities are positive on both sides now; the kind says which way
-        # the goods went.
-        expect(stock_transfer.source_movements.first).to have_attributes(quantity: 5, kind: 'shipped')
-        expect(stock_transfer.destination_movements.first).to have_attributes(quantity: 5, kind: 'received')
-        expect(stock_transfer.source_movements.first.stock_transfer).to eq(stock_transfer)
-      end
-
-      # Checking only for a positive balance let a transfer take more than the
-      # shelf held and leave it negative.
-      context 'when the source holds some of the variant but not enough' do
-        let(:variants) { { variant => 5 } }
-
-        before { source_location.stock_level_or_create(variant).update_column(:count_on_hand, 1) }
-
-        it 'does not transfer the variants' do
-          expect(subject).to be false
-          expect(stock_transfer.errors[:base]).to include(
-            Spree.t('stock_transfer.errors.variants_unavailable', stock: source_location.name)
-          )
-        end
-
-        it 'leaves the source shelf alone' do
-          subject
-
-          expect(source_location.stock_level(variant).reload.count_on_hand).to eq(1)
-        end
-      end
-
-      context 'when variants are not available in the source location' do
-        let(:variants) { { variant => 5, other_variant => 5 } }
-        let(:other_variant) { create(:variant) }
-
-        it 'does not transfer the variants' do
-          expect(subject).to be false
-          expect(stock_transfer.errors[:base]).to include(
-            Spree.t('stock_transfer.errors.variants_unavailable', stock: source_location.name)
-          )
-        end
-      end
-
-      context 'when variants are empty' do
-        let(:variants) { {} }
-
-        it 'does not transfer the variants' do
-          expect(subject).to be false
-          expect(stock_transfer.errors[:base]).to include(Spree.t('stock_transfer.errors.must_have_variant'))
-        end
-      end
-
-      context 'when variants are nil' do
-        let(:variants) { nil }
-
-        it 'does not transfer the variants' do
-          expect(subject).to be false
-          expect(stock_transfer.errors[:base]).to include(Spree.t('stock_transfer.errors.must_have_variant'))
-        end
+        transfer.status = 'in_transit'
+        expect(transfer).to be_invalid
       end
     end
 
-    describe 'quantity guards' do
-      let(:source) { create(:stock_location_with_items) }
-      let(:destination) { create(:stock_location) }
-      let(:variant) { source.stock_levels.first.variant }
-
-      # A negative quantity sails through the availability check — every count
-      # is greater than a negative number — and then takes stock off the source
-      # *and* the destination.
-      it 'refuses a negative transfer quantity' do
-        transfer = described_class.new
-
-        expect(transfer.transfer(source, destination, { variant => -5 })).to be false
-        expect(transfer.errors[:base]).to be_present
+    describe 'totals' do
+      subject(:transfer) do
+        create(:stock_transfer, store: store, source_location: source_location,
+                                destination_location: destination_location, quantity: 0)
       end
 
-      it 'refuses a zero transfer quantity' do
-        transfer = described_class.new
-
-        expect(transfer.transfer(source, destination, { variant => 0 })).to be false
+      before do
+        transfer.items.create!(variant: create(:variant), quantity_shipped: 10, quantity_received: 7)
+        transfer.items.create!(variant: create(:variant), quantity_shipped: 5, quantity_received: 5)
       end
 
-      # A receive has no source, so the availability check never runs and only
-      # this guard stands between a typo and stock disappearing.
-      it 'refuses a negative receive quantity' do
-        transfer = described_class.new
-
-        expect(transfer.receive(destination, { variant => -5 })).to be false
-      end
-    end
-
-    describe '#receive' do
-      subject { stock_transfer.receive(destination_location, { variant => 5 }) }
-
-      let(:stock_transfer) do
-        build(
-          :stock_transfer,
-          reference: 'PO123',
-          source_location: nil,
-          destination_location: nil,
-          stock_movements: []
-        )
+      it 'sums what was promised and what arrived' do
+        expect(transfer.items_count).to eq(2)
+        expect(transfer.quantity_expected_total).to eq(15)
+        expect(transfer.quantity_received_total).to eq(12)
       end
 
-      it 'receives new inventory (from a seller)' do
-        subject
+      it 'is under-received while any line is still owed' do
+        expect(transfer).to be_short
+        expect(transfer).not_to be_fully_received
+        expect(transfer.status_after_receive).to eq('partially_received')
+      end
 
-        expect(destination_location.count_on_hand(variant)).to eq 5
+      it 'is fully received once every line is complete' do
+        transfer.items.each { |item| item.update!(quantity_received: item.quantity_shipped) }
+        transfer.items.reset
 
-        expect(stock_transfer.source_location).to be_nil
-        expect(stock_transfer.destination_location).to eq destination_location
+        expect(transfer).to be_fully_received
+        expect(transfer.status_after_receive).to eq('received')
       end
     end
 
-    describe '#validations' do
-      it 'checks if source location and destination location are the same' do
-        stock_movements = [build(:stock_movement)]
+    describe 'scopes' do
+      it 'separates the trips still running from the ones that are over' do
+        draft = create(:stock_transfer, store: store)
+        received = create(:stock_transfer, :received, store: store)
 
-        expect(described_class.new(source_location: source_location, destination_location: source_location, stock_movements: stock_movements)).to be_invalid
-        expect(described_class.new(source_location: source_location, destination_location: destination_location, stock_movements: stock_movements)).to be_valid
-        expect(described_class.new(destination_location: destination_location, stock_movements: stock_movements)).to be_valid
+        expect(described_class.open).to include(draft)
+        expect(described_class.open).not_to include(received)
+        expect(described_class.closed).to include(received)
+      end
+    end
+
+    describe '#editable?' do
+      it 'is true only while the box can still be repacked' do
+        expect(create(:stock_transfer, store: store)).to be_editable
+        expect(create(:stock_transfer, :ready_to_ship, store: store)).not_to be_editable
       end
     end
   end

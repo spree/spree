@@ -977,7 +977,8 @@
         "customers": "العملاء",
         "price_list_prices": "أسعار قائمة الأسعار",
         "product_translations": "ترجمات المنتجات",
-        "products": "المنتجات"
+        "products": "المنتجات",
+        "purchase_orders": "أوامر الشراء"
       },
       "wizard_title": "الاستيراد"
     },

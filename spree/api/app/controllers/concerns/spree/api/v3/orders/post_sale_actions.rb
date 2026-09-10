@@ -16,15 +16,7 @@ module Spree
         # the other — and this code never learns which.
         module PostSaleActions
           extend ActiveSupport::Concern
-
-          # A payload whose `items` is not a list. Raised out of the params
-          # helper so it cannot be mistaken for a workflow rejection, and
-          # answered as the client mistake it is rather than a 500.
-          class InvalidItems < StandardError; end
-
-          included do
-            rescue_from InvalidItems, with: :render_invalid_items
-          end
+          include Spree::Api::V3::ItemsPayload
 
           protected
 
@@ -48,31 +40,13 @@ module Spree
             raise NotImplementedError, "#{self.class} must implement #workflow_record_key"
           end
 
-          def render_invalid_items
-            errors = ActiveModel::Errors.new(@resource || model_class.new)
-            errors.add(:items, :invalid)
-            render_validation_error(errors)
-          end
-
           # The units a receive request named, or nil when it named none.
-          #
-          # An omitted `items` means "receive it all as requested". Naming an
-          # empty list — or an explicit `null`, which is the same statement —
-          # means the caller named no units, and must not fall through to
-          # receive-all. Anything else that is not a list is refused rather
-          # than iterated, which would answer a 500 to a client mistake.
+          # See {Spree::Api::V3::ItemsPayload} for what omitted and empty mean.
           #
           # @param keys [Array<Symbol>] the per-item keys to permit
           # @return [Array<ActionController::Parameters>, nil]
           def received_items(keys)
-            return nil unless params.key?(:items)
-
-            sent = params.permit(items: keys)[:items]
-            return [] if sent.nil?
-
-            raise InvalidItems unless sent.respond_to?(:map) && !sent.is_a?(Hash)
-
-            sent
+            items_payload(keys)
           end
 
           # Opens the record against the order, through the entity's create
