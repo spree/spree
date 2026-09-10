@@ -31,7 +31,18 @@ export function useReportingQuery(query: ReportingQuery, options: { enabled?: bo
  */
 export function entityDimension(row: ReportingRow, name: string): ReportingDimensionValue {
   const value = row.dimensions[name]
-  if (value === undefined) return { id: null, label: '', meta: {} }
+  if (value === undefined) {
+    // Asking a row for a dimension it was not grouped by is a caller bug, and
+    // a silent empty payload hides it twice over: the row renders unnamed, and
+    // every row keys off the same blank string so React stops telling them
+    // apart. Say so in development rather than degrading quietly.
+    if (import.meta.env.DEV) {
+      console.warn(
+        `[reporting] row has no "${name}" dimension; it carries: ${Object.keys(row.dimensions).join(', ') || '(none)'}`,
+      )
+    }
+    return { id: null, label: '', meta: {} }
+  }
   return typeof value === 'string' ? { id: null, label: value, meta: {} } : value
 }
 

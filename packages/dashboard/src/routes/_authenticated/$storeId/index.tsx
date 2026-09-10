@@ -357,6 +357,8 @@ const RANKING_QUERIES: Record<
   RankingTab,
   {
     query: Omit<ReportingQuery, 'time_range' | 'filters'>
+    /** The dimension the rows are keyed by — read from the row for its label. */
+    dimension: string
     revenueMetric: string
     countMetric: string
   }
@@ -368,6 +370,7 @@ const RANKING_QUERIES: Record<
       sort: '-total_sales',
       limit: 5,
     },
+    dimension: 'customer',
     revenueMetric: 'total_sales',
     countMetric: 'orders',
   },
@@ -378,6 +381,7 @@ const RANKING_QUERIES: Record<
       sort: '-net_sales',
       limit: 5,
     },
+    dimension: 'category',
     revenueMetric: 'net_sales',
     countMetric: 'units_sold',
   },
@@ -388,6 +392,7 @@ const RANKING_QUERIES: Record<
       sort: '-total_sales',
       limit: 5,
     },
+    dimension: 'company',
     revenueMetric: 'total_sales',
     countMetric: 'orders',
   },
@@ -399,6 +404,7 @@ const RANKING_QUERIES: Record<
       sort: '-net_sales',
       limit: 5,
     },
+    dimension: 'seller',
     revenueMetric: 'net_sales',
     countMetric: 'units_sold',
   },
@@ -416,13 +422,13 @@ function RankingsCard({
   const { storeId } = Route.useParams()
   const [tab, setTab] = useState<RankingTab>(tabs[0])
 
-  const { query, revenueMetric, countMetric } = RANKING_QUERIES[tab]
+  const { query, dimension: dimensionName, revenueMetric, countMetric } = RANKING_QUERIES[tab]
   const { data, error, isPlaceholderData } = useReportingQuery({ ...query, ...scope })
 
   // Placeholder data belongs to the previous tab (other dimension, other
   // metrics) — show the skeleton until this tab's own rows arrive.
   const rows = (isPlaceholderData ? undefined : data)?.rows.map((row) => {
-    const dimension = entityDimension(row, tab === 'customers' ? 'customer' : 'category')
+    const dimension = entityDimension(row, dimensionName)
     const amount = row.metrics[revenueMetric]
     const count = row.metrics[countMetric]?.value ?? 0
     return {
@@ -430,8 +436,11 @@ function RankingsCard({
       dimension,
       amount: amount?.value ?? 0,
       display: amount?.display ?? String(amount?.value ?? 0),
+      // Named after the metric being counted, not the tab: companies count
+      // orders and sellers count units, so a tab-based ternary mislabels one
+      // of them the moment a tab is added.
       meta:
-        tab === 'customers'
+        countMetric === 'orders'
           ? t('admin.pages.home.rankings.orders_count', { count })
           : t('admin.pages.home.rankings.units_count', { count }),
     }
