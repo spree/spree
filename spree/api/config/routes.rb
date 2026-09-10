@@ -550,6 +550,10 @@ Spree::Core::Engine.add_routes do
           # Where the seller stands on the ledger, one row per currency.
           resources :balances, only: [:index], controller: 'sellers/balances'
 
+          # Settling this seller by hand. The scheduled sweep skips anyone on
+          # the `manual` interval — this is where the operator decides.
+          resources :payouts, only: [:create], controller: 'sellers/payouts'
+
           # Who runs this seller, and the offers nobody has accepted yet.
           # The operator is the only one who can repair a seller whose team
           # has locked itself out, which the seller's own panel cannot do.

@@ -5308,7 +5308,14 @@
         "view_payout": "View payout",
         "not_settled": "Not paid out yet"
       },
-      "search_placeholder": "Search by reference"
+      "search_placeholder": "Search by reference",
+      "settle": "Settle now",
+      "settled": "Payout created",
+      "settle_confirm": {
+        "title": "Settle this seller now?",
+        "message": "Sweeps everything {{name}} is owed into a payout per currency. It does not send the money — mark the payout paid once the transfer goes out."
+      },
+      "settle_failed": "Could not settle this seller."
     }
   }
 }

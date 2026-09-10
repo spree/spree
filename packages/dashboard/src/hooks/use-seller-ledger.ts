@@ -1,4 +1,6 @@
+import { SpreeError } from '@spree/admin-sdk'
 import { adminClient, useResourceKey, useResourceMutation } from '@spree/dashboard-core'
+import { toastManager } from '@spree/dashboard-ui'
 import { useQuery } from '@tanstack/react-query'
 import i18n from 'i18next'
 
@@ -57,6 +59,35 @@ export function useCompletePayout(payoutId: string) {
       adminClient.sellerPayouts.complete(payoutId, params),
     invalidate: [['seller-payouts'], ['seller-payouts', payoutId], ['sellers']],
     successMessage: i18n.t('admin.payouts.marked_paid'),
+  })
+}
+
+/**
+ * Settles a seller now, sweeping what they are owed into a payout per
+ * currency.
+ *
+ * What the `manual` interval means — the scheduled sweep skips those sellers
+ * — and the way to pay anyone early.
+ *
+ * "Nothing to settle" arrives as a 422, which `useResourceMutation`
+ * deliberately never toasts: that suppression is for forms that render the
+ * message inline instead. This is a button with no form behind it, so the
+ * reason is surfaced here or nowhere, and an operator who clicks Settle and
+ * sees nothing happen has been told less than the server said.
+ */
+export function useSettleSeller(sellerId: string) {
+  return useResourceMutation({
+    mutationFn: () => adminClient.sellers.settle(sellerId),
+    invalidate: [['seller-payouts'], ['seller-transfers'], ['sellers', sellerId, 'balances']],
+    successMessage: i18n.t('admin.payouts.settled'),
+    onError: (error) => {
+      const message = error instanceof SpreeError ? error.message : null
+
+      toastManager.add({
+        type: 'error',
+        title: message || i18n.t('admin.payouts.settle_failed'),
+      })
+    },
   })
 }
 

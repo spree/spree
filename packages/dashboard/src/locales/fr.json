@@ -5308,7 +5308,14 @@
         "view_payout": "Voir le versement",
         "not_settled": "Pas encore versé"
       },
-      "search_placeholder": "Rechercher par référence"
+      "search_placeholder": "Rechercher par référence",
+      "settle": "Régler maintenant",
+      "settled": "Versement créé",
+      "settle_confirm": {
+        "title": "Régler ce vendeur maintenant ?",
+        "message": "Regroupe tout ce qui est dû à {{name}} en un versement par devise. Aucun argent n'est envoyé — marquez le versement comme payé une fois le virement effectué."
+      },
+      "settle_failed": "Impossible de régler ce vendeur."
     }
   }
 }

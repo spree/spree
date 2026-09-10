@@ -32,6 +32,23 @@ production:
     schedule: at 5am every day
 ```
 
+### Marketplace payouts
+
+A marketplace has to schedule one more job, or its sellers are never paid:
+
+```yaml config/recurring.yml
+production:
+  sweep_seller_payouts:
+    class: Spree::SellerPayouts::SweepDueJob
+    schedule: at 3am every day
+```
+
+Run it **daily whatever intervals your sellers are on**. The job only fans
+out; whether a given seller is due — and when they were last settled — is
+decided per seller, because a cron expression cannot say "weekly, counted
+from that seller's own last payout". A seller whose interval is `manual` is
+skipped here by design and is settled by hand from the operator dashboard.
+
 ## Queues
 
 `config/queue.yml` lists queues in polling order: checkout-critical and operator-facing work first, bulk catalog processing second, housekeeping last. A trailing `"*"` catches any queue added later. Large CSV imports are additionally capped so they can't occupy the whole worker pool — see [`SPREE_IMPORT_JOB_CONCURRENCY`](/developer/deployment/environment_variables).

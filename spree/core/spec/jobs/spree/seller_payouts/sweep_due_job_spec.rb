@@ -47,4 +47,54 @@ RSpec.describe Spree::SellerPayouts::SweepDueJob do
 
     expect(enqueued_seller_ids).to contain_exactly(seller.id)
   end
+
+  # A marketplace with many sellers takes long enough to fan out that a deploy
+  # can land mid-run, and re-enqueueing every seller already handed off is
+  # work a marketplace pays for twice.
+  describe 'resuming after an interruption' do
+    let(:other_store) { create(:store) }
+    let!(:other_seller) { create(:seller, :approved, store: other_store) }
+
+    def run_with_continuation(cursor)
+      job = described_class.new
+      job.continuation = ActiveJob::Continuation.new(
+        job, 'completed' => [], 'current' => ['fan_out', cursor]
+      )
+      job.perform_now
+    end
+
+    it 'skips the stores it already fanned out' do
+      seller
+      # The cursor is `succ` of the last store handed off, so resuming at the
+      # second store's id means the first is done. Stated rather than assumed:
+      # the factory promises no id ordering, and without this the example
+      # could pass by reaching both stores for the wrong reason.
+      expect(store.id).to be < other_store.id
+
+      run_with_continuation(other_store.id)
+
+      expect(enqueued_seller_ids).to contain_exactly(other_seller.id)
+    end
+
+    # `advance!` stores `succ`, so a run interrupted *during* a store leaves a
+    # cursor pointing at that same store and it is fanned out again. Cheap,
+    # and the alternative — a second cursor over sellers — would cost the
+    # (store_id, status) index the per-store lookup depends on.
+    it 'replays a store it was interrupted inside' do
+      seller
+      expect(store.id).to be < other_store.id
+
+      run_with_continuation(store.id)
+
+      expect(enqueued_seller_ids).to contain_exactly(seller.id, other_seller.id)
+    end
+
+    it 'reaches every store when starting fresh' do
+      seller
+
+      run_with_continuation(nil)
+
+      expect(enqueued_seller_ids).to contain_exactly(seller.id, other_seller.id)
+    end
+  end
 end

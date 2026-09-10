@@ -25880,7 +25880,7 @@ paths:
                 data:
                 - id: variant_UkLWZg9DAJ
                   product_id: prod_UkLWZg9DAJ
-                  sku: SKU-154
+                  sku: SKU-155
                   options_text: ''
                   track_inventory: true
                   media_count: 0
@@ -25935,11 +25935,11 @@ paths:
                   available_stock: 0
                   reserved_quantity: 0
                   total_on_hand: 0
-                  product_name: Product 1286804
+                  product_name: Product 1296804
                   delivery_profile_id: fp_UkLWZg9DAJ
                 - id: variant_gbHJdmfrXB
                   product_id: prod_UkLWZg9DAJ
-                  sku: SKU-155
+                  sku: SKU-156
                   options_text: 'Size: S'
                   track_inventory: true
                   media_count: 0
@@ -26006,7 +26006,7 @@ paths:
                   available_stock: 0
                   reserved_quantity: 0
                   total_on_hand: 0
-                  product_name: Product 1286804
+                  product_name: Product 1296804
                   delivery_profile_id: fp_UkLWZg9DAJ
                 meta:
                   page: 1
@@ -26152,7 +26152,7 @@ paths:
                 available_stock: 0
                 reserved_quantity: 0
                 total_on_hand: 0
-                product_name: Product 1291771
+                product_name: Product 1301771
                 delivery_profile_id: fp_UkLWZg9DAJ
         '422':
           description: validation error
@@ -26164,7 +26164,7 @@ paths:
                   message: SKU has already been taken
                   details:
                     sku:
-                    - value: SKU-159
+                    - value: SKU-160
                       code: taken
                       message: has already been taken
                       specific: false
@@ -26334,7 +26334,7 @@ paths:
               example:
                 id: variant_gbHJdmfrXB
                 product_id: prod_UkLWZg9DAJ
-                sku: SKU-161
+                sku: SKU-162
                 options_text: 'Size: S'
                 track_inventory: true
                 media_count: 0
@@ -26401,7 +26401,7 @@ paths:
                 available_stock: 0
                 reserved_quantity: 0
                 total_on_hand: 0
-                product_name: Product 1314025
+                product_name: Product 1324025
                 delivery_profile_id: fp_UkLWZg9DAJ
         '404':
           description: variant not found
@@ -26541,7 +26541,7 @@ paths:
                 available_stock: 0
                 reserved_quantity: 0
                 total_on_hand: 0
-                product_name: Product 1335672
+                product_name: Product 1345672
                 delivery_profile_id: fp_UkLWZg9DAJ
       requestBody:
         content:
@@ -36422,6 +36422,91 @@ paths:
                 error:
                   code: record_not_found
                   message: Seller not found
+              schema:
+                "$ref": "#/components/schemas/ErrorResponse"
+  "/api/v3/admin/sellers/{seller_id}/payouts":
+    parameters:
+    - name: seller_id
+      in: path
+      required: true
+      description: Seller prefixed ID
+      schema:
+        type: string
+    post:
+      summary: Settle a seller
+      tags:
+      - Sellers
+      security:
+      - api_key: []
+        bearer_auth: []
+      description: |-
+        Sweeps everything this seller is owed into a payout — one per currency,
+        since nothing is ever converted between them.
+
+        This is what the `manual` payout interval means: the scheduled sweep
+        runs on each seller's own interval and skips anyone set to `manual`,
+        leaving the operator to decide when. It also settles any other seller
+        early.
+
+        It records the settlement rather than sending money: the built-in
+        provider waits to be told the bank transfer went out, which is
+        `PATCH /api/v3/admin/seller_payouts/{id}/complete`.
+
+        Answers `422` when there is nothing to settle — no payout account,
+        nothing unsettled, or a balance below the seller's minimum.
+
+
+        **Required scope:** `write_payouts` (for API-key authentication).
+      parameters:
+      - name: x-spree-api-key
+        in: header
+        required: true
+        schema:
+          type: string
+      - name: Authorization
+        in: header
+        required: true
+        schema:
+          type: string
+      responses:
+        '201':
+          description: seller settled
+          content:
+            application/json:
+              example:
+                data:
+                - id: vpo_UkLWZg9DAJ
+                  status: pending
+                  currency: USD
+                  provider: Spree::PayoutProvider::System
+                  reference:
+                  metadata: {}
+                  period_start: '2026-01-15T12:00:00.000Z'
+                  period_end: '2026-01-15T12:00:00.000Z'
+                  created_at: '2026-01-15T12:00:00.000Z'
+                  updated_at: '2026-01-15T12:00:00.000Z'
+                  amount: '40.0'
+                  display_amount: "$40.00"
+                  seller_id: sel_UkLWZg9DAJ
+                  seller_name: Sparks Audio
+                  transfers_count: 1
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      "$ref": "#/components/schemas/SellerPayout"
+                required:
+                - data
+        '422':
+          description: nothing to settle
+          content:
+            application/json:
+              example:
+                error:
+                  code: validation_error
+                  message: This seller has nothing to settle right now.
               schema:
                 "$ref": "#/components/schemas/ErrorResponse"
   "/api/v3/admin/stock_levels/bulk_upsert":
