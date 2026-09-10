@@ -123,9 +123,7 @@ module Spree
       # All metrics the adapter must aggregate: requested non-derived metrics
       # plus the hidden components of requested ratios.
       def aggregated_metrics
-        base = metrics.reject(&:derived?)
-        components = metrics.select(&:derived?).flat_map { |m| m.ratio.map { |name| registry.metric!(name) } }
-        (base + components).uniq(&:name)
+        metrics.flat_map { |metric| registry.components(metric) }.uniq(&:name)
       end
 
       private

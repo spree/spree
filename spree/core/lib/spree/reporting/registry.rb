@@ -182,13 +182,6 @@ module Spree
         components(metric).all? { |component| base!(component.base).reaches?(dimension.base) }
       end
 
-      # Whether two bases can appear in one query. Sales metrics combine with
-      # each other; a payment total beside a units-received count is two
-      # different questions wearing one answer, so the query refuses it.
-      def same_family?(one, other)
-        base!(one).family == base!(other).family
-      end
-
       # A derived metric aggregates nothing itself — its components do.
       def components(metric)
         metric.derived? ? metric.ratio.map { |name| metric!(name) } : [metric]

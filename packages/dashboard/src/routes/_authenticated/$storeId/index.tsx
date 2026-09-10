@@ -356,9 +356,10 @@ type RankingTab = 'customers' | 'categories' | 'companies' | 'sellers'
 const RANKING_QUERIES: Record<
   RankingTab,
   {
-    query: Omit<ReportingQuery, 'time_range' | 'filters'>
-    /** The dimension the rows are keyed by — read from the row for its label. */
-    dimension: string
+    /** Single-dimension by construction: the card renders one name per row. */
+    query: Omit<ReportingQuery, 'time_range' | 'filters' | 'dimensions'> & {
+      dimensions: [string]
+    }
     revenueMetric: string
     countMetric: string
   }
@@ -370,7 +371,6 @@ const RANKING_QUERIES: Record<
       sort: '-total_sales',
       limit: 5,
     },
-    dimension: 'customer',
     revenueMetric: 'total_sales',
     countMetric: 'orders',
   },
@@ -381,7 +381,6 @@ const RANKING_QUERIES: Record<
       sort: '-net_sales',
       limit: 5,
     },
-    dimension: 'category',
     revenueMetric: 'net_sales',
     countMetric: 'units_sold',
   },
@@ -392,7 +391,6 @@ const RANKING_QUERIES: Record<
       sort: '-total_sales',
       limit: 5,
     },
-    dimension: 'company',
     revenueMetric: 'total_sales',
     countMetric: 'orders',
   },
@@ -404,7 +402,6 @@ const RANKING_QUERIES: Record<
       sort: '-net_sales',
       limit: 5,
     },
-    dimension: 'seller',
     revenueMetric: 'net_sales',
     countMetric: 'units_sold',
   },
@@ -422,7 +419,10 @@ function RankingsCard({
   const { storeId } = Route.useParams()
   const [tab, setTab] = useState<RankingTab>(tabs[0])
 
-  const { query, dimension: dimensionName, revenueMetric, countMetric } = RANKING_QUERIES[tab]
+  const { query, revenueMetric, countMetric } = RANKING_QUERIES[tab]
+  // Read from the query rather than stored beside it: two copies can disagree,
+  // and a row asked for a dimension it was not grouped by renders unnamed.
+  const [dimensionName] = query.dimensions
   const { data, error, isPlaceholderData } = useReportingQuery({ ...query, ...scope })
 
   // Placeholder data belongs to the previous tab (other dimension, other

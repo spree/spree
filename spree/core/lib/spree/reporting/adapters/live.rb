@@ -221,7 +221,6 @@ module Spree
                  fees: Spree::Fee.table_name,
                  commission_lines: Spree::CommissionLine.table_name,
                  payments: Spree::Payment.table_name,
-                 payment_methods: Spree::PaymentMethod.table_name,
                  stock_movements: Spree::StockMovement.table_name,
                  stock_levels: Spree::StockLevel.table_name)
         end

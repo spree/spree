@@ -20,23 +20,13 @@ function Tabs({
   )
 }
 
-/**
- * The track a set of tabs sits in, recessed so the selected tab can be raised
- * against it.
- *
- * The two themes need different tokens because the palette is asymmetric:
- * light-mode `--muted` resolves to the page background, so a muted track is
- * invisible on a page and leaves only a 1.5% step under the selected tab,
- * while dark-mode `--accent` (stone-800) is lighter than every raised surface
- * and would put the selection *below* its own track. `--accent` in light and
- * `--muted` in dark both sit one step under the raised tab.
- */
+/** The track a set of tabs sits in, recessed so the selected tab reads as raised. */
 function TabsList({ className, ...props }: React.ComponentProps<typeof TabsPrimitive.List>) {
   return (
     <TabsPrimitive.List
       data-slot="tabs-list"
       className={cn(
-        'inline-flex w-fit items-center justify-center gap-1 rounded-lg bg-accent p-1 text-muted-foreground dark:bg-muted',
+        'inline-flex w-fit items-center justify-center gap-1 rounded-lg bg-track-recessed p-1 text-muted-foreground',
         'group-data-[orientation=vertical]/tabs:h-auto group-data-[orientation=vertical]/tabs:w-full group-data-[orientation=vertical]/tabs:flex-col',
         className,
       )}
@@ -59,13 +49,12 @@ function TabsTrigger({ className, ...props }: React.ComponentProps<typeof TabsPr
         // promotes to full foreground rather than only shifting the surface,
         // which is the part a colour-blind or low-vision reader can see.
         'text-muted-foreground hover:text-foreground',
-        // A raised surface on the recessed track: +3% lightness in light,
-        // +5% in dark. `--nested-raised` rather than `--card` because the
-        // system raises by lightening in dark mode, where the two differ.
+        // The pair --track-recessed / --nested-raised is defined to hold this
+        // step in both themes: +3% lightness in light, +5% in dark.
         'data-[active]:bg-nested-raised data-[active]:text-foreground data-[active]:shadow-xs',
         // Same focus treatment as Button, so a keyboard user sees one
         // consistent indicator across the dashboard.
-        'focus-visible:shadow-[0_0_0_3px_color-mix(in_srgb,var(--ring)_35%,transparent)]',
+        'focus-visible:shadow-[0_0_0_3px_color-mix(in_srgb,var(--ring)_15%,transparent)]',
         'disabled:pointer-events-none disabled:opacity-70 disabled:cursor-not-allowed',
         "[&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4",
         className,

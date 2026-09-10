@@ -68,6 +68,19 @@ module Spree
                       WHERE pr.payment_id = %{payments}.id), 0))
       SQL
 
+      # A variant reads the same wherever it is ranked — sold on the sales axis,
+      # moved on the inventory one — so both dimensions share one payload.
+      VARIANT_RESOLVE = ->(store, value) { store.variants.find_by_prefix_id!(value).id }
+      VARIANT_HYDRATE = lambda { |store, ids, _params|
+        store.variants.where(id: ids).includes(:product, option_values: :option_type).to_h do |variant|
+          [variant.id, {
+            id: variant.prefixed_id,
+            label: variant.descriptive_name,
+            meta: { sku: variant.sku, product_id: variant.product&.prefixed_id }
+          }]
+        end
+      }
+
       # One movement kind's quantity. The kind carries the direction, so
       # summing across kinds would net a receipt against a dispatch.
       def self.movement_sum(kind)
@@ -300,16 +313,7 @@ module Spree
           # variants of one product stay distinguishable in a ranking.
           dimension :variant, base: :line_items, column: :variant_id, lookup: :variant,
                     subject: -> { Spree::Product }, key_scope: 'read_products',
-                    resolve: ->(store, value) { store.variants.find_by_prefix_id!(value).id },
-                    hydrate: lambda { |store, ids, _params|
-                      store.variants.where(id: ids).includes(:product, option_values: :option_type).to_h do |variant|
-                        [variant.id, {
-                          id: variant.prefixed_id,
-                          label: variant.descriptive_name,
-                          meta: { sku: variant.sku, product_id: variant.product&.prefixed_id }
-                        }]
-                      end
-                    }
+                    resolve: VARIANT_RESOLVE, hydrate: VARIANT_HYDRATE
 
           # Meta rides on the admin product serializer so thumbnails match the
           # rest of the Admin API; the lambda only runs inside API requests.
@@ -369,16 +373,7 @@ module Spree
           dimension :moved_variant, base: :stock_movements, column: '%{stock_levels}.variant_id',
                     joins: [:stock_level], lookup: :variant,
                     subject: -> { Spree::Product }, key_scope: 'read_products',
-                    resolve: ->(store, value) { store.variants.find_by_prefix_id!(value).id },
-                    hydrate: lambda { |store, ids, _params|
-                      store.variants.where(id: ids).includes(:product, option_values: :option_type).to_h do |variant|
-                        [variant.id, {
-                          id: variant.prefixed_id,
-                          label: variant.descriptive_name,
-                          meta: { sku: variant.sku, product_id: variant.product&.prefixed_id }
-                        }]
-                      end
-                    }
+                    resolve: VARIANT_RESOLVE, hydrate: VARIANT_HYDRATE
 
           dimension :stock_location, base: :stock_movements, column: '%{stock_levels}.stock_location_id',
                     joins: [:stock_level], lookup: :stock_location,
