@@ -5495,7 +5495,9 @@
         "sku": "SKU",
         "unit_cost": "Koszt jednostkowy"
       },
-      "picker_title": "Dodaj produkty"
+      "picker_title": "Dodaj produkty",
+      "empty_title": "Brak produktów",
+      "empty_description": "Dodaj produkty, których dotyczy ten dokument."
     },
     "stock_history": {
       "title": "Historia stanu",

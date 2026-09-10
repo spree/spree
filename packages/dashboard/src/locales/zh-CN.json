@@ -5422,7 +5422,9 @@
         "sku": "SKU",
         "unit_cost": "单位成本"
       },
-      "picker_title": "添加商品"
+      "picker_title": "添加商品",
+      "empty_title": "暂无商品",
+      "empty_description": "添加此单据涉及的商品。"
     },
     "stock_history": {
       "title": "库存记录",

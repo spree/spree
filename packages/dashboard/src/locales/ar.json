@@ -5462,7 +5462,9 @@
         "sku": "رمز SKU",
         "unit_cost": "تكلفة الوحدة"
       },
-      "picker_title": "إضافة منتجات"
+      "picker_title": "إضافة منتجات",
+      "empty_title": "لا توجد منتجات بعد",
+      "empty_description": "أضف المنتجات التي يشملها هذا المستند."
     },
     "stock_history": {
       "title": "سجل المخزون",

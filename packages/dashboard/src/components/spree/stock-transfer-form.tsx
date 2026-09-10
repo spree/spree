@@ -19,6 +19,7 @@ import {
   SelectValue,
   Textarea,
 } from '@spree/dashboard-ui'
+import { PlusIcon } from '@spree/dashboard-ui/icons'
 import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { type VariantLine, VariantLineEditor } from './variant-line-editor'
@@ -78,6 +79,7 @@ export function StockTransferForm({
   const [reference, setReference] = useState(initial.reference)
   const [notes, setNotes] = useState(initial.notes)
   const [lines, setLines] = useState<VariantLine[]>(initial.lines)
+  const [pickerOpen, setPickerOpen] = useState(false)
 
   // Stock cannot move to where it already is.
   const destinationItems = locationItems.filter((item) => item.value !== sourceId)
@@ -173,8 +175,20 @@ export function StockTransferForm({
 
   const itemsCard = (
     <Card>
-      <CardHeader>
+      <CardHeader className="flex flex-row items-center justify-between">
         <CardTitle>{t('admin.stock_transfers.items_title')}</CardTitle>
+        {lines.length > 0 && (
+          <Button
+            type="button"
+            variant="outline"
+            size="sm"
+            disabled={!sourceId}
+            onClick={() => setPickerOpen(true)}
+          >
+            <PlusIcon className="size-4" />
+            {t('admin.inventory_lines.add_label')}
+          </Button>
+        )}
       </CardHeader>
       <CardContent>
         {/* A draft may hold no lines at all and gain them as the merchant
@@ -186,6 +200,8 @@ export function StockTransferForm({
           quantityLabel={t('admin.stock_transfers.columns.quantity_shipped')}
           stockLocationId={sourceId || null}
           requireStockLocation
+          pickerOpen={pickerOpen}
+          onPickerOpenChange={setPickerOpen}
         />
       </CardContent>
     </Card>

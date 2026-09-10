@@ -25,6 +25,7 @@ import {
   SelectValue,
   Textarea,
 } from '@spree/dashboard-ui'
+import { PlusIcon } from '@spree/dashboard-ui/icons'
 import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { supplierAutocompleteProps } from '../../hooks/use-suppliers'
@@ -99,6 +100,7 @@ export function PurchaseOrderForm({
   const [notes, setNotes] = useState(initial.notes)
   const [lines, setLines] = useState<VariantLine[]>(initial.lines)
   const [creatingSupplier, setCreatingSupplier] = useState(false)
+  const [pickerOpen, setPickerOpen] = useState(false)
 
   // A cleared cost input is not zero — it is nothing, which the server rejects
   // field-by-field. `Number('')` is 0 and finite, so the emptiness has to be
@@ -131,17 +133,14 @@ export function PurchaseOrderForm({
               value={supplierId}
               onChange={(id) => setSupplierId(id ?? '')}
               placeholder={t('admin.purchase_orders.fields.supplier_placeholder')}
+              // Buying from someone new is part of raising the order, not a
+              // detour through another screen — so it sits in the dropdown the
+              // merchant already opened looking for them.
+              action={{
+                label: t('admin.suppliers.new_title'),
+                onSelect: () => setCreatingSupplier(true),
+              }}
             />
-            {/* Buying from someone new is part of raising the order, not a
-                detour through settings. */}
-            <Button
-              type="button"
-              variant="link"
-              className="h-auto self-start p-0"
-              onClick={() => setCreatingSupplier(true)}
-            >
-              {t('admin.suppliers.new_title')}
-            </Button>
           </Field>
 
           <Field>
@@ -218,8 +217,14 @@ export function PurchaseOrderForm({
 
   const itemsCard = (
     <Card>
-      <CardHeader>
+      <CardHeader className="flex flex-row items-center justify-between">
         <CardTitle>{t('admin.purchase_orders.items_title')}</CardTitle>
+        {lines.length > 0 && (
+          <Button type="button" variant="outline" size="sm" onClick={() => setPickerOpen(true)}>
+            <PlusIcon className="size-4" />
+            {t('admin.inventory_lines.add_label')}
+          </Button>
+        )}
       </CardHeader>
       <CardContent>
         {/* No warehouse filter, unlike a transfer: buying stock in is how a
@@ -230,6 +235,8 @@ export function PurchaseOrderForm({
           currency={currency}
           quantityLabel={t('admin.purchase_orders.columns.quantity_ordered')}
           withCost
+          pickerOpen={pickerOpen}
+          onPickerOpenChange={setPickerOpen}
         />
       </CardContent>
     </Card>

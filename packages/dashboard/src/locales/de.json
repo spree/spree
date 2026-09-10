@@ -5433,7 +5433,9 @@
         "sku": "SKU",
         "unit_cost": "Stückkosten"
       },
-      "picker_title": "Produkte hinzufügen"
+      "picker_title": "Produkte hinzufügen",
+      "empty_title": "Noch keine Produkte",
+      "empty_description": "Fügen Sie die Produkte hinzu, für die dieser Beleg gilt."
     },
     "stock_history": {
       "title": "Bestandsverlauf",

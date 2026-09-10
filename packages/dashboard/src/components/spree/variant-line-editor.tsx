@@ -2,6 +2,12 @@ import type { Variant } from '@spree/admin-sdk'
 import { adminClient, formatPrice, ResourcePickerSheet } from '@spree/dashboard-core'
 import {
   Button,
+  Empty,
+  EmptyContent,
+  EmptyDescription,
+  EmptyHeader,
+  EmptyMedia,
+  EmptyTitle,
   Input,
   InputGroup,
   InputGroupAddon,
@@ -14,8 +20,7 @@ import {
   TableHeader,
   TableRow,
 } from '@spree/dashboard-ui'
-import { PlusIcon, TrashIcon } from '@spree/dashboard-ui/icons'
-import { useState } from 'react'
+import { PackageIcon, PlusIcon, TrashIcon } from '@spree/dashboard-ui/icons'
 import { useTranslation } from 'react-i18next'
 import { VariantLink } from './variant-link'
 
@@ -55,6 +60,8 @@ export function VariantLineEditor({
   withCost = false,
   stockLocationId,
   requireStockLocation = false,
+  pickerOpen,
+  onPickerOpenChange,
 }: {
   lines: VariantLine[]
   onChange: (lines: VariantLine[]) => void
@@ -70,13 +77,19 @@ export function VariantLineEditor({
   stockLocationId?: string | null
   /** Refuse to open the picker until a warehouse is chosen. */
   requireStockLocation?: boolean
+  /**
+   * The picker's open state, owned by the card so its header can carry the
+   * "Add a product" button beside the title — where every other card on these
+   * screens puts its actions.
+   */
+  pickerOpen: boolean
+  onPickerOpenChange: (open: boolean) => void
 }) {
   const { t } = useTranslation()
   // Nothing sensible to search until the source is known, and offering the
   // whole catalogue invites a line the warehouse cannot send — which is only
   // refused later, per line, when the transfer is marked in transit.
   const locked = !!requireStockLocation && !stockLocationId
-  const [pickerOpen, setPickerOpen] = useState(false)
 
   function addVariant(variant: Variant) {
     const existing = lines.find((line) => line.variant.id === variant.id)
@@ -101,29 +114,12 @@ export function VariantLineEditor({
 
   return (
     <div className="flex flex-col gap-4">
-      <div className="flex items-center justify-between gap-4">
-        {/* Only says anything when there is something to say: the button
-            already names the action. */}
-        <p className="text-muted-foreground text-sm">
-          {locked ? t('admin.inventory_lines.pick_source_first') : null}
-        </p>
-        <Button
-          type="button"
-          variant="outline"
-          disabled={locked}
-          onClick={() => setPickerOpen(true)}
-        >
-          <PlusIcon className="size-4" />
-          {t('admin.inventory_lines.add_label')}
-        </Button>
-      </div>
-
       {/* A sheet rather than a one-at-a-time combobox: a delivery is picked in
           one pass, and the same picker the catalogue screens use already does
           searching, paging and select-all. */}
       <ResourcePickerSheet<Variant>
         open={pickerOpen}
-        onOpenChange={setPickerOpen}
+        onOpenChange={onPickerOpenChange}
         // Keyed by warehouse: the same query means different things at two
         // sources, and a cached result would offer the wrong shelf's SKUs.
         queryKey={`inventory-line-variant-picker:${stockLocationId ?? 'any'}`}
@@ -148,7 +144,33 @@ export function VariantLineEditor({
         searchPlaceholder={t('admin.inventory_lines.search_placeholder')}
       />
 
-      {lines.length > 0 && (
+      {lines.length === 0 ? (
+        <Empty className="border-0">
+          <EmptyHeader>
+            <EmptyMedia variant="icon">
+              <PackageIcon />
+            </EmptyMedia>
+            <EmptyTitle>{t('admin.inventory_lines.empty_title')}</EmptyTitle>
+            <EmptyDescription>
+              {locked
+                ? t('admin.inventory_lines.pick_source_first')
+                : t('admin.inventory_lines.empty_description')}
+            </EmptyDescription>
+          </EmptyHeader>
+          <EmptyContent>
+            <Button
+              type="button"
+              variant="outline"
+              size="sm"
+              disabled={locked}
+              onClick={() => onPickerOpenChange(true)}
+            >
+              <PlusIcon className="size-4" />
+              {t('admin.inventory_lines.add_label')}
+            </Button>
+          </EmptyContent>
+        </Empty>
+      ) : (
         <div className="overflow-x-auto rounded-md border">
           <Table>
             <TableHeader>

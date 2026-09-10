@@ -5433,7 +5433,9 @@
         "sku": "UGS",
         "unit_cost": "Coût unitaire"
       },
-      "picker_title": "Ajouter des produits"
+      "picker_title": "Ajouter des produits",
+      "empty_title": "Aucun produit",
+      "empty_description": "Ajoutez les produits concernés par ce document."
     },
     "stock_history": {
       "title": "Historique du stock",

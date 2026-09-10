@@ -5433,7 +5433,9 @@
         "sku": "SKU",
         "unit_cost": "Unit cost"
       },
-      "picker_title": "Add products"
+      "picker_title": "Add products",
+      "empty_title": "No products yet",
+      "empty_description": "Add the products this order is for."
     },
     "stock_history": {
       "title": "Stock history",
