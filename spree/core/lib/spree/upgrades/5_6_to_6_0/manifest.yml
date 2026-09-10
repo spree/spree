@@ -730,7 +730,7 @@ steps:
 
   - id: migrate_external_receives_to_purchase_orders
     name: "Turn 5.x supplier receives into purchase orders, and give every transfer a store"
-    task: "spree:upgrade:migrate_external_receives_to_purchase_orders"
+    task_class: "Spree::MaintenanceTasks::Upgrade::ExternalReceivesToPurchaseOrders"
     notes: |
       A 5.x supplier receive was recorded as a stock transfer with no source
       location. Spree 6.0 has a purchase order for that — with a supplier, a

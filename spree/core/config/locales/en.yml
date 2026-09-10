@@ -1054,6 +1054,8 @@ en:
           description: Assign delivery methods and stock locations to the default store
         delivery_profiles:
           description: Convert shipping categories into delivery profiles
+        external_receives_to_purchase_orders:
+          description: Turn 5.x supplier receives into purchase orders
         fulfillment_statuses:
           description: Collapse fulfillment statuses onto the 6.0 set
         import_export_tenancy:
