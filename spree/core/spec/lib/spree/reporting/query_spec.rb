@@ -348,6 +348,21 @@ RSpec.describe Spree::Reporting::Query do
       expect(result.totals[:net_sales][:value]).to eq(ungrouped.totals[:net_sales][:value])
     end
 
+    it 'keeps a row whose optional association is missing, rather than dropping it' do
+      # A digital order has no shipping address. An inner join would drop it
+      # from the country breakdown while the Total still counted it, so the
+      # rows would silently fail to add up.
+      create(:completed_order_with_totals, store: store, completed_at: 2.days.ago).
+        update_columns(ship_address_id: nil)
+
+      grouped = run(metrics: %w[orders], dimensions: %w[country])
+      ungrouped = run(metrics: %w[orders])
+
+      expect(grouped.rows.sum { |row| row[:metrics][:orders][:value] }).
+        to eq(ungrouped.totals[:orders][:value])
+      expect(grouped.rows.map { |row| row[:dimensions][:country] }).to include(nil)
+    end
+
     it 'counts a line item once when a filter matches it through several categories' do
       result = run(metrics: %w[units_sold],
                    filters: [{ dimension: 'category', op: 'in', value: categories.map(&:prefixed_id) }])
@@ -507,9 +522,11 @@ RSpec.describe Spree::Reporting::Query do
 
         result = run(metrics: %w[net_sales units_sold], dimensions: %w[category], sort: '-net_sales')
 
-        expect(result.rows.length).to eq(1)
         expect(result.rows.first[:dimensions][:category]).to eq(category.id)
         expect(result.rows.first[:metrics][:units_sold][:value]).to be > 0
+        # order2's products were never categorised, so they group under the
+        # NULL key rather than dropping out of the breakdown entirely.
+        expect(result.rows.map { |row| row[:dimensions][:category] }).to include(nil)
       end
 
       it 'groups by payment status without a lookup' do

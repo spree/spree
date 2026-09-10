@@ -142,10 +142,16 @@ module Spree
         # Dimension joins are declared from the dimension's own base. Reaching
         # an :orders dimension (e.g. the ship address) from the :line_items
         # base goes through the order association.
+        # LEFT joins, always. A dimension's association is frequently optional —
+        # an order need not have a shipping address, a product need not be in a
+        # category — and an inner join drops those rows from the breakdown
+        # while the ungrouped Total still counts them, so the rows quietly fail
+        # to add up. Left-joining produces a NULL key instead, which is a real
+        # group the hydration already renders as "Unassigned".
         def join_for(scope, dimension, base)
           return scope if dimension.joins.blank?
-          return scope.joins(dimension.joins) if dimension.base == base
-          return scope.joins(order: dimension.joins) if base == :line_items && dimension.base == :orders
+          return scope.left_joins(dimension.joins) if dimension.base == base
+          return scope.left_joins(order: dimension.joins) if base == :line_items && dimension.base == :orders
 
           scope
         end

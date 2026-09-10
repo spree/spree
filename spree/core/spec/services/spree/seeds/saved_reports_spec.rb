@@ -22,6 +22,18 @@ RSpec.describe Spree::Seeds::SavedReports do
     end
   end
 
+  it 'does not re-create the built-ins when the locale changes' do
+    described_class.call
+    seeded = store.saved_reports.seeded.count
+
+    # The names are translated, so a store seeded in one language must still
+    # recognise its own built-ins when the seeder next runs in another.
+    I18n.with_locale(:de) do
+      expect { described_class.call }.not_to change { store.saved_reports.count }
+    end
+    expect(store.saved_reports.seeded.count).to eq(seeded)
+  end
+
   it 'treats a merchant report differing only in case as already present' do
     create(:saved_report, store: store, name: 'top products')
 

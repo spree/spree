@@ -29,8 +29,6 @@ module Spree
             (threshold || DashboardOperationsSerializer::DEFAULT_LOW_STOCK_THRESHOLD).clamp(1, 1000)
           end
 
-          private
-
           def action_kind
             'read'
           end

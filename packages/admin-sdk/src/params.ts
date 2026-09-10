@@ -3055,8 +3055,6 @@ export interface SavedReportCreateParams {
   description?: string | null
   /** A reporting contract query — validated against the registry on save. */
   query: ReportingQuery
-  /** Visualization config; inferred from the query shape when omitted. */
-  viz?: Record<string, unknown> | null
 }
 
 export type SavedReportUpdateParams = Partial<SavedReportCreateParams>

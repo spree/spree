@@ -265,6 +265,7 @@ nav.add({
   path: '/reports',
   icon: AnalyticsIcon,
   position: 600,
+  subject: Subject.SavedReport,
 })
 
 nav.add({

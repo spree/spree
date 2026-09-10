@@ -75,7 +75,11 @@ module Spree
 
           REPORTS.each do |report|
             name = Spree.t("reporting.seeds.#{report[:key]}.name")
-            next if existing.include?(name.downcase)
+            # Every locale's name for this report, not just the current one:
+            # the name is translated, so a store seeded in one language and
+            # re-seeded in another would otherwise recognise none of its own
+            # built-ins and create a second full set.
+            next if known_names(report[:key]).intersect?(existing)
 
             store.saved_reports.create!(
               name: name,
@@ -85,6 +89,16 @@ module Spree
             )
           end
         end
+      end
+
+      private
+
+      # The downcased name this report carries in every locale core ships.
+      def known_names(key)
+        @known_names ||= {}
+        @known_names[key] ||= I18n.available_locales.filter_map do |locale|
+          Spree.t("reporting.seeds.#{key}.name", locale: locale, default: nil)&.downcase
+        end.to_set
       end
     end
   end
