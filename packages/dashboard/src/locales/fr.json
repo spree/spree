@@ -2076,6 +2076,11 @@
           "help": "Calculer la taxe à partir de l'adresse de livraison du client. Désactivez cette option pour utiliser l'adresse de facturation.",
           "label": "Taxe selon l'adresse de livraison"
         },
+        "low_stock_threshold": {
+          "help": "Une variante suivie ayant au plus ce nombre d’unités en stock est signalée en stock faible sur l’accueil. 0 désactive l’alerte.",
+          "label": "Seuil de stock faible",
+          "suffix": "unités"
+        },
         "track_inventory_levels": {
           "help": "Compter les quantités disponibles. Désactivez pour traiter chaque produit comme toujours disponible.",
           "label": "Suivre les niveaux de stock"
@@ -3184,11 +3189,8 @@
         "operations": {
           "title": "Opérations",
           "subtitle": "Ce qui demande votre attention en ce moment.",
-          "orders_to_fulfill": "Commandes à expédier",
-          "payments_to_collect": "Paiements à encaisser",
-          "open_returns": "Retours ouverts",
-          "low_stock_items": "Variantes en stock faible",
-          "out_of_stock_items": "Variantes en rupture de stock"
+          "failed": "Impossible de charger ces compteurs.",
+          "empty": "Rien ici n’est visible pour votre rôle."
         },
         "rankings": {
           "title": "Classements",

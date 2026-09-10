@@ -2076,6 +2076,11 @@
           "help": "Die Steuer anhand der Lieferadresse des Kunden berechnen. Deaktivieren Sie diese Option, um stattdessen die Rechnungsadresse zu verwenden.",
           "label": "Steuer nach Lieferadresse"
         },
+        "low_stock_threshold": {
+          "help": "Eine bestandsgeführte Variante mit höchstens so vielen Einheiten gilt auf der Startseite als niedriger Bestand. 0 schaltet den Hinweis aus.",
+          "label": "Schwelle für niedrigen Bestand",
+          "suffix": "Stück"
+        },
         "track_inventory_levels": {
           "help": "Bestände zählen. Ausschalten, um jedes Produkt als immer verfügbar zu behandeln.",
           "label": "Lagerbestand verfolgen"
@@ -3184,11 +3189,8 @@
         "operations": {
           "title": "Aufgaben",
           "subtitle": "Was gerade Ihre Aufmerksamkeit braucht.",
-          "orders_to_fulfill": "Zu versendende Bestellungen",
-          "payments_to_collect": "Ausstehende Zahlungen",
-          "open_returns": "Offene Retouren",
-          "low_stock_items": "Varianten mit niedrigem Bestand",
-          "out_of_stock_items": "Nicht vorrätige Varianten"
+          "failed": "Diese Zahlen konnten nicht geladen werden.",
+          "empty": "Für Ihre Rolle gibt es hier nichts zu sehen."
         },
         "rankings": {
           "title": "Rangliste",

@@ -2094,6 +2094,11 @@
           "help": "Oblicz podatek na podstawie adresu dostawy klienta. Wyłącz tę opcję, aby zamiast tego użyć adresu rozliczeniowego.",
           "label": "Podatek według adresu dostawy"
         },
+        "low_stock_threshold": {
+          "help": "Śledzony wariant z co najwyżej taką liczbą sztuk jest oznaczany na stronie głównej jako niski stan. 0 wyłącza ostrzeżenie.",
+          "label": "Próg niskiego stanu",
+          "suffix": "szt."
+        },
         "track_inventory_levels": {
           "help": "Licz dostępne ilości. Wyłącz, aby traktować każdy produkt jako zawsze dostępny.",
           "label": "Śledź stany magazynowe"
@@ -3216,11 +3221,8 @@
         "operations": {
           "title": "Operacje",
           "subtitle": "Co teraz wymaga Twojej uwagi.",
-          "orders_to_fulfill": "Zamówienia do wysłania",
-          "payments_to_collect": "Płatności do pobrania",
-          "open_returns": "Otwarte zwroty",
-          "low_stock_items": "Warianty z niskim stanem magazynowym",
-          "out_of_stock_items": "Warianty niedostępne"
+          "failed": "Nie udało się wczytać tych liczników.",
+          "empty": "Twoja rola nie ma tu nic do wyświetlenia."
         },
         "rankings": {
           "title": "Rankingi",

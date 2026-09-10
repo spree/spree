@@ -2076,6 +2076,11 @@
           "help": "Calculate tax from the customer's shipping address. Turn this off to tax by the billing address instead.",
           "label": "Tax by shipping address"
         },
+        "low_stock_threshold": {
+          "help": "A tracked variant with this many units or fewer on hand counts as low stock on the home screen. 0 turns the warning off.",
+          "label": "Low stock threshold",
+          "suffix": "units"
+        },
         "track_inventory_levels": {
           "help": "Count on-hand quantities. Turn off to treat every product as always available.",
           "label": "Track stock levels"
@@ -3184,11 +3189,8 @@
         "operations": {
           "title": "Operations",
           "subtitle": "What needs your attention right now.",
-          "orders_to_fulfill": "Orders to fulfill",
-          "payments_to_collect": "Payments to collect",
-          "open_returns": "Open returns",
-          "low_stock_items": "Low stock variants",
-          "out_of_stock_items": "Out of stock variants"
+          "failed": "Could not load these counts.",
+          "empty": "Nothing here is visible to your role."
         },
         "rankings": {
           "title": "Rankings",

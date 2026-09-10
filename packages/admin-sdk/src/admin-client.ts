@@ -123,12 +123,12 @@ export interface ReportingSchema {
 export interface DashboardOperations {
   /** Prefixed channel id the order-based counts are scoped to; null means all channels. Stock counts are always store-wide. */
   channel_id: string | null
-  low_stock_threshold: number
-  orders_to_fulfill: number
-  payments_to_collect: number
-  open_returns: number
-  low_stock_items: number
-  out_of_stock_items: number
+  /**
+   * The counters registered on `Spree.reporting` that this caller may read,
+   * in registration order. Labels and links come from the server, so a
+   * counter an extension registers renders without a dashboard change.
+   */
+  counters: DashboardCounter[]
 }
 
 export interface AuthTokens {
@@ -385,6 +385,7 @@ import type {
   CustomerGroup,
   CustomField,
   CustomFieldDefinition,
+  DashboardCounter,
   Delivery,
   DeliveryMethod,
   DeliveryMethodRule,
@@ -913,7 +914,7 @@ export class AdminClient {
 
   readonly dashboard = {
     operations: (
-      params?: { low_stock_threshold?: number; channel_id?: string },
+      params?: { channel_id?: string },
       options?: RequestOptions,
     ): Promise<DashboardOperations> =>
       this.request<DashboardOperations>('GET', '/dashboard/operations', { ...options, params }),

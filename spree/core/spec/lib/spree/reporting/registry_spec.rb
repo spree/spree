@@ -32,12 +32,43 @@ RSpec.describe Spree::Reporting::Registry do
     end
   end
 
+  describe '#counter' do
+    let(:count) { ->(store, channel:) { 1 } }
+
+    it 'registers and fetches counters in registration order' do
+      registry.counter :on_hold, count: count, link: { resource: 'orders', filters: [] }
+      registry.counter :flagged, count: count
+
+      expect(registry.counters.keys).to eq(%i[on_hold flagged])
+      expect(registry.counter!('on_hold').link[:resource]).to eq('orders')
+    end
+
+    it 'requires a key_scope whenever a subject is declared' do
+      expect do
+        registry.counter :on_hold, count: count, subject: -> { Spree::Order }
+      end.to raise_error(ArgumentError, /key_scope/)
+    end
+
+    it 'refuses a count that is not callable' do
+      expect { registry.counter :on_hold, count: 3 }.to raise_error(ArgumentError, /callable/)
+    end
+
+    it 'raises on duplicate registration unless replace: true' do
+      registry.counter :on_hold, count: count
+      expect { registry.counter :on_hold, count: count }.to raise_error(ArgumentError, /already registered/)
+
+      registry.counter :on_hold, count: ->(_store, channel:) { 2 }, replace: true
+      expect(registry.counter!(:on_hold).count.call(nil, channel: nil)).to eq(2)
+    end
+  end
+
   describe 'unknown members' do
     it 'raises UnknownMember naming the valid options' do
       registry.metric :margin, sql: 'SUM(x)', base: :orders
 
       expect { registry.metric!(:nope) }.to raise_error(Spree::Reporting::UnknownMember, /margin/)
       expect { registry.dimension!(:nope) }.to raise_error(Spree::Reporting::UnknownMember)
+      expect { registry.counter!(:nope) }.to raise_error(Spree::Reporting::UnknownMember, /counter/)
     end
   end
 
@@ -47,6 +78,7 @@ RSpec.describe Spree::Reporting::Registry do
       expect(Spree.reporting.metric!(:average_order_value).derived?).to be true
       expect(Spree.reporting.dimension!(:completed_at).grains).to include(:day)
       expect(Spree.reporting.dimension!(:product).lookup).to eq(:product)
+      expect(Spree.reporting.counter!(:orders_to_fulfill).key_scope).to eq('read_orders')
     end
   end
 

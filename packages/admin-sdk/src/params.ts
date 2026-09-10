@@ -71,6 +71,8 @@ export interface StoreUpdateParams {
   preferred_track_inventory_levels?: boolean
   /** Holds stock for shoppers while they check out, so the same item can't be sold twice. */
   preferred_stock_reservations_enabled?: boolean
+  /** On-hand units at or below which a tracked variant counts as low stock on the home screen; 0 turns the warning off. */
+  preferred_low_stock_threshold?: number
   /** Records price changes for the EU Omnibus lowest-price-in-30-days display. */
   preferred_track_price_history?: boolean
   /** Whether products with no price in the shopper's currency still appear in listings. */

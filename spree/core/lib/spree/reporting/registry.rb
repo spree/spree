@@ -105,16 +105,39 @@ module Spree
       def reaches?(dimension_base) = Array(reaches).include?(dimension_base)
     end
 
-    # Allowlist of queryable metrics + dimensions. One global instance lives at
-    # `Spree.reporting`; core seeds the starter vocabulary in the engine
-    # initializer and applications/extensions append theirs in initializer files.
+    # A point-in-time count of things that need attention right now: orders
+    # waiting to ship, returns waiting on a decision, variants running low.
+    # No time range, no currency and no base — a counter is not a report
+    # over a period but the state of the store at this instant, which is why
+    # it is evaluated by a lambda rather than compiled into the query.
+    #
+    # @!attribute count
+    #   ->(store, channel:) returning an Integer. A channel narrows what can
+    #   be narrowed (orders); store-wide facts such as stock ignore it.
+    # @!attribute subject / key_scope
+    #   Authorization, declared the same way as on metrics and dimensions,
+    #   so a caller sees only the counters over data they may read.
+    # @!attribute link
+    #   Where the number leads, declared beside the count so the two cannot
+    #   disagree: `{ resource: 'orders', filters: [{ field:, operator:, value: }] }`.
+    #   Omitted when no list can honestly show exactly what was counted.
+    # @!attribute description
+    #   ->(store) returning a sentence, for counters whose meaning depends on
+    #   a store setting (a threshold). Omitted = the locale's static text.
+    Counter = Struct.new(:name, :count, :subject, :key_scope, :link, :description, keyword_init: true)
+
+    # Allowlist of queryable metrics, dimensions and counters. One global
+    # instance lives at `Spree.reporting`; core seeds the starter vocabulary in
+    # the engine initializer and applications/extensions append theirs in
+    # initializer files.
     class Registry
-      attr_reader :metrics, :dimensions, :bases
+      attr_reader :metrics, :dimensions, :bases, :counters
 
       def initialize
         @metrics = {}
         @dimensions = {}
         @bases = {}
+        @counters = {}
       end
 
       # @param name [Symbol]
@@ -161,8 +184,26 @@ module Spree
         @dimensions[name] = Dimension.new(name: name, **opts)
       end
 
+      # @param name [Symbol]
+      # @param count [Proc] ->(store, channel:) → Integer
+      # @param link [Hash, nil] `{ resource:, filters: [{ field:, operator:, value: }] }`
+      # @param description [Proc, nil] ->(store) → String
+      def counter(name, replace: false, count:, subject: nil, key_scope: nil, link: nil, description: nil)
+        name = name.to_sym
+        raise ArgumentError, "counter #{name} already registered (pass replace: true to override)" if @counters.key?(name) && !replace
+        raise ArgumentError, "counter #{name} declares a subject and must also declare its key_scope" if subject && key_scope.blank?
+        raise ArgumentError, "counter #{name} needs a callable count" unless count.respond_to?(:call)
+
+        @counters[name] = Counter.new(name: name, count: count, subject: subject, key_scope: key_scope,
+                                      link: link, description: description)
+      end
+
       def metric!(name)
         @metrics[name.to_sym] || raise(UnknownMember.new(:metric, name, @metrics.keys))
+      end
+
+      def counter!(name)
+        @counters[name.to_sym] || raise(UnknownMember.new(:counter, name, @counters.keys))
       end
 
       def dimension!(name)
@@ -192,7 +233,6 @@ module Spree
       def family_of(metric)
         base!(components(metric).first.base).family
       end
-
     end
   end
 end

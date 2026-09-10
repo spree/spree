@@ -3,6 +3,8 @@ require 'spree/reporting/default_vocabulary'
 require 'spree/reporting/query'
 require 'spree/reporting/schema'
 require 'spree/reporting/result'
+require 'spree/reporting/counter_result'
+require 'spree/reporting/counters'
 require 'spree/reporting/hydration'
 require 'spree/reporting/adapters/base'
 require 'spree/reporting/adapters/live'
@@ -14,6 +16,7 @@ module Spree
   #
   #   Spree.reporting.metric :wholesale_margin, sql: '...', base: :line_items, format: :money
   #   Spree.reporting.dimension :warehouse, base: :orders, column: :stock_location_id, lookup: 'Spree::StockLocation'
+  #   Spree.reporting.counter :orders_on_hold, count: ->(store, channel:) { store.orders.on_hold.count }
   #
   # Consumers (Admin API, dashboard, saved reports, AI tools) compose queries
   # against registered names only — see Spree::Reporting::Query.

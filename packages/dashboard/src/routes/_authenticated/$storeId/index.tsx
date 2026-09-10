@@ -1,4 +1,4 @@
-import type { DashboardOperations, ReportingQuery } from '@spree/admin-sdk'
+import type { DashboardCounter, DashboardOperations, ReportingQuery } from '@spree/admin-sdk'
 import { SpreeError } from '@spree/admin-sdk'
 import {
   adminClient,
@@ -43,6 +43,7 @@ import {
 import {
   ChartColumnIcon,
   ChevronRightIcon,
+  CircleDotIcon,
   CreditCardIcon,
   PackageXIcon,
   RotateCcwIcon,
@@ -223,51 +224,51 @@ function DashboardPage() {
 const OPERATIONS_ROW_CLASS =
   'flex items-center gap-3 border-b border-border-subtle px-4 py-3 last:border-0'
 
-type OperationsFilter = { id: string; field: string; operator: string; value: string }
+/** Icons for the counters core ships. A counter an extension registers
+ *  arrives with a label and a link but no icon, so it takes the fallback. */
+const COUNTER_ICONS: Record<string, typeof TruckIcon> = {
+  orders_to_fulfill: TruckIcon,
+  payments_to_collect: CreditCardIcon,
+  open_returns: RotateCcwIcon,
+  low_stock_items: TriangleAlertIcon,
+  out_of_stock_items: PackageXIcon,
+}
 
-const OPERATIONS_ROWS: Array<{
-  key: keyof Omit<DashboardOperations, 'low_stock_threshold' | 'channel_id'>
-  icon: typeof TruckIcon
-  link?: { to: '/$storeId/orders' | '/$storeId/products'; filters: OperationsFilter[] }
-}> = [
-  {
-    key: 'orders_to_fulfill',
-    icon: TruckIcon,
-    link: {
-      to: '/$storeId/orders',
-      filters: [
-        // Mirrors the `ready_to_ship` scope backing the count.
-        { id: 'home-fulfill', field: 'fulfillment_status', operator: 'eq', value: 'unfulfilled' },
-      ],
-    },
-  },
-  {
-    key: 'payments_to_collect',
-    icon: CreditCardIcon,
-    link: {
-      to: '/$storeId/orders',
-      filters: [
-        // Mirrors the payments_to_collect statuses backing the count.
-        {
-          id: 'home-collect',
-          field: 'payment_status',
-          operator: 'in',
-          value: 'none,authorized,partially_paid',
-        },
-      ],
-    },
-  },
-  { key: 'open_returns', icon: RotateCcwIcon },
-  { key: 'low_stock_items', icon: TriangleAlertIcon },
-  {
-    key: 'out_of_stock_items',
-    icon: PackageXIcon,
-    link: {
-      to: '/$storeId/products',
-      filters: [{ id: 'home-oos', field: 'in_stock', operator: 'eq', value: 'false' }],
-    },
-  },
-]
+/** Lists a server-declared link can land on. A resource this dashboard has
+ *  no list for renders as a plain row rather than a dead link. */
+const COUNTER_ROUTES = {
+  orders: '/$storeId/orders',
+  returns: '/$storeId/returns',
+  products: '/$storeId/products',
+} as const
+
+/** The counters core registers, so the skeleton holds the card's height
+ *  until the numbers arrive. */
+const COUNTER_SKELETON_ROWS = Object.keys(COUNTER_ICONS)
+
+type CounterLink = {
+  to: (typeof COUNTER_ROUTES)[keyof typeof COUNTER_ROUTES]
+  filters: Array<{ id: string; field: string; operator: string; value: string }>
+}
+
+/** The list a counter opens. The server declares the filter beside the count
+ *  so the two cannot drift; the client only adds the channel it is viewing. */
+function counterLink(
+  link: DashboardCounter['link'],
+  channelId: string | undefined,
+): CounterLink | undefined {
+  if (!link) return undefined
+  const to = COUNTER_ROUTES[link.resource as keyof typeof COUNTER_ROUTES]
+  if (!to) return undefined
+
+  const filters = link.filters.map((filter) => ({ id: `home-${filter.field}`, ...filter }))
+  // Order counts are channel-scoped, so their lists must be too; stock and
+  // returns are store-wide and take no channel filter.
+  if (channelId && link.resource === 'orders') {
+    filters.push({ id: 'home-channel', field: 'channel_id', operator: 'eq', value: channelId })
+  }
+  return { to, filters }
+}
 
 function OperationsCard({
   data,
@@ -279,11 +280,12 @@ function OperationsCard({
   className: string
   /** The screen's channel, or undefined for all channels. */
   channelId: string | undefined
-  /** The counts could not be loaded — show a dash rather than a skeleton forever. */
+  /** The counts could not be loaded — say so rather than show a skeleton forever. */
   failed: boolean
 }) {
   const { t } = useTranslation()
   const { storeId } = Route.useParams()
+  const counters = data?.counters
 
   return (
     <Card className={className}>
@@ -293,67 +295,87 @@ function OperationsCard({
       </CardHeader>
       <CardContent className="p-0">
         <div className="flex flex-col">
-          {OPERATIONS_ROWS.map(({ key, icon: Icon, link }) => {
-            const count = data?.[key]
-            // Order counts are channel-scoped, so their lists must be too;
-            // stock counts are store-wide and take no channel filter.
-            const filters =
-              link && channelId && link.to === '/$storeId/orders'
-                ? [
-                    ...link.filters,
-                    { id: 'home-channel', field: 'channel_id', operator: 'eq', value: channelId },
-                  ]
-                : link?.filters
-            const content = (
-              <>
-                <span className="flex size-8 shrink-0 items-center justify-center rounded-md border hover:bg-accent/50">
-                  <Icon className="size-4 text-muted-foreground" />
-                </span>
-                <span className="flex-1 text-sm">{t(`admin.pages.home.operations.${key}`)}</span>
-                {count === undefined ? (
-                  failed ? (
-                    <span className="text-sm text-muted-foreground">—</span>
-                  ) : (
-                    <Skeleton className="h-4 w-8" />
-                  )
-                ) : (
-                  <span
-                    className={cn(
-                      'text-sm font-semibold tabular-nums',
-                      count === 0 && 'text-muted-foreground',
-                    )}
-                  >
-                    {count.toLocaleString()}
-                  </span>
-                )}
-                {link && <ChevronRightIcon className="size-4 text-muted-foreground" />}
-              </>
+          {counters === undefined ? (
+            failed ? (
+              <p className="px-4 py-3 text-sm text-muted-foreground">
+                {t('admin.pages.home.operations.failed')}
+              </p>
+            ) : (
+              COUNTER_SKELETON_ROWS.map((key) => (
+                <div key={key} className={OPERATIONS_ROW_CLASS}>
+                  <Skeleton className="size-8 rounded-md" />
+                  <Skeleton className="h-4 flex-1" />
+                  <Skeleton className="h-4 w-8" />
+                </div>
+              ))
             )
-
-            if (link) {
-              return (
-                <Link
-                  key={key}
-                  to={link.to}
-                  params={{ storeId }}
-                  search={{ filters }}
-                  className={cn(OPERATIONS_ROW_CLASS, 'hover:bg-accent/50')}
-                >
-                  {content}
-                </Link>
-              )
-            }
-
-            return (
-              <div key={key} className={OPERATIONS_ROW_CLASS}>
-                {content}
-              </div>
-            )
-          })}
+          ) : counters.length === 0 ? (
+            <p className="px-4 py-3 text-sm text-muted-foreground">
+              {t('admin.pages.home.operations.empty')}
+            </p>
+          ) : (
+            counters.map((counter) => (
+              <CounterRow
+                key={counter.key}
+                counter={counter}
+                link={counterLink(counter.link, channelId)}
+                storeId={storeId}
+              />
+            ))
+          )}
         </div>
       </CardContent>
     </Card>
   )
+}
+
+function CounterRow({
+  counter,
+  link,
+  storeId,
+}: {
+  counter: DashboardCounter
+  link: CounterLink | undefined
+  storeId: string
+}) {
+  const Icon = COUNTER_ICONS[counter.key] ?? CircleDotIcon
+  const content = (
+    <>
+      <span className="flex size-8 shrink-0 items-center justify-center rounded-md border">
+        <Icon className="size-4 text-muted-foreground" />
+      </span>
+      <span className="flex min-w-0 flex-1 flex-col">
+        <span className="text-sm">{counter.label}</span>
+        {counter.description && (
+          <span className="truncate text-xs text-muted-foreground">{counter.description}</span>
+        )}
+      </span>
+      <span
+        className={cn(
+          'text-sm font-semibold tabular-nums',
+          counter.value === 0 && 'text-muted-foreground',
+        )}
+      >
+        {counter.value.toLocaleString()}
+      </span>
+      {link && <ChevronRightIcon className="size-4 text-muted-foreground" />}
+    </>
+  )
+
+  if (link) {
+    return (
+      <Link
+        to={link.to}
+        params={{ storeId }}
+        search={{ filters: link.filters }}
+        className={cn(OPERATIONS_ROW_CLASS, 'hover:bg-accent/50')}
+      >
+        {content}
+      </Link>
+    )
+  }
+
+  return <div className={OPERATIONS_ROW_CLASS}>{content}</div>
 }
 
 type RankingTab = 'customers' | 'categories' | 'companies' | 'sellers'

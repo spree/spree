@@ -187,6 +187,22 @@ RSpec.describe Spree::Api::V3::Admin::StoreController, type: :controller do
       end
     end
 
+    context 'with the low stock threshold' do
+      let(:params) { { preferred_low_stock_threshold: 12 } }
+
+      it 'saves it and returns it' do
+        subject
+        expect(response).to have_http_status(:ok)
+        expect(json_response['preferred_low_stock_threshold']).to eq(12)
+        expect(store.reload.preferred_low_stock_threshold).to eq(12)
+      end
+
+      it 'refuses a negative threshold' do
+        patch :update, params: { preferred_low_stock_threshold: -1 }, as: :json
+        expect(response).to have_http_status(:unprocessable_content)
+      end
+    end
+
     context 'with invalid params' do
       let(:params) { { name: '' } }
 

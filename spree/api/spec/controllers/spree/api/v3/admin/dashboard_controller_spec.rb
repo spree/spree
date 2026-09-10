@@ -10,73 +10,74 @@ RSpec.describe Spree::Api::V3::Admin::DashboardController, type: :controller do
   describe 'GET #operations' do
     subject { get :operations, as: :json }
 
-    it 'returns all counters' do
+    let(:counter_keys) { json_response['counters'].map { |counter| counter['key'] } }
+
+    it 'returns every registered counter with its label, value and link' do
       subject
+
       expect(response).to have_http_status(:ok)
-      expect(json_response).to include(
-        'low_stock_threshold', 'orders_to_fulfill', 'payments_to_collect',
-        'open_returns', 'low_stock_items', 'out_of_stock_items'
+      expect(json_response['channel_id']).to be_nil
+      expect(counter_keys).to eq(%w[orders_to_fulfill payments_to_collect open_returns low_stock_items out_of_stock_items])
+
+      fulfill = json_response['counters'].first
+      expect(fulfill).to include('label' => 'Orders to fulfill', 'value' => 0)
+      expect(fulfill['link']).to eq(
+        'resource' => 'orders',
+        'filters' => [{ 'field' => 'fulfillment_status', 'operator' => 'eq', 'value' => 'unfulfilled' }]
       )
     end
 
-    context 'with actionable orders' do
-      let!(:ready_order) { create(:order_ready_to_ship, store: store) }
-      let!(:balance_due_order) do
-        create(:completed_order_with_totals, store: store, payment_status: 'authorized', fulfillment_status: 'fulfilled')
+    it 'scopes order counts to the requested channel' do
+      channel = create(:channel, store: store)
+      create(:order_ready_to_ship, store: store)
+      create(:order_ready_to_ship, store: store, channel: channel)
+
+      get :operations, params: { channel_id: channel.prefixed_id }, as: :json
+
+      expect(json_response['channel_id']).to eq(channel.prefixed_id)
+      expect(json_response['counters'].find { |c| c['key'] == 'orders_to_fulfill' }['value']).to eq(1)
+    end
+
+    it 'refuses a channel from another store' do
+      other_channel = create(:channel, store: create(:store))
+
+      get :operations, params: { channel_id: other_channel.prefixed_id }, as: :json
+      expect(response).to have_http_status(:not_found)
+    end
+
+    context 'via a secret key' do
+      let(:headers) { { 'x-spree-api-key' => key.plaintext_token } }
+      let(:key) { create(:api_key, :secret, store: store, scopes: scopes) }
+
+      context 'with the dashboard scope alone' do
+        let(:scopes) { %w[read_dashboard] }
+
+        it 'returns an empty list rather than counters over data the key cannot read' do
+          subject
+          expect(response).to have_http_status(:ok)
+          expect(counter_keys).to be_empty
+        end
       end
 
-      it 'counts orders to fulfill and payments to collect' do
-        subject
-        expect(json_response['orders_to_fulfill']).to eq(1)
-        expect(json_response['payments_to_collect']).to eq(1)
-      end
+      context 'with the scopes some counters require' do
+        let(:scopes) { %w[read_dashboard read_stock] }
 
-      it 'scopes order counts to the requested channel' do
-        channel = create(:channel, store: store)
-        create(:order_ready_to_ship, store: store, channel: channel)
-
-        get :operations, params: { channel_id: channel.prefixed_id }, as: :json
-        expect(json_response['channel_id']).to eq(channel.prefixed_id)
-        expect(json_response['orders_to_fulfill']).to eq(1)
-        expect(json_response['payments_to_collect']).to eq(0)
+        it 'returns only those counters' do
+          subject
+          expect(counter_keys).to eq(%w[low_stock_items out_of_stock_items])
+        end
       end
     end
 
-    context 'with an open return' do
-      let!(:open_return) { create(:return) }
+    context 'for a staff role without order access' do
+      include_context 'API v3 Admin with custom permissions'
 
-      it 'counts requested and approved returns' do
+      let(:custom_permissions) { %w[read_dashboard read_stock] }
+
+      it 'returns only the stock counters' do
         subject
-        expect(json_response['open_returns']).to eq(1)
-      end
-    end
-
-    context 'with stock levels' do
-      let!(:low_stock_product) { create(:product, store: store) }
-      let!(:out_of_stock_product) { create(:product, store: store) }
-
-      before do
-        low_stock_product.default_variant.stock_levels.first.update!(count_on_hand: 3)
-      end
-
-      it 'counts low stock and out of stock variants' do
-        subject
-        expect(json_response['low_stock_items']).to eq(1)
-        expect(json_response['out_of_stock_items']).to eq(1)
-      end
-
-      it 'respects the low_stock_threshold param' do
-        get :operations, params: { low_stock_threshold: 2 }, as: :json
-        expect(json_response['low_stock_threshold']).to eq(2)
-        expect(json_response['low_stock_items']).to eq(0)
-      end
-
-      it 'ignores variants that do not track inventory' do
-        low_stock_product.default_variant.update!(track_inventory: false)
-        out_of_stock_product.default_variant.update!(track_inventory: false)
-        subject
-        expect(json_response['low_stock_items']).to eq(0)
-        expect(json_response['out_of_stock_items']).to eq(0)
+        expect(response).to have_http_status(:ok)
+        expect(counter_keys).to eq(%w[low_stock_items out_of_stock_items])
       end
     end
 
@@ -88,11 +89,5 @@ RSpec.describe Spree::Api::V3::Admin::DashboardController, type: :controller do
         expect(response).to have_http_status(:unauthorized)
       end
     end
-  end
-
-  it 'ignores a non-scalar low_stock_threshold instead of raising' do
-    get :operations, params: { low_stock_threshold: ['1'] }, as: :json
-
-    expect(response).to have_http_status(:ok)
   end
 end

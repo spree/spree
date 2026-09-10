@@ -157,6 +157,50 @@ Declaring `subject` without `key_scope` raises at registration, so a member
 cannot ship with one axis unguarded. The schema endpoint filters by the same
 rule, so a picker never offers a dimension whose query would be refused.
 
+## Counters
+
+Not everything on the home screen is a report over a period. "Orders to
+fulfill", "Open returns" and "Low stock variants" are the state of the store
+right now, with no time range and no currency. The registry holds these as
+**counters** beside metrics and dimensions, and `GET /dashboard/operations`
+evaluates them:
+
+```json
+{
+  "channel_id": null,
+  "counters": [
+    {
+      "key": "orders_to_fulfill",
+      "label": "Orders to fulfill",
+      "description": "Placed orders with nothing shipped yet.",
+      "value": 12,
+      "link": {
+        "resource": "orders",
+        "filters": [{ "field": "fulfillment_status", "operator": "eq", "value": "unfulfilled" }]
+      }
+    }
+  ]
+}
+```
+
+Three things follow from counters living in the registry:
+
+- **Labels come from the server**, the same way metric labels do, so a
+  counter an extension registers appears on every merchant's home screen
+  without a dashboard release.
+- **Each counter carries its own `subject` and `key_scope`**, filtered by the
+  same rule as the rest of the vocabulary. A role without stock access gets
+  a shorter list, not a refused card.
+- **The link is declared beside the count.** The list a number opens shows
+  exactly the rows that were counted, because the filter and the query are
+  registered together. A counter with no list that can honestly show what it
+  counted carries no link.
+
+Core ships five: orders to fulfill, payments to collect, open returns, low
+stock variants and out of stock variants. The low stock counter reads the
+store's `low_stock_threshold` preference (default five units; zero turns it
+off), which merchants set under store settings → Inventory.
+
 ## What a report counts
 
 Two rules decide what the numbers mean:

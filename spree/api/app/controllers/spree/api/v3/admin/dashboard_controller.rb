@@ -2,32 +2,33 @@ module Spree
   module Api
     module V3
       module Admin
-        # Point-in-time operational counts for the dashboard home. Time-series
+        # Point-in-time operational counts for the dashboard home, evaluated
+        # from the counters registered on Spree.reporting. Time-series
         # analytics live in the semantic reporting endpoint (ReportingController).
         class DashboardController < Admin::BaseController
+          include ReportingAuthorization
+
           scoped_resource :dashboard
 
           # GET /api/v3/admin/dashboard/operations
+          #
+          # Filtered to the counters this caller may read, so a limited role
+          # gets a shorter list rather than a refused card.
           def operations
-            serializer = DashboardOperationsSerializer.new(
+            channel = requested_channel
+            counters = Spree::Reporting::Counters.new(
               store: current_store,
-              channel: requested_channel,
-              low_stock_threshold: low_stock_threshold
+              channel: channel,
+              allowed: ->(counter) { member_allowed?(counter) }
             )
 
-            render json: serializer.to_h
+            render json: {
+              channel_id: channel&.prefixed_id,
+              counters: DashboardCounterSerializer.new(counters.to_a).serializable_hash
+            }
           end
 
           private
-
-          # `?low_stock_threshold[]=1` arrives as an Array, which has no #to_i;
-          # anything that is not a plain integer falls back to the default.
-          def low_stock_threshold
-            value = params[:low_stock_threshold]
-            threshold = value.is_a?(String) || value.is_a?(Integer) ? Integer(value, exception: false) : nil
-
-            (threshold || DashboardOperationsSerializer::DEFAULT_LOW_STOCK_THRESHOLD).clamp(1, 1000)
-          end
 
           def action_kind
             'read'

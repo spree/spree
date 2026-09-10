@@ -87,6 +87,20 @@ module Spree
         "SUM(CASE WHEN %{stock_movements}.kind = '#{kind}' THEN %{stock_movements}.quantity ELSE 0 END)"
       end
 
+      PAYMENTS_OWED = %w[none authorized partially_paid].freeze
+      OPEN_RETURN_STATUSES = %w[requested approved].freeze
+
+      # Placed orders a merchant still acts on, narrowed to a channel when one
+      # is being looked at.
+      PLACED_ORDERS = ->(store, channel) { store.orders.complete.not_canceled.for_channel(channel) }
+
+      # Stock a merchant is actually counting: tracked variants at active
+      # locations. `store.stock_levels` walks products → variants, so paranoia
+      # default scopes already exclude deleted products and variants.
+      TRACKED_STOCK = lambda { |store|
+        store.stock_levels.with_active_stock_location.where(Spree::Variant.table_name => { track_inventory: true })
+      }
+
       def self.install(registry)
         registry.instance_eval do
           # ---- bases ----
@@ -384,6 +398,54 @@ module Spree
                         [location.id, { id: location.prefixed_id, label: location.name, meta: {} }]
                       end
                     }
+
+          # ---- counters ----
+          #
+          # What needs attention right now. Order counters honour the channel
+          # a merchant is looking at; stock is channel-agnostic. Each link
+          # names the list filter that shows exactly the rows counted — the
+          # stock counters carry none until an inventory list can express
+          # "at or below n on hand" (docs/plans/6.0-inventory-operations.md).
+
+          counter :orders_to_fulfill,
+                  subject: -> { Spree::Order }, key_scope: 'read_orders',
+                  count: ->(store, channel:) { PLACED_ORDERS.call(store, channel).ready_to_ship.count },
+                  link: { resource: 'orders',
+                          filters: [{ field: 'fulfillment_status', operator: 'eq', value: 'unfulfilled' }] }
+
+          # Placed orders still owed money: nothing collected yet, authorized
+          # but not captured, or only partially paid.
+          counter :payments_to_collect,
+                  subject: -> { Spree::Order }, key_scope: 'read_orders',
+                  count: lambda { |store, channel:|
+                    PLACED_ORDERS.call(store, channel).where(payment_status: PAYMENTS_OWED).count
+                  },
+                  link: { resource: 'orders',
+                          filters: [{ field: 'payment_status', operator: 'in', value: PAYMENTS_OWED.join(',') }] }
+
+          counter :open_returns,
+                  subject: -> { Spree::Return }, key_scope: 'read_orders',
+                  count: lambda { |store, channel:|
+                    store.returns.joins(:order).where(status: OPEN_RETURN_STATUSES).
+                      merge(Spree::Order.for_channel(channel)).count
+                  },
+                  link: { resource: 'returns',
+                          filters: [{ field: 'status', operator: 'in', value: OPEN_RETURN_STATUSES.join(',') }] }
+
+          counter :low_stock_items,
+                  subject: -> { Spree::StockLevel }, key_scope: 'read_stock',
+                  count: lambda { |store, channel:|
+                    TRACKED_STOCK.call(store).where(count_on_hand: 1..store.preferred_low_stock_threshold).
+                      distinct.count(:variant_id)
+                  },
+                  description: lambda { |store|
+                    Spree.t('reporting.counters.low_stock_items.description',
+                            count: store.preferred_low_stock_threshold)
+                  }
+
+          counter :out_of_stock_items,
+                  subject: -> { Spree::StockLevel }, key_scope: 'read_stock',
+                  count: ->(store, channel:) { TRACKED_STOCK.call(store).where(count_on_hand: ..0).distinct.count(:variant_id) }
         end
       end
     end

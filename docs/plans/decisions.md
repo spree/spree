@@ -1,3 +1,11 @@
+## 2026-09-10: Home-screen operations counters are reporting registry members
+
+**Context:** `dashboard/operations` served five counts as private methods on a serializer in the API gem, the dashboard hardcoded the matching rows (icons, labels, deep-link filters), one permission covered all five, and the out-of-stock deep link pointed at a products filter the server silently dropped. The low stock threshold was a request parameter with a hardcoded default that nothing sent.
+
+**Decision:** Counters are a fourth member type on `Spree.reporting` (`registry.counter`), evaluated by `Spree::Reporting::Counters` rather than compiled into the query — a counter has no range, currency or base. Each declares `subject` + `key_scope` like every other member and is filtered by the shared `Admin::ReportingAuthorization#member_allowed?`; the endpoint returns `{ key, label, description, value, link }` per counter and the dashboard renders whatever arrives. The link is declared beside the count so the list opened shows exactly the rows counted; a counter with no honest list (the stock ones, until the Inventory page) carries none. `low_stock_threshold` is a `Spree::Store` preference (default 5, 0 = off) surfaced in store settings. `Spree.operations` stays reserved; the registry name `Spree.reporting` is unchanged.
+
+**Consequences:** An extension registers a counter with a locale label and it appears on every merchant's home screen with the right permission gating and no dashboard change. A limited role sees a shorter list, not a refused card. New point-in-time numbers for the home screen are registrations — never serializer methods or client-side derivations. See `6.0-analytics-semantic-layer.md` Decision 15.
+
 ## 2026-09-10: Close-short writes the incoming counter, the Inventory page opens on every location, and the recount is an upgrade step
 
 **Context:** Implementing Phase 7 of `6.0-inventory-operations.md` turned up three things the plan left open. The incoming writer table listed `Update` (which refuses anything past `draft`, so it never changes an incoming figure) and omitted the `Close` workflows, whose whole job is to take a document out of the open set the recount reads. The page had no stated default before a location is picked. And the backfill was described as "run it once" without saying who runs it.

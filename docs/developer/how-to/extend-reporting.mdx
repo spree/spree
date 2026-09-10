@@ -151,6 +151,27 @@ RSpec.describe 'seller reporting vocabulary' do
 end
 ```
 
+## Add a counter
+
+A counter is a point-in-time number for the home screen's Operations card:
+no time range, no currency, no base. It takes the store and the channel the
+merchant is looking at and returns an integer.
+
+```ruby
+Spree.reporting.counter :orders_on_hold,
+  subject: -> { Spree::Order }, key_scope: 'read_orders',
+  count: ->(store, channel:) { store.orders.complete.for_channel(channel).where(on_hold: true).count },
+  link: { resource: 'orders', filters: [{ field: 'on_hold', operator: 'eq', value: 'true' }] }
+```
+
+Add `reporting.counters.orders_on_hold.label` (and optionally `.description`)
+to your locale file; without an entry the name is humanized. Declare `link`
+only when the list filter shows exactly the rows counted — the dashboard
+resolves `resource` to one of its lists (`orders`, `returns`, `products`) and
+appends the channel filter itself for order lists. A counter whose meaning
+depends on a store setting can pass `description:` as a lambda receiving the
+store, which is how the built-in low stock counter names its threshold.
+
 ## Overriding a built-in member
 
 Registration refuses a duplicate name unless you say so explicitly:

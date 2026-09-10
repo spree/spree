@@ -1685,6 +1685,25 @@ en:
       products_performance: Products performance
       sales_total: Sales total
     reporting:
+      counters:
+        low_stock_items:
+          description:
+            one: 1 unit or fewer on hand at an active location.
+            other: "%{count} units or fewer on hand at an active location."
+            zero: Turned off. Set a low stock threshold in store settings to use this.
+          label: Low stock variants
+        open_returns:
+          description: Returns requested or approved and not yet received.
+          label: Open returns
+        orders_to_fulfill:
+          description: Placed orders with nothing shipped yet.
+          label: Orders to fulfill
+        out_of_stock_items:
+          description: Tracked variants with nothing on hand at any active location.
+          label: Out of stock variants
+        payments_to_collect:
+          description: Placed orders still owed money.
+          label: Payments to collect
       dimensions:
         category:
           description: The category the sold product belongs to.

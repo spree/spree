@@ -6,6 +6,8 @@ module Spree
         # one query endpoint compiled against the Spree.reporting registry, plus
         # registry introspection for pickers and agent tool schemas.
         class ReportingController < Admin::BaseController
+          include ReportingAuthorization
+
           scoped_resource :reports
 
           rescue_from Spree::Reporting::UnknownMember, Spree::Reporting::InvalidQuery, with: :render_invalid_query
@@ -71,16 +73,6 @@ module Spree
               authorize!(:read, :reports)
               forbidden = reporting_query.unreadable_subjects(current_ability).first
               raise CanCan::AccessDenied.new(nil, :read, forbidden) if forbidden
-            end
-          end
-
-          # Metrics and dimensions declare authorization the same way, so one
-          # predicate answers for both.
-          def member_allowed?(member)
-            if current_api_key.present?
-              member.key_scope.blank? || current_api_key.has_scope?(member.key_scope)
-            else
-              member.subject.nil? || can?(:read, member.subject.call)
             end
           end
 

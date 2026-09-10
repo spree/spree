@@ -116,6 +116,9 @@ module Spree
                default: Spree::ProviderFailurePolicy::DEFAULT_INVENTORY_POLICY
     # Catalog preferences
     preference :track_inventory_levels, :boolean, default: true
+    # On-hand quantity at or below which a tracked variant counts as running
+    # low on the home screen. 0 turns the warning off.
+    preference :low_stock_threshold, :integer, default: 5
     preference :show_products_without_price, :boolean, default: false
     preference :disable_sku_validation, :boolean, default: false
     # Records price changes so the storefront can show the lowest price of the
@@ -316,6 +319,7 @@ module Spree
     validates :preferred_digital_asset_link_expire_time,
               numericality: { only_integer: true, greater_than: 0, less_than_or_equal_to: 1.hour.to_i }
     validates :preferred_stock_reservation_ttl_minutes, numericality: { only_integer: true, greater_than: 0 }
+    validates :preferred_low_stock_threshold, numericality: { only_integer: true, greater_than_or_equal_to: 0 }
     # A fraction, not a percentage: 0.21 is 21%. Bounded because the value is
     # multiplied straight into what a seller is charged, so a negative would
     # credit them and a figure above 1 would bill more tax than fee.

@@ -36,6 +36,7 @@ export {
   ChevronsRightIcon,
   ChevronsUpDownIcon,
   CircleCheckIcon,
+  CircleDotIcon,
   CircleIcon,
   ClipboardCheckIcon,
   ClockIcon,
