@@ -1,4 +1,4 @@
-import type { DashboardOperations, ReportingDimensionValue, ReportingQuery } from '@spree/admin-sdk'
+import type { DashboardOperations, ReportingQuery } from '@spree/admin-sdk'
 import { SpreeError } from '@spree/admin-sdk'
 import {
   adminClient,
@@ -10,9 +10,11 @@ import {
   useStore,
 } from '@spree/dashboard-core'
 import {
+  Button,
   Card,
   CardContent,
   CardDescription,
+  CardFooter,
   CardHeader,
   CardTitle,
   cn,
@@ -24,6 +26,7 @@ import {
   EmptyMedia,
   EmptyTitle,
   Progress,
+  ScrollArea,
   Skeleton,
   Table,
   TableBody,
@@ -47,8 +50,9 @@ import {
   TruckIcon,
 } from '@spree/dashboard-ui/icons'
 import { useQuery } from '@tanstack/react-query'
-import { createFileRoute, Link } from '@tanstack/react-router'
+import { createFileRoute, Link, type LinkProps } from '@tanstack/react-router'
 import { format, parseISO } from 'date-fns'
+import type { CSSProperties } from 'react'
 import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { ALL_CHANNELS, ChannelSelect } from '../../../components/spree/channel-select'
@@ -66,6 +70,7 @@ import {
   useReportingQuery,
   useReportingSchema,
 } from '../../../hooks/use-reporting'
+import { useSavedReportByName } from '../../../hooks/use-saved-reports'
 
 export const Route = createFileRoute('/_authenticated/$storeId/')({
   component: DashboardPage,
@@ -215,7 +220,8 @@ function DashboardPage() {
   )
 }
 
-const OPERATIONS_ROW_CLASS = 'flex items-center gap-3 border-b px-4 py-3 last:border-0'
+const OPERATIONS_ROW_CLASS =
+  'flex items-center gap-3 border-b border-border-subtle px-4 py-3 last:border-0'
 
 type OperationsFilter = { id: string; field: string; operator: string; value: string }
 
@@ -353,6 +359,10 @@ function OperationsCard({
 type RankingTab = 'customers' | 'categories' | 'companies' | 'sellers'
 
 // Each tab is one contract query; the revenue metric doubles as the share bar.
+/** One row's height. The rows, the five-row container and the loading
+ *  skeleton all derive from it, so they cannot drift apart. */
+const RANKING_ROW_HEIGHT = '5.25rem'
+
 const RANKING_QUERIES: Record<
   RankingTab,
   {
@@ -362,6 +372,12 @@ const RANKING_QUERIES: Record<
     }
     revenueMetric: string
     countMetric: string
+    /** Where a row points. The route travels with the query that produced the
+     *  row, so a new tab cannot forget one. */
+    rowLink: (storeId: string, id: string) => LinkProps
+    /** The seeded report this ranking is the top five of; the card links to it
+     *  by name, since a report is addressed by id and names are translated. */
+    reportKey: string
   }
 > = {
   customers: {
@@ -373,6 +389,11 @@ const RANKING_QUERIES: Record<
     },
     revenueMetric: 'total_sales',
     countMetric: 'orders',
+    rowLink: (storeId, customerId) => ({
+      to: '/$storeId/customers/$customerId',
+      params: { storeId, customerId },
+    }),
+    reportKey: 'top_customers',
   },
   categories: {
     query: {
@@ -383,6 +404,11 @@ const RANKING_QUERIES: Record<
     },
     revenueMetric: 'net_sales',
     countMetric: 'units_sold',
+    rowLink: (storeId, categoryId) => ({
+      to: '/$storeId/products/categories/$categoryId',
+      params: { storeId, categoryId },
+    }),
+    reportKey: 'top_categories',
   },
   companies: {
     query: {
@@ -393,6 +419,11 @@ const RANKING_QUERIES: Record<
     },
     revenueMetric: 'total_sales',
     countMetric: 'orders',
+    rowLink: (storeId, companyId) => ({
+      to: '/$storeId/companies/$companyId',
+      params: { storeId, companyId },
+    }),
+    reportKey: 'top_companies',
   },
   // What each seller sold, on the line items that were theirs.
   sellers: {
@@ -404,6 +435,11 @@ const RANKING_QUERIES: Record<
     },
     revenueMetric: 'net_sales',
     countMetric: 'units_sold',
+    rowLink: (storeId, sellerId) => ({
+      to: '/$storeId/sellers/$sellerId',
+      params: { storeId, sellerId },
+    }),
+    reportKey: 'seller_payouts',
   },
 }
 
@@ -419,7 +455,10 @@ function RankingsCard({
   const { storeId } = Route.useParams()
   const [tab, setTab] = useState<RankingTab>(tabs[0])
 
-  const { query, revenueMetric, countMetric } = RANKING_QUERIES[tab]
+  const { query, revenueMetric, countMetric, rowLink, reportKey } = RANKING_QUERIES[tab]
+  // The seeded report's own name, from the same keys the seeder writes it with.
+  const reportName = t(`admin.pages.home.rankings.report_names.${reportKey}`)
+  const { report } = useSavedReportByName(reportName)
   // Read from the query rather than stored beside it: two copies can disagree,
   // and a row asked for a dimension it was not grouped by renders unnamed.
   const [dimensionName] = query.dimensions
@@ -465,104 +504,101 @@ function RankingsCard({
           </TabsList>
         </Tabs>
       </CardHeader>
-      <CardContent className="p-0">
+      {/* Five rows tall whatever the tab holds — rows, a skeleton, an empty
+          note or an error all live at this height, so the page below never
+          moves as tabs are switched or data arrives. */}
+      <CardContent
+        className="h-[calc(var(--ranking-row)*5)] p-0"
+        style={{ '--ranking-row': RANKING_ROW_HEIGHT } as CSSProperties}
+      >
         {rows === undefined ? (
           error ? (
-            <p className="px-4 pb-6 pt-2 text-sm text-muted-foreground">
-              {t('admin.errors.generic')}
-            </p>
+            <p className="px-4 pt-4 text-sm text-muted-foreground">{t('admin.errors.generic')}</p>
           ) : (
             <RankingRowsSkeleton />
           )
         ) : rows.length === 0 ? (
-          <p className="px-4 pb-6 pt-2 text-sm text-muted-foreground">
+          <p className="px-4 pt-4 text-sm text-muted-foreground">
             {t('admin.pages.home.rankings.empty')}
           </p>
         ) : (
-          <div className="flex flex-col">
-            {rows.map((row, index) => (
-              <div key={`${tab}-${row.key ?? index}`} className="border-b px-4 py-3 last:border-0">
-                <div className="flex items-baseline justify-between gap-3">
-                  <span className="flex min-w-0 items-baseline gap-2 text-sm">
-                    <span className="w-5 shrink-0 text-muted-foreground tabular-nums">
-                      {index + 1}.
-                    </span>
-                    <RankingName tab={tab} storeId={storeId} dimension={row.dimension} />
-                  </span>
-                  <span className="shrink-0 text-right">
-                    <span className="block text-sm font-medium tabular-nums">{row.display}</span>
-                    <span className="block text-xs text-muted-foreground">{row.meta}</span>
-                  </span>
-                </div>
-                <Progress className="mt-2" value={sharePercent(row.amount, maxAmount)} />
-              </div>
-            ))}
-          </div>
+          // Five rows tall, whatever the tab returns: the card keeps one height
+          // so the page below it does not jump as tabs are switched, and a
+          // longer ranking scrolls rather than stretching the layout.
+          <ScrollArea className="h-full">
+            <div className="flex flex-col">
+              {rows.map((row, index) => {
+                const body = (
+                  <>
+                    <div className="flex items-baseline justify-between gap-3">
+                      <span className="flex min-w-0 items-baseline gap-2 text-sm">
+                        <span className="w-5 shrink-0 text-muted-foreground tabular-nums">
+                          {index + 1}.
+                        </span>
+                        <DimensionLabel dimension={row.dimension} />
+                      </span>
+                      <span className="shrink-0 text-right">
+                        <span className="block text-sm font-medium tabular-nums">
+                          {row.display}
+                        </span>
+                        <span className="block text-xs text-muted-foreground">{row.meta}</span>
+                      </span>
+                    </div>
+                    <Progress className="mt-2 pl-7" value={sharePercent(row.amount, maxAmount)} />
+                  </>
+                )
+                const rowKey = `${tab}-${row.key ?? index}`
+                // A fixed row height: only customer rows carry a sub-line, so
+                // without it the list is a different height on every tab and
+                // the card resizes as they are switched.
+                const rowClass =
+                  'flex h-(--ranking-row) flex-col justify-center border-b px-4 text-foreground no-underline last:border-0'
+
+                // The whole row is the target rather than just the name: a
+                // ranking row is one thing, and a link the width of a name is a
+                // small target beside the figures it belongs to. A row whose key
+                // has no record behind it ("Unassigned") stays inert.
+                return row.dimension.id ? (
+                  <Link
+                    key={rowKey}
+                    {...rowLink(storeId, row.dimension.id)}
+                    className={cn(rowClass, 'transition-colors hover:bg-accent/60')}
+                  >
+                    {body}
+                  </Link>
+                ) : (
+                  <div key={rowKey} className={rowClass}>
+                    {body}
+                  </div>
+                )
+              })}
+            </div>
+          </ScrollArea>
         )}
       </CardContent>
+      {/* Five rows is the top of a longer report; the footer is the way to the
+          rest of it, below the rows rather than competing with the tabs. */}
+      <Can I="read" a={Subject.SavedReport}>
+        <CardFooter className="justify-end">
+          <Button asChild variant="ghost" size="sm" disabled={!report}>
+            {report ? (
+              <Link to="/$storeId/reports/$reportId" params={{ storeId, reportId: report.id }}>
+                {t('admin.pages.home.rankings.view_report')}
+                <ChevronRightIcon className="size-4" />
+              </Link>
+            ) : (
+              // The report is looked up by name, so until it resolves — or if
+              // a merchant deleted that built-in — the list is the honest
+              // destination rather than a link to nothing.
+              <Link to="/$storeId/reports" params={{ storeId }} search={{ search: reportName }}>
+                {t('admin.pages.home.rankings.view_report')}
+                <ChevronRightIcon className="size-4" />
+              </Link>
+            )}
+          </Button>
+        </CardFooter>
+      </Can>
     </Card>
-  )
-}
-
-function RankingName({
-  tab,
-  storeId,
-  dimension,
-}: {
-  tab: RankingTab
-  storeId: string
-  dimension: ReportingDimensionValue
-}) {
-  const label = <DimensionLabel dimension={dimension} />
-
-  if (!dimension.id) {
-    return label
-  }
-
-  if (tab === 'customers') {
-    return (
-      <Link
-        to="/$storeId/customers/$customerId"
-        params={{ storeId, customerId: dimension.id }}
-        className="min-w-0 hover:underline"
-      >
-        {label}
-      </Link>
-    )
-  }
-
-  if (tab === 'companies') {
-    return (
-      <Link
-        to="/$storeId/companies/$companyId"
-        params={{ storeId, companyId: dimension.id }}
-        className="min-w-0 hover:underline"
-      >
-        {label}
-      </Link>
-    )
-  }
-
-  if (tab === 'sellers') {
-    return (
-      <Link
-        to="/$storeId/sellers/$sellerId"
-        params={{ storeId, sellerId: dimension.id }}
-        className="min-w-0 hover:underline"
-      >
-        {label}
-      </Link>
-    )
-  }
-
-  return (
-    <Link
-      to="/$storeId/products/categories/$categoryId"
-      params={{ storeId, categoryId: dimension.id }}
-      className="min-w-0 hover:underline"
-    >
-      {label}
-    </Link>
   )
 }
 
@@ -570,7 +606,10 @@ function RankingRowsSkeleton() {
   return (
     <div className="flex flex-col">
       {['rank-1', 'rank-2', 'rank-3', 'rank-4', 'rank-5'].map((key) => (
-        <div key={key} className="border-b px-4 py-3 last:border-0">
+        <div
+          key={key}
+          className="flex h-(--ranking-row) flex-col justify-center border-b px-4 last:border-0"
+        >
           <div className="flex items-center justify-between gap-3">
             <Skeleton className="h-4 w-40" />
             <Skeleton className="h-4 w-16" />
@@ -681,7 +720,10 @@ function DashboardSkeleton() {
           <CardContent className="p-0">
             <div className="flex flex-col">
               {['op-1', 'op-2', 'op-3', 'op-4', 'op-5'].map((key) => (
-                <div key={key} className="flex items-center gap-3 border-b px-4 py-3 last:border-0">
+                <div
+                  key={key}
+                  className="flex items-center gap-3 border-b border-border-subtle px-4 py-3 last:border-0"
+                >
                   <Skeleton className="size-8 rounded-md" />
                   <Skeleton className="h-4 w-32 flex-1" />
                   <Skeleton className="h-4 w-8" />

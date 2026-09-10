@@ -3203,7 +3203,14 @@
           "orders_count_other": "{{count}} orders",
           "units_count_one": "{{count}} unit",
           "units_count_other": "{{count}} units",
-          "empty": "No data for this period yet."
+          "empty": "No data for this period yet.",
+          "view_report": "View report",
+          "report_names": {
+            "seller_payouts": "Seller payouts",
+            "top_categories": "Top categories",
+            "top_companies": "Top companies",
+            "top_customers": "Top customers"
+          }
         },
         "unavailable": {
           "title": "Reports are unavailable for your role",

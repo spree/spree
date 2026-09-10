@@ -3203,7 +3203,14 @@
           "orders_count_other": "{{count}} commandes",
           "units_count_one": "{{count}} unité",
           "units_count_other": "{{count}} unités",
-          "empty": "Pas encore de données pour cette période."
+          "empty": "Pas encore de données pour cette période.",
+          "view_report": "Voir le rapport",
+          "report_names": {
+            "seller_payouts": "Versements aux vendeurs",
+            "top_categories": "Meilleures catégories",
+            "top_companies": "Meilleures entreprises",
+            "top_customers": "Meilleurs clients"
+          }
         },
         "unavailable": {
           "title": "Les rapports ne sont pas disponibles pour votre rôle",

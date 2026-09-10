@@ -3228,7 +3228,14 @@
           "units_count_few": "{{count}} وحدات",
           "units_count_many": "{{count}} وحدة",
           "units_count_other": "{{count}} وحدة",
-          "empty": "لا توجد بيانات لهذه الفترة بعد."
+          "empty": "لا توجد بيانات لهذه الفترة بعد.",
+          "view_report": "عرض التقرير",
+          "report_names": {
+            "seller_payouts": "مدفوعات البائعين",
+            "top_categories": "أفضل الفئات",
+            "top_companies": "أفضل الشركات",
+            "top_customers": "أفضل العملاء"
+          }
         },
         "unavailable": {
           "title": "التقارير غير متاحة لدورك",

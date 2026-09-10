@@ -20,6 +20,22 @@ export function useSavedReport(id: string | undefined) {
   })
 }
 
+/**
+ * A seeded report looked up by its exact name, so a surface that knows which
+ * built-in it is showing can link straight to it. Reports are addressed by id
+ * and names are translated, so the name is the only stable handle a caller
+ * has without hardcoding ids per store.
+ */
+export function useSavedReportByName(name: string | undefined) {
+  const query = useQuery({
+    queryKey: useResourceKey('saved-reports', { name_eq: name ?? '' }),
+    queryFn: () => adminClient.reporting.savedReports.list({ name_eq: name, limit: 1 }),
+    enabled: !!name,
+  })
+
+  return { ...query, report: query.data?.data?.[0] }
+}
+
 export function useCreateSavedReport() {
   return useResourceMutation<SavedReport, Error, SavedReportCreateParams>({
     mutationFn: (params) => adminClient.reporting.savedReports.create(params),

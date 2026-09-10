@@ -1918,6 +1918,9 @@ en:
         top_categories:
           description: Best-selling categories by net sales over the last four weeks.
           name: Top categories
+        top_companies:
+          description: Organisations ranked by spend over the last four weeks.
+          name: Top companies
         top_customers:
           description: Customers ranked by spend over the last four weeks.
           name: Top customers

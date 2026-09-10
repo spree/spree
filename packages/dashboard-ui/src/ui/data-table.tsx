@@ -34,6 +34,13 @@ interface TableProps extends React.ComponentProps<'table'> {
    */
   roundedBottom?: boolean
   /**
+   * Rounds the header's outer corners, for a table that starts a card. The
+   * header's own square corners otherwise sit on top of the card's radius and
+   * clip it — the mirror of the `roundedBottom` case, and unset by default
+   * because a table usually has a card header or some content above it.
+   */
+  roundedTop?: boolean
+  /**
    * Scrolls sideways at every width, not just on narrow viewports. For a table
    * in a bounded container — a card, a sheet, a dialog — where the default
    * `clip` puts the last columns out of reach with no way to get at them: the
@@ -70,6 +77,7 @@ function Table({
   children,
   stickyHeader = false,
   roundedBottom,
+  roundedTop,
   scrollX = false,
   ...props
 }: TableProps) {
@@ -101,7 +109,12 @@ function Table({
     'last:[&_tbody_tr:last-child_td:first-child]:rounded-bl-xl last:[&_tbody_tr:last-child_td:last-child]:rounded-br-xl last:[&_tbody_tr:last-child_td:only-child]:rounded-b-xl'
   // `true`/`false` decide on the table itself; unset defers to the wrapper's
   // own position among its siblings.
-  const tableRoundedClasses = roundedBottom === true ? alwaysRounded : undefined
+  // `thead` cells carry the header's background, so the radius belongs on the
+  // cells rather than the row — a rounded row still shows square cell corners.
+  const topRounded = roundedTop
+    ? '[&_thead_tr:first-child_th:first-child]:rounded-tl-xl [&_thead_tr:first-child_th:last-child]:rounded-tr-xl [&_thead_tr:first-child_th:only-child]:rounded-t-xl'
+    : undefined
+  const tableRoundedClasses = cn(roundedBottom === true ? alwaysRounded : undefined, topRounded)
   const wrapperRoundedClasses = roundedBottom === undefined ? roundedWhenLast : undefined
 
   const kids = Children.toArray(children)
@@ -281,7 +294,7 @@ function TableHead({ className, ...props }: React.ComponentProps<'th'>) {
   return (
     <th
       className={cn(
-        'text-left text-sm font-normal text-muted-foreground bg-card px-3 py-2.5 h-9 sm:p-2 whitespace-nowrap first:pl-4 last:pr-4',
+        'text-left text-sm font-normal text-muted-foreground bg-muted px-3 py-2.5 h-9 sm:p-2 whitespace-nowrap first:pl-4 last:pr-4',
         'shadow-[inset_0_-1px_0_0_var(--border-subtle)]',
         className,
       )}

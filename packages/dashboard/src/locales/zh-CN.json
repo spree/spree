@@ -3193,7 +3193,14 @@
           },
           "orders_count_other": "{{count}} 笔订单",
           "units_count_other": "{{count}} 件",
-          "empty": "该时间段暂无数据。"
+          "empty": "该时间段暂无数据。",
+          "view_report": "查看报告",
+          "report_names": {
+            "seller_payouts": "卖家结算",
+            "top_categories": "热门类别",
+            "top_companies": "热门公司",
+            "top_customers": "热门客户"
+          }
         },
         "unavailable": {
           "title": "您的角色无法查看报表",

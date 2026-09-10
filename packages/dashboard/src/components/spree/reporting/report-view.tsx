@@ -438,7 +438,7 @@ function ResultTable({
   return (
     <Card>
       <CardContent className="p-0">
-        <Table data-testid="report-table" roundedBottom>
+        <Table data-testid="report-table" roundedBottom roundedTop>
           <TableHeader>
             <TableHeaderRow>
               {ranked && <TableHead className="w-10">#</TableHead>}

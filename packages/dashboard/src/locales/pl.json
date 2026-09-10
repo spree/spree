@@ -3239,7 +3239,14 @@
           "units_count_few": "{{count}} sztuki",
           "units_count_many": "{{count}} sztuk",
           "units_count_other": "{{count}} sztuki",
-          "empty": "Brak danych dla tego okresu."
+          "empty": "Brak danych dla tego okresu.",
+          "view_report": "Zobacz raport",
+          "report_names": {
+            "seller_payouts": "Wypłaty dla sprzedawców",
+            "top_categories": "Najlepsze kategorie",
+            "top_companies": "Najlepsze firmy",
+            "top_customers": "Najlepsi klienci"
+          }
         },
         "unavailable": {
           "title": "Raporty są niedostępne dla Twojej roli",
