@@ -75,6 +75,14 @@ overrides:
   ip-address: ^10.3.1
   body-parser: ^2.3.0
   '@hono/node-server': ^1.19.15
+  '@tiptap/core@>=2.0.0-alpha.0 <3.30.4': ^3.30.4
+  browserslist@<=4.28.6: ^4.28.7
+  fast-uri@>=3.0.0 <3.1.6: ^3.1.6
+  fast-uri@>=3.1.2 <3.1.6: ^3.1.6
+  fast-uri@>=3.1.3 <3.1.6: ^3.1.6
+  postcss-selector-parser@>=7.1.0 <7.1.3: ^7.1.3
+  qs@>=2.2.5 <6.16.0: ^6.16.0
+  qs@>=6.14.2 <=6.15.3: ^6.15.4
 
 # auditConfig: advisories we have reviewed and decided not to fix. The weekly
 # security-audit workflow honors this list, so an entry here also stops the job
@@ -92,3 +100,11 @@ overrides:
 auditConfig:
   ignoreGhsas:
     - GHSA-4x5r-pxfx-6jf8
+
+minimumReleaseAgeExclude:
+  - postcss-selector-parser@7.1.3
+  - browserslist@4.28.7
+  - qs@6.15.4
+  - qs@6.16.0
+  - '@tiptap/core@3.30.4'
+  - fast-uri@3.1.6
