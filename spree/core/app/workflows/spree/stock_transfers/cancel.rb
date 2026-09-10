@@ -61,10 +61,12 @@ module Spree
         # Read the running totals under the lock: an association loaded before
         # it holds the quantities as they were before any receive that has
         # since committed, and those are what `outstanding` subtracts from.
+        return write_off if on_in_transit == 'write_off'
+
         stock_transfer.items.reload.each do |item|
           next unless item.outstanding.positive?
 
-          on_in_transit == 'restock' ? restock(item) : write_off(item)
+          restock(item)
         end
       end
 
@@ -77,14 +79,15 @@ module Spree
 
       # Nothing to write to the shelf: the units left the source when the
       # transfer was marked in transit and never arrived anywhere, so the loss
-      # is already in the ledger. What is missing is why, and that goes on the
-      # line the merchant is looking at.
-      def write_off(item)
-        item.update!(discrepancy_reason: reason.presence || DEFAULT_WRITE_OFF_REASON)
+      # is already in the ledger. What is missing is why, and that is recorded
+      # as the reason the transfer closed — the same place a short close puts
+      # it.
+      def write_off
+        @close_reason = reason.presence || DEFAULT_WRITE_OFF_REASON
       end
 
       def mark_canceled
-        failure(stock_transfer) unless stock_transfer.update(status: 'canceled')
+        failure(stock_transfer) unless stock_transfer.update(status: 'canceled', close_reason: @close_reason)
       end
     end
   end

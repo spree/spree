@@ -53,13 +53,28 @@ describe 'spree:upgrade inventory operations' do
       expect(Spree::PurchaseOrder.last.items.sole.unit_cost).to eq(0)
     end
 
-    it 're-points the existing movements at the purchase order' do
+    it 're-points the existing movements at the purchase order and its receipt' do
       transfer = legacy_external_receive(quantity: 7)
       movement = transfer.stock_movements.sole
 
       run_task
 
-      expect(movement.reload.purchase_order).to eq(Spree::PurchaseOrder.last)
+      purchase_order = Spree::PurchaseOrder.last
+      expect(movement.reload.purchase_order).to eq(purchase_order)
+      expect(movement.stock_receipt).to eq(purchase_order.stock_receipts.sole)
+    end
+
+    # The receive reads the way every later delivery will: one receipt, dated
+    # when the transfer was, accepting every line in full.
+    it 'records the receive as a stock receipt' do
+      transfer = legacy_external_receive(quantity: 7)
+
+      run_task
+
+      receipt = Spree::PurchaseOrder.last.stock_receipts.sole
+      expect(receipt.reference).to eq(transfer.number)
+      expect(receipt.received_at).to be_within(1.second).of(transfer.created_at)
+      expect(receipt.items.sole).to have_attributes(quantity_accepted: 7, quantity_rejected: 0)
     end
 
     # The number has to stay findable for historical reporting, without the

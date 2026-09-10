@@ -16,7 +16,7 @@ module Spree
 
     delegate :currency, to: :purchase_order, allow_nil: true
 
-    self.whitelisted_ransackable_attributes = %w[variant_id quantity_ordered quantity_received unit_cost]
+    self.whitelisted_ransackable_attributes = %w[variant_id quantity_ordered quantity_received quantity_rejected unit_cost]
     self.whitelisted_ransackable_associations = %w[variant]
 
     # What the whole line costs at the agreed unit price. Ordered rather than

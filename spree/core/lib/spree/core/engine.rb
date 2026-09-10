@@ -458,14 +458,16 @@ module Spree
           Spree::Exports::GiftCards,
           Spree::Exports::NewsletterSubscribers,
           Spree::Exports::CouponCodes,
-          Spree::Exports::PriceListPrices
+          Spree::Exports::PriceListPrices,
+          Spree::Exports::PurchaseOrders
         ]
 
         Rails.application.config.spree.import_types = [
           Spree::Imports::Products,
           Spree::Imports::ProductTranslations,
           Spree::Imports::Customers,
-          Spree::Imports::PriceListPrices
+          Spree::Imports::PriceListPrices,
+          Spree::Imports::PurchaseOrders
         ]
 
         Rails.application.config.spree.taxon_rules = [

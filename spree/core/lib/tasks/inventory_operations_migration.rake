@@ -62,7 +62,11 @@ module Spree
           raise ActiveRecord::Rollback
         end
 
-        Spree::StockMovement.where(id: movements.map(&:id)).update_all(purchase_order_id: purchase_order.id)
+        receipt = mint_receipt(purchase_order, transfer)
+        Spree::StockMovement.where(id: movements.map(&:id)).update_all(
+          purchase_order_id: purchase_order.id,
+          stock_receipt_id: receipt.id
+        )
         transfer.update_columns(status: 'received', deleted_at: Time.current)
 
         @output.puts "  #{transfer.number} → #{purchase_order.number} (#{purchase_order.items.size} line(s))"
@@ -93,6 +97,22 @@ module Spree
       end
 
       purchase_order
+    end
+
+    # The receive itself, as the record every later delivery gets: one
+    # receipt, dated when the transfer was, accepting every line in full.
+    def mint_receipt(purchase_order, transfer)
+      receipt = purchase_order.stock_receipts.build(
+        store: purchase_order.store,
+        received_at: transfer.created_at,
+        reference: transfer.number,
+        notes: "Migrated from stock transfer #{transfer.number}."
+      )
+      purchase_order.items.each do |item|
+        receipt.items.build(line: item, quantity_accepted: item.quantity_received)
+      end
+      receipt.save!
+      receipt
     end
 
     # One line per variant, summing the movements that named it: a 5.x receive

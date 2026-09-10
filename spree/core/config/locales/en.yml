@@ -1623,15 +1623,31 @@ en:
     purchase_order:
       errors:
         already_closed: This purchase order has already been received or cancelled
-        invalid_received_quantity: Received quantity for %{variant} must be between what was already received and the %{ordered} ordered
-        item_not_on_order: One of the lines does not belong to this purchase order
+        already_receiving: A delivery has already been booked against this purchase order, so it cannot go back to draft
+        invalid_receipt_quantity: The quantities for %{variant} cannot be negative
+        item_not_on_document: One of the lines does not belong to this purchase order
         must_have_variant: You must add at least one variant
         no_items_received: No units were received
         not_draft: Only a draft purchase order can be marked as ordered
         not_editable: Only a draft purchase order can be edited
         not_ordered: Only a purchase order that has been placed can be received
+        not_ordered_for_draft: Only a placed purchase order can go back to draft
+        not_partially_received: Only a partially received purchase order can be closed short
         only_draft_can_be_deleted: Only a draft purchase order can be deleted — cancel it instead
-        repeated_item: "%{variant} was listed more than once. Send one entry per line, with the total received so far"
+        repeated_item: "%{variant} was listed more than once. Send one entry per line, with what this delivery brought"
+    purchase_order_import_ambiguous_sku: More than one product in this store has the SKU %{sku}. Give each a SKU of its own before importing an order for it.
+    purchase_order_import_destination_required: Destination is required.
+    purchase_order_import_failed: The purchase order could not be written.
+    purchase_order_import_invalid_cost: unit_cost must be a number like 16.50, got %{value}.
+    purchase_order_import_invalid_date: "%{column} must be a full date like 2026-03-31, got %{value}."
+    purchase_order_import_invalid_quantity: quantity must be a whole number above zero, got %{value}.
+    purchase_order_import_reference_required: Reference is required — it is what groups a file's rows into orders.
+    purchase_order_import_sku_required: SKU is required.
+    purchase_order_import_supplier_required: Supplier is required.
+    purchase_order_import_unknown_destination: This store has no warehouse named %{name}.
+    purchase_order_import_unknown_sku: No product in this store has the SKU %{sku}.
+    purchase_order_import_unknown_supplier: This store has no supplier named %{name}. Add them first.
+    purchase_order_import_unsupported_currency: This store does not buy in %{currency}.
     qty: Qty
     quantity: Quantity
     query: Query
@@ -1887,22 +1903,32 @@ en:
       reasons:
         manual_adjustment: Manual adjustment
     stock_movements: Stock Movements
+    stock_receipt:
+      errors:
+        nothing_counted: A line on a delivery must count at least one unit, accepted or rejected
+      rejection_reasons:
+        damaged: Damaged
+        expired: Expired
+        other: Other
+        wrong_item: Wrong item
     stock_transfer:
       errors:
         already_closed: This transfer has already been completed or cancelled
         in_transit_resolution_required: Choose whether the units come back to the source warehouse or are written off
         invalid_quantity: Every variant must move a quantity above zero
-        invalid_received_quantity: Received quantity for %{variant} must be between what was already received and the %{shipped} shipped
-        item_not_on_transfer: One of the lines does not belong to this transfer
+        invalid_receipt_quantity: The quantities for %{variant} cannot be negative
+        item_not_on_document: One of the lines does not belong to this transfer
         locations_in_different_stores: must belong to the same store as the source location
         must_have_variant: You must add at least one variant
         no_items_received: No units were received
         not_draft: Only a draft transfer can be marked as ready to ship
         not_editable: Only a draft transfer can be edited
         not_in_transit: Only a transfer in transit can be received
+        not_partially_received: Only a partially received transfer can be closed short
+        not_ready_to_ship: Only a transfer that is ready to ship can go back to draft
         not_shippable: Only a draft or ready-to-ship transfer can be marked in transit
         only_draft_can_be_deleted: Only a draft transfer can be deleted — cancel it instead
-        repeated_item: "%{variant} was listed more than once. Send one entry per line, with the total received so far"
+        repeated_item: "%{variant} was listed more than once. Send one entry per line, with what this delivery brought"
         same_location: cannot be the same as the destination location
         variants_unavailable: Some variants are not available on %{stock}
     stop: Stop

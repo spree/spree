@@ -37,7 +37,7 @@ module Spree
 
     publishes_lifecycle_events
 
-    has_status :draft, :ready_to_ship, :in_transit, :partially_received, :received, :canceled,
+    has_status :draft, :ready_to_ship, :in_transit, :partially_received, :received, :over_received, :canceled,
                default: :draft
 
     belongs_to :source_location, class_name: 'Spree::StockLocation'
@@ -63,7 +63,8 @@ module Spree
 
     self.whitelisted_ransackable_attributes = %w[number status reference source_location_id
                                                  destination_location_id shipped_at received_at
-                                                 created_at]
+                                                 closed_short_at created_at]
+    self.whitelisted_ransackable_scopes = %w[open closed]
     self.whitelisted_ransackable_associations = %w[source_location destination_location items]
 
     # Whether the merchant may still edit the lines. Once the box is sealed and

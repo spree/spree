@@ -103,11 +103,15 @@ module Spree
         stock_transfer_mark_in_transit_workflow: 'Spree::StockTransfers::MarkInTransit',
         stock_transfer_receive_workflow: 'Spree::StockTransfers::Receive',
         stock_transfer_cancel_workflow: 'Spree::StockTransfers::Cancel',
+        stock_transfer_mark_draft_workflow: 'Spree::StockTransfers::MarkDraft',
+        stock_transfer_close_workflow: 'Spree::StockTransfers::Close',
         purchase_order_create_workflow: 'Spree::PurchaseOrders::Create',
         purchase_order_update_workflow: 'Spree::PurchaseOrders::Update',
         purchase_order_mark_ordered_workflow: 'Spree::PurchaseOrders::MarkOrdered',
         purchase_order_receive_workflow: 'Spree::PurchaseOrders::Receive',
         purchase_order_cancel_workflow: 'Spree::PurchaseOrders::Cancel',
+        purchase_order_mark_draft_workflow: 'Spree::PurchaseOrders::MarkDraft',
+        purchase_order_close_workflow: 'Spree::PurchaseOrders::Close',
 
         # returns
         return_create_workflow: 'Spree::Returns::Create',

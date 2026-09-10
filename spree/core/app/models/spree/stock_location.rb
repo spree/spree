@@ -290,6 +290,8 @@ module Spree
       when Spree::Exchange      then { exchange: cause, order: cause.order }
       when Spree::StockTransfer then { stock_transfer: cause }
       when Spree::PurchaseOrder then { purchase_order: cause }
+      # A delivery names the document it was against as well as itself.
+      when Spree::StockReceipt  then { stock_receipt: cause, **cause_attributes(cause.receivable) }
       when Spree::Order         then { order: cause }
       else {}
       end

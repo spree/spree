@@ -140,137 +140,172 @@ describe 'stock transfer lifecycle', type: :model do
   describe 'receiving' do
     before { Spree::StockTransfers::MarkInTransit.call(stock_transfer: transfer) }
 
-    it 'lands everything and closes the trip when the count matches' do
-      result = Spree::StockTransfers::Receive.call(stock_transfer: transfer.reload)
-
-      expect(result).to be_success
-      expect(result.value).to be_received
-      expect(result.value.received_at).to be_present
-      expect(destination_on_hand).to eq(10)
+    def receive(items = nil, **attributes)
+      Spree::StockTransfers::Receive.call(stock_transfer: transfer.reload, items: items, **attributes)
     end
 
-    it 'lands only what arrived and stays open when it is short' do
-      item = transfer.reload.items.sole
+    def line
+      transfer.reload.items.sole
+    end
 
-      result = Spree::StockTransfers::Receive.call(
-        stock_transfer: transfer,
-        items: [{ item: item, quantity_received: 8, discrepancy_reason: 'damaged_in_transit' }]
-      )
+    it 'lands everything as a receipt and closes the trip when the count matches' do
+      result = receive(reference: 'Van 3, morning run')
 
       expect(result).to be_success
-      expect(result.value).to be_partially_received
-      expect(result.value.received_at).to be_nil
+      receipt = result.value
+      expect(receipt).to be_a(Spree::StockReceipt)
+      expect(receipt.reference).to eq('Van 3, morning run')
+      expect(receipt.items.sole).to have_attributes(line: line, quantity_accepted: 10)
+      expect(transfer.reload).to be_received
+      expect(transfer.received_at).to be_present
+      expect(destination_on_hand).to eq(10)
+      expect(transfer.stock_movements.received.sole.stock_receipt).to eq(receipt)
+    end
+
+    it 'lands only what arrived and stays open while units are still on the road' do
+      result = receive([{ item: line, quantity_accepted: 8 }])
+
+      expect(result).to be_success
+      expect(transfer.reload).to be_partially_received
+      expect(transfer.received_at).to be_nil
       expect(destination_on_hand).to eq(8)
-      expect(item.reload).to have_attributes(quantity_received: 8, outstanding: 2,
-                                             discrepancy_reason: 'damaged_in_transit')
+      expect(line).to have_attributes(quantity_received: 8, outstanding: 2)
     end
 
-    # The line's quantity_received is a running total, so a second delivery
-    # tops it up rather than landing the whole amount again.
-    it 'adds only the difference on a second receive' do
-      item = transfer.reload.items.sole
-      Spree::StockTransfers::Receive.call(stock_transfer: transfer,
-                                          items: [{ item: item, quantity_received: 8 }])
-
-      result = Spree::StockTransfers::Receive.call(stock_transfer: transfer.reload,
-                                                   items: [{ item: item.reload, quantity_received: 10 }])
+    # Two crushed units arrived all the same: nothing is left in the van, so
+    # the trip is over — with the damage on record and off the shelf.
+    it 'records what was refused and closes the trip once everything has arrived' do
+      result = receive([{ item: line, quantity_accepted: 8, quantity_rejected: 2, rejection_reason: 'damaged' }])
 
       expect(result).to be_success
-      expect(result.value).to be_received
+      expect(result.value.items.sole).to have_attributes(quantity_accepted: 8, quantity_rejected: 2,
+                                                         rejection_reason: 'damaged')
+      expect(transfer.reload).to be_received
+      expect(transfer.received_at).to be_present
+      expect(destination_on_hand).to eq(8)
+      expect(line).to have_attributes(quantity_received: 8, quantity_rejected: 2, outstanding: 0)
+    end
+
+    # Each delivery adds what it brought; the second box does not restate the
+    # first.
+    it 'adds a second delivery to the first' do
+      receive([{ item: line, quantity_accepted: 8 }])
+
+      result = receive([{ item: line, quantity_accepted: 2 }])
+
+      expect(result).to be_success
+      expect(transfer.reload).to be_received
+      expect(transfer.stock_receipts.count).to eq(2)
       expect(destination_on_hand).to eq(10)
-      expect(transfer.reload.stock_movements.received.sum(:quantity)).to eq(10)
+      expect(transfer.stock_movements.received.sum(:quantity)).to eq(10)
     end
 
-    # A second receive that says nothing about the discrepancy must not erase
-    # the audit text the first one recorded.
-    it 'keeps the recorded discrepancy reason when a later receive omits it' do
-      item = transfer.reload.items.sole
-      Spree::StockTransfers::Receive.call(
-        stock_transfer: transfer,
-        items: [{ item: item, quantity_received: 8, discrepancy_reason: 'damaged_in_transit' }]
-      )
+    it 'books more than was shipped and closes the trip as over-received' do
+      result = receive([{ item: line, quantity_accepted: 11 }])
 
-      Spree::StockTransfers::Receive.call(stock_transfer: transfer.reload,
-                                          items: [{ item: item.reload, quantity_received: 9 }])
-
-      expect(item.reload.discrepancy_reason).to eq('damaged_in_transit')
+      expect(result).to be_success
+      expect(transfer.reload).to be_over_received
+      expect(line).to have_attributes(quantity_received: 11, quantity_over: 1, outstanding: 0)
+      expect(destination_on_hand).to eq(11)
     end
 
-    it 'refuses to receive more than was shipped' do
-      result = Spree::StockTransfers::Receive.call(
-        stock_transfer: transfer.reload, items: [{ item: transfer.items.sole, quantity_received: 11 }]
-      )
+    # Two operators receiving two boxes at once, which the destination's
+    # tablet makes as easy as a double-tap: each adds its own count to the
+    # total it reads, and the lock makes the second read the first's write.
+    it 'adds a delivery to the total another delivery just committed' do
+      stale_line = line
+      receive([{ item: line, quantity_accepted: 6 }])
+
+      result = receive([{ item: stale_line, quantity_accepted: 4 }])
+
+      expect(result).to be_success
+      expect(transfer.reload).to be_received
+      expect(destination_on_hand).to eq(10)
+    end
+
+    # Two entries for one line are genuinely ambiguous — two cartons, or a
+    # correction of the first? — the shape a scanner app produces when it
+    # appends an entry per carton.
+    it 'refuses a payload that names the same line twice' do
+      result = receive([{ item: line, quantity_accepted: 4 }, { item: line, quantity_accepted: 6 }])
 
       expect(result).to be_failure
+      expect(result.error.to_s).to eq(Spree.t('stock_transfer.errors.repeated_item', variant: line.variant_name))
       expect(destination_on_hand).to eq(0)
+      expect(line.quantity_received).to eq(0)
     end
 
-    # Taking units back off the shelf is a correction, which is what a manual
-    # adjustment is for.
-    it 'refuses to lower a quantity already received' do
-      item = transfer.reload.items.sole
-      Spree::StockTransfers::Receive.call(stock_transfer: transfer,
-                                          items: [{ item: item, quantity_received: 8 }])
-
-      result = Spree::StockTransfers::Receive.call(stock_transfer: transfer.reload,
-                                                   items: [{ item: item.reload, quantity_received: 5 }])
-
-      expect(result).to be_failure
-      expect(destination_on_hand).to eq(8)
-    end
-
-    # Two operators receiving the same box at once, which the destination's
-    # tablet makes as easy as a double-tap: both resolve the line, both compute
-    # a delta from the total they read, and both credit the whole delivery. The
-    # workflow re-reads the line under its lock, so the second caller measures
-    # against what actually committed and finds nothing left to receive.
-    it 'ignores a running total that was read before another receive committed' do
-      stale_line = transfer.reload.items.sole
-      Spree::StockTransfers::Receive.call(stock_transfer: transfer,
-                                          items: [{ item: transfer.items.sole, quantity_received: 6 }])
-
-      result = Spree::StockTransfers::Receive.call(stock_transfer: transfer.reload,
-                                                   items: [{ item: stale_line, quantity_received: 6 }])
+    it 'refuses a delivery that counts nothing' do
+      result = receive([{ item: line, quantity_accepted: 0 }])
 
       expect(result).to be_failure
       expect(result.error.to_s).to eq(Spree.t('stock_transfer.errors.no_items_received'))
-      expect(destination_on_hand).to eq(6)
-    end
-
-    # Every delta is measured before any of them is written, so a line named
-    # twice would contribute its delta once per entry — the shape a scanner
-    # app produces when it appends an entry per carton.
-    it 'refuses a payload that names the same line twice' do
-      item = transfer.reload.items.sole
-
-      result = Spree::StockTransfers::Receive.call(
-        stock_transfer: transfer,
-        items: [{ item: item, quantity_received: 4 }, { item: item, quantity_received: 6 }]
-      )
-
-      expect(result).to be_failure
-      expect(result.error.to_s).to eq(
-        Spree.t('stock_transfer.errors.repeated_item', variant: item.variant_name)
-      )
-      expect(destination_on_hand).to eq(0)
-      expect(item.reload.quantity_received).to eq(0)
     end
 
     it 'refuses a line belonging to another transfer' do
       other_item = create(:stock_transfer, store: store).items.first
 
-      result = Spree::StockTransfers::Receive.call(
-        stock_transfer: transfer.reload, items: [{ item: other_item, quantity_received: 1 }]
-      )
+      result = receive([{ item: other_item, quantity_accepted: 1 }])
 
       expect(result).to be_failure
-      expect(result.error.to_s).to eq(Spree.t('stock_transfer.errors.item_not_on_transfer'))
+      expect(result.error.to_s).to eq(Spree.t('stock_transfer.errors.item_not_on_document'))
     end
 
-    it 'refuses a transfer that has not shipped' do
+    it 'refuses a transfer that is not on the road' do
       draft = create(:stock_transfer, store: store)
 
-      expect(Spree::StockTransfers::Receive.call(stock_transfer: draft)).to be_failure
+      result = Spree::StockTransfers::Receive.call(stock_transfer: draft)
+
+      expect(result).to be_failure
+      expect(result.error.to_s).to eq(Spree.t('stock_transfer.errors.not_in_transit'))
+    end
+  end
+
+  describe 'closing short' do
+    before { Spree::StockTransfers::MarkInTransit.call(stock_transfer: transfer) }
+
+    it 'ends a partially received trip and records what happened to the rest' do
+      Spree::StockTransfers::Receive.call(stock_transfer: transfer.reload,
+                                          items: [{ item: transfer.items.sole, quantity_accepted: 8 }])
+
+      result = Spree::StockTransfers::Close.call(stock_transfer: transfer.reload, reason: 'Two fell off the van')
+
+      expect(result).to be_success
+      expect(result.value).to be_received
+      expect(result.value).to be_closed_short
+      expect(result.value.close_reason).to eq('Two fell off the van')
+      expect(result.value.items.sole.outstanding).to eq(2)
+      expect(source_on_hand).to eq(0)
+      expect(destination_on_hand).to eq(8)
+    end
+
+    it 'refuses a trip nothing has arrived on' do
+      result = Spree::StockTransfers::Close.call(stock_transfer: transfer.reload)
+
+      expect(result).to be_failure
+      expect(result.error.to_s).to eq(Spree.t('stock_transfer.errors.not_partially_received'))
+    end
+  end
+
+  describe 'going back to draft' do
+    it 'unfreezes a packed transfer' do
+      Spree::StockTransfers::MarkReady.call(stock_transfer: transfer)
+
+      result = Spree::StockTransfers::MarkDraft.call(stock_transfer: transfer.reload)
+
+      expect(result).to be_success
+      expect(result.value).to be_draft
+      expect(result.value).to be_editable
+      expect(source_on_hand).to eq(10)
+    end
+
+    it 'refuses once the van has left' do
+      Spree::StockTransfers::MarkInTransit.call(stock_transfer: transfer)
+
+      result = Spree::StockTransfers::MarkDraft.call(stock_transfer: transfer.reload)
+
+      expect(result).to be_failure
+      expect(result.error.to_s).to eq(Spree.t('stock_transfer.errors.not_ready_to_ship'))
     end
   end
 
@@ -330,7 +365,7 @@ describe 'stock transfer lifecycle', type: :model do
       expect(result).to be_success
       expect(source_on_hand).to eq(0)
       expect(destination_on_hand).to eq(0)
-      expect(transfer.reload.items.sole.discrepancy_reason).to eq('stolen')
+      expect(transfer.reload.close_reason).to eq('stolen')
       expect(transfer.stock_movements.received).to be_empty
     end
 
@@ -338,7 +373,7 @@ describe 'stock transfer lifecycle', type: :model do
     it 'only resolves the units still in flight' do
       Spree::StockTransfers::MarkInTransit.call(stock_transfer: transfer)
       Spree::StockTransfers::Receive.call(stock_transfer: transfer.reload,
-                                          items: [{ item: transfer.items.sole, quantity_received: 6 }])
+                                          items: [{ item: transfer.items.sole, quantity_accepted: 6 }])
 
       Spree::StockTransfers::Cancel.call(stock_transfer: transfer.reload, on_in_transit: 'restock')
 

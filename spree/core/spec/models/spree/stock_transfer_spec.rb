@@ -105,7 +105,7 @@ module Spree
       end
 
       it 'is under-received while any line is still owed' do
-        expect(transfer).to be_under_received
+        expect(transfer).to be_short
         expect(transfer).not_to be_fully_received
         expect(transfer.status_after_receive).to eq('partially_received')
       end

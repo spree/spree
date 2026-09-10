@@ -13,7 +13,13 @@ module Spree
     validates :quantity_shipped, numericality: { greater_than: 0, only_integer: true }
     validates :variant_id, uniqueness: { scope: :stock_transfer_id }
 
-    self.whitelisted_ransackable_attributes = %w[variant_id quantity_shipped quantity_received discrepancy_reason]
+    self.whitelisted_ransackable_attributes = %w[variant_id quantity_shipped quantity_received quantity_rejected]
+
+    # Everything that arrived, whatever state it was in: a crushed unit is
+    # not still on the road.
+    def quantity_settled
+      quantity_received.to_i + quantity_rejected.to_i
+    end
     self.whitelisted_ransackable_associations = %w[variant]
   end
 end

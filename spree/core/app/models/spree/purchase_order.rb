@@ -27,7 +27,7 @@ module Spree
 
     publishes_lifecycle_events
 
-    has_status :draft, :ordered, :partially_received, :received, :canceled,
+    has_status :draft, :ordered, :partially_received, :received, :over_received, :canceled,
                default: :draft
 
     belongs_to :supplier, class_name: 'Spree::Supplier', inverse_of: :purchase_orders,
@@ -48,9 +48,16 @@ module Spree
     validates :currency, presence: true
     validates :items, presence: true, unless: -> { draft? || canceled? }
 
+    # Overdue and past-cancel-by read the calendar date in the server's zone;
+    # a supplier's promise is a day, and a few hours either side of midnight
+    # is not what a merchant is filtering for.
+    scope :overdue, -> { open.where(arel_table[:expected_at].lt(Date.current)) }
+    scope :past_cancel_by, -> { open.where(arel_table[:cancel_by].lt(Date.current)) }
+
     self.whitelisted_ransackable_attributes = %w[number status currency reference expected_at
-                                                 ordered_at received_at supplier_id
-                                                 destination_location_id created_at]
+                                                 cancel_by ordered_at received_at closed_short_at
+                                                 supplier_id destination_location_id created_at]
+    self.whitelisted_ransackable_scopes = %w[open closed overdue past_cancel_by]
     self.whitelisted_ransackable_associations = %w[supplier destination_location items]
 
     # What the supplier will invoice for everything ordered.

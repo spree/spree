@@ -32,6 +32,7 @@ module Spree
     belongs_to :exchange, class_name: 'Spree::Exchange', optional: true
     belongs_to :stock_transfer, class_name: 'Spree::StockTransfer', optional: true
     belongs_to :purchase_order, class_name: 'Spree::PurchaseOrder', optional: true
+    belongs_to :stock_receipt, class_name: 'Spree::StockReceipt', optional: true, inverse_of: :stock_movements
 
     alias_attribute :stock_item_id, :stock_level_id
 
@@ -80,7 +81,7 @@ module Spree
     self.whitelisted_ransackable_attributes = %w[quantity kind reason created_at stock_level_id
                                                  stock_item_id order_id fulfillment_id return_id
                                                  exchange_id stock_transfer_id purchase_order_id
-                                                 unit_cost]
+                                                 stock_receipt_id unit_cost]
     self.whitelisted_ransackable_associations = %w[stock_level]
 
     # Stored audit text for a correction nobody labelled. Deliberately

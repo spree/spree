@@ -21,7 +21,7 @@ module Spree
       # @param notes [String, nil]
       # @param created_by [Object, nil]
       def perform(store:, supplier:, destination_location:, items: [], currency: nil,
-                  expected_at: nil, reference: nil, notes: nil, created_by: nil)
+                  expected_at: nil, cancel_by: nil, reference: nil, notes: nil, created_by: nil)
         super
 
         step :build_purchase_order
@@ -44,6 +44,7 @@ module Spree
           destination_location: destination_location,
           currency: currency,
           expected_at: expected_at,
+          cancel_by: cancel_by,
           reference: reference,
           notes: notes,
           created_by: created_by,

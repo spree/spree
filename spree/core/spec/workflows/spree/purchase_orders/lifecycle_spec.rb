@@ -86,94 +86,119 @@ describe 'purchase order lifecycle', type: :model do
   describe 'receiving' do
     before { Spree::PurchaseOrders::MarkOrdered.call(purchase_order: purchase_order) }
 
-    it 'books the whole delivery in and closes the order' do
-      result = Spree::PurchaseOrders::Receive.call(purchase_order: purchase_order.reload)
+    def receive(items = nil, **attributes)
+      Spree::PurchaseOrders::Receive.call(purchase_order: purchase_order.reload, items: items, **attributes)
+    end
+
+    def line
+      purchase_order.reload.items.sole
+    end
+
+    it 'books the whole delivery in as a receipt and closes the order' do
+      result = receive
 
       expect(result).to be_success
-      expect(result.value).to be_received
-      expect(result.value.received_at).to be_present
+      receipt = result.value
+      expect(receipt).to be_a(Spree::StockReceipt)
+      expect(receipt.number).to start_with('SR')
+      expect(receipt.items.sole).to have_attributes(line: line, quantity_accepted: 100, quantity_rejected: 0)
+      expect(purchase_order.reload).to be_received
+      expect(purchase_order.received_at).to be_present
       expect(on_hand).to eq(100)
     end
 
-    it 'records what the units cost on the movement that landed them' do
-      Spree::PurchaseOrders::Receive.call(purchase_order: purchase_order.reload)
+    it 'records what the units cost on the movement that landed them, and which delivery' do
+      receipt = receive.value
 
       movement = purchase_order.reload.stock_movements.sole
       expect(movement).to have_attributes(kind: 'received', quantity: 100, unit_cost: 12.5)
       expect(movement.purchase_order).to eq(purchase_order)
+      expect(movement.stock_receipt).to eq(receipt)
       expect(movement.display_unit_cost.to_s).to eq('$12.50')
     end
 
-    # Two receivers booking the same pallet in at once: both resolve the line,
-    # both compute a delta from the total they read, and both credit the whole
-    # delivery. The workflow re-reads the line under its lock, so the second
-    # caller measures against what actually committed.
-    # Every delta is measured before any of them is written, so a line named
-    # twice would contribute its delta once per entry — the shape a scanner
-    # app produces when it appends an entry per pallet.
-    it 'refuses a payload that names the same line twice' do
-      item = purchase_order.reload.items.sole
+    it 'adds each delivery to the line and keeps the order open until it is whole' do
+      first = receive([{ item: line, quantity_accepted: 60 }], reference: 'DN-1')
+      expect(purchase_order.reload).to be_partially_received
+      expect(line).to have_attributes(quantity_received: 60, outstanding: 40)
 
-      result = Spree::PurchaseOrders::Receive.call(
-        purchase_order: purchase_order,
-        items: [{ item: item, quantity_received: 40 }, { item: item, quantity_received: 60 }]
-      )
+      second = receive([{ item: line, quantity_accepted: 40 }], reference: 'DN-2')
 
-      expect(result).to be_failure
-      expect(result.error.to_s).to eq(
-        Spree.t('purchase_order.errors.repeated_item', variant: item.variant_name)
-      )
-      expect(on_hand).to eq(0)
-      expect(item.reload.quantity_received).to eq(0)
-    end
-
-    it 'ignores a running total that was read before another receive committed' do
-      stale_line = purchase_order.reload.items.sole
-      Spree::PurchaseOrders::Receive.call(purchase_order: purchase_order,
-                                          items: [{ item: purchase_order.items.sole, quantity_received: 60 }])
-
-      result = Spree::PurchaseOrders::Receive.call(purchase_order: purchase_order.reload,
-                                                   items: [{ item: stale_line, quantity_received: 60 }])
-
-      expect(result).to be_failure
-      expect(result.error.to_s).to eq(Spree.t('purchase_order.errors.no_items_received'))
-      expect(on_hand).to eq(60)
-    end
-
-    it 'stays open when the supplier under-ships' do
-      item = purchase_order.reload.items.sole
-
-      result = Spree::PurchaseOrders::Receive.call(
-        purchase_order: purchase_order, items: [{ item: item, quantity_received: 60 }]
-      )
-
-      expect(result).to be_success
-      expect(result.value).to be_partially_received
-      expect(on_hand).to eq(60)
-      expect(item.reload.outstanding).to eq(40)
-    end
-
-    # Two deliveries agreed at different prices are two movements, each
-    # carrying its own cost — which is the whole reason the column exists.
-    it 'records each delivery at the price it was agreed' do
-      item = purchase_order.reload.items.sole
-      Spree::PurchaseOrders::Receive.call(purchase_order: purchase_order,
-                                          items: [{ item: item, quantity_received: 60 }])
-      item.reload.update!(unit_cost: 14)
-
-      Spree::PurchaseOrders::Receive.call(purchase_order: purchase_order.reload,
-                                          items: [{ item: item.reload, quantity_received: 100 }])
-
-      costs = purchase_order.reload.stock_movements.order(:id).map { |m| [m.quantity, m.unit_cost.to_f] }
-      expect(costs).to eq([[60, 12.5], [40, 14.0]])
+      expect(purchase_order.reload).to be_received
+      expect(purchase_order.stock_receipts.order(:id).map(&:reference)).to eq(%w[DN-1 DN-2])
+      expect(first.value.quantity_accepted_total).to eq(60)
+      expect(second.value.quantity_accepted_total).to eq(40)
       expect(on_hand).to eq(100)
     end
 
-    it 'refuses to receive more than was ordered' do
-      result = Spree::PurchaseOrders::Receive.call(
-        purchase_order: purchase_order.reload,
-        items: [{ item: purchase_order.items.sole, quantity_received: 101 }]
-      )
+    it 'records each delivery at the cost agreed when it landed' do
+      receive([{ item: line, quantity_accepted: 60 }])
+      line.update!(unit_cost: 14.0)
+      receive([{ item: line, quantity_accepted: 40 }])
+
+      costs = purchase_order.reload.stock_movements.order(:id).map { |movement| [movement.quantity, movement.unit_cost] }
+      expect(costs).to eq([[60, 12.5], [40, 14.0]])
+    end
+
+    it 'keeps rejected units off the shelf and on the receipt' do
+      result = receive([{ item: line, quantity_accepted: 8, quantity_rejected: 2, rejection_reason: 'damaged' }])
+
+      expect(result).to be_success
+      expect(result.value.items.sole).to have_attributes(quantity_rejected: 2, rejection_reason: 'damaged')
+      expect(line).to have_attributes(quantity_received: 8, quantity_rejected: 2, outstanding: 92)
+      expect(on_hand).to eq(8)
+    end
+
+    it 'refuses a rejection that gives no reason' do
+      result = receive([{ item: line, quantity_accepted: 8, quantity_rejected: 2 }])
+
+      expect(result).to be_failure
+      expect(on_hand).to eq(0)
+    end
+
+    it 'books an over-shipment in and closes the order as over-received' do
+      result = receive([{ item: line, quantity_accepted: 110 }])
+
+      expect(result).to be_success
+      expect(purchase_order.reload).to be_over_received
+      expect(purchase_order).to be_closed
+      expect(line).to have_attributes(quantity_received: 110, quantity_over: 10, outstanding: 0)
+      expect(on_hand).to eq(110)
+    end
+
+    it 'refuses a delivery that counts nothing' do
+      result = receive([{ item: line, quantity_accepted: 0, quantity_rejected: 0 }])
+
+      expect(result).to be_failure
+      expect(result.error.to_s).to eq(Spree.t('purchase_order.errors.no_items_received'))
+    end
+
+    # Two entries for one line are genuinely ambiguous — two cartons, or a
+    # correction of the first? — the shape a scanner app produces when it
+    # appends an entry per pallet.
+    it 'refuses a payload that names the same line twice' do
+      result = receive([{ item: line, quantity_accepted: 40 }, { item: line, quantity_accepted: 60 }])
+
+      expect(result).to be_failure
+      expect(result.error.to_s).to eq(Spree.t('purchase_order.errors.repeated_item', variant: line.variant_name))
+      expect(on_hand).to eq(0)
+    end
+
+    # Two receivers booking two pallets at once: each adds its own count to
+    # the total it reads, and the lock makes the second read the first's write.
+    it 'adds a delivery to the total another delivery just committed' do
+      stale_line = line
+      receive([{ item: line, quantity_accepted: 60 }])
+
+      result = receive([{ item: stale_line, quantity_accepted: 40 }])
+
+      expect(result).to be_success
+      expect(line.quantity_received).to eq(100)
+      expect(on_hand).to eq(100)
+    end
+
+    it 'refuses a negative count' do
+      result = receive([{ item: line, quantity_accepted: -1 }])
 
       expect(result).to be_failure
       expect(on_hand).to eq(0)
@@ -182,12 +207,10 @@ describe 'purchase order lifecycle', type: :model do
     it 'refuses a line belonging to another order' do
       other_item = create(:purchase_order, store: store).items.first
 
-      result = Spree::PurchaseOrders::Receive.call(
-        purchase_order: purchase_order.reload, items: [{ item: other_item, quantity_received: 1 }]
-      )
+      result = receive([{ item: other_item, quantity_accepted: 1 }])
 
       expect(result).to be_failure
-      expect(result.error.to_s).to eq(Spree.t('purchase_order.errors.item_not_on_order'))
+      expect(result.error.to_s).to eq(Spree.t('purchase_order.errors.item_not_on_document'))
     end
 
     it 'refuses an order that has not been placed' do
@@ -197,6 +220,55 @@ describe 'purchase order lifecycle', type: :model do
 
       expect(result).to be_failure
       expect(result.error.to_s).to eq(Spree.t('purchase_order.errors.not_ordered'))
+    end
+  end
+
+  describe 'closing short' do
+    before { Spree::PurchaseOrders::MarkOrdered.call(purchase_order: purchase_order) }
+
+    it 'ends a partially received order and records why' do
+      Spree::PurchaseOrders::Receive.call(purchase_order: purchase_order.reload,
+                                          items: [{ item: purchase_order.items.sole, quantity_accepted: 60 }])
+
+      result = Spree::PurchaseOrders::Close.call(purchase_order: purchase_order.reload,
+                                                 reason: 'Supplier out of stock')
+
+      expect(result).to be_success
+      expect(result.value).to be_received
+      expect(result.value).to be_closed_short
+      expect(result.value.close_reason).to eq('Supplier out of stock')
+      expect(result.value.items.sole.outstanding).to eq(40)
+      expect(on_hand).to eq(60)
+    end
+
+    it 'refuses an order nothing has arrived on' do
+      result = Spree::PurchaseOrders::Close.call(purchase_order: purchase_order.reload)
+
+      expect(result).to be_failure
+      expect(result.error.to_s).to eq(Spree.t('purchase_order.errors.not_partially_received'))
+    end
+  end
+
+  describe 'going back to draft' do
+    before { Spree::PurchaseOrders::MarkOrdered.call(purchase_order: purchase_order) }
+
+    it 'reopens a placed order nothing has arrived on' do
+      result = Spree::PurchaseOrders::MarkDraft.call(purchase_order: purchase_order.reload)
+
+      expect(result).to be_success
+      expect(result.value).to be_draft
+      expect(result.value.ordered_at).to be_nil
+      expect(result.value).to be_editable
+    end
+
+    it 'refuses once a delivery has been booked' do
+      Spree::PurchaseOrders::Receive.call(purchase_order: purchase_order.reload,
+                                          items: [{ item: purchase_order.items.sole, quantity_accepted: 1 }])
+
+      result = Spree::PurchaseOrders::MarkDraft.call(purchase_order: purchase_order.reload)
+
+      expect(result).to be_failure
+      expect(result.error.to_s).to eq(Spree.t('purchase_order.errors.already_receiving'))
     end
   end
 
@@ -216,7 +288,7 @@ describe 'purchase order lifecycle', type: :model do
     it 'closes what is outstanding and leaves received units alone' do
       Spree::PurchaseOrders::MarkOrdered.call(purchase_order: purchase_order)
       Spree::PurchaseOrders::Receive.call(purchase_order: purchase_order.reload,
-                                          items: [{ item: purchase_order.items.sole, quantity_received: 60 }])
+                                          items: [{ item: purchase_order.items.sole, quantity_accepted: 60 }])
 
       result = Spree::PurchaseOrders::Cancel.call(purchase_order: purchase_order.reload,
                                                   reason: 'Supplier went under')

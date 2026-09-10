@@ -84,13 +84,14 @@ module Spree
         expect(item.display_unit_cost.to_s).to eq('$12.50')
       end
 
-      # A receive of twelve against ten ordered is a miscount at the dock, so
-      # the error belongs on the value the caller sent.
-      it 'refuses to receive more than was ordered' do
-        item.quantity_received = 11
+      # Twelve against ten ordered is what the supplier sent, so the line
+      # reports it rather than refusing it.
+      it 'reports units above the order as over-received, and owes nothing' do
+        item.quantity_received = 12
 
-        expect(item).to be_invalid
-        expect(item.errors[:quantity_received]).to be_present
+        expect(item).to be_valid
+        expect(item).to have_attributes(quantity_over: 2, outstanding: 0)
+        expect(item).to be_over_received
       end
     end
   end

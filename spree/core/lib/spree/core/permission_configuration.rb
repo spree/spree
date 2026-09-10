@@ -364,7 +364,8 @@ module Spree
       })
       register_resource(:stock, group: :catalog, audiences: %i[seller], subjects: -> {
         [Spree::StockLevel, Spree::StockLocation, Spree::StockMovement,
-         Spree::StockTransfer, Spree::StockTransferItem, Spree::StockReservation]
+         Spree::StockTransfer, Spree::StockTransferItem, Spree::StockReservation,
+         Spree::StockReceipt, Spree::StockReceiptItem]
       })
       # Buying goods in, which is a different job from moving the goods you
       # already have: `write_stock` must not also mean "may place orders with
@@ -372,7 +373,8 @@ module Spree
       # seller audience — a marketplace seller does not purchase on the
       # operator's account.
       register_resource(:purchasing, group: :catalog, subjects: -> {
-        [Spree::Supplier, Spree::PurchaseOrder, Spree::PurchaseOrderItem]
+        [Spree::Supplier, Spree::PurchaseOrder, Spree::PurchaseOrderItem,
+         Spree::StockReceipt, Spree::StockReceiptItem]
       })
 
       register_resource(:promotions, group: :marketing, subjects: -> {
