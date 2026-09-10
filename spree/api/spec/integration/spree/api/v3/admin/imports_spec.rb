@@ -70,6 +70,7 @@ RSpec.describe 'Admin Imports API', type: :request, swagger_doc: 'api-reference/
               customers
               product_translations
               price_list_prices
+              purchase_orders
             ],
             example: 'products'
           },

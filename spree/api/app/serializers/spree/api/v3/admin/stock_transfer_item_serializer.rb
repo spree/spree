@@ -3,12 +3,13 @@ module Spree
     module V3
       module Admin
         # One SKU on a stock transfer: how many left, how many arrived, and
-        # what happened to the difference.
+        # how many of those were refused.
         class StockTransferItemSerializer < V3::BaseSerializer
           typelize quantity_shipped: :number,
                    quantity_received: :number,
+                   quantity_rejected: :number,
+                   quantity_over: :number,
                    outstanding: :number,
-                   discrepancy_reason: 'string | null',
                    stock_transfer_id: 'string | null',
                    thumbnail_url: 'string | null',
                    product_id: 'string | null',
@@ -17,7 +18,7 @@ module Spree
                    variant_sku: 'string | null',
                    options_text: 'string | null'
 
-          attributes :quantity_shipped, :quantity_received, :outstanding, :discrepancy_reason,
+          attributes :quantity_shipped, :quantity_received, :quantity_rejected, :quantity_over, :outstanding,
                      created_at: :iso8601, updated_at: :iso8601
 
           attribute :stock_transfer_id do |item|

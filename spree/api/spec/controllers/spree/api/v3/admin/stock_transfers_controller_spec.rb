@@ -216,58 +216,6 @@ RSpec.describe Spree::Api::V3::Admin::StockTransfersController, type: :controlle
       expect(destination_location.stock_level(variant.id)&.count_on_hand.to_i).to eq(0)
     end
 
-    it 'receives what actually arrived and records the shortfall' do
-      patch :mark_in_transit, params: { id: transfer.prefixed_id }, as: :json
-      item = transfer.reload.items.sole
-
-      patch :receive, params: {
-        id: transfer.prefixed_id,
-        items: [{ id: item.prefixed_id, quantity_received: 8, discrepancy_reason: 'damaged_in_transit' }]
-      }, as: :json
-
-      expect(response).to have_http_status(:ok)
-      expect(json_response).to include('status' => 'partially_received',
-                                       'quantity_received_total' => 8)
-      expect(destination_location.stock_level(variant.id).reload.count_on_hand).to eq(8)
-      expect(item.reload.discrepancy_reason).to eq('damaged_in_transit')
-    end
-
-    it 'receives everything when the payload names no lines' do
-      patch :mark_in_transit, params: { id: transfer.prefixed_id }, as: :json
-
-      patch :receive, params: { id: transfer.prefixed_id }, as: :json
-
-      expect(json_response['status']).to eq('received')
-      expect(destination_location.stock_level(variant.id).reload.count_on_hand).to eq(10)
-    end
-
-    # An `items` the caller got wrong must not fall through to receive-all.
-    it 'refuses a receive whose items is an object rather than a list' do
-      patch :mark_in_transit, params: { id: transfer.prefixed_id }, as: :json
-
-      patch :receive, params: {
-        id: transfer.prefixed_id, items: { id: 'x', quantity_received: 1 }
-      }, as: :json
-
-      expect(response).to have_http_status(:unprocessable_content)
-      expect(json_response['error']['details']['base']).to include(
-        hash_including('code' => 'invalid_items')
-      )
-      expect(transfer.reload.status).to eq('in_transit')
-      expect(transfer.quantity_received_total).to eq(0)
-    end
-
-    it "returns 404 for a line belonging to another transfer" do
-      patch :mark_in_transit, params: { id: transfer.prefixed_id }, as: :json
-      foreign_item = create_draft.items.sole
-
-      patch :receive, params: {
-        id: transfer.prefixed_id, items: [{ id: foreign_item.prefixed_id, quantity_received: 1 }]
-      }, as: :json
-
-      expect(response).to have_http_status(:not_found)
-    end
-
     it 'refuses to cancel an in-transit transfer without a decision' do
       patch :mark_in_transit, params: { id: transfer.prefixed_id }, as: :json
 
@@ -285,6 +233,45 @@ RSpec.describe Spree::Api::V3::Admin::StockTransfersController, type: :controlle
       expect(response).to have_http_status(:ok)
       expect(json_response['status']).to eq('canceled')
       expect(source_location.stock_level(variant.id).reload.count_on_hand).to eq(50)
+    end
+    it 'writes off units that never arrived as the reason the transfer closed' do
+      patch :mark_in_transit, params: { id: transfer.prefixed_id }, as: :json
+
+      patch :cancel, params: { id: transfer.prefixed_id, on_in_transit: 'write_off', reason: 'stolen' }, as: :json
+
+      expect(response).to have_http_status(:ok)
+      expect(json_response).to include('status' => 'canceled', 'close_reason' => 'stolen')
+      expect(source_location.stock_level(variant.id).reload.count_on_hand).to eq(40)
+    end
+
+    it 'takes a packed transfer back to draft' do
+      patch :mark_ready, params: { id: transfer.prefixed_id }, as: :json
+
+      patch :mark_draft, params: { id: transfer.prefixed_id }, as: :json
+
+      expect(response).to have_http_status(:ok)
+      expect(json_response).to include('status' => 'draft', 'editable' => true)
+    end
+
+    it 'refuses to take a shipped transfer back to draft' do
+      patch :mark_in_transit, params: { id: transfer.prefixed_id }, as: :json
+
+      patch :mark_draft, params: { id: transfer.prefixed_id }, as: :json
+
+      expect(response).to have_http_status(:unprocessable_content)
+    end
+
+    it 'closes a short transfer and keeps what the destination counted in' do
+      patch :mark_in_transit, params: { id: transfer.prefixed_id }, as: :json
+      Spree::StockTransfers::Receive.call(stock_transfer: transfer.reload,
+                                          items: [{ item: transfer.items.sole, quantity_accepted: 8 }])
+
+      patch :close, params: { id: transfer.prefixed_id, reason: 'Two fell off the van' }, as: :json
+
+      expect(response).to have_http_status(:ok)
+      expect(json_response).to include('status' => 'received', 'closed_short' => true,
+                                       'close_reason' => 'Two fell off the van')
+      expect(destination_location.stock_level(variant.id).reload.count_on_hand).to eq(8)
     end
   end
 

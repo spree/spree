@@ -11,15 +11,22 @@ module Spree
                    items_count: :number,
                    quantity_shipped_total: :number,
                    quantity_received_total: :number,
+                   quantity_rejected_total: :number,
                    editable: :boolean,
+                   closed_short_at: 'string | null',
+                   close_reason: 'string | null',
+                   closed_short: :boolean,
                    shipped_at: 'string | null',
                    received_at: 'string | null',
                    deleted_at: 'string | null',
                    metadata: 'Record<string, unknown>'
 
-          attributes :status, :notes, :metadata,
-                     :items_count, :quantity_received_total,
-                     shipped_at: :iso8601, received_at: :iso8601, deleted_at: :iso8601
+          attributes :status, :notes, :metadata, :close_reason,
+                     :items_count, :quantity_received_total, :quantity_rejected_total,
+                     shipped_at: :iso8601, received_at: :iso8601, closed_short_at: :iso8601,
+                     deleted_at: :iso8601
+
+          attribute :closed_short, &:closed_short?
 
           # Named for the merchant's own vocabulary — a transfer ships, a
           # purchase order orders — over the concern's neutral
@@ -31,6 +38,10 @@ module Spree
           many :items,
                resource: proc { Spree.api.admin_stock_transfer_item_serializer },
                if: proc { expand?('items') }
+
+          many :stock_receipts,
+               resource: proc { Spree.api.admin_stock_receipt_serializer },
+               if: proc { expand?('stock_receipts') }
 
           one :source_location,
               resource: proc { Spree.api.admin_stock_location_serializer },

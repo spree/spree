@@ -33,7 +33,7 @@ RSpec.describe 'Admin Stock Transfers API', type: :request, swagger_doc: 'api-re
         not yet on the other.
 
         Statuses are `draft`, `ready_to_ship`, `in_transit`,
-        `partially_received`, `received` and `canceled`. Each move between them
+        `partially_received`, `received`, `over_received` and `canceled`. Each move between them
         is its own endpoint, not a `PATCH` that writes `status`.
 
         Receiving from a supplier is a purchase order, not a transfer with a
@@ -51,7 +51,7 @@ RSpec.describe 'Admin Stock Transfers API', type: :request, swagger_doc: 'api-re
       parameter name: :page, in: :query, type: :integer, required: false, description: 'Page number'
       parameter name: :limit, in: :query, type: :integer, required: false, description: 'Number of records per page'
       parameter name: :'q[status_eq]', in: :query, type: :string, required: false,
-                description: "Filter by status ('draft', 'ready_to_ship', 'in_transit', 'partially_received', 'received', 'canceled')"
+                description: "Filter by status ('draft', 'ready_to_ship', 'in_transit', 'partially_received', 'received', 'over_received', 'canceled')"
       parameter name: :expand, in: :query, type: :string, required: false,
                 description: 'Comma-separated associations to embed: items, source_location, destination_location'
 
@@ -301,32 +301,63 @@ RSpec.describe 'Admin Stock Transfers API', type: :request, swagger_doc: 'api-re
     end
   end
 
-  path '/api/v3/admin/stock_transfers/{id}/receive' do
-    parameter name: :id, in: :path, type: :string, required: true, description: 'Stock transfer ID'
+  path '/api/v3/admin/stock_transfers/{stock_transfer_id}/stock_receipts' do
+    parameter name: :stock_transfer_id, in: :path, type: :string, required: true, description: 'Stock transfer ID'
 
-    patch 'Receive a transfer' do
+    get 'List the deliveries counted in against a transfer' do
+      tags 'Stock Transfers'
+      produces 'application/json'
+      security [api_key: [], bearer_auth: []]
+      description 'Each delivery the destination counted in, with what it accepted and refused.'
+      admin_scope :read, :stock
+
+      admin_sdk_example 'stock-transfers/stock-receipts/list'
+
+      parameter name: 'x-spree-api-key', in: :header, type: :string, required: true
+      parameter name: :Authorization, in: :header, type: :string, required: true,
+                description: 'Bearer token for admin authentication'
+
+      response '200', 'deliveries found' do
+        let(:'x-spree-api-key') { secret_api_key.plaintext_token }
+        let(:stock_transfer_id) { transfer_record.prefixed_id }
+
+        before do
+          Spree::StockTransfers::MarkInTransit.call(stock_transfer: transfer_record)
+          Spree::StockTransfers::Receive.call(stock_transfer: transfer_record.reload,
+                                              items: [{ item: transfer_record.items.first, quantity_accepted: 8 }])
+        end
+
+        run_test! do |response|
+          data = JSON.parse(response.body)
+          expect(data['data'].sole['quantity_accepted_total']).to eq(8)
+        end
+      end
+    end
+
+    post 'Count a delivery in' do
       tags 'Stock Transfers'
       consumes 'application/json'
       produces 'application/json'
       security [api_key: [], bearer_auth: []]
       description <<~DESC
-        Records what the destination warehouse actually counted in.
+        Records one delivery the destination warehouse counted in, as a stock
+        receipt. Partial receipt is the normal case: ten left, eight arrived,
+        two were crushed in transit. Quantities are this delivery's counts —
+        a second box adds to the first rather than restating it.
 
-        Partial receipt is the normal case, not an edge case: ten left, eight
-        arrived, two were crushed in transit. `quantity_received` is the running
-        total for the line, so a second delivery tops it up rather than
-        starting over, and only the difference reaches the shelf. Omit `items`
-        to receive every line in full.
+        `quantity_accepted` lands on the destination's shelf;
+        `quantity_rejected` is refused and recorded with a `rejection_reason`
+        (`damaged`, `wrong_item`, `expired` or `other`), never stocked. A
+        refused unit still arrived, so it counts toward the trip being over.
+        Omit `items` to count in everything still outstanding, intact.
 
-        `discrepancy_reason` records why fewer arrived —
-        `damaged_in_transit`, `lost_in_transit` or `undercount`.
-
-        The transfer settles in `received` once every line is complete, and
-        stays `partially_received` while any is still owed.
+        The transfer stays `partially_received` while units are still on the
+        road, settles in `received` once everything has arrived, and in
+        `over_received` once more arrived than was shipped.
       DESC
       admin_scope :write, :stock
 
-      admin_sdk_example 'stock-transfers/receive'
+      admin_sdk_example 'stock-transfers/stock-receipts/create'
 
       parameter name: 'x-spree-api-key', in: :header, type: :string, required: true
       parameter name: :Authorization, in: :header, type: :string, required: true,
@@ -334,56 +365,134 @@ RSpec.describe 'Admin Stock Transfers API', type: :request, swagger_doc: 'api-re
       parameter name: :receipt, in: :body, required: false, schema: {
         type: :object,
         properties: {
+          reference: { type: :string, nullable: true, example: 'Van 3, morning run' },
+          received_at: { type: :string, format: 'date-time', nullable: true, description: 'Defaults to now' },
+          notes: { type: :string, nullable: true },
           items: {
             type: :array,
             items: {
               type: :object,
               properties: {
                 id: { type: :string, example: 'sti_1234567890' },
-                quantity_received: { type: :integer, example: 8 },
-                discrepancy_reason: { type: :string, nullable: true, example: 'damaged_in_transit' }
+                quantity_accepted: { type: :integer, example: 8 },
+                quantity_rejected: { type: :integer, example: 2 },
+                rejection_reason: { type: :string, nullable: true, example: 'damaged' },
+                notes: { type: :string, nullable: true }
               },
-              required: %w[id quantity_received]
+              required: %w[id]
             }
           }
         }
       }
 
-      response '200', 'transfer received' do
+      response '201', 'delivery counted in' do
         let(:'x-spree-api-key') { secret_api_key.plaintext_token }
-        let(:id) { transfer_record.prefixed_id }
+        let(:stock_transfer_id) { transfer_record.prefixed_id }
         let(:receipt) do
-          {
-            items: [
-              {
-                id: transfer_record.items.first.prefixed_id,
-                quantity_received: 8,
-                discrepancy_reason: 'damaged_in_transit'
-              }
-            ]
-          }
+          { items: [{ id: transfer_record.items.first.prefixed_id, quantity_accepted: 8, quantity_rejected: 2,
+                      rejection_reason: 'damaged' }] }
         end
 
         before { Spree::StockTransfers::MarkInTransit.call(stock_transfer: transfer_record) }
 
-        schema '$ref' => '#/components/schemas/StockTransfer'
+        schema '$ref' => '#/components/schemas/StockReceipt'
 
         run_test! do |response|
           data = JSON.parse(response.body)
-          expect(data['status']).to eq('partially_received')
-          expect(data['quantity_received_total']).to eq(8)
+          expect(data['quantity_accepted_total']).to eq(8)
+          expect(data['quantity_rejected_total']).to eq(2)
+          expect(transfer_record.reload).to be_received
           expect(destination.stock_level(variant.id).reload.count_on_hand).to eq(8)
         end
       end
 
       response '422', 'transfer has not shipped yet' do
         let(:'x-spree-api-key') { secret_api_key.plaintext_token }
-        let(:id) { transfer_record.prefixed_id }
+        let(:stock_transfer_id) { transfer_record.prefixed_id }
         let(:receipt) { {} }
 
         schema '$ref' => '#/components/schemas/ErrorResponse'
 
         run_test!
+      end
+    end
+  end
+
+  path '/api/v3/admin/stock_transfers/{id}/mark_draft' do
+    parameter name: :id, in: :path, type: :string, required: true, description: 'Stock transfer ID'
+
+    patch 'Take a transfer back to draft' do
+      tags 'Stock Transfers'
+      produces 'application/json'
+      security [api_key: [], bearer_auth: []]
+      description 'Unfreezes a ready-to-ship transfer so its lines can be changed. Nothing has left the source, so nothing is undone.'
+      admin_scope :write, :stock
+
+      admin_sdk_example 'stock-transfers/mark-draft'
+
+      parameter name: 'x-spree-api-key', in: :header, type: :string, required: true
+      parameter name: :Authorization, in: :header, type: :string, required: true,
+                description: 'Bearer token for admin authentication'
+
+      response '200', 'transfer back in draft' do
+        let(:'x-spree-api-key') { secret_api_key.plaintext_token }
+        let(:id) { transfer_record.prefixed_id }
+
+        before { Spree::StockTransfers::MarkReady.call(stock_transfer: transfer_record) }
+
+        schema '$ref' => '#/components/schemas/StockTransfer'
+
+        run_test! do |response|
+          expect(JSON.parse(response.body)['status']).to eq('draft')
+        end
+      end
+    end
+  end
+
+  path '/api/v3/admin/stock_transfers/{id}/close' do
+    parameter name: :id, in: :path, type: :string, required: true, description: 'Stock transfer ID'
+
+    patch 'Close a transfer short' do
+      tags 'Stock Transfers'
+      consumes 'application/json'
+      produces 'application/json'
+      security [api_key: [], bearer_auth: []]
+      description <<~DESC
+        Ends a partially received transfer whose missing units are not going
+        to turn up. Nothing moves — they already left the source — and the
+        transfer settles in `received` with `closed_short_at` and the
+        `reason` recorded, the outstanding count left on each line.
+      DESC
+      admin_scope :write, :stock
+
+      admin_sdk_example 'stock-transfers/close'
+
+      parameter name: 'x-spree-api-key', in: :header, type: :string, required: true
+      parameter name: :Authorization, in: :header, type: :string, required: true,
+                description: 'Bearer token for admin authentication'
+      parameter name: :closure, in: :body, required: false, schema: {
+        type: :object,
+        properties: { reason: { type: :string, nullable: true, example: 'Two fell off the van' } }
+      }
+
+      response '200', 'transfer closed short' do
+        let(:'x-spree-api-key') { secret_api_key.plaintext_token }
+        let(:id) { transfer_record.prefixed_id }
+        let(:closure) { { reason: 'Two fell off the van' } }
+
+        before do
+          Spree::StockTransfers::MarkInTransit.call(stock_transfer: transfer_record)
+          Spree::StockTransfers::Receive.call(stock_transfer: transfer_record.reload,
+                                              items: [{ item: transfer_record.items.first, quantity_accepted: 8 }])
+        end
+
+        schema '$ref' => '#/components/schemas/StockTransfer'
+
+        run_test! do |response|
+          data = JSON.parse(response.body)
+          expect(data['status']).to eq('received')
+          expect(data['closed_short']).to be(true)
+        end
       end
     end
   end

@@ -19,7 +19,7 @@ module Spree
           # The base registers this for show/update/destroy; a second
           # `before_action :set_resource` replaces that registration rather than
           # adding to it, so those three are listed again here.
-          before_action :set_resource, only: [:show, :update, :destroy, :mark_ordered, :receive, :cancel]
+          before_action :set_resource, only: [:show, :update, :destroy, :mark_ordered, :mark_draft, :close, :cancel]
 
           # DELETE /api/v3/admin/purchase_orders/:id
           #
@@ -45,12 +45,20 @@ module Spree
           end
 
           # PATCH /api/v3/admin/purchase_orders/:id/receive
-          def receive
-            result = Spree.purchase_order_receive_workflow.call(
-              purchase_order: @resource,
-              items: items_for_receive([:id, :quantity_received]),
-              received_by: try_spree_current_user
-            )
+          # PATCH /api/v3/admin/purchase_orders/:id/mark_draft
+          def mark_draft
+            result = Spree.purchase_order_mark_draft_workflow.call(purchase_order: @resource)
+            return render_result_error(result) unless result.success?
+
+            render json: serialize_resource(result.value)
+          end
+
+          # PATCH /api/v3/admin/purchase_orders/:id/close
+          #
+          # Deliveries are recorded through the nested stock receipts; this is
+          # for the balance that is not coming.
+          def close
+            result = Spree.purchase_order_close_workflow.call(purchase_order: @resource, reason: params[:reason])
             return render_result_error(result) unless result.success?
 
             render json: serialize_resource(result.value)
@@ -98,6 +106,7 @@ module Spree
               items: items_from_params(:quantity_ordered, :unit_cost) || [],
               currency: params[:currency],
               expected_at: params[:expected_at],
+              cancel_by: params[:cancel_by],
               reference: params[:reference],
               notes: params[:notes],
               created_by: try_spree_current_user
@@ -116,7 +125,7 @@ module Spree
           # instead, since an id the payload names has to be proved to belong
           # here.
           def resource_permitted_attributes
-            [:currency, :expected_at, :reference, :notes, { metadata: {} }]
+            [:currency, :expected_at, :cancel_by, :reference, :notes, { metadata: {} }]
           end
 
           def editable_attributes

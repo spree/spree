@@ -21,7 +21,7 @@ module Spree
           # The base registers this for show/update/destroy; a second
           # `before_action :set_resource` replaces that registration rather than
           # adding to it, so those three are listed again here.
-          before_action :set_resource, only: [:show, :update, :destroy, :mark_ready, :mark_in_transit, :receive, :cancel]
+          before_action :set_resource, only: [:show, :update, :destroy, :mark_ready, :mark_in_transit, :mark_draft, :close, :cancel]
 
           # DELETE /api/v3/admin/stock_transfers/:id
           #
@@ -67,13 +67,20 @@ module Spree
             render json: serialize_resource(result.value)
           end
 
-          # PATCH /api/v3/admin/stock_transfers/:id/receive
-          def receive
-            result = Spree.stock_transfer_receive_workflow.call(
-              stock_transfer: @resource,
-              items: items_for_receive([:id, :quantity_received, :discrepancy_reason]),
-              received_by: try_spree_current_user
-            )
+          # PATCH /api/v3/admin/stock_transfers/:id/mark_draft
+          def mark_draft
+            result = Spree.stock_transfer_mark_draft_workflow.call(stock_transfer: @resource)
+            return render_result_error(result) unless result.success?
+
+            render json: serialize_resource(result.value)
+          end
+
+          # PATCH /api/v3/admin/stock_transfers/:id/close
+          #
+          # Deliveries are recorded through the nested stock receipts; this is
+          # for units that left the source and are not going to turn up.
+          def close
+            result = Spree.stock_transfer_close_workflow.call(stock_transfer: @resource, reason: params[:reason])
             return render_result_error(result) unless result.success?
 
             render json: serialize_resource(result.value)

@@ -138,6 +138,8 @@ module Spree
         admin_supplier_serializer: 'Spree::Api::V3::Admin::SupplierSerializer',
         admin_purchase_order_serializer: 'Spree::Api::V3::Admin::PurchaseOrderSerializer',
         admin_purchase_order_item_serializer: 'Spree::Api::V3::Admin::PurchaseOrderItemSerializer',
+        admin_stock_receipt_serializer: 'Spree::Api::V3::Admin::StockReceiptSerializer',
+        admin_stock_receipt_item_serializer: 'Spree::Api::V3::Admin::StockReceiptItemSerializer',
         admin_shipment_serializer: 'Spree::Api::V3::Admin::FulfillmentSerializer',
         admin_fulfillment_serializer: 'Spree::Api::V3::Admin::FulfillmentSerializer',
         admin_fulfillment_item_serializer: 'Spree::Api::V3::Admin::FulfillmentItemSerializer',

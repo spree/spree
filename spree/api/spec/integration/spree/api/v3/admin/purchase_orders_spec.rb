@@ -31,7 +31,7 @@ RSpec.describe 'Admin Purchase Orders API', type: :request, swagger_doc: 'api-re
         `count_on_hand` until `receive` runs, because a merchant who has
         ordered stock does not have it.
 
-        Statuses are `draft`, `ordered`, `partially_received`, `received` and
+        Statuses are `draft`, `ordered`, `partially_received`, `received`, `over_received` and
         `canceled`. Each move between them is its own endpoint, not a `PATCH`
         that writes `status`.
 
@@ -49,7 +49,7 @@ RSpec.describe 'Admin Purchase Orders API', type: :request, swagger_doc: 'api-re
       parameter name: :page, in: :query, type: :integer, required: false, description: 'Page number'
       parameter name: :limit, in: :query, type: :integer, required: false, description: 'Number of records per page'
       parameter name: :'q[status_eq]', in: :query, type: :string, required: false,
-                description: "Filter by status ('draft', 'ordered', 'partially_received', 'received', 'canceled')"
+                description: "Filter by status ('draft', 'ordered', 'partially_received', 'received', 'over_received', 'canceled')"
       parameter name: :expand, in: :query, type: :string, required: false,
                 description: 'Comma-separated associations to embed: items, supplier, destination_location'
 
@@ -235,31 +235,66 @@ RSpec.describe 'Admin Purchase Orders API', type: :request, swagger_doc: 'api-re
     end
   end
 
-  path '/api/v3/admin/purchase_orders/{id}/receive' do
-    parameter name: :id, in: :path, type: :string, required: true, description: 'Purchase order ID'
+  path '/api/v3/admin/purchase_orders/{purchase_order_id}/stock_receipts' do
+    parameter name: :purchase_order_id, in: :path, type: :string, required: true, description: 'Purchase order ID'
 
-    patch 'Book in a delivery' do
+    get 'List the deliveries booked against an order' do
+      tags 'Purchase Orders'
+      produces 'application/json'
+      security [api_key: [], bearer_auth: []]
+      description 'Each delivery the dock counted in, newest first — with its packing-slip reference and what it accepted and refused.'
+      admin_scope :read, :purchasing
+
+      admin_sdk_example 'purchase-orders/stock-receipts/list'
+
+      parameter name: 'x-spree-api-key', in: :header, type: :string, required: true
+      parameter name: :Authorization, in: :header, type: :string, required: true,
+                description: 'Bearer token for admin authentication'
+
+      response '200', 'deliveries found' do
+        let(:'x-spree-api-key') { secret_api_key.plaintext_token }
+        let(:purchase_order_id) { order_record.prefixed_id }
+
+        before do
+          Spree::PurchaseOrders::MarkOrdered.call(purchase_order: order_record)
+          Spree::PurchaseOrders::Receive.call(purchase_order: order_record.reload,
+                                              items: [{ item: order_record.items.first, quantity_accepted: 60 }],
+                                              reference: 'DN-4471')
+        end
+
+        run_test! do |response|
+          data = JSON.parse(response.body)
+          expect(data['data'].sole['reference']).to eq('DN-4471')
+          expect(data['data'].sole['quantity_accepted_total']).to eq(60)
+        end
+      end
+    end
+
+    post 'Book in a delivery' do
       tags 'Purchase Orders'
       consumes 'application/json'
       produces 'application/json'
       security [api_key: [], bearer_auth: []]
       description <<~DESC
-        The moment purchased goods first count toward availability.
+        The moment purchased goods first count toward availability. Records
+        one delivery as a stock receipt: what this delivery brought, per line,
+        not a running total — a second delivery adds to the first.
 
-        `quantity_received` is the running total for the line, so a second
-        delivery tops it up rather than starting over, and only the difference
-        reaches the shelf. Omit `items` to receive every line in full.
+        `quantity_accepted` reaches the shelf; `quantity_rejected` is refused
+        and recorded with a `rejection_reason` (`damaged`, `wrong_item`,
+        `expired` or `other`), never stocked. Omit `items` to book in
+        everything still outstanding, intact.
 
-        Each `received` stock movement carries the line's `unit_cost`, which is
-        what a rolling average cost is computed from — including across two
-        deliveries agreed at different prices.
+        Each `received` stock movement carries the line's `unit_cost` and
+        names the receipt, so a delivery can be reconciled against the ledger.
 
-        The order settles in `received` once every line is complete, and stays
-        `partially_received` while any is still owed.
+        The order stays `partially_received` while any line is still owed,
+        settles in `received` once every line has what it expected, and in
+        `over_received` once any line has more.
       DESC
       admin_scope :write, :purchasing
 
-      admin_sdk_example 'purchase-orders/receive'
+      admin_sdk_example 'purchase-orders/stock-receipts/create'
 
       parameter name: 'x-spree-api-key', in: :header, type: :string, required: true
       parameter name: :Authorization, in: :header, type: :string, required: true,
@@ -267,24 +302,80 @@ RSpec.describe 'Admin Purchase Orders API', type: :request, swagger_doc: 'api-re
       parameter name: :receipt, in: :body, required: false, schema: {
         type: :object,
         properties: {
+          reference: { type: :string, nullable: true, example: 'DN-4471', description: "The supplier's delivery note or packing slip" },
+          received_at: { type: :string, format: 'date-time', nullable: true, description: 'Defaults to now' },
+          notes: { type: :string, nullable: true },
           items: {
             type: :array,
             items: {
               type: :object,
               properties: {
                 id: { type: :string, example: 'poi_1234567890' },
-                quantity_received: { type: :integer, example: 60 }
+                quantity_accepted: { type: :integer, example: 58 },
+                quantity_rejected: { type: :integer, example: 2 },
+                rejection_reason: { type: :string, nullable: true, example: 'damaged' },
+                notes: { type: :string, nullable: true }
               },
-              required: %w[id quantity_received]
+              required: %w[id]
             }
           }
         }
       }
 
-      response '200', 'delivery booked in' do
+      response '201', 'delivery booked in' do
+        let(:'x-spree-api-key') { secret_api_key.plaintext_token }
+        let(:purchase_order_id) { order_record.prefixed_id }
+        let(:receipt) do
+          { reference: 'DN-4471',
+            items: [{ id: order_record.items.first.prefixed_id, quantity_accepted: 58, quantity_rejected: 2,
+                      rejection_reason: 'damaged' }] }
+        end
+
+        before { Spree::PurchaseOrders::MarkOrdered.call(purchase_order: order_record) }
+
+        schema '$ref' => '#/components/schemas/StockReceipt'
+
+        run_test! do |response|
+          data = JSON.parse(response.body)
+          expect(data['reference']).to eq('DN-4471')
+          expect(data['quantity_accepted_total']).to eq(58)
+          expect(data['quantity_rejected_total']).to eq(2)
+          expect(order_record.reload).to be_partially_received
+          expect(destination.stock_level(variant.id).reload.count_on_hand).to eq(58)
+        end
+      end
+
+      response '422', 'order has not been placed yet' do
+        let(:'x-spree-api-key') { secret_api_key.plaintext_token }
+        let(:purchase_order_id) { order_record.prefixed_id }
+        let(:receipt) { {} }
+
+        schema '$ref' => '#/components/schemas/ErrorResponse'
+
+        run_test!
+      end
+    end
+  end
+
+  path '/api/v3/admin/purchase_orders/{id}/mark_draft' do
+    parameter name: :id, in: :path, type: :string, required: true, description: 'Purchase order ID'
+
+    patch 'Take an order back to draft' do
+      tags 'Purchase Orders'
+      produces 'application/json'
+      security [api_key: [], bearer_auth: []]
+      description 'Reopens a placed order for editing. Only while no delivery has been booked against it; `ordered_at` is cleared.'
+      admin_scope :write, :purchasing
+
+      admin_sdk_example 'purchase-orders/mark-draft'
+
+      parameter name: 'x-spree-api-key', in: :header, type: :string, required: true
+      parameter name: :Authorization, in: :header, type: :string, required: true,
+                description: 'Bearer token for admin authentication'
+
+      response '200', 'order back in draft' do
         let(:'x-spree-api-key') { secret_api_key.plaintext_token }
         let(:id) { order_record.prefixed_id }
-        let(:receipt) { { items: [{ id: order_record.items.first.prefixed_id, quantity_received: 60 }] } }
 
         before { Spree::PurchaseOrders::MarkOrdered.call(purchase_order: order_record) }
 
@@ -292,20 +383,58 @@ RSpec.describe 'Admin Purchase Orders API', type: :request, swagger_doc: 'api-re
 
         run_test! do |response|
           data = JSON.parse(response.body)
-          expect(data['status']).to eq('partially_received')
-          expect(data['quantity_received_total']).to eq(60)
-          expect(destination.stock_level(variant.id).reload.count_on_hand).to eq(60)
+          expect(data['status']).to eq('draft')
+          expect(data['ordered_at']).to be_nil
         end
       end
+    end
+  end
 
-      response '422', 'order has not been placed yet' do
+  path '/api/v3/admin/purchase_orders/{id}/close' do
+    parameter name: :id, in: :path, type: :string, required: true, description: 'Purchase order ID'
+
+    patch 'Close an order short' do
+      tags 'Purchase Orders'
+      consumes 'application/json'
+      produces 'application/json'
+      security [api_key: [], bearer_auth: []]
+      description <<~DESC
+        Ends a partially received order whose balance the supplier will not
+        deliver. Nothing moves: what arrived stays on the shelf, the
+        outstanding count stays on each line, and the order settles in
+        `received` with `closed_short_at` and the `reason` recorded.
+      DESC
+      admin_scope :write, :purchasing
+
+      admin_sdk_example 'purchase-orders/close'
+
+      parameter name: 'x-spree-api-key', in: :header, type: :string, required: true
+      parameter name: :Authorization, in: :header, type: :string, required: true,
+                description: 'Bearer token for admin authentication'
+      parameter name: :closure, in: :body, required: false, schema: {
+        type: :object,
+        properties: { reason: { type: :string, nullable: true, example: 'Supplier out of stock' } }
+      }
+
+      response '200', 'order closed short' do
         let(:'x-spree-api-key') { secret_api_key.plaintext_token }
         let(:id) { order_record.prefixed_id }
-        let(:receipt) { {} }
+        let(:closure) { { reason: 'Supplier out of stock' } }
 
-        schema '$ref' => '#/components/schemas/ErrorResponse'
+        before do
+          Spree::PurchaseOrders::MarkOrdered.call(purchase_order: order_record)
+          Spree::PurchaseOrders::Receive.call(purchase_order: order_record.reload,
+                                              items: [{ item: order_record.items.first, quantity_accepted: 60 }])
+        end
 
-        run_test!
+        schema '$ref' => '#/components/schemas/PurchaseOrder'
+
+        run_test! do |response|
+          data = JSON.parse(response.body)
+          expect(data['status']).to eq('received')
+          expect(data['closed_short']).to be(true)
+          expect(data['close_reason']).to eq('Supplier out of stock')
+        end
       end
     end
   end

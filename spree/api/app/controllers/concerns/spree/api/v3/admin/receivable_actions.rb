@@ -47,32 +47,6 @@ module Spree
             end
           end
 
-          # What the warehouse counted, resolved through the document itself,
-          # so a line from another transfer or order cannot be received here.
-          #
-          # An omitted `items` means "receive it all as expected". Naming an
-          # empty list — or an explicit `null`, the same statement — means the
-          # caller named no lines, and must not fall through to receive-all.
-          #
-          # @param keys [Array<Symbol>] the per-line keys to permit
-          # @return [Array<Hash>, nil]
-          def items_for_receive(keys)
-            sent = items_payload(keys)
-            return nil if sent.nil?
-
-            sent.map do |item|
-              received = {
-                item: @resource.items.find_by_prefix_id!(item[:id]),
-                quantity_received: item[:quantity_received]
-              }
-              # Only when the payload actually carried one: a second receive
-              # that tops a line up without repeating the reason must not erase
-              # the audit text the first one recorded.
-              received[:discrepancy_reason] = item[:discrepancy_reason] if item.key?('discrepancy_reason')
-              received
-            end
-          end
-
           # Any of the store's warehouses the caller may see, or nil when the
           # payload did not name one.
           #

@@ -7,6 +7,7 @@ module Spree
                    return_id: [:string, nullable: true], exchange_id: [:string, nullable: true],
                    stock_transfer_id: [:string, nullable: true],
                    purchase_order_id: [:string, nullable: true],
+                   stock_receipt_id: [:string, nullable: true],
                    unit_cost: [:string, nullable: true],
                    display_unit_cost: [:string, nullable: true],
                    stock_location_id: [:string, nullable: true],
@@ -61,6 +62,10 @@ module Spree
 
           attribute :stock_transfer_id do |movement|
             Spree::StockTransfer.prefixed_id_for(movement.stock_transfer_id)
+          end
+
+          attribute :stock_receipt_id do |movement|
+            movement.stock_receipt&.prefixed_id
           end
 
           attribute :purchase_order_id do |movement|

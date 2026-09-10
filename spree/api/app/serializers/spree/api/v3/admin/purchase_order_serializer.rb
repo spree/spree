@@ -13,7 +13,12 @@ module Spree
                    supplier_id: 'string | null',
                    destination_location_id: 'string | null',
                    expected_at: 'string | null',
+                   cancel_by: 'string | null',
+                   closed_short_at: 'string | null',
+                   close_reason: 'string | null',
+                   closed_short: :boolean,
                    items_count: :number,
+                   quantity_rejected_total: :number,
                    quantity_ordered_total: :number,
                    quantity_received_total: :number,
                    subtotal: :string,
@@ -23,9 +28,9 @@ module Spree
                    received_at: 'string | null',
                    metadata: 'Record<string, unknown>'
 
-          attributes :number, :status, :currency, :reference, :notes, :metadata,
-                     :items_count, :quantity_received_total,
-                     ordered_at: :iso8601, received_at: :iso8601,
+          attributes :number, :status, :currency, :reference, :notes, :metadata, :close_reason,
+                     :items_count, :quantity_received_total, :quantity_rejected_total,
+                     ordered_at: :iso8601, received_at: :iso8601, closed_short_at: :iso8601,
                      created_at: :iso8601, updated_at: :iso8601
 
           # A calendar date, not an instant: the day a supplier promised, which
@@ -36,6 +41,14 @@ module Spree
           attribute :expected_at do |purchase_order|
             purchase_order.expected_at&.iso8601
           end
+
+          # The day after which the merchant no longer wants the goods — a
+          # date for the same reason.
+          attribute :cancel_by do |purchase_order|
+            purchase_order.cancel_by&.iso8601
+          end
+
+          attribute :closed_short, &:closed_short?
 
           # Named for the merchant's own vocabulary — a purchase order orders,
           # a transfer ships — over the concern's neutral `quantity_expected`.
@@ -62,6 +75,10 @@ module Spree
           many :items,
                resource: proc { Spree.api.admin_purchase_order_item_serializer },
                if: proc { expand?('items') }
+
+          many :stock_receipts,
+               resource: proc { Spree.api.admin_stock_receipt_serializer },
+               if: proc { expand?('stock_receipts') }
 
           one :supplier,
               resource: proc { Spree.api.admin_supplier_serializer },

@@ -368,6 +368,8 @@ paths:
                 - write_collections
                 - read_stock
                 - write_stock
+                - read_purchasing
+                - write_purchasing
                 - read_promotions
                 - write_promotions
                 - read_customers
@@ -504,6 +506,8 @@ paths:
                 - write_collections
                 - read_stock
                 - write_stock
+                - read_purchasing
+                - write_purchasing
                 - read_promotions
                 - write_promotions
                 - read_customers
@@ -7460,6 +7464,7 @@ paths:
                   - coupon_codes
                   - newsletter_subscribers
                   - price_list_prices
+                  - purchase_orders
                   example: products
                 record_selection:
                   type: string
@@ -10074,6 +10079,7 @@ paths:
                   - customers
                   - product_translations
                   - price_list_prices
+                  - purchase_orders
                   example: products
                 price_list_id:
                   type: string
@@ -24606,6 +24612,20 @@ paths:
                   group_label: Catalog
                   label: Inventory
                   description: Stock levels, locations, movements and transfers
+                - key: read_purchasing
+                  resource: purchasing
+                  kind: read
+                  group: catalog
+                  group_label: Catalog
+                  label: Purchasing
+                  description: Suppliers and purchase orders
+                - key: write_purchasing
+                  resource: purchasing
+                  kind: write
+                  group: catalog
+                  group_label: Catalog
+                  label: Purchasing
+                  description: Suppliers and purchase orders
                 - key: read_promotions
                   resource: promotions
                   kind: read
@@ -24803,7 +24823,7 @@ paths:
                   label: Analytics dashboard
                   description: Sales and performance analytics
                 meta:
-                  count: 54
+                  count: 56
   "/api/v3/admin/roles":
     get:
       summary: List roles
@@ -24881,6 +24901,8 @@ paths:
                   - write_collections
                   - read_stock
                   - write_stock
+                  - read_purchasing
+                  - write_purchasing
                   - read_promotions
                   - write_promotions
                   - read_customers
@@ -25880,7 +25902,7 @@ paths:
                 data:
                 - id: variant_UkLWZg9DAJ
                   product_id: prod_UkLWZg9DAJ
-                  sku: SKU-155
+                  sku: SKU-212
                   options_text: ''
                   track_inventory: true
                   media_count: 0
@@ -25935,11 +25957,11 @@ paths:
                   available_stock: 0
                   reserved_quantity: 0
                   total_on_hand: 0
-                  product_name: Product 1296804
+                  product_name: Product 1576804
                   delivery_profile_id: fp_UkLWZg9DAJ
                 - id: variant_gbHJdmfrXB
                   product_id: prod_UkLWZg9DAJ
-                  sku: SKU-156
+                  sku: SKU-213
                   options_text: 'Size: S'
                   track_inventory: true
                   media_count: 0
@@ -25974,11 +25996,11 @@ paths:
                   option_values:
                   - id: optval_UkLWZg9DAJ
                     option_type_id: opt_UkLWZg9DAJ
-                    name: size-25
+                    name: size-54
                     label: S
                     position: 1
                     color_code:
-                    option_type_name: foo-size-34
+                    option_type_name: foo-size-63
                     option_type_label: Size
                     image_url:
                     metadata: {}
@@ -26006,7 +26028,7 @@ paths:
                   available_stock: 0
                   reserved_quantity: 0
                   total_on_hand: 0
-                  product_name: Product 1296804
+                  product_name: Product 1576804
                   delivery_profile_id: fp_UkLWZg9DAJ
                 meta:
                   page: 1
@@ -26152,7 +26174,7 @@ paths:
                 available_stock: 0
                 reserved_quantity: 0
                 total_on_hand: 0
-                product_name: Product 1301771
+                product_name: Product 1581771
                 delivery_profile_id: fp_UkLWZg9DAJ
         '422':
           description: validation error
@@ -26164,7 +26186,7 @@ paths:
                   message: SKU has already been taken
                   details:
                     sku:
-                    - value: SKU-160
+                    - value: SKU-217
                       code: taken
                       message: has already been taken
                       specific: false
@@ -26334,7 +26356,7 @@ paths:
               example:
                 id: variant_gbHJdmfrXB
                 product_id: prod_UkLWZg9DAJ
-                sku: SKU-162
+                sku: SKU-219
                 options_text: 'Size: S'
                 track_inventory: true
                 media_count: 0
@@ -26369,11 +26391,11 @@ paths:
                 option_values:
                 - id: optval_UkLWZg9DAJ
                   option_type_id: opt_UkLWZg9DAJ
-                  name: size-28
+                  name: size-57
                   label: S
                   position: 1
                   color_code:
-                  option_type_name: foo-size-37
+                  option_type_name: foo-size-66
                   option_type_label: Size
                   image_url:
                   metadata: {}
@@ -26401,7 +26423,7 @@ paths:
                 available_stock: 0
                 reserved_quantity: 0
                 total_on_hand: 0
-                product_name: Product 1324025
+                product_name: Product 1604025
                 delivery_profile_id: fp_UkLWZg9DAJ
         '404':
           description: variant not found
@@ -26509,11 +26531,11 @@ paths:
                 option_values:
                 - id: optval_UkLWZg9DAJ
                   option_type_id: opt_UkLWZg9DAJ
-                  name: size-30
+                  name: size-59
                   label: S
                   position: 1
                   color_code:
-                  option_type_name: foo-size-39
+                  option_type_name: foo-size-68
                   option_type_label: Size
                   image_url:
                   metadata: {}
@@ -26541,7 +26563,7 @@ paths:
                 available_stock: 0
                 reserved_quantity: 0
                 total_on_hand: 0
-                product_name: Product 1345672
+                product_name: Product 1625672
                 delivery_profile_id: fp_UkLWZg9DAJ
       requestBody:
         content:
@@ -32363,13 +32385,13 @@ paths:
                   video_embed_url:
                   video_url:
                   poster_url:
-                  original_url: http://localhost:3000/rails/active_storage/blobs/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--6128d7f25a498c7fad15f829a8331186efbbcf6a/thinking-cat.jpg
-                  mini_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--6128d7f25a498c7fad15f829a8331186efbbcf6a/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOlsxMjgsMTI4XSwic2F2ZXIiOnsic3RyaXAiOnRydWUsInF1YWxpdHkiOjc1LCJsb3NzbGVzcyI6ZmFsc2UsImFscGhhX3EiOjg1LCJyZWR1Y3Rpb25fZWZmb3J0Ijo2LCJzbWFydF9zdWJzYW1wbGUiOnRydWV9fSwicHVyIjoidmFyaWF0aW9uIn19--28be5f6efadb55cb3643789a8373cc8a1a494d25/thinking-cat.jpg
-                  small_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--6128d7f25a498c7fad15f829a8331186efbbcf6a/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOlsyNTYsMjU2XSwic2F2ZXIiOnsic3RyaXAiOnRydWUsInF1YWxpdHkiOjc1LCJsb3NzbGVzcyI6ZmFsc2UsImFscGhhX3EiOjg1LCJyZWR1Y3Rpb25fZWZmb3J0Ijo2LCJzbWFydF9zdWJzYW1wbGUiOnRydWV9fSwicHVyIjoidmFyaWF0aW9uIn19--da60a239801bd77866dd96e70d7de345552d7f6d/thinking-cat.jpg
-                  medium_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--6128d7f25a498c7fad15f829a8331186efbbcf6a/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOls0MDAsNDAwXSwic2F2ZXIiOnsic3RyaXAiOnRydWUsInF1YWxpdHkiOjc1LCJsb3NzbGVzcyI6ZmFsc2UsImFscGhhX3EiOjg1LCJyZWR1Y3Rpb25fZWZmb3J0Ijo2LCJzbWFydF9zdWJzYW1wbGUiOnRydWV9fSwicHVyIjoidmFyaWF0aW9uIn19--6a35b2e1a7c83fc211a8b93f1a1dc244b1262d68/thinking-cat.jpg
-                  large_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--6128d7f25a498c7fad15f829a8331186efbbcf6a/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOls3MjAsNzIwXSwic2F2ZXIiOnsic3RyaXAiOnRydWUsInF1YWxpdHkiOjc1LCJsb3NzbGVzcyI6ZmFsc2UsImFscGhhX3EiOjg1LCJyZWR1Y3Rpb25fZWZmb3J0Ijo2LCJzbWFydF9zdWJzYW1wbGUiOnRydWV9fSwicHVyIjoidmFyaWF0aW9uIn19--6746f9b2f74b5b4bf483ef8dbdfbe7dfbef708e9/thinking-cat.jpg
-                  xlarge_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--6128d7f25a498c7fad15f829a8331186efbbcf6a/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOlsyMDAwLDIwMDBdLCJzYXZlciI6eyJzdHJpcCI6dHJ1ZSwicXVhbGl0eSI6NzUsImxvc3NsZXNzIjpmYWxzZSwiYWxwaGFfcSI6ODUsInJlZHVjdGlvbl9lZmZvcnQiOjYsInNtYXJ0X3N1YnNhbXBsZSI6dHJ1ZX19LCJwdXIiOiJ2YXJpYXRpb24ifX0=--b33a727845370d6e5d7ce693a6364d812e6d2529/thinking-cat.jpg
-                  og_image_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--6128d7f25a498c7fad15f829a8331186efbbcf6a/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOlsxMjAwLDYzMF0sInNhdmVyIjp7InN0cmlwIjp0cnVlLCJxdWFsaXR5Ijo3NSwibG9zc2xlc3MiOmZhbHNlLCJhbHBoYV9xIjo4NSwicmVkdWN0aW9uX2VmZm9ydCI6Niwic21hcnRfc3Vic2FtcGxlIjp0cnVlfX0sInB1ciI6InZhcmlhdGlvbiJ9fQ==--03b680c5a3eee0a4df1eb15a7953d70f804a20f9/thinking-cat.jpg
+                  original_url: http://localhost:3000/rails/active_storage/blobs/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--cddbce16d3b7474b963e9e23519fa8b54f88a88c/thinking-cat.jpg
+                  mini_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--cddbce16d3b7474b963e9e23519fa8b54f88a88c/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOlsxMjgsMTI4XSwic2F2ZXIiOnsic3RyaXAiOnRydWUsInF1YWxpdHkiOjc1LCJsb3NzbGVzcyI6ZmFsc2UsImFscGhhX3EiOjg1LCJyZWR1Y3Rpb25fZWZmb3J0Ijo2LCJzbWFydF9zdWJzYW1wbGUiOnRydWV9fSwicHVyIjoidmFyaWF0aW9uIn19--ad6bda43cc7dd9c8a02603c78b438ea8ec331efe/thinking-cat.jpg
+                  small_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--cddbce16d3b7474b963e9e23519fa8b54f88a88c/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOlsyNTYsMjU2XSwic2F2ZXIiOnsic3RyaXAiOnRydWUsInF1YWxpdHkiOjc1LCJsb3NzbGVzcyI6ZmFsc2UsImFscGhhX3EiOjg1LCJyZWR1Y3Rpb25fZWZmb3J0Ijo2LCJzbWFydF9zdWJzYW1wbGUiOnRydWV9fSwicHVyIjoidmFyaWF0aW9uIn19--d0276a4c0a99e19fbac8cacce37a3c9c3b699d46/thinking-cat.jpg
+                  medium_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--cddbce16d3b7474b963e9e23519fa8b54f88a88c/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOls0MDAsNDAwXSwic2F2ZXIiOnsic3RyaXAiOnRydWUsInF1YWxpdHkiOjc1LCJsb3NzbGVzcyI6ZmFsc2UsImFscGhhX3EiOjg1LCJyZWR1Y3Rpb25fZWZmb3J0Ijo2LCJzbWFydF9zdWJzYW1wbGUiOnRydWV9fSwicHVyIjoidmFyaWF0aW9uIn19--a5ed0ef8fc211ab90c1add4ccb6099314234b103/thinking-cat.jpg
+                  large_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--cddbce16d3b7474b963e9e23519fa8b54f88a88c/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOls3MjAsNzIwXSwic2F2ZXIiOnsic3RyaXAiOnRydWUsInF1YWxpdHkiOjc1LCJsb3NzbGVzcyI6ZmFsc2UsImFscGhhX3EiOjg1LCJyZWR1Y3Rpb25fZWZmb3J0Ijo2LCJzbWFydF9zdWJzYW1wbGUiOnRydWV9fSwicHVyIjoidmFyaWF0aW9uIn19--e2d4e18a8e8b1ce1731c34dc238bcaca2cc9cca8/thinking-cat.jpg
+                  xlarge_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--cddbce16d3b7474b963e9e23519fa8b54f88a88c/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOlsyMDAwLDIwMDBdLCJzYXZlciI6eyJzdHJpcCI6dHJ1ZSwicXVhbGl0eSI6NzUsImxvc3NsZXNzIjpmYWxzZSwiYWxwaGFfcSI6ODUsInJlZHVjdGlvbl9lZmZvcnQiOjYsInNtYXJ0X3N1YnNhbXBsZSI6dHJ1ZX19LCJwdXIiOiJ2YXJpYXRpb24ifX0=--8a98aadf2c4bc118d5f321ced59bd80b8199a093/thinking-cat.jpg
+                  og_image_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--cddbce16d3b7474b963e9e23519fa8b54f88a88c/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOlsxMjAwLDYzMF0sInNhdmVyIjp7InN0cmlwIjp0cnVlLCJxdWFsaXR5Ijo3NSwibG9zc2xlc3MiOmZhbHNlLCJhbHBoYV9xIjo4NSwicmVkdWN0aW9uX2VmZm9ydCI6Niwic21hcnRfc3Vic2FtcGxlIjp0cnVlfX0sInB1ciI6InZhcmlhdGlvbiJ9fQ==--7613cde32f95aa89ec604b99b316427a599a4924/thinking-cat.jpg
                   external_references: {}
                   created_at: '2026-01-15T12:00:00.000Z'
                   updated_at: '2026-01-15T12:00:00.000Z'
@@ -32377,10 +32399,10 @@ paths:
                   filename: thinking-cat.jpg
                   content_type: image/jpeg
                   byte_size: 18090
-                  embed_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--6128d7f25a498c7fad15f829a8331186efbbcf6a/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2xpbWl0IjpbMTIwMCwxMjAwXSwic2F2ZXIiOnsic3RyaXAiOnRydWUsInF1YWxpdHkiOjc1LCJsb3NzbGVzcyI6ZmFsc2UsImFscGhhX3EiOjg1LCJyZWR1Y3Rpb25fZWZmb3J0Ijo2LCJzbWFydF9zdWJzYW1wbGUiOnRydWV9fSwicHVyIjoidmFyaWF0aW9uIn19--740b9008b41ef7a1f306016aa2c45d31425be090/thinking-cat.jpg
-                  signed_id: eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--6128d7f25a498c7fad15f829a8331186efbbcf6a
+                  embed_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--cddbce16d3b7474b963e9e23519fa8b54f88a88c/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2xpbWl0IjpbMTIwMCwxMjAwXSwic2F2ZXIiOnsic3RyaXAiOnRydWUsInF1YWxpdHkiOjc1LCJsb3NzbGVzcyI6ZmFsc2UsImFscGhhX3EiOjg1LCJyZWR1Y3Rpb25fZWZmb3J0Ijo2LCJzbWFydF9zdWJzYW1wbGUiOnRydWV9fSwicHVyIjoidmFyaWF0aW9uIn19--788f3ae9d619d12b20777b8964c21c817f2d8bd6/thinking-cat.jpg
+                  signed_id: eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--cddbce16d3b7474b963e9e23519fa8b54f88a88c
                   viewable_id: prod_UkLWZg9DAJ
-                  download_url: http://localhost:3000/rails/active_storage/blobs/redirect/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--6128d7f25a498c7fad15f829a8331186efbbcf6a/thinking-cat.jpg?disposition=attachment
+                  download_url: http://localhost:3000/rails/active_storage/blobs/redirect/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--cddbce16d3b7474b963e9e23519fa8b54f88a88c/thinking-cat.jpg?disposition=attachment
                   metadata: {}
                   viewable_type: product
                 meta:
@@ -32451,13 +32473,13 @@ paths:
                 video_embed_url:
                 video_url:
                 poster_url:
-                original_url: http://localhost:3000/rails/active_storage/blobs/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MiwicHVyIjoiYmxvYl9pZCJ9fQ==--63016e55be7244f71707245652aea1a3c1346d50/library-upload.jpg
-                mini_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MiwicHVyIjoiYmxvYl9pZCJ9fQ==--63016e55be7244f71707245652aea1a3c1346d50/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOlsxMjgsMTI4XSwic2F2ZXIiOnsic3RyaXAiOnRydWUsInF1YWxpdHkiOjc1LCJsb3NzbGVzcyI6ZmFsc2UsImFscGhhX3EiOjg1LCJyZWR1Y3Rpb25fZWZmb3J0Ijo2LCJzbWFydF9zdWJzYW1wbGUiOnRydWV9fSwicHVyIjoidmFyaWF0aW9uIn19--28be5f6efadb55cb3643789a8373cc8a1a494d25/library-upload.jpg
-                small_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MiwicHVyIjoiYmxvYl9pZCJ9fQ==--63016e55be7244f71707245652aea1a3c1346d50/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOlsyNTYsMjU2XSwic2F2ZXIiOnsic3RyaXAiOnRydWUsInF1YWxpdHkiOjc1LCJsb3NzbGVzcyI6ZmFsc2UsImFscGhhX3EiOjg1LCJyZWR1Y3Rpb25fZWZmb3J0Ijo2LCJzbWFydF9zdWJzYW1wbGUiOnRydWV9fSwicHVyIjoidmFyaWF0aW9uIn19--da60a239801bd77866dd96e70d7de345552d7f6d/library-upload.jpg
-                medium_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MiwicHVyIjoiYmxvYl9pZCJ9fQ==--63016e55be7244f71707245652aea1a3c1346d50/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOls0MDAsNDAwXSwic2F2ZXIiOnsic3RyaXAiOnRydWUsInF1YWxpdHkiOjc1LCJsb3NzbGVzcyI6ZmFsc2UsImFscGhhX3EiOjg1LCJyZWR1Y3Rpb25fZWZmb3J0Ijo2LCJzbWFydF9zdWJzYW1wbGUiOnRydWV9fSwicHVyIjoidmFyaWF0aW9uIn19--6a35b2e1a7c83fc211a8b93f1a1dc244b1262d68/library-upload.jpg
-                large_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MiwicHVyIjoiYmxvYl9pZCJ9fQ==--63016e55be7244f71707245652aea1a3c1346d50/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOls3MjAsNzIwXSwic2F2ZXIiOnsic3RyaXAiOnRydWUsInF1YWxpdHkiOjc1LCJsb3NzbGVzcyI6ZmFsc2UsImFscGhhX3EiOjg1LCJyZWR1Y3Rpb25fZWZmb3J0Ijo2LCJzbWFydF9zdWJzYW1wbGUiOnRydWV9fSwicHVyIjoidmFyaWF0aW9uIn19--6746f9b2f74b5b4bf483ef8dbdfbe7dfbef708e9/library-upload.jpg
-                xlarge_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MiwicHVyIjoiYmxvYl9pZCJ9fQ==--63016e55be7244f71707245652aea1a3c1346d50/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOlsyMDAwLDIwMDBdLCJzYXZlciI6eyJzdHJpcCI6dHJ1ZSwicXVhbGl0eSI6NzUsImxvc3NsZXNzIjpmYWxzZSwiYWxwaGFfcSI6ODUsInJlZHVjdGlvbl9lZmZvcnQiOjYsInNtYXJ0X3N1YnNhbXBsZSI6dHJ1ZX19LCJwdXIiOiJ2YXJpYXRpb24ifX0=--b33a727845370d6e5d7ce693a6364d812e6d2529/library-upload.jpg
-                og_image_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MiwicHVyIjoiYmxvYl9pZCJ9fQ==--63016e55be7244f71707245652aea1a3c1346d50/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOlsxMjAwLDYzMF0sInNhdmVyIjp7InN0cmlwIjp0cnVlLCJxdWFsaXR5Ijo3NSwibG9zc2xlc3MiOmZhbHNlLCJhbHBoYV9xIjo4NSwicmVkdWN0aW9uX2VmZm9ydCI6Niwic21hcnRfc3Vic2FtcGxlIjp0cnVlfX0sInB1ciI6InZhcmlhdGlvbiJ9fQ==--03b680c5a3eee0a4df1eb15a7953d70f804a20f9/library-upload.jpg
+                original_url: http://localhost:3000/rails/active_storage/blobs/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MiwicHVyIjoiYmxvYl9pZCJ9fQ==--a72cbdbfec143288d60de1b9bfa8544758cdd5cd/library-upload.jpg
+                mini_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MiwicHVyIjoiYmxvYl9pZCJ9fQ==--a72cbdbfec143288d60de1b9bfa8544758cdd5cd/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOlsxMjgsMTI4XSwic2F2ZXIiOnsic3RyaXAiOnRydWUsInF1YWxpdHkiOjc1LCJsb3NzbGVzcyI6ZmFsc2UsImFscGhhX3EiOjg1LCJyZWR1Y3Rpb25fZWZmb3J0Ijo2LCJzbWFydF9zdWJzYW1wbGUiOnRydWV9fSwicHVyIjoidmFyaWF0aW9uIn19--ad6bda43cc7dd9c8a02603c78b438ea8ec331efe/library-upload.jpg
+                small_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MiwicHVyIjoiYmxvYl9pZCJ9fQ==--a72cbdbfec143288d60de1b9bfa8544758cdd5cd/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOlsyNTYsMjU2XSwic2F2ZXIiOnsic3RyaXAiOnRydWUsInF1YWxpdHkiOjc1LCJsb3NzbGVzcyI6ZmFsc2UsImFscGhhX3EiOjg1LCJyZWR1Y3Rpb25fZWZmb3J0Ijo2LCJzbWFydF9zdWJzYW1wbGUiOnRydWV9fSwicHVyIjoidmFyaWF0aW9uIn19--d0276a4c0a99e19fbac8cacce37a3c9c3b699d46/library-upload.jpg
+                medium_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MiwicHVyIjoiYmxvYl9pZCJ9fQ==--a72cbdbfec143288d60de1b9bfa8544758cdd5cd/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOls0MDAsNDAwXSwic2F2ZXIiOnsic3RyaXAiOnRydWUsInF1YWxpdHkiOjc1LCJsb3NzbGVzcyI6ZmFsc2UsImFscGhhX3EiOjg1LCJyZWR1Y3Rpb25fZWZmb3J0Ijo2LCJzbWFydF9zdWJzYW1wbGUiOnRydWV9fSwicHVyIjoidmFyaWF0aW9uIn19--a5ed0ef8fc211ab90c1add4ccb6099314234b103/library-upload.jpg
+                large_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MiwicHVyIjoiYmxvYl9pZCJ9fQ==--a72cbdbfec143288d60de1b9bfa8544758cdd5cd/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOls3MjAsNzIwXSwic2F2ZXIiOnsic3RyaXAiOnRydWUsInF1YWxpdHkiOjc1LCJsb3NzbGVzcyI6ZmFsc2UsImFscGhhX3EiOjg1LCJyZWR1Y3Rpb25fZWZmb3J0Ijo2LCJzbWFydF9zdWJzYW1wbGUiOnRydWV9fSwicHVyIjoidmFyaWF0aW9uIn19--e2d4e18a8e8b1ce1731c34dc238bcaca2cc9cca8/library-upload.jpg
+                xlarge_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MiwicHVyIjoiYmxvYl9pZCJ9fQ==--a72cbdbfec143288d60de1b9bfa8544758cdd5cd/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOlsyMDAwLDIwMDBdLCJzYXZlciI6eyJzdHJpcCI6dHJ1ZSwicXVhbGl0eSI6NzUsImxvc3NsZXNzIjpmYWxzZSwiYWxwaGFfcSI6ODUsInJlZHVjdGlvbl9lZmZvcnQiOjYsInNtYXJ0X3N1YnNhbXBsZSI6dHJ1ZX19LCJwdXIiOiJ2YXJpYXRpb24ifX0=--8a98aadf2c4bc118d5f321ced59bd80b8199a093/library-upload.jpg
+                og_image_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MiwicHVyIjoiYmxvYl9pZCJ9fQ==--a72cbdbfec143288d60de1b9bfa8544758cdd5cd/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOlsxMjAwLDYzMF0sInNhdmVyIjp7InN0cmlwIjp0cnVlLCJxdWFsaXR5Ijo3NSwibG9zc2xlc3MiOmZhbHNlLCJhbHBoYV9xIjo4NSwicmVkdWN0aW9uX2VmZm9ydCI6Niwic21hcnRfc3Vic2FtcGxlIjp0cnVlfX0sInB1ciI6InZhcmlhdGlvbiJ9fQ==--7613cde32f95aa89ec604b99b316427a599a4924/library-upload.jpg
                 external_references: {}
                 created_at: '2026-01-15T12:00:00.000Z'
                 updated_at: '2026-01-15T12:00:00.000Z'
@@ -32465,10 +32487,10 @@ paths:
                 filename: library-upload.jpg
                 content_type: image/jpeg
                 byte_size: 18090
-                embed_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MiwicHVyIjoiYmxvYl9pZCJ9fQ==--63016e55be7244f71707245652aea1a3c1346d50/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2xpbWl0IjpbMTIwMCwxMjAwXSwic2F2ZXIiOnsic3RyaXAiOnRydWUsInF1YWxpdHkiOjc1LCJsb3NzbGVzcyI6ZmFsc2UsImFscGhhX3EiOjg1LCJyZWR1Y3Rpb25fZWZmb3J0Ijo2LCJzbWFydF9zdWJzYW1wbGUiOnRydWV9fSwicHVyIjoidmFyaWF0aW9uIn19--740b9008b41ef7a1f306016aa2c45d31425be090/library-upload.jpg
-                signed_id: eyJfcmFpbHMiOnsiZGF0YSI6MiwicHVyIjoiYmxvYl9pZCJ9fQ==--63016e55be7244f71707245652aea1a3c1346d50
+                embed_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MiwicHVyIjoiYmxvYl9pZCJ9fQ==--a72cbdbfec143288d60de1b9bfa8544758cdd5cd/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2xpbWl0IjpbMTIwMCwxMjAwXSwic2F2ZXIiOnsic3RyaXAiOnRydWUsInF1YWxpdHkiOjc1LCJsb3NzbGVzcyI6ZmFsc2UsImFscGhhX3EiOjg1LCJyZWR1Y3Rpb25fZWZmb3J0Ijo2LCJzbWFydF9zdWJzYW1wbGUiOnRydWV9fSwicHVyIjoidmFyaWF0aW9uIn19--788f3ae9d619d12b20777b8964c21c817f2d8bd6/library-upload.jpg
+                signed_id: eyJfcmFpbHMiOnsiZGF0YSI6MiwicHVyIjoiYmxvYl9pZCJ9fQ==--a72cbdbfec143288d60de1b9bfa8544758cdd5cd
                 viewable_id:
-                download_url: http://localhost:3000/rails/active_storage/blobs/redirect/eyJfcmFpbHMiOnsiZGF0YSI6MiwicHVyIjoiYmxvYl9pZCJ9fQ==--63016e55be7244f71707245652aea1a3c1346d50/library-upload.jpg?disposition=attachment
+                download_url: http://localhost:3000/rails/active_storage/blobs/redirect/eyJfcmFpbHMiOnsiZGF0YSI6MiwicHVyIjoiYmxvYl9pZCJ9fQ==--a72cbdbfec143288d60de1b9bfa8544758cdd5cd/library-upload.jpg?disposition=attachment
                 metadata: {}
                 viewable_type:
               schema:
@@ -32625,13 +32647,13 @@ paths:
                 video_embed_url:
                 video_url:
                 poster_url:
-                original_url: http://localhost:3000/rails/active_storage/blobs/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--6128d7f25a498c7fad15f829a8331186efbbcf6a/thinking-cat.jpg
-                mini_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--6128d7f25a498c7fad15f829a8331186efbbcf6a/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOlsxMjgsMTI4XSwic2F2ZXIiOnsic3RyaXAiOnRydWUsInF1YWxpdHkiOjc1LCJsb3NzbGVzcyI6ZmFsc2UsImFscGhhX3EiOjg1LCJyZWR1Y3Rpb25fZWZmb3J0Ijo2LCJzbWFydF9zdWJzYW1wbGUiOnRydWV9fSwicHVyIjoidmFyaWF0aW9uIn19--28be5f6efadb55cb3643789a8373cc8a1a494d25/thinking-cat.jpg
-                small_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--6128d7f25a498c7fad15f829a8331186efbbcf6a/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOlsyNTYsMjU2XSwic2F2ZXIiOnsic3RyaXAiOnRydWUsInF1YWxpdHkiOjc1LCJsb3NzbGVzcyI6ZmFsc2UsImFscGhhX3EiOjg1LCJyZWR1Y3Rpb25fZWZmb3J0Ijo2LCJzbWFydF9zdWJzYW1wbGUiOnRydWV9fSwicHVyIjoidmFyaWF0aW9uIn19--da60a239801bd77866dd96e70d7de345552d7f6d/thinking-cat.jpg
-                medium_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--6128d7f25a498c7fad15f829a8331186efbbcf6a/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOls0MDAsNDAwXSwic2F2ZXIiOnsic3RyaXAiOnRydWUsInF1YWxpdHkiOjc1LCJsb3NzbGVzcyI6ZmFsc2UsImFscGhhX3EiOjg1LCJyZWR1Y3Rpb25fZWZmb3J0Ijo2LCJzbWFydF9zdWJzYW1wbGUiOnRydWV9fSwicHVyIjoidmFyaWF0aW9uIn19--6a35b2e1a7c83fc211a8b93f1a1dc244b1262d68/thinking-cat.jpg
-                large_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--6128d7f25a498c7fad15f829a8331186efbbcf6a/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOls3MjAsNzIwXSwic2F2ZXIiOnsic3RyaXAiOnRydWUsInF1YWxpdHkiOjc1LCJsb3NzbGVzcyI6ZmFsc2UsImFscGhhX3EiOjg1LCJyZWR1Y3Rpb25fZWZmb3J0Ijo2LCJzbWFydF9zdWJzYW1wbGUiOnRydWV9fSwicHVyIjoidmFyaWF0aW9uIn19--6746f9b2f74b5b4bf483ef8dbdfbe7dfbef708e9/thinking-cat.jpg
-                xlarge_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--6128d7f25a498c7fad15f829a8331186efbbcf6a/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOlsyMDAwLDIwMDBdLCJzYXZlciI6eyJzdHJpcCI6dHJ1ZSwicXVhbGl0eSI6NzUsImxvc3NsZXNzIjpmYWxzZSwiYWxwaGFfcSI6ODUsInJlZHVjdGlvbl9lZmZvcnQiOjYsInNtYXJ0X3N1YnNhbXBsZSI6dHJ1ZX19LCJwdXIiOiJ2YXJpYXRpb24ifX0=--b33a727845370d6e5d7ce693a6364d812e6d2529/thinking-cat.jpg
-                og_image_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--6128d7f25a498c7fad15f829a8331186efbbcf6a/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOlsxMjAwLDYzMF0sInNhdmVyIjp7InN0cmlwIjp0cnVlLCJxdWFsaXR5Ijo3NSwibG9zc2xlc3MiOmZhbHNlLCJhbHBoYV9xIjo4NSwicmVkdWN0aW9uX2VmZm9ydCI6Niwic21hcnRfc3Vic2FtcGxlIjp0cnVlfX0sInB1ciI6InZhcmlhdGlvbiJ9fQ==--03b680c5a3eee0a4df1eb15a7953d70f804a20f9/thinking-cat.jpg
+                original_url: http://localhost:3000/rails/active_storage/blobs/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--cddbce16d3b7474b963e9e23519fa8b54f88a88c/thinking-cat.jpg
+                mini_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--cddbce16d3b7474b963e9e23519fa8b54f88a88c/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOlsxMjgsMTI4XSwic2F2ZXIiOnsic3RyaXAiOnRydWUsInF1YWxpdHkiOjc1LCJsb3NzbGVzcyI6ZmFsc2UsImFscGhhX3EiOjg1LCJyZWR1Y3Rpb25fZWZmb3J0Ijo2LCJzbWFydF9zdWJzYW1wbGUiOnRydWV9fSwicHVyIjoidmFyaWF0aW9uIn19--ad6bda43cc7dd9c8a02603c78b438ea8ec331efe/thinking-cat.jpg
+                small_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--cddbce16d3b7474b963e9e23519fa8b54f88a88c/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOlsyNTYsMjU2XSwic2F2ZXIiOnsic3RyaXAiOnRydWUsInF1YWxpdHkiOjc1LCJsb3NzbGVzcyI6ZmFsc2UsImFscGhhX3EiOjg1LCJyZWR1Y3Rpb25fZWZmb3J0Ijo2LCJzbWFydF9zdWJzYW1wbGUiOnRydWV9fSwicHVyIjoidmFyaWF0aW9uIn19--d0276a4c0a99e19fbac8cacce37a3c9c3b699d46/thinking-cat.jpg
+                medium_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--cddbce16d3b7474b963e9e23519fa8b54f88a88c/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOls0MDAsNDAwXSwic2F2ZXIiOnsic3RyaXAiOnRydWUsInF1YWxpdHkiOjc1LCJsb3NzbGVzcyI6ZmFsc2UsImFscGhhX3EiOjg1LCJyZWR1Y3Rpb25fZWZmb3J0Ijo2LCJzbWFydF9zdWJzYW1wbGUiOnRydWV9fSwicHVyIjoidmFyaWF0aW9uIn19--a5ed0ef8fc211ab90c1add4ccb6099314234b103/thinking-cat.jpg
+                large_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--cddbce16d3b7474b963e9e23519fa8b54f88a88c/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOls3MjAsNzIwXSwic2F2ZXIiOnsic3RyaXAiOnRydWUsInF1YWxpdHkiOjc1LCJsb3NzbGVzcyI6ZmFsc2UsImFscGhhX3EiOjg1LCJyZWR1Y3Rpb25fZWZmb3J0Ijo2LCJzbWFydF9zdWJzYW1wbGUiOnRydWV9fSwicHVyIjoidmFyaWF0aW9uIn19--e2d4e18a8e8b1ce1731c34dc238bcaca2cc9cca8/thinking-cat.jpg
+                xlarge_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--cddbce16d3b7474b963e9e23519fa8b54f88a88c/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOlsyMDAwLDIwMDBdLCJzYXZlciI6eyJzdHJpcCI6dHJ1ZSwicXVhbGl0eSI6NzUsImxvc3NsZXNzIjpmYWxzZSwiYWxwaGFfcSI6ODUsInJlZHVjdGlvbl9lZmZvcnQiOjYsInNtYXJ0X3N1YnNhbXBsZSI6dHJ1ZX19LCJwdXIiOiJ2YXJpYXRpb24ifX0=--8a98aadf2c4bc118d5f321ced59bd80b8199a093/thinking-cat.jpg
+                og_image_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--cddbce16d3b7474b963e9e23519fa8b54f88a88c/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOlsxMjAwLDYzMF0sInNhdmVyIjp7InN0cmlwIjp0cnVlLCJxdWFsaXR5Ijo3NSwibG9zc2xlc3MiOmZhbHNlLCJhbHBoYV9xIjo4NSwicmVkdWN0aW9uX2VmZm9ydCI6Niwic21hcnRfc3Vic2FtcGxlIjp0cnVlfX0sInB1ciI6InZhcmlhdGlvbiJ9fQ==--7613cde32f95aa89ec604b99b316427a599a4924/thinking-cat.jpg
                 external_references: {}
                 created_at: '2026-01-15T12:00:00.000Z'
                 updated_at: '2026-01-15T12:00:00.000Z'
@@ -32639,10 +32661,10 @@ paths:
                 filename: thinking-cat.jpg
                 content_type: image/jpeg
                 byte_size: 18090
-                embed_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--6128d7f25a498c7fad15f829a8331186efbbcf6a/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2xpbWl0IjpbMTIwMCwxMjAwXSwic2F2ZXIiOnsic3RyaXAiOnRydWUsInF1YWxpdHkiOjc1LCJsb3NzbGVzcyI6ZmFsc2UsImFscGhhX3EiOjg1LCJyZWR1Y3Rpb25fZWZmb3J0Ijo2LCJzbWFydF9zdWJzYW1wbGUiOnRydWV9fSwicHVyIjoidmFyaWF0aW9uIn19--740b9008b41ef7a1f306016aa2c45d31425be090/thinking-cat.jpg
-                signed_id: eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--6128d7f25a498c7fad15f829a8331186efbbcf6a
+                embed_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--cddbce16d3b7474b963e9e23519fa8b54f88a88c/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2xpbWl0IjpbMTIwMCwxMjAwXSwic2F2ZXIiOnsic3RyaXAiOnRydWUsInF1YWxpdHkiOjc1LCJsb3NzbGVzcyI6ZmFsc2UsImFscGhhX3EiOjg1LCJyZWR1Y3Rpb25fZWZmb3J0Ijo2LCJzbWFydF9zdWJzYW1wbGUiOnRydWV9fSwicHVyIjoidmFyaWF0aW9uIn19--788f3ae9d619d12b20777b8964c21c817f2d8bd6/thinking-cat.jpg
+                signed_id: eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--cddbce16d3b7474b963e9e23519fa8b54f88a88c
                 viewable_id: prod_gbHJdmfrXB
-                download_url: http://localhost:3000/rails/active_storage/blobs/redirect/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--6128d7f25a498c7fad15f829a8331186efbbcf6a/thinking-cat.jpg?disposition=attachment
+                download_url: http://localhost:3000/rails/active_storage/blobs/redirect/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--cddbce16d3b7474b963e9e23519fa8b54f88a88c/thinking-cat.jpg?disposition=attachment
                 metadata: {}
                 viewable_type: product
               schema:
@@ -34610,6 +34632,958 @@ paths:
                 properties:
                   products_count:
                     type: integer
+  "/api/v3/admin/purchase_orders":
+    get:
+      summary: List purchase orders
+      tags:
+      - Purchase Orders
+      security:
+      - api_key: []
+        bearer_auth: []
+      description: |-
+        Stock bought from suppliers. A purchase order carries what a purchase
+        has and a stock transfer does not: a supplier, a unit cost per line and
+        an expected arrival date.
+
+        Ordered units never count toward availability. Nothing here changes
+        `count_on_hand` until `receive` runs, because a merchant who has
+        ordered stock does not have it.
+
+        Statuses are `draft`, `ordered`, `partially_received`, `received`, `over_received` and
+        `canceled`. Each move between them is its own endpoint, not a `PATCH`
+        that writes `status`.
+
+        Filter with Ransack predicates such as `q[status_eq]`,
+        `q[supplier_id_eq]` or `q[expected_at_lteq]`. Expand `items`,
+        `supplier` and `destination_location`.
+
+
+        **Required scope:** `read_purchasing` (for API-key authentication).
+      x-codeSamples:
+      - lang: javascript
+        label: Spree Admin SDK
+        source: |-
+          import { createAdminClient } from '@spree/admin-sdk'
+
+          const client = createAdminClient({
+            baseUrl: 'https://your-store.com',
+            secretKey: 'sk_xxx',
+          })
+
+          const { data: purchaseOrders } = await client.purchaseOrders.list({
+            q: { status_eq: 'ordered' },
+            expand: ['supplier'],
+          })
+      - lang: bash
+        label: Spree CLI
+        source: spree api get /purchase_orders -d '{"q":{"status_eq":"ordered"},"expand":["supplier"]}'
+      parameters:
+      - name: x-spree-api-key
+        in: header
+        required: true
+        schema:
+          type: string
+      - name: Authorization
+        in: header
+        required: true
+        description: Bearer token for admin authentication
+        schema:
+          type: string
+      - name: page
+        in: query
+        required: false
+        description: Page number
+        schema:
+          type: integer
+      - name: limit
+        in: query
+        required: false
+        description: Number of records per page
+        schema:
+          type: integer
+      - name: q[status_eq]
+        in: query
+        required: false
+        description: Filter by status ('draft', 'ordered', 'partially_received', 'received',
+          'over_received', 'canceled')
+        schema:
+          type: string
+      - name: expand
+        in: query
+        required: false
+        description: 'Comma-separated associations to embed: items, supplier, destination_location'
+        schema:
+          type: string
+      responses:
+        '200':
+          description: purchase orders found
+          content:
+            application/json:
+              example:
+                data:
+                - id: po_UkLWZg9DAJ
+                  number: PO1001
+                  status: draft
+                  currency: USD
+                  reference:
+                  notes:
+                  metadata: {}
+                  close_reason:
+                  items_count: 1
+                  quantity_received_total: 0
+                  quantity_rejected_total: 0
+                  ordered_at:
+                  received_at:
+                  closed_short_at:
+                  created_at: '2026-01-15T12:00:00.000Z'
+                  updated_at: '2026-01-15T12:00:00.000Z'
+                  expected_at: '2026-10-01'
+                  cancel_by:
+                  closed_short: false
+                  quantity_ordered_total: 100
+                  editable: true
+                  subtotal: '1250.0'
+                  display_subtotal: "$1,250.00"
+                  supplier_id: sup_UkLWZg9DAJ
+                  destination_location_id: sloc_UkLWZg9DAJ
+                meta:
+                  page: 1
+                  limit: 25
+                  count: 1
+                  pages: 1
+                  from: 1
+                  to: 1
+                  in: 1
+                  previous:
+                  next:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      "$ref": "#/components/schemas/PurchaseOrder"
+                  meta:
+                    "$ref": "#/components/schemas/PaginationMeta"
+                required:
+                - data
+                - meta
+        '401':
+          description: unauthorized
+          content:
+            application/json:
+              example:
+                error:
+                  code: authentication_required
+                  message: Authentication required
+              schema:
+                "$ref": "#/components/schemas/ErrorResponse"
+    post:
+      summary: Create a purchase order
+      tags:
+      - Purchase Orders
+      security:
+      - api_key: []
+        bearer_auth: []
+      description: |-
+        Drafts an order. Nothing is on order and nothing touches availability
+        until the order is marked as ordered and then received.
+
+        `currency` defaults to the store's; set it for a foreign-currency
+        order. `expected_at` is a calendar date (`yyyy-mm-dd`) — the day the
+        supplier promised means the same day in every timezone.
+
+
+        **Required scope:** `write_purchasing` (for API-key authentication).
+      x-codeSamples:
+      - lang: javascript
+        label: Spree Admin SDK
+        source: |-
+          import { createAdminClient } from '@spree/admin-sdk'
+
+          const client = createAdminClient({
+            baseUrl: 'https://your-store.com',
+            secretKey: 'sk_xxx',
+          })
+
+          const purchaseOrder = await client.purchaseOrders.create({
+            supplier_id: 'sup_1234567890',
+            destination_location_id: 'sloc_1234567890',
+            expected_at: '2026-10-01',
+            items: [{ variant_id: 'variant_1234567890', quantity_ordered: 100, unit_cost: '12.50' }],
+          })
+      - lang: bash
+        label: Spree CLI
+        source: spree api post /purchase_orders -d '{"supplier_id":"sup_1234567890","destination_location_id":"sloc_1234567890","expected_at":"2026-10-01","items":[{"variant_id":"variant_1234567890","quantity_ordered":100,"unit_cost":"12.50"}]}'
+      parameters:
+      - name: x-spree-api-key
+        in: header
+        required: true
+        schema:
+          type: string
+      - name: Authorization
+        in: header
+        required: true
+        description: Bearer token for admin authentication
+        schema:
+          type: string
+      responses:
+        '201':
+          description: purchase order created
+          content:
+            application/json:
+              example:
+                id: po_gbHJdmfrXB
+                number: PO1002
+                status: draft
+                currency: USD
+                reference: SUP-8891
+                notes:
+                metadata: {}
+                close_reason:
+                items_count: 1
+                quantity_received_total: 0
+                quantity_rejected_total: 0
+                ordered_at:
+                received_at:
+                closed_short_at:
+                created_at: '2026-01-15T12:00:00.000Z'
+                updated_at: '2026-01-15T12:00:00.000Z'
+                expected_at: '2026-10-01'
+                cancel_by:
+                closed_short: false
+                quantity_ordered_total: 100
+                editable: true
+                subtotal: '1250.0'
+                display_subtotal: "$1,250.00"
+                supplier_id: sup_UkLWZg9DAJ
+                destination_location_id: sloc_UkLWZg9DAJ
+              schema:
+                "$ref": "#/components/schemas/PurchaseOrder"
+        '404':
+          description: supplier belongs to another store
+          content:
+            application/json:
+              example:
+                error:
+                  code: record_not_found
+                  message: Supplier not found
+              schema:
+                "$ref": "#/components/schemas/ErrorResponse"
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                supplier_id:
+                  type: string
+                  example: sup_1234567890
+                destination_location_id:
+                  type: string
+                  example: sloc_1234567890
+                currency:
+                  type: string
+                  nullable: true
+                  example: USD
+                expected_at:
+                  type: string
+                  format: date
+                  nullable: true
+                  example: '2026-10-01'
+                reference:
+                  type: string
+                  nullable: true
+                  description: The supplier's own order number
+                notes:
+                  type: string
+                  nullable: true
+                items:
+                  type: array
+                  items:
+                    type: object
+                    properties:
+                      variant_id:
+                        type: string
+                        example: variant_1234567890
+                      quantity_ordered:
+                        type: integer
+                        example: 100
+                      unit_cost:
+                        type: string
+                        example: '12.50'
+                    required:
+                    - variant_id
+                    - quantity_ordered
+                metadata:
+                  type: object
+                  nullable: true
+              required:
+              - supplier_id
+              - destination_location_id
+        required: true
+  "/api/v3/admin/purchase_orders/{id}":
+    parameters:
+    - name: id
+      in: path
+      required: true
+      description: Purchase order ID
+      schema:
+        type: string
+    get:
+      summary: Get a purchase order
+      tags:
+      - Purchase Orders
+      security:
+      - api_key: []
+        bearer_auth: []
+      description: "**Required scope:** `read_purchasing` (for API-key authentication)."
+      parameters:
+      - name: x-spree-api-key
+        in: header
+        required: true
+        schema:
+          type: string
+      - name: Authorization
+        in: header
+        required: true
+        description: Bearer token for admin authentication
+        schema:
+          type: string
+      - name: expand
+        in: query
+        required: false
+        description: 'Comma-separated associations to embed: items, supplier, destination_location'
+        schema:
+          type: string
+      responses:
+        '200':
+          description: purchase order found
+          content:
+            application/json:
+              example:
+                id: po_UkLWZg9DAJ
+                number: PO1001
+                status: draft
+                currency: USD
+                reference:
+                notes:
+                metadata: {}
+                close_reason:
+                items_count: 1
+                quantity_received_total: 0
+                quantity_rejected_total: 0
+                ordered_at:
+                received_at:
+                closed_short_at:
+                created_at: '2026-01-15T12:00:00.000Z'
+                updated_at: '2026-01-15T12:00:00.000Z'
+                expected_at: '2026-10-01'
+                cancel_by:
+                closed_short: false
+                quantity_ordered_total: 100
+                editable: true
+                subtotal: '1250.0'
+                display_subtotal: "$1,250.00"
+                supplier_id: sup_UkLWZg9DAJ
+                destination_location_id: sloc_UkLWZg9DAJ
+                items:
+                - id: poi_UkLWZg9DAJ
+                  quantity_ordered: 100
+                  quantity_received: 0
+                  quantity_rejected: 0
+                  quantity_over: 0
+                  outstanding: 100
+                  currency: USD
+                  created_at: '2026-01-15T12:00:00.000Z'
+                  updated_at: '2026-01-15T12:00:00.000Z'
+                  unit_cost: '12.5'
+                  total_cost: '1250.0'
+                  display_unit_cost: "$12.50"
+                  display_total_cost: "$1,250.00"
+                  purchase_order_id: po_UkLWZg9DAJ
+                  variant_id: variant_gbHJdmfrXB
+                  product_id: prod_UkLWZg9DAJ
+                  variant_name: Product 1259018
+                  variant_sku: SKU-148
+                  options_text: 'Size: S'
+                  thumbnail_url:
+                supplier:
+                  id: sup_UkLWZg9DAJ
+                  name: Acme Wholesale
+                  contact_name: Dana Okafor
+                  email: supplier6@example.com
+                  phone: 555-0100
+                  notes:
+                  address1:
+                  address2:
+                  city:
+                  state_name:
+                  state_code:
+                  country_code:
+                  postal_code:
+                  purchase_orders_count: 1
+                  metadata: {}
+                  created_at: '2026-01-15T12:00:00.000Z'
+                  updated_at: '2026-01-15T12:00:00.000Z'
+                  deleted_at:
+                  can_be_deleted: false
+              schema:
+                "$ref": "#/components/schemas/PurchaseOrder"
+        '404':
+          description: purchase order not found
+          content:
+            application/json:
+              example:
+                error:
+                  code: record_not_found
+                  message: Purchase order not found
+              schema:
+                "$ref": "#/components/schemas/ErrorResponse"
+  "/api/v3/admin/purchase_orders/{id}/mark_ordered":
+    parameters:
+    - name: id
+      in: path
+      required: true
+      description: Purchase order ID
+      schema:
+        type: string
+    patch:
+      summary: Place the order with the supplier
+      tags:
+      - Purchase Orders
+      security:
+      - api_key: []
+        bearer_auth: []
+      description: |-
+        Moves a `draft` to `ordered`: the lines are frozen and `ordered_at` is
+        stamped. Availability is still untouched — ordered stock is not stock
+        the merchant has.
+
+
+        **Required scope:** `write_purchasing` (for API-key authentication).
+      parameters:
+      - name: x-spree-api-key
+        in: header
+        required: true
+        schema:
+          type: string
+      - name: Authorization
+        in: header
+        required: true
+        description: Bearer token for admin authentication
+        schema:
+          type: string
+      responses:
+        '200':
+          description: purchase order placed
+          content:
+            application/json:
+              example:
+                id: po_UkLWZg9DAJ
+                number: PO1001
+                status: ordered
+                currency: USD
+                reference:
+                notes:
+                metadata: {}
+                close_reason:
+                items_count: 1
+                quantity_received_total: 0
+                quantity_rejected_total: 0
+                ordered_at: '2026-01-15T12:00:00.000Z'
+                received_at:
+                closed_short_at:
+                created_at: '2026-01-15T12:00:00.000Z'
+                updated_at: '2026-01-15T12:00:00.000Z'
+                expected_at: '2026-10-01'
+                cancel_by:
+                closed_short: false
+                quantity_ordered_total: 100
+                editable: false
+                subtotal: '1250.0'
+                display_subtotal: "$1,250.00"
+                supplier_id: sup_UkLWZg9DAJ
+                destination_location_id: sloc_UkLWZg9DAJ
+              schema:
+                "$ref": "#/components/schemas/PurchaseOrder"
+  "/api/v3/admin/purchase_orders/{purchase_order_id}/stock_receipts":
+    parameters:
+    - name: purchase_order_id
+      in: path
+      required: true
+      description: Purchase order ID
+      schema:
+        type: string
+    get:
+      summary: List the deliveries booked against an order
+      tags:
+      - Purchase Orders
+      security:
+      - api_key: []
+        bearer_auth: []
+      description: |-
+        Each delivery the dock counted in, newest first — with its packing-slip reference and what it accepted and refused.
+
+        **Required scope:** `read_purchasing` (for API-key authentication).
+      x-codeSamples:
+      - lang: javascript
+        label: Spree Admin SDK
+        source: |-
+          import { createAdminClient } from '@spree/admin-sdk'
+
+          const client = createAdminClient({
+            baseUrl: 'https://your-store.com',
+            secretKey: 'sk_xxx',
+          })
+
+          // Every delivery booked against the order, with its lines.
+          const { data: stockReceipts } = await client.purchaseOrders.stockReceipts.list('po_1234567890', {
+            expand: ['items'],
+          })
+      - lang: bash
+        label: Spree CLI
+        source: spree api get /purchase_orders/{purchase_order_id}/stock_receipts
+          -d '{"expand":["items"]}'
+      parameters:
+      - name: x-spree-api-key
+        in: header
+        required: true
+        schema:
+          type: string
+      - name: Authorization
+        in: header
+        required: true
+        description: Bearer token for admin authentication
+        schema:
+          type: string
+      responses:
+        '200':
+          description: deliveries found
+          content:
+            application/json:
+              example:
+                data:
+                - id: sr_UkLWZg9DAJ
+                  number: SR1001
+                  reference: DN-4471
+                  notes:
+                  metadata: {}
+                  quantity_accepted_total: 60
+                  quantity_rejected_total: 0
+                  received_at: '2026-01-15T12:00:00.000Z'
+                  created_at: '2026-01-15T12:00:00.000Z'
+                  updated_at: '2026-01-15T12:00:00.000Z'
+                  receivable_type: purchase_order
+                  receivable_id: po_UkLWZg9DAJ
+                  received_by_id:
+                  items_count: 1
+                meta:
+                  page: 1
+                  limit: 25
+                  count: 1
+                  pages: 1
+                  from: 1
+                  to: 1
+                  in: 1
+                  previous:
+                  next:
+    post:
+      summary: Book in a delivery
+      tags:
+      - Purchase Orders
+      security:
+      - api_key: []
+        bearer_auth: []
+      description: |-
+        The moment purchased goods first count toward availability. Records
+        one delivery as a stock receipt: what this delivery brought, per line,
+        not a running total — a second delivery adds to the first.
+
+        `quantity_accepted` reaches the shelf; `quantity_rejected` is refused
+        and recorded with a `rejection_reason` (`damaged`, `wrong_item`,
+        `expired` or `other`), never stocked. Omit `items` to book in
+        everything still outstanding, intact.
+
+        Each `received` stock movement carries the line's `unit_cost` and
+        names the receipt, so a delivery can be reconciled against the ledger.
+
+        The order stays `partially_received` while any line is still owed,
+        settles in `received` once every line has what it expected, and in
+        `over_received` once any line has more.
+
+
+        **Required scope:** `write_purchasing` (for API-key authentication).
+      x-codeSamples:
+      - lang: javascript
+        label: Spree Admin SDK
+        source: |-
+          import { createAdminClient } from '@spree/admin-sdk'
+
+          const client = createAdminClient({
+            baseUrl: 'https://your-store.com',
+            secretKey: 'sk_xxx',
+          })
+
+          // This delivery's counts, not running totals: 58 accepted, 2 refused as
+          // damaged. A second delivery adds to the first. Omit `items` to book in
+          // everything still outstanding, intact.
+          const stockReceipt = await client.purchaseOrders.stockReceipts.create('po_1234567890', {
+            reference: 'DN-4471',
+            items: [
+              {
+                id: 'poi_1234567890',
+                quantity_accepted: 58,
+                quantity_rejected: 2,
+                rejection_reason: 'damaged',
+              },
+            ],
+          })
+      - lang: bash
+        label: Spree CLI
+        source: spree api post /purchase_orders/{purchase_order_id}/stock_receipts
+          -d '{"reference":"DN-4471","items":[{"id":"poi_1234567890","quantity_accepted":58,"quantity_rejected":2,"rejection_reason":"damaged"}]}'
+      parameters:
+      - name: x-spree-api-key
+        in: header
+        required: true
+        schema:
+          type: string
+      - name: Authorization
+        in: header
+        required: true
+        description: Bearer token for admin authentication
+        schema:
+          type: string
+      responses:
+        '201':
+          description: delivery booked in
+          content:
+            application/json:
+              example:
+                id: sr_UkLWZg9DAJ
+                number: SR1001
+                reference: DN-4471
+                notes:
+                metadata: {}
+                quantity_accepted_total: 58
+                quantity_rejected_total: 2
+                received_at: '2026-01-15T12:00:00.000Z'
+                created_at: '2026-01-15T12:00:00.000Z'
+                updated_at: '2026-01-15T12:00:00.000Z'
+                receivable_type: purchase_order
+                receivable_id: po_UkLWZg9DAJ
+                received_by_id: adm_UkLWZg9DAJ
+                items_count: 1
+              schema:
+                "$ref": "#/components/schemas/StockReceipt"
+        '422':
+          description: order has not been placed yet
+          content:
+            application/json:
+              example:
+                error:
+                  code: processing_error
+                  message: Only a purchase order that has been placed can be received
+              schema:
+                "$ref": "#/components/schemas/ErrorResponse"
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                reference:
+                  type: string
+                  nullable: true
+                  example: DN-4471
+                  description: The supplier's delivery note or packing slip
+                received_at:
+                  type: string
+                  format: date-time
+                  nullable: true
+                  description: Defaults to now
+                notes:
+                  type: string
+                  nullable: true
+                items:
+                  type: array
+                  items:
+                    type: object
+                    properties:
+                      id:
+                        type: string
+                        example: poi_1234567890
+                      quantity_accepted:
+                        type: integer
+                        example: 58
+                      quantity_rejected:
+                        type: integer
+                        example: 2
+                      rejection_reason:
+                        type: string
+                        nullable: true
+                        example: damaged
+                      notes:
+                        type: string
+                        nullable: true
+                    required:
+                    - id
+  "/api/v3/admin/purchase_orders/{id}/mark_draft":
+    parameters:
+    - name: id
+      in: path
+      required: true
+      description: Purchase order ID
+      schema:
+        type: string
+    patch:
+      summary: Take an order back to draft
+      tags:
+      - Purchase Orders
+      security:
+      - api_key: []
+        bearer_auth: []
+      description: |-
+        Reopens a placed order for editing. Only while no delivery has been booked against it; `ordered_at` is cleared.
+
+        **Required scope:** `write_purchasing` (for API-key authentication).
+      x-codeSamples:
+      - lang: javascript
+        label: Spree Admin SDK
+        source: |-
+          import { createAdminClient } from '@spree/admin-sdk'
+
+          const client = createAdminClient({
+            baseUrl: 'https://your-store.com',
+            secretKey: 'sk_xxx',
+          })
+
+          // Only while no delivery has been booked against it.
+          const purchaseOrder = await client.purchaseOrders.markDraft('po_1234567890')
+      - lang: bash
+        label: Spree CLI
+        source: spree api patch /purchase_orders/{id}/mark_draft -d '{ ... }'
+      parameters:
+      - name: x-spree-api-key
+        in: header
+        required: true
+        schema:
+          type: string
+      - name: Authorization
+        in: header
+        required: true
+        description: Bearer token for admin authentication
+        schema:
+          type: string
+      responses:
+        '200':
+          description: order back in draft
+          content:
+            application/json:
+              example:
+                id: po_UkLWZg9DAJ
+                number: PO1001
+                status: draft
+                currency: USD
+                reference:
+                notes:
+                metadata: {}
+                close_reason:
+                items_count: 1
+                quantity_received_total: 0
+                quantity_rejected_total: 0
+                ordered_at:
+                received_at:
+                closed_short_at:
+                created_at: '2026-01-15T12:00:00.000Z'
+                updated_at: '2026-01-15T12:00:00.000Z'
+                expected_at: '2026-10-01'
+                cancel_by:
+                closed_short: false
+                quantity_ordered_total: 100
+                editable: true
+                subtotal: '1250.0'
+                display_subtotal: "$1,250.00"
+                supplier_id: sup_UkLWZg9DAJ
+                destination_location_id: sloc_UkLWZg9DAJ
+              schema:
+                "$ref": "#/components/schemas/PurchaseOrder"
+  "/api/v3/admin/purchase_orders/{id}/close":
+    parameters:
+    - name: id
+      in: path
+      required: true
+      description: Purchase order ID
+      schema:
+        type: string
+    patch:
+      summary: Close an order short
+      tags:
+      - Purchase Orders
+      security:
+      - api_key: []
+        bearer_auth: []
+      description: |-
+        Ends a partially received order whose balance the supplier will not
+        deliver. Nothing moves: what arrived stays on the shelf, the
+        outstanding count stays on each line, and the order settles in
+        `received` with `closed_short_at` and the `reason` recorded.
+
+
+        **Required scope:** `write_purchasing` (for API-key authentication).
+      x-codeSamples:
+      - lang: javascript
+        label: Spree Admin SDK
+        source: |-
+          import { createAdminClient } from '@spree/admin-sdk'
+
+          const client = createAdminClient({
+            baseUrl: 'https://your-store.com',
+            secretKey: 'sk_xxx',
+          })
+
+          // The supplier will not send the balance: keep what arrived, record why.
+          const purchaseOrder = await client.purchaseOrders.close('po_1234567890', {
+            reason: 'Supplier out of stock',
+          })
+      - lang: bash
+        label: Spree CLI
+        source: spree api patch /purchase_orders/{id}/close -d '{"reason":"Supplier
+          out of stock"}'
+      parameters:
+      - name: x-spree-api-key
+        in: header
+        required: true
+        schema:
+          type: string
+      - name: Authorization
+        in: header
+        required: true
+        description: Bearer token for admin authentication
+        schema:
+          type: string
+      responses:
+        '200':
+          description: order closed short
+          content:
+            application/json:
+              example:
+                id: po_UkLWZg9DAJ
+                number: PO1001
+                status: received
+                currency: USD
+                reference:
+                notes:
+                metadata: {}
+                close_reason: Supplier out of stock
+                items_count: 1
+                quantity_received_total: 60
+                quantity_rejected_total: 0
+                ordered_at: '2026-01-15T12:00:00.000Z'
+                received_at: '2026-01-15T12:00:00.000Z'
+                closed_short_at: '2026-01-15T12:00:00.000Z'
+                created_at: '2026-01-15T12:00:00.000Z'
+                updated_at: '2026-01-15T12:00:00.000Z'
+                expected_at: '2026-10-01'
+                cancel_by:
+                closed_short: true
+                quantity_ordered_total: 100
+                editable: false
+                subtotal: '1250.0'
+                display_subtotal: "$1,250.00"
+                supplier_id: sup_UkLWZg9DAJ
+                destination_location_id: sloc_UkLWZg9DAJ
+              schema:
+                "$ref": "#/components/schemas/PurchaseOrder"
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                reason:
+                  type: string
+                  nullable: true
+                  example: Supplier out of stock
+  "/api/v3/admin/purchase_orders/{id}/cancel":
+    parameters:
+    - name: id
+      in: path
+      required: true
+      description: Purchase order ID
+      schema:
+        type: string
+    patch:
+      summary: Cancel a purchase order
+      tags:
+      - Purchase Orders
+      security:
+      - api_key: []
+        bearer_auth: []
+      description: |-
+        Closes what is still outstanding. Nothing is unwound: a purchase order
+        never moved stock until units were received, and units already received
+        stay on the shelf because the merchant has them.
+
+        A `reason` is appended to the order's notes.
+
+
+        **Required scope:** `write_purchasing` (for API-key authentication).
+      parameters:
+      - name: x-spree-api-key
+        in: header
+        required: true
+        schema:
+          type: string
+      - name: Authorization
+        in: header
+        required: true
+        description: Bearer token for admin authentication
+        schema:
+          type: string
+      responses:
+        '200':
+          description: purchase order cancelled
+          content:
+            application/json:
+              example:
+                id: po_UkLWZg9DAJ
+                number: PO1001
+                status: canceled
+                currency: USD
+                reference:
+                notes: Supplier went under
+                metadata: {}
+                close_reason:
+                items_count: 1
+                quantity_received_total: 0
+                quantity_rejected_total: 0
+                ordered_at:
+                received_at:
+                closed_short_at:
+                created_at: '2026-01-15T12:00:00.000Z'
+                updated_at: '2026-01-15T12:00:00.000Z'
+                expected_at: '2026-10-01'
+                cancel_by:
+                closed_short: false
+                quantity_ordered_total: 100
+                editable: false
+                subtotal: '1250.0'
+                display_subtotal: "$1,250.00"
+                supplier_id: sup_UkLWZg9DAJ
+                destination_location_id: sloc_UkLWZg9DAJ
+              schema:
+                "$ref": "#/components/schemas/PurchaseOrder"
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                reason:
+                  type: string
+                  example: Supplier went under
   "/api/v3/admin/seller_requirements":
     get:
       summary: List seller requirements
@@ -36424,91 +37398,6 @@ paths:
                   message: Seller not found
               schema:
                 "$ref": "#/components/schemas/ErrorResponse"
-  "/api/v3/admin/sellers/{seller_id}/payouts":
-    parameters:
-    - name: seller_id
-      in: path
-      required: true
-      description: Seller prefixed ID
-      schema:
-        type: string
-    post:
-      summary: Settle a seller
-      tags:
-      - Sellers
-      security:
-      - api_key: []
-        bearer_auth: []
-      description: |-
-        Sweeps everything this seller is owed into a payout — one per currency,
-        since nothing is ever converted between them.
-
-        This is what the `manual` payout interval means: the scheduled sweep
-        runs on each seller's own interval and skips anyone set to `manual`,
-        leaving the operator to decide when. It also settles any other seller
-        early.
-
-        It records the settlement rather than sending money: the built-in
-        provider waits to be told the bank transfer went out, which is
-        `PATCH /api/v3/admin/seller_payouts/{id}/complete`.
-
-        Answers `422` when there is nothing to settle — no payout account,
-        nothing unsettled, or a balance below the seller's minimum.
-
-
-        **Required scope:** `write_payouts` (for API-key authentication).
-      parameters:
-      - name: x-spree-api-key
-        in: header
-        required: true
-        schema:
-          type: string
-      - name: Authorization
-        in: header
-        required: true
-        schema:
-          type: string
-      responses:
-        '201':
-          description: seller settled
-          content:
-            application/json:
-              example:
-                data:
-                - id: vpo_UkLWZg9DAJ
-                  status: pending
-                  currency: USD
-                  provider: Spree::PayoutProvider::System
-                  reference:
-                  metadata: {}
-                  period_start: '2026-01-15T12:00:00.000Z'
-                  period_end: '2026-01-15T12:00:00.000Z'
-                  created_at: '2026-01-15T12:00:00.000Z'
-                  updated_at: '2026-01-15T12:00:00.000Z'
-                  amount: '40.0'
-                  display_amount: "$40.00"
-                  seller_id: sel_UkLWZg9DAJ
-                  seller_name: Sparks Audio
-                  transfers_count: 1
-              schema:
-                type: object
-                properties:
-                  data:
-                    type: array
-                    items:
-                      "$ref": "#/components/schemas/SellerPayout"
-                required:
-                - data
-        '422':
-          description: nothing to settle
-          content:
-            application/json:
-              example:
-                error:
-                  code: validation_error
-                  message: This seller has nothing to settle right now.
-              schema:
-                "$ref": "#/components/schemas/ErrorResponse"
   "/api/v3/admin/stock_levels/bulk_upsert":
     post:
       summary: Bulk-upsert stock levels
@@ -36726,11 +37615,20 @@ paths:
                   created_at: '2026-01-15T12:00:00.000Z'
                   updated_at: '2026-01-15T12:00:00.000Z'
                   stock_level_id: sl_gbHJdmfrXB
+                  stock_location_id: sloc_UkLWZg9DAJ
+                  stock_location_name: Mona Hegmann
+                  variant_id: variant_gbHJdmfrXB
+                  variant_name: Product 1378513
+                  variant_sku: SKU-171
                   order_id:
                   fulfillment_id:
                   return_id:
                   exchange_id:
                   stock_transfer_id:
+                  stock_receipt_id:
+                  purchase_order_id:
+                  unit_cost:
+                  display_unit_cost:
                 meta:
                   page: 1
                   limit: 25
@@ -36828,11 +37726,20 @@ paths:
                 created_at: '2026-01-15T12:00:00.000Z'
                 updated_at: '2026-01-15T12:00:00.000Z'
                 stock_level_id: sl_gbHJdmfrXB
+                stock_location_id: sloc_UkLWZg9DAJ
+                stock_location_name: Chrystal Sauer
+                variant_id: variant_gbHJdmfrXB
+                variant_name: Product 1392954
+                variant_sku: SKU-175
                 order_id:
                 fulfillment_id:
                 return_id:
                 exchange_id:
                 stock_transfer_id:
+                stock_receipt_id:
+                purchase_order_id:
+                unit_cost:
+                display_unit_cost:
               schema:
                 "$ref": "#/components/schemas/StockMovement"
         '404':
@@ -36845,6 +37752,1505 @@ paths:
                   message: Stock movement not found
               schema:
                 "$ref": "#/components/schemas/ErrorResponse"
+  "/api/v3/admin/stock_transfers":
+    get:
+      summary: List stock transfers
+      tags:
+      - Stock Transfers
+      security:
+      - api_key: []
+        bearer_auth: []
+      description: |-
+        Stock moving between two of the merchant's own warehouses.
+
+        A transfer is a trip, not an instant. Units leave the source when the
+        transfer is marked in transit and land at the destination when somebody
+        counts them in — in between they are in flight, gone from one shelf and
+        not yet on the other.
+
+        Statuses are `draft`, `ready_to_ship`, `in_transit`,
+        `partially_received`, `received`, `over_received` and `canceled`. Each move between them
+        is its own endpoint, not a `PATCH` that writes `status`.
+
+        Receiving from a supplier is a purchase order, not a transfer with a
+        missing source.
+
+        Filter with Ransack predicates such as `q[status_eq]`,
+        `q[source_location_id_eq]` or `q[number_or_reference_cont]`. Expand
+        `items`, `source_location` and `destination_location`.
+
+
+        **Required scope:** `read_stock` (for API-key authentication).
+      parameters:
+      - name: x-spree-api-key
+        in: header
+        required: true
+        schema:
+          type: string
+      - name: Authorization
+        in: header
+        required: true
+        description: Bearer token for admin authentication
+        schema:
+          type: string
+      - name: page
+        in: query
+        required: false
+        description: Page number
+        schema:
+          type: integer
+      - name: limit
+        in: query
+        required: false
+        description: Number of records per page
+        schema:
+          type: integer
+      - name: q[status_eq]
+        in: query
+        required: false
+        description: Filter by status ('draft', 'ready_to_ship', 'in_transit', 'partially_received',
+          'received', 'over_received', 'canceled')
+        schema:
+          type: string
+      - name: expand
+        in: query
+        required: false
+        description: 'Comma-separated associations to embed: items, source_location,
+          destination_location'
+        schema:
+          type: string
+      responses:
+        '200':
+          description: stock transfers found
+          content:
+            application/json:
+              example:
+                data:
+                - id: st_UkLWZg9DAJ
+                  number: T1001
+                  reference: Weekly restock
+                  created_at: '2026-01-15T12:00:00.000Z'
+                  updated_at: '2026-01-15T12:00:00.000Z'
+                  source_location_id: sloc_UkLWZg9DAJ
+                  destination_location_id: sloc_gbHJdmfrXB
+                  status: draft
+                  notes:
+                  metadata: {}
+                  close_reason:
+                  items_count: 1
+                  quantity_received_total: 0
+                  quantity_rejected_total: 0
+                  shipped_at:
+                  received_at:
+                  closed_short_at:
+                  deleted_at:
+                  closed_short: false
+                  quantity_shipped_total: 10
+                  editable: true
+                meta:
+                  page: 1
+                  limit: 25
+                  count: 1
+                  pages: 1
+                  from: 1
+                  to: 1
+                  in: 1
+                  previous:
+                  next:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      "$ref": "#/components/schemas/StockTransfer"
+                  meta:
+                    "$ref": "#/components/schemas/PaginationMeta"
+                required:
+                - data
+                - meta
+        '401':
+          description: unauthorized
+          content:
+            application/json:
+              example:
+                error:
+                  code: authentication_required
+                  message: Authentication required
+              schema:
+                "$ref": "#/components/schemas/ErrorResponse"
+    post:
+      summary: Create a stock transfer
+      tags:
+      - Stock Transfers
+      security:
+      - api_key: []
+        bearer_auth: []
+      description: |-
+        Persists a draft — a packing list the merchant can still edit. Nothing
+        moves until the transfer is marked in transit.
+
+        A draft may legitimately open empty and gain lines as the merchant
+        packs. Both warehouses are required and must belong to the same store.
+
+
+        **Required scope:** `write_stock` (for API-key authentication).
+      x-codeSamples:
+      - lang: javascript
+        label: Spree Admin SDK
+        source: |-
+          import { createAdminClient } from '@spree/admin-sdk'
+
+          const client = createAdminClient({
+            baseUrl: 'https://your-store.com',
+            secretKey: 'sk_xxx',
+          })
+
+          // A draft: nothing moves until the transfer is marked in transit.
+          const stockTransfer = await client.stockTransfers.create({
+            source_location_id: 'sloc_1234567890',
+            destination_location_id: 'sloc_0987654321',
+            reference: 'Weekly restock',
+            items: [{ variant_id: 'variant_1234567890', quantity_shipped: 10 }],
+          })
+      - lang: bash
+        label: Spree CLI
+        source: spree api post /stock_transfers -d '{"source_location_id":"sloc_1234567890","destination_location_id":"sloc_0987654321","reference":"Weekly
+          restock","items":[{"variant_id":"variant_1234567890","quantity_shipped":10}]}'
+      parameters:
+      - name: x-spree-api-key
+        in: header
+        required: true
+        schema:
+          type: string
+      - name: Authorization
+        in: header
+        required: true
+        description: Bearer token for admin authentication
+        schema:
+          type: string
+      responses:
+        '201':
+          description: stock transfer created
+          content:
+            application/json:
+              example:
+                id: st_gbHJdmfrXB
+                number: T1002
+                reference: Weekly restock
+                created_at: '2026-01-15T12:00:00.000Z'
+                updated_at: '2026-01-15T12:00:00.000Z'
+                source_location_id: sloc_UkLWZg9DAJ
+                destination_location_id: sloc_gbHJdmfrXB
+                status: draft
+                notes:
+                metadata: {}
+                close_reason:
+                items_count: 1
+                quantity_received_total: 0
+                quantity_rejected_total: 0
+                shipped_at:
+                received_at:
+                closed_short_at:
+                deleted_at:
+                closed_short: false
+                quantity_shipped_total: 10
+                editable: true
+              schema:
+                "$ref": "#/components/schemas/StockTransfer"
+        '404':
+          description: warehouse belongs to another store
+          content:
+            application/json:
+              example:
+                error:
+                  code: record_not_found
+                  message: Stock location not found
+              schema:
+                "$ref": "#/components/schemas/ErrorResponse"
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                source_location_id:
+                  type: string
+                  example: sloc_1234567890
+                destination_location_id:
+                  type: string
+                  example: sloc_0987654321
+                reference:
+                  type: string
+                  nullable: true
+                  description: The merchant's own label for the trip
+                notes:
+                  type: string
+                  nullable: true
+                items:
+                  type: array
+                  items:
+                    type: object
+                    properties:
+                      variant_id:
+                        type: string
+                        example: variant_1234567890
+                      quantity_shipped:
+                        type: integer
+                        example: 10
+                    required:
+                    - variant_id
+                    - quantity_shipped
+                metadata:
+                  type: object
+                  nullable: true
+              required:
+              - source_location_id
+              - destination_location_id
+        required: true
+  "/api/v3/admin/stock_transfers/{id}":
+    parameters:
+    - name: id
+      in: path
+      required: true
+      description: Stock transfer ID
+      schema:
+        type: string
+    get:
+      summary: Get a stock transfer
+      tags:
+      - Stock Transfers
+      security:
+      - api_key: []
+        bearer_auth: []
+      description: "**Required scope:** `read_stock` (for API-key authentication)."
+      parameters:
+      - name: x-spree-api-key
+        in: header
+        required: true
+        schema:
+          type: string
+      - name: Authorization
+        in: header
+        required: true
+        description: Bearer token for admin authentication
+        schema:
+          type: string
+      - name: expand
+        in: query
+        required: false
+        description: 'Comma-separated associations to embed: items, source_location,
+          destination_location'
+        schema:
+          type: string
+      responses:
+        '200':
+          description: stock transfer found
+          content:
+            application/json:
+              example:
+                id: st_UkLWZg9DAJ
+                number: T1001
+                reference: Weekly restock
+                created_at: '2026-01-15T12:00:00.000Z'
+                updated_at: '2026-01-15T12:00:00.000Z'
+                source_location_id: sloc_UkLWZg9DAJ
+                destination_location_id: sloc_gbHJdmfrXB
+                status: draft
+                notes:
+                metadata: {}
+                close_reason:
+                items_count: 1
+                quantity_received_total: 0
+                quantity_rejected_total: 0
+                shipped_at:
+                received_at:
+                closed_short_at:
+                deleted_at:
+                closed_short: false
+                quantity_shipped_total: 10
+                editable: true
+                items:
+                - id: sti_UkLWZg9DAJ
+                  quantity_shipped: 10
+                  quantity_received: 0
+                  quantity_rejected: 0
+                  quantity_over: 0
+                  outstanding: 10
+                  created_at: '2026-01-15T12:00:00.000Z'
+                  updated_at: '2026-01-15T12:00:00.000Z'
+                  stock_transfer_id: st_UkLWZg9DAJ
+                  variant_id: variant_gbHJdmfrXB
+                  product_id: prod_UkLWZg9DAJ
+                  variant_name: Product 1452176
+                  variant_sku: SKU-187
+                  options_text: 'Size: S'
+                  thumbnail_url:
+                source_location:
+                  id: sloc_UkLWZg9DAJ
+                  name: Warehouse
+                  address1: 1600 Pennsylvania Ave NW
+                  city: Washington
+                  zipcode: '20500'
+                  country_code: US
+                  country_name: United States
+                  state_code: AL
+                  state_text: AL
+                  pickup_ready_in_minutes:
+                  pickup_instructions:
+                  external_references: {}
+                  admin_name:
+                  address2:
+                  state_name:
+                  phone: "(202) 456-1111"
+                  company:
+                  active: true
+                  default: false
+                  backorderable_default: true
+                  propagate_all_variants: false
+                  kind: warehouse
+                  pickup_enabled: false
+                  pickup_stock_policy: local
+                  returns_enabled: true
+                  created_at: '2026-01-15T12:00:00.000Z'
+                  updated_at: '2026-01-15T12:00:00.000Z'
+                  seller_id:
+                  seller_name:
+                destination_location:
+                  id: sloc_gbHJdmfrXB
+                  name: Brooklyn shop
+                  address1: 1600 Pennsylvania Ave NW
+                  city: Washington
+                  zipcode: '20500'
+                  country_code: US
+                  country_name: United States
+                  state_code: AL
+                  state_text: AL
+                  pickup_ready_in_minutes:
+                  pickup_instructions:
+                  external_references: {}
+                  admin_name:
+                  address2:
+                  state_name:
+                  phone: "(202) 456-1111"
+                  company:
+                  active: true
+                  default: false
+                  backorderable_default: true
+                  propagate_all_variants: false
+                  kind: warehouse
+                  pickup_enabled: false
+                  pickup_stock_policy: local
+                  returns_enabled: true
+                  created_at: '2026-01-15T12:00:00.000Z'
+                  updated_at: '2026-01-15T12:00:00.000Z'
+                  seller_id:
+                  seller_name:
+              schema:
+                "$ref": "#/components/schemas/StockTransfer"
+        '404':
+          description: stock transfer not found
+          content:
+            application/json:
+              example:
+                error:
+                  code: record_not_found
+                  message: Stock transfer not found
+              schema:
+                "$ref": "#/components/schemas/ErrorResponse"
+    delete:
+      summary: Delete a stock transfer
+      tags:
+      - Stock Transfers
+      security:
+      - api_key: []
+        bearer_auth: []
+      description: |-
+        Drafts only. Past `draft` the transfer describes a box that physically
+        exists, so it is cancelled rather than deleted — a 422 says so.
+
+
+        **Required scope:** `write_stock` (for API-key authentication).
+      parameters:
+      - name: x-spree-api-key
+        in: header
+        required: true
+        schema:
+          type: string
+      - name: Authorization
+        in: header
+        required: true
+        description: Bearer token for admin authentication
+        schema:
+          type: string
+      responses:
+        '204':
+          description: stock transfer deleted
+  "/api/v3/admin/stock_transfers/{id}/mark_ready":
+    parameters:
+    - name: id
+      in: path
+      required: true
+      description: Stock transfer ID
+      schema:
+        type: string
+    patch:
+      summary: Mark a transfer ready to ship
+      tags:
+      - Stock Transfers
+      security:
+      - api_key: []
+        bearer_auth: []
+      description: |-
+        Freezes the lines so the warehouse and the merchant are looking at the
+        same list. Nothing leaves the shelf yet.
+
+
+        **Required scope:** `write_stock` (for API-key authentication).
+      parameters:
+      - name: x-spree-api-key
+        in: header
+        required: true
+        schema:
+          type: string
+      - name: Authorization
+        in: header
+        required: true
+        description: Bearer token for admin authentication
+        schema:
+          type: string
+      responses:
+        '200':
+          description: transfer is ready to ship
+          content:
+            application/json:
+              example:
+                id: st_UkLWZg9DAJ
+                number: T1001
+                reference: Weekly restock
+                created_at: '2026-01-15T12:00:00.000Z'
+                updated_at: '2026-01-15T12:00:00.000Z'
+                source_location_id: sloc_UkLWZg9DAJ
+                destination_location_id: sloc_gbHJdmfrXB
+                status: ready_to_ship
+                notes:
+                metadata: {}
+                close_reason:
+                items_count: 1
+                quantity_received_total: 0
+                quantity_rejected_total: 0
+                shipped_at:
+                received_at:
+                closed_short_at:
+                deleted_at:
+                closed_short: false
+                quantity_shipped_total: 10
+                editable: false
+              schema:
+                "$ref": "#/components/schemas/StockTransfer"
+  "/api/v3/admin/stock_transfers/{id}/mark_in_transit":
+    parameters:
+    - name: id
+      in: path
+      required: true
+      description: Stock transfer ID
+      schema:
+        type: string
+    patch:
+      summary: Send a transfer
+      tags:
+      - Stock Transfers
+      security:
+      - api_key: []
+        bearer_auth: []
+      description: |-
+        The moment stock leaves the source warehouse: `shipped` movements are
+        written against the source's levels and `shipped_at` is stamped. The
+        destination is deliberately untouched — the units are in flight.
+
+        Refused with a 422 when the source does not hold enough. Pass
+        `force: true` to record the departure anyway: a merchant forcing it has
+        decided the box left whatever the ledger claims.
+
+
+        **Required scope:** `write_stock` (for API-key authentication).
+      x-codeSamples:
+      - lang: javascript
+        label: Spree Admin SDK
+        source: |-
+          import { createAdminClient } from '@spree/admin-sdk'
+
+          const client = createAdminClient({
+            baseUrl: 'https://your-store.com',
+            secretKey: 'sk_xxx',
+          })
+
+          // The units leave the source warehouse here.
+          const stockTransfer = await client.stockTransfers.markInTransit('st_1234567890')
+      - lang: bash
+        label: Spree CLI
+        source: spree api patch /stock_transfers/{id}/mark_in_transit -d '{ ... }'
+      parameters:
+      - name: x-spree-api-key
+        in: header
+        required: true
+        schema:
+          type: string
+      - name: Authorization
+        in: header
+        required: true
+        description: Bearer token for admin authentication
+        schema:
+          type: string
+      responses:
+        '200':
+          description: transfer is in transit
+          content:
+            application/json:
+              example:
+                id: st_UkLWZg9DAJ
+                number: T1001
+                reference: Weekly restock
+                created_at: '2026-01-15T12:00:00.000Z'
+                updated_at: '2026-01-15T12:00:00.000Z'
+                source_location_id: sloc_UkLWZg9DAJ
+                destination_location_id: sloc_gbHJdmfrXB
+                status: in_transit
+                notes:
+                metadata: {}
+                close_reason:
+                items_count: 1
+                quantity_received_total: 0
+                quantity_rejected_total: 0
+                shipped_at: '2026-01-15T12:00:00.000Z'
+                received_at:
+                closed_short_at:
+                deleted_at:
+                closed_short: false
+                quantity_shipped_total: 10
+                editable: false
+              schema:
+                "$ref": "#/components/schemas/StockTransfer"
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                force:
+                  type: boolean
+                  description: Ship even if it drives the source below zero
+  "/api/v3/admin/stock_transfers/{stock_transfer_id}/stock_receipts":
+    parameters:
+    - name: stock_transfer_id
+      in: path
+      required: true
+      description: Stock transfer ID
+      schema:
+        type: string
+    get:
+      summary: List the deliveries counted in against a transfer
+      tags:
+      - Stock Transfers
+      security:
+      - api_key: []
+        bearer_auth: []
+      description: |-
+        Each delivery the destination counted in, with what it accepted and refused.
+
+        **Required scope:** `read_stock` (for API-key authentication).
+      x-codeSamples:
+      - lang: javascript
+        label: Spree Admin SDK
+        source: |-
+          import { createAdminClient } from '@spree/admin-sdk'
+
+          const client = createAdminClient({
+            baseUrl: 'https://your-store.com',
+            secretKey: 'sk_xxx',
+          })
+
+          // Every delivery the destination counted in.
+          const { data: stockReceipts } = await client.stockTransfers.stockReceipts.list('st_1234567890', {
+            expand: ['items'],
+          })
+      - lang: bash
+        label: Spree CLI
+        source: spree api get /stock_transfers/{stock_transfer_id}/stock_receipts
+          -d '{"expand":["items"]}'
+      parameters:
+      - name: x-spree-api-key
+        in: header
+        required: true
+        schema:
+          type: string
+      - name: Authorization
+        in: header
+        required: true
+        description: Bearer token for admin authentication
+        schema:
+          type: string
+      responses:
+        '200':
+          description: deliveries found
+          content:
+            application/json:
+              example:
+                data:
+                - id: sr_UkLWZg9DAJ
+                  number: SR1001
+                  reference:
+                  notes:
+                  metadata: {}
+                  quantity_accepted_total: 8
+                  quantity_rejected_total: 0
+                  received_at: '2026-01-15T12:00:00.000Z'
+                  created_at: '2026-01-15T12:00:00.000Z'
+                  updated_at: '2026-01-15T12:00:00.000Z'
+                  receivable_type: stock_transfer
+                  receivable_id: st_UkLWZg9DAJ
+                  received_by_id:
+                  items_count: 1
+                meta:
+                  page: 1
+                  limit: 25
+                  count: 1
+                  pages: 1
+                  from: 1
+                  to: 1
+                  in: 1
+                  previous:
+                  next:
+    post:
+      summary: Count a delivery in
+      tags:
+      - Stock Transfers
+      security:
+      - api_key: []
+        bearer_auth: []
+      description: |-
+        Records one delivery the destination warehouse counted in, as a stock
+        receipt. Partial receipt is the normal case: ten left, eight arrived,
+        two were crushed in transit. Quantities are this delivery's counts —
+        a second box adds to the first rather than restating it.
+
+        `quantity_accepted` lands on the destination's shelf;
+        `quantity_rejected` is refused and recorded with a `rejection_reason`
+        (`damaged`, `wrong_item`, `expired` or `other`), never stocked. A
+        refused unit still arrived, so it counts toward the trip being over.
+        Omit `items` to count in everything still outstanding, intact.
+
+        The transfer stays `partially_received` while units are still on the
+        road, settles in `received` once everything has arrived, and in
+        `over_received` once more arrived than was shipped.
+
+
+        **Required scope:** `write_stock` (for API-key authentication).
+      x-codeSamples:
+      - lang: javascript
+        label: Spree Admin SDK
+        source: |-
+          import { createAdminClient } from '@spree/admin-sdk'
+
+          const client = createAdminClient({
+            baseUrl: 'https://your-store.com',
+            secretKey: 'sk_xxx',
+          })
+
+          // Partial receipt is the normal case: ten left, eight arrived intact and two
+          // crushed. Refused units are recorded, never stocked.
+          const stockReceipt = await client.stockTransfers.stockReceipts.create('st_1234567890', {
+            items: [
+              {
+                id: 'sti_1234567890',
+                quantity_accepted: 8,
+                quantity_rejected: 2,
+                rejection_reason: 'damaged',
+              },
+            ],
+          })
+      - lang: bash
+        label: Spree CLI
+        source: spree api post /stock_transfers/{stock_transfer_id}/stock_receipts
+          -d '{"items":[{"id":"sti_1234567890","quantity_accepted":8,"quantity_rejected":2,"rejection_reason":"damaged"}]}'
+      parameters:
+      - name: x-spree-api-key
+        in: header
+        required: true
+        schema:
+          type: string
+      - name: Authorization
+        in: header
+        required: true
+        description: Bearer token for admin authentication
+        schema:
+          type: string
+      responses:
+        '201':
+          description: delivery counted in
+          content:
+            application/json:
+              example:
+                id: sr_UkLWZg9DAJ
+                number: SR1001
+                reference:
+                notes:
+                metadata: {}
+                quantity_accepted_total: 8
+                quantity_rejected_total: 2
+                received_at: '2026-01-15T12:00:00.000Z'
+                created_at: '2026-01-15T12:00:00.000Z'
+                updated_at: '2026-01-15T12:00:00.000Z'
+                receivable_type: stock_transfer
+                receivable_id: st_UkLWZg9DAJ
+                received_by_id: adm_UkLWZg9DAJ
+                items_count: 1
+              schema:
+                "$ref": "#/components/schemas/StockReceipt"
+        '422':
+          description: transfer has not shipped yet
+          content:
+            application/json:
+              example:
+                error:
+                  code: processing_error
+                  message: Only a transfer in transit can be received
+              schema:
+                "$ref": "#/components/schemas/ErrorResponse"
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                reference:
+                  type: string
+                  nullable: true
+                  example: Van 3, morning run
+                received_at:
+                  type: string
+                  format: date-time
+                  nullable: true
+                  description: Defaults to now
+                notes:
+                  type: string
+                  nullable: true
+                items:
+                  type: array
+                  items:
+                    type: object
+                    properties:
+                      id:
+                        type: string
+                        example: sti_1234567890
+                      quantity_accepted:
+                        type: integer
+                        example: 8
+                      quantity_rejected:
+                        type: integer
+                        example: 2
+                      rejection_reason:
+                        type: string
+                        nullable: true
+                        example: damaged
+                      notes:
+                        type: string
+                        nullable: true
+                    required:
+                    - id
+  "/api/v3/admin/stock_transfers/{id}/mark_draft":
+    parameters:
+    - name: id
+      in: path
+      required: true
+      description: Stock transfer ID
+      schema:
+        type: string
+    patch:
+      summary: Take a transfer back to draft
+      tags:
+      - Stock Transfers
+      security:
+      - api_key: []
+        bearer_auth: []
+      description: |-
+        Unfreezes a ready-to-ship transfer so its lines can be changed. Nothing has left the source, so nothing is undone.
+
+        **Required scope:** `write_stock` (for API-key authentication).
+      x-codeSamples:
+      - lang: javascript
+        label: Spree Admin SDK
+        source: |-
+          import { createAdminClient } from '@spree/admin-sdk'
+
+          const client = createAdminClient({
+            baseUrl: 'https://your-store.com',
+            secretKey: 'sk_xxx',
+          })
+
+          // Nothing has left the source yet, so the lines can be changed again.
+          const stockTransfer = await client.stockTransfers.markDraft('st_1234567890')
+      - lang: bash
+        label: Spree CLI
+        source: spree api patch /stock_transfers/{id}/mark_draft -d '{ ... }'
+      parameters:
+      - name: x-spree-api-key
+        in: header
+        required: true
+        schema:
+          type: string
+      - name: Authorization
+        in: header
+        required: true
+        description: Bearer token for admin authentication
+        schema:
+          type: string
+      responses:
+        '200':
+          description: transfer back in draft
+          content:
+            application/json:
+              example:
+                id: st_UkLWZg9DAJ
+                number: T1001
+                reference: Weekly restock
+                created_at: '2026-01-15T12:00:00.000Z'
+                updated_at: '2026-01-15T12:00:00.000Z'
+                source_location_id: sloc_UkLWZg9DAJ
+                destination_location_id: sloc_gbHJdmfrXB
+                status: draft
+                notes:
+                metadata: {}
+                close_reason:
+                items_count: 1
+                quantity_received_total: 0
+                quantity_rejected_total: 0
+                shipped_at:
+                received_at:
+                closed_short_at:
+                deleted_at:
+                closed_short: false
+                quantity_shipped_total: 10
+                editable: true
+              schema:
+                "$ref": "#/components/schemas/StockTransfer"
+  "/api/v3/admin/stock_transfers/{id}/close":
+    parameters:
+    - name: id
+      in: path
+      required: true
+      description: Stock transfer ID
+      schema:
+        type: string
+    patch:
+      summary: Close a transfer short
+      tags:
+      - Stock Transfers
+      security:
+      - api_key: []
+        bearer_auth: []
+      description: |-
+        Ends a partially received transfer whose missing units are not going
+        to turn up. Nothing moves — they already left the source — and the
+        transfer settles in `received` with `closed_short_at` and the
+        `reason` recorded, the outstanding count left on each line.
+
+
+        **Required scope:** `write_stock` (for API-key authentication).
+      x-codeSamples:
+      - lang: javascript
+        label: Spree Admin SDK
+        source: |-
+          import { createAdminClient } from '@spree/admin-sdk'
+
+          const client = createAdminClient({
+            baseUrl: 'https://your-store.com',
+            secretKey: 'sk_xxx',
+          })
+
+          // The missing units are not going to turn up: keep what arrived, record why.
+          const stockTransfer = await client.stockTransfers.close('st_1234567890', {
+            reason: 'Two fell off the van',
+          })
+      - lang: bash
+        label: Spree CLI
+        source: spree api patch /stock_transfers/{id}/close -d '{"reason":"Two fell
+          off the van"}'
+      parameters:
+      - name: x-spree-api-key
+        in: header
+        required: true
+        schema:
+          type: string
+      - name: Authorization
+        in: header
+        required: true
+        description: Bearer token for admin authentication
+        schema:
+          type: string
+      responses:
+        '200':
+          description: transfer closed short
+          content:
+            application/json:
+              example:
+                id: st_UkLWZg9DAJ
+                number: T1001
+                reference: Weekly restock
+                created_at: '2026-01-15T12:00:00.000Z'
+                updated_at: '2026-01-15T12:00:00.000Z'
+                source_location_id: sloc_UkLWZg9DAJ
+                destination_location_id: sloc_gbHJdmfrXB
+                status: received
+                notes:
+                metadata: {}
+                close_reason: Two fell off the van
+                items_count: 1
+                quantity_received_total: 8
+                quantity_rejected_total: 0
+                shipped_at: '2026-01-15T12:00:00.000Z'
+                received_at: '2026-01-15T12:00:00.000Z'
+                closed_short_at: '2026-01-15T12:00:00.000Z'
+                deleted_at:
+                closed_short: true
+                quantity_shipped_total: 10
+                editable: false
+              schema:
+                "$ref": "#/components/schemas/StockTransfer"
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                reason:
+                  type: string
+                  nullable: true
+                  example: Two fell off the van
+  "/api/v3/admin/stock_transfers/{id}/cancel":
+    parameters:
+    - name: id
+      in: path
+      required: true
+      description: Stock transfer ID
+      schema:
+        type: string
+    patch:
+      summary: Cancel a stock transfer
+      tags:
+      - Stock Transfers
+      security:
+      - api_key: []
+        bearer_auth: []
+      description: |-
+        Calls the trip off.
+
+        Cancelling a draft or a packed transfer costs nothing — no stock has
+        moved. Cancelling one already in transit needs `on_in_transit`, because
+        the units are physically gone from the source: either they come back
+        (`restock`, as if the transfer had never shipped) or they are written
+        off as lost (`write_off`). There is no default — guessing would either
+        invent stock or destroy it — so an in-flight cancellation without it is
+        refused with a 422.
+
+
+        **Required scope:** `write_stock` (for API-key authentication).
+      parameters:
+      - name: x-spree-api-key
+        in: header
+        required: true
+        schema:
+          type: string
+      - name: Authorization
+        in: header
+        required: true
+        description: Bearer token for admin authentication
+        schema:
+          type: string
+      responses:
+        '200':
+          description: transfer cancelled
+          content:
+            application/json:
+              example:
+                id: st_UkLWZg9DAJ
+                number: T1001
+                reference: Weekly restock
+                created_at: '2026-01-15T12:00:00.000Z'
+                updated_at: '2026-01-15T12:00:00.000Z'
+                source_location_id: sloc_UkLWZg9DAJ
+                destination_location_id: sloc_gbHJdmfrXB
+                status: canceled
+                notes:
+                metadata: {}
+                close_reason:
+                items_count: 1
+                quantity_received_total: 0
+                quantity_rejected_total: 0
+                shipped_at: '2026-01-15T12:00:00.000Z'
+                received_at:
+                closed_short_at:
+                deleted_at:
+                closed_short: false
+                quantity_shipped_total: 10
+                editable: false
+              schema:
+                "$ref": "#/components/schemas/StockTransfer"
+        '422':
+          description: in-transit cancellation needs a decision
+          content:
+            application/json:
+              example:
+                error:
+                  code: processing_error
+                  message: Choose whether the units come back to the source warehouse
+                    or are written off
+              schema:
+                "$ref": "#/components/schemas/ErrorResponse"
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                on_in_transit:
+                  type: string
+                  enum:
+                  - restock
+                  - write_off
+                  description: Required once the units have left the source
+                reason:
+                  type: string
+                  nullable: true
+                  description: Recorded against the written-off lines
+  "/api/v3/admin/suppliers":
+    get:
+      summary: List suppliers
+      tags:
+      - Suppliers
+      security:
+      - api_key: []
+        bearer_auth: []
+      description: |-
+        Who the merchant buys stock from. A supplier is an address-book entry
+        with a purchasing history — not a party that sells on the store, which
+        is a seller.
+
+        Suppliers belong to one store, and are soft-deleted so the purchase
+        orders that name them stay readable.
+
+        Filter with Ransack predicates such as
+        `q[name_or_contact_name_or_email_cont]` or `q[country_code_eq]`.
+
+
+        **Required scope:** `read_purchasing` (for API-key authentication).
+      x-codeSamples:
+      - lang: javascript
+        label: Spree Admin SDK
+        source: |-
+          import { createAdminClient } from '@spree/admin-sdk'
+
+          const client = createAdminClient({
+            baseUrl: 'https://your-store.com',
+            secretKey: 'sk_xxx',
+          })
+
+          const { data: suppliers } = await client.suppliers.list({ search: 'Acme' })
+      - lang: bash
+        label: Spree CLI
+        source: spree api get /suppliers -d '{"search":"Acme"}'
+      parameters:
+      - name: x-spree-api-key
+        in: header
+        required: true
+        schema:
+          type: string
+      - name: Authorization
+        in: header
+        required: true
+        description: Bearer token for admin authentication
+        schema:
+          type: string
+      - name: page
+        in: query
+        required: false
+        description: Page number
+        schema:
+          type: integer
+      - name: limit
+        in: query
+        required: false
+        description: Number of records per page
+        schema:
+          type: integer
+      - name: q[name_or_contact_name_or_email_cont]
+        in: query
+        required: false
+        description: Search by name, contact name or email
+        schema:
+          type: string
+      responses:
+        '200':
+          description: suppliers found
+          content:
+            application/json:
+              example:
+                data:
+                - id: sup_UkLWZg9DAJ
+                  name: Acme Wholesale
+                  contact_name: Dana Okafor
+                  email: supplier15@example.com
+                  phone: 555-0100
+                  notes:
+                  address1: 1 Warehouse Way
+                  address2:
+                  city: Brooklyn
+                  state_name:
+                  state_code: NY
+                  country_code: US
+                  postal_code: '11201'
+                  purchase_orders_count: 0
+                  metadata: {}
+                  created_at: '2026-01-15T12:00:00.000Z'
+                  updated_at: '2026-01-15T12:00:00.000Z'
+                  deleted_at:
+                  can_be_deleted: true
+                meta:
+                  page: 1
+                  limit: 25
+                  count: 1
+                  pages: 1
+                  from: 1
+                  to: 1
+                  in: 1
+                  previous:
+                  next:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      "$ref": "#/components/schemas/Supplier"
+                  meta:
+                    "$ref": "#/components/schemas/PaginationMeta"
+                required:
+                - data
+                - meta
+        '401':
+          description: unauthorized
+          content:
+            application/json:
+              example:
+                error:
+                  code: authentication_required
+                  message: Authentication required
+              schema:
+                "$ref": "#/components/schemas/ErrorResponse"
+    post:
+      summary: Create a supplier
+      tags:
+      - Suppliers
+      security:
+      - api_key: []
+        bearer_auth: []
+      description: |-
+        Adds a supplier to this store's address book. The address is inline —
+        street, city, state and country live on the supplier itself, the same
+        shape a stock location uses.
+
+
+        **Required scope:** `write_purchasing` (for API-key authentication).
+      x-codeSamples:
+      - lang: javascript
+        label: Spree Admin SDK
+        source: |-
+          import { createAdminClient } from '@spree/admin-sdk'
+
+          const client = createAdminClient({
+            baseUrl: 'https://your-store.com',
+            secretKey: 'sk_xxx',
+          })
+
+          const supplier = await client.suppliers.create({
+            name: 'Acme Wholesale',
+            contact_name: 'Dana Okafor',
+            email: 'sales@acme.test',
+            city: 'Brooklyn',
+            country_code: 'US',
+          })
+      - lang: bash
+        label: Spree CLI
+        source: spree api post /suppliers -d '{"name":"Acme Wholesale","contact_name":"Dana
+          Okafor","email":"sales@acme.test","city":"Brooklyn","country_code":"US"}'
+      parameters:
+      - name: x-spree-api-key
+        in: header
+        required: true
+        schema:
+          type: string
+      - name: Authorization
+        in: header
+        required: true
+        description: Bearer token for admin authentication
+        schema:
+          type: string
+      responses:
+        '201':
+          description: supplier created
+          content:
+            application/json:
+              example:
+                id: sup_gbHJdmfrXB
+                name: Northwind Trading
+                contact_name: Dana Okafor
+                email: sales@northwind.test
+                phone:
+                notes:
+                address1:
+                address2:
+                city: Brooklyn
+                state_name:
+                state_code:
+                country_code: US
+                postal_code:
+                purchase_orders_count: 0
+                metadata: {}
+                created_at: '2026-01-15T12:00:00.000Z'
+                updated_at: '2026-01-15T12:00:00.000Z'
+                deleted_at:
+                can_be_deleted: true
+              schema:
+                "$ref": "#/components/schemas/Supplier"
+        '422':
+          description: validation error
+          content:
+            application/json:
+              example:
+                error:
+                  code: validation_error
+                  message: Name can't be blank
+                  details:
+                    name:
+                    - code: blank
+                      message: can't be blank
+                      specific: false
+              schema:
+                "$ref": "#/components/schemas/ErrorResponse"
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                  example: Northwind Trading
+                contact_name:
+                  type: string
+                  nullable: true
+                  example: Dana Okafor
+                email:
+                  type: string
+                  nullable: true
+                  example: sales@northwind.test
+                phone:
+                  type: string
+                  nullable: true
+                  example: 555-0100
+                notes:
+                  type: string
+                  nullable: true
+                address1:
+                  type: string
+                  nullable: true
+                  example: 1 Warehouse Way
+                address2:
+                  type: string
+                  nullable: true
+                city:
+                  type: string
+                  nullable: true
+                  example: Brooklyn
+                state_code:
+                  type: string
+                  nullable: true
+                  example: NY
+                state_name:
+                  type: string
+                  nullable: true
+                country_code:
+                  type: string
+                  nullable: true
+                  example: US
+                postal_code:
+                  type: string
+                  nullable: true
+                  example: '11201'
+                metadata:
+                  type: object
+                  nullable: true
+              required:
+              - name
+        required: true
+  "/api/v3/admin/suppliers/{id}":
+    parameters:
+    - name: id
+      in: path
+      required: true
+      description: Supplier ID
+      schema:
+        type: string
+    get:
+      summary: Get a supplier
+      tags:
+      - Suppliers
+      security:
+      - api_key: []
+        bearer_auth: []
+      description: "**Required scope:** `read_purchasing` (for API-key authentication)."
+      parameters:
+      - name: x-spree-api-key
+        in: header
+        required: true
+        schema:
+          type: string
+      - name: Authorization
+        in: header
+        required: true
+        description: Bearer token for admin authentication
+        schema:
+          type: string
+      responses:
+        '200':
+          description: supplier found
+          content:
+            application/json:
+              example:
+                id: sup_UkLWZg9DAJ
+                name: Acme Wholesale
+                contact_name: Dana Okafor
+                email: supplier19@example.com
+                phone: 555-0100
+                notes:
+                address1: 1 Warehouse Way
+                address2:
+                city: Brooklyn
+                state_name:
+                state_code: NY
+                country_code: US
+                postal_code: '11201'
+                purchase_orders_count: 0
+                metadata: {}
+                created_at: '2026-01-15T12:00:00.000Z'
+                updated_at: '2026-01-15T12:00:00.000Z'
+                deleted_at:
+                can_be_deleted: true
+              schema:
+                "$ref": "#/components/schemas/Supplier"
+        '404':
+          description: supplier not found
+          content:
+            application/json:
+              example:
+                error:
+                  code: record_not_found
+                  message: Supplier not found
+              schema:
+                "$ref": "#/components/schemas/ErrorResponse"
+    patch:
+      summary: Update a supplier
+      tags:
+      - Suppliers
+      security:
+      - api_key: []
+        bearer_auth: []
+      description: "**Required scope:** `write_purchasing` (for API-key authentication)."
+      parameters:
+      - name: x-spree-api-key
+        in: header
+        required: true
+        schema:
+          type: string
+      - name: Authorization
+        in: header
+        required: true
+        description: Bearer token for admin authentication
+        schema:
+          type: string
+      responses:
+        '200':
+          description: supplier updated
+          content:
+            application/json:
+              example:
+                id: sup_UkLWZg9DAJ
+                name: Acme Wholesale
+                contact_name: Sam Reyes
+                email: supplier21@example.com
+                phone: 555-0100
+                notes:
+                address1: 1 Warehouse Way
+                address2:
+                city: Brooklyn
+                state_name:
+                state_code: NY
+                country_code: US
+                postal_code: '11201'
+                purchase_orders_count: 0
+                metadata: {}
+                created_at: '2026-01-15T12:00:00.000Z'
+                updated_at: '2026-01-15T12:00:00.000Z'
+                deleted_at:
+                can_be_deleted: true
+              schema:
+                "$ref": "#/components/schemas/Supplier"
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                contact_name:
+                  type: string
+                  nullable: true
+                email:
+                  type: string
+                  nullable: true
+                phone:
+                  type: string
+                  nullable: true
+        required: true
+    delete:
+      summary: Delete a supplier
+      tags:
+      - Suppliers
+      security:
+      - api_key: []
+        bearer_auth: []
+      description: |-
+        Soft-deletes the supplier, so the purchase orders naming it stay
+        readable. Refused with a 422 while a purchase order still points at it.
+
+
+        **Required scope:** `write_purchasing` (for API-key authentication).
+      parameters:
+      - name: x-spree-api-key
+        in: header
+        required: true
+        schema:
+          type: string
+      - name: Authorization
+        in: header
+        required: true
+        description: Bearer token for admin authentication
+        schema:
+          type: string
+      responses:
+        '204':
+          description: supplier deleted
 servers:
 - url: http://{defaultHost}
   variables:
@@ -42941,6 +45347,181 @@ components:
       - action_ids
       - rule_ids
       x-typelizer: true
+    PurchaseOrderItem:
+      type: object
+      properties:
+        id:
+          type: string
+        quantity_ordered:
+          type: number
+        quantity_received:
+          type: number
+        quantity_rejected:
+          type: number
+        quantity_over:
+          type: number
+        outstanding:
+          type: number
+        currency:
+          type: string
+          nullable: true
+        created_at:
+          type: string
+        updated_at:
+          type: string
+        unit_cost:
+          type: string
+        total_cost:
+          type: string
+        display_unit_cost:
+          type: string
+        display_total_cost:
+          type: string
+        purchase_order_id:
+          type: string
+          nullable: true
+        variant_id:
+          type: string
+          nullable: true
+        product_id:
+          type: string
+          nullable: true
+        variant_name:
+          type: string
+          nullable: true
+        variant_sku:
+          type: string
+          nullable: true
+        options_text:
+          type: string
+          nullable: true
+        thumbnail_url:
+          type: string
+          nullable: true
+      required:
+      - id
+      - quantity_ordered
+      - quantity_received
+      - quantity_rejected
+      - quantity_over
+      - outstanding
+      - currency
+      - created_at
+      - updated_at
+      - unit_cost
+      - total_cost
+      - display_unit_cost
+      - display_total_cost
+      - purchase_order_id
+      - variant_id
+      - product_id
+      - variant_name
+      - variant_sku
+      - options_text
+      - thumbnail_url
+      x-typelizer: true
+    PurchaseOrder:
+      type: object
+      properties:
+        id:
+          type: string
+        number:
+          type: string
+        status:
+          type: string
+        currency:
+          type: string
+        reference:
+          type: string
+          nullable: true
+        notes:
+          type: string
+          nullable: true
+        metadata:
+          type: object
+        close_reason:
+          type: string
+          nullable: true
+        items_count:
+          type: number
+        quantity_received_total:
+          type: number
+        quantity_rejected_total:
+          type: number
+        ordered_at:
+          type: string
+          nullable: true
+        received_at:
+          type: string
+          nullable: true
+        closed_short_at:
+          type: string
+          nullable: true
+        created_at:
+          type: string
+        updated_at:
+          type: string
+        expected_at:
+          type: string
+          nullable: true
+        cancel_by:
+          type: string
+          nullable: true
+        closed_short:
+          type: boolean
+        quantity_ordered_total:
+          type: number
+        editable:
+          type: boolean
+        subtotal:
+          type: string
+        display_subtotal:
+          type: string
+        supplier_id:
+          type: string
+          nullable: true
+        destination_location_id:
+          type: string
+          nullable: true
+        items:
+          type: array
+          items:
+            "$ref": "#/components/schemas/PurchaseOrderItem"
+        stock_receipts:
+          type: array
+          items:
+            "$ref": "#/components/schemas/StockReceipt"
+        supplier:
+          "$ref": "#/components/schemas/Supplier"
+        destination_location:
+          "$ref": "#/components/schemas/StockLocation"
+      required:
+      - id
+      - number
+      - status
+      - currency
+      - reference
+      - notes
+      - metadata
+      - close_reason
+      - items_count
+      - quantity_received_total
+      - quantity_rejected_total
+      - ordered_at
+      - received_at
+      - closed_short_at
+      - created_at
+      - updated_at
+      - expected_at
+      - cancel_by
+      - closed_short
+      - quantity_ordered_total
+      - editable
+      - subtotal
+      - display_subtotal
+      - supplier_id
+      - destination_location_id
+      x-typelizer: true
     RefundReason:
       type: object
       properties:
@@ -44030,6 +46611,21 @@ components:
         stock_level_id:
           type: string
           nullable: true
+        stock_location_id:
+          type: string
+          nullable: true
+        stock_location_name:
+          type: string
+          nullable: true
+        variant_id:
+          type: string
+          nullable: true
+        variant_name:
+          type: string
+          nullable: true
+        variant_sku:
+          type: string
+          nullable: true
         order_id:
           type: string
           nullable: true
@@ -44045,6 +46641,18 @@ components:
         stock_transfer_id:
           type: string
           nullable: true
+        stock_receipt_id:
+          type: string
+          nullable: true
+        purchase_order_id:
+          type: string
+          nullable: true
+        unit_cost:
+          type: string
+          nullable: true
+        display_unit_cost:
+          type: string
+          nullable: true
       required:
       - id
       - quantity
@@ -44053,11 +46661,130 @@ components:
       - created_at
       - updated_at
       - stock_level_id
+      - stock_location_id
+      - stock_location_name
+      - variant_id
+      - variant_name
+      - variant_sku
       - order_id
       - fulfillment_id
       - return_id
       - exchange_id
       - stock_transfer_id
+      - stock_receipt_id
+      - purchase_order_id
+      - unit_cost
+      - display_unit_cost
+      x-typelizer: true
+    StockReceiptItem:
+      type: object
+      properties:
+        id:
+          type: string
+        quantity_accepted:
+          type: number
+        quantity_rejected:
+          type: number
+        rejection_reason:
+          type: string
+          nullable: true
+          enum:
+          - damaged
+          - wrong_item
+          - expired
+          - other
+        notes:
+          type: string
+          nullable: true
+        line_type:
+          type: string
+          enum:
+          - purchase_order_item
+          - stock_transfer_item
+        line_id:
+          type: string
+          nullable: true
+        variant_id:
+          type: string
+          nullable: true
+        variant_name:
+          type: string
+          nullable: true
+        variant_sku:
+          type: string
+          nullable: true
+        thumbnail_url:
+          type: string
+          nullable: true
+      required:
+      - id
+      - quantity_accepted
+      - quantity_rejected
+      - rejection_reason
+      - notes
+      - line_type
+      - line_id
+      - variant_id
+      - variant_name
+      - variant_sku
+      - thumbnail_url
+      x-typelizer: true
+    StockReceipt:
+      type: object
+      properties:
+        id:
+          type: string
+        number:
+          type: string
+        reference:
+          type: string
+          nullable: true
+        notes:
+          type: string
+          nullable: true
+        metadata:
+          type: object
+        quantity_accepted_total:
+          type: number
+        quantity_rejected_total:
+          type: number
+        received_at:
+          type: string
+        created_at:
+          type: string
+        updated_at:
+          type: string
+        receivable_type:
+          type: string
+          enum:
+          - purchase_order
+          - stock_transfer
+        receivable_id:
+          type: string
+        received_by_id:
+          type: string
+          nullable: true
+        items_count:
+          type: number
+        items:
+          type: array
+          items:
+            "$ref": "#/components/schemas/StockReceiptItem"
+      required:
+      - id
+      - number
+      - reference
+      - notes
+      - metadata
+      - quantity_accepted_total
+      - quantity_rejected_total
+      - received_at
+      - created_at
+      - updated_at
+      - receivable_type
+      - receivable_id
+      - received_by_id
+      - items_count
       x-typelizer: true
     StockReservation:
       type: object
@@ -44099,6 +46826,63 @@ components:
       - created_at
       - updated_at
       x-typelizer: true
+    StockTransferItem:
+      type: object
+      properties:
+        id:
+          type: string
+        quantity_shipped:
+          type: number
+        quantity_received:
+          type: number
+        quantity_rejected:
+          type: number
+        quantity_over:
+          type: number
+        outstanding:
+          type: number
+        created_at:
+          type: string
+        updated_at:
+          type: string
+        stock_transfer_id:
+          type: string
+          nullable: true
+        variant_id:
+          type: string
+          nullable: true
+        product_id:
+          type: string
+          nullable: true
+        variant_name:
+          type: string
+          nullable: true
+        variant_sku:
+          type: string
+          nullable: true
+        options_text:
+          type: string
+          nullable: true
+        thumbnail_url:
+          type: string
+          nullable: true
+      required:
+      - id
+      - quantity_shipped
+      - quantity_received
+      - quantity_rejected
+      - quantity_over
+      - outstanding
+      - created_at
+      - updated_at
+      - stock_transfer_id
+      - variant_id
+      - product_id
+      - variant_name
+      - variant_sku
+      - options_text
+      - thumbnail_url
+      x-typelizer: true
     StockTransfer:
       type: object
       properties:
@@ -44109,18 +46893,56 @@ components:
         reference:
           type: string
           nullable: true
-        metadata:
-          type: object
         created_at:
           type: string
         updated_at:
           type: string
         source_location_id:
           type: string
-          nullable: true
         destination_location_id:
           type: string
+        status:
+          type: string
+        notes:
+          type: string
           nullable: true
+        metadata:
+          type: object
+        close_reason:
+          type: string
+          nullable: true
+        items_count:
+          type: number
+        quantity_received_total:
+          type: number
+        quantity_rejected_total:
+          type: number
+        shipped_at:
+          type: string
+          nullable: true
+        received_at:
+          type: string
+          nullable: true
+        closed_short_at:
+          type: string
+          nullable: true
+        deleted_at:
+          type: string
+          nullable: true
+        closed_short:
+          type: boolean
+        quantity_shipped_total:
+          type: number
+        editable:
+          type: boolean
+        items:
+          type: array
+          items:
+            "$ref": "#/components/schemas/StockTransferItem"
+        stock_receipts:
+          type: array
+          items:
+            "$ref": "#/components/schemas/StockReceipt"
         source_location:
           "$ref": "#/components/schemas/StockLocation"
         destination_location:
@@ -44129,11 +46951,24 @@ components:
       - id
       - number
       - reference
-      - metadata
       - created_at
       - updated_at
       - source_location_id
       - destination_location_id
+      - status
+      - notes
+      - metadata
+      - close_reason
+      - items_count
+      - quantity_received_total
+      - quantity_rejected_total
+      - shipped_at
+      - received_at
+      - closed_short_at
+      - deleted_at
+      - closed_short
+      - quantity_shipped_total
+      - editable
       x-typelizer: true
     StoreCredit:
       type: object
@@ -44376,6 +47211,80 @@ components:
       - available_locales
       - logo_url
       - mailer_logo_url
+      x-typelizer: true
+    Supplier:
+      type: object
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+        contact_name:
+          type: string
+          nullable: true
+        email:
+          type: string
+          nullable: true
+        phone:
+          type: string
+          nullable: true
+        notes:
+          type: string
+          nullable: true
+        address1:
+          type: string
+          nullable: true
+        address2:
+          type: string
+          nullable: true
+        city:
+          type: string
+          nullable: true
+        state_name:
+          type: string
+          nullable: true
+        state_code:
+          type: string
+          nullable: true
+        country_code:
+          type: string
+          nullable: true
+        postal_code:
+          type: string
+          nullable: true
+        purchase_orders_count:
+          type: number
+        metadata:
+          type: object
+        created_at:
+          type: string
+        updated_at:
+          type: string
+        deleted_at:
+          type: string
+          nullable: true
+        can_be_deleted:
+          type: boolean
+      required:
+      - id
+      - name
+      - contact_name
+      - email
+      - phone
+      - notes
+      - address1
+      - address2
+      - city
+      - state_name
+      - state_code
+      - country_code
+      - postal_code
+      - purchase_orders_count
+      - metadata
+      - created_at
+      - updated_at
+      - deleted_at
+      - can_be_deleted
       x-typelizer: true
     TaxCategory:
       type: object

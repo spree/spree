@@ -433,9 +433,11 @@ Spree::Core::Engine.add_routes do
           member do
             patch :mark_ready
             patch :mark_in_transit
-            patch :receive
+            patch :mark_draft
+            patch :close
             patch :cancel
           end
+          resources :stock_receipts, only: [:index, :show, :create], module: :stock_transfers
         end
 
         # Purchasing
@@ -443,9 +445,11 @@ Spree::Core::Engine.add_routes do
         resources :purchase_orders do
           member do
             patch :mark_ordered
-            patch :receive
+            patch :mark_draft
+            patch :close
             patch :cancel
           end
+          resources :stock_receipts, only: [:index, :show, :create], module: :purchase_orders
         end
 
         # Payment Methods

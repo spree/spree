@@ -156,59 +156,56 @@ RSpec.describe Spree::Api::V3::Admin::PurchaseOrdersController, type: :controlle
       expect(on_hand).to eq(0)
     end
 
-    it 'books in what the supplier actually delivered' do
-      patch :mark_ordered, params: { id: purchase_order.prefixed_id }, as: :json
-      item = purchase_order.reload.items.sole
-
-      patch :receive, params: {
-        id: purchase_order.prefixed_id, items: [{ id: item.prefixed_id, quantity_received: 60 }]
-      }, as: :json
-
-      expect(response).to have_http_status(:ok)
-      expect(json_response).to include('status' => 'partially_received',
-                                       'quantity_received_total' => 60)
-      expect(on_hand).to eq(60)
-    end
-
-    it 'records what the units cost on the movement that landed them' do
-      patch :mark_ordered, params: { id: purchase_order.prefixed_id }, as: :json
-      patch :receive, params: { id: purchase_order.prefixed_id }, as: :json
-
-      movement = purchase_order.reload.stock_movements.sole
-      expect(movement.unit_cost).to eq(12.5)
-      expect(movement.purchase_order).to eq(purchase_order)
-    end
-
-    it 'refuses to receive an order that has not been placed' do
-      patch :receive, params: { id: purchase_order.prefixed_id }, as: :json
-
-      expect(response).to have_http_status(:unprocessable_content)
-      expect(on_hand).to eq(0)
-    end
-
-    it "returns 404 for a line belonging to another order" do
-      patch :mark_ordered, params: { id: purchase_order.prefixed_id }, as: :json
-      foreign_item = create_draft.items.sole
-
-      patch :receive, params: {
-        id: purchase_order.prefixed_id, items: [{ id: foreign_item.prefixed_id, quantity_received: 1 }]
-      }, as: :json
-
-      expect(response).to have_http_status(:not_found)
-    end
-
     it 'cancels what is outstanding and leaves received units on the shelf' do
       patch :mark_ordered, params: { id: purchase_order.prefixed_id }, as: :json
-      item = purchase_order.reload.items.sole
-      patch :receive, params: {
-        id: purchase_order.prefixed_id, items: [{ id: item.prefixed_id, quantity_received: 60 }]
-      }, as: :json
+      Spree::PurchaseOrders::Receive.call(purchase_order: purchase_order.reload,
+                                          items: [{ item: purchase_order.items.sole, quantity_accepted: 60 }])
 
       patch :cancel, params: { id: purchase_order.prefixed_id, reason: 'Supplier went under' }, as: :json
 
       expect(response).to have_http_status(:ok)
       expect(json_response['status']).to eq('canceled')
       expect(on_hand).to eq(60)
+    end
+    it 'takes a placed order back to draft while nothing has arrived' do
+      patch :mark_ordered, params: { id: purchase_order.prefixed_id }, as: :json
+
+      patch :mark_draft, params: { id: purchase_order.prefixed_id }, as: :json
+
+      expect(response).to have_http_status(:ok)
+      expect(json_response).to include('status' => 'draft', 'editable' => true)
+      expect(json_response['ordered_at']).to be_nil
+    end
+
+    it 'refuses to take an order back to draft once a delivery has been booked' do
+      patch :mark_ordered, params: { id: purchase_order.prefixed_id }, as: :json
+      Spree::PurchaseOrders::Receive.call(purchase_order: purchase_order.reload,
+                                          items: [{ item: purchase_order.items.sole, quantity_accepted: 1 }])
+
+      patch :mark_draft, params: { id: purchase_order.prefixed_id }, as: :json
+
+      expect(response).to have_http_status(:unprocessable_content)
+    end
+
+    it 'closes a short order and keeps what arrived' do
+      patch :mark_ordered, params: { id: purchase_order.prefixed_id }, as: :json
+      Spree::PurchaseOrders::Receive.call(purchase_order: purchase_order.reload,
+                                          items: [{ item: purchase_order.items.sole, quantity_accepted: 60 }])
+
+      patch :close, params: { id: purchase_order.prefixed_id, reason: 'Supplier out of stock' }, as: :json
+
+      expect(response).to have_http_status(:ok)
+      expect(json_response).to include('status' => 'received', 'closed_short' => true,
+                                       'close_reason' => 'Supplier out of stock')
+      expect(on_hand).to eq(60)
+    end
+
+    it 'refuses to close an order nothing has arrived on' do
+      patch :mark_ordered, params: { id: purchase_order.prefixed_id }, as: :json
+
+      patch :close, params: { id: purchase_order.prefixed_id }, as: :json
+
+      expect(response).to have_http_status(:unprocessable_content)
     end
   end
 

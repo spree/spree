@@ -6,6 +6,8 @@ module Spree
         class PurchaseOrderItemSerializer < V3::BaseSerializer
           typelize quantity_ordered: :number,
                    quantity_received: :number,
+                   quantity_rejected: :number,
+                   quantity_over: :number,
                    outstanding: :number,
                    unit_cost: :string,
                    display_unit_cost: :string,
@@ -20,7 +22,8 @@ module Spree
                    variant_sku: 'string | null',
                    options_text: 'string | null'
 
-          attributes :quantity_ordered, :quantity_received, :outstanding, :currency,
+          attributes :quantity_ordered, :quantity_received, :quantity_rejected, :quantity_over,
+                     :outstanding, :currency,
                      created_at: :iso8601, updated_at: :iso8601
 
           # Money on the wire is a decimal string: a float would round the

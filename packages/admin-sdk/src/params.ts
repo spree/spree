@@ -1510,16 +1510,38 @@ export interface StockTransferCreateParams {
 
 export type StockTransferUpdateParams = Partial<StockTransferCreateParams>
 
-export interface StockTransferReceiveParams {
+/**
+ * One delivery against a transfer or a purchase order. Quantities are what
+ * this delivery brought — a second delivery adds to the first, it does not
+ * restate it.
+ */
+export interface StockReceiptCreateParams {
+  /** The supplier's delivery note, or the carrier's reference. */
+  reference?: string | null
+  /** When the goods were counted in. Defaults to now. */
+  received_at?: string | null
+  notes?: string | null
   /**
-   * Omit to receive every line in full. `quantity_received` is the running
-   * total for the line, so a second delivery tops it up.
+   * Omit to book in everything still outstanding, intact. Naming lines — even
+   * none — records exactly what the dock counted. `quantity_accepted` reaches
+   * the shelf; `quantity_rejected` is refused, recorded with a
+   * `rejection_reason` and never stocked.
    */
-  items?: Array<{
-    id: string
-    quantity_received: number
-    discrepancy_reason?: string
-  }>
+  items?: StockReceiptItemParams[]
+}
+
+export interface StockReceiptItemParams {
+  /** The purchase order or transfer line. */
+  id: string
+  quantity_accepted?: number
+  quantity_rejected?: number
+  rejection_reason?: 'damaged' | 'wrong_item' | 'expired' | 'other' | null
+  notes?: string | null
+}
+
+/** Closing a transfer or an order short: why the balance is not coming. */
+export interface ReceivableCloseParams {
+  reason?: string | null
 }
 
 export interface StockTransferCancelParams {
@@ -1563,6 +1585,8 @@ export interface PurchaseOrderCreateParams {
   currency?: string
   /** The day the supplier promised, as `yyyy-mm-dd`. `null` clears it. */
   expected_at?: string | null
+  /** The day after which the goods are no longer wanted, as `yyyy-mm-dd`. `null` clears it. */
+  cancel_by?: string | null
   /** The supplier's own order number. `null` clears it. */
   reference?: string | null
   notes?: string | null
@@ -1571,11 +1595,6 @@ export interface PurchaseOrderCreateParams {
 }
 
 export type PurchaseOrderUpdateParams = Partial<PurchaseOrderCreateParams>
-
-export interface PurchaseOrderReceiveParams {
-  /** Omit to receive every line in full. */
-  items?: Array<{ id: string; quantity_received: number }>
-}
 
 export interface RoleCreateParams {
   /** Unique role name (machine identifier shown capitalized in the UI). */
