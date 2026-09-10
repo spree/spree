@@ -44,4 +44,15 @@ RSpec.describe Spree::Api::V3::Admin::PromotionActionsController, type: :control
       expect(response).to have_http_status(:not_found)
     end
   end
+
+  describe 'GET #calculators' do
+    it 'returns calculator api types that match the action serializer' do
+      get :calculators, params: { type: 'create_adjustment' }, as: :json
+
+      expect(response).to have_http_status(:ok)
+      types = json_response['data'].map { |entry| entry['type'] }
+      expect(types).to include('flat_rate')
+      expect(types).not_to include('Spree::Calculator::FlatRate')
+    end
+  end
 end

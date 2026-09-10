@@ -271,7 +271,7 @@ describe('promotionActions', () => {
         http.get(`${API_PREFIX}/promotion_actions/calculators`, ({ request }) => {
           url = new URL(request.url)
           return HttpResponse.json({
-            data: [{ type: 'Spree::Calculator::FlatRate', label: 'Flat Rate' }],
+            data: [{ type: 'flat_rate', label: 'Flat Rate' }],
           })
         }),
       )
@@ -281,7 +281,7 @@ describe('promotionActions', () => {
       )
 
       expect(url!.searchParams.get('type')).toBe('Spree::Promotion::Actions::CreateItemAdjustments')
-      expect(res.data[0]?.type).toBe('Spree::Calculator::FlatRate')
+      expect(res.data[0]?.type).toBe('flat_rate')
     })
   })
 })
