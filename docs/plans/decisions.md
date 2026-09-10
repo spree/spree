@@ -1,3 +1,38 @@
+## 2026-09-10: A delivery is a stock receipt — discrepancies get quantities, over-receipt gets a status, and a short order can be closed
+
+**Context:** Comparing the shipped inventory operations against a multi-location omnichannel
+merchant's own purchasing code showed what a warehouse dock records that ours could not: a
+delivery with two damaged units out of ten, a delivery of twelve against ten ordered, and a
+supplier confirming the last two will never come. Ours held one running total per line, a
+single free-text discrepancy on transfer lines only, refused any receive above the expected
+quantity, and left a short order in `partially_received` forever. The same review found no way
+back from `ready_to_ship`, no cancel-by date, and no CSV in either direction.
+
+**Decision:** One new model and five additions, recorded in `6.0-inventory-operations.md`
+under "Receipts, discrepancies and the rest of the dock". `Spree::StockReceipt` is one
+delivery against a purchase order or a transfer — numbered `SR-…`, carrying the packing-slip
+reference and date — and `Spree::StockReceiptItem` is one line of it with `quantity_accepted`,
+`quantity_rejected` and a `rejection_reason`. Named *stock* receipt because a customer-facing
+sales receipt will want the plain word. A receive payload now carries this delivery's counts
+rather than running totals, and `PATCH …/receive` becomes `POST …/stock_receipts`. Rejected
+units are never stocked. Over-receipt is allowed and is a terminal `over_received` status of
+its own (chosen over a badge: a list should say it at a glance). `Close` takes
+`partially_received → received` with `closed_short_at` and a `close_reason`, which also
+records why a cancelled transfer's in-flight units were written off. `cancel_by` is a date
+on the order with *Overdue* and *Past cancel-by* filters and no automatic cancelling.
+`MarkDraft` returns a `ready_to_ship` transfer, or an `ordered` order with no receipt, to
+`draft`. CSV export and import ride the existing `Spree::Export` / `Spree::Import` frameworks
+under the `purchasing` scope; the import groups rows by reference into drafts and requires
+the SKU to exist.
+
+**Consequences:** Every `received` movement against these documents now also names its
+`stock_receipt_id`, so a delivery can be reconciled, and the upgrade task mints one receipt
+per migrated 5.x receive so history reads the same way. `discrepancy_reason` leaves
+`spree_stock_transfer_items`. Out of scope on purpose: purchase-order lines for products not
+yet in the catalog, dropship, consignment, and a quarantine location for rejected units —
+the first is a buying feature that drags product creation into purchasing, and the rest are
+their own plans.
+
 ## 2026-09-07: Inventory operations grooming — transfers get a status and workflows, supplier receives become purchase orders, and a receive records what the units cost
 
 **Context:** `6.0-inventory-operations.md` was written before three things
