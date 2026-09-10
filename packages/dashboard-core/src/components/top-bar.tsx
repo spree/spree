@@ -97,7 +97,7 @@ export function TopBar({
     >
       {/* Size the glyph, not the button — `size="icon-sm"` sets a 28px hit area
           and overriding the box would shrink the target to 20px. */}
-      <SidebarTrigger className="-ml-1 opacity-50 hover:bg-accent hover:opacity-100 [&_svg]:size-5" />
+      <SidebarTrigger className="-ml-1 opacity-50 hover:bg-accent-strong hover:opacity-100 [&_svg]:size-5" />
 
       {/* A three-column grid keeps the search optically centred whatever the
           trail's length, with the trail truncating rather than pushing it. The
@@ -134,15 +134,13 @@ function SearchTrigger() {
       // Focus matches the form inputs — the soft blue glow from `--ring`,
       // rather than a hard offset ring. It looks like a search field, so it
       // should focus like one.
-      className="flex w-full max-w-md shrink cursor-pointer items-center gap-1 rounded-xl border border-border p-2 md:py-1.5 text-sm text-muted-foreground outline-none transition-[color,background-color,border-color,box-shadow] duration-100 ease-out hover:bg-accent/50 focus-visible:border-ring focus-visible:shadow-[0_0_0_3px_color-mix(in_srgb,var(--ring)_15%,transparent)]"
+      className="flex w-full max-w-md shrink cursor-pointer items-center gap-2 rounded-xl border border-border p-1.5 pl-3 text-sm text-muted-foreground outline-none transition-[color,background-color,border-color,box-shadow] duration-100 ease-out hover:bg-accent focus-visible:border-ring focus-visible:shadow-[0_0_0_3px_color-mix(in_srgb,var(--ring)_15%,transparent)]"
     >
       <SearchIcon className="size-4" />
       <span className="flex-1 text-left">{t('admin.components.command_palette.placeholder')}</span>
-      <kbd className="hidden rounded-lg border bg-background px-2 py-1 font-mono text-xs sm:inline-flex h-7 items-center">
-        {IS_MAC ? <CommandIcon size={15} /> : 'Ctrl'}
-      </kbd>
-      <kbd className="hidden rounded-lg border bg-background px-2 py-1 font-mono text-xs sm:inline-flex h-7 items-center">
-        K
+      <kbd className="hidden rounded-md border px-2 py-1 font-mono text-lg sm:inline-flex h-7 items-center gap-1">
+        {IS_MAC ? <CommandIcon size={15} /> : 'CTRL'}
+        <span>K</span>
       </kbd>
     </button>
   )
@@ -207,7 +205,7 @@ export function TopBarUser({
         <button
           type="button"
           aria-label={t('admin.a11y.user_menu')}
-          className="flex items-center gap-2 rounded-lg p-1 transition-colors hover:bg-accent"
+          className="flex items-center gap-2 rounded-lg p-1 transition-colors hover:bg-accent-strong"
         >
           <Avatar className="size-7">
             {user.avatar_url && <AvatarImage src={user.avatar_url} alt="" />}

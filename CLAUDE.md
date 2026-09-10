@@ -123,6 +123,7 @@ NEVER kill/shut off dev serves already running unless they are broken (eg. migra
 - ALWAYS use Yard comments for classes and public methods, with `@param` and `@return` types
 - DO NOT generate too much comment noise, be very strict and selective about what gets a comment — only non-obvious public methods, never private methods or internal helpers
 - DO NOT use shorthand variable names, readibility by humans is the core principle
+- Always use `ActiveJob::Continuable` when a Background Job iterates over records and perform operations on them
 
 ### Code Organization
 

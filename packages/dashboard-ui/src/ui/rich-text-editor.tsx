@@ -348,7 +348,7 @@ function ToolbarButton({
       aria-pressed={active}
       className={cn(
         'inline-flex items-center justify-center rounded-md p-1.5 text-muted-foreground hover:bg-accent hover:text-foreground transition-colors disabled:opacity-40 disabled:pointer-events-none',
-        active && 'bg-accent text-foreground',
+        active && 'bg-accent-strong text-foreground',
       )}
     >
       {children}

@@ -740,7 +740,11 @@ export function ResourceTable<T extends Record<string, any>>({
                         // Selected rows carry the hover tint so the selection is
                         // visible at rest; hovering one goes a step deeper so the
                         // row still answers the pointer.
-                        className={isSelected ? 'bg-accent/60 hover:bg-accent' : undefined}
+                        className={
+                          isSelected
+                            ? 'bg-accent-strong/75 hover:bg-accent-strong-hover'
+                            : undefined
+                        }
                       >
                         {selectionEnabled && (
                           <TableCell className="w-8">
@@ -838,7 +842,7 @@ function SortableRow<T extends Record<string, any>>({
       ref={setNodeRef}
       style={style}
       className={cn(
-        'group/row hover:bg-accent/25 last:*:border-b-0',
+        'group/row hover:bg-accent-strong/50 last:*:border-b-0',
         isDragging && 'relative z-10 opacity-70',
       )}
     >

@@ -547,7 +547,7 @@ function DeliveryMethodSheet({
                   return (
                     <div
                       key={rule.id ?? `${rule.type}-${index}`}
-                      className="flex flex-col gap-3 rounded-md border border-border p-3"
+                      className="flex flex-col gap-3 rounded-lg border border-border-subtle p-3"
                     >
                       <div className="flex items-center justify-between gap-4">
                         <div className="flex flex-col">
